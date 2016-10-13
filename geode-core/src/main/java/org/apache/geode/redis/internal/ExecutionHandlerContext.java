@@ -57,7 +57,7 @@ import org.apache.geode.redis.GeodeRedisServer;
 public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   private static final int WAIT_REGION_DSTRYD_MILLIS = 100;
-  private static final int MAXIMUM_NUM_RETRIES = (1000*60)/WAIT_REGION_DSTRYD_MILLIS; // 60 seconds total
+  private static final int MAXIMUM_NUM_RETRIES = (1000 * 60) / WAIT_REGION_DSTRYD_MILLIS; // 60 seconds total
 
   private final Cache cache;
   private final GeodeRedisServer server;
@@ -97,7 +97,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
     this.server = server;
     this.logger = cache.getLogger();
     this.channel = ch;
-    this.needChannelFlush  = new AtomicBoolean(false);
+    this.needChannelFlush = new AtomicBoolean(false);
     this.flusher = new Runnable() {
 
       @Override
@@ -151,7 +151,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
   }
 
   private ByteBuf getExceptionResponse(ChannelHandlerContext ctx, Throwable cause) {
-    ByteBuf response; 
+    ByteBuf response;
     if (cause instanceof RedisDataTypeMismatchException)
       response = Coder.getWrongTypeResponse(this.byteBufAllocator, cause.getMessage());
     else if (cause instanceof DecoderException && cause.getCause() instanceof RedisCommandParserException)
@@ -190,7 +190,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
       if (hasTransaction() && !(exec instanceof TransactionExecutor))
         executeWithTransaction(ctx, exec, command);
       else
-        executeWithoutTransaction(exec, command); 
+        executeWithoutTransaction(exec, command);
 
       if (hasTransaction() && command.getCommandType() != RedisCommandType.MULTI) {
         writeToChannel(Coder.getSimpleStringResponse(this.byteBufAllocator, RedisConstants.COMMAND_QUEUED));
@@ -242,7 +242,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
     txm.resume(transactionId);
     try {
       exec.executeCommand(command, this);
-    } catch(UnsupportedOperationInTransactionException e) {
+    } catch (UnsupportedOperationInTransactionException e) {
       command.setResponse(Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.ERROR_UNSUPPORTED_OPERATION_IN_TRANSACTION));
     } catch (TransactionException e) {
       command.setResponse(Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.ERROR_TRANSACTION_EXCEPTION));

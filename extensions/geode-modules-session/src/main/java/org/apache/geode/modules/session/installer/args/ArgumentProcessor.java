@@ -29,8 +29,7 @@ public class ArgumentProcessor {
   /**
    * Logger.
    */
-  private static final Logger LOG =
-      Logger.getLogger(ArgumentProcessor.class.getName());
+  private static final Logger LOG = Logger.getLogger(ArgumentProcessor.class.getName());
 
   /**
    * Description line length.
@@ -81,9 +80,7 @@ public class ArgumentProcessor {
      * @param theForm     the form used
      * @param theParams   the parameters supplied
      */
-    public Match(
-        final Argument theArgument,
-        final String theForm, final String[] theParams) {
+    public Match(final Argument theArgument, final String theForm, final String[] theParams) {
       arg = theArgument;
       form = theForm;
       params = theParams;
@@ -129,7 +126,6 @@ public class ArgumentProcessor {
     programName = progName;
   }
 
-
   ///////////////////////////////////////////////////////////////////////////
   // Public methods:
 
@@ -147,8 +143,7 @@ public class ArgumentProcessor {
    *
    * @param aHandler unknown arg handler, or null to unset
    */
-  public void setUnknownArgumentHandler(
-      final UnknownArgumentHandler aHandler) {
+  public void setUnknownArgumentHandler(final UnknownArgumentHandler aHandler) {
     handler = aHandler;
   }
 
@@ -159,8 +154,7 @@ public class ArgumentProcessor {
    * @return argument values parsed out of command line
    * @throws UsageException when usge sucked
    */
-  public ArgumentValues process(final String[] programArgs)
-      throws UsageException {
+  public ArgumentValues process(final String[] programArgs) throws UsageException {
     ArgumentHandler argHandler;
     final ArgumentValues result = new ArgumentValues();
     List<Argument> unmatched;
@@ -179,8 +173,7 @@ public class ArgumentProcessor {
     // Error on unmatched yet required args
     for (Argument arg : unmatched) {
       if (arg.isRequired() && !arg.isDefinedInEnv()) {
-        final UsageException usageException = new UsageException(
-            "Required argument not provided: " + arg);
+        final UsageException usageException = new UsageException("Required argument not provided: " + arg);
         usageException.setUsage(getUsage());
         throw usageException;
       }
@@ -191,15 +184,13 @@ public class ArgumentProcessor {
       final Argument arg = match.getArgument();
       argHandler = arg.getArgumentHandler();
       if (argHandler != null) {
-        argHandler.handleArgument(
-            arg, match.getForm(), match.getParams());
+        argHandler.handleArgument(arg, match.getForm(), match.getParams());
       }
       result.addResult(arg, match.getParams());
     }
 
     return result;
   }
-
 
   /**
    * Generates command line usage text for display to user.
@@ -234,8 +225,7 @@ public class ArgumentProcessor {
           builder.append("\n");
         }
 
-        descriptionLines =
-            breakupString(arg.getDescription(), LINE_LENGTH);
+        descriptionLines = breakupString(arg.getDescription(), LINE_LENGTH);
         if (descriptionLines.isEmpty()) {
           builder.append(blank20);
           builder.append("No argument description provided.");
@@ -255,7 +245,6 @@ public class ArgumentProcessor {
     return builder.toString();
   }
 
-
   ///////////////////////////////////////////////////////////////////////////
   // Private methods:
 
@@ -267,9 +256,7 @@ public class ArgumentProcessor {
    * @return list of matches
    * @throws UsageException when there is EBKAC
    */
-  private List<Match> checkMatches(
-      final String[] programArgs, final ArgumentValues values)
-      throws UsageException {
+  private List<Match> checkMatches(final String[] programArgs, final ArgumentValues values) throws UsageException {
     final List<Match> result = new ArrayList<Match>();
     Match match;
     String[] params;
@@ -282,8 +269,7 @@ public class ArgumentProcessor {
       if ("--".equals(programArgs[idx])) {
         if (++idx < programArgs.length) {
           postArgs = new String[programArgs.length - idx];
-          System.arraycopy(programArgs, idx,
-              postArgs, 0, postArgs.length);
+          System.arraycopy(programArgs, idx, postArgs, 0, postArgs.length);
           values.setPostArgs(postArgs);
         }
         // We're done processing args'
@@ -292,8 +278,7 @@ public class ArgumentProcessor {
 
       // Determine parameter count
       idx2 = idx;
-      while ((idx2 + 1) < programArgs.length
-          && programArgs[idx2 + 1].charAt(0) != '-') {
+      while ((idx2 + 1) < programArgs.length && programArgs[idx2 + 1].charAt(0) != '-') {
         idx2++;
       }
 
@@ -318,9 +303,7 @@ public class ArgumentProcessor {
       }
       if (match == null) {
         if (handler == null) {
-          final UsageException usageException = new UsageException(
-              "Unknown argument: " + programArgs[idx]
-                  + " with " + params.length + " parameters.");
+          final UsageException usageException = new UsageException("Unknown argument: " + programArgs[idx] + " with " + params.length + " parameters.");
           usageException.setUsage(getUsage());
           throw (usageException);
         } else {
@@ -342,13 +325,10 @@ public class ArgumentProcessor {
    * @param params  parameters supplied
    * @return match object on match, null otherwise
    */
-  private Match checkMatch(
-      final String argName, final Argument arg, final String[] params) {
+  private Match checkMatch(final String argName, final Argument arg, final String[] params) {
     // Look for a matching form
     for (String form : arg.getForms()) {
-      if (
-          form.equals(argName)
-              && arg.getParameterCount() == params.length) {
+      if (form.equals(argName) && arg.getParameterCount() == params.length) {
         return new Match(arg, form, params);
       }
     }
@@ -364,8 +344,7 @@ public class ArgumentProcessor {
    * @param maxLength maximum line length to use
    * @return broken up string
    */
-  private List<String> breakupString(
-      final String str, final int maxLength) {
+  private List<String> breakupString(final String str, final int maxLength) {
     final List<String> result = new ArrayList<String>();
     int startIdx = -1;
     int lastIdx;
@@ -380,8 +359,7 @@ public class ArgumentProcessor {
       do {
         lastIdx = idx;
         idx = str.indexOf(' ', lastIdx + 1);
-        LOG.fine("startIdx=" + startIdx + "  lastIdx=" + lastIdx
-            + "  idx=" + idx);
+        LOG.fine("startIdx=" + startIdx + "  lastIdx=" + lastIdx + "  idx=" + idx);
         if (idx < 0) {
           // Canot break line up any further
           result.add(str.substring(startIdx + 1));

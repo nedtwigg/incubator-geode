@@ -50,20 +50,20 @@ import org.apache.geode.internal.logging.LogService;
 public class FindRemoteTXMessage extends HighPriorityDistributionMessage implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private TXId txId;
   private int processorId;
-  
+
   public FindRemoteTXMessage() {
   }
-  
+
   public FindRemoteTXMessage(TXId txid, int processorId, Set recipients) {
     super();
     setRecipients(recipients);
     this.txId = txid;
     this.processorId = processorId;
   }
-  
+
   /**
    * Asks all the peers if they host a transaction for the given txId
    * @param txId the transaction id
@@ -71,8 +71,7 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
    * the transaction and a recently committed transactionMessage if any
    */
   public static FindRemoteTXMessageReplyProcessor send(Cache cache, TXId txId) {
-    final InternalDistributedSystem system = 
-      (InternalDistributedSystem)cache.getDistributedSystem();
+    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
     DM dm = system.getDistributionManager();
     Set recipients = dm.getOtherDistributionManagerIds();
     FindRemoteTXMessageReplyProcessor processor = new FindRemoteTXMessageReplyProcessor(dm, recipients, txId);
@@ -80,7 +79,7 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
     dm.putOutgoing(msg);
     return processor;
   }
-  
+
   public int getDSFID() {
     return FIND_REMOTE_TX_MESSAGE;
   }
@@ -148,11 +147,9 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
   public String toString() {
     StringBuffer buff = new StringBuffer();
     String className = getClass().getName();
-//    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
+    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
     buff.append(className.substring(className.indexOf(PartitionMessage.PN_TOKEN) + PartitionMessage.PN_TOKEN.length())); // partition.<foo>
-    buff.append("(txId=").append(this.txId)
-      .append("; sender=").append(getSender())
-      .append("; processorId=").append(this.processorId);
+    buff.append("(txId=").append(this.txId).append("; sender=").append(getSender()).append("; processorId=").append(this.processorId);
     buff.append(")");
     return buff.toString();
   }
@@ -163,26 +160,26 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
     DataSerializer.writeObject(this.txId, out);
     out.writeInt(this.processorId);
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.txId = DataSerializer.readObject(in);
     this.processorId = in.readInt();
   }
-  
-  
+
   public static class FindRemoteTXMessageReplyProcessor extends ReplyProcessor21 {
 
     private InternalDistributedMember hostingMember;
     private TXCommitMessage txCommit;
     private TXId txId;
     private Set<TXCommitMessage> partialCommitMessages = new HashSet<TXCommitMessage>();
+
     public FindRemoteTXMessageReplyProcessor(DM dm, Collection initMembers, TXId txId) {
       super(dm, initMembers);
       this.txId = txId;
     }
-    
+
     @Override
     public void process(DistributionMessage msg) {
       if (msg instanceof FindRemoteTXMessageReply) {
@@ -202,7 +199,7 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
     public InternalDistributedMember getHostingMember() {
       return hostingMember;
     }
-    
+
     @Override
     public boolean stillWaiting() {
       return this.hostingMember == null && super.stillWaiting();
@@ -227,14 +224,12 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
       return txCommit;
     }
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
   }
 
-
-  
   /**
    * Reply message for {@link FindRemoteTXMessage}. Reply is a boolean
    * to indicate if the recipient hosts or has recently hosted the tx state.
@@ -245,13 +240,15 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
     protected boolean isHostingTx;
     protected boolean isPartialCommitMessage;
     protected TXCommitMessage txCommitMessage;
+
     public FindRemoteTXMessageReply() {
     }
-    
+
     @Override
     public int getDSFID() {
       return FIND_REMOTE_TX_REPLY;
     }
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -265,9 +262,9 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
         InternalDataSerializer.writeDSFID(txCommitMessage, out);
       }
     }
+
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.isHostingTx = in.readBoolean();
       if (in.readBoolean()) {

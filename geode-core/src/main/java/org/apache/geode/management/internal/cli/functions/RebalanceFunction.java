@@ -34,70 +34,57 @@ import org.apache.geode.cache.partition.PartitionRebalanceInfo;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.internal.logging.LogService;
 
-
-
-public class RebalanceFunction implements Function, InternalEntity{
+public class RebalanceFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String ID = RebalanceFunction.class.getName();
-  
 
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void execute(FunctionContext context) {   
-    
+  public void execute(FunctionContext context) {
+
     RebalanceOperation op = null;
     String[] str = new String[0];
 
-    Cache cache = CacheFactory.getAnyInstance();    
+    Cache cache = CacheFactory.getAnyInstance();
     ResourceManager manager = cache.getResourceManager();
     Object[] args = (Object[]) context.getArguments();
     String simulate = ((String) args[0]);
-    Set<String> includeRegionNames = (Set<String> ) args[1]; 
-    Set<String> excludeRegionNames = (Set<String> ) args[2]; 
-    RebalanceFactory rbFactory =manager.createRebalanceFactory();    
+    Set<String> includeRegionNames = (Set<String>) args[1];
+    Set<String> excludeRegionNames = (Set<String>) args[2];
+    RebalanceFactory rbFactory = manager.createRebalanceFactory();
     rbFactory.excludeRegions(excludeRegionNames);
     rbFactory.includeRegions(includeRegionNames);
     RebalanceResults results = null;
-    
-    if (simulate.equals("true")){
-      op = rbFactory.simulate();  
-    }else{
-      op = rbFactory.start();  
+
+    if (simulate.equals("true")) {
+      op = rbFactory.simulate();
+    } else {
+      op = rbFactory.start();
     }
-      
+
     try {
-      results = op.getResults();      
+      results = op.getResults();
       logger.info("Starting RebalanceFunction got results = {}", results);
-      StringBuilder str1 = new StringBuilder();      
-      str1.append(results.getTotalBucketCreateBytes() + "," +
-      results.getTotalBucketCreateTime() + "," +
-      results.getTotalBucketCreatesCompleted() + "," +
-      results.getTotalBucketTransferBytes() + "," +
-      results.getTotalBucketTransferTime() + "," +
-      results.getTotalBucketTransfersCompleted() + "," +
-      results.getTotalPrimaryTransferTime() + "," +
-      results.getTotalPrimaryTransfersCompleted() + "," +
-      results.getTotalTime()+ ","  );
-      
+      StringBuilder str1 = new StringBuilder();
+      str1.append(results.getTotalBucketCreateBytes() + "," + results.getTotalBucketCreateTime() + "," + results.getTotalBucketCreatesCompleted() + "," + results.getTotalBucketTransferBytes() + "," + results.getTotalBucketTransferTime() + "," + results.getTotalBucketTransfersCompleted() + "," + results.getTotalPrimaryTransferTime() + "," + results.getTotalPrimaryTransfersCompleted() + "," + results.getTotalTime() + ",");
+
       Set<PartitionRebalanceInfo> regns1 = results.getPartitionRebalanceDetails();
-      Iterator it = regns1.iterator();      
+      Iterator it = regns1.iterator();
       while (it.hasNext()) {
-        PartitionRebalanceInfo rgn = (PartitionRebalanceInfo) it.next();        
+        PartitionRebalanceInfo rgn = (PartitionRebalanceInfo) it.next();
         str1.append(rgn.getRegionPath() + ",");
-      }      
+      }
       logger.info("Starting RebalanceFunction str1={}", str1);
-      context.getResultSender().lastResult(str1.toString());      
+      context.getResultSender().lastResult(str1.toString());
     } catch (CancellationException e) {
       logger.info("Starting RebalanceFunction CancellationException: ", e.getMessage(), e);
-      context.getResultSender().lastResult(
-          "CancellationException1 " + e.getMessage());
-    } catch (InterruptedException e) {      
+      context.getResultSender().lastResult("CancellationException1 " + e.getMessage());
+    } catch (InterruptedException e) {
       logger.info("Starting RebalanceFunction InterruptedException: {}", e.getMessage(), e);
-      context.getResultSender().lastResult(
-          "InterruptedException2 " + e.getMessage());
-    }  
+      context.getResultSender().lastResult("InterruptedException2 " + e.getMessage());
+    }
   }
 
   @Override

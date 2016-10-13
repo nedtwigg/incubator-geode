@@ -30,8 +30,7 @@ import org.apache.geode.i18n.LogWriterI18n;
  */
 public interface BaseMsgStreamer {
 
-  public void reserveConnections(long startTime, long ackTimeout,
-      long ackSDTimeout);
+  public void reserveConnections(long startTime, long ackTimeout, long ackSDTimeout);
 
   /**
    * Returns a list of the Connections that the message was sent to. Call this

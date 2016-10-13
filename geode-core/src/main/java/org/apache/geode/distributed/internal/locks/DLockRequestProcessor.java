@@ -57,9 +57,9 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  */
 public class DLockRequestProcessor extends ReplyProcessor21 {
   private static final Logger logger = LogService.getLogger();
-  
+
   protected final DLockRequestMessage request;
-  
+
   private final DM dm;
 
   protected final DLockService svc;
@@ -71,86 +71,44 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
   private DLockResponseMessage response;
 
   private boolean disableAlerts;
-  
+
   @Override
-  protected boolean processTimeout(){
+  protected boolean processTimeout() {
     //if this returns false then no need to log warning/severe msg as Dlock request will have timeout
     return !disableAlerts;
   }
-  
-//  private volatile boolean doneProcessing = false;
-  
-//  private final long grantorVersion;
-  
+
+  //  private volatile boolean doneProcessing = false;
+
+  //  private final long grantorVersion;
+
   protected static ProcessorKeeper21 getKeeper() {
     return ReplyProcessor21.keeper;
   }
-  
+
   // -------------------------------------------------------------------------
   //   Constructors
   // -------------------------------------------------------------------------
 
-  protected DLockRequestProcessor(LockGrantorId lockGrantorId,
-      DLockService svc, 
-      Object objectName,
-      int threadId,
-      long startTime,
-      long leaseMillis,
-      long waitMillis,
-      boolean reentrant,
-      boolean tryLock,
-      DM dm) {
-   this(lockGrantorId, svc, objectName, threadId, startTime, 
-       leaseMillis, waitMillis, reentrant, tryLock, false, dm, false);
-}
-  
-  protected DLockRequestProcessor(LockGrantorId lockGrantorId,
-                                  DLockService svc, 
-                                  Object objectName,
-                                  int threadId,
-                                  long startTime,
-                                  long leaseMillis,
-                                  long waitMillis,
-                                  boolean reentrant,
-                                  boolean tryLock,
-                                  boolean disableAlerts,
-                                  DM dm) {
-    this(lockGrantorId, svc, objectName, threadId, startTime, 
-        leaseMillis, waitMillis, reentrant, tryLock, disableAlerts, dm, false);
+  protected DLockRequestProcessor(LockGrantorId lockGrantorId, DLockService svc, Object objectName, int threadId, long startTime, long leaseMillis, long waitMillis, boolean reentrant, boolean tryLock, DM dm) {
+    this(lockGrantorId, svc, objectName, threadId, startTime, leaseMillis, waitMillis, reentrant, tryLock, false, dm, false);
   }
-  
-  protected DLockRequestProcessor(LockGrantorId lockGrantorId,
-      DLockService svc,
-      Object objectName,
-      int threadId,
-      long startTime,
-      long leaseMillis,
-      long waitMillis,
-      boolean reentrant,
-      boolean tryLock,
-      DM dm,
-      boolean async) {
-    this(lockGrantorId, svc, objectName, threadId, startTime, 
-        leaseMillis, waitMillis, reentrant, tryLock, false, dm, false);
+
+  protected DLockRequestProcessor(LockGrantorId lockGrantorId, DLockService svc, Object objectName, int threadId, long startTime, long leaseMillis, long waitMillis, boolean reentrant, boolean tryLock, boolean disableAlerts, DM dm) {
+    this(lockGrantorId, svc, objectName, threadId, startTime, leaseMillis, waitMillis, reentrant, tryLock, disableAlerts, dm, false);
   }
-  protected DLockRequestProcessor(LockGrantorId lockGrantorId,
-                                  DLockService svc,
-                                  Object objectName,
-                                  int threadId,
-                                  long startTime,
-                                  long leaseMillis,
-                                  long waitMillis,
-                                  boolean reentrant,
-                                  boolean tryLock,
-                                  boolean disableAlerts,
-                                  DM dm,
-                                  boolean async) {
+
+  protected DLockRequestProcessor(LockGrantorId lockGrantorId, DLockService svc, Object objectName, int threadId, long startTime, long leaseMillis, long waitMillis, boolean reentrant, boolean tryLock, DM dm, boolean async) {
+    this(lockGrantorId, svc, objectName, threadId, startTime, leaseMillis, waitMillis, reentrant, tryLock, false, dm, false);
+  }
+
+  protected DLockRequestProcessor(LockGrantorId lockGrantorId, DLockService svc, Object objectName, int threadId, long startTime, long leaseMillis, long waitMillis, boolean reentrant, boolean tryLock, boolean disableAlerts, DM dm, boolean async) {
     super(dm, lockGrantorId.getLockGrantorMember());
-    
+
     this.svc = svc;
     this.dm = dm;
     this.grantor = lockGrantorId.getLockGrantorMember();
-//    this.grantorVersion = grantorVersion;
+    //    this.grantorVersion = grantorVersion;
 
     this.request = createRequest();
     Assert.assertTrue(getProcessorId() > 0);
@@ -167,7 +125,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     this.request.grantorVersion = lockGrantorId.getLockGrantorVersion();
     this.request.grantorSerialNumber = lockGrantorId.getLockGrantorSerialNumber();
     this.request.dlsSerialNumber = svc.getSerialNumber();
-    
+
     this.request.setRecipient(grantor);
     this.disableAlerts = disableAlerts;
   }
@@ -179,49 +137,46 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
   protected CancelCriterion getCancelCriterion(DM ignoreDM) {
     return this.svc.getCancelCriterion();
   }
-  
+
   boolean repliedDestroyed() {
     if (this.response == null) {
       return false;
     }
-    boolean result = 
-        this.response.responseCode == DLockResponseMessage.DESTROYED;
+    boolean result = this.response.responseCode == DLockResponseMessage.DESTROYED;
     return result;
   }
-  
+
   boolean repliedNotHolder() {
     if (this.response == null) {
       return false;
     }
-    boolean result = 
-        this.response.responseCode == DLockResponseMessage.NOT_HOLDER;
+    boolean result = this.response.responseCode == DLockResponseMessage.NOT_HOLDER;
     return result;
   }
-  
+
   boolean repliedNotGrantor() {
     if (this.response == null) {
       return false;
     }
-    boolean result = 
-        this.response.responseCode == DLockResponseMessage.NOT_GRANTOR;
+    boolean result = this.response.responseCode == DLockResponseMessage.NOT_GRANTOR;
     return result;
   }
-  
+
   boolean hadNoResponse() {
     return this.response == null;
   }
-  
+
   boolean tryLockFailed() {
     if (this.response == null) {
       return false;
     }
-    boolean result = 
-        this.response.responseCode == DLockResponseMessage.TRY_LOCK_FAILED;
+    boolean result = this.response.responseCode == DLockResponseMessage.TRY_LOCK_FAILED;
     return result;
   }
-  
+
   String getResponseCodeString() {
-    if (this.response == null) return null;
+    if (this.response == null)
+      return null;
     return DLockResponseMessage.responseCodeToString(this.response.responseCode);
   }
 
@@ -232,16 +187,15 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
   long getLeaseExpireTime() {
     return this.response.leaseExpireTime;
   }
-  
-  protected boolean requestLock(boolean interruptible, int lockId)
-  throws InterruptedException {
+
+  protected boolean requestLock(boolean interruptible, int lockId) throws InterruptedException {
     final boolean isDebugEnabled_DLS = logger.isTraceEnabled(LogMarker.DLS);
-    
+
     Assert.assertTrue(lockId > -1, "lockId is < 0: " + this);
     this.request.lockId = lockId;
-    
-//    setDoneProcessing(false);
-    
+
+    //    setDoneProcessing(false);
+
     // local grantor... don't use messaging... fake it
     if (isLockGrantor()) {
       if (isDebugEnabled_DLS) {
@@ -252,69 +206,65 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         return false;
       }*/
       //svc.checkDestroyed();
-        
+
       // calls processor (this) process...
       this.request.processLocally(this.dm);
     }
-    
+
     // remote grantor... use messaging
     else {
       // send the message...
       this.dm.putOutgoing(this.request);
     }
-    
+
     if (interruptible) {
       try {
         waitForReplies();
-      } 
-      catch (ReplyException ex) {
+      } catch (ReplyException ex) {
         if (ex.getCause() instanceof InterruptedException) {
           throw (InterruptedException) ex.getCause();
         }
         if (isDebugEnabled_DLS) {
-          logger.trace(LogMarker.DLS, "DLockRequestProcessor caught ReplyException",ex);
+          logger.trace(LogMarker.DLS, "DLockRequestProcessor caught ReplyException", ex);
         }
         return false;
       }
-    }
-    else { // not interruptible
+    } else { // not interruptible
       try {
         waitForRepliesUninterruptibly();
-      }
-      catch (ReplyException ex) {
+      } catch (ReplyException ex) {
         if (ex.getCause() instanceof InterruptedException) {
           throw (InterruptedException) ex.getCause();
         }
         if (isDebugEnabled_DLS) {
-          logger.trace(LogMarker.DLS, "DLockRequestProcessor caught ReplyException",ex);
+          logger.trace(LogMarker.DLS, "DLockRequestProcessor caught ReplyException", ex);
         }
         return false;
       }
     }
-    
+
     if (isDebugEnabled_DLS) {
       logger.trace(LogMarker.DLS, "DLockRequestProcessor {} for {}", (this.gotLock ? "got lock" : "failed to get lock"), this.request);
     }
     return this.gotLock;
   }
-  
+
   @Override
   protected boolean allowReplyFromSender() {
     return true;
   }
-  
-  
-  
-//  private synchronized void setDoneProcessing(boolean value) {
-//    this.doneProcessing = value;
-//  }
-  
+
+  //  private synchronized void setDoneProcessing(boolean value) {
+  //    this.doneProcessing = value;
+  //  }
+
   private boolean isLockGrantor() {
     return this.dm.getDistributionManagerId().equals(this.grantor);
   }
-  
+
   Object getKeyIfFailed() {
-    if (this.gotLock || this.response == null) return null;
+    if (this.gotLock || this.response == null)
+      return null;
     return this.response.keyIfFailed;
   }
 
@@ -326,10 +276,8 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
   public void process(DistributionMessage msg) {
     final boolean isDebugEnabled_DLS = logger.isTraceEnabled(LogMarker.DLS);
     try {
-      Assert.assertTrue(msg instanceof DLockResponseMessage, 
-          "DLockRequestProcessor is unable to process message of type " +
-          msg.getClass());
-      
+      Assert.assertTrue(msg instanceof DLockResponseMessage, "DLockRequestProcessor is unable to process message of type " + msg.getClass());
+
       if (isDebugEnabled_DLS) {
         logger.trace(LogMarker.DLS, "Processing DLockResponseMessage: '{}'", msg);
       }
@@ -340,12 +288,11 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         // Ignore this response since it was sent for a lockId that
         // must have timed out.
         if (isDebugEnabled_DLS) {
-          logger.trace(LogMarker.DLS, "Failed to find processor for lockId {} processor ids must have wrapped.",
-              this.response.getLockId());
+          logger.trace(LogMarker.DLS, "Failed to find processor for lockId {} processor ids must have wrapped.", this.response.getLockId());
         }
         Assert.assertTrue(this.response.getLockId() == this.request.getLockId());
       }
-      
+
       switch (reply.responseCode) {
       case DLockResponseMessage.GRANT:
         /*// If a different version of the lock service requested the lock, we need
@@ -360,11 +307,11 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
           this.gotLock = false; // KIRK never set true except in else
         }
         else {*/
-          // grantor has granted the lock request...
-          if (isDebugEnabled_DLS) {
-            logger.trace(LogMarker.DLS, "{} has granted lock for {} in {}", reply.getSender(), reply.objectName, reply.serviceName);
-          }
-          this.gotLock = true;
+        // grantor has granted the lock request...
+        if (isDebugEnabled_DLS) {
+          logger.trace(LogMarker.DLS, "{} has granted lock for {} in {}", reply.getSender(), reply.objectName, reply.serviceName);
+        }
+        this.gotLock = true;
         //}
         break;
       case DLockResponseMessage.NOT_GRANTOR:
@@ -404,20 +351,19 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         }
         break;
       default:
-          throw new InternalGemFireError(LocalizedStrings.DLockRequestProcessor_UNKNOWN_RESPONSE_CODE_0.toLocalizedString(Integer.valueOf(reply.responseCode)));
+        throw new InternalGemFireError(LocalizedStrings.DLockRequestProcessor_UNKNOWN_RESPONSE_CODE_0.toLocalizedString(Integer.valueOf(reply.responseCode)));
       } // switch
-        
-    }
-    finally {
+
+    } finally {
       super.process(msg);
       if (isDebugEnabled_DLS) {
         logger.trace(LogMarker.DLS, "Finished processing DLockResponseMessage: '{}'", msg);
       }
-      ((DLockResponseMessage)msg).processed = true;
-//      setDoneProcessing(true);
+      ((DLockResponseMessage) msg).processed = true;
+      //      setDoneProcessing(true);
     }
   }
-  
+
   /**
    * LockGrantorDestroyedException or LockServiceDestroyedException is an 
    * anticipated reply exception.  Receiving multiple replies with this 
@@ -431,9 +377,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
   // -------------------------------------------------------------------------
   //   DLockRequestMessage
   // -------------------------------------------------------------------------
-  public static class DLockRequestMessage
-  extends HighPriorityDistributionMessage
-  implements MessageWithReply {
+  public static class DLockRequestMessage extends HighPriorityDistributionMessage implements MessageWithReply {
     /**
      * The id of the DLockRequestProcessor on the
      * initiator node.  This will be communicated back in the response
@@ -450,81 +394,92 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     /** Time when lock request was initiated */
     protected long startTime;
 
-    protected long leaseMillis;    
+    protected long leaseMillis;
 
     protected long waitMillis;
-    
+
     /** True if re-entering held lock */
     protected boolean reentrant;
-    
+
     /** True if try lock and respond immediately without scheduling */
     protected boolean tryLock;
-    
+
     /** Uniquely identifies this request for later releasing or re-entry */
     protected int lockId;
-    
+
     /** Uniquely identifies the thread making this request */
     protected int threadId;
-    
+
     /** version of the grantor that this request is targeted toward */
     protected long grantorVersion;
-    
+
     /** serial number of grantor's DLS that this request is going to */
     protected int grantorSerialNumber;
-    
+
     /** serial number of the DLockService that originated this request */
     protected int dlsSerialNumber;
-  
+
     protected transient DLockService svc;
     protected transient DLockGrantor grantor;
     private transient long statStart = -1;
     private transient volatile DM receivingDM;
     private transient DLockResponseMessage response;
     private transient RemoteThread rThread;
-    
+
     /** True if we've responded to this request */
     private boolean responded = false;
-    
-    public DLockRequestMessage() {}
+
+    public DLockRequestMessage() {
+    }
 
     public boolean isLocal() {
       Assert.assertTrue(this.receivingDM != null);
       return getSender().equals(this.receivingDM.getId());
     }
-    
+
     public boolean isTryLock() {
       return this.tryLock;
     }
-    
+
     @Override
     public int getProcessorId() {
       return this.processorId;
     }
+
     public Object getObjectName() {
       return this.objectName;
     }
+
     public long getStartTime() {
       return this.startTime;
     }
+
     public long getLeaseTime() {
       return this.leaseMillis;
     }
+
     public long getWaitTime() {
       return this.waitMillis;
     }
+
     public int getLockId() {
       return this.lockId;
     }
+
     public int getThreadId() {
       return this.threadId;
     }
+
     public long getGrantorVersion() {
       return this.grantorVersion;
     }
+
     public int getGrantorSerialNumber() {
       return this.grantorSerialNumber;
     }
+
     private final transient Object rThreadLock = new Object();
+
     public RemoteThread getRemoteThread() {
       synchronized (this.rThreadLock) {
         if (this.rThread == null) {
@@ -534,20 +489,20 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         return this.rThread;
       }
     }
-    
+
     boolean isSuspendLockingRequest() {
       return getObjectName().equals(DLockService.SUSPEND_LOCKING_TOKEN);
     }
 
-//    void setReceivingDM(DM dm) {
-//      this.receivingDM = dm;
-//      
-//      this.response = createResponse();
-//      this.response.setProcessorId(getProcessorId());
-//      this.response.setRecipient(getSender());
-//      this.response.serviceName = this.serviceName;
-//      this.response.objectName = this.objectName;
-//    }
+    //    void setReceivingDM(DM dm) {
+    //      this.receivingDM = dm;
+    //      
+    //      this.response = createResponse();
+    //      this.response.setProcessorId(getProcessorId());
+    //      this.response.setRecipient(getSender());
+    //      this.response.serviceName = this.serviceName;
+    //      this.response.objectName = this.objectName;
+    //    }
 
     private long startGrantWait() {
       return DLockService.getDistributedLockStats().startGrantWait();
@@ -567,30 +522,25 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
       try {
         this.statStart = startGrantWait();
         this.svc = DLockService.getInternalServiceNamed(this.serviceName);
-        if (this.svc == null) { 
+        if (this.svc == null) {
           failed = false; // basicProcess has it's own finally-block w reply
           basicProcess(dm, false); // don't have a grantor anymore
-        }
-        else {
+        } else {
           executeBasicProcess(dm); // use executor
         }
         failed = false; // nothing above threw anything
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         replyException = e;
         throw e;
-      }
-      catch (VirtualMachineError e) {
+      } catch (VirtualMachineError e) {
         SystemFailure.initiateFailure(e);
         replyException = e;
         throw e;
-      }
-      catch (Error e) {
+      } catch (Error e) {
         SystemFailure.checkFailure();
         replyException = e;
         throw e;
-      }
-      finally {
+      } finally {
         if (failed) {
           // above code failed so now ensure reply is sent
           if (logger.isTraceEnabled(LogMarker.DLS)) {
@@ -606,14 +556,14 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         }
       }
     }
-    
+
     /** Process locally without using messaging or executor */
     protected void processLocally(final DM dm) {
       this.statStart = startGrantWait();
       this.svc = DLockService.getInternalServiceNamed(this.serviceName);
       basicProcess(dm, true); // don't use executor
     }
-    
+
     /** 
      * Execute basicProcess inside Pooled Executor because grantor may not 
      * be initializing which will require us to wait.
@@ -631,7 +581,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         }
       });
     }
-    
+
     protected void basicProcess(final DM dm, final boolean waitForGrantor) {
       final boolean isDebugEnabled_DLS = logger.isTraceEnabled(LogMarker.DLS);
       try {
@@ -645,43 +595,40 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         this.response.serviceName = this.serviceName;
         this.response.objectName = this.objectName;
         this.response.lockId = this.lockId;
-      
+
         if (waitForGrantor && this.svc != null) {
           try {
             this.grantor = DLockGrantor.waitForGrantor(this.svc);
-          }
-          catch (InterruptedException e) {
+          } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             this.grantor = null; // fail it
           }
         }
-        
+
         if (this.svc == null || this.grantor == null) {
           if (isDebugEnabled_DLS) {
             logger.trace(LogMarker.DLS, "respondWithNotGrantor this.svc={} this.grantor={}", this.svc, this.grantor);
           }
           respondWithNotGrantor();
         }
-      
+
         else if (this.grantor.isDestroyed()) {
           if (isDebugEnabled_DLS) {
             logger.trace(LogMarker.DLS, "respondWithNotGrantor grantor was destroyed {}", this.grantor);
           }
           respondWithNotGrantor();
-        }
-        else if (this.grantor.getVersionId() != this.grantorVersion) {
+        } else if (this.grantor.getVersionId() != this.grantorVersion) {
           if (isDebugEnabled_DLS) {
             logger.trace(LogMarker.DLS, "respondWithNotGrantor current version is {}; request was for {}", this.grantor.getVersionId(), this.grantorVersion);
           }
           respondWithNotGrantor();
-        }
-        else if (this.svc.getSerialNumber() != this.grantorSerialNumber) {
+        } else if (this.svc.getSerialNumber() != this.grantorSerialNumber) {
           if (isDebugEnabled_DLS) {
             logger.trace(LogMarker.DLS, "respondWithNotGrantor current serial number is {}; request was for {}", this.svc.getSerialNumber(), this.grantorSerialNumber);
           }
           respondWithNotGrantor();
         }
-      
+
         // this is the grantor, so the request will be processed...
         else {
           this.svc.checkDestroyed();
@@ -692,14 +639,13 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
             respondWithNotGrantor();
           }
           this.grantor.checkDestroyed();
-          
+
           // handle lock re-entry...
           if (this.reentrant) {
             long leaseExpireTime;
             try {
               leaseExpireTime = this.grantor.reenterLock(this);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
               leaseExpireTime = 0; // just fail it
             }
             if (leaseExpireTime == 0) {
@@ -708,7 +654,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
               respondWithGrant(leaseExpireTime);
             }
           }
-                
+
           // queue up this request to be granted...
           else {
             if (isDebugEnabled_DLS) {
@@ -719,69 +665,61 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
                 logger.trace(LogMarker.DLS, "respondWithNotGrantor grantor was destroyed grantor={}", this.grantor);
               }
               respondWithNotGrantor();
-            }
-            else {
+            } else {
               try {
                 this.grantor.handleLockRequest(this);
-              }
-              catch (InterruptedException e) {
+              } catch (InterruptedException e) {
                 // just fail it
                 respondWithNotGrantor();
-              }
-              catch (LockGrantorDestroyedException e) {
+              } catch (LockGrantorDestroyedException e) {
                 respondWithNotGrantor();
               }
             }
           }
         }
-      }
-      catch (LockGrantorDestroyedException e) {
+      } catch (LockGrantorDestroyedException e) {
         if (isDebugEnabled_DLS) {
           logger.trace(LogMarker.DLS, "LockGrantorDestroyedException respondWithNotGrantor svc={}", this.svc);
         }
         respondWithNotGrantor();
-      }
-      catch (LockServiceDestroyedException e) {
+      } catch (LockServiceDestroyedException e) {
         if (isDebugEnabled_DLS) {
           logger.trace(LogMarker.DLS, "LockServiceDestroyedException respondWithNotGrantor svc={}", this.svc);
         }
         respondWithNotGrantor();
-      }
-      catch (CancelException e) {
+      } catch (CancelException e) {
         if (isDebugEnabled_DLS) {
           logger.trace(LogMarker.DLS, "CacheClosedException respondWithNotGrantor svc={} exception = {}", this.svc, e);
         }
         if (isLocal()) {
           throw e;
-        }
-        else {
+        } else {
           respondWithNotGrantor();
         }
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         logger.warn(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_DLOCKREQUESTMESSAGEPROCESS_CAUGHT_THROWABLE), e);
         respondWithException(e);
       }
-//      catch (VirtualMachineError err) {
-//        SystemFailure.initiateFailure(err);
-//        // If this ever returns, rethrow the error.  We're poisoned
-//        // now, so don't let this thread continue.
-//        throw err;
-//      }
-//      catch (Throwable t) {
-//        // Whenever you catch Error or Throwable, you must also
-//        // catch VirtualMachineError (see above).  However, there is
-//        // _still_ a possibility that you are dealing with a cascading
-//        // error condition, so you also need to check to see if the JVM
-//        // is still usable:
-//        SystemFailure.checkFailure();
-//        respondWithException(t);
-//      }
+      //      catch (VirtualMachineError err) {
+      //        SystemFailure.initiateFailure(err);
+      //        // If this ever returns, rethrow the error.  We're poisoned
+      //        // now, so don't let this thread continue.
+      //        throw err;
+      //      }
+      //      catch (Throwable t) {
+      //        // Whenever you catch Error or Throwable, you must also
+      //        // catch VirtualMachineError (see above).  However, there is
+      //        // _still_ a possibility that you are dealing with a cascading
+      //        // error condition, so you also need to check to see if the JVM
+      //        // is still usable:
+      //        SystemFailure.checkFailure();
+      //        respondWithException(t);
+      //      }
       finally {
-        
+
       }
     }
-    
+
     synchronized void respondWithNotGrantor() {
       this.response.responseCode = DLockResponseMessage.NOT_GRANTOR;
       sendResponse();
@@ -796,7 +734,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
       this.response.responseCode = DLockResponseMessage.NOT_HOLDER;
       sendResponse();
     }
-    
+
     /** Callers must be synchronized on this */
     private void respondWithTimeout() {
       if (logger.isTraceEnabled(LogMarker.DLS)) {
@@ -805,13 +743,13 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
       this.response.responseCode = DLockResponseMessage.TIMEOUT;
       sendResponse();
     }
-    
+
     synchronized void respondWithTryLockFailed(Object keyIfFailed) {
       this.response.responseCode = DLockResponseMessage.TRY_LOCK_FAILED;
       this.response.keyIfFailed = keyIfFailed;
       sendResponse();
     }
-    
+
     synchronized void respondWithGrant(long leaseExpireTime) {
       // TODO: trim reply objectName down to just DLockBatchId for batches
       this.response.responseCode = DLockResponseMessage.GRANT;
@@ -819,7 +757,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
       this.response.dlsSerialNumber = this.dlsSerialNumber;
       sendResponse();
     }
-    
+
     synchronized void respondWithException(Throwable t) {
       try {
         if (this.response.getException() == null) {
@@ -827,12 +765,10 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
           if (logger.isTraceEnabled(LogMarker.DLS)) {
             logger.trace(LogMarker.DLS, "While processing <{}>, got exception, returning to sender", this, this.response.getException());
           }
-        }
-        else {
+        } else {
           logger.warn(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_MORE_THAN_ONE_EXCEPTION_THROWN_IN__0, this), t);
         }
-      }
-      finally {
+      } finally {
         sendResponse();
       }
     }
@@ -852,12 +788,15 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         return result;
       }
     }
-    
+
     synchronized boolean checkForTimeout() {
-      if (this.waitMillis == -1 || this.waitMillis == Long.MAX_VALUE) return false;
-      if (this.tryLock) return false;
+      if (this.waitMillis == -1 || this.waitMillis == Long.MAX_VALUE)
+        return false;
+      if (this.tryLock)
+        return false;
       long now = DLockService.getLockTimeStamp(this.receivingDM);
-      if (now < this.startTime) now = this.startTime;
+      if (now < this.startTime)
+        now = this.startTime;
       if (this.waitMillis + this.startTime - now <= 0) {
         if (logger.isTraceEnabled(LogMarker.DLS)) {
           logger.trace(LogMarker.DLS, "DLockRequestProcessor request timed out: waitMillis={} now={} startTime={}", this.waitMillis, now, this.startTime);
@@ -867,37 +806,46 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
       }
       return false;
     }
-    
+
     private void endGrantWaitStatistic() {
-      if (this.statStart == -1) return; // failed to start the stat
+      if (this.statStart == -1)
+        return; // failed to start the stat
       DistributedLockStats stats = DLockService.getDistributedLockStats();
       switch (this.response.responseCode) {
-        case DLockResponseMessage.GRANT: 
-          stats.endGrantWait(this.statStart); break;
-        case DLockResponseMessage.NOT_GRANTOR: 
-          stats.endGrantWaitNotGrantor(this.statStart); break;
-        case DLockResponseMessage.TIMEOUT: 
-          stats.endGrantWaitTimeout(this.statStart); break;
-        case DLockResponseMessage.SUSPENDED: 
-          stats.endGrantWaitSuspended(this.statStart); break;
-        case DLockResponseMessage.NOT_HOLDER: 
-          stats.endGrantWaitNotHolder(this.statStart); break;
-        case DLockResponseMessage.TRY_LOCK_FAILED: 
-          stats.endGrantWaitFailed(this.statStart); break;
-        case DLockResponseMessage.DESTROYED: 
-          stats.endGrantWaitDestroyed(this.statStart); break;
-        default: 
-          Assert.assertTrue(false,
-              "Unknown responseCode: " + this.response.responseCode); break;
+      case DLockResponseMessage.GRANT:
+        stats.endGrantWait(this.statStart);
+        break;
+      case DLockResponseMessage.NOT_GRANTOR:
+        stats.endGrantWaitNotGrantor(this.statStart);
+        break;
+      case DLockResponseMessage.TIMEOUT:
+        stats.endGrantWaitTimeout(this.statStart);
+        break;
+      case DLockResponseMessage.SUSPENDED:
+        stats.endGrantWaitSuspended(this.statStart);
+        break;
+      case DLockResponseMessage.NOT_HOLDER:
+        stats.endGrantWaitNotHolder(this.statStart);
+        break;
+      case DLockResponseMessage.TRY_LOCK_FAILED:
+        stats.endGrantWaitFailed(this.statStart);
+        break;
+      case DLockResponseMessage.DESTROYED:
+        stats.endGrantWaitDestroyed(this.statStart);
+        break;
+      default:
+        Assert.assertTrue(false, "Unknown responseCode: " + this.response.responseCode);
+        break;
       }
     }
-    
+
     /** Callers must be synchronized on this */
     private void sendResponse() {
       try {
-        if (this.responded) return;
+        if (this.responded)
+          return;
         InternalDistributedMember myId = this.receivingDM.getDistributionManagerId();
-        
+
         // local... don't actually use messaging
         if (getSender().equals(myId)) {
           if (debugReleaseOrphanedGrant()) {
@@ -908,12 +856,10 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
             // lock request was probably interrupted so we need to release it...
             logger.warn(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_FAILED_TO_FIND_PROCESSOR_FOR__0, this.response));
             if (this.response.responseCode == DLockResponseMessage.GRANT) {
-              logger.info(LogMarker.DLS, LocalizedMessage.create(
-                  LocalizedStrings.DLockRequestProcessor_RELEASING_LOCAL_ORPHANED_GRANT_FOR_0, this));
+              logger.info(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_RELEASING_LOCAL_ORPHANED_GRANT_FOR_0, this));
               try {
                 this.grantor.releaseIfLocked(this.objectName, getSender(), this.lockId);
-              }
-              catch (InterruptedException e) {
+              } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 logger.warn(LocalizedMessage.create(LocalizedStrings.DLockRequestProcess_INTERRUPTED_WHILE_RELEASING_GRANT), e);
               }
@@ -926,18 +872,17 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
           endGrantWaitStatistic();
           processor.process(this.response);
         }
-        
+
         // remote... use messaging
         else {
           this.receivingDM.putOutgoing(this.response);
           endGrantWaitStatistic();
         }
-      }
-      finally {
+      } finally {
         this.responded = true;
       }
     }
-    
+
     synchronized void handleDepartureOfSender() {
       try {
         if (this.receivingDM.getDistributionManagerIds().contains(this.sender)) {
@@ -945,28 +890,27 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
           // still need to send a reply to make his thread stop waiting
           respondWithDestroyed();
         }
-      }
-      finally {
+      } finally {
         if (!this.responded) {
           endGrantWaitStatistic();
           this.responded = true;
         }
       }
     }
-    
+
     synchronized boolean responded() {
       return this.responded;
     }
-    
+
     /** Callers must be synchronized on this */
     boolean respondedNoSync() {
       return this.responded;
     }
-    
+
     public int getDSFID() {
       return DLOCK_REQUEST_MESSAGE;
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -986,8 +930,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     }
 
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.serviceName = in.readUTF();
       this.objectName = DataSerializer.readObject(in);
@@ -1007,9 +950,9 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      
+
       sb.append("{DLockRequestMessage id=" + this.processorId);
-      sb.append(" for " +  this.serviceName + ":" + this.dlsSerialNumber);
+      sb.append(" for " + this.serviceName + ":" + this.dlsSerialNumber);
       sb.append(" name=" + this.objectName);
       sb.append(" start=" + this.startTime);
       sb.append(" sender=" + getSender());
@@ -1047,33 +990,34 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     public static final int TRY_LOCK_FAILED = 4; // try lock failed
     public static final int SUSPENDED = 5; // dlock has suspended locking
     public static final int DESTROYED = 6; // requestor sent NonGrantorDestroyedMessage
-  
+
     /** The name of the DistributedLockService */
     protected String serviceName;
 
     /** The object name */
     protected Object objectName;
-    
+
     /** Specifies the results of this response  */
     protected int responseCode = NOT_GRANTOR; // default
-    
+
     /** Absolute cache time millis when the lease expires */
     protected long leaseExpireTime;
 
     /** Starts out null and then set to key that conflicted for failure */
     protected Object keyIfFailed;
-    
+
     /** Used to match this release up with its original request */
     protected int lockId;
-    
+
     /** The serial number of the dlock service that requested this lock */
     protected int dlsSerialNumber;
-    
+
     // set during processing of this message...
     /** True if the receiving node has processed this reply */
     protected boolean processed;
-    
-    public DLockResponseMessage() {}
+
+    public DLockResponseMessage() {
+    }
 
     /**
      * Need to handle race condition in which this side times out waiting for
@@ -1082,19 +1026,18 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
      */
     @Override
     public void process(final DM dm, final ReplyProcessor21 processor) {
-      if(processor==null) {
+      if (processor == null) {
         // The processor was probably cleaned up because of memberDeparted and we need to abandon
         return;
       }
       if (debugReleaseOrphanedGrant()) {
         waitToProcessDLockResponse(dm);
       }
-      
-      
+
       //TODO - This a partial fix for bug 37158. It doesn't completely
       //eliminate the race condition when interrupting a lock request, but
       //it does make DistributedLockServiceTest continue to pass.
-      if(keeper.retrieve(processor.getProcessorId()) != null) {
+      if (keeper.retrieve(processor.getProcessorId()) != null) {
         super.process(dm, processor);
       }
       if (!this.processed) {
@@ -1102,17 +1045,14 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
           logger.warn(LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_NO_PROCESSOR_FOUND_FOR_DLOCKRESPONSEMESSAGE__0, this));
           // got a problem... response prolly came in after client side timed out
           releaseOrphanedGrant(dm);
-        }
-        else {
+        } else {
           logger.info(LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_NO_PROCESSOR_FOUND_FOR_DLOCKRESPONSEMESSAGE__0, this));
         }
       }
     }
 
-    protected boolean callReleaseProcessor(DM dm,
-        InternalDistributedMember grantor) {
-      return DLockService.callReleaseProcessor(dm, this.serviceName, grantor,
-          this.objectName, false, this.lockId);
+    protected boolean callReleaseProcessor(DM dm, InternalDistributedMember grantor) {
+      return DLockService.callReleaseProcessor(dm, this.serviceName, grantor, this.objectName, false, this.lockId);
     }
 
     /** 
@@ -1130,41 +1070,34 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
           dm.getCancelCriterion().checkCancelInProgress(null);
           try {
             if (grantor == null) { // use grantor arg on first iteration
-              GrantorInfo gi = DLockService.checkLockGrantorInfo(
-                  this.serviceName, dm.getSystem());
+              GrantorInfo gi = DLockService.checkLockGrantorInfo(this.serviceName, dm.getSystem());
               grantor = gi.getId();
             }
             if (grantor == null) { // still null if elder says no one is grantor
               // nobody knows about our zombie lock so exit
               released = true;
-            }
-            else {
+            } else {
               released = callReleaseProcessor(dm, grantor);
             }
-          }
-          catch (LockGrantorDestroyedException e) {
+          } catch (LockGrantorDestroyedException e) {
             // loop back around to get next lock grantor
-          }
-          catch (IllegalStateException e) {
+          } catch (IllegalStateException e) {
             if (dm.getId().equals(grantor)) {
               // DLockToken probably threw IllegalStateException because destroyed
               if (logger.isDebugEnabled()) {
-                logger.debug("[releaseOrphanedGrant] Local grantor threw IllegalStateException handling {}", this); 
+                logger.debug("[releaseOrphanedGrant] Local grantor threw IllegalStateException handling {}", this);
               }
             }
             try {
               Thread.sleep(200);
-            }
-            catch (InterruptedException ie) {
+            } catch (InterruptedException ie) {
               Thread.currentThread().interrupt();
             }
-          }
-          finally {
+          } finally {
             grantor = null;
           }
         }
-      }
-      finally {
+      } finally {
         if (released) {
           logger.info(LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_HANDLED_ORPHANED_GRANT_WITH_RELEASE));
         } else {
@@ -1172,7 +1105,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
         }
       }
     }
-  
+
     public int getLockId() {
       return this.lockId;
     }
@@ -1188,18 +1121,34 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     public static String responseCodeToString(int responseCode) {
       String response = null;
       switch (responseCode) {
-        case GRANT:       response = "GRANT"; break;
-        case NOT_GRANTOR: response = "NOT_GRANTOR"; break;
-        case TIMEOUT:     response = "TIMEOUT"; break;
-        case SUSPENDED:   response = "SUSPENDED"; break;
-        case NOT_HOLDER:  response = "NOT_HOLDER"; break;
-        case TRY_LOCK_FAILED:  response = "TRY_LOCK_FAILED"; break;
-        case DESTROYED:  response = "DESTROYED"; break;
-        default: response = "UNKNOWN:" + String.valueOf(responseCode); break;
+      case GRANT:
+        response = "GRANT";
+        break;
+      case NOT_GRANTOR:
+        response = "NOT_GRANTOR";
+        break;
+      case TIMEOUT:
+        response = "TIMEOUT";
+        break;
+      case SUSPENDED:
+        response = "SUSPENDED";
+        break;
+      case NOT_HOLDER:
+        response = "NOT_HOLDER";
+        break;
+      case TRY_LOCK_FAILED:
+        response = "TRY_LOCK_FAILED";
+        break;
+      case DESTROYED:
+        response = "DESTROYED";
+        break;
+      default:
+        response = "UNKNOWN:" + String.valueOf(responseCode);
+        break;
       }
       return response;
     }
-    
+
     @Override
     public int getDSFID() {
       return DLOCK_RESPONSE_MESSAGE;
@@ -1218,8 +1167,7 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     }
 
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.responseCode = in.readByte();
       this.serviceName = in.readUTF();
@@ -1233,51 +1181,45 @@ public class DLockRequestProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       String response = responseCodeToString(this.responseCode);
-      return "DLockRequestProcessor.DLockResponseMessage " +
-             "responding " + response + 
-             "; serviceName=" + serviceName + "(version " + dlsSerialNumber + ")" +
-             "; objectName=" + objectName + 
-             "; responseCode=" + responseCode + 
-             "; keyIfFailed=" + keyIfFailed +
-             "; leaseExpireTime=" + leaseExpireTime + 
-             "; processorId=" + this.processorId +
-             "; lockId=" + this.lockId;
+      return "DLockRequestProcessor.DLockResponseMessage " + "responding " + response + "; serviceName=" + serviceName + "(version " + dlsSerialNumber + ")" + "; objectName=" + objectName + "; responseCode=" + responseCode + "; keyIfFailed=" + keyIfFailed + "; leaseExpireTime=" + leaseExpireTime + "; processorId=" + this.processorId + "; lockId=" + this.lockId;
     }
   }
-  
+
   private static boolean debugReleaseOrphanedGrant = false;
   private static final Object waitToProcessDLockResponseLock = new Object();
   private static volatile boolean waitToProcessDLockResponse = false;
-  
+
   public static boolean debugReleaseOrphanedGrant() {
     return debugReleaseOrphanedGrant;
   }
+
   public static void setDebugReleaseOrphanedGrant(boolean value) {
     debugReleaseOrphanedGrant = value;
   }
+
   public static void setWaitToProcessDLockResponse(boolean value) {
-    synchronized(waitToProcessDLockResponseLock) {
+    synchronized (waitToProcessDLockResponseLock) {
       waitToProcessDLockResponse = value;
       waitToProcessDLockResponseLock.notifyAll();
     }
   }
+
   public static void waitToProcessDLockResponse(DM dm) {
-    synchronized(waitToProcessDLockResponseLock) {
+    synchronized (waitToProcessDLockResponseLock) {
       while (waitToProcessDLockResponse) {
         dm.getCancelCriterion().checkCancelInProgress(null);
         boolean interrupted = Thread.interrupted();
         try {
-            logger.info(LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_WAITING_TO_PROCESS_DLOCKRESPONSEMESSAGE)); 
-            waitToProcessDLockResponseLock.wait();
-        }
-        catch (InterruptedException e) {
+          logger.info(LocalizedMessage.create(LocalizedStrings.DLockRequestProcessor_WAITING_TO_PROCESS_DLOCKRESPONSEMESSAGE));
+          waitToProcessDLockResponseLock.wait();
+        } catch (InterruptedException e) {
           interrupted = true;
-        }
-        finally {
-          if (interrupted) Thread.currentThread().interrupt();
+        } finally {
+          if (interrupted)
+            Thread.currentThread().interrupt();
         }
       }
     }
   }
-    
+
 }

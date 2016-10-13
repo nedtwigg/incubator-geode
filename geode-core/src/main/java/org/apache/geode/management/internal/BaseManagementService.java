@@ -37,7 +37,7 @@ import org.apache.geode.management.ManagementService;
 public abstract class BaseManagementService extends ManagementService {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * The main mapping between different resources and Service instance Object
    * can be Cache
@@ -45,8 +45,7 @@ public abstract class BaseManagementService extends ManagementService {
   protected static final Map<Object, BaseManagementService> instances = new HashMap<Object, BaseManagementService>();
 
   /** List of connected <code>DistributedSystem</code>s */
-  private static final List<InternalDistributedSystem> systems = new ArrayList<InternalDistributedSystem>(
-      1);
+  private static final List<InternalDistributedSystem> systems = new ArrayList<InternalDistributedSystem>(1);
 
   /** Protected constructor. */
   protected BaseManagementService() {
@@ -58,7 +57,7 @@ public abstract class BaseManagementService extends ManagementService {
     initInternalDistributedSystem();
 
   }
-  
+
   /**
    * This method will close the service. Any operation on the service instance
    * will throw exception
@@ -90,14 +89,14 @@ public abstract class BaseManagementService extends ManagementService {
       return service;
     }
   }
+
   public static ManagementService getExistingManagementService(Cache cache) {
     synchronized (instances) {
       BaseManagementService service = (BaseManagementService) instances.get(cache);
       return service;
     }
   }
-  
- 
+
   /**
    * Initialises the distributed system listener
    */
@@ -105,12 +104,11 @@ public abstract class BaseManagementService extends ManagementService {
     synchronized (instances) {
       // Initialize our own list of distributed systems via a connect listener
       @SuppressWarnings("unchecked")
-      List<InternalDistributedSystem> existingSystems = InternalDistributedSystem
-          .addConnectListener(new InternalDistributedSystem.ConnectListener() {
-            public void onConnect(InternalDistributedSystem sys) {
-              addInternalDistributedSystem(sys);
-            }
-          });
+      List<InternalDistributedSystem> existingSystems = InternalDistributedSystem.addConnectListener(new InternalDistributedSystem.ConnectListener() {
+        public void onConnect(InternalDistributedSystem sys) {
+          addInternalDistributedSystem(sys);
+        }
+      });
 
       // While still holding the lock on systems, add all currently known
       // systems to our own list
@@ -135,17 +133,16 @@ public abstract class BaseManagementService extends ManagementService {
    */
   private static void addInternalDistributedSystem(InternalDistributedSystem sys) {
     synchronized (instances) {
-      sys
-          .addDisconnectListener(new InternalDistributedSystem.DisconnectListener() {
-            @Override
-            public String toString() {
-              return "Disconnect listener for BaseManagementService";
-            }
+      sys.addDisconnectListener(new InternalDistributedSystem.DisconnectListener() {
+        @Override
+        public String toString() {
+          return "Disconnect listener for BaseManagementService";
+        }
 
-            public void onDisconnect(InternalDistributedSystem ss) {
-              removeInternalDistributedSystem(ss);
-            }
-          });
+        public void onDisconnect(InternalDistributedSystem ss) {
+          removeInternalDistributedSystem(ss);
+        }
+      });
       systems.add(sys);
     }
   }
@@ -156,13 +153,12 @@ public abstract class BaseManagementService extends ManagementService {
    * 
    * @param sys
    */
-  private static void removeInternalDistributedSystem(
-      InternalDistributedSystem sys) {
+  private static void removeInternalDistributedSystem(InternalDistributedSystem sys) {
     synchronized (instances) {
       systems.remove(sys);
       if (systems.isEmpty()) {
         for (Object key : instances.keySet()) {
-          BaseManagementService service = (BaseManagementService)instances.get(key);
+          BaseManagementService service = (BaseManagementService) instances.get(key);
           try {
             if (!service.isClosed()) {
               // Service close method should take care of the cleaning up

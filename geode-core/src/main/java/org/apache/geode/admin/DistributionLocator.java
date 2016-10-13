@@ -29,12 +29,12 @@ package org.apache.geode.admin;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public interface DistributionLocator extends ManagedEntity {
-  
+
   /** 
    * Returns the identity name for this locator.
    */
   public String getId();
-  
+
   /**
    * Returns the configuration object for this distribution locator.
    *
@@ -43,4 +43,3 @@ public interface DistributionLocator extends ManagedEntity {
   public DistributionLocatorConfig getConfig();
 
 }
-

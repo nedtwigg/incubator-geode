@@ -25,7 +25,7 @@ import java.util.Set;
  * @since GemFire 6.0
  */
 public interface RebalanceFactory {
-  
+
   /**
    * Specify which regions to include in the rebalance operation. The default,
    * <code>null<code>, means
@@ -36,7 +36,7 @@ public interface RebalanceFactory {
    * @since GemFire 6.5
    */
   RebalanceFactory includeRegions(Set<String> regions);
-  
+
   /**
    * Exclude specific regions from the rebalancing operation. The default,
    * <code>null<code>, means
@@ -47,7 +47,7 @@ public interface RebalanceFactory {
    * @since GemFire 6.5
    */
   RebalanceFactory excludeRegions(Set<String> regions);
-  
+
   /**
    * Asynchronously starts a new rebalance operation. Only the GemFire
    * controlled cache resources used by this member will be rebalanced.

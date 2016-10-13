@@ -32,8 +32,7 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.Version;
 
-public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
-    implements DataSerializableFixedID {
+public class FindCoordinatorResponse extends HighPriorityDistributionMessage implements DataSerializableFixedID {
 
   private InternalDistributedMember coordinator;
   private InternalDistributedMember senderId;
@@ -43,15 +42,12 @@ public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
   private boolean networkPartitionDetectionEnabled;
   private boolean usePreferredCoordinators;
   private boolean isShortForm;
-  private byte[] coordinatorPublicKey;  
+  private byte[] coordinatorPublicKey;
   private String rejectionMessage;
 
   private int requestId;
-  
-  public FindCoordinatorResponse(InternalDistributedMember coordinator,
-      InternalDistributedMember senderId,
-      boolean fromView, NetView view, HashSet<InternalDistributedMember> registrants,
-      boolean networkPartitionDectionEnabled, boolean usePreferredCoordinators, byte[] pk) {
+
+  public FindCoordinatorResponse(InternalDistributedMember coordinator, InternalDistributedMember senderId, boolean fromView, NetView view, HashSet<InternalDistributedMember> registrants, boolean networkPartitionDectionEnabled, boolean usePreferredCoordinators, byte[] pk) {
     this.coordinator = coordinator;
     this.senderId = senderId;
     this.fromView = fromView;
@@ -62,20 +58,19 @@ public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
     this.isShortForm = false;
     this.coordinatorPublicKey = pk;
   }
-  
-  public FindCoordinatorResponse(InternalDistributedMember coordinator,
-      InternalDistributedMember senderId, byte[] pk, int requestId) {
+
+  public FindCoordinatorResponse(InternalDistributedMember coordinator, InternalDistributedMember senderId, byte[] pk, int requestId) {
     this.coordinator = coordinator;
     this.senderId = senderId;
     this.isShortForm = true;
     this.coordinatorPublicKey = pk;
     this.requestId = requestId;
   }
-  
+
   public FindCoordinatorResponse(String m) {
     this.rejectionMessage = m;
   }
-  
+
   public FindCoordinatorResponse() {
     // no-arg constructor for serialization
   }
@@ -83,15 +78,15 @@ public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
   public byte[] getCoordinatorPublicKey() {
     return coordinatorPublicKey;
   }
-  
+
   public int getRequestId() {
     return requestId;
   }
-  
+
   public String getRejectionMessage() {
     return rejectionMessage;
   }
-  
+
   public boolean isNetworkPartitionDetectionEnabled() {
     return networkPartitionDetectionEnabled;
   }
@@ -103,7 +98,7 @@ public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
   public InternalDistributedMember getCoordinator() {
     return coordinator;
   }
-  
+
   /**
    * When the response comes from a locator via TcpClient this
    * will return the locators member ID.  If the locator hasn't
@@ -112,33 +107,27 @@ public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
   public InternalDistributedMember getSenderId() {
     return senderId;
   }
-  
+
   public boolean isFromView() {
     return fromView;
   }
-  
+
   public NetView getView() {
     return view;
   }
-  
+
   public Set<InternalDistributedMember> getRegistrants() {
     return registrants;
   }
-  
+
   @Override
   public String toString() {
-    if (this.isShortForm) { 
-      return "FindCoordinatorResponse(coordinator="+coordinator+")";
+    if (this.isShortForm) {
+      return "FindCoordinatorResponse(coordinator=" + coordinator + ")";
     } else {
-      return "FindCoordinatorResponse(coordinator="+coordinator+", fromView="+fromView+", viewId="+(view==null? "nul" : view.getViewId())
-        +", registrants=" + (registrants == null? 0 : registrants.size())
-        +", senderId=" + senderId
-        +", network partition detection enabled="+this.networkPartitionDetectionEnabled
-        +", locators preferred as coordinators="+this.usePreferredCoordinators+")";
+      return "FindCoordinatorResponse(coordinator=" + coordinator + ", fromView=" + fromView + ", viewId=" + (view == null ? "nul" : view.getViewId()) + ", registrants=" + (registrants == null ? 0 : registrants.size()) + ", senderId=" + senderId + ", network partition detection enabled=" + this.networkPartitionDetectionEnabled + ", locators preferred as coordinators=" + this.usePreferredCoordinators + ")";
     }
   }
-
-
 
   @Override
   public Version[] getSerializationVersions() {
@@ -170,7 +159,7 @@ public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
     senderId = DataSerializer.readObject(in);
     coordinatorPublicKey = InternalDataSerializer.readByteArray(in);
     rejectionMessage = InternalDataSerializer.readString(in);
-    isShortForm = in.readBoolean();    
+    isShortForm = in.readBoolean();
     if (!isShortForm) {
       fromView = in.readBoolean();
       networkPartitionDetectionEnabled = in.readBoolean();
@@ -230,5 +219,4 @@ public class FindCoordinatorResponse  extends HighPriorityDistributionMessage
     return true;
   }
 
-  
 }

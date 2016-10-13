@@ -106,8 +106,7 @@ public class CacheElement {
    * @since GemFire 8.1
    */
   public static LinkedHashMap<String, CacheElement> buildElementMap(final Document doc) throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
-    final Map<String, List<String>> schemaLocationMap = XmlUtils.buildSchemaLocationMap(
-        getAttribute(doc.getFirstChild(), W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI));
+    final Map<String, List<String>> schemaLocationMap = XmlUtils.buildSchemaLocationMap(getAttribute(doc.getFirstChild(), W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI));
 
     final LinkedHashMap<String, CacheElement> elementMap = new LinkedHashMap<String, CacheElement>();
 
@@ -170,8 +169,7 @@ public class CacheElement {
    * @throws XPathExpressionException 
    * @since GemFire 8.1
    */
-  private static final void buildElementMapCacheType(final LinkedHashMap<String, CacheElement> elementMap, final InputSource inputSource) throws SAXException,
-      IOException, ParserConfigurationException, XPathExpressionException {
+  private static final void buildElementMapCacheType(final LinkedHashMap<String, CacheElement> elementMap, final InputSource inputSource) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException {
     final Document doc = XmlUtils.getDocumentBuilder().parse(inputSource);
 
     int rank = 0;
@@ -202,8 +200,7 @@ public class CacheElement {
    * @throws XPathExpressionException 
    * @since GemFire 8.1
    */
-  private static int buildElementMapXPath(final LinkedHashMap<String, CacheElement> elementMap, final Document schema, final Node parent, int rank,
-      final String xPath, final XPathContext xPathContext) throws XPathExpressionException {
+  private static int buildElementMapXPath(final LinkedHashMap<String, CacheElement> elementMap, final Document schema, final Node parent, int rank, final String xPath, final XPathContext xPathContext) throws XPathExpressionException {
     final NodeList children = XmlUtils.query(parent, xPath, xPathContext);
     for (int i = 0; i < children.getLength(); i++) {
       final Element child = (Element) children.item(i);

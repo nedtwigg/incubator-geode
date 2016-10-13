@@ -41,7 +41,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class FetchEntriesMessageJUnitTest {
 
   private GemFireCacheImpl cache;
-  
+
   private VersionTag createVersionTag(boolean validVersionTag) throws ClassNotFoundException, IOException {
     VersionTag tag = VersionTag.create(cache.getMyId());
     if (validVersionTag) {
@@ -52,7 +52,7 @@ public class FetchEntriesMessageJUnitTest {
   }
 
   private HeapDataOutputStream createDummyChunk() throws IOException, ClassNotFoundException {
-    HeapDataOutputStream mos = new HeapDataOutputStream(InitialImageOperation.CHUNK_SIZE_IN_BYTES+2048, Version.CURRENT);
+    HeapDataOutputStream mos = new HeapDataOutputStream(InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, Version.CURRENT);
     mos.reset();
     DataSerializer.writeObject("keyWithOutVersionTag", mos);
     DataSerializer.writeObject("valueWithOutVersionTag", mos);
@@ -60,14 +60,14 @@ public class FetchEntriesMessageJUnitTest {
 
     DataSerializer.writeObject("keyWithVersionTag", mos);
     DataSerializer.writeObject("valueWithVersionTag", mos);
-    
+
     VersionTag tag = createVersionTag(true);
     DataSerializer.writeObject(tag, mos);
 
-    DataSerializer.writeObject((Object)null, mos);
+    DataSerializer.writeObject((Object) null, mos);
     return mos;
   }
-  
+
   @Test
   public void testProcessChunk() throws Exception {
     cache = Fakes.cache();

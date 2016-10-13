@@ -33,11 +33,11 @@ public class DataNode {
   public String getData() {
     return data;
   }
-  
+
   public List<DataNode> getChildren() {
     return children;
   }
-  
+
   public boolean addChild(DataNode dataNode) {
     if (this.children != null) {
       this.children.add(dataNode);

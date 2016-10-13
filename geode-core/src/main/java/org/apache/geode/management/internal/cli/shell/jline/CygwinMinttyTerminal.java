@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 
 import jline.UnixTerminal;
 
-
 /**
  * This is re-write of UnixTerminal with stty process spawn removed.
  * There is no process named stty in windows (non-cygwin process) so
@@ -35,16 +34,15 @@ import jline.UnixTerminal;
  *
  */
 public class CygwinMinttyTerminal extends UnixTerminal {
-  
-  
+
   String encoding = System.getProperty("input.encoding", "UTF-8");
   InputStreamReader replayReader;
 
-  public CygwinMinttyTerminal() throws Exception{
+  public CygwinMinttyTerminal() throws Exception {
   }
 
   @Override
-  public void init() throws Exception{
+  public void init() throws Exception {
 
   }
 

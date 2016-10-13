@@ -46,12 +46,12 @@ public class LogWriterAppenderJUnitTest {
 
   private Level previousLogLevel;
   private LogWriterAppender appender;
-  
+
   @Before
   public void setUp() {
     this.previousLogLevel = LogService.getBaseLogLevel();
   }
-  
+
   @After
   public void tearDown() {
     LogService.setBaseLogLevel(this.previousLogLevel);
@@ -60,7 +60,7 @@ public class LogWriterAppenderJUnitTest {
       Configurator.getLoggerConfig(LogService.BASE_LOGGER_NAME).getAppenders().remove(this.appender.getName());
     }
   }
-  
+
   /**
    * Verifies that the appender is correctly added and removed from the Log4j
    * configuration and that when the configuration is changed the appender is
@@ -71,24 +71,23 @@ public class LogWriterAppenderJUnitTest {
     LogService.setBaseLogLevel(Level.TRACE);
 
     final AppenderContext rootContext = LogService.getAppenderContext();
-    
+
     // Find out home many appenders exist before we get started
     final int startingSize = rootContext.getLoggerConfig().getAppenders().size();
-    
+
     //System.out.println("Appenders " + context.getLoggerConfig().getAppenders().values().toString());
-    
+
     // Create the appender and verify it's part of the configuration
     final StringWriter stringWriter = new StringWriter();
     final PureLogWriter logWriter = new PureLogWriter(InternalLogWriter.FINE_LEVEL, new PrintWriter(stringWriter), "");
-    
+
     final AppenderContext[] contexts = new AppenderContext[2];
     contexts[0] = rootContext; // root context
     contexts[1] = LogService.getAppenderContext(LogService.BASE_LOGGER_NAME); // "org.apache" context
-    
+
     this.appender = LogWriterAppender.create(contexts, LogService.MAIN_LOGGER_NAME, logWriter, null);
 
-    assertEquals(rootContext.getLoggerConfig().getAppenders().values().toString(), 
-        startingSize+1, rootContext.getLoggerConfig().getAppenders().size());
+    assertEquals(rootContext.getLoggerConfig().getAppenders().values().toString(), startingSize + 1, rootContext.getLoggerConfig().getAppenders().size());
     assertTrue(rootContext.getLoggerConfig().getAppenders().containsKey(this.appender.getName()));
 
     // Modify the config and verify that the appender still exists
@@ -115,17 +114,17 @@ public class LogWriterAppenderJUnitTest {
     final AppenderContext[] contexts = new AppenderContext[2];
     contexts[0] = LogService.getAppenderContext(); // root context
     contexts[1] = LogService.getAppenderContext(LogService.BASE_LOGGER_NAME); // "org.apache" context
-    
+
     this.appender = LogWriterAppender.create(contexts, LogService.MAIN_LOGGER_NAME, logWriter, null);
 
     final Logger logger = LogService.getLogger();
-    
+
     // set the level to TRACE
     Configurator.setLevel(LogService.BASE_LOGGER_NAME, Level.TRACE);
     Configurator.setLevel(LogService.MAIN_LOGGER_NAME, Level.TRACE);
-    
+
     assertEquals(Level.TRACE, logger.getLevel());
-    
+
     logger.trace("TRACE MESSAGE");
     assertTrue(Pattern.compile(".*\\[finest .*TRACE MESSAGE.*", Pattern.DOTALL).matcher(stringWriter.toString()).matches());
     stringWriter.getBuffer().setLength(0);
@@ -149,16 +148,16 @@ public class LogWriterAppenderJUnitTest {
     logger.fatal("ExpectedStrings: FATAL MESSAGE");
     assertTrue(Pattern.compile(".*\\[severe .*FATAL MESSAGE.*", Pattern.DOTALL).matcher(stringWriter.toString()).matches());
     stringWriter.getBuffer().setLength(0);
-    
+
     final Logger lowerLevelLogger = LogService.getLogger(LogService.BASE_LOGGER_NAME + ".subpackage");
     lowerLevelLogger.fatal("ExpectedStrings: FATAL MESSAGE");
     assertTrue(Pattern.compile(".*\\[severe .*FATAL MESSAGE.*", Pattern.DOTALL).matcher(stringWriter.toString()).matches());
     stringWriter.getBuffer().setLength(0);
-    
+
     this.appender.destroy();
     assertFalse(Configurator.getLoggerConfig(LogService.BASE_LOGGER_NAME).getAppenders().containsKey(this.appender.getName()));
   }
-  
+
   /**
    * Verifies that logging occurs at the levels set in the LogWriter
    */
@@ -170,7 +169,7 @@ public class LogWriterAppenderJUnitTest {
     // Create the LogWriterLogger that will be attached to the appender
     final LogWriterLogger logWriterLogger = LogWriterLogger.create(loggerName, false);
     logWriterLogger.setLevel(Level.INFO);
-    
+
     // Create the appender
     final StringWriter stringWriter = new StringWriter();
     final PureLogWriter logWriter = new PureLogWriter(InternalLogWriter.FINEST_LEVEL, new PrintWriter(stringWriter), "");
@@ -178,18 +177,18 @@ public class LogWriterAppenderJUnitTest {
     final AppenderContext[] contexts = new AppenderContext[2];
     contexts[0] = LogService.getAppenderContext(); // root context
     contexts[1] = LogService.getAppenderContext(LogService.BASE_LOGGER_NAME); // "org.apache" context
-    
+
     this.appender = LogWriterAppender.create(contexts, loggerName, logWriter, null);
-    
+
     logWriter.finest("DIRECT MESSAGE");
     assertTrue(Pattern.compile(".*\\[finest .*DIRECT MESSAGE.*", Pattern.DOTALL).matcher(stringWriter.toString()).matches());
     stringWriter.getBuffer().setLength(0);
-    
+
     LogEvent event = Log4jLogEvent.newBuilder().setLevel(Level.INFO).setLoggerFqcn("NAME").setLoggerName("NAME").setMessage(new ParameterizedMessage("LOGEVENT MESSAGE")).build();
     this.appender.append(event);
     assertTrue(Pattern.compile(".*\\[info .*LOGEVENT MESSAGE.*", Pattern.DOTALL).matcher(stringWriter.toString()).matches());
     stringWriter.getBuffer().setLength(0);
-    
+
     logWriterLogger.finest("FINEST MESSAGE");
     assertFalse(Pattern.compile(".*\\[finest .*FINEST MESSAGE.*", Pattern.DOTALL).matcher(stringWriter.toString()).matches());
     stringWriter.getBuffer().setLength(0);

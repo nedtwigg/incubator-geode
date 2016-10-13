@@ -20,16 +20,14 @@ import org.apache.geode.cache.execute.FunctionAdapter;
 import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.cache.execute.FunctionInvocationTargetException;
 
-public class DistribuedRegionFunctionFunctionInvocationException extends
-    FunctionAdapter {
+public class DistribuedRegionFunctionFunctionInvocationException extends FunctionAdapter {
   private int retryCount;
 
   private boolean isHA;
 
   private int count;
 
-  public DistribuedRegionFunctionFunctionInvocationException(boolean isHA,
-      int retryCount) {
+  public DistribuedRegionFunctionFunctionInvocationException(boolean isHA, int retryCount) {
     this.isHA = isHA;
     this.retryCount = retryCount;
     this.count = 0;
@@ -39,8 +37,7 @@ public class DistribuedRegionFunctionFunctionInvocationException extends
     this.count++;
     if (retryCount != 0 && count >= retryCount) {
       context.getResultSender().lastResult(new Integer(5));
-    }
-    else {
+    } else {
       throw new FunctionInvocationTargetException("I have been thrown from DistribuedRegionFunctionFunctionInvocationException");
     }
   }
@@ -52,7 +49,7 @@ public class DistribuedRegionFunctionFunctionInvocationException extends
   public boolean isHA() {
     return this.isHA;
   }
-  
+
   @Override
   public boolean optimizeForWrite() {
     return false;

@@ -41,7 +41,7 @@ import org.apache.geode.internal.logging.PureLogWriter;
  * @since GemFire 2013
  */
 public final class ProductUseLog implements MembershipListener {
-  protected static long MAX_PRODUCT_USE_FILE_SIZE = Long.getLong("max_view_log_size", 5000000); 
+  protected static long MAX_PRODUCT_USE_FILE_SIZE = Long.getLong("max_view_log_size", 5000000);
   private final int logLevel;
   private final File productUseLogFile;
   private PureLogWriter logWriter;
@@ -53,13 +53,13 @@ public final class ProductUseLog implements MembershipListener {
       MAX_PRODUCT_USE_FILE_SIZE = 1000000;
     }
   }
-  
+
   public ProductUseLog(File productUseLogFile) {
     this.productUseLogFile = productUseLogFile;
     this.logLevel = InternalLogWriter.INFO_LEVEL;
     createLogWriter();
   }
-  
+
   /** adds the log as a membership listener to the given system and logs the view when members join */
   public void monitorUse(InternalDistributedSystem system) {
     this.system = system;
@@ -72,7 +72,7 @@ public final class ProductUseLog implements MembershipListener {
       log("Log opened with new distributed system connection.  Membership view not yet available in this VM.");
     }
   }
-  
+
   public synchronized void log(String logMessage) {
     if (!this.logWriter.isClosed()) {
       if (this.productUseLogFile.length() + logMessage.length() + 100 > MAX_PRODUCT_USE_FILE_SIZE) {
@@ -81,7 +81,7 @@ public final class ProductUseLog implements MembershipListener {
       this.logWriter.info(logMessage);
     }
   }
-  
+
   /** 
    * Closes the log.  It may be reopened with reopen().  This does not remove
    * the log from any distributed systems it is monitoring.
@@ -91,27 +91,27 @@ public final class ProductUseLog implements MembershipListener {
       this.logWriter.close();
     }
   }
-  
+
   /**
    * returns true if the log has been closed
    */
   public synchronized boolean isClosed() {
     return this.logWriter.isClosed();
   }
-  
+
   /** reopens a closed log */
   public synchronized void reopen() {
     if (this.logWriter.isClosed()) {
       createLogWriter();
     }
   }
-  
+
   private synchronized void clearLog() {
     this.logWriter.close();
     this.productUseLogFile.delete();
     createLogWriter();
   }
-  
+
   private synchronized void createLogWriter() {
     FileOutputStream fos;
     try {
@@ -134,13 +134,11 @@ public final class ProductUseLog implements MembershipListener {
   }
 
   @Override
-  public void memberSuspect(InternalDistributedMember id,
-      InternalDistributedMember whoSuspected, String reason) {
+  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
   }
 
   @Override
-  public void quorumLost(Set<InternalDistributedMember> failures,
-      List<InternalDistributedMember> remaining) {
+  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
   }
 
 }

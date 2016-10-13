@@ -68,14 +68,13 @@ public interface ObjectSizer {
    * @since GemFire 6.5
    */
   public static final ObjectSizer REFLECTION_SIZE = ReflectionObjectSizer.getInstance();
-  
-  
+
   /**
    * The default object sizer, currently {@link #SIZE_CLASS_ONCE}
    * @since GemFire 6.5
    */
   public static final ObjectSizer DEFAULT = SIZE_CLASS_ONCE;
 
-  public int sizeof( Object o );
+  public int sizeof(Object o);
 
 }

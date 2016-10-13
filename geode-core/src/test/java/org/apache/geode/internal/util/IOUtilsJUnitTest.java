@@ -53,9 +53,11 @@ public class IOUtilsJUnitTest {
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {{
-      setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    mockContext = new Mockery() {
+      {
+        setImposteriser(ClassImposteriser.INSTANCE);
+      }
+    };
   }
 
   @After
@@ -92,17 +94,18 @@ public class IOUtilsJUnitTest {
     assertEquals(File.separator, IOUtils.appendToPath(File.separator));
     assertEquals(toPathname("bin", "a.out"), IOUtils.appendToPath(null, "bin", "a.out"));
     assertEquals(toPathname("bin", "a.out"), IOUtils.appendToPath(File.separator, "bin", "a.out"));
-    assertEquals(toPathname("usr", "local", "bin", "a.out"), IOUtils
-      .appendToPath(toPathname("usr", "local"), "bin", "a.out"));
+    assertEquals(toPathname("usr", "local", "bin", "a.out"), IOUtils.appendToPath(toPathname("usr", "local"), "bin", "a.out"));
   }
 
   @Test
   public void testClose() throws IOException {
     final Closeable mockCloseable = mockContext.mock(Closeable.class, "Closeable");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockCloseable).close();
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockCloseable).close();
+      }
+    });
 
     IOUtils.close(mockCloseable);
   }
@@ -111,15 +114,16 @@ public class IOUtilsJUnitTest {
   public void testCloseIgnoresIOException() throws IOException {
     final Closeable mockCloseable = mockContext.mock(Closeable.class, "Closeable");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockCloseable).close();
-      will(throwException(new IOException("test")));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockCloseable).close();
+        will(throwException(new IOException("test")));
+      }
+    });
 
     try {
       IOUtils.close(mockCloseable);
-    }
-    catch (Throwable unexpected) {
+    } catch (Throwable unexpected) {
       if (unexpected instanceof IOException) {
         fail("Calling close on a Closeable object unexpectedly threw an IOException!");
       }
@@ -136,11 +140,7 @@ public class IOUtilsJUnitTest {
   @Test
   public void testCreatePathWithSeparator() {
     assertEquals("", IOUtils.createPath(new String[0], "-"));
-    assertEquals("-path-to-file.ext".replace("/", File.separator), IOUtils.createPath(new String[] {
-      "path",
-      "to",
-      "file.ext"
-    }, "-"));
+    assertEquals("-path-to-file.ext".replace("/", File.separator), IOUtils.createPath(new String[] { "path", "to", "file.ext" }, "-"));
     assertEquals("-path-to-a-directory", IOUtils.createPath(new String[] { "path", "to", "a", "directory" }, "-"));
   }
 
@@ -215,11 +215,13 @@ public class IOUtilsJUnitTest {
   public void testToByteArrayThrowsIOException() throws IOException {
     final InputStream mockIn = mockContext.mock(InputStream.class, "testToByteArrayThrowsIOException");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockIn).read(with(aNonNull(byte[].class)));
-      will(throwException(new IOException("test")));
-      oneOf(mockIn).close();
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockIn).read(with(aNonNull(byte[].class)));
+        will(throwException(new IOException("test")));
+        oneOf(mockIn).close();
+      }
+    });
 
     IOUtils.toByteArray(mockIn);
   }
@@ -228,8 +230,7 @@ public class IOUtilsJUnitTest {
   public void testToByteArrayWithNull() throws IOException {
     try {
       IOUtils.toByteArray(null);
-    }
-    catch (AssertionError expected) {
+    } catch (AssertionError expected) {
       assertEquals("The input stream to read bytes from cannot be null!", expected.getMessage());
       throw expected;
     }
@@ -237,8 +238,7 @@ public class IOUtilsJUnitTest {
 
   @Test
   public void testTryGetCanonicalFileElseGetAbsoluteFile() throws Exception {
-    final MockFile file = (MockFile) IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(
-      new MockFile("/path/to/non_existing/file.test", null));
+    final MockFile file = (MockFile) IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(new MockFile("/path/to/non_existing/file.test", null));
 
     assertNotNull(file);
     assertFalse(file.exists());
@@ -248,8 +248,7 @@ public class IOUtilsJUnitTest {
 
   @Test
   public void testTryGetCanonicalFileElseGetAbsoluteFileHandlesIOException() throws Exception {
-    final MockFile file = (MockFile) IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(
-      new MockFile(System.getProperty("user.home"), new IOException("test")));
+    final MockFile file = (MockFile) IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(new MockFile(System.getProperty("user.home"), new IOException("test")));
 
     assertNotNull(file);
     assertTrue(file.exists());
@@ -259,16 +258,14 @@ public class IOUtilsJUnitTest {
 
   @Test
   public void testVerifyPathnameExists() throws FileNotFoundException {
-    assertEquals(System.getProperty("java.io.tmpdir"), IOUtils.verifyPathnameExists(
-      System.getProperty("java.io.tmpdir")));
+    assertEquals(System.getProperty("java.io.tmpdir"), IOUtils.verifyPathnameExists(System.getProperty("java.io.tmpdir")));
   }
 
   @Test(expected = FileNotFoundException.class)
   public void testVerifyPathnameExistsWithNonExistingPathname() throws FileNotFoundException {
     try {
       IOUtils.verifyPathnameExists("/path/to/non_existing/file.test");
-    }
-    catch (FileNotFoundException expected) {
+    } catch (FileNotFoundException expected) {
       assertEquals("Pathname (/path/to/non_existing/file.test) could not be found!", expected.getMessage());
       throw expected;
     }

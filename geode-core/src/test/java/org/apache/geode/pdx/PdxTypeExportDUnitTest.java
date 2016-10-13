@@ -54,7 +54,6 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
     super();
   }
 
-  
   @Test
   public void testPeer() throws Exception {
     Region r = getCache().getRegion("pdxtest");
@@ -63,11 +62,11 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
     TypeRegistry tr = ((GemFireCacheImpl) getCache()).getPdxRegistry();
     Collection<PdxType> types = tr.typeMap().values();
     assertEquals(MyObjectPdx.class.getName(), types.iterator().next().getClassName());
-    
+
     Collection<EnumInfo> enums = tr.enumMap().values();
     assertEquals(MyEnumPdx.const1.name(), enums.iterator().next().getEnum().name());
   }
-  
+
   @Test
   public void testClient() throws Exception {
     SerializableCallable test = new SerializableCallable() {
@@ -77,7 +76,7 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     };
-    
+
     Host.getHost(0).getVM(3).invoke(test);
   }
 
@@ -85,15 +84,14 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
   public final void postSetUp() throws Exception {
     loadCache();
   }
-  
+
   @SuppressWarnings("serial")
   public void loadCache() throws Exception {
     SerializableCallable peer = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory()
-          .setPdxSerializer(new MyPdxSerializer());
-    
+        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
+
         Cache cache = getCache(cf);
         Region r = cache.createRegionFactory(RegionShortcut.REPLICATE).create("pdxtest");
         r.put(1, new MyObjectPdx(1, "test", MyEnumPdx.const1));
@@ -108,9 +106,8 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
     SerializableCallable server = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory()
-          .setPdxSerializer(new MyPdxSerializer());
-        
+        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
+
         CacheServer server = getCache().addCacheServer();
         int port = AvailablePortHelper.getRandomAvailableTCPPort();
         server.setPort(port);
@@ -126,10 +123,8 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
     SerializableCallable client = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        ClientCacheFactory cf = new ClientCacheFactory()
-          .setPdxSerializer(new MyPdxSerializer())
-          .addPoolServer(NetworkUtils.getServerHostName(host), port);
-    
+        ClientCacheFactory cf = new ClientCacheFactory().setPdxSerializer(new MyPdxSerializer()).addPoolServer(NetworkUtils.getServerHostName(host), port);
+
         ClientCache cache = getClientCache(cf);
         Region r = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("pdxtest");
         return null;

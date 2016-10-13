@@ -25,7 +25,7 @@ public class StringGoldenComparator extends GoldenComparator {
   protected StringGoldenComparator(final String[] expectedProblemLines) {
     super(expectedProblemLines);
   }
-  
+
   @Override
   protected boolean compareLines(final String actualLine, final String goldenLine) {
     if (actualLine == null) {

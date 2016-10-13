@@ -120,14 +120,12 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
     // wait till all the duplicates are received by client
     client1.invoke(new CacheSerializableRunnable("waitForPutToComplete") {
 
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         synchronized (dummyObj) {
           while (waitFlag) {
             try {
               dummyObj.wait();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
               fail("interrupted");
             }
           }
@@ -140,8 +138,7 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
 
     // validate the duplicates received by client
     client1.invoke(new CacheSerializableRunnable("validateDuplicates") {
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         if (!isEventDuplicate)
           fail(" Not all duplicates received");
 
@@ -152,32 +149,27 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
   }
 
   @Test
-  public void testSample() throws Exception
-  {
+  public void testSample() throws Exception {
     IgnoredException.addIgnoredException("IOException");
     IgnoredException.addIgnoredException("Connection reset");
     createClientServerConfiguration();
     server1.invoke(new CacheSerializableRunnable("putKey") {
 
-    public void run2() throws CacheException
-    {
-      Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-      assertNotNull(region);
-      region.put("key1","value1");
+      public void run2() throws CacheException {
+        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+        assertNotNull(region);
+        region.put("key1", "value1");
 
-    }
+      }
     });
   }
 
   // function to perform put operations for the known set of keys.
-  private CacheSerializableRunnable putForKnownKeys()
-  {
+  private CacheSerializableRunnable putForKnownKeys() {
 
-    CacheSerializableRunnable putforknownkeys = new CacheSerializableRunnable(
-        "putforknownkeys") {
+    CacheSerializableRunnable putforknownkeys = new CacheSerializableRunnable("putforknownkeys") {
 
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
         assertNotNull(region);
         for (int i = 0; i < NO_OF_PUTS; i++) {
@@ -191,13 +183,10 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
   }
 
   // function to stop server so that the fail over happens
-  private CacheSerializableRunnable stopServer()
-  {
+  private CacheSerializableRunnable stopServer() {
 
-    CacheSerializableRunnable stopserver = new CacheSerializableRunnable(
-        "stopServer") {
-      public void run2() throws CacheException
-      {
+    CacheSerializableRunnable stopserver = new CacheSerializableRunnable("stopServer") {
+      public void run2() throws CacheException {
         server.stop();
       }
 
@@ -207,36 +196,32 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
   }
 
   // function to create 2servers and 1 clients
-  private void createClientServerConfiguration()
-  {
-    int PORT1 = ((Integer)server1.invoke(() -> HADuplicateDUnitTest.createServerCache())).intValue();
+  private void createClientServerConfiguration() {
+    int PORT1 = ((Integer) server1.invoke(() -> HADuplicateDUnitTest.createServerCache())).intValue();
     server1.invoke(() -> HADuplicateDUnitTest.setQRMslow());
-    int PORT2 = ((Integer)server2.invoke(() -> HADuplicateDUnitTest.createServerCache())).intValue();
+    int PORT2 = ((Integer) server2.invoke(() -> HADuplicateDUnitTest.createServerCache())).intValue();
     String hostname = NetworkUtils.getServerHostName(Host.getHost(0));
-    client1.invoke(() -> HADuplicateDUnitTest.createClientCache( hostname, new Integer(PORT1), new Integer(PORT2) ));
+    client1.invoke(() -> HADuplicateDUnitTest.createClientCache(hostname, new Integer(PORT1), new Integer(PORT2)));
 
   }
 
   // function to set QRM slow
-  public static void setQRMslow()
-  {
+  public static void setQRMslow() {
     System.setProperty("QueueRemovalThreadWaitTime", "100000");
   }
 
-  public static void reSetQRMslow()
-  {
+  public static void reSetQRMslow() {
     System.setProperty("QueueRemovalThreadWaitTime", "1000");
   }
 
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     new HADuplicateDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-    server = (CacheServerImpl)cache.addCacheServer();
+    server = (CacheServerImpl) cache.addCacheServer();
     assertNotNull(server);
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     server.setPort(port);
@@ -245,8 +230,7 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     assertNotNull(ds);
     ds.disconnect();
@@ -255,9 +239,7 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  public static void createClientCache(String hostName, Integer port1, Integer port2)
-      throws Exception
-  {
+  public static void createClientCache(String hostName, Integer port1, Integer port2) throws Exception {
     int PORT1 = port1.intValue();
     int PORT2 = port2.intValue();
     Properties props = new Properties();
@@ -265,8 +247,8 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(LOCATORS, "");
     new HADuplicateDUnitTest().createCache(props);
     AttributesFactory factory = new AttributesFactory();
-    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[] {PORT1,PORT2}, true, -1, 2, null);
-    
+    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[] { PORT1, PORT2 }, true, -1, 2, null);
+
     factory.setScope(Scope.DISTRIBUTED_ACK);
     CacheListener clientListener = new HAValidateDuplicateListener();
     factory.setCacheListener(clientListener);
@@ -279,8 +261,7 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
 
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();
@@ -291,16 +272,13 @@ public class HADuplicateDUnitTest extends JUnit4DistributedTestCase {
 // TODO: move these classes to be inner static classes
 
 // Listener class for the validation purpose
-class HAValidateDuplicateListener extends CacheListenerAdapter
-{
-  public void afterCreate(EntryEvent event)
-  {
+class HAValidateDuplicateListener extends CacheListenerAdapter {
+  public void afterCreate(EntryEvent event) {
     System.out.println("After Create");
     HADuplicateDUnitTest.storeEvents.put(event.getKey(), event.getNewValue());
   }
 
-  public void afterUpdate(EntryEvent event)
-  {
+  public void afterUpdate(EntryEvent event) {
     Object value = HADuplicateDUnitTest.storeEvents.get(event.getKey());
     if (value == null)
       HADuplicateDUnitTest.isEventDuplicate = false;
@@ -311,8 +289,7 @@ class HAValidateDuplicateListener extends CacheListenerAdapter
           HADuplicateDUnitTest.waitFlag = false;
           HADuplicateDUnitTest.dummyObj.notifyAll();
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }

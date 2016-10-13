@@ -73,15 +73,14 @@ public class PasswordUtil {
       byte[] encrypted = cipher.doFinal(password.getBytes());
       encryptedString = byteArrayToHexString(encrypted);
       if (echo) {
-        System.out.println(LocalizedStrings.PasswordUtil_ENCRYPTED_TO_0
-            .toLocalizedString(encryptedString));
+        System.out.println(LocalizedStrings.PasswordUtil_ENCRYPTED_TO_0.toLocalizedString(encryptedString));
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return encryptedString;
   }
+
   /**
    * Decrypts an encrypted password string.
    * 
@@ -99,8 +98,7 @@ public class PasswordUtil {
         cipher.init(Cipher.DECRYPT_MODE, key);
         decrypted = cipher.doFinal(hexStringToByteArray(toDecrypt));
         return new String(decrypted);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -124,7 +122,7 @@ public class PasswordUtil {
     for (int i = 0; i < b.length; i++) {
       int index = i * 2;
       int v = Integer.parseInt(s.substring(index, index + 2), 16);
-      b[i] = (byte)v;
+      b[i] = (byte) v;
     }
     return b;
   }

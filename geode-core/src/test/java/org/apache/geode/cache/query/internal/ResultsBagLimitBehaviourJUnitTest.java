@@ -154,8 +154,7 @@ public class ResultsBagLimitBehaviourJUnitTest {
     try {
       bag.add(wrap("four", bag.getCollectionType().getElementType()));
       fail("Addition to bag with limit applied should have failed");
-    }
-    catch (UnsupportedOperationException soe) {
+    } catch (UnsupportedOperationException soe) {
       // Expected exception
     }
   }
@@ -167,15 +166,15 @@ public class ResultsBagLimitBehaviourJUnitTest {
     ResultsBag bag = getBagObject(String.class);
     bag = getBagObject(String.class);
     ObjectType elementType = bag.getCollectionType().getElementType();
-    assertEquals(1, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct)wrap("one", elementType)).getFieldValues() : wrap("one", elementType)));
+    assertEquals(1, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap("one", elementType)).getFieldValues() : wrap("one", elementType)));
     bag.add(wrap("two", elementType));
-    assertEquals(2, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct)wrap("two", elementType)).getFieldValues() : wrap("two", bag.getCollectionType().getElementType())));
+    assertEquals(2, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap("two", elementType)).getFieldValues() : wrap("two", bag.getCollectionType().getElementType())));
     bag.add(wrap("three", bag.getCollectionType().getElementType()));
     bag.add(wrap("three", bag.getCollectionType().getElementType()));
-    assertEquals(3, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct)wrap("three", elementType)).getFieldValues() : wrap("three", elementType)));
+    assertEquals(3, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap("three", elementType)).getFieldValues() : wrap("three", elementType)));
     bag.add(wrap(null, bag.getCollectionType().getElementType()));
     bag.add(wrap(null, bag.getCollectionType().getElementType()));
-    assertEquals(3, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct)wrap(null, elementType)).getFieldValues() : wrap(null, elementType)));
+    assertEquals(3, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap(null, elementType)).getFieldValues() : wrap(null, elementType)));
   }
 
   @Test
@@ -247,8 +246,7 @@ public class ResultsBagLimitBehaviourJUnitTest {
         assertEquals(--occurence, bag.occurrences(wrap(intg, bag.getCollectionType().getElementType())));
         --currSize;
         assertEquals(currSize, bag.size());
-      }
-      else {
+      } else {
         assertEquals(0, bag.occurrences(wrap(intg, bag.getCollectionType().getElementType())));
       }
     }
@@ -291,8 +289,7 @@ public class ResultsBagLimitBehaviourJUnitTest {
     try {
       bag.addAll(new HashSet());
       fail("addAll invocation to bag with limit applied should have failed");
-    }
-    catch (UnsupportedOperationException soe) {
+    } catch (UnsupportedOperationException soe) {
       // Expected exception
     }
   }
@@ -444,8 +441,7 @@ public class ResultsBagLimitBehaviourJUnitTest {
     try {
       itr.remove();
       fail("should have thrown a IllegalStateException");
-    }
-    catch (IllegalStateException e) {
+    } catch (IllegalStateException e) {
       // pass
     }
     for (int i = 0; i < 3; i++) {
@@ -454,8 +450,7 @@ public class ResultsBagLimitBehaviourJUnitTest {
     try {
       itr.next();
       fail("should have thrown a NoSuchElementException");
-    }
-    catch (NoSuchElementException e) {
+    } catch (NoSuchElementException e) {
       // pass
     }
 
@@ -469,8 +464,7 @@ public class ResultsBagLimitBehaviourJUnitTest {
     try {
       itr.next();
       fail("should have thrown a NoSuchElementException");
-    }
-    catch (NoSuchElementException e) {
+    } catch (NoSuchElementException e) {
       // pass
     }
   }

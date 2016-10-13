@@ -15,24 +15,22 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache.query.internal.parse;
 
 import antlr.*;
 import antlr.collections.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-public class ASTImport extends GemFireAST {  
+public class ASTImport extends GemFireAST {
   private static final long serialVersionUID = 6002078657881181949L;
-  
-  public ASTImport() { }
-  
-  
+
+  public ASTImport() {
+  }
+
   public ASTImport(Token t) {
     super(t);
   }
-  
-  
+
   @Override
   public void compile(QCompiler compiler) {
     StringBuffer nameBuf = new StringBuffer();
@@ -43,8 +41,7 @@ public class ASTImport extends GemFireAST {
         child = child.getNextSibling();
         asName = child.getText();
         break;
-      }
-      else {
+      } else {
         nameBuf.append(child.getText());
         child = child.getNextSibling();
         if (child != null && child.getType() != OQLLexerTokenTypes.LITERAL_as) {

@@ -32,14 +32,13 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
  * 
  */
 public class ClientMembershipMessage extends PooledDistributionMessage {
-  public static final int JOINED  = 0;
-  public static final int LEFT    = 1;
+  public static final int JOINED = 0;
+  public static final int LEFT = 1;
   public static final int CRASHED = 2;
-  
 
   private String clientId;
   private String clientHost;
-  private int    eventType;
+  private int eventType;
 
   /**
    * Default constructor(for serialization)
@@ -59,11 +58,10 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
    *          ClientMembershipMessage.JOINED, ClientMembershipMessage.LEFT,
    *          ClientMembershipMessage.CRASHED
    */
-  public ClientMembershipMessage(String clientId, String clientHost,
-                                 int eventType) {
-    this.clientId   = clientId;
+  public ClientMembershipMessage(String clientId, String clientHost, int eventType) {
+    this.clientId = clientId;
     this.clientHost = clientHost;
-    this.eventType  = eventType;
+    this.eventType = eventType;
   }
 
   /** 
@@ -72,9 +70,8 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
    */
   @Override
   protected void process(DistributionManager dm) {
-    AdminDistributedSystemImpl adminDs = 
-                      AdminDistributedSystemImpl.getConnectedInstance();
-    
+    AdminDistributedSystemImpl adminDs = AdminDistributedSystemImpl.getConnectedInstance();
+
     /* 
      * Disconnect can be called on AdminDistributedSystem from Agent and it is 
      * not synchronous with processing of this message. Null check added to 
@@ -86,9 +83,8 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
       if (msgSender != null) {
         senderId = msgSender.getId();
       }
-  
-      adminDs.processClientMembership(senderId, clientId, 
-                                      clientHost, eventType);
+
+      adminDs.processClientMembership(senderId, clientId, clientHost, eventType);
     }
   }
 
@@ -99,7 +95,7 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
   public int getDSFID() {
     return CLIENT_MEMBERSHIP_MESSAGE;
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
@@ -107,14 +103,14 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
     DataSerializer.writeString(this.clientHost, out);
     out.writeInt(this.eventType);
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    
-    this.clientId   = DataSerializer.readString(in);
+
+    this.clientId = DataSerializer.readString(in);
     this.clientHost = DataSerializer.readString(in);
-    this.eventType  = in.readInt();
+    this.eventType = in.readInt();
   }
 
   /**
@@ -137,24 +133,24 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
   public int getEventType() {
     return eventType;
   }
-  
+
   /**
    * @param eventType the eventType integer
    * @return String format of eventType
    */
   public static String getEventTypeString(int eventType) {
     switch (eventType) {
-      case JOINED:
-        return "Member JOINED";
-      case LEFT:
-        return "Member LEFT";
-      case CRASHED:
-        return "Member CRASHED";
-      default:
-        return "UNKNOWN";
+    case JOINED:
+      return "Member JOINED";
+    case LEFT:
+      return "Member LEFT";
+    case CRASHED:
+      return "Member CRASHED";
+    default:
+      return "UNKNOWN";
     }
   }
-  
+
   /**
    * String representation of this message.
    * 
@@ -163,7 +159,7 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
   @Override
   public String toString() {
     String clientMembership = "JOINED";
-    
+
     switch (this.eventType) {
     case LEFT:
       clientMembership = "LEFT";
@@ -176,11 +172,8 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
     default:
       break;
     }
-    
-    return "Client with Id: "+this.clientId + 
-           " running on host: "+this.clientHost + 
-           " "+clientMembership +
-           " the server: "+this.getSender();
+
+    return "Client with Id: " + this.clientId + " running on host: " + this.clientHost + " " + clientMembership + " the server: " + this.getSender();
   }
 
 }

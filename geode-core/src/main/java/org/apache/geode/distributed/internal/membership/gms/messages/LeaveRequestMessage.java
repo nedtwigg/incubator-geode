@@ -27,25 +27,24 @@ import org.apache.geode.distributed.internal.HighPriorityDistributionMessage;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.Version;
 
-public class LeaveRequestMessage extends HighPriorityDistributionMessage
-  implements HasMemberID {
+public class LeaveRequestMessage extends HighPriorityDistributionMessage implements HasMemberID {
   private InternalDistributedMember memberID;
   private String reason;
-  
+
   public LeaveRequestMessage(Collection<InternalDistributedMember> coords, InternalDistributedMember id, String reason) {
     super();
     setRecipients(coords);
     this.memberID = id;
     this.reason = reason;
   }
-  
+
   public LeaveRequestMessage(InternalDistributedMember coord, InternalDistributedMember id, String reason) {
     super();
     setRecipient(coord);
     this.memberID = id;
     this.reason = reason;
   }
-  
+
   public LeaveRequestMessage() {
     // no-arg constructor for serialization
   }
@@ -54,16 +53,16 @@ public class LeaveRequestMessage extends HighPriorityDistributionMessage
   public int getDSFID() {
     return LEAVE_REQUEST_MESSAGE;
   }
-  
+
   @Override
   public void process(DistributionManager dm) {
-    throw new IllegalStateException("this message is not intended to execute in a thread pool"); 
+    throw new IllegalStateException("this message is not intended to execute in a thread pool");
   }
 
   public InternalDistributedMember getMemberID() {
     return memberID;
   }
-  
+
   public String getReason() {
     return reason;
   }
@@ -87,8 +86,7 @@ public class LeaveRequestMessage extends HighPriorityDistributionMessage
 
   @Override
   public String toString() {
-    return getShortClassName() + "(" + memberID
-        + "; reason=" + reason + ")";
+    return getShortClassName() + "(" + memberID + "; reason=" + reason + ")";
   }
 
 }

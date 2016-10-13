@@ -180,7 +180,7 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
       fail("Unexpected exception");
     }
     assertNotNull(results);
-    assertEquals(1,results.size());
+    assertEquals(1, results.size());
     assertNull(results.get(0));
   }
 
@@ -203,7 +203,7 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
       fail("Unexpected exception");
     }
     assertNotNull(results);
-    assertEquals(1,results.size());
+    assertEquals(1, results.size());
     assertNull(results.get(0));
   }
 
@@ -216,7 +216,7 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
     List<?> results = null;
 
     when(cache.getPersistentMemberManager()).thenReturn(memberManager);
-    when(((GemFireCacheImpl)cache).isClosed()).thenReturn(true);
+    when(((GemFireCacheImpl) cache).isClosed()).thenReturn(true);
     rff.execute(context);
     try {
       results = resultSender.getResults();
@@ -240,9 +240,10 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
 
     // Fake missing disk-stores
     Set<PersistentMemberID> regions1 = new HashSet<PersistentMemberID>();
-    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore1", 1L, (short)1));
-    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore2", 2L, (short)2));
-    Map<String,Set<PersistentMemberID>> mapMember1 = new HashMap<String,Set<PersistentMemberID>>();;
+    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore1", 1L, (short) 1));
+    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore2", 2L, (short) 2));
+    Map<String, Set<PersistentMemberID>> mapMember1 = new HashMap<String, Set<PersistentMemberID>>();
+    ;
     mapMember1.put("member1", regions1);
     when(memberManager.getWaitingRegions()).thenReturn(mapMember1);
 
@@ -254,16 +255,16 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
       fail("Unexpected exception");
     }
     assertNotNull(results);
-    assertEquals(1,results.size());
-    Set<?> detailSet = (Set<?>)results.get(0);
+    assertEquals(1, results.size());
+    Set<?> detailSet = (Set<?>) results.get(0);
     assertEquals(2, detailSet.toArray().length);
     assertTrue(detailSet.toArray()[0] instanceof PersistentMemberPattern);
     assertTrue(detailSet.toArray()[1] instanceof PersistentMemberPattern);
     // Results are not sorted so verify results in either order
-    if (((PersistentMemberPattern)detailSet.toArray()[0]).getDirectory().equals("/diskStore1")) {
-      assertEquals("/diskStore2", ((PersistentMemberPattern)detailSet.toArray()[1]).getDirectory());
-    } else if (((PersistentMemberPattern)detailSet.toArray()[0]).getDirectory().equals("/diskStore2")) {
-      assertEquals("/diskStore1", ((PersistentMemberPattern)detailSet.toArray()[1]).getDirectory());
+    if (((PersistentMemberPattern) detailSet.toArray()[0]).getDirectory().equals("/diskStore1")) {
+      assertEquals("/diskStore2", ((PersistentMemberPattern) detailSet.toArray()[1]).getDirectory());
+    } else if (((PersistentMemberPattern) detailSet.toArray()[0]).getDirectory().equals("/diskStore2")) {
+      assertEquals("/diskStore1", ((PersistentMemberPattern) detailSet.toArray()[1]).getDirectory());
     } else {
       fail("Incorrect missing colocated region results");
     }
@@ -295,18 +296,18 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
       e.printStackTrace();
       fail("Unexpected exception");
     }
-    assertEquals(1,results.size());
-    Set<?> detailSet = (Set<?>)results.get(0);
+    assertEquals(1, results.size());
+    Set<?> detailSet = (Set<?>) results.get(0);
     assertEquals(2, detailSet.toArray().length);
     assertTrue(detailSet.toArray()[0] instanceof ColocatedRegionDetails);
     assertTrue(detailSet.toArray()[1] instanceof ColocatedRegionDetails);
-    assertEquals("/pr1", ((ColocatedRegionDetails)detailSet.toArray()[0]).getParent());
-    assertEquals("/pr1", ((ColocatedRegionDetails)detailSet.toArray()[1]).getParent());
+    assertEquals("/pr1", ((ColocatedRegionDetails) detailSet.toArray()[0]).getParent());
+    assertEquals("/pr1", ((ColocatedRegionDetails) detailSet.toArray()[1]).getParent());
     // Results are not sorted so verify results in either order
-    if (((ColocatedRegionDetails)detailSet.toArray()[0]).getChild().equals("child1")) {
-      assertEquals("child2", ((ColocatedRegionDetails)detailSet.toArray()[1]).getChild());
-    } else if (((ColocatedRegionDetails)detailSet.toArray()[0]).getChild().equals("child2")) {
-      assertEquals("child1", ((ColocatedRegionDetails)detailSet.toArray()[1]).getChild());
+    if (((ColocatedRegionDetails) detailSet.toArray()[0]).getChild().equals("child1")) {
+      assertEquals("child2", ((ColocatedRegionDetails) detailSet.toArray()[1]).getChild());
+    } else if (((ColocatedRegionDetails) detailSet.toArray()[0]).getChild().equals("child2")) {
+      assertEquals("child1", ((ColocatedRegionDetails) detailSet.toArray()[1]).getChild());
     } else {
       fail("Incorrect missing colocated region results");
     }
@@ -325,9 +326,10 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
 
     // Fake missing disk-stores
     Set<PersistentMemberID> regions1 = new HashSet<PersistentMemberID>();
-    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore1", 1L, (short)1));
-    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore2", 2L, (short)2));
-    Map<String,Set<PersistentMemberID>> mapMember1 = new HashMap<String,Set<PersistentMemberID>>();;
+    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore1", 1L, (short) 1));
+    regions1.add(new PersistentMemberID(new DiskStoreID(), InetAddress.getLocalHost(), "/diskStore2", 2L, (short) 2));
+    Map<String, Set<PersistentMemberID>> mapMember1 = new HashMap<String, Set<PersistentMemberID>>();
+    ;
     mapMember1.put("member1", regions1);
     when(memberManager.getWaitingRegions()).thenReturn(mapMember1);
 
@@ -347,30 +349,30 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
       e.printStackTrace();
       fail("Unexpected exception");
     }
-    assertEquals(2,results.size());
-    for (Object result:results) {
-      Set<?> detailSet = (Set<?>)result;
+    assertEquals(2, results.size());
+    for (Object result : results) {
+      Set<?> detailSet = (Set<?>) result;
       if (detailSet.toArray()[0] instanceof PersistentMemberPattern) {
         assertEquals(2, detailSet.toArray().length);
         assertTrue(detailSet.toArray()[1] instanceof PersistentMemberPattern);
         // Results are not sorted so verify results in either order
-        if (((PersistentMemberPattern)detailSet.toArray()[0]).getDirectory().equals("/diskStore1")) {
-          assertEquals("/diskStore2", ((PersistentMemberPattern)detailSet.toArray()[1]).getDirectory());
-        } else if (((PersistentMemberPattern)detailSet.toArray()[0]).getDirectory().equals("/diskStore2")) {
-          assertEquals("/diskStore1", ((PersistentMemberPattern)detailSet.toArray()[1]).getDirectory());
+        if (((PersistentMemberPattern) detailSet.toArray()[0]).getDirectory().equals("/diskStore1")) {
+          assertEquals("/diskStore2", ((PersistentMemberPattern) detailSet.toArray()[1]).getDirectory());
+        } else if (((PersistentMemberPattern) detailSet.toArray()[0]).getDirectory().equals("/diskStore2")) {
+          assertEquals("/diskStore1", ((PersistentMemberPattern) detailSet.toArray()[1]).getDirectory());
         } else {
           fail("Incorrect missing colocated region results");
         }
       } else if (detailSet.toArray()[0] instanceof ColocatedRegionDetails) {
         assertEquals(2, detailSet.toArray().length);
         assertTrue(detailSet.toArray()[1] instanceof ColocatedRegionDetails);
-        assertEquals("/pr1", ((ColocatedRegionDetails)detailSet.toArray()[0]).getParent());
-        assertEquals("/pr1", ((ColocatedRegionDetails)detailSet.toArray()[1]).getParent());
+        assertEquals("/pr1", ((ColocatedRegionDetails) detailSet.toArray()[0]).getParent());
+        assertEquals("/pr1", ((ColocatedRegionDetails) detailSet.toArray()[1]).getParent());
         // Results are not sorted so verify results in either order
-        if (((ColocatedRegionDetails)detailSet.toArray()[0]).getChild().equals("child1")) {
-          assertEquals("child2", ((ColocatedRegionDetails)detailSet.toArray()[1]).getChild());
-        } else if (((ColocatedRegionDetails)detailSet.toArray()[0]).getChild().equals("child2")) {
-          assertEquals("child1", ((ColocatedRegionDetails)detailSet.toArray()[1]).getChild());
+        if (((ColocatedRegionDetails) detailSet.toArray()[0]).getChild().equals("child1")) {
+          assertEquals("child2", ((ColocatedRegionDetails) detailSet.toArray()[1]).getChild());
+        } else if (((ColocatedRegionDetails) detailSet.toArray()[0]).getChild().equals("child2")) {
+          assertEquals("child1", ((ColocatedRegionDetails) detailSet.toArray()[1]).getChild());
         } else {
           fail("Incorrect missing colocated region results");
         }
@@ -396,7 +398,6 @@ public class ShowMissingDiskStoresFunctionJUnitTest {
     List<?> results = resultSender.getResults();
     fail("Failed to catch expected RuntimeException");
   }
-
 
   /**
    * Test method for {@link org.apache.geode.management.internal.cli.functions.ShowMissingDiskStoresFunction#getId()}.

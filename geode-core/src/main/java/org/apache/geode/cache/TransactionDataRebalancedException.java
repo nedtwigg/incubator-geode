@@ -28,7 +28,7 @@ import org.apache.geode.cache.control.RebalanceOperation;
  * @since GemFire 6.6
  */
 public class TransactionDataRebalancedException extends TransactionException {
-  
+
   private static final long serialVersionUID = -2217135580436381984L;
 
   public TransactionDataRebalancedException(String s) {

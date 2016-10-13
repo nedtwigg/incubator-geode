@@ -49,7 +49,7 @@ public interface PersistentID extends DataSerializable {
    * The directory which the persistent data was last residing in.
    */
   public abstract String getDirectory();
-  
+
   /**
    * The unique identifier for the persistent data.
    * @since GemFire 7.0

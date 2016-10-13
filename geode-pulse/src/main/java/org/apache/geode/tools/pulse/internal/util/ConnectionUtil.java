@@ -23,24 +23,18 @@ import java.io.IOException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
-
 /**
  * 
  *
  */
 public class ConnectionUtil {
 
-  
-  
-  public static SocketFactory getSocketFactory(boolean usessl)
-    throws IOException
-  {
-    if(usessl){
-      return (SSLSocketFactory)SSLSocketFactory.getDefault();
-    }else{
+  public static SocketFactory getSocketFactory(boolean usessl) throws IOException {
+    if (usessl) {
+      return (SSLSocketFactory) SSLSocketFactory.getDefault();
+    } else {
       return SocketFactory.getDefault();
-    }    
+    }
   }
-  
-  
+
 }

@@ -42,7 +42,7 @@ public enum ClientRegionShortcut {
    * The actual RegionAttributes for a CACHING_PROXY set the {@link DataPolicy} to {@link DataPolicy#NORMAL}.
    */
   CACHING_PROXY,
-    
+
   /**
    * A CACHING_PROXY_HEAP_LRU region has local state but can also send operations to a server.
    * If the local state is not found then the operation is sent to the server
@@ -70,38 +70,38 @@ public enum ClientRegionShortcut {
    * A LOCAL region only has local state and never sends operations to a server.
    * The actual RegionAttributes for a LOCAL region set the {@link DataPolicy} to {@link DataPolicy#NORMAL}.
    */
-    LOCAL,
+  LOCAL,
   /**
    * A LOCAL_PERSISTENT region only has local state and never sends operations to a server
    * but it does write its state to disk and can recover that state when the region
    * is created.
    * The actual RegionAttributes for a LOCAL_PERSISTENT region set the {@link DataPolicy} to {@link DataPolicy#PERSISTENT_REPLICATE}.
    */
-    LOCAL_PERSISTENT,
-    /**
-     * A LOCAL_HEAP_LRU region only has local state and never sends operations to a server.
-     * It will also destroy entries once it detects that the java vm is running low
-     * of memory.
-     * The actual RegionAttributes for a LOCAL_HEAP_LRU region set the {@link DataPolicy} to {@link DataPolicy#NORMAL} and {@link EvictionAttributes} are set to {@link EvictionAlgorithm#LRU_HEAP}
-     * with {@link EvictionAction#LOCAL_DESTROY}.
-     */
-    LOCAL_HEAP_LRU,
-    /**
-     * A LOCAL_OVERFLOW region only has local state and never sends operations to a server.
-     * It will also move the values of entries to disk once it detects that the
-     * java vm is running low of memory.
-     * The actual RegionAttributes for a LOCAL_OVERFLOW region set the {@link DataPolicy} to {@link DataPolicy#NORMAL} and {@link EvictionAttributes} are set to {@link EvictionAlgorithm#LRU_HEAP}
-     * with {@link EvictionAction#OVERFLOW_TO_DISK}.
-     */
-    LOCAL_OVERFLOW,
-    /**
-     * A LOCAL_PERSISTENT_OVERFLOW region only has local state and never sends operations to a server
-     * but it does write its state to disk and can recover that state when the region
-     * is created.
-     * It will also remove the values of entries from memory once it detects that the
-     * java vm is running low of memory.
-     * The actual RegionAttributes for a LOCAL_PERSISTENT_OVERFLOW region set the {@link DataPolicy} to {@link DataPolicy#PERSISTENT_REPLICATE} and {@link EvictionAttributes} are set to {@link EvictionAlgorithm#LRU_HEAP}
-     * with {@link EvictionAction#OVERFLOW_TO_DISK}.
-     */
-    LOCAL_PERSISTENT_OVERFLOW
+  LOCAL_PERSISTENT,
+  /**
+   * A LOCAL_HEAP_LRU region only has local state and never sends operations to a server.
+   * It will also destroy entries once it detects that the java vm is running low
+   * of memory.
+   * The actual RegionAttributes for a LOCAL_HEAP_LRU region set the {@link DataPolicy} to {@link DataPolicy#NORMAL} and {@link EvictionAttributes} are set to {@link EvictionAlgorithm#LRU_HEAP}
+   * with {@link EvictionAction#LOCAL_DESTROY}.
+   */
+  LOCAL_HEAP_LRU,
+  /**
+   * A LOCAL_OVERFLOW region only has local state and never sends operations to a server.
+   * It will also move the values of entries to disk once it detects that the
+   * java vm is running low of memory.
+   * The actual RegionAttributes for a LOCAL_OVERFLOW region set the {@link DataPolicy} to {@link DataPolicy#NORMAL} and {@link EvictionAttributes} are set to {@link EvictionAlgorithm#LRU_HEAP}
+   * with {@link EvictionAction#OVERFLOW_TO_DISK}.
+   */
+  LOCAL_OVERFLOW,
+  /**
+   * A LOCAL_PERSISTENT_OVERFLOW region only has local state and never sends operations to a server
+   * but it does write its state to disk and can recover that state when the region
+   * is created.
+   * It will also remove the values of entries from memory once it detects that the
+   * java vm is running low of memory.
+   * The actual RegionAttributes for a LOCAL_PERSISTENT_OVERFLOW region set the {@link DataPolicy} to {@link DataPolicy#PERSISTENT_REPLICATE} and {@link EvictionAttributes} are set to {@link EvictionAlgorithm#LRU_HEAP}
+   * with {@link EvictionAction#OVERFLOW_TO_DISK}.
+   */
+  LOCAL_PERSISTENT_OVERFLOW
 }

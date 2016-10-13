@@ -71,7 +71,8 @@ public class LuceneQueryImplJUnitTest {
     when(execution.execute(anyString())).thenReturn((ResultCollector) collector);
 
     query = new LuceneQueryImpl<Object, Object>("index", region, provider, null, LIMIT, 20) {
-      @Override protected Execution onRegion() {
+      @Override
+      protected Execution onRegion() {
         return execution;
       }
     };
@@ -84,8 +85,7 @@ public class LuceneQueryImplJUnitTest {
 
     Map<String, String> getAllResult = new HashMap<String, String>();
     getAllResult.put("hi", "value");
-    when(region.getAll(eq(Collections.singletonList("hi"))))
-      .thenReturn(getAllResult);
+    when(region.getAll(eq(Collections.singletonList("hi")))).thenReturn(getAllResult);
   }
 
   @Test
@@ -121,9 +121,9 @@ public class LuceneQueryImplJUnitTest {
   @Test
   public void shouldReturnLuceneResultStructFromFindResults() throws LuceneQueryException {
     addValueToResults();
-    List<LuceneResultStruct<String,String>> result=new ArrayList<>();
-    result.add(new LuceneResultStructImpl("hi","value",5));
-    assertEquals(result,query.findResults());
+    List<LuceneResultStruct<String, String>> result = new ArrayList<>();
+    result.add(new LuceneResultStructImpl("hi", "value", 5));
+    assertEquals(result, query.findResults());
   }
 
   @Test

@@ -66,8 +66,7 @@ public class DataBrowserResultLoader {
 
       File sampleQueryResultFile = new File(url.getPath());
       inputStream = new FileInputStream(sampleQueryResultFile);
-      streamReader = new BufferedReader(new InputStreamReader(inputStream,
-          "UTF-8"));
+      streamReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
       sampleQueryResultResponseStrBuilder = new StringBuilder();
 
       while ((inputStr = streamReader.readLine()) != null) {

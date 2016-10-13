@@ -38,10 +38,10 @@ import java.util.Set;
  * this (For example, any serialization of this class should use getSnapshot).
  *
  */
-public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
-  
+public class CopyOnWriteHashSet<T> implements Set<T>, Serializable {
+
   private static final long serialVersionUID = 8591978652141659932L;
-  
+
   private volatile transient Set<T> snapshot = Collections.emptySet();
 
   public CopyOnWriteHashSet() {
@@ -50,7 +50,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   public CopyOnWriteHashSet(Set<T> copy) {
     this.snapshot = new HashSet<T>(copy);
   }
-  
+
   /**
    * Because I'm lazy, this iterator does not support modification
    * of this set. If you need it, it shouldn't be too hard to implement.
@@ -64,7 +64,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   }
 
   public boolean add(T e) {
-    synchronized(this) {
+    synchronized (this) {
       Set<T> set = new HashSet<T>(snapshot);
       boolean result = set.add(e);
       snapshot = set;
@@ -73,7 +73,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   }
 
   public boolean addAll(Collection<? extends T> c) {
-    synchronized(this) {
+    synchronized (this) {
       Set<T> set = new HashSet<T>(snapshot);
       boolean result = set.addAll(c);
       snapshot = set;
@@ -82,7 +82,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   }
 
   public void clear() {
-    synchronized(this) {
+    synchronized (this) {
       snapshot = Collections.emptySet();
     }
   }
@@ -100,7 +100,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   }
 
   public boolean remove(Object o) {
-    synchronized(this) {
+    synchronized (this) {
       Set<T> set = new HashSet<T>(snapshot);
       boolean result = set.remove(o);
       snapshot = set;
@@ -109,7 +109,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   }
 
   public boolean retainAll(Collection<?> c) {
-    synchronized(this) {
+    synchronized (this) {
       Set<T> set = new HashSet<T>(snapshot);
       boolean result = set.retainAll(c);
       snapshot = set;
@@ -136,7 +136,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   }
 
   public boolean removeAll(Collection<?> c) {
-    synchronized(this) {
+    synchronized (this) {
       Set<T> set = new HashSet<T>(snapshot);
       boolean result = set.removeAll(c);
       snapshot = set;
@@ -148,7 +148,7 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   public String toString() {
     return snapshot.toString();
   }
-  
+
   /**
    * Return a snapshot of the set at this point in time.
    * The snapshot is guaranteed not to change. It is therefore
@@ -160,17 +160,16 @@ public class CopyOnWriteHashSet<T> implements Set<T>, Serializable  {
   public Set<T> getSnapshot() {
     return Collections.unmodifiableSet(snapshot);
   }
-  
+
   private void writeObject(ObjectOutputStream s) throws IOException {
     s.defaultWriteObject();
     s.writeObject(snapshot);
   }
-  
+
   @SuppressWarnings("unchecked")
-  private void readObject(ObjectInputStream s)
-  throws java.io.IOException, ClassNotFoundException {
+  private void readObject(ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
     s.defaultReadObject();
     this.snapshot = (Set<T>) s.readObject();
   }
-  
+
 }

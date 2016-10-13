@@ -21,7 +21,6 @@ import org.apache.geode.internal.lang.SystemUtils;
 import org.apache.geode.management.internal.cli.GfshParser;
 import org.apache.geode.management.internal.cli.parser.SyntaxConstants;
 
-
 /**-
  * Helper class to build command strings, used in the Dunits for testing gfsh
  * commands
@@ -30,14 +29,14 @@ import org.apache.geode.management.internal.cli.parser.SyntaxConstants;
  * @since GemFire 7.0
  */
 public class CommandStringBuilder {
-  private final String OPTION_MARKER    = SyntaxConstants.LONG_OPTION_SPECIFIER;
-  private final String EQUAL_TO         = SyntaxConstants.OPTION_VALUE_SPECIFIER;
-  private final String ARG_SEPARATOR    = SyntaxConstants.OPTION_SEPARATOR;
+  private final String OPTION_MARKER = SyntaxConstants.LONG_OPTION_SPECIFIER;
+  private final String EQUAL_TO = SyntaxConstants.OPTION_VALUE_SPECIFIER;
+  private final String ARG_SEPARATOR = SyntaxConstants.OPTION_SEPARATOR;
   private final String OPTION_SEPARATOR = SyntaxConstants.OPTION_SEPARATOR;
-  private final String SINGLE_SPACE     = " ";
+  private final String SINGLE_SPACE = " ";
 
-  private final    StringBuffer buffer;
-  private volatile boolean      hasOptions;
+  private final StringBuffer buffer;
+  private volatile boolean hasOptions;
 
   public CommandStringBuilder(String command) {
     buffer = new StringBuffer(command);
@@ -45,7 +44,7 @@ public class CommandStringBuilder {
 
   public CommandStringBuilder addArgument(String argument) {
     if (hasOptions) {
-      throw new IllegalStateException("Arguments can't be specified after options. Built String is: "+buffer.toString());
+      throw new IllegalStateException("Arguments can't be specified after options. Built String is: " + buffer.toString());
     }
     buffer.append(ARG_SEPARATOR);
     buffer.append(argument);
@@ -61,9 +60,9 @@ public class CommandStringBuilder {
     hasOptions = true;
     return this;
   }
-  
+
   public CommandStringBuilder addOptionWithValueCheck(String option, String value) {
-    if (!StringUtils.isBlank(value)){
+    if (!StringUtils.isBlank(value)) {
       return addOption(option, value);
     }
     return this;
@@ -76,7 +75,7 @@ public class CommandStringBuilder {
     hasOptions = true;
     return this;
   }
-  
+
   public CommandStringBuilder addNewLine() {
     buffer.append(SINGLE_SPACE); // add a space before continuation char
     buffer.append(SyntaxConstants.CONTINUATION_CHARACTER);

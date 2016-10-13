@@ -27,8 +27,7 @@ import org.apache.geode.ra.GFConnection;
  * 
  *
  */
-public class GFConnectionImpl implements GFConnection
-{
+public class GFConnectionImpl implements GFConnection {
   private JCAManagedConnection mc;
 
   private Reference ref;
@@ -37,13 +36,11 @@ public class GFConnectionImpl implements GFConnection
     this.mc = mc;
   }
 
-  public void resetManagedConnection(JCAManagedConnection mc)
-  {
+  public void resetManagedConnection(JCAManagedConnection mc) {
     this.mc = mc;
   }
 
-  public void close() throws ResourceException
-  {
+  public void close() throws ResourceException {
     // Check if the connection is associated with a JTA. If yes, then
     // we should throw an exception on close being invoked.
     if (this.mc != null) {
@@ -51,19 +48,16 @@ public class GFConnectionImpl implements GFConnection
     }
   }
 
-  public void invalidate()
-  {
+  public void invalidate() {
     this.mc = null;
   }
 
-  public void setReference(Reference ref)
-  {
+  public void setReference(Reference ref) {
     this.ref = ref;
 
   }
 
-  public Reference getReference() throws NamingException
-  {
+  public Reference getReference() throws NamingException {
     return this.ref;
   }
 

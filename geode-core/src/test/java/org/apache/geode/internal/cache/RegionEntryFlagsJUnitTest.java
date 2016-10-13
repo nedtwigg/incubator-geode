@@ -55,8 +55,7 @@ public class RegionEntryFlagsJUnitTest {
 
   @Test
   public void testUpdateInProgressFlag() {
-    Region region = CacheUtils.createRegion("testRegion", null,
-        Scope.DISTRIBUTED_ACK);
+    Region region = CacheUtils.createRegion("testRegion", null, Scope.DISTRIBUTED_ACK);
     // Put one entry in the region.
     region.put(1, 1);
     Set entries = region.entrySet();
@@ -73,8 +72,7 @@ public class RegionEntryFlagsJUnitTest {
 
   @Test
   public void testNetSearchFlag() {
-    Region region = CacheUtils.createRegion("testRegion", null,
-        Scope.DISTRIBUTED_ACK);
+    Region region = CacheUtils.createRegion("testRegion", null, Scope.DISTRIBUTED_ACK);
     // Put one entry in the region.
     region.put(1, 1);
     Set entries = region.entrySet();

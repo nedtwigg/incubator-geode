@@ -31,7 +31,7 @@ public class OrderedTombstoneMapJUnitTest {
   @Test
   public void test() {
     OrderedTombstoneMap<String> map = new OrderedTombstoneMap<String>();
-    
+
     DiskStoreID id1 = DiskStoreID.random();
     DiskStoreID id2 = DiskStoreID.random();
     map.put(createVersionTag(id1, 1, 7), "one");
@@ -40,7 +40,7 @@ public class OrderedTombstoneMapJUnitTest {
     map.put(createVersionTag(id1, 2, 3), "four");
     map.put(createVersionTag(id1, 0, 2), "five");
     map.put(createVersionTag(id2, 4, 4), "six");
-    
+
     //Now make sure we get the entries in the order we expect (ordered by version tag with a member
     //and by timestampe otherwise.
     assertEquals("five", map.take().getValue());

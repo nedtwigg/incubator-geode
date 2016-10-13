@@ -43,7 +43,7 @@ public class SIsMemberExecutor extends SetExecutor {
 
     ByteArrayWrapper key = command.getKey();
     ByteArrayWrapper member = new ByteArrayWrapper(commandElems.get(2));
-    
+
     checkDataType(key, RedisDataType.REDIS_SET, context);
     @SuppressWarnings("unchecked")
     Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);

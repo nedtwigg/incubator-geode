@@ -72,11 +72,10 @@ public class GemFireAuthentication extends UsernamePasswordAuthenticationToken {
         String[] signature = new String[] { String.class.getCanonicalName(), String.class.getCanonicalName() };
         boolean result = (Boolean) mbeanServer.invoke(name, "authorize", params, signature);
         if (result) {
-          authorities.add(new SimpleGrantedAuthority("ROLE_"+role));
+          authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException(e.getMessage(), e);
     }
 

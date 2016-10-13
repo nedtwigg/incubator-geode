@@ -20,7 +20,6 @@ import org.apache.logging.log4j.message.Message;
 
 import org.apache.geode.i18n.StringId;
 
-
 /**
  * An implementation of a Log4j {@link Message} that wraps a {@link StringId}.
  * 
@@ -31,7 +30,7 @@ public final class LocalizedMessage implements Message {
   private final StringId stringId;
   private final Object[] params;
   private final Throwable throwable;
-  
+
   private LocalizedMessage(final StringId stringId, final Object[] params, final Throwable throwable) {
     this.stringId = stringId;
     this.params = params;
@@ -41,7 +40,7 @@ public final class LocalizedMessage implements Message {
   public static LocalizedMessage create(final StringId stringId) {
     return new LocalizedMessage(stringId, null, null);
   }
-  
+
   public static final LocalizedMessage create(final StringId stringId, final Object[] params) {
     return new LocalizedMessage(stringId, params, null);
   }
@@ -49,15 +48,15 @@ public final class LocalizedMessage implements Message {
   public static final LocalizedMessage create(final StringId stringId, final Throwable throwable) {
     return new LocalizedMessage(stringId, null, throwable);
   }
-  
+
   public static final LocalizedMessage create(final StringId stringId, final Object object) {
     return new LocalizedMessage(stringId, new Object[] { object }, null);
   }
-  
+
   public static final LocalizedMessage create(final StringId stringId, final Object[] params, final Throwable throwable) {
     return new LocalizedMessage(stringId, params, throwable);
   }
-  
+
   @Override
   public String getFormattedMessage() {
     return this.stringId.toLocalizedString(params);

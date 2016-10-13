@@ -30,15 +30,15 @@ import org.apache.geode.internal.lang.StringUtils;
 public abstract class AbstractStoredObject implements StoredObject {
   @Override
   public Object getValueAsDeserializedHeapObject() {
-    return getDeserializedValue(null,null);
+    return getDeserializedValue(null, null);
   }
-  
+
   @Override
   public byte[] getValueAsHeapByteArray() {
     if (isSerialized()) {
       return getSerializedValue();
     } else {
-      return (byte[])getDeserializedForReading();
+      return (byte[]) getDeserializedForReading();
     }
   }
 
@@ -53,12 +53,12 @@ public abstract class AbstractStoredObject implements StoredObject {
 
   @Override
   public Object getDeserializedForReading() {
-    return getDeserializedValue(null,null);
+    return getDeserializedValue(null, null);
   }
 
   @Override
   public Object getDeserializedWritableCopy(Region r, RegionEntry re) {
-    return getDeserializedValue(null,null);
+    return getDeserializedValue(null, null);
   }
 
   @Override
@@ -94,7 +94,7 @@ public abstract class AbstractStoredObject implements StoredObject {
       bytes = (byte[]) getDeserializedForReading();
     }
     DataSerializer.writeByteArray(bytes, out);
-    
+
   }
 
   @Override
@@ -105,12 +105,12 @@ public abstract class AbstractStoredObject implements StoredObject {
     InternalDataSerializer.writeDSFIDHeader(DataSerializableFixedID.VM_CACHED_DESERIALIZABLE, out);
     sendAsByteArray(out);
   }
-  
+
   @Override
   public boolean usesHeapForStorage() {
     return false;
   }
-  
+
   @Override
   public boolean isSerializedPdxInstance() {
     if (!isSerialized()) {

@@ -40,7 +40,7 @@ public class HeterogeneousLuceneSerializer implements LuceneSerializer {
    * The set of indexed fields for this mapper
    */
   private String[] indexedFields;
-  
+
   /**
    * A mapper for converting a PDX object into a document
    */
@@ -52,13 +52,12 @@ public class HeterogeneousLuceneSerializer implements LuceneSerializer {
    * Weak so that entry will be removed if a class is garbage collected.
    */
   private Map<Class<?>, LuceneSerializer> mappers = new CopyOnWriteWeakHashMap<Class<?>, LuceneSerializer>();
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   public HeterogeneousLuceneSerializer(String[] indexedFields) {
     this.indexedFields = indexedFields;
     pdxMapper = new PdxLuceneSerializer(indexedFields);
-
 
     addSerializersForPrimitiveValues();
   }
@@ -68,21 +67,20 @@ public class HeterogeneousLuceneSerializer implements LuceneSerializer {
    * if the user has requested that the whole value be serialized
    */
   private void addSerializersForPrimitiveValues() {
-    if(Arrays.asList(indexedFields).contains(LuceneService.REGION_VALUE_FIELD)) {
+    if (Arrays.asList(indexedFields).contains(LuceneService.REGION_VALUE_FIELD)) {
       final PrimitiveSerializer primitiveSerializer = new PrimitiveSerializer();
-      SerializerUtil.supportedPrimitiveTypes().stream()
-        .forEach(type -> mappers.put(type, primitiveSerializer));
+      SerializerUtil.supportedPrimitiveTypes().stream().forEach(type -> mappers.put(type, primitiveSerializer));
     }
   }
 
   @Override
   public void toDocument(Object value, Document doc) {
-    
+
     LuceneSerializer mapper = getFieldMapper(value);
-    
+
     mapper.toDocument(value, doc);
     if (logger.isDebugEnabled()) {
-      logger.debug("HeterogeneousLuceneSerializer.toDocument:"+doc);
+      logger.debug("HeterogeneousLuceneSerializer.toDocument:" + doc);
     }
   }
 
@@ -90,18 +88,17 @@ public class HeterogeneousLuceneSerializer implements LuceneSerializer {
    * Get the field mapper based on the type of the given object.
    */
   private LuceneSerializer getFieldMapper(Object value) {
-    if(value instanceof PdxInstance) {
+    if (value instanceof PdxInstance) {
       return pdxMapper;
     } else {
       Class<?> clazz = value.getClass();
       LuceneSerializer mapper = mappers.get(clazz);
-      if(mapper == null) {
+      if (mapper == null) {
         mapper = new ReflectionLuceneSerializer(clazz, indexedFields);
         mappers.put(clazz, mapper);
       }
       return mapper;
     }
   }
-  
 
 }

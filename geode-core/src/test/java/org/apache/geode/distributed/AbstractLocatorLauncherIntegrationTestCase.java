@@ -42,10 +42,7 @@ public abstract class AbstractLocatorLauncherIntegrationTestCase extends Abstrac
 
   @Parameterized.Parameters
   public static Collection<Object> data() {
-    return Arrays.asList(new Object[] {
-        (IntSupplier) () -> 0,
-        (IntSupplier) () -> AvailablePortHelper.getRandomAvailableTCPPort()
-    });
+    return Arrays.asList(new Object[] { (IntSupplier) () -> 0, (IntSupplier) () -> AvailablePortHelper.getRandomAvailableTCPPort() });
   }
 
   @Parameterized.Parameter
@@ -70,7 +67,7 @@ public abstract class AbstractLocatorLauncherIntegrationTestCase extends Abstrac
     this.workingDirectory = this.temporaryFolder.getRoot().getCanonicalPath();
     this.clusterConfigDirectory = this.temporaryFolder.newFolder(SharedConfiguration.CLUSTER_CONFIG_DISK_DIR_PREFIX + getUniqueName()).getCanonicalPath();
   }
-  
+
   @After
   public final void tearDownAbstractLocatorLauncherIntegrationTestCase() throws Exception {
     this.locatorPort = 0;
@@ -94,26 +91,25 @@ public abstract class AbstractLocatorLauncherIntegrationTestCase extends Abstrac
         try {
           final LocatorState LocatorState = launcher.status();
           return (LocatorState != null && Status.ONLINE.equals(LocatorState.getStatus()));
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
           return false;
         }
       }
     }, timeout, interval);
   }
-  
+
   protected void waitForLocatorToStart(final LocatorLauncher launcher, int timeout, boolean throwOnTimeout) throws Exception {
     waitForLocatorToStart(launcher, timeout, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
-  
+
   protected void waitForLocatorToStart(final LocatorLauncher launcher, boolean throwOnTimeout) throws Exception {
     waitForLocatorToStart(launcher, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
-  
+
   protected void waitForLocatorToStart(final LocatorLauncher launcher) throws Exception {
     waitForLocatorToStart(launcher, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
   }
-  
+
   protected static void waitForLocatorToStart(int port, int timeout, int interval, boolean throwOnTimeout) throws Exception {
     final LocatorLauncher locatorLauncher = new Builder().setPort(port).build();
     assertEventuallyTrue("Waiting for Locator in other process to start.", new Callable<Boolean>() {
@@ -122,8 +118,7 @@ public abstract class AbstractLocatorLauncherIntegrationTestCase extends Abstrac
         try {
           final LocatorState locatorState = locatorLauncher.status();
           return (locatorState != null && Status.ONLINE.equals(locatorState.getStatus()));
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
           return false;
         }
       }

@@ -56,9 +56,7 @@ public class LuceneIndexCreationOffHeapIntegrationTest extends LuceneIntegration
   @Test
   public void shouldNotUseOffHeapForInternalRegionsWhenUserRegionHasOffHeap() {
     createIndex(cache, "text");
-    cache.createRegionFactory(RegionShortcut.PARTITION)
-      .setOffHeap(true)
-      .create(REGION_NAME);
+    cache.createRegionFactory(RegionShortcut.PARTITION).setOffHeap(true).create(REGION_NAME);
 
     verifyInternalRegions(region -> {
       assertEquals(false, region.getOffHeap());

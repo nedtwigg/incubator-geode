@@ -38,27 +38,27 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
  * "distributed-transactions" property to true
  *
  */
-@Category({IntegrationTest.class, DistributedTransactionsTest.class })
+@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
 public class DistTXJUnitTest extends TXJUnitTest {
 
   public DistTXJUnitTest() {
   }
-  
+
   @Override
   protected void createCache() throws Exception {
     Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0"); // loner
     p.setProperty(DISTRIBUTED_TRANSACTIONS, "true");
-    this.cache = (GemFireCacheImpl)CacheFactory.create(DistributedSystem.connect(p));
+    this.cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(p));
     createRegion();
     this.txMgr = this.cache.getCacheTransactionManager();
-    assert(this.txMgr.isDistributed());
+    assert (this.txMgr.isDistributed());
     this.listenerAfterCommit = 0;
     this.listenerAfterFailedCommit = 0;
     this.listenerAfterRollback = 0;
     this.listenerClose = 0;
   }
-  
+
   @Before
   public void setUp() throws Exception {
     createCache();
@@ -68,7 +68,7 @@ public class DistTXJUnitTest extends TXJUnitTest {
   public void tearDown() throws Exception {
     closeCache();
   }
-  
+
   @Override
   @Test
   @Ignore
@@ -76,7 +76,7 @@ public class DistTXJUnitTest extends TXJUnitTest {
     // [DISTTX] TODO Fix this issue. This test fails for DISTTX. This is
     // overridden to avoid running the actual test
   }
-  
+
   @Override
   @Test
   @Ignore
@@ -84,7 +84,7 @@ public class DistTXJUnitTest extends TXJUnitTest {
     // [DISTTX] TODO Fix this issue. This test fails for DISTTX. This is
     // overridden to avoid running the actual test
   }
-  
+
   @Override
   @Test
   @Ignore
@@ -92,5 +92,5 @@ public class DistTXJUnitTest extends TXJUnitTest {
     // [DISTTX] TODO Fix this issue. This test fails for DISTTX. This is
     // overridden to avoid running the actual test
   }
-  
+
 }

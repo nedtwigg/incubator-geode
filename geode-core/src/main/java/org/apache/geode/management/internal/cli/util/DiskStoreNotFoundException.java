@@ -27,7 +27,7 @@ import org.apache.geode.GemFireException;
  * @since GemFire 7.0
  */
 // TODO this GemFireException should be moved to a more appropriate package!
-  @SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public class DiskStoreNotFoundException extends GemFireException {
 
   public DiskStoreNotFoundException() {

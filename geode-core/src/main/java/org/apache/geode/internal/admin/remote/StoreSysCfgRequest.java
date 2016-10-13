@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -54,7 +53,7 @@ public final class StoreSysCfgRequest extends AdminRequest {
    */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
-    return StoreSysCfgResponse.create(dm, this.getSender(), this.sc); 
+    return StoreSysCfgResponse.create(dm, this.getSender(), this.sc);
   }
 
   public int getDSFID() {
@@ -68,10 +67,9 @@ public final class StoreSysCfgRequest extends AdminRequest {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.sc = (Config)DataSerializer.readObject(in);
+    this.sc = (Config) DataSerializer.readObject(in);
   }
 
   @Override

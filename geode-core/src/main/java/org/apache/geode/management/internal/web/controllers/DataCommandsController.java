@@ -51,12 +51,12 @@ public class DataCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/regions/{region}/data")
   @ResponseBody
-  public String get(@PathVariable("region") final String regionNamePath,
-                    @RequestParam(CliStrings.GET__KEY) final String key,
-                    @RequestParam(value = CliStrings.GET__KEYCLASS, required = false) final String keyClassName,
-                    @RequestParam(value = CliStrings.GET__VALUEKLASS, required = false) final String valueClassName,
-                    @RequestParam(value= CliStrings.GET__LOAD, defaultValue = "true") final Boolean loadOnCacheMiss)
-  {
+  public String get(@PathVariable("region")
+  final String regionNamePath, @RequestParam(CliStrings.GET__KEY)
+  final String key, @RequestParam(value = CliStrings.GET__KEYCLASS, required = false)
+  final String keyClassName, @RequestParam(value = CliStrings.GET__VALUEKLASS, required = false)
+  final String valueClassName, @RequestParam(value = CliStrings.GET__LOAD, defaultValue = "true")
+  final Boolean loadOnCacheMiss) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.GET);
 
     command.addOption(CliStrings.GET__REGIONNAME, decode(regionNamePath));
@@ -76,13 +76,13 @@ public class DataCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.PUT, value = "/regions/{region}/data")
   @ResponseBody
-  public String put(@PathVariable("region") final String regionNamePath,
-                    @RequestParam(CliStrings.PUT__KEY) final String key,
-                    @RequestParam(value = CliStrings.PUT__KEYCLASS, required = false) final String keyClassName,
-                    @RequestParam(CliStrings.PUT__VALUE) final String value,
-                    @RequestParam(value = CliStrings.PUT__VALUEKLASS, required = false) final String valueClassName,
-                    @RequestParam(value = CliStrings.PUT__PUTIFABSENT, defaultValue = "false") final Boolean putIfAbsent)
-  {
+  public String put(@PathVariable("region")
+  final String regionNamePath, @RequestParam(CliStrings.PUT__KEY)
+  final String key, @RequestParam(value = CliStrings.PUT__KEYCLASS, required = false)
+  final String keyClassName, @RequestParam(CliStrings.PUT__VALUE)
+  final String value, @RequestParam(value = CliStrings.PUT__VALUEKLASS, required = false)
+  final String valueClassName, @RequestParam(value = CliStrings.PUT__PUTIFABSENT, defaultValue = "false")
+  final Boolean putIfAbsent) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.PUT);
 
     command.addOption(CliStrings.PUT__REGIONNAME, decode(regionNamePath));
@@ -104,10 +104,11 @@ public class DataCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/regions/{region}/data")
   @ResponseBody
-  public String remove(@PathVariable("region") final String regionNamePath,
-                       @RequestParam(value = CliStrings.REMOVE__ALL, defaultValue = "false") final Boolean allKeys,
-                       @RequestParam(value = CliStrings.REMOVE__KEY, required = false) final String key,
-                       @RequestParam(value = CliStrings.REMOVE__KEYCLASS, required = false) final String keyClassName) {
+  public String remove(@PathVariable("region")
+  final String regionNamePath, @RequestParam(value = CliStrings.REMOVE__ALL, defaultValue = "false")
+  final Boolean allKeys, @RequestParam(value = CliStrings.REMOVE__KEY, required = false)
+  final String key, @RequestParam(value = CliStrings.REMOVE__KEYCLASS, required = false)
+  final String keyClassName) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.REMOVE);
 
     command.addOption(CliStrings.REMOVE__REGION, decode(regionNamePath));
@@ -125,10 +126,10 @@ public class DataCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/members/{member}/regions/{region}/data")
-  public Callable<ResponseEntity<String>> exportData(@PathVariable("member") final String memberNameId,
-                                                     @PathVariable("region") final String regionNamePath,
-                                                     @RequestParam(CliStrings.EXPORT_DATA__FILE) final String file)
-  {
+  public Callable<ResponseEntity<String>> exportData(@PathVariable("member")
+  final String memberNameId, @PathVariable("region")
+  final String regionNamePath, @RequestParam(CliStrings.EXPORT_DATA__FILE)
+  final String file) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.EXPORT_DATA);
 
     command.addOption(CliStrings.EXPORT_DATA__MEMBER, decode(memberNameId));
@@ -139,10 +140,10 @@ public class DataCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/members/{member}/regions/{region}/data")
-  public Callable<ResponseEntity<String>> importData(@PathVariable("member") final String memberNameId,
-                                                     @PathVariable("region") final String regionNamePath,
-                                                     @RequestParam(CliStrings.IMPORT_DATA__FILE) final String file)
-  {
+  public Callable<ResponseEntity<String>> importData(@PathVariable("member")
+  final String memberNameId, @PathVariable("region")
+  final String regionNamePath, @RequestParam(CliStrings.IMPORT_DATA__FILE)
+  final String file) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.IMPORT_DATA);
 
     command.addOption(CliStrings.IMPORT_DATA__MEMBER, decode(memberNameId));
@@ -154,12 +155,12 @@ public class DataCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/regions/{region}/data/location")
   @ResponseBody
-  public String locateEntry(@PathVariable("region") final String regionNamePath,
-                            @RequestParam(CliStrings.LOCATE_ENTRY__KEY) final String key,
-                            @RequestParam(value = CliStrings.LOCATE_ENTRY__KEYCLASS, required = false) final String keyClassName,
-                            @RequestParam(value = CliStrings.LOCATE_ENTRY__VALUEKLASS, required = false) final String valueClassName,
-                            @RequestParam(value = CliStrings.LOCATE_ENTRY__RECURSIVE, defaultValue = "false") final Boolean recursive)
-  {
+  public String locateEntry(@PathVariable("region")
+  final String regionNamePath, @RequestParam(CliStrings.LOCATE_ENTRY__KEY)
+  final String key, @RequestParam(value = CliStrings.LOCATE_ENTRY__KEYCLASS, required = false)
+  final String keyClassName, @RequestParam(value = CliStrings.LOCATE_ENTRY__VALUEKLASS, required = false)
+  final String valueClassName, @RequestParam(value = CliStrings.LOCATE_ENTRY__RECURSIVE, defaultValue = "false")
+  final Boolean recursive) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.LOCATE_ENTRY);
 
     command.addOption(CliStrings.LOCATE_ENTRY__REGIONNAME, decode(regionNamePath));
@@ -179,11 +180,10 @@ public class DataCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/regions/data/query")
-  public Callable<ResponseEntity<String>> query(final WebRequest request,
-                                                @RequestParam(CliStrings.QUERY__QUERY) final String oql,
-                                                @RequestParam(value = CliStrings.QUERY__STEPNAME, defaultValue = CliStrings.QUERY__STEPNAME__DEFAULTVALUE) final String stepName,
-                                                @RequestParam(value = CliStrings.QUERY__INTERACTIVE, defaultValue = "true") final Boolean interactive)
-  {
+  public Callable<ResponseEntity<String>> query(final WebRequest request, @RequestParam(CliStrings.QUERY__QUERY)
+  final String oql, @RequestParam(value = CliStrings.QUERY__STEPNAME, defaultValue = CliStrings.QUERY__STEPNAME__DEFAULTVALUE)
+  final String stepName, @RequestParam(value = CliStrings.QUERY__INTERACTIVE, defaultValue = "true")
+  final Boolean interactive) {
     //logRequest(request);
 
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.QUERY);
@@ -196,21 +196,19 @@ public class DataCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/regions/data", params = "op=rebalance")
-  public Callable<ResponseEntity<String>> rebalance(@RequestParam(value = CliStrings.REBALANCE__INCLUDEREGION, required = false) final String[] includedRegions,
-                                                    @RequestParam(value = CliStrings.REBALANCE__EXCLUDEREGION, required = false) final String[] excludedRegions,
-                                                    @RequestParam(value = CliStrings.REBALANCE__SIMULATE, defaultValue = "false") final Boolean simulate,
-                                                    @RequestParam(value = CliStrings.REBALANCE__TIMEOUT, defaultValue = "-1") final Long timeout)
-  {
+  public Callable<ResponseEntity<String>> rebalance(@RequestParam(value = CliStrings.REBALANCE__INCLUDEREGION, required = false)
+  final String[] includedRegions, @RequestParam(value = CliStrings.REBALANCE__EXCLUDEREGION, required = false)
+  final String[] excludedRegions, @RequestParam(value = CliStrings.REBALANCE__SIMULATE, defaultValue = "false")
+  final Boolean simulate, @RequestParam(value = CliStrings.REBALANCE__TIMEOUT, defaultValue = "-1")
+  final Long timeout) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.REBALANCE);
 
     if (hasValue(includedRegions)) {
-      command.addOption(CliStrings.REBALANCE__INCLUDEREGION, StringUtils.concat(includedRegions,
-        StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.REBALANCE__INCLUDEREGION, StringUtils.concat(includedRegions, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(excludedRegions)) {
-      command.addOption(CliStrings.REBALANCE__EXCLUDEREGION, StringUtils.concat(excludedRegions,
-        StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.REBALANCE__EXCLUDEREGION, StringUtils.concat(excludedRegions, StringUtils.COMMA_DELIMITER));
     }
 
     command.addOption(CliStrings.REBALANCE__SIMULATE, String.valueOf(simulate));

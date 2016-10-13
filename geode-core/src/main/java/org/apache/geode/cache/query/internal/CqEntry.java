@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.cache.query.internal;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -24,7 +25,6 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
-
 /**
  * This represents the CQ key value pair for the CQ query results.
  *  
@@ -32,12 +32,12 @@ import org.apache.geode.internal.Version;
  */
 
 public class CqEntry implements DataSerializableFixedID {
-  
+
   private Object key;
-  
+
   private Object value;
 
-  public CqEntry(Object key, Object value){
+  public CqEntry(Object key, Object value) {
     this.key = key;
     this.value = value;
   }
@@ -45,7 +45,7 @@ public class CqEntry implements DataSerializableFixedID {
   /**
    * Constructor to read serialized data.
    */
-  public CqEntry(){
+  public CqEntry() {
   }
 
   /**
@@ -70,29 +70,28 @@ public class CqEntry implements DataSerializableFixedID {
    * @return Object[] key, value pair
    */
   public Object[] getKeyValuePair() {
-    return new Object[] {key, value};
+    return new Object[] { key, value };
   }
-  
+
   @Override
-  public int hashCode(){
+  public int hashCode() {
     return this.key.hashCode();
   }
-  
+
   @Override
   public boolean equals(Object other) {
     if (other == null) {
       return false;
     }
-    return this.key.equals(((CqEntry)other).getKey());
+    return this.key.equals(((CqEntry) other).getKey());
   }
-  
+
   /* DataSerializableFixedID methods ---------------------------------------- */
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.key = DataSerializer.readObject(in);
     this.value = DataSerializer.readObject(in);
   }
-  
 
   public int getDSFID() {
     return CQ_ENTRY_EVENT;

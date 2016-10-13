@@ -35,17 +35,14 @@ import org.slf4j.LoggerFactory;
  * This abstract class contains the structures and methods to handle delta
  * updates to attributes.
  */
-public abstract class AbstractDeltaSessionAttributes
-    extends AbstractSessionAttributes implements Delta {
+public abstract class AbstractDeltaSessionAttributes extends AbstractSessionAttributes implements Delta {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(AbstractDeltaSessionAttributes.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractDeltaSessionAttributes.class.getName());
 
   /**
    * This map holds the updates to attributes
    */
-  protected transient Map<String, DeltaEvent> deltas =
-      Collections.synchronizedMap(new HashMap<String, DeltaEvent>());
+  protected transient Map<String, DeltaEvent> deltas = Collections.synchronizedMap(new HashMap<String, DeltaEvent>());
 
   @Override
   public boolean hasDelta() {
@@ -70,8 +67,7 @@ public abstract class AbstractDeltaSessionAttributes
   }
 
   @Override
-  public void fromDelta(DataInput in)
-      throws IOException, InvalidDeltaException {
+  public void fromDelta(DataInput in) throws IOException, InvalidDeltaException {
     maxInactiveInterval = in.readInt();
     lastAccessedTime = in.readLong();
     Map<String, DeltaEvent> localDeltas = new HashMap<String, DeltaEvent>();
@@ -87,8 +83,7 @@ public abstract class AbstractDeltaSessionAttributes
       return;
     }
 
-    LOG.debug("Processing {} delta events for {}",
-        localDeltas.size(), session);
+    LOG.debug("Processing {} delta events for {}", localDeltas.size(), session);
     for (DeltaEvent e : localDeltas.values()) {
       if (e.isUpdate()) {
         attributes.put(e.getName(), e.getValue());

@@ -30,7 +30,7 @@ import org.apache.geode.redis.internal.RegionProvider;
 public class TTLExecutor extends AbstractExecutor implements Extendable {
 
   private final int NOT_EXISTS = -2;
-  
+
   private final int NO_TIMEOUT = -1;
 
   @Override
@@ -54,13 +54,13 @@ public class TTLExecutor extends AbstractExecutor implements Extendable {
       return;
     }
     long ttl = rC.getExpirationDelayMillis(key);
-    
+
     if (ttl == 0L) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NO_TIMEOUT));
       return;
     }
-    
-    if(!timeUnitMillis())
+
+    if (!timeUnitMillis())
       ttl = ttl / millisInSecond;
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), ttl));

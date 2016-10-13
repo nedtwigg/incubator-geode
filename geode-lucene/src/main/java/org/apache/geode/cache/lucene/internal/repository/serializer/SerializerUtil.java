@@ -65,7 +65,7 @@ public class SerializerUtil {
 
     SUPPORTED_PRIMITIVE_TYPES = Collections.unmodifiableSet(primitiveTypes);
   }
-  
+
   /**
    * A small buffer for converting keys to byte[] arrays.
    */
@@ -78,12 +78,12 @@ public class SerializerUtil {
 
   private SerializerUtil() {
   }
-  
+
   /**
    * Add a gemfire key to a document
    */
   public static void addKey(Object key, Document doc) {
-    if(key instanceof String) {
+    if (key instanceof String) {
       doc.add(new StringField(KEY_FIELD, (String) key, Store.YES));
     } else {
       doc.add(new StringField(KEY_FIELD, keyToBytes(key), Store.YES));
@@ -97,20 +97,20 @@ public class SerializerUtil {
    */
   public static boolean addField(Document doc, String field, Object fieldValue) {
     Class<?> clazz = fieldValue.getClass();
-    if(clazz == String.class) {
-      doc.add(new TextField(field, (String)fieldValue, Store.NO));
+    if (clazz == String.class) {
+      doc.add(new TextField(field, (String) fieldValue, Store.NO));
     } else if (clazz == Long.class) {
       doc.add(new LongPoint(field, (Long) fieldValue));
     } else if (clazz == Integer.class) {
       doc.add(new IntPoint(field, (Integer) fieldValue));
     } else if (clazz == Float.class) {
       doc.add(new FloatPoint(field, (Float) fieldValue));
-    }  else if (clazz == Double.class) {
-        doc.add(new DoublePoint(field, (Double) fieldValue));
+    } else if (clazz == Double.class) {
+      doc.add(new DoublePoint(field, (Double) fieldValue));
     } else {
       return false;
     }
-    
+
     return true;
   }
 
@@ -124,43 +124,43 @@ public class SerializerUtil {
   public static Collection<Class> supportedPrimitiveTypes() {
     return SUPPORTED_PRIMITIVE_TYPES;
   }
-  
+
   /**
    * Extract the gemfire key from a lucene document
    */
   public static Object getKey(Document doc) {
     IndexableField field = doc.getField(KEY_FIELD);
-    if(field.stringValue() != null) {
+    if (field.stringValue() != null) {
       return field.stringValue();
     } else {
-      return  keyFromBytes(field.binaryValue());
+      return keyFromBytes(field.binaryValue());
     }
   }
- 
+
   /**
    * Extract the gemfire key term from a lucene document
    */
   public static Term getKeyTerm(Document doc) {
     IndexableField field = doc.getField(KEY_FIELD);
-    if(field.stringValue() != null) {
+    if (field.stringValue() != null) {
       return new Term(KEY_FIELD, field.stringValue());
     } else {
       return new Term(KEY_FIELD, field.binaryValue());
     }
   }
-  
+
   /**
    * Convert a gemfire key into a key search term that can be used to
    * update or delete the document associated with this key.
    */
   public static Term toKeyTerm(Object key) {
-    if(key instanceof String) {
+    if (key instanceof String) {
       return new Term(KEY_FIELD, (String) key);
     } else {
       return new Term(KEY_FIELD, keyToBytes(key));
     }
   }
-  
+
   private static Object keyFromBytes(BytesRef bytes) {
     try {
       return BlobHelper.deserializeBlob(bytes.bytes);
@@ -168,13 +168,13 @@ public class SerializerUtil {
       throw new InternalGemFireError(e);
     }
   }
-  
+
   /**
    * Convert a key to a byte array.
    */
-  private static BytesRef keyToBytes(Object key)  {
+  private static BytesRef keyToBytes(Object key) {
     ByteArrayOutputStream buffer = LOCAL_BUFFER.get();
-    
+
     try {
       DataOutputStream out = new DataOutputStream(buffer);
       DataSerializer.writeObject(key, out);

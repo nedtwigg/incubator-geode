@@ -30,12 +30,12 @@ public interface StatisticsSampler {
    * Returns the number of times a statistics resource has been add or deleted.
    */
   public int getStatisticsModCount();
-  
+
   /**
    * Returns an array of all the current statistics resource instances.
    */
   public Statistics[] getStatistics();
-  
+
   /**
    * Waits for the SampleCollector to be created and initialized.
    * 
@@ -44,7 +44,7 @@ public interface StatisticsSampler {
    * @throws InterruptedException if the current thread is interrupted while waiting
    */
   public SampleCollector waitForSampleCollector(long timeout) throws InterruptedException;
-  
+
   /**
    * Waits for at least one statistics sample to occur before returning.
    * 

@@ -40,8 +40,7 @@ import org.apache.geode.cache.partition.PartitionListener;
  * @since GemFire 5.0
  * 
  */
-public interface PartitionAttributes<K,V>
-{
+public interface PartitionAttributes<K, V> {
   /**
    * returns entryTimeToLive in ExpirationAttributes.
    * 
@@ -72,7 +71,7 @@ public interface PartitionAttributes<K,V>
    */
   @Deprecated
   public long getTotalSize();
-  
+
   /**
    * This method returns the maximum total size of the region, in megabytes.
    * Default value is Integer.MAX_VALUE.
@@ -86,7 +85,7 @@ public interface PartitionAttributes<K,V>
    * 
    * @return total number of buckets for a PartitionedRegion.
    */
-  public int getTotalNumBuckets();  
+  public int getTotalNumBuckets();
 
   /**
    * This method returns the maximum amount of local memory that can be used
@@ -94,7 +93,7 @@ public interface PartitionAttributes<K,V>
    * By default, a PartitionedRegion can contribute 90% of the maximum memory allocated to a VM.
    */
   public int getLocalMaxMemory();
-  
+
   /**
    * Returns name of the colocated PartitionedRegion's name 
    * @since GemFire 6.0
@@ -126,7 +125,7 @@ public interface PartitionAttributes<K,V>
    * @return <code>PartitionResolver</code> for the PartitionedRegion
    * @since GemFire 6.0
    */
-  public PartitionResolver<K,V> getPartitionResolver();
+  public PartitionResolver<K, V> getPartitionResolver();
 
   /**
    * Returns the delay in milliseconds that
@@ -149,7 +148,7 @@ public interface PartitionAttributes<K,V>
    * @since GemFire 6.0
    */
   public long getStartupRecoveryDelay();
-  
+
   /**
    * Returns array of PartitionListener{s} configured on this partitioned region
    * 
@@ -166,5 +165,5 @@ public interface PartitionAttributes<K,V>
    * @since GemFire 6.6
    */
   public List<FixedPartitionAttributes> getFixedPartitionAttributes();
-  
+
 }

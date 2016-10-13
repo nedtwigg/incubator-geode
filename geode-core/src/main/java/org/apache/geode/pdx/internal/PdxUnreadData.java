@@ -39,20 +39,20 @@ public class PdxUnreadData implements PdxUnreadFields {
   public PdxUnreadData() {
     // initialize may be called later
   }
-  
+
   public PdxUnreadData(UnreadPdxType unreadType, PdxReaderImpl reader) {
     initialize(unreadType, reader);
   }
-  
+
   public void initialize(UnreadPdxType unreadType, PdxReaderImpl reader) {
     this.unreadType = unreadType;
     int[] indexes = unreadType.getUnreadFieldIndexes();
     this.unreadData = new byte[indexes.length][];
     int i = 0;
-    for (int idx: indexes) {
-      
+    for (int idx : indexes) {
+
       ByteSource field = reader.getRaw(idx);
-     
+
       //Copy the unread data into a new byte array
       this.unreadData[i] = new byte[field.capacity()];
       field.position(0);
@@ -64,7 +64,7 @@ public class PdxUnreadData implements PdxUnreadFields {
   public UnreadPdxType getUnreadType() {
     return this.unreadType;
   }
-  
+
   /**
    * Returns the PdxType to use when serializing this unread data.
    * Returns null if we don't know what this type is yet.
@@ -73,14 +73,15 @@ public class PdxUnreadData implements PdxUnreadFields {
   public PdxType getSerializedType() {
     return getUnreadType().getSerializedType();
   }
-  
+
   public void setSerializedType(PdxType t) {
     getUnreadType().setSerializedType(t);
- }
+  }
 
   public void sendTo(PdxWriterImpl writer) {
-    if (isEmpty()) return;
-    int [] indexes = this.unreadType.getUnreadFieldIndexes();
+    if (isEmpty())
+      return;
+    int[] indexes = this.unreadType.getUnreadFieldIndexes();
     int i = 0;
     while (i < this.unreadData.length) {
       int idx = indexes[i];
@@ -103,7 +104,8 @@ public class PdxUnreadData implements PdxUnreadFields {
     // This method is only called by CopyHelper which is public and does not require that a Cache exists.
     // So we need to call getInstance instead of getExisting.
     GemFireCacheImpl gfc = GemFireCacheImpl.getInstance();
-    if (gfc == null) return;
+    if (gfc == null)
+      return;
     TypeRegistry tr = gfc.getPdxRegistry();
     PdxUnreadData ud = tr.getUnreadData(o);
     if (ud != null && !ud.isEmpty()) {

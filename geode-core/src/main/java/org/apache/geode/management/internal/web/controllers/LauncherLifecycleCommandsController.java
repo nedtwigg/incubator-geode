@@ -41,13 +41,15 @@ public class LauncherLifecycleCommandsController extends AbstractCommandsControl
 
   @RequestMapping(method = RequestMethod.GET, value = "/members/{name}/locator")
   @ResponseBody
-  public String statusLocator(@PathVariable("name") final String memberNameId) {
+  public String statusLocator(@PathVariable("name")
+  final String memberNameId) {
     return getMemberMXBean(memberNameId).status();
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/members/{name}/server")
   @ResponseBody
-  public String statusServer(@PathVariable("name") final String memberNameId) {
+  public String statusServer(@PathVariable("name")
+  final String memberNameId) {
     return getMemberMXBean(memberNameId).status();
   }
 

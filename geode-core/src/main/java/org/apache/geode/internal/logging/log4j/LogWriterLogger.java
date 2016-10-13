@@ -40,15 +40,13 @@ import java.util.logging.Handler;
  * 
  */
 @SuppressWarnings("unused")
-public final class LogWriterLogger 
-extends FastLogger 
-implements InternalLogWriter, GemFireLogger {
-  
+public final class LogWriterLogger extends FastLogger implements InternalLogWriter, GemFireLogger {
+
   private static final long serialVersionUID = 446081244292135L;
-  
+
   // TODO:LOG:SECURITY: need to use this either here if isSecure==true or in the security LogWriterAppender's PatternLayout but not both places
   public static final String SECURITY_PREFIX = DistributionConfig.SECURITY_PREFIX_NAME;
-  
+
   private final ExtendedLoggerWrapper logWrapper;
   private final String connectionName;
   private final String loggerName;
@@ -61,7 +59,7 @@ implements InternalLogWriter, GemFireLogger {
     this.loggerName = getName();
     this.isSecure = isSecure;
   }
-  
+
   /**
    * Returns a custom Logger with the specified name and null connectionName.
    * 
@@ -75,7 +73,7 @@ implements InternalLogWriter, GemFireLogger {
   public static LogWriterLogger create(final String name, final boolean isSecure) {
     return create(name, null, isSecure);
   }
-  
+
   /**
    * Returns a custom Logger with the specified name.
    * 
@@ -92,16 +90,16 @@ implements InternalLogWriter, GemFireLogger {
     final Logger wrapped = LogManager.getLogger(name, GemFireParameterizedMessageFactory.INSTANCE);
     return new LogWriterLogger(wrapped, connectionName, isSecure);
   }
-  
+
   public static LogWriterLogger create(final Logger logger) {
     return new LogWriterLogger(logger, null, false);
   }
-  
+
   public void setLevel(final Level level) {
     if (getLevel().isLessSpecificThan(Level.DEBUG) || level.isLessSpecificThan(Level.DEBUG)) {
       debug("Changing level for Logger '{}' from {} to {}", this.loggerName, getLevel(), level);
     }
-    
+
     if (LogService.MAIN_LOGGER_NAME.equals(this.loggerName)) {
       LogService.setBaseLogLevel(level);
     } else if (LogService.SECURITY_LOGGER_NAME.equals(this.loggerName)) {
@@ -110,12 +108,12 @@ implements InternalLogWriter, GemFireLogger {
       Configurator.setLevel(this.loggerName, level);
     }
   }
-  
+
   @Override
   public void setLogWriterLevel(final int logWriterLevel) {
     setLevel(logWriterLeveltoLog4jLevel(logWriterLevel));
   }
-  
+
   /**
    * Logs a message with the specific Marker at the {@code Level.TRACE} level.
    * 
@@ -1564,33 +1562,33 @@ implements InternalLogWriter, GemFireLogger {
   public void severe(final String message, final Throwable t) {
     this.logWrapper.logIfEnabled(this.loggerName, Level.FATAL, null, message, t);
   }
-  
+
   /************************************************************
    * Methods to support backwards compatibility between levels.
    ************************************************************/
-  
+
   public static Level logWriterLeveltoLog4jLevel(final int logWriterLevel) {
     switch (logWriterLevel) {
-      case InternalLogWriter.SEVERE_LEVEL:
-        return Level.FATAL;
-      case InternalLogWriter.ERROR_LEVEL:
-        return Level.ERROR;
-      case InternalLogWriter.WARNING_LEVEL:
-        return Level.WARN;
-      case InternalLogWriter.CONFIG_LEVEL:
-        return Level.INFO;
-      case InternalLogWriter.INFO_LEVEL:
-        return Level.INFO;
-      case InternalLogWriter.FINE_LEVEL:
-        return Level.DEBUG;
-      case InternalLogWriter.FINER_LEVEL:
-        return Level.DEBUG;
-      case InternalLogWriter.FINEST_LEVEL:
-        return Level.TRACE;
-      case InternalLogWriter.ALL_LEVEL:
-        return Level.ALL;
-      case InternalLogWriter.NONE_LEVEL:
-        return Level.OFF;
+    case InternalLogWriter.SEVERE_LEVEL:
+      return Level.FATAL;
+    case InternalLogWriter.ERROR_LEVEL:
+      return Level.ERROR;
+    case InternalLogWriter.WARNING_LEVEL:
+      return Level.WARN;
+    case InternalLogWriter.CONFIG_LEVEL:
+      return Level.INFO;
+    case InternalLogWriter.INFO_LEVEL:
+      return Level.INFO;
+    case InternalLogWriter.FINE_LEVEL:
+      return Level.DEBUG;
+    case InternalLogWriter.FINER_LEVEL:
+      return Level.DEBUG;
+    case InternalLogWriter.FINEST_LEVEL:
+      return Level.TRACE;
+    case InternalLogWriter.ALL_LEVEL:
+      return Level.ALL;
+    case InternalLogWriter.NONE_LEVEL:
+      return Level.OFF;
     }
 
     throw new IllegalArgumentException("Unknown LogWriter level [" + logWriterLevel + "].");
@@ -1627,10 +1625,10 @@ implements InternalLogWriter, GemFireLogger {
     if ("none".equalsIgnoreCase(levelName)) {
       return Level.OFF;
     }
-    
+
     throw new IllegalArgumentException("Unknown LogWriter level [" + levelName + "].");
   }
-    
+
   public static int log4jLevelToLogWriterLevel(final Level log4jLevel) {
     if (log4jLevel == Level.FATAL) {
       return InternalLogWriter.SEVERE_LEVEL;
@@ -1652,16 +1650,16 @@ implements InternalLogWriter, GemFireLogger {
 
     throw new IllegalArgumentException("Unknown Log4J level [" + log4jLevel + "].");
   }
-  
+
   public void log(int logWriterLevel, final String message, final Throwable t) {
     Level level = logWriterLeveltoLog4jLevel(logWriterLevel);
     this.logWrapper.logIfEnabled(this.loggerName, level, null, message, t);
   }
-  
+
   /*****************************************
    * Methods below are specific to LogWriter
    *****************************************/
-  
+
   @Override
   public boolean severeEnabled() {
     return isEnabled(Level.FATAL);
@@ -1989,8 +1987,8 @@ implements InternalLogWriter, GemFireLogger {
   @Override
   public int getLogWriterLevel() {
     final Level log4jLevel = this.logWrapper.getLevel();
-    
-    if (log4jLevel == Level.OFF) {     
+
+    if (log4jLevel == Level.OFF) {
       return InternalLogWriter.NONE_LEVEL;
     } else if (log4jLevel == Level.FATAL) {
       return InternalLogWriter.SEVERE_LEVEL;
@@ -2007,7 +2005,7 @@ implements InternalLogWriter, GemFireLogger {
     } else if (log4jLevel == Level.ALL) {
       return InternalLogWriter.ALL_LEVEL;
     }
-    
+
     throw new IllegalStateException("Level " + log4jLevel + " could not be mapped to LogWriter level.");
   }
 
@@ -2025,7 +2023,7 @@ implements InternalLogWriter, GemFireLogger {
   public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception) {
     log(msgLevel, msgId.toLocalizedString(params), exception);
   }
-  
+
   @Override
   public String getConnectionName() {
     return this.connectionName;

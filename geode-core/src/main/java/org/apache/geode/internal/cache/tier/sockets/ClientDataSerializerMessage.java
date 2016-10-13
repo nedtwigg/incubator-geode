@@ -26,18 +26,17 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.cache.EnumListenerEvent;
 import org.apache.geode.internal.cache.EventID;
 import org.apache.geode.internal.cache.tier.MessageType;
+
 /**
  * 
  *
  */
-public class ClientDataSerializerMessage  extends ClientUpdateMessageImpl{
+public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
   private byte[][] serializedDataSerializer;
 
   private Class[][] supportedClasses;
-  
-  public ClientDataSerializerMessage(EnumListenerEvent operation,
-      byte[][] dataSerializer, ClientProxyMembershipID memberId,
-      EventID eventIdentifier, Class[][] supportedClasses) {
+
+  public ClientDataSerializerMessage(EnumListenerEvent operation, byte[][] dataSerializer, ClientProxyMembershipID memberId, EventID eventIdentifier, Class[][] supportedClasses) {
     super(operation, memberId, eventIdentifier);
     this.serializedDataSerializer = dataSerializer;
     this.supportedClasses = supportedClasses;
@@ -50,13 +49,12 @@ public class ClientDataSerializerMessage  extends ClientUpdateMessageImpl{
   public ClientDataSerializerMessage() {
 
   }
-  
+
   @Override
-  public boolean shouldBeConflated()
-  {
+  public boolean shouldBeConflated() {
     return false;
   }
-  
+
   /**
    * Returns a <code>Message</code> generated from the fields of this
    * <code>ClientDataSerializerMessage</code>.
@@ -71,16 +69,13 @@ public class ClientDataSerializerMessage  extends ClientUpdateMessageImpl{
    * @see org.apache.geode.internal.cache.tier.sockets.Message
    */
   @Override
-  protected Message getMessage(CacheClientProxy proxy, byte[] latestValue)
-    throws IOException {
+  protected Message getMessage(CacheClientProxy proxy, byte[] latestValue) throws IOException {
     if (proxy.getVersion().compareTo(Version.GFE_6516) >= 0) {
       return getGFE6516Message(proxy.getVersion());
     } else if (proxy.getVersion().compareTo(Version.GFE_57) >= 0) {
       return getGFEMessage(proxy.getVersion());
     } else {
-      throw new IOException(
-          "Unsupported client version for server-to-client message creation: "
-              + proxy.getVersion());
+      throw new IOException("Unsupported client version for server-to-client message creation: " + proxy.getVersion());
     }
   }
 
@@ -130,33 +125,33 @@ public class ClientDataSerializerMessage  extends ClientUpdateMessageImpl{
       }
     }
     numOfParts += 1; // one for eventID
-//    this._logger.fine("Number of parts for ClientDataSerializerMessage: "
-//        + numOfParts + ", with eventID: " + this.getEventId());
+    //    this._logger.fine("Number of parts for ClientDataSerializerMessage: "
+    //        + numOfParts + ", with eventID: " + this.getEventId());
 
     message = new Message(numOfParts, clientVersion);
     // Set message type
     message.setMessageType(MessageType.REGISTER_DATASERIALIZERS);
     for (int i = 0; i < dsLength; i = i + 2) {
-      message.addBytesPart(this.serializedDataSerializer[i]);      // part 0
-      message.addBytesPart(this.serializedDataSerializer[i + 1]);  // part 1
+      message.addBytesPart(this.serializedDataSerializer[i]); // part 0
+      message.addBytesPart(this.serializedDataSerializer[i + 1]); // part 1
 
-      int numOfClasses = this.supportedClasses[i/2].length;
+      int numOfClasses = this.supportedClasses[i / 2].length;
       byte[][] classBytes = new byte[numOfClasses][];
       try {
         for (int j = 0; j < numOfClasses; j++) {
-          classBytes[j] = CacheServerHelper.serialize(this.supportedClasses[i/2][j].getName());
+          classBytes[j] = CacheServerHelper.serialize(this.supportedClasses[i / 2][j].getName());
         }
       } catch (IOException ioe) {
         numOfClasses = 0;
         classBytes = null;
       }
-      message.addIntPart(numOfClasses);  // part 2
+      message.addIntPart(numOfClasses); // part 2
       for (int j = 0; j < numOfClasses; j++) {
-        message.addBytesPart(classBytes[j]);  // part 3 onwards
+        message.addBytesPart(classBytes[j]); // part 3 onwards
       }
     }
     message.setTransactionId(0);
-    message.addObjPart(this.getEventId());  // last part
+    message.addObjPart(this.getEventId()); // last part
     return message;
   }
 
@@ -175,7 +170,7 @@ public class ClientDataSerializerMessage  extends ClientUpdateMessageImpl{
    */
   @Override
   public void toData(DataOutput out) throws IOException {
-    
+
     out.writeByte(_operation.getEventCode());
     int dataSerializerCount = this.serializedDataSerializer.length;
     out.writeInt(dataSerializerCount);
@@ -197,40 +192,35 @@ public class ClientDataSerializerMessage  extends ClientUpdateMessageImpl{
    * @see #toData
    */
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     // Note: does not call super.fromData what a HACK
     _operation = EnumListenerEvent.getEnumListenerEvent(in.readByte());
-    int dataSerializerCount = in.readInt(); 
+    int dataSerializerCount = in.readInt();
     this.serializedDataSerializer = new byte[dataSerializerCount][];
     for (int i = 0; i < dataSerializerCount; i++) {
       this.serializedDataSerializer[i] = DataSerializer.readByteArray(in);
     }
     _membershipId = ClientProxyMembershipID.readCanonicalized(in);
-    _eventIdentifier = (EventID)DataSerializer.readObject(in);
+    _eventIdentifier = (EventID) DataSerializer.readObject(in);
   }
 
   @Override
-  public Object getKeyToConflate()
-  {
+  public Object getKeyToConflate() {
     return null;
   }
 
   @Override
-  public String getRegionToConflate()
-  {
+  public String getRegionToConflate() {
     return null;
   }
 
   @Override
-  public Object getValueToConflate()
-  {
+  public Object getValueToConflate() {
     return null;
   }
 
   @Override
-  public void setLatestValue(Object value)
-  {
+  public void setLatestValue(Object value) {
   }
 
   @Override
@@ -244,12 +234,9 @@ public class ClientDataSerializerMessage  extends ClientUpdateMessageImpl{
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ClientDataSerializerMessage[").append(";value=").append(
-        (Arrays.toString(this.serializedDataSerializer))).append(";memberId=").append(
-        getMembershipId()).append(";eventId=").append(getEventId()).append("]");
+    buffer.append("ClientDataSerializerMessage[").append(";value=").append((Arrays.toString(this.serializedDataSerializer))).append(";memberId=").append(getMembershipId()).append(";eventId=").append(getEventId()).append("]");
     return buffer.toString();
   }
 }

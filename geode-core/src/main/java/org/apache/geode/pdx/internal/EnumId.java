@@ -26,7 +26,7 @@ import org.apache.geode.internal.Version;
 public class EnumId implements DataSerializableFixedID {
 
   private int id;
-  
+
   public EnumId(int id) {
     this.id = id;
   }
@@ -49,11 +49,11 @@ public class EnumId implements DataSerializableFixedID {
   public int intValue() {
     return this.id;
   }
-  
+
   public int getDSId() {
     return this.id >> 24;
   }
-  
+
   public int getEnumNum() {
     return this.id & 0x00FFFFFF;
   }
@@ -89,7 +89,5 @@ public class EnumId implements DataSerializableFixedID {
   public Version[] getSerializationVersions() {
     return null;
   }
-  
-  
 
 }

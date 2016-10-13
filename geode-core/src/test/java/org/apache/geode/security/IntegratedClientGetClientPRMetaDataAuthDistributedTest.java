@@ -31,8 +31,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
 @Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientGetClientPRMetaDataAuthDistributedTest
-  extends AbstractSecureServerDUnitTest {
+public class IntegratedClientGetClientPRMetaDataAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Test
   @Ignore("This is not a supported client message")
@@ -40,9 +39,7 @@ public class IntegratedClientGetClientPRMetaDataAuthDistributedTest
   // and it won't bind the correct subject on the executing thread.
   public void testGetClientPartitionAttrCmd() {
     client1.invoke("logging in stranger", () -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                               .addPoolServer("localhost", serverPort)
-                                                                                               .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
 
@@ -51,9 +48,7 @@ public class IntegratedClientGetClientPRMetaDataAuthDistributedTest
     });
 
     client2.invoke("logging in super-user", () -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                 .addPoolServer("localhost", serverPort)
-                                                                                                 .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
 
@@ -62,5 +57,3 @@ public class IntegratedClientGetClientPRMetaDataAuthDistributedTest
     });
   }
 }
-
-

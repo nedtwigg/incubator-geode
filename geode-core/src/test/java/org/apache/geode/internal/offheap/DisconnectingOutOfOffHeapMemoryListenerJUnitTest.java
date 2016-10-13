@@ -40,7 +40,7 @@ public class DisconnectingOutOfOffHeapMemoryListenerJUnitTest {
 
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
-  
+
   @Before
   public void setUp() throws Exception {
     when(ids.getLogWriter()).thenReturn(lw);
@@ -52,13 +52,13 @@ public class DisconnectingOutOfOffHeapMemoryListenerJUnitTest {
     DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(null);
     listener.close();
   }
-  
+
   @Test
   public void constructWithNullSupportsOutOfOffHeapMemory() {
     DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(null);
     listener.outOfOffHeapMemory(null);
   }
-  
+
   @Test
   public void disconnectNotCalledWhenSysPropIsSet() {
     System.setProperty(OffHeapStorage.STAY_CONNECTED_ON_OUTOFOFFHEAPMEMORY_PROPERTY, "true");
@@ -66,7 +66,7 @@ public class DisconnectingOutOfOffHeapMemoryListenerJUnitTest {
     listener.outOfOffHeapMemory(ex);
     verify(ids, never()).disconnect(ex.getMessage(), ex, false);
   }
-  
+
   @Test
   public void disconnectNotCalledWhenListenerClosed() {
     DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(ids);

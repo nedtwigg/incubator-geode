@@ -25,11 +25,11 @@ package org.apache.geode.internal.cache;
 public class TXBucketRegionState extends TXRegionState {
   private final PartitionedRegion pr;
 
-  public TXBucketRegionState(BucketRegion r,TXState txs) {
-    super(r,txs);
+  public TXBucketRegionState(BucketRegion r, TXState txs) {
+    super(r, txs);
     this.pr = r.getPartitionedRegion();
   }
-  
+
   public PartitionedRegion getPartitionedRegion() {
     return this.pr;
   }

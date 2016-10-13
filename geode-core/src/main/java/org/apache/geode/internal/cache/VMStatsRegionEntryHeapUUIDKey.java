@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 package org.apache.geode.internal.cache;
+
 // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import org.apache.geode.internal.InternalStatisticsDisabledException;
 import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.HashEntry;
+
 // macros whose definition changes this class:
 // disk: DISK
 // lru: LRU
@@ -41,65 +43,69 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
  * that contains your build.xml.
  */
 public class VMStatsRegionEntryHeapUUIDKey extends VMStatsRegionEntryHeap {
-  public VMStatsRegionEntryHeapUUIDKey (RegionEntryContext context, UUID key,
-      Object value
-      ) {
-    super(context,
-          value
-        );
+  public VMStatsRegionEntryHeapUUIDKey(RegionEntryContext context, UUID key, Object value) {
+    super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     this.keyMostSigBits = key.getMostSignificantBits();
     this.keyLeastSigBits = key.getLeastSignificantBits();
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsRegionEntryHeapUUIDKey> lastModifiedUpdater
-    = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryHeapUUIDKey.class, "lastModified");
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryHeapUUIDKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryHeapUUIDKey.class, "lastModified");
   private volatile Object value;
+
   @Override
   protected final Object getValueField() {
     return this.value;
   }
+
   @Override
   protected void setValueField(Object v) {
     this.value = v;
   }
+
   protected long getlastModifiedField() {
     return lastModifiedUpdater.get(this);
   }
+
   protected boolean compareAndSetLastModifiedField(long expectedValue, long newValue) {
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
+
   /**
    * @see HashEntry#getEntryHash()
    */
   public final int getEntryHash() {
     return this.hash;
   }
+
   protected void setEntryHash(int v) {
     this.hash = v;
   }
+
   /**
    * @see HashEntry#getNextEntry()
    */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
+
   /**
    * @see HashEntry#setNextEntry
    */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   // stats code
   @Override
-  public final void updateStatsForGet(boolean hit, long time)
-  {
+  public final void updateStatsForGet(boolean hit, long time) {
     setLastAccessed(time);
     if (hit) {
       incrementHitCount();
@@ -107,6 +113,7 @@ public class VMStatsRegionEntryHeapUUIDKey extends VMStatsRegionEntryHeap {
       incrementMissCount();
     }
   }
+
   @Override
   protected final void setLastModified(long lastModified) {
     _setLastModified(lastModified);
@@ -114,39 +121,46 @@ public class VMStatsRegionEntryHeapUUIDKey extends VMStatsRegionEntryHeap {
       setLastAccessed(lastModified);
     }
   }
+
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapUUIDKey> hitCountUpdater
-    = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapUUIDKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapUUIDKey> missCountUpdater
-    = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapUUIDKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapUUIDKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapUUIDKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapUUIDKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapUUIDKey.class, "missCount");
+
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
     return this.lastAccessed;
   }
+
   private void setLastAccessed(long lastAccessed) {
     this.lastAccessed = lastAccessed;
   }
+
   @Override
   public final long getHitCount() throws InternalStatisticsDisabledException {
     return this.hitCount & 0xFFFFFFFFL;
   }
+
   @Override
   public final long getMissCount() throws InternalStatisticsDisabledException {
     return this.missCount & 0xFFFFFFFFL;
   }
+
   private void incrementHitCount() {
     hitCountUpdater.incrementAndGet(this);
   }
+
   private void incrementMissCount() {
     missCountUpdater.incrementAndGet(this);
   }
+
   @Override
   public final void resetCounts() throws InternalStatisticsDisabledException {
-    hitCountUpdater.set(this,0);
-    missCountUpdater.set(this,0);
+    hitCountUpdater.set(this, 0);
+    missCountUpdater.set(this, 0);
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   @Override
   public final void txDidDestroy(long currTime) {
@@ -155,22 +169,26 @@ public class VMStatsRegionEntryHeapUUIDKey extends VMStatsRegionEntryHeap {
     this.hitCount = 0;
     this.missCount = 0;
   }
+
   @Override
   public boolean hasStats() {
     return true;
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   // key code
   private final long keyMostSigBits;
   private final long keyLeastSigBits;
+
   @Override
   public final Object getKey() {
     return new UUID(this.keyMostSigBits, this.keyLeastSigBits);
   }
+
   @Override
   public boolean isKeyEqual(Object k) {
     if (k instanceof UUID) {
-      UUID uuid = (UUID)k;
+      UUID uuid = (UUID) k;
       return uuid.getLeastSignificantBits() == this.keyLeastSigBits && uuid.getMostSignificantBits() == this.keyMostSigBits;
     }
     return false;

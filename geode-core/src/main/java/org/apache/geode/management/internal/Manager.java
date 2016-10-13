@@ -30,33 +30,27 @@ import org.apache.geode.internal.logging.InternalLogWriter;
  * @since GemFire 7.0
  */
 public abstract class Manager {
-  
-  
+
   /**
    * GemFire Cache implementation
    */
 
   protected GemFireCacheImpl cache;
 
-
   /**
    * depicts whether this node is a Managing node or not
    */
   protected volatile boolean running = false;
-  
-  
+
   /**
    * depicts whether this node is a Managing node or not
    */
   protected volatile boolean stopCacheOps = false;
 
-
-
   /**
    * This is a single window to manipulate region resources for management
    */
   protected ManagementResourceRepo repo;
-  
 
   /**
    * The concrete implementation of DistributedSystem that provides
@@ -64,18 +58,19 @@ public abstract class Manager {
    */
 
   protected InternalDistributedSystem system;
-  
 
-  
-  public Manager(ManagementResourceRepo repo , InternalDistributedSystem system, Cache cache){
+  public Manager(ManagementResourceRepo repo, InternalDistributedSystem system, Cache cache) {
     this.repo = repo;
-    this.cache = (GemFireCacheImpl)cache;
+    this.cache = (GemFireCacheImpl) cache;
     this.system = system;
   }
+
   public abstract boolean isRunning();
+
   public abstract void startManager();
-  public abstract void stopManager() ;
-  
+
+  public abstract void stopManager();
+
   /**
    * For internal use only
    * 
@@ -84,6 +79,5 @@ public abstract class Manager {
   public ManagementResourceRepo getManagementResourceRepo() {
     return repo;
   }
-
 
 }

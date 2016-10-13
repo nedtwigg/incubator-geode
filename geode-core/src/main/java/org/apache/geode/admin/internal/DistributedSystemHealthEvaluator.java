@@ -44,8 +44,7 @@ import java.util.Set;
  *
  * @since GemFire 3.5
  * */
-class DistributedSystemHealthEvaluator
-  extends AbstractHealthEvaluator implements MembershipListener {
+class DistributedSystemHealthEvaluator extends AbstractHealthEvaluator implements MembershipListener {
 
   /** The config from which we get the evaluation criteria */
   private DistributedSystemHealthConfig config;
@@ -66,8 +65,7 @@ class DistributedSystemHealthEvaluator
   /**
    * Creates a new <code>DistributedSystemHealthEvaluator</code>
    */
-  DistributedSystemHealthEvaluator(DistributedSystemHealthConfig config,
-                                   DM dm) {
+  DistributedSystemHealthEvaluator(DistributedSystemHealthConfig config, DM dm) {
     super(null, dm);
 
     this.config = config;
@@ -79,9 +77,8 @@ class DistributedSystemHealthEvaluator
 
     String desc = null;
     if (dm instanceof DistributionManager) {
-      desc = 
-        ((DistributionManager) dm).getDistributionConfigDescription();
-    } 
+      desc = ((DistributionManager) dm).getDistributionConfigDescription();
+    }
 
     if (desc != null) {
       sb.append(desc);
@@ -122,7 +119,7 @@ class DistributedSystemHealthEvaluator
     synchronized (this) {
       long threshold = this.config.getMaxDepartedApplications();
       if (this.crashedApplications > threshold) {
-        String s = LocalizedStrings.DistributedSystemHealth_THE_NUMBER_OF_APPLICATIONS_THAT_HAVE_LEFT_THE_DISTRIBUTED_SYSTEM_0_EXCEEDS_THE_THRESHOLD_1.toLocalizedString(new Object[] { Long.valueOf(this.crashedApplications), Long.valueOf(threshold)});
+        String s = LocalizedStrings.DistributedSystemHealth_THE_NUMBER_OF_APPLICATIONS_THAT_HAVE_LEFT_THE_DISTRIBUTED_SYSTEM_0_EXCEEDS_THE_THRESHOLD_1.toLocalizedString(new Object[] { Long.valueOf(this.crashedApplications), Long.valueOf(threshold) });
         status.add(poorHealth(s));
       }
       this.crashedApplications = 0;
@@ -150,23 +147,22 @@ class DistributedSystemHealthEvaluator
     if (!crashed)
       return;
     synchronized (this) {
-        int kind = id.getVmKind();
-        switch (kind) {
-        case DistributionManager.LOCATOR_DM_TYPE:
-        case DistributionManager.NORMAL_DM_TYPE:
-          this.crashedApplications++;
-          break;
-        default:
-          break;
-        }
+      int kind = id.getVmKind();
+      switch (kind) {
+      case DistributionManager.LOCATOR_DM_TYPE:
+      case DistributionManager.NORMAL_DM_TYPE:
+        this.crashedApplications++;
+        break;
+      default:
+        break;
+      }
     } // synchronized
   }
 
   public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
   }
 
-  public void memberSuspect(InternalDistributedMember id,
-      InternalDistributedMember whoSuspected, String reason) {
+  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
   }
-  
+
 }

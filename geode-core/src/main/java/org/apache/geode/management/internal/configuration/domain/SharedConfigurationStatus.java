@@ -21,5 +21,5 @@ package org.apache.geode.management.internal.configuration.domain;
  *
  */
 public enum SharedConfigurationStatus {
-  NOT_STARTED, STARTED, RUNNING, STOPPED, WAITING , UNDETERMINED
+  NOT_STARTED, STARTED, RUNNING, STOPPED, WAITING, UNDETERMINED
 }

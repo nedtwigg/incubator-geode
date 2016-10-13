@@ -32,8 +32,7 @@ public class DummySessionManager implements SessionManager {
   /**
    * Map of sessions
    */
-  private final Map<String, HttpSession> sessions =
-      new HashMap<String, HttpSession>();
+  private final Map<String, HttpSession> sessions = new HashMap<String, HttpSession>();
 
   private class Attributes extends AbstractSessionAttributes {
 

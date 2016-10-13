@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache.query.internal.parse;
 
 import antlr.*;
@@ -23,13 +22,14 @@ import org.apache.geode.cache.query.internal.QCompiler;
 
 public class ASTOr extends GemFireAST {
   private static final long serialVersionUID = 5770135811089855867L;
+
   public ASTOr(Token t) {
     super(t);
   }
-  
-  public ASTOr() { }
-  
-  
+
+  public ASTOr() {
+  }
+
   @Override
   public void compile(QCompiler compiler) {
     super.compile(compiler);

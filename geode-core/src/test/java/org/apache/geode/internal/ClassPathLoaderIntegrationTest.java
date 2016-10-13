@@ -297,10 +297,8 @@ public class ClassPathLoaderIntegrationTest {
 
     final ClassBuilder classBuilder = new ClassBuilder();
 
-    writeJarBytesToFile(new File(EXT_LIB_DIR, "ClassPathLoaderJUnit1.jar"),
-            classBuilder.createJarFromClassContent("com/cpljunit1/ClassPathLoaderJUnit1", "package com.cpljunit1; public class ClassPathLoaderJUnit1 {}"));
-    writeJarBytesToFile(new File(subdir, "ClassPathLoaderJUnit2.jar"),
-            classBuilder.createJarFromClassContent("com/cpljunit2/ClassPathLoaderJUnit2", "package com.cpljunit2; public class ClassPathLoaderJUnit2 {}"));
+    writeJarBytesToFile(new File(EXT_LIB_DIR, "ClassPathLoaderJUnit1.jar"), classBuilder.createJarFromClassContent("com/cpljunit1/ClassPathLoaderJUnit1", "package com.cpljunit1; public class ClassPathLoaderJUnit1 {}"));
+    writeJarBytesToFile(new File(subdir, "ClassPathLoaderJUnit2.jar"), classBuilder.createJarFromClassContent("com/cpljunit2/ClassPathLoaderJUnit2", "package com.cpljunit2; public class ClassPathLoaderJUnit2 {}"));
 
     ClassPathLoader classPathLoader = ClassPathLoader.createWithDefaults(false);
     try {
@@ -318,7 +316,7 @@ public class ClassPathLoaderIntegrationTest {
     assertNotNull(classPathLoader.getResource("com/cpljunit2/ClassPathLoaderJUnit2.class"));
 
     Enumeration<URL> urls = classPathLoader.getResources("com/cpljunit1");
-    if  (!urls.hasMoreElements()) {
+    if (!urls.hasMoreElements()) {
       fail("Resources should return one element");
     }
   }

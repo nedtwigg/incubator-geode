@@ -55,7 +55,7 @@ public class User implements PdxSerializable {
  */
 
 public interface PdxSerializable {
-  
+
   /**
    * Serializes the PDX fields using the given writer.
    * @param writer the {@link PdxWriter} to use to write the PDX fields.

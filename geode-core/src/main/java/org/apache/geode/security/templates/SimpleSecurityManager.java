@@ -47,13 +47,14 @@ import org.apache.geode.security.SecurityManager;
  */
 public class SimpleSecurityManager implements SecurityManager {
   @Override
-  public void init(final Properties securityProps) {}
+  public void init(final Properties securityProps) {
+  }
 
   @Override
   public Object authenticate(final Properties credentials) throws AuthenticationFailedException {
     String username = credentials.getProperty("security-username");
     String password = credentials.getProperty("security-password");
-    if(username!=null && username.equals(password)){
+    if (username != null && username.equals(password)) {
       return username;
     }
     throw new AuthenticationFailedException("invalid username/password");
@@ -61,11 +62,12 @@ public class SimpleSecurityManager implements SecurityManager {
 
   @Override
   public boolean authorize(final Object principal, final ResourcePermission permission) {
-    String permissionString = permission.toString().replace(":","").toLowerCase();
+    String permissionString = permission.toString().replace(":", "").toLowerCase();
     String principle = principal.toString().toLowerCase();
     return permissionString.startsWith(principle);
   }
 
   @Override
-  public void close() {}
+  public void close() {
+  }
 }

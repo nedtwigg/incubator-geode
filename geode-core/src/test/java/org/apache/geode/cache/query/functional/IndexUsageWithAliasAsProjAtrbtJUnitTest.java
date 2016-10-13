@@ -60,8 +60,8 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
   public void testComparisonBetnWithAndWithoutIndexCreation() throws Exception {
     //TASK IUM 7
     Region region = CacheUtils.createRegion("portfolios", Portfolio.class);
-    for(int i=0;i<4;i++){
-      region.put(""+i, new Portfolio(i));
+    for (int i = 0; i < 4; i++) {
+      region.put("" + i, new Portfolio(i));
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
@@ -71,7 +71,7 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
         // IUM 8         
         "Select distinct security from /portfolios , secIds security where length > 2 AND (intern <> 'SUN' OR intern <> 'DELL' )",
         // IUM 9 
-        "Select distinct  security from /portfolios  pos , secIds security where length > 2 and pos.ID > 0"         
+        "Select distinct  security from /portfolios  pos , secIds security where length > 2 and pos.ID > 0"
 
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
@@ -81,10 +81,10 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
       q = CacheUtils.getQueryService().newQuery(queries[i]);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
-      r[i][0] =(SelectResults) q.execute();
-      if(!observer.isIndexesUsed){
+      r[i][0] = (SelectResults) q.execute();
+      if (!observer.isIndexesUsed) {
         CacheUtils.log("NO INDEX USED");
-      }else {
+      } else {
         fail("If index were not there how did they get used ???? ");
       }
     }
@@ -92,44 +92,41 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
     //  Create an Index on status and execute the same query again.
 
     qs = CacheUtils.getQueryService();
-    qs.createIndex("lengthIndex", IndexType.FUNCTIONAL,"length","/portfolios,secIds, positions.values");
+    qs.createIndex("lengthIndex", IndexType.FUNCTIONAL, "length", "/portfolios,secIds, positions.values");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       q = CacheUtils.getQueryService().newQuery(queries[i]);
       QueryObserverImpl observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      r[i][1] = (SelectResults)q.execute();
+      r[i][1] = (SelectResults) q.execute();
 
-      if(observer2.isIndexesUsed){
+      if (observer2.isIndexesUsed) {
         CacheUtils.log("YES INDEX IS USED!");
-      }
-      else {
+      } else {
         fail("Index should have been used!!! ");
       }
     }
-    CacheUtils.compareResultsOfWithAndWithoutIndex(r,this);        
+    CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
   }
 
   @Test
   public void testQueryResultComposition() throws Exception {
     Region region = CacheUtils.createRegion("pos", Portfolio.class);
-    for(int i=0;i<4;i++){
-      region.put(""+i, new Portfolio(i));
+    for (int i = 0; i < 4; i++) {
+      region.put("" + i, new Portfolio(i));
     }
     CacheUtils.getQueryService();
     String queries[] = {
         //"select distinct * from /pos, positions where value != null",
         //"select distinct intern from /pos,names where length >= 3",
-        "select distinct nm from /pos prt,names nm where ID>0",
-        "select distinct prt from /pos prt, names where names[3]='ddd'"
-    };
-    for(int i=0;i<queries.length;i++){
+        "select distinct nm from /pos prt,names nm where ID>0", "select distinct prt from /pos prt, names where names[3]='ddd'" };
+    for (int i = 0; i < queries.length; i++) {
       Query q = CacheUtils.getQueryService().newQuery(queries[i]);
       q.execute();
     }
   }
 
-  private static class QueryObserverImpl extends QueryObserverAdapter{
+  private static class QueryObserverImpl extends QueryObserverAdapter {
     boolean isIndexesUsed = false;
     ArrayList indexesUsed = new ArrayList();
 
@@ -140,7 +137,7 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
 
     @Override
     public void afterIndexLookup(Collection results) {
-      if(results != null){
+      if (results != null) {
         isIndexesUsed = true;
       }
     }

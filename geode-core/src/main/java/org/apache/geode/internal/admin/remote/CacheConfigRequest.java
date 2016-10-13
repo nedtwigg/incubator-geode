@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -42,7 +41,7 @@ public final class CacheConfigRequest extends AdminRequest {
    */
   public static CacheConfigRequest create(CacheInfo c, int attCode, int v) {
     CacheConfigRequest m = new CacheConfigRequest();
-    m.attributeCode = (byte)attCode;
+    m.attributeCode = (byte) attCode;
     m.newValue = v;
     m.cacheId = c.getId();
     return m;
@@ -57,7 +56,7 @@ public final class CacheConfigRequest extends AdminRequest {
    */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
-    return CacheConfigResponse.create(dm, this.getSender(), this.cacheId, this.attributeCode, this.newValue); 
+    return CacheConfigResponse.create(dm, this.getSender(), this.cacheId, this.attributeCode, this.newValue);
   }
 
   public int getDSFID() {
@@ -73,8 +72,7 @@ public final class CacheConfigRequest extends AdminRequest {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.attributeCode = in.readByte();
     this.newValue = in.readInt();

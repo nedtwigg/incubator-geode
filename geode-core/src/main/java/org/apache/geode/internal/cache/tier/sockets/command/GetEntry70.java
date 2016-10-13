@@ -41,17 +41,15 @@ public class GetEntry70 extends Get70 {
 
   protected GetEntry70() {
   }
-  
+
   @Override
-  protected Get70.Entry getEntry(Region region, Object key,
-      Object callbackArg, ServerConnection servConn) {
+  protected Get70.Entry getEntry(Region region, Object key, Object callbackArg, ServerConnection servConn) {
     return getValueAndIsObject(region, key, callbackArg, servConn);
   }
 
   @Override
-  public Get70.Entry getValueAndIsObject(Region region, Object key,
-      Object callbackArg, ServerConnection servConn) {
-    LocalRegion lregion = (LocalRegion)region;
+  public Get70.Entry getValueAndIsObject(Region region, Object key, Object callbackArg, ServerConnection servConn) {
+    LocalRegion lregion = (LocalRegion) region;
     Object data = null;
     Region.Entry entry = region.getEntry(key);
     if (logger.isDebugEnabled()) {

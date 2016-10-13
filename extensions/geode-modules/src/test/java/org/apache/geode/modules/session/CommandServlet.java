@@ -57,25 +57,25 @@ public class CommandServlet extends HttpServlet {
     HttpSession session;
 
     switch (cmd) {
-      case SET:
-        session = request.getSession();
-        session.setAttribute(param, value);
-        break;
-      case GET:
-        session = request.getSession();
-        String val = (String) session.getAttribute(param);
-        if (val != null) {
-          out.write(val);
-        }
-        break;
-      case INVALIDATE:
-        session = request.getSession();
-        session.invalidate();
-        break;
-      case CALLBACK:
-        Callback c = (Callback) context.getAttribute("callback");
-        c.call(request, response);
-        break;
+    case SET:
+      session = request.getSession();
+      session.setAttribute(param, value);
+      break;
+    case GET:
+      session = request.getSession();
+      String val = (String) session.getAttribute(param);
+      if (val != null) {
+        out.write(val);
+      }
+      break;
+    case INVALIDATE:
+      session = request.getSession();
+      session.invalidate();
+      break;
+    case CALLBACK:
+      Callback c = (Callback) context.getAttribute("callback");
+      c.call(request, response);
+      break;
     }
   }
 

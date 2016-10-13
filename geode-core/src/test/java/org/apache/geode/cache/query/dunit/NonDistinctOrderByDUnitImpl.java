@@ -72,8 +72,7 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void testMultiColOrderByWithIndexResultDefaultProjection()
-      throws Exception {
+  public void testMultiColOrderByWithIndexResultDefaultProjection() throws Exception {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     final VM vm1 = host.getVM(1);
@@ -86,8 +85,7 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void testMultiColOrderByWithIndexResultWithProjection()
-      throws Exception {
+  public void testMultiColOrderByWithIndexResultWithProjection() throws Exception {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     final VM vm1 = host.getVM(1);
@@ -100,8 +98,7 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void testMultiColOrderByWithMultiIndexResultDefaultProjection()
-      throws Exception {
+  public void testMultiColOrderByWithMultiIndexResultDefaultProjection() throws Exception {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     final VM vm1 = host.getVM(1);
@@ -114,8 +111,7 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void testMultiColOrderByWithMultiIndexResultProjection()
-      throws Exception {
+  public void testMultiColOrderByWithMultiIndexResultProjection() throws Exception {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     final VM vm1 = host.getVM(1);
@@ -179,14 +175,12 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
     this.closeCache(vm0, vm1, vm2, vm3);
   }
 
-  protected void createIndex(VM vm, final String indexName,
-      final String indexedExpression, final String regionPath) {
+  protected void createIndex(VM vm, final String indexName, final String indexedExpression, final String regionPath) {
     vm.invoke(new SerializableRunnable("create index") {
       public void run() {
         try {
           Cache cache = getCache();
-          cache.getQueryService().createIndex(indexName, indexedExpression,
-              regionPath);
+          cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
         } catch (RegionNotFoundException e) {
           fail(e.toString());
         } catch (IndexExistsException e) {
@@ -198,9 +192,7 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
     });
   }
 
-  protected void createIndex(VM vm, final String indexName,
-      IndexType indexType, final String indexedExpression,
-      final String fromClause) {
+  protected void createIndex(VM vm, final String indexName, IndexType indexType, final String indexedExpression, final String fromClause) {
     int indxTypeCode = -1;
     if (indexType.equals(IndexType.FUNCTIONAL)) {
       indxTypeCode = 0;
@@ -222,8 +214,7 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
           } else if (finalIndxTypeCode == 2) {
             indxType = IndexType.HASH;
           }
-          cache.getQueryService().createIndex(indexName, indxType,
-              indexedExpression, fromClause);
+          cache.getQueryService().createIndex(indexName, indxType, indexedExpression, fromClause);
         } catch (RegionNotFoundException e) {
           fail(e.toString());
         } catch (IndexExistsException e) {
@@ -235,13 +226,11 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
     });
   }
 
-  protected Index createIndexOnAccessor(final String indexName,
-      final String indexedExpression, final String regionPath) {
+  protected Index createIndexOnAccessor(final String indexName, final String indexedExpression, final String regionPath) {
 
     try {
       Cache cache = getCache();
-      return cache.getQueryService().createIndex(indexName, indexedExpression,
-          regionPath);
+      return cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
     } catch (RegionNotFoundException e) {
       fail(e.toString());
     } catch (IndexExistsException e) {
@@ -253,14 +242,11 @@ public abstract class NonDistinctOrderByDUnitImpl extends JUnit4CacheTestCase {
 
   }
 
-  protected Index createIndexOnAccessor(final String indexName,
-      IndexType indexType, final String indexedExpression,
-      final String fromClause) {
+  protected Index createIndexOnAccessor(final String indexName, IndexType indexType, final String indexedExpression, final String fromClause) {
 
     try {
       Cache cache = getCache();
-      return cache.getQueryService().createIndex(indexName, indexType,
-          indexedExpression, fromClause);
+      return cache.getQueryService().createIndex(indexName, indexType, indexedExpression, fromClause);
     } catch (RegionNotFoundException e) {
       fail(e.toString());
     } catch (IndexExistsException e) {

@@ -85,8 +85,8 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
   /**
    * The string manager for this package.
    */
-//  protected static StringManager STRING_MANAGER =
-//    StringManager.getManager("org.apache.geode.modules.session.catalina");
+  //  protected static StringManager STRING_MANAGER =
+  //    StringManager.getManager("org.apache.geode.modules.session.catalina");
 
   /**
    * Construct a new <code>Session</code> associated with no <code>Manager</code>. The <code>Manager</code> will be
@@ -133,13 +133,11 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
         sp = (SerializablePrincipal) BlobHelper.deserializeBlob(this.serializedPrincipal);
       } catch (Exception e) {
         StringBuilder builder = new StringBuilder();
-        builder.append(this)
-            .append(
-                ": Serialized principal contains a byte[] that cannot be deserialized due to the following exception");
+        builder.append(this).append(": Serialized principal contains a byte[] that cannot be deserialized due to the following exception");
         ((DeltaSessionManager) getManager()).getLogger().warn(builder.toString(), e);
         return null;
       }
-      this.principal = sp.getPrincipal(((DeltaSessionManager)this.manager).getTheContext().getRealm());
+      this.principal = sp.getPrincipal(((DeltaSessionManager) this.manager).getTheContext().getRealm());
       if (getManager() != null) {
         DeltaSessionManager mgr = (DeltaSessionManager) getManager();
         if (mgr.getLogger().isDebugEnabled()) {
@@ -291,10 +289,7 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
         value = BlobHelper.deserializeBlob((byte[]) value);
       } catch (Exception e) {
         StringBuilder builder = new StringBuilder();
-        builder.append(this)
-            .append(": Attribute named ")
-            .append(name)
-            .append(" contains a byte[] that cannot be deserialized due to the following exception");
+        builder.append(this).append(": Attribute named ").append(name).append(" contains a byte[] that cannot be deserialized due to the following exception");
         ((DeltaSessionManager) getManager()).getLogger().warn(builder.toString(), e);
       }
       if (this.preferDeserializedForm) {
@@ -400,9 +395,9 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
   }
 
   public void commit() {
-    if (!isValidInternal()) throw new IllegalStateException("commit: Session " + getId() +
-        " already invalidated");
-//          (STRING_MANAGER.getString("deltaSession.commit.ise", getId()));
+    if (!isValidInternal())
+      throw new IllegalStateException("commit: Session " + getId() + " already invalidated");
+    //          (STRING_MANAGER.getString("deltaSession.commit.ise", getId()));
 
     synchronized (this.changeLock) {
       // Jens - there used to be a check to only perform this if the queue is
@@ -410,8 +405,7 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
       // will be updated even when no attributes have been changed.
       DeltaSessionManager mgr = (DeltaSessionManager) this.manager;
       if (this.enableGatewayDeltaReplication && mgr.isPeerToPeer()) {
-        setCurrentGatewayDeltaEvent(
-            new DeltaSessionAttributeEventBatch(this.sessionRegionName, this.id, this.eventQueue));
+        setCurrentGatewayDeltaEvent(new DeltaSessionAttributeEventBatch(this.sessionRegionName, this.id, this.eventQueue));
       }
       this.hasDelta = true;
       this.applyRemotely = true;
@@ -545,7 +539,7 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
   @Override
   public int getSizeInBytes() {
     int size = 0;
-    for (Enumeration<String> e = getAttributeNames(); e.hasMoreElements(); ) {
+    for (Enumeration<String> e = getAttributeNames(); e.hasMoreElements();) {
       // Don't use this.getAttribute() because we don't want to deserialize
       // the value.
       Object value = super.getAttribute(e.nextElement());
@@ -557,11 +551,11 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
     return size;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected Map<String, byte[]> getSerializedAttributes() {
     // Iterate the values and serialize them if necessary before sending them to the server. This makes the application classes unnecessary on the server.
     Map<String, byte[]> serializedAttributes = new ConcurrentHashMap<String, byte[]>();
-    for (Iterator i = this.attributes.entrySet().iterator(); i.hasNext(); ) {
+    for (Iterator i = this.attributes.entrySet().iterator(); i.hasNext();) {
       Map.Entry<String, Object> entry = (Map.Entry<String, Object>) i.next();
       Object value = entry.getValue();
       byte[] serializedValue = value instanceof byte[] ? (byte[]) value : serialize(value);
@@ -576,10 +570,7 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
       serializedValue = BlobHelper.serializeToBlob(obj);
     } catch (IOException e) {
       StringBuilder builder = new StringBuilder();
-      builder.append(this)
-          .append(": Object ")
-          .append(obj)
-          .append(" cannot be serialized due to the following exception");
+      builder.append(this).append(": Object ").append(obj).append(" cannot be serialized due to the following exception");
       ((DeltaSessionManager) getManager()).getLogger().warn(builder.toString(), e);
     }
     return serializedValue;
@@ -587,16 +578,6 @@ public class DeltaSession extends StandardSession implements DataSerializable, D
 
   @Override
   public String toString() {
-    return new StringBuilder().append("DeltaSession[")
-        .append("id=")
-        .append(getId())
-        .append("; context=")
-        .append(this.contextName)
-        .append("; sessionRegionName=")
-        .append(this.sessionRegionName)
-        .append("; operatingRegionName=")
-        .append(getOperatingRegion() == null ? "unset" : getOperatingRegion().getFullPath())
-        .append("]")
-        .toString();
+    return new StringBuilder().append("DeltaSession[").append("id=").append(getId()).append("; context=").append(this.contextName).append("; sessionRegionName=").append(this.sessionRegionName).append("; operatingRegionName=").append(getOperatingRegion() == null ? "unset" : getOperatingRegion().getFullPath()).append("]").toString();
   }
 }

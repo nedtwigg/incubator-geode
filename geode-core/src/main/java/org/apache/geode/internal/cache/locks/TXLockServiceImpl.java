@@ -41,82 +41,72 @@ public class TXLockServiceImpl extends TXLockService {
 
   /** Transaction lock requests never timeout */
   private static long TIMEOUT_MILLIS = -1;
-  
+
   /** Transaction lock leases never expire */
   private static long LEASE_MILLIS = -1;
-  
+
   // -------------------------------------------------------------------------
   //   Constructor and instance variables
   // -------------------------------------------------------------------------
-  
+
   /** Instance of dlock service to use */
   private DLockService dlock;
 
-  /** List of active txLockIds */  
+  /** List of active txLockIds */
   protected List txLockIdList = new ArrayList();
-  
+
   /** 
    * True if grantor recovery is in progress; used to keep <code>release</code> 
    * from waiting for grantor.
    * TODO: this boolean can probably be removed... it was insufficient and 
    * new fixes for bug 38763 have the side effect of making this boolean 
    * obsolete (verify before removal!)
-   */  
+   */
   private volatile boolean recovering = false;
-  
+
   /** 
    * Read locks are held while any <code>txLock</code> is held; write lock is
    * held during grantor recovery.
    */
   private final StoppableReentrantReadWriteLock recoveryLock;
-  
+
   /** The distributed system for cancellation checks. */
   private final InternalDistributedSystem system;
 
   /** Constructs new instance of transaction lock service */
   TXLockServiceImpl(String name) {
-    InternalDistributedSystem sys = 
-        InternalDistributedSystem.getAnyInstance();
+    InternalDistributedSystem sys = InternalDistributedSystem.getAnyInstance();
     if (sys == null) {
       throw new IllegalStateException(LocalizedStrings.TXLockServiceImpl_TXLOCKSERVICE_CANNOT_BE_CREATED_UNTIL_CONNECTED_TO_DISTRIBUTED_SYSTEM.toLocalizedString());
     }
     sys.getCancelCriterion().checkCancelInProgress(null);
     this.system = sys;
-    
-    this.recoveryLock = 
-        new StoppableReentrantReadWriteLock(sys.getCancelCriterion());
-    
-    this.dlock = (DLockService) DLockService.create(
-        name, 
-        sys, 
-        true /*distributed*/, 
-        true /*destroyOnDisconnect*/,
-        true /*automateFreeResources*/);
-        
-    this.dlock.setDLockRecoverGrantorMessageProcessor(
-        new TXRecoverGrantorMessageProcessor());
-    
-    this.dlock.setDLockLessorDepartureHandler(
-        new TXLessorDepartureHandler());
+
+    this.recoveryLock = new StoppableReentrantReadWriteLock(sys.getCancelCriterion());
+
+    this.dlock = (DLockService) DLockService.create(name, sys, true /*distributed*/, true /*destroyOnDisconnect*/, true /*automateFreeResources*/);
+
+    this.dlock.setDLockRecoverGrantorMessageProcessor(new TXRecoverGrantorMessageProcessor());
+
+    this.dlock.setDLockLessorDepartureHandler(new TXLessorDepartureHandler());
   }
-  
+
   // -------------------------------------------------------------------------
   //   Instance methods
   // -------------------------------------------------------------------------
-  
+
   @Override
   public boolean isLockGrantor() {
     return this.dlock.isLockGrantor();
   }
-  
+
   @Override
   public void becomeLockGrantor() {
     this.dlock.becomeLockGrantor();
   }
-  
+
   @Override
-  public TXLockId txLock(List regionLockReqs, Set txParticipants)
-  throws CommitConflictException {
+  public TXLockId txLock(List regionLockReqs, Set txParticipants) throws CommitConflictException {
     if (regionLockReqs == null) {
       throw new IllegalArgumentException(LocalizedStrings.TXLockServiceImpl_REGIONLOCKREQS_MUST_NOT_BE_NULL.toLocalizedString());
     }
@@ -124,7 +114,7 @@ public class TXLockServiceImpl extends TXLockService {
     if (participants == null) {
       participants = Collections.EMPTY_SET;
     }
-    
+
     boolean gotLocks = false;
     TXLockId txLockId = null;
     try {
@@ -133,27 +123,23 @@ public class TXLockServiceImpl extends TXLockService {
         this.txLockIdList.add(txLockId);
       }
       TXLockBatch batch = new TXLockBatch(txLockId, regionLockReqs, participants);
-      
+
       logger.debug("[TXLockServiceImpl.txLock] acquire try-locks for {}", batch);
-      
+
       // TODO: get a readWriteLock to make the following block atomic...
       Object[] keyIfFail = new Object[1];
       gotLocks = this.dlock.acquireTryLocks(batch, TIMEOUT_MILLIS, LEASE_MILLIS, keyIfFail);
       if (gotLocks) { // ...otherwise race can occur between tryLocks and readLock
         acquireRecoveryReadLock();
-      }
-      else if (keyIfFail[0] != null) {
-        throw new CommitConflictException(
-          LocalizedStrings.TXLockServiceImpl_CONCURRENT_TRANSACTION_COMMIT_DETECTED_0.toLocalizedString(keyIfFail[0]));
-      }
-      else {
+      } else if (keyIfFail[0] != null) {
+        throw new CommitConflictException(LocalizedStrings.TXLockServiceImpl_CONCURRENT_TRANSACTION_COMMIT_DETECTED_0.toLocalizedString(keyIfFail[0]));
+      } else {
         throw new CommitConflictException(LocalizedStrings.TXLockServiceImpl_FAILED_TO_REQUEST_TRY_LOCKS_FROM_GRANTOR_0.toLocalizedString(this.dlock.getLockGrantorId()));
       }
 
       logger.debug("[TXLockServiceImpl.txLock] gotLocks is {}, returning txLockId:{}", gotLocks, txLockId);
       return txLockId;
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       logger.debug("[TXLockServiceImpl.txLock] was interrupted", e);
       if (gotLocks) {
@@ -187,39 +173,30 @@ public class TXLockServiceImpl extends TXLockService {
       if (this.dlock.isLockGrantor()) {
         // Don't need to send a message (or wait for a reply)
         // logger.info("DEBUG: [TXLockServiceImpl.updateParticipants] this VM is the Grantor");
-        TXLockUpdateParticipantsMessage.updateParticipants(this.dlock,
-                                                           txLockId, 
-                                                           updatedParticipants);
-      } 
-      else { // not lock grantor
+        TXLockUpdateParticipantsMessage.updateParticipants(this.dlock, txLockId, updatedParticipants);
+      } else { // not lock grantor
         LockGrantorId lockGrantorId = txLockId.getLockGrantorId();
-        if (lockGrantorId == null ||
-            !this.dlock.isLockGrantorId(lockGrantorId)) {
+        if (lockGrantorId == null || !this.dlock.isLockGrantorId(lockGrantorId)) {
           return; // grantor is gone so we cannot update him
         }
-        InternalDistributedMember grantorId = 
-            lockGrantorId.getLockGrantorMember();
-          
+        InternalDistributedMember grantorId = lockGrantorId.getLockGrantorMember();
+
         // logger.info("DEBUG: [TXLockServiceImpl.updateParticipants] sending update message to Grantor " + grantorId);
-        ReplyProcessor21 processor = 
-          new ReplyProcessor21(this.dlock.getDistributionManager(), grantorId);
-        TXLockUpdateParticipantsMessage dlup = 
-          new TXLockUpdateParticipantsMessage(txLockId, this.dlock.getName(), 
-                                              updatedParticipants, processor.getProcessorId());
+        ReplyProcessor21 processor = new ReplyProcessor21(this.dlock.getDistributionManager(), grantorId);
+        TXLockUpdateParticipantsMessage dlup = new TXLockUpdateParticipantsMessage(txLockId, this.dlock.getName(), updatedParticipants, processor.getProcessorId());
         dlup.setRecipient(grantorId);
         this.dlock.getDistributionManager().putOutgoing(dlup);
         // for() loop removed for bug 36983 - you can't loop on waitForReplies()
-          this.dlock.getDistributionManager().getCancelCriterion().checkCancelInProgress(null);
-          try {
-            processor.waitForRepliesUninterruptibly();
-          }
-          catch (ReplyException e) {
-            e.handleAsUnexpected();
-          }
+        this.dlock.getDistributionManager().getCancelCriterion().checkCancelInProgress(null);
+        try {
+          processor.waitForRepliesUninterruptibly();
+        } catch (ReplyException e) {
+          e.handleAsUnexpected();
+        }
       } // not lock grantor
     } // not recovering
   }
-  
+
   @Override
   public void release(TXLockId txLockId) {
     synchronized (this.txLockIdList) {
@@ -239,7 +216,7 @@ public class TXLockServiceImpl extends TXLockService {
       releaseRecoveryReadLock();
     }
   }
-  
+
   @Override
   public boolean isDestroyed() {
     return this.dlock.isDestroyed() || this.system.getCancelCriterion().isCancelInProgress();
@@ -248,22 +225,22 @@ public class TXLockServiceImpl extends TXLockService {
   // -------------------------------------------------------------------------
   //   Internal implementation methods
   // -------------------------------------------------------------------------
-  
+
   /** Delays grantor recovery replies until finished with locks */
   void acquireRecoveryWriteLock() throws InterruptedException {
     this.recoveryLock.writeLock().lockInterruptibly();
     this.recovering = true;
   }
-  
+
   void releaseRecoveryWriteLock() {
     this.recoveryLock.writeLock().unlock();
     this.recovering = false;
   }
-  
+
   private void acquireRecoveryReadLock() throws InterruptedException {
     this.recoveryLock.readLock().lockInterruptibly();
   }
-  
+
   private void releaseRecoveryReadLock() {
     this.recoveryLock.readLock().unlock();
   }
@@ -272,12 +249,11 @@ public class TXLockServiceImpl extends TXLockService {
   public DLockService getInternalDistributedLockService() {
     return this.dlock;
   }
-  
+
   /** Destroys the underlying lock service in this member */
   @Override
   void basicDestroy() {
     this.dlock.destroyAndRemove();
   }
- 
-}
 
+}

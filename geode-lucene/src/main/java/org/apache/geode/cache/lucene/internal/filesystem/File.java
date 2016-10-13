@@ -37,7 +37,7 @@ import org.apache.geode.internal.Version;
  * A file that is stored in a gemfire region.
  */
 public class File implements DataSerializableFixedID {
-  
+
   private transient FileSystem fileSystem;
   private transient int chunkSize;
 
@@ -47,7 +47,7 @@ public class File implements DataSerializableFixedID {
   long created = System.currentTimeMillis();
   long modified = created;
   UUID id = UUID.randomUUID();
-  
+
   /**
    * Constructor for serialization only
    */
@@ -56,7 +56,7 @@ public class File implements DataSerializableFixedID {
 
   File(final FileSystem fileSystem, final String name) {
     setFileSystem(fileSystem);
-    
+
     this.name = name;
   }
 
@@ -141,8 +141,7 @@ public class File implements DataSerializableFixedID {
   }
 
   @Override
-  public void fromData(DataInput in)
-      throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     name = DataSerializer.readString(in);
     length = in.readLong();
     chunks = in.readInt();
@@ -153,17 +152,14 @@ public class File implements DataSerializableFixedID {
     id = new UUID(high, low);
   }
 
-
   /**
    * Export this to a {@link java.io.File}
    */
-  public void export(final java.io.File exportLocation)
-  {
+  public void export(final java.io.File exportLocation) {
     java.io.File targetFile = new java.io.File(exportLocation, getName());
     try {
       Files.copy(getInputStream(), targetFile.toPath());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new InternalGemFireError("Could not export file " + getName(), e);
     }
   }

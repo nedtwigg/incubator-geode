@@ -26,20 +26,19 @@ import java.io.Serializable;
  * 
  */
 public class LI implements Serializable {
-  
+
   private static final long serialVersionUID = -6014738350371493969L;
-  
+
   public final String className;
   public final int identityHashCode;
   private StackTraceElement lockedStackFrame;
-  
+
   public LI(String className, int identityHashCode) {
     this.className = className;
     this.identityHashCode = identityHashCode;
   }
-  
-  public LI(String className, int identityHashCode,
-      StackTraceElement lockedStackFrame) {
+
+  public LI(String className, int identityHashCode, StackTraceElement lockedStackFrame) {
     this.lockedStackFrame = lockedStackFrame;
     this.className = className;
     this.identityHashCode = identityHashCode;
@@ -52,7 +51,7 @@ public class LI implements Serializable {
   public int getIdentityHashCode() {
     return identityHashCode;
   }
-  
+
   //This comes from monitor info. It will null if the lock is 
   //not a monitor.
   public StackTraceElement getLockedStackFrame() {

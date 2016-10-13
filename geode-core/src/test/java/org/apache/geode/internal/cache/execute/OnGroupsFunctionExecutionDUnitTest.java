@@ -82,16 +82,16 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
 
     @Override
     public void execute(FunctionContext context) {
-      LogWriterUtils.getLogWriter().fine("SWAP:1:executing OnGroupsFunction:"+invocationCount);
+      LogWriterUtils.getLogWriter().fine("SWAP:1:executing OnGroupsFunction:" + invocationCount);
       InternalDistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
       synchronized (OnGroupsFunction.class) {
-    	  invocationCount++;
+        invocationCount++;
       }
       ArrayList<String> l = (ArrayList<String>) context.getArguments();
       if (l != null) {
         assertFalse(Collections.disjoint(l, ds.getDistributedMember().getGroups()));
       }
-      if(hasResult()) {
+      if (hasResult()) {
         context.getResultSender().lastResult(Boolean.TRUE);
       }
     }
@@ -101,7 +101,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
       return Id;
     }
   }
-  
+
   private void initVM(VM vm, final String groups, final String regionName, final boolean startServer) {
     vm.invoke(new SerializableCallable() {
       @Override
@@ -145,11 +145,11 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
       @Override
       public Object call() throws Exception {
         OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
-        
+
         // assert succeeded, reset count
         synchronized (OnGroupsFunction.class) {
-        	assertEquals(count, f.invocationCount);
-        	f.invocationCount = 0;
+          assertEquals(count, f.invocationCount);
+          f.invocationCount = 0;
         }
         return null;
       }
@@ -161,10 +161,10 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
       @Override
       public Object call() throws Exception {
         OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
-        int count  = 0 ;
+        int count = 0;
         synchronized (OnGroupsFunction.class) {
-        	count = f.invocationCount;
-        	f.invocationCount = 0;
+          count = f.invocationCount;
+          f.invocationCount = 0;
         }
         return count;
       }
@@ -178,9 +178,9 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
         int count = 0;
         synchronized (OnGroupsFunction.class) {
-        	count = f.invocationCount;
-		    }
-        
+          count = f.invocationCount;
+        }
+
         return count;
       }
     });
@@ -192,8 +192,8 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
       public Object call() throws Exception {
         OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
         synchronized (OnGroupsFunction.class) {
-        	f.invocationCount = 0;
-		    }
+          f.invocationCount = 0;
+        }
         return null;
       }
     });
@@ -214,17 +214,17 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     initVM(vm0, "g0,gm", null, false);
     initVM(vm1, "g1", null, false);
     initVM(vm2, "g0,g1", null, false);
-    
+
     if (registerFunction) {
       registerFunction(vm0);
       registerFunction(vm1);
       registerFunction(vm2);
     }
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -250,7 +250,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     verifyAndResetInvocationCount(vm0, 1);
     verifyAndResetInvocationCount(vm1, 0);
     verifyAndResetInvocationCount(vm2, 0);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -271,7 +271,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     verifyAndResetInvocationCount(vm0, 1);
     verifyAndResetInvocationCount(vm1, 0);
     verifyAndResetInvocationCount(vm2, 1);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -291,7 +291,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     verifyAndResetInvocationCount(vm0, 0);
     verifyAndResetInvocationCount(vm1, 1);
     verifyAndResetInvocationCount(vm2, 1);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -299,7 +299,8 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         InternalDistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
         Execution e = FunctionService.onMembers("g0", "g1");
         ArrayList<String> args = new ArrayList<String>();
-        args.add("g0");args.add("g1");
+        args.add("g0");
+        args.add("g1");
         e = e.withArgs(args);
         if (registerFunction) {
           e.execute(OnGroupsFunction.Id).getResult();
@@ -320,7 +321,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     initVM(vm0, "g0,gm", null, false);
     initVM(vm1, "g1", null, false);
     initVM(vm2, "g0,g1", null, false);
@@ -361,7 +362,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     verifyAndResetInvocationCount(vm1, 0);
     verifyAndResetInvocationCount(vm2, 0);
   }
-  
+
   static class OnGroupMultiResultFunction extends FunctionAdapter {
     private static final long serialVersionUID = 8190290175486881994L;
     public static final String Id = "OnGroupMultiResultFunction";
@@ -369,7 +370,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     @Override
     public void execute(FunctionContext context) {
       // send 5 1s
-      for (int i=0; i<4; i++) {
+      for (int i = 0; i < 4; i++) {
         context.getResultSender().sendResult(1);
       }
       context.getResultSender().lastResult(1);
@@ -388,11 +389,11 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     final String regionName = getName();
-    
+
     initVM(vm0, "g0,mg", regionName, false);
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1", regionName, false);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -400,14 +401,14 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         Execution e = FunctionService.onMembers("mg");
         ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
         int sum = 0;
-        for (int i=0; i<l.size(); i++) {
+        for (int i = 0; i < l.size(); i++) {
           sum += l.get(i);
         }
         assertEquals(5, sum);
         return null;
       }
     });
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -415,14 +416,14 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         Execution e = FunctionService.onMembers("g0");
         ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
         int sum = 0;
-        for (int i=0; i<l.size(); i++) {
+        for (int i = 0; i < l.size(); i++) {
           sum += l.get(i);
         }
         assertEquals(10, sum);
         return null;
       }
     });
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -430,7 +431,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         Execution e = FunctionService.onMembers("g0", "g1");
         ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
         int sum = 0;
-        for (int i=0; i<l.size(); i++) {
+        for (int i = 0; i < l.size(); i++) {
           sum += l.get(i);
         }
         assertEquals(15, sum);
@@ -486,21 +487,21 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
   }
 
   @Test
-  public void testP2PException () {
+  public void testP2PException() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     final String regionName = getName();
-    
+
     //The test function deliberately throws a null pointer exception.
     //which is logged.
     IgnoredException.addIgnoredException(NullPointerException.class.getSimpleName());
-    
+
     initVM(vm0, "g0,mg", regionName, false);
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -515,7 +516,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         } catch (FunctionException ex) {
           assertTrue(ex.getCause() instanceof NullPointerException);
         }
-        
+
         Execution e1 = FunctionService.onMembers("g1");
         e1 = e1.withArgs(args);
         try {
@@ -524,7 +525,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         } catch (FunctionException ex) {
           assertTrue(ex.getCause() instanceof NullPointerException);
         }
-        
+
         // fail on only one member
         Execution e2 = FunctionService.onMembers("g1");
         args.add("g2");
@@ -547,11 +548,11 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     final String regionName = getName();
-    
+
     initVM(vm0, "g0,mg", regionName, false);
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -578,11 +579,11 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     final String regionName = getName();
-    
+
     initVM(vm0, "g0,mg", regionName, false);
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -610,11 +611,11 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     final String regionName = getName();
-    
+
     initVM(vm0, "g0,mg", regionName, false);
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
-    
+
     vm0.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -624,7 +625,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         args.add("shutdown");
         args.add("g2");
         e1 = e1.withArgs(args);
-        ((AbstractExecution)e1).setIgnoreDepartedMembers(true);
+        ((AbstractExecution) e1).setIgnoreDepartedMembers(true);
         ArrayList l = (ArrayList) e1.execute(new OnGroupsExceptionFunction()).getResult();
         assertEquals(2, l.size());
         if (l.get(0) instanceof FunctionInvocationTargetException) {
@@ -667,7 +668,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1", regionName, true);
@@ -738,7 +739,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     verifyAndResetInvocationCount(server0, 1);
     verifyAndResetInvocationCount(server1, 0);
     verifyAndResetInvocationCount(server2, 0);
-    
+
     client.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -747,7 +748,8 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         Execution e = InternalFunctionService.onServers(c, "g0", "g1");
         if (withArgs) {
           ArrayList<String> args = new ArrayList<String>();
-          args.add("g0");args.add("g1");
+          args.add("g0");
+          args.add("g1");
           e = e.withArgs(args);
         }
         if (register) {
@@ -755,7 +757,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         } else {
           e.execute(new OnGroupsFunction()).getResult();
         }
-        return null;    
+        return null;
       }
     });
     verifyAndResetInvocationCount(server0, 1);
@@ -772,7 +774,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1", regionName, true);
@@ -800,7 +802,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         Execution e = InternalFunctionService.onServers(c, "g0");
         ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
         int sum = 0;
-        for (int i=0; i<l.size(); i++) {
+        for (int i = 0; i < l.size(); i++) {
           sum += l.get(i);
         }
         assertEquals(10, sum);
@@ -816,14 +818,14 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         Execution e = InternalFunctionService.onServers(c, "mg");
         ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
         int sum = 0;
-        for (int i=0; i<l.size(); i++) {
+        for (int i = 0; i < l.size(); i++) {
           sum += l.get(i);
         }
         assertEquals(5, sum);
         return null;
       }
     });
-    
+
     client.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -832,7 +834,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         Execution e = InternalFunctionService.onServers(c, "g0", "g1");
         ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
         int sum = 0;
-        for (int i=0; i<l.size(); i++) {
+        for (int i = 0; i < l.size(); i++) {
           sum += l.get(i);
         }
         assertEquals(15, sum);
@@ -850,7 +852,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1,g2", regionName, true);
@@ -877,7 +879,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         IgnoredException ex = IgnoredException.addIgnoredException("No member found");
         try {
           InternalFunctionService.onServer(c, "no such group").execute(new OnGroupsFunction()).getResult();
-         fail("expected exception not thrown");
+          fail("expected exception not thrown");
         } catch (FunctionException e) {
         } finally {
           ex.remove();
@@ -897,25 +899,25 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
       public Object call() throws Exception {
         ClientCache c = ClientCacheFactory.getAnyInstance();
         InternalFunctionService.onServer(c, "g0").execute(new OnGroupsFunction()).getResult();
-        
+
         return null;
       }
     });
-    
+
     verifyAndResetInvocationCount(server0, 1);
     verifyAndResetInvocationCount(server1, 0);
     verifyAndResetInvocationCount(server2, 0);
-    
+
     client.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         ClientCache c = ClientCacheFactory.getAnyInstance();
         InternalFunctionService.onServer(c, "mg", "g1").execute(new OnGroupsFunction()).getResult();
-        
+
         return null;
       }
     });
-    
+
     c0 = getAndResetInvocationCount(server0);
     c1 = getAndResetInvocationCount(server1);
     c2 = getAndResetInvocationCount(server2);
@@ -931,7 +933,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1,g2", regionName, true);
@@ -975,7 +977,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         } catch (FunctionException ex) {
           assertTrue(ex.getCause() instanceof NullPointerException);
         }
-        
+
         Execution e1 = InternalFunctionService.onServers(c, "g1");
         e1 = e1.withArgs(args);
         try {
@@ -984,7 +986,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         } catch (FunctionException ex) {
           assertTrue(ex.getCause() instanceof NullPointerException);
         }
-        
+
         // only one member
         Execution e2 = InternalFunctionService.onServers(c, "g1");
         args.add("g2");
@@ -1009,7 +1011,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1,g2", regionName, true);
@@ -1037,7 +1039,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         ArrayList<String> args = new ArrayList<String>();
         args.add("disconnect");
         e = e.withArgs(args);
-        
+
         IgnoredException.addIgnoredException("FunctionInvocationTargetException");
         try {
           e.execute(new OnGroupsExceptionFunction()).getResult();
@@ -1059,7 +1061,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1,g2", regionName, true);
@@ -1109,7 +1111,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1,g2", regionName, true);
@@ -1138,9 +1140,9 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         args.add("disconnect");
         args.add("g2");
         e = e.withArgs(args);
-        ((AbstractExecution)e).setIgnoreDepartedMembers(true);
+        ((AbstractExecution) e).setIgnoreDepartedMembers(true);
         ArrayList l = (ArrayList) e.execute(new OnGroupsExceptionFunction()).getResult();
-        LogWriterUtils.getLogWriter().info("SWAP:result:"+l);
+        LogWriterUtils.getLogWriter().info("SWAP:result:" + l);
         assertEquals(2, l.size());
         if (l.get(0) instanceof Throwable) {
           assertTrue((Boolean) l.get(1));
@@ -1159,6 +1161,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     public boolean hasResult() {
       return false;
     }
+
     @Override
     public boolean isHA() {
       return false;
@@ -1177,7 +1180,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     VM client = host.getVM(3);
     VM locator = Host.getLocator();
     final String regionName = getName();
-    
+
     initVM(server0, "mg,g0", regionName, true);
     initVM(server1, "g1", regionName, true);
     initVM(server2, "g0,g1", regionName, true);
@@ -1215,6 +1218,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         int c2 = getInvocationCount(server2);
         return (c0 + c1 + c2) == 2;
       }
+
       @Override
       public String description() {
         return "OnGroupsNoAck invocation count mismatch";
@@ -1245,6 +1249,7 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
         int c2 = getInvocationCount(server2);
         return (c0 + c1 + c2) == 1;
       }
+
       @Override
       public String description() {
         return "OnGroupsNoAck invocation count mismatch";

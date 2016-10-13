@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.internal;
 
 import org.apache.geode.distributed.internal.DistributionConfig;
@@ -62,15 +62,17 @@ public final class PureJavaMode {
     isPure = tmpIsPure;
     is64Bit = SharedLibrary.is64Bit();
     String osName = System.getProperty("os.name", "unknown");
-    osStatsAreAvailable = osName.startsWith("Linux") || ! isPure; 
+    osStatsAreAvailable = osName.startsWith("Linux") || !isPure;
   }
 
   public final static boolean isPure() {
     return isPure;
   }
+
   public final static boolean is64Bit() {
     return is64Bit;
   }
+
   /**
    * Linux has OsStats even in PureJava mode but other platforms
    * require the native code to provide OS Statistics.

@@ -35,14 +35,11 @@ public class GatewayReceiverClusterStatsMonitor {
 
   private static final String EVENTS_RECEIVED_RATE = "EventsReceivedRate";
 
-
-
   private StatsAggregator aggregator;
 
   private Map<String, Class<?>> typeMap;
 
-  public void aggregate(FederationComponent newState,
-      FederationComponent oldState) {
+  public void aggregate(FederationComponent newState, FederationComponent oldState) {
     aggregator.aggregate(newState, oldState);
   }
 
@@ -60,7 +57,6 @@ public class GatewayReceiverClusterStatsMonitor {
 
   }
 
-
   public float getGatewayReceiverCreateRequestsRate() {
     return aggregator.getFloatValue(CREATE_REQUEST_RATE);
   }
@@ -72,6 +68,7 @@ public class GatewayReceiverClusterStatsMonitor {
   public float getGatewayReceiverUpdateRequestsRate() {
     return aggregator.getFloatValue(UPDATE_REQUEST_RATE);
   }
+
   public float getGatewayReceiverEventsReceivedRate() {
     return aggregator.getFloatValue(EVENTS_RECEIVED_RATE);
   }

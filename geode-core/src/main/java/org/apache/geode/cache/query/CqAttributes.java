@@ -28,7 +28,7 @@ package org.apache.geode.cache.query;
  */
 
 public interface CqAttributes {
-    
+
   /**
    * Get the CqListeners set with the CQ.
    * Returns all the Listener associated with this CQ.
@@ -36,7 +36,7 @@ public interface CqAttributes {
    * @return CQListener[] array of CqListner
    */
   public CqListener[] getCqListeners();
-  
+
   /**
    * Get the CqListener set with the CQ.
    * Returns the CqListener associated with the CQ. 
@@ -45,5 +45,5 @@ public interface CqAttributes {
    * @return CqListener Object, returns null if there is no CqListener.      
    */
   public CqListener getCqListener();
-   
+
 }

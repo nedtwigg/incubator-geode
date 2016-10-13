@@ -27,28 +27,27 @@ public class ANSIHandler {
   private static ANSIHandler instance;
 
   private boolean isAnsiEnabled;
-  
+
   public ANSIHandler(boolean isAnsiEnabled) {
     this.isAnsiEnabled = isAnsiEnabled;
   }
-  
+
   public static ANSIHandler getInstance(boolean isAnsiSupported) {
     if (instance == null) {
       instance = new ANSIHandler(isAnsiSupported);
     }
     return instance;
   }
-  
+
   public boolean isAnsiEnabled() {
     return isAnsiEnabled;
   }
 
-  public String decorateString(String input, ANSIStyle...styles) {
+  public String decorateString(String input, ANSIStyle... styles) {
     String decoratedInput = input;
-    
+
     if (isAnsiEnabled()) {
       ANSIBuffer ansiBuffer = ANSIBuffer.getANSIBuffer();
-
 
       for (ANSIStyle ansiStyle : styles) {
         switch (ansiStyle) {
@@ -89,24 +88,14 @@ public class ANSIHandler {
           break;
         }
       }
-      
+
       decoratedInput = ansiBuffer.toString();
     }
-    
+
     return decoratedInput;
   }
-  
+
   public static enum ANSIStyle {
-    RED, 
-    BLUE, 
-    GREEN, 
-    BLACK, 
-    YELLOW, 
-    MAGENTA, 
-    CYAN, 
-    BOLD, 
-    UNDERSCORE, 
-    BLINK, 
-    REVERSE;   
+    RED, BLUE, GREEN, BLACK, YELLOW, MAGENTA, CYAN, BOLD, UNDERSCORE, BLINK, REVERSE;
   }
 }

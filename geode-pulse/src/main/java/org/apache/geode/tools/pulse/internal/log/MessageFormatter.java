@@ -48,8 +48,7 @@ public class MessageFormatter extends Formatter {
 
   @Override
   public String format(LogRecord record) {
-    DateFormat df = new SimpleDateFormat(Repository.get().getPulseConfig()
-        .getLogDatePattern());
+    DateFormat df = new SimpleDateFormat(Repository.get().getPulseConfig().getLogDatePattern());
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
 

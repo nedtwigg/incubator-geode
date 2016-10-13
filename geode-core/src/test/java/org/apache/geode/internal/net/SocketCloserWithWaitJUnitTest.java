@@ -31,9 +31,7 @@ public class SocketCloserWithWaitJUnitTest extends SocketCloserJUnitTest {
 
   @Override
   protected SocketCloser createSocketCloser() {
-    return new SocketCloser(
-        SocketCloser.ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS,
-        1, // max threads
+    return new SocketCloser(SocketCloser.ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS, 1, // max threads
         1, TimeUnit.NANOSECONDS);
   }
 }

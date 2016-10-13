@@ -27,99 +27,94 @@ import org.apache.geode.distributed.DistributedMember;
  * @since GemFire 5.5
  * 
  */
-public class ServerQueueStatus
-{
+public class ServerQueueStatus {
   /** queueSize of HARegionQueue for this client */
   private int qSize = 0;
   /** Endpoint type for this endpoint*/
-  private byte epType = (byte)0 ;
+  private byte epType = (byte) 0;
   private DistributedMember memberId = null;
   /** size of the PDX  registry on the server. Currently only set for gateways */
   private int pdxSize = 0;
-  
+
   /**
    * Default constructor 
    * Called when connectionsPerServer=0
-   */  
-  public ServerQueueStatus(DistributedMember memberId){
-    this((byte)0,0,memberId);
+   */
+  public ServerQueueStatus(DistributedMember memberId) {
+    this((byte) 0, 0, memberId);
   }
+
   /**
    * Constructor 
    * Called when connectionsPerServer is nto equal to 0
    * @param epType
    * @param qSize
    */
-  public ServerQueueStatus(byte epType, int qSize,DistributedMember memberId){
+  public ServerQueueStatus(byte epType, int qSize, DistributedMember memberId) {
     this.qSize = qSize;
-    this.epType = epType ;
+    this.epType = epType;
     this.memberId = memberId;
- 
+
   }
-  
+
   /**
    * returns true if the endpoint is primary
    * @return epType
    */
-  public boolean isPrimary(){
-    return this.epType == (byte)2 ;
+  public boolean isPrimary() {
+    return this.epType == (byte) 2;
   }
+
   /**
    * returns true if the endpoint is redundant
    * @return epType
    */
-  public boolean isRedundant(){
-    return this.epType == (byte)1 ;
+  public boolean isRedundant() {
+    return this.epType == (byte) 1;
   }
+
   /**
    * returns true if the endpoint is Non redundant
    * @return epType
    */
-  public boolean isNonRedundant(){
-    return this.epType == (byte)0 ;
+  public boolean isNonRedundant() {
+    return this.epType == (byte) 0;
   }
+
   /**
    * returns qSize of the HARegionQueue for this client 
    * @return qSize
    */
-  public int getServerQueueSize(){
-    return this.qSize ;
+  public int getServerQueueSize() {
+    return this.qSize;
   }
-  
+
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer
-      .append("ServerQueueStatus [")
-      .append("qSize=")
-      .append(this.qSize)
-      .append("; epType=")
-      .append(getTypeAsString())
-      .append("]");
+    buffer.append("ServerQueueStatus [").append("qSize=").append(this.qSize).append("; epType=").append(getTypeAsString()).append("]");
     return buffer.toString();
   }
-  
+
   protected String getTypeAsString() {
     String type = null;
     if (isNonRedundant()) {
       type = "NON_REDUNDANT";
-    }
-    else if (isRedundant()) {
+    } else if (isRedundant()) {
       type = "REDUNDANT";
-    }
-    else {
+    } else {
       type = "PRIMARY";
     }
     return type;
   }
-  
-  
-  
+
   public int getPdxSize() {
     return pdxSize;
   }
+
   public void setPdxSize(int pdxSize) {
     this.pdxSize = pdxSize;
   }
+
   /**
    * The member id of the server we connected to.
    * 

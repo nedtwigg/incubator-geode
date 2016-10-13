@@ -42,8 +42,7 @@ public abstract class SocketUtils {
     if (socket != null) {
       try {
         socket.close();
-      }
-      catch (IOException ignore) {
+      } catch (IOException ignore) {
         return false;
       }
     }
@@ -63,8 +62,7 @@ public abstract class SocketUtils {
     if (serverSocket != null) {
       try {
         serverSocket.close();
-      }
-      catch (IOException ignore) {
+      } catch (IOException ignore) {
         return false;
       }
     }

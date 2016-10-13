@@ -54,8 +54,7 @@ public class ClientHealthMonitoringRegion {
    * @return ClientHealthMonitoringRegion reference.
    */
   public static synchronized Region getInstance(GemFireCacheImpl c) {
-    if (currentInstance != null && currentInstance.getCache() == c 
-        && !c.isClosed()) {
+    if (currentInstance != null && currentInstance.getCache() == c && !c.isClosed()) {
       return currentInstance;
     }
     if (c == null || c.isClosed()) {
@@ -76,8 +75,7 @@ public class ClientHealthMonitoringRegion {
     try {
       AttributesFactory factory = new AttributesFactory();
       factory.setScope(Scope.LOCAL);
-      factory.setEntryTimeToLive(new ExpirationAttributes(
-          ADMIN_REGION_EXPIRY_INTERVAL, ExpirationAction.DESTROY));
+      factory.setEntryTimeToLive(new ExpirationAttributes(ADMIN_REGION_EXPIRY_INTERVAL, ExpirationAction.DESTROY));
       cache.getLogger().fine("ClientHealthMonitoringRegion, setting TTL for entry....");
       factory.addCacheListener(prepareCacheListener());
       factory.setStatisticsEnabled(true);
@@ -87,12 +85,9 @@ public class ClientHealthMonitoringRegion {
       internalArgs.setIsUsedForMetaRegion(true);
       internalArgs.setIsUsedForPartitionedRegionAdmin(false);
 
-      currentInstance = cache.createVMRegion(ADMIN_REGION_NAME, regionAttrs,
-          internalArgs);
-    }
-    catch (Exception ex) {
-      cache.getLoggerI18n().error(LocalizedStrings.
-        ClientHealthMonitoringRegion_ERROR_WHILE_CREATING_AN_ADMIN_REGION, ex);
+      currentInstance = cache.createVMRegion(ADMIN_REGION_NAME, regionAttrs, internalArgs);
+    } catch (Exception ex) {
+      cache.getLoggerI18n().error(LocalizedStrings.ClientHealthMonitoringRegion_ERROR_WHILE_CREATING_AN_ADMIN_REGION, ex);
     }
   }
 

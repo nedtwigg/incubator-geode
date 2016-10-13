@@ -104,8 +104,7 @@ public class MemberRegionsService implements PulseService {
         String diskStoreName = memberRegion.getDiskStoreName();
         if (StringUtils.isNotNullNotEmptyNotWhiteSpace(diskStoreName)) {
           regionJSON.put(this.DISC_STORE_NAME, diskStoreName);
-          regionJSON.put(this.DISC_SYNCHRONOUS,
-              memberRegion.isDiskSynchronous());
+          regionJSON.put(this.DISC_SYNCHRONOUS, memberRegion.isDiskSynchronous());
         } else {
           regionJSON.put(this.DISC_SYNCHRONOUS, this.VALUE_NA);
           regionJSON.put(this.DISC_STORE_NAME, "");

@@ -47,14 +47,11 @@ public class MBeanAggregator implements ProxyListener {
 
   private static final List<Class> distributedMBeanList = new ArrayList<Class>();
 
-
   /**
    * Log writer
    */
 
   protected LogWriterI18n logger;
-  
-  
 
   /**
    * Static list of MBeans which are currently supported for aggregation
@@ -67,7 +64,6 @@ public class MBeanAggregator implements ProxyListener {
     distributedMBeanList.add(GatewayReceiverMXBean.class);
     distributedMBeanList.add(GatewaySenderMXBean.class);
   }
-
 
   /**
    * private instance of SystemManagementService
@@ -88,7 +84,7 @@ public class MBeanAggregator implements ProxyListener {
    * Lock service aggregate handler.
    */
   private LockServiceHandler lockServiceHandler;
-  
+
   /**
    * Cache server aggregate Handler
    */
@@ -104,10 +100,9 @@ public class MBeanAggregator implements ProxyListener {
    */
 
   private GatewaySenderHandler gatewaySenderHandler;
-  
-  
+
   private DistributedSystemBridge distributedSystemBridge;
-  
+
   /**
    * Public constructor.
    * @param distributedSystemBridge
@@ -122,7 +117,6 @@ public class MBeanAggregator implements ProxyListener {
     this.gatewaySenderHandler = new GatewaySenderHandler();
     this.logger = InternalDistributedSystem.getLoggerI18n();
     this.distributedSystemBridge = distributedSystemBridge;
-
 
   }
 
@@ -151,8 +145,7 @@ public class MBeanAggregator implements ProxyListener {
   }
 
   @Override
-  public void afterCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-      FederationComponent newVal) {
+  public void afterCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
     if (!distributedMBeanList.contains(interfaceClass)) {
       return;
     }
@@ -161,8 +154,7 @@ public class MBeanAggregator implements ProxyListener {
   }
 
   @Override
-  public void afterRemoveProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-      FederationComponent oldVal) {
+  public void afterRemoveProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
     if (!distributedMBeanList.contains(interfaceClass)) {
       return;
     }
@@ -171,8 +163,7 @@ public class MBeanAggregator implements ProxyListener {
   }
 
   @Override
-  public void afterUpdateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-      FederationComponent newVal, FederationComponent oldVal) {
+  public void afterUpdateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
     if (!distributedMBeanList.contains(interfaceClass)) {
       return;
     }
@@ -181,14 +172,14 @@ public class MBeanAggregator implements ProxyListener {
   }
 
   @Override
-  public void afterPseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal){
+  public void afterPseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
     if (!distributedMBeanList.contains(interfaceClass)) {
       return;
     }
     AggregateHandler handler = getHandler(interfaceClass);
     handler.handlePseudoCreateProxy(objectName, interfaceClass, proxyObject, newVal);
   }
-  
+
   /**
    * Handler class for CacheServer MBeans only to provide data to Distributed
    * System MBean As of today there wont be any Distributed counterpart of Cache
@@ -198,8 +189,7 @@ public class MBeanAggregator implements ProxyListener {
    */
   private class CacheServerHandler implements AggregateHandler {
 
-    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
+    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
 
       CacheServerMXBean serverProxy = (CacheServerMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.addServerToSystem(objectName, serverProxy, newVal);
@@ -213,15 +203,13 @@ public class MBeanAggregator implements ProxyListener {
     }
 
     @Override
-    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal, FederationComponent oldVal) {
+    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
       distributedSystemBridge.updateCacheServer(objectName, newVal, oldVal);
     }
-    
+
     @Override
-    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
-      
+    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
+
     }
   }
 
@@ -234,36 +222,30 @@ public class MBeanAggregator implements ProxyListener {
    */
   private class GatewayReceiverHandler implements AggregateHandler {
 
-    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
+    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
 
       GatewayReceiverMXBean proxy = (GatewayReceiverMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.addGatewayReceiverToSystem(objectName, proxy, newVal);
 
     }
 
-    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent oldVal) {
+    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
       GatewayReceiverMXBean proxy = (GatewayReceiverMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.removeGatewayReceiverFromSystem(objectName, proxy, oldVal);
 
     }
 
     @Override
-    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal, FederationComponent oldVal) {
+    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
       distributedSystemBridge.updateGatewayReceiver(objectName, newVal, oldVal);
     }
-    
+
     @Override
-    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
-      
+    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
+
     }
   }
-  
-  
-  
+
   /**
    * Handler class for GatewayReceiverHandler MBeans only to provide data to Distributed System MBean
    * As of today there wont be any Distributed counterpart of GatewayReceiverHandler MBean
@@ -272,29 +254,25 @@ public class MBeanAggregator implements ProxyListener {
    */
   private class GatewaySenderHandler implements AggregateHandler {
 
-    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
+    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
 
       GatewaySenderMXBean proxy = (GatewaySenderMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.addGatewaySenderToSystem(objectName, proxy, newVal);
     }
 
-    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent oldVal) {
+    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
       GatewaySenderMXBean proxy = (GatewaySenderMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.removeGatewaySenderFromSystem(objectName, proxy, oldVal);
     }
 
     @Override
-    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal, FederationComponent oldVal) {
+    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
       distributedSystemBridge.updateGatewaySender(objectName, newVal, oldVal);
     }
-    
+
     @Override
-    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
-      
+    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
+
     }
   }
 
@@ -305,29 +283,25 @@ public class MBeanAggregator implements ProxyListener {
    */
   private class RegionHandler implements AggregateHandler {
 
-    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
+    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
       RegionMXBean regionProxy = (RegionMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.addRegion(objectName, regionProxy, newVal);
 
     }
 
-    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent oldVal) {
+    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
       RegionMXBean regionProxy = (RegionMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.removeRegion(objectName, regionProxy, oldVal);
     }
 
     @Override
-    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal, FederationComponent oldVal) {
+    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
       distributedSystemBridge.updateRegion(objectName, oldVal, newVal);
     }
-    
+
     @Override
-    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
-      
+    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
+
     }
   }
 
@@ -338,30 +312,26 @@ public class MBeanAggregator implements ProxyListener {
    */
   private class MemberHandler implements AggregateHandler {
 
-    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
+    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
       MemberMXBean memberProxy = (MemberMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.addMemberToSystem(objectName, memberProxy, newVal);
 
     }
 
-    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent oldVal) {
+    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
       MemberMXBean memberProxy = (MemberMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.removeMemberFromSystem(objectName, memberProxy, oldVal);
     }
 
     @Override
-    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal, FederationComponent oldVal) {
+    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
       distributedSystemBridge.updateMember(objectName, newVal, oldVal);
     }
-    
+
     @Override
-    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
+    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
       distributedSystemBridge.updateMember(objectName, newVal, null);
-      
+
     }
   }
 
@@ -372,29 +342,25 @@ public class MBeanAggregator implements ProxyListener {
    */
   private class LockServiceHandler implements AggregateHandler {
 
-    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
+    public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
 
       LockServiceMXBean lockServiceProxy = (LockServiceMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.addLockService(objectName, lockServiceProxy, newVal);
 
     }
 
-    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent oldVal) {
+    public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
       LockServiceMXBean lockServiceProxy = (LockServiceMXBean) interfaceClass.cast(proxyObject);
       distributedSystemBridge.removeLockService(objectName, lockServiceProxy, oldVal);
     }
 
     @Override
-    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal, FederationComponent oldVal) {
+    public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
     }
-    
+
     @Override
-    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-        FederationComponent newVal) {
-      
+    public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
+
     }
   }
 
@@ -411,15 +377,14 @@ public class MBeanAggregator implements ProxyListener {
 
   public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
     // [bruce] does this need to propagate through this bridge object?
-//    distributedSystemBridge.quorumLost(failures, remaining);
+    //    distributedSystemBridge.quorumLost(failures, remaining);
   }
 
   @Override
-  public void memberSuspect(InternalDistributedMember id,
-      InternalDistributedMember whoSuspected, String reason) {
+  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
     distributedSystemBridge.memberSuspect(id, whoSuspected);
   }
-  
+
   @Override
   public void handleNotification(Notification notification) {
     distributedSystemBridge.sendSystemLevelNotification(notification);

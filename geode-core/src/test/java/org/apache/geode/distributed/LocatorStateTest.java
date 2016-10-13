@@ -60,63 +60,53 @@ public class LocatorStateTest {
   public void fromJsonWithEmptyStringThrowsIllegalArgumentException() throws Exception {
     // given: empty string
     String emptyString = "";
-    
+
     // when: passed to fromJson
     verifyException(this).fromJson(emptyString);
-    
+
     // then: throws IllegalArgumentException with cause of GfJsonException
-    assertThat((Exception)caughtException())
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasCauseInstanceOf(GfJsonException.class);
-    
-    assertThat(caughtException().getCause())
-        .isInstanceOf(GfJsonException.class)
-        .hasNoCause();
+    assertThat((Exception) caughtException()).isInstanceOf(IllegalArgumentException.class).hasCauseInstanceOf(GfJsonException.class);
+
+    assertThat(caughtException().getCause()).isInstanceOf(GfJsonException.class).hasNoCause();
   }
-  
+
   @Test
   public void fromJsonWithWhiteSpaceStringThrowsIllegalArgumentException() throws Exception {
     // given: white space string
     String whiteSpaceString = "      ";
-    
+
     // when: passed to fromJson
     verifyException(this).fromJson(whiteSpaceString);
 
     // then: throws IllegalArgumentException with cause of GfJsonException
-    assertThat((Exception)caughtException())
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasCauseInstanceOf(GfJsonException.class);
-    
-    assertThat(caughtException().getCause())
-        .isInstanceOf(GfJsonException.class)
-        .hasNoCause();
+    assertThat((Exception) caughtException()).isInstanceOf(IllegalArgumentException.class).hasCauseInstanceOf(GfJsonException.class);
+
+    assertThat(caughtException().getCause()).isInstanceOf(GfJsonException.class).hasNoCause();
   }
-  
+
   @Test
   public void fromJsonWithNullStringThrowsNullPointerException() throws Exception {
     // given: null string
     String nullString = null;
-    
+
     // when: passed to fromJson
     verifyException(this).fromJson(nullString);
-    
+
     // then: throws NullPointerException
-    assertThat((Exception)caughtException())
-        .isInstanceOf(NullPointerException.class)
-        .hasNoCause();
+    assertThat((Exception) caughtException()).isInstanceOf(NullPointerException.class).hasNoCause();
   }
-  
+
   @Test
   public void fromJsonWithValidJsonStringReturnsLocatorState() throws Exception {
     // given: valid json string
     String jsonString = createStatusJson();
-    
+
     // when: passed to fromJson
     LocatorState value = fromJson(jsonString);
-    
+
     // then: return valid instance of LocatorState
     assertThat(value).isInstanceOf(LocatorState.class);
-    
+
     assertThat(value.getClasspath()).isEqualTo(getClasspath());
     assertThat(value.getGemFireVersion()).isEqualTo(getGemFireVersion());
     assertThat(value.getHost()).isEqualTo(getHost());
@@ -133,7 +123,7 @@ public class LocatorStateTest {
     assertThat(value.getUptime()).isEqualTo(getUptime());
     assertThat(value.getWorkingDirectory()).isEqualTo(getWorkingDirectory());
   }
-  
+
   protected LocatorState fromJson(final String value) {
     return LocatorState.fromJson(value);
   }

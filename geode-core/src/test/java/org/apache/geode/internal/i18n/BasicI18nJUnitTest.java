@@ -37,17 +37,17 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class BasicI18nJUnitTest {
-  
+
   private static final Locale DEFAULT_LOCALE = Locale.getDefault();
   //static final Class DEFAULT_RESOURCEBUNDLE = StringIdResourceBundle_ja.class;
   //static final Class JAPAN_RESOURCEBUNDLE = StringIdResourceBundle_ja.class;
 
-  private static final StringId messageId = (StringId)LocalizedStrings.TESTING_THIS_IS_A_TEST_MESSAGE;
+  private static final StringId messageId = (StringId) LocalizedStrings.TESTING_THIS_IS_A_TEST_MESSAGE;
   private static final String englishMessage = "This is a test message.";
   private static final String japaneseMessage = "msgID " + messageId.id + ": " + "これはテストメッセージである。";
 
   private static final Integer messageArg = new Integer(1);
-  private static final StringId messageIdWithArg = (StringId)LocalizedStrings.TESTING_THIS_MESSAGE_HAS_0_MEMBERS;
+  private static final StringId messageIdWithArg = (StringId) LocalizedStrings.TESTING_THIS_MESSAGE_HAS_0_MEMBERS;
   private static final String englishMessageWithArg = "Please ignore: This message has 1 members.";
   private static final String japaneseMessageWithArg = "msgID " + messageIdWithArg.id + ": Please ignore: このメッセージに 1 メンバーがある。";
   private static final String englishMessageWithArgMissing = "Please ignore: This message has {0} members.";
@@ -103,15 +103,11 @@ public class BasicI18nJUnitTest {
     assertEquals(messageId.toString(), englishMessage);
     assertEquals(messageId.toLocalizedString(), englishMessage);
     assertEquals(messageIdWithArg.toString(messageArg), englishMessageWithArg);
-    assertEquals(messageIdWithArg.toLocalizedString(messageArg),
-                 englishMessageWithArg);
+    assertEquals(messageIdWithArg.toLocalizedString(messageArg), englishMessageWithArg);
     assertEquals(messageIdWithArg.toString(extraArgs), englishMessageWithArg);
-    assertEquals(messageIdWithArg.toLocalizedString(extraArgs),
-                 englishMessageWithArg);
-    assertEquals(messageIdWithArg.toString(missingArgs),
-                 englishMessageWithArgMissing);
-    assertEquals(messageIdWithArg.toLocalizedString(missingArgs),
-                 englishMessageWithArgMissing);
+    assertEquals(messageIdWithArg.toLocalizedString(extraArgs), englishMessageWithArg);
+    assertEquals(messageIdWithArg.toString(missingArgs), englishMessageWithArgMissing);
+    assertEquals(messageIdWithArg.toLocalizedString(missingArgs), englishMessageWithArgMissing);
 
     /**
      * This is assuming that French isn't implemented and will still get the
@@ -124,15 +120,11 @@ public class BasicI18nJUnitTest {
     assertEquals(messageId.toLocalizedString(), englishMessage);
     //Now with a message expecting one argument
     assertEquals(messageIdWithArg.toString(messageArg), englishMessageWithArg);
-    assertEquals(messageIdWithArg.toLocalizedString(messageArg),
-                 englishMessageWithArg);
+    assertEquals(messageIdWithArg.toLocalizedString(messageArg), englishMessageWithArg);
     assertEquals(messageIdWithArg.toString(extraArgs), englishMessageWithArg);
-    assertEquals(messageIdWithArg.toLocalizedString(extraArgs),
-                 englishMessageWithArg);
-    assertEquals(messageIdWithArg.toString(missingArgs),
-                 englishMessageWithArgMissing);
-    assertEquals(messageIdWithArg.toLocalizedString(missingArgs),
-                 englishMessageWithArgMissing);
+    assertEquals(messageIdWithArg.toLocalizedString(extraArgs), englishMessageWithArg);
+    assertEquals(messageIdWithArg.toString(missingArgs), englishMessageWithArgMissing);
+    assertEquals(messageIdWithArg.toLocalizedString(missingArgs), englishMessageWithArgMissing);
 
     /**
      * We no longer bundle the JAPAN localized strings with the product
@@ -149,28 +141,21 @@ public class BasicI18nJUnitTest {
     //Now with a message expecting one argument
     assertEquals(messageIdWithArg.toString(messageArg), englishMessageWithArg);
     if (getActiveResourceBundle().usingRawMode()) {
-      assertEquals(messageIdWithArg.toLocalizedString(messageArg),
-                   englishMessageWithArg);
+      assertEquals(messageIdWithArg.toLocalizedString(messageArg), englishMessageWithArg);
     } else {
-      assertEquals(messageIdWithArg.toLocalizedString(messageArg),
-                   japaneseMessageWithArg);
+      assertEquals(messageIdWithArg.toLocalizedString(messageArg), japaneseMessageWithArg);
     }
     assertEquals(messageIdWithArg.toString(extraArgs), englishMessageWithArg);
     if (getActiveResourceBundle().usingRawMode()) {
-      assertEquals(messageIdWithArg.toLocalizedString(extraArgs),
-                   englishMessageWithArg);
+      assertEquals(messageIdWithArg.toLocalizedString(extraArgs), englishMessageWithArg);
     } else {
-      assertEquals(messageIdWithArg.toLocalizedString(extraArgs),
-                   japaneseMessageWithArg);
+      assertEquals(messageIdWithArg.toLocalizedString(extraArgs), japaneseMessageWithArg);
     }
-    assertEquals(messageIdWithArg.toString(missingArgs),
-                 englishMessageWithArgMissing);
+    assertEquals(messageIdWithArg.toString(missingArgs), englishMessageWithArgMissing);
     if (getActiveResourceBundle().usingRawMode()) {
-      assertEquals(messageIdWithArg.toLocalizedString(missingArgs),
-                   englishMessageWithArgMissing);
+      assertEquals(messageIdWithArg.toLocalizedString(missingArgs), englishMessageWithArgMissing);
     } else {
-      assertEquals(messageIdWithArg.toLocalizedString(missingArgs),
-                   japaneseMessageWithArgMissing);
+      assertEquals(messageIdWithArg.toLocalizedString(missingArgs), japaneseMessageWithArgMissing);
     }
   }
 
@@ -211,27 +196,22 @@ public class BasicI18nJUnitTest {
     //Save all duplicate ids and report them at the end
     final Set<StringId> duplicates = new HashSet<StringId>();
 
-    for(StringId instance : getAllStringIds()) {
-      boolean isUnique = allStringIds.add(((StringId)instance).id);
+    for (StringId instance : getAllStringIds()) {
+      boolean isUnique = allStringIds.add(((StringId) instance).id);
       //Duplicate ids between 0-1023 are allowed since they are duplicated
       //between String bundles to minimize compiler dependencies.
-      if((! isUnique) && ((StringId)instance).id >= 1024) {
-         boolean status = duplicates.add(instance);
-         assertTrue("Failed to add " + instance + "to the list of"
-                    + " duplicates because of duplicate duplicates",
-                    status);
+      if ((!isUnique) && ((StringId) instance).id >= 1024) {
+        boolean status = duplicates.add(instance);
+        assertTrue("Failed to add " + instance + "to the list of" + " duplicates because of duplicate duplicates", status);
       }
     }
-    if(! duplicates.isEmpty()) {
+    if (!duplicates.isEmpty()) {
       StringBuilder err = new StringBuilder();
       err.append("The following duplicate StringIds were found:");
-      for(StringId i : duplicates) {
-        err.append("\n")
-           .append(((StringId)i).id)
-           .append(" : ")
-           .append(i.getRawText());
+      for (StringId i : duplicates) {
+        err.append("\n").append(((StringId) i).id).append(" : ").append(i.getRawText());
       }
-      fail(err.toString() + "\nSearched in "+getStringIdDefiningClasses());
+      fail(err.toString() + "\nSearched in " + getStringIdDefiningClasses());
     }
   }
 
@@ -271,13 +251,13 @@ public class BasicI18nJUnitTest {
    */
   private Set<StringId> getAllStringIds() {
     final Set<StringId> allStringIds = new HashSet<StringId>();
-    for(String className : getStringIdDefiningClasses()) {
+    for (String className : getStringIdDefiningClasses()) {
       try {
         Class<?> c = Class.forName(className);
         Field[] fields = c.getDeclaredFields();
         final String msg = "Found no StringIds in " + className;
         assertTrue(msg, fields.length > 0);
-        for(Field f : fields) {
+        for (Field f : fields) {
           f.setAccessible(true);
           StringId instance = (StringId) f.get(null);
           allStringIds.add(instance);
@@ -285,8 +265,7 @@ public class BasicI18nJUnitTest {
       } catch (ClassNotFoundException cnfe) {
         throw new AssertionError(cnfe.toString(), cnfe);
       } catch (Exception e) {
-        String exMsg = "Reflection attempt failed while attempting to find all"
-                + " StringId instances. ";
+        String exMsg = "Reflection attempt failed while attempting to find all" + " StringId instances. ";
         throw new AssertionError(exMsg + e.toString(), e);
       }
     }
@@ -300,7 +279,7 @@ public class BasicI18nJUnitTest {
   private Set<String> getStringIdDefiningClasses() {
     final Set<String> StringIdDefiningClasses = new LinkedHashSet<String>();
     final String pkg = "org.apache.geode.internal.i18n.";
-//    StringIdDefiningClasses.add(pkg + "ParentLocalizedStrings");
+    //    StringIdDefiningClasses.add(pkg + "ParentLocalizedStrings");
     StringIdDefiningClasses.add(pkg + "LocalizedStrings");
     StringIdDefiningClasses.add("org.apache.geode.management.internal.ManagementStrings");
     return StringIdDefiningClasses;
@@ -316,10 +295,10 @@ public class BasicI18nJUnitTest {
     try {
       Method m = c.getDeclaredMethod("getCurrentLocale");
       m.setAccessible(true);
-      locale = (Locale)m.invoke(null);
+      locale = (Locale) m.invoke(null);
     } catch (Exception e) {
       String msg = "Reflection attempt failed for StringId.getCurrentLocale ";
-      throw new AssertionError( msg + e.toString(), e);
+      throw new AssertionError(msg + e.toString(), e);
     }
     return locale;
   }
@@ -334,7 +313,7 @@ public class BasicI18nJUnitTest {
     try {
       Method m = c.getDeclaredMethod("getActiveResourceBundle");
       m.setAccessible(true);
-      rb = (AbstractStringIdResourceBundle)m.invoke(null);
+      rb = (AbstractStringIdResourceBundle) m.invoke(null);
     } catch (Exception e) {
       String msg = "Reflection attempt failed for StringId.getActiveResourceBundle ";
       throw new AssertionError(msg + e.toString(), e);
@@ -362,48 +341,36 @@ public class BasicI18nJUnitTest {
     }
 
     final AbstractStringIdResourceBundle rb = getActiveResourceBundle();
-    for(StringId instance : getAllStringIds()) {
+    for (StringId instance : getAllStringIds()) {
       String raw = rb.getString(instance);
       String altered = raw.replaceAll("''", "'");
       altered = altered.replaceAll("\\{([0-9]+)[^\\}]*\\}", "$1");
       if (!rb.usingRawMode()) {
-        altered = "msgID " + ((StringId)instance).id + ": " + altered;
+        altered = "msgID " + ((StringId) instance).id + ": " + altered;
       }
       String formatted = null;
       try {
         formatted = instance.toLocalizedString(identityArgs);
-      } catch(IllegalArgumentException iae) {
-        String testName = this.getClass().getName().replaceAll("\\.", "/")
-                + ".class";
-        String exMsg = "Improper message id=" + ((StringId)instance).id + "\n"
-                + "Usually this is caused by an unmatched or nested \"{\"\n"
-                + "Examples:\t\"{0]\" or \"{ {0} }\"\n"
-                + "This is just the first failure, it is in your interest"
-                + " to rebuild and run just this one test.\n"
-                + "build.sh run-java-tests -Djunit.testcase="
-                + testName;
+      } catch (IllegalArgumentException iae) {
+        String testName = this.getClass().getName().replaceAll("\\.", "/") + ".class";
+        String exMsg = "Improper message id=" + ((StringId) instance).id + "\n" + "Usually this is caused by an unmatched or nested \"{\"\n" + "Examples:\t\"{0]\" or \"{ {0} }\"\n" + "This is just the first failure, it is in your interest" + " to rebuild and run just this one test.\n" + "build.sh run-java-tests -Djunit.testcase=" + testName;
         throw new AssertionError(exMsg, iae);
       }
-      if(! altered.equals(formatted)) {
+      if (!altered.equals(formatted)) {
         System.err.println("altered:   " + altered);
         System.err.println("formatted: " + formatted);
         misquoted.add(instance);
       }
     }
-    if(! misquoted.isEmpty()) {
+    if (!misquoted.isEmpty()) {
       StringBuffer err = new StringBuffer();
       err.append("These errors are usually resolved by replacing ");
       err.append("\"'\" with \"''\".\n");
       err.append("If the error is in the non-english version then ");
       err.append("alter the text in StringIdResouceBundle_{lang}.txt.\n");
       err.append("The following misquoted StringIds were found:");
-      for(StringId i : misquoted) {
-        err.append("\n")
-                .append("StringId id=")
-                .append(((StringId)i).id)
-                .append(" : text=\"")
-                .append(i.getRawText())
-                .append("\"");
+      for (StringId i : misquoted) {
+        err.append("\n").append("StringId id=").append(((StringId) i).id).append(" : text=\"").append(i.getRawText()).append("\"");
       }
       fail(err.toString());
     }

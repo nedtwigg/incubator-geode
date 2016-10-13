@@ -41,6 +41,7 @@ public class JmxManagerLocatorRequest implements DataSerializableFixedID {
   public JmxManagerLocatorRequest() {
     super();
   }
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
   }
 
@@ -55,7 +56,7 @@ public class JmxManagerLocatorRequest implements DataSerializableFixedID {
   public String toString() {
     return "JmxManagerLocatorRequest";
   }
-  
+
   private static final JmxManagerLocatorRequest SINGLETON = new JmxManagerLocatorRequest();
 
   /**
@@ -75,9 +76,7 @@ public class JmxManagerLocatorRequest implements DataSerializableFixedID {
    *           if we can not connect to the locator, timeout waiting for a
    *           response, or have trouble communicating with it.
    */
-  public static JmxManagerLocatorResponse send(String locatorHost, int locatorPort, int msTimeout, Map<String, String> sslConfigProps)
-    throws IOException
-  {
+  public static JmxManagerLocatorResponse send(String locatorHost, int locatorPort, int msTimeout, Map<String, String> sslConfigProps) throws IOException {
     Properties distributionConfigProps = new Properties();
     InetAddress networkAddress = InetAddress.getByName(locatorHost);
 
@@ -90,18 +89,15 @@ public class JmxManagerLocatorRequest implements DataSerializableFixedID {
       Object responseFromServer = client.requestToServer(networkAddress, locatorPort, SINGLETON, msTimeout);
 
       return (JmxManagerLocatorResponse) responseFromServer;
-    }
-    catch (ClassNotFoundException unexpected) {
+    } catch (ClassNotFoundException unexpected) {
       throw new IllegalStateException(unexpected);
-    }
-    catch (ClassCastException unexpected) {
+    } catch (ClassCastException unexpected) {
       // FIXME - Abhishek: object read is type "int" instead of
       // JmxManagerLocatorResponse when the Locator is using SSL & the request 
       // didn't use SSL -> this causes ClassCastException. Not sure how to make 
       // locator meaningful message
       throw new IllegalStateException(unexpected);
-    }
-    finally {
+    } finally {
       distributionConfigProps.clear();
     }
   }
@@ -109,6 +105,7 @@ public class JmxManagerLocatorRequest implements DataSerializableFixedID {
   public static JmxManagerLocatorResponse send(String locatorHost, int locatorPort, int msTimeout) throws IOException {
     return send(locatorHost, locatorPort, msTimeout, null);
   }
+
   @Override
   public Version[] getSerializationVersions() {
     // TODO Auto-generated method stub

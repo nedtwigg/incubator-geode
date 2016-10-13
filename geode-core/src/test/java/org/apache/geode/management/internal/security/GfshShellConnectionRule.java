@@ -33,7 +33,7 @@ import org.apache.geode.test.junit.rules.DescribedExternalResource;
  */
 public class GfshShellConnectionRule extends DescribedExternalResource {
 
-  private int jmxPort = 0 ;
+  private int jmxPort = 0;
   private int httpPort = 0;
   private boolean useHttp = false;
   private HeadlessGfsh gfsh;
@@ -54,7 +54,7 @@ public class GfshShellConnectionRule extends DescribedExternalResource {
 
   protected void before(Description description) throws Throwable {
     JMXConnectionConfiguration config = description.getAnnotation(JMXConnectionConfiguration.class);
-    if(config==null)
+    if (config == null)
       return;
 
     CliUtil.isGfshVM = true;
@@ -74,16 +74,15 @@ public class GfshShellConnectionRule extends DescribedExternalResource {
       endpoint = "localhost[" + jmxPort + "]";
       connectCommand.addOption(CliStrings.CONNECT__JMX_MANAGER, endpoint);
     }
-    System.out.println(getClass().getSimpleName()+" using endpoint: "+endpoint);
+    System.out.println(getClass().getSimpleName() + " using endpoint: " + endpoint);
 
     gfsh.executeCommand(connectCommand.toString());
 
     CommandResult result = (CommandResult) gfsh.getResult();
-    if(result.getResultData() instanceof ErrorResultData) {
+    if (result.getResultData() instanceof ErrorResultData) {
       ErrorResultData errorResultData = (ErrorResultData) result.getResultData();
       this.authenticated = !(errorResultData.getErrorCode() == ResultBuilder.ERRORCODE_CONNECTION_ERROR);
-    }
-    else{
+    } else {
       this.authenticated = true;
     }
   }

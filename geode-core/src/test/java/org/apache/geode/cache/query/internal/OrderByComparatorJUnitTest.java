@@ -58,7 +58,7 @@ public class OrderByComparatorJUnitTest {
 
     String queries[] = {
 
-    "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ", };
+        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ", };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
     qs = CacheUtils.getQueryService();
@@ -99,7 +99,7 @@ public class OrderByComparatorJUnitTest {
 
     String queries[] = {
 
-    "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ", };
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ", };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
     qs = CacheUtils.getQueryService();

@@ -16,7 +16,6 @@
  */
 package org.apache.geode.internal.cache.persistence.query.mock;
 
-
 /**
  * An object that holds a pair of objects.
  *
@@ -24,20 +23,25 @@ package org.apache.geode.internal.cache.persistence.query.mock;
 public class Pair<X, Y> {
   private final X x;
   private final Y y;
+
   public Pair(X x, Y y) {
     this.x = x;
     this.y = y;
   }
+
   public X getX() {
     return x;
   }
+
   public Y getY() {
     return y;
   }
+
   @Override
   public String toString() {
     return "Pair [x=" + x + ", y=" + y + "]";
   }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -46,6 +50,7 @@ public class Pair<X, Y> {
     result = prime * result + ((y == null) ? 0 : y.hashCode());
     return result;
   }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -67,5 +72,5 @@ public class Pair<X, Y> {
       return false;
     return true;
   }
-  
+
 }

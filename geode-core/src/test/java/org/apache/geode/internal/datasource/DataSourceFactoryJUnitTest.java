@@ -59,8 +59,7 @@ public class DataSourceFactoryJUnitTest {
   @Test
   public void testGetSimpleDataSource() throws Exception {
     Context ctx = cache.getJNDIContext();
-    GemFireBasicDataSource ds = (GemFireBasicDataSource) ctx
-        .lookup("java:/SimpleDataSource");
+    GemFireBasicDataSource ds = (GemFireBasicDataSource) ctx.lookup("java:/SimpleDataSource");
     Connection conn = ds.getConnection();
     if (conn == null)
       fail("DataSourceFactoryJUnitTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
@@ -69,8 +68,7 @@ public class DataSourceFactoryJUnitTest {
   @Test
   public void testGetPooledDataSource() throws Exception {
     Context ctx = cache.getJNDIContext();
-    GemFireConnPooledDataSource ds = (GemFireConnPooledDataSource) ctx
-        .lookup("java:/PooledDataSource");
+    GemFireConnPooledDataSource ds = (GemFireConnPooledDataSource) ctx.lookup("java:/PooledDataSource");
     Connection conn = ds.getConnection();
     if (conn == null)
       fail("DataSourceFactoryJUnitTest-testGetPooledDataSource() Error in creating the GemFireConnPooledDataSource");
@@ -79,8 +77,7 @@ public class DataSourceFactoryJUnitTest {
   @Test
   public void testGetTranxDataSource() throws Exception {
     Context ctx = cache.getJNDIContext();
-    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx
-        .lookup("java:/XAPooledDataSource");
+    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
     //DataSourceFactory dsf = new DataSourceFactory();
     //GemFireTransactionDataSource ds =
     // (GemFireTransactionDataSource)dsf.getTranxDataSource(map);

@@ -50,19 +50,16 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.rules.LocatorServerConfigurationRule;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-
 @Category(DistributedTest.class)
 public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
 
   private String groupName = "Lucene";
 
   @Rule
-  public LocatorServerConfigurationRule ls = new LocatorServerConfigurationRule(
-      this);
+  public LocatorServerConfigurationRule ls = new LocatorServerConfigurationRule(this);
 
   @Test
-  public void indexGetsCreatedUsingClusterConfiguration()
-      throws Exception {
+  public void indexGetsCreatedUsingClusterConfiguration() throws Exception {
     VM locator = startLocatorWithClusterConfigurationEnabled();
     VM vm1 = startNodeUsingClusterConfiguration(1, false);
 
@@ -86,8 +83,7 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
   }
 
   @Test
-  public void indexWithAnalyzerGetsCreatedUsingClusterConfiguration()
-      throws Exception {
+  public void indexWithAnalyzerGetsCreatedUsingClusterConfiguration() throws Exception {
     VM locator = startLocatorWithClusterConfigurationEnabled();
     VM vm1 = startNodeUsingClusterConfiguration(1, false);
 
@@ -110,10 +106,7 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
       String[] fields = new String[] { "field1", "field2", "field3" };
       validateIndexFields(fields, index);
       // Add this check back when we complete xml generation for analyzer.
-      this.validateIndexFieldAnalyzer(fields, new String[] {
-          "org.apache.lucene.analysis.standard.StandardAnalyzer",
-          "org.apache.lucene.analysis.standard.StandardAnalyzer",
-          "org.apache.lucene.analysis.standard.StandardAnalyzer" }, index);
+      this.validateIndexFieldAnalyzer(fields, new String[] { "org.apache.lucene.analysis.standard.StandardAnalyzer", "org.apache.lucene.analysis.standard.StandardAnalyzer", "org.apache.lucene.analysis.standard.StandardAnalyzer" }, index);
     });
   }
 
@@ -154,8 +147,7 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
   }
 
   @Test
-  public void indexNotCreatedOnNodeOutSideTheGroup()
-      throws Exception {
+  public void indexNotCreatedOnNodeOutSideTheGroup() throws Exception {
     VM locator = startLocatorWithClusterConfigurationEnabled();
 
     // Start vm1, vm2 in group
@@ -191,8 +183,7 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
   }
 
   @Test
-  public void indexAreCreatedInValidGroupOfNodesJoiningLater()
-      throws Exception {
+  public void indexAreCreatedInValidGroupOfNodesJoiningLater() throws Exception {
     VM locator = startLocatorWithClusterConfigurationEnabled();
 
     // Start vm1 in group
@@ -232,13 +223,11 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     connect(jmxHost, jmxPort, httpPort, gfsh);
   }
 
-  private VM startNodeUsingClusterConfiguration(int vmIndex, boolean addGroup)
-      throws Exception {
+  private VM startNodeUsingClusterConfiguration(int vmIndex, boolean addGroup) throws Exception {
     File dir = this.temporaryFolder.newFolder();
     Properties nodeProperties = new Properties();
     nodeProperties.setProperty(USE_CLUSTER_CONFIGURATION, "true");
-    nodeProperties.setProperty(DEPLOY_WORKING_DIR,
- dir.getCanonicalPath());
+    nodeProperties.setProperty(DEPLOY_WORKING_DIR, dir.getCanonicalPath());
     if (addGroup) {
       nodeProperties.setProperty(GROUPS, groupName);
     }
@@ -248,8 +237,7 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
   private VM startLocatorWithClusterConfigurationEnabled() throws Exception {
     try {
       jmxHost = InetAddress.getLocalHost().getHostName();
-    }
-    catch (UnknownHostException ignore) {
+    } catch (UnknownHostException ignore) {
       jmxHost = "localhost";
     }
 
@@ -266,40 +254,31 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     locatorProps.setProperty(JMX_MANAGER_BIND_ADDRESS, String.valueOf(jmxHost));
     locatorProps.setProperty(JMX_MANAGER_PORT, String.valueOf(jmxPort));
     locatorProps.setProperty(HTTP_SERVICE_PORT, String.valueOf(httpPort));
-    locatorProps.setProperty(CLUSTER_CONFIGURATION_DIR,
- dir.getCanonicalPath());
+    locatorProps.setProperty(CLUSTER_CONFIGURATION_DIR, dir.getCanonicalPath());
     return ls.getLocatorVM(locatorProps);
   }
 
   private void createLuceneIndexUsingGfsh(boolean addGroup) throws Exception {
     // Execute Gfsh command to create lucene index.
     CommandManager.getInstance().add(LuceneIndexCommands.class.newInstance());
-    CommandStringBuilder csb = new CommandStringBuilder(
-        LuceneCliStrings.LUCENE_CREATE_INDEX);
+    CommandStringBuilder csb = new CommandStringBuilder(LuceneCliStrings.LUCENE_CREATE_INDEX);
     csb.addOption(LuceneCliStrings.LUCENE__INDEX_NAME, INDEX_NAME);
     csb.addOption(LuceneCliStrings.LUCENE__REGION_PATH, REGION_NAME);
     if (addGroup) {
       csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__GROUP, groupName);
     }
-    csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__FIELD,
-        "field1,field2,field3");
+    csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__FIELD, "field1,field2,field3");
     executeCommand(csb.toString());
   }
 
-  private void createLuceneIndexWithAnalyzerUsingGfsh(boolean addGroup)
-      throws Exception {
+  private void createLuceneIndexWithAnalyzerUsingGfsh(boolean addGroup) throws Exception {
     // Gfsh command to create lucene index.
     CommandManager.getInstance().add(LuceneIndexCommands.class.newInstance());
-    CommandStringBuilder csb = new CommandStringBuilder(
-        LuceneCliStrings.LUCENE_CREATE_INDEX);
+    CommandStringBuilder csb = new CommandStringBuilder(LuceneCliStrings.LUCENE_CREATE_INDEX);
     csb.addOption(LuceneCliStrings.LUCENE__INDEX_NAME, INDEX_NAME);
     csb.addOption(LuceneCliStrings.LUCENE__REGION_PATH, REGION_NAME);
-    csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__FIELD,
-        "field1,field2,field3");
-    csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER,
-        "org.apache.lucene.analysis.standard.StandardAnalyzer,"
-            + "org.apache.lucene.analysis.standard.StandardAnalyzer,"
-            + "org.apache.lucene.analysis.standard.StandardAnalyzer");
+    csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__FIELD, "field1,field2,field3");
+    csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER, "org.apache.lucene.analysis.standard.StandardAnalyzer," + "org.apache.lucene.analysis.standard.StandardAnalyzer," + "org.apache.lucene.analysis.standard.StandardAnalyzer");
 
     if (addGroup) {
       csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__GROUP, groupName);
@@ -308,23 +287,18 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     executeCommand(csb.toString());
   }
 
-  private void createRegionUsingGfsh(String regionName,
-      RegionShortcut regionShortCut, String group) {
-    CommandStringBuilder csb = new CommandStringBuilder(
-        CliStrings.CREATE_REGION);
+  private void createRegionUsingGfsh(String regionName, RegionShortcut regionShortCut, String group) {
+    CommandStringBuilder csb = new CommandStringBuilder(CliStrings.CREATE_REGION);
     csb.addOption(CliStrings.CREATE_REGION__REGION, regionName);
-    csb.addOption(CliStrings.CREATE_REGION__REGIONSHORTCUT,
-        regionShortCut.name());
+    csb.addOption(CliStrings.CREATE_REGION__REGIONSHORTCUT, regionShortCut.name());
     csb.addOptionWithValueCheck(CliStrings.CREATE_REGION__GROUP, group);
     executeAndVerifyCommand(csb.toString());
   }
 
   private void executeAndVerifyCommand(String commandString) {
     CommandResult cmdResult = executeCommand(commandString);
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info(
-        "Command : " + commandString);
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info(
-        "Command Result : " + commandResultToString(cmdResult));
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Command : " + commandString);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Command Result : " + commandResultToString(cmdResult));
     assertEquals(Status.OK, cmdResult.getStatus());
   }
 
@@ -334,8 +308,7 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     assertArrayEquals(indexFields, indexFieldNames);
   }
 
-  private void validateIndexFieldAnalyzer(String[] fields, String[] analyzers,
-      LuceneIndex index) {
+  private void validateIndexFieldAnalyzer(String[] fields, String[] analyzers, LuceneIndex index) {
     Map<String, Analyzer> indexfieldAnalyzers = index.getFieldAnalyzers();
     for (int i = 0; i < fields.length; i++) {
       Analyzer a = indexfieldAnalyzers.get(fields[i]);

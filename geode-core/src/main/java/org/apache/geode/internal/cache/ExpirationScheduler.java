@@ -33,22 +33,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * entry expiration tasks.
  */
 
-public class ExpirationScheduler
-  {
+public class ExpirationScheduler {
   private static final Logger logger = LogService.getLogger();
 
   private final SystemTimer timer;
   private final AtomicInteger pendingCancels = new AtomicInteger();
-    private static final int MAX_PENDING_CANCELS = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "MAX_PENDING_CANCELS", 10000).intValue();
+  private static final int MAX_PENDING_CANCELS = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "MAX_PENDING_CANCELS", 10000).intValue();
 
   public ExpirationScheduler(InternalDistributedSystem ds) {
     this.timer = new SystemTimer(ds, true);
   }
-  
+
   public void forcePurge() {
     pendingCancels.getAndSet(0);
     this.timer.timerPurge();
   }
+
   /**
    * Called when we have cancelled a scheduled timer task.
    * Do work, if possible to fix bug 37574.
@@ -59,12 +59,12 @@ public class ExpirationScheduler
       pc = pendingCancels.getAndSet(0);
       if (pc > MAX_PENDING_CANCELS) {
         this.timer.timerPurge();
-//        int purgedCancels = CFactory.timerPurge(this.timer);
+        //        int purgedCancels = CFactory.timerPurge(this.timer);
         // we could try to do some fancy stuff here but the value
         // of the atomic is just a hint so don't bother adjusting it
-//         // take the diff between the number of actual cancels we purged
-//         // "purgedCancels" and the number we said we would purge "pc".
-//         int diff = purgedCancels - pc;
+        //         // take the diff between the number of actual cancels we purged
+        //         // "purgedCancels" and the number we said we would purge "pc".
+        //         int diff = purgedCancels - pc;
       } else {
         // some other thread beat us to it so add back in the cancels
         // we just removed by setting it to 0
@@ -72,28 +72,26 @@ public class ExpirationScheduler
       }
     }
   }
-  
+
   /** schedules the given expiration task */
   public ExpiryTask addExpiryTask(ExpiryTask task) {
     try {
-      if(logger.isTraceEnabled()) {
-        logger.trace(LocalizedMessage.create(LocalizedStrings.ExpirationScheduler_SCHEDULING__0__TO_FIRE_IN__1__MS, new Object[] {task, Long.valueOf(task.getExpiryMillis())}));
+      if (logger.isTraceEnabled()) {
+        logger.trace(LocalizedMessage.create(LocalizedStrings.ExpirationScheduler_SCHEDULING__0__TO_FIRE_IN__1__MS, new Object[] { task, Long.valueOf(task.getExpiryMillis()) }));
       }
       // To fix bug 52267 do not create a Date here; instead calculate the relative duration.
       timer.schedule(task, task.getExpiryMillis());
-    }
-    catch (EntryNotFoundException e) {
+    } catch (EntryNotFoundException e) {
       // ignore - there are unsynchronized paths that allow an entry to
       // be destroyed out from under us.
       return null;
-    }
-    catch (IllegalStateException e) {
+    } catch (IllegalStateException e) {
       // task must have been cancelled by another thread so don't schedule it
       return null;
     }
     return task;
   }
-  
+
   /** schedules the given entry expiration task and returns true; returns false if not scheduled */
   public boolean addEntryExpiryTask(EntryExpiryTask task) {
     return addExpiryTask(task) != null;

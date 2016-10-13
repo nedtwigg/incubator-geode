@@ -52,7 +52,6 @@ public class ParallelBucketOperator implements BucketOperator {
   private final int maxParallelOperations;
   private final ConcurrentLinkedQueue<Completion> pendingSuccess = new ConcurrentLinkedQueue<BucketOperator.Completion>();
   private final ConcurrentLinkedQueue<Completion> pendingFailure = new ConcurrentLinkedQueue<BucketOperator.Completion>();
-  
 
   /**
    * Create a parallel bucket operator
@@ -76,9 +75,7 @@ public class ParallelBucketOperator implements BucketOperator {
    * waitForOperations.
    */
   @Override
-  public void createRedundantBucket(final InternalDistributedMember targetMember,
-      final int bucketId, final Map<String, Long> colocatedRegionBytes,
-      final Completion completion) {
+  public void createRedundantBucket(final InternalDistributedMember targetMember, final int bucketId, final Map<String, Long> colocatedRegionBytes, final Completion completion) {
     drainCompletions();
     operationSemaphore.acquireUninterruptibly();
     executor.execute(new Runnable() {
@@ -90,53 +87,49 @@ public class ParallelBucketOperator implements BucketOperator {
             public void onSuccess() {
               pendingSuccess.add(completion);
             }
-            
+
             @Override
             public void onFailure() {
               pendingFailure.add(completion);
             }
           });
-        } catch(CancelException e) {
+        } catch (CancelException e) {
           //ignore 
-        } catch(RegionDestroyedException e) {
+        } catch (RegionDestroyedException e) {
           //ignore
         } finally {
           operationSemaphore.release();
         }
       }
     });
-    
+
   }
 
   @Override
-  public boolean removeBucket(InternalDistributedMember memberId, int id,
-      Map<String, Long> colocatedRegionSizes) {
+  public boolean removeBucket(InternalDistributedMember memberId, int id, Map<String, Long> colocatedRegionSizes) {
     return delegate.removeBucket(memberId, id, colocatedRegionSizes);
   }
 
   @Override
-  public boolean moveBucket(InternalDistributedMember sourceMember,
-      InternalDistributedMember targetMember, int bucketId,
-      Map<String, Long> colocatedRegionBytes) {
-      return delegate.moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
+  public boolean moveBucket(InternalDistributedMember sourceMember, InternalDistributedMember targetMember, int bucketId, Map<String, Long> colocatedRegionBytes) {
+    return delegate.moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
   }
 
   @Override
-  public boolean movePrimary(InternalDistributedMember source,
-      InternalDistributedMember target, int bucketId) {
+  public boolean movePrimary(InternalDistributedMember source, InternalDistributedMember target, int bucketId) {
     return delegate.movePrimary(source, target, bucketId);
   }
-  
+
   public void drainCompletions() {
     Completion next = null;
-    while((next = pendingSuccess.poll()) != null) {
+    while ((next = pendingSuccess.poll()) != null) {
       next.onSuccess();
     }
-    
-    while((next = pendingFailure.poll()) != null) {
+
+    while ((next = pendingFailure.poll()) != null) {
       next.onFailure();
     }
-    
+
   }
 
   /**
@@ -145,18 +138,18 @@ public class ParallelBucketOperator implements BucketOperator {
    */
   public void waitForOperations() {
     boolean interrupted = false;
-    while(!executor.isShutdown()) {
+    while (!executor.isShutdown()) {
       try {
-        if(operationSemaphore.tryAcquire(maxParallelOperations, 1, TimeUnit.SECONDS)) {
+        if (operationSemaphore.tryAcquire(maxParallelOperations, 1, TimeUnit.SECONDS)) {
           operationSemaphore.release(maxParallelOperations);
-          
+
           drainCompletions();
-          
-          if(interrupted) {
+
+          if (interrupted) {
             Thread.currentThread().interrupt();
           }
-          
-          return; 
+
+          return;
         }
       } catch (InterruptedException e) {
         interrupted = true;

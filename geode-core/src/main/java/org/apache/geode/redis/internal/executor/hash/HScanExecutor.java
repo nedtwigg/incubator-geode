@@ -130,7 +130,7 @@ public class HScanExecutor extends AbstractScanExecutor {
     int beforeCursor = 0;
     int numElements = 0;
     int i = -1;
-    for (Entry<ByteArrayWrapper, ByteArrayWrapper> entry: (Collection<Entry<ByteArrayWrapper, ByteArrayWrapper>>) list) {
+    for (Entry<ByteArrayWrapper, ByteArrayWrapper> entry : (Collection<Entry<ByteArrayWrapper, ByteArrayWrapper>>) list) {
       ByteArrayWrapper key = entry.getKey();
       ByteArrayWrapper value = entry.getValue();
       i++;

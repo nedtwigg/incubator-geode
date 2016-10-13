@@ -23,19 +23,17 @@ import org.apache.geode.management.internal.beans.MetricsCalculator;
  *
  */
 public class StatsRate {
-  
+
   private long prevLongCounter = 0;
-  
+
   private int prevIntCounter = 0;
 
   private MBeanStatsMonitor monitor;
-  
+
   private String[] statsKeys;
-  
+
   private StatType type;
 
-  
-  
   public StatsRate(String statsKey, StatType type, MBeanStatsMonitor monitor) {
     this.statsKeys = new String[] { statsKey };
     this.monitor = monitor;

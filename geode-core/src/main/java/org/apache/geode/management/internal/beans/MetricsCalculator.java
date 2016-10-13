@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.beans;
 
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.geode.management.internal.ManagementConstants;
@@ -38,14 +37,14 @@ public class MetricsCalculator {
     float tempXn = Xn;
     float tempXn1 = Xn1;
     long secondsFactor;
-    if(fromTime == 0){
+    if (fromTime == 0) {
       secondsFactor = 0;
-    }else{
-      secondsFactor = toSeconds(fromTime,toTime);
+    } else {
+      secondsFactor = toSeconds(fromTime, toTime);
     }
-   
+
     float num = (tempXn1 - tempXn) / ((secondsFactor == 0) ? 1 : secondsFactor);
-       return Round(num, 3);
+    return Round(num, 3);
     // return num;
   }
 
@@ -53,12 +52,12 @@ public class MetricsCalculator {
     float tempXn = Xn;
     float tempXn1 = Xn1;
     long secondsFactor;
-    if(fromTime == 0){
+    if (fromTime == 0) {
       secondsFactor = 0;
-    }else{
-      secondsFactor = toSeconds(fromTime,toTime);
+    } else {
+      secondsFactor = toSeconds(fromTime, toTime);
     }
-    float num = (tempXn1 - tempXn) /((secondsFactor == 0) ? 1 : secondsFactor);
+    float num = (tempXn1 - tempXn) / ((secondsFactor == 0) ? 1 : secondsFactor);
     return Round(num, 3);
     // return num;
 
@@ -66,7 +65,7 @@ public class MetricsCalculator {
 
   public static long getLatency(int Xn, int Xn1, long XNTime, long XN1Time) {
     if ((Xn1 - Xn) != 0) {
-      return (XN1Time -XNTime) / (Xn1 - Xn);
+      return (XN1Time - XNTime) / (Xn1 - Xn);
     }
     return 0;
 
@@ -74,7 +73,7 @@ public class MetricsCalculator {
 
   public static long getLatency(long Xn, long Xn1, long XNTime, long XN1Time) {
     if ((Xn1 - Xn) != 0) {
-      return (XN1Time -XNTime) / (Xn1 - Xn);
+      return (XN1Time - XNTime) / (Xn1 - Xn);
     }
     return 0;
   }
@@ -131,7 +130,5 @@ public class MetricsCalculator {
     float tmp = Math.round(Rval);
     return (float) tmp / p;
   }
-   
-  
 
 }

@@ -60,13 +60,13 @@ public class DecrementCommand extends AbstractCommand {
     flb.flip();
     String firstLine = getFirstLine();
     String[] firstLineElements = firstLine.split(" ");
-    
+
     assert "decr".equals(firstLineElements[0]);
     String key = firstLineElements[1];
     String decrByStr = stripNewline(firstLineElements[2]);
     Long decrBy = Long.parseLong(decrByStr);
     boolean noReply = firstLineElements.length > 3;
-    
+
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     String reply = Reply.NOT_FOUND.toString();
     ByteBuffer newVal = ByteBuffer.allocate(8);
@@ -95,11 +95,11 @@ public class DecrementCommand extends AbstractCommand {
     ByteBuffer buffer = request.getRequest();
     int extrasLength = buffer.get(EXTRAS_LENGTH_INDEX);
     final KeyWrapper key = getKey(buffer, HEADER_LENGTH + extrasLength);
-    
+
     long decrBy = buffer.getLong(HEADER_LENGTH);
     long initialVal = buffer.getLong(HEADER_LENGTH + LONG_LENGTH);
     int expiration = buffer.getInt(HEADER_LENGTH + LONG_LENGTH + LONG_LENGTH);
-    
+
     final Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     ByteBuffer newVal = ByteBuffer.allocate(8);
     boolean notFound = false;
@@ -142,11 +142,11 @@ public class DecrementCommand extends AbstractCommand {
         }
       }, expiration, TimeUnit.SECONDS);
     }
-    
+
     if (getLogger().fineEnabled()) {
-      getLogger().fine("decr:key:"+key+" decrBy:"+decrBy+" initVal:"+initialVal+" exp:"+expiration+" notFound:"+notFound);
+      getLogger().fine("decr:key:" + key + " decrBy:" + decrBy + " initVal:" + initialVal + " exp:" + expiration + " notFound:" + notFound);
     }
-    
+
     ByteBuffer response = null;
     if (notFound) {
       response = request.getResponse();
@@ -162,7 +162,7 @@ public class DecrementCommand extends AbstractCommand {
     }
     return response;
   }
-  
+
   /**
    * Overridden by Q command
    */

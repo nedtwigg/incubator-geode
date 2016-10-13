@@ -37,13 +37,13 @@ class DisabledManagedEntityController implements ManagedEntityController {
   private static final Logger logger = LogService.getLogger();
 
   private static final String EXCEPTION_MESSAGE = "Local and remote OS command invocations are disabled for the Admin API.";
-  
+
   DisabledManagedEntityController() {
   }
-  
+
   @Override
   public void start(InternalManagedEntity entity) {
-    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)){
+    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)) {
       logger.warn(LogMarker.MANAGED_ENTITY, "DisabledManagedEntityController#start {}", EXCEPTION_MESSAGE);
     }
     throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
@@ -51,7 +51,7 @@ class DisabledManagedEntityController implements ManagedEntityController {
 
   @Override
   public void stop(InternalManagedEntity entity) {
-    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)){
+    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)) {
       logger.warn(LogMarker.MANAGED_ENTITY, "DisabledManagedEntityController#stop {}", EXCEPTION_MESSAGE);
     }
     throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
@@ -59,7 +59,7 @@ class DisabledManagedEntityController implements ManagedEntityController {
 
   @Override
   public boolean isRunning(InternalManagedEntity entity) {
-    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)){
+    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)) {
       logger.warn(LogMarker.MANAGED_ENTITY, "DisabledManagedEntityController#isRunning {}", EXCEPTION_MESSAGE);
     }
     throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
@@ -67,7 +67,7 @@ class DisabledManagedEntityController implements ManagedEntityController {
 
   @Override
   public String getLog(DistributionLocatorImpl locator) {
-    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)){
+    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)) {
       logger.warn(LogMarker.MANAGED_ENTITY, "DisabledManagedEntityController#getLog {}", EXCEPTION_MESSAGE);
     }
     throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
@@ -75,7 +75,7 @@ class DisabledManagedEntityController implements ManagedEntityController {
 
   @Override
   public String buildSSLArguments(DistributedSystemConfig config) {
-    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)){
+    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)) {
       logger.warn(LogMarker.MANAGED_ENTITY, "DisabledManagedEntityController#buildSSLArguments {}", EXCEPTION_MESSAGE);
     }
     throw new UnsupportedOperationException(EXCEPTION_MESSAGE);
@@ -83,7 +83,7 @@ class DisabledManagedEntityController implements ManagedEntityController {
 
   @Override
   public String getProductExecutable(InternalManagedEntity entity, String executable) {
-    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)){
+    if (logger.isTraceEnabled(LogMarker.MANAGED_ENTITY)) {
       logger.warn(LogMarker.MANAGED_ENTITY, "DisabledManagedEntityController#getProductExecutable {}", EXCEPTION_MESSAGE);
     }
     throw new UnsupportedOperationException(EXCEPTION_MESSAGE);

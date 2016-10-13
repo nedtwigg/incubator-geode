@@ -40,12 +40,12 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * @since GemFire 5.0
  */
-public final class BucketBackupMessage extends PartitionMessage
-  {
+public final class BucketBackupMessage extends PartitionMessage {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private int bucketId;
+
   /**
    * Empty contstructor provided for {@link org.apache.geode.DataSerializer}
    */
@@ -67,14 +67,12 @@ public final class BucketBackupMessage extends PartitionMessage
    * @param r
    *          the PartitionedRegion that contains the bucket
    */
-  public static void send(Set recipients, PartitionedRegion r, int bucketId)
-  {
-    Assert.assertTrue(recipients != null,
-        "BucketBackupMessage NULL sender list");
+  public static void send(Set recipients, PartitionedRegion r, int bucketId) {
+    Assert.assertTrue(recipients != null, "BucketBackupMessage NULL sender list");
     BucketBackupMessage m = new BucketBackupMessage(recipients, r.getPRId(), bucketId);
     r.getDistributionManager().putOutgoing(m);
   }
-  
+
   /**
    * This message may be sent to nodes before the PartitionedRegion is
    * completely initialized due to the RegionAdvisor(s) knowing about the
@@ -87,36 +85,33 @@ public final class BucketBackupMessage extends PartitionMessage
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, 
-      PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
 
     // This call has come to an uninitialized region.
     // This can occur as bucket grab Op is done outside the 
     // d-lock.
-    if(pr == null || !pr.isInitialized()) {
-    	return false;
+    if (pr == null || !pr.isInitialized()) {
+      return false;
     }
-    
+
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "BucketBackupMessage operateOnRegion: {}", pr.getFullPath());
     }
     PartitionedRegionDataStore ds = pr.getDataStore();
     if (ds != null) {
       pr.getRedundancyProvider().finishIncompleteBucketCreation(bucketId);
+    } else {
+      logger.warn(LocalizedMessage.create(LocalizedStrings.BucketBackupMessage_BUCKETBACKUPMESSAGE_DATA_STORE_NOT_CONFIGURED_FOR_THIS_MEMBER));
     }
-    else {
-      logger.warn(LocalizedMessage.create(
-          LocalizedStrings.BucketBackupMessage_BUCKETBACKUPMESSAGE_DATA_STORE_NOT_CONFIGURED_FOR_THIS_MEMBER));
-    }
-    pr.getPrStats().endPartitionMessagesProcessing(startTime); 
+    pr.getPrStats().endPartitionMessagesProcessing(startTime);
     return false;
   }
-  
+
   @Override
-  public int getProcessorType()
-  {
+  public int getProcessorType() {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
+
   public int getDSFID() {
     return PR_BUCKET_BACKUP_MESSAGE;
   }
@@ -132,5 +127,5 @@ public final class BucketBackupMessage extends PartitionMessage
     super.toData(out);
     out.writeInt(bucketId);
   }
-  
+
 }

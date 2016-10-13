@@ -76,18 +76,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+
 /**
  * 
  */
 @SuppressWarnings("deprecation")
-public class DistributedRegion extends LocalRegion implements 
-    CacheDistributionAdvisee
-{
+public class DistributedRegion extends LocalRegion implements CacheDistributionAdvisee {
   private static final Logger logger = LogService.getLogger();
-  
+
   /** causes cache profile to be added to afterRemoteRegionCreate notification for testing */
   public static boolean TEST_HOOK_ADD_PROFILE = false;
-  
+
   /** Used to sync accesses to this.dlockService to allow lazy construction */
   private final Object dlockMonitor = new Object();
 
@@ -105,7 +104,7 @@ public class DistributedRegion extends LocalRegion implements
 
   /** True if this region is currently missing any required roles */
   protected volatile boolean isMissingRequiredRoles = false;
-  
+
   /**
    * True if this region is has any required roles defined and the LossAction is
    * either NO_ACCESS or LIMITED_ACCESS. Reliability checks will only happen if
@@ -124,10 +123,10 @@ public class DistributedRegion extends LocalRegion implements
    * Latch that is opened after initialization waits for required roles up to
    * the <a href="DistributedSystem#member-timeout">member-timeout </a>.
    */
-  protected final StoppableCountDownLatch initializationLatchAfterMemberTimeout; 
+  protected final StoppableCountDownLatch initializationLatchAfterMemberTimeout;
 
   private final PersistenceAdvisor persistenceAdvisor;
-  
+
   private final PersistentMemberID persistentId;
 
   /**
@@ -140,7 +139,7 @@ public class DistributedRegion extends LocalRegion implements
 
   /** Tests can set this to true and ignore reliability triggered reconnects */
   public static boolean ignoreReconnect = false;
-  
+
   /**
    * Lock to prevent multiple threads on this member from performing
    * a clear at the same time.
@@ -150,39 +149,27 @@ public class DistributedRegion extends LocalRegion implements
   private static AtomicBoolean loggedNetworkPartitionWarning = new AtomicBoolean(false);
 
   /** Creates a new instance of DistributedRegion */
-  protected DistributedRegion(String regionName, RegionAttributes attrs,
-      LocalRegion parentRegion, GemFireCacheImpl cache,
-      InternalRegionArguments internalRegionArgs) {
+  protected DistributedRegion(String regionName, RegionAttributes attrs, LocalRegion parentRegion, GemFireCacheImpl cache, InternalRegionArguments internalRegionArgs) {
     super(regionName, attrs, parentRegion, cache, internalRegionArgs);
-    this.initializationLatchAfterMemberTimeout = new StoppableCountDownLatch(
-        getCancelCriterion(), 1);
+    this.initializationLatchAfterMemberTimeout = new StoppableCountDownLatch(getCancelCriterion(), 1);
     this.distAdvisor = createDistributionAdvisor(internalRegionArgs);
-    
-    if (getDistributionManager().getConfig().getEnableNetworkPartitionDetection()
-        && !isInternalRegion() && !attrs.getScope().isAck() && !doesNotDistribute() && attrs.getDataPolicy().withStorage()) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.DistributedRegion_REGION_0_1_SPLITBRAIN_CONFIG_WARNING,
-          new Object[] { regionName, attrs.getScope() })); 
+
+    if (getDistributionManager().getConfig().getEnableNetworkPartitionDetection() && !isInternalRegion() && !attrs.getScope().isAck() && !doesNotDistribute() && attrs.getDataPolicy().withStorage()) {
+      logger.warn(LocalizedMessage.create(LocalizedStrings.DistributedRegion_REGION_0_1_SPLITBRAIN_CONFIG_WARNING, new Object[] { regionName, attrs.getScope() }));
     }
-    if (!getDistributionManager().getConfig().getEnableNetworkPartitionDetection() 
-        && attrs.getDataPolicy().withPersistence() && !loggedNetworkPartitionWarning.getAndSet(true)) {
-      logger.warn(LocalizedMessage.create(
-          LocalizedStrings.DistributedRegion_REGION_0_ENABLE_NETWORK_PARTITION_WARNING,
-          new Object[] { regionName, attrs.getScope() }));
+    if (!getDistributionManager().getConfig().getEnableNetworkPartitionDetection() && attrs.getDataPolicy().withPersistence() && !loggedNetworkPartitionWarning.getAndSet(true)) {
+      logger.warn(LocalizedMessage.create(LocalizedStrings.DistributedRegion_REGION_0_ENABLE_NETWORK_PARTITION_WARNING, new Object[] { regionName, attrs.getScope() }));
     }
 
-    boolean setRequiresReliabilityCheck = attrs.getMembershipAttributes()
-        .hasRequiredRoles()
-        &&
-        // note that the following includes NO_ACCESS, LIMITED_ACCESS,
-        !attrs.getMembershipAttributes().getLossAction().isAllAccess()
-        && !attrs.getMembershipAttributes().getLossAction().isReconnect();
+    boolean setRequiresReliabilityCheck = attrs.getMembershipAttributes().hasRequiredRoles() &&
+    // note that the following includes NO_ACCESS, LIMITED_ACCESS,
+        !attrs.getMembershipAttributes().getLossAction().isAllAccess() && !attrs.getMembershipAttributes().getLossAction().isReconnect();
 
     // this optimization is safe for as long as Roles and Required Roles are
     // immutable
     // if this VM fulfills all required roles, make requiresReliabilityCheck
     // false
-    Set reqRoles = new HashSet(attrs.getMembershipAttributes()
-        .getRequiredRoles());
+    Set reqRoles = new HashSet(attrs.getMembershipAttributes().getRequiredRoles());
     reqRoles.removeAll(getSystem().getDistributedMember().getRoles());
     if (reqRoles.isEmpty()) {
       setRequiresReliabilityCheck = false;
@@ -202,9 +189,9 @@ public class DistributedRegion extends LocalRegion implements
       this.rmq = tmp;
     }
 
-    if(internalRegionArgs.isUsedForPartitionedRegionBucket()) {
+    if (internalRegionArgs.isUsedForPartitionedRegionBucket()) {
       this.persistenceAdvisor = internalRegionArgs.getPersistenceAdvisor();
-    } else if (this.allowsPersistence()){
+    } else if (this.allowsPersistence()) {
       //TODO prpersist - using this lock service is a hack. Maybe? Or maybe
       //it's ok if we have one (rarely used) lock service for many operations?
       //What does the resource manager do?
@@ -214,7 +201,7 @@ public class DistributedRegion extends LocalRegion implements
         //I can test the storage.
         DiskRegionStats diskStats;
         PersistentMemberView storage;
-        if(getDataPolicy().withPersistence()) {
+        if (getDataPolicy().withPersistence()) {
           storage = getDiskRegion();
           diskStats = getDiskRegion().getStats();
         } else {
@@ -229,29 +216,29 @@ public class DistributedRegion extends LocalRegion implements
     } else {
       this.persistenceAdvisor = null;
     }
-    if(this.persistenceAdvisor != null) {
+    if (this.persistenceAdvisor != null) {
       this.persistentId = persistenceAdvisor.generatePersistentID();
     } else {
       this.persistentId = null;
     }
-    
+
   }
-  
+
   @Override
   public void createEventTracker() {
     this.eventTracker = new EventTracker(this);
     this.eventTracker.start();
   }
-  
+
   /**
    * Intended for used during construction of a DistributedRegion
    *  
    * @return the advisor to be used by the region
    */
   protected CacheDistributionAdvisor createDistributionAdvisor(InternalRegionArguments internalRegionArgs) {
-    return CacheDistributionAdvisor.createCacheDistributionAdvisor(this);  // Warning: potential early escape of object before full construction
+    return CacheDistributionAdvisor.createCacheDistributionAdvisor(this); // Warning: potential early escape of object before full construction
   }
-  
+
   /**
    * Does this region support persistence?
    */
@@ -263,7 +250,7 @@ public class DistributedRegion extends LocalRegion implements
   public boolean requiresOneHopForMissingEntry(EntryEventImpl event) {
     // received from another member - don't use one-hop
     if (event.isOriginRemote()) {
-      return false; 
+      return false;
     }
     // local ops aren't distributed
     if (event.getOperation().isLocal()) {
@@ -277,39 +264,24 @@ public class DistributedRegion extends LocalRegion implements
     if (!this.generateVersionTag) {
       return true;
     }
-    return this.concurrencyChecksEnabled &&
-        (this.srp == null) &&
-        !isTX() &&
-        this.scope.isDistributed() &&
-        !this.dataPolicy.withReplication();
+    return this.concurrencyChecksEnabled && (this.srp == null) && !isTX() && this.scope.isDistributed() && !this.dataPolicy.withReplication();
   }
-  
-  
+
   /**
    * @see LocalRegion#virtualPut(EntryEventImpl, boolean, boolean, Object, 
    * boolean, long, boolean)
    */
   @Override
-  protected
-  boolean virtualPut(EntryEventImpl event,
-                     boolean ifNew,
-                     boolean ifOld,
-                     Object expectedOldValue,
-                     boolean requireOldValue,
-                     long lastModified,
-                     boolean overwriteDestroyed)
-  throws TimeoutException,
-         CacheWriterException {
+  protected boolean virtualPut(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) throws TimeoutException, CacheWriterException {
     final boolean isTraceEnabled = logger.isTraceEnabled();
-    
+
     Lock dlock = null;
     if (this.scope.isGlobal() && // lock only applies to global scope
         !event.isOriginRemote() && // only if operation originating locally
         !event.isNetSearch() && // search and load processor handles own locking
         !event.isNetLoad() &&
         // @todo darrel/kirk: what about putAll?
-        !event.isLocalLoad() &&
-        !event.isSingleHopPutOp()) { // Single Hop Op means dlock is already taken at origin node.
+        !event.isLocalLoad() && !event.isSingleHopPutOp()) { // Single Hop Op means dlock is already taken at origin node.
       dlock = this.getDistributedLockIfGlobal(event.getKey());
     }
     if (isTraceEnabled) {
@@ -324,8 +296,7 @@ public class DistributedRegion extends LocalRegion implements
             if (!event.isBulkOpInProgress() || this.dataPolicy.withStorage()) {
               // putAll will send a single one-hop for empty regions.  for other missing entries
               // we need to get a valid version number before modifying the local cache 
-              boolean didDistribute = RemotePutMessage.distribute(event, lastModified,
-                  false, false, expectedOldValue, requireOldValue, !this.generateVersionTag);
+              boolean didDistribute = RemotePutMessage.distribute(event, lastModified, false, false, expectedOldValue, requireOldValue, !this.generateVersionTag);
 
               if (!didDistribute && isTraceEnabled) {
                 logger.trace("Unable to perform one-hop messaging");
@@ -346,22 +317,13 @@ public class DistributedRegion extends LocalRegion implements
             }
           }
         }
-        return super.virtualPut(event,
-                                ifNew,
-                                ifOld,
-                                expectedOldValue,
-                                requireOldValue,
-                                lastModified,
-                                overwriteDestroyed);
-      }
-      else {
+        return super.virtualPut(event, ifNew, ifOld, expectedOldValue, requireOldValue, lastModified, overwriteDestroyed);
+      } else {
         if (event.getDeltaBytes() != null && event.getRawNewValue() == null) {
           // This means that this event has delta bytes but no full value.
           // Request the full value of this event.
           // The value in this vm may not be same as this event's value.
-          throw new InvalidDeltaException(
-              "Cache encountered replay of event containing delta bytes for key "
-                  + event.getKey());
+          throw new InvalidDeltaException("Cache encountered replay of event containing delta bytes for key " + event.getKey());
         }
         // if the listeners have already seen this event, then it has already
         // been successfully applied to the cache.  Distributed messages and
@@ -369,7 +331,7 @@ public class DistributedRegion extends LocalRegion implements
         if (isTraceEnabled) {
           logger.trace("DR.virtualPut: this cache has already seen this event {}", event);
         }
-        
+
         // Gester, Fix 39014: when hasSeenEvent, put will still distribute
         // event, but putAll did not. We add the logic back here, not to put 
         // back into DR.distributeUpdate() because we moved this part up into 
@@ -386,24 +348,22 @@ public class DistributedRegion extends LocalRegion implements
         event.makeCreate();
         if (!getConcurrencyChecksEnabled() || event.hasValidVersionTag()) {
           distributeUpdate(event, lastModified, ifNew, ifOld, expectedOldValue, requireOldValue);
-          event.invokeCallbacks(this,true, true);
+          event.invokeCallbacks(this, true, true);
         }
         return true;
       }
-    }
-    finally {
+    } finally {
       if (dlock != null) {
         dlock.unlock();
       }
     }
   }
-  
+
   @Override
-  protected RegionEntry basicPutEntry(EntryEventImpl event, long lastModified)
-      throws TimeoutException, CacheWriterException {
-    
+  protected RegionEntry basicPutEntry(EntryEventImpl event, long lastModified) throws TimeoutException, CacheWriterException {
+
     final boolean isTraceEnabled = logger.isTraceEnabled();
-    
+
     if (isTraceEnabled) {
       logger.trace("basicPutEntry invoked for event {}", event);
     }
@@ -413,8 +373,7 @@ public class DistributedRegion extends LocalRegion implements
       if (re == null /*|| re.isTombstone()*/ || !this.generateVersionTag) {
         final boolean ifNew = false;
         final boolean ifOld = false;
-        boolean didDistribute = RemotePutMessage.distribute(event, lastModified,
-            ifNew, ifOld, null, false, !this.generateVersionTag);
+        boolean didDistribute = RemotePutMessage.distribute(event, lastModified, ifNew, ifOld, null, false, !this.generateVersionTag);
         if (!this.generateVersionTag && !didDistribute) {
           throw new PersistentReplicatesOfflineException();
         }
@@ -428,39 +387,35 @@ public class DistributedRegion extends LocalRegion implements
 
   @Override
   public void performPutAllEntry(EntryEventImpl event) {
-	  /*
-	   * force shared data view so that we just do the virtual op, accruing things in the put all operation for later
-	   */
-	if(isTX()) {
-		event.getPutAllOperation().addEntry(event);
-	} else {
-		getSharedDataView().putEntry(event, false, false, null, false, 0L, false);
-	}
+    /*
+     * force shared data view so that we just do the virtual op, accruing things in the put all operation for later
+     */
+    if (isTX()) {
+      event.getPutAllOperation().addEntry(event);
+    } else {
+      getSharedDataView().putEntry(event, false, false, null, false, 0L, false);
+    }
   }
-  
+
   @Override
   public void performRemoveAllEntry(EntryEventImpl event) {
     // force shared data view so that we just do the virtual op, accruing things in the bulk operation for later
-    if(isTX()) {
+    if (isTX()) {
       event.getRemoveAllOperation().addEntry(event);
     } else {
       basicDestroy(event, true, null);
       //getSharedDataView().destroyExistingEntry(event, true, null);
     }
   }
-  
+
   /**
    * distribution and listener notification
    */
   @Override
-  public void basicPutPart3(EntryEventImpl event, RegionEntry entry,
-      boolean isInitialized, long lastModified, boolean invokeCallbacks,
-      boolean ifNew, boolean ifOld, Object expectedOldValue,
-      boolean requireOldValue) {
-    
+  public void basicPutPart3(EntryEventImpl event, RegionEntry entry, boolean isInitialized, long lastModified, boolean invokeCallbacks, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue) {
+
     distributeUpdate(event, lastModified, false, false, null, false);
-    super.basicPutPart3(event, entry, isInitialized, lastModified,
-        invokeCallbacks, ifNew, ifOld, expectedOldValue, requireOldValue);
+    super.basicPutPart3(event, entry, isInitialized, lastModified, invokeCallbacks, ifNew, ifOld, expectedOldValue, requireOldValue);
   }
 
   /** distribute an update operation */
@@ -468,24 +423,24 @@ public class DistributedRegion extends LocalRegion implements
     // an update from a netSearch is not distributed
     if (!event.isOriginRemote() && !event.isNetSearch() && !event.isBulkOpInProgress()) {
       boolean distribute = true;
-        if (event.getInhibitDistribution()) {
-          // this has already been distributed by a one-hop operation
-          distribute = false;
+      if (event.getInhibitDistribution()) {
+        // this has already been distributed by a one-hop operation
+        distribute = false;
+      }
+      if (distribute) {
+        UpdateOperation op = new UpdateOperation(event, lastModified);
+        if (logger.isTraceEnabled()) {
+          logger.trace("distributing operation for event : {} : for region : {}", event, this.getName());
         }
-        if (distribute) {
-          UpdateOperation op = new UpdateOperation(event, lastModified);
-          if (logger.isTraceEnabled()) {
-            logger.trace("distributing operation for event : {} : for region : {}", event, this.getName());
-          }
-          op.distribute();
-        }
+        op.distribute();
+      }
     }
   }
 
   protected void setGeneratedVersionTag(boolean generateVersionTag) {
     // there is at-least one other persistent member, so turn on concurrencyChecks
     enableConcurrencyChecks();
-    
+
     this.generateVersionTag = generateVersionTag;
   }
 
@@ -496,8 +451,7 @@ public class DistributedRegion extends LocalRegion implements
   @Override
   protected boolean shouldGenerateVersionTag(RegionEntry entry, EntryEventImpl event) {
     if (logger.isTraceEnabled()) {
-      logger.trace("shouldGenerateVersionTag this.generateVersionTag={} ccenabled={} dataPolicy={} event:{}",
-          this.generateVersionTag, this.concurrencyChecksEnabled, this.dataPolicy, event);
+      logger.trace("shouldGenerateVersionTag this.generateVersionTag={} ccenabled={} dataPolicy={} event:{}", this.generateVersionTag, this.concurrencyChecksEnabled, this.dataPolicy, event);
     }
     if (!this.concurrencyChecksEnabled || this.dataPolicy == DataPolicy.EMPTY || !this.generateVersionTag) {
       return false;
@@ -529,6 +483,7 @@ public class DistributedRegion extends LocalRegion implements
     }
     return false;
   }
+
   /**
    * Throws RegionAccessException if required roles are missing and the
    * LossAction is NO_ACCESS
@@ -537,16 +492,14 @@ public class DistributedRegion extends LocalRegion implements
    *           if required roles are missing and the LossAction is NO_ACCESS
    */
   @Override
-  protected void checkForNoAccess()
-  {
+  protected void checkForNoAccess() {
     if (this.requiresReliabilityCheck && this.isMissingRequiredRoles) {
       if (getMembershipAttributes().getLossAction().isNoAccess()) {
         synchronized (this.missingRequiredRoles) {
           if (!this.isMissingRequiredRoles)
             return;
-          Set roles = Collections.unmodifiableSet(new HashSet(
-              this.missingRequiredRoles));
-          throw new RegionAccessException(LocalizedStrings.DistributedRegion_OPERATION_IS_DISALLOWED_BY_LOSSACTION_0_BECAUSE_THESE_REQUIRED_ROLES_ARE_MISSING_1.toLocalizedString(new Object[] {getMembershipAttributes().getLossAction(), roles}), getFullPath(), roles);
+          Set roles = Collections.unmodifiableSet(new HashSet(this.missingRequiredRoles));
+          throw new RegionAccessException(LocalizedStrings.DistributedRegion_OPERATION_IS_DISALLOWED_BY_LOSSACTION_0_BECAUSE_THESE_REQUIRED_ROLES_ARE_MISSING_1.toLocalizedString(new Object[] { getMembershipAttributes().getLossAction(), roles }), getFullPath(), roles);
         }
       }
     }
@@ -561,53 +514,45 @@ public class DistributedRegion extends LocalRegion implements
    *           NO_ACCESS or LIMITED_ACCESS
    */
   @Override
-  protected void checkForLimitedOrNoAccess()
-  {
+  protected void checkForLimitedOrNoAccess() {
     if (this.requiresReliabilityCheck && this.isMissingRequiredRoles) {
-      if (getMembershipAttributes().getLossAction().isNoAccess()
-          || getMembershipAttributes().getLossAction().isLimitedAccess()) {
+      if (getMembershipAttributes().getLossAction().isNoAccess() || getMembershipAttributes().getLossAction().isLimitedAccess()) {
         synchronized (this.missingRequiredRoles) {
           if (!this.isMissingRequiredRoles)
             return;
-          Set roles = Collections.unmodifiableSet(new HashSet(
-              this.missingRequiredRoles));
+          Set roles = Collections.unmodifiableSet(new HashSet(this.missingRequiredRoles));
           Assert.assertTrue(!roles.isEmpty());
-          throw new RegionAccessException(LocalizedStrings.DistributedRegion_OPERATION_IS_DISALLOWED_BY_LOSSACTION_0_BECAUSE_THESE_REQUIRED_ROLES_ARE_MISSING_1
-              .toLocalizedString(new Object[] { getMembershipAttributes().getLossAction(), roles}), getFullPath(), roles);
+          throw new RegionAccessException(LocalizedStrings.DistributedRegion_OPERATION_IS_DISALLOWED_BY_LOSSACTION_0_BECAUSE_THESE_REQUIRED_ROLES_ARE_MISSING_1.toLocalizedString(new Object[] { getMembershipAttributes().getLossAction(), roles }), getFullPath(), roles);
         }
       }
     }
   }
-  
+
   @Override
-  protected void handleReliableDistribution(ReliableDistributionData data,
-      Set successfulRecipients) {
-    handleReliableDistribution(data, successfulRecipients,
-        Collections.EMPTY_SET, Collections.EMPTY_SET);
+  protected void handleReliableDistribution(ReliableDistributionData data, Set successfulRecipients) {
+    handleReliableDistribution(data, successfulRecipients, Collections.EMPTY_SET, Collections.EMPTY_SET);
   }
 
-  protected void handleReliableDistribution(ReliableDistributionData data,
-      Set successfulRecipients, Set otherRecipients1, Set otherRecipients2)
-  {
+  protected void handleReliableDistribution(ReliableDistributionData data, Set successfulRecipients, Set otherRecipients1, Set otherRecipients2) {
     if (this.requiresReliabilityCheck) {
       MembershipAttributes ra = getMembershipAttributes();
       Set recipients = successfulRecipients;
       // determine the successful roles
       Set roles = new HashSet();
       for (Iterator iter = recipients.iterator(); iter.hasNext();) {
-        InternalDistributedMember mbr = (InternalDistributedMember)iter.next();
+        InternalDistributedMember mbr = (InternalDistributedMember) iter.next();
         if (mbr != null) {
           roles.addAll(mbr.getRoles());
         }
       }
       for (Iterator iter = otherRecipients1.iterator(); iter.hasNext();) {
-        InternalDistributedMember mbr = (InternalDistributedMember)iter.next();
+        InternalDistributedMember mbr = (InternalDistributedMember) iter.next();
         if (mbr != null) {
           roles.addAll(mbr.getRoles());
         }
       }
       for (Iterator iter = otherRecipients2.iterator(); iter.hasNext();) {
-        InternalDistributedMember mbr = (InternalDistributedMember)iter.next();
+        InternalDistributedMember mbr = (InternalDistributedMember) iter.next();
         if (mbr != null) {
           roles.addAll(mbr.getRoles());
         }
@@ -617,12 +562,12 @@ public class DistributedRegion extends LocalRegion implements
       failedRoles.removeAll(roles);
       if (failedRoles.isEmpty())
         return;
-//       if (rp.isAllAccessWithQueuing()) {
-//         this.rmq.add(data, failedRoles);
-//       } else {
+      //       if (rp.isAllAccessWithQueuing()) {
+      //         this.rmq.add(data, failedRoles);
+      //       } else {
 
       throw new RegionDistributionException(LocalizedStrings.DistributedRegion_OPERATION_DISTRIBUTION_MAY_HAVE_FAILED_TO_NOTIFY_THESE_REQUIRED_ROLES_0.toLocalizedString(failedRoles), getFullPath(), failedRoles);
-//       }
+      //       }
     }
   }
 
@@ -640,8 +585,7 @@ public class DistributedRegion extends LocalRegion implements
    *           NO_ACCESS or LIMITED_ACCESS.
    * @since GemFire 5.0
    */
-  protected boolean isNoDistributionOk()
-  {
+  protected boolean isNoDistributionOk() {
     if (this.requiresReliabilityCheck) {
       MembershipAttributes ra = getMembershipAttributes();
       //       if (ra.getLossAction().isAllAccessWithQueuing()) {
@@ -653,7 +597,7 @@ public class DistributedRegion extends LocalRegion implements
     }
     return true;
   }
-  
+
   /**
    * returns true if this Region does not distribute its operations to other
    * members.
@@ -664,13 +608,11 @@ public class DistributedRegion extends LocalRegion implements
     return false;
   }
 
-  
   @Override
   public boolean shouldSyncForCrashedMember(InternalDistributedMember id) {
     return !doesNotDistribute() && super.shouldSyncForCrashedMember(id);
   }
-  
-  
+
   /**
    * Adjust the specified set of recipients by removing any of them that are
    * currently having their data queued.
@@ -683,8 +625,7 @@ public class DistributedRegion extends LocalRegion implements
    *         their data queued.
    * @since GemFire 5.0
    */
-  protected Set adjustForQueuing(Set recipients)
-  {
+  protected Set adjustForQueuing(Set recipients) {
     Set result = null;
     //     if (this.requiresReliabilityCheck) {
     //       MembershipAttributes ra = getMembershipAttributes();
@@ -723,15 +664,13 @@ public class DistributedRegion extends LocalRegion implements
    * @return true if sets a and b intersect; false if not
    * @since GemFire 5.0
    */
-  public static boolean intersects(Set a, Set b)
-  {
+  public static boolean intersects(Set a, Set b) {
     Iterator it;
     Set target;
     if (a.size() <= b.size()) {
       it = a.iterator();
       target = b;
-    }
-    else {
+    } else {
       it = b.iterator();
       target = a;
     }
@@ -743,8 +682,7 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  public boolean requiresReliabilityCheck()
-  {
+  public boolean requiresReliabilityCheck() {
     return this.requiresReliabilityCheck;
   }
 
@@ -758,14 +696,12 @@ public class DistributedRegion extends LocalRegion implements
    * only non-distributed expiration actions are allowed.
    */
   @Override
-  protected boolean isExpirationAllowed(ExpiryTask expiry)
-  {
+  protected boolean isExpirationAllowed(ExpiryTask expiry) {
     if (this.requiresReliabilityCheck && this.isMissingRequiredRoles) {
       if (getMembershipAttributes().getLossAction().isNoAccess()) {
         return false;
       }
-      if (getMembershipAttributes().getLossAction().isLimitedAccess()
-          && expiry.isDistributedAction()) {
+      if (getMembershipAttributes().getLossAction().isLimitedAccess() && expiry.isDistributedAction()) {
         return false;
       }
     }
@@ -777,9 +713,7 @@ public class DistributedRegion extends LocalRegion implements
    * 
    * @return true if asynchronous resumption is triggered
    */
-  protected boolean resumeReliability(InternalDistributedMember id,
-      Set newlyAcquiredRoles)
-  {
+  protected boolean resumeReliability(InternalDistributedMember id, Set newlyAcquiredRoles) {
     boolean async = false;
     try {
       ResumptionAction ra = getMembershipAttributes().getResumptionAction();
@@ -788,13 +722,11 @@ public class DistributedRegion extends LocalRegion implements
           logger.debug("Reliability resumption for action of none");
         }
         resumeExpiration();
-      }
-      else if (ra.isReinitialize()) {
+      } else if (ra.isReinitialize()) {
         async = true;
         asyncResumeReliability(id, newlyAcquiredRoles);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_UNEXPECTED_EXCEPTION), e);
     }
     return async;
@@ -803,22 +735,17 @@ public class DistributedRegion extends LocalRegion implements
   /**
    * Handles asynchronous ResumptionActions such as region reinitialize.
    */
-  private void asyncResumeReliability(final InternalDistributedMember id,
-                                      final Set newlyAcquiredRoles)
-                               throws RejectedExecutionException {
+  private void asyncResumeReliability(final InternalDistributedMember id, final Set newlyAcquiredRoles) throws RejectedExecutionException {
     final ResumptionAction ra = getMembershipAttributes().getResumptionAction();
     getDistributionManager().getWaitingThreadPool().execute(new Runnable() {
-      public void run()
-      {
+      public void run() {
         try {
           if (ra.isReinitialize()) {
             if (logger.isDebugEnabled()) {
               logger.debug("Reliability resumption for action of reinitialize");
             }
             if (!isDestroyed() && !cache.isClosed()) {
-              RegionEventImpl event = new RegionEventImpl(
-                  DistributedRegion.this, Operation.REGION_REINITIALIZE, null,
-                  false, getMyId(), generateEventID());
+              RegionEventImpl event = new RegionEventImpl(DistributedRegion.this, Operation.REGION_REINITIALIZE, null, false, getMyId(), generateEventID());
               reinitialize(null, event);
             }
             synchronized (missingRequiredRoles) {
@@ -826,16 +753,12 @@ public class DistributedRegion extends LocalRegion implements
               missingRequiredRoles.notifyAll();
               if (hasListener() && id != null) {
                 // fire afterRoleGain event
-                RoleEventImpl relEvent = new RoleEventImpl(
-                    DistributedRegion.this, Operation.REGION_CREATE, null,
-                    true, id, newlyAcquiredRoles);
-                dispatchListenerEvent(EnumListenerEvent.AFTER_ROLE_GAIN,
-                    relEvent);
+                RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this, Operation.REGION_CREATE, null, true, id, newlyAcquiredRoles);
+                dispatchListenerEvent(EnumListenerEvent.AFTER_ROLE_GAIN, relEvent);
               }
             }
           }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_UNEXPECTED_EXCEPTION), e);
         }
       }
@@ -843,40 +766,26 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   /** Reschedules expiry tasks when reliability is resumed. */
-  private void resumeExpiration()
-  {
+  private void resumeExpiration() {
     boolean isNoAccess = getMembershipAttributes().getLossAction().isNoAccess();
-    boolean isLimitedAccess = getMembershipAttributes().getLossAction()
-        .isLimitedAccess();
+    boolean isLimitedAccess = getMembershipAttributes().getLossAction().isLimitedAccess();
     if (!(isNoAccess || isLimitedAccess)) {
       return; // early out: expiration was never affected by reliability
     }
 
-    if (getEntryTimeToLive().getTimeout() > 0
-        && (isNoAccess || (isLimitedAccess && getEntryTimeToLive().getAction()
-            .isDistributed()))) {
+    if (getEntryTimeToLive().getTimeout() > 0 && (isNoAccess || (isLimitedAccess && getEntryTimeToLive().getAction().isDistributed()))) {
       rescheduleEntryExpiryTasks();
-    }
-    else 
-    if (getEntryIdleTimeout().getTimeout() > 0
-        && (isNoAccess || (isLimitedAccess && getEntryIdleTimeout().getAction()
-            .isDistributed()))) {
+    } else if (getEntryIdleTimeout().getTimeout() > 0 && (isNoAccess || (isLimitedAccess && getEntryIdleTimeout().getAction().isDistributed()))) {
       rescheduleEntryExpiryTasks();
-    }
-    else
-    if (getCustomEntryTimeToLive() != null || getCustomEntryIdleTimeout() != null) {
+    } else if (getCustomEntryTimeToLive() != null || getCustomEntryIdleTimeout() != null) {
       // Force all entries to be rescheduled
       rescheduleEntryExpiryTasks();
     }
 
-    if (getRegionTimeToLive().getTimeout() > 0
-        && (isNoAccess || (isLimitedAccess && getRegionTimeToLive().getAction()
-            .isDistributed()))) {
+    if (getRegionTimeToLive().getTimeout() > 0 && (isNoAccess || (isLimitedAccess && getRegionTimeToLive().getAction().isDistributed()))) {
       addTTLExpiryTask();
     }
-    if (getRegionIdleTimeout().getTimeout() > 0
-        && (isNoAccess || (isLimitedAccess && getRegionIdleTimeout()
-            .getAction().isDistributed()))) {
+    if (getRegionIdleTimeout().getTimeout() > 0 && (isNoAccess || (isLimitedAccess && getRegionIdleTimeout().getAction().isDistributed()))) {
       addIdleExpiryTask();
     }
   }
@@ -895,9 +804,7 @@ public class DistributedRegion extends LocalRegion implements
    * 
    * @return true if asynchronous resumption is triggered
    */
-  protected boolean lostReliability(final InternalDistributedMember id,
-      final Set newlyMissingRoles)
-  {
+  protected boolean lostReliability(final InternalDistributedMember id, final Set newlyMissingRoles) {
     if (DistributedRegion.ignoreReconnect) { // test hook
       return false;
     }
@@ -908,8 +815,7 @@ public class DistributedRegion extends LocalRegion implements
         async = true;
         if (isInitializingThread) {
           doLostReliability(true, id, newlyMissingRoles);
-        }
-        else {
+        } else {
           doLostReliability(false, id, newlyMissingRoles);
         }
         // we don't do this in the waiting pool because we're going to
@@ -933,26 +839,21 @@ public class DistributedRegion extends LocalRegion implements
          * t.setDaemon(true); t.start();
          */
       }
-    }
-    catch (CancelException cce) {
+    } catch (CancelException cce) {
       throw cce;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_UNEXPECTED_EXCEPTION), e);
     }
     return async;
   }
 
-  private void doLostReliability(boolean isInitializing,
-      final InternalDistributedMember id, final Set newlyMissingRoles)
-  {
+  private void doLostReliability(boolean isInitializing, final InternalDistributedMember id, final Set newlyMissingRoles) {
     try {
       if (!isInitializing) {
         // moved code to a new thread.
         Thread t = new Thread(LocalizedStrings.DistributedRegion_RECONNECT_DISTRIBUTED_SYSTEM.toLocalizedString()) {
           @Override
-          public void run()
-          {
+          public void run() {
             try {
               logger.debug("Reliability loss with policy of reconnect and membership thread doing reconnect");
 
@@ -964,15 +865,11 @@ public class DistributedRegion extends LocalRegion implements
                 missingRequiredRoles.notifyAll();
                 // need to fire an event if id is not null
                 if (hasListener() && id != null) {
-                  RoleEventImpl relEvent = new RoleEventImpl(
-                      DistributedRegion.this, Operation.CACHE_RECONNECT, null,
-                      true, id, newlyMissingRoles);
-                  dispatchListenerEvent(EnumListenerEvent.AFTER_ROLE_LOSS,
-                      relEvent);
+                  RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this, Operation.CACHE_RECONNECT, null, true, id, newlyMissingRoles);
+                  dispatchListenerEvent(EnumListenerEvent.AFTER_ROLE_LOSS, relEvent);
                 }
               }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
               logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_UNEXPECTED_EXCEPTION), e);
             }
           }
@@ -980,8 +877,7 @@ public class DistributedRegion extends LocalRegion implements
         t.setDaemon(true);
         t.start();
 
-      }
-      else {
+      } else {
         getSystem().tryReconnect(false, "Role Loss", getCache()); // added for
         // reconnect.
         synchronized (missingRequiredRoles) {
@@ -989,8 +885,7 @@ public class DistributedRegion extends LocalRegion implements
           missingRequiredRoles.notifyAll();
           // need to fire an event if id is not null
           if (hasListener() && id != null) {
-            RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this,
-                Operation.CACHE_RECONNECT, null, true, id, newlyMissingRoles);
+            RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this, Operation.CACHE_RECONNECT, null, true, id, newlyMissingRoles);
             dispatchListenerEvent(EnumListenerEvent.AFTER_ROLE_LOSS, relEvent);
           }
         }
@@ -999,26 +894,22 @@ public class DistributedRegion extends LocalRegion implements
         // }
 
       }
-    }
-    catch (CancelException ignor) {
+    } catch (CancelException ignor) {
       throw ignor;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_UNEXPECTED_EXCEPTION), e);
     }
 
   }
 
-  protected void lockCheckReadiness()
-  {
+  protected void lockCheckReadiness() {
     // fix for bug 32610
     cache.getCancelCriterion().checkCancelInProgress(null);
     checkReadiness();
   }
 
   @Override
-  public final Object validatedDestroy(Object key, EntryEventImpl event)
-      throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public final Object validatedDestroy(Object key, EntryEventImpl event) throws TimeoutException, EntryNotFoundException, CacheWriterException {
     Lock dlock = this.getDistributedLockIfGlobal(key);
     try {
       return super.validatedDestroy(key, event);
@@ -1033,14 +924,12 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#localDestroyNoCallbacks(Object)
    */
   @Override
-  public void localDestroyNoCallbacks(Object key)
-  {
+  public void localDestroyNoCallbacks(Object key) {
     super.localDestroyNoCallbacks(key);
     if (getScope().isGlobal()) {
       try {
         this.getLockService().freeResources(key);
-      }
-      catch (LockServiceDestroyedException ignore) {
+      } catch (LockServiceDestroyedException ignore) {
       }
     }
   }
@@ -1049,15 +938,12 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#localDestroy(Object, Object)
    */
   @Override
-  public void localDestroy(Object key, Object aCallbackArgument)
-      throws EntryNotFoundException
-  {
+  public void localDestroy(Object key, Object aCallbackArgument) throws EntryNotFoundException {
     super.localDestroy(key, aCallbackArgument);
     if (getScope().isGlobal()) {
       try {
         this.getLockService().freeResources(key);
-      }
-      catch (LockServiceDestroyedException ignore) {
+      } catch (LockServiceDestroyedException ignore) {
       }
     }
   }
@@ -1066,9 +952,7 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#invalidate(Object, Object)
    */
   @Override
-  public void invalidate(Object key, Object aCallbackArgument)
-      throws TimeoutException, EntryNotFoundException
-  {
+  public void invalidate(Object key, Object aCallbackArgument) throws TimeoutException, EntryNotFoundException {
     validateKey(key);
     validateCallbackArg(aCallbackArgument);
     checkReadiness();
@@ -1076,16 +960,14 @@ public class DistributedRegion extends LocalRegion implements
     Lock dlock = this.getDistributedLockIfGlobal(key);
     try {
       super.validatedInvalidate(key, aCallbackArgument);
-    }
-    finally {
+    } finally {
       if (dlock != null)
         dlock.unlock();
     }
   }
 
   @Override
-  public Lock getRegionDistributedLock() throws IllegalStateException
-  {
+  public Lock getRegionDistributedLock() throws IllegalStateException {
     lockCheckReadiness();
     checkForLimitedOrNoAccess();
     if (!this.scope.isGlobal()) {
@@ -1095,8 +977,7 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  public Lock getDistributedLock(Object key) throws IllegalStateException
-  {
+  public Lock getDistributedLock(Object key) throws IllegalStateException {
     validateKey(key);
     lockCheckReadiness();
     checkForLimitedOrNoAccess();
@@ -1118,10 +999,7 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#initialize(InputStream, InternalDistributedMember, InternalRegionArguments)
    */
   @Override
-  protected void initialize(InputStream snapshotInputStream,
-      InternalDistributedMember imageTarget, InternalRegionArguments internalRegionArgs) throws TimeoutException,
-      IOException, ClassNotFoundException
-  {
+  protected void initialize(InputStream snapshotInputStream, InternalDistributedMember imageTarget, InternalRegionArguments internalRegionArgs) throws TimeoutException, IOException, ClassNotFoundException {
     Assert.assertTrue(!isInitialized());
     if (logger.isDebugEnabled()) {
       logger.debug("DistributedRegion.initialize BEGIN: {}", getFullPath());
@@ -1136,7 +1014,7 @@ public class DistributedRegion extends LocalRegion implements
       getLockService(); // create lock service eagerly now
     }
 
-     try {
+    try {
       try {
         PersistentMemberID persistentId = null;
         boolean recoverFromDisk = isRecoveryNeeded();
@@ -1151,24 +1029,20 @@ public class DistributedRegion extends LocalRegion implements
           }
           persistentId = dskRgn.getMyPersistentID();
         }
-        
+
         // Create OQL indexes before starting GII.
         createOQLIndexes(internalRegionArgs, recoverFromDisk);
- 
-        if (getDataPolicy().withReplication()
-            || getDataPolicy().withPreloaded()) {
-          getInitialImageAndRecovery(snapshotInputStream, imageTarget,
-              internalRegionArgs, recoverFromDisk, persistentId);
-        }
-        else {
+
+        if (getDataPolicy().withReplication() || getDataPolicy().withPreloaded()) {
+          getInitialImageAndRecovery(snapshotInputStream, imageTarget, internalRegionArgs, recoverFromDisk, persistentId);
+        } else {
           new CreateRegionProcessor(this).initializeRegion();
           if (snapshotInputStream != null) {
             releaseBeforeGetInitialImageLatch();
             loadSnapshotDuringInitialization(snapshotInputStream);
           }
         }
-      }
-      catch (DiskAccessException dae) {
+      } catch (DiskAccessException dae) {
         this.handleDiskAccessException(dae, true);
         throw dae;
       }
@@ -1176,11 +1050,11 @@ public class DistributedRegion extends LocalRegion implements
       initMembershipRoles();
       isInitializingThread = false;
       super.initialize(null, null, null); // makes sure all latches are released if they haven't been already
-     } finally {
+    } finally {
       if (this.eventTracker != null) {
         this.eventTracker.setInitialized();
       }
-     }
+    }
   }
 
   @Override
@@ -1194,79 +1068,70 @@ public class DistributedRegion extends LocalRegion implements
   /**
    * A reference counter to protected the memoryThresholdReached boolean
    */
-  private final Set<DistributedMember> memoryThresholdReachedMembers =
-    new CopyOnWriteArraySet<DistributedMember>();
+  private final Set<DistributedMember> memoryThresholdReachedMembers = new CopyOnWriteArraySet<DistributedMember>();
 
   /** Sets and returns giiMissingRequiredRoles */
-  private boolean checkInitialImageForReliability(
-      InternalDistributedMember imageTarget,
-      CacheDistributionAdvisor.InitialImageAdvice advice)
-  {
+  private boolean checkInitialImageForReliability(InternalDistributedMember imageTarget, CacheDistributionAdvisor.InitialImageAdvice advice) {
     // assumption: required roles are interesting to GII only if Reinitialize...
-//    if (true)
-      return false;
-//    if (getMembershipAttributes().hasRequiredRoles()
-//        && getMembershipAttributes().getResumptionAction().isReinitialize()) {
-//      // are any required roles missing for GII with Reinitialize?
-//      Set missingRR = new HashSet(getMembershipAttributes().getRequiredRoles());
-//      missingRR.removeAll(getSystem().getDistributedMember().getRoles());
-//      for (Iterator iter = advice.replicates.iterator(); iter.hasNext();) {
-//        DistributedMember member = (DistributedMember)iter.next();
-//        missingRR.removeAll(member.getRoles());
-//      }
-//      for (Iterator iter = advice.others.iterator(); iter.hasNext();) {
-//        DistributedMember member = (DistributedMember)iter.next();
-//        missingRR.removeAll(member.getRoles());
-//      }
-//      for (Iterator iter = advice.preloaded.iterator(); iter.hasNext();) {
-//        DistributedMember member = (DistributedMember)iter.next();
-//        missingRR.removeAll(member.getRoles());
-//      }
-//      if (!missingRR.isEmpty()) {
-//        // entering immediate loss condition, which will cause reinit on resume
-//        this.giiMissingRequiredRoles = true;
-//      }
-//    }
-//    return this.giiMissingRequiredRoles;
+    //    if (true)
+    return false;
+    //    if (getMembershipAttributes().hasRequiredRoles()
+    //        && getMembershipAttributes().getResumptionAction().isReinitialize()) {
+    //      // are any required roles missing for GII with Reinitialize?
+    //      Set missingRR = new HashSet(getMembershipAttributes().getRequiredRoles());
+    //      missingRR.removeAll(getSystem().getDistributedMember().getRoles());
+    //      for (Iterator iter = advice.replicates.iterator(); iter.hasNext();) {
+    //        DistributedMember member = (DistributedMember)iter.next();
+    //        missingRR.removeAll(member.getRoles());
+    //      }
+    //      for (Iterator iter = advice.others.iterator(); iter.hasNext();) {
+    //        DistributedMember member = (DistributedMember)iter.next();
+    //        missingRR.removeAll(member.getRoles());
+    //      }
+    //      for (Iterator iter = advice.preloaded.iterator(); iter.hasNext();) {
+    //        DistributedMember member = (DistributedMember)iter.next();
+    //        missingRR.removeAll(member.getRoles());
+    //      }
+    //      if (!missingRR.isEmpty()) {
+    //        // entering immediate loss condition, which will cause reinit on resume
+    //        this.giiMissingRequiredRoles = true;
+    //      }
+    //    }
+    //    return this.giiMissingRequiredRoles;
   }
 
-  private void getInitialImageAndRecovery(InputStream snapshotInputStream,
-      InternalDistributedMember imageSrc, InternalRegionArguments internalRegionArgs,
-      boolean recoverFromDisk, PersistentMemberID persistentId) throws TimeoutException
-  {
+  private void getInitialImageAndRecovery(InputStream snapshotInputStream, InternalDistributedMember imageSrc, InternalRegionArguments internalRegionArgs, boolean recoverFromDisk, PersistentMemberID persistentId) throws TimeoutException {
     logger.info(LocalizedMessage.create(LocalizedStrings.DistributedRegion_INITIALIZING_REGION_0, this.getName()));
-  
+
     ImageState imgState = getImageState();
     imgState.init();
     boolean targetRecreated = internalRegionArgs.getRecreateFlag();
-    Boolean isCBool = (Boolean)isConversion.get();
-    boolean isForConversion = isCBool!=null?isCBool.booleanValue():false;
+    Boolean isCBool = (Boolean) isConversion.get();
+    boolean isForConversion = isCBool != null ? isCBool.booleanValue() : false;
 
     if (recoverFromDisk && snapshotInputStream != null && !isForConversion) {
-      throw new InternalGemFireError(LocalizedStrings.DistributedRegion_IF_LOADING_A_SNAPSHOT_THEN_SHOULD_NOT_BE_RECOVERING_ISRECOVERING_0_SNAPSHOTSTREAM_1.toLocalizedString(new Object[] {Boolean.valueOf(recoverFromDisk), snapshotInputStream}));
+      throw new InternalGemFireError(LocalizedStrings.DistributedRegion_IF_LOADING_A_SNAPSHOT_THEN_SHOULD_NOT_BE_RECOVERING_ISRECOVERING_0_SNAPSHOTSTREAM_1.toLocalizedString(new Object[] { Boolean.valueOf(recoverFromDisk), snapshotInputStream }));
     }
 
     ProfileExchangeProcessor targetProvider;
     if (dataPolicy.withPersistence()) {
-      targetProvider = new CreatePersistentRegionProcessor(this,
-          getPersistenceAdvisor(), recoverFromDisk);
-    }
-    else {
+      targetProvider = new CreatePersistentRegionProcessor(this, getPersistenceAdvisor(), recoverFromDisk);
+    } else {
       // this will go in the advisor profile
       targetProvider = new CreateRegionProcessor(this);
     }
     imgState.setInRecovery(false);
     RegionVersionVector recovered_rvv = null;
     if (dataPolicy.withPersistence()) {
-      recovered_rvv = (this.getVersionVector()==null?null:this.getVersionVector().getCloneForTransmission());
+      recovered_rvv = (this.getVersionVector() == null ? null : this.getVersionVector().getCloneForTransmission());
     }
-      // initializeRegion will send out our profile
+    // initializeRegion will send out our profile
     targetProvider.initializeRegion();
-    
-    if(persistenceAdvisor != null) {
+
+    if (persistenceAdvisor != null) {
       persistenceAdvisor.initialize();
     }
-    
+
     // Register listener here so that the remote members are known
     // since registering calls initializeCriticalMembers (which needs to know about
     // remote members
@@ -1275,31 +1140,28 @@ public class DistributedRegion extends LocalRegion implements
         cache.getResourceManager().addResourceListener(ResourceType.MEMORY, this);
       }
     }
-    
+
     releaseBeforeGetInitialImageLatch();
 
     // allow GII to invoke test hooks.  Do this just after releasing the
     // before-gii latch for bug #48962.  See ConcurrentLeaveDuringGIIDUnitTest
     InitialImageOperation.beforeGetInitialImage(this);
-    
+
     if (snapshotInputStream != null) {
       try {
         if (logger.isDebugEnabled()) {
-          logger.debug("DistributedRegion.getInitialImageAndRecovery: About to load snapshot, isInitialized={}; {}",
-              isInitialized(), getFullPath());
+          logger.debug("DistributedRegion.getInitialImageAndRecovery: About to load snapshot, isInitialized={}; {}", isInitialized(), getFullPath());
         }
         loadSnapshotDuringInitialization(snapshotInputStream);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         throw new RuntimeException(e); // @todo change this exception?
-      }
-      catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException e) {
         throw new RuntimeException(e); // @todo change this exception?
       }
       cleanUpDestroyedTokensAndMarkGIIComplete(GIIStatus.NO_GII);
       return;
     }
-    
+
     // No snapshot provided, use the imageTarget(s)
 
     // if we were given a recommended imageTarget, use that first, and
@@ -1320,23 +1182,20 @@ public class DistributedRegion extends LocalRegion implements
     //        return;
     //      }
 
-
     CacheDistributionAdvisor.InitialImageAdvice advice = null;
     boolean done = false;
-    while(!done && !isDestroyed()) {
+    while (!done && !isDestroyed()) {
       advice = targetProvider.getInitialImageAdvice(advice);
       checkInitialImageForReliability(imageSrc, advice);
-      boolean attemptGetFromOne = 
-        imageSrc != null // we were given a specific member
-        || this.dataPolicy.withPreloaded()
-           && !advice.preloaded.isEmpty() // this is a preloaded region
-        || (!advice.replicates.isEmpty());
+      boolean attemptGetFromOne = imageSrc != null // we were given a specific member
+          || this.dataPolicy.withPreloaded() && !advice.preloaded.isEmpty() // this is a preloaded region
+          || (!advice.replicates.isEmpty());
       // That is: if we have 0 or 1 giiProvider then we can do a getFromOne gii;
       // if we have 2 or more giiProviders then we must do a getFromAll gii.
 
       if (attemptGetFromOne) {
         if (recoverFromDisk) {
-          if (LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER){
+          if (LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER) {
             CacheObserverHolder.getInstance().afterMarkingGIIStarted();
           }
         }
@@ -1350,8 +1209,7 @@ public class DistributedRegion extends LocalRegion implements
           // Plan A: use specified imageSrc, if specified
           if (imageSrc != null) {
             try {
-              GIIStatus ret = iiop.getFromOne(Collections.singleton(imageSrc),
-                  targetRecreated, advice, recoverFromDisk, recovered_rvv);
+              GIIStatus ret = iiop.getFromOne(Collections.singleton(imageSrc), targetRecreated, advice, recoverFromDisk, recovered_rvv);
               if (GIIStatus.didGII(ret)) {
                 this.giiMissingRequiredRoles = false;
                 cleanUpDestroyedTokensAndMarkGIIComplete(ret);
@@ -1388,27 +1246,21 @@ public class DistributedRegion extends LocalRegion implements
 
       } // attemptGetFromOne
       else {
-        if(!isDestroyed()) {
-          if(recoverFromDisk) {
-            logger.info(LocalizedMessage.create(LocalizedStrings.DistributedRegion_INITIALIZED_FROM_DISK,
-                new Object[] {this.getFullPath(), persistentId, getPersistentID()}));
-            if(persistentId != null) {
-              RegionLogger.logRecovery(this.getFullPath(), persistentId,
-                  getDistributionManager().getDistributionManagerId());
+        if (!isDestroyed()) {
+          if (recoverFromDisk) {
+            logger.info(LocalizedMessage.create(LocalizedStrings.DistributedRegion_INITIALIZED_FROM_DISK, new Object[] { this.getFullPath(), persistentId, getPersistentID() }));
+            if (persistentId != null) {
+              RegionLogger.logRecovery(this.getFullPath(), persistentId, getDistributionManager().getDistributionManagerId());
             }
           } else {
-            RegionLogger.logCreate(this.getFullPath(),
-                getDistributionManager().getDistributionManagerId());
-            
+            RegionLogger.logCreate(this.getFullPath(), getDistributionManager().getDistributionManagerId());
+
             if (getPersistentID() != null) {
-              RegionLogger.logPersistence(this.getFullPath(),
-                  getDistributionManager().getDistributionManagerId(),
-                  getPersistentID());
-              logger.info(LocalizedMessage.create(LocalizedStrings.DistributedRegion_NEW_PERSISTENT_REGION_CREATED,
-                  new Object[] {this.getFullPath(), getPersistentID()}));
+              RegionLogger.logPersistence(this.getFullPath(), getDistributionManager().getDistributionManagerId(), getPersistentID());
+              logger.info(LocalizedMessage.create(LocalizedStrings.DistributedRegion_NEW_PERSISTENT_REGION_CREATED, new Object[] { this.getFullPath(), getPersistentID() }));
             }
           }
-          
+
           /* no more union GII
             // do union getInitialImage
             Set rest = new HashSet();
@@ -1429,37 +1281,34 @@ public class DistributedRegion extends LocalRegion implements
 
     return;
   }
-  
-  private void synchronizeWith(InternalDistributedMember target, 
-      VersionSource idToRecover) {
+
+  private void synchronizeWith(InternalDistributedMember target, VersionSource idToRecover) {
     InitialImageOperation op = new InitialImageOperation(this, this.entries);
     op.synchronizeWith(target, idToRecover, null);
   }
-  
+
   /**
    * If this region has concurrency controls enabled this will pull any missing
    * changes from other replicates using InitialImageOperation and a filtered
    * chunking protocol.
    */
-  public void synchronizeForLostMember(InternalDistributedMember
-      lostMember, VersionSource lostVersionID) {
+  public void synchronizeForLostMember(InternalDistributedMember lostMember, VersionSource lostVersionID) {
     if (this.concurrencyChecksEnabled == false) {
       return;
     }
     CacheDistributionAdvisor advisor = getCacheDistributionAdvisor();
     Set<InternalDistributedMember> targets = advisor.adviseInitializedReplicates();
-    for (InternalDistributedMember target: targets) {
+    for (InternalDistributedMember target : targets) {
       synchronizeWith(target, lostVersionID, lostMember);
     }
   }
-  
+
   /**
    * synchronize with another member wrt messages from the given "lost" member.
    * This can be used when a primary bucket crashes to ensure that interrupted
    * message distribution is mended.
    */
-  private void synchronizeWith(InternalDistributedMember target,
-      VersionSource versionMember, InternalDistributedMember lostMember) {
+  private void synchronizeWith(InternalDistributedMember target, VersionSource versionMember, InternalDistributedMember lostMember) {
     InitialImageOperation op = new InitialImageOperation(this, this.entries);
     op.synchronizeWith(target, versionMember, lostMember);
   }
@@ -1491,7 +1340,7 @@ public class DistributedRegion extends LocalRegion implements
       if (this.indexManager != null) {
         try {
           this.indexManager.rerunIndexCreationQuery();
-        } catch (Exception ex){
+        } catch (Exception ex) {
           if (logger.isDebugEnabled()) {
             logger.debug("Exception while clearing indexes after GII failure.", ex);
           }
@@ -1500,25 +1349,21 @@ public class DistributedRegion extends LocalRegion implements
     }
   }
 
-  private void initMembershipRoles()
-  {
+  private void initMembershipRoles() {
     synchronized (this.advisorListener) {
       // hold sync to prevent listener from changing initial members
-      Set others = this.distAdvisor
-          .addMembershipListenerAndAdviseGeneric(this.advisorListener);
+      Set others = this.distAdvisor.addMembershipListenerAndAdviseGeneric(this.advisorListener);
       this.advisorListener.addMembers(others);
       // initialize missing required roles with initial member info
       if (getMembershipAttributes().hasRequiredRoles()) {
         // AdvisorListener will also sync on missingRequiredRoles
         synchronized (this.missingRequiredRoles) {
-          this.missingRequiredRoles.addAll(getMembershipAttributes()
-              .getRequiredRoles());
+          this.missingRequiredRoles.addAll(getMembershipAttributes().getRequiredRoles());
           // remove all the roles we are playing since they will never be
           // missing
-          this.missingRequiredRoles.removeAll(getSystem()
-              .getDistributedMember().getRoles());
+          this.missingRequiredRoles.removeAll(getSystem().getDistributedMember().getRoles());
           for (Iterator iter = others.iterator(); iter.hasNext();) {
-            DistributedMember other = (DistributedMember)iter.next();
+            DistributedMember other = (DistributedMember) iter.next();
             this.missingRequiredRoles.removeAll(other.getRoles());
           }
         }
@@ -1526,7 +1371,7 @@ public class DistributedRegion extends LocalRegion implements
     }
     if (getMembershipAttributes().hasRequiredRoles()) {
       // wait up to memberTimeout for required roles...
-//      boolean requiredRolesAreMissing = false;
+      //      boolean requiredRolesAreMissing = false;
       int memberTimeout = getSystem().getConfig().getMemberTimeout();
       if (logger.isDebugEnabled()) {
         logger.debug("Waiting up to {} for required roles.", memberTimeout);
@@ -1542,8 +1387,7 @@ public class DistributedRegion extends LocalRegion implements
               getCachePerfStats().incReliableRegionsMissing(1);
               if (getMembershipAttributes().getLossAction().isAllAccess())
                 getCachePerfStats().incReliableRegionsMissingFullAccess(1); // rahul
-              else if (getMembershipAttributes().getLossAction()
-                  .isLimitedAccess())
+              else if (getMembershipAttributes().getLossAction().isLimitedAccess())
                 getCachePerfStats().incReliableRegionsMissingLimitedAccess(1);
               else if (getMembershipAttributes().getLossAction().isNoAccess())
                 getCachePerfStats().incReliableRegionsMissingNoAccess(1);
@@ -1560,10 +1404,8 @@ public class DistributedRegion extends LocalRegion implements
                 getCachePerfStats().incReliableRegionsMissing(-1);
                 if (getMembershipAttributes().getLossAction().isAllAccess())
                   getCachePerfStats().incReliableRegionsMissingFullAccess(-1); // rahul
-                else if (getMembershipAttributes().getLossAction()
-                    .isLimitedAccess())
-                  getCachePerfStats()
-                      .incReliableRegionsMissingLimitedAccess(-1);
+                else if (getMembershipAttributes().getLossAction().isLimitedAccess())
+                  getCachePerfStats().incReliableRegionsMissingLimitedAccess(-1);
                 else if (getMembershipAttributes().getLossAction().isNoAccess())
                   getCachePerfStats().incReliableRegionsMissingNoAccess(-1);
                 // pur code to increment the stats.
@@ -1574,8 +1416,7 @@ public class DistributedRegion extends LocalRegion implements
               }
             }
           }
-        }
-        else {
+        } else {
           if (!getSystem().isLoner()) {
             waitForRequiredRoles(memberTimeout);
           }
@@ -1586,19 +1427,17 @@ public class DistributedRegion extends LocalRegion implements
                 if (logger.isDebugEnabled()) {
                   logger.debug("Initialization completed with all required roles present.");
                 }
-              }
-              else {
+              } else {
                 // starting in state of loss...
                 this.isMissingRequiredRoles = true;
                 getCachePerfStats().incReliableRegionsMissing(1);
                 if (getMembershipAttributes().getLossAction().isAllAccess())
                   getCachePerfStats().incReliableRegionsMissingFullAccess(1); // rahul
-                else if (getMembershipAttributes().getLossAction()
-                    .isLimitedAccess())
+                else if (getMembershipAttributes().getLossAction().isLimitedAccess())
                   getCachePerfStats().incReliableRegionsMissingLimitedAccess(1);
                 else if (getMembershipAttributes().getLossAction().isNoAccess())
                   getCachePerfStats().incReliableRegionsMissingNoAccess(1);
-                
+
                 if (logger.isDebugEnabled()) {
                   logger.debug("Initialization completed with missing required roles: {}", this.missingRequiredRoles);
                 }
@@ -1608,17 +1447,14 @@ public class DistributedRegion extends LocalRegion implements
             }
           }
         }
-      }
-      catch (RegionDestroyedException ignore) {
+      } catch (RegionDestroyedException ignore) {
         // ignore to fix bug 34639 may be thrown by waitForRequiredRoles
-      }
-      catch (CancelException ignore) {
+      } catch (CancelException ignore) {
         // ignore to fix bug 34639 may be thrown by waitForRequiredRoles
         if (isInitializingThread) {
           throw ignore;
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_UNEXPECTED_EXCEPTION), e);
       }
 
@@ -1626,17 +1462,16 @@ public class DistributedRegion extends LocalRegion implements
     // open latch which will allow any threads in lostReliability to proceed
     this.initializationLatchAfterMemberTimeout.countDown();
   }
+
   private boolean isRecoveryNeeded() {
-    return getDataPolicy().withPersistence()
-      && getDiskRegion().isRecreated();
+    return getDataPolicy().withPersistence() && getDiskRegion().isRecreated();
   }
 
   // called by InitialImageOperation to clean up destroyed tokens
   // release afterGetInitialImageInitializationLatch before unlocking
   // cleanUpLock
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="UL_UNRELEASED_LOCK")
-  protected void cleanUpDestroyedTokensAndMarkGIIComplete(GIIStatus giiStatus)
-  {
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK")
+  protected void cleanUpDestroyedTokensAndMarkGIIComplete(GIIStatus giiStatus) {
     //We need to clean up the disk before we release the after get initial image latch
     DiskRegion dskRgn = getDiskRegion();
     if (dskRgn != null && dskRgn.isBackup()) {
@@ -1661,25 +1496,24 @@ public class DistributedRegion extends LocalRegion implements
         clearEntries(rvv);
       }
       //need to do this before we release the afterGetInitialImageLatch
-      if(persistenceAdvisor != null) {
+      if (persistenceAdvisor != null) {
         persistenceAdvisor.setOnline(GIIStatus.didGII(giiStatus), false, getPersistentID());
       }
-    }
-    finally {
+    } finally {
       // release after gii lock first so basicDestroy will see isInitialized()
       // be true
       // when they get the cleanUp lock.
-        try {
-          releaseAfterGetInitialImageLatch();
-        } finally { // make sure unlockGII is done for bug 40001
-          is.unlockGII();
-        }
+      try {
+        releaseAfterGetInitialImageLatch();
+      } finally { // make sure unlockGII is done for bug 40001
+        is.unlockGII();
+      }
     }
-    
-    if (LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER){
+
+    if (LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER) {
       CacheObserverHolder.getInstance().afterMarkingGIICompleted();
     }
-    
+
     //"Initializing region {0}" which is not acompanied by a completed message. Users think thread is stuck in some operation. Hence adding this log
     logger.info(LocalizedMessage.create(LocalizedStrings.DistributedRegion_INITIALIZING_REGION_COMPLETED_0, this.getName()));
   }
@@ -1688,11 +1522,7 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#basicDestroy(EntryEventImpl, boolean, Object)
    */
   @Override
-  protected
-  void basicDestroy(EntryEventImpl event,
-                       boolean cacheWrite,
-                       Object expectedOldValue)
-  throws EntryNotFoundException, CacheWriterException, TimeoutException {
+  protected void basicDestroy(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws EntryNotFoundException, CacheWriterException, TimeoutException {
     //  disallow local destruction for mirrored keysvalues regions
     boolean invokeWriter = cacheWrite;
     boolean hasSeen = false;
@@ -1700,7 +1530,7 @@ public class DistributedRegion extends LocalRegion implements
       hasSeen = true;
     }
     checkIfReplicatedAndLocalDestroy(event);
-    
+
     try {
       if (this.requiresOneHopForMissingEntry(event)) {
         // bug #45704: see if a one-hop must be done for this operation
@@ -1713,28 +1543,28 @@ public class DistributedRegion extends LocalRegion implements
           if (!event.isBulkOpInProgress() || this.dataPolicy.withStorage()) {
             // removeAll will send a single one-hop for empty regions.  for other missing entries
             // we need to get a valid version number before modifying the local cache 
-          // TODO: deltaGII: verify that delegating to a peer when this region is also a client is acceptable
-          boolean didDistribute = RemoteDestroyMessage.distribute(event, expectedOldValue, !this.generateVersionTag);
+            // TODO: deltaGII: verify that delegating to a peer when this region is also a client is acceptable
+            boolean didDistribute = RemoteDestroyMessage.distribute(event, expectedOldValue, !this.generateVersionTag);
 
-          if (!this.generateVersionTag && !didDistribute) {
-            throw new PersistentReplicatesOfflineException();
-          }
-          
-          if (didDistribute) {
-            if (logger.isTraceEnabled()) {
-              logger.trace("Event after remoteDestroy operation: {}", event);
+            if (!this.generateVersionTag && !didDistribute) {
+              throw new PersistentReplicatesOfflineException();
             }
-            invokeWriter = false; // remote cache invoked the writer
-            if (event.getVersionTag() == null) {
-              // if the event wasn't applied by the one-hop replicate it will not have a version tag
-              // and so should not be applied to this cache
-              return;
+
+            if (didDistribute) {
+              if (logger.isTraceEnabled()) {
+                logger.trace("Event after remoteDestroy operation: {}", event);
+              }
+              invokeWriter = false; // remote cache invoked the writer
+              if (event.getVersionTag() == null) {
+                // if the event wasn't applied by the one-hop replicate it will not have a version tag
+                // and so should not be applied to this cache
+                return;
+              }
             }
-          }
           }
         }
       }
-      
+
       super.basicDestroy(event, invokeWriter, expectedOldValue);
 
       // if this is a destroy coming in from remote source, free up lock resources
@@ -1743,44 +1573,41 @@ public class DistributedRegion extends LocalRegion implements
       if (this.scope.isGlobal() && event.isOriginRemote()) {
         try {
           getLockService().freeResources(event.getKey());
-        }
-        catch (LockServiceDestroyedException ignore) {
+        } catch (LockServiceDestroyedException ignore) {
         }
       }
-  
+
       return;
-    } 
-    finally {
+    } finally {
       if (hasSeen) {
         if (event.isBulkOpInProgress() && !event.isOriginRemote()) {
           event.getRemoveAllOperation().addEntry(event, true);
         }
         if (!getConcurrencyChecksEnabled() || event.hasValidVersionTag()) {
           distributeDestroy(event, expectedOldValue);
-          event.invokeCallbacks(this,true, false);
+          event.invokeCallbacks(this, true, false);
         }
       }
     }
   }
 
   @Override
-  void basicDestroyPart3(RegionEntry re, EntryEventImpl event,
-      boolean inTokenMode, boolean duringRI, boolean invokeCallbacks, Object expectedOldValue) {
-  
+  void basicDestroyPart3(RegionEntry re, EntryEventImpl event, boolean inTokenMode, boolean duringRI, boolean invokeCallbacks, Object expectedOldValue) {
+
     distributeDestroy(event, expectedOldValue);
     super.basicDestroyPart3(re, event, inTokenMode, duringRI, invokeCallbacks, expectedOldValue);
   }
-  
+
   void distributeDestroy(EntryEventImpl event, Object expectedOldValue) {
     if (event.isDistributed() && !event.isOriginRemote() && !event.isBulkOpInProgress()) {
       boolean distribute = !event.getInhibitDistribution();
       if (distribute) {
-        DestroyOperation op =  new DestroyOperation(event);
+        DestroyOperation op = new DestroyOperation(event);
         op.distribute();
       }
     }
   }
-  
+
   @Override
   boolean evictDestroy(LRUEntry entry) {
     boolean evictDestroyWasDone = super.evictDestroy(entry);
@@ -1788,24 +1615,20 @@ public class DistributedRegion extends LocalRegion implements
       if (this.scope.isGlobal()) {
         try {
           getLockService().freeResources(entry.getKey());
-        }
-        catch (LockServiceDestroyedException ignore) {
+        } catch (LockServiceDestroyedException ignore) {
         }
       }
     }
     return evictDestroyWasDone;
   }
 
-
   /**
    * @see LocalRegion#basicInvalidateRegion(RegionEventImpl)
    */
   @Override
-  void basicInvalidateRegion(RegionEventImpl event)
-  {
+  void basicInvalidateRegion(RegionEventImpl event) {
     // disallow local invalidation for replicated regions
-    if (!event.isDistributed() && getScope().isDistributed()
-        && getDataPolicy().withReplication()) {
+    if (!event.isDistributed() && getScope().isDistributed() && getDataPolicy().withReplication()) {
       throw new IllegalStateException(LocalizedStrings.DistributedRegion_NOT_ALLOWED_TO_DO_A_LOCAL_INVALIDATION_ON_A_REPLICATED_REGION.toLocalizedString());
     }
     if (shouldDistributeInvalidateRegion(event)) {
@@ -1838,15 +1661,12 @@ public class DistributedRegion extends LocalRegion implements
    *      boolean)
    */
   @Override
-  void basicDestroyRegion(RegionEventImpl event, boolean cacheWrite,
-      boolean lock, boolean callbackEvents) throws CacheWriterException,
-      TimeoutException
-  {
+  void basicDestroyRegion(RegionEventImpl event, boolean cacheWrite, boolean lock, boolean callbackEvents) throws CacheWriterException, TimeoutException {
     final String path = getFullPath();
     //Keep track of regions that are being destroyed. This helps avoid a race
     //when another member concurrently creates this region. See bug 42051.
     boolean isClose = event.getOperation().isClose();
-    if(!isClose) {
+    if (!isClose) {
       cache.beginDestroy(path, this);
     }
     try {
@@ -1856,33 +1676,27 @@ public class DistributedRegion extends LocalRegion implements
       if (!event.isOriginRemote()) {
         distributeDestroyRegion(event, true);
       } else {
-        if(!event.isReinitializing()) {
-          RegionEventImpl localEvent = new RegionEventImpl(this,
-              Operation.REGION_LOCAL_DESTROY, event.getCallbackArgument(), false, getMyId(),
-              generateEventID()/* generate EventID */);
+        if (!event.isReinitializing()) {
+          RegionEventImpl localEvent = new RegionEventImpl(this, Operation.REGION_LOCAL_DESTROY, event.getCallbackArgument(), false, getMyId(), generateEventID()/* generate EventID */);
           distributeDestroyRegion(localEvent, false/*fixes bug 41111*/);
         }
       }
       notifyBridgeClients(event);
-    }
-    catch (CancelException e) {
+    } catch (CancelException e) {
       if (logger.isDebugEnabled()) {
         logger.debug("basicDestroyRegion short-circuited due to cancellation");
       }
-    }
-    finally {
-      if(!isClose) {
+    } finally {
+      if (!isClose) {
         cache.endDestroy(path, this);
       }
       RegionLogger.logDestroy(path, getMyId(), getPersistentID(), isClose);
     }
- }
-
+  }
 
   @Override
-  protected void distributeDestroyRegion(RegionEventImpl event,
-                                         boolean notifyOfRegionDeparture) {
-    if(persistenceAdvisor != null) {
+  protected void distributeDestroyRegion(RegionEventImpl event, boolean notifyOfRegionDeparture) {
+    if (persistenceAdvisor != null) {
       persistenceAdvisor.releaseTieLock();
     }
     new DestroyRegionOperation(event, notifyOfRegionDeparture).distribute();
@@ -1895,17 +1709,15 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#basicInvalidate(EntryEventImpl)
    */
   @Override
-  void basicInvalidate(EntryEventImpl event) throws EntryNotFoundException
-  {
-    
+  void basicInvalidate(EntryEventImpl event) throws EntryNotFoundException {
+
     boolean hasSeen = false;
     if (hasSeenEvent(event)) {
       hasSeen = true;
     }
     try {
       // disallow local invalidation for replicated regions
-      if (event.isLocalInvalid() && !event.getOperation().isLocal() && getScope().isDistributed()
-          && getDataPolicy().withReplication()) {
+      if (event.isLocalInvalid() && !event.getOperation().isLocal() && getScope().isDistributed() && getDataPolicy().withReplication()) {
         throw new IllegalStateException(LocalizedStrings.DistributedRegion_NOT_ALLOWED_TO_DO_A_LOCAL_INVALIDATION_ON_A_REPLICATED_REGION.toLocalizedString());
       }
       if (this.requiresOneHopForMissingEntry(event)) {
@@ -1933,30 +1745,28 @@ public class DistributedRegion extends LocalRegion implements
           }
         }
       }
-  
+
       super.basicInvalidate(event);
 
       return;
     } finally {
       if (hasSeen) {
-    	if (!getConcurrencyChecksEnabled() || event.hasValidVersionTag()) {
+        if (!getConcurrencyChecksEnabled() || event.hasValidVersionTag()) {
           distributeInvalidate(event);
-          event.invokeCallbacks(this,true, false);
-    	}
+          event.invokeCallbacks(this, true, false);
+        }
       }
     }
   }
 
   @Override
-  void basicInvalidatePart3(RegionEntry re, EntryEventImpl event,
-      boolean invokeCallbacks) {
+  void basicInvalidatePart3(RegionEntry re, EntryEventImpl event, boolean invokeCallbacks) {
     distributeInvalidate(event);
     super.basicInvalidatePart3(re, event, invokeCallbacks);
   }
-  
+
   void distributeInvalidate(EntryEventImpl event) {
-    if (!this.regionInvalid && event.isDistributed() && !event.isOriginRemote()
-        && !isTX() /* only distribute if non-tx */) {
+    if (!this.regionInvalid && event.isDistributed() && !event.isOriginRemote() && !isTX() /* only distribute if non-tx */) {
       if (event.isDistributed() && !event.isOriginRemote()) {
         boolean distribute = !event.getInhibitDistribution();
         if (distribute) {
@@ -1968,8 +1778,7 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  void basicUpdateEntryVersion(EntryEventImpl event)
-      throws EntryNotFoundException {
+  void basicUpdateEntryVersion(EntryEventImpl event) throws EntryNotFoundException {
     LocalRegion lr = event.getLocalRegion();
     AbstractRegionMap arm = ((AbstractRegionMap) lr.getRegionMap());
     try {
@@ -1990,8 +1799,7 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   protected void distributeUpdateEntryVersion(EntryEventImpl event) {
-    if (!this.regionInvalid && event.isDistributed() && !event.isOriginRemote()
-        && !isTX() /* only distribute if non-tx */) {
+    if (!this.regionInvalid && event.isDistributed() && !event.isOriginRemote() && !isTX() /* only distribute if non-tx */) {
       if (event.isDistributed() && !event.isOriginRemote()) {
         UpdateEntryVersionOperation op = new UpdateEntryVersionOperation(event);
         op.distribute();
@@ -2000,20 +1808,18 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  protected void basicClear(RegionEventImpl ev)
-  {
+  protected void basicClear(RegionEventImpl ev) {
     Lock dlock = this.getRegionDistributedLockIfGlobal();
     try {
       super.basicClear(ev);
-    }
-    finally {
+    } finally {
       if (dlock != null)
         dlock.unlock();
     }
   }
-  
+
   @Override
-  void basicClear(RegionEventImpl regionEvent, boolean cacheWrite)  {
+  void basicClear(RegionEventImpl regionEvent, boolean cacheWrite) {
     if (this.concurrencyChecksEnabled && !this.dataPolicy.withReplication()) {
       boolean retry = false;
       do {
@@ -2038,17 +1844,16 @@ public class DistributedRegion extends LocalRegion implements
     // if no version vector or if no replicates are around, use the default mechanism
     super.basicClear(regionEvent, cacheWrite);
   }
-  
-  
+
   @Override
   void cmnClearRegion(RegionEventImpl regionEvent, boolean cacheWrite, boolean useRVV) {
-    boolean enableRVV = useRVV && this.dataPolicy.withReplication() && this.concurrencyChecksEnabled && !getDistributionManager().isLoner(); 
-    
+    boolean enableRVV = useRVV && this.dataPolicy.withReplication() && this.concurrencyChecksEnabled && !getDistributionManager().isLoner();
+
     //Fix for 46338 - apparently multiple threads from the same VM are allowed
     //to suspend locking, which is what distributedLockForClear() does. We don't
     //want that to happen, so we'll synchronize to make sure only one thread on
     //this member performs a clear.
-    synchronized(clearLock) {
+    synchronized (clearLock) {
       if (enableRVV) {
 
         distributedLockForClear();
@@ -2064,8 +1869,7 @@ public class DistributedRegion extends LocalRegion implements
           } finally {
             releaseWriteLocksForClear(regionEvent, participants);
           }
-        }
-        finally {
+        } finally {
           distributedUnlockForClear();
         }
       } else {
@@ -2076,7 +1880,7 @@ public class DistributedRegion extends LocalRegion implements
         }
       }
     }
-    
+
     // since clients do not maintain RVVs except for tombstone GC
     // we need to ensure that current ops reach the client queues
     // before queuing a clear, but there is no infrastructure for doing so
@@ -2087,16 +1891,16 @@ public class DistributedRegion extends LocalRegion implements
    * Obtain a distributed lock for the clear operation.
    */
   private void distributedLockForClear() {
-    if (!this.scope.isGlobal()) {  // non-global regions must lock when using RVV
+    if (!this.scope.isGlobal()) { // non-global regions must lock when using RVV
       try {
         getLockService().lock("_clearOperation", -1, -1);
-      } catch(IllegalStateException e) {
+      } catch (IllegalStateException e) {
         lockCheckReadiness();
         throw e;
       }
     }
   }
-  
+
   /**
    * Release the distributed lock for the clear operation.
    */
@@ -2104,13 +1908,12 @@ public class DistributedRegion extends LocalRegion implements
     if (!this.scope.isGlobal()) {
       try {
         getLockService().unlock("_clearOperation");
-      } catch(IllegalStateException e) {
+      } catch (IllegalStateException e) {
         lockCheckReadiness();
         throw e;
       }
     }
   }
-
 
   /** obtain locks preventing generation of new versions in other members 
    * @param participants 
@@ -2119,15 +1922,16 @@ public class DistributedRegion extends LocalRegion implements
     lockLocallyForClear(getDistributionManager(), getMyId(), regionEvent);
     DistributedClearOperation.lockAndFlushToOthers(regionEvent, participants);
   }
-  
+
   /** pause local operations so that a clear() can be performed and flush comm channels to the given member
   */
   public void lockLocallyForClear(DM dm, InternalDistributedMember locker, CacheEvent event) {
     RegionVersionVector rvv = getVersionVector();
-    
+
     ARMLockTestHook alth = getRegionMap().getARMLockTestHook();
-    if(alth!=null) alth.beforeLock(this, event);
-    
+    if (alth != null)
+      alth.beforeLock(this, event);
+
     if (rvv != null) {
       // block new operations from being applied to the region map
       rvv.lockForClear(getFullPath(), dm, locker);
@@ -2138,27 +1942,30 @@ public class DistributedRegion extends LocalRegion implements
       if (this.getAttributes().getScope().isDistributedNoAck()) {
         Set<InternalDistributedMember> mbrs = getDistributionAdvisor().adviseCacheOp();
         StateFlushOperation.flushTo(mbrs, this);
-      }      
+      }
     }
-    
-    if(alth!=null) alth.afterLock(this, null);
+
+    if (alth != null)
+      alth.afterLock(this, null);
 
   }
 
   /** releases the locks obtained in obtainWriteLocksForClear 
    * @param participants */
   private void releaseWriteLocksForClear(RegionEventImpl regionEvent, Set<InternalDistributedMember> participants) {
-    
+
     ARMLockTestHook alth = getRegionMap().getARMLockTestHook();
-    if(alth!=null) alth.beforeRelease(this, regionEvent);
-    
+    if (alth != null)
+      alth.beforeRelease(this, regionEvent);
+
     getVersionVector().unlockForClear(getMyId());
     DistributedClearOperation.releaseLocks(regionEvent, participants);
-    
-    if(alth!=null) alth.afterRelease(this, regionEvent);
+
+    if (alth != null)
+      alth.afterRelease(this, regionEvent);
 
   }
-  
+
   /**
    * Wait for in progress clears that were initiated by this member.
    */
@@ -2166,7 +1973,7 @@ public class DistributedRegion extends LocalRegion implements
 
     RegionVersionVector rvv = getVersionVector();
     if (rvv != null) {
-      synchronized(clearLock) {
+      synchronized (clearLock) {
         //do nothing;
         //DAN - I'm a little scared that the compiler might optimize
         //away this synchronization if we really do nothing. Hence
@@ -2176,15 +1983,15 @@ public class DistributedRegion extends LocalRegion implements
         }
       }
     }
-    
+
   }
-  
+
   /**
    * Distribute Tombstone garbage-collection information to all peers with storage
    */
   protected EventID distributeTombstoneGC(Set<Object> keysRemoved) {
     this.getCachePerfStats().incTombstoneGCCount();
-    EventID eventId = new EventID(getSystem()); 
+    EventID eventId = new EventID(getSystem());
     DistributedTombstoneOperation gc = DistributedTombstoneOperation.gc(this, eventId);
     gc.distribute();
     notifyClientsOfTombstoneGC(getVersionVector().getTombstoneGCVector(), keysRemoved, eventId, null);
@@ -2193,7 +2000,7 @@ public class DistributedRegion extends LocalRegion implements
 
   // test hook for DistributedAckRegionCCEDUnitTest
   public static boolean LOCALCLEAR_TESTHOOK;
-  
+
   @Override
   void basicLocalClear(RegionEventImpl rEvent) {
     if (getScope().isDistributed() && getDataPolicy().withReplication() && !LOCALCLEAR_TESTHOOK) {
@@ -2201,7 +2008,7 @@ public class DistributedRegion extends LocalRegion implements
     }
     super.basicLocalClear(rEvent);
   }
-  
+
   public final DistributionConfig getDistributionConfig() {
     return getSystem().getDistributionManager().getConfig();
   }
@@ -2218,28 +2025,25 @@ public class DistributedRegion extends LocalRegion implements
    *         the role
    */
   boolean sendQueue(List list, Role role) {
-    SendQueueOperation op = new SendQueueOperation(getDistributionManager(),
-        this, list, role);
+    SendQueueOperation op = new SendQueueOperation(getDistributionManager(), this, list, role);
     return op.distribute();
   }
 
   /*
    * @see SearchLoadAndWriteProcessor#initialize(LocalRegion, Object, Object)
    */
-  public final CacheDistributionAdvisor getDistributionAdvisor()
-  {
+  public final CacheDistributionAdvisor getDistributionAdvisor() {
     return this.distAdvisor;
   }
 
-  public final CacheDistributionAdvisor getCacheDistributionAdvisor()
-  {
+  public final CacheDistributionAdvisor getCacheDistributionAdvisor() {
     return this.distAdvisor;
   }
-  
+
   public final PersistenceAdvisor getPersistenceAdvisor() {
     return this.persistenceAdvisor;
   }
-  
+
   public final PersistentMemberID getPersistentID() {
     return this.persistentId;
   }
@@ -2251,7 +2055,7 @@ public class DistributedRegion extends LocalRegion implements
 
   public void fillInProfile(Profile p) {
     assert p instanceof CacheProfile;
-    CacheProfile profile = (CacheProfile)p;
+    CacheProfile profile = (CacheProfile) p;
     profile.dataPolicy = getDataPolicy();
     profile.hasCacheLoader = basicGetLoader() != null;
     profile.hasCacheWriter = basicGetWriter() != null;
@@ -2268,19 +2072,17 @@ public class DistributedRegion extends LocalRegion implements
     // attribute comparison across member we are setting it to true.
     if (this.isPdxTypesRegion()) {
       profile.isGatewayEnabled = true;
-    }
-    else {
+    } else {
       profile.isGatewayEnabled = false;
     }
     profile.serialNumber = getSerialNumber();
     profile.regionInitialized = this.isInitialized();
     profile.persistentID = getPersistentID();
-    if(getPersistenceAdvisor() != null) {
+    if (getPersistenceAdvisor() != null) {
       profile.persistenceInitialized = getPersistenceAdvisor().isOnline();
     }
-    profile.hasCacheServer = ((this.cache.getCacheServers().size() > 0)?true:false);
-    profile.requiresOldValueInEvents = this.dataPolicy.withReplication() &&
-       this.filterProfile != null && this.filterProfile.hasCQs();
+    profile.hasCacheServer = ((this.cache.getCacheServers().size() > 0) ? true : false);
+    profile.requiresOldValueInEvents = this.dataPolicy.withReplication() && this.filterProfile != null && this.filterProfile.hasCQs();
     profile.gatewaySenderIds = getGatewaySenderIds();
     profile.asyncEventQueueIds = getAsyncEventQueueIds();
     profile.isOffHeap = getOffHeap();
@@ -2291,21 +2093,16 @@ public class DistributedRegion extends LocalRegion implements
    * will lazily create that service the first time it is invoked on this
    * region.
    */
-  public DistributedLockService getLockService()
-  {
+  public DistributedLockService getLockService() {
     synchronized (this.dlockMonitor) {
-//      Assert.assertTrue(this.scope.isGlobal());  since 7.0 this is used for distributing clear() ops
+      //      Assert.assertTrue(this.scope.isGlobal());  since 7.0 this is used for distributing clear() ops
 
       String svcName = getFullPath();
 
       if (this.dlockService == null) {
         this.dlockService = DistributedLockService.getServiceNamed(svcName);
         if (this.dlockService == null) {
-          this.dlockService = DLockService.create(
-              getFullPath(), 
-              getSystem(), 
-              true /*distributed*/, 
-              false /*destroyOnDisconnect*/, // region destroy will destroy dls
+          this.dlockService = DLockService.create(getFullPath(), getSystem(), true /*distributed*/, false /*destroyOnDisconnect*/, // region destroy will destroy dls
               false /*automateFreeResources*/); // manual freeResources only
         }
         // handle is-lock-grantor region attribute...
@@ -2324,24 +2121,21 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#isCurrentlyLockGrantor()
    */
   @Override
-  protected boolean isCurrentlyLockGrantor()
-  {
+  protected boolean isCurrentlyLockGrantor() {
     if (!this.scope.isGlobal())
       return false;
     return getLockService().isLockGrantor();
   }
 
   @Override
-  public boolean isLockGrantor()
-  {
+  public boolean isLockGrantor() {
     if (!this.scope.isGlobal())
       return false;
     return this.isLockGrantor;
   }
 
   @Override
-  public void becomeLockGrantor()
-  {
+  public void becomeLockGrantor() {
     checkReadiness();
     checkForLimitedOrNoAccess();
     if (!this.scope.isGlobal()) {
@@ -2354,8 +2148,7 @@ public class DistributedRegion extends LocalRegion implements
       if (!svc.isLockGrantor()) {
         svc.becomeLockGrantor();
       }
-    }
-    finally {
+    } finally {
       if (!svc.isLockGrantor()) {
         if (logger.isDebugEnabled()) {
           logger.debug("isLockGrantor is false after becomeLockGrantor for {}", getFullPath());
@@ -2367,172 +2160,146 @@ public class DistributedRegion extends LocalRegion implements
   /** @return the deserialized value */
   @Override
   @Retained
-  protected Object findObjectInSystem(KeyInfo keyInfo,
-                                      boolean isCreate,
-                                      TXStateInterface txState,
-                                      boolean generateCallbacks,
-                                      Object localValue,
-                                      boolean disableCopyOnRead,
-                                      boolean preferCD,
-                                      ClientProxyMembershipID requestingClient,
-                                      EntryEventImpl clientEvent,
-                                      boolean returnTombstones)
-      throws CacheLoaderException, TimeoutException
-  {
+  protected Object findObjectInSystem(KeyInfo keyInfo, boolean isCreate, TXStateInterface txState, boolean generateCallbacks, Object localValue, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) throws CacheLoaderException, TimeoutException {
     checkForLimitedOrNoAccess();
 
     RegionEntry re = null;
     final Object key = keyInfo.getKey();
-    final Object aCallbackArgument  = keyInfo.getCallbackArg();
+    final Object aCallbackArgument = keyInfo.getCallbackArg();
     Operation op;
     if (isCreate) {
       op = Operation.CREATE;
-    }
-    else {
+    } else {
       op = Operation.UPDATE;
     }
     long lastModified = 0L;
     boolean fromServer = false;
-    @Released EntryEventImpl event = null;
-    @Retained Object result = null;
+    @Released
+    EntryEventImpl event = null;
+    @Retained
+    Object result = null;
     try {
-    {
-      if (this.srp != null) {
-        VersionTagHolder holder = new VersionTagHolder();
-        Object value = this.srp.get(key, aCallbackArgument, holder);
-        fromServer = value != null;
-        if (fromServer) {
-          event = EntryEventImpl.create(this, op, key, value,
-                                     aCallbackArgument, false,
-                                     getMyId(), generateCallbacks);
-          event.setVersionTag(holder.getVersionTag());
-          event.setFromServer(fromServer); // fix for bug 39358
-          if (clientEvent != null && clientEvent.getVersionTag() == null) {
-            clientEvent.setVersionTag(holder.getVersionTag());
+      {
+        if (this.srp != null) {
+          VersionTagHolder holder = new VersionTagHolder();
+          Object value = this.srp.get(key, aCallbackArgument, holder);
+          fromServer = value != null;
+          if (fromServer) {
+            event = EntryEventImpl.create(this, op, key, value, aCallbackArgument, false, getMyId(), generateCallbacks);
+            event.setVersionTag(holder.getVersionTag());
+            event.setFromServer(fromServer); // fix for bug 39358
+            if (clientEvent != null && clientEvent.getVersionTag() == null) {
+              clientEvent.setVersionTag(holder.getVersionTag());
+            }
           }
         }
       }
-    }
-    
-    if (!fromServer) {
-      //Do not generate Event ID
-      event = EntryEventImpl.create(this, op, key, null /*newValue*/,
-                                 aCallbackArgument, false,
-                                 getMyId(), generateCallbacks);
-      if (requestingClient != null) {
-        event.setContext(requestingClient);
-      }
-      SearchLoadAndWriteProcessor processor =
-        SearchLoadAndWriteProcessor.getProcessor();
-      try {
-        processor.initialize(this, key, aCallbackArgument);
-        // processor fills in event
-        processor.doSearchAndLoad(event, txState, localValue);
-        if (clientEvent != null && clientEvent.getVersionTag() == null) {
-          clientEvent.setVersionTag(event.getVersionTag());
-        }
-        lastModified = processor.getLastModified();
-      }
-      finally {
-        processor.release();
-      }
-    }
-    if (event.hasNewValue() && !isMemoryThresholdReachedForLoad()) {
-      try {
-        // Set eventId. Required for interested clients.
-        event.setNewEventId(cache.getDistributedSystem());
 
-        long startPut = CachePerfStats.getStatTime();
-        validateKey(key);
-//        if (event.getOperation().isLoad()) {
-//          this.performedLoad(event, lastModified, txState);
-//        }
-        // this next step also distributes the object to other processes, if necessary
+      if (!fromServer) {
+        //Do not generate Event ID
+        event = EntryEventImpl.create(this, op, key, null /*newValue*/, aCallbackArgument, false, getMyId(), generateCallbacks);
+        if (requestingClient != null) {
+          event.setContext(requestingClient);
+        }
+        SearchLoadAndWriteProcessor processor = SearchLoadAndWriteProcessor.getProcessor();
         try {
-          // set the tail key so that the event is passed to GatewaySender queues.
-          // if the tailKey is not set, the event gets filtered out in ParallelGatewaySenderQueue
-          if (this instanceof BucketRegion) {
-          if (((BucketRegion)this).getPartitionedRegion().isParallelWanEnabled())
-          	((BucketRegion)this).handleWANEvent(event);
+          processor.initialize(this, key, aCallbackArgument);
+          // processor fills in event
+          processor.doSearchAndLoad(event, txState, localValue);
+          if (clientEvent != null && clientEvent.getVersionTag() == null) {
+            clientEvent.setVersionTag(event.getVersionTag());
           }
-          re = basicPutEntry(event, lastModified);
-        } catch (ConcurrentCacheModificationException e) {
-          // the cache was modified while we were searching for this entry and
-          // the netsearch result was elided.  Return the current value from the cache
-          re = getRegionEntry(key);
-          if (re != null) {
-            event.setNewValue(re.getValue(this)); // OFFHEAP: need to incrc, copy to heap to setNewValue, decrc
-          }
-        }
-        if (!isTX()) {
-          getCachePerfStats().endPut(startPut, event.isOriginRemote());
+          lastModified = processor.getLastModified();
+        } finally {
+          processor.release();
         }
       }
-      catch (CacheWriterException cwe) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("findObjectInSystem: writer exception putting entry {} : {}", event, cwe);
+      if (event.hasNewValue() && !isMemoryThresholdReachedForLoad()) {
+        try {
+          // Set eventId. Required for interested clients.
+          event.setNewEventId(cache.getDistributedSystem());
+
+          long startPut = CachePerfStats.getStatTime();
+          validateKey(key);
+          //        if (event.getOperation().isLoad()) {
+          //          this.performedLoad(event, lastModified, txState);
+          //        }
+          // this next step also distributes the object to other processes, if necessary
+          try {
+            // set the tail key so that the event is passed to GatewaySender queues.
+            // if the tailKey is not set, the event gets filtered out in ParallelGatewaySenderQueue
+            if (this instanceof BucketRegion) {
+              if (((BucketRegion) this).getPartitionedRegion().isParallelWanEnabled())
+                ((BucketRegion) this).handleWANEvent(event);
+            }
+            re = basicPutEntry(event, lastModified);
+          } catch (ConcurrentCacheModificationException e) {
+            // the cache was modified while we were searching for this entry and
+            // the netsearch result was elided.  Return the current value from the cache
+            re = getRegionEntry(key);
+            if (re != null) {
+              event.setNewValue(re.getValue(this)); // OFFHEAP: need to incrc, copy to heap to setNewValue, decrc
+            }
+          }
+          if (!isTX()) {
+            getCachePerfStats().endPut(startPut, event.isOriginRemote());
+          }
+        } catch (CacheWriterException cwe) {
+          if (logger.isDebugEnabled()) {
+            logger.debug("findObjectInSystem: writer exception putting entry {} : {}", event, cwe);
+          }
         }
       }
-    }
-    if (isCreate) {
-      recordMiss(re, key);
-    }
-    
-    if (preferCD) {
+      if (isCreate) {
+        recordMiss(re, key);
+      }
+
+      if (preferCD) {
         result = event.getRawNewValueAsHeapObject();
-    } else {
-      result = event.getNewValue();     
-    }
-    return result;
+      } else {
+        result = event.getNewValue();
+      }
+      return result;
     } finally {
       if (event != null) {
-        event.release();        
+        event.release();
       }
     }
   }
-  
+
   /** hook for subclasses to note that a cache load was performed
    * @see BucketRegion#performedLoad
    */
-//  void performedLoad(EntryEventImpl event, long lastModifiedTime, TXState txState)
-//    throws CacheWriterException {
-//    // no action in DistributedRegion
-//  }
+  //  void performedLoad(EntryEventImpl event, long lastModifiedTime, TXState txState)
+  //    throws CacheWriterException {
+  //    // no action in DistributedRegion
+  //  }
 
   /**
    * @see LocalRegion#cacheWriteBeforeDestroy(EntryEventImpl, Object)
    * @return true if cacheWrite was performed
    */
   @Override
-  boolean cacheWriteBeforeDestroy(EntryEventImpl event, Object expectedOldValue)
-      throws CacheWriterException, EntryNotFoundException, TimeoutException
-  {
-    
+  boolean cacheWriteBeforeDestroy(EntryEventImpl event, Object expectedOldValue) throws CacheWriterException, EntryNotFoundException, TimeoutException {
+
     boolean result = false;
     if (event.isDistributed()) {
       CacheWriter localWriter = basicGetWriter();
-      Set netWriteRecipients = localWriter == null ? this.distAdvisor
-          .adviseNetWrite() : null;
+      Set netWriteRecipients = localWriter == null ? this.distAdvisor.adviseNetWrite() : null;
 
-      if ((localWriter != null
-          || (netWriteRecipients != null && !netWriteRecipients.isEmpty()))  && 
-          !event.inhibitAllNotifications()) {
+      if ((localWriter != null || (netWriteRecipients != null && !netWriteRecipients.isEmpty())) && !event.inhibitAllNotifications()) {
         final long start = getCachePerfStats().startCacheWriterCall();
         try {
           event.setOldValueFromRegion();
-          SearchLoadAndWriteProcessor processor =
-            SearchLoadAndWriteProcessor.getProcessor();
+          SearchLoadAndWriteProcessor processor = SearchLoadAndWriteProcessor.getProcessor();
           try {
             processor.initialize(this, event.getKey(), null);
-            processor.doNetWrite(event, netWriteRecipients, localWriter,
-                                 SearchLoadAndWriteProcessor.BEFOREDESTROY);
+            processor.doNetWrite(event, netWriteRecipients, localWriter, SearchLoadAndWriteProcessor.BEFOREDESTROY);
             result = true;
-          }
-          finally {
+          } finally {
             processor.release();
           }
-        }
-        finally {
+        } finally {
           getCachePerfStats().endCacheWriterCall(start);
         }
       }
@@ -2545,32 +2312,24 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#cacheWriteBeforeRegionDestroy(RegionEventImpl)
    */
   @Override
-  boolean cacheWriteBeforeRegionDestroy(RegionEventImpl event)
-      throws CacheWriterException, TimeoutException
-  {
+  boolean cacheWriteBeforeRegionDestroy(RegionEventImpl event) throws CacheWriterException, TimeoutException {
     boolean result = false;
     if (event.getOperation().isDistributed()) {
       CacheWriter localWriter = basicGetWriter();
-      Set netWriteRecipients = localWriter == null ? this.distAdvisor
-          .adviseNetWrite() : null;
+      Set netWriteRecipients = localWriter == null ? this.distAdvisor.adviseNetWrite() : null;
 
-      if (localWriter != null
-          || (netWriteRecipients != null && !netWriteRecipients.isEmpty())) {
+      if (localWriter != null || (netWriteRecipients != null && !netWriteRecipients.isEmpty())) {
         final long start = getCachePerfStats().startCacheWriterCall();
         try {
-          SearchLoadAndWriteProcessor processor =
-            SearchLoadAndWriteProcessor.getProcessor();
+          SearchLoadAndWriteProcessor processor = SearchLoadAndWriteProcessor.getProcessor();
           try {
             processor.initialize(this, "preDestroyRegion", null);
-            processor.doNetWrite(event, netWriteRecipients, localWriter,
-                                 SearchLoadAndWriteProcessor.BEFOREREGIONDESTROY);
+            processor.doNetWrite(event, netWriteRecipients, localWriter, SearchLoadAndWriteProcessor.BEFOREREGIONDESTROY);
             result = true;
-          }
-          finally {
+          } finally {
             processor.release();
           }
-        }
-        finally {
+        } finally {
           getCachePerfStats().endCacheWriterCall(start);
         }
       }
@@ -2579,8 +2338,7 @@ public class DistributedRegion extends LocalRegion implements
     return result;
   }
 
-  protected void distributedRegionCleanup(RegionEventImpl event)
-  {
+  protected void distributedRegionCleanup(RegionEventImpl event) {
     if (event == null || event.getOperation() != Operation.REGION_REINITIALIZE) {
       // only perform this if reinitialize is not due to resumption
       // (REGION_REINITIALIZE)
@@ -2591,53 +2349,48 @@ public class DistributedRegion extends LocalRegion implements
       }
     }
 
-    if(persistenceAdvisor != null) {
+    if (persistenceAdvisor != null) {
       this.persistenceAdvisor.close(); // fix for bug 41094
     }
     this.distAdvisor.close();
     DLockService dls = null;
-    
+
     //Fix for bug 46338. Wait for in progress clears before destroying the
     //lock service, because destroying the service immediately releases the dlock
     waitForInProgressClear();
-    
+
     synchronized (this.dlockMonitor) {
       if (this.dlockService != null) {
-        dls = (DLockService)this.dlockService;
+        dls = (DLockService) this.dlockService;
       }
     }
     if (dls != null) {
       try {
         dls.destroyAndRemove();
-      }
-      catch (CancelException e) {
+      } catch (CancelException e) {
         // bug 37118
         if (logger.isDebugEnabled()) {
           logger.debug("DLS destroy abridged due to shutdown", e);
         }
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         logger.warn(LocalizedMessage.create(LocalizedStrings.DistributedRegion_DLS_DESTROY_MAY_HAVE_FAILED_FOR_0, this.getFullPath()), ex);
       }
     }
     if (this.rmq != null) {
       this.rmq.close();
     }
-    
+
     //Fix for #48066 - make sure that region operations are completely
     //distributed to peers before destroying the region.
     long timeout = 1000L * getCache().getDistributedSystem().getConfig().getAckWaitThreshold();
     Boolean flushOnClose = !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "no-flush-on-close"); // test hook
-    if (!this.cache.forcedDisconnect() &&
-        flushOnClose && this.getDistributionManager().getMembershipManager() != null
-        && this.getDistributionManager().getMembershipManager().isConnected()) {
+    if (!this.cache.forcedDisconnect() && flushOnClose && this.getDistributionManager().getMembershipManager() != null && this.getDistributionManager().getMembershipManager().isConnected()) {
       getDistributionAdvisor().forceNewMembershipVersion();
       try {
         getDistributionAdvisor().waitForCurrentOperations(timeout);
       } catch (Exception e) {
         // log this but try to close the region so that listeners are invoked
-        logger.warn(LocalizedMessage.create(LocalizedStrings.GemFireCache_0_ERROR_CLOSING_REGION_1,
-            new Object[] { this, getFullPath() }), e);
+        logger.warn(LocalizedMessage.create(LocalizedStrings.GemFireCache_0_ERROR_CLOSING_REGION_1, new Object[] { this, getFullPath() }), e);
       }
     }
   }
@@ -2647,8 +2400,7 @@ public class DistributedRegion extends LocalRegion implements
    * RegionMembershipListeners
    */
   @Override
-  protected void postCreateRegion()
-  {
+  protected void postCreateRegion() {
     super.postCreateRegion();
     // should we sync on this.distAdvisor first to prevent bug 44369?
     synchronized (this.advisorListener) {
@@ -2657,20 +2409,17 @@ public class DistributedRegion extends LocalRegion implements
       if (listeners != null) {
         for (int i = 0; i < listeners.length; i++) {
           if (listeners[i] instanceof RegionMembershipListener) {
-            RegionMembershipListener rml = (RegionMembershipListener)listeners[i];
+            RegionMembershipListener rml = (RegionMembershipListener) listeners[i];
             try {
-              DistributedMember[] otherDms = new DistributedMember[others
-                  .size()];
+              DistributedMember[] otherDms = new DistributedMember[others.size()];
               others.toArray(otherDms);
               rml.initialMembers(this, otherDms);
-            }
-            catch (VirtualMachineError err) {
+            } catch (VirtualMachineError err) {
               SystemFailure.initiateFailure(err);
               // If this ever returns, rethrow the error.  We're poisoned
               // now, so don't let this thread continue.
               throw err;
-            }
-            catch (Throwable t) {
+            } catch (Throwable t) {
               // Whenever you catch Error or Throwable, you must also
               // catch VirtualMachineError (see above).  However, there is
               // _still_ a possibility that you are dealing with a cascading
@@ -2685,21 +2434,12 @@ public class DistributedRegion extends LocalRegion implements
       Set<String> allGatewaySenderIds = getAllGatewaySenderIds();
       if (!allGatewaySenderIds.isEmpty()) {
         for (GatewaySender sender : cache.getAllGatewaySenders()) {
-          if (sender.isParallel()
-              && allGatewaySenderIds.contains(sender.getId())) {
+          if (sender.isParallel() && allGatewaySenderIds.contains(sender.getId())) {
             //Fix for Bug#51491. Once decided to support this configuration we have call addShadowPartitionedRegionForUserRR
-            if (sender.getId().contains(
-                AsyncEventQueueImpl.ASYNC_EVENT_QUEUE_PREFIX)) {
-              throw new AsyncEventQueueConfigurationException(
-                  LocalizedStrings.ParallelAsyncEventQueue_0_CAN_NOT_BE_USED_WITH_REPLICATED_REGION_1.toLocalizedString(new Object[] {
-                      AsyncEventQueueImpl
-                          .getAsyncEventQueueIdFromSenderId(sender.getId()),
-                      this.getFullPath() }));
+            if (sender.getId().contains(AsyncEventQueueImpl.ASYNC_EVENT_QUEUE_PREFIX)) {
+              throw new AsyncEventQueueConfigurationException(LocalizedStrings.ParallelAsyncEventQueue_0_CAN_NOT_BE_USED_WITH_REPLICATED_REGION_1.toLocalizedString(new Object[] { AsyncEventQueueImpl.getAsyncEventQueueIdFromSenderId(sender.getId()), this.getFullPath() }));
             }
-            throw new GatewaySenderConfigurationException(
-                LocalizedStrings.ParallelGatewaySender_0_CAN_NOT_BE_USED_WITH_REPLICATED_REGION_1
-                    .toLocalizedString(new Object[] { sender.getId(),
-                        this.getFullPath() }));
+            throw new GatewaySenderConfigurationException(LocalizedStrings.ParallelGatewaySender_0_CAN_NOT_BE_USED_WITH_REPLICATED_REGION_1.toLocalizedString(new Object[] { sender.getId(), this.getFullPath() }));
 
             // if (sender.isRunning()) {
             // ConcurrentParallelGatewaySenderQueue parallelQueue =
@@ -2720,41 +2460,36 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#postDestroyRegion(boolean, RegionEventImpl)
    */
   @Override
-  protected void postDestroyRegion(boolean destroyDiskRegion,
-      RegionEventImpl event)
-  {
+  protected void postDestroyRegion(boolean destroyDiskRegion, RegionEventImpl event) {
     distributedRegionCleanup(event);
-    
+
     try {
       super.postDestroyRegion(destroyDiskRegion, event);
-    }
-    catch (CancelException e) {
+    } catch (CancelException e) {
       // I don't think this should ever happens:  bulletproofing for bug 39454
       logger.warn("postDestroyRegion: encountered cancellation", e);
     }
-    
+
     if (this.rmq != null && destroyDiskRegion) {
       this.rmq.destroy();
     }
   }
 
   @Override
-  void cleanupFailedInitialization()
-  {
+  void cleanupFailedInitialization() {
     super.cleanupFailedInitialization();
     try {
-      RegionEventImpl ev = new RegionEventImpl(this, Operation.REGION_CLOSE, null, false, getMyId(),
-          generateEventID());
+      RegionEventImpl ev = new RegionEventImpl(this, Operation.REGION_CLOSE, null, false, getMyId(), generateEventID());
       distributeDestroyRegion(ev, true);
       distributedRegionCleanup(null);
-    } catch(RegionDestroyedException e) {
+    } catch (RegionDestroyedException e) {
       //someone else must have concurrently destroyed the region (maybe a distributed destroy)
-    } catch(CancelException e) {
+    } catch (CancelException e) {
       //cache or DS is closed, ignore
-    } catch(VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    } catch(Throwable t) {
+    } catch (Throwable t) {
       logger.warn(LocalizedMessage.create(LocalizedStrings.DistributedRegion_ERROR_CLEANING_UP_FAILED_INITIALIZATION, this), t);
     }
   }
@@ -2763,12 +2498,10 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#handleCacheClose(Operation)
    */
   @Override
-  void handleCacheClose(Operation op)
-  {
+  void handleCacheClose(Operation op) {
     try {
       super.handleCacheClose(op);
-    }
-    finally {
+    } finally {
       distributedRegionCleanup(null);
     }
   }
@@ -2779,46 +2512,32 @@ public class DistributedRegion extends LocalRegion implements
    * @see LocalRegion#cacheWriteBeforePut(EntryEventImpl, Set, CacheWriter, boolean, Object)
    */
   @Override
-  protected void cacheWriteBeforePut(EntryEventImpl event, Set netWriteRecipients,
-      CacheWriter localWriter, 
-      boolean requireOldValue,
-      Object expectedOldValue)
-      throws CacheWriterException, TimeoutException
-  {
-    if ((localWriter != null
-        || (netWriteRecipients != null && !netWriteRecipients.isEmpty())) &&
-        !event.inhibitAllNotifications()) {
+  protected void cacheWriteBeforePut(EntryEventImpl event, Set netWriteRecipients, CacheWriter localWriter, boolean requireOldValue, Object expectedOldValue) throws CacheWriterException, TimeoutException {
+    if ((localWriter != null || (netWriteRecipients != null && !netWriteRecipients.isEmpty())) && !event.inhibitAllNotifications()) {
       final boolean isNewKey = event.getOperation().isCreate();
       final long start = getCachePerfStats().startCacheWriterCall();
       try {
-        SearchLoadAndWriteProcessor processor =
-          SearchLoadAndWriteProcessor.getProcessor();
+        SearchLoadAndWriteProcessor processor = SearchLoadAndWriteProcessor.getProcessor();
         processor.initialize(this, "preUpdate", null);
         try {
           if (!isNewKey) {
-            processor.doNetWrite(event, netWriteRecipients, localWriter,
-                                 SearchLoadAndWriteProcessor.BEFOREUPDATE);
+            processor.doNetWrite(event, netWriteRecipients, localWriter, SearchLoadAndWriteProcessor.BEFOREUPDATE);
+          } else {
+            processor.doNetWrite(event, netWriteRecipients, localWriter, SearchLoadAndWriteProcessor.BEFORECREATE);
           }
-          else {
-            processor.doNetWrite(event, netWriteRecipients, localWriter,
-                                 SearchLoadAndWriteProcessor.BEFORECREATE);
-          }
-        }
-        finally {
+        } finally {
           processor.release();
         }
-      }
-      finally {
+      } finally {
         getCachePerfStats().endCacheWriterCall(start);
       }
     }
-    
+
     serverPut(event, requireOldValue, expectedOldValue);
   }
 
   @Override
-  protected void cacheListenersChanged(boolean nowHasListener)
-  {
+  protected void cacheListenersChanged(boolean nowHasListener) {
     if (nowHasListener) {
       this.advisorListener.initRMLWrappers();
     }
@@ -2826,8 +2545,7 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  protected void cacheWriterChanged(CacheWriter oldWriter)
-  {
+  protected void cacheWriterChanged(CacheWriter oldWriter) {
     super.cacheWriterChanged(oldWriter);
     if (oldWriter == null ^ basicGetWriter() == null) {
       new UpdateAttributesProcessor(this).distribute();
@@ -2835,8 +2553,7 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  protected void cacheLoaderChanged(CacheLoader oldLoader)
-  {
+  protected void cacheLoaderChanged(CacheLoader oldLoader) {
     super.cacheLoaderChanged(oldLoader);
     if (oldLoader == null ^ basicGetLoader() == null) {
       new UpdateAttributesProcessor(this).distribute();
@@ -2862,36 +2579,27 @@ public class DistributedRegion extends LocalRegion implements
     super.removeAsyncEventQueueId(asyncEventQueueId);
     new UpdateAttributesProcessor(this).distribute();
   }
-  
+
   public void checkSameSenderIdsAvailableOnAllNodes() {
-    List senderIds = this.getCacheDistributionAdvisor()
-        .adviseSameGatewaySenderIds(getGatewaySenderIds());
+    List senderIds = this.getCacheDistributionAdvisor().adviseSameGatewaySenderIds(getGatewaySenderIds());
     if (!senderIds.isEmpty()) {
-      throw new GatewaySenderConfigurationException(
-          LocalizedStrings.Region_REGION_0_HAS_1_GATEWAY_SENDER_IDS_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_GATEWAY_SENDER_IDS_FOR_REGION_ACROSS_ALL_MEMBERS_IN_DS_GATEWAY_SENDER_IDS_SHOULD_BE_SAME
-              .toLocalizedString(new Object[] { this.getName(),
-                  senderIds.get(0), senderIds.get(1) }));
+      throw new GatewaySenderConfigurationException(LocalizedStrings.Region_REGION_0_HAS_1_GATEWAY_SENDER_IDS_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_GATEWAY_SENDER_IDS_FOR_REGION_ACROSS_ALL_MEMBERS_IN_DS_GATEWAY_SENDER_IDS_SHOULD_BE_SAME.toLocalizedString(new Object[] { this.getName(), senderIds.get(0), senderIds.get(1) }));
     }
 
-    List asycnQueueIds = this.getCacheDistributionAdvisor()
-        .adviseSameAsyncEventQueueIds(getAsyncEventQueueIds());
+    List asycnQueueIds = this.getCacheDistributionAdvisor().adviseSameAsyncEventQueueIds(getAsyncEventQueueIds());
     if (!asycnQueueIds.isEmpty()) {
-      throw new GatewaySenderConfigurationException(
-          LocalizedStrings.Region_REGION_0_HAS_1_ASYNC_EVENT_QUEUE_IDS_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_ASYNC_EVENT_QUEUE_IDS_FOR_REGION_ACROSS_ALL_MEMBERS_IN_DS_ASYNC_EVENT_QUEUE_IDS_SHOULD_BE_SAME
-              .toLocalizedString(new Object[] { this.getName(),
-                  asycnQueueIds.get(0), asycnQueueIds.get(1) }));
+      throw new GatewaySenderConfigurationException(LocalizedStrings.Region_REGION_0_HAS_1_ASYNC_EVENT_QUEUE_IDS_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_ASYNC_EVENT_QUEUE_IDS_FOR_REGION_ACROSS_ALL_MEMBERS_IN_DS_ASYNC_EVENT_QUEUE_IDS_SHOULD_BE_SAME.toLocalizedString(new Object[] { this.getName(), asycnQueueIds.get(0), asycnQueueIds.get(1) }));
     }
   }
+
   /**
    * Wraps call to dlock service in order to throw RegionDestroyedException if
    * dlock service throws IllegalStateException and isDestroyed is true.
    */
-  private boolean isLockingSuspendedByCurrentThread()
-  {
+  private boolean isLockingSuspendedByCurrentThread() {
     try {
       return getLockService().isLockingSuspendedByCurrentThread();
-    }
-    catch (IllegalStateException e) {
+    } catch (IllegalStateException e) {
       lockCheckReadiness();
       throw e;
     }
@@ -2906,8 +2614,7 @@ public class DistributedRegion extends LocalRegion implements
    * @throws NullPointerException
    *           if key is null
    */
-  private Lock getDistributedLockIfGlobal(Object key) throws TimeoutException
-  {
+  private Lock getDistributedLockIfGlobal(Object key) throws TimeoutException {
     if (getScope().isGlobal()) {
       if (isLockingSuspendedByCurrentThread())
         return null;
@@ -2922,23 +2629,20 @@ public class DistributedRegion extends LocalRegion implements
         try {
           Lock dlock = getDistributedLock(key);
           if (!dlock.tryLock(timeLeft, TimeUnit.SECONDS)) {
-             msg = LocalizedStrings.DistributedRegion_ATTEMPT_TO_ACQUIRE_DISTRIBUTED_LOCK_FOR_0_FAILED_AFTER_WAITING_1_SECONDS;
-             msgArgs = new Object[] {key, Long.valueOf((System.currentTimeMillis() - start) / 1000L)};
+            msg = LocalizedStrings.DistributedRegion_ATTEMPT_TO_ACQUIRE_DISTRIBUTED_LOCK_FOR_0_FAILED_AFTER_WAITING_1_SECONDS;
+            msgArgs = new Object[] { key, Long.valueOf((System.currentTimeMillis() - start) / 1000L) };
             break;
           }
 
           return dlock;
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
           interrupted = true;
           this.cache.getCancelCriterion().checkCancelInProgress(ex);
           // FIXME Why is it OK to keep going?
           if (lockTimeout > -1) {
-            timeLeft = getCache().getLockTimeout()
-                - ((System.currentTimeMillis() - start) / 1000L);
+            timeLeft = getCache().getLockTimeout() - ((System.currentTimeMillis() - start) / 1000L);
           }
-        }
-        finally {
+        } finally {
           if (interrupted) {
             Thread.currentThread().interrupt();
           }
@@ -2946,11 +2650,10 @@ public class DistributedRegion extends LocalRegion implements
       } // while
       if (msg == null) {
         msg = LocalizedStrings.DistributedRegion_TIMED_OUT_AFTER_WAITING_0_SECONDS_FOR_THE_DISTRIBUTED_LOCK_FOR_1;
-        msgArgs = new Object[] {Integer.valueOf(getCache().getLockTimeout()), key};
+        msgArgs = new Object[] { Integer.valueOf(getCache().getLockTimeout()), key };
       }
       throw new TimeoutException(msg.toLocalizedString(msgArgs));
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -2961,8 +2664,7 @@ public class DistributedRegion extends LocalRegion implements
    * @return true if entry not null or entry is not removed
    *  
    */
-  protected boolean checkEntryNotValid(RegionEntry mapEntry)
-  {
+  protected boolean checkEntryNotValid(RegionEntry mapEntry) {
     return (mapEntry == null || (mapEntry.isRemoved() && !mapEntry.isTombstone()));
   }
 
@@ -2974,24 +2676,24 @@ public class DistributedRegion extends LocalRegion implements
    */
   public Iterator<RegionEntry> getBestIterator(boolean includeValues) {
     DiskRegion dr = this.getDiskRegion();
-    
+
     if (DiskPage.DISK_PAGE_SIZE > 0 && includeValues && dr != null) {
       //Wait for the disk region to recover values first.
       dr.waitForAsyncRecovery();
-      if(dr.getNumOverflowOnDisk() > 0) {
+      if (dr.getNumOverflowOnDisk() > 0) {
         return new DiskSavyIterator();
       }
-    } 
+    }
     return this.entries.regionEntries().iterator();
   }
-  
-//   /**
-//    * The maximum number of entries that can be put into the diskMap before
-//    * some of them are read from disk and returned by this iterator.
-//    * The larger this number the more memory this iterator is allowed to consume
-//    * and the better it will do in optimally reading the pending entries.
-//    */
-//   static final long MAX_PENDING_ENTRIES = Long.getLong("gemfire.MAX_PENDING_ENTRIES", 1000000).longValue();
+
+  //   /**
+  //    * The maximum number of entries that can be put into the diskMap before
+  //    * some of them are read from disk and returned by this iterator.
+  //    * The larger this number the more memory this iterator is allowed to consume
+  //    * and the better it will do in optimally reading the pending entries.
+  //    */
+  //   static final long MAX_PENDING_ENTRIES = Long.getLong("gemfire.MAX_PENDING_ENTRIES", 1000000).longValue();
   /**
    * Should only be used if this region has entries on disk that are not in memory.
    * This currently happens for overflow and for recovery when values are not recovered.
@@ -3008,18 +2710,18 @@ public class DistributedRegion extends LocalRegion implements
     private Iterator<RegionEntry> subIt = null;
     //private final ArrayList<DiskPosition> diskList = new ArrayList<DiskPosition>(/*@todo presize based on number of entries only on disk*/);
     // value will be either RegionEntry or an ArrayList<RegionEntry>
-//     private long pendingCount = 0;
+    //     private long pendingCount = 0;
     private final java.util.TreeMap<DiskPage, Object> diskMap = new java.util.TreeMap<DiskPage, Object>();
 
-//     /**
-//      * used to iterate over the fullest pages at the time we have
-//      * added MAX_PENDING_ENTRIES to diskMap;
-//      */
-//     private Iterator<Map.Entry<DiskPage, Object>> sortedDiskIt;
-    
+    //     /**
+    //      * used to iterate over the fullest pages at the time we have
+    //      * added MAX_PENDING_ENTRIES to diskMap;
+    //      */
+    //     private Iterator<Map.Entry<DiskPage, Object>> sortedDiskIt;
+
     public DiskSavyIterator() {
     }
-    
+
     public boolean hasNext() {
       boolean result;
       if (this.subIt != null) {
@@ -3030,20 +2732,20 @@ public class DistributedRegion extends LocalRegion implements
           return result;
         }
       }
-//       if (this.sortedDiskIt != null) {
-//         result = this.sortedDiskIt.hasNext();
-//         if (!result) {
-//           this.sortedDiskIt = null;
-//         } else {
-//           return result;
-//         }
-//       }
+      //       if (this.sortedDiskIt != null) {
+      //         result = this.sortedDiskIt.hasNext();
+      //         if (!result) {
+      //           this.sortedDiskIt = null;
+      //         } else {
+      //           return result;
+      //         }
+      //       }
       result = this.it.hasNext();
       if (this.usingIt && !result) {
         this.usingIt = false;
-//         long start = System.currentTimeMillis();
-//         Collections.sort(this.diskList);
-//         long end = System.currentTimeMillis();
+        //         long start = System.currentTimeMillis();
+        //         Collections.sort(this.diskList);
+        //         long end = System.currentTimeMillis();
         this.it = this.diskMap.values().iterator();
         result = this.it.hasNext();
       }
@@ -3054,27 +2756,27 @@ public class DistributedRegion extends LocalRegion implements
       for (;;) {
         if (this.subIt != null) {
           return this.subIt.next();
-//         } else if (this.sortedDiskIt != null) {
-//           Map.Entry<DiskPage, Object> me = this.sortedDiskIt.next();
-//           // remove the page from the diskMap.
-//           this.diskMap.remove(me.getKey());
-//           Object v = me.getValue();
-//           int size = 1;
-//           if (v instanceof ArrayList) {
-//             ArrayList al = (ArrayList)v;
-//             size = al.size();
-//             // set up the iterator to start returning the entries on that page
-//             this.subIt = al.iterator();
-//             v = this.subIt.next();
-//           }
-          
-//           // decrement pendingCount by the number of entries on the page
-//           this.pendingCount -= size;
-//           // return the first region entry on this page
-//           return v;
+          //         } else if (this.sortedDiskIt != null) {
+          //           Map.Entry<DiskPage, Object> me = this.sortedDiskIt.next();
+          //           // remove the page from the diskMap.
+          //           this.diskMap.remove(me.getKey());
+          //           Object v = me.getValue();
+          //           int size = 1;
+          //           if (v instanceof ArrayList) {
+          //             ArrayList al = (ArrayList)v;
+          //             size = al.size();
+          //             // set up the iterator to start returning the entries on that page
+          //             this.subIt = al.iterator();
+          //             v = this.subIt.next();
+          //           }
+
+          //           // decrement pendingCount by the number of entries on the page
+          //           this.pendingCount -= size;
+          //           // return the first region entry on this page
+          //           return v;
         }
         if (this.usingIt) {
-          RegionEntry re = (RegionEntry)this.it.next();
+          RegionEntry re = (RegionEntry) this.it.next();
           DiskPosition dp = new DiskPosition();
           if (re.isOverflowedToDisk(DistributedRegion.this, dp)) {
             // add dp to sorted list
@@ -3083,7 +2785,7 @@ public class DistributedRegion extends LocalRegion implements
             if (v == null) {
               this.diskMap.put(dPage, re);
             } else if (v instanceof ArrayList) {
-              ArrayList al = (ArrayList)v;
+              ArrayList al = (ArrayList) v;
               al.add(re);
             } else {
               ArrayList al = new ArrayList();
@@ -3094,47 +2796,47 @@ public class DistributedRegion extends LocalRegion implements
             if (!hasNext()) {
               assert false; // must be true
             }
-//             this.pendingCount++;
-//             if (this.usingIt && this.pendingCount >= MAX_PENDING_ENTRIES) {
-//               // find the pages that have the most entries
-//               int largestPage = 1;
-//               ArrayList<Map.Entry<DiskPage, Object>> largestPages
-//                 = new ArrayList<Map.Entry<DiskPage, Object>>();
-//               for (Map.Entry<DiskPage, Object> me: this.diskMap.entrySet()) {
-//                 int meSize = 1;
-//                 if (me.getValue() instanceof ArrayList) {
-//                   meSize = ((ArrayList)me.getValue()).size();
-//                 }
-//                 if (meSize > largestPage) {
-//                   largestPage = meSize;
-//                   largestPages.clear(); // throw away smaller pages
-//                   largestPages.add(me);
-//                 } else if (meSize == largestPage) {
-//                   largestPages.add(me);
-//                 } else {
-//                   // ignore this page
-//                 }
-//               }
-//               Collections.sort(largestPages, new Comparator
-// <Map.Entry<DiskPage, Object>>() {
-//                   /**
-//                    * Note: this comparator imposes orderings that are inconsistent
-//                    * with equals.
-//                    */
-//                   public int compare(Map.Entry<DiskPage, Object> o1, Map.Entry<DiskPage, Object> o2) {
-//                     return o1.getKey().compareTo(o2.getKey());
-//                   }
-//                 });
-//               this.sortedDiskIt = largestPages.iterator();
-//               // loop around and fetch first value from sortedDiskIt
-//             }
+            //             this.pendingCount++;
+            //             if (this.usingIt && this.pendingCount >= MAX_PENDING_ENTRIES) {
+            //               // find the pages that have the most entries
+            //               int largestPage = 1;
+            //               ArrayList<Map.Entry<DiskPage, Object>> largestPages
+            //                 = new ArrayList<Map.Entry<DiskPage, Object>>();
+            //               for (Map.Entry<DiskPage, Object> me: this.diskMap.entrySet()) {
+            //                 int meSize = 1;
+            //                 if (me.getValue() instanceof ArrayList) {
+            //                   meSize = ((ArrayList)me.getValue()).size();
+            //                 }
+            //                 if (meSize > largestPage) {
+            //                   largestPage = meSize;
+            //                   largestPages.clear(); // throw away smaller pages
+            //                   largestPages.add(me);
+            //                 } else if (meSize == largestPage) {
+            //                   largestPages.add(me);
+            //                 } else {
+            //                   // ignore this page
+            //                 }
+            //               }
+            //               Collections.sort(largestPages, new Comparator
+            // <Map.Entry<DiskPage, Object>>() {
+            //                   /**
+            //                    * Note: this comparator imposes orderings that are inconsistent
+            //                    * with equals.
+            //                    */
+            //                   public int compare(Map.Entry<DiskPage, Object> o1, Map.Entry<DiskPage, Object> o2) {
+            //                     return o1.getKey().compareTo(o2.getKey());
+            //                   }
+            //                 });
+            //               this.sortedDiskIt = largestPages.iterator();
+            //               // loop around and fetch first value from sortedDiskIt
+            //             }
           } else {
             return re;
           }
         } else {
           Object v = this.it.next();
           if (v instanceof ArrayList) {
-            ArrayList al = (ArrayList)v;
+            ArrayList al = (ArrayList) v;
             this.subIt = al.iterator();
             return this.subIt.next();
           } else {
@@ -3152,14 +2854,15 @@ public class DistributedRegion extends LocalRegion implements
   public static class DiskPosition implements Comparable<DiskPosition> {
     private long oplogId;
     private long offset;
-    
+
     DiskPosition() {
     }
+
     void setPosition(long oplogId, long offset) {
       this.oplogId = oplogId;
       this.offset = offset;
     }
-    
+
     @Override
     public int hashCode() {
       return Long.valueOf(this.oplogId ^ this.offset).hashCode();
@@ -3168,12 +2871,13 @@ public class DistributedRegion extends LocalRegion implements
     @Override
     public boolean equals(Object o) {
       if (o instanceof DiskPosition) {
-        DiskPosition other = (DiskPosition)o;
+        DiskPosition other = (DiskPosition) o;
         return this.oplogId == other.oplogId && this.offset == other.offset;
       } else {
         return false;
       }
     }
+
     public int compareTo(DiskPosition o) {
       int result = Long.signum(this.oplogId - o.oplogId);
       if (result == 0) {
@@ -3189,10 +2893,11 @@ public class DistributedRegion extends LocalRegion implements
       return sb.toString();
     }
   }
+
   static class DiskPage extends DiskPosition {
 
     static final long DISK_PAGE_SIZE = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "DISK_PAGE_SIZE", 8 * 1024L).longValue();
-    
+
     DiskPage(DiskPosition dp) {
       this.setPosition(dp.oplogId, dp.offset / DISK_PAGE_SIZE);
     }
@@ -3202,8 +2907,7 @@ public class DistributedRegion extends LocalRegion implements
    * Returns the lock lease value to use for DistributedLock and
    * RegionDistributedLock. -1 is supported as non-expiring lock.
    */
-  protected long getLockLeaseForLock()
-  {
+  protected long getLockLeaseForLock() {
     if (getCache().getLockLease() == -1) {
       return -1;
     }
@@ -3214,85 +2918,70 @@ public class DistributedRegion extends LocalRegion implements
    * Returns the lock timeout value to use for DistributedLock and
    * RegionDistributedLock. -1 is supported as a lock that never times out.
    */
-  protected long getLockTimeoutForLock(long time, TimeUnit unit)
-  {
+  protected long getLockTimeoutForLock(long time, TimeUnit unit) {
     if (time == -1) {
       return -1;
     }
     return TimeUnit.MILLISECONDS.convert(time, unit);
   }
 
-
-  
   /** ******************* DistributedLock ************************************* */
 
-  private class DistributedLock implements Lock
-  {
+  private class DistributedLock implements Lock {
     private final Object key;
 
     public DistributedLock(Object key) {
       this.key = key;
     }
 
-    public void lock()
-    {
+    public void lock() {
       try {
         boolean locked = basicTryLock(-1, TimeUnit.MILLISECONDS, false);
         if (!locked) {
           lockCheckReadiness();
         }
         Assert.assertTrue(locked, "Failed to acquire DistributedLock");
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         lockCheckReadiness();
         Assert.assertTrue(false, "Failed to acquire DistributedLock");
       }
     }
 
-    public void lockInterruptibly() throws InterruptedException
-    {
+    public void lockInterruptibly() throws InterruptedException {
       try {
         boolean locked = basicTryLock(-1, TimeUnit.MILLISECONDS, true);
         if (!locked) {
           lockCheckReadiness();
         }
         Assert.assertTrue(locked, "Failed to acquire DistributedLock");
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
       }
     }
 
-    public boolean tryLock()
-    {
+    public boolean tryLock() {
       try {
         ReplyProcessor21.forceSevereAlertProcessing();
         return getLockService().lock(this.key, 0, getLockLeaseForLock());
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
-      }
-      finally {
+      } finally {
         ReplyProcessor21.unforceSevereAlertProcessing();
       }
     }
 
-    public boolean tryLock(long time, TimeUnit unit)
-    throws InterruptedException  {
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
       return basicTryLock(time, unit, true);
     }
 
-    
-    private boolean basicTryLock(long time, TimeUnit unit, boolean interruptible)
-        throws InterruptedException  {
-//      if (Thread.interrupted()) throw new InterruptedException(); not necessary lockInterruptibly does this
+    private boolean basicTryLock(long time, TimeUnit unit, boolean interruptible) throws InterruptedException {
+      //      if (Thread.interrupted()) throw new InterruptedException(); not necessary lockInterruptibly does this
       final DM dm = getDistributionManager();
 
       long start = System.currentTimeMillis();
@@ -3301,11 +2990,10 @@ public class DistributedRegion extends LocalRegion implements
       if (timeoutMS < 0) {
         timeoutMS = Long.MAX_VALUE;
         end = Long.MAX_VALUE;
-      }
-      else {
+      } else {
         end = start + timeoutMS;
       }
-      
+
       long ackSAThreshold = getSystem().getConfig().getAckSevereAlertThreshold() * 1000;
       boolean suspected = false;
       boolean severeAlertIssued = false;
@@ -3317,24 +3005,20 @@ public class DistributedRegion extends LocalRegion implements
       if (ackSAThreshold > 0) {
         ackWaitThreshold = getSystem().getConfig().getAckWaitThreshold() * 1000;
         waitInterval = ackWaitThreshold;
-      }
-      else {
+      } else {
         waitInterval = timeoutMS;
         ackWaitThreshold = 0;
       }
 
       do {
         try {
-          waitInterval = Math.min(end-System.currentTimeMillis(), waitInterval);
+          waitInterval = Math.min(end - System.currentTimeMillis(), waitInterval);
           ReplyProcessor21.forceSevereAlertProcessing();
           final boolean gotLock;
           if (interruptible) {
-            gotLock = getLockService().lockInterruptibly(this.key,
-              waitInterval, getLockLeaseForLock());
-          }
-          else {
-            gotLock = getLockService().lock(this.key,
-                waitInterval, getLockLeaseForLock());
+            gotLock = getLockService().lockInterruptibly(this.key, waitInterval, getLockLeaseForLock());
+          } else {
+            gotLock = getLockService().lock(this.key, waitInterval, getLockLeaseForLock());
           }
           if (gotLock) {
             return true;
@@ -3347,28 +3031,19 @@ public class DistributedRegion extends LocalRegion implements
                 suspected = true;
                 severeAlertIssued = false; // in case this is a new lock holder
                 waitInterval = ackSAThreshold;
-                DLockRemoteToken remoteToken =
-                  ((DLockService)getLockService()).queryLock(key);
+                DLockRemoteToken remoteToken = ((DLockService) getLockService()).queryLock(key);
                 lockHolder = remoteToken.getLessee();
                 if (lockHolder != null) {
-                  dm.getMembershipManager()
-                  .suspectMember(lockHolder,
-                      "Has not released a global region entry lock in over "
-                      + ackWaitThreshold / 1000 + " seconds");
+                  dm.getMembershipManager().suspectMember(lockHolder, "Has not released a global region entry lock in over " + ackWaitThreshold / 1000 + " seconds");
                 }
-              }
-              else if (elapsed > ackSAThreshold) {
-                DLockRemoteToken remoteToken =
-                  ((DLockService)getLockService()).queryLock(key);
-                if (lockHolder != null && remoteToken.getLessee() != null
-                    && lockHolder.equals(remoteToken.getLessee())) {
+              } else if (elapsed > ackSAThreshold) {
+                DLockRemoteToken remoteToken = ((DLockService) getLockService()).queryLock(key);
+                if (lockHolder != null && remoteToken.getLessee() != null && lockHolder.equals(remoteToken.getLessee())) {
                   if (!severeAlertIssued) {
                     severeAlertIssued = true;
-                    logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_0_SECONDS_HAVE_ELAPSED_WAITING_FOR_GLOBAL_REGION_ENTRY_LOCK_HELD_BY_1,
-                        new Object[] {Long.valueOf(ackWaitThreshold+ackSAThreshold), lockHolder}));
+                    logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedRegion_0_SECONDS_HAVE_ELAPSED_WAITING_FOR_GLOBAL_REGION_ENTRY_LOCK_HELD_BY_1, new Object[] { Long.valueOf(ackWaitThreshold + ackSAThreshold), lockHolder }));
                   }
-                }
-                else {
+                } else {
                   // the lock holder has changed
                   suspected = false;
                   waitInterval = ackWaitThreshold;
@@ -3377,12 +3052,10 @@ public class DistributedRegion extends LocalRegion implements
               }
             }
           } // ackSAThreshold processing
-        }
-        catch (IllegalStateException ex) {
+        } catch (IllegalStateException ex) {
           lockCheckReadiness();
           throw ex;
-        }
-        finally {
+        } finally {
           ReplyProcessor21.unforceSevereAlertProcessing();
         }
       } while (System.currentTimeMillis() < end);
@@ -3390,23 +3063,21 @@ public class DistributedRegion extends LocalRegion implements
       return false;
     }
 
-    public void unlock()
-    {
+    public void unlock() {
       try {
         ReplyProcessor21.forceSevereAlertProcessing();
         getLockService().unlock(this.key);
         if (!DistributedRegion.this.entries.containsKey(key)) {
           getLockService().freeResources(key);
         }
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
-      }
-      finally {
+      } finally {
         ReplyProcessor21.unforceSevereAlertProcessing();
       }
     }
+
     public Condition newCondition() {
       throw new UnsupportedOperationException(LocalizedStrings.DistributedRegion_NEWCONDITION_UNSUPPORTED.toLocalizedString());
     }
@@ -3414,72 +3085,60 @@ public class DistributedRegion extends LocalRegion implements
 
   /////////////////// RegionDistributedLock //////////////////
 
-  private class RegionDistributedLock implements Lock
-  {
+  private class RegionDistributedLock implements Lock {
 
     public RegionDistributedLock() {
     }
 
-    public void lock()
-    {
+    public void lock() {
       try {
         boolean locked = getLockService().suspendLocking(-1);
         Assert.assertTrue(locked, "Failed to acquire RegionDistributedLock");
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
       }
     }
 
-    public void lockInterruptibly() throws InterruptedException
-    {
-//      if (Thread.interrupted()) throw new InterruptedException(); not necessary suspendLockingInterruptibly does this
+    public void lockInterruptibly() throws InterruptedException {
+      //      if (Thread.interrupted()) throw new InterruptedException(); not necessary suspendLockingInterruptibly does this
       try {
         boolean locked = getLockService().suspendLockingInterruptibly(-1);
         Assert.assertTrue(locked, "Failed to acquire RegionDistributedLock");
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
       }
     }
 
-    public boolean tryLock()
-    {
+    public boolean tryLock() {
       try {
         return getLockService().suspendLocking(0);
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
       }
     }
 
-    public boolean tryLock(long time, TimeUnit unit)
-        throws InterruptedException
-    {
-//      if (Thread.interrupted()) throw new InterruptedException(); not necessary suspendLockingINterruptibly does this
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+      //      if (Thread.interrupted()) throw new InterruptedException(); not necessary suspendLockingINterruptibly does this
       try {
-        return getLockService().suspendLockingInterruptibly(
-            getLockTimeoutForLock(time, unit));
-      }
-      catch (IllegalStateException ex) {
+        return getLockService().suspendLockingInterruptibly(getLockTimeoutForLock(time, unit));
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
       }
     }
 
-    public void unlock()
-    {
+    public void unlock() {
       try {
         getLockService().resumeLocking();
-      }
-      catch (IllegalStateException ex) {
+      } catch (IllegalStateException ex) {
         lockCheckReadiness();
         throw ex;
       }
     }
+
     public Condition newCondition() {
       throw new UnsupportedOperationException(LocalizedStrings.DistributedRegion_NEWCONDITION_UNSUPPORTED.toLocalizedString());
     }
@@ -3494,8 +3153,7 @@ public class DistributedRegion extends LocalRegion implements
    * @return the acquired Lock if the region is GLOBAL and not already suspend,
    *         otherwise null.
    */
-  Lock getRegionDistributedLockIfGlobal() throws TimeoutException
-  {
+  Lock getRegionDistributedLockIfGlobal() throws TimeoutException {
     if (getScope().isGlobal()) {
       if (isLockingSuspendedByCurrentThread())
         return null;
@@ -3524,7 +3182,6 @@ public class DistributedRegion extends LocalRegion implements
    * dlock.unlock(); } } }
    */
 
-  
   /**
    * Distribute the PutAllOp.
    * This implementation distributes it to peers.
@@ -3540,6 +3197,7 @@ public class DistributedRegion extends LocalRegion implements
       }
     }
   }
+
   @Override
   public void postRemoveAllSend(DistributedRemoveAllOperation op, VersionedObjectList successfulOps) {
     if (op.removeAllDataSize > 0) {
@@ -3550,8 +3208,7 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  public VersionedObjectList basicPutAll(final Map<?, ?> map,
-      final DistributedPutAllOperation putAllOp, final Map<Object, VersionTag> retryVersions) {
+  public VersionedObjectList basicPutAll(final Map<?, ?> map, final DistributedPutAllOperation putAllOp, final Map<Object, VersionTag> retryVersions) {
     Lock dlock = this.getRegionDistributedLockIfGlobal();
     try {
       return super.basicPutAll(map, putAllOp, retryVersions);
@@ -3561,10 +3218,9 @@ public class DistributedRegion extends LocalRegion implements
       }
     }
   }
-  
+
   @Override
-  public VersionedObjectList basicRemoveAll(final Collection<Object> keys,
-      final DistributedRemoveAllOperation removeAllOp, final ArrayList<VersionTag> retryVersions) {
+  public VersionedObjectList basicRemoveAll(final Collection<Object> keys, final DistributedRemoveAllOperation removeAllOp, final ArrayList<VersionTag> retryVersions) {
     Lock dlock = this.getRegionDistributedLockIfGlobal();
     try {
       return super.basicRemoveAll(keys, removeAllOp, retryVersions);
@@ -3575,10 +3231,8 @@ public class DistributedRegion extends LocalRegion implements
     }
   }
 
-
   /** Returns true if any required roles are currently missing */
-  boolean isMissingRequiredRoles()
-  {
+  boolean isMissingRequiredRoles() {
     return this.isMissingRequiredRoles;
   }
 
@@ -3589,9 +3243,9 @@ public class DistributedRegion extends LocalRegion implements
    *           if region is not configured with required roles
    * @throws InterruptedException TODO-javadocs
    */
-  public Set waitForRequiredRoles(long timeout) throws InterruptedException
-  {
-    if (Thread.interrupted()) throw new InterruptedException();
+  public Set waitForRequiredRoles(long timeout) throws InterruptedException {
+    if (Thread.interrupted())
+      throw new InterruptedException();
     checkReadiness();
     if (!getMembershipAttributes().hasRequiredRoles()) {
       throw new IllegalStateException(LocalizedStrings.DistributedRegion_REGION_HAS_NOT_BEEN_CONFIGURED_WITH_REQUIRED_ROLES.toLocalizedString());
@@ -3618,8 +3272,7 @@ public class DistributedRegion extends LocalRegion implements
             }
           }
         }
-      }
-      else { // use the timeout
+      } else { // use the timeout
         long endTime = System.currentTimeMillis() + timeout;
         while (this.isMissingRequiredRoles) {
           checkReadiness();
@@ -3633,8 +3286,7 @@ public class DistributedRegion extends LocalRegion implements
                   logger.debug("About to wait up to {} milliseconds for missing required roles.", timeToWait);
                 }
                 this.missingRequiredRoles.wait(timeToWait); // spurious wakeup ok
-              }
-              else {
+              } else {
                 break;
               }
             }
@@ -3647,31 +3299,27 @@ public class DistributedRegion extends LocalRegion implements
     if (this.isMissingRequiredRoles) {
       // sync on missingRequiredRoles to prevent mods to required role status...
       synchronized (this.missingRequiredRoles) {
-        return Collections.unmodifiableSet(new HashSet(
-            this.missingRequiredRoles));
+        return Collections.unmodifiableSet(new HashSet(this.missingRequiredRoles));
       }
-    }
-    else {
+    } else {
       return Collections.EMPTY_SET;
     }
   }
 
   /** Returns true if the role is currently present this region's membership. */
-  public boolean isRoleInRegionMembership(Role role)
-  {
+  public boolean isRoleInRegionMembership(Role role) {
     checkReadiness();
     return basicIsRoleInRegionMembership(role);
   }
 
-  protected boolean basicIsRoleInRegionMembership(Role role)
-  {
+  protected boolean basicIsRoleInRegionMembership(Role role) {
     if (getSystem().getDistributedMember().getRoles().contains(role)) {
       // since we are playing the role
       return true;
     }
     Set members = this.distAdvisor.adviseGeneric();
     for (Iterator iter = members.iterator(); iter.hasNext();) {
-      DistributedMember member = (DistributedMember)iter.next();
+      DistributedMember member = (DistributedMember) iter.next();
       Set roles = member.getRoles();
       if (roles.contains(role)) {
         return true;
@@ -3679,23 +3327,20 @@ public class DistributedRegion extends LocalRegion implements
     }
     return false;
   }
-  
+
   @Override
   public void remoteRegionInitialized(CacheProfile profile) {
-    synchronized(this.advisorListener) {
+    synchronized (this.advisorListener) {
       if (this.advisorListener.members == null && hasListener()) {
-        Object callback = TEST_HOOK_ADD_PROFILE? profile : null;
-        RegionEventImpl event = new RegionEventImpl(this,
-            Operation.REGION_CREATE, callback, true, profile.peerMemberId);
-        dispatchListenerEvent(EnumListenerEvent.AFTER_REMOTE_REGION_CREATE,
-              event);
+        Object callback = TEST_HOOK_ADD_PROFILE ? profile : null;
+        RegionEventImpl event = new RegionEventImpl(this, Operation.REGION_CREATE, callback, true, profile.peerMemberId);
+        dispatchListenerEvent(EnumListenerEvent.AFTER_REMOTE_REGION_CREATE, event);
       }
     }
   }
 
   @Override
-  protected void removeSenderFromAdvisor(InternalDistributedMember sender, int serial, boolean regionDestroyed)
-  {
+  protected void removeSenderFromAdvisor(InternalDistributedMember sender, int serial, boolean regionDestroyed) {
     getDistributionAdvisor().removeIdWithSerial(sender, serial, regionDestroyed);
   }
 
@@ -3710,39 +3355,34 @@ public class DistributedRegion extends LocalRegion implements
    * 
    * @since GemFire 5.0
    */
-  protected class AdvisorListener implements MembershipListener
-  {
+  protected class AdvisorListener implements MembershipListener {
     private Set members = new HashSet();
 
     protected boolean destroyed = false;
 
-    protected synchronized void addMembers(Set newMembers)
-    {
+    protected synchronized void addMembers(Set newMembers) {
       this.members.addAll(newMembers);
     }
 
-    protected synchronized Set getInitialMembers()
-    {
+    protected synchronized Set getInitialMembers() {
       Set initMembers = this.members;
       this.members = null;
       return initMembers;
     }
-    
+
     public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
     }
 
-    public void memberSuspect(InternalDistributedMember id,
-        InternalDistributedMember whoSuspected, String reason) {
+    public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
     }
-    
+
     /** called when membership listeners are added after region creation */
     protected synchronized void initRMLWrappers() {
       Set membersWithThisRegion = DistributedRegion.this.distAdvisor.adviseGeneric();
       initPostCreateRegionMembershipListeners(membersWithThisRegion);
     }
-    
-    public synchronized void memberJoined(InternalDistributedMember id)
-    {
+
+    public synchronized void memberJoined(InternalDistributedMember id) {
       if (this.destroyed) {
         return;
       }
@@ -3750,12 +3390,12 @@ public class DistributedRegion extends LocalRegion implements
         this.members.add(id);
       }
       // bug #44684 - do not notify listener of create until remote member is initialized
-//      if (this.members == null && hasListener()) {
-//        RegionEventImpl event = new RegionEventImpl(DistributedRegion.this,
-//            Operation.REGION_CREATE, null, true, id);
-//        dispatchListenerEvent(EnumListenerEvent.AFTER_REMOTE_REGION_CREATE,
-//            event);
-//      }
+      //      if (this.members == null && hasListener()) {
+      //        RegionEventImpl event = new RegionEventImpl(DistributedRegion.this,
+      //            Operation.REGION_CREATE, null, true, id);
+      //        dispatchListenerEvent(EnumListenerEvent.AFTER_REMOTE_REGION_CREATE,
+      //            event);
+      //      }
       if (getMembershipAttributes().hasRequiredRoles()) {
         // newlyAcquiredRoles is used for intersection and RoleEvent
         Set newlyAcquiredRoles = Collections.EMPTY_SET;
@@ -3770,20 +3410,18 @@ public class DistributedRegion extends LocalRegion implements
                 final DM dm = getDistributionManager();
                 while (it.hasNext()) {
                   getCache().getCancelCriterion().checkCancelInProgress(null);
-                  final Role role = (Role)it.next();
+                  final Role role = (Role) it.next();
                   try {
                     // do this in the waiting pool to make it async
                     // @todo darrel/klund: add a single serial executor for
                     // queue flush
                     dm.getWaitingThreadPool().execute(new Runnable() {
-                      public void run()
-                      {
+                      public void run() {
                         DistributedRegion.this.rmq.roleReady(role);
                       }
                     });
                     break;
-                  }
-                  catch (RejectedExecutionException ex) {
+                  } catch (RejectedExecutionException ex) {
                     throw ex;
                   }
                 } // while
@@ -3794,10 +3432,8 @@ public class DistributedRegion extends LocalRegion implements
                 getCachePerfStats().incReliableRegionsMissing(-1);
                 if (getMembershipAttributes().getLossAction().isAllAccess())
                   getCachePerfStats().incReliableRegionsMissingFullAccess(-1); // rahul
-                else if (getMembershipAttributes().getLossAction()
-                    .isLimitedAccess())
-                  getCachePerfStats()
-                      .incReliableRegionsMissingLimitedAccess(-1);
+                else if (getMembershipAttributes().getLossAction().isLimitedAccess())
+                  getCachePerfStats().incReliableRegionsMissingLimitedAccess(-1);
                 else if (getMembershipAttributes().getLossAction().isNoAccess())
                   getCachePerfStats().incReliableRegionsMissingNoAccess(-1);
 
@@ -3816,17 +3452,14 @@ public class DistributedRegion extends LocalRegion implements
         if (!this.destroyed && this.members == null && hasListener()) {
           if (!newlyAcquiredRoles.isEmpty()) {
             // fire afterRoleGain event
-            RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this,
-                Operation.REGION_CREATE, null, true, id, newlyAcquiredRoles);
+            RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this, Operation.REGION_CREATE, null, true, id, newlyAcquiredRoles);
             dispatchListenerEvent(EnumListenerEvent.AFTER_ROLE_GAIN, relEvent);
           }
         }
       }
     }
 
-    public synchronized void memberDeparted(InternalDistributedMember id,
-        boolean crashed)
-    {
+    public synchronized void memberDeparted(InternalDistributedMember id, boolean crashed) {
       if (this.destroyed) {
         return;
       }
@@ -3834,13 +3467,10 @@ public class DistributedRegion extends LocalRegion implements
         this.members.remove(id);
       }
       if (this.members == null && hasListener()) {
-        RegionEventImpl event = new RegionEventImpl(DistributedRegion.this,
-            Operation.REGION_CLOSE, null, true, id);
+        RegionEventImpl event = new RegionEventImpl(DistributedRegion.this, Operation.REGION_CLOSE, null, true, id);
         if (crashed) {
-          dispatchListenerEvent(EnumListenerEvent.AFTER_REMOTE_REGION_CRASH,
-              event);
-        }
-        else {
+          dispatchListenerEvent(EnumListenerEvent.AFTER_REMOTE_REGION_CRASH, event);
+        } else {
           // @todo darrel: it would be nice to know if what actual op was done
           //               could be close, local destroy, or destroy (or load snap?)
           if (DestroyRegionOperation.isRegionDepartureNotificationOk()) {
@@ -3853,9 +3483,8 @@ public class DistributedRegion extends LocalRegion implements
         synchronized (missingRequiredRoles) {
           Set roles = id.getRoles();
           for (Iterator iter = roles.iterator(); iter.hasNext();) {
-            Role role = (Role)iter.next();
-            if (getMembershipAttributes().getRequiredRoles().contains(role)
-                && !basicIsRoleInRegionMembership(role)) {
+            Role role = (Role) iter.next();
+            if (getMembershipAttributes().getRequiredRoles().contains(role) && !basicIsRoleInRegionMembership(role)) {
               if (newlyMissingRoles == Collections.EMPTY_SET) {
                 newlyMissingRoles = new HashSet();
               }
@@ -3865,8 +3494,7 @@ public class DistributedRegion extends LocalRegion implements
                 getCachePerfStats().incReliableRegionsMissing(1);
                 if (getMembershipAttributes().getLossAction().isAllAccess())
                   getCachePerfStats().incReliableRegionsMissingFullAccess(1); // rahul
-                else if (getMembershipAttributes().getLossAction()
-                    .isLimitedAccess())
+                else if (getMembershipAttributes().getLossAction().isLimitedAccess())
                   getCachePerfStats().incReliableRegionsMissingLimitedAccess(1);
                 else if (getMembershipAttributes().getLossAction().isNoAccess())
                   getCachePerfStats().incReliableRegionsMissingNoAccess(1);
@@ -3887,8 +3515,7 @@ public class DistributedRegion extends LocalRegion implements
         if (!this.destroyed && this.members == null && hasListener()) {
           if (!newlyMissingRoles.isEmpty()) {
             // fire afterRoleLoss event
-            RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this,
-                Operation.REGION_CLOSE, null, true, id, newlyMissingRoles);
+            RoleEventImpl relEvent = new RoleEventImpl(DistributedRegion.this, Operation.REGION_CLOSE, null, true, id, newlyMissingRoles);
             dispatchListenerEvent(EnumListenerEvent.AFTER_ROLE_LOSS, relEvent);
           }
         }
@@ -3904,9 +3531,7 @@ public class DistributedRegion extends LocalRegion implements
   @Override
   public DistributedMember getOwnerForKey(KeyInfo key) {
     assert !this.isInternalRegion() || this.isMetaRegionWithTransactions();
-    if (!this.getAttributes().getDataPolicy().withStorage()
-        || (this.concurrencyChecksEnabled && this.getAttributes()
-            .getDataPolicy() == DataPolicy.NORMAL)) {
+    if (!this.getAttributes().getDataPolicy().withStorage() || (this.concurrencyChecksEnabled && this.getAttributes().getDataPolicy() == DataPolicy.NORMAL)) {
       // execute on random replicate
       return getRandomReplicate();
     }
@@ -3926,24 +3551,18 @@ public class DistributedRegion extends LocalRegion implements
    * @param function
    * @param args
    * @since GemFire 5.8
-   */  
+   */
   @Override
-  public ResultCollector executeFunction(
-      final DistributedRegionFunctionExecutor execution,
-      final Function function, final Object args,
-      final ResultCollector rc, final Set filter,
-      final ServerToClientFunctionResultSender sender) {
+  public ResultCollector executeFunction(final DistributedRegionFunctionExecutor execution, final Function function, final Object args, final ResultCollector rc, final Set filter, final ServerToClientFunctionResultSender sender) {
     DistributedMember target = getTransactionalNode();
     if (target != null) {
       if (target.equals(getMyId())) {
         return executeLocally(execution, function, args, 0, rc, filter, sender);
       }
       return executeOnReplicate(execution, function, args, rc, filter, target);
-    } else if (this.getAttributes().getDataPolicy().withReplication()
-        || this.getAttributes().getDataPolicy().withPreloaded()) {
+    } else if (this.getAttributes().getDataPolicy().withReplication() || this.getAttributes().getDataPolicy().withPreloaded()) {
       // execute locally
-      final Set<InternalDistributedMember> singleMember = Collections
-          .singleton(getMyId());
+      final Set<InternalDistributedMember> singleMember = Collections.singleton(getMyId());
       execution.validateExecution(function, singleMember);
       execution.setExecutionNodes(singleMember);
       return executeLocally(execution, function, args, 0, rc, filter, sender);
@@ -3951,36 +3570,26 @@ public class DistributedRegion extends LocalRegion implements
       // select a random replicate
       target = getRandomReplicate();
       if (target == null) {
-        throw new FunctionException(LocalizedStrings
-            .DistributedRegion_NO_REPLICATED_REGION_FOUND_FOR_EXECUTING_FUNCTION_0
-              .toLocalizedString(function.getId()));
+        throw new FunctionException(LocalizedStrings.DistributedRegion_NO_REPLICATED_REGION_FOUND_FOR_EXECUTING_FUNCTION_0.toLocalizedString(function.getId()));
       }
     }
-    final LocalResultCollector<?, ?> localRC = execution
-        .getLocalResultCollector(function, rc);
+    final LocalResultCollector<?, ?> localRC = execution.getLocalResultCollector(function, rc);
     return executeOnReplicate(execution, function, args, localRC, filter, target);
   }
 
-  private ResultCollector executeOnReplicate(
-      final DistributedRegionFunctionExecutor execution,
-      final Function function, final Object args, ResultCollector rc,
-      final Set filter, final DistributedMember target) {
+  private ResultCollector executeOnReplicate(final DistributedRegionFunctionExecutor execution, final Function function, final Object args, ResultCollector rc, final Set filter, final DistributedMember target) {
     final Set singleMember = Collections.singleton(target);
     execution.validateExecution(function, singleMember);
     execution.setExecutionNodes(singleMember);
 
     HashMap<InternalDistributedMember, Object> memberArgs = new HashMap<InternalDistributedMember, Object>();
-    memberArgs.put((InternalDistributedMember)target, execution.getArgumentsForMember(target.getId()));
-    
-    ResultSender resultSender = new DistributedRegionFunctionResultSender(null, rc,
-        function, execution.getServerResultSender());
-    
-    DistributedRegionFunctionResultWaiter waiter = new DistributedRegionFunctionResultWaiter(
-        this.getSystem(), this.getFullPath(), rc, function, filter,
-        Collections.singleton(target), memberArgs, resultSender);      
-    
-    rc = waiter.getFunctionResultFrom(Collections.singleton(target),
-        function, execution);
+    memberArgs.put((InternalDistributedMember) target, execution.getArgumentsForMember(target.getId()));
+
+    ResultSender resultSender = new DistributedRegionFunctionResultSender(null, rc, function, execution.getServerResultSender());
+
+    DistributedRegionFunctionResultWaiter waiter = new DistributedRegionFunctionResultWaiter(this.getSystem(), this.getFullPath(), rc, function, filter, Collections.singleton(target), memberArgs, resultSender);
+
+    rc = waiter.getFunctionResultFrom(Collections.singleton(target), function, execution);
     return rc;
   }
 
@@ -3998,25 +3607,23 @@ public class DistributedRegion extends LocalRegion implements
    * Implementation of {@link ProfileVisitor} that selects a random replicated
    * member from the available ones for this region.
    */
-  static final class GetRandomReplicate implements
-      ProfileVisitor<DistributedMember> {
+  static final class GetRandomReplicate implements ProfileVisitor<DistributedMember> {
 
     private boolean onlyPersistent = false;
-    
+
     InternalDistributedMember member = null;
 
     private int randIndex = -1;
 
     public GetRandomReplicate() {
     }
-    
+
     public GetRandomReplicate(boolean onlyPersistent) {
       this.onlyPersistent = onlyPersistent;
     }
-    
-    public boolean visit(DistributionAdvisor advisor, Profile profile,
-        int profileIndex, int numProfiles, DistributedMember member) {
-      final CacheProfile cp = (CacheProfile)profile;
+
+    public boolean visit(DistributionAdvisor advisor, Profile profile, int profileIndex, int numProfiles, DistributedMember member) {
+      final CacheProfile cp = (CacheProfile) profile;
       if (this.randIndex < 0) {
         this.randIndex = PartitionedRegion.rand.nextInt(numProfiles);
       }
@@ -4065,56 +3672,41 @@ public class DistributedRegion extends LocalRegion implements
     return getPersistentReplicate.member;
   }
 
-  void executeOnRegion(DistributedRegionFunctionStreamingMessage msg,
-      final Function function, final Object args, int prid,
-      final Set filter, boolean isReExecute) throws IOException {
+  void executeOnRegion(DistributedRegionFunctionStreamingMessage msg, final Function function, final Object args, int prid, final Set filter, boolean isReExecute) throws IOException {
     final DM dm = getDistributionManager();
     ResultSender resultSender = new DistributedRegionFunctionResultSender(dm, msg, function);
-    final RegionFunctionContextImpl context = new RegionFunctionContextImpl(
-        function.getId(), this, args, filter, null, null, resultSender,
-        isReExecute);
-    FunctionStats stats = FunctionStats.getFunctionStats(function.getId(), dm.getSystem());    
+    final RegionFunctionContextImpl context = new RegionFunctionContextImpl(function.getId(), this, args, filter, null, null, resultSender, isReExecute);
+    FunctionStats stats = FunctionStats.getFunctionStats(function.getId(), dm.getSystem());
     try {
       long start = stats.startTime();
       stats.startFunctionExecution(function.hasResult());
       function.execute(context);
-      stats.endFunctionExecution(start,function.hasResult());
-    }
-    catch (FunctionException functionException) {
+      stats.endFunctionExecution(start, function.hasResult());
+    } catch (FunctionException functionException) {
       if (logger.isDebugEnabled()) {
         logger.debug("FunctionException occured on remote node  while executing Function: {}", function.getId(), functionException);
       }
       stats.endFunctionExecutionWithException(function.hasResult());
       throw functionException;
-    }
-    catch (CacheClosedException cacheClosedexception) {
+    } catch (CacheClosedException cacheClosedexception) {
       if (logger.isDebugEnabled()) {
         logger.debug("CacheClosedException occured on remote node  while executing Function: {}", function.getId(), cacheClosedexception);
       }
       throw cacheClosedexception;
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
       if (logger.isDebugEnabled()) {
         logger.debug("Exception occured on remote node  while executing Function: {}", function.getId(), exception);
       }
       stats.endFunctionExecutionWithException(function.hasResult());
       throw new FunctionException(exception);
-    } 
+    }
   }
-  
-  ResultCollector executeLocally(
-      final DistributedRegionFunctionExecutor execution,
-      final Function function, final Object args, int prid,
-      final ResultCollector rc, final Set filter,
-      final ServerToClientFunctionResultSender sender) {
-    final LocalResultCollector<?, ?> localRC = execution
-        .getLocalResultCollector(function, rc);
+
+  ResultCollector executeLocally(final DistributedRegionFunctionExecutor execution, final Function function, final Object args, int prid, final ResultCollector rc, final Set filter, final ServerToClientFunctionResultSender sender) {
+    final LocalResultCollector<?, ?> localRC = execution.getLocalResultCollector(function, rc);
     final DM dm = getDistributionManager();
-    final DistributedRegionFunctionResultSender resultSender = new DistributedRegionFunctionResultSender(
-        dm, localRC, function, sender);
-    final RegionFunctionContextImpl context = new RegionFunctionContextImpl(
-        function.getId(), DistributedRegion.this, args, filter, null, null,
-        resultSender, execution.isReExecute());
+    final DistributedRegionFunctionResultSender resultSender = new DistributedRegionFunctionResultSender(dm, localRC, function, sender);
+    final RegionFunctionContextImpl context = new RegionFunctionContextImpl(function.getId(), DistributedRegion.this, args, filter, null, null, resultSender, execution.isReExecute());
     execution.executeFunctionOnLocalNode(function, context, resultSender, dm, isTX());
     return localRC;
   }
@@ -4124,13 +3716,9 @@ public class DistributedRegion extends LocalRegion implements
     Set<InternalDistributedMember> others = getCacheDistributionAdvisor().adviseGeneric();
 
     if (event.isLocal() || others.contains(event.getMember())) {
-      if (event.getState().isCritical()
-          && !event.getPreviousState().isCritical()
-          && (event.getType() == ResourceType.HEAP_MEMORY || (event.getType() == ResourceType.OFFHEAP_MEMORY && getOffHeap()))) {
+      if (event.getState().isCritical() && !event.getPreviousState().isCritical() && (event.getType() == ResourceType.HEAP_MEMORY || (event.getType() == ResourceType.OFFHEAP_MEMORY && getOffHeap()))) {
         setMemoryThresholdReachedCounterTrue(event.getMember());
-      } else if (!event.getState().isCritical()
-          && event.getPreviousState().isCritical()
-          && (event.getType() == ResourceType.HEAP_MEMORY || (event.getType() == ResourceType.OFFHEAP_MEMORY && getOffHeap()))) {
+      } else if (!event.getState().isCritical() && event.getPreviousState().isCritical() && (event.getType() == ResourceType.HEAP_MEMORY || (event.getType() == ResourceType.OFFHEAP_MEMORY && getOffHeap()))) {
         removeMemberFromCriticalList(event.getMember());
       }
     }
@@ -4141,14 +3729,14 @@ public class DistributedRegion extends LocalRegion implements
     if (logger.isDebugEnabled()) {
       logger.debug("DR: removing member {} from critical member list", member);
     }
-    synchronized(this.memoryThresholdReachedMembers) {
+    synchronized (this.memoryThresholdReachedMembers) {
       this.memoryThresholdReachedMembers.remove(member);
       if (this.memoryThresholdReachedMembers.size() == 0) {
         memoryThresholdReached.set(false);
       }
     }
   }
-  
+
   @Override
   public Set<DistributedMember> getMemoryThresholdReachedMembers() {
     synchronized (this.memoryThresholdReachedMembers) {
@@ -4157,10 +3745,9 @@ public class DistributedRegion extends LocalRegion implements
   }
 
   @Override
-  public void initialCriticalMembers(boolean localMemoryIsCritical,
-      Set<InternalDistributedMember> critialMembers) {
+  public void initialCriticalMembers(boolean localMemoryIsCritical, Set<InternalDistributedMember> critialMembers) {
     Set<InternalDistributedMember> others = getCacheDistributionAdvisor().adviseGeneric();
-    for (InternalDistributedMember idm: critialMembers) {
+    for (InternalDistributedMember idm : critialMembers) {
       if (others.contains(idm)) {
         setMemoryThresholdReachedCounterTrue(idm);
       }
@@ -4171,7 +3758,7 @@ public class DistributedRegion extends LocalRegion implements
    * @param idm member whose threshold has been exceeded
    */
   private void setMemoryThresholdReachedCounterTrue(final DistributedMember idm) {
-    synchronized(this.memoryThresholdReachedMembers) {
+    synchronized (this.memoryThresholdReachedMembers) {
       this.memoryThresholdReachedMembers.add(idm);
       if (this.memoryThresholdReachedMembers.size() > 0) {
         memoryThresholdReached.set(true);

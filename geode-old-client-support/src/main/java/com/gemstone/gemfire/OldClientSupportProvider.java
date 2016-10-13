@@ -39,7 +39,7 @@ public class OldClientSupportProvider implements OldClientSupportService {
 
   /** returns the cache's OldClientSupportService */
   public static OldClientSupportService getService(Cache cache) {
-    return (OldClientSupportService)((InternalCache)cache).getService(OldClientSupportService.class);
+    return (OldClientSupportService) ((InternalCache) cache).getService(OldClientSupportService.class);
   }
 
   @Override
@@ -66,7 +66,6 @@ public class OldClientSupportProvider implements OldClientSupportService {
     return name;
   }
 
-
   @Override
   public String processIncomingClassName(String name, DataInput in) {
     // tcpserver was moved to a different package in Geode.  
@@ -81,7 +80,6 @@ public class OldClientSupportProvider implements OldClientSupportService {
     return name;
   }
 
-
   @Override
   public String processOutgoingClassName(String name, DataOutput out) {
     // tcpserver was moved to a different package in Geode
@@ -92,7 +90,7 @@ public class OldClientSupportProvider implements OldClientSupportService {
     }
     // if the client is old then it needs com.gemstone.gemfire package names
     if (out instanceof VersionedDataOutputStream) {
-      VersionedDataOutputStream vout = (VersionedDataOutputStream)out;
+      VersionedDataOutputStream vout = (VersionedDataOutputStream) out;
       Version version = vout.getVersion();
       if (version != null && version.compareTo(Version.GFE_90) < 0) {
         if (name.startsWith(GEODE)) {
@@ -103,7 +101,6 @@ public class OldClientSupportProvider implements OldClientSupportService {
     return name;
   }
 
-
   /**
    * translates the given exception into one that can be sent to an old GemFire client
    * @param theThrowable the exception to convert
@@ -111,22 +108,22 @@ public class OldClientSupportProvider implements OldClientSupportService {
    * @return the exception to give the client
    */
   public Throwable getThrowable(Throwable theThrowable, Version clientVersion) {
-    
+
     if (theThrowable == null) {
       return theThrowable;
     }
     if (clientVersion.compareTo(Version.GFE_90) >= 0) {
       return theThrowable;
     }
-    
+
     String className = theThrowable.getClass().getName();
-    
+
     // this class has been renamed, so it cannot be automatically translated
     // during java deserialization
     if (className.equals("org.apache.geode.cache.execute.EmptyRegionFunctionException")) {
       return new EmtpyRegionFunctionException(theThrowable.getMessage(), theThrowable.getCause());
     }
-    
+
     // other exceptions will be translated automatically by receivers
     return theThrowable;
   }

@@ -28,8 +28,7 @@ import java.util.List;
  * 
  * @since GemFire 4.2
  */
-public interface RegionQueue
-{
+public interface RegionQueue {
 
   /**
    * A token used to signify this is a WAN queue. It is set in the callback
@@ -129,7 +128,7 @@ public interface RegionQueue
    * @throws CacheException
    * 
    */
-  public List peek(int batchSize, int timeToWait) throws  InterruptedException, CacheException;
+  public List peek(int batchSize, int timeToWait) throws InterruptedException, CacheException;
 
   /**
    * Returns the size of the queue

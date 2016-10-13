@@ -27,7 +27,7 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberID;
  * 
  */
 public class RegionLogger {
-  
+
   private static final SequenceLogger GRAPH_LOGGER = SequenceLoggerImpl.getInstance();
 
   /**
@@ -37,15 +37,13 @@ public class RegionLogger {
    * @param regionName
    * @param source
    */
-  public static void logCreate(String regionName,
-      InternalDistributedMember source) {
-    GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "create", "created", source,source);
+  public static void logCreate(String regionName, InternalDistributedMember source) {
+    GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "create", "created", source, source);
   }
 
-  public static void logGII(String regionName,
-      InternalDistributedMember source, InternalDistributedMember dest, PersistentMemberID persistentMemberID) {
+  public static void logGII(String regionName, InternalDistributedMember source, InternalDistributedMember dest, PersistentMemberID persistentMemberID) {
     GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "GII", "created", source, dest);
-    if(persistentMemberID != null) {
+    if (persistentMemberID != null) {
       GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "persist", "persisted", dest, persistentMemberID.diskStoreId);
     }
   }
@@ -53,28 +51,24 @@ public class RegionLogger {
   /**
    * Log the persistence of a region
    */
-  public static void logPersistence(String regionName,
-      InternalDistributedMember source, PersistentMemberID disk) {
+  public static void logPersistence(String regionName, InternalDistributedMember source, PersistentMemberID disk) {
     GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "persist", "persisted", source, disk.diskStoreId);
   }
 
   /**
    * Log the recovery of a persistent region.
    */
-  public static void logRecovery(String regionName,
-      PersistentMemberID disk,
-      InternalDistributedMember memberId) {
+  public static void logRecovery(String regionName, PersistentMemberID disk, InternalDistributedMember memberId) {
     GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "recover", "created", disk.diskStoreId, memberId);
-    
+
   }
 
-  public static void logDestroy(String regionName, InternalDistributedMember memberId,
-      PersistentMemberID persistentID, boolean isClose) {
-    if(isEnabled()) {
-      final Pattern ALL_REGION_KEYS = Pattern.compile(regionName +".*");
+  public static void logDestroy(String regionName, InternalDistributedMember memberId, PersistentMemberID persistentID, boolean isClose) {
+    if (isEnabled()) {
+      final Pattern ALL_REGION_KEYS = Pattern.compile(regionName + ".*");
       GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "destroy", "destroyed", memberId, memberId);
       GRAPH_LOGGER.logTransition(GraphType.KEY, ALL_REGION_KEYS, "destroy", "destroyed", memberId, memberId);
-      if(!isClose && persistentID != null) {
+      if (!isClose && persistentID != null) {
         GRAPH_LOGGER.logTransition(GraphType.REGION, regionName, "destroy", "destroyed", memberId, persistentID.diskStoreId);
         GRAPH_LOGGER.logTransition(GraphType.KEY, ALL_REGION_KEYS, "destroy", "destroyed", memberId, persistentID.diskStoreId);
       }

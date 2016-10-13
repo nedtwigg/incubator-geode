@@ -36,15 +36,13 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
  * Function to create index in a member, based on different arguments passed to it
  *
  */
-public class CreateIndexFunction extends FunctionAdapter implements
-InternalEntity {
-
+public class CreateIndexFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
   @Override
   public void execute(FunctionContext context) {
-    final IndexInfo indexInfo = (IndexInfo)context.getArguments();
+    final IndexInfo indexInfo = (IndexInfo) context.getArguments();
     String memberId = null;
     try {
       Cache cache = CacheFactory.getAnyInstance();
@@ -55,23 +53,23 @@ InternalEntity {
       String fromClause = indexInfo.getRegionPath();
       //Check to see if the region path contains an alias e.g "/region1 r1"
       //Then the first string will be the regionPath
-      String []regionPathTokens = fromClause.trim().split(" ");
+      String[] regionPathTokens = fromClause.trim().split(" ");
       String regionPath = regionPathTokens[0];
 
       switch (indexInfo.getIndexType()) {
-        case IndexInfo.RANGE_INDEX:
-          queryService.createIndex(indexName, indexedExpression, fromClause);
-          break;
-        case IndexInfo.KEY_INDEX:
-          queryService.createKeyIndex(indexName, indexedExpression, fromClause);
-          break;
-        case IndexInfo.HASH_INDEX:
-          queryService.createHashIndex(indexName, indexedExpression, fromClause);
-          break;
-        default :
-          queryService.createIndex(indexName, indexedExpression, fromClause);
+      case IndexInfo.RANGE_INDEX:
+        queryService.createIndex(indexName, indexedExpression, fromClause);
+        break;
+      case IndexInfo.KEY_INDEX:
+        queryService.createKeyIndex(indexName, indexedExpression, fromClause);
+        break;
+      case IndexInfo.HASH_INDEX:
+        queryService.createHashIndex(indexName, indexedExpression, fromClause);
+        break;
+      default:
+        queryService.createIndex(indexName, indexedExpression, fromClause);
       }
-      
+
       XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", cache.getRegion(regionPath).getName());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
     } catch (IndexExistsException e) {
@@ -85,13 +83,12 @@ InternalEntity {
       context.getResultSender().lastResult(new CliFunctionResult(memberId, false, message));
     } catch (IndexInvalidException e) {
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, e.getMessage()));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       String exceptionMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, e.getMessage()));
     }
   }
- 
+
   @Override
   public String getId() {
     return CreateIndexFunction.class.getName();

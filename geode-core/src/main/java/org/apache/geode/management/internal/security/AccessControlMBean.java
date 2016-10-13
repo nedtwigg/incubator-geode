@@ -35,8 +35,7 @@ public class AccessControlMBean implements AccessControlMXBean {
     try {
       this.securityService.authorize(resource, permission);
       return true;
-    }
-    catch (GemFireSecurityException e){
+    } catch (GemFireSecurityException e) {
       return false;
     }
   }

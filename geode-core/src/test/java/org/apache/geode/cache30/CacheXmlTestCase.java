@@ -39,7 +39,7 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
 
   /** The file used by this test (method) to initialize the cache */
   private File xmlFile;
-  
+
   /** set this to false if a test needs a non-loner distributed system */
   static boolean lonerDistributedSystem = true;
 
@@ -50,9 +50,9 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    this.xmlFile = null;    
+    this.xmlFile = null;
   }
-  
+
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     disconnectAllFromDS();
@@ -67,7 +67,7 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
   protected String getGemFireVersion() {
     return CacheXml.VERSION_3_0;
   }
-  
+
   protected boolean getUseSchema() {
     return false;
   }
@@ -90,8 +90,7 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
   public Properties getDistributedSystemProperties() {
     Properties props = super.getDistributedSystemProperties();
     if (this.xmlFile != null) {
-      props.setProperty(CACHE_XML_FILE,
-                        this.xmlFile.toString());
+      props.setProperty(CACHE_XML_FILE, this.xmlFile.toString());
     }
 
     // make it a loner
@@ -112,6 +111,7 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
   protected void testXml(CacheCreation creation) {
     testXml(creation, true);
   }
+
   protected void testXml(CacheCreation creation, boolean checkSame) {
 
     File dir = new File("XML_" + this.getGemFireVersion());
@@ -138,18 +138,14 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
     try {
       if (checkSame && !creation.sameAs(cache)) {
         StringWriter sw = new StringWriter();
-        CacheXmlGenerator.generate(creation, new PrintWriter(sw, true),
-            useSchema, version);
-        CacheXmlGenerator.generate(cache, new PrintWriter(sw, true),
-            useSchema, version);
+        CacheXmlGenerator.generate(creation, new PrintWriter(sw, true), useSchema, version);
+        CacheXmlGenerator.generate(cache, new PrintWriter(sw, true), useSchema, version);
         fail(sw.toString());
       }
     } catch (RuntimeException re) {
       StringWriter sw = new StringWriter();
-      CacheXmlGenerator.generate(creation, new PrintWriter(sw, true),
-          useSchema, version);
-      CacheXmlGenerator.generate(cache, new PrintWriter(sw, true),
-          useSchema, version);
+      CacheXmlGenerator.generate(creation, new PrintWriter(sw, true), useSchema, version);
+      CacheXmlGenerator.generate(cache, new PrintWriter(sw, true), useSchema, version);
       Assert.fail(sw.toString(), re);
     }
   }

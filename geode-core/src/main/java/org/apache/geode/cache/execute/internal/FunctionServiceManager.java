@@ -64,7 +64,6 @@ public class FunctionServiceManager {
   public FunctionServiceManager() {
   }
 
-
   /**
    * Returns an {@link Execution} object that can be used to execute a data dependent function on the specified Region.<br>
    * When invoked from a GemFire client, the method returns an Execution instance that sends a message to one of the
@@ -244,12 +243,10 @@ public class FunctionServiceManager {
    */
   public final Execution onMember(DistributedSystem system, DistributedMember distributedMember) {
     if (system == null) {
-      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL
-          .toLocalizedString("DistributedSystem instance "));
+      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL.toLocalizedString("DistributedSystem instance "));
     }
     if (distributedMember == null) {
-      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL
-          .toLocalizedString("DistributedMember instance "));
+      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL.toLocalizedString("DistributedMember instance "));
     }
     return new MemberFunctionExecutor(system, distributedMember);
   }
@@ -269,8 +266,7 @@ public class FunctionServiceManager {
    */
   public final Execution onMembers(DistributedSystem system, String... groups) {
     if (system == null) {
-      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL
-          .toLocalizedString("DistributedSystem instance "));
+      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL.toLocalizedString("DistributedSystem instance "));
     }
     if (groups.length == 0) {
       return new MemberFunctionExecutor(system);
@@ -280,8 +276,7 @@ public class FunctionServiceManager {
       members.addAll(system.getGroupMembers(group));
     }
     if (members.isEmpty()) {
-      throw new FunctionException(LocalizedStrings.FunctionService_NO_MEMBERS_FOUND_IN_GROUPS
-              .toLocalizedString(Arrays.toString(groups)));
+      throw new FunctionException(LocalizedStrings.FunctionService_NO_MEMBERS_FOUND_IN_GROUPS.toLocalizedString(Arrays.toString(groups)));
     }
     return new MemberFunctionExecutor(system, members);
   }
@@ -301,12 +296,10 @@ public class FunctionServiceManager {
    */
   public final Execution onMembers(DistributedSystem system, Set<DistributedMember> distributedMembers) {
     if (system == null) {
-      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL
-          .toLocalizedString("DistributedSystem instance "));
+      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL.toLocalizedString("DistributedSystem instance "));
     }
     if (distributedMembers == null) {
-      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL
-          .toLocalizedString("distributedMembers set "));
+      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL.toLocalizedString("distributedMembers set "));
     }
     return new MemberFunctionExecutor(system, distributedMembers);
   }
@@ -417,11 +410,9 @@ public class FunctionServiceManager {
     return localRegion.hasServerProxy();
   }
 
-
   public final Execution onMember(DistributedSystem system, String... groups) {
     if (system == null) {
-      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL
-          .toLocalizedString("DistributedSystem instance "));
+      throw new FunctionException(LocalizedStrings.FunctionService_0_PASSED_IS_NULL.toLocalizedString("DistributedSystem instance "));
     }
     Set<DistributedMember> members = new HashSet<DistributedMember>();
     for (String group : groups) {
@@ -436,8 +427,7 @@ public class FunctionServiceManager {
       }
     }
     if (members.isEmpty()) {
-      throw new FunctionException(LocalizedStrings.FunctionService_NO_MEMBERS_FOUND_IN_GROUPS
-          .toLocalizedString(Arrays.toString(groups)));
+      throw new FunctionException(LocalizedStrings.FunctionService_NO_MEMBERS_FOUND_IN_GROUPS.toLocalizedString(Arrays.toString(groups)));
     }
     return new MemberFunctionExecutor(system, members);
   }

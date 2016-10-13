@@ -91,8 +91,7 @@ public class ContextImpl implements Context {
    * Not implemented
    *  
    */
-  public Object addToEnvironment(String key, Object value)
-      throws NamingException {
+  public Object addToEnvironment(String key, Object value) throws NamingException {
     throw new NamingException(LocalizedStrings.ContextImpl_ADDTOENVIRONMENTSTRING_KEY_OBJECT_VALUE_IS_NOT_IMPLEMENTED.toLocalizedString());
   }
 
@@ -160,8 +159,7 @@ public class ContextImpl implements Context {
    */
   public String composeName(String name, String prefix) throws NamingException {
     checkIsDestroyed();
-    return composeName(nameParser.parse(name), nameParser.parse(prefix))
-        .toString();
+    return composeName(nameParser.parse(name), nameParser.parse(prefix)).toString();
   }
 
   /**
@@ -180,7 +178,9 @@ public class ContextImpl implements Context {
   public Context createSubcontext(Name name) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
-    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) { throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString()); }
+    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
+      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+    }
     String subContextName = parsedName.get(0);
     Object boundObject = ctxMaps.get(parsedName.get(0));
     if (parsedName.size() == 1) {
@@ -189,22 +189,18 @@ public class ContextImpl implements Context {
         Context subContext = new ContextImpl(this, subContextName);
         ctxMaps.put(subContextName, subContext);
         return subContext;
-      }
-      else {
+      } else {
         throw new NameAlreadyBoundException(LocalizedStrings.ContextImpl_NAME_0_IS_ALREADY_BOUND.toLocalizedString(subContextName));
       }
-    }
-    else {
+    } else {
       if (boundObject instanceof Context) {
         // Let the subcontext create new subcontext
         // lets consider a scenerio a/b/c
         // case a/b exists : c will be created
         // case a exists : b/c will not be created
         // an exception will be thrown in that case.
-        return ((Context) boundObject)
-            .createSubcontext(parsedName.getSuffix(1));
-      }
-      else {
+        return ((Context) boundObject).createSubcontext(parsedName.getSuffix(1));
+      } else {
         throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(boundObject));
       }
     }
@@ -241,11 +237,17 @@ public class ContextImpl implements Context {
   public void destroySubcontext(Name name) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
-    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) { throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString()); }
+    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
+      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+    }
     String subContextName = parsedName.get(0);
     Object boundObject = ctxMaps.get(subContextName);
-    if (boundObject == null) { throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND_IN_THE_CONTEXT.toLocalizedString(subContextName)); }
-    if (!(boundObject instanceof ContextImpl)) { throw new NotContextException(); }
+    if (boundObject == null) {
+      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND_IN_THE_CONTEXT.toLocalizedString(subContextName));
+    }
+    if (!(boundObject instanceof ContextImpl)) {
+      throw new NotContextException();
+    }
     ContextImpl contextToDestroy = (ContextImpl) boundObject;
     if (parsedName.size() == 1) {
       // Check if the Context to be destroyed is empty. Can not destroy
@@ -253,12 +255,10 @@ public class ContextImpl implements Context {
       if (contextToDestroy.ctxMaps.size() == 0) {
         ctxMaps.remove(subContextName);
         contextToDestroy.destroyInternal();
-      }
-      else {
+      } else {
         throw new ContextNotEmptyException(LocalizedStrings.ContextImpl_CAN_NOT_DESTROY_NONEMPTY_CONTEXT.toLocalizedString());
       }
-    }
-    else {
+    } else {
       // Let the subcontext destroy the context
       ((ContextImpl) boundObject).destroySubcontext(parsedName.getSuffix(1));
     }
@@ -371,21 +371,19 @@ public class ContextImpl implements Context {
         bindings.addElement(new Binding(bindingName, ctxMaps.get(bindingName)));
       }
       return new NamingEnumerationImpl(bindings);
-    }
-    else {
+    } else {
       Object subContext = ctxMaps.get(parsedName.get(0));
       if (subContext instanceof Context) {
-    	Name nextLayer = nameParser.parse("");
+        Name nextLayer = nameParser.parse("");
         // getSuffix(1) only apply to name with size() > 1
-    	if (parsedName.size() > 1) {
-    	  nextLayer = parsedName.getSuffix(1);
-    	}
-    	return ((Context) subContext).list(nextLayer);
+        if (parsedName.size() > 1) {
+          nextLayer = parsedName.getSuffix(1);
+        }
+        return ((Context) subContext).list(nextLayer);
       }
       if (subContext == null && !ctxMaps.containsKey(parsedName.get(0))) {
         throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(name));
-      }
-      else {
+      } else {
         throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(subContext));
       }
     }
@@ -442,21 +440,20 @@ public class ContextImpl implements Context {
       else if (parsedName.size() > 1) {
         if (res instanceof ContextImpl) {
           res = ((ContextImpl) res).lookup(parsedName.getSuffix(1));
-        }
-        else {
+        } else {
           throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXTIMPL_BUT_FOUND_0.toLocalizedString(res));
         }
       }
       return res;
-    }
-    catch (NameNotFoundException e) {
+    } catch (NameNotFoundException e) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (writer.infoEnabled()) writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e); 
-      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] {name}));
-    }
-    catch (SystemException se) {
+      if (writer.infoEnabled())
+        writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e);
+      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] { name }));
+    } catch (SystemException se) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (writer.severeEnabled()) writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_CREATING_USERTRANSACTION_OBJECT, se);
+      if (writer.severeEnabled())
+        writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_CREATING_USERTRANSACTION_OBJECT, se);
       throw new NameNotFoundException(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_CREATING_USERTRANSACTION_OBJECT.toLocalizedString());
     }
   }
@@ -474,11 +471,11 @@ public class ContextImpl implements Context {
     checkIsDestroyed();
     try {
       return lookup(nameParser.parse(name));
-    }
-    catch (NameNotFoundException e) {
+    } catch (NameNotFoundException e) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (writer.infoEnabled()) writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e);
-      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] {name}));
+      if (writer.infoEnabled())
+        writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e);
+      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] { name }));
     }
   }
 
@@ -515,26 +512,25 @@ public class ContextImpl implements Context {
   public void rebind(Name name, Object obj) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
-    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) { throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString()); }
+    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
+      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+    }
     String nameToBind = parsedName.get(0);
     if (parsedName.size() == 1) {
       ctxMaps.put(nameToBind, obj);
-    }
-    else {
+    } else {
       Object boundObject = ctxMaps.get(nameToBind);
       if (boundObject instanceof Context) {
         /*
          * Let the subcontext bind the object.
          */
         ((Context) boundObject).bind(parsedName.getSuffix(1), obj);
-      }
-      else {
+      } else {
         if (boundObject == null) {
           // Create new subcontext and let it do the binding
           Context sub = createSubcontext(nameToBind);
           sub.bind(parsedName.getSuffix(1), obj);
-        }
-        else {
+        } else {
           throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(boundObject));
         }
       }
@@ -599,24 +595,26 @@ public class ContextImpl implements Context {
   public void unbind(Name name) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
-    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) { throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString()); }
+    if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
+      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+    }
     String nameToRemove = parsedName.get(0);
     // scenerio unbind a
     // remove a and its associated object
     if (parsedName.size() == 1) {
       ctxMaps.remove(nameToRemove);
-    }
-    else {
+    } else {
       //        	 scenerio unbind a/b or a/b/c
       //        	 remove b and its associated object
       Object boundObject = ctxMaps.get(nameToRemove);
       if (boundObject instanceof Context) {
         //                remove b and its associated object
         ((Context) boundObject).unbind(parsedName.getSuffix(1));
-      }
-      else {
+      } else {
         // 			if the name is not found then throw exception
-        if (!ctxMaps.containsKey(nameToRemove)) { throw new NameNotFoundException(LocalizedStrings.ContextImpl_CAN_NOT_FIND_0.toLocalizedString(name)); }
+        if (!ctxMaps.containsKey(nameToRemove)) {
+          throw new NameNotFoundException(LocalizedStrings.ContextImpl_CAN_NOT_FIND_0.toLocalizedString(name));
+        }
         throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(boundObject));
       }
     }
@@ -647,7 +645,9 @@ public class ContextImpl implements Context {
    * @throws NoPermissionException if this context has been destroyed
    */
   private void checkIsDestroyed() throws NamingException {
-    if (isDestroyed) { throw new NoPermissionException(LocalizedStrings.ContextImpl_CAN_NOT_INVOKE_OPERATIONS_ON_DESTROYED_CONTEXT.toLocalizedString()); }
+    if (isDestroyed) {
+      throw new NoPermissionException(LocalizedStrings.ContextImpl_CAN_NOT_INVOKE_OPERATIONS_ON_DESTROYED_CONTEXT.toLocalizedString());
+    }
   }
 
   /**
@@ -675,11 +675,11 @@ public class ContextImpl implements Context {
       if (name.size() == 0) {
         // Return empty CompositeName
         result = nameParser.parse("");
+      } else if (name.size() > 1) {
+        throw new InvalidNameException(LocalizedStrings.ContextImpl_MULTIPLE_NAME_SYSTEMS_ARE_NOT_SUPPORTED.toLocalizedString());
       }
-      else if (name.size() > 1) { throw new InvalidNameException(LocalizedStrings.ContextImpl_MULTIPLE_NAME_SYSTEMS_ARE_NOT_SUPPORTED.toLocalizedString()); }
       result = nameParser.parse(name.get(0));
-    }
-    else {
+    } else {
       result = (Name) name.clone();
     }
     while (!result.isEmpty()) {
@@ -696,7 +696,9 @@ public class ContextImpl implements Context {
     // Validate that there are not intermediate empty components.
     // Skip first and last element, they are valid
     for (int i = 1; i < result.size() - 1; i++) {
-      if (result.get(i).length() == 0) { throw new InvalidNameException(LocalizedStrings.ContextImpl_EMPTY_INTERMEDIATE_COMPONENTS_ARE_NOT_SUPPORTED.toLocalizedString()); }
+      if (result.get(i).length() == 0) {
+        throw new InvalidNameException(LocalizedStrings.ContextImpl_EMPTY_INTERMEDIATE_COMPONENTS_ARE_NOT_SUPPORTED.toLocalizedString());
+      }
     }
     return result;
   }
@@ -761,7 +763,9 @@ public class ContextImpl implements Context {
     }
 
     public boolean hasMoreElements() {
-      if (currentElement < elements.size()) { return true; }
+      if (currentElement < elements.size()) {
+        return true;
+      }
       close();
       return false;
     }
@@ -771,7 +775,9 @@ public class ContextImpl implements Context {
     }
 
     public Object nextElement() {
-      if (hasMoreElements()) { return elements.get(currentElement++); }
+      if (hasMoreElements()) {
+        return elements.get(currentElement++);
+      }
       throw new NoSuchElementException();
     }
   }

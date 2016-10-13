@@ -30,17 +30,15 @@ public class SizeOp {
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the entry keySet on
    */
-  public static Integer execute(InternalPool pool,
-                            String region)
-  {
+  public static Integer execute(InternalPool pool, String region) {
     AbstractOp op = new SizeOpImpl(region);
-    return (Integer)pool.execute(op);
+    return (Integer) pool.execute(op);
   }
-                                                               
+
   private SizeOp() {
     // no instances allowed
   }
-  
+
   private static class SizeOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -50,31 +48,34 @@ public class SizeOp {
       getMessage().addStringPart(region);
     }
 
-    @Override  
+    @Override
     protected Object processResponse(Message msg) throws Exception {
-      
+
       return processObjResponse(msg, "size");
     }
-    @Override  
+
+    @Override
     protected boolean isErrorResponse(int msgType) {
       return msgType == MessageType.SIZE_ERROR;
     }
-    @Override  
+
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startSize();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endSizeSend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endSize(start, hasTimedOut(), hasFailed());
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override

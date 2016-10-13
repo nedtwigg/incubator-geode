@@ -82,7 +82,6 @@ public class ClusterConfigWithoutSecurityDUnitTest extends JUnit4DistributedTest
     assertEquals(PDXPostProcessor.class.getName(), secProps.getProperty("security-post-processor"));
   }
 
-
   @Test
   // when locator is not secured, server should not be secured if use-cluster-config is true
   public void serverShouldNotBeAllowedToStartWithSecurityIfUsingClusterConfig() {
@@ -93,9 +92,7 @@ public class ClusterConfigWithoutSecurityDUnitTest extends JUnit4DistributedTest
 
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class)
-                                                     .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION
-                                                       .toLocalizedString());
+    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
 
   }
 

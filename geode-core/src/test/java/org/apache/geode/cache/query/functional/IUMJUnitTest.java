@@ -50,39 +50,39 @@ import org.apache.geode.cache.query.types.StructType;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 @Category(IntegrationTest.class)
-public class IUMJUnitTest{
-  StructType resType1=null;
-  StructType resType2= null;
-  StructType resType3= null;
+public class IUMJUnitTest {
+  StructType resType1 = null;
+  StructType resType2 = null;
+  StructType resType3 = null;
 
   String[] strg1 = null;
-  String[] strg2= null;
-  String[] strg3= null;
+  String[] strg2 = null;
+  String[] strg3 = null;
 
-  int resSize1=0;
-  int resSize2=0;
-  int resSize3=0;
+  int resSize1 = 0;
+  int resSize2 = 0;
+  int resSize3 = 0;
 
-  Object valPf1=null;
-  Object valPos1=null;
+  Object valPf1 = null;
+  Object valPos1 = null;
 
-  Object valPf2=null;
-  Object valPos2=null;
+  Object valPf2 = null;
+  Object valPos2 = null;
 
-  Object valPf3=null;
-  Object valPos3=null;
+  Object valPf3 = null;
+  Object valPos3 = null;
 
-  Iterator itert1=null;
-  Iterator itert2=null;
-  Iterator itert3=null;
+  Iterator itert1 = null;
+  Iterator itert2 = null;
+  Iterator itert3 = null;
 
-  Set set1=null;
-  Set set2=null;
-  Set set3=null;
+  Set set1 = null;
+  Set set2 = null;
+  Set set3 = null;
 
-  boolean isActive1=false;
-  boolean isActive2=false;
-  boolean isActive3=true;
+  boolean isActive1 = false;
+  boolean isActive2 = false;
+  boolean isActive3 = true;
 
   @Before
   public void setUp() throws java.lang.Exception {
@@ -99,13 +99,12 @@ public class IUMJUnitTest{
 
     Region region = CacheUtils.createRegion("pos", Portfolio.class);
 
-    for(int i=0;i<4;i++){
-      region.put(""+i, new Portfolio(i));
+    for (int i = 0; i < 4; i++) {
+      region.put("" + i, new Portfolio(i));
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-        "SELECT DISTINCT * FROM /pos,  positions.values where status='active'"
+    String queries[] = { "SELECT DISTINCT * FROM /pos,  positions.values where status='active'"
         //TASK IUM4
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
@@ -115,11 +114,11 @@ public class IUMJUnitTest{
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         QueryObserverImpl observer = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer);
-        r[i][0] = (SelectResults)q.execute();
+        r[i][0] = (SelectResults) q.execute();
 
-        if(!observer.isIndexesUsed){
+        if (!observer.isIndexesUsed) {
           CacheUtils.log("NO INDEX USED");
-        }               
+        }
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
@@ -129,7 +128,7 @@ public class IUMJUnitTest{
     //  Create an Index on status and execute the same query again.
 
     qs = CacheUtils.getQueryService();
-    qs.createIndex("statusIndex", IndexType.FUNCTIONAL,"status","/pos");
+    qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/pos");
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -137,13 +136,13 @@ public class IUMJUnitTest{
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         QueryObserverImpl observer2 = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer2);
-        r[i][1] = (SelectResults)q.execute();
+        r[i][1] = (SelectResults) q.execute();
 
-        if(observer2.isIndexesUsed){
+        if (observer2.isIndexesUsed) {
           CacheUtils.log("YES INDEX IS USED!");
         } else {
           fail("Index NOT Used");
-        }               
+        }
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -166,17 +165,17 @@ public class IUMJUnitTest{
     //        }
     //        
   }
+
   @Test
   public void testWithOutIndexCreatedMultiCondQueryTest() throws Exception {
     Region region = CacheUtils.createRegion("portfolios", Portfolio.class);
-    for(int i=0;i<4;i++){
-      region.put(""+i, new Portfolio(i));
+    for (int i = 0; i < 4; i++) {
+      region.put("" + i, new Portfolio(i));
       // CacheUtils.log(new Portfolio(i));
     }
     CacheUtils.getQueryService();
 
-    String queries[] = {
-        "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'"
+    String queries[] = { "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'"
         //TASK IUM3
     };
     for (int i = 0; i < queries.length; i++) {
@@ -185,20 +184,20 @@ public class IUMJUnitTest{
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         Object r3 = q.execute();
         CacheUtils.log(Utils.printResult(r3));
-        resType3 =(StructType)((SelectResults)r3).getCollectionType().getElementType();
-        resSize3 =(((SelectResults)r3).size());
+        resType3 = (StructType) ((SelectResults) r3).getCollectionType().getElementType();
+        resSize3 = (((SelectResults) r3).size());
         //         CacheUtils.log(resType3);
-        strg3=resType3.getFieldNames();
+        strg3 = resType3.getFieldNames();
         //         CacheUtils.log(strg3[0]);
         //         CacheUtils.log(strg2[1]);
 
-        set3=(((SelectResults)r3).asSet());
-        Iterator iter=set3.iterator();
-        while (iter.hasNext()){
-          Struct stc3=(Struct)iter.next();
-          valPf2=stc3.get(strg3[0]);
-          valPos2=stc3.get(strg3[1]);
-          isActive3=((Portfolio)stc3.get(strg3[0])).isActive();
+        set3 = (((SelectResults) r3).asSet());
+        Iterator iter = set3.iterator();
+        while (iter.hasNext()) {
+          Struct stc3 = (Struct) iter.next();
+          valPf2 = stc3.get(strg3[0]);
+          valPos2 = stc3.get(strg3[1]);
+          isActive3 = ((Portfolio) stc3.get(strg3[0])).isActive();
           //        CacheUtils.log(valPf2);
           //        CacheUtils.log(valPos2);
         }
@@ -210,16 +209,17 @@ public class IUMJUnitTest{
     }
 
     itert3 = set3.iterator();
-    while (itert3.hasNext()){
-      Struct stc3 = (Struct)itert3.next();
-      if(!((Position)stc3.get(strg3[1])).secId.equals("IBM"))
+    while (itert3.hasNext()) {
+      Struct stc3 = (Struct) itert3.next();
+      if (!((Position) stc3.get(strg3[1])).secId.equals("IBM"))
         fail("FAILED:  secId found is not IBM");
-      if (((Portfolio)stc3.get(strg3[0])).isActive() != false)
+      if (((Portfolio) stc3.get(strg3[0])).isActive() != false)
         fail("FAILED:Portfolio in Search result is Active");
     }
 
   }
-  class QueryObserverImpl extends QueryObserverAdapter{
+
+  class QueryObserverImpl extends QueryObserverAdapter {
     boolean isIndexesUsed = false;
     ArrayList indexesUsed = new ArrayList();
 
@@ -228,7 +228,7 @@ public class IUMJUnitTest{
     }
 
     public void afterIndexLookup(Collection results) {
-      if(results != null){
+      if (results != null) {
         isIndexesUsed = true;
       }
     }

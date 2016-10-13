@@ -25,18 +25,18 @@ import org.apache.geode.Statistics;
  */
 @SuppressWarnings("unchecked")
 public class TestStatisticsSampler implements StatisticsSampler {
-  
+
   private final StatisticsManager manager;
-  
+
   public TestStatisticsSampler(final StatisticsManager manager) {
     this.manager = manager;
   }
-  
+
   @Override
   public int getStatisticsModCount() {
     return this.manager.getStatListModCount();
   }
-  
+
   @Override
   public Statistics[] getStatistics() {
     List<Statistics> statsList = this.manager.getStatsList();
@@ -49,7 +49,7 @@ public class TestStatisticsSampler implements StatisticsSampler {
   public boolean waitForSample(final long timeout) throws InterruptedException {
     return false;
   }
-  
+
   @Override
   public SampleCollector waitForSampleCollector(final long timeout) throws InterruptedException {
     return null;

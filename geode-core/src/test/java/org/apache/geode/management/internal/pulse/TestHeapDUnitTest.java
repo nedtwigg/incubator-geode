@@ -48,7 +48,7 @@ public class TestHeapDUnitTest extends ManagementTestBase {
   }
 
   public static long getHeapSizeOfClient() {
-    return (Runtime.getRuntime().totalMemory() -   Runtime.getRuntime().freeMemory());
+    return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
   }
 
   public static long getHeapSizeOfDS() {
@@ -56,8 +56,7 @@ public class TestHeapDUnitTest extends ManagementTestBase {
       @Override
       public boolean done() {
         final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service
-            .getDistributedSystemMXBean();
+        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
         if (bean != null) {
           if (bean.getTotalHeapSize() > 0) {
             return true;
@@ -65,6 +64,7 @@ public class TestHeapDUnitTest extends ManagementTestBase {
         }
         return false;
       }
+
       @Override
       public String description() {
         return "wait for getHeapSizeOfDS to complete and get results";
@@ -72,8 +72,7 @@ public class TestHeapDUnitTest extends ManagementTestBase {
     };
 
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
-    final DistributedSystemMXBean bean = getManagementService()
-        .getDistributedSystemMXBean();
+    final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
     return bean.getTotalHeapSize() * 1000;
   }
@@ -83,23 +82,15 @@ public class TestHeapDUnitTest extends ManagementTestBase {
     initManagement(false);
     long totalHeapSizeOnAll = 0;
     for (VM vm : managedNodeList) {
-      totalHeapSizeOnAll = totalHeapSizeOnAll
-          + ((Number) vm.invoke(() -> TestHeapDUnitTest.getHeapSizeOfClient()))
-              .longValue();
-            }
+      totalHeapSizeOnAll = totalHeapSizeOnAll + ((Number) vm.invoke(() -> TestHeapDUnitTest.getHeapSizeOfClient())).longValue();
+    }
     long totalHeapSizeFromMXBean = ((Number) managingNode.invoke(() -> TestHeapDUnitTest.getHeapSizeOfDS())).intValue();
 
-    LogWriterUtils.getLogWriter().info(
-        "testTotalHeapSize totalHeapSizeFromMXBean = "
-            + totalHeapSizeFromMXBean + " totalHeapSizeOnAll = "
-            + totalHeapSizeOnAll);
+    LogWriterUtils.getLogWriter().info("testTotalHeapSize totalHeapSizeFromMXBean = " + totalHeapSizeFromMXBean + " totalHeapSizeOnAll = " + totalHeapSizeOnAll);
 
     assertNotSame(0, totalHeapSizeFromMXBean);
     assertNotSame(0, totalHeapSizeOnAll);
-    assertNotSame(
-        0,
-        totalHeapSizeFromMXBean - totalHeapSizeOnAll > 0 ? (totalHeapSizeFromMXBean - totalHeapSizeOnAll)
-            : (-1 * (totalHeapSizeFromMXBean - totalHeapSizeOnAll)));
+    assertNotSame(0, totalHeapSizeFromMXBean - totalHeapSizeOnAll > 0 ? (totalHeapSizeFromMXBean - totalHeapSizeOnAll) : (-1 * (totalHeapSizeFromMXBean - totalHeapSizeOnAll)));
   }
 
   public void verifyStatistics() {

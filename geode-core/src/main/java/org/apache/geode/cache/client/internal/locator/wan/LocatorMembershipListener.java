@@ -33,10 +33,11 @@ import java.util.concurrent.ConcurrentMap;
 public interface LocatorMembershipListener {
 
   public Object handleRequest(Object request);
-  
+
   public void setPort(int port);
+
   public void setConfig(DistributionConfig config);
-  
+
   /**
    * When the new locator is added to remote locator metadata, inform all other
    * locators in remote locator metadata about the new locator so that they can
@@ -45,12 +46,12 @@ public interface LocatorMembershipListener {
    * @param locator
    */
   public void locatorJoined(int distributedSystemId, DistributionLocatorId locator, DistributionLocatorId sourceLocator);
-  
+
   public Set<String> getRemoteLocatorInfo(int dsId);
 
-  public ConcurrentMap<Integer,Set<DistributionLocatorId>> getAllLocatorsInfo();
-  
-  public ConcurrentMap<Integer,Set<String>> getAllServerLocatorsInfo();
-  
+  public ConcurrentMap<Integer, Set<DistributionLocatorId>> getAllLocatorsInfo();
+
+  public ConcurrentMap<Integer, Set<String>> getAllServerLocatorsInfo();
+
   public void clearLocatorInfo();
 }

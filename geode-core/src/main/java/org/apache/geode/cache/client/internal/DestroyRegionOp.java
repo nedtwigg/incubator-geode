@@ -33,14 +33,11 @@ public class DestroyRegionOp {
    * @param eventId the event id for this destroyRegion
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(ExecutablePool pool,
-                             String region,
-                             EventID eventId,
-                             Object callbackArg)
-  {
+  public static void execute(ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
     AbstractOp op = new DestroyRegionOpImpl(region, eventId, callbackArg);
     pool.execute(op);
   }
+
   /**
    * Does a region destroyRegion on a server using the given connection
    * to communicate with the server.
@@ -50,27 +47,20 @@ public class DestroyRegionOp {
    * @param eventId the event id for this destroyRegion
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(Connection con,
-                             ExecutablePool pool,
-                             String region,
-                             EventID eventId,
-                             Object callbackArg)
-  {
+  public static void execute(Connection con, ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
     AbstractOp op = new DestroyRegionOpImpl(region, eventId, callbackArg);
     pool.executeOn(con, op);
   }
-                                                               
+
   private DestroyRegionOp() {
     // no instances allowed
   }
-  
+
   private static class DestroyRegionOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public DestroyRegionOpImpl(String region,
-                     EventID eventId,
-                     Object callbackArg) {
+    public DestroyRegionOpImpl(String region, EventID eventId, Object callbackArg) {
       super(MessageType.DESTROY_REGION, callbackArg != null ? 3 : 2);
       getMessage().addStringPart(region);
       getMessage().addBytesPart(eventId.calcBytes());
@@ -78,23 +68,28 @@ public class DestroyRegionOp {
         getMessage().addObjPart(callbackArg);
       }
     }
+
     @Override
     protected Object processResponse(Message msg) throws Exception {
       processAck(msg, "destroyRegion");
       return null;
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return msgType == MessageType.DESTROY_REGION_DATA_ERROR;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startDestroyRegion();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endDestroyRegionSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endDestroyRegion(start, hasTimedOut(), hasFailed());

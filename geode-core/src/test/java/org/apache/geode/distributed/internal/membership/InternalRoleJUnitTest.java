@@ -19,7 +19,7 @@ package org.apache.geode.distributed.internal.membership;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.junit.Before; 
+import org.junit.Before;
 import org.junit.After;
 import org.junit.experimental.categories.Category;
 
@@ -29,10 +29,10 @@ import org.apache.geode.test.junit.categories.UnitTest;
 * InternalRole Tester. 
 */
 @Category(UnitTest.class)
-public class InternalRoleJUnitTest { 
+public class InternalRoleJUnitTest {
 
   @Test
-  public void testEquals(){
+  public void testEquals() {
     InternalRole role1 = new InternalRole("role1");
     InternalRole role2 = role1;
     InternalRole role3 = new InternalRole(new String("role1"));
@@ -42,5 +42,4 @@ public class InternalRoleJUnitTest {
 
   }
 
-
-} 
+}

@@ -29,8 +29,7 @@ public abstract class ResourceException extends CacheRuntimeException {
    */
   public ResourceException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>ResourceException</code> with the specified detail message.
    * @param msg the detail message
@@ -38,7 +37,7 @@ public abstract class ResourceException extends CacheRuntimeException {
   public ResourceException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>ResourceException</code> with the specified detail message
    * and cause.
@@ -48,7 +47,7 @@ public abstract class ResourceException extends CacheRuntimeException {
   public ResourceException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>ResourceException</code> with the specified cause.
    * @param cause the causal Throwable

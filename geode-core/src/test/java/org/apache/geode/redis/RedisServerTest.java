@@ -53,7 +53,7 @@ public class RedisServerTest {
   @Test
   public void initializeRedisCreatesThreeRegions() {
     createCache();
-    assert(cache.rootRegions().size() == 0);
+    assert (cache.rootRegions().size() == 0);
     redisServer = new GeodeRedisServer(0);
     redisServer.start();
     assert cache.rootRegions().size() == 2 : cache.rootRegions().size();
@@ -63,7 +63,7 @@ public class RedisServerTest {
   @Test
   public void initializeRedisCreatesPartitionedRegionByDefault() {
     createCache();
-    assert(cache.rootRegions().size() == 0);
+    assert (cache.rootRegions().size() == 0);
     redisServer = new GeodeRedisServer(0);
     redisServer.start();
     Region r = cache.getRegion(GeodeRedisServer.STRING_REGION);
@@ -73,7 +73,7 @@ public class RedisServerTest {
   @Test
   public void initializeRedisCreatesRegionsUsingSystemProperty() {
     createCache();
-    assert(cache.rootRegions().size() == 0);
+    assert (cache.rootRegions().size() == 0);
     System.setProperty("gemfireredis.regiontype", "REPLICATE");
     redisServer = new GeodeRedisServer(0);
     redisServer.start();

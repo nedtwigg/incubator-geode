@@ -31,9 +31,7 @@ public class GfManagerAgentConfig {
    * logging messages.
    */
   // LOG: saves LogWriterLogger from AdminDistributedSystemImpl for RemoteGfManagerAgentConfig
-  public GfManagerAgentConfig(String displayName, TransportConfig transport,
-                              InternalLogWriter logWriter, int level,
-                              AlertListener listener,DisconnectListener  disconnectListener) {
+  public GfManagerAgentConfig(String displayName, TransportConfig transport, InternalLogWriter logWriter, int level, AlertListener listener, DisconnectListener disconnectListener) {
     this.displayName = displayName;
     this.transport = transport;
     this.logWriter = logWriter;
@@ -48,40 +46,44 @@ public class GfManagerAgentConfig {
   public TransportConfig getTransport() {
     return this.transport;
   }
+
   /**
    * Returns the log writer
    */
   // LOG: get LogWriter from the AdminDistributedSystemImpl -- used by RemoteGfManagerAgent for AuthenticationFailedException
-  public InternalLogWriter getLogWriter(){
+  public InternalLogWriter getLogWriter() {
     return logWriter;
   }
+
   /**
    * Returns the alert level
    */
   public int getAlertLevel() {
     return this.alertLevel;
   }
+
   /**
    * Returns the alert listener
    */
   public AlertListener getAlertListener() {
     return this.alertListener;
   }
+
   /**
    * Returns the display name
    */
   public String getDisplayName() {
     return this.displayName;
   }
-  
+
   public DisconnectListener getDisconnectListener() {
-	return disconnectListener;
+    return disconnectListener;
   }
-  
+
   private TransportConfig transport;
   private InternalLogWriter logWriter;
   private int alertLevel;
   private AlertListener alertListener;
   private String displayName;
-  private DisconnectListener  disconnectListener;
+  private DisconnectListener disconnectListener;
 }

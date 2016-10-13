@@ -85,10 +85,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testOverflowSyncRollOlg1");
     }
@@ -96,8 +94,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out.println("OverflowWithSyncRollOlg1:: Stats for 1 kb writes :"
-          + stats);
+      System.out.println("OverflowWithSyncRollOlg1:: Stats for 1 kb writes :" + stats);
     }
     //Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -136,10 +133,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testOverflowASyncWithBufferRollOlg2");
     }
@@ -147,9 +142,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out
-          .println("OverflowASyncWithBufferRollOlg2:: Stats for 1 kb writes :"
-              + stats);
+      System.out.println("OverflowASyncWithBufferRollOlg2:: Stats for 1 kb writes :" + stats);
     }
     //Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -188,10 +181,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testOverflowASyncWithoutBufferRollOlg3");
     }
@@ -199,9 +190,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out
-          .println("OverflowASyncWITHOUTBufferRollOlg3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
-              + stats);
+      System.out.println("OverflowASyncWITHOUTBufferRollOlg3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
     }
     // Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -237,10 +226,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
 
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520);
-      region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache,
-          diskProps, Scope.LOCAL);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testpersistSyncRollOlg4");
     }
@@ -248,8 +235,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out.println("PersistOnlySyncRollOlg4:: Stats for 1 kb writes :"
-          + stats);
+      System.out.println("PersistOnlySyncRollOlg4:: Stats for 1 kb writes :" + stats);
     }
     //Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -288,10 +274,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setTimeInterval(15000l);
       diskProps.setMaxOplogSize(20971520);
       diskProps.setRolling(true);
-      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testpersistASyncWithBufferRollOlg5");
     }
@@ -299,9 +283,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out
-          .println("PersistASyncWithBufferRollOlg5:: Stats for 1 kb writes :"
-              + stats);
+      System.out.println("PersistASyncWithBufferRollOlg5:: Stats for 1 kb writes :" + stats);
     }
     //Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -340,10 +322,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setBytesThreshold(0l);
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520);
-      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistASyncWithoutBufferRollOlg6");
     }
@@ -351,9 +331,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out
-          .println("PersistASyncWITHOUTBufferRollOlg6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
-              + stats);
+      System.out.println("PersistASyncWITHOUTBufferRollOlg6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
     }
     // Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -391,10 +369,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistOverflowSyncRollOlg7");
     }
@@ -402,9 +378,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out
-          .println("PersistOverflowWithSyncRollOlg7:: Stats for 1 kb writes :"
-              + stats);
+      System.out.println("PersistOverflowWithSyncRollOlg7:: Stats for 1 kb writes :" + stats);
     }
     //Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -444,10 +418,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistOverflowASyncWithBufferRollOlg8");
     }
@@ -455,9 +427,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out
-          .println("PersistOverflowASyncWithBufferRollOlg8:: Stats for 1 kb writes :"
-              + stats);
+      System.out.println("PersistOverflowASyncWithBufferRollOlg8:: Stats for 1 kb writes :" + stats);
     }
     //Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -466,7 +436,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
      * writes :"+ stats_ForSameKeyputs); }
      */
     //  Deleting all the files and logs created during the test...
-   // deleteFiles();
+    // deleteFiles();
     closeDown();
   } //end of testpersistOverflowASyncWithBuffer8
 
@@ -497,10 +467,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       diskProps.setRolling(true);
       diskProps.setMaxOplogSize(20971520l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistOverflowASyncWithoutBufferRollOlg9");
     }
@@ -508,9 +476,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out
-          .println("Persist-OverflowASyncWITHOUTBufferRollOlg9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
-              + stats);
+      System.out.println("Persist-OverflowASyncWITHOUTBufferRollOlg9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
     }
     // Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -537,7 +503,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
 
   public void populateData0to60k() {
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
+    Arrays.fill(value, (byte) 77);
     for (int i = 0; i < 60000; i++) {
       region.put("" + i, value);
       // System.out.println(i);
@@ -549,7 +515,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     //  Put for validation.
     putForValidation(region);
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
+    Arrays.fill(value, (byte) 77);
     long startTime = System.currentTimeMillis();
     for (int i = 60000; i < 100000; i++) {
       region.put("" + i, value);
@@ -564,8 +530,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     float etSecs = et / 1000f;
     float opPerSec = etSecs == 0 ? 0 : (40000 / (et / 1000f));
     float bytesPerSec = etSecs == 0 ? 0 : ((40000 * ENTRY_SIZE) / (et / 1000f));
-    stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec="
-        + bytesPerSec;
+    stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec=" + bytesPerSec;
     log.info(stats);
   }
 
@@ -573,7 +538,7 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     //  Put for validation.
     putForValidation(region);
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
+    Arrays.fill(value, (byte) 77);
     long startTime = System.currentTimeMillis();
     for (int i = 0; i < OP_COUNT; i++) {
       region.put("K", value);
@@ -586,10 +551,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     float et = endTime - startTime;
     float etSecs = et / 1000f;
     float opPerSec = etSecs == 0 ? 0 : (OP_COUNT / (et / 1000f));
-    float bytesPerSec = etSecs == 0 ? 0
-        : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
-    stats_ForSameKeyputs = "et=" + et + "ms writes/sec=" + opPerSec
-        + " bytes/sec=" + bytesPerSec;
+    float bytesPerSec = etSecs == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
+    stats_ForSameKeyputs = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec=" + bytesPerSec;
     log.info(stats_ForSameKeyputs);
   }
 

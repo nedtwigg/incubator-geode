@@ -41,12 +41,11 @@ public class ValueWrapper implements DataSerializable {
    * used for "cas" operation
    */
   private long casVersion;
-  
+
   /**
    * the value being wrapped
    */
   private byte[] value;
-  
 
   /**
    * the flags sent by the client
@@ -57,7 +56,7 @@ public class ValueWrapper implements DataSerializable {
    * used to generate the version while constructing an instance.
    */
   private static final AtomicLong versionGenerator = new AtomicLong();
-  
+
   public ValueWrapper() {
   }
 
@@ -66,7 +65,7 @@ public class ValueWrapper implements DataSerializable {
     this.casVersion = version;
     this.flags = flags;
   }
-  
+
   /**
    * This method should be used to obtain instances of ValueWrapper.
    * @param value the value to be wrapped
@@ -98,21 +97,21 @@ public class ValueWrapper implements DataSerializable {
   public byte[] getValue() {
     return this.value;
   }
-  
+
   /**
    * @return the unique version for the encapsulated value
    */
   public long getVersion() {
     return this.casVersion;
   }
-  
+
   /**
    * @return the flags
    */
   public int getFlags() {
-	return this.flags;  
+    return this.flags;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof ValueWrapper) {
@@ -123,14 +122,13 @@ public class ValueWrapper implements DataSerializable {
     }
     return false;
   }
-  
+
   @Override
   public int hashCode() {
     return Long.valueOf(casVersion).hashCode();
   }
-  
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.casVersion = in.readLong();
     this.value = DataSerializer.readByteArray(in);
     this.flags = in.readInt();

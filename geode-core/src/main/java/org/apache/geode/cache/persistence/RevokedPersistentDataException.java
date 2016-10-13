@@ -52,6 +52,4 @@ public class RevokedPersistentDataException extends GemFireException {
     super(cause);
   }
 
-  
-
 }

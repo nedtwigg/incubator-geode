@@ -48,58 +48,57 @@ public class LogWriterPerformanceTest extends LoggingPerformanceTestCase {
     props.setProperty(LOG_LEVEL, "info");
     return props;
   }
-  
+
   protected void writeProperties(final Properties props, final File file) throws IOException {
     final FileOutputStream out = new FileOutputStream(file);
     try {
       props.store(out, null);
-    }
-    finally {
+    } finally {
       out.close();
     }
   }
 
   protected LogWriter createLogWriter() {
     final Properties props = createGemFireProperties();
-    
+
     // create configuration with log-file and log-level
     //this.configDirectory = new File(getUniqueName());
-    
+
     this.configDirectory.mkdir();
     assertTrue(this.configDirectory.isDirectory() && this.configDirectory.canWrite());
 
     //this.gemfireProperties = new File(this.configDirectory, "gemfire.properties");
     //writeProperties(props, this.gemfireProperties);
-    
+
     final DistributionConfig config = new DistributionConfigImpl(props, false, false);
-    
+
     // create a LogWriter that writes to log-file
     final boolean appendToFile = false;
     final boolean isLoner = true;
     final boolean isSecurityLog = false;
     final boolean logConfig = true;
     final FileOutputStream[] fosHolder = null;
-    
-    final LogWriter logWriter = TestLogWriterFactory.createLogWriter(
-        appendToFile, isLoner, isSecurityLog, config, logConfig, fosHolder);
+
+    final LogWriter logWriter = TestLogWriterFactory.createLogWriter(appendToFile, isLoner, isSecurityLog, config, logConfig, fosHolder);
     return logWriter;
   }
 
   @Override
   protected PerformanceLogger createPerformanceLogger() {
     final LogWriter logWriter = createLogWriter();
-    
+
     final PerformanceLogger perfLogger = new PerformanceLogger() {
       @Override
       public void log(final String message) {
         logWriter.info(message);
       }
+
       @Override
       public boolean isEnabled() {
         return logWriter.infoEnabled();
       }
     };
-    
+
     return perfLogger;
   }
 }

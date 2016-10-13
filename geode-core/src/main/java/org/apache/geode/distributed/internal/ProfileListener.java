@@ -32,7 +32,7 @@ public interface ProfileListener {
    * @param profile the created profile
    */
   void profileCreated(Profile profile);
-  
+
   /**
    * Method is invoked after
    * a profile is updated in profiles.

@@ -31,6 +31,7 @@ public interface ReliableMessageQueueFactory {
    * @return the created queue
    */
   public ReliableMessageQueue create(DistributedRegion region);
+
   /**
    * Cleanly shutdown this factory flushing any persistent data to disk.
    * @param force true if close should always work

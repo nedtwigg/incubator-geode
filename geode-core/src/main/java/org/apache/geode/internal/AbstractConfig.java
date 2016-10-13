@@ -305,9 +305,7 @@ public abstract class AbstractConfig implements Config {
   protected void checkAttributeName(String attName) {
     String[] validAttNames = getAttributeNames();
     if (!Arrays.asList(validAttNames).contains(attName.toLowerCase())) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_UNKNOWN_CONFIGURATION_ATTRIBUTE_NAME_0_VALID_ATTRIBUTE_NAMES_ARE_1.toLocalizedString(new Object[] {
-        attName, SystemAdmin.join(validAttNames)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_UNKNOWN_CONFIGURATION_ATTRIBUTE_NAME_0_VALID_ATTRIBUTE_NAMES_ARE_1.toLocalizedString(new Object[] { attName, SystemAdmin.join(validAttNames) }));
     }
   }
 
@@ -322,9 +320,8 @@ public abstract class AbstractConfig implements Config {
       return "" + value[0] + "-" + value[1];
     }
 
-    if(result.getClass().isArray() && attName.startsWith("ssl-"))
-    {
-      return SystemAdmin.join((Object[]) result,",");
+    if (result.getClass().isArray() && attName.startsWith("ssl-")) {
+      return SystemAdmin.join((Object[]) result, ",");
     }
 
     if (result.getClass().isArray()) {
@@ -357,7 +354,7 @@ public abstract class AbstractConfig implements Config {
         attObjectValue = attValue;
       } else if (valueType.equals(String[].class)) {
         attObjectValue = commaDelimitedStringToStringArray(attValue);
-      }  else if (valueType.equals(Integer.class)) {
+      } else if (valueType.equals(Integer.class)) {
         attObjectValue = Integer.valueOf(attValue);
       } else if (valueType.equals(Long.class)) {
         attObjectValue = Long.valueOf(attValue);
@@ -378,24 +375,19 @@ public abstract class AbstractConfig implements Config {
         try {
           attObjectValue = InetAddress.getByName(attValue);
         } catch (UnknownHostException ex) {
-          throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_0_VALUE_1_MUST_BE_A_VALID_HOST_NAME_2.toLocalizedString(new Object[] {
-            attName, attValue, ex.toString()
-          }));
+          throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_0_VALUE_1_MUST_BE_A_VALID_HOST_NAME_2.toLocalizedString(new Object[] { attName, attValue, ex.toString() }));
         }
       } else if (valueType.equals(String[].class)) {
         if (attValue == null || attValue.length() == 0) {
           attObjectValue = null;
         } else {
           String trimAttName = trimAttributeName(attName);
-          throw new UnmodifiableException(LocalizedStrings.AbstractConfig_THE_0_CONFIGURATION_ATTRIBUTE_CAN_NOT_BE_SET_FROM_THE_COMMAND_LINE_SET_1_FOR_EACH_INDIVIDUAL_PARAMETER_INSTEAD
-            .toLocalizedString(new Object[] { attName, trimAttName }));
+          throw new UnmodifiableException(LocalizedStrings.AbstractConfig_THE_0_CONFIGURATION_ATTRIBUTE_CAN_NOT_BE_SET_FROM_THE_COMMAND_LINE_SET_1_FOR_EACH_INDIVIDUAL_PARAMETER_INSTEAD.toLocalizedString(new Object[] { attName, trimAttName }));
         }
       } else if (valueType.equals(FlowControlParams.class)) {
         String values[] = attValue.split(",");
         if (values.length != 3) {
-          throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_0_VALUE_1_MUST_HAVE_THREE_ELEMENTS_SEPARATED_BY_COMMAS.toLocalizedString(new Object[] {
-            attName, attValue
-          }));
+          throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_0_VALUE_1_MUST_HAVE_THREE_ELEMENTS_SEPARATED_BY_COMMAS.toLocalizedString(new Object[] { attName, attValue }));
         }
         int credits = 0;
         float thresh = (float) 0.0;
@@ -405,17 +397,13 @@ public abstract class AbstractConfig implements Config {
           thresh = Float.valueOf(values[1].trim()).floatValue();
           waittime = Integer.parseInt(values[2].trim());
         } catch (NumberFormatException e) {
-          throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_0_VALUE_1_MUST_BE_COMPOSED_OF_AN_INTEGER_A_FLOAT_AND_AN_INTEGER.toLocalizedString(new Object[] {
-            attName, attValue
-          }));
+          throw new IllegalArgumentException(LocalizedStrings.AbstractConfig_0_VALUE_1_MUST_BE_COMPOSED_OF_AN_INTEGER_A_FLOAT_AND_AN_INTEGER.toLocalizedString(new Object[] { attName, attValue }));
         }
         attObjectValue = new FlowControlParams(credits, thresh, waittime);
       } else if (valueType.isArray() && SecurableCommunicationChannel.class.equals(valueType.getComponentType())) {
         attObjectValue = commaDelimitedStringToSecurableCommunicationChannels(attValue);
-      }else {
-        throw new InternalGemFireException(LocalizedStrings.AbstractConfig_UNHANDLED_ATTRIBUTE_TYPE_0_FOR_1.toLocalizedString(new Object[] {
-          valueType, attName
-        }));
+      } else {
+        throw new InternalGemFireException(LocalizedStrings.AbstractConfig_UNHANDLED_ATTRIBUTE_TYPE_0_FOR_1.toLocalizedString(new Object[] { valueType, attName }));
       }
     } catch (NumberFormatException ex)
 

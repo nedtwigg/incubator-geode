@@ -49,24 +49,21 @@ public interface GemFireHealth {
   /** An indicator that the GemFire components are healthy.
    *
    * @see #getHealth */
-  public static final Health GOOD_HEALTH =
-    new Health(Health.GOOD_STRING);
+  public static final Health GOOD_HEALTH = new Health(Health.GOOD_STRING);
 
   /** An indicator that one or more GemFire components is slightly
    * unhealthy.  The problem may or may not require configuration
    * changes and may not necessarily lead to poorer component health.
    *
    * @see #getHealth */
-  public static final Health OKAY_HEALTH =
-    new Health(Health.OKAY_STRING);
+  public static final Health OKAY_HEALTH = new Health(Health.OKAY_STRING);
 
   /** An indicator that one or more GemFire components is unhealthy.
    * While it may be possible for the components to recover on their
    * own, it is likely that they will have to be restarted.
    *
    * @see #getHealth */
-  public static final Health POOR_HEALTH =
-    new Health(Health.POOR_STRING);
+  public static final Health POOR_HEALTH = new Health(Health.POOR_STRING);
 
   ///////////////////////  Instance Methods  ///////////////////////
 
@@ -155,8 +152,7 @@ public interface GemFireHealth {
    *         <code>config</code> does not configure host
    *         <code>hostName</code>. 
    */
-  public void setGemFireHealthConfig(String hostName,
-                                     GemFireHealthConfig config);
+  public void setGemFireHealthConfig(String hostName, GemFireHealthConfig config);
 
   /**
    * Closes this health monitor and releases all resources associated
@@ -199,7 +195,7 @@ public interface GemFireHealth {
     protected Health(String healthString) {
       this.healthString = healthString;
     }
-    
+
     ////////////////////  Instance Methods  ////////////////////
 
     /**
@@ -217,8 +213,7 @@ public interface GemFireHealth {
         return GemFireHealth.POOR_HEALTH;
 
       } else {
-        Assert.assertTrue(false, "Unknown healthString: " +
-                          this.healthString);
+        Assert.assertTrue(false, "Unknown healthString: " + this.healthString);
         return null;
       }
     }

@@ -42,10 +42,11 @@ public class InlineKeyJUnitTest {
     GemFireCacheImpl result = (GemFireCacheImpl) new CacheFactory(props).create();
     return result;
   }
+
   private void closeCache(GemFireCacheImpl gfc) {
     gfc.close();
   }
-  
+
   @Test
   public void testInlineKeys() {
     GemFireCacheImpl gfc = createCache();
@@ -69,13 +70,13 @@ public class InlineKeyJUnitTest {
       assertEquals(true, r.containsKey(key));
       assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryHeapStringKey1);
 
-      for (int i=1; i <= 7; i++) {
+      for (int i = 1; i <= 7; i++) {
         key = getAsciiString(i);
         r.create(key, null);
         assertEquals(true, r.containsKey(key));
         assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryHeapStringKey1);
       }
-      for (int i=8; i <= 15; i++) {
+      for (int i = 8; i <= 15; i++) {
         key = getAsciiString(i);
         r.create(key, null);
         assertEquals(true, r.containsKey(key));
@@ -86,14 +87,14 @@ public class InlineKeyJUnitTest {
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
       assertTrue("expected object entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryHeapObjectKey);
-      
-      for (int i=1; i <= 3; i++) {
+
+      for (int i = 1; i <= 3; i++) {
         key = getNonAsciiString(i);
         r.create(key, null);
         assertEquals(true, r.containsKey(key));
         assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryHeapStringKey1);
       }
-      for (int i=4; i <= 7; i++) {
+      for (int i = 4; i <= 7; i++) {
         key = getNonAsciiString(i);
         r.create(key, null);
         assertEquals(true, r.containsKey(key));
@@ -113,7 +114,7 @@ public class InlineKeyJUnitTest {
   private static String getAsciiString(int len) {
     StringBuilder sb = new StringBuilder();
     char asciiChar = 'a';
-    for (int i=0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
       sb.append(asciiChar);
     }
     return sb.toString();
@@ -122,16 +123,16 @@ public class InlineKeyJUnitTest {
   private static String getNonAsciiString(int len) {
     StringBuilder sb = new StringBuilder();
     char nonAsciiChar = '\u8888';
-    for (int i=0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
       sb.append(nonAsciiChar);
     }
     return sb.toString();
   }
-  
+
   private static int getMemSize(Object o) {
     return ObjectSizer.REFLECTION_SIZE.sizeof(o);
   }
-  
+
   @Test
   public void testMemoryOverhead() {
     Object re = new VMThinRegionEntryHeapIntKey(null, 1, null);
@@ -139,13 +140,13 @@ public class InlineKeyJUnitTest {
     Object re2 = new VMThinRegionEntryHeapObjectKey(null, 1, null);
     //System.out.println("VMThinRegionEntryObjectKey=" + getMemSize(re2));
     assertTrue(getMemSize(re) < getMemSize(re2));
-    
+
     re = new VMThinRegionEntryHeapLongKey(null, 1L, null);
     //System.out.println("VMThinRegionEntryLongKey=" + getMemSize(re));
     re2 = new VMThinRegionEntryHeapObjectKey(null, 1L, null);
     //System.out.println("VMThinRegionEntryObjectKey=" + getMemSize(re2));
     assertTrue(getMemSize(re) < getMemSize(re2));
-    
+
     re = new VMThinRegionEntryHeapUUIDKey(null, new UUID(1L, 2L), null);
     //System.out.println("VMThinRegionEntryUUIDKey=" + getMemSize(re));
     re2 = new VMThinRegionEntryHeapObjectKey(null, new UUID(1L, 2L), null);

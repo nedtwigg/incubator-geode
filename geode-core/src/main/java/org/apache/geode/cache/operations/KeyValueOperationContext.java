@@ -21,7 +21,6 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.SerializationException;
 import org.apache.geode.internal.cache.EntryEventImpl;
 
-
 /**
  * Encapsulates a region operation that requires both key and serialized value
  * for the pre-operation and post-operation cases.
@@ -35,7 +34,7 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
    * @since GemFire 6.5
    */
   private Object value;
-  
+
   /**
    * True when the serialized object is a normal object; false when it is a raw
    * byte array.
@@ -54,10 +53,9 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
    *                byte array
    * @since GemFire 6.5
    */
-  public KeyValueOperationContext(Object key, Object value,
-      boolean isObject) {
+  public KeyValueOperationContext(Object key, Object value, boolean isObject) {
     super(key);
-    setValue(value,isObject);
+    setValue(value, isObject);
     //this.value = value;
     // this.isObject = isObject;
   }
@@ -76,10 +74,9 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
    *                true if the context is at the time of sending updates
    * @since GemFire 6.5
    */
-  public KeyValueOperationContext(Object key, Object value,
-      boolean isObject, boolean postOperation) {
+  public KeyValueOperationContext(Object key, Object value, boolean isObject, boolean postOperation) {
     super(key, postOperation);
-    setValue(value,isObject);
+    setValue(value, isObject);
     //this.value = value;
     //this.isObject = isObject;
   }
@@ -93,12 +90,12 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
     if (isObject()) {
       Object tmp = this.value;
       if (tmp instanceof byte[]) {
-        return (byte[])tmp;
+        return (byte[]) tmp;
       }
     }
     return null;
   }
-  
+
   /**
    * Get the deserialized value for this operation.
    * Note that if the value is serialized this method will attempt to deserialize it.
@@ -133,7 +130,7 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
   public Object getValue() {
     return this.value;
   }
-  
+
   /**
    * Return true when the value is an object and not a raw byte array.
    * 
@@ -155,7 +152,6 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
   public void setSerializedValue(byte[] serializedValue, boolean isObject) {
     setValue(serializedValue, isObject);
   }
-  
 
   /**
    * Set the result value of the object for this operation.
@@ -172,5 +168,5 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
     this.value = value;
     this.isObject = isObject;
   }
-  
+
 }

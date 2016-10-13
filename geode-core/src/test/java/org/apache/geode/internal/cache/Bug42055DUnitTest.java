@@ -46,7 +46,6 @@ import org.apache.geode.test.dunit.VM;
  */
 @Category(DistributedTest.class)
 public class Bug42055DUnitTest extends JUnit4CacheTestCase {
-  
 
   /**
    * @param name
@@ -60,10 +59,9 @@ public class Bug42055DUnitTest extends JUnit4CacheTestCase {
     final Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     SerializableCallable createDataRegion = new SerializableCallable("createDataRegion") {
-      public Object call() throws Exception
-      {
+      public Object call() throws Exception {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -71,16 +69,15 @@ public class Bug42055DUnitTest extends JUnit4CacheTestCase {
         attr.setPartitionAttributes(prAttr);
         attr.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
         Region region = cache.createRegion("region1", attr.create());
-        
+
         return null;
       }
     };
-    
+
     vm0.invoke(createDataRegion);
-    
+
     SerializableRunnable createEmptyRegion = new SerializableRunnable("createEmptyRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
         PartitionAttributesFactory<Integer, TestDelta> paf = new PartitionAttributesFactory<Integer, TestDelta>();
@@ -92,7 +89,7 @@ public class Bug42055DUnitTest extends JUnit4CacheTestCase {
         Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
       }
     };
-    
+
     vm1.invoke(createEmptyRegion);
   }
 }

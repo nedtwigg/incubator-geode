@@ -40,7 +40,7 @@ public class DistributionAdvisorDUnitTest extends JUnit4DistributedTestCase {
 
   private transient DistributionAdvisor.Profile profiles[];
   protected transient DistributionAdvisor advisor;
-  
+
   @Override
   public final void postSetUp() throws Exception {
     // connect to distributed system in every VM
@@ -49,45 +49,69 @@ public class DistributionAdvisorDUnitTest extends JUnit4DistributedTestCase {
         getSystem();
       }
     });
-    
+
     // reinitialize the advisor
     this.advisor = DistributionAdvisor.createDistributionAdvisor(new DistributionAdvisee() {
-        public DistributionAdvisee getParentAdvisee() { return null; }
-        public InternalDistributedSystem getSystem() { return DistributionAdvisorDUnitTest.this.getSystem(); }
-        public String getName() {return "DistributionAdvisorDUnitTest";}
-        public String getFullPath() {return getName();}
-        public DM getDistributionManager() {return getSystem().getDistributionManager();}
-        public DistributionAdvisor getDistributionAdvisor() {return DistributionAdvisorDUnitTest.this.advisor;}
-        public DistributionAdvisor.Profile getProfile() {return null;}
-        public void fillInProfile(DistributionAdvisor.Profile profile) {}
-        public int getSerialNumber() {return 0;}
-        public CancelCriterion getCancelCriterion() {
-          return DistributionAdvisorDUnitTest.this.getSystem().getCancelCriterion();
-        }
-      });
+      public DistributionAdvisee getParentAdvisee() {
+        return null;
+      }
+
+      public InternalDistributedSystem getSystem() {
+        return DistributionAdvisorDUnitTest.this.getSystem();
+      }
+
+      public String getName() {
+        return "DistributionAdvisorDUnitTest";
+      }
+
+      public String getFullPath() {
+        return getName();
+      }
+
+      public DM getDistributionManager() {
+        return getSystem().getDistributionManager();
+      }
+
+      public DistributionAdvisor getDistributionAdvisor() {
+        return DistributionAdvisorDUnitTest.this.advisor;
+      }
+
+      public DistributionAdvisor.Profile getProfile() {
+        return null;
+      }
+
+      public void fillInProfile(DistributionAdvisor.Profile profile) {
+      }
+
+      public int getSerialNumber() {
+        return 0;
+      }
+
+      public CancelCriterion getCancelCriterion() {
+        return DistributionAdvisorDUnitTest.this.getSystem().getCancelCriterion();
+      }
+    });
     Set ids = getSystem().getDistributionManager().getOtherNormalDistributionManagerIds();
     assertEquals(VM.getVMCount(), ids.size());
     List profileList = new ArrayList();
-    
+
     int i = 0;
     for (Iterator itr = ids.iterator(); itr.hasNext(); i++) {
-      InternalDistributedMember id = (InternalDistributedMember)itr.next();
-      DistributionAdvisor.Profile profile = new DistributionAdvisor.Profile(id, 0);      
+      InternalDistributedMember id = (InternalDistributedMember) itr.next();
+      DistributionAdvisor.Profile profile = new DistributionAdvisor.Profile(id, 0);
 
       // add profile to advisor
       advisor.putProfile(profile);
       profileList.add(profile);
     }
-    this.profiles = (DistributionAdvisor.Profile[])profileList.toArray(
-                    new DistributionAdvisor.Profile[profileList.size()]);
+    this.profiles = (DistributionAdvisor.Profile[]) profileList.toArray(new DistributionAdvisor.Profile[profileList.size()]);
   }
-    
+
   @Override
   public final void preTearDown() throws Exception {
     this.advisor.close();
   }
-  
-    
+
   @Test
   public void testGenericAdvice() {
     Set expected = new HashSet();

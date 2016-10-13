@@ -56,8 +56,9 @@ public abstract class CacheSerializableRunnable extends SerializableRunnable imp
    */
   public final void run() {
     try {
-      if(args == null){
-      run2();}else{
+      if (args == null) {
+        run2();
+      } else {
         run3();
       }
 
@@ -66,7 +67,7 @@ public abstract class CacheSerializableRunnable extends SerializableRunnable imp
       throw new CacheSerializableRunnableException(s, ex);
     }
   }
-  
+
   /**
    * Invokes the {@link #run} method.  If AssertionError is thrown,
    * and repeatTimeoutMs is >0, then repeat the {@link #run} method until
@@ -92,7 +93,8 @@ public abstract class CacheSerializableRunnable extends SerializableRunnable imp
         }
       }
     } while (lastErr != null && System.currentTimeMillis() - start < repeatTimeoutMs);
-    if (lastErr != null) throw lastErr;
+    if (lastErr != null)
+      throw lastErr;
   }
 
   /**
@@ -101,7 +103,8 @@ public abstract class CacheSerializableRunnable extends SerializableRunnable imp
    */
   public abstract void run2() throws CacheException;
 
-  public void run3() throws CacheException{}
+  public void run3() throws CacheException {
+  }
 
   /**
    * An exception that wraps a {@link CacheException}

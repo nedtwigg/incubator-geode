@@ -50,87 +50,87 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since GemFire 6.6
  */
 class WeakConcurrentIdentityHashMap<K, V> {
-    private WeakConcurrentIdentityHashMap() {}
-    
-    static <K, V> WeakConcurrentIdentityHashMap<K, V> make() {
-        return new WeakConcurrentIdentityHashMap<K, V>();
-    }
-    
-    public V get(K key) {
-        expunge();
-        WeakReference<K> keyref = makeReference(key);
-        return map.get(keyref);
-    }
+  private WeakConcurrentIdentityHashMap() {
+  }
 
-    public V put(K key, V value) {
-        expunge();
-        if (key == null)
-            throw new IllegalArgumentException("Null key");
-        WeakReference<K> keyref = makeReference(key, refQueue);
-        return map.put(keyref, value);
-    }
+  static <K, V> WeakConcurrentIdentityHashMap<K, V> make() {
+    return new WeakConcurrentIdentityHashMap<K, V>();
+  }
 
-    public V remove(K key) {
-        expunge();
-        WeakReference<K> keyref = makeReference(key);
-        return map.remove(keyref);
-    }
+  public V get(K key) {
+    expunge();
+    WeakReference<K> keyref = makeReference(key);
+    return map.get(keyref);
+  }
 
-    private void expunge() {
-        Reference<? extends K> ref;
-        while ((ref = refQueue.poll()) != null)
-            map.remove(ref);
-    }
+  public V put(K key, V value) {
+    expunge();
+    if (key == null)
+      throw new IllegalArgumentException("Null key");
+    WeakReference<K> keyref = makeReference(key, refQueue);
+    return map.put(keyref, value);
+  }
 
-    private WeakReference<K> makeReference(K referent) {
-        return new IdentityWeakReference<K>(referent);
-    }
+  public V remove(K key) {
+    expunge();
+    WeakReference<K> keyref = makeReference(key);
+    return map.remove(keyref);
+  }
 
-    private WeakReference<K> makeReference(K referent, ReferenceQueue<K> q) {
-        return new IdentityWeakReference<K>(referent, q);
-    }
-    
-    public void clear() {
-      expunge();
-      map.clear();
-    }
+  private void expunge() {
+    Reference<? extends K> ref;
+    while ((ref = refQueue.poll()) != null)
+      map.remove(ref);
+  }
 
-    /**
-     * WeakReference where equals and hashCode are based on the
-     * referent.  More precisely, two objects are equal if they are
-     * identical or if they both have the same non-null referent.  The
-     * hashCode is the value the original referent had.  Even if the
-     * referent is cleared, the hashCode remains.  Thus, objects of
-     * this class can be used as keys in hash-based maps and sets.
-     */
-    private static class IdentityWeakReference<T> extends WeakReference<T> {
-        IdentityWeakReference(T o) {
-            this(o, null);
-        }
+  private WeakReference<K> makeReference(K referent) {
+    return new IdentityWeakReference<K>(referent);
+  }
 
-        IdentityWeakReference(T o, ReferenceQueue<T> q) {
-            super(o, q);
-            this.hashCode = (o == null) ? 0 : System.identityHashCode(o);
-        }
+  private WeakReference<K> makeReference(K referent, ReferenceQueue<K> q) {
+    return new IdentityWeakReference<K>(referent, q);
+  }
 
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (!(o instanceof IdentityWeakReference))
-                return false;
-            IdentityWeakReference wr = (IdentityWeakReference) o;
-            Object got = get();
-            return (got != null && got == wr.get());
-        }
+  public void clear() {
+    expunge();
+    map.clear();
+  }
 
-        public int hashCode() {
-            return hashCode;
-        }
-
-        private final int hashCode;
+  /**
+   * WeakReference where equals and hashCode are based on the
+   * referent.  More precisely, two objects are equal if they are
+   * identical or if they both have the same non-null referent.  The
+   * hashCode is the value the original referent had.  Even if the
+   * referent is cleared, the hashCode remains.  Thus, objects of
+   * this class can be used as keys in hash-based maps and sets.
+   */
+  private static class IdentityWeakReference<T> extends WeakReference<T> {
+    IdentityWeakReference(T o) {
+      this(o, null);
     }
 
-    private final Map<WeakReference<K>, V> map = new ConcurrentHashMap<WeakReference<K>, V>();
-    private final ReferenceQueue<K> refQueue = new ReferenceQueue<K>();
+    IdentityWeakReference(T o, ReferenceQueue<T> q) {
+      super(o, q);
+      this.hashCode = (o == null) ? 0 : System.identityHashCode(o);
+    }
+
+    public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (!(o instanceof IdentityWeakReference))
+        return false;
+      IdentityWeakReference wr = (IdentityWeakReference) o;
+      Object got = get();
+      return (got != null && got == wr.get());
+    }
+
+    public int hashCode() {
+      return hashCode;
+    }
+
+    private final int hashCode;
+  }
+
+  private final Map<WeakReference<K>, V> map = new ConcurrentHashMap<WeakReference<K>, V>();
+  private final ReferenceQueue<K> refQueue = new ReferenceQueue<K>();
 }
-

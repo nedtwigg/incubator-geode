@@ -44,8 +44,7 @@ public class QueryObserverAdapter implements QueryObserver {
    * @param context The execution context that will be used to evaluate the
    *          expression.
    */
-  public void beforeQueryEvaluation(CompiledValue expression,
-      ExecutionContext context) {
+  public void beforeQueryEvaluation(CompiledValue expression, ExecutionContext context) {
   }
 
   /**
@@ -65,8 +64,7 @@ public class QueryObserverAdapter implements QueryObserver {
    * @param executer the object performing the iteration.
    * @param currentObject The current object in the iteration.
    */
-  public void beforeIterationEvaluation(CompiledValue executer,
-      Object currentObject) {
+  public void beforeIterationEvaluation(CompiledValue executer, Object currentObject) {
   }
 
   /**
@@ -144,8 +142,7 @@ public class QueryObserverAdapter implements QueryObserver {
    *          evaluation of GroupJunctions
    *  
    */
-  public void beforeCartesianOfGroupJunctionsInAnAllGroupJunctionOfType_AND(
-      Collection[] grpResults) {
+  public void beforeCartesianOfGroupJunctionsInAnAllGroupJunctionOfType_AND(Collection[] grpResults) {
   };
 
   /**
@@ -171,8 +168,7 @@ public class QueryObserverAdapter implements QueryObserver {
    *          evaluation of GroupJunctions
    *  
    */
-  public void beforeCartesianOfGroupJunctionsInCompositeGroupJunctionOfType_AND(
-      Collection[] grpResults) {
+  public void beforeCartesianOfGroupJunctionsInCompositeGroupJunctionOfType_AND(Collection[] grpResults) {
   };
 
   /**
@@ -195,8 +191,7 @@ public class QueryObserverAdapter implements QueryObserver {
    * @param initialResult The raw resultset obtained for the condition
    *  
    */
-  public void beforeCutDownAndExpansionOfSingleIndexResult(Index index,
-      Collection initialResult) {
+  public void beforeCutDownAndExpansionOfSingleIndexResult(Index index, Collection initialResult) {
   }
 
   /**
@@ -233,8 +228,7 @@ public class QueryObserverAdapter implements QueryObserver {
    *          for each Index.
    *  
    */
-  public void beforeMergeJoinOfDoubleIndexResults(Index index1, Index index2,
-      Collection initialResult) {
+  public void beforeMergeJoinOfDoubleIndexResults(Index index1, Index index2, Collection initialResult) {
   }
 
   /**
@@ -277,8 +271,7 @@ public class QueryObserverAdapter implements QueryObserver {
    * 
    *  
    */
-  public void beforeIterJoinOfSingleIndexResults(Index usedIndex,
-      Index unusedIndex) {
+  public void beforeIterJoinOfSingleIndexResults(Index usedIndex, Index unusedIndex) {
   }
 
   /**
@@ -311,30 +304,25 @@ public class QueryObserverAdapter implements QueryObserver {
    * @see org.apache.geode.cache.query.internal.QueryObserver#beforeIndexLookup(org.apache.geode.cache.query.Index,
    *      int, java.lang.Object, int, java.lang.Object, java.util.Set)
    */
-  public void beforeIndexLookup(Index index, int lowerBoundOperator,
-      Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey,
-      Set NotEqualKeys) {
+  public void beforeIndexLookup(Index index, int lowerBoundOperator, Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey, Set NotEqualKeys) {
   }
 
-  public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied)
-  {    
-    
+  public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
+
   }
 
-  public void invokedQueryUtilsIntersection(SelectResults sr1, SelectResults sr2)
-  {    
+  public void invokedQueryUtilsIntersection(SelectResults sr1, SelectResults sr2) {
   }
 
-  public void invokedQueryUtilsUnion(SelectResults sr1, SelectResults sr2)
-  {    
+  public void invokedQueryUtilsUnion(SelectResults sr1, SelectResults sr2) {
   }
-  
-  public void limitAppliedAtIndexLevel(Index index, int limit , Collection indexResult){
-    
+
+  public void limitAppliedAtIndexLevel(Index index, int limit, Collection indexResult) {
+
   }
 
   @Override
   public void orderByColumnsEqual() {
-    
+
   }
 }

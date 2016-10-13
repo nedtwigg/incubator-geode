@@ -55,10 +55,10 @@ import org.apache.geode.internal.logging.LogService;
 // and modified as per requirements. (original-author Dan Smith)
 public class CompactRequest extends AdminRequest {
   private static final Logger logger = LogService.getLogger();
-  
+
   private String diskStoreName;
   private static String notExecutedMembers;
-  
+
   public static Map<DistributedMember, PersistentID> send(DM dm, String diskStoreName, Set<?> recipients) {
     Map<DistributedMember, PersistentID> results = Collections.emptyMap();
 
@@ -78,7 +78,7 @@ public class CompactRequest extends AdminRequest {
       try {
         replyProcessor.waitForReplies();
       } catch (ReplyException e) {
-        if(!(e.getCause() instanceof CancelException)) {
+        if (!(e.getCause() instanceof CancelException)) {
           throw e;
         }
       } catch (InterruptedException e) {
@@ -102,17 +102,17 @@ public class CompactRequest extends AdminRequest {
 
     return new CompactResponse(this.getSender(), compactedDiskStore);
   }
-  
+
   public static PersistentID compactDiskStore(String diskStoreName) {
     PersistentID persistentID = null;
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-    if(cache != null && !cache.isClosed()) {
+    if (cache != null && !cache.isClosed()) {
       DiskStoreImpl diskStore = (DiskStoreImpl) cache.findDiskStore(diskStoreName);
-      if(diskStore != null && diskStore.forceCompaction()) {
+      if (diskStore != null && diskStore.forceCompaction()) {
         persistentID = diskStore.getPersistentID();
-      } 
+      }
     }
-    
+
     return persistentID;
   }
 
@@ -123,9 +123,9 @@ public class CompactRequest extends AdminRequest {
   public int getDSFID() {
     return MGMT_COMPACT_REQUEST;
   }
-  
+
   @Override
-  public void fromData(DataInput in) throws IOException,ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.diskStoreName = DataSerializer.readString(in);
   }
@@ -136,19 +136,18 @@ public class CompactRequest extends AdminRequest {
     DataSerializer.writeString(this.diskStoreName, out);
   }
 
-  @Override  
+  @Override
   public String toString() {
-    return "Compact request sent to " + Arrays.toString(this.getRecipients()) +
-      " from " + this.getSender() +" for "+this.diskStoreName;
+    return "Compact request sent to " + Arrays.toString(this.getRecipients()) + " from " + this.getSender() + " for " + this.diskStoreName;
   }
 
   private static class CompactReplyProcessor extends AdminMultipleReplyProcessor {
     Map<DistributedMember, PersistentID> results = Collections.synchronizedMap(new HashMap<DistributedMember, PersistentID>());
-    
+
     public CompactReplyProcessor(DM dm, Collection<?> initMembers) {
       super(dm, initMembers);
     }
-    
+
     @Override
     protected boolean stopBecauseOfExceptions() {
       return false;
@@ -161,9 +160,9 @@ public class CompactRequest extends AdminRequest {
 
     @Override
     protected void process(DistributionMessage msg, boolean warn) {
-      if(msg instanceof CompactResponse) {
+      if (msg instanceof CompactResponse) {
         final PersistentID persistentId = ((CompactResponse) msg).getPersistentId();
-        if(persistentId != null) {
+        if (persistentId != null) {
           results.put(msg.getSender(), persistentId);
         }
       }

@@ -68,15 +68,15 @@ public class MultiIndexCreationException extends Exception {
   public Set<String> getFailedIndexNames() {
     return exceptionsMap.keySet();
   }
-  
+
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
-    for(Map.Entry<String, Exception> entry : this.exceptionsMap.entrySet()) {
+    for (Map.Entry<String, Exception> entry : this.exceptionsMap.entrySet()) {
       sb.append("Creation of index: ").append(entry.getKey()).append(" failed due to: ").append(entry.getValue()).append(", ");
     }
     sb.delete(sb.length() - 2, sb.length());
     return sb.toString();
   }
-  
+
 }

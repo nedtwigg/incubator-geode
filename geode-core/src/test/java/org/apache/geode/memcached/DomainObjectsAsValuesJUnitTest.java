@@ -37,9 +37,9 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class DomainObjectsAsValuesJUnitTest {
 
   private int PORT;
-  
+
   private GemFireMemcachedServer server;
-  
+
   @Before
   public void setUp() throws Exception {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT, "0");
@@ -47,7 +47,7 @@ public class DomainObjectsAsValuesJUnitTest {
     this.server = new GemFireMemcachedServer(PORT);
     server.start();
   }
-  
+
   @After
   public void tearDown() throws Exception {
     this.server.shutdown();
@@ -58,24 +58,31 @@ public class DomainObjectsAsValuesJUnitTest {
     private static final long serialVersionUID = 4238572216598708877L;
     private String name;
     private String address;
+
     public Customer() {
     }
+
     public Customer(String name, String addr) {
       this.setName(name);
       this.setAddress(addr);
     }
+
     public void setName(String name) {
       this.name = name;
     }
+
     public String getName() {
       return name;
     }
+
     public void setAddress(String address) {
       this.address = address;
     }
+
     public String getAddress() {
       return address;
     }
+
     @Override
     public boolean equals(Object obj) {
       if (obj instanceof Customer) {
@@ -84,6 +91,7 @@ public class DomainObjectsAsValuesJUnitTest {
       }
       return false;
     }
+
     private boolean compareStrings(String str1, String str2) {
       if (str1 == null && str2 == null) {
         return true;
@@ -92,19 +100,19 @@ public class DomainObjectsAsValuesJUnitTest {
       }
       return str1.equals(str2);
     }
+
     @Override
     public String toString() {
-    	StringBuilder b = new StringBuilder();
-    	b.append(getClass()).append("@").append(System.identityHashCode(this));
-    	b.append("name:").append(name).append("address:").append(address);
-    	return b.toString();
+      StringBuilder b = new StringBuilder();
+      b.append(getClass()).append("@").append(System.identityHashCode(this));
+      b.append("name:").append(name).append("address:").append(address);
+      return b.toString();
     }
   }
-  
+
   @Test
   public void testGetPutDomainObject() throws Exception {
-    MemcachedClient client = new MemcachedClient(
-        new InetSocketAddress(InetAddress.getLocalHost(), PORT));
+    MemcachedClient client = new MemcachedClient(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
     Customer c = new Customer("name0", "addr0");
     Customer c1 = new Customer("name1", "addr1");
     Future<Boolean> f = client.add("keyObj", 10, c);

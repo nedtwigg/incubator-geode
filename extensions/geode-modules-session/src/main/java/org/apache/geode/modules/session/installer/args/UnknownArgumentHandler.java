@@ -30,7 +30,6 @@ public interface UnknownArgumentHandler {
    * @param params parameters passed into it
    * @throws UsageException when the user needs to fix it
    */
-  void handleUnknownArgument(String form, String[] params)
-      throws UsageException;
+  void handleUnknownArgument(String form, String[] params) throws UsageException;
 
 }

@@ -295,7 +295,7 @@ public class SocketCreatorFactoryJUnitTest {
     assertTrue(SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.WEB).useSSL());
     assertTrue(SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.LOCATOR).useSSL());
   }
-  
+
   @Test
   public void testLegacyJMXSSLConfig() throws IOException {
     File jks = findTestJKS();

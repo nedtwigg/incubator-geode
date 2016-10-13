@@ -119,14 +119,14 @@ public class TableBuilder {
       for (RowGroup rowGroup : this.rowGroups) {
         List<Row> rows = rowGroup.rows;
         int rowGroupTotalLength = 0;
-        
+
         int rowMaxTotalLength = 0;
         for (Row row : rows) {
           int rowTotalLength = 0;
           for (int i = 0; i < row.getNumCols(); i++) {
             rowTotalLength += row.getMaxColLength(i);
           }
-          
+
           if (rowGroup.getColumnSeparator() != null) {
             rowTotalLength += row.getNumCols() * rowGroup.getColumnSeparator().length();
           }
@@ -134,13 +134,13 @@ public class TableBuilder {
             rowMaxTotalLength = rowTotalLength;
           }
         }
-        
+
         rowGroupTotalLength += rowMaxTotalLength;
         if (rowGroupMaxTotalLength < rowGroupTotalLength) {
           rowGroupMaxTotalLength = rowGroupTotalLength;
         }
       }
-      return (int)(rowGroupMaxTotalLength * 1.1);
+      return (int) (rowGroupMaxTotalLength * 1.1);
     }
 
     public String buildTable() {
@@ -178,7 +178,7 @@ public class TableBuilder {
     private final Table table;
     private final List<Row> rows = new ArrayList<Row>();
     private int[] colSizes;
-    
+
     private String columnSeparator;
 
     private RowGroup(final Table table) {
@@ -230,11 +230,9 @@ public class TableBuilder {
       for (int i = 0; i < localColSizes.length; i++) {
         localColSizes[i] = getMaxColLength(i);
       }
-      
+
       if (isTabularResult) {
-        localColSizes = TableBuilderHelper.recalculateColSizesForScreen(
-            TableBuilderHelper.getScreenWidth(), localColSizes,
-            getColumnSeparator());
+        localColSizes = TableBuilderHelper.recalculateColSizesForScreen(TableBuilderHelper.getScreenWidth(), localColSizes, getColumnSeparator());
       }
 
       return localColSizes;
@@ -317,7 +315,7 @@ public class TableBuilder {
       this.columns.add(column);
       return this;
     }
-    
+
     public boolean isEmpty() {
       return columns.isEmpty();
     }
@@ -332,7 +330,7 @@ public class TableBuilder {
 
       return this.columns.get(colNum).getLength();
     }
-    
+
     public void setColumnSeparator(final String columnSeparator) {
       this.columnSeparator = columnSeparator;
     }
@@ -347,16 +345,16 @@ public class TableBuilder {
         if (isTablewideSeparator) {
           int maxColLength = this.rowGroup.getTable().getMaxLength();
           //Trim only for tabular results
-          if(isTabularResult) {            
+          if (isTabularResult) {
             maxColLength = TableBuilderHelper.trimWidthForScreen(maxColLength);
           }
-          
+
           for (int j = 0; j < maxColLength; j++) {
             stringBuffer.append(this.rowSeparator);
           }
         } else {
           int maxNumCols = this.rowGroup.getNumCols();
-  
+
           for (int i = 0; i < maxNumCols; i++) {
             //int maxColLength = this.rowGroup.getMaxColLength(i);
             int maxColLength = this.rowGroup.getColSize(i);
@@ -369,11 +367,10 @@ public class TableBuilder {
           }
         }
       } else {
-// saj hook
+        // saj hook
         for (int i = 0; i < this.columns.size(); i++) {
           boolean lastColumn = !(i < (this.columns.size() - 1));
-          stringBuffer.append(this.columns.get(i).buildColumn(
-              this.rowGroup.getColSize(i), lastColumn));
+          stringBuffer.append(this.columns.get(i).buildColumn(this.rowGroup.getColSize(i), lastColumn));
           if (!lastColumn) {
             stringBuffer.append(getColumnSeparator());
           }
@@ -413,21 +410,22 @@ public class TableBuilder {
     }
 
     private String buildColumn(int colWidth, boolean trimIt) {
-      
+
       //If string value is greater than colWidth
       //This can happen because colSizes are re-computed
       //to fit the screen width
-      if(this.stringValue.length() > colWidth){
+      if (this.stringValue.length() > colWidth) {
         StringBuffer stringBuffer = new StringBuffer();
-        int endIndex = colWidth-2;
-        if(endIndex<0)
+        int endIndex = colWidth - 2;
+        if (endIndex < 0)
           return "";
-        return stringBuffer.append(stringValue.substring(0,endIndex)).append("..").toString();        
+        return stringBuffer.append(stringValue.substring(0, endIndex)).append("..").toString();
       }
-      
+
       int numSpaces = colWidth - this.stringValue.length();
-      if(trimIt) numSpaces=0;
-      
+      if (trimIt)
+        numSpaces = 0;
+
       StringBuffer stringBuffer = new StringBuffer();
 
       switch (align) {
@@ -456,11 +454,9 @@ public class TableBuilder {
       }
 
       return stringBuffer.toString();
-      
+
     }
-    
-    
-    
+
     private String buildColumn(int colWidth) {
       return buildColumn(colWidth, false);
     }

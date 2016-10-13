@@ -29,7 +29,7 @@ import org.apache.geode.internal.cache.persistence.query.CloseableIterator;
  *
  */
 class ItrAdapter implements CloseableIterator<CachedDeserializable> {
-  
+
   private Iterator<?> iterator;
 
   public ItrAdapter(Iterator<?> iterator) {
@@ -49,13 +49,13 @@ class ItrAdapter implements CloseableIterator<CachedDeserializable> {
   @Override
   public void remove() {
     throw new UnsupportedOperationException();
-    
+
   }
 
   @Override
   public void close() {
     //do nothing
-    
+
   }
-  
+
 }

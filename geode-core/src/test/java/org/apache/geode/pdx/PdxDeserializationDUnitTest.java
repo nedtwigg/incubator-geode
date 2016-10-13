@@ -69,7 +69,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
   public PdxDeserializationDUnitTest() {
     super();
   }
-  
+
   /**
    * Test that we don't deserialize objects on a remote peer
    * when performing operations. 
@@ -80,10 +80,10 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     doTest(vm0, vm1);
   }
-  
+
   /**
    * Test to make sure we don't deserialize
    * objects on a server that is a datastore 
@@ -93,10 +93,10 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     doTest(vm2, vm1);
   }
-  
+
   /**
    * Test to make sure we don't deserialize
    * objects on a server that is an accessor.
@@ -106,10 +106,10 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm1 = host.getVM(1);
     VM vm3 = host.getVM(3);
-    
+
     doTest(vm3, vm1);
   }
-  
+
   /**
    * Test to make sure we don't deserialize
    * objects on a client that has registered interest.
@@ -119,11 +119,10 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm1 = host.getVM(1);
     VM vm3 = host.getVM(2);
-    
+
     doTest(vm1, vm3);
   }
-  
-  
+
   /**
    * This test creates the following topology
    * 
@@ -148,8 +147,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
-    
-    
+
     //Create an accessor
     final int port0 = (Integer) vm0.invoke(new SerializableCallable() {
       public Object call() {
@@ -159,7 +157,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).create("pr");
         cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("overflow_replicate");
         cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).create("overflow_pr");
-        
+
         return server.getPort();
       }
     });
@@ -169,41 +167,24 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
       public Object call() {
         Cache cache = getCache();
         CacheServer server = createCacheServer(cache);
-        
-        cache.createRegionFactory(RegionShortcut.REPLICATE)
-        .setCacheLoader(new TestCacheLoader())
-        .create("replicate");
-        cache.createRegionFactory(RegionShortcut.PARTITION)
-        .setCacheLoader(new TestCacheLoader())
-        .create("pr");
-        
-        cache.createDiskStoreFactory()
-        .setDiskDirs(getDiskDirs())
-        .setMaxOplogSize(1)
-        .create("store");
-        
-        
+
+        cache.createRegionFactory(RegionShortcut.REPLICATE).setCacheLoader(new TestCacheLoader()).create("replicate");
+        cache.createRegionFactory(RegionShortcut.PARTITION).setCacheLoader(new TestCacheLoader()).create("pr");
+
+        cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).setMaxOplogSize(1).create("store");
+
         //these regions will test that faulting in an object
         //from disk doesn't cause an issue.
-        cache.createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW)
-        .setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK))
-        .setDiskStoreName("store")
-        .setCacheLoader(new TestCacheLoader())
-        .create("overflow_replicate");
-        cache.createRegionFactory(RegionShortcut.PARTITION_OVERFLOW)
-        .setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK))
-        .setDiskStoreName("store")
-        .setCacheLoader(new TestCacheLoader())
-        .create("overflow_pr");
-        
+        cache.createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW).setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK)).setDiskStoreName("store").setCacheLoader(new TestCacheLoader()).create("overflow_replicate");
+        cache.createRegionFactory(RegionShortcut.PARTITION_OVERFLOW).setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK)).setDiskStoreName("store").setCacheLoader(new TestCacheLoader()).create("overflow_pr");
+
         return server.getPort();
       }
     });
-    
-    
+
     //create a client connected to the accessor
     vm2.invoke(new SerializableCallable() {
-      
+
       public Object call() throws Exception {
         createClient(port0);
         return null;
@@ -212,37 +193,35 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
 
     //create a client connected to the datastore
     vm3.invoke(new SerializableCallable() {
-      
+
       public Object call() throws Exception {
         createClient(port1);
         return null;
       }
     });
-    
-    
+
     //Disallow deserialization
     disallowDeserializationVM.invoke(new SerializableRunnable() {
-      
+
       public void run() {
         TestSerializable.throwExceptionOnDeserialization = true;
       }
     });
-    
-    
+
     //perform operations in the target VM
     try {
-    
-    operationVM.invoke(new SerializableRunnable() {
-      
-      public void run() {
-        Cache cache = getCache();
-        doOperations(cache.getRegion("replicate"));
-        doOperations(cache.getRegion("pr"));
-        doOperations(cache.getRegion("overflow_replicate"));
-        doOperations(cache.getRegion("overflow_pr"));
-      }
-    });
-    
+
+      operationVM.invoke(new SerializableRunnable() {
+
+        public void run() {
+          Cache cache = getCache();
+          doOperations(cache.getRegion("replicate"));
+          doOperations(cache.getRegion("pr"));
+          doOperations(cache.getRegion("overflow_replicate"));
+          doOperations(cache.getRegion("overflow_pr"));
+        }
+      });
+
     } finally {
       //Ok, now allow deserialization.
       disallowDeserializationVM.invoke(new SerializableRunnable() {
@@ -264,7 +243,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
         checkValues(cache.getRegion("overflow_pr"));
       }
     });
-    
+
     //Make sure the clients receive keys they have registered interest in
     checkRegisterInterestValues(vm2);
     checkRegisterInterestValues(vm3);
@@ -281,87 +260,85 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void checkClientValue(final Region<Object, Object> region) {
     //Because register interest is asynchronous, we need to wait for the value to arrive.
     Wait.waitForCriterion(new WaitCriterion() {
-      
+
       public boolean done() {
         return region.get("A") != null;
       }
-      
+
       public String description() {
         return "Client region never received value for key A";
       }
     }, 30000, 100, true);
     assertEquals(TestSerializable.class, region.get("A").getClass());
-    
+
     //do a register interest which will download the value
     region.registerInterest("B", InterestResultPolicy.KEYS_VALUES);
     assertEquals(TestSerializable.class, region.get("B").getClass());
   }
 
   private void doOperations(Region<Object, Object> region) {
-    
+
     //Do a put and a get
     region.put("A", new TestSerializable());
     assertEquals(TestSerializable.class, region.get("A").getClass());
-    
+
     //Do a cache load
     assertEquals(TestSerializable.class, region.get("B").getClass());
-    
+
     //Make sure the cache load is in the right object form
     assertEquals(TestSerializable.class, region.get("B").getClass());
-    
+
     //If we're a client region, try a register interest
-    if(region.getAttributes().getPoolName() != null) {
+    if (region.getAttributes().getPoolName() != null) {
       region.registerInterest(".*", InterestResultPolicy.KEYS_VALUES);
     }
-    
+
     //Do a query
     try {
       SelectResults queryResults = (SelectResults) getCache().getQueryService().newQuery("select * from " + region.getFullPath()).execute();
-      for(Object result : queryResults.asList()) {
+      for (Object result : queryResults.asList()) {
         assertEquals(TestSerializable.class, result.getClass());
       }
-      
+
     } catch (Exception e) {
       Assert.fail("got exception from query", e);
     }
-    
 
     //TODO Transactions don't work
-//    CacheTransactionManager txManager = getCache().getCacheTransactionManager();
-//    //Test puts and get in a transaction
-//    txManager.begin();
-//    region.put("C", new TestSerializable());
-//    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
-//    txManager.commit();
-//    
-//    txManager.begin();
-//    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
-//    txManager.commit();
-//    
-//    
-//    //Test cache load in a transaction
-//    txManager.begin();
-//    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
-//    txManager.commit();
-//    
-//    txManager.begin();
-//    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
-//    txManager.commit();
+    //    CacheTransactionManager txManager = getCache().getCacheTransactionManager();
+    //    //Test puts and get in a transaction
+    //    txManager.begin();
+    //    region.put("C", new TestSerializable());
+    //    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
+    //    txManager.commit();
+    //    
+    //    txManager.begin();
+    //    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
+    //    txManager.commit();
+    //    
+    //    
+    //    //Test cache load in a transaction
+    //    txManager.begin();
+    //    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
+    //    txManager.commit();
+    //    
+    //    txManager.begin();
+    //    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
+    //    txManager.commit();
   }
-  
+
   private void checkValues(Region<Object, Object> region) {
     assertEquals(TestSerializable.class, region.get("A").getClass());
     assertEquals(TestSerializable.class, region.get("B").getClass());
     //TODO Transactions don't work
-//    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
-//    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
+    //    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
+    //    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
   }
 
-  
   private CacheServer createCacheServer(Cache cache) {
     CacheServer server = cache.addCacheServer();
     server.setPort(AvailablePortHelper.getRandomAvailableTCPPort());
@@ -372,7 +349,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     }
     return server;
   }
-  
+
   private void createClient(final int port0) {
     ClientCacheFactory cf = new ClientCacheFactory();
     cf.addPoolServer("localhost", port0);
@@ -382,22 +359,21 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     Region pr = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("pr");
     cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("overflow_replicate");
     cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("overflow_pr");
-    
+
     //Register interest in a key
     replicate.registerInterest("A", InterestResultPolicy.KEYS_VALUES);
     pr.registerInterest("A", InterestResultPolicy.KEYS_VALUES);
-    
+
   }
 
   public static class TestCacheLoader implements CacheLoader {
-      
+
     public void close() {
       // TODO Auto-generated method stub
 
     }
 
-    public Object load(LoaderHelper helper)
-    throws CacheLoaderException {
+    public Object load(LoaderHelper helper) throws CacheLoaderException {
       return new TestSerializable();
     }
   }
@@ -406,21 +382,19 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
    * deserialized in the target VM.
    */
   public static class TestSerializable implements PdxSerializable {
-    private static boolean throwExceptionOnDeserialization =false;
+    private static boolean throwExceptionOnDeserialization = false;
 
-    
     public void toData(PdxWriter writer) {
       // TODO Auto-generated method stub
-      
+
     }
 
     public void fromData(PdxReader reader) {
-      if(throwExceptionOnDeserialization) {
+      if (throwExceptionOnDeserialization) {
         throw new SerializationException("Deserialization should not be happening in this VM");
       }
     }
-    
+
   }
-  
 
 }

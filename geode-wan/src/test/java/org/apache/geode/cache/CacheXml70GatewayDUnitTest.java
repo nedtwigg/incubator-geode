@@ -61,7 +61,7 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
   protected String getGemFireVersion() {
     return CacheXml.VERSION_7_0;
   }
-  
+
   /**
    * Added to test the scenario of defect #50600.
    */
@@ -69,7 +69,7 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
   public void testAsyncEventQueueWithGatewayEventFilter() {
     getSystem();
     CacheCreation cache = new CacheCreation();
-            
+
     String id = "WBCLChannel";
     AsyncEventQueueFactory factory = cache.createAsyncEventQueueFactory();
     factory.setBatchSize(100);
@@ -80,31 +80,31 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     factory.setParallel(false);
     factory.setDispatcherThreads(33);
     factory.addGatewayEventFilter(new MyGatewayEventFilter());
-            
+
     AsyncEventListener eventListener = new CacheXml70DUnitTest.MyAsyncEventListener();
     AsyncEventQueue asyncEventQueue = factory.create(id, eventListener);
-            
+
     RegionAttributesCreation attrs = new RegionAttributesCreation();
     attrs.addAsyncEventQueueId(asyncEventQueue.getId());
     cache.createRegion("UserRegion", attrs);
-            
+
     testXml(cache);
     Cache c = getCache();
     assertNotNull(c);
-    
+
     Set<AsyncEventQueue> asyncEventQueuesOnCache = c.getAsyncEventQueues();
     assertTrue("Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
-            
+
     for (AsyncEventQueue asyncEventQueueOnCache : asyncEventQueuesOnCache) {
       CacheXml70DUnitTest.validateAsyncEventQueue(asyncEventQueue, asyncEventQueueOnCache);
     }
   }
 
   @Test
-  public void testGatewayReceiver() throws Exception{
+  public void testGatewayReceiver() throws Exception {
     getSystem();
     CacheCreation cache = new CacheCreation();
-    
+
     GatewayReceiverFactory gatewayReceiverFactory = cache.createGatewayReceiverFactory();
     gatewayReceiverFactory.setBindAddress("");
     gatewayReceiverFactory.setStartPort(20000);
@@ -123,31 +123,31 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     Cache c = getCache();
     assertNotNull(c);
     Set<GatewayReceiver> receivers = c.getGatewayReceivers();
-    for(GatewayReceiver receiver : receivers){
+    for (GatewayReceiver receiver : receivers) {
       validateGatewayReceiver(receiver1, receiver);
     }
   }
-  
+
   @Test
-  public void testParallelGatewaySender() throws CacheException{
+  public void testParallelGatewaySender() throws CacheException {
     getSystem();
     CacheCreation cache = new CacheCreation();
-    
+
     GatewaySenderFactory gatewaySenderFactory = cache.createGatewaySenderFactory();
     gatewaySenderFactory.setParallel(true);
     gatewaySenderFactory.setDispatcherThreads(13);
     gatewaySenderFactory.setManualStart(true);
     gatewaySenderFactory.setSocketBufferSize(1234);
-    gatewaySenderFactory.setSocketReadTimeout(1050);          
+    gatewaySenderFactory.setSocketReadTimeout(1050);
     gatewaySenderFactory.setBatchConflationEnabled(false);
     gatewaySenderFactory.setBatchSize(88);
-    gatewaySenderFactory.setBatchTimeInterval(9);           
-    gatewaySenderFactory.setPersistenceEnabled(true);          
-    gatewaySenderFactory.setDiskStoreName("LNSender");  
+    gatewaySenderFactory.setBatchTimeInterval(9);
+    gatewaySenderFactory.setPersistenceEnabled(true);
+    gatewaySenderFactory.setDiskStoreName("LNSender");
     gatewaySenderFactory.setDiskSynchronous(true);
-    gatewaySenderFactory.setMaximumQueueMemory(211);           
+    gatewaySenderFactory.setMaximumQueueMemory(211);
     gatewaySenderFactory.setAlertThreshold(35);
-    
+
     GatewayEventFilter myEventFilter1 = new MyGatewayEventFilter1();
     gatewaySenderFactory.addGatewayEventFilter(myEventFilter1);
     GatewayTransportFilter myStreamFilter1 = new MyGatewayTransportFilter1();
@@ -155,35 +155,35 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     GatewayTransportFilter myStreamFilter2 = new MyGatewayTransportFilter2();
     gatewaySenderFactory.addGatewayTransportFilter(myStreamFilter2);
     GatewaySender parallelGatewaySender = gatewaySenderFactory.create("LN", 2);
-    
+
     testXml(cache);
     Cache c = getCache();
     assertNotNull(c);
     Set<GatewaySender> sendersOnCache = c.getGatewaySenders();
-    for(GatewaySender sender : sendersOnCache){
+    for (GatewaySender sender : sendersOnCache) {
       assertEquals(true, sender.isParallel());
       validateGatewaySender(parallelGatewaySender, sender);
     }
   }
-  
+
   @Test
-  public void testSerialGatewaySender() throws CacheException{
+  public void testSerialGatewaySender() throws CacheException {
     getSystem();
     CacheCreation cache = new CacheCreation();
     GatewaySenderFactory gatewaySenderFactory = cache.createGatewaySenderFactory();
     gatewaySenderFactory.setParallel(false);
     gatewaySenderFactory.setManualStart(true);
     gatewaySenderFactory.setSocketBufferSize(124);
-    gatewaySenderFactory.setSocketReadTimeout(1000);          
+    gatewaySenderFactory.setSocketReadTimeout(1000);
     gatewaySenderFactory.setBatchConflationEnabled(false);
     gatewaySenderFactory.setBatchSize(100);
-    gatewaySenderFactory.setBatchTimeInterval(10);           
-    gatewaySenderFactory.setPersistenceEnabled(true);          
-    gatewaySenderFactory.setDiskStoreName("LNSender"); 
+    gatewaySenderFactory.setBatchTimeInterval(10);
+    gatewaySenderFactory.setPersistenceEnabled(true);
+    gatewaySenderFactory.setDiskStoreName("LNSender");
     gatewaySenderFactory.setDiskSynchronous(true);
-    gatewaySenderFactory.setMaximumQueueMemory(200);           
+    gatewaySenderFactory.setMaximumQueueMemory(200);
     gatewaySenderFactory.setAlertThreshold(30);
-    
+
     GatewayEventFilter myEventFilter1 = new MyGatewayEventFilter1();
     gatewaySenderFactory.addGatewayEventFilter(myEventFilter1);
     GatewayTransportFilter myStreamFilter1 = new MyGatewayTransportFilter1();
@@ -191,32 +191,36 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     GatewayTransportFilter myStreamFilter2 = new MyGatewayTransportFilter2();
     gatewaySenderFactory.addGatewayTransportFilter(myStreamFilter2);
     GatewaySender serialGatewaySender = gatewaySenderFactory.create("LN", 2);
-    
+
     RegionAttributesCreation attrs = new RegionAttributesCreation();
     attrs.addGatewaySenderId(serialGatewaySender.getId());
     cache.createRegion("UserRegion", attrs);
-    
+
     testXml(cache);
     Cache c = getCache();
     assertNotNull(c);
     Set<GatewaySender> sendersOnCache = c.getGatewaySenders();
-    for(GatewaySender sender : sendersOnCache){
+    for (GatewaySender sender : sendersOnCache) {
       assertEquals(false, sender.isParallel());
       validateGatewaySender(serialGatewaySender, sender);
     }
   }
-  
+
   public static class MyGatewayEventFilter implements GatewayEventFilter, Declarable {
     public void afterAcknowledgement(GatewayQueueEvent event) {
     }
+
     public boolean beforeEnqueue(GatewayQueueEvent event) {
       return true;
     }
+
     public boolean beforeTransmit(GatewayQueueEvent event) {
       return true;
     }
+
     public void close() {
     }
+
     public void init(Properties properties) {
     }
   }
@@ -228,7 +232,7 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     assertEquals(receiver1.getMaximumTimeBetweenPings(), gatewayReceiver.getMaximumTimeBetweenPings());
     assertEquals(receiver1.getSocketBufferSize(), gatewayReceiver.getSocketBufferSize());
     assertEquals(receiver1.getGatewayTransportFilters().size(), gatewayReceiver.getGatewayTransportFilters().size());
-  } 
+  }
 
   static void validateGatewaySender(GatewaySender sender1, GatewaySender gatewaySender) {
     assertEquals(sender1.getId(), gatewaySender.getId());
@@ -238,13 +242,13 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     assertEquals(sender1.getBatchSize(), gatewaySender.getBatchSize());
     assertEquals(sender1.getBatchTimeInterval(), gatewaySender.getBatchTimeInterval());
     assertEquals(sender1.isPersistenceEnabled(), gatewaySender.isPersistenceEnabled());
-    assertEquals(sender1.getDiskStoreName(),gatewaySender.getDiskStoreName());
-    assertEquals(sender1.isDiskSynchronous(),gatewaySender.isDiskSynchronous());
+    assertEquals(sender1.getDiskStoreName(), gatewaySender.getDiskStoreName());
+    assertEquals(sender1.isDiskSynchronous(), gatewaySender.isDiskSynchronous());
     assertEquals(sender1.getMaximumQueueMemory(), gatewaySender.getMaximumQueueMemory());
     assertEquals(sender1.getAlertThreshold(), gatewaySender.getAlertThreshold());
     assertEquals(sender1.getGatewayEventFilters().size(), gatewaySender.getGatewayEventFilters().size());
     assertEquals(sender1.getGatewayTransportFilters().size(), gatewaySender.getGatewayTransportFilters().size());
-    
+
     boolean isParallel = sender1.isParallel();
     if (isParallel) {
       assertTrue("sender should be instanceof Creation", sender1 instanceof ParallelGatewaySenderCreation);

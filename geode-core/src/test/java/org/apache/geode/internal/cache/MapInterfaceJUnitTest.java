@@ -60,10 +60,8 @@ public class MapInterfaceJUnitTest {
       cache = CacheFactory.create(ds);
       factory = new AttributesFactory();
       factory.setScope(Scope.LOCAL);
-      region = cache.createRegion("testingRegion", factory
-          .create());
-    }
-    catch (Exception e) {
+      region = cache.createRegion("testingRegion", factory.create());
+    } catch (Exception e) {
       throw new AssertionError(" failed due to ", e);
     }
     for (int i = 0; i < 100; i++) {
@@ -76,17 +74,14 @@ public class MapInterfaceJUnitTest {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     try {
-      region = cache.createRegion("testingRegion", factory
-          .create());
-    }
-    catch (Exception e) {
+      region = cache.createRegion("testingRegion", factory.create());
+    } catch (Exception e) {
       throw new AssertionError(" failed in creating region due to ", e);
     }
     boolean exceptionOccured = false;
     try {
       region.localClear();
-    }
-    catch (UnsupportedOperationException e) {
+    } catch (UnsupportedOperationException e) {
       exceptionOccured = true;
     }
     if (!exceptionOccured) {
@@ -113,10 +108,8 @@ public class MapInterfaceJUnitTest {
       cache = CacheFactory.create(ds);
       factory = new AttributesFactory();
       factory.setScope(Scope.LOCAL);
-      region = cache.createRegion("testingRegion", factory
-          .create());
-    }
-    catch (Exception e) {
+      region = cache.createRegion("testingRegion", factory.create());
+    } catch (Exception e) {
       throw new AssertionError(" failed due to ", e);
     }
     HashMap m = new HashMap();
@@ -135,17 +128,14 @@ public class MapInterfaceJUnitTest {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     try {
-      region = cache.createRegion("testingRegion", factory
-          .create());
-    }
-    catch (Exception e) {
+      region = cache.createRegion("testingRegion", factory.create());
+    } catch (Exception e) {
       throw new AssertionError(" failed in creating region due to ", e);
     }
     boolean exceptionOccured = false;
     try {
       region.localClear();
-    }
-    catch (UnsupportedOperationException e) {
+    } catch (UnsupportedOperationException e) {
       exceptionOccured = true;
     }
     if (!exceptionOccured) {
@@ -155,7 +145,7 @@ public class MapInterfaceJUnitTest {
     cache.close();
     ds.disconnect();
   }
- 
+
   @Test
   public void testBeforeRegionClearCallBack() {
     Properties props = new Properties();
@@ -179,8 +169,7 @@ public class MapInterfaceJUnitTest {
           }
         }
       });
-      region = cache.createRegion("testingRegion", factory
-          .create());
+      region = cache.createRegion("testingRegion", factory.create());
       DoesClear doesClear = new DoesClear(region);
       new Thread(doesClear).start();
       synchronized (this) {
@@ -191,8 +180,7 @@ public class MapInterfaceJUnitTest {
       if (!this.hasBeenNotified) {
         fail(" beforeRegionClear call back did not come");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new AssertionError(" failed due to ", e);
     }
     for (int i = 0; i < 100; i++) {
@@ -205,17 +193,14 @@ public class MapInterfaceJUnitTest {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     try {
-      region = cache.createRegion("testingRegion", factory
-          .create());
-    }
-    catch (Exception e) {
+      region = cache.createRegion("testingRegion", factory.create());
+    } catch (Exception e) {
       throw new AssertionError(" failed in creating region due to ", e);
     }
     boolean exceptionOccured = false;
     try {
       region.localClear();
-    }
-    catch (UnsupportedOperationException e) {
+    } catch (UnsupportedOperationException e) {
       exceptionOccured = true;
     }
     if (!exceptionOccured) {
@@ -233,7 +218,7 @@ public class MapInterfaceJUnitTest {
     props.setProperty(LOCATORS, "");
     DistributedSystem ds = DistributedSystem.connect(props);
     Cache cache = null;
-  
+
     AttributesFactory factory = null;
     try {
       cache = CacheFactory.create(ds);
@@ -249,11 +234,10 @@ public class MapInterfaceJUnitTest {
             MapInterfaceJUnitTest.this.hasBeenNotified = true;
           }
         }
-        
+
       });
-      region2 = cache.createRegion("testingRegion", factory
-          .create());
-      region2.put(new Integer(2),new Integer(2));
+      region2 = cache.createRegion("testingRegion", factory.create());
+      region2.put(new Integer(2), new Integer(2));
       this.hasBeenNotified = false;
       DoesPut doesPut = new DoesPut();
       new Thread(doesPut).start();
@@ -265,14 +249,13 @@ public class MapInterfaceJUnitTest {
       if (!this.hasBeenNotified) {
         fail(" beforeCreate call back did not come");
       }
-      
-      assertEquals(counter,1);
-    }
-    catch (Exception e) {
+
+      assertEquals(counter, 1);
+    } catch (Exception e) {
       throw new AssertionError(" failed due to ", e);
     }
   }
-  
+
   class DoesClear implements Runnable {
 
     private Region region;
@@ -286,7 +269,7 @@ public class MapInterfaceJUnitTest {
       this.region.clear();
     }
   }
-  
+
   class DoesPut implements Runnable {
 
     DoesPut() {
@@ -294,7 +277,7 @@ public class MapInterfaceJUnitTest {
 
     @Override
     public void run() {
-     ((Map.Entry)(MapInterfaceJUnitTest.this.region2.entrySet().iterator().next())).setValue(new Integer(8));
+      ((Map.Entry) (MapInterfaceJUnitTest.this.region2.entrySet().iterator().next())).setValue(new Integer(8));
     }
   }
 }

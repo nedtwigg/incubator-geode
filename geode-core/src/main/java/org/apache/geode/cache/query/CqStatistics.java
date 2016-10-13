@@ -30,13 +30,13 @@ public interface CqStatistics {
    * @return long number of inserts.
    */
   public long numInserts();
-  
+
   /**
    * Get number of Delete events qualified by this CQ.
    * @return long number of deletes.
    */
   public long numDeletes();
-  
+
   /**
    * Get number of Update events qualified by this CQ.
    * @return long number of updates.

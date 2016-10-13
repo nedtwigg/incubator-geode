@@ -61,10 +61,10 @@ public class AbstractSecureServerDUnitTest extends JUnit4CacheTestCase {
   protected Map<String, Object> values;
   protected volatile Properties dsProperties;
 
-  public AbstractSecureServerDUnitTest(){
+  public AbstractSecureServerDUnitTest() {
     values = new HashMap();
-    for(int i=0; i<5; i++){
-      values.put("key"+i, "value"+i);
+    for (int i = 0; i < 5; i++) {
+      values.put("key" + i, "value" + i);
     }
   }
 
@@ -82,26 +82,26 @@ public class AbstractSecureServerDUnitTest extends JUnit4CacheTestCase {
     props.setProperty(SECURITY_MANAGER, SampleSecurityManager.class.getName());
     props.setProperty(LOCATORS, "");
     props.setProperty(MCAST_PORT, "0");
-    if (postProcessor!=null) {
+    if (postProcessor != null) {
       props.setProperty(SECURITY_POST_PROCESSOR, postProcessor.getName());
     }
     props.setProperty(SECURITY_LOG_LEVEL, "finest");
 
-    props.setProperty("security-pdx", pdxPersistent+"");
-    if(jmxPort>0){
+    props.setProperty("security-pdx", pdxPersistent + "");
+    if (jmxPort > 0) {
       props.put(JMX_MANAGER, "true");
       props.put(JMX_MANAGER_START, "true");
       props.put(JMX_MANAGER_PORT, String.valueOf(jmxPort));
     }
 
-    if(restPort>0){
+    if (restPort > 0) {
       props.setProperty(START_DEV_REST_API, "true");
       props.setProperty(HTTP_SERVICE_BIND_ADDRESS, "localhost");
-      props.setProperty(HTTP_SERVICE_PORT, restPort+"");
+      props.setProperty(HTTP_SERVICE_PORT, restPort + "");
     }
 
     props.put(ConfigurationProperties.ENABLE_NETWORK_PARTITION_DETECTION, "false");
-    
+
     this.dsProperties = props;
 
     getSystem(props);
@@ -119,7 +119,7 @@ public class AbstractSecureServerDUnitTest extends JUnit4CacheTestCase {
 
     this.serverPort = server.getPort();
 
-    for(Entry entry:values.entrySet()){
+    for (Entry entry : values.entrySet()) {
       region.put(entry.getKey(), entry.getValue());
     }
   }
@@ -131,7 +131,7 @@ public class AbstractSecureServerDUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public void preTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(()->closeCache());
+    Invoke.invokeInEveryVM(() -> closeCache());
     closeCache();
   }
 
@@ -151,11 +151,8 @@ public class AbstractSecureServerDUnitTest extends JUnit4CacheTestCase {
     return props;
   }
 
-  public static ClientCache createClientCache(String username, String password, int serverPort){
-    ClientCache cache = new ClientCacheFactory(createClientProperties(username, password))
-      .setPoolSubscriptionEnabled(true)
-      .addPoolServer("localhost", serverPort)
-      .create();
+  public static ClientCache createClientCache(String username, String password, int serverPort) {
+    ClientCache cache = new ClientCacheFactory(createClientProperties(username, password)).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
     cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
     return cache;

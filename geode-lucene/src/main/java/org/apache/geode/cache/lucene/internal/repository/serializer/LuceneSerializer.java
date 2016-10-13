@@ -31,5 +31,5 @@ public interface LuceneSerializer {
    * Add the fields of the given value to the document
    */
   void toDocument(Object value, Document doc);
-  
+
 }

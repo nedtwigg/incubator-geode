@@ -44,8 +44,7 @@ public class SessionCachingFilter implements Filter {
   /**
    * Logger instance
    */
-  private static final Logger LOG =
-      LoggerFactory.getLogger(SessionCachingFilter.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(SessionCachingFilter.class.getName());
 
   /**
    * The filter configuration object we are associated with.  If this value is
@@ -62,12 +61,9 @@ public class SessionCachingFilter implements Filter {
   /**
    * Can be overridden during testing.
    */
-  private static AtomicInteger started =
-      new AtomicInteger(
-          Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "override.session.manager.count", 1));
+  private static AtomicInteger started = new AtomicInteger(Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "override.session.manager.count", 1));
 
-  private static int percentInactiveTimeTriggerRebuild =
-      Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "session.inactive.trigger.rebuild", 80);
+  private static int percentInactiveTimeTriggerRebuild = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "session.inactive.trigger.rebuild", 80);
 
   /**
    * This latch ensures that at least one thread/instance has fired up the
@@ -105,9 +101,7 @@ public class SessionCachingFilter implements Filter {
      */
     private HttpServletRequest originalRequest;
 
-    public RequestWrapper(SessionManager manager,
-        HttpServletRequest request,
-        ResponseWrapper response) {
+    public RequestWrapper(SessionManager manager, HttpServletRequest request, ResponseWrapper response) {
 
       super(request);
       this.response = response;
@@ -117,14 +111,11 @@ public class SessionCachingFilter implements Filter {
       final Cookie[] cookies = request.getCookies();
       if (cookies != null) {
         for (final Cookie cookie : cookies) {
-          if (cookie.getName().equalsIgnoreCase(
-              manager.getSessionCookieName()) &&
-              cookie.getValue().endsWith("-GF")) {
+          if (cookie.getName().equalsIgnoreCase(manager.getSessionCookieName()) && cookie.getValue().endsWith("-GF")) {
             requestedSessionId = cookie.getValue();
             sessionFromCookie = true;
 
-            LOG.debug("Cookie contains sessionId: {}",
-                requestedSessionId);
+            LOG.debug("Cookie contains sessionId: {}", requestedSessionId);
           }
         }
       }
@@ -156,16 +147,15 @@ public class SessionCachingFilter implements Filter {
       if (session != null && session.isValid()) {
         session.setIsNew(false);
         session.updateAccessTime();
-                /*
-                 * This is a massively gross hack. Currently, there is no way
-                 * to actually update the last accessed time for a session, so
-                 * what we do here is once we're into X% of the session's TTL
-                 * we grab a new session from the container.
-                 *
-                 * (inactive * 1000) * (pct / 100) ==> (inactive * 10 * pct)
-                 */
-        if (session.getLastAccessedTime() - session.getCreationTime() >
-            (session.getMaxInactiveInterval() * 10 * percentInactiveTimeTriggerRebuild)) {
+        /*
+         * This is a massively gross hack. Currently, there is no way
+         * to actually update the last accessed time for a session, so
+         * what we do here is once we're into X% of the session's TTL
+         * we grab a new session from the container.
+         *
+         * (inactive * 1000) * (pct / 100) ==> (inactive * 10 * pct)
+         */
+        if (session.getLastAccessedTime() - session.getCreationTime() > (session.getMaxInactiveInterval() * 10 * percentInactiveTimeTriggerRebuild)) {
           HttpSession nativeSession = super.getSession();
           session.failoverSession(nativeSession);
         }
@@ -173,8 +163,7 @@ public class SessionCachingFilter implements Filter {
       }
 
       if (requestedSessionId != null) {
-        session = (GemfireHttpSession) manager.getSession(
-            requestedSessionId);
+        session = (GemfireHttpSession) manager.getSession(requestedSessionId);
         if (session != null) {
           session.setIsNew(false);
           // This means we've failed over to another node
@@ -231,8 +220,7 @@ public class SessionCachingFilter implements Filter {
       // Get the existing cookies
       Cookie[] cookies = getCookies();
 
-      Cookie cookie = new Cookie(manager.getSessionCookieName(),
-          session.getId());
+      Cookie cookie = new Cookie(manager.getSessionCookieName(), session.getId());
       cookie.setPath("".equals(getContextPath()) ? "/" : getContextPath());
       // Clear out all old cookies and just set ours
       response.addCookie(cookie);
@@ -296,16 +284,16 @@ public class SessionCachingFilter implements Filter {
       }
     }
 
-        /*
-         * Hmmm... not sure if this is right or even good to do. So, in some
-         * cases - for ex. using a Spring security filter, we have 3 possible
-         * wrappers to deal with - the original, this one and one created by
-         * Spring. When a servlet or JSP is forwarded to the original request
-         * is passed in, but then this (the wrapped) request is used by the JSP.
-         * In some cases, the outer wrapper also contains information relevant
-         * to the request - in this case security info. So here we allow access
-         * to that. There's probably a better way....
-         */
+    /*
+     * Hmmm... not sure if this is right or even good to do. So, in some
+     * cases - for ex. using a Spring security filter, we have 3 possible
+     * wrappers to deal with - the original, this one and one created by
+     * Spring. When a servlet or JSP is forwarded to the original request
+     * is passed in, but then this (the wrapped) request is used by the JSP.
+     * In some cases, the outer wrapper also contains information relevant
+     * to the request - in this case security info. So here we allow access
+     * to that. There's probably a better way....
+     */
 
     /**
      * {@inheritDoc}
@@ -400,7 +388,6 @@ public class SessionCachingFilter implements Filter {
     }
   }
 
-
   public SessionCachingFilter() {
   }
 
@@ -412,9 +399,7 @@ public class SessionCachingFilter implements Filter {
    * @throws ServletException if a servlet error occurs
    */
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response,
-      FilterChain chain)
-      throws IOException, ServletException {
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
     HttpServletRequest httpReq = (HttpServletRequest) request;
     HttpServletResponse httpResp = (HttpServletResponse) response;
@@ -439,8 +424,7 @@ public class SessionCachingFilter implements Filter {
     // include requests.
 
     ResponseWrapper wrappedResponse = new ResponseWrapper(httpResp);
-    final RequestWrapper wrappedRequest =
-        new RequestWrapper(manager, httpReq, wrappedResponse);
+    final RequestWrapper wrappedRequest = new RequestWrapper(manager, httpReq, wrappedResponse);
 
     Throwable problem = null;
 
@@ -454,8 +438,7 @@ public class SessionCachingFilter implements Filter {
       LOG.error("Exception processing filter chain", t);
     }
 
-    GemfireHttpSession session =
-        (GemfireHttpSession) wrappedRequest.getSession(false);
+    GemfireHttpSession session = (GemfireHttpSession) wrappedRequest.getSession(false);
 
     // If there was a problem, we want to rethrow it if it is
     // a known type, otherwise log it.
@@ -483,17 +466,17 @@ public class SessionCachingFilter implements Filter {
    * in the chain of wrapped requests.
    */
   private boolean alreadyWrapped(final ServletRequest request) {
-    if(request instanceof RequestWrapper) {
+    if (request instanceof RequestWrapper) {
       return true;
     }
 
-    if(!(request instanceof ServletRequestWrapper)) {
+    if (!(request instanceof ServletRequestWrapper)) {
       return false;
     }
 
     final ServletRequest nestedRequest = ((ServletRequestWrapper) request).getRequest();
 
-    if(nestedRequest == request) {
+    if (nestedRequest == request) {
       return false;
     }
 
@@ -541,8 +524,7 @@ public class SessionCachingFilter implements Filter {
       /**
        * Allow override for testing purposes
        */
-      String managerClassStr =
-          config.getInitParameter("session-manager-class");
+      String managerClassStr = config.getInitParameter("session-manager-class");
 
       // Otherwise default
       if (managerClassStr == null) {
@@ -550,8 +532,7 @@ public class SessionCachingFilter implements Filter {
       }
 
       try {
-        manager = (SessionManager) Class.forName(
-            managerClassStr).newInstance();
+        manager = (SessionManager) Class.forName(managerClassStr).newInstance();
         manager.start(config, this.getClass().getClassLoader());
       } catch (Exception ex) {
         LOG.error("Exception creating Session Manager", ex);
@@ -564,8 +545,7 @@ public class SessionCachingFilter implements Filter {
       } catch (InterruptedException iex) {
       }
 
-      LOG.debug("SessionManager and listener initialization skipped - "
-          + "already done.");
+      LOG.debug("SessionManager and listener initialization skipped - " + "already done.");
     }
 
     LOG.info("Session Filter initialization complete");
@@ -587,7 +567,6 @@ public class SessionCachingFilter implements Filter {
 
   }
 
-
   private void sendProcessingError(Throwable t, ServletResponse response) {
     String stackTrace = getStackTrace(t);
 
@@ -596,8 +575,7 @@ public class SessionCachingFilter implements Filter {
         response.setContentType("text/html");
         PrintStream ps = new PrintStream(response.getOutputStream());
         PrintWriter pw = new PrintWriter(ps);
-        pw.print(
-            "<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
+        pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
 
         // PENDING! Localize this for next official release
         pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
@@ -650,10 +628,10 @@ public class SessionCachingFilter implements Filter {
    * session
    */
   public static HttpSession getWrappingSession(HttpSession nativeSession) {
-        /*
-         * This is a special case where the GemFire session has been set as a
-         * ThreadLocal during session creation.
-         */
+    /*
+     * This is a special case where the GemFire session has been set as a
+     * ThreadLocal during session creation.
+     */
     GemfireHttpSession gemfireSession = (GemfireHttpSession) ThreadLocalSession.get();
     if (gemfireSession != null) {
       gemfireSession.setNativeSession(nativeSession);

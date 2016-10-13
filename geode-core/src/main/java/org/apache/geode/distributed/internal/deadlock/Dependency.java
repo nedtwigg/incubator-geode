@@ -27,22 +27,22 @@ import java.io.Serializable;
  * 
  * 
  */
-public class Dependency<A,B> implements Serializable {
-  
+public class Dependency<A, B> implements Serializable {
+
   private static final long serialVersionUID = 1L;
-  
+
   public final A depender;
   public final B dependsOn;
-  
+
   public Dependency(A depender, B dependsOn) {
     this.depender = depender;
     this.dependsOn = dependsOn;
   }
-  
+
   public A getDepender() {
     return depender;
   }
-  
+
   public B getDependsOn() {
     return dependsOn;
   }
@@ -64,7 +64,7 @@ public class Dependency<A,B> implements Serializable {
       return false;
     if (!(obj instanceof Dependency))
       return false;
-    Dependency<?,?> other = (Dependency<?,?>) obj;
+    Dependency<?, ?> other = (Dependency<?, ?>) obj;
     if (depender == null) {
       if (other.depender != null)
         return false;
@@ -80,8 +80,7 @@ public class Dependency<A,B> implements Serializable {
 
   @Override
   public String toString() {
-    return depender  + " -> " + dependsOn;
+    return depender + " -> " + dependsOn;
   }
-  
-}
 
+}

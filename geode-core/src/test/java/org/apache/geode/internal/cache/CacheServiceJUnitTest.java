@@ -28,17 +28,17 @@ import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class CacheServiceJUnitTest {
-  
+
   private GemFireCacheImpl cache;
 
   @Before
   public void setUp() {
     cache = (GemFireCacheImpl) new CacheFactory().set(MCAST_PORT, "0").create();
   }
-  
+
   @After
   public void tearDown() {
-    if(cache != null) {
+    if (cache != null) {
       cache.close();
     }
   }

@@ -31,7 +31,7 @@ public class DefaultLineMapper implements LineMapper {
 
   public String getShortNameForLine(String name) {
     Matcher matcher = MEMBER_ID_RE.matcher(name);
-    if(matcher.matches()) {
+    if (matcher.matches()) {
       return matcher.group(1);
     } else {
       return name;

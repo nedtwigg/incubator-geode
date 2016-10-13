@@ -91,7 +91,7 @@ public class JarClassLoader extends ClassLoader {
   public JarClassLoader(final File file, final String jarName, byte[] jarBytes) throws IOException {
     Assert.assertTrue(file != null, "file cannot be null");
     Assert.assertTrue(jarName != null, "jarName cannot be null");
-    
+
     final boolean isDebugEnabled = logger.isDebugEnabled();
     try {
       @SuppressWarnings("resource")
@@ -108,10 +108,9 @@ public class JarClassLoader extends ClassLoader {
 
       final byte[] fileContent = getJarContent();
       if (!Arrays.equals(fileContent, jarBytes)) {
-        throw new FileNotFoundException("JAR file: " + file.getAbsolutePath() + ", was modified prior to obtaining a lock: "
-            + jarName);
+        throw new FileNotFoundException("JAR file: " + file.getAbsolutePath() + ", was modified prior to obtaining a lock: " + jarName);
       }
-        
+
       if (!isValidJarContent(jarBytes)) {
         if (this.fileLock != null) {
           this.fileLock.release();
@@ -122,7 +121,7 @@ public class JarClassLoader extends ClassLoader {
         }
         throw new IllegalArgumentException("File does not contain valid JAR content: " + file.getAbsolutePath());
       }
-      
+
       Assert.assertTrue(jarBytes != null, "jarBytes cannot be null");
 
       // Temporarily save the contents of the JAR file until they can be processed by the
@@ -177,7 +176,7 @@ public class JarClassLoader extends ClassLoader {
 
     return valid;
   }
-  
+
   /**
    * Peek into the JAR data and make sure that it is valid JAR content.
    * 
@@ -189,7 +188,7 @@ public class JarClassLoader extends ClassLoader {
   public static boolean isValidJarContent(final byte[] jarBytes) {
     return hasValidJarContent(new ByteArrayInputStream(jarBytes));
   }
-  
+
   /**
    * Peek into the JAR data and make sure that it is valid JAR content.
    * 
@@ -200,12 +199,12 @@ public class JarClassLoader extends ClassLoader {
    */
   public static boolean hasValidJarContent(final File jarFile) {
     try {
-    return hasValidJarContent(new FileInputStream(jarFile));
+      return hasValidJarContent(new FileInputStream(jarFile));
     } catch (IOException ioex) {
       return false;
     }
   }
-  
+
   /**
    * Scan the JAR file and attempt to load all classes and register any function classes found.
    */
@@ -326,7 +325,7 @@ public class JarClassLoader extends ClassLoader {
   protected URL findResource(String resourceName) {
     URL returnURL = null;
     JarInputStream jarInputStream = null;
-    
+
     try {
       ChannelInputStream channelInputStream = new ChannelInputStream(this.fileLock.channel());
       jarInputStream = new JarInputStream(channelInputStream);
@@ -389,8 +388,7 @@ public class JarClassLoader extends ClassLoader {
     return loadClass(className, resolveIt, true);
   }
 
-  Class<?> loadClass(final String className, final boolean resolveIt, final boolean useClassPathLoader)
-      throws ClassNotFoundException {
+  Class<?> loadClass(final String className, final boolean resolveIt, final boolean useClassPathLoader) throws ClassNotFoundException {
     Class<?> clazz = findLoadedClass(className);
     if (clazz != null) {
       return clazz;
@@ -505,8 +503,7 @@ public class JarClassLoader extends ClassLoader {
         boolean registerUninitializedFunction = true;
         if (Declarable.class.isAssignableFrom(clazz)) {
           try {
-            final List<Properties> propertiesList = ((GemFireCacheImpl) CacheFactory.getAnyInstance())
-                .getDeclarableProperties(clazz.getName());
+            final List<Properties> propertiesList = ((GemFireCacheImpl) CacheFactory.getAnyInstance()).getDeclarableProperties(clazz.getName());
 
             if (!propertiesList.isEmpty()) {
               registerUninitializedFunction = false;

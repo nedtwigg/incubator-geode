@@ -15,27 +15,24 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache.query.internal.parse;
 
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-
-public class ASTRegionPath extends GemFireAST {  
+public class ASTRegionPath extends GemFireAST {
   private static final long serialVersionUID = -4326820914154387472L;
-  
-  public ASTRegionPath() { }
-  
+
+  public ASTRegionPath() {
+  }
+
   public ASTRegionPath(Token t) {
     super(t);
   }
-  
-    
+
   @Override
   public void compile(QCompiler compiler) {
     compiler.pushRegion(getText());
   }
-  
-  
+
 }

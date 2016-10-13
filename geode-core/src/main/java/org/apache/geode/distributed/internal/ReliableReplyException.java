@@ -29,7 +29,7 @@ public class ReliableReplyException extends ReplyException {
   public ReliableReplyException(String message) {
     super(message);
   }
-  
+
   public ReliableReplyException(String message, Throwable cause) {
     super(message, cause);
   }

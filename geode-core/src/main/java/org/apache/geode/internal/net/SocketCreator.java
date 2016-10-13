@@ -184,7 +184,7 @@ public class SocketCreator {
         Set myInterfaces = getMyAddresses();
         boolean preferIPv6 = SocketCreator.useIPv6Addresses;
         String lhName = null;
-        for (Iterator<InetAddress> it = myInterfaces.iterator(); lhName == null && it.hasNext(); ) {
+        for (Iterator<InetAddress> it = myInterfaces.iterator(); lhName == null && it.hasNext();) {
           InetAddress addr = it.next();
           if (addr.isLoopbackAddress() || addr.isAnyLocalAddress()) {
             break;
@@ -261,7 +261,6 @@ public class SocketCreator {
     this.sslConfig = sslConfig;
     initialize();
   }
-
 
   // -------------------------------------------------------------------------
   //   Static instance accessors
@@ -604,7 +603,6 @@ public class SocketCreator {
       this.keyAlias = keyAlias;
     }
 
-
     @Override
     public String[] getClientAliases(final String s, final Principal[] principals) {
       return delegate.getClientAliases(s, principals);
@@ -688,8 +686,7 @@ public class SocketCreator {
     return createServerSocket(nport, backlog, null);
   }
 
-  public ServerSocket createServerSocket(int nport, int backlog, InetAddress bindAddr, List<GatewayTransportFilter> transportFilters, int socketBufferSize)
-    throws IOException {
+  public ServerSocket createServerSocket(int nport, int backlog, InetAddress bindAddr, List<GatewayTransportFilter> transportFilters, int socketBufferSize) throws IOException {
     if (transportFilters.isEmpty()) {
       return createServerSocket(nport, backlog, bindAddr, socketBufferSize);
     } else {
@@ -703,9 +700,7 @@ public class SocketCreator {
       try {
         result.bind(new InetSocketAddress(bindAddr, nport), backlog);
       } catch (BindException e) {
-        BindException throwMe = new BindException(LocalizedStrings.SocketCreator_FAILED_TO_CREATE_SERVER_SOCKET_ON_0_1.toLocalizedString(new Object[] {
-          bindAddr, Integer.valueOf(nport)
-        }));
+        BindException throwMe = new BindException(LocalizedStrings.SocketCreator_FAILED_TO_CREATE_SERVER_SOCKET_ON_0_1.toLocalizedString(new Object[] { bindAddr, Integer.valueOf(nport) }));
         throwMe.initCause(e);
         throw throwMe;
       }
@@ -756,9 +751,7 @@ public class SocketCreator {
       try {
         result.bind(new InetSocketAddress(bindAddr, nport), backlog);
       } catch (BindException e) {
-        BindException throwMe = new BindException(LocalizedStrings.SocketCreator_FAILED_TO_CREATE_SERVER_SOCKET_ON_0_1.toLocalizedString(new Object[] {
-          bindAddr, Integer.valueOf(nport)
-        }));
+        BindException throwMe = new BindException(LocalizedStrings.SocketCreator_FAILED_TO_CREATE_SERVER_SOCKET_ON_0_1.toLocalizedString(new Object[] { bindAddr, Integer.valueOf(nport) }));
         throwMe.initCause(e);
         throw throwMe;
       }
@@ -778,12 +771,7 @@ public class SocketCreator {
    *
    * @throws IOException
    */
-  public ServerSocket createServerSocketUsingPortRange(InetAddress ba,
-                                                       int backlog,
-                                                       boolean isBindAddress,
-                                                       boolean useNIO,
-                                                       int tcpBufferSize,
-                                                       int[] tcpPortRange) throws IOException {
+  public ServerSocket createServerSocketUsingPortRange(InetAddress ba, int backlog, boolean isBindAddress, boolean useNIO, int tcpBufferSize, int[] tcpPortRange) throws IOException {
     return createServerSocketUsingPortRange(ba, backlog, isBindAddress, useNIO, tcpBufferSize, tcpPortRange, sslConfig.isEnabled());
   }
 
@@ -800,13 +788,7 @@ public class SocketCreator {
    *
    * @throws IOException
    */
-  public ServerSocket createServerSocketUsingPortRange(InetAddress ba,
-                                                       int backlog,
-                                                       boolean isBindAddress,
-                                                       boolean useNIO,
-                                                       int tcpBufferSize,
-                                                       int[] tcpPortRange,
-                                                       boolean sslConnection) throws IOException {
+  public ServerSocket createServerSocketUsingPortRange(InetAddress ba, int backlog, boolean isBindAddress, boolean useNIO, int tcpBufferSize, int[] tcpPortRange, boolean sslConnection) throws IOException {
     ServerSocket socket = null;
     int localPort = 0;
     int startingPort = 0;
@@ -901,8 +883,7 @@ public class SocketCreator {
    * The parameter <i>timeout</i> is ignored if SSL is being used, as there is no
    * timeout argument in the ssl socket factory
    */
-  public Socket connect(InetAddress inetadd, int port, int timeout, ConnectionWatcher optionalWatcher, boolean clientSide, int socketBufferSize)
-    throws IOException {
+  public Socket connect(InetAddress inetadd, int port, int timeout, ConnectionWatcher optionalWatcher, boolean clientSide, int socketBufferSize) throws IOException {
     return connect(inetadd, port, timeout, optionalWatcher, clientSide, socketBufferSize, sslConfig.isEnabled());
   }
 
@@ -911,13 +892,7 @@ public class SocketCreator {
    * The parameter <i>timeout</i> is ignored if SSL is being used, as there is no
    * timeout argument in the ssl socket factory
    */
-  public Socket connect(InetAddress inetadd,
-                        int port,
-                        int timeout,
-                        ConnectionWatcher optionalWatcher,
-                        boolean clientSide,
-                        int socketBufferSize,
-                        boolean sslConnection) throws IOException {
+  public Socket connect(InetAddress inetadd, int port, int timeout, ConnectionWatcher optionalWatcher, boolean clientSide, int socketBufferSize, boolean sslConnection) throws IOException {
     Socket socket = null;
     SocketAddress sockaddr = new InetSocketAddress(inetadd, port);
     printConfig();
@@ -990,15 +965,11 @@ public class SocketCreator {
         }
       } catch (SSLPeerUnverifiedException ex) {
         if (this.sslConfig.isRequireAuth()) {
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_AUTHENTICATING_PEER_0_1, new Object[] {
-            socket.getInetAddress(), Integer.valueOf(socket.getPort())
-          }), ex);
+          logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_AUTHENTICATING_PEER_0_1, new Object[] { socket.getInetAddress(), Integer.valueOf(socket.getPort()) }), ex);
           throw ex;
         }
       } catch (SSLException ex) {
-        logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_CONNECTING_TO_PEER_0_1, new Object[] {
-          socket.getInetAddress(), Integer.valueOf(socket.getPort())
-        }), ex);
+        logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_CONNECTING_TO_PEER_0_1, new Object[] { socket.getInetAddress(), Integer.valueOf(socket.getPort()) }), ex);
         throw ex;
       }
     }
@@ -1061,9 +1032,7 @@ public class SocketCreator {
           logger.debug(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_CONNECTION_FROM_PEER_0, ((X509Certificate) peer[0]).getSubjectDN()));
         }
       } catch (SSLHandshakeException ex) {
-        logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_CONNECTING_TO_PEER_0_1, new Object[] {
-          socket.getInetAddress(), Integer.valueOf(socket.getPort())
-        }), ex);
+        logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_CONNECTING_TO_PEER_0_1, new Object[] { socket.getInetAddress(), Integer.valueOf(socket.getPort()) }), ex);
         throw ex;
       } catch (SSLPeerUnverifiedException ex) {
         if (this.sslConfig.isRequireAuth()) {
@@ -1071,9 +1040,7 @@ public class SocketCreator {
           throw ex;
         }
       } catch (SSLException ex) {
-        logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_CONNECTING_TO_PEER_0_1, new Object[] {
-          socket.getInetAddress(), Integer.valueOf(socket.getPort())
-        }), ex);
+        logger.fatal(LocalizedMessage.create(LocalizedStrings.SocketCreator_SSL_ERROR_IN_CONNECTING_TO_PEER_0_1, new Object[] { socket.getInetAddress(), Integer.valueOf(socket.getPort()) }), ex);
         throw ex;
       }
 
@@ -1098,7 +1065,6 @@ public class SocketCreator {
       logger.debug(sb.toString());
     }
   }
-
 
   protected void initializeClientSocketFactory() {
     this.clientSocketFactory = null;
@@ -1191,9 +1157,9 @@ public class SocketCreator {
       env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
       DirContext ctx = new InitialDirContext(env);
       Attributes attrs = ctx.getAttributes(lookup, new String[] { "PTR" });
-      for (NamingEnumeration ae = attrs.getAll(); ae.hasMoreElements(); ) {
+      for (NamingEnumeration ae = attrs.getAll(); ae.hasMoreElements();) {
         Attribute attr = (Attribute) ae.next();
-        for (Enumeration vals = attr.getAll(); vals.hasMoreElements(); ) {
+        for (Enumeration vals = attr.getAll(); vals.hasMoreElements();) {
           Object elem = vals.nextElement();
           if ("PTR".equals(attr.getID()) && elem != null) {
             return elem.toString();
@@ -1221,7 +1187,7 @@ public class SocketCreator {
           Enumeration en = NetworkInterface.getNetworkInterfaces();
           while (en.hasMoreElements()) {
             NetworkInterface i = (NetworkInterface) en.nextElement();
-            for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements(); ) {
+            for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements();) {
               InetAddress addr = (InetAddress) en2.nextElement();
               if (host.equals(addr)) {
                 return true;
@@ -1263,4 +1229,3 @@ public class SocketCreator {
     }
   }
 }
-

@@ -19,7 +19,6 @@ package org.apache.geode.internal.shared;
 
 import java.net.Socket;
 
-
 /**
  * Extended TCP socket options to set socket-specific KEEPALIVE settings etc.
  * Passed to {@link NativeCalls} API to set these options on the Java

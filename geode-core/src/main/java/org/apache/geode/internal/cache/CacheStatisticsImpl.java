@@ -30,19 +30,18 @@ import org.apache.geode.internal.InternalStatisticsDisabledException;
 class CacheStatisticsImpl implements CacheStatistics {
   private final LocalRegion region;
   private final RegionEntry regionEntry;
-  
+
   CacheStatisticsImpl(RegionEntry regionEntry, LocalRegion region) {
     this.region = region;
     // entry stats are all on commited state so ok to ignore tx state
     this.regionEntry = regionEntry;
   }
-  
+
   public long getHitCount() throws StatisticsDisabledException {
     checkEntryDestroyed();
     try {
       return this.regionEntry.getHitCount();
-    }
-    catch (InternalStatisticsDisabledException e) {
+    } catch (InternalStatisticsDisabledException e) {
       throw new StatisticsDisabledException(e);
     }
   }
@@ -56,34 +55,31 @@ class CacheStatisticsImpl implements CacheStatistics {
     try {
       long hitCount = entry.getHitCount();
       long total = hitCount + entry.getMissCount();
-      return total == 0L ? 0.0f : ((float)hitCount / total);
-    }
-    catch (InternalStatisticsDisabledException e) {
+      return total == 0L ? 0.0f : ((float) hitCount / total);
+    } catch (InternalStatisticsDisabledException e) {
       throw new StatisticsDisabledException(e);
     }
   }
-  
+
   public long getLastAccessedTime() throws StatisticsDisabledException {
     checkEntryDestroyed();
     try {
       return this.regionEntry.getLastAccessed();
-    }
-    catch (InternalStatisticsDisabledException e) {
+    } catch (InternalStatisticsDisabledException e) {
       throw new StatisticsDisabledException(e);
     }
   }
-  
+
   public long getLastModifiedTime() {
     checkEntryDestroyed();
     return this.regionEntry.getLastModified();
   }
-  
+
   public long getMissCount() throws StatisticsDisabledException {
     checkEntryDestroyed();
     try {
       return this.regionEntry.getMissCount();
-    }
-    catch (InternalStatisticsDisabledException e) {
+    } catch (InternalStatisticsDisabledException e) {
       throw new StatisticsDisabledException(e);
     }
   }
@@ -92,12 +88,11 @@ class CacheStatisticsImpl implements CacheStatistics {
     checkEntryDestroyed();
     try {
       this.regionEntry.resetCounts();
-    }
-    catch (InternalStatisticsDisabledException e) {
+    } catch (InternalStatisticsDisabledException e) {
       throw new StatisticsDisabledException(e);
     }
-  }    
-  
+  }
+
   /* throws CacheClosedException or EntryDestroyedException if this entry is
    * destroyed.
    */

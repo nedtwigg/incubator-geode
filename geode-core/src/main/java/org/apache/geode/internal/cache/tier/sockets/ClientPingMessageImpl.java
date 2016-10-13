@@ -34,7 +34,7 @@ import org.apache.geode.internal.cache.tier.MessageType;
  * @since GemFire 6.6.2.x
  */
 public final class ClientPingMessageImpl implements ClientMessage {
-  
+
   private static final long serialVersionUID = 5423895238521508743L;
 
   /**
@@ -49,14 +49,12 @@ public final class ClientPingMessageImpl implements ClientMessage {
     if (clientVersion.compareTo(Version.GFE_6622) >= 0) {
       message = getGFEMessage();
     } else {
-      throw new IOException(
-          "Unsupported client version for server-to-client message creation: "
-              + clientVersion);
+      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
     }
-      
+
     return message;
   }
-  
+
   protected Message getGFEMessage() throws IOException {
     Message message = new Message(0, Version.CURRENT);
     message.setMessageType(MessageType.SERVER_TO_CLIENT_PING);
@@ -75,8 +73,7 @@ public final class ClientPingMessageImpl implements ClientMessage {
     return CLIENT_PING_MESSAGE_IMPL;
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
   }
 
   public EventID getEventId() {
@@ -99,7 +96,7 @@ public final class ClientPingMessageImpl implements ClientMessage {
     return "ping";
   }
 
-  public void setLatestValue(Object value){
+  public void setLatestValue(Object value) {
     return;
   }
 

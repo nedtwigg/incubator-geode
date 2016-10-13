@@ -69,17 +69,17 @@ public abstract class CredentialGenerator {
    */
   public static CredentialGenerator create(final ClassCode classCode) {
     switch (classCode.classType) {
-      // Removing dummy one to reduce test run times
-      // case ClassCode.ID_DUMMY:
-      // return new DummyCredentialGenerator();
-      case ClassCode.ID_LDAP:
-        return new LdapUserCredentialGenerator();
-        // case ClassCode.ID_SSL:ø
-        // return new SSLCredentialGenerator();
-      case ClassCode.ID_PKCS:
-        return new PKCSCredentialGenerator();
-      default:
-        return null;
+    // Removing dummy one to reduce test run times
+    // case ClassCode.ID_DUMMY:
+    // return new DummyCredentialGenerator();
+    case ClassCode.ID_LDAP:
+      return new LdapUserCredentialGenerator();
+    // case ClassCode.ID_SSL:ø
+    // return new SSLCredentialGenerator();
+    case ClassCode.ID_PKCS:
+      return new PKCSCredentialGenerator();
+    default:
+      return null;
     }
   }
 
@@ -306,7 +306,7 @@ public abstract class CredentialGenerator {
       if (!(obj instanceof ClassCode)) {
         return false;
       }
-      final ClassCode other = (ClassCode)obj;
+      final ClassCode other = (ClassCode) obj;
       return other.ordinal == this.ordinal;
     }
 

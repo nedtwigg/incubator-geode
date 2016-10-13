@@ -22,15 +22,14 @@ package org.apache.geode.cache;
  *
  * @since GemFire 6.5
  */
-public class UnsupportedOperationInTransactionException extends
-    UnsupportedOperationException {
+public class UnsupportedOperationInTransactionException extends UnsupportedOperationException {
 
   public UnsupportedOperationInTransactionException(String s) {
     super(s);
   }
-  
+
   public UnsupportedOperationInTransactionException() {
     super();
   }
-  
+
 }

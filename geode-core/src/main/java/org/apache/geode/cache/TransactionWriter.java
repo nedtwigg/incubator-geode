@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache;
 
-
 /**
  * A callback that is allowed to veto a transaction. Only one TransactionWriter can exist 
  * per cache, and only one TransactionWriter will be fired in the 
@@ -30,7 +29,7 @@ package org.apache.geode.cache;
  */
 
 public interface TransactionWriter extends CacheCallback {
-  
+
   /** Called before the transaction has finished committing, but after conflict checking. 
    * Provides an opportunity for implementors to cause transaction abort by throwing a
    * TransactionWriterException

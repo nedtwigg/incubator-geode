@@ -44,7 +44,7 @@ public abstract class AbstractMockExtension<T> implements Extension<T> {
   public String getValue() {
     return value;
   }
-  
+
   public void setValue(final String value) {
     this.value = value;
   }

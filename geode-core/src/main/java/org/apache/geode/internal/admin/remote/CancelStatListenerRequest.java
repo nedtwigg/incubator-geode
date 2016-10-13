@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -51,7 +50,7 @@ public final class CancelStatListenerRequest extends AdminRequest {
    */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
-    return CancelStatListenerResponse.create(dm, this.getSender(), this.listenerId); 
+    return CancelStatListenerResponse.create(dm, this.getSender(), this.listenerId);
   }
 
   public int getDSFID() {
@@ -65,15 +64,13 @@ public final class CancelStatListenerRequest extends AdminRequest {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.listenerId = in.readInt();
   }
 
   @Override
   public String toString() {
-    return LocalizedStrings.CancelStatListenerRequest_CANCELSTATLISTENERREQUEST_FROM_0_FOR_1.toLocalizedString
-      (new Object[] {this.getRecipient(), Integer.valueOf(this.listenerId)});
+    return LocalizedStrings.CancelStatListenerRequest_CANCELSTATLISTENERREQUEST_FROM_0_FOR_1.toLocalizedString(new Object[] { this.getRecipient(), Integer.valueOf(this.listenerId) });
   }
 }

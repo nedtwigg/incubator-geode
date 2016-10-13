@@ -42,9 +42,7 @@ import com.gemstone.gemfire.OldClientSupportProvider;
 @SuppressWarnings("deprecation")
 public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
 
-  static private final List<String> allGeodeThrowableClasses = Arrays.asList(new String[] {
-    "org.apache.geode.cache.execute.EmptyRegionFunctionException",
-  });
+  static private final List<String> allGeodeThrowableClasses = Arrays.asList(new String[] { "org.apache.geode.cache.execute.EmptyRegionFunctionException", });
 
   private Cache myCache;
 
@@ -56,7 +54,7 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
 
   @Test
   public void cacheInstallsOldClientSupportServiceProvider() throws Exception {
-    Assert.assertNotNull(((InternalCache)myCache).getService(OldClientSupportService.class));
+    Assert.assertNotNull(((InternalCache) myCache).getService(OldClientSupportService.class));
   }
 
   /**
@@ -67,8 +65,8 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testConversionOfThrowablesForOldClients() throws Exception {
     List<Throwable> problems = new LinkedList<>();
-    
-    for (String geodeClassName: allGeodeThrowableClasses) {
+
+    for (String geodeClassName : allGeodeThrowableClasses) {
       try {
         convertThrowableForOldClient(geodeClassName);
       } catch (Exception e) {
@@ -78,12 +76,12 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
         problems.add(failure);
       }
     }
-    
+
     if (!problems.isEmpty()) {
       Assert.fail(problems.toString());
     }
   }
-  
+
   private void convertThrowableForOldClient(String geodeClassName) throws Exception {
     Version oldClientVersion = Version.GFE_82;
     final String comGemstoneGemFire = "com.gemstone.gemfire";
@@ -95,13 +93,12 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     Class geodeClass = Class.forName(geodeClassName);
     Object geodeObject = instantiate(geodeClass);
     if (geodeObject instanceof Throwable) {
-      Throwable geodeThrowable = (Throwable)instantiate(geodeClass);
+      Throwable geodeThrowable = (Throwable) instantiate(geodeClass);
       Throwable gemfireThrowable = oldClientSupport.getThrowable(geodeThrowable, oldClientVersion);
-      Assert.assertEquals("Failed to convert " + geodeClassName + ". Throwable class is " + gemfireThrowable.getClass().getName()
-        , comGemstoneGemFire, gemfireThrowable.getClass().getName().substring(0, comGemstoneGemFireLength));
+      Assert.assertEquals("Failed to convert " + geodeClassName + ". Throwable class is " + gemfireThrowable.getClass().getName(), comGemstoneGemFire, gemfireThrowable.getClass().getName().substring(0, comGemstoneGemFireLength));
     }
   }
-  
+
   private Object instantiate(Class aClass) throws Exception {
     Constructor c = null;
     try {
@@ -133,7 +130,7 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     com.gemstone.gemfire.ClientSerializableObject gemfireObject = new com.gemstone.gemfire.ClientSerializableObject();
     com.gemstone.gemfire.ClientSerializableObject subObject = new com.gemstone.gemfire.ClientSerializableObject();
     gemfireObject.setSubObject(subObject);
-    
+
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream(500);
     DataOutputStream dataOut = new DataOutputStream(byteStream);
     DataSerializer.writeObject(gemfireObject, dataOut);
@@ -143,12 +140,10 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     ByteArrayDataInput byteDataInput = new ByteArrayDataInput();
     byteDataInput.initialize(serializedForm, Version.GFE_82);
     ClientSerializableObject result = DataSerializer.readObject(byteDataInput);
-    Assert.assertEquals("Expected an org.apache.geode exception but found " + result,
-      result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
+    Assert.assertEquals("Expected an org.apache.geode exception but found " + result, result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
     ClientSerializableObject newSubObject = result.getSubObject();
     Assert.assertNotNull(newSubObject);
   }
-
 
   /**
    * com.gemstone.gemfire objects received from a client should translate to
@@ -170,8 +165,7 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     ByteArrayDataInput byteDataInput = new ByteArrayDataInput();
     byteDataInput.initialize(serializedForm, Version.GFE_82);
     Object result = DataSerializer.readObject(byteDataInput);
-    Assert.assertEquals("Expected an org.apache.geode object but found " + result,
-      result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
+    Assert.assertEquals("Expected an org.apache.geode object but found " + result, result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
   }
 
   /**
@@ -194,7 +188,6 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     ByteArrayDataInput byteDataInput = new ByteArrayDataInput();
     byteDataInput.initialize(serializedForm, Version.GFE_82);
     Object result = DataSerializer.readObject(byteDataInput);
-    Assert.assertEquals("Expected an org.apache.geode object but found " + result,
-      result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
+    Assert.assertEquals("Expected an org.apache.geode object but found " + result, result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
   }
 }

@@ -54,15 +54,8 @@ public class AgentUtil {
      */
   public String findWarLocation(String warFilePrefix) {
     String gemfireHome = getGemFireHome();
-    if(!StringUtils.isBlank(gemfireHome)) {
-      String[] possibleFiles = {
-              gemfireHome + "/tools/Extensions/" + warFilePrefix + "-" + gemfireVersion + ".war",
-              gemfireHome + "/tools/Pulse/" + warFilePrefix + "-" + gemfireVersion + ".war",
-              gemfireHome + "/lib/" + warFilePrefix + "-" + gemfireVersion + ".war",
-              gemfireHome + "/tools/Extensions/" + warFilePrefix + ".war",
-              gemfireHome + "/tools/Pulse/" + warFilePrefix + ".war",
-              gemfireHome + "/lib/" + warFilePrefix + ".war"
-      };
+    if (!StringUtils.isBlank(gemfireHome)) {
+      String[] possibleFiles = { gemfireHome + "/tools/Extensions/" + warFilePrefix + "-" + gemfireVersion + ".war", gemfireHome + "/tools/Pulse/" + warFilePrefix + "-" + gemfireVersion + ".war", gemfireHome + "/lib/" + warFilePrefix + "-" + gemfireVersion + ".war", gemfireHome + "/tools/Extensions/" + warFilePrefix + ".war", gemfireHome + "/tools/Pulse/" + warFilePrefix + ".war", gemfireHome + "/lib/" + warFilePrefix + ".war" };
       for (String possibleFile : possibleFiles) {
         if (new File(possibleFile).isFile()) {
           logger.info(warFilePrefix + " war found: {}", possibleFile);
@@ -73,16 +66,10 @@ public class AgentUtil {
 
     // if $GEMFIRE is not set or we are not able to find it in all the possible locations under $GEMFIRE, try to
     // find in the classpath
-    String[] possibleFiles = {
-            warFilePrefix + "-" + gemfireVersion + ".war",
-            "tools/Pulse/" + warFilePrefix + "-" + gemfireVersion + ".war",
-            "tools/Extensions/" + warFilePrefix + "-" + gemfireVersion + ".war",
-            "lib/" + warFilePrefix + "-" + gemfireVersion + ".war",
-            warFilePrefix + ".war"
-    };
-    for(String possibleFile:possibleFiles){
+    String[] possibleFiles = { warFilePrefix + "-" + gemfireVersion + ".war", "tools/Pulse/" + warFilePrefix + "-" + gemfireVersion + ".war", "tools/Extensions/" + warFilePrefix + "-" + gemfireVersion + ".war", "lib/" + warFilePrefix + "-" + gemfireVersion + ".war", warFilePrefix + ".war" };
+    for (String possibleFile : possibleFiles) {
       URL url = this.getClass().getClassLoader().getResource(possibleFile);
-      if(url!=null){
+      if (url != null) {
         // found the war file
         logger.info(warFilePrefix + " war found: {}", possibleFile);
         return url.getPath();
@@ -90,7 +77,7 @@ public class AgentUtil {
     }
 
     // we still couldn't find the war file
-    logger.warn(warFilePrefix+" war file was not found");
+    logger.warn(warFilePrefix + " war file was not found");
     return null;
   }
 

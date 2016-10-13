@@ -22,19 +22,21 @@ public abstract class VMStatsDiskRegionEntryOffHeap extends VMStatsDiskRegionEnt
   public VMStatsDiskRegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VMStatsDiskRegionEntryOffHeapFactory factory = new VMStatsDiskRegionEntryOffHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VMStatsDiskRegionEntryOffHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VMStatsDiskRegionEntryOffHeapIntKey(context, (Integer)key, value);
+          return new VMStatsDiskRegionEntryOffHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VMStatsDiskRegionEntryOffHeapLongKey(context, (Long)key, value);
+          return new VMStatsDiskRegionEntryOffHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -47,7 +49,7 @@ public abstract class VMStatsDiskRegionEntryOffHeap extends VMStatsDiskRegionEnt
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VMStatsDiskRegionEntryOffHeapUUIDKey(context, (UUID)key, value);
+          return new VMStatsDiskRegionEntryOffHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VMStatsDiskRegionEntryOffHeapObjectKey(context, key, value);
@@ -58,10 +60,12 @@ public abstract class VMStatsDiskRegionEntryOffHeap extends VMStatsDiskRegionEnt
       // This estimate will not take into account the memory saved by inlining the keys.
       return VMStatsDiskRegionEntryOffHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return VersionedStatsDiskRegionEntryOffHeap.getEntryFactory();
     }
-	@Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return VMStatsDiskRegionEntryHeap.getEntryFactory();
     }

@@ -26,12 +26,11 @@ public class DistributedMulticastRegionWithUDPSecurityDUnitTest extends Distribu
   protected void addDSProps(Properties p) {
     p.setProperty(SECURITY_UDP_DHALGO, "AES:128");
   }
-  
+
   @Override
   protected void validateUDPEncryptionStats() {
     long encrptTime = getGemfireCache().getDistributionManager().getStats().getUDPMsgEncryptionTiime();
     long decryptTime = getGemfireCache().getDistributionManager().getStats().getUDPMsgDecryptionTime();
-    assertTrue("Should have multicast writes or reads. encrptTime=  " + encrptTime +  " ,decryptTime= " + decryptTime, 
-        encrptTime > 0 && decryptTime > 0);
+    assertTrue("Should have multicast writes or reads. encrptTime=  " + encrptTime + " ,decryptTime= " + decryptTime, encrptTime > 0 && decryptTime > 0);
   }
 }

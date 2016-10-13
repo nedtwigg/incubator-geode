@@ -41,7 +41,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Ignore("This is broken but fixed on feature/GEODE-1673")
-@Category({DistributedTest.class, SecurityTest.class})
+@Category({ DistributedTest.class, SecurityTest.class })
 public class IntegratedSecurityCacheLifecycleDistributedTest extends JUnit4CacheTestCase {
 
   private String locators;
@@ -59,7 +59,7 @@ public class IntegratedSecurityCacheLifecycleDistributedTest extends JUnit4Cache
     int locatorPort = ports[0];
     int managerPort = ports[1];
 
-    locators =  NetworkUtils.getServerHostName(host) + "[" + locatorPort + "]";
+    locators = NetworkUtils.getServerHostName(host) + "[" + locatorPort + "]";
 
     locator.invoke(() -> {
       DistributedTestUtils.deleteLocatorStateFile(locatorPort);

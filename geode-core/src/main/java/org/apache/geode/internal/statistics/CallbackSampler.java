@@ -35,9 +35,7 @@ public class CallbackSampler {
   private ScheduledExecutorService executor;
   private final StatSamplerStats statSamplerStats;
 
-  public CallbackSampler( final CancelCriterion cancelCriterion,
-                         final StatSamplerStats statSamplerStats)
-  {
+  public CallbackSampler(final CancelCriterion cancelCriterion, final StatSamplerStats statSamplerStats) {
     this.cancelCriterion = cancelCriterion;
     this.statSamplerStats = statSamplerStats;
   }
@@ -60,7 +58,7 @@ public class CallbackSampler {
   }
 
   private void sampleCallbacks() {
-    if(cancelCriterion.isCancelInProgress()) {
+    if (cancelCriterion.isCancelInProgress()) {
       executor.shutdown();
     }
     int errors = 0;
@@ -72,7 +70,7 @@ public class CallbackSampler {
         errors += statistics.invokeSuppliers();
         suppliers += statistics.getSupplierCount();
       }
-    } catch(VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
     } catch (Throwable throwable) {
       logger.error("Error invoking statistic suppliers", throwable);
@@ -86,7 +84,7 @@ public class CallbackSampler {
   }
 
   public void stop() {
-    if(executor != null) {
+    if (executor != null) {
       this.executor.shutdown();
     }
   }

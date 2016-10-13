@@ -30,14 +30,14 @@ public class DynamicRegionFactoryImpl extends DynamicRegionFactory {
    */
   public DynamicRegionFactoryImpl() {
   }
-  
+
   /** close the factory.  Only do this if you're closing the cache, too */
   public void close() {
     _close();
   }
-  
+
   /** initialize the factory for use with a new cache */
-  public void internalInit( GemFireCacheImpl c ) throws CacheException {
+  public void internalInit(GemFireCacheImpl c) throws CacheException {
     _internalInit(c);
   }
 }

@@ -45,35 +45,35 @@ public class MemoryThresholdsJUnitTest {
     } catch (IllegalArgumentException expected) {
       // Expected
     }
-    
+
     try {
       new MemoryThresholds(1000, 100.1f, 0f);
       fail("Expected IllegalArgumentException");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
-    
+
     try {
       new MemoryThresholds(1000, -0.1f, 0f);
       fail("Expected IllegalArgumentException");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
-    
+
     try {
       new MemoryThresholds(1000, 0f, 100.1f);
       fail("Expected IllegalArgumentException");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
-    
+
     try {
       new MemoryThresholds(1000, 0f, -0.1f);
       fail("Expected IllegalArgumentException");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
-    
+
     MemoryThresholds thresholds = new MemoryThresholds(1000, 84.2f, 49.8f);
     assertTrue(thresholds.isEvictionThresholdEnabled());
     assertTrue(thresholds.isCriticalThresholdEnabled());
@@ -83,7 +83,7 @@ public class MemoryThresholdsJUnitTest {
     assertEquals(84.2f, thresholds.getCriticalThreshold(), 0.01);
     assertTrue(Math.abs(842 - thresholds.getCriticalThresholdBytes()) <= 1); // Allow for rounding
   }
- 
+
   @Test
   public void testTransitionsNoThresholds() {
     MemoryThresholds thresholds = new MemoryThresholds(1000, 0f, 0f);
@@ -97,47 +97,47 @@ public class MemoryThresholdsJUnitTest {
     assertEquals(MemoryState.DISABLED, thresholds.computeNextState(MemoryState.CRITICAL, 100));
     assertEquals(MemoryState.DISABLED, thresholds.computeNextState(MemoryState.EVICTION_CRITICAL, 100));
   }
-  
+
   @Test
   public void testTransitionsEvictionSet() {
     MemoryThresholds thresholds = new MemoryThresholds(1000, 0f, 50f);
-    
+
     assertEquals(MemoryState.CRITICAL_DISABLED, thresholds.computeNextState(MemoryState.DISABLED, 499));
     assertEquals(MemoryState.CRITICAL_DISABLED, thresholds.computeNextState(MemoryState.EVICTION, 450));
     assertEquals(MemoryState.CRITICAL_DISABLED, thresholds.computeNextState(MemoryState.CRITICAL, 499));
-    
+
     assertEquals(MemoryState.EVICTION_CRITICAL_DISABLED, thresholds.computeNextState(MemoryState.DISABLED, 500));
     assertEquals(MemoryState.EVICTION_CRITICAL_DISABLED, thresholds.computeNextState(MemoryState.EVICTION, 499));
     assertEquals(MemoryState.EVICTION_CRITICAL_DISABLED, thresholds.computeNextState(MemoryState.CRITICAL, 500));
   }
-  
+
   @Test
   public void testTransitionsCriticalSet() {
     MemoryThresholds thresholds = new MemoryThresholds(1000, 50f, 0f);
-    
+
     assertEquals(MemoryState.EVICTION_DISABLED, thresholds.computeNextState(MemoryState.DISABLED, 499));
     assertEquals(MemoryState.EVICTION_DISABLED, thresholds.computeNextState(MemoryState.EVICTION, 499));
-    
+
     assertEquals(MemoryState.EVICTION_DISABLED_CRITICAL, thresholds.computeNextState(MemoryState.DISABLED, 500));
     assertEquals(MemoryState.EVICTION_DISABLED_CRITICAL, thresholds.computeNextState(MemoryState.EVICTION, 500));
     assertEquals(MemoryState.EVICTION_DISABLED_CRITICAL, thresholds.computeNextState(MemoryState.CRITICAL, 499));
   }
-  
+
   @Test
   public void testTransitionsEvictionAndCriticalSet() {
     MemoryThresholds thresholds = new MemoryThresholds(1000, 80f, 50f);
-    
+
     assertEquals(MemoryState.NORMAL, thresholds.computeNextState(MemoryState.DISABLED, 0));
     assertEquals(MemoryState.NORMAL, thresholds.computeNextState(MemoryState.DISABLED, 499));
     assertEquals(MemoryState.NORMAL, thresholds.computeNextState(MemoryState.NORMAL, 499));
     assertEquals(MemoryState.NORMAL, thresholds.computeNextState(MemoryState.CRITICAL, 499));
-    
+
     assertEquals(MemoryState.EVICTION, thresholds.computeNextState(MemoryState.DISABLED, 500));
     assertEquals(MemoryState.EVICTION, thresholds.computeNextState(MemoryState.NORMAL, 500));
     assertEquals(MemoryState.EVICTION, thresholds.computeNextState(MemoryState.EVICTION, 499));
     assertEquals(MemoryState.EVICTION, thresholds.computeNextState(MemoryState.EVICTION, 500));
     assertEquals(MemoryState.EVICTION, thresholds.computeNextState(MemoryState.EVICTION, 799));
-    
+
     assertEquals(MemoryState.EVICTION_CRITICAL, thresholds.computeNextState(MemoryState.DISABLED, 800));
     assertEquals(MemoryState.EVICTION_CRITICAL, thresholds.computeNextState(MemoryState.NORMAL, 800));
     assertEquals(MemoryState.EVICTION_CRITICAL, thresholds.computeNextState(MemoryState.EVICTION, 800));

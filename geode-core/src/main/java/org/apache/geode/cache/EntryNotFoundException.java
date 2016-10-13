@@ -29,7 +29,8 @@ package org.apache.geode.cache;
  * @since GemFire 3.0
  */
 public class EntryNotFoundException extends CacheException {
-private static final long serialVersionUID = -2404101631744605659L;
+  private static final long serialVersionUID = -2404101631744605659L;
+
   /**
    * Constructs an instance of <code>EntryNotFoundException</code> with the specified detail message.
    * @param msg the detail message
@@ -37,7 +38,7 @@ private static final long serialVersionUID = -2404101631744605659L;
   public EntryNotFoundException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>EntryNotFoundException</code> with the specified detail message
    * and cause.

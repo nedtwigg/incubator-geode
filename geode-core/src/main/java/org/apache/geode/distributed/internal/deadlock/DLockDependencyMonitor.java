@@ -33,20 +33,17 @@ import org.apache.geode.distributed.internal.locks.DLockToken;
  */
 public class DLockDependencyMonitor implements DependencyMonitor {
   static final DLockDependencyMonitor INSTANCE;
-  
+
   static {
     INSTANCE = new DLockDependencyMonitor();
-//    DependencyMonitorManager.addMonitor(INSTANCE);
+    //    DependencyMonitorManager.addMonitor(INSTANCE);
   }
-  
-  
 
-  public Set<Dependency<Thread, Serializable>> getBlockedThreads(
-      Thread[] allThreads) {
+  public Set<Dependency<Thread, Serializable>> getBlockedThreads(Thread[] allThreads) {
     Set<Dependency<Thread, Serializable>> results = new HashSet<Dependency<Thread, Serializable>>();
 
     DLockService.dumpAllServices(); // for investigating bug #43496
-    
+
     Map<String, DLockService> services = DLockService.snapshotAllServices();
     for (Map.Entry<String, DLockService> entry : services.entrySet()) {
       String serviceName = entry.getKey();
@@ -56,8 +53,7 @@ public class DLockDependencyMonitor implements DependencyMonitor {
       for (Thread thread : allThreads) {
         Object lockName = blockedThreadLocal.get(thread);
         if (lockName != null) {
-          results.add(new Dependency<Thread, Serializable>(thread, new LockId(
-              serviceName, (Serializable) lockName)));
+          results.add(new Dependency<Thread, Serializable>(thread, new LockId(serviceName, (Serializable) lockName)));
         }
       }
     }
@@ -65,40 +61,38 @@ public class DLockDependencyMonitor implements DependencyMonitor {
     return results;
   }
 
-  public Set<Dependency<Serializable, Thread>> getHeldResources(
-      Thread[] allThreads) {
-    
+  public Set<Dependency<Serializable, Thread>> getHeldResources(Thread[] allThreads) {
+
     InternalDistributedSystem ds = InternalDistributedSystem.getAnyInstance();
-    if(ds == null) {
+    if (ds == null) {
       return Collections.emptySet();
     }
-    Set<Dependency<Serializable, Thread>> results= new HashSet<Dependency<Serializable, Thread>>();
-    
+    Set<Dependency<Serializable, Thread>> results = new HashSet<Dependency<Serializable, Thread>>();
+
     Map<String, DLockService> services = DLockService.snapshotAllServices();
-    for(Map.Entry<String, DLockService> entry : services.entrySet()) {
+    for (Map.Entry<String, DLockService> entry : services.entrySet()) {
       String serviceName = entry.getKey();
       DLockService service = entry.getValue();
       Map<Object, DLockToken> tokens = service.snapshotService();
-      for(Map.Entry<Object, DLockToken> tokenEntry : tokens.entrySet()) {
+      for (Map.Entry<Object, DLockToken> tokenEntry : tokens.entrySet()) {
         Object tokenName = tokenEntry.getKey();
         DLockToken token = tokenEntry.getValue();
-        synchronized(token) {
+        synchronized (token) {
           Thread holdingThread = token.getThread();
-          if(holdingThread != null) {
-            results.add(new Dependency(new LockId(serviceName,
-                (Serializable) tokenName), holdingThread));
+          if (holdingThread != null) {
+            results.add(new Dependency(new LockId(serviceName, (Serializable) tokenName), holdingThread));
           }
         }
       }
     }
-    
+
     return results;
   }
-  
+
   private static class LockId implements Serializable {
     private final String serviceName;
     private final Serializable tokenName;
-    
+
     public LockId(String serviceName, Serializable tokenName) {
       this.serviceName = serviceName;
       this.tokenName = tokenName;
@@ -108,10 +102,8 @@ public class DLockDependencyMonitor implements DependencyMonitor {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((serviceName == null) ? 0 : serviceName.hashCode());
-      result = prime * result
-          + ((tokenName == null) ? 0 : tokenName.hashCode());
+      result = prime * result + ((serviceName == null) ? 0 : serviceName.hashCode());
+      result = prime * result + ((tokenName == null) ? 0 : tokenName.hashCode());
       return result;
     }
 
@@ -139,7 +131,7 @@ public class DLockDependencyMonitor implements DependencyMonitor {
 
     @Override
     public String toString() {
-      return "DLock(" + serviceName +", " + tokenName + ")";
+      return "DLock(" + serviceName + ", " + tokenName + ")";
     }
   }
 

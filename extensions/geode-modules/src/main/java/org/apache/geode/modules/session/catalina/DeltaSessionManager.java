@@ -191,8 +191,7 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
   public void setMaxActiveSessions(int maxActiveSessions) {
     int oldMaxActiveSessions = this.maxActiveSessions;
     this.maxActiveSessions = maxActiveSessions;
-    support.firePropertyChange("maxActiveSessions", new Integer(oldMaxActiveSessions),
-        new Integer(this.maxActiveSessions));
+    support.firePropertyChange("maxActiveSessions", new Integer(oldMaxActiveSessions), new Integer(this.maxActiveSessions));
   }
 
   @Override
@@ -326,12 +325,8 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
      * active at the same time; the context name will contain an embedded
      * version number; something like /test###2.
      */
-    if (session != null &&
-        !session.getContextName().isEmpty() &&
-        !getContextName().equals(session.getContextName())) {
-      getLogger().info(this + ": Session " + id +
-          " rejected as container name and context do not match: " +
-          getContextName() + " != " + session.getContextName());
+    if (session != null && !session.getContextName().isEmpty() && !getContextName().equals(session.getContextName())) {
+      getLogger().info(this + ": Session " + id + " rejected as container name and context do not match: " + getContextName() + " != " + session.getContextName());
       session = null;
     }
 
@@ -341,8 +336,7 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
       }
     } else {
       if (getLogger().isDebugEnabled()) {
-        getLogger().debug(
-            this + ": Found session " + id + " in " + getSessionCache().getOperatingRegionName() + ": " + session);
+        getLogger().debug(this + ": Found session " + id + " in " + getSessionCache().getOperatingRegionName() + ": " + session);
       }
       // The session was previously stored. Set new to false.
       session.setNew(false);
@@ -363,13 +357,11 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
     // Retrieve the cache
     GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.getAnyInstance();
     if (cache == null) {
-      throw new IllegalStateException(
-          "No cache exists. Please configure either a PeerToPeerCacheLifecycleListener or ClientServerCacheLifecycleListener in the server.xml file.");
+      throw new IllegalStateException("No cache exists. Please configure either a PeerToPeerCacheLifecycleListener or ClientServerCacheLifecycleListener in the server.xml file.");
     }
 
     // Create the appropriate session cache
-    this.sessionCache = cache.isClient() ? new ClientServerSessionCache(this, cache) : new PeerToPeerSessionCache(this,
-        cache);
+    this.sessionCache = cache.isClient() ? new ClientServerSessionCache(this, cache) : new PeerToPeerSessionCache(this, cache);
 
     // Initialize the session cache
     this.sessionCache.initialize();
@@ -392,18 +384,15 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
     DeltaSessionInterface ds = (DeltaSessionInterface) session;
     if (ds.getExpired()) {
       if (getLogger().isDebugEnabled()) {
-        getLogger().debug(
-            this + ": Expired session " + session.getId() + " from " + getSessionCache().getOperatingRegionName());
+        getLogger().debug(this + ": Expired session " + session.getId() + " from " + getSessionCache().getOperatingRegionName());
       }
     } else {
       if (getLogger().isDebugEnabled()) {
-        getLogger().debug(
-            this + ": Destroying session " + session.getId() + " from " + getSessionCache().getOperatingRegionName());
+        getLogger().debug(this + ": Destroying session " + session.getId() + " from " + getSessionCache().getOperatingRegionName());
       }
       getSessionCache().destroySession(session.getId());
       if (getLogger().isDebugEnabled()) {
-        getLogger().debug(
-            this + ": Destroyed session " + session.getId() + " from " + getSessionCache().getOperatingRegionName());
+        getLogger().debug(this + ": Destroyed session " + session.getId() + " from " + getSessionCache().getOperatingRegionName());
       }
     }
   }
@@ -412,13 +401,11 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
   public void add(Session session) {
     //super.add(session);
     if (getLogger().isDebugEnabled()) {
-      getLogger().debug(
-          this + ": Storing session " + session.getId() + " into " + getSessionCache().getOperatingRegionName());
+      getLogger().debug(this + ": Storing session " + session.getId() + " into " + getSessionCache().getOperatingRegionName());
     }
     getSessionCache().putSession(session);
     if (getLogger().isDebugEnabled()) {
-      getLogger().debug(
-          this + ": Stored session " + session.getId() + " into " + getSessionCache().getOperatingRegionName());
+      getLogger().debug(this + ": Stored session " + session.getId() + " into " + getSessionCache().getOperatingRegionName());
     }
     getSessionCache().getStatistics().incSessionsCreated();
   }
@@ -622,9 +609,7 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
       try {
         int interval = ((Integer) event.getNewValue()).intValue();
         if (interval < RegionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL) {
-          getLogger().warn(
-              "The configured session timeout of " + interval + " minutes is invalid. Using the original value of " + event
-                  .getOldValue() + " minutes.");
+          getLogger().warn("The configured session timeout of " + interval + " minutes is invalid. Using the original value of " + event.getOldValue() + " minutes.");
           interval = ((Integer) event.getOldValue()).intValue();
           ;
         }
@@ -632,8 +617,7 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
         // is 0; otherwise it passes the value set in web.xml. If the interval
         // parameter equals the default, set the max inactive interval to the
         // default (no expiration); otherwise set it in seconds.
-        setMaxInactiveInterval(
-            interval == RegionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL ? RegionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL : interval * 60);
+        setMaxInactiveInterval(interval == RegionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL ? RegionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL : interval * 60);
       } catch (NumberFormatException e) {
         getLogger().error(sm.getString("standardManager.sessionTimeout", event.getNewValue().toString()));
       }
@@ -658,8 +642,7 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
     } else {
       regionName = "/" + getRegionName();
     }
-    Query query = querySvc.newQuery("select s.id from " + regionName +
-        " as s where s.contextName = '" + context.getPath() + "'");
+    Query query = querySvc.newQuery("select s.id from " + regionName + " as s where s.contextName = '" + context.getPath() + "'");
     getLogger().debug("Query: " + query.getQueryString());
 
     SelectResults results;
@@ -732,7 +715,8 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
     }
 
     // Write the number of active sessions, followed by the details
-    if (getLogger().isDebugEnabled()) getLogger().debug("Unloading " + list.size() + " sessions");
+    if (getLogger().isDebugEnabled())
+      getLogger().debug("Unloading " + list.size() + " sessions");
     try {
       oos.writeObject(new Integer(list.size()));
       for (DeltaSessionInterface session : list) {
@@ -740,8 +724,7 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
           StandardSession standardSession = (StandardSession) session;
           standardSession.passivate();
           standardSession.writeObjectData(oos);
-        }
-        else {
+        } else {
           //All DeltaSessionInterfaces as of Geode 1.0 should be based on StandardSession
           throw new IOException("Session should be of type StandardSession");
         }
@@ -777,21 +760,21 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
       }
     }
 
-//    // Expire all the sessions we just wrote
-//    if (getLogger().isDebugEnabled()) {
-//      getLogger().debug("Expiring " + list.size() + " persisted sessions");
-//    }
-//    Iterator<StandardSession> expires = list.iterator();
-//    while (expires.hasNext()) {
-//      StandardSession session = expires.next();
-//      try {
-//        session.expire(false);
-//      } catch (Throwable t) {
-////        ExceptionUtils.handleThrowable(t);
-//      } finally {
-//        session.recycle();
-//      }
-//    }
+    //    // Expire all the sessions we just wrote
+    //    if (getLogger().isDebugEnabled()) {
+    //      getLogger().debug("Expiring " + list.size() + " persisted sessions");
+    //    }
+    //    Iterator<StandardSession> expires = list.iterator();
+    //    while (expires.hasNext()) {
+    //      StandardSession session = expires.next();
+    //      try {
+    //        session.expire(false);
+    //      } catch (Throwable t) {
+    ////        ExceptionUtils.handleThrowable(t);
+    //      } finally {
+    //        session.recycle();
+    //      }
+    //    }
 
     if (getLogger().isDebugEnabled()) {
       getLogger().debug("Unloading complete");
@@ -951,16 +934,7 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
 
   @Override
   public String toString() {
-    return new StringBuilder().append(getClass().getSimpleName())
-        .append("[")
-        .append("container=")
-        .append(getTheContext())
-        .append("; regionName=")
-        .append(this.regionName)
-        .append("; regionAttributesId=")
-        .append(this.regionAttributesId)
-        .append("]")
-        .toString();
+    return new StringBuilder().append(getClass().getSimpleName()).append("[").append("container=").append(getTheContext()).append("; regionName=").append(this.regionName).append("; regionAttributesId=").append(this.regionAttributesId).append("]").toString();
   }
 
   protected String getContextName() {
@@ -969,10 +943,9 @@ abstract public class DeltaSessionManager extends ManagerBase implements Lifecyc
 
   public Context getTheContext() {
     if (getContainer() instanceof Context) {
-      return  (Context) getContainer();
+      return (Context) getContainer();
     } else {
-      getLogger().error("Unable to unload sessions - container is of type " +
-                        getContainer().getClass().getName() + " instead of StandardContext");
+      getLogger().error("Unable to unload sessions - container is of type " + getContainer().getClass().getName() + " instead of StandardContext");
       return null;
     }
   }

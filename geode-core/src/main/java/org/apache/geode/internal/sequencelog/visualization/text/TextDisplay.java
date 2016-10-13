@@ -38,45 +38,40 @@ public class TextDisplay {
    */
   public static void main(String[] args) throws IOException {
     File[] files;
-    if(args.length > 0) {
+    if (args.length > 0) {
       files = new File[args.length];
-      for(int i = 0; i < args.length; i++) {
+      for (int i = 0; i < args.length; i++) {
         files[i] = new File(args[i]);
       }
     } else {
-      files = new File[] {new File("states.graph")};
+      files = new File[] { new File("states.graph") };
     }
-    
-    for(File file: files) {
+
+    for (File file : files) {
       System.out.println("FILE: " + file);
       InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)));
       reader.addToGraphs(new GraphReaderCallback() {
-        
-        public void addEdge(long timestamp, GraphType graphType, String graphName,
-            String edgeName, String state, String source, String dest) {
+
+        public void addEdge(long timestamp, GraphType graphType, String graphName, String edgeName, String state, String source, String dest) {
           System.out.println(timestamp + ": (" + graphType + ", " + graphName + ", " + edgeName + ", " + state + ", " + source + ", " + dest + ")");
-          
+
         }
 
-        public void addEdgePattern(long timestamp, GraphType graphType,
-            Pattern graphNamePattern, String edgeName, String state,
-            String source, String dest) {
+        public void addEdgePattern(long timestamp, GraphType graphType, Pattern graphNamePattern, String edgeName, String state, String source, String dest) {
           System.out.println(timestamp + ": (" + graphType + ", " + graphNamePattern + ", " + edgeName + ", " + state + ", " + source + ", " + dest + ")");
         }
       }, new Filter() {
 
-        public boolean accept(GraphType graphType, String name,
-            String edgeName, String source, String dest) {
+        public boolean accept(GraphType graphType, String name, String edgeName, String source, String dest) {
           return true;
         }
 
-        public boolean acceptPattern(GraphType graphType, Pattern pattern,
-            String edgeName, String source, String dest) {
+        public boolean acceptPattern(GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
           return true;
         }
-        
+
       });
-      
+
     }
 
   }

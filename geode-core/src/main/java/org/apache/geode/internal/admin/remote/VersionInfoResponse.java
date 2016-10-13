@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -33,8 +32,7 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class VersionInfoResponse extends AdminResponse {
   // instance variables
   private String verInfo;
-  
-  
+
   /**
    * Returns a <code>VersionInfoResponse</code> that will be returned to the
    * specified recipient.
@@ -49,7 +47,7 @@ public final class VersionInfoResponse extends AdminResponse {
   public String getVersionInfo() {
     return this.verInfo;
   }
-  
+
   public int getDSFID() {
     return VERSION_INFO_RESPONSE;
   }
@@ -61,9 +59,8 @@ public final class VersionInfoResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
-    super.fromData(in);    
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
+    super.fromData(in);
     this.verInfo = DataSerializer.readString(in);
   }
 

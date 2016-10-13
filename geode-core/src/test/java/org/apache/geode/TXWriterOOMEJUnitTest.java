@@ -41,30 +41,32 @@ public class TXWriterOOMEJUnitTest extends TXWriterTestCase {
   @Test
   public void testAfterCommitFailedOnThrowOOM() throws Exception {
     installCacheListenerAndWriter();
-    
+
     // install TransactionWriter
-    ((CacheTransactionManager)this.txMgr).setWriter(new TransactionWriter() {
+    ((CacheTransactionManager) this.txMgr).setWriter(new TransactionWriter() {
       public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
         throw new OutOfMemoryError("this is expected!");
       }
-      public void close() {}
+
+      public void close() {
+      }
     });
-    
+
     installTransactionListener();
-    
+
     try {
       SystemFailureTestHook.setExpectedFailureClass(OutOfMemoryError.class);
-      
+
       this.txMgr.begin();
       this.region.create("key1", "value1");
       this.cbCount = 0;
       try {
         this.txMgr.commit();
         fail("Commit should have thrown OOME");
-      } catch(OutOfMemoryError expected) {
+      } catch (OutOfMemoryError expected) {
         // this is what we expect
       }
-      
+
       // no callbacks were invoked
       assertEquals(0, this.cbCount);
       assertEquals(0, this.failedCommits);

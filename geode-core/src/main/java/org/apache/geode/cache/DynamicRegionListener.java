@@ -49,7 +49,7 @@ public interface DynamicRegionListener {
    *
    * @param event A <code>RegionEvent</code> describing the event
    */
-  public void afterRegionCreate(RegionEvent<?,?> event);
+  public void afterRegionCreate(RegionEvent<?, ?> event);
 
   /**
    * Handles the 'before region destroyed' event of a dynamic region. This method
@@ -57,7 +57,7 @@ public interface DynamicRegionListener {
    *
    * @param event A <code>RegionEvent</code> describing the event
    */
-  public void beforeRegionDestroy(RegionEvent<?,?> event);
+  public void beforeRegionDestroy(RegionEvent<?, ?> event);
 
   /**
    * Handles the 'after region destroyed' event of a dynamic region. This method
@@ -65,5 +65,5 @@ public interface DynamicRegionListener {
    *
    * @param event A <code>RegionEvent</code> describing the event
    */
-  public void afterRegionDestroy(RegionEvent<?,?> event);
+  public void afterRegionDestroy(RegionEvent<?, ?> event);
 }

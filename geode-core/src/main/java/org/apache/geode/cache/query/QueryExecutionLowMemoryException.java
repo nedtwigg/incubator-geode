@@ -19,6 +19,7 @@ package org.apache.geode.cache.query;
 
 import org.apache.geode.cache.CacheRuntimeException;
 import org.apache.geode.cache.control.ResourceManager;
+
 /**
  * Thrown when the query is executing and the critical heap percentage is met.
  * @see ResourceManager#setCriticalHeapPercentage(float)
@@ -31,13 +32,13 @@ import org.apache.geode.cache.control.ResourceManager;
  * @since GemFire 7.0
  */
 public class QueryExecutionLowMemoryException extends CacheRuntimeException {
-  
+
   /**
    * Creates a new instance of <code>QueryExecutionLowMemoryException</code> without detail message.
    */
   public QueryExecutionLowMemoryException() {
   }
-  
+
   /**
    * Constructs an instance of <code>QueryExecutionLowMemoryException</code> with the specified detail message.
    * @param msg the detail message.
@@ -45,7 +46,7 @@ public class QueryExecutionLowMemoryException extends CacheRuntimeException {
   public QueryExecutionLowMemoryException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>QueryExecutionLowMemoryException</code> with the specified detail message
    * and cause.
@@ -55,7 +56,7 @@ public class QueryExecutionLowMemoryException extends CacheRuntimeException {
   public QueryExecutionLowMemoryException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>QueryExecutionLowMemoryException</code> with the specified cause.
    * @param cause the causal Throwable

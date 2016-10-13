@@ -35,7 +35,7 @@ import org.apache.geode.internal.Version;
  * This class contains the information needed to create an index It will
  * contain the callback data between <index></index> invocation
  */
-public class IndexCreationData implements DataSerializableFixedID{
+public class IndexCreationData implements DataSerializableFixedID {
 
   private String name = null;
   private IndexType indexType = null;
@@ -44,11 +44,11 @@ public class IndexCreationData implements DataSerializableFixedID{
   private String importStr = null;
   private PartitionedIndex partitionedIndex = null;
   private boolean loadEntries = false;
-  
+
   public IndexCreationData() {
-    
+
   }
-  
+
   public IndexCreationData(String name) {
     this.name = name;
   }
@@ -61,16 +61,14 @@ public class IndexCreationData implements DataSerializableFixedID{
     return this.indexType;
   }
 
-  public void setIndexData(IndexType type, String fromClause, String expression,
-      String importStr) {
+  public void setIndexData(IndexType type, String fromClause, String expression, String importStr) {
     this.indexType = type;
     this.fromClause = fromClause;
     this.expression = expression;
     this.importStr = importStr;
   }
 
-  public void setIndexData(IndexType type, String fromClause, String expression,
-      String importStr, boolean loadEntries) {
+  public void setIndexData(IndexType type, String fromClause, String expression, String importStr, boolean loadEntries) {
     this.indexType = type;
     this.fromClause = fromClause;
     this.expression = expression;
@@ -102,10 +100,10 @@ public class IndexCreationData implements DataSerializableFixedID{
     return this.name;
   }
 
-  public boolean loadEntries(){
+  public boolean loadEntries() {
     return this.loadEntries;
   }
-  
+
   @Override
   public Version[] getSerializationVersions() {
     return null;
@@ -127,18 +125,17 @@ public class IndexCreationData implements DataSerializableFixedID{
       out.writeByte(0);
     } else if (IndexType.HASH == indexType) {
       out.writeByte(1);
-    } else  {
+    } else {
       out.writeByte(2);
     }
 
-
-    if(this.importStr != null) {
+    if (this.importStr != null) {
       out.writeBoolean(true);
       out.writeUTF(this.importStr);
     } else {
       out.writeBoolean(false);
     }
-   }
+  }
 
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -146,7 +143,7 @@ public class IndexCreationData implements DataSerializableFixedID{
     this.expression = in.readUTF();
     this.fromClause = in.readUTF();
     this.loadEntries = in.readBoolean();
-    
+
     byte byteIndexType = in.readByte();
     if (0 == byteIndexType) {
       this.indexType = IndexType.PRIMARY_KEY;
@@ -157,7 +154,7 @@ public class IndexCreationData implements DataSerializableFixedID{
     }
 
     boolean isImportStr = in.readBoolean();
-    if(isImportStr) {
+    if (isImportStr) {
       this.importStr = in.readUTF();
     }
   }

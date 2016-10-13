@@ -50,7 +50,7 @@ public abstract class ProcessStats {
   public final Statistics getStatistics() {
     return this.stats;
   }
-  
+
   /**
    * Returns the size of this process (resident set on UNIX or working
    * set on Windows) in megabytes

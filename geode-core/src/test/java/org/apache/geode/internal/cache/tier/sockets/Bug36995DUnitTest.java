@@ -67,8 +67,7 @@ public class Bug36995DUnitTest extends JUnit4DistributedTestCase {
     server3 = host.getVM(2);
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     ds.disconnect();
     ds = getSystem(props);
@@ -77,60 +76,41 @@ public class Bug36995DUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  public static void createClientCache(String host, int port1, int port2, int port3)
-  {
+  public static void createClientCache(String host, int port1, int port2, int port3) {
     try {
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, "");
       new Bug36995DUnitTest().createCache(props);
-      PoolImpl p = (PoolImpl)PoolManager.createFactory()
-        .addServer(host, port1)
-        .addServer(host, port2)
-        .addServer(host, port3)
-        .setSubscriptionEnabled(true)
-        .setSubscriptionRedundancy(-1)
-        .setSubscriptionMessageTrackingTimeout(54321)
-        .setIdleTimeout(-1)
-        .setPingInterval(200)
-        .create("Bug36995UnitTestPool1");
+      PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1).addServer(host, port2).addServer(host, port3).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setSubscriptionMessageTrackingTimeout(54321).setIdleTimeout(-1).setPingInterval(200).create("Bug36995UnitTestPool1");
       AttributesFactory factory = new AttributesFactory();
       factory.setPoolName(p.getName());
       RegionAttributes attrs = factory.create();
       cache.createRegion(regionName, attrs);
       pool = p;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Test failed due to ", e);
     }
   }
 
-  public static void createClientCacheWithDefaultMessageTrackingTimeout(
-      String host, int port1, int port2, int port3)
-  {
+  public static void createClientCacheWithDefaultMessageTrackingTimeout(String host, int port1, int port2, int port3) {
     try {
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, "");
       new Bug36995DUnitTest().createCache(props);
-      PoolImpl p = (PoolImpl)PoolManager.createFactory()
-        .addServer(host, port1)
-        .addServer(host, port2)
-        .addServer(host, port3)
-        .create("Bug36995UnitTestPool2");
+      PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1).addServer(host, port2).addServer(host, port3).create("Bug36995UnitTestPool2");
       AttributesFactory factory = new AttributesFactory();
       factory.setPoolName(p.getName());
       RegionAttributes attrs = factory.create();
       cache.createRegion(regionName, attrs);
       pool = p;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Test failed due to ", e);
     }
   }
 
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     new Bug36995DUnitTest().createCache(new Properties());
     // no region is created on server 
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -148,8 +128,7 @@ public class Bug36995DUnitTest extends JUnit4DistributedTestCase {
     server3.invoke(() -> Bug36995DUnitTest.closeCache());
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();
@@ -160,31 +139,25 @@ public class Bug36995DUnitTest extends JUnit4DistributedTestCase {
    * Tests messageTrackingTimeout is set correctly to default or not if not specified
    */
   @Test
-  public void testBug36995_Default()
-  {
-    Integer port1 = ((Integer)server1.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    Integer port2 = ((Integer)server2.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    Integer port3 = ((Integer)server3.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    createClientCacheWithDefaultMessageTrackingTimeout(
-        NetworkUtils.getServerHostName(server1.getHost()), port1.intValue(), port2
-        .intValue(), port3.intValue());
-    assertEquals(PoolFactory.DEFAULT_SUBSCRIPTION_MESSAGE_TRACKING_TIMEOUT,
-                 pool.getSubscriptionMessageTrackingTimeout());
+  public void testBug36995_Default() {
+    Integer port1 = ((Integer) server1.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    Integer port2 = ((Integer) server2.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    Integer port3 = ((Integer) server3.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    createClientCacheWithDefaultMessageTrackingTimeout(NetworkUtils.getServerHostName(server1.getHost()), port1.intValue(), port2.intValue(), port3.intValue());
+    assertEquals(PoolFactory.DEFAULT_SUBSCRIPTION_MESSAGE_TRACKING_TIMEOUT, pool.getSubscriptionMessageTrackingTimeout());
   }
 
   /**
    * Tests messageTrackingTimeout is set correctly as pwr user specified
    */
   @Test
-  public void testBug36995_UserSpecified()
-  {
+  public void testBug36995_UserSpecified() {
     //work around GEODE-507
     IgnoredException.addIgnoredException("Connection reset");
-    Integer port1 = ((Integer)server1.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    Integer port2 = ((Integer)server2.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    Integer port3 = ((Integer)server3.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    createClientCache(NetworkUtils.getServerHostName(server1.getHost()),
-        port1.intValue(), port2.intValue(), port3.intValue());
+    Integer port1 = ((Integer) server1.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    Integer port2 = ((Integer) server2.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    Integer port3 = ((Integer) server3.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1.intValue(), port2.intValue(), port3.intValue());
     assertEquals(54321, pool.getSubscriptionMessageTrackingTimeout());
   }
 
@@ -192,40 +165,36 @@ public class Bug36995DUnitTest extends JUnit4DistributedTestCase {
    * BugTest for 36526 : 
    */
   @Test
-  public void testBug36526()
-  {
-    Integer port1 = ((Integer)server1.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    Integer port2 = ((Integer)server2.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    Integer port3 = ((Integer)server3.invoke(() -> Bug36995DUnitTest.createServerCache()));
-    createClientCache(NetworkUtils.getServerHostName(server1.getHost()),
-        port1.intValue(), port2.intValue(), port3.intValue());
+  public void testBug36526() {
+    Integer port1 = ((Integer) server1.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    Integer port2 = ((Integer) server2.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    Integer port3 = ((Integer) server3.invoke(() -> Bug36995DUnitTest.createServerCache()));
+    createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1.intValue(), port2.intValue(), port3.intValue());
     verifyDeadAndLiveServers(0, 3);
     server2.invoke(() -> Bug36995DUnitTest.stopServer());
     verifyDeadAndLiveServers(1, 2);
   }
 
-  public static void stopServer()
-  {
+  public static void stopServer() {
     try {
       Iterator iter = cache.getCacheServers().iterator();
       if (iter.hasNext()) {
-        CacheServer server = (CacheServer)iter.next();
+        CacheServer server = (CacheServer) iter.next();
         server.stop();
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("failed while stopServer()", e);
     }
   }
 
-  public static void verifyDeadAndLiveServers(final int expectedDeadServers,
-      final int expectedLiveServers)
-  {
+  public static void verifyDeadAndLiveServers(final int expectedDeadServers, final int expectedLiveServers) {
     WaitCriterion wc = new WaitCriterion() {
       String excuse;
+
       public boolean done() {
         return pool.getConnectedServerCount() == expectedLiveServers;
       }
+
       public String description() {
         return excuse;
       }

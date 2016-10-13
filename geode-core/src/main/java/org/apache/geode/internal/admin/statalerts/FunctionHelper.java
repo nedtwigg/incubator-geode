@@ -68,16 +68,16 @@ public class FunctionHelper {
    */
   public static String getFunctionName(short functionId) {
     switch (functionId) {
-      case FUN_AVG:
-        return STR_AVG;
-      case FUN_MIN:
-        return STR_MIN;
-      case FUN_MAX:
-        return STR_MAX;
-      case FUN_SUM:
-        return STR_ADD;
-      default:
-        return null;
+    case FUN_AVG:
+      return STR_AVG;
+    case FUN_MIN:
+      return STR_MIN;
+    case FUN_MAX:
+      return STR_MAX;
+    case FUN_SUM:
+      return STR_ADD;
+    default:
+      return null;
     }
   }
 
@@ -118,20 +118,20 @@ public class FunctionHelper {
   public static Number[] applyFunction(short functorId, Number[] vals) {
     Number[] res = new Number[1];
     switch (functorId) {
-      case FUN_SUM:
-        res[0] = SUM(vals);
-        return res;
-      case FUN_AVG:
-        res[0] = AVG(vals);
-        return res;
-      case FUN_MIN:
-        res[0] = MIN(vals);
-        return res;
-      case FUN_MAX:
-        res[0] = MAX(vals);
-        return res;
-      default:
-        return null;
+    case FUN_SUM:
+      res[0] = SUM(vals);
+      return res;
+    case FUN_AVG:
+      res[0] = AVG(vals);
+      return res;
+    case FUN_MIN:
+      res[0] = MIN(vals);
+      return res;
+    case FUN_MAX:
+      res[0] = MAX(vals);
+      return res;
+    default:
+      return null;
     }
   }
 
@@ -148,14 +148,12 @@ public class FunctionHelper {
         sum = sum + vals[i].doubleValue();
       }
       return Double.valueOf(sum);
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -175,14 +173,12 @@ public class FunctionHelper {
   public static final Number AVG(Number[] vals) {
     try {
       return Double.valueOf(SUM(vals).doubleValue() / vals.length);
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable ex) {
+    } catch (Throwable ex) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -202,17 +198,15 @@ public class FunctionHelper {
   public static final Number MIN(Number[] vals) {
     try {
       Collection col = Arrays.asList(vals);
-      Number min = (Number)Collections.max(col);
+      Number min = (Number) Collections.max(col);
 
       return min;
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -232,17 +226,15 @@ public class FunctionHelper {
   public static final Number MAX(Number[] vals) {
     try {
       Collection col = Arrays.asList(vals);
-      Number max = (Number)Collections.max(col);
+      Number max = (Number) Collections.max(col);
 
       return max;
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading

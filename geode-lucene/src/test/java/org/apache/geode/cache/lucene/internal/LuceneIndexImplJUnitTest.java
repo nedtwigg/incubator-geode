@@ -41,25 +41,25 @@ public class LuceneIndexImplJUnitTest {
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
-  
+
   @Before
   public void createLuceneIndex() {
     cache = Fakes.cache();
     index = new LuceneIndexForPartitionedRegion(INDEX, REGION, cache);
   }
-  
+
   @Test
   public void waitUnitFlushedWithMissingAEQThrowsIllegalArgument() throws Exception {
     thrown.expect(IllegalArgumentException.class);
     index.waitUntilFlushed(MAX_WAIT);
   }
-  
+
   @Test
   public void waitUnitFlushedWaitsForFlush() throws Exception {
     final String expectedIndexName = LuceneServiceImpl.getUniqueIndexName(INDEX, REGION);
     final AsyncEventQueue queue = mock(AsyncEventQueue.class);
     when(cache.getAsyncEventQueue(eq(expectedIndexName))).thenReturn(queue);
-    
+
     AtomicInteger callCount = new AtomicInteger();
     when(queue.size()).thenAnswer(invocation -> {
       if (callCount.get() == 0) {

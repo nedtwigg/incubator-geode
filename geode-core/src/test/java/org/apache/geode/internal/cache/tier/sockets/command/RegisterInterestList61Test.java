@@ -50,7 +50,6 @@ public class RegisterInterestList61Test {
   private static final String KEY = "key1";
   private static final byte[] DURABLE = new byte[8];
 
-
   @Mock
   private SecurityService securityService;
   @Mock
@@ -85,7 +84,6 @@ public class RegisterInterestList61Test {
   public void setUp() throws Exception {
     this.registerInterestList61 = new RegisterInterestList61();
     MockitoAnnotations.initMocks(this);
-
 
     when(this.authzRequest.registerInterestListAuthorize(eq(REGION_NAME), any(), any())).thenReturn(this.registerInterestOperationContext);
 
@@ -161,7 +159,7 @@ public class RegisterInterestList61Test {
 
     this.registerInterestList61.cmdExecute(this.message, this.serverConnection, 0);
 
-    verify(this.authzRequest).registerInterestListAuthorize(eq(REGION_NAME),any(), any());
+    verify(this.authzRequest).registerInterestListAuthorize(eq(REGION_NAME), any(), any());
     verify(this.chunkedResponseMessage).sendChunk(this.serverConnection);
   }
 

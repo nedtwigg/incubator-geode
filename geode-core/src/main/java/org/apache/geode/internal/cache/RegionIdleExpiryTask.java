@@ -23,7 +23,7 @@ import org.apache.geode.cache.*;
  *
  */
 class RegionIdleExpiryTask extends RegionExpiryTask {
-  
+
   /** Creates a new instance of RegionIdleExpiryTask */
   RegionIdleExpiryTask(LocalRegion reg) {
     super(reg);
@@ -39,27 +39,27 @@ class RegionIdleExpiryTask extends RegionExpiryTask {
     // if this is an invalidate action and region has already been invalidated,
     // then don't expire again until the full timeout from now.
     ExpirationAction action = getAction();
-    if (action == ExpirationAction.INVALIDATE ||
-        action == ExpirationAction.LOCAL_INVALIDATE) {
+    if (action == ExpirationAction.INVALIDATE || action == ExpirationAction.LOCAL_INVALIDATE) {
       if (getLocalRegion().regionInvalid) {
         int timeout = getIdleAttributes().getTimeout();
-        if (timeout == 0) return 0L;
+        if (timeout == 0)
+          return 0L;
         if (!getLocalRegion().EXPIRY_UNITS_MS) {
           timeout *= 1000;
         }
         // Expiration should always use the DSClock instead of the System clock.
-        return  timeout + getLocalRegion().cacheTimeMillis();
+        return timeout + getLocalRegion().cacheTimeMillis();
       }
     }
     // otherwise, expire at timeout plus last accessed time
     return getIdleExpirationTime();
   }
-  
+
   @Override
   protected ExpirationAction getAction() {
     return getIdleAttributes().getAction();
   }
-  
+
   @Override
   protected final void addExpiryTask() {
     getLocalRegion().addIdleExpiryTask(this);

@@ -37,14 +37,13 @@ package org.apache.geode.cache;
  * @see RegionEvent
  * @since GemFire 3.0
  */
-public interface EntryEvent<K,V> extends CacheEvent<K,V> {
+public interface EntryEvent<K, V> extends CacheEvent<K, V> {
 
   /** Returns the key.
    * @return the key
    */
   public K getKey();
-  
-  
+
   /**
    * Returns the value in the cache prior to this event.
    * When passed to an event handler after an event occurs, this value
@@ -60,7 +59,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    * @throws IllegalStateException if off-heap and called after the method that was passed this EntryEvent returns.
    */
   public V getOldValue();
-  
+
   /**
    * Returns the serialized form of the value in the cache before this event.
    *
@@ -78,7 +77,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    * @throws IllegalStateException if off-heap and called after the method that was passed this EntryEvent returns.
    */
   public V getNewValue();
-  
+
   /**
    * Returns the serialized form of the value in the cache after this event.
    *
@@ -90,7 +89,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
   public SerializedCacheValue<V> getSerializedNewValue();
 
   // Flag query methods
-    
+
   /** Returns true if this event resulted from a loader running in this cache.
    * Note that this will be true even if the local loader called <code>netSearch</code>.
    *
@@ -103,7 +102,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    */
   @Deprecated
   public boolean isLocalLoad();
-  
+
   /** Returns true if this event resulted from a loader running that was remote
    * from the cache that requested it, i.e., a netLoad. Note that the cache
    * that requested the netLoad may not be this cache in which case
@@ -113,14 +112,14 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    */
   @Deprecated
   public boolean isNetLoad();
-  
+
   /** Returns true if this event resulted from a loader.
    * @return true if isLocalLoad or isNetLoad
    * @deprecated as of GemFire 5.0, use {@link Operation#isLoad} instead.
    */
   @Deprecated
   public boolean isLoad();
-  
+
   /** Returns true if this event resulted from a <code>netSearch</code>. If the <code>netSearch</code>
    * was invoked by a loader however, this will return false and <code>isLocalLoad()</code>
    * or <code>isNetLoad()</code> will return true instead.
@@ -130,6 +129,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    */
   @Deprecated
   public boolean isNetSearch();
+
   /**
    * Gets the TransactionId for this EntryEvent.
    * @return the ID of the transaction that performed the operation that
@@ -137,7 +137,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    * @since GemFire 4.0
    */
   public TransactionId getTransactionId();
-  
+
   /**
    * Returns true if this event originated on a client.
    * 
@@ -147,6 +147,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    */
   @Deprecated
   public boolean isBridgeEvent();
+
   /**
    * Returns true if this event originated on a client.
    * 
@@ -154,6 +155,7 @@ public interface EntryEvent<K,V> extends CacheEvent<K,V> {
    * @return true if this event originated on a client.
    */
   public boolean hasClientOrigin();
+
   /**
    * Returns <code>true</code> if the old value is "available".
    * Not available means that an old value existed but it could not be obtained

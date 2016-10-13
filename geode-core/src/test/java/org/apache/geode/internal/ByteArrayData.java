@@ -42,11 +42,11 @@ public class ByteArrayData {
   public int size() {
     return this.baos.size();
   }
-  
+
   public boolean isEmpty() {
     return this.baos.size() == 0;
   }
-  
+
   /**
    * Returns a <code>DataOutput</code> to write to
    */

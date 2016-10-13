@@ -258,6 +258,7 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
               cache.getLogger().fine("regionQueue.size()::" + sz);
               return sz == 0 || !proxy.isConnected();
             }
+
             @Override
             public String description() {
               return "regionQueue not empty with size " + regionQueue.size() + " for proxy " + proxy;
@@ -309,7 +310,7 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
     createCache(props);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[]{PORT1, PORT2}, true, -1, 2, null);
+    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[] { PORT1, PORT2 }, true, -1, 2, null);
     if (isListenerPresent.booleanValue() == true) {
       CacheListener clientListener = new HAClientListener();
       factory.setCacheListener(clientListener);
@@ -344,8 +345,7 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
       waitForCriterion(ev, 30 * 1000, 200, true);
 
       assertNotNull(pool.getPrimary());
-      assertTrue("backups=" + pool.getRedundants() + " expected=" + 1,
-              pool.getRedundants().size() >= 1);
+      assertTrue("backups=" + pool.getRedundants() + " expected=" + 1, pool.getRedundants().size() >= 1);
       assertEquals(PORT1, pool.getPrimaryPort());
     }
 
@@ -366,7 +366,7 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
 
     // Create CQ Attributes.
     CqAttributesFactory cqf = new CqAttributesFactory();
-    CqListener[] cqListeners = {new CqQueryTestListener(getLogWriter())};
+    CqListener[] cqListeners = { new CqQueryTestListener(getLogWriter()) };
     cqf.initCqListeners(cqListeners);
     CqAttributes cqa = cqf.create();
 

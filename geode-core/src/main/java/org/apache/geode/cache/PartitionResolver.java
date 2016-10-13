@@ -64,7 +64,7 @@ package org.apache.geode.cache;
  * 
  * @since GemFire 6.0
  */
-public interface PartitionResolver<K,V> extends CacheCallback {
+public interface PartitionResolver<K, V> extends CacheCallback {
 
   /**
    * @param opDetails
@@ -76,7 +76,7 @@ public interface PartitionResolver<K,V> extends CacheCallback {
    * @return object associated with entry operation which allows the Partitioned
    *         Region to store associated data together
    */
-  public Object getRoutingObject(EntryOperation<K,V> opDetails);
+  public Object getRoutingObject(EntryOperation<K, V> opDetails);
 
   /**
    * Returns the name of the PartitionResolver

@@ -30,20 +30,18 @@ import org.slf4j.LoggerFactory;
  */
 public class ImmediateSessionAttributes extends AbstractSessionAttributes {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ImmediateSessionAttributes.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(ImmediateSessionAttributes.class.getName());
 
   /**
    * Register ourselves for de-serialization
    */
   static {
-    Instantiator.register(
-        new Instantiator(ImmediateSessionAttributes.class, 347) {
-          @Override
-          public DataSerializable newInstance() {
-            return new ImmediateSessionAttributes();
-          }
-        });
+    Instantiator.register(new Instantiator(ImmediateSessionAttributes.class, 347) {
+      @Override
+      public DataSerializable newInstance() {
+        return new ImmediateSessionAttributes();
+      }
+    });
   }
 
   /**

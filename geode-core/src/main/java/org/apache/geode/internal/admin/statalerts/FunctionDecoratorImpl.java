@@ -110,8 +110,7 @@ public final class FunctionDecoratorImpl extends BaseDecoratorImpl {
 
   @Override
   public StatAlertDefinition getDecorator(String decoratorID) {
-    return ID.equalsIgnoreCase(decoratorID) ? this : super
-        .getDecorator(decoratorID);
+    return ID.equalsIgnoreCase(decoratorID) ? this : super.getDecorator(decoratorID);
   }
 
   @Override
@@ -121,8 +120,7 @@ public final class FunctionDecoratorImpl extends BaseDecoratorImpl {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.functorId = DataSerializer.readPrimitiveShort(in);
   }

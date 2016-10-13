@@ -27,8 +27,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class ConcurrentAsyncEventQueueOffHeapDUnitTest extends
-    ConcurrentAsyncEventQueueDUnitTest {
+public class ConcurrentAsyncEventQueueOffHeapDUnitTest extends ConcurrentAsyncEventQueueDUnitTest {
 
   public ConcurrentAsyncEventQueueOffHeapDUnitTest() {
     super();

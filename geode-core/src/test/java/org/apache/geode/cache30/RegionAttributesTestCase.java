@@ -43,15 +43,14 @@ import java.util.Properties;
  *
  * @since GemFire 3.0
  */
-public abstract class RegionAttributesTestCase
-  extends RegionTestCase {
+public abstract class RegionAttributesTestCase extends RegionTestCase {
 
   public RegionAttributesTestCase() {
     super();
   }
 
   protected static class TestExpiry implements CustomExpiry, Declarable {
-      final Exception created = new Exception();
+    final Exception created = new Exception();
 
     public String toString() {
       final StringBuffer sb = new StringBuffer();
@@ -59,7 +58,7 @@ public abstract class RegionAttributesTestCase
       OutputStream os = new OutputStream() {
 
         public void write(int b) throws IOException {
-          sb.append((char)b);
+          sb.append((char) b);
         }
       };
       PrintStream ps = new PrintStream(os);
@@ -92,24 +91,22 @@ public abstract class RegionAttributesTestCase
     fac.setStatisticsEnabled(true);
     Region region = createRegion(name, fac.create());
 
-    CacheListener listener = new TestCacheListener() { };
+    CacheListener listener = new TestCacheListener() {
+    };
     CacheLoader loader = new TestCacheLoader() {
-        public Object load2(LoaderHelper helper) {
-          fail("Why was I invoked?");
-          return null;
-        }
-      };
-    CacheWriter writer = new TestCacheWriter() { };
+      public Object load2(LoaderHelper helper) {
+        fail("Why was I invoked?");
+        return null;
+      }
+    };
+    CacheWriter writer = new TestCacheWriter() {
+    };
     CustomExpiry customEntryIdle = new TestExpiry();
     CustomExpiry customTtl = new TestExpiry();
-    ExpirationAttributes entryIdle =
-      new ExpirationAttributes(5, ExpirationAction.DESTROY);
-    ExpirationAttributes entryTTL =
-      new ExpirationAttributes(6, ExpirationAction.INVALIDATE);
-    ExpirationAttributes regionIdle =
-      new ExpirationAttributes(7, ExpirationAction.DESTROY);
-    ExpirationAttributes regionTTL =
-      new ExpirationAttributes(8, ExpirationAction.INVALIDATE);
+    ExpirationAttributes entryIdle = new ExpirationAttributes(5, ExpirationAction.DESTROY);
+    ExpirationAttributes entryTTL = new ExpirationAttributes(6, ExpirationAction.INVALIDATE);
+    ExpirationAttributes regionIdle = new ExpirationAttributes(7, ExpirationAction.DESTROY);
+    ExpirationAttributes regionTTL = new ExpirationAttributes(8, ExpirationAction.INVALIDATE);
 
     AttributesMutator mutator = region.getAttributesMutator();
     assertEquals(region, mutator.getRegion());
@@ -136,24 +133,22 @@ public abstract class RegionAttributesTestCase
     assertEquals(customEntryIdle, attrs.getCustomEntryIdleTimeout());
     assertEquals(customTtl, attrs.getCustomEntryTimeToLive());
 
-    CacheListener listener2 = new TestCacheListener() { };
+    CacheListener listener2 = new TestCacheListener() {
+    };
     CacheLoader loader2 = new TestCacheLoader() {
-        public Object load2(LoaderHelper helper) {
-          fail("Why was I invoked?");
-          return null;
-        }
-      };
-    CacheWriter writer2 = new TestCacheWriter() { };
+      public Object load2(LoaderHelper helper) {
+        fail("Why was I invoked?");
+        return null;
+      }
+    };
+    CacheWriter writer2 = new TestCacheWriter() {
+    };
     CustomExpiry customEntryIdle2 = new TestExpiry();
     CustomExpiry customTtl2 = new TestExpiry();
-    ExpirationAttributes entryIdle2 =
-      new ExpirationAttributes(5, ExpirationAction.DESTROY);
-    ExpirationAttributes entryTTL2 =
-      new ExpirationAttributes(6, ExpirationAction.INVALIDATE);
-    ExpirationAttributes regionIdle2 =
-      new ExpirationAttributes(7, ExpirationAction.DESTROY);
-    ExpirationAttributes regionTTL2 =
-      new ExpirationAttributes(8, ExpirationAction.INVALIDATE);
+    ExpirationAttributes entryIdle2 = new ExpirationAttributes(5, ExpirationAction.DESTROY);
+    ExpirationAttributes entryTTL2 = new ExpirationAttributes(6, ExpirationAction.INVALIDATE);
+    ExpirationAttributes regionIdle2 = new ExpirationAttributes(7, ExpirationAction.DESTROY);
+    ExpirationAttributes regionTTL2 = new ExpirationAttributes(8, ExpirationAction.INVALIDATE);
 
     assertEquals(listener, mutator.setCacheListener(listener2));
     assertEquals(loader, mutator.setCacheLoader(loader2));
@@ -235,7 +230,7 @@ public abstract class RegionAttributesTestCase
     // Exception if stats not enabled
     try {
       mutator.setRegionTimeToLive(new ExpirationAttributes(1, ExpirationAction.DESTROY));
-     fail("Should have thrown an IllegalStateException");
+      fail("Should have thrown an IllegalStateException");
 
     } catch (IllegalStateException ex) {
       //pass
@@ -257,21 +252,18 @@ public abstract class RegionAttributesTestCase
     assertEquals(60, region.getAttributes().getConcurrencyLevel());
     assertTrue("expected concurrencyChecksEnabled to be true", region.getAttributes().getConcurrencyChecksEnabled());
   }
-  
-//  public void testCCEWithDNoAck() throws CacheException {
-//    AttributesFactory factory = new AttributesFactory();
-//    factory.setConcurrencyChecksEnabled(true);
-//    factory.setScope(Scope.DISTRIBUTED_NO_ACK);
-//    boolean caught = false;
-//    try {
-//      factory.create();
-//    } catch (IllegalStateException expected) {
-//      caught = true;
-//    }
-//    assertTrue("expected an IllegalStateException", caught);
-//  }
-  
-  
-  
+
+  //  public void testCCEWithDNoAck() throws CacheException {
+  //    AttributesFactory factory = new AttributesFactory();
+  //    factory.setConcurrencyChecksEnabled(true);
+  //    factory.setScope(Scope.DISTRIBUTED_NO_ACK);
+  //    boolean caught = false;
+  //    try {
+  //      factory.create();
+  //    } catch (IllegalStateException expected) {
+  //      caught = true;
+  //    }
+  //    assertTrue("expected an IllegalStateException", caught);
+  //  }
 
 }

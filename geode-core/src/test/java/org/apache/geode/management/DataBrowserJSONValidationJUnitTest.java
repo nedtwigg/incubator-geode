@@ -110,8 +110,7 @@ public class DataBrowserJSONValidationJUnitTest {
   private void queryData(String query, String members, int limit) {
 
     try {
-      Object result = QueryDataFunction.queryData(query, members, limit, false, queryResultSetLimit,
-          queryCollectionsDepth);
+      Object result = QueryDataFunction.queryData(query, members, limit, false, queryResultSetLimit, queryCollectionsDepth);
       String queryResult = (String) result;
 
       System.out.println("Query Result :" + queryResult.toString());
@@ -303,7 +302,7 @@ public class DataBrowserJSONValidationJUnitTest {
     queryData(QUERY_1, "", 0);
 
   }
-  
+
   @Test
   public void testNestedPDXObject() {
 
@@ -318,7 +317,7 @@ public class DataBrowserJSONValidationJUnitTest {
     queryData(QUERY_1, "", 0);
 
   }
-  
+
   @Test
   public void testArrayWithNullValues() {
 
@@ -330,7 +329,7 @@ public class DataBrowserJSONValidationJUnitTest {
     queryData(QUERY_1, "", 0);
 
   }
-  
+
   @Test
   public void testWithSqlDate() {
 

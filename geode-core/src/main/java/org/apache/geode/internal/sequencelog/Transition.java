@@ -28,10 +28,8 @@ public class Transition {
   private final Object source;
   private final Object dest;
   private final Object state;
-  
 
-  public Transition(GraphType type, Object graphName, Object edgeName, Object state, Object source,
-      Object dest) {
+  public Transition(GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
     this.timestamp = System.currentTimeMillis();
     this.type = type;
     this.graphName = graphName;
@@ -40,9 +38,8 @@ public class Transition {
     this.source = source;
     this.dest = dest;
   }
-  
-  public Transition(long timestamp, GraphType type, Object graphName, Object edgeName, Object state, Object source,
-      Object dest) {
+
+  public Transition(long timestamp, GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
     this.timestamp = timestamp;
     this.type = type;
     this.graphName = graphName;
@@ -52,30 +49,25 @@ public class Transition {
     this.dest = dest;
   }
 
-
   public long getTimestamp() {
     return timestamp;
   }
-
 
   public GraphType getType() {
     return type;
   }
 
-
   public Object getGraphName() {
     return graphName;
   }
 
-
   public Object getEdgeName() {
     return edgeName;
   }
-  
+
   public Object getState() {
     return state;
   }
-
 
   public Object getSource() {
     return source;

@@ -73,6 +73,7 @@ public class LoginHandlerInterceptorJUnitTest {
       public boolean hasMoreElements() {
         return iterator.hasNext();
       }
+
       public T nextElement() {
         return iterator.next();
       }
@@ -89,14 +90,16 @@ public class LoginHandlerInterceptorJUnitTest {
 
     final HttpServletRequest mockHttpRequest = mockContext.mock(HttpServletRequest.class, "testPreHandleAfterCompletion.HttpServletRequest");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockHttpRequest).getParameterNames();
-      will(returnValue(enumeration(requestParameters.keySet().iterator())));
-      oneOf(mockHttpRequest).getHeaderNames();
-      will(returnValue(enumeration(requestHeaders.keySet().iterator())));
-      oneOf(mockHttpRequest).getParameter(with(equal(createEnvironmentVariable("variable"))));
-      will(returnValue(requestParameters.get(createEnvironmentVariable("variable"))));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockHttpRequest).getParameterNames();
+        will(returnValue(enumeration(requestParameters.keySet().iterator())));
+        oneOf(mockHttpRequest).getHeaderNames();
+        will(returnValue(enumeration(requestHeaders.keySet().iterator())));
+        oneOf(mockHttpRequest).getParameter(with(equal(createEnvironmentVariable("variable"))));
+        will(returnValue(requestParameters.get(createEnvironmentVariable("variable"))));
+      }
+    });
 
     LoginHandlerInterceptor handlerInterceptor = new LoginHandlerInterceptor();
 
@@ -147,16 +150,18 @@ public class LoginHandlerInterceptorJUnitTest {
 
       mockHttpRequestOne = mockContext.mock(HttpServletRequest.class, "testHandlerInterceptorThreadSafety.HttpServletRequest.1");
 
-      mockContext.checking(new Expectations() {{
-        oneOf(mockHttpRequestOne).getParameterNames();
-        will(returnValue(enumeration(requestParametersOne.keySet().iterator())));
-        oneOf(mockHttpRequestOne).getHeaderNames();
-        will(returnValue(enumeration(requestHeaders.keySet().iterator())));
-        oneOf(mockHttpRequestOne).getParameter(with(equal(createEnvironmentVariable("STAGE"))));
-        will(returnValue(requestParametersOne.get(createEnvironmentVariable("STAGE"))));
-        oneOf(mockHttpRequestOne).getParameter(with(equal(createEnvironmentVariable("GEMFIRE"))));
-        will(returnValue(requestParametersOne.get(createEnvironmentVariable("GEMFIRE"))));
-      }});
+      mockContext.checking(new Expectations() {
+        {
+          oneOf(mockHttpRequestOne).getParameterNames();
+          will(returnValue(enumeration(requestParametersOne.keySet().iterator())));
+          oneOf(mockHttpRequestOne).getHeaderNames();
+          will(returnValue(enumeration(requestHeaders.keySet().iterator())));
+          oneOf(mockHttpRequestOne).getParameter(with(equal(createEnvironmentVariable("STAGE"))));
+          will(returnValue(requestParametersOne.get(createEnvironmentVariable("STAGE"))));
+          oneOf(mockHttpRequestOne).getParameter(with(equal(createEnvironmentVariable("GEMFIRE"))));
+          will(returnValue(requestParametersOne.get(createEnvironmentVariable("GEMFIRE"))));
+        }
+      });
 
       mockHttpRequestTwo = mockContext.mock(HttpServletRequest.class, "testHandlerInterceptorThreadSafety.HttpServletRequest.2");
 
@@ -166,18 +171,20 @@ public class LoginHandlerInterceptorJUnitTest {
       requestParametersTwo.put(createEnvironmentVariable("HOST"), "localhost");
       requestParametersTwo.put(createEnvironmentVariable("GEMFIRE"), "/path/to/gemfire/75");
 
-      mockContext.checking(new Expectations() {{
-        oneOf(mockHttpRequestTwo).getParameterNames();
-        will(returnValue(enumeration(requestParametersTwo.keySet().iterator())));
-        oneOf(mockHttpRequestTwo).getHeaderNames();
-        will(returnValue(enumeration(requestHeaders.keySet().iterator())));
-        oneOf(mockHttpRequestTwo).getParameter(with(equal(createEnvironmentVariable("HOST"))));
-        will(returnValue(requestParametersTwo.get(createEnvironmentVariable("HOST"))));
-        oneOf(mockHttpRequestTwo).getParameter(with(equal(createEnvironmentVariable("GEMFIRE"))));
-        will(returnValue(requestParametersTwo.get(createEnvironmentVariable("GEMFIRE"))));
-      }});
+      mockContext.checking(new Expectations() {
+        {
+          oneOf(mockHttpRequestTwo).getParameterNames();
+          will(returnValue(enumeration(requestParametersTwo.keySet().iterator())));
+          oneOf(mockHttpRequestTwo).getHeaderNames();
+          will(returnValue(enumeration(requestHeaders.keySet().iterator())));
+          oneOf(mockHttpRequestTwo).getParameter(with(equal(createEnvironmentVariable("HOST"))));
+          will(returnValue(requestParametersTwo.get(createEnvironmentVariable("HOST"))));
+          oneOf(mockHttpRequestTwo).getParameter(with(equal(createEnvironmentVariable("GEMFIRE"))));
+          will(returnValue(requestParametersTwo.get(createEnvironmentVariable("GEMFIRE"))));
+        }
+      });
 
-      handlerInterceptor =  new LoginHandlerInterceptor();
+      handlerInterceptor = new LoginHandlerInterceptor();
     }
 
     public void thread1() throws Exception {

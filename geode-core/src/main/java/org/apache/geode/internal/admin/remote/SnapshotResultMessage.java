@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -26,13 +25,11 @@ import org.apache.geode.cache.*;
 import java.io.*;
 //import java.util.*;
 
-public final class SnapshotResultMessage extends PooledDistributionMessage
-    implements AdminMessageType {
+public final class SnapshotResultMessage extends PooledDistributionMessage implements AdminMessageType {
   private CacheSnapshot results;
   private int snapshotId;
-  
-  public static SnapshotResultMessage create(Region region, int snapshotId)
-      throws CacheException {
+
+  public static SnapshotResultMessage create(Region region, int snapshotId) throws CacheException {
     SnapshotResultMessage m = new SnapshotResultMessage();
     m.results = new RemoteRegionSnapshot(region);
     m.snapshotId = snapshotId;
@@ -40,9 +37,9 @@ public final class SnapshotResultMessage extends PooledDistributionMessage
   }
 
   @Override
-  public void process(DistributionManager dm){
+  public void process(DistributionManager dm) {
     RemoteGfManagerAgent agent = dm.getAgent();
-    if (agent != null){
+    if (agent != null) {
       agent.enqueueSnapshotResults(this);
     }
   }
@@ -74,12 +71,10 @@ public final class SnapshotResultMessage extends PooledDistributionMessage
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.results = (CacheSnapshot)DataSerializer.readObject(in);
+    this.results = (CacheSnapshot) DataSerializer.readObject(in);
     this.snapshotId = in.readInt();
   }
 
-  
 }

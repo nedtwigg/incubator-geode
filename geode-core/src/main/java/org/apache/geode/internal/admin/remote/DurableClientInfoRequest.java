@@ -29,8 +29,7 @@ import java.io.*;
  * @since GemFire 5.6
  * 
  */
-public class DurableClientInfoRequest extends AdminRequest
-{
+public class DurableClientInfoRequest extends AdminRequest {
   static final int HAS_DURABLE_CLIENT_REQUEST = 10;
 
   static final int IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST = 11;
@@ -44,44 +43,39 @@ public class DurableClientInfoRequest extends AdminRequest
   /**
    * Returns a <code>DurableClientInfoRequest</code>.
    */
-  public static DurableClientInfoRequest create(String id, int operation)
-  {
+  public static DurableClientInfoRequest create(String id, int operation) {
     DurableClientInfoRequest m = new DurableClientInfoRequest();
     m.durableId = id;
     m.action = operation;
-    setFriendlyName( m );
+    setFriendlyName(m);
     return m;
   }
 
   public DurableClientInfoRequest() {
-    setFriendlyName( this );
+    setFriendlyName(this);
   }
 
   /**
    * Must return a proper response to this request.
    */
-  protected AdminResponse createResponse(DistributionManager dm)
-  {
+  protected AdminResponse createResponse(DistributionManager dm) {
     return DurableClientInfoResponse.create(dm, this.getSender(), this);
   }
 
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeString(this.durableId, out);
     out.writeInt(this.action);
   }
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.durableId = DataSerializer.readString(in);
     this.action = in.readInt();
-    setFriendlyName( this );
+    setFriendlyName(this);
   }
 
-  public String toString()
-  {
+  public String toString() {
     return "DurableClientInfoRequest from " + this.getSender();
   }
 
@@ -91,8 +85,8 @@ public class DurableClientInfoRequest extends AdminRequest
   public int getDSFID() {
     return DURABLE_CLIENT_INFO_REQUEST;
   }
-  
-  private static void setFriendlyName( DurableClientInfoRequest o ) {
+
+  private static void setFriendlyName(DurableClientInfoRequest o) {
     // TODO MGh - these should be localized?
     switch (o.action) {
     case HAS_DURABLE_CLIENT_REQUEST:
@@ -103,7 +97,7 @@ public class DurableClientInfoRequest extends AdminRequest
       break;
     default:
       o.friendlyName = "Unknown operation " + o.action;
-	  break;
+      break;
     }
   }
 }

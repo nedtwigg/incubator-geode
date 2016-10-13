@@ -258,8 +258,7 @@ public class AbstractRegionJUnitTest {
     }
 
     @Override
-    public SelectResults query(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-        QueryInvocationTargetException {
+    public SelectResults query(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 

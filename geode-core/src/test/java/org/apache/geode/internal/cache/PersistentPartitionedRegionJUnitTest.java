@@ -41,24 +41,24 @@ public class PersistentPartitionedRegionJUnitTest {
     dir = new File("diskDir");
     dir.mkdir();
   }
-  
+
   @After
   public void tearDown() throws Exception {
-    if(cache != null && !cache.isClosed()) {
+    if (cache != null && !cache.isClosed()) {
       cache.close();
     }
     FileUtil.delete(dir);
   }
-  
+
   @Test
-  public void testChangeTTL() throws InterruptedException { 
+  public void testChangeTTL() throws InterruptedException {
     Region region = createRegion(-1);
     region.put("A", "B");
     cache.close();
     region = createRegion(60000);
     assertEquals("B", region.get("A"));
   }
-  
+
   @Test
   public void testStatsPersistAttributesChangeNoRecovery() throws InterruptedException {
     System.setProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME, "false");
@@ -67,7 +67,7 @@ public class PersistentPartitionedRegionJUnitTest {
       region.put("A", "B");
       cache.close();
       region = (PartitionedRegion) createRegion(60000);
-      
+
       BucketRegion bucket = region.getBucketRegion("A");
       assertEquals(1, bucket.getDiskRegion().getStats().getNumOverflowOnDisk());
       assertEquals(0, bucket.getDiskRegion().getStats().getNumEntriesInVM());
@@ -78,7 +78,7 @@ public class PersistentPartitionedRegionJUnitTest {
       System.setProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME, "true");
     }
   }
-  
+
   @Test
   public void testStatsPersistAttributesChangeSyncRecovery() throws InterruptedException {
     System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "true");
@@ -87,7 +87,7 @@ public class PersistentPartitionedRegionJUnitTest {
       region.put("A", "B");
       cache.close();
       region = (PartitionedRegion) createRegion(60000);
-      
+
       BucketRegion bucket = region.getBucketRegion("A");
       assertEquals(0, bucket.getDiskRegion().getStats().getNumOverflowOnDisk());
       assertEquals(1, bucket.getDiskRegion().getStats().getNumEntriesInVM());
@@ -98,33 +98,33 @@ public class PersistentPartitionedRegionJUnitTest {
       System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "false");
     }
   }
-  
+
   @Test
   public void testStatsPersistAttributesChangeAsyncRecovery() throws InterruptedException {
     PartitionedRegion region = (PartitionedRegion) createRegion(-1);
-    for(int i=0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
       region.put(i, "B");
     }
     cache.close();
     region = (PartitionedRegion) createRegion(60000);
 
     BucketRegion bucket = region.getBucketRegion("A");
-    for(int i=0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
       region.get(i);
     }
     //There is a race where the async value recovery thread may be handling
     //the stats for the last entry (even though it is already faulted in)
-    int count =0;
-    while(0 != bucket.getDiskRegion().getStats().getNumOverflowOnDisk()) {
+    int count = 0;
+    while (0 != bucket.getDiskRegion().getStats().getNumOverflowOnDisk()) {
       Thread.sleep(50);
-      if(++count==20) {
+      if (++count == 20) {
         break;
       }
     }
     assertEquals(0, bucket.getDiskRegion().getStats().getNumOverflowOnDisk());
     assertEquals(1000, bucket.getDiskRegion().getStats().getNumEntriesInVM());
   }
-  
+
   @Test
   public void testStatsPersistNoRecovery() throws InterruptedException {
     System.setProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME, "false");
@@ -133,7 +133,7 @@ public class PersistentPartitionedRegionJUnitTest {
       region.put("A", "B");
       cache.close();
       region = (PartitionedRegion) createRegion(-1);
-      
+
       BucketRegion bucket = region.getBucketRegion("A");
       assertEquals(1, bucket.getDiskRegion().getStats().getNumOverflowOnDisk());
       assertEquals(0, bucket.getDiskRegion().getStats().getNumEntriesInVM());
@@ -144,7 +144,7 @@ public class PersistentPartitionedRegionJUnitTest {
       System.setProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME, "true");
     }
   }
-  
+
   @Test
   public void testStatsChangeSyncRecovery() throws InterruptedException {
     System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "true");
@@ -153,7 +153,7 @@ public class PersistentPartitionedRegionJUnitTest {
       region.put("A", "B");
       cache.close();
       region = (PartitionedRegion) createRegion(-1);
-      
+
       BucketRegion bucket = region.getBucketRegion("A");
       assertEquals(0, bucket.getDiskRegion().getStats().getNumOverflowOnDisk());
       assertEquals(1, bucket.getDiskRegion().getStats().getNumEntriesInVM());
@@ -164,27 +164,27 @@ public class PersistentPartitionedRegionJUnitTest {
       System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "false");
     }
   }
-  
+
   @Test
   public void testStatsPersistAsyncRecovery() throws InterruptedException {
     PartitionedRegion region = (PartitionedRegion) createRegion(-1);
-    for(int i=0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
       region.put(i, "B");
     }
     cache.close();
     region = (PartitionedRegion) createRegion(-1);
 
     BucketRegion bucket = region.getBucketRegion("A");
-    for(int i=0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
       region.get(i);
     }
-    
+
     //There is a race where the async value recovery thread may be handling
     //the stats for the last entry (even though it is already faulted in)
-    int count =0;
-    while(0 != bucket.getDiskRegion().getStats().getNumOverflowOnDisk()) {
+    int count = 0;
+    while (0 != bucket.getDiskRegion().getStats().getNumOverflowOnDisk()) {
       Thread.sleep(50);
-      if(++count==20) {
+      if (++count == 20) {
         break;
       }
     }
@@ -196,23 +196,16 @@ public class PersistentPartitionedRegionJUnitTest {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOG_LEVEL, "info");
-//    props.setProperty("log-file", "junit.log");
+    //    props.setProperty("log-file", "junit.log");
     cache = new CacheFactory(props).create();
-    cache.createDiskStoreFactory()
-        .setMaxOplogSize(1)
-        .setDiskDirs(new File[] { dir} )
-        .create("disk");
-    
-    
-    RegionFactory<Object, Object> rf = cache.createRegionFactory()
-        .setDataPolicy(DataPolicy.PERSISTENT_PARTITION)
-        .setDiskStoreName("disk");
+    cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] { dir }).create("disk");
+
+    RegionFactory<Object, Object> rf = cache.createRegionFactory().setDataPolicy(DataPolicy.PERSISTENT_PARTITION).setDiskStoreName("disk");
     rf.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
-    if(ttl > 0) {
+    if (ttl > 0) {
       rf.setEntryTimeToLive(new ExpirationAttributes(ttl, ExpirationAction.DESTROY));
     }
-    Region region = rf
-        .create("region");
+    Region region = rf.create("region");
     return region;
   }
 }

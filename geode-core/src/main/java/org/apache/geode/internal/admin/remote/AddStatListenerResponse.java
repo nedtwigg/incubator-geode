@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 //import org.apache.geode.*;
@@ -33,7 +32,7 @@ import org.apache.geode.internal.statistics.GemFireStatSampler;
 public final class AddStatListenerResponse extends AdminResponse {
   // instance variables
   int listenerId;
-  
+
   /**
    * Returns a <code>AddStatListenerResponse</code> that will be
    * returned to the specified recipient. The message will contains a
@@ -54,7 +53,7 @@ public final class AddStatListenerResponse extends AdminResponse {
   public int getListenerId() {
     return this.listenerId;
   }
-  
+
   public int getDSFID() {
     return ADD_STAT_LISTENER_RESPONSE;
   }
@@ -66,8 +65,7 @@ public final class AddStatListenerResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.listenerId = in.readInt();
   }

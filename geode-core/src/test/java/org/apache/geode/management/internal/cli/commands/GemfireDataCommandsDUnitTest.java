@@ -114,7 +114,6 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
   private static final String DATA_REGION_NAME_CHILD_1_2 = "ChildRegionRegion12";
   private static final String DATA_REGION_NAME_CHILD_1_2_PATH = "/GemfireDataCommandsTestRegion/ChildRegionRegion1/ChildRegionRegion12";
 
-
   private static final String keyTemplate = "('id':'?','name':'name?')";
   private static final String valueTemplate = "('stateName':'State?','population':?1,'capitalCity':'capital?','areaInSqKm':?2)";
   private static final String carTemplate = "\"('attributes':?map,'make':'?make','model':'?model','colors':?list,'attributeSet':?set)\"";
@@ -187,7 +186,6 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
         dataRegion = regionFactory.create(DATA_REGION_NAME_VM2);
         assertNotNull(dataRegion);
         getLogWriter().info("Created Region " + dataRegion);
-
 
         PartitionAttributes partitionAttrs = new PartitionAttributesFactory().setRedundantCopies(2).create();
         RegionFactory<Object, Object> partitionRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
@@ -265,19 +263,17 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
             }
 
             if (!flag) {
-              getLogWriter().info(
-                  "Still probing for regionMbeans " + DATA_REGION_NAME_PATH + "=" + beans[0] + " " + DATA_REGION_NAME_VM1_PATH + "=" + beans[1] + " " + DATA_REGION_NAME_VM2_PATH + "=" + beans[2] + " " + DATA_PAR_REGION_NAME_PATH + "=" + beans[3] + " " + DATA_PAR_REGION_NAME_VM1_PATH + "=" + beans[4] + " " + DATA_PAR_REGION_NAME_VM2_PATH + "=" + beans[5] + " "
-                  //+ DATA_REGION_NAME_CHILD_1_PATH
-                  // +"="+ beans[6]  + " " + DATA_REGION_NAME_CHILD_1_2_PATH
-                  // +"=" + beans[7]
+              getLogWriter().info("Still probing for regionMbeans " + DATA_REGION_NAME_PATH + "=" + beans[0] + " " + DATA_REGION_NAME_VM1_PATH + "=" + beans[1] + " " + DATA_REGION_NAME_VM2_PATH + "=" + beans[2] + " " + DATA_PAR_REGION_NAME_PATH + "=" + beans[3] + " " + DATA_PAR_REGION_NAME_VM1_PATH + "=" + beans[4] + " " + DATA_PAR_REGION_NAME_VM2_PATH + "=" + beans[5] + " "
+              //+ DATA_REGION_NAME_CHILD_1_PATH
+              // +"="+ beans[6]  + " " + DATA_REGION_NAME_CHILD_1_2_PATH
+              // +"=" + beans[7]
               );
               return false;
             } else {
-              getLogWriter().info(
-                  "Probing complete for regionMbeans " + DATA_REGION_NAME_PATH + "=" + beans[0] + " " + DATA_REGION_NAME_VM1_PATH + "=" + beans[1] + " " + DATA_REGION_NAME_VM2_PATH + "=" + beans[2] + " " + DATA_PAR_REGION_NAME_PATH + "=" + beans[3] + " " + DATA_PAR_REGION_NAME_VM1_PATH + "=" + beans[4] + " " + DATA_PAR_REGION_NAME_VM2_PATH + "=" + beans[5] + " "
-                  //+ DATA_REGION_NAME_CHILD_1_PATH
-                  // +"="+ beans[6]  + " " + DATA_REGION_NAME_CHILD_1_2_PATH
-                  // +"=" + beans[7]
+              getLogWriter().info("Probing complete for regionMbeans " + DATA_REGION_NAME_PATH + "=" + beans[0] + " " + DATA_REGION_NAME_VM1_PATH + "=" + beans[1] + " " + DATA_REGION_NAME_VM2_PATH + "=" + beans[2] + " " + DATA_PAR_REGION_NAME_PATH + "=" + beans[3] + " " + DATA_PAR_REGION_NAME_VM1_PATH + "=" + beans[4] + " " + DATA_PAR_REGION_NAME_VM2_PATH + "=" + beans[5] + " "
+              //+ DATA_REGION_NAME_CHILD_1_PATH
+              // +"="+ beans[6]  + " " + DATA_REGION_NAME_CHILD_1_2_PATH
+              // +"=" + beans[7]
               );
               //Fails here Rishi Need Fix here
               //if(bean1.getMemberCount()==2 && bean1.getMemberCount()==1 && bean1.getMemberCount()==1)              
@@ -297,16 +293,15 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
 
         waitForCriterion(waitForRegionMBeans, 30000, 2000, true);
 
-        String regions[] = {DATA_REGION_NAME_PATH, DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_PATH, DATA_PAR_REGION_NAME_VM1_PATH, DATA_PAR_REGION_NAME_VM2_PATH, /*DATA_REGION_NAME_CHILD_1_PATH, DATA_REGION_NAME_CHILD_1_2_PATH*/};
+        String regions[] = { DATA_REGION_NAME_PATH, DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_PATH, DATA_PAR_REGION_NAME_VM1_PATH, DATA_PAR_REGION_NAME_VM2_PATH, /*DATA_REGION_NAME_CHILD_1_PATH, DATA_REGION_NAME_CHILD_1_2_PATH*/ };
 
         for (String region : regions) {
           bean = service.getDistributedRegionMXBean(region);
           assertNotNull(bean);
           String[] membersName = bean.getMembers();
-          getLogWriter().info(
-              "Members Array for region " + region + " : " + StringUtils.objectToString(membersName, true, 10));
-          if (bean.getMemberCount() < 1) fail(
-              "Even after waiting mbean reports number of member hosting region " + DATA_REGION_NAME_VM1_PATH + " is less than one");
+          getLogWriter().info("Members Array for region " + region + " : " + StringUtils.objectToString(membersName, true, 10));
+          if (bean.getMemberCount() < 1)
+            fail("Even after waiting mbean reports number of member hosting region " + DATA_REGION_NAME_VM1_PATH + " is less than one");
           //assertIndexDetailsEquals(1, membersName.length); //exists in one members vm1
         }
       }
@@ -325,7 +320,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     vm1.invoke(new SerializableRunnable() {
       public void run() {
         Cache cache = CacheFactory.getAnyInstance();
-        String regions[] = {DATA_PAR_REGION_NAME_PATH, DATA_PAR_REGION_NAME_VM1_PATH, DATA_REGION_NAME_CHILD_1_PATH, DATA_REGION_NAME_CHILD_1_2_PATH};
+        String regions[] = { DATA_PAR_REGION_NAME_PATH, DATA_PAR_REGION_NAME_VM1_PATH, DATA_REGION_NAME_CHILD_1_PATH, DATA_REGION_NAME_CHILD_1_2_PATH };
         for (String r : regions) {
           Region dataRegion = cache.getRegion(r);
           for (int j = 0; j < 10; j++) {
@@ -347,7 +342,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     vm2.invoke(new SerializableRunnable() {
       public void run() {
         Cache cache = CacheFactory.getAnyInstance();
-        String regions[] = {DATA_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_VM2_PATH};
+        String regions[] = { DATA_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_VM2_PATH };
         for (String r : regions) {
           Region dataRegion = cache.getRegion(r);
           for (int j = 0; j < 10; j++) {
@@ -358,8 +353,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     });
   }
 
-  private void doQueryRegionsAssociatedMembers(String queryTemplate, int expectedMembers, boolean returnAll,
-      String... regions) {
+  private void doQueryRegionsAssociatedMembers(String queryTemplate, int expectedMembers, boolean returnAll, String... regions) {
     Cache cache = CacheFactory.getAnyInstance();
 
     String query = queryTemplate;
@@ -378,13 +372,13 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       regionsInQuery = Collections.unmodifiableSet(regionSet);
       getLogWriter().info("Region in query : " + regionsInQuery);
       if (regionsInQuery.size() > 0) {
-        Set<DistributedMember> members = DataCommands.getQueryRegionsAssociatedMembers(regionsInQuery, cache,
-            returnAll);
+        Set<DistributedMember> members = DataCommands.getQueryRegionsAssociatedMembers(regionsInQuery, cache, returnAll);
         getLogWriter().info("Members for Region in query : " + members);
         if (expectedMembers != -1) {
           assertNotNull(members);
           assertEquals(expectedMembers, members.size());
-        } else assertEquals(0, members.size());
+        } else
+          assertEquals(0, members.size());
       } else {
         assertEquals(-1, expectedMembers);//Regions do not exist at all
       }
@@ -400,32 +394,19 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     manager.invoke(new SerializableRunnable() {
       @Override
       public void run() {
-        doQueryRegionsAssociatedMembers(queryTemplate1, 0, true,
-            new String[]{DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_VM2_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 2, true,
-            new String[]{DATA_REGION_NAME_PATH, DATA_REGION_NAME_CHILD_1_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 1, false,
-            new String[]{DATA_REGION_NAME_PATH, DATA_REGION_NAME_CHILD_1_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 1, true,
-            new String[]{DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 1, false,
-            new String[]{DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 1, true,
-            new String[]{DATA_REGION_NAME_VM2_PATH, DATA_REGION_NAME_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 1, false,
-            new String[]{DATA_REGION_NAME_VM2_PATH, DATA_REGION_NAME_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 0, true,
-            new String[]{DATA_PAR_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_VM1_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, 0, false,
-            new String[]{DATA_PAR_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_VM1_PATH});
-        doQueryRegionsAssociatedMembers(queryTemplate1, -1, true,
-            new String[]{DATA_PAR_REGION_NAME_VM2_PATH, "/jfgkdfjgkd"}); //one wrong region
-        doQueryRegionsAssociatedMembers(queryTemplate1, -1, false,
-            new String[]{DATA_PAR_REGION_NAME_VM2_PATH, "/jfgkdfjgkd"}); //one wrong region
-        doQueryRegionsAssociatedMembers(queryTemplate1, -1, true,
-            new String[]{"/dhgfdhgf", "/dhgddhd"}); // both regions wrong
-        doQueryRegionsAssociatedMembers(queryTemplate1, -1, false,
-            new String[]{"/dhgfdhgf", "/dhgddhd"}); // both regions wrong
+        doQueryRegionsAssociatedMembers(queryTemplate1, 0, true, new String[] { DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_VM2_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 2, true, new String[] { DATA_REGION_NAME_PATH, DATA_REGION_NAME_CHILD_1_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 1, false, new String[] { DATA_REGION_NAME_PATH, DATA_REGION_NAME_CHILD_1_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 1, true, new String[] { DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 1, false, new String[] { DATA_REGION_NAME_VM1_PATH, DATA_REGION_NAME_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 1, true, new String[] { DATA_REGION_NAME_VM2_PATH, DATA_REGION_NAME_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 1, false, new String[] { DATA_REGION_NAME_VM2_PATH, DATA_REGION_NAME_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 0, true, new String[] { DATA_PAR_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_VM1_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, 0, false, new String[] { DATA_PAR_REGION_NAME_VM2_PATH, DATA_PAR_REGION_NAME_VM1_PATH });
+        doQueryRegionsAssociatedMembers(queryTemplate1, -1, true, new String[] { DATA_PAR_REGION_NAME_VM2_PATH, "/jfgkdfjgkd" }); //one wrong region
+        doQueryRegionsAssociatedMembers(queryTemplate1, -1, false, new String[] { DATA_PAR_REGION_NAME_VM2_PATH, "/jfgkdfjgkd" }); //one wrong region
+        doQueryRegionsAssociatedMembers(queryTemplate1, -1, true, new String[] { "/dhgfdhgf", "/dhgddhd" }); // both regions wrong
+        doQueryRegionsAssociatedMembers(queryTemplate1, -1, false, new String[] { "/dhgfdhgf", "/dhgddhd" }); // both regions wrong
       }
     });
   }
@@ -436,8 +417,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     String query = "query --query=\"select ID , status , createTime , pk, floatMinValue from " + DATA_PAR_REGION_NAME_PATH + " where ID <= " + randomInteger + "\" --interactive=false";
     CommandResult cmdResult = executeCommand(query);
     printCommandOutput(cmdResult);
-    validateSelectResult(cmdResult, true, (randomInteger + 1),
-        new String[]{"ID", "status", "createTime", "pk", "floatMinValue"});
+    validateSelectResult(cmdResult, true, (randomInteger + 1), new String[] { "ID", "status", "createTime", "pk", "floatMinValue" });
   }
 
   public void doTestSelectProjectionProcessCommand() {
@@ -463,14 +443,14 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     String query = "query --query=\"select employeeId, name, department, value2 from " + DATA_REGION_NAME_VM1_PATH + " where employeeId <= " + randomInteger + "\" --interactive=false";
     CommandResult cmdResult = executeCommand(query);
     printCommandOutput(cmdResult);
-    String expectedCols[] = {"employeeId", "name", "department", "value2"};
+    String expectedCols[] = { "employeeId", "name", "department", "value2" };
     validateSelectResult(cmdResult, true, (randomInteger + 1), expectedCols);
 
     // Test with collections
     query = "query --query=\"select ID , status , createTime , pk, floatMinValue, collectionHolderMap from " + DATA_PAR_REGION_NAME_PATH + " where ID <= " + randomInteger + "\" --interactive=false";
     cmdResult = executeCommand(query);
     printCommandOutput(cmdResult);
-    expectedCols = new String[]{"ID", "status", "createTime", "pk", "floatMinValue", "collectionHolderMap"};
+    expectedCols = new String[] { "ID", "status", "createTime", "pk", "floatMinValue", "collectionHolderMap" };
     validateSelectResult(cmdResult, true, (randomInteger + 1), expectedCols);
   }
 
@@ -480,7 +460,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     String query = "query --query=\"select * from " + DATA_REGION_NAME_PATH + " where employeeId <= " + randomInteger + "\" --interactive=false";
     CommandResult cmdResult = executeCommand(query);
     printCommandOutput(cmdResult);
-    String expectedCols[] = {"name", "lastName", "department", "age", "employeeId"};
+    String expectedCols[] = { "name", "lastName", "department", "age", "employeeId" };
     validateSelectResult(cmdResult, true, (randomInteger + 1), expectedCols);
   }
 
@@ -490,7 +470,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     String query = "query --query=\"select employeeId, name, department, value2 from " + DATA_REGION_NAME_VM1_PATH + " where employeeId <= " + randomInteger + "\" --interactive=false";
     CommandResult cmdResult = executeCommand(query);
     printCommandOutput(cmdResult);
-    String expectedCols[] = {"employeeId", "name", "department", "value2"};
+    String expectedCols[] = { "employeeId", "name", "department", "value2" };
     validateSelectResult(cmdResult, true, (randomInteger + 1), expectedCols);
   }
 
@@ -562,8 +542,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     testGetPutLocateEntryFromShellAndGemfire(doubleKey, doubleValue, Double.class, true, true);
   }
 
-  private void testGetPutLocateEntryFromShellAndGemfire(final Object key, final Object value, Class klass,
-      boolean addRegionPath, boolean expResult) {
+  private void testGetPutLocateEntryFromShellAndGemfire(final Object key, final Object value, Class klass, boolean addRegionPath, boolean expResult) {
 
     final VM vm1 = Host.getHost(0).getVM(1);
 
@@ -600,7 +579,6 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       }
     };
 
-
     SerializableRunnable clearTask = new SerializableRunnable() {
       @Override
       public void run() {
@@ -612,15 +590,19 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     };
 
     String getCommand = "get --key=" + key + " --key-class=" + klass.getCanonicalName() + " --value-class=" + klass.getCanonicalName();
-    if (addRegionPath) getCommand += " --region=" + DATA_REGION_NAME_PATH;
+    if (addRegionPath)
+      getCommand += " --region=" + DATA_REGION_NAME_PATH;
 
     String locateEntryCommand = "locate entry --key=" + key + " --key-class=" + klass.getCanonicalName() + " --value-class=" + klass.getCanonicalName();
-    if (addRegionPath) locateEntryCommand += " --region=" + DATA_REGION_NAME_PATH;
+    if (addRegionPath)
+      locateEntryCommand += " --region=" + DATA_REGION_NAME_PATH;
 
     String removeCommand = "remove --key=" + key + " --key-class=" + klass.getCanonicalName();
-    if (addRegionPath) removeCommand += " --region=" + DATA_REGION_NAME_PATH;
+    if (addRegionPath)
+      removeCommand += " --region=" + DATA_REGION_NAME_PATH;
     String putCommand = "put --key=" + key + " --key-class=" + klass.getCanonicalName() + " --value=" + value + " --value-class=" + klass.getCanonicalName();
-    if (addRegionPath) putCommand += " --region=" + DATA_REGION_NAME_PATH;
+    if (addRegionPath)
+      putCommand += " --region=" + DATA_REGION_NAME_PATH;
 
     if (expResult) {
       //Do put from shell check gemfire get do gemfire remove
@@ -740,7 +722,8 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       SectionResultData section = rd.retrieveSectionByIndex(0);
       boolean result = (Boolean) section.retrieveObject("Result");
       assertEquals(expected, result);
-    } else fail("Expected CompositeResult Returned Result Type " + cmdResult.getType());
+    } else
+      fail("Expected CompositeResult Returned Result Type " + cmdResult.getType());
   }
 
   private void validateLocationsResult(CommandResult cmdResult, int expected) {
@@ -749,7 +732,8 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       SectionResultData section = rd.retrieveSectionByIndex(0);
       int result = (Integer) section.retrieveObject("Locations Found");
       assertEquals(expected, result);
-    } else fail("Expected CompositeResult Returned Result Type " + cmdResult.getType());
+    } else
+      fail("Expected CompositeResult Returned Result Type " + cmdResult.getType());
   }
 
   private void validateJSONGetResult(CommandResult cmdResult, String[] expectedCols) {
@@ -764,7 +748,8 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
         getLogWriter().info("Validating column " + col);
         for (int i = 0; i < array.size(); i++) {
           String header = (String) array.get(i);
-          if (col.equals(header)) found = true;
+          if (col.equals(header))
+            found = true;
         }
         assertEquals(true, found);
       }
@@ -785,7 +770,8 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
         getLogWriter().info("Validating column " + col);
         for (int i = 0; i < array.size(); i++) {
           String header = (String) array.get(i);
-          if (col.equals(header)) found = true;
+          if (col.equals(header))
+            found = true;
         }
         assertEquals(true, found);
 
@@ -819,7 +805,8 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
               getLogWriter().info("Validating column " + col);
               for (int i = 0; i < array.size(); i++) {
                 String header = (String) array.get(i);
-                if (col.equals(header)) found = true;
+                if (col.equals(header))
+                  found = true;
               }
               assertEquals(true, found);
             }
@@ -828,7 +815,8 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
           }
         }
       }
-    } else fail("Expected CompositeResult Returned Result Type " + cmdResult.getType());
+    } else
+      fail("Expected CompositeResult Returned Result Type " + cmdResult.getType());
   }
 
   @Test
@@ -903,7 +891,6 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
 
     final VM vm1 = Host.getHost(0).getVM(1);
     final VM vm2 = Host.getHost(0).getVM(2);
-
 
     SerializableRunnable putKeys = new SerializableRunnable() {
       @Override
@@ -1095,25 +1082,30 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       String command = "get";
       String key = keyPrefix + i;
       String value = valuePrefix + i;
-      if (i % 2 == 0) command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM1_PATH;
-      else if (i % 2 == 1) command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM2_PATH;
+      if (i % 2 == 0)
+        command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM1_PATH;
+      else if (i % 2 == 1)
+        command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM2_PATH;
       CommandResult cmdResult = executeCommand(command);
       printCommandOutput(cmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
       validateResult(cmdResult, true);
 
       command = "locate entry";
-      if (i % 2 == 0) command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM1_PATH;
-      else if (i % 2 == 1) command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM2_PATH;
+      if (i % 2 == 0)
+        command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM1_PATH;
+      else if (i % 2 == 1)
+        command = command + " " + "--key=" + key + " --region=" + DATA_REGION_NAME_VM2_PATH;
       cmdResult = executeCommand(command);
       printCommandOutput(cmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
       validateResult(cmdResult, true);
 
-
       command = "locate entry";
-      if (i % 2 == 0) command = command + " " + "--key=" + key + " --region=" + DATA_PAR_REGION_NAME_VM1_PATH;
-      else if (i % 2 == 1) command = command + " " + "--key=" + key + " --region=" + DATA_PAR_REGION_NAME_VM2_PATH;
+      if (i % 2 == 0)
+        command = command + " " + "--key=" + key + " --region=" + DATA_PAR_REGION_NAME_VM1_PATH;
+      else if (i % 2 == 1)
+        command = command + " " + "--key=" + key + " --region=" + DATA_PAR_REGION_NAME_VM2_PATH;
       cmdResult = executeCommand(command);
       printCommandOutput(cmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
@@ -1175,7 +1167,8 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       String value = valuePrefix + i;
       if (i % 2 == 0)
         command = command + " " + "--key=" + key + " --value=" + value + " --region=" + DATA_REGION_NAME_VM1_PATH;
-      else command = command + " " + "--key=" + key + " --value=" + value + " --region=" + DATA_REGION_NAME_VM2_PATH;
+      else
+        command = command + " " + "--key=" + key + " --value=" + value + " --region=" + DATA_REGION_NAME_VM2_PATH;
       CommandResult cmdResult = executeCommand(command);
       printCommandOutput(cmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
@@ -1277,7 +1270,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       }
     };
 
-    String expectedCols[] = {"id", "name", "stateName", "capitalCity", "population", "areaInSqKm"};
+    String expectedCols[] = { "id", "name", "stateName", "capitalCity", "population", "areaInSqKm" };
     vm1.invoke(putKeys);
     for (int i = 0; i < COUNT; i++) {
       String command = "get";
@@ -1307,7 +1300,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     }
 
     //Added for Bug #51175
-    expectedCols = new String[]{"id", "name", "attributes", "make", "model", "colors", "attributeSet"};
+    expectedCols = new String[] { "id", "name", "attributes", "make", "model", "colors", "attributeSet" };
     for (int i = COUNT; i < COUNT + 5; i++) {
       String command = "get";
       String keyString = keyPrefix + i;
@@ -1700,8 +1693,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
         @Override
         public boolean done() {
           final ManagementService service = ManagementService.getManagementService(getCache());
-          final DistributedRegionMXBean bean = service.getDistributedRegionMXBean(
-              Region.SEPARATOR + REBALANCE_REGION_NAME);
+          final DistributedRegionMXBean bean = service.getDistributedRegionMXBean(Region.SEPARATOR + REBALANCE_REGION_NAME);
           if (bean == null) {
             getLogWriter().info("Still probing for checkRegionMBeans ManagerMBean");
             return false;
@@ -1721,8 +1713,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
         }
       };
       waitForCriterion(waitForMaangerMBean, 2 * 60 * 1000, 2000, true);
-      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean(
-          "/" + REBALANCE_REGION_NAME);
+      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean("/" + REBALANCE_REGION_NAME);
       assertNotNull(bean);
     }
   };
@@ -2024,12 +2015,10 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
                 bean2 = service.getDistributedRegionMXBean(Region.SEPARATOR + regionName);
               }
               if (bean2 == null) {
-                getLogWriter().info(
-                    "waitForListClientMbean Still probing for DistributedRegionMXBean with separator = " + bean2);
+                getLogWriter().info("waitForListClientMbean Still probing for DistributedRegionMXBean with separator = " + bean2);
                 return false;
               } else {
-                getLogWriter().info(
-                    "waitForListClientMbean Still probing for DistributedRegionMXBean with separator Not null  " + bean2.getMembers().length);
+                getLogWriter().info("waitForListClientMbean Still probing for DistributedRegionMXBean with separator Not null  " + bean2.getMembers().length);
                 if (bean2.getMembers().length > 1) {
                   return true;
                 } else {
@@ -2066,12 +2055,10 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     String memSizeFromMbean = (String) manager.invoke(new SerializableCallable() {
       public Object call() {
         Cache cache = GemFireCacheImpl.getInstance();
-        DistributedRegionMXBean bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(
-            DATA_REGION_NAME_PATH);
+        DistributedRegionMXBean bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(DATA_REGION_NAME_PATH);
 
         if (bean == null)// try with slash ahead
-          bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(
-              Region.SEPARATOR + DATA_REGION_NAME_PATH);
+          bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(Region.SEPARATOR + DATA_REGION_NAME_PATH);
 
         if (bean == null) {
           return null;
@@ -2105,12 +2092,10 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
     String memSizeFromMbean = (String) manager.invoke(new SerializableCallable() {
       public Object call() {
         Cache cache = GemFireCacheImpl.getInstance();
-        DistributedRegionMXBean bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(
-            REBALANCE_REGION_NAME);
+        DistributedRegionMXBean bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(REBALANCE_REGION_NAME);
 
         if (bean == null) {
-          bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(
-              Region.SEPARATOR + REBALANCE_REGION_NAME);
+          bean = ManagementService.getManagementService(cache).getDistributedRegionMXBean(Region.SEPARATOR + REBALANCE_REGION_NAME);
         }
 
         if (bean == null) {
@@ -2131,8 +2116,7 @@ public class GemfireDataCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-    getLogWriter().info(
-        "testRegionsViaMbeanAndFunctionsForPartRgn memSizeFromFunctionCall= " + memSizeFromFunctionCall);
+    getLogWriter().info("testRegionsViaMbeanAndFunctionsForPartRgn memSizeFromFunctionCall= " + memSizeFromFunctionCall);
     assertTrue(memSizeFromFunctionCall.equals(memSizeFromMbean));
   }
 }

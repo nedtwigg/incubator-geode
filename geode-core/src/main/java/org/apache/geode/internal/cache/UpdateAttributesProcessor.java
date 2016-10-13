@@ -56,7 +56,7 @@ import org.apache.geode.internal.logging.LogService;
  */
 public class UpdateAttributesProcessor {
   private static final Logger logger = LogService.getLogger();
-  
+
   protected final DistributionAdvisee advisee;
   private boolean profileExchange = false;
   /**
@@ -100,19 +100,18 @@ public class UpdateAttributesProcessor {
   }
 
   public void waitForProfileResponse() {
-    if(processor == null) {
+    if (processor == null) {
       return;
     }
     DM mgr = this.advisee.getDistributionManager();
     try {
       // bug 36983 - you can't loop on a reply processor
-          mgr.getCancelCriterion().checkCancelInProgress(null);
-          try {
-            processor.waitForRepliesUninterruptibly();
-          }
-          catch (ReplyException e) {
-            e.handleAsUnexpected();
-          }
+      mgr.getCancelCriterion().checkCancelInProgress(null);
+      try {
+        processor.waitForRepliesUninterruptibly();
+      } catch (ReplyException e) {
+        e.handleAsUnexpected();
+      }
     } finally {
       processor.cleanup();
     }
@@ -155,8 +154,8 @@ public class UpdateAttributesProcessor {
     }
 
     ReplyProcessor21 processor = null;
-//    Scope scope = this.region.scope;
-    
+    //    Scope scope = this.region.scope;
+
     // always require an ack to prevent misordering of messages
     InternalDistributedSystem system = this.advisee.getSystem();
     processor = new UpdateAttributesReplyProcessor(system, recipients);
@@ -165,9 +164,7 @@ public class UpdateAttributesProcessor {
     this.processor = processor;
   }
 
-
-  UpdateAttributesMessage getUpdateAttributesMessage(ReplyProcessor21 processor,
-                                                     Set recipients) {
+  UpdateAttributesMessage getUpdateAttributesMessage(ReplyProcessor21 processor, Set recipients) {
 
     UpdateAttributesMessage msg = new UpdateAttributesMessage();
     msg.adviseePath = this.advisee.getFullPath();
@@ -186,7 +183,7 @@ public class UpdateAttributesProcessor {
     UpdateAttributesReplyProcessor(InternalDistributedSystem system, Set members) {
       super(system, members);
     }
-    
+
     /**
      * Registers this processor as a membership listener and
      * returns a set of the current members.
@@ -197,12 +194,12 @@ public class UpdateAttributesProcessor {
     protected Set addListenerAndGetMembers() {
       DistributionAdvisor da = UpdateAttributesProcessor.this.advisee.getDistributionAdvisor();
       if (da.useAdminMembersForDefault()) {
-        return getDistributionManager()
-          .addAllMembershipListenerAndGetAllIds(this);
+        return getDistributionManager().addAllMembershipListenerAndGetAllIds(this);
       } else {
         return super.addListenerAndGetMembers();
       }
     }
+
     /**
      * Unregisters this processor as a membership listener
      * @since GemFire 5.7
@@ -216,6 +213,7 @@ public class UpdateAttributesProcessor {
         super.removeListener();
       }
     }
+
     /**
      * If this processor being used by controller then return
      * ALL members; otherwise defer to super.
@@ -231,27 +229,23 @@ public class UpdateAttributesProcessor {
         return super.getDistributionManagerIds();
       }
     }
-    
+
     @Override
     public void process(DistributionMessage msg) {
       try {
         if (msg instanceof ProfilesReplyMessage) {
-          ProfilesReplyMessage reply =
-            (ProfilesReplyMessage)msg;
+          ProfilesReplyMessage reply = (ProfilesReplyMessage) msg;
           if (reply.profiles != null) {
-            for (int i=0; i < reply.profiles.length; i++) {
+            for (int i = 0; i < reply.profiles.length; i++) {
               // @todo Add putProfiles to DistributionAdvisor to do this
               //       with one call atomically?
-              UpdateAttributesProcessor.this.advisee.
-                getDistributionAdvisor().putProfile(reply.profiles[i]);
+              UpdateAttributesProcessor.this.advisee.getDistributionAdvisor().putProfile(reply.profiles[i]);
             }
           }
         } else if (msg instanceof ProfileReplyMessage) {
-          ProfileReplyMessage reply =
-            (ProfileReplyMessage)msg;
+          ProfileReplyMessage reply = (ProfileReplyMessage) msg;
           if (reply.profile != null) {
-            UpdateAttributesProcessor.this.advisee.
-              getDistributionAdvisor().putProfile(reply.profile);
+            UpdateAttributesProcessor.this.advisee.getDistributionAdvisor().putProfile(reply.profile);
           }
         }
       } finally {
@@ -260,9 +254,7 @@ public class UpdateAttributesProcessor {
     }
   }
 
-
-  public static final class UpdateAttributesMessage
-    extends HighPriorityDistributionMessage implements MessageWithReply {
+  public static final class UpdateAttributesMessage extends HighPriorityDistributionMessage implements MessageWithReply {
 
     protected String adviseePath;
     protected int processorId = 0;
@@ -274,7 +266,7 @@ public class UpdateAttributesProcessor {
     public int getProcessorId() {
       return this.processorId;
     }
-    
+
     @Override
     public boolean sendViaUDP() {
       return true;
@@ -290,22 +282,18 @@ public class UpdateAttributesProcessor {
           if (this.exchangeProfiles) {
             replyProfiles = new ArrayList<Profile>();
           }
-          this.profile.processIncoming(dm, this.adviseePath, this.removeProfile,
-              this.exchangeProfiles, replyProfiles);
+          this.profile.processIncoming(dm, this.adviseePath, this.removeProfile, this.exchangeProfiles, replyProfiles);
         }
-      }
-      catch (CancelException e) {
+      } catch (CancelException e) {
         if (logger.isDebugEnabled()) {
           logger.debug("<cache closed> ///{}", this);
         }
-      }
-      catch (VirtualMachineError err) {
+      } catch (VirtualMachineError err) {
         SystemFailure.initiateFailure(err);
         // If this ever returns, rethrow the error.  We're poisoned
         // now, so don't let this thread continue.
         throw err;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         // Whenever you catch Error or Throwable, you must also
         // catch VirtualMachineError (see above).  However, there is
         // _still_ a possibility that you are dealing with a cascading
@@ -313,8 +301,7 @@ public class UpdateAttributesProcessor {
         // is still usable:
         SystemFailure.checkFailure();
         thr = t;
-      }
-      finally {
+      } finally {
         if (sendReply) {
           ReplyException rex = null;
           if (thr != null) {
@@ -326,12 +313,10 @@ public class UpdateAttributesProcessor {
               p = replyProfiles.get(0);
             }
             ProfileReplyMessage.send(getSender(), this.processorId, rex, dm, p);
-          }
-          else {
+          } else {
             Profile[] profiles = new Profile[replyProfiles.size()];
             replyProfiles.toArray(profiles);
-            ProfilesReplyMessage.send(getSender(), this.processorId, rex, dm,
-                profiles);
+            ProfilesReplyMessage.send(getSender(), this.processorId, rex, dm, profiles);
           }
         }
       }
@@ -361,8 +346,7 @@ public class UpdateAttributesProcessor {
     }
 
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.adviseePath = DataSerializer.readString(in);
       this.processorId = in.readInt();
@@ -385,23 +369,20 @@ public class UpdateAttributesProcessor {
     }
   }
 
-
   public final static class ProfileReplyMessage extends ReplyMessage {
     Profile profile;
 
-    public static void send(InternalDistributedMember recipient, int processorId,
-                            ReplyException exception,
-                            DistributionManager dm, Profile profile) {
+    public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DistributionManager dm, Profile profile) {
       Assert.assertTrue(recipient != null, "Sending a ProfileReplyMessage to ALL");
       ProfileReplyMessage m = new ProfileReplyMessage();
 
       m.processorId = processorId;
       m.profile = profile;
       if (exception != null) {
-       m.setException(exception);
-       if (logger.isDebugEnabled()) {
-         logger.debug("Replying with exception: {}" + m, exception);
-       }
+        m.setException(exception);
+        if (logger.isDebugEnabled()) {
+          logger.debug("Replying with exception: {}" + m, exception);
+        }
       }
       m.setRecipient(recipient);
       dm.putOutgoing(m);
@@ -413,10 +394,9 @@ public class UpdateAttributesProcessor {
     }
 
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
-      this.profile = (Profile)DataSerializer.readObject(in);
+      this.profile = (Profile) DataSerializer.readObject(in);
     }
 
     @Override
@@ -451,6 +431,7 @@ public class UpdateAttributesProcessor {
     }
 
   }
+
   /**
    * Used to return multiple profiles
    * @since GemFire 5.7
@@ -458,9 +439,7 @@ public class UpdateAttributesProcessor {
   public static class ProfilesReplyMessage extends ReplyMessage {
     Profile[] profiles;
 
-    public static void send(InternalDistributedMember recipient, int processorId,
-                            ReplyException exception,
-                            DistributionManager dm, Profile[] profiles) {
+    public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DistributionManager dm, Profile[] profiles) {
       Assert.assertTrue(recipient != null, "Sending a ProfilesReplyMessage to ALL");
       ProfilesReplyMessage m = new ProfilesReplyMessage();
 
@@ -475,19 +454,14 @@ public class UpdateAttributesProcessor {
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
-    
-    
 
     @Override
     public int getDSFID() {
-     return PROFILES_REPLY_MESSAGE;
+      return PROFILES_REPLY_MESSAGE;
     }
 
-
-
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       int length = in.readInt();
       if (length == -1) {
@@ -495,7 +469,7 @@ public class UpdateAttributesProcessor {
       } else {
         Profile[] array = new Profile[length];
         for (int i = 0; i < length; i++) {
-          array[i] = (Profile)DataSerializer.readObject(in);
+          array[i] = (Profile) DataSerializer.readObject(in);
         }
         this.profiles = array;
       }

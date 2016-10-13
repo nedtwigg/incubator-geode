@@ -28,7 +28,7 @@ package org.apache.geode;
  * <p>As of GemFire 5.0 this exception should be named NoLocatorException.
  */
 public class NoSystemException extends GemFireException {
-private static final long serialVersionUID = -101890149467219630L;
+  private static final long serialVersionUID = -101890149467219630L;
 
   //////////////////////  Constructors  //////////////////////
 
@@ -38,11 +38,12 @@ private static final long serialVersionUID = -101890149467219630L;
   public NoSystemException(String message) {
     super(message);
   }
+
   /**
    * Creates a new <code>NoSystemException</code> with the given message
    * and cause.
    */
   public NoSystemException(String message, Throwable cause) {
-      super(message, cause);
+    super(message, cause);
   }
 }

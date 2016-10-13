@@ -36,8 +36,7 @@ import java.util.Set;
  * 
  *
  */
-public class AlterRuntimeConfigFunction extends FunctionAdapter implements
-InternalEntity {
+public class AlterRuntimeConfigFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -48,17 +47,17 @@ InternalEntity {
     try {
       Object arg = context.getArguments();
       Cache trueCache = null;
-      GemFireCacheImpl cache = (GemFireCacheImpl)CacheFactory.getAnyInstance();
+      GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.getAnyInstance();
       DistributionConfig config = cache.getSystem().getConfig();
       memberId = cache.getDistributedSystem().getDistributedMember().getId();
 
-      Map<String, String> runtimeAttributes = (Map<String, String>)arg;
-      Set<Entry<String,String>> entries = runtimeAttributes.entrySet();
-      
+      Map<String, String> runtimeAttributes = (Map<String, String>) arg;
+      Set<Entry<String, String>> entries = runtimeAttributes.entrySet();
+
       for (Entry<String, String> entry : entries) {
         String attributeName = entry.getKey();
         String attributeValue = entry.getValue();
-        
+
         if (attributeName.equals(CliStrings.ALTER_RUNTIME_CONFIG__COPY__ON__READ)) {
           cache.setCopyOnRead(Boolean.parseBoolean(attributeValue));
         } else if (attributeName.equals(CliStrings.ALTER_RUNTIME_CONFIG__LOCK__LEASE)) {
@@ -74,17 +73,17 @@ InternalEntity {
           config.setAttribute(attributeName, attributeValue, ConfigSource.runtime());
         }
       }
-      
+
       CliFunctionResult cliFuncResult = new CliFunctionResult(memberId, true, null);
       context.getResultSender().lastResult(cliFuncResult);
-      
+
     } catch (CacheClosedException cce) {
       CliFunctionResult result = new CliFunctionResult(memberId, false, null);
       context.getResultSender().lastResult(result);
-      
-    } catch (Exception e){
+
+    } catch (Exception e) {
       CliFunctionResult cliFuncResult = new CliFunctionResult(memberId, e, CliUtil.stackTraceAsString(e));
-      context.getResultSender().lastResult(cliFuncResult);    
+      context.getResultSender().lastResult(cliFuncResult);
     }
   }
 

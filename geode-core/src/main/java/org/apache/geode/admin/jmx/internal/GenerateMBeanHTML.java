@@ -36,16 +36,15 @@ import java.io.*;
 public class GenerateMBeanHTML extends DefaultHandler {
 
   /** The location of the DTD for the MBean descriptions */
-  private static final String DTD_LOCATION =
-    "/org/apache/geode/admin/jmx/internal/doc-files/mbeans-descriptors.dtd";
+  private static final String DTD_LOCATION = "/org/apache/geode/admin/jmx/internal/doc-files/mbeans-descriptors.dtd";
 
-//  /** The system id of MBean description's DTD */
-//  private static final String SYSTEM_ID = 
-//    "http://jakarta.apache.org/commons/dtds/mbeans-descriptors.dtd";
+  //  /** The system id of MBean description's DTD */
+  //  private static final String SYSTEM_ID = 
+  //    "http://jakarta.apache.org/commons/dtds/mbeans-descriptors.dtd";
 
-//  /** The public id for the DTD */
-//  private static final String PUBLIC_ID =
-//    "-//Apache Software Foundation//DTD Model MBeans Configuration File";
+  //  /** The public id for the DTD */
+  //  private static final String PUBLIC_ID =
+  //    "-//Apache Software Foundation//DTD Model MBeans Configuration File";
 
   /** The name of the "mbean-descriptors" element */
   private static final String MBEANS_DESCRIPTORS = "mbeans-descriptors";
@@ -80,8 +79,8 @@ public class GenerateMBeanHTML extends DefaultHandler {
   /** The name of the "notification" element */
   private static final String NOTIFICATION = "notification";
 
-//  /** The name of the "description" element */
-//  private static final String DESCRIPTOR = "descriptor";
+  //  /** The name of the "description" element */
+  //  private static final String DESCRIPTOR = "descriptor";
 
   /** The name of the "field" element */
   private static final String FIELD = "field";
@@ -109,8 +108,7 @@ public class GenerateMBeanHTML extends DefaultHandler {
    * Converts data from the given <code>InputStream</code> into HTML
    * that is written to the given <code>PrintWriter</code>
    */
-  private static void convert(InputStream in, PrintWriter out) 
-    throws Exception {
+  private static void convert(InputStream in, PrintWriter out) throws Exception {
 
     SAXParserFactory factory = SAXParserFactory.newInstance();
     factory.setValidating(true);
@@ -136,18 +134,17 @@ public class GenerateMBeanHTML extends DefaultHandler {
    * <code>InputSoure</code> for the DTD.
    */
   @Override
-  public InputSource resolveEntity(String publicId, String systemId) 
-    throws SAXException {
+  public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 
     if (publicId == null || systemId == null) {
-      throw new SAXException(LocalizedStrings.GenerateMBeanHTML_PUBLIC_ID_0_SYSTEM_ID_1.toLocalizedString(new Object[] {publicId, systemId}));
+      throw new SAXException(LocalizedStrings.GenerateMBeanHTML_PUBLIC_ID_0_SYSTEM_ID_1.toLocalizedString(new Object[] { publicId, systemId }));
     }
 
     // Figure out the location for the publicId.
     String location = DTD_LOCATION;
 
     InputSource result;
-//    if (location != null) (cannot be null) 
+    //    if (location != null) (cannot be null) 
     {
       InputStream stream = ClassPathLoader.getLatest().getResourceAsStream(getClass(), location);
       if (stream != null) {
@@ -156,8 +153,8 @@ public class GenerateMBeanHTML extends DefaultHandler {
         throw new SAXNotRecognizedException(LocalizedStrings.GenerateMBeanHTML_DTD_NOT_FOUND_0.toLocalizedString(location));
       }
 
-//    } else {
-//      throw new SAXNotRecognizedException(LocalizedStrings.GenerateMBeanHTML_COULD_NOT_FIND_DTD_FOR_0_1.toLocalizedString(new Object[] {publicId, systemId}));
+      //    } else {
+      //      throw new SAXNotRecognizedException(LocalizedStrings.GenerateMBeanHTML_COULD_NOT_FIND_DTD_FOR_0_1.toLocalizedString(new Object[] {publicId, systemId}));
     }
 
     return result;
@@ -167,7 +164,7 @@ public class GenerateMBeanHTML extends DefaultHandler {
    * Warnings are ignored
    */
   @Override
-  public void warning(SAXParseException ex) throws SAXException { 
+  public void warning(SAXParseException ex) throws SAXException {
 
   }
 
@@ -178,7 +175,7 @@ public class GenerateMBeanHTML extends DefaultHandler {
   public void error(SAXParseException ex) throws SAXException {
     throw ex;
   }
-  
+
   /**
    * Rethrow the <code>SAXParseException</code>
    */
@@ -186,7 +183,7 @@ public class GenerateMBeanHTML extends DefaultHandler {
   public void fatalError(SAXParseException ex) throws SAXException {
     throw ex;
   }
-  
+
   /**
    * Starts the HTML document
    */
@@ -198,9 +195,9 @@ public class GenerateMBeanHTML extends DefaultHandler {
     pw.println("");
     pw.println("<h1>GemFire Management Beans</h1>");
     pw.println("");
-    pw.println("<P>This document describes the attributes, operations,"); 
+    pw.println("<P>This document describes the attributes, operations,");
     pw.println("and notifications of the GemFire Administration");
-    pw.println("Management Beans (MBeans).</P>"); 
+    pw.println("Management Beans (MBeans).</P>");
     pw.println("");
   }
 
@@ -287,7 +284,7 @@ public class GenerateMBeanHTML extends DefaultHandler {
         pw.println("</tr>");
 
       } else {
-      String title = "Operations and Parameters";
+        String title = "Operations and Parameters";
         pw.println("<tr valign=\"top\">");
         pw.println("  <th align=\"left\" colspan=\"6\">" + title + "</th>");
         pw.println("</tr>");
@@ -306,7 +303,7 @@ public class GenerateMBeanHTML extends DefaultHandler {
     pw.println("  <td>" + type + "</td>");
     pw.println("  <td colspan=\"2\">" + description + "</td>");
     pw.println("</tr>");
-    
+
   }
 
   /**
@@ -352,13 +349,13 @@ public class GenerateMBeanHTML extends DefaultHandler {
 
     String name = atts.getValue(NAME);
     String description = atts.getValue(DESCRIPTION);
-    
+
     pw.println("<tr valign=\"top\">");
     pw.println("  <td></td>");
     pw.println("  <td colspan=\"3\">" + name + "</td>");
     pw.println("  <td colspan=\"3\">" + description + "</td>");
     pw.println("</tr>");
-    
+
   }
 
   /**
@@ -374,13 +371,11 @@ public class GenerateMBeanHTML extends DefaultHandler {
     pw.println("  <td colspan=\"2\">" + name + "</td>");
     pw.println("  <td colspan=\"2\">" + value + "</td>");
     pw.println("</tr>");
-    
+
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName,
-                           String qName, Attributes atts)
-    throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 
     if (qName.equals(MBEANS_DESCRIPTORS)) {
       startMBeansDescriptors();
@@ -406,11 +401,8 @@ public class GenerateMBeanHTML extends DefaultHandler {
 
   }
 
-
   @Override
-  public void endElement(String namespaceURI, String localName,
-                         String qName)
-    throws SAXException {
+  public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 
     if (qName.equals(MBEANS_DESCRIPTORS)) {
       endMBeansDescriptors();
@@ -424,42 +416,45 @@ public class GenerateMBeanHTML extends DefaultHandler {
   //////////  Inherited methods that don't do anything  //////////
 
   @Override
-  public void characters(char[] ch, int start, int length)
-    throws SAXException {
+  public void characters(char[] ch, int start, int length) throws SAXException {
 
   }
 
   @Override
-  public void setDocumentLocator(Locator locator) { }
+  public void setDocumentLocator(Locator locator) {
+  }
 
   @Override
-  public void startDocument() throws SAXException { }
+  public void startDocument() throws SAXException {
+  }
 
   @Override
-  public void endDocument() throws SAXException { }
+  public void endDocument() throws SAXException {
+  }
 
   @Override
-  public void startPrefixMapping(String prefix, String uri) 
-    throws SAXException { }
+  public void startPrefixMapping(String prefix, String uri) throws SAXException {
+  }
 
   @Override
-  public void endPrefixMapping(String prefix)
-    throws SAXException { }
+  public void endPrefixMapping(String prefix) throws SAXException {
+  }
 
   @Override
-  public void ignorableWhitespace(char[] ch, int start, int length)
-    throws SAXException { }
+  public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+  }
 
   @Override
-  public void processingInstruction(String target, String data)
-    throws SAXException { }
+  public void processingInstruction(String target, String data) throws SAXException {
+  }
 
   @Override
-  public void skippedEntity(String name) throws SAXException { }
+  public void skippedEntity(String name) throws SAXException {
+  }
 
   ////////////////////////  Main Program  ////////////////////////
 
-//  private static final PrintStream out = System.out;
+  //  private static final PrintStream out = System.out;
   private static final PrintStream err = System.err;
 
   /**
@@ -506,8 +501,7 @@ public class GenerateMBeanHTML extends DefaultHandler {
     }
 
     File htmlFile = new File(htmlFileName);
-    convert(new FileInputStream(xmlFile),
-            new PrintWriter(new FileWriter(htmlFile), true));
+    convert(new FileInputStream(xmlFile), new PrintWriter(new FileWriter(htmlFile), true));
   }
 
 }

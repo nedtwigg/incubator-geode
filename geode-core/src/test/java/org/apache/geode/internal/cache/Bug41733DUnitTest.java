@@ -48,7 +48,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  */
 @Category(DistributedTest.class)
 public class Bug41733DUnitTest extends JUnit4CacheTestCase {
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     disconnectAllFromDS();
@@ -60,7 +60,7 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
     result.put(ConfigurationProperties.ENABLE_NETWORK_PARTITION_DETECTION, "false");
     return result;
   }
-  
+
   /** 
    * Test the we can handle a member departing after creating
    * a bucket on the remote node but before we choose a primary
@@ -70,48 +70,46 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     vm0.invoke(new SerializableRunnable("Install observer") {
-      
+
       public void run() {
         DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
 
-          
           @Override
-          public void beforeProcessMessage(DistributionManager dm,
-              DistributionMessage message) {
-            if(message instanceof ManageBucketReplyMessage) {
+          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
+            if (message instanceof ManageBucketReplyMessage) {
               disconnectFromDS();
             }
           }
         });
-        
+
       }
     });
     createPR(vm0, 0);
-    
+
     //Create a couple of buckets in VM0. This will make sure
     //the next bucket we create will be created in VM 1.
     putData(vm0, 0, 2, "a");
-    
+
     createPR(vm1, 0);
-    
+
     //Trigger a bucket creation in VM1, which should cause vm0 to close it's cache.
     try {
       putData(vm0, 3, 4, "a");
       fail("should have received a cache closed exception");
-    } catch(RMIException e) {
-      if(!(e.getCause() instanceof DistributedSystemDisconnectedException)) {
+    } catch (RMIException e) {
+      if (!(e.getCause() instanceof DistributedSystemDisconnectedException)) {
         throw e;
       }
     }
-    
+
     assertEquals(Collections.singleton(3), getBucketList(vm1));
-    
+
     //This shouldn't hang, because the bucket creation should finish,.
     putData(vm1, 3, 4, "a");
   }
-  
+
   /** 
    * Test the we can handle a member departing while we are 
    *  in the process of creating the bucket on the remote node.
@@ -121,44 +119,43 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     vm1.invoke(new SerializableRunnable("Install observer") {
-      
+
       public void run() {
-        
+
         DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
-          
+
           @Override
-          public void beforeProcessMessage(DistributionManager dm,
-              DistributionMessage message) {
-            if(message instanceof ManageBucketMessage) {
+          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
+            if (message instanceof ManageBucketMessage) {
               vm0.invoke(() -> disconnectFromDS());
             }
           }
         });
-        
+
       }
     });
     createPR(vm0, 0);
-    
+
     //Create a couple of buckets in VM0. This will make sure
     //the next bucket we create will be created in VM 1.
     putData(vm0, 0, 2, "a");
-    
+
     createPR(vm1, 0);
-    
+
     //Trigger a bucket creation in VM1, which should cause vm0 to close it's cache.
     try {
       putData(vm0, 3, 4, "a");
       fail("should have received a cache closed exception");
-    } catch(RMIException e) {
-      if(!(e.getCause() instanceof DistributedSystemDisconnectedException)) {
+    } catch (RMIException e) {
+      if (!(e.getCause() instanceof DistributedSystemDisconnectedException)) {
         throw e;
       }
     }
-    
+
     assertEquals(Collections.singleton(3), getBucketList(vm1));
-    
+
     //This shouldn't hang, because the bucket creation should finish,.
     putData(vm1, 3, 4, "a");
   }
@@ -175,40 +172,39 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
         af.setDataPolicy(DataPolicy.PARTITION);
         cache.createRegion("region", af.create());
       }
-      
+
     });
   }
-  
-  protected void putData(VM vm, final int startKey, final int endKey,
-      final String value) {
+
+  protected void putData(VM vm, final int startKey, final int endKey, final String value) {
     SerializableRunnable createData = new SerializableRunnable() {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region");
-        
-        for(int i =startKey; i < endKey; i++) {
+
+        for (int i = startKey; i < endKey; i++) {
           region.put(i, value);
         }
       }
     };
     vm.invoke(createData);
   }
-  
+
   protected Set<Integer> getBucketList(VM vm0) {
     return getBucketList(vm0, "region");
   }
 
   protected Set<Integer> getBucketList(VM vm0, final String regionName) {
     SerializableCallable getBuckets = new SerializableCallable("get buckets") {
-      
+
       public Object call() throws Exception {
         Cache cache = getCache();
         PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
         return new TreeSet<Integer>(region.getDataStore().getAllLocalBucketIds());
       }
     };
-    
+
     return (Set<Integer>) vm0.invoke(getBuckets);
   }
 

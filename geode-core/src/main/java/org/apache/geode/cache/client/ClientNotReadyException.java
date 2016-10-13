@@ -31,7 +31,8 @@ import org.apache.geode.cache.OperationAbortedException;
  * 
  */
 public class ClientNotReadyException extends OperationAbortedException {
-private static final long serialVersionUID = -315765802919271588L;
+  private static final long serialVersionUID = -315765802919271588L;
+
   /**
    * Constructs an instance of <code>ClientNotReadyException</code> with the
    * specified detail message.
@@ -41,7 +42,7 @@ private static final long serialVersionUID = -315765802919271588L;
   public ClientNotReadyException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>ClientNotReadyException</code> with the
    * specified detail message and cause.

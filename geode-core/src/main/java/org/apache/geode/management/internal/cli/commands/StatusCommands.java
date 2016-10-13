@@ -41,13 +41,12 @@ import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 
-
 public class StatusCommands extends AbstractCommandsSupport implements CommandMarker {
-  static final FetchSharedConfigurationStatusFunction fetchSharedConfigStatusFunction = new FetchSharedConfigurationStatusFunction(); 
+  static final FetchSharedConfigurationStatusFunction fetchSharedConfigStatusFunction = new FetchSharedConfigurationStatusFunction();
 
   @SuppressWarnings("unchecked")
-  @CliCommand (value = CliStrings.STATUS_SHARED_CONFIG, help = CliStrings.STATUS_SHARED_CONFIG_HELP)
-  @CliMetaData (relatedTopic = CliStrings.TOPIC_GEODE_LOCATOR)
+  @CliCommand(value = CliStrings.STATUS_SHARED_CONFIG, help = CliStrings.STATUS_SHARED_CONFIG_HELP)
+  @CliMetaData(relatedTopic = CliStrings.TOPIC_GEODE_LOCATOR)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
   public Result statusSharedConfiguration() {
     final GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
@@ -58,16 +57,16 @@ public class StatusCommands extends AbstractCommandsSupport implements CommandMa
       return ResultBuilder.buildResult(getSharedConfigurationStatus(locators));
     }
   }
-  
+
   private TabularResultData getSharedConfigurationStatus(Set<DistributedMember> locators) {
     boolean isSharedConfigRunning = false;
-    ResultCollector<?,?> rc = CliUtil.executeFunction(fetchSharedConfigStatusFunction, null, locators);
-    List<CliFunctionResult> results = (List<CliFunctionResult>)rc.getResult();
+    ResultCollector<?, ?> rc = CliUtil.executeFunction(fetchSharedConfigStatusFunction, null, locators);
+    List<CliFunctionResult> results = (List<CliFunctionResult>) rc.getResult();
     TabularResultData table = ResultBuilder.createTabularResultData();
     table.setHeader("Status of shared configuration on locators");
 
     for (CliFunctionResult result : results) {
-      table.accumulate(CliStrings.STATUS_SHARED_CONFIG_NAME_HEADER,  result.getMemberIdOrName());
+      table.accumulate(CliStrings.STATUS_SHARED_CONFIG_NAME_HEADER, result.getMemberIdOrName());
       String status = (String) result.getSerializables()[0];
       table.accumulate(CliStrings.STATUS_SHARED_CONFIG_STATUS, status);
       if (SharedConfigurationStatus.RUNNING.name().equals(status)) {
@@ -80,8 +79,8 @@ public class StatusCommands extends AbstractCommandsSupport implements CommandMa
     }
     return table;
   }
-  
-  @CliAvailabilityIndicator({ CliStrings.STATUS_SHARED_CONFIG})
+
+  @CliAvailabilityIndicator({ CliStrings.STATUS_SHARED_CONFIG })
   public final boolean isConnected() {
     if (!CliUtil.isGfshVM()) {
       return true;

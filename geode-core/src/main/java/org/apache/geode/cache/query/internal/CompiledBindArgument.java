@@ -32,68 +32,65 @@ import org.apache.geode.cache.query.TypeMismatchException;
  *
  */
 
-
 public class CompiledBindArgument extends AbstractCompiledValue {
   private int index; // one-based
 
-    public CompiledBindArgument(int index) {
-      this.index = index;
-    }
+  public CompiledBindArgument(int index) {
+    this.index = index;
+  }
 
   public int getType() {
     return QUERY_PARAM;
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer,
-      ExecutionContext context) throws AmbiguousNameException,
-      TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
 
     Object bindArg;
-    if (context.isBindArgsSet() && (bindArg = context.getBindArgument(this.index)) instanceof Region ) {
+    if (context.isBindArgsSet() && (bindArg = context.getBindArgument(this.index)) instanceof Region) {
       clauseBuffer.insert(0, ((Region) bindArg).getFullPath());
-    }else {
-      clauseBuffer.insert(0, "$" + this.index);      
+    } else {
+      clauseBuffer.insert(0, "$" + this.index);
     }
   }
-    
-    public Object evaluate(ExecutionContext context) {
-      if(!context.isBindArgsSet()) {
-        return null;
-      }
-      Object obj = context.getBindArgument(this.index);
-      // check for BucketRegion substitution
-      if (obj instanceof Region) {
-        PartitionedRegion pr = context.getPartitionedRegion();
-        if (pr != null) {
-          if (pr.getFullPath().equals(((Region)obj).getFullPath())) {
-            obj = context.getBucketRegion();
-          }
+
+  public Object evaluate(ExecutionContext context) {
+    if (!context.isBindArgsSet()) {
+      return null;
+    }
+    Object obj = context.getBindArgument(this.index);
+    // check for BucketRegion substitution
+    if (obj instanceof Region) {
+      PartitionedRegion pr = context.getPartitionedRegion();
+      if (pr != null) {
+        if (pr.getFullPath().equals(((Region) obj).getFullPath())) {
+          obj = context.getBucketRegion();
         }
       }
-      return obj;
     }
-    
-    /*
-     * provided just the bind parameters, we can evaluate if the expected
-     * parameter is all that is needed.  For example a bound limit variable
-     */
-    public Object evaluate(Object[] bindArguments) {
-        if (index > bindArguments.length) {
-            throw new IllegalArgumentException(LocalizedStrings.ExecutionContext_TOO_FEW_QUERY_PARAMETERS.toLocalizedString());
-        }
-        return bindArguments[index - 1];
+    return obj;
+  }
+
+  /*
+   * provided just the bind parameters, we can evaluate if the expected
+   * parameter is all that is needed.  For example a bound limit variable
+   */
+  public Object evaluate(Object[] bindArguments) {
+    if (index > bindArguments.length) {
+      throw new IllegalArgumentException(LocalizedStrings.ExecutionContext_TOO_FEW_QUERY_PARAMETERS.toLocalizedString());
     }
-    
-    @Override
-    public void getRegionsInQuery(Set regionsInQuery, Object[] parameters) {
-      Object v = parameters[this.index - 1];
-      if (v instanceof Region) {
-        regionsInQuery.add(((Region)v).getFullPath());
-      }
+    return bindArguments[index - 1];
+  }
+
+  @Override
+  public void getRegionsInQuery(Set regionsInQuery, Object[] parameters) {
+    Object v = parameters[this.index - 1];
+    if (v instanceof Region) {
+      regionsInQuery.add(((Region) v).getFullPath());
     }
-    
-    public PdxString getSavedPdxString(ExecutionContext context){
-      return context.getSavedPdxString(this.index);
-    }
+  }
+
+  public PdxString getSavedPdxString(ExecutionContext context) {
+    return context.getSavedPdxString(this.index);
+  }
 }

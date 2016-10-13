@@ -18,8 +18,7 @@ package org.apache.geode.internal.cache.control;
 
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 
-
-public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent>{
+public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent> {
   private int normalCalls = 0;
   private int criticalThresholdCalls = 0;
   private int evictionThresholdCalls = 0;
@@ -29,58 +28,64 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
   private int currentHeapPercentage = 0;
   private int allCalls = 0;
   private final boolean logOnEventCalls;
-  
+
   public TestMemoryThresholdListener() {
     this(false);
   }
+
   public TestMemoryThresholdListener(boolean log) {
     this.logOnEventCalls = log;
   }
 
-  public  long getBytesFromThreshold() {
+  public long getBytesFromThreshold() {
     synchronized (this) {
       return this.bytesFromThreshold;
     }
   }
 
-  public  int getCurrentHeapPercentage() {
+  public int getCurrentHeapPercentage() {
     synchronized (this) {
       return this.currentHeapPercentage;
     }
   }
-  
-  public  int getAllCalls() {
+
+  public int getAllCalls() {
     synchronized (this) {
       return this.allCalls;
     }
   }
-  public  int getNormalCalls() {
-    synchronized(this){
+
+  public int getNormalCalls() {
+    synchronized (this) {
       return this.normalCalls;
     }
   }
-  public  int getCriticalThresholdCalls() {
-    synchronized(this){
+
+  public int getCriticalThresholdCalls() {
+    synchronized (this) {
       return this.criticalThresholdCalls;
     }
   }
-  public  int getCriticalDisabledCalls() {
+
+  public int getCriticalDisabledCalls() {
     synchronized (this) {
       return this.criticalDisabledCalls;
     }
   }
-  public  int getEvictionThresholdCalls() {
-    synchronized(this){
+
+  public int getEvictionThresholdCalls() {
+    synchronized (this) {
       return this.evictionThresholdCalls;
     }
   }
-  public  int getEvictionDisabledCalls() {
+
+  public int getEvictionDisabledCalls() {
     synchronized (this) {
       return this.evictionDisabledCalls;
     }
   }
 
-  public  void resetThresholdCalls(){
+  public void resetThresholdCalls() {
     synchronized (this) {
       this.normalCalls = 0;
       this.criticalThresholdCalls = 0;
@@ -92,19 +97,12 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
       this.allCalls = 0;
     }
   }
+
   @Override
-  public  String toString() {
-    return new StringBuilder("TestListenerStatus:")
-          .append(" normalCalls :"+this.normalCalls)
-          .append(" allCalls :"+this.allCalls)
-          .append(" criticalThresholdCalls :"+this.criticalThresholdCalls)
-          .append(" evictionThresholdCalls :"+this.evictionThresholdCalls)
-          .append(" previousNormalCalls :"+this.normalCalls)
-          .append(" bytesFromThreshold :"+this.bytesFromThreshold)
-          .append(" currentHeapPercentage :"+this.currentHeapPercentage)
-          .append(" evictionDisabledCalls :"+this.evictionDisabledCalls)
-          .append(" criticalDisabledCalls :"+this.criticalDisabledCalls).toString();
+  public String toString() {
+    return new StringBuilder("TestListenerStatus:").append(" normalCalls :" + this.normalCalls).append(" allCalls :" + this.allCalls).append(" criticalThresholdCalls :" + this.criticalThresholdCalls).append(" evictionThresholdCalls :" + this.evictionThresholdCalls).append(" previousNormalCalls :" + this.normalCalls).append(" bytesFromThreshold :" + this.bytesFromThreshold).append(" currentHeapPercentage :" + this.currentHeapPercentage).append(" evictionDisabledCalls :" + this.evictionDisabledCalls).append(" criticalDisabledCalls :" + this.criticalDisabledCalls).toString();
   }
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.control.ResourceListener#onEvent(java.lang.Object)
    */
@@ -116,10 +114,10 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
     synchronized (this) {
       if (event.getState().isNormal()) {
         this.normalCalls++;
-      } 
+      }
       if (event.getState().isCritical() && event.getState() != event.getPreviousState()) {
         this.criticalThresholdCalls++;
-      } 
+      }
       if (event.getState().isEviction() && event.getState() != event.getPreviousState()) {
         this.evictionThresholdCalls++;
       }
@@ -127,11 +125,11 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
         this.criticalDisabledCalls++;
       }
       if (event.getState().isEvictionDisabled() && event.getState() != event.getPreviousState()) {
-          this.evictionDisabledCalls++;
+        this.evictionDisabledCalls++;
       }
-      
+
       this.allCalls++;
-      
+
       if (event.getState().isCritical()) {
         this.bytesFromThreshold = event.getBytesUsed() - event.getThresholds().getCriticalThresholdBytes();
       } else if (event.getState().isEviction()) {
@@ -143,7 +141,7 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
       } else {
         this.bytesFromThreshold = event.getThresholds().getEvictionThresholdBytes() - event.getBytesUsed();
       }
-      
+
       if (event.getThresholds().getMaxMemoryBytes() == 0) {
         this.currentHeapPercentage = 0;
       } else if (event.getBytesUsed() > event.getThresholds().getMaxMemoryBytes()) {
@@ -153,7 +151,7 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
       }
     }
   }
-  
+
   /**
    * Convert a percentage as a double to an integer e.g. 0.09 => 9
    * also legal is 0.095 => 9

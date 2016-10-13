@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -26,10 +25,10 @@ import java.io.*;
 //import java.util.*;
 
 public final class FetchResourceAttributesRequest extends AdminRequest {
-  
+
   // instance variables
   private long resourceUniqueId;
-  
+
   public static FetchResourceAttributesRequest create(long id) {
     FetchResourceAttributesRequest m = new FetchResourceAttributesRequest();
     m.resourceUniqueId = id;
@@ -37,11 +36,11 @@ public final class FetchResourceAttributesRequest extends AdminRequest {
   }
 
   public FetchResourceAttributesRequest() {
-    friendlyName = LocalizedStrings.FetchResourceAttributesRequest_FETCH_STATISTICS_FOR_RESOURCE.toLocalizedString(); 
+    friendlyName = LocalizedStrings.FetchResourceAttributesRequest_FETCH_STATISTICS_FOR_RESOURCE.toLocalizedString();
   }
 
-  @Override  
-  public AdminResponse createResponse(DistributionManager dm){
+  @Override
+  public AdminResponse createResponse(DistributionManager dm) {
     return FetchResourceAttributesResponse.create(dm, this.getSender(), resourceUniqueId);
   }
 
@@ -49,22 +48,21 @@ public final class FetchResourceAttributesRequest extends AdminRequest {
     return FETCH_RESOURCE_ATTRIBUTES_REQUEST;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeLong(resourceUniqueId);
   }
 
-  @Override  
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     resourceUniqueId = in.readLong();
   }
 
-  @Override  
-  public String toString(){
+  @Override
+  public String toString() {
     return LocalizedStrings.FetchResourceAttributesRequest_FETCHRESOURCEATTRIBUTESREQUEST_FOR_0.toLocalizedString(this.getRecipient());
   }
-  
+
 }

@@ -98,17 +98,11 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     accessor.invoke(() -> createCacheInVm());
   }
 
-  public static void createPR(String partitionedRegionName, Integer redundancy,
-      Integer localMaxMemory, Integer totalNumBuckets, Object colocatedWith,
-      Boolean isPartitionResolver) {
-    createPR(partitionedRegionName, redundancy, localMaxMemory,
-        totalNumBuckets, colocatedWith, isPartitionResolver, 
-        Boolean.TRUE/*Concurrency checks; By default is false*/);
+  public static void createPR(String partitionedRegionName, Integer redundancy, Integer localMaxMemory, Integer totalNumBuckets, Object colocatedWith, Boolean isPartitionResolver) {
+    createPR(partitionedRegionName, redundancy, localMaxMemory, totalNumBuckets, colocatedWith, isPartitionResolver, Boolean.TRUE/*Concurrency checks; By default is false*/);
   }
 
-  public static void createPR(String partitionedRegionName, Integer redundancy,
-      Integer localMaxMemory, Integer totalNumBuckets, Object colocatedWith,
-      Boolean isPartitionResolver, Boolean concurrencyChecks) {
+  public static void createPR(String partitionedRegionName, Integer redundancy, Integer localMaxMemory, Integer totalNumBuckets, Object colocatedWith, Boolean isPartitionResolver, Boolean concurrencyChecks) {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
 
     paf.setRedundantCopies(redundancy.intValue());
@@ -122,8 +116,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       paf.setColocatedWith((String) colocatedWith);
     }
     if (isPartitionResolver.booleanValue()) {
-      paf.setPartitionResolver(new CustomerIDPartitionResolver(
-          "CustomerIDPartitionResolver"));
+      paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
     }
     PartitionAttributes prAttr = paf.create();
     AttributesFactory attr = new AttributesFactory();
@@ -135,9 +128,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(basicGetCache());
     Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
     assertNotNull(pr);
-    LogWriterUtils.getLogWriter().info(
-        "Partitioned Region " + partitionedRegionName
-            + " created Successfully :" + pr.toString());
+    LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + pr.toString());
   }
 
   protected void createPartitionedRegion(Object[] attributes) {
@@ -156,8 +147,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(basicGetCache());
     Region pr = basicGetCache().getRegion(partitionedRegionName);
     assertNotNull(pr);
-    LogWriterUtils.getLogWriter().info(
-        "Destroying Partitioned Region " + partitionedRegionName);
+    LogWriterUtils.getLogWriter().info("Destroying Partitioned Region " + partitionedRegionName);
     pr.destroyRegion();
   }
 
@@ -173,9 +163,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     // af.create());
     Region rr = basicGetCache().createRegion(replicatedRegionName, af.create());
     assertNotNull(rr);
-    LogWriterUtils.getLogWriter().info(
-        "Replicated Region " + replicatedRegionName + " created Successfully :"
-            + rr.toString());
+    LogWriterUtils.getLogWriter().info("Replicated Region " + replicatedRegionName + " created Successfully :" + rr.toString());
   }
 
   protected void createReplicatedRegion(Object[] attributes) {
@@ -190,8 +178,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testTXPR() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     SerializableCallable TxOps = new SerializableCallable("TxOps") {
@@ -203,8 +190,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
         // put some data (non tx ops)
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.put");
           pr1.put(dummy, "1_entry__" + i);
         }
@@ -216,8 +202,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         ctx.setDistributed(true);
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.put in tx 1");
           pr1.put(dummy, "2_entry__" + i);
         }
@@ -225,8 +210,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get");
           assertEquals("2_entry__" + i, pr1.get(dummy));
         }
@@ -234,8 +218,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         // put data in tx and rollback
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.put in tx 2");
           pr1.put(dummy, "3_entry__" + i);
         }
@@ -243,8 +226,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get");
           assertEquals("2_entry__" + i, pr1.get(dummy));
         }
@@ -252,8 +234,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         // destroy data in tx and commit
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.destroy in tx 3");
           pr1.destroy(dummy);
         }
@@ -261,8 +242,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get");
           assertEquals(null, pr1.get(dummy));
         }
@@ -271,10 +251,8 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         SerializableCallable verifySize = new SerializableCallable("getOps") {
           @Override
           public Object call() throws CacheException {
-            PartitionedRegion pr1 = (PartitionedRegion) basicGetCache()
-                .getRegion("pregion1");
-            LogWriterUtils.getLogWriter().info(
-                " calling pr.getLocalSize " + pr1.getLocalSize());
+            PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
+            LogWriterUtils.getLogWriter().info(" calling pr.getLocalSize " + pr1.getLocalSize());
             assertEquals(0, pr1.getLocalSize());
             return null;
           }
@@ -289,14 +267,13 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
     accessor.invoke(TxOps);
 
-    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR( "pregion1" ));
+    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR("pregion1"));
   }
 
   @Test
   public void testTXDestroy_invalidate() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     Object[] rrAttrs = new Object[] { "rregion1", Boolean.FALSE };
@@ -310,8 +287,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // put some data (non tx ops)
         for (int i = 1; i <= 6; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling non-tx put");
           pr1.put(dummy, "1_entry__" + i);
           rr1.put(dummy, "1_entry__" + i);
@@ -322,19 +298,15 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         // destroy data in tx and commit
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
-          LogWriterUtils.getLogWriter().info(
-              " calling pr1.destroy in tx key=" + dummy);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
+          LogWriterUtils.getLogWriter().info(" calling pr1.destroy in tx key=" + dummy);
           pr1.destroy(dummy);
           LogWriterUtils.getLogWriter().info(" calling rr1.destroy in tx key=" + i);
           rr1.destroy(dummy);
         }
         for (int i = 4; i <= 6; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
-          LogWriterUtils.getLogWriter().info(
-              " calling pr1.invalidate in tx key=" + dummy);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
+          LogWriterUtils.getLogWriter().info(" calling pr1.invalidate in tx key=" + dummy);
           pr1.invalidate(dummy);
           LogWriterUtils.getLogWriter().info(" calling rr1.invalidate in tx key=" + i);
           rr1.invalidate(dummy);
@@ -343,8 +315,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 6; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr1.get");
           assertEquals(null, pr1.get(dummy));
           LogWriterUtils.getLogWriter().info(" calling rr1.get");
@@ -362,8 +333,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       public Object call() throws CacheException {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
         Region rr1 = basicGetCache().getRegion("rregion1");
-        LogWriterUtils.getLogWriter().info(
-            " calling pr1.getLocalSize " + pr1.getLocalSize());
+        LogWriterUtils.getLogWriter().info(" calling pr1.getLocalSize " + pr1.getLocalSize());
         assertEquals(2, pr1.getLocalSize());
         LogWriterUtils.getLogWriter().info(" calling rr1.size " + rr1.size());
         assertEquals(3, rr1.size());
@@ -374,14 +344,13 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     dataStore2.invoke(verifySize);
     dataStore3.invoke(verifySize);
 
-    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR( "pregion1" ));
+    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR("pregion1"));
   }
 
   @Test
   public void testTXPR_RR() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     Object[] rrAttrs = new Object[] { "rregion1", Boolean.FALSE };
@@ -398,8 +367,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         Region rr1 = basicGetCache().getRegion("rregion1");
         // put some data (non tx ops)
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.put non-tx PR1_entry__" + i);
           pr1.put(dummy, "PR1_entry__" + i);
           LogWriterUtils.getLogWriter().info(" calling rr.put non-tx RR1_entry__" + i);
@@ -413,8 +381,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         ctx.setDistributed(true);
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.put in tx PR2_entry__" + i);
           pr1.put(dummy, "PR2_entry__" + i);
           LogWriterUtils.getLogWriter().info(" calling rr.put in tx RR2_entry__" + i);
@@ -424,8 +391,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get PR2_entry__" + i);
           assertEquals("PR2_entry__" + i, pr1.get(dummy));
           LogWriterUtils.getLogWriter().info(" calling rr.get RR2_entry__" + i);
@@ -442,13 +408,11 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws CacheException {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
-        LogWriterUtils.getLogWriter().info(
-            " calling pr.getLocalSize " + pr1.getLocalSize());
+        LogWriterUtils.getLogWriter().info(" calling pr.getLocalSize " + pr1.getLocalSize());
         assertEquals(2, pr1.getLocalSize());
 
         Region rr1 = basicGetCache().getRegion("rregion1");
-        LogWriterUtils.getLogWriter()
-            .info(" calling rr.getLocalSize " + rr1.size());
+        LogWriterUtils.getLogWriter().info(" calling rr.getLocalSize " + rr1.size());
         assertEquals(3, rr1.size());
         return null;
       }
@@ -457,14 +421,13 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     dataStore2.invoke(verifySize);
     dataStore3.invoke(verifySize);
 
-    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR( "pregion1" ));
+    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR("pregion1"));
   }
 
   @Test
   public void testTXPR2() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     SerializableCallable TxOps = new SerializableCallable("TxOps") {
@@ -482,8 +445,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         ctx.setDistributed(true);
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.put in tx 1");
           pr1.put(dummy, "2_entry__" + i);
         }
@@ -491,8 +453,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get " + pr1.get(dummy));
           assertEquals("2_entry__" + i, pr1.get(dummy));
         }
@@ -507,8 +468,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       public Object call() throws CacheException {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
         CacheTransactionManager ctx = basicGetCache().getCacheTransactionManager();
-        LogWriterUtils.getLogWriter().info(
-            " calling pr.getLocalSize " + pr1.getLocalSize());
+        LogWriterUtils.getLogWriter().info(" calling pr.getLocalSize " + pr1.getLocalSize());
         assertEquals(2, pr1.getLocalSize());
         return null;
       }
@@ -533,20 +493,16 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         ctx.setDistributed(true);
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
-          LogWriterUtils.getLogWriter().info(
-              " calling pr.put in tx for rollback no_entry__" + i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
+          LogWriterUtils.getLogWriter().info(" calling pr.put in tx for rollback no_entry__" + i);
           pr1.put(dummy, "no_entry__" + i);
         }
         ctx.rollback();
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
-          LogWriterUtils.getLogWriter().info(
-              " calling pr.get after rollback " + pr1.get(dummy));
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
+          LogWriterUtils.getLogWriter().info(" calling pr.get after rollback " + pr1.get(dummy));
           assertEquals("2_entry__" + i, pr1.get(dummy));
         }
         return null;
@@ -555,14 +511,13 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
     accessor.invoke(TxRollbackOps);
 
-    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR( "pregion1" ));
+    accessor.invoke(() -> DistTXDebugDUnitTest.destroyPR("pregion1"));
   }
 
   @Test
   public void testTXPRRR2_create() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     Object[] rrAttrs = new Object[] { "rregion1", Boolean.FALSE };
@@ -577,11 +532,10 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         ctx.setDistributed(true);
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.create in tx 1");
           pr1.create(dummy, "2_entry__" + i);
-          
+
           LogWriterUtils.getLogWriter().info(" calling rr.create " + "2_entry__" + i);
           rr1.create(new Integer(i), "2_entry__" + i);
         }
@@ -589,13 +543,11 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get " + pr1.get(dummy));
           assertEquals("2_entry__" + i, pr1.get(dummy));
-          
-          LogWriterUtils.getLogWriter().info(
-              " calling rr.get " + rr1.get(new Integer(i)));
+
+          LogWriterUtils.getLogWriter().info(" calling rr.get " + rr1.get(new Integer(i)));
           assertEquals("2_entry__" + i, rr1.get(new Integer(i)));
         }
         return null;
@@ -609,13 +561,11 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws CacheException {
         Region rr1 = basicGetCache().getRegion("rregion1");
-        LogWriterUtils.getLogWriter()
-            .info(" calling rr.getLocalSize " + rr1.size());
+        LogWriterUtils.getLogWriter().info(" calling rr.getLocalSize " + rr1.size());
         assertEquals(3, rr1.size());
-        
+
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
-        LogWriterUtils.getLogWriter().info(
-            " calling pr.getLocalSize " + pr1.getLocalSize());
+        LogWriterUtils.getLogWriter().info(" calling pr.getLocalSize " + pr1.getLocalSize());
         assertEquals(2, pr1.getLocalSize());
         return null;
       }
@@ -628,8 +578,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testTXPRRR2_putall() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     Object[] rrAttrs = new Object[] { "rregion1", Boolean.FALSE };
@@ -640,15 +589,14 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       public Object call() throws CacheException {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
         Region rr1 = basicGetCache().getRegion("rregion1");
-        
+
         CacheTransactionManager ctx = basicGetCache().getCacheTransactionManager();
         ctx.setDistributed(true);
         ctx.begin();
         HashMap<DummyKeyBasedRoutingResolver, String> phm = new HashMap<DummyKeyBasedRoutingResolver, String>();
         HashMap<Integer, String> rhm = new HashMap<Integer, String>();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           phm.put(dummy, "2_entry__" + i);
           rhm.put(i, "2_entry__" + i);
         }
@@ -658,13 +606,11 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get " + pr1.get(dummy));
           assertEquals("2_entry__" + i, pr1.get(dummy));
-          
-          LogWriterUtils.getLogWriter().info(
-              " calling rr.get " + rr1.get(new Integer(i)));
+
+          LogWriterUtils.getLogWriter().info(" calling rr.get " + rr1.get(new Integer(i)));
           assertEquals("2_entry__" + i, rr1.get(new Integer(i)));
         }
         return null;
@@ -678,13 +624,11 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws CacheException {
         Region rr1 = basicGetCache().getRegion("rregion1");
-        LogWriterUtils.getLogWriter()
-            .info(" calling rr.getLocalSize " + rr1.size());
+        LogWriterUtils.getLogWriter().info(" calling rr.getLocalSize " + rr1.size());
         assertEquals(3, rr1.size());
-        
+
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
-        LogWriterUtils.getLogWriter().info(
-            " calling pr.getLocalSize " + pr1.getLocalSize());
+        LogWriterUtils.getLogWriter().info(" calling pr.getLocalSize " + pr1.getLocalSize());
         assertEquals(2, pr1.getLocalSize());
         return null;
       }
@@ -692,30 +636,28 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     dataStore1.invoke(verifySize);
     dataStore2.invoke(verifySize);
     dataStore3.invoke(verifySize);
-    
-//    accessor.invoke(TxOps);
+
+    //    accessor.invoke(TxOps);
   }
 
   @Test
   public void testTXPR_putall() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     SerializableCallable TxOps = new SerializableCallable("TxOps") {
       @Override
       public Object call() throws CacheException {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
-        
+
         CacheTransactionManager ctx = basicGetCache().getCacheTransactionManager();
         ctx.setDistributed(true);
         ctx.begin();
         HashMap<DummyKeyBasedRoutingResolver, String> phm = new HashMap<DummyKeyBasedRoutingResolver, String>();
         HashMap<Integer, String> rhm = new HashMap<Integer, String>();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           phm.put(dummy, "2_entry__" + i);
         }
         pr1.putAll(phm);
@@ -723,17 +665,16 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get " + pr1.get(dummy));
           assertEquals("2_entry__" + i, pr1.get(dummy));
-          
+
         }
         return null;
       }
     };
 
-//    dataStore1.invoke(TxOps);
+    //    dataStore1.invoke(TxOps);
     accessor.invoke(TxOps);
 
     // verify data size on all replicas
@@ -741,8 +682,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws CacheException {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
-        LogWriterUtils.getLogWriter().info(
-            " calling pr.getLocalSize " + pr1.getLocalSize());
+        LogWriterUtils.getLogWriter().info(" calling pr.getLocalSize " + pr1.getLocalSize());
         assertEquals(2, pr1.getLocalSize());
         return null;
       }
@@ -750,8 +690,8 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     dataStore1.invoke(verifySize);
     dataStore2.invoke(verifySize);
     dataStore3.invoke(verifySize);
-    
-//    accessor.invoke(TxOps);
+
+    //    accessor.invoke(TxOps);
   }
 
   @Test
@@ -783,7 +723,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
           rhm.put(i, "2_entry__" + i);
         }
         rr1.putAll(rhm);
-        
+
         CacheTransactionManager ctx = basicGetCache().getCacheTransactionManager();
         ctx.setDistributed(true);
         ctx.begin();
@@ -793,14 +733,13 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          LogWriterUtils.getLogWriter().info(
-              " calling rr.get " + rr1.get(new Integer(i)));
+          LogWriterUtils.getLogWriter().info(" calling rr.get " + rr1.get(new Integer(i)));
           assertEquals(null, rr1.get(new Integer(i)));
         }
         return null;
       }
     };
-    
+
     if (dataNodeAsCoordinator) {
       dataStore1.invoke(TxOps);
     } else {
@@ -812,8 +751,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws CacheException {
         Region rr1 = basicGetCache().getRegion("rregion1");
-        LogWriterUtils.getLogWriter()
-            .info(" calling rr.getLocalSize " + rr1.size());
+        LogWriterUtils.getLogWriter().info(" calling rr.getLocalSize " + rr1.size());
         assertEquals(0, rr1.size());
         return null;
       }
@@ -821,15 +759,14 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     dataStore1.invoke(verifySize);
     dataStore2.invoke(verifySize);
     dataStore3.invoke(verifySize);
-    
-//    accessor.invoke(TxOps);
+
+    //    accessor.invoke(TxOps);
   }
 
   @Test
   public void testTXPR_removeAll() throws Exception {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     SerializableCallable TxOps = new SerializableCallable("TxOps") {
@@ -838,12 +775,11 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
         HashMap<DummyKeyBasedRoutingResolver, String> phm = new HashMap<DummyKeyBasedRoutingResolver, String>();
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           phm.put(dummy, "2_entry__" + i);
         }
         pr1.putAll(phm);
-        
+
         CacheTransactionManager ctx = basicGetCache().getCacheTransactionManager();
         ctx.setDistributed(true);
         ctx.begin();
@@ -852,8 +788,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(
-              i);
+          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(i);
           LogWriterUtils.getLogWriter().info(" calling pr.get " + pr1.get(dummy));
           assertEquals(null, pr1.get(dummy));
         }
@@ -868,8 +803,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws CacheException {
         PartitionedRegion pr1 = (PartitionedRegion) basicGetCache().getRegion("pregion1");
-        LogWriterUtils.getLogWriter().info(
-            " calling pr.getLocalSize " + pr1.getLocalSize());
+        LogWriterUtils.getLogWriter().info(" calling pr.getLocalSize " + pr1.getLocalSize());
         assertEquals(0, pr1.getLocalSize());
         return null;
       }
@@ -877,14 +811,13 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     dataStore1.invoke(verifySize);
     dataStore2.invoke(verifySize);
     dataStore3.invoke(verifySize);
-    
-//    accessor.invoke(TxOps);
+
+    //    accessor.invoke(TxOps);
   }
 
   public void performTXRRtestOps(boolean makeDatNodeAsCoordinator) {
     createCacheInAllVms();
-    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null,
-        Boolean.FALSE, Boolean.FALSE };
+    Object[] prAttrs = new Object[] { "pregion1", 1, null, 3, null, Boolean.FALSE, Boolean.FALSE };
     createPartitionedRegion(prAttrs);
 
     Object[] rrAttrs = new Object[] { "rregion1", Boolean.FALSE };
@@ -905,18 +838,17 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          LogWriterUtils.getLogWriter().info(
-              " calling rr.get " + rr1.get(new Integer(i)));
+          LogWriterUtils.getLogWriter().info(" calling rr.get " + rr1.get(new Integer(i)));
           assertEquals("2_entry__" + i, rr1.get(new Integer(i)));
         }
         return null;
       }
     };
-    
+
     if (makeDatNodeAsCoordinator) {
       dataStore1.invoke(TxOps);
     } else {
-      accessor.invoke(TxOps);  
+      accessor.invoke(TxOps);
     }
 
     // verify data size on all replicas
@@ -924,8 +856,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws CacheException {
         Region rr1 = basicGetCache().getRegion("rregion1");
-        LogWriterUtils.getLogWriter()
-            .info(" calling rr.getLocalSize " + rr1.size());
+        LogWriterUtils.getLogWriter().info(" calling rr.getLocalSize " + rr1.size());
         assertEquals(3, rr1.size());
         return null;
       }
@@ -942,8 +873,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
         ctx.setDistributed(true);
         ctx.begin();
         for (int i = 1; i <= 3; i++) {
-          LogWriterUtils.getLogWriter().info(
-              " calling rr.put for rollback no_entry__" + i);
+          LogWriterUtils.getLogWriter().info(" calling rr.put for rollback no_entry__" + i);
           rr1.put(new Integer(i), "no_entry__" + i);
         }
         ctx.rollback();
@@ -951,9 +881,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
 
         // verify the data
         for (int i = 1; i <= 3; i++) {
-          LogWriterUtils.getLogWriter().info(
-              " calling rr.get after rollback "
-                  + rr1.get(new Integer(i)));
+          LogWriterUtils.getLogWriter().info(" calling rr.get after rollback " + rr1.get(new Integer(i)));
           assertEquals("2_entry__" + i, rr1.get(new Integer(i)));
         }
         return null;
@@ -963,7 +891,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
     if (makeDatNodeAsCoordinator) {
       dataStore1.invoke(TxRollbackOps);
     } else {
-      accessor.invoke(TxRollbackOps);  
+      accessor.invoke(TxRollbackOps);
     }
   }
 
@@ -978,8 +906,7 @@ public class DistTXDebugDUnitTest extends JUnit4CacheTestCase {
   }
 }
 
-class DummyKeyBasedRoutingResolver implements PartitionResolver,
-    DataSerializable {
+class DummyKeyBasedRoutingResolver implements PartitionResolver, DataSerializable {
   Integer dummyID;
 
   public DummyKeyBasedRoutingResolver() {

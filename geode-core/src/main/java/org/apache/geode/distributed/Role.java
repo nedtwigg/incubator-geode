@@ -27,14 +27,14 @@ package org.apache.geode.distributed;
  * @deprecated this feature is scheduled to be removed
  */
 public interface Role extends Comparable<Role> {
-  
+
   /** 
    * Returns the name of this role. 
    *
    * @return user-defined string name of this role
    */
   public String getName();
-  
+
   /** 
    * Returns true if this role is currently present in distributed system.
    * If true, then at least one member in the system is configured with this
@@ -43,7 +43,7 @@ public interface Role extends Comparable<Role> {
    * @return true if this role is currently present in distributed system
    */
   public boolean isPresent();
-  
+
   /** 
    * Returns the count of members currently filling this role. These members
    * may or may not have a cache.
@@ -52,4 +52,3 @@ public interface Role extends Comparable<Role> {
    */
   public int getCount();
 }
-

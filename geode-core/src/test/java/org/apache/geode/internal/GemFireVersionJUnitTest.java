@@ -41,7 +41,7 @@ public class GemFireVersionJUnitTest {
   public void testPrintInfo() {
     final String versionOutput = GemFireVersion.asString();
     System.out.println(versionOutput);
-    
+
     assertTrue(versionOutput.contains(GemFireVersion.VersionDescription.PRODUCT_NAME));
     assertTrue(versionOutput.contains(GemFireVersion.VersionDescription.GEMFIRE_VERSION));
     assertTrue(versionOutput.contains(GemFireVersion.VersionDescription.SOURCE_DATE));
@@ -52,7 +52,7 @@ public class GemFireVersionJUnitTest {
     assertTrue(versionOutput.contains(GemFireVersion.VersionDescription.BUILD_PLATFORM));
     assertTrue(versionOutput.contains(GemFireVersion.VersionDescription.BUILD_JAVA_VERSION));
   }
-  
+
   @Test
   public void testNoFile() {
     String noFile = "not a property file";
@@ -65,7 +65,7 @@ public class GemFireVersionJUnitTest {
     String noFileOutput = sw.toString();
     assertTrue(noFileOutput.contains(LocalizedStrings.GemFireVersion_COULD_NOT_FIND_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_0.toLocalizedString(noFile)));
   }
-  
+
   @Test
   public void testNoFileGetProperty() {
     String noFile = "not a property file";

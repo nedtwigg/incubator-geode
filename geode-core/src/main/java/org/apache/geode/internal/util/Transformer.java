@@ -22,7 +22,7 @@ package org.apache.geode.internal.util;
  * @param <T1> The data type to be transformed from.
  * @param <T2> The data type to be transformed to.
  */
-public interface Transformer<T1,T2> {
+public interface Transformer<T1, T2> {
   /**
    * Transforms one data type into another.
    * @param t the data to be transferred from.

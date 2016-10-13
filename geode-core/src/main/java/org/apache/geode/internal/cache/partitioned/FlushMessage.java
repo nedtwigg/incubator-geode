@@ -46,17 +46,17 @@ import org.apache.geode.internal.logging.LogService;
  * 
  * @since GemFire 5.1
  */
-public final class FlushMessage extends SerialDistributionMessage implements MessageWithReply
-{ 
+public final class FlushMessage extends SerialDistributionMessage implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
-  
+
   int prId;
   int bucketId;
   int processorId;
 
-  public FlushMessage() {}
+  public FlushMessage() {
+  }
 
   private FlushMessage(int prId, int bucketId, int processorId, InternalDistributedMember recipient) {
     this.prId = prId;
@@ -69,31 +69,28 @@ public final class FlushMessage extends SerialDistributionMessage implements Mes
    * Used both for the reciept of a FlushMessage and the reply to a Flushmessage
    */
   @Override
-  protected void process(DistributionManager dm)
-  {
+  protected void process(DistributionManager dm) {
     if (this.bucketId != Integer.MIN_VALUE) {
-      if (logger.isDebugEnabled()){
+      if (logger.isDebugEnabled()) {
         logger.debug("Received sent FlushMessage {}", this);
       }
       try {
         final PartitionedRegion p = PartitionedRegion.getPRFromId(this.prId);
         Assert.assertTrue(p.getRegionAdvisor().isPrimaryForBucket(this.bucketId));
-      }
-      catch (PRLocallyDestroyedException fre) {
+      } catch (PRLocallyDestroyedException fre) {
         if (logger.isDebugEnabled()) {
           logger.debug("Sending reply despite Region getting locally destroyed prId={}", this.prId, fre);
         }
-      }      
-      catch (CacheRuntimeException ce) {
+      } catch (CacheRuntimeException ce) {
         logger.debug("Sending reply despite unavailable Partitioned Region using prId={}", this.prId, ce);
       } finally {
         dm.putOutgoing(new FlushMessage(this.prId, Integer.MIN_VALUE, getProcessorId(), getSender()));
       }
     } else {
-      if (logger.isDebugEnabled()){
+      if (logger.isDebugEnabled()) {
         logger.debug("Processing FlushMessage as a response {}", this);
       }
-      
+
       ReplyProcessor21 rep = ReplyProcessor21.getProcessor(this.processorId);
       if (rep != null) {
         rep.process(this);
@@ -110,17 +107,15 @@ public final class FlushMessage extends SerialDistributionMessage implements Mes
    * @param bucketId
    * @return a processor on which to wait for the flush operation to complete
    */
-  public static ReplyProcessor21 send(InternalDistributedMember primary, PartitionedRegion p, int bucketId)
-  {
+  public static ReplyProcessor21 send(InternalDistributedMember primary, PartitionedRegion p, int bucketId) {
     ReplyProcessor21 reply = new ReplyProcessor21(p.getDistributionManager(), primary);
     FlushMessage fm = new FlushMessage(p.getPRId(), bucketId, reply.getProcessorId(), primary);
-    p.getDistributionManager().putOutgoing(fm);    
+    p.getDistributionManager().putOutgoing(fm);
     return reply;
   }
 
   @Override
-  public int getProcessorId()
-  {
+  public int getProcessorId() {
     return this.processorId;
   }
 
@@ -129,25 +124,20 @@ public final class FlushMessage extends SerialDistributionMessage implements Mes
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.prId = in.readInt(); 
-    this.bucketId = in.readInt(); 
-    this.processorId = in.readInt(); 
+    this.prId = in.readInt();
+    this.bucketId = in.readInt();
+    this.processorId = in.readInt();
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     // TODO Auto-generated method stub
     super.toData(out);
     out.writeInt(this.prId);
     out.writeInt(this.bucketId);
     out.writeInt(this.processorId);
   }
-
-  
-
 
 }

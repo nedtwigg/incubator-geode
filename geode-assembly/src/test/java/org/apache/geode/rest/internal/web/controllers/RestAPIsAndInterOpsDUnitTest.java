@@ -106,85 +106,24 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
   private static final String findPeopleByGenderQuery = "/queries?id=filterByGender&q=SELECT%20*%20from%20/People%20where%20gender=$1";
   private static final String findPeopleByLastNameQuery = "/queries?id=filterByLastName&q=SELECT%20*%20from%20/People%20where%20lastName=$1";
 
-  private static final String[] PARAM_QUERY_IDS_ARRAY = { "findAllPeople",
-      "filterByGender", "filterByLastName" };
+  private static final String[] PARAM_QUERY_IDS_ARRAY = { "findAllPeople", "filterByGender", "filterByLastName" };
 
-  final static String QUERY_ARGS = "["
-      + "{"
-      + "\"@type\": \"string\","
-      + "\"@value\": \"Patel\""
-      + "}"
-      + "]";
+  final static String QUERY_ARGS = "[" + "{" + "\"@type\": \"string\"," + "\"@value\": \"Patel\"" + "}" + "]";
 
-  final static String PERSON_AS_JSON_CAS = "{"
-      + "\"@old\" :"
-      + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 101," + " \"firstName\": \"Mithali\","
-      + " \"middleName\": \"Dorai\"," + " \"lastName\": \"Raj\","
-      + " \"birthDate\": \"12/04/1982\"," + "\"gender\": \"FEMALE\""
-      + "},"
-      + "\"@new\" :"
-      + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 1101," + " \"firstName\": \"Virat\","
-      + " \"middleName\": \"Premkumar\"," + " \"lastName\": \"Kohli\","
-      + " \"birthDate\": \"08/11/1988\"," + "\"gender\": \"MALE\""
-      + "}"
-      + "}";
+  final static String PERSON_AS_JSON_CAS = "{" + "\"@old\" :" + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 101," + " \"firstName\": \"Mithali\"," + " \"middleName\": \"Dorai\"," + " \"lastName\": \"Raj\"," + " \"birthDate\": \"12/04/1982\"," + "\"gender\": \"FEMALE\"" + "}," + "\"@new\" :" + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 1101," + " \"firstName\": \"Virat\"," + " \"middleName\": \"Premkumar\"," + " \"lastName\": \"Kohli\"," + " \"birthDate\": \"08/11/1988\"," + "\"gender\": \"MALE\"" + "}" + "}";
 
-  final static String PERSON_AS_JSON_REPLACE = "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 501," + " \"firstName\": \"Barack\","
-      + " \"middleName\": \"Hussein\"," + " \"lastName\": \"Obama\","
-      + " \"birthDate\": \"04/08/1961\"," + "\"gender\": \"MALE\""
-      + "}";
+  final static String PERSON_AS_JSON_REPLACE = "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 501," + " \"firstName\": \"Barack\"," + " \"middleName\": \"Hussein\"," + " \"lastName\": \"Obama\"," + " \"birthDate\": \"04/08/1961\"," + "\"gender\": \"MALE\"" + "}";
 
-  private static final String PERSON_LIST_AS_JSON = "[" + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 3," + " \"firstName\": \"Nishka3\","
-      + " \"middleName\": \"Nilkanth3\"," + " \"lastName\": \"Patel3\","
-      + " \"birthDate\": \"07/31/2009\"," + "\"gender\": \"FEMALE\"" + "},"
-      + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 4," + " \"firstName\": \"Tanay4\","
-      + " \"middleName\": \"kiran4\"," + " \"lastName\": \"Patel4\","
-      + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 5," + " \"firstName\": \"Nishka5\","
-      + " \"middleName\": \"Nilkanth5\"," + " \"lastName\": \"Patel5\","
-      + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "},"
-      + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 6," + " \"firstName\": \"Tanay6\","
-      + " \"middleName\": \"Kiran6\"," + " \"lastName\": \"Patel\","
-      + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 7," + " \"firstName\": \"Nishka7\","
-      + " \"middleName\": \"Nilkanth7\"," + " \"lastName\": \"Patel\","
-      + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "},"
-      + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 8," + " \"firstName\": \"Tanay8\","
-      + " \"middleName\": \"kiran8\"," + " \"lastName\": \"Patel\","
-      + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 9," + " \"firstName\": \"Nishka9\","
-      + " \"middleName\": \"Nilkanth9\"," + " \"lastName\": \"Patel\","
-      + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "},"
-      + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 10," + " \"firstName\": \"Tanay10\","
-      + " \"middleName\": \"kiran10\"," + " \"lastName\": \"Patel\","
-      + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 11," + " \"firstName\": \"Nishka11\","
-      + " \"middleName\": \"Nilkanth11\"," + " \"lastName\": \"Patel\","
-      + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "},"
-      + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
-      + "\"id\": 12," + " \"firstName\": \"Tanay12\","
-      + " \"middleName\": \"kiran12\"," + " \"lastName\": \"Patel\","
-      + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}" + "]";
+  private static final String PERSON_LIST_AS_JSON = "[" + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 3," + " \"firstName\": \"Nishka3\"," + " \"middleName\": \"Nilkanth3\"," + " \"lastName\": \"Patel3\"," + " \"birthDate\": \"07/31/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 4," + " \"firstName\": \"Tanay4\"," + " \"middleName\": \"kiran4\"," + " \"lastName\": \"Patel4\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 5," + " \"firstName\": \"Nishka5\"," + " \"middleName\": \"Nilkanth5\"," + " \"lastName\": \"Patel5\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 6," + " \"firstName\": \"Tanay6\","
+      + " \"middleName\": \"Kiran6\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 7," + " \"firstName\": \"Nishka7\"," + " \"middleName\": \"Nilkanth7\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 8," + " \"firstName\": \"Tanay8\"," + " \"middleName\": \"kiran8\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 9," + " \"firstName\": \"Nishka9\"," + " \"middleName\": \"Nilkanth9\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{"
+      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 10," + " \"firstName\": \"Tanay10\"," + " \"middleName\": \"kiran10\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 11," + " \"firstName\": \"Nishka11\"," + " \"middleName\": \"Nilkanth11\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 12," + " \"firstName\": \"Tanay12\"," + " \"middleName\": \"kiran12\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}" + "]";
 
   public RestAPIsAndInterOpsDUnitTest() {
     super();
-    this.helper = new ManagementTestBase() {{}};
+    this.helper = new ManagementTestBase() {
+      {
+      }
+    };
 
   }
 
@@ -198,8 +137,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     disconnectAllFromDS();
   }
 
-  public String startBridgeServerWithRestService(final String hostName, final String[] groups, final String locators, final String[] regions,
-      final ServerLoadProbe probe) {
+  public String startBridgeServerWithRestService(final String hostName, final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) {
     final int serverPort = AvailablePortHelper.getRandomAvailableTCPPort();
 
     //create Cache of given VM and start HTTP service with REST APIs service
@@ -209,8 +147,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
   }
 
   @SuppressWarnings("deprecation")
-  protected int startBridgeServer(String hostName, int restServicerPort, final String[] groups, final String locators, final String[] regions,
-      final ServerLoadProbe probe) {
+  protected int startBridgeServer(String hostName, int restServicerPort, final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) {
 
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, String.valueOf(0));
@@ -338,8 +275,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
         HttpEntity entity = listAllQueriesResponse.getEntity();
         InputStream content = entity.getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-            content));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         String line;
         StringBuffer sb = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -352,10 +288,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
         JSONObject jsonObject = new JSONObject(sb.toString());
         JSONArray jsonArray = jsonObject.getJSONArray("queries");
         for (int i = 0; i < jsonArray.length(); i++) {
-          assertTrue(
-              "PREPARE_PARAMETERIZED_QUERY: function IDs are not matched",
-              Arrays.asList(PARAM_QUERY_IDS_ARRAY).contains(
-                  jsonArray.getJSONObject(i).getString("id")));
+          assertTrue("PREPARE_PARAMETERIZED_QUERY: function IDs are not matched", Arrays.asList(PARAM_QUERY_IDS_ARRAY).contains(jsonArray.getJSONObject(i).getString("id")));
         }
       }
 
@@ -460,8 +393,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
       try {
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpPut put = new HttpPut(restEndpoint
-            + "/People/3,4,5,6,7,8,9,10,11,12");
+        HttpPut put = new HttpPut(restEndpoint + "/People/3,4,5,6,7,8,9,10,11,12");
         put.addHeader("Content-Type", "application/json");
         put.addHeader("Accept", "application/json");
         StringEntity entity = new StringEntity(PERSON_LIST_AS_JSON);
@@ -524,8 +456,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
       try {
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpPut put = new HttpPut(restEndpoint
-            + "/People/2?op=replace");
+        HttpPut put = new HttpPut(restEndpoint + "/People/2?op=replace");
         put.addHeader("Content-Type", "application/json");
         put.addHeader("Accept", "application/json");
         StringEntity entity = new StringEntity(PERSON_AS_JSON_REPLACE);
@@ -548,8 +479,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
       response = httpclient.execute(get);
       HttpEntity entity = response.getEntity();
       InputStream content = entity.getContent();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(
-          content));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(content));
       String line;
       StringBuffer str = new StringBuffer();
       while ((line = reader.readLine()) != null) {
@@ -598,8 +528,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
         HttpEntity entity = response.getEntity();
         InputStream content = entity.getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-            content));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         String line;
         StringBuffer str = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -627,8 +556,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
         HttpEntity entity = response.getEntity();
         InputStream content = entity.getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-            content));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         String line;
         StringBuffer str = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -657,8 +585,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
         HttpEntity entity = result.getEntity();
         InputStream content = entity.getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-            content));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         String line;
         StringBuffer sb = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -687,8 +614,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
         HttpEntity entity = response.getEntity();
         InputStream content = entity.getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-            content));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         String line;
         StringBuffer str = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -717,8 +643,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
         HttpEntity entity = response.getEntity();
         InputStream content = entity.getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-            content));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         String line;
         StringBuffer str = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -747,8 +672,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
         HttpEntity entity = response.getEntity();
         InputStream content = entity.getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-            content));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(content));
         String line;
         StringBuffer str = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -772,8 +696,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
   public void createRegionInClientCache() {
     ClientCache cache = GemFireCacheImpl.getInstance();
     assertNotNull(cache);
-    ClientRegionFactory<String, Object> crf = cache
-        .createClientRegionFactory(ClientRegionShortcut.PROXY);
+    ClientRegionFactory<String, Object> crf = cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
     Region<String, Object> region = crf.create(PEOPLE_REGION_NAME);
 
   }
@@ -782,8 +705,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     Cache cache = GemFireCacheImpl.getInstance();
     assertNotNull(cache);
 
-    RegionFactory<String, Object> rf = cache
-        .createRegionFactory(RegionShortcut.REPLICATE);
+    RegionFactory<String, Object> rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     Region<String, Object> region = rf.create(PEOPLE_REGION_NAME);
   }
 
@@ -815,8 +737,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
     //start startCacheServer With RestService enabled
     final String serverHostName = server.getHost().getHostName();
-    String restEndpoint = (String) server.invoke(() -> startBridgeServerWithRestService(serverHostName, null, locators
-        , new String[] { REGION_NAME }, CacheServer.DEFAULT_LOAD_PROBE));
+    String restEndpoint = (String) server.invoke(() -> startBridgeServerWithRestService(serverHostName, null, locators, new String[] { REGION_NAME }, CacheServer.DEFAULT_LOAD_PROBE));
 
     // create a client cache
     client.invoke(() -> createClientCache(locatorHostName, locatorPort));
@@ -854,18 +775,14 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
   private void createClientCache(final String host, final int port) throws Exception {
     // Connect using the GemFire locator and create a Caching_Proxy cache
-    ClientCache c = new ClientCacheFactory().setPdxReadSerialized(true).addPoolLocator(host, port)
-        .create();
+    ClientCache c = new ClientCacheFactory().setPdxReadSerialized(true).addPoolLocator(host, port).create();
 
-    c.createClientRegionFactory(
-        ClientRegionShortcut.PROXY).create(REGION_NAME);
+    c.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
   }
 
-  private int startManager(final String[] groups, final String locators, final String[] regions
-      , final ServerLoadProbe probe) throws IOException {
+  private int startManager(final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) throws IOException {
     Properties props = new Properties();
-    props
-        .setProperty(MCAST_PORT, String.valueOf(0));
+    props.setProperty(MCAST_PORT, String.valueOf(0));
     props.setProperty(LOCATORS, locators);
 
     props.setProperty(JMX_MANAGER, "true");

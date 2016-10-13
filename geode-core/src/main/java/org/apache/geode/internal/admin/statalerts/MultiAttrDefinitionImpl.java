@@ -66,7 +66,7 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
 
   public boolean verify(StatisticsFactory factory) {
     if (statisticInfo == null || statisticInfo.length == 0) {
-//      System.out.println("No attributes defined for this definition.");
+      //      System.out.println("No attributes defined for this definition.");
       return false;
     }
     boolean result = false;
@@ -74,8 +74,7 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
     for (int i = 0; i < statisticInfo.length; i++) {
 
       if (statisticInfo[i] != null) {
-        Statistics[] temp = factory.findStatisticsByTextId(statisticInfo[i]
-            .getStatisticsTextId());
+        Statistics[] temp = factory.findStatisticsByTextId(statisticInfo[i].getStatisticsTextId());
 
         if (temp == null || temp.length == 0)
           return false;
@@ -87,8 +86,7 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
             break;
           }
         }
-      }
-      else {
+      } else {
         result = false;
         break;
       }
@@ -141,8 +139,7 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
 
   public void setStatisticInfo(StatisticInfo[] info) {
     if (info == null || info.length == 0)
-      throw new IllegalArgumentException(
-          "setStatisticInfo method requires non-zero length array of StatisticInfo objects.");
+      throw new IllegalArgumentException("setStatisticInfo method requires non-zero length array of StatisticInfo objects.");
 
     statisticInfo = info;
   }
@@ -154,8 +151,7 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
   public Number[] getValue() {
     Number[] vals = new Number[statisticInfo.length];
     for (int i = 0; i < vals.length; i++) {
-      vals[i] = statisticInfo[i].getStatistics().get(
-          statisticInfo[i].getStatisticDescriptor());
+      vals[i] = statisticInfo[i].getStatistics().get(statisticInfo[i].getStatisticDescriptor());
     }
     return vals;
   }
@@ -191,16 +187,16 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
   public StatAlertDefinition getDecorator(String decoratorID) {
     return null;
   }
+
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeString(this._name, out);
     DataSerializer.writePrimitiveInt(this._id, out);
     DataSerializer.writeObjectArray(this.statisticInfo, out);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this._name = DataSerializer.readString(in);
     this._id = DataSerializer.readPrimitiveInt(in);
-    this.statisticInfo = (StatisticInfo[])DataSerializer.readObjectArray(in);
+    this.statisticInfo = (StatisticInfo[]) DataSerializer.readObjectArray(in);
   }
 }

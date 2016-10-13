@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.query;
 
-
 /**
  * Interface for continuous query. This provides methods for managing a CQ 
  * once it is created through the QueryService. 
@@ -51,21 +50,21 @@ public interface CqQuery {
    * Get statistics information for this CQ.
    * @return CqStatistics CQ statistics object.
    */
-  public CqStatistics getStatistics();  
+  public CqStatistics getStatistics();
 
   /**
    * Get CqAttributes for this CQ.
    * @see CqAttributes
    * @return CqAttributes cqAttribute set with this CqQuery.
    */
-  public CqAttributes getCqAttributes(); 
+  public CqAttributes getCqAttributes();
 
   /**
    * Get CqAttributesMutator for this CQ.
    * @see CqAttributesMutator
    * @return CqAttributesMutator.
    */
-  public CqAttributesMutator getCqAttributesMutator(); 
+  public CqAttributesMutator getCqAttributesMutator();
 
   /**
    * Starts executing the CQ or, if the CQ is in a stopped state, resumes 
@@ -114,7 +113,7 @@ public interface CqQuery {
    * CqState supports methods like isClosed(), isRunning(), isStopped().
    * @see CqState
    * @return CqState state object of the CQ.
-   */ 
+   */
   public CqState getState();
 
   /**
@@ -123,7 +122,7 @@ public interface CqQuery {
    * @throws CqClosedException Further calls on this CqQuery instance except 
    *         for getState() or getName().
    * @throws CqException - if failure during cleanup of CQ resources.
-   */ 
+   */
   public void close() throws CqClosedException, CqException;
 
   /**
@@ -135,7 +134,7 @@ public interface CqQuery {
   /**
    * This allows to check if the CQ is in stopped.
    * @return boolean true if stopped, false otherwise
-   */ 
+   */
   public boolean isStopped();
 
   /**
@@ -143,7 +142,7 @@ public interface CqQuery {
    * @return boolean true if closed, false otherwise
    */
   public boolean isClosed();
-  
+
   /**
    * This allows to check if the CQ is durable.
    * @return boolean true if durable, false otherwise

@@ -30,9 +30,9 @@ import org.apache.geode.internal.DataSerializableFixedID;
  */
 public class ClientConnectionRequest extends ServerLocationRequest {
   Set/*<ServerLocation>*/ excludedServers;
-  
+
   public ClientConnectionRequest() {
-    
+
   }
 
   public ClientConnectionRequest(Set/*<ServerLocation>*/ excludedServers, String serverGroup) {
@@ -55,7 +55,7 @@ public class ClientConnectionRequest extends ServerLocationRequest {
   public Set getExcludedServers() {
     return excludedServers;
   }
-  
+
   @Override
   public String toString() {
     return "ClientConnectionRequest{group=" + getServerGroup() + ", excluded=" + getExcludedServers() + "}";

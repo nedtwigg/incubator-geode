@@ -34,7 +34,6 @@ public class ExportDiskRegion extends ValidatingDiskRegion {
 
   private Map<Object, RecoveredEntry> currentOplogEntries = new HashMap();
   private ExportWriter writer;
-  
 
   public ExportDiskRegion(DiskStoreImpl ds, DiskRegionView drv, ExportWriter writer) {
     super(ds, drv);
@@ -43,7 +42,7 @@ public class ExportDiskRegion extends ValidatingDiskRegion {
 
   @Override
   public DiskEntry initializeRecoveredEntry(Object key, RecoveredEntry re) {
-    if(re.getValue() == null) {
+    if (re.getValue() == null) {
       Assert.fail("Value should not have been null for key " + key);
     }
     currentOplogEntries.put(key, re);
@@ -61,12 +60,12 @@ public class ExportDiskRegion extends ValidatingDiskRegion {
     currentOplogEntries.remove(key);
     super.destroyRecoveredEntry(key);
   }
-  
+
   @Override
   public void oplogRecovered(long oplogId) {
     try {
       writer.writeBatch(currentOplogEntries);
-    } catch(IOException e) {
+    } catch (IOException e) {
       throw new DiskAccessException("Error during export", e, this.getDiskStore());
     }
     currentOplogEntries.clear();

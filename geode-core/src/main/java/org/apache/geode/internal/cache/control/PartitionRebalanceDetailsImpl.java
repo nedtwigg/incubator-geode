@@ -32,8 +32,7 @@ import org.apache.geode.internal.cache.PartitionedRegion;
  * MBeans to use this as a remotable return type.
  * 
  */
-public class PartitionRebalanceDetailsImpl implements PartitionRebalanceInfo, 
-Serializable, Comparable<PartitionRebalanceDetailsImpl> {
+public class PartitionRebalanceDetailsImpl implements PartitionRebalanceInfo, Serializable, Comparable<PartitionRebalanceDetailsImpl> {
   private static final long serialVersionUID = 5880667005758250156L;
   private long bucketCreateBytes;
   private long bucketCreateTime;
@@ -50,31 +49,30 @@ Serializable, Comparable<PartitionRebalanceDetailsImpl> {
   private int primaryTransfersCompleted;
   transient private final PartitionedRegion region;
   private long time;
-  
-  public PartitionRebalanceDetailsImpl(
-      PartitionedRegion region) {
+
+  public PartitionRebalanceDetailsImpl(PartitionedRegion region) {
     this.region = region;
   }
 
   public synchronized void incCreates(long bytes, long time) {
-    bucketCreateBytes+= bytes;
+    bucketCreateBytes += bytes;
     bucketCreateTime += time;
     bucketCreatesCompleted++;
   }
-  
+
   public synchronized void incRemoves(long bytes, long time) {
-    bucketRemoveBytes+= bytes;
+    bucketRemoveBytes += bytes;
     bucketRemoveTime += time;
-    bucketRemovesCompleted++; 
-    
+    bucketRemovesCompleted++;
+
   }
-  
+
   public synchronized void incTransfers(long bytes, long time) {
-    bucketTransferBytes+= bytes;
+    bucketTransferBytes += bytes;
     bucketTransferTime += time;
     bucketTransfersCompleted++;
   }
-  
+
   public synchronized void incPrimaryTransfers(long time) {
     primaryTransfersCompleted++;
     primaryTransferTime += time;
@@ -83,74 +81,92 @@ Serializable, Comparable<PartitionRebalanceDetailsImpl> {
   public void setPartitionMemberDetailsAfter(Set<PartitionMemberInfo> after) {
     this.partitionMemberDetailsAfter = after;
   }
-  
+
   public void setPartitionMemberDetailsBefore(Set<PartitionMemberInfo> before) {
     this.partitionMemberDetailsBefore = before;
   }
-  
+
   public void setTime(long time) {
     this.time = time;
   }
-  
+
   public long getBucketCreateBytes() {
     return this.bucketCreateBytes;
   }
+
   public long getBucketCreateTime() {
     return TimeUnit.NANOSECONDS.toMillis(this.bucketCreateTime);
   }
+
   public int getBucketCreatesCompleted() {
     return this.bucketCreatesCompleted;
   }
+
   public long getBucketRemoveBytes() {
     return this.bucketRemoveBytes;
   }
+
   public long getBucketRemoveTime() {
     return TimeUnit.NANOSECONDS.toMillis(this.bucketRemoveTime);
   }
+
   public int getBucketRemovesCompleted() {
     return this.bucketRemovesCompleted;
   }
+
   public long getBucketTransferBytes() {
     return this.bucketTransferBytes;
   }
+
   public long getBucketTransferTime() {
     return TimeUnit.NANOSECONDS.toMillis(this.bucketTransferTime);
   }
+
   public int getBucketTransfersCompleted() {
     return this.bucketTransfersCompleted;
   }
+
   public Set<PartitionMemberInfo> getPartitionMemberDetailsAfter() {
     return this.partitionMemberDetailsAfter;
   }
+
   public Set<PartitionMemberInfo> getPartitionMemberDetailsBefore() {
     return this.partitionMemberDetailsBefore;
   }
+
   public long getPrimaryTransferTime() {
     return TimeUnit.NANOSECONDS.toMillis(this.primaryTransferTime);
   }
+
   public int getPrimaryTransfersCompleted() {
     return this.primaryTransfersCompleted;
   }
+
   public String getRegionPath() {
     return this.region.getFullPath();
   }
+
   public PartitionedRegion getRegion() {
     return this.region;
   }
+
   public long getTime() {
     return TimeUnit.NANOSECONDS.toMillis(this.time);
   }
+
   public int compareTo(PartitionRebalanceDetailsImpl other) {
     return this.region.getFullPath().compareTo(other.region.getFullPath());
   }
+
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof PartitionRebalanceDetailsImpl)) {
       return false;
     }
-    PartitionRebalanceDetailsImpl o = (PartitionRebalanceDetailsImpl)other;
+    PartitionRebalanceDetailsImpl o = (PartitionRebalanceDetailsImpl) other;
     return this.region.getFullPath().equals(o.region.getFullPath());
   }
+
   @Override
   public int hashCode() {
     return this.region.getFullPath().hashCode();

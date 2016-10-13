@@ -51,7 +51,6 @@ public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase 
     return Arrays.asList("/geode", "/gemfire-api");
   }
 
-
   @Override
   protected String getFunctionID() {
     return OnGroupsFunction.Id;
@@ -115,7 +114,7 @@ public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase 
 
     assertCorrectInvocationCount(5, vm0, vm1, vm2);
 
-    resetInvocationCounts(vm0,vm1,vm2);
+    resetInvocationCounts(vm0, vm1, vm2);
 
     restURLs.clear();
   }
@@ -156,4 +155,3 @@ public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase 
     }
   }
 }
-

@@ -63,7 +63,7 @@ public class Bug45934DUnitTest extends JUnit4CacheTestCase {
     rf.setDataPolicy(DataPolicy.NORMAL);
     rf.setScope(Scope.DISTRIBUTED_ACK);
     Region<Integer, Integer> region = rf.create(name);
-    
+
     // 3. reset the error flag after initial failure
     AbstractUpdateOperation.test_InvalidVersionAction = new DelayedAction(new Runnable() {
       @Override
@@ -83,10 +83,10 @@ public class Bug45934DUnitTest extends JUnit4CacheTestCase {
     // 5. double check
     verifyLocal(region, count);
     verify(remote, name, count);
-    
+
     cache.close();
   }
-  
+
   private void createRemoteRegion(final VM remote, final String name) {
     SerializableCallable create = new SerializableCallable() {
       @Override
@@ -95,9 +95,8 @@ public class Bug45934DUnitTest extends JUnit4CacheTestCase {
         cf.set(MCAST_PORT, "45934");
         cf.set(CONSERVE_SOCKETS, "false");
 
-        getCache(cf).<Integer, Integer> createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT)
-            .create(name);
-        
+        getCache(cf).<Integer, Integer> createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT).create(name);
+
         AbstractUpdateOperation.test_InvalidVersion = true;
         return null;
       }
@@ -122,7 +121,7 @@ public class Bug45934DUnitTest extends JUnit4CacheTestCase {
       assertEquals(i, (int) r.get(i));
     }
   }
-  
+
   private void verify(VM vm, final String name, final int count) {
     SerializableCallable verify = new SerializableCallable() {
       @Override

@@ -59,8 +59,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
   public void setUp() throws Exception {
     this.testDir = this.temporaryFolder.getRoot();
     assertTrue(this.testDir.exists());
-    System.setProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY,
-        this.testDir.getAbsolutePath() + File.separator + SimpleStatSampler.DEFAULT_ARCHIVE_FILE_NAME);
+    System.setProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY, this.testDir.getAbsolutePath() + File.separator + SimpleStatSampler.DEFAULT_ARCHIVE_FILE_NAME);
   }
 
   @After
@@ -71,7 +70,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     System.clearProperty(SimpleStatSampler.SAMPLE_RATE_PROPERTY);
     closeStatisticsFactory();
   }
-  
+
   /**
    * Tests the majority of getters and the basic functionality of the sampler.
    */
@@ -81,26 +80,24 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
 
     SimpleStatSampler statSampler = getSimpleStatSampler();
     assertTrue(statSampler.waitForInitialization(5000));
-    
-    assertEquals(new File(System.getProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY)), 
-                 statSampler.getArchiveFileName());
+
+    assertEquals(new File(System.getProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY)), statSampler.getArchiveFileName());
     assertEquals(0, statSampler.getArchiveFileSizeLimit());
     assertEquals(0, statSampler.getArchiveDiskSpaceLimit());
     assertEquals(SimpleStatSampler.DEFAULT_SAMPLE_RATE, statSampler.getSampleRate());
     assertEquals(true, statSampler.isSamplingEnabled());
-    
+
     int statsCount = statSampler.getStatisticsManager().getStatisticsCount();
-    
+
     assertEquals(statsCount, statSampler.getStatisticsModCount());
     assertEquals(statsCount, statSampler.getStatisticsManager().getStatisticsCount());
     assertEquals(statsCount, statSampler.getStatistics().length);
-    
+
     assertTrue(statsCount > 0);
-    
+
     Assert.assertEquals(getStatisticsManager().getId(), statSampler.getSystemId());
     assertTrue(statSampler.getSystemStartTime() <= System.currentTimeMillis());
-    assertEquals(SocketCreator.getHostName(SocketCreator.getLocalHost()),
-                 statSampler.getSystemDirectoryPath());
+    assertEquals(SocketCreator.getHostName(SocketCreator.getLocalHost()), statSampler.getSystemDirectoryPath());
 
     VMStatsContract vmStats = statSampler.getVMStats();
     assertNotNull(vmStats);
@@ -111,7 +108,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
      * 2) heapMemStats
      * 3) nonHeapMemStats
      */
-    
+
     Method getProcessStats = null;
     try {
       getProcessStats = SimpleStatSampler.class.getMethod("getProcessStats");
@@ -120,7 +117,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
       // passed
     }
     assertNull(getProcessStats);
-    
+
     assertEquals("Unknown product", statSampler.getProductDescription());
   }
 
@@ -134,22 +131,19 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     final File archiveFile1 = new File(dir + File.separator + this.testName + ".gfs");
     System.setProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY, archiveFileName);
     initStatisticsFactory();
-    
+
     SimpleStatSampler statSampler = getSimpleStatSampler();
     assertTrue(statSampler.waitForInitialization(5000));
-    
+
     final File archiveFile = statSampler.getArchiveFileName();
     assertNotNull(archiveFile);
     assertEquals(archiveFile1, archiveFile);
 
     waitForFileToExist(archiveFile, 5000, 10);
-    
-    assertTrue("File name incorrect: archiveFile.getName()=" + archiveFile.getName() +
-        " archiveFile.getAbsolutePath()=" + archiveFile.getAbsolutePath() +
-        " getCanonicalPath()" + archiveFile.getCanonicalPath(), 
-        archiveFileName.contains(archiveFile.getName()));
+
+    assertTrue("File name incorrect: archiveFile.getName()=" + archiveFile.getName() + " archiveFile.getAbsolutePath()=" + archiveFile.getAbsolutePath() + " getCanonicalPath()" + archiveFile.getCanonicalPath(), archiveFileName.contains(archiveFile.getName()));
   }
-  
+
   /**
    * Tests the statistics sample rate within an acceptable margin of error.
    */
@@ -161,24 +155,24 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     assertTrue(statSampler.waitForInitialization(5000));
 
     assertEquals(SimpleStatSampler.DEFAULT_SAMPLE_RATE, statSampler.getSampleRate());
-    
+
     assertTrue(getStatisticsManager().getStatListModCount() > 0);
-    
+
     List<Statistics> statistics = getStatisticsManager().getStatsList();
     assertNotNull(statistics);
     assertTrue(statistics.size() > 0);
-    
+
     StatisticsType statSamplerType = getStatisticsManager().findType("StatSampler");
     Statistics[] statsArray = getStatisticsManager().findStatisticsByType(statSamplerType);
     assertEquals(1, statsArray.length);
-    
+
     final Statistics statSamplerStats = statsArray[0];
     final int initialSampleCount = statSamplerStats.getInt("sampleCount");
     final int expectedSampleCount = initialSampleCount + 2;
-    
+
     waitForStatSample(statSamplerStats, expectedSampleCount, 20000, 10);
   }
-  
+
   /**
    * Tests lack of methods for supporting LocalStatListener.
    */
@@ -188,7 +182,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
 
     SimpleStatSampler statSampler = getSimpleStatSampler();
     assertTrue(statSampler.waitForInitialization(5000));
-    
+
     Method getLocalListeners = null;
     try {
       getLocalListeners = getSimpleStatSampler().getClass().getMethod("getLocalListeners");
@@ -216,7 +210,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     }
     assertNull(removeLocalStatListener);
   }
-  
+
   /**
    * Invokes stop() and then validates that the sampler did in fact stop.
    */
@@ -231,16 +225,16 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     StatisticsType statSamplerType = getStatisticsManager().findType("StatSampler");
     Statistics[] statsArray = getStatisticsManager().findStatisticsByType(statSamplerType);
     assertEquals(1, statsArray.length);
-    
+
     final Statistics statSamplerStats = statsArray[0];
     final int initialSampleCount = statSamplerStats.getInt("sampleCount");
     final int expectedSampleCount = initialSampleCount + 2;
-    
+
     waitForStatSample(statSamplerStats, expectedSampleCount, 20000, 10);
 
     // stop the stat sampler
     statSampler.stop();
-    
+
     // validate the stat sampler has stopped
     final int stoppedSampleCount = statSamplerStats.getInt("sampleCount");
 
@@ -296,7 +290,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
 
     final String dir = this.testDir.getAbsolutePath() + File.separator + this.testName;
     new File(dir).mkdir();
-    
+
     final String archiveFileName = dir + File.separator + this.testName + ".gfs";
     final int sampleRate = 1000;
     System.setProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY, archiveFileName);
@@ -310,15 +304,15 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     final File archiveFile3 = new File(dir + File.separator + this.testName + "-01-03.gfs");
     final File archiveFile4 = new File(dir + File.separator + this.testName + "-01-04.gfs");
     final File archiveFile5 = new File(dir + File.separator + this.testName + "-01-05.gfs");
-    
+
     assertTrue(getSimpleStatSampler().waitForInitialization(5000));
 
-    waitForFileToExist(archiveFile1, 4*sampleRate, 10);
-    waitForFileToExist(archiveFile2, 4*sampleRate, 10);
-    waitForFileToExist(archiveFile3, 4*sampleRate, 10);
-    waitForFileToExist(archiveFile4, 4*sampleRate, 10);
-    waitForFileToExist(archiveFile5, 4*sampleRate, 10);
-    waitForFileToDelete(archiveFile1, 10*sampleRate, 10);
+    waitForFileToExist(archiveFile1, 4 * sampleRate, 10);
+    waitForFileToExist(archiveFile2, 4 * sampleRate, 10);
+    waitForFileToExist(archiveFile3, 4 * sampleRate, 10);
+    waitForFileToExist(archiveFile4, 4 * sampleRate, 10);
+    waitForFileToExist(archiveFile5, 4 * sampleRate, 10);
+    waitForFileToDelete(archiveFile1, 10 * sampleRate, 10);
   }
 
   @Override
@@ -329,19 +323,20 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
   private SimpleStatSampler getSimpleStatSampler() {
     return this.statisticsFactory.getStatSampler();
   }
-  
+
   private void initStatisticsFactory() {
     CancelCriterion stopper = new CancelCriterion() {
       public String cancelInProgress() {
         return null;
       }
+
       public RuntimeException generateCancelledException(Throwable e) {
         return null;
       }
     };
     this.statisticsFactory = new LocalStatisticsFactory(stopper);
   }
-  
+
   private void closeStatisticsFactory() {
     if (this.statisticsFactory != null) {
       this.statisticsFactory.close();

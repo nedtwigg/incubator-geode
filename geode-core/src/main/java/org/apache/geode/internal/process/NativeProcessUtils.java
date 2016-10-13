@@ -25,21 +25,22 @@ import org.apache.geode.internal.shared.NativeCalls;
  * @since GemFire 8.0
  */
 final class NativeProcessUtils implements InternalProcessUtils {
-  
+
   private final static NativeCalls nativeCalls = NativeCalls.getInstance();
-  
-  NativeProcessUtils() {}
-  
+
+  NativeProcessUtils() {
+  }
+
   @Override
   public boolean isProcessAlive(int pid) {
     return nativeCalls.isProcessActive(pid);
   }
-  
+
   @Override
   public boolean killProcess(int pid) {
     return nativeCalls.killProcess(pid);
   }
-  
+
   @Override
   public boolean isAvailable() {
     return true;

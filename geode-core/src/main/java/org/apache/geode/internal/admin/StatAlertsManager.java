@@ -60,7 +60,7 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  */
 public class StatAlertsManager {
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Instance for current DM
    * 
@@ -92,7 +92,7 @@ public class StatAlertsManager {
    * Provides life cycle support
    */
   protected final DistributionManager dm;
-  
+
   private StatAlertsManager(DistributionManager dm) {
     this.dm = dm;
     logger.info(LocalizedMessage.create(LocalizedStrings.StatAlertsManager_STATALERTSMANAGER_CREATED));
@@ -111,17 +111,17 @@ public class StatAlertsManager {
     if (alertManager != null) {
       alertManager.close();
     }
-    
+
     /* 
      * Throw DistributedSystemDisconnectedException if cancel operation is in 
      * progress 
      */
     dm.getCancelCriterion().checkCancelInProgress(null);
-    
+
     alertManager = new StatAlertsManager(dm);
     return alertManager;
   }
-  
+
   /**
    * Nullifies the StatAlertsManager instance.
    */
@@ -153,10 +153,8 @@ public class StatAlertsManager {
             logger.debug("Removed StatAlertDefinition: {}", defns[i].getName());
           }
         }
-      }
-      else {
-        StatAlertDefinition[] alertDefns = this
-            .createMemberStatAlertDefinition(dm, defns);
+      } else {
+        StatAlertDefinition[] alertDefns = this.createMemberStatAlertDefinition(dm, defns);
         StatAlertDefinition defn;
         for (int i = 0; i < alertDefns.length; i++) {
           defn = alertDefns[i];
@@ -179,8 +177,7 @@ public class StatAlertsManager {
     // Get the swarm.  Currently rather UGLY.
     InternalDistributedSystem system = dm.getSystem();
     if (system == null || system.getDistributionManager() != dm) {
-      throw new org.apache.geode.distributed.DistributedSystemDisconnectedException(
-          "This manager has been cancelled");
+      throw new org.apache.geode.distributed.DistributedSystemDisconnectedException("This manager has been cancelled");
     }
     // start and schedule new timer
     timer = new SystemTimer(system /*swarm*/, true);
@@ -188,12 +185,11 @@ public class StatAlertsManager {
     EvaluateAlertDefnsTask task = new EvaluateAlertDefnsTask();
     if (refreshAtFixedRate) {
       timer.scheduleAtFixedRate(task, 0, refreshInterval);
-    }
-    else {
+    } else {
       timer.schedule(task, 0, refreshInterval);
     }
   }
-  
+
   /**
    * Set refresh time interval also cancel the previous {@link TimerTask} and
    * create new timer task based on ner refresh time interval
@@ -250,9 +246,8 @@ public class StatAlertsManager {
       StatAlert alert;
       Date now = new Date();
       while (iter.hasNext()) {
-        Integer key = (Integer)iter.next();
-        StatAlertDefinition defn = (StatAlertDefinition)alertDefinitionsMap
-            .get(key);
+        Integer key = (Integer) iter.next();
+        StatAlertDefinition defn = (StatAlertDefinition) alertDefinitionsMap.get(key);
         alert = defn.evaluateAndAlert();
         if (alert != null) {
           alert.setTime(now);
@@ -263,7 +258,7 @@ public class StatAlertsManager {
         }
       } // while
     } // synchronized
-    return (StatAlert[])alerts.toArray(new StatAlert[alerts.size()]);
+    return (StatAlert[]) alerts.toArray(new StatAlert[alerts.size()]);
   }
 
   /**
@@ -271,8 +266,7 @@ public class StatAlertsManager {
    * {@link DummyStatisticInfoImpl} to StatAlertDefinition with
    * {@link StatisticInfoImpl}
    */
-  private StatAlertDefinition[] createMemberStatAlertDefinition(
-      DistributionManager dm, StatAlertDefinition[] defns) {
+  private StatAlertDefinition[] createMemberStatAlertDefinition(DistributionManager dm, StatAlertDefinition[] defns) {
     dm.getCancelCriterion().checkCancelInProgress(null);
 
     Statistics[] statistics;
@@ -292,10 +286,9 @@ public class StatAlertsManager {
         // TODO If none by TextID, use StatType and getAll.
         statistics = dm.getSystem().findStatisticsByTextId(textId);
         if (statistics.length == 0) {
-          logger.error(LocalizedMessage.create(
-              LocalizedStrings.StatAlertsManager_STATALERTSMANAGER_CREATEMEMBERSTATALERTDEFINITION_STATISTICS_WITH_GIVEN_TEXTID_0_NOT_FOUND, textId));
+          logger.error(LocalizedMessage.create(LocalizedStrings.StatAlertsManager_STATALERTSMANAGER_CREATEMEMBERSTATALERTDEFINITION_STATISTICS_WITH_GIVEN_TEXTID_0_NOT_FOUND, textId));
           skipDefinition = true;
-//          break;
+          //          break;
           continue; // To print all errors
         }
 
@@ -314,18 +307,16 @@ public class StatAlertsManager {
         if (logger.isDebugEnabled()) {
           logger.debug("StatAlertsManager.createMemberStatAlertDefinition :: {}", defns[i].getStringRepresentation());
         }
-      }
-      else {
+      } else {
         if (logger.isDebugEnabled()) {
           logger.debug("StatAlertsManager.createMemberStatAlertDefinition :: StatAlertDefinition {} is excluded", defn.getName());
         }
       }
     } // for
 
-    return (StatAlertDefinition[])
-        result.toArray(new StatAlertDefinition[result.size()]);
+    return (StatAlertDefinition[]) result.toArray(new StatAlertDefinition[result.size()]);
   }
-  
+
   /**
    * Shut down this instance
    */
@@ -352,12 +343,12 @@ public class StatAlertsManager {
     @Override
     public void run2() {
       final boolean isDebugEnabled = logger.isDebugEnabled();
-      
+
       synchronized (StatAlertsManager.this) {
         if (dm.getCancelCriterion().isCancelInProgress()) {
           return;
         }
-        
+
         //start alert notification are supposed to send to all the 
         //admin agents exists in the system.
         //For the DS without agent, alert manager should not create 
@@ -388,13 +379,11 @@ public class StatAlertsManager {
           }
           request.setRecipients(adminMemberSet);
           dm.putOutgoing(request);
-        }
-        catch (CancelException e) {
+        } catch (CancelException e) {
           logger.debug("EvaluateAlertDefnsTask: system closed: {}", e.getMessage(), e);
           close();
-        }
-        catch (Exception e) {
-          logger.error(LocalizedMessage.create(LocalizedStrings.StatAlertsManager_EVALUATEALERTDEFNSTASK_FAILED_WITH_AN_EXCEPTION),  e);
+        } catch (Exception e) {
+          logger.error(LocalizedMessage.create(LocalizedStrings.StatAlertsManager_EVALUATEALERTDEFNSTASK_FAILED_WITH_AN_EXCEPTION), e);
           close();
         }
         if (isDebugEnabled) {

@@ -52,22 +52,22 @@ public class PDXAsyncEventQueueDUnitTest extends JUnit4CacheTestCase {
   public PDXAsyncEventQueueDUnitTest() {
     super();
   }
-  
+
   /**
    * Test that an async queue doesn't require a persistent PDX
    * type registry.
    */
-  
+
   @Test
   public void testNonPersistentPDXCreateQueueFirst() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
-    
+
     createSystem(vm0, false);
     createSerialAsyncEventQueue(vm0, false);
     serializeOnVM(vm0, 1);
   }
-  
+
   /**
    * Test that an async queue doesn't require a persistent PDX
    * type registry.
@@ -76,39 +76,39 @@ public class PDXAsyncEventQueueDUnitTest extends JUnit4CacheTestCase {
   public void testNonPersistentPDXCreatePDXFirst() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(1);
-    
+
     createSystem(vm0, false);
     serializeOnVM(vm0, 1);
     createSerialAsyncEventQueue(vm0, false);
   }
-  
+
   protected void createRegion(VM vm, final boolean useQueue) {
     SerializableCallable createSystem = new SerializableCallable() {
       public Object call() throws Exception {
         Cache cache = getCache();
-         RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
-         if(useQueue) {
-           rf.addAsyncEventQueueId("queue");
-         }
-        Region region1  =rf.create("region");
+        RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
+        if (useQueue) {
+          rf.addAsyncEventQueueId("queue");
+        }
+        Region region1 = rf.create("region");
         return null;
       }
     };
     vm.invoke(createSystem);
   }
-  
+
   protected void createSystem(VM vm, final boolean pdxPersistent) {
     SerializableCallable createSystem = new SerializableCallable() {
       public Object call() throws Exception {
         Properties props = new Properties();
-//        props.setProperty(DistributionConfig.LOCATORS_NAME, "");
+        //        props.setProperty(DistributionConfig.LOCATORS_NAME, "");
         getSystem(props);
         CacheFactory cf = new CacheFactory();
         cf.setPdxPersistent(pdxPersistent);
         getCache(cf);
         return null;
       }
-    }; 
+    };
     vm.invoke(createSystem);
   }
 
@@ -116,18 +116,14 @@ public class PDXAsyncEventQueueDUnitTest extends JUnit4CacheTestCase {
     SerializableCallable createSystem = new SerializableCallable() {
       public Object call() throws Exception {
         Cache cache = getCache();
-        AsyncEventQueue sender = cache.createAsyncEventQueueFactory().setBatchSize(2)
-        .setBatchTimeInterval(1000)
-        .setBatchConflationEnabled(false)
-        .setPersistent(persistent)
-        .create("queue", new AsyncEventListener() {
-          
+        AsyncEventQueue sender = cache.createAsyncEventQueueFactory().setBatchSize(2).setBatchTimeInterval(1000).setBatchConflationEnabled(false).setPersistent(persistent).create("queue", new AsyncEventListener() {
+
           @Override
           public void close() {
             // TODO Auto-generated method stub
-            
+
           }
-          
+
           @Override
           public boolean processEvents(List<AsyncEvent> events) {
             //do nothing
@@ -139,7 +135,7 @@ public class PDXAsyncEventQueueDUnitTest extends JUnit4CacheTestCase {
     };
     vm.invoke(createSystem);
   }
-  
+
   private void putInRegion(VM vm, final Object key, final int value) {
     SerializableCallable createSystem = new SerializableCallable() {
       public Object call() throws Exception {
@@ -151,7 +147,7 @@ public class PDXAsyncEventQueueDUnitTest extends JUnit4CacheTestCase {
     };
     vm.invoke(createSystem);
   }
-  
+
   private void serializeOnVM(VM vm, final int value) {
     SerializableCallable createSystem = new SerializableCallable() {
       public Object call() throws Exception {

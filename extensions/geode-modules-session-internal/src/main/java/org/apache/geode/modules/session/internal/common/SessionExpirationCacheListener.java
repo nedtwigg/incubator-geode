@@ -28,11 +28,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SessionExpirationCacheListener extends
-    CacheListenerAdapter<String, HttpSession> implements Declarable {
+public class SessionExpirationCacheListener extends CacheListenerAdapter<String, HttpSession> implements Declarable {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(SessionExpirationCacheListener.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(SessionExpirationCacheListener.class.getName());
 
   @Override
   public void afterDestroy(EntryEvent<String, HttpSession> event) {

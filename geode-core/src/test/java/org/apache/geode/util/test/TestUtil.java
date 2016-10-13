@@ -24,7 +24,7 @@ import java.net.URL;
 import org.apache.geode.internal.FileUtil;
 
 public class TestUtil {
-  
+
   /**
    * Return the path to a named resource. This finds the resource on the classpath
    * using the rules of class.getResource. For a relative path it will look in the
@@ -39,12 +39,12 @@ public class TestUtil {
    */
   public static String getResourcePath(Class<?> clazz, String name) {
     URL resource = clazz.getResource(name);
-    if(resource == null) {
+    if (resource == null) {
       throw new RuntimeException("Could not find resource " + name);
     }
     try {
       String path = resource.toURI().getPath();
-      if(path == null) {
+      if (path == null) {
         String filename = name.replaceFirst(".*/", "");
         File tmpFile = File.createTempFile(filename, null);
         tmpFile.deleteOnExit();

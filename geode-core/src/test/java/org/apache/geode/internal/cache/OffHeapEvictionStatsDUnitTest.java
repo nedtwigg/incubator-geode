@@ -45,7 +45,7 @@ public class OffHeapEvictionStatsDUnitTest extends EvictionStatsDUnitTest {
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -58,7 +58,7 @@ public class OffHeapEvictionStatsDUnitTest extends EvictionStatsDUnitTest {
   public Properties getDistributedSystemProperties() {
     Properties properties = super.getDistributedSystemProperties();
     properties.setProperty(OFF_HEAP_MEMORY_SIZE, "100m");
-    
+
     return properties;
   }
 
@@ -75,10 +75,9 @@ public class OffHeapEvictionStatsDUnitTest extends EvictionStatsDUnitTest {
       LogWriterUtils.getLogWriter().info("cache= " + cache);
       LogWriterUtils.getLogWriter().info("cache closed= " + cache.isClosed());
       cache.getResourceManager().setEvictionOffHeapPercentage(20);
-      LogWriterUtils.getLogWriter().info("eviction= "+cache.getResourceManager().getEvictionOffHeapPercentage());
-      LogWriterUtils.getLogWriter().info("critical= "+cache.getResourceManager().getCriticalOffHeapPercentage());
-    }
-    catch (Exception e) {
+      LogWriterUtils.getLogWriter().info("eviction= " + cache.getResourceManager().getEvictionOffHeapPercentage());
+      LogWriterUtils.getLogWriter().info("critical= " + cache.getResourceManager().getCriticalOffHeapPercentage());
+    } catch (Exception e) {
       Assert.fail("Failed while creating the cache", e);
     }
   }
@@ -86,5 +85,5 @@ public class OffHeapEvictionStatsDUnitTest extends EvictionStatsDUnitTest {
   @Override
   public boolean isOffHeapEnabled() {
     return true;
-  }    
+  }
 }

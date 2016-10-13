@@ -28,54 +28,44 @@ import org.apache.geode.pdx.internal.PdxString;
  * @version     $Revision: 1.1 $
  */
 
-
 public class CompiledLiteral extends AbstractCompiledValue {
   Object _obj;
   PdxString _pdxString;
-  
+
   public CompiledLiteral(Object obj) {
     _obj = obj;
   }
-  
-  
+
   public int getType() {
     return LITERAL;
   }
-  
-  
-  public Object evaluate(ExecutionContext context)
-  throws FunctionDomainException, TypeMismatchException {
+
+  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException {
     return _obj;
   }
-  
+
   /**
    * creates new PdxString from String and caches it
    */
-  public PdxString getSavedPdxString(){
-    if(_pdxString == null){
-      _pdxString = new PdxString((String)_obj);
+  public PdxString getSavedPdxString() {
+    if (_pdxString == null) {
+      _pdxString = new PdxString((String) _obj);
     }
     return _pdxString;
   }
-  
+
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
-  throws AmbiguousNameException, TypeMismatchException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException {
     if (_obj == null) {
       clauseBuffer.insert(0, "null");
-    }
-    else if (_obj instanceof String) {
+    } else if (_obj instanceof String) {
       clauseBuffer.insert(0, '\'').insert(0, _obj.toString()).insert(0, '\'');
-    }
-    else {      
+    } else {
       clauseBuffer.insert(0, _obj.toString());
     }
-  } 
-  
-  public int getSizeEstimate(ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException
-  {
+  }
+
+  public int getSizeEstimate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     //The literal could be true or false only in case of Filter 
     // Evaluation. Either way it should be evaluated first, Right?
     return 0;

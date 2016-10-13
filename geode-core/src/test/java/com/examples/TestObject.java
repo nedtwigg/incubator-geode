@@ -45,10 +45,8 @@ public class TestObject {
   /**
    * A <code>Serializable</code> object that is serialized
    */
-  public static class SerializableTestObject extends TestObject
-    implements java.io.Serializable {
-    
-  }
-  
-}
+  public static class SerializableTestObject extends TestObject implements java.io.Serializable {
 
+  }
+
+}

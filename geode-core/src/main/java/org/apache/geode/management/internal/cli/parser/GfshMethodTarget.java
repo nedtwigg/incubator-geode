@@ -59,8 +59,7 @@ public class GfshMethodTarget {
    * @param key
    *          can be blank
    */
-  public GfshMethodTarget(final Method method, final Object target,
-      final String remainingBuffer, final String key) {
+  public GfshMethodTarget(final Method method, final Object target, final String remainingBuffer, final String key) {
     Assert.notNull(method, "Method is required");
     Assert.notNull(target, "Target is required");
     this.key = StringUtils.trimToEmpty(key);
@@ -106,12 +105,7 @@ public class GfshMethodTarget {
   @Override
   public final String toString() {
     StringBuilder builder = new StringBuilder();
-    builder
-        .append(GfshMethodTarget.class.getSimpleName())
-        .append("[key=" + key)
-        .append(
-            ",remainingBuffer=" + remainingBuffer + ",target=" + target
-                + ",method=" + method + "]");
+    builder.append(GfshMethodTarget.class.getSimpleName()).append("[key=" + key).append(",remainingBuffer=" + remainingBuffer + ",target=" + target + ",method=" + method + "]");
     return builder.toString();
   }
 

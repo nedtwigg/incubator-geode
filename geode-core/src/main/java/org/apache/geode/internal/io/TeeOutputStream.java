@@ -29,24 +29,24 @@ import java.io.OutputStream;
 public class TeeOutputStream extends FilterOutputStream {
 
   private volatile OutputStream branch;
-  
+
   public TeeOutputStream(OutputStream out) {
     super(out);
   }
-  
+
   public TeeOutputStream(OutputStream out, OutputStream branch) {
     this(out);
     this.branch = branch;
   }
-  
+
   public OutputStream getOutputStream() {
     return super.out;
   }
-  
+
   public OutputStream getBranchOutputStream() {
     return this.branch;
   }
-  
+
   public void setBranchOutputStream(OutputStream branch) {
     if (branch == super.out) {
       throw new IllegalArgumentException("TeeOutputStream cannot set branch same as out");
@@ -80,7 +80,7 @@ public class TeeOutputStream extends FilterOutputStream {
       os.close();
     }
   }
-  
+
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(getClass().getSimpleName());

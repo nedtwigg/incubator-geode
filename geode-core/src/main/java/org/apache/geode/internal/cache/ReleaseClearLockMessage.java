@@ -35,79 +35,74 @@ import org.apache.geode.distributed.internal.ReplyProcessor21;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.logging.LogService;
 
-public class ReleaseClearLockMessage extends
-  HighPriorityDistributionMessage implements MessageWithReply {
+public class ReleaseClearLockMessage extends HighPriorityDistributionMessage implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
-  
-    private String regionPath;
-    private int processorId;
 
-    /** for deserialization */
-    public ReleaseClearLockMessage() {
-    }
+  private String regionPath;
+  private int processorId;
 
-    public ReleaseClearLockMessage(String regionPath, int processorId) {
-      this.regionPath = regionPath;
-      this.processorId = processorId;
-    }
-    
-    public static void send(
-        Set<InternalDistributedMember> members, DM dm, String regionPath) throws ReplyException {
-      ReplyProcessor21 processor = new ReplyProcessor21(dm, members);
-      ReleaseClearLockMessage msg = new ReleaseClearLockMessage(regionPath, processor.getProcessorId());
-      msg.setRecipients(members);
+  /** for deserialization */
+  public ReleaseClearLockMessage() {
+  }
 
-      dm.putOutgoing(msg);
-      processor.waitForRepliesUninterruptibly();
-    }
+  public ReleaseClearLockMessage(String regionPath, int processorId) {
+    this.regionPath = regionPath;
+    this.processorId = processorId;
+  }
 
-    @Override
-    protected void process(DistributionManager dm) {
-      ReplyException exception = null;
-      try {
-        DistributedRegion region = DistributedClearOperation.regionUnlocked(getSender(), regionPath);
-        if(region != null && region.getVersionVector() != null) {
-          region.getVersionVector().unlockForClear(getSender());
-        }
-      }  catch(VirtualMachineError e) {
-        SystemFailure.initiateFailure(e);
-        throw e;
+  public static void send(Set<InternalDistributedMember> members, DM dm, String regionPath) throws ReplyException {
+    ReplyProcessor21 processor = new ReplyProcessor21(dm, members);
+    ReleaseClearLockMessage msg = new ReleaseClearLockMessage(regionPath, processor.getProcessorId());
+    msg.setRecipients(members);
+
+    dm.putOutgoing(msg);
+    processor.waitForRepliesUninterruptibly();
+  }
+
+  @Override
+  protected void process(DistributionManager dm) {
+    ReplyException exception = null;
+    try {
+      DistributedRegion region = DistributedClearOperation.regionUnlocked(getSender(), regionPath);
+      if (region != null && region.getVersionVector() != null) {
+        region.getVersionVector().unlockForClear(getSender());
       }
-      catch(Throwable t) {
-        SystemFailure.checkFailure();
-        exception = new ReplyException(t);
+    } catch (VirtualMachineError e) {
+      SystemFailure.initiateFailure(e);
+      throw e;
+    } catch (Throwable t) {
+      SystemFailure.checkFailure();
+      exception = new ReplyException(t);
+    } finally {
+      ReplyMessage replyMsg = new ReplyMessage();
+      replyMsg.setProcessorId(processorId);
+      replyMsg.setRecipient(getSender());
+      if (exception != null) {
+        replyMsg.setException(exception);
       }
-      finally {
-        ReplyMessage replyMsg = new ReplyMessage();
-        replyMsg.setProcessorId(processorId);
-        replyMsg.setRecipient(getSender());
-        if(exception != null) {
-          replyMsg.setException(exception);
-        }
-        if(logger.isDebugEnabled()) {
-          logger.debug("Received {}, replying with {}", this, replyMsg);
-        }
-        dm.putOutgoing(replyMsg);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Received {}, replying with {}", this, replyMsg);
       }
-    }
-
-    public int getDSFID() {
-      return RELEASE_CLEAR_LOCK_MESSAGE;
-    }
-
-    @Override
-    public void fromData(DataInput in) throws IOException,
-    ClassNotFoundException {
-      super.fromData(in);
-      regionPath = DataSerializer.readString(in);
-      processorId = in.readInt();
-    }
-
-    @Override
-    public void toData(DataOutput out) throws IOException {
-      super.toData(out);
-      DataSerializer.writeString(regionPath, out);
-      out.writeInt(processorId);
+      dm.putOutgoing(replyMsg);
     }
   }
+
+  public int getDSFID() {
+    return RELEASE_CLEAR_LOCK_MESSAGE;
+  }
+
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
+    super.fromData(in);
+    regionPath = DataSerializer.readString(in);
+    processorId = in.readInt();
+  }
+
+  @Override
+  public void toData(DataOutput out) throws IOException {
+    super.toData(out);
+    DataSerializer.writeString(regionPath, out);
+    out.writeInt(processorId);
+  }
+}

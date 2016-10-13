@@ -38,7 +38,7 @@ public class DependencyGraphJUnitTest {
     graph.addEdge(new Dependency("B", "D"));
     graph.addEdge(new Dependency("B", "E"));
     graph.addEdge(new Dependency("E", "A"));
-    
+
     Set expected = new HashSet();
     expected.add(new Dependency("A", "B"));
     expected.add(new Dependency("B", "E"));
@@ -54,7 +54,7 @@ public class DependencyGraphJUnitTest {
     graph.addEdge(new Dependency("C", "A"));
     graph.addEdge(new Dependency("E", "F"));
     graph.addEdge(new Dependency("F", "G"));
-    
+
     DependencyGraph sub1 = graph.getSubGraph("B");
     Set expected = new HashSet();
     expected.add(new Dependency("A", "B"));
@@ -62,7 +62,7 @@ public class DependencyGraphJUnitTest {
     expected.add(new Dependency("C", "A"));
     assertEquals(expected, new HashSet(sub1.findCycle()));
     assertEquals(expected, new HashSet(sub1.getEdges()));
-    
+
     DependencyGraph sub2 = graph.getSubGraph("E");
     assertEquals(null, sub2.findCycle());
   }
@@ -74,7 +74,7 @@ public class DependencyGraphJUnitTest {
     graph.addEdge(new Dependency("A", "C"));
     graph.addEdge(new Dependency("B", "D"));
     graph.addEdge(new Dependency("C", "D"));
-    
+
     assertEquals(null, graph.findCycle());
   }
 

@@ -95,7 +95,7 @@ public class CacheServerMaxConnectionsJUnitTest {
     pf.setThreadLocalConnections(true);
     pf.setReadTimeout(2000);
     pf.setSocketBufferSize(32768);
-    proxy = (PoolImpl)pf.create("junitPool");
+    proxy = (PoolImpl) pf.create("junitPool");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setPoolName("junitPool");
@@ -143,7 +143,7 @@ public class CacheServerMaxConnectionsJUnitTest {
     assertEquals(0, s.getInt("currentClients"));
     assertEquals(0, s.getInt("currentClientConnections"));
     Connection[] cnxs = new Connection[MAX_CNXS];
-    for (int i=0; i < MAX_CNXS; i++) {
+    for (int i = 0; i < MAX_CNXS; i++) {
       cnxs[i] = proxy.acquireConnection();
       this.system.getLogWriter().info("acquired connection[" + i + "]=" + cnxs[i]);
     }
@@ -151,6 +151,7 @@ public class CacheServerMaxConnectionsJUnitTest {
       public boolean done() {
         return s.getInt("currentClientConnections") == MAX_CNXS;
       }
+
       public String description() {
         return null;
       }
@@ -158,45 +159,38 @@ public class CacheServerMaxConnectionsJUnitTest {
     Wait.waitForCriterion(ev, 1000, 200, true);
     assertEquals(MAX_CNXS, s.getInt("currentClientConnections"));
     assertEquals(1, s.getInt("currentClients"));
-    this.system.getLogWriter().info("<ExpectedException action=add>" 
-        + "exceeded max-connections" + "</ExpectedException>");
+    this.system.getLogWriter().info("<ExpectedException action=add>" + "exceeded max-connections" + "</ExpectedException>");
     try {
       Connection cnx = proxy.acquireConnection();
       if (cnx != null) {
         fail("should not have been able to connect more than " + MAX_CNXS + " times but was able to connect " + s.getInt("currentClientConnections") + " times. Last connection=" + cnx);
       }
       this.system.getLogWriter().info("acquire connection returned null which is ok");
-    }
-    catch (NoAvailableServersException expected) {
+    } catch (NoAvailableServersException expected) {
       // This is expected but due to race conditions in server handshake
       // we may get null back from acquireConnection instead.
       this.system.getLogWriter().info("received expected " + expected.getMessage());
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       fail("expected acquireConnection to throw NoAvailableServersException but instead it threw " + ex);
-    }
-    finally {
-      this.system.getLogWriter().info("<ExpectedException action=remove>" 
-          + "exceeded max-connections" + "</ExpectedException>");
+    } finally {
+      this.system.getLogWriter().info("<ExpectedException action=remove>" + "exceeded max-connections" + "</ExpectedException>");
     }
 
     // now lets see what happens we we close our connections
-    for (int i=0; i < MAX_CNXS; i++) {
+    for (int i = 0; i < MAX_CNXS; i++) {
       cnxs[i].close(false);
     }
     ev = new WaitCriterion() {
       public boolean done() {
         return s.getInt("currentClients") == 0;
       }
+
       public String description() {
         return null;
       }
     };
     Wait.waitForCriterion(ev, 3 * 1000, 200, true);
-    this.system.getLogWriter().info("currentClients="
-        + s.getInt("currentClients")
-        + " currentClientConnections="
-        + s.getInt("currentClientConnections"));
+    this.system.getLogWriter().info("currentClients=" + s.getInt("currentClients") + " currentClientConnections=" + s.getInt("currentClientConnections"));
     assertEquals(0, s.getInt("currentClientConnections"));
     assertEquals(0, s.getInt("currentClients"));
   }

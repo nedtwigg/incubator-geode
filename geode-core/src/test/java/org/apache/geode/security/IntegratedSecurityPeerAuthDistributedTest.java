@@ -37,7 +37,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
 @Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCase{
+public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCase {
 
   private static SpySecurityManager spySecurityManager;
 
@@ -55,7 +55,7 @@ public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCa
     server2 = host.getVM(2);
 
     int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    locators =  NetworkUtils.getServerHostName(host) + "[" + locatorPort + "]";
+    locators = NetworkUtils.getServerHostName(host) + "[" + locatorPort + "]";
 
     locator.invoke(() -> {
       spySecurityManager = new SpySecurityManager();
@@ -72,7 +72,7 @@ public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCa
       getCache();
     });
 
-    server1.invoke(()-> {
+    server1.invoke(() -> {
       spySecurityManager = new SpySecurityManager();
 
       final Properties properties = createProperties(locators);
@@ -84,7 +84,7 @@ public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCa
       getCache();
     });
 
-    server2.invoke(()-> {
+    server2.invoke(() -> {
       spySecurityManager = new SpySecurityManager();
 
       final Properties properties = createProperties(locators);
@@ -113,7 +113,9 @@ public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCa
   public void postTearDownCacheTestCase() throws Exception {
     closeAllCache();
     spySecurityManager = null;
-    invokeInEveryVM(() -> { spySecurityManager = null; });
+    invokeInEveryVM(() -> {
+      spySecurityManager = null;
+    });
   }
 
   private static Properties createProperties(String locators) {

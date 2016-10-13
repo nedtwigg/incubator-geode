@@ -73,6 +73,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
   VM accessor;
   VM datastore1;
   VM datastore2;
+
   /**
    * @param name
    */
@@ -87,36 +88,30 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     datastore1 = host.getVM(1);
     datastore2 = host.getVM(2);
   }
-  
+
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     CountingResolver.resetResolverCount();
   }
-  
+
   void createRegion(boolean isAccessor, int redundantCopies) {
     AttributesFactory af = new AttributesFactory();
     af.setScope(Scope.DISTRIBUTED_ACK);
     af = new AttributesFactory();
-    af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>()
-        .setTotalNumBuckets(4).setLocalMaxMemory(isAccessor ? 0 : 1)
-        .setPartitionResolver(new CountingResolver("CountingResolverCust"))
-        .setRedundantCopies(redundantCopies).create());
+    af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(isAccessor ? 0 : 1).setPartitionResolver(new CountingResolver("CountingResolverCust")).setRedundantCopies(redundantCopies).create());
     getCache().createRegion(CUSTOMER, af.create());
-    af.setPartitionAttributes(new PartitionAttributesFactory<OrderId, Order>()
-        .setTotalNumBuckets(4).setLocalMaxMemory(isAccessor ? 0 : 1)
-        .setPartitionResolver(new CountingResolver("CountingResolverOrder"))
-        .setRedundantCopies(redundantCopies).setColocatedWith(CUSTOMER).create());
+    af.setPartitionAttributes(new PartitionAttributesFactory<OrderId, Order>().setTotalNumBuckets(4).setLocalMaxMemory(isAccessor ? 0 : 1).setPartitionResolver(new CountingResolver("CountingResolverOrder")).setRedundantCopies(redundantCopies).setColocatedWith(CUSTOMER).create());
     getCache().createRegion(ORDER, af.create());
   }
 
   void populateData() {
     Region custRegion = getCache().getRegion(CUSTOMER);
     Region orderRegion = getCache().getRegion(ORDER);
-    for (int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
       CustId custId = new CustId(i);
-      Customer customer = new Customer("customer"+i, "address"+i);
+      Customer customer = new Customer("customer" + i, "address" + i);
       OrderId orderId = new OrderId(i, custId);
-      Order order = new Order("order"+i);
+      Order order = new Order("order" + i);
       custRegion.put(custId, customer);
       orderRegion.put(orderId, order);
     }
@@ -124,22 +119,23 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
 
   static class CountingResolver extends CustomerIDPartitionResolver {
     static AtomicInteger count = new AtomicInteger();
+
     public CountingResolver(String resolverID) {
       super(resolverID);
     }
+
     @Override
     public Serializable getRoutingObject(EntryOperation opDetails) {
       count.incrementAndGet();
-      opDetails.getRegion().getCache().getLoggerI18n().fine("Resolver called key:"
-          +opDetails.getKey()+" Region "+opDetails.getRegion().getName()+" id:"+
-          ((GemFireCacheImpl)opDetails.getRegion().getCache()).getMyId(), new Throwable());
+      opDetails.getRegion().getCache().getLoggerI18n().fine("Resolver called key:" + opDetails.getKey() + " Region " + opDetails.getRegion().getName() + " id:" + ((GemFireCacheImpl) opDetails.getRegion().getCache()).getMyId(), new Throwable());
       return super.getRoutingObject(opDetails);
     }
+
     public static void resetResolverCount() {
       count.set(0);
     }
   }
-  
+
   private void initAccessorAndDataStore(final int redundantCopies) {
     accessor.invoke(new SerializableCallable() {
       public Object call() throws Exception {
@@ -165,11 +161,11 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore2, 10);
     getCache().getLoggerI18n().fine("Reset resolver count");
   }
-  
+
   private int getNumberOfKeysOwnedByVM(VM datastore12) {
-    final Integer numKeys = (Integer)datastore12.invoke(new SerializableCallable() {
+    final Integer numKeys = (Integer) datastore12.invoke(new SerializableCallable() {
       public Object call() throws Exception {
-        PartitionedRegion custRegion = (PartitionedRegion)getGemfireCache().getRegion(CUSTOMER);
+        PartitionedRegion custRegion = (PartitionedRegion) getGemfireCache().getRegion(CUSTOMER);
         Set<BucketRegion> bucketSet = custRegion.getDataStore().getAllLocalPrimaryBucketRegions();
         int count = 0;
         for (BucketRegion br : bucketSet) {
@@ -180,15 +176,17 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     });
     return numKeys * 2 /* for Customer region*/;
   }
+
   private void verifyResolverCountInVM(final VM vm, final int i) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws Exception {
-        assertEquals("My id: "+getGemfireCache().getMyId(), i, CountingResolver.count.get());
+        assertEquals("My id: " + getGemfireCache().getMyId(), i, CountingResolver.count.get());
         CountingResolver.resetResolverCount();
         return null;
       }
     });
   }
+
   @Test
   public void testKeysInIterationOnAccessor() {
     resolverInIteration(IteratorType.KEYS, accessor);
@@ -196,6 +194,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, 0);
     verifyResolverCountInVM(datastore2, 0);
   }
+
   @Test
   public void testValuesInIterationOnAccessor() {
     resolverInIteration(IteratorType.VALUES, accessor);
@@ -203,6 +202,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, getNumberOfKeysOwnedByVM(datastore1));
     verifyResolverCountInVM(datastore2, getNumberOfKeysOwnedByVM(datastore2));
   }
+
   @Test
   public void testEntriesInIterationOnAccessor() {
     resolverInIteration(IteratorType.ENTRIES, accessor);
@@ -210,6 +210,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, getNumberOfKeysOwnedByVM(datastore1));
     verifyResolverCountInVM(datastore2, getNumberOfKeysOwnedByVM(datastore2));
   }
+
   @Test
   public void testKeysInIterationOnDataStore() {
     resolverInIteration(IteratorType.KEYS, datastore1);
@@ -217,6 +218,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, 0);
     verifyResolverCountInVM(datastore2, 0);
   }
+
   @Test
   public void testValuesInIterationOnDataStore() {
     resolverInIteration(IteratorType.VALUES, datastore1);
@@ -224,6 +226,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, 0);
     verifyResolverCountInVM(datastore2, getNumberOfKeysOwnedByVM(datastore2));
   }
+
   @Test
   public void testEntriesInIterationOnDataStore() {
     resolverInIteration(IteratorType.ENTRIES, datastore1);
@@ -231,6 +234,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, 0);
     verifyResolverCountInVM(datastore2, getNumberOfKeysOwnedByVM(datastore2));
   }
+
   private void resolverInIteration(final IteratorType type, final VM vm) {
     initAccessorAndDataStore(0);
     SerializableCallable doIteration = new SerializableCallable() {
@@ -266,7 +270,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     };
     vm.invoke(doIteration);
   }
-  
+
   @Test
   public void testKeysIterationInFunctionExection() {
     doIterationInFunction(IteratorType.KEYS);
@@ -274,7 +278,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, 0);
     verifyResolverCountInVM(datastore2, 0);
   }
-  
+
   @Test
   public void testValuesIterationInFunctionExection() {
     doIterationInFunction(IteratorType.VALUES);
@@ -282,7 +286,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, 0);
     verifyResolverCountInVM(datastore2, 0);
   }
-  
+
   @Test
   public void testEntriesIterationInFunctionExection() {
     doIterationInFunction(IteratorType.ENTRIES);
@@ -290,7 +294,7 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     verifyResolverCountInVM(datastore1, 0);
     verifyResolverCountInVM(datastore2, 0);
   }
-  
+
   private void doIterationInFunction(final IteratorType type) {
     initAccessorAndDataStore(0);
     SerializableCallable registerFunction = new SerializableCallable() {
@@ -302,21 +306,22 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
     accessor.invoke(registerFunction);
     datastore1.invoke(registerFunction);
     datastore2.invoke(registerFunction);
-    
+
     accessor.invoke(new SerializableCallable() {
       public Object call() throws Exception {
-        FunctionService.onRegion(getGemfireCache().getRegion(CUSTOMER)).withArgs(type)
-          .execute(IteratorFunction.id).getResult();
+        FunctionService.onRegion(getGemfireCache().getRegion(CUSTOMER)).withArgs(type).execute(IteratorFunction.id).getResult();
         return null;
       }
     });
   }
+
   static class IteratorFunction implements Function {
     private static final String id = "IteratorFunction";
+
     public void execute(FunctionContext context) {
-      Region custRegion = PartitionRegionHelper.getLocalDataForContext((RegionFunctionContext)context);
+      Region custRegion = PartitionRegionHelper.getLocalDataForContext((RegionFunctionContext) context);
       Region orderRegion = PartitionRegionHelper.getLocalData(custRegion.getCache().getRegion(ORDER));
-      IteratorType type = (IteratorType)context.getArguments();
+      IteratorType type = (IteratorType) context.getArguments();
       Iterator custIterator = null;
       Iterator orderIterator = null;
       switch (type) {
@@ -343,20 +348,24 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
       }
       context.getResultSender().lastResult(Boolean.TRUE);
     }
+
     public String getId() {
       return id;
     }
+
     public boolean hasResult() {
       return true;
     }
+
     public boolean optimizeForWrite() {
       return false;
     }
+
     public boolean isHA() {
       return false;
     }
   }
-  
+
   @Test
   public void testOps() {
     initAccessorAndDataStore(0);
@@ -384,39 +393,54 @@ public class PartitionResolverDUnitTest extends JUnit4CacheTestCase {
         CustId custId = new CustId(6);
         Customer customer = new Customer("customer6", "address6");
         getGemfireCache().getLogger().fine("SWAP:Begin");
-        if (isTx) mgr.begin();
+        if (isTx)
+          mgr.begin();
         custRegion.put(custId, customer);
-        if (isTx) mgr.commit();
-        
-        if (isTx) mgr.begin();
+        if (isTx)
+          mgr.commit();
+
+        if (isTx)
+          mgr.begin();
         custRegion.invalidate(custId);
-        if (isTx) mgr.commit();
-        
-        if (isTx) mgr.begin();
+        if (isTx)
+          mgr.commit();
+
+        if (isTx)
+          mgr.begin();
         custRegion.put(custId, customer);
-        if (isTx) mgr.commit();
-        
-        if (isTx) mgr.begin();
+        if (isTx)
+          mgr.commit();
+
+        if (isTx)
+          mgr.begin();
         custRegion.destroy(custId);
-        if (isTx) mgr.commit();
-        
-        if (isTx) mgr.begin();
+        if (isTx)
+          mgr.commit();
+
+        if (isTx)
+          mgr.begin();
         custRegion.put(custId, customer);
-        if (isTx) mgr.commit();
-        
-        if (isTx) mgr.begin();
+        if (isTx)
+          mgr.commit();
+
+        if (isTx)
+          mgr.begin();
         custRegion.containsKey(custId);
-        if (isTx) mgr.commit();
-                
-        if (isTx) mgr.begin();
+        if (isTx)
+          mgr.commit();
+
+        if (isTx)
+          mgr.begin();
         custRegion.containsValueForKey(custId);
-        if (isTx) mgr.commit();
+        if (isTx)
+          mgr.commit();
         return null;
       }
     });
   }
+
   private int getResolverCountForVM(final VM datastore12) {
-    Integer containsTestKey = (Integer)datastore12.invoke(new SerializableCallable() {
+    Integer containsTestKey = (Integer) datastore12.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region r = PartitionRegionHelper.getLocalData(getGemfireCache().getRegion(CUSTOMER));
         Iterator it = r.keySet().iterator();

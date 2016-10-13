@@ -37,7 +37,7 @@ import org.apache.geode.cache.lucene.internal.distributed.EntryScore;
  * @param <K> The type of the key
  * @param <V> The type of the value
  */
-public class PageableLuceneQueryResultsImpl<K,V> implements PageableLuceneQueryResults<K,V> {
+public class PageableLuceneQueryResultsImpl<K, V> implements PageableLuceneQueryResults<K, V> {
 
   /**
    *  list of docs matching search query
@@ -47,70 +47,69 @@ public class PageableLuceneQueryResultsImpl<K,V> implements PageableLuceneQueryR
   /**
    * * Current page of results
    */
-  private List<LuceneResultStruct<K,V>> currentPage;
+  private List<LuceneResultStruct<K, V>> currentPage;
   /**
    * The maximum score. Lazily evaluated
    */
   private float maxScore = Float.MIN_VALUE;
-  
+
   /**
    * The user region where values are stored.
    */
   private final Region<K, V> userRegion;
-  
+
   /**
    * The start of the next page of results we want to fetch 
    */
   private int currentHit = 0;
-  
+
   /**
    * The page size the user wants.
    */
   private int pageSize;
-  
-  public PageableLuceneQueryResultsImpl(List<EntryScore<K>> hits, Region<K,V> userRegion, int pageSize) {
+
+  public PageableLuceneQueryResultsImpl(List<EntryScore<K>> hits, Region<K, V> userRegion, int pageSize) {
     this.hits = hits;
     this.userRegion = userRegion;
     this.pageSize = pageSize == 0 ? Integer.MAX_VALUE : pageSize;
   }
 
-
-  public List<LuceneResultStruct<K,V>> getHitEntries(int fromIndex, int toIndex) {
+  public List<LuceneResultStruct<K, V>> getHitEntries(int fromIndex, int toIndex) {
     List<EntryScore<K>> scores = hits.subList(fromIndex, toIndex);
     ArrayList<K> keys = new ArrayList<K>(scores.size());
-    for(EntryScore<K> score : scores) {
+    for (EntryScore<K> score : scores) {
       keys.add(score.getKey());
     }
 
-    Map<K,V> values = userRegion.getAll(keys);
+    Map<K, V> values = userRegion.getAll(keys);
 
-    ArrayList<LuceneResultStruct<K,V>> results = new ArrayList<LuceneResultStruct<K,V>>(scores.size());
-    for(EntryScore<K> score : scores) {
+    ArrayList<LuceneResultStruct<K, V>> results = new ArrayList<LuceneResultStruct<K, V>>(scores.size());
+    for (EntryScore<K> score : scores) {
       V value = values.get(score.getKey());
-      if (value!=null)
+      if (value != null)
         results.add(new LuceneResultStructImpl(score.getKey(), value, score.getScore()));
     }
     return results;
   }
 
   @Override
-  public List<LuceneResultStruct<K,V>> next() {
-    if(!hasNext()) {
+  public List<LuceneResultStruct<K, V>> next() {
+    if (!hasNext()) {
       throw new NoSuchElementException();
     }
-    List<LuceneResultStruct<K,V>> result = advancePage();
+    List<LuceneResultStruct<K, V>> result = advancePage();
     currentPage = null;
     return result;
   }
 
   private List<LuceneResultStruct<K, V>> advancePage() {
-    if(currentPage != null) {
+    if (currentPage != null) {
       return currentPage;
     }
 
     int resultSize = (pageSize != Integer.MAX_VALUE) ? pageSize : hits.size();
-    currentPage = new ArrayList<LuceneResultStruct<K,V>>(resultSize);
-    while (currentPage.size()<pageSize && currentHit < hits.size()) {
+    currentPage = new ArrayList<LuceneResultStruct<K, V>>(resultSize);
+    while (currentPage.size() < pageSize && currentHit < hits.size()) {
       int end = currentHit + pageSize - currentPage.size();
       end = end > hits.size() ? hits.size() : end;
       currentPage.addAll(getHitEntries(currentHit, end));
@@ -123,7 +122,7 @@ public class PageableLuceneQueryResultsImpl<K,V> implements PageableLuceneQueryR
   public boolean hasNext() {
 
     advancePage();
-    if ( currentPage.isEmpty() ) {
+    if (currentPage.isEmpty()) {
       return false;
     }
     return true;
@@ -136,12 +135,12 @@ public class PageableLuceneQueryResultsImpl<K,V> implements PageableLuceneQueryR
 
   @Override
   public float getMaxScore() {
-    if(maxScore == Float.MIN_VALUE) {
-      for(EntryScore<K> score : hits) {
+    if (maxScore == Float.MIN_VALUE) {
+      for (EntryScore<K> score : hits) {
         maxScore = Math.max(maxScore, score.getScore());
       }
     }
-    
+
     return maxScore;
   }
 }

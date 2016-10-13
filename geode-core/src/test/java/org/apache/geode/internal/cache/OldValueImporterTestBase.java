@@ -35,8 +35,11 @@ import org.apache.geode.internal.util.BlobHelper;
 public abstract class OldValueImporterTestBase {
 
   protected abstract OldValueImporter createImporter();
+
   protected abstract Object getOldValueFromImporter(OldValueImporter ovi);
+
   protected abstract void toData(OldValueImporter ovi, HeapDataOutputStream hdos) throws IOException;
+
   protected abstract void fromData(OldValueImporter ovi, byte[] bytes) throws IOException, ClassNotFoundException;
 
   @Test
@@ -53,7 +56,7 @@ public abstract class OldValueImporterTestBase {
       fromData(imsg, bytes);
       assertEquals(null, getOldValueFromImporter(imsg));
     }
-    
+
     // null object value
     {
       OldValueImporter omsg = createImporter();
@@ -62,18 +65,18 @@ public abstract class OldValueImporterTestBase {
       fromData(imsg, bytes);
       assertEquals(null, getOldValueFromImporter(imsg));
     }
-    
+
     // simple byte array
     {
-      byte[] baValue = new byte[] {1,2,3,4,5,6,7,8,9};
+      byte[] baValue = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
       OldValueImporter omsg = createImporter();
       omsg.importOldBytes(baValue, false);
       hdos = new HeapDataOutputStream(bytes);
       toData(omsg, hdos);
       fromData(imsg, bytes);
-      assertArrayEquals(baValue, (byte[])getOldValueFromImporter(imsg));
+      assertArrayEquals(baValue, (byte[]) getOldValueFromImporter(imsg));
     }
-    
+
     // String in serialized form
     {
       String stringValue = "1,2,3,4,5,6,7,8,9";
@@ -83,9 +86,9 @@ public abstract class OldValueImporterTestBase {
       hdos = new HeapDataOutputStream(bytes);
       toData(omsg, hdos);
       fromData(imsg, bytes);
-      assertArrayEquals(stringValueBlob, ((VMCachedDeserializable)getOldValueFromImporter(imsg)).getSerializedValue());
+      assertArrayEquals(stringValueBlob, ((VMCachedDeserializable) getOldValueFromImporter(imsg)).getSerializedValue());
     }
-    
+
     // String in object form
     {
       String stringValue = "1,2,3,4,5,6,7,8,9";
@@ -95,47 +98,44 @@ public abstract class OldValueImporterTestBase {
       hdos = new HeapDataOutputStream(bytes);
       toData(omsg, hdos);
       fromData(imsg, bytes);
-      assertArrayEquals(stringValueBlob, ((VMCachedDeserializable)getOldValueFromImporter(imsg)).getSerializedValue());
+      assertArrayEquals(stringValueBlob, ((VMCachedDeserializable) getOldValueFromImporter(imsg)).getSerializedValue());
     }
-    
+
     // off-heap DataAsAddress byte array
     {
-      MemoryAllocatorImpl sma =
-          MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[]{new SlabImpl(1024*1024)});
+      MemoryAllocatorImpl sma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { new SlabImpl(1024 * 1024) });
       try {
-        byte[] baValue = new byte[] {1,2};
+        byte[] baValue = new byte[] { 1, 2 };
         TinyStoredObject baValueSO = (TinyStoredObject) sma.allocateAndInitialize(baValue, false, false);
         OldValueImporter omsg = createImporter();
         omsg.importOldObject(baValueSO, false);
         hdos = new HeapDataOutputStream(bytes);
         toData(omsg, hdos);
         fromData(imsg, bytes);
-        assertArrayEquals(baValue, (byte[])getOldValueFromImporter(imsg));
+        assertArrayEquals(baValue, (byte[]) getOldValueFromImporter(imsg));
       } finally {
         MemoryAllocatorImpl.freeOffHeapMemory();
       }
     }
     // off-heap Chunk byte array
     {
-      MemoryAllocatorImpl sma =
-          MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[]{new SlabImpl(1024*1024)});
+      MemoryAllocatorImpl sma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { new SlabImpl(1024 * 1024) });
       try {
-        byte[] baValue = new byte[] {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+        byte[] baValue = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
         OffHeapStoredObject baValueSO = (OffHeapStoredObject) sma.allocateAndInitialize(baValue, false, false);
         OldValueImporter omsg = createImporter();
         omsg.importOldObject(baValueSO, false);
         hdos = new HeapDataOutputStream(bytes);
         toData(omsg, hdos);
         fromData(imsg, bytes);
-        assertArrayEquals(baValue, (byte[])getOldValueFromImporter(imsg));
+        assertArrayEquals(baValue, (byte[]) getOldValueFromImporter(imsg));
       } finally {
         MemoryAllocatorImpl.freeOffHeapMemory();
       }
     }
     // off-heap DataAsAddress String
     {
-      MemoryAllocatorImpl sma =
-          MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[]{new SlabImpl(1024*1024)});
+      MemoryAllocatorImpl sma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { new SlabImpl(1024 * 1024) });
       try {
         String baValue = "12";
         byte[] baValueBlob = BlobHelper.serializeToBlob(baValue);
@@ -145,15 +145,14 @@ public abstract class OldValueImporterTestBase {
         hdos = new HeapDataOutputStream(bytes);
         toData(omsg, hdos);
         fromData(imsg, bytes);
-        assertArrayEquals(baValueBlob, ((VMCachedDeserializable)getOldValueFromImporter(imsg)).getSerializedValue());
+        assertArrayEquals(baValueBlob, ((VMCachedDeserializable) getOldValueFromImporter(imsg)).getSerializedValue());
       } finally {
         MemoryAllocatorImpl.freeOffHeapMemory();
       }
     }
     // off-heap Chunk String
     {
-      MemoryAllocatorImpl sma =
-          MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[]{new SlabImpl(1024*1024)});
+      MemoryAllocatorImpl sma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { new SlabImpl(1024 * 1024) });
       try {
         String baValue = "12345678";
         byte[] baValueBlob = BlobHelper.serializeToBlob(baValue);
@@ -163,7 +162,7 @@ public abstract class OldValueImporterTestBase {
         hdos = new HeapDataOutputStream(bytes);
         toData(omsg, hdos);
         fromData(imsg, bytes);
-        assertArrayEquals(baValueBlob, ((VMCachedDeserializable)getOldValueFromImporter(imsg)).getSerializedValue());
+        assertArrayEquals(baValueBlob, ((VMCachedDeserializable) getOldValueFromImporter(imsg)).getSerializedValue());
       } finally {
         MemoryAllocatorImpl.freeOffHeapMemory();
       }

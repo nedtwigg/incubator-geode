@@ -54,41 +54,39 @@ public class PluckStacks {
    */
   public static void main(String[] args) {
     PluckStacks ps = new PluckStacks();
-    for (int i=0; i<args.length; i++) {
+    for (int i = 0; i < args.length; i++) {
       ps.examineLog(new File(args[i]));
     }
   }
 
   private void examineLog(File log) {
-    
+
     LineNumberReader reader = null;
-    
+
     try {
       if (log.getName().endsWith(".gz")) {
         reader = new LineNumberReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(log))));
       } else {
         reader = new LineNumberReader(new FileReader(log));
       }
-    } catch( FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       return;
-    } catch ( IOException e) {
+    } catch (IOException e) {
       return;
     }
-    
+
     StringBuffer buffer = new StringBuffer();
-    
+
     String line = null;
     int stackNumber = 1;
-    try { 
-      while( (line = reader.readLine()) != null) {
+    try {
+      while ((line = reader.readLine()) != null) {
         if (line.startsWith("Full thread dump")) {
           int lineNumber = reader.getLineNumber();
           List<ThreadStack> stacks = getStacks(reader);
           if (stacks.size() > 0) {
-            buffer.append("[Stack #").append(stackNumber++)
-             .append(" from "+log+" line " + lineNumber + "]\n")
-             .append(line).append("\n");
-            for (ThreadStack stack: stacks) {
+            buffer.append("[Stack #").append(stackNumber++).append(" from " + log + " line " + lineNumber + "]\n").append(line).append("\n");
+            for (ThreadStack stack : stacks) {
               stack.appendToBuffer(buffer);
               buffer.append("\n");
             }
@@ -98,18 +96,22 @@ public class PluckStacks {
             break;
           }
         }
-      } 
-    } catch(IOException ioe) {
+      }
+    } catch (IOException ioe) {
       return;
     } finally {
-      if ( reader != null) try { reader.close(); } catch (IOException ignore) {}
+      if (reader != null)
+        try {
+          reader.close();
+        } catch (IOException ignore) {
+        }
     }
     String output = buffer.toString();
     if (output.length() > 0) {
       System.out.println(output);
     }
   }
-  
+
   /** parses each stack trace and returns any that are unexpected */
   public List<ThreadStack> getStacks(BufferedReader reader) throws IOException {
     List<ThreadStack> result = new LinkedList<ThreadStack>();
@@ -119,7 +121,8 @@ public class PluckStacks {
       String line = null;
       // find the start of the stack
       while ((line = reader.readLine()) != null) {
-        if (line.length() > 0 && line.charAt(0) == '"') break;
+        if (line.length() > 0 && line.charAt(0) == '"')
+          break;
         if (lastStack != null) {
           if (line.length() == 0 || line.charAt(0) == '\t') {
             lastStack.add(line);
@@ -167,27 +170,32 @@ public class PluckStacks {
       }
     } while (true);
   }
-  
+
   /* see if this thread is at an expected pause point */
   boolean isExpectedStack(ThreadStack thread) {
     String threadName = thread.getThreadName();
     int stackSize = thread.size();
 
     // keep all hydra threads
-    if (threadName.startsWith("vm_")) return false;
+    if (threadName.startsWith("vm_"))
+      return false;
 
     // these are never interesting to me
-    if (threadName.startsWith("StatDispatcher")) return true;
-    if (threadName.startsWith("State Logger Consumer Thread")) return true;
-    if (threadName.contains("StatSampler")) return true;
-    if (threadName.startsWith("IDLE p2pDestreamer")) return true;
-    if (threadName.startsWith("Idle OplogCompactor")) return true;
+    if (threadName.startsWith("StatDispatcher"))
+      return true;
+    if (threadName.startsWith("State Logger Consumer Thread"))
+      return true;
+    if (threadName.contains("StatSampler"))
+      return true;
+    if (threadName.startsWith("IDLE p2pDestreamer"))
+      return true;
+    if (threadName.startsWith("Idle OplogCompactor"))
+      return true;
 
-    
     //////////////     HIGH FREQUENCY STACKS  //////////////////////
-    
+
     // check these first for efficiency
-    
+
     if (threadName.startsWith("Cache Client Updater Thread")) {
       return stackSize == 13 && thread.get(2).contains("SocketInputStream.socketRead0");
     }
@@ -201,32 +209,29 @@ public class PluckStacks {
       return stackSize < 11 && thread.getFirstFrame().contains("socketAccept");
     }
     if (threadName.startsWith("Geode Membership Timer")) {
-//      System.out.println("gf timer stack size = " + stackSize + "; frame = " + thread.get(1));
+      //      System.out.println("gf timer stack size = " + stackSize + "; frame = " + thread.get(1));
       return stackSize < 9 && !thread.isRunnable();
     }
     if (threadName.startsWith("Geode Membership View Creator")) {
-//    System.out.println("gf view creator stack size = " + stackSize + "; frame = " + thread.get(1));
-    return stackSize < 8 && !thread.isRunnable();
+      //    System.out.println("gf view creator stack size = " + stackSize + "; frame = " + thread.get(1));
+      return stackSize < 8 && !thread.isRunnable();
     }
     if (threadName.startsWith("Geode Heartbeat Sender")) {
       return stackSize <= 8 && !thread.isRunnable();
     }
     // thread currently disabled
-//    if (threadName.startsWith("Geode Suspect Message Collector")) {
-//      return stackSize <= 7 && thread.get(1).contains("Thread.State: WAITING");
-//    }
+    //    if (threadName.startsWith("Geode Suspect Message Collector")) {
+    //      return stackSize <= 7 && thread.get(1).contains("Thread.State: WAITING");
+    //    }
     if (threadName.startsWith("multicast receiver")) {
-    return (stackSize > 2 && thread.get(2).contains("PlainDatagramSocketImpl.receive"));
-  }
+      return (stackSize > 2 && thread.get(2).contains("PlainDatagramSocketImpl.receive"));
+    }
     if (threadName.startsWith("P2P Listener")) {
-//      System.out.println("p2p listener stack size = " + stackSize + "; frame = " + thread.get(2));
+      //      System.out.println("p2p listener stack size = " + stackSize + "; frame = " + thread.get(2));
       return (stackSize == 8 && thread.get(2).contains("SocketChannelImpl.accept"));
     }
     if (threadName.startsWith("P2P message reader")) {
-      return (stackSize <= 14 && 
-        (thread.getFirstFrame().contains("FileDispatcherImpl.read") ||
-         thread.getFirstFrame().contains("FileDispatcher.read") ||
-         thread.getFirstFrame().contains("SocketDispatcher.read")));
+      return (stackSize <= 14 && (thread.getFirstFrame().contains("FileDispatcherImpl.read") || thread.getFirstFrame().contains("FileDispatcher.read") || thread.getFirstFrame().contains("SocketDispatcher.read")));
     }
     if (threadName.startsWith("PartitionedRegion Message Processor")) {
       return isIdleExecutor(thread);
@@ -244,34 +249,32 @@ public class PluckStacks {
       return isIdleExecutor(thread);
     }
     if (threadName.startsWith("ServerConnection")) {
-      if (thread.getFirstFrame().contains("socketRead")
-          && (stackSize > 6 && thread.get(6).contains("fetchHeader"))) return true; // reading from a client
+      if (thread.getFirstFrame().contains("socketRead") && (stackSize > 6 && thread.get(6).contains("fetchHeader")))
+        return true; // reading from a client
       return isIdleExecutor(thread);
     }
     if (threadName.startsWith("TCP Check ServerSocket Thread")) {
       return (stackSize >= 3 && thread.get(2).contains("socketAccept"));
     }
     if (threadName.startsWith("Timer runner")) {
-//      System.out.println("timer runner stack size = " + stackSize + "; frame = " + thread.get(1));
+      //      System.out.println("timer runner stack size = " + stackSize + "; frame = " + thread.get(1));
       return (stackSize <= 10 && thread.get(1).contains("TIMED_WAITING"));
     }
     if (threadName.startsWith("TransferQueueBundler")) {
-//      System.out.println("transfer bundler stack size = " + stackSize + "; frame = " + thread.get(2));
+      //      System.out.println("transfer bundler stack size = " + stackSize + "; frame = " + thread.get(2));
       return (stackSize == 9 && thread.get(2).contains("sun.misc.Unsafe.park"));
     }
     if (threadName.startsWith("unicast receiver")) {
-//      System.out.println("unicast receiver stack size = " + stackSize + "; frame = " + thread.get(3));
+      //      System.out.println("unicast receiver stack size = " + stackSize + "; frame = " + thread.get(3));
       return (stackSize > 2 && thread.get(2).contains("PlainDatagramSocketImpl.receive"));
     }
-    
+
     /////////////////////////////////////////////////////////////////////////
-    
+
     // Now check the rest of the product threads in alphabetical order
-    
+
     if (threadName.startsWith("Asynchronous disk writer")) {
-      return !thread.isRunnable() && stackSize <= 10 &&
-        (stackSize >= 7 && (thread.get(5).contains("waitUntilFlushIsReady") ||
-         thread.get(6).contains("waitUntilFlushIsReady")));
+      return !thread.isRunnable() && stackSize <= 10 && (stackSize >= 7 && (thread.get(5).contains("waitUntilFlushIsReady") || thread.get(6).contains("waitUntilFlushIsReady")));
     }
     if (threadName.startsWith("BridgeServer-LoadPollingThread")) {
       return !thread.isRunnable() && stackSize == 5;
@@ -280,8 +283,7 @@ public class PluckStacks {
       return (thread.getFirstFrame().contains("socketAccept"));
     }
     if (threadName.startsWith("Client Message Dispatcher")) {
-      return (stackSize == 11 && thread.getFirstFrame().contains("socketWrite"))
-      || (stackSize == 14 && thread.getFirstFrame().contains("Unsafe.park"));
+      return (stackSize == 11 && thread.getFirstFrame().contains("socketWrite")) || (stackSize == 14 && thread.getFirstFrame().contains("Unsafe.park"));
     }
     if (threadName.equals("ClientHealthMonitor Thread")) {
       return !thread.isRunnable() && stackSize == 4;
@@ -293,7 +295,7 @@ public class PluckStacks {
       return !thread.isRunnable() && (stackSize == 9 && thread.get(6).contains("Queue.take"));
     }
     if (threadName.startsWith("Event Processor for GatewaySender")) {
-      return !thread.isRunnable() && thread.get(3).contains("ConcurrentParallelGatewaySenderQueue.peek"); 
+      return !thread.isRunnable() && thread.get(3).contains("ConcurrentParallelGatewaySenderQueue.peek");
     }
     if (threadName.startsWith("GC Daemon")) {
       return !thread.isRunnable() && stackSize <= 6;
@@ -371,15 +373,19 @@ public class PluckStacks {
       return isIdleExecutor(thread);
     }
     if (threadName.startsWith("Timer-")) {
-      if (thread.isRunnable()) return true;
-      if ((stackSize <= 8) && thread.getFirstFrame().contains("Object.wait")) return true;
+      if (thread.isRunnable())
+        return true;
+      if ((stackSize <= 8) && thread.getFirstFrame().contains("Object.wait"))
+        return true;
     }
     if (threadName.startsWith("TimeScheduler.Thread")) {
       return !thread.isRunnable() && (stackSize <= 8 && thread.getFirstFrame().contains("Object.wait"));
     }
     if (threadName.startsWith("vfabric-license-heartbeat")) {
-      if (thread.isRunnable()) return false;
-      if (stackSize == 6 && thread.getFirstFrame().contains("Thread.sleep")) return true;
+      if (thread.isRunnable())
+        return false;
+      if (stackSize == 6 && thread.getFirstFrame().contains("Thread.sleep"))
+        return true;
       return (stackSize <= 7 && thread.getFirstFrame().contains("Object.wait"));
     }
     if (threadName.equals("WAN Locator Discovery Thread")) {
@@ -387,26 +393,30 @@ public class PluckStacks {
     }
     return isIdleExecutor(thread);
   }
-  
-  
+
   boolean isIdleExecutor(ThreadStack thread) {
-    if (thread.isRunnable()) return false;
+    if (thread.isRunnable())
+      return false;
     int size = thread.size();
-    if (size > 8 && thread.get(7).contains("DMStats.take")) return true;
-    if (size > 3 && thread.get(size - 3).contains("getTask")) return true;    // locator request thread
-    if (size > 4 && thread.get(size - 4).contains("getTask")) return true;    // most executors match this
-    if (size > 5 && thread.get(size - 5).contains("getTask")) return true;    // View Message Processor
-    if (size > 6 && thread.get(size - 6).contains("getTask")) return true;    // View Message Processor
+    if (size > 8 && thread.get(7).contains("DMStats.take"))
+      return true;
+    if (size > 3 && thread.get(size - 3).contains("getTask"))
+      return true; // locator request thread
+    if (size > 4 && thread.get(size - 4).contains("getTask"))
+      return true; // most executors match this
+    if (size > 5 && thread.get(size - 5).contains("getTask"))
+      return true; // View Message Processor
+    if (size > 6 && thread.get(size - 6).contains("getTask"))
+      return true; // View Message Processor
     return false;
   }
 
-
-  /** ThreadStack holds the stack for a single Java Thread */  
+  /** ThreadStack holds the stack for a single Java Thread */
   public static class ThreadStack implements Comparable {
     List<String> lines = new ArrayList<String>(20);
     boolean runnable;
     List<String> breadcrumbs;
- 
+
     /** create a stack with the given initial lines, reading the rest from the Reader */
     ThreadStack(String firstLine, String secondLine, String thirdLine, BufferedReader reader) throws IOException {
       lines.add(firstLine);
@@ -415,36 +425,36 @@ public class PluckStacks {
       lines.add(thirdLine);
 
       String line = null;
-      while ((line = reader.readLine()) != null  &&  line.trim().length() > 0) {
+      while ((line = reader.readLine()) != null && line.trim().length() > 0) {
         lines.add(line);
       }
     }
-    
+
     void addBreadcrumbs(List crumbs) {
       this.breadcrumbs = new ArrayList<String>(crumbs);
     }
-    
+
     void add(String line) {
       lines.add(line);
     }
-    
+
     String get(int position) {
       return lines.get(position);
     }
-    
+
     boolean isRunnable() {
       return runnable;
     }
-    
+
     boolean contains(String subString) {
-      for (int i=lines.size()-1; i >= 0; i--) {
+      for (int i = lines.size() - 1; i >= 0; i--) {
         if (lines.get(i).contains(subString)) {
           return true;
         }
       }
       return false;
     }
-    
+
     String getFirstFrame() {
       if (lines.size() > 2) {
         return lines.get(2);
@@ -452,7 +462,7 @@ public class PluckStacks {
         return "";
       }
     }
-    
+
     String getThreadName() {
       String firstLine = lines.get(0);
       int quote = firstLine.indexOf('"', 1);
@@ -461,19 +471,19 @@ public class PluckStacks {
       }
       return firstLine.substring(1, firstLine.length());
     }
-    
+
     int size() {
       return lines.size();
     }
-    
+
     @Override
     public String toString() {
       StringWriter sw = new StringWriter();
       boolean first = true;
-      for (String line: lines) {
+      for (String line : lines) {
         sw.append(line).append("\n");
         if (first && this.breadcrumbs != null) {
-          for (String bline: breadcrumbs) {
+          for (String bline : breadcrumbs) {
             sw.append(bline).append("\n");
           }
         }
@@ -481,20 +491,20 @@ public class PluckStacks {
       }
       return sw.toString();
     }
-    
+
     public void writeTo(Writer w) throws IOException {
       if (DEBUG) {
-        w.append("stack.name='"+getThreadName()+"' runnable="+this.runnable + " lines=" + lines.size());
+        w.append("stack.name='" + getThreadName() + "' runnable=" + this.runnable + " lines=" + lines.size());
         w.append("\n");
       }
       boolean first = true;
-      for (String line: lines) {
+      for (String line : lines) {
         w.append(line);
         w.append("\n");
         if (first) {
           first = false;
           if (breadcrumbs != null) {
-            for (String bline: breadcrumbs) {
+            for (String bline : breadcrumbs) {
               w.append(bline).append("\n");
             }
           }
@@ -503,22 +513,23 @@ public class PluckStacks {
     }
 
     public void appendToBuffer(StringBuffer buffer) {
-      if (DEBUG) buffer.append("stack.name='"+getThreadName()+"' runnable="+this.runnable + " lines=" + lines.size()).append("\n");
+      if (DEBUG)
+        buffer.append("stack.name='" + getThreadName() + "' runnable=" + this.runnable + " lines=" + lines.size()).append("\n");
       boolean first = true;
-      for (String line: lines) {
+      for (String line : lines) {
         buffer.append(line).append("\n");
         if (first && breadcrumbs != null) {
-          for (String bline: breadcrumbs) {
+          for (String bline : breadcrumbs) {
             buffer.append(bline).append("\n");
           }
         }
         first = false;
       }
     }
-    
+
     @Override
     public int compareTo(Object other) {
-      return ((ThreadStack)other).getThreadName().compareTo(getThreadName());
+      return ((ThreadStack) other).getThreadName().compareTo(getThreadName());
     }
   }
 

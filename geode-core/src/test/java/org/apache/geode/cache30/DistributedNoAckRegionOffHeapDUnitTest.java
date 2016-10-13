@@ -41,14 +41,14 @@ public class DistributedNoAckRegionOffHeapDUnitTest extends DistributedNoAckRegi
   public DistributedNoAckRegionOffHeapDUnitTest() {
     super();
   }
-  
+
   @Override
   public final void preTearDownAssertions() throws Exception {
     SerializableRunnable checkOrphans = new SerializableRunnable() {
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -63,7 +63,7 @@ public class DistributedNoAckRegionOffHeapDUnitTest extends DistributedNoAckRegi
     props.setProperty(OFF_HEAP_MEMORY_SIZE, "10m");
     return props;
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes getRegionAttributes() {
@@ -72,13 +72,13 @@ public class DistributedNoAckRegionOffHeapDUnitTest extends DistributedNoAckRegi
     factory.setOffHeap(true);
     return factory.create();
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = super.getRegionAttributes(type);
     AttributesFactory factory = new AttributesFactory(ra);
-    if(!ra.getDataPolicy().isEmpty()) {
+    if (!ra.getDataPolicy().isEmpty()) {
       factory.setOffHeap(true);
     }
     return factory.create();

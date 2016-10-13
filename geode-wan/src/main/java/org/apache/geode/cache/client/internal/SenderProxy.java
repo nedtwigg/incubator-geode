@@ -25,18 +25,16 @@ import org.apache.geode.distributed.internal.ServerLocation;
  * Used to send operations from a sender to a receiver.
  * @since GemFire 8.1
  */
-public class SenderProxy extends ServerProxy{
+public class SenderProxy extends ServerProxy {
   public SenderProxy(InternalPool pool) {
     super(pool);
   }
 
-  public void dispatchBatch_NewWAN(Connection con, List events, int batchId, boolean isRetry)
-  {
+  public void dispatchBatch_NewWAN(Connection con, List events, int batchId, boolean isRetry) {
     GatewaySenderBatchOp.executeOn(con, this.pool, events, batchId, isRetry);
   }
-  
-  public Object receiveAckFromReceiver(Connection con)
-  {
+
+  public Object receiveAckFromReceiver(Connection con) {
     return GatewaySenderBatchOp.executeOn(con, this.pool);
   }
 }

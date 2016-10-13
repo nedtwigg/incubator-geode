@@ -41,7 +41,7 @@ public class TypeExecutor extends AbstractExecutor {
 
     if (type == null)
       command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), "none"));
-    else 
+    else
       command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), type.toString()));
   }
 

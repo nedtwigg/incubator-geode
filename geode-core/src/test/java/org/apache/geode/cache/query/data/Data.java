@@ -27,20 +27,20 @@ package org.apache.geode.cache.query.data;
  *
  */
 public class Data {
-  
+
   /** Creates a new instance of Data */
   public Data() {
   }
-  
-  public void voidMethod(){
-    
+
+  public void voidMethod() {
+
   }
-  
-  public boolean booleanMethod(){
+
+  public boolean booleanMethod() {
     return true;
   }
-  
-  public Object nullMethod(){
+
+  public Object nullMethod() {
     return null;
   }
 }

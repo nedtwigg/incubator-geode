@@ -24,12 +24,11 @@ import org.apache.geode.management.LocatorMXBean;
  * 
  * 
  */
-public class LocatorMBean extends NotificationBroadcasterSupport implements
-    LocatorMXBean {
-  
+public class LocatorMBean extends NotificationBroadcasterSupport implements LocatorMXBean {
+
   private LocatorMBeanBridge bridge;
-  
-  public LocatorMBean(LocatorMBeanBridge bridge){
+
+  public LocatorMBean(LocatorMBeanBridge bridge) {
     this.bridge = bridge;
   }
 
@@ -72,7 +71,5 @@ public class LocatorMBean extends NotificationBroadcasterSupport implements
   public String[] listPotentialManagers() {
     return bridge.listPotentialManagers();
   }
-
- 
 
 }

@@ -40,7 +40,6 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 
-
 public class LocatorServerConfigurationRule extends ExternalResource implements Serializable {
 
   private int locatorPort = 0;
@@ -117,23 +116,23 @@ public class LocatorServerConfigurationRule extends ExternalResource implements 
    * @param index
    * @return
    */
-  public VM getNodeVM(int index){
+  public VM getNodeVM(int index) {
     return host.getVM(index);
   }
 
-  public InternalDistributedSystem getSystem(Properties properties){
+  public InternalDistributedSystem getSystem(Properties properties) {
     if (!properties.containsKey(MCAST_PORT)) {
       properties.setProperty(MCAST_PORT, "0");
     }
     properties.setProperty(LOCATORS, getHostName() + "[" + locatorPort + "]");
     InternalDistributedSystem ds = testCase.getSystem(properties);
-    if(testCase instanceof JUnit4CacheTestCase){
-      ((JUnit4CacheTestCase)testCase).getCache();
+    if (testCase instanceof JUnit4CacheTestCase) {
+      ((JUnit4CacheTestCase) testCase).getCache();
     }
     return ds;
   }
 
-  public int getLocatorPort(){
+  public int getLocatorPort() {
     return locatorPort;
   }
 

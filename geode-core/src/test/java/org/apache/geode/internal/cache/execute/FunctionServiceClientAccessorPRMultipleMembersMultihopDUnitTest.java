@@ -28,12 +28,14 @@ import org.junit.experimental.categories.Category;
 @Category(DistributedTest.class)
 public class FunctionServiceClientAccessorPRMultipleMembersMultihopDUnitTest extends FunctionServiceClientAccessorPRBase {
 
-  @Override public void configureClient(final ClientCacheFactory cacheFactory) {
+  @Override
+  public void configureClient(final ClientCacheFactory cacheFactory) {
     cacheFactory.setPoolPRSingleHopEnabled(false);
     super.configureClient(cacheFactory);
   }
 
-  @Override public int numberOfExecutions() {
+  @Override
+  public int numberOfExecutions() {
     return 2;
   }
 

@@ -45,14 +45,12 @@ public interface BucketOperator {
    *          a callback which will receive a notification on the success or
    *          failure of the operation.
    */
-  void createRedundantBucket(InternalDistributedMember targetMember,
-      int bucketId, Map<String, Long> colocatedRegionBytes, Completion completion);
+  void createRedundantBucket(InternalDistributedMember targetMember, int bucketId, Map<String, Long> colocatedRegionBytes, Completion completion);
 
   /**
    * Remove a bucket from the target member.
    */
-  boolean removeBucket(InternalDistributedMember memberId, int id,
-      Map<String, Long> colocatedRegionSizes);
+  boolean removeBucket(InternalDistributedMember memberId, int id, Map<String, Long> colocatedRegionSizes);
 
   /**
    * Move a bucket from one member to another
@@ -61,9 +59,7 @@ public interface BucketOperator {
    * @param bucketId the id of the bucket we want to move
    * @return true if the bucket was moved successfully
    */
-  boolean moveBucket(InternalDistributedMember sourceMember,
-      InternalDistributedMember targetMember, int bucketId,
-      Map<String, Long> colocatedRegionBytes);
+  boolean moveBucket(InternalDistributedMember sourceMember, InternalDistributedMember targetMember, int bucketId, Map<String, Long> colocatedRegionBytes);
 
   /**
    * Move a primary from one node to another. This method will
@@ -74,16 +70,15 @@ public interface BucketOperator {
    * @param bucketId The id of the bucket to move;
    * @return true if the primary was successfully moved.
    */
-  boolean movePrimary(InternalDistributedMember source,
-      InternalDistributedMember target, int bucketId);
-  
+  boolean movePrimary(InternalDistributedMember source, InternalDistributedMember target, int bucketId);
+
   /**
    * Wait for any pending asynchronous operations that this thread submitted
    * earlier to complete. Currently only createRedundantBucket may be
    * asynchronous.
    */
   public void waitForOperations();
-  
+
   /**
    * Callbacks for asnychonous operations. These methods will be invoked when an
    * ansynchronous operation finishes.
@@ -95,6 +90,7 @@ public interface BucketOperator {
    */
   public interface Completion {
     public void onSuccess();
+
     public void onFailure();
   }
 }

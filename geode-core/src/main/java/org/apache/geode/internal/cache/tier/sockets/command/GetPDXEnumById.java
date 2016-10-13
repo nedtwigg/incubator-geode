@@ -30,7 +30,6 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import org.apache.geode.pdx.internal.EnumInfo;
 import org.apache.geode.pdx.internal.TypeRegistry;
 
-
 public class GetPDXEnumById extends BaseCommand {
 
   private final static GetPDXEnumById singleton = new GetPDXEnumById();
@@ -43,14 +42,13 @@ public class GetPDXEnumById extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received get pdx enum by id request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
     }
     int enumId = msg.getPart(0).getInt();
-    
+
     EnumInfo result;
     try {
       GemFireCacheImpl cache = (GemFireCacheImpl) servConn.getCache();

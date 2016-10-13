@@ -80,9 +80,7 @@ public class AbstractPeerTXRegionStubTest {
     }
 
     @Override
-    public Object findObject(KeyInfo keyInfo, boolean isCreate,
-        boolean generateCallbacks, Object value, boolean preferCD,
-        ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent) {
+    public Object findObject(KeyInfo keyInfo, boolean isCreate, boolean generateCallbacks, Object value, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent) {
       return null;
     }
 
@@ -92,8 +90,7 @@ public class AbstractPeerTXRegionStubTest {
     }
 
     @Override
-    public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified,
-        boolean overwriteDestroyed) {
+    public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) {
       return false;
     }
 

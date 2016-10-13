@@ -37,16 +37,16 @@ public final class DistributionConfigSnapshot extends DistributionConfigImpl {
   private static final long serialVersionUID = 7445728132965092798L;
 
   private HashSet modifiable;
-  
+
   /**
    * Constructs an internal system config given an existing one.
    * @param dc an existing system configuration.
    */
   public DistributionConfigSnapshot(DistributionConfig dc) {
     super(dc);
-    this.modifiable  = new HashSet(20);
+    this.modifiable = new HashSet(20);
     String[] attNames = dc.getAttributeNames();
-    for (int i=0; i < attNames.length; i++) {
+    for (int i = 0; i < attNames.length; i++) {
       if (dc.isAttributeModifiable(attNames[i])) {
         this.modifiable.add(attNames[i]);
       }

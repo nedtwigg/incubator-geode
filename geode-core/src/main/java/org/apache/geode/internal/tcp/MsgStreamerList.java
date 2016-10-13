@@ -49,8 +49,7 @@ public final class MsgStreamerList implements BaseMsgStreamer {
    * {@inheritDoc}
    */
   @Override
-  public void reserveConnections(long startTime, long ackTimeout,
-      long ackSDTimeout) {
+  public void reserveConnections(long startTime, long ackTimeout, long ackSDTimeout) {
     for (MsgStreamer streamer : this.streamers) {
       streamer.reserveConnections(startTime, ackTimeout, ackSDTimeout);
     }
@@ -106,9 +105,8 @@ public final class MsgStreamerList implements BaseMsgStreamer {
     List<Object> sentCons = Collections.emptyList();
     for (MsgStreamer streamer : this.streamers) {
       if (sentCons.size() == 0) {
-        sentCons = (List<Object>)streamer.getSentConnections();
-      }
-      else {
+        sentCons = (List<Object>) streamer.getSentConnections();
+      } else {
         sentCons.addAll(streamer.getSentConnections());
       }
     }
@@ -124,16 +122,14 @@ public final class MsgStreamerList implements BaseMsgStreamer {
     for (MsgStreamer streamer : this.streamers) {
       if (ce == null) {
         ce = streamer.getConnectExceptions();
-      }
-      else {
+      } else {
         // loop through all failures and add to base ConnectionException
         ConnectExceptions e = streamer.getConnectExceptions();
         if (e != null) {
           List<?> members = e.getMembers();
           List<?> exs = e.getCauses();
           for (int i = 0; i < exs.size(); i++) {
-            ce.addFailure((InternalDistributedMember)members.get(i),
-                (Throwable)exs.get(i));
+            ce.addFailure((InternalDistributedMember) members.get(i), (Throwable) exs.get(i));
           }
         }
       }
@@ -154,8 +150,7 @@ public final class MsgStreamerList implements BaseMsgStreamer {
       } catch (IOException e) {
         if (ex == null) {
           ex = e;
-        }
-        else {
+        } else {
           // log the exception and move on to close others
           logger.fatal("Unknown error closing streamer: {}", e.getMessage(), e);
         }

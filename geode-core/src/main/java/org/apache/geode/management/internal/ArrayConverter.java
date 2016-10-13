@@ -30,8 +30,7 @@ import javax.management.openmbean.OpenDataException;
  * 
  */
 public final class ArrayConverter extends OpenTypeConverter {
-  ArrayConverter(Type targetType, ArrayType openArrayType,
-      Class openArrayClass, OpenTypeConverter elementConverter) {
+  ArrayConverter(Type targetType, ArrayType openArrayType, Class openArrayClass, OpenTypeConverter elementConverter) {
     super(targetType, openArrayType, openArrayClass);
     this.elementConverter = elementConverter;
   }
@@ -39,16 +38,14 @@ public final class ArrayConverter extends OpenTypeConverter {
   final Object toNonNullOpenValue(Object value) throws OpenDataException {
     Object[] valueArray = (Object[]) value;
     final int len = valueArray.length;
-    final Object[] openArray = (Object[]) Array.newInstance(getOpenClass()
-        .getComponentType(), len);
+    final Object[] openArray = (Object[]) Array.newInstance(getOpenClass().getComponentType(), len);
     for (int i = 0; i < len; i++) {
       openArray[i] = elementConverter.toOpenValue(valueArray[i]);
     }
     return openArray;
   }
 
-  public final Object fromNonNullOpenValue(Object openValue)
-      throws InvalidObjectException {
+  public final Object fromNonNullOpenValue(Object openValue) throws InvalidObjectException {
     final Object[] openArray = (Object[]) openValue;
     final Type targetType = getTargetType();
     final Object[] valueArray;
@@ -60,8 +57,7 @@ public final class ArrayConverter extends OpenTypeConverter {
     } else {
       throw new IllegalArgumentException("Not an array: " + targetType);
     }
-    valueArray = (Object[]) Array.newInstance((Class<?>) componentType,
-        openArray.length);
+    valueArray = (Object[]) Array.newInstance((Class<?>) componentType, openArray.length);
     for (int i = 0; i < openArray.length; i++) {
       valueArray[i] = elementConverter.fromOpenValue(openArray[i]);
     }

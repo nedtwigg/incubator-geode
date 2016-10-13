@@ -26,16 +26,17 @@ package org.apache.geode.cache.query.data;
  *
  */
 public class PhoneNo {
-    public int phoneNo1;
-    public int phoneNo2;
-    public int phoneNo3;
-    public int mobile;
-    /** Creates a new instance of PhoneNo */
-    public PhoneNo(int i,int j, int k, int m) {
-        this.phoneNo1 = i;
-        this.phoneNo2 = j;
-        this.phoneNo3 = k;
-        this.mobile = m;
-    }
-    
+  public int phoneNo1;
+  public int phoneNo2;
+  public int phoneNo3;
+  public int mobile;
+
+  /** Creates a new instance of PhoneNo */
+  public PhoneNo(int i, int j, int k, int m) {
+    this.phoneNo1 = i;
+    this.phoneNo2 = j;
+    this.phoneNo3 = k;
+    this.mobile = m;
+  }
+
 }//end of class

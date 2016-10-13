@@ -23,12 +23,10 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-public class HttpSessionListenerImpl extends AbstractListener
-    implements HttpSessionListener {
+public class HttpSessionListenerImpl extends AbstractListener implements HttpSessionListener {
 
   public synchronized void sessionCreated(HttpSessionEvent se) {
-    HttpSession gfeSession = SessionCachingFilter.getWrappingSession(
-        se.getSession());
+    HttpSession gfeSession = SessionCachingFilter.getWrappingSession(se.getSession());
     gfeSession.setAttribute("gemfire-session-id", gfeSession.getId());
     events.add(ListenerEventType.SESSION_CREATED);
     latch.countDown();

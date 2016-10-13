@@ -37,7 +37,7 @@ import org.apache.geode.internal.cache.tier.sockets.command.MonitorCQ;
 import org.apache.geode.internal.cache.tier.sockets.command.StopCQ;
 
 public class CqServiceFactoryImpl implements CqServiceFactory {
-  
+
   public void initialize() {
     {
       Map<Version, Command> versions = new HashMap<Version, Command>();
@@ -46,7 +46,7 @@ public class CqServiceFactoryImpl implements CqServiceFactory {
       CommandInitializer.registerCommand(MessageType.EXECUTECQ_MSG_TYPE, versions);
       CommandInitializer.registerCommand(MessageType.EXECUTECQ_WITH_IR_MSG_TYPE, versions);
     }
-    
+
     CommandInitializer.registerCommand(MessageType.GETCQSTATS_MSG_TYPE, Collections.singletonMap(Version.GFE_57, GetCQStats.getCommand()));
     CommandInitializer.registerCommand(MessageType.MONITORCQ_MSG_TYPE, Collections.singletonMap(Version.GFE_57, MonitorCQ.getCommand()));
     CommandInitializer.registerCommand(MessageType.STOPCQ_MSG_TYPE, Collections.singletonMap(Version.GFE_57, StopCQ.getCommand()));

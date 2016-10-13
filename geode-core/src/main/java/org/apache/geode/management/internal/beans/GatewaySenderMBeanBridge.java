@@ -39,39 +39,36 @@ import org.apache.geode.management.internal.beans.stats.StatsRate;
 public class GatewaySenderMBeanBridge {
 
   private GatewaySender sender;
-  
+
   private MBeanStatsMonitor monitor;
-  
+
   private StatsRate eventsQueuedRate;
-  
+
   private StatsRate eventsReceivedRate;
-  
+
   private StatsRate batchesDispatchedRate;
 
   private StatsAverageLatency batchDistributionAvgLatency;
-   
+
   private GatewaySenderEventDispatcher dispatcher;
-  
+
   private AbstractGatewaySender abstractSender;
 
   public GatewaySenderMBeanBridge(GatewaySender sender) {
     this.sender = sender;
-    this.monitor = new MBeanStatsMonitor(
-        ManagementStrings.GATEWAY_SENDER_MONITOR.toLocalizedString());
-      
+    this.monitor = new MBeanStatsMonitor(ManagementStrings.GATEWAY_SENDER_MONITOR.toLocalizedString());
+
     this.abstractSender = ((AbstractGatewaySender) this.sender);
     GatewaySenderStats stats = abstractSender.getStatistics();
-    
+
     addGatewaySenderStats(stats);
     initializeStats();
   }
 
   public void setDispatcher() {
-    AbstractGatewaySenderEventProcessor eventProcessor = abstractSender
-        .getEventProcessor();
+    AbstractGatewaySenderEventProcessor eventProcessor = abstractSender.getEventProcessor();
     if (eventProcessor != null) {
-      this.dispatcher = abstractSender
-          .getEventProcessor().getDispatcher();
+      this.dispatcher = abstractSender.getEventProcessor().getDispatcher();
     }
 
   }
@@ -79,22 +76,16 @@ public class GatewaySenderMBeanBridge {
   public void addGatewaySenderStats(GatewaySenderStats gatewaySenderStats) {
     monitor.addStatisticsToMonitor(gatewaySenderStats.getStats());
   }
-  
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     monitor.stopListener();
   }
-  
+
   private void initializeStats() {
-    eventsQueuedRate = new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_QUEUED,
-        StatType.INT_TYPE, monitor);
-    eventsReceivedRate = new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_RECEIVED,
-        StatType.INT_TYPE, monitor);
-    batchesDispatchedRate = new StatsRate(
-        StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED, StatType.INT_TYPE, monitor);
-    batchDistributionAvgLatency = new StatsAverageLatency(
-        StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED, StatType.INT_TYPE,
-        StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTE_TIME, monitor);
+    eventsQueuedRate = new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_QUEUED, StatType.INT_TYPE, monitor);
+    eventsReceivedRate = new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_RECEIVED, StatType.INT_TYPE, monitor);
+    batchesDispatchedRate = new StatsRate(StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED, StatType.INT_TYPE, monitor);
+    batchDistributionAvgLatency = new StatsAverageLatency(StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED, StatType.INT_TYPE, StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTE_TIME, monitor);
   }
 
   public int getAlertThreshold() {
@@ -113,7 +104,6 @@ public class GatewaySenderMBeanBridge {
     return sender.getDiskStoreName();
   }
 
-
   public String[] getGatewayEventFilters() {
     List<GatewayEventFilter> filters = sender.getGatewayEventFilters();
     String[] filtersStr = null;
@@ -131,8 +121,7 @@ public class GatewaySenderMBeanBridge {
   }
 
   public String[] getGatewayTransportFilters() {
-    List<GatewayTransportFilter> transportFilters = sender
-        .getGatewayTransportFilters();
+    List<GatewayTransportFilter> transportFilters = sender.getGatewayTransportFilters();
 
     String[] transportFiltersStr = null;
     if (transportFilters != null && transportFilters.size() > 0) {
@@ -222,8 +211,7 @@ public class GatewaySenderMBeanBridge {
   }
 
   public String getOrderPolicy() {
-    return sender.getOrderPolicy() != null ? sender.getOrderPolicy().name()
-        : null;
+    return sender.getOrderPolicy() != null ? sender.getOrderPolicy().name() : null;
   }
 
   public boolean isDiskSynchronous() {
@@ -233,17 +221,16 @@ public class GatewaySenderMBeanBridge {
   public boolean isParallel() {
     return sender.isParallel();
   }
-  
+
   /** Statistics Related Attributes **/
-  
 
   public int getTotalBatchesRedistributed() {
-   return getStatistic(StatsKey.GATEWAYSENDER_TOTAL_BATCHES_REDISTRIBUTED).intValue();
+    return getStatistic(StatsKey.GATEWAYSENDER_TOTAL_BATCHES_REDISTRIBUTED).intValue();
   }
 
   public int getTotalEventsConflated() {
     return getStatistic(StatsKey.GATEWAYSENDER_EVENTS_QUEUED_CONFLATED).intValue();
-  }  
+  }
 
   public int getEventQueueSize() {
     return abstractSender.getEventQueueSize();
@@ -256,15 +243,14 @@ public class GatewaySenderMBeanBridge {
   public float getEventsReceivedRate() {
     return eventsReceivedRate.getRate();
   }
-  
+
   public float getBatchesDispatchedRate() {
     return batchesDispatchedRate.getRate();
   }
-  
+
   public long getAverageDistributionTimePerBatch() {
     return batchDistributionAvgLatency.getAverageLatency();
   }
-  
 
   private Number getStatistic(String statName) {
     if (monitor != null) {
@@ -275,9 +261,8 @@ public class GatewaySenderMBeanBridge {
   }
 
   public String getGatewayReceiver() {
-    return ((AbstractGatewaySender)this.sender).getServerLocation().toString();
+    return ((AbstractGatewaySender) this.sender).getServerLocation().toString();
   }
-
 
   public boolean isConnected() {
     if (this.dispatcher != null && this.dispatcher.isConnectedToRemote()) {
@@ -286,6 +271,7 @@ public class GatewaySenderMBeanBridge {
       return false;
     }
   }
+
   public int getEventsExceedingAlertThreshold() {
     return getStatistic(StatsKey.GATEWAYSENDER_EVENTS_EXCEEDING_ALERT_THRESHOLD).intValue();
   }

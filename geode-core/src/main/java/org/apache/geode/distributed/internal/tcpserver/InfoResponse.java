@@ -32,20 +32,20 @@ import org.apache.geode.DataSerializer;
 public class InfoResponse implements DataSerializable {
   private static final long serialVersionUID = 6249492407448855032L;
   private String[] info;
+
   public InfoResponse(String[] info) {
     this.info = info;
   }
-  
+
   /** Used by DataSerializer */
   public InfoResponse() {
   }
-  
+
   public String[] getInfo() {
     return info;
   }
 
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     info = DataSerializer.readStringArray(in);
   }
 

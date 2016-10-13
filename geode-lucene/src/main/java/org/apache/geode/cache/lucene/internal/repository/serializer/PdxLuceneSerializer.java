@@ -41,8 +41,8 @@ class PdxLuceneSerializer implements LuceneSerializer {
   @Override
   public void toDocument(Object value, Document doc) {
     PdxInstance pdx = (PdxInstance) value;
-    for(String field : indexedFields) {
-      if(pdx.hasField(field)) {
+    for (String field : indexedFields) {
+      if (pdx.hasField(field)) {
         Object fieldValue = pdx.getField(field);
         if (fieldValue == null) {
           continue;
@@ -51,7 +51,7 @@ class PdxLuceneSerializer implements LuceneSerializer {
       }
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("PdxLuceneSerializer.toDocument:"+doc);
+      logger.debug("PdxLuceneSerializer.toDocument:" + doc);
     }
   }
 }

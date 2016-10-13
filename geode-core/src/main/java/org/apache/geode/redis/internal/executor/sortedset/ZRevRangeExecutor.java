@@ -18,7 +18,6 @@ package org.apache.geode.redis.internal.executor.sortedset;
 
 import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
-
 public class ZRevRangeExecutor extends ZRangeExecutor {
 
   @Override

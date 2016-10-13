@@ -15,12 +15,10 @@
  */
 package org.apache.geode.internal.hll;
 
-
-
 @SuppressWarnings("serial")
 public abstract class CardinalityMergeException extends Exception {
 
-    public CardinalityMergeException(String message) {
-        super(message);
-    }
+  public CardinalityMergeException(String message) {
+    super(message);
+  }
 }

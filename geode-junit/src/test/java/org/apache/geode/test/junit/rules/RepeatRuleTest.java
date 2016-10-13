@@ -37,13 +37,13 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class RepeatRuleTest {
 
   private static final String ASSERTION_ERROR_MESSAGE = "failing test";
-  
+
   @Test
   public void failingTestShouldFailOneTimeWhenRepeatIsUnused() {
     Result result = TestRunner.runTest(FailingTestShouldFailOneTimeWhenRepeatIsUnused.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -55,7 +55,7 @@ public class RepeatRuleTest {
   @Test
   public void passingTestShouldPassOneTimeWhenRepeatIsUnused() {
     Result result = TestRunner.runTest(PassingTestShouldPassOneTimeWhenRepeatIsUnused.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(PassingTestShouldPassOneTimeWhenRepeatIsUnused.count).isEqualTo(1);
   }
@@ -63,9 +63,9 @@ public class RepeatRuleTest {
   @Test
   public void zeroValueShouldThrowIllegalArgumentException() {
     Result result = TestRunner.runTest(ZeroValueShouldThrowIllegalArgumentException.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -73,13 +73,13 @@ public class RepeatRuleTest {
     assertThat(failure.getException()).isExactlyInstanceOf(IllegalArgumentException.class).hasMessage("Repeat value must be a positive integer");
     assertThat(ZeroValueShouldThrowIllegalArgumentException.count).isEqualTo(0);
   }
-  
+
   @Test
   public void negativeValueShouldThrowIllegalArgumentException() {
     Result result = TestRunner.runTest(NegativeValueShouldThrowIllegalArgumentException.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -102,9 +102,9 @@ public class RepeatRuleTest {
   @Test
   public void failingTestShouldFailOneTimeWhenRepeatIsOne() {
     Result result = TestRunner.runTest(FailingTestShouldFailOneTimeWhenRepeatIsOne.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -116,7 +116,7 @@ public class RepeatRuleTest {
   @Test
   public void passingTestShouldPassOneTimeWhenRepeatIsOne() {
     Result result = TestRunner.runTest(PassingTestShouldPassOneTimeWhenRepeatIsOne.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(PassingTestShouldPassOneTimeWhenRepeatIsOne.count).isEqualTo(1);
   }
@@ -124,9 +124,9 @@ public class RepeatRuleTest {
   @Test
   public void failingTestShouldFailOneTimeWhenRepeatIsTwo() {
     Result result = TestRunner.runTest(FailingTestShouldFailOneTimeWhenRepeatIsTwo.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -138,7 +138,7 @@ public class RepeatRuleTest {
   @Test
   public void passingTestShouldPassTwoTimesWhenRepeatIsTwo() {
     Result result = TestRunner.runTest(PassingTestShouldPassTwoTimesWhenRepeatIsTwo.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(PassingTestShouldPassTwoTimesWhenRepeatIsTwo.count).isEqualTo(2);
   }
@@ -146,9 +146,9 @@ public class RepeatRuleTest {
   @Test
   public void failingTestShouldFailOneTimeWhenRepeatIsThree() {
     Result result = TestRunner.runTest(FailingTestShouldFailOneTimeWhenRepeatIsThree.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -160,7 +160,7 @@ public class RepeatRuleTest {
   @Test
   public void passingTestShouldPassThreeTimesWhenRepeatIsThree() {
     Result result = TestRunner.runTest(PassingTestShouldPassThreeTimesWhenRepeatIsThree.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(PassingTestShouldPassThreeTimesWhenRepeatIsThree.count).isEqualTo(3);
   }

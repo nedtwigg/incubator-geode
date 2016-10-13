@@ -19,73 +19,54 @@ package org.apache.geode.cache.query.facets.lang;
 
 import org.apache.geode.cache.query.CacheUtils;
 
-
 //import java.util.*;
 
+public class Course {
+  private String _title;
+  private String _courseNum;
+  private Department _dept;
 
-public class Course
-{
-    private String _title;
-    private String _courseNum;
-    private Department _dept;
+  public Course() {
+  }
 
+  public Course(String title, String courseNum, Department department) {
+    _title = title;
+    _courseNum = courseNum;
+    _dept = department;
 
-    public Course()
-    {
-    }
+  }
 
-    public Course(String title, String courseNum, Department department)
-    {
-        _title = title;
-        _courseNum = courseNum;
-        _dept = department;
-        
-    }
+  public String toString() {
+    return getCourseNumber() + ':' + getTitle();
+  }
 
-    public String toString()
-    {
-        return getCourseNumber() + ':'+ getTitle();
-    }
-    
+  public String getTitle() {
+    return _title;
+  }
 
-    public String getTitle()
-    {
-        return _title;
-    }
+  public String getCourseNumber() {
+    return _courseNum;
+  }
 
-    public String getCourseNumber()
-    {
-        return _courseNum;
-    }
+  public Department getDepartment() {
+    return _dept;
+  }
 
-    public Department getDepartment()
-    {
-        return _dept;
-    }
+  public String getDeptId() {
+    CacheUtils.log(this);
+    return getCourseNumber().substring(0, 3);
+  }
 
-    public String getDeptId()
-    {
-        CacheUtils.log(this);
-        return getCourseNumber().substring(0,3);
-    }
-    
+  public void setTitle(String title) {
+    _title = title;
+  }
 
+  public void setCourseNumber(String courseNum) {
+    _courseNum = courseNum;
+  }
 
-    public void setTitle(String title)
-    {
-        _title = title;
-    }
+  public void setDepartment(Department dept) {
+    _dept = dept;
+  }
 
-
-    public void setCourseNumber(String courseNum)
-    {
-        _courseNum = courseNum;
-    }
-
-    public void setDepartment(Department dept)
-    {
-        _dept = dept;
-    }
-
-    
 }

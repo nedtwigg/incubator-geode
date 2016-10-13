@@ -120,8 +120,7 @@ public class Link implements Comparable<Link>, Serializable {
 
     final Link that = (Link) obj;
 
-    return ObjectUtils.equals(getHref(), that.getHref())
-      && ObjectUtils.equals(getMethod(), that.getMethod());
+    return ObjectUtils.equals(getHref(), that.getHref()) && ObjectUtils.equals(getMethod(), that.getMethod());
   }
 
   @Override

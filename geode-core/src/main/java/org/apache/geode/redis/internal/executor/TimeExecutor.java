@@ -46,6 +46,6 @@ public class TimeExecutor extends AbstractExecutor {
     response.writeBytes(Coder.CRLFar);
     response.writeBytes(micAr);
     response.writeBytes(Coder.CRLFar);
-    command.setResponse(response);    
+    command.setResponse(response);
   }
 }

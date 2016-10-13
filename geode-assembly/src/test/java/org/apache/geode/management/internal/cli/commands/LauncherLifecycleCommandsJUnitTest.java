@@ -127,7 +127,6 @@ public class LauncherLifecycleCommandsJUnitTest {
     }
   }
 
-
   @Test
   public void testAddGemFireSystemPropertiesToCommandLineWithRestAPI() {
     final List<String> commandLine = new ArrayList<>();
@@ -147,9 +146,8 @@ public class LauncherLifecycleCommandsJUnitTest {
     gemfireProperties.setProperty(NAME, "machine");
 
     gemfireProperties.setProperty(START_DEV_REST_API, "true");
-    gemfireProperties.setProperty(HTTP_SERVICE_PORT,  "8080");
+    gemfireProperties.setProperty(HTTP_SERVICE_PORT, "8080");
     gemfireProperties.setProperty(HTTP_SERVICE_BIND_ADDRESS, "localhost");
-
 
     getLauncherLifecycleCommands().addGemFireSystemProperties(commandLine, gemfireProperties);
 
@@ -202,12 +200,11 @@ public class LauncherLifecycleCommandsJUnitTest {
 
     assertTrue(commandLine.isEmpty());
 
-    getLauncherLifecycleCommands().addJvmArgumentsAndOptions(commandLine, new String[]{});
+    getLauncherLifecycleCommands().addJvmArgumentsAndOptions(commandLine, new String[] {});
 
     assertTrue(commandLine.isEmpty());
 
-    getLauncherLifecycleCommands().addJvmArgumentsAndOptions(commandLine,
-        new String[]{"-DmyProp=myVal", "-d64", "-server", "-Xprof"});
+    getLauncherLifecycleCommands().addJvmArgumentsAndOptions(commandLine, new String[] { "-DmyProp=myVal", "-d64", "-server", "-Xprof" });
 
     assertFalse(commandLine.isEmpty());
     assertEquals(4, commandLine.size());
@@ -265,8 +262,7 @@ public class LauncherLifecycleCommandsJUnitTest {
     assertEquals(3, commandLine.size());
     assertEquals("-Xmx1024M", commandLine.get(0));
     assertEquals("-XX:+UseConcMarkSweepGC", commandLine.get(1));
-    assertEquals("-XX:CMSInitiatingOccupancyFraction=" + LauncherLifecycleCommands.CMS_INITIAL_OCCUPANCY_FRACTION,
-        commandLine.get(2));
+    assertEquals("-XX:CMSInitiatingOccupancyFraction=" + LauncherLifecycleCommands.CMS_INITIAL_OCCUPANCY_FRACTION, commandLine.get(2));
   }
 
   @Test(expected = AssertionError.class)
@@ -288,8 +284,7 @@ public class LauncherLifecycleCommandsJUnitTest {
   @Test
   @SuppressWarnings("deprecation")
   public void testGetClasspathWithUserDefinedClasspath() {
-    assertEquals(System.getProperty("java.class.path") + File.pathSeparator + "/path/to/user/classes",
-        getLauncherLifecycleCommands().getClasspath("/path/to/user/classes"));
+    assertEquals(System.getProperty("java.class.path") + File.pathSeparator + "/path/to/user/classes", getLauncherLifecycleCommands().getClasspath("/path/to/user/classes"));
   }
 
   @Test
@@ -301,9 +296,7 @@ public class LauncherLifecycleCommandsJUnitTest {
   public void testLocatorClasspathOrder() {
     String userClasspath = "/path/to/user/lib/app.jar:/path/to/user/classes";
 
-    String expectedClasspath = launcherCommands.getGemFireJarPath().concat(File.pathSeparator).concat(
-        userClasspath).concat(File.pathSeparator).concat(System.getProperty("java.class.path")).concat(
-        File.pathSeparator).concat(LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME);
+    String expectedClasspath = launcherCommands.getGemFireJarPath().concat(File.pathSeparator).concat(userClasspath).concat(File.pathSeparator).concat(System.getProperty("java.class.path")).concat(File.pathSeparator).concat(LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME);
 
     String actualClasspath = launcherCommands.getLocatorClasspath(true, userClasspath);
 
@@ -314,9 +307,7 @@ public class LauncherLifecycleCommandsJUnitTest {
   public void testServerClasspathOrder() {
     String userClasspath = "/path/to/user/lib/app.jar:/path/to/user/classes";
 
-    String expectedClasspath = launcherCommands.getGemFireJarPath().concat(File.pathSeparator).concat(
-        userClasspath).concat(File.pathSeparator).concat(
-        LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME);
+    String expectedClasspath = launcherCommands.getGemFireJarPath().concat(File.pathSeparator).concat(userClasspath).concat(File.pathSeparator).concat(LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME);
 
     String actualClasspath = launcherCommands.getServerClasspath(false, userClasspath);
 
@@ -328,34 +319,25 @@ public class LauncherLifecycleCommandsJUnitTest {
     final boolean EXCLUDE_SYSTEM_CLASSPATH = false;
     final boolean INCLUDE_SYSTEM_CLASSPATH = true;
 
-    String[] jarFilePathnames = {"/path/to/user/libs/A.jar", "/path/to/user/libs/B.jar", "/path/to/user/libs/C.jar"};
+    String[] jarFilePathnames = { "/path/to/user/libs/A.jar", "/path/to/user/libs/B.jar", "/path/to/user/libs/C.jar" };
 
-    String[] userClasspaths = {"/path/to/classes:/path/to/libs/1.jar:/path/to/libs/2.jar", "/path/to/ext/libs/1.jar:/path/to/ext/classes:/path/to/ext/lib/10.jar"};
+    String[] userClasspaths = { "/path/to/classes:/path/to/libs/1.jar:/path/to/libs/2.jar", "/path/to/ext/libs/1.jar:/path/to/ext/classes:/path/to/ext/lib/10.jar" };
 
-    String expectedClasspath = LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME.concat(File.pathSeparator).concat(
-        toClasspath(userClasspaths)).concat(File.pathSeparator).concat(toClasspath(jarFilePathnames));
+    String expectedClasspath = LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME.concat(File.pathSeparator).concat(toClasspath(userClasspaths)).concat(File.pathSeparator).concat(toClasspath(jarFilePathnames));
 
-    assertEquals(expectedClasspath,
-        getLauncherLifecycleCommands().toClasspath(EXCLUDE_SYSTEM_CLASSPATH, jarFilePathnames, userClasspaths));
+    assertEquals(expectedClasspath, getLauncherLifecycleCommands().toClasspath(EXCLUDE_SYSTEM_CLASSPATH, jarFilePathnames, userClasspaths));
 
-    expectedClasspath = LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME.concat(File.pathSeparator).concat(
-        toClasspath(userClasspaths)).concat(File.pathSeparator).concat(System.getProperty("java.class.path")).concat(
-        File.pathSeparator).concat(toClasspath(jarFilePathnames));
+    expectedClasspath = LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME.concat(File.pathSeparator).concat(toClasspath(userClasspaths)).concat(File.pathSeparator).concat(System.getProperty("java.class.path")).concat(File.pathSeparator).concat(toClasspath(jarFilePathnames));
 
-    assertEquals(expectedClasspath,
-        getLauncherLifecycleCommands().toClasspath(INCLUDE_SYSTEM_CLASSPATH, jarFilePathnames, userClasspaths));
+    assertEquals(expectedClasspath, getLauncherLifecycleCommands().toClasspath(INCLUDE_SYSTEM_CLASSPATH, jarFilePathnames, userClasspaths));
 
-    expectedClasspath = LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME.concat(File.pathSeparator).concat(
-        System.getProperty("java.class.path"));
+    expectedClasspath = LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME.concat(File.pathSeparator).concat(System.getProperty("java.class.path"));
 
-    assertEquals(expectedClasspath,
-        getLauncherLifecycleCommands().toClasspath(INCLUDE_SYSTEM_CLASSPATH, null, (String[]) null));
+    assertEquals(expectedClasspath, getLauncherLifecycleCommands().toClasspath(INCLUDE_SYSTEM_CLASSPATH, null, (String[]) null));
 
-    assertEquals(LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME,
-        getLauncherLifecycleCommands().toClasspath(EXCLUDE_SYSTEM_CLASSPATH, null, (String[]) null));
+    assertEquals(LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME, getLauncherLifecycleCommands().toClasspath(EXCLUDE_SYSTEM_CLASSPATH, null, (String[]) null));
 
-    assertEquals(LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME,
-        getLauncherLifecycleCommands().toClasspath(EXCLUDE_SYSTEM_CLASSPATH, new String[0], ""));
+    assertEquals(LauncherLifecycleCommands.GEMFIRE_JAR_PATHNAME, getLauncherLifecycleCommands().toClasspath(EXCLUDE_SYSTEM_CLASSPATH, new String[0], ""));
   }
 
   @Test
@@ -363,26 +345,17 @@ public class LauncherLifecycleCommandsJUnitTest {
     String userClasspathOne = "/path/to/user/lib/a.jar:/path/to/user/classes";
     String userClasspathTwo = "/path/to/user/lib/x.jar:/path/to/user/lib/y.jar:/path/to/user/lib/z.jar";
 
-    String expectedClasspath = launcherCommands.getGemFireJarPath().concat(File.pathSeparator).concat(
-        userClasspathOne).concat(File.pathSeparator).concat(userClasspathTwo).concat(File.pathSeparator).concat(
-        System.getProperty("java.class.path")).concat(File.pathSeparator).concat(
-        LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME).concat(File.pathSeparator).concat(
-        LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME);
+    String expectedClasspath = launcherCommands.getGemFireJarPath().concat(File.pathSeparator).concat(userClasspathOne).concat(File.pathSeparator).concat(userClasspathTwo).concat(File.pathSeparator).concat(System.getProperty("java.class.path")).concat(File.pathSeparator).concat(LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME).concat(File.pathSeparator).concat(LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME);
 
-    String actualClasspath = launcherCommands.toClasspath(true,
-        new String[]{LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME, LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME},
-        userClasspathOne, userClasspathTwo);
+    String actualClasspath = launcherCommands.toClasspath(true, new String[] { LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME, LauncherLifecycleCommands.CORE_DEPENDENCIES_JAR_PATHNAME }, userClasspathOne, userClasspathTwo);
 
     assertEquals(expectedClasspath, actualClasspath);
   }
 
   @Test
   public void testGetJavaPathname() {
-    assertEquals(IOUtils.appendToPath(System.getProperty("java.home"), "bin",
-        "java" + LauncherLifecycleCommands.getExecutableSuffix()),
-        getLauncherLifecycleCommands().getJdkToolPathname("java" + LauncherLifecycleCommands.getExecutableSuffix(),
-            new GemFireException() {
-            }));
+    assertEquals(IOUtils.appendToPath(System.getProperty("java.home"), "bin", "java" + LauncherLifecycleCommands.getExecutableSuffix()), getLauncherLifecycleCommands().getJdkToolPathname("java" + LauncherLifecycleCommands.getExecutableSuffix(), new GemFireException() {
+    }));
   }
 
   @Test(expected = NullPointerException.class)
@@ -425,25 +398,20 @@ public class LauncherLifecycleCommandsJUnitTest {
   @Test
   public void testGetLocatorId() {
     assertEquals("machine[11235]", getLauncherLifecycleCommands().getLocatorId("machine", 11235));
-    assertEquals("machine.domain.org[11235]",
-        getLauncherLifecycleCommands().getLocatorId("machine.domain.org", 11235));
-    assertEquals("machine[" + DistributionLocator.DEFAULT_LOCATOR_PORT + "]",
-        getLauncherLifecycleCommands().getLocatorId("machine", null));
+    assertEquals("machine.domain.org[11235]", getLauncherLifecycleCommands().getLocatorId("machine.domain.org", 11235));
+    assertEquals("machine[" + DistributionLocator.DEFAULT_LOCATOR_PORT + "]", getLauncherLifecycleCommands().getLocatorId("machine", null));
   }
 
   @Test
   public void testGetServerId() {
     assertEquals("machine[12480]", getLauncherLifecycleCommands().getServerId("machine", 12480));
-    assertEquals("machine.domain.org[12480]",
-        getLauncherLifecycleCommands().getServerId("machine.domain.org", 12480));
-    assertEquals("machine[" + CacheServer.DEFAULT_PORT + "]",
-        getLauncherLifecycleCommands().getServerId("machine", null));
+    assertEquals("machine.domain.org[12480]", getLauncherLifecycleCommands().getServerId("machine.domain.org", 12480));
+    assertEquals("machine[" + CacheServer.DEFAULT_PORT + "]", getLauncherLifecycleCommands().getServerId("machine", null));
   }
 
   @Test
   public void testCreateJmxServerUrlWithMemberName() {
-    assertEquals("service:jmx:rmi://localhost:8192/jndi/rmi://localhost:8192/jmxrmi",
-        getLauncherLifecycleCommands().getJmxServiceUrlAsString("localhost[8192]"));
+    assertEquals("service:jmx:rmi://localhost:8192/jndi/rmi://localhost:8192/jmxrmi", getLauncherLifecycleCommands().getJmxServiceUrlAsString("localhost[8192]"));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -458,15 +426,11 @@ public class LauncherLifecycleCommandsJUnitTest {
 
   @Test
   public void testCreateServerCommandLine() throws Exception {
-    ServerLauncher serverLauncher = new ServerLauncher.Builder().setCommand(
-        ServerLauncher.Command.START).setDisableDefaultServer(true).setMemberName(
-        "testCreateServerCommandLine").setRebalance(true)
+    ServerLauncher serverLauncher = new ServerLauncher.Builder().setCommand(ServerLauncher.Command.START).setDisableDefaultServer(true).setMemberName("testCreateServerCommandLine").setRebalance(true)
         //.setServerBindAddress("localhost")
-        .setServerPort(41214).setCriticalHeapPercentage(95.5f).setEvictionHeapPercentage(85.0f)
-        .setSocketBufferSize(1024*1024).setMessageTimeToLive(93).build();
+        .setServerPort(41214).setCriticalHeapPercentage(95.5f).setEvictionHeapPercentage(85.0f).setSocketBufferSize(1024 * 1024).setMessageTimeToLive(93).build();
 
-    String[] commandLineElements = launcherCommands.createStartServerCommandLine(serverLauncher, null, null,
-        new Properties(), null, false, new String[0], false, null, null);
+    String[] commandLineElements = launcherCommands.createStartServerCommandLine(serverLauncher, null, null, new Properties(), null, false, new String[0], false, null, null);
 
     assertNotNull(commandLineElements);
     assertTrue(commandLineElements.length > 0);
@@ -479,10 +443,8 @@ public class LauncherLifecycleCommandsJUnitTest {
     expectedCommandLineElements.add("--rebalance");
     //expectedCommandLineElements.add(String.format("--server-bind-address=%1$s", serverLauncher.getServerBindAddress().getHostName()));
     expectedCommandLineElements.add(String.format("--server-port=%1$d", serverLauncher.getServerPort()));
-    expectedCommandLineElements.add(
-        String.format("--critical-heap-percentage=%1$s", serverLauncher.getCriticalHeapPercentage()));
-    expectedCommandLineElements.add(
-        String.format("--eviction-heap-percentage=%1$s", serverLauncher.getEvictionHeapPercentage()));
+    expectedCommandLineElements.add(String.format("--critical-heap-percentage=%1$s", serverLauncher.getCriticalHeapPercentage()));
+    expectedCommandLineElements.add(String.format("--eviction-heap-percentage=%1$s", serverLauncher.getEvictionHeapPercentage()));
     expectedCommandLineElements.add(String.format("--socket-buffer-size=%1$d", serverLauncher.getSocketBufferSize()));
     expectedCommandLineElements.add(String.format("--message-time-to-live=%1$d", serverLauncher.getMessageTimeToLive()));
 
@@ -490,26 +452,21 @@ public class LauncherLifecycleCommandsJUnitTest {
       expectedCommandLineElements.remove(commandLineElement.toLowerCase());
     }
 
-    assertTrue(String.format("Expected ([]); but was (%1$s)", expectedCommandLineElements),
-        expectedCommandLineElements.isEmpty());
+    assertTrue(String.format("Expected ([]); but was (%1$s)", expectedCommandLineElements), expectedCommandLineElements.isEmpty());
   }
 
   @Test
   public void testCreateServerCommandLineWithRestAPI() throws Exception {
-    ServerLauncher serverLauncher = new ServerLauncher.Builder().setCommand(
-      ServerLauncher.Command.START).setDisableDefaultServer(true).setMemberName(
-      "testCreateServerCommandLine").setRebalance(true)
-      //.setServerBindAddress("localhost")
-      .setServerPort(41214).setCriticalHeapPercentage(95.5f).setEvictionHeapPercentage(85.0f).build();
+    ServerLauncher serverLauncher = new ServerLauncher.Builder().setCommand(ServerLauncher.Command.START).setDisableDefaultServer(true).setMemberName("testCreateServerCommandLine").setRebalance(true)
+        //.setServerBindAddress("localhost")
+        .setServerPort(41214).setCriticalHeapPercentage(95.5f).setEvictionHeapPercentage(85.0f).build();
 
     Properties gemfireProperties = new Properties();
     gemfireProperties.setProperty(START_DEV_REST_API, "true");
-    gemfireProperties.setProperty(HTTP_SERVICE_PORT,  "8080");
-    gemfireProperties.setProperty(HTTP_SERVICE_BIND_ADDRESS,  "localhost");
+    gemfireProperties.setProperty(HTTP_SERVICE_PORT, "8080");
+    gemfireProperties.setProperty(HTTP_SERVICE_BIND_ADDRESS, "localhost");
 
-
-    String[] commandLineElements = launcherCommands.createStartServerCommandLine(serverLauncher, null, null,
-      gemfireProperties, null, false, new String[0], false, null, null);
+    String[] commandLineElements = launcherCommands.createStartServerCommandLine(serverLauncher, null, null, gemfireProperties, null, false, new String[0], false, null, null);
 
     assertNotNull(commandLineElements);
     assertTrue(commandLineElements.length > 0);
@@ -522,29 +479,23 @@ public class LauncherLifecycleCommandsJUnitTest {
     expectedCommandLineElements.add("--rebalance");
     //expectedCommandLineElements.add(String.format("--server-bind-address=%1$s", serverLauncher.getServerBindAddress().getHostName()));
     expectedCommandLineElements.add(String.format("--server-port=%1$d", serverLauncher.getServerPort()));
-    expectedCommandLineElements.add(
-      String.format("--critical-heap-percentage=%1$s", serverLauncher.getCriticalHeapPercentage()));
-    expectedCommandLineElements.add(
-      String.format("--eviction-heap-percentage=%1$s", serverLauncher.getEvictionHeapPercentage()));
+    expectedCommandLineElements.add(String.format("--critical-heap-percentage=%1$s", serverLauncher.getCriticalHeapPercentage()));
+    expectedCommandLineElements.add(String.format("--eviction-heap-percentage=%1$s", serverLauncher.getEvictionHeapPercentage()));
 
     expectedCommandLineElements.add("-d" + DistributionConfig.GEMFIRE_PREFIX + "" + START_DEV_REST_API + "=" + "true");
     expectedCommandLineElements.add("-d" + DistributionConfig.GEMFIRE_PREFIX + "" + HTTP_SERVICE_PORT + "=" + "8080");
     expectedCommandLineElements.add("-d" + DistributionConfig.GEMFIRE_PREFIX + "" + HTTP_SERVICE_BIND_ADDRESS + "=" + "localhost");
 
-
     for (String commandLineElement : commandLineElements) {
       expectedCommandLineElements.remove(commandLineElement.toLowerCase());
     }
 
-    assertTrue(String.format("Expected ([]); but was (%1$s)", expectedCommandLineElements),
-      expectedCommandLineElements.isEmpty());
+    assertTrue(String.format("Expected ([]); but was (%1$s)", expectedCommandLineElements), expectedCommandLineElements.isEmpty());
   }
-
 
   @Test
   public void testReadPidWithNonExistingFile() {
-    assertEquals(LauncherLifecycleCommands.INVALID_PID,
-            getLauncherLifecycleCommands().readPid(new File("/path/to/non_existing/pid.file")));
+    assertEquals(LauncherLifecycleCommands.INVALID_PID, getLauncherLifecycleCommands().readPid(new File("/path/to/non_existing/pid.file")));
   }
 
   private LauncherLifecycleCommands getLauncherLifecycleCommands() {

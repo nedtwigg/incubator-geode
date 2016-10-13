@@ -148,15 +148,13 @@ public class SSLConfig {
     this.truststoreType = truststoreType;
   }
 
-
-
   public Properties getProperties() {
     return this.properties;
   }
 
   public void setProperties(Properties newProps) {
     this.properties = new Properties();
-    for (Iterator iter = newProps.keySet().iterator(); iter.hasNext(); ) {
+    for (Iterator iter = newProps.keySet().iterator(); iter.hasNext();) {
       String key = (String) iter.next();
       //            String value = newProps.getProperty(key);
       this.properties.setProperty(key, newProps.getProperty(key));
@@ -193,4 +191,3 @@ public class SSLConfig {
   }
 
 }
-

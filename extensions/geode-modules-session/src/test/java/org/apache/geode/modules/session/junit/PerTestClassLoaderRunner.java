@@ -57,8 +57,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 public class PerTestClassLoaderRunner extends NamedRunner {
-  private static final Logger LOGGER = Logger
-      .getLogger(PerTestClassLoaderRunner.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(PerTestClassLoaderRunner.class.getName());
 
   // The classpath is needed because the custom class loader looks there to find the classes.
   private static String classPath;
@@ -93,8 +92,7 @@ public class PerTestClassLoaderRunner extends NamedRunner {
    *
    * @throws ClassNotFoundException the class not found exception
    */
-  private void loadClassesWithCustomClassLoader()
-      throws ClassNotFoundException {
+  private void loadClassesWithCustomClassLoader() throws ClassNotFoundException {
     String classPath = System.getProperty("java.class.path");
     StringTokenizer st = new StringTokenizer(classPath, ":");
     List<URL> urls = new ArrayList<URL>();
@@ -111,15 +109,11 @@ public class PerTestClassLoaderRunner extends NamedRunner {
       }
     }
 
-    ClassLoader classLoader = new ChildFirstClassLoader(
-        urls.toArray(new URL[]{}),
-        Thread.currentThread().getContextClassLoader()
-    );
+    ClassLoader classLoader = new ChildFirstClassLoader(urls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
 
     Thread.currentThread().setContextClassLoader(classLoader);
 
-    testClassFromClassLoader = new TestClass(classLoader
-        .loadClass(getTestClass().getJavaClass().getName()));
+    testClassFromClassLoader = new TestClass(classLoader.loadClass(getTestClass().getJavaClass().getName()));
     // See withAfters and withBefores for the reason.
     beforeFromClassLoader = classLoader.loadClass(Before.class.getName());
     afterFromClassLoader = classLoader.loadClass(After.class.getName());
@@ -137,8 +131,7 @@ public class PerTestClassLoaderRunner extends NamedRunner {
       // The method as parameter is from the original class and thus not found in our
       // class loaded by the custom name (reflection is class loader sensitive)
       // So find the same method but now in the class from the class Loader.
-      Method methodFromNewlyLoadedClass = testClassFromClassLoader
-          .getJavaClass().getMethod(method.getName());
+      Method methodFromNewlyLoadedClass = testClassFromClassLoader.getJavaClass().getMethod(method.getName());
       newMethod = new FrameworkMethod(methodFromNewlyLoadedClass);
     } catch (ClassNotFoundException e) {
       // Show any problem nicely as a JUnit Test failure.
@@ -155,38 +148,30 @@ public class PerTestClassLoaderRunner extends NamedRunner {
 
   @SuppressWarnings("unchecked")
   @Override
-  protected Statement withAfters(FrameworkMethod method, Object target,
-      Statement statement) {
+  protected Statement withAfters(FrameworkMethod method, Object target, Statement statement) {
     // We now to need to search in the class from the custom loader.
     // We also need to search with the annotation loaded by the custom
     // class loader or otherwise we don't find any method.
-    List<FrameworkMethod> afters = testClassFromClassLoader
-        .getAnnotatedMethods(
-            (Class<? extends Annotation>) afterFromClassLoader);
+    List<FrameworkMethod> afters = testClassFromClassLoader.getAnnotatedMethods((Class<? extends Annotation>) afterFromClassLoader);
     return new RunAfters(statement, afters, target);
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  protected Statement withBefores(FrameworkMethod method, Object target,
-      Statement statement) {
+  protected Statement withBefores(FrameworkMethod method, Object target, Statement statement) {
     // We now to need to search in the class from the custom loader.
     // We also need to search with the annotation loaded by the custom
     // class loader or otherwise we don't find any method.
-    List<FrameworkMethod> befores = testClassFromClassLoader
-        .getAnnotatedMethods(
-            (Class<? extends Annotation>) beforeFromClassLoader);
+    List<FrameworkMethod> befores = testClassFromClassLoader.getAnnotatedMethods((Class<? extends Annotation>) beforeFromClassLoader);
     return new RunBefores(statement, befores, target);
   }
 
   @SuppressWarnings("unchecked")
   @Override
   protected List<MethodRule> rules(Object target) {
-    List<MethodRule> result = testClassFromClassLoader.getAnnotatedMethodValues(target,
-        (Class<? extends Annotation>) ruleFromClassLoader, (Class) methodRuleFromClassLoader);
+    List<MethodRule> result = testClassFromClassLoader.getAnnotatedMethodValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) methodRuleFromClassLoader);
 
-    result.addAll(testClassFromClassLoader.getAnnotatedFieldValues(target,
-        (Class<? extends Annotation>) ruleFromClassLoader, (Class) methodRuleFromClassLoader));
+    result.addAll(testClassFromClassLoader.getAnnotatedFieldValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) methodRuleFromClassLoader));
 
     return result;
   }
@@ -194,11 +179,9 @@ public class PerTestClassLoaderRunner extends NamedRunner {
   @SuppressWarnings("unchecked")
   @Override
   protected List<TestRule> getTestRules(Object target) {
-    List<TestRule> result = testClassFromClassLoader.getAnnotatedMethodValues(target,
-        (Class<? extends Annotation>) ruleFromClassLoader, (Class) testRuleFromClassLoader);
+    List<TestRule> result = testClassFromClassLoader.getAnnotatedMethodValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) testRuleFromClassLoader);
 
-    result.addAll(testClassFromClassLoader.getAnnotatedFieldValues(target,
-        (Class<? extends Annotation>) ruleFromClassLoader, (Class) testRuleFromClassLoader));
+    result.addAll(testClassFromClassLoader.getAnnotatedFieldValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) testRuleFromClassLoader));
 
     return result;
   }

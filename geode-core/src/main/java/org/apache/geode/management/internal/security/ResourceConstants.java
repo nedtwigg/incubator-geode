@@ -18,26 +18,26 @@ package org.apache.geode.management.internal.security;
 
 public class ResourceConstants {
 
-	public static final String DEFAULT_LABEL="";
-	
-	public static final String RESOURCE_SEC_DESCRIPTOR = "resource.secDescriptor";
-	public static final String RESORUCE_AUTH_ACCESSOR = "resource-auth-accessor";
-	public static final String RESORUCE_AUTHENTICATOR = "resource-authenticator";
+  public static final String DEFAULT_LABEL = "";
+
+  public static final String RESOURCE_SEC_DESCRIPTOR = "resource.secDescriptor";
+  public static final String RESORUCE_AUTH_ACCESSOR = "resource-auth-accessor";
+  public static final String RESORUCE_AUTHENTICATOR = "resource-authenticator";
   public static final String RESORUCE_DEFAULT_SEC_DESCRIPTOR = "resourceSecDesc.json";
   public static final String CREATE_MBEAN = "createMBean";
   public static final String UNREGISTER_MBEAN = "unregisterMBean";
   public static final String SET_PREFIX = "set";
   public static final String SET_ATTRIBUTE = "setAttribute";
-  public static final String SET_ATTRIBUTES= "setAttributes";
-  public static final String GET_ATTRIBUTES= "getAttributes";
+  public static final String SET_ATTRIBUTES = "setAttributes";
+  public static final String GET_ATTRIBUTES = "getAttributes";
   public static final String GET_ATTRIBUTE = "getAttribute";
   public static final String GET_PREFIX = "get";
   public static final String GET_IS_PREFIX = "is";
   public static final String REGISTER_MBEAN = "registerMBean";
-  public static final String PROCESS_COMMAND ="processCommand";
+  public static final String PROCESS_COMMAND = "processCommand";
   public static final String ACCESS_DENIED_MESSAGE = "Access Denied";
   public static final String MISSING_CREDENTIALS_MESSAGE = "Missing Credentials. Please supply username/password.";
-  
+
   public static final String ALTER_REGION = "ALTER_REGION";
   public static final String ALTER_RUNTIME = "ALTER_RUNTIME";
   public static final String BACKUP_DISKSTORE = "BACKUP_DISKSTORE";
@@ -102,7 +102,6 @@ public class ResourceConstants {
   public static final String STOP_CONTINUOUS_QUERY = "STOP_CONTINUOUS_QUERY";
   public static final String SET_DISK_USAGE = "SET_DISK_USAGE";
 
-  
   public static final String CREATE_HDFS_STORE = "CREATE_HDFS_STORE";
   public static final String ALTER_HDFS_STORE = "ALTER_HDFS_STORE";
   public static final String DESTROY_HDFS_STORE = "DESTROY_HDFS_STORE";
@@ -123,7 +122,7 @@ public class ResourceConstants {
   public static final String MBEAN_TYPE_MEMBER = "Member";
 
   public static final String MBEAN_SERVICE_MANAGER = "Manager";
-  public static final String MBEAN_SERVICE_CACHESERVER="CacheServer";
+  public static final String MBEAN_SERVICE_CACHESERVER = "CacheServer";
   public static final String MBEAN_SERVICE_REGION = "Region";
   public static final String MBEAN_SERVICE_LOCKSERVICE = "LockService";
   public static final String MBEAN_SERVICE_DISKSTORE = "DiskStore";
@@ -133,10 +132,10 @@ public class ResourceConstants {
   public static final String MBEAN_SERVICE_LOCATOR = "Locator";
   public static final String MBEAN_SERVICE_SYSTEM = "System";
 
-  public static final String MBEAN_KEY_SERVICE ="service";
-  public static final String MBEAN_KEY_TYPE ="type";
+  public static final String MBEAN_KEY_SERVICE = "service";
+  public static final String MBEAN_KEY_TYPE = "type";
 
-  public static final String GETTER_IS= "is";
+  public static final String GETTER_IS = "is";
   public static final String GETTER_GET = "get";
   public static final String GETTER_FETCH = "fetch";
   public static final String GETTER_SHOW = "show";
@@ -147,6 +146,5 @@ public class ResourceConstants {
   public static final String GETTER_STATUS = "status";
 
   public static final String MANAGEMENT_PACKAGE = "org.apache.geode.management";
-
 
 }

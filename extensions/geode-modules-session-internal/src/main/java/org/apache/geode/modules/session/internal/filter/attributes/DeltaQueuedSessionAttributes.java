@@ -29,27 +29,24 @@ import org.slf4j.LoggerFactory;
  */
 public class DeltaQueuedSessionAttributes extends AbstractDeltaSessionAttributes {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(DeltaQueuedSessionAttributes.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(DeltaQueuedSessionAttributes.class.getName());
 
   private Trigger trigger = Trigger.SET;
 
   private enum Trigger {
-    SET,
-    SET_AND_GET;
+    SET, SET_AND_GET;
   }
 
   /**
    * Register ourselves for de-serialization
    */
   static {
-    Instantiator.register(
-        new Instantiator(DeltaQueuedSessionAttributes.class, 3479) {
-          @Override
-          public DataSerializable newInstance() {
-            return new DeltaQueuedSessionAttributes();
-          }
-        });
+    Instantiator.register(new Instantiator(DeltaQueuedSessionAttributes.class, 3479) {
+      @Override
+      public DataSerializable newInstance() {
+        return new DeltaQueuedSessionAttributes();
+      }
+    });
   }
 
   /**

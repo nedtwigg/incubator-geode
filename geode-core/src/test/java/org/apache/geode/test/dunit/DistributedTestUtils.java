@@ -84,6 +84,7 @@ public class DistributedTestUtils {
       public boolean done() {
         return !system.isConnected();
       }
+
       public String description() {
         return "Waiting for distributed system to finish disconnecting: " + system;
       }
@@ -100,14 +101,13 @@ public class DistributedTestUtils {
    * test with disconnectFromDS() or disconnectAllFromDS().
    */
   public static boolean crashDistributedSystem(final VM vm) {
-    return vm.invoke(()->{
-        DistributedSystem system = InternalDistributedSystem.getAnyInstance();
-        crashDistributedSystem(system);
-        return true;
-      }
-    );
+    return vm.invoke(() -> {
+      DistributedSystem system = InternalDistributedSystem.getAnyInstance();
+      crashDistributedSystem(system);
+      return true;
+    });
   }
-  
+
   /** 
    * Delete locator state files.  Use this after getting a random port
    * to ensure that an old locator state file isn't picked up by the
@@ -115,23 +115,23 @@ public class DistributedTestUtils {
    */
   public static void deleteLocatorStateFile(final int... ports) {
     for (int index = 0; index < ports.length; index++) {
-      File stateFile = new File("locator"+ports[index]+"view.dat");
+      File stateFile = new File("locator" + ports[index] + "view.dat");
       if (stateFile.exists()) {
         stateFile.delete();
       }
     }
   }
-  
+
   public final static Properties getAllDistributedSystemProperties(final Properties properties) {
     Properties dsProperties = DUnitEnv.get().getDistributedSystemProperties();
-    
+
     // our tests do not expect auto-reconnect to be on by default
     if (!dsProperties.contains(DISABLE_AUTO_RECONNECT)) {
       dsProperties.put(DISABLE_AUTO_RECONNECT, "true");
     }
-  
-    for (Iterator<Map.Entry<Object,Object>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-      Map.Entry<Object,Object> entry = iterator.next();
+
+    for (Iterator<Map.Entry<Object, Object>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+      Map.Entry<Object, Object> entry = iterator.next();
       String key = (String) entry.getKey();
       Object value = entry.getValue();
       dsProperties.put(key, value);
@@ -139,7 +139,7 @@ public class DistributedTestUtils {
     System.out.println("distributed system properties: " + dsProperties);
     return dsProperties;
   }
-  
+
   /**
    * Get the port that the standard dunit locator is listening on.
    */
@@ -149,8 +149,8 @@ public class DistributedTestUtils {
 
   public static void unregisterAllDataSerializersFromAllVms() {
     DistributedTestUtils.unregisterDataSerializerInThisVM();
-    Invoke.invokeInEveryVM(()->unregisterDataSerializerInThisVM());
-    Invoke.invokeInLocator(()->unregisterDataSerializerInThisVM());
+    Invoke.invokeInEveryVM(() -> unregisterDataSerializerInThisVM());
+    Invoke.invokeInLocator(() -> unregisterDataSerializerInThisVM());
   }
 
   public static void unregisterDataSerializerInThisVM() {

@@ -44,7 +44,7 @@ import org.apache.geode.management.ManagementException;
  * 
  */
 public class MBeanProxyFactory {
-  private static final Logger logger = LogService.getLogger();  
+  private static final Logger logger = LogService.getLogger();
 
   /**
    * Proxy repository contains several indexes to search proxies in an efficient manner.
@@ -69,8 +69,7 @@ public class MBeanProxyFactory {
    * @param jmxAdapter adapter to interface between JMX and GemFire
    * @param service management service
    */
-  public MBeanProxyFactory(RemoteFilterChain remoteFilterChain,
-      MBeanJMXAdapter jmxAdapter, SystemManagementService service) {
+  public MBeanProxyFactory(RemoteFilterChain remoteFilterChain, MBeanJMXAdapter jmxAdapter, SystemManagementService service) {
 
     this.remoteFilterChain = remoteFilterChain;
     this.jmxAdapter = jmxAdapter;
@@ -90,8 +89,7 @@ public class MBeanProxyFactory {
    *          monitoring region containing the proxies
    * @throws ManagementException
    */
-  public void createProxy(DistributedMember member, ObjectName objectName,
-      Region<String, Object> monitoringRegion,Object newVal) {
+  public void createProxy(DistributedMember member, ObjectName objectName, Region<String, Object> monitoringRegion, Object newVal) {
 
     try {
 
@@ -108,28 +106,25 @@ public class MBeanProxyFactory {
         return;
       }
 
-      Class interfaceClass = ClassLoadUtil
-          .classFromName(((FederationComponent) monitoringRegion
-              .get(objectName.toString())).getMBeanInterfaceClass());
+      Class interfaceClass = ClassLoadUtil.classFromName(((FederationComponent) monitoringRegion.get(objectName.toString())).getMBeanInterfaceClass());
 
-      Object object = MBeanProxyInvocationHandler.newProxyInstance(member,
-          monitoringRegion, objectName, interfaceClass);
+      Object object = MBeanProxyInvocationHandler.newProxyInstance(member, monitoringRegion, objectName, interfaceClass);
 
       jmxAdapter.registerMBeanProxy(object, objectName);
-      
+
       if (logger.isDebugEnabled()) {
         logger.debug("Registered ObjectName : {}", objectName);
       }
 
       ProxyInfo proxyInfo = new ProxyInfo(interfaceClass, object, objectName);
       proxyRepo.addProxyToRepository(member, proxyInfo);
-      
-      service.afterCreateProxy(objectName, interfaceClass, object, (FederationComponent)newVal);      
-      
+
+      service.afterCreateProxy(objectName, interfaceClass, object, (FederationComponent) newVal);
+
       if (logger.isDebugEnabled()) {
         logger.debug("Proxy Created for : {}", objectName);
-      }     
-      
+      }
+
     } catch (ClassNotFoundException e) {
       throw new ManagementException(e);
     } catch (IntrospectionException e) {
@@ -152,8 +147,7 @@ public class MBeanProxyFactory {
    * @param monitoringRegion
    *          monitoring region containing the proxies
    */
-  public void createAllProxies(DistributedMember member,
-      Region<String, Object> monitoringRegion) {
+  public void createAllProxies(DistributedMember member, Region<String, Object> monitoringRegion) {
 
     if (logger.isDebugEnabled()) {
       logger.debug("Creating proxy for: {}", member.getId());
@@ -201,10 +195,9 @@ public class MBeanProxyFactory {
           logger.debug("Creating proxy for ObjectName: " + objectName.toString());
         }
 
-        createProxy(member, objectName, monitoringRegion, monitoringRegion
-            .get(objectName.toString()));
+        createProxy(member, objectName, monitoringRegion, monitoringRegion.get(objectName.toString()));
       } catch (ManagementException e) {
-          logger.warn("Create Proxy failed for {} with exception {}", objectName, e.getMessage(), e);
+        logger.warn("Create Proxy failed for {} with exception {}", objectName, e.getMessage(), e);
         continue;
       } catch (Exception e) {
         logger.warn("Create Proxy failed for {} with exception {}", objectName, e.getMessage(), e);
@@ -256,8 +249,7 @@ public class MBeanProxyFactory {
    * @param objectName
    *          {@link javax.management.ObjectName} of the Bean
    */
-  public void removeProxy(DistributedMember member, ObjectName objectName,
-      Object oldVal) {
+  public void removeProxy(DistributedMember member, ObjectName objectName, Object oldVal) {
 
     try {
       if (logger.isDebugEnabled()) {
@@ -268,12 +260,11 @@ public class MBeanProxyFactory {
         ProxyInfo proxyInfo = proxyRepo.findProxyInfo(objectName);
         proxyRepo.removeProxy(member, objectName);
         if (proxyInfo != null) {
-          service.afterRemoveProxy(objectName, proxyInfo.getProxyInterface(), proxyInfo.getProxyInstance(),
-              (FederationComponent)oldVal);
+          service.afterRemoveProxy(objectName, proxyInfo.getProxyInterface(), proxyInfo.getProxyInstance(), (FederationComponent) oldVal);
         }
         jmxAdapter.unregisterMBean(objectName);
-        
-        if (logger.isDebugEnabled())  {
+
+        if (logger.isDebugEnabled()) {
           logger.debug("Removed proxy for ObjectName: {}", objectName);
         }
       }
@@ -281,7 +272,7 @@ public class MBeanProxyFactory {
     } catch (Exception e) {
       if (!(e.getCause() instanceof InstanceNotFoundException)) {
         logger.warn("Could not remove proxy for Member {} due to {}", member, e.getMessage(), e);
-      }     
+      }
     }
   }
 
@@ -289,7 +280,7 @@ public class MBeanProxyFactory {
     try {
       if (proxyInfo != null) {
         Class interfaceClass = proxyInfo.getProxyInterface();
-        service.afterUpdateProxy(objectName, interfaceClass, proxyInfo.getProxyInstance(),(FederationComponent)newObject, (FederationComponent)oldObject);
+        service.afterUpdateProxy(objectName, interfaceClass, proxyInfo.getProxyInstance(), (FederationComponent) newObject, (FederationComponent) oldObject);
       }
     } catch (Exception e) {
       throw new ManagementException(e);
@@ -308,15 +299,12 @@ public class MBeanProxyFactory {
    *          interface class implemented by proxy
    * @return an instance of proxy exposing the given interface
    */
-  public <T> T findProxy(ObjectName objectName,
-      Class<T> interfaceClass) {
+  public <T> T findProxy(ObjectName objectName, Class<T> interfaceClass) {
 
-
-      return proxyRepo.findProxyByName(objectName, interfaceClass);
-   
+    return proxyRepo.findProxyByName(objectName, interfaceClass);
 
   }
-  
+
   public ProxyInfo findProxyInfo(ObjectName objectName) {
     return proxyRepo.findProxyInfo(objectName);
   }
@@ -337,15 +325,14 @@ public class MBeanProxyFactory {
 
   /**
    * This will return the last updated time of the proxyMBean
-
+  
    * @param objectName
    *          {@link javax.management.ObjectName} of the MBean
    * @return last updated time of the proxy
    */
   public long getLastUpdateTime(ObjectName objectName) {
 
-    ProxyInterface proxyObj = findProxy(objectName,
-        ProxyInterface.class);
+    ProxyInterface proxyObj = findProxy(objectName, ProxyInterface.class);
 
     return proxyObj.getLastRefreshedTime();
 

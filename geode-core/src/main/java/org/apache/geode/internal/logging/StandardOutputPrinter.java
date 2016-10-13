@@ -38,5 +38,5 @@ public class StandardOutputPrinter extends LocalLogWriter {
   public StandardOutputPrinter(final int level) {
     super(level, System.out);
   }
-  
+
 }

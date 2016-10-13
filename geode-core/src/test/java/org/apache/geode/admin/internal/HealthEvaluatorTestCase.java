@@ -44,8 +44,7 @@ public abstract class HealthEvaluatorTestCase {
   @Before
   public void setUp() {
     Properties props = getProperties();
-    system = (InternalDistributedSystem)
-      DistributedSystem.connect(props);
+    system = (InternalDistributedSystem) DistributedSystem.connect(props);
   }
 
   /**

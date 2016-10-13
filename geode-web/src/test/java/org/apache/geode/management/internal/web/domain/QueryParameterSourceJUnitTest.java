@@ -46,7 +46,7 @@ public class QueryParameterSourceJUnitTest {
   @Test
   public void testCreateQueryParameterSource() throws MalformedObjectNameException {
     final ObjectName expectedObjectName = ObjectName.getInstance("GemFire:type=Member,*");
-    
+
     final QueryExp expectedQueryExpression = Query.eq(Query.attr("id"), Query.value("12345"));
 
     final QueryParameterSource query = new QueryParameterSource(expectedObjectName, expectedQueryExpression);
@@ -59,11 +59,8 @@ public class QueryParameterSourceJUnitTest {
   @Test
   public void testSerialization() throws ClassNotFoundException, IOException, MalformedObjectNameException {
     final ObjectName expectedObjectName = ObjectName.getInstance("GemFire:type=Member,*");
-    
-    final QueryExp expectedQueryExpression = Query.or(
-      Query.eq(Query.attr("name"), Query.value("myName")),
-      Query.eq(Query.attr("id"), Query.value("myId"))
-    );
+
+    final QueryExp expectedQueryExpression = Query.or(Query.eq(Query.attr("name"), Query.value("myName")), Query.eq(Query.attr("id"), Query.value("myId")));
 
     final QueryParameterSource expectedQuery = new QueryParameterSource(expectedObjectName, expectedQueryExpression);
 

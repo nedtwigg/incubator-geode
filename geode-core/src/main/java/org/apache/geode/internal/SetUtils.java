@@ -26,17 +26,19 @@ import java.util.Set;
  * 
  */
 public final class SetUtils {
-  public static  <T> boolean intersectsWith(final Set<? extends T> a, final Set<? extends T> b) {
+  public static <T> boolean intersectsWith(final Set<? extends T> a, final Set<? extends T> b) {
     if (a == b) {
       return true;
     }
     final Set/*<T>*/ lSet, sSet;
     if (a.size() >= b.size()) {
-      lSet = a; sSet = b;
+      lSet = a;
+      sSet = b;
     } else {
-      lSet = b; sSet = a;
+      lSet = b;
+      sSet = a;
     }
-    for (Iterator i=sSet.iterator(); i.hasNext(); ) {
+    for (Iterator i = sSet.iterator(); i.hasNext();) {
       Object item = i.next();
       if (lSet.contains(item)) {
         return true;
@@ -44,19 +46,21 @@ public final class SetUtils {
     }
     return false;
   }
-  
+
   public static /*T*/ Set/*<T>*/ intersection(final Set/*<T>*/ a, final Set/*<T>*/ b) {
     if (a == b) {
       return a;
     }
     final Set/*<T>*/ lSet, sSet;
     if (a.size() >= b.size()) {
-      lSet = a; sSet = b;
+      lSet = a;
+      sSet = b;
     } else {
-      lSet = b; sSet = a;
+      lSet = b;
+      sSet = a;
     }
     HashSet /*<T>*/ ret = new HashSet/*<T>*/();
-    for (Iterator i=sSet.iterator(); i.hasNext(); ) {
+    for (Iterator i = sSet.iterator(); i.hasNext();) {
       Object item = i.next();
       if (lSet.contains(item)) {
         ret.add(item);

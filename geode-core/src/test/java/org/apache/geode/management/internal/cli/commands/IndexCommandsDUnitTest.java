@@ -69,7 +69,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     }
 
     DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
-    diskStoreFactory.setDiskDirs(new File[]{diskStoreDirFile});
+    diskStoreFactory.setDiskDirs(new File[] { diskStoreDirFile });
     diskStoreFactory.setMaxOplogSize(1);
     diskStoreFactory.setAllowForceCompaction(true);
     diskStoreFactory.setAutoCompact(false);
@@ -99,7 +99,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     }
 
     DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
-    diskStoreFactory.setDiskDirs(new File[]{diskStoreDirFile});
+    diskStoreFactory.setDiskDirs(new File[] { diskStoreDirFile });
     diskStoreFactory.setMaxOplogSize(1);
     diskStoreFactory.setAllowForceCompaction(true);
     diskStoreFactory.setAutoCompact(false);
@@ -431,7 +431,6 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     writeToLog("Command String :\n ", commandString);
     writeToLog("testCreateAndDestroyIndexWithIncorrectInput", resultAsString);
 
-
     //Create index on a wrong regionPath
     csb = new CommandStringBuilder(CliStrings.CREATE_INDEX);
     csb.addOption(CliStrings.CREATE_INDEX__NAME, indexName);
@@ -605,8 +604,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
         locatorProps.setProperty(LOG_LEVEL, "fine");
         locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
         try {
-          final InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(locatorPort, locatorLogFile, null,
-              locatorProps);
+          final InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(locatorPort, locatorLogFile, null, locatorProps);
 
           WaitCriterion wc = new WaitCriterion() {
             @Override
@@ -629,7 +627,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     // Start the default manager
     Properties managerProps = new Properties();
     managerProps.setProperty(MCAST_PORT, "0");
-    managerProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+    managerProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
     setUpJmxManagerOnVm0ThenConnect(managerProps);
 
     // Create a cache in VM 1
@@ -639,7 +637,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
       public void run() {
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
         localProps.setProperty(GROUPS, groupName);
         getSystem(localProps);
         assertNotNull(getCache());
@@ -682,7 +680,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
 
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
         localProps.setProperty(GROUPS, groupName);
         localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
         getSystem(localProps);
@@ -727,7 +725,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
 
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
         localProps.setProperty(GROUPS, groupName);
         localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
         getSystem(localProps);
@@ -788,10 +786,8 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
       public Object call() {
         Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
         parReg.put("VMW", new Stock("VMW", 98));
-        Region parRegPers = createParRegWithPersistence(parRegPersName, "testCreateIndexDiskstore1",
-            "testCreateIndexDiskDir1");
-        Region repRegPers = createRepRegWithPersistence(repRegPersName, "testCreateIndexDiskstore1",
-            "testCreateIndexDiskDir1");
+        Region parRegPers = createParRegWithPersistence(parRegPersName, "testCreateIndexDiskstore1", "testCreateIndexDiskDir1");
+        Region repRegPers = createRepRegWithPersistence(repRegPersName, "testCreateIndexDiskstore1", "testCreateIndexDiskDir1");
         return parReg.put("APPL", new Stock("APPL", 600));
       }
     });
@@ -805,10 +801,8 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
         getSystem(props);
         Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
         parReg.put("MSFT", new Stock("MSFT", 27));
-        Region parRegPers = createParRegWithPersistence(parRegPersName, "testCreateIndexDiskstore2",
-            "testCreateIndexDiskDir2");
-        Region repRegPers = createRepRegWithPersistence(repRegPersName, "testCreateIndexDiskstore2",
-            "testCreateIndexDiskDir2");
+        Region parRegPers = createParRegWithPersistence(parRegPersName, "testCreateIndexDiskstore2", "testCreateIndexDiskDir2");
+        Region repRegPers = createRepRegWithPersistence(repRegPersName, "testCreateIndexDiskstore2", "testCreateIndexDiskDir2");
         return parReg.put("GOOG", new Stock("GOOG", 540));
       }
     });

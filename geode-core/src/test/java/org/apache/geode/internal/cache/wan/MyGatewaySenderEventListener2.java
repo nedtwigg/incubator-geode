@@ -24,8 +24,7 @@ import java.util.Map;
 import org.apache.geode.cache.asyncqueue.AsyncEvent;
 import org.apache.geode.cache.asyncqueue.AsyncEventListener;
 
-public class MyGatewaySenderEventListener2 implements
-    AsyncEventListener, Serializable {
+public class MyGatewaySenderEventListener2 implements AsyncEventListener, Serializable {
   String id = "MyGatewaySenderEventListener2";
 
   /**
@@ -65,7 +64,7 @@ public class MyGatewaySenderEventListener2 implements
     }
     if (!(obj instanceof MyGatewaySenderEventListener2))
       return false;
-    MyGatewaySenderEventListener2 listener = (MyGatewaySenderEventListener2)obj;
+    MyGatewaySenderEventListener2 listener = (MyGatewaySenderEventListener2) obj;
     return this.id.equals(listener.id);
   }
 
@@ -73,5 +72,5 @@ public class MyGatewaySenderEventListener2 implements
   public String toString() {
     return id;
   }
-  
+
 }

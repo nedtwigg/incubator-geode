@@ -66,10 +66,7 @@ public class LocatorJUnitTest {
 
   @Parameterized.Parameters
   public static Collection<Object> data() {
-    return Arrays.asList(new Object[] {
-        (IntSupplier) () -> 0,
-        (IntSupplier) () -> AvailablePortHelper.getRandomAvailableTCPPort()
-    });
+    return Arrays.asList(new Object[] { (IntSupplier) () -> 0, (IntSupplier) () -> AvailablePortHelper.getRandomAvailableTCPPort() });
   }
 
   @Parameterized.Parameter
@@ -90,10 +87,10 @@ public class LocatorJUnitTest {
 
   @After
   public void tearDown() {
-    if(locator != null) {
+    if (locator != null) {
       locator.stop();
     }
-   assertEquals(false, Locator.hasLocator());
+    assertEquals(false, Locator.hasLocator());
   }
 
   /**
@@ -145,17 +142,16 @@ public class LocatorJUnitTest {
       locator.stop();
       fail("expected an exception");
     } catch (SystemConnectException expected) {
-      
-      for (int i=0; i<10; i++) {
+
+      for (int i = 0; i < 10; i++) {
         if (threadCount < Thread.activeCount()) {
           Thread.sleep(1000);
         }
       }
       if (threadCount < Thread.activeCount()) {
         OSProcess.printStacks(0);
-        fail("expected " + threadCount + " threads or fewer but found " + Thread.activeCount()
-            +".  Check log file for a thread dump.");
-        }
+        fail("expected " + threadCount + " threads or fewer but found " + Thread.activeCount() + ".  Check log file for a thread dump.");
+      }
     }
   }
 
@@ -165,8 +161,8 @@ public class LocatorJUnitTest {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(ConfigurationProperties.ENABLE_CLUSTER_CONFIGURATION, "false");
     locator = Locator.startLocatorAndDS(port, tmpFile, null, props, false, true, null);
-   assertFalse(locator.isPeerLocator());
-   assertTrue(locator.isServerLocator());
+    assertFalse(locator.isPeerLocator());
+    assertTrue(locator.isServerLocator());
     Thread.sleep(1000);
     doServerLocation(locator.getPort());
   }
@@ -208,7 +204,7 @@ public class LocatorJUnitTest {
     }
 
     {
-      QueueConnectionRequest request = new QueueConnectionRequest(ClientProxyMembershipID.getNewProxyMembership(InternalDistributedSystem.getAnyInstance()), 3, Collections.EMPTY_SET, "group1",true);
+      QueueConnectionRequest request = new QueueConnectionRequest(ClientProxyMembershipID.getNewProxyMembership(InternalDistributedSystem.getAnyInstance()), 3, Collections.EMPTY_SET, "group1", true);
       QueueConnectionResponse response = (QueueConnectionResponse) new TcpClient().requestToServer(InetAddress.getLocalHost(), realPort, request, REQUEST_TIMEOUT);
       assertEquals(new ArrayList(), response.getServers());
       assertFalse(response.isDurableQueueFound());

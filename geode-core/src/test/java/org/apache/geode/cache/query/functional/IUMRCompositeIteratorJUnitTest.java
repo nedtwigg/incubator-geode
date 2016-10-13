@@ -68,8 +68,8 @@ public class IUMRCompositeIteratorJUnitTest {
     CountrySet1.add(new String("China"));
     CountrySet1.add(new String("USA"));
     CountrySet1.add(new String("UK"));
-    for (int i=0; i<4 ; i++){
-      r1.put(new Integer(i), new Country(i,CountrySet1));
+    for (int i = 0; i < 4; i++) {
+      r1.put(new Integer(i), new Country(i, CountrySet1));
     }
 
     Set add1 = new HashSet();
@@ -77,20 +77,19 @@ public class IUMRCompositeIteratorJUnitTest {
     add1.add(new Address("411001", "DholePatilRd"));
 
     Region r2 = CacheUtils.createRegion("employees", Employee.class);
-    for(int i=0;i<4;i++){
-      r2.put(i+"", new Employee("empName",(20+i),i,"Mr.",(5000+i),add1));
+    for (int i = 0; i < 4; i++) {
+      r2.put(i + "", new Employee("empName", (20 + i), i, "Mr.", (5000 + i), add1));
     }
 
     Region r3 = CacheUtils.createRegion("address", Address.class);
     Set ph = new HashSet();
     Set str = new HashSet();
     ph.add(new PhoneNo(111, 222, 333, 444));
-    str.add(new Street("DPRoad","lane5"));
-    str.add(new Street("DPStreet1","lane5"));
-    for(int i=0;i<4;i++){
-      r3.put(new Integer(i), new Address("411001","Pune",str,ph));
+    str.add(new Street("DPRoad", "lane5"));
+    str.add(new Street("DPStreet1", "lane5"));
+    for (int i = 0; i < 4; i++) {
+      r3.put(new Integer(i), new Address("411001", "Pune", str, ph));
     }
-
 
   }
 
@@ -116,14 +115,14 @@ public class IUMRCompositeIteratorJUnitTest {
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
-        r[i][0] = (SelectResults)q.execute();
+        r[i][0] = (SelectResults) q.execute();
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
     //Create Indexes and Execute Queries
-    qs.createIndex("nameIndex", IndexType.FUNCTIONAL,"e.name","/employees e");  
+    qs.createIndex("nameIndex", IndexType.FUNCTIONAL, "e.name", "/employees e");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -131,27 +130,26 @@ public class IUMRCompositeIteratorJUnitTest {
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         QueryObserverImpl observer = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer);
-        r[i][1] = (SelectResults)q.execute();
-        if(!observer.isIndexesUsed){
+        r[i][1] = (SelectResults) q.execute();
+        if (!observer.isIndexesUsed) {
           fail("Index is NOT uesd");
         }
         int indxs = observer.indexesUsed.size();
-        CacheUtils.log("***********Indexes Used :::: "+indxs+" IndexName::"+observer.IndexName);
-        if(indxs!=1){
-          fail("FAILED: The Index should be used. Presently only "+indxs+" Index(es) is used");
+        CacheUtils.log("***********Indexes Used :::: " + indxs + " IndexName::" + observer.IndexName);
+        if (indxs != 1) {
+          fail("FAILED: The Index should be used. Presently only " + indxs + " Index(es) is used");
         }
 
         Iterator itr = observer.indexesUsed.iterator();
         String temp;
 
-        while(itr.hasNext()){
+        while (itr.hasNext()) {
           temp = itr.next().toString();
 
-          if(temp.equals("nameIndex")){
+          if (temp.equals("nameIndex")) {
             break;
-          }else{
-            fail("indices used do not match with the which is expected to be used" +
-                "<nameIndex> was expected but found " +itr.next());
+          } else {
+            fail("indices used do not match with the which is expected to be used" + "<nameIndex> was expected but found " + itr.next());
           }
         }
 
@@ -162,7 +160,7 @@ public class IUMRCompositeIteratorJUnitTest {
     }
     //Verifying the query results
     //  StructSetOrResultsSet ssORrs = new StructSetOrResultsSet();
-    CacheUtils.compareResultsOfWithAndWithoutIndex(r,this );
+    CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
 
   }
 
@@ -173,8 +171,7 @@ public class IUMRCompositeIteratorJUnitTest {
     qs = CacheUtils.getQueryService();
     String queries[] = {
         //Test Case No. IUMR
-        "Select distinct * from /countries c, /employees e, c.citizens[e.empId].arr where e.name='empName'",
-    };
+        "Select distinct * from /countries c, /employees e, c.citizens[e.empId].arr where e.name='empName'", };
     SelectResults r[][] = new SelectResults[queries.length][2];
 
     //Execute Query without Indexes
@@ -183,7 +180,7 @@ public class IUMRCompositeIteratorJUnitTest {
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
-        r[i][0] = (SelectResults)q.execute();
+        r[i][0] = (SelectResults) q.execute();
         CacheUtils.log(Utils.printResult(r[i][0]));
       } catch (Exception e) {
         e.printStackTrace();
@@ -192,7 +189,7 @@ public class IUMRCompositeIteratorJUnitTest {
     }
 
     //Create Indexes and Execute Queries
-    qs.createIndex("nameIndex", IndexType.FUNCTIONAL,"e.name","/employees e");
+    qs.createIndex("nameIndex", IndexType.FUNCTIONAL, "e.name", "/employees e");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -200,27 +197,26 @@ public class IUMRCompositeIteratorJUnitTest {
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         QueryObserverImpl observer = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer);
-        r[i][1] = (SelectResults)q.execute();
-        if(!observer.isIndexesUsed){
+        r[i][1] = (SelectResults) q.execute();
+        if (!observer.isIndexesUsed) {
           fail("Index is NOT uesd");
         }
         int indxs = observer.indexesUsed.size();
-        CacheUtils.log("***********Indexes Used :::: "+indxs+" IndexName::"+observer.IndexName);
-        if(indxs!=1){
-          fail("FAILED: The Index should be used. Presently only "+indxs+" Index(es) is used");
+        CacheUtils.log("***********Indexes Used :::: " + indxs + " IndexName::" + observer.IndexName);
+        if (indxs != 1) {
+          fail("FAILED: The Index should be used. Presently only " + indxs + " Index(es) is used");
         }
 
         Iterator itr = observer.indexesUsed.iterator();
         String temp;
 
-        while(itr.hasNext()){
+        while (itr.hasNext()) {
           temp = itr.next().toString();
 
-          if(temp.equals("nameIndex")){
+          if (temp.equals("nameIndex")) {
             break;
-          }else{
-            fail("indices used do not match with the which is expected to be used" +
-                "<nameIndex> was expected but found " +itr.next());
+          } else {
+            fail("indices used do not match with the which is expected to be used" + "<nameIndex> was expected but found " + itr.next());
           }
         }
 
@@ -231,20 +227,22 @@ public class IUMRCompositeIteratorJUnitTest {
     }
     //Verifying the query results
 
-    CacheUtils.compareResultsOfWithAndWithoutIndex(r,this);
+    CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
 
   }
-  class QueryObserverImpl extends QueryObserverAdapter{
+
+  class QueryObserverImpl extends QueryObserverAdapter {
     boolean isIndexesUsed = false;
     ArrayList indexesUsed = new ArrayList();
     String IndexName;
+
     public void beforeIndexLookup(Index index, int oper, Object key) {
       IndexName = index.getName();
       indexesUsed.add(index.getName());
     }
 
     public void afterIndexLookup(Collection results) {
-      if(results != null){
+      if (results != null) {
         isIndexesUsed = true;
       }
     }

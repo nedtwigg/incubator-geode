@@ -17,7 +17,6 @@
 
 package org.apache.geode.internal.cache;
 
-
 /**
  * A factory that produces RegionEntry instances.
  *
@@ -31,15 +30,17 @@ public interface RegionEntryFactory {
    * @return the created entry
    */
   public RegionEntry createEntry(RegionEntryContext context, Object key, Object value);
+
   /**
    * @return the Class that each entry, of this factory, is an instance of
    */
   public Class getEntryClass();
+
   /**
    * @return return the versioned equivalent of this RegionEntryFactory
    */
   public RegionEntryFactory makeVersioned();
-  
+
   /**
    * Return the equivalent on heap version of this entry factory. This
    * is used for creating temporary region entries that shouldn't be stored

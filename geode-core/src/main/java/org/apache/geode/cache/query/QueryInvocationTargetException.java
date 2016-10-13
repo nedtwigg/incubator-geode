@@ -23,8 +23,8 @@ package org.apache.geode.cache.query;
  */
 
 public class QueryInvocationTargetException extends QueryException {
-private static final long serialVersionUID = 2978208305701582906L;
-  
+  private static final long serialVersionUID = 2978208305701582906L;
+
   /**
    * Construct an instance of QueryInvalidException
    * @param cause a Throwable cause of this exception
@@ -32,8 +32,7 @@ private static final long serialVersionUID = 2978208305701582906L;
   public QueryInvocationTargetException(Throwable cause) {
     super(cause);
   }
-  
-  
+
   /**
    * Construct an instance of QueryInvalidException
    * @param msg the error message
@@ -41,7 +40,7 @@ private static final long serialVersionUID = 2978208305701582906L;
   public QueryInvocationTargetException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Construct an instance of QueryInvalidException
    * @param msg the error message
@@ -49,5 +48,5 @@ private static final long serialVersionUID = 2978208305701582906L;
    */
   public QueryInvocationTargetException(String msg, Throwable cause) {
     super(msg, cause);
-  }  
+  }
 }

@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -31,35 +30,30 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class FetchDistLockInfoResponse extends AdminResponse {
   // instance variables
   DLockInfo[] lockInfos;
-  
+
   /**
    * Returns a <code>FetchDistLockInfoResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of the local manager's
    * distributed lock service information.
    */
-  public static FetchDistLockInfoResponse create(DistributionManager dm,
-                                                 InternalDistributedMember recipient) {
+  public static FetchDistLockInfoResponse create(DistributionManager dm, InternalDistributedMember recipient) {
     FetchDistLockInfoResponse m = new FetchDistLockInfoResponse();
     InternalDistributedMember id = dm.getDistributionManagerId();
     Set entries = DLockService.snapshotAllServices().entrySet();
     List infos = new ArrayList();
     Iterator iter = entries.iterator();
     while (iter.hasNext()) {
-      Map.Entry entry = (Map.Entry)iter.next();
+      Map.Entry entry = (Map.Entry) iter.next();
       String serviceName = entry.getKey().toString();
-      DLockService service = 
-          (DLockService) entry.getValue();
+      DLockService service = (DLockService) entry.getValue();
       Set serviceEntries = service.snapshotService().entrySet();
       Iterator iter1 = serviceEntries.iterator();
-      while(iter1.hasNext()) {
-        Map.Entry token = (Map.Entry)iter1.next();
-        infos.add(new RemoteDLockInfo(serviceName,
-                                      token.getKey().toString(),
-                                      (DLockToken)token.getValue(),
-                                      id));
+      while (iter1.hasNext()) {
+        Map.Entry token = (Map.Entry) iter1.next();
+        infos.add(new RemoteDLockInfo(serviceName, token.getKey().toString(), (DLockToken) token.getValue(), id));
       }
-    }    
-    m.lockInfos = (DLockInfo[])infos.toArray(new DLockInfo[0]);
+    }
+    m.lockInfos = (DLockInfo[]) infos.toArray(new DLockInfo[0]);
     m.setRecipient(recipient);
     return m;
   }
@@ -68,7 +62,7 @@ public final class FetchDistLockInfoResponse extends AdminResponse {
   public DLockInfo[] getLockInfos() {
     return lockInfos;
   }
-  
+
   public int getDSFID() {
     return FETCH_DIST_LOCK_INFO_RESPONSE;
   }
@@ -80,10 +74,9 @@ public final class FetchDistLockInfoResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.lockInfos = (DLockInfo[])DataSerializer.readObject(in);
+    this.lockInfos = (DLockInfo[]) DataSerializer.readObject(in);
   }
 
   @Override

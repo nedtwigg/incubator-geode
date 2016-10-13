@@ -34,31 +34,29 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * @see org.apache.geode.internal.cache.PartitionedRegion#sendDumpAllPartitionedRegions()
  */
-public final class DumpAllPRConfigMessage extends PartitionMessage
-  {
+public final class DumpAllPRConfigMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
-  
-  public DumpAllPRConfigMessage() {}
+
+  public DumpAllPRConfigMessage() {
+  }
 
   private DumpAllPRConfigMessage(Set recipients, int regionId, ReplyProcessor21 processor) {
     super(recipients, regionId, processor);
   }
 
-  public static PartitionResponse send(Set recipients, PartitionedRegion r) 
-      {
+  public static PartitionResponse send(Set recipients, PartitionedRegion r) {
     PartitionResponse p = new PartitionResponse(r.getSystem(), recipients);
     DumpAllPRConfigMessage m = new DumpAllPRConfigMessage(recipients, r.getPRId(), p);
 
     /*Set failures = */r.getDistributionManager().putOutgoing(m);
-//    if (failures != null && failures.size() > 0) {
-//      throw new PartitionedRegionCommunicationException("Failed sending ", m);
-//    }
+    //    if (failures != null && failures.size() > 0) {
+    //      throw new PartitionedRegionCommunicationException("Failed sending ", m);
+    //    }
     return p;
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, 
-      PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "DumpAllPRConfigMessage operateOnRegion: {}", pr.getFullPath());
     }

@@ -27,7 +27,6 @@ import org.apache.geode.distributed.internal.ReplyMessage;
 import org.apache.geode.distributed.internal.ReplyProcessor21;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-
 /**
  * TODO prpersist. This code really needs to be merged with the 
  * AdminReplyProcessor. However, we're getting close to the release
@@ -46,35 +45,30 @@ public class AdminMultipleReplyProcessor extends ReplyProcessor21 {
     super(dm, member);
   }
 
-  public AdminMultipleReplyProcessor(DM dm, InternalDistributedSystem system,
-      Collection initMembers, CancelCriterion cancelCriterion, boolean register) {
+  public AdminMultipleReplyProcessor(DM dm, InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion, boolean register) {
     super(dm, system, initMembers, cancelCriterion, register);
   }
 
-  public AdminMultipleReplyProcessor(InternalDistributedSystem system,
-      Collection initMembers, CancelCriterion cancelCriterion) {
+  public AdminMultipleReplyProcessor(InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
     super(system, initMembers, cancelCriterion);
   }
 
-  public AdminMultipleReplyProcessor(InternalDistributedSystem system,
-      Collection initMembers) {
+  public AdminMultipleReplyProcessor(InternalDistributedSystem system, Collection initMembers) {
     super(system, initMembers);
   }
 
-  public AdminMultipleReplyProcessor(InternalDistributedSystem system,
-      InternalDistributedMember member, CancelCriterion cancelCriterion) {
+  public AdminMultipleReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member, CancelCriterion cancelCriterion) {
     super(system, member, cancelCriterion);
   }
 
-  public AdminMultipleReplyProcessor(InternalDistributedSystem system,
-      InternalDistributedMember member) {
+  public AdminMultipleReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member) {
     super(system, member);
   }
 
   @Override
   protected void process(DistributionMessage msg, boolean warn) {
     if (msg instanceof AdminFailureResponse) {
-      Exception ex = ((AdminFailureResponse)msg).getCause();
+      Exception ex = ((AdminFailureResponse) msg).getCause();
       if (ex != null) {
         ReplyException rex = new ReplyException(ex);
         rex.setSenderIfNull(msg.getSender());
@@ -83,8 +77,5 @@ public class AdminMultipleReplyProcessor extends ReplyProcessor21 {
     }
     super.process(msg, warn);
   }
-
-  
-  
 
 }

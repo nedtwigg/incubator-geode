@@ -60,13 +60,13 @@ public interface Index {
    * @return the type of index
    */
   public IndexType getType();
-      
+
   /**
    * The Region this index is on
    * @return the Region for this index
    */
-  public Region<?,?> getRegion();
-  
+  public Region<?, ?> getRegion();
+
   /**
    * Get statistics information for this index.
    * 
@@ -77,31 +77,34 @@ public interface Index {
    *           that can be viewed in VSD stats.
    */
   public IndexStatistics getStatistics();
-  
+
   /**
    * Get the original fromClause for this index.
    */
   public String getFromClause();
+
   /**
    * Get the canonicalized fromClause for this index.
    */
   public String getCanonicalizedFromClause();
-  
+
   /**
    * Get the original indexedExpression for this index.
    */
   public String getIndexedExpression();
-  
-    /**
-   * Get the canonicalized indexedExpression for this index.
-   */
+
+  /**
+  * Get the canonicalized indexedExpression for this index.
+  */
   public String getCanonicalizedIndexedExpression();
+
   /**
    * Get the original projectionAttributes for this expression.
    * @return the projectionAttributes, or "*" if there were none
    * specified at index creation.
    */
   public String getProjectionAttributes();
+
   /**
    * Get the canonicalized projectionAttributes for this expression.
    * @return the projectionAttributes, or "*" if there were none

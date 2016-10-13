@@ -25,16 +25,16 @@ import java.util.*;
  * @version $Revision: 1.1 $
  *  
  */
-class QScope  {
+class QScope {
 
   //private RuntimeIterator _iterator;
   private List iterators;
   boolean _oneIndexLookup = false; // if there is exactly one index lookup in
                                    // this scope
-  // set if scope evaluation is limited up to this iterator
+                                   // set if scope evaluation is limited up to this iterator
   private RuntimeIterator limit = null;
   private int scopeID = 0;
-  
+
   /**
    * 
    * @param scopeID The scopeID assosciated with the scope
@@ -65,7 +65,7 @@ class QScope  {
     while (iter.hasNext()) {
       RuntimeIterator _iterator = (RuntimeIterator) iter.next();
       if (_iterator != null && name.equals(_iterator.getName()))
-          return _iterator;
+        return _iterator;
     }
     return null;
   }
@@ -77,8 +77,7 @@ class QScope  {
   void setCurrent(RuntimeIterator iterator, Object obj) {
     iterator.setCurrent(obj);
   }
-  
-  
+
   /**
    * 
    * @return unique int identifying the scope. It also indicates the relative visibility
@@ -87,5 +86,5 @@ class QScope  {
   int getScopeID() {
     return this.scopeID;
   }
-  
+
 }

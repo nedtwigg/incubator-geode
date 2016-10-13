@@ -74,7 +74,7 @@ public class TopEntriesFunctionCollector implements ResultCollector<TopEntriesCo
     id = cache == null ? String.valueOf(this.hashCode()) : cache.getName();
 
     int limit = context == null ? 0 : context.getLimit();
-    
+
     if (context != null && context.getCollectorManager() != null) {
       this.manager = context.getCollectorManager();
     } else {
@@ -122,7 +122,7 @@ public class TopEntriesFunctionCollector implements ResultCollector<TopEntriesCo
       if (mergedResults != null) {
         return mergedResults.getEntries();
       }
-      
+
       mergedResults = manager.reduce(subResults);
       return mergedResults.getEntries();
     }

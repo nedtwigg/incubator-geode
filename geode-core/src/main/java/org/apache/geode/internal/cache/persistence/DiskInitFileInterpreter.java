@@ -64,6 +64,7 @@ public interface DiskInitFileInterpreter {
   void cmnOfflineMemberId(long drId, PersistentMemberID pmid);
 
   void cmdOfflineAndEqualMemberId(long drId, PersistentMemberID pmid);
+
   /**
    * @param drId
    * @param pmid
@@ -112,7 +113,7 @@ public interface DiskInitFileInterpreter {
    * @param clearOplogEntryId
    */
   void cmnClearRegion(long drId, long clearOplogEntryId);
-  
+
   /**
    * @param drId
    * @param clearRVV
@@ -120,21 +121,19 @@ public interface DiskInitFileInterpreter {
   void cmnClearRegion(long drId, ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> clearRVV);
 
   public void cmnCrfCreate(long oplogId);
+
   public void cmnDrfCreate(long oplogId);
+
   public boolean cmnCrfDelete(long oplogId);
+
   public boolean cmnDrfDelete(long oplogId);
-  
-  public void cmnRegionConfig(long drId, byte lruAlgorithm, byte lruAction, int lruLimit,
-                              int concurrencyLevel, int initialCapacity,
-                              float loadFactor, boolean statisticsEnabled,
-                              boolean isBucket, EnumSet<DiskRegionFlag> flags,
-                              String partitionName, int startingBucketId,
-                              String compressorClassName, boolean offHeap);
+
+  public void cmnRegionConfig(long drId, byte lruAlgorithm, byte lruAction, int lruLimit, int concurrencyLevel, int initialCapacity, float loadFactor, boolean statisticsEnabled, boolean isBucket, EnumSet<DiskRegionFlag> flags, String partitionName, int startingBucketId, String compressorClassName, boolean offHeap);
 
   void cmnKrfCreate(long oplogId);
-  
+
   boolean cmnPRCreate(String name, PRPersistentConfig config);
-  
+
   boolean cmnPRDestroy(String name);
 
   void cmnAddCanonicalMemberId(int id, Object object);
@@ -142,6 +141,6 @@ public interface DiskInitFileInterpreter {
   void cmnDiskStoreID(DiskStoreID result);
 
   boolean cmnRevokeDiskStoreId(PersistentMemberPattern id);
-  
+
   void cmnGemfireVersion(Version version);
 }

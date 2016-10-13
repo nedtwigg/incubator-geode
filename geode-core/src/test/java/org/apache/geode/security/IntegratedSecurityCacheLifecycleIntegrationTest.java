@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category({IntegrationTest.class, SecurityTest.class})
+@Category({ IntegrationTest.class, SecurityTest.class })
 public class IntegratedSecurityCacheLifecycleIntegrationTest {
 
   private Properties securityProps;
@@ -66,8 +66,8 @@ public class IntegratedSecurityCacheLifecycleIntegrationTest {
 
   @Category(FlakyTest.class) // GEODE-1661
   @Test
-  public void initAndCloseTest () {
-    SpySecurityManager ssm = (SpySecurityManager)securityService.getSecurityManager();
+  public void initAndCloseTest() {
+    SpySecurityManager ssm = (SpySecurityManager) securityService.getSecurityManager();
     assertThat(ssm.initInvoked).isEqualTo(1);
     cache.close();
     assertThat(ssm.closeInvoked).isEqualTo(1);

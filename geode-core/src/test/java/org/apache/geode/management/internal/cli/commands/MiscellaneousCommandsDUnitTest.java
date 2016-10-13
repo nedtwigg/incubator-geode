@@ -195,7 +195,6 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     final VM vm1 = Host.getHost(0).getVM(1);
     final VM vm2 = Host.getHost(0).getVM(2);
 
-
     setUpJmxManagerOnVm0ThenConnect(null);
     vm1.invoke(new SerializableRunnable() {
       public void run() {
@@ -302,7 +301,6 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-
     String command = "shutdown --time-out=15";
     CommandResult cmdResult = executeCommand(command);
 
@@ -363,7 +361,8 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     final VM vm0 = Host.getHost(0).getVM(0);
     final VM vm1 = Host.getHost(0).getVM(1);
 
-    @SuppressWarnings("serial") final SerializableCallable connectedChecker = new SerializableCallable() {
+    @SuppressWarnings("serial")
+    final SerializableCallable connectedChecker = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         boolean cacheExists = true;

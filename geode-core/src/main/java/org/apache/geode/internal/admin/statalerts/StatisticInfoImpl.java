@@ -61,13 +61,11 @@ public class StatisticInfoImpl implements StatisticInfo {
   }
 
   public void setStatisticName(String statisticName) {
-    throw new UnsupportedOperationException(
-        "StatisticInfoImpl class does not support setStatisticName method.");
+    throw new UnsupportedOperationException("StatisticInfoImpl class does not support setStatisticName method.");
   }
 
   public void setStatisticsTextId(String statisticsTextId) {
-    throw new UnsupportedOperationException(
-        "StatisticInfoImpl class does not support setStatisticsTextId method.");
+    throw new UnsupportedOperationException("StatisticInfoImpl class does not support setStatisticsTextId method.");
   }
 
   public Number getValue() {
@@ -87,8 +85,7 @@ public class StatisticInfoImpl implements StatisticInfo {
   }
 
   public void setStatisticsTypeName(String statisticsType) {
-    throw new UnsupportedOperationException(
-        "StatisticInfoImpl class does not support setStatisticsTypeName method.");
+    throw new UnsupportedOperationException("StatisticInfoImpl class does not support setStatisticsTypeName method.");
   }
 
   @Override
@@ -100,11 +97,9 @@ public class StatisticInfoImpl implements StatisticInfo {
 
     String statisticsTextId = getStatisticsTextId();
 
-    StatisticInfoImpl other = (StatisticInfoImpl)object;
+    StatisticInfoImpl other = (StatisticInfoImpl) object;
 
-    if (StringUtils.equals(getStatisticName(), other.getStatisticName())
-        && statisticsTextId != null
-        && statisticsTextId.equals(other.getStatisticsTextId())) {
+    if (StringUtils.equals(getStatisticName(), other.getStatisticName()) && statisticsTextId != null && statisticsTextId.equals(other.getStatisticsTextId())) {
       return true;
     }
 
@@ -114,8 +109,7 @@ public class StatisticInfoImpl implements StatisticInfo {
   public void toData(DataOutput out) throws IOException {
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
   }
 
   @Override
@@ -125,8 +119,7 @@ public class StatisticInfoImpl implements StatisticInfo {
 
   @Override
   public String toString() {
-    return this.statistics.getType().getName() + " ["
-        + this.descriptor.getName() + "]";
+    return this.statistics.getType().getName() + " [" + this.descriptor.getName() + "]";
   }
 
   public static StatisticInfoImpl create(String toString, StatisticsFactory f) {

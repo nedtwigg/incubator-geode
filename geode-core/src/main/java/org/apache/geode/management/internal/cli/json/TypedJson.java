@@ -61,13 +61,13 @@ public class TypedJson {
    * If Integer of Float is NAN
    */
   static final String NONFINITE = "Non-Finite";
-  
-  Map<Object,List<Object>> forbidden = new java.util.IdentityHashMap<Object,List<Object>>();
+
+  Map<Object, List<Object>> forbidden = new java.util.IdentityHashMap<Object, List<Object>>();
 
   boolean commanate;
 
   private Map<String, List<Object>> map;
-  
+
   private int queryCollectionsDepth;
 
   public TypedJson(String key, Object value, int queryCollectionsDepth) {
@@ -89,7 +89,7 @@ public class TypedJson {
     this.map = new LinkedHashMap<String, List<Object>>();
     this.queryCollectionsDepth = DEFAULT_COLLECTION_ELEMENT_LIMIT;
   }
-  
+
   public TypedJson(String key, Object value) {
     List<Object> list = new ArrayList<Object>();
     this.map = new LinkedHashMap<String, List<Object>>();
@@ -99,9 +99,9 @@ public class TypedJson {
     this.map.put(key, list);
     this.queryCollectionsDepth = DEFAULT_COLLECTION_ELEMENT_LIMIT;
   }
-  
+
   void bfs(Writer w, Object root) throws IOException {
-    if(root == null || isPrimitiveOrWrapper(root.getClass())){
+    if (root == null || isPrimitiveOrWrapper(root.getClass())) {
       return;
     }
     LinkedList<Object> queue = new LinkedList<Object>();
@@ -119,8 +119,8 @@ public class TypedJson {
       List<Object> childrens = getChildrens(w, r);
       // Visit child first before grand child
       for (Object n : childrens) {
-        
-        if(n == null){
+
+        if (n == null) {
           continue;
         }
         if (!isPrimitiveOrWrapper(n.getClass())) {
@@ -129,15 +129,15 @@ public class TypedJson {
             seen.put(n, null);
           } else {
             List<Object> list = forbidden.get(r);
-            if(list != null){
+            if (list != null) {
               list.add(n);
               forbidden.put(r, list);
-            }else{
+            } else {
               List<Object> newList = new ArrayList<Object>();
               newList.add(n);
               forbidden.put(r, newList);
             }
-            
+
           }
         }
 
@@ -152,7 +152,6 @@ public class TypedJson {
       return this.visitChildrens(w, object, false);
     }
   }
- 
 
   /**
    * 
@@ -292,16 +291,7 @@ public class TypedJson {
   }
 
   static boolean isPrimitiveOrWrapper(Class<?> klass) {
-    return klass.isAssignableFrom(Byte.class) || klass.isAssignableFrom(byte.class)
-        || klass.isAssignableFrom(Short.class) || klass.isAssignableFrom(short.class)
-        || klass.isAssignableFrom(Integer.class) || klass.isAssignableFrom(int.class)
-        || klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class)
-        || klass.isAssignableFrom(Float.class) || klass.isAssignableFrom(float.class)
-        || klass.isAssignableFrom(Double.class) || klass.isAssignableFrom(double.class)
-        || klass.isAssignableFrom(Boolean.class) || klass.isAssignableFrom(boolean.class)
-        || klass.isAssignableFrom(String.class) || klass.isAssignableFrom(char.class)
-        || klass.isAssignableFrom(Character.class) || klass.isAssignableFrom(java.sql.Date.class)
-        || klass.isAssignableFrom(java.util.Date.class) || klass.isAssignableFrom(java.math.BigDecimal.class);
+    return klass.isAssignableFrom(Byte.class) || klass.isAssignableFrom(byte.class) || klass.isAssignableFrom(Short.class) || klass.isAssignableFrom(short.class) || klass.isAssignableFrom(Integer.class) || klass.isAssignableFrom(int.class) || klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class) || klass.isAssignableFrom(Float.class) || klass.isAssignableFrom(float.class) || klass.isAssignableFrom(Double.class) || klass.isAssignableFrom(double.class) || klass.isAssignableFrom(Boolean.class) || klass.isAssignableFrom(boolean.class) || klass.isAssignableFrom(String.class) || klass.isAssignableFrom(char.class) || klass.isAssignableFrom(Character.class) || klass.isAssignableFrom(java.sql.Date.class) || klass.isAssignableFrom(java.util.Date.class) || klass.isAssignableFrom(java.math.BigDecimal.class);
   }
 
   static boolean isSpecialObject(Object object) {
@@ -309,8 +299,7 @@ public class TypedJson {
     if (type.isArray() || type.isEnum()) {
       return true;
     }
-    if ((object instanceof Collection) || (object instanceof Map) || (object instanceof PdxInstance)
-        || (object instanceof Struct) || (object instanceof Region.Entry) ){
+    if ((object instanceof Collection) || (object instanceof Map) || (object instanceof PdxInstance) || (object instanceof Struct) || (object instanceof Region.Entry)) {
       return true;
     }
     return false;
@@ -352,7 +341,7 @@ public class TypedJson {
       writeType(w, type, value);
     }
 
-    if (isPrimitiveOrWrapper(clazz)) {      
+    if (isPrimitiveOrWrapper(clazz)) {
       writePrimitives(w, value);
       commanate = true;
     } else if (isSpecialObject(value)) {
@@ -374,8 +363,7 @@ public class TypedJson {
       return;
     }
 
-    if (value instanceof String || value instanceof Character || value instanceof java.sql.Date
-        || value instanceof java.util.Date) {
+    if (value instanceof String || value instanceof Character || value instanceof java.sql.Date || value instanceof java.util.Date) {
       w.write(quote(value.toString()));
       return;
     }
@@ -395,7 +383,7 @@ public class TypedJson {
       if (i != 0) {
         w.write(",");
       }
-      if(item != null){
+      if (item != null) {
         Class clazz = item.getClass();
 
         if (isPrimitiveOrWrapper(clazz)) {
@@ -405,7 +393,7 @@ public class TypedJson {
         } else {
           writeVal(w, item);
         }
-      }else{
+      } else {
         w.write("null");
       }
       elements++;
@@ -415,15 +403,15 @@ public class TypedJson {
     commanate = true;
     return;
   }
-  
-  List<Object> getArrayChildren(Object object){
+
+  List<Object> getArrayChildren(Object object) {
     List<Object> items = new ArrayList<Object>();
     int length = Array.getLength(object);
     int elements = 0;
     for (int i = 0; i < length && elements < queryCollectionsDepth; i += 1) {
       Object item = Array.get(object, i);
       items.add(item);
-      
+
     }
     return items;
   }
@@ -486,9 +474,9 @@ public class TypedJson {
   }
 
   List<Object> visitSpecialObjects(Writer w, Object object, boolean write) throws IOException {
-    
+
     List<Object> elements = new ArrayList<Object>();
-    
+
     Class clazz = object.getClass();
 
     if (clazz.isArray()) {
@@ -498,13 +486,13 @@ public class TypedJson {
         return getArrayChildren(object);
       }
     }
-    
+
     if (clazz.isEnum()) {
       if (write) {
         writeEnum(w, object);
-      }else{
+      } else {
         elements.add(object);
-      }      
+      }
       return elements;
     }
 
@@ -517,18 +505,20 @@ public class TypedJson {
       Collection collection = (Collection) object;
       Iterator iter = collection.iterator();
       int i = 0;
-      if(write)w.write('{');
+      if (write)
+        w.write('{');
       while (iter.hasNext() && i < queryCollectionsDepth) {
         Object item = iter.next();
-        if(write){
-          writeKeyValue(w, i, item, item !=null ? item.getClass() : null);
-        }else{
+        if (write) {
+          writeKeyValue(w, i, item, item != null ? item.getClass() : null);
+        } else {
           elements.add(item);
         }
-        
+
         i++;
       }
-      if(write)w.write('}');
+      if (write)
+        w.write('}');
       return elements;
     }
 
@@ -536,36 +526,39 @@ public class TypedJson {
       Map map = (Map) object;
       Iterator it = map.entrySet().iterator();
       int i = 0;
-      if(write)w.write('{');
+      if (write)
+        w.write('{');
       while (it.hasNext() && i < queryCollectionsDepth) {
         Map.Entry e = (Map.Entry) it.next();
         Object value = e.getValue();
-        if(write){
-          writeKeyValue(w, e.getKey(), value, value !=null ? value.getClass(): null);
-        }else{
+        if (write) {
+          writeKeyValue(w, e.getKey(), value, value != null ? value.getClass() : null);
+        } else {
           elements.add(value);
         }
-      
+
         i++;
       }
-      if(write)w.write('}');
+      if (write)
+        w.write('}');
       return elements;
     }
 
     if (object instanceof PdxInstance) {
       PdxInstance pdxInstance = (PdxInstance) object;
-      if(write)w.write('{');
+      if (write)
+        w.write('{');
       for (String field : pdxInstance.getFieldNames()) {
         Object fieldValue = pdxInstance.getField(field);
-        if(write){
-          writeKeyValue(w, field, fieldValue, fieldValue !=null ? fieldValue.getClass() : null);
-        }else{
+        if (write) {
+          writeKeyValue(w, field, fieldValue, fieldValue != null ? fieldValue.getClass() : null);
+        } else {
           elements.add(fieldValue);
         }
-        
 
       }
-      if(write)w.write('}');
+      if (write)
+        w.write('}');
       return elements;
     }
 
@@ -574,40 +567,38 @@ public class TypedJson {
       String fields[] = impl.getFieldNames();
       Object[] values = impl.getFieldValues();
 
-      if(write)w.write('{');
+      if (write)
+        w.write('{');
       for (int i = 0; i < fields.length; i++) {
         Object fieldValue = values[i];
-        if(write){
-          writeKeyValue(w, fields[i], fieldValue, fieldValue !=null ? fieldValue.getClass() : null);
-        }else{
+        if (write) {
+          writeKeyValue(w, fields[i], fieldValue, fieldValue != null ? fieldValue.getClass() : null);
+        } else {
           elements.add(fieldValue);
         }
-       
+
       }
-      if(write)w.write('}');
+      if (write)
+        w.write('}');
       return elements;
     }
-    
 
     if (object instanceof Region.Entry) {
       Region.Entry entry = (Region.Entry) object;
       Object key = entry.getKey();
       Object value = entry.getValue();
 
-     
-      if(write){
+      if (write) {
         w.write('{');
-        writeKeyValue(w, key, value, value !=null ? value.getClass() : null);
+        writeKeyValue(w, key, value, value != null ? value.getClass() : null);
         w.write('}');
-      }else{
+      } else {
         elements.add(value);
       }
-     
-     
+
       return elements;
     }
-    
-    
+
     return elements;
   }
 
@@ -618,16 +609,17 @@ public class TypedJson {
       w.write(",");
     }
   }
+
   /**
    * Handle some special GemFire classes. We don't want to expose some of the internal classes.
    * Hence corresponding interface or external classes should be shown.
    * 
    */
-  String internalToExternal(Class clazz, Object value){
-    if(value != null && value instanceof Region.Entry){
+  String internalToExternal(Class clazz, Object value) {
+    if (value != null && value instanceof Region.Entry) {
       return Region.Entry.class.getCanonicalName();
     }
-    if(value != null && value instanceof PdxInstance){
+    if (value != null && value instanceof PdxInstance) {
       return PdxInstance.class.getCanonicalName();
     }
     return clazz.getCanonicalName();
@@ -641,11 +633,11 @@ public class TypedJson {
   }
 
   List<Object> visitChildrens(Writer w, Object object, boolean write) {
-    
+
     List<Object> elements = new ArrayList<Object>();
- 
+
     Method[] methods = getMethods(object);
-    
+
     for (int i = 0; i < methods.length; i += 1) {
       try {
         Method method = methods[i];
@@ -669,18 +661,17 @@ public class TypedJson {
             }
             method.setAccessible(true);
             Object result = method.invoke(object, (Object[]) null);
-            if(write){
+            if (write) {
               List<Object> forbiddenList = forbidden.get(object);
-              if(forbiddenList != null && forbiddenList.contains(result)){
+              if (forbiddenList != null && forbiddenList.contains(result)) {
                 writeKeyValue(w, key, result.getClass().getCanonicalName(), method.getReturnType());
-              }else{
+              } else {
                 writeKeyValue(w, key, result, method.getReturnType());
               }
-            }else{
+            } else {
               elements.add(result);
             }
 
-            
           }
         }
       } catch (Exception ignore) {
@@ -688,13 +679,12 @@ public class TypedJson {
     }
     return elements;
   }
-  
-  
+
   /**
    * This method returns method declared in a Class as well as all the super classes in the hierarchy.
    * If class is a system class it wont include super class methods 
    */
-  Method[] getMethods(Object object){
+  Method[] getMethods(Object object) {
     Class klass = object.getClass();
 
     // If klass is a System class then set includeSuperClass to false.
@@ -702,27 +692,26 @@ public class TypedJson {
     boolean includeSuperClass = klass.getClassLoader() != null;
 
     Method[] decMethods = klass.getDeclaredMethods();
-    Map<String, Method> decMethodMap = new HashMap<String,Method>();
-    for(Method method : decMethods){
+    Map<String, Method> decMethodMap = new HashMap<String, Method>();
+    for (Method method : decMethods) {
       decMethodMap.put(method.getName(), method);
     }
-    
-    if(includeSuperClass){
+
+    if (includeSuperClass) {
       Method[] allMethods = klass.getMethods();
       List<Method> allMethodList = Arrays.asList(allMethods);
-      for(Method method : allMethodList){
-        if(decMethodMap.get(method.getName()) != null){
+      for (Method method : allMethodList) {
+        if (decMethodMap.get(method.getName()) != null) {
           //skip. This will ensure overriden methods wont be added again.
-        }else{
+        } else {
           decMethodMap.put(method.getName(), method);
         }
       }
     }
-    
+
     Method[] methodArr = new Method[decMethodMap.size()];
     return decMethodMap.values().toArray(methodArr);
   }
-
 
   /**
    * Produce a string from a Number.

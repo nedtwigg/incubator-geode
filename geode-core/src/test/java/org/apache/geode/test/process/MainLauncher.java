@@ -31,11 +31,11 @@ public class MainLauncher {
     assert args.length > 0;
     String innerMain = args[0];
     Class<?> clazz = Class.forName(innerMain);
-    
+
     //System.out.println(MainLauncher.class.getSimpleName() + " waiting to start...");
     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
     bufferedReader.readLine();
-    
+
     //System.out.println(MainLauncher.class.getSimpleName() + " delegating...");
     Object[] innerArgs = new String[args.length - 1];
     for (int i = 0; i < innerArgs.length; i++) {

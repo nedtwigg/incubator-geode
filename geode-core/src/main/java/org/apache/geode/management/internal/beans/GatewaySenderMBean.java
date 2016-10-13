@@ -19,8 +19,7 @@ package org.apache.geode.management.internal.beans;
 import org.apache.geode.management.GatewaySenderMXBean;
 import javax.management.NotificationBroadcasterSupport;
 
-public class GatewaySenderMBean extends NotificationBroadcasterSupport
-    implements GatewaySenderMXBean {
+public class GatewaySenderMBean extends NotificationBroadcasterSupport implements GatewaySenderMXBean {
 
   private GatewaySenderMBeanBridge bridge;
 
@@ -62,7 +61,6 @@ public class GatewaySenderMBean extends NotificationBroadcasterSupport
   public int getEventQueueSize() {
     return bridge.getEventQueueSize();
   }
-
 
   @Override
   public float getEventsQueuedRate() {
@@ -169,10 +167,10 @@ public class GatewaySenderMBean extends NotificationBroadcasterSupport
   public void rebalance() {
     bridge.rebalance();
   }
-  
+
   @Override
   public boolean isPrimary() {
-   return bridge.isPrimary();
+    return bridge.isPrimary();
   }
 
   @Override
@@ -195,15 +193,15 @@ public class GatewaySenderMBean extends NotificationBroadcasterSupport
     return bridge.isParallel();
   }
 
-  public String getGatewayReceiver(){
+  public String getGatewayReceiver() {
     return bridge.getGatewayReceiver();
   }
-  
+
   public GatewaySenderMBeanBridge getBridge() {
     return bridge;
   }
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     bridge.stopMonitor();
   }
 

@@ -32,7 +32,7 @@ import org.apache.geode.pdx.PdxSerializer;
 public class SnapshotReader {
   private SnapshotReader() {
   }
-  
+
   /**
    * Reads a snapshot file and passes the entries to the application.
    * <p>
@@ -49,9 +49,7 @@ public class SnapshotReader {
    * @throws IOException error reading the snapshot file
    * @throws ClassNotFoundException unable deserialize entry
    */
-  public static <K, V> SnapshotIterator<K, V> read(File snapshot) 
-      throws IOException, ClassNotFoundException {
+  public static <K, V> SnapshotIterator<K, V> read(File snapshot) throws IOException, ClassNotFoundException {
     return GFSnapshot.read(snapshot);
   }
 }
-

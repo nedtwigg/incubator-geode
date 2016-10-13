@@ -37,44 +37,36 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @since GemFire 4.0
  */
-public interface SystemMemberJmx
-  extends SystemMember, NotificationListener {
+public interface SystemMemberJmx extends SystemMember, NotificationListener {
   /** 
    * Notification type for indicating a cache got created on a member of this 
    * distributed system.
    */
-  public static final String NOTIF_CACHE_CREATED =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.created";
+  public static final String NOTIF_CACHE_CREATED = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.created";
   /** 
    * Notification type for indicating a cache is closed on a member of this 
    * distributed system.
    */
-  public static final String NOTIF_CACHE_CLOSED =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.closed";
+  public static final String NOTIF_CACHE_CLOSED = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.closed";
   /** 
    * Notification type for indicating a region is created in a cache on a member 
    * of this distributed system.
    */
-  public static final String NOTIF_REGION_CREATED =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.region.created";
+  public static final String NOTIF_REGION_CREATED = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.region.created";
   /** 
    * Notification type for indicating a region was removed from a cache on a 
    * member of this distributed system.
    */
-  public static final String NOTIF_REGION_LOST =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.region.lost";
-  
+  public static final String NOTIF_REGION_LOST = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.region.lost";
+
   /** Notification type for indicating client joined */
-  public static final String NOTIF_CLIENT_JOINED =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.client.joined";
-  
+  public static final String NOTIF_CLIENT_JOINED = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.client.joined";
+
   /** Notification type for indicating client left */
-  public static final String NOTIF_CLIENT_LEFT =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.client.left";
-  
+  public static final String NOTIF_CLIENT_LEFT = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.client.left";
+
   /** Notification type for indicating client crashed */
-  public static final String NOTIF_CLIENT_CRASHED =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.client.crashed";
+  public static final String NOTIF_CLIENT_CRASHED = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.cache.client.crashed";
 
   /**
    * Gets the interval in seconds between config refreshes
@@ -112,16 +104,14 @@ public interface SystemMemberJmx
    * @throws AdminException
    *         If this system member does not host a cache
    */
-  public ObjectName manageCache() 
-    throws AdminException, MalformedObjectNameException;
+  public ObjectName manageCache() throws AdminException, MalformedObjectNameException;
 
   /** 
    * Gets all active StatisticResources for this manager.
    *
    * @return array of ObjectName instances
    */
-  public ObjectName[] manageStats() 
-    throws AdminException, MalformedObjectNameException;
+  public ObjectName[] manageStats() throws AdminException, MalformedObjectNameException;
 
   /** 
    * Gets the active StatisticResources for this manager, based on the
@@ -129,8 +119,7 @@ public interface SystemMemberJmx
    *
    * @return ObjectName of StatisticResourceJMX instance
    */
-  public ObjectName[] manageStat(String statisticsTypeName) 
-    throws AdminException, MalformedObjectNameException;
+  public ObjectName[] manageStat(String statisticsTypeName) throws AdminException, MalformedObjectNameException;
 
   /**
    * Handles notification to refresh. Reacts by refreshing the values of this
@@ -149,9 +138,7 @@ public interface SystemMemberJmx
    * @return a new instance of ManagedBean copied from <code>managed</code> but 
    *         with the new attributes added
    */
-  public ManagedBean addDynamicAttributes(ManagedBean managed) 
-    throws AdminException;
-
+  public ManagedBean addDynamicAttributes(ManagedBean managed) throws AdminException;
 
   /**
    * Implementation should handle creation of cache by extracting the details
@@ -210,19 +197,16 @@ public interface SystemMemberJmx
    */
   public static class Helper {
     private static final Logger logger = LogService.getLogger();
-    
+
     private static AtomicInteger notificationSequenceNumber = new AtomicInteger();
 
-    public static int setAndReturnRefreshInterval(SystemMemberJmx member,
-                                          int refreshInterval) {
+    public static int setAndReturnRefreshInterval(SystemMemberJmx member, int refreshInterval) {
       int ret = refreshInterval;
-      
+
       try {
-        MBeanUtil.registerRefreshNotification(
-          member, // NotificationListener
-          ((ManagedResource)member).getMBeanName(), // User Data
-          RefreshNotificationType.SYSTEM_MEMBER_CONFIG, 
-          refreshInterval); // int
+        MBeanUtil.registerRefreshNotification(member, // NotificationListener
+            ((ManagedResource) member).getMBeanName(), // User Data
+            RefreshNotificationType.SYSTEM_MEMBER_CONFIG, refreshInterval); // int
 
       } catch (RuntimeException e) {
         logger.warn(e.getMessage(), e); // dead in water, print, and then ignore
@@ -243,12 +227,11 @@ public interface SystemMemberJmx
         logger.error(e.getMessage(), e); // dead in water, print, and then ignore
         ret = 0; // zero out to avoid more exceptions
       }
-      
+
       return ret;
     }
 
-    public static ObjectName manageCache(SystemMemberJmx member) 
-      throws AdminException, MalformedObjectNameException {
+    public static ObjectName manageCache(SystemMemberJmx member) throws AdminException, MalformedObjectNameException {
       boolean IthrewIt = false;
       try {
         SystemMemberCache cache = member.getCache();
@@ -256,103 +239,94 @@ public interface SystemMemberJmx
           IthrewIt = true;
           throw new AdminException(LocalizedStrings.SystemMemberJmx_THIS_SYSTEM_MEMBER_DOES_NOT_HAVE_A_CACHE.toLocalizedString());
         }
-//        Assert.assertTrue(cache != null); (cannot be null)
+        //        Assert.assertTrue(cache != null); (cannot be null)
         SystemMemberCacheJmxImpl cacheJmx = (SystemMemberCacheJmxImpl) cache;
         return ObjectName.getInstance(cacheJmx.getMBeanName());
-      } catch (AdminException e) { 
+      } catch (AdminException e) {
         if (!IthrewIt) {
-          logger.warn(e.getMessage(), e); 
+          logger.warn(e.getMessage(), e);
         }
-        throw e; 
-      } catch (RuntimeException e) { 
+        throw e;
+      } catch (RuntimeException e) {
         logger.warn(e.getMessage(), e);
-        throw e; 
+        throw e;
       } catch (VirtualMachineError err) {
         SystemFailure.initiateFailure(err);
         // If this ever returns, rethrow the error.  We're poisoned
         // now, so don't let this thread continue.
         throw err;
-      } catch (Error e) { 
+      } catch (Error e) {
         // Whenever you catch Error or Throwable, you must also
         // catch VirtualMachineError (see above).  However, there is
         // _still_ a possibility that you are dealing with a cascading
         // error condition, so you also need to check to see if the JVM
         // is still usable:
         SystemFailure.checkFailure();
-        logger.error(e.getMessage(), e); 
-        throw e; 
+        logger.error(e.getMessage(), e);
+        throw e;
       }
     }
 
-    public static ObjectName[] manageStats(SystemMemberJmx member) 
-      throws AdminException, MalformedObjectNameException {
-        try {
-          StatisticResource[] stats = member.getStats();
-          ObjectName[] onames = new ObjectName[stats.length];
-          for (int i = 0; i < stats.length; i++) {
-            StatisticResourceJmxImpl stat =
-              (StatisticResourceJmxImpl) stats[i];
-            onames[i] = ObjectName.getInstance(stat.getMBeanName());
-          }
-          return onames;
-        } catch (AdminException e) { 
-          logger.warn(e.getMessage(), e); 
-          throw e;
-        } catch (RuntimeException e) {
-          logger.warn(e.getMessage(), e); 
-          throw e; 
-        } catch (VirtualMachineError err) {
-          SystemFailure.initiateFailure(err);
-          // If this ever returns, rethrow the error.  We're poisoned
-          // now, so don't let this thread continue.
-          throw err;
-        } catch (Error e) { 
-          // Whenever you catch Error or Throwable, you must also
-          // catch VirtualMachineError (see above).  However, there is
-          // _still_ a possibility that you are dealing with a cascading
-          // error condition, so you also need to check to see if the JVM
-          // is still usable:
-          SystemFailure.checkFailure();
-          logger.error(e.getMessage(), e); 
-          throw e; 
+    public static ObjectName[] manageStats(SystemMemberJmx member) throws AdminException, MalformedObjectNameException {
+      try {
+        StatisticResource[] stats = member.getStats();
+        ObjectName[] onames = new ObjectName[stats.length];
+        for (int i = 0; i < stats.length; i++) {
+          StatisticResourceJmxImpl stat = (StatisticResourceJmxImpl) stats[i];
+          onames[i] = ObjectName.getInstance(stat.getMBeanName());
         }
+        return onames;
+      } catch (AdminException e) {
+        logger.warn(e.getMessage(), e);
+        throw e;
+      } catch (RuntimeException e) {
+        logger.warn(e.getMessage(), e);
+        throw e;
+      } catch (VirtualMachineError err) {
+        SystemFailure.initiateFailure(err);
+        // If this ever returns, rethrow the error.  We're poisoned
+        // now, so don't let this thread continue.
+        throw err;
+      } catch (Error e) {
+        // Whenever you catch Error or Throwable, you must also
+        // catch VirtualMachineError (see above).  However, there is
+        // _still_ a possibility that you are dealing with a cascading
+        // error condition, so you also need to check to see if the JVM
+        // is still usable:
+        SystemFailure.checkFailure();
+        logger.error(e.getMessage(), e);
+        throw e;
       }
+    }
 
-    public static ObjectName[] manageStat(SystemMemberJmx member, String statisticsTypeName) 
-    throws AdminException, MalformedObjectNameException {
+    public static ObjectName[] manageStat(SystemMemberJmx member, String statisticsTypeName) throws AdminException, MalformedObjectNameException {
       try {
         StatisticResource[] stats = member.getStat(statisticsTypeName);
-        if (stats==null)
+        if (stats == null)
           return null;
         else {
-          ObjectName[] statNames = new ObjectName[stats.length]; 
-          for (int i=0; i<stats.length; i++) {
+          ObjectName[] statNames = new ObjectName[stats.length];
+          for (int i = 0; i < stats.length; i++) {
             StatisticResourceJmxImpl statJMX = (StatisticResourceJmxImpl) stats[i];
-            statNames[i] = ObjectName.getInstance(statJMX.getMBeanName()); 
+            statNames[i] = ObjectName.getInstance(statJMX.getMBeanName());
           }
           return statNames;
         }
-      } catch (AdminException e) { 
-        logger.warn(e.getMessage(), e); 
-        throw e; 
-      } catch (RuntimeException e) { 
-        logger.warn(e.getMessage(), e); 
+      } catch (AdminException e) {
+        logger.warn(e.getMessage(), e);
         throw e;
-      } catch (Error e) { 
-        logger.error(e.getMessage(), e); 
+      } catch (RuntimeException e) {
+        logger.warn(e.getMessage(), e);
+        throw e;
+      } catch (Error e) {
+        logger.error(e.getMessage(), e);
         throw e;
       }
     }
 
-    public static void handleNotification(SystemMemberJmx member,
-                                          Notification notification,
-                                          Object hb) {
-      if (RefreshNotificationType.SYSTEM_MEMBER_CONFIG.
-                           getType().equals(notification.getType()) &&
-          ((ManagedResource)member).getMBeanName().
-                           equals(notification.getUserData())
-         ) {
-          
+    public static void handleNotification(SystemMemberJmx member, Notification notification, Object hb) {
+      if (RefreshNotificationType.SYSTEM_MEMBER_CONFIG.getType().equals(notification.getType()) && ((ManagedResource) member).getMBeanName().equals(notification.getUserData())) {
+
         try {
           member.refreshConfig();
 
@@ -385,33 +359,30 @@ public interface SystemMemberJmx
       }
     }
 
-    public static ManagedBean
-      addDynamicAttributes(SystemMemberJmx member, ManagedBean managed)
-      throws AdminException {
+    public static ManagedBean addDynamicAttributes(SystemMemberJmx member, ManagedBean managed) throws AdminException {
 
       if (managed == null) {
         throw new IllegalArgumentException(LocalizedStrings.SystemMemberJmx_MANAGEDBEAN_IS_NULL.toLocalizedString());
       }
-    
+
       member.refreshConfig(); // to get the config parms...
-    
+
       // need to create a new instance of ManagedBean to clean the "slate"...
       ManagedBean newManagedBean = new DynamicManagedBean(managed);
       ConfigurationParameter[] params = member.getConfiguration();
       for (int i = 0; i < params.length; i++) {
-        ConfigurationParameterJmxImpl parm =
-          (ConfigurationParameterJmxImpl) params[i];
+        ConfigurationParameterJmxImpl parm = (ConfigurationParameterJmxImpl) params[i];
         ConfigAttributeInfo attrInfo = new ConfigAttributeInfo(parm);
 
         attrInfo.setName(parm.getName());
         attrInfo.setDisplayName(parm.getName());
         attrInfo.setDescription(parm.getDescription());
         attrInfo.setType(parm.getJmxValueType().getName());
-        
+
         attrInfo.setIs(false);
         attrInfo.setReadable(true);
         attrInfo.setWriteable(parm.isModifiable());
-        
+
         newManagedBean.addAttribute(attrInfo);
       }
       return newManagedBean;
@@ -425,7 +396,7 @@ public interface SystemMemberJmx
     /*default*/static int getNextNotificationSequenceNumber() {
       return notificationSequenceNumber.incrementAndGet();
     }
-    
+
     /**
      * Returns the cache event details extracted from the given
      * SystemMemberCacheEvent
@@ -436,12 +407,12 @@ public interface SystemMemberJmx
      *         SystemMemberCacheEvent
      */
     /*default*/static String getCacheEventDetails(SystemMemberCacheEvent event) {
-      String    memberId  = event.getMemberId();
+      String memberId = event.getMemberId();
       Operation operation = event.getOperation();
-      
-      return "CacheEvent[MemberId: "+memberId+", operation: "+operation+"]";
+
+      return "CacheEvent[MemberId: " + memberId + ", operation: " + operation + "]";
     }
-    
+
     /**
      * Returns the region event details extracted from the given
      * SystemMemberRegionEvent
@@ -450,13 +421,12 @@ public interface SystemMemberJmx
      *          SystemMemberRegionEvent instance
      * @return the cache event details extracted from the given
      *         SystemMemberRegionEvent
-     */  
+     */
     /*default*/static String getRegionEventDetails(SystemMemberRegionEvent event) {
-      String    memberId  = event.getMemberId();
+      String memberId = event.getMemberId();
       Operation operation = event.getOperation();
-      
-      return "RegionEvent[MemberId: " + memberId + ", operation: " + operation
-          + ", region:" + event.getRegionPath() + "]";
+
+      return "RegionEvent[MemberId: " + memberId + ", operation: " + operation + ", region:" + event.getRegionPath() + "]";
     }
 
     /**
@@ -477,17 +447,9 @@ public interface SystemMemberJmx
           }
         }
       } catch (RuntimeOperationsException e) {
-        logger.info(LocalizedMessage.create(
-            LocalizedStrings.SystemMemberJmx_FAILED_TO_SEND_0_NOTIFICATION_FOR_1,
-            new Object[] { "'" + notif.getType() + "'", 
-                          "'" + notif.getMessage() + "'" }), 
-            e);
+        logger.info(LocalizedMessage.create(LocalizedStrings.SystemMemberJmx_FAILED_TO_SEND_0_NOTIFICATION_FOR_1, new Object[] { "'" + notif.getType() + "'", "'" + notif.getMessage() + "'" }), e);
       } catch (MBeanException e) {
-        logger.info(LocalizedMessage.create(
-            LocalizedStrings.SystemMemberJmx_FAILED_TO_SEND_0_NOTIFICATION_FOR_1,
-            new Object[] { "'" + notif.getType() + "'", 
-                           "'" + notif.getMessage() + "'" }), 
-            e);
+        logger.info(LocalizedMessage.create(LocalizedStrings.SystemMemberJmx_FAILED_TO_SEND_0_NOTIFICATION_FOR_1, new Object[] { "'" + notif.getType() + "'", "'" + notif.getMessage() + "'" }), e);
       }
     }
   }

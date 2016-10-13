@@ -30,16 +30,15 @@ import org.apache.geode.management.internal.cli.shell.Gfsh;
 public class CommandExecutionContext {
   // ThreadLocal variables that can be uses by commands
   private static final ThreadLocal<Map<String, String>> ENV = new ThreadLocal<Map<String, String>>();
-  private static final ThreadLocal<Boolean>             FROM_SHELL = new ThreadLocal<Boolean>();
-  private static final ThreadLocal<byte[][]>            SHELL_BYTES_DATA = new ThreadLocal<byte[][]>();
+  private static final ThreadLocal<Boolean> FROM_SHELL = new ThreadLocal<Boolean>();
+  private static final ThreadLocal<byte[][]> SHELL_BYTES_DATA = new ThreadLocal<byte[][]>();
 
-  private static final WrapperThreadLocal<CommandResponseWriter> WRITER_WRAPPER = 
-      new WrapperThreadLocal<CommandResponseWriter>() {
-        @Override
-        protected CommandResponseWriter createWrapped() {
-          return new CommandResponseWriter();
-        }
-      };
+  private static final WrapperThreadLocal<CommandResponseWriter> WRITER_WRAPPER = new WrapperThreadLocal<CommandResponseWriter>() {
+    @Override
+    protected CommandResponseWriter createWrapped() {
+      return new CommandResponseWriter();
+    }
+  };
 
   public static String getShellEnvProperty(String propertyName, String defaultValue) {
     String propertyValue = null;
@@ -49,10 +48,10 @@ public class CommandExecutionContext {
     }
     return propertyValue != null ? propertyValue : defaultValue;
   }
-// Enable when "use region" command is required. See #46110
-//  public static String getShellContextPath() {
-//    return getShellEnvProperty(CliConstants.ENV_APP_CONTEXT_PATH, null);
-//  }
+  // Enable when "use region" command is required. See #46110
+  //  public static String getShellContextPath() {
+  //    return getShellEnvProperty(CliConstants.ENV_APP_CONTEXT_PATH, null);
+  //  }
 
   public static int getShellFetchSize() {
     int fetchSize = Gfsh.DEFAULT_APP_FETCH_SIZE;
@@ -118,7 +117,7 @@ public class CommandExecutionContext {
       map.clear();
     }
     ENV.set(null);
-    
+
     FROM_SHELL.set(false);
     SHELL_BYTES_DATA.set(null);
     WRITER_WRAPPER.set(null);

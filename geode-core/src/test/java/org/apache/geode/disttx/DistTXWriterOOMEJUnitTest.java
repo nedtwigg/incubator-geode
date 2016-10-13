@@ -46,8 +46,7 @@ public class DistTXWriterOOMEJUnitTest extends TXWriterOOMEJUnitTest {
     Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0"); // loner
     p.setProperty(ConfigurationProperties.DISTRIBUTED_TRANSACTIONS, "true");
-    this.cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem
-        .connect(p));
+    this.cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(p));
     AttributesFactory<?, ?> af = new AttributesFactory<String, String>();
     af.setScope(Scope.DISTRIBUTED_NO_ACK);
     af.setIndexMaintenanceSynchronous(true);

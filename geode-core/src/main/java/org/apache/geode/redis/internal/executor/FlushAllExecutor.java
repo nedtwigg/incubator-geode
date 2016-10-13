@@ -32,7 +32,7 @@ public class FlushAllExecutor extends AbstractExecutor {
     if (context.hasTransaction())
       throw new UnsupportedOperationInTransactionException();
 
-    for (Entry<String, RedisDataType> e: context.getRegionProvider().metaEntrySet()) {
+    for (Entry<String, RedisDataType> e : context.getRegionProvider().metaEntrySet()) {
       try {
         String skey = e.getKey();
         RedisDataType type = e.getValue();

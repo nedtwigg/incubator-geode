@@ -26,9 +26,9 @@ import org.apache.geode.internal.cache.CachePerfStats;
  * IndexStats tracks statistics about query index use.
  */
 public class IndexStats {
-  
+
   //////////////////  Static fields ///////////////////////////
-  
+
   private static final StatisticsType type;
 
   private static final int numKeysId;
@@ -47,7 +47,7 @@ public class IndexStats {
   private final Statistics stats;
 
   ////////////////////////  Static methods  ////////////////////////
-  
+
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
@@ -55,40 +55,24 @@ public class IndexStats {
     final String numValuesDesc = "Number of values in this index";
     final String numUpdatesDesc = "Number of updates that have completed on this index";
     final String numUsesDesc = "Number of times this index has been used while executing a query";
-    final String updateTimeDesc = "Total time spent updating this index";    
+    final String updateTimeDesc = "Total time spent updating this index";
 
-    type = f.createType(
-      "IndexStats", 
-      "Statistics about a query index",
-      new StatisticDescriptor[] {
-        f.createLongGauge("numKeys", numKeysDesc, "keys"),
-        f.createLongGauge("numValues", numValuesDesc, "values"),
-        f.createLongCounter("numUpdates", numUpdatesDesc, "operations"),
-        f.createLongCounter("numUses", numUsesDesc, "operations"),
-        f.createLongCounter("updateTime", updateTimeDesc, "nanoseconds"),
-        f.createLongCounter("useTime", "Total time spent using this index", "nanoseconds"),
-        f.createIntGauge("updatesInProgress", "Current number of updates in progress.", "updates"),
-        f.createIntGauge("usesInProgress", "Current number of uses in progress.", "uses"),
-        f.createIntGauge("readLockCount", "Current number of read locks taken.", "uses"),
-        f.createLongGauge("numMapIndexKeys", "Number of keys in this Map index", "keys"),
-        f.createIntGauge("numBucketIndexes", "Number of bucket indexes in the partitioned region", "indexes"),
-      }
-    );
+    type = f.createType("IndexStats", "Statistics about a query index", new StatisticDescriptor[] { f.createLongGauge("numKeys", numKeysDesc, "keys"), f.createLongGauge("numValues", numValuesDesc, "values"), f.createLongCounter("numUpdates", numUpdatesDesc, "operations"), f.createLongCounter("numUses", numUsesDesc, "operations"), f.createLongCounter("updateTime", updateTimeDesc, "nanoseconds"), f.createLongCounter("useTime", "Total time spent using this index", "nanoseconds"), f.createIntGauge("updatesInProgress", "Current number of updates in progress.", "updates"), f.createIntGauge("usesInProgress", "Current number of uses in progress.", "uses"), f.createIntGauge("readLockCount", "Current number of read locks taken.", "uses"), f.createLongGauge("numMapIndexKeys", "Number of keys in this Map index", "keys"), f.createIntGauge("numBucketIndexes", "Number of bucket indexes in the partitioned region", "indexes"), });
 
     // Initialize id fields
     numKeysId = type.nameToId("numKeys");
     numValuesId = type.nameToId("numValues");
     numUpdatesId = type.nameToId("numUpdates");
     numUsesId = type.nameToId("numUses");
-    updateTimeId = type.nameToId("updateTime");    
-    updatesInProgressId = type.nameToId("updatesInProgress");    
-    usesInProgressId = type.nameToId("usesInProgress");    
+    updateTimeId = type.nameToId("updateTime");
+    updatesInProgressId = type.nameToId("updatesInProgress");
+    usesInProgressId = type.nameToId("usesInProgress");
     useTimeId = type.nameToId("useTime");
     readLockCountId = type.nameToId("readLockCount");
     numMapIndexKeysId = type.nameToId("numMapIndexKeys");
     numBucketIndexesId = type.nameToId("numBucketIndexes");
   }
-  
+
   ////////////////////////  Constructors  ////////////////////////
 
   /**
@@ -101,93 +85,99 @@ public class IndexStats {
 
   //////////////////////  Accessing Stats  //////////////////////
 
-   public long getNumberOfKeys() {
-     return stats.getLong(numKeysId);
-   }
-   
-   public long getNumberOfValues() {
-     return stats.getLong(numValuesId); 
-   }
-   
-   public long getNumUpdates() {
-     return stats.getLong(numUpdatesId);
-   }
+  public long getNumberOfKeys() {
+    return stats.getLong(numKeysId);
+  }
 
-   public long getTotalUses() {
-     return stats.getLong(numUsesId); 
-   }  
-  
-   public long getTotalUpdateTime() {
-     return CachePerfStats.enableClockStats? stats.getLong(updateTimeId) : 0;
-   }
-   
-   public long getUseTime() {
-     return CachePerfStats.enableClockStats? stats.getLong(useTimeId) : 0;
-   }
-   
-   public int getReadLockCount() {
-     return stats.getInt(readLockCountId);
-   }
-   
-   public long getNumberOfMapIndexKeys() {
-     return stats.getLong(numMapIndexKeysId);
-   }
+  public long getNumberOfValues() {
+    return stats.getLong(numValuesId);
+  }
 
-   public int getNumberOfBucketIndexes() {
-     return stats.getInt(numBucketIndexesId);
-   }
+  public long getNumUpdates() {
+    return stats.getLong(numUpdatesId);
+  }
+
+  public long getTotalUses() {
+    return stats.getLong(numUsesId);
+  }
+
+  public long getTotalUpdateTime() {
+    return CachePerfStats.enableClockStats ? stats.getLong(updateTimeId) : 0;
+  }
+
+  public long getUseTime() {
+    return CachePerfStats.enableClockStats ? stats.getLong(useTimeId) : 0;
+  }
+
+  public int getReadLockCount() {
+    return stats.getInt(readLockCountId);
+  }
+
+  public long getNumberOfMapIndexKeys() {
+    return stats.getLong(numMapIndexKeysId);
+  }
+
+  public int getNumberOfBucketIndexes() {
+    return stats.getInt(numBucketIndexesId);
+  }
 
   //////////////////////  Updating Stats  //////////////////////
-  
-   public void incNumUpdates() {
-     this.stats.incLong(numUpdatesId, 1);
-   }
-   public void incNumUpdates(int delta) {
-     this.stats.incLong(numUpdatesId, delta);
-   }
-   public void incNumValues(int delta) {
-     this.stats.incLong(numValuesId, delta);
-   }
-  
-   public void updateNumKeys(long numKeys) {
-     this.stats.setLong(numKeysId, numKeys);
-   }
-   
-   public void incNumKeys(long numKeys) {
-     this.stats.incLong(numKeysId, numKeys);
-   }
-   
-   public void incUpdateTime(long delta) {
-     if (CachePerfStats.enableClockStats) {
-       this.stats.incLong(updateTimeId, delta);
-     }
-   }
-   
-   public void incNumUses() {
-     this.stats.incLong(numUsesId, 1);
-   }
-   public void incUpdatesInProgress(int delta) {
-     this.stats.incInt(updatesInProgressId, delta);
-   }
-   public void incUsesInProgress(int delta) {
-     this.stats.incInt(usesInProgressId, delta);
-   }
-   public void incUseTime(long delta) {
-     if (CachePerfStats.enableClockStats) {
-       this.stats.incLong(useTimeId, delta);
-     }
-   }
-   public void incReadLockCount(int delta) {
-     this.stats.incInt(readLockCountId, delta);
-   }
-   
-   public void incNumMapIndexKeys(long delta) {
-     this.stats.incLong(numMapIndexKeysId, delta);
-   }
-   
-   public void incNumBucketIndexes(int delta) {
-     this.stats.incInt(numBucketIndexesId, delta);
-   }   
+
+  public void incNumUpdates() {
+    this.stats.incLong(numUpdatesId, 1);
+  }
+
+  public void incNumUpdates(int delta) {
+    this.stats.incLong(numUpdatesId, delta);
+  }
+
+  public void incNumValues(int delta) {
+    this.stats.incLong(numValuesId, delta);
+  }
+
+  public void updateNumKeys(long numKeys) {
+    this.stats.setLong(numKeysId, numKeys);
+  }
+
+  public void incNumKeys(long numKeys) {
+    this.stats.incLong(numKeysId, numKeys);
+  }
+
+  public void incUpdateTime(long delta) {
+    if (CachePerfStats.enableClockStats) {
+      this.stats.incLong(updateTimeId, delta);
+    }
+  }
+
+  public void incNumUses() {
+    this.stats.incLong(numUsesId, 1);
+  }
+
+  public void incUpdatesInProgress(int delta) {
+    this.stats.incInt(updatesInProgressId, delta);
+  }
+
+  public void incUsesInProgress(int delta) {
+    this.stats.incInt(usesInProgressId, delta);
+  }
+
+  public void incUseTime(long delta) {
+    if (CachePerfStats.enableClockStats) {
+      this.stats.incLong(useTimeId, delta);
+    }
+  }
+
+  public void incReadLockCount(int delta) {
+    this.stats.incInt(readLockCountId, delta);
+  }
+
+  public void incNumMapIndexKeys(long delta) {
+    this.stats.incLong(numMapIndexKeysId, delta);
+  }
+
+  public void incNumBucketIndexes(int delta) {
+    this.stats.incInt(numBucketIndexesId, delta);
+  }
   ////// Special Instance Methods /////
 
   /**
@@ -211,7 +201,6 @@ public class IndexStats {
     return this.stats.isClosed();
   }
 
-
   /**
    * Returns the Statistics instance that stores the cache perf stats.
    * @since GemFire 3.5
@@ -220,4 +209,3 @@ public class IndexStats {
     return this.stats;
   }
 }
-

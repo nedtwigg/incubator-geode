@@ -68,8 +68,7 @@ public class AbstractMultiPartCommandsController extends AbstractCommandsControl
       fileWriter = new FileOutputStream(saveFile, false);
       fileWriter.write(file.getBytes());
       fileWriter.flush();
-    }
-    finally {
+    } finally {
       IOUtils.close(fileWriter);
     }
   }

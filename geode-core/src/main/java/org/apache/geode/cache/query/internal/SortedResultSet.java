@@ -34,8 +34,7 @@ import org.apache.geode.internal.Version;
  * 
  * @since GemFire 4.0
  */
-public final class SortedResultSet extends TreeSet implements SelectResults, Ordered, 
-    DataSerializableFixedID {
+public final class SortedResultSet extends TreeSet implements SelectResults, Ordered, DataSerializableFixedID {
   private static final long serialVersionUID = 5184711453750319224L;
 
   private ObjectType elementType;
@@ -66,7 +65,7 @@ public final class SortedResultSet extends TreeSet implements SelectResults, Ord
     if (!(other instanceof SortedResultSet)) {
       return false;
     }
-    if (!this.elementType.equals(((SortedResultSet)other).elementType)) {
+    if (!this.elementType.equals(((SortedResultSet) other).elementType)) {
       return false;
     }
     return super.equals(other);
@@ -74,9 +73,7 @@ public final class SortedResultSet extends TreeSet implements SelectResults, Ord
 
   public void setElementType(ObjectType elementType) {
     if (elementType instanceof StructType)
-      throw new IllegalArgumentException(
-          LocalizedStrings.SortedResultSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.SortedResultSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS.toLocalizedString());
     this.elementType = elementType;
   }
 
@@ -106,7 +103,7 @@ public final class SortedResultSet extends TreeSet implements SelectResults, Ord
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     int size = in.readInt();
-    this.elementType = (ObjectType)DataSerializer.readObject(in);
+    this.elementType = (ObjectType) DataSerializer.readObject(in);
     for (int j = size; j > 0; j--) {
       this.add(DataSerializer.readObject(in));
     }
@@ -123,11 +120,11 @@ public final class SortedResultSet extends TreeSet implements SelectResults, Ord
 
   @Override
   public Version[] getSerializationVersions() {
-     return null;
+    return null;
   }
 
   @Override
-  public boolean dataPreordered() {    
+  public boolean dataPreordered() {
     return false;
   }
 }

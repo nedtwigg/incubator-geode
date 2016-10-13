@@ -32,7 +32,6 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.pdx.internal.EnumInfo;
 import org.apache.geode.pdx.internal.TypeRegistry;
 
-
 public class AddPdxEnum extends BaseCommand {
   private static final Logger logger = LogService.getLogger();
 
@@ -46,8 +45,7 @@ public class AddPdxEnum extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received get pdx id for enum request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
@@ -56,7 +54,7 @@ public class AddPdxEnum extends BaseCommand {
 
     EnumInfo enumInfo = (EnumInfo) msg.getPart(0).getObject();
     int enumId = msg.getPart(1).getInt();
-    
+
     try {
       GemFireCacheImpl cache = (GemFireCacheImpl) servConn.getCache();
       TypeRegistry registry = cache.getPdxRegistry();

@@ -41,4 +41,3 @@ public interface SnapshotFilter<K, V> extends Serializable {
    */
   boolean accept(Entry<K, V> entry);
 }
-  

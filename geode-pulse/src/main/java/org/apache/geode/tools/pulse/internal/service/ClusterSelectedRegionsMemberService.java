@@ -54,16 +54,16 @@ public class ClusterSelectedRegionsMemberService implements PulseService {
 
   //Comparator based upon regions entry count
   private static Comparator<Cluster.RegionOnMember> romEntryCountComparator = (m1, m2) -> {
-      long m1EntryCount = m1.getEntryCount();
-      long m2EntryCount = m2.getEntryCount();
-      if (m1EntryCount < m2EntryCount) {
-        return -1;
-      } else if (m1EntryCount > m2EntryCount) {
-        return 1;
-      } else {
-        return 0;
-      }
-    };
+    long m1EntryCount = m1.getEntryCount();
+    long m2EntryCount = m2.getEntryCount();
+    if (m1EntryCount < m2EntryCount) {
+      return -1;
+    } else if (m1EntryCount > m2EntryCount) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
 
   @Override
   public ObjectNode execute(final HttpServletRequest request) throws Exception {
@@ -95,7 +95,7 @@ public class ClusterSelectedRegionsMemberService implements PulseService {
     PulseLogWriter LOGGER = PulseLogWriter.getLogger();
     Cluster.Region reg = cluster.getClusterRegion(selectedRegionFullPath);
 
-    if (reg != null){
+    if (reg != null) {
       ObjectNode regionMemberJSON = mapper.createObjectNode();
       RegionOnMember[] regionOnMembers = reg.getRegionOnMembers();
 
@@ -103,7 +103,7 @@ public class ClusterSelectedRegionsMemberService implements PulseService {
       List<RegionOnMember> romList = Arrays.asList(regionOnMembers);
       Collections.sort(romList, romEntryCountComparator);
 
-      for(RegionOnMember rom : romList) {
+      for (RegionOnMember rom : romList) {
         ObjectNode memberJSON = mapper.createObjectNode();
         memberJSON.put("memberName", rom.getMemberName());
         memberJSON.put("regionFullPath", rom.getRegionFullPath());
@@ -113,20 +113,16 @@ public class ClusterSelectedRegionsMemberService implements PulseService {
         memberJSON.put("accessor", ((rom.getLocalMaxMemory() == 0) ? "True" : "False"));
         LOGGER.finest("calling getSelectedRegionsMembersJson :: rom.getLocalMaxMemory() = " + rom.getLocalMaxMemory());
 
-        memberJSON.put("memoryReadsTrend",
-            mapper.<JsonNode>valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_GETS_PER_SEC_TREND)));
+        memberJSON.put("memoryReadsTrend", mapper.<JsonNode> valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_GETS_PER_SEC_TREND)));
         LOGGER.finest("memoryReadsTrend = " + rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_GETS_PER_SEC_TREND).length);
 
-        memberJSON.put("memoryWritesTrend",
-            mapper.<JsonNode>valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_PUTS_PER_SEC_TREND)));
+        memberJSON.put("memoryWritesTrend", mapper.<JsonNode> valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_PUTS_PER_SEC_TREND)));
         LOGGER.finest("memoryWritesTrend = " + rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_PUTS_PER_SEC_TREND).length);
 
-        memberJSON.put("diskReadsTrend",
-            mapper.<JsonNode>valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_DISK_READS_PER_SEC_TREND)));
+        memberJSON.put("diskReadsTrend", mapper.<JsonNode> valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_DISK_READS_PER_SEC_TREND)));
         LOGGER.finest("diskReadsTrend = " + rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_DISK_READS_PER_SEC_TREND).length);
 
-        memberJSON.put("diskWritesTrend",
-            mapper.<JsonNode>valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_DISK_WRITES_PER_SEC_TREND)));
+        memberJSON.put("diskWritesTrend", mapper.<JsonNode> valueToTree(rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_DISK_WRITES_PER_SEC_TREND)));
         LOGGER.finest("diskWritesTrend = " + rom.getRegionOnMemberStatisticTrend(RegionOnMember.REGION_ON_MEMBER_STAT_DISK_WRITES_PER_SEC_TREND).length);
 
         regionMemberJSON.put(rom.getMemberName(), memberJSON);

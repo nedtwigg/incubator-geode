@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.distributed.internal;
 
 import org.apache.logging.log4j.Logger;
@@ -35,7 +35,7 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  */
 public class HealthMonitorImpl implements HealthMonitor, Runnable {
   private static final Logger logger = LogService.getLogger();
-  
+
   private final InternalDistributedMember owner;
   private final int id;
   private final DistributionManager dm;
@@ -43,20 +43,18 @@ public class HealthMonitorImpl implements HealthMonitor, Runnable {
 
   /** The current health status
    *
-   * @see GemFireHealth#OKAY_HEALTH */ 
+   * @see GemFireHealth#OKAY_HEALTH */
   private GemFireHealth.Health currentStatus;
   private final Thread t;
   private volatile boolean stopRequested = false;
 
   private static int idCtr = 0;
-  
+
   /********** Constructors *********/
   /**
    * Creates a health monitor given its owner, configuration, and its dm
    */
-  public HealthMonitorImpl(InternalDistributedMember owner,
-                           GemFireHealthConfig config,
-                           DistributionManager dm) {
+  public HealthMonitorImpl(InternalDistributedMember owner, GemFireHealthConfig config, DistributionManager dm) {
     this.owner = owner;
     this.id = getNewId();
     this.dm = dm;
@@ -66,18 +64,21 @@ public class HealthMonitorImpl implements HealthMonitor, Runnable {
     this.t = new Thread(tg, this, LocalizedStrings.HealthMonitorImpl_HEALTH_MONITOR_OWNED_BY_0.toLocalizedString(owner));
     this.t.setDaemon(true);
   }
-  
+
   /************** HealthMonitor interface implementation ******************/
   public int getId() {
     return this.id;
   }
+
   public void resetStatus() {
     this.currentStatus = GemFireHealth.GOOD_HEALTH;
     this.eval.reset();
   }
+
   public String[] getDiagnosis(GemFireHealth.Health healthCode) {
     return this.eval.getDiagnosis(healthCode);
   }
+
   public void stop() {
     if (this.t.isAlive()) {
       this.stopRequested = true;
@@ -105,11 +106,11 @@ public class HealthMonitorImpl implements HealthMonitor, Runnable {
   public void run() {
     final int sleepTime = this.eval.getEvaluationInterval() * 1000;
     if (logger.isDebugEnabled()) {
-      logger.debug("Starting health monitor.  Health will be evaluated every {} seconds.", (sleepTime/1000));
+      logger.debug("Starting health monitor.  Health will be evaluated every {} seconds.", (sleepTime / 1000));
     }
     try {
       while (!this.stopRequested) {
-//        SystemFailure.checkFailure(); dm's stopper will do this
+        //        SystemFailure.checkFailure(); dm's stopper will do this
         this.dm.getCancelCriterion().checkCancelInProgress(null);
         Thread.sleep(sleepTime);
         if (!this.stopRequested) {
@@ -136,7 +137,7 @@ public class HealthMonitorImpl implements HealthMonitor, Runnable {
       }
     }
   }
-  
+
   /********** Internal implementation **********/
 
   private static synchronized int getNewId() {

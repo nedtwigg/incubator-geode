@@ -170,7 +170,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
     }
   }
 
-
   public static void setUpServer(String username, String password, String jsonAuthFile) throws Exception {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
@@ -312,7 +311,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
     movePicker.perform();
   }
 
-
   @Test
   public void testClusterLocatorCount() throws IOException {
     String clusterLocators = driver.findElement(By.id(CLUSTER_VIEW_LOCATORS_ID)).getText();
@@ -414,7 +412,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
     }
   }
 
-
   @Test
   public void testClusterGridViewMemberHost() {
     searchByIdAndClick("default_grid_button");
@@ -446,7 +443,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
       assertEquals(gridCPUUsage, CPUUsage);
     }
   }
-
 
   public void testRgraphWidget() throws InterruptedException {
     searchByIdAndClick("default_rgraph_button");
@@ -549,7 +545,7 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
     assertEquals(memberCPUUsage, CPUUsagevalue);
   }
 
-  @Test  // difference between UI and properties file
+  @Test // difference between UI and properties file
   public void testMemberAverageReads() {
     searchByIdAndClick("default_grid_button");
     searchByIdAndClick("M1&M1");
@@ -567,7 +563,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
     String memberWritePerSec = JMXProperties.getInstance().getProperty("member.M1.averageWrites");
     assertEquals(memberWritePerSec, WritePerSec);
   }
-
 
   @Test
   @Ignore("ElementNotVisible with phantomJS")
@@ -695,7 +690,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
     assertEquals(dataViewEntrySize, DataViewEntrySize);
 
   }
-
 
   public void loadDataBrowserpage() {
     searchByLinkAndClick(DATA_BROWSER_LABEL);
@@ -859,7 +853,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
       String loadAvgM1 = JMXProperties.getInstance().getProperty("member.M" + (i) + ".loadAverage");
       assertEquals(df2.format(Double.valueOf(loadAvgM1)), LoadAvgM1);
 
-
       String ThreadsM1 = driver.findElement(By.xpath("//div[@id='_tooltip']/div/div/div[2]/div[" + (j + 3) + "]/div[2]/div")).getText();
       String threadsM1 = JMXProperties.getInstance().getProperty("member.M" + (i) + ".numThreads");
       assertEquals(threadsM1, ThreadsM1);
@@ -949,7 +942,6 @@ public abstract class PulseAbstractTest extends PulseBaseTest {
     // WebElement dataBrowserLabel = driver.findElement(By.xpath(""));
     WebDriverWait wait = new WebDriverWait(driver, 20);
     wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//label[text()='Data Browser']"))));
-
 
     // Verify all elements must be displayed on data browser screen
     assertTrue(driver.findElement(By.xpath("//a[text()='Data Regions']")).isDisplayed());

@@ -60,46 +60,40 @@ import org.apache.geode.internal.logging.LogService;
  * @since GemFire     3.5
  *
  */
-public class SystemMemberJmxImpl 
-extends org.apache.geode.admin.internal.SystemMemberImpl
-implements SystemMemberJmx, javax.management.NotificationListener,
-           org.apache.geode.admin.jmx.internal.ManagedResource {
+public class SystemMemberJmxImpl extends org.apache.geode.admin.internal.SystemMemberImpl implements SystemMemberJmx, javax.management.NotificationListener, org.apache.geode.admin.jmx.internal.ManagedResource {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** 
    * Interval in seconds between refreshes. Value less than one results in no 
    * refreshing 
    */
   private int refreshInterval = 0;
-  
+
   /** The JMX object name of this managed resource */
   private ObjectName objectName;
 
   /** Reference to the cache MBean representing a Cache in the Cache VM Member */
   private SystemMemberCacheJmxImpl managedSystemMemberCache;
-  
+
   /** collection to collect all the resources created for this member */
   private Map<StatResource, StatisticResourceJmxImpl> managedStatisticsResourcesMap = new HashMap<StatResource, StatisticResourceJmxImpl>();
-
 
   // -------------------------------------------------------------------------
   //   Constructor(s)
   // -------------------------------------------------------------------------
-  
+
   /** 
    * Constructs an instance of SystemMemberJmxImpl.
    *
    * @param system  the distributed system this SystemMember is a member of
    * @param application the internal admin application to delegate actual work
    */
-  public SystemMemberJmxImpl(AdminDistributedSystemJmxImpl system,
-                             ApplicationVM application)
-                      throws org.apache.geode.admin.AdminException { 
+  public SystemMemberJmxImpl(AdminDistributedSystemJmxImpl system, ApplicationVM application) throws org.apache.geode.admin.AdminException {
     super(system, application);
     initializeMBean();
   }
-  
+
   /**
    * Constructs the instance of SystemMember using the corresponding
    * InternalDistributedMember instance of a DS member for the given
@@ -115,32 +109,26 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *           
    * @since GemFire 6.5
    */
-  protected SystemMemberJmxImpl(AdminDistributedSystemJmxImpl system,
-      InternalDistributedMember member) throws AdminException {
+  protected SystemMemberJmxImpl(AdminDistributedSystemJmxImpl system, InternalDistributedMember member) throws AdminException {
     super(system, member);
     initializeMBean();
   }
 
   /** Create and register the MBean to manage this resource */
-  private void initializeMBean() 
-  throws org.apache.geode.admin.AdminException {
+  private void initializeMBean() throws org.apache.geode.admin.AdminException {
     //initialize Managed Resources for stats & cache first.
-//    initializeManagedResources();
+    //    initializeManagedResources();
 
-    this.mbeanName = new StringBuffer("GemFire.Member:id=")
-      .append(MBeanUtil.makeCompliantMBeanNameProperty(getId()))
-      .append(",type=").append(MBeanUtil.makeCompliantMBeanNameProperty(getType().getName())).toString();
-      
-    this.objectName =
-      MBeanUtil.createMBean(this, 
-        addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
+    this.mbeanName = new StringBuffer("GemFire.Member:id=").append(MBeanUtil.makeCompliantMBeanNameProperty(getId())).append(",type=").append(MBeanUtil.makeCompliantMBeanNameProperty(getType().getName())).toString();
+
+    this.objectName = MBeanUtil.createMBean(this, addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
 
     // Refresh Interval
-    AdminDistributedSystemJmxImpl sysJmx = (AdminDistributedSystemJmxImpl)system;
+    AdminDistributedSystemJmxImpl sysJmx = (AdminDistributedSystemJmxImpl) system;
     if (sysJmx.getRefreshInterval() > 0)
       this.refreshInterval = sysJmx.getRefreshInterval();
   }
-  
+
   // -------------------------------------------------------------------------
   //   MBean attributes - accessors/mutators
   // -------------------------------------------------------------------------
@@ -153,7 +141,7 @@ implements SystemMemberJmx, javax.management.NotificationListener,
   public int getRefreshInterval() {
     return this.refreshInterval;
   }
-  
+
   /**
    * RefreshInterval is now set only through the AdminDistributedSystem property
    * refreshInterval. Attempt to set refreshInterval on SystemMemberJmx MBean
@@ -165,10 +153,8 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    * @deprecated since 6.0 use DistributedSystemConfig.refreshInterval instead
    */
   @Deprecated
-  public void setRefreshInterval(int refreshInterval)
-      throws OperationNotSupportedException {
-    throw new OperationNotSupportedException(
-        LocalizedStrings.MANAGED_RESOURCE_REFRESH_INTERVAL_CANT_BE_SET_DIRECTLY.toLocalizedString());
+  public void setRefreshInterval(int refreshInterval) throws OperationNotSupportedException {
+    throw new OperationNotSupportedException(LocalizedStrings.MANAGED_RESOURCE_REFRESH_INTERVAL_CANT_BE_SET_DIRECTLY.toLocalizedString());
   }
 
   /**
@@ -180,16 +166,14 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *          the new refresh interval in seconds
    */
   public void _setRefreshInterval(int refreshInterval) {
-    boolean isRegistered = MBeanUtil.isRefreshNotificationRegistered(this,
-        RefreshNotificationType.SYSTEM_MEMBER_CONFIG);
+    boolean isRegistered = MBeanUtil.isRefreshNotificationRegistered(this, RefreshNotificationType.SYSTEM_MEMBER_CONFIG);
 
     if (isRegistered && (getRefreshInterval() == refreshInterval))
       return;
 
-    this.refreshInterval = Helper.setAndReturnRefreshInterval(this,
-        refreshInterval);
+    this.refreshInterval = Helper.setAndReturnRefreshInterval(this, refreshInterval);
   }
-  
+
   // -------------------------------------------------------------------------
   //   MBean Operations
   // -------------------------------------------------------------------------
@@ -203,35 +187,35 @@ implements SystemMemberJmx, javax.management.NotificationListener,
 
     super.refreshConfig();
   }
-  
+
   /**
    * Initializes Cache & Statistics managed resources.
    * 
    * @throws AdminException
    *           if initialization of managed resources fails
    */
-//  private void initializeManagedResources() throws AdminException {
-//    try {
-//      manageCache();
-//    } catch (MalformedObjectNameException e) {
-//      throw new AdminException(LocalizedStrings.SystemMemberJmxImpl_EXCEPTION_OCCURRED_WHILE_INITIALIZING_0_MBEANS_FOR_1.toLocalizedString(
-//              new Object[] {"Cache", getId()}), 
-//              e);
-//    } catch (AdminException ae) {
-//      if (LocalizedStrings.SystemMemberJmx_THIS_SYSTEM_MEMBER_DOES_NOT_HAVE_A_CACHE.toLocalizedString().equals(ae.getMessage())) {
-//        //ignore this exception for a cache-less peer 
-//      } else {
-//        throw ae;
-//      }
-//    }
-//    try {
-//      manageStats();
-//    } catch (MalformedObjectNameException e) {
-//      throw new AdminException(LocalizedStrings.SystemMemberJmxImpl_EXCEPTION_OCCURRED_WHILE_INITIALIZING_0_MBEANS_FOR_1.toLocalizedString(
-//          new Object[] {"Statistics", getId()}), 
-//          e);
-//    }
-//  }
+  //  private void initializeManagedResources() throws AdminException {
+  //    try {
+  //      manageCache();
+  //    } catch (MalformedObjectNameException e) {
+  //      throw new AdminException(LocalizedStrings.SystemMemberJmxImpl_EXCEPTION_OCCURRED_WHILE_INITIALIZING_0_MBEANS_FOR_1.toLocalizedString(
+  //              new Object[] {"Cache", getId()}), 
+  //              e);
+  //    } catch (AdminException ae) {
+  //      if (LocalizedStrings.SystemMemberJmx_THIS_SYSTEM_MEMBER_DOES_NOT_HAVE_A_CACHE.toLocalizedString().equals(ae.getMessage())) {
+  //        //ignore this exception for a cache-less peer 
+  //      } else {
+  //        throw ae;
+  //      }
+  //    }
+  //    try {
+  //      manageStats();
+  //    } catch (MalformedObjectNameException e) {
+  //      throw new AdminException(LocalizedStrings.SystemMemberJmxImpl_EXCEPTION_OCCURRED_WHILE_INITIALIZING_0_MBEANS_FOR_1.toLocalizedString(
+  //          new Object[] {"Statistics", getId()}), 
+  //          e);
+  //    }
+  //  }
 
   /** 
    * Gets this member's cache.
@@ -241,35 +225,32 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    * @throws AdminException
    *         If this system member does not host a cache
    */
-  public ObjectName manageCache() 
-    throws AdminException, MalformedObjectNameException {
+  public ObjectName manageCache() throws AdminException, MalformedObjectNameException {
 
     return Helper.manageCache(this);
   }
-  
+
   /** 
    * Gets all active StatisticResources for this manager.
    *
    * @return array of ObjectName instances
    */
-  public ObjectName[] manageStats() 
-    throws AdminException, MalformedObjectNameException {
+  public ObjectName[] manageStats() throws AdminException, MalformedObjectNameException {
 
     return Helper.manageStats(this);
   }
-  
+
   /** 
    * Gets the active StatisticResources for this manager, based on the
    * typeName as the key
    *
    * @return ObjectName of StatisticResourceJMX instance
    */
-  public ObjectName[] manageStat(String statisticsTypeName) 
-    throws AdminException, MalformedObjectNameException {
-    
+  public ObjectName[] manageStat(String statisticsTypeName) throws AdminException, MalformedObjectNameException {
+
     return Helper.manageStat(this, statisticsTypeName);
   }
-  
+
   // -------------------------------------------------------------------------
   //   JMX Notification listener
   // -------------------------------------------------------------------------
@@ -286,9 +267,8 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *          handback object is unused
    */
   public void handleNotification(Notification notification, Object hb) {
-    AdminDistributedSystemJmxImpl systemJmx = 
-                                  (AdminDistributedSystemJmxImpl) this.system;
-    
+    AdminDistributedSystemJmxImpl systemJmx = (AdminDistributedSystemJmxImpl) this.system;
+
     if (!systemJmx.isRmiClientCountZero()) {
       Helper.handleNotification(this, notification, hb);
     }
@@ -303,13 +283,8 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    * Overridden to return ConfigurationParameterJmxImpl.
    */
   @Override
-  protected ConfigurationParameter createConfigurationParameter(String name,
-                                                                String description,
-                                                                Object value,
-                                                                Class type,
-                                                                boolean userModifiable) {
-    return new ConfigurationParameterJmxImpl(
-        name, description, value, type, userModifiable);
+  protected ConfigurationParameter createConfigurationParameter(String name, String description, Object value, Class type, boolean userModifiable) {
+    return new ConfigurationParameterJmxImpl(name, description, value, type, userModifiable);
   }
 
   /**
@@ -323,10 +298,9 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *           if constructing StatisticResourceJmxImpl instance fails
    */
   @Override
-  protected StatisticResource createStatisticResource(StatResource stat)
-    throws org.apache.geode.admin.AdminException {
+  protected StatisticResource createStatisticResource(StatResource stat) throws org.apache.geode.admin.AdminException {
     StatisticResourceJmxImpl managedStatisticResource = null;
-    
+
     synchronized (this.managedStatisticsResourcesMap) {
       /* 
        * Ensuring that a single instance of Statistic Resource is created per 
@@ -355,8 +329,7 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *           if constructing SystemMemberCacheJmxImpl instance fails
    */
   @Override
-  protected SystemMemberCache createSystemMemberCache(GemFireVM vm)
-    throws org.apache.geode.admin.AdminException {
+  protected SystemMemberCache createSystemMemberCache(GemFireVM vm) throws org.apache.geode.admin.AdminException {
     if (managedSystemMemberCache == null) {
       managedSystemMemberCache = new SystemMemberCacheJmxImpl(vm);
     }
@@ -366,7 +339,7 @@ implements SystemMemberJmx, javax.management.NotificationListener,
   // -------------------------------------------------------------------------
   //   Create MBean attributes for each ConfigurationParameter
   // -------------------------------------------------------------------------
-  
+
   /**
    * Add MBean attribute definitions for each ConfigurationParameter.
    *
@@ -374,8 +347,7 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    * @return a new instance of ManagedBean copied from <code>managed</code> but 
    *         with the new attributes added
    */
-  public ManagedBean addDynamicAttributes(ManagedBean managed) 
-    throws AdminException {
+  public ManagedBean addDynamicAttributes(ManagedBean managed) throws AdminException {
 
     return Helper.addDynamicAttributes(this, managed);
   }
@@ -383,24 +355,25 @@ implements SystemMemberJmx, javax.management.NotificationListener,
   // -------------------------------------------------------------------------
   //   ManagedResource implementation
   // -------------------------------------------------------------------------
-  
+
   /** The name of the MBean that will manage this resource */
   private String mbeanName;
 
   /** The ModelMBean that is configured to manage this resource */
   private ModelMBean modelMBean;
-  
-	public String getMBeanName() {
-		return this.mbeanName;
-	}
-  
-	public ModelMBean getModelMBean() {
-		return this.modelMBean;
-	}
-	public void setModelMBean(ModelMBean modelMBean) {
-		this.modelMBean = modelMBean;
-	}
-  
+
+  public String getMBeanName() {
+    return this.mbeanName;
+  }
+
+  public ModelMBean getModelMBean() {
+    return this.modelMBean;
+  }
+
+  public void setModelMBean(ModelMBean modelMBean) {
+    this.modelMBean = modelMBean;
+  }
+
   public ObjectName getObjectName() {
     return this.objectName;
   }
@@ -408,7 +381,7 @@ implements SystemMemberJmx, javax.management.NotificationListener,
   public ManagedResourceType getManagedResourceType() {
     return ManagedResourceType.SYSTEM_MEMBER;
   }
-  
+
   /**
    * Un-registers all the statistics & cache managed resource created for this 
    * member. After un-registering the resource MBean instances, clears 
@@ -426,16 +399,15 @@ implements SystemMemberJmx, javax.management.NotificationListener,
       this.parms.clear();
 
       Collection<StatisticResourceJmxImpl> statisticResources = managedStatisticsResourcesMap.values();
-      
+
       for (StatisticResourceJmxImpl statisticResource : statisticResources) {
         MBeanUtil.unregisterMBean(statisticResource);
       }
-        
+
       this.managedStatisticsResourcesMap.clear();
     }
     MBeanUtil.unregisterMBean(managedSystemMemberCache);
   }
-
 
   /**
    * Cleans up Managed Resources created for the client that was connected to
@@ -454,10 +426,10 @@ implements SystemMemberJmx, javax.management.NotificationListener,
   public List<ManagedResource> cleanupBridgeClientResources(String clientId) {
     List<ManagedResource> returnedResources = new ArrayList<ManagedResource>();
 
-    String compatibleId = "id_"+MBeanUtil.makeCompliantMBeanNameProperty(clientId);
+    String compatibleId = "id_" + MBeanUtil.makeCompliantMBeanNameProperty(clientId);
     synchronized (this.managedStatisticsResourcesMap) {
       Set<Entry<StatResource, StatisticResourceJmxImpl>> entrySet = this.managedStatisticsResourcesMap.entrySet();
-      
+
       for (Iterator<Entry<StatResource, StatisticResourceJmxImpl>> it = entrySet.iterator(); it.hasNext();) {
         Entry<StatResource, StatisticResourceJmxImpl> entry = it.next();
         StatisticResourceJmxImpl resource = entry.getValue();
@@ -469,7 +441,7 @@ implements SystemMemberJmx, javax.management.NotificationListener,
     }
     return returnedResources;
   }
-  
+
   /**
    * Implementation handles client membership changes.
    * 
@@ -482,9 +454,9 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *          {@link ClientMembershipMessage#CRASHED}
    */
   public void handleClientMembership(String clientId, int eventType) {
-    String notifType                = null;
+    String notifType = null;
     List<ManagedResource> cleanedUp = null;
-    
+
     if (eventType == ClientMembershipMessage.LEFT) {
       notifType = NOTIF_CLIENT_LEFT;
       cleanedUp = cleanupBridgeClientResources(clientId);
@@ -494,19 +466,16 @@ implements SystemMemberJmx, javax.management.NotificationListener,
     } else if (eventType == ClientMembershipMessage.JOINED) {
       notifType = NOTIF_CLIENT_JOINED;
     }
-    
+
     if (cleanedUp != null) {
       for (ManagedResource resource : cleanedUp) {
         MBeanUtil.unregisterMBean(resource);
       }
     }
 
-    Helper.sendNotification(this, 
-        new Notification(notifType, this.modelMBean, 
-        Helper.getNextNotificationSequenceNumber(),
-        clientId));
+    Helper.sendNotification(this, new Notification(notifType, this.modelMBean, Helper.getNextNotificationSequenceNumber(), clientId));
   }
-  
+
   /**
    * Implementation handles creation of cache by extracting the details from the 
    * given event object and sending the 
@@ -517,11 +486,8 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *          event object corresponding to the creation of the cache
    */
   public void handleCacheCreate(SystemMemberCacheEvent event) {
-    Helper.sendNotification(this, 
-      new Notification(NOTIF_CACHE_CREATED, this.modelMBean, 
-      Helper.getNextNotificationSequenceNumber(),
-      Helper.getCacheEventDetails(event)));
-  }  
+    Helper.sendNotification(this, new Notification(NOTIF_CACHE_CREATED, this.modelMBean, Helper.getNextNotificationSequenceNumber(), Helper.getCacheEventDetails(event)));
+  }
 
   /**
    * Implementation handles closure of cache by extracting the details from the 
@@ -533,10 +499,7 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *          event object corresponding to the closure of the cache
    */
   public void handleCacheClose(SystemMemberCacheEvent event) {
-    Helper.sendNotification(this, 
-        new Notification(NOTIF_CACHE_CLOSED, this.modelMBean, 
-        Helper.getNextNotificationSequenceNumber(),
-        Helper.getCacheEventDetails(event)));
+    Helper.sendNotification(this, new Notification(NOTIF_CACHE_CLOSED, this.modelMBean, Helper.getNextNotificationSequenceNumber(), Helper.getCacheEventDetails(event)));
   }
 
   /**
@@ -549,10 +512,8 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    *          event object corresponding to the creation of a region
    */
   public void handleRegionCreate(SystemMemberRegionEvent event) {
-    Notification notification = new Notification(NOTIF_REGION_CREATED, this.modelMBean, 
-        Helper.getNextNotificationSequenceNumber(),
-        Helper.getRegionEventDetails(event));
-    
+    Notification notification = new Notification(NOTIF_REGION_CREATED, this.modelMBean, Helper.getNextNotificationSequenceNumber(), Helper.getRegionEventDetails(event));
+
     notification.setUserData(event.getRegionPath());
 
     Helper.sendNotification(this, notification);
@@ -570,23 +531,19 @@ implements SystemMemberJmx, javax.management.NotificationListener,
    */
   public void handleRegionLoss(SystemMemberRegionEvent event) {
     SystemMemberCacheJmxImpl cacheResource = this.managedSystemMemberCache;
-    
+
     if (cacheResource != null) {
-      ManagedResource cleanedUp = 
-                cacheResource.cleanupRegionResources(event.getRegionPath());
-      
+      ManagedResource cleanedUp = cacheResource.cleanupRegionResources(event.getRegionPath());
+
       if (cleanedUp != null) {
         MBeanUtil.unregisterMBean(cleanedUp);
       }
     }
-    
-    Notification notification = new Notification(NOTIF_REGION_LOST, this.modelMBean, 
-        Helper.getNextNotificationSequenceNumber(),
-        Helper.getRegionEventDetails(event));
-    
+
+    Notification notification = new Notification(NOTIF_REGION_LOST, this.modelMBean, Helper.getNextNotificationSequenceNumber(), Helper.getRegionEventDetails(event));
+
     notification.setUserData(event.getRegionPath());
 
     Helper.sendNotification(this, notification);
   }
 }
-

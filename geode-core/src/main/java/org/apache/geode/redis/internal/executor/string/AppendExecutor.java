@@ -26,14 +26,15 @@ import org.apache.geode.redis.internal.ExecutionHandlerContext;
 import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class AppendExecutor extends StringExecutor {
-  
+
   private final int VALUE_INDEX = 2;
-  
+
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
     List<byte[]> commandElems = command.getProcessedCommand();
 
-    Region<ByteArrayWrapper, ByteArrayWrapper> r = context.getRegionProvider().getStringsRegion();;
+    Region<ByteArrayWrapper, ByteArrayWrapper> r = context.getRegionProvider().getStringsRegion();
+    ;
 
     if (commandElems.size() < 3) {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.APPEND));
@@ -60,7 +61,7 @@ public class AppendExecutor extends StringExecutor {
   private byte[] concatArrays(byte[] o, byte[] n) {
     int oLen = o.length;
     int nLen = n.length;
-    byte[] combined = new byte[oLen+nLen];
+    byte[] combined = new byte[oLen + nLen];
     System.arraycopy(o, 0, combined, 0, oLen);
     System.arraycopy(n, 0, combined, oLen, nLen);
     return combined;

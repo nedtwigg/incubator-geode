@@ -91,8 +91,7 @@ public class LuceneServiceImplIntegrationTest {
   private ClientCache getClientCache() {
     if (null == clientCache) {
       clientCache = new ClientCacheFactory().set(MCAST_PORT, "0").create();
-    }
-    else {
+    } else {
       return clientCache;
     }
     return clientCache;
@@ -106,5 +105,3 @@ public class LuceneServiceImplIntegrationTest {
   }
 
 }
-
-

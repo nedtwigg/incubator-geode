@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.cli.parser.preprocessor;
 
-
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,7 +43,7 @@ public class PreprocessorUtils {
       return null;
     }
   }
-  
+
   /**
    * 
    * This function will trim the given input string. It will not only remove the
@@ -86,7 +85,7 @@ public class PreprocessorUtils {
       // "^(.*)(\\s-+)$" - something that ends with a space followed by a series of hyphens.
       while (Pattern.matches("^(.*)(\\s-+)$", inputCopy)) {
         inputCopy = StringUtils.removeEnd(inputCopy, SyntaxConstants.SHORT_OPTION_SPECIFIER);
-        
+
         // Again we need to trim the trailing white spaces
         // As we are in a loop
         inputCopy = StringUtils.stripEnd(inputCopy, null);
@@ -282,9 +281,7 @@ public class PreprocessorUtils {
   // Not used at present
   @SuppressWarnings("unused")
   private static boolean isClosingBracket(char ch) {
-    if (EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch
-        || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch
-        || EnclosingCharacters.CLOSING_CURLY_BRACE == ch) {
+    if (EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch || EnclosingCharacters.CLOSING_CURLY_BRACE == ch) {
       return true;
     } else {
       return false;
@@ -292,9 +289,7 @@ public class PreprocessorUtils {
   }
 
   private static boolean isOpeningBracket(char ch) {
-    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch
-        || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch
-        || EnclosingCharacters.OPENING_CURLY_BRACE == ch) {
+    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch || EnclosingCharacters.OPENING_CURLY_BRACE == ch) {
       return true;
     } else {
       return false;
@@ -302,14 +297,7 @@ public class PreprocessorUtils {
   }
 
   private static boolean isValueEnclosingChar(char ch) {
-    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch
-        || EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch
-        || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch
-        || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch
-        || EnclosingCharacters.OPENING_CURLY_BRACE == ch
-        || EnclosingCharacters.CLOSING_CURLY_BRACE == ch
-        || EnclosingCharacters.DOUBLE_QUOTATION == ch
-        || EnclosingCharacters.SINGLE_QUOTATION == ch) {
+    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch || EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch || EnclosingCharacters.OPENING_CURLY_BRACE == ch || EnclosingCharacters.CLOSING_CURLY_BRACE == ch || EnclosingCharacters.DOUBLE_QUOTATION == ch || EnclosingCharacters.SINGLE_QUOTATION == ch) {
       return true;
     }
     return false;
@@ -327,9 +315,9 @@ public class PreprocessorUtils {
       return false;
     }
   }
-  
+
   public static boolean isWhitespace(char ch) {
-    if (ch == ' ' || ch == '\t' || ch == '\n' || (ch == '\r' && SystemUtils.isWindows()) ) {
+    if (ch == ' ' || ch == '\t' || ch == '\n' || (ch == '\r' && SystemUtils.isWindows())) {
       return true;
     }
     return false;

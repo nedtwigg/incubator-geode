@@ -30,19 +30,19 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
  */
 public class CompactResponse extends AdminResponse {
   private HashSet<PersistentID> persistentIds;
-  
+
   public CompactResponse() {
   }
-  
+
   public CompactResponse(InternalDistributedMember sender, HashSet<PersistentID> persistentIds) {
     this.setRecipient(sender);
     this.persistentIds = persistentIds;
   }
-  
+
   public HashSet<PersistentID> getPersistentIds() {
     return persistentIds;
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
@@ -51,10 +51,10 @@ public class CompactResponse extends AdminResponse {
 
   @Override
   public void toData(DataOutput out) throws IOException {
-    super.toData(out);    
+    super.toData(out);
     DataSerializer.writeHashSet(persistentIds, out);
   }
-  
+
   public CompactResponse(InternalDistributedMember sender) {
     this.setRecipient(sender);
   }

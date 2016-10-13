@@ -27,6 +27,7 @@ import org.apache.geode.distributed.internal.ServerLocation;
  */
 public class ServerProxy {
   protected final InternalPool pool;
+
   /**
    * Creates a server proxy for the given pool.
    * @param pool the pool that this proxy will use to communicate with servers
@@ -34,12 +35,14 @@ public class ServerProxy {
   public ServerProxy(InternalPool pool) {
     this.pool = pool;
   }
+
   /**
    * Returns the pool the proxy is using.
    */
   public InternalPool getPool() {
     return this.pool;
   }
+
   /**
    * Release use of this pool
    */
@@ -54,15 +57,15 @@ public class ServerProxy {
   public void ping(ServerLocation server) {
     PingOp.execute(this.pool, server);
   }
+
   /**
    * Does a query on a server
    * @param queryPredicate A query language boolean query predicate
    * @return  A <code>SelectResults</code> containing the values
    *            that match the <code>queryPredicate</code>.
    */
-  public SelectResults query(String queryPredicate, Object[] queryParams)
-  {
+  public SelectResults query(String queryPredicate, Object[] queryParams) {
     return QueryOp.execute(this.pool, queryPredicate, queryParams);
   }
-  
+
 }

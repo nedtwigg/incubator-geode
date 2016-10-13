@@ -35,21 +35,21 @@ import org.apache.geode.internal.process.ControlFileWatchdog.ControlRequestHandl
  */
 public final class ControllableProcess {
   private static final Logger logger = LogService.getLogger();
-  
+
   private final File workingDir;
   private final File pidFile;
   private final LocalProcessLauncher launcher;
   private final ControlFileWatchdog stopRequestFileWatchdog;
   private final ControlFileWatchdog statusRequestFileWatchdog;
-  
+
   public ControllableProcess(final ControlNotificationHandler handler, final File workingDir, final ProcessType processType, boolean force) throws FileAlreadyExistsException, IOException, PidUnavailableException {
     this.workingDir = workingDir;
     this.pidFile = new File(this.workingDir, processType.getPidFileName());
-    
+
     deleteFiles(this.workingDir, processType);
-    
+
     this.launcher = new LocalProcessLauncher(this.pidFile, force);
-    
+
     final ControlRequestHandler stopHandler = new ControlRequestHandler() {
       @Override
       public void handleRequest() {
@@ -78,13 +78,13 @@ public final class ControllableProcess {
         assert renamed;
       }
     };
-    
+
     this.stopRequestFileWatchdog = new ControlFileWatchdog(workingDir, processType.getStopRequestFileName(), stopHandler, false);
     this.stopRequestFileWatchdog.start();
     this.statusRequestFileWatchdog = new ControlFileWatchdog(workingDir, processType.getStatusRequestFileName(), statusHandler, false);
     this.statusRequestFileWatchdog.start();
   }
-  
+
   /**
    * Returns the process id (PID).
    * 
@@ -93,7 +93,7 @@ public final class ControllableProcess {
   public int getPid() {
     return this.launcher.getPid();
   }
-  
+
   /**
    * Returns the PID file.
    * 
@@ -117,17 +117,17 @@ public final class ControllableProcess {
       this.launcher.close();
     }
   }
-  
+
   protected File getWorkingDir() {
     return this.workingDir;
   }
-  
+
   private static void deleteFiles(final File workingDir, final ProcessType processType) {
     deleteFile(workingDir, processType.getStatusRequestFileName());
     deleteFile(workingDir, processType.getStatusFileName());
     deleteFile(workingDir, processType.getStopRequestFileName());
   }
-  
+
   private static void deleteFile(final File workingDir, final String fileName) {
     final File file = new File(workingDir, fileName);
     if (file.exists()) {

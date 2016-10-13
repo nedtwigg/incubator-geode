@@ -35,30 +35,31 @@ import parReg.query.unittest.NewPortfolio;
  *
  */
 public class Utils {
-  public static String printResult(Object r){
+  public static String printResult(Object r) {
     StringBuffer sb = new StringBuffer();
     sb.append("Search Results\n");
-    if(r == null){
+    if (r == null) {
       sb.append("Result is NULL");
       return sb.toString();
-    } else if(r == QueryService.UNDEFINED){
+    } else if (r == QueryService.UNDEFINED) {
       sb.append("Result is UNDEFINED");
       return sb.toString();
     }
-    sb.append("Type = "+r.getClass().getName()).append("\n");
-    if(r instanceof Collection){
-      sb.append("Size = "+((Collection)r).size()+"\n");
-      int cnt = 1 ;
-      Iterator iter = ((Collection)r).iterator();
-      while(iter.hasNext()){
+    sb.append("Type = " + r.getClass().getName()).append("\n");
+    if (r instanceof Collection) {
+      sb.append("Size = " + ((Collection) r).size() + "\n");
+      int cnt = 1;
+      Iterator iter = ((Collection) r).iterator();
+      while (iter.hasNext()) {
         Object value = iter.next();
-        sb.append((cnt++)+" type = "+value.getClass().getName()).append("\n");
-        sb.append("  "+value+"\n");
+        sb.append((cnt++) + " type = " + value.getClass().getName()).append("\n");
+        sb.append("  " + value + "\n");
       }
     } else
       sb.append(r);
     return sb.toString();
   }
+
   /**
    * This function <br>
    * 1. The Creates an array of PortfolioData objects

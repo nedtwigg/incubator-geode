@@ -39,18 +39,16 @@ public final class SecurityManagerLogWriter extends ManagerLogWriter {
     super(level, stream);
   }
 
-  public SecurityManagerLogWriter(int level, PrintStream stream,
-      String connectionName) {
+  public SecurityManagerLogWriter(int level, PrintStream stream, String connectionName) {
 
     super(level, stream, connectionName);
   }
 
-
   @Override
   public void setConfig(LogConfig config) {
-    
+
     if (config instanceof DistributionConfig) {
-      config = new SecurityLogConfig((DistributionConfig)config);
+      config = new SecurityLogConfig((DistributionConfig) config);
     }
     super.setConfig(config);
   }
@@ -59,7 +57,7 @@ public final class SecurityManagerLogWriter extends ManagerLogWriter {
   public boolean isSecure() {
     return true;
   }
-  
+
   /**
    * Adds the {@link SecurityLogWriter#SECURITY_PREFIX} prefix to the log-level
    * to distinguish security related log-lines.

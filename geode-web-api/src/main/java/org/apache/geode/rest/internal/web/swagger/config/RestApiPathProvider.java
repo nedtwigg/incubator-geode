@@ -39,8 +39,7 @@ public class RestApiPathProvider implements SwaggerPathProvider {
   private SwaggerPathProvider defaultPathProvider;
 
   public RestApiPathProvider(final String docsLocation) {
-    Assert.isTrue(!StringUtils.isBlank(docsLocation),
-        "The docs location must be specified!");
+    Assert.isTrue(!StringUtils.isBlank(docsLocation), "The docs location must be specified!");
 
     DistributionConfig config = InternalDistributedSystem.getAnyInstance().getConfig();
     String scheme = config.getHttpServiceSSLEnabled() ? "https" : "http";
@@ -55,7 +54,7 @@ public class RestApiPathProvider implements SwaggerPathProvider {
       if (org.apache.commons.lang.StringUtils.isBlank(config.getServerBindAddress())) {
         if (org.apache.commons.lang.StringUtils.isBlank(config.getBindAddress())) {
           try {
-          bindAddress = SocketCreator.getLocalHost().getHostAddress();
+            bindAddress = SocketCreator.getLocalHost().getHostAddress();
           } catch (UnknownHostException e) {
             e.printStackTrace();
           }
@@ -76,14 +75,12 @@ public class RestApiPathProvider implements SwaggerPathProvider {
 
   @Override
   public String getAppBasePath() {
-    return UriComponentsBuilder.fromHttpUrl(docsLocation)
-        .path(servletContext.getContextPath()).build().toString();
+    return UriComponentsBuilder.fromHttpUrl(docsLocation).path(servletContext.getContextPath()).build().toString();
   }
 
   @Override
   public String getSwaggerDocumentationBasePath() {
-    return UriComponentsBuilder.fromHttpUrl(getAppBasePath())
-        .pathSegment("api-docs/").build().toString();
+    return UriComponentsBuilder.fromHttpUrl(getAppBasePath()).pathSegment("api-docs/").build().toString();
   }
 
   @Override
@@ -91,8 +88,7 @@ public class RestApiPathProvider implements SwaggerPathProvider {
     return defaultPathProvider.getRequestMappingEndpoint(requestMappingPattern);
   }
 
-  public void setDefaultPathProvider(
-      final SwaggerPathProvider defaultSwaggerPathProvider) {
+  public void setDefaultPathProvider(final SwaggerPathProvider defaultSwaggerPathProvider) {
     this.defaultPathProvider = defaultSwaggerPathProvider;
   }
 

@@ -57,7 +57,7 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
   /**
    * Returns region attributes for a <code>GLOBAL</code> region
    */
-   protected RegionAttributes getRegionAttributes() {
+  protected RegionAttributes getRegionAttributes() {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.GLOBAL);
     factory.setConcurrencyChecksEnabled(false);
@@ -74,8 +74,7 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
    * @see Region#createSubregion
    */
   @Test
-  public void testIncompatibleSubregions()
-    throws CacheException, InterruptedException {
+  public void testIncompatibleSubregions() throws CacheException, InterruptedException {
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -87,62 +86,60 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
 
     final String name = this.getUniqueName() + "-GLOBAL";
     vm0.invoke(new SerializableRunnable("Create GLOBAL Region") {
-        public void run() {
-          try {
-            createRegion(name, "INCOMPATIBLE_ROOT", getRegionAttributes());
-          } catch (CacheException ex) {
-            Assert.fail("While creating GLOBAL region", ex);
-          }
-          assertTrue(getRootRegion("INCOMPATIBLE_ROOT").getAttributes().getScope().isGlobal());
+      public void run() {
+        try {
+          createRegion(name, "INCOMPATIBLE_ROOT", getRegionAttributes());
+        } catch (CacheException ex) {
+          Assert.fail("While creating GLOBAL region", ex);
         }
-      });
+        assertTrue(getRootRegion("INCOMPATIBLE_ROOT").getAttributes().getScope().isGlobal());
+      }
+    });
 
     vm1.invoke(new SerializableRunnable("Create NO ACK Region") {
-        public void run() {
+      public void run() {
+        try {
+          AttributesFactory factory = new AttributesFactory(getRegionAttributes());
+          factory.setScope(Scope.DISTRIBUTED_NO_ACK);
           try {
-            AttributesFactory factory =
-              new AttributesFactory(getRegionAttributes());
-            factory.setScope(Scope.DISTRIBUTED_NO_ACK);
-            try {
-              assertNull(getRootRegion("INCOMPATIBLE_ROOT"));
-              createRegion(name,  "INCOMPATIBLE_ROOT", factory.create());
-              fail("Should have thrown an IllegalStateException");
-            } catch (IllegalStateException ex) {
-              // pass...
-//              assertNull(getRootRegion());
-            }
-
-          } catch (CacheException ex) {
-            Assert.fail("While creating GLOBAL Region", ex);
+            assertNull(getRootRegion("INCOMPATIBLE_ROOT"));
+            createRegion(name, "INCOMPATIBLE_ROOT", factory.create());
+            fail("Should have thrown an IllegalStateException");
+          } catch (IllegalStateException ex) {
+            // pass...
+            //              assertNull(getRootRegion());
           }
+
+        } catch (CacheException ex) {
+          Assert.fail("While creating GLOBAL Region", ex);
         }
-      });
+      }
+    });
 
     vm1.invoke(new SerializableRunnable("Create ACK Region") {
-        public void run() {
+      public void run() {
+        try {
+          AttributesFactory factory = new AttributesFactory(getRegionAttributes());
+          factory.setScope(Scope.DISTRIBUTED_ACK);
           try {
-            AttributesFactory factory =
-              new AttributesFactory(getRegionAttributes());
-            factory.setScope(Scope.DISTRIBUTED_ACK);
-            try {
-             //assertNull(getRootRegion()); // This should be null, but is not
-              RegionAttributes attrs = factory.create();
-              createRootRegion("INCOMPATIBLE_ROOT", attrs);
-              fail("Should have thrown an IllegalStateException");
+            //assertNull(getRootRegion()); // This should be null, but is not
+            RegionAttributes attrs = factory.create();
+            createRootRegion("INCOMPATIBLE_ROOT", attrs);
+            fail("Should have thrown an IllegalStateException");
 
-              createRegion(name, "INCOMPATIBLE_ROOT", factory.create());
-              fail("Should have thrown an IllegalStateException");
+            createRegion(name, "INCOMPATIBLE_ROOT", factory.create());
+            fail("Should have thrown an IllegalStateException");
 
-           } catch (IllegalStateException ex) {
-              // pass...
-              assertNull(getRootRegion());
-            }
-
-          } catch (CacheException ex) {
-            Assert.fail("While creating GLOBAL Region", ex);
+          } catch (IllegalStateException ex) {
+            // pass...
+            assertNull(getRootRegion());
           }
+
+        } catch (CacheException ex) {
+          Assert.fail("While creating GLOBAL Region", ex);
         }
-      });
+      }
+    });
   }
 
   /**
@@ -161,42 +158,38 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    SerializableRunnable create =
-      new CacheSerializableRunnable("Create Region") {
-        public void run2() throws CacheException {
-          Region region = createRegion(name);
-          loader = new TestCacheLoader() {
-              public Object load2(LoaderHelper helper)
-                throws CacheLoaderException {
+    SerializableRunnable create = new CacheSerializableRunnable("Create Region") {
+      public void run2() throws CacheException {
+        Region region = createRegion(name);
+        loader = new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
 
-                fail("Should not be invoked");
-                return null;
-              }
-            };
-          region.getAttributesMutator().setCacheLoader(loader);
-        }
-      };
+            fail("Should not be invoked");
+            return null;
+          }
+        };
+        region.getAttributesMutator().setCacheLoader(loader);
+      }
+    };
 
     vm0.invoke(create);
     vm0.invoke(new CacheSerializableRunnable("Put") {
-        public void run2() throws CacheException {
-          Region region =
-            getRootRegion().getSubregion(name);
-          region.put(key, value);
-          assertFalse(loader.wasInvoked());
-        }
-      });
+      public void run2() throws CacheException {
+        Region region = getRootRegion().getSubregion(name);
+        region.put(key, value);
+        assertFalse(loader.wasInvoked());
+      }
+    });
 
     vm1.invoke(create);
 
     vm1.invoke(new CacheSerializableRunnable("Get") {
-        public void run2() throws CacheException {
-          Region region =
-            getRootRegion().getSubregion(name);
-          assertEquals(value, region.get(key));
-          assertFalse(loader.wasInvoked());
-        }
-      });
+      public void run2() throws CacheException {
+        Region region = getRootRegion().getSubregion(name);
+        assertEquals(value, region.get(key));
+        assertFalse(loader.wasInvoked());
+      }
+    });
   }
 
   /**
@@ -204,28 +197,26 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
    * incrementing the value of an entry get the right value.
    */
   @Test
-  public void testSynchronousIncrements()
-    throws InterruptedException {
+  public void testSynchronousIncrements() throws InterruptedException {
 
     //getCache().setLockTimeout(getCache().getLockTimeout() * 2);
-      
+
     final String name = this.getUniqueName();
     final Object key = "KEY";
-//    final Object value = "VALUE";
+    //    final Object value = "VALUE";
 
     Host host = Host.getHost(0);
     final int vmCount = host.getVMCount();
     final int threadsPerVM = 3;
     final int incrementsPerThread = 10;
 
-    SerializableRunnable create =
-      new CacheSerializableRunnable("Create region") {
-          public void run2() throws CacheException {
-            createRegion(name);
-            Region region = getRootRegion().getSubregion(name);
-            region.put(key, new Integer(0));
-          }
-        };
+    SerializableRunnable create = new CacheSerializableRunnable("Create region") {
+      public void run2() throws CacheException {
+        createRegion(name);
+        Region region = getRootRegion().getSubregion(name);
+        region.put(key, new Integer(0));
+      }
+    };
 
     VM vm0 = host.getVM(0);
     vm0.invoke(create);
@@ -236,85 +227,77 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
 
     try {
       Thread.sleep(50);
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       fail("interrupted");
     }
-    
-    SerializableRunnable increment =
-      new CacheSerializableRunnable("Start Threads and increment") {
-          public void run2() throws CacheException {
-            final ThreadGroup group =
-              new ThreadGroup("Incrementors") {
-                  public void uncaughtException(Thread t, Throwable e)
-                  {
-                    if (e instanceof VirtualMachineError) {
-                      SystemFailure.setFailure((VirtualMachineError)e); // don't throw
-                    }
-                    String s = "Uncaught exception in thread " + t;
-                    Assert.fail(s, e);
-                  }
-                };
 
-            Thread[] threads = new Thread[threadsPerVM];
-            for (int i = 0; i < threadsPerVM; i++) {
-              Thread thread = new Thread(group, new Runnable() {
-                  public void run() {
-                    try {
-                      LogWriterUtils.getLogWriter().info("testSynchronousIncrements." + this);
-                      final Random rand = new Random(System.identityHashCode(this));
-                      try {
-                        Region region = getRootRegion().getSubregion(name);
-                        for (int j = 0; j < incrementsPerThread; j++) {
-                          Thread.sleep(rand.nextInt(30)+30);
-                          
-                          Lock lock = region.getDistributedLock(key);
-                          assertTrue(lock.tryLock(-1, TimeUnit.MILLISECONDS));
-                          
-                          Integer value = (Integer) region.get(key);
-                          Integer oldValue = value;
-                          if (value == null) {
-                            value = new Integer(1);
-  
-                          } else {
-                            Integer v = value;
-                            value = new Integer(v.intValue() + 1);
-                          }
-  
-                          assertEquals(oldValue, region.get(key));
-                          region.put(key, value);
-                          assertEquals(value, region.get(key));
-                          
-                          LogWriterUtils.getLogWriter().info("testSynchronousIncrements." + 
-                              this + ": " + key + " -> " + value);
-                          lock.unlock();
-                        }
-  
-                      } catch (InterruptedException ex) {
-                        Assert.fail("While incrementing", ex);
-                      } catch (Exception ex) {
-                        Assert.fail("While incrementing", ex);
-                      }
-                    }
-                    catch (VirtualMachineError e) {
-                      SystemFailure.initiateFailure(e);
-                      throw e;
-                    }
-                    catch (Throwable t) {
-                      LogWriterUtils.getLogWriter().info("testSynchronousIncrements." + 
-                          this + " caught Throwable", t);
-                    }
-                  }
-                }, "Incrementer " + i);
-              threads[i] = thread;
-              thread.start();
+    SerializableRunnable increment = new CacheSerializableRunnable("Start Threads and increment") {
+      public void run2() throws CacheException {
+        final ThreadGroup group = new ThreadGroup("Incrementors") {
+          public void uncaughtException(Thread t, Throwable e) {
+            if (e instanceof VirtualMachineError) {
+              SystemFailure.setFailure((VirtualMachineError) e); // don't throw
             }
-            
-            for (int i = 0; i < threads.length; i++) {
-              ThreadUtils.join(threads[i], 30 * 1000);
-            }
+            String s = "Uncaught exception in thread " + t;
+            Assert.fail(s, e);
           }
         };
+
+        Thread[] threads = new Thread[threadsPerVM];
+        for (int i = 0; i < threadsPerVM; i++) {
+          Thread thread = new Thread(group, new Runnable() {
+            public void run() {
+              try {
+                LogWriterUtils.getLogWriter().info("testSynchronousIncrements." + this);
+                final Random rand = new Random(System.identityHashCode(this));
+                try {
+                  Region region = getRootRegion().getSubregion(name);
+                  for (int j = 0; j < incrementsPerThread; j++) {
+                    Thread.sleep(rand.nextInt(30) + 30);
+
+                    Lock lock = region.getDistributedLock(key);
+                    assertTrue(lock.tryLock(-1, TimeUnit.MILLISECONDS));
+
+                    Integer value = (Integer) region.get(key);
+                    Integer oldValue = value;
+                    if (value == null) {
+                      value = new Integer(1);
+
+                    } else {
+                      Integer v = value;
+                      value = new Integer(v.intValue() + 1);
+                    }
+
+                    assertEquals(oldValue, region.get(key));
+                    region.put(key, value);
+                    assertEquals(value, region.get(key));
+
+                    LogWriterUtils.getLogWriter().info("testSynchronousIncrements." + this + ": " + key + " -> " + value);
+                    lock.unlock();
+                  }
+
+                } catch (InterruptedException ex) {
+                  Assert.fail("While incrementing", ex);
+                } catch (Exception ex) {
+                  Assert.fail("While incrementing", ex);
+                }
+              } catch (VirtualMachineError e) {
+                SystemFailure.initiateFailure(e);
+                throw e;
+              } catch (Throwable t) {
+                LogWriterUtils.getLogWriter().info("testSynchronousIncrements." + this + " caught Throwable", t);
+              }
+            }
+          }, "Incrementer " + i);
+          threads[i] = thread;
+          thread.start();
+        }
+
+        for (int i = 0; i < threads.length; i++) {
+          ThreadUtils.join(threads[i], 30 * 1000);
+        }
+      }
+    };
 
     AsyncInvocation[] invokes = new AsyncInvocation[vmCount];
     for (int i = 0; i < vmCount; i++) {
@@ -329,15 +312,14 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
     }
 
     vm0.invoke(new CacheSerializableRunnable("Verify final value") {
-        public void run2() throws CacheException {
-          Region region =
-            getRootRegion().getSubregion(name);
-          Integer value = (Integer) region.get(key);
-          assertNotNull(value);
-          int expected = vmCount * threadsPerVM * incrementsPerThread;
-          assertEquals(expected, value.intValue());
-        }
-      });
+      public void run2() throws CacheException {
+        Region region = getRootRegion().getSubregion(name);
+        Integer value = (Integer) region.get(key);
+        assertNotNull(value);
+        int expected = vmCount * threadsPerVM * incrementsPerThread;
+        assertEquals(expected, value.intValue());
+      }
+    });
   }
 
   /**
@@ -356,68 +338,66 @@ public class GlobalRegionDUnitTest extends MultiVMRegionTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    SerializableRunnable create =
-      new CacheSerializableRunnable("Create Region") {
-        public void run2() throws CacheException {
-          createRegion(name);
-        }
-      };
+    SerializableRunnable create = new CacheSerializableRunnable("Create Region") {
+      public void run2() throws CacheException {
+        createRegion(name);
+      }
+    };
 
     vm0.invoke(create);
 
     vm1.invoke(create);
 
     vm0.invoke(new CacheSerializableRunnable("Lock entry") {
-        public void run2() throws CacheException {
-          Region region =
-            getRootRegion().getSubregion(name);
-          Lock lock = region.getDistributedLock(key);
-          lock.lock();
-        }
-      });
+      public void run2() throws CacheException {
+        Region region = getRootRegion().getSubregion(name);
+        Lock lock = region.getDistributedLock(key);
+        lock.lock();
+      }
+    });
 
     vm1.invoke(new CacheSerializableRunnable("Attempt get/put") {
-        public void run2() throws CacheException {
-          Cache cache = getCache();
-          cache.setLockTimeout(1);
-          cache.setSearchTimeout(1);
-          Region region =
-            getRootRegion().getSubregion(name);
+      public void run2() throws CacheException {
+        Cache cache = getCache();
+        cache.setLockTimeout(1);
+        cache.setSearchTimeout(1);
+        Region region = getRootRegion().getSubregion(name);
 
-          try {
-            region.put(key, value);
-            fail("Should have thrown a TimeoutException on put");
+        try {
+          region.put(key, value);
+          fail("Should have thrown a TimeoutException on put");
 
-          } catch (TimeoutException ex) {
-            // pass..
-          }
-          
-          // With a loader, should try to lock and time out
-          region.getAttributesMutator().setCacheLoader(new TestCacheLoader() {
-            public Object load2(LoaderHelper helper) { return null; }
-          });
-          try {
-            region.get(key);
-            fail("Should have thrown a TimeoutException on get");
-
-          } catch (TimeoutException ex) {
-            // pass..
-          }
-
-          // Without a loader, should succeed
-          region.getAttributesMutator().setCacheLoader(null);
-          region.get(key);
+        } catch (TimeoutException ex) {
+          // pass..
         }
-      });
+
+        // With a loader, should try to lock and time out
+        region.getAttributesMutator().setCacheLoader(new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) {
+            return null;
+          }
+        });
+        try {
+          region.get(key);
+          fail("Should have thrown a TimeoutException on get");
+
+        } catch (TimeoutException ex) {
+          // pass..
+        }
+
+        // Without a loader, should succeed
+        region.getAttributesMutator().setCacheLoader(null);
+        region.get(key);
+      }
+    });
 
     vm0.invoke(new CacheSerializableRunnable("Unlock entry") {
-        public void run2() throws CacheException {
-          Region region =
-            getRootRegion().getSubregion(name);
-          Lock lock = region.getDistributedLock(key);
-          lock.unlock();
-       }
-      });
+      public void run2() throws CacheException {
+        Region region = getRootRegion().getSubregion(name);
+        Lock lock = region.getDistributedLock(key);
+        lock.unlock();
+      }
+    });
   }
 
 }

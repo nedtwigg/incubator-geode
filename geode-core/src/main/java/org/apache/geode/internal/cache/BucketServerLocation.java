@@ -31,7 +31,7 @@ import org.apache.geode.distributed.internal.ServerLocation;
  */
 @SuppressWarnings("serial")
 public class BucketServerLocation extends ServerLocation {
-  
+
   private byte version;
 
   private int bucketId;
@@ -41,12 +41,11 @@ public class BucketServerLocation extends ServerLocation {
   public BucketServerLocation() {
   }
 
-  public BucketServerLocation(int bucketId, int port, String host,
-      boolean isPrimary, byte version) {
+  public BucketServerLocation(int bucketId, int port, String host, boolean isPrimary, byte version) {
     super(host, port);
     this.bucketId = bucketId;
     this.isPrimary = isPrimary;
-    this.version = version ;
+    this.version = version;
   }
 
   @Override
@@ -68,12 +67,12 @@ public class BucketServerLocation extends ServerLocation {
   public boolean isPrimary() {
     return this.isPrimary;
   }
-  
-  public byte getVersion(){
+
+  public byte getVersion() {
     return this.version;
   }
 
-/*  @Override
+  /*  @Override
   public String toString() {
     return "BucketServerLocation{bucketId=" + bucketId + ",host="
         + this.getHostName() + ",port=" + this.getPort() + ",isPrimary="

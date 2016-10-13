@@ -57,8 +57,8 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
 
   private static final Logger logger = LogService.getLogger();
-  
-  private HashMap regionToDispatchedKeysMap; 
+
+  private HashMap regionToDispatchedKeysMap;
 
   public ParallelQueueRemovalMessage() {
   }
@@ -78,41 +78,33 @@ public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
     final GemFireCacheImpl cache;
     cache = GemFireCacheImpl.getInstance();
     if (cache != null) {
-      int oldLevel = LocalRegion
-          .setThreadInitLevelRequirement(LocalRegion.BEFORE_INITIAL_IMAGE);
+      int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.BEFORE_INITIAL_IMAGE);
       try {
         for (Object name : regionToDispatchedKeysMap.keySet()) {
-          final String regionName = (String)name;
-          final PartitionedRegion region = (PartitionedRegion)cache
-              .getRegion(regionName);
+          final String regionName = (String) name;
+          final PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
           if (region == null) {
             continue;
-          }
-          else {
-            AbstractGatewaySender abstractSender = region.getParallelGatewaySender(); 
+          } else {
+            AbstractGatewaySender abstractSender = region.getParallelGatewaySender();
             // Find the map: bucketId to dispatchedKeys
             // Find the bucket
             // Destroy the keys
-            Map bucketIdToDispatchedKeys = (Map)this.regionToDispatchedKeysMap
-                .get(regionName);
+            Map bucketIdToDispatchedKeys = (Map) this.regionToDispatchedKeysMap.get(regionName);
             for (Object bId : bucketIdToDispatchedKeys.keySet()) {
-              final String bucketFullPath = Region.SEPARATOR
-                  + PartitionedRegionHelper.PR_ROOT_REGION_NAME
-                  + Region.SEPARATOR + region.getBucketName((Integer)bId);
-              AbstractBucketRegionQueue brq = (AbstractBucketRegionQueue)cache
-                  .getRegionByPath(bucketFullPath);
+              final String bucketFullPath = Region.SEPARATOR + PartitionedRegionHelper.PR_ROOT_REGION_NAME + Region.SEPARATOR + region.getBucketName((Integer) bId);
+              AbstractBucketRegionQueue brq = (AbstractBucketRegionQueue) cache.getRegionByPath(bucketFullPath);
               if (isDebugEnabled) {
                 logger.debug("ParallelQueueRemovalMessage : The bucket in the cache is bucketRegionName : {} bucket: {}", bucketFullPath, brq);
               }
 
-              List dispatchedKeys = (List)bucketIdToDispatchedKeys
-                  .get((Integer)bId);
+              List dispatchedKeys = (List) bucketIdToDispatchedKeys.get((Integer) bId);
               if (dispatchedKeys != null) {
                 for (Object key : dispatchedKeys) {
                   //First, clear the Event from tempQueueEvents at AbstractGatewaySender level, if exists
                   //synchronize on AbstractGatewaySender.queuedEventsSync while doing so
                   abstractSender.removeFromTempQueueEvents(key);
-                  
+
                   if (brq != null) {
                     if (brq.isInitialized()) {
                       if (isDebugEnabled) {
@@ -121,8 +113,7 @@ public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
                       //fix for #48082
                       afterAckForSecondary_EventInBucket(abstractSender, brq, key);
                       destroyKeyFromBucketQueue(brq, key, region);
-                    }
-                    else {
+                    } else {
                       //if bucket is not initialized, the event should either be in bucket or tempQueue 
                       boolean isDestroyed = false;
                       if (isDebugEnabled) {
@@ -135,28 +126,24 @@ public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
                           afterAckForSecondary_EventInBucket(abstractSender, brq, key);
                           destroyKeyFromBucketQueue(brq, key, region);
                           isDestroyed = true;
-                        }
-                        else {
+                        } else {
                           // if BucketRegionQueue does not have the key, it
                           // should be in tempQueue
                           // remove it from there..defect #49196
-                          isDestroyed = destroyFromTempQueue(brq.getPartitionedRegion(),
-                              (Integer) bId,
-                              key);
+                          isDestroyed = destroyFromTempQueue(brq.getPartitionedRegion(), (Integer) bId, key);
                         }
                         if (!isDestroyed) {
-                    	  //event is neither destroyed from BucketRegionQueue nor from tempQueue
-                    	  brq.addToFailedBatchRemovalMessageKeys(key);
+                          //event is neither destroyed from BucketRegionQueue nor from tempQueue
+                          brq.addToFailedBatchRemovalMessageKeys(key);
                           if (isDebugEnabled) {
                             logger.debug("Event is neither destroyed from BucketRegionQueue not from tempQueue. Added to failedBatchRemovalMessageKeys: {}", key);
                           }
-                    	}
+                        }
                       } finally {
-                    	brq.getInitializationLock().readLock().unlock();
+                        brq.getInitializationLock().readLock().unlock();
                       }
                     }
-                  }
-                  else {// brq is null. Destroy the event from tempQueue. Defect #49196
+                  } else {// brq is null. Destroy the event from tempQueue. Defect #49196
                     destroyFromTempQueue(region, (Integer) bId, key);
                   }
                 }
@@ -171,29 +158,20 @@ public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
   }
 
   //fix for #48082
-  private void afterAckForSecondary_EventInBucket(
-      AbstractGatewaySender abstractSender, AbstractBucketRegionQueue brq,
-      Object key) {
+  private void afterAckForSecondary_EventInBucket(AbstractGatewaySender abstractSender, AbstractBucketRegionQueue brq, Object key) {
     for (GatewayEventFilter filter : abstractSender.getGatewayEventFilters()) {
-      GatewayQueueEvent eventForFilter = (GatewayQueueEvent)brq.get(key);
+      GatewayQueueEvent eventForFilter = (GatewayQueueEvent) brq.get(key);
       try {
         if (eventForFilter != null) {
           filter.afterAcknowledgement(eventForFilter);
         }
-      }
-      catch (Exception e) {
-        logger
-            .fatal(
-                LocalizedMessage
-                    .create(
-                        LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1,
-                        new Object[] { filter.toString(), eventForFilter }), e);
+      } catch (Exception e) {
+        logger.fatal(LocalizedMessage.create(LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1, new Object[] { filter.toString(), eventForFilter }), e);
       }
     }
   }
-  
-  private void destroyKeyFromBucketQueue(AbstractBucketRegionQueue brq,
-      Object key, PartitionedRegion prQ) {
+
+  private void destroyKeyFromBucketQueue(AbstractBucketRegionQueue brq, Object key, PartitionedRegion prQ) {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     try {
       brq.destroyKey(key);
@@ -207,7 +185,7 @@ public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
       //add the key to failedBatchRemovalMessageQueue. 
       //This is to handle the last scenario in #49196
       brq.addToFailedBatchRemovalMessageKeys(key);
-      
+
     } catch (ForceReattemptException fe) {
       if (isDebugEnabled) {
         logger.debug("Got ForceReattemptException while getting bucket {} to destroyLocally the keys.", brq.getId());
@@ -215,20 +193,16 @@ public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
     } catch (CancelException e) {
       return; // cache or DS is closing
     } catch (CacheException e) {
-      logger.error(LocalizedMessage.create(
-          LocalizedStrings.ParallelQueueRemovalMessage_QUEUEREMOVALMESSAGEPROCESSEXCEPTION_IN_PROCESSING_THE_LAST_DISPTACHED_KEY_FOR_A_SHADOWPR_THE_PROBLEM_IS_WITH_KEY__0_FOR_SHADOWPR_WITH_NAME_1,
-          new Object[] { key, prQ.getName() }), e);
+      logger.error(LocalizedMessage.create(LocalizedStrings.ParallelQueueRemovalMessage_QUEUEREMOVALMESSAGEPROCESSEXCEPTION_IN_PROCESSING_THE_LAST_DISPTACHED_KEY_FOR_A_SHADOWPR_THE_PROBLEM_IS_WITH_KEY__0_FOR_SHADOWPR_WITH_NAME_1, new Object[] { key, prQ.getName() }), e);
     }
   }
-  
+
   private boolean destroyFromTempQueue(PartitionedRegion qPR, int bId, Object key) {
-	boolean isDestroyed = false;
+    boolean isDestroyed = false;
     Set queues = qPR.getParallelGatewaySender().getQueues();
     if (queues != null) {
-      ConcurrentParallelGatewaySenderQueue prq = (ConcurrentParallelGatewaySenderQueue)queues
-          .toArray()[0];
-      BlockingQueue<GatewaySenderEventImpl> tempQueue = prq
-    		  .getBucketTmpQueue(bId);
+      ConcurrentParallelGatewaySenderQueue prq = (ConcurrentParallelGatewaySenderQueue) queues.toArray()[0];
+      BlockingQueue<GatewaySenderEventImpl> tempQueue = prq.getBucketTmpQueue(bId);
       if (tempQueue != null) {
         Iterator<GatewaySenderEventImpl> itr = tempQueue.iterator();
         while (itr.hasNext()) {
@@ -245,35 +219,26 @@ public class ParallelQueueRemovalMessage extends PooledDistributionMessage {
     }
     return isDestroyed;
   }
-  
+
   //fix for #48082
-  private void afterAckForSecondary_EventInTempQueue(
-      AbstractGatewaySender parallelGatewaySenderImpl,
-      GatewaySenderEventImpl eventForFilter) {
-    for (GatewayEventFilter filter : parallelGatewaySenderImpl
-        .getGatewayEventFilters()) {
+  private void afterAckForSecondary_EventInTempQueue(AbstractGatewaySender parallelGatewaySenderImpl, GatewaySenderEventImpl eventForFilter) {
+    for (GatewayEventFilter filter : parallelGatewaySenderImpl.getGatewayEventFilters()) {
       try {
         if (eventForFilter != null) {
           filter.afterAcknowledgement(eventForFilter);
         }
-      }
-      catch (Exception e) {
-        logger
-            .fatal(
-                LocalizedMessage
-                    .create(
-                        LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1,
-                        new Object[] { filter.toString(), eventForFilter }), e);
+      } catch (Exception e) {
+        logger.fatal(LocalizedMessage.create(LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1, new Object[] { filter.toString(), eventForFilter }), e);
       }
     }
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeHashMap(this.regionToDispatchedKeysMap, out);
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);

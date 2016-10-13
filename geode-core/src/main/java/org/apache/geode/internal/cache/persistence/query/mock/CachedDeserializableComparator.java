@@ -38,16 +38,16 @@ class CachedDeserializableComparator implements Comparator<Object> {
 
   @Override
   public int compare(Object o1, Object o2) {
-    if(o1 instanceof CachedDeserializable) {
+    if (o1 instanceof CachedDeserializable) {
       o1 = ((CachedDeserializable) o1).getDeserializedForReading();
     }
-    
-    if(o2 instanceof CachedDeserializable) {
+
+    if (o2 instanceof CachedDeserializable) {
       o2 = ((CachedDeserializable) o2).getDeserializedForReading();
     }
-    
+
     return comparator.compare(o1, o2);
-    
+
   }
-  
+
 }

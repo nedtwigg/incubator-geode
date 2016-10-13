@@ -33,7 +33,7 @@ public interface LuceneResultStruct<K, V> {
    * @throws IllegalArgumentException If this struct does not have a field named fieldName
    */
   public Object getProjectedField(String fieldName);
-  
+
   /**
    * Return key of the entry
    *
@@ -41,7 +41,7 @@ public interface LuceneResultStruct<K, V> {
    * @throws IllegalArgumentException If this struct does not contain key
    */
   public K getKey();
-  
+
   /**
    * Return value of the entry
    *
@@ -49,7 +49,7 @@ public interface LuceneResultStruct<K, V> {
    * @throws IllegalArgumentException If this struct does not contain value
    */
   public V getValue();
-  
+
   /**
    * Return score of the query 
    *
@@ -58,4 +58,3 @@ public interface LuceneResultStruct<K, V> {
    */
   public float getScore();
 }
-

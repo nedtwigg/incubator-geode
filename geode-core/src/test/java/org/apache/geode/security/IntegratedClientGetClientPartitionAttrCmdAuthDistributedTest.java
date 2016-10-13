@@ -27,8 +27,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
 @Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientGetClientPartitionAttrCmdAuthDistributedTest
-  extends AbstractSecureServerDUnitTest {
+public class IntegratedClientGetClientPartitionAttrCmdAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Test
   @Ignore("This is not a supported client message")
@@ -48,5 +47,3 @@ public class IntegratedClientGetClientPartitionAttrCmdAuthDistributedTest
     });
   }
 }
-
-

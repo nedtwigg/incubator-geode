@@ -91,7 +91,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
   private static final int NUM_PUB_THREADS = 2;
   private static final int NUM_PUBS = 2;
   private static final boolean RANDOMIZE_PUTS = true;
-  
+
   private static AtomicInteger updateEvents = new AtomicInteger();
   private static AtomicInteger puts = new AtomicInteger();
   private static AtomicReference<PubSubStats> subStatsRef = new AtomicReference<>();
@@ -113,7 +113,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
     invokeInEveryVM(() -> cleanup());
     disconnectAllFromDS(); // because this test enabled stat sampling!
   }
-  
+
   @Test
   public void testPubAndSubCustomStats() throws Exception {
     String regionName = "region_" + getName();
@@ -128,7 +128,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
     for (int pubVM = 0; pubVM < NUM_PUBS; pubVM++) {
       pubArchives[pubVM] = this.directory.getAbsolutePath() + File.separator + getName() + "_pub-" + pubVM + ".gfs";
     }
-    
+
     for (int i = 0; i < NUM_PUBS; i++) {
       final int pubVM = i;
       pubs[pubVM].invoke("pub-connect-and-create-data-" + pubVM, () -> {
@@ -167,12 +167,12 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
         // create the keys
         if (region.getAttributes().getScope() == Scope.DISTRIBUTED_ACK) {
           for (int key = 0; key < NUM_KEYS; key++) {
-            region.create("KEY-"+key, null);
+            region.create("KEY-" + key, null);
           }
         }
       });
     }
-    
+
     DistributedMember subMember = sub.invoke("sub-connect-and-create-keys", () -> {
       Properties props = new Properties();
       props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
@@ -211,14 +211,14 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       // create the keys
       if (region.getAttributes().getScope() == Scope.DISTRIBUTED_ACK) {
         for (int key = 0; key < NUM_KEYS; key++) {
-          region.create("KEY-"+key, null);
+          region.create("KEY-" + key, null);
         }
       }
 
       assertEquals(0, statistics.getUpdateEvents());
       return system.getDistributedMember();
     });
-    
+
     for (int i = 0; i < NUM_PUBS; i++) {
       final int pubVM = i;
       AsyncInvocation[] publishers = new AsyncInvocation[NUM_PUB_THREADS];
@@ -246,16 +246,16 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
             for (int idx = 0; idx < MAX_PUTS; idx++) {
               long start = statistics.startPut();
               key = randomGenerator.nextInt(NUM_KEYS);
-              region.put("KEY-"+key, idx);
+              region.put("KEY-" + key, idx);
               statistics.endPut(start);
             }
 
-          // cycle through he keys in order and wrapping back around
+            // cycle through he keys in order and wrapping back around
           } else {
             int key = 0;
             for (int idx = 0; idx < MAX_PUTS; idx++) {
               long start = statistics.startPut();
-              region.put("KEY-"+key, idx);
+              region.put("KEY-" + key, idx);
               key++; // cycle through the keys...
               if (key >= NUM_KEYS) {
                 key = 0;
@@ -284,7 +284,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
         }
       }
     }
-    
+
     sub.invoke("sub-wait-for-samples", () -> {
       // wait for 2 samples to ensure all stats have been archived
       StatisticsType statSamplerType = getSystem().findType("StatSampler");
@@ -301,10 +301,10 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       assertNotNull(statistics);
       updateEvents.set(statistics.getUpdateEvents());
     });
-    
+
     // validate pub values against sub values
     int totalUpdateEvents = sub.invoke(() -> getUpdateEvents());
-    
+
     // validate pub values against pub statistics against pub archive
     for (int i = 0; i < NUM_PUBS; i++) {
       final int pubIdx = i;
@@ -325,7 +325,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
         File archive = new File(pubArchives[pubIdx]);
         assertTrue(archive.exists());
 
-        StatArchiveReader reader = new StatArchiveReader(new File[]{archive}, null, false);
+        StatArchiveReader reader = new StatArchiveReader(new File[] { archive }, null, false);
 
         double combinedPuts = 0;
 
@@ -370,11 +370,11 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
         }
 
         // assert that sum of mostRecent values for all puts equals totalPuts
-        assertEquals((double)totalPuts, combinedPuts, 0);
+        assertEquals((double) totalPuts, combinedPuts, 0);
         puts.getAndAdd(totalPuts);
       });
     }
-    
+
     // validate pub values against sub values
     int totalCombinedPuts = 0;
     for (int i = 0; i < NUM_PUBS; i++) {
@@ -385,7 +385,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
     }
     assertEquals(totalCombinedPuts, totalUpdateEvents);
     assertEquals(MAX_PUTS * NUM_PUB_THREADS * NUM_PUBS, totalCombinedPuts);
-    
+
     // validate sub values against sub statistics against sub archive
     final int totalPuts = totalCombinedPuts;
     sub.invoke("sub-validation", () -> {
@@ -400,7 +400,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       File archive = new File(subArchive);
       assertTrue(archive.exists());
 
-      StatArchiveReader reader = new StatArchiveReader(new File[]{archive}, null, false);
+      StatArchiveReader reader = new StatArchiveReader(new File[] { archive }, null, false);
 
       double combinedUpdateEvents = 0;
 
@@ -427,26 +427,26 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
             double mean = sv.getSnapshotsAverage();
             double stdDev = sv.getSnapshotsStandardDeviation();
 
-            assertEquals(mostRecent, max,0);
+            assertEquals(mostRecent, max, 0);
 
             double summation = 0;
             double[] rawSnapshots = sv.getRawSnapshots();
             for (int j = 0; j < rawSnapshots.length; j++) {
               summation += rawSnapshots[j];
             }
-            assertEquals(mean, summation / sv.getSnapshotsSize(),0);
+            assertEquals(mean, summation / sv.getSnapshotsSize(), 0);
 
             combinedUpdateEvents += mostRecent;
           }
         }
       }
-      assertEquals((double)totalUpdateEvents, combinedUpdateEvents,0);
+      assertEquals((double) totalUpdateEvents, combinedUpdateEvents, 0);
     });
-    
+
     int updateEvents = sub.invoke(() -> readIntStat(new File(subArchive), "PubSubStats", "updateEvents"));
     assertTrue(updateEvents > 0);
     assertEquals(MAX_PUTS * NUM_PUB_THREADS * NUM_PUBS, updateEvents);
-    
+
     int puts = 0;
     for (int pubVM = 0; pubVM < NUM_PUBS; pubVM++) {
       int currentPubVM = pubVM;
@@ -457,21 +457,20 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
     }
     assertTrue(puts > 0);
     assertEquals(MAX_PUTS * NUM_PUB_THREADS * NUM_PUBS, puts);
-    
+
     // use regex "testPubAndSubCustomStats"
-    
+
     MultipleArchiveReader reader = new MultipleArchiveReader(this.directory, ".*" + getTestMethodName() + ".*\\.gfs");
 
     int combinedUpdateEvents = reader.readIntStat(PubSubStats.TYPE_NAME, PubSubStats.UPDATE_EVENTS);
     assertTrue("Failed to read updateEvents stat values", combinedUpdateEvents > 0);
-    
+
     int combinedPuts = reader.readIntStat(PubSubStats.TYPE_NAME, PubSubStats.PUTS);
     assertTrue("Failed to read puts stat values", combinedPuts > 0);
-    
-    assertTrue("updateEvents is " + combinedUpdateEvents + " but puts is " + combinedPuts, 
-        combinedUpdateEvents == combinedPuts);
+
+    assertTrue("updateEvents is " + combinedUpdateEvents + " but puts is " + combinedPuts, combinedUpdateEvents == combinedPuts);
   }
-  
+
   static int readIntStat(final File archive, final String typeName, final String statName) throws IOException {
     MultipleArchiveReader reader = new MultipleArchiveReader(archive);
     return reader.readIntStat(typeName, statName);
@@ -525,21 +524,20 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       int value1 = reader.readIntStat(statType1, statName1);
       int value2 = reader.readIntStat(statType2, statName2);
 
-      assertTrue(statType1 + "#" + statName1 + "=" + value1 + " does not equal " + statType2 + "#" + statName2 + "=" + value2,
-          value1 == value2);
+      assertTrue(statType1 + "#" + statName1 + "=" + value1 + " does not equal " + statType2 + "#" + statName2 + "=" + value2, value1 == value2);
     } else {
       assertEquals("Minimum two args are required: statType statName", 2, args.length);
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
   static class PubSubStats {
-    
+
     private static final String TYPE_NAME = "PubSubStats";
     private static final String TYPE_DESCRIPTION = "Statistics for StatisticsDistributedTest with Pub/Sub.";
-    
+
     private static final String INSTANCE_PREFIX = "pubSubStats_";
 
     private static final String PUTS = "puts";
@@ -552,76 +550,54 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       StatisticsType type = stf.createType(TYPE_NAME, TYPE_DESCRIPTION, createDescriptors(f));
       return type;
     }
-    
+
     private static StatisticDescriptor[] createDescriptors(final StatisticsFactory f) {
       boolean largerIsBetter = true;
-      return new StatisticDescriptor[] {
-        f.createIntCounter
-          ( 
-          PUTS,
-          "Number of puts completed.",
-          "operations",
-          largerIsBetter
-          ),
-        f.createLongCounter
-          ( 
-          PUT_TIME,
-          "Total time spent doing puts.",
-          "nanoseconds",
-          !largerIsBetter
-          ),
-        f.createIntCounter
-          ( 
-          UPDATE_EVENTS,
-          "Number of update events.",
-          "events",
-          largerIsBetter
-          )
-      };
+      return new StatisticDescriptor[] { f.createIntCounter(PUTS, "Number of puts completed.", "operations", largerIsBetter), f.createLongCounter(PUT_TIME, "Total time spent doing puts.", "nanoseconds", !largerIsBetter), f.createIntCounter(UPDATE_EVENTS, "Number of update events.", "events", largerIsBetter) };
     }
-    
+
     private final Statistics statistics;
 
     PubSubStats(final StatisticsFactory f, final String name, final int id) {
       this.statistics = f.createAtomicStatistics(createType(f), INSTANCE_PREFIX + "_" + name, id);
     }
-    
+
     Statistics statistics() {
       return this.statistics;
     }
-    
+
     void close() {
       this.statistics.close();
     }
-    
+
     int getUpdateEvents() {
       return statistics().getInt(UPDATE_EVENTS);
     }
-    
+
     void incUpdateEvents() {
       incUpdateEvents(1);
     }
-    
+
     void incUpdateEvents(final int amount) {
       incStat(UPDATE_EVENTS, amount);
     }
-    
+
     int getPuts() {
       return statistics().getInt(PUTS);
     }
-    
+
     void incPuts() {
       incPuts(1);
     }
-    
+
     void incPuts(final int amount) {
       incStat(PUTS, amount);
     }
-    
+
     void incPutTime(final long amount) {
       incStat(PUT_TIME, amount);
     }
-    
+
     long startPut() {
       return NanoTimer.getTime();
     }
@@ -629,13 +605,13 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
     void endPut(final long start) {
       endPut(start, 1);
     }
-    
+
     void endPut(final long start, final int amount) {
       long elapsed = NanoTimer.getTime() - start;
       incPuts(amount);
       incPutTime(elapsed);
     }
-    
+
     private void incStat(final String statName, final int intValue) {
       statistics().incInt(statName, intValue);
     }
@@ -644,39 +620,39 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       statistics().incLong(statName, longValue);
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
   static class UpdateListener extends CacheListenerAdapter<String, Number> {
-    
+
     private final PubSubStats statistics;
-    
+
     UpdateListener(final PubSubStats statistics) {
       this.statistics = statistics;
     }
-    
+
     @Override
     public void afterUpdate(final EntryEvent<String, Number> event) {
-      this.statistics.incUpdateEvents( 1 );
+      this.statistics.incUpdateEvents(1);
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
   static class RegionMembershipListener extends RegionMembershipListenerAdapter<String, Number> {
-    
+
     private final List<DistributedMember> members = new ArrayList<>();
-    
+
     int size() {
       return this.members.size();
     }
-    
+
     List<DistributedMember> getMembers() {
       return Collections.unmodifiableList(new ArrayList<>(this.members));
     }
-    
+
     boolean containsId(final DistributedMember member) {
       for (DistributedMember peer : getMembers()) {
         if (peer.getId().equals(member.getId())) {
@@ -685,7 +661,7 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       }
       return false;
     }
-    
+
     boolean contains(final DistributedMember member) {
       return this.members.contains(member);
     }
@@ -694,32 +670,32 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       StringBuilder sb = new StringBuilder();
       for (DistributedMember peer : getMembers()) {
         if (!peer.equals(member)) {
-          InternalDistributedMember peerIDM = (InternalDistributedMember)peer;
-          InternalDistributedMember memberIDM = (InternalDistributedMember)member;
+          InternalDistributedMember peerIDM = (InternalDistributedMember) peer;
+          InternalDistributedMember memberIDM = (InternalDistributedMember) member;
           sb.append("peer port=").append(peerIDM.getPort()).append(" ");
           sb.append("member port=").append(memberIDM.getPort()).append(" ");
         }
       }
       return sb.toString();
     }
-    
+
     @Override
     public void initialMembers(final Region<String, Number> region, final DistributedMember[] initialMembers) {
       for (int i = 0; i < initialMembers.length; i++) {
         this.members.add(initialMembers[i]);
       }
     }
-    
+
     @Override
     public void afterRemoteRegionCreate(final RegionEvent<String, Number> event) {
       this.members.add(event.getDistributedMember());
     }
-    
+
     @Override
     public void afterRemoteRegionDeparture(final RegionEvent<String, Number> event) {
       this.members.remove(event.getDistributedMember());
     }
-    
+
     @Override
     public void afterRemoteRegionCrash(final RegionEvent<String, Number> event) {
       this.members.remove(event.getDistributedMember());
@@ -727,33 +703,33 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
   }
 
   static class MultipleArchiveReader {
-    
+
     private final File dir;
     private final String regex;
-    
+
     MultipleArchiveReader(final File dir, final String regex) {
       this.dir = dir;
       this.regex = regex;
     }
-    
+
     MultipleArchiveReader(final File dir) {
       this.dir = dir;
       this.regex = null;
     }
-    
+
     int readIntStat(final String typeName, final String statName) throws IOException {
       // directory (maybe directories) with one or more archives
       if (this.dir.exists() && this.dir.isDirectory()) {
         List<File> archives = findFilesWithSuffix(this.dir, this.regex, ".gfs");
         return readIntStatFromArchives(archives, typeName, statName);
-        
-      // one archive file
+
+        // one archive file
       } else if (this.dir.exists() && this.dir.isFile()) {
         List<File> archives = new ArrayList<File>();
         archives.add(this.dir);
         return readIntStatFromArchives(archives, typeName, statName);
-        
-      // failure
+
+        // failure
       } else {
         throw new IllegalStateException(this.dir + " does not exist!");
       }
@@ -763,36 +739,33 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       StatValue[] statValues = readStatValues(archives, typeName, statName);
       assertNotNull("statValues is null!", statValues);
       assertTrue("statValues is empty!", statValues.length > 0);
-      
+
       int value = 0;
       for (int i = 0; i < statValues.length; i++) {
         statValues[i].setFilter(StatValue.FILTER_NONE);
-        value += (int)statValues[i].getSnapshotsMaximum();
+        value += (int) statValues[i].getSnapshotsMaximum();
       }
       return value;
     }
-    
+
     private static List<File> findFilesWithSuffix(final File dir, final String regex, final String suffix) {
       Pattern p = null;
       if (regex != null) {
         p = Pattern.compile(regex);
       }
       final Pattern pattern = p;
-      
-      return findFiles(
-          dir,
-          (final File file) -> {
-            boolean value = true;
-            if (regex != null) {
-              final Matcher matcher = pattern.matcher(file.getName());
-              value = matcher.matches();
-            }
-            if (suffix != null) {
-              value = value && file.getName().endsWith(suffix);
-            }
-            return value;
-          },
-          true);
+
+      return findFiles(dir, (final File file) -> {
+        boolean value = true;
+        if (regex != null) {
+          final Matcher matcher = pattern.matcher(file.getName());
+          value = matcher.matches();
+        }
+        if (suffix != null) {
+          value = value && file.getName().endsWith(suffix);
+        }
+        return value;
+      }, true);
     }
 
     private static List<File> findFiles(final File dir, final FileFilter filter, final boolean recursive) {
@@ -816,31 +789,35 @@ public class StatisticsDistributedTest extends JUnit4CacheTestCase {
       }
       return matches;
     }
-    
+
     private static StatValue[] readStatValues(final List<File> archives, final String typeName, final String statName) throws IOException {
       final StatSpec statSpec = new StatSpec() {
         @Override
         public boolean archiveMatches(File value) {
           return true;
         }
+
         @Override
         public boolean typeMatches(String value) {
           return typeName.equals(value);
         }
+
         @Override
         public boolean statMatches(String value) {
           return statName.equals(value);
         }
+
         @Override
         public boolean instanceMatches(String textId, long numericId) {
           return true;
         }
+
         @Override
         public int getCombineType() {
           return StatSpec.FILE;
         }
       };
-  
+
       File[] archiveFiles = archives.toArray(new File[archives.size()]);
       StatSpec[] filters = new StatSpec[] { statSpec };
       StatArchiveReader reader = new StatArchiveReader(archiveFiles, filters, true);

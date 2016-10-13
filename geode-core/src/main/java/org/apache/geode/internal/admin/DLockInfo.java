@@ -26,10 +26,16 @@ import org.apache.geode.distributed.internal.membership.*;
  */
 public interface DLockInfo extends Serializable {
   public String getService();
+
   public String getThreadId();
+
   public String getLockName();
+
   public boolean isAcquired();
-  public int getRecursionCount();    
+
+  public int getRecursionCount();
+
   public InternalDistributedMember getOwner();
+
   public Date getLeaseExpireTime();
 }

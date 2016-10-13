@@ -41,7 +41,7 @@ public interface SnapshotIterator<K, V> {
    * @throws ClassNotFoundException error deserializing the snapshot element
    */
   boolean hasNext() throws IOException, ClassNotFoundException;
-  
+
   /**
    * Returns the next element in the iteration.
    * 

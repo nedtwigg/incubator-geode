@@ -23,7 +23,7 @@ package org.apache.geode.cache;
  * @since GemFire 5.7
  */
 public class IncompatibleVersionException extends VersionException {
-private static final long serialVersionUID = 668812986092856749L;
+  private static final long serialVersionUID = 668812986092856749L;
 
   /**
    * Constructs a new <code>IncompatibleVersionException</code>.
@@ -31,10 +31,8 @@ private static final long serialVersionUID = 668812986092856749L;
    * @param clientVersion The client <code>Version</code>
    * @param serverVersion The server <code>Version</code>
    */
-  public IncompatibleVersionException(Object/*Version*/ clientVersion,
-      Object/*Version*/ serverVersion) {
-    this("Client version " + clientVersion
-        + " is incompatible with server version " + serverVersion);
+  public IncompatibleVersionException(Object/*Version*/ clientVersion, Object/*Version*/ serverVersion) {
+    this("Client version " + clientVersion + " is incompatible with server version " + serverVersion);
   }
 
   /**

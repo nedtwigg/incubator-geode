@@ -51,12 +51,14 @@ public interface GemFireCache extends RegionService {
    * @return the String name of this cache
    */
   public String getName();
+
   /**
    * Returns the distributed system used by this cache.
    * This method does not throw
    * <code>CacheClosedException</code> if the cache is closed.
    */
   public DistributedSystem getDistributedSystem();
+
   /**
    * Returns the <code>ResourceManager</code> for managing this cache's 
    * resources.
@@ -91,7 +93,7 @@ public interface GemFireCache extends RegionService {
    *
    * @since GemFire 4.1
    */
-  public <K,V> RegionAttributes<K,V> getRegionAttributes(String id);
+  public <K, V> RegionAttributes<K, V> getRegionAttributes(String id);
 
   /**
    * Sets the <code>id</code> of the given
@@ -112,7 +114,7 @@ public interface GemFireCache extends RegionService {
    *
    * @since GemFire 4.1
    */
-  public <K,V> void setRegionAttributes(String id, RegionAttributes<K,V> attrs);
+  public <K, V> void setRegionAttributes(String id, RegionAttributes<K, V> attrs);
 
   /**
    * Returns an unmodifiable mapping of ids to region attributes.  The
@@ -121,7 +123,7 @@ public interface GemFireCache extends RegionService {
    *
    * @since GemFire 4.1
    */
-  public <K,V> Map<String, RegionAttributes<K,V>> listRegionAttributes();
+  public <K, V> Map<String, RegionAttributes<K, V>> listRegionAttributes();
 
   /**
    * Loads the cache configuration described in a <a
@@ -145,10 +147,7 @@ public interface GemFireCache extends RegionService {
    *
    * @since GemFire 4.1
    */
-  public void loadCacheXml(InputStream is) 
-    throws TimeoutException, CacheWriterException,
-           GatewayException,
-           RegionExistsException;
+  public void loadCacheXml(InputStream is) throws TimeoutException, CacheWriterException, GatewayException, RegionExistsException;
 
   /**
    * Gets the logging object for GemFire.
@@ -173,16 +172,16 @@ public interface GemFireCache extends RegionService {
    * @since GemFire 6.5
    */
   public DiskStore findDiskStore(String name);
-  
+
   /**
    * create diskstore factory 
    * 
    * @since GemFire 6.5
    */
   public DiskStoreFactory createDiskStoreFactory();
-  
+
   public GatewaySenderFactory createGatewaySenderFactory();
-  
+
   /**
    * Returns whether { @link PdxInstance} is preferred for PDX types instead of Java object.
    * @see org.apache.geode.cache.CacheFactory#setPdxReadSerialized(boolean)
@@ -191,7 +190,7 @@ public interface GemFireCache extends RegionService {
    * @since GemFire 6.6
    */
   public boolean getPdxReadSerialized();
-  
+
   /**
    * Returns the PdxSerializer used by this cache, or null
    * if no PDX serializer is defined.
@@ -201,7 +200,7 @@ public interface GemFireCache extends RegionService {
    * @see ClientCacheFactory#setPdxSerializer(PdxSerializer)
    */
   public PdxSerializer getPdxSerializer();
-  
+
   /**
    * Returns the disk store used for PDX meta data
    * @since GemFire 6.6
@@ -209,7 +208,7 @@ public interface GemFireCache extends RegionService {
    * @see ClientCacheFactory#setPdxDiskStore(String)
    */
   public String getPdxDiskStore();
-  
+
   /**
    * Returns true if the PDX metadata for this
    * cache is persistent
@@ -218,6 +217,7 @@ public interface GemFireCache extends RegionService {
    * @see ClientCacheFactory#setPdxPersistent(boolean)
    */
   public boolean getPdxPersistent();
+
   /**
    * Returns true if fields that are not read during PDX deserialization
    * should be ignored during the PDX serialization.
@@ -226,6 +226,7 @@ public interface GemFireCache extends RegionService {
    * @see ClientCacheFactory#setPdxIgnoreUnreadFields(boolean)
    */
   public boolean getPdxIgnoreUnreadFields();
+
   /**
    * Get the CacheTransactionManager instance for this Cache.
    *
@@ -236,6 +237,7 @@ public interface GemFireCache extends RegionService {
    * @since GemFire 4.0
    */
   public CacheTransactionManager getCacheTransactionManager();
+
   /**
    * Returns the JNDI context associated with the Cache.
    * @return javax.naming.Context

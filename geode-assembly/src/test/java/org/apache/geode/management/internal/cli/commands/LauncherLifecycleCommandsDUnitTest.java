@@ -199,8 +199,7 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
     assertTrue("serviceStateStatus is missing 'Uptime': " + serviceStateStatus, serviceStateStatus.contains("Uptime"));
     assertTrue("serviceStateStatus is missing 'JVM Arguments': " + serviceStateStatus, serviceStateStatus.contains("JVM Arguments"));
 
-    return serviceStateStatus.substring(0, serviceStateStatus.indexOf("Uptime"))
-                             .concat(serviceStateStatus.substring(serviceStateStatus.indexOf("JVM Arguments")));
+    return serviceStateStatus.substring(0, serviceStateStatus.indexOf("Uptime")).concat(serviceStateStatus.substring(serviceStateStatus.indexOf("JVM Arguments")));
   }
 
   protected Status stopLocator(final File workingDirectory) {
@@ -212,10 +211,7 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
   }
 
   protected Status stopServer(final String workingDirectory) {
-    return waitForGemFireProcessToStop(new ServerLauncher.Builder().setCommand(ServerLauncher.Command.STOP)
-                                                                   .setWorkingDirectory(workingDirectory)
-                                                                   .build()
-                                                                   .stop(), workingDirectory);
+    return waitForGemFireProcessToStop(new ServerLauncher.Builder().setCommand(ServerLauncher.Command.STOP).setWorkingDirectory(workingDirectory).build().stop(), workingDirectory);
   }
 
   protected String toString(final Result result) {
@@ -313,10 +309,8 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
 
     String resultString = toString(result);
 
-    assertTrue(resultString, resultString.contains("Exception in thread \"main\" java.lang.RuntimeException: A PID file already exists and a Locator may be running in " + IOUtils
-      .tryGetCanonicalFileElseGetAbsoluteFile(workingDirectory)));
-    assertTrue(resultString, resultString.contains("Caused by: org.apache.geode.internal.process.FileAlreadyExistsException: Pid file already exists: " + IOUtils
-      .tryGetCanonicalFileElseGetAbsoluteFile(pidFile)));
+    assertTrue(resultString, resultString.contains("Exception in thread \"main\" java.lang.RuntimeException: A PID file already exists and a Locator may be running in " + IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(workingDirectory)));
+    assertTrue(resultString, resultString.contains("Caused by: org.apache.geode.internal.process.FileAlreadyExistsException: Pid file already exists: " + IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(pidFile)));
   }
 
   /*
@@ -531,11 +525,7 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
       assertNotNull(result);
       assertEquals(Result.Status.OK, result.getStatus());
 
-      LocatorLauncher locatorLauncher = new LocatorLauncher.Builder().setCommand(LocatorLauncher.Command.STATUS)
-                                                                     .setBindAddress(null)
-                                                                     .setPort(locatorPort)
-                                                                     .setWorkingDirectory(workingDirectory.getPath())
-                                                                     .build();
+      LocatorLauncher locatorLauncher = new LocatorLauncher.Builder().setCommand(LocatorLauncher.Command.STATUS).setBindAddress(null).setPort(locatorPort).setWorkingDirectory(workingDirectory.getPath()).build();
 
       assertNotNull(locatorLauncher);
 
@@ -594,11 +584,7 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
       assertNotNull(result);
       assertEquals(Result.Status.OK, result.getStatus());
 
-      LocatorLauncher locatorLauncher = new LocatorLauncher.Builder().setCommand(LocatorLauncher.Command.STATUS)
-                                                                     .setBindAddress(null)
-                                                                     .setPort(locatorPort)
-                                                                     .setWorkingDirectory(workingDirectory.getPath())
-                                                                     .build();
+      LocatorLauncher locatorLauncher = new LocatorLauncher.Builder().setCommand(LocatorLauncher.Command.STATUS).setBindAddress(null).setPort(locatorPort).setWorkingDirectory(workingDirectory.getPath()).build();
 
       assertNotNull(locatorLauncher);
 
@@ -660,11 +646,7 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
       assertNotNull(result);
       assertEquals(Result.Status.OK, result.getStatus());
 
-      final LocatorLauncher locatorLauncher = new Builder().setCommand(Command.STOP)
-                                                           .setBindAddress(null)
-                                                           .setPort(locatorPort)
-                                                           .setWorkingDirectory(workingDirectory.getPath())
-                                                           .build();
+      final LocatorLauncher locatorLauncher = new Builder().setCommand(Command.STOP).setBindAddress(null).setPort(locatorPort).setWorkingDirectory(workingDirectory.getPath()).build();
 
       assertNotNull(locatorLauncher);
 
@@ -753,11 +735,7 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
       assertNotNull(result);
       assertEquals(Result.Status.OK, result.getStatus());
 
-      final LocatorLauncher locatorLauncher = new Builder().setCommand(Command.STOP)
-                                                                           .setBindAddress(null)
-                                                                           .setPort(locatorPort)
-                                                                           .setWorkingDirectory(workingDirectory.getPath())
-                                                                           .build();
+      final LocatorLauncher locatorLauncher = new Builder().setCommand(Command.STOP).setBindAddress(null).setPort(locatorPort).setWorkingDirectory(workingDirectory.getPath()).build();
 
       assertNotNull(locatorLauncher);
 
@@ -829,16 +807,13 @@ public class LauncherLifecycleCommandsDUnitTest extends CliCommandTestBase {
     command.addOption(CliStrings.START_SERVER__INCLUDE_SYSTEM_CLASSPATH);
     command.addOption(CliStrings.START_SERVER__J, "-D" + DistributionConfig.GEMFIRE_PREFIX + "" + START_LOCATOR + "=localhost[" + locatorPort + "]");
 
-
     CommandResult result = executeCommand(command.toString());
     System.out.println("result=" + result);
 
     assertNotNull(result);
     assertEquals(Result.Status.OK, result.getStatus());
 
-    ServerLauncher serverLauncher = new ServerLauncher.Builder().setCommand(ServerLauncher.Command.STATUS)
-                                                                .setWorkingDirectory(IOUtils.tryGetCanonicalPathElseGetAbsolutePath(workingDirectory))
-                                                                .build();
+    ServerLauncher serverLauncher = new ServerLauncher.Builder().setCommand(ServerLauncher.Command.STATUS).setWorkingDirectory(IOUtils.tryGetCanonicalPathElseGetAbsolutePath(workingDirectory)).build();
 
     assertNotNull(serverLauncher);
 

@@ -78,10 +78,7 @@ public class LauncherLifecycleCommandsIntegrationTest {
     assertNotNull(coreDependenciesJar);
     assertTrue(coreDependenciesJar + " is not a file", coreDependenciesJar.isFile());
 
-    Collection<String> expectedJarDependencies = Arrays.asList("antlr", "commons-io", "commons-lang", "commons-logging",
-            "geode", "jackson-annotations", "jackson-core", "jackson-databind", "jansi", "jline", "snappy",
-            "spring-core", "spring-shell", "jetty-server", "jetty-servlet", "jetty-webapp", "jetty-util", "jetty-http",
-            "servlet-api", "jetty-io", "jetty-security", "jetty-xml"
+    Collection<String> expectedJarDependencies = Arrays.asList("antlr", "commons-io", "commons-lang", "commons-logging", "geode", "jackson-annotations", "jackson-core", "jackson-databind", "jansi", "jline", "snappy", "spring-core", "spring-shell", "jetty-server", "jetty-servlet", "jetty-webapp", "jetty-util", "jetty-http", "servlet-api", "jetty-io", "jetty-security", "jetty-xml"
 
     );
 
@@ -117,8 +114,7 @@ public class LauncherLifecycleCommandsIntegrationTest {
     IOUtils.close(fileWriter);
   }
 
-  private void assertJarFileManifestClassPath(final File dependenciesJar,
-                                              final Collection<String> expectedJarDependencies) throws IOException {
+  private void assertJarFileManifestClassPath(final File dependenciesJar, final Collection<String> expectedJarDependencies) throws IOException {
     JarFile dependenciesJarFile = new JarFile(dependenciesJar);
     Manifest manifest = dependenciesJarFile.getManifest();
 
@@ -132,9 +128,7 @@ public class LauncherLifecycleCommandsIntegrationTest {
     String[] actualJarDependencies = attributes.getValue(Name.CLASS_PATH).split(" ");
 
     assertNotNull(actualJarDependencies);
-    assertTrue(String.format("Expected the actual number of JAR dependencies to be (%1$d); but was (%2$d)!",
-            expectedJarDependencies.size(), actualJarDependencies.length),
-            actualJarDependencies.length >= expectedJarDependencies.size());
+    assertTrue(String.format("Expected the actual number of JAR dependencies to be (%1$d); but was (%2$d)!", expectedJarDependencies.size(), actualJarDependencies.length), actualJarDependencies.length >= expectedJarDependencies.size());
     //assertTrue(Arrays.asList(actualJarDependencies).containsAll(expectedJarDependencies));
 
     List<String> actualJarDependenciesList = new ArrayList<>(Arrays.asList(actualJarDependencies));
@@ -156,10 +150,7 @@ public class LauncherLifecycleCommandsIntegrationTest {
       }
     }
 
-    assertTrue(String.format(
-            "GemFire dependencies JAR file (%1$s) does not contain the expected dependencies (%2$s) in the Manifest Class-Path attribute (%3$s)!",
-            dependenciesJar, missingExpectedJarDependenciesList, attributes.getValue(Name.CLASS_PATH)),
-            missingExpectedJarDependenciesList.isEmpty());
+    assertTrue(String.format("GemFire dependencies JAR file (%1$s) does not contain the expected dependencies (%2$s) in the Manifest Class-Path attribute (%3$s)!", dependenciesJar, missingExpectedJarDependenciesList, attributes.getValue(Name.CLASS_PATH)), missingExpectedJarDependenciesList.isEmpty());
   }
 
 }

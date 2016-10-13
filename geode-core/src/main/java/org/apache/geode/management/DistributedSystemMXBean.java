@@ -187,7 +187,6 @@ public interface DistributedSystemMXBean {
    */
   public int getNumClients();
 
-
   /**
    * Returns the average number of disk reads per second across all distributed
    * members.
@@ -236,8 +235,7 @@ public interface DistributedSystemMXBean {
    * @return The results of the backup request.
    */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.READ)
-  public DiskBackupStatus backupAllMembers(String targetDirPath, String baselineDirPath)
-      throws Exception;
+  public DiskBackupStatus backupAllMembers(String targetDirPath, String baselineDirPath) throws Exception;
 
   /**
    * Returns the configuration information for a distributed member.
@@ -248,8 +246,7 @@ public interface DistributedSystemMXBean {
    * @throws Exception
    *           for an invalid member ID.
    */
-  public GemFireProperties fetchMemberConfiguration(String member)
-      throws Exception;
+  public GemFireProperties fetchMemberConfiguration(String member) throws Exception;
 
   /**
    * Returns the total time (in seconds) since a distributed member was started.
@@ -267,8 +264,7 @@ public interface DistributedSystemMXBean {
    * 
    */
   public String[] listCacheServers();
-  
-  
+
   /**
    * Returns a list of names for all servers where server means
    * any long-running GemFire process that was started with "start server" command from GFSH.
@@ -341,8 +337,7 @@ public interface DistributedSystemMXBean {
    * @return True if the request is successful, false otherwise.
    */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
-  public boolean revokeMissingDiskStores(String diskStoreId)
-      throws Exception;
+  public boolean revokeMissingDiskStores(String diskStoreId) throws Exception;
 
   /**
    * Returns a list of details for disk stores which have been determined to be
@@ -386,8 +381,7 @@ public interface DistributedSystemMXBean {
    * @param memberMBeanName
    *          ObjectName of the member.
    */
-  public ObjectName[] fetchRegionObjectNames(ObjectName memberMBeanName)
-      throws Exception;
+  public ObjectName[] fetchRegionObjectNames(ObjectName memberMBeanName) throws Exception;
 
   /**
    * Returns a list of object names for the {@link DistributedRegionMXBean}s
@@ -405,8 +399,7 @@ public interface DistributedSystemMXBean {
    * @param regionPath
    *          Full path of the region.
    */
-  public ObjectName fetchDistributedRegionObjectName(String regionPath)
-      throws Exception;
+  public ObjectName fetchDistributedRegionObjectName(String regionPath) throws Exception;
 
   /**
    * Returns the object name for a {@link RegionMXBean} used to access
@@ -417,8 +410,7 @@ public interface DistributedSystemMXBean {
    * @param regionPath
    *          Full path of the region.
    */
-  public ObjectName fetchRegionObjectName(String member, String regionPath)
-      throws Exception;
+  public ObjectName fetchRegionObjectName(String member, String regionPath) throws Exception;
 
   /**
    * Returns the object name for a {@link GatewaySenderMXBean} used to access
@@ -429,8 +421,7 @@ public interface DistributedSystemMXBean {
    * @param senderId
    *          ID of a gateway sender.
    */
-  public ObjectName fetchGatewaySenderObjectName(String member,
-      String senderId) throws Exception;
+  public ObjectName fetchGatewaySenderObjectName(String member, String senderId) throws Exception;
 
   /**
    * Returns the object name for a {@link GatewayReceiverMXBean} used to access
@@ -439,8 +430,7 @@ public interface DistributedSystemMXBean {
    * @param member
    *          Name or ID of the member.
    */
-  public ObjectName fetchGatewayReceiverObjectName(String member)
-      throws Exception;
+  public ObjectName fetchGatewayReceiverObjectName(String member) throws Exception;
 
   /**
    * Returns a list of object names for the {@link GatewaySenderMXBean}s
@@ -458,8 +448,7 @@ public interface DistributedSystemMXBean {
    * @param member
    *          Name or ID of the member.
    */
-  public ObjectName[] listGatewaySenderObjectNames(String member)
-      throws Exception;
+  public ObjectName[] listGatewaySenderObjectNames(String member) throws Exception;
 
   /**
    * Returns a list of object names for the {@link GatewayReceiverMXBean}s
@@ -477,8 +466,7 @@ public interface DistributedSystemMXBean {
    * @param lockServiceName
    *          Name of the lock service.
    */
-  public ObjectName fetchDistributedLockServiceObjectName(String lockServiceName)
-      throws Exception;
+  public ObjectName fetchDistributedLockServiceObjectName(String lockServiceName) throws Exception;
 
   /**
    * Returns the object name for a {@link LockServiceMXBean} used to
@@ -489,8 +477,7 @@ public interface DistributedSystemMXBean {
    * @param lockService
    *          Name of the lock service.
    */
-  public ObjectName fetchLockServiceObjectName(String member,
-      String lockService) throws Exception;
+  public ObjectName fetchLockServiceObjectName(String member, String lockService) throws Exception;
 
   /**
    * Returns object name of a {@link DiskStoreMXBean} for a given name and member
@@ -502,8 +489,7 @@ public interface DistributedSystemMXBean {
    * @return a ObjectName
    * @throws Exception
    */
-  public ObjectName fetchDiskStoreObjectName(String member,
-      String diskStoreName) throws Exception;
+  public ObjectName fetchDiskStoreObjectName(String member, String diskStoreName) throws Exception;
 
   /**
    * Returns the object name for a {@link CacheServerMXBean} used to access
@@ -514,8 +500,7 @@ public interface DistributedSystemMXBean {
    * @param port
    *          Port of the server.
    */
-  public ObjectName fetchCacheServerObjectName(String member, int port)
-      throws Exception;
+  public ObjectName fetchCacheServerObjectName(String member, int port) throws Exception;
 
   /**
    * Returns a list of object names for the {@link CacheServerMXBean}s
@@ -559,7 +544,6 @@ public interface DistributedSystemMXBean {
    * Returns the number of subscriptions for all members.
    */
   public int getNumSubscriptions();
-
 
   /**
    * Returns the number of garbage collection operations for all members.
@@ -620,7 +604,7 @@ public interface DistributedSystemMXBean {
    */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.READ)
   public String queryData(String queryString, String members, int limit) throws Exception;
-  
+
   /**
    * 
    * Functionality is same as queryData() method. Only difference being the
@@ -650,8 +634,7 @@ public interface DistributedSystemMXBean {
    */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.READ)
   public byte[] queryDataForCompressedResult(String queryString, String members, int limit) throws Exception;
-  
-  
+
   /**
    * Returns the number of committed transactions across all members. It gives
    * point in time value i.e. Number of tx committed at the time of reading this
@@ -665,7 +648,7 @@ public interface DistributedSystemMXBean {
    * time of reading this value
    */
   public int getTransactionRolledBack();
-  
+
   /**
    * Number of rows DistributedSystemMXBean.queryData() operation will return.
    * By default it will be 1000. User can modify this to control number of rows

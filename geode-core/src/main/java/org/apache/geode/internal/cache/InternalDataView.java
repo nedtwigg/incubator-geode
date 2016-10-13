@@ -47,14 +47,7 @@ public interface InternalDataView {
    * @return the object associated with the key
    */
   @Retained
-  Object getDeserializedValue(KeyInfo keyInfo,
-                              LocalRegion localRegion,
-                              boolean updateStats,
-                              boolean disableCopyOnRead,
-                              boolean preferCD,
-                              EntryEventImpl clientEvent,
-                              boolean returnTombstones,
-                              boolean retainResult);
+  Object getDeserializedValue(KeyInfo keyInfo, LocalRegion localRegion, boolean updateStats, boolean disableCopyOnRead, boolean preferCD, EntryEventImpl clientEvent, boolean returnTombstones, boolean retainResult);
 
   /**
    * @param event
@@ -63,7 +56,6 @@ public interface InternalDataView {
    * @throws EntryNotFoundException if the entry is not found in the view
    */
   void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws EntryNotFoundException;
-
 
   /**
    * Invalidate the entry
@@ -131,8 +123,7 @@ public interface InternalDataView {
    * @param lastModified
    * @return true if operation updated existing data, otherwise false
    */
-  boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld,
-      Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed);
+  boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed);
 
   /**
    * Put or create an entry in the data view. Called only on the farside.
@@ -145,9 +136,7 @@ public interface InternalDataView {
    * @param lastModified
    * @return true if operation updated existing data, otherwise false
    */
-  boolean putEntryOnRemote(EntryEventImpl event, boolean ifNew, boolean ifOld,
-      Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed)
-      throws DataLocationException;
+  boolean putEntryOnRemote(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) throws DataLocationException;
 
   /**
    * Destroy an entry in the data view. Called only on the farside.
@@ -172,7 +161,6 @@ public interface InternalDataView {
    */
   boolean isDeferredStats();
 
-  
   /**
    * @param key
    * @param r
@@ -186,10 +174,7 @@ public interface InternalDataView {
    * @param returnTombstones TODO
    * @return the Object associated with the key
    */
-  Object findObject(KeyInfo key, LocalRegion r, boolean isCreate, boolean generateCallbacks,
-                    Object value, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient,
-                    EntryEventImpl clientEvent, boolean returnTombstones);
-
+  Object findObject(KeyInfo key, LocalRegion r, boolean isCreate, boolean generateCallbacks, Object value, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones);
 
   /**
    * 
@@ -199,8 +184,7 @@ public interface InternalDataView {
    * @param allowTombstones
    * @return an Entry for the key
    */
-  Object getEntryForIterator(KeyInfo key, LocalRegion currRgn,
-      boolean rememberReads, boolean allowTombstones);
+  Object getEntryForIterator(KeyInfo key, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones);
 
   /**
    * 
@@ -210,8 +194,7 @@ public interface InternalDataView {
    * @param allowTombstones
    * @return the key for the provided key
    */
-  Object getKeyForIterator(KeyInfo keyInfo, LocalRegion currRgn,
-      boolean rememberReads, boolean allowTombstones);
+  Object getKeyForIterator(KeyInfo keyInfo, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones);
 
   /**
    * @param currRgn
@@ -235,17 +218,14 @@ public interface InternalDataView {
    * @param returnTombstones TODO
    * @return the serialized value from the cache
    */
-  Object getSerializedValue(LocalRegion localRegion,
-                            KeyInfo key,
-                            boolean doNotLockEntry,
-                            ClientProxyMembershipID requestingClient,
-                            EntryEventImpl clientEvent,
-                            boolean returnTombstones) throws DataLocationException;
+  Object getSerializedValue(LocalRegion localRegion, KeyInfo key, boolean doNotLockEntry, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) throws DataLocationException;
 
   abstract void checkSupportsRegionDestroy() throws UnsupportedOperationInTransactionException;
+
   abstract void checkSupportsRegionInvalidate() throws UnsupportedOperationInTransactionException;
+
   abstract void checkSupportsRegionClear() throws UnsupportedOperationInTransactionException;
-  
+
   /**
    * @param localRegion
    * @param bucketId
@@ -253,8 +233,9 @@ public interface InternalDataView {
    * @return Set of keys in the given bucket
    */
   Set getBucketKeys(LocalRegion localRegion, int bucketId, boolean allowTombstones);
-  
-  public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts,LocalRegion region);
+
+  public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region);
+
   public void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region);
 
   Entry accessEntry(KeyInfo keyInfo, LocalRegion localRegion);

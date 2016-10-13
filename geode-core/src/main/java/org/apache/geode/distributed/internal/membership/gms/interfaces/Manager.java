@@ -53,7 +53,7 @@ public interface Manager extends Service, MessageHandler {
    * @param reason
    */
   void forceDisconnect(String reason);
-  
+
   /**
    * notifies the manager that membership quorum has been lost
    */
@@ -88,33 +88,33 @@ public interface Manager extends Service, MessageHandler {
    * who created and distributed the view.  See NetView.
    */
   DistributedMember getCoordinator();
-  
+
   /**
    * sometimes we cannot perform multicast messaging, such as during a
    * rolling upgrade.
    * @return true if multicast messaging can be performed
    */
   boolean isMulticastAllowed();
-  
+
   /**
    * Returns the reason for a shutdown. 
    */
   Throwable getShutdownCause();
-  
+
   /**
    * Returns true if a shutdown is in progress or has been completed
    */
   boolean shutdownInProgress();
 
-//  /**
-//   * similar to forceDisconnect but is used solely by Messenger
-//   * to tell Manager that communications have been lost
-//   */
-//  void membershipFailure(String message, Exception cause);
+  //  /**
+  //   * similar to forceDisconnect but is used solely by Messenger
+  //   * to tell Manager that communications have been lost
+  //   */
+  //  void membershipFailure(String message, Exception cause);
 
   /**
    * Indicate whether we are attempting a reconnect
    */
   boolean isReconnectingDS();
-  
+
 }

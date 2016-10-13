@@ -96,14 +96,10 @@ public class RestAPIsOnMembersFunctionExecutionDUnitTest extends RestAPITestBase
   }
 
   private void createCacheForVMs() {
-    restURLs.add(vm0.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm0.getHost()
-                                                                                                      .getHostName(), "m1")));
-    restURLs.add(vm1.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm1.getHost()
-                                                                                                      .getHostName(), "m2")));
-    restURLs.add(vm2.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm2.getHost()
-                                                                                                      .getHostName(), "m3")));
-    restURLs.add(vm3.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm3.getHost()
-                                                                                                      .getHostName(), "m4")));
+    restURLs.add(vm0.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm0.getHost().getHostName(), "m1")));
+    restURLs.add(vm1.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm1.getHost().getHostName(), "m2")));
+    restURLs.add(vm2.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm2.getHost().getHostName(), "m3")));
+    restURLs.add(vm3.invoke("createCacheAndRegisterFunction", () -> createCacheAndRegisterFunction(vm3.getHost().getHostName(), "m4")));
   }
 
   @Test

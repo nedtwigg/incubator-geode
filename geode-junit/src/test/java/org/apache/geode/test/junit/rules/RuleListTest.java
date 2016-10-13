@@ -112,9 +112,11 @@ public class RuleListTest {
     void invokedTest() {
       testInvocation = counter.incrementAndGet();
     }
+
     void invokedBefore() {
       beforeInvocation = counter.incrementAndGet();
     }
+
     void invokedAfter() {
       afterInvocation = counter.incrementAndGet();
     }

@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.DataSerializer;
@@ -45,18 +44,18 @@ import java.net.UnknownHostException;
  */
 public final class FetchHostResponse extends AdminResponse {
   private static final Logger logger = LogService.getLogger();
-  
+
   // instance variables
-  
+
   InetAddress host;
   File gemfireDir;
   File workingDir;
   long birthDate;
   boolean isDedicatedCacheServer = false;
-  
+
   /** The connection/system name (not guaranteed to be unique) */
   String name;
-  
+
   /**
    * Returns a <code>FetchHostResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of this vm's local host.
@@ -68,14 +67,13 @@ public final class FetchHostResponse extends AdminResponse {
       InetAddress host = null;
       String bindAddress = dm.getConfig().getBindAddress();
       try {
-        if (bindAddress != null && 
-            !bindAddress.equals(DistributionConfig.DEFAULT_BIND_ADDRESS)) {
+        if (bindAddress != null && !bindAddress.equals(DistributionConfig.DEFAULT_BIND_ADDRESS)) {
           host = InetAddress.getByName(bindAddress);
         }
       } catch (UnknownHostException uhe) {
         // handled in the finally block
       } finally {
-        if ( host == null) {
+        if (host == null) {
           host = SocketCreator.getLocalHost();
         }
       }
@@ -84,9 +82,9 @@ public final class FetchHostResponse extends AdminResponse {
 
       DistributionConfig config = dm.getSystem().getConfig();
       m.name = config.getName();
-      
+
       m.workingDir = new File(System.getProperty("user.dir")).getAbsoluteFile();
-        
+
       URL url = GemFireVersion.getJarURL();
       if (url == null) {
         throw new IllegalStateException(LocalizedStrings.FetchHostResponse_COULD_NOT_FIND_GEMFIREJAR.toLocalizedString());
@@ -137,12 +135,12 @@ public final class FetchHostResponse extends AdminResponse {
   public boolean isDedicatedCacheServer() {
     return this.isDedicatedCacheServer;
   }
-  
+
   public int getDSFID() {
     return FETCH_HOST_RESPONSE;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeString(this.name, out);
@@ -153,21 +151,19 @@ public final class FetchHostResponse extends AdminResponse {
     out.writeBoolean(this.isDedicatedCacheServer);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.name = DataSerializer.readString(in);
-    this.host = (InetAddress)DataSerializer.readObject(in);
-    this.gemfireDir = (File)DataSerializer.readObject(in);
-    this.workingDir = (File)DataSerializer.readObject(in);
+    this.host = (InetAddress) DataSerializer.readObject(in);
+    this.gemfireDir = (File) DataSerializer.readObject(in);
+    this.workingDir = (File) DataSerializer.readObject(in);
     this.birthDate = in.readLong();
     this.isDedicatedCacheServer = in.readBoolean();
   }
 
-  @Override  
+  @Override
   public String toString() {
-    return LocalizedStrings.FetchHostResponse_FETCHHOSTRESPONSE_FOR_0_HOST_1.toLocalizedString(new Object[] {this.getRecipient(), this.host});
+    return LocalizedStrings.FetchHostResponse_FETCHHOSTRESPONSE_FOR_0_HOST_1.toLocalizedString(new Object[] { this.getRecipient(), this.host });
   }
 }
-

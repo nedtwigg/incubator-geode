@@ -56,7 +56,7 @@ public class SerializableTimeout extends Timeout implements SerializableTestRule
    * Builder for {@code SerializableTimeout}.
    */
   public static class Builder extends Timeout.Builder {
-    
+
     protected Builder() {
       super();
     }
@@ -90,15 +90,12 @@ public class SerializableTimeout extends Timeout implements SerializableTestRule
 
     SerializationProxy(final SerializableTimeout instance) {
       this.timeout = (long) readField(Timeout.class, instance, FIELD_TIMEOUT);
-      this.timeUnit =(TimeUnit) readField(Timeout.class, instance, FIELD_TIME_UNIT);
-      this.lookForStuckThread =(boolean) readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD);
+      this.timeUnit = (TimeUnit) readField(Timeout.class, instance, FIELD_TIME_UNIT);
+      this.lookForStuckThread = (boolean) readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD);
     }
 
     private Object readResolve() {
-      return new SerializableTimeout.Builder()
-          .withTimeout(this.timeout, this.timeUnit)
-          .withLookingForStuckThread(this.lookForStuckThread)
-          .build();
+      return new SerializableTimeout.Builder().withTimeout(this.timeout, this.timeUnit).withLookingForStuckThread(this.lookForStuckThread).build();
     }
   }
 }

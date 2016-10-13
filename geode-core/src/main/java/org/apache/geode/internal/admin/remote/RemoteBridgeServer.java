@@ -47,9 +47,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @since GemFire 4.0
  */
-public class RemoteBridgeServer
-  extends AbstractCacheServer
-  implements AdminBridgeServer, DataSerializable {
+public class RemoteBridgeServer extends AbstractCacheServer implements AdminBridgeServer, DataSerializable {
 
   private static final long serialVersionUID = 8417391824652384959L;
 
@@ -58,13 +56,12 @@ public class RemoteBridgeServer
 
   /** The id of this bridge server */
   private int id;
-  
 
-//  /**
-//   * The name of the directory in which to store overflowed files for client ha
-//   * queue
-//   */
-//  private String overflowDirectory=null;
+  //  /**
+  //   * The name of the directory in which to store overflowed files for client ha
+  //   * queue
+  //   */
+  //  private String overflowDirectory=null;
   //////////////////////  Constructors  //////////////////////
 
   /**
@@ -92,8 +89,8 @@ public class RemoteBridgeServer
     this.loadProbe = getProbe(impl.getLoadProbe());
     this.loadPollInterval = impl.getLoadPollInterval();
     this.tcpNoDelay = impl.getTcpNoDelay();
-//  added for configuration of ha overflow
-    ClientSubscriptionConfig cscimpl = impl.getClientSubscriptionConfig();    
+    //  added for configuration of ha overflow
+    ClientSubscriptionConfig cscimpl = impl.getClientSubscriptionConfig();
     this.clientSubscriptionConfig.setEvictionPolicy(cscimpl.getEvictionPolicy());
     this.clientSubscriptionConfig.setCapacity(cscimpl.getCapacity());
     String diskStoreName = cscimpl.getDiskStoreName();
@@ -103,15 +100,14 @@ public class RemoteBridgeServer
       this.clientSubscriptionConfig.setOverflowDirectory(cscimpl.getOverflowDirectory());
     }
   }
-  
+
   private ServerLoadProbe getProbe(ServerLoadProbe probe) {
-    if(probe == null) {
+    if (probe == null) {
       return new RemoteLoadProbe("");
     }
-    if(probe instanceof Serializable) {
+    if (probe instanceof Serializable) {
       return probe;
-    }
-    else {
+    } else {
       return new RemoteLoadProbe(probe.toString());
     }
   }
@@ -124,7 +120,7 @@ public class RemoteBridgeServer
   }
 
   ////////////////////  Instance Methods  ////////////////////
-  
+
   @Override
   public void start() throws IOException {
     throw new UnsupportedOperationException(LocalizedStrings.RemoteBridgeServer_A_REMOTE_BRIDGESERVER_CANNOT_BE_STARTED.toLocalizedString());
@@ -146,7 +142,7 @@ public class RemoteBridgeServer
   public Cache getCache() {
     throw new UnsupportedOperationException(LocalizedStrings.RemoteBridgeServer_CANNOT_GET_THE_CACHE_OF_A_REMOTE_BRIDGESERVER.toLocalizedString());
   }
-  
+
   public ClientSession getClientSession(String durableClientId) {
     String s = LocalizedStrings.RemoteBridgeServer_CANNOT_GET_CLIENT_SESSION.toLocalizedString();
     throw new UnsupportedOperationException(s);
@@ -162,14 +158,14 @@ public class RemoteBridgeServer
     throw new UnsupportedOperationException(s);
   }
 
-  public ClientSubscriptionConfig getClientSubscriptionConfig(){
+  public ClientSubscriptionConfig getClientSubscriptionConfig() {
     return this.clientSubscriptionConfig;
   }
 
   public int getId() {
     return this.id;
   }
-  
+
   public void toData(DataOutput out) throws IOException {
     out.writeInt(this.port);
     out.writeBoolean(this.notifyBySubscription);
@@ -188,47 +184,41 @@ public class RemoteBridgeServer
     out.writeInt(this.socketBufferSize);
     out.writeBoolean(this.tcpNoDelay);
     out.writeInt(this.getClientSubscriptionConfig().getCapacity());
-    DataSerializer.writeString(this.getClientSubscriptionConfig()
-        .getEvictionPolicy(), out);
-    DataSerializer.writeString(this.getClientSubscriptionConfig()
-        .getDiskStoreName(), out);
+    DataSerializer.writeString(this.getClientSubscriptionConfig().getEvictionPolicy(), out);
+    DataSerializer.writeString(this.getClientSubscriptionConfig().getDiskStoreName(), out);
     if (this.getClientSubscriptionConfig().getDiskStoreName() == null) {
-      DataSerializer.writeString(this.getClientSubscriptionConfig()
-          .getOverflowDirectory(), out);
+      DataSerializer.writeString(this.getClientSubscriptionConfig().getOverflowDirectory(), out);
     }
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
-	  
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
+
     this.port = in.readInt();
     this.notifyBySubscription = in.readBoolean();
     this.isRunning = in.readBoolean();
     this.maxConnections = in.readInt();
     this.id = in.readInt();
-    this.maximumTimeBetweenPings = in .readInt();
+    this.maximumTimeBetweenPings = in.readInt();
     this.maximumMessageCount = in.readInt();
     this.messageTimeToLive = in.readInt();
     this.maxThreads = in.readInt();
     setBindAddress(DataSerializer.readString(in));
     setGroups(DataSerializer.readStringArray(in));
     setHostnameForClients(DataSerializer.readString(in));
-    setLoadProbe((ServerLoadProbe)DataSerializer.readObject(in));
+    setLoadProbe((ServerLoadProbe) DataSerializer.readObject(in));
     setLoadPollInterval(DataSerializer.readPrimitiveLong(in));
     this.socketBufferSize = in.readInt();
     this.tcpNoDelay = in.readBoolean();
     this.getClientSubscriptionConfig().setCapacity(in.readInt());
-    this.getClientSubscriptionConfig().setEvictionPolicy(
-        DataSerializer.readString(in));
+    this.getClientSubscriptionConfig().setEvictionPolicy(DataSerializer.readString(in));
     String diskStoreName = DataSerializer.readString(in);
     if (diskStoreName != null) {
       this.getClientSubscriptionConfig().setDiskStoreName(diskStoreName);
     } else {
-      this.getClientSubscriptionConfig().setOverflowDirectory(
-          DataSerializer.readString(in));
+      this.getClientSubscriptionConfig().setOverflowDirectory(DataSerializer.readString(in));
     }
   }
-  
+
   private static class RemoteLoadProbe extends ServerLoadProbeAdapter {
     /** The description of this callback */
     private final String desc;
@@ -240,12 +230,13 @@ public class RemoteBridgeServer
     public ServerLoad getLoad(ServerMetrics metrics) {
       return null;
     }
-    
+
     @Override
     public String toString() {
       return desc;
     }
-  }  
+  }
+
   /**
    * Registers a new <code>InterestRegistrationListener</code> with the set of
    * <code>InterestRegistrationListener</code>s.
@@ -255,11 +246,8 @@ public class RemoteBridgeServer
    * 
    * @since GemFire 5.8Beta
    */
-  public void registerInterestRegistrationListener(
-      InterestRegistrationListener listener) {
-    final String s = LocalizedStrings.
-      RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_REGISTERED_ON_A_REMOTE_BRIDGESERVER
-      .toLocalizedString();
+  public void registerInterestRegistrationListener(InterestRegistrationListener listener) {
+    final String s = LocalizedStrings.RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_REGISTERED_ON_A_REMOTE_BRIDGESERVER.toLocalizedString();
     throw new UnsupportedOperationException(s);
   }
 
@@ -273,11 +261,8 @@ public class RemoteBridgeServer
    * 
    * @since GemFire 5.8Beta
    */
-  public void unregisterInterestRegistrationListener(
-      InterestRegistrationListener listener) {
-    final String s = LocalizedStrings.
-      RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_UNREGISTERED_FROM_A_REMOTE_BRIDGESERVER
-      .toLocalizedString();
+  public void unregisterInterestRegistrationListener(InterestRegistrationListener listener) {
+    final String s = LocalizedStrings.RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_UNREGISTERED_FROM_A_REMOTE_BRIDGESERVER.toLocalizedString();
     throw new UnsupportedOperationException(s);
   }
 
@@ -291,9 +276,7 @@ public class RemoteBridgeServer
    * @since GemFire 5.8Beta
    */
   public Set getInterestRegistrationListeners() {
-    final String s = LocalizedStrings.
-      RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_RETRIEVED_FROM_A_REMOTE_BRIDGESERVER
-      .toLocalizedString();
+    final String s = LocalizedStrings.RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_RETRIEVED_FROM_A_REMOTE_BRIDGESERVER.toLocalizedString();
     throw new UnsupportedOperationException(s);
   }
 }

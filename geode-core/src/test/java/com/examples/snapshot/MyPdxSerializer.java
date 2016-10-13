@@ -26,10 +26,11 @@ import org.apache.geode.pdx.ReflectionBasedAutoSerializer;
 
 public class MyPdxSerializer implements PdxSerializer, Declarable {
   private final PdxSerializer auto = new ReflectionBasedAutoSerializer("com.examples.snapshot.My.*Pdx");
-  
+
   @Override
   public void init(Properties props) {
   }
+
   @Override
   public boolean toData(Object o, PdxWriter out) {
     if (o instanceof MyObjectPdx2) {
@@ -47,12 +48,12 @@ public class MyPdxSerializer implements PdxSerializer, Declarable {
       MyObjectPdx2 obj = new MyObjectPdx2();
       obj.f1 = in.readLong("f1");
       obj.f2 = in.readString("f2");
-      
+
       return obj;
     }
     return auto.fromData(clazz, in);
   }
-  
+
   public static class MyObjectPdx2 extends MyObject {
     public MyObjectPdx2() {
     }

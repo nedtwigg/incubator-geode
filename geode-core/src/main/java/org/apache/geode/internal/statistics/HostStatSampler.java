@@ -42,8 +42,7 @@ import java.util.concurrent.TimeUnit;
  * statistics. It only has the common functionality that any sampler needs.
 
  */
-public abstract class HostStatSampler 
-    implements Runnable, StatisticsSampler, StatArchiveHandlerConfig {
+public abstract class HostStatSampler implements Runnable, StatisticsSampler, StatArchiveHandlerConfig {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -52,28 +51,27 @@ public abstract class HostStatSampler
 
   protected static final String INITIALIZATION_TIMEOUT_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "statSamplerInitializationTimeout";
   protected static final int INITIALIZATION_TIMEOUT_DEFAULT = 30000;
-  protected static final long INITIALIZATION_TIMEOUT_MILLIS = 
-      Long.getLong(INITIALIZATION_TIMEOUT_PROPERTY, INITIALIZATION_TIMEOUT_DEFAULT);
-  
+  protected static final long INITIALIZATION_TIMEOUT_MILLIS = Long.getLong(INITIALIZATION_TIMEOUT_PROPERTY, INITIALIZATION_TIMEOUT_DEFAULT);
+
   /** 
    * Used to check if the sampler thread wake-up is delayed, and log a warning if it is delayed by longer than 
    * the amount of milliseconds specified by this property. The value of 0 disables the check. 
    */
   private static final long STAT_SAMPLER_DELAY_THRESHOLD = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "statSamplerDelayThreshold", 3000);
   private static final long STAT_SAMPLER_DELAY_THRESHOLD_NANOS = NanoTimer.millisToNanos(STAT_SAMPLER_DELAY_THRESHOLD);
-  
+
   private static final int MIN_MS_SLEEP = 1;
-  
+
   private static final int WAIT_FOR_SLEEP_INTERVAL = 10;
-  
+
   private static Thread statThread = null;
 
   private volatile boolean stopRequested = false;
-  
+
   private final boolean osStatsDisabled = Boolean.getBoolean(OS_STATS_DISABLED_PROPERTY);
   private final boolean fileSizeLimitInKB;
   private final StatSamplerStats samplerStats;
-  
+
   private VMStatsContract vmStats;
   private SampleCollector sampleCollector;
 
@@ -85,20 +83,19 @@ public abstract class HostStatSampler
   private final CancelCriterion stopper;
 
   private final CallbackSampler callbackSampler;
-  
-  protected HostStatSampler(CancelCriterion stopper, 
-                            StatSamplerStats samplerStats) {
+
+  protected HostStatSampler(CancelCriterion stopper, StatSamplerStats samplerStats) {
     this.stopper = stopper;
     this.statSamplerInitializedLatch = new StoppableCountDownLatch(this.stopper, 1);
     this.samplerStats = samplerStats;
     this.fileSizeLimitInKB = Boolean.getBoolean(TEST_FILE_SIZE_LIMIT_IN_KB_PROPERTY);
     this.callbackSampler = new CallbackSampler(stopper, samplerStats);
   }
-  
+
   public final StatSamplerStats getStatSamplerStats() {
     return this.samplerStats;
   }
-  
+
   /**
    * Returns the number of times a statistics resource has been add or deleted.
    */
@@ -147,8 +144,7 @@ public abstract class HostStatSampler
   public boolean waitForSample(long timeout) throws InterruptedException {
     final long endTime = System.currentTimeMillis() + timeout;
     final int startSampleCount = this.samplerStats.getSampleCount();
-    while (System.currentTimeMillis() < endTime && 
-        this.samplerStats.getSampleCount() <= startSampleCount) {
+    while (System.currentTimeMillis() < endTime && this.samplerStats.getSampleCount() <= startSampleCount) {
       Thread.sleep(WAIT_FOR_SLEEP_INTERVAL);
     }
     return this.samplerStats.getSampleCount() > startSampleCount;
@@ -157,13 +153,12 @@ public abstract class HostStatSampler
   @Override
   public SampleCollector waitForSampleCollector(long timeout) throws InterruptedException {
     final long endTime = System.currentTimeMillis() + timeout;
-    while (System.currentTimeMillis() < endTime && 
-        this.sampleCollector == null || !this.sampleCollector.isInitialized()) {
+    while (System.currentTimeMillis() < endTime && this.sampleCollector == null || !this.sampleCollector.isInitialized()) {
       Thread.sleep(WAIT_FOR_SLEEP_INTERVAL);
     }
     return this.sampleCollector;
   }
-  
+
   /**
    * This service's main loop
    */
@@ -178,10 +173,10 @@ public abstract class HostStatSampler
     boolean latchCountedDown = false;
     try {
       initSpecialStats();
-      
+
       this.sampleCollector = new SampleCollector(this);
       this.sampleCollector.initialize(this, NanoTimer.getTime());
-      
+
       this.statSamplerInitializedLatch.countDown();
       latchCountedDown = true;
 
@@ -201,38 +196,36 @@ public abstract class HostStatSampler
           final long nanosTimeStamp = timer.getLastResetTime();
           final long nanosElapsedSleeping = nanosTimeStamp - nanosBeforeSleep;
           checkElapsedSleepTime(nanosElapsedSleeping);
-          if (stopRequested()) break;
+          if (stopRequested())
+            break;
           sampleSpecialStats(false);
-          if (stopRequested()) break;
+          if (stopRequested())
+            break;
           checkListeners();
-          if (stopRequested()) break;
-          
+          if (stopRequested())
+            break;
+
           this.sampleCollector.sample(nanosTimeStamp);
-          
+
           final long nanosSpentWorking = timer.reset();
           accountForTimeSpentWorking(nanosSpentWorking, nanosElapsedSleeping);
         } else if (!stopRequested() && !isSamplingEnabled()) {
           sampleSpecialStats(true); // fixes bug 42527
         }
       }
-    } 
-    catch (InterruptedException ex) {
+    } catch (InterruptedException ex) {
       // Silently exit
-    }
-    catch (CancelException ex) {
+    } catch (CancelException ex) {
       // Silently exit
-    }
-    catch (RuntimeException ex) {
+    } catch (RuntimeException ex) {
       logger.fatal(LogMarker.STATISTICS, ex.getMessage(), ex);
       throw ex;
-    } 
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Error ex) {
+    } catch (Error ex) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -243,10 +236,10 @@ public abstract class HostStatSampler
       throw ex;
     } finally {
       try {
-      closeSpecialStats();
-      if (this.sampleCollector != null) {
-        this.sampleCollector.close();
-      }
+        closeSpecialStats();
+        if (this.sampleCollector != null) {
+          this.sampleCollector.close();
+        }
       } finally {
         if (!latchCountedDown) {
           // Make sure the latch gets counted down since
@@ -266,20 +259,19 @@ public abstract class HostStatSampler
    * @throws IllegalStateException if an instance of the {@link #statThread} is still running from a previous DistributedSystem.
    */
   public final void start() {
-    synchronized(HostStatSampler.class) { 
+    synchronized (HostStatSampler.class) {
       if (statThread != null) {
         try {
           int msToWait = getSampleRate() + 100;
           statThread.join(msToWait);
         } catch (InterruptedException ex) {
           Thread.currentThread().interrupt();
-        } 
+        }
         if (statThread.isAlive()) {
           throw new IllegalStateException(LocalizedStrings.HostStatSampler_STATISTICS_SAMPLING_THREAD_IS_ALREADY_RUNNING_INDICATING_AN_INCOMPLETE_SHUTDOWN_OF_A_PREVIOUS_CACHE.toLocalizedString());
         }
-      }  
-      ThreadGroup group = 
-        LoggingThreadGroup.createThreadGroup("StatSampler Threads");
+      }
+      ThreadGroup group = LoggingThreadGroup.createThreadGroup("StatSampler Threads");
 
       this.callbackSampler.start(getStatisticsManager(), group, getSampleRate(), TimeUnit.MILLISECONDS);
       statThread = new Thread(group, this);
@@ -295,18 +287,19 @@ public abstract class HostStatSampler
       }
     }
   }
-  
+
   /**
    * Tell this service's main thread to terminate.
    */
   public final void stop() {
     stop(true);
   }
+
   private final void stop(boolean interruptIfAlive) {
     synchronized (HostStatSampler.class) {
       this.callbackSampler.stop();
-      if ( statThread == null) {
-        return; 
+      if (statThread == null) {
+        return;
       }
 
       this.stopRequested = true;
@@ -324,7 +317,7 @@ public abstract class HostStatSampler
           Thread.currentThread().interrupt();
         }
       } finally {
-        if ( statThread.isAlive() ) {
+        if (statThread.isAlive()) {
           if (interruptIfAlive) {
             // It is still alive so interrupt the thread
             statThread.interrupt();
@@ -339,7 +332,7 @@ public abstract class HostStatSampler
       }
     }
   }
-  
+
   public final boolean isAlive() {
     synchronized (HostStatSampler.class) {
       return statThread != null && statThread.isAlive();
@@ -356,7 +349,7 @@ public abstract class HostStatSampler
   public final void waitForInitialization() throws InterruptedException {
     this.statSamplerInitializedLatch.await();
   }
-  
+
   /**
    * Waits for the special statistics to be initialized. This overridden
    * version of {@link #waitForInitialization()} should always be used
@@ -368,11 +361,11 @@ public abstract class HostStatSampler
   public final boolean waitForInitialization(long ms) throws InterruptedException {
     return this.statSamplerInitializedLatch.await(ms);
   }
-  
+
   public final void changeArchive(File newFile) {
     this.sampleCollector.changeArchive(newFile, NanoTimer.getTime());
   }
-  
+
   /**
    * Returns the <code>VMStatsContract</code> for this VM.
    *
@@ -395,12 +388,12 @@ public abstract class HostStatSampler
    * Gets the sample rate in milliseconds
    */
   protected abstract int getSampleRate();
-  
+
   /**
    * Returns true if sampling is enabled.
    */
   public abstract boolean isSamplingEnabled();
-  
+
   /**
    * Returns the statistics manager using this sampler.
    */
@@ -409,15 +402,15 @@ public abstract class HostStatSampler
   protected OsStatisticsFactory getOsStatisticsFactory() {
     return null;
   }
-  
+
   protected void initProcessStats(long id) {
     // do nothing by default
   }
-  
+
   protected void sampleProcessStats(boolean prepareOnly) {
     // do nothing by default
   }
-  
+
   protected void closeProcessStats() {
     // do nothing by default
   }
@@ -425,15 +418,15 @@ public abstract class HostStatSampler
   protected long getSpecialStatsId() {
     return getStatisticsManager().getId();
   }
-  
+
   protected final boolean fileSizeLimitInKB() {
     return this.fileSizeLimitInKB;
   }
-  
+
   protected final boolean osStatsDisabled() {
     return this.osStatsDisabled;
   }
-  
+
   protected final boolean stopRequested() {
     return stopper.isCancelInProgress() || this.stopRequested;
   }
@@ -441,7 +434,7 @@ public abstract class HostStatSampler
   public final SampleCollector getSampleCollector() {
     return this.sampleCollector;
   }
-  
+
   /**
    * Initialize any special sampler stats
    */
@@ -461,17 +454,15 @@ public abstract class HostStatSampler
     }
     closeProcessStats();
   }
-  
+
   /**
    * Called when this sampler has spent some time working and wants
    * it to be accounted for.
    */
-  private void accountForTimeSpentWorking(long nanosSpentWorking, 
-                                          long nanosSpentSleeping) {
-    this.samplerStats.tookSample(
-        nanosSpentWorking, getStatisticsManager().getStatisticsCount(), nanosSpentSleeping);
+  private void accountForTimeSpentWorking(long nanosSpentWorking, long nanosSpentSleeping) {
+    this.samplerStats.tookSample(nanosSpentWorking, getStatisticsManager().getStatisticsCount(), nanosSpentSleeping);
   }
-  
+
   /**
    * @param timer a NanoTimer used to compute the elapsed delay
    * @param nanosToDelay the timestamp to delay until it is the current time
@@ -504,11 +495,11 @@ public abstract class HostStatSampler
       remainingNanos = nanosToDelay - now;
     }
   }
-  
+
   private long getNanoRate() {
     return NanoTimer.millisToNanos(getSampleRate());
   }
-  
+
   /**
    * Collect samples of any operating system statistics
    * 
@@ -518,14 +509,16 @@ public abstract class HostStatSampler
   private void sampleSpecialStats(boolean prepareOnly) {
     List<Statistics> statsList = getStatisticsManager().getStatsList();
     for (Statistics s : statsList) {
-      if (stopRequested()) return;
+      if (stopRequested())
+        return;
       if (s instanceof StatisticsImpl) {
-        ((StatisticsImpl)s).prepareForSample();
+        ((StatisticsImpl) s).prepareForSample();
       }
     }
 
     if (!prepareOnly && this.vmStats != null) {
-      if (stopRequested()) return;
+      if (stopRequested())
+        return;
       this.vmStats.refresh();
     }
     sampleProcessStats(prepareOnly);

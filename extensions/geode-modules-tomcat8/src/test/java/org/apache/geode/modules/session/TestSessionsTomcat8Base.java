@@ -41,7 +41,7 @@ import org.apache.geode.modules.session.catalina.DeltaSessionManager;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 
-public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase{
+public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase {
 
   protected static EmbeddedTomcat8 server;
 
@@ -56,7 +56,6 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase{
   protected Cache cache;
 
   protected VM vm0;
-
 
   /**
    * Check that the basics are working
@@ -222,8 +221,7 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase{
   @Test
   public void testSessionExpiration2() throws Exception {
     // TestSessions only live for a minute
-    sessionManager.propertyChange(
-      new PropertyChangeEvent(server.getRootContext(), "sessionTimeout", new Integer(30), new Integer(1)));
+    sessionManager.propertyChange(new PropertyChangeEvent(server.getRootContext(), "sessionTimeout", new Integer(30), new Integer(1)));
 
     // Check that the value has been set to 60 seconds
     assertEquals(60, sessionManager.getMaxInactiveInterval());
@@ -425,8 +423,6 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase{
     HttpSession session = (HttpSession) servlet.getServletContext().getAttribute("session");
     Long lastAccess = (Long) session.getAttribute("lastAccessTime");
 
-    assertTrue(
-      "Last access time not set correctly: " + lastAccess.longValue() + " not <= " + session.getLastAccessedTime(),
-      lastAccess.longValue() <= session.getLastAccessedTime());
+    assertTrue("Last access time not set correctly: " + lastAccess.longValue() + " not <= " + session.getLastAccessedTime(), lastAccess.longValue() <= session.getLastAccessedTime());
   }
 }

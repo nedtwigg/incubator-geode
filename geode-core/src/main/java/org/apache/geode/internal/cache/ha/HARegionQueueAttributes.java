@@ -28,8 +28,7 @@ import org.apache.geode.distributed.internal.DistributionConfig;
  * 
  *  
  */
-public class HARegionQueueAttributes
-{
+public class HARegionQueueAttributes {
   /**
    * default expiry time for region entries in seconds
    */
@@ -47,12 +46,12 @@ public class HARegionQueueAttributes
    */
 
   private int expiryTime = DEFAULT_EXPIRY_TIME;
-  
+
   /**
    * 
    */
-  private int blockingQueueCapacity = Integer.getInteger(BLOCKING_QUEUE_CAPACITY,DEFAULT_BLOCKING_QUEUE_CAPACITY).intValue();
-  
+  private int blockingQueueCapacity = Integer.getInteger(BLOCKING_QUEUE_CAPACITY, DEFAULT_BLOCKING_QUEUE_CAPACITY).intValue();
+
   //TODO:Asif: We shoudl prevent modification of this object by using
   // HARegionAttributesFactory instead of directly
   // providing getter/setter in HARegionAttributes. HAregionAttributes should be
@@ -63,7 +62,7 @@ public class HARegionQueueAttributes
    * Default constructor
    */
   public HARegionQueueAttributes() {
-   // this.blockingQueueCapacity = Integer.getInteger(BLOCKING_QUEUE_CAPACITY,DEFAULT_BLOCKING_QUEUE_CAPACITY).intValue();
+    // this.blockingQueueCapacity = Integer.getInteger(BLOCKING_QUEUE_CAPACITY,DEFAULT_BLOCKING_QUEUE_CAPACITY).intValue();
   }
 
   /**
@@ -71,8 +70,7 @@ public class HARegionQueueAttributes
    * 
    * @return the expiry time in seconds
    */
-  public int getExpiryTime()
-  {
+  public int getExpiryTime() {
     return expiryTime;
   }
 
@@ -82,17 +80,16 @@ public class HARegionQueueAttributes
    * @param expiryTime
    *          expiry time in seconds
    */
-  public void setExpiryTime(int expiryTime)
-  {
+  public void setExpiryTime(int expiryTime) {
     this.expiryTime = expiryTime;
   }
+
   /**
    * Gets the blocking queue capacity
    * 
    * @return the blocking queue capacity
    */
-  public int getBlockingQueueCapacity()
-  {
+  public int getBlockingQueueCapacity() {
     return this.blockingQueueCapacity;
   }
 
@@ -102,9 +99,8 @@ public class HARegionQueueAttributes
    * @param cap
    *          number of items allowed in the queue
    */
-  public void setBlockingQueueCapacity(int cap)
-  {
-     this.blockingQueueCapacity = cap;
+  public void setBlockingQueueCapacity(int cap) {
+    this.blockingQueueCapacity = cap;
   }
-  
+
 }

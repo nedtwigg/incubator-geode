@@ -200,8 +200,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
         while (!existingSystems.isEmpty() && existingSystemDisconnecting && !isReconnecting) {
           Assert.assertTrue(existingSystems.size() == 1);
 
-          InternalDistributedSystem existingSystem =
-              (InternalDistributedSystem) existingSystems.get(0);
+          InternalDistributedSystem existingSystem = (InternalDistributedSystem) existingSystems.get(0);
           existingSystemDisconnecting = existingSystem.isDisconnecting();
           // a reconnecting DS will block on GemFireCache.class and a ReconnectThread
           // holds that lock and invokes this method, so we break out of the loop
@@ -212,29 +211,25 @@ public abstract class DistributedSystem implements StatisticsFactory {
             try {
               // no notify for existingSystemsLock, just to release the sync
               existingSystemsLock.wait(50);
-            } 
-            catch (InterruptedException ex) {
+            } catch (InterruptedException ex) {
               interrupted = true;
-            }
-            finally {
+            } finally {
               if (interrupted) {
                 Thread.currentThread().interrupt();
               }
             }
           } else if (existingSystem.isConnected()) {
-            existingSystem.validateSameProperties(config,
-                existingSystem.isConnected());
+            existingSystem.validateSameProperties(config, existingSystem.isConnected());
             return existingSystem;
           } else {
-          // This should not happen: existingSystem.isConnected()==false && existingSystem.isDisconnecting()==false 
+            // This should not happen: existingSystem.isConnected()==false && existingSystem.isDisconnecting()==false 
             throw new AssertionError("system should not be disconnecting==false and isConnected==falsed");
           }
         }
       }
 
       // Make a new connection to the distributed system
-      InternalDistributedSystem newSystem =
-        InternalDistributedSystem.newInstance(config);
+      InternalDistributedSystem newSystem = InternalDistributedSystem.newInstance(config);
       addSystem(newSystem);
       return newSystem;
     }
@@ -245,15 +240,15 @@ public abstract class DistributedSystem implements StatisticsFactory {
       int size = existingSystems.size();
       if (size == 0) {
         existingSystems = Collections.singletonList(newSystem);
-      }
-      else {
-        ArrayList l = new ArrayList(size+1);
+      } else {
+        ArrayList l = new ArrayList(size + 1);
         l.addAll(existingSystems);
         l.add(0, newSystem);
         existingSystems = Collections.unmodifiableList(l);
       }
     }
   }
+
   protected static boolean removeSystem(InternalDistributedSystem oldSystem) {
     synchronized (existingSystemsLock) {
       ArrayList l = new ArrayList(existingSystems);
@@ -262,18 +257,16 @@ public abstract class DistributedSystem implements StatisticsFactory {
         int size = l.size();
         if (size == 0) {
           existingSystems = Collections.EMPTY_LIST;
-        }
-        else if (size == 1) {
+        } else if (size == 1) {
           existingSystems = Collections.singletonList(l.get(0));
-        }
-        else {
+        } else {
           existingSystems = Collections.unmodifiableList(l);
         }
       }
       return result;
     }
   }
-  
+
   /**
    * Sets the calling thread's socket policy.
    * This value will override that default set by the
@@ -290,8 +283,6 @@ public abstract class DistributedSystem implements StatisticsFactory {
       ConnectionTable.threadWantsOwnResources();
     }
   }
-
-
 
   /**
    * Frees up any socket resources owned by the calling thread.
@@ -312,9 +303,8 @@ public abstract class DistributedSystem implements StatisticsFactory {
     // distributed system.  If we are already connected to the desired
     // distributed system, return that connection.
     List l = existingSystems;
-    for (Iterator iter = l.iterator(); iter.hasNext(); ) {
-      InternalDistributedSystem existingSystem =
-        (InternalDistributedSystem) iter.next();
+    for (Iterator iter = l.iterator(); iter.hasNext();) {
+      InternalDistributedSystem existingSystem = (InternalDistributedSystem) iter.next();
       if (existingSystem.sameSystemAs(config)) {
         Assert.assertTrue(existingSystem.isConnected());
         return existingSystem;
@@ -354,36 +344,34 @@ public abstract class DistributedSystem implements StatisticsFactory {
    */
   protected static void setEnableAdministrationOnly(boolean adminOnly) {
     synchronized (existingSystemsLock) {
-      if( existingSystems != null && !existingSystems.isEmpty()) {
-        throw new IllegalStateException(
-          LocalizedStrings.DistributedSystem_THIS_VM_ALREADY_HAS_ONE_OR_MORE_DISTRIBUTED_SYSTEM_CONNECTIONS_0
-            .toLocalizedString(existingSystems));
+      if (existingSystems != null && !existingSystems.isEmpty()) {
+        throw new IllegalStateException(LocalizedStrings.DistributedSystem_THIS_VM_ALREADY_HAS_ONE_OR_MORE_DISTRIBUTED_SYSTEM_CONNECTIONS_0.toLocalizedString(existingSystems));
       }
       DistributionManager.isDedicatedAdminVM = adminOnly;
     }
   }
 
-//   /**
-//    * Connects to a GemFire distributed system with a configuration
-//    * supplemented by the given properties.
-//    *
-//    * @param config
-//    *        The <a href="#configuration">configuration properties</a>
-//    *        used when connecting to the distributed system
-//    * @param callback
-//    *        A user-specified object that is delivered with the {@link
-//    *        org.apache.geode.admin.SystemMembershipEvent}
-//    *        triggered by connecting.
-//    *
-//    * @see #connect(Properties)
-//    * @see org.apache.geode.admin.SystemMembershipListener#memberJoined
-//    *
-//    * @since GemFire 4.0
-//    */
-//   public static DistributedSystem connect(Properties config,
-//                                           Object callback) {
-//     throw new UnsupportedOperationException("Not implemented yet");
-//   }
+  //   /**
+  //    * Connects to a GemFire distributed system with a configuration
+  //    * supplemented by the given properties.
+  //    *
+  //    * @param config
+  //    *        The <a href="#configuration">configuration properties</a>
+  //    *        used when connecting to the distributed system
+  //    * @param callback
+  //    *        A user-specified object that is delivered with the {@link
+  //    *        org.apache.geode.admin.SystemMembershipEvent}
+  //    *        triggered by connecting.
+  //    *
+  //    * @see #connect(Properties)
+  //    * @see org.apache.geode.admin.SystemMembershipListener#memberJoined
+  //    *
+  //    * @since GemFire 4.0
+  //    */
+  //   public static DistributedSystem connect(Properties config,
+  //                                           Object callback) {
+  //     throw new UnsupportedOperationException("Not implemented yet");
+  //   }
 
   //////////////////////  Constructors  //////////////////////
 
@@ -437,7 +425,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @return the cancel criterion for this system
    */
   public abstract CancelCriterion getCancelCriterion();
-  
+
   /**
    * Disconnects from this distributed system.  This operation will
    * close the distribution manager and render the {@link
@@ -454,6 +442,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @deprecated as of 6.5 use {@link Cache#close} or {@link ClientCache#close} instead.
    */
   public abstract void disconnect();
+
   /**
    * Returns whether or not this <code>DistributedSystem</code> is
    * connected to the distributed system.
@@ -491,7 +480,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @since GemFire 5.0
    */
   public abstract DistributedMember getDistributedMember();
-  
+
   /**
    * Returns a set of all the other members in this distributed system.
    * @return returns a set of all the other members in this distributed system.
@@ -506,8 +495,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @since GemFire 7.0
    */
   public abstract Set<DistributedMember> getGroupMembers(String group);
-  
-  
+
   /**
    * Find the set of distributed members running on a given address
    * 
@@ -515,18 +503,18 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * that match the given IP address. May be empty if there are no members.
    * 
    * @since GemFire 7.1
-   */ 
-   public abstract Set<DistributedMember> findDistributedMembers(InetAddress address);
-
-   /**
-   * Find the distributed member with the given name
-   * 
-   * @return the distributed member that has the given name, or null if
-   * no member is currently running with the given name.
-   * 
-   * @since GemFire 7.1
    */
-   public abstract DistributedMember findDistributedMember(String name);
+  public abstract Set<DistributedMember> findDistributedMembers(InetAddress address);
+
+  /**
+  * Find the distributed member with the given name
+  * 
+  * @return the distributed member that has the given name, or null if
+  * no member is currently running with the given name.
+  * 
+  * @since GemFire 7.1
+  */
+  public abstract DistributedMember findDistributedMember(String name);
 
   /**
    * Returns the <a href="#name">name</a> of this connection to the
@@ -559,7 +547,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @since Geode 1.0
    */
   public static final String PROPERTIES_FILE_PROPERTY = "gemfirePropertyFile";
-  
+
   /** 
    * The default value of <code>PROPERTIES_FILE_PROPERTY</code> is
    * <code>"gemfire.properties"</code>. The location of the file will be 
@@ -580,9 +568,9 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @since Geode 1.0
    */
   public static String getPropertiesFile() {
-	return System.getProperty(PROPERTIES_FILE_PROPERTY, PROPERTIES_FILE_DEFAULT);
+    return System.getProperty(PROPERTIES_FILE_PROPERTY, PROPERTIES_FILE_DEFAULT);
   }
-  
+
   /**
    * The <code>PROPERTY_FILE</code> is the name of the
    * properties file that the connect method will check for when
@@ -634,7 +622,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @since Geode 1.0
    */
   public static final String SECURITY_PROPERTIES_FILE_PROPERTY = "gemfireSecurityPropertyFile";
-  
+
   /** 
    * The default value of <code>SECURITY_PROPERTIES_FILE_PROPERTY</code> is
    * <code>"gfsecurity.properties"</code>. The location of the file will be 
@@ -655,9 +643,9 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @since Geode 1.0
    */
   public static String getSecurityPropertiesFile() {
-	return System.getProperty(SECURITY_PROPERTIES_FILE_PROPERTY, SECURITY_PROPERTIES_FILE_DEFAULT);
+    return System.getProperty(SECURITY_PROPERTIES_FILE_PROPERTY, SECURITY_PROPERTIES_FILE_DEFAULT);
   }
-  
+
   /**
    * The <code>SECURITY_PROPERTY_FILE</code> is the name of the
    * property file that the connect method will check for when
@@ -758,7 +746,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
 
     return ClassPathLoader.getLatest().getResource(DistributedSystem.class, fileName);
   }
-  
+
   /**
    * Test to see whether the DistributedSystem is in the process of reconnecting
    * and recreating the cache after it has been removed from the system
@@ -770,7 +758,7 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @return true if the DistributedSystem is attempting to reconnect or has finished reconnecting
    */
   abstract public boolean isReconnecting();
-  
+
   /**
    * Wait for the DistributedSystem to finish reconnecting to the system
    * and recreate the cache.
@@ -781,14 +769,14 @@ public abstract class DistributedSystem implements StatisticsFactory {
    * @throws InterruptedException if the thread is interrupted while waiting
    */
   abstract public boolean waitUntilReconnected(long time, TimeUnit units) throws InterruptedException;
-  
+
   /**
    * Force the DistributedSystem to stop reconnecting.  If the DistributedSystem
    * is currently connected this will disconnect it and close the cache.
    * 
    */
   abstract public void stopReconnecting();
-  
+
   /**
    * Returns the new DistributedSystem if there was an auto-reconnect
    */

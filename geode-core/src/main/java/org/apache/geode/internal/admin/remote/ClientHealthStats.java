@@ -52,55 +52,54 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
    * yet Defined
    */
   protected int numOfPuts;
-  
+
   /**
    * Represents number of cache misses in this client. IntCounter, "Total number
    * of times a get on the cache did not find a value already in local memory."
    * Java: CachePerfStats.misses
    */
   protected int numOfMisses;
-  
+
   /**
    * Represents number of cache listners calls completed. IntCounter, "Total
    * number of times a cache listener call has completed."
    * Java: CachePerfStats.cacheListenerCallsCompleted
    */
   protected int numOfCacheListenerCalls;
-  
+
   /**
    * Represents total number of active threads in the client VM. IntCounter,
    * "Current number of live threads (both daemon and non-daemon) in this VM."
    * Java: VMStats.threads
    **/
   protected int numOfThreads;
-      
+
   /**
    * Represents the CPU time used by the process (in nanoseconds). LongCounter,
    * "CPU timed used by the process in nanoseconds."
    * Java: VMStats.processCpuTime   
    **/
   protected long processCpuTime;
-  
+
   /**
    * Represents the number of cpus available to the java VM on its machine. IntCounter,
    * "Number of cpus available to the java VM on its machine."
    * Java: VMStats.cpus   
    **/
   protected int cpus;
-  
-  
+
   /**
    * Represents time when this snapshot of the client statistics was taken.
    **/
-  protected Date updateTime; 
- 
+  protected Date updateTime;
+
   /**
    * Represents stats for a poolName .
    **/
   private HashMap<String, String> poolStats = new HashMap<String, String>();
-  
+
   /** The versions in which this message was modified */
-  private static final Version[] dsfidVersions = new Version[] { Version.GFE_80 };  
+  private static final Version[] dsfidVersions = new Version[] { Version.GFE_80 };
 
   public ClientHealthStats() {
   }
@@ -136,7 +135,7 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
   public void setNumOfPuts(int numOfPuts) {
     this.numOfPuts = numOfPuts;
   }
-  
+
   /**
    * This method returns total number of cache misses in this client. 
    * @return total number of cache misses.
@@ -160,7 +159,7 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
   public int getNumOfCacheListenerCalls() {
     return numOfCacheListenerCalls;
   }
-  
+
   /**
    * This method sets total number of cache listener calls compeleted.
    * @param numOfCacheListenerCalls total number of cache listener calls completed. 
@@ -168,7 +167,7 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
   public void setNumOfCacheListenerCalls(int numOfCacheListenerCalls) {
     this.numOfCacheListenerCalls = numOfCacheListenerCalls;
   }
-  
+
   /**
    * This method returns total number of threads in the client VM.
    * @return total number of threads in the client VM
@@ -204,11 +203,11 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
   public int getCpus() {
     return cpus;
   }
-  
+
   public void setCpus(int cpus) {
     this.cpus = cpus;
   }
-  
+
   public Date getUpdateTime() {
     return updateTime;
   }
@@ -226,10 +225,10 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
     DataSerializer.writePrimitiveInt(cpus, out);
     DataSerializer.writePrimitiveLong(processCpuTime, out);
     DataSerializer.writeDate(updateTime, out);
-    DataSerializer.writeHashMap(( poolStats), out);
+    DataSerializer.writeHashMap((poolStats), out);
   }
-  
-  public void toDataPre_GFE_8_0_0_0(DataOutput out) throws IOException{
+
+  public void toDataPre_GFE_8_0_0_0(DataOutput out) throws IOException {
     DataSerializer.writePrimitiveInt(numOfGets, out);
     DataSerializer.writePrimitiveInt(numOfPuts, out);
     DataSerializer.writePrimitiveInt(numOfMisses, out);
@@ -248,11 +247,11 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
     this.numOfThreads = DataSerializer.readPrimitiveInt(in);
     this.cpus = DataSerializer.readPrimitiveInt(in);
     this.processCpuTime = DataSerializer.readPrimitiveLong(in);
-    this.updateTime = DataSerializer.readDate(in);        
-    this.poolStats = DataSerializer.readHashMap(in);    
+    this.updateTime = DataSerializer.readDate(in);
+    this.poolStats = DataSerializer.readHashMap(in);
   }
-  
-  public void fromDataPre_GFE_8_0_0_0(DataInput in) throws IOException, ClassNotFoundException{
+
+  public void fromDataPre_GFE_8_0_0_0(DataInput in) throws IOException, ClassNotFoundException {
     this.numOfGets = DataSerializer.readPrimitiveInt(in);
     this.numOfPuts = DataSerializer.readPrimitiveInt(in);
     this.numOfMisses = DataSerializer.readPrimitiveInt(in);
@@ -278,9 +277,9 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
     buf.append("\n updateTime=" + this.updateTime);
     Iterator<Entry<String, String>> it = this.poolStats.entrySet().iterator();
     StringBuffer tempBuffer = new StringBuffer();
-    while(it.hasNext()){
+    while (it.hasNext()) {
       Entry<String, String> entry = it.next();
-      tempBuffer.append(entry.getKey() + " = "+ entry.getValue());      
+      tempBuffer.append(entry.getKey() + " = " + entry.getValue());
     }
     buf.append("\n poolStats " + tempBuffer);
     buf.append("\n]");
@@ -296,12 +295,12 @@ public class ClientHealthStats implements DataSerializableFixedID, Serializable 
   public Version[] getSerializationVersions() {
     return dsfidVersions;
   }
-  
-  public HashMap<String, String> getPoolStats(){
+
+  public HashMap<String, String> getPoolStats() {
     return this.poolStats;
   }
-  
+
   public void setPoolStats(HashMap<String, String> statsMap) {
-    this.poolStats = statsMap;    
-  } 
+    this.poolStats = statsMap;
+  }
 }

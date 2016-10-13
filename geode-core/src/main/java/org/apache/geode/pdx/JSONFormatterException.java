@@ -23,7 +23,7 @@ import org.apache.geode.GemFireException;
  * JSON document or {link @PdxInstance}.
  */
 
-public class JSONFormatterException extends GemFireException{
+public class JSONFormatterException extends GemFireException {
 
   private static final long serialVersionUID = 1L;
 

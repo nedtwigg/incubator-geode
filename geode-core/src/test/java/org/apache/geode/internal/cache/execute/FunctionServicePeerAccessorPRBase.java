@@ -34,10 +34,9 @@ public abstract class FunctionServicePeerAccessorPRBase extends FunctionServiceB
 
   @Before
   public void createRegions() {
-    region = getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY)
-      .create(REGION);
+    region = getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY).create(REGION);
     Host host = Host.getHost(0);
-    for(int i =0; i < numberOfExecutions(); i++) {
+    for (int i = 0; i < numberOfExecutions(); i++) {
       VM vm = host.getVM(i);
       createRegion(vm);
     }
@@ -47,20 +46,22 @@ public abstract class FunctionServicePeerAccessorPRBase extends FunctionServiceB
 
   private void createRegion(final VM vm) {
     vm.invoke(() -> {
-      getCache().createRegionFactory(RegionShortcut.PARTITION)
-        .create(REGION);
-      });
+      getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION);
+    });
   }
 
-  @Override public Execution getExecution() {
+  @Override
+  public Execution getExecution() {
     return FunctionService.onRegion(region);
   }
 
   @Ignore("GEODE-1348 - With this topology, the exception is not wrapped in FunctionException")
-  @Override public void defaultCollectorThrowsExceptionAfterFunctionThrowsIllegalState() {
+  @Override
+  public void defaultCollectorThrowsExceptionAfterFunctionThrowsIllegalState() {
   }
 
   @Ignore("GEODE-1348 - With this topology, the exception is not wrapped in FunctionException")
-  @Override public void customCollectorDoesNotSeeExceptionFunctionThrowsIllegalState() {
+  @Override
+  public void customCollectorDoesNotSeeExceptionFunctionThrowsIllegalState() {
   }
 }

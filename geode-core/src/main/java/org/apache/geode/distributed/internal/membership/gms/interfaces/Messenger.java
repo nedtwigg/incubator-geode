@@ -54,12 +54,12 @@ public interface Messenger extends Service {
    * returns the endpoint ID for this member
    */
   InternalDistributedMember getMemberID();
-  
+
   /**
    * retrieves the quorum checker that is used during auto-reconnect attempts
    */
   QuorumChecker getQuorumChecker();
-  
+
   /**
    * test whether multicast is not only turned on but is working
    * @return true multicast is enabled and working
@@ -77,7 +77,7 @@ public interface Messenger extends Service {
    * @param includeMulticast whether to record multicast state
    */
   void getMessageState(InternalDistributedMember member, Map state, boolean includeMulticast);
-  
+
   /**
    * The flip-side of getMessageState, this method takes the state it recorded
    * and waits for messages from the given member to be received.
@@ -86,40 +86,40 @@ public interface Messenger extends Service {
    * @param state the state of that member's outgoing messaging to this member
    */
   void waitForMessageState(InternalDistributedMember member, Map state) throws InterruptedException;
-  
+
   /**
    * Get the public key of member. 
    * @param mbr
    * @return byte[] public key for member
    */
   byte[] getPublicKey(InternalDistributedMember mbr);
-  
+
   /**
    * Set public key of member.
    * @param publickey
    * @param mbr
    */
-  
+
   void setPublicKey(byte[] publickey, InternalDistributedMember mbr);
-  
+
   /**
    * Set cluster key in local member.Memebr calls when it gets cluster key in join response
    * @param clusterSecretKey
    */
   void setClusterSecretKey(byte[] clusterSecretKey);
-  
+
   /** 
    * To retrieve the cluster key. This needs to send cluster key to new memebr.
    * @return byte[] cluster key
    */
   byte[] getClusterSecretKey();
-  
+
   /**
    * To set requestId in request. This requestId comes back in response to match the request.
    * @return int request id
    */
   int getRequestId();
-  
+
   /**
    * Initialize the cluster key, this happens when member becomes coordinator.
    */

@@ -28,8 +28,7 @@ import org.apache.geode.internal.statistics.platform.ProcessStats;
  * <P>This class provides the interface for statistics about a
  * Linux operating system process that is using a GemFire system.
  */
-public class LinuxProcessStats
-{
+public class LinuxProcessStats {
   final static int imageSizeINT = 0;
   final static int rssSizeINT = 1;
 
@@ -39,19 +38,10 @@ public class LinuxProcessStats
     int id = myType.nameToId(name);
     Assert.assertTrue(offset == id, "Expected the offset for " + name + " to be " + offset + " but it was " + id);
   }
-  
+
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    myType = f.createType("LinuxProcessStats",
-                          "Statistics on a Linux process.",
-                          new StatisticDescriptor[] {
-                            f.createIntGauge("imageSize",
-                                             "The size of the process's image in megabytes.",
-                                             "megabytes"),
-                            f.createIntGauge("rssSize",
-                                             "The size of the process's resident set size in megabytes. (assumes PAGESIZE=4096, specify -Dgemfire.statistics.linux.pageSize=<pagesize> to adjust)",
-                                             "megabytes"),
-                          });
+    myType = f.createType("LinuxProcessStats", "Statistics on a Linux process.", new StatisticDescriptor[] { f.createIntGauge("imageSize", "The size of the process's image in megabytes.", "megabytes"), f.createIntGauge("rssSize", "The size of the process's resident set size in megabytes. (assumes PAGESIZE=4096, specify -Dgemfire.statistics.linux.pageSize=<pagesize> to adjust)", "megabytes"), });
     checkOffset("imageSize", imageSizeINT);
     checkOffset("rssSize", rssSizeINT);
   }
@@ -59,6 +49,7 @@ public class LinuxProcessStats
   private LinuxProcessStats() {
     // no instances allowed
   }
+
   public static StatisticsType getType() {
     return myType;
   }
@@ -75,10 +66,10 @@ public class LinuxProcessStats
     } // otherwise its a Dummy implementation so do nothing
     return new ProcessStats(stats) {
       @Override
-        public long getProcessSize() {
-          return stats.getInt(rssSizeINT);
-        }
-      };
+      public long getProcessSize() {
+        return stats.getInt(rssSizeINT);
+      }
+    };
   }
 
 }

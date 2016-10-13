@@ -33,8 +33,7 @@ import org.apache.geode.internal.VersionedDataStream;
  * 
  * @since GemFire 7.1
  */
-public class ByteArrayDataInput extends InputStream implements DataInput,
-    VersionedDataStream {
+public class ByteArrayDataInput extends InputStream implements DataInput, VersionedDataStream {
 
   private byte[] bytes;
   private int nBytes;
@@ -77,10 +76,9 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
   private final int skipOver(long n) {
     final int capacity = (this.nBytes - this.pos);
     if (n <= capacity) {
-      this.pos += (int)n;
-      return (int)n;
-    }
-    else {
+      this.pos += (int) n;
+      return (int) n;
+    } else {
       this.pos += capacity;
       return capacity;
     }
@@ -93,8 +91,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
   public final int read() throws IOException {
     if (this.pos < this.nBytes) {
       return (this.bytes[this.pos++] & 0xff);
-    }
-    else {
+    } else {
       throw new EOFException();
     }
   }
@@ -106,8 +103,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
   public final int read(byte[] b, int off, int len) {
     if (b == null) {
       throw new NullPointerException();
-    }
-    else if (off < 0 || len < 0 || b.length < (off + len)) {
+    } else if (off < 0 || len < 0 || b.length < (off + len)) {
       throw new IndexOutOfBoundsException();
     }
 
@@ -119,8 +115,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
       System.arraycopy(this.bytes, this.pos, b, off, len);
       this.pos += len;
       return len;
-    }
-    else {
+    } else {
       return 0;
     }
   }
@@ -174,12 +169,10 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
       if ((this.nBytes - this.pos) >= len) {
         System.arraycopy(this.bytes, this.pos, b, off, len);
         this.pos += len;
-      }
-      else {
+      } else {
         throw new EOFException();
       }
-    }
-    else if (len < 0) {
+    } else if (len < 0) {
       throw new IndexOutOfBoundsException();
     }
   }
@@ -199,8 +192,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
   public final boolean readBoolean() throws IOException {
     if (this.pos < this.nBytes) {
       return (this.bytes[this.pos++] != 0);
-    }
-    else {
+    } else {
       throw new EOFException();
     }
   }
@@ -212,8 +204,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
   public final byte readByte() throws IOException {
     if (this.pos < this.nBytes) {
       return this.bytes[this.pos++];
-    }
-    else {
+    } else {
       throw new EOFException();
     }
   }
@@ -233,9 +224,8 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
   public final short readShort() throws IOException {
     if ((this.pos + 1) < this.nBytes) {
       int result = (this.bytes[this.pos++] & 0xff);
-      return (short)((result << 8) | (this.bytes[this.pos++] & 0xff));
-    }
-    else {
+      return (short) ((result << 8) | (this.bytes[this.pos++] & 0xff));
+    } else {
       throw new EOFException();
     }
   }
@@ -248,8 +238,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
     if ((this.pos + 1) < this.nBytes) {
       int result = (this.bytes[this.pos++] & 0xff);
       return ((result << 8) | (this.bytes[this.pos++] & 0xff));
-    }
-    else {
+    } else {
       throw new EOFException();
     }
   }
@@ -261,9 +250,8 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
   public char readChar() throws IOException {
     if ((this.pos + 1) < this.nBytes) {
       int result = this.bytes[this.pos++] << 8;
-      return (char)(result | (this.bytes[this.pos++] & 0xff));
-    }
-    else {
+      return (char) (result | (this.bytes[this.pos++] & 0xff));
+    } else {
       throw new EOFException();
     }
   }
@@ -278,8 +266,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
       result = (result << 8) | (this.bytes[this.pos++] & 0xff);
       result = (result << 8) | (this.bytes[this.pos++] & 0xff);
       return ((result << 8) | (this.bytes[this.pos++] & 0xff));
-    }
-    else {
+    } else {
       throw new EOFException();
     }
   }
@@ -298,8 +285,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
       result = (result << 8) | (this.bytes[this.pos++] & 0xff);
       result = (result << 8) | (this.bytes[this.pos++] & 0xff);
       return ((result << 8) | (this.bytes[this.pos++] & 0xff));
-    }
-    else {
+    } else {
       throw new EOFException();
     }
   }
@@ -344,10 +330,9 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
       for (; index < limit; index++, nChars++) {
         char1 = (bytes[index] & 0xff);
         if (char1 < 128) {
-          chars[nChars] = (char)char1;
+          chars[nChars] = (char) char1;
           continue;
-        }
-        else {
+        } else {
           break;
         }
       }
@@ -356,66 +341,57 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
         char1 = (bytes[index] & 0xff);
         // classify based on the high order 3 bits
         switch (char1 >> 5) {
-          case 6:
-            if ((index + 1) < limit) {
-              // two byte encoding
-              // 110yyyyy 10xxxxxx
+        case 6:
+          if ((index + 1) < limit) {
+            // two byte encoding
+            // 110yyyyy 10xxxxxx
+            // use low order 6 bits of the next byte
+            // It should have high order bits 10.
+            char2 = bytes[++index];
+            if ((char2 & 0xc0) == 0x80) {
+              // 00000yyy yyxxxxxx
+              chars[nChars] = (char) ((char1 & 0x1f) << 6 | (char2 & 0x3f));
+            } else {
+              throwUTFEncodingError(index, char1, char2, null, 2);
+            }
+          } else {
+            throw new UTFDataFormatException("partial 2-byte character at end (char1=" + char1 + ')');
+          }
+          break;
+        case 7:
+          if ((index + 2) < limit) {
+            // three byte encoding
+            // 1110zzzz 10yyyyyy 10xxxxxx
+            // use low order 6 bits of the next byte
+            // It should have high order bits 10.
+            char2 = bytes[++index];
+            if ((char2 & 0xc0) == 0x80) {
               // use low order 6 bits of the next byte
               // It should have high order bits 10.
-              char2 = bytes[++index];
-              if ((char2 & 0xc0) == 0x80) {
-                // 00000yyy yyxxxxxx
-                chars[nChars] = (char)((char1 & 0x1f) << 6 | (char2 & 0x3f));
+              char3 = bytes[++index];
+              if ((char3 & 0xc0) == 0x80) {
+                // zzzzyyyy yyxxxxxx
+                chars[nChars] = (char) (((char1 & 0x0f) << 12) | ((char2 & 0x3f) << 6) | (char3 & 0x3f));
+              } else {
+                throwUTFEncodingError(index, char1, char2, char3, 3);
               }
-              else {
-                throwUTFEncodingError(index, char1, char2, null, 2);
-              }
+            } else {
+              throwUTFEncodingError(index, char1, char2, null, 3);
             }
-            else {
-              throw new UTFDataFormatException(
-                  "partial 2-byte character at end (char1=" + char1 + ')');
-            }
-            break;
-          case 7:
-            if ((index + 2) < limit) {
-              // three byte encoding
-              // 1110zzzz 10yyyyyy 10xxxxxx
-              // use low order 6 bits of the next byte
-              // It should have high order bits 10.
-              char2 = bytes[++index];
-              if ((char2 & 0xc0) == 0x80) {
-                // use low order 6 bits of the next byte
-                // It should have high order bits 10.
-                char3 = bytes[++index];
-                if ((char3 & 0xc0) == 0x80) {
-                  // zzzzyyyy yyxxxxxx
-                  chars[nChars] = (char)(((char1 & 0x0f) << 12)
-                      | ((char2 & 0x3f) << 6) | (char3 & 0x3f));
-                }
-                else {
-                  throwUTFEncodingError(index, char1, char2, char3, 3);
-                }
-              }
-              else {
-                throwUTFEncodingError(index, char1, char2, null, 3);
-              }
-            }
-            else {
-              throw new UTFDataFormatException(
-                  "partial 3-byte character at end (char1=" + char1 + ')');
-            }
-            break;
-          default:
-            // one byte encoding
-            // 0xxxxxxx
-            chars[nChars] = (char)char1;
-            break;
+          } else {
+            throw new UTFDataFormatException("partial 3-byte character at end (char1=" + char1 + ')');
+          }
+          break;
+        default:
+          // one byte encoding
+          // 0xxxxxxx
+          chars[nChars] = (char) char1;
+          break;
         }
       }
       this.pos = limit;
       return new String(chars, 0, nChars);
-    }
-    else {
+    } else {
       throw new EOFException();
     }
   }
@@ -444,14 +420,10 @@ public class ByteArrayDataInput extends InputStream implements DataInput,
    */
   @Override
   public String toString() {
-    return this.version == null ? super.toString() : (super.toString() + " ("
-        + this.version + ')');
+    return this.version == null ? super.toString() : (super.toString() + " (" + this.version + ')');
   }
 
-  private void throwUTFEncodingError(int index, int char1, int char2,
-      Integer char3, int enc) throws UTFDataFormatException {
-    throw new UTFDataFormatException("malformed input for " + enc
-        + "-byte encoding at " + index + " (char1=" + char1 + " char2=" + char2
-        + (char3 == null ? ")" : (" char3=" + char3 + ')')));
+  private void throwUTFEncodingError(int index, int char1, int char2, Integer char3, int enc) throws UTFDataFormatException {
+    throw new UTFDataFormatException("malformed input for " + enc + "-byte encoding at " + index + " (char1=" + char1 + " char2=" + char2 + (char3 == null ? ")" : (" char3=" + char3 + ')')));
   }
 }

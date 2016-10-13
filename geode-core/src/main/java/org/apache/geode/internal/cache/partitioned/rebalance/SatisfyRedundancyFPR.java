@@ -36,7 +36,7 @@ import org.apache.geode.internal.logging.LogService;
 public class SatisfyRedundancyFPR extends RebalanceDirectorAdapter {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private PartitionedRegionLoadModel model;
 
   @Override
@@ -56,18 +56,17 @@ public class SatisfyRedundancyFPR extends RebalanceDirectorAdapter {
     createFPRBucketsForThisNode();
     return false;
   }
-  
+
   public void createFPRBucketsForThisNode() {
-    final Map<BucketRollup,Move> moves = new HashMap<BucketRollup,Move>();
-    
+    final Map<BucketRollup, Move> moves = new HashMap<BucketRollup, Move>();
+
     for (BucketRollup bucket : model.getLowRedundancyBuckets()) {
       Move move = model.findBestTargetForFPR(bucket, true);
-      
-      if (move == null
-          && !model.enforceUniqueZones()) {
+
+      if (move == null && !model.enforceUniqueZones()) {
         move = model.findBestTargetForFPR(bucket, false);
       }
-      
+
       if (move != null) {
         moves.put(bucket, move);
       } else {
@@ -82,7 +81,7 @@ public class SatisfyRedundancyFPR extends RebalanceDirectorAdapter {
       BucketRollup bucket = bucketMove.getKey();
       Move move = bucketMove.getValue();
       Member targetMember = move.getTarget();
-      
+
       model.createRedundantBucket(bucket, targetMember);
     }
     model.waitForOperations();

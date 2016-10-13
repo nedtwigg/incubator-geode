@@ -50,7 +50,8 @@ public class QueryWithBucketParameterIntegrationTest {
   DefaultQuery queryExecutor;
   LocalDataSet lds;
 
-  public QueryWithBucketParameterIntegrationTest() {}
+  public QueryWithBucketParameterIntegrationTest() {
+  }
 
   @Before
   public void setUp() throws Exception {
@@ -66,8 +67,7 @@ public class QueryWithBucketParameterIntegrationTest {
     populateRegion(pr1, numValues);
     QueryService qs = pr1.getCache().getQueryService();
     String query = "select distinct e1.value from /pr1 e1";
-    queryExecutor = (DefaultQuery)CacheUtils.getQueryService().newQuery(
-      query);
+    queryExecutor = (DefaultQuery) CacheUtils.getQueryService().newQuery(query);
     Set<Integer> set = createAndPopulateSet(totalBuckets);
     lds = new LocalDataSet(pr1, set);
   }
@@ -79,53 +79,49 @@ public class QueryWithBucketParameterIntegrationTest {
 
   private PartitionAttributesFactory getPartitionAttributesFactoryWithPartitionResolver(int totalBuckets) {
     PartitionAttributesFactory pAFactory = new PartitionAttributesFactory();
-    pAFactory.setRedundantCopies(1).setTotalNumBuckets(totalBuckets).setPartitionResolver(
-      getPartitionResolver());
+    pAFactory.setRedundantCopies(1).setTotalNumBuckets(totalBuckets).setPartitionResolver(getPartitionResolver());
     return pAFactory;
   }
 
   private PartitionResolver getPartitionResolver() {
     return new PartitionResolver() {
-      public String getName()
-      {
+      public String getName() {
         return "PartitionResolverForTest";
       }
-      public Serializable getRoutingObject(EntryOperation opDetails)
-      {
-        return (Serializable)opDetails.getKey();
+
+      public Serializable getRoutingObject(EntryOperation opDetails) {
+        return (Serializable) opDetails.getKey();
       }
-      public void close() {}
+
+      public void close() {
+      }
     };
   }
 
   @Test
-  public void testQueryExecuteWithEmptyBucketListExpectNoResults() throws Exception
-  {
-    SelectResults r = (SelectResults)lds.executeQuery(queryExecutor, null, new HashSet<Integer>());
+  public void testQueryExecuteWithEmptyBucketListExpectNoResults() throws Exception {
+    SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, new HashSet<Integer>());
     assertTrue("Received: A non-empty result collection, expected : Empty result collection", r.isEmpty());
   }
 
   @Test
-  public void testQueryExecuteWithNullBucketListExpectNonEmptyResultSet() throws Exception
-  {
-    SelectResults r = (SelectResults)lds.executeQuery(queryExecutor, null, null);
+  public void testQueryExecuteWithNullBucketListExpectNonEmptyResultSet() throws Exception {
+    SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, null);
     assertFalse("Received: An empty result collection, expected : Non-empty result collection", r.isEmpty());
   }
 
   @Test
-  public void testQueryExecuteWithNonEmptyBucketListExpectNonEmptyResultSet() throws Exception
-  {
+  public void testQueryExecuteWithNonEmptyBucketListExpectNonEmptyResultSet() throws Exception {
     int nTestBucketNumber = 15;
     Set<Integer> nonEmptySet = createAndPopulateSet(nTestBucketNumber);
-    SelectResults r = (SelectResults)lds.executeQuery(queryExecutor, null, nonEmptySet);
+    SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, nonEmptySet);
     assertFalse("Received: An empty result collection, expected : Non-empty result collection", r.isEmpty());
   }
 
   @Test(expected = QueryInvocationTargetException.class)
-  public void testQueryExecuteWithLargerBucketListThanExistingExpectQueryInvocationTargetException() throws Exception
-  {
+  public void testQueryExecuteWithLargerBucketListThanExistingExpectQueryInvocationTargetException() throws Exception {
     int nTestBucketNumber = 45;
     Set<Integer> overflowSet = createAndPopulateSet(nTestBucketNumber);
-    SelectResults r = (SelectResults)lds.executeQuery(queryExecutor, null, overflowSet);
+    SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, overflowSet);
   }
 }

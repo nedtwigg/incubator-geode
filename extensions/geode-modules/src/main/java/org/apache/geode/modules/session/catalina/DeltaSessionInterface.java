@@ -18,8 +18,6 @@ package org.apache.geode.modules.session.catalina;
 
 import org.apache.geode.cache.Region;
 
-
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -33,20 +31,27 @@ import org.apache.geode.modules.session.catalina.internal.DeltaSessionAttributeE
 public interface DeltaSessionInterface extends Session {
 
   void commit();
+
   void abort();
+
   boolean isValid();
+
   void localDestroyAttribute(String name);
+
   void applyAttributeEvents(Region<String, DeltaSessionInterface> region, List<DeltaSessionAttributeEvent> events);
 
   void localUpdateAttribute(String attributeName, Object attributeValue);
 
   void toData(DataOutput os) throws IOException;
+
   void fromData(DataInput is) throws IOException, ClassNotFoundException;
 
   String getContextName();
+
   boolean getExpired();
 
   void setOwner(Object manager);
+
   void activate();
 
   void processExpired();

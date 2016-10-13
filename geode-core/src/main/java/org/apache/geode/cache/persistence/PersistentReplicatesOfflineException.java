@@ -32,11 +32,11 @@ public class PersistentReplicatesOfflineException extends GemFireException {
 
   public PersistentReplicatesOfflineException() {
   }
-  
+
   public PersistentReplicatesOfflineException(String message) {
     super(message);
   }
-  
+
   public PersistentReplicatesOfflineException(String message, Throwable cause) {
     super(message, cause);
   }

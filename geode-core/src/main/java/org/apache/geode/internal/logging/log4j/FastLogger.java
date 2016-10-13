@@ -33,7 +33,7 @@ public class FastLogger extends ExtendedLoggerWrapper {
   private static final long serialVersionUID = 7084130827962463327L;
 
   private static volatile boolean delegating = true;
-  
+
   public FastLogger(final Logger logger) {
     this((ExtendedLogger) logger, logger.getName(), logger.getMessageFactory());
   }
@@ -46,7 +46,7 @@ public class FastLogger extends ExtendedLoggerWrapper {
     StatusLogger.getLogger().debug("Setting delegating to {}", newValue);
     delegating = newValue;
   }
-  
+
   @Override
   public boolean isDebugEnabled() {
     return delegating && super.isDebugEnabled();
@@ -66,11 +66,11 @@ public class FastLogger extends ExtendedLoggerWrapper {
   public boolean isTraceEnabled(final Marker marker) {
     return delegating && super.isTraceEnabled(marker);
   }
-  
+
   public boolean isDelegating() {
     return delegating;
   }
-  
+
   public ExtendedLogger getExtendedLogger() {
     return super.logger;
   }

@@ -44,7 +44,7 @@ public class AbstractRegionMapTest {
     verify(arm.owner, never()).basicInvalidatePart2(any(), any(), anyBoolean(), anyBoolean());
     verify(arm.owner, never()).invokeInvalidateCallbacks(any(), any(), anyBoolean());
   }
-  
+
   @Test
   public void invalidateOfNonExistentRegionThrowsEntryNotFoundWithForce() {
     AbstractRegionMap.FORCE_INVALIDATE_EVENT = true;
@@ -64,12 +64,12 @@ public class AbstractRegionMapTest {
       AbstractRegionMap.FORCE_INVALIDATE_EVENT = false;
     }
   }
-  
+
   @Test
   public void invalidateOfAlreadyInvalidEntryReturnsFalse() {
     TestableAbstractRegionMap arm = new TestableAbstractRegionMap();
     EntryEventImpl event = createEventForInvalidate(arm.owner);
-    
+
     // invalidate on region that is not initialized should create
     // entry in map as invalid.
     try {
@@ -77,7 +77,7 @@ public class AbstractRegionMapTest {
       fail("expected EntryNotFoundException");
     } catch (EntryNotFoundException expected) {
     }
-    
+
     when(arm.owner.isInitialized()).thenReturn(true);
     assertFalse(arm.invalidate(event, true, false, false));
     verify(arm.owner, never()).basicInvalidatePart2(any(), any(), anyBoolean(), anyBoolean());
@@ -113,7 +113,7 @@ public class AbstractRegionMapTest {
     when(lr.getKeyInfo(key)).thenReturn(new KeyInfo(key, null, null));
     return EntryEventImpl.create(lr, Operation.INVALIDATE, key, false, null, true, false);
   }
-  
+
   @Test
   public void invalidateForceNewEntryOfAlreadyInvalidEntryReturnsFalse() {
     TestableAbstractRegionMap arm = new TestableAbstractRegionMap();
@@ -123,7 +123,7 @@ public class AbstractRegionMapTest {
     // entry in map as invalid.
     assertTrue(arm.invalidate(event, true, true, false));
     verify(arm.owner, times(1)).basicInvalidatePart2(any(), any(), anyBoolean(), anyBoolean());
-    
+
     when(arm.owner.isInitialized()).thenReturn(true);
     assertFalse(arm.invalidate(event, true, true, false));
     verify(arm.owner, times(1)).basicInvalidatePart2(any(), any(), anyBoolean(), anyBoolean());

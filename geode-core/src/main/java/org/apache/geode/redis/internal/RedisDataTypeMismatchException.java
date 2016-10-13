@@ -26,7 +26,7 @@ package org.apache.geode.redis.internal;
 public class RedisDataTypeMismatchException extends RuntimeException {
 
   private static final long serialVersionUID = -2451663685348513870L;
-  
+
   public RedisDataTypeMismatchException() {
     super();
   }

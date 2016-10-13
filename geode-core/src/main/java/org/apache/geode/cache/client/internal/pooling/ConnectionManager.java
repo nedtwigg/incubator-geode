@@ -46,8 +46,7 @@ public interface ConnectionManager {
    * @throws NoAvailableServersException
    *                 if we can't connect to any server
    */
-  Connection borrowConnection(long aquireTimeout)
-      throws AllConnectionsInUseException, NoAvailableServersException;
+  Connection borrowConnection(long aquireTimeout) throws AllConnectionsInUseException, NoAvailableServersException;
 
   /**
    * Borrow an existing idle connection or create a new one to a specific server.
@@ -64,8 +63,7 @@ public interface ConnectionManager {
    *                 if we can't connect to any server
    * 
    */
-  Connection borrowConnection(ServerLocation server, long aquireTimeout,boolean onlyUseExistingCnx)
-      throws AllConnectionsInUseException, NoAvailableServersException;
+  Connection borrowConnection(ServerLocation server, long aquireTimeout, boolean onlyUseExistingCnx) throws AllConnectionsInUseException, NoAvailableServersException;
 
   /**
    * Return a connection to the pool. The connection should not be
@@ -107,9 +105,7 @@ public interface ConnectionManager {
    *         excluded servers
    * @throws AllConnectionsInUseException
    */
-  Connection exchangeConnection(Connection conn,
-      Set/* <ServerLocation> */excludedServers, long aquireTimeout)
-      throws AllConnectionsInUseException;
+  Connection exchangeConnection(Connection conn, Set/* <ServerLocation> */ excludedServers, long aquireTimeout) throws AllConnectionsInUseException;
 
   /**
    * Test hook to find out current number of connections this manager has.
@@ -122,6 +118,7 @@ public interface ConnectionManager {
    * Used to active a thread local connection
    */
   public void activate(Connection conn);
+
   /**
    * Used to passivate a thread local connection
    */

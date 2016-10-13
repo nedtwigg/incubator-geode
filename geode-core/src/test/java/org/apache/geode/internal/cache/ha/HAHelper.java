@@ -25,26 +25,21 @@ import org.apache.geode.internal.cache.HARegion;
  * outside the package.
  */
 
-public class HAHelper
-{
+public class HAHelper {
 
-  public static String getRegionQueueName(String proxyId)
-  {
+  public static String getRegionQueueName(String proxyId) {
     return HARegionQueue.createRegionName(proxyId.toString());
   }
 
-  public static HARegionQueue getRegionQueue(HARegion hr)
-  {
+  public static HARegionQueue getRegionQueue(HARegion hr) {
     return hr.getOwner();
   }
 
-  public static HARegionQueueStats getRegionQueueStats(HARegionQueue hq)
-  {
+  public static HARegionQueueStats getRegionQueueStats(HARegionQueue hq) {
     return hq.getStatistics();
   }
-  
-  public static Map getDispatchMessageMap(Object mapWrapper)
-  {
-    return ((MapWrapper)mapWrapper).map;
+
+  public static Map getDispatchMessageMap(Object mapWrapper) {
+    return ((MapWrapper) mapWrapper).map;
   }
 }

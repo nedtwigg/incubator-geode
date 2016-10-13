@@ -43,17 +43,16 @@ public class QueryExecutionContext extends ExecutionContext {
   private IntOpenHashSet successfulBuckets;
 
   private boolean cqQueryContext = false;
-  
-  
+
   private List bucketList;
-  
+
   private boolean indexUsed = false;
-  
+
   /**
    * stack used to determine which execCache to currently be using
    */
   private final Stack execCacheStack = new Stack();
-  
+
   /**
    * a map that stores general purpose maps for caching data that is valid 
    * for one query execution only
@@ -64,13 +63,13 @@ public class QueryExecutionContext extends ExecutionContext {
    * This map stores PdxString corresponding to the bind argument
    */
   private Map<Integer, PdxString> bindArgumentToPdxStringMap;
-  
+
   /**
    * List of query index names that the user has hinted on using
    */
-  
+
   private ArrayList<String> hints = null;
-  
+
   /**
    * @param bindArguments
    * @param cache
@@ -78,8 +77,6 @@ public class QueryExecutionContext extends ExecutionContext {
   public QueryExecutionContext(Object[] bindArguments, Cache cache) {
     super(bindArguments, cache);
   }
-
-  
 
   /**
    * @param bindArguments
@@ -91,12 +88,11 @@ public class QueryExecutionContext extends ExecutionContext {
     this.query = query;
   }
 
-
   // General purpose caching methods for data that is only valid for one
   // query execution
   void cachePut(Object key, Object value) {
     if (key.equals(CompiledValue.QUERY_INDEX_HINTS)) {
-      setHints((ArrayList)value);
+      setHints((ArrayList) value);
       return;
     }
     //execCache can be empty in cases where we are doing adds to indexes
@@ -105,7 +101,7 @@ public class QueryExecutionContext extends ExecutionContext {
     if (!execCacheStack.isEmpty()) {
       scopeId = (Integer) execCacheStack.peek();
     }
-    Map execCache = (Map)execCaches.get(scopeId);
+    Map execCache = (Map) execCaches.get(scopeId);
     if (execCache == null) {
       execCache = new HashMap();
       execCaches.put(scopeId, execCache);
@@ -116,7 +112,7 @@ public class QueryExecutionContext extends ExecutionContext {
   public Object cacheGet(Object key) {
     return cacheGet(key, null);
   }
-  
+
   public Object cacheGet(Object key, Object defaultValue) {
     //execCache can be empty in cases where we are doing adds to indexes
     //in that case, we use a default execCache
@@ -124,7 +120,7 @@ public class QueryExecutionContext extends ExecutionContext {
     if (!execCacheStack.isEmpty()) {
       scopeId = (Integer) execCacheStack.peek();
     }
-    Map execCache = (Map)execCaches.get(scopeId);
+    Map execCache = (Map) execCaches.get(scopeId);
     if (execCache == null) {
       return defaultValue;
     }
@@ -137,7 +133,7 @@ public class QueryExecutionContext extends ExecutionContext {
   public void pushExecCache(int scopeNum) {
     execCacheStack.push(scopeNum);
   }
-  
+
   public void popExecCache() {
     execCacheStack.pop();
   }
@@ -145,7 +141,7 @@ public class QueryExecutionContext extends ExecutionContext {
   /**
    * Added to reset the state from the last execution. This is added for CQs only.
    */
-  public void reset(){
+  public void reset() {
     super.reset();
     this.execCacheStack.clear();
   }
@@ -153,20 +149,19 @@ public class QueryExecutionContext extends ExecutionContext {
   int nextFieldNum() {
     return this.nextFieldNum++;
   }
-  
-  public void setCqQueryContext(boolean cqQuery){
+
+  public void setCqQueryContext(boolean cqQuery) {
     this.cqQueryContext = cqQuery;
   }
 
-  public boolean isCqQueryContext(){
+  public boolean isCqQueryContext() {
     return this.cqQueryContext;
   }
-
 
   public Query getQuery() {
     return query;
   }
-  
+
   public void setBucketList(List list) {
     this.bucketList = list;
     this.successfulBuckets = new IntOpenHashSet();
@@ -175,53 +170,53 @@ public class QueryExecutionContext extends ExecutionContext {
   public List getBucketList() {
     return this.bucketList;
   }
-  
+
   public void addToSuccessfulBuckets(int bId) {
     this.successfulBuckets.add(bId);
   }
-  
+
   public int[] getSuccessfulBuckets() {
     return this.successfulBuckets.toIntArray();
   }
-  
+
   /**
    * creates new PdxString from String and caches it
    */
-  public PdxString getSavedPdxString(int index){
-    if(bindArgumentToPdxStringMap == null){
+  public PdxString getSavedPdxString(int index) {
+    if (bindArgumentToPdxStringMap == null) {
       bindArgumentToPdxStringMap = new HashMap<Integer, PdxString>();
-    } 
-    
-    PdxString pdxString = bindArgumentToPdxStringMap.get(index-1);
-    if(pdxString == null){
-      pdxString = new PdxString((String)bindArguments[index-1]);
-      bindArgumentToPdxStringMap.put(index-1, pdxString);
+    }
+
+    PdxString pdxString = bindArgumentToPdxStringMap.get(index - 1);
+    if (pdxString == null) {
+      pdxString = new PdxString((String) bindArguments[index - 1]);
+      bindArgumentToPdxStringMap.put(index - 1, pdxString);
     }
     return pdxString;
-    
+
   }
-  
+
   public boolean isIndexUsed() {
     return indexUsed;
   }
-  
+
   void setIndexUsed(boolean indexUsed) {
     this.indexUsed = indexUsed;
   }
-  
+
   public void setHints(ArrayList<String> hints) {
     this.hints = new ArrayList();
     this.hints.addAll(hints);
   }
-  
+
   /**
    * @param indexName of index to check if in the hinted list
    * @return true if the index name was hinted by the user
    */
   public boolean isHinted(String indexName) {
-    return hints != null? hints.contains(indexName):false;
+    return hints != null ? hints.contains(indexName) : false;
   }
-  
+
   /**
    * Hint size is used for filter ordering.
    * Smaller values have preference
@@ -229,11 +224,11 @@ public class QueryExecutionContext extends ExecutionContext {
   public int getHintSize(String indexName) {
     return -(hints.size() - hints.indexOf(indexName));
   }
-  
+
   public boolean hasHints() {
     return hints != null;
   }
-  
+
   public boolean hasMultiHints() {
     return hints != null && hints.size() > 1;
   }

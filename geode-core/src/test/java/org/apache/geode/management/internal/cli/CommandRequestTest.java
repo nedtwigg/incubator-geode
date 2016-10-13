@@ -57,7 +57,7 @@ public class CommandRequestTest {
 
     Map<String, String> parameters = this.commandRequest.getParameters();
     assertThat(parameters).containsKey(key);
-    assertThat(parameters.get(key)).isEqualTo(value.substring(1, value.length()-1));
+    assertThat(parameters.get(key)).isEqualTo(value.substring(1, value.length() - 1));
   }
 
   @Test

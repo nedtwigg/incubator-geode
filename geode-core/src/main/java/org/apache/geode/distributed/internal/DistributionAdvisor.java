@@ -65,7 +65,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @since GemFire 3.0
  */
-public class DistributionAdvisor  {
+public class DistributionAdvisor {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -73,16 +73,13 @@ public class DistributionAdvisor  {
    * Specifies the starting version number for the  
    * profileVersionSequencer.
    */
-  public static final int START_VERSION_NUMBER = Integer.getInteger(
-      DistributionConfig.GEMFIRE_PREFIX + "DistributionAdvisor.startVersionNumber", 1).intValue();
-  
+  public static final int START_VERSION_NUMBER = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "DistributionAdvisor.startVersionNumber", 1).intValue();
+
   /**
    * Specifies the starting serial number for the serialNumberSequencer.
    */
-  public static final int START_SERIAL_NUMBER = Integer.getInteger(
-      DistributionConfig.GEMFIRE_PREFIX + "Cache.startSerialNumber",
-      1 // Integer.MAX_VALUE-10
-      ).intValue();
+  public static final int START_SERIAL_NUMBER = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "Cache.startSerialNumber", 1 // Integer.MAX_VALUE-10
+  ).intValue();
 
   /**
    * Incrementing serial number used to identify order of resource creation
@@ -99,36 +96,30 @@ public class DistributionAdvisor  {
    * {@link Integer#MAX_VALUE} and {@link Integer#MIN_VALUE} to determine
    * if a rollover has occurred.
    */
-  public static final int ROLLOVER_THRESHOLD = Integer.getInteger(
-      DistributionConfig.GEMFIRE_PREFIX + "CacheDistributionAdvisor.rolloverThreshold",
-      1000).intValue();
-  
+  public static final int ROLLOVER_THRESHOLD = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "CacheDistributionAdvisor.rolloverThreshold", 1000).intValue();
+
   /**
    * {@link Integer#MAX_VALUE} minus {@link #ROLLOVER_THRESHOLD} determines the
    * upper threshold for rollover comparison.
    */
-  private static final int ROLLOVER_THRESHOLD_UPPER = 
-    Integer.MAX_VALUE - ROLLOVER_THRESHOLD;
+  private static final int ROLLOVER_THRESHOLD_UPPER = Integer.MAX_VALUE - ROLLOVER_THRESHOLD;
 
   /**
    * {@link Integer#MIN_VALUE} plus {@link #ROLLOVER_THRESHOLD} determines the
    * lower threshold for rollover comparison.
    */
-  private static final int ROLLOVER_THRESHOLD_LOWER = 
-    Integer.MIN_VALUE + ROLLOVER_THRESHOLD;
+  private static final int ROLLOVER_THRESHOLD_LOWER = Integer.MIN_VALUE + ROLLOVER_THRESHOLD;
 
   /**
    * Incrementing serial number used to identify order of region creation
    * @see Profile#getVersion()
    */
   private final AtomicInteger profileVersionSequencer = new AtomicInteger(START_VERSION_NUMBER);
-  
+
   /** This system property is not supported and disabling intelligent messaging
    *  is currently problematic
    */
   protected static final boolean disabled = Boolean.getBoolean("disable-intelligent-msg");
-
-  
 
   /** Indicates whether this advisor is has been initialized. This will be
    * false when a shared region is mapped into the cache but there has
@@ -142,13 +133,13 @@ public class DistributionAdvisor  {
    * while we are doing initialization
    */
   private final Object initializeLock = new Object();
-  
+
   /**
    * the version of the profile set
    * @since GemFire 5.1
    */
   private long membershipVersion;
-  
+
   /**
    * whether membership ops are closed (because the DA's been closed).
    * Access under synchronization on (this)
@@ -159,7 +150,7 @@ public class DistributionAdvisor  {
    * opCountLock guards access to previousVersionOpCount and currentVersionOpCount
    */
   private final Object opCountLock = new Object();
-  
+
   /**
    * the number of operations in-progress for previous versions
    * of the profile set.  Guarded by opCountLock
@@ -183,7 +174,7 @@ public class DistributionAdvisor  {
    * My database of Profiles
    */
   protected volatile Profile[] profiles = new Profile[0];
-  
+
   /**
    * Number of active profiles
    */
@@ -195,13 +186,13 @@ public class DistributionAdvisor  {
    * The keys are membership listeners and the values are Boolean.TRUE.
    */
   protected ConcurrentMap membershipListeners = new ConcurrentHashMap();
-  
+
   /**
    * A collection of listeners for changes to profiles. These listeners
    * are notified if a profile is added, removed, or updated.
    */
   protected ConcurrentMap profileListeners = new ConcurrentHashMap();
-  
+
   /** The resource getting advise from this.
    */
   private final DistributionAdvisee advisee;
@@ -233,24 +224,23 @@ public class DistributionAdvisor  {
         }
       }
 
-      public void memberSuspect(InternalDistributedMember id,
-          InternalDistributedMember whoSuspected, String reason) {
+      public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
       }
-      
-   };
+
+    };
   }
-  
+
   public static DistributionAdvisor createDistributionAdvisor(DistributionAdvisee advisee) {
     DistributionAdvisor advisor = new DistributionAdvisor(advisee);
     advisor.initialize();
     return advisor;
   }
-  
+
   protected final void initialize() {
     subInit();
     getDistributionManager().addMembershipListener(this.ml);
   }
-  
+
   protected void subInit() {
     // override for any additional initialization specific to subclass
   }
@@ -262,9 +252,9 @@ public class DistributionAdvisor  {
    * @return true if a delta-gii should be performed
    */
   public boolean shouldSyncForCrashedMember(InternalDistributedMember id) {
-    return (this.advisee instanceof DistributedRegion) && ((DistributedRegion)this.advisee).shouldSyncForCrashedMember(id);
+    return (this.advisee instanceof DistributedRegion) && ((DistributedRegion) this.advisee).shouldSyncForCrashedMember(id);
   }
-  
+
   /** perform a delta-GII for the given lost member */
   public void syncForCrashedMember(final InternalDistributedMember id, final Profile profile) {
     final DistributedRegion dr = getRegionForDeltaGII();
@@ -295,7 +285,7 @@ public class DistributionAdvisor  {
         }
         CacheProfile cp = (CacheProfile) profile;
         PersistentMemberID persistentId = cp.persistentID;
-        if(dr.getDataPolicy().withPersistence() && persistentId==null) {
+        if (dr.getDataPolicy().withPersistence() && persistentId == null) {
           //Fix for 46704. The lost member may be a replicate
           //or an empty accessor. We don't need to to a synchronization
           //in that case, because those members send their writes to
@@ -305,10 +295,9 @@ public class DistributionAdvisor  {
           }
           return;
         }
-        
-        
+
         VersionSource lostVersionID;
-        if(persistentId != null) {
+        if (persistentId != null) {
           lostVersionID = persistentId.getVersionMember();
         } else {
           lostVersionID = id;
@@ -317,11 +306,11 @@ public class DistributionAdvisor  {
       }
     });
   }
-  
+
   /** find the region for a delta-gii operation (synch) */
   public DistributedRegion getRegionForDeltaGII() {
     if (this.advisee instanceof DistributedRegion) {
-      return (DistributedRegion)this.advisee;
+      return (DistributedRegion) this.advisee;
     }
     return null;
   }
@@ -349,7 +338,7 @@ public class DistributionAdvisor  {
     // NOTE: int should rollover if value is Integer.MAX_VALUE
     return this.profileVersionSequencer.incrementAndGet();
   }
-  
+
   /**
    * Generates a serial number for identifying a logical resource. Later instances of
    * the same logical resource will have a greater serial number than earlier
@@ -383,19 +372,17 @@ public class DistributionAdvisor  {
    */
   public void close() {
     try {
-      synchronized(this) {
+      synchronized (this) {
         this.membershipClosed = true;
-        synchronized(this.opCountLock) {
+        synchronized (this.opCountLock) {
           this.previousVersionOpCount = 0;
           this.currentVersionOpCount = 0;
         }
       }
       getDistributionManager().removeMembershipListener(this.ml);
-    }
-    catch (CancelException e) {
+    } catch (CancelException e) {
       // if distribution has stopped, above is a no-op.
-    }
-    catch (IllegalArgumentException ignore) {
+    } catch (IllegalArgumentException ignore) {
       // this is thrown if the listener is no longer registered
     }
   }
@@ -412,7 +399,6 @@ public class DistributionAdvisor  {
     return adviseGeneric();
   }
 
-
   /**
    * Add listener to the list to receive notification when a 
    * profile is added or removed. Note that there is no guarantee that
@@ -422,11 +408,11 @@ public class DistributionAdvisor  {
   public void addMembershipListener(MembershipListener listener) {
     membershipListeners.putIfAbsent(listener, Boolean.TRUE);
   }
-  
+
   public boolean addProfileChangeListener(ProfileListener listener) {
     return null == profileListeners.putIfAbsent(listener, Boolean.TRUE);
   }
-  
+
   public boolean removeProfileChangeListener(ProfileListener listener) {
     return profileListeners.remove(listener) != null;
   }
@@ -449,7 +435,7 @@ public class DistributionAdvisor  {
 
   /** Return true if exchanged profiles */
   public boolean initializationGate() {
-    if(this.initialized) {
+    if (this.initialized) {
       return false;
     }
     synchronized (this.initializeLock) {
@@ -517,12 +503,10 @@ public class DistributionAdvisor  {
     return putProfile(profile, false);
   }
 
-  public synchronized boolean putProfile(Profile newProfile, 
-                                         boolean forceProfile) {
+  public synchronized boolean putProfile(Profile newProfile, boolean forceProfile) {
     try {
       return doPutProfile(newProfile, forceProfile);
-    }
-    finally {
+    } finally {
       if (logger.isTraceEnabled(LogMarker.DA)) {
         logger.trace(LogMarker.DA, "putProfile exiting {}", toStringWithProfiles());
       }
@@ -537,7 +521,7 @@ public class DistributionAdvisor  {
   protected boolean isCurrentMember(Profile p) {
     return getDistributionManager().isCurrentMember(p.getDistributedMember());
   }
-  
+
   /**
    * Update the Advisor with profiles
    * describing remote instances of the
@@ -554,8 +538,7 @@ public class DistributionAdvisor  {
    * 
    * @return true if the profile was applied, false if the profile was ignored
    */
-  private synchronized boolean doPutProfile(Profile newProfile, 
-                                            boolean forceProfile) {
+  private synchronized boolean doPutProfile(Profile newProfile, boolean forceProfile) {
     assert newProfile != null;
     // prevent putting of profile that is gone from the view
     if (!forceProfile) {
@@ -564,18 +547,15 @@ public class DistributionAdvisor  {
         if (logger.isTraceEnabled(LogMarker.DA)) {
           logger.trace(LogMarker.DA, "putProfile: ignoring {}; not in current view for {}", newProfile.getDistributedMember(), getAdvisee().getFullPath());
         }
-        
+
         // member is no longer in system so do nothing
         return false;
       }
     }
-    
+
     // prevent putting of profile for which we already received removal msg
-    Integer removedSerialNumber = 
-      (Integer) this.removedProfiles.get(newProfile.getId());
-    if (removedSerialNumber != null &&
-        !isNewerSerialNumber(newProfile.getSerialNumber(), 
-                             removedSerialNumber.intValue())) {
+    Integer removedSerialNumber = (Integer) this.removedProfiles.get(newProfile.getId());
+    if (removedSerialNumber != null && !isNewerSerialNumber(newProfile.getSerialNumber(), removedSerialNumber.intValue())) {
       // removedProfile exists and newProfile is NOT newer so do nothing
       if (logger.isTraceEnabled(LogMarker.DA)) {
         logger.trace(LogMarker.DA, "putProfile: Skipping putProfile: {} is not newer than serialNumber {} for {}", newProfile, removedSerialNumber, getAdvisee().getFullPath());
@@ -592,17 +572,16 @@ public class DistributionAdvisor  {
     if (oldProfile != null && !isNewerProfile(newProfile, oldProfile)) {
       // oldProfile exists and newProfile is NOT newer so do nothing
       if (isDebugEnabled_DA) {
-        logger.trace(LogMarker.DA, "putProfile: Ignoring {} because it's older than or same as {} for {}", newProfile, oldProfile,getAdvisee().getFullPath());
+        logger.trace(LogMarker.DA, "putProfile: Ignoring {} because it's older than or same as {} for {}", newProfile, oldProfile, getAdvisee().getFullPath());
       }
       return false;
     }
-    
+
     // handle membershipVersion for state flush
     if (newProfile.initialMembershipVersion == 0) {
       if (oldProfile != null) {
         newProfile.initialMembershipVersion = oldProfile.initialMembershipVersion;
-      }
-      else {
+      } else {
         if (!membershipClosed) {
           membershipVersion++;
           if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
@@ -615,11 +594,10 @@ public class DistributionAdvisor  {
           }
         }
       }
-    }
-    else {
+    } else {
       forceNewMembershipVersion();
     }
-    
+
     if (isDebugEnabled_DA) {
       logger.trace(LogMarker.DA, "DistributionAdvisor ({}) putProfile: {}", this, newProfile);
     }
@@ -631,14 +609,13 @@ public class DistributionAdvisor  {
       profileCreated(newProfile);
       notifyListenersProfileAdded(newProfile);
       notifyListenersMemberAdded(newProfile.getDistributedMember());
-    }
-    else {
+    } else {
       notifyListenersProfileUpdated(newProfile);
       profileUpdated(newProfile);
     }
     return true;
   }
-  
+
   /**
    * A callback to sub-classes for extra validation logic
    * @param oldProfile
@@ -661,30 +638,26 @@ public class DistributionAdvisor  {
    * @param oldProfile the older profile
    * @return true if newProfile is newer than oldProfile
    */
-  protected boolean isNewerProfile(Profile newProfile, 
-                                   Profile oldProfile) {
-    Assert.assertHoldsLock(this,true);
+  protected boolean isNewerProfile(Profile newProfile, Profile oldProfile) {
+    Assert.assertHoldsLock(this, true);
     boolean isNewer = true;
 
     // force version comparison
     int oldSerial = oldProfile.getSerialNumber();
     int newSerial = newProfile.getSerialNumber();
     //boolean serialRolled = oldSerial > 0 && newSerial < 0;
-    boolean serialRolled = oldSerial > ROLLOVER_THRESHOLD_UPPER && 
-                           newSerial < ROLLOVER_THRESHOLD_LOWER;
-    
+    boolean serialRolled = oldSerial > ROLLOVER_THRESHOLD_UPPER && newSerial < ROLLOVER_THRESHOLD_LOWER;
+
     int oldVersion = oldProfile.getVersion();
     int newVersion = newProfile.getVersion();
     //boolean versionRolled = oldVersion > 0 && newVersion < 0;
-    boolean versionRolled = oldVersion > ROLLOVER_THRESHOLD_UPPER && 
-                            newVersion < ROLLOVER_THRESHOLD_LOWER;
-    
+    boolean versionRolled = oldVersion > ROLLOVER_THRESHOLD_UPPER && newVersion < ROLLOVER_THRESHOLD_LOWER;
+
     boolean newIsNewer = false;
     if (oldSerial == newSerial) {
       // if region serial is same, compare versions
       newIsNewer = versionRolled || oldVersion < newVersion;
-    }
-    else {
+    } else {
       // compare region serial
       newIsNewer = serialRolled || oldSerial < newSerial;
     }
@@ -700,10 +673,8 @@ public class DistributionAdvisor  {
    * @param oldSerialNumber
    * @return return true if the first serial number (newSerialNumber) is more recent
    */
-  static public boolean isNewerSerialNumber(int newSerialNumber, 
-                                            int oldSerialNumber) {
-    boolean serialRolled = oldSerialNumber > ROLLOVER_THRESHOLD_UPPER && 
-                           newSerialNumber < ROLLOVER_THRESHOLD_LOWER;
+  static public boolean isNewerSerialNumber(int newSerialNumber, int oldSerialNumber) {
+    boolean serialRolled = oldSerialNumber > ROLLOVER_THRESHOLD_UPPER && newSerialNumber < ROLLOVER_THRESHOLD_LOWER;
     return serialRolled || oldSerialNumber < newSerialNumber;
   }
 
@@ -719,7 +690,7 @@ public class DistributionAdvisor  {
       if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
         logger.trace(LogMarker.STATE_FLUSH_OP, "StateFlush forced new membership version: {}", membershipVersion);
       }
-      synchronized(this.opCountLock) {
+      synchronized (this.opCountLock) {
         previousVersionOpCount += currentVersionOpCount;
         currentVersionOpCount = 0;
         if (logger.isTraceEnabled(LogMarker.DISTRIBUTION_STATE_FLUSH_OP)) {
@@ -740,9 +711,9 @@ public class DistributionAdvisor  {
    */
   public final synchronized long startOperation() {
     if (logger.isTraceEnabled(LogMarker.DISTRIBUTION_STATE_FLUSH_OP)) {
-      logger.trace(LogMarker.DISTRIBUTION_STATE_FLUSH_OP, "startOperation() op count is now {} in view version {}", currentVersionOpCount+1, membershipVersion);
+      logger.trace(LogMarker.DISTRIBUTION_STATE_FLUSH_OP, "startOperation() op count is now {} in view version {}", currentVersionOpCount + 1, membershipVersion);
     }
-    synchronized(this.opCountLock) {
+    synchronized (this.opCountLock) {
       currentVersionOpCount++;
       if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
         logger.trace(LogMarker.STATE_FLUSH_OP, "StateFlush current opcount incremented: {}", currentVersionOpCount);
@@ -759,14 +730,13 @@ public class DistributionAdvisor  {
    * @since GemFire 5.1
    */
   public final synchronized long endOperation(long version) {
-    synchronized(this.opCountLock) {
+    synchronized (this.opCountLock) {
       if (version == membershipVersion) {
         currentVersionOpCount--;
         if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
           logger.trace(LogMarker.STATE_FLUSH_OP, "StateFlush current opcount deccremented: {}", currentVersionOpCount);
         }
-      }
-      else {
+      } else {
         previousVersionOpCount--;
         if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
           logger.trace(LogMarker.STATE_FLUSH_OP, "StateFlush previous opcount incremented: {}", previousVersionOpCount);
@@ -777,8 +747,7 @@ public class DistributionAdvisor  {
   }
 
   public void waitForCurrentOperations() {
-    long timeout = 1000L * this.getDistributionManager().getSystem()
-        .getConfig().getAckWaitThreshold();
+    long timeout = 1000L * this.getDistributionManager().getSystem().getConfig().getAckWaitThreshold();
     waitForCurrentOperations(timeout);
   }
 
@@ -787,11 +756,10 @@ public class DistributionAdvisor  {
    * of the given member to be placed on communication channels before returning
    * @since GemFire 5.1
    */
-  public void waitForCurrentOperations(long timeout)
-  {
+  public void waitForCurrentOperations(long timeout) {
     //CacheProfile profile = (CacheProfile)getProfile(member);
     //long targetVersion = profile.initialMembershipVersion - 1;
-    
+
     // this may wait longer than it should if the membership version changes, dumping
     // more operations into the previousVersionOpCount
     long startTime = System.currentTimeMillis();
@@ -801,7 +769,7 @@ public class DistributionAdvisor  {
     final boolean isDebugEnabled_STATE_FLUSH_OP = logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP);
     while (true) {
       long opCount;
-      synchronized(this.opCountLock) {
+      synchronized (this.opCountLock) {
         opCount = this.previousVersionOpCount;
       }
       if (opCount <= 0) {
@@ -821,12 +789,9 @@ public class DistributionAdvisor  {
       long now = System.currentTimeMillis();
       if ((!warned) && System.currentTimeMillis() >= warnTime) {
         warned = true;
-        logger.warn(LocalizedMessage.create(
-            LocalizedStrings.DistributionAdvisor_0_SEC_HAVE_ELAPSED_WHILE_WAITING_FOR_CURRENT_OPERATIONS_TO_DISTRIBUTE,
-            Long.toString((warnTime-startTime)/1000L)));
-      }
-      else if (warned && (now >= quitTime)) {
-//        OSProcess.printStacks(0);
+        logger.warn(LocalizedMessage.create(LocalizedStrings.DistributionAdvisor_0_SEC_HAVE_ELAPSED_WHILE_WAITING_FOR_CURRENT_OPERATIONS_TO_DISTRIBUTE, Long.toString((warnTime - startTime) / 1000L)));
+      } else if (warned && (now >= quitTime)) {
+        //        OSProcess.printStacks(0);
         throw new GemFireIOException("Current operations did not distribute within " + (now - startTime) + " milliseconds");
       }
     }
@@ -851,7 +816,7 @@ public class DistributionAdvisor  {
    */
   protected boolean stillInView(ProfileId id) {
     if (id instanceof InternalDistributedMember) {
-      InternalDistributedMember memberId = (InternalDistributedMember)id;
+      InternalDistributedMember memberId = (InternalDistributedMember) id;
       return this.getDistributionManager().getViewMembers().contains(memberId);
     } else {
       // if id is not a InternalDistributedMember then return false
@@ -870,14 +835,12 @@ public class DistributionAdvisor  {
    * @param crashed true if the member did not leave normally
    * @return true if it was being tracked
    */
-  private boolean basicRemoveId(ProfileId memberId, 
-      boolean crashed,
-      boolean destroyed) {
+  private boolean basicRemoveId(ProfileId memberId, boolean crashed, boolean destroyed) {
     final boolean isDebugEnabled = logger.isTraceEnabled(LogMarker.DA);
     if (isDebugEnabled) {
       logger.trace(LogMarker.DA, "DistributionAdvisor ({}) removeId {}", this, memberId);
     }
-    
+
     Profile profileRemoved = basicRemoveMemberId(memberId);
     if (profileRemoved == null) {
       if (isDebugEnabled) {
@@ -903,7 +866,7 @@ public class DistributionAdvisor  {
   public boolean removeProfile(Profile profile, boolean destroyed) {
     return removeId(profile.getId(), false, destroyed, false/*fromMembershipListener*/);
   }
-  
+
   /**
    * Removes the profile for the given member. This method is meant to be
    * overriden by subclasses.
@@ -917,10 +880,7 @@ public class DistributionAdvisor  {
    *          true if this call is a result of MembershipEvent invocation (fixes #42000)
    * @return true when the profile was removed, false otherwise
    */
-  public boolean removeId(final ProfileId memberId,
-                          boolean crashed,
-                          boolean destroyed,
-                          boolean fromMembershipListener) {
+  public boolean removeId(final ProfileId memberId, boolean crashed, boolean destroyed, boolean fromMembershipListener) {
     boolean result;
     try {
       result = doRemoveId(memberId, crashed, destroyed, fromMembershipListener);
@@ -932,15 +892,12 @@ public class DistributionAdvisor  {
     return result;
   }
 
-  private boolean doRemoveId(ProfileId memberId,
-                             boolean crashed,
-                             boolean destroyed,
-                             boolean fromMembershipListener) {
+  private boolean doRemoveId(ProfileId memberId, boolean crashed, boolean destroyed, boolean fromMembershipListener) {
     final boolean isDebugEnabled_DA = logger.isTraceEnabled(LogMarker.DA);
     if (isDebugEnabled_DA) {
       logger.trace(LogMarker.DA, "removeId: removing member {} from resource {}", memberId, getAdvisee().getFullPath());
     }
-    synchronized(this) {
+    synchronized (this) {
       // If the member has disappeared, completely remove
       if (!fromMembershipListener) {
         boolean result = false;
@@ -953,14 +910,12 @@ public class DistributionAdvisor  {
           if (isDebugEnabled_DA) {
             logger.trace(LogMarker.DA, "removeId: tracking removal of {}", profileToRemove);
           }
-          this.removedProfiles.put(profileToRemove.getDistributedMember(), 
-              Integer.valueOf(profileToRemove.getSerialNumber()));
+          this.removedProfiles.put(profileToRemove.getDistributedMember(), Integer.valueOf(profileToRemove.getSerialNumber()));
           basicRemoveId(profileToRemove.getId(), crashed, destroyed);
           profileToRemove = getProfile(memberId);
         }
         return result;
-      }
-      else {
+      } else {
         // Garbage collect; this profile is no longer pertinent
         this.removedProfiles.remove(memberId);
         boolean result = basicRemoveId(memberId, crashed, destroyed);
@@ -979,9 +934,7 @@ public class DistributionAdvisor  {
    * @param serialNum specific serial number to remove
    * @return true if a matching profile for the member was found
    */
-  public boolean removeIdWithSerial(InternalDistributedMember memberId,
-                                    int serialNum,
-                                    boolean regionDestroyed) {
+  public boolean removeIdWithSerial(InternalDistributedMember memberId, int serialNum, boolean regionDestroyed) {
     if (logger.isTraceEnabled(LogMarker.DA)) {
       logger.trace(LogMarker.DA, "removeIdWithSerial: removing member {} with serial {} from resource {}", memberId, serialNum, getAdvisee().getName());
     }
@@ -997,10 +950,7 @@ public class DistributionAdvisor  {
    * @param serialNum serial number
    * @return true if this member was an owner
    */
-  private synchronized boolean updateRemovedProfiles(
-      InternalDistributedMember memberId,
-      int serialNum,
-      boolean regionDestroyed) {
+  private synchronized boolean updateRemovedProfiles(InternalDistributedMember memberId, int serialNum, boolean regionDestroyed) {
     final boolean isDebugEnabled_DA = logger.isTraceEnabled(LogMarker.DA);
     if (isDebugEnabled_DA) {
       logger.trace(LogMarker.DA, "updateRemovedProfiles: ensure member {} with serial {} is removed from region {}", memberId, serialNum, getAdvisee().getFullPath());
@@ -1009,7 +959,7 @@ public class DistributionAdvisor  {
     boolean removedId = false;
     if (stillInView(memberId)) {
       boolean isNews = true;
-      
+
       // If existing profile is newer, just return
       Profile profileToRemove = getProfile(memberId);
       if (profileToRemove != null) {
@@ -1019,27 +969,26 @@ public class DistributionAdvisor  {
           }
           // We have a current profile for this member, but its serial number
           // is more recent than the removal that was requested.
-          
+
           // Do not remove our existing profile, and do not update
           // removedProfiles.
           isNews = false;
         }
       }
-      
+
       if (isNews) {
         // Is this a more recent removal than we have recorded?
         // If not, do not remove any existing profile, and do not
         // update removedProfiles
-        Integer oldSerial = (Integer)this.removedProfiles.get(memberId);
-        if (oldSerial != null 
-            && isNewerSerialNumber(oldSerial.intValue(), serialNum)) {
+        Integer oldSerial = (Integer) this.removedProfiles.get(memberId);
+        if (oldSerial != null && isNewerSerialNumber(oldSerial.intValue(), serialNum)) {
           if (isDebugEnabled_DA) {
             logger.trace(LogMarker.DA, "updateRemovedProfiles: member {} sent removal of serial {} but we hae already removed {}", memberId, serialNum, oldSerial);
           }
           isNews = false;
         }
       }
-      
+
       if (isNews) {
         if (isDebugEnabled_DA) {
           logger.trace(LogMarker.DA, "updateRemovedProfiles: adding serial {} for member {} to removedProfiles", serialNum, memberId);
@@ -1048,7 +997,7 @@ public class DistributionAdvisor  {
         // a new one.  Remember this removal, and ensure that its profile
         // is removed from this bucket.
         this.removedProfiles.put(memberId, Integer.valueOf(serialNum));
-        
+
         // Only remove profile if this removal is more recent than our
         // current state
         removedId = basicRemoveId(memberId, false, regionDestroyed);
@@ -1064,11 +1013,11 @@ public class DistributionAdvisor  {
       // Always make sure that this member is removed from the advisor
       removedId = basicRemoveId(memberId, false, regionDestroyed);
     }
-    
+
     if (isDebugEnabled_DA) {
       logger.trace(LogMarker.DA, "updateRemovedProfiles: removedId = {}", removedId);
     }
-    
+
     return removedId;
   }
 
@@ -1080,23 +1029,24 @@ public class DistributionAdvisor  {
   public synchronized boolean containsId(InternalDistributedMember memberId) {
     return (indexOfMemberId(memberId) > -1);
   }
-  
-//  /**
-//   * get the profile for a specific member
-//   * @since GemFire 5.1
-//   * @return the Profile or null
-//   */
-//  synchronized public Profile getProfile(InternalDistributedMember memberId) {
-//    int index = indexOfMemberId(memberId);
-//    if (index >= 0) {
-//      return profiles[index];
-//    }
-//    return null;
-//  }
-  
+
+  //  /**
+  //   * get the profile for a specific member
+  //   * @since GemFire 5.1
+  //   * @return the Profile or null
+  //   */
+  //  synchronized public Profile getProfile(InternalDistributedMember memberId) {
+  //    int index = indexOfMemberId(memberId);
+  //    if (index >= 0) {
+  //      return profiles[index];
+  //    }
+  //    return null;
+  //  }
+
   public synchronized int getNumProfiles() {
     return this.numActiveProfiles;
   }
+
   /**
    * Caller must be synchronized on this.
    * Overridden in BucketAdvisor.
@@ -1124,23 +1074,21 @@ public class DistributionAdvisor  {
 
   /** exchange profiles to initialize this advisor */
   private void exchangeProfiles() {
-    Assert.assertHoldsLock(this,false); // causes deadlock
-    Assert.assertHoldsLock(this.initializeLock,true);
+    Assert.assertHoldsLock(this, false); // causes deadlock
+    Assert.assertHoldsLock(this.initializeLock, true);
     new UpdateAttributesProcessor(getAdvisee()).distribute(true);
     setInitialized();
   }
 
   /** Creates the current distribution profile for this member */
   public Profile createProfile() {
-    Profile newProfile = instantiateProfile(
-        getDistributionManager().getId(), incrementAndGetVersion());
+    Profile newProfile = instantiateProfile(getDistributionManager().getId(), incrementAndGetVersion());
     getAdvisee().fillInProfile(newProfile);
     return newProfile;
   }
 
   /** Instantiate new distribution profile for this member */
-  protected Profile instantiateProfile(
-      InternalDistributedMember memberId, int version) {
+  protected Profile instantiateProfile(InternalDistributedMember memberId, int version) {
     return new Profile(memberId, version);
   }
 
@@ -1153,7 +1101,7 @@ public class DistributionAdvisor  {
   public Set<InternalDistributedMember> adviseGeneric() {
     return adviseFilter(null);
   }
-  
+
   /** Provide recipients for profile exchange,
    * called by UpdateAttributesProcessor and CreateRegionProcessor.
    * Can not be initialized at this point because it is only called in
@@ -1189,8 +1137,7 @@ public class DistributionAdvisor  {
   protected final Set<InternalDistributedMember> getDefaultDistributionMembers() {
     if (!useAdminMembersForDefault()) {
       return getDistributionManager().getOtherDistributionManagerIds();
-    }
-    else {
+    } else {
       return getDistributionManager().getAllOtherMembers();
     }
   }
@@ -1207,69 +1154,69 @@ public class DistributionAdvisor  {
     Iterator it = membershipListeners.keySet().iterator();
     while (it.hasNext()) {
       try {
-        ((MembershipListener)it.next()).memberJoined(member);
-      }
-      catch (Exception e) {
+        ((MembershipListener) it.next()).memberJoined(member);
+      } catch (Exception e) {
         logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributionAdvisor_UNEXPECTED_EXCEPTION), e);
       }
     }
   }
-  
-  private void notifyListenersMemberRemoved(InternalDistributedMember member,
-                                            boolean crashed) {
+
+  private void notifyListenersMemberRemoved(InternalDistributedMember member, boolean crashed) {
     Iterator it = membershipListeners.keySet().iterator();
     while (it.hasNext()) {
       try {
-        ((MembershipListener)it.next()).memberDeparted(member, crashed);
-      }
-      catch (Exception e) {
+        ((MembershipListener) it.next()).memberDeparted(member, crashed);
+      } catch (Exception e) {
         logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributionAdvisor_UNEXPECTED_EXCEPTION), e);
       }
     }
   }
-  
+
   private void notifyListenersProfileRemoved(Profile profile, boolean destroyed) {
     Iterator it = profileListeners.keySet().iterator();
     while (it.hasNext()) {
-      ((ProfileListener)it.next()).profileRemoved(profile, destroyed);
+      ((ProfileListener) it.next()).profileRemoved(profile, destroyed);
     }
   }
-  
+
   private void notifyListenersProfileAdded(Profile profile) {
     Iterator it = profileListeners.keySet().iterator();
     while (it.hasNext()) {
-      ((ProfileListener)it.next()).profileCreated(profile);
+      ((ProfileListener) it.next()).profileCreated(profile);
     }
   }
-  
+
   private void notifyListenersProfileUpdated(Profile profile) {
     Iterator it = profileListeners.keySet().iterator();
     while (it.hasNext()) {
-      ((ProfileListener)it.next()).profileUpdated(profile);
+      ((ProfileListener) it.next()).profileUpdated(profile);
     }
   }
-  
+
   /**
    * Template method for sub-classes to override. Method is invoked after
    * a new profile is created/added to profiles.
    * @param profile the created profile
    */
-  protected void profileCreated(Profile profile) {}
-  
+  protected void profileCreated(Profile profile) {
+  }
+
   /**
    * Template method for sub-classes to override. Method is invoked after
    * a profile is updated in profiles.
    * @param profile the updated profile
    */
-  protected void profileUpdated(Profile profile) {}
-  
+  protected void profileUpdated(Profile profile) {
+  }
+
   /**
    * Template method for sub-classes to override. Method is invoked after
    * a profile is removed from profiles.
    * @param profile the removed profile
    */
-  protected void profileRemoved(Profile profile) {}
-  
+  protected void profileRemoved(Profile profile) {
+  }
+
   /** All advise methods go through this method */
   protected Set<InternalDistributedMember> adviseFilter(Filter f) {
     initializationGate();
@@ -1325,8 +1272,7 @@ public class DistributionAdvisor  {
      * @return false if the visit has to be terminated immediately and false
      *         otherwise
      */
-    boolean visit(DistributionAdvisor advisor, Profile profile,
-        int profileIndex, int numProfiles, T aggregate);
+    boolean visit(DistributionAdvisor advisor, Profile profile, int profileIndex, int numProfiles, T aggregate);
   }
 
   /**
@@ -1388,7 +1334,7 @@ public class DistributionAdvisor  {
     }
     return result;
   }
-  
+
   /** Provide recipients for profile update. */
   public Set adviseProfileUpdate() {
     return adviseGeneric();
@@ -1401,7 +1347,7 @@ public class DistributionAdvisor  {
   public Set adviseProfileRemove() {
     return adviseGeneric();
   }
-  
+
   /**
    * @return true if new profile added, false if already had
    * profile (but profile is still replaced with new one)
@@ -1409,7 +1355,7 @@ public class DistributionAdvisor  {
   // must synchronize when modifying profile array
   protected synchronized boolean basicAddProfile(Profile p) {
     // don't add more than once, but replace existing profile
-//    try {
+    //    try {
 
     int index = indexOfMemberId(p.getId());
     if (index >= 0) {
@@ -1418,84 +1364,81 @@ public class DistributionAdvisor  {
       this.profiles = oldProfiles; // volatile write
       return false;
     }
-    
+
     // minimize volatile reads by copying ref to local var
     Profile[] snap = this.profiles; // volatile read
-    Profile[] newProfiles = (Profile[])
-        ArrayUtils.insert(snap, snap.length, p);
+    Profile[] newProfiles = (Profile[]) ArrayUtils.insert(snap, snap.length, p);
     Assert.assertTrue(newProfiles != null);
 
-//    System.out.println("newprofiles = " + newProfiles.length);
-//    for (int i = 0; i < newProfiles.length; i ++)
-//      System.out.println("profile " + i + ": " + newProfiles[i].getId().toString());
+    //    System.out.println("newprofiles = " + newProfiles.length);
+    //    for (int i = 0; i < newProfiles.length; i ++)
+    //      System.out.println("profile " + i + ": " + newProfiles[i].getId().toString());
 
-      this.profiles = newProfiles; // volatile write
-      setNumActiveProfiles(newProfiles.length);
-    
-     return true;
-//    }
-//    finally {
-//      Assert.assertTrue(indexOfMemberId(p.getId()) >= 0);
-//      boolean containsOne = false;
-//      for (int i = 0; i < this.profiles.length; i++) {
-//        if (this.profiles[i].getId() == p.getId()) {
-//          Assert.assertTrue(!containsOne);
-//          containsOne = true;
-//        }
-//      }
-//      Assert.assertTrue(containsOne);
-//    }
+    this.profiles = newProfiles; // volatile write
+    setNumActiveProfiles(newProfiles.length);
+
+    return true;
+    //    }
+    //    finally {
+    //      Assert.assertTrue(indexOfMemberId(p.getId()) >= 0);
+    //      boolean containsOne = false;
+    //      for (int i = 0; i < this.profiles.length; i++) {
+    //        if (this.profiles[i].getId() == p.getId()) {
+    //          Assert.assertTrue(!containsOne);
+    //          containsOne = true;
+    //        }
+    //      }
+    //      Assert.assertTrue(containsOne);
+    //    }
   }
 
-    
   // must synchronize when modifying profile array
   /**
    * Perform work of removing the given member from this advisor.
    */
   private synchronized Profile basicRemoveMemberId(ProfileId id) {
-//    try {
+    //    try {
     int i = indexOfMemberId(id);
     if (i >= 0) {
       Profile profileRemoved = this.profiles[i];
       basicRemoveIndex(i);
       return profileRemoved;
-    }
-    else
+    } else
       return null;
-//    } finally {
-//      Assert.assertTrue(-1 == indexOfMemberId(id));
-//    }
+    //    } finally {
+    //      Assert.assertTrue(-1 == indexOfMemberId(id));
+    //    }
   }
-  
+
   protected int indexOfMemberId(ProfileId id) {
-    Assert.assertHoldsLock(this,true);
+    Assert.assertHoldsLock(this, true);
     Profile[] profs = this.profiles; // volatile read
     for (int i = 0; i < profs.length; i++) {
       Profile p = profs[i];
       if (id instanceof InternalDistributedMember) {
-        if (p.getDistributedMember().equals(id)) return i;
+        if (p.getDistributedMember().equals(id))
+          return i;
       } else {
-        if (p.getId().equals(id)) return i;
+        if (p.getId().equals(id))
+          return i;
       }
     }
     return -1;
   }
-  
+
   private void basicRemoveIndex(int index) {
-    Assert.assertHoldsLock(this,true);    
+    Assert.assertHoldsLock(this, true);
     // minimize volatile reads by copying ref to local var
     Profile[] oldProfiles = this.profiles; // volatile read
     Profile[] newProfiles = new Profile[oldProfiles.length - 1];
     System.arraycopy(oldProfiles, 0, newProfiles, 0, index);
-    System.arraycopy(oldProfiles, index + 1, newProfiles, index,
-                     newProfiles.length - index);
+    System.arraycopy(oldProfiles, index + 1, newProfiles, index, newProfiles.length - index);
     this.profiles = newProfiles; // volatile write
     if (this.numActiveProfiles > 0) {
       this.numActiveProfiles--;
     }
   }
-  
- 
+
   /** Filter interface */
   protected static interface Filter {
     public boolean include(Profile profile);
@@ -1507,6 +1450,7 @@ public class DistributionAdvisor  {
    */
   public static interface ProfileId {
   }
+
   /**
    * Profile information for a remote counterpart.
    */
@@ -1542,10 +1486,11 @@ public class DistributionAdvisor  {
     public ProfileId getId() {
       return this.peerMemberId;
     }
+
     public int getVersion() {
       return this.version;
     }
-    
+
     public int getSerialNumber() {
       return this.serialNumber;
     }
@@ -1554,13 +1499,16 @@ public class DistributionAdvisor  {
     public int hashCode() {
       return this.getId().hashCode();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-      if (obj == this) return true;
-      if (obj == null) return false;
-      if (!this.getClass().equals(obj.getClass())) return false;
-      return getId().equals(((Profile)obj).getId());
+      if (obj == this)
+        return true;
+      if (obj == null)
+        return false;
+      if (!this.getClass().equals(obj.getClass()))
+        return false;
+      return getId().equals(((Profile) obj).getId());
     }
 
     /** Return the DistributedMember associated with this profile
@@ -1569,11 +1517,11 @@ public class DistributionAdvisor  {
     public final InternalDistributedMember getDistributedMember() {
       return this.peerMemberId;
     }
-    
+
     public int getDSFID() {
       return DA_PROFILE;
     }
-    
+
     public void toData(DataOutput out) throws IOException {
       InternalDataSerializer.invokeToData(this.peerMemberId, out);
       out.writeInt(this.version);
@@ -1590,9 +1538,7 @@ public class DistributionAdvisor  {
     /**
      * Process add/remove/update of an incoming profile.
      */
-    public void processIncoming(DistributionManager dm, String adviseePath,
-        boolean removeProfile, boolean exchangeProfiles,
-        final List<Profile> replyProfiles) {
+    public void processIncoming(DistributionManager dm, String adviseePath, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
       // nothing by default; just log that nothing was done
       if (logger.isDebugEnabled()) {
         logger.debug("While processing UpdateAttributes message ignored incoming profile: {}", this);
@@ -1611,15 +1557,12 @@ public class DistributionAdvisor  {
      * @param exchangeProfiles
      *          true to add the profile to reply
      */
-    protected final void handleDistributionAdvisee(DistributionAdvisee advisee,
-        boolean removeProfile, boolean exchangeProfiles,
-        final List<Profile> replyProfiles) {
+    protected final void handleDistributionAdvisee(DistributionAdvisee advisee, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
       final DistributionAdvisor da;
       if (advisee != null && (da = advisee.getDistributionAdvisor()) != null) {
         if (removeProfile) {
           da.removeProfile(this, false);
-        }
-        else {
+        } else {
           da.putProfile(this);
         }
         if (exchangeProfiles) {
@@ -1637,14 +1580,14 @@ public class DistributionAdvisor  {
       sb.append(")");
       return sb.toString();
     }
-    
+
     /**
      * This will be get called when profile will be removed from advisor
      * Do local cleanup in this thread, otherwsie spawn another thread to
      * do cleanup 
      */
-    public void cleanUp(){
-      
+    public void cleanUp() {
+
     }
 
     public StringBuilder getToStringHeader() {
@@ -1660,7 +1603,7 @@ public class DistributionAdvisor  {
 
     @Override
     public Version[] getSerializationVersions() {
-       return null;
+      return null;
     }
   }
 }

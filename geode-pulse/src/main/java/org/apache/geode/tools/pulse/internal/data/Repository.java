@@ -49,15 +49,12 @@ public class Repository {
   private boolean useSSLLocator = false;
   private boolean useSSLManager = false;
   private boolean useGemFireCredentials = false;
-  
 
   private String pulseWebAppUrl;
 
-  Locale locale = new Locale(PulseConstants.APPLICATION_LANGUAGE,
-      PulseConstants.APPLICATION_COUNTRY);
+  Locale locale = new Locale(PulseConstants.APPLICATION_LANGUAGE, PulseConstants.APPLICATION_COUNTRY);
 
-  private ResourceBundle resourceBundle = ResourceBundle.getBundle(
-      PulseConstants.LOG_MESSAGES_FILE, locale);
+  private ResourceBundle resourceBundle = ResourceBundle.getBundle(PulseConstants.LOG_MESSAGES_FILE, locale);
 
   private PulseConfig pulseConfig = new PulseConfig();
 
@@ -162,14 +159,13 @@ public class Repository {
   public Cluster getCluster() {
     String username = null;
     String password = null;
-    if(useGemFireCredentials) {
+    if (useGemFireCredentials) {
       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-      if(auth!=null) {
+      if (auth != null) {
         username = auth.getName();
         password = (String) auth.getCredentials();
       }
-    }
-    else{
+    } else {
       username = this.jmxUserName;
       password = this.jmxUserPassword;
     }
@@ -186,8 +182,7 @@ public class Repository {
       if (data == null) {
         try {
           if (LOGGER.infoEnabled()) {
-            LOGGER.info(resourceBundle.getString("LOG_MSG_CREATE_NEW_THREAD")
-                + " : " + key);
+            LOGGER.info(resourceBundle.getString("LOG_MSG_CREATE_NEW_THREAD") + " : " + key);
           }
           data = new Cluster(this.jmxHost, this.jmxPort, username, password);
           // Assign name to thread created
@@ -213,8 +208,7 @@ public class Repository {
   // This method is used to remove all cluster threads
   public void removeAllClusters() {
 
-    Iterator<Map.Entry<String, Cluster>> iter = clusterMap.entrySet()
-        .iterator();
+    Iterator<Map.Entry<String, Cluster>> iter = clusterMap.entrySet().iterator();
 
     while (iter.hasNext()) {
       Map.Entry<String, Cluster> entry = iter.next();
@@ -223,8 +217,7 @@ public class Repository {
       c.stopThread();
       iter.remove();
       if (LOGGER.infoEnabled()) {
-        LOGGER.info(resourceBundle.getString("LOG_MSG_REMOVE_THREAD") + " : "
-            + clusterKey.toString());
+        LOGGER.info(resourceBundle.getString("LOG_MSG_REMOVE_THREAD") + " : " + clusterKey.toString());
       }
     }
   }
@@ -240,7 +233,5 @@ public class Repository {
   public void setUseGemFireCredentials(boolean useGemFireCredentials) {
     this.useGemFireCredentials = useGemFireCredentials;
   }
-  
-  
 
 }

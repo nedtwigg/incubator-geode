@@ -51,11 +51,12 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
   public ConcurrentLeaveDuringGIIDUnitTest() {
     super();
   }
-  
+
   @Test
   public void testRemoveWhenBug50988IsFixed() {
     // remove this placeholder
   }
+
   /**
    * In #48962 a member X has replicated region and is updating it.  Members A and B
    * are started up in parallel.  At the same time X decides to close the region.
@@ -80,9 +81,9 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
     VM X = Host.getHost(0).getVM(1);
     VM A = Host.getHost(0).getVM(2);
     VM B = Host.getHost(0).getVM(3);
-    
+
     final String regionName = getUniqueName() + "_Region";
-    
+
     SerializableCallable createRegionXB = new SerializableCallable("create region in X and B") {
       public Object call() {
         Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
@@ -99,7 +100,7 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
         return result;
       }
     };
-    
+
     SerializableCallable createRegionA = new SerializableCallable("create region in A") {
       public Object call() {
         final GiiCallback cb = new GiiCallback(InitialImageOperation.GIITestHookType.BeforeGetInitialImage, regionName);
@@ -114,6 +115,7 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
           public boolean done() {
             return cb.isRunning;
           }
+
           public String description() {
             return "waiting for GII test hook to be invoked";
           }
@@ -124,14 +126,14 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
     };
 
     A.invoke(createRegionA);
-    
-    final InternalDistributedMember Xid = (InternalDistributedMember)X.invoke(createRegionXB);
+
+    final InternalDistributedMember Xid = (InternalDistributedMember) X.invoke(createRegionXB);
 
     A.invoke(new SerializableRunnable("make sure A got keyFromX from X") {
       public void run() {
         // use internal methods to get the region since it's still initializing
-        GemFireCacheImpl cache = (GemFireCacheImpl)getCache(); 
-        final RegionMap r = cache.getRegionByPathForProcessing(regionName).getRegionMap(); 
+        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+        final RegionMap r = cache.getRegionByPathForProcessing(regionName).getRegionMap();
 
         // X's update should have been propagated to A and put into the cache.
         // If this throws an assertion error then there's no point in
@@ -141,6 +143,7 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
           public boolean done() {
             return r.containsKey("keyFromX");
           }
+
           public String description() {
             return "waiting for region " + regionName + " to contain keyFromX";
           }
@@ -148,31 +151,31 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
         Wait.waitForCriterion(wc, 20000, 1000, true);
       }
     });
-    
+
     // create in B and make sure the key isn't there
     B.invoke(createRegionXB);
-    
+
     A.invoke(new SerializableRunnable("allow A to continue GII from B") {
       public void run() {
-        GiiCallback cb = (GiiCallback)InitialImageOperation.getGIITestHookForCheckingPurpose(
-            InitialImageOperation.GIITestHookType.BeforeGetInitialImage);
-        synchronized(cb.lockObject) {
+        GiiCallback cb = (GiiCallback) InitialImageOperation.getGIITestHookForCheckingPurpose(InitialImageOperation.GIITestHookType.BeforeGetInitialImage);
+        synchronized (cb.lockObject) {
           cb.lockObject.notify();
         }
         WaitCriterion wc = new WaitCriterion() {
           public boolean done() {
             return getCache().getRegion(regionName) != null;
           }
+
           public String description() {
             return "waiting for region " + regionName + " to initialize";
           }
         };
         Wait.waitForCriterion(wc, 20000, 1000, true);
         // ensure that the RVV has recorded the event
-        DistributedRegion r = (DistributedRegion)getCache().getRegion(regionName);
+        DistributedRegion r = (DistributedRegion) getCache().getRegion(regionName);
         if (!r.getVersionVector().contains(Xid, 1)) {
           LogWriterUtils.getLogWriter().info("r's version vector is " + r.getVersionVector().fullToString());
-          ((LocalRegion)r).dumpBackingMap();
+          ((LocalRegion) r).dumpBackingMap();
         }
         assertTrue(r.containsKey("keyFromX"));
         // if the test fails here then the op received from X was not correctly
@@ -180,7 +183,7 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
         assertTrue(r.getVersionVector().contains(Xid, 1));
       }
     });
-    
+
     // Now ensure the B has done the sync and received the entry
     B.invoke(new SerializableRunnable("ensure B is now consistent") {
       public void run() {
@@ -189,6 +192,7 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
           public boolean done() {
             return r.containsKey("keyFromX");
           }
+
           public String description() {
             return "waiting for region " + regionName + " to contain keyFromX";
           }
@@ -197,7 +201,7 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
         Wait.waitForCriterion(wc, 20000, 500, true);
         // if the test fails here something is odd because the sync was done
         // but the RVV doesn't know about it
-        assertTrue(((LocalRegion)r).getVersionVector().contains(Xid, 1));
+        assertTrue(((LocalRegion) r).getVersionVector().contains(Xid, 1));
       }
     });
   }
@@ -208,7 +212,7 @@ public class ConcurrentLeaveDuringGIIDUnitTest extends JUnit4CacheTestCase {
     public GiiCallback(GIITestHookType type, String region_name) {
       super(type, region_name);
     }
-    
+
     @Override
     public void reset() {
       synchronized (this.lockObject) {

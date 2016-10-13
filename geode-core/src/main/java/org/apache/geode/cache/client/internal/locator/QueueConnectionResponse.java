@@ -31,7 +31,7 @@ import org.apache.geode.internal.DataSerializableFixedID;
  *
  */
 public class QueueConnectionResponse extends ServerLocationResponse {
-  
+
   private boolean durableQueueFound;
   private List servers;
   private boolean serversFound = false;
@@ -67,13 +67,12 @@ public class QueueConnectionResponse extends ServerLocationResponse {
   public List getServers() {
     return servers;
   }
-  
+
   @Override
   public String toString() {
-    return "QueueConnectionResponse{durableQueueFound=" + durableQueueFound + ", servers="
-        + servers + "}";
+    return "QueueConnectionResponse{durableQueueFound=" + durableQueueFound + ", servers=" + servers + "}";
   }
-  
+
   public int getDSFID() {
     return DataSerializableFixedID.QUEUE_CONNECTION_RESPONSE;
   }
@@ -82,5 +81,5 @@ public class QueueConnectionResponse extends ServerLocationResponse {
   public boolean hasResult() {
     return this.serversFound;
   }
-  
+
 }

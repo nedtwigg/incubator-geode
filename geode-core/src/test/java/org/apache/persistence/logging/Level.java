@@ -61,38 +61,38 @@ public class Level {
    * should be something like "FINER" or "42".
    */
   public static Level parse(String name) {
-    if(name.equalsIgnoreCase("OFF")) {
-      return(OFF);
+    if (name.equalsIgnoreCase("OFF")) {
+      return (OFF);
 
-    } else if(name.equalsIgnoreCase("SEVERE")) {
-      return(SEVERE);
+    } else if (name.equalsIgnoreCase("SEVERE")) {
+      return (SEVERE);
 
-    } else if(name.equalsIgnoreCase("WARNING")) {
-      return(WARNING);
+    } else if (name.equalsIgnoreCase("WARNING")) {
+      return (WARNING);
 
-    } else if(name.equalsIgnoreCase("INFO")) {
-      return(INFO);
+    } else if (name.equalsIgnoreCase("INFO")) {
+      return (INFO);
 
-    } else if(name.equalsIgnoreCase("CONFIG")) {
-      return(CONFIG);
+    } else if (name.equalsIgnoreCase("CONFIG")) {
+      return (CONFIG);
 
-    } else if(name.equalsIgnoreCase("FINE")) {
-      return(FINE);
+    } else if (name.equalsIgnoreCase("FINE")) {
+      return (FINE);
 
-    } else if(name.equalsIgnoreCase("FINER")) {
-      return(FINER);
+    } else if (name.equalsIgnoreCase("FINER")) {
+      return (FINER);
 
-    } else if(name.equalsIgnoreCase("FINEST")) {
-      return(FINEST);
+    } else if (name.equalsIgnoreCase("FINEST")) {
+      return (FINEST);
 
-    } else if(name.equalsIgnoreCase("ALL")) {
-      return(ALL);
+    } else if (name.equalsIgnoreCase("ALL")) {
+      return (ALL);
     }
 
     try {
-      return(new Level(name, Integer.parseInt(name)));
+      return (new Level(name, Integer.parseInt(name)));
 
-    } catch(NumberFormatException ex) {
+    } catch (NumberFormatException ex) {
       throw new IllegalArgumentException("Invalid level: " + name);
     }
   }
@@ -101,28 +101,28 @@ public class Level {
    * Returns the integer value for this level
    */
   public int intValue() {
-    return(this.value);
+    return (this.value);
   }
 
   /**
    * Returns a textual representation of this level
    */
   public String toString() {
-    return("Level " + this.name + " (" + this.value + ")");
+    return ("Level " + this.name + " (" + this.value + ")");
   }
 
   /**
    * Two levels are equal if they have the same integer value
    */
   public boolean equals(Object o) {
-    if(o instanceof Level) {
+    if (o instanceof Level) {
       Level l = (Level) o;
-      if(l.value == this.value) {
-        return(true);
-      } 
+      if (l.value == this.value) {
+        return (true);
+      }
     }
 
-    return(false);
+    return (false);
   }
 
 }

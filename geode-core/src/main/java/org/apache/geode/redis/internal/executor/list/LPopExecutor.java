@@ -18,7 +18,6 @@ package org.apache.geode.redis.internal.executor.list;
 
 import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
-
 public class LPopExecutor extends PopExecutor {
 
   @Override

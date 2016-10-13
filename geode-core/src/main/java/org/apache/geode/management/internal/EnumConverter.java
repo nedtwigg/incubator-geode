@@ -36,8 +36,7 @@ public final class EnumConverter<T extends Enum<T>> extends OpenTypeConverter {
     return ((Enum) value).name();
   }
 
-  public final Object fromNonNullOpenValue(Object value)
-      throws InvalidObjectException {
+  public final Object fromNonNullOpenValue(Object value) throws InvalidObjectException {
     try {
       return Enum.valueOf(enumClass, (String) value);
     } catch (Exception e) {

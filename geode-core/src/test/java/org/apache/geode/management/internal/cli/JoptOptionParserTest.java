@@ -82,8 +82,8 @@ public class JoptOptionParserTest {
     assertThat(optionSet.getSplit()).isEqualTo(emptyOptionSet.getSplit());
     assertThat(optionSet.getNoOfSpacesRemoved()).isEqualTo(emptyOptionSet.getNoOfSpacesRemoved());
     assertThat(optionSet.getUserInput()).isEqualTo(""); //emptyOptionSet.getUserInput());
-    assertThat(optionSet.getValue((Argument)null)).isEqualTo(emptyOptionSet.getValue((Argument)null));
-    assertThat(optionSet.getValue((Option)null)).isEqualTo(emptyOptionSet.getValue((Option)null));
+    assertThat(optionSet.getValue((Argument) null)).isEqualTo(emptyOptionSet.getValue((Argument) null));
+    assertThat(optionSet.getValue((Option) null)).isEqualTo(emptyOptionSet.getValue((Option) null));
   }
 
   @Test
@@ -308,28 +308,27 @@ public class JoptOptionParserTest {
   }
 
   private static Object[] exampleInputParameters() {
-    return new Object[]{
-      // 0
-      new Object[] { " ARGUMENT1_VALUE —option1=somevalue", false, true, false },
-      // 1
-      new Object[] { " ARGUMENT1_VALUE?      ARGUMENT2_VALUE -- ----------", false, true, false },
-      // 2
-      new Object[] { " --option1=value", false, false, true },
-      // 3
-      new Object[] { "         ARGUMENT1_VALUE?       ARGUMENT2_VALUE --option1=option1value --option2", false, true, true },
-      // 4
-      new Object[] { "         ARGUMENT1_VALUE?       ARGUMENT2_VALUE --option1=option1value --option2=option2value --option3=option3value", false, true, true },
-      // 5
-      new Object[] { " --string=string1 --stringArray=1,2 --stringArray=3,4 --stringList=11,12,13 --integer=10 --stringArray=5 --stringList=14,15", false, false, true },
-      // 6
-      new Object[] { " --stringArray=1,2 --stringArray='3,4'", false, false, true },
-      // 7
-      new Object[] { " --string=\"1\" --colonArray=2:3:4 --stringArray=5,\"6,7\",8 --stringList=\"9,10,11,12\"", false, false, true },
-      // 8
-      new Object[] { " --string=string1 --stringArray=1,2 --string=string2", false, false, true },
-      // 9
-      new Object[] { " this is just one argument?this is a second argument", false, true, false }
-    };
+    return new Object[] {
+        // 0
+        new Object[] { " ARGUMENT1_VALUE —option1=somevalue", false, true, false },
+        // 1
+        new Object[] { " ARGUMENT1_VALUE?      ARGUMENT2_VALUE -- ----------", false, true, false },
+        // 2
+        new Object[] { " --option1=value", false, false, true },
+        // 3
+        new Object[] { "         ARGUMENT1_VALUE?       ARGUMENT2_VALUE --option1=option1value --option2", false, true, true },
+        // 4
+        new Object[] { "         ARGUMENT1_VALUE?       ARGUMENT2_VALUE --option1=option1value --option2=option2value --option3=option3value", false, true, true },
+        // 5
+        new Object[] { " --string=string1 --stringArray=1,2 --stringArray=3,4 --stringList=11,12,13 --integer=10 --stringArray=5 --stringList=14,15", false, false, true },
+        // 6
+        new Object[] { " --stringArray=1,2 --stringArray='3,4'", false, false, true },
+        // 7
+        new Object[] { " --string=\"1\" --colonArray=2:3:4 --stringArray=5,\"6,7\",8 --stringList=\"9,10,11,12\"", false, false, true },
+        // 8
+        new Object[] { " --string=string1 --stringArray=1,2 --string=string2", false, false, true },
+        // 9
+        new Object[] { " this is just one argument?this is a second argument", false, true, false } };
   }
 
   private void defineSimpleOptionParser() {

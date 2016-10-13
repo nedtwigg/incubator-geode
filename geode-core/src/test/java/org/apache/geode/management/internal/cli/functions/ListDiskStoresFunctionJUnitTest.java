@@ -65,9 +65,11 @@ public class ListDiskStoresFunctionJUnitTest {
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {{
-      setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    mockContext = new Mockery() {
+      {
+        setImposteriser(ClassImposteriser.INSTANCE);
+      }
+    };
   }
 
   @After
@@ -76,10 +78,7 @@ public class ListDiskStoresFunctionJUnitTest {
     mockContext = null;
   }
 
-  private DiskStoreDetails createDiskStoreDetails(final UUID id,
-                                                    final String name,
-                                                    final String memberName,
-                                                    final String memberId) {
+  private DiskStoreDetails createDiskStoreDetails(final UUID id, final String name, final String memberName, final String memberId) {
     return new DiskStoreDetails(id, name, memberId, memberName);
   }
 
@@ -115,30 +114,32 @@ public class ListDiskStoresFunctionJUnitTest {
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockCache).getMyId();
-      will(returnValue(mockMember));
-      oneOf(mockCache).listDiskStoresIncludingRegionOwned();
-      will(returnValue(mockDiskStores));
-      exactly(3).of(mockMember).getId();
-      will(returnValue(memberId));
-      exactly(3).of(mockMember).getName();
-      will(returnValue(memberName));
-      oneOf(mockDiskStoreOne).getDiskStoreUUID();
-      will(returnValue(mockDiskStoreOneId));
-      oneOf(mockDiskStoreOne).getName();
-      will(returnValue("ds-backup"));
-      oneOf(mockDiskStoreTwo).getDiskStoreUUID();
-      will(returnValue(mockDiskStoreTwoId));
-      oneOf(mockDiskStoreTwo).getName();
-      will(returnValue("ds-overflow"));
-      oneOf(mockDiskStoreThree).getDiskStoreUUID();
-      will(returnValue(mockDiskStoreThreeId));
-      oneOf(mockDiskStoreThree).getName();
-      will(returnValue("ds-persistence"));
-      oneOf(mockFunctionContext).getResultSender();
-      will(returnValue(testResultSender));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockCache).getMyId();
+        will(returnValue(mockMember));
+        oneOf(mockCache).listDiskStoresIncludingRegionOwned();
+        will(returnValue(mockDiskStores));
+        exactly(3).of(mockMember).getId();
+        will(returnValue(memberId));
+        exactly(3).of(mockMember).getName();
+        will(returnValue(memberName));
+        oneOf(mockDiskStoreOne).getDiskStoreUUID();
+        will(returnValue(mockDiskStoreOneId));
+        oneOf(mockDiskStoreOne).getName();
+        will(returnValue("ds-backup"));
+        oneOf(mockDiskStoreTwo).getDiskStoreUUID();
+        will(returnValue(mockDiskStoreTwoId));
+        oneOf(mockDiskStoreTwo).getName();
+        will(returnValue("ds-overflow"));
+        oneOf(mockDiskStoreThree).getDiskStoreUUID();
+        will(returnValue(mockDiskStoreThreeId));
+        oneOf(mockDiskStoreThree).getName();
+        will(returnValue("ds-persistence"));
+        oneOf(mockFunctionContext).getResultSender();
+        will(returnValue(testResultSender));
+      }
+    });
 
     final ListDiskStoresFunction function = createListDiskStoresFunction(mockCache);
 
@@ -153,10 +154,7 @@ public class ListDiskStoresFunctionJUnitTest {
 
     assertNotNull(diskStoreDetails);
     assertEquals(3, diskStoreDetails.size());
-    diskStoreDetails.containsAll(Arrays.asList(
-      createDiskStoreDetails(mockDiskStoreOneId, "ds-backup", memberId, memberName),
-      createDiskStoreDetails(mockDiskStoreTwoId, "ds-overflow", memberId, memberName),
-      createDiskStoreDetails(mockDiskStoreThreeId, "ds-persistence", memberId, memberName)));
+    diskStoreDetails.containsAll(Arrays.asList(createDiskStoreDetails(mockDiskStoreOneId, "ds-backup", memberId, memberName), createDiskStoreDetails(mockDiskStoreTwoId, "ds-overflow", memberId, memberName), createDiskStoreDetails(mockDiskStoreThreeId, "ds-persistence", memberId, memberName)));
   }
 
   @Test(expected = CacheClosedException.class)
@@ -164,24 +162,26 @@ public class ListDiskStoresFunctionJUnitTest {
     final FunctionContext mockFunctionContext = mockContext.mock(FunctionContext.class, "MockFunctionContext");
 
     final ListDiskStoresFunction testListDiskStoresFunction = new TestListDiskStoresFunction(mockContext.mock(Cache.class, "MockCache")) {
-      @Override protected Cache getCache() {
+      @Override
+      protected Cache getCache() {
         throw new CacheClosedException("Expected");
       }
     };
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionContext).getResultSender();
-      will(returnValue(testResultSender));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionContext).getResultSender();
+        will(returnValue(testResultSender));
+      }
+    });
 
     testListDiskStoresFunction.execute(mockFunctionContext);
 
     try {
       testResultSender.getResults();
-    }
-    catch (CacheClosedException expected) {
+    } catch (CacheClosedException expected) {
       assertEquals("Expected", expected.getMessage());
       throw expected;
     }
@@ -198,14 +198,16 @@ public class ListDiskStoresFunctionJUnitTest {
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockCache).getMyId();
-      will(returnValue(mockMember));
-      oneOf(mockCache).listDiskStoresIncludingRegionOwned();
-      will(returnValue(Collections.emptyList()));
-      oneOf(mockFunctionContext).getResultSender();
-      will(returnValue(testResultSender));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockCache).getMyId();
+        will(returnValue(mockMember));
+        oneOf(mockCache).listDiskStoresIncludingRegionOwned();
+        will(returnValue(Collections.emptyList()));
+        oneOf(mockFunctionContext).getResultSender();
+        will(returnValue(testResultSender));
+      }
+    });
 
     final ListDiskStoresFunction function = createListDiskStoresFunction(mockCache);
 
@@ -231,10 +233,12 @@ public class ListDiskStoresFunctionJUnitTest {
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionContext).getResultSender();
-      will(returnValue(testResultSender));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionContext).getResultSender();
+        will(returnValue(testResultSender));
+      }
+    });
 
     final ListDiskStoresFunction function = createListDiskStoresFunction(mockCache);
 
@@ -261,14 +265,16 @@ public class ListDiskStoresFunctionJUnitTest {
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockCache).getMyId();
-      will(returnValue(mockMember));
-      oneOf(mockCache).listDiskStoresIncludingRegionOwned();
-      will(throwException(new RuntimeException("expected")));
-      oneOf(mockFunctionContext).getResultSender();
-      will(returnValue(testResultSender));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockCache).getMyId();
+        will(returnValue(mockMember));
+        oneOf(mockCache).listDiskStoresIncludingRegionOwned();
+        will(throwException(new RuntimeException("expected")));
+        oneOf(mockFunctionContext).getResultSender();
+        will(returnValue(testResultSender));
+      }
+    });
 
     final ListDiskStoresFunction function = createListDiskStoresFunction(mockCache);
 
@@ -276,8 +282,7 @@ public class ListDiskStoresFunctionJUnitTest {
 
     try {
       testResultSender.getResults();
-    }
-    catch (Throwable throwable) {
+    } catch (Throwable throwable) {
       assertTrue(throwable instanceof RuntimeException);
       assertEquals("expected", throwable.getMessage());
       throw throwable;

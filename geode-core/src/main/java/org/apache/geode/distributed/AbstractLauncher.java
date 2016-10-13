@@ -60,17 +60,12 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 public abstract class AbstractLauncher<T extends Comparable<T>> implements Runnable {
 
   protected static final Boolean DEFAULT_FORCE = Boolean.FALSE;
-  
-  protected static final long READ_PID_FILE_TIMEOUT_MILLIS = 2*1000;
+
+  protected static final long READ_PID_FILE_TIMEOUT_MILLIS = 2 * 1000;
 
   // @see http://publib.boulder.ibm.com/infocenter/javasdk/v6r0/index.jsp?topic=%2Fcom.ibm.java.doc.user.lnx.60%2Fuser%2Fattachapi.html
   // @see http://docs.oracle.com/cd/E13150_01/jrockit_jvm/jrockit/geninfo/diagnos/aboutjrockit.html#wp1083571
-  private static final List<String> ATTACH_API_PACKAGES = Arrays.asList(
-    "com.sun.tools.attach",
-    "com/sun/tools/attach",
-    "com.ibm.tools.attach",
-    "com/ibm/tools/attach"
-  );
+  private static final List<String> ATTACH_API_PACKAGES = Arrays.asList("com.sun.tools.attach", "com/sun/tools/attach", "com.ibm.tools.attach", "com/ibm/tools/attach");
 
   public static final String DEFAULT_WORKING_DIRECTORY = SystemUtils.CURRENT_DIRECTORY;
   public static final String SIGNAL_HANDLER_REGISTRATION_SYSTEM_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "launcher.registerSignalHandlers";
@@ -90,12 +85,10 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
   public AbstractLauncher() {
     try {
       if (Boolean.getBoolean(SIGNAL_HANDLER_REGISTRATION_SYSTEM_PROPERTY)) {
-        ClassUtils.forName(SUN_SIGNAL_API_CLASS_NAME, new SunAPINotFoundException(
-          "WARNING!!! Not running a Sun JVM.  Could not find the sun.misc.Signal class; Signal handling disabled."));
+        ClassUtils.forName(SUN_SIGNAL_API_CLASS_NAME, new SunAPINotFoundException("WARNING!!! Not running a Sun JVM.  Could not find the sun.misc.Signal class; Signal handling disabled."));
         RegisterSignalHandlerSupport.registerSignalHandlers();
       }
-    }
-    catch (SunAPINotFoundException e) {
+    } catch (SunAPINotFoundException e) {
       info(e.getMessage());
     }
   }
@@ -124,8 +117,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
    */
   protected static void assertPortAvailable(final InetAddress bindAddress, final int port) throws BindException {
     if (!AvailablePort.isPortAvailable(port, AvailablePort.SOCKET, bindAddress)) {
-      throw new BindException(String.format("Network is unreachable; port (%1$d) is not available on %2$s.", port,
-        (bindAddress != null ? bindAddress.getCanonicalHostName() : "localhost")));
+      throw new BindException(String.format("Network is unreachable; port (%1$d) is not available on %2$s.", port, (bindAddress != null ? bindAddress.getCanonicalHostName() : "localhost")));
     }
   }
 
@@ -157,13 +149,11 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
     if (url != null) {
       try {
         properties.load(new FileReader(new File(url.toURI())));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         try {
           // not in the file system, try the classpath
           properties.load(AbstractLauncher.class.getResourceAsStream(DistributedSystem.getPropertiesFile()));
-        }
-        catch (Exception ignore) {
+        } catch (Exception ignore) {
           // not in the file system or the classpath; gemfire.properties does not exist
         }
       }
@@ -177,8 +167,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
       this.logger.addHandler(new FileHandler(SystemUtils.CURRENT_DIRECTORY.concat("debug.log")));
       this.logger.setLevel(Level.ALL);
       this.logger.setUseParentHandlers(true);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace(System.err);
       System.err.flush();
       throw new RuntimeException(e);
@@ -224,8 +213,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
    * @return a boolean value indicating if the Attach API is on the classpath.
    */
   boolean isAttachAPIOnClasspath() {
-    return (ClassUtils.isClassAvailable(SUN_ATTACH_API_CLASS_NAME)
-      || ClassUtils.isClassAvailable(IBM_ATTACH_API_CLASS_NAME));
+    return (ClassUtils.isClassAvailable(SUN_ATTACH_API_CLASS_NAME) || ClassUtils.isClassAvailable(IBM_ATTACH_API_CLASS_NAME));
   }
 
   /**
@@ -397,8 +385,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
     if (isDebugging()) {
       if (args != null && args.length > 0) {
         System.err.printf(message, args);
-      }
-      else {
+      } else {
         System.err.print(message);
       }
     }
@@ -430,8 +417,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
   protected void info(final Object message, final Object... args) {
     if (args != null && args.length > 0) {
       System.err.printf(message.toString(), args);
-    }
-    else {
+    } else {
       System.err.print(message);
     }
   }
@@ -457,11 +443,11 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
   public String version() {
     return GemFireVersion.getGemFireVersion();
   }
-  
+
   int identifyPid() throws PidUnavailableException {
     return ProcessUtils.identifyPid();
   }
-  
+
   int identifyPidOrNot() {
     try {
       return identifyPid();
@@ -469,7 +455,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
       return -1;
     }
   }
-  
+
   boolean isPidInProcess() {
     Integer pid = getPid();
     return pid != null && pid == identifyPidOrNot();
@@ -530,8 +516,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
     protected static Integer identifyPid() {
       try {
         return ProcessUtils.identifyPid();
-      }
-      catch (PidUnavailableException ignore) {
+      } catch (PidUnavailableException ignore) {
         return null;
       }
     }
@@ -562,7 +547,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
         }
 
         if (hours > 0) {
-          buffer.append(hours).append(hours> 1 ? " hours " : " hour ");
+          buffer.append(hours).append(hours > 1 ? " hours " : " hour ");
         }
 
         if (minutes > 0) {
@@ -576,22 +561,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
     }
 
     @SuppressWarnings("unchecked")
-    protected ServiceState(final Status status,
-                           final String statusMessage,
-                           final long timestamp,
-                           final String serviceLocation,
-                           final Integer pid,
-                           final Long uptime,
-                           final String workingDirectory,
-                           final List<String> jvmArguments,
-                           final String classpath,
-                           final String gemfireVersion,
-                           final String javaVersion,
-                           final String logFile,
-                           final String host,
-                           final String port,
-                           final String memberName)
-    {
+    protected ServiceState(final Status status, final String statusMessage, final long timestamp, final String serviceLocation, final Integer pid, final Long uptime, final String workingDirectory, final List<String> jvmArguments, final String classpath, final String gemfireVersion, final String javaVersion, final String logFile, final String host, final String port, final String memberName) {
       assert status != null : "The status of the GemFire service cannot be null!";
       this.status = status;
       this.statusMessage = statusMessage;
@@ -600,8 +570,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
       this.pid = pid;
       this.uptime = uptime;
       this.workingDirectory = workingDirectory;
-      this.jvmArguments = ObjectUtils.defaultIfNull(Collections.unmodifiableList(jvmArguments),
-        Collections.<String>emptyList());
+      this.jvmArguments = ObjectUtils.defaultIfNull(Collections.unmodifiableList(jvmArguments), Collections.<String> emptyList());
       this.classpath = classpath;
       this.gemfireVersion = gemfireVersion;
       this.javaVersion = javaVersion;
@@ -794,44 +763,14 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
     @Override
     public String toString() {
       switch (getStatus()) {
-        case STARTING:
-          return LocalizedStrings.Launcher_ServiceStatus_STARTING_MESSAGE.toLocalizedString(
-            getServiceName(),
-            getWorkingDirectory(),
-            getServiceLocation(),
-            getMemberName(),
-            toString(getTimestamp()),
-            toString(getPid()),
-            toString(getGemFireVersion()),
-            toString(getJavaVersion()),
-            getLogFile(),
-            toString(getJvmArguments().toArray()),
-            toString(getClasspath()));
-        case ONLINE:
-          return LocalizedStrings.Launcher_ServiceStatus_RUNNING_MESSAGE.toLocalizedString(
-            getServiceName(),
-            getWorkingDirectory(),
-            getServiceLocation(),
-            getMemberName(),
-            getStatus(),
-            toString(getPid()),
-            toDaysHoursMinutesSeconds(getUptime()),
-            toString(getGemFireVersion()),
-            toString(getJavaVersion()),
-            getLogFile(),
-            toString(getJvmArguments().toArray()),
-            toString(getClasspath()));
-        case STOPPED:
-          return LocalizedStrings.Launcher_ServiceStatus_STOPPED_MESSAGE.toLocalizedString(
-            getServiceName(),
-            getWorkingDirectory(),
-            getServiceLocation());
-        default: // NOT_RESPONDING
-          return LocalizedStrings.Launcher_ServiceStatus_MESSAGE.toLocalizedString(
-            getServiceName(),
-            getWorkingDirectory(),
-            getServiceLocation(),
-            getStatus());
+      case STARTING:
+        return LocalizedStrings.Launcher_ServiceStatus_STARTING_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getServiceLocation(), getMemberName(), toString(getTimestamp()), toString(getPid()), toString(getGemFireVersion()), toString(getJavaVersion()), getLogFile(), toString(getJvmArguments().toArray()), toString(getClasspath()));
+      case ONLINE:
+        return LocalizedStrings.Launcher_ServiceStatus_RUNNING_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getServiceLocation(), getMemberName(), getStatus(), toString(getPid()), toDaysHoursMinutesSeconds(getUptime()), toString(getGemFireVersion()), toString(getJavaVersion()), getLogFile(), toString(getJvmArguments().toArray()), toString(getClasspath()));
+      case STOPPED:
+        return LocalizedStrings.Launcher_ServiceStatus_STOPPED_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getServiceLocation());
+      default: // NOT_RESPONDING
+        return LocalizedStrings.Launcher_ServiceStatus_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getServiceLocation(), getStatus());
       }
     }
 
@@ -846,7 +785,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
     }
 
     // a String concatenation of all values separated by " "
-    protected String toString (final Object... values) {
+    protected String toString(final Object... values) {
       return StringUtils.concat(values, " ");
     }
 
@@ -861,10 +800,7 @@ public abstract class AbstractLauncher<T extends Comparable<T>> implements Runna
    * a Locator or a Manager).
    */
   public static enum Status {
-    NOT_RESPONDING(LocalizedStrings.Launcher_Status_NOT_RESPONDING.toLocalizedString()),
-    ONLINE(LocalizedStrings.Launcher_Status_ONLINE.toLocalizedString()),
-    STARTING(LocalizedStrings.Launcher_Status_STARTING.toLocalizedString()),
-    STOPPED(LocalizedStrings.Launcher_Status_STOPPED.toLocalizedString());
+    NOT_RESPONDING(LocalizedStrings.Launcher_Status_NOT_RESPONDING.toLocalizedString()), ONLINE(LocalizedStrings.Launcher_Status_ONLINE.toLocalizedString()), STARTING(LocalizedStrings.Launcher_Status_STARTING.toLocalizedString()), STOPPED(LocalizedStrings.Launcher_Status_STOPPED.toLocalizedString());
 
     private final String description;
 

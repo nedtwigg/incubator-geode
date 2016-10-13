@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.geode.cache.query;
+
 /**
  * This class is used to represent any partitioned index creation exceptions.
  * 
  */
-public class IndexCreationException extends QueryException
-{
+public class IndexCreationException extends QueryException {
   private static final long serialVersionUID = -2218359458870240534L;
 
   /**
@@ -31,7 +31,7 @@ public class IndexCreationException extends QueryException
   public IndexCreationException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructor with a string message representing the problem and also the 
    * throwable.

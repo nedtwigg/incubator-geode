@@ -50,7 +50,6 @@ public class RegisterInterest61Test {
   private static final String KEY = "key1";
   private static final byte[] DURABLE = new byte[8];
 
-
   @Mock
   private SecurityService securityService;
   @Mock
@@ -83,7 +82,6 @@ public class RegisterInterest61Test {
   public void setUp() throws Exception {
     this.registerInterest61 = new RegisterInterest61();
     MockitoAnnotations.initMocks(this);
-
 
     when(this.authzRequest.registerInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt(), any())).thenReturn(this.registerInterestOperationContext);
 
@@ -178,7 +176,5 @@ public class RegisterInterest61Test {
     assertThat(argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).sendChunk(this.serverConnection);
   }
-
-
 
 }

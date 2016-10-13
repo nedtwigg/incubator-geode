@@ -42,7 +42,7 @@ public class BytesJUnitTest {
     for (int i = 0; i < val.length; i++) {
       buf.putShort(val[i]).flip();
       assertEquals(val[i], Bytes.toShort(buf.get(), buf.get()));
-      
+
       buf.rewind();
     }
   }
@@ -53,7 +53,7 @@ public class BytesJUnitTest {
     for (int i = 0; i < val.length; i++) {
       buf.putChar(val[i]).flip();
       assertEquals(val[i], Bytes.toChar(buf.get(), buf.get()));
-      
+
       buf.rewind();
     }
   }
@@ -64,7 +64,7 @@ public class BytesJUnitTest {
     for (int i = 0; i < val.length; i++) {
       buf.put(Bytes.int2(val[i])).put(Bytes.int3(val[i])).flip();
       assertEquals(val[i], Bytes.toUnsignedShort(buf.get(), buf.get()));
-      
+
       buf.rewind();
     }
   }
@@ -75,9 +75,9 @@ public class BytesJUnitTest {
     for (int i = 0; i < val.length; i++) {
       buf.putInt(val[i]).flip();
       assertEquals(val[i], Bytes.toInt(buf.get(), buf.get(), buf.get(), buf.get()));
-      
+
       buf.rewind();
-      
+
       byte[] bytes = new byte[4];
       Bytes.putInt(val[i], bytes, 0);
       assertEquals(val[i], Bytes.toInt(bytes[0], bytes[1], bytes[2], bytes[3]));
@@ -89,9 +89,8 @@ public class BytesJUnitTest {
     long[] val = { 666, -1, Long.MIN_VALUE, 0, 1, Long.MAX_VALUE };
     for (int i = 0; i < val.length; i++) {
       buf.putLong(val[i]).flip();
-      assertEquals(val[i], Bytes.toLong(buf.get(), buf.get(), buf.get(), buf.get(),
-          buf.get(), buf.get(), buf.get(), buf.get()));
-      
+      assertEquals(val[i], Bytes.toLong(buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get()));
+
       buf.rewind();
     }
   }
@@ -100,28 +99,28 @@ public class BytesJUnitTest {
   public void testVarint() {
     ByteBuffer buf = ByteBuffer.allocate(5);
     checkVarint(0, buf);
-    
+
     // 1 byte
     checkVarint(1, buf);
     checkVarint(0x7f, buf);
-    
+
     // 2 byte
     checkVarint(0x80, buf);
     checkVarint(0x7fff, buf);
-    
+
     // 3 byte
     checkVarint(0x8000, buf);
     checkVarint(0x7fffff, buf);
-    
+
     // 4 byte
     checkVarint(0x800000, buf);
     checkVarint(0x7fffffff, buf);
   }
-  
+
   private void checkVarint(int v, ByteBuffer buf) {
     Bytes.putVarInt(v, buf);
     buf.rewind();
-    
+
     int v2 = Bytes.getVarInt(buf);
     assertEquals(v, v2);
     buf.clear();

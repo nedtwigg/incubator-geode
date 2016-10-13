@@ -25,23 +25,23 @@ package org.apache.geode.distributed.internal.membership;
  *
  */
 public interface QuorumChecker {
-  
+
   /**
    * Check to see if a quorum of the old members are reachable
    * @param timeoutMS time to wait for responses, in milliseconds
    */
   public boolean checkForQuorum(long timeoutMS) throws InterruptedException;
-  
+
   /**
    * suspends the quorum checker for an attempt to connect to the distributed system
    */
   public void suspend();
-  
+
   /**
    * resumes the quorum checker after having invoked suspend();
    */
   public void resume();
-  
+
   /**
    * closes the quorum checker and releases resources.  Use this if
    * the distributed system is not going to be reconnected and you
@@ -54,7 +54,7 @@ public interface QuorumChecker {
    * to the one that is reconnecting.
    */
   public Object getMembershipInfo();
-  
+
   /**
    * Returns the membership view that is being used to establish a quorum
    */

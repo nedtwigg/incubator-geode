@@ -101,7 +101,7 @@ public abstract class AbstractExecutor implements Executor {
   }
 
   protected int getBoundedStartIndex(int index, int size) {
-    if (size <  0)
+    if (size < 0)
       throw new IllegalArgumentException("Size < 0, really?");
     if (index >= 0)
       return Math.min(index, size);
@@ -110,7 +110,7 @@ public abstract class AbstractExecutor implements Executor {
   }
 
   protected int getBoundedEndIndex(int index, int size) {
-    if (size <  0)
+    if (size < 0)
       throw new IllegalArgumentException("Size < 0, really?");
     if (index >= 0)
       return Math.min(index, size);
@@ -119,7 +119,7 @@ public abstract class AbstractExecutor implements Executor {
   }
 
   protected long getBoundedStartIndex(long index, long size) {
-    if (size <  0L)
+    if (size < 0L)
       throw new IllegalArgumentException("Size < 0, really?");
     if (index >= 0L)
       return Math.min(index, size);
@@ -128,7 +128,7 @@ public abstract class AbstractExecutor implements Executor {
   }
 
   protected long getBoundedEndIndex(long index, long size) {
-    if (size <  0L)
+    if (size < 0L)
       throw new IllegalArgumentException("Size < 0, really?");
     if (index >= 0L)
       return Math.min(index, size);

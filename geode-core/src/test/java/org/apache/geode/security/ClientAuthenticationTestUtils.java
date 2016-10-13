@@ -39,6 +39,7 @@ public abstract class ClientAuthenticationTestUtils {
   protected static Integer createCacheServer(final int locatorPort, final String locatorString, final int serverPort, final String authenticator, final Properties extraProps, final Properties javaProps) {
     return createCacheServer(locatorPort, locatorString, serverPort, authenticator, extraProps, javaProps, NO_EXCEPTION);
   }
+
   protected static Integer createCacheServer(final int locatorPort, final String locatorString, final String authenticator, final Properties extraProps, final Properties javaProps, final int expectedResult) {
 
     return createCacheServer(locatorPort, locatorString, 0, authenticator, extraProps, javaProps, expectedResult);

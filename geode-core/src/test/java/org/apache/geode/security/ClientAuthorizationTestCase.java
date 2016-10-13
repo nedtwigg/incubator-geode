@@ -86,21 +86,9 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
   protected static final String regionName = REGION_NAME; // TODO: remove
   protected static final String SUBREGION_NAME = "AuthSubregion";
 
-  private static final String[] serverIgnoredExceptions = {
-      "Connection refused",
-      AuthenticationRequiredException.class.getName(),
-      AuthenticationFailedException.class.getName(),
-      NotAuthorizedException.class.getName(),
-      GemFireSecurityException.class.getName(),
-      RegionDestroyedException.class.getName(),
-      ClassNotFoundException.class.getName()
-  };
+  private static final String[] serverIgnoredExceptions = { "Connection refused", AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), NotAuthorizedException.class.getName(), GemFireSecurityException.class.getName(), RegionDestroyedException.class.getName(), ClassNotFoundException.class.getName() };
 
-  private static final String[] clientIgnoredExceptions = {
-      AuthenticationFailedException.class.getName(),
-      NotAuthorizedException.class.getName(),
-      RegionDestroyedException.class.getName()
-  };
+  private static final String[] clientIgnoredExceptions = { AuthenticationFailedException.class.getName(), NotAuthorizedException.class.getName(), RegionDestroyedException.class.getName() };
 
   @Override
   public final void preSetUp() throws Exception {
@@ -144,11 +132,11 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
   }
 
   protected String[] serverIgnoredExceptions() {
-    return new String[]{};
+    return new String[] {};
   }
 
   protected String[] clientIgnoredExceptions() {
-    return new String[]{};
+    return new String[] {};
   }
 
   protected void preSetUpClientAuthorizationTestBase() throws Exception {
@@ -286,8 +274,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
     final String[] vals;
     if ((flags & OpFlags.USE_NEWVAL) > 0) {
       vals = NVALUES;
-    }
-    else {
+    } else {
       vals = VALUES;
     }
 
@@ -330,8 +317,8 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
               // local invalidate some KEYS to force fetch of those KEYS from server
               if ((flags & OpFlags.CHECK_NOKEY) > 0) {
-                AbstractRegionEntry entry = (AbstractRegionEntry)((LocalRegion)region).getRegionEntry(searchKey);
-                System.out.println(""+keyNum+": key is " + searchKey + " and entry is " + entry);
+                AbstractRegionEntry entry = (AbstractRegionEntry) ((LocalRegion) region).getRegionEntry(searchKey);
+                System.out.println("" + keyNum + ": key is " + searchKey + " and entry is " + entry);
                 assertFalse(region.containsKey(searchKey));
               } else {
                 if (keyNumIndex % 2 == 1) {
@@ -393,7 +380,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
             if ((flags & OpFlags.CHECK_NOKEY) > 0) {
               assertFalse(region.containsKey(key));
             } else {
-              assertTrue(region.containsKey(key) || ((LocalRegion)region).getRegionEntry(key).isTombstone());
+              assertTrue(region.containsKey(key) || ((LocalRegion) region).getRegionEntry(key).isTombstone());
               region.localInvalidate(key);
             }
             value = region.get(key);
@@ -411,7 +398,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
         } else if (op.isPutAll()) {
           HashMap map = new HashMap();
-          for (int i=0; i<indices.length; i++) {
+          for (int i = 0; i < indices.length; i++) {
             map.put(keys[indices[i]], vals[indices[i]]);
           }
           region.putAll(map);
@@ -444,8 +431,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
           // }
           if ((flags & OpFlags.LOCAL_OP) > 0) {
             region.localDestroy(key);
-          }
-          else {
+          } else {
             region.destroy(key);
           }
 
@@ -569,7 +555,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
           if ((flags & OpFlags.LOCAL_OP) > 0) {
             // Interpret this as testing results using CqListener
-            final AuthzCqListener listener = (AuthzCqListener)cqQuery.getCqAttributes().getCqListener();
+            final AuthzCqListener listener = (AuthzCqListener) cqQuery.getCqAttributes().getCqListener();
             WaitCriterion ev = new WaitCriterion() {
               @Override
               public boolean done() {
@@ -579,6 +565,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
                   return numOps == listener.getNumUpdates();
                 }
               }
+
               @Override
               public String description() {
                 return null;
@@ -603,7 +590,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
             assertNotNull(cqResults);
             Set cqResultValues = new HashSet();
             for (Object o : cqResults.asList()) {
-              Struct s = (Struct)o;
+              Struct s = (Struct) o;
               cqResultValues.add(s.get("value"));
             }
 
@@ -625,13 +612,13 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         } else if (op.isStopCQ()) {
           breakLoop = true;
           CqQuery cqQuery = getCache().getQueryService().getCq("cq1");
-          ((AuthzCqListener)cqQuery.getCqAttributes().getCqListener()).reset();
+          ((AuthzCqListener) cqQuery.getCqAttributes().getCqListener()).reset();
           cqQuery.stop();
 
         } else if (op.isCloseCQ()) {
           breakLoop = true;
           CqQuery cqQuery = getCache().getQueryService().getCq("cq1");
-          ((AuthzCqListener)cqQuery.getCqAttributes().getCqListener()).reset();
+          ((AuthzCqListener) cqQuery.getCqAttributes().getCqListener()).reset();
           cqQuery.close();
 
         } else if (op.isRegionClear()) {
@@ -683,8 +670,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
       } catch (Exception ex) {
         exceptionOccured = true;
-        if ((ex instanceof ServerConnectivityException || ex instanceof QueryInvocationTargetException || ex instanceof CqException)
-            && (expectedResult == NOTAUTHZ_EXCEPTION) && (ex.getCause() instanceof NotAuthorizedException)) {
+        if ((ex instanceof ServerConnectivityException || ex instanceof QueryInvocationTargetException || ex instanceof CqException) && (expectedResult == NOTAUTHZ_EXCEPTION) && (ex.getCause() instanceof NotAuthorizedException)) {
           System.out.println("doOp: Got expected NotAuthorizedException when doing operation [" + op + "] with flags " + OpFlags.description(flags) + ": " + ex.getCause());
           continue;
         } else if (expectedResult == OTHER_EXCEPTION) {
@@ -711,18 +697,18 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       boolean useThisVM = false;
 
       switch (clientNum) {
-        case 1:
-          clientVM = client1;
-          break;
-        case 2:
-          clientVM = client2;
-          break;
-        case 3:
-          useThisVM = true;
-          break;
-        default:
-          fail("executeOpBlock: Unknown client number " + clientNum);
-          break;
+      case 1:
+        clientVM = client1;
+        break;
+      case 2:
+        clientVM = client2;
+        break;
+      case 3:
+        useThisVM = true;
+        break;
+      default:
+        fail("executeOpBlock: Unknown client number " + clientNum);
+        break;
       }
 
       System.out.println("executeOpBlock: performing operation number [" + currentOp.getOpNum() + "]: " + currentOp);
@@ -756,8 +742,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         if (useThisVM) {
           SecurityTestUtils.createCacheClientWithDynamicRegion(authInit, clientProps, javaProps, new int[] { port1, port2 }, 0, setupDynamicRegionFactory, NO_EXCEPTION);
         } else {
-          clientVM.invoke("SecurityTestUtils.createCacheClientWithDynamicRegion",
-              () -> SecurityTestUtils.createCacheClientWithDynamicRegion(authInit, clientProps, javaProps, new int[] { port1, port2 }, 0, setupDynamicRegionFactory, NO_EXCEPTION));
+          clientVM.invoke("SecurityTestUtils.createCacheClientWithDynamicRegion", () -> SecurityTestUtils.createCacheClientWithDynamicRegion(authInit, clientProps, javaProps, new int[] { port1, port2 }, 0, setupDynamicRegionFactory, NO_EXCEPTION));
         }
       }
 
@@ -775,13 +760,12 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         doOp(opCode, currentOp.getIndices(), new Integer(opFlags), new Integer(expectedResult));
       } else {
         int[] indices = currentOp.getIndices();
-        clientVM.invoke("ClientAuthorizationTestCase.doOp",
-            () -> ClientAuthorizationTestCase.doOp( opCode, indices, new Integer(opFlags), new Integer(expectedResult) ));
+        clientVM.invoke("ClientAuthorizationTestCase.doOp", () -> ClientAuthorizationTestCase.doOp(opCode, indices, new Integer(opFlags), new Integer(expectedResult)));
       }
     }
   }
 
-  protected AuthzCredentialGenerator getXmlAuthzGenerator(){
+  protected AuthzCredentialGenerator getXmlAuthzGenerator() {
     AuthzCredentialGenerator authzGen = new XmlAuthzCredentialGenerator();
     CredentialGenerator cGen = new DummyCredentialGenerator();
     cGen.init();
@@ -854,7 +838,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
           port1Keeper.release();
 
           // Start the first server and execute the operation block
-          server1.invoke("createCacheServer", () -> ClientAuthorizationTestCase.createCacheServer(locator1Port, port1, serverProps, javaProps ));
+          server1.invoke("createCacheServer", () -> ClientAuthorizationTestCase.createCacheServer(locator1Port, port1, serverProps, javaProps));
           server2.invoke("closeCache", () -> closeCache());
 
           executeOpBlock(opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
@@ -864,7 +848,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
             locator2PortKeeper.release();
             port2Keeper.release();
 
-            server2.invoke("createCacheServer", () -> ClientAuthorizationTestCase.createCacheServer(locator2Port, port2, serverProps, javaProps ));
+            server2.invoke("createCacheServer", () -> ClientAuthorizationTestCase.createCacheServer(locator2Port, port2, serverProps, javaProps));
             server1.invoke("closeCache", () -> closeCache());
 
             executeOpBlock(opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
@@ -955,7 +939,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         boolean foundKey = false;
 
         for (Iterator<CqEvent> eventIter = this.eventList.iterator(); eventIter.hasNext();) {
-          CqEvent event = (CqEvent)eventIter.next();
+          CqEvent event = (CqEvent) eventIter.next();
           if (KEYS[index].equals(event.getKey())) {
             assertEquals(vals[index], event.getNewValue());
             foundKey = true;
@@ -1063,7 +1047,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
      * Use the {@link InterestResultPolicy#NONE} for register interest.
      */
     public static final int REGISTER_POLICY_NONE = 0x8000;
-    
+
     /**
      * Use the {@link LocalRegion#getEntry} under transaction.
      */

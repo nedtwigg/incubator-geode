@@ -22,14 +22,14 @@ package org.apache.geode.cache.client.internal;
 public interface ClientUpdater {
 
   void close();
-  
+
   boolean isAlive();
 
   void join(long wait) throws InterruptedException;
-  
+
   public void setFailedUpdater(ClientUpdater failedUpdater);
-  
+
   public boolean isProcessing();
-  
+
   public boolean isPrimary();
 }

@@ -33,8 +33,7 @@ import java.io.IOException;
  */
 public class DeltaEvent implements DataSerializable {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(DeltaEvent.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(DeltaEvent.class.getName());
   /**
    * The event is either an update (true) or a remove (false)
    */
@@ -75,14 +74,12 @@ public class DeltaEvent implements DataSerializable {
 
   private void blobifyValue() {
     if (value instanceof byte[]) {
-      LOG.warn("Session attribute is already a byte[] - problems may "
-          + "occur transmitting this delta.");
+      LOG.warn("Session attribute is already a byte[] - problems may " + "occur transmitting this delta.");
     }
     try {
       value = BlobHelper.serializeToBlob(value);
     } catch (IOException iox) {
-      LOG.error("Attribute '" + name + "' value: " + value
-          + " cannot be serialized due to the following exception", iox);
+      LOG.error("Attribute '" + name + "' value: " + value + " cannot be serialized due to the following exception", iox);
     }
   }
 
@@ -110,8 +107,7 @@ public class DeltaEvent implements DataSerializable {
   }
 
   @Override
-  public void fromData(
-      DataInput in) throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     update = in.readBoolean();
     name = DataSerializer.readString(in);
     value = DataSerializer.readObject(in);

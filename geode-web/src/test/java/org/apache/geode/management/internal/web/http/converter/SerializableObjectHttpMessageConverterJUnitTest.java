@@ -96,10 +96,12 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
 
     final HttpInputMessage mockInputMessage = mockContext.mock(HttpInputMessage.class, "HttpInputMessage");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockInputMessage).getBody();
-      will(returnValue(new ByteArrayInputStream(IOUtils.serializeObject(expectedInputMessageBody))));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockInputMessage).getBody();
+        will(returnValue(new ByteArrayInputStream(IOUtils.serializeObject(expectedInputMessageBody))));
+      }
+    });
 
     final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
 
@@ -117,10 +119,12 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
 
     final HttpOutputMessage mockOutputMessage = mockContext.mock(HttpOutputMessage.class, "HttpOutputMessage");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockOutputMessage).getHeaders();
-      will(returnValue(headers));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockOutputMessage).getHeaders();
+        will(returnValue(headers));
+      }
+    });
 
     final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
 
@@ -141,12 +145,14 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
 
     final HttpOutputMessage mockOutputMessage = mockContext.mock(HttpOutputMessage.class, "HttpOutputMessage");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockOutputMessage).getHeaders();
-      will(returnValue(headers));
-      oneOf(mockOutputMessage).getBody();
-      will(returnValue(out));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockOutputMessage).getHeaders();
+        will(returnValue(headers));
+        oneOf(mockOutputMessage).getBody();
+        will(returnValue(out));
+      }
+    });
 
     final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
 

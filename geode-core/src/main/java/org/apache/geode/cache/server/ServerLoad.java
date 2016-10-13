@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.apache.geode.DataSerializable;
 
-
 /**
  * A data object containing the load information for a cache server. This object
  * is returned from {@link ServerLoadProbe#getLoad(ServerMetrics)} and indicates
@@ -49,18 +48,16 @@ public final class ServerLoad implements DataSerializable {
   private float loadPerConnection;
   private float loadPerSubscriber;
 
-  
-  public ServerLoad(float connectionLoad, float loadPerConnection,
-      float subscriptionConnectionLoad, float loadPerSubscriptionConnection) {
+  public ServerLoad(float connectionLoad, float loadPerConnection, float subscriptionConnectionLoad, float loadPerSubscriptionConnection) {
     super();
     this.connectionLoad = connectionLoad;
     this.subscriberLoad = subscriptionConnectionLoad;
     this.loadPerConnection = loadPerConnection;
     this.loadPerSubscriber = loadPerSubscriptionConnection;
   }
-  
+
   public ServerLoad() {
-    
+
   }
 
   /**
@@ -70,7 +67,7 @@ public final class ServerLoad implements DataSerializable {
   public float getConnectionLoad() {
     return connectionLoad;
   }
-  
+
   /**
    * Get an estimate of the how much load each new
    * connection will add to this server. The locator uses
@@ -89,7 +86,7 @@ public final class ServerLoad implements DataSerializable {
   public float getSubscriptionConnectionLoad() {
     return subscriberLoad;
   }
-  
+
   /**
    * Get an estimate of the how much load each new
    * subscriber will add to this server. The locator uses
@@ -136,7 +133,7 @@ public final class ServerLoad implements DataSerializable {
     out.writeFloat(subscriberLoad);
     out.writeFloat(loadPerSubscriber);
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     connectionLoad = in.readFloat();
     loadPerConnection = in.readFloat();
@@ -164,21 +161,17 @@ public final class ServerLoad implements DataSerializable {
     if (getClass() != obj.getClass())
       return false;
     final ServerLoad other = (ServerLoad) obj;
-    if (Float.floatToIntBits(connectionLoad) != Float
-        .floatToIntBits(other.connectionLoad))
+    if (Float.floatToIntBits(connectionLoad) != Float.floatToIntBits(other.connectionLoad))
       return false;
-    if (Float.floatToIntBits(loadPerConnection) != Float
-        .floatToIntBits(other.loadPerConnection))
+    if (Float.floatToIntBits(loadPerConnection) != Float.floatToIntBits(other.loadPerConnection))
       return false;
-    if (Float.floatToIntBits(loadPerSubscriber) != Float
-        .floatToIntBits(other.loadPerSubscriber))
+    if (Float.floatToIntBits(loadPerSubscriber) != Float.floatToIntBits(other.loadPerSubscriber))
       return false;
-    if (Float.floatToIntBits(subscriberLoad) != Float
-        .floatToIntBits(other.subscriberLoad))
+    if (Float.floatToIntBits(subscriberLoad) != Float.floatToIntBits(other.subscriberLoad))
       return false;
     return true;
   }
-  
+
   @Override
   public String toString() {
     return "Load(" + connectionLoad + ", " + loadPerConnection + ", " + subscriberLoad + ", " + loadPerSubscriber + ")";

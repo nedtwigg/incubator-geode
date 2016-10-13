@@ -32,17 +32,16 @@ public class FPRDirector extends RebalanceDirectorAdapter {
 
   private boolean initialSatisfyRedundancy;
   private boolean initialMovePrimaries;
-  
+
   private boolean satisfyRedundancy;
   private boolean movePrimaries;
-  
+
   private final SatisfyRedundancyFPR satisfyRedundancyDirector = new SatisfyRedundancyFPR();
   private final MovePrimariesFPR movePrimariesDirector = new MovePrimariesFPR();
-  
+
   private PartitionedRegionLoadModel model;
 
-  public FPRDirector(boolean initialSatisfyRedundancy, 
-      boolean initialMovePrimaries) {
+  public FPRDirector(boolean initialSatisfyRedundancy, boolean initialMovePrimaries) {
     this.initialSatisfyRedundancy = initialSatisfyRedundancy;
     this.initialMovePrimaries = initialMovePrimaries;
   }
@@ -63,15 +62,15 @@ public class FPRDirector extends RebalanceDirectorAdapter {
 
   @Override
   public boolean nextStep() {
-    
-    if(this.satisfyRedundancy) {
+
+    if (this.satisfyRedundancy) {
       satisfyRedundancyDirector.nextStep();
     }
-    
-    if(this.movePrimaries) {
+
+    if (this.movePrimaries) {
       movePrimariesDirector.nextStep();
     }
-    
+
     return false;
   }
 

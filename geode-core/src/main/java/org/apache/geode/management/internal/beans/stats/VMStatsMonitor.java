@@ -35,8 +35,6 @@ public final class VMStatsMonitor extends MBeanStatsMonitor {
 
   private volatile float cpuUsage = 0;
 
-
-
   private static String processCPUTimeAttr = "ProcessCpuTime";
 
   private long lastSystemTime = 0;
@@ -47,14 +45,12 @@ public final class VMStatsMonitor extends MBeanStatsMonitor {
 
   public VMStatsMonitor(String name) {
     super(name);
-    processCPUTimeAvailable = MBeanJMXAdapter.isAttributeAvailable(
-        processCPUTimeAttr, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);
-    if(!processCPUTimeAvailable){
+    processCPUTimeAvailable = MBeanJMXAdapter.isAttributeAvailable(processCPUTimeAttr, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);
+    if (!processCPUTimeAvailable) {
       cpuUsage = MBeanJMXAdapter.VALUE_NOT_AVAILABLE;
     }
 
   }
-
 
   @Override
   public void handleNotification(StatisticsNotification notification) {
@@ -68,12 +64,11 @@ public final class VMStatsMonitor extends MBeanStatsMonitor {
       } catch (StatisticNotFoundException e) {
         value = 0;
       }
-      log(name,value);
+      log(name, value);
       statsMap.put(name, value);
     }
     refreshStats();
   }
-
 
   /**
    * Right now it only refreshes CPU usage in terms of percentage. This method
@@ -88,13 +83,12 @@ public final class VMStatsMonitor extends MBeanStatsMonitor {
 
     if (processCPUTimeAvailable) {
       Number processCpuTime = statsMap.get(StatsKey.VM_PROCESS_CPU_TIME);
-      
+
       //Some JVM like IBM is not handled by Stats layer properly. Ignoring the attribute for such cases
-      if(processCpuTime == null){
+      if (processCpuTime == null) {
         cpuUsage = MBeanJMXAdapter.VALUE_NOT_AVAILABLE;
         return;
       }
-
 
       if (lastSystemTime == 0) {
         lastSystemTime = System.currentTimeMillis();

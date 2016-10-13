@@ -24,7 +24,7 @@ import org.apache.geode.internal.Version;
  */
 public abstract class ServerLocationResponse implements DataSerializableFixedID {
   public abstract boolean hasResult();
-  
+
   @Override
   public Version[] getSerializationVersions() {
     return null;

@@ -76,7 +76,7 @@ public class TransactionTimeOutJUnitTest {
 
     String path = tmpFile.getAbsolutePath();
     String file_as_str = readFile(TestUtil.getResourcePath(TransactionTimeOutJUnitTest.class, "/jta/cachejta.xml"));
-    String modified_file_str= file_as_str.replaceAll("newDB", "newDB_" + pid);
+    String modified_file_str = file_as_str.replaceAll("newDB", "newDB_" + pid);
 
     FileOutputStream fos = new FileOutputStream(path);
     BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(fos));
@@ -178,10 +178,8 @@ public class TransactionTimeOutJUnitTest {
     Context ctx = cache.getJNDIContext();
     DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
     ds2.getConnection();
-    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx
-        .lookup("java:/XAPooledDataSource");
-    UserTransaction utx = (UserTransaction) ctx
-        .lookup("java:/UserTransaction");
+    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+    UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
     utx.begin();
     Connection conn = ds.getConnection();
     String sql = "create table newTable1 (id integer)";
@@ -210,10 +208,8 @@ public class TransactionTimeOutJUnitTest {
     Context ctx = cache.getJNDIContext();
     DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
     ds2.getConnection();
-    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx
-        .lookup("java:/XAPooledDataSource");
-    UserTransaction utx = (UserTransaction) ctx
-        .lookup("java:/UserTransaction");
+    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+    UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
     utx.begin();
     Connection conn = ds.getConnection();
     String sql = "create table newTable2 (id integer)";
@@ -245,10 +241,8 @@ public class TransactionTimeOutJUnitTest {
     Context ctx = cache.getJNDIContext();
     DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
     Connection conn2 = ds2.getConnection();
-    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx
-        .lookup("java:/XAPooledDataSource");
-    UserTransaction utx = (UserTransaction) ctx
-        .lookup("java:/UserTransaction");
+    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+    UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
     utx.begin();
     Connection conn = ds.getConnection();
     String sql = "create table newTable3 (id integer)";

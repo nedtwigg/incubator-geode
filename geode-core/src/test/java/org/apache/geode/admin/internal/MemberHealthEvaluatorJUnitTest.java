@@ -51,7 +51,7 @@ public class MemberHealthEvaluatorJUnitTest extends HealthEvaluatorTestCase {
    */
   @Test
   public void testCheckVMProcessSize() throws InterruptedException {
-    if(PureJavaMode.osStatsAreAvailable()) {
+    if (PureJavaMode.osStatsAreAvailable()) {
       GemFireStatSampler sampler = system.getStatSampler();
       assertNotNull(sampler);
 
@@ -71,29 +71,23 @@ public class MemberHealthEvaluatorJUnitTest extends HealthEvaluatorTestCase {
       GemFireHealthConfig config = new GemFireHealthConfigImpl(null);
       config.setMaxVMProcessSize(threshold);
 
-      MemberHealthEvaluator eval =
-        new MemberHealthEvaluator(config,
-                                this.system.getDistributionManager());
+      MemberHealthEvaluator eval = new MemberHealthEvaluator(config, this.system.getDistributionManager());
       eval.evaluate(status);
       assertTrue(status.isEmpty());
 
       status = new ArrayList();
       long processSize = stats.getProcessSize();
       threshold = processSize / 2;
-      assertTrue("Threshold (" + threshold + ") is > 0.  " +
-                 "Process size is " + processSize,
-                 threshold > 0);
+      assertTrue("Threshold (" + threshold + ") is > 0.  " + "Process size is " + processSize, threshold > 0);
 
       config = new GemFireHealthConfigImpl(null);
       config.setMaxVMProcessSize(threshold);
 
-      eval = new MemberHealthEvaluator(config,
-                                     this.system.getDistributionManager());
+      eval = new MemberHealthEvaluator(config, this.system.getDistributionManager());
       eval.evaluate(status);
       assertEquals(1, status.size());
 
-      AbstractHealthEvaluator.HealthStatus ill =
-        (AbstractHealthEvaluator.HealthStatus) status.get(0);
+      AbstractHealthEvaluator.HealthStatus ill = (AbstractHealthEvaluator.HealthStatus) status.get(0);
       assertEquals(GemFireHealth.OKAY_HEALTH, ill.getHealthCode());
       assertTrue(ill.getDiagnosis().indexOf("The size of this VM") != -1);
     }

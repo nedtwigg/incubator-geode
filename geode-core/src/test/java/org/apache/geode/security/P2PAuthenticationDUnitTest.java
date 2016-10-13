@@ -63,15 +63,7 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
 
   private static VM locatorVM = null;
 
-  private static final String[] ignoredExceptions = {
-      AuthenticationRequiredException.class.getName(),
-      AuthenticationFailedException.class.getName(),
-      GemFireSecurityException.class.getName(),
-      SSLHandshakeException.class.getName(),
-      ClassNotFoundException.class.getName(),
-      "Authentication failed for",
-      "Failed to obtain credentials"
-  };
+  private static final String[] ignoredExceptions = { AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), GemFireSecurityException.class.getName(), SSLHandshakeException.class.getName(), ClassNotFoundException.class.getName(), "Authentication failed for", "Failed to obtain credentials" };
 
   @Override
   public final void postSetUp() throws Exception {
@@ -354,7 +346,7 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
     // Start the locator with the LDAP authenticator
     Properties props = new Properties();
     int port = getRandomAvailablePort(SOCKET);
-    final String locators = getIPLiteral() +"["+port+"]";
+    final String locators = getIPLiteral() + "[" + port + "]";
 
     props.setProperty(SECURITY_PEER_AUTH_INIT, authInit);
     props.setProperty(SECURITY_PEER_AUTHENTICATOR, authenticator);

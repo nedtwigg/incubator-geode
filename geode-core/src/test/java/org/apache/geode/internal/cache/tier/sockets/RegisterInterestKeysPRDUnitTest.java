@@ -37,12 +37,12 @@ public class RegisterInterestKeysPRDUnitTest extends RegisterInterestKeysDUnitTe
   public RegisterInterestKeysPRDUnitTest() {
     super();
   }
+
   public static void createImpl() {
     impl = new RegisterInterestKeysPRDUnitTest();
   }
-  
-  protected RegionAttributes createServerCacheAttributes()
-  {
+
+  protected RegionAttributes createServerCacheAttributes() {
     AttributesFactory factory = new AttributesFactory();
     factory.setPartitionAttributes((new PartitionAttributesFactory()).create());
     return factory.create();

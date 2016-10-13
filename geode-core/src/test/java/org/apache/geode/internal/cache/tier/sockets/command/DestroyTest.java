@@ -149,7 +149,6 @@ public class DestroyTest {
 
     this.destroy.cmdExecute(this.message, this.serverConnection, 0);
 
-
     verify(this.errorResponseMessage).send(eq(this.serverConnection));
   }
 

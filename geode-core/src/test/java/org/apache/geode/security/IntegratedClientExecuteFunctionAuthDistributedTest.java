@@ -41,21 +41,15 @@ public class IntegratedClientExecuteFunctionAuthDistributedTest extends Abstract
       ClientCache cache = createClientCache("dataReader", "1234567", serverPort);
 
       FunctionService.registerFunction(function);
-      assertNotAuthorized(() -> FunctionService.onServer(cache.getDefaultPool())
-                                               .withArgs(Boolean.TRUE)
-                                               .execute(function.getId()), "DATA:WRITE");
+      assertNotAuthorized(() -> FunctionService.onServer(cache.getDefaultPool()).withArgs(Boolean.TRUE).execute(function.getId()), "DATA:WRITE");
     });
 
     client2.invoke("logging in with super-user", () -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
 
       FunctionService.registerFunction(function);
-      ResultCollector rc = FunctionService.onServer(cache.getDefaultPool())
-                                          .withArgs(Boolean.TRUE)
-                                          .execute(function.getId());
+      ResultCollector rc = FunctionService.onServer(cache.getDefaultPool()).withArgs(Boolean.TRUE).execute(function.getId());
       rc.getResult();
     });
   }
 }
-
-

@@ -34,7 +34,7 @@ import java.io.IOException;
  * @since GemFire 7.0
  */
 public interface Result {
-  
+
   /**
    * Indicates a Results status.
    * 
@@ -45,12 +45,12 @@ public interface Result {
      * Indicates that the command completed successfully.
      */
     OK(0),
-    
+
     /**
      * Indicates that an error occurred while processing the command.
      */
     ERROR(-1);
-    
+
     private final int code;
 
     private Status(int code) {
@@ -69,7 +69,7 @@ public interface Result {
    * Returns the status of a processed command.
    */
   public Status getStatus();
-  
+
   /**
    * Resets the pointer to the first line in the Result.
    */
@@ -90,14 +90,14 @@ public interface Result {
    *           information.
    */
   public String nextLine();
-  
+
   /**
    * Returns whether this Result has a file as a part of the command output.
    * 
    * @return True if there is a file, false otherwise.
    */
   public boolean hasIncomingFiles();
-  
+
   /**
    * Save the file(s) from this Result. {@link #hasIncomingFiles()} should be used
    * before calling this method to verify that the Result contains a file.
@@ -110,18 +110,17 @@ public interface Result {
    *           If there is no file in the Result to save.
    */
   public void saveIncomingFiles(String directory) throws IOException;
-  
+
   /****
    * Return whether the configuration changes due to command have been persisted to cluster configuration or not.
    * 
    * @return True if the command has failed to persist configuration changes , false otherwise.
    */
   public boolean failedToPersist();
-  
+
   /*****
    * Sets whether the command changes have not been persisted to the cluster configuration 
    * @param commandPersisted true if the command changes are persisted to the cluster configuration, false otherwise.
    */
   public void setCommandPersisted(boolean commandPersisted);
 }
-

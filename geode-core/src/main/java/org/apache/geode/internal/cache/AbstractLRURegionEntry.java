@@ -17,7 +17,6 @@
 
 package org.apache.geode.internal.cache;
 
-
 import org.apache.geode.internal.cache.lru.LRUEntry;
 
 /**
@@ -28,14 +27,11 @@ import org.apache.geode.internal.cache.lru.LRUEntry;
  *
  *
  */
-public abstract class AbstractLRURegionEntry
-  extends AbstractRegionEntry
-  implements LRUEntry
-{
+public abstract class AbstractLRURegionEntry extends AbstractRegionEntry implements LRUEntry {
   protected AbstractLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }
-  
+
   /////////////////////////////////////////////////////////////////////
   ////////////////////////// instance methods /////////////////////////
   /////////////////////////////////////////////////////////////////////

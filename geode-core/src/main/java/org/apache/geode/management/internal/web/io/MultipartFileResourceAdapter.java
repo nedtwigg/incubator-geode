@@ -60,7 +60,8 @@ public class MultipartFileResourceAdapter extends AbstractResource {
     return getMultipartFile().getOriginalFilename();
   }
 
-  @Override public InputStream getInputStream() throws IOException {
+  @Override
+  public InputStream getInputStream() throws IOException {
     return getMultipartFile().getInputStream();
   }
 

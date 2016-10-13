@@ -49,13 +49,12 @@ public class AsyncEventQueueStatsJUnitTest extends MBeanStatsTestCase {
 
     sample();
     assertEquals(10, getEventQueueSize());
-    
+
     asyncEventQueueStats.setQueueSize(0);
     sample();
-    
+
     assertEquals(0, getEventQueueSize());
-    
-    
+
   }
 
   private int getEventQueueSize() {

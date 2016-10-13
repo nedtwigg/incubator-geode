@@ -44,7 +44,7 @@ public class MBeanStatsMonitor implements StatisticsListener {
   protected DefaultHashMap statsMap;
 
   protected String monitorName;
-  
+
   private LogWriterI18n logger;
 
   public MBeanStatsMonitor(String name) {
@@ -84,13 +84,13 @@ public class MBeanStatsMonitor implements StatisticsListener {
       } catch (StatisticNotFoundException e) {
         value = 0;
       }
-      log(name,value);
+      log(name, value);
       statsMap.put(name, value);
 
     }
   }
-  
-  protected void log(String name, Number value){
+
+  protected void log(String name, Number value) {
 
     if (logger != null && logger.finestEnabled()) {
       logger.finest("Monitor = " + monitorName + " descriptor = " + name + " And Value = " + value);

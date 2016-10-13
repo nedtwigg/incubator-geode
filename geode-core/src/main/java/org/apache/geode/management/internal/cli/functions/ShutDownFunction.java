@@ -38,7 +38,7 @@ import java.util.concurrent.Future;
  */
 public class ShutDownFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String ID = ShutDownFunction.class.getName();
   private static final long serialVersionUID = 1L;
 
@@ -65,8 +65,7 @@ public class ShutDownFunction implements Function, InternalEntity {
    * The shutdown is performed in a separate, non-daemon thread so that the JVM does not shut down
    * prematurely before the full process has completed.
    */
-  private void disconnectInNonDaemonThread(final InternalDistributedSystem ids)
-      throws InterruptedException, ExecutionException {
+  private void disconnectInNonDaemonThread(final InternalDistributedSystem ids) throws InterruptedException, ExecutionException {
     ExecutorService exec = Executors.newSingleThreadExecutor();
     Future future = exec.submit(() -> {
       ConnectionTable.threadWantsSharedResources();

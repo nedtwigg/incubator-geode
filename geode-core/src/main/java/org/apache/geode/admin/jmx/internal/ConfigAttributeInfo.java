@@ -34,43 +34,34 @@ import javax.management.modelmbean.ModelMBeanAttributeInfo;
  */
 class ConfigAttributeInfo extends org.apache.commons.modeler.AttributeInfo {
   private static final long serialVersionUID = -1918437700841687078L;
-  
+
   private final ConfigurationParameterJmxImpl config;
-  
+
   public ConfigAttributeInfo(ConfigurationParameterJmxImpl config) {
     super();
     this.config = config;
   }
-  
+
   public ConfigurationParameterJmxImpl getConfig() {
     return this.config;
   }
 
   @Override
   public ModelMBeanAttributeInfo createAttributeInfo() {
-    Descriptor desc = new DescriptorSupport(
-        new String[] {
-        "name=" + this.displayName,
-        "descriptorType=attribute",
-        "currencyTimeLimit=-1", // always stale
-        "displayName=" + this.displayName,
-        "getMethod=getJmxValue",
-        "setMethod=setJmxValue" 
-        });
-        
+    Descriptor desc = new DescriptorSupport(new String[] { "name=" + this.displayName, "descriptorType=attribute", "currencyTimeLimit=-1", // always stale
+        "displayName=" + this.displayName, "getMethod=getJmxValue", "setMethod=setJmxValue" });
+
     Assert.assertTrue(this.config != null, "Config target object is null!");
     desc.setField("targetObject", this.config);
 
-    ModelMBeanAttributeInfo info = new ModelMBeanAttributeInfo(
-        this.displayName, // name
-        this.type,        // type
+    ModelMBeanAttributeInfo info = new ModelMBeanAttributeInfo(this.displayName, // name
+        this.type, // type
         this.description, // description
-        this.readable,    // isReadable
-        this.writeable,   // isWritable
-        this.is,          // isIs
+        this.readable, // isReadable
+        this.writeable, // isWritable
+        this.is, // isIs
         desc);
-        
+
     return info;
   }
 }
-

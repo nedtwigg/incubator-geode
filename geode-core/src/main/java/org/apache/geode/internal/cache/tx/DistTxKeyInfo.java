@@ -23,21 +23,21 @@ import org.apache.geode.internal.cache.KeyInfo;
  */
 public class DistTxKeyInfo extends KeyInfo {
   boolean checkPrimary = true;
-  
+
   public DistTxKeyInfo(Object key, Object value, Object callbackArg, Integer bucketId) {
     super(key, value, callbackArg);
     setBucketId(bucketId);
   }
-  
+
   public DistTxKeyInfo(DistTxKeyInfo other) {
     super(other);
     this.checkPrimary = other.checkPrimary;
   }
-  
+
   public DistTxKeyInfo(KeyInfo other) {
     super(other);
   }
-  
+
   @Override
   public boolean isCheckPrimary() {
     return checkPrimary;
@@ -47,7 +47,7 @@ public class DistTxKeyInfo extends KeyInfo {
   public void setCheckPrimary(boolean checkPrimary) {
     this.checkPrimary = checkPrimary;
   }
-  
+
   public boolean isDistKeyInfo() {
     return true;
   }

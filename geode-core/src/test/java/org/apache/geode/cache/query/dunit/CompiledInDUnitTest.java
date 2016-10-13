@@ -110,7 +110,6 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     createRegion(this.regionName, this.rootRegionName, factory.create());
   }
 
-
   private void createReplicateRegion() {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -135,11 +134,9 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     client.invoke(closeCache);
   }
 
-
   @Category(FlakyTest.class) // GEODE-1771
   @Test
-  public void whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults()
-    throws CacheException {
+  public void whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
@@ -180,8 +177,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults()
-    throws CacheException {
+  public void whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
@@ -218,8 +214,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults()
-    throws CacheException {
+  public void whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
@@ -239,8 +234,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
@@ -259,8 +253,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
@@ -278,8 +271,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
@@ -298,8 +290,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
@@ -317,8 +308,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
@@ -485,8 +475,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
@@ -505,8 +494,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
@@ -524,8 +512,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
@@ -544,8 +531,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
@@ -563,8 +549,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void whenUsingAccessorMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
-    throws CacheException {
+  public void whenUsingAccessorMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
@@ -583,10 +568,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(executeQueryWithAccessor(numExpectedResults, queryString, bindArguments));
   }
 
-
-  CacheSerializableRunnable executeQueryOnReplicateRegion(final int numberOfEntries,
-                                                          final String queryString,
-                                                          Object[] bindArguments) {
+  CacheSerializableRunnable executeQueryOnReplicateRegion(final int numberOfEntries, final String queryString, Object[] bindArguments) {
     return new CacheSerializableRunnable("Execute Query in Replicated Region") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -596,12 +578,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     };
   }
 
-  CacheSerializableRunnable executeQueryWithIndexOnReplicateRegion(final int numberOfEntries,
-                                                                   final String queryString,
-                                                                   Object[] bindArguments,
-                                                                   String indexName,
-                                                                   String indexExpression,
-                                                                   String regionPath) {
+  CacheSerializableRunnable executeQueryWithIndexOnReplicateRegion(final int numberOfEntries, final String queryString, Object[] bindArguments, String indexName, String indexExpression, String regionPath) {
     return new CacheSerializableRunnable("Execute Query with Index in Replicated Region") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -612,10 +589,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     };
   }
 
-
-  CacheSerializableRunnable executeQueryOnPartitionRegion(final int numberOfEntries,
-                                                          final String queryString,
-                                                          Object[] bindArguments) {
+  CacheSerializableRunnable executeQueryOnPartitionRegion(final int numberOfEntries, final String queryString, Object[] bindArguments) {
     return new CacheSerializableRunnable("Execute Query in Partition Regions") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -625,9 +599,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     };
   }
 
-  CacheSerializableRunnable executeQueryWithAccessor(final int numberOfEntries,
-                                                          final String queryString,
-                                                          Object[] bindArguments) {
+  CacheSerializableRunnable executeQueryWithAccessor(final int numberOfEntries, final String queryString, Object[] bindArguments) {
     return new CacheSerializableRunnable("Execute Query with Accessor") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -636,7 +608,6 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
       }
     };
   }
-
 
   void verifyQuery(final int numExpectedEntries, final String queryString, Object[] bindArguments) {
     QueryService qs = getCache().getQueryService();

@@ -23,26 +23,26 @@ import org.apache.geode.cache.CacheRuntimeException;
  * operations.
  *
  */
-public class PartitionedRegionException extends CacheRuntimeException  {
-private static final long serialVersionUID = 5113786059279106007L;
+public class PartitionedRegionException extends CacheRuntimeException {
+  private static final long serialVersionUID = 5113786059279106007L;
 
-    /** Creates a new instance of ParititonedRegionException */
-    public PartitionedRegionException() {
-    }
-    
-    /** Creates a new instance of PartitionedRegionException 
-     *@param msg 
-     */
-    public PartitionedRegionException(String msg) {
-      super(msg);
-    }    
+  /** Creates a new instance of ParititonedRegionException */
+  public PartitionedRegionException() {
+  }
 
-    //////////////////////  Constructors  //////////////////////
+  /** Creates a new instance of PartitionedRegionException 
+   *@param msg 
+   */
+  public PartitionedRegionException(String msg) {
+    super(msg);
+  }
 
-    /**
-     * Creates a new <code>PartitionedRegionException</code>.
-     */
-    public PartitionedRegionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  //////////////////////  Constructors  //////////////////////
+
+  /**
+   * Creates a new <code>PartitionedRegionException</code>.
+   */
+  public PartitionedRegionException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

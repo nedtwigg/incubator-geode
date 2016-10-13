@@ -18,24 +18,25 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VersionedStatsDiskRegionEntryHeap extends
-    VersionedStatsDiskRegionEntry {
+public abstract class VersionedStatsDiskRegionEntryHeap extends VersionedStatsDiskRegionEntry {
   public VersionedStatsDiskRegionEntryHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VersionedStatsDiskRegionEntryHeapFactory factory = new VersionedStatsDiskRegionEntryHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VersionedStatsDiskRegionEntryHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VersionedStatsDiskRegionEntryHeapIntKey(context, (Integer)key, value);
+          return new VersionedStatsDiskRegionEntryHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VersionedStatsDiskRegionEntryHeapLongKey(context, (Long)key, value);
+          return new VersionedStatsDiskRegionEntryHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -48,7 +49,7 @@ public abstract class VersionedStatsDiskRegionEntryHeap extends
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VersionedStatsDiskRegionEntryHeapUUIDKey(context, (UUID)key, value);
+          return new VersionedStatsDiskRegionEntryHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VersionedStatsDiskRegionEntryHeapObjectKey(context, key, value);
@@ -59,10 +60,12 @@ public abstract class VersionedStatsDiskRegionEntryHeap extends
       // This estimate will not take into account the memory saved by inlining the keys.
       return VersionedStatsDiskRegionEntryHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return this;
     }
-	@Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return this;
     }

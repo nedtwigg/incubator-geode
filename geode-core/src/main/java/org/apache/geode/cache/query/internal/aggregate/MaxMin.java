@@ -39,7 +39,7 @@ public class MaxMin implements Aggregator {
       return;
     }
     Comparable comparable = (Comparable) value;
-    
+
     if (currentOptima == null) {
       currentOptima = comparable;
     } else {

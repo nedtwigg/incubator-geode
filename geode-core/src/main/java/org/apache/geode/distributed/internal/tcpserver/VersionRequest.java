@@ -27,7 +27,6 @@ import java.io.IOException;
  */
 public class VersionRequest implements DataSerializable {
 
-
   private static final long serialVersionUID = -8272913634136267812L;
 
   @Override

@@ -17,7 +17,6 @@
 
 package org.apache.geode.rest.internal.web.exception;
 
-
 import org.apache.geode.GemFireException;
 
 /**
@@ -44,6 +43,5 @@ public class DataTypeNotSupportedException extends GemFireException {
   public DataTypeNotSupportedException(String message, Throwable cause) {
     super(message, cause);
   }
-  
-}
 
+}

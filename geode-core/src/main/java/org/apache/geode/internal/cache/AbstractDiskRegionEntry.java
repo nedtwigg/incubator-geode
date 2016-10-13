@@ -20,23 +20,21 @@ import org.apache.geode.internal.cache.wan.GatewaySenderEventImpl;
 import org.apache.geode.internal.cache.wan.serial.SerialGatewaySenderQueue;
 import org.apache.geode.internal.offheap.annotations.Released;
 import org.apache.geode.internal.offheap.annotations.Retained;
+
 /**
  * 
  *
  */
-public abstract class AbstractDiskRegionEntry
-  extends AbstractRegionEntry
-  implements DiskEntry
-{
+public abstract class AbstractDiskRegionEntry extends AbstractRegionEntry implements DiskEntry {
   protected AbstractDiskRegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }
-  
+
   @Override
-  public  void setValue(RegionEntryContext context, Object v) throws RegionClearedException {
+  public void setValue(RegionEntryContext context, Object v) throws RegionClearedException {
     setValue(context, v, null);
   }
-  
+
   @Override
   public void setValue(RegionEntryContext context, Object value, EntryEventImpl event) throws RegionClearedException {
     Helper.update(this, (LocalRegion) context, value, event);

@@ -56,18 +56,18 @@ public class SingletonValue<T extends Closeable> {
      * @throws IOException unable to construct the value
      */
     T create() throws IOException;
-    
+
     /**
      * Invoked after the value is successfully created and stored.
      */
     void postCreate();
-    
+
     /**
      * Invoked when a thread is waiting for the result of {@link #create}.
      */
     void createInProgress();
   }
-  
+
   /** 
    * Defines the value state.  Allowable transitions are:
    * <ul>
@@ -76,36 +76,39 @@ public class SingletonValue<T extends Closeable> {
    *  <li>{@code SET} -> {@code NOT_SET}, {@code CLEARED}
    * </ul>
    */
-  private enum ValueState { NOT_SET, IN_PROGRESS, SET, CLEARED }
-  
+  private enum ValueState {
+    NOT_SET, IN_PROGRESS, SET, CLEARED
+  }
+
   /** the delegated invocation */
   private final SingletonBuilder<T> builder;
-  
+
   /** protects access to {@code state} and {@code value} */
   private final ReentrantLock sync;
-  
+
   /** notified during state change */
   private final Condition change;
-  
+
   /** the state of the cached value */
   private ValueState state;
 
   /** the originating thread, temporarily used during invocation */
   private Thread current;
-  
+
   /** the cached value, null when not or cleared */
   private T value;
-  
+
   /** the invocation error, null if successful or cleared */
   private IOException error;
-  
+
   public SingletonValue(SingletonBuilder<T> builder) {
     this.builder = builder;
-    
+
     state = ValueState.NOT_SET;
     sync = new ReentrantLock();
     change = sync.newCondition();
   }
+
   /**
    * Returns true if the value is cached.
    * @return true if cached
@@ -118,7 +121,7 @@ public class SingletonValue<T extends Closeable> {
       sync.unlock();
     }
   }
-  
+
   /**
    * Returns true if the value is cached.
    * @return true if cached
@@ -144,7 +147,7 @@ public class SingletonValue<T extends Closeable> {
       sync.unlock();
     }
   }
-  
+
   /**
    * Clears the cached result.  Any threads waiting for the result will retry unless
    * {@code allowReset} is {@code false}.
@@ -159,16 +162,16 @@ public class SingletonValue<T extends Closeable> {
       if (state == ValueState.NOT_SET) {
         return null;
       }
-      
+
       T result = value;
       ValueState old = state;
-      
+
       // reset internal state
       state = allowReset ? ValueState.NOT_SET : ValueState.CLEARED;
       current = null;
       value = null;
       error = null;
-      
+
       // interrupt waiting threads
       if (old == ValueState.IN_PROGRESS) {
         change.signalAll();
@@ -178,7 +181,7 @@ public class SingletonValue<T extends Closeable> {
       sync.unlock();
     }
   }
-  
+
   /**
    * Clears the cached value as long it matches the expected value.
    * 
@@ -192,22 +195,20 @@ public class SingletonValue<T extends Closeable> {
       if (expect != value) {
         return false;
       }
-      
+
       ValueState prev = state;
       clear(allowReset);
       return prev == ValueState.SET;
-      
+
     } finally {
       sync.unlock();
     }
   }
-  
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
-      value="UL_UNRELEASED_LOCK", 
-      justification="findbugs is wrong and Darrel agrees")
+
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK", justification = "findbugs is wrong and Darrel agrees")
   public T get() throws IOException {
     assert sync.getHoldCount() == 0;
-    
+
     sync.lock();
     boolean doUnlock = true;
     try {
@@ -216,13 +217,13 @@ public class SingletonValue<T extends Closeable> {
         assert current == null;
         current = Thread.currentThread();
         state = ValueState.IN_PROGRESS;
-        
+
         doUnlock = false;
         sync.unlock();
-        
+
         // invoke the task while NOT locked
         return acquireValue();
-        
+
       case IN_PROGRESS:
         builder.createInProgress();
         while (state == ValueState.IN_PROGRESS) {
@@ -233,23 +234,23 @@ public class SingletonValue<T extends Closeable> {
             throw new InterruptedIOException();
           }
         }
-  
+
         if (error != null) {
           throw error;
         }
-        
+
         doUnlock = false;
         sync.unlock();
 
         // try again
         return get();
-        
+
       case SET:
         return value;
-        
+
       case CLEARED:
         throw new IOException("Value has been cleared and cannot be reset");
-        
+
       default:
         throw new IllegalStateException("Unknown ValueState: " + state);
       }
@@ -259,10 +260,8 @@ public class SingletonValue<T extends Closeable> {
       }
     }
   }
-  
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
-      value="UL_UNRELEASED_LOCK", 
-      justification="findbugs is wrong and Darrel agrees")
+
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK", justification = "findbugs is wrong and Darrel agrees")
   private T acquireValue() throws IOException {
     T result = null;
     IOException err = null;
@@ -272,7 +271,7 @@ public class SingletonValue<T extends Closeable> {
     } catch (IOException e) {
       err = e;
     }
-    
+
     // update the state and signal waiting threads
     sync.lock();
     boolean doUnlock = true;
@@ -285,18 +284,18 @@ public class SingletonValue<T extends Closeable> {
           } catch (IOException e) {
           }
         }
-        
+
         sync.unlock();
         doUnlock = false;
-        
+
         return get();
       }
-      
+
       state = (err == null) ? ValueState.SET : ValueState.NOT_SET;
       current = null;
       value = result;
       error = err;
-      
+
       try {
         builder.postCreate();
       } finally {
@@ -307,7 +306,7 @@ public class SingletonValue<T extends Closeable> {
         sync.unlock();
       }
     }
-  
+
     // all done, return the result
     if (err != null) {
       throw err;

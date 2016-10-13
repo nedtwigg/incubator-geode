@@ -23,15 +23,14 @@ import org.apache.geode.cache.execute.FunctionException;
 import org.apache.geode.cache.execute.ResultCollector;
 import org.apache.geode.distributed.DistributedMember;
 
-public class CustomResultCollector implements ResultCollector{
+public class CustomResultCollector implements ResultCollector {
 
-  private ArrayList resultList = new ArrayList();  
+  private ArrayList resultList = new ArrayList();
 
-  public void addResult(DistributedMember memberID,
-      Object result) {
+  public void addResult(DistributedMember memberID, Object result) {
     this.resultList.add(result);
   }
-  
+
   public void endResults() {
   }
 
@@ -39,11 +38,10 @@ public class CustomResultCollector implements ResultCollector{
     return resultList;
   }
 
-  public Object getResult(long timeout, TimeUnit unit)
-      throws FunctionException {
+  public Object getResult(long timeout, TimeUnit unit) throws FunctionException {
     return resultList;
   }
-  
+
   public void clearResults() {
     resultList.clear();
   }

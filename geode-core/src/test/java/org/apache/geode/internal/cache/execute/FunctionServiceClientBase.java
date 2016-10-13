@@ -33,7 +33,7 @@ public abstract class FunctionServiceClientBase extends FunctionServiceBase {
   public ClientCache createServersAndClient(int numberOfServers) {
     int[] ports = new int[numberOfServers];
     Host host = Host.getHost(0);
-    for(int i =0; i < numberOfServers; i++) {
+    for (int i = 0; i < numberOfServers; i++) {
       VM vm = host.getVM(i);
       ports[i] = createServer(vm);
     }

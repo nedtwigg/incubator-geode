@@ -31,16 +31,16 @@ import org.apache.geode.internal.logging.LogService;
 final class ControlFileWatchdog implements Runnable {
   private static final Logger logger = LogService.getLogger();
 
-  private static final long STOP_TIMEOUT_MILLIS = 60*1000;
+  private static final long STOP_TIMEOUT_MILLIS = 60 * 1000;
   private static final long SLEEP_MILLIS = 1000;
-  
+
   private final File workingDir;
   private final File file;
   private final ControlRequestHandler requestHandler;
   private final boolean stopAfterRequest;
   private Thread thread;
   private boolean alive;
-  
+
   ControlFileWatchdog(final File workingDir, final String fileName, final ControlRequestHandler requestHandler, final boolean stopAfterRequest) {
     this.workingDir = workingDir;
     this.file = new File(this.workingDir, fileName);
@@ -77,7 +77,7 @@ final class ControlFileWatchdog implements Runnable {
       }
     }
   }
-  
+
   private void work() throws IOException {
     try { // always delete file after invoking handler
       this.requestHandler.handleRequest();
@@ -89,7 +89,7 @@ final class ControlFileWatchdog implements Runnable {
       }
     }
   }
-  
+
   void start() {
     synchronized (this) {
       if (this.thread == null) {
@@ -117,13 +117,13 @@ final class ControlFileWatchdog implements Runnable {
       stopping.join(STOP_TIMEOUT_MILLIS);
     }
   }
-  
+
   boolean isAlive() {
     synchronized (this) {
       return this.alive;
     }
   }
-  
+
   private void stopMe() {
     synchronized (this) {
       if (this.thread != null) {
@@ -143,11 +143,11 @@ final class ControlFileWatchdog implements Runnable {
     sb.append(", stopAfterRequest=").append(this.stopAfterRequest);
     return sb.append("}").toString();
   }
-  
+
   private String createThreadName() {
     return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " monitoring " + this.file.getName();
   }
-  
+
   /**
    * Defines the callback to be invoked when the control file exists.
    */

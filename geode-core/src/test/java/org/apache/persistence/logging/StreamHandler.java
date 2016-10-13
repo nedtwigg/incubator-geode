@@ -46,10 +46,10 @@ public class StreamHandler extends Handler {
   }
 
   public boolean isLoggable(LogRecord record) {
-    if(this.pw == null) {
-      return(false);
+    if (this.pw == null) {
+      return (false);
     } else {
-      return(super.isLoggable(record));
+      return (super.isLoggable(record));
     }
   }
 

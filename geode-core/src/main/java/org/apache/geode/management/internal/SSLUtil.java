@@ -30,7 +30,7 @@ import org.apache.geode.internal.lang.StringUtils;
  * @since GemFire  8.1
  */
 public class SSLUtil {
-  
+
   public static String getSSLAlgo(String[] protocols) {
     String c = null;
 
@@ -63,19 +63,19 @@ public class SSLUtil {
     }
     return c;
   }
-  
+
   /** Read an array of values from a string, whitespace separated. */
-  public static String[] readArray( String text ) {
+  public static String[] readArray(String text) {
     if (StringUtils.isBlank(text)) {
       return null;
     }
-    
-    StringTokenizer st = new StringTokenizer( text );
-    List<String> v = new ArrayList<String>( );
-    while( st.hasMoreTokens() ) {
-      v.add( st.nextToken() );
+
+    StringTokenizer st = new StringTokenizer(text);
+    List<String> v = new ArrayList<String>();
+    while (st.hasMoreTokens()) {
+      v.add(st.nextToken());
     }
-    return v.toArray( new String[ v.size() ] );
+    return v.toArray(new String[v.size()]);
   }
 
 }

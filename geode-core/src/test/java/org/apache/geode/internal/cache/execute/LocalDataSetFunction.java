@@ -36,38 +36,37 @@ public class LocalDataSetFunction extends FunctionAdapter {
   }
 
   public void execute(FunctionContext context) {
-    RegionFunctionContext rContext = (RegionFunctionContext)context;
+    RegionFunctionContext rContext = (RegionFunctionContext) context;
     Region cust = rContext.getDataSet();
-    LocalDataSet localCust = (LocalDataSet)PartitionRegionHelper.getLocalDataForContext(rContext);
-    Map <String, Region<?,?>> localColocatedRegions = PartitionRegionHelper.getLocalColocatedRegions(rContext);
-    Map <String, Region<?,?>> colocatedRegions = PartitionRegionHelper.getColocatedRegions(cust);
+    LocalDataSet localCust = (LocalDataSet) PartitionRegionHelper.getLocalDataForContext(rContext);
+    Map<String, Region<?, ?>> localColocatedRegions = PartitionRegionHelper.getLocalColocatedRegions(rContext);
+    Map<String, Region<?, ?>> colocatedRegions = PartitionRegionHelper.getColocatedRegions(cust);
 
-
-    Assert.assertTrue(colocatedRegions.size()==2); 
+    Assert.assertTrue(colocatedRegions.size() == 2);
 
     Set custKeySet = cust.keySet();
     Set localCustKeySet = localCust.keySet();
-    
-    Region ord = colocatedRegions.get("/OrderPR") ;
-    Region localOrd = localColocatedRegions.get("/OrderPR") ;
+
+    Region ord = colocatedRegions.get("/OrderPR");
+    Region localOrd = localColocatedRegions.get("/OrderPR");
     Set ordKeySet = ord.keySet();
     Set localOrdKeySet = localOrd.keySet();
-    
+
     Region ship = colocatedRegions.get("/ShipmentPR");
     Region localShip = localColocatedRegions.get("/ShipmentPR");
     Set shipKeySet = ship.keySet();
     Set localShipKeySet = localShip.keySet();
-    
-    Assert.assertTrue(localCust.getBucketSet().size() == ((LocalDataSet)localOrd).getBucketSet().size());
-    Assert.assertTrue(localCust.getBucketSet().size() == ((LocalDataSet)localShip).getBucketSet().size());
-    
+
+    Assert.assertTrue(localCust.getBucketSet().size() == ((LocalDataSet) localOrd).getBucketSet().size());
+    Assert.assertTrue(localCust.getBucketSet().size() == ((LocalDataSet) localShip).getBucketSet().size());
+
     Assert.assertTrue(custKeySet.size() == 120);
     Assert.assertTrue(ordKeySet.size() == 120);
-    Assert.assertTrue(shipKeySet.size() == 120);    
-    
+    Assert.assertTrue(shipKeySet.size() == 120);
+
     Assert.assertTrue(localCustKeySet.size() == localOrdKeySet.size());
     Assert.assertTrue(localCustKeySet.size() == localShipKeySet.size());
-    
+
     context.getResultSender().lastResult(null);
   }
 
@@ -82,7 +81,7 @@ public class LocalDataSetFunction extends FunctionAdapter {
   public boolean optimizeForWrite() {
     return optimizeForWrite;
   }
-  
+
   public boolean isHA() {
     return false;
   }

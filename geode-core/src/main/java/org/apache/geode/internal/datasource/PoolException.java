@@ -23,7 +23,7 @@ import org.apache.geode.GemFireCheckedException;
  * 
  */
 public class PoolException extends GemFireCheckedException {
-private static final long serialVersionUID = -6178632158204356727L;
+  private static final long serialVersionUID = -6178632158204356727L;
 
   //public Exception excep;
 
@@ -47,7 +47,7 @@ private static final long serialVersionUID = -6178632158204356727L;
    *          retrieval.
    */
   public PoolException(String message, Exception ex) {
-    super(message,ex);
+    super(message, ex);
     //this.excep = ex;
   }
 

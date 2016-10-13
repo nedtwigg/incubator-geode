@@ -27,7 +27,7 @@ public class FreeListOffHeapRegionJUnitTest extends OffHeapRegionBase {
   protected String getOffHeapMemorySize() {
     return "20m";
   }
-  
+
   @Override
   public void configureOffHeapStorage() {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "OFF_HEAP_SLAB_SIZE", "1m");

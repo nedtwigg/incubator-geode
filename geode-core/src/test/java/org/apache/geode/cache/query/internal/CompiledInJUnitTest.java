@@ -45,10 +45,10 @@ public class CompiledInJUnitTest {
     elm = mock(CompiledValue.class);
     colln = mock(CompiledValue.class);
   }
-  
+
   @Test
   public void testEnumsShouldCompareCorrectlyToACollectionOfOnePdxEnumInfo() throws Exception {
-    Object[] objectValues = new Object[] { createPdxInstanceEnumInfo(EnumForTest.ONE, 1)};
+    Object[] objectValues = new Object[] { createPdxInstanceEnumInfo(EnumForTest.ONE, 1) };
     when(elm.evaluate(isA(ExecutionContext.class))).thenReturn(EnumForTest.ONE);
     when(colln.evaluate(isA(ExecutionContext.class))).thenReturn(objectValues);
 
@@ -56,10 +56,10 @@ public class CompiledInJUnitTest {
     Object result = compiledIn.evaluate(context);
     assertTrue((Boolean) result);
   }
-  
+
   @Test
   public void testEnumsShouldNotCompareCorrectlyIfNotInCollectionOfPdxInstanceEnum() throws Exception {
-    Object[] objectValues = new Object[] { createPdxInstanceEnumInfo(EnumForTest.ONE, 1)};
+    Object[] objectValues = new Object[] { createPdxInstanceEnumInfo(EnumForTest.ONE, 1) };
     when(elm.evaluate(isA(ExecutionContext.class))).thenReturn(EnumForTest.TWO);
     when(colln.evaluate(isA(ExecutionContext.class))).thenReturn(objectValues);
 
@@ -67,10 +67,10 @@ public class CompiledInJUnitTest {
     Object result = compiledIn.evaluate(context);
     assertFalse((Boolean) result);
   }
-  
+
   @Test
   public void testEnumsShouldCompareCorrectlyToACollectionOfPdxEnums() throws Exception {
-    Object[] objectValues = new Object[] { createPdxInstanceEnumInfo(EnumForTest.ONE, 1), createPdxInstanceEnumInfo(EnumForTest.TWO, 1)};
+    Object[] objectValues = new Object[] { createPdxInstanceEnumInfo(EnumForTest.ONE, 1), createPdxInstanceEnumInfo(EnumForTest.TWO, 1) };
     when(elm.evaluate(isA(ExecutionContext.class))).thenReturn(EnumForTest.ONE);
     when(colln.evaluate(isA(ExecutionContext.class))).thenReturn(objectValues);
 
@@ -78,10 +78,10 @@ public class CompiledInJUnitTest {
     Object result = compiledIn.evaluate(context);
     assertTrue((Boolean) result);
   }
-  
+
   @Test
   public void testPdxEnumsShouldCompareCorrectlyToACollectionOfOneEnum() throws Exception {
-    Object[] objectValues = new Object[] { EnumForTest.ONE};
+    Object[] objectValues = new Object[] { EnumForTest.ONE };
     when(elm.evaluate(isA(ExecutionContext.class))).thenReturn(createPdxInstanceEnumInfo(EnumForTest.ONE, 1));
     when(colln.evaluate(isA(ExecutionContext.class))).thenReturn(objectValues);
 
@@ -89,7 +89,7 @@ public class CompiledInJUnitTest {
     Object result = compiledIn.evaluate(context);
     assertTrue((Boolean) result);
   }
-  
+
   @Test
   public void testShouldNotThrowTypeMismatchWithNullElementAndObjectArray() throws Exception {
     Object[] objectValues = new Object[] { true, true };
@@ -446,11 +446,13 @@ public class CompiledInJUnitTest {
     Object result = compiledIn.evaluate(context);
     assertNotNull(result);
   }
-  
+
   private PdxInstanceEnumInfo createPdxInstanceEnumInfo(Enum<?> e, int enumId) {
     EnumInfo ei = new EnumInfo(e);
     return (PdxInstanceEnumInfo) ei.getPdxInstance(enumId);
   }
-  
-  private enum EnumForTest {ONE, TWO, THREE};
+
+  private enum EnumForTest {
+    ONE, TWO, THREE
+  };
 }

@@ -45,11 +45,10 @@ import org.apache.geode.internal.logging.LogService;
  * 
  *
  */
-public abstract class TXMessage extends SerialDistributionMessage 
-  implements MessageWithReply, TransactionMessage {
+public abstract class TXMessage extends SerialDistributionMessage implements MessageWithReply, TransactionMessage {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private int processorId;
   private int txUniqId;
   private InternalDistributedMember txMemberId = null;
@@ -76,7 +75,7 @@ public abstract class TXMessage extends SerialDistributionMessage
         logger.debug("processing {}", this);
       }
       GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-      if(checkCacheClosing(cache) || checkDSClosing(cache.getDistributedSystem())) {
+      if (checkCacheClosing(cache) || checkDSClosing(cache.getDistributedSystem())) {
         thr = new CacheClosedException(LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString(dm.getId()));
         return;
       }
@@ -86,7 +85,7 @@ public abstract class TXMessage extends SerialDistributionMessage
         assert this.txUniqId != TXManagerImpl.NOTX;
         TXId txId = new TXId(getMemberToMasqueradeAs(), this.txUniqId);
         tx = txMgr.masqueradeAs(this);
-        sendReply = operateOnTx(txId,dm);
+        sendReply = operateOnTx(txId, dm);
       } finally {
         txMgr.unmasquerade(tx);
       }
@@ -98,7 +97,7 @@ public abstract class TXMessage extends SerialDistributionMessage
         logger.debug("shutdown caught, abandoning message: " + se);
       }
     } catch (RegionDestroyedException rde) {
-        thr = new ForceReattemptException(LocalizedStrings.PartitionMessage_REGION_IS_DESTROYED_IN_0.toLocalizedString(dm.getDistributionManagerId()), rde);
+      thr = new ForceReattemptException(LocalizedStrings.PartitionMessage_REGION_IS_DESTROYED_IN_0.toLocalizedString(dm.getDistributionManagerId()), rde);
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
@@ -134,8 +133,7 @@ public abstract class TXMessage extends SerialDistributionMessage
     return cache == null || cache.isClosed();
   }
 
-  private void sendReply(InternalDistributedMember recipient, int processorId2,
-      DistributionManager dm, ReplyException rex) {
+  private void sendReply(InternalDistributedMember recipient, int processorId2, DistributionManager dm, ReplyException rex) {
     ReplyMessage.send(recipient, processorId2, rex, getReplySender(dm));
   }
 
@@ -143,26 +141,23 @@ public abstract class TXMessage extends SerialDistributionMessage
   public String toString() {
     StringBuffer buff = new StringBuffer();
     String className = getClass().getName();
-//    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
+    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
     buff.append(className.substring(className.indexOf(PartitionMessage.PN_TOKEN) + PartitionMessage.PN_TOKEN.length())); // partition.<foo>
-    buff.append("(txId=").append(this.txUniqId)
-      .append("; txMbr=").append(this.txMemberId)
-      .append("; sender=").append(getSender())
-      .append("; processorId=").append(this.processorId);
+    buff.append("(txId=").append(this.txUniqId).append("; txMbr=").append(this.txMemberId).append("; sender=").append(getSender()).append("; processorId=").append(this.processorId);
     appendFields(buff);
     buff.append(")");
     return buff.toString();
   }
-  
+
   public void appendFields(StringBuffer buff) {
   }
-    
+
   /**
    * Transaction operations override this method to do actual work
    * @param txId The transaction Id to operate on
    * @return true if {@link TXMessage} should send a reply false otherwise
    */
-  protected abstract boolean operateOnTx(TXId txId,DistributionManager dm) throws RemoteOperationException;
+  protected abstract boolean operateOnTx(TXId txId, DistributionManager dm) throws RemoteOperationException;
 
   public int getTXUniqId() {
     return this.txUniqId;
@@ -173,7 +168,7 @@ public abstract class TXMessage extends SerialDistributionMessage
     super.toData(out);
     out.writeInt(this.processorId);
     out.writeInt(this.txUniqId);
-    DataSerializer.writeObject(this.txMemberId,out);
+    DataSerializer.writeObject(this.txMemberId, out);
   }
 
   @Override
@@ -185,13 +180,12 @@ public abstract class TXMessage extends SerialDistributionMessage
   }
 
   public final InternalDistributedMember getMemberToMasqueradeAs() {
-    if(txMemberId==null) {
+    if (txMemberId == null) {
       return getSender();
     }
     return txMemberId;
   }
 
-  
   @Override
   public int getProcessorId() {
     return this.processorId;
@@ -200,7 +194,7 @@ public abstract class TXMessage extends SerialDistributionMessage
   public InternalDistributedMember getTXOriginatorClient() {
     return this.txMemberId;
   }
-  
+
   @Override
   public boolean canParticipateInTransaction() {
     return true;

@@ -38,9 +38,7 @@ public interface Indexable {
    * @throws AmbiguousNameException
    * @throws NameResolutionException
    */
-  IndexInfo[] getIndexInfo(ExecutionContext context)
-      throws TypeMismatchException, AmbiguousNameException,
-      NameResolutionException;
+  IndexInfo[] getIndexInfo(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException;
 
   /**
    * 

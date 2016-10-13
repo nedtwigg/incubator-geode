@@ -29,7 +29,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
  */
 @Category(UnitTest.class)
 public class UniqueIdGeneratorJUnitTest {
-  
+
   @Test
   public void testBasics() throws Exception {
     UniqueIdGenerator uig = new UniqueIdGenerator(1);
@@ -43,7 +43,7 @@ public class UniqueIdGeneratorJUnitTest {
     assertEquals(0, uig.obtain());
 
     uig = new UniqueIdGenerator(32768);
-    for (int i=0; i < 32768; i++) {
+    for (int i = 0; i < 32768; i++) {
       assertEquals(i, uig.obtain());
     }
     try {
@@ -51,7 +51,7 @@ public class UniqueIdGeneratorJUnitTest {
       fail("expected IllegalStateException");
     } catch (IllegalStateException expected) {
     }
-    for (int i=32767; i >= 0; i--) {
+    for (int i = 32767; i >= 0; i--) {
       uig.release(i);
       assertEquals(i, uig.obtain());
     }

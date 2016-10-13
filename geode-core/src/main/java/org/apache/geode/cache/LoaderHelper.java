@@ -26,8 +26,7 @@ package org.apache.geode.cache;
  * @see CacheLoader#load(LoaderHelper) load
  * @since GemFire 2.0
  */
-public interface LoaderHelper<K,V>
-{
+public interface LoaderHelper<K, V> {
   /** Searches other caches for the value to be loaded. If the cache
    * is part of a distributed caching system, <code>netSearch</code>
    * will try to locate the requested value in any other cache within
@@ -52,8 +51,7 @@ public interface LoaderHelper<K,V>
    *         If <code>netSearch</code> is attempted on a {@linkplain
    *         org.apache.geode.cache.Scope#LOCAL local} region. 
    */
-  public V netSearch(boolean doNetLoad)
-    throws CacheLoaderException, TimeoutException;
+  public V netSearch(boolean doNetLoad) throws CacheLoaderException, TimeoutException;
 
   /**
    * Returns the key for the value being loaded.
@@ -69,7 +67,7 @@ public interface LoaderHelper<K,V>
    * @return the name of the region for the object being loaded
    * @see CacheLoader#load(LoaderHelper) load
    */
-  public Region<K,V> getRegion();
+  public Region<K, V> getRegion();
 
   /** Return the argument object for the load method that was passed in from
    * application code. This object is passed in as <i>aLoaderArgument</i> in

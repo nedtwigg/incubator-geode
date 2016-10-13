@@ -57,26 +57,25 @@ public interface Service {
    * test method for simulating a sick/dead member
    */
   void beSick();
-  
+
   /**
    * test method for simulating a sick/dead member
    */
   void playDead();
-  
+
   /**
    * test method for simulating a sick/dead member
    */
   void beHealthy();
-  
+
   /**
    * shut down threads, cancel timers, etc.
    */
   void emergencyClose();
-  
+
   /**
    * a member is suspected of having crashed
    */
   void memberSuspected(InternalDistributedMember initiator, InternalDistributedMember suspect, String reason);
-
 
 }

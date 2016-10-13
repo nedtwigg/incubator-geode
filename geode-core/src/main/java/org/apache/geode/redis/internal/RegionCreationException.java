@@ -23,12 +23,13 @@ package org.apache.geode.redis.internal;
  */
 public class RegionCreationException extends RuntimeException {
 
-  public RegionCreationException() {}
-  
+  public RegionCreationException() {
+  }
+
   public RegionCreationException(String err) {
     super(err);
   }
-  
+
   public RegionCreationException(String err, Throwable cause) {
     super(err, cause);
   }

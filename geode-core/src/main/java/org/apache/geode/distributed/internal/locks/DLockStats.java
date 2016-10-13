@@ -35,14 +35,14 @@ public class DLockStats implements DistributedLockStats {
 
   private final static StatisticsType type;
 
-  private final static int grantorsId;  
-  private final static int servicesId;  
+  private final static int grantorsId;
+  private final static int servicesId;
   private final static int tokensId;
   private final static int grantTokensId;
   private final static int requestQueuesId;
-  private final static int serialQueueSizeId;  
+  private final static int serialQueueSizeId;
   private final static int serialThreadsId;
-  private final static int waitingQueueSizeId;  
+  private final static int waitingQueueSizeId;
   private final static int waitingThreadsId;
   private final static int lockWaitsInProgressId;
   private final static int lockWaitsCompletedId;
@@ -82,7 +82,7 @@ public class DLockStats implements DistributedLockStats {
   private final static int grantorThreadHandleRequestTimeoutsTimeId;
   private final static int grantorThreadRemoveUnusedTokensTimeId;
   private final static int grantorThreadTimeId;
-  private final static int pendingRequestsId;  
+  private final static int pendingRequestsId;
   private final static int destroyReadWaitsInProgressId;
   private final static int destroyReadWaitsCompletedId;
   private final static int destroyReadWaitTimeId;
@@ -93,15 +93,15 @@ public class DLockStats implements DistributedLockStats {
   private final static int destroyWriteWaitTimeId;
   private final static int destroyWriteWaitsFailedId;
   private final static int destroyWriteWaitFailedTimeId;
-  private final static int destroyReadsId;  
-  private final static int destroyWritesId;  
+  private final static int destroyReadsId;
+  private final static int destroyWritesId;
   private final static int lockReleasesInProgressId;
   private final static int lockReleasesCompletedId;
   private final static int lockReleaseTimeId;
-  private final static int becomeGrantorRequestsId;  
+  private final static int becomeGrantorRequestsId;
   private final static int freeResourcesCompletedId;
   private final static int freeResourcesFailedId;
-  
+
   /** returns the current nano time, if time stats are enabled */
   static long getStatTime() {
     return DistributionStats.getStatTime();
@@ -177,91 +177,27 @@ public class DLockStats implements DistributedLockStats {
     final String becomeGrantorRequestsDesc = "Total number of times this member has explicitly requested to become lock grantor.";
     final String freeResourcesCompletedDesc = "Total number of times this member has freed resources for a distributed lock.";
     final String freeResourcesFailedDesc = "Total number of times this member has attempted to free resources for a distributed lock which remained in use.";
-      
+
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    type = f.createType(
-      statName, 
-      statDescription,
-      new StatisticDescriptor[] {
-        f.createIntGauge("grantors", grantorsDesc, "grantors"), 
-        f.createIntGauge("services", servicesDesc, "services"), 
-        f.createIntGauge("tokens", tokensDesc, "tokens"), 
-        f.createIntGauge("grantTokens", grantTokensDesc, "grantTokens"), 
-        f.createIntGauge("requestQueues", requestQueuesDesc, "requestQueues"), 
-        f.createIntGauge("serialQueueSize", serialQueueSizeDesc, "messages"), 
-        f.createIntGauge("serialThreads", serialThreadsDesc, "threads"), 
-        f.createIntGauge("waitingQueueSize", waitingQueueSizeDesc, "messages"), 
-        f.createIntGauge("waitingThreads", waitingThreadsDesc, "threads"),
-        f.createIntGauge("lockWaitsInProgress", lockWaitsInProgressDesc, "operations"), 
-        f.createIntCounter("lockWaitsCompleted", lockWaitsCompletedDesc, "operations"), 
-        f.createLongCounter("lockWaitTime", lockWaitTimeDesc, "nanoseconds", false), 
-        f.createIntCounter("lockWaitsFailed", lockWaitsFailedDesc, "operations"), 
-        f.createLongCounter("lockWaitFailedTime", lockWaitFailedTimeDesc, "nanoseconds", false), 
-        f.createIntGauge("grantWaitsInProgress", grantWaitsInProgressDesc, "operations"), 
-        f.createIntCounter("grantWaitsCompleted", grantWaitsCompletedDesc, "operations"), 
-        f.createLongCounter("grantWaitTime", grantWaitTimeDesc, "nanoseconds", false),
-        f.createIntCounter("grantWaitsNotGrantor", grantWaitsNotGrantorDesc, "operations"), 
-        f.createLongCounter("grantWaitNotGrantorTime", grantWaitNotGrantorTimeDesc, "nanoseconds", false),
-        f.createIntCounter("grantWaitsTimeout", grantWaitsTimeoutDesc, "operations"), 
-        f.createLongCounter("grantWaitTimeoutTime", grantWaitTimeoutTimeDesc, "nanoseconds", false),
-        f.createIntCounter("grantWaitsNotHolder", grantWaitsNotHolderDesc, "operations"), 
-        f.createLongCounter("grantWaitNotHolderTime", grantWaitNotHolderTimeDesc, "nanoseconds", false),
-        f.createIntCounter("grantWaitsFailed", grantWaitsFailedDesc, "operations"), 
-        f.createLongCounter("grantWaitFailedTime", grantWaitFailedTimeDesc, "nanoseconds", false),
-        f.createIntCounter("grantWaitsSuspended", grantWaitsSuspendedDesc, "operations"), 
-        f.createLongCounter("grantWaitSuspendedTime", grantWaitSuspendedTimeDesc, "nanoseconds", false),
-        f.createIntCounter("grantWaitsDestroyed", grantWaitsDestroyedDesc, "operations"), 
-        f.createLongCounter("grantWaitDestroyedTime", grantWaitDestroyedTimeDesc, "nanoseconds", false),
-        f.createIntGauge("createGrantorsInProgress", createGrantorsInProgressDesc, "operations"), 
-        f.createIntCounter("createGrantorsCompleted", createGrantorsCompletedDesc, "operations"), 
-        f.createLongCounter("createGrantorTime", createGrantorTimeDesc, "nanoseconds", false), 
-        f.createIntGauge("serviceCreatesInProgress", serviceCreatesInProgressDesc, "operations"), 
-        f.createIntCounter("serviceCreatesCompleted", serviceCreatesCompletedDesc, "operations"), 
-        f.createLongCounter("serviceCreateLatchTime", serviceCreateLatchTimeDesc, "nanoseconds", false), 
-        f.createLongCounter("serviceInitLatchTime", serviceInitLatchTimeDesc, "nanoseconds", false), 
-        f.createIntGauge("grantorWaitsInProgress", grantorWaitsInProgressDesc, "operations"), 
-        f.createIntCounter("grantorWaitsCompleted", grantorWaitsCompletedDesc, "operations"), 
-        f.createLongCounter("grantorWaitTime", grantorWaitTimeDesc, "nanoseconds", false), 
-        f.createIntCounter("grantorWaitsFailed", grantorWaitsFailedDesc, "operations"), 
-        f.createLongCounter("grantorWaitFailedTime", grantorWaitFailedTimeDesc, "nanoseconds", false), 
-        f.createIntGauge("grantorThreadsInProgress", grantorThreadsInProgressDesc, "operations"), 
-        f.createIntCounter("grantorThreadsCompleted", grantorThreadsCompletedDesc, "operations"), 
-        f.createLongCounter("grantorThreadExpireAndGrantLocksTime", grantorThreadExpireAndGrantLocksTimeDesc, "nanoseconds", false), 
-        f.createLongCounter("grantorThreadHandleRequestTimeoutsTime", grantorThreadHandleRequestTimeoutsTimeDesc, "nanoseconds", false),
-        f.createLongCounter("grantorThreadRemoveUnusedTokensTime", grantorThreadRemoveUnusedTokensTimeDesc, "nanoseconds", false),
-        f.createLongCounter("grantorThreadTime", grantorThreadTimeDesc, "nanoseconds", false), 
-        f.createIntGauge("pendingRequests", pendingRequestsDesc, "pendingRequests"),
-        f.createIntGauge("destroyReadWaitsInProgress", destroyReadWaitsInProgressDesc, "operations"), 
-        f.createIntCounter("destroyReadWaitsCompleted", destroyReadWaitsCompletedDesc, "operations"), 
-        f.createLongCounter("destroyReadWaitTime", destroyReadWaitTimeDesc, "nanoseconds", false), 
-        f.createIntCounter("destroyReadWaitsFailed", destroyReadWaitsFailedDesc, "operations"), 
-        f.createLongCounter("destroyReadWaitFailedTime", destroyReadWaitFailedTimeDesc, "nanoseconds", false),
-        f.createIntGauge("destroyWriteWaitsInProgress", destroyWriteWaitsInProgressDesc, "operations"), 
-        f.createIntCounter("destroyWriteWaitsCompleted", destroyWriteWaitsCompletedDesc, "operations"), 
-        f.createLongCounter("destroyWriteWaitTime", destroyWriteWaitTimeDesc, "nanoseconds", false), 
-        f.createIntCounter("destroyWriteWaitsFailed", destroyWriteWaitsFailedDesc, "operations"), 
-        f.createLongCounter("destroyWriteWaitFailedTime", destroyWriteWaitFailedTimeDesc, "nanoseconds", false),
-        f.createIntGauge("destroyReads", destroyReadsDesc, "destroyReads"), 
-        f.createIntGauge("destroyWrites", destroyWritesDesc, "destroyWrites"), 
-        f.createIntGauge("lockReleasesInProgress", lockReleasesInProgressDesc, "operations"), 
-        f.createIntCounter("lockReleasesCompleted", lockReleasesCompletedDesc, "operations"), 
-        f.createLongCounter("lockReleaseTime", lockReleaseTimeDesc, "nanoseconds", false), 
-        f.createIntCounter("becomeGrantorRequests", becomeGrantorRequestsDesc, "operations"), 
-        f.createIntCounter("freeResourcesCompleted", freeResourcesCompletedDesc, "operations"),
-        f.createIntCounter("freeResourcesFailed", freeResourcesFailedDesc, "operations"),
-      }
-    );
+    type = f.createType(statName, statDescription,
+        new StatisticDescriptor[] { f.createIntGauge("grantors", grantorsDesc, "grantors"), f.createIntGauge("services", servicesDesc, "services"), f.createIntGauge("tokens", tokensDesc, "tokens"), f.createIntGauge("grantTokens", grantTokensDesc, "grantTokens"), f.createIntGauge("requestQueues", requestQueuesDesc, "requestQueues"), f.createIntGauge("serialQueueSize", serialQueueSizeDesc, "messages"), f.createIntGauge("serialThreads", serialThreadsDesc, "threads"), f.createIntGauge("waitingQueueSize", waitingQueueSizeDesc, "messages"), f.createIntGauge("waitingThreads", waitingThreadsDesc, "threads"), f.createIntGauge("lockWaitsInProgress", lockWaitsInProgressDesc, "operations"), f.createIntCounter("lockWaitsCompleted", lockWaitsCompletedDesc, "operations"), f.createLongCounter("lockWaitTime", lockWaitTimeDesc, "nanoseconds", false), f.createIntCounter("lockWaitsFailed", lockWaitsFailedDesc, "operations"),
+            f.createLongCounter("lockWaitFailedTime", lockWaitFailedTimeDesc, "nanoseconds", false), f.createIntGauge("grantWaitsInProgress", grantWaitsInProgressDesc, "operations"), f.createIntCounter("grantWaitsCompleted", grantWaitsCompletedDesc, "operations"), f.createLongCounter("grantWaitTime", grantWaitTimeDesc, "nanoseconds", false), f.createIntCounter("grantWaitsNotGrantor", grantWaitsNotGrantorDesc, "operations"), f.createLongCounter("grantWaitNotGrantorTime", grantWaitNotGrantorTimeDesc, "nanoseconds", false), f.createIntCounter("grantWaitsTimeout", grantWaitsTimeoutDesc, "operations"), f.createLongCounter("grantWaitTimeoutTime", grantWaitTimeoutTimeDesc, "nanoseconds", false), f.createIntCounter("grantWaitsNotHolder", grantWaitsNotHolderDesc, "operations"), f.createLongCounter("grantWaitNotHolderTime", grantWaitNotHolderTimeDesc, "nanoseconds", false), f.createIntCounter("grantWaitsFailed", grantWaitsFailedDesc, "operations"),
+            f.createLongCounter("grantWaitFailedTime", grantWaitFailedTimeDesc, "nanoseconds", false), f.createIntCounter("grantWaitsSuspended", grantWaitsSuspendedDesc, "operations"), f.createLongCounter("grantWaitSuspendedTime", grantWaitSuspendedTimeDesc, "nanoseconds", false), f.createIntCounter("grantWaitsDestroyed", grantWaitsDestroyedDesc, "operations"), f.createLongCounter("grantWaitDestroyedTime", grantWaitDestroyedTimeDesc, "nanoseconds", false), f.createIntGauge("createGrantorsInProgress", createGrantorsInProgressDesc, "operations"), f.createIntCounter("createGrantorsCompleted", createGrantorsCompletedDesc, "operations"), f.createLongCounter("createGrantorTime", createGrantorTimeDesc, "nanoseconds", false), f.createIntGauge("serviceCreatesInProgress", serviceCreatesInProgressDesc, "operations"), f.createIntCounter("serviceCreatesCompleted", serviceCreatesCompletedDesc, "operations"),
+            f.createLongCounter("serviceCreateLatchTime", serviceCreateLatchTimeDesc, "nanoseconds", false), f.createLongCounter("serviceInitLatchTime", serviceInitLatchTimeDesc, "nanoseconds", false), f.createIntGauge("grantorWaitsInProgress", grantorWaitsInProgressDesc, "operations"), f.createIntCounter("grantorWaitsCompleted", grantorWaitsCompletedDesc, "operations"), f.createLongCounter("grantorWaitTime", grantorWaitTimeDesc, "nanoseconds", false), f.createIntCounter("grantorWaitsFailed", grantorWaitsFailedDesc, "operations"), f.createLongCounter("grantorWaitFailedTime", grantorWaitFailedTimeDesc, "nanoseconds", false), f.createIntGauge("grantorThreadsInProgress", grantorThreadsInProgressDesc, "operations"), f.createIntCounter("grantorThreadsCompleted", grantorThreadsCompletedDesc, "operations"), f.createLongCounter("grantorThreadExpireAndGrantLocksTime", grantorThreadExpireAndGrantLocksTimeDesc, "nanoseconds", false),
+            f.createLongCounter("grantorThreadHandleRequestTimeoutsTime", grantorThreadHandleRequestTimeoutsTimeDesc, "nanoseconds", false), f.createLongCounter("grantorThreadRemoveUnusedTokensTime", grantorThreadRemoveUnusedTokensTimeDesc, "nanoseconds", false), f.createLongCounter("grantorThreadTime", grantorThreadTimeDesc, "nanoseconds", false), f.createIntGauge("pendingRequests", pendingRequestsDesc, "pendingRequests"), f.createIntGauge("destroyReadWaitsInProgress", destroyReadWaitsInProgressDesc, "operations"), f.createIntCounter("destroyReadWaitsCompleted", destroyReadWaitsCompletedDesc, "operations"), f.createLongCounter("destroyReadWaitTime", destroyReadWaitTimeDesc, "nanoseconds", false), f.createIntCounter("destroyReadWaitsFailed", destroyReadWaitsFailedDesc, "operations"), f.createLongCounter("destroyReadWaitFailedTime", destroyReadWaitFailedTimeDesc, "nanoseconds", false), f.createIntGauge("destroyWriteWaitsInProgress", destroyWriteWaitsInProgressDesc, "operations"),
+            f.createIntCounter("destroyWriteWaitsCompleted", destroyWriteWaitsCompletedDesc, "operations"), f.createLongCounter("destroyWriteWaitTime", destroyWriteWaitTimeDesc, "nanoseconds", false), f.createIntCounter("destroyWriteWaitsFailed", destroyWriteWaitsFailedDesc, "operations"), f.createLongCounter("destroyWriteWaitFailedTime", destroyWriteWaitFailedTimeDesc, "nanoseconds", false), f.createIntGauge("destroyReads", destroyReadsDesc, "destroyReads"), f.createIntGauge("destroyWrites", destroyWritesDesc, "destroyWrites"), f.createIntGauge("lockReleasesInProgress", lockReleasesInProgressDesc, "operations"), f.createIntCounter("lockReleasesCompleted", lockReleasesCompletedDesc, "operations"), f.createLongCounter("lockReleaseTime", lockReleaseTimeDesc, "nanoseconds", false), f.createIntCounter("becomeGrantorRequests", becomeGrantorRequestsDesc, "operations"), f.createIntCounter("freeResourcesCompleted", freeResourcesCompletedDesc, "operations"),
+            f.createIntCounter("freeResourcesFailed", freeResourcesFailedDesc, "operations"), });
 
     // Initialize id fields
-    grantorsId = type.nameToId("grantors");  
-    servicesId = type.nameToId("services");  
-    tokensId = type.nameToId("tokens");  
-    grantTokensId = type.nameToId("grantTokens");  
-    requestQueuesId = type.nameToId("requestQueues");  
-    serialQueueSizeId = type.nameToId("serialQueueSize");  
+    grantorsId = type.nameToId("grantors");
+    servicesId = type.nameToId("services");
+    tokensId = type.nameToId("tokens");
+    grantTokensId = type.nameToId("grantTokens");
+    requestQueuesId = type.nameToId("requestQueues");
+    serialQueueSizeId = type.nameToId("serialQueueSize");
     serialThreadsId = type.nameToId("serialThreads");
-    waitingQueueSizeId = type.nameToId("waitingQueueSize");  
+    waitingQueueSizeId = type.nameToId("waitingQueueSize");
     waitingThreadsId = type.nameToId("waitingThreads");
     lockWaitsInProgressId = type.nameToId("lockWaitsInProgress");
     lockWaitsCompletedId = type.nameToId("lockWaitsCompleted");
@@ -301,7 +237,7 @@ public class DLockStats implements DistributedLockStats {
     grantorThreadHandleRequestTimeoutsTimeId = type.nameToId("grantorThreadHandleRequestTimeoutsTime");
     grantorThreadRemoveUnusedTokensTimeId = type.nameToId("grantorThreadRemoveUnusedTokensTime");
     grantorThreadTimeId = type.nameToId("grantorThreadTime");
-    pendingRequestsId = type.nameToId("pendingRequests");  
+    pendingRequestsId = type.nameToId("pendingRequests");
     destroyReadWaitsInProgressId = type.nameToId("destroyReadWaitsInProgress");
     destroyReadWaitsCompletedId = type.nameToId("destroyReadWaitsCompleted");
     destroyReadWaitTimeId = type.nameToId("destroyReadWaitTime");
@@ -312,12 +248,12 @@ public class DLockStats implements DistributedLockStats {
     destroyWriteWaitTimeId = type.nameToId("destroyWriteWaitTime");
     destroyWriteWaitsFailedId = type.nameToId("destroyWriteWaitsFailed");
     destroyWriteWaitFailedTimeId = type.nameToId("destroyWriteWaitFailedTime");
-    destroyReadsId = type.nameToId("destroyReads");  
-    destroyWritesId = type.nameToId("destroyWrites");  
+    destroyReadsId = type.nameToId("destroyReads");
+    destroyWritesId = type.nameToId("destroyWrites");
     lockReleasesInProgressId = type.nameToId("lockReleasesInProgress");
     lockReleasesCompletedId = type.nameToId("lockReleasesCompleted");
     lockReleaseTimeId = type.nameToId("lockReleaseTime");
-    becomeGrantorRequestsId = type.nameToId("becomeGrantorRequests");  
+    becomeGrantorRequestsId = type.nameToId("becomeGrantorRequests");
     freeResourcesCompletedId = type.nameToId("freeResourcesCompleted");
     freeResourcesFailedId = type.nameToId("freeResourcesFailed");
   } // static block
@@ -336,6 +272,7 @@ public class DLockStats implements DistributedLockStats {
   public DLockStats(StatisticsFactory f, long statId) {
     this.stats = f.createAtomicStatistics(type, "dlockStats", statId);
   }
+
   /**
    * Used by tests to create an instance given its already existings stats.
    */
@@ -350,39 +287,45 @@ public class DLockStats implements DistributedLockStats {
   public void close() {
     this.stats.close();
   }
-  
+
   // time for call to lock() to complete
   public int getLockWaitsInProgress() {
     return stats.getInt(lockWaitsInProgressId);
   }
+
   public int getLockWaitsCompleted() {
     return stats.getInt(lockWaitsCompletedId);
   }
+
   public int getLockWaitsFailed() {
     return stats.getInt(lockWaitsFailedId);
   }
+
   public long getLockWaitTime() {
     return stats.getLong(lockWaitTimeId);
   }
+
   public long getLockWaitFailedTime() {
     return stats.getLong(lockWaitFailedTimeId);
   }
+
   public long startLockWait() {
     stats.incInt(lockWaitsInProgressId, 1);
     return DLockStats.getStatTime();
   }
+
   public void endLockWait(long start, boolean success) {
     long ts = DLockStats.getStatTime();
     stats.incInt(lockWaitsInProgressId, -1);
     if (success) {
       stats.incInt(lockWaitsCompletedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(lockWaitTimeId, ts-start);
+        stats.incLong(lockWaitTimeId, ts - start);
       }
     } else {
       stats.incInt(lockWaitsFailedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(lockWaitFailedTimeId, ts-start);
+        stats.incLong(lockWaitFailedTimeId, ts - start);
       }
     }
   }
@@ -391,30 +334,34 @@ public class DLockStats implements DistributedLockStats {
   public int getWaitingQueueSize() {
     return this.stats.getInt(waitingQueueSizeId);
   }
+
   public void incWaitingQueueSize(int messages) { // TODO: prolly no callers
     this.stats.incInt(waitingQueueSizeId, messages);
   }
-  
+
   // incSerialQueueSize everytime getSerialQueueHelper add/remove called
   public int getSerialQueueSize() {
     return this.stats.getInt(serialQueueSizeId);
   }
+
   public void incSerialQueueSize(int messages) { // TODO: prolly no callers
     this.stats.incInt(serialQueueSizeId, messages);
   }
-  
+
   // incNumSerialThreads everytime we execute with dlock getSerialExecutor() 
   public int getNumSerialThreads() {
     return this.stats.getInt(serialThreadsId);
   }
+
   public void incNumSerialThreads(int threads) { // TODO: no callers!
     this.stats.incInt(serialThreadsId, threads);
   }
-  
+
   // incWaitingThreads for every invoke of getWaitingPoolHelper startJob/endJob
   public int getWaitingThreads() {
     return this.stats.getInt(waitingThreadsId);
   }
+
   public void incWaitingThreads(int threads) { // TODO: prolly no callers
     this.stats.incInt(waitingThreadsId, threads);
   }
@@ -423,22 +370,25 @@ public class DLockStats implements DistributedLockStats {
   public int getServices() {
     return this.stats.getInt(servicesId);
   }
+
   public void incServices(int val) {
     this.stats.incInt(servicesId, val);
   }
-  
+
   // current number of lock grantors hosted by this system member 
   public int getGrantors() {
     return this.stats.getInt(grantorsId);
   }
+
   public void incGrantors(int val) {
     this.stats.incInt(grantorsId, val);
   }
-  
+
   // current number of lock tokens used by this system member 
   public int getTokens() {
     return this.stats.getInt(tokensId);
   }
+
   public void incTokens(int val) {
     this.stats.incInt(tokensId, val);
   }
@@ -447,6 +397,7 @@ public class DLockStats implements DistributedLockStats {
   public int getGrantTokens() {
     return this.stats.getInt(grantTokensId);
   }
+
   public void incGrantTokens(int val) {
     this.stats.incInt(grantTokensId, val);
   }
@@ -455,270 +406,318 @@ public class DLockStats implements DistributedLockStats {
   public int getRequestQueues() {
     return this.stats.getInt(requestQueuesId);
   }
+
   public void incRequestQueues(int val) {
     this.stats.incInt(requestQueuesId, val);
   }
-  
+
   // time for granting of lock requests to complete
   public int getGrantWaitsInProgress() {
     return stats.getInt(grantWaitsInProgressId);
   }
+
   public int getGrantWaitsCompleted() {
     return stats.getInt(grantWaitsCompletedId);
   }
+
   public int getGrantWaitsFailed() {
     return stats.getInt(grantWaitsFailedId);
   }
+
   public int getGrantWaitsSuspended() {
     return stats.getInt(grantWaitsSuspendedId);
   }
+
   public int getGrantWaitsDestroyed() {
     return stats.getInt(grantWaitsDestroyedId);
   }
+
   public long getGrantWaitTime() {
     return stats.getLong(grantWaitTimeId);
   }
+
   public long getGrantWaitFailedTime() {
     return stats.getLong(grantWaitFailedTimeId);
   }
+
   public long startGrantWait() {
     stats.incInt(grantWaitsInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public void endGrantWait(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantWaitsInProgressId, -1);
     stats.incInt(grantWaitsCompletedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantWaitTimeId, ts-start);
+      stats.incLong(grantWaitTimeId, ts - start);
     }
   }
+
   public void endGrantWaitNotGrantor(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantWaitsInProgressId, -1);
     stats.incInt(grantWaitsNotGrantorId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantWaitNotGrantorTimeId, ts-start);
+      stats.incLong(grantWaitNotGrantorTimeId, ts - start);
     }
   }
+
   public void endGrantWaitTimeout(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantWaitsInProgressId, -1);
     stats.incInt(grantWaitsTimeoutId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantWaitTimeoutTimeId, ts-start);
+      stats.incLong(grantWaitTimeoutTimeId, ts - start);
     }
   }
+
   public void endGrantWaitNotHolder(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantWaitsInProgressId, -1);
     stats.incInt(grantWaitsNotHolderId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantWaitNotHolderTimeId, ts-start);
+      stats.incLong(grantWaitNotHolderTimeId, ts - start);
     }
   }
+
   public void endGrantWaitFailed(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantWaitsInProgressId, -1);
     stats.incInt(grantWaitsFailedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantWaitFailedTimeId, ts-start);
+      stats.incLong(grantWaitFailedTimeId, ts - start);
     }
   }
+
   public void endGrantWaitSuspended(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantWaitsInProgressId, -1);
     stats.incInt(grantWaitsSuspendedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantWaitSuspendedTimeId, ts-start);
+      stats.incLong(grantWaitSuspendedTimeId, ts - start);
     }
   }
+
   public void endGrantWaitDestroyed(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantWaitsInProgressId, -1);
     stats.incInt(grantWaitsDestroyedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantWaitDestroyedTimeId, ts-start);
+      stats.incLong(grantWaitDestroyedTimeId, ts - start);
     }
   }
-  
+
   // time for creating initial grantor for lock service
   public int getCreateGrantorsInProgress() {
     return stats.getInt(createGrantorsInProgressId);
   }
+
   public int getCreateGrantorsCompleted() {
     return stats.getInt(createGrantorsCompletedId);
   }
+
   public long getCreateGrantorTime() {
     return stats.getLong(createGrantorTimeId);
   }
+
   public long startCreateGrantor() { // TODO: no callers!
     stats.incInt(createGrantorsInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public void endCreateGrantor(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(createGrantorsInProgressId, -1);
     stats.incInt(createGrantorsCompletedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(createGrantorTimeId, ts-start);
+      stats.incLong(createGrantorTimeId, ts - start);
     }
   }
-  
+
   // time for creating each lock service
   public int getServiceCreatesInProgress() {
     return stats.getInt(serviceCreatesInProgressId);
   }
+
   public int getServiceCreatesCompleted() {
     return stats.getInt(serviceCreatesCompletedId);
   }
+
   public long startServiceCreate() { // TODO: no callers!
     stats.incInt(serviceCreatesInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public void serviceCreateLatchReleased(long start) {
     if (DistributionStats.enableClockStats) {
       long ts = DLockStats.getStatTime();
-      stats.incLong(serviceCreateLatchTimeId, ts-start);
+      stats.incLong(serviceCreateLatchTimeId, ts - start);
     }
   }
+
   public void serviceInitLatchReleased(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(serviceCreatesInProgressId, -1);
     stats.incInt(serviceCreatesCompletedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(serviceInitLatchTimeId, ts-start);
+      stats.incLong(serviceInitLatchTimeId, ts - start);
     }
   }
+
   public long getServiceCreateLatchTime() {
     return stats.getLong(serviceCreateLatchTimeId);
   }
+
   public long getServiceInitLatchTime() {
     return stats.getLong(serviceInitLatchTimeId);
   }
-  
+
   // time spent waiting grantor latches
   public int getGrantorWaitsInProgress() {
     return stats.getInt(grantorWaitsInProgressId);
   }
+
   public int getGrantorWaitsCompleted() {
     return stats.getInt(grantorWaitsCompletedId);
   }
+
   public int getGrantorWaitsFailed() {
     return stats.getInt(grantorWaitsFailedId);
   }
+
   public long getGrantorWaitTime() {
     return stats.getLong(grantorWaitTimeId);
   }
+
   public long getGrantorWaitFailedTime() {
     return stats.getLong(grantorWaitFailedTimeId);
   }
+
   public long startGrantorWait() {
     stats.incInt(grantorWaitsInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public void endGrantorWait(long start, boolean success) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantorWaitsInProgressId, -1);
     if (success) {
       stats.incInt(grantorWaitsCompletedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(grantorWaitTimeId, ts-start);
+        stats.incLong(grantorWaitTimeId, ts - start);
       }
     } else {
       stats.incInt(grantorWaitsFailedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(grantorWaitFailedTimeId, ts-start);
+        stats.incLong(grantorWaitFailedTimeId, ts - start);
       }
     }
   }
-  
+
   // time spent by grantor threads
   public int getGrantorThreadsInProgress() {
     return stats.getInt(grantorThreadsInProgressId);
   }
+
   public int getGrantorThreadsCompleted() {
     return stats.getInt(grantorThreadsCompletedId);
   }
+
   public long getGrantorThreadTime() {
     return stats.getLong(grantorThreadTimeId);
   }
+
   public long getGrantorThreadExpireAndGrantLocksTime() {
     return stats.getLong(grantorThreadExpireAndGrantLocksTimeId);
   }
+
   public long getGrantorThreadHandleRequestTimeoutsTime() {
     return stats.getLong(grantorThreadHandleRequestTimeoutsTimeId);
   }
+
   public long getGrantorThreadRemoveUnusedTokensTime() {
     return stats.getLong(grantorThreadRemoveUnusedTokensTimeId);
   }
+
   public long startGrantorThread() {
     stats.incInt(grantorThreadsInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public long endGrantorThreadExpireAndGrantLocks(long start) {
     long ts = DLockStats.getStatTime();
-    stats.incLong(grantorThreadExpireAndGrantLocksTimeId, ts-start);
-    return DLockStats.getStatTime(); 
+    stats.incLong(grantorThreadExpireAndGrantLocksTimeId, ts - start);
+    return DLockStats.getStatTime();
   }
+
   public long endGrantorThreadHandleRequestTimeouts(long timing) {
     long ts = DLockStats.getStatTime();
-    stats.incLong(grantorThreadHandleRequestTimeoutsTimeId, ts-timing);
-    return DLockStats.getStatTime(); 
+    stats.incLong(grantorThreadHandleRequestTimeoutsTimeId, ts - timing);
+    return DLockStats.getStatTime();
   }
+
   public void endGrantorThreadRemoveUnusedTokens(long timing) {
     long ts = DLockStats.getStatTime();
-    stats.incLong(grantorThreadRemoveUnusedTokensTimeId, ts-timing);
+    stats.incLong(grantorThreadRemoveUnusedTokensTimeId, ts - timing);
   }
+
   public void endGrantorThread(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(grantorThreadsInProgressId, -1);
     stats.incInt(grantorThreadsCompletedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(grantorThreadTimeId, ts-start);
+      stats.incLong(grantorThreadTimeId, ts - start);
     }
   }
-    
+
   // current number of requests waiting in lock grantor queues 
   public int getPendingRequests() {
     return this.stats.getInt(pendingRequestsId);
   }
+
   public void incPendingRequests(int val) {
     this.stats.incInt(pendingRequestsId, val);
   }
-  
+
   // acquisition of destroyReadLock in DLockService
   public int getDestroyReadWaitsInProgress() {
     return stats.getInt(destroyReadWaitsInProgressId);
   }
+
   public int getDestroyReadWaitsCompleted() {
     return stats.getInt(destroyReadWaitsCompletedId);
   }
+
   public int getDestroyReadWaitsFailed() {
     return stats.getInt(destroyReadWaitsFailedId);
   }
+
   public long getDestroyReadWaitTime() {
     return stats.getLong(destroyReadWaitTimeId);
   }
+
   public long getDestroyReadWaitFailedTime() {
     return stats.getLong(destroyReadWaitFailedTimeId);
   }
+
   public long startDestroyReadWait() { // TODO: no callers!
     stats.incInt(destroyReadWaitsInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public void endDestroyReadWait(long start, boolean success) {
     long ts = DLockStats.getStatTime();
     stats.incInt(destroyReadWaitsInProgressId, -1);
     if (success) {
       stats.incInt(destroyReadWaitsCompletedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(destroyReadWaitTimeId, ts-start);
+        stats.incLong(destroyReadWaitTimeId, ts - start);
       }
     } else {
       stats.incInt(destroyReadWaitsFailedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(destroyReadWaitFailedTimeId, ts-start);
+        stats.incLong(destroyReadWaitFailedTimeId, ts - start);
       }
     }
   }
@@ -727,34 +726,40 @@ public class DLockStats implements DistributedLockStats {
   public int getDestroyWriteWaitsInProgress() {
     return stats.getInt(destroyWriteWaitsInProgressId);
   }
+
   public int getDestroyWriteWaitsCompleted() {
     return stats.getInt(destroyWriteWaitsCompletedId);
   }
+
   public int getDestroyWriteWaitsFailed() {
     return stats.getInt(destroyWriteWaitsFailedId);
   }
+
   public long getDestroyWriteWaitTime() {
     return stats.getLong(destroyWriteWaitTimeId);
   }
+
   public long getDestroyWriteWaitFailedTime() {
     return stats.getLong(destroyWriteWaitFailedTimeId);
   }
+
   public long startDestroyWriteWait() { // TODO: no callers!
     stats.incInt(destroyWriteWaitsInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public void endDestroyWriteWait(long start, boolean success) {
     long ts = DLockStats.getStatTime();
     stats.incInt(destroyWriteWaitsInProgressId, -1);
     if (success) {
       stats.incInt(destroyWriteWaitsCompletedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(destroyWriteWaitTimeId, ts-start);
+        stats.incLong(destroyWriteWaitTimeId, ts - start);
       }
     } else {
       stats.incInt(destroyWriteWaitsFailedId, 1);
       if (DistributionStats.enableClockStats) {
-        stats.incLong(destroyWriteWaitFailedTimeId, ts-start);
+        stats.incLong(destroyWriteWaitFailedTimeId, ts - start);
       }
     }
   }
@@ -763,38 +768,44 @@ public class DLockStats implements DistributedLockStats {
   public int getDestroyReads() {
     return this.stats.getInt(destroyReadsId);
   }
+
   public void incDestroyReads(int val) { // TODO: no callers!
     this.stats.incInt(destroyReadsId, val);
   }
-  
+
   // current number of DLockService destroy write locks held by this process 
   public int getDestroyWrites() {
     return this.stats.getInt(destroyWritesId);
   }
+
   public void incDestroyWrites(int val) { // TODO: no callers!
     this.stats.incInt(destroyWritesId, val);
   }
-  
+
   // time for call to unlock() to complete
   public int getLockReleasesInProgress() {
     return stats.getInt(lockReleasesInProgressId);
   }
+
   public int getLockReleasesCompleted() {
     return stats.getInt(lockReleasesCompletedId);
   }
+
   public long getLockReleaseTime() {
     return stats.getLong(lockReleaseTimeId);
   }
+
   public long startLockRelease() {
     stats.incInt(lockReleasesInProgressId, 1);
-    return DLockStats.getStatTime(); 
+    return DLockStats.getStatTime();
   }
+
   public void endLockRelease(long start) {
     long ts = DLockStats.getStatTime();
     stats.incInt(lockReleasesInProgressId, -1);
     stats.incInt(lockReleasesCompletedId, 1);
     if (DistributionStats.enableClockStats) {
-      stats.incLong(lockReleaseTimeId, ts-start);
+      stats.incLong(lockReleaseTimeId, ts - start);
     }
   }
 
@@ -802,28 +813,31 @@ public class DLockStats implements DistributedLockStats {
   public int getBecomeGrantorRequests() {
     return this.stats.getInt(becomeGrantorRequestsId);
   }
+
   public void incBecomeGrantorRequests() {
     this.stats.incInt(becomeGrantorRequestsId, 1);
   }
-  
+
   public int getFreeResourcesCompleted() {
     return this.stats.getInt(freeResourcesCompletedId);
   }
+
   public void incFreeResourcesCompleted() {
     this.stats.incInt(freeResourcesCompletedId, 1);
   }
-  
+
   public int getFreeResourcesFailed() {
     return this.stats.getInt(freeResourcesFailedId);
   }
+
   public void incFreeResourcesFailed() {
     this.stats.incInt(freeResourcesFailedId, 1);
   }
-  
+
   // -------------------------------------------------------------------------
   //   StatHelpers for dedicated dlock executors
   // -------------------------------------------------------------------------
-  
+
   /**
    * Returns a helper object so that the serial queue can record its
    * stats to the proper distribution stats.
@@ -831,16 +845,18 @@ public class DLockStats implements DistributedLockStats {
    */
   public QueueStatHelper getSerialQueueHelper() {
     return new QueueStatHelper() {
-        public void add() {
-          incSerialQueueSize(1);
-        }
-        public void remove() {
-          incSerialQueueSize(-1);
-        }
-        public void remove(int count) {
-          incSerialQueueSize(-count);
-        }
-      };
+      public void add() {
+        incSerialQueueSize(1);
+      }
+
+      public void remove() {
+        incSerialQueueSize(-1);
+      }
+
+      public void remove(int count) {
+        incSerialQueueSize(-count);
+      }
+    };
   }
 
   /**
@@ -850,15 +866,16 @@ public class DLockStats implements DistributedLockStats {
    */
   public PoolStatHelper getWaitingPoolHelper() {
     return new PoolStatHelper() {
-        public void startJob() {
-          incWaitingThreads(1);
-        }
-        public void endJob() {
-          incWaitingThreads(-1);
-        }
-      };
+      public void startJob() {
+        incWaitingThreads(1);
+      }
+
+      public void endJob() {
+        incWaitingThreads(-1);
+      }
+    };
   }
-  
+
   /**
    * Returns a helper object so that the waiting queue can record its
    * stats to the proper distribution stats.
@@ -866,21 +883,22 @@ public class DLockStats implements DistributedLockStats {
    */
   public QueueStatHelper getWaitingQueueHelper() {
     return new QueueStatHelper() {
-        public void add() {
-          incWaitingQueueSize(1);
-        }
-        public void remove() {
-          incWaitingQueueSize(-1);
-        }
-        public void remove(int count) {
-          incWaitingQueueSize(-count);
-        }
-      };
+      public void add() {
+        incWaitingQueueSize(1);
+      }
+
+      public void remove() {
+        incWaitingQueueSize(-1);
+      }
+
+      public void remove(int count) {
+        incWaitingQueueSize(-count);
+      }
+    };
   }
-  
+
   public Statistics getStats() {
     return stats;
   }
 
 }
-

@@ -26,7 +26,7 @@ import org.apache.geode.lang.Identifiable;
  * @see java.lang.Comparable
  * @since GemFire 7.0
  */
-public interface MutableIdentifiable<T>  extends Identifiable {
+public interface MutableIdentifiable<T> extends Identifiable {
 
   /**
    * Set the identifier uniquely identifying this Object instance.

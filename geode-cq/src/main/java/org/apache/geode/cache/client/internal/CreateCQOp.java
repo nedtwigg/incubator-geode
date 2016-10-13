@@ -44,15 +44,11 @@ public class CreateCQOp {
    * @param isDurable true if CQ is durable
    * @param regionDataPolicy the data policy ordinal of the region
    */
-  public static Object execute(ExecutablePool pool, String cqName,
-      String queryStr, int cqState, boolean isDurable, byte regionDataPolicy)
-  {
-    AbstractOp op = new CreateCQOpImpl(cqName, queryStr, cqState,
-        isDurable, regionDataPolicy);
+  public static Object execute(ExecutablePool pool, String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+    AbstractOp op = new CreateCQOpImpl(cqName, queryStr, cqState, isDurable, regionDataPolicy);
     return pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
-  
-  
+
   /**
    * Create a continuous query on the server using a specific connections from the given pool.
    * @param pool the pool to use to communicate with the server.
@@ -63,16 +59,11 @@ public class CreateCQOp {
    * @param isDurable true if CQ is durable
    * @param regionDataPolicy the data policy ordinal of the region
    */
-  public static Object executeOn(ExecutablePool pool, Connection conn,
-      String cqName, String queryStr, int cqState, boolean isDurable,
-      byte regionDataPolicy)
-  {
-    AbstractOp op = new CreateCQOpImpl(cqName, queryStr, cqState,
-        isDurable, regionDataPolicy);
-    return pool.executeOn(conn,op);
+  public static Object executeOn(ExecutablePool pool, Connection conn, String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+    AbstractOp op = new CreateCQOpImpl(cqName, queryStr, cqState, isDurable, regionDataPolicy);
+    return pool.executeOn(conn, op);
   }
-  
-                                                               
+
   private CreateCQOp() {
     // no instances allowed
   }
@@ -84,25 +75,26 @@ public class CreateCQOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public CreateCQOpImpl(String cqName, String queryStr, int cqState,
-        boolean isDurable, byte regionDataPolicy) {
+    public CreateCQOpImpl(String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
       super(MessageType.EXECUTECQ_MSG_TYPE, 5);
       getMessage().addStringPart(cqName);
       getMessage().addStringPart(queryStr);
       getMessage().addIntPart(cqState);
       {
-        byte durableByte = (byte)(isDurable ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] {durableByte});
+        byte durableByte = (byte) (isDurable ? 0x01 : 0x00);
+        getMessage().addBytesPart(new byte[] { durableByte });
       }
-      getMessage().addBytesPart(new byte[] {regionDataPolicy});
+      getMessage().addBytesPart(new byte[] { regionDataPolicy });
     }
-    @Override  
+
+    @Override
     protected Message createResponseMessage() {
       return new ChunkedMessage(1, Version.CURRENT);
     }
-    @Override  
+
+    @Override
     protected Object processResponse(Message m) throws Exception {
-      ChunkedMessage msg = (ChunkedMessage)m;
+      ChunkedMessage msg = (ChunkedMessage) m;
       msg.readHeader();
       int msgType = msg.getMessageType();
       msg.receiveChunk();
@@ -120,17 +112,17 @@ public class CreateCQOp {
           // will be propagated up properly. Ideally, this exception would be
           // contained in the message..
           String errorMessage = part.getString();
-          if(errorMessage.indexOf("Not authorized") >= 0) {
+          if (errorMessage.indexOf("Not authorized") >= 0) {
             throw new NotAuthorizedException(errorMessage);
           }
-          
+
           throw new ServerOperationException(errorMessage);
         } else {
-          throw new InternalGemFireError("Unexpected message type "
-                                         + MessageType.getString(msgType));
+          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
+
     /**
      * This constructor is for our subclasses
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -138,23 +130,27 @@ public class CreateCQOp {
     protected CreateCQOpImpl(int msgType, int numParts) {
       super(msgType, numParts);
     }
+
     protected String getOpName() {
       return "createCQ";
     }
-    @Override  
+
+    @Override
     protected boolean isErrorResponse(int msgType) {
-      return msgType == MessageType.CQDATAERROR_MSG_TYPE
-        || msgType == MessageType.CQ_EXCEPTION_TYPE;
+      return msgType == MessageType.CQDATAERROR_MSG_TYPE || msgType == MessageType.CQ_EXCEPTION_TYPE;
     }
-    @Override  
+
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startCreateCQ();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endCreateCQSend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endCreateCQ(start, hasTimedOut(), hasFailed());
     }

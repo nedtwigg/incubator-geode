@@ -38,27 +38,27 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class StructSetJUnitTest {
-  
+
   @Test
   public void testIntersectionAndRetainAll() {
-    String names[] = {"p","pos"};
-    ObjectType types[] = {TypeUtils.OBJECT_TYPE, TypeUtils.OBJECT_TYPE};
+    String names[] = { "p", "pos" };
+    ObjectType types[] = { TypeUtils.OBJECT_TYPE, TypeUtils.OBJECT_TYPE };
     StructTypeImpl sType = new StructTypeImpl(names, types);
     StructSet set1 = new StructSet(sType);
     Portfolio ptf = new Portfolio(0);
     Iterator pIter = ptf.positions.values().iterator();
-    while(pIter.hasNext()){
-      Object arr[] = {ptf, pIter.next()};
+    while (pIter.hasNext()) {
+      Object arr[] = { ptf, pIter.next() };
       set1.addFieldValues(arr);
     }
-    
+
     StructSet set2 = new StructSet(sType);
     pIter = ptf.positions.values().iterator();
-    while(pIter.hasNext()){
-      Object arr[] = {ptf, pIter.next()};
+    while (pIter.hasNext()) {
+      Object arr[] = { ptf, pIter.next() };
       set2.addFieldValues(arr);
     }
-    
+
     assertEquals(2, set1.size());
     assertEquals(2, set2.size());
     // tests that retainAll does not modify set1
@@ -67,5 +67,5 @@ public class StructSetJUnitTest {
     assertEquals(2, set2.size());
     SelectResults sr = QueryUtils.intersection(set1, set2, null);
     assertEquals(2, sr.size());
-  }  
+  }
 }

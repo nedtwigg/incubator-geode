@@ -24,12 +24,12 @@ public class TestException extends Error {
     super(message, cause);
   }
 
-public TestException(String name) {
-   super(name);
-}
+  public TestException(String name) {
+    super(name);
+  }
 
-public TestException(StringBuffer name) {
-   super(name.toString());
-}
+  public TestException(StringBuffer name) {
+    super(name.toString());
+  }
 
 }

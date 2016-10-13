@@ -153,7 +153,6 @@ public interface GatewaySenderMXBean {
    */
   public int getTotalEventsConflated();
 
-
   /**
    * Returns the average number of batches sent per second.
    */
@@ -180,7 +179,7 @@ public interface GatewaySenderMXBean {
   /**
    * Stops this GatewaySender.
    */
-  @ResourceOperation(resource=Resource.DATA, operation=Operation.MANAGE)
+  @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   public void stop();
 
   /**
@@ -200,27 +199,27 @@ public interface GatewaySenderMXBean {
    */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   public void rebalance();
-  
+
   /**
    * Returns whether this GatewaySender is primary or secondary.
    * 
    * @return True if this is the primary, false otherwise.
    */
   public boolean isPrimary();
-  
+
   /**
    * Returns the number of dispatcher threads working for this <code>GatewaySender</code>.
    */
   public int getDispatcherThreads();
-  
+
   /**
    * Returns the order policy followed while dispatching the events to remote
    * distributed system. Order policy is only relevant when the number of dispatcher
    * threads is greater than one.
    */
-  
+
   public String getOrderPolicy();
- 
+
   /**
    * Returns whether the isDiskSynchronous property is set for this GatewaySender.
    * 
@@ -240,18 +239,16 @@ public interface GatewaySenderMXBean {
    * gateway sender is connected.
    */
   public String getGatewayReceiver();
-  
+
   /**
    * Returns whether this GatewaySender is connected and sending data to a
    * GatewayReceiver.
    */
   public boolean isConnected();
-  
+
   /**
    * Returns number of events which have exceeded the configured alert threshold.
    */
   public int getEventsExceedingAlertThreshold();
-
-  
 
 }

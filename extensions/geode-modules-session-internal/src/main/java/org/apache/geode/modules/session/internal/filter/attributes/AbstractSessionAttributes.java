@@ -39,14 +39,12 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractSessionAttributes implements SessionAttributes {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(AbstractSessionAttributes.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractSessionAttributes.class.getName());
 
   /**
    * Internal attribute store.
    */
-  protected Map<String, Object> attributes =
-      Collections.synchronizedMap(new HashMap<String, Object>());
+  protected Map<String, Object> attributes = Collections.synchronizedMap(new HashMap<String, Object>());
 
   /**
    * The session to which these attributes belong
@@ -92,9 +90,7 @@ public abstract class AbstractSessionAttributes implements SessionAttributes {
         value = BlobHelper.deserializeBlob((byte[]) value);
         attributes.put(name, value);
       } catch (Exception iox) {
-        LOG.error("Attribute '" + name +
-            " contains a byte[] that cannot be deserialized due "
-            + "to the following exception", iox);
+        LOG.error("Attribute '" + name + " contains a byte[] that cannot be deserialized due " + "to the following exception", iox);
       }
     }
 
@@ -154,8 +150,7 @@ public abstract class AbstractSessionAttributes implements SessionAttributes {
     synchronized (attributes) {
       out.writeInt(attributes.size());
       for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-        DeltaEvent delta = new DeltaEvent(true, entry.getKey(),
-            entry.getValue());
+        DeltaEvent delta = new DeltaEvent(true, entry.getKey(), entry.getValue());
         DataSerializer.writeObject(delta, out);
       }
     }
@@ -164,8 +159,7 @@ public abstract class AbstractSessionAttributes implements SessionAttributes {
   }
 
   @Override
-  public void fromData(
-      DataInput in) throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     maxInactiveInterval = in.readInt();
     lastAccessedTime = in.readLong();
     int size = in.readInt();

@@ -70,9 +70,9 @@ public class DeleteCommand extends AbstractCommand {
   private ByteBuffer processBinaryCommand(RequestReader request, Cache cache) {
     ByteBuffer buffer = request.getRequest();
     ByteBuffer response = request.getResponse();
-    
+
     KeyWrapper key = getKey(buffer, HEADER_LENGTH);
-    
+
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     try {
       r.destroy(key);
@@ -86,11 +86,11 @@ public class DeleteCommand extends AbstractCommand {
       response = handleBinaryException(key, request, response, "delete", e);
     }
     if (getLogger().fineEnabled()) {
-      getLogger().fine("delete:key:"+key);
+      getLogger().fine("delete:key:" + key);
     }
     return response;
   }
-  
+
   /**
    * Overridden by Q command
    */

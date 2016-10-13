@@ -30,28 +30,26 @@ public class MakePrimaryOp {
    * @param conn the connection to do the execution on
    * @param sentClientReady true if the client ready message has already been sent
    */
-  public static void execute(ExecutablePool pool, Connection conn, boolean sentClientReady)
-  {
+  public static void execute(ExecutablePool pool, Connection conn, boolean sentClientReady) {
     AbstractOp op = new MakePrimaryOpImpl(sentClientReady);
     pool.executeOn(conn, op);
   }
-                                                               
+
   private MakePrimaryOp() {
     // no instances allowed
   }
-  
+
   private static class MakePrimaryOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
     public MakePrimaryOpImpl(boolean sentClientReady) {
       super(MessageType.MAKE_PRIMARY, 1);
-      getMessage().addBytesPart(new byte[] {(byte)(sentClientReady?0x01:0x00)});
+      getMessage().addBytesPart(new byte[] { (byte) (sentClientReady ? 0x01 : 0x00) });
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override
@@ -70,18 +68,22 @@ public class MakePrimaryOp {
       processAck(msg, "makePrimary");
       return null;
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startMakePrimary();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endMakePrimarySend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endMakePrimary(start, hasTimedOut(), hasFailed());

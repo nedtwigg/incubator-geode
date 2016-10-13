@@ -15,28 +15,30 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis.decode.cp;
+
 import java.io.*;
 
 import org.apache.geode.codeAnalysis.decode.CompiledClass;
 
-
 public class CpClass extends Cp {
-    int name_index;
-    private String name;
+  int name_index;
+  private String name;
 
-    CpClass( DataInputStream source ) throws IOException {
-        name_index = source.readUnsignedShort();
-    }
-    /**
-     * find and form the class name - remembering that '[' chars may come before
-     * the class name to denote arrays of the given class.  Max of 255 array specs
-     */
-    public String className(CompiledClass info) {
-        if (name == null)
-            name = decodeNameRef(info);
-        return name;
-    }
-    private String decodeNameRef(CompiledClass info) {
-        return ((CpUtf8)info.constant_pool[name_index]).stringValue();
-    }
+  CpClass(DataInputStream source) throws IOException {
+    name_index = source.readUnsignedShort();
+  }
+
+  /**
+   * find and form the class name - remembering that '[' chars may come before
+   * the class name to denote arrays of the given class.  Max of 255 array specs
+   */
+  public String className(CompiledClass info) {
+    if (name == null)
+      name = decodeNameRef(info);
+    return name;
+  }
+
+  private String decodeNameRef(CompiledClass info) {
+    return ((CpUtf8) info.constant_pool[name_index]).stringValue();
+  }
 }

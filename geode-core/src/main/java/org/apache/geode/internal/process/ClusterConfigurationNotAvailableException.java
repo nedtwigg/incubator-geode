@@ -23,7 +23,7 @@ package org.apache.geode.internal.process;
  */
 public final class ClusterConfigurationNotAvailableException extends RuntimeException {
   private static final long serialVersionUID = -3448160213553925462L;
-  
+
   public ClusterConfigurationNotAvailableException(String message) {
     super(message);
   }

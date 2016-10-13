@@ -36,7 +36,6 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.security.AuthorizeRequest;
 import org.apache.geode.security.NotAuthorizedException;
 
-
 public class UnregisterInterestList extends BaseCommand {
 
   private final static UnregisterInterestList singleton = new UnregisterInterestList();
@@ -49,8 +48,7 @@ public class UnregisterInterestList extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-    throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     Part regionNamePart = null, keyPart = null, numberOfKeysPart = null;
     String regionName = null;
     Object key = null;
@@ -96,8 +94,7 @@ public class UnregisterInterestList extends BaseCommand {
       keys.add(key);
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received unregister interest request ({} bytes) from {} for the following {} keys in region {}: {}", servConn
-        .getName(), msg.getPayloadLength(), servConn.getSocketString(), numberOfKeys, regionName, keys);
+      logger.debug("{}: Received unregister interest request ({} bytes) from {} for the following {} keys in region {}: {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), numberOfKeys, regionName, keys);
     }
 
     // Process the unregister interest request
@@ -124,7 +121,6 @@ public class UnregisterInterestList extends BaseCommand {
       servConn.setAsTrue(RESPONDED);
       return;
     }
-  
 
     AuthorizeRequest authzRequest = servConn.getAuthzRequest();
     if (authzRequest != null) {
@@ -140,22 +136,20 @@ public class UnregisterInterestList extends BaseCommand {
       }
     }
     // Yogesh : bug fix for 36457 :
-      /*
-       * Region destroy message from server to client results in client calling
-       * unregister to server (an unnecessary callback). The unregister
-       * encounters an error because the region has been destroyed on the server
-       * and hence falsely marks the server dead.
-       */
-      /*
-       * Region region = crHelper.getRegion(regionName); if (region == null) {
-       * logger.warning(this.name + ": Region named " + regionName + " was not
-       * found during register interest list request"); writeErrorResponse(msg,
-       * MessageType.UNREGISTER_INTEREST_DATA_ERROR); responded = true; } else {
-       */
+    /*
+     * Region destroy message from server to client results in client calling
+     * unregister to server (an unnecessary callback). The unregister
+     * encounters an error because the region has been destroyed on the server
+     * and hence falsely marks the server dead.
+     */
+    /*
+     * Region region = crHelper.getRegion(regionName); if (region == null) {
+     * logger.warning(this.name + ": Region named " + regionName + " was not
+     * found during register interest list request"); writeErrorResponse(msg,
+     * MessageType.UNREGISTER_INTEREST_DATA_ERROR); responded = true; } else {
+     */
     // Register interest
-    servConn.getAcceptor()
-            .getCacheClientNotifier()
-            .unregisterClientInterest(regionName, keys, isClosingList, servConn.getProxyID(), keepalive);
+    servConn.getAcceptor().getCacheClientNotifier().unregisterClientInterest(regionName, keys, isClosingList, servConn.getProxyID(), keepalive);
 
     // Update the statistics and write the reply
     // bserverStats.incLong(processDestroyTimeId,

@@ -28,16 +28,12 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since GemFire 6.0
  */
 public class AtomicLongWithTerminalState extends AtomicLong {
-  
+
   private static final long serialVersionUID = -6130409343386576390L;
-  
-  
 
   public AtomicLongWithTerminalState() {
     super();
   }
-
-
 
   public AtomicLongWithTerminalState(long initialValue) {
     super(initialValue);
@@ -52,12 +48,12 @@ public class AtomicLongWithTerminalState extends AtomicLong {
    * is already set to the terminal state.
    */
   public long compareAddAndGet(long terminalState, long delta) {
-    while(true) {
+    while (true) {
       long current = get();
-      if(current == terminalState) {
+      if (current == terminalState) {
         return terminalState;
       }
-      long newValue = current +delta;
+      long newValue = current + delta;
       if (compareAndSet(current, newValue)) {
         return newValue;
       }

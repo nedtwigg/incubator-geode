@@ -82,13 +82,13 @@ public class ReentrantSemaphoreJUnitTest {
           sem.release();
           sem.release();
           sem.release();
-        } catch(Exception e) {
+        } catch (Exception e) {
           failure.compareAndSet(null, e);
         }
       }
     };
     t1.start();
-    
+
     Thread t2 = new Thread() {
       public void run() {
         try {
@@ -100,26 +100,26 @@ public class ReentrantSemaphoreJUnitTest {
           sem.release();
           sem.release();
           sem.release();
-        } catch(Exception e) {
+        } catch (Exception e) {
           failure.compareAndSet(null, e);
         }
       }
     };
     t2.start();
-    
+
     Thread t3 = new Thread() {
       public void run() {
         try {
           assertTrue(acquired.await(OPERATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
           assertEquals(0, sem.availablePermits());
           assertFalse(sem.tryAcquire(1, TimeUnit.SECONDS));
-        } catch(Exception e) {
+        } catch (Exception e) {
           failure.compareAndSet(null, e);
         }
       }
     };
     t3.start();
-    
+
     t3.join(OPERATION_TIMEOUT_MILLIS);
     assertFalse(t3.isAlive());
 
@@ -134,7 +134,7 @@ public class ReentrantSemaphoreJUnitTest {
     if (failure.get() != null) {
       throw new AssertionError(failure.get());
     }
-    
+
     assertEquals(2, sem.availablePermits());
   }
 

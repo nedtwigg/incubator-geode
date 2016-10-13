@@ -56,18 +56,11 @@ public class WANBootStrapping_Site1_Add {
 
   public static void main(String[] args) {
 
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener",
-        "com.main.MyDistributedSystemListener");
+    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener", "com.main.MyDistributedSystemListener");
 
     // Create a locator and a cache
     System.out.println("Creating cache ...It will take some time..");
-    Cache cache = new CacheFactory().set(MCAST_PORT,
-        "0").set(DISTRIBUTED_SYSTEM_ID, "" + 1).set(
-        LOCATORS, "localhost[" + 10101 + "]").set(
-        START_LOCATOR,
-        "localhost[" + 10101
-            + "],server=true,peer=true,hostname-for-clients=localhost").set(
-        LOG_LEVEL, "warning").create();
+    Cache cache = new CacheFactory().set(MCAST_PORT, "0").set(DISTRIBUTED_SYSTEM_ID, "" + 1).set(LOCATORS, "localhost[" + 10101 + "]").set(START_LOCATOR, "localhost[" + 10101 + "],server=true,peer=true,hostname-for-clients=localhost").set(LOG_LEVEL, "warning").create();
     System.out.println("Cache Created");
 
     // to create region and a gateway sender ask to run
@@ -80,8 +73,7 @@ public class WANBootStrapping_Site1_Add {
       region = cache.getRegion("MyRegion");
       try {
         Thread.sleep(5000);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         e.printStackTrace();
       }
     }
@@ -104,17 +96,15 @@ public class WANBootStrapping_Site1_Add {
 
     // to stop gateway sender ask to run WANBootStrapping_Site2_Remove program
     while (sender.isRunning()) {
-      System.out
-          .println("Waitng for sender to stop through DistributedSystemListener");
+      System.out.println("Waitng for sender to stop through DistributedSystemListener");
       System.out.println("Start WANBootStrapping_Site2_Remove");
       try {
         Thread.sleep(5000);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         e.printStackTrace();
       }
     }
-    
+
     System.out.println("Sender " + sender.getId() + " is stopped");
 
     System.exit(0);

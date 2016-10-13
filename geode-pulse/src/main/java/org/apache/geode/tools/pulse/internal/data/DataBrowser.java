@@ -46,11 +46,9 @@ import java.util.Scanner;
 public class DataBrowser {
 
   private final PulseLogWriter LOGGER = PulseLogWriter.getLogger();
-  private final ResourceBundle resourceBundle = Repository.get()
-      .getResourceBundle();
+  private final ResourceBundle resourceBundle = Repository.get().getResourceBundle();
 
-  private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-      PulseConstants.PULSE_QUERY_HISTORY_DATE_PATTERN);
+  private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PulseConstants.PULSE_QUERY_HISTORY_DATE_PATTERN);
 
   private final ObjectMapper mapper = new ObjectMapper();
 
@@ -64,8 +62,7 @@ public class DataBrowser {
    */
   public boolean addQueryInHistory(String queryText, String userId) {
     boolean operationStatus = false;
-    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryText)
-        && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
+    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryText) && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
 
       // Fetch all queries from query log file
       ObjectNode queries = fetchAllQueriesFromFile();
@@ -99,8 +96,7 @@ public class DataBrowser {
   public boolean deleteQueryById(String userId, String queryId) {
 
     boolean operationStatus = false;
-    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryId)
-        && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
+    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryId) && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
 
       // Fetch all queries from query log file
       ObjectNode queries = fetchAllQueriesFromFile();
@@ -117,7 +113,7 @@ public class DataBrowser {
         operationStatus = storeQueriesInFile(queries);
       }
     }
-    
+
     return operationStatus;
   }
 
@@ -136,7 +132,7 @@ public class DataBrowser {
 
       // Fetch all queries from query log file
       ObjectNode queries = fetchAllQueriesFromFile();
-      
+
       // Get user's query history list
       ObjectNode userQueries = (ObjectNode) queries.get(userId);
 
@@ -171,9 +167,7 @@ public class DataBrowser {
       queriesJSON = mapper.readTree(inputStreamString);
     } catch (FileNotFoundException e) {
       if (LOGGER.fineEnabled()) {
-        LOGGER.fine(resourceBundle
-            .getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND")
-            + " : " + e.getMessage());
+        LOGGER.fine(resourceBundle.getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND") + " : " + e.getMessage());
       }
     } catch (Exception e) {
       if (LOGGER.infoEnabled()) {
@@ -223,9 +217,7 @@ public class DataBrowser {
     } catch (FileNotFoundException e) {
 
       if (LOGGER.fineEnabled()) {
-        LOGGER.fine(resourceBundle
-            .getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND")
-            + " : " + e.getMessage());
+        LOGGER.fine(resourceBundle.getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND") + " : " + e.getMessage());
       }
     } catch (IOException e) {
       if (LOGGER.infoEnabled()) {

@@ -63,7 +63,7 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
   public void postSetUp() throws Exception {
     disconnectAllFromDS();
   }
-  
+
   /**
    * ensure that waitForMemberDeparture correctly flushes the serial message queue for
    * the given member
@@ -76,18 +76,18 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     p.put(LOCATORS, "");
     p.put(START_LOCATOR, "localhost[" + locatorPort + "]");
     p.put(DISABLE_TCP, "true");
-    InternalDistributedSystem ds = (InternalDistributedSystem)DistributedSystem.connect(p);
+    InternalDistributedSystem ds = (InternalDistributedSystem) DistributedSystem.connect(p);
     try {
       // construct a member ID that will represent a departed member
-      InternalDistributedMember mbr = new InternalDistributedMember("localhost", 12345, "", "",
-          DistributionManager.NORMAL_DM_TYPE, null, null);
-      final DistributionManager mgr = (DistributionManager)ds.getDistributionManager();
+      InternalDistributedMember mbr = new InternalDistributedMember("localhost", 12345, "", "", DistributionManager.NORMAL_DM_TYPE, null, null);
+      final DistributionManager mgr = (DistributionManager) ds.getDistributionManager();
       // schedule a message in order to create a queue for the fake member
       final FakeMessage msg = new FakeMessage(null);
       mgr.getExecutor(DistributionManager.SERIAL_EXECUTOR, mbr).execute(new SizeableRunnable(100) {
         public void run() {
           msg.doAction(mgr, false);
         }
+
         public String toString() {
           return "Processing fake message";
         }
@@ -107,33 +107,38 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
   private static class FakeMessage extends SerialDistributionMessage {
     volatile boolean[] blocked;
     volatile boolean processed;
-    
+
     FakeMessage(boolean[] blocked) {
       this.blocked = blocked;
     }
+
     public void doAction(DistributionManager dm, boolean block) {
       processed = true;
       if (block) {
-        synchronized(blocked) {
+        synchronized (blocked) {
           blocked[0] = true;
           blocked.notify();
           try {
             blocked.wait(60000);
-          } catch (InterruptedException e) {}
+          } catch (InterruptedException e) {
+          }
         }
       }
     }
+
     public int getDSFID() {
       return 0; // never serialized
     }
+
     protected void process(DistributionManager dm) {
       // this is never called
     }
+
     public String toString() {
-      return "FakeMessage(blocking="+(blocked!=null)+")";
+      return "FakeMessage(blocking=" + (blocked != null) + ")";
     }
   }
-  
+
   /**
    * Tests that we can get a DistributedSystem with the same
    * configuration twice.
@@ -145,7 +150,7 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     config.setProperty(LOCATORS, "");
     // set a flow-control property for the test (bug 37562)
     config.setProperty(MCAST_FLOW_CONTROL, "3000000,0.20,3000");
-    
+
     DistributedSystem system1 = DistributedSystem.connect(config);
     DistributedSystem system2 = DistributedSystem.connect(config);
     assertSame(system1, system2);
@@ -164,7 +169,6 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     config.setProperty(LOCATORS, "");
     config.setProperty(MCAST_FLOW_CONTROL, "3000000,0.20,3000");
 
-
     DistributedSystem system1 = DistributedSystem.connect(config);
     config.setProperty(MCAST_ADDRESS, "224.0.0.1");
     try {
@@ -172,11 +176,9 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
       if (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "mcast-address") == null) {
         fail("Should have thrown an IllegalStateException");
       }
-    }
-    catch (IllegalStateException ex) {
+    } catch (IllegalStateException ex) {
       // pass...
-    }
-    finally {
+    } finally {
       system1.disconnect();
     }
   }
@@ -194,12 +196,10 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     DistributedSystem system1 = DistributedSystem.connect(config);
     system1.disconnect();
     int time = DistributionConfig.DEFAULT_ACK_WAIT_THRESHOLD + 17;
-    config.put(ACK_WAIT_THRESHOLD,
-               String.valueOf(time));
+    config.put(ACK_WAIT_THRESHOLD, String.valueOf(time));
     DistributedSystem system2 = DistributedSystem.connect(config);
     system2.disconnect();
   }
-
 
   @Test
   public void testGetProperties() {
@@ -210,16 +210,15 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     config.setProperty(LOCATORS, "");
 
     DistributedSystem system1 = DistributedSystem.connect(config);
-    
+
     assertTrue(config != system1.getProperties());
     assertEquals(unusedPort, Integer.parseInt(system1.getProperties().getProperty(MCAST_PORT)));
-    
+
     system1.disconnect();
-    
+
     assertTrue(config != system1.getProperties());
     assertEquals(unusedPort, Integer.parseInt(system1.getProperties().getProperty(MCAST_PORT)));
   }
-
 
   @Test
   public void testIsolatedDistributedSystem() throws Exception {
@@ -238,7 +237,6 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-
   /** test the ability to set the port used to listen for tcp/ip connections */
   @Test
   public void testSpecificTcpPort() throws Exception {
@@ -247,8 +245,8 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     config.put(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
     config.setProperty(TCP_PORT, String.valueOf(tcpPort));
     InternalDistributedSystem system = getSystem(config);
-    DistributionManager dm = (DistributionManager)system.getDistributionManager();
-    GMSMembershipManager mgr = (GMSMembershipManager)dm.getMembershipManager();
+    DistributionManager dm = (DistributionManager) system.getDistributionManager();
+    GMSMembershipManager mgr = (GMSMembershipManager) dm.getMembershipManager();
     int actualPort = mgr.getDirectChannelPort();
     system.disconnect();
     assertEquals(tcpPort, actualPort);
@@ -257,13 +255,13 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
   /** test that loopback cannot be used as a bind address when a locator w/o a bind address is being used */
   @Test
   public void testLoopbackNotAllowed() throws Exception {
-	  // DISABLED for bug #49926
+    // DISABLED for bug #49926
     InetAddress loopback = null;
-    for (Enumeration<NetworkInterface> it = NetworkInterface.getNetworkInterfaces(); it.hasMoreElements(); ) {
+    for (Enumeration<NetworkInterface> it = NetworkInterface.getNetworkInterfaces(); it.hasMoreElements();) {
       NetworkInterface nif = it.nextElement();
-      for (Enumeration<InetAddress> ait = nif.getInetAddresses(); ait.hasMoreElements(); ) {
+      for (Enumeration<InetAddress> ait = nif.getInetAddresses(); ait.hasMoreElements();) {
         InetAddress a = ait.nextElement();
-        Class theClass = SocketCreator.getLocalHost() instanceof Inet4Address? Inet4Address.class : Inet6Address.class;
+        Class theClass = SocketCreator.getLocalHost() instanceof Inet4Address ? Inet4Address.class : Inet6Address.class;
         if (a.isLoopbackAddress() && (a.getClass().isAssignableFrom(theClass))) {
           loopback = a;
           break;
@@ -273,10 +271,10 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     if (loopback != null) {
       Properties config = new Properties();
       config.put(MCAST_PORT, "0");
-      String locators = InetAddress.getLocalHost().getHostName()+"["+DistributedTestUtils.getDUnitLocatorPort()+"]";
+      String locators = InetAddress.getLocalHost().getHostName() + "[" + DistributedTestUtils.getDUnitLocatorPort() + "]";
       config.put(LOCATORS, locators);
       config.setProperty(BIND_ADDRESS, loopback.getHostAddress());
-      LogWriterUtils.getLogWriter().info("attempting to connect with " + loopback +" and locators=" + locators);
+      LogWriterUtils.getLogWriter().info("attempting to connect with " + loopback + " and locators=" + locators);
       try {
         InternalDistributedSystem system = getSystem(config);
         system.disconnect();
@@ -295,16 +293,15 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     int unicastPort = AvailablePort.getRandomAvailablePort(SOCKET, AvailablePort.getAddress(SOCKET), true);
     config.put(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
     // Minimum 3 ports required in range for UDP, FD_SOCK and TcpConduit.
-    config.setProperty(MEMBERSHIP_PORT_RANGE,
-        ""+unicastPort+"-"+(unicastPort+2));
+    config.setProperty(MEMBERSHIP_PORT_RANGE, "" + unicastPort + "-" + (unicastPort + 2));
     InternalDistributedSystem system = getSystem(config);
-    DistributionManager dm = (DistributionManager)system.getDistributionManager();
+    DistributionManager dm = (DistributionManager) system.getDistributionManager();
     InternalDistributedMember idm = dm.getDistributionManagerId();
     system.disconnect();
-    assertTrue(unicastPort <= idm.getPort() && idm.getPort() <= unicastPort+2);
-    assertTrue(unicastPort <= idm.getPort() && idm.getDirectChannelPort() <= unicastPort+2);
+    assertTrue(unicastPort <= idm.getPort() && idm.getPort() <= unicastPort + 2);
+    assertTrue(unicastPort <= idm.getPort() && idm.getDirectChannelPort() <= unicastPort + 2);
   }
-  
+
   /***
    * this will return starting port, from it "range" of port will available
    * @param range
@@ -346,8 +343,8 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     cache.addCacheServer();
     DistributionManager dm = (DistributionManager) system.getDistributionManager();
     InternalDistributedMember idm = dm.getDistributionManagerId();
-    GMSMembershipManager manager = (GMSMembershipManager)MembershipManagerHelper.getMembershipManager(system);
-    JGroupsMessenger messenger = (JGroupsMessenger)manager.getServices().getMessenger();
+    GMSMembershipManager manager = (GMSMembershipManager) MembershipManagerHelper.getMembershipManager(system);
+    JGroupsMessenger messenger = (JGroupsMessenger) manager.getServices().getMessenger();
     String jgConfig = messenger.getJGroupsStackConfig();
     system.disconnect();
     assertTrue("expected to find port_range=\"2\" in " + jgConfig, jgConfig.contains("port_range=\"2\""));
@@ -366,11 +363,10 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
     final int unicastPort = getPortRange(3);
     config.setProperty(MCAST_PORT, String.valueOf(mcastPort));
     config.setProperty(START_LOCATOR, "localhost[" + socketPorts[0] + "]");
-    config.setProperty(MEMBERSHIP_PORT_RANGE,
-        ""+unicastPort+"-"+(unicastPort+2));
-    InternalDistributedSystem system = (InternalDistributedSystem)DistributedSystem.connect(config);
+    config.setProperty(MEMBERSHIP_PORT_RANGE, "" + unicastPort + "-" + (unicastPort + 2));
+    InternalDistributedSystem system = (InternalDistributedSystem) DistributedSystem.connect(config);
     try {
-      DistributionManager dm = (DistributionManager)system.getDistributionManager();
+      DistributionManager dm = (DistributionManager) system.getDistributionManager();
       InternalDistributedMember idm = dm.getDistributionManagerId();
       VM vm = Host.getHost(0).getVM(1);
       vm.invoke(new CacheSerializableRunnable("start conflicting system") {
@@ -382,8 +378,7 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
             system.disconnect();
           } catch (GemFireConfigException e) {
             return; // 
-          }
-          catch (RMIException e) {
+          } catch (RMIException e) {
             if (e.getCause() instanceof SystemConnectException) {
               //GEODE-1198: for this test, the membership-port-range has only 3 ports available.
               //If in some rare cases, one of the ports is used by others, it will get this 
@@ -418,8 +413,7 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
       try {
         CacheFactory.getInstance(sys);
         fail("Should have thrown a CancelException");
-      } 
-      catch (CancelException expected) {
+      } catch (CancelException expected) {
       }
       // now make sure we can create the cache
       CacheFactory.create(sys);
@@ -428,7 +422,5 @@ public class DistributedSystemDUnitTest extends JUnit4DistributedTestCase {
       sys.disconnect();
     }
   }
-  
 
-  
 }

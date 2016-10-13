@@ -24,8 +24,7 @@ package org.apache.geode.admin;
  * @since GemFire 3.5
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  * */
-public interface GemFireHealthConfig
-  extends MemberHealthConfig, CacheHealthConfig {
+public interface GemFireHealthConfig extends MemberHealthConfig, CacheHealthConfig {
 
   /** The default number of seconds between assessments of the health
    * of the GemFire components. */

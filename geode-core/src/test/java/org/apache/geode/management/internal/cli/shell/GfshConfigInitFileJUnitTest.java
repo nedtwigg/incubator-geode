@@ -84,17 +84,14 @@ public class GfshConfigInitFileJUnitTest {
     temporaryFolder_CurrentDirectory.newFile(INIT_FILE_NAME);
     System.setProperty(INIT_FILE_PROPERTY, temporaryFolder_AnotherDirectory.newFile(INIT_FILE_NAME).getAbsolutePath());
 
-    String argument = temporaryFolder_AnotherDirectory.newFile("junit")
-        .getAbsolutePath();
+    String argument = temporaryFolder_AnotherDirectory.newFile("junit").getAbsolutePath();
 
     /*
      * String historyFileName, String defaultPrompt, int historySize, String
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, argument);
+    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, argument);
 
     String result = gfshConfig.getInitFileName();
 
@@ -114,9 +111,7 @@ public class GfshConfigInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, null);
+    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, null);
 
     String result = gfshConfig.getInitFileName();
 
@@ -134,9 +129,7 @@ public class GfshConfigInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, null);
+    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, null);
 
     String result = gfshConfig.getInitFileName();
 
@@ -153,9 +146,7 @@ public class GfshConfigInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, null);
+    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, null);
 
     String result = gfshConfig.getInitFileName();
 
@@ -170,9 +161,7 @@ public class GfshConfigInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, null);
+    GfshConfig gfshConfig = new GfshConfig("historyFileName", "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, null);
 
     String result = gfshConfig.getInitFileName();
 

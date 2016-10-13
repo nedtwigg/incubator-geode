@@ -80,7 +80,6 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-
     vm2.invoke(new SerializableRunnable() {
       public void run() {
         final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
@@ -174,9 +173,7 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-    String command = "execute function --id=" + function.getId() + " --region=" + REGION_NAME +
-        " --arguments=arg1,arg2" +
-        " --result-collector=" + ToUpperResultCollector.class.getName();
+    String command = "execute function --id=" + function.getId() + " --region=" + REGION_NAME + " --arguments=arg1,arg2" + " --result-collector=" + ToUpperResultCollector.class.getName();
     getLogWriter().info("testExecuteFunctionOnRegion command=" + command);
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
@@ -232,8 +229,7 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
         }
       };
       waitForCriterion(waitForMaangerMBean, 2 * 60 * 1000, 2000, true);
-      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean(
-          Region.SEPARATOR + REGION_ONE);
+      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean(Region.SEPARATOR + REGION_ONE);
       assertNotNull(bean);
     }
   };
@@ -310,7 +306,6 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     FunctionService.registerFunction(function);
     final VM vm1 = Host.getHost(0).getVM(1);
 
-
     Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
       public void run() {
         RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
@@ -342,7 +337,6 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     setUpJmxManagerOnVm0ThenConnect(localProps);
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
     FunctionService.registerFunction(function);
-
 
     Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
       public void run() {
@@ -379,7 +373,6 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
     FunctionService.registerFunction(function);
 
-
     Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
       public void run() {
         RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
@@ -390,8 +383,7 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-    String command = "execute function --id=" + function.getId() + " --arguments=\"arg1,arg2\"" +
-        " --result-collector=" + ToUpperResultCollector.class.getName();
+    String command = "execute function --id=" + function.getId() + " --arguments=\"arg1,arg2\"" + " --result-collector=" + ToUpperResultCollector.class.getName();
 
     getLogWriter().info("testExecuteFunctionOnMembersWithArgs command=" + command);
     CommandResult cmdResult = executeCommand(command);
@@ -512,7 +504,6 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-
     String vm2id = (String) vm2.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -546,9 +537,7 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
       fail("testDestroyOnGroups exception=" + e);
     }
     assertNotNull(content);
-    assertTrue(content.equals(
-        "[\"Destroyed " + TestFunction.TEST_FUNCTION1 + " Successfully on " + vm1id + "," + vm2id + "\"]") || content.equals(
-        "[\"Destroyed " + TestFunction.TEST_FUNCTION1 + " Successfully on " + vm2id + "," + vm1id + "\"]"));
+    assertTrue(content.equals("[\"Destroyed " + TestFunction.TEST_FUNCTION1 + " Successfully on " + vm1id + "," + vm2id + "\"]") || content.equals("[\"Destroyed " + TestFunction.TEST_FUNCTION1 + " Successfully on " + vm2id + "," + vm1id + "\"]"));
   }
 
   @Test

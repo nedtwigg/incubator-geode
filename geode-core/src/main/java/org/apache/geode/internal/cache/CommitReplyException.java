@@ -25,11 +25,11 @@ import java.util.*;
  * @since GemFire 5.0
  */
 public class CommitReplyException extends ReplyException {
-private static final long serialVersionUID = -7711083075296622596L;
-  
+  private static final long serialVersionUID = -7711083075296622596L;
+
   /** Exceptions generated when attempting to process a commit operation */
   private final Set exceptions;
-  
+
   /** 
    * Constructs a <code>CommitReplyException</code> with a message.
    *
@@ -39,7 +39,7 @@ private static final long serialVersionUID = -7711083075296622596L;
     super(s);
     this.exceptions = Collections.EMPTY_SET;
   }
-  
+
   /** 
    * Constructs a <code>CommitReplyException</code> with a message and
    * set of exceptions generated when attempting to process a commit operation.
@@ -52,7 +52,7 @@ private static final long serialVersionUID = -7711083075296622596L;
     super(s);
     this.exceptions = exceptions;
   }
-  
+
   /** 
    * Returns set of exceptions generated when attempting to process a 
    * commit operation
@@ -69,4 +69,3 @@ private static final long serialVersionUID = -7711083075296622596L;
     return super.toString() + " with exceptions: " + this.exceptions;
   }
 }
-

@@ -88,8 +88,7 @@ public class Invalidate extends BaseCommand {
       return;
     }
     if (logger.isDebugEnabled()) {
-      logger.debug(servConn.getName() + ": Received invalidate request (" + msg.getPayloadLength() + " bytes) from " + servConn
-        .getSocketString() + " for region " + regionName + " key " + key);
+      logger.debug(servConn.getName() + ": Received invalidate request (" + msg.getPayloadLength() + " bytes) from " + servConn.getSocketString() + " for region " + regionName + " key " + key);
     }
 
     // Process the invalidate request
@@ -155,9 +154,7 @@ public class Invalidate extends BaseCommand {
     } catch (EntryNotFoundException e) {
       // Don't send an exception back to the client if this
       // exception happens. Just log it and continue.
-      logger.info(LocalizedMessage.create(LocalizedStrings.BaseCommand_DURING_0_NO_ENTRY_WAS_FOUND_FOR_KEY_1, new Object[] {
-        "invalidate", key
-      }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.BaseCommand_DURING_0_NO_ENTRY_WAS_FOUND_FOR_KEY_1, new Object[] { "invalidate", key }));
     } catch (RegionDestroyedException rde) {
       writeException(msg, rde, false, servConn);
       servConn.setAsTrue(RESPONDED);
@@ -209,11 +206,7 @@ public class Invalidate extends BaseCommand {
     writeReply(origMsg, servConn);
   }
 
-  protected void writeReplyWithRefreshMetadata(Message origMsg,
-                                               ServerConnection servConn,
-                                               PartitionedRegion pr,
-                                               byte nwHop,
-                                               VersionTag tag) throws IOException {
+  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop, VersionTag tag) throws IOException {
     writeReplyWithRefreshMetadata(origMsg, servConn, pr, nwHop);
   }
 }

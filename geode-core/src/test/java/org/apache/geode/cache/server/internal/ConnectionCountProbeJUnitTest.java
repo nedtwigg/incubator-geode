@@ -26,7 +26,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class ConnectionCountProbeJUnitTest {
-  
+
   @Test
   public void test() {
     ConnectionCountProbe probe = new ConnectionCountProbe();
@@ -34,15 +34,15 @@ public class ConnectionCountProbeJUnitTest {
     ServerLoad load = probe.getLoad(metrics);
     assertEquals(0f, load.getConnectionLoad(), .0001f);
     assertEquals(0f, load.getSubscriptionConnectionLoad(), .0001f);
-    assertEquals(1/800f, load.getLoadPerConnection(), .0001f);
+    assertEquals(1 / 800f, load.getLoadPerConnection(), .0001f);
     assertEquals(1f, load.getLoadPerSubscriptionConnection(), .0001f);
 
-    for(int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; i++) {
       metrics.incConnectionCount();
     }
-    
+
     load = probe.getLoad(metrics);
     assertEquals(0.125, load.getConnectionLoad(), .0001f);
   }
-    
+
 }

@@ -24,7 +24,7 @@ package org.apache.geode.internal.offheap;
 public class SlabImpl implements Slab {
   private final long address;
   private final int size;
-  
+
   public SlabImpl(int size) {
     this(size, false);
   }
@@ -42,17 +42,17 @@ public class SlabImpl implements Slab {
     this.address = addr;
     this.size = size;
   }
-  
+
   @Override
   public int getSize() {
     return this.size;
   }
-  
+
   @Override
   public long getMemoryAddress() {
     return this.address;
   }
-  
+
   @Override
   public void free() {
     AddressableMemoryManager.free(this.address);

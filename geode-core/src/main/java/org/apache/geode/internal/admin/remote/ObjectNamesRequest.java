@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -53,9 +52,13 @@ public final class ObjectNamesRequest extends RegionAdminRequest implements Canc
   protected AdminResponse createResponse(DistributionManager dm) {
     CancellationRegistry.getInstance().registerMessage(this);
     resp = ObjectNamesResponse.create(dm, this.getSender());
-    if (cancelled) { return null; }
+    if (cancelled) {
+      return null;
+    }
     resp.buildNames(this.getRegion(dm.getSystem()));
-    if (cancelled) { return null; }
+    if (cancelled) {
+      return null;
+    }
     CancellationRegistry.getInstance().deregisterMessage(this);
     return resp;
   }
@@ -77,8 +80,7 @@ public final class ObjectNamesRequest extends RegionAdminRequest implements Canc
   }
 
   @Override
-  public void fromData(DataInput in)
-      throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 

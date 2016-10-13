@@ -46,32 +46,31 @@ public class MembershipAttributesData {
    * The action to take when missing required roles return to the system
    */
   private String resumptionAction;
-  
-	/**
-	 * This constructor is to be used by internal JMX framework only. User
-	 * should not try to create an instance of this class.
-	 * 
-	 * @param requiredRoles
-	 *            Array of required role names by this process for reliable
-	 *            access to the region
-	 * @param lossAction
-	 *            The configuration defining how this process behaves when there
-	 *            are missing required roles
-	 * @param resumptionAction
-	 *            The action to take when missing required roles return to the
-	 *            system
-	 */
-	@ConstructorProperties({ "requiredRoles", "lossAction", "resumptionAction"
 
-	})
-	public MembershipAttributesData(Set<String> requiredRoles,
-			String lossAction, String resumptionAction) {
-		this.requiredRoles = requiredRoles;
-		this.lossAction = lossAction;
-		this.resumptionAction = resumptionAction;
+  /**
+   * This constructor is to be used by internal JMX framework only. User
+   * should not try to create an instance of this class.
+   * 
+   * @param requiredRoles
+   *            Array of required role names by this process for reliable
+   *            access to the region
+   * @param lossAction
+   *            The configuration defining how this process behaves when there
+   *            are missing required roles
+   * @param resumptionAction
+   *            The action to take when missing required roles return to the
+   *            system
+   */
+  @ConstructorProperties({ "requiredRoles", "lossAction", "resumptionAction"
 
-	}
-  
+  })
+  public MembershipAttributesData(Set<String> requiredRoles, String lossAction, String resumptionAction) {
+    this.requiredRoles = requiredRoles;
+    this.lossAction = lossAction;
+    this.resumptionAction = resumptionAction;
+
+  }
+
   /**
    * Returns the set of {@linkplain Role}s that are required for the reliability
    * of this region.
@@ -101,11 +100,7 @@ public class MembershipAttributesData {
    */
   @Override
   public String toString() {
-    return "MembershipAttributesData [lossAction=" + lossAction
-        + ", requiredRoles=" + requiredRoles + ", resumptionAction="
-        + resumptionAction + "]";
+    return "MembershipAttributesData [lossAction=" + lossAction + ", requiredRoles=" + requiredRoles + ", resumptionAction=" + resumptionAction + "]";
   }
-
-
 
 }

@@ -29,9 +29,9 @@ package org.apache.geode.cache.query;
  * @since GemFire 4.0
  */
 
-public class IndexNameConflictException extends QueryException{
-private static final long serialVersionUID = 7047969935188485334L;
-  
+public class IndexNameConflictException extends QueryException {
+  private static final long serialVersionUID = 7047969935188485334L;
+
   /**
    * Constructs instance of IndexNameConflictException with error message
    * @param msg the error message
@@ -39,7 +39,7 @@ private static final long serialVersionUID = 7047969935188485334L;
   public IndexNameConflictException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs instance of IndexNameConflictException with error message and cause
    * @param msg the error message

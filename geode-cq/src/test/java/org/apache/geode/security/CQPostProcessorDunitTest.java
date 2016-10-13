@@ -40,18 +40,16 @@ import org.apache.geode.test.junit.categories.SecurityTest;
 @Category({ DistributedTest.class, SecurityTest.class })
 public class CQPostProcessorDunitTest extends AbstractSecureServerDUnitTest {
 
-  public CQPostProcessorDunitTest(){
+  public CQPostProcessorDunitTest() {
     this.postProcessor = SamplePostProcessor.class;
   }
 
   @Test
-  public void testPostProcess(){
+  public void testPostProcess() {
     String query = "select * from /AuthRegion";
-    client1.invoke(()-> {
+    client1.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
-
-
 
       Pool pool = PoolManager.find(region);
       QueryService qs = pool.getQueryService();
@@ -65,7 +63,6 @@ public class CQPostProcessorDunitTest extends AbstractSecureServerDUnitTest {
           assertEquals("super-user/AuthRegion/key6/value6", aCqEvent.getNewValue());
         }
       });
-
 
       CqAttributes cqa = factory.create();
 
@@ -81,7 +78,7 @@ public class CQPostProcessorDunitTest extends AbstractSecureServerDUnitTest {
       assertTrue(resultString.contains("key:key4,value:super-user/null/key4/value4"));
     });
 
-    client2.invoke(()-> {
+    client2.invoke(() -> {
       ClientCache cache = createClientCache("authRegionUser", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
       region.put("key6", "value6");

@@ -41,19 +41,19 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
 public class NetstatFunction implements Function, InternalEntity {
   private static final long serialVersionUID = 1L;
 
-  private static final String OS_NAME_LINUX   = "Linux";
-  private static final String OS_NAME_MACOS   = "darwin";
+  private static final String OS_NAME_LINUX = "Linux";
+  private static final String OS_NAME_MACOS = "darwin";
   private static final String OS_NAME_SOLARIS = "SunOS";
-  private static final String OS_NAME_PROP    = "os.name";
-  private static final String OS_ARCH_PROP    = "os.arch";
+  private static final String OS_NAME_PROP = "os.name";
+  private static final String OS_ARCH_PROP = "os.arch";
   private static final String OS_VERSION_PROP = "os.version";
-  
+
   public static final NetstatFunction INSTANCE = new NetstatFunction();
-  
+
   private static final String ID = NetstatFunction.class.getName();
 
   private static final String NETSTAT_COMMAND = "netstat";
-  private static final String LSOF_COMMAND    = "lsof";
+  private static final String LSOF_COMMAND = "lsof";
 
   @Override
   public boolean hasResult() {
@@ -66,7 +66,7 @@ public class NetstatFunction implements Function, InternalEntity {
     if (ds.isConnected()) {
       InternalDistributedMember distributedMember = ds.getDistributedMember();
       String host = distributedMember.getHost();
-      NetstatFunctionArgument args = (NetstatFunctionArgument)context.getArguments();
+      NetstatFunctionArgument args = (NetstatFunctionArgument) context.getArguments();
       boolean withlsof = args.isWithlsof();
       String lineSeparator = args.getLineSeparator();
       String netstatOutput = executeCommand(lineSeparator, withlsof);
@@ -80,8 +80,8 @@ public class NetstatFunction implements Function, InternalEntity {
 
   private static void addMemberHostHeader(final StringBuilder netstatInfo, final String id, final String host, final String lineSeparator) {
     StringBuilder memberPlatFormInfo = new StringBuilder();
-    String osInfo = System.getProperty(OS_NAME_PROP) +" " + System.getProperty(OS_VERSION_PROP) + " " + System.getProperty(OS_ARCH_PROP);
-    memberPlatFormInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__FOR_HOST_1_OS_2_MEMBER_0, new Object[] {id, host, osInfo, lineSeparator}));
+    String osInfo = System.getProperty(OS_NAME_PROP) + " " + System.getProperty(OS_VERSION_PROP) + " " + System.getProperty(OS_ARCH_PROP);
+    memberPlatFormInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__FOR_HOST_1_OS_2_MEMBER_0, new Object[] { id, host, osInfo, lineSeparator }));
 
     int nameIdLength = Math.max(Math.max(id.length(), host.length()), osInfo.length()) * 2;
 
@@ -91,11 +91,7 @@ public class NetstatFunction implements Function, InternalEntity {
       netstatInfoBottom.append("#");
     }
 
-    netstatInfo.append(lineSeparator)
-      .append(memberPlatFormInfo.toString())
-      .append(lineSeparator)
-      .append(netstatInfoBottom.toString())
-      .append(lineSeparator);
+    netstatInfo.append(lineSeparator).append(memberPlatFormInfo.toString()).append(lineSeparator).append(netstatInfoBottom.toString()).append(lineSeparator);
   }
 
   private static void addNetstatDefaultOptions(final List<String> cmdOptionsList) {
@@ -135,7 +131,7 @@ public class NetstatFunction implements Function, InternalEntity {
       netstat.destroy();
     } catch (IOException e) {
       // Send error also, if any
-      netstatInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1, new Object[] {NETSTAT_COMMAND, e.getMessage()}));
+      netstatInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1, new Object[] { NETSTAT_COMMAND, e.getMessage() }));
     } finally {
       netstatInfo.append(lineSeparator); //additional new line
     }
@@ -143,7 +139,7 @@ public class NetstatFunction implements Function, InternalEntity {
 
   private static void executeLsof(final StringBuilder existingNetstatInfo, final String lineSeparator) {
     String osName = System.getProperty(OS_NAME_PROP);
-    existingNetstatInfo.append("################ "+LSOF_COMMAND+" output ###################").append(lineSeparator);
+    existingNetstatInfo.append("################ " + LSOF_COMMAND + " output ###################").append(lineSeparator);
     if (OS_NAME_LINUX.equalsIgnoreCase(osName) || OS_NAME_MACOS.equalsIgnoreCase(osName) || OS_NAME_SOLARIS.equalsIgnoreCase(osName)) {
       ProcessBuilder procBuilder = new ProcessBuilder(LSOF_COMMAND);
       try {
@@ -160,14 +156,10 @@ public class NetstatFunction implements Function, InternalEntity {
         // Send error also, if any
         String message = e.getMessage();
         if (message.contains("error=2, No such file or directory")) {
-          existingNetstatInfo.append(CliStrings.format(
-              CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1,
-              new Object[] { LSOF_COMMAND, CliStrings.NETSTAT__MSG__LSOF_NOT_IN_PATH }));
+          existingNetstatInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1, new Object[] { LSOF_COMMAND, CliStrings.NETSTAT__MSG__LSOF_NOT_IN_PATH }));
         } else {
-          existingNetstatInfo.append(CliStrings.format(
-              CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1,
-              new Object[] { LSOF_COMMAND, e.getMessage() }));
-        }        
+          existingNetstatInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1, new Object[] { LSOF_COMMAND, e.getMessage() }));
+        }
       } finally {
         existingNetstatInfo.append(lineSeparator); //additional new line
       }
@@ -202,11 +194,11 @@ public class NetstatFunction implements Function, InternalEntity {
   public boolean isHA() {
     return false;
   }
-  
+
   public static class NetstatFunctionArgument implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final String  lineSeparator;
+    private final String lineSeparator;
     private final boolean withlsof;
 
     public NetstatFunctionArgument(String lineSeparator, boolean withlsof) {
@@ -228,7 +220,7 @@ public class NetstatFunction implements Function, InternalEntity {
       return withlsof;
     }
   }
-  
+
   public static class NetstatFunctionResult implements Serializable {
     private static final long serialVersionUID = 1L;
 

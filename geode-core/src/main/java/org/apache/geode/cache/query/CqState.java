@@ -25,12 +25,12 @@ package org.apache.geode.cache.query;
  */
 
 public interface CqState {
-          
+
   /**
    * Returns the state in string form.
    */
   public String toString();
-  
+
   /**
    * Returns true if the CQ is in Running state.
    */
@@ -40,15 +40,15 @@ public interface CqState {
    * Returns true if the CQ is in Stopped state.
    */
   public boolean isStopped();
-  
+
   /**
    * Returns true if the CQ is in Closed state.
    */
   public boolean isClosed();
-  
+
   /**
    * Returns true if the CQ is in Closing state.
    */
   public boolean isClosing();
-  
+
 }

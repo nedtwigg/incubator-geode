@@ -68,15 +68,15 @@ public class LocatorLoadSnapshotIntegrationTest {
     loadCounts.put(l3, new AtomicInteger(initialLoad3));
 
     Thread[] threads = new Thread[NUM_THREADS];
-//    final Object lock = new Object();
-    for(int i =0; i < NUM_THREADS; i++) {
+    //    final Object lock = new Object();
+    for (int i = 0; i < NUM_THREADS; i++) {
       threads[i] = new Thread("Thread-" + i) {
         public void run() {
-          for(int ii = 0; ii < NUM_REQUESTS; ii++) {
+          for (int ii = 0; ii < NUM_REQUESTS; ii++) {
             ServerLocation location;
-//            synchronized(lock) {
+            //            synchronized(lock) {
             location = sn.getServerForConnection(null, Collections.EMPTY_SET);
-//            }
+            //            }
             AtomicInteger count = (AtomicInteger) loadCounts.get(location);
             count.incrementAndGet();
           }
@@ -84,34 +84,33 @@ public class LocatorLoadSnapshotIntegrationTest {
       };
     }
 
-    for(int i =0; i < NUM_THREADS; i++) {
+    for (int i = 0; i < NUM_THREADS; i++) {
       threads[i].start();
     }
 
-    for(int i =0; i < NUM_THREADS; i++) {
+    for (int i = 0; i < NUM_THREADS; i++) {
       Thread t = threads[i];
       long ms = 30 * 1000;
       t.join(30 * 1000);
       if (t.isAlive()) {
-        for(int j =0; j < NUM_THREADS; j++) {
+        for (int j = 0; j < NUM_THREADS; j++) {
           threads[j].interrupt();
         }
         fail("Thread did not terminate after " + ms + " ms: " + t);
       }
     }
 
-    double expectedPerServer = ( initialLoad1 + initialLoad2 + initialLoad3 +
-            NUM_REQUESTS * NUM_THREADS) / (double) loadCounts.size();
-//    for(Iterator itr = loadCounts.entrySet().iterator(); itr.hasNext(); ) {
-//      Map.Entry entry = (Entry) itr.next();
-//      ServerLocation location = (ServerLocation) entry.getKey();
-//      AI count= (AI) entry.getValue();
-//    }
+    double expectedPerServer = (initialLoad1 + initialLoad2 + initialLoad3 + NUM_REQUESTS * NUM_THREADS) / (double) loadCounts.size();
+    //    for(Iterator itr = loadCounts.entrySet().iterator(); itr.hasNext(); ) {
+    //      Map.Entry entry = (Entry) itr.next();
+    //      ServerLocation location = (ServerLocation) entry.getKey();
+    //      AI count= (AI) entry.getValue();
+    //    }
 
-    for(Iterator itr = loadCounts.entrySet().iterator(); itr.hasNext(); ) {
+    for (Iterator itr = loadCounts.entrySet().iterator(); itr.hasNext();) {
       Map.Entry entry = (Map.Entry) itr.next();
       ServerLocation location = (ServerLocation) entry.getKey();
-      AtomicInteger count= (AtomicInteger) entry.getValue();
+      AtomicInteger count = (AtomicInteger) entry.getValue();
       int difference = (int) Math.abs(count.get() - expectedPerServer);
       assertTrue("Count " + count + " for server " + location + " is not within " + ALLOWED_THRESHOLD + " of " + expectedPerServer, difference < ALLOWED_THRESHOLD);
     }

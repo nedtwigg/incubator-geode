@@ -32,14 +32,14 @@ import org.apache.geode.cache.query.types.ObjectType;
 import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.pdx.internal.PdxString;
 
-public class ResultsCollectionPdxDeserializerWrapper implements
-    SelectResults {
+public class ResultsCollectionPdxDeserializerWrapper implements SelectResults {
   SelectResults results;
   private boolean copyOnRead = false;
+
   public ResultsCollectionPdxDeserializerWrapper() {
-    
+
   }
-  
+
   public ResultsCollectionPdxDeserializerWrapper(SelectResults results, boolean copyOnRead) {
     this.results = results;
     this.copyOnRead = copyOnRead;
@@ -76,9 +76,9 @@ public class ResultsCollectionPdxDeserializerWrapper implements
           } else if (values[i] instanceof PdxString) {
             newValues[i] = ((PdxString) values[i]).toString();
           } else if (copyOnRead) {
-          //due to bug #50650 When query results are fed back through the query engine
-	  //we could end up copying a java object but due to serialization
-	  //end up getting a pdx value.  So extract the actual value if needed
+            //due to bug #50650 When query results are fed back through the query engine
+            //we could end up copying a java object but due to serialization
+            //end up getting a pdx value.  So extract the actual value if needed
             newValues[i] = extractPdxIfNeeded(CopyHelper.copy(values[i]));
           } else {
             newValues[i] = values[i];
@@ -92,8 +92,8 @@ public class ResultsCollectionPdxDeserializerWrapper implements
           object = ((PdxString) object).toString();
         } else if (copyOnRead) {
           //due to bug #50650 When query results are fed back through the query engine
-	  //we could end up copying a java object but due to serialization
-	  //end up getting a pdx value.  So extract the actual value if needed
+          //we could end up copying a java object but due to serialization
+          //end up getting a pdx value.  So extract the actual value if needed
           object = extractPdxIfNeeded(CopyHelper.copy(object));
         }
         return object;
@@ -112,10 +112,10 @@ public class ResultsCollectionPdxDeserializerWrapper implements
       object = ((PdxInstance) object).getObject();
     } else if (object instanceof PdxString) {
       object = ((PdxString) object).toString();
-    } 
+    }
     return object;
   }
-  
+
   @Override
   public boolean add(Object e) {
     return results.add(e);

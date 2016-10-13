@@ -38,20 +38,20 @@ public class FragmentJUnitTest {
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
-  
+
   @Rule
   public JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
   @Before
   public void setUp() throws Exception {
-    SlabImpl slab1 = new SlabImpl((int)OffHeapStorage.MIN_SLAB_SIZE);
-    SlabImpl slab2 = new SlabImpl((int)OffHeapStorage.MIN_SLAB_SIZE);
-    slabs = new SlabImpl[]{slab1, slab2};
+    SlabImpl slab1 = new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE);
+    SlabImpl slab2 = new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE);
+    slabs = new SlabImpl[] { slab1, slab2 };
   }
 
   @After
   public void tearDown() throws Exception {
-    for (int i=0; i < slabs.length; i++) {
+    for (int i = 0; i < slabs.length; i++) {
       slabs[i].free();
     }
   }
@@ -74,8 +74,8 @@ public class FragmentJUnitTest {
   @Test
   public void unallocatedFragmentHasFreeSpaceEqualToFragmentSize() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
-    softly.assertThat(fragment.getSize()).isEqualTo((int)OffHeapStorage.MIN_SLAB_SIZE);
-    softly.assertThat(fragment.freeSpace()).isEqualTo((int)OffHeapStorage.MIN_SLAB_SIZE);
+    softly.assertThat(fragment.getSize()).isEqualTo((int) OffHeapStorage.MIN_SLAB_SIZE);
+    softly.assertThat(fragment.freeSpace()).isEqualTo((int) OffHeapStorage.MIN_SLAB_SIZE);
   }
 
   @Test
@@ -89,7 +89,7 @@ public class FragmentJUnitTest {
   @Test
   public void fragementAllocationIsUnsafeWithRespectToAllocationSize() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
-    softly.assertThat(fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + (int)OffHeapStorage.MIN_SLAB_SIZE + 8)).isEqualTo(true);
+    softly.assertThat(fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + (int) OffHeapStorage.MIN_SLAB_SIZE + 8)).isEqualTo(true);
     softly.assertThat(fragment.freeSpace()).isEqualTo(-8);
   }
 
@@ -107,7 +107,7 @@ public class FragmentJUnitTest {
     fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + 256);
     softly.assertThat(fragment.getAddress()).isEqualTo(slabs[0].getMemoryAddress());
   }
-  
+
   @Test
   public void getStateIsAlwaysStateUNUSED() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
@@ -184,19 +184,19 @@ public class FragmentJUnitTest {
     Fragment fragment0 = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
     Fragment fragment1 = new Fragment(slabs[1].getMemoryAddress(), slabs[1].getSize());
     Long fragmentAddress = fragment0.getAddress();
-    softly.assertThat(fragment0.hashCode()).isEqualTo(fragmentAddress.hashCode())
-                                           .isNotEqualTo(fragment1.hashCode());
+    softly.assertThat(fragment0.hashCode()).isEqualTo(fragmentAddress.hashCode()).isNotEqualTo(fragment1.hashCode());
   }
 
   @Test
   public void fragmentFillSetsAllBytesToTheSameConstantValue() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
     Long fragmentAddress = fragment.getAddress();
-    byte[] bytes = new byte[(int)OffHeapStorage.MIN_SLAB_SIZE];
-    byte[] expectedBytes = new byte[(int)OffHeapStorage.MIN_SLAB_SIZE];
-    Arrays.fill(expectedBytes, OffHeapStoredObject.FILL_BYTE);;
+    byte[] bytes = new byte[(int) OffHeapStorage.MIN_SLAB_SIZE];
+    byte[] expectedBytes = new byte[(int) OffHeapStorage.MIN_SLAB_SIZE];
+    Arrays.fill(expectedBytes, OffHeapStoredObject.FILL_BYTE);
+    ;
     fragment.fill();
-    AddressableMemoryManager.readBytes(fragmentAddress, bytes, 0, (int)OffHeapStorage.MIN_SLAB_SIZE);
+    AddressableMemoryManager.readBytes(fragmentAddress, bytes, 0, (int) OffHeapStorage.MIN_SLAB_SIZE);
     assertThat(bytes, is(equalTo(expectedBytes)));
   }
 
@@ -217,5 +217,5 @@ public class FragmentJUnitTest {
     fragment.getSlabId();
     fail("getSlabId failed to throw UnsupportedOperationException");
   }
-  
+
 }

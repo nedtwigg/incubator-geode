@@ -21,9 +21,7 @@ package org.apache.geode.internal.datasource;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class ConnectionEventListenerAdaptor implements 
-    javax.resource.spi.ConnectionEventListener,
-    javax.sql.ConnectionEventListener {
+public class ConnectionEventListenerAdaptor implements javax.resource.spi.ConnectionEventListener, javax.sql.ConnectionEventListener {
 
   /**
    * @see javax.resource.spi.ConnectionEventListener#connectionClosed(javax.resource.spi.ConnectionEvent)

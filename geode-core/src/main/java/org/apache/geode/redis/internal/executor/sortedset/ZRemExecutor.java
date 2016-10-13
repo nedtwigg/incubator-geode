@@ -49,7 +49,7 @@ public class ZRemExecutor extends SortedSetExecutor {
     }
 
     int numDeletedMembers = 0;
-    
+
     for (int i = 2; i < commandElems.size(); i++) {
       byte[] memberArray = commandElems.get(i);
       ByteArrayWrapper member = new ByteArrayWrapper(memberArray);

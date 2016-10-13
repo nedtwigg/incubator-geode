@@ -58,15 +58,14 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @SuppressWarnings("serial")
 public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
 
-
   private static final String REGION_NAME = "Bug51193DUnitTest_region";
 
   private static GemFireCacheImpl cache;
 
   private static VM server0;
-  
+
   private VM client0;
-  
+
   @Override
   public final void postSetUp() throws Exception {
     Host host = Host.getHost(0);
@@ -90,25 +89,21 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
   }
 
   @SuppressWarnings("deprecation")
-  public static void createClientCache(String hostName, Integer port,
-      Integer timeout) throws Exception {
+  public static void createClientCache(String hostName, Integer port, Integer timeout) throws Exception {
     try {
       if (timeout > 0) {
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "CLIENT_FUNCTION_TIMEOUT",
-            String.valueOf(timeout));
+        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "CLIENT_FUNCTION_TIMEOUT", String.valueOf(timeout));
       }
       Properties props = new Properties();
       props.setProperty(LOCATORS, "");
       props.setProperty(MCAST_PORT, "0");
-      DistributedSystem ds = new Bug51193DUnitTest()
-          .getSystem(props);
+      DistributedSystem ds = new Bug51193DUnitTest().getSystem(props);
       ds.disconnect();
       ClientCacheFactory ccf = new ClientCacheFactory(props);
       ccf.addPoolServer(hostName, port);
       cache = (GemFireCacheImpl) ccf.create();
 
-      ClientRegionFactory<String, String> crf = cache
-          .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+      ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
 
       crf.create(REGION_NAME);
     } finally {
@@ -117,22 +112,19 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
   }
 
   @SuppressWarnings("deprecation")
-  public static Integer createServerCache(Boolean createPR)
-      throws Exception {
+  public static Integer createServerCache(Boolean createPR) throws Exception {
     Properties props = new Properties();
     props.setProperty(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
 
     Bug51193DUnitTest test = new Bug51193DUnitTest();
     DistributedSystem ds = test.getSystem(props);
     ds.disconnect();
-    cache = (GemFireCacheImpl)CacheFactory.create(test.getSystem());
+    cache = (GemFireCacheImpl) CacheFactory.create(test.getSystem());
 
     RegionFactory<String, String> rf = null;
     if (createPR) {
       rf = cache.createRegionFactory(RegionShortcut.PARTITION);
-      rf.setPartitionAttributes(
-          new PartitionAttributesFactory<String, String>()
-              .setRedundantCopies(1).setTotalNumBuckets(4).create());
+      rf.setPartitionAttributes(new PartitionAttributesFactory<String, String>().setRedundantCopies(1).setTotalNumBuckets(4).create());
     } else {
       rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     }
@@ -157,8 +149,7 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
       dataSet = FunctionService.onServers(cache).withArgs(timeout);
     }
     ResultCollector rs = dataSet.execute(function);
-    assertTrue("Server did not read client_function_timeout from client.",
-        (Boolean) ((ArrayList) rs.getResult()).get(0));
+    assertTrue("Server did not read client_function_timeout from client.", (Boolean) ((ArrayList) rs.getResult()).get(0));
   }
 
   @SuppressWarnings("rawtypes")
@@ -170,18 +161,15 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
     r.get("KEY_0");
   }
 
-  public void doTest(boolean createPR, int timeout, String mode)
-      throws Throwable {
+  public void doTest(boolean createPR, int timeout, String mode) throws Throwable {
     // start server
-    int port = (Integer) server0.invoke(() -> Bug51193DUnitTest.createServerCache( createPR ));
+    int port = (Integer) server0.invoke(() -> Bug51193DUnitTest.createServerCache(createPR));
     // start client
-    client0.invoke(() -> Bug51193DUnitTest.createClientCache(
-        client0.getHost().getHostName(), port, timeout ));
+    client0.invoke(() -> Bug51193DUnitTest.createClientCache(client0.getHost().getHostName(), port, timeout));
     // do puts and get
-    server0
-        .invoke(() -> Bug51193DUnitTest.doPutsAndGet( 10 ));
+    server0.invoke(() -> Bug51193DUnitTest.doPutsAndGet(10));
     // execute function & verify timeout has been received at server.
-    client0.invoke(() -> Bug51193DUnitTest.executeFunction( mode, timeout ));
+    client0.invoke(() -> Bug51193DUnitTest.executeFunction(mode, timeout));
   }
 
   @Test
@@ -225,9 +213,8 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
     @Override
     public void execute(FunctionContext context) {
       boolean timeoutMatches = false;
-      int expected = (Integer)context.getArguments();
-      AcceptorImpl acceptor = ((CacheServerImpl) cache.getCacheServers()
-          .get(0)).getAcceptor();
+      int expected = (Integer) context.getArguments();
+      AcceptorImpl acceptor = ((CacheServerImpl) cache.getCacheServers().get(0)).getAcceptor();
       ServerConnection[] scs = acceptor.getAllServerConnectionList();
       for (int i = 0; i < scs.length; ++i) {
         ClientHandShake hs = scs[i].getHandshake();

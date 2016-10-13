@@ -57,8 +57,7 @@ public class ClusterWANInfoService implements PulseService {
     // members list
     ArrayNode connectedClusterListJson = mapper.createArrayNode();
 
-    for (Map.Entry<String, Boolean> entry : cluster.getWanInformation()
-        .entrySet()) {
+    for (Map.Entry<String, Boolean> entry : cluster.getWanInformation().entrySet()) {
       ObjectNode clusterJSON = mapper.createObjectNode();
       clusterJSON.put("clusterId", entry.getKey());
       clusterJSON.put("name", entry.getKey());

@@ -26,6 +26,7 @@ import org.apache.geode.DataSerializable;
 import org.apache.geode.DataSerializer;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionService;
+
 /**
  * FunctionContext for remote/target nodes
  * 
@@ -50,9 +51,7 @@ public class FunctionRemoteContext implements DataSerializable {
   public FunctionRemoteContext() {
   }
 
-  public FunctionRemoteContext(final Function function, Object object,
-      Set filter, Set<Integer> bucketSet, boolean isReExecute,
-      boolean isFnSerializationReqd) {
+  public FunctionRemoteContext(final Function function, Object object, Set filter, Set<Integer> bucketSet, boolean isReExecute, boolean isFnSerializationReqd) {
     this.function = function;
     this.args = object;
     this.filter = filter;
@@ -65,31 +64,29 @@ public class FunctionRemoteContext implements DataSerializable {
     Object object = DataSerializer.readObject(in);
     if (object instanceof String) {
       this.isFnSerializationReqd = false;
-      this.function = FunctionService.getFunction((String)object);
+      this.function = FunctionService.getFunction((String) object);
       if (this.function == null) {
-        this.functionId = (String)object;
+        this.functionId = (String) object;
       }
-    }
-    else {
-      this.function = (Function)object;
+    } else {
+      this.function = (Function) object;
       this.isFnSerializationReqd = true;
     }
     this.args = DataSerializer.readObject(in);
-    this.filter = (HashSet)DataSerializer.readHashSet(in);
-    this.bucketSet = (HashSet)DataSerializer.readHashSet(in);
+    this.filter = (HashSet) DataSerializer.readHashSet(in);
+    this.bucketSet = (HashSet) DataSerializer.readHashSet(in);
     this.isReExecute = DataSerializer.readBoolean(in);
   }
 
   public void toData(DataOutput out) throws IOException {
     if (this.isFnSerializationReqd) {
       DataSerializer.writeObject(this.function, out);
-    }
-    else {
+    } else {
       DataSerializer.writeObject(function.getId(), out);
     }
     DataSerializer.writeObject(this.args, out);
-    DataSerializer.writeHashSet((HashSet)this.filter, out);
-    DataSerializer.writeHashSet((HashSet)this.bucketSet, out);
+    DataSerializer.writeHashSet((HashSet) this.filter, out);
+    DataSerializer.writeHashSet((HashSet) this.bucketSet, out);
     DataSerializer.writeBoolean(this.isReExecute, out);
   }
 
@@ -112,9 +109,11 @@ public class FunctionRemoteContext implements DataSerializable {
   public Function getFunction() {
     return function;
   }
+
   public String getFunctionId() {
     return functionId;
   }
+
   @Override
   public String toString() {
 

@@ -45,7 +45,7 @@ public class FlushAllCommand extends AbstractCommand {
     flb.flip();
     String firstLine = getFirstLine();
     String[] firstLineElements = firstLine.split(" ");
-    
+
     assert "flush_all".equals(stripNewline(firstLineElements[0]));
     boolean noReply = false;
     int delay = 0;
@@ -59,7 +59,7 @@ public class FlushAllCommand extends AbstractCommand {
       delay = Integer.parseInt(stripNewline(firstLineElements[1]));
       noReply = true;
     }
-    
+
     final Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     if (delay == 0) {
       r.destroyRegion();
@@ -70,27 +70,27 @@ public class FlushAllCommand extends AbstractCommand {
         }
       }, delay, TimeUnit.SECONDS);
     }
-    
+
     CharBuffer retVal = CharBuffer.wrap(Reply.OK.toString());
-    
+
     return noReply ? null : asciiCharset.encode(retVal);
   }
-  
+
   private ByteBuffer processBinaryCommand(RequestReader request, Cache cache) {
     ByteBuffer buffer = request.getRequest();
     final Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
-    
+
     int delay = 0;
     int extraLength = buffer.get(EXTRAS_LENGTH_INDEX);
     buffer.position(HEADER_LENGTH);
     if (extraLength != 0) {
       delay = buffer.getInt();
     }
-    
+
     if (getLogger().fineEnabled()) {
-      cache.getLogger().fine("flush:delay:"+delay);
+      cache.getLogger().fine("flush:delay:" + delay);
     }
-    
+
     if (delay == 0) {
       try {
         r.destroyRegion();
@@ -109,7 +109,7 @@ public class FlushAllCommand extends AbstractCommand {
     response.putShort(POSITION_RESPONSE_STATUS, ResponseStatus.NO_ERROR.asShort());
     return isQuiet() ? null : response;
   }
-  
+
   /**
    * Overridden by Q command
    */

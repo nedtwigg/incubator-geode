@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
  */
 @Category(IntegrationTest.class)
 public class AtomicStatsJUnitTest {
-  
+
   /**
    * Test for bug 41340. Do two gets at the same time of a dirty
    * stat, and make sure we get the correct value for the stat.
@@ -47,26 +47,21 @@ public class AtomicStatsJUnitTest {
    */
   @Test
   public void testConcurrentGets() throws Throwable {
-    
+
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     //    props.setProperty("statistic-sample-rate", "60000");
     props.setProperty(STATISTIC_SAMPLING_ENABLED, "false");
     DistributedSystem ds = DistributedSystem.connect(props);
-    
-    String statName = "TestStats";
-    String statDescription =
-      "Tests stats";
 
-    final String statDesc =
-      "blah blah blah";
+    String statName = "TestStats";
+    String statDescription = "Tests stats";
+
+    final String statDesc = "blah blah blah";
 
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    StatisticsType type = f.createType(statName, statDescription,
-       new StatisticDescriptor[] {
-         f.createIntGauge("stat", statDesc, "bottles of beer on the wall"),
-       });
+    StatisticsType type = f.createType(statName, statDescription, new StatisticDescriptor[] { f.createIntGauge("stat", statDesc, "bottles of beer on the wall"), });
 
     final int statId = type.nameToId("stat");
 
@@ -78,7 +73,7 @@ public class AtomicStatsJUnitTest {
       Thread thread1 = new Thread("thread1") {
         public void run() {
           try {
-            while(true) {
+            while (true) {
               beforeIncrement.await();
               statsRef.get().incInt(statId, 1);
               afterIncrement.await();
@@ -95,7 +90,7 @@ public class AtomicStatsJUnitTest {
       Thread thread3 = new Thread("thread1") {
         public void run() {
           try {
-            while(true) {
+            while (true) {
               beforeIncrement.await();
               afterIncrement.await();
               statsRef.get().getInt(statId);
@@ -111,7 +106,7 @@ public class AtomicStatsJUnitTest {
       };
       thread1.start();
       thread3.start();
-      for(int i =0; i < 5000; i++) {
+      for (int i = 0; i < 5000; i++) {
         Statistics stats = ds.createAtomicStatistics(type, "stats");
         statsRef.set(stats);
         beforeIncrement.await();
@@ -119,7 +114,7 @@ public class AtomicStatsJUnitTest {
         assertEquals("On loop " + i, 1, stats.getInt(statId));
         stats.close();
       }
-    
+
     } finally {
       ds.disconnect();
     }

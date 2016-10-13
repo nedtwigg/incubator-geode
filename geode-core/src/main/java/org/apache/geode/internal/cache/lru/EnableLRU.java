@@ -32,12 +32,12 @@ public interface EnableLRU {
   /**
    * return the size of an entry or its worth when constraining the size of an LRU EntriesMap.
    */
-  public int entrySize( Object key, Object value ) throws IllegalArgumentException;
+  public int entrySize(Object key, Object value) throws IllegalArgumentException;
 
   /**
    * return the limit for the accumulated entrySize which triggers disposal.
    */
-  public long limit( );
+  public long limit();
 
   /** setup stats for this LRU type, if reset is true, initialize counter on stats to zero. */
   public LRUStatistics initStats(Object region, StatisticsFactory sf);
@@ -107,16 +107,16 @@ public interface EnableLRU {
    * @return the id
    */
   public int getGreedyReturnsStatId();
-  
+
   /**
    * Returns whether or not there is enough room to accommodate data
    * of the given size based on the given <code>LRUStatistics</code>.
    */
   public boolean mustEvict(LRUStatistics stats, Region region, int delta);
+
   /**
    * Envoked after an entry has been evicted
    */
   public void afterEviction();
 
 }
-

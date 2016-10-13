@@ -27,7 +27,7 @@ import org.apache.geode.internal.logging.LogService;
 
 public abstract class RecoveryRunnable implements Runnable {
   private static final Logger logger = LogService.getLogger();
-  
+
   protected final PRHARedundancyProvider redundancyProvider;
 
   /**
@@ -38,12 +38,12 @@ public abstract class RecoveryRunnable implements Runnable {
   }
 
   private volatile Throwable failure;
-  
+
   public abstract void run2();
 
   public void checkFailure() {
-    if(failure != null) {
-      if( failure instanceof RuntimeException) {
+    if (failure != null) {
+      if (failure instanceof RuntimeException) {
         throw (RuntimeException) failure;
       } else {
         throw new InternalGemFireError("Failure during bucket recovery ", failure);
@@ -51,10 +51,8 @@ public abstract class RecoveryRunnable implements Runnable {
     }
   }
 
-  public void run()
-  {
-    CancelCriterion stopper = redundancyProvider.prRegion
-        .getGemFireCache().getDistributedSystem().getCancelCriterion();
+  public void run() {
+    CancelCriterion stopper = redundancyProvider.prRegion.getGemFireCache().getDistributedSystem().getCancelCriterion();
     DistributedSystem.setThreadsSocketPolicy(true /* conserve sockets */);
     SystemFailure.checkFailure();
     if (stopper.isCancelInProgress()) {
@@ -62,14 +60,12 @@ public abstract class RecoveryRunnable implements Runnable {
     }
     try {
       run2();
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading

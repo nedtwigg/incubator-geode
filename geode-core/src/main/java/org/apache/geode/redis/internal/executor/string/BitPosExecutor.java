@@ -80,7 +80,6 @@ public class BitPosExecutor extends StringExecutor {
       }
     }
 
-
     if (commandElems.size() > 4) {
       try {
         byte[] endAr = commandElems.get(4);
@@ -112,18 +111,17 @@ public class BitPosExecutor extends StringExecutor {
       return;
     }
 
-    outerLoop:
-      for (int i = start; i <= end; i++) {
-        int cBit;
-        byte cByte = bytes[i];
-        for (int j = 0; j < 8; j++) {
-          cBit = (cByte & (0x80 >> j)) >> (7 - j);
-    if (cBit ==  bit) {
-      bitPosition = 8 * i + j;
-      break outerLoop;
-    }
+    outerLoop: for (int i = start; i <= end; i++) {
+      int cBit;
+      byte cByte = bytes[i];
+      for (int j = 0; j < 8; j++) {
+        cBit = (cByte & (0x80 >> j)) >> (7 - j);
+        if (cBit == bit) {
+          bitPosition = 8 * i + j;
+          break outerLoop;
         }
       }
+    }
 
     if (bit == 0 && bitPosition == -1 && !endSet)
       bitPosition = bytes.length * 8;

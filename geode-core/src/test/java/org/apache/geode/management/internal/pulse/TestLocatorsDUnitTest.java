@@ -51,10 +51,10 @@ public class TestLocatorsDUnitTest extends ManagementTestBase {
     final WaitCriterion waitCriteria = new WaitCriterion() {
       @Override
       public boolean done() {
-        final ManagementService service = getManagementService();        
+        final ManagementService service = getManagementService();
         final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
         if (bean != null) {
-          if(bean.getLocatorCount() > 0){
+          if (bean.getLocatorCount() > 0) {
             return true;
           }
         }
@@ -66,9 +66,9 @@ public class TestLocatorsDUnitTest extends ManagementTestBase {
         return "wait for getNumOfLocatorFromMBean to complete and get results";
       }
     };
-    Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 2000, true);    
+    Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 2000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
-    assertNotNull(bean);    
+    assertNotNull(bean);
     return bean.getLocatorCount();
   }
 

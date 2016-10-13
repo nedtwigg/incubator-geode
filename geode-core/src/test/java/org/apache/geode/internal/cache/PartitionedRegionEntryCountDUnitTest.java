@@ -58,40 +58,27 @@ public class PartitionedRegionEntryCountDUnitTest extends JUnit4CacheTestCase {
     final int maxEntriesForOtherVm = 2000;
     final String name = "PR_TEMP";
 
-    final SerializableRunnable create = new CacheSerializableRunnable(
-        "Create Entry LRU with local destroy on a partitioned Region having max entries "
-            + maxEntriesForVm1) {
+    final SerializableRunnable create = new CacheSerializableRunnable("Create Entry LRU with local destroy on a partitioned Region having max entries " + maxEntriesForVm1) {
       public void run2() {
         final AttributesFactory factory = new AttributesFactory();
-        factory.setPartitionAttributes(new PartitionAttributesFactory()
-            .setRedundantCopies(redundantCopies).create());
-        factory.setEvictionAttributes(EvictionAttributes
-            .createLRUEntryAttributes(maxEntriesForVm1,
-                EvictionAction.LOCAL_DESTROY));
-        final PartitionedRegion pr = (PartitionedRegion)createRootRegion(name,
-            factory.create());
+        factory.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(redundantCopies).create());
+        factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(maxEntriesForVm1, EvictionAction.LOCAL_DESTROY));
+        final PartitionedRegion pr = (PartitionedRegion) createRootRegion(name, factory.create());
         assertNotNull(pr);
       }
     };
     vm1.invoke(create);
 
-    final SerializableRunnable create2 = new SerializableRunnable(
-        "Create Entry LRU with local destroy on a partitioned Region having max entries "
-            + maxEntriesForOtherVm) {
+    final SerializableRunnable create2 = new SerializableRunnable("Create Entry LRU with local destroy on a partitioned Region having max entries " + maxEntriesForOtherVm) {
       public void run() {
         try {
           final AttributesFactory factory = new AttributesFactory();
-          factory.setPartitionAttributes(new PartitionAttributesFactory()
-              .setRedundantCopies(redundantCopies).create());
-          factory.setEvictionAttributes(EvictionAttributes
-              .createLRUEntryAttributes(maxEntriesForOtherVm,
-                  EvictionAction.LOCAL_DESTROY));
+          factory.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(redundantCopies).create());
+          factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(maxEntriesForOtherVm, EvictionAction.LOCAL_DESTROY));
 
-          final PartitionedRegion pr = (PartitionedRegion)createRootRegion(
-              name, factory.create());
+          final PartitionedRegion pr = (PartitionedRegion) createRootRegion(name, factory.create());
           assertNotNull(pr);
-        }
-        catch (final CacheException ex) {
+        } catch (final CacheException ex) {
           Assert.fail("While creating Partitioned region", ex);
         }
       }
@@ -101,7 +88,7 @@ public class PartitionedRegionEntryCountDUnitTest extends JUnit4CacheTestCase {
 
     final SerializableRunnable putData = new SerializableRunnable("Puts Data") {
       public void run() {
-        final PartitionedRegion pr = (PartitionedRegion)getRootRegion(name);
+        final PartitionedRegion pr = (PartitionedRegion) getRootRegion(name);
         assertNotNull(pr);
         for (int counter = 1; counter <= 6 * maxEntriesForVm1; counter++) {
           pr.put(new Integer(counter), new byte[1]);
@@ -110,44 +97,40 @@ public class PartitionedRegionEntryCountDUnitTest extends JUnit4CacheTestCase {
     };
     vm1.invoke(putData);
 
-    final SerializableCallable getTotalEntryCount = new SerializableCallable(
-        "Get total entry count") {
+    final SerializableCallable getTotalEntryCount = new SerializableCallable("Get total entry count") {
       public Object call() throws Exception {
         try {
-          final PartitionedRegion pr = (PartitionedRegion)getRootRegion(name);
+          final PartitionedRegion pr = (PartitionedRegion) getRootRegion(name);
 
           assertNotNull(pr);
           return pr.entryCount(false);
-        }
-        finally {
+        } finally {
         }
       }
     };
 
-    Integer v1T = (Integer)vm1.invoke(getTotalEntryCount);
-    Integer v2T = (Integer)vm2.invoke(getTotalEntryCount);
-    Integer v3T = (Integer)vm3.invoke(getTotalEntryCount);
+    Integer v1T = (Integer) vm1.invoke(getTotalEntryCount);
+    Integer v2T = (Integer) vm2.invoke(getTotalEntryCount);
+    Integer v3T = (Integer) vm3.invoke(getTotalEntryCount);
     assertEquals(v1T, v2T);
     assertEquals(v1T, v3T);
     assertEquals(v2T, v3T);
 
-    final SerializableCallable getLocalEntryCount = new SerializableCallable(
-        "Get local entry count") {
+    final SerializableCallable getLocalEntryCount = new SerializableCallable("Get local entry count") {
       public Object call() throws Exception {
         try {
-          final PartitionedRegion pr = (PartitionedRegion)getRootRegion(name);
+          final PartitionedRegion pr = (PartitionedRegion) getRootRegion(name);
 
           assertNotNull(pr);
           return pr.entryCount(pr.getDataStore().getAllLocalPrimaryBucketIds());
-        }
-        finally {
+        } finally {
         }
       }
     };
 
-    Integer v1L = (Integer)vm1.invoke(getLocalEntryCount);
-    Integer v2L = (Integer)vm2.invoke(getLocalEntryCount);
-    Integer v3L = (Integer)vm3.invoke(getLocalEntryCount);
+    Integer v1L = (Integer) vm1.invoke(getLocalEntryCount);
+    Integer v2L = (Integer) vm2.invoke(getLocalEntryCount);
+    Integer v3L = (Integer) vm3.invoke(getLocalEntryCount);
     Integer total = v1L + v2L + v3L;
 
     assertEquals(v1T, total);

@@ -32,7 +32,7 @@ public class SequenceNumber {
     long retVal = sequenceNumber.incrementAndGet();
 
     if (retVal == Long.MAX_VALUE || retVal < 0) {//retVal <0 is checked for cases where other threads might have incremented sequenceNumber beyond Long.MAX_VALUE
-      
+
       synchronized (SequenceNumber.class) {
         long currentValue = sequenceNumber.get();
         if (currentValue == Long.MAX_VALUE || retVal < 0) {

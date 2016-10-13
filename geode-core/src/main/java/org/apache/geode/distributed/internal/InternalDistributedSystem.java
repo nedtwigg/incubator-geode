@@ -234,7 +234,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
    */
   private QuorumChecker quorumChecker;
 
-
   /**
    * A Constant that matches the ThreadGroup name of the shutdown hook.
    * This constant is used to insure consistency with LoggingThreadGroup.
@@ -306,7 +305,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
       }
     }
   }
-
 
   /**
    * creates a non-functional instance for testing
@@ -423,7 +421,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
   private static void resetReconnectAttemptCounter() {
     reconnectAttemptCounter = 0;
   }
-
 
   //////////////////////  Constructors  //////////////////////
 
@@ -731,7 +728,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
    */
   private void startInitLocator() throws InterruptedException {
     String locatorString = this.originalConfig.getStartLocator();
-    if (locatorString.length()==0) {
+    if (locatorString.length() == 0) {
       return;
     }
 
@@ -750,8 +747,8 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
     DistributionLocatorId locId = new DistributionLocatorId(locatorString);
     try {
       this.startedLocator = InternalLocator.createLocator(locId.getPort(), null, null, this.logWriter, // LOG: this is after IDS has created LogWriterLoggers and Appenders
-        this.securityLogWriter, // LOG: this is after IDS has created LogWriterLoggers and Appenders
-        locId.getHost(), locId.getHostnameForClients(), this.originalConfig.toProperties(), false);
+          this.securityLogWriter, // LOG: this is after IDS has created LogWriterLoggers and Appenders
+          locId.getHost(), locId.getHostnameForClients(), this.originalConfig.toProperties(), false);
 
       // if locator is started this way, cluster config is not enabled, set the flag correctly
       this.startedLocator.getConfig().setEnableClusterConfiguration(false);
@@ -768,8 +765,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
         }
       }
     } catch (IOException e) {
-      throw new GemFireIOException(LocalizedStrings.
-        InternalDistributedSystem_PROBLEM_STARTING_A_LOCATOR_SERVICE.toLocalizedString(), e);
+      throw new GemFireIOException(LocalizedStrings.InternalDistributedSystem_PROBLEM_STARTING_A_LOCATOR_SERVICE.toLocalizedString(), e);
     }
   }
 
@@ -821,8 +817,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
    */
   private void checkConnected() {
     if (!isConnected()) {
-      throw new DistributedSystemDisconnectedException(LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString(), dm
-        .getRootCause());
+      throw new DistributedSystemDisconnectedException(LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString(), dm.getRootCause());
     }
   }
 
@@ -902,12 +897,12 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
 
   /*
   public Cache myCache;
-
+  
   public void setCache(Cache cache){
-	  myCache=cache;
+    myCache=cache;
   }
   public Cache getCache(){
-	  return myCache;
+    return myCache;
   }
   */
 
@@ -1045,7 +1040,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
     // Make a pass over the disconnect listeners, asking them _politely_
     // to clean up.
     HashSet shutdownListeners = new HashSet();
-    for (; ; ) {
+    for (;;) {
       DisconnectListener listener = null;
       synchronized (this.listeners) {
         Iterator itr = listeners.iterator();
@@ -1106,7 +1101,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
     // disconnect listeners may have appeared. After messagingDisabled is
     // set, no new ones will be created.  However, we must process any
     // that appeared in the interim.
-    for (; ; ) {
+    for (;;) {
       // Pluck next listener from the list
       DisconnectListener dcListener = null;
       ShutdownListener sdListener = null;
@@ -1493,7 +1488,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
     }
 
     StringBuffer sb = new StringBuffer();
-    for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
+    for (Iterator iter = sorted.iterator(); iter.hasNext();) {
       sb.append((String) iter.next());
       if (iter.hasNext()) {
         sb.append(",");
@@ -1542,7 +1537,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
   public Set<DistributedMember> getGroupMembers(String group) {
     return dm.getGroupMembers(group);
   }
-
 
   @Override
   public Set<DistributedMember> findDistributedMembers(InetAddress address) {
@@ -1714,7 +1708,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
   @Override
   public final Statistics[] getStatistics() {
     List<Statistics> statsList = this.statsList;
-    return (Statistics[])statsList.toArray(new Statistics[0]);
+    return (Statistics[]) statsList.toArray(new Statistics[0]);
   }
 
   // StatisticsFactory methods
@@ -1759,7 +1753,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
     return stats;
   }
 
-
   public FunctionServiceStats getFunctionServiceStats() {
     if (functionServiceStats == null) {
       synchronized (this) {
@@ -1793,7 +1786,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
   public Set<String> getAllFunctionExecutionIds() {
     return functionExecutionStatsMap.keySet();
   }
-
 
   public Statistics[] findStatisticsByType(final StatisticsType type) {
     final ArrayList hits = new ArrayList();
@@ -1878,7 +1870,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
     }
     return result;
   }
-
 
   // StatisticsTypeFactory methods
   private final static StatisticsTypeFactory tf = StatisticsTypeFactoryImpl.singleton();
@@ -1999,7 +1990,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
    */
   private static void notifyConnectListeners(InternalDistributedSystem sys) {
     synchronized (connectListeners) {
-      for (Iterator iter = connectListeners.iterator(); iter.hasNext(); ) {
+      for (Iterator iter = connectListeners.iterator(); iter.hasNext();) {
         try {
           ConnectListener listener = (ConnectListener) iter.next();
           listener.onConnect(sys);
@@ -2075,13 +2066,13 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
    * @param resource the actual resource object.
    */
   private void notifyResourceEventListeners(ResourceEvent event, Object resource) {
-    for (Iterator<ResourceEventsListener> iter = resourceListeners.iterator(); iter.hasNext(); ) {
+    for (Iterator<ResourceEventsListener> iter = resourceListeners.iterator(); iter.hasNext();) {
       try {
         ResourceEventsListener listener = (ResourceEventsListener) iter.next();
         listener.handleEvent(event, resource);
       } catch (CancelException e) {
         //ignore
-      } catch (GemFireSecurityException|ManagementException ex) {
+      } catch (GemFireSecurityException | ManagementException ex) {
         if (event == ResourceEvent.CACHE_CREATE) {
           throw ex;
         } else {
@@ -2118,8 +2109,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
         String reason = this.stopper.cancelInProgress();
         if (reason != null) {
           this.listeners.remove(listener); // don't leave in the list!
-          throw new DistributedSystemDisconnectedException(LocalizedStrings.InternalDistributedSystem_NO_LISTENERS_PERMITTED_AFTER_SHUTDOWN_0.toLocalizedString(reason), dm
-            .getRootCause());
+          throw new DistributedSystemDisconnectedException(LocalizedStrings.InternalDistributedSystem_NO_LISTENERS_PERMITTED_AFTER_SHUTDOWN_0.toLocalizedString(reason), dm.getRootCause());
         }
       }
     } // synchronized
@@ -2320,7 +2310,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
    */
   private boolean locatorDMTypeForced;
 
-
   /**
    * Returns true if we are reconnecting the distributed system or
    * reconnect has completed.  If this returns true it means that
@@ -2340,7 +2329,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
     }
     return true;
   }
-
 
   /**
    * Returns true if we are reconnecting the distributed system
@@ -2444,7 +2432,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
       } // synchronized cache
     } // synchronized CacheFactory.class
   }
-
 
   /**
    * Returns the value for the number of time reconnect has been tried.
@@ -2577,7 +2564,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
           return;
         }
 
-
         logger.info(LocalizedMessage.create(LocalizedStrings.DISTRIBUTED_SYSTEM_RECONNECTING, new Object[] { reconnectAttemptCounter }));
 
         int savNumOfTries = reconnectAttemptCounter;
@@ -2646,7 +2632,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
           }
           reconnectAttemptCounter = savNumOfTries;
         }
-
 
         DM newDM = this.reconnectDS.getDistributionManager();
         if (newDM instanceof DistributionManager) {
@@ -2728,7 +2713,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
 
   }
 
-
   /**
    * after an auto-reconnect we may need to recreate a cache server
    * and start it
@@ -2799,11 +2783,9 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
       }
 
       if (this.creationStack == null) {
-        throw new IllegalStateException(LocalizedStrings.InternalDistributedSystem_A_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_ALREADY_EXISTS_IN_THIS_VM_IT_HAS_THE_FOLLOWING_CONFIGURATION_0
-          .toLocalizedString(sb.toString()));
+        throw new IllegalStateException(LocalizedStrings.InternalDistributedSystem_A_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_ALREADY_EXISTS_IN_THIS_VM_IT_HAS_THE_FOLLOWING_CONFIGURATION_0.toLocalizedString(sb.toString()));
       } else {
-        throw new IllegalStateException(LocalizedStrings.InternalDistributedSystem_A_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_ALREADY_EXISTS_IN_THIS_VM_IT_HAS_THE_FOLLOWING_CONFIGURATION_0
-          .toLocalizedString(sb.toString()), this.creationStack);
+        throw new IllegalStateException(LocalizedStrings.InternalDistributedSystem_A_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_ALREADY_EXISTS_IN_THIS_VM_IT_HAS_THE_FOLLOWING_CONFIGURATION_0.toLocalizedString(sb.toString()), this.creationStack);
       }
     }
   }
@@ -2818,7 +2800,7 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
       buff.append(Array.get(obj, i).toString());
       buff.append(",");
     }
-    if(arrayLength > 0) {
+    if (arrayLength > 0) {
       buff.append(Array.get(obj, arrayLength - 1).toString());
     }
     buff.append("]");
@@ -2857,7 +2839,6 @@ public class InternalDistributedSystem extends DistributedSystem implements OsSt
   public boolean hasAlertListenerFor(DistributedMember member) {
     return hasAlertListenerFor(member, AlertLevel.WARNING.getSeverity());
   }
-
 
   public boolean hasAlertListenerFor(DistributedMember member, int severity) {
     return AlertAppender.getInstance().hasAlertListener(member, severity);

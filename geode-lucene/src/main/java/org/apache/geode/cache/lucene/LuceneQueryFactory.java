@@ -30,17 +30,17 @@ import org.apache.geode.annotations.Experimental;
  */
 @Experimental
 public interface LuceneQueryFactory {
-  
+
   /**
    * Default query result limit is 100
    */
   public static final int DEFAULT_LIMIT = 100;
-  
+
   /**
    *  Default page size of result is 0, which means no pagination
    */
   public static final int DEFAULT_PAGESIZE = 0;
-  
+
   /**
    * Set page size for a query result. The default page size is 0 which means no pagination.
    * If specified negative value, throw IllegalArgumentException
@@ -48,7 +48,7 @@ public interface LuceneQueryFactory {
    * @return itself
    */
   LuceneQueryFactory setPageSize(int pageSize);
-  
+
   /**
    * Set max limit of result for a query
    * If specified limit is less or equal to zero, throw IllegalArgumentException
@@ -56,7 +56,7 @@ public interface LuceneQueryFactory {
    * @return itself
    */
   LuceneQueryFactory setResultLimit(int limit);
-  
+
   /**
    * Set a list of fields for result projection.
    * 
@@ -67,7 +67,7 @@ public interface LuceneQueryFactory {
    */
   @Deprecated
   LuceneQueryFactory setProjectionFields(String... fieldNames);
-  
+
   /**
    * Create wrapper object for lucene's QueryParser object using default standard analyzer.
    * The queryString is using lucene QueryParser's syntax. QueryParser is for easy-to-use 

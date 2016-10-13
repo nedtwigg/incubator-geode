@@ -26,20 +26,10 @@ import java.util.Set;
  */
 public class TransactionalOperation {
   static public enum ServerRegionOperation {
-    CONTAINS_KEY,
-    CONTAINS_VALUE,
-    CONTAINS_VALUE_FOR_KEY,
-    DESTROY,  // includes REMOVE(k,v)
-    EXECUTE_FUNCTION,
-    GET,
-    GET_ENTRY,
-    GET_ALL,
-    INVALIDATE,
-    KEY_SET,
-    PUT, // includes PUT_IF_ABSENT
-    PUT_ALL,
-    REMOVE_ALL;
-    
+    CONTAINS_KEY, CONTAINS_VALUE, CONTAINS_VALUE_FOR_KEY, DESTROY, // includes REMOVE(k,v)
+    EXECUTE_FUNCTION, GET, GET_ENTRY, GET_ALL, INVALIDATE, KEY_SET, PUT, // includes PUT_IF_ABSENT
+    PUT_ALL, REMOVE_ALL;
+
     /**
      * @param op
      * @return true if the key associated with this op should be locked on
@@ -51,37 +41,37 @@ public class TransactionalOperation {
       }
       return false;
     }
-    };
+  };
 
-//  private ClientTXStateStub clienttx;
+  //  private ClientTXStateStub clienttx;
   protected ServerRegionOperation operation;
   protected String regionName;
   protected Object key;
   protected Object[] arguments;
 
   protected TransactionalOperation(ClientTXStateStub clienttx, String regionName, ServerRegionOperation op, Object key, Object arguments[]) {
-//    this.clienttx = clienttx;
+    //    this.clienttx = clienttx;
     this.regionName = regionName;
     this.operation = op;
     this.key = key;
     this.arguments = arguments;
   }
-  
+
   /**
    * @return the name of the affected region
    */
   public String getRegionName() {
     return this.regionName;
   }
-  
+
   public ServerRegionOperation getOperation() {
     return this.operation;
   }
-  
+
   public Object getKey() {
     return this.key;
   }
-  
+
   /**
    * @return set of keys if the operation was PUTALL or REMOVEALL; null otherwise
    */
@@ -95,16 +85,15 @@ public class TransactionalOperation {
     }
     return null;
   }
-  
+
   /** this returns internal arguments for reinvoking methods on the ServerRegionProxy */
   public Object[] getArguments() {
     return this.arguments;
   }
-  
+
   @Override
   public String toString() {
-    return "TransactionalOperation(region="+this.regionName+"; op="+this.operation
-     + "; key=" + this.key + ")";
+    return "TransactionalOperation(region=" + this.regionName + "; op=" + this.operation + "; key=" + this.key + ")";
   }
 
 }

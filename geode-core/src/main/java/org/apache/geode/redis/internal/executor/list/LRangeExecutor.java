@@ -50,7 +50,6 @@ public class LRangeExecutor extends ListExecutor {
     int redisStart;
     int redisStop;
 
-
     checkDataType(key, RedisDataType.REDIS_LIST, context);
     Region<Integer, ByteArrayWrapper> keyRegion = getRegion(context, key);
 
@@ -67,12 +66,11 @@ public class LRangeExecutor extends ListExecutor {
 
     try {
       redisStart = Coder.bytesToInt(startArray);
-      redisStop =  Coder.bytesToInt(stopArray);
+      redisStop = Coder.bytesToInt(stopArray);
     } catch (NumberFormatException e) {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
       return;
     }
-
 
     redisStart = getBoundedStartIndex(redisStart, listSize);
     redisStop = getBoundedEndIndex(redisStop, listSize);
@@ -82,8 +80,7 @@ public class LRangeExecutor extends ListExecutor {
     }
     redisStart = Math.min(redisStart, listSize - 1);
     redisStop = Math.min(redisStop, listSize - 1);
-   
-    
+
     List<Struct> range;
     try {
       range = getRange(context, key, redisStart, redisStop, keyRegion);
@@ -101,7 +98,7 @@ public class LRangeExecutor extends ListExecutor {
 
     Query query = getQuery(key, ListQuery.LRANGE, context);
 
-    Object[] params = {Integer.valueOf(stop + 1)};
+    Object[] params = { Integer.valueOf(stop + 1) };
     SelectResults<Struct> results = (SelectResults<Struct>) query.execute(params);
     int size = results.size();
     if (results == null || size <= start) {

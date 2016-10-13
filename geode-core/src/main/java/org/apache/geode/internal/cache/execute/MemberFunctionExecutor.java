@@ -52,17 +52,17 @@ public class MemberFunctionExecutor extends AbstractExecution {
   private ServerToClientFunctionResultSender sender;
 
   public MemberFunctionExecutor(DistributedSystem s) {
-    this.ds = (InternalDistributedSystem)s;
+    this.ds = (InternalDistributedSystem) s;
     this.members = this.ds.getDistributionManager().getNormalDistributionManagerIds();
   }
 
   public MemberFunctionExecutor(DistributedSystem s, DistributedMember m) {
-    this.ds = (InternalDistributedSystem)s;
+    this.ds = (InternalDistributedSystem) s;
     this.members = Collections.singleton(m);
   }
 
   public MemberFunctionExecutor(DistributedSystem s, Set m) {
-    this.ds = (InternalDistributedSystem)s;
+    this.ds = (InternalDistributedSystem) s;
     this.members = m;
   }
 
@@ -79,60 +79,50 @@ public class MemberFunctionExecutor extends AbstractExecution {
     this.sender = memFunctionExecutor.sender;
   }
 
-  private MemberFunctionExecutor(MemberFunctionExecutor memberFunctionExecutor,
-      MemberMappedArgument argument) {
-    this(memberFunctionExecutor);    
-    
+  private MemberFunctionExecutor(MemberFunctionExecutor memberFunctionExecutor, MemberMappedArgument argument) {
+    this(memberFunctionExecutor);
+
     this.memberMappedArg = argument;
     this.isMemberMappedArgument = true;
   }
 
-  private MemberFunctionExecutor(MemberFunctionExecutor memberFunctionExecutor,
-      ResultCollector rs) {
-    this(memberFunctionExecutor);    
+  private MemberFunctionExecutor(MemberFunctionExecutor memberFunctionExecutor, ResultCollector rs) {
+    this(memberFunctionExecutor);
 
     this.rc = rs;
   }
 
-  private MemberFunctionExecutor(MemberFunctionExecutor memberFunctionExecutor,
-      Object arguments) {
+  private MemberFunctionExecutor(MemberFunctionExecutor memberFunctionExecutor, Object arguments) {
     this(memberFunctionExecutor);
 
     this.args = arguments;
   }
 
   @SuppressWarnings("unchecked")
-  private ResultCollector executeFunction(final Function function,
-      ResultCollector resultCollector) {
+  private ResultCollector executeFunction(final Function function, ResultCollector resultCollector) {
     final DM dm = this.ds.getDistributionManager();
     final Set dest = new HashSet(this.members);
     if (dest.isEmpty()) {
-      throw new FunctionException(
-          LocalizedStrings.MemberFunctionExecutor_NO_MEMBER_FOUND_FOR_EXECUTING_FUNCTION_0
-              .toLocalizedString(function.getId()));
-    } 
+      throw new FunctionException(LocalizedStrings.MemberFunctionExecutor_NO_MEMBER_FOUND_FOR_EXECUTING_FUNCTION_0.toLocalizedString(function.getId()));
+    }
     validateExecution(function, dest);
     setExecutionNodes(dest);
 
-    final InternalDistributedMember localVM = this.ds.getDistributionManager()
-        .getDistributionManagerId();
-    final LocalResultCollector<?, ?> localRC = getLocalResultCollector(
-        function, resultCollector); 
+    final InternalDistributedMember localVM = this.ds.getDistributionManager().getDistributionManagerId();
+    final LocalResultCollector<?, ?> localRC = getLocalResultCollector(function, resultCollector);
     boolean remoteOnly = false;
     boolean localOnly = false;
     if (!dest.contains(localVM)) {
       remoteOnly = true;
     }
-    if(dest.size()==1 && dest.contains(localVM)){
-      localOnly = true ;	
+    if (dest.size() == 1 && dest.contains(localVM)) {
+      localOnly = true;
     }
-    final MemberFunctionResultSender resultSender = new MemberFunctionResultSender(dm,
-        localRC, function,localOnly, remoteOnly, sender);
+    final MemberFunctionResultSender resultSender = new MemberFunctionResultSender(dm, localRC, function, localOnly, remoteOnly, sender);
     if (dest.contains(localVM)) {
       // if member is local VM
       dest.remove(localVM);
-      final FunctionContext context = new FunctionContextImpl(function.getId(),
-          getArgumentsForMember(localVM.getId()), resultSender);
+      final FunctionContext context = new FunctionContextImpl(function.getId(), getArgumentsForMember(localVM.getId()), resultSender);
       boolean isTx = false;
       GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
       if (cache != null) {
@@ -140,21 +130,18 @@ public class MemberFunctionExecutor extends AbstractExecution {
       }
       executeFunctionOnLocalNode(function, context, resultSender, dm, isTx);
     }
-    
+
     if (!dest.isEmpty()) {
       HashMap<InternalDistributedMember, Object> memberArgs = new HashMap<InternalDistributedMember, Object>();
       Iterator<DistributedMember> iter = dest.iterator();
       while (iter.hasNext()) {
-        InternalDistributedMember recip = (InternalDistributedMember)iter
-            .next();
+        InternalDistributedMember recip = (InternalDistributedMember) iter.next();
         memberArgs.put(recip, getArgumentsForMember(recip.getId()));
       }
       Assert.assertTrue(memberArgs.size() == dest.size());
-      MemberFunctionResultWaiter resultReciever = new MemberFunctionResultWaiter(
-          this.ds, localRC, function, memberArgs, dest,resultSender);
+      MemberFunctionResultWaiter resultReciever = new MemberFunctionResultWaiter(this.ds, localRC, function, memberArgs, dest, resultSender);
 
-      ResultCollector reply = resultReciever.getFunctionResultFrom(dest,
-          function, this);
+      ResultCollector reply = resultReciever.getFunctionResultFrom(dest, function, this);
       return reply;
     }
     return localRC;
@@ -172,23 +159,19 @@ public class MemberFunctionExecutor extends AbstractExecution {
         throw new TransactionException(LocalizedStrings.PartitionedRegion_TX_FUNCTION_ON_MORE_THAN_ONE_NODE.toLocalizedString());
       } else {
         assert dest.size() == 1;
-        DistributedMember funcTarget = (DistributedMember)dest.iterator().next();
+        DistributedMember funcTarget = (DistributedMember) dest.iterator().next();
         DistributedMember target = cache.getTxManager().getTXState().getTarget();
         if (target == null) {
           cache.getTxManager().getTXState().setTarget(funcTarget);
         } else if (!target.equals(funcTarget)) {
-          throw new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_TX_FUNCTION_EXECUTION_NOT_COLOCATED
-              .toLocalizedString());
+          throw new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_TX_FUNCTION_EXECUTION_NOT_COLOCATED.toLocalizedString());
         }
       }
     }
-    if (function.optimizeForWrite() && cache!= null && cache.
-        getResourceManager().getHeapMonitor().containsHeapCriticalMembers(dest) &&
-        !MemoryThresholds.isLowMemoryExceptionDisabled()) {
-      Set<InternalDistributedMember> hcm  = cache.getResourceAdvisor().adviseCritialMembers();
+    if (function.optimizeForWrite() && cache != null && cache.getResourceManager().getHeapMonitor().containsHeapCriticalMembers(dest) && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
+      Set<InternalDistributedMember> hcm = cache.getResourceAdvisor().adviseCritialMembers();
       Set<DistributedMember> sm = SetUtils.intersection(hcm, dest);
-      throw new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(
-              new Object[] {function.getId(), sm}), sm);
+      throw new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(new Object[] { function.getId(), sm }), sm);
     }
   }
 
@@ -200,8 +183,7 @@ public class MemberFunctionExecutor extends AbstractExecution {
         rc = new DefaultResultCollector();
       }
       return executeFunction(function, rc);
-    }
-    else {
+    } else {
       executeFunction(function, null);
       return new NoResult();
     }
@@ -210,41 +192,31 @@ public class MemberFunctionExecutor extends AbstractExecution {
   // Changing the object!!
   public Execution withArgs(Object arguments) {
     if (arguments == null) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString("args"));
+      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("args"));
     }
-    return new MemberFunctionExecutor(this,arguments);
+    return new MemberFunctionExecutor(this, arguments);
   }
+
   //Changing the object!!
   public Execution withCollector(ResultCollector rs) {
     if (rs == null) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString("Result Collector"));
+      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("Result Collector"));
     }
-    return new MemberFunctionExecutor(this,rs);
+    return new MemberFunctionExecutor(this, rs);
   }
 
   public Execution withFilter(Set filter) {
-    throw new FunctionException(
-        LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS
-            .toLocalizedString("filter"));
-  }
-  
-  @Override
-  public InternalExecution withBucketFilter(Set<Integer> bucketIDs) {
-    throw new FunctionException(
-        LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS
-            .toLocalizedString("bucket as filter"));
+    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS.toLocalizedString("filter"));
   }
 
-  public InternalExecution withMemberMappedArgument(
-      MemberMappedArgument argument) {
-    if(argument == null){
-      throw new IllegalArgumentException(
-          LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString("MemberMappedArgs"));
+  @Override
+  public InternalExecution withBucketFilter(Set<Integer> bucketIDs) {
+    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS.toLocalizedString("bucket as filter"));
+  }
+
+  public InternalExecution withMemberMappedArgument(MemberMappedArgument argument) {
+    if (argument == null) {
+      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("MemberMappedArgs"));
     }
     return new MemberFunctionExecutor(this, argument);
   }
@@ -258,8 +230,7 @@ public class MemberFunctionExecutor extends AbstractExecution {
   public Object getArgumentsForMember(String memberId) {
     if (!isMemberMappedArgument) {
       return this.args;
-    }
-    else {
+    } else {
       return this.memberMappedArg.getArgumentsForMember(memberId);
     }
   }
@@ -268,7 +239,7 @@ public class MemberFunctionExecutor extends AbstractExecution {
   public MemberMappedArgument getMemberMappedArgument() {
     return this.memberMappedArg;
   }
-  
+
   public ServerToClientFunctionResultSender getServerResultSender() {
     return this.sender;
   }

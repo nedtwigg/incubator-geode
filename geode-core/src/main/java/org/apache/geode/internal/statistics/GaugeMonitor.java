@@ -23,7 +23,7 @@ public final class GaugeMonitor extends StatisticsMonitor {
 
   private final Number lowThreshold;
   private final Number highThreshold;
-  
+
   public GaugeMonitor(Number lowThreshold, Number highThreshold) {
     super();
     this.lowThreshold = lowThreshold;
@@ -41,7 +41,7 @@ public final class GaugeMonitor extends StatisticsMonitor {
     super.removeStatistic(statId);
     return this;
   }
-  
+
   @Override
   protected StringBuilder appendToString() {
     final StringBuilder sb = new StringBuilder();

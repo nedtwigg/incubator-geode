@@ -71,9 +71,7 @@ import java.util.*;
  *
  * @since GemFire 3.2
  */
-public abstract class LRUAlgorithm
-  implements CacheCallback, Serializable, Cloneable
-{
+public abstract class LRUAlgorithm implements CacheCallback, Serializable, Cloneable {
 
   /** The key for setting the <code>eviction-action</code> property
    * of an <code>LRUAlgorithm</code> */
@@ -97,8 +95,8 @@ public abstract class LRUAlgorithm
    * Creates a new <code>LRUAlgorithm</code> with the given
    * {@linkplain EvictionAction eviction action}.
    */
-  protected LRUAlgorithm(EvictionAction evictionAction,Region region) {
-    bucketRegion=(BucketRegion)(region instanceof BucketRegion ? region :null);
+  protected LRUAlgorithm(EvictionAction evictionAction, Region region) {
+    bucketRegion = (BucketRegion) (region instanceof BucketRegion ? region : null);
     setEvictionAction(evictionAction);
     this.helper = createLRUHelper();
   }
@@ -110,10 +108,11 @@ public abstract class LRUAlgorithm
    */
   public void setBucketRegion(Region r) {
     if (r instanceof BucketRegion) {
-      this.bucketRegion = (BucketRegion)r;
+      this.bucketRegion = (BucketRegion) r;
       this.bucketRegion.setLimit(getLimit());
     }
   }
+
   /**
    * Sets the action that is performed on the least recently used
    * entry when it is evicted from the VM.
@@ -124,8 +123,8 @@ public abstract class LRUAlgorithm
    *
    * @see EvictionAction
    */
-  protected void setEvictionAction(EvictionAction  evictionAction) {
-      this.evictionAction = evictionAction;
+  protected void setEvictionAction(EvictionAction evictionAction) {
+    this.evictionAction = evictionAction;
   }
 
   /**
@@ -151,40 +150,38 @@ public abstract class LRUAlgorithm
     }
   }
 
-  private void writeObject(java.io.ObjectOutputStream out)
-    throws IOException {
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
 
-    synchronized (this) {        // See bug 31047
+    synchronized (this) { // See bug 31047
       out.writeObject(this.evictionAction);
     }
   }
 
-  private void readObject(java.io.ObjectInputStream in)
-    throws IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
 
-    synchronized (this) {        // See bug 31047
+    synchronized (this) { // See bug 31047
       this.evictionAction = (EvictionAction) in.readObject();
       this.helper = createLRUHelper();
     }
   }
 
-//   public void writeExternal(ObjectOutput out)
-//     throws IOException {
-//     out.writeObject(this.evictionAction);
-//   }
+  //   public void writeExternal(ObjectOutput out)
+  //     throws IOException {
+  //     out.writeObject(this.evictionAction);
+  //   }
 
-//   public void readExternal(ObjectInput in)
-//     throws IOException, ClassNotFoundException {
-//     String evictionAction = (String) in.readObject();
-//     this.setEvictionAction(evictionAction);
-//   }
+  //   public void readExternal(ObjectInput in)
+  //     throws IOException, ClassNotFoundException {
+  //     String evictionAction = (String) in.readObject();
+  //     this.setEvictionAction(evictionAction);
+  //   }
 
-//   protected Object readResolve() throws ObjectStreamException {
-//     if (this.helper == null) {
-//       this.helper = createLRUHelper();
-//     }
-//     return this;
-//   }
+  //   protected Object readResolve() throws ObjectStreamException {
+  //     if (this.helper == null) {
+  //       this.helper = createLRUHelper();
+  //     }
+  //     return this;
+  //   }
 
   /**
    * Creates a new <code>LRUHelper</code> tailed for this LRU
@@ -220,8 +217,7 @@ public abstract class LRUAlgorithm
         this.stats.incEvictions(bucketRegion.getEvictions() * -1);
         this.stats.decrementCounter(bucketRegion.getCounter());
         bucketRegion.close();
-      }
-      else {
+      } else {
         this.stats.close();
       }
     }
@@ -243,16 +239,19 @@ public abstract class LRUAlgorithm
       return clone;
     }
   }
-  
+
   /** Return true if the specified capacity controller is
    *  compatible with this
    */
   @Override
   public boolean equals(Object cc) {
-    if (cc == null) return false;
-    if (!getClass().isAssignableFrom(cc.getClass())) return false;
-    LRUAlgorithm other = (LRUAlgorithm)cc;
-    if (!other.evictionAction.equals(this.evictionAction)) return false;
+    if (cc == null)
+      return false;
+    if (!getClass().isAssignableFrom(cc.getClass()))
+      return false;
+    LRUAlgorithm other = (LRUAlgorithm) cc;
+    if (!other.evictionAction.equals(this.evictionAction))
+      return false;
     return true;
   }
 
@@ -286,9 +285,9 @@ public abstract class LRUAlgorithm
 
     /** The region whose capacity is controller by this eviction controller */
     private volatile transient String regionName;
-    
+
     public long limit() {
-      if ( stats == null ) {
+      if (stats == null) {
         throw new InternalGemFireException(LocalizedStrings.LRUAlgorithm_LRU_STATS_IN_EVICTION_CONTROLLER_INSTANCE_SHOULD_NOT_BE_NULL.toLocalizedString());
       }
       if (bucketRegion != null) {
@@ -300,12 +299,13 @@ public abstract class LRUAlgorithm
     public String getRegionName() {
       return this.regionName;
     }
+
     public void setRegionName(Object region) {
       String fullPathName;
       if (region instanceof Region) {
-        fullPathName = ((Region)region).getFullPath();
+        fullPathName = ((Region) region).getFullPath();
       } else if (region instanceof PlaceHolderDiskRegion) {
-        PlaceHolderDiskRegion phdr = (PlaceHolderDiskRegion)region;
+        PlaceHolderDiskRegion phdr = (PlaceHolderDiskRegion) region;
         if (phdr.isBucket()) {
           fullPathName = phdr.getPrName();
         } else {
@@ -315,21 +315,21 @@ public abstract class LRUAlgorithm
         throw new IllegalStateException("expected Region or PlaceHolderDiskRegion");
       }
       if (this.regionName != null && !this.regionName.equals(fullPathName)) {
-        throw new IllegalArgumentException(LocalizedStrings.LRUAlgorithm_LRU_EVICTION_CONTROLLER_0_ALREADY_CONTROLS_THE_CAPACITY_OF_1_IT_CANNOT_ALSO_CONTROL_THE_CAPACITY_OF_REGION_2.toLocalizedString(new Object[] {LRUAlgorithm.this, this.regionName, fullPathName}));
+        throw new IllegalArgumentException(LocalizedStrings.LRUAlgorithm_LRU_EVICTION_CONTROLLER_0_ALREADY_CONTROLS_THE_CAPACITY_OF_1_IT_CANNOT_ALSO_CONTROL_THE_CAPACITY_OF_REGION_2.toLocalizedString(new Object[] { LRUAlgorithm.this, this.regionName, fullPathName }));
       }
       this.regionName = fullPathName; // store the name not the region since
       // region is not fully constructed yet
     }
-    
+
     protected void setStats(LRUStatistics stats) {
-      LRUAlgorithm.this.stats = stats;      
+      LRUAlgorithm.this.stats = stats;
     }
 
     public LRUStatistics initStats(Object region, StatisticsFactory sf) {
       setRegionName(region);
       final LRUStatistics stats = new LRUStatistics(sf, getRegionName(), this);
-      stats.setLimit( LRUAlgorithm.this.getLimit() );
-      stats.setDestroysLimit( 1000 );
+      stats.setLimit(LRUAlgorithm.this.getLimit());
+      stats.setDestroysLimit(1000);
       setStats(stats);
       return stats;
     }

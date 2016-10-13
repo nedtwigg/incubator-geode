@@ -32,18 +32,17 @@ public class CqStateImpl implements CqState {
   public static final int RUNNING = 1;
 
   public static final int CLOSED = 2;
-  
+
   public static final int CLOSING = 3;
- 
+
   public static final int INIT = 4;
- 
+
   private volatile int state = INIT;
-  
-  
+
   /**
    * Returns true if the CQ is in Running state.
    */
-  public boolean isRunning(){
+  public boolean isRunning() {
     return (this.state == RUNNING);
   }
 
@@ -53,26 +52,26 @@ public class CqStateImpl implements CqState {
   public boolean isStopped() {
     return (this.state == STOPPED || this.state == INIT);
   }
-  
+
   /**
    * Returns true if the CQ is in Closed state.
    */
   public boolean isClosed() {
-    return (this.state == CLOSED);    
+    return (this.state == CLOSED);
   }
-  
+
   /**
    * Returns true if the CQ is in the Closing state.
    */
   public boolean isClosing() {
     return (this.state == CLOSING);
   }
-  
+
   /**
    * Sets the state of CQ.
    * @param state
    */
-  public void setState(int state){
+  public void setState(int state) {
     this.state = state;
   }
 
@@ -82,21 +81,21 @@ public class CqStateImpl implements CqState {
   public int getState() {
     return this.state;
   }
-  
+
   /**
    * Returns the state in string form.
    */
   @Override
   public String toString() {
-    switch (this.state){    
-      case STOPPED:
-        return "STOPPED";
-      case RUNNING:
-        return "RUNNING";
-      case CLOSED:
-        return "CLOSED";
-      default:
-        return "UNKNOWN";
+    switch (this.state) {
+    case STOPPED:
+      return "STOPPED";
+    case RUNNING:
+      return "RUNNING";
+    case CLOSED:
+      return "CLOSED";
+    default:
+      return "UNKNOWN";
     }
   }
 

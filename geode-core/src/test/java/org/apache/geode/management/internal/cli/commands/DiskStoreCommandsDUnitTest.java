@@ -280,7 +280,7 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
     });
 
     // Create a disk store and region in the Manager (VM0) and VM1 VMs
-    for (final VM vm : (new VM[]{vm0, vm1})) {
+    for (final VM vm : (new VM[] { vm0, vm1 })) {
       final String vmName = "VM" + vm.getPid();
       vm.invoke(new SerializableRunnable() {
         public void run() {
@@ -290,7 +290,7 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
           diskStoreDirFile.mkdirs();
 
           DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
-          diskStoreFactory.setDiskDirs(new File[]{diskStoreDirFile});
+          diskStoreFactory.setDiskDirs(new File[] { diskStoreDirFile });
           diskStoreFactory.setMaxOplogSize(1);
           diskStoreFactory.setAllowForceCompaction(true);
           diskStoreFactory.setAutoCompact(false);
@@ -347,7 +347,7 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
       public void run() {
         Cache cache = getCache();
         Region childRegion = cache.getRegion(childName);
-        PartitionedRegion parentRegion = (PartitionedRegion)(cache.getRegion(regionName));
+        PartitionedRegion parentRegion = (PartitionedRegion) (cache.getRegion(regionName));
         try {
           parentRegion.put("A", "C");
         } catch (Exception e) {
@@ -477,7 +477,7 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
 
     // Do our own cleanup so that the disk store directories can be removed
     super.destroyDefaultSetup();
-    for (final VM vm : (new VM[]{vm0, vm1})) {
+    for (final VM vm : (new VM[] { vm0, vm1 })) {
       final String vmName = "VM" + vm.getPid();
       vm.invoke(new SerializableRunnable() {
         public void run() {
@@ -784,7 +784,7 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
         getCache().close();
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
         localProps.setProperty(GROUPS, groupName);
         localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
         getSystem(localProps);
@@ -827,7 +827,6 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-
     //Restart the cache and make sure it DOES NOT have the diskstore
     vm = Host.getHost(0).getVM(1);
     vm.invoke(new SerializableCallable() {
@@ -836,7 +835,7 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
         getCache().close();
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
         localProps.setProperty(GROUPS, groupName);
         localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
         getSystem(localProps);
@@ -850,7 +849,6 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
       }
     });
   }
-
 
   /**
    * 1) Create a disk-store in a member, get the disk-dirs. 2) Close the member. 3) Execute the command. 4) Restart the
@@ -872,7 +870,6 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
 
     final String diskDirPath = diskStoreDir.getCanonicalPath();
     final VM vm1 = Host.getHost(0).getVM(1);
-
 
     vm1.invoke(new SerializableCallable() {
 
@@ -965,7 +962,6 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
     csb.addOption(CliStrings.ALTER_DISK_STORE__CONCURRENCY__LEVEL, "5");
     csb.addOption(CliStrings.ALTER_DISK_STORE__REMOVE, "true");
 
-
     commandString = csb.getCommandString();
     commandString.trim();
 
@@ -990,7 +986,6 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
     final VM manager = Host.getHost(0).getVM(0);
     final VM vm1 = Host.getHost(0).getVM(1);
     setUpJmxManagerOnVm0ThenConnect(null);
-
 
     File controllerDiskDir = new File(controllerDiskDirName);
     controllerDiskDir.mkdir();
@@ -1031,7 +1026,6 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
       }
     });
 
-
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.BACKUP_DISK_STORE);
     csb.addOption(CliStrings.BACKUP_DISK_STORE__DISKDIRS, fullBackupDirPath);
     String commandString = csb.toString();
@@ -1042,7 +1036,6 @@ public class DiskStoreCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(Result.Status.OK, cmdResult.getStatus());
     assertEquals(true, resultAsString.contains("Manager"));
     assertEquals(true, resultAsString.contains(vm1Name));
-
 
     vm1.invoke(new SerializableRunnable() {
 

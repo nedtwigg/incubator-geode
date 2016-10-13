@@ -33,16 +33,15 @@ public class CloseCQOp {
    * @param pool the pool to use to communicate with the server.
    * @param cqName name of the CQ to close
    */
-  public static void execute(ExecutablePool pool, String cqName)
-  {
+  public static void execute(ExecutablePool pool, String cqName) {
     AbstractOp op = new CloseCQOpImpl(cqName);
     pool.executeOnAllQueueServers(op);
   }
-                                                               
+
   private CloseCQOp() {
     // no instances allowed
   }
-  
+
   private static class CloseCQOpImpl extends CreateCQOpImpl {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -51,18 +50,22 @@ public class CloseCQOp {
       super(MessageType.CLOSECQ_MSG_TYPE, 1);
       getMessage().addStringPart(cqName);
     }
+
     @Override
     protected String getOpName() {
       return "closeCQ";
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startCloseCQ();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endCloseCQSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endCloseCQ(start, hasTimedOut(), hasFailed());

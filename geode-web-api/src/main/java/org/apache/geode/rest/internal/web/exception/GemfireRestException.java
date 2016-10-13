@@ -43,5 +43,5 @@ public class GemfireRestException extends GemFireException {
   public GemfireRestException(String message, Throwable cause) {
     super(message, cause);
   }
-  
+
 }

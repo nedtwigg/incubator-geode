@@ -48,24 +48,24 @@ import org.apache.geode.cache.query.types.ObjectType;
  */
 public class ResultsCollectionCopyOnReadWrapper implements SelectResults {
   SelectResults results;
-  
+
   public ResultsCollectionCopyOnReadWrapper(SelectResults results) {
     this.results = results;
   }
-  
+
   @Override
   public Iterator iterator() {
     return new SelectResultsCopyOnReadIterator(results.iterator());
   }
-  
+
   private class SelectResultsCopyOnReadIterator implements Iterator {
 
     Iterator iterator;
-    
+
     SelectResultsCopyOnReadIterator(Iterator iterator) {
-     this.iterator = iterator; 
+      this.iterator = iterator;
     }
-    
+
     @Override
     public boolean hasNext() {
       return iterator.hasNext();
@@ -83,10 +83,9 @@ public class ResultsCollectionCopyOnReadWrapper implements SelectResults {
           newValues[i] = CopyHelper.copy(values[i]);
         }
         return new StructImpl((StructTypeImpl) struct.getStructType(), newValues);
-      }
-      else {
+      } else {
         return CopyHelper.copy(object);
-      }    
+      }
     }
 
     @Override
@@ -94,43 +93,32 @@ public class ResultsCollectionCopyOnReadWrapper implements SelectResults {
       iterator.remove();
     }
   }
-  
-  
+
   //All other methods are pass throughs and won't actually be used.
   @Override
   public boolean add(Object e) {
     return results.add(e);
   }
 
-
-
   @Override
   public boolean addAll(Collection c) {
     return results.addAll(c);
   }
-
-
 
   @Override
   public void clear() {
     results.clear();
   }
 
-
-
   @Override
   public boolean contains(Object o) {
     return results.contains(o);
   }
 
-
-
   @Override
   public boolean containsAll(Collection c) {
     return results.containsAll(c);
   }
-
-
 
   @Override
   public boolean isEmpty() {
@@ -142,27 +130,21 @@ public class ResultsCollectionCopyOnReadWrapper implements SelectResults {
     return results.remove(o);
   }
 
-
-
   @Override
   public boolean removeAll(Collection c) {
     return results.removeAll(c);
   }
-
-
 
   @Override
   public boolean retainAll(Collection c) {
     return results.retainAll(c);
   }
 
-
-
   @Override
   public int size() {
     return results.size();
   }
-  
+
   @Override
   public Object[] toArray() {
     ArrayList arrayList = new ArrayList();
@@ -183,41 +165,30 @@ public class ResultsCollectionCopyOnReadWrapper implements SelectResults {
     return a;
   }
 
-
   @Override
   public boolean isModifiable() {
     return results.isModifiable();
   }
-
-
 
   @Override
   public int occurrences(Object element) {
     return results.occurrences(element);
   }
 
-
-
   @Override
   public Set asSet() {
     return new HashSet(this);
   }
-
-
 
   @Override
   public List asList() {
     return new ArrayList(this);
   }
 
-
-
   @Override
   public CollectionType getCollectionType() {
     return results.getCollectionType();
   }
-
-
 
   @Override
   public void setElementType(ObjectType elementType) {

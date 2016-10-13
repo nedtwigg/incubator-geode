@@ -25,15 +25,15 @@ package org.apache.geode;
  * @since GemFire 4.0
  */
 public class CopyException extends GemFireException {
-private static final long serialVersionUID = -1143711608610323585L;
-  
+  private static final long serialVersionUID = -1143711608610323585L;
+
   /**
    * Constructs a new <code>CopyException</code>.
    */
   public CopyException() {
     super();
   }
-  
+
   /**
    * Constructs a new <code>CopyException</code> with a message string.
    *
@@ -42,7 +42,7 @@ private static final long serialVersionUID = -1143711608610323585L;
   public CopyException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs a new <code>CopyException</code> with a message string
    * and a cause.
@@ -53,7 +53,7 @@ private static final long serialVersionUID = -1143711608610323585L;
   public CopyException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs a new <code>CopyException</code> with a cause.
    *
@@ -63,4 +63,3 @@ private static final long serialVersionUID = -1143711608610323585L;
     super(cause);
   }
 }
-

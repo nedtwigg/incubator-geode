@@ -41,28 +41,27 @@ public class JtaBeforeCompletionMessage extends TXMessage {
 
   public JtaBeforeCompletionMessage() {
   }
-  
+
   public JtaBeforeCompletionMessage(int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
-    super(txUniqId,onBehalfOfClientMember, processor);
+    super(txUniqId, onBehalfOfClientMember, processor);
   }
 
-  public static ReliableReplyProcessor21 send(Cache cache, int txUniqId,InternalDistributedMember onBehalfOfClientMember, DistributedMember recipient) {
-    final InternalDistributedSystem system =
-      (InternalDistributedSystem)cache.getDistributedSystem();
+  public static ReliableReplyProcessor21 send(Cache cache, int txUniqId, InternalDistributedMember onBehalfOfClientMember, DistributedMember recipient) {
+    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
     final Set recipients = Collections.singleton(recipient);
     ReliableReplyProcessor21 response = new ReliableReplyProcessor21(system, recipients);
-    JtaBeforeCompletionMessage msg = new JtaBeforeCompletionMessage(txUniqId,onBehalfOfClientMember,
-        response);
+    JtaBeforeCompletionMessage msg = new JtaBeforeCompletionMessage(txUniqId, onBehalfOfClientMember, response);
     msg.setRecipients(recipients);
     system.getDistributionManager().putOutgoing(msg);
     return response;
 
   }
+
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXMessage#operateOnTx(org.apache.geode.internal.cache.TXId)
    */
   @Override
-  protected boolean operateOnTx(TXId txId,DistributionManager dm) {
+  protected boolean operateOnTx(TXId txId, DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     TXManagerImpl txMgr = cache.getTXMgr();
     if (logger.isDebugEnabled()) {

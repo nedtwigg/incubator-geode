@@ -42,7 +42,7 @@ public interface OldClientSupportService extends CacheService {
    * @return the class name to use
    */
   public String processIncomingClassName(String name);
-    
+
   /**
    * Process a class name read from a serialized object
    * @param name the fully qualified class name

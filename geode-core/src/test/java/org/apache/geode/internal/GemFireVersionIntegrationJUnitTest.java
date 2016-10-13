@@ -40,7 +40,7 @@ public class GemFireVersionIntegrationJUnitTest {
   @Test
   public void testDefaultConfig() throws IOException {
     String[] args = new String[1];
-    args[0] = "gf"+System.nanoTime()+".properties";
+    args[0] = "gf" + System.nanoTime() + ".properties";
     DistributionConfigImpl.main(args);
     Properties props = new Properties();
     props.load(new FileInputStream(args[0]));

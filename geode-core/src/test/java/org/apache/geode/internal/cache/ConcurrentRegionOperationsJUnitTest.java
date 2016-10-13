@@ -114,8 +114,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   @Test
-  public void testPersistSyncConcurrency()
-  {
+  public void testPersistSyncConcurrency() {
     this.validate = true;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -126,10 +125,9 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region1 = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, p, Scope.LOCAL);
     validate(region1, region2);
   }
-  
+
   @Test
-  public void testPersistAsyncConcurrency()
-  {
+  public void testPersistAsyncConcurrency() {
     this.validate = true;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -142,10 +140,9 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region1 = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, p);
     validate(region1, region2);
   }
-  
+
   @Test
-  public void testPersistAsyncSmallQueueConcurrency()
-  {
+  public void testPersistAsyncSmallQueueConcurrency() {
     this.validate = true;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -158,28 +155,24 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region1 = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, p);
     validate(region1, region2);
   }
-  
+
   @Test
-  public void testPersistAndOverflowSyncConcurrency()
-  {
+  public void testPersistAndOverflowSyncConcurrency() {
     this.validate = true;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
     p.setDiskDirs(dirs);
     p.setCompactionThreshold(99);
     p.setOverFlowCapacity(1);
-    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, p);
     region2 = concurrencyTest(region1);
-    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
 
   }
 
   @Test
-  public void testPersistAndOverflowAsyncConcurrency()
-  {
+  public void testPersistAndOverflowAsyncConcurrency() {
     this.validate = true;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -188,17 +181,14 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     p.setBytesThreshold(0);
     p.setTimeInterval(1);
     p.setOverFlowCapacity(1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     region2 = concurrencyTest(region1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
   }
 
   @Test
-  public void testPersistAndOverflowAsyncSmallQueueConcurrency()
-  {
+  public void testPersistAndOverflowAsyncSmallQueueConcurrency() {
     this.validate = true;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -207,30 +197,27 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     p.setBytesThreshold(1);
     p.setTimeInterval(0);
     p.setOverFlowCapacity(1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     region2 = concurrencyTest(region1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
   }
+
   @Test
-  public void testNVPersistSyncConcurrency()
-  {
+  public void testNVPersistSyncConcurrency() {
     this.validate = false;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
     p.setDiskDirs(dirs);
     p.setCompactionThreshold(99);
-    region1 = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, p,Scope.LOCAL);
+    region1 = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, p, Scope.LOCAL);
     region2 = concurrencyTest(region1);
-    region1 = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, p,Scope.LOCAL);
+    region1 = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, p, Scope.LOCAL);
     validate(region1, region2);
   }
-  
+
   @Test
-  public void testNVPersistAsyncConcurrency()
-  {
+  public void testNVPersistAsyncConcurrency() {
     this.validate = false;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -243,10 +230,9 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region1 = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, p);
     validate(region1, region2);
   }
-  
+
   @Test
-  public void testNVPersistAsyncSmallQueueConcurrency()
-  {
+  public void testNVPersistAsyncSmallQueueConcurrency() {
     this.validate = false;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -259,28 +245,24 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region1 = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, p);
     validate(region1, region2);
   }
-  
+
   @Test
-  public void testNVPersistAndOverflowSyncConcurrency()
-  {
+  public void testNVPersistAndOverflowSyncConcurrency() {
     this.validate = false;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
     p.setDiskDirs(dirs);
     p.setCompactionThreshold(100);
     p.setOverFlowCapacity(1);
-    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, p);
     region2 = concurrencyTest(region1);
-    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
 
   }
 
   @Test
-  public void testNVPersistAndOverflowAsyncConcurrency()
-  {
+  public void testNVPersistAndOverflowAsyncConcurrency() {
     this.validate = false;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -289,17 +271,14 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     p.setBytesThreshold(0);
     p.setTimeInterval(1);
     p.setOverFlowCapacity(1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     region2 = concurrencyTest(region1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
   }
 
   @Test
-  public void testNVPersistAndOverflowAsyncSmallQueueConcurrency()
-  {
+  public void testNVPersistAndOverflowAsyncSmallQueueConcurrency() {
     this.validate = false;
     DiskRegionProperties p = new DiskRegionProperties();
     p.setRegionName(this.getName() + counter);
@@ -308,11 +287,9 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     p.setBytesThreshold(1);
     p.setTimeInterval(0);
     p.setOverFlowCapacity(1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     region2 = concurrencyTest(region1);
-    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-        p);
+    region1 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
   }
 
@@ -321,8 +298,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
    * as the oplog is deleted by the roller, but the entry was not rolled.
    */
   @Test
-  public void testBug35048()
-  {
+  public void testBug35048() {
     DiskRegionProperties p = new DiskRegionProperties();
     p.setMaxOplogSize(1000);
     p.setRegionName(this.getName() + counter);
@@ -358,14 +334,12 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
       region.get("" + 6);
       try {
         region.get("" + 1);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logWriter.severe("Exception occured  ", e);
         fail("Failed to retrieve value from disk as the Oplog has been rolled but entry still references the Oplog.");
       }
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logWriter.severe("Exception occured  ", e);
       fail("Test failed because  of unexpected exception");
     }
@@ -376,8 +350,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   @Test
-  public void testConcurrentForceRollingAndGetOperation()
-  {
+  public void testConcurrentForceRollingAndGetOperation() {
     DiskRegionProperties p = new DiskRegionProperties();
     p.setMaxOplogSize(1000);
     p.setRegionName(this.getName() + counter);
@@ -392,15 +365,13 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
       region.put("" + j, val);
     }
     Thread t1 = new Thread(new Runnable() {
-      public void run()
-      {
+      public void run() {
         for (int i = 0; i < 100; ++i) {
           region.forceRolling();
 
           try {
-            Thread.sleep(TIME_TO_RUN/100);
-          }
-          catch (InterruptedException e) {
+            Thread.sleep(TIME_TO_RUN / 100);
+          } catch (InterruptedException e) {
             fail("interrupted");
           }
         }
@@ -408,8 +379,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     });
     Thread t2 = new Thread(new Runnable() {
 
-      public void run()
-      {
+      public void run() {
         try {
           for (int i = 0; i < 100; ++i) {
             for (int j = 1; j < 101; ++j) {
@@ -417,8 +387,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
 
             }
           }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
           failure = true;
         }
@@ -432,6 +401,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   private final AtomicBoolean timeToStop = new AtomicBoolean();
+
   private boolean isItTimeToStop() {
     return this.timeToStop.get();
   }
@@ -447,21 +417,15 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
       throw new AssertionError("unexpected ", ex);
     }
   }
-  
-  private Region concurrencyTest(Region r1)
-  {
+
+  private Region concurrencyTest(Region r1) {
     if (this.validate) {
       for (int i = 0; i < 10; i++) {
         map.put(Integer.valueOf(i), new ReentrantLock());
       }
-      region2 = cache.createVMRegion("testRegion2", new AttributesFactory()
-          .createRegionAttributes());
+      region2 = cache.createVMRegion("testRegion2", new AttributesFactory().createRegionAttributes());
     }
-    this.startLine = new CyclicBarrier(numberOfPutsThreads
-                                       + numberOfGetsThreads
-                                       + numberOfDestroysThreads
-                                       + numberOfClearThreads
-                                       + numberOfForceRollThreads);
+    this.startLine = new CyclicBarrier(numberOfPutsThreads + numberOfGetsThreads + numberOfDestroysThreads + numberOfClearThreads + numberOfForceRollThreads);
     DoesPuts doesPuts = new DoesPuts();
     DoesGets doesGets = new DoesGets();
     DoesDestroy doesDestroy = new DoesDestroy();
@@ -513,27 +477,26 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
       }
       try {
         Thread.sleep(TIME_TO_RUN);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         fail("interrupted");
       }
     } finally {
       this.timeToStop.set(true);
     }
     for (int i = 0; i < numberOfPutsThreads; i++) {
-      ThreadUtils.join(putThreads[i], 60*1000);
+      ThreadUtils.join(putThreads[i], 60 * 1000);
     }
     for (int i = 0; i < numberOfGetsThreads; i++) {
-      ThreadUtils.join(getThreads[i], 60*1000);
+      ThreadUtils.join(getThreads[i], 60 * 1000);
     }
     for (int i = 0; i < numberOfDestroysThreads; i++) {
-      ThreadUtils.join(destroyThreads[i], 60*1000);
+      ThreadUtils.join(destroyThreads[i], 60 * 1000);
     }
     for (int i = 0; i < numberOfClearThreads; i++) {
-      ThreadUtils.join(clearThreads[i], 60*1000);
+      ThreadUtils.join(clearThreads[i], 60 * 1000);
     }
     for (int i = 0; i < numberOfForceRollThreads; i++) {
-      ThreadUtils.join(forceRollThreads[i], 60*1000);
+      ThreadUtils.join(forceRollThreads[i], 60 * 1000);
     }
 
     if (this.validate) {
@@ -541,18 +504,16 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
       Iterator iterator = entrySet.iterator();
       Map.Entry mapEntry = null;
       Object key, value = null;
-      ((LocalRegion)r1).getDiskRegion().forceFlush();
+      ((LocalRegion) r1).getDiskRegion().forceFlush();
       while (iterator.hasNext()) {
-        mapEntry = (Map.Entry)iterator.next();
+        mapEntry = (Map.Entry) iterator.next();
         key = mapEntry.getKey();
         value = mapEntry.getValue();
         if (!(r1.containsKey(key))) {
-          fail(" region1 does not contain Key " + key
-               + " but was expected to be there");
+          fail(" region1 does not contain Key " + key + " but was expected to be there");
         }
-        if (!(((LocalRegion)r1).getValueOnDisk(key).equals(value))) {
-          fail(" value for key " + key + " is " + ((LocalRegion)r1).getValueOnDisk(key)
-               + " which is not consistent, it is supposed to be " + value);
+        if (!(((LocalRegion) r1).getValueOnDisk(key).equals(value))) {
+          fail(" value for key " + key + " is " + ((LocalRegion) r1).getValueOnDisk(key) + " which is not consistent, it is supposed to be " + value);
         }
       }
     }
@@ -580,25 +541,23 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     return region2;
   }
 
-  void validate(Region r1, Region r2)
-  {
-    if (!this.validate) return;
+  void validate(Region r1, Region r2) {
+    if (!this.validate)
+      return;
 
     Collection entrySet = r2.entrySet();
     Iterator iterator = entrySet.iterator();
     Map.Entry mapEntry = null;
     Object key, value = null;
     while (iterator.hasNext()) {
-      mapEntry = (Map.Entry)iterator.next();
+      mapEntry = (Map.Entry) iterator.next();
       key = mapEntry.getKey();
       value = mapEntry.getValue();
       if (!(r1.containsKey(key))) {
-        fail(" region1 does not contain Key " + key
-            + " but was expected to be there");
+        fail(" region1 does not contain Key " + key + " but was expected to be there");
       }
       if (!(r1.get(key).equals(value))) {
-        fail(" value for key " + key + " is " + r1.get(key)
-            + " which is not consistent, it is supposed to be " + value);
+        fail(" value for key " + key + " is " + r1.get(key) + " which is not consistent, it is supposed to be " + value);
       }
     }
     assertEquals(r2.size(), r1.size());
@@ -609,8 +568,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
 
   private Random random = new Random();
 
-  void put()
-  {
+  void put() {
     int randomInt1 = random.nextInt() % 10;
     if (randomInt1 < 0) {
       randomInt1 = randomInt1 * (-1);
@@ -631,8 +589,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         if (this.validate) {
           expected = region2.put(integer1, integer2);
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccuredInPuts = true;
         logWriter.severe("Exception occured in puts ", e);
         fail(" failed during put due to " + e);
@@ -649,8 +606,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  void get()
-  {
+  void get() {
     int randomInt1 = random.nextInt() % 10;
     if (randomInt1 < 0) {
       randomInt1 = randomInt1 * (-1);
@@ -670,8 +626,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         if (this.validate) {
           expected = region2.get(integer1);
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccuredInGets = true;
         logWriter.severe("Exception occured in get ", e);
         throw new AssertionError(" failed during get due to ", e);
@@ -686,8 +641,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  void destroy()
-  {
+  void destroy() {
     Exception exceptionOccured1 = null;
     Exception exceptionOccured2 = null;
     int randomInt1 = random.nextInt() % 10;
@@ -705,22 +659,19 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     try {
       try {
         v = region1.destroy(integer1);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured1 = e;
       }
       if (this.validate) {
         try {
           expected = region2.destroy(integer1);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           exceptionOccured2 = e;
         }
 
-        if ((exceptionOccured1!=null) ^ (exceptionOccured2!=null)) {
+        if ((exceptionOccured1 != null) ^ (exceptionOccured2 != null)) {
           exceptionOccuredInDestroys = true;
-          logWriter.severe("Exception occured in destroy ex1="+exceptionOccured1
-                           + " ex2=" + exceptionOccured2);
+          logWriter.severe("Exception occured in destroy ex1=" + exceptionOccured1 + " ex2=" + exceptionOccured2);
           fail("Exception occured in destroy");
         }
       }
@@ -740,13 +691,12 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     if (this.validate) {
       return; // can't do clear and validate
     }
-    
+
     try {
       region1.clear();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       exceptionOccuredInClears = true;
-      logWriter.severe("Exception occured in clear=",e);
+      logWriter.severe("Exception occured in clear=", e);
       throw new AssertionError("Exception occured in clear", e);
     }
   }
@@ -761,8 +711,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
    * notification was issued to exit).
    */
   @Test
-  public void testConcurrentClearAndRegionDestroyBug()
-  {
+  public void testConcurrentClearAndRegionDestroyBug() {
     DiskRegionProperties p = new DiskRegionProperties();
     p.setMaxOplogSize(10000);
     p.setOverflow(false);
@@ -772,34 +721,31 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     byte[] val = new byte[8000];
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, p, Scope.LOCAL);
     region.put("key1", val);
-    DiskStoreImpl dimpl = ((LocalRegion)region).getDiskStore();
+    DiskStoreImpl dimpl = ((LocalRegion) region).getDiskStore();
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     final Thread th = new Thread(new Runnable() {
 
-      public void run()
-      {
+      public void run() {
         region.destroyRegion();
       }
     });
 
     DiskStoreImpl.DEBUG_DELAY_JOINING_WITH_COMPACTOR = 8000;
-    CacheObserver old = CacheObserverHolder
-        .setInstance(new CacheObserverAdapter() {
-          boolean skip = false;
+    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+      boolean skip = false;
 
-          public void beforeStoppingCompactor()
-          {
-            if (!skip) {
-              skip = true;
-              th.setPriority(9);
-              th.start();
-              Thread.yield();
-            }
-          }
-
+      public void beforeStoppingCompactor() {
+        if (!skip) {
+          skip = true;
+          th.setPriority(9);
+          th.start();
+          Thread.yield();
         }
+      }
 
-        );
+    }
+
+    );
 
     region.clear();
     ThreadUtils.join(th, 20 * 1000);
@@ -809,11 +755,9 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   @SuppressWarnings("synthetic-access")
-  class DoesPuts implements Runnable
-  {
+  class DoesPuts implements Runnable {
 
-    public void run()
-    {
+    public void run() {
       waitForAllStartersToBeReady();
       while (!isItTimeToStop()) {
         put();
@@ -823,11 +767,9 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   @SuppressWarnings("synthetic-access")
-  class DoesGets implements Runnable
-  {
+  class DoesGets implements Runnable {
 
-    public void run()
-    {
+    public void run() {
       waitForAllStartersToBeReady();
       while (!isItTimeToStop()) {
         get();
@@ -837,11 +779,9 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   @SuppressWarnings("synthetic-access")
-  class DoesDestroy implements Runnable
-  {
+  class DoesDestroy implements Runnable {
 
-    public void run()
-    {
+    public void run() {
       waitForAllStartersToBeReady();
       while (!isItTimeToStop()) {
         destroy();
@@ -851,15 +791,13 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   @SuppressWarnings("synthetic-access")
-  class DoesClear implements Runnable  {
-    public void run()
-    {
+  class DoesClear implements Runnable {
+    public void run() {
       waitForAllStartersToBeReady();
       while (!isItTimeToStop()) {
         try {
-          Thread.sleep(TIME_TO_RUN/100);
-        }
-        catch (InterruptedException e) {
+          Thread.sleep(TIME_TO_RUN / 100);
+        } catch (InterruptedException e) {
           fail("interrupted");
         }
         clear();
@@ -868,29 +806,24 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   @SuppressWarnings("synthetic-access")
-  class DoesForceRoll implements Runnable
-  {
+  class DoesForceRoll implements Runnable {
 
-    public void run()
-    {
+    public void run() {
       waitForAllStartersToBeReady();
       while (!isItTimeToStop()) {
         try {
           Thread.sleep(20);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           fail("interrupted");
         }
         forceRoll();
       }
     }
 
-    private void forceRoll()
-    {
+    private void forceRoll() {
       try {
         region1.forceRolling();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccuredInForceRolls = true;
         logWriter.severe("Exception occured in forceRolling ", e);
         throw new AssertionError(" Exception occured here", e);

@@ -23,7 +23,7 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 public class LuceneIndexFactory {
   public LuceneIndexFactory() {
   }
-  
+
   public LuceneIndexImpl create(String indexName, String regionPath, GemFireCacheImpl cache) {
     return new LuceneIndexForPartitionedRegion(indexName, regionPath, cache);
   }

@@ -40,34 +40,34 @@ public class JoinResponseMessage extends HighPriorityDistributionMessage {
   private byte[] messengerData;
   private int requestId;
   private byte[] secretPk;
-    
+
   public JoinResponseMessage(InternalDistributedMember memberID, NetView view, int requestId) {
     this.currentView = view;
     this.memberID = memberID;
     this.requestId = requestId;
     setRecipient(memberID);
   }
-  
+
   public JoinResponseMessage(InternalDistributedMember memberID, byte[] sPk, int requestId) {
     this.memberID = memberID;
     this.requestId = requestId;
     this.secretPk = sPk;
     setRecipient(memberID);
   }
-  
+
   public JoinResponseMessage(String rejectionMessage, int requestId) {
     this.rejectionMessage = rejectionMessage;
     this.requestId = requestId;
   }
-  
+
   public JoinResponseMessage() {
     // no-arg constructor for serialization
   }
-  
+
   public byte[] getSecretPk() {
     return secretPk;
   }
-  
+
   public int getRequestId() {
     return requestId;
   }
@@ -75,19 +75,19 @@ public class JoinResponseMessage extends HighPriorityDistributionMessage {
   public NetView getCurrentView() {
     return currentView;
   }
-  
+
   public InternalDistributedMember getMemberID() {
     return memberID;
   }
-  
+
   public String getRejectionMessage() {
     return rejectionMessage;
   }
-  
+
   public byte[] getMessengerData() {
     return this.messengerData;
   }
-  
+
   public void setMessengerData(byte[] data) {
     this.messengerData = data;
   }
@@ -96,15 +96,12 @@ public class JoinResponseMessage extends HighPriorityDistributionMessage {
   public void process(DistributionManager dm) {
     throw new IllegalStateException("JoinResponse is not intended to be executed");
   }
-  
+
   @Override
   public String toString() {
-    return getShortClassName() + "("+memberID + "; "
-        + (currentView==null? "" : currentView.toString())
-        + (rejectionMessage==null? "" : ("; "+rejectionMessage))
-        + ")";
+    return getShortClassName() + "(" + memberID + "; " + (currentView == null ? "" : currentView.toString()) + (rejectionMessage == null ? "" : ("; " + rejectionMessage)) + ")";
   }
-  
+
   @Override
   public Version[] getSerializationVersions() {
     return null;
@@ -167,5 +164,4 @@ public class JoinResponseMessage extends HighPriorityDistributionMessage {
     return true;
   }
 
-  
 }

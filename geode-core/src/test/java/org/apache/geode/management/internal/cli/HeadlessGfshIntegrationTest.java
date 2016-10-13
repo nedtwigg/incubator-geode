@@ -47,7 +47,7 @@ public class HeadlessGfshIntegrationTest {
   @Rule
   public TestName testName = new TestName();
 
-  @SuppressWarnings({"deprecation"})
+  @SuppressWarnings({ "deprecation" })
   @Test
   public void testHeadlessGfshTest() throws ClassNotFoundException, IOException, InterruptedException {
     int port = getRandomAvailablePort(SOCKET);

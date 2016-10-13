@@ -33,7 +33,6 @@ public class ZAddExecutor extends SortedSetExecutor {
 
   private final String ERROR_NOT_NUMERICAL = "The inteded score is not a float";
 
-
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
     List<byte[]> commandElems = command.getProcessedCommand();

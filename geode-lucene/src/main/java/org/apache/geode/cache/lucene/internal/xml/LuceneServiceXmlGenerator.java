@@ -32,8 +32,7 @@ public final class LuceneServiceXmlGenerator implements XmlGenerator<Cache> {
   }
 
   @Override
-  public void generate(CacheXmlGenerator cacheXmlGenerator)
-      throws SAXException {
+  public void generate(CacheXmlGenerator cacheXmlGenerator) throws SAXException {
     //Nothing to to the xml at the service level at the moment.
   }
 }

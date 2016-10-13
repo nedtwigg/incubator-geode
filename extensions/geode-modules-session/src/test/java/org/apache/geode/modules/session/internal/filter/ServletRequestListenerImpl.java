@@ -20,8 +20,7 @@ package org.apache.geode.modules.session.internal.filter;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
-public class ServletRequestListenerImpl extends AbstractListener
-    implements ServletRequestListener {
+public class ServletRequestListenerImpl extends AbstractListener implements ServletRequestListener {
 
   public synchronized void requestDestroyed(ServletRequestEvent sre) {
     events.add(ListenerEventType.SERVLET_REQUEST_DESTROYED);

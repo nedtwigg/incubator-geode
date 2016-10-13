@@ -39,7 +39,7 @@ public class CommitDistributionException extends TransactionException {
    * failure during distribution of the operation.
    */
   private Set regionDistributionExceptions = Collections.EMPTY_SET;
-  
+
   /** 
    * Constructs a <code>CommitDistributionException</code> with a message.
    *
@@ -48,7 +48,7 @@ public class CommitDistributionException extends TransactionException {
   public CommitDistributionException(String s) {
     super(s);
   }
-  
+
   /** 
    * Constructs a <code>CommitDistributionException</code> with a message and
    * a cause.
@@ -64,7 +64,7 @@ public class CommitDistributionException extends TransactionException {
       this.regionDistributionExceptions = Collections.EMPTY_SET;
     }
   }
-  
+
   /** 
    * Returns set of RegionDistributionExceptions for each region that had a 
    * reliability failure during distribution of the operation.
@@ -75,6 +75,5 @@ public class CommitDistributionException extends TransactionException {
   public Set getRegionDistributionExceptions() {
     return this.regionDistributionExceptions;
   }
-  
-}
 
+}

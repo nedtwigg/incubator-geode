@@ -49,16 +49,15 @@ public class ExecuteFunction70 extends ExecuteFunction66 {
   public static Command getCommand() {
     return singleton;
   }
-  
+
   private ExecuteFunction70() {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     super.cmdExecute(msg, servConn, start);
   }
-  
+
   @Override
   protected String[] getGroups(Message msg) throws IOException, ClassNotFoundException {
     String[] grp = null;
@@ -95,15 +94,11 @@ public class ExecuteFunction70 extends ExecuteFunction66 {
   }
 
   @Override
-  protected void executeFunctionOnGroups(Object function, Object args,
-      String[] groups, boolean allMembers, Function functionObject,
-      ServerToClientFunctionResultSender resultSender, boolean ignoreFailedMembers) {
+  protected void executeFunctionOnGroups(Object function, Object args, String[] groups, boolean allMembers, Function functionObject, ServerToClientFunctionResultSender resultSender, boolean ignoreFailedMembers) {
 
     DistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
     if (ds == null) {
-      throw new IllegalStateException(
-          LocalizedStrings.ExecuteFunction_DS_NOT_CREATED_OR_NOT_READY
-              .toLocalizedString());
+      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_DS_NOT_CREATED_OR_NOT_READY.toLocalizedString());
     }
     Set<DistributedMember> members = new HashSet<DistributedMember>();
     for (String group : groups) {
@@ -132,10 +127,10 @@ public class ExecuteFunction70 extends ExecuteFunction66 {
       if (logger.isDebugEnabled()) {
         logger.debug("Function will ignore failed members");
       }
-      ((AbstractExecution)execution).setIgnoreDepartedMembers(true);
+      ((AbstractExecution) execution).setIgnoreDepartedMembers(true);
     }
-    if(!functionObject.isHA()) {
-      ((AbstractExecution)execution).setWaitOnExceptionFlag(true);
+    if (!functionObject.isHA()) {
+      ((AbstractExecution) execution).setWaitOnExceptionFlag(true);
     }
     if (function instanceof String) {
       execution.execute(functionObject.getId()).getResult();

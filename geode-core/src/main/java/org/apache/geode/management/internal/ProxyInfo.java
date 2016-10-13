@@ -25,50 +25,48 @@ import javax.management.ObjectName;
  *
  */
 public class ProxyInfo {
-	
-	/**
-	 * Proxy Interface
-	 */
+
+  /**
+   * Proxy Interface
+   */
   private Class proxyInterface;
-	/**
-	 * proxy instance
-	 */
-	private Object proxyInstance;
+  /**
+   * proxy instance
+   */
+  private Object proxyInstance;
 
-	/**
-	 * JMX name of proxy
-	 */
-	private ObjectName objectName;
-	
+  /**
+   * JMX name of proxy
+   */
+  private ObjectName objectName;
 
-	/**
-	 * public constructor
-	 * @param proxyInstance
-	 * @param objectName
-	 */
-	public ProxyInfo(Class proxyInterface, Object proxyInstance,  ObjectName objectName){
-		this.proxyInstance = proxyInstance;
-		this.proxyInterface = proxyInterface;
-		this.objectName = objectName;
-		
-	}
-	
-	/**
-	 * get the proxy instance
-	 * @return proxyInstance
-	 */
-	public Object getProxyInstance() {
-		return proxyInstance;
-	}
+  /**
+   * public constructor
+   * @param proxyInstance
+   * @param objectName
+   */
+  public ProxyInfo(Class proxyInterface, Object proxyInstance, ObjectName objectName) {
+    this.proxyInstance = proxyInstance;
+    this.proxyInterface = proxyInterface;
+    this.objectName = objectName;
 
+  }
 
-	/**
-	 * get MBean name
-	 * @return ObjectName
-	 */
-	public ObjectName getObjectName() {
-		return objectName;
-	}
+  /**
+   * get the proxy instance
+   * @return proxyInstance
+   */
+  public Object getProxyInstance() {
+    return proxyInstance;
+  }
+
+  /**
+   * get MBean name
+   * @return ObjectName
+   */
+  public ObjectName getObjectName() {
+    return objectName;
+  }
 
   public Class getProxyInterface() {
     return proxyInterface;
@@ -77,6 +75,5 @@ public class ProxyInfo {
   public void setProxyInterface(Class proxyInterface) {
     this.proxyInterface = proxyInterface;
   }
-
 
 }

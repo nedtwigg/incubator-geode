@@ -34,7 +34,8 @@ import javax.transaction.UserTransaction;
  * @since GemFire 4.0
  */
 public class FailedSynchronizationException extends CacheRuntimeException {
-private static final long serialVersionUID = -6225053492344591496L;
+  private static final long serialVersionUID = -6225053492344591496L;
+
   /**
    * Constructs an instance of
    * <code>FailedSynchronizationException</code> with the
@@ -44,7 +45,7 @@ private static final long serialVersionUID = -6225053492344591496L;
   public FailedSynchronizationException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of
    * <code>FailedSynchronizationException</code> with the

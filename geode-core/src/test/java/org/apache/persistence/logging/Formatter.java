@@ -22,8 +22,7 @@ package org.apache.persistence.logging;
 public abstract class Formatter {
 
   /** Should we print a stack trace along with logging messages */
-  protected static boolean STACK_TRACE =
-    Boolean.getBoolean("org.apache.persistence.logging.StackTraces");
+  protected static boolean STACK_TRACE = Boolean.getBoolean("org.apache.persistence.logging.StackTraces");
 
   /**
    * Formats the given log record as a String
@@ -35,7 +34,7 @@ public abstract class Formatter {
    */
   public String formatMessage(LogRecord record) {
     // Simple
-    return(record.getMessage());
+    return (record.getMessage());
   }
 
 }

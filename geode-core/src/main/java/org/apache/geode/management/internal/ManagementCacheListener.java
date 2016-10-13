@@ -33,14 +33,13 @@ import org.apache.geode.internal.logging.LogService;
  * 
  * 
  */
-public class ManagementCacheListener extends
-    CacheListenerAdapter<String, Object> {
+public class ManagementCacheListener extends CacheListenerAdapter<String, Object> {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private MBeanProxyFactory proxyHelper;
-  
-  private volatile boolean  readyForEvents;
+
+  private volatile boolean readyForEvents;
 
   public ManagementCacheListener(MBeanProxyFactory proxyHelper) {
     this.proxyHelper = proxyHelper;
@@ -57,8 +56,7 @@ public class ManagementCacheListener extends
     try {
       objectName = ObjectName.getInstance(event.getKey());
       Object newObject = event.getNewValue();
-      proxyHelper.createProxy(event.getDistributedMember(), objectName, event
-          .getRegion(), newObject);
+      proxyHelper.createProxy(event.getDistributedMember(), objectName, event.getRegion(), newObject);
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Proxy Create failed for {} with exception {}", objectName, e.getMessage(), e);
@@ -74,8 +72,7 @@ public class ManagementCacheListener extends
     try {
       objectName = ObjectName.getInstance(event.getKey());
       Object oldObject = event.getOldValue();
-      proxyHelper.removeProxy(event.getDistributedMember(), objectName,
-          oldObject);
+      proxyHelper.removeProxy(event.getDistributedMember(), objectName, oldObject);
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Proxy Destroy failed for {} with exception {}", objectName, e.getMessage(), e);
@@ -113,8 +110,8 @@ public class ManagementCacheListener extends
     }
 
   }
-  
-  void markReady(){
+
+  void markReady() {
     readyForEvents = true;
   }
 

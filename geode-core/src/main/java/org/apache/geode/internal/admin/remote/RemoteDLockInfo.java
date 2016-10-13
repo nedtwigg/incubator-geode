@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.DataSerializable;
@@ -40,8 +39,7 @@ public class RemoteDLockInfo implements DLockInfo, DataSerializable {
   private long leaseExpiration;
   private transient Date expirationDate;
 
-  public RemoteDLockInfo(String serviceName, String name,
-                         DLockToken lock, InternalDistributedMember localId) {
+  public RemoteDLockInfo(String serviceName, String name, DLockToken lock, InternalDistributedMember localId) {
     this.serviceName = serviceName;
     this.lockName = name;
     synchronized (lock) {
@@ -58,30 +56,38 @@ public class RemoteDLockInfo implements DLockInfo, DataSerializable {
   /**
    * for DataExternalizable only
    */
-  public RemoteDLockInfo(){}
+  public RemoteDLockInfo() {
+  }
 
   public String getService() {
     return serviceName;
   }
+
   public String getThreadId() {
     return threadId;
   }
+
   public String getLockName() {
     return lockName;
   }
+
   public boolean isAcquired() {
     return acquired;
-  }  
+  }
+
   public int getRecursionCount() {
     return recursion;
   }
+
   public InternalDistributedMember getOwner() {
     return owner;
   }
+
   public long getStartTime() {
     return startTime;
   }
-  public synchronized Date getLeaseExpireTime() {    
+
+  public synchronized Date getLeaseExpireTime() {
     if (expirationDate == null && leaseExpiration > -1) {
       expirationDate = new Date(leaseExpiration);
     }
@@ -100,14 +106,13 @@ public class RemoteDLockInfo implements DLockInfo, DataSerializable {
     out.writeLong(leaseExpiration);
   }
 
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.serviceName = DataSerializer.readString(in);
     this.threadId = DataSerializer.readString(in);
     this.lockName = DataSerializer.readString(in);
     this.acquired = in.readBoolean();
     this.recursion = in.readInt();
-    this.owner = (InternalDistributedMember)DataSerializer.readObject(in);
+    this.owner = (InternalDistributedMember) DataSerializer.readObject(in);
     this.startTime = in.readLong();
     this.leaseExpiration = in.readLong();
   }

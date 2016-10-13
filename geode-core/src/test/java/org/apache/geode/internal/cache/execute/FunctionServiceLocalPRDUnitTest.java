@@ -38,16 +38,17 @@ public class FunctionServiceLocalPRDUnitTest extends FunctionServiceBase {
 
   @Before
   public void createRegions() {
-    region = getCache().createRegionFactory(RegionShortcut.PARTITION)
-      .create(REGION);
+    region = getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION);
     PartitionRegionHelper.assignBucketsToPartitions(region);
   }
 
-  @Override public Execution getExecution() {
+  @Override
+  public Execution getExecution() {
     return FunctionService.onRegion(region);
   }
 
-  @Override public int numberOfExecutions() {
+  @Override
+  public int numberOfExecutions() {
     return 1;
   }
 

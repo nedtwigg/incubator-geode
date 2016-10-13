@@ -205,7 +205,7 @@ public class TopEntriesFunctionCollectorJUnitTest {
   @Test
   public void mergeShardAndLimitResults() throws Exception {
     LuceneFunctionContext<TopEntriesCollector> context = new LuceneFunctionContext<>(null, null, null, 3);
-    
+
     TopEntriesFunctionCollector collector = new TopEntriesFunctionCollector(context);
     collector.addResult(null, result1);
     collector.addResult(null, result2);
@@ -216,7 +216,7 @@ public class TopEntriesFunctionCollectorJUnitTest {
     assertEquals(3, merged.size());
     TopEntriesJUnitTest.verifyResultOrder(merged.getHits(), r1_1, r2_1, r1_2);
   }
-  
+
   @Test
   public void mergeResultsDefaultCollectorManager() throws Exception {
     TopEntriesFunctionCollector collector = new TopEntriesFunctionCollector();
@@ -236,18 +236,18 @@ public class TopEntriesFunctionCollectorJUnitTest {
     collector.addResult(null, result1);
     collector.addResult(null, result2);
     collector.endResults();
-    
+
     TopEntries merged = collector.getResult();
     Assert.assertNotNull(merged);
     assertEquals(4, merged.size());
     TopEntriesJUnitTest.verifyResultOrder(merged.getHits(), r1_1, r2_1, r1_2, r2_2);
-    
+
     merged = collector.getResult();
     Assert.assertNotNull(merged);
     assertEquals(4, merged.size());
     TopEntriesJUnitTest.verifyResultOrder(merged.getHits(), r1_1, r2_1, r1_2, r2_2);
   }
-  
+
   @Test
   public void mergeResultsCustomCollectorManager() throws Exception {
     TopEntries resultEntries = new TopEntries();
@@ -255,14 +255,13 @@ public class TopEntriesFunctionCollectorJUnitTest {
     Mockito.doReturn(resultEntries).when(mockCollector).getEntries();
 
     CollectorManager<TopEntriesCollector> mockManager = mock(CollectorManager.class);
-    Mockito.doReturn(mockCollector).when(mockManager)
-        .reduce(Mockito.argThat(new ArgumentMatcher<Collection<TopEntriesCollector>>() {
-          @Override
-          public boolean matches(Object argument) {
-            Collection<TopEntriesCollector> collectors = (Collection<TopEntriesCollector>) argument;
-            return collectors.contains(result1) && collectors.contains(result2);
-          }
-        }));
+    Mockito.doReturn(mockCollector).when(mockManager).reduce(Mockito.argThat(new ArgumentMatcher<Collection<TopEntriesCollector>>() {
+      @Override
+      public boolean matches(Object argument) {
+        Collection<TopEntriesCollector> collectors = (Collection<TopEntriesCollector>) argument;
+        return collectors.contains(result1) && collectors.contains(result2);
+      }
+    }));
 
     LuceneFunctionContext<TopEntriesCollector> context = new LuceneFunctionContext<>(null, null, mockManager);
     TopEntriesFunctionCollector collector = new TopEntriesFunctionCollector(context);

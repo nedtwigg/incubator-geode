@@ -27,8 +27,7 @@ import java.io.Serializable;
  * 
  * @since GemFire 4.2
  */
-public interface Conflatable extends Serializable
-{
+public interface Conflatable extends Serializable {
 
   /**
    * Returns whether the object should be conflated

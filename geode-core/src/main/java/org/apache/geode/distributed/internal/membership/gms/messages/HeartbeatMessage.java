@@ -30,17 +30,17 @@ public class HeartbeatMessage extends HighPriorityDistributionMessage {
    * If it is < 0 this is a periodic heartbeat message.
    */
   int requestId;
-  
+
   public HeartbeatMessage(int id) {
     requestId = id;
   }
 
-  public HeartbeatMessage(){}
-  
+  public HeartbeatMessage() {
+  }
+
   public int getRequestId() {
     return requestId;
   }
-
 
   @Override
   public int getDSFID() {
@@ -51,22 +51,22 @@ public class HeartbeatMessage extends HighPriorityDistributionMessage {
   public void process(DistributionManager dm) {
     throw new IllegalStateException("this message is not intended to execute in a thread pool");
   }
- 
+
   @Override
   public String toString() {
-    return getClass().getSimpleName()+" [requestId=" + requestId + "]";
+    return getClass().getSimpleName() + " [requestId=" + requestId + "]";
   }
 
   @Override
   public Version[] getSerializationVersions() {
     return null;
-  }  
+  }
 
   @Override
   public void toData(DataOutput out) throws IOException {
     out.writeInt(requestId);
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     requestId = in.readInt();

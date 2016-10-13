@@ -35,9 +35,8 @@ import java.util.Properties;
  * 
  * @since GemFire 5.1
  */
-@SuppressWarnings({"deprecation", "unused"})
-public final class DiskWriteAttributesImpl implements DiskWriteAttributes
-{
+@SuppressWarnings({ "deprecation", "unused" })
+public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   private static final long serialVersionUID = -4269181954992768424L;
 
   /** Are writes synchronous? */
@@ -62,11 +61,10 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
   private final long maxOplogSize;
 
   /** default max in bytes **/
-  private static final long DEFAULT_MAX_OPLOG_SIZE =
-      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "DEFAULT_MAX_OPLOG_SIZE", 1024L).longValue() * (1024 * 1024); // 1 GB
+  private static final long DEFAULT_MAX_OPLOG_SIZE = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "DEFAULT_MAX_OPLOG_SIZE", 1024L).longValue() * (1024 * 1024); // 1 GB
 
   /** default max limit in bytes **/
-  private static final long DEFAULT_MAX_OPLOG_SIZE_LIMIT = (long)Integer.MAX_VALUE * (1024*1024);
+  private static final long DEFAULT_MAX_OPLOG_SIZE_LIMIT = (long) Integer.MAX_VALUE * (1024 * 1024);
 
   private static final boolean DEFAULT_ROLL_OPLOGS = true;
 
@@ -74,7 +72,7 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
 
   private static final boolean DEFAULT_IS_SYNCHRONOUS = false; // the pre 6.5 default
 
-//  private static final long DEFAULT_BYTES_THRESHOLD = 0;
+  //  private static final long DEFAULT_BYTES_THRESHOLD = 0;
 
   static final long DEFAULT_TIME_INTERVAL = 1000; // 1 sec
 
@@ -153,8 +151,7 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
     String isSynchronousString = properties.getProperty(SYNCHRONOUS_PROPERTY);
     if (isSynchronousString == null) {
       this.isSynchronous = DEFAULT_IS_SYNCHRONOUS;
-    }
-    else {
+    } else {
       verifyBooleanString(isSynchronousString, SYNCHRONOUS_PROPERTY);
       this.isSynchronous = Boolean.valueOf(isSynchronousString).booleanValue();
     }
@@ -167,42 +164,34 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
       this.compactOplogs = Boolean.valueOf(compactOplogsString).booleanValue();
     }
 
-    String bytesThresholdString = properties
-        .getProperty(CacheXml.BYTES_THRESHOLD);
+    String bytesThresholdString = properties.getProperty(CacheXml.BYTES_THRESHOLD);
     if (bytesThresholdString != null) {
       if (this.isSynchronous) {
         // log warning, no use setting time if is synchronous
       }
-      this.bytesThreshold = verifyLongInString(bytesThresholdString,
-          CacheXml.BYTES_THRESHOLD);
-    }
-    else {
+      this.bytesThreshold = verifyLongInString(bytesThresholdString, CacheXml.BYTES_THRESHOLD);
+    } else {
       this.bytesThreshold = 0L;
     }
-    
+
     String timeIntervalString = properties.getProperty(CacheXml.TIME_INTERVAL);
     if (timeIntervalString != null) {
       if (this.isSynchronous) {
         // log warning, no use setting time if is synchronous
       }
-      this.timeInterval = verifyLongInString(timeIntervalString,
-          CacheXml.TIME_INTERVAL);
-    }
-    else {
-      if (!this.isSynchronous && this.bytesThreshold == 0 ) {
-        this.timeInterval =DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL;
-      }else {
+      this.timeInterval = verifyLongInString(timeIntervalString, CacheXml.TIME_INTERVAL);
+    } else {
+      if (!this.isSynchronous && this.bytesThreshold == 0) {
+        this.timeInterval = DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL;
+      } else {
         this.timeInterval = 0;
       }
     }
-    
-    
 
     String maxOplogSizeString = properties.getProperty(CacheXml.MAX_OPLOG_SIZE);
 
     if (maxOplogSizeString != null) {
-      long opSize = verifyLongInString(maxOplogSizeString,
-          CacheXml.MAX_OPLOG_SIZE);
+      long opSize = verifyLongInString(maxOplogSizeString, CacheXml.MAX_OPLOG_SIZE);
       if (opSize == 0 && this.compactOplogs == true) {
         throw new IllegalStateException(LocalizedStrings.DiskWriteAttributesImpl_COMPACTION_CANNOT_BE_SET_TO_TRUE_IF_MAXOPLOGSIZE_IS_SET_TO_INFINITE_INFINITE_IS_REPRESENTED_BY_SIZE_ZERO_0.toLocalizedString());
 
@@ -210,16 +199,13 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
       if (opSize == 0 || opSize == DEFAULT_MAX_OPLOG_SIZE_LIMIT) {
         if (this.compactOplogs) {
           throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_CANNOT_SET_MAXOPLOGS_SIZE_TO_INFINITY_0_IF_COMPACTION_IS_SET_TO_TRUE.toLocalizedString());
-        }
-        else {
+        } else {
           this.maxOplogSize = DEFAULT_MAX_OPLOG_SIZE_LIMIT; // infinity
         }
-      }
-      else {
+      } else {
         this.maxOplogSize = opSize;
       }
-    }
-    else {
+    } else {
       this.maxOplogSize = DEFAULT_MAX_OPLOG_SIZE;
     }
   }
@@ -235,11 +221,9 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    *           null
    *  
    */
-  private void verifyBooleanString(String propertyString, String property)
-  {
-    if (!(propertyString.equalsIgnoreCase("true")
-        || propertyString.equalsIgnoreCase("false"))) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_PROPERTY_HAS_TO_BE_TRUE_OR_FALSE_OR_NULL_AND_CANNOT_BE_1.toLocalizedString(new Object[] {property, propertyString}));
+  private void verifyBooleanString(String propertyString, String property) {
+    if (!(propertyString.equalsIgnoreCase("true") || propertyString.equalsIgnoreCase("false"))) {
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_PROPERTY_HAS_TO_BE_TRUE_OR_FALSE_OR_NULL_AND_CANNOT_BE_1.toLocalizedString(new Object[] { property, propertyString }));
     }
   }
 
@@ -251,19 +235,16 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    * @param property
    * @return the long value of the string
    */
-  private long verifyLongInString(String propertyString, String property)
-  {
+  private long verifyLongInString(String propertyString, String property) {
     long returnValue;
     try {
       returnValue = Long.valueOf(propertyString).longValue();
-    }
-    catch (NumberFormatException e) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1.toLocalizedString(new Object[] {property, propertyString}));
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1.toLocalizedString(new Object[] { property, propertyString }));
     }
 
     if (returnValue < 0) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(
-            new Object[] {property, Long.valueOf(returnValue)}));
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(new Object[] { property, Long.valueOf(returnValue) }));
     }
 
     return returnValue;
@@ -277,21 +258,18 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    * @param property
    * @return the int value of the string
    */
-  private int verifyPercentInString(String propertyString, String property)
-  {
+  private int verifyPercentInString(String propertyString, String property) {
     int returnValue;
     try {
       returnValue = Integer.valueOf(propertyString).intValue();
-    }
-    catch (NumberFormatException e) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1.toLocalizedString(new Object[] {property, propertyString}));
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1.toLocalizedString(new Object[] { property, propertyString }));
     }
 
     if (returnValue < 0) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(
-            new Object[] {property, Integer.valueOf(returnValue)}));
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(new Object[] { property, Integer.valueOf(returnValue) }));
     } else if (returnValue > 100) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_LESS_THAN_2_BUT_WAS_1.toLocalizedString(new Object[] {property, Integer.valueOf(returnValue), Integer.valueOf(100)}));
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_LESS_THAN_2_BUT_WAS_1.toLocalizedString(new Object[] { property, Integer.valueOf(returnValue), Integer.valueOf(100) }));
     }
 
     return returnValue;
@@ -303,39 +281,33 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    * Returns whether or not this <code>DiskWriteAttributes</code> configures
    * synchronous writes.
    */
-  public boolean isSynchronous()
-  {
+  public boolean isSynchronous() {
     return this.isSynchronous;
   }
 
   /**
    * Returns true if the oplogs is to be rolled
    */
-  public boolean isRollOplogs()
-  {
+  public boolean isRollOplogs() {
     return this.compactOplogs;
   }
 
   /** Get the max Oplog Size in megabytes. The value is stored in bytes so division is necessary **/
-  public int getMaxOplogSize()
-  {
-    return (int)(maxOplogSize/(1024 * 1024));
+  public int getMaxOplogSize() {
+    return (int) (maxOplogSize / (1024 * 1024));
   }
-
 
   /** Get the max Oplog Size in bytes **/
-  long getMaxOplogSizeInBytes()
-  {
+  long getMaxOplogSizeInBytes() {
     return maxOplogSize;
   }
-  
+
   /**
    * Returns the number of milliseconds that can elapse before unwritten data is
    * written to disk. If this <code>DiskWriteAttributes</code> configures
    * synchronous writing, then <code>timeInterval</code> has no meaning.
    */
-  public long getTimeInterval()
-  {
+  public long getTimeInterval() {
     return this.timeInterval;
   }
 
@@ -345,11 +317,9 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    * configures synchronous writing, then <code>bytesThreshold</code> has no
    * meaning.
    */
-  public long getBytesThreshold()
-  {
+  public long getBytesThreshold() {
     return this.bytesThreshold;
   }
-
 
   /**
    * Two <code>DiskWriteAttributes</code> are equal if the both specify the
@@ -357,22 +327,18 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    * time interval and bytes threshold.
    */
   @Override
-  public boolean equals(Object o)
-  {
+  public boolean equals(Object o) {
     if (!(o instanceof DiskWriteAttributesImpl)) {
       return false;
     }
 
-    DiskWriteAttributesImpl other = (DiskWriteAttributesImpl)o;
+    DiskWriteAttributesImpl other = (DiskWriteAttributesImpl) o;
     if (other.isSynchronous() != isSynchronous()) {
       return false;
     }
-    boolean result = other.isRollOplogs() == isRollOplogs()
-      && other.getMaxOplogSize() == getMaxOplogSize();
+    boolean result = other.isRollOplogs() == isRollOplogs() && other.getMaxOplogSize() == getMaxOplogSize();
     if (!isSynchronous()) {
-      result = result
-        && other.getTimeInterval() == getTimeInterval()
-        && other.getBytesThreshold() == getBytesThreshold();
+      result = result && other.getTimeInterval() == getTimeInterval() && other.getBytesThreshold() == getBytesThreshold();
     }
     return result;
   }
@@ -387,13 +353,12 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
   @Override
   public int hashCode() {
     int result = 0;
-    
+
     if (this.isSynchronous()) {
       if (this.isRollOplogs()) {
         result += 2;
       }
-    }
-    else {
+    } else {
       result += 1; // asynchronous
       result += this.getTimeInterval();
       result += this.getBytesThreshold();
@@ -401,16 +366,14 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
     result += this.getMaxOplogSize();
     return result;
   }
-  
+
   @Override
-  public String toString()
-  {
+  public String toString() {
     StringBuffer sb = new StringBuffer();
     if (this.isSynchronous()) {
       sb.append("Synchronous writes to disk");
 
-    }
-    else {
+    } else {
       sb.append("Asynchronous writes to disk after a threshold of ");
       sb.append(this.getTimeInterval());
       sb.append("ms or ");
@@ -419,16 +382,15 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
     }
     sb.append(". MaxOplog size is        : " + maxOplogSize);
     sb.append(". RollOplogs is          : " + compactOplogs);
-     return sb.toString();
+    return sb.toString();
   }
 
   /**
    * Get the default max oplog size limit in megabytes
    * @return the default max oplog size limit in megabytes
    */
-  public static int getDefaultMaxOplogSizeLimit()
-  {
-    return (int)(DEFAULT_MAX_OPLOG_SIZE_LIMIT/(1024*1024));
+  public static int getDefaultMaxOplogSizeLimit() {
+    return (int) (DEFAULT_MAX_OPLOG_SIZE_LIMIT / (1024 * 1024));
   }
 
   /**
@@ -437,8 +399,7 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    * 
    * @return the default compaction oplog value
    */
-  public static boolean getDefaultRollOplogsValue()
-  {
+  public static boolean getDefaultRollOplogsValue() {
     return DEFAULT_ROLL_OPLOGS;
   }
 
@@ -448,21 +409,19 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes
    * 
    * @return the default max oplog size in megabytes
    */
-  public static int getDefaultMaxOplogSize()
-  {
-    return (int)(DEFAULT_MAX_OPLOG_SIZE/(1024*1024));
+  public static int getDefaultMaxOplogSize() {
+    return (int) (DEFAULT_MAX_OPLOG_SIZE / (1024 * 1024));
   }
 
   /**
    * Returns a default instance of  DiskWriteAttributes
    * @return the default DiskWriteAttributes instance
    */
-  public static DiskWriteAttributes getDefaultAsyncInstance()
-  {
+  public static DiskWriteAttributes getDefaultAsyncInstance() {
     return DEFAULT_ASYNC_DWA;
   }
-  public static DiskWriteAttributes getDefaultSyncInstance()
-  {
+
+  public static DiskWriteAttributes getDefaultSyncInstance() {
     return DEFAULT_SYNC_DWA;
   }
 }

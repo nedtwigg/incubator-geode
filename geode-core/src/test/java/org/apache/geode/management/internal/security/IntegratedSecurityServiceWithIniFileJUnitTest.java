@@ -44,17 +44,17 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
   private SecurityService securityService = SecurityService.getSecurityService();
 
   @BeforeClass
-  public static void beforeClass() throws Exception{
+  public static void beforeClass() throws Exception {
     props.setProperty(SECURITY_SHIRO_INIT, "shiro.ini");
   }
 
   @Before
-  public void before(){
+  public void before() {
     securityService.initSecurity(props);
   }
 
   @Test
-  public void testRoot(){
+  public void testRoot() {
     this.securityService.login("root", "secret");
     this.securityService.authorize(TestCommand.none);
     this.securityService.authorize(TestCommand.everyOneAllowed);
@@ -67,7 +67,7 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
   }
 
   @Test
-  public void testGuest(){
+  public void testGuest() {
     this.securityService.login("guest", "guest");
     this.securityService.authorize(TestCommand.none);
     this.securityService.authorize(TestCommand.everyOneAllowed);
@@ -82,7 +82,7 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
   }
 
   @Test
-  public void testRegionAReader(){
+  public void testRegionAReader() {
     this.securityService.login("regionAReader", "password");
     this.securityService.authorize(TestCommand.none);
     this.securityService.authorize(TestCommand.everyOneAllowed);
@@ -97,7 +97,7 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
   }
 
   @Test
-  public void testRegionAUser(){
+  public void testRegionAUser() {
     this.securityService.login("regionAUser", "password");
     this.securityService.authorize(TestCommand.none);
     this.securityService.authorize(TestCommand.everyOneAllowed);
@@ -112,7 +112,7 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
   }
 
   @Test
-  public void testDataReader(){
+  public void testDataReader() {
     this.securityService.login("dataReader", "12345");
     this.securityService.authorize(TestCommand.none);
     this.securityService.authorize(TestCommand.everyOneAllowed);
@@ -127,7 +127,7 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
   }
 
   @Test
-  public void testReader(){
+  public void testReader() {
     this.securityService.login("reader", "12345");
     this.securityService.authorize(TestCommand.none);
     this.securityService.authorize(TestCommand.everyOneAllowed);
@@ -141,7 +141,7 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
     this.securityService.logout();
   }
 
-  private void assertNotAuthorized(ResourcePermission context){
-    assertThatThrownBy(()-> this.securityService.authorize(context)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining(context.toString());
+  private void assertNotAuthorized(ResourcePermission context) {
+    assertThatThrownBy(() -> this.securityService.authorize(context)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining(context.toString());
   }
 }

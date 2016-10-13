@@ -27,7 +27,7 @@ import org.apache.geode.DataSerializer;
 public class ObjectWithAuthz implements DataSerializable {
   private static final long serialVersionUID = -9016665470672291858L;
 
-  public static final byte CLASSID = (byte)57;
+  public static final byte CLASSID = (byte) 57;
 
   private Object val;
 

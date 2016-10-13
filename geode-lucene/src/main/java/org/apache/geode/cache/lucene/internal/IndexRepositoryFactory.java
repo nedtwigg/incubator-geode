@@ -34,17 +34,13 @@ public class IndexRepositoryFactory {
   public IndexRepositoryFactory() {
   }
 
-  public IndexRepository createIndexRepository(final Integer bucketId,
-                                        LuceneSerializer serializer,
-                                        LuceneIndexImpl index, PartitionedRegion userRegion)
-    throws IOException
-  {
+  public IndexRepository createIndexRepository(final Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
     final IndexRepository repo;
-    LuceneIndexForPartitionedRegion indexForPR = (LuceneIndexForPartitionedRegion)index; 
+    LuceneIndexForPartitionedRegion indexForPR = (LuceneIndexForPartitionedRegion) index;
     BucketRegion fileBucket = getMatchingBucket(indexForPR.getFileRegion(), bucketId);
     BucketRegion chunkBucket = getMatchingBucket(indexForPR.getChunkRegion(), bucketId);
     BucketRegion dataBucket = getMatchingBucket(userRegion, bucketId);
-    if(fileBucket == null || chunkBucket == null) {
+    if (fileBucket == null || chunkBucket == null) {
       return null;
     }
     RegionDirectory dir = new RegionDirectory(fileBucket, chunkBucket, indexForPR.getFileSystemStats());

@@ -45,8 +45,7 @@ public class LuceneIndexXmlGenerator implements XmlGenerator<Region<?, ?>> {
   }
 
   @Override
-  public void generate(CacheXmlGenerator cacheXmlGenerator)
-      throws SAXException {
+  public void generate(CacheXmlGenerator cacheXmlGenerator) throws SAXException {
     final ContentHandler handler = cacheXmlGenerator.getContentHandler();
 
     handler.startPrefixMapping(PREFIX, NAMESPACE);
@@ -55,7 +54,7 @@ public class LuceneIndexXmlGenerator implements XmlGenerator<Region<?, ?>> {
     //TODO - should the type be xs:string ?
     XmlGeneratorUtils.addAttribute(attr, NAME, index.getName());
     XmlGeneratorUtils.startElement(handler, PREFIX, INDEX, attr);
-    for(String field : index.getFieldNames()) {
+    for (String field : index.getFieldNames()) {
       AttributesImpl fieldAttr = new AttributesImpl();
       XmlGeneratorUtils.addAttribute(fieldAttr, NAME, field);
       Analyzer analyzer = index.getFieldAnalyzers().get(field);

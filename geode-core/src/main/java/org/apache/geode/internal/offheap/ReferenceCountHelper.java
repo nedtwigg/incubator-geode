@@ -36,12 +36,13 @@ public class ReferenceCountHelper {
   private static final ReferenceCountHelperImpl inst = new ReferenceCountHelperImpl(Boolean.getBoolean(TRACK_OFFHEAP_REFERENCES), Boolean.getBoolean(TRACK_OFFHEAP_FREES));
 
   /* Do not allow any instances */
-  private ReferenceCountHelper() {}
-  
+  private ReferenceCountHelper() {
+  }
+
   static ReferenceCountHelperImpl getInstance() {
     return inst;
   }
-  
+
   /**
    * Returns true if reference count tracking is enabled.
    */
@@ -111,7 +112,7 @@ public class ReferenceCountHelper {
 
   /**
    * Used internally to report that a reference count has changed.
-   */  
+   */
   static void refCountChanged(Long address, boolean decRefCount, int rc) {
     getInstance().refCountChanged(address, decRefCount, rc);
   }
@@ -123,7 +124,7 @@ public class ReferenceCountHelper {
   static void freeRefCountInfo(Long address) {
     getInstance().freeRefCountInfo(address);
   }
-  
+
   /**
    * Returns the thread local owner
    */

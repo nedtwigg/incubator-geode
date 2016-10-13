@@ -36,8 +36,7 @@ import org.apache.geode.internal.Version;
  * 
  * @since GemFire 4.0
  */
-public final class SortedStructSet extends TreeSet implements SelectResults,
-    DataSerializableFixedID, Ordered, StructFields {
+public final class SortedStructSet extends TreeSet implements SelectResults, DataSerializableFixedID, Ordered, StructFields {
   private static final long serialVersionUID = -1687142950781718159L;
 
   protected StructTypeImpl structType;
@@ -59,9 +58,7 @@ public final class SortedStructSet extends TreeSet implements SelectResults,
   public SortedStructSet(Comparator c, StructTypeImpl structType) {
     this(c);
     if (structType == null) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.structType = structType;
   }
@@ -69,9 +66,7 @@ public final class SortedStructSet extends TreeSet implements SelectResults,
   /** Creates a new instance of StructSet */
   public SortedStructSet(StructTypeImpl structType) {
     if (structType == null) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.structType = structType;
   }
@@ -91,15 +86,11 @@ public final class SortedStructSet extends TreeSet implements SelectResults,
   @Override
   public boolean add(Object obj) {
     if (!(obj instanceof StructImpl)) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.SortedStructSet_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL.toLocalizedString());
     }
     StructImpl s = (StructImpl) obj;
     if (!s.getStructType().equals(this.structType)) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.SortedStructSet_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE.toLocalizedString());
     }
     // return addFieldValues(s.getFieldValues());
     return this.addFieldValues(s.getFieldValues());
@@ -196,8 +187,7 @@ public final class SortedStructSet extends TreeSet implements SelectResults,
   public boolean addAll(StructSet ss) {
     boolean modified = false;
     if (!this.structType.equals(ss.structType)) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.SortedStructSet_TYPES_DONT_MATCH.toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_TYPES_DONT_MATCH.toLocalizedString());
     }
     for (Iterator itr = ss.fieldValuesIterator(); itr.hasNext();) {
       if (this.addFieldValues((Object[]) itr.next())) {
@@ -267,9 +257,7 @@ public final class SortedStructSet extends TreeSet implements SelectResults,
   // is overriding the element type in a set of structs
   public void setElementType(ObjectType elementType) {
     if (!(elementType instanceof StructTypeImpl)) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.SortedStructSet_ELEMENT_TYPE_MUST_BE_STRUCT
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_ELEMENT_TYPE_MUST_BE_STRUCT.toLocalizedString());
     }
     this.structType = (StructTypeImpl) elementType;
   }
@@ -338,8 +326,7 @@ public final class SortedStructSet extends TreeSet implements SelectResults,
     }
 
     public Object next() {
-      return new StructImpl((StructTypeImpl) SortedStructSet.this.structType,
-          (Object[]) this.itr.next());
+      return new StructImpl((StructTypeImpl) SortedStructSet.this.structType, (Object[]) this.itr.next());
     }
 
     public void remove() {
@@ -379,6 +366,6 @@ public final class SortedStructSet extends TreeSet implements SelectResults,
 
   @Override
   public boolean dataPreordered() {
-     return false;
+    return false;
   }
 }

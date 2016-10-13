@@ -41,7 +41,7 @@ public interface SnapshotOptions<K, V> extends Serializable {
     /** an optimized binary format specific to GemFire */
     GEMFIRE
   }
-  
+
   /**
    * Sets a filter to apply to snapshot entries.  Entries that are accepted by 
    * the filter will be included in import and export operations.
@@ -50,7 +50,7 @@ public interface SnapshotOptions<K, V> extends Serializable {
    * @return the snapshot options
    */
   SnapshotOptions<K, V> setFilter(SnapshotFilter<K, V> filter);
-  
+
   /**
    * Returns the filter to be applied to snapshot entries.  Entries that are 
    * accepted by the filter will be included in import and export operations.

@@ -52,7 +52,7 @@ public class IgnoreResourceException extends GemFireCheckedException {
     super(message);
     this.initCause(cause);
   }
-  
+
   /**
    * Creates a new <code>IgnoreResourceException</code> with the given cause and
    * no detail message

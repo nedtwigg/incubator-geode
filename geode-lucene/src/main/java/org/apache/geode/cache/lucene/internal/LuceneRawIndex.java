@@ -24,7 +24,7 @@ import org.apache.geode.cache.lucene.internal.repository.serializer.Heterogeneou
 import org.apache.geode.internal.cache.PartitionedRegion;
 
 public class LuceneRawIndex extends LuceneIndexImpl {
-  
+
   protected LuceneRawIndex(String indexName, String regionPath, Cache cache) {
     super(indexName, regionPath, cache);
   }
@@ -34,7 +34,7 @@ public class LuceneRawIndex extends LuceneIndexImpl {
     HeterogeneousLuceneSerializer mapper = new HeterogeneousLuceneSerializer(getFieldNames());
     return new RawLuceneRepositoryManager(this, mapper);
   }
-  
+
   @Override
   public void dumpFiles(String directory) {
     return;

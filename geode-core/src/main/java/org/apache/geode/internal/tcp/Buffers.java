@@ -33,7 +33,7 @@ public class Buffers {
    * A list of soft references to byte buffers.
    */
   private static final ConcurrentLinkedQueue bufferQueue = new ConcurrentLinkedQueue();
-  
+
   /**
    * Should only be called by threads that have currently acquired send permission.
    * @return a byte buffer to be used for sending on this connection.
@@ -41,7 +41,7 @@ public class Buffers {
   static ByteBuffer acquireSenderBuffer(int size, DMStats stats) {
     return acquireBuffer(size, stats, true);
   }
-  
+
   static ByteBuffer acquireReceiveBuffer(int size, DMStats stats) {
     return acquireBuffer(size, stats, false);
   }
@@ -50,7 +50,7 @@ public class Buffers {
     ByteBuffer result;
     if (TCPConduit.useDirectBuffers) {
       IdentityHashMap<BBSoftReference, BBSoftReference> alreadySeen = null; // keys are used like a set
-      BBSoftReference ref = (BBSoftReference)bufferQueue.poll();
+      BBSoftReference ref = (BBSoftReference) bufferQueue.poll();
       while (ref != null) {
         ByteBuffer bb = ref.getBB();
         if (bb == null) {
@@ -80,29 +80,29 @@ public class Buffers {
             break;
           }
         }
-        ref = (BBSoftReference)bufferQueue.poll();
+        ref = (BBSoftReference) bufferQueue.poll();
       }
       result = ByteBuffer.allocateDirect(size);
     } else {
       // if we are using heap buffers then don't bother with keeping them around
       result = ByteBuffer.allocate(size);
     }
-    if(send) {
+    if (send) {
       stats.incSenderBufferSize(size, TCPConduit.useDirectBuffers);
     } else {
       stats.incReceiverBufferSize(size, TCPConduit.useDirectBuffers);
     }
     return result;
   }
-  
+
   static void releaseSenderBuffer(ByteBuffer bb, DMStats stats) {
     releaseBuffer(bb, stats, true);
   }
-  
+
   static void releaseReceiveBuffer(ByteBuffer bb, DMStats stats) {
     releaseBuffer(bb, stats, false);
   }
-  
+
   /**
    * Releases a previously acquired buffer.
    */
@@ -111,22 +111,22 @@ public class Buffers {
       BBSoftReference bbRef = new BBSoftReference(bb, send);
       bufferQueue.offer(bbRef);
     } else {
-      if(send) {
+      if (send) {
         stats.incSenderBufferSize(-bb.capacity(), false);
       } else {
         stats.incReceiverBufferSize(-bb.capacity(), false);
       }
     }
   }
-  
+
   public static void initBufferStats(DMStats stats) { // fixes 46773
     if (TCPConduit.useDirectBuffers) {
       @SuppressWarnings("unchecked")
-      Iterator<BBSoftReference> it = (Iterator<BBSoftReference>)bufferQueue.iterator();
+      Iterator<BBSoftReference> it = (Iterator<BBSoftReference>) bufferQueue.iterator();
       while (it.hasNext()) {
         BBSoftReference ref = it.next();
         if (ref.getBB() != null) {
-          if(ref.getSend()) { // fix bug 46773
+          if (ref.getSend()) { // fix bug 46773
             stats.incSenderBufferSize(ref.getSize(), true);
           } else {
             stats.incReceiverBufferSize(ref.getSize(), true);
@@ -145,24 +145,29 @@ public class Buffers {
   private static class BBSoftReference extends SoftReference<ByteBuffer> {
     private int size;
     private final boolean send;
+
     public BBSoftReference(ByteBuffer bb, boolean send) {
       super(bb);
       this.size = bb.capacity();
       this.send = send;
     }
+
     public int getSize() {
       return this.size;
     }
+
     public synchronized int consumeSize() {
       int result = this.size;
       this.size = 0;
       return result;
     }
+
     public boolean getSend() {
       return this.send;
     }
+
     public ByteBuffer getBB() {
-      return (ByteBuffer)super.get();
+      return (ByteBuffer) super.get();
     }
   }
 

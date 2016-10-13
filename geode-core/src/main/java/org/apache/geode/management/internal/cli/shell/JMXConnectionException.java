@@ -24,10 +24,10 @@ package org.apache.geode.management.internal.cli.shell;
 public class JMXConnectionException extends RuntimeException {
   private static final long serialVersionUID = 3872374016604940917L;
 
-  public static final int OTHER                       = 1;
+  public static final int OTHER = 1;
   public static final int MANAGER_NOT_FOUND_EXCEPTION = 2;
-  public static final int CONNECTION_EXCEPTION        = 3;
-  
+  public static final int CONNECTION_EXCEPTION = 3;
+
   private int exceptionType;
 
   public JMXConnectionException(String message, Throwable cause, int exceptionType) {
@@ -44,7 +44,7 @@ public class JMXConnectionException extends RuntimeException {
     super(cause);
     this.exceptionType = exceptionType;
   }
-  
+
   public JMXConnectionException(int exceptionType) {
     this.exceptionType = exceptionType;
   }

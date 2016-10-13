@@ -46,7 +46,7 @@ public class LocatorLogFileJUnitTest {
 
   protected static final int TIMEOUT_MILLISECONDS = 180 * 1000; // 2 minutes
   protected static final int INTERVAL_MILLISECONDS = 100; // 100 milliseconds
-  
+
   private Locator locator;
   private FileInputStream fis;
 
@@ -63,7 +63,7 @@ public class LocatorLogFileJUnitTest {
       fis.close();
     }
   }
-  
+
   @Test
   public void testLocatorCreatesLogFile() throws Exception {
     final int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -77,35 +77,34 @@ public class LocatorLogFileJUnitTest {
     properties.put(DISABLE_AUTO_RECONNECT, "true");
     properties.put(MEMBER_TIMEOUT, "2000");
     properties.put(ENABLE_CLUSTER_CONFIGURATION, "false");
-    
+
     final File logFile = new File(name.getMethodName() + "-locator-" + port + ".log");
     if (logFile.exists()) {
       logFile.delete();
     }
     assertFalse(logFile.exists());
-    
+
     this.locator = Locator.startLocatorAndDS(port, logFile, properties);
-    
-    InternalDistributedSystem ds = (InternalDistributedSystem)this.locator.getDistributedSystem();
+
+    InternalDistributedSystem ds = (InternalDistributedSystem) this.locator.getDistributedSystem();
     assertNotNull(ds);
     DistributionConfig config = ds.getConfig();
     assertNotNull(config);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()),
-        InternalLogWriter.CONFIG_LEVEL, config.getLogLevel());
-    
+    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.CONFIG_LEVEL, config.getLogLevel());
+
     // CONFIG has been replaced with INFO -- all CONFIG statements are now logged at INFO as well
     InternalLogWriter logWriter = (InternalLogWriter) ds.getLogWriter();
     assertNotNull(logWriter);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
-        InternalLogWriter.INFO_LEVEL, logWriter.getLogWriterLevel());
-    
+    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.INFO_LEVEL, logWriter.getLogWriterLevel());
+
     assertNotNull(this.locator);
     Wait.waitForCriterion(new WaitCriterion() {
       @Override
       public boolean done() {
         return logFile.exists();
       }
+
       @Override
       public String description() {
         return "waiting for log file to exist: " + logFile;

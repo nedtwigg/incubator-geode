@@ -39,10 +39,10 @@ import java.io.IOException;
 public final class LocalProcessLauncher {
 
   public static final String PROPERTY_IGNORE_IS_PID_ALIVE = DistributionConfig.GEMFIRE_PREFIX + "test.LocalProcessLauncher.ignoreIsPidAlive";
-  
+
   private final int pid;
   private final File pidFile;
-  
+
   /**
    * Constructs a new ProcessLauncher. Parses this process's RuntimeMXBean name 
    * for the pid (process id).
@@ -56,13 +56,12 @@ public final class LocalProcessLauncher {
    * 
    * @see java.lang.management.RuntimeMXBean
    */
-  public LocalProcessLauncher(final File pidFile, final boolean force) 
-      throws FileAlreadyExistsException, IOException, PidUnavailableException {
+  public LocalProcessLauncher(final File pidFile, final boolean force) throws FileAlreadyExistsException, IOException, PidUnavailableException {
     this.pid = ProcessUtils.identifyPid();
     this.pidFile = pidFile;
     writePid(force);
   }
-  
+
   /**
    * Returns the process id (pid).
    * 
@@ -71,7 +70,7 @@ public final class LocalProcessLauncher {
   public int getPid() {
     return this.pid;
   }
-  
+
   /**
    * Returns the pid file.
    * 
@@ -80,7 +79,7 @@ public final class LocalProcessLauncher {
   public File getPidFile() {
     return this.pidFile;
   }
-  
+
   /**
    * Delete the pid file now. {@link java.io.File#deleteOnExit()} is set on the pid file.
    */
@@ -102,7 +101,7 @@ public final class LocalProcessLauncher {
       int otherPid = 0;
       try {
         otherPid = ProcessUtils.readPid(this.pidFile);
-      } catch(IOException e) {
+      } catch (IOException e) {
         // suppress
       } catch (NumberFormatException e) {
         // suppress
@@ -112,8 +111,7 @@ public final class LocalProcessLauncher {
         ignorePidFile = !ProcessUtils.isProcessAlive(otherPid);
       }
       if (!ignorePidFile) {
-        throw new FileAlreadyExistsException("Pid file already exists: " + this.pidFile + 
-            " for " + (otherPid > 0 ? "process " + otherPid : "unknown process"));
+        throw new FileAlreadyExistsException("Pid file already exists: " + this.pidFile + " for " + (otherPid > 0 ? "process " + otherPid : "unknown process"));
       }
     }
     this.pidFile.deleteOnExit();
@@ -122,7 +120,7 @@ public final class LocalProcessLauncher {
     writer.flush();
     writer.close();
   }
-  
+
   private static boolean ignoreIsPidAlive() {
     return Boolean.getBoolean(PROPERTY_IGNORE_IS_PID_ALIVE);
   }

@@ -25,7 +25,6 @@ import org.apache.geode.distributed.internal.DistributionStats;
 
 import java.io.IOException;
 
-
 public class ClientReady extends BaseCommand {
 
   private final static ClientReady singleton = new ClientReady();
@@ -38,8 +37,7 @@ public class ClientReady extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {  
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     CacheServerStats stats = servConn.getCacheServerStats();
     {
       long oldStart = start;
@@ -65,10 +63,8 @@ public class ClientReady extends BaseCommand {
       if (logger.isDebugEnabled()) {
         logger.debug(servConn.getName() + ": Processed client ready request from " + servConn.getProxyID() + " on " + clientHost + ":" + clientPort);
       }
-    }
-    finally {
-      stats.incWriteClientReadyResponseTime(DistributionStats.getStatTime()
-          - start);
+    } finally {
+      stats.incWriteClientReadyResponseTime(DistributionStats.getStatTime() - start);
     }
 
   }

@@ -36,11 +36,10 @@ import java.net.URL;
  * @deprecated As of 8.1 use {@link CacheXml}
  */
 @Deprecated
-public class DtdResolver implements EntityResolver{
+public class DtdResolver implements EntityResolver {
 
   @Deprecated
-  public InputSource resolveEntity (String publicId, String systemId) throws IOException
-  {
+  public InputSource resolveEntity(String publicId, String systemId) throws IOException {
     if (!isHttpUrlOK(systemId)) {
       URL dtdURL = getClass().getResource(CacheXml.LATEST_DTD_LOCATION);
       File dtd = new File(DistributionConfig.GEMFIRE_PREFIX + "dtd");
@@ -52,6 +51,7 @@ public class DtdResolver implements EntityResolver{
       return null;
     }
   }
+
   /****
    * Checks if the url passed , can be contacted or not.
    * @param urlString
@@ -71,9 +71,9 @@ public class DtdResolver implements EntityResolver{
       }
     } catch (Exception e) {
       return false;
-    }  
+    }
   }
- 
+
   /***
    * Gets the URL for Cache dtd
    * @return dtd url as string

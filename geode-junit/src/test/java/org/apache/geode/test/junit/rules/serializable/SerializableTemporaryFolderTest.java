@@ -82,7 +82,7 @@ public class SerializableTemporaryFolderTest {
     SerializableTemporaryFolder instance = new SerializableTemporaryFolder(parentFolder);
     instance.create();
 
-    SerializableTemporaryFolder cloned = (SerializableTemporaryFolder)SerializationUtils.clone(instance);
+    SerializableTemporaryFolder cloned = (SerializableTemporaryFolder) SerializationUtils.clone(instance);
 
     assertThat(readField(TemporaryFolder.class, cloned, FIELD_PARENT_FOLDER)).isEqualTo(parentFolder);
     assertThat(readField(TemporaryFolder.class, cloned, FIELD_FOLDER)).isEqualTo(cloned.getRoot());

@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.internal.cache;
+
 import org.apache.geode.internal.ExternalizableDSFID;
 import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.Version;
@@ -35,9 +36,7 @@ import org.apache.geode.distributed.internal.membership.*;
  * @see TXManagerImpl#begin
  * @see org.apache.geode.cache.CacheTransactionManager#getTransactionId
  */
-public final class TXId
-  extends ExternalizableDSFID
-  implements TransactionId {
+public final class TXId extends ExternalizableDSFID implements TransactionId {
   /** The domain of a transaction, currently the VM's unique identifier */
   private InternalDistributedMember memberId;
   /** Per unique identifier within the transactions memberId */
@@ -47,12 +46,12 @@ public final class TXId
    */
   public TXId() {
   }
-  
+
   /** Constructor for the Transation Manager, the birth place of
    * TXId objects.  The object is Serializable mainly because of
    * the identifier type provided by JGroups.
    */
-  public TXId(InternalDistributedMember memberId, int uniqId)  {
+  public TXId(InternalDistributedMember memberId, int uniqId) {
     this.memberId = memberId;
     this.uniqId = uniqId;
   }
@@ -77,15 +76,13 @@ public final class TXId
     }
 
     TXId otx = (TXId) o;
-    return (otx.uniqId == this.uniqId &&
-        ((otx.memberId==null && this.memberId==null) || 
-         (otx.memberId!=null && this.memberId!=null && otx.memberId.equals(this.memberId))));
-            
+    return (otx.uniqId == this.uniqId && ((otx.memberId == null && this.memberId == null) || (otx.memberId != null && this.memberId != null && otx.memberId.equals(this.memberId))));
+
   }
 
   @Override
   public int hashCode() {
-    int retval=this.uniqId;
+    int retval = this.uniqId;
     if (this.memberId != null)
       retval = retval * 37 + this.memberId.hashCode();
     return retval;
@@ -103,20 +100,17 @@ public final class TXId
   }
 
   @Override
-  public void fromData(DataInput in) 
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.uniqId = in.readInt();
     this.memberId = DSFIDFactory.readInternalDistributedMember(in);
   }
 
-  public static final TXId createFromData(DataInput in) 
-    throws IOException, ClassNotFoundException
-  {
+  public static final TXId createFromData(DataInput in) throws IOException, ClassNotFoundException {
     TXId result = new TXId();
     InternalDataSerializer.invokeFromData(result, in);
     return result;
   }
-  
+
   public int getUniqId() {
     return this.uniqId;
   }
@@ -125,5 +119,5 @@ public final class TXId
   public Version[] getSerializationVersions() {
     return null;
   }
-  
+
 }

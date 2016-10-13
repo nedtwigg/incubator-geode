@@ -73,7 +73,8 @@ public class TestSubscriptionsDUnitTest extends JUnit4DistributedTestCase {
 
   @Override
   public final void preSetUp() throws Exception {
-    this.helper = new ManagementTestBase(){};
+    this.helper = new ManagementTestBase() {
+    };
   }
 
   @Override
@@ -114,15 +115,13 @@ public class TestSubscriptionsDUnitTest extends JUnit4DistributedTestCase {
 
   @SuppressWarnings("serial")
   private Object createServerCache(VM vm) {
-    return vm.invoke(new SerializableCallable(
-        "Create Server Cache in TestSubscriptionsDUnitTest") {
+    return vm.invoke(new SerializableCallable("Create Server Cache in TestSubscriptionsDUnitTest") {
 
       public Object call() {
         try {
           return createServerCache();
         } catch (Exception e) {
-          fail("Error while createServerCache in TestSubscriptionsDUnitTest"
-              + e);
+          fail("Error while createServerCache in TestSubscriptionsDUnitTest" + e);
         }
         return null;
       }
@@ -131,15 +130,13 @@ public class TestSubscriptionsDUnitTest extends JUnit4DistributedTestCase {
 
   @SuppressWarnings("serial")
   private void createClientCache(VM vm, final String host, final Integer port1) {
-    vm.invoke(new SerializableCallable(
-        "Create Client Cache in TestSubscriptionsDUnitTest") {
+    vm.invoke(new SerializableCallable("Create Client Cache in TestSubscriptionsDUnitTest") {
 
       public Object call() {
         try {
           createClientCache(host, port1);
         } catch (Exception e) {
-          fail("Error while createClientCache in TestSubscriptionsDUnitTest "
-              + e);
+          fail("Error while createClientCache in TestSubscriptionsDUnitTest " + e);
         }
         return null;
       }
@@ -181,12 +178,7 @@ public class TestSubscriptionsDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     Cache cache = createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory()
-        .addServer(host, port1.intValue()).setSubscriptionEnabled(true)
-        .setThreadLocalConnections(true).setMinConnections(1)
-        .setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1)
-        .setSubscriptionEnabled(true).setStatisticInterval(1000)
-        .create("TestSubscriptionsDUnitTest");
+    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(true).setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1).setSubscriptionEnabled(true).setStatisticInterval(1000).create("TestSubscriptionsDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -213,20 +205,16 @@ public class TestSubscriptionsDUnitTest extends JUnit4DistributedTestCase {
    * @param vm
    */
   @SuppressWarnings("serial")
-  protected void verifyClientStats(final VM vm,
-      final DistributedMember serverMember, final int serverPort) {
-    SerializableRunnable verifyCacheServerRemote = new SerializableRunnable(
-        "TestSubscriptionsDUnitTest Verify Cache Server Remote") {
+  protected void verifyClientStats(final VM vm, final DistributedMember serverMember, final int serverPort) {
+    SerializableRunnable verifyCacheServerRemote = new SerializableRunnable("TestSubscriptionsDUnitTest Verify Cache Server Remote") {
       public void run() {
         final GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
         try {
           final WaitCriterion waitCriteria = new WaitCriterion() {
             @Override
             public boolean done() {
-              ManagementService service = ManagementService
-                  .getExistingManagementService(cache);
-              final DistributedSystemMXBean dsBean = service
-                  .getDistributedSystemMXBean();
+              ManagementService service = ManagementService.getExistingManagementService(cache);
+              final DistributedSystemMXBean dsBean = service.getDistributedSystemMXBean();
               if (dsBean != null) {
                 if (dsBean.getNumSubscriptions() > 1) {
                   return true;
@@ -241,16 +229,12 @@ public class TestSubscriptionsDUnitTest extends JUnit4DistributedTestCase {
             }
           };
           Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
-          final DistributedSystemMXBean dsBean = ManagementService
-              .getExistingManagementService(cache).getDistributedSystemMXBean();
+          final DistributedSystemMXBean dsBean = ManagementService.getExistingManagementService(cache).getDistributedSystemMXBean();
           assertNotNull(dsBean);
-          LogWriterUtils.getLogWriter().info(
-              "TestSubscriptionsDUnitTest dsBean.getNumSubscriptions() ="
-                  + dsBean.getNumSubscriptions());
+          LogWriterUtils.getLogWriter().info("TestSubscriptionsDUnitTest dsBean.getNumSubscriptions() =" + dsBean.getNumSubscriptions());
           assertTrue(dsBean.getNumSubscriptions() == 2 ? true : false);
         } catch (Exception e) {
-          fail("TestSubscriptionsDUnitTest Error while verifying subscription "
-              + e.getMessage());
+          fail("TestSubscriptionsDUnitTest Error while verifying subscription " + e.getMessage());
         }
 
       }
@@ -265,13 +249,11 @@ public class TestSubscriptionsDUnitTest extends JUnit4DistributedTestCase {
    */
   @SuppressWarnings("serial")
   protected void registerInterest(final VM vm) {
-    SerializableRunnable put = new SerializableRunnable(
-        "TestSubscriptionsDUnitTest registerInterest") {
+    SerializableRunnable put = new SerializableRunnable("TestSubscriptionsDUnitTest registerInterest") {
       public void run() {
         try {
           Cache cache = GemFireCacheImpl.getInstance();
-          Region<Object, Object> r1 = cache.getRegion(Region.SEPARATOR
-              + REGION_NAME);
+          Region<Object, Object> r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
           assertNotNull(r1);
           r1.registerInterest(k1);
           r1.registerInterest(k2);

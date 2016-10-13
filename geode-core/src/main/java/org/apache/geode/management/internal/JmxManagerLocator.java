@@ -44,7 +44,7 @@ import org.apache.geode.management.internal.JmxManagerAdvisor.JmxManagerProfile;
 
 public class JmxManagerLocator implements TcpHandler {
   private static final Logger logger = LogService.getLogger();
-  
+
   private GemFireCacheImpl cache;
 
   public JmxManagerLocator(GemFireCacheImpl gfc) {
@@ -54,7 +54,7 @@ public class JmxManagerLocator implements TcpHandler {
   @Override
   public Object processRequest(Object request) throws IOException {
     assert request instanceof JmxManagerLocatorRequest;
-    return findJmxManager((JmxManagerLocatorRequest)request);
+    return findJmxManager((JmxManagerLocatorRequest) request);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class JmxManagerLocator implements TcpHandler {
   }
 
   public void restarting(DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {
-    this.cache = (GemFireCacheImpl)cache;
+    this.cache = (GemFireCacheImpl) cache;
   }
 
   @Override
@@ -160,7 +160,7 @@ public class JmxManagerLocator implements TcpHandler {
   }
 
   private JmxManagerProfile startJmxManager(List<JmxManagerProfile> willingToManage) {
-    for (JmxManagerProfile p: willingToManage) {
+    for (JmxManagerProfile p : willingToManage) {
       if (sendStartJmxManager(p.getDistributedMember())) {
         return p;
       }
@@ -170,14 +170,14 @@ public class JmxManagerLocator implements TcpHandler {
 
   private boolean sendStartJmxManager(InternalDistributedMember distributedMember) {
     try {
-    ArrayList<Object> resultContainer = (ArrayList<Object>)FunctionService.onMember(distributedMember).execute(new StartJmxManagerFunction()).getResult();
-    Object result = resultContainer.get(0);
-    if (result instanceof Boolean) {
-      return ((Boolean)result).booleanValue();
-    } else {
-      logger.info("Could not start jmx manager on {} because {}", distributedMember, result);
-      return false;
-    }
+      ArrayList<Object> resultContainer = (ArrayList<Object>) FunctionService.onMember(distributedMember).execute(new StartJmxManagerFunction()).getResult();
+      Object result = resultContainer.get(0);
+      if (result instanceof Boolean) {
+        return ((Boolean) result).booleanValue();
+      } else {
+        logger.info("Could not start jmx manager on {} because {}", distributedMember, result);
+        return false;
+      }
     } catch (RuntimeException ex) {
       if (!this.cache.getDistributionManager().getDistributionManagerIdsIncludingAdmin().contains(distributedMember)) {
         // if the member went away then just return false
@@ -188,14 +188,14 @@ public class JmxManagerLocator implements TcpHandler {
       }
     }
   }
-  
+
   public static class StartJmxManagerFunction implements Function, InternalEntity {
     private static final long serialVersionUID = -2860286061903069789L;
     public static final String ID = StartJmxManagerFunction.class.getName();
 
     @Override
     public void execute(FunctionContext context) {
-      
+
       try {
         Cache cache = CacheFactory.getAnyInstance();
         if (cache != null) {
@@ -210,9 +210,8 @@ public class JmxManagerLocator implements TcpHandler {
         context.getResultSender().lastResult(Boolean.FALSE);
       } catch (AlreadyRunningException ok) {
         context.getResultSender().lastResult(Boolean.TRUE);
-      }catch (Exception e) {
-        context.getResultSender().lastResult(
-            "Exception in StartJmxManager =" + e.getMessage());
+      } catch (Exception e) {
+        context.getResultSender().lastResult("Exception in StartJmxManager =" + e.getMessage());
       }
     }
 

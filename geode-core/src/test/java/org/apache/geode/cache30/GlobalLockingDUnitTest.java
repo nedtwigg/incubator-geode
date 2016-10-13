@@ -48,7 +48,7 @@ import org.apache.geode.test.dunit.VM;
 public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
 
   public static Region region_testBug32356;
-  
+
   public GlobalLockingDUnitTest() {
     super();
   }
@@ -76,7 +76,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
     return root;
   }
 
-//////////////////////  Test Methods  //////////////////////
+  //////////////////////  Test Methods  //////////////////////
 
   /** 
    * Tests for 32356 R2 tryLock w/ 0 timeout broken in Distributed Lock Service
@@ -94,8 +94,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
       final int vm = i;
       host.getVM(vm).invoke(new CacheSerializableRunnable("testBug32356_step1") {
         public void run2() throws CacheException {
-          region_testBug32356 =
-              getOrCreateRootRegion().createSubregion(name, getGlobalAttrs());
+          region_testBug32356 = getOrCreateRootRegion().createSubregion(name, getGlobalAttrs());
           Lock lock = region_testBug32356.getDistributedLock(key);
           lock.lock();
           lock.unlock();
@@ -111,7 +110,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
         public void run2() throws CacheException {
           Lock lock = region_testBug32356.getDistributedLock(key);
           // bug 32356 should cause this to fail...
-          assertTrue("Found bug 32356", lock.tryLock()); 
+          assertTrue("Found bug 32356", lock.tryLock());
           lock.unlock();
         }
       });
@@ -157,19 +156,14 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
     lock.lock();
     lock.unlock();
   }
-  
+
   @Test
   public void testIsLockGrantorAttribute() throws Exception {
     String name = this.getUniqueName() + "-testIsLockGrantorAttribute";
     AttributesFactory factory = new AttributesFactory(getGlobalAttrs());
     factory.setLockGrantor(true);
-    Region region = getOrCreateRootRegion().createSubregion(
-        name, factory.create());
-    assertEquals(
-        "Setting isLockGrantor failed to result in becoming lock grantor", 
-        true, 
-        ((org.apache.geode.internal.cache.DistributedRegion)
-            region).getLockService().isLockGrantor());
+    Region region = getOrCreateRootRegion().createSubregion(name, factory.create());
+    assertEquals("Setting isLockGrantor failed to result in becoming lock grantor", true, ((org.apache.geode.internal.cache.DistributedRegion) region).getLockService().isLockGrantor());
   }
 
   /**
@@ -236,7 +230,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * get lock in one VM, try to invoke loader in other
    */
@@ -247,7 +241,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String name = this.getUniqueName();
     final Object key = new Integer(5);
-    
+
     // In first VM, get a lock on the entry
     vm0.invoke(new CacheSerializableRunnable("Get lock") {
       public void run2() throws CacheException {
@@ -263,11 +257,12 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
         getOrCreateRootRegion().getCache().setLockTimeout(2);
         Region r = getOrCreateRootRegion().createSubregion(name, getGlobalAttrs());
         r.getAttributesMutator().setCacheLoader(new CacheLoader() {
-          public Object load(LoaderHelper helper)
-          throws CacheLoaderException {
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
             throw new CacheLoaderException("Made it into the loader!");
           }
-          public void close() {}
+
+          public void close() {
+          }
         });
         try {
           r.get(key);
@@ -278,7 +273,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * get lock in one VM, try to invalidate in other
    */
@@ -310,7 +305,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * get lock in one VM, try to destroy in other
    */
@@ -344,7 +339,7 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * get the lock, region.get(), region.put(), release lock
    */
@@ -377,11 +372,11 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
         }
       }
     });
-    
+
     // Now, in Master, do another locking operation, then release the lock
     r.put(key, "value 2");
     lock.unlock();
-    
+
     // Finally, successfully perform a locking in other VM
     vm1.invoke(new CacheSerializableRunnable("Successful locking operation") {
       public void run2() throws CacheException {
@@ -391,17 +386,16 @@ public class GlobalLockingDUnitTest extends JUnit4CacheTestCase {
         r2.put(key, "value 3");
       }
     });
-    
+
     assertEquals("value 3", r.get(key));
 
   }
-  
+
   /**
    * Test Region.getRegionDistributedLock(), calling lock() and then unlock()
    */
   @Test
-  public void testRegionDistributedLockSimple() throws CacheException
-  {
+  public void testRegionDistributedLockSimple() throws CacheException {
     final String name = this.getUniqueName();
     Region r = getOrCreateRootRegion().createSubregion(name, getGlobalAttrs());
     Lock lock = r.getRegionDistributedLock();

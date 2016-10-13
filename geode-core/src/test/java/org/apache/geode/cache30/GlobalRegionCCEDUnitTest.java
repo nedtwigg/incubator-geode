@@ -63,8 +63,7 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
     Properties p = super.getDistributedSystemProperties();
     p.put(CONSERVE_SOCKETS, "false");
     if (distributedSystemID > 0) {
-      p.put(DISTRIBUTED_SYSTEM_ID, ""
-          + distributedSystemID);
+      p.put(DISTRIBUTED_SYSTEM_ID, "" + distributedSystemID);
     }
     return p;
   }
@@ -85,8 +84,7 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = getCache().getRegionAttributes(type);
     if (ra == null) {
-      throw new IllegalStateException("The region shortcut " + type
-          + " has been removed.");
+      throw new IllegalStateException("The region shortcut " + type + " has been removed.");
     }
     AttributesFactory factory = new AttributesFactory(ra);
     factory.setConcurrencyChecksEnabled(true);
@@ -120,8 +118,7 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
   }
 
   // TODO: delete this unused method
-  protected void do_version_recovery_if_necessary(final VM vm0, final VM vm1,
-      final VM vm2, final Object[] params) {
+  protected void do_version_recovery_if_necessary(final VM vm0, final VM vm1, final VM vm2, final Object[] params) {
     // do nothing here
   }
 
@@ -173,12 +170,10 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
     // VM vm2 = Host.getHost(0).getVM(2);
 
     final String name = this.getUniqueName() + "-CC";
-    SerializableRunnable createRegion = new SerializableRunnable(
-        "Create Region") {
+    SerializableRunnable createRegion = new SerializableRunnable("Create Region") {
       public void run() {
         try {
-          RegionFactory f = getCache().createRegionFactory(
-              getRegionAttributes());
+          RegionFactory f = getCache().createRegionFactory(getRegionAttributes());
           CCRegion = (LocalRegion) f.create(name);
           CCRegion.put("cckey0", "ccvalue");
           CCRegion.put("cckey0", "ccvalue"); // version number will end up at 4
@@ -190,8 +185,7 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
     vm0.invoke(createRegion);
     vm1.invoke(createRegion);
     // vm2.invoke(createRegion);
-    vm1.invoke(new SerializableRunnable(
-        "Create local tombstone and adjust time") {
+    vm1.invoke(new SerializableRunnable("Create local tombstone and adjust time") {
       public void run() {
         // make the entry for cckey0 a tombstone in this VM and set its
         // modification time to be older than the tombstone GC interval. This
@@ -199,8 +193,7 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
         RegionEntry entry = CCRegion.getRegionEntry("cckey0");
         VersionTag tag = entry.getVersionStamp().asVersionTag();
         assertTrue(tag.getEntryVersion() > 1);
-        tag.setVersionTimeStamp(System.currentTimeMillis()
-            - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT - 1000);
+        tag.setVersionTimeStamp(System.currentTimeMillis() - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT - 1000);
         entry.getVersionStamp().setVersionTimeStamp(tag.getVersionTimeStamp());
         try {
           entry.makeTombstone(CCRegion, tag);
@@ -211,11 +204,9 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
     });
     // now remove the entry on vm0, simulating that it initiated a GC, and
     // perform a CREATE with a new version number
-    vm0.invoke(new SerializableRunnable(
-        "Locally destroy the entry and do a create that will be propagated with v1") {
+    vm0.invoke(new SerializableRunnable("Locally destroy the entry and do a create that will be propagated with v1") {
       public void run() {
-        CCRegion.getRegionMap().removeEntry("cckey0",
-            CCRegion.getRegionEntry("cckey0"), true);
+        CCRegion.getRegionMap().removeEntry("cckey0", CCRegion.getRegionEntry("cckey0"), true);
         if (CCRegion.getRegionEntry("ckey0") != null) {
           fail("expected removEntry to remove the entry from the region's map");
         }

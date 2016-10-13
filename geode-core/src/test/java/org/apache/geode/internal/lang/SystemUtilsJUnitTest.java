@@ -85,6 +85,7 @@ public class SystemUtilsJUnitTest {
     final boolean expected = ManagementFactory.getOperatingSystemMXBean().getName().contains(SystemUtils.LINUX_OS_NAME);
     assertEquals(expected, SystemUtils.isLinux());
   }
+
   @Test
   public void testIsMacOSX() {
     final boolean expected = ManagementFactory.getOperatingSystemMXBean().getName().contains(SystemUtils.MAC_OSX_NAME);

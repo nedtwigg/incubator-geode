@@ -85,8 +85,8 @@ public class SetBitExecutor extends StringExecutor {
       byte[] bytes = wrapper.toBytes();
       if (byteIndex < bytes.length)
         returnBit = (bytes[byteIndex] & (0x80 >> offset)) >> (7 - offset);
-        else 
-          returnBit = 0;
+      else
+        returnBit = 0;
 
       if (byteIndex < bytes.length) {
         bytes[byteIndex] = value == 1 ? (byte) (bytes[byteIndex] | (0x80 >> offset)) : (byte) (bytes[byteIndex] & ~(0x80 >> offset));

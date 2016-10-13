@@ -59,7 +59,7 @@ public class SortLogFileJUnitTest {
 
     pw.flush();
     pw.close();
-    
+
     byte[] bytes = baos.toByteArray();
 
     ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
@@ -77,8 +77,7 @@ public class SortLogFileJUnitTest {
       LogFileParser.LogEntry entry = parser.getNextEntry();
       String timestamp = entry.getTimestamp();
       if (prevTimestamp != null) {
-        assertTrue("Prev: " + prevTimestamp + ", current: " + timestamp,
-                   prevTimestamp.compareTo(timestamp) <= 0);
+        assertTrue("Prev: " + prevTimestamp + ", current: " + timestamp, prevTimestamp.compareTo(timestamp) <= 0);
       }
       prevTimestamp = entry.getTimestamp();
     }

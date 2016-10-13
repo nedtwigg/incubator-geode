@@ -122,8 +122,7 @@ public class XmlEntity implements DataSerializable {
    * @param childValue
    *          Value of the child element identifier
    */
-  public XmlEntity(final String parentType, final String parentKey, final String parentValue, final String childType, final String childKey,
-      final String childValue) {
+  public XmlEntity(final String parentType, final String parentKey, final String parentValue, final String childType, final String childKey, final String childValue) {
     // TODO this should be replaced with a builder.
     // TODO consider parent as nested XmlEntity type.
     this.parentType = parentType;
@@ -146,7 +145,6 @@ public class XmlEntity implements DataSerializable {
     // no init();
   }
 
-
   /**
    * Initialize new instances. Called from
    * {@link #XmlEntity(String, String, String)} and
@@ -164,7 +162,7 @@ public class XmlEntity implements DataSerializable {
       xmlDefinition = loadXmlDefinition();
     }
   }
-  
+
   /**
    * Use the CacheXmlGenerator to create XML from the entity associated with the
    * current cache.
@@ -263,11 +261,11 @@ public class XmlEntity implements DataSerializable {
 
     return queryStringBuilder.toString();
   }
-  
+
   public String getSearchString() {
     return this.searchString;
   }
-  
+
   public String getType() {
     return this.type;
   }
@@ -298,7 +296,7 @@ public class XmlEntity implements DataSerializable {
     if (this.attributes.containsKey("name")) {
       return this.attributes.get("name");
     }
-    
+
     return this.attributes.get("id");
   }
 
@@ -429,12 +427,12 @@ public class XmlEntity implements DataSerializable {
      * @since GemFire 8.1
      */
     public XmlEntity build() {
-        xmlEntity.init();
-        
-        final XmlEntity built = xmlEntity;
-        xmlEntity = new XmlEntity();
-        
-        return built;
+      xmlEntity.init();
+
+      final XmlEntity built = xmlEntity;
+      xmlEntity = new XmlEntity();
+
+      return built;
     }
 
     /**

@@ -24,16 +24,17 @@ import java.util.*;
  * 
  * @since GemFire 5.0
  */
-public interface ReliableDistributionData  {
-//  /**
-//   * Returns a set of the recipients that this data was sent to successfully.
-//   * @param processor the reply processor used for responses to this data.
-//   */
-//  public Set getSuccessfulRecipients(ReliableReplyProcessor21 processor);
+public interface ReliableDistributionData {
+  //  /**
+  //   * Returns a set of the recipients that this data was sent to successfully.
+  //   * @param processor the reply processor used for responses to this data.
+  //   */
+  //  public Set getSuccessfulRecipients(ReliableReplyProcessor21 processor);
   /**
    * Returns the number of logical operations this data contains.
    */
   public int getOperationCount();
+
   /**
    * Returns a list of QueuedOperation instances one for each logical
    * operation done by this data instance.

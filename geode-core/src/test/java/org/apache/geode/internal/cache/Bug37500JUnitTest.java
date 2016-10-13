@@ -36,8 +36,7 @@ import static org.junit.Assert.*;
  * 
  */
 @Category(IntegrationTest.class)
-public class Bug37500JUnitTest extends DiskRegionTestingBase
-{
+public class Bug37500JUnitTest extends DiskRegionTestingBase {
 
   /** The disk region configuration object for the test */
   private DiskRegionProperties diskProps = new DiskRegionProperties();
@@ -97,8 +96,7 @@ public class Bug37500JUnitTest extends DiskRegionTestingBase
    * @throws Exception
    */
   @Test
-  public void testBug37500() throws Exception
-  {
+  public void testBug37500() throws Exception {
     final int MAX_OPLOG_SIZE = 1000;
     diskProps.setMaxOplogSize(MAX_OPLOG_SIZE);
     diskProps.setPersistBackup(true);
@@ -113,44 +111,36 @@ public class Bug37500JUnitTest extends DiskRegionTestingBase
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
-    CacheObserver old = CacheObserverHolder
-        .setInstance(new CacheObserverAdapter() {
-          public void beforeGoingToCompact()
-          {
+    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+      public void beforeGoingToCompact() {
+        if (!proceedForRolling) {
+          synchronized (Bug37500JUnitTest.class) {
             if (!proceedForRolling) {
-              synchronized (Bug37500JUnitTest.class) {
-                if (!proceedForRolling) {
-                  try {
-                    cache.getLogger().info(
-                        "beforeGoingToCompact :: going into wait");
-                    Bug37500JUnitTest.class.wait();
-                  }
-                  catch (InterruptedException e) {
-                    cache.getLogger().info("Roller interrupted");
-                    fail("interrupted");
-                  }
-                  cache.getLogger().info(
-                      "beforeGoingToCompact :: coming out of wait");
-                }
+              try {
+                cache.getLogger().info("beforeGoingToCompact :: going into wait");
+                Bug37500JUnitTest.class.wait();
+              } catch (InterruptedException e) {
+                cache.getLogger().info("Roller interrupted");
+                fail("interrupted");
               }
+              cache.getLogger().info("beforeGoingToCompact :: coming out of wait");
             }
           }
+        }
+      }
 
-          public void beforeSwitchingOplog()
-          {
-            if (notifyRoller) {
-              cache.getLogger().info(
-                  "beforeSwitchingOplog :: going to notify Roller");
-              synchronized (Bug37500JUnitTest.class) {
-                proceedForRolling = true;
-                Bug37500JUnitTest.class.notify();
-                cache.getLogger().info(
-                    "beforeSwitchingOplog :: notified the Roller");
-              }
-            }
-
+      public void beforeSwitchingOplog() {
+        if (notifyRoller) {
+          cache.getLogger().info("beforeSwitchingOplog :: going to notify Roller");
+          synchronized (Bug37500JUnitTest.class) {
+            proceedForRolling = true;
+            Bug37500JUnitTest.class.notify();
+            cache.getLogger().info("beforeSwitchingOplog :: notified the Roller");
           }
-        });
+        }
+
+      }
+    });
 
     cache.getLogger().info("goin to put no. 1");
     // put 440 bytes , it will go in oplog1

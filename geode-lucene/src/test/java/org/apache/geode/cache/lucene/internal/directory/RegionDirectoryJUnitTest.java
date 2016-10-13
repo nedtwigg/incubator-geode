@@ -51,7 +51,7 @@ public class RegionDirectoryJUnitTest extends BaseDirectoryTestCase {
   @Override
   protected Directory getDirectory(Path path) throws IOException {
     final FileSystemStats stats = mock(FileSystemStats.class);
-    
+
     //This is super lame, but log4j automatically sets the system property, and the lucene
     //test asserts that no system properties have changed. Unfortunately, there is no
     //way to control the order of rules, so we can't clear this property with a rule

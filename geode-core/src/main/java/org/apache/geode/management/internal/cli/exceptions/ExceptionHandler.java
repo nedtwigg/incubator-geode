@@ -26,9 +26,9 @@ import org.apache.geode.management.internal.cli.util.CLIConsoleBufferUtil;
 public class ExceptionHandler {
 
   private static Logger LOGGER = Logger.getLogger(ExceptionHandler.class.getCanonicalName());
-  
+
   //FIXME define handling when no match is present
-  public static void handleException(CliException ce) {    
+  public static void handleException(CliException ce) {
     if (ce instanceof CliCommandNotAvailableException) {
       handleCommandNotAvailableException((CliCommandNotAvailableException) ce);
     } else if (ce instanceof CliCommandInvalidException) {
@@ -39,13 +39,13 @@ public class ExceptionHandler {
   }
 
   private static void handleMultiModeOptionException(CliCommandMultiModeOptionException ce) {
-    switch(ce.getCode()){
-      case CliCommandMultiModeOptionException.MULTIPLE_LEAD_OPTIONS :
-        LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer("Input command contains multiple lead-options from modes : " + ce.getLeadOptionString()));
-        break;
-      case CliCommandMultiModeOptionException.OPTIONS_FROM_MULTIPLE_MODES :
-        LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer("Input command contains options from multilpe modes : " + ce.getLeadOptionString()));
-        break;
+    switch (ce.getCode()) {
+    case CliCommandMultiModeOptionException.MULTIPLE_LEAD_OPTIONS:
+      LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer("Input command contains multiple lead-options from modes : " + ce.getLeadOptionString()));
+      break;
+    case CliCommandMultiModeOptionException.OPTIONS_FROM_MULTIPLE_MODES:
+      LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer("Input command contains options from multilpe modes : " + ce.getLeadOptionString()));
+      break;
     }
   }
 
@@ -62,14 +62,14 @@ public class ExceptionHandler {
       handleOptionInvalidExcpetion((CliCommandOptionNotApplicableException) ccoe);
     } else if (ccoe instanceof CliCommandOptionValueException) {
       handleOptionValueException((CliCommandOptionValueException) ccoe);
-    } else if (ccoe instanceof CliCommandMultiModeOptionException) {      
+    } else if (ccoe instanceof CliCommandMultiModeOptionException) {
       handleMultiModeOptionException((CliCommandMultiModeOptionException) ccoe);
-    } 
+    }
   }
 
   private static void handleOptionInvalidExcpetion(CliCommandOptionNotApplicableException cconae) {
     String messege = "Parameter " + cconae.getOption().getLongOption() + " is not applicable for " + cconae.getCommandTarget().getGfshMethodTarget().getKey();
-    LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(messege));  
+    LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(messege));
   }
 
   private static void handleOptionValueException(CliCommandOptionValueException ccove) {

@@ -34,7 +34,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class DeadlockDetectorTest {
-  
+
   private volatile Set<Thread> stuckThreads;
 
   @Before
@@ -44,7 +44,7 @@ public class DeadlockDetectorTest {
 
   @After
   public void tearDown() throws Exception {
-    for (Thread thread: stuckThreads) {
+    for (Thread thread : stuckThreads) {
       thread.interrupt();
       thread.join(20 * 1000);
       if (thread.isAlive()) {
@@ -54,7 +54,7 @@ public class DeadlockDetectorTest {
 
     stuckThreads.clear();
   }
-  
+
   @Test
   public void testNoDeadlocks() {
     DeadlockDetector detector = new DeadlockDetector();
@@ -71,13 +71,13 @@ public class DeadlockDetectorTest {
     final CountDownLatch latch = new CountDownLatch(1);
     MockDependencyMonitor mockDependencyMonitor = new MockDependencyMonitor();
     DependencyMonitorManager.addMonitor(mockDependencyMonitor);
-    
+
     Thread thread1 = startAThread(latch);
     Thread thread2 = startAThread(latch);
-    
+
     String resource1 = "one";
     String resource2 = "two";
-    
+
     mockDependencyMonitor.addDependency(thread1, resource1);
     mockDependencyMonitor.addDependency(resource1, thread2);
     mockDependencyMonitor.addDependency(thread2, resource2);
@@ -107,15 +107,15 @@ public class DeadlockDetectorTest {
     };
 
     thread.start();
-    
+
     return thread;
   }
-  
+
   /**
    * A fake dependency monitor.
    */
   private static class MockDependencyMonitor implements DependencyMonitor {
-    
+
     Set<Dependency<Thread, Serializable>> blockedThreads = new HashSet<>();
     Set<Dependency<Serializable, Thread>> held = new HashSet<>();
 

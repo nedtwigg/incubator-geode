@@ -26,16 +26,16 @@ import java.util.Iterator;
 public class CompositePrintStream extends PrintStream {
 
   private final CompositeOutputStream compositeOutputStream;
-  
+
   public CompositePrintStream(CompositeOutputStream compositeOutputStream) {
     super(compositeOutputStream, true);
     this.compositeOutputStream = compositeOutputStream;
   }
-  
+
   public CompositePrintStream(OutputStream... out) {
     this(new CompositeOutputStream(out));
   }
-  
+
   public CompositeOutputStream getCompositePrintStream() {
     return this.compositeOutputStream;
   }
@@ -46,14 +46,14 @@ public class CompositePrintStream extends PrintStream {
   public boolean addOutputStream(OutputStream out) {
     return this.compositeOutputStream.addOutputStream(out);
   }
-  
+
   /**
    * @return <tt>true</tt> if this CompositePrintStream contained the specified OutputStream
    */
   public boolean removeOutputStream(OutputStream out) {
     return this.compositeOutputStream.removeOutputStream(out);
   }
-  
+
   /**
    * Returns <tt>true</tt> if this CompositePrintStream contains no OutputStreams.
    *
@@ -62,7 +62,7 @@ public class CompositePrintStream extends PrintStream {
   public boolean isEmpty() {
     return this.compositeOutputStream.isEmpty();
   }
-  
+
   /**
    * Returns the number of OutputStreams in this CompositePrintStream (its cardinality).
    *
@@ -71,7 +71,7 @@ public class CompositePrintStream extends PrintStream {
   public int size() {
     return this.compositeOutputStream.size();
   }
-  
+
   public Iterator<OutputStream> iterator() {
     return this.compositeOutputStream.iterator();
   }

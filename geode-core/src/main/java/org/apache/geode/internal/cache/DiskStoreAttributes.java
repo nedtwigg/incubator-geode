@@ -33,7 +33,7 @@ import org.apache.geode.cache.DiskStoreFactory;
  */
 public class DiskStoreAttributes implements Serializable, DiskStore {
   private static final long serialVersionUID = 1L;
-  
+
   public boolean allowForceCompaction;
   public boolean autoCompact;
 
@@ -49,7 +49,7 @@ public class DiskStoreAttributes implements Serializable, DiskStore {
   public File[] diskDirs;
 
   public String name;
-  
+
   private volatile float diskUsageWarningPct;
   private volatile float diskUsageCriticalPct;
 
@@ -58,7 +58,7 @@ public class DiskStoreAttributes implements Serializable, DiskStore {
     this.autoCompact = DiskStoreFactory.DEFAULT_AUTO_COMPACT;
     this.compactionThreshold = DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD;
     this.allowForceCompaction = DiskStoreFactory.DEFAULT_ALLOW_FORCE_COMPACTION;
-    this.maxOplogSizeInBytes = DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE * (1024*1024);
+    this.maxOplogSizeInBytes = DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE * (1024 * 1024);
     this.timeInterval = DiskStoreFactory.DEFAULT_TIME_INTERVAL;
     this.writeBufferSize = DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE;
     this.queueSize = DiskStoreFactory.DEFAULT_QUEUE_SIZE;

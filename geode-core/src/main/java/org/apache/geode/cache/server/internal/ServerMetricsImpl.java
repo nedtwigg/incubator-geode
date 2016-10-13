@@ -30,7 +30,7 @@ public class ServerMetricsImpl implements ServerMetrics {
   private final AtomicInteger connectionCount = new AtomicInteger();
   private final AtomicInteger queueCount = new AtomicInteger();
   private final int maxConnections;
-  
+
   public ServerMetricsImpl(int maxConnections) {
     this.maxConnections = maxConnections;
   }
@@ -50,29 +50,29 @@ public class ServerMetricsImpl implements ServerMetrics {
   public int getSubscriptionConnectionCount() {
     return queueCount.get();
   }
-  
+
   public void incClientCount() {
     clientCount.incrementAndGet();
   }
-  
+
   public void decClientCount() {
     clientCount.decrementAndGet();
   }
-  
+
   public void incConnectionCount() {
     connectionCount.incrementAndGet();
   }
-  
+
   public void decConnectionCount() {
     connectionCount.decrementAndGet();
   }
-  
+
   public void incQueueCount() {
     queueCount.incrementAndGet();
   }
-  
+
   public void decQueueCount() {
     queueCount.decrementAndGet();
   }
-  
+
 }

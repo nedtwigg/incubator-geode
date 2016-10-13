@@ -24,7 +24,8 @@ package org.apache.geode.cache;
  * @since GemFire 4.0
  */
 public class SynchronizationCommitConflictException extends CacheRuntimeException {
-private static final long serialVersionUID = 2619806460255259492L;
+  private static final long serialVersionUID = 2619806460255259492L;
+
   /**
    * Constructs an instance of
    * <code>SynchronizationCommitConflictException</code> with the
@@ -34,7 +35,7 @@ private static final long serialVersionUID = 2619806460255259492L;
   public SynchronizationCommitConflictException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of
    * <code>SynchronizationCommitConflictException</code> with the

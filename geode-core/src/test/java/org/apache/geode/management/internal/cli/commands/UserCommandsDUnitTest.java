@@ -45,9 +45,7 @@ import static org.apache.geode.test.dunit.Assert.assertEquals;
 public class UserCommandsDUnitTest extends CliCommandTestBase {
 
   private static final long serialVersionUID = 1L;
-  final File jarDirectory = new File(
-      (new File(ClassPathLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath())).getParent(),
-      "ext");
+  final File jarDirectory = new File((new File(ClassPathLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath())).getParent(), "ext");
   final File jarFile = new File(this.jarDirectory, "UserCommandsDUnit.jar");
   boolean deleteJarDirectory = false;
 
@@ -97,15 +95,13 @@ public class UserCommandsDUnitTest extends CliCommandTestBase {
 
     stringBuffer.append("public final class UCDunitClass implements CommandMarker { public UCDunitClass() {}");
     stringBuffer.append("@CliCommand(value = { \"ucdunitcmd\" }, help = \"ucdunitcmd help\")");
-    stringBuffer.append(
-        "public final Result ucdunitcmd(@CliOption(key = { \"name\" }, help = \"ucdunitcmd name help\") String name) {");
+    stringBuffer.append("public final Result ucdunitcmd(@CliOption(key = { \"name\" }, help = \"ucdunitcmd name help\") String name) {");
     stringBuffer.append("return ResultBuilder.createInfoResult(\"ucdunitcmd \" + name); }");
     stringBuffer.append("@CliAvailabilityIndicator({ \"ucdunitcmd\" })");
     stringBuffer.append("public final boolean isAvailable() { return true; } }");
 
     ClassBuilder classBuilder = new ClassBuilder();
-    final byte[] jarBytes = classBuilder.createJarFromClassContent("junit/ucdunit/UCDunitClass",
-        stringBuffer.toString());
+    final byte[] jarBytes = classBuilder.createJarFromClassContent("junit/ucdunit/UCDunitClass", stringBuffer.toString());
 
     final FileOutputStream outStream = new FileOutputStream(this.jarFile);
     outStream.write(jarBytes);

@@ -32,8 +32,7 @@ import org.apache.geode.cache.FixedPartitionResolver;
 import org.apache.geode.cache.PartitionAttributes;
 import org.apache.geode.internal.cache.xmlcache.Declarable2;
 
-public class QuarterPartitionResolver implements FixedPartitionResolver,
-    Declarable2, DataSerializable {
+public class QuarterPartitionResolver implements FixedPartitionResolver, Declarable2, DataSerializable {
   private Properties resolveProps;
 
   public QuarterPartitionResolver() {
@@ -43,25 +42,20 @@ public class QuarterPartitionResolver implements FixedPartitionResolver,
 
   int numBuckets;
 
-  public String getPartitionName(EntryOperation opDetails,
-      Set allAvailablePartitions) {
-    Date date = (Date)opDetails.getKey();
+  public String getPartitionName(EntryOperation opDetails, Set allAvailablePartitions) {
+    Date date = (Date) opDetails.getKey();
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
     int month = cal.get(Calendar.MONTH);
     if (month == 0 || month == 1 || month == 2) {
       return "Q1";
-    }
-    else if (month == 3 || month == 4 || month == 5) {
+    } else if (month == 3 || month == 4 || month == 5) {
       return "Q2";
-    }
-    else if (month == 6 || month == 7 || month == 8) {
+    } else if (month == 6 || month == 7 || month == 8) {
       return "Q3";
-    }
-    else if (month == 9 || month == 10 || month == 11) {
+    } else if (month == 9 || month == 10 || month == 11) {
       return "Q4";
-    }
-    else {
+    } else {
       return "Invalid Quarter";
     }
   }
@@ -71,7 +65,7 @@ public class QuarterPartitionResolver implements FixedPartitionResolver,
   }
 
   public Serializable getRoutingObject(EntryOperation opDetails) {
-    Date date = (Date)opDetails.getKey();
+    Date date = (Date) opDetails.getKey();
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
     int month = cal.get(Calendar.MONTH);
@@ -87,8 +81,7 @@ public class QuarterPartitionResolver implements FixedPartitionResolver,
     this.numBuckets = numBukcets;
   }
 
-  public int getNumBuckets(String partitionName, String regionName,
-      PartitionAttributes partitionAttributes) {
+  public int getNumBuckets(String partitionName, String regionName, PartitionAttributes partitionAttributes) {
     return this.numBuckets;
   }
 
@@ -102,7 +95,7 @@ public class QuarterPartitionResolver implements FixedPartitionResolver,
     if (!obj.getClass().equals(this.getClass())) {
       return false;
     }
-    QuarterPartitionResolver other = (QuarterPartitionResolver)obj;
+    QuarterPartitionResolver other = (QuarterPartitionResolver) obj;
     if (!this.resolveProps.equals(other.getConfig())) {
       return false;
     }
@@ -136,7 +129,7 @@ public class QuarterPartitionResolver implements FixedPartitionResolver,
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeProperties(this.resolveProps, out);
     out.writeInt(this.numBuckets);
-    
+
   }
 
 }

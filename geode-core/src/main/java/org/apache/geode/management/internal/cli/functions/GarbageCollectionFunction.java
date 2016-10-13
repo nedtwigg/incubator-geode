@@ -34,8 +34,7 @@ import org.apache.geode.management.internal.cli.CliUtil;
  * 
  */
 public class GarbageCollectionFunction implements Function, InternalEntity {
- public static final String ID = GarbageCollectionFunction.class.getName();
-  
+  public static final String ID = GarbageCollectionFunction.class.getName();
 
   private static final long serialVersionUID = 1L;
 
@@ -43,30 +42,31 @@ public class GarbageCollectionFunction implements Function, InternalEntity {
   public void execute(FunctionContext context) {
     StringBuilder str1 = new StringBuilder();
     Map<String, String> resultMap = null;
-    try{     
-        Cache cache = CacheFactory.getAnyInstance();        
-        DistributedMember member = cache.getDistributedSystem().getDistributedMember();
-        long freeMemoeryBeforeGC = Runtime.getRuntime().freeMemory();
-        long totalMemoryBeforeGC = Runtime.getRuntime().totalMemory();
-        long timeBeforeGC = System.currentTimeMillis();
-        Runtime.getRuntime().gc(); 
-       
-        long freeMemoeryAfterGC = Runtime.getRuntime().freeMemory();
-        long totalMemoryAfterGC = Runtime.getRuntime().totalMemory();
-        long timeAfterGC = System.currentTimeMillis() ;
-        
-        long megaBytes = 131072;
-        resultMap = new HashMap<String,String>();
-        resultMap.put("MemberId", member.getId());
-        resultMap.put("HeapSizeBeforeGC", String.valueOf((totalMemoryBeforeGC - freeMemoeryBeforeGC) / megaBytes));
-        resultMap.put("HeapSizeAfterGC",String.valueOf( (totalMemoryAfterGC - freeMemoeryAfterGC)/megaBytes));
-        resultMap.put("TimeSpentInGC", String.valueOf(timeAfterGC - timeBeforeGC));      
-    }catch(Exception ex){
-      str1.append("Exception in GC:"+ ex.getMessage() + CliUtil.stackTraceAsString((Throwable)ex));
-      context.getResultSender().lastResult(str1.toString());    
-    }        
-    context.getResultSender().lastResult(resultMap);    
+    try {
+      Cache cache = CacheFactory.getAnyInstance();
+      DistributedMember member = cache.getDistributedSystem().getDistributedMember();
+      long freeMemoeryBeforeGC = Runtime.getRuntime().freeMemory();
+      long totalMemoryBeforeGC = Runtime.getRuntime().totalMemory();
+      long timeBeforeGC = System.currentTimeMillis();
+      Runtime.getRuntime().gc();
+
+      long freeMemoeryAfterGC = Runtime.getRuntime().freeMemory();
+      long totalMemoryAfterGC = Runtime.getRuntime().totalMemory();
+      long timeAfterGC = System.currentTimeMillis();
+
+      long megaBytes = 131072;
+      resultMap = new HashMap<String, String>();
+      resultMap.put("MemberId", member.getId());
+      resultMap.put("HeapSizeBeforeGC", String.valueOf((totalMemoryBeforeGC - freeMemoeryBeforeGC) / megaBytes));
+      resultMap.put("HeapSizeAfterGC", String.valueOf((totalMemoryAfterGC - freeMemoeryAfterGC) / megaBytes));
+      resultMap.put("TimeSpentInGC", String.valueOf(timeAfterGC - timeBeforeGC));
+    } catch (Exception ex) {
+      str1.append("Exception in GC:" + ex.getMessage() + CliUtil.stackTraceAsString((Throwable) ex));
+      context.getResultSender().lastResult(str1.toString());
+    }
+    context.getResultSender().lastResult(resultMap);
   }
+
   @Override
   public String getId() {
     return GarbageCollectionFunction.ID;
@@ -88,5 +88,3 @@ public class GarbageCollectionFunction implements Function, InternalEntity {
     return false;
   }
 }
-
-

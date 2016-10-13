@@ -54,38 +54,26 @@ public class IndexUsageInNestedQueryJUnitTest {
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
     Region r = CacheUtils.createRegion("portfolios", Portfolio.class);
-    for(int i=0;i<4;i++)
-      r.put(i+"", new Portfolio(i));
+    for (int i = 0; i < 4; i++)
+      r.put(i + "", new Portfolio(i));
   }
 
   @After
   public void tearDown() throws java.lang.Exception {
     CacheUtils.closeCache();
   }
+
   @Test
   public void testNestedQueriesResultsasStructSet() throws Exception {
 
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-        "select distinct * from /portfolios p, (select distinct pos  as poos from /portfolios x, x.positions.values pos"
-            + " where pos.secId = 'YHOO') as k",
-            "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios p, p.positions.values pos"
-                + " where pos.secId = 'YHOO') as k",
-                "select distinct * from /portfolios p, (select distinct x.ID as ID  from /portfolios x"
-                    + " where x.ID = p.ID) as k ", // Currently Index Not Getting Used
-                    "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios x, p.positions.values pos"
-                    + " where x.ID = p.ID) as k",   // Currently Index Not Getting Used        
-                    "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as k "
-                    + "  where k.poos.secId = 'YHOO'",            
-                    "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as K"
-                        + "  where K.poos.secId = 'YHOO'",
-                        "select distinct * from /portfolios p, (select distinct val from positions.values as val where val.secId = 'YHOO') as k ",
-                        "select distinct * from /portfolios x, x.positions.values where " 
-                            + "secId = element(select distinct vals.secId from /portfolios p, p.positions.values vals where vals.secId = 'YHOO')",
+    String queries[] = { "select distinct * from /portfolios p, (select distinct pos  as poos from /portfolios x, x.positions.values pos" + " where pos.secId = 'YHOO') as k", "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios p, p.positions.values pos" + " where pos.secId = 'YHOO') as k", "select distinct * from /portfolios p, (select distinct x.ID as ID  from /portfolios x" + " where x.ID = p.ID) as k ", // Currently Index Not Getting Used
+        "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios x, p.positions.values pos" + " where x.ID = p.ID) as k", // Currently Index Not Getting Used        
+        "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as k " + "  where k.poos.secId = 'YHOO'", "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as K" + "  where K.poos.secId = 'YHOO'", "select distinct * from /portfolios p, (select distinct val from positions.values as val where val.secId = 'YHOO') as k ", "select distinct * from /portfolios x, x.positions.values where " + "secId = element(select distinct vals.secId from /portfolios p, p.positions.values vals where vals.secId = 'YHOO')",
 
     };
-    SelectResults r[][]= new SelectResults[queries.length][2];
+    SelectResults r[][] = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -96,7 +84,7 @@ public class IndexUsageInNestedQueryJUnitTest {
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         //                DebuggerSupport.waitForJavaDebugger(CacheUtils.getLogger());
         r[i][0] = (SelectResults) q.execute();
-        if(!observer.isIndexesUsed){
+        if (!observer.isIndexesUsed) {
           CacheUtils.log("NO INDEX USED");
         }
         CacheUtils.log(Utils.printResult(r[i][0]));
@@ -108,17 +96,17 @@ public class IndexUsageInNestedQueryJUnitTest {
     //  Create an Index on status and execute the same query again.
 
     qs = CacheUtils.getQueryService();
-    qs.createIndex("idIndex", IndexType.FUNCTIONAL,"p.ID","/portfolios p");
-    qs.createIndex("secIdIndex", IndexType.FUNCTIONAL,"b.secId","/portfolios pf, pf.positions.values b");
-    qs.createIndex("cIndex", IndexType.FUNCTIONAL, "pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]","/portfolios pf");
+    qs.createIndex("idIndex", IndexType.FUNCTIONAL, "p.ID", "/portfolios p");
+    qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/portfolios pf, pf.positions.values b");
+    qs.createIndex("cIndex", IndexType.FUNCTIONAL, "pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]", "/portfolios pf");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         QueryObserverImpl observer2 = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer2);
         q = CacheUtils.getQueryService().newQuery(queries[i]);
-        r[i][1] = (SelectResults)q.execute();
-        if(observer2.isIndexesUsed == true){
+        r[i][1] = (SelectResults) q.execute();
+        if (observer2.isIndexesUsed == true) {
           CacheUtils.log("YES INDEX IS USED!");
         }
         CacheUtils.log(Utils.printResult(r[i][1]));
@@ -130,9 +118,7 @@ public class IndexUsageInNestedQueryJUnitTest {
     CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
   }
 
-
-
-  class QueryObserverImpl extends QueryObserverAdapter{
+  class QueryObserverImpl extends QueryObserverAdapter {
     boolean isIndexesUsed = false;
     ArrayList indexesUsed = new ArrayList();
 
@@ -141,7 +127,7 @@ public class IndexUsageInNestedQueryJUnitTest {
     }
 
     public void afterIndexLookup(Collection results) {
-      if(results != null){
+      if (results != null) {
         isIndexesUsed = true;
         //CacheUtils.log(Utils.printResult(results));
       }

@@ -21,8 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.geode.internal.security.AuthorizeRequest;
 import org.apache.geode.internal.security.AuthorizeRequestPP;
 
-public class UserAuthAttributes
-{
+public class UserAuthAttributes {
   private AtomicInteger numberOfDurableCQ;
 
   /**
@@ -36,13 +35,13 @@ public class UserAuthAttributes
    * operation on this connection is authorized in post-operation phase.
    */
   private AuthorizeRequestPP postAuthzRequest;
-  
+
   public UserAuthAttributes(AuthorizeRequest authzRequest, AuthorizeRequestPP postAuthzRequest) {
     this.authzRequest = authzRequest;
     this.postAuthzRequest = postAuthzRequest;
-    this.numberOfDurableCQ = new AtomicInteger();    
+    this.numberOfDurableCQ = new AtomicInteger();
   }
-  
+
   public AuthorizeRequest getAuthzRequest() {
     return this.authzRequest;
   }
@@ -50,6 +49,7 @@ public class UserAuthAttributes
   public AuthorizeRequestPP getPostAuthzRequest() {
     return this.postAuthzRequest;
   }
+
   /*
   public void setDurable(boolean isDurable) {
     if(isDurable)
@@ -61,19 +61,18 @@ public class UserAuthAttributes
   public void setDurable() {
     this.numberOfDurableCQ.incrementAndGet();
   }
-  
+
   public void unsetDurable() {
     this.numberOfDurableCQ.decrementAndGet();
   }
-  
-  
+
   public boolean isDurable() {
     return this.numberOfDurableCQ.intValue() != 0;
   }
   /*protected void setAuthorizeRequest(AuthorizeRequest authzRequest) {
     this.authzRequest = authzRequest;
   }
-
+  
   protected void setPostAuthorizeRequest(AuthorizeRequestPP postAuthzRequest) {
     this.postAuthzRequest = postAuthzRequest;
   }*/

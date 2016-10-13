@@ -26,7 +26,7 @@ import java.beans.ConstructorProperties;
  *
  */
 public class OSMetrics {
-  
+
   /**
    * Maximum number file descriptor which can be opened
    */
@@ -86,19 +86,10 @@ public class OSMetrics {
    * This constructor is to be used by internal JMX framework only. User should
    * not try to create an instance of this class.
    */
-  @ConstructorProperties( { "maxFileDescriptorCount",
-      "openFileDescriptorCount", "processCpuTime",
-      "committedVirtualMemorySize", "totalPhysicalMemorySize",
-      "freePhysicalMemorySize", "totalSwapSpaceSize", "freeSwapSpaceSize",
-      "name", "version", "arch", "availableProcessors", "systemLoadAverage"
+  @ConstructorProperties({ "maxFileDescriptorCount", "openFileDescriptorCount", "processCpuTime", "committedVirtualMemorySize", "totalPhysicalMemorySize", "freePhysicalMemorySize", "totalSwapSpaceSize", "freeSwapSpaceSize", "name", "version", "arch", "availableProcessors", "systemLoadAverage"
 
   })
-  public OSMetrics(long maxFileDescriptorCount, long openFileDescriptorCount,
-      long processCpuTime, long committedVirtualMemorySize,
-      long totalPhysicalMemorySize, long freePhysicalMemorySize,
-      long totalSwapSpaceSize, long freeSwapSpaceSize, String name,
-      String version, String arch, int availableProcessors,
-      double systemLoadAverage) {
+  public OSMetrics(long maxFileDescriptorCount, long openFileDescriptorCount, long processCpuTime, long committedVirtualMemorySize, long totalPhysicalMemorySize, long freePhysicalMemorySize, long totalSwapSpaceSize, long freeSwapSpaceSize, String name, String version, String arch, int availableProcessors, double systemLoadAverage) {
     this.maxFileDescriptorCount = maxFileDescriptorCount;
     this.openFileDescriptorCount = openFileDescriptorCount;
     this.processCpuTime = processCpuTime;
@@ -215,16 +206,6 @@ public class OSMetrics {
   @Override
   public String toString() {
 
-    return "{OSMetrics : maxFileDescriptorCount = " + maxFileDescriptorCount
-        + " openFileDescriptorCount = " + openFileDescriptorCount
-        + " processCpuTime = " + processCpuTime
-        + " committedVirtualMemorySize = " + committedVirtualMemorySize
-        + " totalPhysicalMemorySize = " + totalPhysicalMemorySize
-        + " freePhysicalMemorySize = " + freePhysicalMemorySize
-        + " totalSwapSpaceSize = " + totalSwapSpaceSize
-        + " freeSwapSpaceSize = " + freeSwapSpaceSize + " name = " + name
-        + " version = " + version + " arch = " + arch
-        + " availableProcessors = " + availableProcessors
-        + " systemLoadAverage = " + systemLoadAverage + "}";
+    return "{OSMetrics : maxFileDescriptorCount = " + maxFileDescriptorCount + " openFileDescriptorCount = " + openFileDescriptorCount + " processCpuTime = " + processCpuTime + " committedVirtualMemorySize = " + committedVirtualMemorySize + " totalPhysicalMemorySize = " + totalPhysicalMemorySize + " freePhysicalMemorySize = " + freePhysicalMemorySize + " totalSwapSpaceSize = " + totalSwapSpaceSize + " freeSwapSpaceSize = " + freeSwapSpaceSize + " name = " + name + " version = " + version + " arch = " + arch + " availableProcessors = " + availableProcessors + " systemLoadAverage = " + systemLoadAverage + "}";
   }
 }

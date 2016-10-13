@@ -30,10 +30,10 @@ import org.apache.geode.cache.CacheRuntimeException;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public class RegionNotFoundException extends CacheRuntimeException {
-private static final long serialVersionUID = 1758668137691463909L;
+  private static final long serialVersionUID = 1758668137691463909L;
 
   public RegionNotFoundException(String message) {
     super(message);
   }
-  
+
 }

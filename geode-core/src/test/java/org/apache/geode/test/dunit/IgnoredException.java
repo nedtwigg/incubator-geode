@@ -61,13 +61,13 @@ import org.apache.geode.internal.logging.LogService;
  */
 @SuppressWarnings("serial")
 public class IgnoredException implements Serializable {
-  
+
   private static final Logger logger = LogService.getLogger();
 
   private final String suspectString;
 
   private final transient VM vm;
-  
+
   private static ConcurrentLinkedQueue<IgnoredException> ignoredExceptions = new ConcurrentLinkedQueue<IgnoredException>();
 
   public IgnoredException(final String suspectString) {
@@ -83,11 +83,11 @@ public class IgnoredException implements Serializable {
   String suspectString() {
     return this.suspectString;
   }
-  
+
   VM vm() {
     return this.vm;
   }
-  
+
   public String getRemoveMessage() {
     return "<ExpectedException action=remove>" + this.suspectString + "</ExpectedException>";
   }
@@ -98,16 +98,16 @@ public class IgnoredException implements Serializable {
 
   public void remove() {
     final String removeMessage = getRemoveMessage();
-    
+
     @SuppressWarnings("serial")
-    SerializableRunnable removeRunnable = new SerializableRunnable(IgnoredException.class.getSimpleName()+" remove") {
+    SerializableRunnable removeRunnable = new SerializableRunnable(IgnoredException.class.getSimpleName() + " remove") {
       public void run() {
         // TODO: delete use of system.getLogWriter
         DistributedSystem system = InternalDistributedSystem.getConnectedInstance();
         if (system != null) {
           system.getLogWriter().info(removeMessage);
         }
-        
+
         // TODO: delete use of LogWriterUtils
         try {
           LogWriterUtils.getLogWriter().info(removeMessage);
@@ -123,7 +123,7 @@ public class IgnoredException implements Serializable {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    
+
     if (this.vm != null) {
       vm.invoke(removeRunnable);
     } else {
@@ -152,38 +152,38 @@ public class IgnoredException implements Serializable {
   public static IgnoredException addIgnoredException(final String suspectString, final VM vm) {
     final IgnoredException ignoredException = new IgnoredException(suspectString, vm);
     final String addMessage = ignoredException.getAddMessage();
-    
+
     @SuppressWarnings("serial")
-    SerializableRunnable addRunnable = new SerializableRunnable(IgnoredException.class.getSimpleName()+" addIgnoredException") {
+    SerializableRunnable addRunnable = new SerializableRunnable(IgnoredException.class.getSimpleName() + " addIgnoredException") {
       public void run() {
         // TODO: delete use of system.getLogWriter
         DistributedSystem system = InternalDistributedSystem.getConnectedInstance();
         if (system != null) {
           system.getLogWriter().info(addMessage);
         }
-        
+
         // TODO: delete use of LogWriterUtils
         try {
           LogWriterUtils.getLogWriter().info(addMessage);
         } catch (Exception noHydraLogger) {
         }
-  
+
         logger.info(addMessage);
       }
     };
-    
+
     try {
       addRunnable.run();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    
+
     if (vm != null) {
       vm.invoke(addRunnable);
     } else {
       Invoke.invokeInEveryVM(addRunnable);
     }
-    
+
     ignoredExceptions.add(ignoredException);
     return ignoredException;
   }

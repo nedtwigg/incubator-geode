@@ -30,54 +30,49 @@ import org.apache.geode.internal.sequencelog.model.GraphSet;
  *
  */
 public class GraphReader {
-  
+
   private File[] files;
 
   public GraphReader(File file) {
-    this (new File[] {file});
+    this(new File[] { file });
   }
-  
+
   public GraphReader(File[] files) {
     this.files = files;
   }
-  
+
   public GraphSet readGraphs() throws IOException {
     return readGraphs(false);
   }
-  
+
   public GraphSet readGraphs(boolean areGemfireLogs) throws IOException {
     return readGraphs(new Filter() {
-      public boolean accept(GraphType graphType, String name, String edgeName,
-          String source, String dest) {
+      public boolean accept(GraphType graphType, String name, String edgeName, String source, String dest) {
         return true;
       }
 
-      public boolean acceptPattern(GraphType graphType, Pattern pattern,
-          String edgeName, String source, String dest) {
+      public boolean acceptPattern(GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
         return true;
       }
     }, areGemfireLogs);
   }
-  
-  public GraphSet readGraphs(Filter filter)
-  throws IOException {
+
+  public GraphSet readGraphs(Filter filter) throws IOException {
     return readGraphs(filter, false);
   }
-  
-  public GraphSet readGraphs(Filter filter, boolean areGemfireLogs)
-  throws IOException {
+
+  public GraphSet readGraphs(Filter filter, boolean areGemfireLogs) throws IOException {
     GraphSet graphs = new GraphSet();
-    
-    if(areGemfireLogs) {
+
+    if (areGemfireLogs) {
       //TODO - probably don't need to go all the way
       //to a binary format here, but this is quick and easy.
       HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
       GemfireLogConverter.convertFiles(out, files);
       InputStreamReader reader = new InputStreamReader(out.getInputStream());
       reader.addToGraphs(graphs, filter);
-    }
-    else {
-      for(File file : files) {
+    } else {
+      for (File file : files) {
         FileInputStream fis = new FileInputStream(file);
         InputStreamReader reader = new InputStreamReader(fis);
         reader.addToGraphs(graphs, filter);

@@ -32,15 +32,14 @@ package org.apache.geode.cache;
  * @since GemFire 3.0
  */
 public class CacheWriterException extends OperationAbortedException {
-private static final long serialVersionUID = -2872212342970454458L;
-  
+  private static final long serialVersionUID = -2872212342970454458L;
+
   /**
    * Creates a new instance of <code>CacheWriterException</code>.
    */
   public CacheWriterException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>CacheWriterException</code> with the specified detail message.
    * @param msg the detail message
@@ -48,7 +47,7 @@ private static final long serialVersionUID = -2872212342970454458L;
   public CacheWriterException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>CacheWriterException</code> with the specified detail message
    * and cause.
@@ -58,7 +57,7 @@ private static final long serialVersionUID = -2872212342970454458L;
   public CacheWriterException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>CacheWriterException</code> with the specified cause.
    * @param cause the causal Throwable

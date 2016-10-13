@@ -107,7 +107,7 @@ public class ClientTypeRegistration implements TypeRegistration {
   private Collection<Pool> getAllPools() {
     Collection<Pool> pools = PoolManagerImpl.getPMI().getMap().values();
 
-    for (Iterator<Pool> itr = pools.iterator(); itr.hasNext(); ) {
+    for (Iterator<Pool> itr = pools.iterator(); itr.hasNext();) {
       PoolImpl pool = (PoolImpl) itr.next();
       if (pool.isUsedByGateway()) {
         itr.remove();
@@ -232,7 +232,6 @@ public class ClientTypeRegistration implements TypeRegistration {
     }
     return enums;
   }
-
 
   @Override
   public PdxType getPdxTypeForField(String fieldName, String className) {

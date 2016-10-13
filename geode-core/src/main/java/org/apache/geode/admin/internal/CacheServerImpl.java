@@ -29,8 +29,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
  *
  * @since GemFire 3.5
  */
-public class CacheServerImpl extends ManagedSystemMemberImpl
-  implements CacheVm, CacheServer {
+public class CacheServerImpl extends ManagedSystemMemberImpl implements CacheVm, CacheServer {
 
   /** How many new <code>CacheServer</code>s have been created? */
   private static int newCacheServers = 0;
@@ -47,9 +46,7 @@ public class CacheServerImpl extends ManagedSystemMemberImpl
    * non-existsing (unstarted) cache server in a given distributed
    * system.
    */
-  public CacheServerImpl(AdminDistributedSystemImpl system,
-                         CacheVmConfig config) 
-    throws AdminException {
+  public CacheServerImpl(AdminDistributedSystemImpl system, CacheVmConfig config) throws AdminException {
 
     super(system, config);
 
@@ -61,9 +58,7 @@ public class CacheServerImpl extends ManagedSystemMemberImpl
    * Creates a new <code>CacheServerImpl</code> that represents an
    * existing dedicated cache server in a given distributed system.
    */
-  public CacheServerImpl(AdminDistributedSystemImpl system,
-                         GemFireVM vm) 
-    throws AdminException {
+  public CacheServerImpl(AdminDistributedSystemImpl system, GemFireVM vm) throws AdminException {
 
     super(system, vm);
     this.config = new CacheServerConfigImpl(vm);
@@ -101,18 +96,17 @@ public class CacheServerImpl extends ManagedSystemMemberImpl
     // NOTE: DistributedSystem nodeLeft will then set this.manager to null
     this.config.setManagedEntity(null);
   }
-  
+
   public boolean isRunning() {
-    DM dm = ((AdminDistributedSystemImpl)getDistributedSystem()).getDistributionManager();
-    if(dm == null) {
+    DM dm = ((AdminDistributedSystemImpl) getDistributedSystem()).getDistributionManager();
+    if (dm == null) {
       try {
         return this.controller.isRunning(this);
-      }
-      catch (IllegalStateException e) {
+      } catch (IllegalStateException e) {
         return false;
       }
     }
-    return ((DistributionManager)dm).getDistributionManagerIdsIncludingAdmin().contains(getDistributedMember());
+    return ((DistributionManager) dm).getDistributionManagerIdsIncludingAdmin().contains(getDistributedMember());
   }
 
   public CacheServerConfig getConfig() {
@@ -186,13 +180,12 @@ public class CacheServerImpl extends ManagedSystemMemberImpl
    * 
    * @since GemFire 5.6
    */
-  public boolean isPrimaryForDurableClient(String durableClientId)
-  {
-    RemoteApplicationVM vm = (RemoteApplicationVM)this.getGemFireVM();
+  public boolean isPrimaryForDurableClient(String durableClientId) {
+    RemoteApplicationVM vm = (RemoteApplicationVM) this.getGemFireVM();
     boolean isPrimary = false;
     if (vm != null) {
       isPrimary = vm.isPrimaryForDurableClient(durableClientId);
-}
+    }
     return isPrimary;
   }
 

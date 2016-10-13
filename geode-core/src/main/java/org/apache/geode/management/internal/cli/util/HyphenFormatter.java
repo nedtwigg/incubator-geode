@@ -38,7 +38,7 @@ public class HyphenFormatter {
   /**
    * Returns command with quotes around the values of any option values that begin with hyphen.
    */
-  public String formatCommand(String command){
+  public String formatCommand(String command) {
     if (!containsOption(command)) {
       return command;
     }

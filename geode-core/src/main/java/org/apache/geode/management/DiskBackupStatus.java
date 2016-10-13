@@ -32,7 +32,7 @@ public class DiskBackupStatus {
    * Map of DistributedMember, Set<PersistentID>
    */
   private Map<String, String[]> backedUpDiskStores;
-  
+
   /**
    * List of offline disk stores
    */

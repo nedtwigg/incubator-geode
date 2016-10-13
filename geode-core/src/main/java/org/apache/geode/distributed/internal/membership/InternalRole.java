@@ -46,22 +46,22 @@ import org.apache.commons.lang.StringUtils;
  * @deprecated this feature is scheduled to be removed
  */
 public class InternalRole implements Role {
-  
+
   /** The name of this role */
   private final String name;
 
-  /** Static canonical instances of roles. key=name, value=InternalRole */  
+  /** Static canonical instances of roles. key=name, value=InternalRole */
   private static final Map roles = new HashMap(); // could use ConcurrentHashMap
-  
+
   /** Contructs a new InternalRole instance for the specified role name */
   InternalRole(String name) {
     this.name = name;
   }
-  
+
   public String getName() {
     return this.name;
   }
-  
+
   /**
    * implements the java.lang.Comparable interface
    * 
@@ -81,43 +81,46 @@ public class InternalRole implements Role {
     InternalRole other = (InternalRole) o;
     return this.name.compareTo(other.name);
   }
-   
-	/**
-	 * Indicates whether some other object is "equal to" this one.
-	 *
-	 * @param  other  the reference object with which to compare.
-	 * @return true if this object is the same as the obj argument;
-	 *         false otherwise.
-	 */
+
+  /**
+   * Indicates whether some other object is "equal to" this one.
+   *
+   * @param  other  the reference object with which to compare.
+   * @return true if this object is the same as the obj argument;
+   *         false otherwise.
+   */
   @Override
-	public boolean equals(Object other) {
-		if (other == this) return true;
-		if (other == null) return false;
-		if (!(other instanceof InternalRole)) return  false;
-		final InternalRole that = (InternalRole) other;
+  public boolean equals(Object other) {
+    if (other == this)
+      return true;
+    if (other == null)
+      return false;
+    if (!(other instanceof InternalRole))
+      return false;
+    final InternalRole that = (InternalRole) other;
 
-		if (!StringUtils.equals(this.name, that.name)) return false;
+    if (!StringUtils.equals(this.name, that.name))
+      return false;
 
-		return true;
-	}
+    return true;
+  }
 
-	/**
-	 * Returns a hash code for the object. This method is supported for the
-	 * benefit of hashtables such as those provided by java.util.Hashtable.
-	 *
-	 * @return the integer 0 if description is null; otherwise a unique integer.
-	 */
+  /**
+   * Returns a hash code for the object. This method is supported for the
+   * benefit of hashtables such as those provided by java.util.Hashtable.
+   *
+   * @return the integer 0 if description is null; otherwise a unique integer.
+   */
   @Override
-	public int hashCode() {
-		int result = 17;
-		final int mult = 37;
+  public int hashCode() {
+    int result = 17;
+    final int mult = 37;
 
-		result = mult * result + 
-			(this.name == null ? 0 : this.name.hashCode());
+    result = mult * result + (this.name == null ? 0 : this.name.hashCode());
 
-		return result;
-	}
-  
+    return result;
+  }
+
   /** 
    * Factory method to allow canonicalization of instances. Returns existing
    * instance or creates a new instance.
@@ -132,20 +135,18 @@ public class InternalRole implements Role {
       return role;
     }
   }
-  
+
   public boolean isPresent() {
-    InternalDistributedSystem sys = 
-        InternalDistributedSystem.getAnyInstance();
+    InternalDistributedSystem sys = InternalDistributedSystem.getAnyInstance();
     if (sys == null) {
       throw new IllegalStateException(LocalizedStrings.InternalRole_ISPRESENT_REQUIRES_A_CONNECTION_TO_THE_DISTRIBUTED_SYSTEM.toLocalizedString());
     }
     DM dm = sys.getDistributionManager();
     return dm.isRolePresent(this);
   }
-  
+
   public int getCount() {
-    InternalDistributedSystem sys = 
-        InternalDistributedSystem.getAnyInstance();
+    InternalDistributedSystem sys = InternalDistributedSystem.getAnyInstance();
     if (sys == null) {
       throw new IllegalStateException(LocalizedStrings.InternalRole_GETCOUNT_REQUIRES_A_CONNECTION_TO_THE_DISTRIBUTED_SYSTEM.toLocalizedString());
     }
@@ -153,16 +154,14 @@ public class InternalRole implements Role {
     return dm.getRoleCount(this);
   }
 
-	/**
-	 * Returns a string representation of the object.
-	 * 
-	 * @return a string representation of the object
-	 */
+  /**
+   * Returns a string representation of the object.
+   * 
+   * @return a string representation of the object
+   */
   @Override
-	public String toString() {
+  public String toString() {
     return this.name;
-	}
-  
+  }
+
 }
-
-

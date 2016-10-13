@@ -38,14 +38,13 @@ public class GfshCommandsPostProcessorTest {
   private HeadlessGfsh gfsh = null;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(
-      jmxPort, "org/apache/geode/management/internal/security/cacheServer.json", SamplePostProcessor.class);
+  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxPort, "org/apache/geode/management/internal/security/cacheServer.json", SamplePostProcessor.class);
 
   @Rule
   public GfshShellConnectionRule gfshConnection = new GfshShellConnectionRule(jmxPort);
 
   @Before
-  public void before(){
+  public void before() {
     gfsh = gfshConnection.getGfsh();
   }
 

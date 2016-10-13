@@ -27,7 +27,7 @@ import org.apache.geode.internal.logging.InternalLogWriter;
  * 
  */
 public interface QueueManager {
-  
+
   public QueueConnections getAllConnectionsNoWait();
 
   public QueueConnections getAllConnections();
@@ -35,22 +35,24 @@ public interface QueueManager {
   void start(ScheduledExecutorService background);
 
   void close(boolean keepAlive);
-  
+
   public static interface QueueConnections {
     Connection getPrimary();
+
     List/*<Connection>*/ getBackups();
+
     QueueConnectionImpl getConnection(Endpoint endpoint);
   }
 
   public QueueState getState();
 
   public InternalPool getPool();
-  
+
   public InternalLogWriter getSecurityLogger();
 
   public void readyForEvents(InternalDistributedSystem system);
 
   public void emergencyClose();
-  
+
   public void checkEndpoint(ClientUpdater qc, Endpoint endpoint);
 }

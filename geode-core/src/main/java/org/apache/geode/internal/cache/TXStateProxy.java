@@ -32,7 +32,7 @@ import org.apache.geode.internal.cache.tx.TransactionalOperation.ServerRegionOpe
 public interface TXStateProxy extends TXStateInterface {
 
   public void checkJTA(String errmsg) throws IllegalStateException;
-  
+
   public void setIsJTA(boolean isJTA);
 
   public TXId getTxId();
@@ -44,46 +44,48 @@ public interface TXStateProxy extends TXStateInterface {
   public void setTarget(DistributedMember target);
 
   public DistributedMember getTarget();
-  
+
   public boolean isCommitOnBehalfOfRemoteStub();
-  
+
   public boolean setCommitOnBehalfOfRemoteStub(boolean requestedByOwner);
-  
+
   public boolean isOnBehalfOfClient();
-  
+
   public boolean isJCATransaction();
+
   public void setJCATransaction();
-  
+
   /**
    * establishes the synchronization thread used for client/server
    * beforeCompletion/afterCompletion processing
    * @param sync
    */
   public void setSynchronizationRunnable(TXSynchronizationRunnable sync);
+
   public TXSynchronizationRunnable getSynchronizationRunnable();
-  
+
   /**
    * Called by {@link TXManagerImpl#internalSuspend()} to perform additional
    * tasks required to suspend a transaction
    */
   public void suspend();
-  
+
   /**
    * Called by {@link TXManagerImpl#resume(TXStateProxy)} to
    * perform additional tasks required to resume a transaction
    */
   public void resume();
-  
+
   /**
    * record a client-side transactional operation for possible later replay
    */
   public void recordTXOperation(ServerRegionDataAccess proxy, ServerRegionOperation op, Object key, Object[] arguments);
-  
+
   /**
    * @return the number of operations performed in this transaction
    */
   public int operationCount();
-  
+
   /**
    * During client transaction failover, it is possible
    * to get two Commit (rollback) requests for a single transaction.
@@ -93,6 +95,6 @@ public interface TXStateProxy extends TXStateInterface {
    * @param progress
    */
   public void setInProgress(boolean progress);
-  
+
   public void updateProxyServer(InternalDistributedMember proxy);
 }

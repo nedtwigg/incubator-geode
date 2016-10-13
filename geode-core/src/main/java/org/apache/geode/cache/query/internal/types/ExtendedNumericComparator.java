@@ -28,20 +28,19 @@ import org.apache.geode.cache.query.internal.Undefined;
  */
 
 public class ExtendedNumericComparator extends NumericComparator implements Comparator {
-  
+
   @Override
   public boolean equals(Object obj) {
     return obj instanceof ExtendedNumericComparator;
   }
 
   public int compare(Object obj1, Object obj2) {
-    if (obj1.getClass() != obj2.getClass()
-        && (obj1 instanceof Number && obj2 instanceof Number)) {
+    if (obj1.getClass() != obj2.getClass() && (obj1 instanceof Number && obj2 instanceof Number)) {
       return super.compare(obj1, obj2);
-    } else if(obj2 instanceof Undefined && !(obj1 instanceof Undefined)){
+    } else if (obj2 instanceof Undefined && !(obj1 instanceof Undefined)) {
       // Everthing should be greater than Undefined
       return 1;
-    }else if(obj2 instanceof NullToken && !(obj1 instanceof NullToken)){
+    } else if (obj2 instanceof NullToken && !(obj1 instanceof NullToken)) {
       // Everthing should be greater than Null
       return 1;
     }

@@ -25,40 +25,40 @@ package org.apache.geode.admin;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public interface ConfigurationParameter {
-  
+
   /** Gets the identifying name of this configuration parameter. */
   public String getName();
-  
+
   /** Gets the full description of this configuration parameter */
   public String getDescription();
-  
+
   /** Gets the current value */
   public Object getValue();
-  
+
   /** Gets the current value as a string */
   public String getValueAsString();
-  
+
   /** Gets the class type of the value */
   public Class getValueType();
-  
+
   /** True if this is modifiable; false if read-only */
   public boolean isModifiable();
-  
+
   /** Returns true if this config parameter uses a string array for value. */
   public boolean isArray();
-  
+
   /** Returns true if this config parameter represents an InetAddress value. */
   public boolean isInetAddress();
-  
+
   /** Returns true if this config parameter represents a File value. */
   public boolean isFile();
-  
+
   /** Returns true if this config parameter represents an octal value. */
   public boolean isOctal();
-    
+
   /** Returns true if this config parameter represents a string value. */
   public boolean isString();
-  
+
   /**
    * Sets a new value for this configuration parameter.
    *
@@ -70,4 +70,3 @@ public interface ConfigurationParameter {
    */
   public void setValue(Object value) throws UnmodifiableConfigurationException;
 }
-

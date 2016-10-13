@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.internal.cache.locks;
+
 import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.distributed.internal.MessageWithReply;
@@ -48,19 +49,14 @@ import java.util.Set;
  * 
  * @since GemFire 4.1.1
  */
-public final class TXLockUpdateParticipantsMessage
-  extends PooledDistributionMessage 
-  implements MessageWithReply {
-  
+public final class TXLockUpdateParticipantsMessage extends PooledDistributionMessage implements MessageWithReply {
+
   private transient TXLockId txLockId;
   private transient String serviceName;
   private transient Set updatedParticipants;
   private transient int processorId;
 
-  public TXLockUpdateParticipantsMessage(TXLockId txLockId, 
-                                         String serviceName,
-                                         Set updatedParticipants,
-                                         int processorId) {
+  public TXLockUpdateParticipantsMessage(TXLockId txLockId, String serviceName, Set updatedParticipants, int processorId) {
     this.txLockId = txLockId;
     this.serviceName = serviceName;
     this.updatedParticipants = updatedParticipants;
@@ -76,13 +72,11 @@ public final class TXLockUpdateParticipantsMessage
   @Override
   public void process(DistributionManager dm) {
     // dm.getLogger().info("DEBUG Processing " + this);
-    DLockService svc = 
-      DLockService.getInternalServiceNamed(this.serviceName);
+    DLockService svc = DLockService.getInternalServiceNamed(this.serviceName);
     if (svc != null) {
       updateParticipants(svc, this.txLockId, this.updatedParticipants);
     }
-    TXLockUpdateParticipantsReplyMessage reply = 
-      new TXLockUpdateParticipantsReplyMessage();
+    TXLockUpdateParticipantsReplyMessage reply = new TXLockUpdateParticipantsReplyMessage();
     reply.setProcessorId(this.processorId);
     reply.setRecipient(getSender());
     dm.putOutgoing(reply);
@@ -92,9 +86,7 @@ public final class TXLockUpdateParticipantsMessage
    * Update the Grantor with a new set of Participants.  This method is meant to be used
    * in a local context (does <b>NOT</b> involve any messaging)
    */
-  public static void updateParticipants(DLockService svc,
-                                        TXLockId txLockId, 
-                                        Set updatedParticipants) {
+  public static void updateParticipants(DLockService svc, TXLockId txLockId, Set updatedParticipants) {
     DLockGrantor grantor = null;
     try {
       grantor = DLockGrantor.waitForGrantor(svc);
@@ -108,12 +100,10 @@ public final class TXLockUpdateParticipantsMessage
           }
           txb.setParticipants(updatedParticipants);
           grantor.updateLockBatch(txLockId, txb);
-        } 
-        catch (LockGrantorDestroyedException ignoreit) {
+        } catch (LockGrantorDestroyedException ignoreit) {
         }
       }
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
@@ -131,27 +121,23 @@ public final class TXLockUpdateParticipantsMessage
     DataSerializer.writeString(this.serviceName, out);
     InternalDataSerializer.writeSet(this.updatedParticipants, out);
   }
-  
+
   public int getDSFID() {
     return TX_LOCK_UPDATE_PARTICIPANTS_MESSAGE;
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.processorId = in.readInt();
     this.txLockId = TXLockIdImpl.createFromData(in);
     this.serviceName = DataSerializer.readString(in);
     this.updatedParticipants = InternalDataSerializer.readSet(in);
   }
-  
+
   @Override
   public String toString() {
-    return "TXLockUpdateParticipantsMessage for " 
-      + "service=" + this.serviceName
-      + "; updatedParticipants=" + this.updatedParticipants
-      + "; txLockId=" + this.txLockId;
+    return "TXLockUpdateParticipantsMessage for " + "service=" + this.serviceName + "; updatedParticipants=" + this.updatedParticipants + "; txLockId=" + this.txLockId;
   }
 
   /**
@@ -165,11 +151,10 @@ public final class TXLockUpdateParticipantsMessage
     }
 
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -177,8 +162,7 @@ public final class TXLockUpdateParticipantsMessage
 
     @Override
     public String toString() {
-      return "TXLockUpdateParticipantsReplyMessage processorId=" + super.processorId 
-        + "; sender=" + this.getSender();
+      return "TXLockUpdateParticipantsReplyMessage processorId=" + super.processorId + "; sender=" + this.getSender();
     }
   }
 

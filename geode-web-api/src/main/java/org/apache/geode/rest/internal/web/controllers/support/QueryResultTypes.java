@@ -24,8 +24,5 @@ package org.apache.geode.rest.internal.web.controllers.support;
  */
 
 public enum QueryResultTypes {
-  OBJECT_COLLECTION,
-  PDX_COLLECTION,
-  STRUCT_COLLECTION,
-  NESTED_COLLECTION
+  OBJECT_COLLECTION, PDX_COLLECTION, STRUCT_COLLECTION, NESTED_COLLECTION
 }

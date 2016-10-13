@@ -48,31 +48,31 @@ import static org.junit.Assert.assertTrue;
  */
 public abstract class AbstractLauncherIntegrationTestCase {
   protected static final Logger logger = LogService.getLogger();
-  
+
   protected static final int WAIT_FOR_PROCESS_TO_DIE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
   protected static final int TIMEOUT_MILLISECONDS = WAIT_FOR_PROCESS_TO_DIE_TIMEOUT;
-  protected static final int WAIT_FOR_FILE_CREATION_TIMEOUT = 10*1000; // 10s
-  protected static final int WAIT_FOR_FILE_DELETION_TIMEOUT = 10*1000; // 10s
-  protected static final int WAIT_FOR_MBEAN_TIMEOUT = 10*1000; // 10s
+  protected static final int WAIT_FOR_FILE_CREATION_TIMEOUT = 10 * 1000; // 10s
+  protected static final int WAIT_FOR_FILE_DELETION_TIMEOUT = 10 * 1000; // 10s
+  protected static final int WAIT_FOR_MBEAN_TIMEOUT = 10 * 1000; // 10s
   protected static final int INTERVAL_MILLISECONDS = 100;
-  
+
   private static final String EXPECTED_EXCEPTION_ADD = "<ExpectedException action=add>{}</ExpectedException>";
   private static final String EXPECTED_EXCEPTION_REMOVE = "<ExpectedException action=remove>{}</ExpectedException>";
   private static final String EXPECTED_EXCEPTION_MBEAN_NOT_REGISTERED = "MBean Not Registered In GemFire Domain";
-  
+
   protected volatile ServerSocket socket;
 
   protected volatile File pidFile;
   protected volatile File stopRequestFile;
   protected volatile File statusRequestFile;
   protected volatile File statusFile;
-  
+
   @Rule
-  public TestName testName= new TestName();
+  public TestName testName = new TestName();
 
   @Rule
   public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
-  
+
   @Before
   public final void setUpAbstractLauncherIntegrationTestCase() throws Exception {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT, Integer.toString(0));
@@ -86,12 +86,16 @@ public abstract class AbstractLauncherIntegrationTestCase {
       this.socket.close();
       this.socket = null;
     }
-    delete(this.pidFile); this.pidFile = null;
-    delete(this.stopRequestFile); this.stopRequestFile = null;
-    delete(this.statusRequestFile); this.statusRequestFile = null;
-    delete(this.statusFile); this.statusFile = null;
+    delete(this.pidFile);
+    this.pidFile = null;
+    delete(this.stopRequestFile);
+    this.stopRequestFile = null;
+    delete(this.statusRequestFile);
+    this.statusRequestFile = null;
+    delete(this.statusFile);
+    this.statusFile = null;
   }
-  
+
   protected void delete(final File file) throws Exception {
     assertEventuallyTrue("deleting " + file, new Callable<Boolean>() {
       @Override
@@ -107,7 +111,7 @@ public abstract class AbstractLauncherIntegrationTestCase {
       }
     }, WAIT_FOR_FILE_DELETION_TIMEOUT, INTERVAL_MILLISECONDS);
   }
-  
+
   protected void waitForPidToStop(final int pid, boolean throwOnTimeout) throws Exception {
     assertEventuallyFalse("Process never died", new Callable<Boolean>() {
       @Override
@@ -116,11 +120,11 @@ public abstract class AbstractLauncherIntegrationTestCase {
       }
     }, WAIT_FOR_PROCESS_TO_DIE_TIMEOUT, INTERVAL_MILLISECONDS);
   }
-  
+
   protected void waitForPidToStop(final int pid) throws Exception {
     waitForPidToStop(pid, true);
   }
-  
+
   protected void waitForFileToDelete(final File file, boolean throwOnTimeout) throws Exception {
     if (file == null) {
       return;
@@ -132,11 +136,11 @@ public abstract class AbstractLauncherIntegrationTestCase {
       }
     }, WAIT_FOR_FILE_DELETION_TIMEOUT, INTERVAL_MILLISECONDS);
   }
-  
+
   protected void waitForFileToDelete(final File file) throws Exception {
     waitForFileToDelete(file, true);
   }
-  
+
   protected static int getPid() throws PidUnavailableException {
     return ProcessUtils.identifyPid();
   }
@@ -147,6 +151,7 @@ public abstract class AbstractLauncherIntegrationTestCase {
       public void notifyInputLine(String line) {
         logger.info(new StringBuilder("[").append(header).append("]").append(line).toString());
       }
+
       @Override
       public String toString() {
         return name;
@@ -160,6 +165,7 @@ public abstract class AbstractLauncherIntegrationTestCase {
       public void notifyInputLine(String line) {
         lines.add(line);
       }
+
       @Override
       public String toString() {
         return name;
@@ -175,6 +181,7 @@ public abstract class AbstractLauncherIntegrationTestCase {
           atomic.set(true);
         }
       }
+
       @Override
       public String toString() {
         return name;
@@ -193,8 +200,7 @@ public abstract class AbstractLauncherIntegrationTestCase {
     try {
       reader = new BufferedReader(new FileReader(pidFile));
       return Integer.parseInt(StringUtils.trim(reader.readLine()));
-    }
-    finally {
+    } finally {
       IOUtils.close(reader);
     }
   }
@@ -215,15 +221,15 @@ public abstract class AbstractLauncherIntegrationTestCase {
       }
     }, WAIT_FOR_FILE_CREATION_TIMEOUT, INTERVAL_MILLISECONDS);
   }
-  
+
   protected void waitForFileToExist(final File file) throws Exception {
     waitForFileToExist(file, true);
   }
-  
+
   protected String getUniqueName() {
     return getClass().getSimpleName() + "_" + testName.getMethodName();
   }
-  
+
   protected static void assertEventuallyTrue(final String message, final Callable<Boolean> callable, final int timeout, final int interval) throws Exception {
     boolean done = false;
     for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < timeout; done = (callable.call())) {
@@ -231,7 +237,7 @@ public abstract class AbstractLauncherIntegrationTestCase {
     }
     assertTrue(message, done);
   }
-  
+
   protected static void assertEventuallyFalse(final String message, final Callable<Boolean> callable, final int timeout, final int interval) throws Exception {
     boolean done = false;
     for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < timeout; done = (!callable.call())) {
@@ -239,7 +245,7 @@ public abstract class AbstractLauncherIntegrationTestCase {
     }
     assertTrue(message, done);
   }
-  
+
   protected static void disconnectFromDS() {
     InternalDistributedSystem ids = InternalDistributedSystem.getConnectedInstance();
     if (ids != null) {

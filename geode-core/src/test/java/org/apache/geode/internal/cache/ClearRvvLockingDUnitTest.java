@@ -87,11 +87,11 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
    * 
    */
   VM vm0, vm1, opsVM, clearVM;
-  
+
   static Cache cache;
   static LocalRegion region;
   DistributedMember vm0ID, vm1ID;
-  
+
   static AbstractRegionMap.ARMLockTestHook theHook;
 
   static final String THE_KEY = "theKey";
@@ -105,7 +105,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public void testPutOperationSameVM() {
     try {
       setupMembers();
-      setOpAndClearVM(vm0, vm0);   // first arg is where to perform operation, second arg where to perform clear
+      setOpAndClearVM(vm0, vm0); // first arg is where to perform operation, second arg where to perform clear
       opsVM.invoke(() -> setBasicHook(opsVM));
       runConsistencyTest(vm0, performPutOperation);
       checkForConsistencyErrors();
@@ -118,7 +118,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public void testPutOperationDifferentVM() {
     try {
       setupMembers();
-      setOpAndClearVM(vm0, vm1);  // first arg is where to perform operation, second arg where to perform clear   
+      setOpAndClearVM(vm0, vm1); // first arg is where to perform operation, second arg where to perform clear   
       opsVM.invoke(() -> setBasicHook(clearVM));
       runConsistencyTest(vm0, performPutOperation);
       checkForConsistencyErrors();
@@ -147,7 +147,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testRemoveOperationSameVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm0);
       opsVM.invoke(() -> setRemoveAndInvalidateHook(clearVM));
       runConsistencyTest(vm0, performRemoveOperation);
@@ -160,7 +160,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testRemoveOperationDifferentVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm1);
       opsVM.invoke(() -> setRemoveAndInvalidateHook(clearVM));
       runConsistencyTest(vm0, performRemoveOperation);
@@ -173,11 +173,11 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testInvalidateOperationSameVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm0);
       opsVM.invoke(() -> setRemoveAndInvalidateHook(clearVM));
       runConsistencyTest(vm0, performInvalidateOperation);
-      checkForConsistencyErrors();   
+      checkForConsistencyErrors();
     } finally {
       opsVM.invoke(() -> resetHook());
     }
@@ -186,11 +186,11 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testInvalidateOperationDifferentVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm1);
       opsVM.invoke(() -> setRemoveAndInvalidateHook(clearVM));
       runConsistencyTest(vm0, performInvalidateOperation);
-      checkForConsistencyErrors();   
+      checkForConsistencyErrors();
     } finally {
       opsVM.invoke(() -> resetHook());
     }
@@ -199,11 +199,11 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testPutAllOperationSameVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm0);
       opsVM.invoke(() -> setBulkHook(vm0));
       runConsistencyTest(vm0, performPutAllOperation);
-      checkForConsistencyErrors();   
+      checkForConsistencyErrors();
     } finally {
       opsVM.invoke(() -> resetHook());
     }
@@ -212,11 +212,11 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testPutAllOperationDifferentVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm1);
       opsVM.invoke(() -> setBulkHook(vm0));
       runConsistencyTest(vm0, performPutAllOperation);
-      checkForConsistencyErrors();   
+      checkForConsistencyErrors();
     } finally {
       opsVM.invoke(() -> resetHook());
     }
@@ -225,11 +225,11 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testRemoveAllOperationSameVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm0);
       opsVM.invoke(() -> setBulkHook(vm0));
       runConsistencyTest(vm0, performRemoveAllOperation);
-      checkForConsistencyErrors();   
+      checkForConsistencyErrors();
     } finally {
       opsVM.invoke(() -> resetHook());
     }
@@ -238,27 +238,26 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testRemoveAllOperationDifferentVM() {
     try {
-      setupMembers();    
+      setupMembers();
       setOpAndClearVM(vm0, vm1);
       opsVM.invoke(() -> setBulkHook(vm0));
       runConsistencyTest(vm0, performRemoveAllOperation);
-      checkForConsistencyErrors();   
+      checkForConsistencyErrors();
     } finally {
       opsVM.invoke(() -> resetHook());
     }
   }
 
-
   private void invokePut(VM whichVM) {
-    if(whichVM==null) {
+    if (whichVM == null) {
       doPut();
     } else {
       whichVM.invoke(() -> doPut());
     }
   }
-  
+
   private void invokeRemove(VM whichVM) {
-    if(whichVM==null) {
+    if (whichVM == null) {
       doRemove();
     } else {
       whichVM.invoke(() -> doRemove());
@@ -266,23 +265,23 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void invokeInvalidate(VM whichVM) {
-    if(whichVM==null) {
+    if (whichVM == null) {
       doInvalidate();
     } else {
       whichVM.invoke(() -> doInvalidate());
     }
   }
-  
+
   private void invokePutAll(VM whichVM) {
-    if(whichVM==null) {
+    if (whichVM == null) {
       doPutAll();
     } else {
       whichVM.invoke(() -> doPutAll());
     }
   }
-  
+
   private void invokeRemoveAll(VM whichVM) {
-    if(whichVM==null) {
+    if (whichVM == null) {
       doRemoveAll();
     } else {
       whichVM.invoke(() -> doRemoveAll());
@@ -290,7 +289,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   }
 
   private static void invokeClear(VM whichVM) {
-    if(whichVM==null) {
+    if (whichVM == null) {
       doClear();
     } else {
       whichVM.invoke(() -> doClear());
@@ -298,9 +297,9 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   }
 
   // remote test methods
-  
+
   private static boolean doesRegionEntryExist(String key) {
-    return region.getRegionEntry(key)!=null;
+    return region.getRegionEntry(key) != null;
   }
 
   private static void doPut() {
@@ -324,7 +323,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
     Map<Object, Object> map = generateKeyValues();
     region.removeAll(map.keySet(), "removeAllCallback");
   }
-  
+
   private static void doClear() {
     region.clear();
   }
@@ -332,7 +331,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   private static void primeStep1(int cnt) {
     primeStep1Latch(cnt);
   }
-  
+
   private static void primeStep2(int cnt) {
     primeStep2Latch(cnt);
   }
@@ -362,16 +361,16 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
           DistributedSystem.releaseThreadsSockets();
         }
       };
-      
+
       Runnable putThread2 = new Runnable() {
         public void run() {
           DistributedSystem.setThreadsSocketPolicy(false);
-          awaitStep1Latch();        
+          awaitStep1Latch();
           doClear();
           DistributedSystem.releaseThreadsSockets();
         }
       };
-      
+
       Thread t1 = new Thread(putThread1);
       Thread t2 = new Thread(putThread2);
       t2.start();
@@ -427,32 +426,32 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
       }
     }
   };
-  
+
   // helper methods
 
   private void setOpAndClearVM(VM opsTarget, VM clearTarget) {
     opsVM = opsTarget;
     clearVM = clearTarget;
   }
-  
-  private void setupMembers() {    
+
+  private void setupMembers() {
     Host host = Host.getHost(0);
     vm0 = host.getVM(0);
     vm1 = host.getVM(1);
     vm0ID = createCache(vm0);
     vm1ID = createCache(vm1);
-    String testName =  getName();    
+    String testName = getName();
     vm0.invoke(() -> createRegion(testName));
     vm1.invoke(() -> createRegion(testName));
   }
 
-  private void setupNoAckMembers() {    
+  private void setupNoAckMembers() {
     Host host = Host.getHost(0);
     vm0 = host.getVM(0);
     vm1 = host.getVM(1);
     vm0ID = createNoConserveSocketsCache(vm0);
     vm1ID = createNoConserveSocketsCache(vm1);
-    String testName =  getName();    
+    String testName = getName();
     vm0.invoke(() -> createNOACKRegion(testName));
     vm1.invoke(() -> createNOACKRegion(testName));
   }
@@ -462,14 +461,14 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void checkForConsistencyErrors() {
-    Map<Object, Object> r0Contents = (Map<Object, Object>)vm0.invoke(() -> getRegionContents());
-    Map<Object, Object> r1Contents = (Map<Object, Object>)vm1.invoke(() -> getRegionContents());
+    Map<Object, Object> r0Contents = (Map<Object, Object>) vm0.invoke(() -> getRegionContents());
+    Map<Object, Object> r1Contents = (Map<Object, Object>) vm1.invoke(() -> getRegionContents());
 
     String key = THE_KEY;
     softly.assertThat(r1Contents.get(key)).as("region contents are not consistent for key %s", key).isEqualTo(r0Contents.get(key));
     softly.assertThat(checkRegionEntry(vm1, key)).as("region entries are not consistent for key %s", key).isEqualTo(checkRegionEntry(vm0, key));
 
-    for (int subi=1; subi<3; subi++) {
+    for (int subi = 1; subi < 3; subi++) {
       String subkey = key + "-" + subi;
       if (r0Contents.containsKey(subkey)) {
         softly.assertThat(r1Contents.get(subkey)).as("region contents are not consistent for key %s", subkey).isEqualTo(r0Contents.get(subkey));
@@ -500,19 +499,19 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
     theHook = new ArmNoAckRemoteHook();
     ((AbstractRegionMap) region.entries).setARMLockTestHook(theHook);
   }
-  
+
   public void setLocalNoAckHook(VM whichVM) {
     theOtherVM = whichVM;
     theHook = new ArmNoAckLocalHook();
     ((AbstractRegionMap) region.entries).setARMLockTestHook(theHook);
   }
-  
+
   public void setBulkHook(VM whichVM) {
     theOtherVM = whichVM;
     theHook = new ArmBulkClearHook();
     ((AbstractRegionMap) region.entries).setARMLockTestHook(theHook);
   }
-  
+
   private InternalDistributedMember createCache(VM vm) {
     return (InternalDistributedMember) vm.invoke(new SerializableCallable<Object>() {
       public Object call() {
@@ -535,14 +534,14 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
     RegionFactory<Object, Object> rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     rf.setConcurrencyChecksEnabled(true);
     rf.setScope(Scope.DISTRIBUTED_ACK);
-    region = (LocalRegion)rf.create(rgnName);
+    region = (LocalRegion) rf.create(rgnName);
   }
 
   private static void createNOACKRegion(String rgnName) {
     RegionFactory<Object, Object> rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     rf.setConcurrencyChecksEnabled(true);
     rf.setScope(Scope.DISTRIBUTED_NO_ACK);
-    region = (LocalRegion)rf.create(rgnName);
+    region = (LocalRegion) rf.create(rgnName);
   }
 
   private static Map<Object, Object> generateKeyValues() {
@@ -550,39 +549,40 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
     String value = THE_VALUE;
     Map<Object, Object> map = new HashMap<>();
     map.put(key, value);
-    map.put(key+"-1", value+"-1");
-    map.put(key+"-2", value+"-2");
+    map.put(key + "-1", value + "-1");
+    map.put(key + "-2", value + "-2");
     return map;
   }
 
   @SuppressWarnings("rawtypes")
   private static Map<Object, Object> getRegionContents() {
     Map<Object, Object> result = new HashMap<>();
-    for (Iterator i=region.entrySet().iterator(); i.hasNext(); ) {
-      Region.Entry e = (Region.Entry)i.next();
+    for (Iterator i = region.entrySet().iterator(); i.hasNext();) {
+      Region.Entry e = (Region.Entry) i.next();
       result.put(e.getKey(), e.getValue());
     }
     return result;
   }
 
   private boolean checkRegionEntry(VM vm, String key) {
-    boolean target = vm.invoke(() -> doesRegionEntryExist(key)); 
+    boolean target = vm.invoke(() -> doesRegionEntryExist(key));
     return target;
   }
-  
+
   static VM theOtherVM;
   transient static CountDownLatch step1Latch, step2Latch;
 
   public static void primeStep1Latch(int waitCount) {
     step1Latch = new CountDownLatch(waitCount);
   }
-  
+
   public static void awaitStep1Latch() {
     try {
       step1Latch.await();
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException e) {
+    }
   }
-  
+
   public static void decrementStep1Latch() {
     step1Latch.countDown();
   }
@@ -590,17 +590,18 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public static void decrementRemoteStep1Latch() {
     theOtherVM.invoke(() -> decrementStep1Latch());
   }
-  
+
   public static void primeStep2Latch(int waitCount) {
     step2Latch = new CountDownLatch(waitCount);
   }
-  
+
   public static void awaitStep2Latch() {
     try {
       step2Latch.await();
-    } catch (InterruptedException e) {}
+    } catch (InterruptedException e) {
+    }
   }
-  
+
   public static void decrementStep2Latch() {
     step2Latch.countDown();
   }
@@ -608,28 +609,27 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public static void decrementRemoteStep2Latch() {
     theOtherVM.invoke(() -> decrementStep2Latch());
   }
+
   /*
    * Test callback class used to hook the rvv locking mechanism with basic operations.
    */
-  public static class ArmBasicClearHook extends ARMLockTestHookAdapter {    
+  public static class ArmBasicClearHook extends ARMLockTestHookAdapter {
     @Override
-    public void afterRelease(LocalRegion owner, CacheEvent event) {      
-      if((event.getOperation().isCreate()) && owner.getName().startsWith("test")) {
+    public void afterRelease(LocalRegion owner, CacheEvent event) {
+      if ((event.getOperation().isCreate()) && owner.getName().startsWith("test")) {
         invokeClear(theOtherVM);
       }
     }
   }
-  
+
   /*
    * Test callback class used to hook the rvv locking mechanism with basic operations.
    */
-  public static class ArmRemoveAndInvalidateClearHook extends ARMLockTestHookAdapter {    
-    
+  public static class ArmRemoveAndInvalidateClearHook extends ARMLockTestHookAdapter {
+
     @Override
-    public void afterRelease(LocalRegion owner, CacheEvent event) {      
-      if((event.getOperation().isDestroy() || 
-          event.getOperation().isInvalidate()) &&
-          owner.getName().startsWith("test")) {
+    public void afterRelease(LocalRegion owner, CacheEvent event) {
+      if ((event.getOperation().isDestroy() || event.getOperation().isInvalidate()) && owner.getName().startsWith("test")) {
         invokeClear(theOtherVM);
       }
     }
@@ -641,24 +641,24 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public static class ArmNoAckRemoteHook extends ARMLockTestHookAdapter {
     @Override
     public void beforeLock(LocalRegion owner, CacheEvent event) {
-      if(event.isOriginRemote() && event.getOperation().isCreate() && owner.getName().startsWith("test")) {
-        theOtherVM.invoke(() -> releaseStep1());   // start clear
-        awaitStep2Latch();  // wait for clear to complete
+      if (event.isOriginRemote() && event.getOperation().isCreate() && owner.getName().startsWith("test")) {
+        theOtherVM.invoke(() -> releaseStep1()); // start clear
+        awaitStep2Latch(); // wait for clear to complete
       }
     }
   }
-  
+
   public static class ArmNoAckLocalHook extends ARMLockTestHookAdapter {
     @Override
     public void beforeStateFlushWait() {
       decrementRemoteStep2Latch();
     }
   }
-  
+
   /*
    * Test callback class used to hook the rvv locking mechanism with bulk operations.
    */
-  public static class ArmBulkClearHook extends ARMLockTestHookAdapter {    
+  public static class ArmBulkClearHook extends ARMLockTestHookAdapter {
     @Override
     public void afterBulkRelease(LocalRegion region) {
       invokeClear(theOtherVM);

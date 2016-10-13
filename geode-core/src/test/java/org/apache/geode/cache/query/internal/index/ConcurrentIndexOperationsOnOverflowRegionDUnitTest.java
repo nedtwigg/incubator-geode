@@ -67,8 +67,7 @@ import org.apache.geode.test.dunit.Wait;
  *
  */
 @Category(DistributedTest.class)
-public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
-    JUnit4CacheTestCase {
+public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends JUnit4CacheTestCase {
 
   String name;
 
@@ -90,15 +89,14 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         IndexManager.testHook = null;
         try {
           DiskStore ds = cache.findDiskStore("disk");
-          if(ds == null) {
-            ds = cache.createDiskStoreFactory()
-            .setDiskDirs(getDiskDirs()).create("disk");
+          if (ds == null) {
+            ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
           }
           AttributesFactory attr = new AttributesFactory();
           attr.setValueConstraint(PortfolioData.class);
           attr.setIndexMaintenanceSynchronous(true);
           EvictionAttributesImpl evicAttr = new EvictionAttributesImpl().setAction(EvictionAction.OVERFLOW_TO_DISK);
-              evicAttr.setAlgorithm(EvictionAlgorithm.LRU_ENTRY).setMaximum(1);
+          evicAttr.setAlgorithm(EvictionAlgorithm.LRU_ENTRY).setMaximum(1);
           attr.setEvictionAttributes(evicAttr);
           attr.setDataPolicy(DataPolicy.REPLICATE);
           //attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
@@ -110,11 +108,10 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         }
         assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
         assertNotNull("Region ref null", partitionRegion);
-        assertTrue("Region ref claims to be destroyed",
-            !partitionRegion.isDestroyed());
-      //Create Indexes
+        assertTrue("Region ref claims to be destroyed", !partitionRegion.isDestroyed());
+        //Create Indexes
         try {
-          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/"+name+" p");
+          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/" + name + " p");
           assertNotNull(index);
         } catch (Exception e1) {
           e1.printStackTrace();
@@ -133,7 +130,7 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         // Do a put in region.
         Region r = getCache().getRegion(name);
 
-        for (int i=0; i<100; i++) {
+        for (int i = 0; i < 100; i++) {
           r.put(i, new PortfolioData(i));
         }
 
@@ -154,15 +151,14 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
       public void run2() throws CacheException {
         Cache cache = getCache();
 
-        Query statusQuery = getCache().getQueryService()
-            .newQuery("select * from /" + name + " p where p.ID > -1");
+        Query statusQuery = getCache().getQueryService().newQuery("select * from /" + name + " p where p.ID > -1");
 
         while (!hooked) {
           Wait.pause(100);
         }
         try {
           getCache().getLogger().fine("Querying the region");
-          SelectResults results = (SelectResults)statusQuery.execute();
+          SelectResults results = (SelectResults) statusQuery.execute();
           assertEquals(100, results.size());
         } catch (Exception e) {
           e.printStackTrace();
@@ -171,8 +167,8 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
     });
 
     //If we take more than 30 seconds then its a deadlock.
-    ThreadUtils.join(asyncInv2, 30*1000);
-    ThreadUtils.join(asyncInv1, 30*1000);
+    ThreadUtils.join(asyncInv2, 30 * 1000);
+    ThreadUtils.join(asyncInv1, 30 * 1000);
   }
 
   /**
@@ -193,15 +189,14 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         IndexManager.testHook = null;
         try {
           DiskStore ds = cache.findDiskStore("disk");
-          if(ds == null) {
-            ds = cache.createDiskStoreFactory()
-            .setDiskDirs(getDiskDirs()).create("disk");
+          if (ds == null) {
+            ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
           }
           AttributesFactory attr = new AttributesFactory();
           attr.setValueConstraint(PortfolioData.class);
           attr.setIndexMaintenanceSynchronous(true);
           EvictionAttributesImpl evicAttr = new EvictionAttributesImpl().setAction(EvictionAction.OVERFLOW_TO_DISK);
-              evicAttr.setAlgorithm(EvictionAlgorithm.LRU_ENTRY).setMaximum(1);
+          evicAttr.setAlgorithm(EvictionAlgorithm.LRU_ENTRY).setMaximum(1);
           attr.setEvictionAttributes(evicAttr);
           attr.setDataPolicy(DataPolicy.PARTITION);
           attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
@@ -213,11 +208,10 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         }
         assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
         assertNotNull("Region ref null", partitionRegion);
-        assertTrue("Region ref claims to be destroyed",
-            !partitionRegion.isDestroyed());
+        assertTrue("Region ref claims to be destroyed", !partitionRegion.isDestroyed());
         //Create Indexes
         try {
-          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/"+name+" p");
+          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/" + name + " p");
           assertNotNull(index);
         } catch (Exception e1) {
           e1.printStackTrace();
@@ -236,7 +230,7 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         // Do a put in region.
         Region r = getCache().getRegion(name);
 
-        for (int i=0; i<100; i++) {
+        for (int i = 0; i < 100; i++) {
           r.put(i, new PortfolioData(i));
         }
 
@@ -257,15 +251,14 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
       public void run2() throws CacheException {
         Cache cache = getCache();
 
-        Query statusQuery = getCache().getQueryService()
-            .newQuery("select * from /" + name + " p where p.ID > -1");
+        Query statusQuery = getCache().getQueryService().newQuery("select * from /" + name + " p where p.ID > -1");
 
         while (!hooked) {
           Wait.pause(100);
         }
         try {
           getCache().getLogger().fine("Querying the region");
-          SelectResults results = (SelectResults)statusQuery.execute();
+          SelectResults results = (SelectResults) statusQuery.execute();
           assertEquals(100, results.size());
         } catch (Exception e) {
           e.printStackTrace();
@@ -274,8 +267,8 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
     });
 
     //If we take more than 30 seconds then its a deadlock.
-    ThreadUtils.join(asyncInv2, 30*1000);
-    ThreadUtils.join(asyncInv1, 30*1000);
+    ThreadUtils.join(asyncInv2, 30 * 1000);
+    ThreadUtils.join(asyncInv1, 30 * 1000);
   }
 
   /**
@@ -288,8 +281,7 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
     hooked = false;
     name = "PartionedPortfoliosPR";
     // Create Overflow Persistent Partition Region
-    vm0.invoke(new CacheSerializableRunnable(
-        "Create local region with synchronous index maintenance") {
+    vm0.invoke(new CacheSerializableRunnable("Create local region with synchronous index maintenance") {
       @Override
       public void run2() throws CacheException {
         Cache cache = getCache();
@@ -298,14 +290,12 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         try {
           DiskStore ds = cache.findDiskStore("disk");
           if (ds == null) {
-            ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs())
-                .create("disk");
+            ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
           }
           AttributesFactory attr = new AttributesFactory();
           attr.setValueConstraint(PortfolioData.class);
           attr.setIndexMaintenanceSynchronous(true);
-          EvictionAttributesImpl evicAttr = new EvictionAttributesImpl()
-              .setAction(EvictionAction.OVERFLOW_TO_DISK);
+          EvictionAttributesImpl evicAttr = new EvictionAttributesImpl().setAction(EvictionAction.OVERFLOW_TO_DISK);
           evicAttr.setAlgorithm(EvictionAlgorithm.LRU_ENTRY).setMaximum(1);
           attr.setEvictionAttributes(evicAttr);
           attr.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
@@ -319,12 +309,10 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         }
         assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
         assertNotNull("Region ref null", partitionRegion);
-        assertTrue("Region ref claims to be destroyed",
-            !partitionRegion.isDestroyed());
+        assertTrue("Region ref claims to be destroyed", !partitionRegion.isDestroyed());
         // Create Indexes
         try {
-          Index index = cache.getQueryService().createIndex("statusIndex",
-              "p.ID", "/" + name + " p");
+          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/" + name + " p");
           assertNotNull(index);
         } catch (Exception e1) {
           e1.printStackTrace();
@@ -335,8 +323,7 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
 
     // Start changing the value in Region which should turn into a deadlock if
     // the fix is not there
-    AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable(
-        "Change value in region") {
+    AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable("Change value in region") {
 
       @Override
       public void run2() throws CacheException {
@@ -358,20 +345,18 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
       }
     });
 
-    AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable(
-        "Run query on region") {
+    AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable("Run query on region") {
 
       @Override
       public void run2() throws CacheException {
-        Query statusQuery = getCache().getQueryService()
-            .newQuery("select * from /" + name + " p where p.ID > -1");
+        Query statusQuery = getCache().getQueryService().newQuery("select * from /" + name + " p where p.ID > -1");
 
         while (!hooked) {
           Wait.pause(100);
         }
         try {
           getCache().getLogger().fine("Querying the region");
-          SelectResults results = (SelectResults)statusQuery.execute();
+          SelectResults results = (SelectResults) statusQuery.execute();
           assertEquals(100, results.size());
         } catch (Exception e) {
           e.printStackTrace();
@@ -394,8 +379,7 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
     hooked = false;
     name = "PartionedPortfoliosPR";
     // Create Overflow Persistent Partition Region
-    vm0.invoke(new CacheSerializableRunnable(
-        "Create local region with synchronous index maintenance") {
+    vm0.invoke(new CacheSerializableRunnable("Create local region with synchronous index maintenance") {
       @Override
       public void run2() throws CacheException {
         Cache cache = getCache();
@@ -404,19 +388,16 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         try {
           DiskStore ds = cache.findDiskStore("disk");
           if (ds == null) {
-            ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs())
-                .create("disk");
+            ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
           }
           AttributesFactory attr = new AttributesFactory();
           attr.setValueConstraint(PortfolioData.class);
           attr.setIndexMaintenanceSynchronous(true);
-          EvictionAttributesImpl evicAttr = new EvictionAttributesImpl()
-              .setAction(EvictionAction.OVERFLOW_TO_DISK);
+          EvictionAttributesImpl evicAttr = new EvictionAttributesImpl().setAction(EvictionAction.OVERFLOW_TO_DISK);
           evicAttr.setAlgorithm(EvictionAlgorithm.LRU_ENTRY).setMaximum(1);
           attr.setEvictionAttributes(evicAttr);
           attr.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-          attr.setPartitionAttributes(new
-          PartitionAttributesFactory().setTotalNumBuckets(1).create());
+          attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
           attr.setDiskStoreName("disk");
           RegionFactory regionFactory = cache.createRegionFactory(attr.create());
           partitionRegion = regionFactory.create(name);
@@ -425,12 +406,10 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
         }
         assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
         assertNotNull("Region ref null", partitionRegion);
-        assertTrue("Region ref claims to be destroyed",
-            !partitionRegion.isDestroyed());
+        assertTrue("Region ref claims to be destroyed", !partitionRegion.isDestroyed());
         // Create Indexes
         try {
-          Index index = cache.getQueryService().createIndex("statusIndex",
-              "p.ID", "/" + name + " p");
+          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/" + name + " p");
           assertNotNull(index);
         } catch (Exception e1) {
           e1.printStackTrace();
@@ -441,8 +420,7 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
 
     // Start changing the value in Region which should turn into a deadlock if
     // the fix is not there
-    AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable(
-        "Change value in region") {
+    AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable("Change value in region") {
 
       @Override
       public void run2() throws CacheException {
@@ -464,20 +442,18 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
       }
     });
 
-    AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable(
-        "Run query on region") {
+    AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable("Run query on region") {
 
       @Override
       public void run2() throws CacheException {
-        Query statusQuery = getCache().getQueryService()
-            .newQuery("select * from /" + name + " p where p.ID > -1");
+        Query statusQuery = getCache().getQueryService().newQuery("select * from /" + name + " p where p.ID > -1");
 
         while (!hooked) {
           Wait.pause(100);
         }
         try {
           getCache().getLogger().fine("Querying the region");
-          SelectResults results = (SelectResults)statusQuery.execute();
+          SelectResults results = (SelectResults) statusQuery.execute();
           assertEquals(100, results.size());
         } catch (Exception e) {
           e.printStackTrace();
@@ -495,190 +471,186 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
   */
   @Test
   public void testAsyncIndexInitDuringEntryDestroyAndQueryOnNonOverflowRR() {
-   Host host = Host.getHost(0);
-   VM vm0 = host.getVM(0);
-   hooked = false;
-   name = "PartionedPortfoliosPR";
-   //Create Overflow Persistent Partition Region
-   vm0.invoke(new CacheSerializableRunnable("Create local region with synchronous index maintenance") {
-     @Override
-     public void run2() throws CacheException {
-       Cache cache = getCache();
-       Region partitionRegion = null;
-       IndexManager.testHook = null;
-       try {
-         AttributesFactory attr = new AttributesFactory();
-         attr.setValueConstraint(PortfolioData.class);
-         attr.setIndexMaintenanceSynchronous(true);
-         attr.setDataPolicy(DataPolicy.REPLICATE);
-         //attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
-         RegionFactory regionFactory = cache.createRegionFactory(attr.create());
-         partitionRegion = regionFactory.create(name);
-       } catch (IllegalStateException ex) {
-         LogWriterUtils.getLogWriter().warning("Creation caught IllegalStateException", ex);
-       }
-       assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
-       assertNotNull("Region ref null", partitionRegion);
-       assertTrue("Region ref claims to be destroyed",
-           !partitionRegion.isDestroyed());
-     //Create Indexes
-       try {
-         Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/"+name+" p");
-         assertNotNull(index);
-       } catch (Exception e1) {
-         e1.printStackTrace();
-         fail("Index creation failed");
-       }
-     }
-   });
+    Host host = Host.getHost(0);
+    VM vm0 = host.getVM(0);
+    hooked = false;
+    name = "PartionedPortfoliosPR";
+    //Create Overflow Persistent Partition Region
+    vm0.invoke(new CacheSerializableRunnable("Create local region with synchronous index maintenance") {
+      @Override
+      public void run2() throws CacheException {
+        Cache cache = getCache();
+        Region partitionRegion = null;
+        IndexManager.testHook = null;
+        try {
+          AttributesFactory attr = new AttributesFactory();
+          attr.setValueConstraint(PortfolioData.class);
+          attr.setIndexMaintenanceSynchronous(true);
+          attr.setDataPolicy(DataPolicy.REPLICATE);
+          //attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
+          RegionFactory regionFactory = cache.createRegionFactory(attr.create());
+          partitionRegion = regionFactory.create(name);
+        } catch (IllegalStateException ex) {
+          LogWriterUtils.getLogWriter().warning("Creation caught IllegalStateException", ex);
+        }
+        assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
+        assertNotNull("Region ref null", partitionRegion);
+        assertTrue("Region ref claims to be destroyed", !partitionRegion.isDestroyed());
+        //Create Indexes
+        try {
+          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/" + name + " p");
+          assertNotNull(index);
+        } catch (Exception e1) {
+          e1.printStackTrace();
+          fail("Index creation failed");
+        }
+      }
+    });
 
-   //Start changing the value in Region which should turn into a deadlock if the fix is not there
-   AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable("Change value in region") {
+    //Start changing the value in Region which should turn into a deadlock if the fix is not there
+    AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable("Change value in region") {
 
-     @Override
-     public void run2() throws CacheException {
-       Cache cache = getCache();
+      @Override
+      public void run2() throws CacheException {
+        Cache cache = getCache();
 
-       // Do a put in region.
-       Region r = getCache().getRegion(name);
+        // Do a put in region.
+        Region r = getCache().getRegion(name);
 
-       for (int i=0; i<100; i++) {
-         r.put(i, new PortfolioData(i));
-       }
+        for (int i = 0; i < 100; i++) {
+          r.put(i, new PortfolioData(i));
+        }
 
-       assertNull(IndexManager.testHook);
-       IndexManager.testHook = new IndexManagerNoWaitTestHook();
+        assertNull(IndexManager.testHook);
+        IndexManager.testHook = new IndexManagerNoWaitTestHook();
 
-       // Destroy one of the values.
-       getCache().getLogger().fine("Destroying the value");
-       r.destroy(1);
+        // Destroy one of the values.
+        getCache().getLogger().fine("Destroying the value");
+        r.destroy(1);
 
-       IndexManager.testHook = null;
-     }
-   });
+        IndexManager.testHook = null;
+      }
+    });
 
-   AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable("Run query on region") {
+    AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable("Run query on region") {
 
-     @Override
-     public void run2() throws CacheException {
-       Cache cache = getCache();
+      @Override
+      public void run2() throws CacheException {
+        Cache cache = getCache();
 
-       Query statusQuery = getCache().getQueryService()
-           .newQuery("select * from /" + name + " p where p.ID > -1");
+        Query statusQuery = getCache().getQueryService().newQuery("select * from /" + name + " p where p.ID > -1");
 
-       while (!hooked) {
-         Wait.pause(10);
-       }
-       try {
-         getCache().getLogger().fine("Querying the region");
-         SelectResults results = (SelectResults)statusQuery.execute();
-         assertEquals(100, results.size());
-       } catch (Exception e) {
-         e.printStackTrace();
-       }
-     }
-   });
+        while (!hooked) {
+          Wait.pause(10);
+        }
+        try {
+          getCache().getLogger().fine("Querying the region");
+          SelectResults results = (SelectResults) statusQuery.execute();
+          assertEquals(100, results.size());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
 
-   //If we take more than 30 seconds then its a deadlock.
-   ThreadUtils.join(asyncInv2, 30*1000);
-   ThreadUtils.join(asyncInv1, 30*1000);
- }
+    //If we take more than 30 seconds then its a deadlock.
+    ThreadUtils.join(asyncInv2, 30 * 1000);
+    ThreadUtils.join(asyncInv1, 30 * 1000);
+  }
 
- /**
+  /**
   *
   */
   @Test
   public void testAsyncIndexInitDuringEntryDestroyAndQueryOnOnNonOverflowPR() {
-   Host host = Host.getHost(0);
-   VM vm0 = host.getVM(0);
-   hooked = false;
-   name = "PartionedPortfoliosPR";
-   //Create Overflow Persistent Partition Region
-   vm0.invoke(new CacheSerializableRunnable("Create local region with synchronous index maintenance") {
-     @Override
-     public void run2() throws CacheException {
-       Cache cache = getCache();
-       Region partitionRegion = null;
-       IndexManager.testHook = null;
-       try {
-         AttributesFactory attr = new AttributesFactory();
-         attr.setValueConstraint(PortfolioData.class);
-         attr.setIndexMaintenanceSynchronous(true);
-         attr.setDataPolicy(DataPolicy.PARTITION);
-         attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
-         RegionFactory regionFactory = cache.createRegionFactory(attr.create());
-         partitionRegion = regionFactory.create(name);
-       } catch (IllegalStateException ex) {
-         LogWriterUtils.getLogWriter().warning("Creation caught IllegalStateException", ex);
-       }
-       assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
-       assertNotNull("Region ref null", partitionRegion);
-       assertTrue("Region ref claims to be destroyed",
-           !partitionRegion.isDestroyed());
-       //Create Indexes
-       try {
-         Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/"+name+" p");
-         assertNotNull(index);
-       } catch (Exception e1) {
-         e1.printStackTrace();
-         fail("Index creation failed");
-       }
-     }
-   });
+    Host host = Host.getHost(0);
+    VM vm0 = host.getVM(0);
+    hooked = false;
+    name = "PartionedPortfoliosPR";
+    //Create Overflow Persistent Partition Region
+    vm0.invoke(new CacheSerializableRunnable("Create local region with synchronous index maintenance") {
+      @Override
+      public void run2() throws CacheException {
+        Cache cache = getCache();
+        Region partitionRegion = null;
+        IndexManager.testHook = null;
+        try {
+          AttributesFactory attr = new AttributesFactory();
+          attr.setValueConstraint(PortfolioData.class);
+          attr.setIndexMaintenanceSynchronous(true);
+          attr.setDataPolicy(DataPolicy.PARTITION);
+          attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
+          RegionFactory regionFactory = cache.createRegionFactory(attr.create());
+          partitionRegion = regionFactory.create(name);
+        } catch (IllegalStateException ex) {
+          LogWriterUtils.getLogWriter().warning("Creation caught IllegalStateException", ex);
+        }
+        assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
+        assertNotNull("Region ref null", partitionRegion);
+        assertTrue("Region ref claims to be destroyed", !partitionRegion.isDestroyed());
+        //Create Indexes
+        try {
+          Index index = cache.getQueryService().createIndex("statusIndex", "p.ID", "/" + name + " p");
+          assertNotNull(index);
+        } catch (Exception e1) {
+          e1.printStackTrace();
+          fail("Index creation failed");
+        }
+      }
+    });
 
-   //Start changing the value in Region which should turn into a deadlock if the fix is not there
-   AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable("Change value in region") {
+    //Start changing the value in Region which should turn into a deadlock if the fix is not there
+    AsyncInvocation asyncInv1 = vm0.invokeAsync(new CacheSerializableRunnable("Change value in region") {
 
-     @Override
-     public void run2() throws CacheException {
-       // Do a put in region.
-       Region r = getCache().getRegion(name);
+      @Override
+      public void run2() throws CacheException {
+        // Do a put in region.
+        Region r = getCache().getRegion(name);
 
-       for (int i=0; i<100; i++) {
-         r.put(i, new PortfolioData(i));
-       }
+        for (int i = 0; i < 100; i++) {
+          r.put(i, new PortfolioData(i));
+        }
 
-       assertNull(IndexManager.testHook);
-       IndexManager.testHook = new IndexManagerNoWaitTestHook();
+        assertNull(IndexManager.testHook);
+        IndexManager.testHook = new IndexManagerNoWaitTestHook();
 
-       // Destroy one of the values.
-       getCache().getLogger().fine("Destroying the value");
-       r.destroy(1);
+        // Destroy one of the values.
+        getCache().getLogger().fine("Destroying the value");
+        r.destroy(1);
 
-       IndexManager.testHook = null;
-     }
-   });
+        IndexManager.testHook = null;
+      }
+    });
 
-   AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable("Run query on region") {
+    AsyncInvocation asyncInv2 = vm0.invokeAsync(new CacheSerializableRunnable("Run query on region") {
 
-     @Override
-     public void run2() throws CacheException {
-       Query statusQuery = getCache().getQueryService()
-           .newQuery("select * from /" + name + " p where p.ID > -1");
+      @Override
+      public void run2() throws CacheException {
+        Query statusQuery = getCache().getQueryService().newQuery("select * from /" + name + " p where p.ID > -1");
 
-       while (!hooked) {
-         Wait.pause(10);
-       }
-       try {
-         getCache().getLogger().fine("Querying the region");
-         SelectResults results = (SelectResults)statusQuery.execute();
-         assertEquals(100, results.size());
-       } catch (Exception e) {
-         e.printStackTrace();
-       }
-     }
-   });
+        while (!hooked) {
+          Wait.pause(10);
+        }
+        try {
+          getCache().getLogger().fine("Querying the region");
+          SelectResults results = (SelectResults) statusQuery.execute();
+          assertEquals(100, results.size());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
 
-   //If we take more than 30 seconds then its a deadlock.
-   ThreadUtils.join(asyncInv2, 30*1000);
-   ThreadUtils.join(asyncInv1, 30*1000);
- }
+    //If we take more than 30 seconds then its a deadlock.
+    ThreadUtils.join(asyncInv2, 30 * 1000);
+    ThreadUtils.join(asyncInv1, 30 * 1000);
+  }
 
-  public class IndexManagerTestHook implements org.apache.geode.cache.query.internal.index.IndexManager.TestHook{
+  public class IndexManagerTestHook implements org.apache.geode.cache.query.internal.index.IndexManager.TestHook {
     public void hook(final int spot) throws RuntimeException {
       switch (spot) {
       case 5: //Before Index update and after region entry lock.
-        hooked  = true;
+        hooked = true;
         LogWriterUtils.getLogWriter().fine("IndexManagerTestHook is hooked.");
         Wait.pause(10000);
         //hooked = false;
@@ -688,14 +660,15 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
       }
     }
   }
-  public class IndexManagerNoWaitTestHook implements org.apache.geode.cache.query.internal.index.IndexManager.TestHook{
+
+  public class IndexManagerNoWaitTestHook implements org.apache.geode.cache.query.internal.index.IndexManager.TestHook {
     public void hook(final int spot) throws RuntimeException {
       switch (spot) {
       case 5: //Before Index update and after region entry lock.
-        hooked  = true;
+        hooked = true;
         LogWriterUtils.getLogWriter().fine("IndexManagerTestHook is hooked.");
         Wait.pause(100);
-       // hooked = false;
+        // hooked = false;
         break;
       default:
         break;
@@ -703,4 +676,3 @@ public class ConcurrentIndexOperationsOnOverflowRegionDUnitTest extends
     }
   }
 }
-

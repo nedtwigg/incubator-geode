@@ -33,7 +33,7 @@ import org.apache.geode.SystemFailure;
 */
 public class MethExecutor {
 
-   // @todo lises add static args method
+  // @todo lises add static args method
 
   /**
    * Helper method that searches a class (and its superclasses) for a
@@ -42,14 +42,12 @@ public class MethExecutor {
    * @throws NoSuchMethodException
    *         If the method cannot be found
    */
-  public static Method getMethod(Class c, String methodName, Class[] paramTypes)
-  throws NoSuchMethodException {
+  public static Method getMethod(Class c, String methodName, Class[] paramTypes) throws NoSuchMethodException {
 
-    ArrayList matchingMethods  = new ArrayList();
+    ArrayList matchingMethods = new ArrayList();
     for (Class q = c; q != null; q = q.getSuperclass()) {
       Method[] methods = q.getDeclaredMethods();
-    NEXT_METHOD:
-      for (int i = 0; i < methods.length; i++) {
+      NEXT_METHOD: for (int i = 0; i < methods.length; i++) {
         Method m = methods[i];
         if (!m.getName().equals(methodName)) {
           continue;
@@ -61,8 +59,8 @@ public class MethExecutor {
         }
 
         for (int j = 0; j < argTypes.length; j++) {
-          if(paramTypes[j] == null) {
-            if(argTypes[j].isPrimitive()) {
+          if (paramTypes[j] == null) {
+            if (argTypes[j].isPrimitive()) {
               //this parameter is not ok, the parameter is a primative and the value is null
               continue NEXT_METHOD;
             } else {
@@ -75,23 +73,7 @@ public class MethExecutor {
             Class paramType = paramTypes[j];
 
             if (argType.isPrimitive()) {
-              if ((argType.equals(boolean.class) &&
-                   paramType.equals(Boolean.class)) ||
-                  (argType.equals(short.class) &&
-                   paramType.equals(Short.class)) ||
-                  (argType.equals(int.class) &&
-                   paramType.equals(Integer.class)) ||
-                  (argType.equals(long.class) &&
-                   paramType.equals(Long.class)) ||
-                  (argType.equals(float.class) &&
-                   paramType.equals(Float.class)) ||
-                  (argType.equals(double.class) &&
-                   paramType.equals(Double.class)) ||
-                  (argType.equals(char.class) &&
-                   paramType.equals(Character.class)) ||
-                  (argType.equals(byte.class) &&
-                   paramType.equals(Byte.class)) ||
-                  false) {
+              if ((argType.equals(boolean.class) && paramType.equals(Boolean.class)) || (argType.equals(short.class) && paramType.equals(Short.class)) || (argType.equals(int.class) && paramType.equals(Integer.class)) || (argType.equals(long.class) && paramType.equals(Long.class)) || (argType.equals(float.class) && paramType.equals(Float.class)) || (argType.equals(double.class) && paramType.equals(Double.class)) || (argType.equals(char.class) && paramType.equals(Character.class)) || (argType.equals(byte.class) && paramType.equals(Byte.class)) || false) {
 
                 // This parameter is okay, try the next arg
                 continue;
@@ -103,17 +85,17 @@ public class MethExecutor {
 
         matchingMethods.add(m);
       }
-      
+
       //We want to check to make sure there aren't two
       //ambiguous methods on the same class. But a subclass
       //can still override a method on a super class, so we'll stop
       //if we found a method on the subclass.
-      if(matchingMethods.size() > 0) {
+      if (matchingMethods.size() > 0) {
         break;
       }
     }
-    
-    if(matchingMethods.isEmpty()) {
+
+    if (matchingMethods.isEmpty()) {
       StringBuffer sb = new StringBuffer();
       sb.append("Could not find method ");
       sb.append(methodName);
@@ -131,7 +113,7 @@ public class MethExecutor {
       sb.append(c.getName());
       throw new NoSuchMethodException(sb.toString());
     }
-    if(matchingMethods.size() > 1) {
+    if (matchingMethods.size() > 1) {
       StringBuffer sb = new StringBuffer();
       sb.append("Method is ambiguous ");
       sb.append(methodName);
@@ -149,8 +131,8 @@ public class MethExecutor {
       sb.append(c.getName());
       sb.append(" methods=" + matchingMethods);
       throw new NoSuchMethodException(sb.toString());
-    }
-    else return (Method) matchingMethods.get(0);
+    } else
+      return (Method) matchingMethods.get(0);
   }
 
   /**
@@ -167,9 +149,7 @@ public class MethExecutor {
    * Executes the given static method on the given class with the
    * given arguments.
    */
-  public static MethExecutorResult execute(String receiver, 
-                                           String selector, 
-                                           Object[] args) {
+  public static MethExecutorResult execute(String receiver, String selector, Object[] args) {
     try {
       // get the class
       Class receiverClass = Class.forName(receiver);
@@ -193,33 +173,30 @@ public class MethExecutor {
           }
         }
 
-        Method theMethod =
-          getMethod(receiverClass, selector, paramTypes);
+        Method theMethod = getMethod(receiverClass, selector, paramTypes);
         theMethod.setAccessible(true);
         res = theMethod.invoke(receiverClass, args);
-        return new MethExecutorResult( res );
+        return new MethExecutorResult(res);
 
       } catch (InvocationTargetException invTargEx) {
         Throwable targEx = invTargEx.getTargetException();
-        if ( targEx == null ) {
-          return new MethExecutorResult( res );
+        if (targEx == null) {
+          return new MethExecutorResult(res);
 
         } else {
           return new MethExecutorResult(targEx);
         }
       }
 
-    } 
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
-//       String s = "While trying to invoke " + receiver + "." +
-//         selector;
-//       t = new HydraConfigException(s, t);
+    } catch (Throwable t) {
+      //       String s = "While trying to invoke " + receiver + "." +
+      //         selector;
+      //       t = new HydraConfigException(s, t);
       return new MethExecutorResult(t);
-    } 
+    }
   }
 
   /**
@@ -236,9 +213,7 @@ public class MethExecutor {
    * Executes the given instance method on the given object with the
    * given arguments.
    */
-  public static MethExecutorResult executeObject(Object target, 
-                                           String selector, 
-                                           Object[] args) {
+  public static MethExecutorResult executeObject(Object target, String selector, Object[] args) {
     try {
       // get the class
       Class receiverClass = target.getClass();
@@ -262,30 +237,27 @@ public class MethExecutor {
           }
         }
 
-        Method theMethod =
-          getMethod(receiverClass, selector, paramTypes);
+        Method theMethod = getMethod(receiverClass, selector, paramTypes);
         theMethod.setAccessible(true);
         res = theMethod.invoke(target, args);
-        return new MethExecutorResult( res );
+        return new MethExecutorResult(res);
 
       } catch (InvocationTargetException invTargEx) {
         Throwable targEx = invTargEx.getTargetException();
-        if ( targEx == null ) {
-          return new MethExecutorResult( res );
+        if (targEx == null) {
+          return new MethExecutorResult(res);
 
         } else {
           return new MethExecutorResult(targEx);
         }
       }
 
-    } 
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       return new MethExecutorResult(t);
-    } 
+    }
   }
 
   /**
@@ -294,7 +266,7 @@ public class MethExecutor {
   * Return the result, including stack trace (if any).
   *
   */
-  public static MethExecutorResult executeInstance( String receiver, String selector ) {
+  public static MethExecutorResult executeInstance(String receiver, String selector) {
 
     try {
       // get the class
@@ -304,28 +276,25 @@ public class MethExecutor {
       // invoke the method
       Object res = null;
       try {
-        Method theMethod =
-          getMethod(receiverClass, selector, new Class[0]);
-        res = theMethod.invoke(target, new Object[0] );
-        return new MethExecutorResult( res );
+        Method theMethod = getMethod(receiverClass, selector, new Class[0]);
+        res = theMethod.invoke(target, new Object[0]);
+        return new MethExecutorResult(res);
 
       } catch (InvocationTargetException invTargEx) {
         Throwable targEx = invTargEx.getTargetException();
-        if ( targEx == null ) {
-          return new MethExecutorResult( res );
+        if (targEx == null) {
+          return new MethExecutorResult(res);
         } else {
           return new MethExecutorResult(targEx);
         }
       }
 
-    } 
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       return new MethExecutorResult(t);
-    } 
+    }
   }
 
   /**
@@ -334,14 +303,12 @@ public class MethExecutor {
   * Return the result, including stack trace (if any).
   *
   */
-  public static MethExecutorResult executeInstance( String receiver, String selector,
-                                                    Class[] types, Object[] args ) {
+  public static MethExecutorResult executeInstance(String receiver, String selector, Class[] types, Object[] args) {
 
     try {
       // get the class
       Class receiverClass = Class.forName(receiver);
-      Constructor init =
-        receiverClass.getDeclaredConstructor(new Class[0]);
+      Constructor init = receiverClass.getDeclaredConstructor(new Class[0]);
       init.setAccessible(true);
       Object target = init.newInstance(new Object[0]);
 
@@ -349,27 +316,25 @@ public class MethExecutor {
       Object res = null;
       try {
         Method theMethod = getMethod(receiverClass, selector, types);
-        res = theMethod.invoke(target, args );
-        return new MethExecutorResult( res );
+        res = theMethod.invoke(target, args);
+        return new MethExecutorResult(res);
 
       } catch (InvocationTargetException invTargEx) {
         Throwable targEx = invTargEx.getTargetException();
-        if ( targEx == null ) {
-          return new MethExecutorResult( res );
+        if (targEx == null) {
+          return new MethExecutorResult(res);
 
         } else {
           return new MethExecutorResult(targEx);
         }
       }
 
-    } 
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       return new MethExecutorResult(t);
-    } 
+    }
   }
 
   /** 
@@ -378,16 +343,18 @@ public class MethExecutor {
   *
   */
   public static String testMethod1() {
-    return "The result is: " + System.currentTimeMillis(); 
+    return "The result is: " + System.currentTimeMillis();
   }
+
   public static String testMethod2() {
     throw new ArrayIndexOutOfBoundsException("frip");
   }
+
   public static void main(String[] args) {
     MethExecutorResult result = null;
-    result = MethExecutor.execute( "hydra.MethExecutor", "testMethod1" );
+    result = MethExecutor.execute("hydra.MethExecutor", "testMethod1");
     System.out.println(result.toString());
-    result = MethExecutor.execute( "hydra.MethExecutor", "testMethod2" );
+    result = MethExecutor.execute("hydra.MethExecutor", "testMethod2");
     System.out.println(result.toString());
   }
 }

@@ -96,7 +96,7 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
 
     int numRemoved = 0;
 
-    for (ByteArrayWrapper entry: removeList) {
+    for (ByteArrayWrapper entry : removeList) {
       Object oldVal = keyRegion.remove(entry);
       if (oldVal != null)
         numRemoved++;
@@ -119,17 +119,17 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXNINF, context);
       }
-      params = new Object[]{stop, INFINITY_LIMIT};
+      params = new Object[] { stop, INFINITY_LIMIT };
     } else if (stop.equals("+")) {
       if (startInclusive) {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINFI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINF, context);
       }
-      params = new Object[]{start, INFINITY_LIMIT};
+      params = new Object[] { start, INFINITY_LIMIT };
     } else {
       if (startInclusive) {
-        if(stopInclusive) {
+        if (stopInclusive) {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEXSTISI, context);
         } else {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEXSTI, context);
@@ -141,7 +141,7 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEX, context);
         }
       }
-      params = new Object[]{start, stop, INFINITY_LIMIT};
+      params = new Object[] { start, stop, INFINITY_LIMIT };
     }
 
     @SuppressWarnings("unchecked")

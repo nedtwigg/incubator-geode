@@ -23,8 +23,7 @@ import javax.servlet.http.HttpSessionBindingEvent;
 /**
  *
  */
-public class HttpSessionAttributeListenerImpl extends AbstractListener
-    implements HttpSessionAttributeListener {
+public class HttpSessionAttributeListenerImpl extends AbstractListener implements HttpSessionAttributeListener {
 
   @Override
   public synchronized void attributeAdded(HttpSessionBindingEvent se) {

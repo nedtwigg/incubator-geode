@@ -27,10 +27,11 @@ import org.apache.geode.*;
  */
 
 public abstract class SchedulingOrder extends GemFireException {
-    public SchedulingOrder() {
-        super();
-    }
-    public SchedulingOrder(String s) {
-        super(s);
-    }
+  public SchedulingOrder() {
+    super();
+  }
+
+  public SchedulingOrder(String s) {
+    super(s);
+  }
 }

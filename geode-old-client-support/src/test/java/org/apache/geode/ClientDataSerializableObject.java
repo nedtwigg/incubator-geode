@@ -23,12 +23,12 @@ import java.io.IOException;
 public class ClientDataSerializableObject implements DataSerializable {
 
   public ClientDataSerializableObject() {
-    
+
   }
 
   @Override
   public void toData(final DataOutput out) throws IOException {
-    
+
   }
 
   @Override

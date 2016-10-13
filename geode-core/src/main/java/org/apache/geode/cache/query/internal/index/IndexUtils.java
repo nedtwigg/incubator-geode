@@ -35,10 +35,9 @@ import org.apache.geode.cache.query.internal.index.IndexManager.TestHook;
 
 /**
  */
-public class IndexUtils  {
+public class IndexUtils {
 
-  public static final boolean indexesEnabled = System
-      .getProperty("query.disableIndexes") == null;
+  public static final boolean indexesEnabled = System.getProperty("query.disableIndexes") == null;
   public static final boolean useOnlyExactIndexs = false;
 
   public static TestHook testHook;
@@ -47,9 +46,9 @@ public class IndexUtils  {
     IndexUtils.testHook = testHook;
   }
 
-  public static IndexManager getIndexManager(Region region,
-      boolean createIfNotAvailable) {
-    if (region == null || region.isDestroyed()) return null;
+  public static IndexManager getIndexManager(Region region, boolean createIfNotAvailable) {
+    if (region == null || region.isDestroyed())
+      return null;
     LocalRegion lRegion = (LocalRegion) region;
     IndexManager idxMgr = lRegion.getIndexManager();
     if (idxMgr == null && createIfNotAvailable) {
@@ -63,8 +62,7 @@ public class IndexUtils  {
         if (lRegion.getIndexManager() == null) {
           idxMgr = new IndexManager(region);
           lRegion.setIndexManager(idxMgr);
-        }
-        else {
+        } else {
           idxMgr = lRegion.getIndexManager();
         }
       }
@@ -72,53 +70,42 @@ public class IndexUtils  {
     return idxMgr;
   }
 
-  public static IndexData findIndex(String regionpath, String defintions[],
-      CompiledValue indexedExpression, String projectionAttributes, Cache cache,
-      boolean usePrimaryIndex, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
-    DefaultQueryService qs = (DefaultQueryService) ((GemFireCacheImpl)cache).getLocalQueryService();
+  public static IndexData findIndex(String regionpath, String defintions[], CompiledValue indexedExpression, String projectionAttributes, Cache cache, boolean usePrimaryIndex, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+    DefaultQueryService qs = (DefaultQueryService) ((GemFireCacheImpl) cache).getLocalQueryService();
     //IndexProtocol index = null;
     IndexData indxData = null;
     if (usePrimaryIndex) {
       if (useOnlyExactIndexs) {
-        indxData = qs.getIndex(regionpath, defintions, IndexType.PRIMARY_KEY,
-            indexedExpression, context);
+        indxData = qs.getIndex(regionpath, defintions, IndexType.PRIMARY_KEY, indexedExpression, context);
       } else {
-        indxData = qs.getBestMatchIndex(regionpath, defintions,
-            IndexType.PRIMARY_KEY, indexedExpression, context);
+        indxData = qs.getBestMatchIndex(regionpath, defintions, IndexType.PRIMARY_KEY, indexedExpression, context);
       }
       //If we cannot find a primary key index, we can now look for a hash index
       //because both rely on usePrimaryIndex evaluating to true only if the query
       //is and equality or not equals condition
       if (indxData == null) {
         if (useOnlyExactIndexs) {
-          indxData = qs.getIndex(regionpath, defintions, IndexType.HASH,
-              indexedExpression, context);
+          indxData = qs.getIndex(regionpath, defintions, IndexType.HASH, indexedExpression, context);
         } else {
-          indxData = qs.getBestMatchIndex(regionpath, defintions,
-              IndexType.HASH, indexedExpression, context);
+          indxData = qs.getBestMatchIndex(regionpath, defintions, IndexType.HASH, indexedExpression, context);
         }
       }
     }
 
-      
     //If Primary Key Index not found or is not valid search for FUNCTIONAL
     // Index
-    if (indxData == null || !indxData._index.isValid() ) {
+    if (indxData == null || !indxData._index.isValid()) {
       if (useOnlyExactIndexs) {
-        indxData = qs.getIndex(regionpath, defintions, IndexType.FUNCTIONAL,
-            indexedExpression, context);
+        indxData = qs.getIndex(regionpath, defintions, IndexType.FUNCTIONAL, indexedExpression, context);
       } else {
-        indxData = qs.getBestMatchIndex(regionpath, defintions,
-            IndexType.FUNCTIONAL, indexedExpression, context);
+        indxData = qs.getBestMatchIndex(regionpath, defintions, IndexType.FUNCTIONAL, indexedExpression, context);
       }
-    }
-    else {
+    } else {
       //if exact PRIMARY_KEY Index not found then try to find exact FUNCTIONAL
       // Index
       //if (!fromClause.equals(index.getCanonicalizedFromClause())) {
-      if (indxData._matchLevel != 0 ) {
-        IndexData functionalIndxData = qs.getIndex(regionpath, defintions,
-            IndexType.FUNCTIONAL /* do not use pk index*/, indexedExpression, context);
+      if (indxData._matchLevel != 0) {
+        IndexData functionalIndxData = qs.getIndex(regionpath, defintions, IndexType.FUNCTIONAL /* do not use pk index*/, indexedExpression, context);
         //if FUNCTIONAL Index is exact match then use or else use PRIMARY_KEY
         // Index
         //if (functionalIndxInfo != null &&
@@ -130,5 +117,5 @@ public class IndexUtils  {
     }
     return indxData;
   }
-  
+
 }

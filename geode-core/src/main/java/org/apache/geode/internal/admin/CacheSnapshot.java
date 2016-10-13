@@ -24,11 +24,16 @@ package org.apache.geode.internal.admin;
  */
 public interface CacheSnapshot extends java.io.Serializable {
   public Object getName();
+
   public Object getUserAttribute();
 
   public long getLastModifiedTime();
+
   public long getLastAccessTime();
+
   public long getNumberOfHits();
+
   public long getNumberOfMisses();
+
   public float getHitRatio();
 }

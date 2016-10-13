@@ -48,7 +48,7 @@ public class CqStatsOptimizedExecuteDUnitTest extends CqStatsDUnitTest {
       }
     });
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {

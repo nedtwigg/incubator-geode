@@ -44,7 +44,7 @@ public class StatisticsTypeFactoryImpl implements StatisticsTypeFactory {
   public final static StatisticsTypeFactory singleton() {
     return singleton;
   }
-  
+
   protected final static void clear() {
     singleton.statTypes.clear();
   }
@@ -52,7 +52,7 @@ public class StatisticsTypeFactoryImpl implements StatisticsTypeFactory {
   // constructors
   private StatisticsTypeFactoryImpl() {
   }
-  
+
   // instance fields
   private final HashMap statTypes = new HashMap();
 
@@ -76,65 +76,64 @@ public class StatisticsTypeFactoryImpl implements StatisticsTypeFactory {
     }
     return result;
   }
-  public StatisticsType createType(String name, String description,
-                                   StatisticDescriptor[] stats) {
+
+  public StatisticsType createType(String name, String description, StatisticDescriptor[] stats) {
     return addType(new StatisticsTypeImpl(name, description, stats));
   }
+
   public StatisticsType findType(String name) {
-    return (StatisticsType)this.statTypes.get(name);
+    return (StatisticsType) this.statTypes.get(name);
   }
-  public StatisticsType[] createTypesFromXml(Reader reader)
-    throws IOException {
+
+  public StatisticsType[] createTypesFromXml(Reader reader) throws IOException {
     return StatisticsTypeImpl.fromXml(reader, this);
   }
 
-  public StatisticDescriptor createIntCounter(String name, String description,
-                                              String units) {
+  public StatisticDescriptor createIntCounter(String name, String description, String units) {
     return StatisticDescriptorImpl.createIntCounter(name, description, units, true);
   }
-  public StatisticDescriptor createLongCounter(String name, String description,
-                                               String units) {
+
+  public StatisticDescriptor createLongCounter(String name, String description, String units) {
     return StatisticDescriptorImpl.createLongCounter(name, description, units, true);
   }
-  public StatisticDescriptor createDoubleCounter(String name, String description,
-                                                 String units) {
+
+  public StatisticDescriptor createDoubleCounter(String name, String description, String units) {
     return StatisticDescriptorImpl.createDoubleCounter(name, description, units, true);
   }
-  public StatisticDescriptor createIntGauge(String name, String description,
-                                            String units) {
+
+  public StatisticDescriptor createIntGauge(String name, String description, String units) {
     return StatisticDescriptorImpl.createIntGauge(name, description, units, false);
   }
-  public StatisticDescriptor createLongGauge(String name, String description,
-                                             String units) {
+
+  public StatisticDescriptor createLongGauge(String name, String description, String units) {
     return StatisticDescriptorImpl.createLongGauge(name, description, units, false);
   }
-  public StatisticDescriptor createDoubleGauge(String name, String description,
-                                               String units) {
+
+  public StatisticDescriptor createDoubleGauge(String name, String description, String units) {
     return StatisticDescriptorImpl.createDoubleGauge(name, description, units, false);
   }
 
-  public StatisticDescriptor createIntCounter(String name, String description,
-                                              String units, boolean largerBetter) {
+  public StatisticDescriptor createIntCounter(String name, String description, String units, boolean largerBetter) {
     return StatisticDescriptorImpl.createIntCounter(name, description, units, largerBetter);
   }
-  public StatisticDescriptor createLongCounter(String name, String description,
-                                               String units, boolean largerBetter) {
+
+  public StatisticDescriptor createLongCounter(String name, String description, String units, boolean largerBetter) {
     return StatisticDescriptorImpl.createLongCounter(name, description, units, largerBetter);
   }
-  public StatisticDescriptor createDoubleCounter(String name, String description,
-                                                 String units, boolean largerBetter) {
+
+  public StatisticDescriptor createDoubleCounter(String name, String description, String units, boolean largerBetter) {
     return StatisticDescriptorImpl.createDoubleCounter(name, description, units, largerBetter);
   }
-  public StatisticDescriptor createIntGauge(String name, String description,
-                                            String units, boolean largerBetter) {
+
+  public StatisticDescriptor createIntGauge(String name, String description, String units, boolean largerBetter) {
     return StatisticDescriptorImpl.createIntGauge(name, description, units, largerBetter);
   }
-  public StatisticDescriptor createLongGauge(String name, String description,
-                                             String units, boolean largerBetter) {
+
+  public StatisticDescriptor createLongGauge(String name, String description, String units, boolean largerBetter) {
     return StatisticDescriptorImpl.createLongGauge(name, description, units, largerBetter);
   }
-  public StatisticDescriptor createDoubleGauge(String name, String description,
-                                               String units, boolean largerBetter) {
+
+  public StatisticDescriptor createDoubleGauge(String name, String description, String units, boolean largerBetter) {
     return StatisticDescriptorImpl.createDoubleGauge(name, description, units, largerBetter);
   }
 }

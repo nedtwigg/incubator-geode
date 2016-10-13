@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -41,27 +40,26 @@ public final class FetchDistLockInfoRequest extends AdminRequest {
   /**
    * Must return a proper response to this request.
    */
-  @Override  
+  @Override
   protected AdminResponse createResponse(DistributionManager dm) {
-    return FetchDistLockInfoResponse.create(dm, this.getSender()); 
+    return FetchDistLockInfoResponse.create(dm, this.getSender());
   }
 
   public int getDSFID() {
     return FETCH_DIST_LOCK_INFO_REQUEST;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 
-  @Override  
+  @Override
   public String toString() {
     return LocalizedStrings.FetchDistLockInfoRequest_FETCHDISTLOCKINFOREQUEST_FROM_0.toLocalizedString(this.getSender());
   }

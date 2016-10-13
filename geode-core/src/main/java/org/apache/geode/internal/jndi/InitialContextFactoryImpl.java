@@ -35,7 +35,7 @@ import javax.naming.Context;
 public class InitialContextFactoryImpl implements InitialContextFactory {
 
   private static Map oldSystemProps = new HashMap();
-//  private static Hashtable env;
+  //  private static Hashtable env;
   private static Context ctx;
 
   /**
@@ -48,8 +48,7 @@ public class InitialContextFactoryImpl implements InitialContextFactory {
    *            the instance of this context.
    * @return ContextImpl object.
    */
-  public synchronized Context getInitialContext(Hashtable environment)
-      throws NamingException {
+  public synchronized Context getInitialContext(Hashtable environment) throws NamingException {
     if (ctx == null) {
       ctx = new ContextImpl();
     }
@@ -73,10 +72,8 @@ public class InitialContextFactoryImpl implements InitialContextFactory {
     oldSystemProps.put(key, System.getProperty(key));
     key = Context.URL_PKG_PREFIXES;
     oldSystemProps.put(key, System.getProperty(key));
-    System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-        InitialContextFactoryImpl.class.getName());
-    System.setProperty(Context.URL_PKG_PREFIXES,
-        "org.apache.geode.internal.jndi");
+    System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextFactoryImpl.class.getName());
+    System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.geode.internal.jndi");
   }
 
   /**

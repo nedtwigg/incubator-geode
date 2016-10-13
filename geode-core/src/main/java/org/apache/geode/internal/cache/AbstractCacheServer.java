@@ -49,7 +49,7 @@ public abstract class AbstractCacheServer implements CacheServer {
 
   /** The port that the bridge server was configured to run on */
   protected int port;
-  
+
   /** The maximum number of connections that the BridgeServer will accept */
   protected int maxConnections;
 
@@ -58,28 +58,28 @@ public abstract class AbstractCacheServer implements CacheServer {
 
   /** Whether the bridge server notifies by subscription */
   protected boolean notifyBySubscription = true;
-  
+
   /**
    * The buffer size in bytes of the socket for this 
    * <code>BridgeServer</code>
    */
   protected int socketBufferSize;
-  
+
   /**
    * The tcpNoDelay setting for outgoing sockets
    */
   protected boolean tcpNoDelay;
-  
+
   /**
    * The maximum amount of time between client pings. This value is used by
    * the <code>ClientHealthMonitor</code> to determine the health of this
    * <code>BridgeServer</code>'s clients.
    */
   protected int maximumTimeBetweenPings;
-  
+
   /** the maximum number of messages that can be enqueued in a client-queue. */
   protected int maximumMessageCount;
-  
+
   /**
    * the time (in seconds) after which a message in the client queue will
    * expire.
@@ -90,7 +90,7 @@ public abstract class AbstractCacheServer implements CacheServer {
    * @since GemFire 5.7
    */
   protected String[] groups;
-  
+
   protected ServerLoadProbe loadProbe;
 
   /**
@@ -104,20 +104,20 @@ public abstract class AbstractCacheServer implements CacheServer {
    * @since GemFire 5.7
    */
   protected String hostnameForClients;
-  
+
   /**
    * How frequency to poll the load on this server.
    */
   protected long loadPollInterval;
-  
+
   protected ClientSubscriptionConfig clientSubscriptionConfig;
-  
+
   /**
    * Listens to client membership events and notifies any admin 
    * members as clients of this server leave/crash. 
    */
   protected final ClientMembershipListener listener;
-  
+
   //////////////////////  Constructors  //////////////////////
 
   /**
@@ -140,7 +140,7 @@ public abstract class AbstractCacheServer implements CacheServer {
     this.tcpNoDelay = CacheServer.DEFAULT_TCP_NO_DELAY;
     this.maximumTimeBetweenPings = CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS;
     this.maximumMessageCount = CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT;
-    this.messageTimeToLive = CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE;    
+    this.messageTimeToLive = CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE;
     this.groups = CacheServer.DEFAULT_GROUPS;
     this.bindAddress = CacheServer.DEFAULT_BIND_ADDRESS;
     this.hostnameForClients = CacheServer.DEFAULT_HOSTNAME_FOR_CLIENTS;
@@ -174,7 +174,7 @@ public abstract class AbstractCacheServer implements CacheServer {
           createAndSendMessage(event, ClientMembershipMessage.CRASHED);
         }
       }
-      
+
       /**
        * Method to create & send the ClientMembershipMessage to admin members.
        * The message is sent only if there are any admin members in the
@@ -190,25 +190,22 @@ public abstract class AbstractCacheServer implements CacheServer {
         InternalDistributedSystem ds = null;
         Cache cacheInstance = AbstractCacheServer.this.cache;
         if (cacheInstance != null && !(cacheInstance instanceof CacheCreation)) {
-          ds = (InternalDistributedSystem)cacheInstance.getDistributedSystem();
+          ds = (InternalDistributedSystem) cacheInstance.getDistributedSystem();
         } else {
           ds = InternalDistributedSystem.getAnyInstance();
         }
 
         //ds could be null
         if (ds != null && ds.isConnected()) {
-          DM dm =  ds.getDistributionManager();
+          DM dm = ds.getDistributionManager();
           Set adminMemberSet = dm.getAdminMemberSet();
 
           /* check if there are any admin members at all */
           if (!adminMemberSet.isEmpty()) {
             DistributedMember member = event.getMember();
 
-            ClientMembershipMessage msg = 
-              new ClientMembershipMessage(event.getMemberId(), 
-                                      member == null ? null : member.getHost(), 
-                                      type);
-            
+            ClientMembershipMessage msg = new ClientMembershipMessage(event.getMemberId(), member == null ? null : member.getHost(), type);
+
             msg.setRecipients(adminMemberSet);
             dm.putOutgoing(msg);
           }
@@ -236,7 +233,7 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setBindAddress(String address) {
     this.bindAddress = address;
   }
-  
+
   public String getHostnameForClients() {
     return this.hostnameForClients;
   }
@@ -244,7 +241,7 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setHostnameForClients(String name) {
     this.hostnameForClients = name;
   }
-  
+
   public int getMaxConnections() {
     return this.maxConnections;
   }
@@ -277,7 +274,7 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setSocketBufferSize(int socketBufferSize) {
     this.socketBufferSize = socketBufferSize;
   }
-  
+
   public int getSocketBufferSize() {
     return this.socketBufferSize;
   }
@@ -285,11 +282,11 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setMaximumTimeBetweenPings(int maximumTimeBetweenPings) {
     this.maximumTimeBetweenPings = maximumTimeBetweenPings;
   }
-  
+
   public int getMaximumTimeBetweenPings() {
     return this.maximumTimeBetweenPings;
   }
-  
+
   public int getMaximumMessageCount() {
     return this.maximumMessageCount;
   }
@@ -297,7 +294,7 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setMaximumMessageCount(int maximumMessageCount) {
     this.maximumMessageCount = maximumMessageCount;
   }
-  
+
   public int getMessageTimeToLive() {
     return this.messageTimeToLive;
   }
@@ -305,14 +302,13 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setMessageTimeToLive(int messageTimeToLive) {
     this.messageTimeToLive = messageTimeToLive;
   }
-  
+
   public void setGroups(String[] groups) {
     if (groups == null) {
       this.groups = CacheServer.DEFAULT_GROUPS;
-    }
-    else if (groups.length > 0) {
+    } else if (groups.length > 0) {
       // copy it for isolation
-      String [] copy = new String[groups.length];
+      String[] copy = new String[groups.length];
       System.arraycopy(groups, 0, copy, 0, groups.length);
       this.groups = copy;
     } else {
@@ -324,13 +320,13 @@ public abstract class AbstractCacheServer implements CacheServer {
     String[] result = this.groups;
     if (result.length > 0) {
       // copy it for isolation
-      String [] copy = new String[result.length];
+      String[] copy = new String[result.length];
       System.arraycopy(result, 0, copy, 0, result.length);
       result = copy;
     }
     return result;
   }
-  
+
   public ServerLoadProbe getLoadProbe() {
     return loadProbe;
   }
@@ -338,7 +334,7 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setLoadProbe(ServerLoadProbe loadProbe) {
     this.loadProbe = loadProbe;
   }
-  
+
   public long getLoadPollInterval() {
     return loadPollInterval;
   }
@@ -350,7 +346,7 @@ public abstract class AbstractCacheServer implements CacheServer {
   public void setTcpNoDelay(boolean setting) {
     this.tcpNoDelay = setting;
   }
-  
+
   public boolean getTcpNoDelay() {
     return this.tcpNoDelay;
   }
@@ -366,24 +362,12 @@ public abstract class AbstractCacheServer implements CacheServer {
       return s1.equals(s2);
     }
   }
-  
+
   /**
    * Returns whether or not this bridge server has the same
    * configuration as another bridge server.
    */
   public boolean sameAs(CacheServer other) {
-    return getPort() == other.getPort()
-      && eq(getBindAddress(), other.getBindAddress())
-      && getSocketBufferSize() == other.getSocketBufferSize()
-      && getMaximumTimeBetweenPings() == other.getMaximumTimeBetweenPings()
-      && getNotifyBySubscription() == other.getNotifyBySubscription()
-      && getMaxConnections() == other.getMaxConnections()
-      && getMaxThreads() == other.getMaxThreads()
-      && getMaximumMessageCount() == other.getMaximumMessageCount()
-      && getMessageTimeToLive() == other.getMessageTimeToLive()
-      && Arrays.equals(getGroups(), other.getGroups())
-      && getLoadProbe().equals(other.getLoadProbe())
-      && getLoadPollInterval() == other.getLoadPollInterval()
-      && getTcpNoDelay() == other.getTcpNoDelay();
+    return getPort() == other.getPort() && eq(getBindAddress(), other.getBindAddress()) && getSocketBufferSize() == other.getSocketBufferSize() && getMaximumTimeBetweenPings() == other.getMaximumTimeBetweenPings() && getNotifyBySubscription() == other.getNotifyBySubscription() && getMaxConnections() == other.getMaxConnections() && getMaxThreads() == other.getMaxThreads() && getMaximumMessageCount() == other.getMaximumMessageCount() && getMessageTimeToLive() == other.getMessageTimeToLive() && Arrays.equals(getGroups(), other.getGroups()) && getLoadProbe().equals(other.getLoadProbe()) && getLoadPollInterval() == other.getLoadPollInterval() && getTcpNoDelay() == other.getTcpNoDelay();
   }
 }

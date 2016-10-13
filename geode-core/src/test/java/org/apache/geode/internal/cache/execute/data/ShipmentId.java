@@ -42,7 +42,7 @@ public class ShipmentId implements DataSerializable {
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.shipmentId = DataSerializer.readInteger(in);
-    this.orderId = (OrderId)DataSerializer.readObject(in);
+    this.orderId = (OrderId) DataSerializer.readObject(in);
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -69,20 +69,20 @@ public class ShipmentId implements DataSerializable {
   public void setShipmentId(Integer shipmentId) {
     this.shipmentId = shipmentId;
   }
-  
+
   public boolean equals(Object obj) {
-    if(this == obj)
+    if (this == obj)
       return true;
-    
-    if(obj instanceof ShipmentId){
-      ShipmentId other = (ShipmentId)obj;
-      if(orderId.equals(other.orderId) && shipmentId.equals(other.shipmentId)){
+
+    if (obj instanceof ShipmentId) {
+      ShipmentId other = (ShipmentId) obj;
+      if (orderId.equals(other.orderId) && shipmentId.equals(other.shipmentId)) {
         return true;
       }
     }
     return false;
   }
-  
+
   public int hashCode() {
     return orderId.getCustId().hashCode();
   }

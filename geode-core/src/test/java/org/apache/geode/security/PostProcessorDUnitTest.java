@@ -42,17 +42,17 @@ import org.apache.geode.test.junit.categories.SecurityTest;
 @Category({ DistributedTest.class, SecurityTest.class })
 public class PostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
 
-  public PostProcessorDUnitTest(){
+  public PostProcessorDUnitTest() {
     this.postProcessor = SamplePostProcessor.class;
   }
 
   @Test
-  public void testPostProcessRegionGet(){
+  public void testPostProcessRegionGet() {
     List<String> keys = new ArrayList<>();
     keys.add("key1");
     keys.add("key2");
 
-    client1.invoke(()->{
+    client1.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
 
@@ -69,8 +69,8 @@ public class PostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
   }
 
   @Test
-  public void testPostProcessQuery(){
-    client1.invoke(()->{
+  public void testPostProcessQuery() {
+    client1.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
 
@@ -86,7 +86,7 @@ public class PostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       assertTrue(result.contains("super-user/null/null/value4"));
 
       Pool pool = PoolManager.find(region);
-      result =  (SelectResults)pool.getQueryService().newQuery(query).execute();
+      result = (SelectResults) pool.getQueryService().newQuery(query).execute();
       assertTrue(result.contains("super-user/null/null/value0"));
       assertTrue(result.contains("super-user/null/null/value1"));
       assertTrue(result.contains("super-user/null/null/value2"));
@@ -96,14 +96,11 @@ public class PostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
   }
 
   @Test
-  public void testRegisterInterestPostProcess(){
-    client1.invoke(()->{
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567"))
-        .setPoolSubscriptionEnabled(true)
-        .addPoolServer("localhost", serverPort)
-        .create();
+  public void testRegisterInterestPostProcess() {
+    client1.invoke(() -> {
+      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
-      ClientRegionFactory factory =  cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
+      ClientRegionFactory factory = cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
       factory.addCacheListener(new CacheListenerAdapter() {
         @Override
         public void afterUpdate(EntryEvent event) {
@@ -116,7 +113,7 @@ public class PostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       region.registerInterest("key1");
     });
 
-    client2.invoke(()->{
+    client2.invoke(() -> {
       ClientCache cache = createClientCache("dataUser", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
       region.put("key1", "value2");

@@ -23,9 +23,7 @@ import java.util.Map;
 
 public interface IndexListener {
 
-  public void beforeIndexCreated(final String indexName, String regionPath,
-      final Analyzer analyzer, final Map<String, Analyzer> fieldAnalyzers,
-      final String... fields);
+  public void beforeIndexCreated(final String indexName, String regionPath, final Analyzer analyzer, final Map<String, Analyzer> fieldAnalyzers, final String... fields);
 
   public void afterIndexCreated(LuceneIndex index);
 

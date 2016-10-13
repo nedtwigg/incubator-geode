@@ -36,15 +36,14 @@ public abstract class IdentifiableUtils {
 
   private static final AtomicLong ID_SEQUENCE = new AtomicLong(0l);
 
-  protected static final Logger LOGGER = Logger
-      .getLogger(IdentifiableUtils.class.getName());
+  protected static final Logger LOGGER = Logger.getLogger(IdentifiableUtils.class.getName());
 
   public static synchronized long createId() {
     return ID_SEQUENCE.incrementAndGet();
   }
 
   public static synchronized Long createId(final Long baseId) {
-    final long delta = ((baseId != null ? baseId.longValue() : 0l) - ID_SEQUENCE.get()); 
+    final long delta = ((baseId != null ? baseId.longValue() : 0l) - ID_SEQUENCE.get());
     long newId = (delta > 0 ? ID_SEQUENCE.addAndGet(delta) : createId());
     return Long.valueOf(newId);
   }
@@ -68,13 +67,12 @@ public abstract class IdentifiableUtils {
   }
 
   public static boolean isGetIdMethodAvailable(final Object identifiableObject) {
-    return (identifiableObject != null && ClassUtils.hasMethod(
-        identifiableObject.getClass(), "getId"));
+    return (identifiableObject != null && ClassUtils.hasMethod(identifiableObject.getClass(), "getId"));
   }
 
   @SuppressWarnings("unchecked")
   public static <T> void setId(final Object identifiableObject, final T id) {
-    
+
     if (isSetIdMethodAvailable(identifiableObject, id)) {
       final MethodInvoker method = new MethodInvoker();
 
@@ -86,23 +84,15 @@ public abstract class IdentifiableUtils {
         method.prepare();
         method.invoke();
       } catch (Exception e) {
-        throw new IllegalArgumentException(
-            String.format("Failed to set ID (%1$s) on Object (%2$s)!", id,
-                identifiableObject), e);
+        throw new IllegalArgumentException(String.format("Failed to set ID (%1$s) on Object (%2$s)!", id, identifiableObject), e);
       }
     } else {
-      LOGGER.warning(String.format(
-          "Not able to set ID (%1$s) of type (%2$s) on Object of type (%3$s)",
-          id, ObjectUtils.nullSafeClassName(id),
-          ObjectUtils.nullSafeClassName(identifiableObject)));
+      LOGGER.warning(String.format("Not able to set ID (%1$s) of type (%2$s) on Object of type (%3$s)", id, ObjectUtils.nullSafeClassName(id), ObjectUtils.nullSafeClassName(identifiableObject)));
     }
   }
 
-  public static <T> boolean isSetIdMethodAvailable(
-      final Object identifiableObject, final T id) {
-    return (identifiableObject != null && ClassUtils.hasMethod(
-        identifiableObject.getClass(), "setId",
-        (id == null ? Object.class : id.getClass())));
+  public static <T> boolean isSetIdMethodAvailable(final Object identifiableObject, final T id) {
+    return (identifiableObject != null && ClassUtils.hasMethod(identifiableObject.getClass(), "setId", (id == null ? Object.class : id.getClass())));
   }
 
 }

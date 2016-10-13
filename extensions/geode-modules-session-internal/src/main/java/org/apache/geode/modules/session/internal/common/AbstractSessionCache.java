@@ -40,8 +40,7 @@ public abstract class AbstractSessionCache implements SessionCache {
    */
   protected Region<String, HttpSession> operatingRegion;
 
-  protected Map<CacheProperty, Object> properties =
-      new TypeAwareMap<CacheProperty, Object>(CacheProperty.class);
+  protected Map<CacheProperty, Object> properties = new TypeAwareMap<CacheProperty, Object>(CacheProperty.class);
 
   protected DeltaSessionStatistics statistics;
 
@@ -70,9 +69,7 @@ public abstract class AbstractSessionCache implements SessionCache {
   }
 
   protected void createStatistics() {
-    this.statistics =
-        new DeltaSessionStatistics(getCache().getDistributedSystem(),
-            (String) properties.get(CacheProperty.STATISTICS_NAME));
+    this.statistics = new DeltaSessionStatistics(getCache().getDistributedSystem(), (String) properties.get(CacheProperty.STATISTICS_NAME));
   }
 
   /**
@@ -84,18 +81,12 @@ public abstract class AbstractSessionCache implements SessionCache {
   protected RegionConfiguration createRegionConfiguration() {
     RegionConfiguration configuration = new RegionConfiguration();
 
-    configuration.setRegionName(
-        (String) properties.get(CacheProperty.REGION_NAME));
-    configuration.setRegionAttributesId(
-        (String) properties.get(CacheProperty.REGION_ATTRIBUTES_ID));
+    configuration.setRegionName((String) properties.get(CacheProperty.REGION_NAME));
+    configuration.setRegionAttributesId((String) properties.get(CacheProperty.REGION_ATTRIBUTES_ID));
 
-    configuration.setEnableGatewayDeltaReplication(
-        (Boolean) properties.get(
-            CacheProperty.ENABLE_GATEWAY_DELTA_REPLICATION));
-    configuration.setEnableGatewayReplication(
-        (Boolean) properties.get(CacheProperty.ENABLE_GATEWAY_REPLICATION));
-    configuration.setEnableDebugListener(
-        (Boolean) properties.get(CacheProperty.ENABLE_DEBUG_LISTENER));
+    configuration.setEnableGatewayDeltaReplication((Boolean) properties.get(CacheProperty.ENABLE_GATEWAY_DELTA_REPLICATION));
+    configuration.setEnableGatewayReplication((Boolean) properties.get(CacheProperty.ENABLE_GATEWAY_REPLICATION));
+    configuration.setEnableDebugListener((Boolean) properties.get(CacheProperty.ENABLE_DEBUG_LISTENER));
 
     return configuration;
   }

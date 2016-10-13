@@ -27,15 +27,15 @@ import org.apache.geode.cache.query.internal.QCompiler;
  */
 public class GemFireAST extends CommonAST {
   private static final long serialVersionUID = 779964802274305208L;
-  
+
   public GemFireAST() {
     super();
   }
-  
+
   public GemFireAST(Token tok) {
     super(tok);
   }
-  
+
   @Override
   public String getText() {
     String txt = super.getText();
@@ -44,17 +44,17 @@ public class GemFireAST extends CommonAST {
     }
     return txt;
   }
-  
-  public void compile(QCompiler compiler)  {
+
+  public void compile(QCompiler compiler) {
     childrenCompile(compiler);
   }
-  
+
   public void childrenCompile(QCompiler compiler) {
-    GemFireAST child = (GemFireAST)getFirstChild();
+    GemFireAST child = (GemFireAST) getFirstChild();
     while (child != null) {
       child.compile(compiler);
-      child = (GemFireAST)child.getNextSibling();
+      child = (GemFireAST) child.getNextSibling();
     }
   }
-  
+
 }

@@ -40,11 +40,11 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberPattern;
  */
 public class RevokePersistentIDRequest extends CliLegacyMessage {
   PersistentMemberPattern pattern;
-  
+
   public RevokePersistentIDRequest() {
-    
+
   }
-  
+
   public RevokePersistentIDRequest(PersistentMemberPattern pattern) {
     this.pattern = pattern;
   }
@@ -53,14 +53,14 @@ public class RevokePersistentIDRequest extends CliLegacyMessage {
     Set recipients = dm.getOtherDistributionManagerIds();
     RevokePersistentIDRequest request = new RevokePersistentIDRequest(pattern);
     request.setRecipients(recipients);
-    
+
     AdminMultipleReplyProcessor replyProcessor = new AdminMultipleReplyProcessor(dm, recipients);
     request.msgId = replyProcessor.getProcessorId();
     dm.putOutgoing(request);
     try {
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
-      if(e.getCause() instanceof CancelException) {
+      if (e.getCause() instanceof CancelException) {
         //ignore
         return;
       }
@@ -68,13 +68,13 @@ public class RevokePersistentIDRequest extends CliLegacyMessage {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    request.createResponse((DistributionManager)dm);
+    request.createResponse((DistributionManager) dm);
   }
-  
+
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-    if(cache != null && !cache.isClosed()) {
+    if (cache != null && !cache.isClosed()) {
       PersistentMemberManager mm = cache.getPersistentMemberManager();
       mm.revokeMember(pattern);
     }

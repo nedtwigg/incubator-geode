@@ -75,10 +75,10 @@ public class StatArchiveWithConsecutiveResourceInstIntegrationTest {
 
   @Test
   public void readingFourActiveCacheClientUpdaterStatsWithReaderMatchSpec() throws Exception {
-    StatArchiveReader reader = new StatArchiveReader(new File[] {this.archiveFile}, new StatSpec[] {this.statSpec }, true);
+    StatArchiveReader reader = new StatArchiveReader(new File[] { this.archiveFile }, new StatSpec[] { this.statSpec }, true);
 
     Set<ResourceInst> resourceInstList = new HashSet<>();
-    for (StatValue statValue: reader.matchSpec(this.statSpec)) {
+    for (StatValue statValue : reader.matchSpec(this.statSpec)) {
       for (int i = 0; i < statValue.getResources().length; i++) {
         resourceInstList.add(statValue.getResources()[i]);
       }
@@ -89,7 +89,7 @@ public class StatArchiveWithConsecutiveResourceInstIntegrationTest {
 
   @Test
   public void readingFourActiveCacheClientUpdaterStatsWithReader() throws Exception {
-    StatArchiveReader reader = new StatArchiveReader(new File[] {this.archiveFile}, new StatSpec[]{this.statSpec }, true);
+    StatArchiveReader reader = new StatArchiveReader(new File[] { this.archiveFile }, new StatSpec[] { this.statSpec }, true);
 
     Set<ResourceInst> resourceInstList = new HashSet<>();
     for (Iterator<ResourceInst> it = reader.getResourceInstList().iterator(); it.hasNext();) {

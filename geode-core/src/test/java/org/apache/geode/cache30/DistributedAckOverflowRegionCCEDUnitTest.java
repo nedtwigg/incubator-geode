@@ -36,8 +36,7 @@ import org.apache.geode.cache.RegionAttributes;
 import org.apache.geode.cache.Scope;
 
 @Category(DistributedTest.class)
-public class DistributedAckOverflowRegionCCEDUnitTest extends
-    DistributedAckRegionCCEDUnitTest {
+public class DistributedAckOverflowRegionCCEDUnitTest extends DistributedAckRegionCCEDUnitTest {
 
   public DistributedAckOverflowRegionCCEDUnitTest() {
     super();
@@ -49,24 +48,21 @@ public class DistributedAckOverflowRegionCCEDUnitTest extends
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     factory.setConcurrencyChecksEnabled(true);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(
-        5, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
     return factory.create();
   }
-  
+
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = getCache().getRegionAttributes(type);
     if (ra == null) {
-      throw new IllegalStateException("The region shortcut " + type
-                                      + " has been removed.");
+      throw new IllegalStateException("The region shortcut " + type + " has been removed.");
     }
     AttributesFactory factory = new AttributesFactory(ra);
     factory.setConcurrencyChecksEnabled(true);
-    if(!ra.getDataPolicy().isEmpty()) {
-      factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(
-          5, EvictionAction.OVERFLOW_TO_DISK));
+    if (!ra.getDataPolicy().isEmpty()) {
+      factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
     }
     return factory.create();
-  }  
+  }
 }

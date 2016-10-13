@@ -14,17 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
-package org.apache.geode.internal.admin.remote;
 
+package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.internal.admin.GemFireVM;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 public final class CacheDisplay {
   public static Object getCachedObjectDisplay(Object obj, int inspectionType) {
-    switch(inspectionType) {
+    switch (inspectionType) {
     case GemFireVM.LIGHTWEIGHT_CACHE_VALUE:
       if (obj == null) {
         return "null";
@@ -41,10 +39,10 @@ public final class CacheDisplay {
       //  return "a " + name;
       //} else {
       return name + " \"" + toString + "\"";
-      //}
+    //}
     case GemFireVM.PHYSICAL_CACHE_VALUE:
       Object physicalVal = EntryValueNodeImpl.createFromValueRoot(obj, false);
-      return (physicalVal == null) ? "null" :  physicalVal;
+      return (physicalVal == null) ? "null" : physicalVal;
     case GemFireVM.LOGICAL_CACHE_VALUE:
       Object logicalVal = EntryValueNodeImpl.createFromValueRoot(obj, true);
       return (logicalVal == null) ? "null" : logicalVal;
@@ -56,24 +54,25 @@ public final class CacheDisplay {
   private static String getArrayDisplayName(Object instance) {
     if (instance instanceof Object[]) {
       String className = instance.getClass().getName();
-      return "an array of " + getClassName(className.substring(2, className.length()-1)) + " with " + ((Object[])instance).length + " elements";
+      return "an array of " + getClassName(className.substring(2, className.length() - 1)) + " with " + ((Object[]) instance).length + " elements";
     } else if (instance instanceof int[]) {
-      return "an array of int with " + ((int[])instance).length + " elements";
+      return "an array of int with " + ((int[]) instance).length + " elements";
     } else if (instance instanceof double[]) {
-      return "an array of double with " + ((double[])instance).length + " elements";
+      return "an array of double with " + ((double[]) instance).length + " elements";
     } else if (instance instanceof char[]) {
-      return "an array of char with " + ((char[])instance).length + " elements";
+      return "an array of char with " + ((char[]) instance).length + " elements";
     } else if (instance instanceof byte[]) {
-      return "an array of byte with " + ((byte[])instance).length + " elements";
+      return "an array of byte with " + ((byte[]) instance).length + " elements";
     } else if (instance instanceof boolean[]) {
-      return "an array of boolean with " + ((boolean[])instance).length + " elements";
+      return "an array of boolean with " + ((boolean[]) instance).length + " elements";
     } else if (instance instanceof long[]) {
-      return "an array of long with " + ((long[])instance).length + " elements";
+      return "an array of long with " + ((long[]) instance).length + " elements";
     } else if (instance instanceof float[]) {
-      return "an array of float with " + ((float[])instance).length + " elements";
+      return "an array of float with " + ((float[]) instance).length + " elements";
     } else if (instance instanceof short[]) {
-      return "an array of short with " + ((short[])instance).length + " elements";
-    } else return null;
+      return "an array of short with " + ((short[]) instance).length + " elements";
+    } else
+      return null;
   }
 
   private static String getClassName(Class clazz) {
@@ -81,6 +80,6 @@ public final class CacheDisplay {
   }
 
   private static String getClassName(String name) {
-    return (name.length() > 64) ? name.substring(name.lastIndexOf(".")+1) : name;
+    return (name.length() > 64) ? name.substring(name.lastIndexOf(".") + 1) : name;
   }
 }

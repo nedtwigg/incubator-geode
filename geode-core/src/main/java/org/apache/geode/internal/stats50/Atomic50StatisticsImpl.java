@@ -53,7 +53,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
 
   /** The StatisticsFactory that created this instance */
   private final StatisticsManager dSystem;
-  
+
   ///////////////////////  Constructors  ///////////////////////
 
   /**
@@ -72,15 +72,11 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
    *        statistics are stored (and collected) in GemFire shared
    *        memory or in the local VM
    */
-  public Atomic50StatisticsImpl(StatisticsType type, String textId,
-                             long numericId,
-                             long uniqueId,
-                             StatisticsManager system) {
-    super(type, calcTextId(system, textId), calcNumericId(system, numericId),
-          uniqueId, 0);
+  public Atomic50StatisticsImpl(StatisticsType type, String textId, long numericId, long uniqueId, StatisticsManager system) {
+    super(type, calcTextId(system, textId), calcNumericId(system, numericId), uniqueId, 0);
     this.dSystem = system;
 
-    StatisticsTypeImpl realType = (StatisticsTypeImpl)type;
+    StatisticsTypeImpl realType = (StatisticsTypeImpl) type;
     if (realType.getDoubleStatCount() > 0) {
       throw new IllegalArgumentException(LocalizedStrings.Atomic50StatisticsImpl_ATOMICS_DO_NOT_SUPPORT_DOUBLE_STATS.toLocalizedString());
     }
@@ -91,7 +87,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
       this.intStorage = new AtomicIntegerArray(intCount);
       this.intDirty = new AtomicIntegerArray(intCount);
       this.intReadPrepLock = new Object[intCount];
-      for (int i=0; i < intCount; i++) {
+      for (int i = 0; i < intCount; i++) {
         this.intReadPrepLock[i] = new Object();
       }
     } else {
@@ -104,7 +100,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
       this.longStorage = new AtomicLongArray(longCount);
       this.longDirty = new AtomicIntegerArray(longCount);
       this.longReadPrepLock = new Object[longCount];
-      for (int i=0; i < longCount; i++) {
+      for (int i = 0; i < longCount; i++) {
         this.longReadPrepLock[i] = new Object();
       }
     } else {
@@ -180,7 +176,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
     public boolean isAlive() {
       return this.owner.isAlive();
     }
-    
+
     public ThreadStorage(int intSize, int longSize) {
       this.owner = Thread.currentThread();
       if (intSize > 0) {
@@ -195,6 +191,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
       }
     }
   }
+
   private final ThreadLocal<ThreadStorage> threadStore = new ThreadLocal<ThreadStorage>();
 
   private ThreadStorage getThreadStorage() {
@@ -214,15 +211,18 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
     }
     return result;
   }
+
   private ThreadStorage getThreadStorageForWrite() {
     ThreadStorage result = getThreadStorage();
-    if (!result.dirty) result.dirty = true;
+    if (!result.dirty)
+      result.dirty = true;
     return result;
   }
+
   private AtomicIntegerArray getThreadIntStorage() {
     return getThreadStorageForWrite().intStore;
   }
-  
+
   private AtomicLongArray getThreadLongStorage() {
     return getThreadStorageForWrite().longStore;
   }
@@ -285,26 +285,27 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   /**
    * Prepare the threadStoreList by moving into it all the new instances in Q.
    */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="JLM_JSR166_UTILCONCURRENT_MONITORENTER",
-  justification="findbugs complains about this synchronize. It could be changed to a sync on a dedicated Object instance to make findbugs happy. see comments below")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "JLM_JSR166_UTILCONCURRENT_MONITORENTER", justification = "findbugs complains about this synchronize. It could be changed to a sync on a dedicated Object instance to make findbugs happy. see comments below")
   private void prepareThreadStoreList() {
     // The following sync is for the rare case when this method is called concurrently.
     // In that case it would be sub-optimal for both threads to concurrently create their
     // own ArrayList and then for both of them to call addAll.
     // findbugs complains about this synchronize. It could be changed to a sync on a dedicated Object instance to make findbugs happy.
-    synchronized(threadStoreList) {
+    synchronized (threadStoreList) {
       ThreadStorage ts = this.threadStoreQ.poll();
-      if (ts == null) return;
+      if (ts == null)
+        return;
       ArrayList<ThreadStorage> tmp = new ArrayList<ThreadStorage>(64);
       do {
         tmp.add(ts);
-        ts = this.threadStoreQ.poll();      
+        ts = this.threadStoreQ.poll();
       } while (ts != null);
       if (tmp.size() > 0) {
         this.threadStoreList.addAll(tmp);
       }
     }
   }
+
   /**
    * Used to take striped thread stats and "roll them up" into a single
    * shared stat.
@@ -313,10 +314,11 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   @Override
   public void prepareForSample() {
     // mark this thread as the sampler
-    if (samplerThread.get() == null) samplerThread.set(Boolean.TRUE);
+    if (samplerThread.get() == null)
+      samplerThread.set(Boolean.TRUE);
     prepareThreadStoreList();
     ArrayList<ThreadStorage> removed = null;
-    for (ThreadStorage ts: this.threadStoreList) {
+    for (ThreadStorage ts : this.threadStoreList) {
       if (!ts.isAlive()) {
         if (removed == null) {
           removed = new ArrayList<ThreadStorage>(64);
@@ -326,7 +328,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
       if (ts.dirty) {
         ts.dirty = false;
         if (ts.intStore != null) {
-          for (int i=0; i < ts.intStore.length(); i++) {
+          for (int i = 0; i < ts.intStore.length(); i++) {
             synchronized (this.intReadPrepLock[i]) {
               int delta = ts.intStore.getAndSet(i, 0);
               if (delta != 0) {
@@ -336,7 +338,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
           }
         }
         if (ts.longStore != null) {
-          for (int i=0; i < ts.longStore.length(); i++) {
+          for (int i = 0; i < ts.longStore.length(); i++) {
             synchronized (this.longReadPrepLock[i]) {
               long delta = ts.longStore.getAndSet(i, 0);
               if (delta != 0) {
@@ -351,25 +353,29 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
       this.threadStoreList.removeAll(removed);
     }
   }
-  
+
   private final boolean isIntDirty(final int idx) {
     return this.intDirty.get(idx) != 0;
   }
+
   private final boolean isLongDirty(final int idx) {
     return this.longDirty.get(idx) != 0;
   }
+
   private final boolean clearIntDirty(final int idx) {
     if (!this.intDirty.weakCompareAndSet(idx, 1/*expected*/, 0/*update*/)) {
       return this.intDirty.compareAndSet(idx, 1/*expected*/, 0/*update*/);
     }
     return true;
   }
+
   private final boolean clearLongDirty(final int idx) {
     if (!this.longDirty.weakCompareAndSet(idx, 1/*expected*/, 0/*update*/)) {
       return this.longDirty.compareAndSet(idx, 1/*expected*/, 0/*update*/);
     }
     return true;
   }
+
   private final void setIntDirty(final int idx) {
     if (!this.intDirty.weakCompareAndSet(idx, 0/*expected*/, 1/*update*/)) {
       if (!isIntDirty(idx)) {
@@ -377,6 +383,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
       }
     }
   }
+
   private final void setLongDirty(final int idx) {
     if (!this.longDirty.weakCompareAndSet(idx, 0/*expected*/, 1/*update*/)) {
       if (!isLongDirty(idx)) {
@@ -404,17 +411,17 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
         return this.intStorage.get(idx);
       }
       int delta = 0;
-      for (ThreadStorage ts: this.threadStoreList) {
+      for (ThreadStorage ts : this.threadStoreList) {
         delta += ts.intStore.getAndSet(idx, 0);
       }
       if (delta != 0) {
         return this.intStorage.addAndGet(idx, delta);
-      }
-      else {
+      } else {
         return this.intStorage.get(idx);
       }
     }
   }
+
   private final void doIntWrite(final int idx, int value) {
     synchronized (this.intReadPrepLock[idx]) {
       if (!isIntDirty(idx)) {
@@ -426,7 +433,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
     prepareThreadStoreList();
     synchronized (this.intReadPrepLock[idx]) {
       if (clearIntDirty(idx)) {
-        for (ThreadStorage ts: this.threadStoreList) {
+        for (ThreadStorage ts : this.threadStoreList) {
           if (ts.intStore.get(idx) != 0) {
             ts.intStore.set(idx, 0);
           }
@@ -435,6 +442,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
       this.intStorage.set(idx, value);
     }
   }
+
   private final long doLongRead(final int idx) {
     if (samplerThread.get() != null) {
       return this.longStorage.get(idx);
@@ -453,17 +461,17 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
         return this.longStorage.get(idx);
       }
       long delta = 0;
-      for (ThreadStorage ts: this.threadStoreList) {
+      for (ThreadStorage ts : this.threadStoreList) {
         delta += ts.longStore.getAndSet(idx, 0);
       }
       if (delta != 0) {
         return this.longStorage.addAndGet(idx, delta);
-      }
-      else {
+      } else {
         return this.longStorage.get(idx);
       }
     }
   }
+
   private final void doLongWrite(int idx, long value) {
     synchronized (this.longReadPrepLock[idx]) {
       if (!isLongDirty(idx)) {
@@ -476,7 +484,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
     prepareThreadStoreList();
     synchronized (this.longReadPrepLock[idx]) {
       if (clearLongDirty(idx)) {
-        for (ThreadStorage ts: this.threadStoreList) {
+        for (ThreadStorage ts : this.threadStoreList) {
           if (ts.longStore.get(idx) != 0) {
             ts.longStore.set(idx, 0);
           }
@@ -491,9 +499,11 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   final int[] _getIntStorage() {
     throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
   }
+
   final long[] _getLongStorage() {
     throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
   }
+
   final double[] _getDoubleStorage() {
     throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
   }

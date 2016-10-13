@@ -58,6 +58,7 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    * @return the data stored in this object as a heap byte array.
    */
   public byte[] getValueAsHeapByteArray();
+
   /**
    * Take all the bytes in the object and write them to the data output as a byte array.
    * If the StoredObject is not serialized then its raw byte array is sent.
@@ -69,6 +70,7 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    * @throws IOException
    */
   void sendAsByteArray(DataOutput out) throws IOException;
+
   /**
    * Take all the bytes in the object and write them to the data output as a byte array.
    * If the StoredObject is not serialized then an exception will be thrown.
@@ -80,7 +82,7 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    * @throws IOException
    */
   void sendAsCachedDeserializable(DataOutput out) throws IOException;
-  
+
   /**
    * Call to indicate that this object's memory is in use by the caller.
    * The memory will stay allocated until {@link #release()} is called.
@@ -98,12 +100,13 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    * Returns true if this type of StoredObject uses a references count; false otherwise.
    */
   public boolean hasRefCount();
-   /**
-   * Returns the number of users of this memory. If this type of StoredObject does not
-   * have a reference count then -1 is returned.
-   */
+
+  /**
+  * Returns the number of users of this memory. If this type of StoredObject does not
+  * have a reference count then -1 is returned.
+  */
   public int getRefCount();
-  
+
   /**
    * Returns the address of the memory used to store this object.
    * This address may not be to the first byte of stored data since
@@ -117,33 +120,41 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    * This size includes any bytes used for padding and meta-information.
    */
   public int getSize();
-  
+
   /**
    * Returns the number of bytes of memory used to store the object.
    * This size does not include any bytes used for padding.
    */
   public int getDataSize();
+
   public byte readDataByte(int offset);
+
   public void writeDataByte(int offset, byte value);
+
   public void readDataBytes(int offset, byte[] bytes);
+
   public void writeDataBytes(int offset, byte[] bytes);
+
   public void readDataBytes(int offset, byte[] bytes, int bytesOffset, int size);
+
   public void writeDataBytes(int offset, byte[] bytes, int bytesOffset, int size);
+
   /**
    * Returns an address that can read data from this StoredObject at the given offset.
    */
   public long getAddressForReadingData(int offset, int size);
-  
+
   /**
    * Returns a StoredObject that acts as if its data is our data starting
    * at the given offset and limited to the given number of bytes.
    */
   public StoredObject slice(int offset, int limit);
-  
+
   /**
    * Returns true if our data is equal to other's data; false otherwise.
    */
   public boolean checkDataEquals(StoredObject other);
+
   /**
    * Returns true if the given bytes are equal to our data bytes; false otherwise
    */
@@ -157,11 +168,12 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    */
   @Unretained
   public ByteBuffer createDirectByteBuffer();
+
   /**
    * Returns true if the data is serialized with PDX
    */
   public boolean isSerializedPdxInstance();
-  
+
   /**
    * Returns a StoredObject that does not cache the heap form.
    * If a StoredObject is going to be kept around for a while then
@@ -174,6 +186,6 @@ public interface StoredObject extends Sendable, CachedDeserializable, Releasable
    * Return true if the given "o" is reference to off-heap memory.
    */
   public static boolean isOffHeapReference(Object o) {
-    return (o instanceof StoredObject) && ((StoredObject)o).hasRefCount();
+    return (o instanceof StoredObject) && ((StoredObject) o).hasRefCount();
   }
 }

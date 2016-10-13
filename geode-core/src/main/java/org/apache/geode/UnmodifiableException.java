@@ -23,7 +23,7 @@ package org.apache.geode;
  * not be modified is that the member is active.
  */
 public class UnmodifiableException extends GemFireException {
-private static final long serialVersionUID = -1043243260052395455L;
+  private static final long serialVersionUID = -1043243260052395455L;
 
   //////////////////////  Constructors  //////////////////////
 

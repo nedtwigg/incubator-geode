@@ -25,7 +25,7 @@ import org.apache.geode.cache.ExpirationAttributes;
  * @since GemFire 8.0
  *
  */
-public class CustomEntryExpiryTask extends EntryExpiryTask {  
+public class CustomEntryExpiryTask extends EntryExpiryTask {
   private final ExpirationAttributes ttlAttr;
   private final ExpirationAttributes idleAttr;
 

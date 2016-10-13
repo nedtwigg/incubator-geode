@@ -28,13 +28,12 @@ import java.util.ConcurrentModificationException;
  * 
  * @since GemFire 7.0
  */
-public class ConcurrentCacheModificationException extends
-    ConcurrentModificationException {
+public class ConcurrentCacheModificationException extends ConcurrentModificationException {
   public ConcurrentCacheModificationException() {
   }
 
   public ConcurrentCacheModificationException(String message) {
-      super(message);
+    super(message);
   }
 
 }

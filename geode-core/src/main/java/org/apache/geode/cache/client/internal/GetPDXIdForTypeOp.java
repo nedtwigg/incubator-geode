@@ -34,17 +34,15 @@ public class GetPDXIdForTypeOp {
    * to communicate with the server.
    * @param pool the pool to use to communicate with the server.
    */
-  public static int execute(ExecutablePool pool,
-                             PdxType type)
-  {
+  public static int execute(ExecutablePool pool, PdxType type) {
     AbstractOp op = new GetPDXIdForTypeOpImpl(type);
     return ((Integer) pool.execute(op)).intValue();
   }
-                                                               
+
   private GetPDXIdForTypeOp() {
     // no instances allowed
   }
-  
+
   private static class GetPDXIdForTypeOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -53,6 +51,7 @@ public class GetPDXIdForTypeOp {
       super(MessageType.GET_PDX_ID_FOR_TYPE, 1);
       getMessage().addObjPart(type);
     }
+
     @Override
     protected Object processResponse(Message msg) throws Exception {
       Part part = msg.getPart(0);
@@ -69,40 +68,46 @@ public class GetPDXIdForTypeOp {
         } else if (isErrorResponse(msgType)) {
           throw new ServerOperationException(part.getString());
         } else {
-          throw new InternalGemFireError("Unexpected message type "
-                                         + MessageType.getString(msgType));
+          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startGetPDXTypeById();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endGetPDXTypeByIdSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endGetPDXTypeById(start, hasTimedOut(), hasFailed());
     }
+
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
+
     @Override
     protected boolean needsUserId() {
       return false;
     }
+
     //Don't send the transaction id for this message type.
     @Override
     protected boolean participateInTransaction() {
       return false;
     }
+
     @Override
     protected void sendMessage(Connection cnx) throws Exception {
       getMessage().clearMessageHasSecurePartFlag();

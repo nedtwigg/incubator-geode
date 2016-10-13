@@ -24,7 +24,7 @@ package org.apache.geode;
  * @since GemFire 5.7
  */
 public class ForcedDisconnectException extends CancelException {
-private static final long serialVersionUID = 4977003259880566257L;
+  private static final long serialVersionUID = 4977003259880566257L;
 
   //////////////////////  Constructors  //////////////////////
 
@@ -34,7 +34,7 @@ private static final long serialVersionUID = 4977003259880566257L;
   public ForcedDisconnectException(String message) {
     super(message);
   }
-  
+
   public ForcedDisconnectException(String message, Throwable cause) {
     super(message, cause);
   }

@@ -86,7 +86,7 @@ public interface QueryObserver {
    * @param oper The operation being attemped on the index. AbstractIndex
    */
   void beforeIndexLookup(Index index, int oper, Object key);
-  
+
   /**
    * Called once right before the query subsystem has requested that the
    * indexing subsystem attempt an index lookup. This is invoked only for the
@@ -106,9 +106,7 @@ public interface QueryObserver {
    * @param NotEqualKeys
    *                Set containing the != | <> ( not equal to ) type keys
    */
-  void beforeIndexLookup(Index index, int lowerBoundOperator,
-      Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey,
-      Set NotEqualKeys);
+  void beforeIndexLookup(Index index, int lowerBoundOperator, Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey, Set NotEqualKeys);
 
   /**
    * Called once right after the query subsystem has requested that the indexing
@@ -153,8 +151,7 @@ public interface QueryObserver {
    *          evaluation of GroupJunctions
    *  
    */
-  void beforeCartesianOfGroupJunctionsInAnAllGroupJunctionOfType_AND(
-      Collection[] grpResults);
+  void beforeCartesianOfGroupJunctionsInAnAllGroupJunctionOfType_AND(Collection[] grpResults);
 
   /**
    * Asif : Invoked just after the cartesian of the SelectResults obtained from
@@ -178,8 +175,7 @@ public interface QueryObserver {
    *          evaluation of GroupJunctions
    *  
    */
-  void beforeCartesianOfGroupJunctionsInCompositeGroupJunctionOfType_AND(
-      Collection[] grpResults);
+  void beforeCartesianOfGroupJunctionsInCompositeGroupJunctionOfType_AND(Collection[] grpResults);
 
   /**
    * Asif : Invoked just before the cartesian of the SelectResults obtained from
@@ -200,8 +196,7 @@ public interface QueryObserver {
    * @param initialResult The raw resultset obtained for the condition
    *  
    */
-  void beforeCutDownAndExpansionOfSingleIndexResult(Index index,
-      Collection initialResult);
+  void beforeCutDownAndExpansionOfSingleIndexResult(Index index, Collection initialResult);
 
   /**
    * Asif : Invoked just after doing expansion or cutdown of results obtained
@@ -237,8 +232,7 @@ public interface QueryObserver {
    * 
    *  
    */
-  void beforeMergeJoinOfDoubleIndexResults(Index index1, Index index2,
-      Collection initialResult);
+  void beforeMergeJoinOfDoubleIndexResults(Index index1, Index index2, Collection initialResult);
 
   /**
    * Asif : Invoked after merging the results of the two indexes, identified for
@@ -310,6 +304,7 @@ public interface QueryObserver {
    * @param preProjectionAppliedResult
    */
   void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionAppliedResult);
+
   /**
    *
    * @param sr1
@@ -323,9 +318,9 @@ public interface QueryObserver {
    * @param sr2
    */
   void invokedQueryUtilsIntersection(SelectResults sr1, SelectResults sr2);
-  
-  void limitAppliedAtIndexLevel(Index index, int limit , Collection indexResult);
-  
+
+  void limitAppliedAtIndexLevel(Index index, int limit, Collection indexResult);
+
   /**
    * Callback issued if the order by columns of two objects match. 
    * Note that it is still possible to receive compare value other than 0 , 

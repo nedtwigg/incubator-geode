@@ -39,13 +39,13 @@ import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 public class ConnectionHandler implements Runnable {
 
   private final Socket socket;
-  
+
   private final Cache cache;
-  
+
   private final Protocol protocol;
 
   private static LogWriter logger;
-  
+
   public ConnectionHandler(Socket socket, Cache cache, Protocol protocol) {
     this.socket = socket;
     this.cache = cache;
@@ -54,17 +54,16 @@ public class ConnectionHandler implements Runnable {
       logger = this.cache.getLogger();
     }
   }
-  
+
   public void run() {
     RequestReader request = new RequestReader(this.socket, this.protocol);
-    while(!Thread.currentThread().isInterrupted()) {
+    while (!Thread.currentThread().isInterrupted()) {
       try {
         Command command = request.readCommand();
         if (logger.fineEnabled()) {
-          logger.fine("processing command:"+command);
+          logger.fine("processing command:" + command);
         }
-        ByteBuffer reply = command.getCommandProcessor().processCommand(
-            request, this.protocol, cache);
+        ByteBuffer reply = command.getCommandProcessor().processCommand(request, this.protocol, cache);
         if (reply != null) {
           request.sendReply(reply);
         }
@@ -83,7 +82,7 @@ public class ConnectionHandler implements Runnable {
         Thread.currentThread().interrupt();
       }
     }
-    logger.fine("Connection handler "+Thread.currentThread().getName()+" terminating");
+    logger.fine("Connection handler " + Thread.currentThread().getName() + " terminating");
   }
 
   protected static LogWriter getLogger() {

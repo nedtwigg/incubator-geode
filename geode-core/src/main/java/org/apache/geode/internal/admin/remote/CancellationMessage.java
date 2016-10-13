@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -57,14 +57,13 @@ public final class CancellationMessage extends PooledDistributionMessage {
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     msgToCancel = in.readInt();
   }
 
   @Override
-  public String toString(){
-    return LocalizedStrings.CancellationMessage_CANCELLATIONMESSAGE_FROM_0_FOR_MESSAGE_ID_1.toLocalizedString(new Object[] { this.getSender(), Integer.valueOf(msgToCancel)});
+  public String toString() {
+    return LocalizedStrings.CancellationMessage_CANCELLATIONMESSAGE_FROM_0_FOR_MESSAGE_ID_1.toLocalizedString(new Object[] { this.getSender(), Integer.valueOf(msgToCancel) });
   }
 }

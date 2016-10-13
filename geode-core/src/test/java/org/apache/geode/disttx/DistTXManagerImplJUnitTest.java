@@ -36,7 +36,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * Same tests as that of {@link TXManagerImplJUnitTest} after setting
  * "distributed-transactions" property to true
  */
-@Category({IntegrationTest.class, DistributedTransactionsTest.class })
+@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
 public class DistTXManagerImplJUnitTest extends TXManagerImplJUnitTest {
 
   @Override
@@ -48,7 +48,7 @@ public class DistTXManagerImplJUnitTest extends TXManagerImplJUnitTest {
     cache = new CacheFactory(props).create();
     region = cache.createRegionFactory(RegionShortcut.REPLICATE).create("testRegion");
     CacheTransactionManager txmgr = cache.getCacheTransactionManager();
-    assert(txmgr.isDistributed());
+    assert (txmgr.isDistributed());
   }
 
   @Override

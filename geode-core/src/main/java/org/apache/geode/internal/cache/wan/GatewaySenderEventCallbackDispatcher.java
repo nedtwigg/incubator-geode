@@ -37,10 +37,10 @@ import org.apache.geode.i18n.StringId;
  * 
  * @since GemFire 7.0
  */
-public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventDispatcher{
+public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventDispatcher {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * The <code>SerialGatewayEventProcessor</code> used by this
    * <code>CacheListener</code> to process events.
@@ -51,8 +51,7 @@ public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventD
    * The <code>AsyncEventListener</code>s registered on this
    * <code>SerialGatewayEventCallbackDispatcher</code>.
    */
-  private volatile List<AsyncEventListener> eventListeners = Collections
-      .emptyList();
+  private volatile List<AsyncEventListener> eventListeners = Collections.emptyList();
 
   /**
    * A lock to protect access to the registered
@@ -60,8 +59,7 @@ public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventD
    */
   private final Object eventLock = new Object();
 
-  public GatewaySenderEventCallbackDispatcher(
-      AbstractGatewaySenderEventProcessor eventProcessor) {
+  public GatewaySenderEventCallbackDispatcher(AbstractGatewaySenderEventProcessor eventProcessor) {
     this.eventProcessor = eventProcessor;
     initializeEventListeners();
   }
@@ -95,9 +93,7 @@ public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventD
       this.eventProcessor.setIsStopped(true);
       throw e;
     } catch (Exception e) {
-      logger.fatal(LocalizedMessage.create(
-          LocalizedStrings.SerialGatewayEventCallbackDispatcher_STOPPING_THE_PROCESSOR_BECAUSE_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_PROCESSING_A_BATCH),
-          e);
+      logger.fatal(LocalizedMessage.create(LocalizedStrings.SerialGatewayEventCallbackDispatcher_STOPPING_THE_PROCESSOR_BECAUSE_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_PROCESSING_A_BATCH), e);
       this.eventProcessor.setIsStopped(true);
     }
     return success;
@@ -113,8 +109,7 @@ public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventD
     synchronized (eventLock) {
       List<AsyncEventListener> oldListeners = this.eventListeners;
       if (!oldListeners.contains(listener)) {
-        List<AsyncEventListener> newListeners = new ArrayList<AsyncEventListener>(
-            oldListeners);
+        List<AsyncEventListener> newListeners = new ArrayList<AsyncEventListener>(oldListeners);
         newListeners.add(listener);
         this.eventListeners = newListeners;
       }
@@ -132,8 +127,7 @@ public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventD
     synchronized (eventLock) {
       List<AsyncEventListener> oldListeners = this.eventListeners;
       if (oldListeners.contains(listener)) {
-        List<AsyncEventListener> newListeners = new ArrayList<AsyncEventListener>(
-            oldListeners);
+        List<AsyncEventListener> newListeners = new ArrayList<AsyncEventListener>(oldListeners);
         if (newListeners.remove(listener)) {
           this.eventListeners = newListeners;
         }
@@ -142,8 +136,7 @@ public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventD
   }
 
   protected void initializeEventListeners() {
-    for (AsyncEventListener listener : this.eventProcessor.getSender()
-        .getAsyncEventListeners()) {
+    for (AsyncEventListener listener : this.eventProcessor.getSender().getAsyncEventListeners()) {
       registerAsyncEventListener(listener);
     }
   }
@@ -190,10 +183,10 @@ public class GatewaySenderEventCallbackDispatcher implements GatewaySenderEventD
   public boolean isConnectedToRemote() {
     return false;
   }
-  
+
   @Override
   public void stop() {
     // no op
-    
+
   }
 }

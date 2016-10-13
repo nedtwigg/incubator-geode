@@ -29,8 +29,7 @@ import org.apache.geode.internal.cache.wan.parallel.ParallelWANPersistenceEnable
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class ParallelWANPersistenceEnabledGatewaySenderOffHeapDUnitTest extends
-    ParallelWANPersistenceEnabledGatewaySenderDUnitTest {
+public class ParallelWANPersistenceEnabledGatewaySenderOffHeapDUnitTest extends ParallelWANPersistenceEnabledGatewaySenderDUnitTest {
 
   public ParallelWANPersistenceEnabledGatewaySenderOffHeapDUnitTest() {
     super();

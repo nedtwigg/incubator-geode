@@ -23,9 +23,8 @@ import org.apache.geode.internal.offheap.annotations.Retained;
  * A subclass of EntryEventImpl used in WAN conflict resolution
  * 
  */
-public class TimestampedEntryEventImpl extends EntryEventImpl implements
-    TimestampedEntryEvent {
-  
+public class TimestampedEntryEventImpl extends EntryEventImpl implements TimestampedEntryEvent {
+
   private int newDSID;
   private int oldDSID;
   private long newTimestamp;
@@ -39,6 +38,7 @@ public class TimestampedEntryEventImpl extends EntryEventImpl implements
     this.newTimestamp = newTimestamp;
     this.oldTimestamp = oldTimestamp;
   }
+
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.util.TimestampedEntryEvent#getNewDistributedSystemID()
    */

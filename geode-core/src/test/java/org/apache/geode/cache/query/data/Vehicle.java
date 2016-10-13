@@ -26,13 +26,14 @@ package org.apache.geode.cache.query.data;
  *
  */
 
- // Added for the Test IUMRCompositeIteratorTest
+// Added for the Test IUMRCompositeIteratorTest
 public class Vehicle {
- public String[] arr;
-    /** Creates a new instance of Vehicle */
-    public Vehicle(String[] arr) {
-      this.arr = arr;
-        
-    }
-    
+  public String[] arr;
+
+  /** Creates a new instance of Vehicle */
+  public Vehicle(String[] arr) {
+    this.arr = arr;
+
+  }
+
 }//end of class

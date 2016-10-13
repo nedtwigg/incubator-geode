@@ -255,11 +255,11 @@ public class OffHeapRegionEntryHelperJUnitTest {
     long encodedAddress = 549755813703L;
     OffHeapRegionEntryHelper.decodeUncompressedAddressToBytes(encodedAddress);
   }
-  
+
   @Test
   public void decodeCompressedDataAsAddressToRawBytes() {
     long encodedAddress = 549755813703L;
-    byte[] expected = new byte[]{127, -1, -1, -1};
+    byte[] expected = new byte[] { 127, -1, -1, -1 };
 
     byte[] bytes = OffHeapRegionEntryHelper.decodeAddressToRawBytes(encodedAddress);
 
@@ -874,7 +874,7 @@ public class OffHeapRegionEntryHelperJUnitTest {
     PowerMockito.verifyStatic();
     OffHeapRegionEntryHelper.setValue(re, Token.REMOVED_PHASE2);
   }
-  
+
   @Test
   public void doWithOffHeapClearShouldSetTheThreadLocalToTrue() {
     // verify that threadlocal is not set

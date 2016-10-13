@@ -37,31 +37,31 @@ public class PdxFieldMapperJUnitTest {
 
   @Test
   public void testWriteFields() {
-    String[] fields = new String[] {"s", "i"};
+    String[] fields = new String[] { "s", "i" };
     PdxLuceneSerializer mapper = new PdxLuceneSerializer(fields);
-    
+
     PdxInstance i = mock(PdxInstance.class);
-    
+
     when(i.hasField("s")).thenReturn(true);
     when(i.hasField("i")).thenReturn(true);
     when(i.getField("s")).thenReturn("a");
     when(i.getField("i")).thenReturn(5);
-    
+
     Document doc = new Document();
     mapper.toDocument(i, doc);
-    
+
     assertEquals(2, doc.getFields().size());
     assertEquals("a", doc.getField("s").stringValue());
     assertEquals(5, doc.getField("i").numericValue());
   }
-  
+
   @Test
   public void testIgnoreMissing() {
-    String[] fields = new String[] {"s", "i", "s2", "o"};
+    String[] fields = new String[] { "s", "i", "s2", "o" };
     PdxLuceneSerializer mapper = new PdxLuceneSerializer(fields);
-    
+
     PdxInstance i = mock(PdxInstance.class);
-    
+
     when(i.hasField("s")).thenReturn(true);
     when(i.hasField("i")).thenReturn(true);
     when(i.hasField("o")).thenReturn(true);
@@ -70,30 +70,30 @@ public class PdxFieldMapperJUnitTest {
     when(i.getField("i")).thenReturn(5);
     when(i.getField("o")).thenReturn(new Object());
     when(i.getField("o2")).thenReturn(new Object());
-    
+
     Document doc = new Document();
     mapper.toDocument(i, doc);
-    
+
     assertEquals(2, doc.getFields().size());
     assertEquals("a", doc.getField("s").stringValue());
     assertEquals(5, doc.getField("i").numericValue());
   }
-  
+
   @Test
   public void testNullField() {
-    String[] fields = new String[] {"s", "i"};
+    String[] fields = new String[] { "s", "i" };
     PdxLuceneSerializer mapper = new PdxLuceneSerializer(fields);
-    
+
     PdxInstance i = mock(PdxInstance.class);
-    
+
     when(i.hasField("s")).thenReturn(true);
     when(i.hasField("i")).thenReturn(true);
     when(i.getField("s")).thenReturn("a");
     when(i.getField("i")).thenReturn(null);
-    
+
     Document doc = new Document();
     mapper.toDocument(i, doc);
-    
+
     assertEquals(1, doc.getFields().size());
     assertEquals("a", doc.getField("s").stringValue());
     assertNull(doc.getField("i"));

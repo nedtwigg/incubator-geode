@@ -34,34 +34,33 @@ public class CliTopic implements Comparable<CliTopic> {
   private static final Map<String, String> nameDescriptionMap = new HashMap<String, String>();
 
   static {
-    nameDescriptionMap.put(CliStrings.DEFAULT_TOPIC_GEODE,    CliStrings.DEFAULT_TOPIC_GEODE__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_REGION,     CliStrings.TOPIC_GEODE_REGION__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_WAN,        CliStrings.TOPIC_GEODE_WAN__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_JMX,        CliStrings.TOPIC_GEODE_JMX__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_DISKSTORE,  CliStrings.TOPIC_GEODE_DISKSTORE__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_LOCATOR,    CliStrings.TOPIC_GEODE_LOCATOR__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_SERVER,     CliStrings.TOPIC_GEODE_SERVER__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_MANAGER,    CliStrings.TOPIC_GEODE_MANAGER__DESC);
+    nameDescriptionMap.put(CliStrings.DEFAULT_TOPIC_GEODE, CliStrings.DEFAULT_TOPIC_GEODE__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_REGION__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_WAN, CliStrings.TOPIC_GEODE_WAN__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_JMX, CliStrings.TOPIC_GEODE_JMX__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_DISKSTORE, CliStrings.TOPIC_GEODE_DISKSTORE__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_LOCATOR, CliStrings.TOPIC_GEODE_LOCATOR__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_SERVER, CliStrings.TOPIC_GEODE_SERVER__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_MANAGER, CliStrings.TOPIC_GEODE_MANAGER__DESC);
     nameDescriptionMap.put(CliStrings.TOPIC_GEODE_STATISTICS, CliStrings.TOPIC_GEODE_STATISTICS__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_LIFECYCLE,  CliStrings.TOPIC_GEODE_LIFECYCLE__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_M_AND_M,    CliStrings.TOPIC_GEODE_M_AND_M__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_DATA,       CliStrings.TOPIC_GEODE_DATA__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_CONFIG,     CliStrings.TOPIC_GEODE_CONFIG__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_FUNCTION,   CliStrings.TOPIC_GEODE_FUNCTION__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_HELP,       CliStrings.TOPIC_GEODE_HELP__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_LIFECYCLE, CliStrings.TOPIC_GEODE_LIFECYCLE__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_M_AND_M, CliStrings.TOPIC_GEODE_M_AND_M__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_DATA, CliStrings.TOPIC_GEODE_DATA__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_CONFIG, CliStrings.TOPIC_GEODE_CONFIG__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_FUNCTION, CliStrings.TOPIC_GEODE_FUNCTION__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GEODE_HELP, CliStrings.TOPIC_GEODE_HELP__DESC);
     nameDescriptionMap.put(CliStrings.TOPIC_GEODE_DEBUG_UTIL, CliStrings.TOPIC_GEODE_DEBUG_UTIL__DESC);
-    nameDescriptionMap.put(CliStrings.TOPIC_GFSH,               CliStrings.TOPIC_GFSH__DESC);
+    nameDescriptionMap.put(CliStrings.TOPIC_GFSH, CliStrings.TOPIC_GFSH__DESC);
   }
 
-
-  private final String       name;
-  private final String       oneLinerDescription;
+  private final String name;
+  private final String oneLinerDescription;
   private Set<CommandTarget> commandTargets;
-  
+
   public CliTopic(String name) {
-    this.name                = name;
+    this.name = name;
     this.oneLinerDescription = nameDescriptionMap.get(this.name);
-    this.commandTargets      = new HashSet<CommandTarget>();
+    this.commandTargets = new HashSet<CommandTarget>();
   }
 
   public String getName() {
@@ -75,14 +74,14 @@ public class CliTopic implements Comparable<CliTopic> {
   public void addCommandTarget(CommandTarget commandTarget) {
     commandTargets.add(commandTarget);
   }
-  
+
   public Map<String, String> getCommandsNameHelp() {
     Map<String, String> commandsNameHelp = new TreeMap<String, String>();
-    
+
     for (CommandTarget commandTarget : commandTargets) {
       commandsNameHelp.put(commandTarget.getCommandName(), commandTarget.getCommandHelp());
     }
-    
+
     return commandsNameHelp;
   }
 
@@ -125,6 +124,6 @@ public class CliTopic implements Comparable<CliTopic> {
 
   @Override
   public String toString() {
-    return CliTopic.class.getSimpleName() + "["+name+"]";
+    return CliTopic.class.getSimpleName() + "[" + name + "]";
   }
 }

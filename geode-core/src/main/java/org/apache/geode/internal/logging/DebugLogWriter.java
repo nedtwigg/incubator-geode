@@ -16,7 +16,6 @@
  */
 package org.apache.geode.internal.logging;
 
-
 import org.apache.geode.i18n.StringId;
 
 /**
@@ -36,19 +35,18 @@ import org.apache.geode.i18n.StringId;
  * 
  * @since GemFire 5.0
  */
-final public class DebugLogWriter extends LogWriterImpl
-{
+final public class DebugLogWriter extends LogWriterImpl {
   private final LogWriterImpl realLogWriter;
   private final String prefix;
+
   public DebugLogWriter(LogWriterImpl lw, Class c) {
     this.realLogWriter = lw;
     this.prefix = c.getName() + ":";
-//    this.realLogWriter.config(LocalizedStrings.DebugLogWriter_STARTED_USING_CLASS_LOGGER_FOR__0, getClass().getName());
+    //    this.realLogWriter.config(LocalizedStrings.DebugLogWriter_STARTED_USING_CLASS_LOGGER_FOR__0, getClass().getName());
   }
 
   @Override
-  public int getLogWriterLevel()
-  {
+  public int getLogWriterLevel() {
     return ALL_LEVEL;
   }
 
@@ -56,7 +54,7 @@ final public class DebugLogWriter extends LogWriterImpl
   public void setLogWriterLevel(int newLevel) {
     throw new UnsupportedOperationException("Cannot restrict log level");
   }
-  
+
   @Override
   public void put(int level, String msg, Throwable exception) {
     this.realLogWriter.put(WARNING_LEVEL, new StringBuilder(this.prefix).append(" level ").append(levelToString(level)).append(" ").append(msg).toString(), exception);
@@ -69,57 +67,49 @@ final public class DebugLogWriter extends LogWriterImpl
    * @since GemFire 6.0
    */
   @Override
-  public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception)
-  {
+  public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception) {
     String msg = new StringBuilder(this.prefix).append(" level ").append(levelToString(msgLevel)).append(" ").append(msgId.toLocalizedString(params)).toString();
     this.realLogWriter.put(WARNING_LEVEL, msg, exception);
   }
 
   @Override
-  public boolean configEnabled()
-  {
+  public boolean configEnabled() {
     return true;
   }
 
   @Override
-  public boolean fineEnabled()
-  {
+  public boolean fineEnabled() {
     return true;
   }
 
   @Override
-  public boolean finerEnabled()
-  {
+  public boolean finerEnabled() {
     return true;
   }
 
   @Override
-  public boolean finestEnabled()
-  {
+  public boolean finestEnabled() {
     return true;
   }
 
   @Override
-  public boolean infoEnabled()
-  {
+  public boolean infoEnabled() {
     return true;
   }
 
   @Override
-  public boolean severeEnabled()
-  {
+  public boolean severeEnabled() {
     return true;
   }
 
   @Override
-  public boolean warningEnabled()
-  {
+  public boolean warningEnabled() {
     return true;
   }
-  
+
   @Override
   public String getConnectionName() {
     return null;
   }
-  
+
 }

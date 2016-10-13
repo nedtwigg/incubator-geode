@@ -64,7 +64,7 @@ public class ListDurableCqNamesFunction extends FunctionAdapter implements Inter
     String memberNameOrId = CliUtil.getMemberNameOrId(member);
     DurableCqNamesResult result = new DurableCqNamesResult(memberNameOrId);
 
-    String durableClientId = (String)context.getArguments();
+    String durableClientId = (String) context.getArguments();
 
     try {
       CacheClientNotifier ccn = CacheClientNotifier.getInstance();

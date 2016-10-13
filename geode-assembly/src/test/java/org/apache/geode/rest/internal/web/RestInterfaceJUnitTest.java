@@ -117,17 +117,8 @@ public class RestInterfaceJUnitTest {
       gemfireProperties = (gemfireProperties != null ? gemfireProperties : new Properties());
 
       gemfireCache = new CacheFactory()
-        //.setPdxSerializer(new ReflectionBasedAutoSerializer(Person.class.getPackage().getName().concat(".*")))
-        .setPdxSerializer(new ReflectionBasedAutoSerializer(Person.class.getName().replaceAll("\\$", ".")))
-        .setPdxReadSerialized(true)
-        .setPdxIgnoreUnreadFields(false)
-        .set("name", getClass().getSimpleName())
-          .set(MCAST_PORT, "0")
-          .set(LOG_LEVEL, "config")
-          .set(HTTP_SERVICE_BIND_ADDRESS, "localhost")
-          .set(HTTP_SERVICE_PORT, String.valueOf(getHttpServicePort()))
-          .set(START_DEV_REST_API, "true")
-        .create();
+          //.setPdxSerializer(new ReflectionBasedAutoSerializer(Person.class.getPackage().getName().concat(".*")))
+          .setPdxSerializer(new ReflectionBasedAutoSerializer(Person.class.getName().replaceAll("\\$", "."))).setPdxReadSerialized(true).setPdxIgnoreUnreadFields(false).set("name", getClass().getSimpleName()).set(MCAST_PORT, "0").set(LOG_LEVEL, "config").set(HTTP_SERVICE_BIND_ADDRESS, "localhost").set(HTTP_SERVICE_PORT, String.valueOf(getHttpServicePort())).set(START_DEV_REST_API, "true").create();
 
       RegionFactory<String, Object> peopleRegionFactory = gemfireCache.createRegionFactory();
 
@@ -147,8 +138,7 @@ public class RestInterfaceJUnitTest {
   protected synchronized int getHttpServicePort() {
     try {
       return Integer.parseInt(StringUtils.trimWhitespace(gemfireProperties.getProperty(HTTP_SERVICE_PORT)));
-    }
-    catch (NumberFormatException ignore) {
+    } catch (NumberFormatException ignore) {
       int httpServicePort = getHttpServicePort(DEFAULT_HTTP_SERVICE_PORT);
       gemfireProperties.setProperty(HTTP_SERVICE_PORT, String.valueOf(httpServicePort));
       return httpServicePort;
@@ -222,8 +212,7 @@ public class RestInterfaceJUnitTest {
 
     httpMessageConverter.setObjectMapper(getObjectMapper());
 
-    return setErrorHandler(new RestTemplate(Collections.<HttpMessageConverter<?>>singletonList(
-      httpMessageConverter)));
+    return setErrorHandler(new RestTemplate(Collections.<HttpMessageConverter<?>> singletonList(httpMessageConverter)));
   }
 
   private RestTemplate setErrorHandler(final RestTemplate restTemplate) {
@@ -256,8 +245,7 @@ public class RestInterfaceJUnitTest {
 
       @Override
       public void handleError(final ClientHttpResponse response) throws IOException {
-        System.err.printf("%1$d - %2$s%n", response.getRawStatusCode(),
-          response.getStatusText());
+        System.err.printf("%1$d - %2$s%n", response.getRawStatusCode(), response.getStatusText());
         System.err.println(readBody(response));
       }
 
@@ -275,8 +263,7 @@ public class RestInterfaceJUnitTest {
           }
 
           return buffer.toString().trim();
-        }
-        finally {
+        } finally {
           IOUtils.close(responseBodyReader);
         }
       }
@@ -317,7 +304,7 @@ public class RestInterfaceJUnitTest {
     /*
     Object result = runQueryUsingApi(getPeopleRegion().getRegionService(), String.format("SELECT * FROM %1$s",
       getPeopleRegion().getFullPath()));
-
+    
     System.out.printf("(OQL Query using API) Person is (%1$s)%n", result);
     */
 
@@ -372,8 +359,7 @@ public class RestInterfaceJUnitTest {
     }
 
     public void setBirthDate(final Date birthDate) {
-      Assert.isTrue(birthDate == null || birthDate.compareTo(Calendar.getInstance().getTime()) <= 0,
-        "A Person's date of birth cannot be after today!");
+      Assert.isTrue(birthDate == null || birthDate.compareTo(Calendar.getInstance().getTime()) <= 0, "A Person's date of birth cannot be after today!");
       this.birthDate = birthDate;
     }
 
@@ -400,8 +386,7 @@ public class RestInterfaceJUnitTest {
     }
 
     protected String format(final Date dateTime, final String dateFormatPattern) {
-      return (dateTime == null ? null : new SimpleDateFormat(StringUtils.hasText(dateFormatPattern) ? dateFormatPattern
-        : DEFAULT_BIRTH_DATE_FORMAT_PATTERN).format(dateTime));
+      return (dateTime == null ? null : new SimpleDateFormat(StringUtils.hasText(dateFormatPattern) ? dateFormatPattern : DEFAULT_BIRTH_DATE_FORMAT_PATTERN).format(dateTime));
     }
 
     @Override
@@ -430,9 +415,7 @@ public class RestInterfaceJUnitTest {
 
       Person that = (Person) obj;
 
-      return ObjectUtils.nullSafeEquals(this.getFirstName(), that.getFirstName())
-        && ObjectUtils.nullSafeEquals(this.getLastName(), that.getLastName())
-        && ObjectUtils.nullSafeEquals(this.getBirthDate(), that.getBirthDate());
+      return ObjectUtils.nullSafeEquals(this.getFirstName(), that.getFirstName()) && ObjectUtils.nullSafeEquals(this.getLastName(), that.getLastName()) && ObjectUtils.nullSafeEquals(this.getBirthDate(), that.getBirthDate());
     }
 
     @Override
@@ -446,8 +429,7 @@ public class RestInterfaceJUnitTest {
 
     @Override
     public String toString() {
-      return String.format("{ @type = %1$s, firstName = %2$s, lastName = %3$s, birthDate = %4$s }",
-        getClass().getName(), getFirstName(), getLastName(), format(getBirthDate()));
+      return String.format("{ @type = %1$s, firstName = %2$s, lastName = %3$s, birthDate = %4$s }", getClass().getName(), getFirstName(), getLastName(), format(getBirthDate()));
     }
   }
 

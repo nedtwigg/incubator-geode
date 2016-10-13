@@ -116,7 +116,7 @@ public class GetAllTest {
     verify(this.chunkedResponseMessage).addObjPart(argument.capture(), eq(false));
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object key : argument.getValue().getKeys()) {
+    for (Object key : argument.getValue().getKeys()) {
       assertThat(key).isIn(KEYS);
     }
     for (Object key : KEYS) {
@@ -145,7 +145,7 @@ public class GetAllTest {
     verify(this.chunkedResponseMessage).addObjPart(argument.capture(), eq(false));
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object key : argument.getValue().getObjects()){
+    for (Object key : argument.getValue().getObjects()) {
       assertThat(key).isExactlyInstanceOf(NotAuthorizedException.class);
     }
 
@@ -163,11 +163,11 @@ public class GetAllTest {
     verify(this.chunkedResponseMessage).addObjPart(argument.capture(), eq(false));
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object key : argument.getValue().getKeys()) {
+    for (Object key : argument.getValue().getKeys()) {
       assertThat(key).isIn(KEYS);
     }
 
-    for (Object key: KEYS) {
+    for (Object key : KEYS) {
       verify(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(key.toString()), eq(null));
     }
 
@@ -188,11 +188,11 @@ public class GetAllTest {
     verify(this.chunkedResponseMessage).addObjPart(argument.capture(), eq(false));
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object o : argument.getValue().getObjects()){
+    for (Object o : argument.getValue().getObjects()) {
       assertThat(o).isExactlyInstanceOf(NotAuthorizedException.class);
     }
 
-    for (Object key: KEYS) {
+    for (Object key : KEYS) {
       verify(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(key.toString()), eq(null));
     }
     verify(this.chunkedResponseMessage).sendChunk(eq(this.serverConnection));

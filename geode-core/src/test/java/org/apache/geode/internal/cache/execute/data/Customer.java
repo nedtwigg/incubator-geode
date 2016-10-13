@@ -56,7 +56,7 @@ public class Customer implements DataSerializable {
   public String toString() {
     return "Customer { name=" + this.name + " address=" + this.address + "}";
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -65,7 +65,7 @@ public class Customer implements DataSerializable {
     if (!(o instanceof Customer))
       return false;
 
-    Customer cust = (Customer)o;
+    Customer cust = (Customer) o;
     return (cust.name.equals(name) && cust.address.equals(address));
   }
 

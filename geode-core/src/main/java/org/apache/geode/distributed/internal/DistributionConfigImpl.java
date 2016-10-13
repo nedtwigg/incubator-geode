@@ -258,7 +258,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
    */
   private int maxNumReconnectTries = DEFAULT_MAX_NUM_RECONNECT_TRIES;
 
-
   private int asyncDistributionTimeout = DEFAULT_ASYNC_DISTRIBUTION_TIMEOUT;
   private int asyncQueueTimeout = DEFAULT_ASYNC_QUEUE_TIMEOUT;
   private int asyncMaxQueueSize = DEFAULT_ASYNC_MAX_QUEUE_SIZE;
@@ -410,7 +409,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   protected boolean loadSharedConfigurationFromDir = DistributionConfig.DEFAULT_LOAD_CLUSTER_CONFIG_FROM_DIR;
   protected String clusterConfigDir = "";
 
-
   private int httpServicePort = DEFAULT_HTTP_SERVICE_PORT;
 
   private String httpServiceBindAddress = DEFAULT_HTTP_SERVICE_BIND_ADDRESS;
@@ -435,7 +433,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
    * Are distributed transactions enabled or not
    */
   private boolean distributedTransactions = DEFAULT_DISTRIBUTED_TRANSACTIONS;
-
 
   /**
    * port on which {@link GeodeRedisServer} is started
@@ -525,7 +522,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   private String gatewaySSLTrustStore = DEFAULT_GATEWAY_SSL_TRUSTSTORE;
   @Deprecated
   private String gatewaySSLTrustStorePassword = DEFAULT_GATEWAY_SSL_TRUSTSTORE_PASSWORD;
-
 
   private String gatewaySSLAlias = DEFAULT_SSL_ALIAS;
 
@@ -784,7 +780,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     this.sslDefaultAlias = other.getSSLDefaultAlias();
     this.sslWebServiceRequireAuthentication = other.getSSLWebRequireAuthentication();
 
-
   }
 
   /**
@@ -966,39 +961,39 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   private boolean isAliasCorrectlyConfiguredForComponents(final SecurableCommunicationChannel component) {
     switch (component) {
-      case ALL: {
-        //If the default alias is not set, then check that all the other component aliases are set
-        if (StringUtils.isEmpty(getSSLDefaultAlias())) {
-          boolean correctAlias = true;
-          correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.CLUSTER);
-          correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.GATEWAY);
-          correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.WEB);
-          correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.JMX);
-          correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.LOCATOR);
-          correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.SERVER);
-          return correctAlias;
-        }
+    case ALL: {
+      //If the default alias is not set, then check that all the other component aliases are set
+      if (StringUtils.isEmpty(getSSLDefaultAlias())) {
+        boolean correctAlias = true;
+        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.CLUSTER);
+        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.GATEWAY);
+        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.WEB);
+        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.JMX);
+        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.LOCATOR);
+        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.SERVER);
+        return correctAlias;
       }
-      case CLUSTER: {
-        return StringUtils.isEmpty(getClusterSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-      }
-      case GATEWAY: {
-        return StringUtils.isEmpty(getGatewaySSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-      }
-      case WEB: {
-        return StringUtils.isEmpty(getHTTPServiceSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-      }
-      case JMX: {
-        return StringUtils.isEmpty(getJMXSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-      }
-      case LOCATOR: {
-        return StringUtils.isEmpty(getLocatorSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-      }
-      case SERVER: {
-        return StringUtils.isEmpty(getServerSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-      }
-      default:
-        return false;
+    }
+    case CLUSTER: {
+      return StringUtils.isEmpty(getClusterSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
+    }
+    case GATEWAY: {
+      return StringUtils.isEmpty(getGatewaySSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
+    }
+    case WEB: {
+      return StringUtils.isEmpty(getHTTPServiceSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
+    }
+    case JMX: {
+      return StringUtils.isEmpty(getJMXSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
+    }
+    case LOCATOR: {
+      return StringUtils.isEmpty(getLocatorSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
+    }
+    case SERVER: {
+      return StringUtils.isEmpty(getServerSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
+    }
+    default:
+      return false;
     }
   }
 
@@ -1328,7 +1323,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     }
   }
 
-
   /**
    * Produce a DistributionConfigImpl for the given properties and return it.
    */
@@ -1378,9 +1372,7 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public static boolean specialPropName(String propName) {
-    return propName.equalsIgnoreCase(CLUSTER_SSL_ENABLED) || propName.equals(SECURITY_PEER_AUTH_INIT) || propName.equals(SECURITY_PEER_AUTHENTICATOR) || propName
-      .equals(LOG_WRITER_NAME) || propName.equals(DS_CONFIG_NAME) || propName.equals(SECURITY_LOG_WRITER_NAME) || propName.equals(LOG_OUTPUTSTREAM_NAME) || propName
-             .equals(SECURITY_LOG_OUTPUTSTREAM_NAME);
+    return propName.equalsIgnoreCase(CLUSTER_SSL_ENABLED) || propName.equals(SECURITY_PEER_AUTH_INIT) || propName.equals(SECURITY_PEER_AUTHENTICATOR) || propName.equals(LOG_WRITER_NAME) || propName.equals(DS_CONFIG_NAME) || propName.equals(SECURITY_LOG_WRITER_NAME) || propName.equals(LOG_OUTPUTSTREAM_NAME) || propName.equals(SECURITY_LOG_OUTPUTSTREAM_NAME);
   }
 
   @Override
@@ -1487,7 +1479,7 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   private String convertCommaDelimitedToSpaceDelimitedString(final String propVal) {
-      return propVal.replace(","," ");
+    return propVal.replace(",", " ");
   }
 
   public void close() {
@@ -1853,8 +1845,7 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       // fix 48228
       InternalDistributedSystem ids = InternalDistributedSystem.getConnectedInstance();
       if (ids != null) {
-        ids.getLogWriter()
-           .info("Setting statistic-sample-rate to " + DEFAULT_STATISTIC_SAMPLE_RATE + " instead of the requested " + value + " because VSD does not work with sub-second sampling.");
+        ids.getLogWriter().info("Setting statistic-sample-rate to " + DEFAULT_STATISTIC_SAMPLE_RATE + " instead of the requested " + value + " because VSD does not work with sub-second sampling.");
       }
       value = DEFAULT_STATISTIC_SAMPLE_RATE;
     }
@@ -2679,7 +2670,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   ///////////////////////  Utility Methods  ///////////////////////
 
-
   /**
    * Two instances of <code>DistributedConfigImpl</code> are equal if all of
    * their configuration properties are the same. Be careful if you need to
@@ -2697,174 +2687,16 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
     final DistributionConfigImpl that = (DistributionConfigImpl) o;
 
-    return new EqualsBuilder().append(tcpPort, that.tcpPort)
-                              .append(mcastPort, that.mcastPort)
-                              .append(mcastTtl, that.mcastTtl)
-                              .append(socketLeaseTime, that.socketLeaseTime)
-                              .append(socketBufferSize, that.socketBufferSize)
-                              .append(conserveSockets, that.conserveSockets)
-                              .append(locatorWaitTime, that.locatorWaitTime)
-                              .append(logLevel, that.logLevel)
-                              .append(startLocatorPort, that.startLocatorPort)
-                              .append(statisticSamplingEnabled, that.statisticSamplingEnabled)
-                              .append(statisticSampleRate, that.statisticSampleRate)
-                              .append(ackWaitThreshold, that.ackWaitThreshold)
-                              .append(ackForceDisconnectThreshold, that.ackForceDisconnectThreshold)
-                              .append(archiveDiskSpaceLimit, that.archiveDiskSpaceLimit)
-                              .append(archiveFileSizeLimit, that.archiveFileSizeLimit)
-                              .append(logDiskSpaceLimit, that.logDiskSpaceLimit)
-                              .append(logFileSizeLimit, that.logFileSizeLimit)
-                              .append(clusterSSLEnabled, that.clusterSSLEnabled)
-                              .append(clusterSSLRequireAuthentication, that.clusterSSLRequireAuthentication)
-                              .append(mcastSendBufferSize, that.mcastSendBufferSize)
-                              .append(mcastRecvBufferSize, that.mcastRecvBufferSize)
-                              .append(udpSendBufferSize, that.udpSendBufferSize)
-                              .append(udpRecvBufferSize, that.udpRecvBufferSize)
-                              .append(udpFragmentSize, that.udpFragmentSize)
-                              .append(disableTcp, that.disableTcp)
-                              .append(enableTimeStatistics, that.enableTimeStatistics)
-                              .append(memberTimeout, that.memberTimeout)
-                              .append(maxWaitTimeForReconnect, that.maxWaitTimeForReconnect)
-                              .append(maxNumReconnectTries, that.maxNumReconnectTries)
-                              .append(asyncDistributionTimeout, that.asyncDistributionTimeout)
-                              .append(asyncQueueTimeout, that.asyncQueueTimeout)
-                              .append(asyncMaxQueueSize, that.asyncMaxQueueSize)
-                              .append(durableClientTimeout, that.durableClientTimeout)
-                              .append(securityLogLevel, that.securityLogLevel)
-                              .append(enableNetworkPartitionDetection, that.enableNetworkPartitionDetection)
-                              .append(disableAutoReconnect, that.disableAutoReconnect)
-                              .append(securityPeerMembershipTimeout, that.securityPeerMembershipTimeout)
-                              .append(removeUnresponsiveClient, that.removeUnresponsiveClient)
-                              .append(deltaPropagation, that.deltaPropagation)
-                              .append(distributedSystemId, that.distributedSystemId)
-                              .append(enforceUniqueHost, that.enforceUniqueHost)
-                              .append(enableSharedConfiguration, that.enableSharedConfiguration)
-                              .append(useSharedConfiguration, that.useSharedConfiguration)
-                              .append(loadSharedConfigurationFromDir, that.loadSharedConfigurationFromDir)
-                              .append(httpServicePort, that.httpServicePort)
-                              .append(startDevRestApi, that.startDevRestApi)
-                              .append(memcachedPort, that.memcachedPort)
-                              .append(distributedTransactions, that.distributedTransactions)
-                              .append(redisPort, that.redisPort)
-                              .append(jmxManager, that.jmxManager)
-                              .append(jmxManagerStart, that.jmxManagerStart)
-                              .append(jmxManagerPort, that.jmxManagerPort)
-                              .append(jmxManagerHttpPort, that.jmxManagerHttpPort)
-                              .append(jmxManagerUpdateRate, that.jmxManagerUpdateRate)
-                              .append(jmxManagerSSLEnabled, that.jmxManagerSSLEnabled)
-                              .append(jmxManagerSslRequireAuthentication, that.jmxManagerSslRequireAuthentication)
-                              .append(serverSSLEnabled, that.serverSSLEnabled)
-                              .append(serverSslRequireAuthentication, that.serverSslRequireAuthentication)
-                              .append(gatewaySSLEnabled, that.gatewaySSLEnabled)
-                              .append(gatewaySslRequireAuthentication, that.gatewaySslRequireAuthentication)
-                              .append(httpServiceSSLEnabled, that.httpServiceSSLEnabled)
-                              .append(httpServiceSSLRequireAuthentication, that.httpServiceSSLRequireAuthentication)
-                              .append(sslRequireAuthentication, that.sslRequireAuthentication)
-                              .append(sslWebServiceRequireAuthentication, that.sslWebServiceRequireAuthentication)
-                              .append(lockMemory, that.lockMemory)
-                              .append(modifiable, that.modifiable)
-                              .append(name, that.name)
-                              .append(roles, that.roles)
-                              .append(mcastAddress, that.mcastAddress)
-                              .append(bindAddress, that.bindAddress)
-                              .append(serverBindAddress, that.serverBindAddress)
-                              .append(locators, that.locators)
-                              .append(logFile, that.logFile)
-                              .append(deployWorkingDir, that.deployWorkingDir)
-                              .append(startLocator, that.startLocator)
-                              .append(statisticArchiveFile, that.statisticArchiveFile)
-                              .append(cacheXmlFile, that.cacheXmlFile)
-                              .append(clusterSSLProtocols, that.clusterSSLProtocols)
-                              .append(clusterSSLCiphers, that.clusterSSLCiphers)
-                              .append(clusterSSLKeyStore, that.clusterSSLKeyStore)
-                              .append(clusterSSLKeyStoreType, that.clusterSSLKeyStoreType)
-                              .append(clusterSSLKeyStorePassword, that.clusterSSLKeyStorePassword)
-                              .append(clusterSSLTrustStore, that.clusterSSLTrustStore)
-                              .append(clusterSSLTrustStorePassword, that.clusterSSLTrustStorePassword)
-                              .append(clusterSSLAlias, that.clusterSSLAlias)
-                              .append(mcastFlowControl, that.mcastFlowControl)
-                              .append(membershipPortRange, that.membershipPortRange)
-                              .append(clientConflation, that.clientConflation)
-                              .append(durableClientId, that.durableClientId)
-                              .append(securityClientAuthInit, that.securityClientAuthInit)
-                              .append(securityClientAuthenticator, that.securityClientAuthenticator)
-                              .append(securityManager, that.securityManager)
-                              .append(postProcessor, that.postProcessor)
-                              .append(securityClientDHAlgo, that.securityClientDHAlgo)
-                              .append(securityPeerAuthInit, that.securityPeerAuthInit)
-                              .append(securityPeerAuthenticator, that.securityPeerAuthenticator)
-                              .append(securityClientAccessor, that.securityClientAccessor)
-                              .append(securityClientAccessorPP, that.securityClientAccessorPP)
-                              .append(securityLogFile, that.securityLogFile)
-                              .append(security, that.security)
-                              .append(userDefinedProps, that.userDefinedProps)
-                              .append(props, that.props)
-                              .append(remoteLocators, that.remoteLocators)
-                              .append(redundancyZone, that.redundancyZone)
-                              .append(sslProperties, that.sslProperties)
-                              .append(clusterSSLProperties, that.clusterSSLProperties)
-                              .append(groups, that.groups)
-                              .append(clusterConfigDir, that.clusterConfigDir)
-                              .append(httpServiceBindAddress, that.httpServiceBindAddress)
-                              .append(memcachedProtocol, that.memcachedProtocol)
-                              .append(memcachedBindAddress, that.memcachedBindAddress)
-                              .append(redisBindAddress, that.redisBindAddress)
-                              .append(redisPassword, that.redisPassword)
-                              .append(jmxManagerBindAddress, that.jmxManagerBindAddress)
-                              .append(jmxManagerHostnameForClients, that.jmxManagerHostnameForClients)
-                              .append(jmxManagerPasswordFile, that.jmxManagerPasswordFile)
-                              .append(jmxManagerAccessFile, that.jmxManagerAccessFile)
-                              .append(jmxManagerSslProtocols, that.jmxManagerSslProtocols)
-                              .append(jmxManagerSslCiphers, that.jmxManagerSslCiphers)
-                              .append(jmxManagerSslProperties, that.jmxManagerSslProperties)
-                              .append(jmxManagerSSLKeyStore, that.jmxManagerSSLKeyStore)
-                              .append(jmxManagerSSLKeyStoreType, that.jmxManagerSSLKeyStoreType)
-                              .append(jmxManagerSSLKeyStorePassword, that.jmxManagerSSLKeyStorePassword)
-                              .append(jmxManagerSSLTrustStore, that.jmxManagerSSLTrustStore)
-                              .append(jmxManagerSSLTrustStorePassword, that.jmxManagerSSLTrustStorePassword)
-                              .append(jmxManagerSSLAlias, that.jmxManagerSSLAlias)
-                              .append(serverSslProtocols, that.serverSslProtocols)
-                              .append(serverSslCiphers, that.serverSslCiphers)
-                              .append(serverSslProperties, that.serverSslProperties)
-                              .append(serverSSLKeyStore, that.serverSSLKeyStore)
-                              .append(serverSSLKeyStoreType, that.serverSSLKeyStoreType)
-                              .append(serverSSLKeyStorePassword, that.serverSSLKeyStorePassword)
-                              .append(serverSSLTrustStore, that.serverSSLTrustStore)
-                              .append(serverSSLTrustStorePassword, that.serverSSLTrustStorePassword)
-                              .append(serverSSLAlias, that.serverSSLAlias)
-                              .append(gatewaySslProtocols, that.gatewaySslProtocols)
-                              .append(gatewaySslCiphers, that.gatewaySslCiphers)
-                              .append(gatewaySslProperties, that.gatewaySslProperties)
-                              .append(gatewaySSLKeyStore, that.gatewaySSLKeyStore)
-                              .append(gatewaySSLKeyStoreType, that.gatewaySSLKeyStoreType)
-                              .append(gatewaySSLKeyStorePassword, that.gatewaySSLKeyStorePassword)
-                              .append(gatewaySSLTrustStore, that.gatewaySSLTrustStore)
-                              .append(gatewaySSLTrustStorePassword, that.gatewaySSLTrustStorePassword)
-                              .append(gatewaySSLAlias, that.gatewaySSLAlias)
-                              .append(httpServiceSSLProtocols, that.httpServiceSSLProtocols)
-                              .append(httpServiceSSLCiphers, that.httpServiceSSLCiphers)
-                              .append(httpServiceSSLProperties, that.httpServiceSSLProperties)
-                              .append(httpServiceSSLKeyStore, that.httpServiceSSLKeyStore)
-                              .append(httpServiceSSLKeyStoreType, that.httpServiceSSLKeyStoreType)
-                              .append(httpServiceSSLKeyStorePassword, that.httpServiceSSLKeyStorePassword)
-                              .append(httpServiceSSLTrustStore, that.httpServiceSSLTrustStore)
-                              .append(httpServiceSSLTrustStorePassword, that.httpServiceSSLTrustStorePassword)
-                              .append(httpServiceSSLAlias, that.httpServiceSSLAlias)
-                              .append(securableCommunicationChannels, that.securableCommunicationChannels)
-                              .append(sslProtocols, that.sslProtocols)
-                              .append(sslCiphers, that.sslCiphers)
-                              .append(sslKeyStore, that.sslKeyStore)
-                              .append(sslKeyStoreType, that.sslKeyStoreType)
-                              .append(sslKeyStorePassword, that.sslKeyStorePassword)
-                              .append(sslTrustStore, that.sslTrustStore)
-                              .append(sslTrustStorePassword, that.sslTrustStorePassword)
-                              .append(locatorSSLAlias, that.locatorSSLAlias)
-                              .append(sslDefaultAlias, that.sslDefaultAlias)
-                              .append(sourceMap, that.sourceMap)
-                              .append(userCommandPackages, that.userCommandPackages)
-                              .append(offHeapMemorySize, that.offHeapMemorySize)
-                              .append(shiroInit, that.shiroInit)
-                              .isEquals();
+    return new EqualsBuilder().append(tcpPort, that.tcpPort).append(mcastPort, that.mcastPort).append(mcastTtl, that.mcastTtl).append(socketLeaseTime, that.socketLeaseTime).append(socketBufferSize, that.socketBufferSize).append(conserveSockets, that.conserveSockets).append(locatorWaitTime, that.locatorWaitTime).append(logLevel, that.logLevel).append(startLocatorPort, that.startLocatorPort).append(statisticSamplingEnabled, that.statisticSamplingEnabled).append(statisticSampleRate, that.statisticSampleRate).append(ackWaitThreshold, that.ackWaitThreshold).append(ackForceDisconnectThreshold, that.ackForceDisconnectThreshold).append(archiveDiskSpaceLimit, that.archiveDiskSpaceLimit).append(archiveFileSizeLimit, that.archiveFileSizeLimit).append(logDiskSpaceLimit, that.logDiskSpaceLimit).append(logFileSizeLimit, that.logFileSizeLimit).append(clusterSSLEnabled, that.clusterSSLEnabled).append(clusterSSLRequireAuthentication, that.clusterSSLRequireAuthentication)
+        .append(mcastSendBufferSize, that.mcastSendBufferSize).append(mcastRecvBufferSize, that.mcastRecvBufferSize).append(udpSendBufferSize, that.udpSendBufferSize).append(udpRecvBufferSize, that.udpRecvBufferSize).append(udpFragmentSize, that.udpFragmentSize).append(disableTcp, that.disableTcp).append(enableTimeStatistics, that.enableTimeStatistics).append(memberTimeout, that.memberTimeout).append(maxWaitTimeForReconnect, that.maxWaitTimeForReconnect).append(maxNumReconnectTries, that.maxNumReconnectTries).append(asyncDistributionTimeout, that.asyncDistributionTimeout).append(asyncQueueTimeout, that.asyncQueueTimeout).append(asyncMaxQueueSize, that.asyncMaxQueueSize).append(durableClientTimeout, that.durableClientTimeout).append(securityLogLevel, that.securityLogLevel).append(enableNetworkPartitionDetection, that.enableNetworkPartitionDetection).append(disableAutoReconnect, that.disableAutoReconnect).append(securityPeerMembershipTimeout, that.securityPeerMembershipTimeout)
+        .append(removeUnresponsiveClient, that.removeUnresponsiveClient).append(deltaPropagation, that.deltaPropagation).append(distributedSystemId, that.distributedSystemId).append(enforceUniqueHost, that.enforceUniqueHost).append(enableSharedConfiguration, that.enableSharedConfiguration).append(useSharedConfiguration, that.useSharedConfiguration).append(loadSharedConfigurationFromDir, that.loadSharedConfigurationFromDir).append(httpServicePort, that.httpServicePort).append(startDevRestApi, that.startDevRestApi).append(memcachedPort, that.memcachedPort).append(distributedTransactions, that.distributedTransactions).append(redisPort, that.redisPort).append(jmxManager, that.jmxManager).append(jmxManagerStart, that.jmxManagerStart).append(jmxManagerPort, that.jmxManagerPort).append(jmxManagerHttpPort, that.jmxManagerHttpPort).append(jmxManagerUpdateRate, that.jmxManagerUpdateRate).append(jmxManagerSSLEnabled, that.jmxManagerSSLEnabled)
+        .append(jmxManagerSslRequireAuthentication, that.jmxManagerSslRequireAuthentication).append(serverSSLEnabled, that.serverSSLEnabled).append(serverSslRequireAuthentication, that.serverSslRequireAuthentication).append(gatewaySSLEnabled, that.gatewaySSLEnabled).append(gatewaySslRequireAuthentication, that.gatewaySslRequireAuthentication).append(httpServiceSSLEnabled, that.httpServiceSSLEnabled).append(httpServiceSSLRequireAuthentication, that.httpServiceSSLRequireAuthentication).append(sslRequireAuthentication, that.sslRequireAuthentication).append(sslWebServiceRequireAuthentication, that.sslWebServiceRequireAuthentication).append(lockMemory, that.lockMemory).append(modifiable, that.modifiable).append(name, that.name).append(roles, that.roles).append(mcastAddress, that.mcastAddress).append(bindAddress, that.bindAddress).append(serverBindAddress, that.serverBindAddress).append(locators, that.locators).append(logFile, that.logFile).append(deployWorkingDir, that.deployWorkingDir)
+        .append(startLocator, that.startLocator).append(statisticArchiveFile, that.statisticArchiveFile).append(cacheXmlFile, that.cacheXmlFile).append(clusterSSLProtocols, that.clusterSSLProtocols).append(clusterSSLCiphers, that.clusterSSLCiphers).append(clusterSSLKeyStore, that.clusterSSLKeyStore).append(clusterSSLKeyStoreType, that.clusterSSLKeyStoreType).append(clusterSSLKeyStorePassword, that.clusterSSLKeyStorePassword).append(clusterSSLTrustStore, that.clusterSSLTrustStore).append(clusterSSLTrustStorePassword, that.clusterSSLTrustStorePassword).append(clusterSSLAlias, that.clusterSSLAlias).append(mcastFlowControl, that.mcastFlowControl).append(membershipPortRange, that.membershipPortRange).append(clientConflation, that.clientConflation).append(durableClientId, that.durableClientId).append(securityClientAuthInit, that.securityClientAuthInit).append(securityClientAuthenticator, that.securityClientAuthenticator).append(securityManager, that.securityManager)
+        .append(postProcessor, that.postProcessor).append(securityClientDHAlgo, that.securityClientDHAlgo).append(securityPeerAuthInit, that.securityPeerAuthInit).append(securityPeerAuthenticator, that.securityPeerAuthenticator).append(securityClientAccessor, that.securityClientAccessor).append(securityClientAccessorPP, that.securityClientAccessorPP).append(securityLogFile, that.securityLogFile).append(security, that.security).append(userDefinedProps, that.userDefinedProps).append(props, that.props).append(remoteLocators, that.remoteLocators).append(redundancyZone, that.redundancyZone).append(sslProperties, that.sslProperties).append(clusterSSLProperties, that.clusterSSLProperties).append(groups, that.groups).append(clusterConfigDir, that.clusterConfigDir).append(httpServiceBindAddress, that.httpServiceBindAddress).append(memcachedProtocol, that.memcachedProtocol).append(memcachedBindAddress, that.memcachedBindAddress).append(redisBindAddress, that.redisBindAddress)
+        .append(redisPassword, that.redisPassword).append(jmxManagerBindAddress, that.jmxManagerBindAddress).append(jmxManagerHostnameForClients, that.jmxManagerHostnameForClients).append(jmxManagerPasswordFile, that.jmxManagerPasswordFile).append(jmxManagerAccessFile, that.jmxManagerAccessFile).append(jmxManagerSslProtocols, that.jmxManagerSslProtocols).append(jmxManagerSslCiphers, that.jmxManagerSslCiphers).append(jmxManagerSslProperties, that.jmxManagerSslProperties).append(jmxManagerSSLKeyStore, that.jmxManagerSSLKeyStore).append(jmxManagerSSLKeyStoreType, that.jmxManagerSSLKeyStoreType).append(jmxManagerSSLKeyStorePassword, that.jmxManagerSSLKeyStorePassword).append(jmxManagerSSLTrustStore, that.jmxManagerSSLTrustStore).append(jmxManagerSSLTrustStorePassword, that.jmxManagerSSLTrustStorePassword).append(jmxManagerSSLAlias, that.jmxManagerSSLAlias).append(serverSslProtocols, that.serverSslProtocols).append(serverSslCiphers, that.serverSslCiphers)
+        .append(serverSslProperties, that.serverSslProperties).append(serverSSLKeyStore, that.serverSSLKeyStore).append(serverSSLKeyStoreType, that.serverSSLKeyStoreType).append(serverSSLKeyStorePassword, that.serverSSLKeyStorePassword).append(serverSSLTrustStore, that.serverSSLTrustStore).append(serverSSLTrustStorePassword, that.serverSSLTrustStorePassword).append(serverSSLAlias, that.serverSSLAlias).append(gatewaySslProtocols, that.gatewaySslProtocols).append(gatewaySslCiphers, that.gatewaySslCiphers).append(gatewaySslProperties, that.gatewaySslProperties).append(gatewaySSLKeyStore, that.gatewaySSLKeyStore).append(gatewaySSLKeyStoreType, that.gatewaySSLKeyStoreType).append(gatewaySSLKeyStorePassword, that.gatewaySSLKeyStorePassword).append(gatewaySSLTrustStore, that.gatewaySSLTrustStore).append(gatewaySSLTrustStorePassword, that.gatewaySSLTrustStorePassword).append(gatewaySSLAlias, that.gatewaySSLAlias).append(httpServiceSSLProtocols, that.httpServiceSSLProtocols)
+        .append(httpServiceSSLCiphers, that.httpServiceSSLCiphers).append(httpServiceSSLProperties, that.httpServiceSSLProperties).append(httpServiceSSLKeyStore, that.httpServiceSSLKeyStore).append(httpServiceSSLKeyStoreType, that.httpServiceSSLKeyStoreType).append(httpServiceSSLKeyStorePassword, that.httpServiceSSLKeyStorePassword).append(httpServiceSSLTrustStore, that.httpServiceSSLTrustStore).append(httpServiceSSLTrustStorePassword, that.httpServiceSSLTrustStorePassword).append(httpServiceSSLAlias, that.httpServiceSSLAlias).append(securableCommunicationChannels, that.securableCommunicationChannels).append(sslProtocols, that.sslProtocols).append(sslCiphers, that.sslCiphers).append(sslKeyStore, that.sslKeyStore).append(sslKeyStoreType, that.sslKeyStoreType).append(sslKeyStorePassword, that.sslKeyStorePassword).append(sslTrustStore, that.sslTrustStore).append(sslTrustStorePassword, that.sslTrustStorePassword).append(locatorSSLAlias, that.locatorSSLAlias)
+        .append(sslDefaultAlias, that.sslDefaultAlias).append(sourceMap, that.sourceMap).append(userCommandPackages, that.userCommandPackages).append(offHeapMemorySize, that.offHeapMemorySize).append(shiroInit, that.shiroInit).isEquals();
   }
 
   /**
@@ -2874,174 +2706,11 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
    */
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(name)
-                                      .append(tcpPort)
-                                      .append(mcastPort)
-                                      .append(mcastTtl)
-                                      .append(socketLeaseTime)
-                                      .append(socketBufferSize)
-                                      .append(conserveSockets)
-                                      .append(roles)
-                                      .append(mcastAddress)
-                                      .append(bindAddress)
-                                      .append(serverBindAddress)
-                                      .append(locators)
-                                      .append(locatorWaitTime)
-                                      .append(logFile)
-                                      .append(deployWorkingDir)
-                                      .append(logLevel)
-                                      .append(startLocator)
-                                      .append(startLocatorPort)
-                                      .append(statisticSamplingEnabled)
-                                      .append(statisticSampleRate)
-                                      .append(statisticArchiveFile)
-                                      .append(ackWaitThreshold)
-                                      .append(ackForceDisconnectThreshold)
-                                      .append(cacheXmlFile)
-                                      .append(archiveDiskSpaceLimit)
-                                      .append(archiveFileSizeLimit)
-                                      .append(logDiskSpaceLimit)
-                                      .append(logFileSizeLimit)
-                                      .append(clusterSSLEnabled)
-                                      .append(clusterSSLProtocols)
-                                      .append(clusterSSLCiphers)
-                                      .append(clusterSSLRequireAuthentication)
-                                      .append(clusterSSLKeyStore)
-                                      .append(clusterSSLKeyStoreType)
-                                      .append(clusterSSLKeyStorePassword)
-                                      .append(clusterSSLTrustStore)
-                                      .append(clusterSSLTrustStorePassword)
-                                      .append(clusterSSLAlias)
-                                      .append(mcastSendBufferSize)
-                                      .append(mcastRecvBufferSize)
-                                      .append(mcastFlowControl)
-                                      .append(udpSendBufferSize)
-                                      .append(udpRecvBufferSize)
-                                      .append(udpFragmentSize)
-                                      .append(disableTcp)
-                                      .append(enableTimeStatistics)
-                                      .append(memberTimeout)
-                                      .append(membershipPortRange)
-                                      .append(maxWaitTimeForReconnect)
-                                      .append(maxNumReconnectTries)
-                                      .append(asyncDistributionTimeout)
-                                      .append(asyncQueueTimeout)
-                                      .append(asyncMaxQueueSize)
-                                      .append(clientConflation)
-                                      .append(durableClientId)
-                                      .append(durableClientTimeout)
-                                      .append(securityClientAuthInit)
-                                      .append(securityClientAuthenticator)
-                                      .append(securityManager)
-                                      .append(postProcessor)
-                                      .append(securityClientDHAlgo)
-                                      .append(securityPeerAuthInit)
-                                      .append(securityPeerAuthenticator)
-                                      .append(securityClientAccessor)
-                                      .append(securityClientAccessorPP)
-                                      .append(securityLogLevel)
-                                      .append(enableNetworkPartitionDetection)
-                                      .append(disableAutoReconnect)
-                                      .append(securityLogFile)
-                                      .append(securityPeerMembershipTimeout)
-                                      .append(security)
-                                      .append(userDefinedProps)
-                                      .append(removeUnresponsiveClient)
-                                      .append(deltaPropagation)
-                                      .append(props)
-                                      .append(distributedSystemId)
-                                      .append(remoteLocators)
-                                      .append(enforceUniqueHost)
-                                      .append(redundancyZone)
-                                      .append(sslProperties)
-                                      .append(clusterSSLProperties)
-                                      .append(groups)
-                                      .append(enableSharedConfiguration)
-                                      .append(useSharedConfiguration)
-                                      .append(loadSharedConfigurationFromDir)
-                                      .append(clusterConfigDir)
-                                      .append(httpServicePort)
-                                      .append(httpServiceBindAddress)
-                                      .append(startDevRestApi)
-                                      .append(memcachedPort)
-                                      .append(memcachedProtocol)
-                                      .append(memcachedBindAddress)
-                                      .append(distributedTransactions)
-                                      .append(redisPort)
-                                      .append(redisBindAddress)
-                                      .append(redisPassword)
-                                      .append(jmxManager)
-                                      .append(jmxManagerStart)
-                                      .append(jmxManagerPort)
-                                      .append(jmxManagerBindAddress)
-                                      .append(jmxManagerHostnameForClients)
-                                      .append(jmxManagerPasswordFile)
-                                      .append(jmxManagerAccessFile)
-                                      .append(jmxManagerHttpPort)
-                                      .append(jmxManagerUpdateRate)
-                                      .append(jmxManagerSSLEnabled)
-                                      .append(jmxManagerSslRequireAuthentication)
-                                      .append(jmxManagerSslProtocols)
-                                      .append(jmxManagerSslCiphers)
-                                      .append(jmxManagerSslProperties)
-                                      .append(jmxManagerSSLKeyStore)
-                                      .append(jmxManagerSSLKeyStoreType)
-                                      .append(jmxManagerSSLKeyStorePassword)
-                                      .append(jmxManagerSSLTrustStore)
-                                      .append(jmxManagerSSLTrustStorePassword)
-                                      .append(jmxManagerSSLAlias)
-                                      .append(serverSSLEnabled)
-                                      .append(serverSslRequireAuthentication)
-                                      .append(serverSslProtocols)
-                                      .append(serverSslCiphers)
-                                      .append(serverSslProperties)
-                                      .append(serverSSLKeyStore)
-                                      .append(serverSSLKeyStoreType)
-                                      .append(serverSSLKeyStorePassword)
-                                      .append(serverSSLTrustStore)
-                                      .append(serverSSLTrustStorePassword)
-                                      .append(serverSSLAlias)
-                                      .append(gatewaySSLEnabled)
-                                      .append(gatewaySslRequireAuthentication)
-                                      .append(gatewaySslProtocols)
-                                      .append(gatewaySslCiphers)
-                                      .append(gatewaySslProperties)
-                                      .append(gatewaySSLKeyStore)
-                                      .append(gatewaySSLKeyStoreType)
-                                      .append(gatewaySSLKeyStorePassword)
-                                      .append(gatewaySSLTrustStore)
-                                      .append(gatewaySSLTrustStorePassword)
-                                      .append(gatewaySSLAlias)
-                                      .append(httpServiceSSLEnabled)
-                                      .append(httpServiceSSLRequireAuthentication)
-                                      .append(httpServiceSSLProtocols)
-                                      .append(httpServiceSSLCiphers)
-                                      .append(httpServiceSSLProperties)
-                                      .append(httpServiceSSLKeyStore)
-                                      .append(httpServiceSSLKeyStoreType)
-                                      .append(httpServiceSSLKeyStorePassword)
-                                      .append(httpServiceSSLTrustStore)
-                                      .append(httpServiceSSLTrustStorePassword)
-                                      .append(httpServiceSSLAlias)
-                                      .append(securableCommunicationChannels)
-                                      .append(sslProtocols)
-                                      .append(sslCiphers)
-                                      .append(sslRequireAuthentication)
-                                      .append(sslKeyStore)
-                                      .append(sslKeyStoreType)
-                                      .append(sslKeyStorePassword)
-                                      .append(sslTrustStore)
-                                      .append(sslTrustStorePassword)
-                                      .append(sslWebServiceRequireAuthentication)
-                                      .append(locatorSSLAlias)
-                                      .append(sslDefaultAlias)
-                                      .append(sourceMap)
-                                      .append(userCommandPackages)
-                                      .append(offHeapMemorySize)
-                                      .append(lockMemory)
-                                      .append(shiroInit)
-                                      .append(modifiable)
-                                      .toHashCode();
+    return new HashCodeBuilder(17, 37).append(name).append(tcpPort).append(mcastPort).append(mcastTtl).append(socketLeaseTime).append(socketBufferSize).append(conserveSockets).append(roles).append(mcastAddress).append(bindAddress).append(serverBindAddress).append(locators).append(locatorWaitTime).append(logFile).append(deployWorkingDir).append(logLevel).append(startLocator).append(startLocatorPort).append(statisticSamplingEnabled).append(statisticSampleRate).append(statisticArchiveFile).append(ackWaitThreshold).append(ackForceDisconnectThreshold).append(cacheXmlFile).append(archiveDiskSpaceLimit).append(archiveFileSizeLimit).append(logDiskSpaceLimit).append(logFileSizeLimit).append(clusterSSLEnabled).append(clusterSSLProtocols).append(clusterSSLCiphers).append(clusterSSLRequireAuthentication).append(clusterSSLKeyStore).append(clusterSSLKeyStoreType).append(clusterSSLKeyStorePassword).append(clusterSSLTrustStore).append(clusterSSLTrustStorePassword).append(clusterSSLAlias)
+        .append(mcastSendBufferSize).append(mcastRecvBufferSize).append(mcastFlowControl).append(udpSendBufferSize).append(udpRecvBufferSize).append(udpFragmentSize).append(disableTcp).append(enableTimeStatistics).append(memberTimeout).append(membershipPortRange).append(maxWaitTimeForReconnect).append(maxNumReconnectTries).append(asyncDistributionTimeout).append(asyncQueueTimeout).append(asyncMaxQueueSize).append(clientConflation).append(durableClientId).append(durableClientTimeout).append(securityClientAuthInit).append(securityClientAuthenticator).append(securityManager).append(postProcessor).append(securityClientDHAlgo).append(securityPeerAuthInit).append(securityPeerAuthenticator).append(securityClientAccessor).append(securityClientAccessorPP).append(securityLogLevel).append(enableNetworkPartitionDetection).append(disableAutoReconnect).append(securityLogFile).append(securityPeerMembershipTimeout).append(security).append(userDefinedProps).append(removeUnresponsiveClient)
+        .append(deltaPropagation).append(props).append(distributedSystemId).append(remoteLocators).append(enforceUniqueHost).append(redundancyZone).append(sslProperties).append(clusterSSLProperties).append(groups).append(enableSharedConfiguration).append(useSharedConfiguration).append(loadSharedConfigurationFromDir).append(clusterConfigDir).append(httpServicePort).append(httpServiceBindAddress).append(startDevRestApi).append(memcachedPort).append(memcachedProtocol).append(memcachedBindAddress).append(distributedTransactions).append(redisPort).append(redisBindAddress).append(redisPassword).append(jmxManager).append(jmxManagerStart).append(jmxManagerPort).append(jmxManagerBindAddress).append(jmxManagerHostnameForClients).append(jmxManagerPasswordFile).append(jmxManagerAccessFile).append(jmxManagerHttpPort).append(jmxManagerUpdateRate).append(jmxManagerSSLEnabled).append(jmxManagerSslRequireAuthentication).append(jmxManagerSslProtocols).append(jmxManagerSslCiphers)
+        .append(jmxManagerSslProperties).append(jmxManagerSSLKeyStore).append(jmxManagerSSLKeyStoreType).append(jmxManagerSSLKeyStorePassword).append(jmxManagerSSLTrustStore).append(jmxManagerSSLTrustStorePassword).append(jmxManagerSSLAlias).append(serverSSLEnabled).append(serverSslRequireAuthentication).append(serverSslProtocols).append(serverSslCiphers).append(serverSslProperties).append(serverSSLKeyStore).append(serverSSLKeyStoreType).append(serverSSLKeyStorePassword).append(serverSSLTrustStore).append(serverSSLTrustStorePassword).append(serverSSLAlias).append(gatewaySSLEnabled).append(gatewaySslRequireAuthentication).append(gatewaySslProtocols).append(gatewaySslCiphers).append(gatewaySslProperties).append(gatewaySSLKeyStore).append(gatewaySSLKeyStoreType).append(gatewaySSLKeyStorePassword).append(gatewaySSLTrustStore).append(gatewaySSLTrustStorePassword).append(gatewaySSLAlias).append(httpServiceSSLEnabled).append(httpServiceSSLRequireAuthentication)
+        .append(httpServiceSSLProtocols).append(httpServiceSSLCiphers).append(httpServiceSSLProperties).append(httpServiceSSLKeyStore).append(httpServiceSSLKeyStoreType).append(httpServiceSSLKeyStorePassword).append(httpServiceSSLTrustStore).append(httpServiceSSLTrustStorePassword).append(httpServiceSSLAlias).append(securableCommunicationChannels).append(sslProtocols).append(sslCiphers).append(sslRequireAuthentication).append(sslKeyStore).append(sslKeyStoreType).append(sslKeyStorePassword).append(sslTrustStore).append(sslTrustStorePassword).append(sslWebServiceRequireAuthentication).append(locatorSSLAlias).append(sslDefaultAlias).append(sourceMap).append(userCommandPackages).append(offHeapMemorySize).append(lockMemory).append(shiroInit).append(modifiable).toHashCode();
   }
 
   /**
@@ -3057,7 +2726,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     }
     cfg.toFile(new File(fileName));
   }
-
 
   /**
    * For dunit tests we do not allow use of the default multicast address/port.
@@ -3185,7 +2853,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   public boolean getEnableClusterConfiguration() {
     return this.enableSharedConfiguration;
   }
-
 
   @Override
   public void setUseSharedConfiguration(boolean newValue) {
@@ -3440,7 +3107,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     this.httpServiceSSLCiphers = httpServiceSSLCiphers;
   }
 
-
   @Override
   public String getHttpServiceSSLKeyStore() {
     return httpServiceSSLKeyStore;
@@ -3511,6 +3177,5 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   public void setDistributedTransactions(boolean value) {
     this.distributedTransactions = value;
   }
-
 
 }

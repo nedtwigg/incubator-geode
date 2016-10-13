@@ -79,26 +79,8 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
     String search = "<jndi-binding type=\"XAPooledDataSource\"";
     String last_search = "</jndi-binding>";
     String newDB = "newDB_" + OSProcess.getId();
-    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\" jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"1\" max-pool-size=\"2\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\"2\" login-timeout-seconds=\"1\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:"+newDB+";create=true\" >";
-    String config_prop = "<config-property>"
-        + "<config-property-name>description</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>hi</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>user</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>mitul</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>password</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        "
-        + "</config-property>" + "<config-property>"
-        + "<config-property-name>databaseName</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>"+newDB+"</config-property-value>"
-        + "</config-property>\n";
+    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\" jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"1\" max-pool-size=\"2\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\"2\" login-timeout-seconds=\"1\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:" + newDB + ";create=true\" >";
+    String config_prop = "<config-property>" + "<config-property-name>description</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>hi</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>user</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>mitul</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>password</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        " + "</config-property>" + "<config-property>" + "<config-property-name>databaseName</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>" + newDB + "</config-property-value>" + "</config-property>\n";
     String new_str = jndi_str + config_prop;
     /*
      * String new_str = " <jndi-binding type=\"XAPooledDataSource\"
@@ -153,17 +135,14 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
     return tableName;
   }
 
-  public static void createTable(String tableName) throws NamingException,
-      SQLException {
+  public static void createTable(String tableName) throws NamingException, SQLException {
     Context ctx = cache.getJNDIContext();
     DataSource ds = (DataSource) ctx.lookup("java:/SimpleDataSource");
     //String sql = "create table " + tableName + " (id number primary key, name
     // varchar2(50))";
     //String sql = "create table " + tableName + " (id integer primary key,
     // name varchar(50))";
-    String sql = "create table "
-        + tableName
-        + " (id integer NOT NULL, name varchar(50), CONSTRAINT "+tableName+"_key PRIMARY KEY(id))";
+    String sql = "create table " + tableName + " (id integer NOT NULL, name varchar(50), CONSTRAINT " + tableName + "_key PRIMARY KEY(id))";
     LogWriterUtils.getLogWriter().fine(sql);
     Connection conn = ds.getConnection();
     Statement sm = conn.createStatement();
@@ -190,8 +169,7 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
       Statement sm = conn.createStatement();
       sm.execute(sql);
       conn.close();
-    }
-    catch (SQLException se) {
+    } catch (SQLException se) {
       if (!se.getMessage().contains("A lock could not be obtained within the time requested")) {
         LogWriterUtils.getLogWriter().fine("destroy table sql exception: " + se);
         throw se;
@@ -212,8 +190,7 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
       if (cache.isClosed()) {
         cache = CacheFactory.create(ds);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("startCache failed", e);
     }
   }
@@ -223,14 +200,12 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
       if (!cache.isClosed()) {
         cache.close();
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("closeCache failed", e);
     }
     try {
       ds.disconnect();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().fine("Error in disconnecting from Distributed System");
     }
   }
@@ -262,7 +237,7 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
     VM vm0 = host.getVM(0);
     AsyncInvocation asyncObj = vm0.invokeAsync(() -> MaxPoolSizeDUnitTest.runTest1());
     ThreadUtils.join(asyncObj, 30 * 1000);
-    if(asyncObj.exceptionOccurred()){
+    if (asyncObj.exceptionOccurred()) {
       Assert.fail("asyncObj failed", asyncObj.getException());
     }
   }
@@ -274,13 +249,11 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
     try {
       Context ctx = cache.getJNDIContext();
       ds = (DataSource) ctx.lookup("java:/XAPooledDataSource");
-    }
-    catch (NamingException e) {
+    } catch (NamingException e) {
       LogWriterUtils.getLogWriter().fine("Naming Exception caught in lookup: " + e);
       fail("failed in naming lookup: ", e);
       return;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().fine("Exception caught during naming lookup: " + e);
       fail("failed in naming lookup: ", e);
       return;
@@ -291,14 +264,11 @@ public class MaxPoolSizeDUnitTest extends JUnit4DistributedTestCase {
         LogWriterUtils.getLogWriter().fine("Thread 1 acquired connection #" + count);
       }
       fail("expected max connect exception");
-    }
-    catch (SQLException e) {
-      if (count < (MAX_CONNECTIONS-1)) {
+    } catch (SQLException e) {
+      if (count < (MAX_CONNECTIONS - 1)) {
         Assert.fail("runTest1 SQL Exception", e);
-      }
-      else {
-        LogWriterUtils.getLogWriter().fine("Success SQLException caught at connection #"
-            + count);
+      } else {
+        LogWriterUtils.getLogWriter().fine("Success SQLException caught at connection #" + count);
       }
     }
   }

@@ -20,16 +20,16 @@ import java.util.*;
 
 public class FormatOutput {
 
-	public static String converListToString(List<String> outputStringList) {
-		Iterator<String> iters = outputStringList.iterator();
-		
-		StringBuilder sb = new StringBuilder(200);
-		
-		while (iters.hasNext()) {
-		  sb.append("\n");
-			sb.append((String)iters.next());
-		}
-		
-		return sb.toString();
-	}
+  public static String converListToString(List<String> outputStringList) {
+    Iterator<String> iters = outputStringList.iterator();
+
+    StringBuilder sb = new StringBuilder(200);
+
+    while (iters.hasNext()) {
+      sb.append("\n");
+      sb.append((String) iters.next());
+    }
+
+    return sb.toString();
+  }
 }

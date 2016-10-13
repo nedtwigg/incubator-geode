@@ -69,7 +69,7 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     int pid = OSProcess.getId();
     String path = File.createTempFile("dunit-cachejta_", ".xml").getAbsolutePath();
     String file_as_str = readFile(TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml"));
-    String modified_file_str= file_as_str.replaceAll("newDB", "newDB_" + pid);
+    String modified_file_str = file_as_str.replaceAll("newDB", "newDB_" + pid);
     FileOutputStream fos = new FileOutputStream(path);
     BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(fos));
     wr.write(modified_file_str);
@@ -79,7 +79,8 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(CACHE_XML_FILE, path);
 
     ds = (new TransactionTimeOutDUnitTest()).getSystem(props);
-    if (cache == null || cache.isClosed()) cache = CacheFactory.create(ds);
+    if (cache == null || cache.isClosed())
+      cache = CacheFactory.create(ds);
   }
 
   public static Cache getCache() {
@@ -91,8 +92,7 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       if (cache.isClosed()) {
         cache = CacheFactory.create(ds);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception in cache creation due to ", e);
     }
   }
@@ -101,12 +101,11 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     try {
       if (cache != null && !cache.isClosed()) {
         cache.close();
-		}
-	  if (ds != null && ds.isConnected())
-		   ds.disconnect();
-    }
-    catch (Exception e) {
-	    fail("Exception in closing cache and disconnecting ds due to ", e);
+      }
+      if (ds != null && ds.isConnected())
+        ds.disconnect();
+    } catch (Exception e) {
+      fail("Exception in closing cache and disconnecting ds due to ", e);
     }
   }
 
@@ -124,18 +123,18 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> TransactionTimeOutDUnitTest.closeCache());
   }
 
-  public static void testTimeOut() throws Throwable{
+  public static void testTimeOut() throws Throwable {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     AsyncInvocation async1 = vm0.invokeAsync(() -> TransactionTimeOutDUnitTest.runTest1());
-    AsyncInvocation async2 =vm0.invokeAsync(() -> TransactionTimeOutDUnitTest.runTest2());
-    
+    AsyncInvocation async2 = vm0.invokeAsync(() -> TransactionTimeOutDUnitTest.runTest2());
+
     ThreadUtils.join(async1, 30 * 1000);
     ThreadUtils.join(async2, 30 * 1000);
-    if (async1.exceptionOccurred()){
+    if (async1.exceptionOccurred()) {
       Assert.fail("async1 failed", async1.getException());
     }
-    if (async2.exceptionOccurred()){
+    if (async2.exceptionOccurred()) {
       Assert.fail("async2 failed", async2.getException());
     }
   }
@@ -200,21 +199,18 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     boolean exceptionOccured = false;
     try {
       Context ctx = cache.getJNDIContext();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       utx.setTransactionTimeout(2);
       Thread.sleep(6000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured)
-          fail("Exception did not occur although was supposed to occur");
-    }
-    catch (Exception e) {
+        fail("Exception did not occur although was supposed to occur");
+    } catch (Exception e) {
       fail("failed in naming lookup: ", e);
     }
   }
@@ -223,21 +219,18 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     boolean exceptionOccured = false;
     try {
       Context ctx = cache.getJNDIContext();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       utx.setTransactionTimeout(2);
       Thread.sleep(6000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured)
         fail("Exception did not occur although was supposed to occur");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("failed in naming lookup: ", e);
     }
   }
@@ -245,15 +238,13 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
   public static void runTest3() {
     try {
       Context ctx = cache.getJNDIContext();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       utx.setTransactionTimeout(2);
       Thread.sleep(6000);
       utx.begin();
       utx.commit();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception in TestSetTransactionTimeOut due to ", e);
     }
   }
@@ -262,23 +253,20 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     boolean exceptionOccured = true;
     try {
       Context ctx = cache.getJNDIContext();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx = new UserTransactionImpl();
       utx.setTransactionTimeout(2);
       utx.begin();
       Thread.sleep(4000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = false;
       }
       if (exceptionOccured) {
         fail("TimeOut did not rollback the transaction");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception in testExceptionOnCommitAfterTimeOut() due to ", e);
     }
   }
@@ -287,8 +275,7 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     boolean exceptionOccured = true;
     try {
       Context ctx = cache.getJNDIContext();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx = new UserTransactionImpl();
       utx.setTransactionTimeout(10);
       utx.begin();
@@ -298,15 +285,13 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       Thread.sleep(6000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = false;
       }
       if (exceptionOccured) {
         fail("TimeOut did not rollback the transaction");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception in testExceptionOnCommitAfterTimeOut() due to ", e);
     }
   }
@@ -315,43 +300,37 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
     boolean exceptionOccured = true;
     try {
       Context ctx = cache.getJNDIContext();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.setTransactionTimeout(4);
       utx.begin();
       Thread.sleep(6000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = false;
       }
       if (exceptionOccured) {
         fail("TimeOut did not rollback the transaction");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception in testExceptionOnCommitAfterTimeOut() due to ", e);
     }
   }
 
   public static void runTest7() {
-//    boolean exceptionOccured = true;
+    //    boolean exceptionOccured = true;
     try {
       Context ctx = cache.getJNDIContext();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       utx.setTransactionTimeout(6);
       Thread.sleep(2000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         fail("Transaction failed to commit although TimeOut was not exceeded due to ", e);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception in testExceptionOnCommitAfterTimeOut() due to ", e);
     }
   }
@@ -361,10 +340,8 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       Context ctx = cache.getJNDIContext();
       DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
       ds2.getConnection();
-      GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx
-          .lookup("java:/XAPooledDataSource");
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       Connection conn = ds.getConnection();
       String sql = "create table newTable1 (id integer)";
@@ -379,13 +356,13 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       utx.commit();
       sql = "select * from newTable1 where id = 1";
       ResultSet rs = sm.executeQuery(sql);
-      if (!rs.next()) fail("Transaction not committed");
+      if (!rs.next())
+        fail("Transaction not committed");
       sql = "drop table newTable1";
       sm.execute(sql);
       sm.close();
       conn.close();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception occured in test Commit due to ", e);
     }
   }
@@ -396,10 +373,8 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       Context ctx = cache.getJNDIContext();
       DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
       ds2.getConnection();
-      GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx
-          .lookup("java:/XAPooledDataSource");
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       Connection conn = ds.getConnection();
       String sql = "create table newTable2 (id integer)";
@@ -410,7 +385,8 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       sm.execute(sql);
       sql = "select * from newTable2 where id = 1";
       ResultSet rs = sm.executeQuery(sql);
-      if (!rs.next()) fail("Transaction not committed");
+      if (!rs.next())
+        fail("Transaction not committed");
       sql = "drop table newTable2";
       sm.execute(sql);
       sm.close();
@@ -419,15 +395,13 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       Thread.sleep(3000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured) {
         fail("exception did not occur on commit although transaction timed out");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception occured in test Commit due to ", e);
     }
   }
@@ -438,10 +412,8 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       Context ctx = cache.getJNDIContext();
       DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
       ds2.getConnection();
-      GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx
-          .lookup("java:/XAPooledDataSource");
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       Connection conn = ds.getConnection();
       String sql = "create table newTable3 (id integer)";
@@ -452,7 +424,8 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       sm.execute(sql);
       sql = "select * from newTable3 where id = 1";
       ResultSet rs = sm.executeQuery(sql);
-      if (!rs.next()) fail("Transaction not committed");
+      if (!rs.next())
+        fail("Transaction not committed");
       sql = "drop table newTable3";
       sm.execute(sql);
       sm.close();
@@ -461,15 +434,13 @@ public class TransactionTimeOutDUnitTest extends JUnit4DistributedTestCase {
       Thread.sleep(3000);
       try {
         utx.rollback();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured) {
         fail("exception did not occur on rollback although transaction timed out");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception occured in test Commit due to ", e);
     }
   }

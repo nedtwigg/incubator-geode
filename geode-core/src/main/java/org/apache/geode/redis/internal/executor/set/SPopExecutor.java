@@ -36,7 +36,7 @@ public class SPopExecutor extends SetExecutor {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.SPOP));
       return;
     }
-    
+
     ByteArrayWrapper key = command.getKey();
     @SuppressWarnings("unchecked")
     Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
@@ -44,13 +44,13 @@ public class SPopExecutor extends SetExecutor {
       command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
       return;
     }
-    
+
     Random rand = new Random();
-    
+
     ByteArrayWrapper[] entries = keyRegion.keySet().toArray(new ByteArrayWrapper[keyRegion.size()]);
-    
+
     ByteArrayWrapper pop = entries[rand.nextInt(entries.length)];
-    
+
     keyRegion.remove(pop);
     if (keyRegion.isEmpty()) {
       context.getRegionProvider().removeKey(key);

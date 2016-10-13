@@ -25,7 +25,7 @@ package org.apache.geode;
  * <p>As of GemFire 5.0 this exception should be named IncompatibleDistributedSystemException
  */
 public class IncompatibleSystemException extends GemFireException {
-private static final long serialVersionUID = -6852188720149734350L;
+  private static final long serialVersionUID = -6852188720149734350L;
 
   //////////////////////  Constructors  //////////////////////
 

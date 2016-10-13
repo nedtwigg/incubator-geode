@@ -28,9 +28,14 @@ import org.apache.geode.internal.process.ProcessController.Arguments;
  */
 interface MBeanControllerParameters extends Arguments {
   public ObjectName getNamePattern();
+
   public String getPidAttribute();
+
   public String getStatusMethod();
+
   public String getStopMethod();
+
   public String[] getAttributes();
+
   public Object[] getValues();
 }

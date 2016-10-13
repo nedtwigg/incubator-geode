@@ -52,27 +52,27 @@ public class StoppableCondition implements java.io.Serializable {
 
   public static final long TIME_TO_WAIT = 15000;
 
-    /**
-     * Create a new StoppableCondition based on given condition and
-     * cancellation criterion
-     * @param c the underlying condition
-     **/
-    StoppableCondition(Condition c, CancelCriterion stopper) {
-        Assert.assertTrue(stopper != null);
-        this.condition = c;
-        this.stopper = stopper;
-    }
+  /**
+   * Create a new StoppableCondition based on given condition and
+   * cancellation criterion
+   * @param c the underlying condition
+   **/
+  StoppableCondition(Condition c, CancelCriterion stopper) {
+    Assert.assertTrue(stopper != null);
+    this.condition = c;
+    this.stopper = stopper;
+  }
 
-    public boolean await(long timeoutMs) throws InterruptedException {
-        stopper.checkCancelInProgress(null);
-        return condition.await(timeoutMs, TimeUnit.MILLISECONDS);
-    }
+  public boolean await(long timeoutMs) throws InterruptedException {
+    stopper.checkCancelInProgress(null);
+    return condition.await(timeoutMs, TimeUnit.MILLISECONDS);
+  }
 
-    public synchronized void signal() {
-      condition.signal();
-    }
+  public synchronized void signal() {
+    condition.signal();
+  }
 
-    public synchronized void signalAll() {
-      condition.signalAll();
-    }
+  public synchronized void signalAll() {
+    condition.signalAll();
+  }
 }

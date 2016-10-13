@@ -62,11 +62,11 @@ public class CacheXmlParserJUnitTest {
     assertTrue("delegates should be empty.", cacheXmlParser.getDelegates().isEmpty());
 
     final MockXmlParser delegate = (MockXmlParser) cacheXmlParser.getDelegate(NAMESPACE_URI);
-    
+
     assertNotNull("Delegate should be found in classpath.", delegate);
 
     assertSame("Should have same stack as cacheXmlParser.", cacheXmlParser.stack, delegate.stack);
-    assertSame("Should have same stack as cacheXmlParser.", cacheXmlParser.documentLocator , delegate.documentLocator);
+    assertSame("Should have same stack as cacheXmlParser.", cacheXmlParser.documentLocator, delegate.documentLocator);
 
     assertEquals("Should be exactly 1 delegate.", 1, cacheXmlParser.getDelegates().size());
     assertNotNull("There should be an entry in delegates cache.", cacheXmlParser.getDelegates().get(NAMESPACE_URI));
@@ -145,7 +145,7 @@ public class CacheXmlParserJUnitTest {
       }
     }
   }
-  
+
   public static class MockXmlParser extends AbstractXmlParser {
 
     @Override

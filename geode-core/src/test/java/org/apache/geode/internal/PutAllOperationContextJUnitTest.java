@@ -90,6 +90,7 @@ public class PutAllOperationContextJUnitTest {
       }
     }
   }
+
   /**
    * Make sure that we do not expose the internal Token.INVALID to customers
    */
@@ -157,7 +158,7 @@ public class PutAllOperationContextJUnitTest {
     PutAllOperationContext paoc = new PutAllOperationContext(m);
     Map<String, String> opMap = paoc.getMap();
     assertEquals(m, opMap);
-    
+
     { // change order and make sure paoc map order is unchanged
       LinkedHashMap<String, String> m2 = new LinkedHashMap<>();
       m2.put("3", "3");
@@ -184,19 +185,19 @@ public class PutAllOperationContextJUnitTest {
     m.put("2", "2c");
     paoc.setMap(m);
     assertEquals(m, opMap);
-    for (Map.Entry<String, String> me: opMap.entrySet()) {
+    for (Map.Entry<String, String> me : opMap.entrySet()) {
       if (me.getKey().equals("1")) {
         me.setValue("1d");
       }
     }
     m.put("1", "1d");
     assertEquals(m, opMap);
-    
+
     paoc.setMap(opMap);
-    
+
     // check that none of updates changed to key order
     assertEquals(Arrays.asList("1", "2", "3"), new ArrayList<>(opMap.keySet()));
-    
+
     opMap.toString();
   }
 

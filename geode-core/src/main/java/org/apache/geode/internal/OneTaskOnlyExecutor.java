@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("synthetic-access")
 public class OneTaskOnlyExecutor {
-  
+
   private final ScheduledExecutorService ex;
   private ScheduledFuture<?> future = null;
   private ConflatedTaskListener listener;
@@ -56,7 +56,7 @@ public class OneTaskOnlyExecutor {
   public OneTaskOnlyExecutor(ScheduledExecutorService ex) {
     this(ex, new ConflatedTaskListenerAdapter());
   }
-  
+
   public OneTaskOnlyExecutor(ScheduledExecutorService ex, ConflatedTaskListener listener) {
     this.ex = ex;
     this.listener = listener;
@@ -79,10 +79,9 @@ public class OneTaskOnlyExecutor {
    * @see ScheduledExecutorService#schedule(Runnable, long, TimeUnit)
    */
   public ScheduledFuture<?> schedule(Runnable runnable, long delay, TimeUnit unit) {
-    synchronized(this) {
-      if (future == null || future.isCancelled() || future.isDone()
-          || future.getDelay(unit) > delay) {
-        if(future != null && !future.isDone()) {
+    synchronized (this) {
+      if (future == null || future.isCancelled() || future.isDone() || future.getDelay(unit) > delay) {
+        if (future != null && !future.isDone()) {
           future.cancel(false);
           listener.taskDropped();
         }
@@ -93,7 +92,7 @@ public class OneTaskOnlyExecutor {
     }
     return future;
   }
-  
+
   /**
    * Schedule an execution of a task. This will either add the task to the
    * execution service, or if a task has already been scheduled through this
@@ -111,13 +110,13 @@ public class OneTaskOnlyExecutor {
    * @see ScheduledExecutorService#schedule(Runnable, long, TimeUnit)
    */
   public <T> ScheduledFuture<?> schedule(Callable<T> callable, long delay, TimeUnit unit) {
-    synchronized(this) {
-      if(future == null || future.isCancelled() || future.isDone() || future.getDelay(unit) > delay) {
-        if(future != null && !future.isDone()) {
+    synchronized (this) {
+      if (future == null || future.isCancelled() || future.isDone() || future.getDelay(unit) > delay) {
+        if (future != null && !future.isDone()) {
           future.cancel(false);
           listener.taskDropped();
         }
-          future = ex.schedule(new DelegatingCallable<T>(callable), delay, unit);
+        future = ex.schedule(new DelegatingCallable<T>(callable), delay, unit);
       } else {
         listener.taskDropped();
       }
@@ -129,46 +128,46 @@ public class OneTaskOnlyExecutor {
    * Removes the canceled tasks from the executor queue.
    */
   public void purge() {
-    ((ScheduledThreadPoolExecutor)ex).purge();
+    ((ScheduledThreadPoolExecutor) ex).purge();
   }
 
   private class DelegatingRunnable implements Runnable {
     private final Runnable runnable;
-    
+
     public DelegatingRunnable(Runnable runnable) {
       this.runnable = runnable;
     }
 
     public void run() {
-      synchronized(OneTaskOnlyExecutor.this) {
+      synchronized (OneTaskOnlyExecutor.this) {
         future = null;
       }
       runnable.run();
     }
   }
-  
+
   private class DelegatingCallable<T> implements Callable<T> {
     private final Callable<T> callable;
-    
+
     public DelegatingCallable(Callable<T> callable) {
       this.callable = callable;
     }
 
     public T call() throws Exception {
-      synchronized(OneTaskOnlyExecutor.this) {
+      synchronized (OneTaskOnlyExecutor.this) {
         future = null;
       }
       return callable.call();
     }
   }
-  
+
   public static interface ConflatedTaskListener {
     void taskDropped();
   }
-  
+
   public static class ConflatedTaskListenerAdapter implements ConflatedTaskListener {
     public void taskDropped() {
-      
+
     }
   }
 }

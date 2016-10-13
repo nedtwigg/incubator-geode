@@ -25,8 +25,7 @@ import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.configuration.domain.ConfigurationChangeResult;
 import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
-public class DeleteXmlEntityFunction extends FunctionAdapter implements
-    InternalEntity {
+public class DeleteXmlEntityFunction extends FunctionAdapter implements InternalEntity {
 
   /**
    * 
@@ -41,7 +40,7 @@ public class DeleteXmlEntityFunction extends FunctionAdapter implements
       if (locator.isSharedConfigurationRunning()) {
         Object[] args = (Object[]) context.getArguments();
         XmlEntity xmlEntity = (XmlEntity) args[0];
-        String[] groups = (String[])args[1];
+        String[] groups = (String[]) args[1];
         SharedConfiguration sharedConfig = locator.getSharedConfiguration();
         sharedConfig.deleteXmlEntity(xmlEntity, groups);
       } else {
@@ -53,7 +52,7 @@ public class DeleteXmlEntityFunction extends FunctionAdapter implements
 
     } finally {
       context.getResultSender().lastResult(configChangeResult);
-      
+
     }
   }
 

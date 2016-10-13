@@ -51,14 +51,17 @@ import static org.junit.Assert.*;
  *
  */
 public abstract class OffHeapRegionBase {
-  
+
   public abstract void configureOffHeapStorage();
+
   public abstract void unconfigureOffHeapStorage();
+
   public abstract int perObjectOverhead();
 
   private GemFireCacheImpl createCache() {
     return createCache(false);
   }
+
   private GemFireCacheImpl createCache(boolean isPersistent) {
     configureOffHeapStorage();
     Properties props = new Properties();
@@ -69,6 +72,7 @@ public abstract class OffHeapRegionBase {
     unconfigureOffHeapStorage();
     return result;
   }
+
   private void closeCache(GemFireCacheImpl gfc, boolean keepOffHeapAllocated) {
     gfc.close();
     if (!keepOffHeapAllocated) {
@@ -76,9 +80,9 @@ public abstract class OffHeapRegionBase {
     }
     // TODO cleanup default disk store files
   }
-  
+
   protected abstract String getOffHeapMemorySize();
-  
+
   @Test
   public void testSizeAllocation() {
     // prevent cache from closing in reaction to ooom
@@ -90,8 +94,8 @@ public abstract class OffHeapRegionBase {
       final long offHeapSize = ma.getFreeMemory();
       assertEquals(0, ma.getUsedMemory());
       StoredObject mc1 = ma.allocate(64);
-      assertEquals(64+perObjectOverhead(), ma.getUsedMemory());
-      assertEquals(offHeapSize-(64+perObjectOverhead()), ma.getFreeMemory());
+      assertEquals(64 + perObjectOverhead(), ma.getUsedMemory());
+      assertEquals(offHeapSize - (64 + perObjectOverhead()), ma.getFreeMemory());
       mc1.release();
       assertEquals(offHeapSize, ma.getFreeMemory());
       assertEquals(0, ma.getUsedMemory());
@@ -100,7 +104,7 @@ public abstract class OffHeapRegionBase {
       // (see the todo comment on defragment() in FreeListManager).
       // So we request 20m here since that it the total size.
       try {
-        ma.allocate(1024*1024*20);
+        ma.allocate(1024 * 1024 * 20);
         fail("Expected an out of heap exception");
       } catch (OutOfOffHeapMemoryException expected) {
       }
@@ -111,7 +115,7 @@ public abstract class OffHeapRegionBase {
       closeCache(gfc, false);
     }
   }
-  
+
   public void keep_testOutOfOffHeapMemoryErrorClosesCache() {
     // this test is redundant but may be useful
     final GemFireCacheImpl gfc = createCache();
@@ -121,29 +125,30 @@ public abstract class OffHeapRegionBase {
       final long offHeapSize = ma.getFreeMemory();
       assertEquals(0, ma.getUsedMemory());
       StoredObject mc1 = ma.allocate(64);
-      assertEquals(64+perObjectOverhead(), ma.getUsedMemory());
-      assertEquals(offHeapSize-(64+perObjectOverhead()), ma.getFreeMemory());
+      assertEquals(64 + perObjectOverhead(), ma.getUsedMemory());
+      assertEquals(offHeapSize - (64 + perObjectOverhead()), ma.getFreeMemory());
       mc1.release();
       assertEquals(offHeapSize, ma.getFreeMemory());
       assertEquals(0, ma.getUsedMemory());
       // do an allocation larger than the slab size
       try {
-        ma.allocate(1024*1024*10);
+        ma.allocate(1024 * 1024 * 10);
         fail("Expected an out of heap exception");
       } catch (OutOfOffHeapMemoryException expected) {
         // passed
       }
       assertEquals(0, ma.getUsedMemory());
-      
+
       final WaitCriterion waitForDisconnect = new WaitCriterion() {
         public boolean done() {
           return gfc.isClosed();
         }
+
         public String description() {
           return "Waiting for disconnect to complete";
         }
       };
-      org.apache.geode.test.dunit.Wait.waitForCriterion(waitForDisconnect, 10*1000, 100, true);
+      org.apache.geode.test.dunit.Wait.waitForCriterion(waitForDisconnect, 10 * 1000, 100, true);
 
       assertTrue(gfc.isClosed());
     } finally {
@@ -159,10 +164,10 @@ public abstract class OffHeapRegionBase {
       assertNotNull(ma);
       final long offHeapSize = ma.getFreeMemory();
       assertEquals(0, ma.getUsedMemory());
-      byte[] data = new byte[] {1,2,3,4,5,6,7,8};
-      StoredObject mc1 = (StoredObject)ma.allocateAndInitialize(data, false, false);
-      assertEquals(data.length+perObjectOverhead(), ma.getUsedMemory());
-      assertEquals(offHeapSize-(data.length+perObjectOverhead()), ma.getFreeMemory());
+      byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+      StoredObject mc1 = (StoredObject) ma.allocateAndInitialize(data, false, false);
+      assertEquals(data.length + perObjectOverhead(), ma.getUsedMemory());
+      assertEquals(offHeapSize - (data.length + perObjectOverhead()), ma.getFreeMemory());
       byte[] data2 = new byte[data.length];
       mc1.readDataBytes(0, data2);
       assertTrue(Arrays.equals(data, data2));
@@ -170,12 +175,12 @@ public abstract class OffHeapRegionBase {
       assertEquals(offHeapSize, ma.getFreeMemory());
       assertEquals(0, ma.getUsedMemory());
       // try some small byte[] that don't need to be stored off heap.
-      data = new byte[] {1,2,3,4,5,6,7};
+      data = new byte[] { 1, 2, 3, 4, 5, 6, 7 };
       StoredObject so1 = ma.allocateAndInitialize(data, false, false);
       assertEquals(0, ma.getUsedMemory());
       assertEquals(offHeapSize, ma.getFreeMemory());
       data2 = new byte[data.length];
-      data2 = (byte[])so1.getDeserializedForReading();
+      data2 = (byte[]) so1.getDeserializedForReading();
       assertTrue(Arrays.equals(data, data2));
     } finally {
       closeCache(gfc, false);
@@ -218,7 +223,7 @@ public abstract class OffHeapRegionBase {
       assertEquals(data, r.get("key1"));
       r.destroy("key1");
       assertEquals(0, ma.getUsedMemory());
-      
+
       data = new Long(0x007FFFFFL);
       r.put("key1", data);
       if (!compressed) {
@@ -231,8 +236,7 @@ public abstract class OffHeapRegionBase {
         assertTrue(ma.getUsedMemory() == 0);
       }
       assertEquals(data, r.get("key1"));
-      
-      
+
       // now lets set data to something that will be stored offheap
       data = new Long(Long.MAX_VALUE);
       r.put("key1", data);
@@ -274,8 +278,8 @@ public abstract class OffHeapRegionBase {
           assertEquals(null, oldV); // we default to old value being null for offheap
         }
         assertEquals(startUsedMemory, ma.getUsedMemory());
-        
-        readBytes = (byte[])r.putIfAbsent("byteArray", originalBytes);
+
+        readBytes = (byte[]) r.putIfAbsent("byteArray", originalBytes);
         if (originalBytes == readBytes) {
           fail("Expected different byte[] identity");
         }
@@ -299,7 +303,7 @@ public abstract class OffHeapRegionBase {
           fail("Expected remove to not happen");
         }
         assertEquals(startUsedMemory, ma.getUsedMemory());
-        
+
         if (!r.remove("byteArray", originalBytes)) {
           fail("Expected remove to happen");
         }
@@ -335,7 +339,7 @@ public abstract class OffHeapRegionBase {
             assertEquals("string value1", listener.ohOldValue.getDeserializedForReading());
           }
           // make sure that a custom equals/hashCode are not used when comparing values.
-          
+
         } finally {
           r.getAttributesMutator().removeCacheListener(listener);
         }
@@ -439,7 +443,7 @@ public abstract class OffHeapRegionBase {
         assertEquals(new Long(0x007FFFFFL), r.get("key3"));
         assertEquals(new Long(0xFF8000000L), r.get("key4"));
       }
-        
+
       r.destroyRegion();
       assertEquals(0, ma.getUsedMemory());
 
@@ -449,19 +453,22 @@ public abstract class OffHeapRegionBase {
       }
       closeCache(gfc, false);
     }
-    
+
   }
-  
+
   /**
    * This class has an equals that does not compare all its bytes.
    */
   private static class MyValueWithPartialEquals implements Serializable {
     private static final long serialVersionUID = 1L;
     private final String value;
+
     public MyValueWithPartialEquals(String v) {
       this.value = v;
     }
-    @Override public boolean equals(Object other) {
+
+    @Override
+    public boolean equals(Object other) {
       if (other instanceof MyValueWithPartialEquals) {
         MyValueWithPartialEquals o = (MyValueWithPartialEquals) other;
         // just compare the first char
@@ -471,38 +478,43 @@ public abstract class OffHeapRegionBase {
       }
     }
   }
+
   /**
    * This class has an equals that does not compare all its bytes.
    */
   private static class MyPdxWithPartialEquals implements PdxSerializable {
     private String base;
     private String value;
+
     public MyPdxWithPartialEquals(String b, String v) {
       this.base = b;
       this.value = v;
     }
+
     public MyPdxWithPartialEquals() {
     }
+
     @Override
     public void toData(PdxWriter writer) {
       writer.writeString("base", this.base);
       writer.writeString("value", this.value);
       writer.markIdentityField("base");
     }
+
     @Override
     public void fromData(PdxReader reader) {
       this.base = reader.readString("base");
       this.value = reader.readString("value");
     }
   }
-  
+
   @SuppressWarnings("rawtypes")
   private static class MyCacheListener extends CacheListenerAdapter {
     @Retained(OffHeapIdentifier.TEST_OFF_HEAP_REGION_BASE_LISTENER)
     public StoredObject ohOldValue;
     @Retained(OffHeapIdentifier.TEST_OFF_HEAP_REGION_BASE_LISTENER)
     public StoredObject ohNewValue;
-    
+
     /**
      * This method retains both ohOldValue and ohNewValue
      */
@@ -513,7 +525,7 @@ public abstract class OffHeapRegionBase {
       this.ohOldValue = event.getOffHeapOldValue();
       this.ohNewValue = event.getOffHeapNewValue();
     }
-    
+
     @Override
     public void afterCreate(EntryEvent e) {
       setEventData(e);
@@ -533,55 +545,64 @@ public abstract class OffHeapRegionBase {
     public void afterUpdate(EntryEvent e) {
       setEventData(e);
     }
-    
+
     @Released(OffHeapIdentifier.TEST_OFF_HEAP_REGION_BASE_LISTENER)
     @Override
     public void close() {
       if (this.ohOldValue instanceof OffHeapStoredObject) {
-        ((OffHeapStoredObject)this.ohOldValue).release();
+        ((OffHeapStoredObject) this.ohOldValue).release();
       }
       if (this.ohNewValue instanceof OffHeapStoredObject) {
-        ((OffHeapStoredObject)this.ohNewValue).release();
+        ((OffHeapStoredObject) this.ohNewValue).release();
       }
     }
   }
-  
+
   @Test
   public void testPR() {
     doRegionTest(RegionShortcut.PARTITION, "pr1");
   }
+
   @Test
   public void testPRCompressed() {
     doRegionTest(RegionShortcut.PARTITION, "pr2", true);
   }
+
   @Test
   public void testReplicate() {
     doRegionTest(RegionShortcut.REPLICATE, "rep1");
   }
+
   @Test
   public void testReplicateCompressed() {
     doRegionTest(RegionShortcut.REPLICATE, "rep2", true);
   }
+
   @Test
   public void testLocal() {
     doRegionTest(RegionShortcut.LOCAL, "local1");
   }
+
   @Test
   public void testLocalCompressed() {
     doRegionTest(RegionShortcut.LOCAL, "local2", true);
   }
+
   @Test
   public void testLocalPersistent() {
     doRegionTest(RegionShortcut.LOCAL_PERSISTENT, "localPersist1");
   }
+
   @Test
   public void testLocalPersistentCompressed() {
     doRegionTest(RegionShortcut.LOCAL_PERSISTENT, "localPersist2", true);
   }
+
   @Test
   public void testPRPersistent() {
     doRegionTest(RegionShortcut.PARTITION_PERSISTENT, "prPersist1");
   }
+
   @Test
   public void testPRPersistentCompressed() {
     doRegionTest(RegionShortcut.PARTITION_PERSISTENT, "prPersist2", true);
@@ -636,12 +657,12 @@ public abstract class OffHeapRegionBase {
       assertEquals(true, r.containsKey(key));
       MemoryAllocatorImpl mai = MemoryAllocatorImpl.getAllocator();
       List<OffHeapStoredObject> orphans = mai.getLostChunks();
-      if (orphans.size() >0) {
+      if (orphans.size() > 0) {
         fail("expected no orphan detected, but gets orphan size " + orphans.size());
       }
       assertEquals(value, r.get(key));
     } finally {
-      if (r !=null && !r.isDestroyed()) {
+      if (r != null && !r.isDestroyed()) {
         r.destroyRegion();
       }
       closeCache(gfc, false);

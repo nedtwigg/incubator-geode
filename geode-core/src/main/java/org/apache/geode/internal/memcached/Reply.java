@@ -21,7 +21,7 @@ package org.apache.geode.internal.memcached;
  * All reply types override toString to send "\r\n"
  */
 public enum Reply {
-  
+
   /**
    * to indicate success
    */
@@ -31,7 +31,7 @@ public enum Reply {
       return "STORED\r\n";
     }
   },
-  
+
   /**
    * to indicate the data was not stored, but not
    * because of an error. This normally means that the
@@ -43,7 +43,7 @@ public enum Reply {
       return "NOT_STORED\r\n";
     }
   },
-  
+
   /**
    * to indicate that the item you are trying to store with
    * a "cas" command has been modified since you last fetched it.
@@ -54,7 +54,7 @@ public enum Reply {
       return "EXISTS\r\n";
     }
   },
-  
+
   /**
    * to indicate that the item you are trying to store
    * with a "cas" command did not exist.
@@ -66,7 +66,7 @@ public enum Reply {
       return "NOT_FOUND\r\n";
     }
   },
-  
+
   /**
    * to indicate that get/gets operation has completed
    */
@@ -76,7 +76,7 @@ public enum Reply {
       return "END\r\n";
     }
   },
-  
+
   /**
    * to indicate that flush_all has completed
    */
@@ -86,7 +86,7 @@ public enum Reply {
       return "OK\r\n";
     }
   },
-  
+
   /**
    * to indicate success on delete
    */
@@ -117,4 +117,3 @@ public enum Reply {
     }
   }
 }
-

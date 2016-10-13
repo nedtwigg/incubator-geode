@@ -34,7 +34,7 @@ public class ResourcePermissionTest {
   private ResourcePermission context;
 
   @Test
-  public void testEmptyConstructor(){
+  public void testEmptyConstructor() {
     context = new ResourcePermission();
     assertEquals(Resource.NULL, context.getResource());
     assertEquals(Operation.NULL, context.getOperation());
@@ -42,13 +42,13 @@ public class ResourcePermissionTest {
   }
 
   @Test
-  public void testIsPermission(){
+  public void testIsPermission() {
     context = new ResourcePermission();
     assertTrue(context instanceof WildcardPermission);
   }
 
   @Test
-  public void testConstructor(){
+  public void testConstructor() {
     context = new ResourcePermission();
     assertEquals(Resource.NULL, context.getResource());
     assertEquals(Operation.NULL, context.getOperation());
@@ -81,7 +81,7 @@ public class ResourcePermissionTest {
   }
 
   @Test
-  public void testToString(){
+  public void testToString() {
     context = new ResourcePermission();
     assertEquals("NULL:NULL", context.toString());
 

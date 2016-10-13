@@ -60,13 +60,9 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  */
 @SuppressWarnings("deprecation")
-public abstract class AbstractRegion implements Region, RegionAttributes,
-                                                AttributesMutator, CacheStatistics,
-                                                DataSerializableFixedID, RegionEntryContext,
-                                                Extensible<Region<?,?>>
-{
+public abstract class AbstractRegion implements Region, RegionAttributes, AttributesMutator, CacheStatistics, DataSerializableFixedID, RegionEntryContext, Extensible<Region<?, ?>> {
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Identifies the static order in which this region was created in relation
    * to other regions or other instances of this region during the life of
@@ -133,23 +129,23 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   protected boolean mcastEnabled;
 
   protected int concurrencyLevel;
-  
+
   protected volatile boolean concurrencyChecksEnabled;
 
   protected boolean earlyAck;
 
   //merge42004: revision 42004 has not defined isPdxTypesRegion. It has come to cheetah branch from merge revision 39860. This is getting used in method getRemoteDsIds.
-  
+
   protected final boolean isPdxTypesRegion;
-  
+
   protected Set<String> gatewaySenderIds;
-  
+
   protected boolean isGatewaySenderEnabled = false;
-  
+
   protected Set<String> asyncEventQueueIds;
 
   protected Set<String> allGatewaySenderIds;
-  
+
   protected boolean enableSubscriptionConflation;
 
   protected boolean publisher;
@@ -207,22 +203,21 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   private final AtomicLong hitCount = new AtomicLong();
 
   private final AtomicLong missCount = new AtomicLong();
-  
+
   protected String poolName;
-  
+
   protected Compressor compressor;
-  
+
   /**
    * @see #getExtensionPoint()
    * @since GemFire 8.1
    */
-  protected ExtensionPoint<Region<?,?>> extensionPoint = new SimpleExtensionPoint<Region<?,?>>(this, this);
-  
+  protected ExtensionPoint<Region<?, ?>> extensionPoint = new SimpleExtensionPoint<Region<?, ?>>(this, this);
+
   protected final GemFireCacheImpl cache;
 
   /** Creates a new instance of AbstractRegion */
-  protected AbstractRegion(GemFireCacheImpl cache, RegionAttributes attrs,
-      String regionName, InternalRegionArguments internalRegionArgs) {
+  protected AbstractRegion(GemFireCacheImpl cache, RegionAttributes attrs, String regionName, InternalRegionArguments internalRegionArgs) {
     this.cache = cache;
     this.serialNumber = DistributionAdvisor.createSerialNumber();
     this.isPdxTypesRegion = PeerTypeRegistration.REGION_NAME.equals(regionName);
@@ -240,14 +235,14 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *             .
    */
   @Deprecated
-  AbstractRegion(GemFireCacheImpl cache, int serialNumber, boolean isPdxTypeRegion, long lastAccessedTime, long lastModifiedTime ) {
+  AbstractRegion(GemFireCacheImpl cache, int serialNumber, boolean isPdxTypeRegion, long lastAccessedTime, long lastModifiedTime) {
     this.cache = cache;
     this.serialNumber = serialNumber;
     this.isPdxTypesRegion = isPdxTypeRegion;
     this.lastAccessedTime = new AtomicLong(lastAccessedTime);
     this.lastModifiedTime = new AtomicLong(lastModifiedTime);
   }
-  
+
   /** ******************** No-Brainer methods ******************************** */
 
   /**
@@ -259,43 +254,31 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *             to configure this
    */
   @Deprecated
-  public void setIgnoreJTA(boolean ignore)
-  {
+  public void setIgnoreJTA(boolean ignore) {
     ignoreJTA = ignore;
   }
 
-  public final void create(Object key, Object value) throws TimeoutException,
-      EntryExistsException, CacheWriterException
-  {
+  public final void create(Object key, Object value) throws TimeoutException, EntryExistsException, CacheWriterException {
     create(key, value, null);
   }
 
-  public final Object destroy(Object key) throws TimeoutException,
-      EntryNotFoundException, CacheWriterException
-  {
+  public final Object destroy(Object key) throws TimeoutException, EntryNotFoundException, CacheWriterException {
     return destroy(key, null);
   }
 
-  public Object get(Object name) throws CacheLoaderException,
-      TimeoutException
-  {
+  public Object get(Object name) throws CacheLoaderException, TimeoutException {
     return get(name, null, true, null);
   }
 
-  public Object put(Object name, Object value) throws TimeoutException,
-      CacheWriterException
-  {
+  public Object put(Object name, Object value) throws TimeoutException, CacheWriterException {
     return put(name, value, null);
   }
 
-  public Object get(Object name, Object aCallbackArgument)
-      throws CacheLoaderException, TimeoutException
-  {
+  public Object get(Object name, Object aCallbackArgument) throws CacheLoaderException, TimeoutException {
     return get(name, aCallbackArgument, true, null);
   }
 
-  public final void localDestroyRegion()
-  {
+  public final void localDestroyRegion() {
     localDestroyRegion(null);
   }
 
@@ -308,37 +291,29 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * @throws TimeoutException
    * @throws CacheLoaderException
    */
-  abstract Object get(Object key, Object aCallbackArgument,
-      boolean generateCallbacks, EntryEventImpl clientEvent) throws TimeoutException, CacheLoaderException;
+  abstract Object get(Object key, Object aCallbackArgument, boolean generateCallbacks, EntryEventImpl clientEvent) throws TimeoutException, CacheLoaderException;
 
   public final void localDestroy(Object key) throws EntryNotFoundException {
     localDestroy(key, null);
   }
 
-  public final void destroyRegion() throws CacheWriterException,
-      TimeoutException
-  {
+  public final void destroyRegion() throws CacheWriterException, TimeoutException {
     destroyRegion(null);
   }
 
-  public final void invalidate(Object key) throws TimeoutException,
-      EntryNotFoundException
-  {
+  public final void invalidate(Object key) throws TimeoutException, EntryNotFoundException {
     invalidate(key, null);
   }
 
-  public final void localInvalidate(Object key) throws EntryNotFoundException
-  {
+  public final void localInvalidate(Object key) throws EntryNotFoundException {
     localInvalidate(key, null);
   }
 
-  public final void localInvalidateRegion()
-  {
+  public final void localInvalidateRegion() {
     localInvalidateRegion(null);
   }
 
-  public final void invalidateRegion() throws TimeoutException
-  {
+  public final void invalidateRegion() throws TimeoutException {
     invalidateRegion(null);
   }
 
@@ -357,23 +332,19 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
 
   protected abstract DistributedMember getMyId();
 
-  public void clear()
-  {
+  public void clear() {
     checkReadiness();
     checkForLimitedOrNoAccess();
-    RegionEventImpl regionEvent = new RegionEventImpl(this,
-        Operation.REGION_CLEAR, null, false, getMyId(),generateEventID());
+    RegionEventImpl regionEvent = new RegionEventImpl(this, Operation.REGION_CLEAR, null, false, getMyId(), generateEventID());
     basicClear(regionEvent);
   }
 
   abstract void basicLocalClear(RegionEventImpl rEvent);
 
-  public void localClear()
-  {
+  public void localClear() {
     checkReadiness();
     checkForNoAccess();
-    RegionEventImpl event = new RegionEventImpl(this,
-        Operation.REGION_LOCAL_CLEAR, null, false, getMyId(),generateEventID()/* generate EventID */);
+    RegionEventImpl event = new RegionEventImpl(this, Operation.REGION_LOCAL_CLEAR, null, false, getMyId(), generateEventID()/* generate EventID */);
     basicLocalClear(event);
   }
 
@@ -389,7 +360,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     }
     checkReadiness();
     checkForLimitedOrNoAccess();
-    return keys.isEmpty()? new HashMap(): basicGetAll(keys, callback);
+    return keys.isEmpty() ? new HashMap() : basicGetAll(keys, callback);
   }
 
   abstract Map basicGetAll(Collection keys, Object callback);
@@ -399,12 +370,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   protected StringBuilder getStringBuilder() {
     StringBuilder buf = new StringBuilder();
     buf.append(getClass().getName());
-    buf.append("[path='")
-       .append(getFullPath())
-       .append("';scope=")
-       .append(getScope())
-       .append("';dataPolicy=")
-       .append(this.dataPolicy);
+    buf.append("[path='").append(getFullPath()).append("';scope=").append(getScope()).append("';dataPolicy=").append(this.dataPolicy);
     if (this.concurrencyChecksEnabled) {
       buf.append("; concurrencyChecksEnabled");
     }
@@ -418,14 +384,12 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
 
   /** ********************* RegionAttributes ********************************* */
 
-  public CacheLoader getCacheLoader()
-  {
+  public CacheLoader getCacheLoader() {
     //checkReadiness();
     return this.cacheLoader;
   }
 
-  public CacheWriter getCacheWriter()
-  {
+  public CacheWriter getCacheWriter() {
     //checkReadiness();
     return this.cacheWriter;
   }
@@ -439,6 +403,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     CacheLoader result = this.cacheLoader;
     return result;
   }
+
   /**
    * Return a cache writer if this region has one.
    * Note if region's writer is used to implement bridge then null is returned.
@@ -448,104 +413,90 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     CacheWriter result = this.cacheWriter;
     return result;
   }
-  
-  public Class getKeyConstraint()
-  {
+
+  public Class getKeyConstraint() {
     //checkReadiness();
     return this.keyConstraint;
   }
 
-  public Class getValueConstraint()
-  {
+  public Class getValueConstraint() {
     return this.valueConstraint;
   }
 
   private volatile ExpirationAttributes regionTimeToLiveAtts;
-  
+
   private void setRegionTimeToLiveAtts() {
     this.regionTimeToLiveAtts = new ExpirationAttributes(this.regionTimeToLive, this.regionTimeToLiveExpirationAction);
   }
 
-  public ExpirationAttributes getRegionTimeToLive()
-  {
+  public ExpirationAttributes getRegionTimeToLive() {
     return this.regionTimeToLiveAtts;
   }
 
   private volatile ExpirationAttributes regionIdleTimeoutAtts;
-  
+
   private void setRegionIdleTimeoutAtts() {
     this.regionIdleTimeoutAtts = new ExpirationAttributes(this.regionIdleTimeout, this.regionIdleTimeoutExpirationAction);
   }
 
-  public ExpirationAttributes getRegionIdleTimeout()
-  {
+  public ExpirationAttributes getRegionIdleTimeout() {
     return this.regionIdleTimeoutAtts;
   }
-  
+
   private volatile ExpirationAttributes entryTimeToLiveAtts;
-  
+
   protected void setEntryTimeToLiveAtts() {
     this.entryTimeToLiveAtts = new ExpirationAttributes(this.entryTimeToLive, this.entryTimeToLiveExpirationAction);
   }
 
-  public ExpirationAttributes getEntryTimeToLive()
-  {
+  public ExpirationAttributes getEntryTimeToLive() {
     return this.entryTimeToLiveAtts;
   }
-  
+
   public CustomExpiry getCustomEntryTimeToLive() {
     return this.customEntryTimeToLive;
   }
 
   private volatile ExpirationAttributes entryIdleTimeoutAtts;
-  
+
   protected void setEntryIdleTimeoutAtts() {
     this.entryIdleTimeoutAtts = new ExpirationAttributes(this.entryIdleTimeout, this.entryIdleTimeoutExpirationAction);
   }
 
-  public ExpirationAttributes getEntryIdleTimeout()
-  {
+  public ExpirationAttributes getEntryIdleTimeout() {
     return this.entryIdleTimeoutAtts;
   }
-  
+
   public CustomExpiry getCustomEntryIdleTimeout() {
     return this.customEntryIdleTimeout;
   }
 
   public MirrorType getMirrorType() {
-    if (this.dataPolicy.isNormal() || this.dataPolicy.isPreloaded()
-        || this.dataPolicy.isEmpty() || this.dataPolicy.withPartitioning()) {
+    if (this.dataPolicy.isNormal() || this.dataPolicy.isPreloaded() || this.dataPolicy.isEmpty() || this.dataPolicy.withPartitioning()) {
       return MirrorType.NONE;
-    }
-    else if (this.dataPolicy.withReplication()) {
+    } else if (this.dataPolicy.withReplication()) {
       return MirrorType.KEYS_VALUES;
-    }
-    else {
+    } else {
       throw new IllegalStateException(LocalizedStrings.AbstractRegion_NO_MIRROR_TYPE_CORRESPONDS_TO_DATA_POLICY_0.toLocalizedString(this.dataPolicy));
     }
   }
 
-  
-  public String getPoolName()
-  {
+  public String getPoolName() {
     //checkReadiness();
     return this.poolName;
   }
-  
-  public DataPolicy getDataPolicy()
-  {
+
+  public DataPolicy getDataPolicy() {
     //checkReadiness();
     return this.dataPolicy;
   }
 
-  public Scope getScope()
-  {
+  public Scope getScope() {
     //checkReadiness();
     return this.scope;
   }
 
-  public CacheListener getCacheListener()
-  {
+  public CacheListener getCacheListener() {
     //checkReadiness();
     CacheListener[] listeners = fetchCacheListenersField();
     if (listeners == null || listeners.length == 0) {
@@ -553,8 +504,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     }
     if (listeners.length == 1) {
       return listeners[0];
-    }
-    else {
+    } else {
       throw new IllegalStateException(LocalizedStrings.AbstractRegion_MORE_THAN_ONE_CACHE_LISTENER_EXISTS.toLocalizedString());
     }
   }
@@ -562,7 +512,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   public final boolean isPdxTypesRegion() {
     return this.isPdxTypesRegion;
   }
-  
+
   public Set<String> getGatewaySenderIds() {
     return this.gatewaySenderIds;
   }
@@ -576,19 +526,16 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   }
 
   public final boolean checkNotifyGatewaySender() {
-    return (this.cache.getAllGatewaySenders().size() > 0
-        && this.allGatewaySenderIds.size() > 0);
+    return (this.cache.getAllGatewaySenders().size() > 0 && this.allGatewaySenderIds.size() > 0);
   }
 
   public final Set<String> getActiveGatewaySenderIds() {
     final Set<GatewaySender> allGatewaySenders;
     HashSet<String> activeGatewaySenderIds = null;
     final int sz = this.gatewaySenderIds.size();
-    if (sz > 0
-        && (allGatewaySenders = this.cache.getGatewaySenders()).size() > 0) {
+    if (sz > 0 && (allGatewaySenders = this.cache.getGatewaySenders()).size() > 0) {
       for (GatewaySender sender : allGatewaySenders) {
-        if (sender.isRunning()
-            && this.gatewaySenderIds.contains(sender.getId())) {
+        if (sender.isRunning() && this.gatewaySenderIds.contains(sender.getId())) {
           if (activeGatewaySenderIds == null) {
             activeGatewaySenderIds = new HashSet<String>();
           }
@@ -603,8 +550,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     final Set<AsyncEventQueue> allAsyncQueues;
     HashSet<String> activeAsyncQueueIds = null;
     final int sz = this.asyncEventQueueIds.size();
-    if (sz > 0
-        && (allAsyncQueues = this.cache.getAsyncEventQueues()).size() > 0) {
+    if (sz > 0 && (allAsyncQueues = this.cache.getAsyncEventQueues()).size() > 0) {
       for (AsyncEventQueue asyncQueue : allAsyncQueues) {
         //merge42004:In cheetah asyncEventQueue has isRunning Method. It has come from merging branches. A mail regarding the asyncEventQueue is sent to Barry to get more clarification. We need to sort this out.
         if (/*asyncQueue.isRunning()
@@ -624,12 +570,10 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *
    * @param allGatewaySenderIds the set of gateway sender IDs to consider
    */
-  public final List<Integer> getRemoteDsIds(Set<String> allGatewaySenderIds)
-      throws IllegalStateException {
+  public final List<Integer> getRemoteDsIds(Set<String> allGatewaySenderIds) throws IllegalStateException {
     final Set<GatewaySender> allGatewaySenders;
     final int sz = allGatewaySenderIds.size();
-    if ((sz > 0 || isPdxTypesRegion)
-        && (allGatewaySenders = this.cache.getAllGatewaySenders()).size() > 0) {
+    if ((sz > 0 || isPdxTypesRegion) && (allGatewaySenders = this.cache.getAllGatewaySenders()).size() > 0) {
       List<Integer> allRemoteDSIds = new ArrayList<Integer>(sz);
       for (GatewaySender sender : allGatewaySenders) {
         // This is for all regions except pdx Region
@@ -645,8 +589,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
             }*/
             allRemoteDSIds.add(sender.getRemoteDSId());
           }
-        }
-        else { // this else is for PDX region
+        } else { // this else is for PDX region
           allRemoteDSIds.add(sender.getRemoteDSId());
         }
       }
@@ -655,33 +598,31 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     return null;
   }
 
-//  protected final void initAllGatewaySenderIds() {
-//    HashSet<String> senderIds = new HashSet<String>();
-//    this.allGatewaySenderIds = senderIds;
-//    if (getGatewaySenderIds().isEmpty() && getAsyncEventQueueIds().isEmpty()) {
-//      return Collections.emptySet(); // fix for bug 45774
-//    }
-//    Set<String> tmp = new CopyOnWriteArraySet<String>();
-//    tmp.addAll(this.getGatewaySenderIds());
-//    for(String asyncQueueId : this.getAsyncEventQueueIds()){
-//      tmp.add(AsyncEventQueueImpl.getSenderIdFromAsyncEventQueueId(asyncQueueId));
-//    }
-//    return tmp;
-//  }
-  
+  //  protected final void initAllGatewaySenderIds() {
+  //    HashSet<String> senderIds = new HashSet<String>();
+  //    this.allGatewaySenderIds = senderIds;
+  //    if (getGatewaySenderIds().isEmpty() && getAsyncEventQueueIds().isEmpty()) {
+  //      return Collections.emptySet(); // fix for bug 45774
+  //    }
+  //    Set<String> tmp = new CopyOnWriteArraySet<String>();
+  //    tmp.addAll(this.getGatewaySenderIds());
+  //    for(String asyncQueueId : this.getAsyncEventQueueIds()){
+  //      tmp.add(AsyncEventQueueImpl.getSenderIdFromAsyncEventQueueId(asyncQueueId));
+  //    }
+  //    return tmp;
+  //  }
+
   public boolean isGatewaySenderEnabled() {
     return this.isGatewaySenderEnabled;
   }
-  
+
   private static final CacheListener[] EMPTY_LISTENERS = new CacheListener[0];
 
-  public CacheListener[] getCacheListeners()
-  {
+  public CacheListener[] getCacheListeners() {
     CacheListener[] listeners = fetchCacheListenersField();
     if (listeners == null || listeners.length == 0) {
       return EMPTY_LISTENERS;
-    }
-    else {
+    } else {
       CacheListener[] result = new CacheListener[listeners.length];
       System.arraycopy(listeners, 0, result, 0, listeners.length);
       return result;
@@ -691,15 +632,13 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   /**
    * Sets the cacheListeners field.
    */
-  private final void storeCacheListenersField(CacheListener[] value)
-  {
+  private final void storeCacheListenersField(CacheListener[] value) {
     synchronized (this.clSync) {
       if (value != null && value.length != 0) {
         CacheListener[] nv = new CacheListener[value.length];
         System.arraycopy(value, 0, nv, 0, nv.length);
         value = nv;
-      }
-      else {
+      } else {
         value = EMPTY_LISTENERS;
       }
       this.cacheListeners = value;
@@ -710,27 +649,23 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * Fetches the value in the cacheListeners field. NOTE: callers should not
    * modify the contents of the returned array.
    */
-  protected final CacheListener[] fetchCacheListenersField()
-  {
+  protected final CacheListener[] fetchCacheListenersField() {
     return this.cacheListeners;
   }
 
-  public int getInitialCapacity()
-  {
+  public int getInitialCapacity() {
     //checkReadiness();
     return this.initialCapacity;
   }
 
-  public float getLoadFactor()
-  {
+  public float getLoadFactor() {
     //checkReadiness();
     return this.loadFactor;
   }
 
   protected abstract boolean isCurrentlyLockGrantor();
 
-  public boolean isLockGrantor()
-  {
+  public boolean isLockGrantor() {
     //checkReadiness();
     return this.isLockGrantor;
   }
@@ -739,42 +674,36 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * RegionAttributes implementation. Returns true if multicast can be used by
    * the cache for this region
    */
-  public boolean getMulticastEnabled()
-  {
+  public boolean getMulticastEnabled() {
     //checkReadiness();
     return this.mcastEnabled;
   }
 
-  public boolean getStatisticsEnabled()
-  {
+  public boolean getStatisticsEnabled() {
     //checkReadiness();
     return this.statisticsEnabled;
   }
 
-  public boolean getIgnoreJTA()
-  {
+  public boolean getIgnoreJTA() {
     //checkRediness();
     return this.ignoreJTA;
   }
 
-  public int getConcurrencyLevel()
-  {
+  public int getConcurrencyLevel() {
     //checkReadiness();
     return this.concurrencyLevel;
   }
-  
+
   public boolean getConcurrencyChecksEnabled() {
     return this.concurrencyChecksEnabled;
   }
 
-  public boolean getPersistBackup()
-  {
+  public boolean getPersistBackup() {
     //checkReadiness();
     return getDataPolicy().withPersistence();
   }
 
-  public boolean getEarlyAck()
-  {
+  public boolean getEarlyAck() {
     //checkReadiness();
     return this.earlyAck;
   }
@@ -783,8 +712,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * @deprecated as of prPersistSprint1
    */
   @Deprecated
-  public boolean getPublisher()
-  {
+  public boolean getPublisher() {
     return this.publisher;
   }
 
@@ -795,12 +723,12 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   public boolean getEnableBridgeConflation() {// deprecated in 5.7
     return getEnableSubscriptionConflation();
   }
+
   public boolean getEnableSubscriptionConflation() {
     return this.enableSubscriptionConflation;
   }
 
-  public boolean getEnableAsyncConflation()
-  {
+  public boolean getEnableAsyncConflation() {
     return this.enableAsyncConflation;
   }
 
@@ -808,8 +736,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * @deprecated as of prPersistSprint2
    */
   @Deprecated
-  public DiskWriteAttributes getDiskWriteAttributes()
-  {
+  public DiskWriteAttributes getDiskWriteAttributes() {
     //checkReadiness();
     return this.diskWriteAttributes;
   }
@@ -819,36 +746,31 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   public final String getDiskStoreName() {
     return this.diskStoreName;
   }
-  
+
   public boolean isDiskSynchronous() {
     return this.isDiskSynchronous;
   }
 
-  public boolean getIndexMaintenanceSynchronous()
-  {
+  public boolean getIndexMaintenanceSynchronous() {
     return this.indexMaintenanceSynchronous;
   }
 
-  public PartitionAttributes getPartitionAttributes()
-  {
+  public PartitionAttributes getPartitionAttributes() {
     return this.partitionAttributes;
   }
 
-  public MembershipAttributes getMembershipAttributes()
-  {
+  public MembershipAttributes getMembershipAttributes() {
     return this.membershipAttributes;
   }
 
-  public SubscriptionAttributes getSubscriptionAttributes()
-  {
+  public SubscriptionAttributes getSubscriptionAttributes() {
     return this.subscriptionAttributes;
   }
-  
+
   /**
    * Get IndexManger for region
    */
-  public IndexManager getIndexManager()
-  {
+  public IndexManager getIndexManager() {
     return this.indexManager;
   }
 
@@ -856,8 +778,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * This method call is guarded by imSync lock created for each region.
    * Set IndexManger for region.
    */
-  public IndexManager setIndexManager(IndexManager indexManager)
-  {
+  public IndexManager setIndexManager(IndexManager indexManager) {
     checkReadiness();
     IndexManager oldIdxManager = this.indexManager;
     this.indexManager = indexManager;
@@ -878,8 +799,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   // Thread.
   // Once the thread has created the Index , it will unset the value in the
   // ThreadLocal Object
-  public void setFlagForIndexCreationThread(boolean bool)
-  {
+  public void setFlagForIndexCreationThread(boolean bool) {
     this.isIndexCreator.set(bool ? Boolean.TRUE : null);
   }
 
@@ -887,16 +807,14 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   // block
   // in case the value of the entry is "REMOVED" token. This prevents dead lock
   // caused by the Bug # 33336
-  boolean isIndexCreationThread()
-  {
-    Boolean bool = (Boolean)this.isIndexCreator.get();
+  boolean isIndexCreationThread() {
+    Boolean bool = (Boolean) this.isIndexCreator.get();
     return (bool != null) ? bool.booleanValue() : false;
   }
 
   /** ********************* AttributesMutator ******************************** */
 
-  public Region getRegion()
-  {
+  public Region getRegion() {
     return this;
   }
 
@@ -912,8 +830,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   //       this.listeners = listeners;
   //     }
   //   }
-  public CacheListener setCacheListener(CacheListener aListener)
-  {
+  public CacheListener setCacheListener(CacheListener aListener) {
     checkReadiness();
     CacheListener result = null;
     CacheListener[] oldListeners = null;
@@ -937,8 +854,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
       if (aListener == null) {
         cacheListenersChanged(false);
       }
-    }
-    else { // we have no old listeners
+    } else { // we have no old listeners
       if (aListener != null) {
         // we have added a new listener
         cacheListenersChanged(true);
@@ -951,22 +867,22 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     getGatewaySenderIds().add(gatewaySenderId);
     setAllGatewaySenderIds();
   }
-  
-  public void removeGatewaySenderId(String gatewaySenderId){
+
+  public void removeGatewaySenderId(String gatewaySenderId) {
     getGatewaySenderIds().remove(gatewaySenderId);
     setAllGatewaySenderIds();
   }
-  
+
   public void addAsyncEventQueueId(String asyncEventQueueId) {
     getAsyncEventQueueIds().add(asyncEventQueueId);
     setAllGatewaySenderIds();
   }
-  
+
   public void removeAsyncEventQueueId(String asyncEventQueueId) {
     getAsyncEventQueueIds().remove(asyncEventQueueId);
     setAllGatewaySenderIds();
   }
-  
+
   private void setAllGatewaySenderIds() {
     if (getGatewaySenderIds().isEmpty() && getAsyncEventQueueIds().isEmpty()) {
       allGatewaySenderIds = Collections.emptySet(); // fix for bug 45774
@@ -974,14 +890,12 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     Set<String> tmp = new CopyOnWriteArraySet<String>();
     tmp.addAll(this.getGatewaySenderIds());
     for (String asyncQueueId : this.getAsyncEventQueueIds()) {
-      tmp.add(AsyncEventQueueImpl
-          .getSenderIdFromAsyncEventQueueId(asyncQueueId));
+      tmp.add(AsyncEventQueueImpl.getSenderIdFromAsyncEventQueueId(asyncQueueId));
     }
     allGatewaySenderIds = tmp;
   }
 
-  public void addCacheListener(CacheListener cl)
-  {
+  public void addCacheListener(CacheListener cl) {
     checkReadiness();
     if (cl == null) {
       throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_ADDCACHELISTENER_PARAMETER_WAS_NULL.toLocalizedString());
@@ -993,12 +907,10 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
       if (oldListeners == null || oldListeners.length == 0) {
         this.cacheListeners = new CacheListener[] { wcl };
         changed = true;
-      }
-      else {
+      } else {
         List l = Arrays.asList(oldListeners);
         if (!l.contains(cl)) {
-          this.cacheListeners = (CacheListener[])
-              ArrayUtils.insert(oldListeners, oldListeners.length, wcl);
+          this.cacheListeners = (CacheListener[]) ArrayUtils.insert(oldListeners, oldListeners.length, wcl);
         }
       }
     }
@@ -1007,7 +919,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
       cacheListenersChanged(true);
     }
   }
-  
+
   /**
    * We wrap RegionMembershipListeners in a container when adding them at
    * runtime, so that we can properly initialize their membership set prior
@@ -1016,26 +928,25 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    */
   private CacheListener wrapRegionMembershipListener(CacheListener cl) {
     if (cl instanceof RegionMembershipListener) {
-      return new WrappedRegionMembershipListener((RegionMembershipListener)cl);
+      return new WrappedRegionMembershipListener((RegionMembershipListener) cl);
     }
     return cl;
   }
-  
+
   /**
    * Initialize any wrapped RegionMembershipListeners in the cache listener list
    */
   void initPostCreateRegionMembershipListeners(Set initialMembers) {
     DistributedMember[] initMbrs = null;
     CacheListener[] newcl = null;
-    synchronized(clSync) { 
+    synchronized (clSync) {
       for (int i = 0; i < cacheListeners.length; i++) {
         CacheListener cl = cacheListeners[i];
         if (cl instanceof WrappedRegionMembershipListener) {
-          WrappedRegionMembershipListener wrml = (WrappedRegionMembershipListener)cl;
+          WrappedRegionMembershipListener wrml = (WrappedRegionMembershipListener) cl;
           if (!wrml.isInitialized()) {
             if (initMbrs == null) {
-              initMbrs = (DistributedMember[])initialMembers
-                          .toArray(new DistributedMember[initialMembers.size()]);
+              initMbrs = (DistributedMember[]) initialMembers.toArray(new DistributedMember[initialMembers.size()]);
             }
             wrml.initialMembers(this, initMbrs);
             if (newcl == null) {
@@ -1051,16 +962,14 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
       }
     }
   }
-  
 
-  public void initCacheListeners(CacheListener[] addedListeners)
-  {
+  public void initCacheListeners(CacheListener[] addedListeners) {
     checkReadiness();
     CacheListener[] oldListeners = null;
     CacheListener[] listenersToAdd = null;
     if (addedListeners != null) {
       listenersToAdd = new CacheListener[addedListeners.length];
-      for (int i=0; i<addedListeners.length; i++) {
+      for (int i = 0; i < addedListeners.length; i++) {
         listenersToAdd[i] = wrapRegionMembershipListener(addedListeners[i]);
       }
     }
@@ -1068,14 +977,12 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
       oldListeners = this.cacheListeners;
       if (listenersToAdd == null || listenersToAdd.length == 0) {
         this.cacheListeners = EMPTY_LISTENERS;
-      }
-      else { // we have some listeners to add
+      } else { // we have some listeners to add
         if (Arrays.asList(listenersToAdd).contains(null)) {
           throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_INITCACHELISTENERS_PARAMETER_HAD_A_NULL_ELEMENT.toLocalizedString());
         }
         CacheListener[] newListeners = new CacheListener[listenersToAdd.length];
-        System.arraycopy(listenersToAdd, 0, newListeners, 0,
-            newListeners.length);
+        System.arraycopy(listenersToAdd, 0, newListeners, 0, newListeners.length);
         this.cacheListeners = newListeners;
       }
     }
@@ -1087,21 +994,18 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
         }
         cacheListenersChanged(false);
       }
-    }
-    else { // we had some listeners to add
+    } else { // we had some listeners to add
       if (oldListeners != null && oldListeners.length > 0) {
         for (int i = 0; i < oldListeners.length; i++) {
           closeCacheCallback(oldListeners[i]);
         }
-      }
-      else {
+      } else {
         cacheListenersChanged(true);
       }
     }
   }
 
-  public void removeCacheListener(CacheListener cl)
-  {
+  public void removeCacheListener(CacheListener cl) {
     checkReadiness();
     if (cl == null) {
       throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_REMOVECACHELISTENER_PARAMETER_WAS_NULL.toLocalizedString());
@@ -1114,8 +1018,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
         if (l.remove(cl)) {
           if (l.isEmpty()) {
             this.cacheListeners = EMPTY_LISTENERS;
-          }
-          else {
+          } else {
             CacheListener[] newListeners = new CacheListener[l.size()];
             l.toArray(newListeners);
             this.cacheListeners = newListeners;
@@ -1146,8 +1049,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   }
 
   // synchronized so not reentrant
-  public synchronized CacheWriter setCacheWriter(CacheWriter cacheWriter)
-  {
+  public synchronized CacheWriter setCacheWriter(CacheWriter cacheWriter) {
     checkReadiness();
     CacheWriter oldWriter = this.cacheWriter;
     assignCacheWriter(cacheWriter);
@@ -1155,22 +1057,17 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     return oldWriter;
   }
 
-  private synchronized void assignCacheWriter(CacheWriter cacheWriter)
-  {
+  private synchronized void assignCacheWriter(CacheWriter cacheWriter) {
     this.cacheWriter = cacheWriter;
   }
 
   void checkEntryTimeoutAction(String mode, ExpirationAction ea) {
-    if ((this.dataPolicy.withReplication()
-         || this.dataPolicy.withPartitioning())
-        && (ea == ExpirationAction.LOCAL_DESTROY
-            || ea == ExpirationAction.LOCAL_INVALIDATE)) {
+    if ((this.dataPolicy.withReplication() || this.dataPolicy.withPartitioning()) && (ea == ExpirationAction.LOCAL_DESTROY || ea == ExpirationAction.LOCAL_INVALIDATE)) {
       throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_0_ACTION_IS_INCOMPATIBLE_WITH_THIS_REGIONS_DATA_POLICY.toLocalizedString(mode));
     }
   }
-  
-  public ExpirationAttributes setEntryIdleTimeout(
-      ExpirationAttributes idleTimeout) {
+
+  public ExpirationAttributes setEntryIdleTimeout(ExpirationAttributes idleTimeout) {
     checkReadiness();
     if (idleTimeout == null) {
       throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_IDLETIMEOUT_MUST_NOT_BE_NULL.toLocalizedString());
@@ -1188,12 +1085,11 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     idleTimeoutChanged(oldAttrs);
     return oldAttrs;
   }
-  
+
   public CustomExpiry setCustomEntryIdleTimeout(CustomExpiry custom) {
     checkReadiness();
     if (custom != null && !this.statisticsEnabled) {
-      throw new IllegalStateException(
-        LocalizedStrings.AbstractRegion_CANNOT_SET_IDLE_TIMEOUT_WHEN_STATISTICS_ARE_DISABLED.toLocalizedString());
+      throw new IllegalStateException(LocalizedStrings.AbstractRegion_CANNOT_SET_IDLE_TIMEOUT_WHEN_STATISTICS_ARE_DISABLED.toLocalizedString());
     }
 
     CustomExpiry old = getCustomEntryIdleTimeout();
@@ -1203,8 +1099,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     return old;
   }
 
-  public ExpirationAttributes setEntryTimeToLive(ExpirationAttributes timeToLive)
-  {
+  public ExpirationAttributes setEntryTimeToLive(ExpirationAttributes timeToLive) {
     checkReadiness();
     if (timeToLive == null) {
       throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_TIMETOLIVE_MUST_NOT_BE_NULL.toLocalizedString());
@@ -1221,12 +1116,11 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     timeToLiveChanged(oldAttrs);
     return oldAttrs;
   }
-  
+
   public CustomExpiry setCustomEntryTimeToLive(CustomExpiry custom) {
     checkReadiness();
     if (custom != null && !this.statisticsEnabled) {
-      throw new IllegalStateException(
-        LocalizedStrings.AbstractRegion_CANNOT_SET_CUSTOM_TIME_TO_LIVE_WHEN_STATISTICS_ARE_DISABLED.toLocalizedString());
+      throw new IllegalStateException(LocalizedStrings.AbstractRegion_CANNOT_SET_CUSTOM_TIME_TO_LIVE_WHEN_STATISTICS_ARE_DISABLED.toLocalizedString());
     }
     CustomExpiry old = getCustomEntryTimeToLive();
     this.customEntryTimeToLive = custom;
@@ -1254,8 +1148,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     if (this.getAttributes().getDataPolicy().withPartitioning()) {
       validatePRRegionExpirationAttributes(idleTimeout);
     }
-    if (idleTimeout.getAction() == ExpirationAction.LOCAL_INVALIDATE
-        && this.dataPolicy.withReplication()) {
+    if (idleTimeout.getAction() == ExpirationAction.LOCAL_INVALIDATE && this.dataPolicy.withReplication()) {
       throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_0_ACTION_IS_INCOMPATIBLE_WITH_THIS_REGIONS_DATA_POLICY.toLocalizedString("idleTimeout"));
     }
     if (!this.statisticsEnabled) {
@@ -1277,8 +1170,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     if (this.getAttributes().getDataPolicy().withPartitioning()) {
       validatePRRegionExpirationAttributes(timeToLive);
     }
-    if (timeToLive.getAction() == ExpirationAction.LOCAL_INVALIDATE
-        && this.dataPolicy.withReplication()) {
+    if (timeToLive.getAction() == ExpirationAction.LOCAL_INVALIDATE && this.dataPolicy.withReplication()) {
       throw new IllegalArgumentException(LocalizedStrings.AbstractRegion_0_ACTION_IS_INCOMPATIBLE_WITH_THIS_REGIONS_DATA_POLICY.toLocalizedString("timeToLive"));
     }
     if (!this.statisticsEnabled) {
@@ -1293,8 +1185,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     return oldAttrs;
   }
 
-  public void becomeLockGrantor()
-  {
+  public void becomeLockGrantor() {
     checkReadiness();
     checkForLimitedOrNoAccess();
     if (this.scope != Scope.GLOBAL) {
@@ -1307,8 +1198,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
 
   /** ********************* CacheStatistics ******************************** */
 
-  public CacheStatistics getStatistics()
-  {
+  public CacheStatistics getStatistics() {
     // prefer region destroyed exception over statistics disabled exception
     checkReadiness();
     if (!this.statisticsEnabled) {
@@ -1323,50 +1213,42 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * trades performance of stat retrieval for performance of get/put, which is
    * more critical.
    */
-  public synchronized long getLastModifiedTime()
-  {
+  public synchronized long getLastModifiedTime() {
     checkReadiness();
     long mostRecent = basicGetLastModifiedTime();
     // don't need to wait on getInitialImage for this operation in subregions
-    int oldLevel = LocalRegion
-        .setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
+    int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
     try {
       Iterator subIt = subregions(false).iterator();
       while (subIt.hasNext()) {
         try {
-          LocalRegion r = (LocalRegion)subIt.next();
+          LocalRegion r = (LocalRegion) subIt.next();
           if (r.isInitialized()) {
             mostRecent = Math.max(mostRecent, r.getLastModifiedTime());
           }
-        }
-        catch (RegionDestroyedException e) {
+        } catch (RegionDestroyedException e) {
           // pass over destroyed region
         }
       }
-    }
-    finally {
+    } finally {
       LocalRegion.setThreadInitLevelRequirement(oldLevel);
     }
     return mostRecent;
   }
 
-  protected long basicGetLastModifiedTime()
-  {
+  protected long basicGetLastModifiedTime() {
     return this.lastModifiedTime.get();
   }
 
-  protected long basicGetLastAccessedTime()
-  {
+  protected long basicGetLastAccessedTime() {
     return this.lastAccessedTime.get();
   }
 
-  protected void basicSetLastModifiedTime(long t)
-  {
+  protected void basicSetLastModifiedTime(long t) {
     this.lastModifiedTime.set(t);
   }
 
-  protected void basicSetLastAccessedTime(long t)
-  {
+  protected void basicSetLastAccessedTime(long t) {
     this.lastAccessedTime.set(t);
   }
 
@@ -1376,28 +1258,24 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * trades performance of stat retrieval for performance of get/put, which is
    * more critical.
    */
-  public synchronized long getLastAccessedTime()
-  {
+  public synchronized long getLastAccessedTime() {
     checkReadiness();
     long mostRecent = basicGetLastAccessedTime();
     // don't need to wait on getInitialImage for this operation in subregions
-    int oldLevel = LocalRegion
-        .setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
+    int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
     try {
       Iterator subIt = subregions(false).iterator();
       while (subIt.hasNext()) {
         try {
-          LocalRegion r = (LocalRegion)subIt.next();
+          LocalRegion r = (LocalRegion) subIt.next();
           if (r.isInitialized()) {
             mostRecent = Math.max(mostRecent, r.getLastAccessedTime());
           }
-        }
-        catch (RegionDestroyedException e) {
+        } catch (RegionDestroyedException e) {
           // pass over destroyed region
         }
       }
-    }
-    finally {
+    } finally {
       LocalRegion.setThreadInitLevelRequirement(oldLevel);
     }
     return mostRecent;
@@ -1407,39 +1285,32 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * Update the lastAccessedTime and lastModifiedTimes to reflects those in the
    * subregions
    */
-  protected synchronized void updateStats()
-  {
+  protected synchronized void updateStats() {
     long mostRecentAccessed = basicGetLastAccessedTime();
     long mostRecentModified = basicGetLastModifiedTime();
     // don't need to wait on getInitialImage for this operation in subregions
-    int oldLevel = LocalRegion
-        .setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
+    int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
     try {
       Iterator subIt = subregions(false).iterator();
       while (subIt.hasNext()) {
         try {
-          LocalRegion r = (LocalRegion)subIt.next();
+          LocalRegion r = (LocalRegion) subIt.next();
           if (r.isInitialized()) {
-            mostRecentAccessed = Math.max(mostRecentAccessed, r
-                .getLastAccessedTime());
-            mostRecentModified = Math.max(mostRecentModified, r
-                .getLastModifiedTime());
+            mostRecentAccessed = Math.max(mostRecentAccessed, r.getLastAccessedTime());
+            mostRecentModified = Math.max(mostRecentModified, r.getLastModifiedTime());
           }
-        }
-        catch (RegionDestroyedException e) {
+        } catch (RegionDestroyedException e) {
           // pass over destroyed region
         }
       }
       basicSetLastAccessedTime(Math.max(mostRecentAccessed, mostRecentModified));
       basicSetLastModifiedTime(mostRecentModified);
-    }
-    finally {
+    } finally {
       LocalRegion.setThreadInitLevelRequirement(oldLevel);
     }
   }
 
-  protected void setLastModifiedTime(long time)
-  {
+  protected void setLastModifiedTime(long time) {
     //checkReadiness();
     if (time > this.lastModifiedTime.get()) {
       this.lastModifiedTime.set(time);
@@ -1449,8 +1320,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     }
   }
 
-  protected void setLastAccessedTime(long time, boolean hit)
-  {
+  protected void setLastAccessedTime(long time, boolean hit) {
     this.lastAccessedTime.set(time);
     if (hit) {
       if (trackHits) {
@@ -1463,28 +1333,24 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     }
   }
 
-  public final float getHitRatio()
-  {
+  public final float getHitRatio() {
     //checkReadiness();
     long hits = getHitCount();
     long total = hits + getMissCount();
-    return total == 0L ? 0.0f : ((float)hits / total);
+    return total == 0L ? 0.0f : ((float) hits / total);
   }
 
-  public long getHitCount()
-  {
+  public long getHitCount() {
     //checkReadiness();
     return this.hitCount.get();
   }
 
-  public long getMissCount()
-  {
+  public long getMissCount() {
     //checkReadiness();
     return this.missCount.get();
   }
 
-  public void resetCounts()
-  {
+  public void resetCounts() {
     //checkReadiness();
     if (trackMisses) {
       this.missCount.set(0);
@@ -1496,20 +1362,17 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
 
   /** ****************** Protected Methods *********************************** */
 
-  protected void closeCacheCallback(CacheCallback cb)
-  {
+  protected void closeCacheCallback(CacheCallback cb) {
     if (cb != null) {
       try {
         cb.close();
-      }
-      catch (RuntimeException ex) {
+      } catch (RuntimeException ex) {
         logger.warn(LocalizedMessage.create(LocalizedStrings.AbstractRegion_CACHECALLBACK_CLOSE_EXCEPTION), ex);
       }
     }
   }
 
-  protected void cacheLoaderChanged(CacheLoader oldLoader)
-  {
+  protected void cacheLoaderChanged(CacheLoader oldLoader) {
     if (this.cacheLoader != oldLoader) {
       closeCacheCallback(oldLoader);
     }
@@ -1523,32 +1386,26 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *          true if we now have at least one listener; false if we now have no
    *          listeners
    */
-  protected void cacheListenersChanged(boolean nowHasListener)
-  {
+  protected void cacheListenersChanged(boolean nowHasListener) {
     // nothing needed by default
   }
 
-  protected void cacheWriterChanged(CacheWriter oldWriter)
-  {
+  protected void cacheWriterChanged(CacheWriter oldWriter) {
     if (this.cacheWriter != oldWriter) {
       closeCacheCallback(oldWriter);
     }
   }
 
-  protected void timeToLiveChanged(ExpirationAttributes oldTimeToLive)
-  {
+  protected void timeToLiveChanged(ExpirationAttributes oldTimeToLive) {
   }
 
-  protected void idleTimeoutChanged(ExpirationAttributes oldIdleTimeout)
-  {
+  protected void idleTimeoutChanged(ExpirationAttributes oldIdleTimeout) {
   }
 
-  protected void regionTimeToLiveChanged(ExpirationAttributes oldTimeToLive)
-  {
+  protected void regionTimeToLiveChanged(ExpirationAttributes oldTimeToLive) {
   }
 
-  protected void regionIdleTimeoutChanged(ExpirationAttributes oldIdleTimeout)
-  {
+  protected void regionIdleTimeoutChanged(ExpirationAttributes oldIdleTimeout) {
   };
 
   /** Throws CacheClosedException or RegionDestroyedException */
@@ -1559,8 +1416,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *
    * @since GemFire 5.0
    */
-  protected final boolean isProxy()
-  {
+  protected final boolean isProxy() {
     return getDataPolicy().isEmpty();
   }
 
@@ -1570,11 +1426,9 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *
    * @since GemFire 5.0
    */
-  protected final boolean isCacheContentProxy()
-  {
+  protected final boolean isCacheContentProxy() {
     // method added to fix bug 35195
-    return isProxy()
-        && getSubscriptionAttributes().getInterestPolicy().isCacheContent();
+    return isProxy() && getSubscriptionAttributes().getInterestPolicy().isCacheContent();
   }
 
   /**
@@ -1582,42 +1436,33 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *
    * @since GemFire 5.0
    */
-  final boolean isAllEvents()
-  {
-    return getDataPolicy().withReplication()
-        || getSubscriptionAttributes().getInterestPolicy().isAll();
+  final boolean isAllEvents() {
+    return getDataPolicy().withReplication() || getSubscriptionAttributes().getInterestPolicy().isAll();
   }
 
   private boolean entryExpiryPossible = false;
 
-  protected void updateEntryExpiryPossible()
-  {
-    this.entryExpiryPossible = !isProxy()
-        && (this.entryTimeToLive > 0 
-            || this.entryIdleTimeout > 0 
-            || this.customEntryIdleTimeout != null
-            || this.customEntryTimeToLive != null
-            );
+  protected void updateEntryExpiryPossible() {
+    this.entryExpiryPossible = !isProxy() && (this.entryTimeToLive > 0 || this.entryIdleTimeout > 0 || this.customEntryIdleTimeout != null || this.customEntryTimeToLive != null);
   }
 
   /**
    * Returns true if this region could expire an entry
    */
-  protected boolean isEntryExpiryPossible()
-  {
+  protected boolean isEntryExpiryPossible() {
     return this.entryExpiryPossible;
   }
-  
+
   public ExpirationAction getEntryExpirationAction() {
-    if(this.entryIdleTimeoutExpirationAction != null) {
+    if (this.entryIdleTimeoutExpirationAction != null) {
       return entryIdleTimeoutExpirationAction;
     }
-    if(this.entryTimeToLiveExpirationAction != null) {
+    if (this.entryTimeToLiveExpirationAction != null) {
       return entryTimeToLiveExpirationAction;
     }
     return null;
   }
-  
+
   /**
    * Returns true if this region can evict entries.
    */
@@ -1626,63 +1471,47 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   }
 
   /** ****************** Private Methods ************************************* */
-  private void setAttributes(RegionAttributes attrs,String regionName, InternalRegionArguments internalRegionArgs)
-  {
+  private void setAttributes(RegionAttributes attrs, String regionName, InternalRegionArguments internalRegionArgs) {
     this.dataPolicy = attrs.getDataPolicy(); // do this one first
     this.scope = attrs.getScope();
-    
+
     this.offHeap = attrs.getOffHeap();
 
     // fix bug #52033 by invoking setOffHeap now (localMaxMemory may now be the temporary placeholder for off-heap until DistributedSystem is created
     // found non-null PartitionAttributes and offHeap is true so let's setOffHeap on PA now
     PartitionAttributes<?, ?> pa = attrs.getPartitionAttributes();
     if (this.offHeap && pa != null) {
-      PartitionAttributesImpl impl = (PartitionAttributesImpl)pa;
+      PartitionAttributesImpl impl = (PartitionAttributesImpl) pa;
       impl.setOffHeap(this.offHeap);
     }
 
-    this.evictionAttributes = new EvictionAttributesImpl((EvictionAttributesImpl)attrs
-        .getEvictionAttributes());
-    if (attrs.getPartitionAttributes() != null
-        && this.evictionAttributes != null
-        && this.evictionAttributes.getAlgorithm().isLRUMemory()
-        && attrs.getPartitionAttributes().getLocalMaxMemory() != 0
-        && this.evictionAttributes.getMaximum() != attrs
-            .getPartitionAttributes().getLocalMaxMemory()) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.Mem_LRU_Eviction_Attribute_Reset,
-          new Object[] { regionName,this.evictionAttributes.getMaximum(),
-              attrs.getPartitionAttributes().getLocalMaxMemory() }));
-      this.evictionAttributes.setMaximum(attrs.getPartitionAttributes()
-          .getLocalMaxMemory());
+    this.evictionAttributes = new EvictionAttributesImpl((EvictionAttributesImpl) attrs.getEvictionAttributes());
+    if (attrs.getPartitionAttributes() != null && this.evictionAttributes != null && this.evictionAttributes.getAlgorithm().isLRUMemory() && attrs.getPartitionAttributes().getLocalMaxMemory() != 0 && this.evictionAttributes.getMaximum() != attrs.getPartitionAttributes().getLocalMaxMemory()) {
+      logger.warn(LocalizedMessage.create(LocalizedStrings.Mem_LRU_Eviction_Attribute_Reset, new Object[] { regionName, this.evictionAttributes.getMaximum(), attrs.getPartitionAttributes().getLocalMaxMemory() }));
+      this.evictionAttributes.setMaximum(attrs.getPartitionAttributes().getLocalMaxMemory());
     }
     //final boolean isNotPartitionedRegion = !(attrs.getPartitionAttributes() != null || attrs
     //            .getDataPolicy().withPartitioning());
-    
+
     //if (isNotPartitionedRegion && this.evictionAttributes != null
-    if (this.evictionAttributes != null
-        && !this.evictionAttributes.getAlgorithm().isNone()) {
-      this.setEvictionController(this.evictionAttributes
-          .createEvictionController(this, attrs.getOffHeap()));
+    if (this.evictionAttributes != null && !this.evictionAttributes.getAlgorithm().isNone()) {
+      this.setEvictionController(this.evictionAttributes.createEvictionController(this, attrs.getOffHeap()));
     }
     storeCacheListenersField(attrs.getCacheListeners());
     assignCacheLoader(attrs.getCacheLoader());
     assignCacheWriter(attrs.getCacheWriter());
     this.regionTimeToLive = attrs.getRegionTimeToLive().getTimeout();
-    this.regionTimeToLiveExpirationAction = attrs.getRegionTimeToLive()
-        .getAction();
+    this.regionTimeToLiveExpirationAction = attrs.getRegionTimeToLive().getAction();
     setRegionTimeToLiveAtts();
     this.regionIdleTimeout = attrs.getRegionIdleTimeout().getTimeout();
-    this.regionIdleTimeoutExpirationAction = attrs.getRegionIdleTimeout()
-        .getAction();
+    this.regionIdleTimeoutExpirationAction = attrs.getRegionIdleTimeout().getAction();
     setRegionIdleTimeoutAtts();
     this.entryTimeToLive = attrs.getEntryTimeToLive().getTimeout();
-    this.entryTimeToLiveExpirationAction = attrs.getEntryTimeToLive()
-        .getAction();
+    this.entryTimeToLiveExpirationAction = attrs.getEntryTimeToLive().getAction();
     setEntryTimeToLiveAtts();
     this.customEntryTimeToLive = attrs.getCustomEntryTimeToLive();
     this.entryIdleTimeout = attrs.getEntryIdleTimeout().getTimeout();
-    this.entryIdleTimeoutExpirationAction = attrs.getEntryIdleTimeout()
-        .getAction();
+    this.entryIdleTimeoutExpirationAction = attrs.getEntryIdleTimeout().getAction();
     setEntryIdleTimeoutAtts();
     this.customEntryIdleTimeout = attrs.getCustomEntryIdleTimeout();
     updateEntryExpiryPossible();
@@ -1694,7 +1523,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     this.initialCapacity = attrs.getInitialCapacity();
     this.loadFactor = attrs.getLoadFactor();
     this.concurrencyLevel = attrs.getConcurrencyLevel();
-    this.concurrencyChecksEnabled =  attrs.getConcurrencyChecksEnabled() && supportsConcurrencyChecks();
+    this.concurrencyChecksEnabled = attrs.getConcurrencyChecksEnabled() && supportsConcurrencyChecks();
     this.earlyAck = attrs.getEarlyAck();
     this.gatewaySenderIds = attrs.getGatewaySenderIds();
     this.asyncEventQueueIds = attrs.getAsyncEventQueueIds();
@@ -1712,13 +1541,11 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     if (this.poolName != null) {
       PoolImpl cp = getPool();
       if (cp == null) {
-        throw new IllegalStateException(LocalizedStrings.
-            AbstractRegion_THE_CONNECTION_POOL_0_HAS_NOT_BEEN_CREATED.toLocalizedString(this.poolName));
+        throw new IllegalStateException(LocalizedStrings.AbstractRegion_THE_CONNECTION_POOL_0_HAS_NOT_BEEN_CREATED.toLocalizedString(this.poolName));
       }
       cp.attach();
       if (cp.getMultiuserAuthentication() && !this.dataPolicy.isEmpty()) {
-        throw new IllegalStateException("Region must have empty data-policy "
-            + "when multiuser-authentication is true.");
+        throw new IllegalStateException("Region must have empty data-policy " + "when multiuser-authentication is true.");
       }
     }
 
@@ -1730,16 +1557,14 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
       this.diskDirs = attrs.getDiskDirs();
       this.diskSizes = attrs.getDiskDirSizes();
     }
-    
+
     this.compressor = attrs.getCompressor();
     // enable concurrency checks for persistent regions
-    if(!attrs.getConcurrencyChecksEnabled() 
-        && attrs.getDataPolicy().withPersistence()
-        && supportsConcurrencyChecks()) {
+    if (!attrs.getConcurrencyChecksEnabled() && attrs.getDataPolicy().withPersistence() && supportsConcurrencyChecks()) {
       throw new IllegalStateException(LocalizedStrings.AttributesFactory_CONCURRENCY_CHECKS_MUST_BE_ENABLED.toLocalizedString());
     }
   }
-  
+
   /** is this a region that supports versioning? */
   public abstract boolean supportsConcurrencyChecks();
 
@@ -1751,22 +1576,16 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   private PoolImpl getPool() {
     PoolImpl result = null;
     if (getPoolName() != null) {
-      result = (PoolImpl)PoolManager.find(getPoolName());
+      result = (PoolImpl) PoolManager.find(getPoolName());
     }
     return result;
   }
 
-  public boolean existsValue(String predicate) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException
-  {
+  public boolean existsValue(String predicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     return !query(predicate).isEmpty();
   }
 
-  public Object selectValue(String predicate) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException
-  {
+  public Object selectValue(String predicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     SelectResults result = query(predicate);
     if (result.isEmpty()) {
       return null;
@@ -1776,29 +1595,23 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     return result.iterator().next();
   }
 
-  public Set entrySet(boolean recursive)
-  {
+  public Set entrySet(boolean recursive) {
     return entries(recursive);
   }
 
-  public EvictionAttributes getEvictionAttributes()
-  {
+  public EvictionAttributes getEvictionAttributes() {
     return this.evictionAttributes;
   }
 
-  public EvictionAttributesMutator getEvictionAttributesMutator()
-  {
+  public EvictionAttributesMutator getEvictionAttributesMutator() {
     return this.evictionAttributes;
   }
 
-
-  public void setEvictionController(LRUAlgorithm evictionController)
-  {
+  public void setEvictionController(LRUAlgorithm evictionController) {
     this.evictionController = evictionController;
   }
 
-  public LRUAlgorithm getEvictionController()
-  {
+  public LRUAlgorithm getEvictionController() {
     return evictionController;
   }
 
@@ -1809,8 +1622,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * @throws RegionAccessException
    *           if required roles are missing and the LossAction is NO_ACCESS
    */
-  protected void checkForNoAccess()
-  {
+  protected void checkForNoAccess() {
   }
 
   /**
@@ -1821,8 +1633,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    *           if required roles are missing and the LossAction is either
    *           NO_ACCESS or LIMITED_ACCESS
    */
-  protected void checkForLimitedOrNoAccess()
-  {
+  protected void checkForLimitedOrNoAccess() {
   }
 
   /**
@@ -1839,18 +1650,14 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
    * @since GemFire 5.0
    *
    */
-  protected void handleReliableDistribution(ReliableDistributionData data,
-      Set successfulRecipients)
-  {
+  protected void handleReliableDistribution(ReliableDistributionData data, Set successfulRecipients) {
     // do nothing by default
   }
 
   /** Returns true if region requires a reliability check. */
-  public boolean requiresReliabilityCheck()
-  {
+  public boolean requiresReliabilityCheck() {
     return false;
   }
-
 
   /**
    * Returns the serial number which identifies the static order in which this
@@ -1872,7 +1679,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   public final RegionService getRegionService() {
     return this.cache;
   }
-  
+
   public final DM getDistributionManager() {
     return getSystem().getDistributionManager();
   }
@@ -1880,7 +1687,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   public InternalDistributedSystem getSystem() {
     return getCache().getDistributedSystem();
   }
-  
+
   // DataSerializableFixedID support
   public final int getDSFID() {
     return REGION;
@@ -1888,7 +1695,7 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
 
   // DataSerializableFixedID support
   public final void toData(DataOutput out) throws IOException {
-    DataSerializer.writeRegion(this, out); 
+    DataSerializer.writeRegion(this, out);
   }
 
   // DataSerializableFixedID support
@@ -1904,8 +1711,8 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
   public boolean getCloningEnabled() {
     return this.cloningEnable;
   }
-  
-  public void setCloningEnabled(boolean cloningEnable){
+
+  public void setCloningEnabled(boolean cloningEnable) {
     this.cloningEnable = cloningEnable;
   }
 
@@ -1915,19 +1722,19 @@ public abstract class AbstractRegion implements Region, RegionAttributes,
     }
     return v;
   }
-  
+
   public GemFireCacheImpl getGemFireCache() {
     return this.cache;
   }
-  
+
   public RegionSnapshotService<?, ?> getSnapshotService() {
     return new RegionSnapshotServiceImpl(this);
   }
-  
+
   public Compressor getCompressor() {
     return this.compressor;
   }
-  
+
   /**
   * @since GemFire 8.1
   */

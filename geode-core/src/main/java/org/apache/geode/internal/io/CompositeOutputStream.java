@@ -31,9 +31,9 @@ import java.util.Set;
 public class CompositeOutputStream extends OutputStream implements Iterable<OutputStream> {
 
   protected final Object lock = new Object();
-  
-  private volatile Set<OutputStream> streams = Collections.<OutputStream>emptySet();
-  
+
+  private volatile Set<OutputStream> streams = Collections.<OutputStream> emptySet();
+
   /**
    * Constructs a new instance of CompositeOutputStream with zero or more OutputStreams.
    * 
@@ -51,7 +51,7 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
    * @return <tt>true</tt> if this CompositeOutputStream did not already contain the specified OutputStream
    */
   public boolean addOutputStream(OutputStream out) {
-    synchronized(this.lock) {
+    synchronized (this.lock) {
       final Set<OutputStream> oldSet = this.streams;
       if (oldSet.contains(out)) {
         return false;
@@ -63,17 +63,17 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
       }
     }
   }
-  
+
   /**
    * @return <tt>true</tt> if this CompositeOutputStream contained the specified OutputStream
    */
   public boolean removeOutputStream(OutputStream out) {
-    synchronized(this.lock) {
+    synchronized (this.lock) {
       final Set<OutputStream> oldSet = this.streams;
       if (!oldSet.contains(out)) {
         return false;
       } else if (oldSet.size() == 1) {
-        this.streams = Collections.<OutputStream>emptySet();
+        this.streams = Collections.<OutputStream> emptySet();
         return true;
       } else {
         final Set<OutputStream> newSet = new HashSet<OutputStream>(oldSet);
@@ -83,7 +83,7 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
       }
     }
   }
-  
+
   /**
    * Returns <tt>true</tt> if this CompositeOutputStream contains no OutputStreams.
    *
@@ -92,7 +92,7 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
   public boolean isEmpty() {
     return this.streams.isEmpty();
   }
-  
+
   /**
    * Returns the number of OutputStreams in this CompositeOutputStream (its cardinality).
    *
@@ -101,11 +101,11 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
   public int size() {
     return this.streams.size();
   }
-  
+
   public Iterator<OutputStream> iterator() {
     return this.streams.iterator();
   }
-  
+
   /**
    * Writes the specified <code>byte</code> to this output stream. 
    * <p>
@@ -164,7 +164,7 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
       out.close();
     }
   }
-  
+
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(getClass().getSimpleName());

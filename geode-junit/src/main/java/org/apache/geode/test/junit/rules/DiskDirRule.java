@@ -31,12 +31,14 @@ import org.junit.rules.ExternalResource;
 public class DiskDirRule extends ExternalResource {
   private File diskDir;
 
-  @Override protected void before() throws Throwable {
+  @Override
+  protected void before() throws Throwable {
     diskDir = new File(".", "DiskDirRule-" + System.nanoTime());
   }
 
-  @Override protected void after() {
-    if(!diskDir.exists()) {
+  @Override
+  protected void after() {
+    if (!diskDir.exists()) {
       return;
     }
 
@@ -44,12 +46,11 @@ public class DiskDirRule extends ExternalResource {
       Files.walk(diskDir.toPath()).forEach((path) -> {
         try {
           Files.delete(path);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           //Ignore
         }
       });
-    } catch(IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException("Could not delete disk dir: " + diskDir, e);
     }
     diskDir.delete();

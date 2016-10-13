@@ -21,7 +21,7 @@ package org.apache.geode.internal.datasource;
  * a name, value and type.
  * 
  */
-public class ConfigProperty  {
+public class ConfigProperty {
 
   private String _name; // name of property
   private String _value; // value

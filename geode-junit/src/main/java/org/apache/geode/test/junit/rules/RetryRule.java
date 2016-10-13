@@ -58,12 +58,12 @@ import org.apache.geode.test.junit.Retry;
  * of Throwable.
  */
 public class RetryRule implements TestRule, Serializable {
-  
+
   /**
    * Enables printing of failures to System.err even if test passes on a retry
    */
   private static final boolean LOG = false;
-  
+
   private final AbstractRetryRule implementation;
 
   public RetryRule() {
@@ -82,12 +82,13 @@ public class RetryRule implements TestRule, Serializable {
   protected abstract class AbstractRetryRule implements TestRule, Serializable {
     protected AbstractRetryRule() {
     }
+
     protected void evaluate(final Statement base, final Description description, final int retryCount) throws Throwable {
       if (retryCount == 0) {
-        
+
       }
       Throwable caughtThrowable = null;
-      
+
       for (int count = 0; count < retryCount; count++) {
         try {
           base.evaluate();
@@ -97,22 +98,23 @@ public class RetryRule implements TestRule, Serializable {
           debug(description.getDisplayName() + ": run " + (count + 1) + " failed");
         }
       }
-      
+
       debug(description.getDisplayName() + ": giving up after " + retryCount + " failures");
       throw caughtThrowable;
     }
+
     private void debug(final String message) {
       if (LOG) {
         System.err.println(message);
       }
     }
   }
-  
+
   /**
    * Implementation of RetryRule for all test methods in a test case
    */
   protected class GlobalRetryRule extends AbstractRetryRule {
-    
+
     private final int retryCount;
 
     protected GlobalRetryRule(final int retryCount) {
@@ -121,7 +123,7 @@ public class RetryRule implements TestRule, Serializable {
       }
       this.retryCount = retryCount;
     }
-    
+
     @Override
     public Statement apply(final Statement base, final Description description) {
       return new Statement() {
@@ -141,14 +143,14 @@ public class RetryRule implements TestRule, Serializable {
    * Implementation of RetryRule for test methods annotated with Retry
    */
   protected class LocalRetryRule extends AbstractRetryRule {
-    
+
     protected LocalRetryRule() {
     }
-    
+
     @Override
     public Statement apply(final Statement base, final Description description) {
       return new Statement() {
-        @Override 
+        @Override
         public void evaluate() throws Throwable {
           LocalRetryRule.this.evaluatePerTest(base, description);
         }

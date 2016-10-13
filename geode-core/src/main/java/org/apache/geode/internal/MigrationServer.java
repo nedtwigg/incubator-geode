@@ -100,9 +100,9 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
  */
 public class MigrationServer {
   final static boolean VERBOSE = Boolean.getBoolean("Migration.VERBOSE");
-  
+
   final static int VERSION = 551; // version for backward communications compatibility
-  
+
   protected static final int CODE_ERROR = 0;
   protected static final int CODE_ENTRY = 1; /* serialized key, serialized value */
   protected static final int CODE_COMPLETED = 2;
@@ -112,7 +112,7 @@ public class MigrationServer {
     String cacheXmlFileName = "cache.xml";
     String bindAddressName = null;
     int listenPort = 10533;
-    
+
     if (args.length > 0) {
       cacheXmlFileName = args[argIdx++];
     } else {
@@ -124,7 +124,7 @@ public class MigrationServer {
     if (args.length > argIdx) {
       bindAddressName = args[argIdx++];
     }
-    
+
     MigrationServer instance = null;
     try {
       instance = new MigrationServer(cacheXmlFileName, bindAddressName, listenPort);
@@ -137,15 +137,13 @@ public class MigrationServer {
     instance.serve();
   }
 
-
   private InetAddress bindAddress;
   private int listenPort;
   private ServerSocket serverSocket;
   private DistributedSystem distributedSystem;
   private File cacheXmlFile;
   private Cache cache;
-  
-  
+
   /**
    * Create a MigrationServer to be used with a DistributedSystem and Cache
    * that are created using GemFire APIs
@@ -179,7 +177,7 @@ public class MigrationServer {
       throw new IllegalArgumentException("Port is already in use", e);
     }
   }
-  
+
   /**
    * this is for use by main()
    * 
@@ -206,8 +204,7 @@ public class MigrationServer {
   private void createDistributedSystem() throws Exception {
     Properties dsProps = new Properties();
     // if no discovery information has been explicitly given, use a loner ds 
-    if (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT) == null
-        && System.getProperty(DistributionConfig.GEMFIRE_PREFIX + LOCATORS) == null) {
+    if (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT) == null && System.getProperty(DistributionConfig.GEMFIRE_PREFIX + LOCATORS) == null) {
       dsProps.put(MCAST_PORT, "0");
     }
     dsProps.put(LOG_FILE, "migrationServer.log");
@@ -219,8 +216,7 @@ public class MigrationServer {
       System.out.println("created distributed system " + this.distributedSystem);
     }
   }
-  
-  
+
   /**
    * create the cache to be used by this migration server
    * @throws Exception if there are any problems
@@ -234,7 +230,6 @@ public class MigrationServer {
       System.out.println("created cache " + this.cache);
     }
   }
-    
 
   /**
    * This locates the distributed system and cache, if they have not been
@@ -254,11 +249,9 @@ public class MigrationServer {
         this.cache = GemFireCacheImpl.getInstance();
       }
       if (this.bindAddress != null) {
-        System.out.println("Migration server on port " + this.listenPort +
-            " bound to " + this.bindAddress + " is ready for client requets");
+        System.out.println("Migration server on port " + this.listenPort + " bound to " + this.bindAddress + " is ready for client requets");
       } else {
-        System.out.println("Migration server on port " + this.listenPort +
-            " is ready for client requests");
+        System.out.println("Migration server on port " + this.listenPort + " is ready for client requests");
       }
       for (;;) {
         if (Thread.interrupted() || this.serverSocket.isClosed()) {
@@ -281,7 +274,7 @@ public class MigrationServer {
       }
     }
   }
-  
+
   /**
    * this causes the migration server to stop serving after it finishes dispatching
    * any in-process requests
@@ -300,7 +293,7 @@ public class MigrationServer {
   public Cache getCache() {
     return this.cache;
   }
-  
+
   /**
    * get the distributed system being used by this migration server
    * @return the distributed system, or null if a system has not yet been associated with this server
@@ -308,38 +301,30 @@ public class MigrationServer {
   public DistributedSystem getDistributedSystem() {
     return this.distributedSystem;
   }
-  
 
-  
-  
-  
-  
   // copied from 6.0 SocketCreator
   public static boolean isLocalHost(Object host) {
     if (host instanceof InetAddress) {
       if (InetAddressUtil.LOCALHOST.equals(host)) {
         return true;
-      }
-      else {
+      } else {
         try {
-          Enumeration en=NetworkInterface.getNetworkInterfaces();
-          while(en.hasMoreElements()) {
-            NetworkInterface i=(NetworkInterface)en.nextElement();
-            for(Enumeration en2=i.getInetAddresses(); en2.hasMoreElements();) {
-              InetAddress addr=(InetAddress)en2.nextElement();
+          Enumeration en = NetworkInterface.getNetworkInterfaces();
+          while (en.hasMoreElements()) {
+            NetworkInterface i = (NetworkInterface) en.nextElement();
+            for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements();) {
+              InetAddress addr = (InetAddress) en2.nextElement();
               if (host.equals(addr)) {
                 return true;
               }
             }
           }
           return false;
-        }
-        catch (SocketException e) {
+        } catch (SocketException e) {
           throw new IllegalArgumentException(LocalizedStrings.InetAddressUtil_UNABLE_TO_QUERY_NETWORK_INTERFACE.toLocalizedString(), e);
         }
       }
-    }
-    else {
+    } else {
       return isLocalHost(toInetAddress(host.toString()));
     }
   }
@@ -352,8 +337,7 @@ public class MigrationServer {
     try {
       if (host.indexOf("/") > -1) {
         return InetAddress.getByName(host.substring(host.indexOf("/") + 1));
-      }
-      else {
+      } else {
         return InetAddress.getByName(host);
       }
     } catch (java.net.UnknownHostException e) {
@@ -361,13 +345,8 @@ public class MigrationServer {
     }
   }
 
-  
-  
-  
-  
   //               R E Q U E S T   H A N D L E R
-  
-  
+
   class RequestHandler implements Runnable {
     Socket clientSocket;
     DataInputStream dis;
@@ -378,14 +357,12 @@ public class MigrationServer {
       dos = new DataOutputStream(this.clientSocket.getOutputStream());
       dis = new DataInputStream(this.clientSocket.getInputStream());
     }
-    
-    
+
     // for now this is a blocking operation - multithread later if necessary
     void serveClientRequest() {
       try {
         run();
-      }
-      finally {
+      } finally {
         if (!this.clientSocket.isClosed()) {
           try {
             this.clientSocket.close();
@@ -395,19 +372,17 @@ public class MigrationServer {
         }
       }
     }
-    
+
     public void run() {
       try {
         // first exchange version information so we can communicate correctly
         dos.writeShort(VERSION);
         int version = dis.readShort();
         handleRequest(version);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         System.err.println("Trouble dispatching request: " + e.getMessage());
         return;
-      }
-      finally {
+      } finally {
         try {
           this.clientSocket.close();
         } catch (IOException e) {
@@ -415,7 +390,7 @@ public class MigrationServer {
         }
       }
     }
-    
+
     /**
      * read and dispatch a single request on client socket
      * @param clientVersion
@@ -435,21 +410,18 @@ public class MigrationServer {
         e.printStackTrace();
       }
     }
-    
+
   }
-  
-  
+
   //           R E Q U E S T   C L A S S E S
-  
-  
-  
+
   static abstract class ClientRequest {
     Socket clientSocket;
     DataInputStream dsi;
     DataOutputStream dso;
-    
+
     final static int REGION_REQUEST = 1;
-    
+
     /**
      * Use readRequest to create a new request object, not this constructor.
      * Subclasses may refine this constructor to perform other initialization
@@ -480,37 +452,36 @@ public class MigrationServer {
       String errorMessage = "Type of request is not implemented in this server";
       dso.writeShort(CODE_ERROR);
       dso.writeUTF(errorMessage);
-      System.err.println("Migration server received unknown type of request ("
-          + requestType + ") from " + clientSocket.getInetAddress().getHostAddress());
+      System.err.println("Migration server received unknown type of request (" + requestType + ") from " + clientSocket.getInetAddress().getHostAddress());
       return null;
     }
-    
+
     void writeErrorResponse(String message) throws IOException {
       this.dso.writeShort(CODE_ERROR);
       this.dso.writeUTF(message);
     }
 
-    abstract void process(MigrationServer server) throws IOException ;
-    
+    abstract void process(MigrationServer server) throws IOException;
+
   }
-  
+
   /**
    * RegionRequest represents a request for the keys and values of a Region
    * from a client.
    */
   static class RegionRequest extends ClientRequest {
     String regionName;
-    
+
     RegionRequest(Socket clientSocket, DataInputStream dsi, DataOutputStream dso) throws IOException {
       super(clientSocket, dsi, dso);
       regionName = dsi.readUTF();
     }
-    
+
     @Override
     public String toString() {
       return "request for contents of region '" + this.regionName + "'";
     }
-    
+
     @Override
     void process(MigrationServer server) throws IOException {
       Cache cache = server.getCache();
@@ -518,33 +489,32 @@ public class MigrationServer {
       try {
         region = cache.getRegion(regionName);
         if (region == null) {
-          String errorMessage = "Error: region " + this.regionName + " not found in cache"; 
+          String errorMessage = "Error: region " + this.regionName + " not found in cache";
           System.err.println(errorMessage);
           writeErrorResponse(errorMessage);
         }
       } catch (IllegalArgumentException e) {
-        String errorMessage = "Error: malformed region name"; 
+        String errorMessage = "Error: malformed region name";
         System.err.println(errorMessage);
         writeErrorResponse(errorMessage);
       }
       try {
-        for (Iterator it = region.entrySet().iterator(); it.hasNext(); ) {
-          sendEntry((Region.Entry)it.next());
+        for (Iterator it = region.entrySet().iterator(); it.hasNext();) {
+          sendEntry((Region.Entry) it.next());
         }
         this.dso.writeShort(CODE_COMPLETED);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         writeErrorResponse(e.getMessage());
       }
     }
-    
+
     private void sendEntry(Region.Entry entry) throws Exception {
       Object key = entry.getKey();
       Object value = entry.getValue();
-      if ( !(key instanceof Serializable) ) {
+      if (!(key instanceof Serializable)) {
         throw new IOException("Could not serialize entry for '" + key + "'");
       }
-      if ( !(value instanceof Serializable) ) {
+      if (!(value instanceof Serializable)) {
         throw new IOException("Could not serialize entry for '" + key + "'");
       }
       if (VERBOSE) {

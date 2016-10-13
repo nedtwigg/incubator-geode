@@ -35,8 +35,7 @@ public class AsyncEventQueueDetails implements Serializable {
   private final String listener;
   private final Properties listenerProperties;
 
-  public AsyncEventQueueDetails(final String id, final int batchSize, final boolean persistent, final String diskStoreName,
-      final int maxQueueMemory, final String listener, final Properties listenerProperties) {
+  public AsyncEventQueueDetails(final String id, final int batchSize, final boolean persistent, final String diskStoreName, final int maxQueueMemory, final String listener, final Properties listenerProperties) {
     this.id = id;
     this.batchSize = batchSize;
     this.persistent = persistent;
@@ -69,7 +68,7 @@ public class AsyncEventQueueDetails implements Serializable {
   public String getListener() {
     return this.listener;
   }
-  
+
   public Properties getListenerProperties() {
     return this.listenerProperties;
   }

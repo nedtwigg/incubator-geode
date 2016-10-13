@@ -18,6 +18,7 @@ package org.apache.geode.cache.query.internal.parse;
 
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
+
 /**
  * 
  *
@@ -28,16 +29,14 @@ public class ASTGroupBy extends GemFireAST {
   public ASTGroupBy(Token t) {
     super(t);
   }
-  
-  public ASTGroupBy() { }
 
+  public ASTGroupBy() {
+  }
 
   @Override
-    public void compile(QCompiler compiler)
-    {
-        super.compile(compiler);
-        compiler.compileGroupByClause(this.getNumberOfChildren());
-    }
+  public void compile(QCompiler compiler) {
+    super.compile(compiler);
+    compiler.compileGroupByClause(this.getNumberOfChildren());
+  }
 
 }
-

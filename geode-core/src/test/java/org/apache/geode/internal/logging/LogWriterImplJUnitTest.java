@@ -30,7 +30,7 @@ public class LogWriterImplJUnitTest {
   public void testAllowedLogLevels() {
     assertEquals("all|finest|finer|fine|config|info|warning|error|severe|none", LogWriterImpl.allowedLogLevels());
   }
-  
+
   @Test
   public void testLevelNames() {
     String[] levelNames = LogWriterImpl.levelNames;
@@ -46,7 +46,7 @@ public class LogWriterImplJUnitTest {
     assertEquals("none", levelNames[9]);
     assertEquals(10, levelNames.length);
   }
-  
+
   @Test
   public void testLevelNameToCode() {
     assertEquals(Integer.MIN_VALUE, LogWriterImpl.levelNameToCode("all"));
@@ -64,7 +64,7 @@ public class LogWriterImplJUnitTest {
     assertEquals(1000, LogWriterImpl.levelNameToCode("fatal"));
     assertEquals(Integer.MAX_VALUE, LogWriterImpl.levelNameToCode("none"));
   }
-  
+
   @Test
   public void testLevelToString() {
     assertEquals("all", LogWriterImpl.levelToString(Integer.MIN_VALUE));

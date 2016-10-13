@@ -44,8 +44,7 @@ import java.util.Set;
  * 
  * @since GemFire 7.0
  */
-public final class GatewaySenderEventCallbackArgument extends
-WrappedCallbackArgument implements DataSerializableFixedID {
+public final class GatewaySenderEventCallbackArgument extends WrappedCallbackArgument implements DataSerializableFixedID {
   /**
    * The id of the originating <code>GatewayReceiver</code> making the request
    */
@@ -68,7 +67,7 @@ WrappedCallbackArgument implements DataSerializableFixedID {
   public GatewaySenderEventCallbackArgument(Object originalCallbackArg) {
     super(originalCallbackArg);
   }
-  
+
   /**
    * Constructor.
    * @param geca
@@ -83,7 +82,7 @@ WrappedCallbackArgument implements DataSerializableFixedID {
       receipientDSIds = new HashSet<Integer>(geca.receipientDSIds);
     }
   }
-  
+
   /**
    * Constructor.
    * 
@@ -97,8 +96,7 @@ WrappedCallbackArgument implements DataSerializableFixedID {
    *          The list of <code>Gateway</code> s to which the event has been
    *          originally sent
    */
-  public GatewaySenderEventCallbackArgument(Object originalCallbackArg,
-      int originatingDSId, List<Integer> originalReceivers) {
+  public GatewaySenderEventCallbackArgument(Object originalCallbackArg, int originatingDSId, List<Integer> originalReceivers) {
     super(originalCallbackArg);
     this.originatingDSId = originatingDSId;
     initializeReceipientDSIds(originalReceivers);
@@ -143,7 +141,7 @@ WrappedCallbackArgument implements DataSerializableFixedID {
    */
   public void initializeReceipientDSIds(List<Integer> originalGatewaysReceivers) {
     this.receipientDSIds = new HashSet<Integer>();
-    for (Integer id:originalGatewaysReceivers) {
+    for (Integer id : originalGatewaysReceivers) {
       this.receipientDSIds.add(id);
     }
   }
@@ -180,11 +178,7 @@ WrappedCallbackArgument implements DataSerializableFixedID {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("GatewaySenderEventCallbackArgument [")
-        .append("originalCallbackArg=").append(getOriginalCallbackArg())
-        .append(";originatingSenderId=").append(this.originatingDSId)
-        .append(";recipientGatewayReceivers=").append(this.receipientDSIds)
-        .append("]");
+    buffer.append("GatewaySenderEventCallbackArgument [").append("originalCallbackArg=").append(getOriginalCallbackArg()).append(";originatingSenderId=").append(this.originatingDSId).append(";recipientGatewayReceivers=").append(this.receipientDSIds).append("]");
     return buffer.toString();
   }
 

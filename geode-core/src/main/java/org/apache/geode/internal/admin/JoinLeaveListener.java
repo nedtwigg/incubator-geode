@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.internal.admin;
 
 /**
  * Interface implemented by those who want to be alerted when a node joins or leaves a distributed GemFire system
  */
 public interface JoinLeaveListener extends java.util.EventListener {
-    public void nodeJoined( GfManagerAgent source, GemFireVM joined );
-    public void nodeLeft( GfManagerAgent source, GemFireVM left );
-    public void nodeCrashed( GfManagerAgent source, GemFireVM crashed );
+  public void nodeJoined(GfManagerAgent source, GemFireVM joined);
+
+  public void nodeLeft(GfManagerAgent source, GemFireVM left);
+
+  public void nodeCrashed(GfManagerAgent source, GemFireVM crashed);
 }

@@ -63,11 +63,11 @@ public class LuceneDescribeIndexFunction extends FunctionAdapter implements Inte
     final LuceneIndexInfo indexInfo = (LuceneIndexInfo) context.getArguments();
     LuceneServiceImpl service = (LuceneServiceImpl) LuceneServiceProvider.get(cache);
     LuceneIndex index = service.getIndex(indexInfo.getIndexName(), indexInfo.getRegionPath());
-    LuceneIndexCreationProfile profile = service.getDefinedIndex(indexInfo.getIndexName(),indexInfo.getRegionPath());
+    LuceneIndexCreationProfile profile = service.getDefinedIndex(indexInfo.getIndexName(), indexInfo.getRegionPath());
     if (index != null) {
       result = new LuceneIndexDetails((LuceneIndexImpl) index);
     } else if (profile != null) {
-     result = new LuceneIndexDetails(profile);
+      result = new LuceneIndexDetails(profile);
     }
     context.getResultSender().lastResult(result);
   }

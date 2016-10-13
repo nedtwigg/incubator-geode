@@ -39,27 +39,16 @@ public class DiskDirectoryStats {
   private static final int volumeFreeSpaceId;
   private static final int volumeFreeSpaceChecksId;
   private static final int volumeFreeSpaceTimeId;
-  
+
   static {
     String statName = "DiskDirStatistics";
-    String statDescription =
-      "Statistics about a single disk directory for a region";
+    String statDescription = "Statistics about a single disk directory for a region";
 
-    final String diskSpaceDesc =
-      "The total number of bytes currently being used on disk in this directory for oplog files.";
-    final String maxSpaceDesc =
-      "The configured maximum number of bytes allowed in this directory for oplog files. Note that some product configurations allow this maximum to be exceeded.";
+    final String diskSpaceDesc = "The total number of bytes currently being used on disk in this directory for oplog files.";
+    final String maxSpaceDesc = "The configured maximum number of bytes allowed in this directory for oplog files. Note that some product configurations allow this maximum to be exceeded.";
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    type = f.createType(statName, statDescription,
-       new StatisticDescriptor[] {
-         f.createLongGauge("diskSpace", diskSpaceDesc, "bytes"),
-         f.createLongGauge("maximumSpace", maxSpaceDesc, "bytes"),
-         f.createLongGauge("volumeSize", "The total size in bytes of the disk volume", "bytes"),
-         f.createLongGauge("volumeFreeSpace", "The total free space in bytes on the disk volume", "bytes"),
-         f.createLongCounter("volumeFreeSpaceChecks", "The total number of disk space checks", "checks"),
-         f.createLongCounter("volumeFreeSpaceTime", "The total time spent checking disk usage", "nanoseconds")
-       });
+    type = f.createType(statName, statDescription, new StatisticDescriptor[] { f.createLongGauge("diskSpace", diskSpaceDesc, "bytes"), f.createLongGauge("maximumSpace", maxSpaceDesc, "bytes"), f.createLongGauge("volumeSize", "The total size in bytes of the disk volume", "bytes"), f.createLongGauge("volumeFreeSpace", "The total free space in bytes on the disk volume", "bytes"), f.createLongCounter("volumeFreeSpaceChecks", "The total number of disk space checks", "checks"), f.createLongCounter("volumeFreeSpaceTime", "The total time spent checking disk usage", "nanoseconds") });
 
     // Initialize id fields
     diskSpaceId = type.nameToId("diskSpace");
@@ -101,16 +90,19 @@ public class DiskDirectoryStats {
   public void incDiskSpace(long delta) {
     this.stats.incLong(diskSpaceId, delta);
   }
+
   public void setMaxSpace(long v) {
     this.stats.setLong(maxSpaceId, v);
   }
+
   public void addVolumeCheck(long total, long free, long time) {
     stats.setLong(volumeSizeId, total);
     stats.setLong(volumeFreeSpaceId, free);
     stats.incLong(volumeFreeSpaceChecksId, 1);
     stats.incLong(volumeFreeSpaceTimeId, time);
   }
-  public Statistics getStats(){
+
+  public Statistics getStats() {
     return stats;
   }
 }

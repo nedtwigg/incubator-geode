@@ -33,18 +33,21 @@ public interface ReliableMessageQueue {
    * Returns the region this queue belongs to.
    */
   public DistributedRegion getRegion();
+
   /**
    * Adds a message to the queue to be sent to the list of roles.
    * @param data the actual data that describes the operation to enqueue
    * @param roles the roles that need to receive this message.
    */
   public void add(ReliableDistributionData data, Set roles);
+
   /**
    * Gets the roles that this queue currently has messages for.
    * @return a set of {link Role}s that currently have queued messages.
    * <code>null</code> is returned if no messages are queued. 
    */
   public Set getQueuingRoles();
+
   /**
    * Attempts to send any messages that have been added for the given role
    * to all members that are currently playing that role.
@@ -53,10 +56,12 @@ public interface ReliableMessageQueue {
    * are still queued.
    */
   public boolean roleReady(Role role);
+
   /**
    * Removes all the data in this queue causing it to never be sent.
    */
   public void destroy();
+
   /**
    * Closes this queue. This frees up any memory used by the queue but its
    * persistent data remains.

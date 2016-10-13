@@ -34,11 +34,11 @@ public class FlowControlParams implements java.io.Serializable {
   private int byteAllowance;
   private float rechargeThreshold;
   private int rechargeBlockMs;
-  
+
   /** for serialization use only */
   public FlowControlParams() {
   }
-  
+
   /** instantiate a FlowControlParams */
   public FlowControlParams(int byteAllowance, float rechargeThreshold, int rechargeBlockMs) {
     this.byteAllowance = byteAllowance;
@@ -49,38 +49,38 @@ public class FlowControlParams implements java.io.Serializable {
   /** return a string representation of this object */
   @Override
   public String toString() {
-    return (""+byteAllowance+", "+rechargeThreshold+", "+rechargeBlockMs);
+    return ("" + byteAllowance + ", " + rechargeThreshold + ", " + rechargeBlockMs);
     //return "FlowControlParams(byteAllowance="+byteAllowance
     //    +", rechargeThreshold="+rechargeThreshold
     //    +", rechargeBlockMs="+rechargeBlockMs
     //    +")";
   }
-  
+
   /** returns the byteAllowance setting */
   public int getByteAllowance() {
     return byteAllowance;
   }
-  
+
   /** returns the rechargeThreshold setting */
   public float getRechargeThreshold() {
     return rechargeThreshold;
   }
-  
+
   /** returns the rechargeBlockMs setting */
   public int getRechargeBlockMs() {
     return rechargeBlockMs;
   }
-  
+
   /** sets the byteAllowance */
   public void setByteAllowance(int value) {
     byteAllowance = value;
   }
-  
+
   /** sets the rechargeThreshold */
   public void setRechargeThreshold(float value) {
     rechargeThreshold = value;
   }
-  
+
   /** sets the rechargeBlockMs */
   public void setRechargeBlockMs(int value) {
     rechargeBlockMs = value;
@@ -89,12 +89,9 @@ public class FlowControlParams implements java.io.Serializable {
   @Override
   public boolean equals(Object obj) {
     if (obj != null && obj instanceof FlowControlParams) {
-      FlowControlParams other = (FlowControlParams)obj;
-      return (this.byteAllowance == other.byteAllowance)
-        && (this.rechargeThreshold == other.rechargeThreshold)
-        && (this.rechargeBlockMs == other.rechargeBlockMs);
-    }
-    else {
+      FlowControlParams other = (FlowControlParams) obj;
+      return (this.byteAllowance == other.byteAllowance) && (this.rechargeThreshold == other.rechargeThreshold) && (this.rechargeBlockMs == other.rechargeBlockMs);
+    } else {
       return false;
     }
   }
@@ -103,11 +100,5 @@ public class FlowControlParams implements java.io.Serializable {
   public int hashCode() {
     return byteAllowance + rechargeBlockMs;
   }
-  
-  
-  
-  
-}
 
-  
-  
+}

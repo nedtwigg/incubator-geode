@@ -36,9 +36,9 @@ import org.apache.geode.test.dunit.standalone.BounceResult;
  *   
  */
 public abstract class DUnitEnv {
-  
+
   public static DUnitEnv instance = null;
-  
+
   public static final DUnitEnv get() {
     if (instance == null) {
       try {
@@ -46,24 +46,24 @@ public abstract class DUnitEnv {
         // distributed unit test framework  we need to look for this
         // old closed-source dunit environment
         Class clazz = Class.forName("dunit.hydra.HydraDUnitEnv");
-        instance = (DUnitEnv)clazz.newInstance();
+        instance = (DUnitEnv) clazz.newInstance();
       } catch (Exception e) {
         throw new Error("Distributed unit test environment is not initialized");
       }
     }
     return instance;
   }
-  
+
   public static void set(DUnitEnv dunitEnv) {
     instance = dunitEnv;
   }
-  
+
   public abstract String getLocatorString();
-  
+
   public abstract String getLocatorAddress();
 
   public abstract int getLocatorPort();
-  
+
   public abstract Properties getDistributedSystemProperties();
 
   public abstract int getPid();
@@ -73,5 +73,5 @@ public abstract class DUnitEnv {
   public abstract BounceResult bounce(int pid) throws RemoteException;
 
   public abstract File getWorkingDirectory(int pid);
-  
+
 }

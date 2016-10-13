@@ -39,18 +39,19 @@ public class SystemFailureJUnitTest {
     oldWaitTime = SystemFailure.SHUTDOWN_WAIT;
     SystemFailure.SHUTDOWN_WAIT = LONG_WAIT;
   }
-  
+
   @After
   public void restoreWaitTime() {
     SystemFailure.SHUTDOWN_WAIT = oldWaitTime;
   }
+
   @Test
   public void testStopThreads() {
     SystemFailure.signalCacheCreate();
     SystemFailure.startThreads();
     long start = System.nanoTime();
     Thread watchDog = SystemFailure.getWatchDogForTest();
-    Thread proctor= SystemFailure.getProctorForTest();
+    Thread proctor = SystemFailure.getProctorForTest();
     Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> watchDog.isAlive());
     Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> proctor.isAlive());
     SystemFailure.stopThreads();

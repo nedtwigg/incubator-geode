@@ -83,7 +83,7 @@ public class QueryAndJtaJUnitTest {
     CacheUtils.destroyTable(tblName);
     cache.close();
   }
-  
+
   @Test
   public void testScenario1() throws Exception {
     Context ctx = cache.getJNDIContext();
@@ -128,13 +128,11 @@ public class QueryAndJtaJUnitTest {
       }
       // print("Size of query result :"+ ((Collection)r).size());
       // print("Result of query =" + Utils.printResult(r));
-      Index i1 = qs.createIndex("tIndex", IndexType.FUNCTIONAL, "status",
-          "/portfolios");
+      Index i1 = qs.createIndex("tIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
       // print("Index IS: " + ((RangeIndex)i1).dump());
       observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      q = qs
-          .newQuery("select distinct * from /portfolios where status = 'active'");
+      q = qs.newQuery("select distinct * from /portfolios where status = 'active'");
       r = q.execute();
       if (!observer2.isIndexesUsed) {
         fail("NO INDEX WAS USED, IT WAS EXPECTED TO BE USED");
@@ -144,8 +142,7 @@ public class QueryAndJtaJUnitTest {
       }
       observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      q = qs
-          .newQuery("select distinct * from /portfolios where status = 'inactive'");
+      q = qs.newQuery("select distinct * from /portfolios where status = 'inactive'");
       r = q.execute();
       if (!observer2.isIndexesUsed) {
         fail("NO INDEX WAS USED, IT WAS EXPECTED TO BE USED");
@@ -157,8 +154,7 @@ public class QueryAndJtaJUnitTest {
       // PRINT INDEX AFTER ROLLBACK, REMOVEINDEX.
       observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      q = qs
-          .newQuery("select distinct * from /portfolios where status = 'active'");
+      q = qs.newQuery("select distinct * from /portfolios where status = 'active'");
       r = q.execute();
       if (!observer2.isIndexesUsed) {
         fail("NO INDEX WAS USED, IT WAS EXPECTED TO BE USED");
@@ -174,13 +170,11 @@ public class QueryAndJtaJUnitTest {
       for (int i = 9; i < 13; i++) {
         currRegion.put("key" + i, new Portfolio(i));
       }
-      i1 = qs.createIndex("tIndex", IndexType.FUNCTIONAL, "status",
-          "/portfolios");
+      i1 = qs.createIndex("tIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
       // print("Index IS: " + ((RangeIndex)i1).dump());
       observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      q = qs
-          .newQuery("select distinct * from /portfolios where status = 'active'");
+      q = qs.newQuery("select distinct * from /portfolios where status = 'active'");
       r = q.execute();
       if (!observer2.isIndexesUsed) {
         fail("NO INDEX WAS USED, IT WAS EXPECTED TO BE USED");
@@ -193,8 +187,7 @@ public class QueryAndJtaJUnitTest {
       }
       observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      q = qs
-          .newQuery("select distinct * from /portfolios where status = 'active'");
+      q = qs.newQuery("select distinct * from /portfolios where status = 'active'");
       r = q.execute();
       if (!observer2.isIndexesUsed) {
         fail("NO INDEX WAS USED, IT WAS EXPECTED TO BE USED");
@@ -215,8 +208,7 @@ public class QueryAndJtaJUnitTest {
       // print("Index IS: " + ((RangeIndex)i1).dump());
       observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      q = qs
-          .newQuery("select distinct * from /portfolios where status = 'active'");
+      q = qs.newQuery("select distinct * from /portfolios where status = 'active'");
       r = q.execute();
       if (!observer2.isIndexesUsed) {
         fail("NO INDEX WAS USED, IT WAS EXPECTED TO BE USED");
@@ -226,8 +218,7 @@ public class QueryAndJtaJUnitTest {
       }
       observer2 = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer2);
-      q = qs
-          .newQuery("select distinct * from /portfolios where status = 'inactive'");
+      q = qs.newQuery("select distinct * from /portfolios where status = 'inactive'");
       r = q.execute();
       if (!observer2.isIndexesUsed) {
         fail("NO INDEX WAS USED, IT WAS EXPECTED TO BE USED");
@@ -338,19 +329,7 @@ public class QueryAndJtaJUnitTest {
       region.put(i, new Portfolio(i));
     }
 
-    String[] queries = {
-        "select * from /sample where ID = 5",
-        "select ID from /sample where ID < 5",
-        "select ID from /sample where ID > 5",
-        "select ID from /sample where ID != 5",
-        "select status from /sample where status = 'active'",
-        "select status from /sample where status > 'active'",
-        "select status from /sample where status < 'active'",
-        "select status from /sample where status != 'active'",
-        "select pos.secId from /sample p, p.positions.values pos where pos.secId = 'IBM'",
-        "select pos.secId from /sample p, p.positions.values pos where pos.secId < 'VMW'",
-        "select pos.secId from /sample p, p.positions.values pos where pos.secId > 'IBM'",
-        "select pos.secId from /sample p, p.positions.values pos where pos.secId != 'IBM'" };
+    String[] queries = { "select * from /sample where ID = 5", "select ID from /sample where ID < 5", "select ID from /sample where ID > 5", "select ID from /sample where ID != 5", "select status from /sample where status = 'active'", "select status from /sample where status > 'active'", "select status from /sample where status < 'active'", "select status from /sample where status != 'active'", "select pos.secId from /sample p, p.positions.values pos where pos.secId = 'IBM'", "select pos.secId from /sample p, p.positions.values pos where pos.secId < 'VMW'", "select pos.secId from /sample p, p.positions.values pos where pos.secId > 'IBM'", "select pos.secId from /sample p, p.positions.values pos where pos.secId != 'IBM'" };
 
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
@@ -362,8 +341,7 @@ public class QueryAndJtaJUnitTest {
     // create indexes
     qs.createKeyIndex("IDIndex", "ID", "/sample");
     qs.createIndex("statusIndex", "status", "/sample");
-    qs.createIndex("secIdIndex", "pos.secId",
-        "/sample p, p.positions.values pos");
+    qs.createIndex("secIdIndex", "pos.secId", "/sample p, p.positions.values pos");
 
     // begin transaction
     Context ctx = cache.getJNDIContext();
@@ -384,8 +362,7 @@ public class QueryAndJtaJUnitTest {
     utx.commit();
 
     // verify results
-    org.apache.geode.cache.query.CacheUtils
-        .compareResultsOfWithAndWithoutIndex(sr);
+    org.apache.geode.cache.query.CacheUtils.compareResultsOfWithAndWithoutIndex(sr);
   }
 
   @Test

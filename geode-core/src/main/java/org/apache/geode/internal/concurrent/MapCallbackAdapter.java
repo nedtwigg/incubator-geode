@@ -65,13 +65,10 @@ public class MapCallbackAdapter<K, V, C, P> implements MapCallback<K, V, C, P> {
    * @see MapCallback#removeValue
    */
   @Override
-  public Object removeValue(Object key, Object value, V existingValue,
-      C context, P removeParams) {
-    if (value != null
-        && (value == NO_OBJECT_TOKEN || value.equals(existingValue))) {
+  public Object removeValue(Object key, Object value, V existingValue, C context, P removeParams) {
+    if (value != null && (value == NO_OBJECT_TOKEN || value.equals(existingValue))) {
       return null;
-    }
-    else {
+    } else {
       return ABORT_REMOVE_TOKEN;
     }
   }
@@ -80,20 +77,17 @@ public class MapCallbackAdapter<K, V, C, P> implements MapCallback<K, V, C, P> {
    * @see MapCallback#postRemove
    */
   @Override
-  public void postRemove(Object key, Object value, V existingValue, C context,
-      P removeParams) {
+  public void postRemove(Object key, Object value, V existingValue, C context, P removeParams) {
   }
 
   /**
    * @see MapCallback#replaceValue
    */
   @Override
-  public V replaceValue(K key, V oldValue, V existingValue, V newValue,
-      C context, P params) {
+  public V replaceValue(K key, V oldValue, V existingValue, V newValue, C context, P params) {
     if (oldValue != null && oldValue.equals(existingValue)) {
       return newValue;
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -110,24 +104,21 @@ public class MapCallbackAdapter<K, V, C, P> implements MapCallback<K, V, C, P> {
    * @see MapCallback#afterReplace
    */
   @Override
-  public void afterReplace(K mapKey, V newValue, Object beforeResult,
-      C context, P params) {
+  public void afterReplace(K mapKey, V newValue, Object beforeResult, C context, P params) {
   }
 
   /**
    * @see MapCallback#onReplaceFailed
    */
   @Override
-  public void onReplaceFailed(K mapKey, V newValue, Object beforeResult,
-      C context, P params) {
+  public void onReplaceFailed(K mapKey, V newValue, Object beforeResult, C context, P params) {
   }
 
   /**
    * @see MapCallback#onOperationFailed
    */
   @Override
-  public V onOperationFailed(K key, Object oldValue, V updatedValue,
-      V newValue, C context, P params) {
+  public V onOperationFailed(K key, Object oldValue, V updatedValue, V newValue, C context, P params) {
     return null;
   }
 

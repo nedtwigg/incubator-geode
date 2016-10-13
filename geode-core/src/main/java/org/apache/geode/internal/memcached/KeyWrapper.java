@@ -82,7 +82,7 @@ public class KeyWrapper implements DataSerializable {
   public int hashCode() {
     return Arrays.hashCode(this.key);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder str = new StringBuilder();

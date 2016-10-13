@@ -35,7 +35,7 @@ public class DelayedActionJUnitTest {
   public void testDelay() throws InterruptedException {
     final AtomicBoolean hit = new AtomicBoolean(false);
     final CountDownLatch complete = new CountDownLatch(1);
-    
+
     Runnable r = new Runnable() {
       @Override
       public void run() {
@@ -43,15 +43,15 @@ public class DelayedActionJUnitTest {
         complete.countDown();
       }
     };
-    
+
     DelayedAction delay = new DelayedAction(r);
-    
+
     ExecutorService exec = Executors.newSingleThreadExecutor();
     exec.execute(delay);
-    
+
     delay.waitForArrival();
     assertFalse(hit.get());
-    
+
     delay.allowToProceed();
     complete.await();
     assertTrue(hit.get());

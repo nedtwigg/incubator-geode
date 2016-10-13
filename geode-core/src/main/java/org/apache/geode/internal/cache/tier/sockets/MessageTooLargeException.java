@@ -21,7 +21,7 @@ import java.io.IOException;
 public class MessageTooLargeException extends IOException {
 
   private static final long serialVersionUID = -8970585803331525833L;
-  
+
   public MessageTooLargeException(String message) {
     super(message);
   }

@@ -61,13 +61,13 @@ public class ObjIdMap {
       throw new IllegalArgumentException(LocalizedStrings.ObjIdMap_ILLEGAL_LOAD_FACTOR_0.toLocalizedString(new Float(loadFactor)));
     }
 
-    if (initialCapacity==0) {
+    if (initialCapacity == 0) {
       initialCapacity = 1;
     }
 
     this.loadFactor = loadFactor;
     table = new Entry[initialCapacity];
-    threshold = (int)(initialCapacity * loadFactor);
+    threshold = (int) (initialCapacity * loadFactor);
   }
 
   /**
@@ -89,6 +89,7 @@ public class ObjIdMap {
     rehash(oldMap.table, oldMap.count, oldMap.count + 2);
     put(addKey, addValue);
   }
+
   /**
    * Create a new map which will contain all the contents of the oldMap.
    */
@@ -136,7 +137,7 @@ public class ObjIdMap {
    *         <code>key</code> is less than zero
    */
   public Object get(int key) {
- 
+
     Entry[] table = this.table;
     int bucket = Math.abs(key) % table.length;
     for (Entry e = table[bucket]; e != null; e = e.next) {
@@ -156,20 +157,20 @@ public class ObjIdMap {
   private void rehash() {
     rehash(this.table, this.count, this.count * 2 + 1);
   }
-           
+
   private void rehash(Entry[] oldMap, int newCount, int newCapacity) {
     int oldCapacity = oldMap.length;
 
     Entry newMap[] = new Entry[newCapacity];
 
     synchronized (rehashLock) {
-      for (int i = oldCapacity ; i-- > 0 ;) {
-        for (Entry old = oldMap[i] ; old != null ; ) {
+      for (int i = oldCapacity; i-- > 0;) {
+        for (Entry old = oldMap[i]; old != null;) {
           Entry e = old;
           old = old.next;
 
           if (e.value != null && e.value instanceof WeakReference) {
-            WeakReference r = (WeakReference)e.value;
+            WeakReference r = (WeakReference) e.value;
             if (r.get() == null) {
               // don't copy this one into the new table since its value was gc'd
               newCount--;
@@ -182,7 +183,7 @@ public class ObjIdMap {
         }
       }
 
-      threshold = (int)(newCapacity * loadFactor);
+      threshold = (int) (newCapacity * loadFactor);
       count = newCount;
       table = newMap;
     }
@@ -211,7 +212,7 @@ public class ObjIdMap {
     // Adjust the table, if necessary
     if (this.count >= this.threshold) {
       rehash();
-//      table = this.table; assignment has no effect
+      //      table = this.table; assignment has no effect
       bucket = Math.abs(key) % table.length;
     }
 
@@ -232,8 +233,7 @@ public class ObjIdMap {
     Entry[] table = this.table;
     int bucket = Math.abs(key) % table.length;
 
-    for (Entry e = table[bucket], prev = null; e != null;
-         prev = e, e = e.next) {
+    for (Entry e = table[bucket], prev = null; e != null; prev = e, e = e.next) {
       if (key == e.key) {
         if (prev != null)
           prev.next = e.next;
@@ -295,6 +295,7 @@ public class ObjIdMap {
     public int getKey() {
       return this.key;
     }
+
     public Object getValue() {
       return this.value;
     }
@@ -303,7 +304,7 @@ public class ObjIdMap {
   /**
    * A class for iterating over the contents of an
    * <code>ObjIdMap</code> 
-   */ 
+   */
   public class EntryIterator {
     /** The current collision chain we're traversing */
     private int index = 0;

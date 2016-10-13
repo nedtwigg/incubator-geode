@@ -20,7 +20,6 @@ import java.beans.ConstructorProperties;
 
 import org.apache.geode.cache.Region;
 
-
 /**
  * Composite data type used to distribute metrics for the JVM running
  * a GemFire member.
@@ -71,12 +70,8 @@ public class JVMMetrics {
    * This constructor is to be used by internal JMX framework only. User
    * should not try to create an instance of this class.
    */
-  @ConstructorProperties( { "gcCount", "gcTimeMillis", "initMemory",
-      "committedMemory", "usedMemory", "maxMemory", "totalThreads"
-  })
-  public JVMMetrics(long gcCount, long gcTimeMillis, long initMemory,
-      long committedMemory, long usedMemory, long maxMemory,
-      int totalThreads) {
+  @ConstructorProperties({ "gcCount", "gcTimeMillis", "initMemory", "committedMemory", "usedMemory", "maxMemory", "totalThreads" })
+  public JVMMetrics(long gcCount, long gcTimeMillis, long initMemory, long committedMemory, long usedMemory, long maxMemory, int totalThreads) {
     this.gcCount = gcCount;
     this.gcTimeMillis = gcTimeMillis;
     this.initMemory = initMemory;
@@ -114,7 +109,7 @@ public class JVMMetrics {
   public long getCommittedMemory() {
     return committedMemory;
   }
-  
+
   /**
    * Returns the current number of megabytes of memory being used.
    */
@@ -142,9 +137,6 @@ public class JVMMetrics {
    */
   @Override
   public String toString() {
-    return "{JVMMetrics : gcCount = " + gcCount + " gcTimeMillis = "
-        + gcTimeMillis + " initMemory = " + initMemory + " committedMemory = "
-        + committedMemory + " usedMemory = " + usedMemory + " maxMemory = "
-        + maxMemory + " totalThreads = " + totalThreads + "}";
+    return "{JVMMetrics : gcCount = " + gcCount + " gcTimeMillis = " + gcTimeMillis + " initMemory = " + initMemory + " committedMemory = " + committedMemory + " usedMemory = " + usedMemory + " maxMemory = " + maxMemory + " totalThreads = " + totalThreads + "}";
   }
 }

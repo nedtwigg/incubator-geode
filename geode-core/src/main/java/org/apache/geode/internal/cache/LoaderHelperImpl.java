@@ -33,8 +33,7 @@ import org.apache.geode.i18n.StringId;
  * @see CacheLoader#load(LoaderHelper) load
  * @since GemFire 2.0
  */
-public class LoaderHelperImpl implements LoaderHelper
-{
+public class LoaderHelperImpl implements LoaderHelper {
   /** The message issued when the user attempts to netSearch on a
    * LOCAL Region.  It is public for testing purposes only. */
   public static final StringId NET_SEARCH_LOCAL = LocalizedStrings.LoaderHelperImpl_CANNOT_NETSEARCH_FOR_A_SCOPELOCAL_OBJECT;
@@ -46,28 +45,23 @@ public class LoaderHelperImpl implements LoaderHelper
   private final Object aCallbackArgument;
   private SearchLoadAndWriteProcessor searcher = null;
 
-
-  public LoaderHelperImpl(Region region, Object key, Object aCallbackArgument,boolean netSearchAllowed,
-                          SearchLoadAndWriteProcessor searcher) {
-    this.region=region;
-    this.key=key;
+  public LoaderHelperImpl(Region region, Object key, Object aCallbackArgument, boolean netSearchAllowed, SearchLoadAndWriteProcessor searcher) {
+    this.region = region;
+    this.key = key;
     this.aCallbackArgument = aCallbackArgument;
-    this.netSearchAllowed=netSearchAllowed;
+    this.netSearchAllowed = netSearchAllowed;
     this.netLoadAllowed = true;
     this.searcher = searcher;
   }
 
-  public LoaderHelperImpl(Region region, Object key, Object aCallbackArgument,boolean netSearchAllowed, boolean netLoadAllowed,
-                          SearchLoadAndWriteProcessor searcher) {
-    this.region=region;
-    this.key=key;
+  public LoaderHelperImpl(Region region, Object key, Object aCallbackArgument, boolean netSearchAllowed, boolean netLoadAllowed, SearchLoadAndWriteProcessor searcher) {
+    this.region = region;
+    this.key = key;
     this.aCallbackArgument = aCallbackArgument;
-    this.netSearchAllowed=netSearchAllowed;
+    this.netSearchAllowed = netSearchAllowed;
     this.netLoadAllowed = netLoadAllowed;
     this.searcher = searcher;
   }
-
-
 
   /** Searchs other caches for the value to be loaded. If the cache is part of
    * a distributed caching system, <code>netSearch</code> will try to locate the requested
@@ -86,7 +80,7 @@ public class LoaderHelperImpl implements LoaderHelper
    * @return the requested value or null if not found
    * @throws TimeoutException if the netSearch times out before getting a response from another cache
    */
-  public Object netSearch(final boolean doNetLoad) throws CacheLoaderException, TimeoutException{
+  public Object netSearch(final boolean doNetLoad) throws CacheLoaderException, TimeoutException {
 
     if (this.region.getAttributes().getScope().isLocal()) {
       throw new CacheLoaderException(NET_SEARCH_LOCAL.toLocalizedString());
@@ -100,20 +94,20 @@ public class LoaderHelperImpl implements LoaderHelper
 
     try {
       if (removeSearcher) {
-        searcher.initialize((LocalRegion)this.region,this.key, this.aCallbackArgument);
+        searcher.initialize((LocalRegion) this.region, this.key, this.aCallbackArgument);
       }
       Object obj = null;
 
       if (this.netSearchAllowed) {
         obj = searcher.doNetSearch();
         if (searcher.resultIsSerialized()) {
-          obj = EntryEventImpl.deserialize((byte[])obj);
+          obj = EntryEventImpl.deserialize((byte[]) obj);
         }
       }
       if (doNetLoad && obj == null && this.netLoadAllowed) {
         obj = searcher.doNetLoad();
         if (searcher.resultIsSerialized()) {
-          obj = EntryEventImpl.deserialize((byte[])obj);
+          obj = EntryEventImpl.deserialize((byte[]) obj);
         }
       }
       // Note it is possible for netsearch to not be allowed
@@ -121,8 +115,7 @@ public class LoaderHelperImpl implements LoaderHelper
       // For example on replicated regions we say don't bother netsearching
       // but we do need to check for netLoaders
       return obj;
-    }
-    finally {
+    } finally {
       if (removeSearcher) {
         searcher.remove();
       }
@@ -135,7 +128,7 @@ public class LoaderHelperImpl implements LoaderHelper
    * @return The name Object for the object being loaded.
    * @see CacheLoader#load(LoaderHelper) load
    */
-  public Object getKey(){
+  public Object getKey() {
     return this.key;
   }
 
@@ -145,7 +138,7 @@ public class LoaderHelperImpl implements LoaderHelper
    * @return The name of the region for the object being loaded.
    * @see CacheLoader#load(LoaderHelper) load
    */
-  public Region getRegion(){
+  public Region getRegion() {
     return region;
   }
 
@@ -154,15 +147,12 @@ public class LoaderHelperImpl implements LoaderHelper
    * {@link Region#get(Object, Object) get}.
    * @return the argument or null if one was not supplied
    */
-  public Object getArgument(){
+  public Object getArgument() {
     return aCallbackArgument;
   }
 
   @Override
   public String toString() {
-    return "LoaderHelper region: " + getRegion()
-      + " key: " + getKey()
-      + " argument: " + getArgument();
+    return "LoaderHelper region: " + getRegion() + " key: " + getKey() + " argument: " + getArgument();
   }
 }
-

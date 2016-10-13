@@ -21,7 +21,7 @@ package org.apache.geode.cache.lucene.internal;
 
 import org.apache.geode.cache.lucene.LuceneResultStruct;
 
-public class LuceneResultStructImpl<K,V> implements LuceneResultStruct<K,V> {
+public class LuceneResultStructImpl<K, V> implements LuceneResultStruct<K, V> {
   K key;
   V value;
   float score;
@@ -88,7 +88,6 @@ public class LuceneResultStructImpl<K,V> implements LuceneResultStruct<K,V> {
 
   @Override
   public String toString() {
-    return "LuceneResultStructImpl [key=" + key + ", value=" + value
-        + ", score=" + score + "]";
+    return "LuceneResultStructImpl [key=" + key + ", value=" + value + ", score=" + score + "]";
   }
 }

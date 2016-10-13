@@ -28,7 +28,7 @@ import org.apache.geode.internal.cache.LocalRegion;
  *
  */
 public interface DiskExceptionHandler {
-  
+
   /**
    * @param dae DiskAccessException encountered by the thread
    * @see LocalRegion#handleDiskAccessException(DiskAccessException)

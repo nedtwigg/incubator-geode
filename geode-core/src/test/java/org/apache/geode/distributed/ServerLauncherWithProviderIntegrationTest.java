@@ -39,14 +39,14 @@ public class ServerLauncherWithProviderIntegrationTest extends AbstractServerLau
   @Before
   public final void setUpServerLauncherWithSpringTest() throws Exception {
     disconnectFromDS();
-    System.setProperty(ProcessType.TEST_PREFIX_PROPERTY, getUniqueName()+"-");
+    System.setProperty(ProcessType.TEST_PREFIX_PROPERTY, getUniqueName() + "-");
   }
 
   @After
   public final void tearDownServerLauncherWithSpringTest() throws Exception {
     MockServerLauncherCacheProvider.setCache(null);
     disconnectFromDS();
-    
+
   }
 
   // NOTE make sure bugs like Trac #51201 never happen again!!!
@@ -54,13 +54,7 @@ public class ServerLauncherWithProviderIntegrationTest extends AbstractServerLau
   public void testBootstrapGemFireServerWithProvider() throws Throwable {
     Cache mockCache = Mockito.mock(Cache.class);
     MockServerLauncherCacheProvider.setCache(mockCache);
-    this.launcher = new Builder()
-      .setDisableDefaultServer(true)
-      .setForce(true)
-      .setMemberName(getUniqueName())
-      .setSpringXmlLocation("spring/spring-gemfire-context.xml")
-        .set(MCAST_PORT, "0")
-      .build();
+    this.launcher = new Builder().setDisableDefaultServer(true).setForce(true).setMemberName(getUniqueName()).setSpringXmlLocation("spring/spring-gemfire-context.xml").set(MCAST_PORT, "0").build();
 
     assertNotNull(this.launcher);
 
@@ -72,16 +66,14 @@ public class ServerLauncherWithProviderIntegrationTest extends AbstractServerLau
       Cache cache = this.launcher.getCache();
 
       assertEquals(mockCache, cache);
-    }
-    catch (Throwable e) {
+    } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
 
     try {
       assertEquals(Status.STOPPED, this.launcher.stop().getStatus());
       assertNull(this.launcher.getCache());
-    }
-    catch (Throwable e) {
+    } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
   }

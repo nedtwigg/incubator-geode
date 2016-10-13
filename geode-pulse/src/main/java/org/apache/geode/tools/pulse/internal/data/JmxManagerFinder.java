@@ -113,8 +113,7 @@ public class JmxManagerFinder {
    *           if a problem occurs trying to connect to the locator or
    *           communicate with it.
    */
-  public static JmxManagerInfo askLocatorForJmxManager(InetAddress addr,
-      int port, int timeout, boolean usessl) throws IOException {
+  public static JmxManagerInfo askLocatorForJmxManager(InetAddress addr, int port, int timeout, boolean usessl) throws IOException {
     SocketAddress sockaddr = new InetSocketAddress(addr, port);
     Socket sock = ConnectionUtil.getSocketFactory(usessl).createSocket();
     try {
@@ -130,13 +129,11 @@ public class JmxManagerFinder {
       DataInputStream in = new DataInputStream(sock.getInputStream());
       byte header = in.readByte();
       if (header != DS_FIXED_ID_SHORT) {
-        throw new IllegalStateException("Expected " + DS_FIXED_ID_SHORT
-            + " but found " + header);
+        throw new IllegalStateException("Expected " + DS_FIXED_ID_SHORT + " but found " + header);
       }
       int msgType = in.readShort();
       if (msgType != JMX_MANAGER_LOCATOR_RESPONSE) {
-        throw new IllegalStateException("Expected "
-            + JMX_MANAGER_LOCATOR_RESPONSE + " but found " + msgType);
+        throw new IllegalStateException("Expected " + JMX_MANAGER_LOCATOR_RESPONSE + " but found " + msgType);
       }
       byte hostHeader = in.readByte();
       String host;
@@ -150,8 +147,7 @@ public class JmxManagerFinder {
         String str = new String(buf, 0);
         host = str;
       } else {
-        throw new IllegalStateException("Expected " + STRING_BYTES + " or "
-            + NULL_STRING + " but found " + hostHeader);
+        throw new IllegalStateException("Expected " + STRING_BYTES + " or " + NULL_STRING + " but found " + hostHeader);
       }
       int jmport = in.readInt();
       boolean ssl = in.readBoolean();

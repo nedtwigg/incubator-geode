@@ -49,15 +49,15 @@ public class HKeysExecutor extends HashExecutor {
       return;
     }
 
-   Set<ByteArrayWrapper> keys = new HashSet(keyRegion.keySet());
-   
-   if (keys.isEmpty()) {
-     command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
-     return;
-   }
-   
-   // String response = getBulkStringArrayResponse(keys);
+    Set<ByteArrayWrapper> keys = new HashSet(keyRegion.keySet());
 
-   command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), keys));
+    if (keys.isEmpty()) {
+      command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
+      return;
+    }
+
+    // String response = getBulkStringArrayResponse(keys);
+
+    command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), keys));
   }
 }

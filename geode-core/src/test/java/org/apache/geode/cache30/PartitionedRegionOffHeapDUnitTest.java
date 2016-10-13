@@ -43,7 +43,7 @@ public class PartitionedRegionOffHeapDUnitTest extends PartitionedRegionDUnitTes
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -58,7 +58,7 @@ public class PartitionedRegionOffHeapDUnitTest extends PartitionedRegionDUnitTes
     props.setProperty(OFF_HEAP_MEMORY_SIZE, "10m");
     return props;
   }
-  
+
   @Override
   @SuppressWarnings({ "rawtypes", "unchecked" })
   protected RegionAttributes getRegionAttributes() {
@@ -67,13 +67,13 @@ public class PartitionedRegionOffHeapDUnitTest extends PartitionedRegionDUnitTes
     factory.setOffHeap(true);
     return factory.create();
   }
-  
+
   @Override
   @SuppressWarnings({ "rawtypes", "unchecked" })
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = super.getRegionAttributes(type);
     AttributesFactory factory = new AttributesFactory(ra);
-    if(!ra.getDataPolicy().isEmpty()) {
+    if (!ra.getDataPolicy().isEmpty()) {
       factory.setOffHeap(true);
     }
     return factory.create();

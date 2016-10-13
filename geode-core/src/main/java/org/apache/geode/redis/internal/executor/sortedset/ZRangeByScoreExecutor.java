@@ -158,7 +158,7 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
     Object[] params;
     if (isReverse()) {
       if (startInclusive) {
-        if(stopInclusive) {
+        if (stopInclusive) {
           query = getQuery(key, SortedSetQuery.ZREVRBSSTISI, context);
         } else {
           query = getQuery(key, SortedSetQuery.ZREVRBSSTI, context);
@@ -170,10 +170,10 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
           query = getQuery(key, SortedSetQuery.ZREVRBS, context);
         }
       }
-      params = new Object[]{start, stop, INFINITY_LIMIT};
+      params = new Object[] { start, stop, INFINITY_LIMIT };
     } else {
       if (startInclusive) {
-        if(stopInclusive) {
+        if (stopInclusive) {
           query = getQuery(key, SortedSetQuery.ZRBSSTISI, context);
         } else {
           query = getQuery(key, SortedSetQuery.ZRBSSTI, context);
@@ -185,15 +185,15 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
           query = getQuery(key, SortedSetQuery.ZRBS, context);
         }
       }
-      params = new Object[]{start, stop, INFINITY_LIMIT};
+      params = new Object[] { start, stop, INFINITY_LIMIT };
     }
     if (limit > 0)
-      params[params.length - 1] =  (limit + offset);
+      params[params.length - 1] = (limit + offset);
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
     if (offset < results.size())
       return (Collection<Struct>) results.asList().subList(offset, results.size());
-    else 
+    else
       return null;
   }
 

@@ -81,7 +81,7 @@ public class SRandMemberExecutor extends SetExecutor {
       do {
         ByteArrayWrapper s = entries[rand.nextInt(entries.length)];
         randEntries.add(s);
-      } while(randEntries.size() < count);
+      } while (randEntries.size() < count);
       command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), randEntries));
     } else {
       count = -count;

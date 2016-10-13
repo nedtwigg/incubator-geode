@@ -16,7 +16,6 @@
  */
 package org.apache.geode.redis.internal;
 
-
 /**
  * Interface for executors of a {@link Command}
  * 
@@ -33,5 +32,5 @@ public interface Executor {
    * @param context The execution context by which this command is to be executed
    */
   public void executeCommand(Command command, ExecutionHandlerContext context);
-  
+
 }

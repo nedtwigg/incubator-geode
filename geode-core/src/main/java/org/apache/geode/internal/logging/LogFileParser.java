@@ -31,16 +31,15 @@ import java.util.*;
  *
  * @since GemFire 3.0
  */
-public class LogFileParser  {
+public class LogFileParser {
   private static final boolean TRIM_TIMESTAMPS = Boolean.getBoolean("mergelogs.TRIM_TIMESTAMPS");
-  
+
   private static final boolean NEWLINE_AFTER_HEADER = Boolean.getBoolean("mergelogs.NEWLINE_AFTER_HEADER");
 
   private static final boolean TRIM_NAMES = Boolean.getBoolean("mergelogs.TRIM_NAMES");
-  
+
   /** Text that signifies the start of a JRockit-style thread dump */
-  private static final String FULL_THREAD_DUMP =
-    "===== FULL THREAD DUMP ===============";
+  private static final String FULL_THREAD_DUMP = "===== FULL THREAD DUMP ===============";
 
   ///////////////////////  Instance Fields  ///////////////////////
 
@@ -49,7 +48,7 @@ public class LogFileParser  {
 
   /** The name of the log file plus a colon and space */
   private final String extLogFileName;
-  
+
   /** The buffer to read the log file from */
   private BufferedReader br;
 
@@ -57,23 +56,23 @@ public class LogFileParser  {
   private boolean hasMoreEntries;
 
   /** The pattern used to match the first line of a log entry */
-//  private Pattern pattern;
+  //  private Pattern pattern;
 
   /** The timestamp of the entry being parsed */
   private String timestamp;
 
   /** StringBuffer containing the text of the entry we're parsing */
   private StringBuffer sb;
-  
+
   /** whether we're still reading the first line of the first entry */
   private boolean firstEntry = true;
-  
+
   /**
    * StringBuffer containing white space that is the same length as
    * logFileName plus ": ", in a monospace font when tabs are 8 chars long
    */
   private final StringBuffer whiteFileName;
-  
+
   /** whether to suppress blank lines in output */
   private boolean suppressBlanks;
 
@@ -94,7 +93,7 @@ public class LogFileParser  {
   public LogFileParser(String logFileName, BufferedReader br) {
     this(logFileName, br, false, false);
   }
-  
+
   /**
    * Creates a new <code>LogFileParser</code> that reads a log from a
    * given <code>BufferedReader</code>.
@@ -111,30 +110,28 @@ public class LogFileParser  {
    * @param suppressBlanks
    *        whether to suppress blank lines
    */
-  public LogFileParser(String logFileName, BufferedReader br,
-      boolean tabOut, boolean suppressBlanks) {
+  public LogFileParser(String logFileName, BufferedReader br, boolean tabOut, boolean suppressBlanks) {
     this.logFileName = logFileName;
     this.br = br;
     this.hasMoreEntries = true;
-//    this.pattern = 
-//      Pattern.compile("\\[\\w+ (\\d\\d\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d) .*");
+    //    this.pattern = 
+    //      Pattern.compile("\\[\\w+ (\\d\\d\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d\\.\\d\\d\\d) .*");
     this.timestamp = null;
     this.sb = new StringBuffer();
     this.suppressBlanks = suppressBlanks;
     this.whiteFileName = new StringBuffer();
     if (tabOut) {
-      int numTabs = (logFileName.length()+2) / 8;
-      for (int i=0; i<numTabs; i++) {
+      int numTabs = (logFileName.length() + 2) / 8;
+      for (int i = 0; i < numTabs; i++) {
         whiteFileName.append('\t');
       }
-      for (int i=((logFileName.length()+2)%8); i>0; i--) {
+      for (int i = ((logFileName.length() + 2) % 8); i > 0; i--) {
         whiteFileName.append(' ');
       }
     }
     if (this.logFileName != null) {
       this.extLogFileName = this.logFileName + ": ";
-    }
-    else {
+    } else {
       this.extLogFileName = null;
     }
   }
@@ -157,83 +154,60 @@ public class LogFileParser  {
     String result = null;
     if (llen > 10) {
       // first see if the start of the line is a timestamp, as in a thread-dump's stamp
-      if (line.charAt(0) == '2' &&
-          line.charAt(1) == '0' &&
-          line.charAt(4) == '-' &&
-          line.charAt(7) == '-') {
+      if (line.charAt(0) == '2' && line.charAt(1) == '0' && line.charAt(4) == '-' && line.charAt(7) == '-') {
         return line.substring(0, 19).replace('-', '/');
       }
       // now look for gemfire's log format
       if (line.charAt(0) == '[') {
-        if ((line.charAt(1) == 'i' &&
-             line.charAt(2) == 'n' &&
-             line.charAt(3) == 'f' /*&&
-             line.charAt(4) == 'o'*/)   ||
-             
-            (line.charAt(1) == 'f' &&
-             line.charAt(2) == 'i' &&
-             line.charAt(3) == 'n' /*&&
-             line.charAt(4) == 'e'*/)   ||
-             
-            (line.charAt(1) == 'w' &&
-             line.charAt(2) == 'a' &&
-             line.charAt(3) == 'r' /*&&
-             line.charAt(4) == 'n' &&
-             line.charAt(5) == 'i' &&
-             line.charAt(6) == 'n' &&
-             line.charAt(7) == 'g'*/)   ||
-             
-            (line.charAt(1) == 'd' &&
-             line.charAt(2) == 'e' &&
-             line.charAt(3) == 'b'/* &&
-             line.charAt(4) == 'u' &&
-             line.charAt(5) == 'g'*/)   ||
-             
-            (line.charAt(1) == 't' &&
-             line.charAt(2) == 'r' &&
-             line.charAt(3) == 'a' /*&&
-             line.charAt(4) == 'c' &&
-             line.charAt(5) == 'e'*/)   ||
-             
-            (line.charAt(1) == 's' &&
-             line.charAt(2) == 'e' &&
-             line.charAt(3) == 'v' /*&&
-             line.charAt(4) == 'e' &&
-             line.charAt(5) == 'r' &&
-             line.charAt(6) == 'e'*/)   ||
-             
-            (line.charAt(1) == 'c' &&
-             line.charAt(2) == 'o' &&
-             line.charAt(3) == 'n' /*&&
-             line.charAt(4) == 'f' &&
-             line.charAt(5) == 'i' &&
-             line.charAt(6) == 'g'*/)   ||
-             
-            (line.charAt(1) == 'e' &&
-             line.charAt(2) == 'r' &&
-             line.charAt(3) == 'r' /*&&
-             line.charAt(4) == 'o' &&
-             line.charAt(5) == 'r'*/)   ||
-             
-             (line.charAt(1) == 's' &&
-              line.charAt(2) == 'e' &&
-              line.charAt(3) == 'c' &&
-              line.charAt(4) == 'u' &&
-              line.charAt(5) == 'r')) {
+        if ((line.charAt(1) == 'i' && line.charAt(2) == 'n' && line.charAt(3) == 'f' /*&&
+                                                                                     line.charAt(4) == 'o'*/) ||
+
+            (line.charAt(1) == 'f' && line.charAt(2) == 'i' && line.charAt(3) == 'n' /*&&
+                                                                                     line.charAt(4) == 'e'*/) ||
+
+            (line.charAt(1) == 'w' && line.charAt(2) == 'a' && line.charAt(3) == 'r' /*&&
+                                                                                     line.charAt(4) == 'n' &&
+                                                                                     line.charAt(5) == 'i' &&
+                                                                                     line.charAt(6) == 'n' &&
+                                                                                     line.charAt(7) == 'g'*/) ||
+
+            (line.charAt(1) == 'd' && line.charAt(2) == 'e' && line.charAt(3) == 'b'/* &&
+                                                                                    line.charAt(4) == 'u' &&
+                                                                                    line.charAt(5) == 'g'*/) ||
+
+            (line.charAt(1) == 't' && line.charAt(2) == 'r' && line.charAt(3) == 'a' /*&&
+                                                                                     line.charAt(4) == 'c' &&
+                                                                                     line.charAt(5) == 'e'*/) ||
+
+            (line.charAt(1) == 's' && line.charAt(2) == 'e' && line.charAt(3) == 'v' /*&&
+                                                                                     line.charAt(4) == 'e' &&
+                                                                                     line.charAt(5) == 'r' &&
+                                                                                     line.charAt(6) == 'e'*/) ||
+
+            (line.charAt(1) == 'c' && line.charAt(2) == 'o' && line.charAt(3) == 'n' /*&&
+                                                                                     line.charAt(4) == 'f' &&
+                                                                                     line.charAt(5) == 'i' &&
+                                                                                     line.charAt(6) == 'g'*/) ||
+
+            (line.charAt(1) == 'e' && line.charAt(2) == 'r' && line.charAt(3) == 'r' /*&&
+                                                                                     line.charAt(4) == 'o' &&
+                                                                                     line.charAt(5) == 'r'*/) ||
+
+            (line.charAt(1) == 's' && line.charAt(2) == 'e' && line.charAt(3) == 'c' && line.charAt(4) == 'u' && line.charAt(5) == 'r')) {
           int sidx = 4;
           while (sidx < llen && line.charAt(sidx) != ' ') {
             sidx++;
           }
           int endIdx = sidx + 24;
           if (endIdx < llen) {
-            result = line.substring(sidx+1, endIdx+1);
+            result = line.substring(sidx + 1, endIdx + 1);
           }
         }
       }
     }
     return result;
   }
-  
+
   /**
    * Returns the next entry in the log file.  The last entry will be
    * an instance of {@link LogFileParser.LastLogEntry}.
@@ -250,7 +224,7 @@ public class LogFileParser  {
       int lend = llen;
       if (this.suppressBlanks || this.firstEntry) {
         // trim the end of the line
-        while (lend > 1  &&  Character.isWhitespace(lineStr.charAt(lend-1))) {
+        while (lend > 1 && Character.isWhitespace(lineStr.charAt(lend - 1))) {
           lend--;
         }
         if (lend == 0) {
@@ -258,16 +232,16 @@ public class LogFileParser  {
           continue;
         }
       }
-      
+
       StringBuffer line = new StringBuffer(lineStr);
       if (lend != llen) {
         line.setLength(lend);
         llen = lend;
       }
 
-//      Matcher matcher = pattern.matcher(line);
+      //      Matcher matcher = pattern.matcher(line);
       String nextTimestamp = getTimestamp(lineStr);
-          
+
       // See if we've found the beginning of a new log entry.  If so, bundle
       // up the current string buffer and return it in a LogEntry representing
       // the currently parsed text
@@ -278,18 +252,18 @@ public class LogFileParser  {
           if (tsl > 0) {
             // find where the year/mo/dy starts and delete it and the time zone
             int start = 5;
-            if (line.charAt(start) != ' ')         // info & fine
-              if (line.charAt(++start) != ' ')     // finer & error
-                if (line.charAt(++start) != ' ')   // finest, severe, config
+            if (line.charAt(start) != ' ') // info & fine
+              if (line.charAt(++start) != ' ') // finer & error
+                if (line.charAt(++start) != ' ') // finest, severe, config
                   if (line.charAt(++start) != ' ') // warning
                     start = 0;
             if (start > 0) {
-              line.delete(start+25, start+29);  // time zone
-              line.delete(start, start+11);     // date
+              line.delete(start + 25, start + 29); // time zone
+              line.delete(start, start + 11); // date
               if (TRIM_NAMES) {
-                int idx2 = line.indexOf("<", + 12);
-                if (idx2 > start+13) {
-                  line.delete(start+13, idx2-1);
+                int idx2 = line.indexOf("<", +12);
+                if (idx2 > start + 13) {
+                  line.delete(start + 13, idx2 - 1);
                 }
               }
             }
@@ -297,9 +271,9 @@ public class LogFileParser  {
           if (NEWLINE_AFTER_HEADER) {
             int idx = line.indexOf("tid=");
             if (idx > 0) {
-              idx = line.indexOf("]", idx+4);
-              if (idx+1 < line.length()) {
-                line.insert(idx+1, "\n ");
+              idx = line.indexOf("]", idx + 4);
+              if (idx + 1 < line.length()) {
+                line.insert(idx + 1, "\n ");
               }
             }
           }
@@ -313,16 +287,14 @@ public class LogFileParser  {
 
         if (!this.firstEntry) {
           sb = new StringBuffer(500);
-        }
-        else {
+        } else {
           this.firstEntry = false;
         }
         if (this.extLogFileName != null) {
           sb.append(this.extLogFileName);
         }
 
-      }
-      else if (line.indexOf(FULL_THREAD_DUMP) != -1) {
+      } else if (line.indexOf(FULL_THREAD_DUMP) != -1) {
         // JRockit-style thread dumps have time stamps!
         String dump = lineStr;
         lineStr = br.readLine();
@@ -333,7 +305,7 @@ public class LogFileParser  {
         df.setLenient(true);
         try {
           Date date = df.parse(lineStr);
-          
+
           if (timestamp != null) {
             // We've found the end of a log entry
             entry = new LogEntry(timestamp, sb.toString());
@@ -355,8 +327,7 @@ public class LogFileParser  {
           // Oh well...
           sb.append(dump);
         }
-      }
-      else {
+      } else {
         sb.append(this.whiteFileName);
       }
 
@@ -372,14 +343,13 @@ public class LogFileParser  {
       // The file didn't contain any log entries.  Just use the
       // current time
       DateFormat df = DateFormatter.createDateFormat();
-//      Date now = new Date();
+      //      Date now = new Date();
       timestamp = df.format(new Date());
 
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw, true);
 
-      LocalLogWriter tempLogger =
-        new LocalLogWriter(InternalLogWriter.ALL_LEVEL, pw);
+      LocalLogWriter tempLogger = new LocalLogWriter(InternalLogWriter.ALL_LEVEL, pw);
       tempLogger.info(LocalizedStrings.LogFileParser_MISSING_TIME_STAMP);
       pw.flush();
       sb.insert(0, "\n\n");
@@ -407,8 +377,7 @@ public class LogFileParser  {
     }
 
     String logFileName = args[0];
-    BufferedReader br =
-      new BufferedReader(new FileReader(logFileName));
+    BufferedReader br = new BufferedReader(new FileReader(logFileName));
     LogFileParser parser = new LogFileParser(logFileName, br, false, false);
     PrintWriter pw = new PrintWriter(System.out);
     while (parser.hasMoreEntries()) {
@@ -417,7 +386,6 @@ public class LogFileParser  {
     }
   }
 
-
   //////////////////////  Inner Classes  //////////////////////
 
   /**
@@ -425,13 +393,13 @@ public class LogFileParser  {
    * timestamp as a <code>String</code>. 
    * {@link java.text.DateFormat#parse(java.lang.String) Parsing} it was too expensive.
    */
-  static class LogEntry  {
+  static class LogEntry {
     /** Timestamp of the log entry */
     private String timestamp;
 
     /** The contents of the log entry */
     private String contents;
-    
+
     /** whether extraneous blank lines are being suppressed */
     private boolean suppressBlanks;
 
@@ -471,7 +439,7 @@ public class LogFileParser  {
     String getContents() {
       return this.contents;
     }
-    
+
     /**
      * Writes the contents of this log entry to a
      * <code>PrintWriter</code>. 
@@ -497,10 +465,10 @@ public class LogFileParser  {
    * to avoid the overhead of an extra <code>boolean</code> field in
    * each {@link LogFileParser.LogEntry}.
    */
-  static class LastLogEntry extends LogEntry  {
+  static class LastLogEntry extends LogEntry {
     public LastLogEntry(String timestamp, String contents) {
       super(timestamp, contents);
-    }    
+    }
 
     @Override
     public boolean isLast() {

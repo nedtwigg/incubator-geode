@@ -46,10 +46,10 @@ public class SmHelper {
       return _pointerSizeBytes();
     }
   }
+
   private static native int _pointerSizeBytes();
 
-
-  /* ================== System Administration =========================== */  
+  /* ================== System Administration =========================== */
 
   /**
    * Sleeps for the specified number of nanoseconds.
@@ -60,18 +60,19 @@ public class SmHelper {
    * Sleeps for the specified number of nanoseconds.
    */
   public static void nanosleep(long nanos) throws InterruptedException {
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     if (nanos <= 0) {
       return;
     }
     if (nanos >= 1000000) {
-      Thread.sleep(nanos/1000000, (int)(nanos%1000000));
+      Thread.sleep(nanos / 1000000, (int) (nanos % 1000000));
     } else {
       if (pureMode) {
         // fix for bug 35150
         Thread.yield();
       } else {
-        _nanosleep((int)nanos);
+        _nanosleep((int) nanos);
       }
     }
   }
@@ -86,6 +87,7 @@ public class SmHelper {
       return _getNativeVersion();
     }
   }
+
   private static native String _getNativeVersion();
 
   public static String getSystemId() {
@@ -95,8 +97,8 @@ public class SmHelper {
       return _getSystemId();
     }
   }
-  
-  private static native String _getSystemId(); 
+
+  private static native String _getSystemId();
 
   /** Cache of class -> has zero-arg constructor */
   private static Map zeroArgConstructorCache = new HashMap();
@@ -122,8 +124,7 @@ public class SmHelper {
    *         <code>Externalizable</code> classes in which
    *         <code>c.equals(initClass)</code>
    */
-  public static Object allocateJOMObject(Class c, Class initClass) 
-    throws IllegalAccessException, InvalidClassException {
+  public static Object allocateJOMObject(Class c, Class initClass) throws IllegalAccessException, InvalidClassException {
     if (c.isPrimitive()) {
       throw new InvalidClassException(LocalizedStrings.SmHelper_IS_PRIMITIVE.toLocalizedString(), c.getName());
 
@@ -131,11 +132,11 @@ public class SmHelper {
       throw new InvalidClassException(LocalizedStrings.SmHelper_IS_PRIMITIVE.toLocalizedString(), initClass.getName());
     }
 
-//    boolean hasZeroArgInit;
+    //    boolean hasZeroArgInit;
     if (!zeroArgConstructorCache.containsKey(initClass)) {
       try {
-//        Constructor init = 
-          initClass.getDeclaredConstructor(new Class[0]);
+        //        Constructor init = 
+        initClass.getDeclaredConstructor(new Class[0]);
         if (Modifier.isPublic(initClass.getModifiers())) {
           publicConstructorCache.put(initClass, Boolean.TRUE);
 
@@ -155,13 +156,13 @@ public class SmHelper {
       }
     }
 
-//     // Doesn't let us invoke the non-public constructors of inner
-//     // classes 
-//     boolean isPublic = 
-//       ((Boolean) publicConstructorCache.get(initClass)).booleanValue();
-//     if (c.equals(initClass) && !isPublic) {
-//       throw new IllegalAccessException();
-//     }
+    //     // Doesn't let us invoke the non-public constructors of inner
+    //     // classes 
+    //     boolean isPublic = 
+    //       ((Boolean) publicConstructorCache.get(initClass)).booleanValue();
+    //     if (c.equals(initClass) && !isPublic) {
+    //       throw new IllegalAccessException();
+    //     }
 
     return _allocateJOMObject(c, initClass);
   }

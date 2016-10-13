@@ -47,19 +47,28 @@ public class ConvertUtilsJUnitTest {
 
   private MultipartFile createMultipartFile(final String filename, final byte[] content) {
     return new MultipartFileAdapter() {
-      @Override public byte[] getBytes() throws IOException {
+      @Override
+      public byte[] getBytes() throws IOException {
         return content;
       }
-      @Override public InputStream getInputStream() throws IOException {
+
+      @Override
+      public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(getBytes());
       }
-      @Override public String getName() {
+
+      @Override
+      public String getName() {
         return filename;
       }
-      @Override public String getOriginalFilename() {
+
+      @Override
+      public String getOriginalFilename() {
         return filename;
       }
-      @Override public long getSize() {
+
+      @Override
+      public long getSize() {
         return content.length;
       }
     };
@@ -67,7 +76,8 @@ public class ConvertUtilsJUnitTest {
 
   private Resource createResource(final String filename, final byte[] content) {
     return new ByteArrayResource(content, String.format("Content of file (%1$s).", filename)) {
-      @Override public String getFilename() {
+      @Override
+      public String getFilename() {
         return filename;
       }
     };
@@ -106,10 +116,7 @@ public class ConvertUtilsJUnitTest {
 
   @Test
   public void testConvertMultipartFile() throws IOException {
-    final MultipartFile[] files = {
-      createMultipartFile("/path/to/multi-part/file1.txt", "The contents of multi-part file1.".getBytes()),
-      createMultipartFile("/path/to/multi-part/file2.txt", "The contents of multi-part file2.".getBytes())
-    };
+    final MultipartFile[] files = { createMultipartFile("/path/to/multi-part/file1.txt", "The contents of multi-part file1.".getBytes()), createMultipartFile("/path/to/multi-part/file2.txt", "The contents of multi-part file2.".getBytes()) };
 
     final byte[][] fileData = ConvertUtils.convert(files);
 
@@ -124,10 +131,7 @@ public class ConvertUtilsJUnitTest {
 
   @Test
   public void testConvertResource() throws IOException {
-    final Resource[] resources = {
-      createResource("/path/to/file1.txt", "Contents of file1.".getBytes()),
-      createResource("/path/to/file2.txt", "Contents of file2.".getBytes())
-    };
+    final Resource[] resources = { createResource("/path/to/file1.txt", "Contents of file1.".getBytes()), createResource("/path/to/file2.txt", "Contents of file2.".getBytes()) };
 
     final byte[][] fileData = ConvertUtils.convert(resources);
 
@@ -144,8 +148,7 @@ public class ConvertUtilsJUnitTest {
   public void testConvertResourceWithResourceHavingNoFilename() throws IOException {
     try {
       ConvertUtils.convert(createResource(null, "test".getBytes()));
-    }
-    catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException expected) {
       assertEquals("The filename of Resource (Byte array resource [Content of file (null).]) must be specified!", expected.getMessage());
       throw expected;
     }

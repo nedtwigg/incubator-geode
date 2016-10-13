@@ -41,8 +41,7 @@ import static org.junit.Assert.fail;
  *
  */
 @Category(IntegrationTest.class)
-public class HARegionQueueStartStopJUnitTest
-{
+public class HARegionQueueStartStopJUnitTest {
 
   /**
    * Creates the cache instance for the test
@@ -51,8 +50,7 @@ public class HARegionQueueStartStopJUnitTest
    * @throws CacheException -
    *           thrown if any exception occurs in cache creation
    */
-  private Cache createCache() throws CacheException
-  {
+  private Cache createCache() throws CacheException {
     final Properties props = new Properties();
     props.setProperty(LOCATORS, "");
     props.setProperty(MCAST_PORT, "0");
@@ -68,65 +66,55 @@ public class HARegionQueueStartStopJUnitTest
    * @throws CacheException
    * @throws InterruptedException
    */
-  private RegionQueue createHARegionQueue(String name, Cache cache)
-      throws IOException, ClassNotFoundException, CacheException, InterruptedException
-  {
-    RegionQueue regionqueue =HARegionQueue.getHARegionQueueInstance(name, cache,HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
+  private RegionQueue createHARegionQueue(String name, Cache cache) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    RegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
   @Test
-  public void testStartStop()
-  {
+  public void testStartStop() {
     try {
       boolean exceptionOccured = false;
       Cache cache = createCache();
       createHARegionQueue("test", cache);
-      Assert
-          .assertTrue(HARegionQueue.getDispatchedMessagesMapForTesting() != null);
+      Assert.assertTrue(HARegionQueue.getDispatchedMessagesMapForTesting() != null);
       HARegionQueue.stopHAServices();
       try {
         HARegionQueue.getDispatchedMessagesMapForTesting();
-      }
-      catch (NullPointerException e) {
+      } catch (NullPointerException e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured) {
         fail("Expected exception to occur but did not occur");
       }
-      HARegionQueue.startHAServices((GemFireCacheImpl)cache);
-      Assert
-          .assertTrue(HARegionQueue.getDispatchedMessagesMapForTesting() != null);
+      HARegionQueue.startHAServices((GemFireCacheImpl) cache);
+      Assert.assertTrue(HARegionQueue.getDispatchedMessagesMapForTesting() != null);
       cache.close();
       try {
         HARegionQueue.getDispatchedMessagesMapForTesting();
-      }
-      catch (NullPointerException e) {
+      } catch (NullPointerException e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured) {
         fail("Expected exception to occur but did not occur");
       }
-      
+
       cache = createCache();
 
       try {
         HARegionQueue.getDispatchedMessagesMapForTesting();
-      }
-      catch (NullPointerException e) {
+      } catch (NullPointerException e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured) {
         fail("Expected exception to occur but did not occur");
       }
-      
-    }
-    catch (Exception e) {
+
+    } catch (Exception e) {
       e.printStackTrace();
       fail("Test failed due to " + e);
     }
 
   }
-  
-  
+
 }

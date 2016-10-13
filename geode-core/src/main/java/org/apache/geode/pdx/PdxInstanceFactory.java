@@ -20,6 +20,7 @@ import java.util.Date;
 
 import org.apache.geode.cache.CacheFactory;
 import org.apache.geode.cache.RegionService;
+
 /**
  * PdxInstanceFactory gives you a way to create PdxInstances.
  * Call the write methods to populate the field data and then call {@link #create()}
@@ -52,6 +53,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeChar(String fieldName, char value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>boolean</code>.
@@ -63,6 +65,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeBoolean(String fieldName, boolean value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>byte</code>.
@@ -74,6 +77,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeByte(String fieldName, byte value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>short</code>.
@@ -85,6 +89,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeShort(String fieldName, short value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>int</code>.
@@ -96,6 +101,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeInt(String fieldName, int value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>long</code>.
@@ -107,6 +113,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeLong(String fieldName, long value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>float</code>.
@@ -118,6 +125,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeFloat(String fieldName, float value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>double</code>.
@@ -129,6 +137,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeDouble(String fieldName, double value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Date</code>.
@@ -140,6 +149,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeDate(String fieldName, Date value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>String</code>.
@@ -151,6 +161,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeString(String fieldName, String value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Object</code>.
@@ -170,6 +181,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeObject(String fieldName, Object value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Object</code>.
@@ -237,6 +249,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeBooleanArray(String fieldName, boolean[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>char[]</code>.
@@ -248,6 +261,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeCharArray(String fieldName, char[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>byte[]</code>.
@@ -259,6 +273,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeByteArray(String fieldName, byte[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>short[]</code>.
@@ -270,6 +285,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeShortArray(String fieldName, short[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>int[]</code>.
@@ -281,6 +297,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeIntArray(String fieldName, int[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>long[]</code>.
@@ -292,6 +309,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeLongArray(String fieldName, long[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>float[]</code>.
@@ -303,6 +321,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeFloatArray(String fieldName, float[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>double[]</code>.
@@ -314,6 +333,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeDoubleArray(String fieldName, double[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>String[]</code>.
@@ -325,6 +345,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeStringArray(String fieldName, String[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Object[]</code>.
@@ -339,6 +360,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxInstanceFactory writeObjectArray(String fieldName, Object[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Object[]</code>.
@@ -356,6 +378,7 @@ public interface PdxInstanceFactory {
    * @since GemFire 6.6.2
    */
   public PdxInstanceFactory writeObjectArray(String fieldName, Object[] value, boolean checkPortability);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>byte[][]</code>.
@@ -407,6 +430,7 @@ public interface PdxInstanceFactory {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public <CT, VT extends CT> PdxInstanceFactory writeField(String fieldName, VT fieldValue, Class<CT> fieldType);
+
   /**
    * Writes the named field with the given value and type to the serialized form.
    * This method uses the <code>fieldType</code> to determine which writeXXX method it should call.

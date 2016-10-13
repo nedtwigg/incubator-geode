@@ -17,7 +17,6 @@
 
 package org.apache.geode.internal.cache;
 
-
 import org.apache.geode.InternalGemFireError;
 import org.apache.geode.internal.Assert;
 
@@ -29,20 +28,18 @@ import org.apache.geode.internal.Assert;
  * @see org.apache.geode.internal.cache.partitioned.PartitionMessage
  * @since GemFire 5.0
  */
-public class ForceReattemptException extends
-    DataLocationException
-{
+public class ForceReattemptException extends DataLocationException {
   private static final long serialVersionUID = -595988965679204903L;
   /**
    * If true, this exception includes a hashCode for specified key
    */
   private boolean hasHash = false;
-  
+
   /**
    * The hashCode for a specified key, if {@link #hasHash()} is true
    */
   private int keyHash = 0;
-  
+
   /**
    * Used when constructing the error: sets the expected hash.
    * @param h the hash to use
@@ -52,7 +49,7 @@ public class ForceReattemptException extends
     this.hasHash = true;
     this.keyHash = h;
   }
-  
+
   /**
    * Fetch the hash for this exception
    * @return the expected hash
@@ -60,14 +57,14 @@ public class ForceReattemptException extends
   public boolean hasHash() {
     return this.hasHash;
   }
-  
+
   public int getHash() {
     if (!hasHash) {
       throw new InternalGemFireError("getHash when no hash");
     }
     return this.keyHash;
   }
-  
+
   /**
    * If possible, validate the given key's hashCode against any
    * that was returned by the peer.
@@ -81,16 +78,14 @@ public class ForceReattemptException extends
     if (key == null) {
       return; // ???
     }
-    
+
     int expected = key.hashCode();
     if (expected == keyHash) {
       return;
     }
-    throw new PartitionedRegionException(
-        "Object hashCode inconsistent between cache peers. Here = " + 
-        expected + "; peer calculated = " + keyHash);
+    throw new PartitionedRegionException("Object hashCode inconsistent between cache peers. Here = " + expected + "; peer calculated = " + keyHash);
   }
-  
+
   /**
    * Reattempt required due to an underlying error
    * 
@@ -100,7 +95,7 @@ public class ForceReattemptException extends
   public ForceReattemptException(String message, Throwable cause) {
     super(message, cause);
   }
-  
+
   /**
    * Reattempt required due to detected condition
    * @param message describes the condition
@@ -108,7 +103,7 @@ public class ForceReattemptException extends
   public ForceReattemptException(String message) {
     super(message);
   }
-  
+
   @Override
   public String toString() {
     String result = super.toString();

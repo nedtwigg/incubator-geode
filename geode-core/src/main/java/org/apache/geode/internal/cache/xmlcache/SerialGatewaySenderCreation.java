@@ -31,25 +31,23 @@ import org.apache.geode.internal.cache.EnumListenerEvent;
 import org.apache.geode.internal.cache.wan.AbstractGatewaySender;
 import org.apache.geode.internal.cache.wan.GatewaySenderAttributes;
 
-  
-public class SerialGatewaySenderCreation extends AbstractGatewaySender implements GatewaySender{
-  
-  public SerialGatewaySenderCreation(Cache cache,
-      GatewaySenderAttributes attrs) {
+public class SerialGatewaySenderCreation extends AbstractGatewaySender implements GatewaySender {
+
+  public SerialGatewaySenderCreation(Cache cache, GatewaySenderAttributes attrs) {
     super(cache, attrs);
   }
-  
+
   public void distribute(EnumListenerEvent operation, EntryEventImpl event, List<Integer> remoteDSIds) {
-    
+
   }
 
   @Override
-  public void start(){
-    
+  public void start() {
+
   }
 
   public void stop() {
-    
+
   }
 
   public void rebalance() {
@@ -58,7 +56,7 @@ public class SerialGatewaySenderCreation extends AbstractGatewaySender implement
 
   public void fillInProfile(Profile profile) {
     // TODO Auto-generated method stub
-    
+
   }
 
   public CancelCriterion getCancelCriterion() {
@@ -109,7 +107,7 @@ public class SerialGatewaySenderCreation extends AbstractGatewaySender implement
   @Override
   protected void setModifiedEventId(EntryEventImpl clonedEvent) {
     // TODO Auto-generated method stub
-    
+
   }
-  
+
 }

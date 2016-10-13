@@ -43,7 +43,7 @@ import org.apache.geode.distributed.internal.membership.gms.Services;
 public class AddressManager extends Protocol {
 
   private static final Logger logger = Services.getLogger();
-  
+
   private TP transport;
   private Method setPingData;
   boolean warningLogged = false;
@@ -51,14 +51,14 @@ public class AddressManager extends Protocol {
   @SuppressWarnings("unchecked")
   @Override
   public Object up(Event evt) {
-    
+
     switch (evt.getType()) {
 
     case Event.FIND_MBRS:
-      List<Address> missing = (List<Address>)evt.getArg();
+      List<Address> missing = (List<Address>) evt.getArg();
 
       Responses responses = new Responses(false);
-      for (Address laddr: missing) {
+      for (Address laddr : missing) {
         try {
           if (laddr instanceof JGAddress) {
             PingData pd = new PingData(laddr, true, laddr.toString(), newIpAddress(laddr));
@@ -74,12 +74,12 @@ public class AddressManager extends Protocol {
     }
     return up_prot.up(evt);
   }
-  
+
   private IpAddress newIpAddress(Address jgaddr) {
-    JGAddress addr = (JGAddress)jgaddr;
+    JGAddress addr = (JGAddress) jgaddr;
     return addr.asIpAddress();
   }
-  
+
   /**
    * update the logical->physical address cache in UDP, which doesn't
    * seem to be updated by UDP when processing responses from FIND_MBRS
@@ -91,7 +91,7 @@ public class AddressManager extends Protocol {
     }
     if (setPingData != null) {
       try {
-        setPingData.invoke(transport, new Object[]{pd});
+        setPingData.invoke(transport, new Object[] { pd });
       } catch (InvocationTargetException | IllegalAccessException e) {
         if (!warningLogged) {
           log.warn("Unable to update JGroups address cache - this may affect performance", e);
@@ -100,14 +100,14 @@ public class AddressManager extends Protocol {
       }
     }
   }
-  
+
   /**
    * find and initialize the method used to update UDP's address cache
    */
   private void findPingDataMethod() {
-    transport = (TP)getProtocolStack().getTransport();
+    transport = (TP) getProtocolStack().getTransport();
     try {
-      setPingData = TP.class.getDeclaredMethod("setPingData", new Class<?>[]{PingData.class});
+      setPingData = TP.class.getDeclaredMethod("setPingData", new Class<?>[] { PingData.class });
       setPingData.setAccessible(true);
     } catch (NoSuchMethodException e) {
       if (!warningLogged) {
@@ -116,5 +116,5 @@ public class AddressManager extends Protocol {
       }
     }
   }
-  
+
 }

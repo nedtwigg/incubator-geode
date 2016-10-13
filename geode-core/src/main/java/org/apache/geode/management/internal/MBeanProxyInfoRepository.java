@@ -30,7 +30,6 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.logging.LogService;
 
-
 /**
  * This class is a repository of all proxy related information multiple indices
  * are provided for searching This searching capability will ease while various
@@ -68,8 +67,7 @@ public class MBeanProxyInfoRepository {
    * @param proxyInfo
    *          Proxy Info instance
    */
-  protected void addProxyToRepository(DistributedMember member,
-      ProxyInfo proxyInfo) {
+  protected void addProxyToRepository(DistributedMember member, ProxyInfo proxyInfo) {
     ObjectName objectName = proxyInfo.getObjectName();
     if (logger.isTraceEnabled()) {
       logger.trace("ADDED TO PROXY REPO : {}", proxyInfo.getObjectName());
@@ -102,13 +100,12 @@ public class MBeanProxyInfoRepository {
     ProxyInfo proxyInfo = objectNameIndex.get(objectName);
     if (proxyInfo != null) {
       return interfaceClass.cast(proxyInfo.getProxyInstance());
-    }else{
+    } else {
       return null;
     }
-    
 
   }
-  
+
   /**
    * Finds the proxy instance by {@link javax.management.ObjectName}
    * 
@@ -120,7 +117,7 @@ public class MBeanProxyInfoRepository {
       logger.trace("SEARCHING FOR PROXY INFO N REPO FOR MBEAN : {}", objectName);
     }
     ProxyInfo proxyInfo = objectNameIndex.get(objectName);
-   
+
     return proxyInfo;
   }
 
@@ -140,7 +137,7 @@ public class MBeanProxyInfoRepository {
     Set<ObjectName> proxyInfoSet = memberIndex.get(member);
     if (proxyInfoSet != null) {
       return Collections.unmodifiableSet(proxyInfoSet);
-    }else{
+    } else {
       return Collections.emptySet();
     }
   }

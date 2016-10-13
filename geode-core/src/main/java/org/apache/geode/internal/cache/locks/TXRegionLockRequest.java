@@ -23,17 +23,16 @@ import java.util.Set;
 
 /** Specifies a set of keys to try-lock within the scope of a region */
 public interface TXRegionLockRequest extends DataSerializable {
-  
+
   /** The full path of the region containing the entries to try-lock */
   public String getRegionFullPath();
-  
+
   /** The entries to try-lock. Returns a set of <code>Object</code> names */
   public Set getKeys();
-  
+
   /** add the key to be locked*/
   public void addEntryKey(Object key);
-  
+
   /** add the set of keys to be locked */
   public void addEntryKeys(Set<Object> s);
 }
-

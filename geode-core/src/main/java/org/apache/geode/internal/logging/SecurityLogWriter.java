@@ -34,7 +34,7 @@ import org.apache.geode.i18n.StringId;
 public final class SecurityLogWriter extends LogWriterImpl implements InternalLogWriter {
 
   public static final String SECURITY_PREFIX = DistributionConfig.SECURITY_PREFIX_NAME;
-  
+
   private final int logLevel;
 
   private final InternalLogWriter realLogWriter;
@@ -48,17 +48,17 @@ public final class SecurityLogWriter extends LogWriterImpl implements InternalLo
   public int getLogWriterLevel() {
     return this.logLevel;
   }
-  
+
   @Override
   public void setLogWriterLevel(int newLevel) {
     throw new UnsupportedOperationException("Unable to change log level after creation");
   }
-  
+
   @Override
   public boolean isSecure() {
     return true;
   }
- 
+
   @Override
   public String getConnectionName() {
     return null;
@@ -68,7 +68,7 @@ public final class SecurityLogWriter extends LogWriterImpl implements InternalLo
   public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception) {
     put(msgLevel, msgId.toLocalizedString(params), exception);
   }
-  
+
   /**
    * Adds the {@link SecurityLogWriter#SECURITY_PREFIX} prefix to the log-level
    * to distinguish security related log-lines.

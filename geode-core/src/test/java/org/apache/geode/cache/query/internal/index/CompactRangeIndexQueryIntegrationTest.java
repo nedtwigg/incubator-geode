@@ -62,12 +62,12 @@ public class CompactRangeIndexQueryIntegrationTest {
       if (i < numMatching) {
         p.status = "1";
       }
-      region.put("KEY-"+ i, p);
+      region.put("KEY-" + i, p);
     }
 
     Query q = qs.newQuery("select * from /portfolios p where p.pk <> '0' and p.status <> '0' and p.status <> '1' and p.status <> '2'");
     SelectResults rs = (SelectResults) q.execute();
-    assertEquals( numMatching, rs.size());
+    assertEquals(numMatching, rs.size());
   }
 
   @Test
@@ -94,6 +94,6 @@ public class CompactRangeIndexQueryIntegrationTest {
 
     Query q = qs.newQuery("select * from /ExampleRegion E where E['codeNumber']=1 and E['origin']='src_common' and (E['country']='JPY' or E['ccountrycy']='USD')");
     SelectResults rs = (SelectResults) q.execute();
-    assertEquals( 4, rs.size());
+    assertEquals(4, rs.size());
   }
 }

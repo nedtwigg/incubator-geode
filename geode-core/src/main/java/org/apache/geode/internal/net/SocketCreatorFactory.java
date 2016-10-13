@@ -80,7 +80,6 @@ public class SocketCreatorFactory {
     return createSSLSocketCreator(sslComponent, sslConfig);
   }
 
-
   private SocketCreator getOrCreateSocketCreatorForSSLEnabledComponent(final SecurableCommunicationChannel sslEnabledComponent, final SSLConfig sslConfig) {
     SocketCreator socketCreator = getRegisteredSocketCreatorForComponent(sslEnabledComponent);
     if (socketCreator == null) {
@@ -126,11 +125,7 @@ public class SocketCreatorFactory {
    * @deprecated as of Geode 1.0
    */
   @Deprecated
-  public static SocketCreator createNonDefaultInstance(final boolean useSSL,
-                                                       final boolean needClientAuth,
-                                                       final String protocols,
-                                                       final String ciphers,
-                                                       final Properties gfsecurityProps) {
+  public static SocketCreator createNonDefaultInstance(final boolean useSSL, final boolean needClientAuth, final String protocols, final String ciphers, final Properties gfsecurityProps) {
     SSLConfig sslConfig = SSLConfigurationFactory.getSSLConfigForComponent(useSSL, needClientAuth, protocols, ciphers, gfsecurityProps, null);
     return new SocketCreator(sslConfig);
   }
@@ -152,6 +147,5 @@ public class SocketCreatorFactory {
     getInstance().initializeSocketCreators(config);
     return getInstance();
   }
-
 
 }

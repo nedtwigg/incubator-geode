@@ -40,7 +40,6 @@ public class AlertLevelJUnitTest {
   private AlertLevel alertLevel2 = AlertLevel.ERROR;
   private AlertLevel alertLevel3 = AlertLevel.WARNING;
 
-
   @Test
   public void testEquals() throws Exception {
     //TODO: Test goes here...
@@ -54,11 +53,10 @@ public class AlertLevelJUnitTest {
     AlertLevel level = constructor.newInstance(AlertLevel.ERROR.getSeverity(), "ERROR");
     assertEquals(level.getSeverity(), AlertLevel.ERROR.getSeverity());
 
-
     AlertLevel level1 = constructor.newInstance(AlertLevel.ERROR.getSeverity(), new String("ERROR"));
     assertEquals(level1.getName(), alertLevel2.getName());
     assertTrue(level1.equals(alertLevel2));
 
   }
 
-} 
+}

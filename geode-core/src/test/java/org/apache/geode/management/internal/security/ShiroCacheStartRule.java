@@ -50,7 +50,7 @@ public class ShiroCacheStartRule extends ExternalResource {
     cache.addCacheServer().start();
   }
 
-  public Cache getCache(){
+  public Cache getCache() {
     return cache;
   }
 

@@ -35,20 +35,19 @@ public class RestSecurityService {
   }
 
   public boolean authorize(String resource, String operation, String region, String key) {
-    try{
+    try {
       securityService.authorize(resource, operation, region, key);
       return true;
-    }
-    catch (GemFireSecurityException ex){
+    } catch (GemFireSecurityException ex) {
       return false;
     }
   }
 
   public boolean authorizeKeys(String operation, String region, String[] keys) {
     boolean authorized = false;
-    for(String key:keys){
+    for (String key : keys) {
       authorized = authorize("DATA", operation, region, key);
-      if(!authorized)
+      if (!authorized)
         return false;
     }
     return true;

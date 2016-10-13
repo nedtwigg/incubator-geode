@@ -97,8 +97,7 @@ public class ClusterMembersRGraphService implements PulseService {
     ObjectNode responseJSON = mapper.createObjectNode();
 
     // cluster's Members
-    responseJSON.put(this.CLUSTER,
-        getPhysicalServerJson(cluster, repository.getJmxHost(), repository.getJmxPort()));
+    responseJSON.put(this.CLUSTER, getPhysicalServerJson(cluster, repository.getJmxHost(), repository.getJmxPort()));
     responseJSON.put(this.MEMBER_COUNT, cluster.getMemberCount());
 
     // Send json response
@@ -164,19 +163,16 @@ public class ClusterMembersRGraphService implements PulseService {
         if (usedHeapSize > 0) {
           double heapUsage = (currentHeap.doubleValue() / usedHeapSize.doubleValue()) * 100;
 
-          memberData.put(this.MEMORY_USAGE,
-              Double.valueOf(df2.format(heapUsage)));
+          memberData.put(this.MEMORY_USAGE, Double.valueOf(df2.format(heapUsage)));
         } else
           memberData.put(this.MEMORY_USAGE, 0);
 
         double currentCPUUsage = member.getCpuUsage();
 
-        memberData.put(this.CPU_USAGE,
-            Double.valueOf(df2.format(currentCPUUsage)));
+        memberData.put(this.CPU_USAGE, Double.valueOf(df2.format(currentCPUUsage)));
         memberData.put(this.REGIONS, member.getMemberRegions().size());
         memberData.put(this.HOST, member.getHost());
-        if ((member.getMemberPort() == null)
-            || (member.getMemberPort().equals(""))) {
+        if ((member.getMemberPort() == null) || (member.getMemberPort().equals(""))) {
           memberData.put(this.PORT, "-");
         } else {
           memberData.put(this.PORT, member.getMemberPort());
@@ -204,8 +200,7 @@ public class ClusterMembersRGraphService implements PulseService {
           }
         } else if (errorAlertsList.contains(member.getName())) {
           // for error alerts
-          memberNodeType = getMemberNodeType(member,
-              this.MEMBER_NODE_TYPE_ERROR);
+          memberNodeType = getMemberNodeType(member, this.MEMBER_NODE_TYPE_ERROR);
           if (!hostError) {
             hostError = true;
           }
@@ -282,26 +277,19 @@ public class ClusterMembersRGraphService implements PulseService {
 
     if ((member.isLocator()) && (member.isServer()) && (member.isManager())) {
       memberNodeType = "memberLocatorManagerServer" + memberState + "Node";
-    } else if ((member.isLocator()) && (member.isServer())
-        && !(member.isManager())) {
+    } else if ((member.isLocator()) && (member.isServer()) && !(member.isManager())) {
       memberNodeType = "memberLocatorServer" + memberState + "Node";
-    } else if ((member.isLocator()) && !(member.isServer())
-        && (member.isManager())) {
+    } else if ((member.isLocator()) && !(member.isServer()) && (member.isManager())) {
       memberNodeType = "memberLocatorManager" + memberState + "Node";
-    } else if ((member.isLocator()) && !(member.isServer())
-        && !(member.isManager())) {
+    } else if ((member.isLocator()) && !(member.isServer()) && !(member.isManager())) {
       memberNodeType = "memberLocator" + memberState + "Node";
-    } else if (!(member.isLocator()) && (member.isServer())
-        && (member.isManager())) {
+    } else if (!(member.isLocator()) && (member.isServer()) && (member.isManager())) {
       memberNodeType = "memberManagerServer" + memberState + "Node";
-    } else if (!(member.isLocator()) && (member.isServer())
-        && !(member.isManager())) {
+    } else if (!(member.isLocator()) && (member.isServer()) && !(member.isManager())) {
       memberNodeType = "memberServer" + memberState + "Node";
-    } else if (!(member.isLocator()) && !(member.isServer())
-        && (member.isManager())) {
+    } else if (!(member.isLocator()) && !(member.isServer()) && (member.isManager())) {
       memberNodeType = "memberManager" + memberState + "Node";
-    } else if (!(member.isLocator()) && !(member.isServer())
-        && !(member.isManager())) {
+    } else if (!(member.isLocator()) && !(member.isServer()) && !(member.isManager())) {
       memberNodeType = "member" + memberState + "Node";
     }
     return memberNodeType;

@@ -33,6 +33,7 @@ public interface ConnectionListener {
    * connection.
    */
   void connectionOpened(boolean firstConnection, byte communicationMode);
+
   /**
    * Indicates that the a connection to this acceptor has been
    * closed.
@@ -41,12 +42,12 @@ public interface ConnectionListener {
    * @param communicationMode of this connection. 
    */
   void connectionClosed(boolean lastConnection, byte communicationMode);
-  
+
   /**
    * Indicates that a new queue was created on this Acceptor.
    */
   void queueAdded(ClientProxyMembershipID id);
-  
+
   /**
    * Indicates that a queue was removed from this Acceptor.
    */

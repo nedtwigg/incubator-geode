@@ -68,14 +68,14 @@ public class GetBitExecutor extends StringExecutor {
 
     int byteIndex = offset / 8;
     offset %= 8;
-    
+
     if (byteIndex >= bytes.length) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
       return;
     }
-    
+
     bit = (bytes[byteIndex] & (0x80 >> offset)) >> (7 - offset);
-    
+
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), bit));
   }
 

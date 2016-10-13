@@ -51,8 +51,7 @@ class IndexCreationData implements Index {
     return this.indexType;
   }
 
-  void setFunctionalIndexData(String fromClause, String expression,
-      String importStr) {
+  void setFunctionalIndexData(String fromClause, String expression, String importStr) {
     this.fromClause = fromClause;
     this.expression = expression;
     this.importStr = importStr;

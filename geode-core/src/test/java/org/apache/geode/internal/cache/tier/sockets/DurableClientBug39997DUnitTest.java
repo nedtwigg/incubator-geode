@@ -48,7 +48,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 public class DurableClientBug39997DUnitTest extends JUnit4CacheTestCase {
 
   public final void postTearDownCacheTestCase() {
-    Host.getHost(0) .getVM(0).invoke(() -> disconnectFromDS());
+    Host.getHost(0).getVM(0).invoke(() -> disconnectFromDS());
   }
 
   @Test
@@ -62,11 +62,7 @@ public class DurableClientBug39997DUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(new SerializableRunnable("create cache") {
       public void run() {
         getSystem(getClientProperties());
-        PoolImpl p = (PoolImpl)PoolManager.createFactory()
-                .addServer(hostName, port)
-                .setSubscriptionEnabled(true)
-                .setSubscriptionRedundancy(0)
-                .create("DurableClientReconnectDUnitTestPool");
+        PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(hostName, port).setSubscriptionEnabled(true).setSubscriptionRedundancy(0).create("DurableClientReconnectDUnitTestPool");
         AttributesFactory factory = new AttributesFactory();
         factory.setScope(Scope.LOCAL);
         factory.setPoolName(p.getName());
@@ -77,7 +73,7 @@ public class DurableClientBug39997DUnitTest extends JUnit4CacheTestCase {
         try {
           region1.registerInterest("ALL_KEYS");
           fail("Should have received an exception trying to register interest");
-        } catch(NoSubscriptionServersAvailableException expected) {
+        } catch (NoSubscriptionServersAvailableException expected) {
           //this is expected
         }
       }

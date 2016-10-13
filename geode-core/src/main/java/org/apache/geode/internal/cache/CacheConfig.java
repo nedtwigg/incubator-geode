@@ -38,7 +38,7 @@ public class CacheConfig {
   public static boolean DEFAULT_PDX_IGNORE_UNREAD_FIELDS = false;
 
   public boolean pdxReadSerialized = DEFAULT_PDX_READ_SERIALIZED;
-  
+
   /**
    * cacheXMLDescription is used to reinitialize the cache after a reconnect.
    * It overrides any cache.xml filename setting in distributed system properties.
@@ -49,7 +49,7 @@ public class CacheConfig {
    * list of cache servers to create after auto-reconnect if cluster configuration is being used
    */
   private List<CacheServerCreation> cacheServerCreation;
-  
+
   /**
    * This indicates if the pdxReadSerialized value is set by user. This is used 
    * during cache xml parsing. The value set by user api overrides the 
@@ -68,56 +68,40 @@ public class CacheConfig {
   public boolean pdxPersistent = DEFAULT_PDX_PERSISTENT;
 
   public boolean pdxPersistentUserSet = false;
-  
+
   public boolean pdxIgnoreUnreadFields = DEFAULT_PDX_IGNORE_UNREAD_FIELDS;
   public boolean pdxIgnoreUnreadFieldsUserSet = false;
-  
-  
 
   public boolean isPdxReadSerialized() {
     return pdxReadSerialized;
   }
-
-
 
   public void setPdxReadSerialized(boolean pdxReadSerialized) {
     this.pdxReadSerializedUserSet = true;
     this.pdxReadSerialized = pdxReadSerialized;
   }
 
-
-
   public PdxSerializer getPdxSerializer() {
     return pdxSerializer;
   }
-
-
 
   public void setPdxSerializer(PdxSerializer pdxSerializer) {
     pdxSerializerUserSet = true;
     this.pdxSerializer = pdxSerializer;
   }
 
-
-
   public String getPdxDiskStore() {
     return pdxDiskStore;
   }
-
-
 
   public void setPdxDiskStore(String pdxDiskStore) {
     this.pdxDiskStoreUserSet = true;
     this.pdxDiskStore = pdxDiskStore;
   }
 
-
-
   public boolean isPdxPersistent() {
     return pdxPersistent;
   }
-
-
 
   public void setPdxPersistent(boolean pdxPersistent) {
     this.pdxPersistentUserSet = true;
@@ -127,29 +111,24 @@ public class CacheConfig {
   public boolean getPdxIgnoreUnreadFields() {
     return this.pdxIgnoreUnreadFields;
   }
-  
+
   public void setPdxIgnoreUnreadFields(boolean ignore) {
     this.pdxIgnoreUnreadFields = ignore;
     this.pdxIgnoreUnreadFieldsUserSet = true;
   }
 
-
   public String getCacheXMLDescription() {
     return cacheXMLDescription;
   }
-
-
 
   public void setCacheXMLDescription(String cacheXMLDescription) {
     this.cacheXMLDescription = cacheXMLDescription;
   }
 
-  
   public List<CacheServerCreation> getCacheServerCreation() {
     return this.cacheServerCreation;
   }
-  
-  
+
   public void setCacheServerCreation(List<CacheServerCreation> servers) {
     this.cacheServerCreation = servers;
   }
@@ -190,35 +169,33 @@ public class CacheConfig {
   }
 
   private boolean equals(Object o1, Object o2) {
-    if(o1 == null)  {
+    if (o1 == null) {
       return o2 == null;
     }
-    if(o2 == null) {
+    if (o2 == null) {
       return false;
     }
     return o1.equals(o2);
   }
 
-
-
   public void setDeclarativeConfig(CacheConfig cacheConfig) {
-    if(!this.pdxDiskStoreUserSet) {
+    if (!this.pdxDiskStoreUserSet) {
       this.pdxDiskStore = cacheConfig.getPdxDiskStore();
       this.pdxDiskStoreUserSet = cacheConfig.pdxDiskStoreUserSet;
     }
-    if(!this.pdxPersistentUserSet) {
+    if (!this.pdxPersistentUserSet) {
       this.pdxPersistent = cacheConfig.isPdxPersistent();
       this.pdxPersistentUserSet = cacheConfig.pdxPersistentUserSet;
     }
-    if(!this.pdxReadSerializedUserSet) {
-      this.pdxReadSerialized= cacheConfig.isPdxReadSerialized();
-      this.pdxReadSerializedUserSet= cacheConfig.pdxReadSerializedUserSet;
+    if (!this.pdxReadSerializedUserSet) {
+      this.pdxReadSerialized = cacheConfig.isPdxReadSerialized();
+      this.pdxReadSerializedUserSet = cacheConfig.pdxReadSerializedUserSet;
     }
-    if(!this.pdxSerializerUserSet) {
+    if (!this.pdxSerializerUserSet) {
       this.pdxSerializer = cacheConfig.getPdxSerializer();
       this.pdxSerializerUserSet = cacheConfig.pdxSerializerUserSet;
     }
-    if(!this.pdxIgnoreUnreadFieldsUserSet) {
+    if (!this.pdxIgnoreUnreadFieldsUserSet) {
       this.pdxIgnoreUnreadFields = cacheConfig.getPdxIgnoreUnreadFields();
       this.pdxIgnoreUnreadFieldsUserSet = cacheConfig.pdxIgnoreUnreadFieldsUserSet;
     }

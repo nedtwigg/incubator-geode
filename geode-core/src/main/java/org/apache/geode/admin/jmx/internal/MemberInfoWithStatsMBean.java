@@ -49,15 +49,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * 
  * @since GemFire 6.5
  */
-public class MemberInfoWithStatsMBean extends AbstractDynamicMBean 
-                                 implements NotificationEmitter {
+public class MemberInfoWithStatsMBean extends AbstractDynamicMBean implements NotificationEmitter {
   private static final Logger logger = LogService.getLogger();
-  
+
   /* constants defining max no of attributes/operations/notifications */
-  private static final int MAX_ATTRIBUTES_COUNT    = 3;
-  private static final int MAX_OPERATIONS_COUNT    = 3;
+  private static final int MAX_ATTRIBUTES_COUNT = 3;
+  private static final int MAX_OPERATIONS_COUNT = 3;
   private static final int MAX_NOTIFICATIONS_COUNT = 9;
-  
+
   private static final String NOT_AVAILABLE_STR = "N/A";
   private static final String NOT_AVAILABLE = null;
   private static final Number NOT_AVAILABLE_NUMBER = null;
@@ -67,25 +66,25 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   private static final String PLACE_HOLDER_ROOT_REGION = "/Root/";
 
   /* String that are used to form QueryExp/ObjectName for querying MBeanServer */
-  private static final String REGION_QUERY_EXPRESSION = "*GemFire.Cache*:*,owner={0},type=Region";  
-  private static final String STATS_QUERY_EXPRESSION  = "*GemFire.Statistic*:*,source={0},name={1}";
-  
+  private static final String REGION_QUERY_EXPRESSION = "*GemFire.Cache*:*,owner={0},type=Region";
+  private static final String STATS_QUERY_EXPRESSION = "*GemFire.Statistic*:*,source={0},name={1}";
+
   /** mbean name string for this MBean */
-  /*default*/static final String  MBEAN_NAME = "GemFire:type=MemberInfoWithStatsMBean";
+  /*default*/static final String MBEAN_NAME = "GemFire:type=MemberInfoWithStatsMBean";
 
   /** ObjectName handle for this MBean */
   private ObjectName objectName;
-  
+
   /** version of the GemFire Enterprise system that is running */
-  private String                        version;
-  private int                           refreshInterval;
-  private String                        id;
-  
-  private Agent                         agent;
+  private String version;
+  private int refreshInterval;
+  private String id;
+
+  private Agent agent;
   private AdminDistributedSystemJmxImpl adminDSJmx;
-  
-  private NotificationForwarder         forwarder;
-  private boolean                       isInitialized;//needs synchronization?
+
+  private NotificationForwarder forwarder;
+  private boolean isInitialized;//needs synchronization?
 
   /**
    * Default Constructor
@@ -96,12 +95,12 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    * @throws AdminException 
    */
   MemberInfoWithStatsMBean(Agent agent) throws OperationsException, MBeanRegistrationException, AdminException {
-    this.agent           = agent;
-    this.objectName      = ObjectName.getInstance(MBEAN_NAME);
-    this.version         = GemFireVersion.getGemFireVersion();
+    this.agent = agent;
+    this.objectName = ObjectName.getInstance(MBEAN_NAME);
+    this.version = GemFireVersion.getGemFireVersion();
     this.refreshInterval = -1;
-    this.id              = NOT_AVAILABLE_STR;
-    this.forwarder       = new NotificationForwarder(agent.getMBeanServer());
+    this.id = NOT_AVAILABLE_STR;
+    this.forwarder = new NotificationForwarder(agent.getMBeanServer());
   }
 
   /**
@@ -113,34 +112,24 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   @Override
   protected MBeanAttributeInfo[] createMBeanAttributeInfo() {
     MBeanAttributeInfo[] attributesInfo = new MBeanAttributeInfo[MAX_ATTRIBUTES_COUNT];
-    
+
     /* First letter in attribute name has to be 'V' so that getVersion is 
      * called. With 'v' it looks for getversion, same for others */
-    attributesInfo[0] = new MBeanAttributeInfo("Version", 
-                                               String.class.getName(), 
-                                               "GemFire Enterprise Version", 
-                                               true,  /*readable*/ 
-                                               false, /*writable*/ 
-                                               false);/*has getter with name like 'is****'*/
-    
-    attributesInfo[1] = new MBeanAttributeInfo("RefreshInterval", 
-                                               String.class.getName(), 
-                                               "The interval (in seconds) between auto-polling for updating member & statistics resources. If this is '-1', it means the this MBean has not yet been initialized. First call to getMembers operation will initialize this MBean.", 
-                                               true,  /*readable*/ 
-                                               false, /*writable*/ 
-                                               false);/*has getter with name like 'is****'*/
-    
-    attributesInfo[2] = new MBeanAttributeInfo("Id", 
-                                               String.class.getName(), 
-                                               "Identifier of the GemFire Enterprise. If this is 'N/A', it means the this MBean has not yet been initialized. First call to getMembers operation will initialize this MBean.", 
-                                               true,  /*readable*/ 
-                                               false, /*writable*/ 
-                                               false);/*has getter with name like 'is****'*/   
-    
-    
+    attributesInfo[0] = new MBeanAttributeInfo("Version", String.class.getName(), "GemFire Enterprise Version", true, /*readable*/
+        false, /*writable*/
+        false);/*has getter with name like 'is****'*/
+
+    attributesInfo[1] = new MBeanAttributeInfo("RefreshInterval", String.class.getName(), "The interval (in seconds) between auto-polling for updating member & statistics resources. If this is '-1', it means the this MBean has not yet been initialized. First call to getMembers operation will initialize this MBean.", true, /*readable*/
+        false, /*writable*/
+        false);/*has getter with name like 'is****'*/
+
+    attributesInfo[2] = new MBeanAttributeInfo("Id", String.class.getName(), "Identifier of the GemFire Enterprise. If this is 'N/A', it means the this MBean has not yet been initialized. First call to getMembers operation will initialize this MBean.", true, /*readable*/
+        false, /*writable*/
+        false);/*has getter with name like 'is****'*/
+
     return attributesInfo;
   }
-  
+
   /**
    * Returns operations defined for this MBean as an array of 
    * MBeanOperationInfo objects.
@@ -150,31 +139,18 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   @Override
   protected MBeanOperationInfo[] createMBeanOperationInfo() {
     MBeanOperationInfo[] operationsInfo = new MBeanOperationInfo[MAX_OPERATIONS_COUNT];
-    
-    operationsInfo[0] = new MBeanOperationInfo("getMembers", 
-                                               "Returns ids as strings for all the members - Application Peers & Cache Servers.", 
-                                               new MBeanParameterInfo[] {}, 
-                                               String[].class.getName(), 
-                                               MBeanOperationInfo.ACTION_INFO);
-    
+
+    operationsInfo[0] = new MBeanOperationInfo("getMembers", "Returns ids as strings for all the members - Application Peers & Cache Servers.", new MBeanParameterInfo[] {}, String[].class.getName(), MBeanOperationInfo.ACTION_INFO);
+
     MBeanParameterInfo[] getMemberDetailsArgs = new MBeanParameterInfo[1];
     getMemberDetailsArgs[0] = new MBeanParameterInfo("memberId", String.class.getName(), "Id of the member for all the details are to be retrieved.");
-    operationsInfo[1] = new MBeanOperationInfo("getMemberDetails", 
-                                                "Returns details for a given member", 
-                                                getMemberDetailsArgs, 
-                                                Map.class.getName(), 
-                                                MBeanOperationInfo.ACTION_INFO);
-    
+    operationsInfo[1] = new MBeanOperationInfo("getMemberDetails", "Returns details for a given member", getMemberDetailsArgs, Map.class.getName(), MBeanOperationInfo.ACTION_INFO);
+
     /* For retrieving ObjectNames of existing Region MBeans, MBeanServerConnection.queryMBeans(), could be called */
     MBeanParameterInfo[] getRegionSnapArgs = new MBeanParameterInfo[1];
     getRegionSnapArgs[0] = new MBeanParameterInfo("memberId", String.class.getName(), "Id of the member on which we want to discover all the region MBean.");
-    operationsInfo[2] = new MBeanOperationInfo("getRegions", 
-                                                "Returns a java.util.Map of details of regions on a member", 
-                                                getRegionSnapArgs, 
-                                                Map.class.getName(), 
-                                                MBeanOperationInfo.ACTION_INFO);
+    operationsInfo[2] = new MBeanOperationInfo("getRegions", "Returns a java.util.Map of details of regions on a member", getRegionSnapArgs, Map.class.getName(), MBeanOperationInfo.ACTION_INFO);
 
-    
     return operationsInfo;
   }
 
@@ -188,65 +164,47 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   @Override
   protected MBeanNotificationInfo[] createMBeanNotificationInfo() {
     MBeanNotificationInfo[] notificationsInfo = new MBeanNotificationInfo[MAX_NOTIFICATIONS_COUNT];
-    
-    String[] notificationTypes = new String[] {AdminDistributedSystemJmxImpl.NOTIF_MEMBER_JOINED};
-    notificationsInfo[0] = new MBeanNotificationInfo(notificationTypes,
-                                                    Notification.class.getName(), 
-                                                    "A GemFire manager, cache, or other member has joined this distributed system.");
-    
-    notificationTypes = new String[] {AdminDistributedSystemJmxImpl.NOTIF_MEMBER_LEFT};
-    notificationsInfo[1] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A GemFire manager, cache, or other member has left the distributed system.");
-    
-    notificationTypes = new String[] {AdminDistributedSystemJmxImpl.NOTIF_MEMBER_CRASHED};
-    notificationsInfo[2] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A member of this distributed system has crashed instead of leaving cleanly.");
-    
-    notificationTypes = new String[] {AdminDistributedSystemJmxImpl.NOTIF_ALERT};
-    notificationsInfo[3] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A member of this distributed system has generated an alert.");
-    
-    notificationTypes = new String[] {AdminDistributedSystemJmxImpl.NOTIF_ADMIN_SYSTEM_DISCONNECT};
-    notificationsInfo[4] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A GemFire manager, cache, or other member has joined this distributed system.");
-    
-    notificationTypes = new String[] {SystemMemberJmx.NOTIF_CACHE_CREATED};
-    notificationsInfo[5] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A cache got created on a member of this distributed system.");
-    
-    notificationTypes = new String[] {SystemMemberJmx.NOTIF_CACHE_CLOSED};
-    notificationsInfo[6] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A cache is closed on a member of this distributed system.");
-    
-    notificationTypes = new String[] {SystemMemberJmx.NOTIF_REGION_CREATED};
-    notificationsInfo[7] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A region is created in a cache on a member of this distributed system.");
-    
-    notificationTypes = new String[] {SystemMemberJmx.NOTIF_REGION_LOST};
-    notificationsInfo[8] = new MBeanNotificationInfo(notificationTypes, 
-                                                    Notification.class.getName(), 
-                                                    "A region was removed from a cache on a member of this distributed system.");
 
-//  String[] notificationTypes5 = new String[] {AdminDistributedSystemJmxImpl.NOTIF_STAT_ALERT};
-//  notificationsInfo[9] = new MBeanNotificationInfo(notificationTypes5, 
-//                                                  Notification.class.getName(), 
-//                                                  "An alert based on statistic(s) has been raised.");    
+    String[] notificationTypes = new String[] { AdminDistributedSystemJmxImpl.NOTIF_MEMBER_JOINED };
+    notificationsInfo[0] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A GemFire manager, cache, or other member has joined this distributed system.");
+
+    notificationTypes = new String[] { AdminDistributedSystemJmxImpl.NOTIF_MEMBER_LEFT };
+    notificationsInfo[1] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A GemFire manager, cache, or other member has left the distributed system.");
+
+    notificationTypes = new String[] { AdminDistributedSystemJmxImpl.NOTIF_MEMBER_CRASHED };
+    notificationsInfo[2] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A member of this distributed system has crashed instead of leaving cleanly.");
+
+    notificationTypes = new String[] { AdminDistributedSystemJmxImpl.NOTIF_ALERT };
+    notificationsInfo[3] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A member of this distributed system has generated an alert.");
+
+    notificationTypes = new String[] { AdminDistributedSystemJmxImpl.NOTIF_ADMIN_SYSTEM_DISCONNECT };
+    notificationsInfo[4] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A GemFire manager, cache, or other member has joined this distributed system.");
+
+    notificationTypes = new String[] { SystemMemberJmx.NOTIF_CACHE_CREATED };
+    notificationsInfo[5] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A cache got created on a member of this distributed system.");
+
+    notificationTypes = new String[] { SystemMemberJmx.NOTIF_CACHE_CLOSED };
+    notificationsInfo[6] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A cache is closed on a member of this distributed system.");
+
+    notificationTypes = new String[] { SystemMemberJmx.NOTIF_REGION_CREATED };
+    notificationsInfo[7] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A region is created in a cache on a member of this distributed system.");
+
+    notificationTypes = new String[] { SystemMemberJmx.NOTIF_REGION_LOST };
+    notificationsInfo[8] = new MBeanNotificationInfo(notificationTypes, Notification.class.getName(), "A region was removed from a cache on a member of this distributed system.");
+
+    //  String[] notificationTypes5 = new String[] {AdminDistributedSystemJmxImpl.NOTIF_STAT_ALERT};
+    //  notificationsInfo[9] = new MBeanNotificationInfo(notificationTypes5, 
+    //                                                  Notification.class.getName(), 
+    //                                                  "An alert based on statistic(s) has been raised.");    
 
     return notificationsInfo;
   }
-  
-  /**
-   * 
-   * @return ObjectName of this MBean
-   */
-  /*default*/ ObjectName getObjectName() {
+
+      /**
+       * 
+       * @return ObjectName of this MBean
+       */
+      /*default*/ ObjectName getObjectName() {
     return objectName;
   }
 
@@ -285,18 +243,18 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   private ObjectName connectToSystem() throws OperationsException, AdminException {
     ObjectName adminDsObjName = agent.connectToSystem();
-    
+
     AdminDistributedSystem adminDS = agent.getDistributedSystem();
     if (adminDSJmx == null && adminDS instanceof AdminDistributedSystemJmxImpl) {//instanceof checks for null
-      adminDSJmx      = (AdminDistributedSystemJmxImpl) adminDS;
+      adminDSJmx = (AdminDistributedSystemJmxImpl) adminDS;
       refreshInterval = adminDSJmx.getRefreshInterval();
-      id              = adminDSJmx.getId();
+      id = adminDSJmx.getId();
       forwarder.registerNotificationListener(adminDSJmx.getObjectName());
     }
 
     return adminDsObjName;
   }
-  
+
   /**
    * 
    * @param memberId
@@ -305,7 +263,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   private SystemMemberJmx findMember(String memberId) throws AdminException {
     SystemMemberJmx foundMember = null;
-    
+
     if (agent.isConnected()) {
       SystemMember[] members = adminDSJmx.getSystemMemberApplications();
       for (SystemMember app : members) {
@@ -314,7 +272,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
           break;
         }
       }
-      
+
       if (foundMember == null) {
         members = adminDSJmx.getCacheVms();
         for (SystemMember cacheVm : members) {
@@ -325,7 +283,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
         }
       }
     }
-    
+
     return foundMember;
   }
 
@@ -341,23 +299,23 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   public String[] getMembers() throws OperationsException {
     String[] members = new String[0];
-      
+
     try {
       if (!isInitialized) {
         initializeAll(); //initialize if not yet
       }
 
       if (adminDSJmx != null) {
-        CacheVm[]      cacheVms = adminDSJmx.getCacheVms();
-        SystemMember[] appVms   = adminDSJmx.getSystemMemberApplications();
-        
+        CacheVm[] cacheVms = adminDSJmx.getCacheVms();
+        SystemMember[] appVms = adminDSJmx.getSystemMemberApplications();
+
         List<String> membersList = new ArrayList<String>();
-        if (cacheVms != null && cacheVms.length !=0) {
+        if (cacheVms != null && cacheVms.length != 0) {
           for (SystemMember cacheVm : cacheVms) {
             membersList.add(cacheVm.getId());
           }
         }
-        if (appVms != null && appVms.length !=0) {
+        if (appVms != null && appVms.length != 0) {
           for (SystemMember appVm : appVms) {
             membersList.add(appVm.getId());
           }
@@ -372,7 +330,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
       logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0, "getMembers"), e);
       throw new OperationsException(e.getMessage());
     }
-    
+
     return members;
   }
 
@@ -388,7 +346,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   public Map<String, Map<String, ?>> getRegions(String memberId) throws OperationsException {
     Map<String, Map<String, ?>> regionsInfo = new LinkedHashMap<String, Map<String, ?>>();
-    
+
     if (memberId != null) {
       try {
         SystemMemberJmx foundMember = findMember(memberId);
@@ -403,17 +361,17 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
           }
         }
       } catch (AdminException e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, new Object[]{"getRegions", memberId}), e);
+        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, new Object[] { "getRegions", memberId }), e);
         throw new OperationsException(e.getMessage());
       } catch (Exception e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, new Object[]{"getRegions", memberId}), e);
+        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, new Object[] { "getRegions", memberId }), e);
         throw new OperationsException(e.getMessage());
       }
     }
-    
+
     return regionsInfo;
   }
-  
+
   /* **************************************************************************/
   /* ************* INITIALIZE THE ENTIRE ADMIN DS AT A TIME *******************/
   /* **************************************************************************/
@@ -429,19 +387,17 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
         SystemMember[] cacheVms = adminDSJmx.getCacheVms();
         for (int i = 0; i < cacheVms.length; i++) {
           try {
-            initializeCacheRegionsAndStats((SystemMemberJmx)cacheVms[i]);
+            initializeCacheRegionsAndStats((SystemMemberJmx) cacheVms[i]);
           } catch (AdminException e) {
-            logger.info(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_WHILE_INTIALIZING_0_CONTINUING, 
-                           cacheVms[i].getId()), e);
+            logger.info(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_WHILE_INTIALIZING_0_CONTINUING, cacheVms[i].getId()), e);
           }
         }
         SystemMember[] appVms = adminDSJmx.getSystemMemberApplications();
         for (int i = 0; i < appVms.length; i++) {
           try {
-            initializeCacheRegionsAndStats((SystemMemberJmx)appVms[i]);
+            initializeCacheRegionsAndStats((SystemMemberJmx) appVms[i]);
           } catch (AdminException e) {
-            logger.info(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_WHILE_INTIALIZING_0_CONTINUING, 
-                           appVms[i].getId()), e);
+            logger.info(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_WHILE_INTIALIZING_0_CONTINUING, appVms[i].getId()), e);
           }
         }
       }
@@ -452,10 +408,10 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
       logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_WHILE_INTIALIZING), e);
       throw new OperationsException(e.getMessage());
     }
-    
+
     isInitialized = true;
   }
-  
+
   /**
    * Initializes Cache, Regions & Statistics Types MBeans for the given Member.
    * 
@@ -466,8 +422,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    * @throws AdminException
    *           if fails to initialize required MBeans
    */
-  private void initializeCacheRegionsAndStats(SystemMemberJmx memberJmx) 
-    throws OperationsException, AdminException {
+  private void initializeCacheRegionsAndStats(SystemMemberJmx memberJmx) throws OperationsException, AdminException {
     if (memberJmx != null) {
       SystemMemberCacheJmxImpl cache = (SystemMemberCacheJmxImpl) memberJmx.getCache();
       if (cache != null) {
@@ -507,19 +462,16 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    *           if fails to initialize the region MBean
    */
   @SuppressWarnings("rawtypes")
-  private void initializeRegionSubRegions(SystemMemberCacheJmxImpl cache, 
-                                 RegionSubRegionSnapshot regionSnapshot) 
-                                   throws MalformedObjectNameException, 
-                                          AdminException {
+  private void initializeRegionSubRegions(SystemMemberCacheJmxImpl cache, RegionSubRegionSnapshot regionSnapshot) throws MalformedObjectNameException, AdminException {
     String fullPath = regionSnapshot.getFullPath();
     if (!fullPath.equals(PLACE_HOLDER_ROOT_REGION)) {
-      fullPath = fullPath.substring(PLACE_HOLDER_ROOT_REGION.length()-1);
+      fullPath = fullPath.substring(PLACE_HOLDER_ROOT_REGION.length() - 1);
 
       cache.manageRegion(fullPath);
     }
-    
+
     Set subRegionSnapshots = regionSnapshot.getSubRegionSnapshots();
-    
+
     for (Iterator iterator = subRegionSnapshots.iterator(); iterator.hasNext();) {
       RegionSubRegionSnapshot subRegion = (RegionSubRegionSnapshot) iterator.next();
       try {
@@ -529,12 +481,11 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
       }
     }
   }
-  
-  
+
   /* **************************************************************************/
   /* ********************** EVERYTHING HYPERIC NEEDS **************************/
   /* **************************************************************************/
-  
+
   /* constants defined that could be used simply retrieve needed info from Map */
   private static final String TYPE_NAME_CACHESERVER = "Cache Server";
   private static final String TYPE_NAME_APPLICATION = "Application Peer";
@@ -552,10 +503,10 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    * element(s) in the cache-xml file or using an API Cache.addCacheServer().
    */
 
-//  private static final String VERSION          = "gemfire.version.string";
-//  private static final String MEMBER_COUNT     = "gemfire.membercount.int";
-//  private static final String GATEWAYHUB_COUNT = "gemfire.gatewayhubcount.int";
-//  private static final String CLIENT_COUNT     = "gemfire.clientcount.int";
+  //  private static final String VERSION          = "gemfire.version.string";
+  //  private static final String MEMBER_COUNT     = "gemfire.membercount.int";
+  //  private static final String GATEWAYHUB_COUNT = "gemfire.gatewayhubcount.int";
+  //  private static final String CLIENT_COUNT     = "gemfire.clientcount.int";
 
   private static final String MEMBER_ID = DistributionConfig.GEMFIRE_PREFIX + "member.id.string";
   private static final String MEMBER_NAME = DistributionConfig.GEMFIRE_PREFIX + "member.name.string";
@@ -599,15 +550,14 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   private static final String CLIENT_STATS_CPUS = DistributionConfig.GEMFIRE_PREFIX + "client.stats.cpus.int";
   private static final String CLIENT_STATS_UPDATETIME = DistributionConfig.GEMFIRE_PREFIX + "client.stats.updatetime.long";
   private static final String CLIENT_STATS_THREADS = DistributionConfig.GEMFIRE_PREFIX + "client.stats.threads.int";
-  
+
   /**
    * 
    * @param memberId
    * @return All the required details for a member with given memberId 
    * @throws OperationsException
    */
-  public Map<String, Object> getMemberDetails(String memberId) 
-    throws OperationsException {
+  public Map<String, Object> getMemberDetails(String memberId) throws OperationsException {
     Map<String, Object> allDetails = new TreeMap<String, Object>();
 
     if (memberId != null) {
@@ -615,10 +565,10 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
         SystemMemberJmx member = findMember(memberId);
         if (member != null) {
           SystemMemberCacheJmxImpl cache = (SystemMemberCacheJmxImpl) member.getCache();
-          GemFireMemberStatus snapshot   = cache.getSnapshot();
-          boolean isServer     = snapshot.getIsServer();
+          GemFireMemberStatus snapshot = cache.getSnapshot();
+          boolean isServer = snapshot.getIsServer();
           boolean isGatewayHub = snapshot.getIsGatewayHub();
-          
+
           //1. Member info
           allDetails.put(MEMBER_ID, member.getId());
           allDetails.put(MEMBER_NAME, member.getName());
@@ -632,20 +582,20 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
           allDetails.put(MEMBER_UPTIME, snapshot.getUpTime());
           allDetails.put(IS_SERVER, isServer);
           allDetails.put(IS_GATEWAY, isGatewayHub);
-          
+
           String memberType = "";
           if (member instanceof CacheServerJmxImpl) {
             memberType = TYPE_NAME_CACHESERVER;
           } else {//Mark it of Application type if neither a gateway hub nor a server
             memberType = TYPE_NAME_APPLICATION;
           }
-//          if (isGatewayHub) {
-//            memberType = TYPE_NAME_GATEWAYHUB;
-//          } else if (isServer) {
-//            memberType = TYPE_NAME_CACHESERVER;
-//          } else {//Mark it of Application type if neither a gateway nor a server
-//            memberType = TYPE_NAME_APPLICATION;
-//          }
+          //          if (isGatewayHub) {
+          //            memberType = TYPE_NAME_GATEWAYHUB;
+          //          } else if (isServer) {
+          //            memberType = TYPE_NAME_CACHESERVER;
+          //          } else {//Mark it of Application type if neither a gateway nor a server
+          //            memberType = TYPE_NAME_APPLICATION;
+          //          }
           allDetails.put(MEMBER_TYPE, memberType);
 
           //2. Region info
@@ -655,19 +605,19 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
 
           //3. Clients info
           allDetails.put(MEMBER_CLIENTS, getClientDetails(snapshot));
-          
+
           boolean statSamplingEnabled = true;
           //assuming will never return as per current implementation
           ConfigurationParameter[] configParams = member.getConfiguration();
           for (ConfigurationParameter configParam : configParams) {
             if (STATISTIC_SAMPLING_ENABLED.equals(configParam.getName())) {
               allDetails.put(MEMBER_STATSAMPLING_ENABLED, configParam.getValue());
-              statSamplingEnabled = Boolean.parseBoolean(""+configParam.getValue());
+              statSamplingEnabled = Boolean.parseBoolean("" + configParam.getValue());
             } else if (ENABLE_TIME_STATISTICS.equals(configParam.getName())) {
               allDetails.put(MEMBER_TIME_STATS_ENABLED, configParam.getValue());
             }
           }
-          
+
           //5. Stats info
           allDetails.putAll(getRequiredStats(member, statSamplingEnabled));
 
@@ -687,21 +637,19 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
           }
           allDetails.put(MEMBER_PORT, memberCacheServerPort);
         }
-        
+
       } catch (AdminException e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, 
-                          new Object[] {"getMemberDetails", memberId}), e);
+        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, new Object[] { "getMemberDetails", memberId }), e);
         throw new OperationsException(e.getMessage());
       } catch (Exception e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, 
-                          new Object[] {"getMemberDetails", memberId}), e);
+        logger.warn(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_FOR_OPERATION_0_FOR_MEMBER_1, new Object[] { "getMemberDetails", memberId }), e);
         throw new OperationsException(e.getMessage());
       }
     }
-    
+
     return allDetails;
   }
-  
+
   /**
    * 
    * @param snapshot
@@ -709,22 +657,21 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   @SuppressWarnings("rawtypes")
   private Map<String, Map<String, ?>> getClientDetails(GemFireMemberStatus snapshot) {
-    Map<String, Map<String, ?>> clientsInfo = 
-      new LinkedHashMap<String, Map<String, ?>>();
-    
+    Map<String, Map<String, ?>> clientsInfo = new LinkedHashMap<String, Map<String, ?>>();
+
     Set connectedClients = snapshot.getConnectedClients();
     if (!connectedClients.isEmpty()) {
       Map clientHealthStatsMap = snapshot.getClientHealthStats();
-      
+
       for (Iterator iterator = connectedClients.iterator(); iterator.hasNext();) {
         Map<String, Object> clientData = new HashMap<String, Object>();
         String clientId = (String) iterator.next();
-        String host     = snapshot.getClientHostName(clientId);
+        String host = snapshot.getClientHostName(clientId);
         clientData.put(CLIENT_ID, clientId);
         clientData.put(CLIENT_NAME, extractClientName(clientId, host));
         clientData.put(CLIENT_HOST, host);
         clientData.put(CLIENT_QUEUESIZE, snapshot.getClientQueueSize(clientId));
-  
+
         ClientHealthStats clientHealthStats = (ClientHealthStats) clientHealthStatsMap.get(clientId);
         if (clientHealthStats != null) {
           clientData.put(CLIENT_STATS_GETS, clientHealthStats.getNumOfGets());
@@ -743,11 +690,11 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
           clientData.put(CLIENT_STATS_UPDATETIME, Long.valueOf(0));
           clientData.put(CLIENT_STATS_THREADS, Integer.valueOf(0));
         }
-        
+
         clientsInfo.put(clientId, clientData);
       }
     }
-    
+
     return clientsInfo;
   }
 
@@ -762,13 +709,9 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    * @throws OperationsException
    *           if fails to retrieve
    */
-  private Map<String, Map<String, ?>> getAllRegionsDetails(
-                                  SystemMemberCacheJmxImpl cache, 
-                                  Map<String, ObjectName> existingRegionMbeans) 
-                                  throws OperationsException {
-    Map<String, Map<String, ?>> regionsInfo = 
-                        new TreeMap<String, Map<String, ?>>();
-    
+  private Map<String, Map<String, ?>> getAllRegionsDetails(SystemMemberCacheJmxImpl cache, Map<String, ObjectName> existingRegionMbeans) throws OperationsException {
+    Map<String, Map<String, ?>> regionsInfo = new TreeMap<String, Map<String, ?>>();
+
     if (cache != null) {
       try {
         RegionSubRegionSnapshot regionSnapshot = cache.getRegionSnapshot();
@@ -781,7 +724,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
         throw new OperationsException(e.getMessage());
       }
     }
-    
+
     return regionsInfo;
   }
 
@@ -808,22 +751,17 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    *           if fails to retrieve the Region MBean attribute info
    */
   @SuppressWarnings("rawtypes")
-  private void collectAllRegionsDetails(SystemMemberCacheJmxImpl cache, 
-                                 RegionSubRegionSnapshot regionSnapshot, 
-                                 Map<String, Map<String, ?>> regionsInfo,
-                                 Map<String, ObjectName> existingRegionMbeans) 
-                                 throws AdminException, OperationsException, 
-                                        MBeanException, ReflectionException {
+  private void collectAllRegionsDetails(SystemMemberCacheJmxImpl cache, RegionSubRegionSnapshot regionSnapshot, Map<String, Map<String, ?>> regionsInfo, Map<String, ObjectName> existingRegionMbeans) throws AdminException, OperationsException, MBeanException, ReflectionException {
     String fullPath = regionSnapshot.getFullPath();
     if (!fullPath.equals(PLACE_HOLDER_ROOT_REGION)) {
-      fullPath = fullPath.substring(PLACE_HOLDER_ROOT_REGION.length()-1);
+      fullPath = fullPath.substring(PLACE_HOLDER_ROOT_REGION.length() - 1);
       String name = regionSnapshot.getName();
       Integer entryCount = Integer.valueOf(regionSnapshot.getEntryCount());
       Map<String, Object> details = new TreeMap<String, Object>();
       details.put(REGION_NAME, name);
       details.put(REGION_PATH, fullPath);
       details.put(REGION_ENTRYCOUNT, entryCount);
-      
+
       ObjectName regionObjectName = existingRegionMbeans.get(fullPath);
       if (regionObjectName == null) {//initialize if has not yet been 
         regionObjectName = cache.manageRegion(fullPath);
@@ -832,14 +770,12 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
       Object attribute = getAttribute(regionObjectName, "scope", NOT_AVAILABLE);
       attribute = attribute != null ? attribute.toString() : attribute;
       details.put(REGION_SCOPE, attribute);
-      
+
       attribute = getAttribute(regionObjectName, "dataPolicy", NOT_AVAILABLE);
       attribute = attribute != null ? attribute.toString() : attribute;
       details.put(REGION_DATAPOLICY, attribute);
 
-      SubscriptionAttributes interestPolicyAttr = 
-          (SubscriptionAttributes) getAttribute(regionObjectName, 
-                                                "subscriptionAttributes", null);
+      SubscriptionAttributes interestPolicyAttr = (SubscriptionAttributes) getAttribute(regionObjectName, "subscriptionAttributes", null);
       String interestPolicyStr = NOT_AVAILABLE;
       if (interestPolicyAttr != null) {
         InterestPolicy interestPolicy = interestPolicyAttr.getInterestPolicy();
@@ -852,18 +788,18 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
       attribute = getAttribute(regionObjectName, "diskWriteAttributes", NOT_AVAILABLE);
       attribute = attribute != null ? attribute.toString() : attribute;
       details.put(REGION_DISKATTRS, attribute);
-      
+
       regionsInfo.put(fullPath, details);
     }
-    
+
     Set subRegionSnapshots = regionSnapshot.getSubRegionSnapshots();
-    
+
     for (Iterator iterator = subRegionSnapshots.iterator(); iterator.hasNext();) {
       RegionSubRegionSnapshot subRegion = (RegionSubRegionSnapshot) iterator.next();
       collectAllRegionsDetails(cache, subRegion, regionsInfo, existingRegionMbeans);
     }
   }
-  
+
   /**
    * Checks if the given host name string contains ':' as in IPv6 host address.
    * 
@@ -886,10 +822,10 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   private static boolean isIPv4(String host) {
     String regex = "\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}";
-    
+
     return host.matches(regex);
   }
-  
+
   /**
    * Excludes the host name from the client id and returns the String. If the
    * host name can not be detected, returns an empty string. Typically, the
@@ -920,7 +856,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   private static String extractClientName(String clientId, String host) {
     /* This isIPv6, isIPv4, extractClientName is taken from GFMon code base*/
     String hostExcludedId = "";
-    if ( (isIPv6(host) || isIPv4(host))&& clientId.startsWith(host)) {
+    if ((isIPv6(host) || isIPv4(host)) && clientId.startsWith(host)) {
       hostExcludedId = clientId.substring(host.length());
     } else {
       int firstDotIndex = host.indexOf(".");
@@ -929,14 +865,14 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
         hostExcludedId = clientId.substring(hostShortName.length());
       }
     }
-    
+
     String vmPIDAndKindRegex = "\\(\\w+:\\w+\\)";
-    String regex             = "(\\<ec\\>)?:[0-9]+(:\\w+){2}+";
-    String name              = NOT_AVAILABLE;
-    String temp              = hostExcludedId;
+    String regex = "(\\<ec\\>)?:[0-9]+(:\\w+){2}+";
+    String name = NOT_AVAILABLE;
+    String temp = hostExcludedId;
 
     int openIndex = temp.indexOf("(");
-    if (openIndex != -1) {      
+    if (openIndex != -1) {
       regex = vmPIDAndKindRegex + regex;
     }
 
@@ -944,7 +880,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
       String[] splitted = temp.split(":");
       name = splitted[splitted.length - 1];
     }
-    
+
     return name;
   }
 
@@ -960,7 +896,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   private Map<String, Object> getRequiredStats(SystemMemberJmx member, boolean statSamplingEnabled) throws OperationsException {
     Map<String, Object> statDetails = new TreeMap<String, Object>();
-    
+
     try {
       if (!statSamplingEnabled) {
         statDetails.put(STATS_PROCESSCPUTIME, NOT_AVAILABLE_NUMBER);
@@ -973,55 +909,55 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
         statDetails.put(STATS_PUTTIME, NOT_AVAILABLE_NUMBER);
       } else {
         MBeanServer mBeanServer = agent.getMBeanServer();
-        Number defaultVal     = NOT_AVAILABLE_NUMBER;
+        Number defaultVal = NOT_AVAILABLE_NUMBER;
         Number processCpuTime = defaultVal;
-        Number cpus           = defaultVal;
-        Number maxMemory      = defaultVal;
-        Number usedMemory     = defaultVal;
-        Number gets           = defaultVal;
-        Number getTime        = defaultVal;
-        Number puts           = defaultVal;
-        Number putTime        = defaultVal;
-        
+        Number cpus = defaultVal;
+        Number maxMemory = defaultVal;
+        Number usedMemory = defaultVal;
+        Number gets = defaultVal;
+        Number getTime = defaultVal;
+        Number puts = defaultVal;
+        Number putTime = defaultVal;
+
         ObjectName[] vmMemoryUsageStats = getExistingStats(member.getId(), "vmHeapMemoryStats");
-        ObjectName[] vmStats            = getExistingStats(member.getId(), "vmStats");
-        ObjectName[] cachePerfStats     = getExistingStats(member.getId(), "cachePerfStats");
+        ObjectName[] vmStats = getExistingStats(member.getId(), "vmStats");
+        ObjectName[] cachePerfStats = getExistingStats(member.getId(), "cachePerfStats");
         boolean needToReinit = false;
         if (vmMemoryUsageStats.length == 0 || vmStats.length == 0 || cachePerfStats.length == 0) {
           //if the StatisticResource MBeans are not created
           needToReinit = true;
         }
-        if(!needToReinit) {
+        if (!needToReinit) {
           /*
            * To handle a case when the StatisticResource MBeans are created but 
            * not registered with RefreshTimer. If VMMemoryUsageStats are 
            * present, maxMemory should always be non-zero. */
           for (int i = 0; i < vmMemoryUsageStats.length; i++) {//ideally there should be a single instance
             String type = (String) mBeanServer.getAttribute(vmMemoryUsageStats[i], "type");
-            
+
             if ("VMMemoryUsageStats".equals(type)) { //first instance that has Statistics Type name
-              maxMemory  = (Number) getAttribute(vmMemoryUsageStats[i], "maxMemory", defaultVal);
+              maxMemory = (Number) getAttribute(vmMemoryUsageStats[i], "maxMemory", defaultVal);
               break;
             }
           }
-          
-          needToReinit = 0 == maxMemory.longValue(); 
+
+          needToReinit = 0 == maxMemory.longValue();
         }
 
-        if(needToReinit) {
+        if (needToReinit) {
           logger.info(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_REINITIALIZING_STATS_FOR_0, member.getId()));
           initStats(member);
 
           vmMemoryUsageStats = getExistingStats(member.getId(), "vmHeapMemoryStats");
-          vmStats            = getExistingStats(member.getId(), "vmStats");
-          cachePerfStats     = getExistingStats(member.getId(), "cachePerfStats");
+          vmStats = getExistingStats(member.getId(), "vmStats");
+          cachePerfStats = getExistingStats(member.getId(), "cachePerfStats");
         }
-        
+
         for (int i = 0; i < vmMemoryUsageStats.length; i++) {//ideally there should be a single instance
           String type = (String) mBeanServer.getAttribute(vmMemoryUsageStats[i], "type");
-          
+
           if ("VMMemoryUsageStats".equals(type)) { //first instance that has Statistics Type name
-            maxMemory  = (Number) getAttribute(vmMemoryUsageStats[i], "maxMemory", defaultVal);
+            maxMemory = (Number) getAttribute(vmMemoryUsageStats[i], "maxMemory", defaultVal);
             usedMemory = (Number) getAttribute(vmMemoryUsageStats[i], "usedMemory", defaultVal);
             break;
           }
@@ -1029,29 +965,29 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
 
         for (int i = 0; i < vmStats.length; i++) {//ideally there should be a single instance
           String type = (String) mBeanServer.getAttribute(vmStats[i], "type");
-          
+
           if ("VMStats".equals(type)) { //first instance that has Statistics Type name
             processCpuTime = (Number) getAttribute(vmStats[i], "processCpuTime", defaultVal);
-            cpus           = (Number) getAttribute(vmStats[i], "cpus", defaultVal);
+            cpus = (Number) getAttribute(vmStats[i], "cpus", defaultVal);
             break;
           }
         }
-        
+
         for (int i = 0; i < cachePerfStats.length; i++) {//ideally there should be a single instance
           String type = (String) mBeanServer.getAttribute(cachePerfStats[i], "type");
-          
+
           if ("CachePerfStats".equals(type)) { //first instance that has Statistics Type name
-            gets    = (Number) getAttribute(cachePerfStats[i], "gets", defaultVal);
+            gets = (Number) getAttribute(cachePerfStats[i], "gets", defaultVal);
             getTime = (Number) getAttribute(cachePerfStats[i], "getTime", defaultVal);
-            puts    = (Number) getAttribute(cachePerfStats[i], "puts", defaultVal);
+            puts = (Number) getAttribute(cachePerfStats[i], "puts", defaultVal);
             putTime = (Number) getAttribute(cachePerfStats[i], "putTime", defaultVal);
             break;
           }
         }
-        
+
         statDetails.put(STATS_PROCESSCPUTIME, processCpuTime == NOT_AVAILABLE_NUMBER ? NOT_AVAILABLE_NUMBER : processCpuTime.longValue());
         statDetails.put(STATS_CPUS, cpus == NOT_AVAILABLE_NUMBER ? NOT_AVAILABLE_NUMBER : cpus.intValue());
-        statDetails.put(STATS_MAXMEMORY,  maxMemory == NOT_AVAILABLE_NUMBER ? NOT_AVAILABLE_NUMBER : maxMemory.longValue());
+        statDetails.put(STATS_MAXMEMORY, maxMemory == NOT_AVAILABLE_NUMBER ? NOT_AVAILABLE_NUMBER : maxMemory.longValue());
         statDetails.put(STATS_USEDMEMORY, usedMemory == NOT_AVAILABLE_NUMBER ? NOT_AVAILABLE_NUMBER : usedMemory.longValue());
         statDetails.put(STATS_GETS, gets == NOT_AVAILABLE_NUMBER ? NOT_AVAILABLE_NUMBER : gets.intValue());
         statDetails.put(STATS_GETTIME, getTime == NOT_AVAILABLE_NUMBER ? NOT_AVAILABLE_NUMBER : getTime.intValue());
@@ -1062,7 +998,7 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
       logger.warn(e.getMessage(), e);
       throw new OperationsException(e.getMessage());
     }
-    
+
     return statDetails;
   }
 
@@ -1085,17 +1021,15 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    * @throws ReflectionException
    *           thrown when trying to invoke the setter.
    */
-  private Object getAttribute(ObjectName objectName, String attribute, 
-      Object unavailableValue) 
-        throws OperationsException, MBeanException, ReflectionException {
+  private Object getAttribute(ObjectName objectName, String attribute, Object unavailableValue) throws OperationsException, MBeanException, ReflectionException {
     /* NOTE: callers methods rely on non-null value being returned */
     Object value = null;
-    
+
     MBeanServer mBeanServer = agent.getMBeanServer();
     value = mBeanServer.getAttribute(objectName, attribute);
-    
-    value = (value != null)? value : unavailableValue;
-    
+
+    value = (value != null) ? value : unavailableValue;
+
     return value;
   }
 
@@ -1112,13 +1046,13 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
     Map<String, ObjectName> pathsToObjName = new HashMap<String, ObjectName>();
 
     if (memberId != null && memberId.trim().length() != 0) {
-      Object[] params = new Object[] {MBeanUtil.makeCompliantMBeanNameProperty(memberId)};
+      Object[] params = new Object[] { MBeanUtil.makeCompliantMBeanNameProperty(memberId) };
       Set<ObjectName> queryNames = queryObjectNames(REGION_QUERY_EXPRESSION, params);
       for (ObjectName objectName : queryNames) {
         pathsToObjName.put(objectName.getKeyProperty("path"), objectName);
       }
     }
-    
+
     return pathsToObjName;
   }
 
@@ -1136,14 +1070,14 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    */
   private ObjectName[] getExistingStats(String memberId, String name) throws MalformedObjectNameException {
     ObjectName[] statObjectNames = new ObjectName[0];
-    
+
     if (memberId != null && memberId.trim().length() != 0) {
-      Object[] params = new Object[] {MBeanUtil.makeCompliantMBeanNameProperty(memberId), name};
+      Object[] params = new Object[] { MBeanUtil.makeCompliantMBeanNameProperty(memberId), name };
       Set<ObjectName> queryNames = queryObjectNames(STATS_QUERY_EXPRESSION, params);
       statObjectNames = new ObjectName[queryNames.size()];
       statObjectNames = queryNames.toArray(statObjectNames);
     }
-    
+
     return statObjectNames;
   }
 
@@ -1159,18 +1093,16 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
    * @throws MalformedObjectNameException
    *           If the query expression ObjectName formed is not valid
    */
-  private Set<ObjectName> queryObjectNames(String queryStr, Object ... params) 
-    throws MalformedObjectNameException {
-    Set<ObjectName> queried = Collections.emptySet();    
-    
-    queryStr = MessageFormat.format(queryStr, params);    
+  private Set<ObjectName> queryObjectNames(String queryStr, Object... params) throws MalformedObjectNameException {
+    Set<ObjectName> queried = Collections.emptySet();
+
+    queryStr = MessageFormat.format(queryStr, params);
     ObjectName queryExp = ObjectName.getInstance(queryStr);
     queried = agent.getMBeanServer().queryNames(null, queryExp);
-    
+
     return queried;
   }
-  
-  
+
   /* *************************************************************************/
   /* **************** NOTIFICATION EMITTER IMPLEMENTATION ********************/
   /* *************************************************************************/
@@ -1178,17 +1110,14 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   /**
    * @see NotificationEmitter#addNotificationListener(NotificationListener, NotificationFilter, Object)
    */
-  public void addNotificationListener(NotificationListener listener,
-      NotificationFilter filter, Object handback)
-      throws IllegalArgumentException {
+  public void addNotificationListener(NotificationListener listener, NotificationFilter filter, Object handback) throws IllegalArgumentException {
     forwarder.addNotificationListener(listener, filter, handback);
   }
 
   /**
    * @see NotificationEmitter#removeNotificationListener(NotificationListener)
    */
-  public void removeNotificationListener(NotificationListener listener)
-      throws ListenerNotFoundException {
+  public void removeNotificationListener(NotificationListener listener) throws ListenerNotFoundException {
     forwarder.removeNotificationListener(listener);
   }
 
@@ -1198,16 +1127,14 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
   public MBeanNotificationInfo[] getNotificationInfo() {
     return getMBeanInfo().getNotifications();
   }
-  
+
   /**
    * @see NotificationEmitter#removeNotificationListener(NotificationListener, NotificationFilter, Object)
    */
-  public void removeNotificationListener(NotificationListener listener,
-      NotificationFilter filter, Object handback)
-      throws ListenerNotFoundException {
+  public void removeNotificationListener(NotificationListener listener, NotificationFilter filter, Object handback) throws ListenerNotFoundException {
     forwarder.removeNotificationListener(listener, filter, handback);
   }
-  
+
 }
 
 /**
@@ -1221,16 +1148,15 @@ public class MemberInfoWithStatsMBean extends AbstractDynamicMBean
  * 
  * @since GemFire 6.5
  */
-class NotificationForwarder extends NotificationBroadcasterSupport 
-  implements NotificationListener {
-  
+class NotificationForwarder extends NotificationBroadcasterSupport implements NotificationListener {
+
   private static final Logger logger = LogService.getLogger();
-  
+
   /* sequence generator for notifications from GemFireTypesWrapper MBean */
   private static AtomicLong notificationSequenceNumber = new AtomicLong();
 
   /* reference to the MBeanServer instance */
-  private MBeanServer   mBeanServer;
+  private MBeanServer mBeanServer;
 
   /**
    * Default Constructor
@@ -1238,7 +1164,7 @@ class NotificationForwarder extends NotificationBroadcasterSupport
    * @param mBeanServer
    *          reference to the MBeanServer instance
    */
-  /*default*/NotificationForwarder(MBeanServer mBeanServer) {
+  /*default*/ NotificationForwarder(MBeanServer mBeanServer) {
     this.mBeanServer = mBeanServer;
   }
 
@@ -1296,7 +1222,7 @@ class NotificationForwarder extends NotificationBroadcasterSupport
       } catch (OperationsException e) {
         logwriter.info(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_WHILE_UNREGISTERING_NOTIFICATION_LISTENER_FOR_0, source.toString(), e);
       }
-    } else if (AdminDistributedSystemJmxImpl.NOTIF_ADMIN_SYSTEM_DISCONNECT.equals(notification.getType())) {
+      } else if (AdminDistributedSystemJmxImpl.NOTIF_ADMIN_SYSTEM_DISCONNECT.equals(notification.getType())) {
       String source = (String) notifSource;
       //This notification does not have ObjectName as a source. 
       try {
@@ -1307,46 +1233,41 @@ class NotificationForwarder extends NotificationBroadcasterSupport
       } catch (NullPointerException e) {
         logwriter.info(LocalizedMessage.create(LocalizedStrings.MemberInfoWithStatsMBean_EXCEPTION_WHILE_UNREGISTERING_NOTIFICATION_LISTENER_FOR_0, source.toString(), e);
       }
-    } */
+      } */
     //NOTIF_ALERT is sent as is
-    
+
     //TODO: Check if same notification instance can be reused by simply changing the sequence number 
-    notification = new Notification(notification.getType(), notifSource, 
-                                    notificationSequenceNumber.addAndGet(1L), 
-                                    notification.getTimeStamp(), 
-                                    notification.getMessage());
-    
+    notification = new Notification(notification.getType(), notifSource, notificationSequenceNumber.addAndGet(1L), notification.getTimeStamp(), notification.getMessage());
+
     sendNotification(notification);
   }
 
-  /**
-   * Registers itself as a NotificationListener for Notifications sent from
-   * MBean with the ObjectName given as source.
-   * 
-   * @param source
-   *          source of notifications
-   * @throws InstanceNotFoundException
-   *           The MBean name provided does not match any of the registered
-   *           MBeans.
-   */
-  /*default*/void registerNotificationListener(ObjectName source) 
-    throws InstanceNotFoundException {
+      /**
+       * Registers itself as a NotificationListener for Notifications sent from
+       * MBean with the ObjectName given as source.
+       * 
+       * @param source
+       *          source of notifications
+       * @throws InstanceNotFoundException
+       *           The MBean name provided does not match any of the registered
+       *           MBeans.
+       */
+      /*default*/void registerNotificationListener(ObjectName source) throws InstanceNotFoundException {
     mBeanServer.addNotificationListener(source, this, null/*handback*/, source);
   }
 
-  /**
-   * Unregisters itself as a NotificationListener for Notifications sent from
-   * MBean with the ObjectName given as source.
-   * 
-   * @param source source of notifications
-   * @throws InstanceNotFoundException
-   *           The MBean name provided does not match any of the registered
-   *           MBeans.
-   * @throws ListenerNotFoundException
-   *           The listener is not registered in the MBean.
-   */
-  /*default*/void unregisterNotificationListener(ObjectName source) 
-    throws InstanceNotFoundException, ListenerNotFoundException {
+      /**
+       * Unregisters itself as a NotificationListener for Notifications sent from
+       * MBean with the ObjectName given as source.
+       * 
+       * @param source source of notifications
+       * @throws InstanceNotFoundException
+       *           The MBean name provided does not match any of the registered
+       *           MBeans.
+       * @throws ListenerNotFoundException
+       *           The listener is not registered in the MBean.
+       */
+      /*default*/void unregisterNotificationListener(ObjectName source) throws InstanceNotFoundException, ListenerNotFoundException {
     mBeanServer.removeNotificationListener(source, this);
   }
 }

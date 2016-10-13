@@ -64,8 +64,7 @@ public class MergeLogFilesJUnitTest {
    * order is verified.
    */
   @Test
-  public void testMultipleThreads()
-    throws InterruptedException, IOException {
+  public void testMultipleThreads() throws InterruptedException, IOException {
 
     // Spawn a bunch of threads that write to a log 
     WorkerGroup group = new WorkerGroup("Workers");
@@ -76,7 +75,7 @@ public class MergeLogFilesJUnitTest {
       worker.start();
     }
 
-    for (Iterator iter = workers.iterator(); iter.hasNext(); ) {
+    for (Iterator iter = workers.iterator(); iter.hasNext();) {
       Worker worker = (Worker) iter.next();
       ThreadUtils.join(worker, 120 * 1000);
     }
@@ -100,10 +99,8 @@ public class MergeLogFilesJUnitTest {
     //System.out.println(sw.toString());
 
     // Verfiy that the entries are sorted
-    BufferedReader br =
-      new BufferedReader(new StringReader(sw.toString()));
-    Pattern pattern =
-      Pattern.compile("^Worker \\d+: .* VALUE: (\\d+)");
+    BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
+    Pattern pattern = Pattern.compile("^Worker \\d+: .* VALUE: (\\d+)");
     int lastValue = -1;
     while (br.ready()) {
       String line = br.readLine();
@@ -144,7 +141,7 @@ public class MergeLogFilesJUnitTest {
 
     public void uncaughtException(Thread t, Throwable e) {
       if (e instanceof VirtualMachineError) {
-        SystemFailure.setFailure((VirtualMachineError)e); // don't throw
+        SystemFailure.setFailure((VirtualMachineError) e); // don't throw
       }
       sb.append("Uncaught exception in thread ");
       sb.append(t.getName());
@@ -196,8 +193,7 @@ public class MergeLogFilesJUnitTest {
 
     public void run() {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      LogWriter logger = new LocalLogWriter(InternalLogWriter.ALL_LEVEL,
-                                            new PrintStream(baos, true));
+      LogWriter logger = new LocalLogWriter(InternalLogWriter.ALL_LEVEL, new PrintStream(baos, true));
       for (int i = 0; i < 100; i++) {
         int n;
         synchronized (MergeLogFilesJUnitTest.this) {
@@ -213,7 +209,7 @@ public class MergeLogFilesJUnitTest {
             // DJM - even at 10, some entries have the same timestamp
             // on some PCs.
             Thread.sleep(15);
-            
+
           } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             break; // TODO

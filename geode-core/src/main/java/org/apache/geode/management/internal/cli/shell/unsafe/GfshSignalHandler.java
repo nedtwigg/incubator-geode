@@ -38,8 +38,7 @@ import sun.misc.SignalHandler;
 @SuppressWarnings("unused")
 public class GfshSignalHandler extends AbstractSignalNotificationHandler implements SignalHandler {
 
-  private final Map<Signal, SignalHandler> originalSignalHandlers = Collections.synchronizedMap(
-    new Hashtable<Signal, SignalHandler>(Signal.values().length));
+  private final Map<Signal, SignalHandler> originalSignalHandlers = Collections.synchronizedMap(new Hashtable<Signal, SignalHandler>(Signal.values().length));
 
   public GfshSignalHandler() {
     for (final Signal signal : Signal.values()) {
@@ -65,13 +64,13 @@ public class GfshSignalHandler extends AbstractSignalNotificationHandler impleme
   protected void handleDefault(final sun.misc.Signal sig) {
     final Signal signal = Signal.valueOfName(sig.getName());
     switch (signal) {
-      case SIGINT:
-        break; // ignore the interrupt signal
-      default:
-        final SignalHandler handler = getOriginalSignalHandler(signal);
-        if (handler != null) {
-          handler.handle(sig);
-        }
+    case SIGINT:
+      break; // ignore the interrupt signal
+    default:
+      final SignalHandler handler = getOriginalSignalHandler(signal);
+      if (handler != null) {
+        handler.handle(sig);
+      }
     }
   }
 

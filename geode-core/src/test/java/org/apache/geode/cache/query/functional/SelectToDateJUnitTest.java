@@ -46,7 +46,7 @@ public class SelectToDateJUnitTest {
   private static int numElem = 120;
   private static String format = "MMddyyyyHHmmss";
   private static String mayDate = "05202012100559";
-  private static int numMonthsBeforeMay = 4; 
+  private static int numMonthsBeforeMay = 4;
   private static int numMonthsAfterMay = 7;
   private static int numElementsExpectedPerMonth = numElem * 2 / 12;
 
@@ -61,40 +61,14 @@ public class SelectToDateJUnitTest {
     CacheUtils.closeCache();
   }
 
-  private static String[] toDateQueries = new String[] {
-      "select * from /test p where p.createDate = to_date('" + mayDate + "', '"
-          + format + "')",
-      "select * from /test p where p.createDate < to_date('" + mayDate + "', '"
-          + format + "')",
-      "select * from /test p where p.createDate > to_date('" + mayDate + "', '"
-          + format + "')",
-      "select * from /test p where p.createDate <= to_date('" + mayDate
-          + "', '" + format + "')",
-      "select * from /test p where p.createDate >= to_date('" + mayDate
-          + "', '" + format + "')" };
-  
+  private static String[] toDateQueries = new String[] { "select * from /test p where p.createDate = to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate < to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate > to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate <= to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate >= to_date('" + mayDate + "', '" + format + "')" };
+
   //the test will be validating against the May date, so expected values revolve around month of May
-  private static int[] toDateExpectedResults = new int[] {
-      numElementsExpectedPerMonth,
-      numMonthsBeforeMay * numElementsExpectedPerMonth,
-      numMonthsAfterMay * numElementsExpectedPerMonth,
-      (numMonthsBeforeMay + 1) * numElementsExpectedPerMonth,
-      (numMonthsAfterMay + 1) * numElementsExpectedPerMonth };
+  private static int[] toDateExpectedResults = new int[] { numElementsExpectedPerMonth, numMonthsBeforeMay * numElementsExpectedPerMonth, numMonthsAfterMay * numElementsExpectedPerMonth, (numMonthsBeforeMay + 1) * numElementsExpectedPerMonth, (numMonthsAfterMay + 1) * numElementsExpectedPerMonth };
 
-  private static String[] projectionQueries = new String[] {
-      "select p.createDate from /test p where p.createDate = to_date('"
-          + mayDate + "', '" + format + "')",
-      "select p.createDate from /test p where p.createDate < to_date('"
-          + mayDate + "', '" + format + "')",
-      "select p.createDate from /test p where p.createDate > to_date('"
-          + mayDate + "', '" + format + "')",
-      "select p.createDate from /test p where p.createDate <= to_date('"
-          + mayDate + "', '" + format + "')",
-      "select p.createDate from /test p where p.createDate >= to_date('"
-          + mayDate + "', '" + format + "')", };
+  private static String[] projectionQueries = new String[] { "select p.createDate from /test p where p.createDate = to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate < to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate > to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate <= to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate >= to_date('" + mayDate + "', '" + format + "')", };
 
-  private void executeQueryTest(Cache cache, String[] queries,
-      int[] expectedResults) {
+  private void executeQueryTest(Cache cache, String[] queries, int[] expectedResults) {
     CacheUtils.log("********Execute Query Test********");
     QueryService queryService = cache.getQueryService();
     Query query = null;

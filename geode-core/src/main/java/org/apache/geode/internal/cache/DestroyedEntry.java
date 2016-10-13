@@ -28,11 +28,11 @@ import org.apache.geode.cache.Region;
  */
 public class DestroyedEntry implements Region.Entry<Object, Object> {
   private final String msg;
-  
+
   public DestroyedEntry(String msg) {
     this.msg = msg;
   }
-  
+
   @Override
   public Object getKey() {
     throw entryDestroyed();

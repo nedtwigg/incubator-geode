@@ -46,7 +46,7 @@ public class GlobalRegionOffHeapDUnitTest extends GlobalRegionDUnitTest {
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -68,7 +68,7 @@ public class GlobalRegionOffHeapDUnitTest extends GlobalRegionDUnitTest {
     props.setProperty(OFF_HEAP_MEMORY_SIZE, "10m");
     return props;
   }
-  
+
   @Override
   protected RegionAttributes getRegionAttributes() {
     RegionAttributes attrs = super.getRegionAttributes();
@@ -76,12 +76,12 @@ public class GlobalRegionOffHeapDUnitTest extends GlobalRegionDUnitTest {
     factory.setOffHeap(true);
     return factory.create();
   }
-  
+
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = super.getRegionAttributes(type);
     AttributesFactory factory = new AttributesFactory(ra);
-    if(!ra.getDataPolicy().isEmpty()) {
+    if (!ra.getDataPolicy().isEmpty()) {
       factory.setOffHeap(true);
     }
     return factory.create();

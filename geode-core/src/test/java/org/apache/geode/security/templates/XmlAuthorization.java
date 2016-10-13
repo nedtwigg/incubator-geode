@@ -314,8 +314,8 @@ public class XmlAuthorization implements AccessControl {
     if (opCode.isQuery() || opCode.isExecuteCQ() || opCode.isCloseCQ() || opCode.isStopCQ()) {
       // First check if cache-level permission has been provided
       operationMap = this.allowedOps.get(EMPTY_VALUE);
-      boolean globalPermission = (operationMap != null && operationMap .containsKey(opCode));
-      Set<String> regionNames = ((QueryOperationContext)context) .getRegionNames();
+      boolean globalPermission = (operationMap != null && operationMap.containsKey(opCode));
+      Set<String> regionNames = ((QueryOperationContext) context).getRegionNames();
       if (regionNames == null || regionNames.size() == 0) {
         return globalPermission;
       }
@@ -356,11 +356,11 @@ public class XmlAuthorization implements AccessControl {
               if (functionParameter.isOptimizeForWrite() != null && functionParameter.isOptimizeForWrite().booleanValue() != functionContext.isOptimizeForWrite()) {
                 return false;
               }
-              if (functionParameter.getFunctionIds() != null && !functionParameter.getFunctionIds().contains( functionContext.getFunctionId())) {
+              if (functionParameter.getFunctionIds() != null && !functionParameter.getFunctionIds().contains(functionContext.getFunctionId())) {
                 return false;
               }
               if (functionParameter.getKeySet() != null && functionContext.getKeySet() != null) {
-                if (functionContext.getKeySet().containsAll( functionParameter.getKeySet())) {
+                if (functionContext.getKeySet().containsAll(functionParameter.getKeySet())) {
                   return false;
                 }
               }
@@ -374,11 +374,11 @@ public class XmlAuthorization implements AccessControl {
             }
 
           } else {
-            ExecuteFunctionOperationContext functionContext = (ExecuteFunctionOperationContext)context;
+            ExecuteFunctionOperationContext functionContext = (ExecuteFunctionOperationContext) context;
             FunctionSecurityPrmsHolder functionParameter = operationMap.get(context.getOperationCode());
             if (functionContext.getRegionName() != null) {
               if (functionContext.getResult() instanceof ArrayList && functionParameter.getKeySet() != null) {
-                ArrayList<String> resultList = (ArrayList)functionContext.getResult();
+                ArrayList<String> resultList = (ArrayList) functionContext.getResult();
                 Set<String> nonAllowedKeys = functionParameter.getKeySet();
                 if (resultList.containsAll(nonAllowedKeys)) {
                   return false;
@@ -387,7 +387,7 @@ public class XmlAuthorization implements AccessControl {
               return true;
 
             } else {
-              ArrayList<String> resultList = (ArrayList)functionContext.getResult();
+              ArrayList<String> resultList = (ArrayList) functionContext.getResult();
               final String inSecureItem = "Insecure item";
               if (resultList.contains(inSecureItem)) {
                 return false;
@@ -414,7 +414,7 @@ public class XmlAuthorization implements AccessControl {
     NamedNodeMap attrMap = node.getAttributes();
     Node attrNode;
     if (attrMap != null && (attrNode = attrMap.getNamedItem(attrName)) != null) {
-      return ((Attr)attrNode).getValue();
+      return ((Attr) attrNode).getValue();
     }
     return EMPTY_VALUE;
   }
@@ -440,7 +440,7 @@ public class XmlAuthorization implements AccessControl {
    */
   private static void init(final Cache cache) throws NotAuthorizedException {
     final LogWriter systemLogWriter = cache.getLogger();
-    final String xmlDocumentUri = (String)cache.getDistributedSystem().getSecurityProperties().get(DOC_URI_PROP_NAME);
+    final String xmlDocumentUri = (String) cache.getDistributedSystem().getSecurityProperties().get(DOC_URI_PROP_NAME);
 
     try {
       if (xmlDocumentUri == null) {
@@ -582,8 +582,7 @@ public class XmlAuthorization implements AccessControl {
       String message;
       if (ex instanceof NotAuthorizedException) {
         message = ex.getMessage();
-      }
-      else {
+      } else {
         message = ex.getClass().getName() + ": " + ex.getMessage();
       }
       systemLogWriter.warning("XmlAuthorization.init: " + message);
@@ -605,10 +604,10 @@ public class XmlAuthorization implements AccessControl {
           return new InputSource(stream);
         }
 
-      } catch(Exception e) {
+      } catch (Exception e) {
         //do nothing, use the default resolver
       }
-      
+
       return null;
     }
   }

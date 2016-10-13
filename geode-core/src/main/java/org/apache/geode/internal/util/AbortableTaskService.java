@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AbortableTaskService {
   /** the executor */
   private final Executor exec;
-  
+
   /** the queue of executing tasks */
   private final Queue<AbortingRunnable> tasks;
 
@@ -44,18 +44,18 @@ public class AbortableTaskService {
      * @param aborted set to true when the task has been aborted
      */
     void runOrAbort(AtomicBoolean aborted);
-    
+
     /**
      * Invoked when a task is aborted prior to execution.
      */
     void abortBeforeRun();
   }
-  
+
   public AbortableTaskService(Executor exec) {
     this.exec = exec;
     tasks = new ConcurrentLinkedQueue<AbortingRunnable>();
   }
-  
+
   /**
    * Executes the task using the embedded executor.
    * @param task the task to execute
@@ -63,16 +63,16 @@ public class AbortableTaskService {
   public void execute(AbortableTask task) {
     AbortingRunnable ar = new AbortingRunnable(task);
     tasks.add(ar);
-    
+
     try {
       exec.execute(ar);
-      
+
     } catch (RejectedExecutionException e) {
       tasks.remove(ar);
       throw e;
     }
   }
-  
+
   /**
    * Aborts all executing tasks.
    */
@@ -81,7 +81,7 @@ public class AbortableTaskService {
       ar.abort();
     }
   }
-  
+
   /**
    * Waits for all currently executing tasks to complete.
    */
@@ -94,18 +94,18 @@ public class AbortableTaskService {
         interrupted = true;
       }
     }
-    
+
     if (interrupted) {
       Thread.currentThread().interrupt();
     }
   }
-  
+
   /**
    * Returns true if all tasks are done or aborted.
    */
   public boolean isCompleted() {
     for (AbortingRunnable ar : tasks) {
-      synchronized(ar) {
+      synchronized (ar) {
         if (!ar.done) {
           return false;
         }
@@ -113,35 +113,35 @@ public class AbortableTaskService {
     }
     return true;
   }
-  
+
   private class AbortingRunnable implements Runnable {
     /** the task to execute */
     private final AbortableTask task;
-    
+
     /** true if the task is aborted */
     private AtomicBoolean aborted;
-    
+
     /** true if the task has begun */
     private AtomicBoolean hasStarted;
-    
+
     /** true if the task is complete */
     private boolean done;
-  
+
     public AbortingRunnable(AbortableTask task) {
       this.task = task;
-      
+
       aborted = new AtomicBoolean(false);
       hasStarted = new AtomicBoolean(false);
-      
+
       done = false;
     }
-    
+
     private synchronized void waitForCompletion() throws InterruptedException {
       while (!done) {
         wait();
       }
     }
-    
+
     private synchronized void signalDone() {
       done = true;
       notifyAll();
@@ -158,7 +158,7 @@ public class AbortableTaskService {
         }
       }
     }
-    
+
     @Override
     public void run() {
       if (hasStarted.compareAndSet(false, true)) {

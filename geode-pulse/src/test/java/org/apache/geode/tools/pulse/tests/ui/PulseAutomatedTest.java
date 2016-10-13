@@ -514,7 +514,6 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     verifyTextPresrntById(PulseTestLocators.RegionDetailsView.memberNameId, "M3");
   }
 
-
   @Test
   public void verifySortingOptionsTest() {
     clickElementUsingXpath(PulseTestLocators.TopNavigation.clusterViewLinkXpath);
@@ -525,9 +524,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     verifyElementPresentByLinkText("CPU Usage");
   }
 
-	/* 
+  /* 
    * HotSpot test scripts -
-	 */
+   */
   //--- Topology view
 
   @Test
@@ -632,7 +631,6 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     assertEquals(PulseTestData.RedundancyZone.hotSpotHeapLbl, getTextUsingId(PulseTestLocators.RedundancyZone.hotSpotId));
   }
 
-
   @Test
   public void testHotSpotOptionsRedundancyZoneView() {
     // navigate to Redundancy Zones - Tree View
@@ -711,9 +709,7 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     List<WebElement> regionLst = getRegionsFromDataBrowser();
 
     for (int regionIndex = 0; regionIndex < regionLst.size(); regionIndex++) {
-      assertTrue(findElementByXpath(PulseTestLocators.DataBrowser.rgnSpanFirstPart + (regionIndex + 1) + PulseTestLocators.DataBrowser.rgnSpanSecondPart).
-                                                                                                                                                           getText().
-                                                                                                                                                           contains(PulseTestData.DataBrowser.partialRgnName));
+      assertTrue(findElementByXpath(PulseTestLocators.DataBrowser.rgnSpanFirstPart + (regionIndex + 1) + PulseTestLocators.DataBrowser.rgnSpanSecondPart).getText().contains(PulseTestData.DataBrowser.partialRgnName));
     }
   }
 
@@ -740,7 +736,7 @@ public class PulseAutomatedTest extends PulseAbstractTest {
 
     for (int i = 1; i <= numOfReg.size(); i++) {
       if (getTextUsingId("treeDemo_" + i + "_span").equals(PulseTestData.DataBrowser.regName)) {
-        searchByIdAndClick("treeDemo_" + i + "_check");  //driver.findElement(By.id("treeDemo_" + i + "_check")).click();
+        searchByIdAndClick("treeDemo_" + i + "_check"); //driver.findElement(By.id("treeDemo_" + i + "_check")).click();
       }
     }
 
@@ -752,7 +748,6 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     String queryDateTime = dateFormat.format(System.currentTimeMillis());
     String queryTime[] = queryDateTime.split(":");
     System.out.println("Query Time from System: " + queryTime[0]);
-
 
     clickElementUsingId(PulseTestLocators.DataBrowser.historyIcon);
     List<WebElement> historyLst = driver.findElements(By.xpath(PulseTestLocators.DataBrowser.historyLst));

@@ -40,7 +40,7 @@ import org.apache.geode.security.templates.XmlAuthorization;
  * @since GemFire 5.5
  */
 public abstract class AuthzCredentialGenerator {
-  
+
   private static final Logger logger = LogService.getLogger();
 
   /**
@@ -69,12 +69,12 @@ public abstract class AuthzCredentialGenerator {
    */
   public static AuthzCredentialGenerator create(final ClassCode classCode) {
     switch (classCode.classType) {
-      case ClassCode.ID_DUMMY:
-        return new DummyAuthzCredentialGenerator();
-      case ClassCode.ID_XML:
-        return new XmlAuthzCredentialGenerator();
-      default:
-        return null;
+    case ClassCode.ID_DUMMY:
+      return new DummyAuthzCredentialGenerator();
+    case ClassCode.ID_XML:
+      return new XmlAuthzCredentialGenerator();
+    default:
+      return null;
     }
   }
 
@@ -420,7 +420,7 @@ public abstract class AuthzCredentialGenerator {
       if (!(obj instanceof ClassCode)) {
         return false;
       }
-      final ClassCode other = (ClassCode)obj;
+      final ClassCode other = (ClassCode) obj;
       return other.ordinal == this.ordinal;
     }
 

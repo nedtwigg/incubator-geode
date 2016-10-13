@@ -38,7 +38,7 @@ import org.apache.geode.internal.logging.LogService;
 
 public class ExportConfigFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String ID = ExportConfigFunction.class.getName();
 
   private static final long serialVersionUID = 1L;
@@ -63,9 +63,9 @@ public class ExportConfigFunction implements Function, InternalEntity {
       PrintWriter printWriter = new PrintWriter(xmlWriter);
       CacheXmlGenerator.generate(cache, printWriter, true, false, false);
       printWriter.close();
-      
+
       // Generate the properties file
-      DistributionConfigImpl  config = (DistributionConfigImpl) ((InternalDistributedSystem) cache.getDistributedSystem()).getConfig();
+      DistributionConfigImpl config = (DistributionConfigImpl) ((InternalDistributedSystem) cache.getDistributedSystem()).getConfig();
       StringBuffer propStringBuf = new StringBuffer();
       String lineSeparator = System.getProperty("line.separator");
       for (Map.Entry entry : config.getConfigPropsFromSource(ConfigSource.runtime()).entrySet()) {
@@ -89,19 +89,19 @@ public class ExportConfigFunction implements Function, InternalEntity {
           propStringBuf.append(entry.getKey()).append("=").append(entry.getValue()).append(lineSeparator);
         }
       }
-      
+
       CliFunctionResult result = new CliFunctionResult(memberId, new String[] { xmlWriter.toString(), propStringBuf.toString() });
 
       context.getResultSender().lastResult(result);
-      
+
     } catch (CacheClosedException cce) {
       CliFunctionResult result = new CliFunctionResult(memberId, false, null);
       context.getResultSender().lastResult(result);
-      
+
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not export config {}", th.getMessage(), th);

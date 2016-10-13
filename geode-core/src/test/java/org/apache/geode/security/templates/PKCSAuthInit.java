@@ -92,8 +92,8 @@ public class PKCSAuthInit implements AuthInitialize {
       final Key key = ks.getKey(alias, passPhrase);
 
       if (key instanceof PrivateKey) {
-        final PrivateKey privKey = (PrivateKey)key;
-        final X509Certificate cert = (X509Certificate)ks.getCertificate(alias);
+        final PrivateKey privKey = (PrivateKey) key;
+        final X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
         final Signature sig = Signature.getInstance(cert.getSigAlgName());
 
         sig.initSign(privKey);

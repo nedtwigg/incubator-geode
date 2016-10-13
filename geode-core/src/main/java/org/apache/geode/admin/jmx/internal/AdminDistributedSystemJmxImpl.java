@@ -55,17 +55,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @since GemFire     3.5
  */
-public class AdminDistributedSystemJmxImpl 
-              extends AdminDistributedSystemImpl
-              implements ManagedResource, DistributedSystemConfig, StatAlertsAggregator {
+public class AdminDistributedSystemJmxImpl extends AdminDistributedSystemImpl implements ManagedResource, DistributedSystemConfig, StatAlertsAggregator {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private Properties mailProps;
 
   // The file name where the StatAlertDefinitions would be serialized
   private String statAlertDefnSerFile = System.getProperty("user.dir");
-  
+
   /** 
    * Simple counter incrementing on each notification.  This this currently 
    * resets at every restart of Agent
@@ -89,7 +87,7 @@ public class AdminDistributedSystemJmxImpl
   // -------------------------------------------------------------------------
   //   Constructor(s)
   // -------------------------------------------------------------------------
-  
+
   /**
    * Constructs new DistributedSystemJmxImpl and registers an MBean to represent
    * it.
@@ -97,11 +95,9 @@ public class AdminDistributedSystemJmxImpl
    * @param config
    *          configuration defining the JMX agent.
    */
-  public AdminDistributedSystemJmxImpl(AgentConfigImpl config)
-      throws org.apache.geode.admin.AdminException {
+  public AdminDistributedSystemJmxImpl(AgentConfigImpl config) throws org.apache.geode.admin.AdminException {
     super(config);
-    this.mbeanName = "GemFire:type=AdminDistributedSystem,id="
-        + MBeanUtil.makeCompliantMBeanNameProperty(getId());
+    this.mbeanName = "GemFire:type=AdminDistributedSystem,id=" + MBeanUtil.makeCompliantMBeanNameProperty(getId());
     this.objectName = MBeanUtil.createMBean(this);
     isEmailNotificationEnabled = config.isEmailNotificationEnabled();
     if (isEmailNotificationEnabled) {
@@ -116,12 +112,9 @@ public class AdminDistributedSystemJmxImpl
 
   private void initMailProps(AgentConfigImpl config) {
     mailProps = new Properties();
-    mailProps.put(MailManager.PROPERTY_MAIL_FROM, 
-                    config.getEmailNotificationFrom());
-    mailProps.put(MailManager.PROPERTY_MAIL_HOST, 
-                    config.getEmailNotificationHost());
-    mailProps.put(MailManager.PROPERTY_MAIL_TO_LIST, 
-                    config.getEmailNotificationToList());
+    mailProps.put(MailManager.PROPERTY_MAIL_FROM, config.getEmailNotificationFrom());
+    mailProps.put(MailManager.PROPERTY_MAIL_HOST, config.getEmailNotificationHost());
+    mailProps.put(MailManager.PROPERTY_MAIL_TO_LIST, config.getEmailNotificationToList());
   }
 
   private void initStateSaveFile(AgentConfigImpl agentConfig) {
@@ -129,21 +122,21 @@ public class AdminDistributedSystemJmxImpl
     AgentConfigImpl impl = (AgentConfigImpl) agentConfig;
     File propFile = impl.getPropertyFile();
 
-    if (propFile!=null) {
-     if (propFile.isDirectory()) {
-       statAlertDefnSerFile = propFile.getAbsolutePath();
-     } else if (propFile.getParentFile()!=null) {
-       statAlertDefnSerFile = propFile.getParentFile().getAbsolutePath();
-     }
+    if (propFile != null) {
+      if (propFile.isDirectory()) {
+        statAlertDefnSerFile = propFile.getAbsolutePath();
+      } else if (propFile.getParentFile() != null) {
+        statAlertDefnSerFile = propFile.getParentFile().getAbsolutePath();
+      }
     }
 
     statAlertDefnSerFile = statAlertDefnSerFile + File.separator + agentConfig.getStateSaveFile();
   }
-  
+
   // -------------------------------------------------------------------------
   //   MBean operations
   // -------------------------------------------------------------------------
-  
+
   /**
    * Registers the MBeans for monitoring the health of GemFire 
    *
@@ -167,15 +160,10 @@ public class AdminDistributedSystemJmxImpl
    * @param workingDirectory  directory path for the locator and its log
    * @param productDirectory  directory path to the GemFire product to use 
    */
-  public ObjectName createDistributionLocator(String host,
-                                              int port,
-                                              String workingDirectory,
-                                              String productDirectory) 
-                                       throws MalformedObjectNameException {
-    return createDistributionLocator(
-        host, port, workingDirectory, productDirectory, getRemoteCommand());
+  public ObjectName createDistributionLocator(String host, int port, String workingDirectory, String productDirectory) throws MalformedObjectNameException {
+    return createDistributionLocator(host, port, workingDirectory, productDirectory, getRemoteCommand());
   }
-  
+
   /**
    * Creates a new DistributionLocator for this system and registers an MBean
    * for managing it.
@@ -189,16 +177,10 @@ public class AdminDistributedSystemJmxImpl
    * @param productDirectory  directory path to the GemFire product to use 
    * @param remoteCommand     formatted remote command to control remotely
    */
-  public ObjectName createDistributionLocator(String host,
-                                              int port,
-                                              String workingDirectory,
-                                              String productDirectory,
-                                              String remoteCommand) 
-                                       throws MalformedObjectNameException {
+  public ObjectName createDistributionLocator(String host, int port, String workingDirectory, String productDirectory, String remoteCommand) throws MalformedObjectNameException {
     try {
-      DistributionLocatorJmxImpl locator =
-        (DistributionLocatorJmxImpl) addDistributionLocator();
-      
+      DistributionLocatorJmxImpl locator = (DistributionLocatorJmxImpl) addDistributionLocator();
+
       DistributionLocatorConfig config = locator.getConfig();
       config.setHost(host);
       config.setPort(port);
@@ -215,7 +197,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -226,15 +208,14 @@ public class AdminDistributedSystemJmxImpl
       throw e;
     }
   }
-  
+
   // -------------------------------------------------------------------------
   //   Template methods overriden from superclass...
   // -------------------------------------------------------------------------
-  
+
   /** Override createSystemMember by instantiating SystemMemberJmxImpl */
   @Override
-  protected SystemMember createSystemMember(ApplicationVM app)
-  throws org.apache.geode.admin.AdminException {
+  protected SystemMember createSystemMember(ApplicationVM app) throws org.apache.geode.admin.AdminException {
     return new SystemMemberJmxImpl(this, app);
   }
 
@@ -251,67 +232,54 @@ public class AdminDistributedSystemJmxImpl
    *
    * @since GemFire 6.5
    */
-  protected SystemMember createSystemMember(InternalDistributedMember member)
-      throws org.apache.geode.admin.AdminException {
+  protected SystemMember createSystemMember(InternalDistributedMember member) throws org.apache.geode.admin.AdminException {
     return new SystemMemberJmxImpl(this, member);
   }
-  
 
   @Override
-  protected CacheServer createCacheServer(ApplicationVM member) 
-    throws AdminException {
+  protected CacheServer createCacheServer(ApplicationVM member) throws AdminException {
 
     return new CacheServerJmxImpl(this, member);
   }
 
   @Override
-  protected CacheServer createCacheServer(CacheServerConfigImpl config) 
-    throws AdminException {
+  protected CacheServer createCacheServer(CacheServerConfigImpl config) throws AdminException {
 
     return new CacheServerJmxImpl(this, config);
   }
 
   /** Override createGemFireHealth by instantiating GemFireHealthJmxImpl */
   @Override
-  protected GemFireHealth createGemFireHealth(GfManagerAgent system) 
-    throws org.apache.geode.admin.AdminException {
+  protected GemFireHealth createGemFireHealth(GfManagerAgent system) throws org.apache.geode.admin.AdminException {
     if (system == null) {
       throw new IllegalStateException(LocalizedStrings.AdminDistributedSystemJmxImpl_GFMANAGERAGENT_MUST_NOT_BE_NULL.toLocalizedString());
     }
     return new GemFireHealthJmxImpl(system, this);
   }
-  
+
   /** Template-method for creating a DistributionLocatorImpl instance. */
   @Override
-  protected DistributionLocatorImpl 
-    createDistributionLocatorImpl(DistributionLocatorConfig config) {
+  protected DistributionLocatorImpl createDistributionLocatorImpl(DistributionLocatorConfig config) {
     return new DistributionLocatorJmxImpl(config, this);
   }
 
   // -------------------------------------------------------------------------
   //   Internal Admin listeners and JMX Notifications
   // -------------------------------------------------------------------------
-  
+
   /** Notification type for indicating system member joined */
-  public static final String NOTIF_MEMBER_JOINED =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.member.joined";
+  public static final String NOTIF_MEMBER_JOINED = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.member.joined";
   /** Notification type for indicating system member left */
-  public static final String NOTIF_MEMBER_LEFT =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.member.left";
+  public static final String NOTIF_MEMBER_LEFT = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.member.left";
   /** Notification type for indicating system member crashed */
-  public static final String NOTIF_MEMBER_CRASHED =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.member.crashed";
+  public static final String NOTIF_MEMBER_CRASHED = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.member.crashed";
   /** Notification type for sending GemFire alerts as JMX notifications */
-  public static final String NOTIF_ALERT =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.alert";
+  public static final String NOTIF_ALERT = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.alert";
   /** Notification type for sending GemFire StatAlerts as JMX notifications */
-  public static final String NOTIF_STAT_ALERT =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.statalert";
+  public static final String NOTIF_STAT_ALERT = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.statalert";
   /** Notification type for indicating abnormal disconnection from the distributed system */
-  public static final String NOTIF_ADMIN_SYSTEM_DISCONNECT =
-      DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.disconnect";
-  
-  
+  public static final String NOTIF_ADMIN_SYSTEM_DISCONNECT = DistributionConfig.GEMFIRE_PREFIX + "distributedsystem.disconnect";
+
   private static final String EML_SUBJ_PRFX_GFE_ALERT = "[GemFire Alert] ";
   private static final String EML_SUBJ_PRFX_GFE_NOTFY = "[GemFire Notification] ";
   private static final String EML_SUBJ_ITEM_GFE_DS = "Distributed System: ";
@@ -331,40 +299,34 @@ public class AdminDistributedSystemJmxImpl
   public void nodeJoined(GfManagerAgent source, GemFireVM joined) {
     try {
       super.nodeJoined(source, joined);
-      
+
       /* super.nodeJoined results in creation of a new SystemMember which 
        * registers itself as an MBean, so now we try to find it...
        */
       SystemMember member = findSystemMember(joined);
-      
-      if(null == member) {
+
+      if (null == member) {
         if (logger.isDebugEnabled()) {
           logger.debug("AdminDistributedSystemJmxImpl.nodeJoined(), Could not find SystemMember for VM {}", joined);
         }
         return;
       }
-      
+
       try {
         if (logger.isDebugEnabled()) {
           logger.debug("Processing node joined for: {}", member);
           logger.debug("RemoteGemFireVM.nodeJoined(), setting alerts manager *************");
         }
         setAlertsManager(joined);
-        
-        this.modelMBean.sendNotification(new Notification(
-            NOTIF_MEMBER_JOINED,
-            ((ManagedResource)member).getObjectName(), // Pass the ObjName of the Source Member
-            notificationSequenceNumber.addAndGet(1),
-            joined.getId().toString()));
 
-//      String mess = "Gemfire AlertNotification: System Member Joined, System member Id: " + joined.getId().toString();
-//      sendEmail("Gemfire AlertNotification: Member Joined, ID: " + joined.getId().toString(), mess);
+        this.modelMBean.sendNotification(new Notification(NOTIF_MEMBER_JOINED, ((ManagedResource) member).getObjectName(), // Pass the ObjName of the Source Member
+            notificationSequenceNumber.addAndGet(1), joined.getId().toString()));
+
+        //      String mess = "Gemfire AlertNotification: System Member Joined, System member Id: " + joined.getId().toString();
+        //      sendEmail("Gemfire AlertNotification: Member Joined, ID: " + joined.getId().toString(), mess);
         if (isEmailNotificationEnabled) {
-          String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_JOINED_THE_DISTRIBUTED_SYSTEM_MEMBER_ID_0.toLocalizedString(new Object[] {joined.getId().toString()} );
-        	sendEmail(
-        	    EML_SUBJ_PRFX_GFE_NOTFY + EML_SUBJ_ITEM_GFE_DS + getName() + " <" 
-        	    + LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_JOINED.toLocalizedString() +">", 
-        	    mess);
+          String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_JOINED_THE_DISTRIBUTED_SYSTEM_MEMBER_ID_0.toLocalizedString(new Object[] { joined.getId().toString() });
+          sendEmail(EML_SUBJ_PRFX_GFE_NOTFY + EML_SUBJ_ITEM_GFE_DS + getName() + " <" + LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_JOINED.toLocalizedString() + ">", mess);
         }
       } catch (javax.management.MBeanException e) {
         logger.warn(e.getMessage(), e);
@@ -377,7 +339,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -388,7 +350,7 @@ public class AdminDistributedSystemJmxImpl
       throw e;
     }
   }
-  
+
   /** 
    * Listener callback for when a member has left this DistributedSystem.
    * <p>
@@ -408,84 +370,14 @@ public class AdminDistributedSystemJmxImpl
         logger.debug("Processing node left for: {}", member);
       }
       try {
-        this.modelMBean.sendNotification(new Notification(
-            NOTIF_MEMBER_LEFT,
-            ((ManagedResource)member).getObjectName(), // Pass the ObjName of the Source Member
-            notificationSequenceNumber.addAndGet(1),
-            left.getId().toString()));
+        this.modelMBean.sendNotification(new Notification(NOTIF_MEMBER_LEFT, ((ManagedResource) member).getObjectName(), // Pass the ObjName of the Source Member
+            notificationSequenceNumber.addAndGet(1), left.getId().toString()));
 
-//        String mess = "Gemfire AlertNotification: System Member Left the system, System member Id: " + left.getId().toString();
-//        sendEmail("Gemfire AlertNotification: Member Left, ID: " + left.getId().toString(), mess);
+        //        String mess = "Gemfire AlertNotification: System Member Left the system, System member Id: " + left.getId().toString();
+        //        sendEmail("Gemfire AlertNotification: Member Left, ID: " + left.getId().toString(), mess);
         if (isEmailNotificationEnabled) {
-          String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_LEFT_THE_DISTRIBUTED_SYSTEM_MEMBER_ID_0.toLocalizedString(new Object[] {left.getId().toString()} );
-        	sendEmail( 
-        	    EML_SUBJ_PRFX_GFE_NOTFY + EML_SUBJ_ITEM_GFE_DS + getName() + " <" 
-        	    + LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_LEFT.toLocalizedString() +">", 
-        	    mess);
-        }
-      } catch (javax.management.MBeanException e) { 
-        logger.warn(e.getMessage(), e);
-      }
-      
-      SystemMemberType memberType = member.getType();  
-      if (/* member != null && */ memberType.isApplication() || memberType.isCacheVm()) {
-        // automatically unregister the MBean...
-        MBeanUtil.unregisterMBean((ManagedResource) member);
-      }
-    } catch (RuntimeException e) {
-      logger.warn(e.getMessage(), e);
-      throw e;
-    } catch (VirtualMachineError err) {
-      SystemFailure.initiateFailure(err);
-      // If this ever returns, rethrow the error.  We're poisoned
-      // now, so don't let this thread continue.
-      throw err;
-    } catch (Error e) { 
-      // Whenever you catch Error or Throwable, you must also
-      // catch VirtualMachineError (see above).  However, there is
-      // _still_ a possibility that you are dealing with a cascading
-      // error condition, so you also need to check to see if the JVM
-      // is still usable:
-      SystemFailure.checkFailure();
-      logger.error(e.getMessage(), e);
-      throw e;
-    }
-  }
-  
-  /** 
-   * Listener callback for when a member of this DistributedSystem has crashed.
-   * <p>
-   * Also fires a Notification with the internal Id of the member VM.
-   *
-   * @param source  the distributed system that fired nodeCrashed
-   * @param crashed the VM that crashed
-   * @see org.apache.geode.internal.admin.JoinLeaveListener#nodeCrashed
-   */
-  @Override
-  public void nodeCrashed(GfManagerAgent source, GemFireVM crashed) {
-    try {
-      // SystemMember application has left...
-      SystemMember member = findSystemMember(crashed, false);
-      super.nodeCrashed(source, crashed);
-      if (logger.isDebugEnabled()) {
-        logger.debug("Processing node crash for: {}", member);
-      }
-      
-      try {
-        this.modelMBean.sendNotification(new Notification(
-            NOTIF_MEMBER_CRASHED,
-            ((ManagedResource)member).getObjectName(), // Pass the ObjName of the Source Member
-            notificationSequenceNumber.addAndGet(1),
-            crashed.getId().toString()));
-        
-//        String mess = "Gemfire AlertNotification: System Member Crashed, System member Id: " + crashed.getId().toString();
-//        sendEmail("Gemfire AlertNotification: Member Crashed, ID: " + crashed.getId().toString(), mess);
-        if (isEmailNotificationEnabled) {
-          String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_CRASHED_IN_THE_DISTRIBUTED_SYSTEM_MEMBER_ID_0.toLocalizedString(new Object[] {crashed.getId().toString()} );
-        	sendEmail(
-        	    EML_SUBJ_PRFX_GFE_ALERT + EML_SUBJ_ITEM_GFE_DS + getName() + " <" 
-        	    + LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_CRASHED.toLocalizedString() +">", 
-        	    mess);
+          String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_LEFT_THE_DISTRIBUTED_SYSTEM_MEMBER_ID_0.toLocalizedString(new Object[] { left.getId().toString() });
+          sendEmail(EML_SUBJ_PRFX_GFE_NOTFY + EML_SUBJ_ITEM_GFE_DS + getName() + " <" + LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_LEFT.toLocalizedString() + ">", mess);
         }
       } catch (javax.management.MBeanException e) {
         logger.warn(e.getMessage(), e);
@@ -504,7 +396,65 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
+      // Whenever you catch Error or Throwable, you must also
+      // catch VirtualMachineError (see above).  However, there is
+      // _still_ a possibility that you are dealing with a cascading
+      // error condition, so you also need to check to see if the JVM
+      // is still usable:
+      SystemFailure.checkFailure();
+      logger.error(e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  /** 
+   * Listener callback for when a member of this DistributedSystem has crashed.
+   * <p>
+   * Also fires a Notification with the internal Id of the member VM.
+   *
+   * @param source  the distributed system that fired nodeCrashed
+   * @param crashed the VM that crashed
+   * @see org.apache.geode.internal.admin.JoinLeaveListener#nodeCrashed
+   */
+  @Override
+  public void nodeCrashed(GfManagerAgent source, GemFireVM crashed) {
+    try {
+      // SystemMember application has left...
+      SystemMember member = findSystemMember(crashed, false);
+      super.nodeCrashed(source, crashed);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Processing node crash for: {}", member);
+      }
+
+      try {
+        this.modelMBean.sendNotification(new Notification(NOTIF_MEMBER_CRASHED, ((ManagedResource) member).getObjectName(), // Pass the ObjName of the Source Member
+            notificationSequenceNumber.addAndGet(1), crashed.getId().toString()));
+
+        //        String mess = "Gemfire AlertNotification: System Member Crashed, System member Id: " + crashed.getId().toString();
+        //        sendEmail("Gemfire AlertNotification: Member Crashed, ID: " + crashed.getId().toString(), mess);
+        if (isEmailNotificationEnabled) {
+          String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_CRASHED_IN_THE_DISTRIBUTED_SYSTEM_MEMBER_ID_0.toLocalizedString(new Object[] { crashed.getId().toString() });
+          sendEmail(EML_SUBJ_PRFX_GFE_ALERT + EML_SUBJ_ITEM_GFE_DS + getName() + " <" + LocalizedStrings.AdminDistributedSystemJmxImpl_MEMBER_CRASHED.toLocalizedString() + ">", mess);
+        }
+      } catch (javax.management.MBeanException e) {
+        logger.warn(e.getMessage(), e);
+      }
+
+      SystemMemberType memberType = member.getType();
+      if (/* member != null && */ memberType.isApplication() || memberType.isCacheVm()) {
+        // automatically unregister the MBean...
+        MBeanUtil.unregisterMBean((ManagedResource) member);
+      }
+    } catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
+    } catch (VirtualMachineError err) {
+      SystemFailure.initiateFailure(err);
+      // If this ever returns, rethrow the error.  We're poisoned
+      // now, so don't let this thread continue.
+      throw err;
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -532,17 +482,13 @@ public class AdminDistributedSystemJmxImpl
       super.alert(alert);
       try {
         String strAlert = alert.toString();
-        this.modelMBean.sendNotification(new Notification(
-            NOTIF_ALERT,
-            this.mbeanName,
-            notificationSequenceNumber.addAndGet(1),
-            strAlert));
-        
-//        String mess = "Gemfire AlertNotification: System Alert :" + alert.toString();
-//        sendEmail("Gemfire AlertNotification: System Alert", mess);
+        this.modelMBean.sendNotification(new Notification(NOTIF_ALERT, this.mbeanName, notificationSequenceNumber.addAndGet(1), strAlert));
+
+        //        String mess = "Gemfire AlertNotification: System Alert :" + alert.toString();
+        //        sendEmail("Gemfire AlertNotification: System Alert", mess);
         if (isEmailNotificationEnabled) {
           String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_SYSTEM_ALERT_FROM_DISTRIBUTED_SYSTEM_0.toLocalizedString(strAlert);
-        	sendEmail( EML_SUBJ_PRFX_GFE_ALERT + EML_SUBJ_ITEM_GFE_DS + getName() + " <System Alert>", mess);
+          sendEmail(EML_SUBJ_PRFX_GFE_ALERT + EML_SUBJ_ITEM_GFE_DS + getName() + " <System Alert>", mess);
         }
       } catch (javax.management.MBeanException e) {
         logger.warn(e.getMessage(), e);
@@ -555,7 +501,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -566,70 +512,67 @@ public class AdminDistributedSystemJmxImpl
       throw e;
     }
   }
-  
+
   @Override
   public void onDisconnect(InternalDistributedSystem sys) {
     if (logger.isDebugEnabled()) {
       this.logger.debug("Calling AdminDistributedSystemJmxImpl#onDisconnect");
     }
-  	try {
-  		super.onDisconnect(sys);
-  		
-  		try {
-  			this.modelMBean.sendNotification(new Notification(
-  			        NOTIF_ADMIN_SYSTEM_DISCONNECT,
-  			        this.mbeanName,
-  			        notificationSequenceNumber.addAndGet(1),
-  			        null));
-  		} catch (MBeanException e) {
-  		  logger.warn(e.getMessage(), e);	
-  		}
-  	} catch (RuntimeException e) {
-  	  logger.warn(e.getMessage(), e);
-  	  throw e;
-  	} catch (VirtualMachineError err) {
-  	  SystemFailure.initiateFailure(err);
-  	  // If this ever returns, rethrow the error. We're poisoned
-  	  // now, so don't let this thread continue.
-  	  throw err;
-  	} catch (Error e) {
-  	  // Whenever you catch Error or Throwable, you must also
-  	  // catch VirtualMachineError (see above). However, there is
-  	  // _still_ a possibility that you are dealing with a cascading
-  	  // error condition, so you also need to check to see if the JVM
-  	  // is still usable:
-  	  SystemFailure.checkFailure();
-  	  logger.error(e.getMessage(), e);
-  	  throw e;
-  	}
-  	if (logger.isDebugEnabled()) {
-  	  this.logger.debug("Completed AdminDistributedSystemJmxImpl#onDisconnect");
-  	}
+    try {
+      super.onDisconnect(sys);
+
+      try {
+        this.modelMBean.sendNotification(new Notification(NOTIF_ADMIN_SYSTEM_DISCONNECT, this.mbeanName, notificationSequenceNumber.addAndGet(1), null));
+      } catch (MBeanException e) {
+        logger.warn(e.getMessage(), e);
+      }
+    } catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
+    } catch (VirtualMachineError err) {
+      SystemFailure.initiateFailure(err);
+      // If this ever returns, rethrow the error. We're poisoned
+      // now, so don't let this thread continue.
+      throw err;
+    } catch (Error e) {
+      // Whenever you catch Error or Throwable, you must also
+      // catch VirtualMachineError (see above). However, there is
+      // _still_ a possibility that you are dealing with a cascading
+      // error condition, so you also need to check to see if the JVM
+      // is still usable:
+      SystemFailure.checkFailure();
+      logger.error(e.getMessage(), e);
+      throw e;
+    }
+    if (logger.isDebugEnabled()) {
+      this.logger.debug("Completed AdminDistributedSystemJmxImpl#onDisconnect");
+    }
   }
-  
+
   // -------------------------------------------------------------------------
   //   ManagedResource implementation
   // -------------------------------------------------------------------------
-  
+
   /** The name of the MBean that will manage this resource */
   private String mbeanName;
 
   /** The remotable ObjectName that the  MBean is registered under */
   final private ObjectName objectName;
-  
+
   /** The ModelMBean that is configured to manage this resource */
   private ModelMBean modelMBean;
-  
-	public String getMBeanName() {
-		return this.mbeanName;
-	}
-  
-	public ModelMBean getModelMBean() {
-		return this.modelMBean;
-	}
-	public void setModelMBean(ModelMBean modelMBean) {
-		this.modelMBean = modelMBean;
-	}
+
+  public String getMBeanName() {
+    return this.mbeanName;
+  }
+
+  public ModelMBean getModelMBean() {
+    return this.modelMBean;
+  }
+
+  public void setModelMBean(ModelMBean modelMBean) {
+    this.modelMBean = modelMBean;
+  }
 
   public ObjectName getObjectName() {
     return this.objectName;
@@ -638,11 +581,11 @@ public class AdminDistributedSystemJmxImpl
   public ManagedResourceType getManagedResourceType() {
     return ManagedResourceType.DISTRIBUTED_SYSTEM;
   }
-  
+
   // -------------------------------------------------------------------------
   //   Error traps added to overridden methods...
   // -------------------------------------------------------------------------
-  
+
   @Override
   public boolean isRunning() {
     try {
@@ -655,7 +598,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (java.lang.Error e) { 
+    } catch (java.lang.Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -679,7 +622,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (java.lang.Error e) { 
+    } catch (java.lang.Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -690,7 +633,7 @@ public class AdminDistributedSystemJmxImpl
       throw e;
     }
   }
-  
+
   @Override
   public void stop() throws AdminException {
     try {
@@ -703,7 +646,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (java.lang.Error e) { 
+    } catch (java.lang.Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -716,10 +659,10 @@ public class AdminDistributedSystemJmxImpl
   }
 
   @Override
-  public boolean waitToBeConnected(long timeout)
-    throws InterruptedException {
+  public boolean waitToBeConnected(long timeout) throws InterruptedException {
 
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     try {
       return super.waitToBeConnected(timeout);
     } catch (java.lang.RuntimeException e) {
@@ -730,7 +673,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (java.lang.Error e) { 
+    } catch (java.lang.Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -754,7 +697,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (java.lang.Error e) { 
+    } catch (java.lang.Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -766,13 +709,12 @@ public class AdminDistributedSystemJmxImpl
     }
   }
 
-  public ObjectName manageDistributionLocator()
-    throws MalformedObjectNameException {
+  public ObjectName manageDistributionLocator() throws MalformedObjectNameException {
 
     try {
       return new ObjectName(((ManagedResource) addDistributionLocator()).getMBeanName());
     }
-//     catch (AdminException e) { logger.warn(e.getMessage(), e); throw e; }
+    //     catch (AdminException e) { logger.warn(e.getMessage(), e); throw e; }
     catch (RuntimeException e) {
       logger.warn(e.getMessage(), e);
       throw e;
@@ -781,7 +723,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -793,8 +735,7 @@ public class AdminDistributedSystemJmxImpl
     }
   }
 
-  public ObjectName[] manageDistributionLocators() 
-  throws MalformedObjectNameException {
+  public ObjectName[] manageDistributionLocators() throws MalformedObjectNameException {
     try {
       DistributionLocator[] locs = getDistributionLocators();
       ObjectName[] onames = new javax.management.ObjectName[locs.length];
@@ -805,50 +746,49 @@ public class AdminDistributedSystemJmxImpl
       return onames;
     }
     //catch (AdminException e) { logger.warn(e.getMessage(), e); throw e; }
-    catch (RuntimeException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
+    catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
       // error condition, so you also need to check to see if the JVM
       // is still usable:
       SystemFailure.checkFailure();
-      logger.error(e.getMessage(), e); 
-      throw e; 
+      logger.error(e.getMessage(), e);
+      throw e;
     }
   }
-    
+
   /**
    * @deprecated as of 5.7 use {@link #manageCacheVm} instead.
    */
   @Deprecated
-  public ObjectName manageCacheServer()
-  throws AdminException, MalformedObjectNameException {
+  public ObjectName manageCacheServer() throws AdminException, MalformedObjectNameException {
     return manageCacheVm();
   }
-  public ObjectName manageCacheVm()
-  throws AdminException, MalformedObjectNameException {
+
+  public ObjectName manageCacheVm() throws AdminException, MalformedObjectNameException {
     try {
       return new ObjectName(((ManagedResource) addCacheVm()).getMBeanName());
-    } catch (AdminException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
-    } catch (RuntimeException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
+    } catch (AdminException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
+    } catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -856,7 +796,7 @@ public class AdminDistributedSystemJmxImpl
       // is still usable:
       SystemFailure.checkFailure();
       logger.warn(e.getMessage(), e);
-      throw e; 
+      throw e;
     }
   }
 
@@ -864,13 +804,11 @@ public class AdminDistributedSystemJmxImpl
    * @deprecated as of 5.7 use {@link #manageCacheVms} instead.
    */
   @Deprecated
-  public ObjectName[] manageCacheServers()
-  throws AdminException, MalformedObjectNameException {
+  public ObjectName[] manageCacheServers() throws AdminException, MalformedObjectNameException {
     return manageCacheVms();
   }
 
-  public ObjectName[] manageCacheVms()
-  throws AdminException, MalformedObjectNameException {
+  public ObjectName[] manageCacheVms() throws AdminException, MalformedObjectNameException {
     try {
       CacheVm[] mgrs = getCacheVms();
       ObjectName[] onames = new javax.management.ObjectName[mgrs.length];
@@ -879,18 +817,18 @@ public class AdminDistributedSystemJmxImpl
         onames[i] = new ObjectName(mgr.getMBeanName());
       }
       return onames;
-    } catch (AdminException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
-    } catch (RuntimeException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
+    } catch (AdminException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
+    } catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -898,12 +836,11 @@ public class AdminDistributedSystemJmxImpl
       // is still usable:
       SystemFailure.checkFailure();
       logger.error(e.getMessage(), e);
-      throw e; 
+      throw e;
     }
   }
 
-  public ObjectName[] manageSystemMemberApplications()
-  throws AdminException, MalformedObjectNameException {
+  public ObjectName[] manageSystemMemberApplications() throws AdminException, MalformedObjectNameException {
     try {
       SystemMember[] apps = getSystemMemberApplications();
       ObjectName[] onames = new javax.management.ObjectName[apps.length];
@@ -912,18 +849,18 @@ public class AdminDistributedSystemJmxImpl
         onames[i] = new ObjectName(app.getMBeanName());
       }
       return onames;
-    } catch (AdminException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
-    } catch (RuntimeException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
+    } catch (AdminException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
+    } catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -931,10 +868,10 @@ public class AdminDistributedSystemJmxImpl
       // is still usable:
       SystemFailure.checkFailure();
       logger.error(e.getMessage(), e);
-      throw e; 
+      throw e;
     }
   }
-  
+
   /**
    * Return the ObjectName for the SystemMemberMBean representing the
    * specified distributed member or null if the member is not found.
@@ -942,26 +879,26 @@ public class AdminDistributedSystemJmxImpl
    * @param distributedMember the distributed member to manage
    * @return the ObjectName for the SystemMemberMBean
    */
-  public ObjectName manageSystemMember(DistributedMember distributedMember)
-  throws AdminException, MalformedObjectNameException {
+  public ObjectName manageSystemMember(DistributedMember distributedMember) throws AdminException, MalformedObjectNameException {
     try {
       SystemMember member = lookupSystemMember(distributedMember);
-      if (member == null) return null;
+      if (member == null)
+        return null;
       SystemMemberJmxImpl jmx = (SystemMemberJmxImpl) member;
       ObjectName oname = new ObjectName(jmx.getMBeanName());
       return oname;
-    } catch (AdminException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
-    } catch (RuntimeException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
+    } catch (AdminException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
+    } catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -969,16 +906,16 @@ public class AdminDistributedSystemJmxImpl
       // is still usable:
       SystemFailure.checkFailure();
       logger.error(e.getMessage(), e);
-      throw e; 
+      throw e;
     }
   }
-  
+
   @Override
   public void connect(InternalLogWriter logWriter) {
     try {
       // LOG: passes the AdminDistributedSystemImpl LogWriterLogger into GfManagerAgentConfig
       super.connect(logWriter);
-      
+
       // Load existing StatAlert Definitions
       readAlertDefinitionsAsSerializedObjects();
 
@@ -987,15 +924,15 @@ public class AdminDistributedSystemJmxImpl
         logger.debug("Adding CacheAndRegionListener .... ");
       }
       addCacheListener(cacheRegionListener);
-    } catch (RuntimeException e) { 
+    } catch (RuntimeException e) {
       logger.warn(e.getMessage(), e);
-      throw e; 
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -1003,15 +940,15 @@ public class AdminDistributedSystemJmxImpl
       // is still usable:
       SystemFailure.checkFailure();
       logger.error(e.getMessage(), e);
-      throw e; 
+      throw e;
     }
   }
-  
+
   @Override
   public void disconnect() {
     try {
       super.disconnect();
-      
+
       // Save existing StatAlert Definitions
       saveAlertDefinitionsAsSerializedObjects();
 
@@ -1019,8 +956,8 @@ public class AdminDistributedSystemJmxImpl
       if (logger.isDebugEnabled()) {
         logger.debug("Removing CacheAndRegionListener .... ");
       }
-      removeCacheListener(cacheRegionListener);      
-    } catch (RuntimeException e) { 
+      removeCacheListener(cacheRegionListener);
+    } catch (RuntimeException e) {
       logger.warn(e.getMessage(), e);
       throw e;
     } catch (VirtualMachineError err) {
@@ -1028,7 +965,7 @@ public class AdminDistributedSystemJmxImpl
       // If this ever returns, re-throw the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -1043,7 +980,7 @@ public class AdminDistributedSystemJmxImpl
   public void cleanupResource() {
     disconnect();
   }
-  
+
   /**
    * @return the isRmiClientCountZero
    * @since GemFire 6.0
@@ -1058,12 +995,11 @@ public class AdminDistributedSystemJmxImpl
    */
   void setRmiClientCountZero(boolean isRmiClientCountZero) {
     this.isRmiClientCountZero = isRmiClientCountZero;
-    
+
     if (isRmiClientCountZero) {
       logger.info(LocalizedStrings.AdminDistributedSystemJmxImpl_JMX_CLIENT_COUNT_HAS_DROPPED_TO_ZERO);
     }
   }
-
 
   ///////////////////////  Configuration  ///////////////////////
 
@@ -1091,7 +1027,7 @@ public class AdminDistributedSystemJmxImpl
   public void setSystemName(final String name) {
     this.getConfig().setSystemName(name);
   }
-    
+
   @Override
   public boolean getDisableTcp() {
     return this.getConfig().getDisableTcp();
@@ -1100,16 +1036,19 @@ public class AdminDistributedSystemJmxImpl
   public void setEnableNetworkPartitionDetection(boolean newValue) {
     getConfig().setEnableNetworkPartitionDetection(newValue);
   }
+
   public boolean getEnableNetworkPartitionDetection() {
     return getConfig().getEnableNetworkPartitionDetection();
   }
+
   public int getMemberTimeout() {
-   return getConfig().getMemberTimeout();
+    return getConfig().getMemberTimeout();
   }
+
   public void setMemberTimeout(int value) {
     getConfig().setMemberTimeout(value);
   }
-  
+
   @Override
   public String getMcastAddress() {
     return this.getConfig().getMcastAddress();
@@ -1123,7 +1062,7 @@ public class AdminDistributedSystemJmxImpl
   public int getMcastPort() {
     return this.getConfig().getMcastPort();
   }
-  
+
   public void setMcastPort(int mcastPort) {
     this.getConfig().setMcastPort(mcastPort);
   }
@@ -1131,7 +1070,7 @@ public class AdminDistributedSystemJmxImpl
   public int getAckWaitThreshold() {
     return getConfig().getAckWaitThreshold();
   }
-  
+
   public void setAckWaitThreshold(int seconds) {
     getConfig().setAckWaitThreshold(seconds);
   }
@@ -1139,7 +1078,7 @@ public class AdminDistributedSystemJmxImpl
   public int getAckSevereAlertThreshold() {
     return getConfig().getAckSevereAlertThreshold();
   }
-  
+
   public void setAckSevereAlertThreshold(int seconds) {
     getConfig().setAckSevereAlertThreshold(seconds);
   }
@@ -1153,7 +1092,7 @@ public class AdminDistributedSystemJmxImpl
   public void setLocators(String locators) {
     this.getConfig().setLocators(locators);
   }
-  
+
   /* Note that the getter & setter for membership port range are referred from 
    * the super class AdminDistributedSystemImpl */
 
@@ -1164,7 +1103,7 @@ public class AdminDistributedSystemJmxImpl
   public void setBindAddress(String bindAddress) {
     this.getConfig().setBindAddress(bindAddress);
   }
-  
+
   public String getServerBindAddress() {
     return this.getConfig().getServerBindAddress();
   }
@@ -1214,7 +1153,7 @@ public class AdminDistributedSystemJmxImpl
   public void setSSLAuthenticationRequired(boolean authRequired) {
     this.getConfig().setSSLAuthenticationRequired(authRequired);
   }
-  
+
   public Properties getSSLProperties() {
     return this.getConfig().getSSLProperties();
   }
@@ -1230,7 +1169,7 @@ public class AdminDistributedSystemJmxImpl
   public void removeSSLProperty(String key) {
     this.getConfig().removeSSLProperty(key);
   }
-  
+
   public String getLogFile() {
     return this.getConfig().getLogFile();
   }
@@ -1310,13 +1249,12 @@ public class AdminDistributedSystemJmxImpl
   public DistributionLocatorConfig[] getDistributionLocatorConfigs() {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
-  
+
   public DistributionLocatorConfig createDistributionLocatorConfig() {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  public void removeDistributionLocatorConfig(DistributionLocatorConfig config) 
-{
+  public void removeDistributionLocatorConfig(DistributionLocatorConfig config) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
@@ -1336,45 +1274,43 @@ public class AdminDistributedSystemJmxImpl
   public Object clone() throws CloneNotSupportedException {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
-  
 
-  private static final String[] PERSISTENT_ID_FIELDS = new String[] {"host", "directory", "uuid"};
-  private static final String[] PERSISTENT_ID_DESCRIPTIONS = new String[] {"The host that was persisting the missing files", "The directory where the files were persisted", "The unique id for the persistent files"};
+  private static final String[] PERSISTENT_ID_FIELDS = new String[] { "host", "directory", "uuid" };
+  private static final String[] PERSISTENT_ID_DESCRIPTIONS = new String[] { "The host that was persisting the missing files", "The directory where the files were persisted", "The unique id for the persistent files" };
   private final CompositeType PERSISTENT_ID_TYPE;
   private final TabularType PERSISTENT_ID_TABLE_TYPE;
-  
-  { 
+
+  {
     try {
-      PERSISTENT_ID_TYPE = new CompositeType(PersistentID.class.getCanonicalName(), "A single member's a set of persistent files for a region", PERSISTENT_ID_FIELDS, PERSISTENT_ID_DESCRIPTIONS, new OpenType[] {SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+      PERSISTENT_ID_TYPE = new CompositeType(PersistentID.class.getCanonicalName(), "A single member's a set of persistent files for a region", PERSISTENT_ID_FIELDS, PERSISTENT_ID_DESCRIPTIONS, new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
       PERSISTENT_ID_TABLE_TYPE = new TabularType("TABLE_" + PERSISTENT_ID_TYPE.getTypeName(), "A table of persistent member ids", PERSISTENT_ID_TYPE, PERSISTENT_ID_FIELDS);
     } catch (OpenDataException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
-  
+
   public TabularData getMissingPersistentMembersJMX() throws AdminException {
-    
+
     try {
       Set<PersistentID> members = super.getMissingPersistentMembers();
       TabularData results = new TabularDataSupport(PERSISTENT_ID_TABLE_TYPE);
       int index = 0;
-      for(PersistentID id : members) {
-        CompositeData idData = new CompositeDataSupport(PERSISTENT_ID_TYPE, PERSISTENT_ID_FIELDS, new Object[] {id.getHost().toString(), id.getDirectory(), id.getUUID().toString()});
+      for (PersistentID id : members) {
+        CompositeData idData = new CompositeDataSupport(PERSISTENT_ID_TYPE, PERSISTENT_ID_FIELDS, new Object[] { id.getHost().toString(), id.getDirectory(), id.getUUID().toString() });
         results.put(idData);
         index++;
       }
       return results;
-    } catch( OpenDataException e) {
+    } catch (OpenDataException e) {
       logger.warn("Exception occurred while getting missing persistent members.", e);
       throw new AdminException(e);
     }
   }
 
-  public void revokePersistentMember(String host,
-      String directory) throws AdminException, UnknownHostException {
+  public void revokePersistentMember(String host, String directory) throws AdminException, UnknownHostException {
     super.revokePersistentMember(InetAddress.getByName(host), directory);
   }
-  
+
   public void revokePersistentMember(String uuid) throws AdminException, UnknownHostException {
     super.revokePersistentMember(UUID.fromString(uuid));
   }
@@ -1382,10 +1318,10 @@ public class AdminDistributedSystemJmxImpl
   /* ********************************************************************* */
   /* ************** Implementing StatAlertsAggregator interface ********** */
   /* ********************************************************************* */
-  
+
   /* Map to store admin stat alert definitions */
   private final Map ALERT_DEFINITIONS = new Hashtable();
-  
+
   /* Refresh interval for all stat alerts managers in seconds */
   private int refreshIntervalForStatAlerts = 20;
 
@@ -1393,13 +1329,13 @@ public class AdminDistributedSystemJmxImpl
    * This map contains list of stat alerts as a value for alert def ID as a key  
    */
   private final HashMap alertsStore = new HashMap();
-  
+
   //TODO: yet to set the timer task
-//  private SystemTimer systemwideAlertNotificationScheduler = new SystemTimer();
-  
+  //  private SystemTimer systemwideAlertNotificationScheduler = new SystemTimer();
+
   private MailManager mailManager = null;
   private final boolean isEmailNotificationEnabled;
-  
+
   /**
    * Convenience method to retrieve admin stat alert definition.
    * 
@@ -1408,12 +1344,12 @@ public class AdminDistributedSystemJmxImpl
    * @since GemFire 5.7
    */
   private StatAlertDefinition getAlertDefinition(int alertDefinitionId) {
-    synchronized(ALERT_DEFINITIONS) {
-      return (StatAlertDefinition)ALERT_DEFINITIONS.get(Integer.valueOf(alertDefinitionId));
+    synchronized (ALERT_DEFINITIONS) {
+      return (StatAlertDefinition) ALERT_DEFINITIONS.get(Integer.valueOf(alertDefinitionId));
     }
   }
-  
-/*  private void setAlertDefinition(StatAlertDefinition alertDefinition) {
+
+  /*  private void setAlertDefinition(StatAlertDefinition alertDefinition) {
     ALERT_DEFINITIONS.put(Integer.valueOf(alertDefinition.getId()), alertDefinition);
   }*/
 
@@ -1427,7 +1363,7 @@ public class AdminDistributedSystemJmxImpl
   public StatAlertDefinition getAlertDefinition(StatAlertDefinition alertDefinition) {
     return getAlertDefinition(alertDefinition.getId());
   }
-  
+
   /**
    * This method is used to write existing StatAlertDefinitions 
    * to a file
@@ -1441,40 +1377,36 @@ public class AdminDistributedSystemJmxImpl
 
     try {
       serFile = new File(statAlertDefnSerFile);
-      
+
       if (!canWriteToFile(serFile)) {/* can not write a file */
         canPersistStatAlertDefs = false;
       }
       if (!serFile.exists()) {/* file does not exist */
         return;
       }
-      
+
       if (logger.isDebugEnabled()) {
         logger.debug("AdminDistributedSystemJmxImpl.readAlertDefinitionsAsSerializedObjects: File: {}", serFile.getPath());
       }
 
       foStr = new FileInputStream(serFile);
       ooStr = new DataInputStream(foStr);
-      defns = (StatAlertDefinition[])DataSerializer.readObjectArray(ooStr);
+      defns = (StatAlertDefinition[]) DataSerializer.readObjectArray(ooStr);
     } catch (ClassNotFoundException cnfEx) {
-      logger.error(LocalizedMessage.create(
-          LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_A_0_WHILE_LOADING_STATALERTDEFINITIONS_1,
-          new Object[] {cnfEx.getClass().getName(), statAlertDefnSerFile}), cnfEx);
+      logger.error(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_A_0_WHILE_LOADING_STATALERTDEFINITIONS_1, new Object[] { cnfEx.getClass().getName(), statAlertDefnSerFile }), cnfEx);
       canPersistStatAlertDefs = false;
     } catch (IOException ex) {
-      logger.error(LocalizedMessage.create(
-          LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_A_0_WHILE_LOADING_STATALERTDEFINITIONS_1_LOADING_ABORTED,
-          new Object[] {ex.getClass().getName(), statAlertDefnSerFile}), ex);
+      logger.error(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_A_0_WHILE_LOADING_STATALERTDEFINITIONS_1_LOADING_ABORTED, new Object[] { ex.getClass().getName(), statAlertDefnSerFile }), ex);
       canPersistStatAlertDefs = false;
     } finally {
-      if (foStr!=null) {
+      if (foStr != null) {
         try {
           foStr.close();
         } catch (IOException ex) {
           ;
         }
       }
-      if (ooStr!=null) { 
+      if (ooStr != null) {
         try {
           ooStr.close();
         } catch (IOException ex) {
@@ -1482,8 +1414,8 @@ public class AdminDistributedSystemJmxImpl
         }
       }
     }
-    
-    for (int i=0; i<defns.length; i++) {
+
+    for (int i = 0; i < defns.length; i++) {
       updateAlertDefinition(defns[i]);
     }
   }
@@ -1498,48 +1430,45 @@ public class AdminDistributedSystemJmxImpl
     DataOutputStream ooStr = null;
     try {
       serFile = new File(statAlertDefnSerFile);
-      
-  
+
       if (logger.isDebugEnabled()) {
         logger.debug("AdminDistributedSystemJmxImpl.saveAlertDefinitionsAsSerializedObjects: File: {}", serFile.getPath());
       }
-      
+
       if (!canWriteToFile(serFile)) {
         return;
       }
-      
+
       foStr = new FileOutputStream(serFile);
       ooStr = new DataOutputStream(foStr);
-      
+
       int numOfAlerts = 0;
       StatAlertDefinition[] defs = null;
 
       synchronized (ALERT_DEFINITIONS) {
         numOfAlerts = ALERT_DEFINITIONS.size();
         defs = new StatAlertDefinition[numOfAlerts];
-        
+
         int i = 0;
-        for (Iterator iter=ALERT_DEFINITIONS.keySet().iterator(); iter.hasNext() ;) {
+        for (Iterator iter = ALERT_DEFINITIONS.keySet().iterator(); iter.hasNext();) {
           Integer key = (Integer) iter.next();
           StatAlertDefinition readDefn = (StatAlertDefinition) ALERT_DEFINITIONS.get(key);
           defs[i] = readDefn;
-          i++; 
+          i++;
         }
       }
 
       DataSerializer.writeObjectArray(defs, ooStr);
     } catch (IOException ex) {
-      logger.error(LocalizedMessage.create(
-          LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_A_0_WHILE_SAVING_STATALERTDEFINITIONS_1,
-          new Object[] {ex.getClass().getName(), statAlertDefnSerFile}), ex);
+      logger.error(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_A_0_WHILE_SAVING_STATALERTDEFINITIONS_1, new Object[] { ex.getClass().getName(), statAlertDefnSerFile }), ex);
     } finally {
-      if (foStr!=null) 
+      if (foStr != null)
         try {
           foStr.close();
         } catch (IOException ex) {
           ;
         }
-      if (ooStr!=null) 
+      if (ooStr != null)
         try {
           ooStr.close();
         } catch (IOException ex) {
@@ -1566,18 +1495,14 @@ public class AdminDistributedSystemJmxImpl
     // necessary.
     if (file.exists()) {
       if (!file.canWrite()) {
-        logger.warn(LocalizedMessage.create(
-            LocalizedStrings.AdminDistributedSystemJmxImpl_READONLY_STAT_ALERT_DEF_FILE_0,
-            new Object[] { file }));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystemJmxImpl_READONLY_STAT_ALERT_DEF_FILE_0, new Object[] { file }));
         fileIsWritable = false;
       }
     } else {
       try {
         file.createNewFile();
       } catch (IOException e) {
-        logger.warn(LocalizedMessage.create(
-            LocalizedStrings.AdminDistributedSystemJmxImpl_FAILED_TO_CREATE_STAT_ALERT_DEF_FILE_0,
-            new Object[] { file }), e);
+        logger.warn(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystemJmxImpl_FAILED_TO_CREATE_STAT_ALERT_DEF_FILE_0, new Object[] { file }), e);
         fileIsWritable = false;
       } finally {
         // Since we had created this file only for testing purpose, delete the
@@ -1598,7 +1523,7 @@ public class AdminDistributedSystemJmxImpl
    * 
    * @param alertDefinition alertDefinition to be updated 
    * @since GemFire 5.7
-   */  
+   */
   public void updateAlertDefinition(StatAlertDefinition alertDefinition) {
     if (logger.isDebugEnabled()) {
       logger.debug("Entered AdminDistributedSystemJmxImpl.updateAlertDefinition(StatAlertDefinition) *****");
@@ -1610,11 +1535,11 @@ public class AdminDistributedSystemJmxImpl
      */
     synchronized (ALERT_DEFINITIONS) {
       ALERT_DEFINITIONS.put(Integer.valueOf(alertDefinition.getId()), alertDefinition);
-      
+
       if (logger.isDebugEnabled()) {
         logger.debug("AdminDistributedSystemJmxImpl.updateAlertDefinition : alertDefinition :: id={} :: {}", alertDefinition.getId(), alertDefinition.getStringRepresentation());
       }
-      
+
       /* TODO: add code to retry on failure */
       notifyMembersForAlertDefinitionChange(alertDefinition);
     }
@@ -1631,7 +1556,7 @@ public class AdminDistributedSystemJmxImpl
    * 
    * @param defId id of the alert definition to be removed
    * @since GemFire 5.7
-   */  
+   */
   public void removeAlertDefinition(Integer defId) {
     if (logger.isDebugEnabled()) {
       logger.debug("Entered AdminDistributedSystemJmxImpl.removeAlertDefinition id *****");
@@ -1641,15 +1566,15 @@ public class AdminDistributedSystemJmxImpl
      * & all Member MBeans
      */
     synchronized (ALERT_DEFINITIONS) {
-      StatAlertDefinition alertDefinition = (StatAlertDefinition)ALERT_DEFINITIONS.get(defId);
-  	  if (alertDefinition != null) {
-    		ALERT_DEFINITIONS.remove(defId);
-    		synchronized (alertsStore) {
-    		  alertsStore.remove(defId);
-    		}
-    		/* TODO: add code to retry on failure */
-    		notifyMembersForAlertDefinitionRemoval(alertDefinition);
-  	  }      
+      StatAlertDefinition alertDefinition = (StatAlertDefinition) ALERT_DEFINITIONS.get(defId);
+      if (alertDefinition != null) {
+        ALERT_DEFINITIONS.remove(defId);
+        synchronized (alertsStore) {
+          alertsStore.remove(defId);
+        }
+        /* TODO: add code to retry on failure */
+        notifyMembersForAlertDefinitionRemoval(alertDefinition);
+      }
     }
     if (logger.isDebugEnabled()) {
       logger.debug("Exiting AdminDistributedSystemJmxImpl.removeAlertDefinition() *****");
@@ -1672,7 +1597,7 @@ public class AdminDistributedSystemJmxImpl
      * 
      * TODO: optimize to use Map.containsKey - DONE
      */
-    synchronized(ALERT_DEFINITIONS) {
+    synchronized (ALERT_DEFINITIONS) {
       return ALERT_DEFINITIONS.containsKey(Integer.valueOf(alertDefinition.getId()));
     }
   }
@@ -1702,7 +1627,7 @@ public class AdminDistributedSystemJmxImpl
      * change the state refresh interval here. 
      */
     this.refreshIntervalForStatAlerts = refreshIntervalForStatAlerts;
-    notifyMembersForRefreshIntervalChange(this.refreshIntervalForStatAlerts*1000l);
+    notifyMembersForRefreshIntervalChange(this.refreshIntervalForStatAlerts * 1000l);
   }
 
   /**
@@ -1722,37 +1647,35 @@ public class AdminDistributedSystemJmxImpl
    * @param newInterval refresh interval to be set for members(in milliseconds)
    */
   private void notifyMembersForRefreshIntervalChange(long newInterval) {
-    GfManagerAgent  agent = getGfManagerAgent();
-    ApplicationVM[] VMs   = agent.listApplications();    
+    GfManagerAgent agent = getGfManagerAgent();
+    ApplicationVM[] VMs = agent.listApplications();
     //TODO: is there any other way to get all VMs?
-    
+
     for (int i = 0; i < VMs.length; i++) {
       VMs[i].setRefreshInterval(newInterval);
     }
   }
-  
+
   /**
    * An intermediate method to notify all members for change in stat alert 
    * definition.
    * 
    * @param alertDef stat alert definition that got changed
-   */  
+   */
   private void notifyMembersForAlertDefinitionChange(StatAlertDefinition alertDef) {
     if (logger.isDebugEnabled()) {
       logger.debug("Entered AdminDistributedSystemJmxImpl.notifyMembersForAlertDefinitionChange(StatAlertDefinition) *****");
     }
-    GfManagerAgent        agent     = getGfManagerAgent();
-    StatAlertDefinition[] alertDefs = new StatAlertDefinition[] {alertDef};
-    ApplicationVM[]       VMs       = agent.listApplications();
-    
+    GfManagerAgent agent = getGfManagerAgent();
+    StatAlertDefinition[] alertDefs = new StatAlertDefinition[] { alertDef };
+    ApplicationVM[] VMs = agent.listApplications();
+
     for (int i = 0; i < VMs.length; i++) {
-      VMs[i].updateAlertDefinitions(alertDefs, 
-          UpdateAlertDefinitionMessage.UPDATE_ALERT_DEFINITION);
+      VMs[i].updateAlertDefinitions(alertDefs, UpdateAlertDefinitionMessage.UPDATE_ALERT_DEFINITION);
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("Exiting AdminDistributedSystemJmxImpl.notifyMembersForAlertDefinitionChange(StatAlertDefinition) "
-    		    + VMs.length+" members notified.*****");
+      logger.debug("Exiting AdminDistributedSystemJmxImpl.notifyMembersForAlertDefinitionChange(StatAlertDefinition) " + VMs.length + " members notified.*****");
     }
   }
 
@@ -1763,13 +1686,12 @@ public class AdminDistributedSystemJmxImpl
    * @param alertDef stat alert definition to be removed
    */
   private void notifyMembersForAlertDefinitionRemoval(StatAlertDefinition alertDef) {
-    GfManagerAgent        agent     = getGfManagerAgent();
-    StatAlertDefinition[] alertDefs = new StatAlertDefinition[] {alertDef};
-    ApplicationVM[]       VMs       = agent.listApplications();
-    
+    GfManagerAgent agent = getGfManagerAgent();
+    StatAlertDefinition[] alertDefs = new StatAlertDefinition[] { alertDef };
+    ApplicationVM[] VMs = agent.listApplications();
+
     for (int i = 0; i < VMs.length; i++) {
-      VMs[i].updateAlertDefinitions(alertDefs, 
-          UpdateAlertDefinitionMessage.REMOVE_ALERT_DEFINITION);
+      VMs[i].updateAlertDefinitions(alertDefs, UpdateAlertDefinitionMessage.REMOVE_ALERT_DEFINITION);
     }
   }
 
@@ -1798,19 +1720,19 @@ public class AdminDistributedSystemJmxImpl
     if (logger.isDebugEnabled()) {
       logger.debug("Entered AdminDistributedSystemJmxImpl.setAlertsManager(GemFireVM) *****");
     }
-    
+
     // creating an array of stat alert definition objects
     StatAlertDefinition[] alertDefs = new StatAlertDefinition[0];
-    
+
     Collection alertDefsCollection = null;
-    synchronized(ALERT_DEFINITIONS) {
+    synchronized (ALERT_DEFINITIONS) {
       alertDefsCollection = ALERT_DEFINITIONS.values();
     }
-    
-    alertDefs = (StatAlertDefinition[])alertDefsCollection.toArray(alertDefs);
-    
-    memberVM.setAlertsManager(alertDefs, getRefreshIntervalForStatAlerts()*1000l, true);
-    
+
+    alertDefs = (StatAlertDefinition[]) alertDefsCollection.toArray(alertDefs);
+
+    memberVM.setAlertsManager(alertDefs, getRefreshIntervalForStatAlerts() * 1000l, true);
+
     if (logger.isDebugEnabled()) {
       logger.debug("Exiting AdminDistributedSystemJmxImpl.setAlertsManager(GemFireVM) *****");
     }
@@ -1827,28 +1749,27 @@ public class AdminDistributedSystemJmxImpl
     if (logger.isDebugEnabled()) {
       logger.debug("Entered AdminDistributedSystemJmxImpl.getAllStatAlertDefinitions() *****");
     }
-    
+
     Collection alertDefs = null;
-    synchronized(ALERT_DEFINITIONS) {
+    synchronized (ALERT_DEFINITIONS) {
       alertDefs = ALERT_DEFINITIONS.values();
     }
-    
+
     StatAlertDefinition[] alertDefsArr = null;
-    
+
     if (alertDefs != null) {
       alertDefsArr = new StatAlertDefinition[alertDefs.size()];
-      alertDefsArr = (StatAlertDefinition[])alertDefs.toArray(alertDefsArr);
+      alertDefsArr = (StatAlertDefinition[]) alertDefs.toArray(alertDefsArr);
     } else {
       alertDefsArr = new StatAlertDefinition[0];
     }
-    
+
     if (logger.isDebugEnabled()) {
       logger.debug("Exiting AdminDistributedSystemJmxImpl.getAllStatAlertDefinitions() *****");
     }
-    
+
     return alertDefsArr;
   }
-
 
   /**
    * This method can be used to process the notifications sent by the 
@@ -1859,12 +1780,12 @@ public class AdminDistributedSystemJmxImpl
    * @param alerts array of Alert class(contains alert def. ID & value)
    * @param remoteVM Remote Member VM that sent Stat Alerts for processing the
    *                 notifications to the clients
-   */  
+   */
   public void processNotifications(StatAlert[] alerts, GemFireVM remoteVM) {
     if (logger.isDebugEnabled()) {
       logger.debug("Entered AdminDistributedSystemJmxImpl.processNotifications(StatAlert[{}], GemFireVM) *************", alerts.length);
     }
-    
+
     /* 
      * Notifications can not be processed if the remote VM is not available.
      * NOTE: Should this method get the required GemFireVM information instead 
@@ -1877,30 +1798,30 @@ public class AdminDistributedSystemJmxImpl
       }
       return;
     }
-    
+
     /*
      * 1. The implementation idea is yet not clear.
      * 2. The StatAlert array would received directly or from a request object. 
      */
     ArrayList notificationObjects = new ArrayList();
-    
+
     String memberId = remoteVM.getId().getId();
 
     final boolean isSystemWide = false;
-    
+
     StatAlert alert = null;
-    Integer   defId = null;
-//    Number[]  values = null;
+    Integer defId = null;
+    //    Number[]  values = null;
     for (int i = 0; i < alerts.length; i++) {
       alert = alerts[i];
-      
-//      defId = Integer.valueOf(alert.getDefinitionId());
-      if (getAlertDefinition(alert.getDefinitionId())==null)
+
+      //      defId = Integer.valueOf(alert.getDefinitionId());
+      if (getAlertDefinition(alert.getDefinitionId()) == null)
         continue; // Ignore any removed AlertDefns 
-//      values = alert.getValues();
-      
-//      StatAlertDefinition statAlertDef = (StatAlertDefinition)ALERT_DEFINITIONS.get(defId);
-      
+      //      values = alert.getValues();
+
+      //      StatAlertDefinition statAlertDef = (StatAlertDefinition)ALERT_DEFINITIONS.get(defId);
+
       /*
        * 1. check if it's system-wide.
        * 2. if system-wide keep, it in a collection (that should get cleared on 
@@ -1911,21 +1832,21 @@ public class AdminDistributedSystemJmxImpl
        * 2. If it's not required, the notification should directly be sent to 
        *    clients.
        */
-      
+
       //if (statAlertDef.getFunctionId() != 0) {
-        /*
-         * StatAlert with alert definitions having functions
-         * assigned will get evaluated at manager side only.
-         * 
-         * Is combination of systemwide alerts with function valid? It should 
-         * be & hence such evaluation should be skipped on manager side. Or is 
-         * it to be evaluated at manager as well as aggragator?
-         */
+      /*
+       * StatAlert with alert definitions having functions
+       * assigned will get evaluated at manager side only.
+       * 
+       * Is combination of systemwide alerts with function valid? It should 
+       * be & hence such evaluation should be skipped on manager side. Or is 
+       * it to be evaluated at manager as well as aggragator?
+       */
       //}
-      
+
       //TODO: is this object required? Or earlier canbe resused?
       StatAlertNotification alertNotification = new StatAlertNotification(alert, memberId);
-      
+
       /*
        * variable isSystemWide is created only for convienience, there
        * should be an indication for the same in the alert definition. 
@@ -1948,8 +1869,8 @@ public class AdminDistributedSystemJmxImpl
       }
       HashSet accumulatedAlertValues;
       synchronized (alertsStore) {
-        accumulatedAlertValues = (HashSet)alertsStore.get(defId);
-        
+        accumulatedAlertValues = (HashSet) alertsStore.get(defId);
+
         if (accumulatedAlertValues == null) {
           accumulatedAlertValues = new HashSet();
           alertsStore.put(defId, accumulatedAlertValues);
@@ -1959,12 +1880,12 @@ public class AdminDistributedSystemJmxImpl
         accumulatedAlertValues.add(alertNotification);
       }
     } //for ends
-    
+
     if (!notificationObjects.isEmpty()) {
       /* TODO: should ths method send & forget or be fail-safe? */
       sendNotifications(notificationObjects, getObjectName());
     }
-    
+
     if (logger.isDebugEnabled()) {
       logger.debug("Exiting AdminDistributedSystemJmxImpl.processNotifications(StatAlert[], GemFireVM) *************");
     }
@@ -1983,10 +1904,8 @@ public class AdminDistributedSystemJmxImpl
       DataSerializer.writeArrayList(notificationObjects, str);
       str.flush();
       arr = byteArrStr.toByteArray();
-    } catch(IOException ex) {
-      logger.warn(LocalizedMessage.create(
-          LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_AN_IOEXCEPTION_0,
-          ex.getLocalizedMessage()));
+    } catch (IOException ex) {
+      logger.warn(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystem_ENCOUNTERED_AN_IOEXCEPTION_0, ex.getLocalizedMessage()));
     }
 
     return arr;
@@ -1997,35 +1916,29 @@ public class AdminDistributedSystemJmxImpl
    * 
    * @param notificationObjects list of StatAlertNotification objects
    */
-  private void sendNotifications(ArrayList notificationObjects, 
-      ObjectName objName) {
+  private void sendNotifications(ArrayList notificationObjects, ObjectName objName) {
     try {
       if (logger.isDebugEnabled()) {
         logger.debug("AdminDistributedSystemJmxImpl#sendNotifications: sending {} notifications", notificationObjects.size());
       }
-      
+
       byte[] notifBytes = convertNotificationsDataToByteArray(notificationObjects);
-      if (notifBytes!=null) {
-        Notification notif = new Notification(NOTIF_STAT_ALERT,  
-            objName, // Pass the StatNotifications
+      if (notifBytes != null) {
+        Notification notif = new Notification(NOTIF_STAT_ALERT, objName, // Pass the StatNotifications
             notificationSequenceNumber.addAndGet(1), "StatAlert Notifications");
         notif.setUserData(notifBytes);
         this.modelMBean.sendNotification(notif);
       } // IOException handled and logged in convertNotificationsDataToByteArray
 
       StringBuffer buf = new StringBuffer();
-      for (int i = 0; i < notificationObjects.size(); i ++) {
-        StatAlertNotification not = (StatAlertNotification)
-            notificationObjects.get(i);
+      for (int i = 0; i < notificationObjects.size(); i++) {
+        StatAlertNotification not = (StatAlertNotification) notificationObjects.get(i);
         buf.append(not.toString(getAlertDefinition(not.getDefinitionId())));
       }
-//      sendEmail("Gemfire AlertNotification on Member:" + objName, buf.toString());
+      //      sendEmail("Gemfire AlertNotification on Member:" + objName, buf.toString());
       if (isEmailNotificationEnabled) {
-        String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_STATISTICS_ALERT_FROM_DISTRIBUTED_SYSTEM_MEMBER_0_STATISTICS_1.toLocalizedString(new Object[] {objName.getCanonicalName(), buf.toString()} );
-        sendEmail(
-            EML_SUBJ_PRFX_GFE_ALERT + EML_SUBJ_ITEM_GFE_DS + getName() 
-            + " <"+LocalizedStrings.AdminDistributedSystemJmxImpl_STATISTICS_ALERT_FOR_MEMBER.toLocalizedString()+">", 
-            mess);
+        String mess = LocalizedStrings.AdminDistributedSystemJmxImpl_STATISTICS_ALERT_FROM_DISTRIBUTED_SYSTEM_MEMBER_0_STATISTICS_1.toLocalizedString(new Object[] { objName.getCanonicalName(), buf.toString() });
+        sendEmail(EML_SUBJ_PRFX_GFE_ALERT + EML_SUBJ_ITEM_GFE_DS + getName() + " <" + LocalizedStrings.AdminDistributedSystemJmxImpl_STATISTICS_ALERT_FOR_MEMBER.toLocalizedString() + ">", mess);
       }
     } catch (javax.management.MBeanException e) {
       logger.error(e.getMessage(), e);
@@ -2048,7 +1961,7 @@ public class AdminDistributedSystemJmxImpl
       throw e;
     }
   }
-  
+
   /**
    * Sends an email to the configured recipients using configured email server.
    * The given message will be the email body. NOTE: the check whether email
@@ -2061,9 +1974,9 @@ public class AdminDistributedSystemJmxImpl
    *          message body of the email
    */
   private void sendEmail(String subject, String message) {
-	  if (mailManager == null) {
-	    mailManager = new MailManager(mailProps);
-	  }
+    if (mailManager == null) {
+      mailManager = new MailManager(mailProps);
+    }
     this.mailManager.sendEmail(subject, message);
   }
 
@@ -2092,41 +2005,36 @@ public class AdminDistributedSystemJmxImpl
    *          ClientMembershipMessage#CRASHED
    */
   @Override
-  public void processClientMembership(String senderId, String clientId,
-      String clientHost, int eventType) {
-    logger.info(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystemJmxImpl_PROCESSING_CLIENT_MEMBERSHIP_EVENT_0_FROM_1_FOR_2_RUNNING_ON_3, new String[] {ClientMembershipMessage.getEventTypeString(eventType), senderId, clientId, clientHost}));
+  public void processClientMembership(String senderId, String clientId, String clientHost, int eventType) {
+    logger.info(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystemJmxImpl_PROCESSING_CLIENT_MEMBERSHIP_EVENT_0_FROM_1_FOR_2_RUNNING_ON_3, new String[] { ClientMembershipMessage.getEventTypeString(eventType), senderId, clientId, clientHost }));
     try {
       SystemMemberJmx systemMemberJmx = null;
       CacheVm[] cacheVms = getCacheVms();
-      
+
       for (CacheVm cacheVm : cacheVms) {
-        if (cacheVm.getId().equals(senderId) && 
-            cacheVm instanceof CacheServerJmxImpl) {
+        if (cacheVm.getId().equals(senderId) && cacheVm instanceof CacheServerJmxImpl) {
           systemMemberJmx = (CacheServerJmxImpl) cacheVm;
           break;
         }
       }
-      
+
       if (systemMemberJmx == null) {
         SystemMember[] appVms = getSystemMemberApplications();
-        
+
         for (SystemMember appVm : appVms) {
-          if (appVm.getId().equals(senderId) && 
-              appVm instanceof SystemMemberJmxImpl) {
+          if (appVm.getId().equals(senderId) && appVm instanceof SystemMemberJmxImpl) {
             systemMemberJmx = (SystemMemberJmxImpl) appVm;
             break;
           }
         }
-        
+
       }
 
       if (systemMemberJmx != null) {
         systemMemberJmx.handleClientMembership(clientId, eventType);
       }
     } catch (AdminException e) {
-      logger.error(LocalizedMessage.create(
-          LocalizedStrings.AdminDistributedSystemJmxImpl_FAILED_TO_PROCESS_CLIENT_MEMBERSHIP_FROM_0_FOR_1,
-              new Object[] { senderId, clientId }), e);
+      logger.error(LocalizedMessage.create(LocalizedStrings.AdminDistributedSystemJmxImpl_FAILED_TO_PROCESS_CLIENT_MEMBERSHIP_FROM_0_FOR_1, new Object[] { senderId, clientId }), e);
       return;
     } catch (RuntimeOperationsException e) {
       logger.warn(e.getMessage(), e);//failed to send notification
@@ -2136,7 +2044,7 @@ public class AdminDistributedSystemJmxImpl
   public String getAlertLevelAsString() {
     return super.getAlertLevelAsString();
   }
-  
+
   public void setAlertLevelAsString(String level) {
     String newLevel = level != null ? level.trim() : null;
     try {
@@ -2156,11 +2064,11 @@ public class AdminDistributedSystemJmxImpl
   public void handleCacheCreateEvent(SystemMemberCacheEvent event) {
     String memberId = event.getMemberId();
     SystemMemberJmx systemMemberJmx = (SystemMemberJmx) findCacheOrAppVmById(memberId);
-    
+
     if (systemMemberJmx != null) {
       systemMemberJmx.handleCacheCreate(event);
     }
-    
+
   }
 
   /**
@@ -2173,11 +2081,11 @@ public class AdminDistributedSystemJmxImpl
   public void handleCacheCloseEvent(SystemMemberCacheEvent event) {
     String memberId = event.getMemberId();
     SystemMemberJmx systemMemberJmx = (SystemMemberJmx) findCacheOrAppVmById(memberId);
-    
+
     if (systemMemberJmx != null) {
       systemMemberJmx.handleCacheClose(event);
     }
-    
+
   }
 
   /**
@@ -2190,12 +2098,12 @@ public class AdminDistributedSystemJmxImpl
   public void handleRegionCreateEvent(SystemMemberRegionEvent event) {
     String memberId = event.getMemberId();
     SystemMemberJmx systemMemberJmx = (SystemMemberJmx) findCacheOrAppVmById(memberId);
-    
+
     if (systemMemberJmx != null) {
       systemMemberJmx.handleRegionCreate(event);
     }
-  }  
-  
+  }
+
   /**
    * Finds the member as per details in the given event object and passes on 
    * this event for handling the region loss.
@@ -2206,7 +2114,7 @@ public class AdminDistributedSystemJmxImpl
   public void handleRegionLossEvent(SystemMemberRegionEvent event) {
     String memberId = event.getMemberId();
     SystemMemberJmx systemMemberJmx = (SystemMemberJmx) findCacheOrAppVmById(memberId);
-    
+
     if (systemMemberJmx != null) {
       systemMemberJmx.handleRegionLoss(event);
     }
@@ -2220,22 +2128,22 @@ public class AdminDistributedSystemJmxImpl
   @Override
   public boolean getDisableAutoReconnect() {
     return getConfig().getDisableAutoReconnect();
-  }  
-  
+  }
+
 }
 
 class ProcessSystemwideStatAlertsNotification extends TimerTask {
   private StatAlertsAggregator aggregator;
-  
+
   ProcessSystemwideStatAlertsNotification(StatAlertsAggregator aggregator) {
     this.aggregator = aggregator;
   }
-  
+
   @Override
   public void run() {
     aggregator.processSystemwideNotifications();
   }
-  
+
 }
 
 /**
@@ -2259,33 +2167,32 @@ class CacheAndRegionListenerImpl implements SystemMemberCacheListener {
   CacheAndRegionListenerImpl(AdminDistributedSystemJmxImpl adminDSResource) {
     this.adminDS = adminDSResource;
   }
-  
+
   /**
    * See SystemMemberCacheListener#afterCacheClose(SystemMemberCacheEvent)
    */
   public void afterCacheClose(SystemMemberCacheEvent event) {
     adminDS.handleCacheCloseEvent(event);
   }
-  
+
   /**
    * See SystemMemberCacheListener#afterCacheCreate(SystemMemberCacheEvent)
    */
   public void afterCacheCreate(SystemMemberCacheEvent event) {
     adminDS.handleCacheCreateEvent(event);
   }
-  
+
   /**
    * See SystemMemberCacheListener#afterRegionCreate(SystemMemberCacheEvent)
    */
   public void afterRegionCreate(SystemMemberRegionEvent event) {
-    adminDS.handleRegionCreateEvent(event);    
+    adminDS.handleRegionCreateEvent(event);
   }
-  
+
   /**
    * See SystemMemberCacheListener#afterRegionLoss(SystemMemberCacheEvent)
    */
   public void afterRegionLoss(SystemMemberRegionEvent event) {
     adminDS.handleRegionLossEvent(event);
-  }  
+  }
 }
-

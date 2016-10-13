@@ -18,7 +18,7 @@ package org.apache.geode.management;
 
 import java.beans.ConstructorProperties;
 
-public class CompositeStats{
+public class CompositeStats {
   /**
    * 
    */
@@ -31,16 +31,13 @@ public class CompositeStats{
   private long connectionLifeTime; // is this total TTL??
 
   @ConstructorProperties(value = { "connectionStatsType", "connectionsOpened", "connectionsClosed", "connectionsAttempted", "connectionsFailed", "connectionLifeTime" })
-  public CompositeStats(String connectionStatsType,
-      long connectionsOpen, long connectionsClosed,
-      long connectionsAttempts, long connectionsFailures,
-      long connectionLifeTime) {
-    this.connectionStatsType  = connectionStatsType;
-    this.connectionsOpened    = connectionsOpen;
-    this.connectionsClosed    = connectionsClosed;
+  public CompositeStats(String connectionStatsType, long connectionsOpen, long connectionsClosed, long connectionsAttempts, long connectionsFailures, long connectionLifeTime) {
+    this.connectionStatsType = connectionStatsType;
+    this.connectionsOpened = connectionsOpen;
+    this.connectionsClosed = connectionsClosed;
     this.connectionsAttempted = connectionsAttempts;
-    this.connectionsFailed    = connectionsFailures;
-    this.connectionLifeTime   = connectionLifeTime;
+    this.connectionsFailed = connectionsFailures;
+    this.connectionLifeTime = connectionLifeTime;
   }
 
   /**
@@ -99,5 +96,4 @@ public class CompositeStats{
     return builder.toString();
   }
 
-  
 }

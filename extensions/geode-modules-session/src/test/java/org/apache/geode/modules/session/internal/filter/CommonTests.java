@@ -52,10 +52,8 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
   @Test
   public void testGetSession1() throws Exception {
     doFilter();
-    HttpSession session1 =
-        ((HttpServletRequest) getFilteredRequest()).getSession();
-    HttpSession session2 =
-        ((HttpServletRequest) getFilteredRequest()).getSession();
+    HttpSession session1 = ((HttpServletRequest) getFilteredRequest()).getSession();
+    HttpSession session2 = ((HttpServletRequest) getFilteredRequest()).getSession();
 
     assertSame("Session should be the same", session1, session2);
   }
@@ -84,8 +82,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     getFilteredRequest().setAttribute("foo", "bar");
 
     assertEquals("bar", getFilteredRequest().getAttribute("foo"));
-    assertNull("Unknown attribute should be null",
-        getFilteredRequest().getAttribute("baz"));
+    assertNull("Unknown attribute should be null", getFilteredRequest().getAttribute("baz"));
   }
 
   @Test
@@ -101,8 +98,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     doFilter();
 
     assertEquals("bar", getFilteredRequest().getAttribute("foo"));
-    assertNull("Unknown attribute should be null",
-        getFilteredRequest().getAttribute("baz"));
+    assertNull("Unknown attribute should be null", getFilteredRequest().getAttribute("baz"));
   }
 
   @Test
@@ -163,7 +159,6 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     String attr = (String) session.getAttribute("foo");
     assertNull("Attribute should be null but is " + attr, attr);
   }
-
 
   /**
    * Test that various methods throw the appropriate exception when the session is
@@ -350,10 +345,8 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     assertTrue("Event timeout", listener.await(1, TimeUnit.SECONDS));
     assertEquals(ListenerEventType.SESSION_ATTRIBUTE_ADDED, listener.getEvents().get(0));
-    assertEquals(ListenerEventType.SESSION_ATTRIBUTE_REPLACED,
-        listener.getEvents().get(1));
-    assertEquals(ListenerEventType.SESSION_ATTRIBUTE_REMOVED,
-        listener.getEvents().get(2));
+    assertEquals(ListenerEventType.SESSION_ATTRIBUTE_REPLACED, listener.getEvents().get(1));
+    assertEquals(ListenerEventType.SESSION_ATTRIBUTE_REMOVED, listener.getEvents().get(2));
   }
 
   /**
@@ -363,13 +356,10 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
   public void testHttpSessionBindingListener1() throws Exception {
     doFilter();
 
-    HttpSession session =
-        ((HttpServletRequest) getFilteredRequest()).getSession();
+    HttpSession session = ((HttpServletRequest) getFilteredRequest()).getSession();
 
-    HttpSessionBindingListenerImpl listener1 =
-        new HttpSessionBindingListenerImpl(2);
-    HttpSessionBindingListenerImpl listener2 =
-        new HttpSessionBindingListenerImpl(2);
+    HttpSessionBindingListenerImpl listener1 = new HttpSessionBindingListenerImpl(2);
+    HttpSessionBindingListenerImpl listener2 = new HttpSessionBindingListenerImpl(2);
 
     session.setAttribute("foo", listener1);
     session.setAttribute("foo", listener2);
@@ -381,19 +371,16 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     assertEquals("Event list size incorrect", 2, listener1.getEvents().size());
     assertEquals("Event list size incorrect", 2, listener2.getEvents().size());
     assertEquals(ListenerEventType.SESSION_VALUE_BOUND, listener1.getEvents().get(0));
-    assertEquals(ListenerEventType.SESSION_VALUE_UNBOUND,
-        listener1.getEvents().get(1));
+    assertEquals(ListenerEventType.SESSION_VALUE_UNBOUND, listener1.getEvents().get(1));
     assertEquals(ListenerEventType.SESSION_VALUE_BOUND, listener2.getEvents().get(0));
-    assertEquals(ListenerEventType.SESSION_VALUE_UNBOUND,
-        listener2.getEvents().get(1));
+    assertEquals(ListenerEventType.SESSION_VALUE_UNBOUND, listener2.getEvents().get(1));
   }
 
   @Test
   public void testGetId1() throws Exception {
     doFilter();
 
-    assertNotNull("Session Id should not be null",
-        ((HttpServletRequest) getFilteredRequest()).getSession().getId());
+    assertNotNull("Session Id should not be null", ((HttpServletRequest) getFilteredRequest()).getSession().getId());
   }
 
   /**
@@ -411,8 +398,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     doFilter();
 
-    assertEquals("Session Ids should be the same", sessionId,
-        ((HttpServletRequest) getFilteredRequest()).getSession().getId());
+    assertEquals("Session Ids should be the same", sessionId, ((HttpServletRequest) getFilteredRequest()).getSession().getId());
   }
 
   @Test
@@ -420,10 +406,8 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     doFilter();
 
     HttpServletRequest request = (HttpServletRequest) getFilteredRequest();
-    assertTrue("Session should have a non-zero creation time",
-        request.getSession().getCreationTime() > 0);
+    assertTrue("Session should have a non-zero creation time", request.getSession().getCreationTime() > 0);
   }
-
 
   /**
    * Test that multiple calls from the same client don't change the creation time.
@@ -440,8 +424,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     doFilter();
 
-    assertEquals("Session creation time should be the same", creationTime,
-        ((HttpServletRequest) getFilteredRequest()).getSession().getCreationTime());
+    assertEquals("Session creation time should be the same", creationTime, ((HttpServletRequest) getFilteredRequest()).getSession().getCreationTime());
   }
 
   @Test
@@ -453,8 +436,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     HttpServletRequest request = (HttpServletRequest) getFilteredRequest();
 
-    assertEquals("Request does not contain requested session ID", "999-GF",
-        request.getRequestedSessionId());
+    assertEquals("Request does not contain requested session ID", "999-GF", request.getRequestedSessionId());
   }
 
   @Test
@@ -462,10 +444,8 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     doFilter();
 
     HttpServletRequest request = (HttpServletRequest) getFilteredRequest();
-    assertTrue("Session should have a non-zero last access time",
-        request.getSession().getLastAccessedTime() > 0);
+    assertTrue("Session should have a non-zero last access time", request.getSession().getLastAccessedTime() > 0);
   }
-
 
   /**
    * Test that repeated accesses update the last accessed time
@@ -500,8 +480,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     Thread.sleep(50);
     doFilter();
 
-    assertTrue("Last access time should be changing",
-        request.getSession().getLastAccessedTime() > lastAccess);
+    assertTrue("Last access time should be changing", request.getSession().getLastAccessedTime() > lastAccess);
   }
 
   @Test
@@ -581,8 +560,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     HttpServletRequest request = (HttpServletRequest) getFilteredRequest();
     request.getSession();
 
-    assertFalse("Session ID should not be from cookie",
-        request.isRequestedSessionIdFromCookie());
+    assertFalse("Session ID should not be from cookie", request.isRequestedSessionIdFromCookie());
     assertTrue("Session ID should be from URL", request.isRequestedSessionIdFromURL());
   }
 
@@ -598,14 +576,13 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
   public static class RequestWrappingFilter implements Filter {
 
-    @Override public void init(final FilterConfig filterConfig) throws ServletException {
+    @Override
+    public void init(final FilterConfig filterConfig) throws ServletException {
 
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException
-    {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
       final HttpServletRequest httpRequest = (HttpServletRequest) request;
       httpRequest.getSession();
       httpRequest.setAttribute("original_session", httpRequest.getSession());
@@ -614,7 +591,8 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     }
 
-    @Override public void destroy() {
+    @Override
+    public void destroy() {
 
     }
   }

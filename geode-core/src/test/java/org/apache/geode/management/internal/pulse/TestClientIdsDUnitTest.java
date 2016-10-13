@@ -82,7 +82,8 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
 
   @Override
   public final void preSetUp() throws Exception {
-    this.helper = new ManagementTestBase(){};
+    this.helper = new ManagementTestBase() {
+    };
   }
 
   @Override
@@ -182,12 +183,7 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     Cache cache = createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory()
-        .addServer(host, port1.intValue()).setSubscriptionEnabled(false)
-        .setThreadLocalConnections(true).setMinConnections(1)
-        .setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1)
-        .setSubscriptionEnabled(true).setStatisticInterval(1000)
-        .create("CacheServerManagementDUnitTest");
+    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(false).setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1).setSubscriptionEnabled(true).setStatisticInterval(1000).create("CacheServerManagementDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -214,39 +210,36 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
    * @param vm
    */
   @SuppressWarnings("serial")
-  protected void verifyClientIds(final VM vm,
-      final DistributedMember serverMember, final int serverPort) {
-    SerializableRunnable verifyCacheServerRemote = new SerializableRunnable(
-        "Verify Cache Server Remote") {
+  protected void verifyClientIds(final VM vm, final DistributedMember serverMember, final int serverPort) {
+    SerializableRunnable verifyCacheServerRemote = new SerializableRunnable("Verify Cache Server Remote") {
       public void run() {
-        try {         
+        try {
           final WaitCriterion waitCriteria = new WaitCriterion() {
             @Override
             public boolean done() {
               CacheServerMXBean bean = null;
               try {
-                bean = MBeanUtil.getCacheServerMbeanProxy(
-                    serverMember, serverPort);             
-              if (bean != null) {               
-                  if( bean.getClientIds().length > 0){
+                bean = MBeanUtil.getCacheServerMbeanProxy(serverMember, serverPort);
+                if (bean != null) {
+                  if (bean.getClientIds().length > 0) {
                     return true;
                   }
-                } 
-              }catch (Exception e) {                 
-                LogWriterUtils.getLogWriter().info("exception occured " + e.getMessage() + CliUtil.stackTraceAsString((Throwable)e));
+                }
+              } catch (Exception e) {
+                LogWriterUtils.getLogWriter().info("exception occured " + e.getMessage() + CliUtil.stackTraceAsString((Throwable) e));
               }
               return false;
             }
+
             @Override
             public String description() {
               return "wait for getNumOfClients bean to complete and get results";
             }
           };
-          Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);          
-          
+          Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
+
           //Now it is sure that bean would be available
-          CacheServerMXBean bean = MBeanUtil.getCacheServerMbeanProxy(
-              serverMember, serverPort);
+          CacheServerMXBean bean = MBeanUtil.getCacheServerMbeanProxy(serverMember, serverPort);
           LogWriterUtils.getLogWriter().info("verifyClientIds = " + bean.getClientIds().length);
           assertEquals(true, bean.getClientIds().length > 0 ? true : false);
         } catch (Exception e) {

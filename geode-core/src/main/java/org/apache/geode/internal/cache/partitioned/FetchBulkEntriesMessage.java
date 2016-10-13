@@ -66,10 +66,9 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * @since GemFire 8.0
  */
-public final class FetchBulkEntriesMessage extends PartitionMessage
-  {
+public final class FetchBulkEntriesMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   private HashSet<Integer> bucketIds;
 
   private String regex;
@@ -78,12 +77,12 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
    * Map of bucket-id as key and set of keys as value.
    */
   private HashMap<Integer, HashSet> bucketKeys;
-  
-  private static final byte ALL_KEYS = (byte)0;
 
-  private static final byte KEY_LIST = (byte)1;
+  private static final byte ALL_KEYS = (byte) 0;
 
-  private static final byte REGEX = (byte)2;
+  private static final byte KEY_LIST = (byte) 1;
+
+  private static final byte REGEX = (byte) 2;
 
   private byte keys;
 
@@ -92,10 +91,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
   public FetchBulkEntriesMessage() {
   }
 
-  private FetchBulkEntriesMessage(InternalDistributedMember recipient,
-      int regionId, ReplyProcessor21 processor,
-      HashMap<Integer, HashSet> bucketKeys, HashSet<Integer> bucketIds,
-      String regex, boolean allowTombstones) {
+  private FetchBulkEntriesMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, HashMap<Integer, HashSet> bucketKeys, HashSet<Integer> bucketIds, String regex, boolean allowTombstones) {
     super(recipient, regionId, processor);
     this.bucketKeys = bucketKeys;
     this.bucketIds = bucketIds;
@@ -114,14 +110,10 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
    * @return the processor used to read the returned entries
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static FetchBulkEntriesResponse send(
-      InternalDistributedMember recipient, PartitionedRegion r,
-      HashMap<Integer, HashSet> bucketKeys, HashSet<Integer> bucketIds,
-      String regex, boolean allowTombstones) throws ForceReattemptException {
+  public static FetchBulkEntriesResponse send(InternalDistributedMember recipient, PartitionedRegion r, HashMap<Integer, HashSet> bucketKeys, HashSet<Integer> bucketIds, String regex, boolean allowTombstones) throws ForceReattemptException {
     Assert.assertTrue(recipient != null, "FetchBulkEntriesMessage NULL reply message");
     FetchBulkEntriesResponse p = new FetchBulkEntriesResponse(r.getSystem(), r, recipient);
-    FetchBulkEntriesMessage m = new FetchBulkEntriesMessage(recipient, r.getPRId(), p, bucketKeys,
-        bucketIds, regex, allowTombstones);
+    FetchBulkEntriesMessage m = new FetchBulkEntriesMessage(recipient, r.getPRId(), p, bucketKeys, bucketIds, regex, allowTombstones);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
@@ -131,21 +123,17 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime)
-      throws CacheException, ForceReattemptException
-  {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, ForceReattemptException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.debug("FetchBulkEntriesMessage operateOnRegion: {}", pr.getFullPath());
     }
 
-    FetchBulkEntriesReplyMessage.sendReply(pr, getSender(), getProcessorId(),
-        dm, this.bucketKeys, this.bucketIds, regex, this.allowTombstones, startTime);
+    FetchBulkEntriesReplyMessage.sendReply(pr, getSender(), getProcessorId(), dm, this.bucketKeys, this.bucketIds, regex, this.allowTombstones, startTime);
     return false;
   }
 
   @Override
-  protected void appendFields(StringBuffer buff)
-  {
+  protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
     buff.append("; bucketId=").append(this.bucketIds);
     buff.append("; recipient=").append(this.getRecipient());
@@ -156,8 +144,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.keys = DataSerializer.readByte(in);
     if (this.keys == KEY_LIST) {
@@ -170,8 +157,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeByte(this.keys, out);
     if (this.keys == KEY_LIST) {
@@ -182,9 +168,9 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
     DataSerializer.writeString(this.regex, out);
     DataSerializer.writePrimitiveBoolean(this.allowTombstones, out);
   }
-  
+
   public static final class FetchBulkEntriesReplyMessage extends ReplyMessage {
-    
+
     /** Whether this message is the last of a series of chunk responses */
     boolean lastInSeries;
     /** Array holding chunk of entries received */
@@ -206,9 +192,8 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
      */
     public FetchBulkEntriesReplyMessage() {
     }
-  
-    private FetchBulkEntriesReplyMessage(InternalDistributedMember dest,
-        int processorId, HeapDataOutputStream chunk, int msgNum, boolean lastInSeries) {
+
+    private FetchBulkEntriesReplyMessage(InternalDistributedMember dest, int processorId, HeapDataOutputStream chunk, int msgNum, boolean lastInSeries) {
       setRecipient(dest);
       setProcessorId(processorId);
       this.lastInSeries = lastInSeries;
@@ -216,11 +201,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
       this.msgNum = msgNum;
     }
 
-    public static void sendReply(PartitionedRegion pr,
-        final InternalDistributedMember recipient, final int processorId,
-        final DM dm, final HashMap<Integer, HashSet> bucketKeys,
-        final HashSet<Integer> bucketIds, String regex,
-        boolean allowTombstones, long startTime) throws ForceReattemptException {
+    public static void sendReply(PartitionedRegion pr, final InternalDistributedMember recipient, final int processorId, final DM dm, final HashMap<Integer, HashSet> bucketKeys, final HashSet<Integer> bucketIds, String regex, boolean allowTombstones, long startTime) throws ForceReattemptException {
 
       PartitionedRegionDataStore ds = pr.getDataStore();
       if (ds == null) {
@@ -242,10 +223,8 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
           failedBuckets.add(id);
         }
       }
-      
-      HeapDataOutputStream mos = new HeapDataOutputStream(
-          InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048,
-          recipient.getVersionObject());
+
+      HeapDataOutputStream mos = new HeapDataOutputStream(InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, recipient.getVersionObject());
       Iterator<BucketRegion> mapsIterator = maps.iterator();
       BucketRegion map = null;
       Iterator it = null;
@@ -275,8 +254,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
         try {
           map.acquireDestroyLock();
           lockAcquired = true;
-        }
-        catch (CancelException e) {
+        } catch (CancelException e) {
           if (logger.isDebugEnabled()) {
             logger.debug("sendReply: acquireDestroyLock failed due to cache closure, region = {}", map.getFullPath());
           }
@@ -289,16 +267,14 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
             if (regex == null) {
               it = new HashSet(map.keySet(allowTombstones)).iterator();
             } else {
-              it = map.getKeysWithInterest(InterestType.REGULAR_EXPRESSION,
-                  regex, allowTombstones).iterator();
+              it = map.getKeysWithInterest(InterestType.REGULAR_EXPRESSION, regex, allowTombstones).iterator();
             }
           }
 
           while (it.hasNext()) {
             Object key = it.next();
             VersionTagHolder clientEvent = new VersionTagHolder();
-            Object value = map.get(key, null, true, true, true, null,
-                clientEvent, allowTombstones);
+            Object value = map.get(key, null, true, true, true, null, clientEvent, allowTombstones);
 
             if (needToWriteBucketInfo) {
               DataSerializer.writePrimitiveInt(map.getId(), mos);
@@ -314,7 +290,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
             }
             DataSerializer.writeObject(value, mos);
             DataSerializer.writeObject(versionTag, mos);
-            entrySize = mos.size() - entrySize; 
+            entrySize = mos.size() - entrySize;
 
             // If no more space OR no more entries in bucket, write end-of-bucket marker.
             if ((mos.size() + entrySize) >= InitialImageOperation.CHUNK_SIZE_IN_BYTES || !it.hasNext()) {
@@ -332,8 +308,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
               boolean lastMsg = !(it.hasNext() || mapsIterator.hasNext());
 
               ++msgNum;
-              FetchBulkEntriesReplyMessage reply = new FetchBulkEntriesReplyMessage(
-                  recipient, processorId, mos, msgNum, lastMsg);
+              FetchBulkEntriesReplyMessage reply = new FetchBulkEntriesReplyMessage(recipient, processorId, mos, msgNum, lastMsg);
               if (lastMsg) {
                 reply.failedBucketIds = failedBuckets;
               }
@@ -380,8 +355,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
           }
         }
         ++msgNum;
-        FetchBulkEntriesReplyMessage reply = new FetchBulkEntriesReplyMessage(
-            recipient, processorId, mos, msgNum, true);
+        FetchBulkEntriesReplyMessage reply = new FetchBulkEntriesReplyMessage(recipient, processorId, mos, msgNum, true);
         reply.failedBucketIds = failedBuckets;
         Set failures = dm.putOutgoing(reply);
         if (failures != null && failures.size() > 0) {
@@ -408,8 +382,8 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
     @Override
     public void process(final DM dm, final ReplyProcessor21 p) {
       final long startTime = getTimestamp();
-      FetchBulkEntriesResponse processor = (FetchBulkEntriesResponse)p;
-  
+      FetchBulkEntriesResponse processor = (FetchBulkEntriesResponse) p;
+
       if (processor == null) {
         if (logger.isTraceEnabled(LogMarker.DM)) {
           logger.trace(LogMarker.DM, "FetchBulkEntriesReplyMessage processor not found");
@@ -422,11 +396,9 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
         logger.trace(LogMarker.DM, "{} processed {}", processor, this);
       }
 
-      dm.getStats().incReplyMessageTime(DistributionStats.getStatTime()
-          - startTime);
+      dm.getStats().incReplyMessageTime(DistributionStats.getStatTime() - startTime);
     }
-    
-   
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -435,35 +407,32 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
       DataSerializer.writeObjectAsByteArray(this.chunkStream, out);
       DataSerializer.writeHashSet(this.failedBucketIds, out);
     }
-    
+
     @Override
     public int getDSFID() {
       return PR_FETCH_BULK_ENTRIES_REPLY_MESSAGE;
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.lastInSeries = in.readBoolean();
       this.msgNum = DataSerializer.readPrimitiveInt(in);
       this.chunk = DataSerializer.readByteArray(in);
       this.failedBucketIds = DataSerializer.readHashSet(in);
     }
-    
+
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("FetchBulkEntriesReplyMessage ")
-        .append("processorid=").append(this.processorId);
-      if (getSender() != null) { 
+      sb.append("FetchBulkEntriesReplyMessage ").append("processorid=").append(this.processorId);
+      if (getSender() != null) {
         sb.append(",sender=").append(this.getSender());
       }
       sb.append(",lastInSeries=").append(lastInSeries);
       if (chunk != null) {
         sb.append(",size=").append(chunk.length);
-      }
-      else if (chunkStream != null) {
+      } else if (chunkStream != null) {
         sb.append(",size=").append(chunkStream.size());
       }
       if (getException() != null) {
@@ -472,39 +441,38 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
       return sb.toString();
     }
   }
- 
+
   /**
    * A processor to capture the value returned by {@link 
    * org.apache.geode.internal.cache.partitioned.FetchBulkEntriesMessage}
    * @since GemFire 8.0
    */
-  public static class FetchBulkEntriesResponse extends ReplyProcessor21  {
+  public static class FetchBulkEntriesResponse extends ReplyProcessor21 {
 
     private final PartitionedRegion pr;
 
     private final HashMap<Integer, HashMap<Object, Object>> returnValue;
     private final HashMap<Integer, HashMap<Object, VersionTag>> returnVersions = new HashMap();
-    private final Map<VersionSource,VersionSource> canonicalMembers = new ConcurrentHashMap<VersionSource,VersionSource>();
-    
+    private final Map<VersionSource, VersionSource> canonicalMembers = new ConcurrentHashMap<VersionSource, VersionSource>();
+
     /** lock used to synchronize chunk processing */
     private final Object endLock = new Object();
-    
+
     /** number of chunks processed */
     private volatile int chunksProcessed;
-    
+
     /** whether the last chunk has been processed */
     private volatile boolean lastChunkReceived;
 
     private HashSet<Integer> failedBucketIds;
 
     private ArrayList<Integer> receivedBuckets = new ArrayList<Integer>();
-    
+
     private int expectedChunks;
 
     private InternalDistributedMember recipient;
-    
-    public FetchBulkEntriesResponse(InternalDistributedSystem ds,
-        final PartitionedRegion pr, final InternalDistributedMember recipient) {
+
+    public FetchBulkEntriesResponse(InternalDistributedSystem ds, final PartitionedRegion pr, final InternalDistributedMember recipient) {
       super(ds, Collections.singleton(recipient));
       this.pr = pr;
       this.recipient = recipient;
@@ -513,11 +481,10 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
 
     void processChunkResponse(FetchBulkEntriesReplyMessage msg) {
       boolean doneProcessing = false;
-      
+
       if (msg.getException() != null) {
         process(msg);
-      }
-      else {
+      } else {
         boolean deserializingKey = true;
         try {
           ByteArrayInputStream byteStream = new ByteArrayInputStream(msg.chunk);
@@ -542,18 +509,15 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
                 if (versionTag != null) {
                   // Fix for 47260 - canonicalize the member ids to avoid an OOME
                   if (canonicalMembers.containsKey(versionTag.getMemberID())) {
-                    versionTag.setMemberID(canonicalMembers.get(versionTag
-                        .getMemberID()));
+                    versionTag.setMemberID(canonicalMembers.get(versionTag.getMemberID()));
                   } else {
-                    canonicalMembers.put(versionTag.getMemberID(),
-                        versionTag.getMemberID());
+                    canonicalMembers.put(versionTag.getMemberID(), versionTag.getMemberID());
                   }
                 }
 
                 synchronized (returnValue) {
                   HashMap<Object, Object> valueMap = returnValue.get(currentId);
-                  HashMap<Object, VersionTag> versionMap = returnVersions
-                      .get(currentId);
+                  HashMap<Object, VersionTag> versionMap = returnVersions.get(currentId);
                   if (valueMap != null) {
                     valueMap.put(key, value);
                   } else {
@@ -580,11 +544,11 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
                 break;
               }
             } // inner while
-          }  // outer while
+          } // outer while
 
-          synchronized(this.endLock) {
+          synchronized (this.endLock) {
             this.chunksProcessed = this.chunksProcessed + 1;
-  
+
             if (msg.lastInSeries) {
               this.expectedChunks = msg.msgNum;
               this.failedBucketIds = msg.failedBucketIds;
@@ -593,14 +557,12 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
               doneProcessing = true;
               this.lastChunkReceived = true;
             }
-  
+
             if (isDebugEnabled) {
-              logger.trace(LogMarker.DM, "{} chunksProcessed={}, lastChunkReceived={},done={}",
-                  this, this.chunksProcessed, this.lastChunkReceived, doneProcessing);
+              logger.trace(LogMarker.DM, "{} chunksProcessed={}, lastChunkReceived={},done={}", this, this.chunksProcessed, this.lastChunkReceived, doneProcessing);
             }
           }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           if (deserializingKey) {
             processException(new ReplyException(LocalizedStrings.FetchEntriesMessage_ERROR_DESERIALIZING_KEYS.toLocalizedString(), e));
           } else {
@@ -608,7 +570,7 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
           }
           checkIfDone(); // fix for hang in 41202
         }
-  
+
         // if all chunks have been received, wake up the waiting thread
         if (doneProcessing) {
           process(msg);
@@ -623,14 +585,12 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
     public BucketDump[] waitForEntries() throws ForceReattemptException {
       try {
         waitForRepliesUninterruptibly();
-      }
-      catch (ReplyException e) {
+      } catch (ReplyException e) {
         Throwable t = e.getCause();
         if (t instanceof CancelException) {
           logger.debug("FetchBulkEntriesResponse got remote cancellation; forcing reattempt. {}", t.getMessage(), t);
           throw new ForceReattemptException(LocalizedStrings.FetchEntriesMessage_FETCHKEYSRESPONSE_GOT_REMOTE_CANCELLATION_FORCING_REATTEMPT.toLocalizedString(), t);
-        }
-        else if (t instanceof ForceReattemptException) {
+        } else if (t instanceof ForceReattemptException) {
           // Not sure this is necessary, but it is possible for
           // FetchBulkEntriesMessage to marshal a ForceReattemptException, so...
           throw new ForceReattemptException(LocalizedStrings.FetchEntriesMessage_PEER_REQUESTS_REATTEMPT.toLocalizedString(), t);
@@ -644,12 +604,11 @@ public final class FetchBulkEntriesMessage extends PartitionMessage
       BucketDump[] dumps = new BucketDump[this.receivedBuckets.size()];
       for (int i = 0; i < this.receivedBuckets.size(); i++) {
         int id = this.receivedBuckets.get(i);
-        dumps[i] = new BucketDump(id, recipient, null, returnValue.get(id),
-            returnVersions.get(id));
+        dumps[i] = new BucketDump(id, recipient, null, returnValue.get(id), returnVersions.get(id));
       }
       return dumps;
     }
-    
+
     public HashSet<Integer> getFailedBucketIds() {
       return this.failedBucketIds;
     }

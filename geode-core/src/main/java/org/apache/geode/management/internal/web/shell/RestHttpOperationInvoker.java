@@ -64,7 +64,7 @@ import org.springframework.web.util.UriTemplate;
 public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker implements Initable {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   protected static final String ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX = "vf.gf.env.";
   protected static final String RESOURCES_REQUEST_PARAMETER = "resources";
 
@@ -101,7 +101,7 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    * @see org.apache.geode.management.internal.web.domain.LinkIndex
    */
-  public RestHttpOperationInvoker(final LinkIndex linkIndex, final Gfsh gfsh, Map<String,String> securityProperties) {
+  public RestHttpOperationInvoker(final LinkIndex linkIndex, final Gfsh gfsh, Map<String, String> securityProperties) {
     this(linkIndex, gfsh, CliStrings.CONNECT__DEFAULT_BASE_URL, securityProperties);
   }
 
@@ -118,7 +118,7 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
    * @see org.apache.geode.management.internal.web.domain.LinkIndex
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    */
-  public RestHttpOperationInvoker(final LinkIndex linkIndex, final Gfsh gfsh, final String baseUrl, Map<String,String> securityProperties) {
+  public RestHttpOperationInvoker(final LinkIndex linkIndex, final Gfsh gfsh, final String baseUrl, Map<String, String> securityProperties) {
     super(gfsh, baseUrl, securityProperties);
     assertNotNull(linkIndex, "The Link Index resolving commands to REST API web service endpoints cannot be null!");
     this.linkIndex = linkIndex;
@@ -139,24 +139,22 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
 
     if (pingLink != null) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Scheduling periodic HTTP ping requests to monitor the availability of the GemFire Manager HTTP service @ ({})",
-            getBaseUrl());
+        logger.debug("Scheduling periodic HTTP ping requests to monitor the availability of the GemFire Manager HTTP service @ ({})", getBaseUrl());
       }
 
       getExecutorService().scheduleAtFixedRate(new Runnable() {
         public void run() {
           try {
-            org.springframework.http.client.ClientHttpRequest httpRequest = getRestTemplate().getRequestFactory()
-              .createRequest(pingLink.getHref(), HttpMethod.HEAD);
+            org.springframework.http.client.ClientHttpRequest httpRequest = getRestTemplate().getRequestFactory().createRequest(pingLink.getHref(), HttpMethod.HEAD);
 
             httpRequest.getHeaders().set(HttpHeader.USER_AGENT.getName(), USER_AGENT_HTTP_REQUEST_HEADER_VALUE);
             httpRequest.getHeaders().setAccept(getAcceptableMediaTypes());
             httpRequest.getHeaders().setContentLength(0l);
 
-            if(securityProperties != null){
+            if (securityProperties != null) {
               Iterator<Entry<String, String>> it = securityProperties.entrySet().iterator();
-              while(it.hasNext()){
-                Entry<String,String> entry= it.next();
+              while (it.hasNext()) {
+                Entry<String, String> entry = it.next();
                 httpRequest.getHeaders().add(entry.getKey(), entry.getValue());
               }
             }
@@ -164,26 +162,20 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
             ClientHttpResponse httpResponse = httpRequest.execute();
 
             if (HttpStatus.NOT_FOUND.equals(httpResponse.getStatusCode())) {
-              throw new IOException(String.format("The HTTP service at URL (%1$s) could not be found!",
-                pingLink.getHref()));
+              throw new IOException(String.format("The HTTP service at URL (%1$s) could not be found!", pingLink.getHref()));
+            } else if (!HttpStatus.OK.equals(httpResponse.getStatusCode())) {
+              printDebug("Received unexpected HTTP status code (%1$d - %2$s) for HTTP request (%3$s).", httpResponse.getRawStatusCode(), httpResponse.getStatusText(), pingLink.getHref());
             }
-            else if (!HttpStatus.OK.equals(httpResponse.getStatusCode())) {
-              printDebug("Received unexpected HTTP status code (%1$d - %2$s) for HTTP request (%3$s).",
-                httpResponse.getRawStatusCode(), httpResponse.getStatusText(), pingLink.getHref());
-            }
-          }
-          catch (IOException e) {
+          } catch (IOException e) {
             printDebug("An error occurred while connecting to the Manager's HTTP service: %1$s: ", e.getMessage());
             getGfsh().notifyDisconnect(RestHttpOperationInvoker.this.toString());
             stop();
           }
         }
       }, DEFAULT_INITIAL_DELAY, DEFAULT_PERIOD, DEFAULT_TIME_UNIT);
-    }
-    else {
+    } else {
       if (logger.isDebugEnabled()) {
-        logger.debug("The Link to the GemFire Manager web service endpoint @ ({}) to monitor availability was not found!",
-            getBaseUrl());
+        logger.debug("The Link to the GemFire Manager web service endpoint @ ({}) to monitor availability was not found!", getBaseUrl());
       }
     }
 
@@ -291,8 +283,7 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
     }
 
     if (linksFound.isEmpty()) {
-      throw new RestApiCallForCommandNotFoundException(String.format("No REST API call for command (%1$s) was found!",
-        command.getInput()));
+      throw new RestApiCallForCommandNotFoundException(String.format("No REST API call for command (%1$s) was found!", command.getInput()));
     }
 
     return (linksFound.size() > 1 ? resolveLink(command, linksFound) : linksFound.get(0));
@@ -314,8 +305,7 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   protected Link resolveLink(final CommandRequest command, final List<Link> links) {
     // NOTE, Gfsh's ParseResult contains a Map entry for all command options whether or not the user set the option
     // with a value on the command-line, argh!
-    Map<String, String> commandParametersCopy = CollectionUtils.removeKeys(
-      new HashMap<>(command.getParameters()), NoValueFilter.INSTANCE);
+    Map<String, String> commandParametersCopy = CollectionUtils.removeKeys(new HashMap<>(command.getParameters()), NoValueFilter.INSTANCE);
 
     Link resolvedLink = null;
 
@@ -338,8 +328,7 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
     }
 
     if (resolvedLink == null) {
-      throw new RestApiCallForCommandNotFoundException(String.format("No REST API call for command (%1$s) was found!",
-        command.getInput()));
+      throw new RestApiCallForCommandNotFoundException(String.format("No REST API call for command (%1$s) was found!", command.getInput()));
     }
 
     return resolvedLink;
@@ -366,11 +355,9 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
       ResponseEntity<String> response = send(createHttpRequest(command), String.class, command.getParameters());
 
       return response.getBody();
-    }
-    catch (RestApiCallForCommandNotFoundException e) {
+    } catch (RestApiCallForCommandNotFoundException e) {
       return simpleProcessCommand(command, e);
-    }
-    catch (ResourceAccessException e) {
+    } catch (ResourceAccessException e) {
       return handleResourceAccessException(e);
     }
   }
@@ -389,8 +376,7 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
    */
   protected String simpleProcessCommand(final CommandRequest command, final RestApiCallForCommandNotFoundException e) {
     if (getHttpOperationInvoker() != null) {
-      printWarning("WARNING - No REST API web service endpoint (URI) exists for command (%1$s); using the non-RESTful, simple URI.",
-        command.getName());
+      printWarning("WARNING - No REST API web service endpoint (URI) exists for command (%1$s); using the non-RESTful, simple URI.", command.getName());
 
       return String.valueOf(getHttpOperationInvoker().processCommand(command));
     }

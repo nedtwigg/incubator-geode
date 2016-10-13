@@ -48,9 +48,9 @@ public class DistTXPersistentDebugDUnitTest extends DistTXDebugDUnitTest {
         TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = true;
         return null;
       }
-    }); 
+    });
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(new SerializableCallable() {
@@ -60,43 +60,41 @@ public class DistTXPersistentDebugDUnitTest extends DistTXDebugDUnitTest {
         TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = false;
         return null;
       }
-    }); 
+    });
   }
-  
+
   protected void createPesistentPR(Object[] attributes) {
     dataStore1.invoke(DistTXPersistentDebugDUnitTest.class, "createPersistentPR", attributes);
     dataStore2.invoke(DistTXPersistentDebugDUnitTest.class, "createPersistentPR", attributes);
-//    dataStore3.invoke(TxPersistentDebugDUnit.class, "createPR", attributes);
-//    // make Local max memory = o for accessor
-//    attributes[2] = new Integer(0);
-//    accessor.invoke(TxPersistentDebugDUnit.class, "createPR", attributes);
+    //    dataStore3.invoke(TxPersistentDebugDUnit.class, "createPR", attributes);
+    //    // make Local max memory = o for accessor
+    //    attributes[2] = new Integer(0);
+    //    accessor.invoke(TxPersistentDebugDUnit.class, "createPR", attributes);
   }
-  
+
   public static void createPersistentPR(String regionName) {
     assertNotNull(basicGetCache());
     basicGetCache().createRegion(regionName, getPersistentPRAttributes(1, -1, basicGetCache(), 113, true));
   }
-  
-  protected static RegionAttributes getPersistentPRAttributes(final int redundancy, final int recoveryDelay,
-      Cache cache, int numBuckets, boolean synchronous) {
-        DiskStore ds = cache.findDiskStore("disk");
-        if(ds == null) {
-          ds = cache.createDiskStoreFactory()
-          .setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy);
-        paf.setRecoveryDelay(recoveryDelay);
-        paf.setTotalNumBuckets(numBuckets);
-        paf.setLocalMaxMemory(500);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        af.setDiskSynchronous(synchronous);
-        RegionAttributes attr = af.create();
-        return attr;
-      }
+
+  protected static RegionAttributes getPersistentPRAttributes(final int redundancy, final int recoveryDelay, Cache cache, int numBuckets, boolean synchronous) {
+    DiskStore ds = cache.findDiskStore("disk");
+    if (ds == null) {
+      ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+    }
+    AttributesFactory af = new AttributesFactory();
+    PartitionAttributesFactory paf = new PartitionAttributesFactory();
+    paf.setRedundantCopies(redundancy);
+    paf.setRecoveryDelay(recoveryDelay);
+    paf.setTotalNumBuckets(numBuckets);
+    paf.setLocalMaxMemory(500);
+    af.setPartitionAttributes(paf.create());
+    af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+    af.setDiskStoreName("disk");
+    af.setDiskSynchronous(synchronous);
+    RegionAttributes attr = af.create();
+    return attr;
+  }
 
   @Test
   public void testBasicDistributedTX() throws Exception {

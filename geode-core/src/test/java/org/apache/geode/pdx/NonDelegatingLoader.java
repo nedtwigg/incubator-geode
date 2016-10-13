@@ -26,28 +26,27 @@ import org.apache.geode.internal.Version;
 
 class NonDelegatingLoader extends ClassLoader {
 
-  
   public NonDelegatingLoader(ClassLoader parent) {
     super(parent);
   }
 
   @Override
   public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-    if(!name.contains("SeparateClassloaderPdx")) {
+    if (!name.contains("SeparateClassloaderPdx")) {
       return super.loadClass(name, resolve);
     }
     URL url = super.getResource(name.replace('.', File.separatorChar) + ".class");
-    if(url == null) {
+    if (url == null) {
       throw new ClassNotFoundException();
     }
     HeapDataOutputStream hoas = new HeapDataOutputStream(Version.CURRENT);
     InputStream classStream;
     try {
       classStream = url.openStream();
-      while(true) {
+      while (true) {
         byte[] chunk = new byte[1024];
         int read = classStream.read(chunk);
-        if(read < 0) {
+        if (read < 0) {
           break;
         }
         hoas.write(chunk, 0, read);
@@ -55,12 +54,12 @@ class NonDelegatingLoader extends ClassLoader {
     } catch (IOException e) {
       throw new ClassNotFoundException("Error reading class", e);
     }
-    
+
     Class clazz = defineClass(name, hoas.toByteBuffer(), null);
-    if(resolve) {
+    if (resolve) {
       resolveClass(clazz);
     }
     return clazz;
   }
-  
+
 }

@@ -29,7 +29,7 @@ import org.apache.geode.cache.RegionAttributes;
  * out to the user creating the region and the region creation will fail.
  */
 public interface RegionListener {
-  
+
   /**
    * Invoked before a region is created. This callback is allowed to modify the region
    * attributes before the region is created. Note that it's generally a bad idea to modify

@@ -34,8 +34,7 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
  * Function to get subscription-queue-size
  *
  */
-public class GetSubscriptionQueueSizeFunction extends FunctionAdapter implements
-InternalEntity {
+public class GetSubscriptionQueueSizeFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -43,7 +42,7 @@ InternalEntity {
   public void execute(FunctionContext context) {
     final Cache cache = CliUtil.getCacheIfExists();
     final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
-    String args[] = (String []) context.getArguments();
+    String args[] = (String[]) context.getArguments();
     String durableClientId = null, cqName = null;
     SubscriptionQueueSizeResult result = new SubscriptionQueueSizeResult(memberNameOrId);
 
@@ -62,7 +61,7 @@ InternalEntity {
             if (cqService != null) {
               CqQuery cqQuery = cqService.getClientCqFromServer(cacheClientProxy.getProxyID(), cqName);
               if (cqQuery != null) {
-                CqQueryVsdStats cqVsdStats = ((InternalCqQuery)cqQuery).getVsdStats();
+                CqQueryVsdStats cqVsdStats = ((InternalCqQuery) cqQuery).getVsdStats();
 
                 if (cqVsdStats != null) {
                   long queueSize = cqVsdStats.getNumHAQueuedEvents();

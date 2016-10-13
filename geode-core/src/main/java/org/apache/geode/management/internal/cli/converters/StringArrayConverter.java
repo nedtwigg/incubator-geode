@@ -30,25 +30,21 @@ import org.apache.geode.management.internal.cli.MultipleValueAdapter;
  * 
  * 
  */
-public class StringArrayConverter extends MultipleValueAdapter<String[]>{
+public class StringArrayConverter extends MultipleValueAdapter<String[]> {
 
   @Override
-  public String[] convertFromText(String[] value, Class<?> targetType,
-      String context) {
+  public String[] convertFromText(String[] value, Class<?> targetType, String context) {
     return value;
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String[] existingData, String context,
-      MethodTarget target) {
+  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String[] existingData, String context, MethodTarget target) {
     return false;
   }
 
   @Override
   public boolean supports(Class<?> type, String optionContext) {
-    if (String[].class.isAssignableFrom(type)
-        && !optionContext.equals(ConverterHint.DIRS)) {
+    if (String[].class.isAssignableFrom(type) && !optionContext.equals(ConverterHint.DIRS)) {
       return true;
     } else {
       return false;

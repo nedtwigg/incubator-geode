@@ -28,6 +28,7 @@ import java.util.*;
  */
 public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFactory {
   private boolean closed;
+
   /**
    * Create a factory given its persistence attributes.
    */
@@ -39,7 +40,7 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
    * Contains all the unclosed queues that have been created by this factory.
    */
   private final ArrayList queues = new ArrayList();
-  
+
   public ReliableMessageQueue create(DistributedRegion region) {
     if (this.closed) {
       throw new IllegalStateException(LocalizedStrings.ReliableMessageQueueFactoryImpl_RELIABLE_MESSAGE_QUEUE_IS_CLOSED.toLocalizedString());
@@ -50,7 +51,7 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
       return q;
     }
   }
-  
+
   public void close(boolean force) {
     // @todo darrel: nyi
     if (!force) {
@@ -73,50 +74,55 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
    */
   protected void add(DistributedRegion r, ReliableDistributionData data, Set roles) {
     QueuedRegionData qrd = null;
-    synchronized(this.regionMap) {
-      qrd = (QueuedRegionData)this.regionMap.get(r);
+    synchronized (this.regionMap) {
+      qrd = (QueuedRegionData) this.regionMap.get(r);
     }
     qrd.add(r, data, roles);
     r.getCachePerfStats().incReliableQueuedOps(data.getOperationCount() * roles.size());
   }
+
   public Set getQueuingRoles(DistributedRegion r) {
     QueuedRegionData qrd = null;
-    synchronized(this.regionMap) {
-      qrd = (QueuedRegionData)this.regionMap.get(r);
+    synchronized (this.regionMap) {
+      qrd = (QueuedRegionData) this.regionMap.get(r);
     }
     return qrd.getQueuingRoles(r);
   }
+
   protected boolean roleReady(DistributedRegion r, Role role) {
     QueuedRegionData qrd = null;
-    synchronized(this.regionMap) {
-      qrd = (QueuedRegionData)this.regionMap.get(r);
+    synchronized (this.regionMap) {
+      qrd = (QueuedRegionData) this.regionMap.get(r);
     }
     return qrd.roleReady(r, role);
   }
+
   /**
    * Initializes data queuing for the given region
    */
   protected void init(DistributedRegion r) {
     QueuedRegionData qrd = new QueuedRegionData();
-    synchronized(this.regionMap) {
+    synchronized (this.regionMap) {
       Object old = this.regionMap.put(r, qrd);
       if (old != null) {
-        throw new IllegalStateException(LocalizedStrings.ReliableMessageQueueFactoryImpl_UNEXPECTED_QUEUEDREGIONDATA_0_FOR_REGION_1.toLocalizedString(new Object[] {old, r}));
+        throw new IllegalStateException(LocalizedStrings.ReliableMessageQueueFactoryImpl_UNEXPECTED_QUEUEDREGIONDATA_0_FOR_REGION_1.toLocalizedString(new Object[] { old, r }));
       }
     }
   }
+
   /**
    * Removes any data queued for the given region
    */
   protected void destroy(DistributedRegion r) {
     QueuedRegionData qrd = null;
-    synchronized(this.regionMap) {
-      qrd = (QueuedRegionData)this.regionMap.remove(r);
+    synchronized (this.regionMap) {
+      qrd = (QueuedRegionData) this.regionMap.remove(r);
     }
     if (qrd != null) {
       qrd.destroy(r);
     }
   }
+
   /**
    * Removes a previously created queue from this factory.
    */
@@ -132,30 +138,37 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
    */
   public class Queue implements ReliableMessageQueue {
     private final DistributedRegion r;
-    
+
     Queue(DistributedRegion r) {
       this.r = r;
       init(this.r);
     }
+
     public DistributedRegion getRegion() {
       return this.r;
     }
+
     public void add(ReliableDistributionData data, Set roles) {
       ReliableMessageQueueFactoryImpl.this.add(this.r, data, roles);
     }
+
     public Set getQueuingRoles() {
       return ReliableMessageQueueFactoryImpl.this.getQueuingRoles(this.r);
     }
+
     public boolean roleReady(Role role) {
       return ReliableMessageQueueFactoryImpl.this.roleReady(this.r, role);
     }
+
     public void destroy() {
       ReliableMessageQueueFactoryImpl.this.destroy(this.r);
     }
+
     public void close() {
       removeQueue(this);
     }
   }
+
   /**
    * Used to organize all the queued data for a region.
    */
@@ -172,8 +185,8 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
       synchronized (this) {
         Iterator it = roles.iterator();
         while (it.hasNext()) {
-          Role role = (Role)it.next();
-          List l = (List)this.roleMap.get(role);
+          Role role = (Role) it.next();
+          List l = (List) this.roleMap.get(role);
           if (l == null) {
             l = new ArrayList();
             this.roleMap.put(role, l);
@@ -182,14 +195,14 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
         }
       }
     }
-    
+
     protected Set getQueuingRoles(DistributedRegion r) {
       Set result = null;
       synchronized (this) {
         Iterator it = this.roleMap.entrySet().iterator();
         while (it.hasNext()) {
-          Map.Entry me = (Map.Entry)it.next();
-          List l = (List)me.getValue();
+          Map.Entry me = (Map.Entry) it.next();
+          List l = (List) me.getValue();
           if (l != null && !l.isEmpty()) {
             // found a role with a non-empty list of operations so add to result
             if (result == null) {
@@ -201,11 +214,11 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
       }
       return result;
     }
-    
+
     protected boolean roleReady(DistributedRegion r, Role role) {
       List l = null;
       synchronized (this) {
-        l = (List)this.roleMap.get(role);
+        l = (List) this.roleMap.get(role);
       }
       if (l != null) {
         // @todo darrel: do this in a background thread
@@ -218,7 +231,7 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
       }
       return true;
     }
-    
+
     /**
      * Blows away all the data in this object.
      */

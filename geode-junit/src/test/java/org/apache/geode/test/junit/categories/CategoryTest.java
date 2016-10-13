@@ -153,16 +153,15 @@ public class CategoryTest {
 
   @RunWith(Categories.class)
   @Categories.IncludeCategory(CategoryOne.class)
-  @Suite.SuiteClasses({
-          ClassOneMethodNone.class, // 1
-          ClassOneMethodTwo.class, // 2
-          ClassTwoMethodTwo.class, // 3
-          ClassNoneMethodOne.class, // 4
-          ClassNoneMethodTwo.class, // 5
-          ClassTwoMethodOne.class, // 6
-          ClassOneMethodOne.class, // 7
-          ClassOneAndTwoMethodNone.class, // 8
-          ClassNoneMethodOneAndTwo.class // 9
+  @Suite.SuiteClasses({ ClassOneMethodNone.class, // 1
+      ClassOneMethodTwo.class, // 2
+      ClassTwoMethodTwo.class, // 3
+      ClassNoneMethodOne.class, // 4
+      ClassNoneMethodTwo.class, // 5
+      ClassTwoMethodOne.class, // 6
+      ClassOneMethodOne.class, // 7
+      ClassOneAndTwoMethodNone.class, // 8
+      ClassNoneMethodOneAndTwo.class // 9
   })
   public static class CategoryTestSuite {
   }

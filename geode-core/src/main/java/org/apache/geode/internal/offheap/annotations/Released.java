@@ -38,10 +38,7 @@ import java.lang.annotation.Target;
  * 
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.PARAMETER,
-              ElementType.METHOD,
-              ElementType.LOCAL_VARIABLE,
-              ElementType.FIELD})
+@Target({ ElementType.PARAMETER, ElementType.METHOD, ElementType.LOCAL_VARIABLE, ElementType.FIELD })
 @Documented
 public @interface Released {
   OffHeapIdentifier[] value() default DEFAULT;

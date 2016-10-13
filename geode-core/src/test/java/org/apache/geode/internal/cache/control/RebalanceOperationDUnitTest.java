@@ -102,7 +102,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
   private static final long MAX_WAIT = 60;
-  
+
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(new SerializableRunnable() {
@@ -119,20 +119,19 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
   public void testRecoverRedundancySimulation() {
     recoverRedundancy(true);
   }
-   
+
   @Test
   public void testRecoverRedundancy() {
     recoverRedundancy(false);
   }
-  
+
   public void recoverRedundancy(final boolean simulate) {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -144,13 +143,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in only 1 VM
     vm0.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
@@ -162,7 +161,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         region.put(Integer.valueOf(6), "A");
       }
     });
-    
+
     SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
 
       public void run() {
@@ -170,23 +169,23 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(6, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(6,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(6, details.getLowRedundancyBucketCount());
       }
     };
-    
+
     //make sure we can tell that the buckets have low redundancy
     vm0.invoke(checkLowRedundancy);
 
     //Create the region in the other VM (should have no effect)
     vm1.invoke(createPrRegion);
-    
+
     //Make sure we still have low redundancy
     vm0.invoke(checkLowRedundancy);
-    
+
     //Now simulate a rebalance
     vm0.invoke(new SerializableRunnable("simulateRebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -202,21 +201,21 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(3, details.getPrimaryTransfersCompleted());
         assertEquals(0, details.getBucketTransferBytes());
         assertEquals(0, details.getBucketTransfersCompleted());
-        
+
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(2, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(6, memberDetails.getBucketCount());
           assertEquals(3, memberDetails.getPrimaryCount());
         }
-        
-        if(!simulate) {
+
+        if (!simulate) {
           verifyStats(manager, results);
         }
       }
     });
 
-    if(!simulate) {
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkLowRedundancy") {
 
         public void run() {
@@ -224,8 +223,8 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Region region = cache.getRegion("region1");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
           assertEquals(6, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
         }
       };
 
@@ -236,7 +235,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       vm0.invoke(checkLowRedundancy);
     }
   }
-  
+
   /** Manual test.*/
   @Ignore
   @Test
@@ -248,8 +247,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm3 = host.getVM(3);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -261,23 +259,23 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in only 1 VM
     vm0.invoke(createPrRegion);
     vm3.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
-        for(int i =0; i < 500; i++) {
+        for (int i = 0; i < 500; i++) {
           region.put(Integer.valueOf(i), "A");
         }
       }
     });
-    
+
     SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
 
       public void run() {
@@ -285,31 +283,29 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(113, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(113,details.getLowRedundancyBucketCount());
-      }
-    };
-    
-    //make sure we can tell that the buckets have low redundancy
-    vm0.invoke(checkLowRedundancy);
-    
-    SerializableRunnable closePrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
-        disconnectFromDS();
-//        Cache cache = getCache();
-//        Region region = cache.getRegion("region1");
-//        region.localDestroyRegion();
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(113, details.getLowRedundancyBucketCount());
       }
     };
 
-    for(int i =0; i < 50; i++) {
+    //make sure we can tell that the buckets have low redundancy
+    vm0.invoke(checkLowRedundancy);
+
+    SerializableRunnable closePrRegion = new SerializableRunnable("createRegion") {
+      public void run() {
+        disconnectFromDS();
+        //        Cache cache = getCache();
+        //        Region region = cache.getRegion("region1");
+        //        region.localDestroyRegion();
+      }
+    };
+
+    for (int i = 0; i < 50; i++) {
       long start = System.nanoTime();
       //Create the region in the other VM (should have no effect)
       vm1.invoke(createPrRegion);
       vm2.invoke(createPrRegion);
 
-      
       //Now simulate a rebalance
       vm1.invoke(new SerializableRunnable("simulateRebalance") {
 
@@ -317,7 +313,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Cache cache = getCache();
           ResourceManager manager = cache.getResourceManager();
           RebalanceResults results = doRebalance(false, manager);
-//          assertIndexDetailsEquals(113, results.getTotalBucketCreatesCompleted());
+          //          assertIndexDetailsEquals(113, results.getTotalBucketCreatesCompleted());
         }
       });
 
@@ -332,256 +328,253 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
   public void testEnforceIP() {
     enforceIp(false);
   }
-  
+
   @Test
   public void testEnforceIPSimulation() {
     enforceIp(true);
   }
-  
+
   public void enforceIp(final boolean simulate) {
     Invoke.invokeInEveryVM(new SerializableRunnable() {
       public void run() {
         Properties props = new Properties();
         props.setProperty(ENFORCE_UNIQUE_HOST, "true");
-        getSystem(props); 
+        getSystem(props);
       }
     });
     try {
-    Host host = Host.getHost(0);
-    VM vm0 = host.getVM(0);
-    VM vm1 = host.getVM(1);
+      Host host = Host.getHost(0);
+      VM vm0 = host.getVM(0);
+      VM vm1 = host.getVM(1);
 
-    SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(-1);
-        paf.setStartupRecoveryDelay(-1);
-        PartitionAttributes prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        cache.createRegion("region1", attr.create());
-      }
-    };
-    
-    //Create the region in only 1 VM
-    vm0.invoke(createPrRegion);
-    
-    //Create some buckets
-    vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region1");
-        region.put(Integer.valueOf(1), "A");
-        region.put(Integer.valueOf(2), "A");
-        region.put(Integer.valueOf(3), "A");
-        region.put(Integer.valueOf(4), "A");
-        region.put(Integer.valueOf(5), "A");
-        region.put(Integer.valueOf(6), "A");
-      }
-    });
-    
-    SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
-
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region1");
-        PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
-        assertEquals(6, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(6,details.getLowRedundancyBucketCount());
-      }
-    };
-    
-    //make sure we can tell that the buckets have low redundancy
-    vm0.invoke(checkLowRedundancy);
-
-    //Create the region in the other VM (should have no effect)
-    vm1.invoke(createPrRegion);
-    
-    //Make sure we still have low redundancy
-    vm0.invoke(checkLowRedundancy);
-    
-    //Now simulate a rebalance
-    vm0.invoke(new SerializableRunnable("simulateRebalance") {
-      
-      public void run() {
-        Cache cache = getCache();
-        ResourceManager manager = cache.getResourceManager();
-        RebalanceResults results = doRebalance(simulate, manager);
-        assertEquals(0, results.getTotalBucketCreatesCompleted());
-        assertEquals(0, results.getTotalPrimaryTransfersCompleted());
-        //We actually *will* transfer buckets, because that improves
-        //the balance
-        assertEquals(3, results.getTotalBucketTransfersCompleted());
-//        assertIndexDetailsEquals(0, results.getTotalBucketTransferBytes());
-        Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
-        assertEquals(1, detailSet.size());
-        PartitionRebalanceInfo details = detailSet.iterator().next();
-        assertEquals(0, details.getBucketCreatesCompleted());
-        assertEquals(0, details.getPrimaryTransfersCompleted());
-        assertEquals(3, details.getBucketTransfersCompleted());
-//        assertIndexDetailsEquals(0, details.getBucketTransferBytes());
-        if(!simulate) {
-          verifyStats(manager, results);
+      SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
+        public void run() {
+          Cache cache = getCache();
+          AttributesFactory attr = new AttributesFactory();
+          PartitionAttributesFactory paf = new PartitionAttributesFactory();
+          paf.setRedundantCopies(1);
+          paf.setRecoveryDelay(-1);
+          paf.setStartupRecoveryDelay(-1);
+          PartitionAttributes prAttr = paf.create();
+          attr.setPartitionAttributes(prAttr);
+          cache.createRegion("region1", attr.create());
         }
-      }
-    });
-    
-    //Make sure we still have low redundancy
-    vm0.invoke(checkLowRedundancy);
-    vm1.invoke(checkLowRedundancy);
+      };
+
+      //Create the region in only 1 VM
+      vm0.invoke(createPrRegion);
+
+      //Create some buckets
+      vm0.invoke(new SerializableRunnable("createSomeBuckets") {
+
+        public void run() {
+          Cache cache = getCache();
+          Region region = cache.getRegion("region1");
+          region.put(Integer.valueOf(1), "A");
+          region.put(Integer.valueOf(2), "A");
+          region.put(Integer.valueOf(3), "A");
+          region.put(Integer.valueOf(4), "A");
+          region.put(Integer.valueOf(5), "A");
+          region.put(Integer.valueOf(6), "A");
+        }
+      });
+
+      SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
+
+        public void run() {
+          Cache cache = getCache();
+          Region region = cache.getRegion("region1");
+          PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
+          assertEquals(6, details.getCreatedBucketCount());
+          assertEquals(0, details.getActualRedundantCopies());
+          assertEquals(6, details.getLowRedundancyBucketCount());
+        }
+      };
+
+      //make sure we can tell that the buckets have low redundancy
+      vm0.invoke(checkLowRedundancy);
+
+      //Create the region in the other VM (should have no effect)
+      vm1.invoke(createPrRegion);
+
+      //Make sure we still have low redundancy
+      vm0.invoke(checkLowRedundancy);
+
+      //Now simulate a rebalance
+      vm0.invoke(new SerializableRunnable("simulateRebalance") {
+
+        public void run() {
+          Cache cache = getCache();
+          ResourceManager manager = cache.getResourceManager();
+          RebalanceResults results = doRebalance(simulate, manager);
+          assertEquals(0, results.getTotalBucketCreatesCompleted());
+          assertEquals(0, results.getTotalPrimaryTransfersCompleted());
+          //We actually *will* transfer buckets, because that improves
+          //the balance
+          assertEquals(3, results.getTotalBucketTransfersCompleted());
+          //        assertIndexDetailsEquals(0, results.getTotalBucketTransferBytes());
+          Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
+          assertEquals(1, detailSet.size());
+          PartitionRebalanceInfo details = detailSet.iterator().next();
+          assertEquals(0, details.getBucketCreatesCompleted());
+          assertEquals(0, details.getPrimaryTransfersCompleted());
+          assertEquals(3, details.getBucketTransfersCompleted());
+          //        assertIndexDetailsEquals(0, details.getBucketTransferBytes());
+          if (!simulate) {
+            verifyStats(manager, results);
+          }
+        }
+      });
+
+      //Make sure we still have low redundancy
+      vm0.invoke(checkLowRedundancy);
+      vm1.invoke(checkLowRedundancy);
 
     } finally {
       disconnectFromDS();
       Invoke.invokeInEveryVM(new SerializableRunnable() {
         public void run() {
-          disconnectFromDS(); 
+          disconnectFromDS();
         }
       });
     }
   }
-  
+
   @Test
   public void testEnforceZone() {
     enforceZone(false);
   }
-  
+
   @Test
   public void testEnforceZoneSimulation() {
     enforceZone(true);
   }
-  
+
   /**
    * Test that we correctly use the redundancy-zone
    * property to determine where to place redundant copies of a buckets.
    * @param simulate
    */
   public void enforceZone(final boolean simulate) {
-    
+
     try {
-    Host host = Host.getHost(0);
-    VM vm0 = host.getVM(0);
-    VM vm1 = host.getVM(1);
-    VM vm2 = host.getVM(2);
-    
-    setRedundancyZone(vm0, "A");
-    setRedundancyZone(vm1, "A");
-    final DistributedMember zoneBMember = setRedundancyZone(vm2, "B");
+      Host host = Host.getHost(0);
+      VM vm0 = host.getVM(0);
+      VM vm1 = host.getVM(1);
+      VM vm2 = host.getVM(2);
 
-    SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(-1);
-        paf.setStartupRecoveryDelay(-1);
-        PartitionAttributes prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        cache.createRegion("region1", attr.create());
-      }
-    };
-    
-    //Create the region in only 1 VM
-    vm0.invoke(createPrRegion);
-    
-    //Create some buckets
-    vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region1");
-        region.put(Integer.valueOf(1), "A");
-        region.put(Integer.valueOf(2), "A");
-        region.put(Integer.valueOf(3), "A");
-        region.put(Integer.valueOf(4), "A");
-        region.put(Integer.valueOf(5), "A");
-        region.put(Integer.valueOf(6), "A");
-      }
-    });
-    
-    SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
+      setRedundancyZone(vm0, "A");
+      setRedundancyZone(vm1, "A");
+      final DistributedMember zoneBMember = setRedundancyZone(vm2, "B");
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region1");
-        PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
-        assertEquals(6, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(6,details.getLowRedundancyBucketCount());
-      }
-    };
-    
-    //make sure we can tell that the buckets have low redundancy
-    vm0.invoke(checkLowRedundancy);
+      SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
+        public void run() {
+          Cache cache = getCache();
+          AttributesFactory attr = new AttributesFactory();
+          PartitionAttributesFactory paf = new PartitionAttributesFactory();
+          paf.setRedundantCopies(1);
+          paf.setRecoveryDelay(-1);
+          paf.setStartupRecoveryDelay(-1);
+          PartitionAttributes prAttr = paf.create();
+          attr.setPartitionAttributes(prAttr);
+          cache.createRegion("region1", attr.create());
+        }
+      };
 
-    //Create the region in the other VMs (should have no effect)
-    vm1.invoke(createPrRegion);
-    vm2.invoke(createPrRegion);
-    
-    //Make sure we still have low redundancy
-    vm0.invoke(checkLowRedundancy);
-    
-    //Now simulate a rebalance
-    vm0.invoke(new SerializableRunnable("simulateRebalance") {
-      
-      public void run() {
-        Cache cache = getCache();
-        ResourceManager manager = cache.getResourceManager();
-        RebalanceResults results = doRebalance(simulate, manager);
-        //We expect to satisfy redundancy with the zone B member
-        assertEquals(6, results.getTotalBucketCreatesCompleted());
-        //2 primaries will go to vm2, leaving vm0 and vm1 with 2 primaries each
-        assertEquals(2, results.getTotalPrimaryTransfersCompleted());
-        //We actually *will* transfer 3 buckets to the other member in zone A, because that improves
-        //the balance
-        assertEquals(3, results.getTotalBucketTransfersCompleted());
-        Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
-        assertEquals(1, detailSet.size());
-        PartitionRebalanceInfo details = detailSet.iterator().next();
-        assertEquals(6, details.getBucketCreatesCompleted());
-        assertEquals(2, details.getPrimaryTransfersCompleted());
-        assertEquals(3, details.getBucketTransfersCompleted());
-        Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
-        for(PartitionMemberInfo info : afterDetails) {
-          if(info.getDistributedMember().equals(zoneBMember)) {
-            assertEquals(6, info.getBucketCount());
-          } else {
-            assertEquals(3, info.getBucketCount());
+      //Create the region in only 1 VM
+      vm0.invoke(createPrRegion);
+
+      //Create some buckets
+      vm0.invoke(new SerializableRunnable("createSomeBuckets") {
+
+        public void run() {
+          Cache cache = getCache();
+          Region region = cache.getRegion("region1");
+          region.put(Integer.valueOf(1), "A");
+          region.put(Integer.valueOf(2), "A");
+          region.put(Integer.valueOf(3), "A");
+          region.put(Integer.valueOf(4), "A");
+          region.put(Integer.valueOf(5), "A");
+          region.put(Integer.valueOf(6), "A");
+        }
+      });
+
+      SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
+
+        public void run() {
+          Cache cache = getCache();
+          Region region = cache.getRegion("region1");
+          PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
+          assertEquals(6, details.getCreatedBucketCount());
+          assertEquals(0, details.getActualRedundantCopies());
+          assertEquals(6, details.getLowRedundancyBucketCount());
+        }
+      };
+
+      //make sure we can tell that the buckets have low redundancy
+      vm0.invoke(checkLowRedundancy);
+
+      //Create the region in the other VMs (should have no effect)
+      vm1.invoke(createPrRegion);
+      vm2.invoke(createPrRegion);
+
+      //Make sure we still have low redundancy
+      vm0.invoke(checkLowRedundancy);
+
+      //Now simulate a rebalance
+      vm0.invoke(new SerializableRunnable("simulateRebalance") {
+
+        public void run() {
+          Cache cache = getCache();
+          ResourceManager manager = cache.getResourceManager();
+          RebalanceResults results = doRebalance(simulate, manager);
+          //We expect to satisfy redundancy with the zone B member
+          assertEquals(6, results.getTotalBucketCreatesCompleted());
+          //2 primaries will go to vm2, leaving vm0 and vm1 with 2 primaries each
+          assertEquals(2, results.getTotalPrimaryTransfersCompleted());
+          //We actually *will* transfer 3 buckets to the other member in zone A, because that improves
+          //the balance
+          assertEquals(3, results.getTotalBucketTransfersCompleted());
+          Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
+          assertEquals(1, detailSet.size());
+          PartitionRebalanceInfo details = detailSet.iterator().next();
+          assertEquals(6, details.getBucketCreatesCompleted());
+          assertEquals(2, details.getPrimaryTransfersCompleted());
+          assertEquals(3, details.getBucketTransfersCompleted());
+          Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
+          for (PartitionMemberInfo info : afterDetails) {
+            if (info.getDistributedMember().equals(zoneBMember)) {
+              assertEquals(6, info.getBucketCount());
+            } else {
+              assertEquals(3, info.getBucketCount());
+            }
+            assertEquals(2, info.getPrimaryCount());
           }
-          assertEquals(2, info.getPrimaryCount());
+          //        assertIndexDetailsEquals(0, details.getBucketTransferBytes());
+          if (!simulate) {
+            verifyStats(manager, results);
+          }
         }
-//        assertIndexDetailsEquals(0, details.getBucketTransferBytes());
-        if(!simulate) {
-          verifyStats(manager, results);
-        }
+      });
+
+      if (!simulate) {
+        checkBucketCount(vm0, "region1", 3);
+        checkBucketCount(vm1, "region1", 3);
+        checkBucketCount(vm2, "region1", 6);
       }
-    });
-    
-    
-    if(!simulate) {
-    checkBucketCount(vm0, "region1", 3);
-    checkBucketCount(vm1, "region1", 3);
-    checkBucketCount(vm2, "region1", 6);
-    }
-    
+
     } finally {
       disconnectFromDS();
       Invoke.invokeInEveryVM(new SerializableRunnable() {
         public void run() {
           //clear the redundancy zone setting
-          disconnectFromDS(); 
+          disconnectFromDS();
         }
       });
     }
   }
 
-  private void createPR(String regionName){
+  private void createPR(String regionName) {
     Cache cache = getCache();
     AttributesFactory attr = new AttributesFactory();
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -592,7 +585,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     attr.setPartitionAttributes(prAttr);
     cache.createRegion(regionName, attr.create());
   }
-  
+
   private void doPuts(String regionName) {
     Cache cache = getCache();
     Region region = cache.getRegion(regionName);
@@ -603,23 +596,23 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     region.put(Integer.valueOf(5), "A");
     region.put(Integer.valueOf(6), "A");
   }
-  
+
   public static class ParallelRecoveryObserver extends InternalResourceManager.ResourceObserverAdapter {
-    
+
     HashSet<String> regions = new HashSet<String>();
     private volatile boolean observerCalled;
     private CyclicBarrier barrier;
-    
+
     public ParallelRecoveryObserver(int numRegions) {
       this.barrier = new CyclicBarrier(numRegions);
     }
-    
+
     public void observeRegion(String region) {
       regions.add(region);
     }
-    
+
     private void checkAllRegionRecoveryOrRebalanceStarted(String rn) {
-      if(regions.contains(rn)) {
+      if (regions.contains(rn)) {
         try {
           barrier.await(MAX_WAIT, TimeUnit.SECONDS);
         } catch (Exception e) {
@@ -627,22 +620,22 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         }
         observerCalled = true;
       } else {
-        throw new RuntimeException("region not registered " + rn );
+        throw new RuntimeException("region not registered " + rn);
       }
     }
-    
-    public boolean isObserverCalled(){
+
+    public boolean isObserverCalled() {
       return observerCalled;
     }
-    
+
     @Override
     public void rebalancingStarted(Region region) {
-      
+
       // TODO Auto-generated method stub
       super.rebalancingStarted(region);
       checkAllRegionRecoveryOrRebalanceStarted(region.getName());
     }
-    
+
     @Override
     public void recoveryStarted(Region region) {
       // TODO Auto-generated method stub
@@ -650,143 +643,142 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       checkAllRegionRecoveryOrRebalanceStarted(region.getName());
     }
   }
-  
+
   @Test
   public void testEnforceZoneWithMultipleRegions() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     try {
-    setRedundancyZone(vm0, "A");
-    setRedundancyZone(vm1, "A");
-    
-    final DistributedMember zoneBMember = setRedundancyZone(vm2, "B");
-    
-    SerializableRunnable setRebalanceObserver = new SerializableRunnable("RebalanceObserver") {
-      @Override
-      public void run() {
-        InternalResourceManager.setResourceObserver(new ParallelRecoveryObserver(2));        
-      }
-    };
+      setRedundancyZone(vm0, "A");
+      setRedundancyZone(vm1, "A");
 
-    SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
-        ParallelRecoveryObserver ob = (ParallelRecoveryObserver)InternalResourceManager.getResourceObserver();
-        ob.observeRegion("region1");
-        ob.observeRegion("region2");
-        createPR("region1");        
-        createPR("region2");
-                
-      }
-    };
-    
-    vm0.invoke(setRebalanceObserver);
-    //Create the region in only 1 VM
-    vm0.invoke(createPrRegion);
-    
-    //Create some buckets
-    vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
-      public void run() {
-        doPuts("region1");
-        doPuts("region2");
-      }
-    });
-    
-    SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
+      final DistributedMember zoneBMember = setRedundancyZone(vm2, "B");
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region1");
-        PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
-        assertEquals(6, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(6,details.getLowRedundancyBucketCount());
-        
-        region = cache.getRegion("region2");
-        details = PartitionRegionHelper.getPartitionRegionInfo(region);
-        assertEquals(6, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(6,details.getLowRedundancyBucketCount());
-      }
-    };
-    
-    //make sure we can tell that the buckets have low redundancy
-    vm0.invoke(checkLowRedundancy);
-
-    //Create the region in the other VMs (should have no effect)
-    vm1.invoke(setRebalanceObserver);
-    vm1.invoke(createPrRegion);
-    vm2.invoke(setRebalanceObserver);
-    vm2.invoke(createPrRegion);
-    
-    //Make sure we still have low redundancy
-    vm0.invoke(checkLowRedundancy);
-    
-    //Now do a rebalance
-    vm0.invoke(new SerializableRunnable("simulateRebalance") {
-
-      public void run() {
-        Cache cache = getCache();
-        ResourceManager manager = cache.getResourceManager();
-        RebalanceResults results = doRebalance(false, manager);
-        //We expect to satisfy redundancy with the zone B member
-        assertEquals(12, results.getTotalBucketCreatesCompleted());
-        //2 primaries will go to vm2, leaving vm0 and vm1 with 2 primaries each
-        assertEquals(4, results.getTotalPrimaryTransfersCompleted());
-        //We actually *will* transfer 3 buckets to the other member in zone A, because that improves
-        //the balance
-        assertEquals(6, results.getTotalBucketTransfersCompleted());
-        Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
-        assertEquals(2, detailSet.size());
-        for(PartitionRebalanceInfo details : detailSet) {
-          assertEquals(6, details.getBucketCreatesCompleted());
-          assertEquals(2, details.getPrimaryTransfersCompleted());
-          assertEquals(3, details.getBucketTransfersCompleted());
-          Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
-          for(PartitionMemberInfo info : afterDetails) {
-            if(info.getDistributedMember().equals(zoneBMember)) {
-              assertEquals(6, info.getBucketCount());
-            } else {
-              assertEquals(3, info.getBucketCount());
-            }
-            assertEquals(2, info.getPrimaryCount());
-          }
+      SerializableRunnable setRebalanceObserver = new SerializableRunnable("RebalanceObserver") {
+        @Override
+        public void run() {
+          InternalResourceManager.setResourceObserver(new ParallelRecoveryObserver(2));
         }
-        //        assertIndexDetailsEquals(0, details.getBucketTransferBytes());
-        verifyStats(manager, results);
-      }
-    });
-    
-    vm0.invoke(new SerializableRunnable() {
-      
-      @Override
-      public void run() {
-        assertTrue(((ParallelRecoveryObserver)InternalResourceManager.getResourceObserver()).isObserverCalled());
-      }
-    });
-    
-    checkBucketCount(vm0, "region1", 3);
-    checkBucketCount(vm1, "region1", 3);
-    checkBucketCount(vm2, "region1", 6);
-    
-    checkBucketCount(vm0, "region2", 3);
-    checkBucketCount(vm1, "region2", 3);
-    checkBucketCount(vm2, "region2", 6);
+      };
+
+      SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
+        public void run() {
+          ParallelRecoveryObserver ob = (ParallelRecoveryObserver) InternalResourceManager.getResourceObserver();
+          ob.observeRegion("region1");
+          ob.observeRegion("region2");
+          createPR("region1");
+          createPR("region2");
+
+        }
+      };
+
+      vm0.invoke(setRebalanceObserver);
+      //Create the region in only 1 VM
+      vm0.invoke(createPrRegion);
+
+      //Create some buckets
+      vm0.invoke(new SerializableRunnable("createSomeBuckets") {
+
+        public void run() {
+          doPuts("region1");
+          doPuts("region2");
+        }
+      });
+
+      SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
+
+        public void run() {
+          Cache cache = getCache();
+          Region region = cache.getRegion("region1");
+          PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
+          assertEquals(6, details.getCreatedBucketCount());
+          assertEquals(0, details.getActualRedundantCopies());
+          assertEquals(6, details.getLowRedundancyBucketCount());
+
+          region = cache.getRegion("region2");
+          details = PartitionRegionHelper.getPartitionRegionInfo(region);
+          assertEquals(6, details.getCreatedBucketCount());
+          assertEquals(0, details.getActualRedundantCopies());
+          assertEquals(6, details.getLowRedundancyBucketCount());
+        }
+      };
+
+      //make sure we can tell that the buckets have low redundancy
+      vm0.invoke(checkLowRedundancy);
+
+      //Create the region in the other VMs (should have no effect)
+      vm1.invoke(setRebalanceObserver);
+      vm1.invoke(createPrRegion);
+      vm2.invoke(setRebalanceObserver);
+      vm2.invoke(createPrRegion);
+
+      //Make sure we still have low redundancy
+      vm0.invoke(checkLowRedundancy);
+
+      //Now do a rebalance
+      vm0.invoke(new SerializableRunnable("simulateRebalance") {
+
+        public void run() {
+          Cache cache = getCache();
+          ResourceManager manager = cache.getResourceManager();
+          RebalanceResults results = doRebalance(false, manager);
+          //We expect to satisfy redundancy with the zone B member
+          assertEquals(12, results.getTotalBucketCreatesCompleted());
+          //2 primaries will go to vm2, leaving vm0 and vm1 with 2 primaries each
+          assertEquals(4, results.getTotalPrimaryTransfersCompleted());
+          //We actually *will* transfer 3 buckets to the other member in zone A, because that improves
+          //the balance
+          assertEquals(6, results.getTotalBucketTransfersCompleted());
+          Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
+          assertEquals(2, detailSet.size());
+          for (PartitionRebalanceInfo details : detailSet) {
+            assertEquals(6, details.getBucketCreatesCompleted());
+            assertEquals(2, details.getPrimaryTransfersCompleted());
+            assertEquals(3, details.getBucketTransfersCompleted());
+            Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
+            for (PartitionMemberInfo info : afterDetails) {
+              if (info.getDistributedMember().equals(zoneBMember)) {
+                assertEquals(6, info.getBucketCount());
+              } else {
+                assertEquals(3, info.getBucketCount());
+              }
+              assertEquals(2, info.getPrimaryCount());
+            }
+          }
+          //        assertIndexDetailsEquals(0, details.getBucketTransferBytes());
+          verifyStats(manager, results);
+        }
+      });
+
+      vm0.invoke(new SerializableRunnable() {
+
+        @Override
+        public void run() {
+          assertTrue(((ParallelRecoveryObserver) InternalResourceManager.getResourceObserver()).isObserverCalled());
+        }
+      });
+
+      checkBucketCount(vm0, "region1", 3);
+      checkBucketCount(vm1, "region1", 3);
+      checkBucketCount(vm2, "region1", 6);
+
+      checkBucketCount(vm0, "region2", 3);
+      checkBucketCount(vm1, "region2", 3);
+      checkBucketCount(vm2, "region2", 6);
     } finally {
       disconnectFromDS();
       Invoke.invokeInEveryVM(new SerializableRunnable() {
         public void run() {
           //clear the redundancy zone setting
-          disconnectFromDS(); 
+          disconnectFromDS();
         }
       });
     }
   }
-  
+
   private void checkBucketCount(VM vm0, final String regionName, final int numLocalBuckets) {
     vm0.invoke(new SerializableRunnable("checkLowRedundancy") {
 
@@ -798,7 +790,6 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     });
   }
 
-  
   private DistributedMember setRedundancyZone(VM vm, final String zone) {
     return (DistributedMember) vm.invoke(new SerializableCallable("set redundancy zone") {
       public Object call() {
@@ -807,31 +798,26 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         props.setProperty(REDUNDANCY_ZONE, zone);
         DistributedSystem system = getSystem(props);
         return system.getDistributedMember();
-        
+
       }
     });
-    
+
   }
 
-  private RebalanceResults doRebalance(final boolean simulate,
-      ResourceManager manager) {
+  private RebalanceResults doRebalance(final boolean simulate, ResourceManager manager) {
     return doRebalance(simulate, manager, null, null);
   }
+
   /**
    * @param simulate
    * @param manager
    * @return
    */
-  private RebalanceResults doRebalance(final boolean simulate,
-      ResourceManager manager, Set<String> includes, Set<String> excludes) {
+  private RebalanceResults doRebalance(final boolean simulate, ResourceManager manager, Set<String> includes, Set<String> excludes) {
     RebalanceResults results = null;
-    if(simulate) {
+    if (simulate) {
       try {
-        results = manager.createRebalanceFactory()
-          .includeRegions(includes)
-          .excludeRegions(excludes)
-          .simulate()
-          .getResults(MAX_WAIT, TimeUnit.SECONDS);
+        results = manager.createRebalanceFactory().includeRegions(includes).excludeRegions(excludes).simulate().getResults(MAX_WAIT, TimeUnit.SECONDS);
       } catch (InterruptedException e) {
         Assert.fail("Interrupted waiting on rebalance", e);
       } catch (TimeoutException e) {
@@ -839,11 +825,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       }
     } else {
       try {
-        results = manager.createRebalanceFactory()
-        .includeRegions(includes)
-        .excludeRegions(excludes)
-        .start()
-        .getResults(MAX_WAIT, TimeUnit.SECONDS);
+        results = manager.createRebalanceFactory().includeRegions(includes).excludeRegions(excludes).start().getResults(MAX_WAIT, TimeUnit.SECONDS);
       } catch (InterruptedException e) {
         Assert.fail("Interrupted waiting on rebalance", e);
       } catch (TimeoutException e) {
@@ -853,63 +835,59 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     assertEquals(Collections.emptySet(), manager.getRebalanceOperations());
     return results;
   }
-  
+
   @Test
   public void testRecoverRedundancyBalancingSimulation() {
     recoverRedundancyBalancing(true);
   }
-  
+
   @Test
   public void testRecoverRedundancyBalancing() {
     recoverRedundancyBalancing(false);
   }
-  
+
   public void recoverRedundancyBalancing(final boolean simulate) {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
 
     final DistributedMember member1 = createPrRegion(vm0, "region1", 200, null);
-    
+
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
-        for(int i = 0; i < 12; i++) {
+        for (int i = 0; i < 12; i++) {
           region.put(Integer.valueOf(i), "A");
         }
       }
     });
-    
-    
-    SerializableRunnable checkRedundancy= new SerializableRunnable("checkRedundancy") {
+
+    SerializableRunnable checkRedundancy = new SerializableRunnable("checkRedundancy") {
 
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(12, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(12,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(12, details.getLowRedundancyBucketCount());
       }
     };
-    
+
     vm0.invoke(checkRedundancy);
-    
-    
-    
+
     //Now create the region in 2 more VMs with half the localMaxMemory
     createPrRegion(vm1, "region1", 100, null);
     createPrRegion(vm2, "region1", 100, null);
-    
+
     vm0.invoke(checkRedundancy);
-    
+
     //Now simulate a rebalance
     vm0.invoke(new SerializableRunnable("rebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -925,12 +903,12 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(6, details.getPrimaryTransfersCompleted());
         assertEquals(0, details.getBucketTransferBytes());
         assertEquals(0, details.getBucketTransfersCompleted());
-        
+
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(3, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           //We have 1 member with a size of 200 and two members with size 100
-          if(memberDetails.getDistributedMember().equals(member1)) {
+          if (memberDetails.getDistributedMember().equals(member1)) {
             assertEquals(12, memberDetails.getBucketCount());
             assertEquals(6, memberDetails.getPrimaryCount());
           } else {
@@ -938,14 +916,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
             assertEquals(3, memberDetails.getPrimaryCount());
           }
         }
-        
-        if(!simulate) {
+
+        if (!simulate) {
           verifyStats(manager, results);
         }
       }
     });
-    
-    if(!simulate) {
+
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkLowRedundancy") {
 
         public void run() {
@@ -953,8 +931,8 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Region region = cache.getRegion("region1");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
         }
       };
 
@@ -966,8 +944,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
   private DistributedMember createPrRegion(VM vm, final String region, final int localMaxMemory, final String colocatedWith) {
     SerializableCallable createPrRegion = new SerializableCallable("createRegion") {
-      public Object call()
-      {
+      public Object call() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -975,7 +952,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         paf.setRecoveryDelay(-1);
         paf.setStartupRecoveryDelay(-1);
         paf.setLocalMaxMemory(localMaxMemory);
-        if(colocatedWith != null) {
+        if (colocatedWith != null) {
           paf.setColocatedWith(colocatedWith);
         }
         PartitionAttributes prAttr = paf.create();
@@ -986,63 +963,61 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     };
     return (DistributedMember) vm.invoke(createPrRegion);
   }
-  
+
   @Test
   public void testRecoverRedundancyBalancingIfCreateBucketFails() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
 
     final DistributedMember member1 = createPrRegion(vm0, "region1", 100, null);
-    
+
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
-        for(int i = 0; i < 1; i++) {
+        for (int i = 0; i < 1; i++) {
           region.put(Integer.valueOf(i), "A");
         }
       }
     });
-    
-    
-    SerializableRunnable checkRedundancy= new SerializableRunnable("checkRedundancy") {
+
+    SerializableRunnable checkRedundancy = new SerializableRunnable("checkRedundancy") {
 
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(1, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(1,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(1, details.getLowRedundancyBucketCount());
       }
     };
-    
+
     vm0.invoke(checkRedundancy);
-        
+
     //Now create the region in 2 more VMs
     //Let localMaxMemory(VM1) > localMaxMemory(VM2)
     //so that redundant bucket will always be attempted on VM1
     final DistributedMember member2 = createPrRegion(vm1, "region1", 100, null);
     final DistributedMember member3 = createPrRegion(vm2, "region1", 90, null);
-    
+
     vm0.invoke(checkRedundancy);
-    
+
     //Inject mock PRHARedundancyProvider to simulate createBucketFailures
     vm0.invoke(new SerializableRunnable("injectCreateBucketFailureAndRebalance") {
-      
+
       @Override
       public void run() {
         GemFireCacheImpl cache = spy(getGemfireCache());
         //set the spied cache instance
         GemFireCacheImpl origCache = GemFireCacheImpl.setInstanceForTests(cache);
-        
+
         PartitionedRegion origRegion = (PartitionedRegion) cache.getRegion("region1");
         PartitionedRegion spyRegion = spy(origRegion);
-        PRHARedundancyProvider redundancyProvider = spy(new PRHARedundancyProvider(spyRegion));   
+        PRHARedundancyProvider redundancyProvider = spy(new PRHARedundancyProvider(spyRegion));
 
         //return the spied region when ever getPartitionedRegions() is invoked
         Set<PartitionedRegion> parRegions = cache.getPartitionedRegions();
@@ -1051,7 +1026,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
         doReturn(parRegions).when(cache).getPartitionedRegions();
         doReturn(redundancyProvider).when(spyRegion).getRedundancyProvider();
-        
+
         //simulate create bucket fails on member2 and test if it creates on member3
         doReturn(false).when(redundancyProvider).createBackupBucketOnMember(anyInt(), eq((InternalDistributedMember) member2), anyBoolean(), anyBoolean(), any(), anyBoolean());
 
@@ -1079,35 +1054,35 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getPrimaryTransfersCompleted());
         assertEquals(0, details.getBucketTransferBytes());
         assertEquals(0, details.getBucketTransfersCompleted());
-        
+
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(3, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
-          if(memberDetails.getDistributedMember().equals(member1)) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
+          if (memberDetails.getDistributedMember().equals(member1)) {
             assertEquals(1, memberDetails.getBucketCount());
             assertEquals(1, memberDetails.getPrimaryCount());
-          } else if(memberDetails.getDistributedMember().equals(member2)) {
+          } else if (memberDetails.getDistributedMember().equals(member2)) {
             assertEquals(0, memberDetails.getBucketCount());
             assertEquals(0, memberDetails.getPrimaryCount());
-          } else if(memberDetails.getDistributedMember().equals(member3)) {
+          } else if (memberDetails.getDistributedMember().equals(member3)) {
             assertEquals(1, memberDetails.getBucketCount());
             assertEquals(0, memberDetails.getPrimaryCount());
           }
         }
-        
+
         ResourceManagerStats stats = cache.getResourceManager().getStats();
-        
+
         assertEquals(0, stats.getRebalancesInProgress());
         assertEquals(1, stats.getRebalancesCompleted());
         assertEquals(0, stats.getRebalanceBucketCreatesInProgress());
         assertEquals(results.getTotalBucketCreatesCompleted(), stats.getRebalanceBucketCreatesCompleted());
         assertEquals(1, stats.getRebalanceBucketCreatesFailed());
-        
+
         //set the original cache
         GemFireCacheImpl.setInstanceForTests(origCache);
       }
     });
-    
+
     SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkLowRedundancy") {
 
       public void run() {
@@ -1115,8 +1090,8 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(1, details.getCreatedBucketCount());
-        assertEquals(1,details.getActualRedundantCopies());
-        assertEquals(0,details.getLowRedundancyBucketCount());
+        assertEquals(1, details.getActualRedundantCopies());
+        assertEquals(0, details.getLowRedundancyBucketCount());
       }
     };
 
@@ -1124,17 +1099,17 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(checkRedundancyFixed);
     vm2.invoke(checkRedundancyFixed);
   }
-  
+
   @Test
   public void testRecoverRedundancyColocatedRegionsSimulation() {
     recoverRedundancyColocatedRegions(true);
   }
-  
+
   @Test
   public void testRecoverRedundancyColocatedRegions() {
     recoverRedundancyColocatedRegions(false);
   }
-  
+
   public void recoverRedundancyColocatedRegions(final boolean simulate) {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -1143,22 +1118,21 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
     final DistributedMember member1 = createPrRegion(vm0, "region1", 200, null);
     createPrRegion(vm0, "region2", 200, "region1");
-    
+
     //Create some buckets. 
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
         Region region2 = cache.getRegion("region2");
-        for(int i =0; i< 12; i++) {
+        for (int i = 0; i < 12; i++) {
           region.put(Integer.valueOf(i), "A");
           region2.put(Integer.valueOf(i), "A");
         }
       }
     });
-    
-    
+
     //check to make sure our redundancy is impaired
     SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
 
@@ -1168,29 +1142,29 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(12, details.getCreatedBucketCount());
         assertEquals(0, details.getActualRedundantCopies());
-        assertEquals(12 ,details.getLowRedundancyBucketCount());
+        assertEquals(12, details.getLowRedundancyBucketCount());
         region = cache.getRegion("region2");
         details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(12, details.getCreatedBucketCount());
-        assertEquals(0,  details.getActualRedundantCopies());
-        assertEquals(12,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(12, details.getLowRedundancyBucketCount());
       }
     };
-    
+
     vm0.invoke(checkLowRedundancy);
-    
+
     //Now create the region in 2 more vms, each which
     //has local max memory of 1/2 that of the original VM.
     createPrRegion(vm1, "region1", 100, null);
     createPrRegion(vm2, "region1", 100, null);
     createPrRegion(vm1, "region2", 100, "region1");
     createPrRegion(vm2, "region2", 100, "region1");
-    
+
     vm0.invoke(checkLowRedundancy);
-    
+
     //Now simulate a rebalance
     vm0.invoke(new SerializableRunnable("rebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -1201,16 +1175,16 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, results.getTotalBucketTransfersCompleted());
         Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
         assertEquals(2, detailSet.size());
-        for(PartitionRebalanceInfo details : detailSet) {
+        for (PartitionRebalanceInfo details : detailSet) {
           assertEquals(12, details.getBucketCreatesCompleted());
           assertEquals(6, details.getPrimaryTransfersCompleted());
           assertEquals(0, details.getBucketTransferBytes());
           assertEquals(0, details.getBucketTransfersCompleted());
-          
+
           Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
           assertEquals(3, afterDetails.size());
-          for(PartitionMemberInfo memberDetails: afterDetails) {
-            if(memberDetails.getDistributedMember().equals(member1)) {
+          for (PartitionMemberInfo memberDetails : afterDetails) {
+            if (memberDetails.getDistributedMember().equals(member1)) {
               assertEquals(12, memberDetails.getBucketCount());
               assertEquals(6, memberDetails.getPrimaryCount());
             } else {
@@ -1218,14 +1192,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
               assertEquals(3, memberDetails.getPrimaryCount());
             }
           }
-          if(!simulate) {
+          if (!simulate) {
             verifyStats(manager, results);
           }
         }
       }
     });
-    
-    if(!simulate) {
+
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkLowRedundancy") {
 
         public void run() {
@@ -1234,15 +1208,15 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           PartitionedRegion region2 = (PartitionedRegion) cache.getRegion("region2");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(cache.getRegion("region1"));
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
           details = PartitionRegionHelper.getPartitionRegionInfo(cache.getRegion("region2"));
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
-          
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
+
           assertEquals(region1.getLocalPrimaryBucketsListTestOnly(), region2.getLocalPrimaryBucketsListTestOnly());
-          
+
           assertEquals(region1.getLocalBucketsListTestOnly(), region2.getLocalBucketsListTestOnly());
         }
       };
@@ -1252,13 +1226,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       vm2.invoke(checkRedundancyFixed);
     }
   }
-  
+
   @Test
   public void testRecoverRedundancyParallelAsyncEventQueueSimulation() throws NoSuchFieldException, SecurityException {
     Invoke.invokeInEveryVM(new SerializableRunnable() {
 
       @Override
-      public void run () {
+      public void run() {
         System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "LOG_REBALANCE", "true");
       }
     });
@@ -1268,12 +1242,12 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "LOG_REBALANCE", "false");
     }
   }
-  
+
   @Test
   public void testRecoverRedundancyParallelAsyncEventQueue() {
     recoverRedundancyParallelAsyncEventQueue(false);
   }
-  
+
   public void recoverRedundancyParallelAsyncEventQueue(final boolean simulate) {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -1281,24 +1255,24 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(2);
 
     final DistributedMember member1 = createPRRegionWithAsyncQueue(vm0, 200);
-    
+
     //Create some buckets. Put enough data to cause the queue to overflow (more than 1 MB)
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
         Region region2 = cache.getRegion("region2");
-        for(int i =0; i< 12; i++) {
+        for (int i = 0; i < 12; i++) {
           region.put(Integer.valueOf(i), "A", new byte[1024 * 512]);
         }
-        
+
         // GEODE-244 - the async event queue uses asnychronous writes. Flush 
         // the default disk store to make sure all values have overflowed
         cache.findDiskStore(null).flush();
       }
     });
-    
+
     //check to make sure our redundancy is impaired
     SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
 
@@ -1308,30 +1282,29 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(12, details.getCreatedBucketCount());
         assertEquals(0, details.getActualRedundantCopies());
-        assertEquals(12 ,details.getLowRedundancyBucketCount());
+        assertEquals(12, details.getLowRedundancyBucketCount());
         //Get the async event queue region (It's a colocated region)
-        PartitionedRegion region2 = ColocationHelper.getColocatedChildRegions((PartitionedRegion)region).get(0);
+        PartitionedRegion region2 = ColocationHelper.getColocatedChildRegions((PartitionedRegion) region).get(0);
         details = PartitionRegionHelper.getPartitionRegionInfo(region2);
         assertEquals(12, details.getCreatedBucketCount());
-        assertEquals(0,  details.getActualRedundantCopies());
-        assertEquals(12,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(12, details.getLowRedundancyBucketCount());
         AsyncEventQueue queue = cache.getAsyncEventQueue("parallelQueue");
         assertEquals(12, queue.size());
       }
     };
-    
+
     vm0.invoke(checkLowRedundancy);
-    
-    
+
     //Create the region on two more members, each with 1/2 of the memory
     createPRRegionWithAsyncQueue(vm1, 100);
     createPRRegionWithAsyncQueue(vm2, 100);
-    
+
     vm0.invoke(checkLowRedundancy);
-    
+
     //Now simulate a rebalance
     vm0.invoke(new SerializableRunnable("rebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -1342,16 +1315,16 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, results.getTotalBucketTransfersCompleted());
         Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
         assertEquals(2, detailSet.size());
-        for(PartitionRebalanceInfo details : detailSet) {
+        for (PartitionRebalanceInfo details : detailSet) {
           assertEquals(12, details.getBucketCreatesCompleted());
           assertEquals(6, details.getPrimaryTransfersCompleted());
           assertEquals(0, details.getBucketTransferBytes());
           assertEquals(0, details.getBucketTransfersCompleted());
-          
+
           Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
           assertEquals(3, afterDetails.size());
-          for(PartitionMemberInfo memberDetails: afterDetails) {
-            if(memberDetails.getDistributedMember().equals(member1)) {
+          for (PartitionMemberInfo memberDetails : afterDetails) {
+            if (memberDetails.getDistributedMember().equals(member1)) {
               assertEquals(12, memberDetails.getBucketCount());
               assertEquals(6, memberDetails.getPrimaryCount());
             } else {
@@ -1359,14 +1332,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
               assertEquals(3, memberDetails.getPrimaryCount());
             }
           }
-          if(!simulate) {
+          if (!simulate) {
             verifyStats(manager, results);
           }
         }
       }
     });
-    
-    if(!simulate) {
+
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkLowRedundancy") {
 
         public void run() {
@@ -1376,15 +1349,15 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           PartitionedRegion region2 = ColocationHelper.getColocatedChildRegions(region1).get(0);
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(cache.getRegion("region1"));
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
           details = PartitionRegionHelper.getPartitionRegionInfo(region2);
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
-          
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
+
           assertEquals(region1.getLocalPrimaryBucketsListTestOnly(), region2.getLocalPrimaryBucketsListTestOnly());
-          
+
           assertEquals(region1.getLocalBucketsListTestOnly(), region2.getLocalBucketsListTestOnly());
         }
       };
@@ -1397,10 +1370,9 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
   private DistributedMember createPRRegionWithAsyncQueue(VM vm0, final int localMaxMemory) {
     SerializableCallable createPrRegion = new SerializableCallable("createRegion") {
-      public Object call()
-      {
+      public Object call() {
         Cache cache = getCache();
-        
+
         //Create an async event listener that doesn't dispatch anything
         cache.createAsyncEventQueueFactory().setMaximumQueueMemory(1).setParallel(true).create("parallelQueue", new AsyncEventListener() {
           @Override
@@ -1416,11 +1388,11 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
             }
             return false;
           }
-          
+
         });
         AttributesFactory attr = new AttributesFactory();
         attr.addAsyncEventQueueId("parallelQueue");
-        
+
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setRedundantCopies(1);
         paf.setRecoveryDelay(-1);
@@ -1429,15 +1401,15 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         PartitionAttributes prAttr = paf.create();
         attr.setPartitionAttributes(prAttr);
         cache.createRegion("region1", attr.create());
-        
+
         return cache.getDistributedSystem().getDistributedMember();
       }
     };
-    
+
     final DistributedMember member1 = (DistributedMember) vm0.invoke(createPrRegion);
     return member1;
   }
-  
+
   @Test
   public void testCancelOperation() {
     Host host = Host.getHost(0);
@@ -1445,8 +1417,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -1458,20 +1429,20 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in only 1 VM
     vm0.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
         region.put(Integer.valueOf(1), "A");
       }
     });
-    
+
     SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
 
       public void run() {
@@ -1479,23 +1450,23 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(1, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(1,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(1, details.getLowRedundancyBucketCount());
       }
     };
-    
+
     //make sure we can tell that the buckets have low redundancy
     vm0.invoke(checkLowRedundancy);
 
     //Create the region in the other VM (should have no effect)
     vm1.invoke(createPrRegion);
-    
+
     //Make sure we still have low redundancy
     vm0.invoke(checkLowRedundancy);
-    
+
     //Now do a rebalance, but cancel it in the middle
-    vm0.invoke(new SerializableCallable("D rebalance")  {
-      
+    vm0.invoke(new SerializableCallable("D rebalance") {
+
       public Object call() throws Exception {
         GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         InternalResourceManager manager = cache.getResourceManager();
@@ -1511,7 +1482,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
               Thread.currentThread().interrupt();
             }
           }
-          
+
           @Override
           public void rebalancingOrRecoveryFinished(Region region) {
             rebalancingFinished.countDown();
@@ -1524,30 +1495,30 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         try {
           op.getResults(5, TimeUnit.SECONDS);
           fail("Should have received a timeout exception");
-        } catch(TimeoutException expected) {
+        } catch (TimeoutException expected) {
         }
         assertTrue(op.cancel());
         rebalancingCancelled.countDown();
         assertTrue(op.isCancelled());
         assertTrue(op.isDone());
-        
+
         rebalancingFinished.await();
         try {
           op.getResults(60, TimeUnit.SECONDS);
           fail("Should have received a cancellation exception");
-        } catch(CancellationException expected) {
+        } catch (CancellationException expected) {
         }
         assertEquals(Collections.emptySet(), manager.getRebalanceOperations());
-        
+
         return null;
       }
     });
-    
+
     //We should still have low redundancy, because the rebalancing was cancelled
     vm0.invoke(checkLowRedundancy);
 
   }
-  
+
   /**
    * Test that the rebalancing operation picks up on 
    * a concurrent membership change
@@ -1560,8 +1531,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     final VM vm2 = host.getVM(2);
 
     final SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -1573,13 +1543,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in only 1 VM
     vm0.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
@@ -1591,14 +1561,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         region.put(Integer.valueOf(6), "A");
       }
     });
-    
 
     //Create the region in the other VM (should have no effect)
     vm1.invoke(createPrRegion);
-    
+
     //Now do a rebalance, but start another member in the middle
-    vm0.invoke(new SerializableCallable("D rebalance")  {
-      
+    vm0.invoke(new SerializableCallable("D rebalance") {
+
       public Object call() throws Exception {
         GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         InternalResourceManager manager = cache.getResourceManager();
@@ -1606,12 +1575,10 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         final CountDownLatch memberAdded = new CountDownLatch(1);
         InternalResourceManager.setResourceObserver(new ResourceObserverAdapter() {
           boolean firstBucket = true;
+
           @Override
-          public void movingBucket(Region region,
-              int bucketId, 
-              DistributedMember source, 
-              DistributedMember target) {
-            if(firstBucket) {
+          public void movingBucket(Region region, int bucketId, DistributedMember source, DistributedMember target) {
+            if (firstBucket) {
               firstBucket = false;
               vm2.invoke(createPrRegion);
             }
@@ -1629,38 +1596,37 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getPrimaryTransfersCompleted());
         assertTrue(0 < details.getBucketTransferBytes());
         assertEquals(4, details.getBucketTransfersCompleted());
-        
+
         Set<PartitionMemberInfo> beforeDetails = details.getPartitionMemberDetailsBefore();
         //there should have only been 2 members when the rebalancing started.
         assertEquals(2, beforeDetails.size());
-        
+
         //if it was done, there should now be 3 members.
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(3, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(2, memberDetails.getBucketCount());
           assertEquals(2, memberDetails.getPrimaryCount());
         }
         verifyStats(manager, results);
-        InternalResourceManager mgr  = (InternalResourceManager) manager;
+        InternalResourceManager mgr = (InternalResourceManager) manager;
         ResourceManagerStats stats = mgr.getStats();
         assertEquals(1, stats.getRebalanceMembershipChanges());
         return null;
       }
     });
   }
-  
-  
+
   @Test
   public void testMoveBucketsNoRedundancySimulation() {
     moveBucketsNoRedundancy(true);
   }
-  
+
   @Test
   public void testMoveBucketsNoRedundancy() {
     moveBucketsNoRedundancy(false);
   }
-  
+
   /**
    * Check to make sure that we balance
    * buckets between two hosts with no redundancy.
@@ -1672,8 +1638,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -1686,13 +1651,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in only 1 VM
     vm0.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
@@ -1704,13 +1669,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         region.put(Integer.valueOf(6), "A");
       }
     });
-    
+
     //Create the region in the other VM (should have no effect)
     vm1.invoke(createPrRegion);
-    
+
     //Now simulate a rebalance
     vm0.invoke(new SerializableRunnable("simulateRebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -1726,20 +1691,20 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getPrimaryTransfersCompleted());
         assertTrue(0 < details.getBucketTransferBytes());
         assertEquals(3, details.getBucketTransfersCompleted());
-        
+
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(2, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(3, memberDetails.getBucketCount());
           assertEquals(3, memberDetails.getPrimaryCount());
         }
-        if(!simulate) {
+        if (!simulate) {
           verifyStats(manager, results);
         }
       }
     });
 
-    if(!simulate) {
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkRedundancyFixed") {
 
         public void run() {
@@ -1747,14 +1712,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Region region = cache.getRegion("region1");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
           assertEquals(6, details.getCreatedBucketCount());
-          assertEquals(0,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(0, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
           assertEquals(2, details.getPartitionMemberInfo().size());
-          for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+          for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
             assertEquals(3, memberDetails.getBucketCount());
             assertEquals(3, memberDetails.getPrimaryCount());
           }
-          
+
           //check to make sure that moving buckets didn't close the cache loader
           Bug40228Loader loader = (Bug40228Loader) cache.getRegion("region1").getAttributes().getCacheLoader();
           assertFalse(loader.isClosed());
@@ -1763,7 +1728,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
       vm0.invoke(checkRedundancyFixed);
       vm1.invoke(checkRedundancyFixed);
-      
+
       SerializableRunnable checkBug40228Fixed = new SerializableRunnable("checkBug40228Fixed") {
 
         public void run() {
@@ -1775,22 +1740,22 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           assertTrue(loader.isClosed());
         }
       };
-      
+
       vm0.invoke(checkBug40228Fixed);
       vm1.invoke(checkBug40228Fixed);
     }
   }
-  
+
   @Test
   public void testFilterRegionsSimulation() {
     filterRegions(true);
   }
-  
+
   @Test
   public void testFilterRegions() {
     filterRegions(false);
   }
-  
+
   /**
    * Check to make sure that we balance
    * buckets between two hosts with no redundancy.
@@ -1800,7 +1765,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     final int NUM_REGIONS = 4;
     final Set<String> INCLUDED = new HashSet<String>();
     INCLUDED.add("region0");
@@ -1808,14 +1773,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     final Set<String> EXCLUDED = new HashSet<String>();
     EXCLUDED.add("region0");
     EXCLUDED.add("region3");
-    
+
     final HashSet<String> EXPECTED_REBALANCED = new HashSet<String>();
     EXPECTED_REBALANCED.add("/region0");
     EXPECTED_REBALANCED.add("/region1");
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -1824,43 +1788,43 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         paf.setStartupRecoveryDelay(-1);
         PartitionAttributes prAttr = paf.create();
         attr.setPartitionAttributes(prAttr);
-        for(int i = 0; i < NUM_REGIONS; i++) {
+        for (int i = 0; i < NUM_REGIONS; i++) {
           cache.createRegion("region" + i, attr.create());
         }
       }
     };
-    
+
     //Create the region in only 1 VM
     vm0.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
-        for(int i = 0; i < NUM_REGIONS; i++) {
+        for (int i = 0; i < NUM_REGIONS; i++) {
           Region region = cache.getRegion("region" + i);
-          for(int j = 0; j < 6; j++) {
+          for (int j = 0; j < 6; j++) {
             region.put(Integer.valueOf(j), "A");
           }
         }
       }
     });
-    
+
     //Create the region in the other VM (should have no effect)
     vm1.invoke(createPrRegion);
-    
+
     //Now simulate a rebalance
     vm0.invoke(new SerializableRunnable("simulateRebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
         RebalanceResults results = doRebalance(simulate, manager, INCLUDED, EXCLUDED);
         Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
-//        assertIndexDetailsEquals(3, detailSet.size());
+        //        assertIndexDetailsEquals(3, detailSet.size());
         Set<String> names = new HashSet<String>();
-        for(PartitionRebalanceInfo details: detailSet) {
+        for (PartitionRebalanceInfo details : detailSet) {
           assertEquals(0, details.getBucketCreatesCompleted());
           assertEquals(0, details.getPrimaryTransfersCompleted());
           assertTrue(0 < details.getBucketTransferBytes());
@@ -1868,38 +1832,38 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           names.add(details.getRegionPath());
           Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
           assertEquals(2, afterDetails.size());
-          for(PartitionMemberInfo memberDetails: afterDetails) {
+          for (PartitionMemberInfo memberDetails : afterDetails) {
             assertEquals(3, memberDetails.getBucketCount());
             assertEquals(3, memberDetails.getPrimaryCount());
           }
         }
-        
+
         assertEquals(EXPECTED_REBALANCED, names);
 
         assertEquals(0, results.getTotalBucketCreatesCompleted());
         assertEquals(0, results.getTotalPrimaryTransfersCompleted());
         assertEquals(6, results.getTotalBucketTransfersCompleted());
         assertTrue(0 < results.getTotalBucketTransferBytes());
-        
-        if(!simulate) {
+
+        if (!simulate) {
           verifyStats(manager, results);
         }
       }
     });
 
-    if(!simulate) {
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkRedundancyFixed") {
 
         public void run() {
           Cache cache = getCache();
-          for(String name: EXPECTED_REBALANCED) {
+          for (String name : EXPECTED_REBALANCED) {
             Region region = cache.getRegion(name);
             PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
             assertEquals(6, details.getCreatedBucketCount());
-            assertEquals(0,details.getActualRedundantCopies());
-            assertEquals(0,details.getLowRedundancyBucketCount());
+            assertEquals(0, details.getActualRedundantCopies());
+            assertEquals(0, details.getLowRedundancyBucketCount());
             assertEquals(2, details.getPartitionMemberInfo().size());
-            for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+            for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
               assertEquals(3, memberDetails.getBucketCount());
               assertEquals(3, memberDetails.getPrimaryCount());
             }
@@ -1907,17 +1871,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Region region = cache.getRegion("region2");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
           assertEquals(6, details.getCreatedBucketCount());
-          assertEquals(0,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(0, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
           assertEquals(2, details.getPartitionMemberInfo().size());
-          for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+          for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
             int bucketCount = memberDetails.getBucketCount();
             int primaryCount = memberDetails.getPrimaryCount();
-            assertTrue(
-                "Wrong number of buckets on non rebalanced region buckets="
-                    + bucketCount + " primarys=" + primaryCount,
-                bucketCount == 6 && primaryCount == 6 
-                || bucketCount == 0 && primaryCount == 0);
+            assertTrue("Wrong number of buckets on non rebalanced region buckets=" + bucketCount + " primarys=" + primaryCount, bucketCount == 6 && primaryCount == 6 || bucketCount == 0 && primaryCount == 0);
           }
         }
       };
@@ -1926,7 +1886,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       vm1.invoke(checkRedundancyFixed);
     }
   }
-  
+
   @Test
   public void testMoveBucketsWithRedundancySimulation() {
     moveBucketsWithRedundancy(true);
@@ -1936,7 +1896,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
   public void testMoveBucketsWithRedundancy() {
     moveBucketsWithRedundancy(false);
   }
-  
+
   /**
    * Test to make sure we balance buckets between three hosts with redundancy
    */
@@ -1947,8 +1907,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(2);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -1960,29 +1919,29 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in two VMs
     vm0.invoke(createPrRegion);
     vm1.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
-        for(int i =0; i < 12; i++) {
+        for (int i = 0; i < 12; i++) {
           region.put(Integer.valueOf(i), "A");
         }
       }
     });
-    
+
     //Create the region in one more VM.
     vm2.invoke(createPrRegion);
-    
+
     //Now simulate a rebalance
     final Long totalSize = (Long) vm0.invoke(new SerializableCallable("simulateRebalance") {
-      
+
       public Object call() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -1999,31 +1958,31 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getBucketCreatesCompleted());
         assertTrue(0 < details.getBucketTransferBytes());
         assertEquals(8, details.getBucketTransfersCompleted());
-        
+
         long totalSize = 0;
         Set<PartitionMemberInfo> beforeDetails = details.getPartitionMemberDetailsAfter();
-        for(PartitionMemberInfo memberDetails: beforeDetails) {
+        for (PartitionMemberInfo memberDetails : beforeDetails) {
           totalSize += memberDetails.getSize();
         }
-        
+
         long afterSize = 0;
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(3, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(8, memberDetails.getBucketCount());
           assertEquals(4, memberDetails.getPrimaryCount());
           afterSize += memberDetails.getSize();
         }
         assertEquals(totalSize, afterSize);
-        if(!simulate) {
+        if (!simulate) {
           verifyStats(manager, results);
         }
-        
+
         return Long.valueOf(totalSize);
       }
     });
 
-    if(!simulate) {
+    if (!simulate) {
       SerializableRunnable checkBalance = new SerializableRunnable("checkBalance") {
 
         public void run() {
@@ -2031,11 +1990,11 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Region region = cache.getRegion("region1");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
           LogWriterUtils.getLogWriter().info("details=" + details.getPartitionMemberInfo());
           long afterSize = 0;
-          for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+          for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
             assertEquals(8, memberDetails.getBucketCount());
             assertEquals(4, memberDetails.getPrimaryCount());
             afterSize += memberDetails.getSize();
@@ -2049,7 +2008,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       vm2.invoke(checkBalance);
     }
   }
-  
+
   /** A test that the stats when overflowing entries to disk
    * are correct and we still rebalance correctly
    */
@@ -2062,8 +2021,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm3 = host.getVM(3);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -2076,21 +2034,21 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in two VMs
     vm0.invoke(createPrRegion);
     vm1.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
-        for(int i =0; i < 12; i++) {
+        for (int i = 0; i < 12; i++) {
           Map m = new HashMap();
           for (int j = 0; j < 200; j++) {
-            m.put(Integer.valueOf(i + 113*j), "A");
+            m.put(Integer.valueOf(i + 113 * j), "A");
           }
           region.putAll(m);
         }
@@ -2099,36 +2057,36 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
     //Do some puts and gets, to trigger eviction
     SerializableRunnable doOps = new SerializableRunnable("doOps") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
-        
+
         Random rand = new Random();
-        
-        for(int count = 0; count < 5000; count++) {
+
+        for (int count = 0; count < 5000; count++) {
           int bucket = (int) (count % 12);
           int key = rand.nextInt(20);
-          region.put(Integer.valueOf(bucket + 113*key), "B");
+          region.put(Integer.valueOf(bucket + 113 * key), "B");
         }
-        
-        for(int count = 0; count < 500; count++) {
+
+        for (int count = 0; count < 500; count++) {
           int bucket = (int) (count % 12);
           int key = rand.nextInt(20);
-          region.get(Integer.valueOf(bucket + 113*key));
+          region.get(Integer.valueOf(bucket + 113 * key));
         }
       }
     };
-    
+
     //Do some operations
     vm0.invoke(doOps);
-    
+
     //Create the region in one more VM.
     vm2.invoke(createPrRegion);
-    
+
     //Now do a rebalance
     final Long totalSize = (Long) vm0.invoke(new SerializableCallable("simulateRebalance") {
-      
+
       public Object call() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -2145,24 +2103,24 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getBucketCreatesCompleted());
         assertTrue(0 < details.getBucketTransferBytes());
         assertEquals(8, details.getBucketTransfersCompleted());
-        
+
         long totalSize = 0;
         Set<PartitionMemberInfo> beforeDetails = details.getPartitionMemberDetailsAfter();
-        for(PartitionMemberInfo memberDetails: beforeDetails) {
+        for (PartitionMemberInfo memberDetails : beforeDetails) {
           totalSize += memberDetails.getSize();
         }
-        
+
         long afterSize = 0;
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(3, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(8, memberDetails.getBucketCount());
           assertEquals(4, memberDetails.getPrimaryCount());
           afterSize += memberDetails.getSize();
         }
         assertEquals(totalSize, afterSize);
         verifyStats(manager, results);
-        
+
         return Long.valueOf(totalSize);
       }
     });
@@ -2174,11 +2132,11 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(12, details.getCreatedBucketCount());
-        assertEquals(1,details.getActualRedundantCopies());
-        assertEquals(0,details.getLowRedundancyBucketCount());
+        assertEquals(1, details.getActualRedundantCopies());
+        assertEquals(0, details.getLowRedundancyBucketCount());
         LogWriterUtils.getLogWriter().info("details=" + details.getPartitionMemberInfo());
         long afterSize = 0;
-        for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+        for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
           assertEquals(8, memberDetails.getBucketCount());
           assertEquals(4, memberDetails.getPrimaryCount());
           afterSize += memberDetails.getSize();
@@ -2190,13 +2148,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(checkBalance);
     vm1.invoke(checkBalance);
     vm2.invoke(checkBalance);
-    
+
     //Create the region in one more VM.
     vm3.invoke(createPrRegion);
-    
+
     //Do another rebalance
     vm0.invoke(new SerializableCallable("simulateRebalance") {
-      
+
       public Object call() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -2213,54 +2171,54 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getBucketCreatesCompleted());
         assertTrue(0 < details.getBucketTransferBytes());
         assertEquals(6, details.getBucketTransfersCompleted());
-        
+
         long totalSize = 0;
         Set<PartitionMemberInfo> beforeDetails = details.getPartitionMemberDetailsAfter();
-        for(PartitionMemberInfo memberDetails: beforeDetails) {
+        for (PartitionMemberInfo memberDetails : beforeDetails) {
           totalSize += memberDetails.getSize();
         }
-        
+
         long afterSize = 0;
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(4, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(6, memberDetails.getBucketCount());
-//          assertIndexDetailsEquals(3, memberDetails.getPrimaryCount());
+          //          assertIndexDetailsEquals(3, memberDetails.getPrimaryCount());
           afterSize += memberDetails.getSize();
         }
         assertEquals(totalSize, afterSize);
         //TODO - need to fix verifyStats to handle a second rebalance
-//        verifyStats(manager, results);
-        
+        //        verifyStats(manager, results);
+
         return Long.valueOf(totalSize);
       }
     });
 
-      checkBalance = new SerializableRunnable("checkBalance") {
+    checkBalance = new SerializableRunnable("checkBalance") {
 
-        public void run() {
-          Cache cache = getCache();
-          Region region = cache.getRegion("region1");
-          PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
-          assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
-          LogWriterUtils.getLogWriter().info("details=" + details.getPartitionMemberInfo());
-          long afterSize = 0;
-          for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
-            assertEquals(6, memberDetails.getBucketCount());
-            //            assertIndexDetailsEquals(3, memberDetails.getPrimaryCount());
-            afterSize += memberDetails.getSize();
-          }
-          //assertIndexDetailsEquals(totalSize.longValue(), afterSize);
+      public void run() {
+        Cache cache = getCache();
+        Region region = cache.getRegion("region1");
+        PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
+        assertEquals(12, details.getCreatedBucketCount());
+        assertEquals(1, details.getActualRedundantCopies());
+        assertEquals(0, details.getLowRedundancyBucketCount());
+        LogWriterUtils.getLogWriter().info("details=" + details.getPartitionMemberInfo());
+        long afterSize = 0;
+        for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
+          assertEquals(6, memberDetails.getBucketCount());
+          //            assertIndexDetailsEquals(3, memberDetails.getPrimaryCount());
+          afterSize += memberDetails.getSize();
         }
-      };
+        //assertIndexDetailsEquals(totalSize.longValue(), afterSize);
+      }
+    };
 
-      vm0.invoke(checkBalance);
-      vm1.invoke(checkBalance);
-      vm2.invoke(checkBalance);
+    vm0.invoke(checkBalance);
+    vm1.invoke(checkBalance);
+    vm2.invoke(checkBalance);
   }
-  
+
   /**
    * Test to make sure we balance buckets between three hosts with redundancy
    */
@@ -2272,8 +2230,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(2);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Region parent;
         Cache cache = getCache();
         {
@@ -2291,29 +2248,29 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         parent.createSubregion("region1", attr.create());
       }
     };
-    
+
     //Create the region in two VMs
     vm0.invoke(createPrRegion);
     vm1.invoke(createPrRegion);
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("parent/region1");
-        for(int i =0; i < 12; i++) {
+        for (int i = 0; i < 12; i++) {
           region.put(Integer.valueOf(i), "A");
         }
       }
     });
-    
+
     //Create the region in one more VM.
     vm2.invoke(createPrRegion);
-    
+
     //Now simulate a rebalance
     final Long totalSize = (Long) vm0.invoke(new SerializableCallable("simulateRebalance") {
-      
+
       public Object call() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -2330,24 +2287,24 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getBucketCreatesCompleted());
         assertTrue(0 < details.getBucketTransferBytes());
         assertEquals(8, details.getBucketTransfersCompleted());
-        
+
         long totalSize = 0;
         Set<PartitionMemberInfo> beforeDetails = details.getPartitionMemberDetailsAfter();
-        for(PartitionMemberInfo memberDetails: beforeDetails) {
+        for (PartitionMemberInfo memberDetails : beforeDetails) {
           totalSize += memberDetails.getSize();
         }
-        
+
         long afterSize = 0;
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(3, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(8, memberDetails.getBucketCount());
           assertEquals(4, memberDetails.getPrimaryCount());
           afterSize += memberDetails.getSize();
         }
         assertEquals(totalSize, afterSize);
         verifyStats(manager, results);
-        
+
         return Long.valueOf(totalSize);
       }
     });
@@ -2359,11 +2316,11 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("parent/region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(12, details.getCreatedBucketCount());
-        assertEquals(1,details.getActualRedundantCopies());
-        assertEquals(0,details.getLowRedundancyBucketCount());
+        assertEquals(1, details.getActualRedundantCopies());
+        assertEquals(0, details.getLowRedundancyBucketCount());
         LogWriterUtils.getLogWriter().info("details=" + details.getPartitionMemberInfo());
         long afterSize = 0;
-        for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+        for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
           assertEquals(8, memberDetails.getBucketCount());
           assertEquals(4, memberDetails.getPrimaryCount());
           afterSize += memberDetails.getSize();
@@ -2376,17 +2333,17 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(checkBalance);
     vm2.invoke(checkBalance);
   }
-  
+
   @Test
   public void testMoveBucketsColocatedRegionsSimulation() {
     moveBucketsColocatedRegions(true);
   }
-  
+
   @Test
   public void testMoveBucketsColocatedRegions() {
     moveBucketsColocatedRegions(false);
   }
-  
+
   /**
    * Test to make sure that we move buckets to balance between
    * three hosts with a redundancy of 1 and two colocated regions.
@@ -2403,31 +2360,30 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     createPrRegion(vm0, "region2", 200, "region1");
     createPrRegion(vm1, "region1", 200, null);
     createPrRegion(vm1, "region2", 200, "region1");
-    
+
     //Create some buckets. 
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
         Region region2 = cache.getRegion("region2");
-        for(int i =0; i< 12; i++) {
+        for (int i = 0; i < 12; i++) {
           region.put(Integer.valueOf(i), "A");
           region2.put(Integer.valueOf(i), "A");
         }
       }
     });
-    
+
     //create the leader region, but not the colocated
     //region in one of the VMs.
     createPrRegion(vm2, "region1", 200, null);
 
-    
     //Simulate a rebalance, and make sure we don't
     //move any buckets yet, because we don't have
     //the colocated region in the new VMs.
     vm0.invoke(new SerializableRunnable("rebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -2438,22 +2394,21 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, results.getTotalBucketTransfersCompleted());
         Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
         assertEquals(2, detailSet.size());
-        for(PartitionRebalanceInfo details : detailSet) {
+        for (PartitionRebalanceInfo details : detailSet) {
           assertEquals(0, details.getBucketCreatesCompleted());
           assertEquals(0, details.getPrimaryTransfersCompleted());
           assertEquals(0, details.getBucketTransferBytes());
           assertEquals(0, details.getBucketTransfersCompleted());
         }
-        
+
       }
     });
-    
-    
+
     //now create the colocated region in the last VM.
     createPrRegion(vm2, "region2", 200, "region1");
-    
+
     vm0.invoke(new SerializableRunnable("rebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -2463,14 +2418,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertTrue(0 < results.getTotalBucketTransferBytes());
         Set<PartitionRebalanceInfo> detailSet = results.getPartitionRebalanceDetails();
         assertEquals(2, detailSet.size());
-        for(PartitionRebalanceInfo details : detailSet) {
+        for (PartitionRebalanceInfo details : detailSet) {
           assertEquals(0, details.getBucketCreatesCompleted());
           assertTrue(0 < details.getBucketTransferBytes());
           assertEquals(8, details.getBucketTransfersCompleted());
-          
+
           Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
           assertEquals(3, afterDetails.size());
-          for(PartitionMemberInfo memberDetails: afterDetails) {
+          for (PartitionMemberInfo memberDetails : afterDetails) {
             assertEquals(8, memberDetails.getBucketCount());
             assertEquals(4, memberDetails.getPrimaryCount());
           }
@@ -2478,8 +2433,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       }
     });
 
-    
-    if(!simulate) {
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkLowRedundancy") {
 
         public void run() {
@@ -2489,15 +2443,15 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           ResourceManager manager = cache.getResourceManager();
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(cache.getRegion("region1"));
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
           details = PartitionRegionHelper.getPartitionRegionInfo(cache.getRegion("region2"));
           assertEquals(12, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
-          
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
+
           assertEquals(region1.getLocalPrimaryBucketsListTestOnly(), region2.getLocalPrimaryBucketsListTestOnly());
-          
+
           assertEquals(region1.getLocalBucketsListTestOnly(), region2.getLocalBucketsListTestOnly());
         }
       };
@@ -2507,7 +2461,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       vm2.invoke(checkRedundancyFixed);
     }
   }
-  
+
   /**
    * Test to make sure that moving primaries waits for a put
    * @throws Exception
@@ -2520,7 +2474,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * Test to make sure that moving primaries waits for a put
    * @throws Exception
@@ -2533,7 +2487,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * Test to make sure that moving primaries waits for a put
    * @throws Exception
@@ -2546,7 +2500,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * Test to make sure that moving primaries waits for a put
    * @throws Exception
@@ -2561,7 +2515,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /** 
    * Test to ensure that we wait for
    * in progress write operations before moving a primary.
@@ -2573,8 +2527,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         attr.setCacheLoader(new CacheLoader() {
@@ -2595,7 +2548,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create a region in this VM with a cache writer
     //and cache loader
     Cache cache = getCache();
@@ -2608,7 +2561,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       public void close() {
       }
     });
-    
+
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     paf.setRedundantCopies(1);
     paf.setRecoveryDelay(-1);
@@ -2617,14 +2570,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     PartitionAttributes prAttr = paf.create();
     attr.setPartitionAttributes(prAttr);
     final Region region = cache.createRegion("region1", attr.create());
-    
+
     //create some buckets
     region.put(Integer.valueOf(1), "A");
     region.put(Integer.valueOf(2), "A");
 
     BlockingCacheListener cacheWriter = new BlockingCacheListener(2);
     region.getAttributesMutator().addCacheListener(cacheWriter);
-    
+
     //start two threads doing operations, one on each bucket
     //the threads will block on the cache writer. The rebalance operation
     //will try to move one of these buckets, but it shouldn't
@@ -2635,7 +2588,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       }
     };
     thread1.start();
-    
+
     Thread thread2 = new Thread() {
       public void run() {
         op.execute(region, Integer.valueOf(2));
@@ -2643,7 +2596,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     };
     thread2.start();
     cacheWriter.waitForOperationsStarted();
-    
+
     SerializableRunnable checkLowRedundancy = new SerializableRunnable("checkLowRedundancy") {
 
       public void run() {
@@ -2651,30 +2604,30 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(2, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(2,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(2, details.getLowRedundancyBucketCount());
       }
     };
-    
+
     //make sure we can tell that the buckets have low redundancy
     checkLowRedundancy.run();
 
     //Create the region in the other VM (should have no effect)
     vm1.invoke(createPrRegion);
-    
+
     //Make sure we still have low redundancy
     checkLowRedundancy.run();
-    
+
     ResourceManager manager = cache.getResourceManager();
     RebalanceOperation rebalance = manager.createRebalanceFactory().start();
     try {
       rebalance.getResults(5, TimeUnit.SECONDS);
       fail("Operation should not have completed");
-    } catch(TimeoutException expected) {
+    } catch (TimeoutException expected) {
       //do nothing
     }
     cacheWriter.release();
-   
+
     LogWriterUtils.getLogWriter().info("starting wait for rebalance.  Will wait for " + MAX_WAIT + " seconds");
     RebalanceResults results = rebalance.getResults(MAX_WAIT, TimeUnit.SECONDS);
     assertEquals(2, results.getTotalBucketCreatesCompleted());
@@ -2688,10 +2641,10 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     assertEquals(1, details.getPrimaryTransfersCompleted());
     assertEquals(0, details.getBucketTransferBytes());
     assertEquals(0, details.getBucketTransfersCompleted());
-        
+
     Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
     assertEquals(2, afterDetails.size());
-    for(PartitionMemberInfo memberDetails: afterDetails) {
+    for (PartitionMemberInfo memberDetails : afterDetails) {
       assertEquals(2, memberDetails.getBucketCount());
       assertEquals(1, memberDetails.getPrimaryCount());
 
@@ -2702,8 +2655,8 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Region region = cache.getRegion("region1");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
           assertEquals(2, details.getCreatedBucketCount());
-          assertEquals(1,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(1, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
         }
       };
 
@@ -2711,41 +2664,39 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       vm1.invoke(checkRedundancyFixed);
     }
   }
-  
+
   @Test
   public void testRecoverRedundancyWithOfflinePersistenceSimulation() throws Throwable {
     recoverRedundancyWithOfflinePersistence(true, false);
   }
-   
+
   @Test
   public void testRecoverRedundancyWithOfflinePersistence() throws Throwable {
     recoverRedundancyWithOfflinePersistence(false, false);
   }
-  
+
   @Test
   public void testRecoverRedundancyWithOfflinePersistenceAccessorSimulation() throws Throwable {
     recoverRedundancyWithOfflinePersistence(true, true);
   }
-   
+
   @Test
   public void testRecoverRedundancyWithOfflinePersistenceAccessor() throws Throwable {
     recoverRedundancyWithOfflinePersistence(false, true);
   }
-  
+
   public void recoverRedundancyWithOfflinePersistence(final boolean simulate, final boolean useAccessor) throws Throwable {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     final VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
-    
+
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        DiskStore ds1 = dsf.setDiskDirs(getDiskDirs())
-                          .create(getUniqueName());
+        DiskStore ds1 = dsf.setDiskDirs(getDiskDirs()).create(getUniqueName());
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setRedundantCopies(1);
@@ -2759,19 +2710,18 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     //Create the region in only 2 VMs
     vm0.invoke(createPrRegion);
     vm1.invoke(createPrRegion);
-    
+
     VM rebalanceVM;
     SerializableRunnable createAccessor = new SerializableRunnable(("createAccessor")) {
-      
+
       public void run() {
         Cache cache = getCache();
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        DiskStore ds1 = dsf.setDiskDirs(getDiskDirs())
-                          .create("ds1");
+        DiskStore ds1 = dsf.setDiskDirs(getDiskDirs()).create("ds1");
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setRedundantCopies(1);
@@ -2780,21 +2730,21 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         paf.setLocalMaxMemory(0);
         PartitionAttributes prAttr = paf.create();
         attr.setPartitionAttributes(prAttr);
-        cache.createRegion("region1", attr.create());  
+        cache.createRegion("region1", attr.create());
       }
     };
-    
-    if(useAccessor) {
+
+    if (useAccessor) {
       //Create an accessor and reblance from that VM
       vm3.invoke(createAccessor);
       rebalanceVM = vm3;
     } else {
       rebalanceVM = vm0;
     }
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
@@ -2806,18 +2756,18 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         region.put(Integer.valueOf(6), "A");
       }
     });
-    
+
     SerializableRunnable closeCache = new SerializableRunnable("close cache") {
       public void run() {
         Cache cache = getCache();
         cache.getRegion("region1").close();
       }
     };
-   
+
     //Close the cache in vm1
     final Set<Integer> vm1Buckets = getBucketList("region1", vm1);
     vm1.invoke(closeCache);
-    
+
     SerializableRunnable checkLowRedundancyBeforeRebalance = new SerializableRunnable("checkLowRedundancyBeforeRebalance") {
 
       public void run() {
@@ -2825,8 +2775,8 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(6, details.getCreatedBucketCount());
-        assertEquals(0,details.getActualRedundantCopies());
-        assertEquals(6,details.getLowRedundancyBucketCount());
+        assertEquals(0, details.getActualRedundantCopies());
+        assertEquals(6, details.getLowRedundancyBucketCount());
       }
     };
 
@@ -2837,20 +2787,20 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.getRegion("region1");
         PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
         assertEquals(6, details.getCreatedBucketCount());
-        assertEquals(1,details.getActualRedundantCopies());
-        assertEquals(0,details.getLowRedundancyBucketCount());
+        assertEquals(1, details.getActualRedundantCopies());
+        assertEquals(0, details.getLowRedundancyBucketCount());
       }
     };
-    
+
     //make sure we can tell that the buckets have low redundancy
     vm0.invoke(checkLowRedundancyBeforeRebalance);
-    
+
     //Now create the cache in another member
     vm2.invoke(createPrRegion);
-    
+
     //Make sure we still have low redundancy
     vm0.invoke(checkLowRedundancyBeforeRebalance);
-    
+
     /*
      * Simulates a rebalance if simulation flag is set.
      * Otherwise, performs a rebalance.
@@ -2859,7 +2809,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
      * should restore redundancy
      */
     rebalanceVM.invoke(new SerializableRunnable("simulateRebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -2873,62 +2823,62 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(6, details.getBucketCreatesCompleted());
         assertEquals(3, details.getPrimaryTransfersCompleted());
         assertEquals(0, details.getBucketTransfersCompleted());
-        
+
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(2, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(6, memberDetails.getBucketCount());
           assertEquals(3, memberDetails.getPrimaryCount());
         }
-        
-        if(!simulate) {
+
+        if (!simulate) {
           verifyStats(manager, results);
         }
       }
     });
-    
+
     Set<Integer> vm0Buckets = getBucketList("region1", vm0);
     Set<Integer> vm2Buckets = getBucketList("region1", vm2);
 
     //Make sure redundancy is repaired if not simulated
-    if(!simulate) {
+    if (!simulate) {
       vm0.invoke(checkLowRedundancyAfterRebalance);
     } else {
       // Othewise, we should still have broken redundancy at this point
       vm0.invoke(checkLowRedundancyBeforeRebalance);
     }
-    
+
     vm2.invoke(closeCache);
     vm0.invoke(closeCache);
-    
-    if(useAccessor) {
+
+    if (useAccessor) {
       vm3.invoke(closeCache);
     }
-    
+
     //We need to restart both VMs at the same time, because
     //they will wait for each other before allowing operations.
     AsyncInvocation async0 = vm0.invokeAsync(createPrRegion);
     AsyncInvocation async2 = vm2.invokeAsync(createPrRegion);
     async0.getResult(30000);
     async0.getResult(30000);
-    
-    if(useAccessor) {
+
+    if (useAccessor) {
       vm3.invoke(createAccessor);
     }
-    
+
     // pause for async bucket recovery threads to finish their work.  Otherwise
     // the rebalance op may think that the other member doesn't have buckets, then
     // ask it to create them and get a negative reply because it actually does
     // have the buckets, causing the test to fail
-    Wait.pause(10000);  
-    
+    Wait.pause(10000);
+
     //Try to rebalance again. This shouldn't do anything, because
     //we already recovered redundancy earlier.
     //Note that we don't check the primary balance. This rebalance
     //has a race with the redundancy recovery thread, which is also trying
     //to rebalance primaries. So this thread might end up rebalancing primaries,
     //or it might not.
-    if(!simulate) {
+    if (!simulate) {
       rebalanceVM.invoke(new SerializableRunnable("rebalance") {
 
         public void run() {
@@ -2945,31 +2895,31 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
           Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
           assertEquals(2, afterDetails.size());
-          for(PartitionMemberInfo memberDetails: afterDetails) {
+          for (PartitionMemberInfo memberDetails : afterDetails) {
             assertEquals(6, memberDetails.getBucketCount());
             assertEquals(3, memberDetails.getPrimaryCount());
           }
         }
       });
-      
+
       //Redundancy should be repaired.
       vm0.invoke(checkLowRedundancyAfterRebalance);
     }
-    
+
     vm1.invoke(createPrRegion);
-        
+
     //Look at vm0 buckets.
     assertEquals(vm0Buckets, getBucketList("region1", vm0));
-    
+
     /*
      * Look at vm1 buckets.
      */
-    if(!simulate) {
+    if (!simulate) {
       /*
        * vm1 should have no buckets because offline buckets were recovered
        * when vm0 and vm2 were rebalanced above.
        */
-      assertEquals(0,getBucketList("region1",vm1).size());
+      assertEquals(0, getBucketList("region1", vm1).size());
     } else {
       /*
        * No rebalancing above because the simulation flag is on.
@@ -2978,28 +2928,28 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
        * might still be in the middle of creation in the
        * background
        */
-      waitForBucketList("region1", vm1, vm1Buckets);      
+      waitForBucketList("region1", vm1, vm1Buckets);
     }
-    
+
     // look at vm2 buckets
     assertEquals(vm2Buckets, getBucketList("region1", vm2));
   }
-  
+
   @Test
   public void testMoveBucketsWithUnrecoveredValues() {
     moveBucketsWithUnrecoveredValuesRedundancy(false);
   }
-  
+
   @Test
   public void testBalanceBucketsByCountSimulation() {
     balanceBucketsByCount(true);
   }
-  
+
   @Test
   public void testBalanceBucketsByCount() {
     balanceBucketsByCount(false);
   }
-  
+
   /**
    * Check to make sure that we balance
    * buckets between two hosts with no redundancy.
@@ -3013,8 +2963,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     LoadProbe oldProbe = setLoadProbe(vm0, new BucketCountLoadProbe());
     try {
       SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-        public void run()
-        {
+        public void run() {
           Cache cache = getCache();
           AttributesFactory attr = new AttributesFactory();
           PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -3070,17 +3019,17 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
           Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
           assertEquals(2, afterDetails.size());
-          for(PartitionMemberInfo memberDetails: afterDetails) {
+          for (PartitionMemberInfo memberDetails : afterDetails) {
             assertEquals(3, memberDetails.getBucketCount());
             assertEquals(3, memberDetails.getPrimaryCount());
           }
-          if(!simulate) {
+          if (!simulate) {
             verifyStats(manager, results);
           }
         }
       });
 
-      if(!simulate) {
+      if (!simulate) {
         SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkRedundancyFixed") {
 
           public void run() {
@@ -3088,10 +3037,10 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
             Region region = cache.getRegion("region1");
             PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
             assertEquals(6, details.getCreatedBucketCount());
-            assertEquals(0,details.getActualRedundantCopies());
-            assertEquals(0,details.getLowRedundancyBucketCount());
+            assertEquals(0, details.getActualRedundantCopies());
+            assertEquals(0, details.getLowRedundancyBucketCount());
             assertEquals(2, details.getPartitionMemberInfo().size());
-            for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+            for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
               assertEquals(3, memberDetails.getBucketCount());
               assertEquals(3, memberDetails.getPrimaryCount());
             }
@@ -3109,17 +3058,17 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       setLoadProbe(vm0, oldProbe);
     }
   }
-  
+
   private LoadProbe setLoadProbe(VM vm, final LoadProbe probe) {
     LoadProbe oldProbe = (LoadProbe) vm.invoke(new SerializableCallable("set load probe") {
-      
+
       public Object call() {
         GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         InternalResourceManager mgr = cache.getResourceManager();
         return mgr.setLoadProbe(probe);
       }
     });
-    
+
     return oldProbe;
   }
 
@@ -3134,41 +3083,36 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
 
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         System.setProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME, "false");
         try {
-        Cache cache = getCache();
-        if(cache.findDiskStore("store") == null) {
-         cache.createDiskStoreFactory()
-         .setDiskDirs(getDiskDirs())
-         .setMaxOplogSize(1)
-         .create("store");
-        }
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        attr.setDiskStoreName("store");
-        attr.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        paf.setRedundantCopies(0);
-        paf.setRecoveryDelay(-1);
-        paf.setStartupRecoveryDelay(-1);
-        PartitionAttributes prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        attr.setCacheLoader(new Bug40228Loader());
-        cache.createRegion("region1", attr.create());
+          Cache cache = getCache();
+          if (cache.findDiskStore("store") == null) {
+            cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).setMaxOplogSize(1).create("store");
+          }
+          AttributesFactory attr = new AttributesFactory();
+          PartitionAttributesFactory paf = new PartitionAttributesFactory();
+          attr.setDiskStoreName("store");
+          attr.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+          paf.setRedundantCopies(0);
+          paf.setRecoveryDelay(-1);
+          paf.setStartupRecoveryDelay(-1);
+          PartitionAttributes prAttr = paf.create();
+          attr.setPartitionAttributes(prAttr);
+          attr.setCacheLoader(new Bug40228Loader());
+          cache.createRegion("region1", attr.create());
         } finally {
           System.setProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME, "true");
         }
       }
     };
-    
+
     //Create the region in only 1 VM
     vm0.invoke(createPrRegion);
-    
-    
+
     //Create some buckets
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
@@ -3180,14 +3124,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         region.put(Integer.valueOf(6), "A");
       }
     });
-    
+
     final long[] bucketSizes = (long[]) vm0.invoke(new SerializableCallable("get sizes and close cache") {
 
       public Object call() {
         PartitionedRegion region = (PartitionedRegion) getCache().getRegion("region1");
         PartitionedRegionDataStore dataStore = region.getDataStore();
         long[] bucketSizes = new long[7];
-        for(int i =1; i <= 6; i++) {
+        for (int i = 1; i <= 6; i++) {
           BucketRegion bucket = dataStore.getLocalBucketById(i);
           bucketSizes[i] = bucket.getTotalBytes();
           assertEquals(0, bucket.getNumOverflowBytesOnDisk());
@@ -3195,20 +3139,20 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           assertEquals(1, bucket.getNumEntriesInVM());
         }
         getCache().close();
-        
+
         return bucketSizes;
       }
     });
-    
+
     //now recover the region
     vm0.invoke(createPrRegion);
-    
+
     vm0.invoke(new SerializableRunnable("check sizes") {
 
       public void run() {
         PartitionedRegion region = (PartitionedRegion) getCache().getRegion("region1");
         PartitionedRegionDataStore dataStore = region.getDataStore();
-        for(int i =1; i <= 6; i++) {
+        for (int i = 1; i <= 6; i++) {
           BucketRegion bucket = dataStore.getLocalBucketById(i);
           assertEquals(1, bucket.getNumOverflowOnDisk());
           assertEquals(0, bucket.getNumEntriesInVM());
@@ -3218,13 +3162,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         }
       }
     });
-    
+
     //Create the region in the other VM (should have no effect)
     vm1.invoke(createPrRegion);
-    
+
     //Now simulate a rebalance
     vm0.invoke(new SerializableRunnable("simulateRebalance") {
-      
+
       public void run() {
         Cache cache = getCache();
         ResourceManager manager = cache.getResourceManager();
@@ -3240,20 +3184,20 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
         assertEquals(0, details.getPrimaryTransfersCompleted());
         assertTrue(0 < details.getBucketTransferBytes());
         assertEquals(3, details.getBucketTransfersCompleted());
-        
+
         Set<PartitionMemberInfo> afterDetails = details.getPartitionMemberDetailsAfter();
         assertEquals(2, afterDetails.size());
-        for(PartitionMemberInfo memberDetails: afterDetails) {
+        for (PartitionMemberInfo memberDetails : afterDetails) {
           assertEquals(3, memberDetails.getBucketCount());
           assertEquals(3, memberDetails.getPrimaryCount());
         }
-        if(!simulate) {
+        if (!simulate) {
           verifyStats(manager, results);
         }
       }
     });
 
-    if(!simulate) {
+    if (!simulate) {
       SerializableRunnable checkRedundancyFixed = new SerializableRunnable("checkRedundancyFixed") {
 
         public void run() {
@@ -3261,14 +3205,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           Region region = cache.getRegion("region1");
           PartitionRegionInfo details = PartitionRegionHelper.getPartitionRegionInfo(region);
           assertEquals(6, details.getCreatedBucketCount());
-          assertEquals(0,details.getActualRedundantCopies());
-          assertEquals(0,details.getLowRedundancyBucketCount());
+          assertEquals(0, details.getActualRedundantCopies());
+          assertEquals(0, details.getLowRedundancyBucketCount());
           assertEquals(2, details.getPartitionMemberInfo().size());
-          for(PartitionMemberInfo memberDetails: details.getPartitionMemberInfo()) {
+          for (PartitionMemberInfo memberDetails : details.getPartitionMemberInfo()) {
             assertEquals(3, memberDetails.getBucketCount());
             assertEquals(3, memberDetails.getPrimaryCount());
           }
-          
+
           //check to make sure that moving buckets didn't close the cache loader
           Bug40228Loader loader = (Bug40228Loader) cache.getRegion("region1").getAttributes().getCacheLoader();
           assertFalse(loader.isClosed());
@@ -3277,7 +3221,7 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
 
       vm0.invoke(checkRedundancyFixed);
       vm1.invoke(checkRedundancyFixed);
-      
+
       SerializableRunnable checkBug40228Fixed = new SerializableRunnable("checkBug40228Fixed") {
 
         public void run() {
@@ -3289,20 +3233,20 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
           assertTrue(loader.isClosed());
         }
       };
-      
+
       vm0.invoke(checkBug40228Fixed);
       vm1.invoke(checkBug40228Fixed);
     }
   }
-  
+
   //TODO test colocated regions where buckets aren't created for all subregions
-  
+
   //TODO test colocated regions where members aren't consistent in which regions they have
-  
+
   private void verifyStats(ResourceManager manager, RebalanceResults results) {
-    InternalResourceManager mgr  = (InternalResourceManager) manager;
+    InternalResourceManager mgr = (InternalResourceManager) manager;
     ResourceManagerStats stats = mgr.getStats();
-    
+
     assertEquals(0, stats.getRebalancesInProgress());
     assertEquals(1, stats.getRebalancesCompleted());
     assertEquals(0, stats.getRebalanceBucketCreatesInProgress());
@@ -3322,29 +3266,29 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     assertEquals(0, stats.getRebalancePrimaryTransfersFailed());
     assertEquals(results.getTotalPrimaryTransferTime(), TimeUnit.NANOSECONDS.toMillis(stats.getRebalancePrimaryTransferTime()), 2000);
   }
-  
+
   private Set<Integer> getBucketList(final String regionName, VM vm0) {
     SerializableCallable getBuckets = new SerializableCallable("get buckets") {
-      
+
       public Object call() throws Exception {
         Cache cache = getCache();
         PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
         return new TreeSet<Integer>(region.getDataStore().getAllLocalBucketIds());
       }
     };
-    
+
     return (Set<Integer>) vm0.invoke(getBuckets);
   }
-  
+
   private void waitForBucketList(final String regionName, VM vm0, final Collection<Integer> expected) {
     SerializableCallable getBuckets = new SerializableCallable("get buckets") {
-      
+
       public Object call() throws Exception {
         Cache cache = getCache();
         final PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
-        
+
         Wait.waitForCriterion(new WaitCriterion() {
-          
+
           @Override
           public boolean done() {
             TreeSet<Integer> results = getBuckets();
@@ -3355,37 +3299,37 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
             TreeSet<Integer> results = new TreeSet<Integer>(region.getDataStore().getAllLocalBucketIds());
             return results;
           }
-          
+
           @Override
           public String description() {
             return "Timeout waiting for buckets to match. Expected " + expected + " but got " + getBuckets();
           }
         }, 60000, 100, true);
-        
+
         return null;
       }
     };
-    
+
     vm0.invoke(getBuckets);
   }
 
   private static class BlockingCacheListener extends CacheListenerAdapter {
     CountDownLatch operationStartedLatch;
     CountDownLatch resumeOperationLatch = new CountDownLatch(1);
-    
+
     public BlockingCacheListener(int threads) {
       operationStartedLatch = new CountDownLatch(threads);
     }
 
     public void waitForOperationsStarted() throws InterruptedException {
       operationStartedLatch.await(MAX_WAIT, TimeUnit.SECONDS);
-      
+
     }
 
     public void close() {
-      
+
     }
-    
+
     private void doWait() {
       operationStartedLatch.countDown();
       try {
@@ -3393,14 +3337,14 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       } catch (InterruptedException e) {
         throw new CacheWriterException(e);
       }
-      
+
     }
 
     @Override
     public void afterUpdate(EntryEvent event) throws CacheWriterException {
       doWait();
     }
-    
+
     @Override
     public void afterCreate(EntryEvent event) {
       doWait();
@@ -3420,13 +3364,13 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
       resumeOperationLatch.countDown();
     }
   }
-  
+
   private static interface Operation {
 
     void execute(Region region, Integer key);
-    
+
   }
-  
+
   private static class Bug40228Loader implements CacheLoader {
     private volatile boolean closed = false;
 
@@ -3439,8 +3383,8 @@ public class RebalanceOperationDUnitTest extends JUnit4CacheTestCase {
     }
 
     public void close() {
-      closed =true;
+      closed = true;
     }
-    
+
   }
 }

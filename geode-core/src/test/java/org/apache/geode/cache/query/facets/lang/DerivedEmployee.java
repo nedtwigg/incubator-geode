@@ -17,13 +17,11 @@
 
 package org.apache.geode.cache.query.facets.lang;
 
-class DerivedEmployee extends Employee
-{
-    public Address fieldAddress; // this is actually package level access
-    
-    public Address address()
-    {
-        System.out.println("In DerivedEmployee#address()");
-        return super.address();
-    }
+class DerivedEmployee extends Employee {
+  public Address fieldAddress; // this is actually package level access
+
+  public Address address() {
+    System.out.println("In DerivedEmployee#address()");
+    return super.address();
+  }
 }

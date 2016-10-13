@@ -44,8 +44,7 @@ public class ParserUtils {
             // This means that we need to check further whether
             // the splitAround is present
             StringBuffer temp = new StringBuffer("");
-            for (int j = 0; j < splitAround.length()
-                && (i + j) < input.length(); j++) {
+            for (int j = 0; j < splitAround.length() && (i + j) < input.length(); j++) {
               temp.append(input.charAt((i + j)));
               if (temp.toString().equals(splitAround)) {
                 parts.add(part.toString().trim());
@@ -84,8 +83,7 @@ public class ParserUtils {
   public static String[] splitValues(String value, String valueSeparator) {
     if (value != null && valueSeparator != null) {
       String[] split = split(value, valueSeparator);
-      if (value.endsWith(valueSeparator)
-          && PreprocessorUtils.isSyntaxValid(split[split.length - 1])) {
+      if (value.endsWith(valueSeparator) && PreprocessorUtils.isSyntaxValid(split[split.length - 1])) {
         String[] extendedSplit = new String[split.length + 1];
         for (int i = 0; i < split.length; i++) {
           extendedSplit[i] = split[i];
@@ -96,12 +94,11 @@ public class ParserUtils {
 
       // Remove quotes from the beginning and end of split strings
       for (int i = 0; i < split.length; i++) {
-        if ((split[i].endsWith("\"") && split[i].endsWith("\""))
-            || (split[i].startsWith("\'") && split[i].endsWith("\'"))) {
+        if ((split[i].endsWith("\"") && split[i].endsWith("\"")) || (split[i].startsWith("\'") && split[i].endsWith("\'"))) {
           split[i] = split[i].substring(1, split[i].length() - 1);
         }
       }
-      
+
       return split;
     } else {
       return null;

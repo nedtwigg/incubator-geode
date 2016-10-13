@@ -69,11 +69,9 @@ public class StatsAggregator {
     }
   }
 
-  public void aggregate(FederationComponent newComp,
-      FederationComponent oldComp) {
+  public void aggregate(FederationComponent newComp, FederationComponent oldComp) {
 
-    Map<String, Object> newState = (newComp != null ? newComp.getObjectState()
-        : null);
+    Map<String, Object> newState = (newComp != null ? newComp.getObjectState() : null);
     Map<String, Object> oldState;
 
     if (oldComp != null && oldComp.getOldState().size() > 0) {
@@ -85,7 +83,7 @@ public class StatsAggregator {
     String attribute = null;
     try {
       if (typeMap != null && !typeMap.isEmpty()) {
-        for (Map.Entry<String, Class<?>> typeEntry: typeMap.entrySet()) {
+        for (Map.Entry<String, Class<?>> typeEntry : typeMap.entrySet()) {
           attribute = typeEntry.getKey();
 
           Object newVal = newState != null ? newState.get(attribute) : null;
@@ -104,7 +102,7 @@ public class StatsAggregator {
               incLong(attribute, (Long) newVal, (Long) oldVal);
             } else if (classzz == Integer.TYPE) {
               if (oldVal == null) {
-                oldVal =  new Integer(0);
+                oldVal = new Integer(0);
               }
               incInt(attribute, (Integer) newVal, (Integer) oldVal);
             } else if (classzz == Float.TYPE) {
@@ -122,7 +120,7 @@ public class StatsAggregator {
 
           } else if (oldState != null && newState == null) {
             Object oldVal = oldState.get(attribute);
-            if(oldVal != null){
+            if (oldVal != null) {
               Class<?> classzz = typeEntry.getValue();
               if (classzz == Long.TYPE) {
                 decLong(attribute, (Long) oldVal);
@@ -142,10 +140,10 @@ public class StatsAggregator {
 
       }
     } catch (Exception e) {
-        if(logger.fineEnabled()){
-          logger.fine("Exception while processing attribute " + attribute);
-          logger.fine(e);
-        }
+      if (logger.fineEnabled()) {
+        logger.fine("Exception while processing attribute " + attribute);
+        logger.fine(e);
+      }
     }
 
   }
@@ -226,7 +224,7 @@ public class StatsAggregator {
     }
   }
 
-  public void decLong(String attributeName,Long oldVal) {
+  public void decLong(String attributeName, Long oldVal) {
     if (oldVal == 0) {
       return;
     }
@@ -245,7 +243,7 @@ public class StatsAggregator {
     }
   }
 
-  public void decInt(String attributeName,Integer oldVal) {
+  public void decInt(String attributeName, Integer oldVal) {
     if (oldVal == 0) {
       return;
     }
@@ -264,7 +262,7 @@ public class StatsAggregator {
     }
   }
 
-  public void decFloat(String attributeName,Float oldVal) {
+  public void decFloat(String attributeName, Float oldVal) {
     if (oldVal == 0) {
       return;
     }
@@ -283,7 +281,7 @@ public class StatsAggregator {
     }
   }
 
-  public void decDouble(String attributeName,Double oldVal) {
+  public void decDouble(String attributeName, Double oldVal) {
     if (oldVal == 0) {
       return;
     }

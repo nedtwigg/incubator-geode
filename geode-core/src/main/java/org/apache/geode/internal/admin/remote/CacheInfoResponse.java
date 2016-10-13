@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 //import org.apache.geode.internal.admin.*;
@@ -36,8 +35,7 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class CacheInfoResponse extends AdminResponse {
   // instance variables
   private RemoteCacheInfo info;
-  
-  
+
   /**
    * Returns a <code>CacheInfoResponse</code> that will be returned to the
    * specified recipient.
@@ -46,10 +44,9 @@ public final class CacheInfoResponse extends AdminResponse {
     CacheInfoResponse m = new CacheInfoResponse();
     m.setRecipient(recipient);
     try {
-      GemFireCacheImpl c = (GemFireCacheImpl)CacheFactory.getInstanceCloseOk(dm.getSystem());
+      GemFireCacheImpl c = (GemFireCacheImpl) CacheFactory.getInstanceCloseOk(dm.getSystem());
       m.info = new RemoteCacheInfo(c);
-    } 
-    catch (CancelException ex) {
+    } catch (CancelException ex) {
       m.info = null;
     }
     return m;
@@ -58,7 +55,7 @@ public final class CacheInfoResponse extends AdminResponse {
   public RemoteCacheInfo getCacheInfo() {
     return this.info;
   }
-  
+
   public int getDSFID() {
     return CACHE_INFO_RESPONSE;
   }
@@ -70,10 +67,9 @@ public final class CacheInfoResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.info = (RemoteCacheInfo)DataSerializer.readObject(in);
+    this.info = (RemoteCacheInfo) DataSerializer.readObject(in);
   }
 
   @Override

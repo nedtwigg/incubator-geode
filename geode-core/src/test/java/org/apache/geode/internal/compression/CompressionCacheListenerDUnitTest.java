@@ -94,36 +94,35 @@ public class CompressionCacheListenerDUnitTest extends JUnit4CacheTestCase {
   /**
    * Queues events received by the CacheListener.
    */
-  public static final BlockingQueue<EntryEvent> LISTENER_QUEUE = new LinkedBlockingQueue<EntryEvent>(
-      1);
+  public static final BlockingQueue<EntryEvent> LISTENER_QUEUE = new LinkedBlockingQueue<EntryEvent>(1);
 
   /**
    * A CacheListener that simply stores received events in a queue for evaluating.
    */
   private static final CacheListener<String, String> CACHE_LISTENER = new CacheListenerAdapter<String, String>() {
     public void afterCreate(EntryEvent<String, String> event) {
-      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl)event);
+      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl) event);
       copy.copyOffHeapToHeap();
       LISTENER_QUEUE.add(copy);
     }
 
     @Override
     public void afterDestroy(EntryEvent<String, String> event) {
-      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl)event);
+      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl) event);
       copy.copyOffHeapToHeap();
       LISTENER_QUEUE.add(copy);
     }
 
     @Override
     public void afterInvalidate(EntryEvent<String, String> event) {
-      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl)event);
+      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl) event);
       copy.copyOffHeapToHeap();
       LISTENER_QUEUE.add(copy);
     }
 
     @Override
     public void afterUpdate(EntryEvent<String, String> event) {
-      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl)event);
+      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl) event);
       copy.copyOffHeapToHeap();
       LISTENER_QUEUE.add(copy);
     }
@@ -132,29 +131,28 @@ public class CompressionCacheListenerDUnitTest extends JUnit4CacheTestCase {
   /**
    * A queue for storing events received by a CacheWriter.
    */
-  public static final BlockingQueue<EntryEvent> WRITER_QUEUE = new LinkedBlockingQueue<EntryEvent>(
-      1);
+  public static final BlockingQueue<EntryEvent> WRITER_QUEUE = new LinkedBlockingQueue<EntryEvent>(1);
 
   /**
    * A CacheWriter that simply stores received events in a queue for evaluation.
    */
   private static final CacheWriter<String, String> CACHE_WRITER = new CacheWriterAdapter<String, String>() {
     public void beforeCreate(EntryEvent<String, String> event) {
-      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl)event);
+      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl) event);
       copy.copyOffHeapToHeap();
       WRITER_QUEUE.add(copy);
     }
 
     @Override
     public void beforeDestroy(EntryEvent<String, String> event) {
-      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl)event);
+      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl) event);
       copy.copyOffHeapToHeap();
       WRITER_QUEUE.add(copy);
     }
 
     @Override
     public void beforeUpdate(EntryEvent<String, String> event) {
-      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl)event);
+      EntryEventImpl copy = new EntryEventImpl((EntryEventImpl) event);
       copy.copyOffHeapToHeap();
       WRITER_QUEUE.add(copy);
     }
@@ -175,7 +173,7 @@ public class CompressionCacheListenerDUnitTest extends JUnit4CacheTestCase {
     disconnectAllFromDS();
     createRegion();
   }
-  
+
   protected void createRegion() {
     createCompressedRegionOnVm(getVM(TEST_VM), REGION_NAME, new SnappyCompressor());
   }
@@ -185,7 +183,7 @@ public class CompressionCacheListenerDUnitTest extends JUnit4CacheTestCase {
     preTearDownCompressionCacheListenerDUnitTest();
     cleanup(getVM(TEST_VM));
   }
-  
+
   protected void preTearDownCompressionCacheListenerDUnitTest() throws Exception {
   }
 
@@ -320,10 +318,10 @@ public class CompressionCacheListenerDUnitTest extends JUnit4CacheTestCase {
    * @param compressor
    *          a compressor.
    */
-  private void createCompressedRegionOnVm(final VM vm, final String name,
-      final Compressor compressor) {
+  private void createCompressedRegionOnVm(final VM vm, final String name, final Compressor compressor) {
     createCompressedRegionOnVm(vm, name, compressor, false);
   }
+
   protected void createCompressedRegionOnVm(final VM vm, final String name, final Compressor compressor, final boolean offHeap) {
     vm.invoke(new SerializableCallable() {
       @Override
@@ -343,11 +341,6 @@ public class CompressionCacheListenerDUnitTest extends JUnit4CacheTestCase {
    *          a compressor.
    */
   private Region createRegion(String name, Compressor compressor, boolean offHeap) {
-    return getCache().<String, String> createRegionFactory()
-        .addCacheListener(CACHE_LISTENER).setCacheWriter(CACHE_WRITER)
-        .setDataPolicy(DataPolicy.REPLICATE).setCloningEnabled(true)
-        .setCompressor(compressor)
-        .setOffHeap(offHeap)
-        .create(name);
+    return getCache().<String, String> createRegionFactory().addCacheListener(CACHE_LISTENER).setCacheWriter(CACHE_WRITER).setDataPolicy(DataPolicy.REPLICATE).setCloningEnabled(true).setCompressor(compressor).setOffHeap(offHeap).create(name);
   }
 }

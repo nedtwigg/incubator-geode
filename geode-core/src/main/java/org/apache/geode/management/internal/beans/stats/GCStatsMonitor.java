@@ -32,7 +32,6 @@ public class GCStatsMonitor extends MBeanStatsMonitor {
 
   private volatile long collectionTime = 0;
 
-  
   public GCStatsMonitor(String name) {
     super(name);
   }
@@ -48,7 +47,6 @@ public class GCStatsMonitor extends MBeanStatsMonitor {
     return 0;
   }
 
-   
   @Override
   public void handleNotification(StatisticsNotification notification) {
     decreasePrevValues(statsMap);
@@ -61,7 +59,7 @@ public class GCStatsMonitor extends MBeanStatsMonitor {
       } catch (StatisticNotFoundException e) {
         value = 0;
       }
-      log(name,value);
+      log(name, value);
       increaseStats(name, value);
       statsMap.put(name, value);
     }

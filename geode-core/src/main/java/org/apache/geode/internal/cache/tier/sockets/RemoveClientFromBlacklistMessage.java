@@ -33,6 +33,7 @@ import org.apache.geode.distributed.internal.PooledDistributionMessage;
 import org.apache.geode.internal.cache.CacheServerImpl;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.LogService;
+
 /**
  * Distribution message for dropping client from blacklist.
  * 
@@ -44,7 +45,7 @@ public class RemoveClientFromBlacklistMessage extends PooledDistributionMessage 
 
   //The proxy id of the client represented by this proxy
   private ClientProxyMembershipID proxyID;
-  
+
   @Override
   protected void process(DistributionManager dm) {
     final Cache cache;
@@ -52,8 +53,7 @@ public class RemoveClientFromBlacklistMessage extends PooledDistributionMessage 
       // use GemFireCache.getInstance to avoid blocking during cache.xml
       // processing.
       cache = GemFireCacheImpl.getInstance();
-    }
-    catch (Exception ignore) {
+    } catch (Exception ignore) {
       DistributedSystem ds = dm.getSystem();
       if (ds != null) {
         if (logger.isTraceEnabled()) {
@@ -69,22 +69,22 @@ public class RemoveClientFromBlacklistMessage extends PooledDistributionMessage 
       if (l != null) {
         Iterator i = l.iterator();
         while (i.hasNext()) {
-          CacheServerImpl bs = (CacheServerImpl)i.next();
+          CacheServerImpl bs = (CacheServerImpl) i.next();
           CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
           Set s = ccn.getBlacklistedClient();
           if (s != null) {
-            if(s.remove(proxyID)){          
-            DistributedSystem ds = dm.getSystem();
-            if (ds != null) {
-              if (logger.isDebugEnabled()) {
-                logger.debug("Remove the client from black list as its queue is already destroyed: {}", proxyID);
+            if (s.remove(proxyID)) {
+              DistributedSystem ds = dm.getSystem();
+              if (ds != null) {
+                if (logger.isDebugEnabled()) {
+                  logger.debug("Remove the client from black list as its queue is already destroyed: {}", proxyID);
+                }
               }
             }
-           }
+          }
         }
       }
     }
-   }   
   }
 
   public RemoveClientFromBlacklistMessage() {
@@ -109,6 +109,6 @@ public class RemoveClientFromBlacklistMessage extends PooledDistributionMessage 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     proxyID = ClientProxyMembershipID.readCanonicalized(in);
-  }  
-  
-}  
+  }
+
+}

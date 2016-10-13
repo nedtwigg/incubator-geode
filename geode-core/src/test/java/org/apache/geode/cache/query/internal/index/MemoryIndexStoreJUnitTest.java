@@ -48,7 +48,7 @@ public class MemoryIndexStoreJUnitTest {
   RegionEntry[] mockEntries;
   int numMockEntries = 10;
   GemFireCacheImpl actualInstance;
-  
+
   protected void subclassPreSetup() {
   }
 
@@ -67,7 +67,7 @@ public class MemoryIndexStoreJUnitTest {
     store = new MemoryIndexStore(region, mockStats);
     store.setIndexOnValues(true);
     mockEntries = new RegionEntry[numMockEntries];
-    IntStream.range(0, numMockEntries).forEach(i-> {
+    IntStream.range(0, numMockEntries).forEach(i -> {
       mockEntries[i] = createRegionEntry(i, new Object());
     });
   }
@@ -82,8 +82,7 @@ public class MemoryIndexStoreJUnitTest {
     IntStream.range(0, 150).forEach(i -> {
       try {
         store.addMapping(i % 3, createRegionEntry(i, new Object()));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         throw new AssertionError(e);
       }
     });
@@ -95,8 +94,7 @@ public class MemoryIndexStoreJUnitTest {
     IntStream.range(0, 150).forEach(i -> {
       try {
         store.addMapping(1, createRegionEntry(i, new Object()));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         throw new AssertionError(e);
       }
     });
@@ -104,12 +102,11 @@ public class MemoryIndexStoreJUnitTest {
   }
 
   @Test
-  public void testUpdateAgainstAConcurrentHashSet() throws Exception{
+  public void testUpdateAgainstAConcurrentHashSet() throws Exception {
     IntStream.range(0, 150).forEach(i -> {
       try {
         store.addMapping(1, createRegionEntry(1, new Object()));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         throw new AssertionError(e);
       }
     });
@@ -205,9 +202,9 @@ public class MemoryIndexStoreJUnitTest {
 
     Iterator iterator = store.descendingIterator(null);
     iterator.hasNext();
-    assertEquals(mockEntry2, ((MemoryIndexStore.MemoryIndexStoreEntry)iterator.next()).getRegionEntry());
+    assertEquals(mockEntry2, ((MemoryIndexStore.MemoryIndexStoreEntry) iterator.next()).getRegionEntry());
     iterator.hasNext();
-    assertEquals(mockEntry1, ((MemoryIndexStore.MemoryIndexStoreEntry)iterator.next()).getRegionEntry());
+    assertEquals(mockEntry1, ((MemoryIndexStore.MemoryIndexStoreEntry) iterator.next()).getRegionEntry());
   }
 
   @Test
@@ -227,9 +224,9 @@ public class MemoryIndexStoreJUnitTest {
     keysToRemove.add("2");
     Iterator iterator = store.descendingIterator(keysToRemove);
     iterator.hasNext();
-    assertEquals(mockEntry3, ((MemoryIndexStore.MemoryIndexStoreEntry)iterator.next()).getRegionEntry());
+    assertEquals(mockEntry3, ((MemoryIndexStore.MemoryIndexStoreEntry) iterator.next()).getRegionEntry());
     iterator.hasNext();
-    assertEquals(mockEntry1, ((MemoryIndexStore.MemoryIndexStoreEntry)iterator.next()).getRegionEntry());
+    assertEquals(mockEntry1, ((MemoryIndexStore.MemoryIndexStoreEntry) iterator.next()).getRegionEntry());
     assertFalse(iterator.hasNext());
   }
 
@@ -252,7 +249,7 @@ public class MemoryIndexStoreJUnitTest {
     keysToRemove.add("1");
     Iterator iterator = store.descendingIterator(keysToRemove);
     iterator.hasNext();
-    assertEquals(mockEntry3, ((MemoryIndexStore.MemoryIndexStoreEntry)iterator.next()).getRegionEntry());
+    assertEquals(mockEntry3, ((MemoryIndexStore.MemoryIndexStoreEntry) iterator.next()).getRegionEntry());
     assertFalse(iterator.hasNext());
   }
 
@@ -374,8 +371,7 @@ public class MemoryIndexStoreJUnitTest {
     IntStream.range(0, numEntriesToAdd).forEach(i -> {
       try {
         store.addMapping(mockEntries[i].getKey(), mockEntries[i]);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         throw new AssertionError(e);
       }
     });

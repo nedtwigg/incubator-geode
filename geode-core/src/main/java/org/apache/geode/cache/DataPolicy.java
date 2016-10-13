@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache;
+
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 import java.io.*;
@@ -74,8 +74,7 @@ public class DataPolicy implements java.io.Serializable {
    * disk. The region initialization may use the data stored on disk.
    */
   public static final DataPolicy PERSISTENT_REPLICATE = new DataPolicy(3, "PERSISTENT_REPLICATE");
-  
-  
+
   /**
    * Data in this region may be spread across a number of processes.  This is
    * further configured with {@link PartitionAttributes partitioning attributes}
@@ -94,43 +93,40 @@ public class DataPolicy implements java.io.Serializable {
    * @since GemFire 6.5
    */
   public static final DataPolicy PERSISTENT_PARTITION = new DataPolicy(6, "PERSISTENT_PARTITION");
-  
-   /**
-   * The data policy used by default; it is {@link #NORMAL}.
-   */
+
+  /**
+  * The data policy used by default; it is {@link #NORMAL}.
+  */
   public static final DataPolicy DEFAULT = NORMAL;
 
-    
   /** The name of this mirror type. */
   private final transient String name;
-    
+
   /** used as ordinal to represent this DataPolicy */
   public final byte ordinal;
 
   private Object readResolve() throws ObjectStreamException {
-    return VALUES[ordinal];  // Canonicalize
+    return VALUES[ordinal]; // Canonicalize
   }
-    
-    
+
   /** Creates a new instance of DataPolicy. */
   private DataPolicy(int ordinal, String name) {
     if (ordinal >= VALUES.length) {
-      throw new IllegalArgumentException(LocalizedStrings.DataPolicy_ONLY_0_DATAPOLICIES_MAY_BE_DEFINED.toLocalizedString(Integer.valueOf(VALUES.length+1)));
+      throw new IllegalArgumentException(LocalizedStrings.DataPolicy_ONLY_0_DATAPOLICIES_MAY_BE_DEFINED.toLocalizedString(Integer.valueOf(VALUES.length + 1)));
     }
     if (VALUES[ordinal] != null) {
-      throw new IllegalArgumentException(LocalizedStrings.DataPolicy_ORDINAL_0_IS_ALREADY_DEFINED_BY_1.toLocalizedString(new Object[] {Integer.valueOf(ordinal), VALUES[ordinal]}));
+      throw new IllegalArgumentException(LocalizedStrings.DataPolicy_ORDINAL_0_IS_ALREADY_DEFINED_BY_1.toLocalizedString(new Object[] { Integer.valueOf(ordinal), VALUES[ordinal] }));
     }
     this.name = name;
-    this.ordinal = (byte)(ordinal & 0xff);
+    this.ordinal = (byte) (ordinal & 0xff);
     VALUES[this.ordinal] = this;
   }
-    
+
   /** Return the DataPolicy represented by specified ordinal */
   public static DataPolicy fromOrdinal(byte ordinal) {
     return VALUES[ordinal];
   }
-    
-    
+
   /** Return true if regions with this policy store data locally.<p>
    * Although DataPolicy {@link #PARTITION} will return true to this query,
    * it is possible to turn off local storage with
@@ -156,7 +152,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean withReplication() {
     return this == REPLICATE || this == PERSISTENT_REPLICATE;
   }
-  
+
   /** Return whether this policy does persistence.
    * @return true if this policy does persistence.
    * @see #PERSISTENT_PARTITION
@@ -194,6 +190,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean isEmpty() {
     return this == EMPTY;
   }
+
   /**
    * Return true if this policy is {@link #NORMAL}.
    * @return true if this policy is {@link #NORMAL}.
@@ -202,6 +199,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean isNormal() {
     return this == NORMAL;
   }
+
   /**
    * Return true if this policy is {@link #PRELOADED}.
    * @return true if this policy is {@link #PRELOADED}
@@ -210,6 +208,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean isPreloaded() {
     return this == PRELOADED;
   }
+
   /**
    * Return true if this policy is the default.
    * @return true if this policy is the default.
@@ -218,6 +217,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean isDefault() {
     return this == DEFAULT;
   }
+
   /**
    * Return true if this policy is {@link #REPLICATE}.
    * @return true if this policy is {@link #REPLICATE}.
@@ -226,6 +226,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean isReplicate() {
     return this == REPLICATE;
   }
+
   /**
    * Return true if this policy is {@link #PERSISTENT_REPLICATE}.
    * @return true if this policy is {@link #PERSISTENT_REPLICATE}.
@@ -234,7 +235,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean isPersistentReplicate() {
     return this == PERSISTENT_REPLICATE;
   }
-  
+
   /**
    * Return true if this policy is {@link #PARTITION}.
    * @return true if this policy is {@link #PARTITION}
@@ -243,7 +244,7 @@ public class DataPolicy implements java.io.Serializable {
   public boolean isPartition() {
     return this == PARTITION;
   }
-  
+
   /** Returns a string representation for this data policy.
      * @return the name of this data policy.
      */

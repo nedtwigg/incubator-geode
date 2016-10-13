@@ -52,7 +52,7 @@ import joptsimple.internal.Strings;
 
 public class CreateAsyncEventQueueFunction extends FunctionAdapter implements InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
 
   @SuppressWarnings("deprecation")
@@ -62,7 +62,7 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
     String memberId = "";
 
     try {
-      AsyncEventQueueFunctionArgs aeqArgs =  (AsyncEventQueueFunctionArgs)context.getArguments();
+      AsyncEventQueueFunctionArgs aeqArgs = (AsyncEventQueueFunctionArgs) context.getArguments();
 
       GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.getAnyInstance();
 
@@ -74,18 +74,7 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
         memberId = member.getName();
       }
 
-      AsyncEventQueueFactory asyncEventQueueFactory = cache.createAsyncEventQueueFactory()
-          .setParallel(aeqArgs.isParallel())
-          .setBatchConflationEnabled(aeqArgs.isEnableBatchConflation())
-          .setBatchSize(aeqArgs.getBatchSize())
-          .setBatchTimeInterval(aeqArgs.getBatchTimeInterval())
-          .setPersistent(aeqArgs.isPersistent())
-          .setDiskStoreName(aeqArgs.getDiskStoreName())
-          .setDiskSynchronous(aeqArgs.isDiskSynchronous())
-          .setForwardExpirationDestroy(aeqArgs.isForwardExpirationDestroy())
-          .setMaximumQueueMemory(aeqArgs.getMaxQueueMemory())
-          .setDispatcherThreads(aeqArgs.getDispatcherThreads())
-          .setOrderPolicy(OrderPolicy.valueOf(aeqArgs.getOrderPolicy()));
+      AsyncEventQueueFactory asyncEventQueueFactory = cache.createAsyncEventQueueFactory().setParallel(aeqArgs.isParallel()).setBatchConflationEnabled(aeqArgs.isEnableBatchConflation()).setBatchSize(aeqArgs.getBatchSize()).setBatchTimeInterval(aeqArgs.getBatchTimeInterval()).setPersistent(aeqArgs.isPersistent()).setDiskStoreName(aeqArgs.getDiskStoreName()).setDiskSynchronous(aeqArgs.isDiskSynchronous()).setForwardExpirationDestroy(aeqArgs.isForwardExpirationDestroy()).setMaximumQueueMemory(aeqArgs.getMaxQueueMemory()).setDispatcherThreads(aeqArgs.getDispatcherThreads()).setOrderPolicy(OrderPolicy.valueOf(aeqArgs.getOrderPolicy()));
 
       String[] gatewayEventFilters = aeqArgs.getGatewayEventFilters();
       if (gatewayEventFilters != null) {
@@ -98,7 +87,7 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
       String gatewaySubstitutionFilter = aeqArgs.getGatewaySubstitutionFilter();
       if (gatewaySubstitutionFilter != null) {
         Class<?> gatewayEventSubstitutionFilterKlass = forName(gatewaySubstitutionFilter, CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER);
-        asyncEventQueueFactory.setGatewayEventSubstitutionListener((GatewayEventSubstitutionFilter<?,?>) newInstance(gatewayEventSubstitutionFilterKlass, CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER));
+        asyncEventQueueFactory.setGatewayEventSubstitutionListener((GatewayEventSubstitutionFilter<?, ?>) newInstance(gatewayEventSubstitutionFilterKlass, CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER));
       }
 
       String listenerClassName = aeqArgs.getListenerClassName();
@@ -130,7 +119,7 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not create async event queue: {}", th.getMessage(), th);
@@ -142,31 +131,26 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
     if (Strings.isNullOrEmpty(className)) {
       return null;
     }
-    
+
     try {
       return ClassPathLoader.getLatest().forName(className);
     } catch (ClassNotFoundException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1,
-          new Object[] { className, neededFor }), e);
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1, new Object[] { className, neededFor }), e);
     } catch (ClassCastException e) {
-      throw new RuntimeException(CliStrings.format(
-          CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__CLASS_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE, new Object[] { className,
-              neededFor }), e);
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__CLASS_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE, new Object[] { className, neededFor }), e);
     }
   }
-  
+
   private static Object newInstance(Class<?> klass, String neededFor) {
     try {
       return klass.newInstance();
     } catch (InstantiationException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass,
-              neededFor }), e);
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(CliStrings.format(
-          CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
     }
   }
-  
+
   @Override
   public String getId() {
     return CreateDiskStoreFunction.class.getName();

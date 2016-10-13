@@ -218,7 +218,7 @@ public class VM implements Serializable {
   public AsyncInvocation invokeAsync(final SerializableRunnableIF runnable) {
     return invokeAsync(runnable, "run", new Object[0]);
   }
-  
+
   /**
    * Invokes the {@code run} method of a {@link Runnable} in this VM.  Recall
    * that {@code run} takes no arguments and has no return value.  The
@@ -236,7 +236,7 @@ public class VM implements Serializable {
   public AsyncInvocation invokeAsync(final String name, final SerializableRunnableIF runnable) {
     return invokeAsync(new NamedRunnable(name, runnable), "run", new Object[0]);
   }
-  
+
   /**
    * Invokes the {@code call} method of a {@link Callable} in this {@code VM}.
    *
@@ -292,7 +292,7 @@ public class VM implements Serializable {
   public void invoke(final SerializableRunnableIF runnable) {
     invoke(runnable, "run");
   }
-  
+
   /**
    * Invokes the {@code call} method of a {@link Callable} in this {@code VM}.
    *
@@ -304,10 +304,10 @@ public class VM implements Serializable {
    *
    * @see SerializableCallable
    */
-  public <T>  T invoke(final String name, final SerializableCallableIF<T> callable) {
+  public <T> T invoke(final String name, final SerializableCallableIF<T> callable) {
     return (T) invoke(new NamedCallable(name, callable), "call");
   }
-  
+
   /**
    * Invokes the {@code call} method of a {@link Callable} in this {@code VM}.
    *
@@ -316,10 +316,10 @@ public class VM implements Serializable {
    *
    * @see SerializableCallable
    */
-  public <T>  T invoke(final SerializableCallableIF<T> callable) {
+  public <T> T invoke(final SerializableCallableIF<T> callable) {
     return (T) invoke(callable, "call");
   }
-  
+
   /**
    * Invokes the {@code run} method of a {@link Runnable} in this {@code VM}.
    * If the invocation throws AssertionError, and repeatTimeoutMs
@@ -354,7 +354,7 @@ public class VM implements Serializable {
   public Object invoke(final Object targetObject, final String methodName) {
     return invoke(targetObject, methodName, new Object[0]);
   }
-  
+
   /**
    * Invokes an instance method on an object that is serialized into this
    * {@code VM}.  The return type of the method can be either {@link Object} or

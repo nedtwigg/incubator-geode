@@ -46,5 +46,4 @@ public class ReenteredConnectException extends GemFireException {
     super(cause);
   }
 
-
 }

@@ -31,17 +31,16 @@ public class AddPDXEnumOp {
    * to communicate with the server.
    * @param pool the pool to use to communicate with the server.
    */
-  public static void execute(ExecutablePool pool, int id,
-                             EnumInfo ei)
-  {
+  public static void execute(ExecutablePool pool, int id, EnumInfo ei) {
     AbstractOp op = new AddPdxEnumOpImpl(id, ei);
-    pool.execute(op);;
+    pool.execute(op);
+    ;
   }
-                                                               
+
   private AddPDXEnumOp() {
     // no instances allowed
   }
-  
+
   private static class AddPdxEnumOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -51,41 +50,48 @@ public class AddPDXEnumOp {
       getMessage().addObjPart(ei);
       getMessage().addIntPart(id);
     }
+
     @Override
     protected Object processResponse(Message msg) throws Exception {
       processAck(msg, "addPDXEnum");
       return null;
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startAddPdxType(); /* use the addPdxType stats instead of adding more stats */
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endAddPdxTypeSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endAddPdxType(start, hasTimedOut(), hasFailed());
     }
+
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
+
     @Override
     protected boolean needsUserId() {
       return false;
     }
+
     //Don't send the transaction id for this message type.
     @Override
     protected boolean participateInTransaction() {
       return false;
     }
-    
+
     // override since this is not a message subject to security
     @Override
     protected void sendMessage(Connection cnx) throws Exception {

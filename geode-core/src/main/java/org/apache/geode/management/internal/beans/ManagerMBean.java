@@ -25,10 +25,10 @@ import org.apache.geode.management.ManagerMXBean;
  *
  */
 public class ManagerMBean implements ManagerMXBean {
-  
+
   private ManagerMBeanBridge bridge;
-  
-  public ManagerMBean(ManagerMBeanBridge bridge){
+
+  public ManagerMBean(ManagerMBeanBridge bridge) {
     this.bridge = bridge;
   }
 
@@ -38,8 +38,8 @@ public class ManagerMBean implements ManagerMXBean {
   }
 
   @Override
-  public boolean start() throws JMException{
-     return bridge.start();
+  public boolean start() throws JMException {
+    return bridge.start();
   }
 
   @Override

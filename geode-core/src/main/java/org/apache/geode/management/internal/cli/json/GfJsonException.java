@@ -30,6 +30,7 @@ public class GfJsonException extends Exception {
   public GfJsonException(String message) {
     super(message);
   }
+
   public GfJsonException(Exception e) {
     super(e);
   }

@@ -59,9 +59,11 @@ public class InitializerJUnitTest {
   public void testInitWithInitableObject() {
     final Initable initableObject = mockContext.mock(Initable.class, "testInitWithInitableObject.Initable");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(initableObject).init();
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(initableObject).init();
+      }
+    });
 
     assertTrue(Initializer.init(initableObject));
   }

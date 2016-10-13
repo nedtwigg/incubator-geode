@@ -61,6 +61,7 @@ public interface SystemMemberCacheListener {
    * @see CacheFactory#create
    */
   public void afterCacheCreate(SystemMemberCacheEvent event);
+
   /**
    * Invoked after a cache is closed in any node of a distributed system.
    * This callback is done after those done for each region in the cache.

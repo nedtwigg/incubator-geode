@@ -47,27 +47,27 @@ public class Option extends Parameter {
   public Option() {
     aggregate = new ArrayList<String>();
   }
-  
+
   public Option(char shortOption) {
-    this(shortOption, null , null);
+    this(shortOption, null, null);
   }
-  
+
   public Option(char shortOption, List<String> synonyms) {
-    this(shortOption,null,synonyms);
+    this(shortOption, null, synonyms);
   }
-  
+
   public Option(String longOption) {
-    this(SHORT_OPTION_DEFAULT,longOption,null);
+    this(SHORT_OPTION_DEFAULT, longOption, null);
   }
-  
+
   public Option(String longOption, List<String> synonyms) {
-    this(SHORT_OPTION_DEFAULT,longOption,synonyms);
+    this(SHORT_OPTION_DEFAULT, longOption, synonyms);
   }
-  
+
   public Option(char shortOption, String longOption) {
-    this(shortOption,longOption,null);
+    this(shortOption, longOption, null);
   }
-  
+
   public Option(char shortOption, String longOption, List<String> synonyms) {
     aggregate = new ArrayList<String>();
     this.shortOption = shortOption;
@@ -87,9 +87,7 @@ public class Option extends Parameter {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(Option.class.getSimpleName())
-        .append("[longOption=" + longOption).append(",help=" + help)
-        .append(",required=" + required + "]");
+    builder.append(Option.class.getSimpleName()).append("[longOption=" + longOption).append(",help=" + help).append(",required=" + required + "]");
     return builder.toString();
   }
 
@@ -97,8 +95,7 @@ public class Option extends Parameter {
   public int hashCode() {
     final int prime = 41;
     int result = 1;
-    result = prime * result
-        + ((longOption == null) ? 0 : longOption.hashCode());
+    result = prime * result + ((longOption == null) ? 0 : longOption.hashCode());
     return result;
   }
 
@@ -208,8 +205,7 @@ public class Option extends Parameter {
   }
 
   public void setSpecifiedDefaultValue(String specifiedDefaultValue) {
-    this.specifiedDefaultValue = PreprocessorUtils.trim(specifiedDefaultValue)
-        .getString();
+    this.specifiedDefaultValue = PreprocessorUtils.trim(specifiedDefaultValue).getString();
   }
 
   public String getValueSeparator() {

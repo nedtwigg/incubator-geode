@@ -74,15 +74,6 @@ public class GatewayDeltaCreateEvent extends AbstractGatewayDeltaEvent {
   }
 
   public String toString() {
-    return new StringBuilder().append("GatewayDeltaCreateEvent[")
-        .append("regionName=")
-        .append(this.regionName)
-        .append("; key=")
-        .append(this.key)
-        .append("; gatewayDelta=")
-        .append(this.gatewayDelta)
-        .append("]")
-        .toString();
+    return new StringBuilder().append("GatewayDeltaCreateEvent[").append("regionName=").append(this.regionName).append("; key=").append(this.key).append("; gatewayDelta=").append(this.gatewayDelta).append("]").toString();
   }
 }
-

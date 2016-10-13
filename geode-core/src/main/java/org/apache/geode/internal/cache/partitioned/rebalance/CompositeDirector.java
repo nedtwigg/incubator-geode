@@ -30,17 +30,17 @@ public class CompositeDirector extends RebalanceDirectorAdapter {
   private boolean initialSatisfyRedundancy;
   private boolean initialMoveBuckets;
   private boolean initialMovePrimaries;
-  
+
   private boolean removeOverRedundancy;
   private boolean satisfyRedundancy;
   private boolean moveBuckets;
   private boolean movePrimaries;
-  
+
   private final RemoveOverRedundancy removeOverRedundancyDirector = new RemoveOverRedundancy();
   private final SatisfyRedundancy satisfyRedundancyDirector = new SatisfyRedundancy();
   private final MovePrimaries movePrimariesDirector = new MovePrimaries();
   private final MoveBuckets moveBucketsDirector = new MoveBuckets();
-  
+
   private PartitionedRegionLoadModel model;
 
   /**
@@ -50,26 +50,19 @@ public class CompositeDirector extends RebalanceDirectorAdapter {
   * @param moveBuckets true to move buckets as part of the operation
   * @param movePrimaries true to move primaries as part of the operation
   */
-  public CompositeDirector(boolean removeOverRedundancy,
-      boolean satisfyRedundancy, boolean moveBuckets,
-      boolean movePrimaries) {
+  public CompositeDirector(boolean removeOverRedundancy, boolean satisfyRedundancy, boolean moveBuckets, boolean movePrimaries) {
     this.initialRemoveOverRedundancy = removeOverRedundancy;
     this.initialSatisfyRedundancy = satisfyRedundancy;
     this.initialMoveBuckets = moveBuckets;
     this.initialMovePrimaries = movePrimaries;
   }
-  
-  
 
   @Override
-  public boolean isRebalanceNecessary(boolean redundancyImpaired,
-      boolean withPersistence) {
+  public boolean isRebalanceNecessary(boolean redundancyImpaired, boolean withPersistence) {
     //We can skip a rebalance is redundancy is not impaired and we
     //don't need to move primaries.
     return redundancyImpaired || (initialMovePrimaries && withPersistence);
   }
-
-
 
   @Override
   public void initialize(PartitionedRegionLoadModel model) {
@@ -92,34 +85,34 @@ public class CompositeDirector extends RebalanceDirectorAdapter {
   @Override
   public boolean nextStep() {
     boolean attemptedOperation = false;
-    if(this.removeOverRedundancy) {
+    if (this.removeOverRedundancy) {
       attemptedOperation = removeOverRedundancyDirector.nextStep();
     }
-    if(!attemptedOperation) {
+    if (!attemptedOperation) {
       this.removeOverRedundancy = false;
     }
-    
-    if(!attemptedOperation && this.satisfyRedundancy) {
+
+    if (!attemptedOperation && this.satisfyRedundancy) {
       attemptedOperation = satisfyRedundancyDirector.nextStep();
     }
-    if(!attemptedOperation) {
+    if (!attemptedOperation) {
       this.satisfyRedundancy = false;
     }
-    
-    if(!attemptedOperation && this.moveBuckets) {
+
+    if (!attemptedOperation && this.moveBuckets) {
       attemptedOperation = moveBucketsDirector.nextStep();
     }
-    if(!attemptedOperation) {
+    if (!attemptedOperation) {
       this.moveBuckets = false;
     }
-    
-    if(!attemptedOperation && this.movePrimaries) {
+
+    if (!attemptedOperation && this.movePrimaries) {
       attemptedOperation = movePrimariesDirector.nextStep();
     }
-    if(!attemptedOperation) {
-      this.movePrimaries= false;
+    if (!attemptedOperation) {
+      this.movePrimaries = false;
     }
-      
+
     return attemptedOperation;
   }
 

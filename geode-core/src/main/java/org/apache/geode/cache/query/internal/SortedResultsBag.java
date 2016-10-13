@@ -42,7 +42,7 @@ public class SortedResultsBag<E> extends Bag implements Ordered {
 
   private final Map<E, Integer> sortedMap;
   private final boolean orderedDataAddition;
-  private final boolean emitNullAtStart; 
+  private final boolean emitNullAtStart;
 
   /**
    * Constructor for unordered input
@@ -57,7 +57,7 @@ public class SortedResultsBag<E> extends Bag implements Ordered {
     this.emitNullAtStart = nullAtStart;
     this.orderedDataAddition = false;
   }
-  
+
   /**
    * Constructor for unordered input
    * @param comparator
@@ -65,8 +65,7 @@ public class SortedResultsBag<E> extends Bag implements Ordered {
    * @param nullAtStart Indicates that the first order by coumn is asc , so that tuple with null 
    * order by column value need to be emitted at start, else if desc, then emit at last
    */
-  public SortedResultsBag(Comparator<E> comparator,
-      ObjectType elementType, boolean nullAtStart) {
+  public SortedResultsBag(Comparator<E> comparator, ObjectType elementType, boolean nullAtStart) {
     super();
     this.sortedMap = new TreeMap<E, Integer>(comparator);
     this.setElementType(elementType);
@@ -83,8 +82,7 @@ public class SortedResultsBag<E> extends Bag implements Ordered {
    * @param nullAtStart Indicates that the first order by coumn is asc , so that tuple with null 
    * order by column value need to be emitted at start, else if desc, then emit at last
    */
-  public SortedResultsBag(Comparator<E> comparator, ObjectType elementType,
-      CachePerfStats stats, boolean nullAtStart) {
+  public SortedResultsBag(Comparator<E> comparator, ObjectType elementType, CachePerfStats stats, boolean nullAtStart) {
     super(elementType, stats);
     this.sortedMap = new TreeMap<E, Integer>(comparator);
     this.emitNullAtStart = nullAtStart;
@@ -236,21 +234,19 @@ public class SortedResultsBag<E> extends Bag implements Ordered {
 
   @Override
   public Comparator comparator() {
-    return this.orderedDataAddition ? null : ((SortedMap) this.sortedMap)
-        .comparator();
+    return this.orderedDataAddition ? null : ((SortedMap) this.sortedMap).comparator();
   }
-  
+
   @Override
-  public void setElementType(ObjectType elementType) {   
+  public void setElementType(ObjectType elementType) {
     this.elementType = elementType;
   }
 
-
   @Override
-  public boolean dataPreordered() {    
+  public boolean dataPreordered() {
     return this.orderedDataAddition;
   }
-  
+
   @Override
   protected boolean nullOutputAtBegining() {
     return this.emitNullAtStart;

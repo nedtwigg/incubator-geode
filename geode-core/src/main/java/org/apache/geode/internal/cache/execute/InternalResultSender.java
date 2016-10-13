@@ -29,6 +29,6 @@ public interface InternalResultSender extends ResultSender<Object> {
   public boolean isLocallyExecuted();
 
   public boolean isLastResultReceived();
-  
+
   public void setException(Throwable t);
 }

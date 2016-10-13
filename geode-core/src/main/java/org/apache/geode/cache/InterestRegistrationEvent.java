@@ -35,13 +35,13 @@ public interface InterestRegistrationEvent {
    * @return the name of the region to which this interest event belongs
    */
   public String getRegionName();
-  
+
   /**
    * Returns the region to which this interest belongs.
    * 
    * @return the region to which this interest belongs
    */
-  public Region<?,?> getRegion(); 
+  public Region<?, ?> getRegion();
 
   /**
    * Returns a <code>Set</code> of keys of interest.
@@ -81,11 +81,11 @@ public interface InterestRegistrationEvent {
    *         {@link InterestType#REGULAR_EXPRESSION}
    */
   public boolean isRegularExpression();
-  
+
   /** 
    * Returns the {@link ClientSession} that initiated this event 
    *  
    * @return the {@link ClientSession} that initiated this event 
-   */ 
-  public ClientSession getClientSession(); 
+   */
+  public ClientSession getClientSession();
 }

@@ -88,8 +88,7 @@ public class ClusterDetailsService implements PulseService {
     responseJSON.put("totalRegions", cluster.getTotalRegionCount());
     Long heapSize = cluster.getTotalHeapSize();
 
-    DecimalFormat df2 = new DecimalFormat(
-        PulseConstants.DECIMAL_FORMAT_PATTERN);
+    DecimalFormat df2 = new DecimalFormat(PulseConstants.DECIMAL_FORMAT_PATTERN);
     Double heapS = heapSize.doubleValue() / 1024;
     responseJSON.put("totalHeap", Double.valueOf(df2.format(heapS)));
     responseJSON.put("functions", cluster.getRunningFunctionCount());

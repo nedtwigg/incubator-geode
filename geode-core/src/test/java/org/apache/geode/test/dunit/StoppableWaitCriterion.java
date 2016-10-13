@@ -25,11 +25,11 @@ package org.apache.geode.test.dunit;
  * @deprecated Use {@link com.jayway.awaitility.Awaitility} instead.
  */
 public interface StoppableWaitCriterion extends WaitCriterion {
-  
+
   /**
    * If this method returns true then quit waiting even if we are not done.
    * This allows a wait to fail early.
    */
   public boolean stopWaiting();
-  
+
 }

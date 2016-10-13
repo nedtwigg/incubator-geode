@@ -37,14 +37,14 @@ public class RegionPath {
   public RegionPath(String pathName) {
     regionPath = pathName;
     String[] regions = pathName.split(Region.SEPARATOR);
-    
+
     LinkedList<String> regionsNames = new LinkedList<String>();
     for (String region : regions) {
       if (!region.isEmpty()) {
         regionsNames.add(region);
       }
     }
-    
+
     regionName = regionsNames.removeLast();
     StringBuilder parentPathBuilder = new StringBuilder();
     while (!regionsNames.isEmpty()) {
@@ -53,7 +53,7 @@ public class RegionPath {
 
     regionParentPath = parentPathBuilder.length() != 0 ? parentPathBuilder.toString() : null;
   }
-  
+
   public String getName() {
     return regionName;
   }
@@ -68,7 +68,7 @@ public class RegionPath {
   public String getParent() {
     return regionParentPath;
   }
-  
+
   /**
    * @return Parent RegionPath of this RegionPath. null if this is a root region
    */
@@ -78,7 +78,7 @@ public class RegionPath {
     }
     return new RegionPath(getParent());
   }
-  
+
   public boolean isRootRegion() {
     return regionParentPath == null;
   }
@@ -101,7 +101,7 @@ public class RegionPath {
 
     return existsInCluster;
   }
-  
+
   @Override
   public String toString() {
     return "RegionPath [regionPath=" + regionPath + "]";
@@ -109,19 +109,19 @@ public class RegionPath {
 
   public static void main(String[] args) {
     RegionPath rp = new RegionPath("/region1/region11/region111/region1112");
-    
-    System.out.println("name :: "+rp.getName());
-    System.out.println("regionpath :: "+rp.getRegionPath());
-    System.out.println("parent :: "+rp.getParent());
-    System.out.println("parent region path :: "+rp.getParentRegionPath());
-    
+
+    System.out.println("name :: " + rp.getName());
+    System.out.println("regionpath :: " + rp.getRegionPath());
+    System.out.println("parent :: " + rp.getParent());
+    System.out.println("parent region path :: " + rp.getParentRegionPath());
+
     System.out.println("---------------------------------------------------");
-    
+
     rp = new RegionPath("/region1");
-    
-    System.out.println("name :: "+rp.getName());
-    System.out.println("regionpath :: "+rp.getRegionPath());
-    System.out.println("parent :: "+rp.getParent());
-    System.out.println("parent region path :: "+rp.getParentRegionPath());
+
+    System.out.println("name :: " + rp.getName());
+    System.out.println("regionpath :: " + rp.getRegionPath());
+    System.out.println("parent :: " + rp.getParent());
+    System.out.println("parent region path :: " + rp.getParentRegionPath());
   }
 }

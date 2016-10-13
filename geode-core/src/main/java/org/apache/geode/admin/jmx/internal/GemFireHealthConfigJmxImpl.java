@@ -45,9 +45,8 @@ import org.apache.geode.admin.internal.GemFireHealthConfigImpl;
  *
  * @since GemFire 3.5
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings(justification="This class is deprecated. Also, any further changes so close to the release is inadvisable.") 
-public class GemFireHealthConfigJmxImpl
-  implements GemFireHealthConfig, ManagedResource, java.io.Serializable {
+@edu.umd.cs.findbugs.annotations.SuppressWarnings(justification = "This class is deprecated. Also, any further changes so close to the release is inadvisable.")
+public class GemFireHealthConfigJmxImpl implements GemFireHealthConfig, ManagedResource, java.io.Serializable {
 
   private static final long serialVersionUID = 1482719647163239953L;
 
@@ -73,19 +72,11 @@ public class GemFireHealthConfigJmxImpl
    * configures the health monitoring of components running on the
    * given host.
    */
-  GemFireHealthConfigJmxImpl(GemFireHealthJmxImpl health,
-                             String hostName)
-    throws AdminException {
+  GemFireHealthConfigJmxImpl(GemFireHealthJmxImpl health, String hostName) throws AdminException {
 
     this.delegate = new GemFireHealthConfigImpl(hostName);
     this.health = health;
-    this.mbeanName = new StringBuffer()
-      .append(MBEAN_NAME_PREFIX)
-      .append("GemFireHealthConfig,id=")
-      .append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId()))
-      .append(",host=") 
-      .append((hostName == null ? "default" : MBeanUtil.makeCompliantMBeanNameProperty(hostName)))
-      .toString(); 
+    this.mbeanName = new StringBuffer().append(MBEAN_NAME_PREFIX).append("GemFireHealthConfig,id=").append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId())).append(",host=").append((hostName == null ? "default" : MBeanUtil.makeCompliantMBeanNameProperty(hostName))).toString();
     this.objectName = MBeanUtil.createMBean(this);
   }
 
@@ -110,7 +101,7 @@ public class GemFireHealthConfigJmxImpl
   public String getMBeanName() {
     return this.mbeanName;
   }
-  
+
   public ModelMBean getModelMBean() {
     return this.modelMBean;
   }
@@ -164,14 +155,14 @@ public class GemFireHealthConfigJmxImpl
   public double getMaxRetransmissionRatio() {
     return delegate.getMaxRetransmissionRatio();
   }
-  
+
   public void setMaxRetransmissionRatio(double ratio) {
     delegate.setMaxRetransmissionRatio(ratio);
   }
 
   //////////////////////  CacheHealthConfig  //////////////////////
 
-    public long getMaxNetSearchTime() {
+  public long getMaxNetSearchTime() {
     return delegate.getMaxNetSearchTime();
   }
 
@@ -217,6 +208,7 @@ public class GemFireHealthConfigJmxImpl
     return delegate.getHealthEvaluationInterval();
   }
 
-  public void cleanupResource() {}
-  
+  public void cleanupResource() {
+  }
+
 }

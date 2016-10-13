@@ -51,22 +51,22 @@ public class PeerAuthenticatorWithCachelessLocatorDUnitTest extends JUnit4Distri
   }
 
   @Test
-  public void testPeerAuthenticator() throws Exception{
+  public void testPeerAuthenticator() throws Exception {
     int locatorPort = AvailablePortHelper.getRandomAvailableTCPPort();
-    locator.invoke(()->{
+    locator.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(SECURITY_PEER_AUTHENTICATOR, DummyAuthenticator.class.getName());
       props.setProperty(MCAST_PORT, "0");
       props.put(JMX_MANAGER, "true");
       props.put(JMX_MANAGER_START, "true");
       props.put(JMX_MANAGER_PORT, "0");
-      props.setProperty("start-locator", "localhost["+locatorPort+"]");
+      props.setProperty("start-locator", "localhost[" + locatorPort + "]");
       DistributedSystem.connect(props);
     });
 
     // set up server with security
     String locators = "localhost[" + locatorPort + "]";
-    server.invoke(()->{
+    server.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, locators);
@@ -78,7 +78,7 @@ public class PeerAuthenticatorWithCachelessLocatorDUnitTest extends JUnit4Distri
       InternalDistributedSystem ds = getSystem(props);
     });
 
-    server1.invoke(()->{
+    server1.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, locators);
@@ -87,7 +87,7 @@ public class PeerAuthenticatorWithCachelessLocatorDUnitTest extends JUnit4Distri
       props.setProperty("security-username", "bogus");
       props.setProperty("security-password", "user");
 
-      assertThatThrownBy(()->getSystem(props)).isInstanceOf(GemFireSecurityException.class);
+      assertThatThrownBy(() -> getSystem(props)).isInstanceOf(GemFireSecurityException.class);
     });
   }
 

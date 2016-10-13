@@ -61,8 +61,7 @@ public class ResourceAdvisor extends DistributionAdvisor {
   /**
    * Message used to push event updates to remote VMs
    */
-  public static class ResourceProfileMessage extends
-      HighPriorityDistributionMessage {
+  public static class ResourceProfileMessage extends HighPriorityDistributionMessage {
     // As of 9.0 this message will only ever have a single profile.
     // But to be compatible with previous releases we still support
     // multiple profiles so that we can handle these messages during
@@ -73,7 +72,8 @@ public class ResourceAdvisor extends DistributionAdvisor {
     /**
      * Default constructor used for de-serialization (used during receipt)
      */
-    public ResourceProfileMessage() {}
+    public ResourceProfileMessage() {
+    }
 
     /**
      * Constructor used to send profiles to other members.
@@ -81,11 +81,10 @@ public class ResourceAdvisor extends DistributionAdvisor {
      * @param recips Members to send the profile to.
      * @param profile Profile to send.
      */
-    private ResourceProfileMessage(final Set<InternalDistributedMember> recips,
-        final ResourceManagerProfile profile) {
+    private ResourceProfileMessage(final Set<InternalDistributedMember> recips, final ResourceManagerProfile profile) {
       setRecipients(recips);
       this.processorId = 0;
-      this.profiles = new ResourceManagerProfile[]{profile};
+      this.profiles = new ResourceManagerProfile[] { profile };
     }
 
     /* (non-Javadoc)
@@ -104,7 +103,7 @@ public class ResourceAdvisor extends DistributionAdvisor {
             // to fire (remote) listeners so that the origin member can proceed with
             // firing its (local) listeners
 
-            for (int i=0; i<this.profiles.length; i++) {
+            for (int i = 0; i < this.profiles.length; i++) {
               ra.putProfile(this.profiles[i]);
             }
           }
@@ -133,9 +132,7 @@ public class ResourceAdvisor extends DistributionAdvisor {
       } finally {
         if (thr != null) {
           dm.getCancelCriterion().checkCancelInProgress(null);
-          logger.info(LocalizedMessage.create(
-              LocalizedStrings.ResourceAdvisor_MEMBER_CAUGHT_EXCEPTION_PROCESSING_PROFILE,
-              new Object[] {p, toString()}), thr);
+          logger.info(LocalizedMessage.create(LocalizedStrings.ResourceAdvisor_MEMBER_CAUGHT_EXCEPTION_PROCESSING_PROFILE, new Object[] { p, toString() }), thr);
         }
       }
     }
@@ -149,14 +146,13 @@ public class ResourceAdvisor extends DistributionAdvisor {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.processorId = in.readInt();
       final int l = in.readInt();
       if (l != -1) {
         this.profiles = new ResourceManagerProfile[l];
-        for (int i=0; i<this.profiles.length; i++) {
+        for (int i = 0; i < this.profiles.length; i++) {
           final ResourceManagerProfile r = new ResourceManagerProfile();
           InternalDataSerializer.invokeFromData(r, in);
           this.profiles[i] = r;
@@ -172,7 +168,7 @@ public class ResourceAdvisor extends DistributionAdvisor {
       out.writeInt(this.processorId);
       if (this.profiles != null) {
         out.writeInt(this.profiles.length);
-        for (int i=0; i<this.profiles.length; i++) {
+        for (int i = 0; i < this.profiles.length; i++) {
           InternalDataSerializer.invokeToData(this.profiles[i], out);
         }
       } else {
@@ -187,8 +183,7 @@ public class ResourceAdvisor extends DistributionAdvisor {
      * @param profile Profile to send in this message
      * @throws ReplyException
      */
-    public static void send(final InternalResourceManager irm, Set<InternalDistributedMember> recips,
-        ResourceManagerProfile profile) {
+    public static void send(final InternalResourceManager irm, Set<InternalDistributedMember> recips, ResourceManagerProfile profile) {
       final DM dm = irm.getResourceAdvisor().getDistributionManager();
       ResourceProfileMessage r = new ResourceProfileMessage(recips, profile);
       dm.putOutgoing(r);
@@ -202,12 +197,10 @@ public class ResourceAdvisor extends DistributionAdvisor {
     @Override
     public String toString() {
       StringBuilder sb = new StringBuilder();
-      sb.append(getShortClassName())
-      .append(" (processorId=").append(this.processorId)
-      .append("; profiles=[");
-      for (int i=0; i<this.profiles.length; i++) {
+      sb.append(getShortClassName()).append(" (processorId=").append(this.processorId).append("; profiles=[");
+      for (int i = 0; i < this.profiles.length; i++) {
         sb.append(this.profiles[i]);
-        if (i < this.profiles.length-1) {
+        if (i < this.profiles.length - 1) {
           sb.append(", ");
         }
       }
@@ -224,54 +217,48 @@ public class ResourceAdvisor extends DistributionAdvisor {
   private ResourceAdvisor(DistributionAdvisee advisee) {
     super(advisee);
   }
-  
+
   public static ResourceAdvisor createResourceAdvisor(DistributionAdvisee advisee) {
     ResourceAdvisor advisor = new ResourceAdvisor(advisee);
     advisor.initialize();
     return advisor;
   }
-  
+
   @Override
-  protected Profile instantiateProfile(InternalDistributedMember memberId,
-      int version) {
+  protected Profile instantiateProfile(InternalDistributedMember memberId, int version) {
     return new ResourceManagerProfile(memberId, version);
   }
-  
+
   private InternalResourceManager getResourceManager() {
     return ((GemFireCacheImpl) getAdvisee()).getResourceManager(false);
   }
 
   @SuppressWarnings("synthetic-access")
   @Override
-  protected boolean evaluateProfiles(final Profile newProfile,
-      final Profile oldProfile) {
+  protected boolean evaluateProfiles(final Profile newProfile, final Profile oldProfile) {
 
     ResourceManagerProfile oldRMProfile = (ResourceManagerProfile) oldProfile;
     ResourceManagerProfile newRMProfile = (ResourceManagerProfile) newProfile;
-    
+
     List<ResourceEvent> eventsToDeliver = new ArrayList<ResourceEvent>();
-    
+
     if (oldRMProfile == null) {
-      eventsToDeliver.add(new MemoryEvent(ResourceType.HEAP_MEMORY, MemoryState.DISABLED, newRMProfile.heapState, newRMProfile.getDistributedMember(),
-          newRMProfile.heapBytesUsed, false, newRMProfile.heapThresholds));
-      eventsToDeliver.add(new MemoryEvent(ResourceType.OFFHEAP_MEMORY, MemoryState.DISABLED, newRMProfile.offHeapState, newRMProfile.getDistributedMember(),
-          newRMProfile.offHeapBytesUsed, false, newRMProfile.offHeapThresholds));
-      
+      eventsToDeliver.add(new MemoryEvent(ResourceType.HEAP_MEMORY, MemoryState.DISABLED, newRMProfile.heapState, newRMProfile.getDistributedMember(), newRMProfile.heapBytesUsed, false, newRMProfile.heapThresholds));
+      eventsToDeliver.add(new MemoryEvent(ResourceType.OFFHEAP_MEMORY, MemoryState.DISABLED, newRMProfile.offHeapState, newRMProfile.getDistributedMember(), newRMProfile.offHeapBytesUsed, false, newRMProfile.offHeapThresholds));
+
     } else {
       if (oldRMProfile.heapState != newRMProfile.heapState) {
-        eventsToDeliver.add(new MemoryEvent(ResourceType.HEAP_MEMORY, oldRMProfile.heapState, newRMProfile.heapState, newRMProfile.getDistributedMember(),
-            newRMProfile.heapBytesUsed, false, newRMProfile.heapThresholds));
+        eventsToDeliver.add(new MemoryEvent(ResourceType.HEAP_MEMORY, oldRMProfile.heapState, newRMProfile.heapState, newRMProfile.getDistributedMember(), newRMProfile.heapBytesUsed, false, newRMProfile.heapThresholds));
       }
-  
+
       if (newRMProfile.heapState == MemoryState.DISABLED) {
         newRMProfile.setHeapData(oldRMProfile.heapBytesUsed, oldRMProfile.heapState, oldRMProfile.heapThresholds);
       }
-      
+
       if (oldRMProfile.offHeapState != newRMProfile.offHeapState) {
-        eventsToDeliver.add(new MemoryEvent(ResourceType.OFFHEAP_MEMORY, oldRMProfile.offHeapState, newRMProfile.offHeapState, newRMProfile.getDistributedMember(),
-            newRMProfile.offHeapBytesUsed, false, newRMProfile.offHeapThresholds));
+        eventsToDeliver.add(new MemoryEvent(ResourceType.OFFHEAP_MEMORY, oldRMProfile.offHeapState, newRMProfile.offHeapState, newRMProfile.getDistributedMember(), newRMProfile.offHeapBytesUsed, false, newRMProfile.offHeapThresholds));
       }
-      
+
       if (newRMProfile.offHeapState == MemoryState.DISABLED) {
         newRMProfile.setOffHeapData(oldRMProfile.offHeapBytesUsed, oldRMProfile.offHeapState, oldRMProfile.offHeapThresholds);
       }
@@ -280,16 +267,15 @@ public class ResourceAdvisor extends DistributionAdvisor {
     for (ResourceEvent event : eventsToDeliver) {
       getResourceManager().deliverEventFromRemote(event);
     }
-    
+
     return true;
   }
 
   @Override
   public String toString() {
-    return new StringBuilder().append("ResourceAdvisor for ResourceManager " 
-        + getAdvisee()).toString();
+    return new StringBuilder().append("ResourceAdvisor for ResourceManager " + getAdvisee()).toString();
   }
-  
+
   /**
    * Profile which shares state with other ResourceManagers.
    * The data available in this profile should be enough to 
@@ -301,46 +287,42 @@ public class ResourceAdvisor extends DistributionAdvisor {
     private long heapBytesUsed;
     private MemoryState heapState;
     private MemoryThresholds heapThresholds;
-    
+
     private long offHeapBytesUsed;
     private MemoryState offHeapState;
     private MemoryThresholds offHeapThresholds;
-    
+
     // Constructor for de-serialization
-    public ResourceManagerProfile() {}
-    
+    public ResourceManagerProfile() {
+    }
+
     // Constructor for sending purposes
-    public ResourceManagerProfile(InternalDistributedMember memberId,
-        int version) {
+    public ResourceManagerProfile(InternalDistributedMember memberId, int version) {
       super(memberId, version);
     }
-    
-    public synchronized ResourceManagerProfile setHeapData(final long heapBytesUsed, final MemoryState heapState,
-        final MemoryThresholds heapThresholds) {
+
+    public synchronized ResourceManagerProfile setHeapData(final long heapBytesUsed, final MemoryState heapState, final MemoryThresholds heapThresholds) {
       this.heapBytesUsed = heapBytesUsed;
       this.heapState = heapState;
       this.heapThresholds = heapThresholds;
       return this;
     }
 
-    public synchronized ResourceManagerProfile setOffHeapData(final long offHeapBytesUsed, final MemoryState offHeapState,
-        final MemoryThresholds offHeapThresholds) {
+    public synchronized ResourceManagerProfile setOffHeapData(final long offHeapBytesUsed, final MemoryState offHeapState, final MemoryThresholds offHeapThresholds) {
       this.offHeapBytesUsed = offHeapBytesUsed;
       this.offHeapState = offHeapState;
       this.offHeapThresholds = offHeapThresholds;
       return this;
     }
-    
+
     public synchronized MemoryEvent createDisabledMemoryEvent(ResourceType resourceType) {
       if (resourceType == ResourceType.HEAP_MEMORY) {
-        return new MemoryEvent(ResourceType.HEAP_MEMORY, this.heapState, MemoryState.DISABLED, getDistributedMember(), this.heapBytesUsed,
-            false, this.heapThresholds);
+        return new MemoryEvent(ResourceType.HEAP_MEMORY, this.heapState, MemoryState.DISABLED, getDistributedMember(), this.heapBytesUsed, false, this.heapThresholds);
       }
-      
-      return new MemoryEvent(ResourceType.OFFHEAP_MEMORY, this.offHeapState, MemoryState.DISABLED, getDistributedMember(), this.offHeapBytesUsed,
-          false, this.offHeapThresholds);
+
+      return new MemoryEvent(ResourceType.OFFHEAP_MEMORY, this.offHeapState, MemoryState.DISABLED, getDistributedMember(), this.offHeapBytesUsed, false, this.offHeapThresholds);
     }
-    
+
     /**
      * Used to process incoming Resource Manager profiles. A reply is expected
      * to contain a profile with state of the local Resource Manager.
@@ -348,13 +330,10 @@ public class ResourceAdvisor extends DistributionAdvisor {
      * @since GemFire 6.0
      */
     @Override
-    public void processIncoming(DistributionManager dm, String adviseePath,
-        boolean removeProfile, boolean exchangeProfiles,
-        final List<Profile> replyProfiles) {
+    public void processIncoming(DistributionManager dm, String adviseePath, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
       final GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
       if (cache != null && !cache.isClosed()) {
-        handleDistributionAdvisee(cache, removeProfile,
-            exchangeProfiles, replyProfiles);
+        handleDistributionAdvisee(cache, removeProfile, exchangeProfiles, replyProfiles);
       }
     }
 
@@ -367,19 +346,14 @@ public class ResourceAdvisor extends DistributionAdvisor {
     public void fillInToString(StringBuilder sb) {
       super.fillInToString(sb);
       synchronized (this) {
-        sb.append("; heapState=").append(this.heapState)
-        .append("; heapBytesUsed=").append(this.heapBytesUsed)
-        .append("; heapThresholds=").append(this.heapThresholds)
-        .append("; offHeapState=").append(this.offHeapState)
-        .append("; offHeapBytesUsed=").append(this.offHeapBytesUsed)
-        .append("; offHeapThresholds=").append(this.offHeapThresholds);
+        sb.append("; heapState=").append(this.heapState).append("; heapBytesUsed=").append(this.heapBytesUsed).append("; heapThresholds=").append(this.heapThresholds).append("; offHeapState=").append(this.offHeapState).append("; offHeapBytesUsed=").append(this.offHeapBytesUsed).append("; offHeapThresholds=").append(this.offHeapThresholds);
       }
     }
-    
+
     @Override
     public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
-      
+
       final long heapBytesUsed = in.readLong();
       MemoryState heapState = MemoryState.fromData(in);
       MemoryThresholds heapThresholds = MemoryThresholds.fromData(in);
@@ -393,19 +367,23 @@ public class ResourceAdvisor extends DistributionAdvisor {
 
     @Override
     public void toData(DataOutput out) throws IOException {
-      final long heapBytesUsed; final MemoryState heapState; final MemoryThresholds heapThresholds;
-      final long offHeapBytesUsed; final MemoryState offHeapState; final MemoryThresholds offHeapThresholds;
-      synchronized(this) {
+      final long heapBytesUsed;
+      final MemoryState heapState;
+      final MemoryThresholds heapThresholds;
+      final long offHeapBytesUsed;
+      final MemoryState offHeapState;
+      final MemoryThresholds offHeapThresholds;
+      synchronized (this) {
         heapBytesUsed = this.heapBytesUsed;
         heapState = this.heapState;
         heapThresholds = this.heapThresholds;
-        
+
         offHeapBytesUsed = this.offHeapBytesUsed;
         offHeapState = this.offHeapState;
         offHeapThresholds = this.offHeapThresholds;
       }
       super.toData(out);
-      
+
       out.writeLong(heapBytesUsed);
       heapState.toData(out);
       heapThresholds.toData(out);
@@ -414,16 +392,16 @@ public class ResourceAdvisor extends DistributionAdvisor {
       offHeapState.toData(out);
       offHeapThresholds.toData(out);
     }
-    
+
     @Override
     public int getDSFID() {
-      return RESOURCE_MANAGER_PROFILE; 
+      return RESOURCE_MANAGER_PROFILE;
     }
-    
+
     public synchronized MemoryState getHeapState() {
       return this.heapState;
     }
-    
+
     public synchronized MemoryState getoffHeapState() {
       return this.offHeapState;
     }
@@ -440,13 +418,14 @@ public class ResourceAdvisor extends DistributionAdvisor {
     return adviseFilter(new Filter() {
       @Override
       public boolean include(Profile profile) {
-        ResourceManagerProfile rmp = (ResourceManagerProfile)profile;
+        ResourceManagerProfile rmp = (ResourceManagerProfile) profile;
         return rmp.getHeapState().isCritical();
-      }});
+      }
+    });
   }
 
   public final boolean isHeapCritical(final InternalDistributedMember member) {
-    ResourceManagerProfile rmp = (ResourceManagerProfile)getProfile(member);
+    ResourceManagerProfile rmp = (ResourceManagerProfile) getProfile(member);
     return rmp != null ? rmp.getHeapState().isCritical() : false;
   }
 

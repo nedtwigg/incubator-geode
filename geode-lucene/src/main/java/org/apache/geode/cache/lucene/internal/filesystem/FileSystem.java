@@ -39,7 +39,7 @@ public class FileSystem {
   // private final Cache cache;
   private final ConcurrentMap<String, File> fileRegion;
   private final ConcurrentMap<ChunkKey, byte[]> chunkRegion;
-  
+
   static final int CHUNK_SIZE = 1024 * 1024; //1 MB
   private final FileSystemStats stats;
 
@@ -77,14 +77,14 @@ public class FileSystem {
     stats.incTemporaryFileCreates(1);
     return file;
   }
-  
+
   public File getFile(final String name) throws FileNotFoundException {
     final File file = fileRegion.get(name);
-    
+
     if (null == file) {
       throw new FileNotFoundException(name);
     }
-    
+
     file.setFileSystem(this);
     return file;
   }
@@ -97,7 +97,7 @@ public class FileSystem {
     // Seems like a file will be left with some 
     // dangling chunks at the end of the file
     File file = fileRegion.remove(name);
-    if(file == null) {
+    if (file == null) {
       throw new FileNotFoundException(name);
     }
 
@@ -114,22 +114,22 @@ public class FileSystem {
 
     stats.incFileDeletes(1);
   }
-  
+
   public void renameFile(String source, String dest) throws IOException {
     final File sourceFile = fileRegion.get(source);
     if (null == sourceFile) {
       throw new FileNotFoundException(source);
     }
-    
+
     final File destFile = createFile(dest);
-    
+
     destFile.chunks = sourceFile.chunks;
     destFile.created = sourceFile.created;
     destFile.length = sourceFile.length;
     destFile.modified = sourceFile.modified;
     destFile.id = sourceFile.id;
     updateFile(destFile);
-    
+
     // TODO - What is the state of the system if 
     // things crash in the middle of moving this file?
     // Seems like we will have two files pointing
@@ -139,21 +139,21 @@ public class FileSystem {
 
     stats.incFileRenames(1);
   }
-  
+
   byte[] getChunk(final File file, final int id) {
     final ChunkKey key = new ChunkKey(file.id, id);
-    
+
     //The file's metadata indicates that this chunk shouldn't
     //exist. Purge all of the chunks that are larger than the file metadata
-    if(id >= file.chunks) {
-      while(chunkRegion.containsKey(key)) {
+    if (id >= file.chunks) {
+      while (chunkRegion.containsKey(key)) {
         chunkRegion.remove(key);
         key.chunkId++;
       }
-      
+
       return null;
     }
-    
+
     final byte[] chunk = chunkRegion.get(key);
     stats.incReadBytes(chunk.length);
     return chunk;
@@ -182,11 +182,10 @@ public class FileSystem {
    */
   public void export(final java.io.File exportLocation) {
 
-    listFileNames().stream().forEach(fileName-> {
+    listFileNames().stream().forEach(fileName -> {
       try {
         getFile(fileName).export(exportLocation);
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
         //ignore this, it was concurrently removed
       }
 

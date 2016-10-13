@@ -63,8 +63,7 @@ public class JarClassLoader extends URLClassLoader {
   }
 
   @Override
-  protected synchronized Class<?> loadClass(String name, boolean resolve)
-      throws ClassNotFoundException {
+  protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     try {
       Class<?> clazz = findLoadedClass(name);
       if (clazz == null) {
@@ -90,22 +89,17 @@ public class JarClassLoader extends URLClassLoader {
   }
 
   private static boolean isJar(String fileName) {
-    return fileName != null && (fileName.toLowerCase().endsWith(".jar") ||
-        fileName.toLowerCase().endsWith(".war") ||
-        fileName.toLowerCase().endsWith(".ear"));
+    return fileName != null && (fileName.toLowerCase().endsWith(".jar") || fileName.toLowerCase().endsWith(".war") || fileName.toLowerCase().endsWith(".ear"));
   }
 
-  private static File jarEntryAsFile(JarFile jarFile,
-      JarEntry jarEntry) throws IOException {
+  private static File jarEntryAsFile(JarFile jarFile, JarEntry jarEntry) throws IOException {
     InputStream input = null;
     OutputStream output = null;
     try {
       String name = jarEntry.getName().replace('/', '_');
       int i = name.lastIndexOf(".");
       String extension = i > -1 ? name.substring(i) : "";
-      File file = File.createTempFile(
-          name.substring(0, name.length() - extension.length()) + ".",
-          extension);
+      File file = File.createTempFile(name.substring(0, name.length() - extension.length()) + ".", extension);
       file.deleteOnExit();
       input = jarFile.getInputStream(jarEntry);
       output = new FileOutputStream(file);

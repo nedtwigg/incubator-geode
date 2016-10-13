@@ -88,7 +88,7 @@ public interface TXStateInterface extends Synchronization, InternalDataView {
    * @since GemFire 5.0
    */
   public boolean needsLargeModCount();
-  
+
   /*
    * Only applicable for Distributed transaction.
    */
@@ -100,15 +100,12 @@ public interface TXStateInterface extends Synchronization, InternalDataView {
 
   public List getEvents();
 
- 
-
   /** Implement TransactionEvent's getCache */
   public Cache getCache();
 
   public Collection<LocalRegion> getRegions();
 
-  public void invalidateExistingEntry(final EntryEventImpl event,
-      boolean invokeCallbacks, boolean forceNewEntry);
+  public void invalidateExistingEntry(final EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry);
 
   /**
    * @param region
@@ -123,14 +120,7 @@ public interface TXStateInterface extends Synchronization, InternalDataView {
    * @param localRegion
    * @param updateStats TODO
    */
-  public Object getDeserializedValue(KeyInfo keyInfo,
-                                     LocalRegion localRegion,
-                                     boolean updateStats,
-                                     boolean disableCopyOnRead,
-                                     boolean preferCD,
-                                     EntryEventImpl clientEvent,
-                                     boolean returnTombstones,
-                                     boolean retainResult);
+  public Object getDeserializedValue(KeyInfo keyInfo, LocalRegion localRegion, boolean updateStats, boolean disableCopyOnRead, boolean preferCD, EntryEventImpl clientEvent, boolean returnTombstones, boolean retainResult);
 
   public TXEvent getEvent();
 
@@ -148,8 +138,7 @@ public interface TXStateInterface extends Synchronization, InternalDataView {
    * @param  createTxEntryIfAbsent should a transactional entry be created if not present. 
    * @return a txEntryState or null if the entry doesn't exist in the transaction and/or committed state. 
    */
-  public TXEntryState txReadEntry(KeyInfo entryKey, LocalRegion localRegion, boolean rememberRead
-      ,boolean createTxEntryIfAbsent);
+  public TXEntryState txReadEntry(KeyInfo entryKey, LocalRegion localRegion, boolean rememberRead, boolean createTxEntryIfAbsent);
 
   public void rmRegion(LocalRegion r);
 
@@ -165,7 +154,7 @@ public interface TXStateInterface extends Synchronization, InternalDataView {
    * @return true if callbacks should be fired for this TXState
    */
   public boolean isFireCallbacks();
-  
+
   /**
    * On the remote node, the tx can potentially be accessed by multiple threads,
    * specially with function execution. This lock should be used to synchronize
@@ -173,52 +162,52 @@ public interface TXStateInterface extends Synchronization, InternalDataView {
    * @return the lock to be used
    */
   public ReentrantLock getLock();
-  
+
   public boolean isRealDealLocal();
-  
+
   public boolean isMemberIdForwardingRequired();
 
   public InternalDistributedMember getOriginatingMember();
-  
+
   public TXCommitMessage getCommitMessage();
-  
+
   /**
    * perform additional tasks to suspend a transaction
    */
   public void suspend();
-  
+
   /**
    * perform additional tasks to resume a suspended transaction
    */
   public void resume();
-  
+
   /**
    * record a transactional operation for possible later replay
    */
   public void recordTXOperation(ServerRegionDataAccess region, ServerRegionOperation op, Object key, Object arguments[]);
 
   public void close();
-  
+
   /*
    * Determine if its TxState or not
    */
   public boolean isTxState();
-  
+
   /*
    * Determine if is TxStateStub or not
    */
   public boolean isTxStateStub();
-  
+
   /*
    * Determine if is TxStateProxy or not
    */
   public boolean isTxStateProxy();
-  
+
   /*
    * Is class related to Distributed Transaction, and not colocated transaction
    */
   public boolean isDistTx();
-  
+
   /*
    * Is class meant for Coordinator for Distributed Transaction
    * 

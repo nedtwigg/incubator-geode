@@ -135,9 +135,9 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     Set<String> serverNames = new HashSet<>();
 
     final int[] serverPorts = getRandomAvailableTCPPorts(numServers);
-    for (int i=0; i<numServers; i++) {
+    for (int i = 0; i < numServers; i++) {
       int port = serverPorts[i];
-      String serverName = serverNamePrefix+ Integer.toString(i+startNum) + "-" + port;
+      String serverName = serverNamePrefix + Integer.toString(i + startNum) + "-" + port;
 
       CommandStringBuilder csb = new CommandStringBuilder(CliStrings.START_SERVER);
       csb.addOption(CliStrings.START_SERVER__NAME, serverName);
@@ -154,7 +154,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
   private void doCreateCommands() throws IOException {
     createRegion(REGION1, REPLICATE, null);
     createRegion(REGION2, PARTITION, null);
-    createIndex(INDEX1 , "AAPL", REGION1, null);
+    createIndex(INDEX1, "AAPL", REGION1, null);
     createAndDeployJar(this.temporaryFolder.getRoot().getCanonicalPath() + File.separator + "Deploy1.jar");
     createAsyncEventQueue("q1");
     final String autoCompact = "true";
@@ -165,10 +165,10 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     final String maxOplogSize = "1000";
     final String queueSize = "300";
     final String timeInterval = "10";
-    final String writeBufferSize="100";
+    final String writeBufferSize = "100";
     final String diskStoreName = "ds1";
     final String diskDirs = "ds1";
-    
+
     createDiskStore(diskStoreName, diskDirs, autoCompact, allowForceCompaction, compactionThreshold, duCritical, duWarning, maxOplogSize, queueSize, timeInterval, writeBufferSize);
   }
 
@@ -204,17 +204,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
 
     try {
       ClassBuilder classBuilder = new ClassBuilder();
-      byte[] jarBytes = classBuilder.createJarFromClassContent("com/qcdunit/QueueCommandsDUnitTestListener",
-          "package com.qcdunit;" +
-              "import java.util.List; import java.util.Properties;" +
-              "import org.apache.geode.internal.cache.xmlcache.Declarable2; import org.apache.geode.cache.asyncqueue.AsyncEvent;" +
-              "import org.apache.geode.cache.asyncqueue.AsyncEventListener;" +
-              "public class QueueCommandsDUnitTestListener implements Declarable2, AsyncEventListener {" +
-              "Properties props;" +
-              "public boolean processEvents(List<AsyncEvent> events) { return true; }" +
-              "public void close() {}" +
-              "public void init(final Properties props) {this.props = props;}" +
-          "public Properties getConfig() {return this.props;}}");
+      byte[] jarBytes = classBuilder.createJarFromClassContent("com/qcdunit/QueueCommandsDUnitTestListener", "package com.qcdunit;" + "import java.util.List; import java.util.Properties;" + "import org.apache.geode.internal.cache.xmlcache.Declarable2; import org.apache.geode.cache.asyncqueue.AsyncEvent;" + "import org.apache.geode.cache.asyncqueue.AsyncEventListener;" + "public class QueueCommandsDUnitTestListener implements Declarable2, AsyncEventListener {" + "Properties props;" + "public boolean processEvents(List<AsyncEvent> events) { return true; }" + "public void close() {}" + "public void init(final Properties props) {this.props = props;}" + "public Properties getConfig() {return this.props;}}");
 
       FileUtils.writeByteArrayToFile(jarFile, jarBytes);
       CommandStringBuilder csb = new CommandStringBuilder(CliStrings.DEPLOY);
@@ -242,17 +232,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     }
   }
 
-  private void createDiskStore(final String diskStoreName,
-                               final String diskDirs,
-                               final String autoCompact,
-                               final String allowForceCompaction,
-                               final String compactionThreshold,
-                               final String duCritical,
-                               final String duWarning,
-                               final String maxOplogSize,
-                               final String queueSize,
-                               final String timeInterval,
-                               final String writeBufferSize) {
+  private void createDiskStore(final String diskStoreName, final String diskDirs, final String autoCompact, final String allowForceCompaction, final String compactionThreshold, final String duCritical, final String duWarning, final String maxOplogSize, final String queueSize, final String timeInterval, final String writeBufferSize) {
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.CREATE_DISK_STORE);
     csb.addOption(CliStrings.CREATE_DISK_STORE__NAME, diskStoreName);
     csb.addOption(CliStrings.CREATE_DISK_STORE__DIRECTORY_AND_SIZE, diskDirs);
@@ -267,7 +247,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     csb.addOptionWithValueCheck(CliStrings.CREATE_DISK_STORE__WRITE_BUFFER_SIZE, writeBufferSize);
     executeAndVerifyCommand(csb.getCommandString());
   }
-  
+
   private void destroyDiskStore(final String diskStoreName, final String group) {
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.DESTROY_DISK_STORE);
     csb.addOption(CliStrings.DESTROY_DISK_STORE__NAME, diskStoreName);
@@ -317,7 +297,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
   }
 
   private Object[] setup() throws IOException {
-    final int [] ports = getRandomAvailableTCPPorts(3);
+    final int[] ports = getRandomAvailableTCPPorts(3);
     final int locator1Port = ports[0];
 
     final String locator1Name = "locator1-" + locator1Port;
@@ -333,8 +313,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
 
         try {
           jmxHost = InetAddress.getLocalHost().getHostName();
-        }
-        catch (UnknownHostException ignore) {
+        } catch (UnknownHostException ignore) {
           jmxHost = "localhost";
         }
 
@@ -363,6 +342,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
           public boolean done() {
             return locator.isSharedConfigurationRunning();
           }
+
           @Override
           public String description() {
             return "Waiting for shared configuration to be started";
@@ -380,9 +360,9 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     });
 
     HeadlessGfsh gfsh = getDefaultShell();
-    String jmxHost = (String)result[1];
-    int jmxPort = (Integer)result[2];
-    int httpPort = (Integer)result[3];
+    String jmxHost = (String) result[1];
+    int jmxPort = (Integer) result[2];
+    int httpPort = (Integer) result[3];
 
     connect(jmxHost, jmxPort, httpPort, gfsh);
 
@@ -393,7 +373,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
       public Object call() {
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locator1Port+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locator1Port + "]");
         localProps.setProperty(NAME, "DataMember");
         getSystem(localProps);
         Cache cache = getCache();
@@ -409,7 +389,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     locatorAndMgr.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        GemFireCacheImpl cache = (GemFireCacheImpl)CacheFactory.getAnyInstance();
+        GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.getAnyInstance();
         ShutdownAllRequest.send(cache.getDistributedSystem().getDistributionManager(), -1);
         return null;
       }
@@ -437,7 +417,7 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
     for (String serverName : serverNames) {
       assertTrue(resultAsString.contains(serverName));
     }
-  }     
+  }
 
   private void verifyIndexCreationOnAllMembers(final String indexName) {
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.LIST_INDEX);
@@ -448,12 +428,12 @@ public class SharedConfigurationEndToEndDUnitTest extends CliCommandTestBase {
       assertTrue(resultAsString.contains(serverName));
     }
   }
-  
+
   private void verifyAsyncEventQueueCreation() {
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.LIST_ASYNC_EVENT_QUEUES);
     CommandResult cmdResult = executeCommand(csb.toString());
     String resultAsString = commandResultToString(cmdResult);
-    
+
     for (String serverName : serverNames) {
       assertTrue(resultAsString.contains(serverName));
     }

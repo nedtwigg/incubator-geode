@@ -90,8 +90,7 @@ public class AuthenticateUserOp {
    * @param securityProps
    * @return Object unique user-id.
    */
-  public static Object executeOn(ServerLocation location, ExecutablePool pool,
-      Properties securityProps) {
+  public static Object executeOn(ServerLocation location, ExecutablePool pool, Properties securityProps) {
     AbstractOp op = new AuthenticateUserOpImpl(pool, securityProps);
     return pool.executeOn(location, op);
   }
@@ -108,23 +107,19 @@ public class AuthenticateUserOp {
     public AuthenticateUserOpImpl(Connection con, ExecutablePool pool) {
       super(MessageType.USER_CREDENTIAL_MESSAGE, 1);
       byte[] credentialBytes = null;
-      DistributedMember server = new InternalDistributedMember(con.getSocket()
-          .getInetAddress(), con.getSocket().getPort(), false);
+      DistributedMember server = new InternalDistributedMember(con.getSocket().getInetAddress(), con.getSocket().getPort(), false);
       DistributedSystem sys = InternalDistributedSystem.getConnectedInstance();
       String authInitMethod = sys.getProperties().getProperty(SECURITY_CLIENT_AUTH_INIT);
       Properties tmpSecurityProperties = sys.getSecurityProperties();
 
       // LOG: following passes the DS API LogWriters into the security API
-      Properties credentials = HandShake.getCredentials(authInitMethod,
-          tmpSecurityProperties, server, false, (InternalLogWriter)sys.getLogWriter(), (InternalLogWriter)sys
-              .getSecurityLogWriter());
-      
+      Properties credentials = HandShake.getCredentials(authInitMethod, tmpSecurityProperties, server, false, (InternalLogWriter) sys.getLogWriter(), (InternalLogWriter) sys.getSecurityLogWriter());
+
       getMessage().setMessageHasSecurePartFlag();
       HeapDataOutputStream heapdos = new HeapDataOutputStream(Version.CURRENT);
       try {
         DataSerializer.writeProperties(credentials, heapdos);
-        credentialBytes = ((ConnectionImpl)con).getHandShake()
-            .encryptBytes(heapdos.toByteArray());
+        credentialBytes = ((ConnectionImpl) con).getHandShake().encryptBytes(heapdos.toByteArray());
       } catch (Exception e) {
         throw new ServerOperationException(e);
       } finally {
@@ -152,28 +147,22 @@ public class AuthenticateUserOp {
       hdos.writeLong(cnx.getConnectionID());
       if (this.securityProperties != null) {
         byte[] credentialBytes = null;
-        DistributedMember server = new InternalDistributedMember(cnx
-            .getSocket().getInetAddress(), cnx.getSocket().getPort(), false);
-        DistributedSystem sys = InternalDistributedSystem
-            .getConnectedInstance();
+        DistributedMember server = new InternalDistributedMember(cnx.getSocket().getInetAddress(), cnx.getSocket().getPort(), false);
+        DistributedSystem sys = InternalDistributedSystem.getConnectedInstance();
         String authInitMethod = sys.getProperties().getProperty(SECURITY_CLIENT_AUTH_INIT);
 
-        Properties credentials = HandShake.getCredentials(authInitMethod,
-            this.securityProperties, server, false, (InternalLogWriter)sys.getLogWriter(), (InternalLogWriter)sys
-                .getSecurityLogWriter());
+        Properties credentials = HandShake.getCredentials(authInitMethod, this.securityProperties, server, false, (InternalLogWriter) sys.getLogWriter(), (InternalLogWriter) sys.getSecurityLogWriter());
         HeapDataOutputStream heapdos = new HeapDataOutputStream(Version.CURRENT);
         try {
           DataSerializer.writeProperties(credentials, heapdos);
-          credentialBytes = ((ConnectionImpl)cnx).getHandShake().encryptBytes(
-              heapdos.toByteArray());
+          credentialBytes = ((ConnectionImpl) cnx).getHandShake().encryptBytes(heapdos.toByteArray());
         } finally {
           heapdos.close();
         }
         getMessage().addBytesPart(credentialBytes);
       }
       try {
-        secureBytes = ((ConnectionImpl)cnx).getHandShake().encryptBytes(
-            hdos.toByteArray());
+        secureBytes = ((ConnectionImpl) cnx).getHandShake().encryptBytes(hdos.toByteArray());
       } finally {
         hdos.close();
       }
@@ -194,8 +183,7 @@ public class AuthenticateUserOp {
     protected Object attemptReadResponse(Connection cnx) throws Exception {
       Message msg = createResponseMessage();
       if (msg != null) {
-        msg.setComms(cnx.getSocket(), cnx.getInputStream(),
-            cnx.getOutputStream(), cnx.getCommBuffer(), cnx.getStats());
+        msg.setComms(cnx.getSocket(), cnx.getInputStream(), cnx.getOutputStream(), cnx.getCommBuffer(), cnx.getStats());
         if (msg instanceof ChunkedMessage) {
           try {
             return processResponse(cnx, msg);
@@ -223,54 +211,44 @@ public class AuthenticateUserOp {
       final int msgType = msg.getMessageType();
       long userId = -1;
       if (msgType == MessageType.RESPONSE) {
-        bytes = (byte[])part.getObject();
+        bytes = (byte[]) part.getObject();
         if (bytes.length == 0) {
           cnx.getServer().setRequiresCredentials(false);
         } else {
           cnx.getServer().setRequiresCredentials(true);
-          byte[] decrypted = ((ConnectionImpl)cnx).getHandShake().decryptBytes(bytes);
+          byte[] decrypted = ((ConnectionImpl) cnx).getHandShake().decryptBytes(bytes);
           DataInputStream dis = new DataInputStream(new ByteArrayInputStream(decrypted));
           userId = dis.readLong();
         }
         if (this.needsServerLocation) {
-          return new Object[] {cnx.getServer(), userId};
-       } else {
-         return userId;
-       }
-      }
-      else if (msgType == MessageType.EXCEPTION) {
+          return new Object[] { cnx.getServer(), userId };
+        } else {
+          return userId;
+        }
+      } else if (msgType == MessageType.EXCEPTION) {
         Object result = part.getObject();
         String s = "While performing a remote authenticate";
         if (result instanceof AuthenticationFailedException) {
-          final AuthenticationFailedException afe =
-            (AuthenticationFailedException)result;
+          final AuthenticationFailedException afe = (AuthenticationFailedException) result;
           if ("REPLY_REFUSED".equals(afe.getMessage())) {
             throw new AuthenticationFailedException(s, afe.getCause());
-          }
-          else {
+          } else {
             throw new AuthenticationFailedException(s, afe);
           }
-        }
-        else if (result instanceof AuthenticationRequiredException) {
-          throw new AuthenticationRequiredException(s,
-              (AuthenticationRequiredException)result);
-        }
-        else if (result instanceof NotAuthorizedException) {
-          throw new NotAuthorizedException(s, (NotAuthorizedException)result);
-        }
-        else {
-          throw new ServerOperationException(s, (Throwable)result);
+        } else if (result instanceof AuthenticationRequiredException) {
+          throw new AuthenticationRequiredException(s, (AuthenticationRequiredException) result);
+        } else if (result instanceof NotAuthorizedException) {
+          throw new NotAuthorizedException(s, (NotAuthorizedException) result);
+        } else {
+          throw new ServerOperationException(s, (Throwable) result);
         }
         // Get the exception toString part.
         // This was added for c++ thin client and not used in java
         // Part exceptionToStringPart = msg.getPart(1);
-      }
-      else if (isErrorResponse(msgType)) {
+      } else if (isErrorResponse(msgType)) {
         throw new ServerOperationException(part.getString());
-      }
-      else {
-        throw new InternalGemFireError("Unexpected message type "
-            + MessageType.getString(msgType));
+      } else {
+        throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
       }
     }
 

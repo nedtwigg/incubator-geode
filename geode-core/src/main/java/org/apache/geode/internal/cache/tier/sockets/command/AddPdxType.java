@@ -33,7 +33,6 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.pdx.internal.PdxType;
 import org.apache.geode.pdx.internal.TypeRegistry;
 
-
 public class AddPdxType extends BaseCommand {
   private static final Logger logger = LogService.getLogger();
 
@@ -47,8 +46,7 @@ public class AddPdxType extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received get pdx id for type request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
@@ -57,7 +55,7 @@ public class AddPdxType extends BaseCommand {
 
     PdxType type = (PdxType) msg.getPart(0).getObject();
     int typeId = msg.getPart(1).getInt();
-    
+
     //The native client needs this line
     //because it doesn't set the type id on the
     //client side.

@@ -16,7 +16,6 @@
  */
 package org.apache.geode.internal.cache;
 
-
 import java.util.Collections;
 import java.util.Iterator;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +23,7 @@ import org.apache.geode.cache.CacheRuntimeException;
 import org.apache.geode.distributed.internal.DM;
 import org.apache.geode.internal.logging.LogService;
 
-public class DistTXAdjunctCommitMessage extends TXCommitMessage{
+public class DistTXAdjunctCommitMessage extends TXCommitMessage {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -38,8 +37,7 @@ public class DistTXAdjunctCommitMessage extends TXCommitMessage{
     Iterator it = this.farSideEntryOps.iterator();
     while (it.hasNext()) {
       try {
-        RegionCommit.FarSideEntryOp entryOp = (RegionCommit.FarSideEntryOp) it
-            .next();
+        RegionCommit.FarSideEntryOp entryOp = (RegionCommit.FarSideEntryOp) it.next();
         entryOp.processAdjunctOnly();
       } catch (CacheRuntimeException problem) {
         processCacheRuntimeException(problem);
@@ -47,5 +45,5 @@ public class DistTXAdjunctCommitMessage extends TXCommitMessage{
         addProcessingException(e);
       }
     }
-  }  
+  }
 }

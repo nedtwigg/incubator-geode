@@ -27,8 +27,7 @@ import java.io.ObjectOutput;
  * 
  * @since GemFire 7.1
  */
-public final class VersionedObjectOutput implements ObjectOutput,
-    VersionedDataStream {
+public final class VersionedObjectOutput implements ObjectOutput, VersionedDataStream {
 
   private final ObjectOutput out;
   private final Version version;
@@ -45,8 +44,7 @@ public final class VersionedObjectOutput implements ObjectOutput,
    */
   public VersionedObjectOutput(ObjectOutput out, Version version) {
     if (version.compareTo(Version.CURRENT) > 0) {
-      Assert.fail("unexpected version: " + version + ", CURRENT: "
-          + Version.CURRENT);
+      Assert.fail("unexpected version: " + version + ", CURRENT: " + Version.CURRENT);
     }
     this.out = out;
     this.version = version;

@@ -39,9 +39,8 @@ class ReflectionLuceneSerializer implements LuceneSerializer {
   private Field[] fields;
 
   private static final Logger logger = LogService.getLogger();
-  
-  public ReflectionLuceneSerializer(Class<? extends Object> clazz,
-      String[] indexedFields) {
+
+  public ReflectionLuceneSerializer(Class<? extends Object> clazz, String[] indexedFields) {
     Set<String> fieldSet = new HashSet<String>();
     fieldSet.addAll(Arrays.asList(indexedFields));
 
@@ -49,25 +48,24 @@ class ReflectionLuceneSerializer implements LuceneSerializer {
     //in a list if they are an indexed field and have the correct
     //type.
     ArrayList<Field> foundFields = new ArrayList<Field>();
-    while(clazz != Object.class) {
-      for(Field field : clazz.getDeclaredFields()) {
+    while (clazz != Object.class) {
+      for (Field field : clazz.getDeclaredFields()) {
         Class<?> type = field.getType();
-        if(fieldSet.contains(field.getName()) 
-            && SerializerUtil.isSupported(type)) {
+        if (fieldSet.contains(field.getName()) && SerializerUtil.isSupported(type)) {
           field.setAccessible(true);
           foundFields.add(field);
         }
       }
-      
+
       clazz = clazz.getSuperclass();
     }
-    
+
     this.fields = foundFields.toArray(new Field[foundFields.size()]);
   }
 
   @Override
   public void toDocument(Object value, Document doc) {
-    for(Field field: fields) {
+    for (Field field : fields) {
       try {
         Object fieldValue = field.get(value);
         if (fieldValue == null) {
@@ -79,7 +77,7 @@ class ReflectionLuceneSerializer implements LuceneSerializer {
       }
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("ReflectionLuceneSerializer.toDocument:"+doc);
+      logger.debug("ReflectionLuceneSerializer.toDocument:" + doc);
     }
   }
 }

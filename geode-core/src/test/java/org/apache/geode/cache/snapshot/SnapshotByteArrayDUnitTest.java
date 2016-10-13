@@ -43,7 +43,7 @@ import org.apache.geode.test.dunit.SerializableCallable;
 @Category(DistributedTest.class)
 public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
   private final File snap = new File("snapshot-ops");
-  
+
   public SnapshotByteArrayDUnitTest() {
     super();
   }
@@ -60,13 +60,13 @@ public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
 
         region.getSnapshotService().save(snap, SnapshotFormat.GEMFIRE);
         region.getSnapshotService().load(snap, SnapshotFormat.GEMFIRE);
-        
+
         return null;
       }
     };
-    
+
     Host.getHost(0).getVM(1).invoke(load);
-    
+
     SerializableCallable callback = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -76,24 +76,24 @@ public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
           public void afterUpdate(EntryEvent<Integer, Object> event) {
             dump(event);
           }
-          
+
           @Override
           public void afterInvalidate(EntryEvent<Integer, Object> event) {
             dump(event);
           }
-          
+
           @Override
           public void afterDestroy(EntryEvent<Integer, Object> event) {
             dump(event);
           }
-          
+
           @Override
           public void afterCreate(EntryEvent<Integer, Object> event) {
           }
-          
+
           private void dump(EntryEvent<Integer, Object> event) {
             LogWriterUtils.getLogWriter().info("op = " + event.getOperation());
-            
+
             Object obj1 = event.getNewValue();
             LogWriterUtils.getLogWriter().info("new = " + obj1);
 
@@ -101,7 +101,7 @@ public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
             LogWriterUtils.getLogWriter().info("old = " + obj2);
           }
         });
-        
+
         return null;
       }
     };
@@ -120,22 +120,20 @@ public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
   public final void postSetUp() throws Exception {
     loadCache();
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     if (snap.exists()) {
       snap.delete();
     }
   }
-  
+
   public void loadCache() throws Exception {
     SerializableCallable setup = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory()
-          .setPdxSerializer(new MyPdxSerializer())
-          .setPdxPersistent(true);
-    
+        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer()).setPdxPersistent(true);
+
         Cache cache = getCache(cf);
         RegionGenerator rgen = new RegionGenerator();
         rgen.createRegion(cache, null, RegionType.REPLICATE, "snapshot-ops");
@@ -143,7 +141,7 @@ public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     };
-    
+
     SnapshotDUnitTest.forEachVm(setup, true);
   }
 }

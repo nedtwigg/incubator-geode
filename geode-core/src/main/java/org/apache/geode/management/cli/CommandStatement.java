@@ -27,17 +27,17 @@ import java.util.Map;
  * @since GemFire 7.0
  */
 public interface CommandStatement {
-  
+
   /**
    * Returns the user specified command string.
    */
   public String getCommandString();
-  
+
   /**
    * Returns the CLI environment variables.
    */
   public Map<String, String> getEnv();
-  
+
   /**
    * Processes this command statement with the user specified command string
    * and environment
@@ -45,8 +45,7 @@ public interface CommandStatement {
    * @return The {@link Result} of the execution of this command statement.
    */
   public Result process();
-  
-  
+
   /**
    * Returns whether the command statement is well formed.
    * 

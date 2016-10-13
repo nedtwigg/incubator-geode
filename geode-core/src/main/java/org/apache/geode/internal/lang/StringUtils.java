@@ -37,19 +37,7 @@ public abstract class StringUtils {
 
   public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-  public static final String[] SPACES = {
-    "",
-    " ",
-    "  ",
-    "   ",
-    "    ",
-    "     ",
-    "      ",
-    "       ",
-    "        ",
-    "         ",
-    "          "
-  };
+  public static final String[] SPACES = { "", " ", "  ", "   ", "    ", "     ", "      ", "       ", "        ", "         ", "          " };
 
   /**
    * Concatenates all Objects in the array into a single String by calling toString on the Object.
@@ -165,11 +153,10 @@ public abstract class StringUtils {
     final StringBuilder spaces = new StringBuilder(SPACES[Math.min(number, SPACES.length - 1)]);
 
     do {
-      number -= (SPACES.length -1);
+      number -= (SPACES.length - 1);
       number = Math.max(number, 0);
       spaces.append(SPACES[Math.min(number, SPACES.length - 1)]);
-    }
-    while (number > 0);
+    } while (number > 0);
 
     return spaces.toString();
   }
@@ -287,8 +274,7 @@ public abstract class StringUtils {
   public static String valueOf(final Object value, final String... defaultValues) {
     if (value != null) {
       return value.toString();
-    }
-    else {
+    } else {
       if (defaultValues != null) {
         for (String defaultValue : defaultValues) {
           if (defaultValue != null) {
@@ -340,7 +326,7 @@ public abstract class StringUtils {
   }
 
   private static final int MAX_ARRAY_ELEMENTS_TO_CONVERT = Integer.getInteger("StringUtils.MAX_ARRAY_ELEMENTS_TO_CONVERT", 16);
-  
+
   /**
    * Used to convert the given object to a String. If anything goes wrong in this conversion
    * put some info about what went wrong on the result string but do not throw an exception.
@@ -354,7 +340,7 @@ public abstract class StringUtils {
       return "Conversion to a string failed because " + ex;
     }
   }
-  
+
   /**
    * Convert an object to a string and return it.
    * Handled CacheDeserializables without having them change the form they store.
@@ -368,26 +354,26 @@ public abstract class StringUtils {
     if (o == null || o == Token.NOT_AVAILABLE) {
       return "null";
     } else if (o instanceof CachedDeserializable) {
-      CachedDeserializable cd = (CachedDeserializable)o;
+      CachedDeserializable cd = (CachedDeserializable) o;
       return cd.getStringForm();
     } else if (convertArrayContents && o.getClass().isArray()) {
       Class<?> eClass = o.getClass();
       if (eClass == byte[].class) {
-        return arrayToString((byte[])o, maxArrayElements);
+        return arrayToString((byte[]) o, maxArrayElements);
       } else if (eClass == boolean[].class) {
-        return arrayToString((boolean[])o, maxArrayElements);
+        return arrayToString((boolean[]) o, maxArrayElements);
       } else if (eClass == char[].class) {
-        return arrayToString((char[])o, maxArrayElements);
+        return arrayToString((char[]) o, maxArrayElements);
       } else if (eClass == short[].class) {
-        return arrayToString((short[])o, maxArrayElements);
+        return arrayToString((short[]) o, maxArrayElements);
       } else if (eClass == int[].class) {
-        return arrayToString((int[])o, maxArrayElements);
+        return arrayToString((int[]) o, maxArrayElements);
       } else if (eClass == long[].class) {
-        return arrayToString((long[])o, maxArrayElements);
+        return arrayToString((long[]) o, maxArrayElements);
       } else if (eClass == float[].class) {
-        return arrayToString((float[])o, maxArrayElements);
+        return arrayToString((float[]) o, maxArrayElements);
       } else if (eClass == double[].class) {
-        return arrayToString((double[])o, maxArrayElements);
+        return arrayToString((double[]) o, maxArrayElements);
       } else {
         return arrayToString((Object[]) o, maxArrayElements);
       }
@@ -395,7 +381,7 @@ public abstract class StringUtils {
       return o.toString();
     }
   }
-  
+
   private static String arrayToString(Object[] a, int maxArrayElements) {
     if (maxArrayElements < 0) {
       maxArrayElements = 0;
@@ -415,7 +401,7 @@ public abstract class StringUtils {
     StringBuilder b = new StringBuilder();
     b.append(componentType.getSimpleName());
     b.append('[');
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(String.valueOf(a[i]));
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -450,7 +436,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("boolean[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -485,7 +471,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("byte[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -520,7 +506,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("char[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -555,7 +541,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("short[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -590,7 +576,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("int[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -625,7 +611,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("long[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -660,7 +646,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("float[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;
@@ -695,7 +681,7 @@ public abstract class StringUtils {
     }
     StringBuilder b = new StringBuilder();
     b.append("double[");
-    for (int i = 0; ; i++) {
+    for (int i = 0;; i++) {
       b.append(a[i]);
       if (i == iMax) {
         int skipCount = a.length - maxArrayElements;

@@ -26,9 +26,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * 
  */
 @Category(IntegrationTest.class)
-public class CacheServerSelectorMaxConnectionsJUnitTest extends CacheServerMaxConnectionsJUnitTest
-{
+public class CacheServerSelectorMaxConnectionsJUnitTest extends CacheServerMaxConnectionsJUnitTest {
   protected int getMaxThreads() {
-    return 2; 
+    return 2;
   }
 }

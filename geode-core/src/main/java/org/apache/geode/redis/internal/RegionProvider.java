@@ -175,7 +175,7 @@ public class RegionProvider implements Closeable {
       return false;
     Lock lock = this.locks.get(key.toString());
     try {
-      if (lock != null)  {// Strings/hlls will not have locks
+      if (lock != null) {// Strings/hlls will not have locks
         lock.lock();
       }
       metaRemoveEntry(key);
@@ -299,8 +299,8 @@ public class RegionProvider implements Closeable {
                   concurrentCreateDestroyException = e;
                 }
               }
-            } while(concurrentCreateDestroyException != null);
-            this.regions.put(key, r);            
+            } while (concurrentCreateDestroyException != null);
+            this.regions.put(key, r);
             if (addToMeta) {
               RedisDataType existingType = metaPutIfAbsent(key, type);
               if (existingType != null && existingType != type)
@@ -359,7 +359,7 @@ public class RegionProvider implements Closeable {
       // ignore, these indexes already exist or unsupported but make sure prepared queries are made
     }
     HashMap<Enum<?>, Query> queryList = new HashMap<Enum<?>, Query>();
-    for (SortedSetQuery lq: SortedSetQuery.values()) {
+    for (SortedSetQuery lq : SortedSetQuery.values()) {
       String queryString = lq.getQueryString(fullpath);
       Query query = this.queryService.newQuery(queryString);
       queryList.put(lq, query);
@@ -372,7 +372,7 @@ public class RegionProvider implements Closeable {
     r.put("tail", Integer.valueOf(0));
     String fullpath = r.getFullPath();
     HashMap<Enum<?>, Query> queryList = new HashMap<Enum<?>, Query>();
-    for (ListQuery lq: ListQuery.values()) {
+    for (ListQuery lq : ListQuery.values()) {
       String queryString = lq.getQueryString(fullpath);
       Query query = this.queryService.newQuery(queryString);
       queryList.put(lq, query);
@@ -391,17 +391,18 @@ public class RegionProvider implements Closeable {
   private Region<?, ?> createRegionGlobally(String key) {
     Region<?, ?> r = null;
     r = cache.getRegion(key);
-    if (r != null) return r;
+    if (r != null)
+      return r;
     do {
       Result result = cliCmds.createRegion(key, defaultRegionType, null, null, true, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
       r = cache.getRegion(key);
       if (result.getStatus() == Status.ERROR && r == null) {
         String err = "";
-        while(result.hasNextLine())
+        while (result.hasNextLine())
           err += result.nextLine();
         throw new RegionCreationException(err);
       }
-    } while(r == null); // The region can be null in the case that it is concurrently destroyed by
+    } while (r == null); // The region can be null in the case that it is concurrently destroyed by
     // a remote even triggered internally by Geode
     return r;
   }

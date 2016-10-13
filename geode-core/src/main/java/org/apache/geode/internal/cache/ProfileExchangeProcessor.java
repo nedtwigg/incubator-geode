@@ -33,8 +33,9 @@ import org.apache.geode.internal.cache.CacheDistributionAdvisor.InitialImageAdvi
 public interface ProfileExchangeProcessor {
   /** Exchange profiles with other members to initialize the region*/
   void initializeRegion();
-  /** Get, and possibling wait for, the members that we should initialize from. */ 
+
+  /** Get, and possibling wait for, the members that we should initialize from. */
   InitialImageAdvice getInitialImageAdvice(InitialImageAdvice previousAdvice);
-  
+
   void setOnline(InternalDistributedMember target);
 }

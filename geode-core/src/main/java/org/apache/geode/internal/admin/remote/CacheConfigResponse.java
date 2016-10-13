@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 //import org.apache.geode.internal.admin.*;
@@ -36,12 +35,12 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class CacheConfigResponse extends AdminResponse {
   // instance variables
   private RemoteCacheInfo info;
-  
+
   /** An exception thrown while configuring the cache
    *
    * @since GemFire 4.0 */
   private Exception exception;
-  
+
   /**
    * Returns a <code>CacheConfigResponse</code> that will be returned to the
    * specified recipient.
@@ -50,7 +49,7 @@ public final class CacheConfigResponse extends AdminResponse {
     CacheConfigResponse m = new CacheConfigResponse();
     m.setRecipient(recipient);
     try {
-      GemFireCacheImpl c = (GemFireCacheImpl)CacheFactory.getInstanceCloseOk(dm.getSystem());
+      GemFireCacheImpl c = (GemFireCacheImpl) CacheFactory.getInstanceCloseOk(dm.getSystem());
       if (cacheId != System.identityHashCode(c)) {
         m.info = null;
       } else {
@@ -65,13 +64,11 @@ public final class CacheConfigResponse extends AdminResponse {
           c.setSearchTimeout(newValue);
           break;
         default:
-          Assert.assertTrue(false, "Unknown config code: " +
-                            attributeCode);
+          Assert.assertTrue(false, "Unknown config code: " + attributeCode);
         }
       }
       m.info = new RemoteCacheInfo(c);
-    } 
-    catch (CancelException ex) {
+    } catch (CancelException ex) {
       m.info = null;
 
     } catch (Exception ex) {
@@ -84,7 +81,7 @@ public final class CacheConfigResponse extends AdminResponse {
   public RemoteCacheInfo getCacheInfo() {
     return this.info;
   }
-  
+
   /**
    * Returns the exception that was thrown while changing the cache
    * configuration.
@@ -105,10 +102,9 @@ public final class CacheConfigResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.info = (RemoteCacheInfo)DataSerializer.readObject(in);
+    this.info = (RemoteCacheInfo) DataSerializer.readObject(in);
     this.exception = (Exception) DataSerializer.readObject(in);
   }
 

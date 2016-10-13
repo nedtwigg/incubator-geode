@@ -52,10 +52,10 @@ public class LogWriterUtils {
 
   private static final Logger logger = LogService.getLogger();
   private static final LogWriterLogger oldLogger = LogWriterLogger.create(logger);
-  
+
   protected LogWriterUtils() {
   }
-  
+
   /**
    * Returns a <code>LogWriter</code> for logging information
    * 
@@ -83,15 +83,13 @@ public class LogWriterUtils {
       nonDefault = new Properties();
     }
     DistributedTestUtils.addHydraProperties(nonDefault);
-    
+
     DistributionConfig dc = new DistributionConfigImpl(nonDefault);
-    LogWriter logger = LogWriterFactory.createLogWriterLogger(
-        false/*isLoner*/, false/*isSecurityLog*/, dc, 
-        false);        
-    
+    LogWriter logger = LogWriterFactory.createLogWriterLogger(false/*isLoner*/, false/*isSecurityLog*/, dc, false);
+
     // if config was non-null, then these will be added to it...
     nonDefault.put(DistributionConfig.LOG_WRITER_NAME, logger);
-    
+
     return logger;
   }
 

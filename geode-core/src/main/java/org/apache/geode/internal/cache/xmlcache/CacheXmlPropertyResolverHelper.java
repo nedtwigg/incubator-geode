@@ -62,17 +62,16 @@ public class CacheXmlPropertyResolverHelper {
    * @param propPrefix
    * @param propSuffix
    */
-  public CacheXmlPropertyResolverHelper(String propPrefix,
-      String propSuffix) {
-    if(propPrefix != null && propSuffix != null){
+  public CacheXmlPropertyResolverHelper(String propPrefix, String propSuffix) {
+    if (propPrefix != null && propSuffix != null) {
       String validPrefix = validSuffixAndPrefixes.get(propSuffix);
-      if(validPrefix != null && propPrefix.endsWith(validPrefix)){
+      if (validPrefix != null && propPrefix.endsWith(validPrefix)) {
         this.prefixForSuffix = validPrefix;
       } else {
         this.prefixForSuffix = propPrefix;
       }
       this.propertyPrefix = propPrefix;
-      
+
       this.propertySuffix = propSuffix;
     }
   }
@@ -83,34 +82,34 @@ public class CacheXmlPropertyResolverHelper {
    * @param unparsedString
    * @return parsedString
    */
-  protected String parseResolvablePropString(String unparsedString, PropertyResolver resolver, Set<String> visitedReplaceableStrings){
+  protected String parseResolvablePropString(String unparsedString, PropertyResolver resolver, Set<String> visitedReplaceableStrings) {
     StringBuilder buf = new StringBuilder(unparsedString);
     int prefixIndex = buf.indexOf(propertyPrefix);
 
-    while(prefixIndex != -1){
-      int suffixIndex = findSuffixIndex(buf, prefixIndex+propertyPrefix.length());
-      if(suffixIndex != -1){
-        String replaceableString = buf.substring(prefixIndex+propertyPrefix.length(), suffixIndex);
+    while (prefixIndex != -1) {
+      int suffixIndex = findSuffixIndex(buf, prefixIndex + propertyPrefix.length());
+      if (suffixIndex != -1) {
+        String replaceableString = buf.substring(prefixIndex + propertyPrefix.length(), suffixIndex);
         //Check for circular references
-        if(!visitedReplaceableStrings.add(replaceableString)){
+        if (!visitedReplaceableStrings.add(replaceableString)) {
           logger.info(LocalizedMessage.create(LocalizedStrings.CacheXmlPropertyResolverHelper_SOME_UNRESOLVED_STRING_REPLACED_CIRCULAR_ERROR__0, replaceableString));
-          throw new IllegalArgumentException("Some still unresolved string "+ replaceableString+" was replaced by resolver, leading to circular references.");
+          throw new IllegalArgumentException("Some still unresolved string " + replaceableString + " was replaced by resolver, leading to circular references.");
         }
         /** Find the replacement using given <code>resolver</code> */
         replaceableString = parseResolvablePropString(replaceableString, resolver, visitedReplaceableStrings);
         String replacement = resolver.resolveReplaceString(replaceableString);
 
-        if(replacement != null){
+        if (replacement != null) {
           /** put replacement in <code>unparsedString</code> and call <code>parseResolvablePropString</code> recursively to find more 
            * unparsedStrings in the replaced value of given unparsedString.*/
           replacement = parseResolvablePropString(replacement, resolver, visitedReplaceableStrings);
-          buf.replace(prefixIndex, suffixIndex+propertySuffix.length(), replacement);
-          prefixIndex = buf.indexOf(propertyPrefix, prefixIndex+replacement.length());
-        } else if(resolver.isIgnoreUnresolvedProperties()) {
+          buf.replace(prefixIndex, suffixIndex + propertySuffix.length(), replacement);
+          prefixIndex = buf.indexOf(propertyPrefix, prefixIndex + replacement.length());
+        } else if (resolver.isIgnoreUnresolvedProperties()) {
           /** Look for more replaceable strings in given <code>unparsedString</code>. */
-          prefixIndex = buf.indexOf(propertyPrefix, suffixIndex+propertySuffix.length());
+          prefixIndex = buf.indexOf(propertyPrefix, suffixIndex + propertySuffix.length());
         } else {
-          throw new IllegalArgumentException("No replacement found for property : "+ replaceableString);
+          throw new IllegalArgumentException("No replacement found for property : " + replaceableString);
         }
         //Before iterating again remove replaceable string from visitedReplaceableStrings as it can appear again.
         visitedReplaceableStrings.remove(replaceableString);
@@ -118,7 +117,7 @@ public class CacheXmlPropertyResolverHelper {
         prefixIndex = -1;
       }
     }
-    
+
     return buf.toString();
   }
 
@@ -132,14 +131,14 @@ public class CacheXmlPropertyResolverHelper {
   private int findSuffixIndex(StringBuilder buf, int index) {
     int inNestedProperty = 0;
     while (index < buf.length()) {
-      if (buf.substring(index, index+this.propertySuffix.length()).equalsIgnoreCase(this.propertySuffix)) {
+      if (buf.substring(index, index + this.propertySuffix.length()).equalsIgnoreCase(this.propertySuffix)) {
         if (inNestedProperty > 0) {
           inNestedProperty--;
           index = index + this.propertySuffix.length();
         } else {
           return index;
         }
-      } else if (buf.substring(index, index+this.prefixForSuffix.length()).equalsIgnoreCase(this.prefixForSuffix)) {
+      } else if (buf.substring(index, index + this.prefixForSuffix.length()).equalsIgnoreCase(this.prefixForSuffix)) {
         inNestedProperty++;
         index = index + this.prefixForSuffix.length();
       } else {

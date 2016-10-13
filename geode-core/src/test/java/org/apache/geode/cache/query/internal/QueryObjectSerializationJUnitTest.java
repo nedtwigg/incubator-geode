@@ -46,7 +46,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
  */
 @Category(UnitTest.class)
 public class QueryObjectSerializationJUnitTest implements Serializable {
-  
+
   /** A <code>ByteArrayOutputStream</code> that data is serialized to */
   private transient ByteArrayOutputStream baos;
 
@@ -88,7 +88,7 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
     DataSerializer.writeObject(o1, out);
     out.flush();
     DataInput in = getDataInput();
-    assertEquals(o1, DataSerializer.<Object>readObject(in));
+    assertEquals(o1, DataSerializer.<Object> readObject(in));
     this.baos = new ByteArrayOutputStream();
   }
 
@@ -107,14 +107,14 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
 
     ObjectType elementType = new SimpleObjectType();
     // Undefined
-    checkRoundTrip(QueryService.UNDEFINED); 
+    checkRoundTrip(QueryService.UNDEFINED);
     //ResultsBag
-    ResultsBag rbWithoutData = new ResultsBag(); 
+    ResultsBag rbWithoutData = new ResultsBag();
     rbWithoutData.setElementType(elementType); //avoid NPE in equals
-    checkRoundTrip(rbWithoutData); 
-    ResultsBag rbWithData = new ResultsBag(data, (CachePerfStats)null); 
+    checkRoundTrip(rbWithoutData);
+    ResultsBag rbWithData = new ResultsBag(data, (CachePerfStats) null);
     rbWithData.setElementType(elementType); //avoid NPE in equals
-    checkRoundTrip(rbWithData); 
+    checkRoundTrip(rbWithData);
     /*
     Set rbWithoutDataAsSet = new ResultsBag().asSet(); 
     ResultsCollectionWrapper rcw = new ResultsCollectionWrapper(elementType, rbWithoutDataAsSet, -1);
@@ -126,10 +126,10 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
     //SortedResultSet
     SortedResultSet srsWithoutData = new SortedResultSet();
     srsWithoutData.setElementType(elementType); //avoid NPE in equals
-    checkRoundTrip(srsWithoutData); 
+    checkRoundTrip(srsWithoutData);
     SortedResultSet srsWithData = new SortedResultSet();
     srsWithData.setElementType(elementType); //avoid NPE in equals
-    checkRoundTrip(srsWithData); 
+    checkRoundTrip(srsWithData);
 
     //SortedStructSet
     //SortedStructSet sssWithoutData = new SortedStructSet();
@@ -137,14 +137,37 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
   }
 
   private static class SimpleObjectType implements ObjectType {
-    public SimpleObjectType() {}
-    public boolean isCollectionType() { return false; }
-    public boolean isMapType() { return false; }
-    public boolean isStructType() { return false; }
-    public String getSimpleClassName() { return "java.lang.Object"; }
-    public Class resolveClass() { return Object.class; }
-    public void toData(DataOutput out) {}
-    public void fromData(DataInput in) {}
-    public boolean equals(Object o) { return o instanceof SimpleObjectType; }
+    public SimpleObjectType() {
+    }
+
+    public boolean isCollectionType() {
+      return false;
+    }
+
+    public boolean isMapType() {
+      return false;
+    }
+
+    public boolean isStructType() {
+      return false;
+    }
+
+    public String getSimpleClassName() {
+      return "java.lang.Object";
+    }
+
+    public Class resolveClass() {
+      return Object.class;
+    }
+
+    public void toData(DataOutput out) {
+    }
+
+    public void fromData(DataInput in) {
+    }
+
+    public boolean equals(Object o) {
+      return o instanceof SimpleObjectType;
+    }
   }
 }

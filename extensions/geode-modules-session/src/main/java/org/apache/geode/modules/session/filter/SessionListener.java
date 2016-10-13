@@ -26,8 +26,7 @@ import javax.servlet.http.HttpSessionListener;
 
 public class SessionListener implements HttpSessionListener {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(SessionListener.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(SessionListener.class.getName());
 
   public void sessionCreated(HttpSessionEvent httpSessionEvent) {
   }
@@ -38,14 +37,10 @@ public class SessionListener implements HttpSessionListener {
   public void sessionDestroyed(HttpSessionEvent event) {
     String nativeId = event.getSession().getId();
     try {
-      String sessionId = SessionCachingFilter.getSessionManager().destroyNativeSession(
-          nativeId);
-      LOG.debug(
-          "Received sessionDestroyed event for native session {} (wrapped by {})",
-          nativeId, sessionId);
+      String sessionId = SessionCachingFilter.getSessionManager().destroyNativeSession(nativeId);
+      LOG.debug("Received sessionDestroyed event for native session {} (wrapped by {})", nativeId, sessionId);
     } catch (DistributedSystemDisconnectedException dex) {
-      LOG.debug("Cache disconnected - unable to destroy native session {0}",
-          nativeId);
+      LOG.debug("Cache disconnected - unable to destroy native session {0}", nativeId);
     }
   }
 }

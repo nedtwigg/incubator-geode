@@ -61,14 +61,16 @@ public class Assert {
 
   private static boolean debug = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "haltOnAssertFailure");
 
-  public static boolean waitForDebuggerOnError() { return debug; }
+  public static boolean waitForDebuggerOnError() {
+    return debug;
+  }
 
   public static void fail(Object message) {
     throwError(message);
   }
 
   private static void throwError(Object message) {
-    if (debug) { 
+    if (debug) {
       System.out.flush();
       System.err.println("Assertion failure: " + message);
       try {
@@ -78,11 +80,12 @@ public class Assert {
       }
       System.out.println();
       System.out.flush();
-      System.err.println("Waiting for debugger to attach"); 
+      System.err.println("Waiting for debugger to attach");
       System.err.flush();
       while (true) {
-        try { Thread.sleep(1000); }
-        catch (InterruptedException ignore) { 
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException ignore) {
           Thread.currentThread().interrupt();
         }
       }
@@ -93,11 +96,11 @@ public class Assert {
       } else {
         ex = new InternalGemFireError();
       }
-//       org.apache.geode.internal.cache.GemFireCache gfc
-//         = org.apache.geode.internal.cache.GemFireCache.getInstance();
-//       if (gfc != null) {
-//         gfc.getLogger().info("DEBUG", ex);
-//       }
+      //       org.apache.geode.internal.cache.GemFireCache gfc
+      //         = org.apache.geode.internal.cache.GemFireCache.getInstance();
+      //       if (gfc != null) {
+      //         gfc.getLogger().info("DEBUG", ex);
+      //       }
       throw ex;
     }
   }
@@ -116,43 +119,43 @@ public class Assert {
       throwError(message);
     }
   }
-  
+
   public static void assertTrue(boolean b, boolean message) {
     if (!b) {
       throwError(Boolean.valueOf(message));
     }
   }
-  
+
   public static void assertTrue(boolean b, char message) {
     if (!b) {
       throwError(new Character(message));
     }
   }
-  
+
   public static void assertTrue(boolean b, int message) {
     if (!b) {
       throwError(Integer.valueOf(message));
     }
   }
-  
+
   public static void assertTrue(boolean b, long message) {
     if (!b) {
       throwError(Long.valueOf(message));
     }
   }
-  
+
   public static void assertTrue(boolean b, float message) {
     if (!b) {
       throwError(new Float(message));
     }
   }
-  
+
   public static void assertTrue(boolean b, double message) {
     if (!b) {
       throwError(Double.valueOf(message));
     }
   }
-  
+
   /**
    * This is a workaround for X bug 38288. JRockit can throw a NullPointerException
    * from Thread.holdsLock, so we catch the NullPointerException if it happens.
@@ -166,13 +169,13 @@ public class Assert {
    */
   public static boolean assertHoldsLock(Object lock, boolean shouldBeHeld) {
     try {
-      if(Thread.holdsLock(lock) != shouldBeHeld) {
+      if (Thread.holdsLock(lock) != shouldBeHeld) {
         throwError(null);
       }
     } catch (NullPointerException jrockitSucks) {
       assertTrue(lock != null);
     }
-    
+
     return true;
   }
 }

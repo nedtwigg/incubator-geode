@@ -29,8 +29,6 @@ public class ReverseComparator implements Comparator<Comparable> {
     this.comparator = comparator;
   }
 
-
-
   @Override
   public int compare(Comparable o1, Comparable o2) {
     return -comparator.compare(o1, o2);

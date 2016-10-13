@@ -20,9 +20,9 @@ public class MyObjectPdx extends MyObject {
   public enum MyEnumPdx {
     const1, const2, const3, const4, const5;
   }
-  
+
   private MyEnumPdx enumVal;
-  
+
   public MyObjectPdx() {
   }
 

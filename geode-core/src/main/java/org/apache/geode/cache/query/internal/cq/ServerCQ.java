@@ -40,9 +40,7 @@ public interface ServerCQ extends InternalCqQuery {
    * @param p_ccn
    * @throws CqException
    */
-  public abstract void registerCq(ClientProxyMembershipID p_clientProxyId,
-      CacheClientNotifier p_ccn, int p_cqState) throws CqException,
-      RegionNotFoundException;
+  public abstract void registerCq(ClientProxyMembershipID p_clientProxyId, CacheClientNotifier p_ccn, int p_cqState) throws CqException, RegionNotFoundException;
 
   /**
    * Adds into the CQ Results key cache.
@@ -75,12 +73,10 @@ public interface ServerCQ extends InternalCqQuery {
    * @param sendRequestToServer true to send the request to server.
    * @throws CqException
    */
-  public abstract void close(boolean sendRequestToServer)
-      throws CqClosedException, CqException;
-
+  public abstract void close(boolean sendRequestToServer) throws CqClosedException, CqException;
 
   public abstract boolean isPR();
-  
+
   public ClientProxyMembershipID getClientProxyId();
 
   public void stop() throws CqClosedException, CqException;

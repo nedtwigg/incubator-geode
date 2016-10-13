@@ -55,7 +55,7 @@ public class MoveBuckets extends RebalanceDirectorAdapter {
     }
 
     model.moveBucket(bestMove);
-    
+
     return true;
   }
 

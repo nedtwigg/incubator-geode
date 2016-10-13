@@ -68,29 +68,28 @@ package org.apache.geode.cache;
  * @see org.apache.geode.cache.PartitionAttributesFactory
  * @since GemFire 5.0
  */
-public class PartitionedRegionStorageException extends CacheRuntimeException  {
-private static final long serialVersionUID = 5905463619475329732L;
+public class PartitionedRegionStorageException extends CacheRuntimeException {
+  private static final long serialVersionUID = 5905463619475329732L;
 
-    /** Creates a new instance of PartitionedRegionStorageException */
-    public PartitionedRegionStorageException() {
-    }
-    
-    
-    /**
-     * Creates a new {@link PartitionedRegionStorageException} with a message.
-     * @param msg The string message for the PartitionedRegionStorageException.
-     */
- 
-    public PartitionedRegionStorageException(String msg) {
-      super(msg);
-    }    
-    
-    /**
-     * Creates a new {@link PartitionedRegionStorageException} with a message and Throwable cause.
-     * @param message The string message for the PartitionedRegionStorageException.
-     * @param cause Throwable cause for this {@link PartitionedRegionStorageException}.
-     */
-    public PartitionedRegionStorageException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /** Creates a new instance of PartitionedRegionStorageException */
+  public PartitionedRegionStorageException() {
+  }
+
+  /**
+   * Creates a new {@link PartitionedRegionStorageException} with a message.
+   * @param msg The string message for the PartitionedRegionStorageException.
+   */
+
+  public PartitionedRegionStorageException(String msg) {
+    super(msg);
+  }
+
+  /**
+   * Creates a new {@link PartitionedRegionStorageException} with a message and Throwable cause.
+   * @param message The string message for the PartitionedRegionStorageException.
+   * @param cause Throwable cause for this {@link PartitionedRegionStorageException}.
+   */
+  public PartitionedRegionStorageException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

@@ -135,8 +135,7 @@ import org.apache.geode.internal.util.ArrayUtils;
  * @param <V>
  *          the type of mapped values
  */
-public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implements
-    ConcurrentMap<K, V>, Serializable {
+public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
 
   private static final long serialVersionUID = -7056732555635108300L;
 
@@ -186,14 +185,14 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
    */
   static final int RETRIES_BEFORE_LOCK = 2;
 
-// GemStone addition
+  // GemStone addition
   /**
    * Token object to indicate that {@link #remove(Object)} does not need to
    * compare against provided value before removing from segment.
    */
   private static final Object NO_OBJECT_TOKEN = new Object();
 
-// End GemStone addition
+  // End GemStone addition
 
   /* ---------------- Fields -------------- */
 
@@ -266,9 +265,9 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
 
   /* ---------------- Inner Classes -------------- */
 
-// GemStone addition
-// GemStone changed HashEntry to be an interface with original HashEntry
-// as the default implementation HashEntryImpl.
+  // GemStone addition
+  // GemStone changed HashEntry to be an interface with original HashEntry
+  // as the default implementation HashEntryImpl.
 
   /**
    * [sumedh] Interface for ConcurrentHashMap list entry. Note that this is
@@ -284,7 +283,7 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
      * Get the key object for this entry.
      */
     K getKey();
-    
+
     /**
      * Return true if the entry's key is equal to k.
      * GemFire addition to deal with inline keys.
@@ -340,8 +339,7 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
 
     private final HashEntry<K, V> wrappedEntry;
 
-    HashEntryImpl(final K key, final int hash, final HashEntry<K, V> next,
-        final V value, final HashEntry<K, V> wrappedEntry) {
+    HashEntryImpl(final K key, final int hash, final HashEntry<K, V> next, final V value, final HashEntry<K, V> wrappedEntry) {
       this.key = key;
       this.hash = hash;
       this.next = next;
@@ -407,8 +405,7 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
      * Create a new {@link org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.HashEntry} given the key, hash, value and next
      * element.
      */
-    public HashEntry<K, V> newEntry(K key, int hash, HashEntry<K, V> next,
-        V value);
+    public HashEntry<K, V> newEntry(K key, int hash, HashEntry<K, V> next, V value);
 
     /**
      * Get the hashCode for given key object.
@@ -416,15 +413,14 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
     public int keyHashCode(Object key, boolean compareValues);
   }
 
-// End GemStone addition
+  // End GemStone addition
 
   /**
    * Segments are specialized versions of hash tables. This subclasses from
    * ReentrantLock opportunistically, just to simplify some locking and avoid
    * separate construction.
    */
-  static class Segment<K, V> extends ReentrantReadWriteLock implements
-      Serializable {
+  static class Segment<K, V> extends ReentrantReadWriteLock implements Serializable {
 
     /*
      * Segments maintain a table of entry lists that are ALWAYS
@@ -499,7 +495,7 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
      */
     final float loadFactor;
 
-// GemStone addition
+    // GemStone addition
 
     /**
      * {@link org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.HashEntryCreator} for the map to create {@link org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.HashEntry}s.
@@ -512,10 +508,9 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
      */
     final ReentrantReadWriteLock listUpdateLock;
 
-// End GemStone addition
+    // End GemStone addition
 
-    Segment(final int initialCapacity, final float lf,
-        final HashEntryCreator<K, V> entryCreator) {
+    Segment(final int initialCapacity, final float lf, final HashEntryCreator<K, V> entryCreator) {
       this.loadFactor = lf;
       this.entryCreator = entryCreator;
       this.listUpdateLock = new ReentrantReadWriteLock();
@@ -527,7 +522,7 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
       return new Segment[i];
     }
 
-// GemStone added the method below
+    // GemStone added the method below
     @SuppressWarnings("unchecked")
     static <K, V> HashEntry<K, V>[] newEntryArray(final int size) {
       return new HashEntry[size];
@@ -538,7 +533,7 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
      * constructor.
      */
     final void setTable(final HashEntry<K, V>[] newTable) {
-      this.threshold = (int)(newTable.length * this.loadFactor);
+      this.threshold = (int) (newTable.length * this.loadFactor);
       this.table = newTable;
     }
 
@@ -570,12 +565,12 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
     protected boolean equalityKeyCompare(final Object key, final HashEntry<K, V> mapEntry) {
       return mapEntry.isKeyEqual(key);
     }
+
     protected boolean equalityCompare(final Object v1, final Object v2) {
       return v1.equals(v2);
     }
 
-    protected boolean equalityCompareWithNulls(final Object key,
-        final Object mapKey) {
+    protected boolean equalityCompareWithNulls(final Object key, final Object mapKey) {
       if (key != mapKey) {
         if (key != null) {
           return key.equals(mapKey);
@@ -589,9 +584,8 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
 
     final V get(final Object key, final int hash) {
       if (this.count != 0) { // read-volatile
-// GemStone change to acquire the read lock on list updates
-        final ReentrantReadWriteLock.ReadLock listLock = this.listUpdateLock
-            .readLock();
+        // GemStone change to acquire the read lock on list updates
+        final ReentrantReadWriteLock.ReadLock listLock = this.listUpdateLock.readLock();
         listLock.lock();
         boolean lockAcquired = true;
         HashEntry<K, V> e = getFirst(hash);
@@ -617,10 +611,9 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
       return null;
     }
 
-    final V getNoLock(final Object key, final int hash,
-        final boolean lockListForRead) {
+    final V getNoLock(final Object key, final int hash, final boolean lockListForRead) {
       if (this.count != 0) { // read-volatile
-// GemStone change to acquire the read lock on list updates
+        // GemStone change to acquire the read lock on list updates
         ReentrantReadWriteLock.ReadLock listLock = null;
         if (lockListForRead) {
           listLock = this.listUpdateLock.readLock();
@@ -645,9 +638,8 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
 
     final boolean containsKey(final Object key, final int hash) {
       if (this.count != 0) { // read-volatile
-// GemStone change to acquire the read lock on list updates
-        final ReentrantReadWriteLock.ReadLock listLock = this.listUpdateLock
-            .readLock();
+        // GemStone change to acquire the read lock on list updates
+        final ReentrantReadWriteLock.ReadLock listLock = this.listUpdateLock.readLock();
         listLock.lock();
         HashEntry<K, V> e = getFirst(hash);
         try {
@@ -666,11 +658,9 @@ public class CustomEntryConcurrentHashMap<K, V> extends AbstractMap<K, V> implem
 
     final boolean containsValue(final Object value) {
       if (this.count != 0) { // read-volatile
-// GemStone change to acquire the read lock on list updates
-        ReentrantReadWriteLock.ReadLock readLock = this.listUpdateLock
-            .readLock();
-RETRYLOOP:
-        for (;;) {
+        // GemStone change to acquire the read lock on list updates
+        ReentrantReadWriteLock.ReadLock readLock = this.listUpdateLock.readLock();
+        RETRYLOOP: for (;;) {
           readLock.lock();
           final HashEntry<K, V>[] tab = this.table;
           final int len = tab.length;
@@ -701,14 +691,12 @@ RETRYLOOP:
       return false;
     }
 
-    final boolean replace(final K key, final int hash, final V oldValue,
-        final V newValue) {
+    final boolean replace(final K key, final int hash, final V oldValue, final V newValue) {
       final ReentrantReadWriteLock.WriteLock writeLock = super.writeLock();
       writeLock.lock();
       try {
         HashEntry<K, V> e = getFirst(hash);
-        while (e != null && (e.getEntryHash() != hash
-            || !equalityKeyCompare(key, e))) {
+        while (e != null && (e.getEntryHash() != hash || !equalityKeyCompare(key, e))) {
           e = e.getNextEntry();
         }
 
@@ -728,8 +716,7 @@ RETRYLOOP:
       writeLock.lock();
       try {
         HashEntry<K, V> e = getFirst(hash);
-        while (e != null && (e.getEntryHash() != hash
-            || !equalityKeyCompare(key, e))) {
+        while (e != null && (e.getEntryHash() != hash || !equalityKeyCompare(key, e))) {
           e = e.getNextEntry();
         }
 
@@ -744,8 +731,7 @@ RETRYLOOP:
       }
     }
 
-    final V put(final K key, final int hash, final V value,
-        final boolean onlyIfAbsent) {
+    final V put(final K key, final int hash, final V value, final boolean onlyIfAbsent) {
       final ReentrantReadWriteLock.WriteLock writeLock = super.writeLock();
       writeLock.lock();
       try {
@@ -757,8 +743,7 @@ RETRYLOOP:
         final int index = hash & (tab.length - 1);
         final HashEntry<K, V> first = tab[index];
         HashEntry<K, V> e = first;
-        while (e != null && (e.getEntryHash() != hash
-            || !equalityKeyCompare(key, e))) {
+        while (e != null && (e.getEntryHash() != hash || !equalityKeyCompare(key, e))) {
           e = e.getNextEntry();
         }
 
@@ -768,8 +753,7 @@ RETRYLOOP:
           if (!onlyIfAbsent) {
             e.setMapValue(value);
           }
-        }
-        else {
+        } else {
           oldValue = null;
           ++this.modCount;
           tab[index] = this.entryCreator.newEntry(key, hash, first, value);
@@ -781,11 +765,9 @@ RETRYLOOP:
       }
     }
 
-// GemStone additions
+    // GemStone additions
 
-    final <C, P> V create(final K key, final int hash,
-        final MapCallback<K, V, C, P> valueCreator, final C context,
-        final P createParams, final boolean lockForRead) {
+    final <C, P> V create(final K key, final int hash, final MapCallback<K, V, C, P> valueCreator, final C context, final P createParams, final boolean lockForRead) {
       // TODO: This can be optimized by having a special lock implementation
       // that will allow upgrade from read to write lock atomically. This can
       // cause a deadlock if two readers try to simultaneously upgrade, so the
@@ -800,8 +782,7 @@ RETRYLOOP:
         if (v != null) {
           return v;
         }
-      }
-      else {
+      } else {
         final ReentrantReadWriteLock.ReadLock readLock = super.readLock();
         readLock.lock();
         try {
@@ -827,8 +808,7 @@ RETRYLOOP:
         final int index = hash & (tab.length - 1);
         final HashEntry<K, V> first = tab[index];
         HashEntry<K, V> e = first;
-        while (e != null && (e.getEntryHash() != hash
-            || !equalityKeyCompare(key, e))) {
+        while (e != null && (e.getEntryHash() != hash || !equalityKeyCompare(key, e))) {
           e = e.getNextEntry();
         }
 
@@ -836,12 +816,10 @@ RETRYLOOP:
         if (e == null) {
           ++this.modCount;
           currentValue = valueCreator.newValue(key, context, createParams);
-          tab[index] = this.entryCreator.newEntry(key, hash, first,
-              currentValue);
+          tab[index] = this.entryCreator.newEntry(key, hash, first, currentValue);
           this.count = c; // write-volatile
           return currentValue;
-        }
-        else {
+        } else {
           currentValue = e.getMapValue();
           if (lockForRead) {
             // invoke the callback before returning an existing value
@@ -854,8 +832,7 @@ RETRYLOOP:
       }
     }
 
-    final V get(final Object key, final int hash,
-        final MapCallback<K, V, ?, ?> readCallback) {
+    final V get(final Object key, final int hash, final MapCallback<K, V, ?, ?> readCallback) {
       final ReentrantReadWriteLock.ReadLock readLock = super.readLock();
       readLock.lock();
       try {
@@ -880,7 +857,7 @@ RETRYLOOP:
       return null;
     }
 
-// End GemStone additions
+    // End GemStone additions
 
     final void rehash() {
       final HashEntry<K, V>[] oldTable = this.table;
@@ -904,7 +881,7 @@ RETRYLOOP:
        */
 
       final HashEntry<K, V>[] newTable = newEntryArray(oldCapacity << 1);
-      this.threshold = (int)(newTable.length * this.loadFactor);
+      this.threshold = (int) (newTable.length * this.loadFactor);
       final int sizeMask = newTable.length - 1;
       for (int i = 0; i < oldCapacity; i++) {
         // We need to guarantee that any existing reads of old Map can
@@ -918,13 +895,11 @@ RETRYLOOP:
           // Single node on list
           if (next == null) {
             newTable[idx] = e;
-          }
-          else {
+          } else {
             // Reuse trailing consecutive sequence at same slot
             HashEntry<K, V> lastRun = e;
             int lastIdx = idx;
-            for (HashEntry<K, V> last = next; last != null; last = last
-                .getNextEntry()) {
+            for (HashEntry<K, V> last = next; last != null; last = last.getNextEntry()) {
               final int k = last.getEntryHash() & sizeMask;
               if (k != lastIdx) {
                 lastIdx = k;
@@ -934,7 +909,7 @@ RETRYLOOP:
             newTable[lastIdx] = lastRun;
 
             // Clone all remaining nodes
-// GemStone changes BEGIN
+            // GemStone changes BEGIN
             // update the next entry instead of cloning the nodes in newTable;
             // this is primarily because we don't want to change
             // the underlying RegionEntry that may be used elsewhere;
@@ -948,19 +923,16 @@ RETRYLOOP:
             //in the last run may have their next pointers changed
             //by a later rehash.
             for (HashEntry<K, V> p = e; p != null; p = nextp) {
-              newe = new HashEntryImpl<K, V>(p.getKey(), p.getEntryHash(),
-                  (nextp = p.getNextEntry()), p.getMapValue(), p);
+              newe = new HashEntryImpl<K, V>(p.getKey(), p.getEntryHash(), (nextp = p.getNextEntry()), p.getMapValue(), p);
               if (newp != null) {
                 newp.setNextEntry(newe);
-              }
-              else {
+              } else {
                 newFirst = newe;
               }
               newp = newe;
             }
             // take the listUpdate write lock before updating the next refs
-            final ReentrantReadWriteLock.WriteLock listWriteLock =
-                this.listUpdateLock.writeLock();
+            final ReentrantReadWriteLock.WriteLock listWriteLock = this.listUpdateLock.writeLock();
             listWriteLock.lock();
             try {
               if (newFirst != null) {
@@ -984,7 +956,7 @@ RETRYLOOP:
                   p.value);
             }
             */
-// GemStone changes END
+            // GemStone changes END
           }
         }
       }
@@ -994,12 +966,10 @@ RETRYLOOP:
     /**
      * Remove; match on key only if value null, else match both.
      */
-// GemStone change
+    // GemStone change
     // added "condition" and "removeParams" parameters
-    final <C, P> V remove(final Object key, final int hash, final Object value,
-        final MapCallback<K, V, C, P> condition, final C context,
-        final P removeParams) {
-// End GemStone change
+    final <C, P> V remove(final Object key, final int hash, final Object value, final MapCallback<K, V, C, P> condition, final C context, final P removeParams) {
+      // End GemStone change
       final ReentrantReadWriteLock.WriteLock writeLock = super.writeLock();
       writeLock.lock();
       try {
@@ -1008,16 +978,14 @@ RETRYLOOP:
         final int index = hash & (tab.length - 1);
         final HashEntry<K, V> first = tab[index];
         HashEntry<K, V> e = first;
-// GemStone change
+        // GemStone change
         // the entry previous to the matched one, if any
         HashEntry<K, V> p = null;
-        while (e != null && (e.getEntryHash() != hash
-            || !equalityKeyCompare(key, e))) {
+        while (e != null && (e.getEntryHash() != hash || !equalityKeyCompare(key, e))) {
           e = e.getNextEntry();
           if (p == null) {
             p = first;
-          }
-          else {
+          } else {
             p = p.getNextEntry();
           }
         }
@@ -1025,29 +993,25 @@ RETRYLOOP:
         V oldValue = null;
         if (e != null) {
           final V v = e.getMapValue();
-// GemStone change
+          // GemStone change
           // allow for passing in a null object for comparison during remove;
           // also invoke the provided condition to check for removal
-          if ((value == NO_OBJECT_TOKEN || equalityCompareWithNulls(v, value))
-              && (condition == null || condition.doRemoveValue(v, context,
-                  removeParams))) {
-// End GemStone change
+          if ((value == NO_OBJECT_TOKEN || equalityCompareWithNulls(v, value)) && (condition == null || condition.doRemoveValue(v, context, removeParams))) {
+            // End GemStone change
             oldValue = v;
             // All entries following removed node can stay in list,
             // but all preceding ones need to be cloned.
             ++this.modCount;
-// GemStone changes BEGIN
+            // GemStone changes BEGIN
             // update the next entry instead of cloning the nodes
             // this is primarily because we don't want to change
             // the underlying RegionEntry that may be used elsewhere
-            final ReentrantReadWriteLock.WriteLock listWriteLock =
-                this.listUpdateLock.writeLock();
+            final ReentrantReadWriteLock.WriteLock listWriteLock = this.listUpdateLock.writeLock();
             listWriteLock.lock();
             try {
               if (p == null) {
                 tab[index] = e.getNextEntry();
-              }
-              else {
+              } else {
                 p.setNextEntry(e.getNextEntry());
               }
             } finally {
@@ -1061,7 +1025,7 @@ RETRYLOOP:
             }
             tab[index] = newFirst;
             */
-// GemStone changes END
+            // GemStone changes END
             this.count = c; // write-volatile
           }
         }
@@ -1074,7 +1038,7 @@ RETRYLOOP:
     /**
      * GemStone added the clearedEntries param and the result
      */
-    final ArrayList<HashEntry<?,?>> clear(ArrayList<HashEntry<?,?>> clearedEntries) {
+    final ArrayList<HashEntry<?, ?>> clear(ArrayList<HashEntry<?, ?>> clearedEntries) {
       if (this.count != 0) {
         final ReentrantReadWriteLock.WriteLock writeLock = super.writeLock();
         writeLock.lock();
@@ -1102,7 +1066,8 @@ RETRYLOOP:
           } else {
             for (int i = 0; i < tab.length; i++) {
               HashEntry<K, V> he = tab[i];
-              if (he == null) continue;
+              if (he == null)
+                continue;
               tab[i] = null;
               if (collectEntries) {
                 clearedEntries.add(he);
@@ -1135,13 +1100,11 @@ RETRYLOOP:
    * swale
    * @since GemFire 7.0
    */
-  static final class IdentitySegment<K, V> extends Segment<K, V> implements
-      Serializable {
+  static final class IdentitySegment<K, V> extends Segment<K, V> implements Serializable {
 
     private static final long serialVersionUID = 3086228147110819882L;
 
-    IdentitySegment(final int initialCapacity, final float lf,
-        final HashEntryCreator<K, V> entryCreator) {
+    IdentitySegment(final int initialCapacity, final float lf, final HashEntryCreator<K, V> entryCreator) {
       super(initialCapacity, lf, entryCreator);
     }
 
@@ -1151,20 +1114,17 @@ RETRYLOOP:
     }
 
     @Override
-    protected final boolean equalityKeyCompare(final Object key,
-        final HashEntry<K, V> mapEntry) {
+    protected final boolean equalityKeyCompare(final Object key, final HashEntry<K, V> mapEntry) {
       return key == mapEntry.getKey();
     }
 
     @Override
-    protected final boolean equalityCompare(final Object key,
-        final Object mapKey) {
+    protected final boolean equalityCompare(final Object key, final Object mapKey) {
       return key == mapKey;
     }
 
     @Override
-    protected final boolean equalityCompareWithNulls(final Object key,
-        final Object mapKey) {
+    protected final boolean equalityCompareWithNulls(final Object key, final Object mapKey) {
       return key == mapKey;
     }
   }
@@ -1190,12 +1150,11 @@ RETRYLOOP:
    *           if the initial capacity is negative or the load factor or
    *           concurrencyLevel are nonpositive.
    */
-  public CustomEntryConcurrentHashMap(final int initialCapacity, final float loadFactor,
-      final int concurrencyLevel) {
+  public CustomEntryConcurrentHashMap(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
     this(initialCapacity, loadFactor, concurrencyLevel, false, null);
   }
 
-// GemStone addition
+  // GemStone addition
 
   /**
    * Creates a new, empty map with the specified initial capacity, load factor
@@ -1219,8 +1178,7 @@ RETRYLOOP:
    *           if the initial capacity is negative or the load factor or
    *           concurrencyLevel are nonpositive.
    */
-  public CustomEntryConcurrentHashMap(final int initialCapacity, final float loadFactor,
-      final int concurrencyLevel, final boolean isIdentityMap) {
+  public CustomEntryConcurrentHashMap(final int initialCapacity, final float loadFactor, final int concurrencyLevel, final boolean isIdentityMap) {
     this(initialCapacity, loadFactor, concurrencyLevel, isIdentityMap, null);
   }
 
@@ -1249,9 +1207,7 @@ RETRYLOOP:
    *           if the initial capacity is negative or the load factor or
    *           concurrencyLevel are nonpositive.
    */
-  public CustomEntryConcurrentHashMap(int initialCapacity, final float loadFactor,
-      int concurrencyLevel, final boolean isIdentityMap,
-      HashEntryCreator<K, V> entryCreator) {
+  public CustomEntryConcurrentHashMap(int initialCapacity, final float loadFactor, int concurrencyLevel, final boolean isIdentityMap, HashEntryCreator<K, V> entryCreator) {
     if (!(loadFactor > 0) || initialCapacity < 0 || concurrencyLevel <= 0) {
       throw new IllegalArgumentException();
     }
@@ -1294,35 +1250,30 @@ RETRYLOOP:
       for (int i = 0; i < ssize; ++i) {
         this.segments[i] = new Segment<K, V>(cap, loadFactor, entryCreator);
       }
-    }
-    else {
+    } else {
       this.compareValues = false;
       this.segments = IdentitySegment.newArray(ssize);
       this.entryCreator = entryCreator;
       for (int i = 0; i < ssize; ++i) {
-        this.segments[i] = new IdentitySegment<K, V>(cap, loadFactor,
-            entryCreator);
+        this.segments[i] = new IdentitySegment<K, V>(cap, loadFactor, entryCreator);
       }
     }
   }
 
-  static final class DefaultHashEntryCreator<K, V> implements
-      HashEntryCreator<K, V>, Serializable {
+  static final class DefaultHashEntryCreator<K, V> implements HashEntryCreator<K, V>, Serializable {
 
     private static final long serialVersionUID = 3765680607280951726L;
 
-    public final HashEntry<K, V> newEntry(final K key, final int hash,
-        final HashEntry<K, V> next, final V value) {
+    public final HashEntry<K, V> newEntry(final K key, final int hash, final HashEntry<K, V> next, final V value) {
       return new HashEntryImpl<K, V>(key, hash, next, value, null);
     }
 
-    public final int keyHashCode(final Object key,
-        final boolean compareValues) {
+    public final int keyHashCode(final Object key, final boolean compareValues) {
       return keyHash(key, compareValues);
     }
   }
 
-// End GemStone addition
+  // End GemStone addition
 
   /**
    * Creates a new, empty map with the specified initial capacity and load
@@ -1364,8 +1315,7 @@ RETRYLOOP:
    * (0.75) and concurrencyLevel (16).
    */
   public CustomEntryConcurrentHashMap() {
-    this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR,
-        DEFAULT_CONCURRENCY_LEVEL, false);
+    this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL, false);
   }
 
   /**
@@ -1378,9 +1328,7 @@ RETRYLOOP:
    *          the map
    */
   public CustomEntryConcurrentHashMap(final Map<? extends K, ? extends V> m) {
-    this(Math.max((int)(m.size() / DEFAULT_LOAD_FACTOR) + 1,
-        DEFAULT_INITIAL_CAPACITY), DEFAULT_LOAD_FACTOR,
-        DEFAULT_CONCURRENCY_LEVEL, false);
+    this(Math.max((int) (m.size() / DEFAULT_LOAD_FACTOR) + 1, DEFAULT_INITIAL_CAPACITY), DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL, false);
     putAll(m);
   }
 
@@ -1406,8 +1354,7 @@ RETRYLOOP:
     for (int i = 0; i < segments.length; ++i) {
       if (segments[i].count != 0) {
         return false;
-      }
-      else {
+      } else {
         mcsum += mc[i] = segments[i].modCount;
       }
     }
@@ -1432,7 +1379,7 @@ RETRYLOOP:
    * @return the number of key-value mappings in this map
    */
   @Override
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="UL_UNRELEASED_LOCK", justification="The lock() calls are followed by unlock() calls without finally-block. Leaving this as is because it's lifted from JDK code and we want to minimize changes.") 
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK", justification = "The lock() calls are followed by unlock() calls without finally-block. Leaving this as is because it's lifted from JDK code and we want to minimize changes.")
   public final int size() {
     final Segment<K, V>[] segments = this.segments;
     long sum = 0;
@@ -1475,9 +1422,8 @@ RETRYLOOP:
     }
     if (sum > Integer.MAX_VALUE) {
       return Integer.MAX_VALUE;
-    }
-    else {
-      return (int)sum;
+    } else {
+      return (int) sum;
     }
   }
 
@@ -1532,7 +1478,7 @@ RETRYLOOP:
    *           if the specified value is null
    */
   @Override
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="UL_UNRELEASED_LOCK", justification="Leaving this as is because it's lifted from JDK code and we want to minimize changes.") 
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK", justification = "Leaving this as is because it's lifted from JDK code and we want to minimize changes.")
   public final boolean containsValue(final Object value) {
     if (value == null) {
       throw new NullPointerException();
@@ -1648,7 +1594,7 @@ RETRYLOOP:
     return segmentFor(hash).put(key, hash, value, true);
   }
 
-// GemStone addition
+  // GemStone addition
 
   /**
    * Create a given key, value mapping if the key does not exist in the map else
@@ -1739,8 +1685,7 @@ RETRYLOOP:
    * Simple adapter class providing empty default implementations for
    * {@link org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.MapCallback}.
    */
-  public static class MapCallbackAdapter<K, V, C, P> implements
-      MapCallback<K, V, C, P> {
+  public static class MapCallbackAdapter<K, V, C, P> implements MapCallback<K, V, C, P> {
 
     /**
      * @see MapCallback#newValue
@@ -1797,13 +1742,10 @@ RETRYLOOP:
    * @throws NullPointerException
    *           if the specified key or value is null
    */
-  public final <C, P> V create(final K key,
-      final MapCallback<K, V, C, P> valueCreator, final C context,
-      final P createParams, final boolean lockForRead) {
+  public final <C, P> V create(final K key, final MapCallback<K, V, C, P> valueCreator, final C context, final P createParams, final boolean lockForRead) {
     // throws NullPointerException if key null
     final int hash = this.entryCreator.keyHashCode(key, this.compareValues);
-    return segmentFor(hash).create(key, hash, valueCreator, context,
-        createParams, lockForRead);
+    return segmentFor(hash).create(key, hash, valueCreator, context, createParams, lockForRead);
   }
 
   /**
@@ -1824,8 +1766,7 @@ RETRYLOOP:
    * @throws NullPointerException
    *           if the specified key is null
    */
-  public final V get(final Object key,
-      final MapCallback<K, V, ?, ?> readCallback) {
+  public final V get(final Object key, final MapCallback<K, V, ?, ?> readCallback) {
     // throws NullPointerException if key null
     final int hash = this.entryCreator.keyHashCode(key, this.compareValues);
     return segmentFor(hash).get(key, hash, readCallback);
@@ -1872,16 +1813,13 @@ RETRYLOOP:
    *           if the specified key or value is null, and this map does not
    *           permit null keys or values (optional)
    */
-  public final <C, P> V removeConditionally(final Object key,
-      final MapCallback<K, V, C, P> condition, final C context,
-      final P removeParams) {
+  public final <C, P> V removeConditionally(final Object key, final MapCallback<K, V, C, P> condition, final C context, final P removeParams) {
     // throws NullPointerException if key null
     final int hash = this.entryCreator.keyHashCode(key, this.compareValues);
-    return segmentFor(hash).remove(key, hash, NO_OBJECT_TOKEN, condition,
-        context, removeParams);
+    return segmentFor(hash).remove(key, hash, NO_OBJECT_TOKEN, condition, context, removeParams);
   }
 
-// End GemStone addition
+  // End GemStone addition
 
   /**
    * Copies all of the mappings from the specified map to this one. These
@@ -1913,8 +1851,7 @@ RETRYLOOP:
   public final V remove(final Object key) {
     // throws NullPointerException if key null
     final int hash = this.entryCreator.keyHashCode(key, this.compareValues);
-    return segmentFor(hash)
-        .remove(key, hash, NO_OBJECT_TOKEN, null, null, null);
+    return segmentFor(hash).remove(key, hash, NO_OBJECT_TOKEN, null, null, null);
   }
 
   /**
@@ -1969,20 +1906,20 @@ RETRYLOOP:
    */
   @Override
   public final void clear() {
-    ArrayList<HashEntry<?,?>> entries = null;
+    ArrayList<HashEntry<?, ?>> entries = null;
     try {
       for (int i = 0; i < this.segments.length; ++i) {
         entries = this.segments[i].clear(entries);
       }
     } finally {
       if (entries != null) {
-        final ArrayList<HashEntry<?,?>> clearedEntries = entries;
+        final ArrayList<HashEntry<?, ?>> clearedEntries = entries;
         final Runnable runnable = new Runnable() {
           public void run() {
-            for (HashEntry<?,?> he: clearedEntries) {
+            for (HashEntry<?, ?> he : clearedEntries) {
               for (HashEntry<?, ?> p = he; p != null; p = p.getNextEntry()) {
                 synchronized (p) {
-                  ((OffHeapRegionEntry)p).release();
+                  ((OffHeapRegionEntry) p).release();
                 }
               }
             }
@@ -2003,7 +1940,7 @@ RETRYLOOP:
           }
         }
         if (!submitted) {
-          String name = this.getClass().getSimpleName()+"@"+this.hashCode()+" Clear Thread";
+          String name = this.getClass().getSimpleName() + "@" + this.hashCode() + " Clear Thread";
           Thread thread = new Thread(runnable, name);
           thread.setDaemon(true);
           thread.start();
@@ -2078,7 +2015,7 @@ RETRYLOOP:
     return (es != null) ? es : (this.entrySet = new EntrySet(false));
   }
 
-// GemStone addition
+  // GemStone addition
 
   /**
    * Returns a {@link Set} view of the mappings contained in this map. The set
@@ -2105,7 +2042,7 @@ RETRYLOOP:
     return (es != null) ? es : (this.reusableEntrySet = new EntrySet(true));
   }
 
-// End GemStone addition
+  // End GemStone addition
 
   /**
    * Returns an enumeration of the keys in this table.
@@ -2135,7 +2072,7 @@ RETRYLOOP:
 
     int nextTableIndex;
 
-// GemStone changed HashEntry<K, V>[] currentTable to currentSegment
+    // GemStone changed HashEntry<K, V>[] currentTable to currentSegment
     HashEntry<K, V>[] currentTable;
 
     HashEntry<K, V> nextEntry;
@@ -2159,7 +2096,7 @@ RETRYLOOP:
     }
 
     final void advance() {
-// GemStone changes BEGIN
+      // GemStone changes BEGIN
       if (this.currentListIndex < this.currentList.size()) {
         this.nextEntry = this.currentList.get(this.currentListIndex++);
         return;
@@ -2167,10 +2104,8 @@ RETRYLOOP:
 
       this.nextEntry = null;
       if (this.nextTableIndex >= 0) {
-        final Segment<K, V> seg = CustomEntryConcurrentHashMap.this
-            .segments[this.currentSegmentIndex];
-        final ReentrantReadWriteLock.ReadLock listLock = seg.listUpdateLock
-            .readLock();
+        final Segment<K, V> seg = CustomEntryConcurrentHashMap.this.segments[this.currentSegmentIndex];
+        final ReentrantReadWriteLock.ReadLock listLock = seg.listUpdateLock.readLock();
         listLock.lock();
         try {
           do {
@@ -2188,7 +2123,7 @@ RETRYLOOP:
           && (this.nextEntry = this.nextEntry.getNextEntry()) != null) {
         return;
       }
-
+      
       while (this.nextTableIndex >= 0) {
         if ((this.nextEntry = this.currentTable[this.nextTableIndex--])
             != null) {
@@ -2196,15 +2131,13 @@ RETRYLOOP:
         }
       }
       */
-// GemStone changes END
+      // GemStone changes END
 
       while (this.currentSegmentIndex > 0) {
-        final Segment<K, V> seg = CustomEntryConcurrentHashMap.this
-            .segments[--this.currentSegmentIndex];
+        final Segment<K, V> seg = CustomEntryConcurrentHashMap.this.segments[--this.currentSegmentIndex];
         if (seg.count != 0) {
           this.currentTable = seg.table;
-          final ReentrantReadWriteLock.ReadLock listLock = seg.listUpdateLock
-              .readLock();
+          final ReentrantReadWriteLock.ReadLock listLock = seg.listUpdateLock.readLock();
           listLock.lock();
           try {
             for (int j = currentTable.length - 1; j >= 0; --j) {
@@ -2221,7 +2154,7 @@ RETRYLOOP:
       }
     }
 
-// GemStone added the method below
+    // GemStone added the method below
     /**
      * Copy the tail of list of current matched entry ({@link #nextEntry}) to a
      * temporary list, so that the read lock can be released after the copy.
@@ -2230,13 +2163,12 @@ RETRYLOOP:
      * acquired.
      */
     private final void copyEntriesToList() {
-      assert segments[currentSegmentIndex] != null: "unexpected null currentSegment";
+      assert segments[currentSegmentIndex] != null : "unexpected null currentSegment";
       assert segments[currentSegmentIndex].listUpdateLock.getReadLockCount() > 0;
 
       this.currentList.clear();
       this.currentListIndex = 0;
-      for (HashEntry<K, V> p = this.nextEntry.getNextEntry(); p != null; p = p
-          .getNextEntry()) {
+      for (HashEntry<K, V> p = this.nextEntry.getNextEntry(); p != null; p = p.getNextEntry()) {
         this.currentList.add(p);
       }
     }
@@ -2263,8 +2195,7 @@ RETRYLOOP:
     }
   }
 
-  final class KeyIterator extends HashIterator implements Iterator<K>,
-      Enumeration<K> {
+  final class KeyIterator extends HashIterator implements Iterator<K>, Enumeration<K> {
 
     public K next() {
       return super.nextEntry().getKey();
@@ -2275,8 +2206,7 @@ RETRYLOOP:
     }
   }
 
-  final class ValueIterator extends HashIterator implements Iterator<V>,
-      Enumeration<V> {
+  final class ValueIterator extends HashIterator implements Iterator<V>, Enumeration<V> {
 
     public V next() {
       return super.nextEntry().getMapValue();
@@ -2383,10 +2313,9 @@ RETRYLOOP:
       if (!(o instanceof Map.Entry<?, ?>)) {
         return false;
       }
-      final Map.Entry<?, ?> e = (Map.Entry<?, ?>)o;
+      final Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
       if (CustomEntryConcurrentHashMap.this.compareValues) {
-        return ArrayUtils.objectEquals(this.key, e.getKey())
-            && ArrayUtils.objectEquals(this.value, e.getValue());
+        return ArrayUtils.objectEquals(this.key, e.getKey()) && ArrayUtils.objectEquals(this.value, e.getValue());
       }
       return this.key == e.getKey() && this.value == e.getValue();
     }
@@ -2411,11 +2340,9 @@ RETRYLOOP:
     @Override
     public int hashCode() {
       if (CustomEntryConcurrentHashMap.this.compareValues) {
-        return (this.key != null ? this.key.hashCode() : 0)
-            ^ (this.value != null ? this.value.hashCode() : 0);
+        return (this.key != null ? this.key.hashCode() : 0) ^ (this.value != null ? this.value.hashCode() : 0);
       }
-      return System.identityHashCode(this.key)
-          ^ System.identityHashCode(this.value);
+      return System.identityHashCode(this.key) ^ System.identityHashCode(this.value);
     }
 
     /**
@@ -2472,10 +2399,9 @@ RETRYLOOP:
     }
   }
 
-  final class EntryIterator extends HashIterator implements
-      Iterator<Map.Entry<K, V>> {
+  final class EntryIterator extends HashIterator implements Iterator<Map.Entry<K, V>> {
 
-// GemStone change
+    // GemStone change
     // added possibility to reuse a single Map.Entry for entire iteration
     final WriteThroughEntry reusableEntry;
 
@@ -2492,7 +2418,7 @@ RETRYLOOP:
       }
       return new WriteThroughEntry(e.getKey(), e.getMapValue());
     }
-// End GemStone change
+    // End GemStone change
   }
 
   final class KeySet extends AbstractSet<K> {
@@ -2548,15 +2474,14 @@ RETRYLOOP:
 
   final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
 
-// GemStone change
+    // GemStone change
     // added possibility to reuse a single Map.Entry for entire iteration
     final WriteThroughEntry reusableEntry;
 
     EntrySet(final boolean useReusableEntry) {
       if (useReusableEntry) {
         this.reusableEntry = new WriteThroughEntry(null, null);
-      }
-      else {
+      } else {
         this.reusableEntry = null;
       }
     }
@@ -2566,14 +2491,14 @@ RETRYLOOP:
       return new EntryIterator(this.reusableEntry);
     }
 
-// End GemStone change
+    // End GemStone change
 
     @Override
     public boolean contains(final Object o) {
       if (!(o instanceof Map.Entry)) {
         return false;
       }
-      final Map.Entry<?, ?> e = (Map.Entry<?, ?>)o;
+      final Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
       final V v = CustomEntryConcurrentHashMap.this.get(e.getKey());
       if (CustomEntryConcurrentHashMap.this.compareValues) {
         return v != null && v.equals(e.getValue());
@@ -2586,7 +2511,7 @@ RETRYLOOP:
       if (!(o instanceof Map.Entry)) {
         return false;
       }
-      final Map.Entry<?, ?> e = (Map.Entry<?, ?>)o;
+      final Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
       return CustomEntryConcurrentHashMap.this.remove(e.getKey(), e.getValue());
     }
 
@@ -2613,8 +2538,7 @@ RETRYLOOP:
    *             followed by a null pair. The key-value mappings are emitted in
    *             no particular order.
    */
-  private void writeObject(final java.io.ObjectOutputStream s)
-      throws IOException {
+  private void writeObject(final java.io.ObjectOutputStream s) throws IOException {
     s.defaultWriteObject();
 
     for (int k = 0; k < this.segments.length; ++k) {
@@ -2645,8 +2569,7 @@ RETRYLOOP:
    *          the stream
    */
   @SuppressWarnings("unchecked")
-  private void readObject(final java.io.ObjectInputStream s)
-      throws IOException, ClassNotFoundException {
+  private void readObject(final java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
     s.defaultReadObject();
 
     // Initialize each segment to be minimally sized, and let grow.
@@ -2656,8 +2579,8 @@ RETRYLOOP:
 
     // Read the keys and values, and put the mappings in the table
     for (;;) {
-      final K key = (K)s.readObject();
-      final V value = (V)s.readObject();
+      final K key = (K) s.readObject();
+      final V value = (V) s.readObject();
       if (key == null) {
         break;
       }

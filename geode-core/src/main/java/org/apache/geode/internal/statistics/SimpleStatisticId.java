@@ -32,12 +32,12 @@ public final class SimpleStatisticId implements StatisticId {
 
   private final StatisticDescriptor descriptor;
   private final Statistics statistics;
-  
+
   protected SimpleStatisticId(StatisticDescriptor descriptor, Statistics statistics) {
     this.descriptor = descriptor;
     this.statistics = statistics;
   }
-  
+
   @Override
   public StatisticDescriptor getStatisticDescriptor() {
     return this.descriptor;
@@ -47,7 +47,7 @@ public final class SimpleStatisticId implements StatisticId {
   public Statistics getStatistics() {
     return this.statistics;
   }
-  
+
   /**
    * Object equality must be based on instance identity.
    */

@@ -37,7 +37,7 @@ import org.apache.geode.internal.logging.LogService;
 
 public class ListFunctionFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String ID = ListFunctionFunction.class.getName();
 
   private static final long serialVersionUID = 1L;
@@ -46,7 +46,7 @@ public class ListFunctionFunction implements Function, InternalEntity {
   public void execute(FunctionContext context) {
     // Declared here so that it's available when returning a Throwable
     String memberId = "";
-    
+
     try {
       final Object[] args = (Object[]) context.getArguments();
       final String stringPattern = (String) args[0];
@@ -76,15 +76,15 @@ public class ListFunctionFunction implements Function, InternalEntity {
         result = new CliFunctionResult(memberId, resultList.toArray(new String[0]));
       }
       context.getResultSender().lastResult(result);
-      
+
     } catch (CacheClosedException cce) {
       CliFunctionResult result = new CliFunctionResult(memberId, false, null);
       context.getResultSender().lastResult(result);
-      
+
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not list functions: {}", th.getMessage(), th);

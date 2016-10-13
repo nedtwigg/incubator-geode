@@ -36,23 +36,23 @@ public class QueueConnectionRequest extends ServerLocationRequest {
   private Set excludedServers;
   private int redundantCopies;
   private boolean findDurable = false;
-  
+
   public QueueConnectionRequest() {
     super();
   }
 
-  public QueueConnectionRequest(ClientProxyMembershipID proxyId, int redundantCopies, Set excludedServers, String serverGroup,boolean findDurable) {
+  public QueueConnectionRequest(ClientProxyMembershipID proxyId, int redundantCopies, Set excludedServers, String serverGroup, boolean findDurable) {
     super(serverGroup);
     this.proxyId = proxyId;
     this.excludedServers = excludedServers;
     this.redundantCopies = redundantCopies;
     this.findDurable = findDurable;
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    
+
     proxyId = ClientProxyMembershipID.readCanonicalized(in);
     redundantCopies = DataSerializer.readPrimitiveInt(in);
     this.excludedServers = SerializationHelper.readServerLocationSet(in);
@@ -67,7 +67,7 @@ public class QueueConnectionRequest extends ServerLocationRequest {
     SerializationHelper.writeServerLocationSet(this.excludedServers, out);
     out.writeBoolean(this.findDurable);
   }
-  
+
   public Set getExcludedServers() {
     return excludedServers;
   }
@@ -79,18 +79,16 @@ public class QueueConnectionRequest extends ServerLocationRequest {
   public int getRedundantCopies() {
     return redundantCopies;
   }
-  
+
   public boolean isFindDurable() {
     return this.findDurable;
   }
-  
+
   @Override
   public String toString() {
-    return "QueueConnectionRequest{group=" + getServerGroup() + ", excluded="
-        + getExcludedServers() + ", redundant= " + redundantCopies
-        + ",findDurable=" + findDurable + ",proxyId=" + proxyId + "}";
+    return "QueueConnectionRequest{group=" + getServerGroup() + ", excluded=" + getExcludedServers() + ", redundant= " + redundantCopies + ",findDurable=" + findDurable + ",proxyId=" + proxyId + "}";
   }
-  
+
   public int getDSFID() {
     return DataSerializableFixedID.QUEUE_CONNECTION_REQUEST;
   }

@@ -24,7 +24,6 @@ import org.apache.geode.cache.*;
 import org.apache.geode.distributed.*;
 import org.apache.geode.distributed.internal.*;
 
-
 /**
  * Sends a chunk of queued messages to everyone currently playing a role.
  *
@@ -75,7 +74,7 @@ public class SendQueueOperation {
       return false;
     }
     // @todo darrel: now remove sent items from the list
-    this.r.getCachePerfStats().incReliableQueuedOps(- l.size());
+    this.r.getCachePerfStats().incReliableQueuedOps(-l.size());
     this.l.clear();
     return true;
   }
@@ -84,10 +83,7 @@ public class SendQueueOperation {
    * A batch of queued messages. Once they are processed on the other side
    * an ack is sent.
    */
-  public static final class SendQueueMessage
-    extends SerialDistributionMessage
-    implements MessageWithReply
-  {
+  public static final class SendQueueMessage extends SerialDistributionMessage implements MessageWithReply {
     private int processorId;
     private String regionPath;
     /**
@@ -99,31 +95,36 @@ public class SendQueueOperation {
     public int getProcessorId() {
       return this.processorId;
     }
+
     public void setProcessorId(int id) {
       this.processorId = id;
     }
+
     public String getRegionPath() {
       return this.regionPath;
     }
+
     public void setRegionPath(String rp) {
       this.regionPath = rp;
     }
+
     public void setOperations(List l) {
       this.ops = l;
     }
+
     @Override
     protected void process(DistributionManager dm) {
       ReplyException rex = null;
       boolean ignored = false;
       try {
-        GemFireCacheImpl gfc = (GemFireCacheImpl)CacheFactory.getInstance(dm.getSystem());
+        GemFireCacheImpl gfc = (GemFireCacheImpl) CacheFactory.getInstance(dm.getSystem());
         final LocalRegion lclRgn = gfc.getRegionByPathForProcessing(this.regionPath);
         if (lclRgn != null) {
           lclRgn.waitOnInitialization();
           final long lastMod = gfc.cacheTimeMillis();
           Iterator it = this.ops.iterator();
           while (it.hasNext()) {
-            QueuedOperation op = (QueuedOperation)it.next();
+            QueuedOperation op = (QueuedOperation) it.next();
             op.process(lclRgn, getSender(), lastMod);
           }
         } else {
@@ -137,7 +138,7 @@ public class SendQueueOperation {
         ReplyMessage.send(getSender(), this.processorId, rex, dm, ignored, false, false);
       }
     }
-    
+
     public int getDSFID() {
       return SEND_QUEUE_MESSAGE;
     }
@@ -150,13 +151,13 @@ public class SendQueueOperation {
       {
         int opCount = in.readInt();
         QueuedOperation[] ops = new QueuedOperation[opCount];
-        for (int i=0; i < opCount; i++) {
+        for (int i = 0; i < opCount; i++) {
           ops[i] = QueuedOperation.createFromData(in);
         }
         this.ops = Arrays.asList(ops);
       }
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -165,8 +166,8 @@ public class SendQueueOperation {
       {
         int opCount = this.ops.size();
         out.writeInt(opCount);
-        for (int i=0; i < opCount; i++) {
-          QueuedOperation op = (QueuedOperation)this.ops.get(i);
+        for (int i = 0; i < opCount; i++) {
+          QueuedOperation op = (QueuedOperation) this.ops.get(i);
           op.toData(out);
         }
       }

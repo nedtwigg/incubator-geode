@@ -25,28 +25,28 @@ package org.apache.geode.admin;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public interface Statistic extends java.io.Serializable {
-    
+
   /**
    * Gets the identifying name of this statistic.
    *
    * @return the identifying name of this statistic 
    */
   public String getName();
-    
+
   /**
    * Gets the value of this statistic as a <code>java.lang.Number</code>.
    *
    * @return the value of this statistic
    */
   public Number getValue();
-  
+
   /**
    * Gets the unit of measurement (if any) this statistic represents.
    *
    * @return the unit of measurement (if any) this statistic represents
    */
   public String getUnits();
-  
+
   /**
    * Returns true if this statistic represents a numeric value which always 
    * increases.
@@ -54,7 +54,7 @@ public interface Statistic extends java.io.Serializable {
    * @return true if this statistic represents a value which always increases
    */
   public boolean isCounter();
-  
+
   /**
    * Gets the full description of this statistic.
    *
@@ -62,4 +62,3 @@ public interface Statistic extends java.io.Serializable {
    */
   public String getDescription();
 }
-

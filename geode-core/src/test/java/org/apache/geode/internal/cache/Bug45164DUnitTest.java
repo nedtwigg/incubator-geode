@@ -41,7 +41,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 public class Bug45164DUnitTest extends JUnit4CacheTestCase {
   private static final int count = 10000;
   private static final int stride = 3;
-  
+
   public Bug45164DUnitTest() {
     super();
   }
@@ -68,16 +68,16 @@ public class Bug45164DUnitTest extends JUnit4CacheTestCase {
           i++;
           if (entry == null) {
             fail("Element " + i + " is null");
-            
+
           }
         }
       }
     };
-    
+
     Host h = Host.getHost(0);
     AsyncInvocation async1 = h.getVM(1).invokeAsync(destroy);
     AsyncInvocation async2 = h.getVM(2).invokeAsync(iterate);
-    
+
     async1.getResult();
     async2.getResult();
   }
@@ -88,13 +88,13 @@ public class Bug45164DUnitTest extends JUnit4CacheTestCase {
       @Override
       public void run() {
         Cache cache = getCache(new CacheFactory());
-        Region<Integer, Object> region = cache.<Integer, Object>createRegionFactory(RegionShortcut.PARTITION).create("test");
+        Region<Integer, Object> region = cache.<Integer, Object> createRegionFactory(RegionShortcut.PARTITION).create("test");
         if (region == null) {
           LogWriterUtils.getLogWriter().error("oops!");
         }
       }
     };
-    
+
     SerializableRunnable load = new SerializableRunnable() {
       @Override
       public void run() {
@@ -104,7 +104,7 @@ public class Bug45164DUnitTest extends JUnit4CacheTestCase {
         }
       }
     };
-    
+
     Host h = Host.getHost(0);
     h.getVM(1).invoke(create);
     h.getVM(2).invoke(create);

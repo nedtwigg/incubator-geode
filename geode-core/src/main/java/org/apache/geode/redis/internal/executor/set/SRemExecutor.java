@@ -29,7 +29,7 @@ import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 public class SRemExecutor extends SetExecutor {
 
   private final int NONE_REMOVED = 0;
-  
+
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
     List<byte[]> commandElems = command.getProcessedCommand();
@@ -43,21 +43,21 @@ public class SRemExecutor extends SetExecutor {
     checkDataType(key, RedisDataType.REDIS_SET, context);
     @SuppressWarnings("unchecked")
     Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
-    
+
     if (keyRegion == null) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NONE_REMOVED));
       return;
     }
-    
+
     int numRemoved = 0;
-    
+
     for (int i = 2; i < commandElems.size(); i++) {
       Object oldVal;
       oldVal = keyRegion.remove(new ByteArrayWrapper(commandElems.get(i)));
       if (oldVal != null)
         numRemoved++;
     }
-    
+
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numRemoved));
   }
 }

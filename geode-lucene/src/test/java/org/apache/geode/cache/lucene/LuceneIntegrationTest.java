@@ -30,7 +30,6 @@ import org.junit.Before;
 
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
-
 public class LuceneIntegrationTest {
 
   protected Cache cache;
@@ -38,7 +37,7 @@ public class LuceneIntegrationTest {
 
   @After
   public void closeCache() {
-    if(this.cache != null) {
+    if (this.cache != null) {
       this.cache.close();
     }
   }

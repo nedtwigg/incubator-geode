@@ -60,7 +60,7 @@ public interface ManagerMXBean {
    * Returns the URL for connecting to the Pulse application.
    */
   public String getPulseURL();
-  
+
   /**
    * Sets the URL for the Pulse application.
    * 

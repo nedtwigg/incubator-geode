@@ -35,16 +35,19 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
   public ReliableReplyProcessor21(InternalDistributedSystem system, InternalDistributedMember member) {
     super(system, member);
   }
+
   public ReliableReplyProcessor21(DM dm, InternalDistributedMember member) {
     super(dm, member);
   }
+
   public ReliableReplyProcessor21(DM dm, Collection initMembers) {
     super(dm, initMembers);
   }
+
   public ReliableReplyProcessor21(InternalDistributedSystem system, Collection initMembers) {
     super(system, initMembers);
   }
-  
+
   /**
    * This method is invoked after a member has explicitly left
    * the system.  It may not get invoked if a member becomes unreachable
@@ -69,13 +72,13 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
     }
     checkIfDone();
   }
-  
+
   /**
    * Returns the recipients that have departed prior to processing a reply
    * from them.
    */
   public Set getDepartedMembers() {
-    synchronized(this) {
+    synchronized (this) {
       if (this.departedMembers == null) {
         return Collections.EMPTY_SET;
       } else {
@@ -83,7 +86,7 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
       }
     }
   }
-  
+
   /**
    * Use this method instead of {@link #waitForReplies()} if you want the wait to throw an
    * exception when a member departs.
@@ -94,7 +97,7 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
   public final void waitForReliableDelivery() throws ReplyException, InterruptedException, ReliableReplyException {
     waitForReliableDelivery(0);
   }
-  
+
   /**
    * @see #waitForReliableDelivery()
    * @param msecs the number of milliseconds to wait for replies
@@ -106,10 +109,8 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
     super.waitForReplies(msecs);
     synchronized (this) {
       if (this.departedMembers != null) {
-        throw new ReliableReplyException(LocalizedStrings.ReliableReplyProcessor_FAILED_TO_DELIVER_MESSAGE_TO_MEMBERS_0
-            .toLocalizedString(departedMembers));
+        throw new ReliableReplyException(LocalizedStrings.ReliableReplyProcessor_FAILED_TO_DELIVER_MESSAGE_TO_MEMBERS_0.toLocalizedString(departedMembers));
       }
     }
   }
 }
-

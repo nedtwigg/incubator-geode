@@ -63,14 +63,12 @@ public class CommandManagerJUnitTest {
   private static final String ARGUMENT1_NAME = "argument1";
   private static final String ARGUMENT1_HELP = "help for argument1";
   private static final String ARGUMENT1_CONTEXT = "context for argument 1";
-  private static final Completion[] ARGUMENT1_COMPLETIONS = {
-      new Completion("arg1"), new Completion("arg1alt") };
+  private static final Completion[] ARGUMENT1_COMPLETIONS = { new Completion("arg1"), new Completion("arg1alt") };
   private static final String ARGUMENT2_NAME = "argument2";
   private static final String ARGUMENT2_CONTEXT = "context for argument 2";
   private static final String ARGUMENT2_HELP = "help for argument2";
   private static final String ARGUMENT2_UNSPECIFIED_DEFAULT_VALUE = "{unspecified default value for argument2}";
-  private static final Completion[] ARGUMENT2_COMPLETIONS = {
-      new Completion("arg2"), new Completion("arg2alt") };
+  private static final Completion[] ARGUMENT2_COMPLETIONS = { new Completion("arg2"), new Completion("arg2alt") };
 
   // OPTIONS
   private static final String OPTION1_NAME = "option1";
@@ -78,8 +76,7 @@ public class CommandManagerJUnitTest {
   private static final String OPTION1_HELP = "help for option1";
   private static final String OPTION1_CONTEXT = "context for option1";
   private static final String OPTION1_SPECIFIED_DEFAULT_VALUE = "{specified default value for option1}";
-  private static final Completion[] OPTION1_COMPLETIONS = {
-      new Completion("option1"), new Completion("option1Alternate") };
+  private static final Completion[] OPTION1_COMPLETIONS = { new Completion("option1"), new Completion("option1Alternate") };
   private static final String OPTION2_NAME = "option2";
   private static final String OPTION2_HELP = "help for option2";
   private static final String OPTION2_CONTEXT = "context for option2";
@@ -95,7 +92,7 @@ public class CommandManagerJUnitTest {
   public void tearDown() {
     CommandManager.clearInstance();
   }
-  
+
   /**
    * tests loadCommands()
    */
@@ -123,8 +120,7 @@ public class CommandManagerJUnitTest {
     CommandManager commandManager = CommandManager.getInstance(true);
     assertNotNull(commandManager);
 
-    Method method = Commands.class.getMethod(COMMAND1_NAME, String.class,
-        String.class, String.class, String.class, String.class);
+    Method method = Commands.class.getMethod(COMMAND1_NAME, String.class, String.class, String.class, String.class, String.class);
 
     Annotation[][] annotations = method.getParameterAnnotations();
     Class<?>[] parameterTypes = method.getParameterTypes();
@@ -138,19 +134,14 @@ public class CommandManagerJUnitTest {
       Annotation[] annotation = annotations[i];
       for (Annotation ann : annotation) {
         if (ann instanceof CliOption) {
-          Option createdOption = commandManager.createOption((CliOption) ann,
-              parameterTypes[i], parameterNo);
-          assertTrue(optionNames.contains(createdOption.getLongOption()));          
-          assertEquals(((CliOption) ann).help(), createdOption.getHelp());          
-          if (((CliOption) ann).specifiedDefaultValue() != null
-              && ((CliOption) ann).specifiedDefaultValue().length() > 0) {            
-            assertEquals(((CliOption) ann).specifiedDefaultValue().trim(),
-                createdOption.getSpecifiedDefaultValue().trim());
+          Option createdOption = commandManager.createOption((CliOption) ann, parameterTypes[i], parameterNo);
+          assertTrue(optionNames.contains(createdOption.getLongOption()));
+          assertEquals(((CliOption) ann).help(), createdOption.getHelp());
+          if (((CliOption) ann).specifiedDefaultValue() != null && ((CliOption) ann).specifiedDefaultValue().length() > 0) {
+            assertEquals(((CliOption) ann).specifiedDefaultValue().trim(), createdOption.getSpecifiedDefaultValue().trim());
           }
-          if (((CliOption) ann).unspecifiedDefaultValue() != null
-              && ((CliOption) ann).unspecifiedDefaultValue().length() > 0) {           
-            assertEquals(((CliOption) ann).specifiedDefaultValue().trim(),
-                createdOption.getSpecifiedDefaultValue().trim());
+          if (((CliOption) ann).unspecifiedDefaultValue() != null && ((CliOption) ann).unspecifiedDefaultValue().length() > 0) {
+            assertEquals(((CliOption) ann).specifiedDefaultValue().trim(), createdOption.getSpecifiedDefaultValue().trim());
           }
 
         }
@@ -166,8 +157,7 @@ public class CommandManagerJUnitTest {
     CommandManager commandManager = CommandManager.getInstance(true);
     assertNotNull(commandManager);
 
-    Method method = Commands.class.getMethod(COMMAND1_NAME, String.class,
-        String.class, String.class, String.class, String.class);
+    Method method = Commands.class.getMethod(COMMAND1_NAME, String.class, String.class, String.class, String.class, String.class);
 
     Annotation[][] annotations = method.getParameterAnnotations();
     Class<?>[] parameterTypes = method.getParameterTypes();
@@ -180,14 +170,11 @@ public class CommandManagerJUnitTest {
       Annotation[] annotation = annotations[i];
       for (Annotation ann : annotation) {
         if (ann instanceof CliArgument) {
-          Argument arg = commandManager.createArgument((CliArgument) ann,
-              parameterTypes[i], parameterNo);
+          Argument arg = commandManager.createArgument((CliArgument) ann, parameterTypes[i], parameterNo);
           assertEquals(true, argumentList.contains(arg.getArgumentName()));
           assertEquals(((CliArgument) ann).mandatory(), arg.isRequired());
-          assertEquals(((CliArgument) ann).name().trim(), arg.getArgumentName()
-              .trim());
-          assertEquals(((CliArgument) ann).argumentContext().trim(), arg
-              .getContext().trim());
+          assertEquals(((CliArgument) ann).name().trim(), arg.getArgumentName().trim());
+          assertEquals(((CliArgument) ann).argumentContext().trim(), arg.getContext().trim());
           assertEquals(((CliArgument) ann).help().trim(), arg.getHelp().trim());
         }
       }
@@ -206,11 +193,9 @@ public class CommandManagerJUnitTest {
     for (String commandName : commands.keySet()) {
       if (commandName.equals(COMMAND1_NAME)) {
         CommandTarget commandTarget = commands.get(commandName);
-        AvailabilityTarget availabilityIndicator = commandTarget
-            .getAvailabilityIndicator();
+        AvailabilityTarget availabilityIndicator = commandTarget.getAvailabilityIndicator();
         if (availabilityIndicator == null) {
-          availabilityIndicator = commandManager
-              .getAvailabilityIndicator(COMMAND1_NAME);
+          availabilityIndicator = commandManager.getAvailabilityIndicator(COMMAND1_NAME);
           commandTarget.setAvailabilityIndicator(availabilityIndicator);
         }
         assertEquals(true, commandTarget.isAvailable());
@@ -218,16 +203,16 @@ public class CommandManagerJUnitTest {
       }
     }
   }
-  
+
   /**
    * Tests {@link CommandManager#loadPluginCommands()}.
    * @since GemFire 8.1
    */
   @Test
   public void testCommandManagerLoadPluginCommands() throws Exception {
-    CommandManager commandManager  = CommandManager.getInstance(true);
+    CommandManager commandManager = CommandManager.getInstance(true);
     assertNotNull(commandManager);
-    
+
     // see META-INF/services/org.springframework.shell.core.CommandMarker service loader file.
     assertTrue("Should find listed plugin.", commandManager.getCommands().containsKey("mock plugin command"));
     assertTrue("Should not find unlisted plugin.", !commandManager.getCommands().containsKey("mock plugin command unlisted"));
@@ -241,17 +226,8 @@ public class CommandManagerJUnitTest {
     @CliCommand(value = { COMMAND1_NAME, COMMAND1_NAME_ALIAS }, help = COMMAND1_HELP)
     @CliMetaData(shellOnly = true, relatedTopic = { "relatedTopicOfCommand1" })
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static String command1(
-        @CliArgument(name = ARGUMENT1_NAME, argumentContext = ARGUMENT1_CONTEXT, help = ARGUMENT1_HELP, mandatory = true)
-        String argument1,
-        @CliArgument(name = ARGUMENT2_NAME, argumentContext = ARGUMENT2_CONTEXT, help = ARGUMENT2_HELP, mandatory = false, unspecifiedDefaultValue = ARGUMENT2_UNSPECIFIED_DEFAULT_VALUE, systemProvided = false)
-        String argument2,
-        @CliOption(key = { OPTION1_NAME, OPTION1_SYNONYM }, help = OPTION1_HELP, mandatory = true, optionContext = OPTION1_CONTEXT, specifiedDefaultValue = OPTION1_SPECIFIED_DEFAULT_VALUE)
-        String option1,
-        @CliOption(key = { OPTION2_NAME }, help = OPTION2_HELP, mandatory = false, optionContext = OPTION2_CONTEXT, specifiedDefaultValue = OPTION2_SPECIFIED_DEFAULT_VALUE)
-        String option2,
-        @CliOption(key = { OPTION3_NAME, OPTION3_SYNONYM }, help = OPTION3_HELP, mandatory = false, optionContext = OPTION3_CONTEXT, unspecifiedDefaultValue = OPTION3_UNSPECIFIED_DEFAULT_VALUE, specifiedDefaultValue = OPTION3_SPECIFIED_DEFAULT_VALUE)
-        String option3) {
+    public static String command1(@CliArgument(name = ARGUMENT1_NAME, argumentContext = ARGUMENT1_CONTEXT, help = ARGUMENT1_HELP, mandatory = true) String argument1, @CliArgument(name = ARGUMENT2_NAME, argumentContext = ARGUMENT2_CONTEXT, help = ARGUMENT2_HELP, mandatory = false, unspecifiedDefaultValue = ARGUMENT2_UNSPECIFIED_DEFAULT_VALUE, systemProvided = false) String argument2, @CliOption(key = { OPTION1_NAME, OPTION1_SYNONYM }, help = OPTION1_HELP, mandatory = true, optionContext = OPTION1_CONTEXT, specifiedDefaultValue = OPTION1_SPECIFIED_DEFAULT_VALUE) String option1, @CliOption(key = { OPTION2_NAME }, help = OPTION2_HELP, mandatory = false, optionContext = OPTION2_CONTEXT, specifiedDefaultValue = OPTION2_SPECIFIED_DEFAULT_VALUE) String option2,
+        @CliOption(key = { OPTION3_NAME, OPTION3_SYNONYM }, help = OPTION3_HELP, mandatory = false, optionContext = OPTION3_CONTEXT, unspecifiedDefaultValue = OPTION3_UNSPECIFIED_DEFAULT_VALUE, specifiedDefaultValue = OPTION3_SPECIFIED_DEFAULT_VALUE) String option3) {
       return null;
     }
 
@@ -263,26 +239,13 @@ public class CommandManagerJUnitTest {
 
     @CliCommand(value = { "testParamConcat" })
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static Result testParamConcat(
-        @CliOption(key = { "string" })
-        String string,
-        @CliOption(key = { "stringArray" })
-        @CliMetaData(valueSeparator = ",")
-        String[] stringArray,
-        @CliOption(key = { "stringList" }, optionContext = ConverterHint.STRING_LIST)
-        @CliMetaData(valueSeparator = ",")
-        List<String> stringList, @CliOption(key = { "integer" })
-        Integer integer, @CliOption(key = { "colonArray" })
-        @CliMetaData(valueSeparator = ":")
-        String[] colonArray) {
+    public static Result testParamConcat(@CliOption(key = { "string" }) String string, @CliOption(key = { "stringArray" }) @CliMetaData(valueSeparator = ",") String[] stringArray, @CliOption(key = { "stringList" }, optionContext = ConverterHint.STRING_LIST) @CliMetaData(valueSeparator = ",") List<String> stringList, @CliOption(key = { "integer" }) Integer integer, @CliOption(key = { "colonArray" }) @CliMetaData(valueSeparator = ":") String[] colonArray) {
       return null;
     }
 
     @CliCommand(value = { "testMultiWordArg" })
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static Result testMultiWordArg(@CliArgument(name = "arg1")
-    String arg1, @CliArgument(name = "arg2")
-    String arg2) {
+    public static Result testMultiWordArg(@CliArgument(name = "arg1") String arg1, @CliArgument(name = "arg2") String arg2) {
       return null;
     }
 
@@ -306,15 +269,12 @@ public class CommandManagerJUnitTest {
     }
 
     @Override
-    public String convertFromText(String value, Class<?> targetType,
-        String optionContext) {
+    public String convertFromText(String value, Class<?> targetType, String optionContext) {
       return value;
     }
 
     @Override
-    public boolean getAllPossibleValues(List<Completion> completions,
-        Class<?> targetType, String existingData, String context,
-        MethodTarget target) {
+    public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String context, MethodTarget target) {
       if (context.equals(ARGUMENT1_CONTEXT)) {
         for (Completion completion : ARGUMENT1_COMPLETIONS) {
           completions.add(completion);

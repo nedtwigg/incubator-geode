@@ -48,7 +48,8 @@ public class GemFireAuthenticationProvider implements AuthenticationProvider {
     if (authentication instanceof GemFireAuthentication) {
       GemFireAuthentication gemAuth = (GemFireAuthentication) authentication;
       LOGGER.fine("GemAuthentication is connected? = " + gemAuth.getJmxc());
-      if (gemAuth.getJmxc() != null && gemAuth.isAuthenticated()) return gemAuth;
+      if (gemAuth.getJmxc() != null && gemAuth.isAuthenticated())
+        return gemAuth;
     }
 
     String name = authentication.getName();
@@ -59,8 +60,7 @@ public class GemFireAuthenticationProvider implements AuthenticationProvider {
       JMXConnector jmxc = Repository.get().getCluster(name, password).connectToGemFire();
       if (jmxc != null) {
         Collection<GrantedAuthority> list = GemFireAuthentication.populateAuthorities(jmxc);
-        GemFireAuthentication auth = new GemFireAuthentication(authentication.getPrincipal(),
-            authentication.getCredentials(), list, jmxc);
+        GemFireAuthentication auth = new GemFireAuthentication(authentication.getPrincipal(), authentication.getCredentials(), list, jmxc);
         LOGGER.fine("For user " + name + " authList=" + list);
         return auth;
       } else {

@@ -21,8 +21,7 @@ import java.io.Serializable;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-public class HttpSessionBindingListenerImpl extends AbstractListener implements
-    HttpSessionBindingListener, Serializable {
+public class HttpSessionBindingListenerImpl extends AbstractListener implements HttpSessionBindingListener, Serializable {
 
   public HttpSessionBindingListenerImpl(int i) {
     super(i);

@@ -39,7 +39,7 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
  */
 public class FetchRegionAttributesFunction extends FunctionAdapter {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 4366812590788342070L;
 
   private static final String ID = FetchRegionAttributesFunction.class.getName();
@@ -74,7 +74,7 @@ public class FetchRegionAttributesFunction extends FunctionAdapter {
     Region<K, V> foundRegion = cache.getRegion(regionPath);
 
     if (foundRegion == null) {
-      throw new IllegalArgumentException(CliStrings.format(CliStrings.CREATE_REGION__MSG__SPECIFY_VALID_REGION_PATH_FOR_0_REGIONPATH_1_NOT_FOUND, new Object[] {CliStrings.CREATE_REGION__USEATTRIBUTESFROM, regionPath}));
+      throw new IllegalArgumentException(CliStrings.format(CliStrings.CREATE_REGION__MSG__SPECIFY_VALID_REGION_PATH_FOR_0_REGIONPATH_1_NOT_FOUND, new Object[] { CliStrings.CREATE_REGION__USEATTRIBUTESFROM, regionPath }));
     }
 
     // Using AttributesFactory to get the serializable RegionAttributes 
@@ -88,7 +88,7 @@ public class FetchRegionAttributesFunction extends FunctionAdapter {
   public String getId() {
     return ID;
   }
-  
+
   public static class FetchRegionAttributesFunctionResult<K, V> implements Serializable {
     private static final long serialVersionUID = -3970828263897978845L;
 

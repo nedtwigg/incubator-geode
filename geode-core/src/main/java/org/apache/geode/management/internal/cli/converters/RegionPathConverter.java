@@ -42,15 +42,12 @@ public class RegionPathConverter implements Converter<String> {
   }
 
   @Override
-  public String convertFromText(String value, Class<?> targetType,
-      String optionContext) {
+  public String convertFromText(String value, Class<?> targetType, String optionContext) {
     return value;
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String existingData, String optionContext,
-      MethodTarget target) {
+  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.REGIONPATH.equals(optionContext)) {
       Set<String> regionPathSet = getAllRegionPaths();
       Gfsh gfsh = Gfsh.getCurrentInstance();

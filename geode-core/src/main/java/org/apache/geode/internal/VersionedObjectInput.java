@@ -27,8 +27,7 @@ import java.io.ObjectInput;
  * 
  * @since GemFire 7.1
  */
-public final class VersionedObjectInput implements ObjectInput,
-    VersionedDataStream {
+public final class VersionedObjectInput implements ObjectInput, VersionedDataStream {
 
   private final ObjectInput in;
   private final Version version;
@@ -237,8 +236,6 @@ public final class VersionedObjectInput implements ObjectInput,
    */
   @Override
   public String toString() {
-    return "VersionedObjectInput@"
-        + Integer.toHexString(System.identityHashCode(this)) + " ("
-        + this.version + ')';
+    return "VersionedObjectInput@" + Integer.toHexString(System.identityHashCode(this)) + " (" + this.version + ')';
   }
 }

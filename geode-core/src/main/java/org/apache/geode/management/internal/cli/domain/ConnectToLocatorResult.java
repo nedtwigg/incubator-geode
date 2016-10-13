@@ -27,21 +27,21 @@ public class ConnectToLocatorResult {
   private ConnectionEndpoint memberEndpoint = null;
   private String resultMessage;
   final private boolean isJmxManagerSslEnabled;
-  
-  public ConnectToLocatorResult (ConnectionEndpoint memberEndpoint, String resultMessage, boolean isJmxManagerSslEnabled) {
+
+  public ConnectToLocatorResult(ConnectionEndpoint memberEndpoint, String resultMessage, boolean isJmxManagerSslEnabled) {
     this.memberEndpoint = memberEndpoint;
     this.resultMessage = resultMessage;
     this.isJmxManagerSslEnabled = isJmxManagerSslEnabled;
   }
-  
+
   public ConnectionEndpoint getMemberEndpoint() {
     return this.memberEndpoint;
   }
-  
+
   public String getResultMessage() {
     return this.resultMessage;
   }
-  
+
   public boolean isJmxManagerSslEnabled() {
     return isJmxManagerSslEnabled;
   }

@@ -56,9 +56,9 @@ public class LuceneEventListenerJUnitTest {
     IndexRepository repo2 = Mockito.mock(IndexRepository.class);
     Region region1 = Mockito.mock(Region.class);
     Region region2 = Mockito.mock(Region.class);
-    
+
     Object callback1 = new Object();
-    
+
     Mockito.when(manager.getRepository(eq(region1), any(), eq(callback1))).thenReturn(repo1);
     Mockito.when(manager.getRepository(eq(region2), any(), eq(null))).thenReturn(repo2);
 
@@ -107,14 +107,13 @@ public class LuceneEventListenerJUnitTest {
   @Test
   public void shouldHandleBucketNotFoundExceptionWithoutLoggingError() throws BucketNotFoundException {
     RepositoryManager manager = Mockito.mock(RepositoryManager.class);
-    Logger log=Mockito.mock(Logger.class);
-    Mockito.when(manager.getRepository(any(), any(), any()))
-      .thenThrow(BucketNotFoundException.class);
+    Logger log = Mockito.mock(Logger.class);
+    Mockito.when(manager.getRepository(any(), any(), any())).thenThrow(BucketNotFoundException.class);
 
     LuceneEventListener listener = new LuceneEventListener(manager);
     listener.logger = log;
     AsyncEvent event = Mockito.mock(AsyncEvent.class);
-    boolean result = listener.processEvents(Arrays.asList(new AsyncEvent[] {event}));
+    boolean result = listener.processEvents(Arrays.asList(new AsyncEvent[] { event }));
     assertFalse(result);
     verify(log, never()).error(anyString(), any(Exception.class));
   }

@@ -22,14 +22,12 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.SetUtils;
 import org.apache.geode.internal.cache.partitioned.Bucket;
 
-
 /**
  * This class encapsulates the Bucket Related heuristics/algos for a PR.
  * 
  *  
  */
-public class PartitionedRegionBucketMgmtHelper
-  {
+public class PartitionedRegionBucketMgmtHelper {
 
   /**
    * 
@@ -42,11 +40,10 @@ public class PartitionedRegionBucketMgmtHelper
     if (b.getDistributionManager().enforceUniqueZone()) {
       Set<InternalDistributedMember> hostingMembers = b.getBucketOwners();
       Set<InternalDistributedMember> buddyMembers = b.getDistributionManager().getMembersInThisZone();
-      boolean intersects =  SetUtils.intersectsWith(hostingMembers, buddyMembers);
+      boolean intersects = SetUtils.intersectsWith(hostingMembers, buddyMembers);
       boolean sourceIsOneThisHost = moveSource != null && buddyMembers.contains(moveSource);
       return !intersects || sourceIsOneThisHost;
-    }
-    else { 
+    } else {
       return true;
     }
   }

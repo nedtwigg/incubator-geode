@@ -60,12 +60,12 @@ public class CacheServerMBean extends NotificationBroadcasterSupport implements 
   }
 
   @Override
-  public String[] getClientIds() throws Exception{
+  public String[] getClientIds() throws Exception {
     return bridge.listClientIds();
   }
 
   @Override
-  public ClientHealthStatus showClientStats(String clientId) throws Exception{
+  public ClientHealthStatus showClientStats(String clientId) throws Exception {
     return bridge.showClientStats(clientId);
   }
 
@@ -88,7 +88,6 @@ public class CacheServerMBean extends NotificationBroadcasterSupport implements 
   public String getDiskStoreName() {
     return bridge.getDiskStoreName();
   }
-
 
   @Override
   public String getEvictionPolicy() {
@@ -167,7 +166,6 @@ public class CacheServerMBean extends NotificationBroadcasterSupport implements 
     return bridge.getMessageTimeToLive();
   }
 
-  
   @Override
   public int getPort() {
     return bridge.getPort();
@@ -208,7 +206,6 @@ public class CacheServerMBean extends NotificationBroadcasterSupport implements 
     return bridge.getTotalConnectionsTimedOut();
   }
 
-
   @Override
   public int getTotalFailedConnectionAttempts() {
     return bridge.getTotalFailedConnectionAttempts();
@@ -225,13 +222,13 @@ public class CacheServerMBean extends NotificationBroadcasterSupport implements 
   }
 
   @Override
-  public void removeIndex(String indexName) throws Exception{
+  public void removeIndex(String indexName) throws Exception {
     bridge.removeIndex(indexName);
   }
 
   @Override
   @Deprecated
-  public void stopContinuousQuery(String queryName) throws Exception{
+  public void stopContinuousQuery(String queryName) throws Exception {
     bridge.stopContinuousQuery(queryName);
   }
 
@@ -273,14 +270,14 @@ public class CacheServerMBean extends NotificationBroadcasterSupport implements 
 
   @Override
   public int getNumClientNotificationRequests() {
-   return bridge.getNumClientNotificationRequests();
+    return bridge.getNumClientNotificationRequests();
   }
-  
+
   public CacheServerBridge getBridge() {
     return bridge;
   }
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     bridge.stopMonitor();
   }
 
@@ -305,12 +302,12 @@ public class CacheServerMBean extends NotificationBroadcasterSupport implements 
   }
 
   @Override
-  public ClientQueueDetail[] showClientQueueDetails() throws Exception{
+  public ClientQueueDetail[] showClientQueueDetails() throws Exception {
     return bridge.getClientQueueDetails();
   }
-  
+
   @Override
-  public ClientQueueDetail showClientQueueDetails(String clientId) throws Exception{
+  public ClientQueueDetail showClientQueueDetails(String clientId) throws Exception {
     return bridge.getClientQueueDetail(clientId);
   }
 }

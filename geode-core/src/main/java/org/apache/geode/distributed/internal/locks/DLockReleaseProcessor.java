@@ -16,7 +16,7 @@
  */
 
 package org.apache.geode.distributed.internal.locks;
-  
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -43,28 +43,21 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * Synchronously releases a lock.
  *
  */
-public class DLockReleaseProcessor
-extends ReplyProcessor21 {
+public class DLockReleaseProcessor extends ReplyProcessor21 {
   private static final Logger logger = LogService.getLogger();
 
   private DLockReleaseReplyMessage reply;
-  
+
   protected Object objectName;
-  
-  public DLockReleaseProcessor(DM dm,
-                               InternalDistributedMember member,
-                               String serviceName,
-                               Object objectName) {
+
+  public DLockReleaseProcessor(DM dm, InternalDistributedMember member, String serviceName, Object objectName) {
     super(dm, member);
     this.objectName = objectName;
   }
-  
+
   /** Returns true if release was acknowledged by the grantor; false means
    *  we targeted someone who is not the grantor */
-  protected boolean release(InternalDistributedMember grantor,
-                            String serviceName, 
-                            boolean lockBatch,
-                            int lockId) {
+  protected boolean release(InternalDistributedMember grantor, String serviceName, boolean lockBatch, int lockId) {
 
     DM dm = getDistributionManager();
     DLockReleaseMessage msg = new DLockReleaseMessage();
@@ -73,40 +66,37 @@ extends ReplyProcessor21 {
     msg.objectName = this.objectName;
     msg.lockBatch = lockBatch;
     msg.lockId = lockId;
-    
+
     msg.setRecipient(grantor);
     if (grantor.equals(dm.getId())) {
       // local... don't message...
       msg.setSender(grantor);
       msg.processLocally(dm);
-    }
-    else {
+    } else {
       dm.putOutgoing(msg);
     }
 
     // keep waiting even if interrupted
-    try { 
+    try {
       waitForRepliesUninterruptibly();
-    }
-    catch (ReplyException e) {
+    } catch (ReplyException e) {
       e.handleAsUnexpected();
     }
-    
-    if (this.reply == null) return false;
+
+    if (this.reply == null)
+      return false;
     return this.reply.replyCode == DLockReleaseReplyMessage.OK;
   }
-  
+
   @Override
   protected boolean allowReplyFromSender() {
     return true;
   }
-  
+
   @Override
   public void process(DistributionMessage msg) {
     try {
-      Assert.assertTrue(msg instanceof DLockReleaseReplyMessage, 
-          "DLockReleaseProcessor is unable to process message of type " +
-          msg.getClass());
+      Assert.assertTrue(msg instanceof DLockReleaseReplyMessage, "DLockReleaseProcessor is unable to process message of type " + msg.getClass());
 
       DLockReleaseReplyMessage myReply = (DLockReleaseReplyMessage) msg;
       final boolean isDebugEnabled_DLS = logger.isTraceEnabled(LogMarker.DLS);
@@ -114,7 +104,7 @@ extends ReplyProcessor21 {
         logger.trace(LogMarker.DLS, "Handling: {}", myReply);
       }
       this.reply = myReply;
-      
+
       if (isDebugEnabled_DLS) {
         // grantor acknowledged release of lock...
         if (myReply.replyCode == DLockReleaseReplyMessage.OK) {
@@ -125,47 +115,45 @@ extends ReplyProcessor21 {
           logger.trace(LogMarker.DLS, "{} has responded DLockReleaseReplyMessage.NOT_GRANTOR for {}", myReply.getSender(), myReply.serviceName);
         }
       }
-    }
-    finally {
+    } finally {
       super.process(msg);
       /*if (this.log.fineEnabled()) {
         this.log.fine("Finished handling: " + msg);
       }*/
     }
   }
-  
+
   // -------------------------------------------------------------------------
   //   DLockReleaseMessage
   // -------------------------------------------------------------------------
-  public static final class DLockReleaseMessage 
-  extends HighPriorityDistributionMessage
-  implements MessageWithReply {
+  public static final class DLockReleaseMessage extends HighPriorityDistributionMessage implements MessageWithReply {
     /** The name of the DistributedLockService */
     protected String serviceName;
-  
+
     /** The object name */
     protected Object objectName;
-    
+
     /** True if objectName identifies a batch of locks */
     protected boolean lockBatch;
-    
+
     /** Id of the processor that will handle replies */
     protected int processorId;
-    
+
     /** Matches up this release with the original lock request */
     protected int lockId;
-    
+
     // set used during processing of this msg...
     protected DLockService svc;
     protected DLockGrantor grantor;
-    
-    public DLockReleaseMessage() {}
-  
+
+    public DLockReleaseMessage() {
+    }
+
     @Override
     public int getProcessorId() {
       return this.processorId;
     }
-      
+
     /**
      * Processes this message - invoked on the node that is the lock grantor.
      */
@@ -175,30 +163,25 @@ extends ReplyProcessor21 {
       ReplyException replyException = null;
       try {
         this.svc = DLockService.getInternalServiceNamed(this.serviceName);
-        if (this.svc == null) { 
+        if (this.svc == null) {
           failed = false; // basicProcess has it's own finally-block w reply
           basicProcess(dm, false); // don't have a grantor anymore
-        }
-        else {
+        } else {
           executeBasicProcess(dm); // use executor
         }
         failed = false; // nothing above threw anything
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         replyException = new ReplyException(e);
         throw e;
-      }
-      catch (VirtualMachineError e) {
+      } catch (VirtualMachineError e) {
         SystemFailure.initiateFailure(e);
         replyException = new ReplyException(e);
         throw e;
-      }
-      catch (Error e) {
+      } catch (Error e) {
         SystemFailure.checkFailure();
         replyException = new ReplyException(e);
         throw e;
-      }
-      finally {
+      } finally {
         if (failed) {
           // above code failed so now ensure reply is sent
           if (logger.isTraceEnabled(LogMarker.DLS)) {
@@ -211,18 +194,17 @@ extends ReplyProcessor21 {
           replyMsg.setProcessorId(this.processorId);
           replyMsg.setRecipient(getSender());
           replyMsg.setException(replyException);
-          
+
           if (dm.getId().equals(getSender())) {
             replyMsg.setSender(getSender());
             replyMsg.dmProcess(dm);
-          }
-          else {
+          } else {
             dm.putOutgoing(replyMsg);
           }
         }
       }
     }
-    
+
     /** Process locally without using messaging or executor */
     protected void processLocally(final DM dm) {
       this.svc = DLockService.getInternalServiceNamed(this.serviceName);
@@ -246,7 +228,7 @@ extends ReplyProcessor21 {
         }
       });
     }
-    
+
     /** 
      * Perform basic processing of this message.
      * <p>
@@ -260,54 +242,47 @@ extends ReplyProcessor21 {
       int replyCode = DLockReleaseReplyMessage.NOT_GRANTOR;
       ReplyException replyException = null;
       try {
-        if (svc == null || svc.isDestroyed()) return;
-        
+        if (svc == null || svc.isDestroyed())
+          return;
+
         if (waitForGrantor) {
           try {
             this.grantor = DLockGrantor.waitForGrantor(this.svc);
-          }
-          catch (InterruptedException e) {
+          } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             this.grantor = null;
           }
         }
-        
+
         if (grantor == null || grantor.isDestroyed()) {
           return;
         }
-        
+
         try {
           if (lockBatch) {
             grantor.releaseLockBatch(objectName, getSender());
             replyCode = DLockReleaseReplyMessage.OK;
-          }
-          else {
+          } else {
             grantor.releaseIfLocked(objectName, getSender(), lockId);
             replyCode = DLockReleaseReplyMessage.OK;
           }
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           replyCode = DLockReleaseReplyMessage.NOT_GRANTOR;
         }
-      }
-      catch (LockGrantorDestroyedException ignore) {
-      }
-      catch (LockServiceDestroyedException ignore) {
-      }
-      catch (RuntimeException e) {
+      } catch (LockGrantorDestroyedException ignore) {
+      } catch (LockServiceDestroyedException ignore) {
+      } catch (RuntimeException e) {
         replyException = new ReplyException(e);
         if (isDebugEnabled_DLS) {
           logger.trace(LogMarker.DLS, "[basicProcess] caught RuntimeException", e);
         }
-      }
-      catch (VirtualMachineError err) {
+      } catch (VirtualMachineError err) {
         SystemFailure.initiateFailure(err);
         // If this ever returns, rethrow the error.  We're poisoned
         // now, so don't let this thread continue.
         throw err;
-      }
-      catch (Error e) {
+      } catch (Error e) {
         // Whenever you catch Error or Throwable, you must also
         // catch VirtualMachineError (see above).  However, there is
         // _still_ a possibility that you are dealing with a cascading
@@ -318,28 +293,25 @@ extends ReplyProcessor21 {
         if (isDebugEnabled_DLS) {
           logger.trace(LogMarker.DLS, "[basicProcess] caught Error", e);
         }
-      }
-      finally {
+      } finally {
         DLockReleaseReplyMessage replyMsg = new DLockReleaseReplyMessage();
         replyMsg.serviceName = this.serviceName;
         replyMsg.replyCode = replyCode;
         replyMsg.setProcessorId(this.processorId);
         replyMsg.setRecipient(getSender());
         replyMsg.setException(replyException);
-        
+
         if (dm.getId().equals(getSender())) {
           replyMsg.setSender(getSender());
           replyMsg.dmProcess(dm);
-        }
-        else {
+        } else {
           dm.putOutgoing(replyMsg);
         }
         if (grantor != null && !lockBatch) {
           // moved what was here into grantor...
           try {
             grantor.postRemoteReleaseLock(objectName);
-          }
-          catch (InterruptedException e) {
+          } catch (InterruptedException e) {
             try {
               dm.getCancelCriterion().checkCancelInProgress(e);
             } finally {
@@ -354,11 +326,11 @@ extends ReplyProcessor21 {
         }
       }
     }
-    
+
     public int getDSFID() {
       return DLOCK_RELEASE_MESSAGE;
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -368,10 +340,9 @@ extends ReplyProcessor21 {
       out.writeInt(this.processorId);
       out.writeInt(this.lockId);
     }
-  
+
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.serviceName = DataSerializer.readString(in);
       this.objectName = DataSerializer.readObject(in);
@@ -379,45 +350,39 @@ extends ReplyProcessor21 {
       this.processorId = in.readInt();
       this.lockId = in.readInt();
     }
-  
+
     @Override
     public String toString() {
-      return new StringBuilder("DLockReleaseMessage for ").append(this.serviceName)
-          .append(", ").append(this.objectName)
-          .append("; processorId=").append(this.processorId) 
-          .append("; lockBatch=").append(this.lockBatch) 
-          .append("; lockId=").append(this.lockId).toString();
+      return new StringBuilder("DLockReleaseMessage for ").append(this.serviceName).append(", ").append(this.objectName).append("; processorId=").append(this.processorId).append("; lockBatch=").append(this.lockBatch).append("; lockId=").append(this.lockId).toString();
     }
   } // DLockReleaseMessage
-  
+
   // -------------------------------------------------------------------------
   //   DLockReleaseReplyMessage
   // -------------------------------------------------------------------------
-  public static final class DLockReleaseReplyMessage 
-  extends ReplyMessage {
-   
+  public static final class DLockReleaseReplyMessage extends ReplyMessage {
+
     static final int NOT_GRANTOR = 0;
     static final int OK = 1;
-    
+
     /** Name of service to release the lock in; for toString only */
     protected String serviceName;
-    
+
     /** OK or NOT_GRANTOR for the service  */
     protected int replyCode = NOT_GRANTOR;
-    
+
     @Override
     public int getDSFID() {
       return DLOCK_RELEASE_REPLY;
     }
 
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.serviceName = DataSerializer.readString(in);
       this.replyCode = in.readInt();
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -433,9 +398,15 @@ extends ReplyProcessor21 {
       buff.append(this.serviceName);
       buff.append("; replyCode=");
       switch (this.replyCode) {
-        case NOT_GRANTOR: buff.append("NOT_GRANTOR"); break;
-        case OK:          buff.append("OK"); break;
-        default: buff.append(String.valueOf(this.replyCode)); break;
+      case NOT_GRANTOR:
+        buff.append("NOT_GRANTOR");
+        break;
+      case OK:
+        buff.append("OK");
+        break;
+      default:
+        buff.append(String.valueOf(this.replyCode));
+        break;
       }
       buff.append("; sender=");
       buff.append(getSender());
@@ -446,4 +417,3 @@ extends ReplyProcessor21 {
     }
   } // DLockReleaseReplyMessage
 }
-

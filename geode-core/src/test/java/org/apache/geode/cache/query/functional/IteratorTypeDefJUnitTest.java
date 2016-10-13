@@ -59,36 +59,24 @@ public class IteratorTypeDefJUnitTest {
 
   @Test
   public void testIteratorDefSyntax() throws Exception {
-    String queries[] = {
-        "IMPORT org.apache.geode.cache.\"query\".data.Position;"
-            + "SELECT DISTINCT secId FROM /portfolios,  positions.values pos TYPE Position WHERE iD > 0",
-        "IMPORT org.apache.geode.cache.\"query\".data.Position;"
-            + "SELECT DISTINCT secId FROM /portfolios, positions.values AS pos TYPE Position WHERE iD > 0",
-        "IMPORT org.apache.geode.cache.\"query\".data.Position;"
-            + "SELECT DISTINCT pos.secId FROM /portfolios, pos IN positions.values TYPE Position WHERE iD > 0",
-        "SELECT DISTINCT pos.secId FROM /portfolios,  positions.values AS pos  WHERE iD > 0",
-        "SELECT DISTINCT pos.secId FROM /portfolios, pos IN positions.values  WHERE iD > 0",};
+    String queries[] = { "IMPORT org.apache.geode.cache.\"query\".data.Position;" + "SELECT DISTINCT secId FROM /portfolios,  positions.values pos TYPE Position WHERE iD > 0", "IMPORT org.apache.geode.cache.\"query\".data.Position;" + "SELECT DISTINCT secId FROM /portfolios, positions.values AS pos TYPE Position WHERE iD > 0", "IMPORT org.apache.geode.cache.\"query\".data.Position;" + "SELECT DISTINCT pos.secId FROM /portfolios, pos IN positions.values TYPE Position WHERE iD > 0", "SELECT DISTINCT pos.secId FROM /portfolios,  positions.values AS pos  WHERE iD > 0", "SELECT DISTINCT pos.secId FROM /portfolios, pos IN positions.values  WHERE iD > 0", };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         Object r = q.execute();
         CacheUtils.log(Utils.printResult(r));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
     CacheUtils.log("TestCase:testIteratorDefSyntax PASS");
   }
-  
- @Test
+
+  @Test
   public void testIteratorDefSyntaxForObtainingResultBag() throws Exception {
-    String queries[] = {
-     "IMPORT org.apache.geode.cache.\"query\".data.Position;"+ 
-"SELECT DISTINCT secId FROM /portfolios, (set<Position>)positions.values WHERE iD > 0",
-    };
+    String queries[] = { "IMPORT org.apache.geode.cache.\"query\".data.Position;" + "SELECT DISTINCT secId FROM /portfolios, (set<Position>)positions.values WHERE iD > 0", };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -96,67 +84,55 @@ public class IteratorTypeDefJUnitTest {
         Object r = q.execute();
         CacheUtils.log(Utils.printResult(r));
         if (!(r instanceof SelectResults))
-            fail("testIteratorDefSyntaxForObtainingResultBag: Test failed as obtained Result Data not an instance of SelectResults. Query= "+ q.getQueryString());
-        if (((SelectResults)r).getCollectionType().allowsDuplicates()) 
-            fail("testIteratorDefSyntaxForObtainingResultBag: results of query should not allow duplicates, but says it does");
-      }
-      catch (Exception e) {
+          fail("testIteratorDefSyntaxForObtainingResultBag: Test failed as obtained Result Data not an instance of SelectResults. Query= " + q.getQueryString());
+        if (((SelectResults) r).getCollectionType().allowsDuplicates())
+          fail("testIteratorDefSyntaxForObtainingResultBag: results of query should not allow duplicates, but says it does");
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
     CacheUtils.log("TestCase:testIteratorDefSyntaxForObtainingResultSet PASS");
   }
-  
-  
+
   @Test
   public void testNOValueconstraintInCreatRegion() throws Exception {
-      CacheUtils.createRegion("pos", null);  
-      String queries[] = {
-        "IMPORT org.apache.geode.cache.\"query\".data.Portfolio;"+ 
-"SELECT DISTINCT * FROM (set<Portfolio>)/pos where iD > 0"
-    };
+    CacheUtils.createRegion("pos", null);
+    String queries[] = { "IMPORT org.apache.geode.cache.\"query\".data.Portfolio;" + "SELECT DISTINCT * FROM (set<Portfolio>)/pos where iD > 0" };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         Object r = q.execute();
         CacheUtils.log(Utils.printResult(r));
-     }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
     CacheUtils.log("TestCase: testNOValueconstraintInCreatRegion PASS");
-  } 
-  
+  }
+
   @Test
   public void testNOConstraintOnRegion() throws Exception {
-      Region region = CacheUtils.createRegion("portfl",null); 
-      for (int i = 0; i < 4; i++) {
+    Region region = CacheUtils.createRegion("portfl", null);
+    for (int i = 0; i < 4; i++) {
       region.put("" + i, new Portfolio(i));
     }
     CacheUtils.log(region);
-      String queries[] = {
-"IMPORT org.apache.geode.cache.\"query\".data.Position;"+ 
-"IMPORT org.apache.geode.cache.\"query\".data.Portfolio;"+
-"SELECT DISTINCT secId FROM (set<Portfolio>)/portfl, (set<Position>)positions.values WHERE iD > 0",
-    };
+    String queries[] = { "IMPORT org.apache.geode.cache.\"query\".data.Position;" + "IMPORT org.apache.geode.cache.\"query\".data.Portfolio;" + "SELECT DISTINCT secId FROM (set<Portfolio>)/portfl, (set<Position>)positions.values WHERE iD > 0", };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         Object r = q.execute();
         CacheUtils.log(Utils.printResult(r));
-     }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
     CacheUtils.log("TestCase: testNOConstraintOnRegion PASS");
-  } 
-  
+  }
+
 }
- 

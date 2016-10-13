@@ -19,12 +19,12 @@ package org.apache.geode.redis.internal.executor;
 import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class PExpireAtExecutor extends ExpireAtExecutor {
-  
+
   @Override
   protected boolean timeUnitMillis() {
     return true;
   }
-  
+
   @Override
   public String getArgsError() {
     return ArityDef.PEXPIREAT;

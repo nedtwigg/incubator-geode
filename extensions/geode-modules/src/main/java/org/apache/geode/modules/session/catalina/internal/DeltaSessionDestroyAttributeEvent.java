@@ -26,7 +26,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-
 @SuppressWarnings("serial")
 public class DeltaSessionDestroyAttributeEvent implements DeltaSessionAttributeEvent {
 
@@ -64,11 +63,6 @@ public class DeltaSessionDestroyAttributeEvent implements DeltaSessionAttributeE
   }
 
   public String toString() {
-    return new StringBuilder().append("DeltaSessionDestroyAttributeEvent[")
-        .append("attributeName=")
-        .append(this.attributeName)
-        .append("]")
-        .toString();
+    return new StringBuilder().append("DeltaSessionDestroyAttributeEvent[").append("attributeName=").append(this.attributeName).append("]").toString();
   }
 }
-

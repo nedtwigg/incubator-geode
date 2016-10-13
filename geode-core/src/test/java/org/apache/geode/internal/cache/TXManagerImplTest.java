@@ -35,7 +35,6 @@ import org.apache.geode.test.fake.Fakes;
 import org.apache.geode.test.junit.categories.UnitTest;
 import com.jayway.awaitility.Awaitility;
 
-
 @Category(UnitTest.class)
 public class TXManagerImplTest {
   private TXManagerImpl txMgr;
@@ -57,7 +56,7 @@ public class TXManagerImplTest {
     dm = mock(DistributionManager.class);
     txMgr = new TXManagerImpl(mock(CachePerfStats.class), cache);
     txid = new TXId(null, 0);
-    msg = mock(DestroyMessage.class);    
+    msg = mock(DestroyMessage.class);
     txCommitMsg = mock(TXCommitMessage.class);
     member = mock(InternalDistributedMember.class);
     completedTxid = new TXId(member, 1);
@@ -65,66 +64,66 @@ public class TXManagerImplTest {
     latch = new CountDownLatch(1);
     rollbackMsg = new TXRemoteRollbackMessage();
     commitMsg = new TXRemoteCommitMessage();
-    
+
     when(this.msg.canStartRemoteTransaction()).thenReturn(true);
     when(this.msg.canParticipateInTransaction()).thenReturn(true);
 
   }
 
   @Test
-  public void getOrSetHostedTXStateAbleToSetTXStateAndGetLock(){    
+  public void getOrSetHostedTXStateAbleToSetTXStateAndGetLock() {
     TXStateProxy tx = txMgr.getOrSetHostedTXState(txid, msg);
-    
+
     assertNotNull(tx);
-    assertEquals(tx, txMgr.getHostedTXState(txid));  
+    assertEquals(tx, txMgr.getHostedTXState(txid));
     assertTrue(txMgr.getLock(tx, txid));
   }
 
   @Test
-  public void getLockAfterTXStateRemoved() throws InterruptedException{
+  public void getLockAfterTXStateRemoved() throws InterruptedException {
     TXStateProxy tx = txMgr.getOrSetHostedTXState(txid, msg);
-    
-    assertEquals(tx, txMgr.getHostedTXState(txid));  
+
+    assertEquals(tx, txMgr.getHostedTXState(txid));
     assertTrue(txMgr.getLock(tx, txid));
     assertNotNull(tx);
     assertTrue(txMgr.getLock(tx, txid));
     tx.getLock().unlock();
-       
-    TXStateProxy oldtx = txMgr.getOrSetHostedTXState(txid, msg);    
+
+    TXStateProxy oldtx = txMgr.getOrSetHostedTXState(txid, msg);
     assertEquals(tx, oldtx);
-    
+
     Thread t1 = new Thread(new Runnable() {
       public void run() {
         txMgr.removeHostedTXState(txid);
       }
     });
     t1.start();
-    
+
     t1.join();
-    
+
     TXStateProxy curTx = txMgr.getHostedTXState(txid);
     assertNull(curTx);
-    
+
     //after failover command removed the txid from hostedTXState,
     //getLock should put back the original TXStateProxy
     assertTrue(txMgr.getLock(tx, txid));
     assertEquals(tx, txMgr.getHostedTXState(txid));
-    
+
     tx.getLock().unlock();
   }
-  
+
   @Test
-  public void getLockAfterTXStateReplaced() throws InterruptedException{  
+  public void getLockAfterTXStateReplaced() throws InterruptedException {
     TXStateProxy oldtx = txMgr.getOrSetHostedTXState(txid, msg);
-    
-    assertEquals(oldtx, txMgr.getHostedTXState(txid));  
+
+    assertEquals(oldtx, txMgr.getHostedTXState(txid));
     assertTrue(txMgr.getLock(oldtx, txid));
     assertNotNull(oldtx);
     oldtx.getLock().unlock();
-       
-    TXStateProxy tx = txMgr.getOrSetHostedTXState(txid, msg);    
+
+    TXStateProxy tx = txMgr.getOrSetHostedTXState(txid, msg);
     assertEquals(tx, oldtx);
-    
+
     Thread t1 = new Thread(new Runnable() {
       public void run() {
         txMgr.removeHostedTXState(txid);
@@ -133,31 +132,31 @@ public class TXManagerImplTest {
       }
     });
     t1.start();
-    
+
     t1.join();
-   
+
     TXStateProxy curTx = txMgr.getHostedTXState(txid);
     assertNotNull(curTx);
     //replaced
     assertNotEquals(tx, curTx);
-    
+
     //after TXStateProxy replaced, getLock will not get 
     assertFalse(txMgr.getLock(tx, txid));
-    
+
   }
 
   @Test
-  public void getLockAfterTXStateCommitted() throws InterruptedException{
+  public void getLockAfterTXStateCommitted() throws InterruptedException {
     TXStateProxy oldtx = txMgr.getOrSetHostedTXState(txid, msg);
-    
-    assertEquals(oldtx, txMgr.getHostedTXState(txid));  
+
+    assertEquals(oldtx, txMgr.getHostedTXState(txid));
     assertTrue(txMgr.getLock(oldtx, txid));
     assertNotNull(oldtx);
     oldtx.getLock().unlock();
-       
-    TXStateProxy tx = txMgr.getOrSetHostedTXState(txid, msg);    
+
+    TXStateProxy tx = txMgr.getOrSetHostedTXState(txid, msg);
     assertEquals(tx, oldtx);
-    
+
     Thread t1 = new Thread(new Runnable() {
       public void run() {
         when(msg.getTXOriginatorClient()).thenReturn(mock(InternalDistributedMember.class));
@@ -179,57 +178,56 @@ public class TXManagerImplTest {
       }
     });
     t1.start();
-    
+
     t1.join();
-   
+
     TXStateProxy curTx = txMgr.getHostedTXState(txid);
     assertNull(curTx);
-    
+
     assertFalse(tx.isInProgress());
     //after TXStateProxy committed, getLock will get the lock for the oldtx
     //but caller should not perform ops on this TXStateProxy
-    assertTrue(txMgr.getLock(tx, txid));    
-  } 
+    assertTrue(txMgr.getLock(tx, txid));
+  }
 
   @Test
-  public void masqueradeAsCanGetLock() throws InterruptedException{  
+  public void masqueradeAsCanGetLock() throws InterruptedException {
     TXStateProxy tx;
 
     tx = txMgr.masqueradeAs(msg);
     assertNotNull(tx);
   }
-  
+
   @Test
-  public void masqueradeAsCanGetLockAfterTXStateIsReplaced() throws InterruptedException{  
+  public void masqueradeAsCanGetLockAfterTXStateIsReplaced() throws InterruptedException {
     TXStateProxy tx;
-    
+
     Thread t1 = new Thread(new Runnable() {
       public void run() {
         tx1 = txMgr.getHostedTXState(txid);
         assertNull(tx1);
-        tx1 =txMgr.getOrSetHostedTXState(txid, msg);
+        tx1 = txMgr.getOrSetHostedTXState(txid, msg);
         assertNotNull(tx1);
         assertTrue(txMgr.getLock(tx1, txid));
 
         latch.countDown();
-        
-        Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS)
-        .atMost(30, TimeUnit.SECONDS).until(() -> tx1.getLock().hasQueuedThreads()); 
-        
+
+        Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS).until(() -> tx1.getLock().hasQueuedThreads());
+
         txMgr.removeHostedTXState(txid);
-        
-        tx2 =txMgr.getOrSetHostedTXState(txid, msg);
+
+        tx2 = txMgr.getOrSetHostedTXState(txid, msg);
         assertNotNull(tx2);
         assertTrue(txMgr.getLock(tx2, txid));
-        
+
         tx2.getLock().unlock();
         tx1.getLock().unlock();
       }
     });
     t1.start();
-            
+
     assertTrue(latch.await(60, TimeUnit.SECONDS));
-  
+
     tx = txMgr.masqueradeAs(msg);
     assertNotNull(tx);
     assertEquals(tx, tx2);
@@ -238,7 +236,7 @@ public class TXManagerImplTest {
     t1.join();
 
   }
-  
+
   @Test
   public void testTxStateWithNotFinishedTx() {
     TXStateProxy tx = txMgr.getOrSetHostedTXState(notCompletedTxid, msg);
@@ -248,8 +246,8 @@ public class TXManagerImplTest {
   @Test
   public void testTxStateWithCommittedTx() throws InterruptedException {
     when(msg.getTXOriginatorClient()).thenReturn(mock(InternalDistributedMember.class));
-    setupTx(); 
-    
+    setupTx();
+
     TXStateProxy tx = txMgr.masqueradeAs(commitMsg);
     try {
       tx.commit();
@@ -258,12 +256,12 @@ public class TXManagerImplTest {
     }
     assertFalse(tx.isInProgress());
   }
-  
+
   @Test
   public void testTxStateWithRolledBackTx() throws InterruptedException {
     when(msg.getTXOriginatorClient()).thenReturn(mock(InternalDistributedMember.class));
     setupTx();
-    
+
     TXStateProxy tx = txMgr.masqueradeAs(rollbackMsg);
     try {
       tx.rollback();
@@ -296,8 +294,7 @@ public class TXManagerImplTest {
 
         TXStateProxy existingTx = masqueradeToRollback();
         latch.countDown();
-        Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS)
-        .atMost(30, TimeUnit.SECONDS).until(() -> tx1.getLock().hasQueuedThreads());
+        Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS).until(() -> tx1.getLock().hasQueuedThreads());
 
         rollbackTransaction(existingTx);
       }

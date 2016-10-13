@@ -44,19 +44,16 @@ public class LogLevelConverter implements Converter<String> {
 
   @Override
   public boolean supports(Class<?> type, String optionContext) {
-   return String.class.equals(type) && ConverterHint.LOG_LEVEL.equals(optionContext);
+    return String.class.equals(type) && ConverterHint.LOG_LEVEL.equals(optionContext);
   }
 
   @Override
-  public String convertFromText(String value, Class<?> targetType,
-      String optionContext) {
+  public String convertFromText(String value, Class<?> targetType, String optionContext) {
     return value;
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String existingData, String optionContext,
-      MethodTarget target) {
+  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
     completions.addAll(logLevels);
     return !completions.isEmpty();
   }

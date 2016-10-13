@@ -48,14 +48,14 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 
 public class LuceneListIndexFunctionJUnitTest {
-  
+
   @Test
   @SuppressWarnings("unchecked")
   public void testExecute() throws Throwable {
     GemFireCacheImpl cache = Fakes.cache();
     LuceneServiceImpl service = mock(LuceneServiceImpl.class);
     when(cache.getService(InternalLuceneService.class)).thenReturn(service);
-    
+
     FunctionContext context = mock(FunctionContext.class);
     ResultSender resultSender = mock(ResultSender.class);
     when(context.getResultSender()).thenReturn(resultSender);
@@ -71,13 +71,13 @@ public class LuceneListIndexFunctionJUnitTest {
     allIndexes.add(index1);
     allIndexes.add(index2);
     when(service.getAllIndexes()).thenReturn(allIndexes);
-    
+
     LuceneListIndexFunction function = new LuceneListIndexFunction();
     function = spy(function);
     Mockito.doReturn(cache).when(function).getCache();
     function.execute(context);
-    
-    ArgumentCaptor<Set> resultCaptor  = ArgumentCaptor.forClass(Set.class);
+
+    ArgumentCaptor<Set> resultCaptor = ArgumentCaptor.forClass(Set.class);
     verify(resultSender).lastResult(resultCaptor.capture());
     Set<String> result = resultCaptor.getValue();
 
@@ -85,9 +85,8 @@ public class LuceneListIndexFunctionJUnitTest {
     assertEquals(expectedResult, result);
   }
 
-  private LuceneIndexImpl getMockLuceneIndex(final String indexName)
-  {
-    String[] searchableFields={"field1","field2"};
+  private LuceneIndexImpl getMockLuceneIndex(final String indexName) {
+    String[] searchableFields = { "field1", "field2" };
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", new StandardAnalyzer());
     fieldAnalyzers.put("field2", new KeywordAnalyzer());

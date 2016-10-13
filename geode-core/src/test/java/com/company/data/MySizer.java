@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package com.company.data;
+
 /**
  * A <code>Declarable</code> <code>ObjectSizer</code> for used for XML testing
  *
@@ -29,11 +30,11 @@ public class MySizer implements ObjectSizer, Declarable {
 
   String name;
 
-  public int sizeof( Object o ) {
+  public int sizeof(Object o) {
     return ObjectSizer.DEFAULT.sizeof(o);
   }
 
   public void init(Properties props) {
-      this.name = props.getProperty("name", "defaultName");
+    this.name = props.getProperty("name", "defaultName");
   }
 }

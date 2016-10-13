@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import java.io.DataInput;
@@ -49,13 +48,13 @@ public final class AdminConsoleMessage extends PooledDistributionMessage {
   public void setLevel(int level) {
     this.level = level;
   }
-  
+
   @Override
   public void process(DistributionManager dm) {
     if (this.level != Alert.OFF) {
       AlertAppender.getInstance().addAlertListener(this.getSender(), this.level);
     }
-    dm.addAdminConsole(this.getSender()); 
+    dm.addAdminConsole(this.getSender());
   }
 
   public int getDSFID() {
@@ -69,14 +68,13 @@ public final class AdminConsoleMessage extends PooledDistributionMessage {
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.level = in.readInt();
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     return "AdminConsoleMessage from " + this.getSender() + " level=" + level;
   }
 

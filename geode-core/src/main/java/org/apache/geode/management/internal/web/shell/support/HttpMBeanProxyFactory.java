@@ -33,8 +33,7 @@ public class HttpMBeanProxyFactory {
 
   @SuppressWarnings("unchecked")
   public static <T> T createMBeanProxy(final HttpOperationInvoker connection, final ObjectName objectName, final Class<T> mbeanInterface) {
-    return mbeanInterface.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-      new Class<?>[] { mbeanInterface }, new HttpInvocationHandler(connection, objectName)));
+    return mbeanInterface.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { mbeanInterface }, new HttpInvocationHandler(connection, objectName)));
   }
 
 }

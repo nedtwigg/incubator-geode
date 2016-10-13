@@ -55,9 +55,9 @@ public class DiskStoreCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/diskstores", params = "op=backup")
-  public Callable<ResponseEntity<String>> backupDiskStore(@RequestParam(value = CliStrings.BACKUP_DISK_STORE__DISKDIRS) final String dir,
-                                                          @RequestParam(value = CliStrings.BACKUP_DISK_STORE__BASELINEDIR, required = false) final String baselineDir)
-  {
+  public Callable<ResponseEntity<String>> backupDiskStore(@RequestParam(value = CliStrings.BACKUP_DISK_STORE__DISKDIRS)
+  final String dir, @RequestParam(value = CliStrings.BACKUP_DISK_STORE__BASELINEDIR, required = false)
+  final String baselineDir) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.BACKUP_DISK_STORE);
 
     command.addOption(CliStrings.BACKUP_DISK_STORE__DISKDIRS, decode(dir));
@@ -70,9 +70,9 @@ public class DiskStoreCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/diskstores/{name}", params = "op=compact")
-  public Callable<ResponseEntity<String>> compactDiskStore(@PathVariable("name") final String diskStoreNameId,
-                                                           @RequestParam(value = CliStrings.COMPACT_DISK_STORE__GROUP, required = false) final String[] groups)
-  {
+  public Callable<ResponseEntity<String>> compactDiskStore(@PathVariable("name")
+  final String diskStoreNameId, @RequestParam(value = CliStrings.COMPACT_DISK_STORE__GROUP, required = false)
+  final String[] groups) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.COMPACT_DISK_STORE);
 
     command.addOption(CliStrings.COMPACT_DISK_STORE__NAME, decode(diskStoreNameId));
@@ -86,19 +86,19 @@ public class DiskStoreCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.POST, value = "/diskstores")
   @ResponseBody
-  public String createDiskStore(@RequestParam(CliStrings.CREATE_DISK_STORE__NAME) final String diskStoreNameId,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__DIRECTORY_AND_SIZE) final String[] directoryAndSizes,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__ALLOW_FORCE_COMPACTION, defaultValue = "false") final Boolean allowForceCompaction,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__AUTO_COMPACT, defaultValue = "true") final Boolean autoCompact,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__COMPACTION_THRESHOLD, defaultValue = "50") final Integer compactionThreshold,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__MAX_OPLOG_SIZE, defaultValue = "1024") final Integer maxOplogSize,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__QUEUE_SIZE, defaultValue = "0") final Integer queueSize,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__TIME_INTERVAL, defaultValue = "1000") final Long timeInterval,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__WRITE_BUFFER_SIZE, defaultValue = "32768") final Integer writeBufferSize,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__DISK_USAGE_WARNING_PCT, defaultValue = "90") final Float diskUsageWarningPercentage,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__DISK_USAGE_CRITICAL_PCT, defaultValue = "99") final Integer diskUsageCriticalPercentage,
-                                @RequestParam(value = CliStrings.CREATE_DISK_STORE__GROUP, required = false) final String[] groups)
-  {
+  public String createDiskStore(@RequestParam(CliStrings.CREATE_DISK_STORE__NAME)
+  final String diskStoreNameId, @RequestParam(value = CliStrings.CREATE_DISK_STORE__DIRECTORY_AND_SIZE)
+  final String[] directoryAndSizes, @RequestParam(value = CliStrings.CREATE_DISK_STORE__ALLOW_FORCE_COMPACTION, defaultValue = "false")
+  final Boolean allowForceCompaction, @RequestParam(value = CliStrings.CREATE_DISK_STORE__AUTO_COMPACT, defaultValue = "true")
+  final Boolean autoCompact, @RequestParam(value = CliStrings.CREATE_DISK_STORE__COMPACTION_THRESHOLD, defaultValue = "50")
+  final Integer compactionThreshold, @RequestParam(value = CliStrings.CREATE_DISK_STORE__MAX_OPLOG_SIZE, defaultValue = "1024")
+  final Integer maxOplogSize, @RequestParam(value = CliStrings.CREATE_DISK_STORE__QUEUE_SIZE, defaultValue = "0")
+  final Integer queueSize, @RequestParam(value = CliStrings.CREATE_DISK_STORE__TIME_INTERVAL, defaultValue = "1000")
+  final Long timeInterval, @RequestParam(value = CliStrings.CREATE_DISK_STORE__WRITE_BUFFER_SIZE, defaultValue = "32768")
+  final Integer writeBufferSize, @RequestParam(value = CliStrings.CREATE_DISK_STORE__DISK_USAGE_WARNING_PCT, defaultValue = "90")
+  final Float diskUsageWarningPercentage, @RequestParam(value = CliStrings.CREATE_DISK_STORE__DISK_USAGE_CRITICAL_PCT, defaultValue = "99")
+  final Integer diskUsageCriticalPercentage, @RequestParam(value = CliStrings.CREATE_DISK_STORE__GROUP, required = false)
+  final String[] groups) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.CREATE_DISK_STORE);
 
     command.addOption(CliStrings.CREATE_DISK_STORE__NAME, diskStoreNameId);
@@ -122,9 +122,9 @@ public class DiskStoreCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/diskstores/{name}")
   @ResponseBody
-  public String describeDiskStore(@PathVariable("name") final String diskStoreNameId,
-                                  @RequestParam(CliStrings.DESCRIBE_DISK_STORE__MEMBER) final String memberNameId)
-  {
+  public String describeDiskStore(@PathVariable("name")
+  final String diskStoreNameId, @RequestParam(CliStrings.DESCRIBE_DISK_STORE__MEMBER)
+  final String memberNameId) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESCRIBE_DISK_STORE);
     command.addOption(CliStrings.DESCRIBE_DISK_STORE__MEMBER, memberNameId);
     command.addOption(CliStrings.DESCRIBE_DISK_STORE__NAME, decode(diskStoreNameId));
@@ -134,9 +134,9 @@ public class DiskStoreCommandsController extends AbstractCommandsController {
   // TODO determine whether Async functionality is required
   @RequestMapping(method = RequestMethod.DELETE, value = "/diskstores/{name}")
   @ResponseBody
-  public String destroyDiskStore(@PathVariable("name") final String diskStoreNameId,
-                                 @RequestParam(value = CliStrings.DESTROY_DISK_STORE__GROUP, required = false) final String[] groups)
-  {
+  public String destroyDiskStore(@PathVariable("name")
+  final String diskStoreNameId, @RequestParam(value = CliStrings.DESTROY_DISK_STORE__GROUP, required = false)
+  final String[] groups) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESTROY_DISK_STORE);
 
     command.addOption(CliStrings.DESTROY_DISK_STORE__NAME, decode(diskStoreNameId));
@@ -151,7 +151,8 @@ public class DiskStoreCommandsController extends AbstractCommandsController {
   // TODO determine whether Async functionality is required
   @RequestMapping(method = RequestMethod.POST, value = "/diskstores/{id}", params = "op=revoke")
   @ResponseBody
-  public String revokeMissingDiskStore(@PathVariable("id") final String diskStoreId) {
+  public String revokeMissingDiskStore(@PathVariable("id")
+  final String diskStoreId) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.REVOKE_MISSING_DISK_STORE);
     command.addOption(CliStrings.REVOKE_MISSING_DISK_STORE__ID, decode(diskStoreId));
     return processCommand(command.toString());

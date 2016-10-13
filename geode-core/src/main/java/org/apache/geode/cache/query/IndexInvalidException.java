@@ -31,8 +31,8 @@ import org.apache.geode.GemFireException;
  */
 
 public class IndexInvalidException extends GemFireException {
-private static final long serialVersionUID = 3285601274732772770L;
-  
+  private static final long serialVersionUID = 3285601274732772770L;
+
   /**
    * Construct an instance of IndexInvalidException
    * @param msg the error message
@@ -40,7 +40,7 @@ private static final long serialVersionUID = 3285601274732772770L;
   public IndexInvalidException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Construct an instance of IndexInvalidException
    * @param msg the error message
@@ -50,7 +50,7 @@ private static final long serialVersionUID = 3285601274732772770L;
     super(msg);
     initCause(cause);
   }
-  
+
   /**
    * Construct an instance of IndexInvalidException
    * @param cause a Throwable cause
@@ -59,5 +59,5 @@ private static final long serialVersionUID = 3285601274732772770L;
     super(cause.getCause() != null ? cause.getCause().getMessage() : cause.getMessage());
     initCause(cause);
   }
-  
+
 }

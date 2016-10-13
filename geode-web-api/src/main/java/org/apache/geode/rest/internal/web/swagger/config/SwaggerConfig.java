@@ -41,8 +41,7 @@ import org.springframework.context.annotation.Configuration;
 @SuppressWarnings("unused")
 public class SwaggerConfig {
 
-  protected static final List<String> DEFAULT_INCLUDE_PATTERNS = Arrays
-      .asList("/.*");
+  protected static final List<String> DEFAULT_INCLUDE_PATTERNS = Arrays.asList("/.*");
 
   protected static final String SWAGGER_GROUP = "gemfireApi";
 
@@ -59,13 +58,7 @@ public class SwaggerConfig {
    * API Info as it appears on the Swagger-UI page
    */
   private ApiInfo apiInfo() {
-    return new ApiInfo(
-        LocalizedStrings.SwaggerConfig_VENDOR_PRODUCT_LINE.toLocalizedString(),
-        LocalizedStrings.SwaggerConfig_DESCRIPTOR.toLocalizedString(),
-        LocalizedStrings.SwaggerConfig_EULA_LINK.toLocalizedString(),
-        LocalizedStrings.SwaggerConfig_SUPPORT_LINK.toLocalizedString(),
-        LocalizedStrings.SwaggerConfig_DOC_TITLE.toLocalizedString(),
-        LocalizedStrings.SwaggerConfig_DOC_LINK.toLocalizedString());
+    return new ApiInfo(LocalizedStrings.SwaggerConfig_VENDOR_PRODUCT_LINE.toLocalizedString(), LocalizedStrings.SwaggerConfig_DESCRIPTOR.toLocalizedString(), LocalizedStrings.SwaggerConfig_EULA_LINK.toLocalizedString(), LocalizedStrings.SwaggerConfig_SUPPORT_LINK.toLocalizedString(), LocalizedStrings.SwaggerConfig_DOC_TITLE.toLocalizedString(), LocalizedStrings.SwaggerConfig_DOC_LINK.toLocalizedString());
   }
 
   /**
@@ -93,8 +86,7 @@ public class SwaggerConfig {
     // ApiListingReferenceScanner
     // Note that swaggerCache() is by DefaultSwaggerController to serve the
     // Swagger JSON
-    SwaggerApiResourceListing swaggerApiResourceListing = new SwaggerApiResourceListing(
-        springSwaggerConfig.swaggerCache(), SWAGGER_GROUP);
+    SwaggerApiResourceListing swaggerApiResourceListing = new SwaggerApiResourceListing(springSwaggerConfig.swaggerCache(), SWAGGER_GROUP);
 
     // set required Swagger settings
     swaggerApiResourceListing.setSwaggerGlobalSettings(swaggerGlobalSettings());
@@ -108,12 +100,10 @@ public class SwaggerConfig {
 
     // every SwaggerApiResourceListing needs an ApiListingReferenceScanner to
     // scan the Spring RequestMappings
-    swaggerApiResourceListing
-        .setApiListingReferenceScanner(apiListingReferenceScanner());
+    swaggerApiResourceListing.setApiListingReferenceScanner(apiListingReferenceScanner());
 
     // global authorization - see the Swagger documentation
-    swaggerApiResourceListing.setAuthorizationTypes(Collections
-        .<AuthorizationType> emptyList());
+    swaggerApiResourceListing.setAuthorizationTypes(Collections.<AuthorizationType> emptyList());
 
     return swaggerApiResourceListing;
   }
@@ -124,12 +114,9 @@ public class SwaggerConfig {
   @Bean
   public SwaggerGlobalSettings swaggerGlobalSettings() {
     SwaggerGlobalSettings swaggerGlobalSettings = new SwaggerGlobalSettings();
-    swaggerGlobalSettings.setGlobalResponseMessages(springSwaggerConfig
-        .defaultResponseMessages());
-    swaggerGlobalSettings.setIgnorableParameterTypes(springSwaggerConfig
-        .defaultIgnorableParameterTypes());
-    swaggerGlobalSettings.setParameterDataTypes(springSwaggerModelConfig
-        .defaultParameterDataTypes());
+    swaggerGlobalSettings.setGlobalResponseMessages(springSwaggerConfig.defaultResponseMessages());
+    swaggerGlobalSettings.setIgnorableParameterTypes(springSwaggerConfig.defaultIgnorableParameterTypes());
+    swaggerGlobalSettings.setParameterDataTypes(springSwaggerModelConfig.defaultParameterDataTypes());
     return swaggerGlobalSettings;
   }
 
@@ -144,20 +131,16 @@ public class SwaggerConfig {
 
     // Picks up all of the registered Spring RequestMappingHandlerMappings
     // during scanning...
-    apiListingReferenceScanner
-        .setRequestMappingHandlerMapping(springSwaggerConfig
-            .swaggerRequestMappingHandlerMappings());
+    apiListingReferenceScanner.setRequestMappingHandlerMapping(springSwaggerConfig.swaggerRequestMappingHandlerMappings());
 
     // Excludes any Controllers with the supplied Annotations...
-    apiListingReferenceScanner.setExcludeAnnotations(springSwaggerConfig
-        .defaultExcludeAnnotations());
+    apiListingReferenceScanner.setExcludeAnnotations(springSwaggerConfig.defaultExcludeAnnotations());
 
     // Only include paths that match the supplied Regular Expressions...
     apiListingReferenceScanner.setIncludePatterns(DEFAULT_INCLUDE_PATTERNS);
 
     //
-    apiListingReferenceScanner.setResourceGroupingStrategy(springSwaggerConfig
-        .defaultResourceGroupingStrategy());
+    apiListingReferenceScanner.setResourceGroupingStrategy(springSwaggerConfig.defaultResourceGroupingStrategy());
 
     // PathProvider used to generate the appropriate uri's
     apiListingReferenceScanner.setSwaggerPathProvider(apiPathProvider());
@@ -174,8 +157,7 @@ public class SwaggerConfig {
   @Bean
   public RestApiPathProvider apiPathProvider() {
     RestApiPathProvider apiPathProvider = new RestApiPathProvider(docsLocation);
-    apiPathProvider.setDefaultPathProvider(springSwaggerConfig
-        .defaultSwaggerPathProvider());
+    apiPathProvider.setDefaultPathProvider(springSwaggerConfig.defaultSwaggerPathProvider());
     return apiPathProvider;
   }
 

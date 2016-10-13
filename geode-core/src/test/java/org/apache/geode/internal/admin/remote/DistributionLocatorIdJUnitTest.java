@@ -23,7 +23,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.junit.Test;
-import org.junit.Before; 
+import org.junit.Before;
 import org.junit.After;
 import org.junit.experimental.categories.Category;
 
@@ -51,4 +51,4 @@ public class DistributionLocatorIdJUnitTest {
 
   }
 
-} 
+}

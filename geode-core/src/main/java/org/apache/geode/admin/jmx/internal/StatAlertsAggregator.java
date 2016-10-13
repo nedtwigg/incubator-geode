@@ -41,8 +41,7 @@ public interface StatAlertsAggregator {
    *                StatAlertDefinition to retrieve
    * @return StatAlertDefinition
    */
-  public StatAlertDefinition getAlertDefinition(
-      StatAlertDefinition alertDefinition);
+  public StatAlertDefinition getAlertDefinition(StatAlertDefinition alertDefinition);
 
   /**
    * This method can be used to retrieve all available stat alert definitions.

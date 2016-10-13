@@ -38,9 +38,7 @@ public class IntegratedClientAuthDUnitTest extends AbstractSecureServerDUnitTest
   @Test
   public void authWithCorrectPasswordShouldPass() {
     client1.invoke("logging in super-user with correct password", () -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                 .addPoolServer("localhost", serverPort)
-                                                                                                 .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
 
@@ -56,12 +54,8 @@ public class IntegratedClientAuthDUnitTest extends AbstractSecureServerDUnitTest
     client2.invoke("logging in super-user with wrong password", () -> {
       AuthenticationFailedException expected = new AuthenticationFailedException("Authentication error. Please check your credentials.");
 
-      catchException(new ClientCacheFactory(createClientProperties("super-user", "wrong")).setPoolSubscriptionEnabled(true)
-                                                                                          .addPoolServer("localhost", serverPort))
-        .create();
+      catchException(new ClientCacheFactory(createClientProperties("super-user", "wrong")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort)).create();
       assertThat((Throwable) caughtException()).hasCause(expected);
     });
   }
 }
-
-

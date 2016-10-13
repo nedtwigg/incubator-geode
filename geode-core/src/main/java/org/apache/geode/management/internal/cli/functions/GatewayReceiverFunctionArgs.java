@@ -25,7 +25,7 @@ public class GatewayReceiverFunctionArgs implements Serializable {
   private static final long serialVersionUID = -5158224572470173267L;
 
   private final Boolean manualStart;
-  
+
   private final Integer startPort;
 
   private final Integer endPort;
@@ -38,9 +38,7 @@ public class GatewayReceiverFunctionArgs implements Serializable {
 
   private final String[] gatewayTransportFilters;
 
-  public GatewayReceiverFunctionArgs(Boolean manualStart, Integer startPort, Integer endPort,
-      String bindAddress, Integer socketBufferSize,
-      Integer maximumTimeBetweenPings, String[] gatewayTransportFilters) {
+  public GatewayReceiverFunctionArgs(Boolean manualStart, Integer startPort, Integer endPort, String bindAddress, Integer socketBufferSize, Integer maximumTimeBetweenPings, String[] gatewayTransportFilters) {
     this.manualStart = manualStart;
     this.startPort = startPort;
     this.endPort = endPort;
@@ -49,31 +47,31 @@ public class GatewayReceiverFunctionArgs implements Serializable {
     this.maximumTimeBetweenPings = maximumTimeBetweenPings;
     this.gatewayTransportFilters = gatewayTransportFilters;
   }
-  
+
   public Boolean isManualStart() {
     return this.manualStart;
   }
-  
+
   public Integer getStartPort() {
     return this.startPort;
   }
-  
+
   public Integer getEndPort() {
     return this.endPort;
   }
-  
+
   public String getBindAddress() {
     return this.bindAddress;
   }
-  
+
   public Integer getSocketBufferSize() {
     return this.socketBufferSize;
   }
-  
+
   public Integer getMaximumTimeBetweenPings() {
     return this.maximumTimeBetweenPings;
   }
-  
+
   public String[] getGatewayTransportFilters() {
     return this.gatewayTransportFilters;
   }

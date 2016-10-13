@@ -39,7 +39,7 @@ public class Invoke {
 
   protected Invoke() {
   }
-  
+
   /**
    * Invokes a <code>SerializableRunnable</code> in every VM that
    * DUnit knows about.
@@ -58,7 +58,7 @@ public class Invoke {
 
       for (int vmIndex = 0; vmIndex < host.getVMCount(); vmIndex++) {
         VM vm = host.getVM(vmIndex);
-        if (name!=null)
+        if (name != null)
           vm.invoke(name, runnable);
         else
           vm.invoke(runnable);
@@ -76,7 +76,7 @@ public class Invoke {
   public static void invokeInEveryVM(final Class<?> targetClass, final String targetMethod) {
     for (int hostIndex = 0; hostIndex < Host.getHostCount(); hostIndex++) {
       Host host = Host.getHost(hostIndex);
-  
+
       for (int vmIndex = 0; vmIndex < host.getVMCount(); vmIndex++) {
         VM vm = host.getVM(vmIndex);
         vm.invoke(targetClass, targetMethod);
@@ -93,14 +93,13 @@ public class Invoke {
   public static void invokeInEveryVM(final Class<?> targetClass, final String targetMethod, final Object[] methodArgs) {
     for (int hostIndex = 0; hostIndex < Host.getHostCount(); hostIndex++) {
       Host host = Host.getHost(hostIndex);
-  
+
       for (int vmIndex = 0; vmIndex < host.getVMCount(); vmIndex++) {
         VM vm = host.getVM(vmIndex);
         vm.invoke(targetClass, targetMethod, methodArgs);
       }
     }
   }
-
 
   /**
    * Invokes a <code>SerializableCallable</code> in every VM that
@@ -119,7 +118,7 @@ public class Invoke {
       Host host = Host.getHost(h);
       for (int v = 0; v < host.getVMCount(); v++) {
         VM vm = host.getVM(v);
-        if(name != null)
+        if (name != null)
           ret.put(vm, vm.invoke(name, callable));
         else
           ret.put(vm, vm.invoke(callable));
@@ -164,7 +163,7 @@ public class Invoke {
   public static void invokeInEveryVMRepeatingIfNecessary(final RepeatableRunnable runnable, final long repeatTimeoutMs) {
     for (int h = 0; h < Host.getHostCount(); h++) {
       Host host = Host.getHost(h);
-  
+
       for (int v = 0; v < host.getVMCount(); v++) {
         VM vm = host.getVM(v);
         vm.invokeRepeatingIfNecessary(runnable, repeatTimeoutMs);

@@ -30,14 +30,9 @@ package org.apache.geode.cache;
  * @deprecated as of 6.5 use {@link DiskStore} instead
  */
 @Deprecated
-public interface DiskWriteAttributes
-  extends java.io.Serializable {
-
-
+public interface DiskWriteAttributes extends java.io.Serializable {
 
   //////////////////////  Instance Methods  //////////////////////
-
- 
 
   /**
    * Returns true if this <code>DiskWriteAttributes</code> object
@@ -48,8 +43,7 @@ public interface DiskWriteAttributes
    */
   @Deprecated
   public boolean isSynchronous();
-  
-  
+
   /** 
    * Returns true if the oplogs is to be rolled to a more condensed format (on disk)
    * 

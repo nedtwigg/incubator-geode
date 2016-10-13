@@ -36,7 +36,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class ZipUtilsJUnitTest {
-  
+
   private String destinationFolderName = "destination";
   private String clusterFolderName = "cluster";
   private String groupFolderName = "group";
@@ -84,7 +84,7 @@ public class ZipUtilsJUnitTest {
     ZipUtils.unzip(zipFile.getCanonicalPath(), destinationFolder.getCanonicalPath());
     assertTrue(destinationFolder.exists());
     assertTrue(destinationFolder.isDirectory());
-    
+
     File[] destinationSubDirs = destinationFolder.listFiles();
     assertNotNull(destinationSubDirs);
     assertEquals(2, destinationSubDirs.length);

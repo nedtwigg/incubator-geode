@@ -32,10 +32,10 @@ public class RemoveAllOperationContext extends OperationContext {
 
   /** The collection of keys for the operation */
   private Collection<?> keys;
-  
+
   /** True if this is a post-operation context */
   private boolean postOperation = false;
-  
+
   private Object callbackArg;
 
   /**

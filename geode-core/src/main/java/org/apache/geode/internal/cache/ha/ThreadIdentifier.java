@@ -58,11 +58,11 @@ public class ThreadIdentifier implements DataSerializable {
    * Generates thread ids for parallel wan usage.
    */
   public enum WanType {
-    RESERVED,  // original thread id incl putAll (or old format)
-    PRIMARY,   // parallel new wan
+    RESERVED, // original thread id incl putAll (or old format)
+    PRIMARY, // parallel new wan
     SECONDARY, // parallel new wan
-    PARALLEL;  // parallel old wan
-    
+    PARALLEL; // parallel old wan
+
     /**
      * Generates a new thread id for usage in a parallel wan context.
      * @param threadId the original thread id
@@ -72,12 +72,9 @@ public class ThreadIdentifier implements DataSerializable {
      */
     public long generateWanId(long threadId, long offset, int gatewayIndex) {
       assert this != RESERVED;
-      return Bits.WAN_TYPE.shift(ordinal()) 
-          | Bits.WAN.shift(offset) 
-          | Bits.GATEWAY_ID.shift(gatewayIndex) 
-          | threadId;
+      return Bits.WAN_TYPE.shift(ordinal()) | Bits.WAN.shift(offset) | Bits.GATEWAY_ID.shift(gatewayIndex) | threadId;
     }
-    
+
     /**
      * Returns true if the supplied value is a wan thread identifier.
      * @param tid the thread
@@ -87,29 +84,29 @@ public class ThreadIdentifier implements DataSerializable {
       return Bits.WAN_TYPE.extract(tid) > 0;
     }
   }
-  
+
   /**
    * Provides type-safe bitwise access to the threadID when dealing with generated
    * values for wan id generation.
    */
   protected enum Bits {
-    THREAD_ID   (0, 32),  // bits  0-31 thread id (including fake putAll bits)
-    WAN         (32, 16), // bits 32-47 wan thread index (or bucket for new wan)
-    WAN_TYPE    (48, 8),  // bits 48-55 thread id type
-    GATEWAY_ID  (56, 4),  // bits 56-59 gateway id
-    RESERVED    (60, 4);  // bits 60-63 unused
-    
+    THREAD_ID(0, 32), // bits  0-31 thread id (including fake putAll bits)
+    WAN(32, 16), // bits 32-47 wan thread index (or bucket for new wan)
+    WAN_TYPE(48, 8), // bits 48-55 thread id type
+    GATEWAY_ID(56, 4), // bits 56-59 gateway id
+    RESERVED(60, 4); // bits 60-63 unused
+
     /** the beginning bit position */
     private final int position;
-    
+
     /** the field width */
     private final int width;
-    
+
     private Bits(int position, int width) {
       this.position = position;
       this.width = width;
     }
-    
+
     /**
      * Returns the field bitmask.
      * @return the mask
@@ -117,7 +114,7 @@ public class ThreadIdentifier implements DataSerializable {
     public long mask() {
       return (1L << width) - 1;
     }
-    
+
     /** 
      * Returns the value shifted into the field position.
      * @param val the value to shift
@@ -127,7 +124,7 @@ public class ThreadIdentifier implements DataSerializable {
       assert val <= mask();
       return val << position;
     }
-    
+
     /**
      * Extracts the field bits from the value. 
      * @param val the value
@@ -137,29 +134,26 @@ public class ThreadIdentifier implements DataSerializable {
       return (val >> position) & mask();
     }
   }
-  
+
   public ThreadIdentifier() {
   }
-  
+
   public ThreadIdentifier(final byte[] mid, long threadId) {
     this.membershipID = mid;
     this.threadID = threadId;
   }
 
   @Override
-  public boolean equals(Object obj)
-  {
+  public boolean equals(Object obj) {
     if ((obj == null) || !(obj instanceof ThreadIdentifier)) {
       return false;
     }
-    return (this.threadID == ((ThreadIdentifier)obj).threadID && Arrays.equals(
-        this.membershipID, ((ThreadIdentifier)obj).membershipID));
+    return (this.threadID == ((ThreadIdentifier) obj).threadID && Arrays.equals(this.membershipID, ((ThreadIdentifier) obj).membershipID));
   }
 
   // TODO: Asif : Check this implementation
   @Override
-  public int hashCode()
-  {
+  public int hashCode() {
     int result = 17;
     final int mult = 37;
 
@@ -168,22 +162,20 @@ public class ThreadIdentifier implements DataSerializable {
         result = mult * result + this.membershipID[i];
       }
     }
-    result = mult* result + (int) this.threadID;
-    result = mult* result + (int) (this.threadID >>> 32);
+    result = mult * result + (int) this.threadID;
+    result = mult * result + (int) (this.threadID >>> 32);
 
     return result;
   }
 
- public byte[] getMembershipID()
-  {
+  public byte[] getMembershipID() {
     return membershipID;
   }
 
-  public long getThreadID()
-  {
+  public long getThreadID() {
     return threadID;
   }
-  
+
   public static String toDisplayString(long tid) {
     StringBuilder sb = new StringBuilder();
     long lower = Bits.THREAD_ID.extract(tid);
@@ -193,31 +185,29 @@ public class ThreadIdentifier implements DataSerializable {
       sb.append("|");
     }
     sb.append(lower);
-    
+
     return sb.toString();
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    
+
     sb.append("ThreadId[");
     sb.append(toDisplayString(threadID));
     sb.append("]");
 
     return sb.toString();
   }
-  
+
   public String expensiveToString() {
     Object mbr;
     try {
-      mbr = InternalDistributedMember.readEssentialData(
-          new DataInputStream(new ByteArrayInputStream(membershipID)));
+      mbr = InternalDistributedMember.readEssentialData(new DataInputStream(new ByteArrayInputStream(membershipID)));
+    } catch (Exception e) {
+      mbr = membershipID; // punt and use the bytes
     }
-    catch (Exception e) {
-      mbr = membershipID;  // punt and use the bytes
-    }
-    
+
     return "ThreadId[" + mbr + "; thread " + toDisplayString(threadID) + "]";
   }
 
@@ -258,10 +248,9 @@ public class ThreadIdentifier implements DataSerializable {
    * @return whether the thread id is generated by ParallelGatewaySender
    */
   public static boolean isParallelWANThreadID(long tid) {
-    return WanType.matches(tid) ? true
-        : tid / MAX_THREAD_PER_CLIENT > (MAX_BUCKET_PER_PR + 2);
+    return WanType.matches(tid) ? true : tid / MAX_THREAD_PER_CLIENT > (MAX_BUCKET_PER_PR + 2);
   }
-  
+
   /**
    * Checks if the input thread id is a WAN_TYPE thread id
    * @param tid
@@ -270,43 +259,39 @@ public class ThreadIdentifier implements DataSerializable {
   public static boolean isWanTypeThreadID(long tid) {
     return WanType.matches(tid);
   }
-  
+
   /**
    * create a fake id for an operation on the given bucket
    * @return the fake id
    */
-  public static long createFakeThreadIDForBulkOp(int bucketNumber,
-      long originatingThreadId) {
+  public static long createFakeThreadIDForBulkOp(int bucketNumber, long originatingThreadId) {
     return (MAX_THREAD_PER_CLIENT * (bucketNumber + 1) + originatingThreadId);
   }
-  
+
   /**
    * create a fake id for an operation on the given bucket
    * @return the fake id
    */
-  public static long createFakeThreadIDForParallelGSPrimaryBucket(int bucketId,
-      long originatingThreadId, int gatewayIndex) {
+  public static long createFakeThreadIDForParallelGSPrimaryBucket(int bucketId, long originatingThreadId, int gatewayIndex) {
     return WanType.PRIMARY.generateWanId(originatingThreadId, bucketId, gatewayIndex);
   }
-  
+
   /**
    * create a fake id for an operation on the given bucket
    * @return the fake id
    */
-  public static long createFakeThreadIDForParallelGSSecondaryBucket(
-      int bucketId, long originatingThreadId, int gatewayIndex) {
+  public static long createFakeThreadIDForParallelGSSecondaryBucket(int bucketId, long originatingThreadId, int gatewayIndex) {
     return WanType.SECONDARY.generateWanId(originatingThreadId, bucketId, gatewayIndex);
   }
-  
+
   /**
    * create a fake id for an operation on the given bucket
    * @return the fake id
    */
-  public static long createFakeThreadIDForParallelGateway(int index,
-      long originatingThreadId, int gatewayIndex) {
+  public static long createFakeThreadIDForParallelGateway(int index, long originatingThreadId, int gatewayIndex) {
     return WanType.PARALLEL.generateWanId(originatingThreadId, index, gatewayIndex);
   }
-  
+
   /**
    * checks to see if the membership id of this identifier is the same
    * as in the argument

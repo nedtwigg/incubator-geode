@@ -60,21 +60,20 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * @since GemFire 5.0
  */
-public final class DestroyPartitionedRegionMessage extends PartitionMessage
-{
+public final class DestroyPartitionedRegionMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   private Object cbArg;
 
   /** The specific destroy operation performed on the sender */
   private Operation op;
-  
+
   /** Serial number of the region being removed */
   private int prSerial;
-  
+
   /** Serial numbers of the buckets for this region */
   private int bucketSerials[];
-  
+
   /**
    * Empty constructor to satisfy {@link DataSerializer} requirements
    */
@@ -88,9 +87,7 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage
    * @param processor the processor that the reply will use to notify of the reply.
    * @see #send(Set, PartitionedRegion, RegionEventImpl, int[])
    */
-  private DestroyPartitionedRegionMessage(Set recipients, PartitionedRegion region,
-      ReplyProcessor21 processor,
-      final RegionEventImpl event, int serials[]) {
+  private DestroyPartitionedRegionMessage(Set recipients, PartitionedRegion region, ReplyProcessor21 processor, final RegionEventImpl event, int serials[]) {
     super(recipients, region.getPRId(), processor);
     this.cbArg = event.getRawCallbackArgument();
     this.op = event.getOperation();
@@ -107,33 +104,27 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage
    *          the PartitionedRegion to destroy on each member
    * @return the response on which to wait for the confirmation
    */
-  public static DestroyPartitionedRegionResponse send(Set recipients, PartitionedRegion r,
-      final RegionEventImpl event, int serials[])
-  {
+  public static DestroyPartitionedRegionResponse send(Set recipients, PartitionedRegion r, final RegionEventImpl event, int serials[]) {
     Assert.assertTrue(recipients != null, "DestroyMessage NULL recipients set");
-    DestroyPartitionedRegionResponse resp = new DestroyPartitionedRegionResponse(r.getSystem(),
-        recipients);
-    DestroyPartitionedRegionMessage m = new DestroyPartitionedRegionMessage(
-        recipients, r,
-        resp, event, serials);
+    DestroyPartitionedRegionResponse resp = new DestroyPartitionedRegionResponse(r.getSystem(), recipients);
+    DestroyPartitionedRegionMessage m = new DestroyPartitionedRegionMessage(recipients, r, resp, event, serials);
     r.getDistributionManager().putOutgoing(m);
     return resp;
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, 
-      PartitionedRegion r, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException {
     if (this.op.isLocal()) {
       // notify the advisor that the sending member has locally destroyed (or closed) the region
-            
+
       PartitionProfile pp = r.getRegionAdvisor().getPartitionProfile(getSender());
-      if (pp==null) { //Fix for bug#36863
+      if (pp == null) { //Fix for bug#36863
         return true;
       }
-     // final Lock isClosingWriteLock  = r.getRegionAdvisor().getPartitionProfile(getSender()).getIsClosingWriteLock();
-      
+      // final Lock isClosingWriteLock  = r.getRegionAdvisor().getPartitionProfile(getSender()).getIsClosingWriteLock();
+
       Assert.assertTrue(this.prSerial != DistributionAdvisor.ILLEGAL_SERIAL);
-      
+
       boolean ok = true;
       // Examine this peer's profile and look at the serial number in that
       // profile.  If we have a newer profile, ignore the request.
@@ -148,16 +139,16 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage
       if (ok) {
         RegionAdvisor ra = r.getRegionAdvisor();
         ra.removeIdAndBuckets(this.sender, this.prSerial, this.bucketSerials, !this.op.isClose());
-//      r.getRegionAdvisor().removeId(this.sender);
+        //      r.getRegionAdvisor().removeId(this.sender);
       }
-      
+
       sendReply(getSender(), getProcessorId(), dm, null, r, startTime);
-     /* } finally {
+      /* } finally {
         isClosingWriteLock.unlock();
       }*/
       return false;
     }
-    
+
     // If region's isDestroyed flag is true, we can check if local destroy is done or not and if NOT, 
     // we can invoke destroyPartitionedRegionLocally method.
     if (r.isDestroyed()) {
@@ -165,25 +156,23 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage
       r.destroyPartitionedRegionLocally(!isClose);
       return true;
     }
-    
-    if (logger.isTraceEnabled(LogMarker.DM)) {  
+
+    if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "{} operateOnRegion: {}", getClass().getName(), r.getFullPath());
     }
-    RegionEventImpl event = new RegionEventImpl(r, this.op,
-        this.cbArg, true, r.getMyId());
+    RegionEventImpl event = new RegionEventImpl(r, this.op, this.cbArg, true, r.getMyId());
     r.basicDestroyRegion(event, false, false, true);
 
     return true;
   }
 
   @Override
-  protected void appendFields(StringBuffer buff)
-  {
+  protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
     buff.append("; cbArg=").append(this.cbArg).append("; op=").append(this.op);
     buff.append("; prSerial=" + prSerial);
     buff.append("; bucketSerials (" + bucketSerials.length + ")=(");
-    for (int i = 0; i < bucketSerials.length; i ++) {
+    for (int i = 0; i < bucketSerials.length; i++) {
       buff.append(Integer.toString(bucketSerials[i]));
       if (i < bucketSerials.length - 1) {
         buff.append(", ");
@@ -196,28 +185,26 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.cbArg = DataSerializer.readObject(in);
     this.op = Operation.fromOrdinal(in.readByte());
     this.prSerial = in.readInt();
     int len = in.readInt();
     this.bucketSerials = new int[len];
-    for (int i = 0; i < len ; i ++) {
+    for (int i = 0; i < len; i++) {
       this.bucketSerials[i] = in.readInt();
     }
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(this.cbArg, out);
     out.writeByte(this.op.ordinal);
     out.writeInt(this.prSerial);
     out.writeInt(this.bucketSerials.length);
-    for (int i = 0; i < this.bucketSerials.length; i ++) {
+    for (int i = 0; i < this.bucketSerials.length; i++) {
       out.writeInt(this.bucketSerials[i]);
     }
   }
@@ -227,10 +214,8 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage
    * 
    * @since GemFire 5.0
    */
-  static public class DestroyPartitionedRegionResponse extends ReplyProcessor21
-  {
-    public DestroyPartitionedRegionResponse(InternalDistributedSystem system,
-        Set initMembers) {
+  static public class DestroyPartitionedRegionResponse extends ReplyProcessor21 {
+    public DestroyPartitionedRegionResponse(InternalDistributedSystem system, Set initMembers) {
       super(system, initMembers);
     }
 
@@ -239,8 +224,7 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage
      * acknowledgement that the message was processed.
      */
     @Override
-    protected void processException(ReplyException ex)
-    {
+    protected void processException(ReplyException ex) {
       if (logger.isDebugEnabled()) {
         logger.debug("DestroyRegionResponse ignoring exception", ex);
       }

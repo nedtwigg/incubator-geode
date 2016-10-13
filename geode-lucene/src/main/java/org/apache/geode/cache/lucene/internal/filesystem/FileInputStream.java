@@ -61,16 +61,16 @@ final class FileInputStream extends SeekableInputStream {
 
     return chunk[chunkPosition++] & 0xff;
   }
-  
+
   @Override
   public void seek(long position) throws IOException {
-    if(position > file.length) {
+    if (position > file.length) {
       throw new EOFException();
     }
     int targetChunk = (int) (position / file.getChunkSize());
     int targetPosition = (int) (position % file.getChunkSize());
-    
-    if(targetChunk != (this.chunkId - 1)) {
+
+    if (targetChunk != (this.chunkId - 1)) {
       chunk = file.getFileSystem().getChunk(this.file, targetChunk);
       chunkId = targetChunk + 1;
       chunkPosition = targetPosition;
@@ -78,8 +78,6 @@ final class FileInputStream extends SeekableInputStream {
       chunkPosition = targetPosition;
     }
   }
-  
-  
 
   @Override
   public long skip(long n) throws IOException {
@@ -87,7 +85,7 @@ final class FileInputStream extends SeekableInputStream {
     seek(currentPosition + n);
     return n;
   }
-  
+
   @Override
   public void reset() throws IOException {
     seek(0);
@@ -158,7 +156,7 @@ final class FileInputStream extends SeekableInputStream {
       throw new IOException("Closed");
     }
   }
-  
+
   @Override
   public FileInputStream clone() {
     return new FileInputStream(this);

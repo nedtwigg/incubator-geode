@@ -45,10 +45,10 @@ public class JmxManagerLocatorResponse implements DataSerializableFixedID {
     this.ssl = ssl;
     this.ex = ex;
   }
-  
+
   public JmxManagerLocatorResponse() {
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.host = DataSerializer.readString(in);
     this.port = DataSerializer.readPrimitiveInt(in);
@@ -69,8 +69,7 @@ public class JmxManagerLocatorResponse implements DataSerializableFixedID {
 
   @Override
   public String toString() {
-    return "JmxManagerLocatorResponse [host=" + host + ", port=" + port
-        + ", ssl=" + ssl + ", ex=" + ex + "]";
+    return "JmxManagerLocatorResponse [host=" + host + ", port=" + port + ", ssl=" + ssl + ", ex=" + ex + "]";
   }
 
   public String getHost() {
@@ -86,7 +85,7 @@ public class JmxManagerLocatorResponse implements DataSerializableFixedID {
   public int getPort() {
     return this.port;
   }
-  
+
   public Throwable getException() {
     return this.ex;
   }

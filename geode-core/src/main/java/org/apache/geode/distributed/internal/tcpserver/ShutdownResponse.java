@@ -30,8 +30,8 @@ import org.apache.geode.DataSerializable;
  */
 public class ShutdownResponse implements DataSerializable {
   private static final long serialVersionUID = -7223807212380360314L;
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
   }
 
   public void toData(DataOutput out) throws IOException {

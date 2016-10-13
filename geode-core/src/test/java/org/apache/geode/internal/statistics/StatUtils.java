@@ -61,7 +61,7 @@ public class StatUtils {
   }
 
   private static void addResourceInstsToSet(final File archiveFile, final Set<ResourceInst> resourceInsts) throws IOException {
-    StatArchiveReader reader = new StatArchiveReader(new File[] {archiveFile}, new StatSpec[]{}, true);
+    StatArchiveReader reader = new StatArchiveReader(new File[] { archiveFile }, new StatSpec[] {}, true);
 
     for (Iterator<ResourceInst> it = reader.getResourceInstList().iterator(); it.hasNext();) {
       resourceInsts.add(it.next());
@@ -82,7 +82,7 @@ public class StatUtils {
   }
 
   private static byte[] readBytes(File file) throws IOException {
-    int byteCount = (int)file.length();
+    int byteCount = (int) file.length();
 
     byte[] input = new byte[byteCount];
 

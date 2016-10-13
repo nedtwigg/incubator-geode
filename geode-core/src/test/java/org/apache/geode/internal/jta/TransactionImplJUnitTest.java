@@ -39,9 +39,9 @@ public class TransactionImplJUnitTest {
 
   private static DistributedSystem ds;
   private static TransactionManagerImpl tm;
-  
+
   private UserTransaction utx;
-  
+
   @BeforeClass
   public static void beforeClass() throws Exception {
     Properties props = new Properties();
@@ -49,7 +49,7 @@ public class TransactionImplJUnitTest {
     ds = DistributedSystem.connect(props);
     tm = TransactionManagerImpl.getTransactionManager();
   }
-  
+
   @AfterClass
   public static void afterClass() {
     ds.disconnect();

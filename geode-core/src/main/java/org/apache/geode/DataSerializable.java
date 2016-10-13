@@ -107,8 +107,7 @@ public interface DataSerializable extends Serializable {
    *         A class could not be loaded while reading from
    *         <code>in</code> 
    */
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException;
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException;
 
   ////////////////////////  Inner Classes  ////////////////////////
 

@@ -27,41 +27,39 @@ import org.apache.geode.distributed.DistributedMember;
  * cache listeners at runtime, after the region has already been initialized
  * and is active.
  */
-class WrappedRegionMembershipListener implements
-    RegionMembershipListener {
+class WrappedRegionMembershipListener implements RegionMembershipListener {
 
   private RegionMembershipListener wrappedListener;
-  
+
   private Object initLock = new Object();
-  
+
   /**
    * has initMembers been invoked?
    * @guarded.By initLock
    */
   private boolean initialized;
 
-  
   public WrappedRegionMembershipListener(RegionMembershipListener listener) {
     this.wrappedListener = listener;
   }
-  
+
   /** has initMembers been invoked on this object? */
   public boolean isInitialized() {
-    synchronized(initLock) {
+    synchronized (initLock) {
       return this.initialized;
     }
   }
-  
+
   /** return the wrapped listener object */
   public RegionMembershipListener getWrappedListener() {
     return this.wrappedListener;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.RegionMembershipListener#afterRemoteRegionCrash(org.apache.geode.cache.RegionEvent)
    */
   public void afterRemoteRegionCrash(RegionEvent event) {
-    synchronized(this.initLock) {
+    synchronized (this.initLock) {
       if (this.initialized) {
         this.wrappedListener.afterRemoteRegionCrash(event);
       }
@@ -72,7 +70,7 @@ class WrappedRegionMembershipListener implements
    * @see org.apache.geode.cache.RegionMembershipListener#afterRemoteRegionCreate(org.apache.geode.cache.RegionEvent)
    */
   public void afterRemoteRegionCreate(RegionEvent event) {
-    synchronized(this.initLock) {
+    synchronized (this.initLock) {
       if (this.initialized) {
         this.wrappedListener.afterRemoteRegionCreate(event);
       }
@@ -83,7 +81,7 @@ class WrappedRegionMembershipListener implements
    * @see org.apache.geode.cache.RegionMembershipListener#afterRemoteRegionDeparture(org.apache.geode.cache.RegionEvent)
    */
   public void afterRemoteRegionDeparture(RegionEvent event) {
-    synchronized(this.initLock) {
+    synchronized (this.initLock) {
       if (this.initialized) {
         this.wrappedListener.afterRemoteRegionDeparture(event);
       }
@@ -94,7 +92,7 @@ class WrappedRegionMembershipListener implements
    * @see org.apache.geode.cache.RegionMembershipListener#initialMembers(org.apache.geode.cache.Region, org.apache.geode.distributed.DistributedMember[])
    */
   public void initialMembers(Region region, DistributedMember[] initialMembers) {
-    synchronized(this.initLock) {
+    synchronized (this.initLock) {
       if (!this.initialized) {
         this.wrappedListener.initialMembers(region, initialMembers);
         this.initialized = true;

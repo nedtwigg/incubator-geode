@@ -78,6 +78,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public String getBindAddress();
+
   /**
    * Sets the ip address or host name that this server is to listen on for
    * client connections.
@@ -95,6 +96,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public void setBindAddress(String address) throws AdminException;
+
   /**
    * Returns a string representing the ip address or host name that server locators
    * will tell clients that this server is listening on.
@@ -103,6 +105,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public String getHostnameForClients();
+
   /**
    * Sets the ip address or host name that this server is to listen on for
    * client connections.
@@ -116,6 +119,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public void setHostnameForClients(String name) throws AdminException;
+
   /**
    * Sets whether or not this bridge server should notify clients based on
    * key subscription.
@@ -230,7 +234,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public void setMaximumMessageCount(int maxMessageCount) throws AdminException;
-  
+
   /**
    * Returns the time (in seconds ) after which a message in the client queue
    * will expire.
@@ -245,6 +249,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public void setMessageTimeToLive(int messageTimeToLive) throws AdminException;
+
   /**
    * Sets the list of server groups this bridge server will belong to.
    * By default bridge servers belong to the default global server group
@@ -255,6 +260,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public void setGroups(String[] groups) throws AdminException;
+
   /**
    * Returns the list of server groups that this bridge server belongs to.
    * @return a possibly empty array of <code>String</code>s where
@@ -263,7 +269,7 @@ public interface SystemMemberBridgeServer {
    * @since GemFire 5.7
    */
   public String[] getGroups();
-  
+
   /**
    * Get a description of the load probe for this bridge server.
    * {@link ServerLoadProbe} for details on the load probe.
@@ -304,5 +310,5 @@ public interface SystemMemberBridgeServer {
    * @throws AdminException if the bridge server is running
    */
   public void setLoadPollInterval(long loadPollInterval) throws AdminException;
-  
+
 }

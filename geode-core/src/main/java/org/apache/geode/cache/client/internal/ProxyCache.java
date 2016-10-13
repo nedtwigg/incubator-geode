@@ -51,7 +51,7 @@ import java.util.Set;
  * @since GemFire 6.5
  */
 public class ProxyCache implements RegionService {
-  
+
   private final GemFireCacheImpl cache;
   private UserAttributes userAttributes;
   private ProxyQueryService proxyQueryService;
@@ -66,7 +66,7 @@ public class ProxyCache implements RegionService {
   public void close() {
     close(false);
   }
-  
+
   public void close(boolean keepAlive) {
     if (this.isClosed) {
       return;
@@ -78,13 +78,11 @@ public class ProxyCache implements RegionService {
         this.proxyQueryService.closeCqs(keepAlive);
       }
       UserAttributes.userAttributes.set(this.userAttributes);
-      Iterator<ServerLocation> iter = this.userAttributes.getServerToId()
-          .keySet().iterator();
+      Iterator<ServerLocation> iter = this.userAttributes.getServerToId().keySet().iterator();
       while (iter.hasNext()) {
-        ProxyCacheCloseOp.executeOn(iter.next(), (PoolImpl)this.userAttributes.getPool(),
-            this.userAttributes.getCredentials(), keepAlive);
+        ProxyCacheCloseOp.executeOn(iter.next(), (PoolImpl) this.userAttributes.getPool(), this.userAttributes.getCredentials(), keepAlive);
       }
-      ArrayList<ProxyCache> proxyCache = ((PoolImpl)this.userAttributes.getPool()).getProxyCacheList();
+      ArrayList<ProxyCache> proxyCache = ((PoolImpl) this.userAttributes.getPool()).getProxyCacheList();
       synchronized (proxyCache) {
         proxyCache.remove(this);
       }
@@ -108,8 +106,7 @@ public class ProxyCache implements RegionService {
   public QueryService getQueryService() {
     preOp();
     if (this.proxyQueryService == null) {
-      this.proxyQueryService = new ProxyQueryService(this, userAttributes
-          .getPool().getQueryService());
+      this.proxyQueryService = new ProxyQueryService(this, userAttributes.getPool().getQueryService());
     }
     return this.proxyQueryService;
   }
@@ -126,8 +123,7 @@ public class ProxyCache implements RegionService {
       return null;
     } else {
       if (!this.cache.getRegion(path).getAttributes().getDataPolicy().isEmpty()) {
-        throw new IllegalStateException(
-            "Region's data-policy must be EMPTY when multiuser-authentication is true");
+        throw new IllegalStateException("Region's data-policy must be EMPTY when multiuser-authentication is true");
       }
       return new ProxyRegion(this, this.cache.getRegion(path));
     }
@@ -161,8 +157,7 @@ public class ProxyCache implements RegionService {
   public Object getUserId(Object key) {
     preOp();
     if (!(key instanceof ServerLocation)) {
-      throw new IllegalArgumentException(
-          "Key must be of type ServerLocation, but is " + key.getClass());
+      throw new IllegalArgumentException("Key must be of type ServerLocation, but is " + key.getClass());
     }
     return this.userAttributes.getServerToId().get(key);
   }
@@ -207,15 +202,14 @@ public class ProxyCache implements RegionService {
 
       try {
         return new CacheClosedException(reason, e);
-      }
-      catch (IllegalStateException e2) {
+      } catch (IllegalStateException e2) {
         // Bug 39496 (Jrockit related)  Give up.  The following
         // error is not entirely sane but gives the correct general picture.
         return new CacheClosedException(reason);
       }
     }
   }
-  
+
   public CancelCriterion getCancelCriterion() {
     return this.stopper;
   }
@@ -225,7 +219,7 @@ public class ProxyCache implements RegionService {
    */
   public Set<Region<?, ?>> rootRegions() {
     preOp();
-    Set<Region<?, ?>> rRegions = new HashSet<Region<?,?>>(); 
+    Set<Region<?, ?>> rRegions = new HashSet<Region<?, ?>>();
     Iterator<LocalRegion> it = this.cache.rootRegions().iterator();
     while (it.hasNext()) {
       LocalRegion lr = it.next();
@@ -239,9 +233,11 @@ public class ProxyCache implements RegionService {
   public PdxInstanceFactory createPdxInstanceFactory(String className) {
     return PdxInstanceFactoryImpl.newCreator(className, true);
   }
+
   public PdxInstanceFactory createPdxInstanceFactory(String className, boolean b) {
     return PdxInstanceFactoryImpl.newCreator(className, b);
   }
+
   public PdxInstance createPdxEnum(String className, String enumName, int enumOrdinal) {
     return PdxInstanceFactoryImpl.createPdxEnum(className, enumName, enumOrdinal, this.cache);
   }

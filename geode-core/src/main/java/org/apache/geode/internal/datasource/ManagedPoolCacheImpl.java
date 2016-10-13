@@ -35,10 +35,10 @@ import org.apache.geode.internal.logging.LogService;
  * AbstractPoolCache to inherit the pool bahavior.
  * 
  */
-public class ManagedPoolCacheImpl extends AbstractPoolCache  {
+public class ManagedPoolCacheImpl extends AbstractPoolCache {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1064642271736399718L;
   private ManagedConnectionFactory connFactory;
   private Subject sub;
@@ -47,10 +47,7 @@ public class ManagedPoolCacheImpl extends AbstractPoolCache  {
   /**
    * Constructor initializes the ConnectionPoolCacheImpl properties.
    */
-  public ManagedPoolCacheImpl(ManagedConnectionFactory connFac,
-      Subject subject, ConnectionRequestInfo connReq,
-      javax.resource.spi.ConnectionEventListener eventListner,
-      ConfiguredDataSourceProperties configs) throws PoolException {
+  public ManagedPoolCacheImpl(ManagedConnectionFactory connFac, Subject subject, ConnectionRequestInfo connReq, javax.resource.spi.ConnectionEventListener eventListner, ConfiguredDataSourceProperties configs) throws PoolException {
     super(eventListner, configs);
     connFactory = connFac;
     sub = subject;
@@ -69,13 +66,11 @@ public class ManagedPoolCacheImpl extends AbstractPoolCache  {
     ManagedConnection manConn = null;
     try {
       manConn = connFactory.createManagedConnection(sub, connReqInfo);
-    }
-    catch (ResourceException rex) {
+    } catch (ResourceException rex) {
       rex.printStackTrace();
       throw new PoolException(LocalizedStrings.ManagedPoolCacheImpl_MANAGEDPOOLCACHEIMPLGETNEWCONNECTION_EXCEPTION_IN_CREATING_NEW_MANAGED_POOLEDCONNECTION.toLocalizedString(), rex);
     }
-    manConn
-        .addConnectionEventListener((javax.resource.spi.ConnectionEventListener) connEventListner);
+    manConn.addConnectionEventListener((javax.resource.spi.ConnectionEventListener) connEventListner);
     return manConn;
   }
 
@@ -87,15 +82,12 @@ public class ManagedPoolCacheImpl extends AbstractPoolCache  {
   @Override
   void destroyPooledConnection(Object connectionObject) {
     try {
-      ((ManagedConnection) connectionObject)
-          .removeConnectionEventListener((ConnectionEventListener) connEventListner);
+      ((ManagedConnection) connectionObject).removeConnectionEventListener((ConnectionEventListener) connEventListner);
       ((ManagedConnection) connectionObject).destroy();
       connectionObject = null;
-    }
-    catch (ResourceException rex) {
+    } catch (ResourceException rex) {
       if (logger.isTraceEnabled()) {
-        logger.trace("ManagedPoolcacheImpl::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}",
-            rex.getMessage(), rex);
+        logger.trace("ManagedPoolcacheImpl::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}", rex.getMessage(), rex);
       }
     }
   }

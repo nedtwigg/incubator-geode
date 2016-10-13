@@ -17,80 +17,58 @@
 
 package org.apache.geode.cache.query.facets.lang;
 
-
 //import java.util.*;
 
+public class Department {
+  private String _name;
+  private String _id;
+  private String _office;
+  private Faculty _chairperson;
 
-public class Department
-{
-    private String _name;
-    private String _id;
-    private String _office;
-    private Faculty _chairperson;
+  public Department() {
+  }
 
+  public Department(String name, String id, String office, Faculty chairperson) {
+    _name = name;
+    _id = id;
+    _office = office;
+    _chairperson = chairperson;
+  }
 
-    public Department()
-    {
-    }
+  public String toString() {
+    return getId();
+  }
 
-    public Department(String name, String id, String office, Faculty chairperson)
-    {
-        _name = name;
-        _id = id;
-        _office = office;
-        _chairperson = chairperson;
-    }
-    
+  public String getName() {
+    return _name;
+  }
 
-    public String toString()
-    {
-        return getId();
-    }
-    
+  public String getId() {
+    return _id;
+  }
 
-    public String getName()
-    {
-        return _name;
-    }
+  public String getOffice() {
+    return _office;
+  }
 
-    public String getId()
-    {
-        return _id;
-    }
+  public Faculty getChairperson() {
+    return _chairperson;
+  }
 
+  public void setName(String name) {
+    _name = name;
+  }
 
-    public String getOffice()
-    {
-        return _office;
-    }
+  public void setOffice(String office) {
+    _office = office;
+  }
 
+  public void setChairperson(Faculty chairperson) {
+    _chairperson = chairperson;
+  }
 
-    public Faculty getChairperson()
-    {
-        return _chairperson;
-    }
+  public void setId(String id) {
+    _id = id;
+  }
 
-
-    public void setName(String name)
-    {
-        _name = name;
-    }
-
-
-    public void setOffice(String office)
-    {
-        _office = office;
-    }
-
-
-    public void setChairperson(Faculty chairperson)
-    {
-        _chairperson = chairperson;
-    }
-
-    public void setId(String id)
-    {
-        _id = id;
-    }
-    
 }

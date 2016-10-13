@@ -26,7 +26,7 @@ public class ClientQueueDetail {
    * Client ID
    */
   private String clientId;
-  
+
   /**
    * Current queue size of client which is derived by the formula queueSize = eventsEnqued -
    * eventsRemoved - eventsConflated - markerEventsConflated - eventsExpired -
@@ -155,10 +155,7 @@ public class ClientQueueDetail {
 
   @Override
   public String toString() {
-    return "ClientQueueDetail [clientId=" + clientId + ", queueSize=" + queueSize + ", eventsEnqued=" + eventsEnqued + ", eventsRemoved=" + eventsRemoved
-        + ", eventsConflated=" + eventsConflated + ", markerEventsConflated=" + markerEventsConflated + ", eventsExpired=" + eventsExpired
-        + ", eventsRemovedByQrm=" + eventsRemovedByQrm + ", eventsTaken=" + eventsTaken + ", numVoidRemovals=" + numVoidRemovals + "]";
+    return "ClientQueueDetail [clientId=" + clientId + ", queueSize=" + queueSize + ", eventsEnqued=" + eventsEnqued + ", eventsRemoved=" + eventsRemoved + ", eventsConflated=" + eventsConflated + ", markerEventsConflated=" + markerEventsConflated + ", eventsExpired=" + eventsExpired + ", eventsRemovedByQrm=" + eventsRemovedByQrm + ", eventsTaken=" + eventsTaken + ", numVoidRemovals=" + numVoidRemovals + "]";
   }
-  
 
 }

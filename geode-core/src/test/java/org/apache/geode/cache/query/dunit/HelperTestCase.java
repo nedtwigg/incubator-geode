@@ -62,8 +62,7 @@ public class HelperTestCase extends JUnit4CacheTestCase {
     vm.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        RegionFactory factory = getCache().createRegionFactory(RegionShortcut.PARTITION)
-            .setPartitionAttributes(paf.create());
+        RegionFactory factory = getCache().createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(paf.create());
         if (valueConstraint != null) {
           factory.setValueConstraint(valueConstraint);
         }
@@ -72,12 +71,11 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void createReplicatedRegion(VM vm, final String regionName, final Class valueConstraint) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws Exception {
-        RegionFactory factory = getCache().createRegionFactory(
-            RegionShortcut.REPLICATE);
+        RegionFactory factory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
         if (valueConstraint != null) {
           factory.setValueConstraint(valueConstraint);
         }
@@ -86,12 +84,11 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void createCachingProxyRegion(VM vm, final String regionName, final Class valueConstraint) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws Exception {
-        ClientRegionFactory factory = ((ClientCache) getCache())
-            .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+        ClientRegionFactory factory = ((ClientCache) getCache()).createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
         if (valueConstraint != null) {
           factory.setValueConstraint(valueConstraint);
         }
@@ -100,7 +97,7 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void createCQ(VM vm, final String cqName, final String query, final CqAttributes cqAttr) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws CqException, RegionNotFoundException, CqExistsException {
@@ -113,7 +110,7 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void registerInterest(VM vm, final String regionName) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws CqException, RegionNotFoundException, CqExistsException {
@@ -122,7 +119,7 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void createIndex(VM vm, final String indexName, final String indexedExpression, final String regionPath) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws RegionNotFoundException, CqExistsException, IndexExistsException, IndexNameConflictException {
@@ -131,18 +128,18 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void printIndexMapping(VM vm, final String regionName, final String indexName) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws RegionNotFoundException, CqExistsException, IndexExistsException, IndexNameConflictException {
         Region region = getCache().getRegion("/" + regionName);
-        CompactRangeIndex index = (CompactRangeIndex)getCache().getQueryService().getIndex(region, indexName);
+        CompactRangeIndex index = (CompactRangeIndex) getCache().getQueryService().getIndex(region, indexName);
         System.out.println(index.dump());
         return true;
       }
     });
   }
-  
+
   protected void put(VM vm, final String regionName, final Object key, final Object value) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws RegionNotFoundException, CqExistsException, IndexExistsException, IndexNameConflictException {
@@ -151,11 +148,11 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private CqAttributes createDummyCqAttributes() {
     // Create CQ Attributes.
     CqAttributesFactory cqAf = new CqAttributesFactory();
-    
+
     // Initialize and set CqListener.
     CqListener[] cqListeners = { new CqListener() {
 
@@ -170,13 +167,13 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       @Override
       public void onError(CqEvent aCqEvent) {
       }
-      
-    }};
+
+    } };
     cqAf.initCqListeners(cqListeners);
     CqAttributes cqa = cqAf.create();
     return cqa;
   }
-  
+
   protected AsyncInvocation executeCQ(VM vm, final String cqName) {
     return vm.invokeAsync(new SerializableCallable() {
       public Object call() throws CqException, RegionNotFoundException {
@@ -185,7 +182,7 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   public void stopCacheServer(VM server) {
     server.invoke(new SerializableRunnable("Close CacheServer") {
       public void run() {
@@ -195,7 +192,7 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void startCacheServer(VM server, final int port, final Properties properties) throws Exception {
     createCacheServer(server, port, properties);
     startCacheServers(server);
@@ -209,19 +206,19 @@ public class HelperTestCase extends JUnit4CacheTestCase {
     server.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         getSystem(properties);
-        
-        GemFireCacheImpl cache = (GemFireCacheImpl)getCache();
+
+        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         cache.setCopyOnRead(true);
-        
+
         CacheServer cacheServer = getCache().addCacheServer();
         cacheServer.setPort(port);
-        
+
         QueryTestUtils.setCache(cache);
         return true;
       }
     });
   }
-  
+
   protected void startCacheServers(VM server) {
     server.invoke(new SerializableCallable() {
       public Object call() throws Exception {
@@ -233,24 +230,24 @@ public class HelperTestCase extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   protected void startClient(VM client, final VM[] servers, final int[] ports, final int redundancyLevel, final Properties properties) {
     client.invoke(new CacheSerializableRunnable("Start client") {
       public void run2() throws CacheException {
         getSystem(properties);
-        
+
         final ClientCacheFactory ccf = new ClientCacheFactory(properties);
         for (int i = 0; i < servers.length; i++) {
           ccf.addPoolServer(NetworkUtils.getServerHostName(servers[i].getHost()), ports[i]);
         }
         ccf.setPoolSubscriptionEnabled(true);
         ccf.setPoolSubscriptionRedundancy(redundancyLevel);
-        
-        ClientCache cache = (ClientCache)getClientCache(ccf);
+
+        ClientCache cache = (ClientCache) getClientCache(ccf);
       }
     });
   }
-  
+
   protected Properties getClientProperties() {
     Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0");
@@ -265,4 +262,3 @@ public class HelperTestCase extends JUnit4CacheTestCase {
     return p;
   }
 }
-

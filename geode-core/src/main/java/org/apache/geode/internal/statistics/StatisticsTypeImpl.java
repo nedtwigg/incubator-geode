@@ -59,9 +59,7 @@ public class StatisticsTypeImpl implements StatisticsType {
   /**
    * @see StatisticsTypeXml#read(Reader, StatisticsTypeFactory)
    */
-  public static StatisticsType[] fromXml(Reader reader,
-                                         StatisticsTypeFactory factory)
-    throws IOException {
+  public static StatisticsType[] fromXml(Reader reader, StatisticsTypeFactory factory) throws IOException {
     return (new StatisticsTypeXml()).read(reader, factory);
   }
 
@@ -86,8 +84,7 @@ public class StatisticsTypeImpl implements StatisticsType {
    *         If either <code>name</code> or <code>stats</code> is
    *         <code>null</code>.
    */
-  public StatisticsTypeImpl(String name, String description,
-                            StatisticDescriptor[] stats) {
+  public StatisticsTypeImpl(String name, String description, StatisticDescriptor[] stats) {
     this(name, description, stats, false);
   }
 
@@ -113,8 +110,7 @@ public class StatisticsTypeImpl implements StatisticsType {
    *         If either <code>name</code> or <code>stats</code> is
    *         <code>null</code>.
    */
-  public StatisticsTypeImpl(String name, String description,
-                            StatisticDescriptor[] stats, boolean wrapsSharedClass) {
+  public StatisticsTypeImpl(String name, String description, StatisticDescriptor[] stats, boolean wrapsSharedClass) {
     if (name == null) {
       throw new NullPointerException(LocalizedStrings.StatisticsTypeImpl_CANNOT_HAVE_A_NULL_STATISTICS_TYPE_NAME.toLocalizedString());
     }
@@ -123,18 +119,18 @@ public class StatisticsTypeImpl implements StatisticsType {
       throw new NullPointerException(LocalizedStrings.StatisticsTypeImpl_CANNOT_HAVE_A_NULL_STATISTIC_DESCRIPTORS.toLocalizedString());
     }
     if (stats.length > StatisticsTypeFactory.MAX_DESCRIPTORS_PER_TYPE) {
-      throw new IllegalArgumentException(LocalizedStrings.StatisticsTypeImpl_THE_REQUESTED_DESCRIPTOR_COUNT_0_EXCEEDS_THE_MAXIMUM_WHICH_IS_1.toLocalizedString(new Object[] {Integer.valueOf(stats.length), Integer.valueOf(StatisticsTypeFactory.MAX_DESCRIPTORS_PER_TYPE)}));
+      throw new IllegalArgumentException(LocalizedStrings.StatisticsTypeImpl_THE_REQUESTED_DESCRIPTOR_COUNT_0_EXCEEDS_THE_MAXIMUM_WHICH_IS_1.toLocalizedString(new Object[] { Integer.valueOf(stats.length), Integer.valueOf(StatisticsTypeFactory.MAX_DESCRIPTORS_PER_TYPE) }));
     }
 
     this.name = name;
     this.description = description;
     this.stats = stats;
-    this.statsMap = new HashMap(stats.length*2);
+    this.statsMap = new HashMap(stats.length * 2);
     int intCount = 0;
     int longCount = 0;
     int doubleCount = 0;
-    for (int i=0; i < stats.length; i++) {
-      StatisticDescriptorImpl sd = (StatisticDescriptorImpl)stats[i];
+    for (int i = 0; i < stats.length; i++) {
+      StatisticDescriptorImpl sd = (StatisticDescriptorImpl) stats[i];
       if (sd.getTypeCode() == StatisticDescriptorImpl.INT) {
         if (!wrapsSharedClass) {
           sd.setId(intCount);
@@ -174,13 +170,13 @@ public class StatisticsTypeImpl implements StatisticsType {
   public final StatisticDescriptor[] getStatistics() {
     return this.stats;
   }
-  
+
   public final int nameToId(String name) {
     return nameToDescriptor(name).getId();
   }
 
   public final StatisticDescriptor nameToDescriptor(String name) {
-    StatisticDescriptorImpl stat = (StatisticDescriptorImpl)statsMap.get(name);
+    StatisticDescriptorImpl stat = (StatisticDescriptorImpl) statsMap.get(name);
     if (stat == null) {
       throw new IllegalArgumentException(LocalizedStrings.StatisticsTypeImpl_THERE_IS_NO_STATISTIC_NAMED_0.toLocalizedString(name));
     }
@@ -195,12 +191,14 @@ public class StatisticsTypeImpl implements StatisticsType {
   public int getIntStatCount() {
     return this.intStatCount;
   }
+
   /**
    * Gets the number of statistics in this type that are longs.
    */
   public int getLongStatCount() {
     return this.longStatCount;
   }
+
   /**
    * Gets the number of statistics that are doubles.
    */
@@ -208,10 +206,10 @@ public class StatisticsTypeImpl implements StatisticsType {
     return this.doubleStatCount;
   }
 
-//  @Override
-//  public String toString() {
-//    return "StatisticType with " + this.stats.length + " stats";
-//  }
+  //  @Override
+  //  public String toString() {
+  //    return "StatisticType with " + this.stats.length + " stats";
+  //  }
 
   @Override
   public String toString() {
@@ -223,11 +221,12 @@ public class StatisticsTypeImpl implements StatisticsType {
     sb.append("}");
     return sb.toString();
   }
-  
+
   @Override
   public int hashCode() {
     return getName().hashCode();
   }
+
   @Override
   public boolean equals(Object o) {
     if (o == null) {
@@ -236,7 +235,7 @@ public class StatisticsTypeImpl implements StatisticsType {
     if (!(o instanceof StatisticsType)) {
       return false;
     }
-    StatisticsType other = (StatisticsType)o;
+    StatisticsType other = (StatisticsType) o;
     if (!getName().equals(other.getName())) {
       return false;
     }
@@ -248,7 +247,7 @@ public class StatisticsTypeImpl implements StatisticsType {
     if (myStats.length != yourStats.length) {
       return false;
     }
-    for (int i=0; i < myStats.length; i++) {
+    for (int i = 0; i < myStats.length; i++) {
       if (!myStats[i].equals(yourStats[i])) {
         return false;
       }

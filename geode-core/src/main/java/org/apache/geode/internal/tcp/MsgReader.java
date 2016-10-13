@@ -38,8 +38,7 @@ public abstract class MsgReader {
 
   public MsgReader(Connection conn, Version version) {
     this.conn = conn;
-    this.bbis = version == null ? new ByteBufferInputStream()
-        : new VersionedByteBufferInputStream(version);
+    this.bbis = version == null ? new ByteBufferInputStream() : new VersionedByteBufferInputStream(version);
   }
 
   public Header readHeader() throws IOException {
@@ -54,13 +53,13 @@ public abstract class MsgReader {
       // logger.info("DEBUG: msg from " + getRemoteAddress() + " is direct ack" );
       nioMessageType &= ~Connection.DIRECT_ACK_BIT; // clear the ack bit
     }
-  
+
     header.nioMessageLength = nioMessageLength;
     header.nioMessageType = nioMessageType;
     header.nioMsgId = nioMsgId;
     return header;
   }
-  
+
   /**
    * Block until you can read a message. Returns null if the message
    * was a message chunk.
@@ -74,18 +73,18 @@ public abstract class MsgReader {
     this.getStats().incMessagesBeingReceived(true, header.nioMessageLength);
     long startSer = this.getStats().startMsgDeserialization();
     try {
-        bbis.setBuffer(nioInputBuffer);
-        DistributionMessage msg = null;
-        ReplyProcessor21.initMessageRPId();
-        // add serialization stats
-        msg = (DistributionMessage)InternalDataSerializer.readDSFID(bbis);
-        return msg;
+      bbis.setBuffer(nioInputBuffer);
+      DistributionMessage msg = null;
+      ReplyProcessor21.initMessageRPId();
+      // add serialization stats
+      msg = (DistributionMessage) InternalDataSerializer.readDSFID(bbis);
+      return msg;
     } finally {
       this.getStats().endMsgDeserialization(startSer);
       this.getStats().decMessagesBeingReceived(header.nioMessageLength);
     }
   }
-    
+
   public void readChunk(Header header, MsgDestreamer md) throws IOException, ClassNotFoundException, InterruptedException {
     ByteBuffer nioInputBuffer = readAtLeast(header.nioMessageLength);
     this.getStats().incMessagesBeingReceived(md.size() == 0, header.nioMessageLength);
@@ -93,7 +92,7 @@ public abstract class MsgReader {
   }
 
   public abstract ByteBuffer readAtLeast(int bytes) throws IOException;
-  
+
   protected DMStats getStats() {
     return conn.owner.getConduit().stats;
   }
@@ -118,8 +117,7 @@ public abstract class MsgReader {
     public short getNioMessageId() {
       return nioMsgId;
     }
-    
-    
+
   }
 
   public void close() {

@@ -25,7 +25,7 @@ package org.apache.geode.cache;
  * @see PartitionResolver  
  * @since GemFire 6.0
  */
-public interface EntryOperation<K,V> {
+public interface EntryOperation<K, V> {
 
   /** 
    * Returns the region to which this cached object belongs or
@@ -33,7 +33,7 @@ public interface EntryOperation<K,V> {
    * @return the region associated with this object or the region that raised
    * this event.
    */
-  public Region<K,V> getRegion();
+  public Region<K, V> getRegion();
 
   /**
    * Return a description of the operation that triggered this event.
@@ -72,7 +72,7 @@ public interface EntryOperation<K,V> {
    * @since GemFire 6.0
    */
   public boolean isCallbackArgumentAvailable();
-  
+
   /**
    * Returns the value but may return null and should not be used to generate 
    * routing object in {@link PartitionResolver#getRoutingObject(EntryOperation)}.

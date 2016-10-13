@@ -36,13 +36,12 @@ public class CompanySerializer extends DataSerializer {
   public int getId() {
     return 42;
   }
-  
+
   public Class[] getSupportedClasses() {
     return new Class[] { Company.class };
   }
 
-  public boolean toData(Object o, DataOutput out)
-    throws IOException {
+  public boolean toData(Object o, DataOutput out) throws IOException {
     if (o instanceof Company) {
       Company company = (Company) o;
       out.writeUTF(company.getName());
@@ -57,8 +56,7 @@ public class CompanySerializer extends DataSerializer {
     }
   }
 
-  public Object fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public Object fromData(DataInput in) throws IOException, ClassNotFoundException {
 
     String name = in.readUTF();
     Address address = (Address) readObject(in);

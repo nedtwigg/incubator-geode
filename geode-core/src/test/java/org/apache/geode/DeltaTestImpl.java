@@ -33,14 +33,14 @@ import org.apache.geode.internal.cache.PartitionedRegionLocalMaxMemoryDUnitTest.
  * @since GemFire 6.1
  */
 public class DeltaTestImpl implements DataSerializable, Delta {
-  
-  private static final byte INT_MASK      = 0x1;
-  private static final byte STR_MASK      = 0x2;
-  private static final byte DOUBLE_MASK   = 0x4;
+
+  private static final byte INT_MASK = 0x1;
+  private static final byte STR_MASK = 0x2;
+  private static final byte DOUBLE_MASK = 0x4;
   private static final byte BYTE_ARR_MASK = 0x8;
   private static final byte TEST_OBJ_MASK = 0x10;
-  private static final byte COMPLETE_MASK = 0x1F;  
-  
+  private static final byte COMPLETE_MASK = 0x1F;
+
   /*****************************************************************************
    * Below fields are not part of standard Delta implementation but are used for
    * testing purpose.
@@ -54,12 +54,12 @@ public class DeltaTestImpl implements DataSerializable, Delta {
   private static long timesConstructed = 0;
   public static boolean NEED_TO_RESET_T0_DELTA = true;
   /** *********************************************************************** */
-  
+
   // Actual data fields of this instance.
-  private int intVar = 0;                          // 0000 0001
-  private String str = "";                         // 0000 0010
-  private Double doubleVar = new Double(0);        // 0000 0100
-  private byte[] byteArr = new byte[1];            // 0000 1000
+  private int intVar = 0; // 0000 0001
+  private String str = ""; // 0000 0010
+  private Double doubleVar = new Double(0); // 0000 0100
+  private byte[] byteArr = new byte[1]; // 0000 1000
   private TestObject1 testObj = new TestObject1(); // 0001 0000
 
   /**
@@ -78,8 +78,7 @@ public class DeltaTestImpl implements DataSerializable, Delta {
     this.str = str;
   }
 
-  public DeltaTestImpl(int intVal, String string, Double doubleVal,
-      byte[] bytes, TestObject1 testObj) {
+  public DeltaTestImpl(int intVal, String string, Double doubleVal, byte[] bytes, TestObject1 testObj) {
     this.intVar = intVal;
     this.str = string;
     this.doubleVar = doubleVal;
@@ -90,11 +89,11 @@ public class DeltaTestImpl implements DataSerializable, Delta {
   public static long getTimesConstructed() {
     return timesConstructed;
   }
-  
+
   public static void setTimesConstructed(long cnt) {
     timesConstructed = cnt;
   }
-  
+
   public void resetDeltaStatus() {
     this.deltaBits = 0x0;
     this.hasDelta = false;
@@ -208,24 +207,24 @@ public class DeltaTestImpl implements DataSerializable, Delta {
   public static Long getToDeltaFailures() {
     return toDeltaFailure;
   }
-  
+
   protected void checkInvalidString(String str) {
     if (ERRONEOUS_STRING_FOR_FROM_DELTA.equals(str)) {
       fromDeltaFailure++;
-      throw new InvalidDeltaException("Delta could not be applied. "
-          + this);
+      throw new InvalidDeltaException("Delta could not be applied. " + this);
     }
   }
 
   protected void checkInvalidInt(int intVal) {
     if (ERRONEOUS_INT_FOR_TO_DELTA == intVal) {
       toDeltaFailure++;
-      throw new InvalidDeltaException("Delta could not be extracted. "
-          + this);
+      throw new InvalidDeltaException("Delta could not be extracted. " + this);
     }
   }
 
-  protected void checkInvalidInt2(int intVal) {}
+  protected void checkInvalidInt2(int intVal) {
+  }
+
   /** ********************************************************************** */
 
   public String toString() {
@@ -235,20 +234,15 @@ public class DeltaTestImpl implements DataSerializable, Delta {
         bytes.append(byteArr[i]);
       }
     }
-    return "DeltaTestImpl[hasDelta=" + this.hasDelta + ",int=" + this.intVar
-        + ",double=" + this.doubleVar + ",str=" + this.str + ",bytes={"
-        + bytes.toString() + "},testObj="
-        + ((this.testObj != null) ? this.testObj.hashCode() : "") + "]";
+    return "DeltaTestImpl[hasDelta=" + this.hasDelta + ",int=" + this.intVar + ",double=" + this.doubleVar + ",str=" + this.str + ",bytes={" + bytes.toString() + "},testObj=" + ((this.testObj != null) ? this.testObj.hashCode() : "") + "]";
   }
 
   public boolean equals(Object other) {
     if (other == null || !(other instanceof DeltaTestImpl)) {
       return false;
     }
-    DeltaTestImpl delta = (DeltaTestImpl)other;
-    if (this.intVar == delta.intVar && this.doubleVar.equals(delta.doubleVar)
-        && Arrays.equals(this.byteArr, delta.byteArr)
-        && this.str.equals(delta.str)) {
+    DeltaTestImpl delta = (DeltaTestImpl) other;
+    if (this.intVar == delta.intVar && this.doubleVar.equals(delta.doubleVar) && Arrays.equals(this.byteArr, delta.byteArr) && this.str.equals(delta.str)) {
       return true;
     }
     return false;
@@ -288,11 +282,10 @@ public class DeltaTestImpl implements DataSerializable, Delta {
           tempByteArr = DataSerializer.readByteArray(in);
         }
         if ((tempDeltaBits & TEST_OBJ_MASK) == TEST_OBJ_MASK) {
-          tempTestObj = (TestObject1)DataSerializer.readObject(in);
+          tempTestObj = (TestObject1) DataSerializer.readObject(in);
         }
         if ((deltaBits | COMPLETE_MASK) != COMPLETE_MASK) {
-          throw new IllegalArgumentException("Unknown field code: "
-              + tempDeltaBits);
+          throw new IllegalArgumentException("Unknown field code: " + tempDeltaBits);
         }
       }
       if (tempHasDelta) {
@@ -304,24 +297,18 @@ public class DeltaTestImpl implements DataSerializable, Delta {
         this.byteArr = tempByteArr;
         this.testObj = tempTestObj;
       }
-    }
-    catch (IOException e) {
-      GemFireCacheImpl.getInstance().getLogger().warning(
-          "DeltaTestImpl.fromDelta(): " + e);
+    } catch (IOException e) {
+      GemFireCacheImpl.getInstance().getLogger().warning("DeltaTestImpl.fromDelta(): " + e);
       throw e;
-    }
-    catch (IllegalArgumentException iae) {
-      GemFireCacheImpl.getInstance().getLogger().warning(
-          "DeltaTestImpl.fromDelta(): " + iae);
+    } catch (IllegalArgumentException iae) {
+      GemFireCacheImpl.getInstance().getLogger().warning("DeltaTestImpl.fromDelta(): " + iae);
       throw new InvalidDeltaException(iae);
-    }
-    catch (ClassNotFoundException cnfe) {
-      GemFireCacheImpl.getInstance().getLogger().warning(
-          "DeltaTestImpl.fromDelta(): " + cnfe);
+    } catch (ClassNotFoundException cnfe) {
+      GemFireCacheImpl.getInstance().getLogger().warning("DeltaTestImpl.fromDelta(): " + cnfe);
       throw new InvalidDeltaException(cnfe);
     }
   }
-  
+
   /*
    * (non-Javadoc)
    * 
@@ -362,24 +349,19 @@ public class DeltaTestImpl implements DataSerializable, Delta {
           throw new IllegalArgumentException("Unknown field code: " + deltaBits);
         }
       }
-    }
-    catch (IOException ioe) {
-      GemFireCacheImpl.getInstance().getLogger().warning(
-          "DeltaTestImpl.toDelta(): " + ioe);
+    } catch (IOException ioe) {
+      GemFireCacheImpl.getInstance().getLogger().warning("DeltaTestImpl.toDelta(): " + ioe);
       throw ioe;
-    }
-    catch (IllegalArgumentException iae) {
-      GemFireCacheImpl.getInstance().getLogger().warning(
-          "DeltaTestImpl.toDelta(): " + iae);
+    } catch (IllegalArgumentException iae) {
+      GemFireCacheImpl.getInstance().getLogger().warning("DeltaTestImpl.toDelta(): " + iae);
       throw new InvalidDeltaException(iae);
-    }
-    finally {
+    } finally {
       if (NEED_TO_RESET_T0_DELTA) {// No need to reset if secondary needs to
-                                    // send delta again upon receiving
-                                    // forceReattemptException
+                                     // send delta again upon receiving
+                                   // forceReattemptException
         this.deltaBits = 0x0;
         this.hasDelta = false;
-      } 
+      }
     }
   }
 
@@ -389,7 +371,7 @@ public class DeltaTestImpl implements DataSerializable, Delta {
     this.str = DataSerializer.readString(in);
     this.doubleVar = DataSerializer.readDouble(in);
     this.byteArr = DataSerializer.readByteArray(in);
-    this.testObj = (TestObject1)DataSerializer.readObject(in);
+    this.testObj = (TestObject1) DataSerializer.readObject(in);
     //if (deltaBits != 0) {
     //  this.hasDelta = true;
     //}

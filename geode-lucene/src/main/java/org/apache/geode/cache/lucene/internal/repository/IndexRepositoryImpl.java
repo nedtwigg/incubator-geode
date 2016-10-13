@@ -39,22 +39,20 @@ import java.util.function.IntSupplier;
  * A repository that writes to a single lucene index writer
  */
 public class IndexRepositoryImpl implements IndexRepository {
-  
-  private static final boolean APPLY_ALL_DELETES = System
-      .getProperty(DistributionConfig.GEMFIRE_PREFIX + "IndexRepository.APPLY_ALL_DELETES", "true")
-      .equalsIgnoreCase("true");
-  
+
+  private static final boolean APPLY_ALL_DELETES = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "IndexRepository.APPLY_ALL_DELETES", "true").equalsIgnoreCase("true");
+
   private final IndexWriter writer;
   private final LuceneSerializer serializer;
   private final SearcherManager searcherManager;
-  private Region<?,?> region;
-  private Region<?,?> userRegion;
+  private Region<?, ?> region;
+  private Region<?, ?> userRegion;
   private LuceneIndexStats stats;
   private DocumentCountSupplier documentCountSupplier;
 
   private static final Logger logger = LogService.getLogger();
-  
-  public IndexRepositoryImpl(Region<?,?> region, IndexWriter writer, LuceneSerializer serializer, LuceneIndexStats stats, Region<?, ?> userRegion) throws IOException {
+
+  public IndexRepositoryImpl(Region<?, ?> region, IndexWriter writer, LuceneSerializer serializer, LuceneIndexStats stats, Region<?, ?> userRegion) throws IOException {
     this.region = region;
     this.userRegion = userRegion;
     this.writer = writer;
@@ -110,11 +108,11 @@ public class IndexRepositoryImpl implements IndexRepository {
     try {
       TopDocs docs = searcher.search(query, limit);
       totalHits = docs.totalHits;
-      for(ScoreDoc scoreDoc : docs.scoreDocs) {
+      for (ScoreDoc scoreDoc : docs.scoreDocs) {
         Document doc = searcher.doc(scoreDoc.doc);
         Object key = SerializerUtil.getKey(doc);
         if (logger.isDebugEnabled()) {
-          logger.debug("query found doc:"+doc+":"+scoreDoc);
+          logger.debug("query found doc:" + doc + ":" + scoreDoc);
         }
         collector.collect(key, scoreDoc.score);
       }
@@ -158,8 +156,7 @@ public class IndexRepositoryImpl implements IndexRepository {
     stats.removeDocumentsSupplier(documentCountSupplier);
     try {
       writer.close();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       logger.warn("Unable to clean up index repository", e);
     }
   }
@@ -167,13 +164,13 @@ public class IndexRepositoryImpl implements IndexRepository {
   private class DocumentCountSupplier implements IntSupplier {
     @Override
     public int getAsInt() {
-      if(isClosed()) {
+      if (isClosed()) {
         stats.removeDocumentsSupplier(this);
         return 0;
       }
       try {
         return writer.numDocs();
-      } catch(AlreadyClosedException e) {
+      } catch (AlreadyClosedException e) {
         //ignore
         return 0;
       }

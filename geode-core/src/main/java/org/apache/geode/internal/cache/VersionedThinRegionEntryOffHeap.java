@@ -22,19 +22,21 @@ public abstract class VersionedThinRegionEntryOffHeap extends VersionedThinRegio
   public VersionedThinRegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VersionedThinRegionEntryOffHeapFactory factory = new VersionedThinRegionEntryOffHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VersionedThinRegionEntryOffHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VersionedThinRegionEntryOffHeapIntKey(context, (Integer)key, value);
+          return new VersionedThinRegionEntryOffHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VersionedThinRegionEntryOffHeapLongKey(context, (Long)key, value);
+          return new VersionedThinRegionEntryOffHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -47,7 +49,7 @@ public abstract class VersionedThinRegionEntryOffHeap extends VersionedThinRegio
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VersionedThinRegionEntryOffHeapUUIDKey(context, (UUID)key, value);
+          return new VersionedThinRegionEntryOffHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VersionedThinRegionEntryOffHeapObjectKey(context, key, value);
@@ -58,10 +60,12 @@ public abstract class VersionedThinRegionEntryOffHeap extends VersionedThinRegio
       // This estimate will not take into account the memory saved by inlining the keys.
       return VersionedThinRegionEntryOffHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return this;
     }
-	@Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return VersionedThinRegionEntryHeap.getEntryFactory();
     }

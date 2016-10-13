@@ -53,12 +53,7 @@ public class TouchReplicatedRegionEntriesFunction implements Function, Declarabl
     Set<String> keys = (Set<String>) arguments[1];
     if (this.cache.getLogger().fineEnabled()) {
       StringBuilder builder = new StringBuilder();
-      builder.append("Function ")
-          .append(ID)
-          .append(" received request to touch ")
-          .append(regionName)
-          .append("->")
-          .append(keys);
+      builder.append("Function ").append(ID).append(" received request to touch ").append(regionName).append("->").append(keys);
       this.cache.getLogger().fine(builder.toString());
     }
 
@@ -93,4 +88,3 @@ public class TouchReplicatedRegionEntriesFunction implements Function, Declarabl
   public void init(Properties properties) {
   }
 }
-

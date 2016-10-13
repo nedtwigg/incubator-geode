@@ -37,13 +37,14 @@ public class FunctionServiceSingleOnMemberDUnitTest extends FunctionServiceBase 
     memberId = getSystem().getDistributedMember();
   }
 
-  @Override public Execution getExecution() {
+  @Override
+  public Execution getExecution() {
     return FunctionService.onMember(memberId);
   }
 
-  @Override public int numberOfExecutions() {
+  @Override
+  public int numberOfExecutions() {
     return 1;
   }
-
 
 }

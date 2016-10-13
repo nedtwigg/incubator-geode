@@ -48,9 +48,9 @@ public class RegionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/regions")
   @ResponseBody
-  public String listRegions(@RequestParam(value = CliStrings.LIST_REGION__GROUP, required = false) final String groupName,
-                            @RequestParam(value = CliStrings.LIST_REGION__MEMBER, required = false) final String memberNameId)
-  {
+  public String listRegions(@RequestParam(value = CliStrings.LIST_REGION__GROUP, required = false)
+  final String groupName, @RequestParam(value = CliStrings.LIST_REGION__MEMBER, required = false)
+  final String memberNameId) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.LIST_REGION);
 
     if (hasValue(groupName)) {
@@ -66,7 +66,8 @@ public class RegionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/regions/{name}")
   @ResponseBody
-  public String describeRegion(@PathVariable("name") final String regionNamePath) {
+  public String describeRegion(@PathVariable("name")
+  final String regionNamePath) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESCRIBE_REGION);
     command.addOption(CliStrings.DESCRIBE_REGION__NAME, decode(regionNamePath));
     return processCommand(command.toString());
@@ -74,25 +75,24 @@ public class RegionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.PUT, value = "/regions/{name}")
   @ResponseBody
-  public String alterRegion(final WebRequest request,
-                            @PathVariable("name") final String regionNamePath,
-                            @RequestParam(value = CliStrings.ALTER_REGION__GROUP, required = false) final String[] groups,
-                            @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONIDLETIME, required = false) final Integer entryIdleTimeExpiration,
-                            @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONIDLETIMEACTION, required = false) final String entryIdleTimeExpirationAction,
-                            @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONTIMETOLIVE, required = false) final Integer entryTimeToLiveExpiration,
-                            @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONTTLACTION, required = false) final String entryTimeToLiveExpirationAction,
-                            @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONIDLETIME, required = false) final Integer regionIdleTimeExpiration,
-                            @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONIDLETIMEACTION, required = false) final String regionIdleTimeExpirationAction,
-                            @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONTTL, required = false) final Integer regionTimeToLiveExpiration,
-                            @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONTTLACTION, required = false) final String regionTimeToLiveExpirationAction,
-                            @RequestParam(value = CliStrings.ALTER_REGION__CACHELISTENER, required = false) final String[] cacheListeners,
-                            @RequestParam(value = CliStrings.ALTER_REGION__CACHELOADER, required = false) final String cacheLoader,
-                            @RequestParam(value = CliStrings.ALTER_REGION__CACHEWRITER, required = false) final String cacheWriter,
-                            @RequestParam(value = CliStrings.ALTER_REGION__ASYNCEVENTQUEUEID, required = false) final String[] asyncEventQueueIds,
-                            @RequestParam(value = CliStrings.ALTER_REGION__GATEWAYSENDERID, required = false) final String[] gatewaySenderIds,
-                            @RequestParam(value = CliStrings.ALTER_REGION__CLONINGENABLED, required = false) final Boolean enableCloning,
-                            @RequestParam(value = CliStrings.ALTER_REGION__EVICTIONMAX, required = false) final Integer evictionMax)
-  {
+  public String alterRegion(final WebRequest request, @PathVariable("name")
+  final String regionNamePath, @RequestParam(value = CliStrings.ALTER_REGION__GROUP, required = false)
+  final String[] groups, @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONIDLETIME, required = false)
+  final Integer entryIdleTimeExpiration, @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONIDLETIMEACTION, required = false)
+  final String entryIdleTimeExpirationAction, @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONTIMETOLIVE, required = false)
+  final Integer entryTimeToLiveExpiration, @RequestParam(value = CliStrings.ALTER_REGION__ENTRYEXPIRATIONTTLACTION, required = false)
+  final String entryTimeToLiveExpirationAction, @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONIDLETIME, required = false)
+  final Integer regionIdleTimeExpiration, @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONIDLETIMEACTION, required = false)
+  final String regionIdleTimeExpirationAction, @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONTTL, required = false)
+  final Integer regionTimeToLiveExpiration, @RequestParam(value = CliStrings.ALTER_REGION__REGIONEXPIRATIONTTLACTION, required = false)
+  final String regionTimeToLiveExpirationAction, @RequestParam(value = CliStrings.ALTER_REGION__CACHELISTENER, required = false)
+  final String[] cacheListeners, @RequestParam(value = CliStrings.ALTER_REGION__CACHELOADER, required = false)
+  final String cacheLoader, @RequestParam(value = CliStrings.ALTER_REGION__CACHEWRITER, required = false)
+  final String cacheWriter, @RequestParam(value = CliStrings.ALTER_REGION__ASYNCEVENTQUEUEID, required = false)
+  final String[] asyncEventQueueIds, @RequestParam(value = CliStrings.ALTER_REGION__GATEWAYSENDERID, required = false)
+  final String[] gatewaySenderIds, @RequestParam(value = CliStrings.ALTER_REGION__CLONINGENABLED, required = false)
+  final Boolean enableCloning, @RequestParam(value = CliStrings.ALTER_REGION__EVICTIONMAX, required = false)
+  final Integer evictionMax) {
     //logRequest(request);
 
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.ALTER_REGION);
@@ -130,56 +130,54 @@ public class RegionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.POST, value = "/regions")
   @ResponseBody
-  public String createRegion(@RequestParam("name") final String regionNamePath,
-                             @RequestParam(value = CliStrings.CREATE_REGION__REGIONSHORTCUT, required = false) final String regionType,
-                             @RequestParam(value = CliStrings.CREATE_REGION__USEATTRIBUTESFROM, required = false) final String regionTemplate,
-                             @RequestParam(value = CliStrings.CREATE_REGION__GROUP, required = false) final String[] groups,
-                             @RequestParam(value = CliStrings.CREATE_REGION__SKIPIFEXISTS, defaultValue = "true") final Boolean skipIfExists,
-                             @RequestParam(value = CliStrings.CREATE_REGION__KEYCONSTRAINT, required = false) final String keyConstraint,
-                             @RequestParam(value = CliStrings.CREATE_REGION__VALUECONSTRAINT, required = false) final String valueConstraint,
-                             @RequestParam(value = CliStrings.CREATE_REGION__STATISTICSENABLED, required = false) final Boolean enableStatistics,
-                             @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONIDLETIME, required = false) final Integer entryIdleTimeExpiration,
-                             @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONIDLETIMEACTION, required = false) final String entryIdleTimeExpirationAction,
-                             @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONTIMETOLIVE, required = false) final Integer entryTimeToLiveExpiration,
-                             @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONTTLACTION, required = false) final String entryTimeToLiveExpirationAction,
-                             @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONIDLETIME, required = false) final Integer regionIdleTimeExpiration,
-                             @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONIDLETIMEACTION, required = false) final String regionIdleTimeExpirationAction,
-                             @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONTTL, required = false) final Integer regionTimeToLiveExpiration,
-                             @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONTTLACTION, required = false) final String regionTimeToLiveExpirationAction,
-                             @RequestParam(value = CliStrings.CREATE_REGION__DISKSTORE, required = false) final String diskStore,
-                             @RequestParam(value = CliStrings.CREATE_REGION__DISKSYNCHRONOUS, required = false) final Boolean enableSynchronousDisk,
-                             @RequestParam(value = CliStrings.CREATE_REGION__ENABLEASYNCCONFLATION, required = false) final Boolean enableAsynchronousConflation,
-                             @RequestParam(value = CliStrings.CREATE_REGION__ENABLESUBSCRIPTIONCONFLATION, required = false) final Boolean enableSubscriptionConflation,
-                             @RequestParam(value = CliStrings.CREATE_REGION__CACHELISTENER, required = false) final String[] cacheListeners,
-                             @RequestParam(value = CliStrings.CREATE_REGION__CACHELOADER, required = false) final String cacheLoader,
-                             @RequestParam(value = CliStrings.CREATE_REGION__CACHEWRITER, required = false) final String cacheWriter,
-                             @RequestParam(value = CliStrings.CREATE_REGION__ASYNCEVENTQUEUEID, required = false) final String[] asyncEventQueueIds,
-                             @RequestParam(value = CliStrings.CREATE_REGION__GATEWAYSENDERID, required = false) final String[] gatewaySenderIds,
-                             @RequestParam(value = CliStrings.CREATE_REGION__CONCURRENCYCHECKSENABLED, required = false) final Boolean enableConcurrencyChecks,
-                             @RequestParam(value = CliStrings.CREATE_REGION__CLONINGENABLED, required = false) final Boolean enableCloning,
-                             @RequestParam(value = CliStrings.CREATE_REGION__CONCURRENCYLEVEL, required = false) final Integer concurrencyLevel,
-                             @RequestParam(value = CliStrings.CREATE_REGION__COLOCATEDWITH, required = false) final String colocatedWith,
-                             @RequestParam(value = CliStrings.CREATE_REGION__LOCALMAXMEMORY, required = false) final Integer localMaxMemory,
-                             @RequestParam(value = CliStrings.CREATE_REGION__RECOVERYDELAY, required = false) final Long recoveryDelay,
-                             @RequestParam(value = CliStrings.CREATE_REGION__REDUNDANTCOPIES, required = false) final Integer redundantCopies,
-                             @RequestParam(value = CliStrings.CREATE_REGION__STARTUPRECOVERYDDELAY, required = false) final Long startupRecoveryDelay,
-                             @RequestParam(value = CliStrings.CREATE_REGION__TOTALMAXMEMORY, required = false) final Long totalMaxMemory,
-                             @RequestParam(value = CliStrings.CREATE_REGION__TOTALNUMBUCKETS, required = false) final Integer totalNumBuckets,
-                             @RequestParam(value = CliStrings.CREATE_REGION__COMPRESSOR, required = false) final String compressor)
-  {
+  public String createRegion(@RequestParam("name")
+  final String regionNamePath, @RequestParam(value = CliStrings.CREATE_REGION__REGIONSHORTCUT, required = false)
+  final String regionType, @RequestParam(value = CliStrings.CREATE_REGION__USEATTRIBUTESFROM, required = false)
+  final String regionTemplate, @RequestParam(value = CliStrings.CREATE_REGION__GROUP, required = false)
+  final String[] groups, @RequestParam(value = CliStrings.CREATE_REGION__SKIPIFEXISTS, defaultValue = "true")
+  final Boolean skipIfExists, @RequestParam(value = CliStrings.CREATE_REGION__KEYCONSTRAINT, required = false)
+  final String keyConstraint, @RequestParam(value = CliStrings.CREATE_REGION__VALUECONSTRAINT, required = false)
+  final String valueConstraint, @RequestParam(value = CliStrings.CREATE_REGION__STATISTICSENABLED, required = false)
+  final Boolean enableStatistics, @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONIDLETIME, required = false)
+  final Integer entryIdleTimeExpiration, @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONIDLETIMEACTION, required = false)
+  final String entryIdleTimeExpirationAction, @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONTIMETOLIVE, required = false)
+  final Integer entryTimeToLiveExpiration, @RequestParam(value = CliStrings.CREATE_REGION__ENTRYEXPIRATIONTTLACTION, required = false)
+  final String entryTimeToLiveExpirationAction, @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONIDLETIME, required = false)
+  final Integer regionIdleTimeExpiration, @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONIDLETIMEACTION, required = false)
+  final String regionIdleTimeExpirationAction, @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONTTL, required = false)
+  final Integer regionTimeToLiveExpiration, @RequestParam(value = CliStrings.CREATE_REGION__REGIONEXPIRATIONTTLACTION, required = false)
+  final String regionTimeToLiveExpirationAction, @RequestParam(value = CliStrings.CREATE_REGION__DISKSTORE, required = false)
+  final String diskStore, @RequestParam(value = CliStrings.CREATE_REGION__DISKSYNCHRONOUS, required = false)
+  final Boolean enableSynchronousDisk, @RequestParam(value = CliStrings.CREATE_REGION__ENABLEASYNCCONFLATION, required = false)
+  final Boolean enableAsynchronousConflation, @RequestParam(value = CliStrings.CREATE_REGION__ENABLESUBSCRIPTIONCONFLATION, required = false)
+  final Boolean enableSubscriptionConflation, @RequestParam(value = CliStrings.CREATE_REGION__CACHELISTENER, required = false)
+  final String[] cacheListeners, @RequestParam(value = CliStrings.CREATE_REGION__CACHELOADER, required = false)
+  final String cacheLoader, @RequestParam(value = CliStrings.CREATE_REGION__CACHEWRITER, required = false)
+  final String cacheWriter, @RequestParam(value = CliStrings.CREATE_REGION__ASYNCEVENTQUEUEID, required = false)
+  final String[] asyncEventQueueIds, @RequestParam(value = CliStrings.CREATE_REGION__GATEWAYSENDERID, required = false)
+  final String[] gatewaySenderIds, @RequestParam(value = CliStrings.CREATE_REGION__CONCURRENCYCHECKSENABLED, required = false)
+  final Boolean enableConcurrencyChecks, @RequestParam(value = CliStrings.CREATE_REGION__CLONINGENABLED, required = false)
+  final Boolean enableCloning, @RequestParam(value = CliStrings.CREATE_REGION__CONCURRENCYLEVEL, required = false)
+  final Integer concurrencyLevel, @RequestParam(value = CliStrings.CREATE_REGION__COLOCATEDWITH, required = false)
+  final String colocatedWith, @RequestParam(value = CliStrings.CREATE_REGION__LOCALMAXMEMORY, required = false)
+  final Integer localMaxMemory, @RequestParam(value = CliStrings.CREATE_REGION__RECOVERYDELAY, required = false)
+  final Long recoveryDelay, @RequestParam(value = CliStrings.CREATE_REGION__REDUNDANTCOPIES, required = false)
+  final Integer redundantCopies, @RequestParam(value = CliStrings.CREATE_REGION__STARTUPRECOVERYDDELAY, required = false)
+  final Long startupRecoveryDelay, @RequestParam(value = CliStrings.CREATE_REGION__TOTALMAXMEMORY, required = false)
+  final Long totalMaxMemory, @RequestParam(value = CliStrings.CREATE_REGION__TOTALNUMBUCKETS, required = false)
+  final Integer totalNumBuckets, @RequestParam(value = CliStrings.CREATE_REGION__COMPRESSOR, required = false)
+  final String compressor) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.CREATE_REGION);
 
     assertArgument(hasValue(regionNamePath), "Region name/path is required!");
 
-    assertArgument(hasValue(regionType) || hasValue(regionTemplate),
-      "Either Region type or template-region must be specified!");
+    assertArgument(hasValue(regionType) || hasValue(regionTemplate), "Either Region type or template-region must be specified!");
 
     command.addOption(CliStrings.CREATE_REGION__REGION, regionNamePath);
 
     if (hasValue(regionType)) {
       command.addOption(CliStrings.CREATE_REGION__REGIONSHORTCUT, regionType);
-    }
-    else {
+    } else {
       command.addOption(CliStrings.CREATE_REGION__USEATTRIBUTESFROM, regionTemplate);
     }
 
@@ -246,13 +244,11 @@ public class RegionCommandsController extends AbstractCommandsController {
     }
 
     if (Boolean.TRUE.equals(enableSubscriptionConflation)) {
-      command.addOption(CliStrings.CREATE_REGION__ENABLESUBSCRIPTIONCONFLATION,
-        String.valueOf(enableSubscriptionConflation));
+      command.addOption(CliStrings.CREATE_REGION__ENABLESUBSCRIPTIONCONFLATION, String.valueOf(enableSubscriptionConflation));
     }
 
     if (hasValue(cacheListeners)) {
-      command.addOption(CliStrings.CREATE_REGION__CACHELISTENER, StringUtils.concat(cacheListeners,
-        StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.CREATE_REGION__CACHELISTENER, StringUtils.concat(cacheListeners, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(cacheLoader)) {
@@ -264,13 +260,11 @@ public class RegionCommandsController extends AbstractCommandsController {
     }
 
     if (hasValue(asyncEventQueueIds)) {
-      command.addOption(CliStrings.CREATE_REGION__ASYNCEVENTQUEUEID, StringUtils.concat(asyncEventQueueIds,
-        StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.CREATE_REGION__ASYNCEVENTQUEUEID, StringUtils.concat(asyncEventQueueIds, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(gatewaySenderIds)) {
-      command.addOption(CliStrings.CREATE_REGION__GATEWAYSENDERID, StringUtils.concat(gatewaySenderIds,
-        StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.CREATE_REGION__GATEWAYSENDERID, StringUtils.concat(gatewaySenderIds, StringUtils.COMMA_DELIMITER));
     }
 
     if (Boolean.TRUE.equals(enableConcurrencyChecks)) {
@@ -322,7 +316,8 @@ public class RegionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/regions/{name}")
   @ResponseBody
-  public String destroyRegion(@PathVariable("name") final String regionNamePath) {
+  public String destroyRegion(@PathVariable("name")
+  final String regionNamePath) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESTROY_REGION);
     command.addOption(CliStrings.DESTROY_REGION__REGION, decode(regionNamePath));
     return processCommand(command.toString());

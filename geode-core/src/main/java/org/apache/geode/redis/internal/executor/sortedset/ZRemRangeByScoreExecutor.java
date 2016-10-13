@@ -99,7 +99,7 @@ public class ZRemRangeByScoreExecutor extends SortedSetExecutor {
     }
 
     if (removeList != null) {
-      for (Object entry: removeList) {
+      for (Object entry : removeList) {
         ByteArrayWrapper remove = null;
         if (entry instanceof Entry)
           remove = (ByteArrayWrapper) ((Entry<?, ?>) entry).getKey();
@@ -122,7 +122,7 @@ public class ZRemRangeByScoreExecutor extends SortedSetExecutor {
     Query query;
     Object[] params;
     if (startInclusive) {
-      if(stopInclusive) {
+      if (stopInclusive) {
         query = getQuery(key, SortedSetQuery.ZRBSSTISI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZRBSSTI, context);
@@ -134,7 +134,7 @@ public class ZRemRangeByScoreExecutor extends SortedSetExecutor {
         query = getQuery(key, SortedSetQuery.ZRBS, context);
       }
     }
-    params = new Object[]{start, stop, INFINITY_LIMIT};
+    params = new Object[] { start, stop, INFINITY_LIMIT };
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 

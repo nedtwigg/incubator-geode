@@ -28,18 +28,17 @@ import java.util.regex.Pattern;
  */
 public class ExpectedStrings {
 
-  private ExpectedStrings() {}
-  
-  public static boolean skipLogMsgs(String type) {
-    if ( type.equals("junit") 
-        || type.equals("java")
-        || type.equals("query") 
-        || type.equals("dunit")) {
-      return true;
-    }else {
-      return false;
-    }    
+  private ExpectedStrings() {
   }
+
+  public static boolean skipLogMsgs(String type) {
+    if (type.equals("junit") || type.equals("java") || type.equals("query") || type.equals("dunit")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public static List create(String type) {
     List expected = new ArrayList();
 
@@ -82,27 +81,27 @@ public class ExpectedStrings {
     expected.add(Pattern.compile("checkForForcedDisconnect processed Exception"));
     expected.add(Pattern.compile("operation generated expected \\S+Exception"));
 
-    expected.add(Pattern.compile("ExpectedString")); 
-    expected.add(Pattern.compile("ExpectedStrings")); 
+    expected.add(Pattern.compile("ExpectedString"));
+    expected.add(Pattern.compile("ExpectedStrings"));
 
-    expected.add(Pattern.compile("PassWithExpectedSevereJUnitTest")); 
-    expected.add(Pattern.compile("FailWithErrorInOutputJUnitTest")); 
-    expected.add(Pattern.compile("PassWithExpectedErrorJUnitTest")); 
+    expected.add(Pattern.compile("PassWithExpectedSevereJUnitTest"));
+    expected.add(Pattern.compile("FailWithErrorInOutputJUnitTest"));
+    expected.add(Pattern.compile("PassWithExpectedErrorJUnitTest"));
     expected.add(Pattern.compile("FailWithSevereInOutputJUnitTest"));
     expected.add(Pattern.compile("SystemAlertManager: A simple Alert."));
-    
-    expected.add(Pattern.compile("org.apache.geode.management.DependenciesNotFoundException")); 
+
+    expected.add(Pattern.compile("org.apache.geode.management.DependenciesNotFoundException"));
 
     //expected.add(Pattern.compile("Java version older than"));
     //expected.add(Pattern.compile("Minimum system requirements not met. Unexpected behavior may result in additional errors."));
-    
-    if ( type.equals("junit") || type.equals("java") || type.equals("query")) {
+
+    if (type.equals("junit") || type.equals("java") || type.equals("query")) {
       expected.add(Pattern.compile("TEST EXCEPTION"));
       expected.add(Pattern.compile("testLogLevels"));
       expected.add(Pattern.compile("On iteration"));
-      expected.add(Pattern.compile("signal count"));  
+      expected.add(Pattern.compile("signal count"));
       //Remove when davidw fixes
-      expected.add(Pattern.compile("Expected")); 
+      expected.add(Pattern.compile("Expected"));
       //below here for gfx unit tests
       expected.add(Pattern.compile("Valid documents must have a"));
       expected.add(Pattern.compile("Loaded java.lang.ClassCastException"));
@@ -117,7 +116,7 @@ public class ExpectedStrings {
       expected.add(Pattern.compile("Unsupported at this time"));
       expected.add(Pattern.compile("DiskAccessException occured as expected"));
       expected.add(Pattern.compile("Oplog::createOplog:Exception in preblowing the file"));
-    } else if ( type.equals("dunit")) {
+    } else if (type.equals("dunit")) {
       expected.add(Pattern.compile("INCOMPATIBLE_ROOT"));
       expected.add(Pattern.compile("connecting to locator"));
       expected.add(Pattern.compile("ItsOkayForMyClassNotToBeFound"));
@@ -159,16 +158,16 @@ public class ExpectedStrings {
       //The following 2 strings are ignored due to bug 52042
       expected.add(Pattern.compile("failed accepting client connection"));
       expected.add(Pattern.compile("Acceptor received unknown communication"));
-    } else if ( type.equals("smoke")) {
+    } else if (type.equals("smoke")) {
       expected.add(Pattern.compile("Doing stack dump on all"));
       expected.add(Pattern.compile("SIGQUIT received, dumping threads"));
       expected.add(Pattern.compile("Sleeping \\d+ seconds between stack dumps"));
       expected.add(Pattern.compile("Could not find Spring Shell library"));
-    } else if ( type.equals("perf")) {
+    } else if (type.equals("perf")) {
       expected.add(Pattern.compile("Doing stack dump on all"));
       expected.add(Pattern.compile("SIGQUIT received, dumping threads"));
       expected.add(Pattern.compile("Sleeping \\d+ seconds between stack dumps"));
-    } else if ( type.equals("moresmoke")) {
+    } else if (type.equals("moresmoke")) {
       expected.add(Pattern.compile(" expected error"));
       expected.add(Pattern.compile("Doing stack dump on all"));
       expected.add(Pattern.compile("SIGQUIT received, dumping threads"));

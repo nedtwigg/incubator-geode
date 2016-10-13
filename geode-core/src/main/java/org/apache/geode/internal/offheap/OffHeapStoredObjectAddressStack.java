@@ -29,17 +29,21 @@ import org.apache.geode.internal.offheap.FreeListManager.LongStack;
 public class OffHeapStoredObjectAddressStack implements LongStack {
   // Ok to read without sync but must be synced on write
   private volatile long topAddr;
-  
+
   public OffHeapStoredObjectAddressStack(long addr) {
-    if (addr != 0L) MemoryAllocatorImpl.validateAddress(addr);
+    if (addr != 0L)
+      MemoryAllocatorImpl.validateAddress(addr);
     this.topAddr = addr;
   }
+
   public OffHeapStoredObjectAddressStack() {
     this.topAddr = 0L;
   }
+
   public boolean isEmpty() {
     return this.topAddr == 0L;
   }
+
   public void offer(long e) {
     assert e != 0;
     MemoryAllocatorImpl.validateAddress(e);
@@ -48,6 +52,7 @@ public class OffHeapStoredObjectAddressStack implements LongStack {
       this.topAddr = e;
     }
   }
+
   @Override
   public long poll() {
     long result;
@@ -59,12 +64,14 @@ public class OffHeapStoredObjectAddressStack implements LongStack {
     }
     return result;
   }
+
   /**
    * Returns the address of the "top" item in this stack.
    */
   public long getTopAddress() {
     return this.topAddr;
   }
+
   /**
    * Removes all the addresses from this stack
    * and returns the top address.
@@ -80,6 +87,7 @@ public class OffHeapStoredObjectAddressStack implements LongStack {
     }
     return result;
   }
+
   public void logSizes(Logger logger, String msg) {
     long headAddr = this.topAddr;
     long addr;
@@ -106,6 +114,7 @@ public class OffHeapStoredObjectAddressStack implements LongStack {
       }
     } while (concurrentModDetected);
   }
+
   public long computeTotalSize() {
     long result;
     long headAddr = this.topAddr;
@@ -132,7 +141,7 @@ public class OffHeapStoredObjectAddressStack implements LongStack {
     } while (concurrentModDetected);
     return result;
   }
-  
+
   /**
    * This method allows tests to override it
    * and do a concurrent modification to the stack.

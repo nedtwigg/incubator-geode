@@ -41,15 +41,16 @@ import org.apache.geode.internal.Version;
  *
  */
 public interface DM extends ReplySender {
-  
+
   public boolean shutdownInProgress();
-  
+
   /**
    * Returns the current "cache time" in milliseconds since the epoch.
    * The "cache time" takes into account skew among the local clocks
    * on the various machines involved in the cache.
    */
   public long cacheTimeMillis();
+
   /**
    * Returns the id of this distribution manager.
    */
@@ -66,7 +67,7 @@ public interface DM extends ReplySender {
    * If the ID is not in the view, the argument is returned.
    */
   public InternalDistributedMember getCanonicalId(DistributedMember id);
-  
+
   /**
    * removes members that have older versions from the given collection, typically
    * a Set from a distribution advisor
@@ -87,6 +88,7 @@ public interface DM extends ReplySender {
    * since they have a cache.
    */
   public Set getDistributionManagerIds();
+
   /**
    * Returns an unmodifiable set containing the identities of all of
    * the known "normal" distribution managers. 
@@ -106,6 +108,7 @@ public interface DM extends ReplySender {
    * minus our id.
    */
   public Set getOtherDistributionManagerIds();
+
   /**
    * Returns a private-memory list containing getNormalDistributionManagerIds()
    * minus our id.
@@ -137,6 +140,7 @@ public interface DM extends ReplySender {
    * @since GemFire 4.0
    */
   public boolean isAdam();
+
   /**
    * Returns the identity of the oldest DM in this group.
    * 
@@ -146,19 +150,20 @@ public interface DM extends ReplySender {
    * @since GemFire 4.0
    */
   public InternalDistributedMember getElderId();
+
   /**
    * Return true if this is the oldest DM in this group.
    *
    * @since GemFire 5.0
    */
   public boolean isElder();
-  
+
   /**
    * Return true if this DM is a loner that is not part of
    * a real distributed system.
    */
   public boolean isLoner();
-  
+
   /**
    * Returns the elder state or null if this DM is not the elder.
    * <p>
@@ -170,7 +175,7 @@ public interface DM extends ReplySender {
    * @since GemFire 4.0
    */
   public ElderState getElderState(boolean force, boolean useTryLock);
-  
+
   /**
    * Returns the id of the underlying distribution channel used for
    * communication.
@@ -190,8 +195,7 @@ public interface DM extends ReplySender {
    *         If <code>message</code> cannot be serialized
    * @see #putOutgoing(DistributionMessage)
    */
-  public Set putOutgoingUserData(DistributionMessage message) 
-      throws NotSerializableException;
+  public Set putOutgoingUserData(DistributionMessage message) throws NotSerializableException;
 
   /**
    * Sends a message, guaranteed to be serialized
@@ -201,7 +205,7 @@ public interface DM extends ReplySender {
    * @return recipients who did not receive the message
    */
   public Set putOutgoing(DistributionMessage msg);
-  
+
   /**
    * Returns the distributed system to which this distribution manager
    * is connected.
@@ -245,7 +249,7 @@ public interface DM extends ReplySender {
    * @since GemFire 4.2.1
    */
   public DistributionConfig getConfig();
-  
+
   /**
    * Makes note of a distribution manager that has shut down.  Invokes
    * the appropriate listeners.
@@ -255,8 +259,7 @@ public interface DM extends ReplySender {
    *
    * @see ShutdownMessage#process
    */
-  public void handleManagerDeparture(InternalDistributedMember theId, 
-      boolean crashed, String reason);
+  public void handleManagerDeparture(InternalDistributedMember theId, boolean crashed, String reason);
 
   /**
    * getThreadPool gets this distribution manager's message-processing thread pool */
@@ -265,12 +268,12 @@ public interface DM extends ReplySender {
   /**
    * Return the high-priority message-processing executor */
   public ExecutorService getHighPriorityThreadPool();
-  
+
   /**
    * Return the waiting message-processing executor 
    */
   public ExecutorService getWaitingThreadPool();
-  
+
   /**
    * Return the special waiting message-processing executor 
    */
@@ -289,6 +292,7 @@ public interface DM extends ReplySender {
    * oldest-to-youngest order.  Added for DLockGrantor
    */
   public List<InternalDistributedMember> getViewMembers();
+
   /**
    * Returns the oldest member in the given set of distribution managers.  The
    * current implementation may use n*n/2 comparisons, so use this judiciously
@@ -298,73 +302,73 @@ public interface DM extends ReplySender {
    * a member of the distributed system.
    */
   public DistributedMember getOldestMember(Collection members) throws NoSuchElementException;
-/**
- * @return Set of Admin VM nodes
- */
+
+  /**
+   * @return Set of Admin VM nodes
+   */
   public Set getAdminMemberSet();
-  
+
   /** Throws ShutdownException if closeInProgress returns true. */
   public void throwIfDistributionStopped();
-  
+
   /** Returns count of members filling the specified role */
   public int getRoleCount(Role role);
-  
+
   /** Returns true if at least one member is filling the specified role */
   public boolean isRolePresent(Role role);
 
   /** Returns a set of all roles currently in the distributed system. */
   public Set getAllRoles();
-  
+
   /** Returns true if id is a current member of the distributed system */
   public boolean isCurrentMember(InternalDistributedMember id);
-  
+
   /** Remove given member from list of members who are pending a
    * startup reply
    * @param m the member
    * @param departed true if we're removing them due to membership
    */
-  public void removeUnfinishedStartup(InternalDistributedMember m,
-      boolean departed);
-  
+  public void removeUnfinishedStartup(InternalDistributedMember m, boolean departed);
+
   public void setUnfinishedStartups(Collection s);
-  
+
   /**
    * Return the CancelCriterion for this DM.
    * 
    * @return CancelCriterion for this DM
    */
   public CancelCriterion getCancelCriterion();
-  
+
   /**
    * Return the membership manager for this DM
    * @return the membership manager
    */
   public MembershipManager getMembershipManager();
-  
+
   /**
    * Set the root cause for DM failure
    * @param t the underlying failure
    */
   public void setRootCause(Throwable t);
-  
+
   /**
    * Return the underlying root cause for DM failure, possibly null
    * @return the underlying root cause
    */
   public Throwable getRootCause();
-  
+
   /**
    * Return all members that are on the the this host 
    * @return set of {@link InternalDistributedMember} including this VM
    * @since GemFire 5.9
    */
-  public Set <InternalDistributedMember> getMembersInThisZone();
-  
+  public Set<InternalDistributedMember> getMembersInThisZone();
+
   /**
    * Acquire a permit to request a GII from another member
    */
   public void acquireGIIPermitUninterruptibly();
-  
+
   /**
    * Release a permit to request a GII from another member.
    */
@@ -376,9 +380,8 @@ public interface DM extends ReplySender {
 
   public Set<InternalDistributedMember> getMembersInSameZone(InternalDistributedMember acceptedMember);
 
-  public boolean areInSameZone(InternalDistributedMember member1,
-      InternalDistributedMember member2);
-  
+  public boolean areInSameZone(InternalDistributedMember member1, InternalDistributedMember member2);
+
   /**
    * Returns true is the two members are on the same equivalent host machine
    * based on overlapping IP addresses collected for all NICs on each member's
@@ -387,8 +390,7 @@ public interface DM extends ReplySender {
    * @param member1 First member
    * @param member2 Second member
    */
-  public boolean areOnEquivalentHost(InternalDistributedMember member1,
-      InternalDistributedMember member2);
+  public boolean areOnEquivalentHost(InternalDistributedMember member1, InternalDistributedMember member2);
 
   public Set<InetAddress> getEquivalents(InetAddress in);
 
@@ -406,8 +408,7 @@ public interface DM extends ReplySender {
    * @since GemFire 6.6.3
    */
   public void addHostedLocators(InternalDistributedMember member, Collection<String> locators, boolean isSharedConfigurationEnabled);
-  
-  
+
   /**
    * Gets the value in hostedLocators for a member with one or more
    * hosted locators. The value is a collection of host[port] strings. If a 
@@ -419,7 +420,7 @@ public interface DM extends ReplySender {
    * @since GemFire 6.6.3
    */
   public Collection<String> getHostedLocators(InternalDistributedMember member);
-  
+
   /**
    * Gets the map of all members hosting locators. The key is the member, and
    * the value is a collection of host[port] strings. If a bind-address was 
@@ -443,21 +444,21 @@ public interface DM extends ReplySender {
    * @since GemFire 8.0
    */
   public Map<InternalDistributedMember, Collection<String>> getAllHostedLocatorsWithSharedConfiguration();
-  
+
   /****
    * Determines if the distributed system has the shared configuration service enabled or not. 
    * 
    * @return true if the distributed system was started or had a locator with enable-cluster-configuration = true 
    */
   public boolean isSharedConfigurationServiceEnabledForDS();
-    
+
   /**
    * Forces use of UDP for communications in the current thread.  UDP is
    * connectionless, so no tcp/ip connections will be created or used for
    * messaging until this setting is released with releaseUDPMessagingForCurrentThread.
    */
   public void forceUDPMessagingForCurrentThread();
-  
+
   /**
    * Releases use of UDP for all communications in the current thread,
    * as established by forceUDPMessagingForCurrentThread.

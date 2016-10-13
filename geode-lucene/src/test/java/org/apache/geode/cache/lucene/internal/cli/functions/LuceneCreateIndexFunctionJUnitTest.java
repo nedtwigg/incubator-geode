@@ -45,14 +45,14 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 
 public class LuceneCreateIndexFunctionJUnitTest {
-  
+
   private InternalLuceneService service;
   private GemFireCacheImpl cache;
   String member;
   FunctionContext context;
   ResultSender resultSender;
   CliFunctionResult expectedResult;
-  
+
   @Before
   public void prepare() {
     cache = Fakes.cache();
@@ -61,7 +61,7 @@ public class LuceneCreateIndexFunctionJUnitTest {
     service = mock(InternalLuceneService.class);
     when(cache.getService(InternalLuceneService.class)).thenReturn(service);
     doNothing().when(service).createIndex(anyString(), anyString(), anyMap());
-    
+
     context = mock(FunctionContext.class);
     resultSender = mock(ResultSender.class);
     when(context.getResultSender()).thenReturn(resultSender);
@@ -77,17 +77,16 @@ public class LuceneCreateIndexFunctionJUnitTest {
     analyzerNames.add(StandardAnalyzer.class.getCanonicalName());
     analyzerNames.add(KeywordAnalyzer.class.getCanonicalName());
     analyzerNames.add(StandardAnalyzer.class.getCanonicalName());
-    String [] analyzers = new String[3];
+    String[] analyzers = new String[3];
     analyzerNames.toArray(analyzers);
-    LuceneIndexInfo indexInfo = new LuceneIndexInfo("index1", "/region1", 
-        new String[] {"field1", "field2", "field3"}, analyzers);
+    LuceneIndexInfo indexInfo = new LuceneIndexInfo("index1", "/region1", new String[] { "field1", "field2", "field3" }, analyzers);
     when(context.getArguments()).thenReturn(indexInfo);
 
     LuceneCreateIndexFunction function = new LuceneCreateIndexFunction();
     function = spy(function);
     doReturn(cache).when(function).getCache();
     function.execute(context);
-    
+
     ArgumentCaptor<Map> analyzersCaptor = ArgumentCaptor.forClass(Map.class);
     verify(service).createIndex(eq("index1"), eq("/region1"), analyzersCaptor.capture());
     Map<String, Analyzer> analyzerPerField = analyzersCaptor.getValue();
@@ -95,10 +94,10 @@ public class LuceneCreateIndexFunctionJUnitTest {
     assertTrue(analyzerPerField.get("field1") instanceof StandardAnalyzer);
     assertTrue(analyzerPerField.get("field2") instanceof KeywordAnalyzer);
     assertTrue(analyzerPerField.get("field3") instanceof StandardAnalyzer);
-    
-    ArgumentCaptor<Set> resultCaptor  = ArgumentCaptor.forClass(Set.class);
+
+    ArgumentCaptor<Set> resultCaptor = ArgumentCaptor.forClass(Set.class);
     verify(resultSender).lastResult(resultCaptor.capture());
-    CliFunctionResult result = (CliFunctionResult)resultCaptor.getValue();
+    CliFunctionResult result = (CliFunctionResult) resultCaptor.getValue();
 
     assertEquals(expectedResult, result);
   }
@@ -106,7 +105,7 @@ public class LuceneCreateIndexFunctionJUnitTest {
   @Test
   @SuppressWarnings("unchecked")
   public void testExecuteWithoutAnalyzer() throws Throwable {
-    String fields[] = new String[] {"field1", "field2", "field3"};
+    String fields[] = new String[] { "field1", "field2", "field3" };
     LuceneIndexInfo indexInfo = new LuceneIndexInfo("index1", "/region1", fields, null);
     when(context.getArguments()).thenReturn(indexInfo);
 
@@ -114,12 +113,12 @@ public class LuceneCreateIndexFunctionJUnitTest {
     function = spy(function);
     doReturn(cache).when(function).getCache();
     function.execute(context);
-    
+
     verify(service).createIndex(eq("index1"), eq("/region1"), eq("field1"), eq("field2"), eq("field3"));
 
-    ArgumentCaptor<Set> resultCaptor  = ArgumentCaptor.forClass(Set.class);
+    ArgumentCaptor<Set> resultCaptor = ArgumentCaptor.forClass(Set.class);
     verify(resultSender).lastResult(resultCaptor.capture());
-    CliFunctionResult result = (CliFunctionResult)resultCaptor.getValue();
+    CliFunctionResult result = (CliFunctionResult) resultCaptor.getValue();
 
     assertEquals(expectedResult, result);
   }

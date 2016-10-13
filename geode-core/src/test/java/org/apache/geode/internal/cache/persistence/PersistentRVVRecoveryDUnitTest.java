@@ -86,20 +86,20 @@ import org.apache.geode.test.dunit.WaitCriterion;
 
 @Category(DistributedTest.class)
 public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase {
-  
+
   private static final int TEST_REPLICATED_TOMBSTONE_TIMEOUT = 1000;
 
   public PersistentRVVRecoveryDUnitTest() {
     super();
   }
-  
+
   @Override
   protected final void postTearDownPersistentReplicatedTestBase() throws Exception {
     Invoke.invokeInEveryVM(PersistentRecoveryOrderDUnitTest.class, "resetAckWaitThreshold");
   }
-  
+
   @Test
-  public void testNoConcurrencyChecks () {
+  public void testNoConcurrencyChecks() {
     Cache cache = getCache();
     RegionFactory rf = new RegionFactory();
     rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
@@ -107,11 +107,11 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     try {
       LocalRegion region = (LocalRegion) rf.create(REGION_NAME);
       fail("Expected to get an IllegalStateException because concurrency checks can't be disabled");
-    } catch(IllegalStateException expected) {
+    } catch (IllegalStateException expected) {
       //do nothing
     }
   }
-  
+
   /**
    * Test that we can recover the RVV information with some normal
    * usage.
@@ -125,7 +125,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
       }
     });
   }
-  
+
   /**
    * Test that we can recover the RVV information if the krf is missing
    */
@@ -142,7 +142,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
       }
     });
   }
-  
+
   /**
    * Test that we correctly recover and expire recovered tombstones, with compaction enabled
    */
@@ -163,7 +163,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     assertEquals(0, initialCount);
 
     final int entryCount = 20;
-    for(int i =0 ; i < entryCount; i++) {
+    for (int i = 0; i < entryCount; i++) {
       region.put(i, new byte[100]);
       //destroy each entry.
       region.destroy(i);
@@ -171,15 +171,14 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
 
     assertEquals(entryCount, getTombstoneCount(region));
 
-
     //roll to a new oplog
     region.getDiskStore().forceRoll();
-    
+
     //Force a compaction. This should do nothing, because
     //The tombstones are not garbage, so only 50% of the oplog
     //is garbage (the creates).
     region.getDiskStore().forceCompaction();
-    
+
     assertEquals(0, region.getDiskStore().numCompactableOplogs());
 
     assertEquals(entryCount, getTombstoneCount(region));
@@ -196,17 +195,17 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     //Before expiring tombstones, no oplogs are available for compaction
     assertEquals(0, region.getDiskStore().numCompactableOplogs());
     region.getDiskStore().forceCompaction();
-    assertTrue(tombstoneService.forceBatchExpirationForTests(entryCount/2));
-    
-    assertEquals(entryCount/2, getTombstoneCount(region));
-    
+    assertTrue(tombstoneService.forceBatchExpirationForTests(entryCount / 2));
+
+    assertEquals(entryCount / 2, getTombstoneCount(region));
+
     //After expiring, we should have an oplog available for compaction.
     assertEquals(1, region.getDiskStore().numCompactableOplogs());
 
     //Test after restart the tombstones are still missing
     getCache().close();
     region = createRegion(vm0);
-    assertEquals(entryCount/2, getTombstoneCount(region));
+    assertEquals(entryCount / 2, getTombstoneCount(region));
 
     //We should have an oplog available for compaction, because the tombstones 
     //were garbage collected
@@ -214,14 +213,14 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     //This should compact some oplogs
     region.getDiskStore().forceCompaction();
     assertEquals(0, region.getDiskStore().numCompactableOplogs());
-    
+
     //Restart again, and make sure the compaction didn't mess up our tombstone
     //count
     getCache().close();
     region = createRegion(vm0);
-    assertEquals(entryCount/2, getTombstoneCount(region));
+    assertEquals(entryCount / 2, getTombstoneCount(region));
     cache = (GemFireCacheImpl) getCache();
-    
+
     //Add a test hook that will shutdown the system as soon as we write a GC RVV record
     DiskStoreObserver.setInstance(new DiskStoreObserver() {
       @Override
@@ -230,25 +229,24 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         //preventing us from writing any other records.
         throw new DiskAccessException();
       }
-      
+
     });
     IgnoredException ex = IgnoredException.addIgnoredException("DiskAccessException");
     try {
       //Force expiration, with our test hook that should close the cache
       tombstoneService = cache.getTombstoneService();
-      tombstoneService.forceBatchExpirationForTests(entryCount/4);
+      tombstoneService.forceBatchExpirationForTests(entryCount / 4);
 
       getCache().close();
       assertTrue(cache.isClosed());
 
       //Restart again, and make sure the tombstones are in fact removed
       region = createRegion(vm0);
-      assertEquals(entryCount/4, getTombstoneCount(region));
+      assertEquals(entryCount / 4, getTombstoneCount(region));
     } finally {
       ex.remove();
     }
-    
-    
+
   }
 
   /**
@@ -264,14 +262,14 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
   public void testLotsOfTombstonesExpiration() throws Throwable {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
-    
+
     vm0.invoke(new CacheSerializableRunnable("") {
-      
+
       @Override
       public void run2() throws CacheException {
         long replicatedTombstoneTomeout = TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT;
         int expiriredTombstoneLimit = TombstoneService.EXPIRED_TOMBSTONE_LIMIT;
-        
+
         try {
           LocalRegion region = createRegion(vm0);
 
@@ -339,7 +337,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         } finally {
           TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT = replicatedTombstoneTomeout;
           TombstoneService.EXPIRED_TOMBSTONE_LIMIT = expiriredTombstoneLimit;
-        }    
+        }
       }
     });
   }
@@ -360,13 +358,12 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     VM vm1 = host.getVM(1);
 
     vm0.invoke(new CacheSerializableRunnable("Create PR and put an entry") {
-      
+
       @Override
       public void run2() throws CacheException {
         Cache cache = getCache();
-        
-        PartitionAttributes attrs = new PartitionAttributesFactory()
-            .setRedundantCopies(1).setTotalNumBuckets(1).create();
+
+        PartitionAttributes attrs = new PartitionAttributesFactory().setRedundantCopies(1).setTotalNumBuckets(1).create();
         AttributesFactory factory = new AttributesFactory();
         factory.setPartitionAttributes(attrs);
         RegionAttributes rAttrs = factory.create();
@@ -384,25 +381,24 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
       @Override
       public void run2() throws CacheException {
         Cache cache = getCache();
-        PartitionAttributes attrs = new PartitionAttributesFactory()
-            .setRedundantCopies(1).setTotalNumBuckets(1).create();
+        PartitionAttributes attrs = new PartitionAttributesFactory().setRedundantCopies(1).setTotalNumBuckets(1).create();
         AttributesFactory factory = new AttributesFactory();
         factory.setPartitionAttributes(attrs);
         RegionAttributes rAttrs = factory.create();
         Region region = cache.createRegionFactory(rAttrs).create("prRegion");
         region.put("testKey", "testValue2");
         cache.close();
-        
+
         //Restart
         cache = getCache();
         region = cache.createRegionFactory(rAttrs).create("prRegion");
       }
     });
-    
+
     // Do a DESTROY in vm0 when delta GII is in progress in vm1 (Hopefully, Not
     // guaranteed).
     AsyncInvocation async = vm0.invokeAsync(new CacheSerializableRunnable("Detroy entry in region") {
-      
+
       @Override
       public void run2() throws CacheException {
         Cache cache = getCache();
@@ -421,17 +417,17 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     }
 
     vm1.invoke(new CacheSerializableRunnable("Verifying entry version in new node VM1") {
-      
+
       @Override
       public void run2() throws CacheException {
         Cache cache = getCache();
         Region region = cache.getRegion("prRegion");
-        
-        Region.Entry entry = ((PartitionedRegion)region).getEntry("testKey", true /*Entry is destroyed*/);
-        RegionEntry re = ((EntrySnapshot)entry).getRegionEntry();
+
+        Region.Entry entry = ((PartitionedRegion) region).getEntry("testKey", true /*Entry is destroyed*/);
+        RegionEntry re = ((EntrySnapshot) entry).getRegionEntry();
         LogWriterUtils.getLogWriter().fine("RegionEntry for testKey: " + re.getKey() + " " + re.getValueInVM((LocalRegion) region));
         assertTrue(re.getValueInVM((LocalRegion) region) instanceof Tombstone);
-        
+
         VersionTag tag = re.getVersionStamp().asVersionTag();
         assertEquals(3 /*Two puts and a Destroy*/, tag.getEntryVersion());
       }
@@ -446,7 +442,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     File dir = getDiskDirForVM(vm0);
     dir.mkdirs();
-    dsf.setDiskDirs(new File[] {dir});
+    dsf.setDiskDirs(new File[] { dir });
     dsf.setMaxOplogSize(1);
     //Turn of automatic compaction
     dsf.setAllowForceCompaction(true);
@@ -467,8 +463,8 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
   private int getTombstoneCount(LocalRegion region) {
     int regionCount = region.getTombstoneCount();
     int actualCount = 0;
-    for(RegionEntry entry : region.entries.regionEntries()) {
-      if(entry.isTombstone()) {
+    for (RegionEntry entry : region.entries.regionEntries()) {
+      if (entry.isTombstone()) {
         actualCount++;
       }
     }
@@ -477,71 +473,68 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
 
     return actualCount;
   }
-  
-  
+
   public void doTestRecovery(Runnable doWhileOffline) throws Throwable {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     //Create the region in few members to test recovery
     createPersistentRegion(vm0);
     createPersistentRegion(vm1);
     createPersistentRegion(vm2);
-    
+
     //Create and delete some keys (to update the RVV)
-    createData(vm0, 0,5, "value1");
-    createData(vm1, 3,8, "value2");
-    createData(vm2, 6,11, "value3");
-    
-    delete(vm1, 0,1);
-    delete(vm0, 10,11);
-    
-    
+    createData(vm0, 0, 5, "value1");
+    createData(vm1, 3, 8, "value2");
+    createData(vm2, 6, 11, "value3");
+
+    delete(vm1, 0, 1);
+    delete(vm0, 10, 11);
+
     //Make sure the RVVs are the same in the members
     RegionVersionVector vm0RVV = getRVV(vm0);
     RegionVersionVector vm1RVV = getRVV(vm1);
     RegionVersionVector vm2RVV = getRVV(vm2);
-    
-    
+
     assertSameRVV(vm0RVV, vm1RVV);
     assertSameRVV(vm0RVV, vm2RVV);
-    
+
     //Closing the cache will ensure the disk store is closed
     closeCache(vm2);
     closeCache(vm1);
     closeCache(vm0);
 
     doWhileOffline.run();
-    
+
     //Make sure we can recover the RVV
     createPersistentRegion(vm0);
-    
+
     RegionVersionVector new0RVV = getRVV(vm0);
     assertSameRVV(vm0RVV, new0RVV);
     assertEquals(vm0RVV.getOwnerId(), new0RVV.getOwnerId());
-    
+
     createData(vm0, 12, 15, "value");
-    
+
     //Make sure we can GII the RVV
     new0RVV = getRVV(vm0);
     assertSameRVV(new0RVV, getDiskRVV(vm0));
     createPersistentRegion(vm1);
     assertSameRVV(new0RVV, getRVV(vm1));
     assertSameRVV(new0RVV, getDiskRVV(vm1));
-    
+
     closeCache(vm0);
     closeCache(vm1);
-    
+
     doWhileOffline.run();
-    
+
     //Make the sure member that GII'd the RVV can also recover it
     createPersistentRegion(vm1);
     RegionVersionVector new1RVV = getRVV(vm1);
     assertSameRVV(new0RVV, getRVV(vm1));
   }
-  
+
   /**
    * Test that we skip conflict checks with entries that are on
    * disk compared to entries that come in as part of a GII
@@ -551,15 +544,15 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     //Create the region in few members to test recovery
     createPersistentRegion(vm0);
     createPersistentRegion(vm1);
-    
+
     //Create an update some entries in vm0 and vm1.
-    createData(vm0, 0,1, "value1");
-    createData(vm0, 0,2, "value2");
-    
+    createData(vm0, 0, 1, "value1");
+    createData(vm0, 0, 2, "value2");
+
     closeCache(vm1);
 
     //Reset the entry version in vm0.
@@ -567,7 +560,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     //a lower entry version than vm1, which would cause us to prefer vm1's
     //value
     SerializableRunnable createData = new SerializableRunnable("rollEntryVersion") {
-      
+
       public void run() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion(REGION_NAME);
@@ -581,9 +574,9 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         entry.getVersionStamp().setVersions(tag);
       }
     };
-    
+
     vm0.invoke(createData);
-    
+
     //Create vm1, doing a GII
     createPersistentRegion(vm1);
 
@@ -591,7 +584,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     //If we did a conflict check, this would be value2
     checkData(vm1, 0, 1, "value3");
   }
-  
+
   /**
    * Test that we skip conflict checks with entries that are on
    * disk compared to entries that come in as part of a concurrent operation
@@ -601,16 +594,16 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     //Create the region in few members to test recovery
     createPersistentRegion(vm0);
     createPersistentRegion(vm1);
-    
+
     //Create an update some entries in vm0 and vm1.
-    createData(vm0, 0,1, "value1");
-    createData(vm0, 0,1, "value2");
-    createData(vm0, 0,1, "value2");
-    
+    createData(vm0, 0, 1, "value1");
+    createData(vm0, 0, 1, "value2");
+    createData(vm0, 0, 1, "value2");
+
     closeCache(vm1);
 
     //Update the keys  in vm0 until the entry version rolls over.
@@ -618,7 +611,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     //a lower entry version than vm1, which would cause us to prefer vm1's
     //value
     SerializableRunnable createData = new SerializableRunnable("rollEntryVersion") {
-      
+
       public void run() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion(REGION_NAME);
@@ -629,7 +622,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         //a conflict.
         VersionTag tag = entry.getVersionStamp().asVersionTag();
         tag.setEntryVersion(tag.getEntryVersion() - 2);
-        entry.getVersionStamp().setVersions(tag); 
+        entry.getVersionStamp().setVersions(tag);
       }
     };
     vm0.invoke(createData);
@@ -644,20 +637,19 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
 
           @Override
-          public void beforeProcessMessage(DistributionManager dm,
-              DistributionMessage msg) {
-            if(msg instanceof InitialImageOperation.RequestImageMessage) {
-              if(((InitialImageOperation.RequestImageMessage) msg).regionPath.contains(REGION_NAME)) {
+          public void beforeProcessMessage(DistributionManager dm, DistributionMessage msg) {
+            if (msg instanceof InitialImageOperation.RequestImageMessage) {
+              if (((InitialImageOperation.RequestImageMessage) msg).regionPath.contains(REGION_NAME)) {
                 createData(vm0, 0, 1, "value4");
                 DistributionMessageObserver.setInstance(null);
+              }
             }
           }
-          } 
-          
+
         });
       }
     });
-    
+
     //Create vm1, doing a GII
     createPersistentRegion(vm1);
 
@@ -674,14 +666,14 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
   public void testUpdateRVVWithAsyncPersistence() throws Throwable {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(1);
-    
+
     SerializableRunnable createRegion = new SerializableRunnable("Create persistent region") {
       public void run() {
         Cache cache = getCache();
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
         File dir = getDiskDirForVM(vm0);
         dir.mkdirs();
-        dsf.setDiskDirs(new File[] {dir});
+        dsf.setDiskDirs(new File[] { dir });
         dsf.setMaxOplogSize(1);
         dsf.setQueueSize(100);
         dsf.setTimeInterval(1000);
@@ -694,17 +686,17 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         rf.create(REGION_NAME);
       }
     };
-    
+
     //Create a region with async persistence
     vm0.invoke(createRegion);
-    
+
     //In two different threads, perform updates to the same key on the same region
     AsyncInvocation ins0 = vm0.invokeAsync(new SerializableRunnable("change the entry at vm0") {
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion(REGION_NAME);
-        for (int i=0; i<500; i++) {
-          region.put("A", "vm0-"+i);
+        for (int i = 0; i < 500; i++) {
+          region.put("A", "vm0-" + i);
         }
       }
     });
@@ -712,12 +704,12 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion(REGION_NAME);
-        for (int i=0; i<500; i++) {
-          region.put("A", "vm1-"+i);
+        for (int i = 0; i < 500; i++) {
+          region.put("A", "vm1-" + i);
         }
       }
     });
-    
+
     //Wait for the update threads to finish.
     ins0.getResult(MAX_WAIT);
     ins1.getResult(MAX_WAIT);
@@ -731,7 +723,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         ds.flush();
       }
     });
-    
+
     //Assert that the disk has seen all of the updates
     RegionVersionVector rvv = getRVV(vm0);
     RegionVersionVector diskRVV = getDiskRVV(vm0);
@@ -740,16 +732,16 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     //Bounce the cache and make the same assertion
     closeCache(vm0);
     vm0.invoke(createRegion);
-    
+
     //Assert that the recovered RVV is the same as before the restart
     RegionVersionVector rvv2 = getRVV(vm0);
     assertSameRVV(rvv, rvv2);
-    
+
     //The disk RVV should also match.
     RegionVersionVector diskRVV2 = getDiskRVV(vm0);
     assertSameRVV(rvv2, diskRVV2);
   }
-  
+
   /**
    * Test that when we generate a krf, we write the version tag
    * that matches the entry in the crf.
@@ -758,10 +750,9 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
   public void testWriteCorrectVersionToKrf() throws Throwable {
     Host host = Host.getHost(0);
     final VM vm0 = host.getVM(1);
-    
+
     final LocalRegion region = (LocalRegion) createAsyncRegionWithSmallQueue(vm0);
 
-    
     //The idea here is to do a bunch of puts with async persistence
     //At some point the oplog will switch. At that time, we wait for a krf
     //to be created and then throw an exception to shutdown the disk store.
@@ -771,27 +762,25 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     //
     //To avoid deadlocks, we need to mark that the oplog was switched,
     //and then do the wait in the flusher thread.
-    
+
     //Setup the callbacks to wait for krf creation and throw an exception
     IgnoredException ex = IgnoredException.addIgnoredException("DiskAccessException");
-    LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER=true;
+    LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     try {
       final CountDownLatch krfCreated = new CountDownLatch(1);
       final AtomicBoolean oplogSwitched = new AtomicBoolean(false);
       CacheObserverHolder.setInstance(new CacheObserverAdapter() {
 
-
         @Override
         public void afterKrfCreated() {
           krfCreated.countDown();
         }
-        
 
         @Override
         public void afterWritingBytes() {
-          if(oplogSwitched.get()) {
+          if (oplogSwitched.get()) {
             try {
-              if(!krfCreated.await(3000, TimeUnit.SECONDS)) {
+              if (!krfCreated.await(3000, TimeUnit.SECONDS)) {
                 fail("KRF was not created in 30 seconds!");
               }
             } catch (InterruptedException e) {
@@ -802,8 +791,6 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
             throw new DiskAccessException();
           }
         }
-
-
 
         @Override
         public void afterSwitchingOplog() {
@@ -819,12 +806,12 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         //Starting with a value of 1 means the value should match
         //the region version for easier debugging.
         int i = 1;
-        while(krfCreated.getCount() > 0) {
+        while (krfCreated.getCount() > 0) {
           i++;
           region.put("key" + (i % 3), i);
           Thread.sleep(2);
         }
-      } catch(CacheClosedException | DiskAccessException expected) {
+      } catch (CacheClosedException | DiskAccessException expected) {
         //do nothing
       }
 
@@ -845,21 +832,19 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
       closeCache();
     } finally {
       ex.remove();
-      LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER=false;
+      LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
       CacheObserverHolder.setInstance(null);
     }
-    
-    
-    
+
     //Get the version tags from the krf 
     LocalRegion recoveredRegion = (LocalRegion) createAsyncRegionWithSmallQueue(vm0);
     VersionTag[] tagsFromKrf = new VersionTag[3];
-    for(int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
       NonTXEntry entry = (NonTXEntry) recoveredRegion.getEntry("key" + i);
       tagsFromKrf[i] = entry.getRegionEntry().getVersionStamp().asVersionTag();
-      LogWriterUtils.getLogWriter().info("krfTag[" + i + "]="+ tagsFromKrf[i] + ",value=" + entry.getValue());
+      LogWriterUtils.getLogWriter().info("krfTag[" + i + "]=" + tagsFromKrf[i] + ",value=" + entry.getValue());
     }
-    
+
     closeCache();
 
     //Set a system property to skip recovering from the krf so we can
@@ -869,14 +854,14 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
       //Get the version tags from the crf
       recoveredRegion = (LocalRegion) createAsyncRegionWithSmallQueue(vm0);
       VersionTag[] tagsFromCrf = new VersionTag[3];
-      for(int i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; i++) {
         NonTXEntry entry = (NonTXEntry) recoveredRegion.getEntry("key" + i);
         tagsFromCrf[i] = entry.getRegionEntry().getVersionStamp().asVersionTag();
-        LogWriterUtils.getLogWriter().info("crfTag[" + i + "]="+ tagsFromCrf[i] + ",value=" + entry.getValue());
+        LogWriterUtils.getLogWriter().info("crfTag[" + i + "]=" + tagsFromCrf[i] + ",value=" + entry.getValue());
       }
-      
+
       //Make sure the version tags from the krf and the crf match.
-      for(int i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; i++) {
         assertEquals(tagsFromCrf[i], tagsFromKrf[i]);
       }
     } finally {
@@ -889,7 +874,7 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     DiskStoreFactoryImpl dsf = (DiskStoreFactoryImpl) cache.createDiskStoreFactory();
     File dir = getDiskDirForVM(vm0);
     dir.mkdirs();
-    dsf.setDiskDirs(new File[] {dir});
+    dsf.setDiskDirs(new File[] { dir });
     dsf.setMaxOplogSizeInBytes(500);
     dsf.setQueueSize(1000);
     dsf.setTimeInterval(1000);
@@ -902,68 +887,64 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
     Region region = rf.create(REGION_NAME);
     return region;
   }
-    
-  
+
   private void deleteKRFs(final VM vm0) {
     vm0.invoke(new SerializableRunnable() {
       @Override
       public void run() {
         File file = getDiskDirForVM(vm0);
         File[] krfs = file.listFiles(new FilenameFilter() {
-          
+
           @Override
           public boolean accept(File dir, String name) {
             return name.endsWith(".krf");
           }
         });
         assertTrue(krfs.length > 0);
-        for(File krf : krfs) {
+        for (File krf : krfs) {
           assertTrue(krf.delete());
         }
-        
+
       }
     });
   }
-  
-  private void assertSameRVV(RegionVersionVector rvv1,
-      RegionVersionVector rvv2) {
-    if(!rvv1.sameAs(rvv2)) {
+
+  private void assertSameRVV(RegionVersionVector rvv1, RegionVersionVector rvv2) {
+    if (!rvv1.sameAs(rvv2)) {
       fail("Expected " + rvv1 + " but was " + rvv2);
     }
   }
 
-  protected void createData(VM vm, final int startKey, final int endKey,
-    final String value) {
-      SerializableRunnable createData = new SerializableRunnable("createData") {
-        
-        public void run() {
-          Cache cache = getCache();
-          Region region = cache.getRegion(REGION_NAME);
-          
-          for(int i =startKey; i < endKey; i++) {
-            region.put(i, value);
-          }
+  protected void createData(VM vm, final int startKey, final int endKey, final String value) {
+    SerializableRunnable createData = new SerializableRunnable("createData") {
+
+      public void run() {
+        Cache cache = getCache();
+        Region region = cache.getRegion(REGION_NAME);
+
+        for (int i = startKey; i < endKey; i++) {
+          region.put(i, value);
         }
-      };
-      vm.invoke(createData);
-    }
-  
-  protected void checkData(VM vm0, final int startKey, final int endKey,
-      final String value) {
-        SerializableRunnable checkData = new SerializableRunnable("CheckData") {
-          
-          public void run() {
-            Cache cache = getCache();
-            Region region = cache.getRegion(REGION_NAME);
-            
-            for(int i =startKey; i < endKey; i++) {
-              assertEquals("For key " + i, value, region.get(i));
-            }
-          }
-        };
-        
-        vm0.invoke(checkData);
       }
+    };
+    vm.invoke(createData);
+  }
+
+  protected void checkData(VM vm0, final int startKey, final int endKey, final String value) {
+    SerializableRunnable checkData = new SerializableRunnable("CheckData") {
+
+      public void run() {
+        Cache cache = getCache();
+        Region region = cache.getRegion(REGION_NAME);
+
+        for (int i = startKey; i < endKey; i++) {
+          assertEquals("For key " + i, value, region.get(i));
+        }
+      }
+    };
+
+    vm0.invoke(checkData);
+  }
 
   protected void delete(VM vm, final int startKey, final int endKey) {
     SerializableRunnable createData = new SerializableRunnable("destroy") {
@@ -972,14 +953,14 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         Cache cache = getCache();
         Region region = cache.getRegion(REGION_NAME);
 
-        for(int i =startKey; i < endKey; i++) {
+        for (int i = startKey; i < endKey; i++) {
           region.destroy(i);
         }
       }
     };
     vm.invoke(createData);
   }
-  
+
   protected RegionVersionVector getRVV(VM vm) throws IOException, ClassNotFoundException {
     SerializableCallable createData = new SerializableCallable("getRVV") {
 
@@ -996,28 +977,28 @@ public class PersistentRVVRecoveryDUnitTest extends PersistentReplicatedTestBase
         return hdos.toByteArray();
       }
     };
-    byte[] result= (byte[]) vm.invoke(createData);
+    byte[] result = (byte[]) vm.invoke(createData);
     ByteArrayInputStream bais = new ByteArrayInputStream(result);
     return DataSerializer.readObject(new DataInputStream(bais));
   }
-  
+
   protected RegionVersionVector getDiskRVV(VM vm) throws IOException, ClassNotFoundException {
     SerializableCallable createData = new SerializableCallable("getRVV") {
-      
+
       public Object call() throws Exception {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion(REGION_NAME);
         RegionVersionVector rvv = region.getDiskRegion().getRegionVersionVector();
         rvv = rvv.getCloneForTransmission();
         HeapDataOutputStream hdos = new HeapDataOutputStream(Version.CURRENT);
-        
+
         //Using gemfire serialization because 
         //RegionVersionVector is not java serializable
         DataSerializer.writeObject(rvv, hdos);
         return hdos.toByteArray();
       }
     };
-    byte[] result= (byte[]) vm.invoke(createData);
+    byte[] result = (byte[]) vm.invoke(createData);
     ByteArrayInputStream bais = new ByteArrayInputStream(result);
     return DataSerializer.readObject(new DataInputStream(bais));
   }

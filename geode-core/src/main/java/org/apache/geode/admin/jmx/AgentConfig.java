@@ -286,7 +286,7 @@ public interface AgentConfig extends DistributedSystemConfig {
 
   /** The default name for file that has "agent state saved serialized" */
   public static final String DEFAULT_STATE_SAVE_FILE = "agent.ser";
-  
+
   /** The name of the "auto-connect" property */
   public static final String AUTO_CONNECT_NAME = "auto-connect";
 
@@ -296,19 +296,19 @@ public interface AgentConfig extends DistributedSystemConfig {
   // -------------------------------------------------------------------------
   //   HttpAdaptor properties...
   // -------------------------------------------------------------------------
-  
+
   /** The name of the "httpEnabled" property */
   public static final String HTTP_ENABLED_NAME = "http-enabled";
 
   /** The default value of the "httpEnabled" property  */
   public static final boolean DEFAULT_HTTP_ENABLED = true;
-  
+
   /** The name of the "httpBindAddress" property */
   public static final String HTTP_BIND_ADDRESS_NAME = "http-bind-address";
 
   /** The default value of the "httpBindAddress" property */
   public static final String DEFAULT_HTTP_BIND_ADDRESS = "";
-  
+
   /** The name of the "httpPort" property */
   public static final String HTTP_PORT_NAME = "http-port";
 
@@ -322,82 +322,72 @@ public interface AgentConfig extends DistributedSystemConfig {
   public static final int MAX_HTTP_PORT = 65535;
 
   /** The name of the "state-save-file-name" property */
-  public static final String STATE_SAVE_FILE_NAME =
-    "state-save-file";
+  public static final String STATE_SAVE_FILE_NAME = "state-save-file";
 
   /** The name of the "http-authentication-enabled" property */
-  public static final String HTTP_AUTHENTICATION_ENABLED_NAME =
-    "http-authentication-enabled";
+  public static final String HTTP_AUTHENTICATION_ENABLED_NAME = "http-authentication-enabled";
 
   /** The default value of the "http-authentication-enabled" property
-   *  */ 
+   *  */
   public static final boolean DEFAULT_HTTP_AUTHENTICATION_ENABLED = false;
 
   /** The name of the "http-authentication-user" property */
-  public static final String HTTP_AUTHENTICATION_USER_NAME =
-    "http-authentication-user";
+  public static final String HTTP_AUTHENTICATION_USER_NAME = "http-authentication-user";
 
   /** The default value of the "http-authentication-user" property  */
   public static final String DEFAULT_HTTP_AUTHENTICATION_USER = "admin";
 
   /** The name of the "http-authentication-password" property */
-  public static final String HTTP_AUTHENTICATION_PASSWORD_NAME =
-    "http-authentication-password";
+  public static final String HTTP_AUTHENTICATION_PASSWORD_NAME = "http-authentication-password";
 
   /** The default value of the "http-authentication-password" property
    *  */
-  public static final String DEFAULT_HTTP_AUTHENTICATION_PASSWORD =
-    "password";
+  public static final String DEFAULT_HTTP_AUTHENTICATION_PASSWORD = "password";
 
   /** The name of the "email-notification-enabled" property */
-  public static final String EMAIL_NOTIFICATIONS_ENABLED_NAME =
-    "email-notification-enabled";
+  public static final String EMAIL_NOTIFICATIONS_ENABLED_NAME = "email-notification-enabled";
 
   /** The default value of the "email-notification-enabled" property
-   *  */ 
+   *  */
   public static final boolean DEFAULT_EMAIL_NOTIFICATIONS_ENABLED = false;
 
   /** The name of the "email-notification-from" property */
-  public static final String EMAIL_NOTIFICATIONS_FROM_NAME =
-    "email-notification-from";
+  public static final String EMAIL_NOTIFICATIONS_FROM_NAME = "email-notification-from";
 
   /** The default value of the "email-notification-from" property
-   *  */ 
+   *  */
   public static final String DEFAULT_EMAIL_FROM = "";
 
   /** The name of the "email-notification-host" property */
-  public static final String EMAIL_NOTIFICATIONS_HOST_NAME =
-    "email-notification-host";
+  public static final String EMAIL_NOTIFICATIONS_HOST_NAME = "email-notification-host";
 
   /** The default value of the "email-notification-host" property
-   *  */ 
+   *  */
   public static final String DEFAULT_EMAIL_HOST = "";
 
   /** The name of the "email-notification-to" property */
-  public static final String EMAIL_NOTIFICATIONS_TO_LIST_NAME =
-    "email-notification-to";
+  public static final String EMAIL_NOTIFICATIONS_TO_LIST_NAME = "email-notification-to";
 
   /** The default value of the "email-notification-to" property
-   *  */ 
+   *  */
   public static final String DEFAULT_EMAIL_TO_LIST = "";
 
   // -------------------------------------------------------------------------
   //   RMIConnectorServer properties...
   // -------------------------------------------------------------------------
-  
+
   /** The name of the "rmiEnabled" property */
   public static final String RMI_ENABLED_NAME = "rmi-enabled";
 
   /** The default value of the {@linkplain #RMI_ENABLED_NAME rmi-enabled} property  */
   public static final boolean DEFAULT_RMI_ENABLED = true;
-  
+
   /** The name of the "rmi-registry-enabled" property */
-  public static final String RMI_REGISTRY_ENABLED_NAME =
-    "rmi-registry-enabled"; 
+  public static final String RMI_REGISTRY_ENABLED_NAME = "rmi-registry-enabled";
 
   /** The default value of the {@linkplain #RMI_REGISTRY_ENABLED_NAME rmi-registry-enabled} property*/
   public static final boolean DEFAULT_RMI_REGISTRY_ENABLED = true;
-  
+
   /** The name of the "rmiBindAddress" property */
   public static final String RMI_BIND_ADDRESS_NAME = "rmi-bind-address";
 
@@ -409,7 +399,7 @@ public interface AgentConfig extends DistributedSystemConfig {
 
   /** The default value of the {@linkplain #RMI_PORT_NAME rmi-port} property (1099) */
   public static final int DEFAULT_RMI_PORT = 1099;
-  
+
   /** 
    * The name of the "rmi-server-port" property
    * 
@@ -436,17 +426,17 @@ public interface AgentConfig extends DistributedSystemConfig {
    * {@linkplain #RMI_SERVER_PORT_NAME rmi-server-port} (65535)
    */
   public static final int MAX_RMI_PORT = 65535;
-  
+
   // -------------------------------------------------------------------------
   //   AdventNetSNMPAdaptor properties...
   // -------------------------------------------------------------------------
-  
+
   /** The name of the "snmpEnabled" property */
   public static final String SNMP_ENABLED_NAME = "snmp-enabled";
 
   /** The default value of the "snmpEnabled" property  */
   public static final boolean DEFAULT_SNMP_ENABLED = false;
-  
+
   /** The name of the "snmpBindAddress" property */
   public static final String SNMP_BIND_ADDRESS_NAME = "snmp-bind-address";
 
@@ -472,29 +462,27 @@ public interface AgentConfig extends DistributedSystemConfig {
   /** The name of the "agent-ssl-protocols" property */
   public static final String AGENT_SSL_PROTOCOLS_NAME = "agent-ssl-protocols";
 
-   /** The default value of the "agent-ssl-protocols" property  */
+  /** The default value of the "agent-ssl-protocols" property  */
   public static final String DEFAULT_AGENT_SSL_PROTOCOLS = "any";
 
   /** The name of the "agent-ssl-ciphers" property */
   public static final String AGENT_SSL_CIPHERS_NAME = "agent-ssl-ciphers";
 
-   /** The default value of the "agent-ssl-ciphers" property  */
+  /** The default value of the "agent-ssl-ciphers" property  */
   public static final String DEFAULT_AGENT_SSL_CIPHERS = "any";
 
   /** The name of the "agent-ssl-require-authentication" property */
-  public static final String AGENT_SSL_REQUIRE_AUTHENTICATION_NAME =
-    "agent-ssl-require-authentication";
+  public static final String AGENT_SSL_REQUIRE_AUTHENTICATION_NAME = "agent-ssl-require-authentication";
 
-   /** The default value of the "agent-ssl-require-authentication"
-    * property  */
+  /** The default value of the "agent-ssl-require-authentication"
+   * property  */
   public static final boolean DEFAULT_AGENT_SSL_REQUIRE_AUTHENTICATION = true;
-    
-  /** The name of the "http-ssl-require-authentication" property */
-  public static final String HTTP_SSL_REQUIRE_AUTHENTICATION_NAME =
-    "http-ssl-require-authentication";
 
-   /** The default value of the "http-ssl-require-authentication"
-    * property  */
+  /** The name of the "http-ssl-require-authentication" property */
+  public static final String HTTP_SSL_REQUIRE_AUTHENTICATION_NAME = "http-ssl-require-authentication";
+
+  /** The default value of the "http-ssl-require-authentication"
+   * property  */
   public static final boolean DEFAULT_HTTP_SSL_REQUIRE_AUTHENTICATION = false;
 
   //////////////////////  Instance Methods  //////////////////////
@@ -565,7 +553,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    *
    * See <a href="#http-authentication-enabled">description</a>
    * above.
-   */ 
+   */
   public boolean isHttpAuthEnabled();
 
   /**
@@ -583,7 +571,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * above.
    */
   public String getHttpAuthUser();
-  
+
   /**
    * Sets the user name for HTTP adapter authentication.
    *
@@ -599,7 +587,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * above.
    */
   public String getHttpAuthPassword();
-  
+
   /**
    * Sets the password for HTTP adapter authentication.
    *
@@ -649,7 +637,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#rmi-port">description</a> above.
    */
   public void setRmiPort(int port);
-  
+
   /**
    * Returns the port of the RMI Connector Server.
    *
@@ -727,7 +715,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#snmp-directory">description</a> above.
    */
   public void setSnmpDirectory(String snmpDirectory);
-  
+
   /**
    * Returns whether or not SSL is required for the JMX agent.
    *
@@ -777,7 +765,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#agent-ssl-require-authentication">description</a> above.
    */
   public boolean isAgentSSLRequireAuth();
-  
+
   /**
    * Sets whether SSL authentication is used when connecting to the
    * RMI connector.
@@ -793,7 +781,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#http-ssl-require-authentication">description</a> above.
    */
   public boolean isHttpSSLRequireAuth();
-  
+
   /**
    * Sets whether SSL authentication is used when connecting to the
    * HTTP connector.
@@ -822,7 +810,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#email-notification-from">description</a> above.
    */
   public String getEmailNotificationFrom();
-  
+
   /**
    * Sets the EmailID from whom notification emails are sent.
    *
@@ -836,7 +824,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#email-notification-host">description</a> above.
    */
   public String getEmailNotificationHost();
-  
+
   /**
    * Sets the Host Name from whom notification emails are sent.
    *
@@ -851,7 +839,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#email-notification-to">description</a> above.
    */
   public String getEmailNotificationToList();
-  
+
   /**
    * Sets the EmailID from whom notification emails are sent as a
    * comma separated list.
@@ -859,7 +847,7 @@ public interface AgentConfig extends DistributedSystemConfig {
    * See <a href="#email-notification-to">description</a> above.
    */
   public void setEmailNotificationToList(String emailIDs);
-  
+
   /**
    * Returns the name of the file to be used for saving agent state
    *
@@ -878,6 +866,6 @@ public interface AgentConfig extends DistributedSystemConfig {
    * Returns an <code>AgentConfig</code> with the same configuration
    * as this <code>AgentConfig</code>.
    */
-  public Object clone() throws CloneNotSupportedException; 
+  public Object clone() throws CloneNotSupportedException;
 
 }

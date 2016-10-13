@@ -73,8 +73,7 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
    * when it tries to create new bucket</br>
    */
   @Test
-  public void testLocalMaxMemoryInPartitionedRegion()
-  {
+  public void testLocalMaxMemoryInPartitionedRegion() {
     Host host = Host.getHost(0);
     /** creating 4 VMs */
     this.vm[0] = host.getVM(0);
@@ -93,23 +92,20 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
     List vmList = addNodeToList(startIndexForNode, endIndexForNode);
     localMaxMemory = 1;
     final int redundancy = 1;
-    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, 
-        "20000");
+    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, "20000");
     createPartitionRegion(vmList, startIndexForRegion, endIndexForRegion, localMaxMemory, redundancy, false);
-    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, 
-        Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
+    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
     putFromOneVm(vm[0], true);
     putFromOneVm(vm[0], false);
     destroyRegion(vm[0]);
   }
-  
+
   /**
    * This test makes sure that we don't enforce the localMaxMemory setting
    * when eviction is enabled.
    */
   @Test
-  public void testLocalMaxMemoryInPartitionedRegionWithEviction()
-  {
+  public void testLocalMaxMemoryInPartitionedRegionWithEviction() {
     Host host = Host.getHost(0);
     /** creating 4 VMs */
     this.vm[0] = host.getVM(0);
@@ -128,11 +124,9 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
     List vmList = addNodeToList(startIndexForNode, endIndexForNode);
     localMaxMemory = 1;
     final int redundancy = 1;
-    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, 
-        "20000");
+    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, "20000");
     createPartitionRegion(vmList, startIndexForRegion, endIndexForRegion, localMaxMemory, redundancy, true);
-    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, 
-        Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
+    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
     putFromOneVm(vm[0], true);
     putFromOneVm(vm[0], true);
     destroyRegion(vm[0]);
@@ -144,8 +138,7 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
    * @param vm
    * @param objectFlg
    */
-  private void putFromOneVm(VM vm, boolean objectFlg)
-  {
+  private void putFromOneVm(VM vm, boolean objectFlg) {
     vm.invoke(putObjectInPartitionRegion(objectFlg));
   }
 
@@ -156,19 +149,15 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
    * @param objectFlg
    * @return
    */
-  private CacheSerializableRunnable putObjectInPartitionRegion(final boolean objectFlg)
-  {
+  private CacheSerializableRunnable putObjectInPartitionRegion(final boolean objectFlg) {
 
     CacheSerializableRunnable putObject = new CacheSerializableRunnable("putObject") {
-      public void run2()
-      {
+      public void run2() {
         Cache cache = getCache();
-        PartitionedRegion pr = (PartitionedRegion)cache
-            .getRegion(Region.SEPARATOR
-                + "testLocalMaxMemoryInPartitionedRegion0");
+        PartitionedRegion pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + "testLocalMaxMemoryInPartitionedRegion0");
         assertNotNull("Name of region : " + pr.getName(), pr);
         int i = 0;
-        
+
         if (objectFlg == true) {
           long size = 0;
           while ((size = pr.getDataStore().currentAllocatedMemory()) < PartitionedRegionHelper.BYTES_PER_MB) {
@@ -178,25 +167,18 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
             i++;
           }
           assertEquals(1, pr.getDataStore().localBucket2RegionMap.size());
-          LogWriterUtils.getLogWriter().info(
-          "putObjectInPartitionRegion() - Put operation done successfully");
-        }
-        else {
-          final String expectedExceptions = PartitionedRegionStorageException.class.getName(); 
-          getCache().getLogger().info("<ExpectedException action=add>" + 
-              expectedExceptions + "</ExpectedException>");	
+          LogWriterUtils.getLogWriter().info("putObjectInPartitionRegion() - Put operation done successfully");
+        } else {
+          final String expectedExceptions = PartitionedRegionStorageException.class.getName();
+          getCache().getLogger().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
           try {
             TestObject1 kv = new TestObject1("testObject1" + i, 21);
             pr.put(kv, kv);
             fail("Bucket gets created even if no memory is available");
+          } catch (PartitionedRegionStorageException e) {
+            LogWriterUtils.getLogWriter().info("putObjectInPartitionRegion()- got correct PartitionedRegionStorageException while creating bucket when no memory is available");
           }
-          catch (PartitionedRegionStorageException e) {
-            LogWriterUtils.getLogWriter()
-            .info(
-            "putObjectInPartitionRegion()- got correct PartitionedRegionStorageException while creating bucket when no memory is available");
-          }
-          getCache().getLogger().info("<ExpectedException action=remove>" + 
-              expectedExceptions + "</ExpectedException>");
+          getCache().getLogger().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
         }
       }
     };
@@ -208,14 +190,11 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
    * vmList
    * @param evict 
    */
-  private void createPartitionRegion(List vmList, int startIndexForRegion,
-      int endIndexForRegion, int localMaxMemory, int redundancy, boolean evict)
-  {
+  private void createPartitionRegion(List vmList, int startIndexForRegion, int endIndexForRegion, int localMaxMemory, int redundancy, boolean evict) {
     Iterator nodeIterator = vmList.iterator();
     while (nodeIterator.hasNext()) {
-      VM vm = (VM)nodeIterator.next();
-      vm.invoke(createMultiplePartitionRegion(
-          prPrefix, startIndexForRegion, endIndexForRegion, redundancy, localMaxMemory, evict));
+      VM vm = (VM) nodeIterator.next();
+      vm.invoke(createMultiplePartitionRegion(prPrefix, startIndexForRegion, endIndexForRegion, redundancy, localMaxMemory, evict));
     }
   }
 
@@ -225,8 +204,7 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
    * @param endIndexForNode
    * @return
    */
-  private List addNodeToList(int startIndexForNode, int endIndexForNode)
-  {
+  private List addNodeToList(int startIndexForNode, int endIndexForNode) {
     List localvmList = new ArrayList();
     for (int i = startIndexForNode; i < endIndexForNode; i++) {
       localvmList.add(vm[i]);
@@ -238,80 +216,65 @@ public class PartitionedRegionLocalMaxMemoryDUnitTest extends PartitionedRegionD
    * this function creates vms in given host
    * @param host
    */
-  private void createVMs(Host host)
-  {
+  private void createVMs(Host host) {
     for (int i = 0; i < 4; i++) {
       vm[i] = host.getVM(i);
     }
   }
- 
-  private void destroyRegion (VM vm )
-  {
-    SerializableRunnable destroyObj = new CacheSerializableRunnable("destroyObj")
-    {
-      public void run2() 
-      {
+
+  private void destroyRegion(VM vm) {
+    SerializableRunnable destroyObj = new CacheSerializableRunnable("destroyObj") {
+      public void run2() {
         Cache cache = getCache();
-        PartitionedRegion pr = (PartitionedRegion)cache
-        .getRegion(Region.SEPARATOR
-            + "testLocalMaxMemoryInPartitionedRegion0");
+        PartitionedRegion pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + "testLocalMaxMemoryInPartitionedRegion0");
         assertNotNull("Name of region : " + pr.getName(), pr);
         pr.destroyRegion();
       }
     };
     vm.invoke(destroyObj);
   }
-  
+
   /** 
    * Object used for the put() operation as key and object
    */
-  static public class TestObject1 implements DataSerializable, Sizeable
-  {
+  static public class TestObject1 implements DataSerializable, Sizeable {
     String name;
 
     byte arr[] = new byte[1024 * 4];
 
     int identifier;
-    
-    public TestObject1() {}
+
+    public TestObject1() {
+    }
 
     public TestObject1(String objectName, int objectIndentifier) {
       this.name = objectName;
-      Arrays.fill(this.arr, (byte)'A');
+      Arrays.fill(this.arr, (byte) 'A');
       this.identifier = objectIndentifier;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
       return this.identifier;
     }
 
-    public boolean equals(TestObject1 obj)
-    {
-      return (this.name.equals(obj.name) 
-            && Arrays.equals(this.arr, obj.arr));
+    public boolean equals(TestObject1 obj) {
+      return (this.name.equals(obj.name) && Arrays.equals(this.arr, obj.arr));
     }
 
-    public void toData(DataOutput out) throws IOException
-    {
+    public void toData(DataOutput out) throws IOException {
       DataSerializer.writeByteArray(this.arr, out);
       DataSerializer.writeString(this.name, out);
       out.writeInt(this.identifier);
     }
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException
-    {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       this.arr = DataSerializer.readByteArray(in);
       this.name = DataSerializer.readString(in);
       this.identifier = in.readInt();
     }
 
-    public int getSizeInBytes()
-    {
-      return ObjectSizer.DEFAULT.sizeof(arr) 
-          + ObjectSizer.DEFAULT.sizeof(name) 
-          + ObjectSizer.DEFAULT.sizeof(identifier) 
-          + Sizeable.PER_OBJECT_OVERHEAD * 3;
+    public int getSizeInBytes() {
+      return ObjectSizer.DEFAULT.sizeof(arr) + ObjectSizer.DEFAULT.sizeof(name) + ObjectSizer.DEFAULT.sizeof(identifier) + Sizeable.PER_OBJECT_OVERHEAD * 3;
     }
   }
 }

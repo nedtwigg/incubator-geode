@@ -94,16 +94,11 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
     }
   }
 
-
   protected void minMaxCheck(String propName, int value, int minValue, int maxValue) {
     if (value < minValue) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] {
-        propName, Integer.valueOf(value), Integer.valueOf(minValue)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] { propName, Integer.valueOf(value), Integer.valueOf(minValue) }));
     } else if (value > maxValue) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] {
-        propName, Integer.valueOf(value), Integer.valueOf(maxValue)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] { propName, Integer.valueOf(value), Integer.valueOf(maxValue) }));
     }
   }
 
@@ -119,9 +114,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = TCP_PORT)
   protected int checkTcpPort(int value) {
     if (getClusterSSLEnabled() && value != 0) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_MUST_BE_0_WHEN_2_IS_TRUE.toLocalizedString(new Object[] {
-        TCP_PORT, Integer.valueOf(value), CLUSTER_SSL_ENABLED
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_MUST_BE_0_WHEN_2_IS_TRUE.toLocalizedString(new Object[] { TCP_PORT, Integer.valueOf(value), CLUSTER_SSL_ENABLED }));
     }
     return value;
   }
@@ -129,9 +122,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = MCAST_PORT)
   protected int checkMcastPort(int value) {
     if (getClusterSSLEnabled() && value != 0) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_MUST_BE_0_WHEN_2_IS_TRUE.toLocalizedString(new Object[] {
-        MCAST_PORT, Integer.valueOf(value), CLUSTER_SSL_ENABLED
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_MUST_BE_0_WHEN_2_IS_TRUE.toLocalizedString(new Object[] { MCAST_PORT, Integer.valueOf(value), CLUSTER_SSL_ENABLED }));
     }
     return value;
   }
@@ -139,9 +130,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = MCAST_ADDRESS)
   protected InetAddress checkMcastAddress(InetAddress value) {
     if (!value.isMulticastAddress()) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_IT_WAS_NOT_A_MULTICAST_ADDRESS.toLocalizedString(new Object[] {
-        MCAST_ADDRESS, value
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_IT_WAS_NOT_A_MULTICAST_ADDRESS.toLocalizedString(new Object[] { MCAST_ADDRESS, value }));
     }
     return value;
   }
@@ -149,9 +138,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = BIND_ADDRESS)
   protected String checkBindAddress(String value) {
     if (value != null && value.length() > 0 && !SocketCreator.isLocalHost(value)) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] {
-        value, SocketCreator.getMyAddresses()
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] { value, SocketCreator.getMyAddresses() }));
     }
     return value;
   }
@@ -159,9 +146,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = SERVER_BIND_ADDRESS)
   protected String checkServerBindAddress(String value) {
     if (value != null && value.length() > 0 && !SocketCreator.isLocalHost(value)) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] {
-        value, SocketCreator.getMyAddresses()
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] { value, SocketCreator.getMyAddresses() }));
     }
     return value;
   }
@@ -169,9 +154,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = CLUSTER_SSL_ENABLED)
   protected Boolean checkClusterSSLEnabled(Boolean value) {
     if (value.booleanValue() && (getMcastPort() != 0)) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_MUST_BE_FALSE_WHEN_2_IS_NOT_0.toLocalizedString(new Object[] {
-        CLUSTER_SSL_ENABLED, value, MCAST_PORT
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_MUST_BE_FALSE_WHEN_2_IS_NOT_0.toLocalizedString(new Object[] { CLUSTER_SSL_ENABLED, value, MCAST_PORT }));
     }
     return value;
   }
@@ -179,9 +162,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = HTTP_SERVICE_BIND_ADDRESS)
   protected String checkHttpServiceBindAddress(String value) {
     if (value != null && value.length() > 0 && !SocketCreator.isLocalHost(value)) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] {
-        value, SocketCreator.getMyAddresses()
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] { value, SocketCreator.getMyAddresses() }));
     }
     return value;
   }
@@ -192,15 +173,11 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
     //this check is specific for Jayesh's use case of WAN BootStraping
     if (distributedSystemListener == null) {
       if (value < MIN_DISTRIBUTED_SYSTEM_ID) {
-        throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] {
-          DISTRIBUTED_SYSTEM_ID, Integer.valueOf(value), Integer.valueOf(MIN_DISTRIBUTED_SYSTEM_ID)
-        }));
+        throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] { DISTRIBUTED_SYSTEM_ID, Integer.valueOf(value), Integer.valueOf(MIN_DISTRIBUTED_SYSTEM_ID) }));
       }
     }
     if (value > MAX_DISTRIBUTED_SYSTEM_ID) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] {
-        DISTRIBUTED_SYSTEM_ID, Integer.valueOf(value), Integer.valueOf(MAX_DISTRIBUTED_SYSTEM_ID)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] { DISTRIBUTED_SYSTEM_ID, Integer.valueOf(value), Integer.valueOf(MAX_DISTRIBUTED_SYSTEM_ID) }));
     }
     return value;
   }
@@ -232,7 +209,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
     boolean firstUniqueLocator = true;
     while (st.hasMoreTokens()) {
       String locator = st.nextToken();
-      StringBuffer locatorsb = new StringBuffer();  // string for this locator is accumulated in this buffer
+      StringBuffer locatorsb = new StringBuffer(); // string for this locator is accumulated in this buffer
 
       int portIndex = locator.indexOf('[');
       if (portIndex < 1) {
@@ -304,8 +281,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
         if (0 == portVal) {
           return "";
         } else if (portVal < 1 || portVal > 65535) {
-          throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_INVALID_LOCATOR_0_THE_PORT_1_WAS_NOT_GREATER_THAN_ZERO_AND_LESS_THAN_65536
-            .toLocalizedString(new Object[] { value, Integer.valueOf(portVal) }));
+          throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_INVALID_LOCATOR_0_THE_PORT_1_WAS_NOT_GREATER_THAN_ZERO_AND_LESS_THAN_65536.toLocalizedString(new Object[] { value, Integer.valueOf(portVal) }));
         }
       } catch (NumberFormatException ex) {
         throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_INVALID_LOCATOR_0.toLocalizedString(value));
@@ -338,24 +314,19 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   protected FlowControlParams checkMcastFlowControl(FlowControlParams params) {
     int value = params.getByteAllowance();
     if (value < MIN_FC_BYTE_ALLOWANCE) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_BYTEALLOWANCE_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2
-        .toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, Integer.valueOf(value), Integer.valueOf(MIN_FC_BYTE_ALLOWANCE) }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_BYTEALLOWANCE_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, Integer.valueOf(value), Integer.valueOf(MIN_FC_BYTE_ALLOWANCE) }));
     }
     float fvalue = params.getRechargeThreshold();
     if (fvalue < MIN_FC_RECHARGE_THRESHOLD) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGETHRESHOLD_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2
-        .toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, new Float(fvalue), new Float(MIN_FC_RECHARGE_THRESHOLD) }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGETHRESHOLD_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, new Float(fvalue), new Float(MIN_FC_RECHARGE_THRESHOLD) }));
     } else if (fvalue > MAX_FC_RECHARGE_THRESHOLD) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGETHRESHOLD_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2
-        .toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, new Float(fvalue), new Float(MAX_FC_RECHARGE_THRESHOLD) }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGETHRESHOLD_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, new Float(fvalue), new Float(MAX_FC_RECHARGE_THRESHOLD) }));
     }
     value = params.getRechargeBlockMs();
     if (value < MIN_FC_RECHARGE_BLOCK_MS) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGEBLOCKMS_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2
-        .toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, Integer.valueOf(value), Integer.valueOf(MIN_FC_RECHARGE_BLOCK_MS) }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGEBLOCKMS_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, Integer.valueOf(value), Integer.valueOf(MIN_FC_RECHARGE_BLOCK_MS) }));
     } else if (value > MAX_FC_RECHARGE_BLOCK_MS) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGEBLOCKMS_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2
-        .toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, Integer.valueOf(value), Integer.valueOf(MAX_FC_RECHARGE_BLOCK_MS) }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_RECHARGEBLOCKMS_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] { MCAST_FLOW_CONTROL, Integer.valueOf(value), Integer.valueOf(MAX_FC_RECHARGE_BLOCK_MS) }));
     }
     return params;
   }
@@ -368,9 +339,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
     // Minimum 3 ports are required to start a Gemfire data node,
     // One for each, UDP, FD_SOCk protocols and Cache Server.
     if (value[1] - value[0] < 2) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] {
-        MEMBERSHIP_PORT_RANGE, value[0] + "-" + value[1], Integer.valueOf(3)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] { MEMBERSHIP_PORT_RANGE, value[0] + "-" + value[1], Integer.valueOf(3) }));
     }
     return value;
   }
@@ -390,9 +359,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   protected String checkSecurityPeerAuthInit(String value) {
     if (value != null && value.length() > 0 && getMcastPort() != 0) {
       String mcastInfo = MCAST_PORT + "[" + getMcastPort() + "]";
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_2_MUST_BE_0_WHEN_SECURITY_IS_ENABLED.toLocalizedString(new Object[] {
-        SECURITY_PEER_AUTH_INIT, value, mcastInfo
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_2_MUST_BE_0_WHEN_SECURITY_IS_ENABLED.toLocalizedString(new Object[] { SECURITY_PEER_AUTH_INIT, value, mcastInfo }));
     }
     return value;
   }
@@ -401,9 +368,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   protected String checkSecurityPeerAuthenticator(String value) {
     if (value != null && value.length() > 0 && getMcastPort() != 0) {
       String mcastInfo = MCAST_PORT + "[" + getMcastPort() + "]";
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_2_MUST_BE_0_WHEN_SECURITY_IS_ENABLED.toLocalizedString(new Object[] {
-        SECURITY_PEER_AUTHENTICATOR, value, mcastInfo
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_2_MUST_BE_0_WHEN_SECURITY_IS_ENABLED.toLocalizedString(new Object[] { SECURITY_PEER_AUTHENTICATOR, value, mcastInfo }));
     }
     return value;
   }
@@ -411,24 +376,18 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = SECURITY_LOG_LEVEL)
   protected int checkSecurityLogLevel(int value) {
     if (value < MIN_LOG_LEVEL) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] {
-        SECURITY_LOG_LEVEL, LogWriterImpl.levelToString(value), LogWriterImpl.levelToString(MIN_LOG_LEVEL)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_LESS_THAN_2.toLocalizedString(new Object[] { SECURITY_LOG_LEVEL, LogWriterImpl.levelToString(value), LogWriterImpl.levelToString(MIN_LOG_LEVEL) }));
     }
     if (value > MAX_LOG_LEVEL) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] {
-        SECURITY_LOG_LEVEL, LogWriterImpl.levelToString(value), LogWriterImpl.levelToString(MAX_LOG_LEVEL)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_COULD_NOT_SET_0_TO_1_BECAUSE_ITS_VALUE_CAN_NOT_BE_GREATER_THAN_2.toLocalizedString(new Object[] { SECURITY_LOG_LEVEL, LogWriterImpl.levelToString(value), LogWriterImpl.levelToString(MAX_LOG_LEVEL) }));
     }
     return value;
   }
 
   @ConfigAttributeChecker(name = MEMCACHED_PROTOCOL)
   protected String checkMemcachedProtocol(String protocol) {
-    if (protocol == null || (!protocol.equalsIgnoreCase(GemFireMemcachedServer.Protocol.ASCII.name()) && !protocol.equalsIgnoreCase(GemFireMemcachedServer.Protocol.BINARY
-      .name()))) {
-      throw new IllegalArgumentException(LocalizedStrings.
-        AbstractDistributionConfig_MEMCACHED_PROTOCOL_MUST_BE_ASCII_OR_BINARY.toLocalizedString());
+    if (protocol == null || (!protocol.equalsIgnoreCase(GemFireMemcachedServer.Protocol.ASCII.name()) && !protocol.equalsIgnoreCase(GemFireMemcachedServer.Protocol.BINARY.name()))) {
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_MEMCACHED_PROTOCOL_MUST_BE_ASCII_OR_BINARY.toLocalizedString());
     }
     return protocol;
   }
@@ -440,9 +399,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = MEMCACHED_BIND_ADDRESS)
   protected String checkMemcachedBindAddress(String value) {
     if (value != null && value.length() > 0 && !SocketCreator.isLocalHost(value)) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_MEMCACHED_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] {
-        value, SocketCreator.getMyAddresses()
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_MEMCACHED_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] { value, SocketCreator.getMyAddresses() }));
     }
     return value;
   }
@@ -450,9 +407,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   @ConfigAttributeChecker(name = REDIS_BIND_ADDRESS)
   protected String checkRedisBindAddress(String value) {
     if (value != null && value.length() > 0 && !SocketCreator.isLocalHost(value)) {
-      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_REDIS_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] {
-        value, SocketCreator.getMyAddresses()
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_REDIS_BIND_ADDRESS_0_INVALID_MUST_BE_IN_1.toLocalizedString(new Object[] { value, SocketCreator.getMyAddresses() }));
     }
     return value;
   }
@@ -465,26 +420,16 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   protected SecurableCommunicationChannel[] checkLegacySSLWhenSSLEnabledComponentsSet(SecurableCommunicationChannel[] value) {
     for (SecurableCommunicationChannel component : value) {
       switch (component) {
-        case ALL:
-        case CLUSTER:
-        case SERVER:
-        case GATEWAY:
-        case JMX:
-        case WEB:
-        case LOCATOR:
-          continue;
-        default:
-          throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_SSL_ENABLED_COMPONENTS_0_INVALID_TRY_1.toLocalizedString(new Object[] {
-            value, StringUtils.join(new String[] {
-            SecurableCommunicationChannel.ALL.getConstant(),
-            SecurableCommunicationChannel.CLUSTER.getConstant(),
-            SecurableCommunicationChannel.SERVER.getConstant(),
-            SecurableCommunicationChannel.GATEWAY.getConstant(),
-            SecurableCommunicationChannel.JMX.getConstant(),
-            SecurableCommunicationChannel.WEB.getConstant(),
-            SecurableCommunicationChannel.LOCATOR.getConstant()
-          }, ",")
-          }));
+      case ALL:
+      case CLUSTER:
+      case SERVER:
+      case GATEWAY:
+      case JMX:
+      case WEB:
+      case LOCATOR:
+        continue;
+      default:
+        throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_SSL_ENABLED_COMPONENTS_0_INVALID_TRY_1.toLocalizedString(new Object[] { value, StringUtils.join(new String[] { SecurableCommunicationChannel.ALL.getConstant(), SecurableCommunicationChannel.CLUSTER.getConstant(), SecurableCommunicationChannel.SERVER.getConstant(), SecurableCommunicationChannel.GATEWAY.getConstant(), SecurableCommunicationChannel.JMX.getConstant(), SecurableCommunicationChannel.WEB.getConstant(), SecurableCommunicationChannel.LOCATOR.getConstant() }, ",") }));
       }
     }
     if (value.length > 0) {
@@ -514,9 +459,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
     if (attValue != null) {
       // null is a "valid" value for any class
       if (!validValueClass.isInstance(attValue)) {
-        throw new InvalidValueException(LocalizedStrings.AbstractDistributionConfig_0_VALUE_1_MUST_BE_OF_TYPE_2.toLocalizedString(new Object[] {
-          attName, attValue, validValueClass.getName()
-        }));
+        throw new InvalidValueException(LocalizedStrings.AbstractDistributionConfig_0_VALUE_1_MUST_BE_OF_TYPE_2.toLocalizedString(new Object[] { attName, attValue, validValueClass.getName() }));
       }
     }
 
@@ -607,7 +550,6 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
     }
   }
 
-
   public boolean isAttributeModifiable(String attName) {
     checkAttributeName(attName);
     if (getModifiableAttributes().contains(attName)) {
@@ -620,7 +562,6 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
     // otherwise, return the default
     return _modifiableDefault();
   }
-
 
   /**
    * child class can override this method to return a list of modifiable attributes
@@ -664,18 +605,11 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
   static {
     Map<String, String> m = new HashMap<String, String>();
 
-    m.put(ACK_WAIT_THRESHOLD, LocalizedStrings.AbstractDistributionConfig_DEFAULT_ACK_WAIT_THRESHOLD_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_ACK_WAIT_THRESHOLD), Integer.valueOf(MIN_ACK_WAIT_THRESHOLD), Integer.valueOf(MIN_ACK_WAIT_THRESHOLD)
-    }));
+    m.put(ACK_WAIT_THRESHOLD, LocalizedStrings.AbstractDistributionConfig_DEFAULT_ACK_WAIT_THRESHOLD_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_ACK_WAIT_THRESHOLD), Integer.valueOf(MIN_ACK_WAIT_THRESHOLD), Integer.valueOf(MIN_ACK_WAIT_THRESHOLD) }));
 
     m.put(ARCHIVE_FILE_SIZE_LIMIT, LocalizedStrings.AbstractDistributionConfig_ARCHIVE_FILE_SIZE_LIMIT_NAME.toLocalizedString());
 
-    m.put(ACK_SEVERE_ALERT_THRESHOLD, LocalizedStrings.AbstractDistributionConfig_ACK_SEVERE_ALERT_THRESHOLD_NAME.toLocalizedString(new Object[] {
-      ACK_WAIT_THRESHOLD,
-      Integer.valueOf(DEFAULT_ACK_SEVERE_ALERT_THRESHOLD),
-      Integer.valueOf(MIN_ACK_SEVERE_ALERT_THRESHOLD),
-      Integer.valueOf(MAX_ACK_SEVERE_ALERT_THRESHOLD)
-    }));
+    m.put(ACK_SEVERE_ALERT_THRESHOLD, LocalizedStrings.AbstractDistributionConfig_ACK_SEVERE_ALERT_THRESHOLD_NAME.toLocalizedString(new Object[] { ACK_WAIT_THRESHOLD, Integer.valueOf(DEFAULT_ACK_SEVERE_ALERT_THRESHOLD), Integer.valueOf(MIN_ACK_SEVERE_ALERT_THRESHOLD), Integer.valueOf(MAX_ACK_SEVERE_ALERT_THRESHOLD) }));
 
     m.put(ARCHIVE_DISK_SPACE_LIMIT, LocalizedStrings.AbstractDistributionConfig_ARCHIVE_DISK_SPACE_LIMIT_NAME.toLocalizedString());
 
@@ -689,9 +623,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
 
     m.put(LOG_FILE, LocalizedStrings.AbstractDistributionConfig_LOG_FILE_NAME_0.toLocalizedString(DEFAULT_LOG_FILE));
 
-    m.put(LOG_LEVEL, LocalizedStrings.AbstractDistributionConfig_LOG_LEVEL_NAME_0_1.toLocalizedString(new Object[] {
-      LogWriterImpl.levelToString(DEFAULT_LOG_LEVEL), LogWriterImpl.allowedLogLevels()
-    }));
+    m.put(LOG_LEVEL, LocalizedStrings.AbstractDistributionConfig_LOG_LEVEL_NAME_0_1.toLocalizedString(new Object[] { LogWriterImpl.levelToString(DEFAULT_LOG_LEVEL), LogWriterImpl.allowedLogLevels() }));
 
     m.put(LOG_FILE_SIZE_LIMIT, LocalizedStrings.AbstractDistributionConfig_LOG_FILE_SIZE_LIMIT_NAME.toLocalizedString());
 
@@ -701,21 +633,13 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
 
     m.put(LOCATOR_WAIT_TIME, LocalizedStrings.AbstractDistributionConfig_LOCATOR_WAIT_TIME_NAME_0.toLocalizedString(Integer.valueOf(DEFAULT_LOCATOR_WAIT_TIME)));
 
-    m.put(TCP_PORT, LocalizedStrings.AbstractDistributionConfig_TCP_PORT_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_TCP_PORT), Integer.valueOf(MIN_TCP_PORT), Integer.valueOf(MAX_TCP_PORT)
-    }));
+    m.put(TCP_PORT, LocalizedStrings.AbstractDistributionConfig_TCP_PORT_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_TCP_PORT), Integer.valueOf(MIN_TCP_PORT), Integer.valueOf(MAX_TCP_PORT) }));
 
-    m.put(MCAST_PORT, LocalizedStrings.AbstractDistributionConfig_MCAST_PORT_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_MCAST_PORT), Integer.valueOf(MIN_MCAST_PORT), Integer.valueOf(MAX_MCAST_PORT)
-    }));
+    m.put(MCAST_PORT, LocalizedStrings.AbstractDistributionConfig_MCAST_PORT_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_MCAST_PORT), Integer.valueOf(MIN_MCAST_PORT), Integer.valueOf(MAX_MCAST_PORT) }));
 
-    m.put(MCAST_ADDRESS, LocalizedStrings.AbstractDistributionConfig_MCAST_ADDRESS_NAME_0_1.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_MCAST_PORT), DEFAULT_MCAST_ADDRESS
-    }));
+    m.put(MCAST_ADDRESS, LocalizedStrings.AbstractDistributionConfig_MCAST_ADDRESS_NAME_0_1.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_MCAST_PORT), DEFAULT_MCAST_ADDRESS }));
 
-    m.put(MCAST_TTL, LocalizedStrings.AbstractDistributionConfig_MCAST_TTL_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_MCAST_TTL), Integer.valueOf(MIN_MCAST_TTL), Integer.valueOf(MAX_MCAST_TTL)
-    }));
+    m.put(MCAST_TTL, LocalizedStrings.AbstractDistributionConfig_MCAST_TTL_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_MCAST_TTL), Integer.valueOf(MIN_MCAST_TTL), Integer.valueOf(MAX_MCAST_TTL) }));
 
     m.put(MCAST_SEND_BUFFER_SIZE, LocalizedStrings.AbstractDistributionConfig_MCAST_SEND_BUFFER_SIZE_NAME_0.toLocalizedString(Integer.valueOf(DEFAULT_MCAST_SEND_BUFFER_SIZE)));
 
@@ -737,13 +661,9 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
 
     m.put(UDP_FRAGMENT_SIZE, LocalizedStrings.AbstractDistributionConfig_UDP_FRAGMENT_SIZE_NAME_0.toLocalizedString(Integer.valueOf(DEFAULT_UDP_FRAGMENT_SIZE)));
 
-    m.put(SOCKET_LEASE_TIME, LocalizedStrings.AbstractDistributionConfig_SOCKET_LEASE_TIME_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_SOCKET_LEASE_TIME), Integer.valueOf(MIN_SOCKET_LEASE_TIME), Integer.valueOf(MAX_SOCKET_LEASE_TIME)
-    }));
+    m.put(SOCKET_LEASE_TIME, LocalizedStrings.AbstractDistributionConfig_SOCKET_LEASE_TIME_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_SOCKET_LEASE_TIME), Integer.valueOf(MIN_SOCKET_LEASE_TIME), Integer.valueOf(MAX_SOCKET_LEASE_TIME) }));
 
-    m.put(SOCKET_BUFFER_SIZE, LocalizedStrings.AbstractDistributionConfig_SOCKET_BUFFER_SIZE_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_SOCKET_BUFFER_SIZE), Integer.valueOf(MIN_SOCKET_BUFFER_SIZE), Integer.valueOf(MAX_SOCKET_BUFFER_SIZE)
-    }));
+    m.put(SOCKET_BUFFER_SIZE, LocalizedStrings.AbstractDistributionConfig_SOCKET_BUFFER_SIZE_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_SOCKET_BUFFER_SIZE), Integer.valueOf(MIN_SOCKET_BUFFER_SIZE), Integer.valueOf(MAX_SOCKET_BUFFER_SIZE) }));
 
     m.put(CONSERVE_SOCKETS, LocalizedStrings.AbstractDistributionConfig_CONSERVE_SOCKETS_NAME_0.toLocalizedString(Boolean.valueOf(DEFAULT_CONSERVE_SOCKETS)));
 
@@ -757,9 +677,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
 
     m.put(STATISTIC_ARCHIVE_FILE, LocalizedStrings.AbstractDistributionConfig_STATISTIC_ARCHIVE_FILE_NAME_0.toLocalizedString(DEFAULT_STATISTIC_ARCHIVE_FILE));
 
-    m.put(STATISTIC_SAMPLE_RATE, LocalizedStrings.AbstractDistributionConfig_STATISTIC_SAMPLE_RATE_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_STATISTIC_SAMPLE_RATE), Integer.valueOf(MIN_STATISTIC_SAMPLE_RATE), Integer.valueOf(MAX_STATISTIC_SAMPLE_RATE)
-    }));
+    m.put(STATISTIC_SAMPLE_RATE, LocalizedStrings.AbstractDistributionConfig_STATISTIC_SAMPLE_RATE_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_STATISTIC_SAMPLE_RATE), Integer.valueOf(MIN_STATISTIC_SAMPLE_RATE), Integer.valueOf(MAX_STATISTIC_SAMPLE_RATE) }));
 
     m.put(STATISTIC_SAMPLING_ENABLED, LocalizedStrings.AbstractDistributionConfig_STATISTIC_SAMPLING_ENABLED_NAME_0.toLocalizedString(Boolean.valueOf(DEFAULT_STATISTIC_SAMPLING_ENABLED)));
 
@@ -787,18 +705,11 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
 
     m.put(MAX_NUM_RECONNECT_TRIES, LocalizedStrings.AbstractDistributionConfig_MAX_NUM_RECONNECT_TRIES.toLocalizedString());
 
-    m.put(ASYNC_DISTRIBUTION_TIMEOUT, LocalizedStrings.AbstractDistributionConfig_ASYNC_DISTRIBUTION_TIMEOUT_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_ASYNC_DISTRIBUTION_TIMEOUT), Integer.valueOf(MIN_ASYNC_DISTRIBUTION_TIMEOUT), Integer.valueOf(MAX_ASYNC_DISTRIBUTION_TIMEOUT)
-    }));
+    m.put(ASYNC_DISTRIBUTION_TIMEOUT, LocalizedStrings.AbstractDistributionConfig_ASYNC_DISTRIBUTION_TIMEOUT_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_ASYNC_DISTRIBUTION_TIMEOUT), Integer.valueOf(MIN_ASYNC_DISTRIBUTION_TIMEOUT), Integer.valueOf(MAX_ASYNC_DISTRIBUTION_TIMEOUT) }));
 
+    m.put(ASYNC_QUEUE_TIMEOUT, LocalizedStrings.AbstractDistributionConfig_ASYNC_QUEUE_TIMEOUT_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_ASYNC_QUEUE_TIMEOUT), Integer.valueOf(MIN_ASYNC_QUEUE_TIMEOUT), Integer.valueOf(MAX_ASYNC_QUEUE_TIMEOUT) }));
 
-    m.put(ASYNC_QUEUE_TIMEOUT, LocalizedStrings.AbstractDistributionConfig_ASYNC_QUEUE_TIMEOUT_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_ASYNC_QUEUE_TIMEOUT), Integer.valueOf(MIN_ASYNC_QUEUE_TIMEOUT), Integer.valueOf(MAX_ASYNC_QUEUE_TIMEOUT)
-    }));
-
-    m.put(ASYNC_MAX_QUEUE_SIZE, LocalizedStrings.AbstractDistributionConfig_ASYNC_MAX_QUEUE_SIZE_NAME_0_1_2.toLocalizedString(new Object[] {
-      Integer.valueOf(DEFAULT_ASYNC_MAX_QUEUE_SIZE), Integer.valueOf(MIN_ASYNC_MAX_QUEUE_SIZE), Integer.valueOf(MAX_ASYNC_MAX_QUEUE_SIZE)
-    }));
+    m.put(ASYNC_MAX_QUEUE_SIZE, LocalizedStrings.AbstractDistributionConfig_ASYNC_MAX_QUEUE_SIZE_NAME_0_1_2.toLocalizedString(new Object[] { Integer.valueOf(DEFAULT_ASYNC_MAX_QUEUE_SIZE), Integer.valueOf(MIN_ASYNC_MAX_QUEUE_SIZE), Integer.valueOf(MAX_ASYNC_MAX_QUEUE_SIZE) }));
 
     m.put(START_LOCATOR, LocalizedStrings.AbstractDistributionConfig_START_LOCATOR_NAME.toLocalizedString());
 
@@ -816,13 +727,9 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
 
     m.put(SECURITY_CLIENT_AUTHENTICATOR, LocalizedStrings.AbstractDistributionConfig_SECURITY_CLIENT_AUTHENTICATOR_NAME_0.toLocalizedString(DEFAULT_SECURITY_CLIENT_AUTHENTICATOR));
 
-    m.put(SECURITY_CLIENT_DHALGO,
-      LocalizedStrings.AbstractDistributionConfig_SECURITY_CLIENT_DHALGO_NAME_0
-        .toLocalizedString(DEFAULT_SECURITY_CLIENT_DHALGO));
+    m.put(SECURITY_CLIENT_DHALGO, LocalizedStrings.AbstractDistributionConfig_SECURITY_CLIENT_DHALGO_NAME_0.toLocalizedString(DEFAULT_SECURITY_CLIENT_DHALGO));
 
-    m.put(SECURITY_UDP_DHALGO,
-        LocalizedStrings.AbstractDistributionConfig_SECURITY_UDP_DHALGO_NAME_0
-          .toLocalizedString(DEFAULT_SECURITY_UDP_DHALGO));
+    m.put(SECURITY_UDP_DHALGO, LocalizedStrings.AbstractDistributionConfig_SECURITY_UDP_DHALGO_NAME_0.toLocalizedString(DEFAULT_SECURITY_UDP_DHALGO));
 
     m.put(SECURITY_PEER_AUTH_INIT, LocalizedStrings.AbstractDistributionConfig_SECURITY_PEER_AUTH_INIT_NAME_0.toLocalizedString(DEFAULT_SECURITY_PEER_AUTH_INIT));
 
@@ -832,9 +739,7 @@ public abstract class AbstractDistributionConfig extends AbstractConfig implemen
 
     m.put(SECURITY_CLIENT_ACCESSOR_PP, LocalizedStrings.AbstractDistributionConfig_SECURITY_CLIENT_ACCESSOR_PP_NAME_0.toLocalizedString(DEFAULT_SECURITY_CLIENT_ACCESSOR_PP));
 
-    m.put(SECURITY_LOG_LEVEL, LocalizedStrings.AbstractDistributionConfig_SECURITY_LOG_LEVEL_NAME_0_1.toLocalizedString(new Object[] {
-      LogWriterImpl.levelToString(DEFAULT_LOG_LEVEL), LogWriterImpl.allowedLogLevels()
-    }));
+    m.put(SECURITY_LOG_LEVEL, LocalizedStrings.AbstractDistributionConfig_SECURITY_LOG_LEVEL_NAME_0_1.toLocalizedString(new Object[] { LogWriterImpl.levelToString(DEFAULT_LOG_LEVEL), LogWriterImpl.allowedLogLevels() }));
 
     m.put(SECURITY_LOG_FILE, LocalizedStrings.AbstractDistributionConfig_SECURITY_LOG_FILE_NAME_0.toLocalizedString(DEFAULT_SECURITY_LOG_FILE));
 

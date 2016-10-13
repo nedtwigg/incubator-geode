@@ -36,7 +36,7 @@ public class VersionJUnitTest {
     compare(Version.GFE_81, Version.GFE_71);
     compare(Version.GFE_81, Version.GFE_80);
   }
-  
+
   private void compare(Version later, Version earlier) {
     assertTrue(later.compareTo(earlier) > 0);
     assertTrue(later.equals(later));

@@ -56,17 +56,17 @@ public class GetCommand extends AbstractCommand {
   private static final String RN = "\r\n";
   private static final ByteBuffer RN_BUF = asciiCharset.encode(RN);
   private static final ByteBuffer END_BUF = asciiCharset.encode(Reply.END.toString());
-  
+
   /**
    * buffer used to compose one line of reply
    */
   private static ThreadLocal<CharBuffer> lineBuffer = new ThreadLocal<CharBuffer>();
-  
+
   /**
    * defaults to the default send buffer size on socket
    */
   private static final int REPLY_BUFFER_CAPACITY = Integer.getInteger("replyBufferCapacity", 146988);
-  
+
   /**
    * buffer for sending get replies, one per thread
    */
@@ -84,7 +84,7 @@ public class GetCommand extends AbstractCommand {
 
   protected ByteBuffer processBinaryCommand(ByteBuffer buffer, RequestReader request, Cache cache, ByteBuffer response) {
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
-    
+
     KeyWrapper key = getKey(buffer, HEADER_LENGTH);
     ValueWrapper val = null;
     try {
@@ -93,7 +93,7 @@ public class GetCommand extends AbstractCommand {
       return handleBinaryException(key, request, response, "get", e);
     }
     if (getLogger().fineEnabled()) {
-      getLogger().fine("get:key:"+key+" val:"+val);
+      getLogger().fine("get:key:" + key + " val:" + val);
     }
     if (val == null) {
       if (isQuiet()) {
@@ -120,7 +120,7 @@ public class GetCommand extends AbstractCommand {
         response.put(key.getKey());
       }
       response.put(realValue);
-      
+
       response.flip();
     }
     return response;
@@ -148,28 +148,27 @@ public class GetCommand extends AbstractCommand {
     flb.flip();
     String firstLine = getFirstLine();
     String[] firstLineElements = firstLine.split(" ");
-    
+
     boolean isGets = firstLineElements[0].equals("gets");
     Set<String> keys = new HashSet<String>();
-    for (int i=1; i<firstLineElements.length; i++) {
+    for (int i = 1; i < firstLineElements.length; i++) {
       keys.add(stripNewline(firstLineElements[i]));
     }
-    
+
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     Map<Object, ValueWrapper> results = r.getAll(keys);
-    
+
     return composeReply(results, isGets);
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "NP_NULL_PARAM_DEREF",
-      justification = "findbugs complains that v is null while putting into buffer, but it is not")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "NP_NULL_PARAM_DEREF", justification = "findbugs complains that v is null while putting into buffer, but it is not")
   private ByteBuffer composeReply(Map<Object, ValueWrapper> results, boolean isGets) {
     Iterator<Entry<Object, ValueWrapper>> it = results.entrySet().iterator();
     ByteBuffer buffer = getReplyBuffer();
     while (it.hasNext()) {
       Entry<Object, ValueWrapper> e = it.next();
       if (getLogger().fineEnabled()) {
-        getLogger().fine("get compose reply:"+e);
+        getLogger().fine("get compose reply:" + e);
       }
       ValueWrapper valWrapper = e.getValue();
       if (valWrapper != null) {
@@ -178,7 +177,7 @@ public class GetCommand extends AbstractCommand {
         reply.put(VALUE).put(W_SPACE);
         reply.put(e.getKey().toString()).put(W_SPACE);
         reply.put(Integer.toString(valWrapper.getFlags())).put(W_SPACE); // flags
-        
+
         String valBytes = v == null ? Integer.toString(0) : Integer.toString(v.length);
         reply.put(valBytes);
         if (isGets) {
@@ -200,7 +199,7 @@ public class GetCommand extends AbstractCommand {
     buffer.flip();
     return buffer;
   }
-  
+
   private ByteBuffer getReplyBuffer() {
     ByteBuffer retVal = replyBuffer.get();
     if (retVal == null) {
@@ -210,7 +209,7 @@ public class GetCommand extends AbstractCommand {
     retVal.clear();
     return retVal;
   }
-  
+
   private CharBuffer getLineBuffer() {
     CharBuffer retVal = lineBuffer.get();
     if (retVal == null) {

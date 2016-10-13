@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.admin;
 
 /**
@@ -25,7 +25,7 @@ package org.apache.geode.admin;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public class CacheDoesNotExistException extends AdminException {
-private static final long serialVersionUID = -1639933911265729978L;
+  private static final long serialVersionUID = -1639933911265729978L;
 
   /**
    * Constructs a new exception with <code>null</code> as its detail message.
@@ -81,6 +81,5 @@ private static final long serialVersionUID = -1639933911265729978L;
   public CacheDoesNotExistException(Throwable cause) {
     super(cause);
   }
-    
-}
 
+}

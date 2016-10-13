@@ -41,7 +41,7 @@ public interface IndexProtocol extends Index {
   static final int OTHER_OP = 0; // not an UPDATE but some other operation
   static final int BEFORE_UPDATE_OP = 1; // handled when there is no reverse map
   static final int AFTER_UPDATE_OP = 2; // handled when there is a reverse map 
-  
+
   boolean addIndexMapping(RegionEntry entry) throws IMQException;
 
   boolean addAllIndexMappings(Collection c) throws IMQException;
@@ -54,7 +54,7 @@ public interface IndexProtocol extends Index {
   boolean removeAllIndexMappings(Collection c) throws IMQException;
 
   boolean clear() throws QueryException;
- 
+
   /**
    * This method gets invoked only if the where clause contains multiple 'NOT
    * EQUAL' conditions only , for a given index expression ( i.e something like
@@ -70,13 +70,8 @@ public interface IndexProtocol extends Index {
    *                ExecutionContext object                
    * @throws TypeMismatchException
    */
-  void query(Collection results, Set keysToRemove, ExecutionContext context)
-  throws TypeMismatchException,
-         FunctionDomainException,
-         NameResolutionException,
-         QueryInvocationTargetException;
-  
- 
+  void query(Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException;
+
   /**
    * This can be invoked only from RangeJunction.SingleCondnEvaluator
    * 
@@ -100,11 +95,7 @@ public interface IndexProtocol extends Index {
    *                ExecutionContext object
    * @throws TypeMismatchException
    */
-  void query(Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context)
-  throws TypeMismatchException,
-         FunctionDomainException,
-         NameResolutionException,
-         QueryInvocationTargetException;
+  void query(Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * 
@@ -120,11 +111,7 @@ public interface IndexProtocol extends Index {
    *               ExecutionContext object 
    * @throws TypeMismatchException
    */
-  void query(Object key, int operator, Collection results, ExecutionContext context)
-  throws TypeMismatchException,
-         FunctionDomainException,
-         NameResolutionException,
-         QueryInvocationTargetException;
+  void query(Object key, int operator, Collection results, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * 
@@ -135,12 +122,11 @@ public interface IndexProtocol extends Index {
    * @param indpndntItr
    * @param context
    * @throws TypeMismatchException
- * @throws QueryInvocationTargetException 
- * @throws NameResolutionException 
- * @throws FunctionDomainException 
+  * @throws QueryInvocationTargetException 
+  * @throws NameResolutionException 
+  * @throws FunctionDomainException 
    */
-  void query(Object key, int operator, Collection results, CompiledValue iterOp, RuntimeIterator indpndntItr,ExecutionContext context, List projAttrib,SelectResults intermediateResults , boolean isIntersection)
-  throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException;
+  void query(Object key, int operator, Collection results, CompiledValue iterOp, RuntimeIterator indpndntItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * This will be queried from RangeJunction.DoubleCondnRangeJunctionEvaluator
@@ -162,17 +148,8 @@ public interface IndexProtocol extends Index {
    *               ExecutionContext object
    * @throws TypeMismatchException
    */
-  void query(Object lowerBoundKey,
-             int lowerBoundOperator,
-             Object upperBoundKey,
-             int upperBoundOperator,
-             Collection results,
-             Set keysToRemove, ExecutionContext context)
-  throws TypeMismatchException,
-         FunctionDomainException,
-         NameResolutionException,
-         QueryInvocationTargetException;
-  
+  void query(Object lowerBoundKey, int lowerBoundOperator, Object upperBoundKey, int upperBoundOperator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException;
+
   /**
    * Asif: Gets the data for an equi join condition across the region. The function
    * iterates over this Range Index's keys &  also runs an inner iteration  for 
@@ -207,16 +184,15 @@ public interface IndexProtocol extends Index {
    * @return String array containing canonicalized definitions
    */
   public String[] getCanonicalizedIteratorDefinitions();
-  
+
   /**
    * Asif: Object type of the data ( tuple ) contained in the Index Results . It will be 
    * either of type ObjectType or StructType
    * @return ObjectType 
    */
   public ObjectType getResultSetType();
-  
+
   public int getSizeEstimate(Object key, int op, int matchLevel) throws TypeMismatchException;
-  
-  public boolean isMatchingWithIndexExpression(CompiledValue condnExpr, String condnExprStr,
-      ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException;
+
+  public boolean isMatchingWithIndexExpression(CompiledValue condnExpr, String condnExprStr, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException;
 }

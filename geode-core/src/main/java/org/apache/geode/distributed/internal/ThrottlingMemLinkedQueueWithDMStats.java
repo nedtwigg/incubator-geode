@@ -44,35 +44,33 @@ public class ThrottlingMemLinkedQueueWithDMStats extends OverflowQueueWithDMStat
 
   /** The maximum size of the queue */
   private final int maxMemSize;
-  
+
   /** The size at which to beging throttling */
   private final int startThrottleMemSize;
 
   /** The maximum size of the queue */
   private final int maxSize;
-  
+
   /** The size at which to begin throttling */
   private final int startThrottleSize;
 
   /** The current memory footprint of the queue */
   private volatile int memSize;
-  
+
   /** Creates a new instance of ThrottlingMessageQueue */
-  public ThrottlingMemLinkedQueueWithDMStats(int maxMemSize, int startThrottleMemSize,
-                                             int maxSize, int startThrottleSize,
-                                          ThrottledMemQueueStatHelper stats) {
+  public ThrottlingMemLinkedQueueWithDMStats(int maxMemSize, int startThrottleMemSize, int maxSize, int startThrottleSize, ThrottledMemQueueStatHelper stats) {
     super(maxSize, stats);
     this.maxMemSize = maxMemSize;
     this.startThrottleMemSize = startThrottleMemSize;
     this.maxSize = maxSize;
     this.startThrottleSize = startThrottleSize;
   }
-  
+
   /** Check if the sender needs to be throttled. Returns the time the sender should sleep */
-  public int getThrottleTime() {    
+  public int getThrottleTime() {
     return calculateThrottleTime();
   }
-  
+
   public int getMemSize() {
     return memSize;
   }
@@ -82,36 +80,37 @@ public class ThrottlingMemLinkedQueueWithDMStats extends OverflowQueueWithDMStat
 
     int myMemSize = memSize;
     if (myMemSize > startThrottleMemSize) {
-      sleep = (int)(((float)(myMemSize - startThrottleMemSize) / (float)(maxMemSize - startThrottleMemSize)) * 100); 
+      sleep = (int) (((float) (myMemSize - startThrottleMemSize) / (float) (maxMemSize - startThrottleMemSize)) * 100);
     } else {
       int qSize = size();
       if (qSize > startThrottleSize) {
-        sleep = (int)(((float)(qSize - startThrottleSize) / (float)(maxSize - startThrottleSize)) * 100);
+        sleep = (int) (((float) (qSize - startThrottleSize) / (float) (maxSize - startThrottleSize)) * 100);
       } else {
         // no need to throttle
         return 0;
       }
     }
-       
+
     // Increment sleep count with linear step as the size approaches max value.
     sleep = sleep * ((sleep / 10) + 1);
     sleep = Math.max(sleep, 1);
-    
+
     return sleep;
   }
-  
+
   @Override
   protected void preAdd(Object o) {
     try {
       preAddInterruptibly(o);
-    } 
-    catch (InterruptedException ex) {
+    } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
   }
+
   @Override
   protected void preAddInterruptibly(Object o) throws InterruptedException {
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     // only block threads reading from tcp stream sockets.  blocking udp
     // will cause retransmission storms
     if (!DistributionMessage.isPreciousThread()) {
@@ -129,30 +128,30 @@ public class ThrottlingMemLinkedQueueWithDMStats extends OverflowQueueWithDMStat
         }
         if (DistributionStats.enableClockStats) {
           final long endTime = DistributionStats.getStatTime();
-          ((ThrottledMemQueueStatHelper)this.stats).throttleTime(endTime-startTime);
+          ((ThrottledMemQueueStatHelper) this.stats).throttleTime(endTime - startTime);
           startTime = endTime;
         }
       } while (memSize >= maxMemSize || size() >= maxSize);
-      
-      ((ThrottledMemQueueStatHelper)this.stats).incThrottleCount();
+
+      ((ThrottledMemQueueStatHelper) this.stats).incThrottleCount();
     }
 
     if (o instanceof Sizeable) {
-      int mem = ((Sizeable)o).getSize();
-      ((ThrottledMemQueueStatHelper)this.stats).addMem(mem);
+      int mem = ((Sizeable) o).getSize();
+      ((ThrottledMemQueueStatHelper) this.stats).addMem(mem);
       this.memSize += mem;
     }
   }
-  
+
   @Override
   protected void postRemove(Object o) {
     if (o != null && (o instanceof Sizeable)) {
-      int mem = ((Sizeable)o).getSize();
+      int mem = ((Sizeable) o).getSize();
       this.memSize -= mem;
-      ((ThrottledMemQueueStatHelper)this.stats).removeMem(mem);
+      ((ThrottledMemQueueStatHelper) this.stats).removeMem(mem);
     }
   }
-  
+
   @Override
   protected void postDrain(Collection c) {
     Iterator it = c.iterator();

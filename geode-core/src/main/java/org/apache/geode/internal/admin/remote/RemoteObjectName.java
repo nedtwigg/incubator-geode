@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -45,7 +44,8 @@ public class RemoteObjectName implements DataSerializable {
   /**
    * This constructor is only for use by the DataSerializable mechanism
    */
-  public RemoteObjectName() {}
+  public RemoteObjectName() {
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -53,9 +53,8 @@ public class RemoteObjectName implements DataSerializable {
       return false;
     }
     if (o instanceof RemoteObjectName) {
-      RemoteObjectName n = (RemoteObjectName)o;
-      return (hashCode == n.hashCode)
-        && className.equals(n.className) && value.equals(n.value);
+      RemoteObjectName n = (RemoteObjectName) o;
+      return (hashCode == n.hashCode) && className.equals(n.className) && value.equals(n.value);
     } else {
       // this should only happen on the server side when we are trying
       // to find the original object
@@ -68,7 +67,7 @@ public class RemoteObjectName implements DataSerializable {
       return value.equals(o.toString());
     }
   }
-  
+
   @Override
   public int hashCode() {
     return hashCode;
@@ -85,8 +84,7 @@ public class RemoteObjectName implements DataSerializable {
     out.writeInt(this.hashCode);
   }
 
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.className = DataSerializer.readString(in);
     this.value = DataSerializer.readString(in);
     this.hashCode = in.readInt();

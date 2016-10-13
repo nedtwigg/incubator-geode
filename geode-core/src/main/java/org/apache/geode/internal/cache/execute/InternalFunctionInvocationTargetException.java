@@ -22,11 +22,10 @@ import java.util.Set;
 import org.apache.geode.cache.execute.FunctionInvocationTargetException;
 import org.apache.geode.distributed.DistributedMember;
 
-public class InternalFunctionInvocationTargetException extends
-    FunctionInvocationTargetException {
+public class InternalFunctionInvocationTargetException extends FunctionInvocationTargetException {
 
   private final Set<String> failedIds = new HashSet<String>();
-  
+
   /**
    * Construct an instance of InternalFunctionInvocationTargetException
    * 
@@ -46,7 +45,7 @@ public class InternalFunctionInvocationTargetException extends
   public InternalFunctionInvocationTargetException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Construct an instance of InternalFunctionInvocationTargetException
    * 
@@ -55,8 +54,7 @@ public class InternalFunctionInvocationTargetException extends
    * @param failedNode
    *                the failed node member
    */
-  public InternalFunctionInvocationTargetException(String msg,
-      DistributedMember failedNode) {
+  public InternalFunctionInvocationTargetException(String msg, DistributedMember failedNode) {
     super(msg, failedNode);
     this.failedIds.add(failedNode.getId());
   }

@@ -48,7 +48,7 @@ import org.mockito.Mockito;
 @Category(UnitTest.class)
 
 public class LuceneDescribeIndexFunctionJUnitTest {
-  
+
   @Test
   @SuppressWarnings("unchecked")
   public void testExecute() throws Throwable {
@@ -57,38 +57,37 @@ public class LuceneDescribeIndexFunctionJUnitTest {
     when(cache.getService(InternalLuceneService.class)).thenReturn(service);
     FunctionContext context = mock(FunctionContext.class);
     ResultSender resultSender = mock(ResultSender.class);
-    LuceneIndexInfo indexInfo=getMockLuceneInfo("index1");
+    LuceneIndexInfo indexInfo = getMockLuceneInfo("index1");
     LuceneIndexImpl index1 = getMockLuceneIndex("index1");
     LuceneDescribeIndexFunction function = spy(LuceneDescribeIndexFunction.class);
 
     doReturn(indexInfo).when(context).getArguments();
     doReturn(resultSender).when(context).getResultSender();
     doReturn(cache).when(function).getCache();
-    when(service.getIndex(indexInfo.getIndexName(),indexInfo.getRegionPath())).thenReturn(index1);
+    when(service.getIndex(indexInfo.getIndexName(), indexInfo.getRegionPath())).thenReturn(index1);
 
     function.execute(context);
-    ArgumentCaptor<LuceneIndexDetails> resultCaptor  = ArgumentCaptor.forClass(LuceneIndexDetails.class);
+    ArgumentCaptor<LuceneIndexDetails> resultCaptor = ArgumentCaptor.forClass(LuceneIndexDetails.class);
     verify(resultSender).lastResult(resultCaptor.capture());
     LuceneIndexDetails result = resultCaptor.getValue();
-    LuceneIndexDetails expected=new LuceneIndexDetails(index1);
+    LuceneIndexDetails expected = new LuceneIndexDetails(index1);
 
-    assertEquals(expected.getIndexName(),result.getIndexName());
-    assertEquals(expected.getRegionPath(),result.getRegionPath());
-    assertEquals(expected.getIndexStats(),result.getIndexStats());
-    assertEquals(expected.getFieldAnalyzersString(),result.getFieldAnalyzersString());
-    assertEquals(expected.getSearchableFieldNamesString(),result.getSearchableFieldNamesString());
+    assertEquals(expected.getIndexName(), result.getIndexName());
+    assertEquals(expected.getRegionPath(), result.getRegionPath());
+    assertEquals(expected.getIndexStats(), result.getIndexStats());
+    assertEquals(expected.getFieldAnalyzersString(), result.getFieldAnalyzersString());
+    assertEquals(expected.getSearchableFieldNamesString(), result.getSearchableFieldNamesString());
   }
 
   private LuceneIndexInfo getMockLuceneInfo(final String index1) {
-    LuceneIndexInfo mockInfo=mock(LuceneIndexInfo.class);
+    LuceneIndexInfo mockInfo = mock(LuceneIndexInfo.class);
     doReturn(index1).when(mockInfo).getIndexName();
     doReturn("/region").when(mockInfo).getRegionPath();
     return mockInfo;
   }
 
-  private LuceneIndexImpl getMockLuceneIndex(final String indexName)
-  {
-    String[] searchableFields={"field1","field2"};
+  private LuceneIndexImpl getMockLuceneIndex(final String indexName) {
+    String[] searchableFields = { "field1", "field2" };
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", new StandardAnalyzer());
     fieldAnalyzers.put("field2", new KeywordAnalyzer());

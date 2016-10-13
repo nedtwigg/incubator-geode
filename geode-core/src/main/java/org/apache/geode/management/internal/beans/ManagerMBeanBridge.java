@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.beans;
 
-
 import javax.management.JMException;
 
 import org.apache.geode.management.internal.SystemManagementService;
@@ -28,8 +27,8 @@ import org.apache.geode.management.internal.SystemManagementService;
 public class ManagerMBeanBridge {
 
   private SystemManagementService service;
-  
-  private String pulseURL ;
+
+  private String pulseURL;
 
   private String statusMessage;
 
@@ -58,7 +57,7 @@ public class ManagerMBeanBridge {
     }
     return true;
   }
-  
+
   public String getPulseURL() {
     return pulseURL;
   }

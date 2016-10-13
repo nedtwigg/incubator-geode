@@ -20,13 +20,11 @@ package org.apache.geode.internal.cache.tier.sockets;
  * Helper class to access the required functions of this package from
  * outside the package.
  */
-public class HaHelper
-{
-  public static boolean checkPrimary(CacheClientProxy proxy)
-  {
-    System.out.println("proxy " + proxy.getProxyID()+  " : " +  proxy.isPrimary()); 
+public class HaHelper {
+  public static boolean checkPrimary(CacheClientProxy proxy) {
+    System.out.println("proxy " + proxy.getProxyID() + " : " + proxy.isPrimary());
     return proxy.isPrimary();
-    
+
   }
-  
+
 }

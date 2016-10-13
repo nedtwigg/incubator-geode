@@ -34,63 +34,57 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
   private final ResultCollector userRC;
 
   private CountDownLatch latch = new CountDownLatch(1);
-  
+
   protected volatile boolean endResultRecieved = false;
-  
+
   private volatile boolean resultCollected = false;
-  
+
   protected volatile boolean resultsCleared = false;
-  
+
   private FunctionException functionException = null;
-  
+
   private Function function = null;
-  
+
   private AbstractExecution execution = null;
 
-  public LocalResultCollectorImpl(Function function, ResultCollector rc,
-      Execution execution) {
+  public LocalResultCollectorImpl(Function function, ResultCollector rc, Execution execution) {
     this.function = function;
     this.userRC = rc;
-    this.execution = (AbstractExecution)execution;
+    this.execution = (AbstractExecution) execution;
   }
 
-  public synchronized void addResult(DistributedMember memberID,
-      Object resultOfSingleExecution) {
+  public synchronized void addResult(DistributedMember memberID, Object resultOfSingleExecution) {
     if (resultsCleared) {
       return;
     }
     if (!this.endResultRecieved) {
       if (resultOfSingleExecution instanceof Throwable) {
-        Throwable t = (Throwable)resultOfSingleExecution;
+        Throwable t = (Throwable) resultOfSingleExecution;
         if (this.execution.isIgnoreDepartedMembers()) {
-          if(t.getCause() != null){
+          if (t.getCause() != null) {
             t = t.getCause();
           }
           this.userRC.addResult(memberID, t);
         } else {
           if (!(t instanceof InternalFunctionException)) {
             if (this.functionException == null) {
-              if(resultOfSingleExecution instanceof FunctionInvocationTargetException){
+              if (resultOfSingleExecution instanceof FunctionInvocationTargetException) {
                 this.functionException = new FunctionException(t);
-              }
-              else if (resultOfSingleExecution instanceof FunctionException) {
-                this.functionException = (FunctionException)resultOfSingleExecution;
+              } else if (resultOfSingleExecution instanceof FunctionException) {
+                this.functionException = (FunctionException) resultOfSingleExecution;
                 if (t.getCause() != null) {
                   t = t.getCause();
                 }
-              }
-              else {
+              } else {
                 this.functionException = new FunctionException(t);
               }
             }
             this.functionException.addException(t);
-          }
-          else {
+          } else {
             this.userRC.addResult(memberID, t.getCause());
           }
         }
-      }
-      else {
+      } else {
         this.userRC.addResult(memberID, resultOfSingleExecution);
       }
     }
@@ -107,20 +101,17 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
     this.endResultRecieved = false;
     this.functionException = null;
     this.userRC.clearResults();
-    resultsCleared = true ;
+    resultsCleared = true;
   }
 
   public Object getResult() throws FunctionException {
     if (this.resultCollected) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED.toLocalizedString());
     }
     this.resultCollected = true;
     try {
       this.latch.await();
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       this.latch.countDown();
       Thread.currentThread().interrupt();
     }
@@ -133,42 +124,34 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
           ResultCollector newRc = null;
           if (execution.isFnSerializationReqd()) {
             newRc = this.execution.execute(this.function);
-          }
-          else {
+          } else {
             newRc = this.execution.execute(this.function.getId());
           }
           return newRc.getResult();
         }
       }
       throw this.functionException;
-    }
-    else {
+    } else {
       Object result = this.userRC.getResult();
       return result;
     }
   }
 
-  public Object getResult(long timeout, TimeUnit unit)
-      throws FunctionException, InterruptedException {
+  public Object getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
 
     boolean resultRecieved = false;
     if (this.resultCollected) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED.toLocalizedString());
     }
     this.resultCollected = true;
     try {
       resultRecieved = this.latch.await(timeout, unit);
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       this.latch.countDown();
       Thread.currentThread().interrupt();
     }
     if (!resultRecieved) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteFunction_RESULTS_NOT_COLLECTED_IN_TIME_PROVIDED
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.ExecuteFunction_RESULTS_NOT_COLLECTED_IN_TIME_PROVIDED.toLocalizedString());
     }
     this.latch = new CountDownLatch(1);
     if (this.functionException != null && !this.execution.isIgnoreDepartedMembers()) {
@@ -179,16 +162,14 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
           ResultCollector newRc = null;
           if (execution.isFnSerializationReqd()) {
             newRc = this.execution.execute(this.function);
-          }
-          else {
+          } else {
             newRc = this.execution.execute(this.function.getId());
           }
           return newRc.getResult(timeout, unit);
         }
       }
       throw this.functionException;
-    }
-    else {
+    } else {
       Object result = this.userRC.getResult(timeout, unit);
       return result;
     }
@@ -196,9 +177,8 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
 
   public void setException(Throwable exception) {
     if (exception instanceof FunctionException) {
-      this.functionException = (FunctionException)exception;
-    }
-    else {
+      this.functionException = (FunctionException) exception;
+    } else {
       this.functionException = new FunctionException(exception);
     }
   }

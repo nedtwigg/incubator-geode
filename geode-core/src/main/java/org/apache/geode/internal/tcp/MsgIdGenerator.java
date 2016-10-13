@@ -37,14 +37,16 @@ public class MsgIdGenerator {
   private MsgIdGenerator() {
     // static only; no constructor
   }
+
   /**
    * Obtains a message id. Callers of this must call release
    * when finished with the id.
    * @throws IllegalStateException if all ids have been obtained
    */
   public static short obtain() {
-    return (short)uigen.obtain();
+    return (short) uigen.obtain();
   }
+
   public static void release(short id) {
     if (id != NO_MSG_ID) {
       uigen.release(id);

@@ -31,6 +31,7 @@ public interface CacheServer extends SystemMember, ManagedEntity {
    */
   @Deprecated
   public CacheServerConfig getConfig();
+
   /**
    * Find whether this server is primary for given client (durableClientId)
    * 

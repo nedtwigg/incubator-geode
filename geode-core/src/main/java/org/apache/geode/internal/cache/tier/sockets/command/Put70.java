@@ -45,10 +45,7 @@ public class Put70 extends Put65 {
   }
 
   @Override
-  protected void writeReply(Message origMsg, ServerConnection servConn,
-      boolean sendOldValue, boolean oldValueIsObject, Object oldValue,
-      VersionTag versionTag)
-  throws IOException {
+  protected void writeReply(Message origMsg, ServerConnection servConn, boolean sendOldValue, boolean oldValueIsObject, Object oldValue, VersionTag versionTag) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -82,10 +79,7 @@ public class Put70 extends Put65 {
   }
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg,
-      ServerConnection servConn, PartitionedRegion pr,
-      boolean sendOldValue, boolean oldValueIsObject, Object oldValue, byte nwHopType, VersionTag versionTag)
-  throws IOException {
+  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, boolean sendOldValue, boolean oldValueIsObject, Object oldValue, byte nwHopType, VersionTag versionTag) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -105,12 +99,12 @@ public class Put70 extends Put65 {
     }
     replyMsg.setNumberOfParts(parts);
     replyMsg.setTransactionId(origMsg.getTransactionId());
-    replyMsg.addBytesPart(new byte[]{pr.getMetadataVersion(), nwHopType});
+    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHopType });
     replyMsg.addIntPart(flags);
     if (sendOldValue) {
-//      if (logger.fineEnabled()) {
-//        logger.fine("sending old value in Put response");
-//      }
+      //      if (logger.fineEnabled()) {
+      //        logger.fine("sending old value in Put response");
+      //      }
       replyMsg.addObjPart(oldValue);
     }
     if (versionTag != null) {

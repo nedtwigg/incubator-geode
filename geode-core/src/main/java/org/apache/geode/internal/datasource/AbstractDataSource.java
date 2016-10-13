@@ -42,7 +42,7 @@ import org.apache.geode.internal.logging.LogService;
 public abstract class AbstractDataSource implements Serializable, DataSource {
 
   private static final org.apache.logging.log4j.Logger logger = LogService.getLogger();
-  
+
   protected transient PrintWriter dataSourcePW;
   protected int loginTimeOut;
   protected String user;
@@ -61,8 +61,7 @@ public abstract class AbstractDataSource implements Serializable, DataSource {
    * @throws SQLException
    *  
    */
-  public AbstractDataSource(ConfiguredDataSourceProperties configs)
-      throws SQLException {
+  public AbstractDataSource(ConfiguredDataSourceProperties configs) throws SQLException {
     loginTimeOut = configs.getLoginTimeOut();
     user = configs.getUser();
     password = configs.getPassword();
@@ -90,8 +89,7 @@ public abstract class AbstractDataSource implements Serializable, DataSource {
    * @throws SQLException
    * @return ???
    */
-  public abstract Connection getConnection(String username, String password)
-      throws SQLException;
+  public abstract Connection getConnection(String username, String password) throws SQLException;
 
   //DataSource Interface functions
   /**
@@ -147,10 +145,9 @@ public abstract class AbstractDataSource implements Serializable, DataSource {
   protected boolean validateConnection(Connection conn) {
     try {
       return (!conn.isClosed());
-    }
-    catch (SQLException e) {
+    } catch (SQLException e) {
       if (logger.isDebugEnabled()) {
-          logger.debug("AbstractDataSource::validateConnection:exception in validating connection", e);
+        logger.debug("AbstractDataSource::validateConnection:exception in validating connection", e);
       }
       return false;
     }
@@ -219,10 +216,8 @@ public abstract class AbstractDataSource implements Serializable, DataSource {
    * @param clPass The password for the database connection
    * @throws SQLException
    */
-  public void checkCredentials(String clUser, String clPass)
-      throws SQLException {
-    if (clUser == null || !clUser.equals(user) || clPass == null
-        || !clPass.equals(password)) {
+  public void checkCredentials(String clUser, String clPass) throws SQLException {
+    if (clUser == null || !clUser.equals(user) || clPass == null || !clPass.equals(password)) {
       String error = LocalizedStrings.AbstractDataSource_CANNOT_CREATE_A_CONNECTION_WITH_THE_USER_0_AS_IT_DOESNT_MATCH_THE_EXISTING_USER_NAMED_1_OR_THE_PASSWORD_WAS_INCORRECT.toLocalizedString(new Object[] { clUser, clPass });
       throw new SQLException(error);
     }

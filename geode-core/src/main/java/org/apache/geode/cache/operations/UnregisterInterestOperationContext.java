@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.operations;
 
-
 /**
  * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#UNREGISTER_INTEREST} region operation for
  * the pre-operation case.
@@ -34,8 +33,7 @@ public class UnregisterInterestOperationContext extends InterestOperationContext
    * @param interestType
    *                the <code>InterestType</code> of the unregister request
    */
-  public UnregisterInterestOperationContext(Object key,
-      InterestType interestType) {
+  public UnregisterInterestOperationContext(Object key, InterestType interestType) {
     super(key, interestType);
   }
 

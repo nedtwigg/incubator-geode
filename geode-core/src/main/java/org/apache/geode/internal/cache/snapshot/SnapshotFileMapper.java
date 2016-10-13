@@ -60,7 +60,7 @@ public interface SnapshotFileMapper extends Serializable {
    * @return the mapped filename, or null to use the existing file
    */
   File mapExportPath(DistributedMember member, File snapshot);
-  
+
   /**
    * Invoked during a parallel import to map the supplied path to one or more
    * files. This is necessary when the import files must be read from a

@@ -44,11 +44,10 @@ import org.apache.geode.internal.logging.LogService;
  *
  * @since GemFire 3.5
  */
-public class GemFireHealthJmxImpl extends GemFireHealthImpl 
-  implements ManagedResource {
+public class GemFireHealthJmxImpl extends GemFireHealthImpl implements ManagedResource {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** The name of the MBean that will manage this resource */
   private String mbeanName;
 
@@ -65,16 +64,10 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl
    * health of the given distributed system and uses the given JMX
    * agent. 
    */
-  GemFireHealthJmxImpl(GfManagerAgent agent,
-                       AdminDistributedSystemJmxImpl system)
-    throws AdminException {
+  GemFireHealthJmxImpl(GfManagerAgent agent, AdminDistributedSystemJmxImpl system) throws AdminException {
 
     super(agent, system);
-    this.mbeanName = new StringBuffer()
-      .append(MBEAN_NAME_PREFIX)
-      .append("GemFireHealth,id=")
-      .append(MBeanUtil.makeCompliantMBeanNameProperty(system.getId()))
-      .toString();
+    this.mbeanName = new StringBuffer().append(MBEAN_NAME_PREFIX).append("GemFireHealth,id=").append(MBeanUtil.makeCompliantMBeanNameProperty(system.getId())).toString();
     this.objectName = MBeanUtil.createMBean(this);
   }
 
@@ -83,23 +76,22 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl
   public String getHealthStatus() {
     return getHealth().toString();
   }
-  
-  public ObjectName manageGemFireHealthConfig(String hostName)
-  throws MalformedObjectNameException {
+
+  public ObjectName manageGemFireHealthConfig(String hostName) throws MalformedObjectNameException {
     try {
       GemFireHealthConfig config = getGemFireHealthConfig(hostName);
       GemFireHealthConfigJmxImpl jmx = (GemFireHealthConfigJmxImpl) config;
       return new ObjectName(jmx.getMBeanName());
     } //catch (AdminException e) { logWriter.warning(e); throw e; }
-    catch (RuntimeException e) { 
-      logger.warn(e.getMessage(), e); 
-      throw e; 
+    catch (RuntimeException e) {
+      logger.warn(e.getMessage(), e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -107,16 +99,15 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl
       // is still usable:
       SystemFailure.checkFailure();
       logger.error(e.getMessage(), e);
-      throw e; 
+      throw e;
     }
   }
-    
+
   /**
    * Creates a new {@link DistributedSystemHealthConfigJmxImpl}
    */
   @Override
-  protected DistributedSystemHealthConfig
-    createDistributedSystemHealthConfig() {
+  protected DistributedSystemHealthConfig createDistributedSystemHealthConfig() {
 
     try {
       return new DistributedSystemHealthConfigJmxImpl(this);
@@ -130,8 +121,7 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl
    * Creates a new {@link GemFireHealthConfigJmxImpl}
    */
   @Override
-  protected GemFireHealthConfig
-    createGemFireHealthConfig(String hostName) {
+  protected GemFireHealthConfig createGemFireHealthConfig(String hostName) {
 
     try {
       return new GemFireHealthConfigJmxImpl(this, hostName);
@@ -147,14 +137,14 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl
    */
   protected void ensureMBeansAreRegistered() {
     MBeanUtil.ensureMBeanIsRegistered(this);
-    MBeanUtil.ensureMBeanIsRegistered((ManagedResource)this.defaultConfig);
-    MBeanUtil.ensureMBeanIsRegistered((ManagedResource)this.dsHealthConfig);
+    MBeanUtil.ensureMBeanIsRegistered((ManagedResource) this.defaultConfig);
+    MBeanUtil.ensureMBeanIsRegistered((ManagedResource) this.dsHealthConfig);
   }
-  
+
   public String getMBeanName() {
     return this.mbeanName;
   }
-  
+
   public ModelMBean getModelMBean() {
     return this.modelMBean;
   }
@@ -174,5 +164,5 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl
   public void cleanupResource() {
     close();
   }
-  
+
 }

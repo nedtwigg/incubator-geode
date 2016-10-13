@@ -31,9 +31,9 @@ public class ThreadIdentifierJUnitTest {
   public void testPutAllId() {
     int id = 42;
     int bucketNumber = 113;
-    
+
     long putAll = ThreadIdentifier.createFakeThreadIDForBulkOp(bucketNumber, id);
-    
+
     assertTrue(ThreadIdentifier.isPutAllFakeThreadID(putAll));
     assertEquals(42, ThreadIdentifier.getRealThreadID(putAll));
   }
@@ -41,7 +41,7 @@ public class ThreadIdentifierJUnitTest {
   @Test
   public void testWanId() {
     int id = 42;
-    
+
     long wan1 = ThreadIdentifier.createFakeThreadIDForParallelGSPrimaryBucket(1, id, 0);
     assertEquals(42, ThreadIdentifier.getRealThreadID(wan1));
     assertTrue(ThreadIdentifier.isParallelWANThreadID(wan1));
@@ -51,7 +51,7 @@ public class ThreadIdentifierJUnitTest {
       assertTrue(ThreadIdentifier.isParallelWANThreadID(real_tid_with_wan));
       assertTrue(WanType.PRIMARY.matches(real_tid_with_wan));
     }
-    
+
     long wan2 = ThreadIdentifier.createFakeThreadIDForParallelGSSecondaryBucket(1, id, 0);
     assertEquals(42, ThreadIdentifier.getRealThreadID(wan2));
     assertTrue(ThreadIdentifier.isParallelWANThreadID(wan2));
@@ -77,20 +77,20 @@ public class ThreadIdentifierJUnitTest {
   public void testWanAndPutAllId() {
     int id = 42;
     int bucketNumber = 113;
-    
+
     long putAll = ThreadIdentifier.createFakeThreadIDForBulkOp(bucketNumber, id);
 
     long wan1 = ThreadIdentifier.createFakeThreadIDForParallelGSPrimaryBucket(1, putAll, 0);
     assertEquals(42, ThreadIdentifier.getRealThreadID(wan1));
     assertTrue(ThreadIdentifier.isParallelWANThreadID(wan1));
     assertTrue(ThreadIdentifier.isPutAllFakeThreadID(wan1));
-    { 
-      long real_tid_with_wan = ThreadIdentifier.getRealThreadIDIncludingWan(wan1);  
+    {
+      long real_tid_with_wan = ThreadIdentifier.getRealThreadIDIncludingWan(wan1);
       assertEquals(42, ThreadIdentifier.getRealThreadID(real_tid_with_wan));
       assertTrue(ThreadIdentifier.isParallelWANThreadID(real_tid_with_wan));
       assertTrue(WanType.PRIMARY.matches(real_tid_with_wan));
     }
-    
+
     long wan2 = ThreadIdentifier.createFakeThreadIDForParallelGSSecondaryBucket(1, putAll, 0);
     assertEquals(42, ThreadIdentifier.getRealThreadID(wan2));
     assertTrue(ThreadIdentifier.isParallelWANThreadID(wan2));
@@ -112,7 +112,7 @@ public class ThreadIdentifierJUnitTest {
       assertTrue(ThreadIdentifier.isParallelWANThreadID(real_tid_with_wan));
       assertTrue(WanType.PARALLEL.matches(real_tid_with_wan));
     }
-    
+
     long tid = 4054000001L;
     assertTrue(ThreadIdentifier.isParallelWANThreadID(tid));
     assertFalse(ThreadIdentifier.isParallelWANThreadID(putAll));

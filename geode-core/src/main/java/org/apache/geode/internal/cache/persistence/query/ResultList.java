@@ -41,13 +41,13 @@ public interface ResultList {
    * number
    */
   CloseableIterator<CachedDeserializable> iterator();
-  
+
   /**
    * Return all of the elements in the list, starting at a given element
    * number
    */
   CloseableIterator<CachedDeserializable> iterator(long start);
-  
+
   /**
    * Close the result list and free up any resources on disk
    * associated with the result set.

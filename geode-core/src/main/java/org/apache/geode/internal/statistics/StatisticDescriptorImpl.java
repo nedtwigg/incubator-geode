@@ -87,13 +87,13 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
    */
   public final static String getTypeCodeName(int code) {
     switch (code) {
-    case BYTE: 
+    case BYTE:
       return "byte";
-    case SHORT: 
+    case SHORT:
       return "short";
-    case FLOAT: 
+    case FLOAT:
       return "float";
-    case INT: 
+    case INT:
       return "int";
     case LONG:
       return "long";
@@ -112,13 +112,13 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
    */
   public final static int getTypeCodeBits(int code) {
     switch (code) {
-    case BYTE: 
+    case BYTE:
       return 8;
-    case SHORT: 
+    case SHORT:
       return 16;
-    case FLOAT: 
+    case FLOAT:
       return 32;
-    case INT: 
+    case INT:
       return 32;
     case LONG:
       return 64;
@@ -137,13 +137,13 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
    */
   public final static Class<?> getTypeCodeClass(byte code) {
     switch (code) {
-    case BYTE: 
+    case BYTE:
       return byte.class;
-    case SHORT: 
+    case SHORT:
       return short.class;
-    case FLOAT: 
+    case FLOAT:
       return float.class;
-    case INT: 
+    case INT:
       return int.class;
     case LONG:
       return long.class;
@@ -154,28 +154,27 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
     }
   }
 
-  public static StatisticDescriptor createIntCounter(String name, String description,
-                                              String units, boolean isLargerBetter) {
+  public static StatisticDescriptor createIntCounter(String name, String description, String units, boolean isLargerBetter) {
     return new StatisticDescriptorImpl(name, INT, description, units, true, isLargerBetter);
   }
-  public static StatisticDescriptor createLongCounter(String name, String description,
-                                               String units, boolean isLargerBetter) {
+
+  public static StatisticDescriptor createLongCounter(String name, String description, String units, boolean isLargerBetter) {
     return new StatisticDescriptorImpl(name, LONG, description, units, true, isLargerBetter);
   }
-  public static StatisticDescriptor createDoubleCounter(String name, String description,
-                                                 String units, boolean isLargerBetter) {
+
+  public static StatisticDescriptor createDoubleCounter(String name, String description, String units, boolean isLargerBetter) {
     return new StatisticDescriptorImpl(name, DOUBLE, description, units, true, isLargerBetter);
   }
-  public static StatisticDescriptor createIntGauge(String name, String description,
-                                            String units, boolean isLargerBetter) {
+
+  public static StatisticDescriptor createIntGauge(String name, String description, String units, boolean isLargerBetter) {
     return new StatisticDescriptorImpl(name, INT, description, units, false, isLargerBetter);
   }
-  public static StatisticDescriptor createLongGauge(String name, String description,
-                                             String units, boolean isLargerBetter) {
+
+  public static StatisticDescriptor createLongGauge(String name, String description, String units, boolean isLargerBetter) {
     return new StatisticDescriptorImpl(name, LONG, description, units, false, isLargerBetter);
   }
-  public static StatisticDescriptor createDoubleGauge(String name, String description,
-                                               String units, boolean isLargerBetter) {
+
+  public static StatisticDescriptor createDoubleGauge(String name, String description, String units, boolean isLargerBetter) {
     return new StatisticDescriptorImpl(name, DOUBLE, description, units, false, isLargerBetter);
   }
 
@@ -208,10 +207,7 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
    *         <code>type</code> is not one of <code>int.class</code>,
    *         <code>long.class</code>, or <code>double.class</code>.
    */
-  private StatisticDescriptorImpl(String name, byte typeCode,
-                                  String description, String unit,
-                                  boolean isCounter,
-                                  boolean isLargerBetter) {
+  private StatisticDescriptorImpl(String name, byte typeCode, String description, String unit, boolean isCounter, boolean isLargerBetter) {
     this.name = name;
     this.typeCode = typeCode;
     if (description == null) {
@@ -252,29 +248,29 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
   public final boolean isCounter() {
     return this.isCounter;
   }
-  
+
   public final boolean isLargerBetter() {
     return this.isLargerBetter;
   }
-  
+
   public final String getUnit() {
     return this.unit;
   }
 
   public final int getId() {
-//     if (this.id == INVALID_OFFSET) {
-//       String s = "The id has not been initialized yet.";
-//       throw new IllegalStateException(s);
-//     }
+    //     if (this.id == INVALID_OFFSET) {
+    //       String s = "The id has not been initialized yet.";
+    //       throw new IllegalStateException(s);
+    //     }
 
     //Assert.assertTrue(this.id >= 0);
     return this.id;
   }
-  
+
   public final Number getNumberForRawBits(long bits) {
     switch (this.typeCode) {
     case StatisticDescriptorImpl.INT:
-      return (int)bits;
+      return (int) bits;
     case StatisticDescriptorImpl.LONG:
       return bits;
     case StatisticDescriptorImpl.DOUBLE:
@@ -283,7 +279,7 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
       throw new RuntimeException(LocalizedStrings.StatisticsImpl_UNEXPECTED_STAT_DESCRIPTOR_TYPE_CODE_0.toLocalizedString(Byte.valueOf(this.typeCode)));
     }
   }
-  
+
   ////////////////////  Instance Methods  ////////////////////
 
   /**
@@ -317,7 +313,7 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
 
   public final int checkInt() {
     if (this.typeCode != INT) {
-      throw new IllegalArgumentException(LocalizedStrings.StatisticDescriptorImpl_THE_STATISTIC_0_WITH_ID_1_IS_OF_TYPE_2_AND_IT_WAS_EXPECTED_TO_BE_AN_INT.toLocalizedString(new Object[] {getName(), Integer.valueOf(getId()), StatisticDescriptorImpl.getTypeCodeName(getTypeCode())}));
+      throw new IllegalArgumentException(LocalizedStrings.StatisticDescriptorImpl_THE_STATISTIC_0_WITH_ID_1_IS_OF_TYPE_2_AND_IT_WAS_EXPECTED_TO_BE_AN_INT.toLocalizedString(new Object[] { getName(), Integer.valueOf(getId()), StatisticDescriptorImpl.getTypeCodeName(getTypeCode()) }));
     }
     return this.id;
   }
@@ -329,7 +325,7 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
       sb.append(getId());
       sb.append(" is of type ");
       sb.append(StatisticDescriptorImpl.getTypeCodeName(getTypeCode()));
-      
+
       sb.append(" and it was expected to be a long");
       throw new IllegalArgumentException(sb.toString());
     }
@@ -338,16 +334,16 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
 
   public final int checkDouble() {
     if (this.typeCode != DOUBLE) {
-      throw new IllegalArgumentException(LocalizedStrings.StatisticDescriptorImpl_THE_STATISTIC_0_WITH_ID_1_IS_OF_TYPE_2_AND_IT_WAS_EXPECTED_TO_BE_A_DOUBLE.toLocalizedString(new Object[] {getName(), Integer.valueOf(getId()), StatisticDescriptorImpl.getTypeCodeName(getTypeCode())}));
+      throw new IllegalArgumentException(LocalizedStrings.StatisticDescriptorImpl_THE_STATISTIC_0_WITH_ID_1_IS_OF_TYPE_2_AND_IT_WAS_EXPECTED_TO_BE_A_DOUBLE.toLocalizedString(new Object[] { getName(), Integer.valueOf(getId()), StatisticDescriptorImpl.getTypeCodeName(getTypeCode()) }));
     }
     return this.id;
   }
-
 
   @Override // GemStoneAddition
   public int hashCode() {
     return getName().hashCode();
   }
+
   @Override
   public boolean equals(Object o) {
     if (o == null) {
@@ -356,7 +352,7 @@ public final class StatisticDescriptorImpl implements StatisticDescriptor {
     if (!(o instanceof StatisticDescriptorImpl)) {
       return false;
     }
-    StatisticDescriptorImpl other = (StatisticDescriptorImpl)o;
+    StatisticDescriptorImpl other = (StatisticDescriptorImpl) o;
     if (getId() != other.getId()) {
       return false;
     }

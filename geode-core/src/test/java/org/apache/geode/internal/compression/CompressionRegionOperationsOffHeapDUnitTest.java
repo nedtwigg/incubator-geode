@@ -38,7 +38,7 @@ public class CompressionRegionOperationsOffHeapDUnitTest extends CompressionRegi
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }

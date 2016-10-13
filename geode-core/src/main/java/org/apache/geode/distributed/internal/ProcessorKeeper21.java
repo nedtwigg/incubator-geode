@@ -34,12 +34,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>Processor ids are always greater than 0.</p>
  */
 public class ProcessorKeeper21 {
-  
+
   /** 
    * Key is a unique id, value is an instance of some processor class
    */
-  private final ObjIdConcurrentMap<Object> map =
-    new ObjIdConcurrentMap<Object>();
+  private final ObjIdConcurrentMap<Object> map = new ObjIdConcurrentMap<Object>();
 
   /**
    * If true then use weak refs to reference the processors.
@@ -51,7 +50,7 @@ public class ProcessorKeeper21 {
   public ProcessorKeeper21() {
     this(true);
   }
-  
+
   public ProcessorKeeper21(boolean useWeakRefs) {
     this.useWeakRefs = useWeakRefs;
   }
@@ -84,8 +83,7 @@ public class ProcessorKeeper21 {
     final Object obj;
     if (this.useWeakRefs) {
       obj = new WeakReference<Object>(processor);
-    }
-    else {
+    } else {
       obj = processor;
     }
     do {
@@ -103,7 +101,7 @@ public class ProcessorKeeper21 {
   public Object retrieve(int id) {
     Object o = null;
     if (this.useWeakRefs) {
-      final WeakReference<?> ref = (WeakReference<?>)this.map.get(id);
+      final WeakReference<?> ref = (WeakReference<?>) this.map.get(id);
       if (ref != null) {
         o = ref.get();
         if (o == null) {

@@ -69,19 +69,11 @@ public class RegionConfigurationCacheListener extends CacheListenerAdapter<Strin
       builder1 = new StringBuilder();
       int regionSize = region.size();
       if (regionSize > 0) {
-        builder1.append("RegionConfigurationCacheListener region ")
-            .append(region.getName())
-            .append(" has been initialized with the following ")
-            .append(regionSize)
-            .append(" region configurations:\n");
+        builder1.append("RegionConfigurationCacheListener region ").append(region.getName()).append(" has been initialized with the following ").append(regionSize).append(" region configurations:\n");
         builder2 = new StringBuilder();
-        builder2.append("RegionConfigurationCacheListener created the following ")
-            .append(regionSize)
-            .append(" regions:\n");
+        builder2.append("RegionConfigurationCacheListener created the following ").append(regionSize).append(" regions:\n");
       } else {
-        builder1.append("RegionConfigurationCacheListener region ")
-            .append(region.getName())
-            .append(" has been initialized with no region configurations");
+        builder1.append("RegionConfigurationCacheListener region ").append(region.getName()).append(" has been initialized with no region configurations");
       }
     }
     for (RegionConfiguration configuration : region.values()) {

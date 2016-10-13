@@ -18,7 +18,6 @@ package org.apache.geode.cache.server;
 
 import org.apache.geode.cache.CacheCallback;
 
-
 /**
  * A load probe is installed in a cache server to measure the load on the
  * cache server for balancing load between multiple cache servers.
@@ -60,12 +59,12 @@ public interface ServerLoadProbe extends CacheCallback {
    * @return The current load on this server.
    */
   ServerLoad getLoad(ServerMetrics metrics);
-  
+
   /** Signals that a cache server
    * using this load probe has been started.
    */
   void open();
-  
+
   /**
    * Signals that a cache server
    * using this load probe has been closed.

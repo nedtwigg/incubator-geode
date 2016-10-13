@@ -21,5 +21,5 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 public interface HasMemberID {
 
   public InternalDistributedMember getMemberID();
-  
+
 }

@@ -54,14 +54,14 @@ public class DependencyGraph implements Serializable {
    * The edges of the graph. This holds all of the dependencies in the graph.
    */
   private Set<Dependency> edges = new LinkedHashSet<Dependency>();
- 
+
   /** add a collection of edges to this graph */
   public void addEdges(Collection<Dependency> edges) {
-    for (Dependency dep: edges) {
+    for (Dependency dep : edges) {
       addEdge(dep);
     }
   }
-  
+
   /** 
    * Add an edge to the dependency graph. 
    */
@@ -69,18 +69,18 @@ public class DependencyGraph implements Serializable {
     if (!edges.contains(dependency)) {
       edges.add(dependency);
       Set<Dependency> outboundEdges = vertices.get(dependency.getDepender());
-      if(outboundEdges == null) {
+      if (outboundEdges == null) {
         outboundEdges = new HashSet();
         vertices.put(dependency.getDepender(), outboundEdges);
       }
       outboundEdges.add(dependency);
-      
-      if(vertices.get(dependency.getDependsOn()) == null) {
+
+      if (vertices.get(dependency.getDependsOn()) == null) {
         vertices.put(dependency.getDependsOn(), new HashSet());
       }
     }
   }
-  
+
   /**
    * Find a cycle in the graph, if one exists.
    * 
@@ -93,17 +93,17 @@ public class DependencyGraph implements Serializable {
 
     Set<Object> unvisited = new HashSet<Object>(vertices.keySet());
     Set<Object> finished = new HashSet<Object>(vertices.size());
-    
-    while(unvisited.size() > 0) {
+
+    while (unvisited.size() > 0) {
       Object start = unvisited.iterator().next();
       CycleHolder cycle = new CycleHolder();
-      
+
       boolean foundCycle = visitCycle(start, unvisited, finished, cycle, 0);
-      if(foundCycle) {
+      if (foundCycle) {
         return cycle.cycle;
       }
     }
-    
+
     return null;
   }
 
@@ -120,20 +120,18 @@ public class DependencyGraph implements Serializable {
   public DependencyGraph findLongestCallChain() {
     int depth = 0;
     DependencyGraph deepest = null;
-    
-    for (Object dep: vertices.keySet()) {
+
+    for (Object dep : vertices.keySet()) {
       int itsDepth = getDepth(dep);
       if (itsDepth > depth) {
         deepest = getSubGraph(dep);
         depth = itsDepth;
       }
     }
-    
+
     return deepest;
   }
-  
-  
-  
+
   /**
    * This returns a collection of top-level threads and their
    * path to the given object.  The object name is some
@@ -142,12 +140,12 @@ public class DependencyGraph implements Serializable {
    * @param objectName
    */
   public List<DependencyGraph> findDependenciesWith(String objectName) {
-    
+
     // first find a dependency containing the node.  If we can't find one
     // we can just quit
     Object obj = null;
     Dependency objDep = null;
-    for (Dependency dep: edges) {
+    for (Dependency dep : edges) {
       if (dep.depender.toString().contains(objectName)) {
         obj = dep.depender;
         objDep = dep;
@@ -162,7 +160,7 @@ public class DependencyGraph implements Serializable {
     if (obj == null) {
       return Collections.emptyList();
     }
-    
+
     // expand the dependency set to include all incoming
     // references, references to those references, etc.
     // This should give us a collection that includes all
@@ -172,9 +170,8 @@ public class DependencyGraph implements Serializable {
     boolean anyAdded = true;
     while (anyAdded) {
       anyAdded = false;
-      for (Dependency dep: edges) {
-        if (dependsOnObj.contains(dep.dependsOn)
-            && !dependsOnObj.contains(dep.depender)) {
+      for (Dependency dep : edges) {
+        if (dependsOnObj.contains(dep.dependsOn) && !dependsOnObj.contains(dep.depender)) {
           anyAdded = true;
           dependsOnObj.add(dep.depender);
         }
@@ -184,8 +181,8 @@ public class DependencyGraph implements Serializable {
     // find all terminal nodes having no incoming
     // dependers.
     Set<Object> allDependants = new HashSet<>();
-    for (Dependency dep: edges) {
-      if ( (dep.dependsOn instanceof LocalThread) ) {
+    for (Dependency dep : edges) {
+      if ((dep.dependsOn instanceof LocalThread)) {
         if (dep.depender instanceof MessageKey) {
           allDependants.add(dep.dependsOn);
         }
@@ -193,17 +190,17 @@ public class DependencyGraph implements Serializable {
         allDependants.add(dep.dependsOn);
       }
     }
-    
+
     List<DependencyGraph> result = new LinkedList<>();
-    for (Object depender: dependsOnObj) {
+    for (Object depender : dependsOnObj) {
       if (!allDependants.contains(depender)) {
         result.add(getSubGraph(depender));
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Visit a vertex for the purposes of finding a cycle in the graph.
    * 
@@ -217,28 +214,27 @@ public class DependencyGraph implements Serializable {
    *          an object used to record the any cycles that are detected
    * @param depth the depth of the recursion chain up to this point
    */
-  private boolean visitCycle(Object start, Set<Object> unvisited,
-      Set<Object> finished, CycleHolder cycle, int depth) {
-    if(finished.contains(start)) {
+  private boolean visitCycle(Object start, Set<Object> unvisited, Set<Object> finished, CycleHolder cycle, int depth) {
+    if (finished.contains(start)) {
       return false;
     }
-    
-    if(!unvisited.remove(start)) {
+
+    if (!unvisited.remove(start)) {
       return true;
     }
-    
+
     cycle.processDepth(depth);
-    
+
     boolean foundCycle = false;
-    for(Dependency dep : vertices.get(start)) {
-      foundCycle |= visitCycle(dep.getDependsOn(), unvisited, finished, cycle, depth+1);
-      if(foundCycle) {
+    for (Dependency dep : vertices.get(start)) {
+      foundCycle |= visitCycle(dep.getDependsOn(), unvisited, finished, cycle, depth + 1);
+      if (foundCycle) {
         cycle.add(dep);
         break;
       }
     }
     finished.add(start);
-    
+
     return foundCycle;
   }
 
@@ -252,13 +248,12 @@ public class DependencyGraph implements Serializable {
 
     boolean foundCycle = visitCycle(start, unvisited, finished, cycle, 0);
 
-    if(foundCycle) {
+    if (foundCycle) {
       return Integer.MAX_VALUE;
     } else {
       return cycle.getMaxDepth();
     }
   }
-  
 
   /**
    * Get the subgraph that the starting object has dependencies on.
@@ -267,28 +262,26 @@ public class DependencyGraph implements Serializable {
    */
   public DependencyGraph getSubGraph(Object start) {
     DependencyGraph result = new DependencyGraph();
-    
+
     populateSubGraph(start, result);
-    
+
     return result;
   }
-  
-  
-  
+
   private void populateSubGraph(Object start, DependencyGraph result) {
-    if(result.vertices.keySet().contains(start)) {
+    if (result.vertices.keySet().contains(start)) {
       return;
     }
-    if(vertices.get(start) == null) {
+    if (vertices.get(start) == null) {
       return;
     }
-    
+
     result.addVertex(start, vertices.get(start));
-    for(Dependency dep: result.vertices.get(start)) {
+    for (Dependency dep : result.vertices.get(start)) {
       populateSubGraph(dep.getDependsOn(), result);
     }
   }
-  
+
   /**
    * Add a vertex to the graph.
    */
@@ -296,11 +289,11 @@ public class DependencyGraph implements Serializable {
     vertices.put(start, set);
     edges.addAll(set);
   }
-  
+
   public Collection<Dependency> getEdges() {
     return edges;
   }
-  
+
   public Collection<Object> getVertices() {
     return vertices.keySet();
   }
@@ -309,30 +302,30 @@ public class DependencyGraph implements Serializable {
     private LinkedList<Dependency> cycle = new LinkedList<Dependency>();
     private boolean cycleDone;
     private int maxDepth = 0;
-    
+
     public void processDepth(int depth) {
       if (depth > maxDepth) {
         maxDepth = depth;
       }
     }
-    
+
     public int getMaxDepth() {
       return maxDepth;
     }
-    
+
     public void add(Dependency dep) {
-      if(cycleDone) {
+      if (cycleDone) {
         return;
       }
-      
+
       cycle.addFirst(dep);
-      
+
       Object lastVertex = cycle.getLast().getDependsOn();
-      
-      if(dep.depender.equals(lastVertex)) {
+
+      if (dep.depender.equals(lastVertex)) {
         cycleDone = true;
       }
     }
   }
-  
+
 }

@@ -38,16 +38,16 @@ public class OfflineMembersDetailsJUnitTest {
   @Test
   public void testSerialization() throws Exception {
     Set<PersistentMemberID>[] offlineMembers = new Set[5];
-    for(int i =0; i < offlineMembers.length; i++) {
+    for (int i = 0; i < offlineMembers.length; i++) {
       offlineMembers[i] = new HashSet<PersistentMemberID>();
-      offlineMembers[i].add(new PersistentMemberID(DiskStoreID.random(), InetAddress.getLocalHost(), "a", System.currentTimeMillis(),(short)0));
+      offlineMembers[i].add(new PersistentMemberID(DiskStoreID.random(), InetAddress.getLocalHost(), "a", System.currentTimeMillis(), (short) 0));
     }
-    OfflineMemberDetailsImpl details = new OfflineMemberDetailsImpl(offlineMembers );
-    
+    OfflineMemberDetailsImpl details = new OfflineMemberDetailsImpl(offlineMembers);
+
     ByteArrayOutputStream boas = new ByteArrayOutputStream();
     DataOutput out = new DataOutputStream(boas);
     details.toData(out);
-    
+
     OfflineMemberDetailsImpl details2 = new OfflineMemberDetailsImpl();
     details2.fromData(new DataInputStream(new ByteArrayInputStream(boas.toByteArray())));
   }

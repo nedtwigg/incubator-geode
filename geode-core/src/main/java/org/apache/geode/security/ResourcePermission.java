@@ -29,16 +29,11 @@ public class ResourcePermission extends WildcardPermission {
   public static String ALL_KEYS = "*";
 
   public enum Resource {
-    NULL,
-    CLUSTER,
-    DATA
+    NULL, CLUSTER, DATA
   }
 
   public enum Operation {
-    NULL,
-    MANAGE,
-    WRITE,
-    READ
+    NULL, MANAGE, WRITE, READ
   }
 
   // these default values are used when creating a lock around an operation
@@ -60,27 +55,28 @@ public class ResourcePermission extends WildcardPermission {
   }
 
   public ResourcePermission(String resource, String operation, String regionName, String key) {
-    this((resource==null) ? Resource.NULL : Resource.valueOf(resource.toUpperCase()),
-      (operation == null) ? Operation.NULL : Operation.valueOf(operation.toUpperCase()),
-      regionName,
-      key);
+    this((resource == null) ? Resource.NULL : Resource.valueOf(resource.toUpperCase()), (operation == null) ? Operation.NULL : Operation.valueOf(operation.toUpperCase()), regionName, key);
   }
 
-  public ResourcePermission(Resource resource, Operation operation){
+  public ResourcePermission(Resource resource, Operation operation) {
     this(resource, operation, ALL_REGIONS);
   }
 
-  public ResourcePermission(Resource resource, Operation operation, String regionName){
+  public ResourcePermission(Resource resource, Operation operation, String regionName) {
     this(resource, operation, regionName, ALL_KEYS);
   }
 
-  public ResourcePermission(Resource resource, Operation operation, String regionName, String key){
-    if(resource != null) this.resource = resource;
-    if(operation != null) this.operation = operation;
-    if(regionName != null) this.regionName = regionName;
-    if(key != null) this.key = key;
+  public ResourcePermission(Resource resource, Operation operation, String regionName, String key) {
+    if (resource != null)
+      this.resource = resource;
+    if (operation != null)
+      this.operation = operation;
+    if (regionName != null)
+      this.regionName = regionName;
+    if (key != null)
+      this.key = key;
 
-    setParts(this.resource+":"+this.operation+":"+this.regionName+":"+this.key, true);
+    setParts(this.resource + ":" + this.operation + ":" + this.regionName + ":" + this.key, true);
   }
 
   /**
@@ -115,10 +111,9 @@ public class ResourcePermission extends WildcardPermission {
   public String toString() {
     if (ALL_REGIONS.equals(regionName)) {
       return getResource() + ":" + getOperation();
-    } else if(ALL_KEYS.equals(key)) {
+    } else if (ALL_KEYS.equals(key)) {
       return resource + ":" + operation + ":" + regionName;
-    }
-    else{
+    } else {
       return resource + ":" + operation + ":" + regionName + ":" + key;
     }
   }

@@ -52,7 +52,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.SERVER_BIND_A
  *
  * @since GemFire 2.0.2
  */
-public class CacheServerLauncher  {
+public class CacheServerLauncher {
 
   /** Is this VM a dedicated Cache Server?  This value is used mainly by the admin API. */
   public static boolean isDedicatedCacheServer = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "isDedicatedServer");
@@ -63,15 +63,12 @@ public class CacheServerLauncher  {
   public static boolean DONT_EXIT_AFTER_LAUNCH = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "CacheServerLauncher.dontExitAfterLaunch");
 
   /** Should the launch command be printed? */
-  public static final boolean PRINT_LAUNCH_COMMAND = Boolean.getBoolean(
-    CacheServerLauncher.class.getSimpleName() + ".PRINT_LAUNCH_COMMAND");
+  public static final boolean PRINT_LAUNCH_COMMAND = Boolean.getBoolean(CacheServerLauncher.class.getSimpleName() + ".PRINT_LAUNCH_COMMAND");
 
-  private static final long STATUS_WAIT_TIME
-      = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "CacheServerLauncher.STATUS_WAIT_TIME_MS", 15000);
-  
+  private static final long STATUS_WAIT_TIME = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "CacheServerLauncher.STATUS_WAIT_TIME_MS", 15000);
+
   /** How long to wait for a cache server to stop */
-  private static final long SHUTDOWN_WAIT_TIME
-      = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "CacheServerLauncher.SHUTDOWN_WAIT_TIME_MS", 20000);
+  private static final long SHUTDOWN_WAIT_TIME = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "CacheServerLauncher.SHUTDOWN_WAIT_TIME_MS", 20000);
 
   protected final String baseName;
   protected final String defaultLogFileName;
@@ -85,7 +82,6 @@ public class CacheServerLauncher  {
   protected String maxHeapSize;
   protected String initialHeapSize;
   protected String offHeapSize;
-
 
   public static final int SHUTDOWN = 0;
   public static final int STARTING = 1;
@@ -121,8 +117,8 @@ public class CacheServerLauncher  {
    */
   protected void usage() {
     PrintStream out = System.out;
-    out.println("cacheserver start [-J<vmarg>]* [<attName>=<attValue>]* [-dir=<workingdir>] [-classpath=<classpath>] [-disable-default-server] [-rebalance] [-lock-memory] [-server-port=<server-port>] [-server-bind-address=<server-bind-address>] [-critical-heap-percentage=<critical-heap-percentage>] [-eviction-heap-percentage=<eviction-heap-percentage>] [-critical-off-heap-percentage=<critical-off-heap-percentage>] [-eviction-off-heap-percentage=<eviction-off-heap-percentage>]\n" );
-    out.println("\t" + LocalizedStrings.CacheServerLauncher_STARTS_A_GEMFIRE_CACHESERVER_VM.toLocalizedString() );
+    out.println("cacheserver start [-J<vmarg>]* [<attName>=<attValue>]* [-dir=<workingdir>] [-classpath=<classpath>] [-disable-default-server] [-rebalance] [-lock-memory] [-server-port=<server-port>] [-server-bind-address=<server-bind-address>] [-critical-heap-percentage=<critical-heap-percentage>] [-eviction-heap-percentage=<eviction-heap-percentage>] [-critical-off-heap-percentage=<critical-off-heap-percentage>] [-eviction-off-heap-percentage=<eviction-off-heap-percentage>]\n");
+    out.println("\t" + LocalizedStrings.CacheServerLauncher_STARTS_A_GEMFIRE_CACHESERVER_VM.toLocalizedString());
     out.println("\t" + LocalizedStrings.CacheServerLauncher_VMARG.toLocalizedString());
     out.println("\t" + LocalizedStrings.CacheServerLauncher_DIR.toLocalizedString());
     out.println("\t" + LocalizedStrings.CacheServerLauncher_CLASSPATH.toLocalizedString());
@@ -138,12 +134,12 @@ public class CacheServerLauncher  {
     out.println("\t" + LocalizedStrings.CacheServerLauncher_LOCK_MEMORY.toLocalizedString());
 
     out.println();
-    out.println( "cacheserver stop [-dir=<workingdir>]" );
+    out.println("cacheserver stop [-dir=<workingdir>]");
     out.println("\t" + LocalizedStrings.CacheServerLauncher_STOPS_A_GEMFIRE_CACHESERVER_VM.toLocalizedString());
     out.println("\t" + LocalizedStrings.CacheServerLauncher_DIR.toLocalizedString());
     out.println();
-    out.println( "cacheserver status [-dir=<workingdir>]" );
-    out.println( "\t" + LocalizedStrings.CacheServerLauncher_STATUS.toLocalizedString());
+    out.println("cacheserver status [-dir=<workingdir>]");
+    out.println("\t" + LocalizedStrings.CacheServerLauncher_STATUS.toLocalizedString());
     out.println("\t" + LocalizedStrings.CacheServerLauncher_DIR.toLocalizedString());
   }
 
@@ -166,8 +162,7 @@ public class CacheServerLauncher  {
 
     if (new File(workingDir, statusName).exists()) {
       status = spinReadStatus(); // See bug 32456
-    }
-    else {
+    } else {
       // no pid since the cache server is not running
       status = createStatus(this.baseName, SHUTDOWN, 0);
     }
@@ -189,36 +184,29 @@ public class CacheServerLauncher  {
       if (args.length > 0) {
         if (args[0].equalsIgnoreCase("start")) {
           launcher.start(args);
-        }
-        else if (args[0].equalsIgnoreCase("server")) {
+        } else if (args[0].equalsIgnoreCase("server")) {
           inServer = true;
           launcher.server(args);
-        }
-        else if (args[0].equalsIgnoreCase("stop")) {
+        } else if (args[0].equalsIgnoreCase("stop")) {
           launcher.stop(args);
-        }
-        else if (args[0].equalsIgnoreCase("status")) {
+        } else if (args[0].equalsIgnoreCase("status")) {
           launcher.status(args);
-        }
-        else {
+        } else {
           launcher.usage();
           System.exit(1);
         }
-      }
-      else {
+      } else {
         launcher.usage();
         System.exit(1);
       }
 
       throw new Exception(LocalizedStrings.CacheServerLauncher_INTERNAL_ERROR_SHOULDNT_REACH_HERE.toLocalizedString());
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -227,50 +215,43 @@ public class CacheServerLauncher  {
       SystemFailure.checkFailure();
       t.printStackTrace();
       if (inServer) {
-        launcher.setServerError(LocalizedStrings.CacheServerLauncher_ERROR_STARTING_SERVER_PROCESS
-          .toLocalizedString(), t);
+        launcher.setServerError(LocalizedStrings.CacheServerLauncher_ERROR_STARTING_SERVER_PROCESS.toLocalizedString(), t);
       }
       launcher.restoreStdOut();
       if (launcher.logger != null) {
         launcher.logger.severe(LocalizedStrings.CacheServerLauncher_CACHE_SERVER_ERROR, t);
 
-      }
-      else {
+      } else {
         System.out.println(LocalizedStrings.CacheServerLauncher_ERROR_0.toLocalizedString(t.getMessage()));
       }
       System.exit(1);
     }
   }
 
-  protected void restoreStdOut( ) {
-    System.setErr( oldErr );
-    System.setOut( oldOut );
+  protected void restoreStdOut() {
+    System.setErr(oldErr);
+    System.setOut(oldOut);
   }
 
-  protected static final String DIR     = "dir";
-  protected static final String VMARGS  = "vmargs";
+  protected static final String DIR = "dir";
+  protected static final String VMARGS = "vmargs";
   protected static final String PROPERTIES = "properties";
   protected static final String CLASSPATH = "classpath";
   protected static final String REBALANCE = "rebalance";
   protected static final String SERVER_PORT = "server-port";
   protected static final String SERVER_BIND_ADDRESS_NAME = SERVER_BIND_ADDRESS;
   protected static final String DISABLE_DEFAULT_SERVER = "disable-default-server";
-  public static final String CRITICAL_HEAP_PERCENTAGE =
-    "critical-heap-percentage";
-  public static final String EVICTION_HEAP_PERCENTAGE =
-      "eviction-heap-percentage";
-  public static final String CRITICAL_OFF_HEAP_PERCENTAGE =
-      "critical-off-heap-percentage";
-  public static final String EVICTION_OFF_HEAP_PERCENTAGE =
-      "eviction-off-heap-percentage";
+  public static final String CRITICAL_HEAP_PERCENTAGE = "critical-heap-percentage";
+  public static final String EVICTION_HEAP_PERCENTAGE = "eviction-heap-percentage";
+  public static final String CRITICAL_OFF_HEAP_PERCENTAGE = "critical-off-heap-percentage";
+  public static final String EVICTION_OFF_HEAP_PERCENTAGE = "eviction-off-heap-percentage";
   protected static final String LOCK_MEMORY = ConfigurationProperties.LOCK_MEMORY;
 
   protected final File processDirOption(final Map<String, Object> options, final String dirValue) throws FileNotFoundException {
     final File inputWorkingDirectory = new File(dirValue);
 
     if (!inputWorkingDirectory.exists()) {
-      throw new FileNotFoundException(LocalizedStrings.CacheServerLauncher_THE_INPUT_WORKING_DIRECTORY_DOES_NOT_EXIST_0
-        .toLocalizedString(dirValue));
+      throw new FileNotFoundException(LocalizedStrings.CacheServerLauncher_THE_INPUT_WORKING_DIRECTORY_DOES_NOT_EXIST_0.toLocalizedString(dirValue));
     }
 
     options.put(DIR, inputWorkingDirectory);
@@ -295,44 +276,32 @@ public class CacheServerLauncher  {
     for (final String arg : args) {
       if (arg.equals("start")) {
         // expected
-      }
-      else if (arg.startsWith("-classpath=")) {
+      } else if (arg.startsWith("-classpath=")) {
         options.put(CLASSPATH, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-dir=")) {
+      } else if (arg.startsWith("-dir=")) {
         processDirOption(options, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-disable-default-server")) {
+      } else if (arg.startsWith("-disable-default-server")) {
         options.put(DISABLE_DEFAULT_SERVER, arg);
-      }
-      else if (arg.startsWith("-lock-memory")) {
+      } else if (arg.startsWith("-lock-memory")) {
         if (System.getProperty("os.name").indexOf("Windows") >= 0) {
           throw new IllegalArgumentException("Unable to lock memory on this operating system");
         }
         props.put(LOCK_MEMORY, "true");
-      }
-      else if (arg.startsWith("-rebalance")) {
+      } else if (arg.startsWith("-rebalance")) {
         options.put(REBALANCE, Boolean.TRUE);
-      }
-      else if (arg.startsWith("-server-port")) {
+      } else if (arg.startsWith("-server-port")) {
         options.put(SERVER_PORT, arg);
-      }
-      else if (arg.startsWith("-" + CRITICAL_HEAP_PERCENTAGE) ) {
+      } else if (arg.startsWith("-" + CRITICAL_HEAP_PERCENTAGE)) {
         options.put(CRITICAL_HEAP_PERCENTAGE, arg);
-      }
-      else if (arg.startsWith("-" + EVICTION_HEAP_PERCENTAGE) ) {
+      } else if (arg.startsWith("-" + EVICTION_HEAP_PERCENTAGE)) {
         options.put(EVICTION_HEAP_PERCENTAGE, arg);
-      }
-      else if (arg.startsWith("-" + CRITICAL_OFF_HEAP_PERCENTAGE) ) {
+      } else if (arg.startsWith("-" + CRITICAL_OFF_HEAP_PERCENTAGE)) {
         options.put(CRITICAL_OFF_HEAP_PERCENTAGE, arg);
-      }
-      else if (arg.startsWith("-" + EVICTION_OFF_HEAP_PERCENTAGE) ) {
+      } else if (arg.startsWith("-" + EVICTION_OFF_HEAP_PERCENTAGE)) {
         options.put(EVICTION_OFF_HEAP_PERCENTAGE, arg);
-      }
-      else if (arg.startsWith("-server-bind-address")) {
+      } else if (arg.startsWith("-server-bind-address")) {
         options.put(SERVER_BIND_ADDRESS_NAME, arg);
-      }
-      else if (arg.startsWith("-J")) {
+      } else if (arg.startsWith("-J")) {
         String vmArg = arg.substring(2);
         if (vmArg.startsWith("-Xmx")) {
           this.maxHeapSize = vmArg.substring(4);
@@ -350,14 +319,11 @@ public class CacheServerLauncher  {
 
         if (key.startsWith("-")) {
           processStartOption(key.substring(1), value, options, vmArgs, props);
-        }
-        else {
+        } else {
           processStartArg(key, value, options, vmArgs, props);
         }
-      }
-      else {
-        throw new IllegalArgumentException(LocalizedStrings.CacheServerLauncher_UNKNOWN_ARGUMENT_0
-          .toLocalizedString(arg));
+      } else {
+        throw new IllegalArgumentException(LocalizedStrings.CacheServerLauncher_UNKNOWN_ARGUMENT_0.toLocalizedString(arg));
       }
     }
 
@@ -368,7 +334,7 @@ public class CacheServerLauncher  {
 
     // configure commons-logging to use JDK logging 
     vmArgs.add("-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger");
-    
+
     options.put(VMARGS, vmArgs);
     return options;
   }
@@ -376,37 +342,21 @@ public class CacheServerLauncher  {
   /**
    * Process a command-line options of the form "key=value".
    */
-  protected void processStartArg(final String key,
-                                 final String value,
-                                 final Map<String, Object> options,
-                                 final List<String> vmArgs,
-                                 final Properties props)
-    throws Exception
-  {
+  protected void processStartArg(final String key, final String value, final Map<String, Object> options, final List<String> vmArgs, final Properties props) throws Exception {
     props.setProperty(key, value);
   }
 
   /**
    * Process a command-line option of the form "-key=value".
    */
-  protected void processStartOption(final String key,
-                                    final String value,
-                                    final Map<String, Object> options,
-                                    final List<String> vmArgs,
-                                    final Properties props)
-    throws Exception
-  {
+  protected void processStartOption(final String key, final String value, final Map<String, Object> options, final List<String> vmArgs, final Properties props) throws Exception {
     processUnknownStartOption(key, value, options, vmArgs, props);
   }
 
   /**
    * Process a command-line option of the form "-key=value" unknown to the base class.
    */
-  protected void processUnknownStartOption(final String key,
-                                           final String value,
-                                           final Map<String, Object> options,
-                                           final List<String> vmArgs,
-                                           final Properties props) {
+  protected void processUnknownStartOption(final String key, final String value, final Map<String, Object> options, final List<String> vmArgs, final Properties props) {
     throw new IllegalArgumentException(LocalizedStrings.CacheServerLauncher_UNKNOWN_ARGUMENT_0.toLocalizedString(key));
   }
 
@@ -424,50 +374,37 @@ public class CacheServerLauncher  {
     for (final String arg : args) {
       if (arg.equals("server")) {
         // expected
-      }
-      else if (arg.startsWith("-dir=")) {
+      } else if (arg.startsWith("-dir=")) {
         this.workingDir = processDirOption(options, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-rebalance")) {
+      } else if (arg.startsWith("-rebalance")) {
         options.put(REBALANCE, Boolean.TRUE);
-      }
-      else if (arg.startsWith("-disable-default-server")) {
+      } else if (arg.startsWith("-disable-default-server")) {
         options.put(DISABLE_DEFAULT_SERVER, Boolean.TRUE);
-      }
-      else if (arg.startsWith("-lock-memory")) {
+      } else if (arg.startsWith("-lock-memory")) {
         props.put(LOCK_MEMORY, "true");
-      }
-      else if (arg.startsWith("-server-port")) {
+      } else if (arg.startsWith("-server-port")) {
         options.put(SERVER_PORT, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-server-bind-address")) {
+      } else if (arg.startsWith("-server-bind-address")) {
         options.put(SERVER_BIND_ADDRESS_NAME, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-" + CRITICAL_HEAP_PERCENTAGE)) {
+      } else if (arg.startsWith("-" + CRITICAL_HEAP_PERCENTAGE)) {
         options.put(CRITICAL_HEAP_PERCENTAGE, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-" + EVICTION_HEAP_PERCENTAGE)) {
+      } else if (arg.startsWith("-" + EVICTION_HEAP_PERCENTAGE)) {
         options.put(EVICTION_HEAP_PERCENTAGE, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-" + CRITICAL_OFF_HEAP_PERCENTAGE)) {
+      } else if (arg.startsWith("-" + CRITICAL_OFF_HEAP_PERCENTAGE)) {
         options.put(CRITICAL_OFF_HEAP_PERCENTAGE, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.startsWith("-" + EVICTION_OFF_HEAP_PERCENTAGE)) {
+      } else if (arg.startsWith("-" + EVICTION_OFF_HEAP_PERCENTAGE)) {
         options.put(EVICTION_OFF_HEAP_PERCENTAGE, arg.substring(arg.indexOf("=") + 1));
-      }
-      else if (arg.indexOf("=") > 1) {
+      } else if (arg.indexOf("=") > 1) {
         final int assignmentIndex = arg.indexOf("=");
         final String key = arg.substring(0, assignmentIndex);
         final String value = arg.substring(assignmentIndex + 1);
 
         if (key.startsWith("-")) {
           options.put(key.substring(1), value);
-        }
-        else {
+        } else {
           props.setProperty(key, value);
         }
-      }
-      else {
+      } else {
         throw new IllegalArgumentException(LocalizedStrings.CacheServerLauncher_UNKNOWN_ARGUMENT_0.toLocalizedString(arg));
       }
     }
@@ -486,13 +423,10 @@ public class CacheServerLauncher  {
     for (final String arg : args) {
       if (arg.equals("stop") || arg.equals("status")) {
         // expected
-      }
-      else if (arg.startsWith("-dir=")) {
+      } else if (arg.startsWith("-dir=")) {
         processDirOption(options, arg.substring(arg.indexOf("=") + 1));
-      }
-      else {
-        throw new IllegalArgumentException(LocalizedStrings.CacheServerLauncher_UNKNOWN_ARGUMENT_0
-          .toLocalizedString(arg));
+      } else {
+        throw new IllegalArgumentException(LocalizedStrings.CacheServerLauncher_UNKNOWN_ARGUMENT_0.toLocalizedString(arg));
       }
     }
 
@@ -533,16 +467,14 @@ public class CacheServerLauncher  {
     final Status status = getStatus();
 
     if (status != null && status.state != SHUTDOWN) {
-      throw new IllegalStateException(LocalizedStrings.CacheServerLauncher_A_0_IS_ALREADY_RUNNING_IN_DIRECTORY_1_2
-        .toLocalizedString(this.baseName, workingDir, status));
+      throw new IllegalStateException(LocalizedStrings.CacheServerLauncher_A_0_IS_ALREADY_RUNNING_IN_DIRECTORY_1_2.toLocalizedString(this.baseName, workingDir, status));
     }
 
     deleteStatus();
   }
 
   private String[] buildCommandLine(final Map<String, Object> options) {
-    final List<String> commandLine = JavaCommandBuilder.buildCommand(this.getClass().getName(),
-      (String) options.get(CLASSPATH), null, (List<String>) options.get(VMARGS));
+    final List<String> commandLine = JavaCommandBuilder.buildCommand(this.getClass().getName(), (String) options.get(CLASSPATH), null, (List<String>) options.get(VMARGS));
 
     commandLine.add("server");
     addToServerCommand(commandLine, options);
@@ -571,7 +503,7 @@ public class CacheServerLauncher  {
     Map<String, String> env = new HashMap<String, String>();
     // read the passwords from command line
     SocketCreator.readSSLProperties(env);
-    
+
     printCommandLine(commandLine);
 
     final int pid = OSProcess.bgexec(commandLine, workingDir, startLogFile, false, env);
@@ -591,8 +523,7 @@ public class CacheServerLauncher  {
   public void running() {
     try {
       writeStatus(createStatus(this.baseName, RUNNING, OSProcess.getId()));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -621,7 +552,6 @@ public class CacheServerLauncher  {
     serverBindAddress.set(null);
   }
 
-
   /**
    * The method that does the work of being a cache server.  It is
    * invoked in the VM spawned by the {@link #start} method.
@@ -640,7 +570,7 @@ public class CacheServerLauncher  {
    *
    * @param args Configuration options passed in from the command line
    */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
   public void server(final String[] args) throws Exception {
     isDedicatedCacheServer = true;
     SystemFailure.setExitOK(true);
@@ -681,7 +611,7 @@ public class CacheServerLauncher  {
     InternalDistributedSystem system = this.connect(props);
 
     installLogListener();
-    
+
     logger = system.getLogWriter().convertToLogWriterI18n();
     // redirect output to the log file
     OSProcess.redirectOutput(system.getConfig().getLogFile());
@@ -691,7 +621,7 @@ public class CacheServerLauncher  {
     startAdditionalServices(cache, options);
 
     this.running();
-    
+
     clearLogListener();
 
     if (ASSIGN_BUCKETS) {
@@ -704,29 +634,29 @@ public class CacheServerLauncher  {
       cache.getResourceManager().createRebalanceFactory().start();
     }
 
-    File statusFile = new File( workingDir, statusName );
-    long lastModified=0, oldModified = statusFile.lastModified();
+    File statusFile = new File(workingDir, statusName);
+    long lastModified = 0, oldModified = statusFile.lastModified();
     // Every FORCE_STATUS_FILE_READ_ITERATION_COUNT iterations, read the status file despite the modification time
     // to catch situations where the file is modified quicker than the file timestamp's resolution.
     short count = 0;
     boolean loggedWarning = false;
-    while(true) {
+    while (true) {
       lastModified = statusFile.lastModified();
       if (lastModified > oldModified || count++ == FORCE_STATUS_FILE_READ_ITERATION_COUNT) {
         count = 0;
-        Thread.sleep( 500 ); // allow for it to be finished writing.
+        Thread.sleep(500); // allow for it to be finished writing.
         //Sometimes the status file is partially written causing readObject to
         //fail, sleep and retry.
         try {
-          status = readStatus( );
-        } catch(IOException ioeSecondChance) {
+          status = readStatus();
+        } catch (IOException ioeSecondChance) {
           Thread.sleep(1000);
           try {
-            status = readStatus( );
-          } catch(IOException ioeThirdChance) {
+            status = readStatus();
+          } catch (IOException ioeThirdChance) {
             Thread.sleep(5000);
             try {
-              status = readStatus( );
+              status = readStatus();
             } catch (FileNotFoundException fnfe) {
               // See bug 44627.
               // The cache server used to just shutdown at this point. Instead,
@@ -745,24 +675,24 @@ public class CacheServerLauncher  {
         }
         oldModified = lastModified;
         if (status.state == SHUTDOWN_PENDING) {
-            stopAdditionalServices();
-            this.disconnect(cache);
-            status.state = SHUTDOWN;
-            writeStatus(status);
+          stopAdditionalServices();
+          this.disconnect(cache);
+          status.state = SHUTDOWN;
+          writeStatus(status);
         } else {
-          Thread.sleep( 250 );
+          Thread.sleep(250);
         }
 
       } else {
         Thread.sleep(1000);
       }
       if (!system.isConnected()) {
-//        System.out.println("System is disconnected.  isReconnecting = " + system.isReconnecting());
+        //        System.out.println("System is disconnected.  isReconnecting = " + system.isReconnecting());
         boolean reconnected = false;
         if (system.isReconnecting()) {
           reconnected = system.waitUntilReconnected(-1, TimeUnit.SECONDS);
           if (reconnected) {
-            system = (InternalDistributedSystem)system.getReconnectedSystem();
+            system = (InternalDistributedSystem) system.getReconnectedSystem();
             cache = GemFireCacheImpl.getInstance();
           }
         }
@@ -780,67 +710,59 @@ public class CacheServerLauncher  {
     reporter.setDaemon(true);
     reporter.start();
   }
-  
+
   private void clearLogListener() {
     MainLogReporter mainLogListener = (MainLogReporter) StartupStatus.getStartupListener();
-    if(mainLogListener != null) {
+    if (mainLogListener != null) {
       mainLogListener.shutdown();
       StartupStatus.clearListener();
     }
   }
-  
+
   protected InternalDistributedSystem connect(Properties props) {
-    return (InternalDistributedSystem)DistributedSystem.connect(props);
+    return (InternalDistributedSystem) DistributedSystem.connect(props);
   }
 
   protected static float getCriticalHeapPercent(Map<String, Object> options) {
     if (options != null) {
-      String criticalHeapThreshold = (String)options
-          .get(CRITICAL_HEAP_PERCENTAGE);
+      String criticalHeapThreshold = (String) options.get(CRITICAL_HEAP_PERCENTAGE);
       if (criticalHeapThreshold != null) {
-        return Float.parseFloat(criticalHeapThreshold
-            .substring(criticalHeapThreshold.indexOf("=") + 1));
+        return Float.parseFloat(criticalHeapThreshold.substring(criticalHeapThreshold.indexOf("=") + 1));
       }
     }
     return -1.0f;
   }
-  
+
   protected static float getEvictionHeapPercent(Map<String, Object> options) {
     if (options != null) {
-      String evictionHeapThreshold = (String)options
-          .get(EVICTION_HEAP_PERCENTAGE);
+      String evictionHeapThreshold = (String) options.get(EVICTION_HEAP_PERCENTAGE);
       if (evictionHeapThreshold != null) {
-        return Float.parseFloat(evictionHeapThreshold
-            .substring(evictionHeapThreshold.indexOf("=") + 1));
+        return Float.parseFloat(evictionHeapThreshold.substring(evictionHeapThreshold.indexOf("=") + 1));
       }
     }
     return -1.0f;
   }
-  
+
   protected static float getCriticalOffHeapPercent(Map<String, Object> options) {
     if (options != null) {
-      String criticalOffHeapThreshold = (String)options
-          .get(CRITICAL_OFF_HEAP_PERCENTAGE);
+      String criticalOffHeapThreshold = (String) options.get(CRITICAL_OFF_HEAP_PERCENTAGE);
       if (criticalOffHeapThreshold != null) {
-        return Float.parseFloat(criticalOffHeapThreshold
-            .substring(criticalOffHeapThreshold.indexOf("=") + 1));
+        return Float.parseFloat(criticalOffHeapThreshold.substring(criticalOffHeapThreshold.indexOf("=") + 1));
       }
     }
     return -1.0f;
   }
-  
+
   protected static float getEvictionOffHeapPercent(Map<String, Object> options) {
     if (options != null) {
-      String evictionOffHeapThreshold = (String)options
-          .get(EVICTION_OFF_HEAP_PERCENTAGE);
+      String evictionOffHeapThreshold = (String) options.get(EVICTION_OFF_HEAP_PERCENTAGE);
       if (evictionOffHeapThreshold != null) {
-        return Float.parseFloat(evictionOffHeapThreshold
-            .substring(evictionOffHeapThreshold.indexOf("=") + 1));
+        return Float.parseFloat(evictionOffHeapThreshold.substring(evictionOffHeapThreshold.indexOf("=") + 1));
       }
     }
     return -1.0f;
   }
-  
+
   protected Cache createCache(InternalDistributedSystem system, Map<String, Object> options) throws IOException {
     Cache cache = CacheFactory.create(system);
 
@@ -852,7 +774,7 @@ public class CacheServerLauncher  {
     if (threshold > 0.0f) {
       cache.getResourceManager().setEvictionHeapPercentage(threshold);
     }
-    
+
     threshold = getCriticalOffHeapPercent(options);
     getCriticalOffHeapPercent(options);
     if (threshold > 0.0f) {
@@ -863,14 +785,13 @@ public class CacheServerLauncher  {
       cache.getResourceManager().setEvictionOffHeapPercentage(threshold);
     }
 
-
     // Create and start a default cache server
     // If (disableDefaultServer is not set or it is set but false) AND (the number of cacheservers is 0)
     Boolean disable = disableDefaultServer.get();
     if ((disable == null || !disable) && cache.getCacheServers().size() == 0) {
       // Create and add a cache server
       CacheServer server = cache.addCacheServer();
-      
+
       CacheServerHelper.setIsDefaultServer(server);
 
       // Set its port if necessary
@@ -928,15 +849,11 @@ public class CacheServerLauncher  {
         System.out.println(LocalizedStrings.CacheServerLauncher_0_STOPPED.toLocalizedString(this.baseName));
         deleteStatus();
         exitStatus = 0;
+      } else {
+        System.out.println(LocalizedStrings.CacheServerLauncher_TIMEOUT_WAITING_FOR_0_TO_SHUTDOWN_STATUS_IS_1.toLocalizedString(this.baseName, this.status));
       }
-      else {
-        System.out.println(LocalizedStrings.CacheServerLauncher_TIMEOUT_WAITING_FOR_0_TO_SHUTDOWN_STATUS_IS_1
-          .toLocalizedString(this.baseName, this.status));
-      }
-    }
-    else {
-      System.out.println(LocalizedStrings.CacheServerLauncher_THE_SPECIFIED_WORKING_DIRECTORY_0_CONTAINS_NO_STATUS_FILE
-        .toLocalizedString(this.workingDir));
+    } else {
+      System.out.println(LocalizedStrings.CacheServerLauncher_THE_SPECIFIED_WORKING_DIRECTORY_0_CONTAINS_NO_STATUS_FILE.toLocalizedString(this.workingDir));
     }
 
     if (DONT_EXIT_AFTER_LAUNCH) {
@@ -954,14 +871,12 @@ public class CacheServerLauncher  {
     while (clock < SHUTDOWN_WAIT_TIME && status.state != SHUTDOWN) {
       try {
         status = readStatus();
-      }
-      catch (IOException ignore) {
+      } catch (IOException ignore) {
       }
 
       try {
         Thread.sleep(increment);
-      }
-      catch (InterruptedException ie) {
+      } catch (InterruptedException ie) {
         break;
       }
 
@@ -999,33 +914,30 @@ public class CacheServerLauncher  {
       final StringBuilder buffer = new StringBuilder();
       buffer.append(this.baseName).append(" pid: ").append(pid).append(" status: ");
       switch (state) {
-        case SHUTDOWN:
-          buffer.append("stopped");
-          break;
-        case STARTING:
-          buffer.append("starting");
-          break;
-        case RUNNING:
-          buffer.append("running");
-          break;
-        case SHUTDOWN_PENDING:
-          buffer.append("stopping");
-          break;
-        default:
-          buffer.append("unknown");
-          break;
+      case SHUTDOWN:
+        buffer.append("stopped");
+        break;
+      case STARTING:
+        buffer.append("starting");
+        break;
+      case RUNNING:
+        buffer.append("running");
+        break;
+      case SHUTDOWN_PENDING:
+        buffer.append("stopping");
+        break;
+      default:
+        buffer.append("unknown");
+        break;
       }
       if (exception != null) {
         if (msg != null) {
           buffer.append("\n").append(msg).append(" - ");
-        }
-        else {
+        } else {
           buffer.append("\nException in ").append(this.baseName).append(" - ");
         }
-        buffer.append(LocalizedStrings
-            .CacheServerLauncher_SEE_LOG_FILE_FOR_DETAILS.toLocalizedString());
-      }
-      else if (this.dsMsg != null) {
+        buffer.append(LocalizedStrings.CacheServerLauncher_SEE_LOG_FILE_FOR_DETAILS.toLocalizedString());
+      } else if (this.dsMsg != null) {
         buffer.append('\n').append(this.dsMsg);
       }
       return buffer.toString();
@@ -1039,12 +951,10 @@ public class CacheServerLauncher  {
   protected void setServerError(final String msg, final Throwable t) {
     try {
       writeStatus(createStatus(this.baseName, SHUTDOWN, OSProcess.getId(), msg, t));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       if (logger != null) {
         logger.severe(e);
-      }
-      else {
+      } else {
         e.printStackTrace();
       }
       System.exit(1);
@@ -1064,8 +974,7 @@ public class CacheServerLauncher  {
       objectOutput = new ObjectOutputStream(fileOutput);
       objectOutput.writeObject(s);
       objectOutput.flush();
-    }
-    finally {
+    } finally {
       IOUtils.close(objectOutput);
       IOUtils.close(fileOutput);
     }
@@ -1081,14 +990,12 @@ public class CacheServerLauncher  {
     while (status == null && System.currentTimeMillis() < timeout) {
       try {
         status = readStatus();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         // try again - the status might have been read in the middle of it being written by the server resulting in
         // an EOFException here
         try {
           Thread.sleep(500);
-        }
-        catch (InterruptedException ie) {
+        } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
           status = null;
           break;
@@ -1122,21 +1029,17 @@ public class CacheServerLauncher  {
       }
 
       return status;
-    }
-    catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException e) {
       throw new RuntimeException(e);
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       Thread.sleep(500);
 
       if (statusFile.exists()) {
         return readStatus();
-      }
-      else {
+      } else {
         throw e;
       }
-    }
-    finally {
+    } finally {
       IOUtils.close(objectInput);
       IOUtils.close(fileInput);
     }
@@ -1162,43 +1065,40 @@ public class CacheServerLauncher  {
     String lastReadMessage = null;
     String lastReportedMessage = null;
     long lastReadTime = System.nanoTime();
-    if ( status == null ) {
+    if (status == null) {
       throw new Exception(LocalizedStrings.CacheServerLauncher_NO_AVAILABLE_STATUS.toLocalizedString());
     } else {
-      switch ( status.state  ) {
-        case STARTING:
-          // re-read status for a while...
-          while( status.state == STARTING ) {
-            Thread.sleep( 500 ); // fix for bug 36998
-            status = spinReadStatus();
-            
-            //check to see if the status message has changed
-            if(status.dsMsg != null && !status.dsMsg.equals(lastReadMessage)) {
-              lastReadMessage = status.dsMsg;
-              lastReadTime = System.nanoTime();
-            }
-            
-            //if the status message has not changed for 15 seconds, print
-            //out the message.
-            long elapsed = System.nanoTime() - lastReadTime;
-            if(TimeUnit.NANOSECONDS.toMillis(elapsed) > STATUS_WAIT_TIME
-                && lastReadMessage != null &&
-                !lastReadMessage.equals(lastReportedMessage)) {
-              long elapsedSec = TimeUnit.NANOSECONDS.toSeconds(elapsed);
-              System.out.println(LocalizedStrings.CacheServerLauncher_LAUNCH_IN_PROGRESS_0
-                  .toLocalizedString(elapsedSec, status.dsMsg));
-              lastReportedMessage = lastReadMessage;
-            }
+      switch (status.state) {
+      case STARTING:
+        // re-read status for a while...
+        while (status.state == STARTING) {
+          Thread.sleep(500); // fix for bug 36998
+          status = spinReadStatus();
+
+          //check to see if the status message has changed
+          if (status.dsMsg != null && !status.dsMsg.equals(lastReadMessage)) {
+            lastReadMessage = status.dsMsg;
+            lastReadTime = System.nanoTime();
           }
-          if (status.state == SHUTDOWN) {
-            System.out.println(status);
-            System.exit(1);
+
+          //if the status message has not changed for 15 seconds, print
+          //out the message.
+          long elapsed = System.nanoTime() - lastReadTime;
+          if (TimeUnit.NANOSECONDS.toMillis(elapsed) > STATUS_WAIT_TIME && lastReadMessage != null && !lastReadMessage.equals(lastReportedMessage)) {
+            long elapsedSec = TimeUnit.NANOSECONDS.toSeconds(elapsed);
+            System.out.println(LocalizedStrings.CacheServerLauncher_LAUNCH_IN_PROGRESS_0.toLocalizedString(elapsedSec, status.dsMsg));
+            lastReportedMessage = lastReadMessage;
           }
-          break;
-        default:
-          break;
+        }
+        if (status.state == SHUTDOWN) {
+          System.out.println(status);
+          System.exit(1);
+        }
+        break;
+      default:
+        break;
       }
-      System.out.println( status );
+      System.out.println(status);
     }
   }
 
@@ -1216,10 +1116,10 @@ public class CacheServerLauncher  {
       } catch (IOException io) {
         //throw new GemFireIOException("Failed reading " + url, io);
         System.out.println("Failed reading " + url);
-        System.exit( 1 );
+        System.exit(1);
       }
       final String logFile = gfprops.getProperty(LOG_FILE);
-      if ( logFile == null || logFile.length() == 0 ) {
+      if (logFile == null || logFile.length() == 0) {
         return true;
       }
     } else {
@@ -1244,22 +1144,20 @@ public class CacheServerLauncher  {
     commandLineWrapper.add((String) options.get(SERVER_PORT));
     commandLineWrapper.add((String) options.get(SERVER_BIND_ADDRESS_NAME));
 
-    String criticalHeapThreshold = (String)options.get(CRITICAL_HEAP_PERCENTAGE);
+    String criticalHeapThreshold = (String) options.get(CRITICAL_HEAP_PERCENTAGE);
     if (criticalHeapThreshold != null) {
       commandLineWrapper.add(criticalHeapThreshold);
     }
-    String evictionHeapThreshold = (String)options
-        .get(EVICTION_HEAP_PERCENTAGE);
+    String evictionHeapThreshold = (String) options.get(EVICTION_HEAP_PERCENTAGE);
     if (evictionHeapThreshold != null) {
       commandLineWrapper.add(evictionHeapThreshold);
     }
-    
-    String criticalOffHeapThreshold = (String)options.get(CRITICAL_OFF_HEAP_PERCENTAGE);
+
+    String criticalOffHeapThreshold = (String) options.get(CRITICAL_OFF_HEAP_PERCENTAGE);
     if (criticalOffHeapThreshold != null) {
       commandLineWrapper.add(criticalOffHeapThreshold);
     }
-    String evictionOffHeapThreshold = (String)options
-        .get(EVICTION_OFF_HEAP_PERCENTAGE);
+    String evictionOffHeapThreshold = (String) options.get(EVICTION_OFF_HEAP_PERCENTAGE);
     if (evictionOffHeapThreshold != null) {
       commandLineWrapper.add(evictionOffHeapThreshold);
     }
@@ -1296,7 +1194,7 @@ public class CacheServerLauncher  {
    * A List implementation that disallows null values.
    * @param <E> the Class type for the List elements.
    */
-  protected static class ListWrapper<E> extends AbstractList<E>  {
+  protected static class ListWrapper<E> extends AbstractList<E> {
 
     private static final ThreadLocal<Boolean> addResult = new ThreadLocal<Boolean>();
 
@@ -1341,7 +1239,7 @@ public class CacheServerLauncher  {
       return list.size();
     }
   }
-  
+
   private class MainLogReporter extends Thread implements StartupStatusListener {
     private String lastLogMessage;
     private final Status status;
@@ -1357,21 +1255,20 @@ public class CacheServerLauncher  {
       this.notifyAll();
     }
 
-    
     @Override
     public void setStatus(String status) {
-      lastLogMessage = status;      
+      lastLogMessage = status;
     }
 
     public synchronized void run() {
-      while(running) {
+      while (running) {
         try {
           wait(1000);
         } catch (InterruptedException e) {
           //this should not happen.
           break;
         }
-        if(running && safeEquals(lastLogMessage, status.dsMsg)) {
+        if (running && safeEquals(lastLogMessage, status.dsMsg)) {
           status.dsMsg = lastLogMessage;
           try {
             writeStatus(status);
@@ -1384,11 +1281,11 @@ public class CacheServerLauncher  {
       }
     }
   }
+
   protected static boolean safeEquals(String lastLogMessage, String dsMsg) {
-    if (lastLogMessage == null && dsMsg == null){
+    if (lastLogMessage == null && dsMsg == null) {
       return true;
-    }
-    else if (lastLogMessage == null || dsMsg == null){
+    } else if (lastLogMessage == null || dsMsg == null) {
       return false;
     }
     return lastLogMessage.equals(dsMsg);

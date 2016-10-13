@@ -63,9 +63,7 @@ public class PulseConfig {
     this.logDatePattern = PulseConstants.PULSE_LOG_MESSAGE_DATE_PATTERN;
     this.logLevel = PulseConstants.PULSE_LOG_LEVEL;
     this.logAppend = PulseConstants.PULSE_LOG_APPEND;
-    this.queryHistoryFileName = PulseConstants.PULSE_QUERY_HISTORY_FILE_LOCATION
-      + System.getProperty("file.separator")
-      + PulseConstants.PULSE_QUERY_HISTORY_FILE_NAME;
+    this.queryHistoryFileName = PulseConstants.PULSE_QUERY_HISTORY_FILE_LOCATION + System.getProperty("file.separator") + PulseConstants.PULSE_QUERY_HISTORY_FILE_NAME;
 
   }
 

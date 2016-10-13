@@ -38,28 +38,28 @@ import org.apache.geode.internal.CopyOnWriteHashSet;
  * 
  */
 public class DependencyMonitorManager {
-  
+
   private static Set<DependencyMonitor> monitors = new CopyOnWriteHashSet<DependencyMonitor>();
-  
+
   static {
     //The DLockDependencyMonitor won't get loaded unless we add it here.
     addMonitor(DLockDependencyMonitor.INSTANCE);
   }
-  
+
   /**
    * Register a dependency monitor.
    */
   public static void addMonitor(DependencyMonitor monitor) {
     monitors.add(monitor);
   }
-  
+
   /**
    * Unregister a dependency monitor.
    */
   public static void removeMonitor(DependencyMonitor monitor) {
     monitors.remove(monitor);
   }
-  
+
   /**
    * Get the set of all blocked threads and their dependencies in this VM, as reported
    * by the dependency monitors registered with this manager.
@@ -67,13 +67,13 @@ public class DependencyMonitorManager {
   public static Set<Dependency<Thread, Serializable>> getBlockedThreads() {
     Set<Dependency<Thread, Serializable>> blockedThreads = new HashSet<Dependency<Thread, Serializable>>();
     Thread[] allThreads = getAllThreads();
-    for(DependencyMonitor monitor : monitors) {
+    for (DependencyMonitor monitor : monitors) {
       blockedThreads.addAll(monitor.getBlockedThreads(allThreads));
     }
-    
+
     return blockedThreads;
   }
-  
+
   /**
    * Get the set of all resources which are held by threads in this VM, as reported
    * by the dependency monitors registered with this manager. 
@@ -81,20 +81,20 @@ public class DependencyMonitorManager {
   public static Set<Dependency<Serializable, Thread>> getHeldResources() {
     Thread[] allThreads = getAllThreads();
     Set<Dependency<Serializable, Thread>> heldResources = new HashSet<Dependency<Serializable, Thread>>();
-    for(DependencyMonitor monitor : monitors) {
+    for (DependencyMonitor monitor : monitors) {
       heldResources.addAll(monitor.getHeldResources(allThreads));
     }
-    
+
     return heldResources;
   }
-  
+
   /**
    * Get all of the threads in this VM.
    * TODO - do this more efficiently.
    * TODO - move this to a more appropriate location.
    */
   public static Thread[] getAllThreads() {
-    
+
     //Ok, this lame. This seems to be the easiest way
     //to get all threads in java. Weak.
     Map<Thread, StackTraceElement[]> allStacks = Thread.getAllStackTraces();

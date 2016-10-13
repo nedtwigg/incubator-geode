@@ -83,8 +83,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
     final int bsPort4 = bsKeeper4.getPort();
 
     final String host0 = NetworkUtils.getServerHostName(host);
-    final String locators = host0 + "[" + port1 + "]" + ","
-        + host0 + "[" + port2 + "]";
+    final String locators = host0 + "[" + port1 + "]" + "," + host0 + "[" + port2 + "]";
 
     final Properties dsProps = new Properties();
     dsProps.setProperty(LOCATORS, locators);
@@ -95,8 +94,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
     keeper1.release();
     vm0.invoke(new SerializableRunnable("Start locator on " + port1) {
       public void run() {
-        File logFile = new File(getUniqueName() + "-locator" + port1
-            + ".log");
+        File logFile = new File(getUniqueName() + "-locator" + port1 + ".log");
         try {
           Locator.startLocatorAndDS(port1, logFile, null, dsProps, true, true, null);
         } catch (IOException ex) {
@@ -110,8 +108,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
     keeper2.release();
     vm3.invoke(new SerializableRunnable("Start locators on " + port2) {
       public void run() {
-        File logFile = new File(getUniqueName() + "-locator" +
-            port2 + ".log");
+        File logFile = new File(getUniqueName() + "-locator" + port2 + ".log");
         try {
           Locator.startLocatorAndDS(port2, logFile, null, dsProps, true, true, "locator2HNFC");
 
@@ -121,50 +118,47 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable connect =
-        new SerializableRunnable("Connect to " + locators) {
-          public void run() {
-            Properties props = new Properties();
-            props.setProperty(MCAST_PORT, "0");
-            props.setProperty(LOCATORS, locators);
-            dsProps.setProperty(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-            CacheFactory.create(DistributedSystem.connect(props));
-          }
-        };
+    SerializableRunnable connect = new SerializableRunnable("Connect to " + locators) {
+      public void run() {
+        Properties props = new Properties();
+        props.setProperty(MCAST_PORT, "0");
+        props.setProperty(LOCATORS, locators);
+        dsProps.setProperty(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+        CacheFactory.create(DistributedSystem.connect(props));
+      }
+    };
     vm1.invoke(connect);
     vm2.invoke(connect);
-    SerializableRunnable startBS1 =
-        new SerializableRunnable("start bridgeServer on " + bsPort1) {
-          public void run() {
-            try {
-              Cache c = CacheFactory.getAnyInstance();
-              CacheServer bs = c.addCacheServer();
-              bs.setPort(bsPort1);
-              bs.setGroups(new String[] { "bs1Group1", "bs1Group2" });
-              bs.start();
-            } catch (IOException ex) {
-              RuntimeException re = new RuntimeException();
-              re.initCause(ex);
-              throw re;
-            }
-          }
-        };
-    SerializableRunnable startBS3 =
-        new SerializableRunnable("start bridgeServer on " + bsPort3) {
-          public void run() {
-            try {
-              Cache c = CacheFactory.getAnyInstance();
-              CacheServer bs = c.addCacheServer();
-              bs.setPort(bsPort3);
-              bs.setGroups(new String[] { "bs3Group1", "bs3Group2" });
-              bs.start();
-            } catch (IOException ex) {
-              RuntimeException re = new RuntimeException();
-              re.initCause(ex);
-              throw re;
-            }
-          }
-        };
+    SerializableRunnable startBS1 = new SerializableRunnable("start bridgeServer on " + bsPort1) {
+      public void run() {
+        try {
+          Cache c = CacheFactory.getAnyInstance();
+          CacheServer bs = c.addCacheServer();
+          bs.setPort(bsPort1);
+          bs.setGroups(new String[] { "bs1Group1", "bs1Group2" });
+          bs.start();
+        } catch (IOException ex) {
+          RuntimeException re = new RuntimeException();
+          re.initCause(ex);
+          throw re;
+        }
+      }
+    };
+    SerializableRunnable startBS3 = new SerializableRunnable("start bridgeServer on " + bsPort3) {
+      public void run() {
+        try {
+          Cache c = CacheFactory.getAnyInstance();
+          CacheServer bs = c.addCacheServer();
+          bs.setPort(bsPort3);
+          bs.setGroups(new String[] { "bs3Group1", "bs3Group2" });
+          bs.start();
+        } catch (IOException ex) {
+          RuntimeException re = new RuntimeException();
+          re.initCause(ex);
+          throw re;
+        }
+      }
+    };
 
     bsKeeper1.release();
     vm1.invoke(startBS1);
@@ -213,8 +207,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port2, cp.getPort());
           assertEquals("locator2HNFC", cp.getHost());
         }
@@ -222,20 +215,15 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         others = ca.fetchBridgeServers();
         assertEquals(4, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort1) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -251,27 +239,21 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port1, cp.getPort());
         }
         others = ca.fetchBridgeServers();
         assertEquals(4, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort1) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -292,8 +274,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           others = bsa.fetchControllers();
           assertEquals(2, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port1) {
               // ok
             } else if (cp.getPort() == port2) {
@@ -320,8 +301,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           others = bsa.fetchControllers();
           assertEquals(2, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port1) {
               // ok
             } else if (cp.getPort() == port2) {
@@ -335,16 +315,15 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable stopBS =
-        new SerializableRunnable("stop bridge server") {
-          public void run() {
-            Cache c = CacheFactory.getAnyInstance();
-            List bslist = c.getCacheServers();
-            assertEquals(2, bslist.size());
-            CacheServer bs = (CacheServer) bslist.get(0);
-            bs.stop();
-          }
-        };
+    SerializableRunnable stopBS = new SerializableRunnable("stop bridge server") {
+      public void run() {
+        Cache c = CacheFactory.getAnyInstance();
+        List bslist = c.getCacheServers();
+        assertEquals(2, bslist.size());
+        CacheServer bs = (CacheServer) bslist.get(0);
+        bs.stop();
+      }
+    };
     vm1.invoke(stopBS);
 
     // now check to see if everyone else noticed him going away
@@ -357,8 +336,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port2, cp.getPort());
           assertEquals("locator2HNFC", cp.getHost());
         }
@@ -366,17 +344,13 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         others = ca.fetchBridgeServers();
         assertEquals(3, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -392,24 +366,19 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port1, cp.getPort());
         }
         others = ca.fetchBridgeServers();
         assertEquals(3, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -417,23 +386,21 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable disconnect =
-        new SerializableRunnable("Disconnect from " + locators) {
-          public void run() {
-            Properties props = new Properties();
-            props.setProperty(MCAST_PORT, "0");
-            props.setProperty(LOCATORS, locators);
-            DistributedSystem.connect(props).disconnect();
-          }
-        };
-    SerializableRunnable stopLocator =
-        new SerializableRunnable("Stop locator") {
-          public void run() {
-            assertTrue(Locator.hasLocator());
-            Locator.getLocator().stop();
-            assertFalse(Locator.hasLocator());
-          }
-        };
+    SerializableRunnable disconnect = new SerializableRunnable("Disconnect from " + locators) {
+      public void run() {
+        Properties props = new Properties();
+        props.setProperty(MCAST_PORT, "0");
+        props.setProperty(LOCATORS, locators);
+        DistributedSystem.connect(props).disconnect();
+      }
+    };
+    SerializableRunnable stopLocator = new SerializableRunnable("Stop locator") {
+      public void run() {
+        assertTrue(Locator.hasLocator());
+        Locator.getLocator().stop();
+        assertFalse(Locator.hasLocator());
+      }
+    };
 
     vm0.invoke(stopLocator);
 
@@ -459,8 +426,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           List others = bsa.fetchControllers();
           assertEquals(1, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port2) {
               assertEquals("locator2HNFC", cp.getHost());
               // ok
@@ -486,8 +452,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           List others = bsa.fetchControllers();
           assertEquals(1, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port2) {
               assertEquals("locator2HNFC", cp.getHost());
               // ok
@@ -499,23 +464,22 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable restartBS =
-        new SerializableRunnable("restart bridge server") {
-          public void run() {
-            try {
-              Cache c = CacheFactory.getAnyInstance();
-              List bslist = c.getCacheServers();
-              assertEquals(2, bslist.size());
-              CacheServer bs = (CacheServer) bslist.get(0);
-              bs.setHostnameForClients("nameForClients");
-              bs.start();
-            } catch (IOException ex) {
-              RuntimeException re = new RuntimeException();
-              re.initCause(ex);
-              throw re;
-            }
-          }
-        };
+    SerializableRunnable restartBS = new SerializableRunnable("restart bridge server") {
+      public void run() {
+        try {
+          Cache c = CacheFactory.getAnyInstance();
+          List bslist = c.getCacheServers();
+          assertEquals(2, bslist.size());
+          CacheServer bs = (CacheServer) bslist.get(0);
+          bs.setHostnameForClients("nameForClients");
+          bs.start();
+        } catch (IOException ex) {
+          RuntimeException re = new RuntimeException();
+          re.initCause(ex);
+          throw re;
+        }
+      }
+    };
     // restart bridge server 1 and see if controller sees it
     vm1.invoke(restartBS);
 
@@ -529,22 +493,17 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchBridgeServers();
         assertEquals(4, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort1) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
             assertEquals("nameForClients", bsp.getHost());
           } else if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
             assertFalse(bsp.getHost().equals("nameForClients"));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs3Group1", "bs3Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs4Group1", "bs4Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -594,8 +553,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
     final int bsPort4 = bsKeeper4.getPort();
 
     final String host0 = NetworkUtils.getServerHostName(host);
-    final String locators = host0 + "[" + port1 + "]" + ","
-        + host0 + "[" + port2 + "]";
+    final String locators = host0 + "[" + port1 + "]" + "," + host0 + "[" + port2 + "]";
 
     final Properties dsProps = new Properties();
     dsProps.setProperty(LOCATORS, locators);
@@ -606,8 +564,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
     keeper1.release();
     vm0.invoke(new SerializableRunnable("Start locators on " + port1) {
       public void run() {
-        File logFile = new File(getUniqueName() + "-locator" + port1
-            + ".log");
+        File logFile = new File(getUniqueName() + "-locator" + port1 + ".log");
         try {
           Locator.startLocatorAndDS(port1, logFile, null, dsProps, true, true, null);
         } catch (IOException ex) {
@@ -621,8 +578,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
     keeper2.release();
     vm3.invoke(new SerializableRunnable("Start locators on " + port2) {
       public void run() {
-        File logFile = new File(getUniqueName() + "-locator" +
-            port2 + ".log");
+        File logFile = new File(getUniqueName() + "-locator" + port2 + ".log");
         try {
           Locator.startLocatorAndDS(port2, logFile, null, dsProps, true, true, "locator2HNFC");
 
@@ -653,36 +609,34 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable startBS1 =
-        new SerializableRunnable("start bridgeServer on " + bsPort1) {
-          public void run() {
-            try {
-              Cache c = CacheFactory.getAnyInstance();
-              CacheServer bs = c.addCacheServer();
-              bs.setPort(bsPort1);
-              bs.start();
-            } catch (IOException ex) {
-              RuntimeException re = new RuntimeException();
-              re.initCause(ex);
-              throw re;
-            }
-          }
-        };
-    SerializableRunnable startBS3 =
-        new SerializableRunnable("start bridgeServer on " + bsPort3) {
-          public void run() {
-            try {
-              Cache c = CacheFactory.getAnyInstance();
-              CacheServer bs = c.addCacheServer();
-              bs.setPort(bsPort3);
-              bs.start();
-            } catch (IOException ex) {
-              RuntimeException re = new RuntimeException();
-              re.initCause(ex);
-              throw re;
-            }
-          }
-        };
+    SerializableRunnable startBS1 = new SerializableRunnable("start bridgeServer on " + bsPort1) {
+      public void run() {
+        try {
+          Cache c = CacheFactory.getAnyInstance();
+          CacheServer bs = c.addCacheServer();
+          bs.setPort(bsPort1);
+          bs.start();
+        } catch (IOException ex) {
+          RuntimeException re = new RuntimeException();
+          re.initCause(ex);
+          throw re;
+        }
+      }
+    };
+    SerializableRunnable startBS3 = new SerializableRunnable("start bridgeServer on " + bsPort3) {
+      public void run() {
+        try {
+          Cache c = CacheFactory.getAnyInstance();
+          CacheServer bs = c.addCacheServer();
+          bs.setPort(bsPort3);
+          bs.start();
+        } catch (IOException ex) {
+          RuntimeException re = new RuntimeException();
+          re.initCause(ex);
+          throw re;
+        }
+      }
+    };
 
     bsKeeper1.release();
     vm1.invoke(startBS1);
@@ -729,8 +683,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port2, cp.getPort());
           assertEquals("locator2HNFC", cp.getHost());
         }
@@ -738,20 +691,15 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         others = ca.fetchBridgeServers();
         assertEquals(4, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort1) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -767,27 +715,21 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port1, cp.getPort());
         }
         others = ca.fetchBridgeServers();
         assertEquals(4, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort1) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -808,8 +750,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           others = bsa.fetchControllers();
           assertEquals(2, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port1) {
               // ok
             } else if (cp.getPort() == port2) {
@@ -836,8 +777,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           others = bsa.fetchControllers();
           assertEquals(2, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port1) {
               // ok
             } else if (cp.getPort() == port2) {
@@ -851,16 +791,15 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable stopBS =
-        new SerializableRunnable("stop bridge server") {
-          public void run() {
-            Cache c = CacheFactory.getAnyInstance();
-            List bslist = c.getCacheServers();
-            assertEquals(2, bslist.size());
-            CacheServer bs = (CacheServer) bslist.get(0);
-            bs.stop();
-          }
-        };
+    SerializableRunnable stopBS = new SerializableRunnable("stop bridge server") {
+      public void run() {
+        Cache c = CacheFactory.getAnyInstance();
+        List bslist = c.getCacheServers();
+        assertEquals(2, bslist.size());
+        CacheServer bs = (CacheServer) bslist.get(0);
+        bs.stop();
+      }
+    };
     vm1.invoke(stopBS);
 
     // now check to see if everyone else noticed him going away
@@ -873,8 +812,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port2, cp.getPort());
           assertEquals("locator2HNFC", cp.getHost());
         }
@@ -882,17 +820,13 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         others = ca.fetchBridgeServers();
         assertEquals(3, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -908,24 +842,19 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchControllers();
         assertEquals(1, others.size());
         {
-          ControllerAdvisor.ControllerProfile cp =
-              (ControllerAdvisor.ControllerProfile) others.get(0);
+          ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(0);
           assertEquals(port1, cp.getPort());
         }
         others = ca.fetchBridgeServers();
         assertEquals(3, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }
@@ -933,20 +862,18 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable disconnect =
-        new SerializableRunnable("Disconnect from " + locators) {
-          public void run() {
-            InternalDistributedSystem.getAnyInstance().disconnect();
-          }
-        };
-    SerializableRunnable stopLocator =
-        new SerializableRunnable("Stop locator") {
-          public void run() {
-            assertTrue(Locator.hasLocator());
-            Locator.getLocator().stop();
-            assertFalse(Locator.hasLocator());
-          }
-        };
+    SerializableRunnable disconnect = new SerializableRunnable("Disconnect from " + locators) {
+      public void run() {
+        InternalDistributedSystem.getAnyInstance().disconnect();
+      }
+    };
+    SerializableRunnable stopLocator = new SerializableRunnable("Stop locator") {
+      public void run() {
+        assertTrue(Locator.hasLocator());
+        Locator.getLocator().stop();
+        assertFalse(Locator.hasLocator());
+      }
+    };
 
     vm0.invoke(stopLocator);
 
@@ -972,8 +899,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           List others = bsa.fetchControllers();
           assertEquals(1, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port2) {
               assertEquals("locator2HNFC", cp.getHost());
               // ok
@@ -999,8 +925,7 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
           List others = bsa.fetchControllers();
           assertEquals(1, others.size());
           for (int j = 0; j < others.size(); j++) {
-            ControllerAdvisor.ControllerProfile cp =
-                (ControllerAdvisor.ControllerProfile) others.get(j);
+            ControllerAdvisor.ControllerProfile cp = (ControllerAdvisor.ControllerProfile) others.get(j);
             if (cp.getPort() == port2) {
               assertEquals("locator2HNFC", cp.getHost());
               // ok
@@ -1012,23 +937,22 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
       }
     });
 
-    SerializableRunnable restartBS =
-        new SerializableRunnable("restart bridge server") {
-          public void run() {
-            try {
-              Cache c = CacheFactory.getAnyInstance();
-              List bslist = c.getCacheServers();
-              assertEquals(2, bslist.size());
-              CacheServer bs = (CacheServer) bslist.get(0);
-              bs.setHostnameForClients("nameForClients");
-              bs.start();
-            } catch (IOException ex) {
-              RuntimeException re = new RuntimeException();
-              re.initCause(ex);
-              throw re;
-            }
-          }
-        };
+    SerializableRunnable restartBS = new SerializableRunnable("restart bridge server") {
+      public void run() {
+        try {
+          Cache c = CacheFactory.getAnyInstance();
+          List bslist = c.getCacheServers();
+          assertEquals(2, bslist.size());
+          CacheServer bs = (CacheServer) bslist.get(0);
+          bs.setHostnameForClients("nameForClients");
+          bs.start();
+        } catch (IOException ex) {
+          RuntimeException re = new RuntimeException();
+          re.initCause(ex);
+          throw re;
+        }
+      }
+    };
     // restart bridge server 1 and see if controller sees it
     vm1.invoke(restartBS);
 
@@ -1042,22 +966,17 @@ public class GridAdvisorDUnitTest extends JUnit4DistributedTestCase {
         List others = ca.fetchBridgeServers();
         assertEquals(4, others.size());
         for (int j = 0; j < others.size(); j++) {
-          CacheServerAdvisor.CacheServerProfile bsp =
-              (CacheServerAdvisor.CacheServerProfile) others.get(j);
+          CacheServerAdvisor.CacheServerProfile bsp = (CacheServerAdvisor.CacheServerProfile) others.get(j);
           if (bsp.getPort() == bsPort1) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
             assertEquals("nameForClients", bsp.getHost());
           } else if (bsp.getPort() == bsPort2) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
             assertFalse(bsp.getHost().equals("nameForClients"));
           } else if (bsp.getPort() == bsPort3) {
-            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs1Group1", "bs1Group2" }), Arrays.asList(bsp.getGroups()));
           } else if (bsp.getPort() == bsPort4) {
-            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }),
-                Arrays.asList(bsp.getGroups()));
+            assertEquals(Arrays.asList(new String[] { "bs2Group1", "bs2Group2" }), Arrays.asList(bsp.getGroups()));
           } else {
             fail("unexpected port " + bsp.getPort() + " in " + bsp);
           }

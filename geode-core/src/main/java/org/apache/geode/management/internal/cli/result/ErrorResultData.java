@@ -27,24 +27,24 @@ import org.apache.geode.management.internal.cli.json.GfJsonObject;
  */
 public class ErrorResultData extends InfoResultData {
   private static final String ERROR_CODE = "errorCode";
-  
-  /*package*/ErrorResultData() {
+
+  /*package*/ ErrorResultData() {
     super();
   }
-  
+
   // Useful on client/gfsh side to reconstruct the object
-  /*package*/ErrorResultData(GfJsonObject gfJsonObject) {
+  /*package*/ ErrorResultData(GfJsonObject gfJsonObject) {
     super(gfJsonObject);
   }
-  
+
   public int getErrorCode() {
     Integer code = (Integer) contentObject.get(ERROR_CODE);
-    if(code==null){
+    if (code == null) {
       return ResultBuilder.ERRORCODE_DEFAULT;
     }
     return code;
   }
-  
+
   /**
    * 
    * @param errorCode
@@ -58,7 +58,7 @@ public class ErrorResultData extends InfoResultData {
     } catch (GfJsonException e) {
       throw new ResultDataException(e.getMessage());
     }
-    
+
     return this;
   }
 
@@ -71,7 +71,7 @@ public class ErrorResultData extends InfoResultData {
   public ErrorResultData setHeader(String headerText) {
     return (ErrorResultData) super.setHeader(headerText);
   }
-  
+
   /**
    * 
    * @param line message to add
@@ -80,26 +80,26 @@ public class ErrorResultData extends InfoResultData {
   public ErrorResultData addLine(String line) {
     return (ErrorResultData) super.addLine(line);
   }
-  
+
   /**
    * 
    * @param footerText
    * @return this InfoResultData
    * @throws ResultDataException 
    */
-  public ErrorResultData setFooter(String footerText) {    
+  public ErrorResultData setFooter(String footerText) {
     return (ErrorResultData) super.setFooter(footerText);
   }
 
   public String getType() {
     return TYPE_ERROR;
   }
-  
+
   @Override
   public void setStatus(final Status status) {
     throw new UnsupportedOperationException("The status of an ErrorResultData result must always be ERROR");
   }
-  
+
   @Override
   public Status getStatus() {
     return Status.ERROR;

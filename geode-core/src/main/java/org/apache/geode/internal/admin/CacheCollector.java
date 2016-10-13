@@ -74,7 +74,7 @@ public class CacheCollector {
     this.systemAgent = agent;
     systemAgent.setCacheCollector(this);
   }
-  
+
   /**
    * Initiates a snapshot of the all of the Cache regions in a
    * distributed system.
@@ -84,9 +84,9 @@ public class CacheCollector {
   public synchronized void takeSnapshot(String regionName) {
     flush();
     ApplicationVM[] apps = systemAgent.listApplications();
-    
-    for (int j=0; j<apps.length; j++) {
-      notHeardFrom.add(apps[j]);   
+
+    for (int j = 0; j < apps.length; j++) {
+      notHeardFrom.add(apps[j]);
       apps[j].takeRegionSnapshot(regionName, snapshotCount);
     }
   }
@@ -97,21 +97,21 @@ public class CacheCollector {
    */
   public synchronized void flush() {
     snapshotCount++;
-//     if (heardFrom != null && notHeardFrom != null) {
-//       forEachFlush(heardFrom.iterator());
-//       forEachFlush(notHeardFrom.iterator());
-//     }
+    //     if (heardFrom != null && notHeardFrom != null) {
+    //       forEachFlush(heardFrom.iterator());
+    //       forEachFlush(notHeardFrom.iterator());
+    //     }
     clear();
   }
 
-//   private void forEachFlush(Iterator iter) {
-//     while (iter.hasNext()) {
-//       Object member = iter.next();
-//       try {
-//         ((ApplicationVM)member).flushSnapshots();
-//       } catch (RuntimeAdminException ignore) {}
-//     }
-//   }
+  //   private void forEachFlush(Iterator iter) {
+  //     while (iter.hasNext()) {
+  //       Object member = iter.next();
+  //       try {
+  //         ((ApplicationVM)member).flushSnapshots();
+  //       } catch (RuntimeAdminException ignore) {}
+  //     }
+  //   }
 
   /**
    * Closes this <code>CacheCollector</code> so it no longer processes
@@ -125,11 +125,11 @@ public class CacheCollector {
   /**
    * Resets the internal state of this <code>CacheCollector</code>
    */
-  private synchronized void clear() {    
+  private synchronized void clear() {
     //    this.results = new TreeMap(new SnapshotNameComparator());
     snaps = null;
     this.notHeardFrom = new ArrayList();
-    this.heardFrom = new ArrayList();    
+    this.heardFrom = new ArrayList();
   }
 
   /**
@@ -145,8 +145,7 @@ public class CacheCollector {
    * @return The compound snapshot containing the newly-amalgamated
    *         <code>update</code>. 
    */
-  private CacheSnapshot updateResultSet(CacheSnapshot update,
-                                        GemFireVM poster) {
+  private CacheSnapshot updateResultSet(CacheSnapshot update, GemFireVM poster) {
     noteResponse(poster);
 
     if (update instanceof EntrySnapshot) {
@@ -156,7 +155,7 @@ public class CacheCollector {
       if (snaps == null) {
         snaps = new CompoundEntrySnapshot(update.getName());
       }
-      ((CompoundEntrySnapshot)snaps).addCache(poster, (EntrySnapshot)update);
+      ((CompoundEntrySnapshot) snaps).addCache(poster, (EntrySnapshot) update);
     } else if (update instanceof RegionSnapshot) {
       if (snaps instanceof CompoundEntrySnapshot) {
         throw new IllegalStateException(LocalizedStrings.CacheCollector_UNABLE_TO_MIX_REGION_AND_ENTRY_SNAPSHOTS_IN_CACHECOLLECTOR.toLocalizedString());
@@ -164,36 +163,36 @@ public class CacheCollector {
       if (snaps == null) {
         snaps = new CompoundRegionSnapshot(update.getName().toString());
       }
-      ((CompoundRegionSnapshot)snaps).addCache(poster, (RegionSnapshot)update);
+      ((CompoundRegionSnapshot) snaps).addCache(poster, (RegionSnapshot) update);
     }
-          
-//     Set keys = results.keySet();
-//     for (int i=0; i<update.length; i++) { 
-//       CacheSnapshot temp = update[i];
-//       Object name = temp.getName();
-//       if (keys.contains(name)) {
-//         CacheSnapshot cs = (CacheSnapshot)results.get(name);
-//         if (cs instanceof CompoundEntrySnapshot) {
-//           ((CompoundEntrySnapshot)cs).addCache(poster, (EntrySnapshot)temp);
-//         } else if (cs instanceof CompoundRegionSnapshot) {
-//           ((CompoundRegionSnapshot)cs).addCache(poster, (RegionSnapshot)temp);73
-//         }
-//       } else {
-//         if (temp instanceof EntrySnapshot) {
-//           EntrySnapshot entry = (EntrySnapshot)temp;
-//           CompoundEntrySnapshot snap = new CompoundEntrySnapshot(name);
-//           snap.addCache(poster, entry);
-//           results.put(name, snap);
-//         } else if (temp instanceof RegionSnapshot) {
-//           RegionSnapshot region = (RegionSnapshot)temp;
-//           CompoundRegionSnapshot snap = new CompoundRegionSnapshot((String)name);
-//           snap.addCache(poster, region);
-//           results.put(name, snap);
-//         }
-//       }
-//     }
 
-//     return results.values();
+    //     Set keys = results.keySet();
+    //     for (int i=0; i<update.length; i++) { 
+    //       CacheSnapshot temp = update[i];
+    //       Object name = temp.getName();
+    //       if (keys.contains(name)) {
+    //         CacheSnapshot cs = (CacheSnapshot)results.get(name);
+    //         if (cs instanceof CompoundEntrySnapshot) {
+    //           ((CompoundEntrySnapshot)cs).addCache(poster, (EntrySnapshot)temp);
+    //         } else if (cs instanceof CompoundRegionSnapshot) {
+    //           ((CompoundRegionSnapshot)cs).addCache(poster, (RegionSnapshot)temp);73
+    //         }
+    //       } else {
+    //         if (temp instanceof EntrySnapshot) {
+    //           EntrySnapshot entry = (EntrySnapshot)temp;
+    //           CompoundEntrySnapshot snap = new CompoundEntrySnapshot(name);
+    //           snap.addCache(poster, entry);
+    //           results.put(name, snap);
+    //         } else if (temp instanceof RegionSnapshot) {
+    //           RegionSnapshot region = (RegionSnapshot)temp;
+    //           CompoundRegionSnapshot snap = new CompoundRegionSnapshot((String)name);
+    //           snap.addCache(poster, region);
+    //           results.put(name, snap);
+    //         }
+    //       }
+    //     }
+
+    //     return results.values();
     return snaps;
   }
 
@@ -207,21 +206,21 @@ public class CacheCollector {
     }
   }
 
-//   private ApplicationProcess findResultPoster(GfManager parent, long connId) {
-//     for (Iterator iter = notHeardFrom.iterator(); iter.hasNext(); ) {
-//       ApplicationProcess app = (ApplicationProcess)iter.next();
-//       if (app.getSystemManager().equals(parent) && app.getId() == connId) {
-//         return app;          
-//       }
-//     }
-//     for (Iterator iter = heardFrom.iterator(); iter.hasNext(); ) {
-//       ApplicationProcess app = (ApplicationProcess)iter.next();
-//       if (app.getSystemManager().equals(parent) && app.getId() == connId) {
-//         return app;          
-//       }
-//     }
-//     return null; //couldn't find the member...
-//   }
+  //   private ApplicationProcess findResultPoster(GfManager parent, long connId) {
+  //     for (Iterator iter = notHeardFrom.iterator(); iter.hasNext(); ) {
+  //       ApplicationProcess app = (ApplicationProcess)iter.next();
+  //       if (app.getSystemManager().equals(parent) && app.getId() == connId) {
+  //         return app;          
+  //       }
+  //     }
+  //     for (Iterator iter = heardFrom.iterator(); iter.hasNext(); ) {
+  //       ApplicationProcess app = (ApplicationProcess)iter.next();
+  //       if (app.getSystemManager().equals(parent) && app.getId() == connId) {
+  //         return app;          
+  //       }
+  //     }
+  //     return null; //couldn't find the member...
+  //   }
 
   /** 
    * This method is called as result segments come in. It updates the
@@ -237,41 +236,38 @@ public class CacheCollector {
    *        number is not for the current snapshot, then the segment
    *        is ignored.
    */
-  public synchronized void resultsReturned(CacheSnapshot snap,
-                                           GemFireVM member,
-                                           int snapshotId) {   
+  public synchronized void resultsReturned(CacheSnapshot snap, GemFireVM member, int snapshotId) {
     if (snapshotId == CacheCollector.snapshotCount) {
       // protect against stragglers from previous snapshots
 
       if (snap == null) {
         noteResponse(member);
       } else {
-        view.updateSnapshot(updateResultSet(snap, member),
-                            new ArrayList(heardFrom));
+        view.updateSnapshot(updateResultSet(snap, member), new ArrayList(heardFrom));
       }
-//       ApplicationProcess cacheMember = findResultPoster(manager, appConnId);
-//       if (cacheMember != null) {
-//         if (snaps.length == 0) {
-//           noteResponse(cacheMember);
-//         } else {
-//           view.updateSnapshot(updateResultSet(snaps, cacheMember));
-//         }
-//       }
+      //       ApplicationProcess cacheMember = findResultPoster(manager, appConnId);
+      //       if (cacheMember != null) {
+      //         if (snaps.length == 0) {
+      //           noteResponse(cacheMember);
+      //         } else {
+      //           view.updateSnapshot(updateResultSet(snaps, cacheMember));
+      //         }
+      //       }
     }
   }
 
   //// inner classes ///////////////////////
 
-//   private class SnapshotNameComparator implements Comparator {
-//     public int compare(Object a, Object b) {
-//       int hashA = a.hashCode();
-//       int hashB = b.hashCode();
-//       if (hashA == hashB) {
-//         return 0;
-//       } else {
-//         return (hashA > hashB) ? 1 : -1;
-//       }
-//     }
-//   }
+  //   private class SnapshotNameComparator implements Comparator {
+  //     public int compare(Object a, Object b) {
+  //       int hashA = a.hashCode();
+  //       int hashB = b.hashCode();
+  //       if (hashA == hashB) {
+  //         return 0;
+  //       } else {
+  //         return (hashA > hashB) ? 1 : -1;
+  //       }
+  //     }
+  //   }
 
 }

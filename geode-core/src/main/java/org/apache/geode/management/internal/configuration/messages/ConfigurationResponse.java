@@ -43,20 +43,20 @@ import org.apache.geode.management.internal.configuration.utils.XmlUtils;
  * Response containing the configuration requested by the {@link ConfigurationRequest}
  */
 public class ConfigurationResponse implements DataSerializableFixedID {
-  
-  private Map<String,Configuration> requestedConfiguration = new HashMap<String,Configuration>();
-  private byte [][]jarBytes;
+
+  private Map<String, Configuration> requestedConfiguration = new HashMap<String, Configuration>();
+  private byte[][] jarBytes;
   private String[] jarNames;
   private boolean failedToGetSharedConfig = false;
-  
+
   public ConfigurationResponse() {
-    
+
   }
-  
+
   public ConfigurationResponse(Map<String, Configuration> requestedConfiguration) {
     this.requestedConfiguration.putAll(requestedConfiguration);
   }
-  
+
   @Override
   public int getDSFID() {
     return DataSerializableFixedID.CONFIGURATION_RESPONSE;
@@ -64,7 +64,7 @@ public class ConfigurationResponse implements DataSerializableFixedID {
 
   @Override
   public void toData(DataOutput out) throws IOException {
-    DataSerializer.writeHashMap((HashMap<?,?>)requestedConfiguration, out);
+    DataSerializer.writeHashMap((HashMap<?, ?>) requestedConfiguration, out);
     DataSerializer.writeStringArray(jarNames, out);
     DataSerializer.writeArrayOfByteArrays(jarBytes, out);
     DataSerializer.writeBoolean(Boolean.valueOf(failedToGetSharedConfig), out);
@@ -85,13 +85,13 @@ public class ConfigurationResponse implements DataSerializableFixedID {
   public void setRequestedConfiguration(Map<String, Configuration> requestedConfiguration) {
     this.requestedConfiguration = requestedConfiguration;
   }
-  
-  public void addConfiguration(Configuration configuration)  {
+
+  public void addConfiguration(Configuration configuration) {
     if (configuration != null) {
       this.requestedConfiguration.put(configuration.getConfigName(), configuration);
     }
   }
- 
+
   public String toString() {
     StringBuffer sb = new StringBuffer();
     Set<String> configNames = requestedConfiguration.keySet();
@@ -100,7 +100,7 @@ public class ConfigurationResponse implements DataSerializableFixedID {
     }
     return sb.toString();
   }
-  
+
   public String describeConfig() {
     StringBuffer sb = new StringBuffer();
     if (requestedConfiguration.isEmpty()) {
@@ -108,25 +108,25 @@ public class ConfigurationResponse implements DataSerializableFixedID {
     } else {
       Set<Entry<String, Configuration>> entries = requestedConfiguration.entrySet();
       Iterator<Entry<String, Configuration>> iter = entries.iterator();
-      
+
       while (iter.hasNext()) {
         Entry<String, Configuration> entry = iter.next();
         String configType = entry.getKey();
         Configuration config = entry.getValue();
-        
+
         if (config != null) {
           sb.append("\n***************************************************************");
           sb.append("\nConfiguration for  '" + configType + "'");
           sb.append("\n\nJar files to deployed");
 
-          Set<String>jarNames = config.getJarNames();
+          Set<String> jarNames = config.getJarNames();
           Iterator<String> jarIter = jarNames.iterator();
           int jarCounter = 0;
 
           while (jarIter.hasNext()) {
             sb.append("\n" + ++jarCounter + "." + jarIter.next());
           }
-          
+
           try {
             String cacheXmlContent = config.getCacheXmlContent();
             if (!StringUtils.isBlank(cacheXmlContent)) {
@@ -136,21 +136,20 @@ public class ConfigurationResponse implements DataSerializableFixedID {
             throw new InternalGemFireError(e);
           }
         }
-       
+
       }
     }
     return sb.toString();
   }
-  
-  
+
   public String[] getJarNames() {
     return this.jarNames;
   }
-  
+
   public byte[][] getJars() {
     return this.jarBytes;
   }
-  
+
   public void addJarsToBeDeployed(String[] jarNames, byte[][] jarBytes) {
     this.jarNames = jarNames;
     this.jarBytes = jarBytes;
@@ -169,5 +168,3 @@ public class ConfigurationResponse implements DataSerializableFixedID {
     this.failedToGetSharedConfig = failedToGetSharedConfig;
   }
 }
-
-

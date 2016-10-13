@@ -76,8 +76,7 @@ public final class BridgeServerRequest extends AdminRequest {
    * Creates a <code>BridgeServerRequest</code> for adding a new
    * bridge server.
    */
-  public static BridgeServerRequest createForInfo(CacheInfo cache,
-                                                  int id) {
+  public static BridgeServerRequest createForInfo(CacheInfo cache, int id) {
     BridgeServerRequest request = new BridgeServerRequest();
     request.cacheId = cache.getId();
     request.operation = INFO_OPERATION;
@@ -91,8 +90,7 @@ public final class BridgeServerRequest extends AdminRequest {
    * Creates a <code>BridgeServerRequest</code> for starting a
    * bridge server.
    */
-  public static BridgeServerRequest createForStart(CacheInfo cache,
-                                                   RemoteBridgeServer bridge) {
+  public static BridgeServerRequest createForStart(CacheInfo cache, RemoteBridgeServer bridge) {
     BridgeServerRequest request = new BridgeServerRequest();
     request.cacheId = cache.getId();
     request.operation = START_OPERATION;
@@ -105,8 +103,7 @@ public final class BridgeServerRequest extends AdminRequest {
    * Creates a <code>BridgeServerRequest</code> for stopping a
    * bridge server.
    */
-  public static BridgeServerRequest createForStop(CacheInfo cache,
-                                                  RemoteBridgeServer bridge) {
+  public static BridgeServerRequest createForStop(CacheInfo cache, RemoteBridgeServer bridge) {
     BridgeServerRequest request = new BridgeServerRequest();
     request.cacheId = cache.getId();
     request.operation = STOP_OPERATION;
@@ -134,7 +131,7 @@ public final class BridgeServerRequest extends AdminRequest {
   /**
    * Creates a <Code>BridgeServerResponse</code> to this request
    */
-  @Override  
+  @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return BridgeServerResponse.create(dm, this);
   }
@@ -172,7 +169,7 @@ public final class BridgeServerRequest extends AdminRequest {
     return BRIDGE_SERVER_REQUEST;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeInt(this.cacheId);
@@ -181,21 +178,18 @@ public final class BridgeServerRequest extends AdminRequest {
     out.writeInt(this.bridgeId);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.cacheId = in.readInt();
     this.operation = in.readInt();
-    this.bridgeInfo =
-      (RemoteBridgeServer) DataSerializer.readObject(in);
+    this.bridgeInfo = (RemoteBridgeServer) DataSerializer.readObject(in);
     this.bridgeId = in.readInt();
   }
 
-  @Override  
+  @Override
   public String toString() {
-    return "BridgeServerRequest: " +
-      getOperationDescription(this.operation);
+    return "BridgeServerRequest: " + getOperationDescription(this.operation);
   }
 
 }

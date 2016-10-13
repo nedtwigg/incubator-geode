@@ -38,12 +38,12 @@ public final class NonBlockingProcessStreamReader extends ProcessStreamReader {
 
   /** millis to continue reading after Process terminates in order to fully read the last of its output */
   private final long continueReadingMillis;
-  
+
   protected NonBlockingProcessStreamReader(final Builder builder) {
     super(builder);
     continueReadingMillis = builder.continueReadingMillis;
   }
-  
+
   @Override
   public void run() {
     final boolean isDebugEnabled = logger.isDebugEnabled();
@@ -54,13 +54,13 @@ public final class NonBlockingProcessStreamReader extends ProcessStreamReader {
     BufferedReader reader = null;
     try {
       reader = new BufferedReader(new InputStreamReader(inputStream));
-      StringBuilder sb = new StringBuilder(); 
+      StringBuilder sb = new StringBuilder();
       boolean ready = false;
       int ch = 0;
       while (ch != -1) {
         while ((ready = reader.ready()) && (ch = reader.read()) != -1) {
-          sb.append((char)ch);
-          if ((char)ch == '\n') {
+          sb.append((char) ch);
+          if ((char) ch == '\n') {
             this.inputListener.notifyInputLine(sb.toString());
             sb = new StringBuilder();
           }

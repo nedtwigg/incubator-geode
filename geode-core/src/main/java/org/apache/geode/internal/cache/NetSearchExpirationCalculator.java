@@ -25,15 +25,15 @@ import org.apache.geode.cache.*;
  * provided by the netsearch, rather than this region's attributes.
  */
 public class NetSearchExpirationCalculator extends EntryExpiryTask {
-  
+
   private final ExpirationAttributes idleAttr;
   private final ExpirationAttributes ttlAttr;
-  
+
   /** Creates a new instance of NetSearchExpirationCalculator */
   public NetSearchExpirationCalculator(LocalRegion region, Object key, int ttl, int idleTime) {
     super(region, null);
     idleAttr = new ExpirationAttributes(idleTime, ExpirationAction.INVALIDATE);
-    ttlAttr = new ExpirationAttributes(ttl, ExpirationAction.INVALIDATE); 
+    ttlAttr = new ExpirationAttributes(ttl, ExpirationAction.INVALIDATE);
   }
 
   @Override
@@ -45,5 +45,5 @@ public class NetSearchExpirationCalculator extends EntryExpiryTask {
   protected ExpirationAttributes getIdleAttributes() {
     return this.idleAttr;
   }
-  
+
 }

@@ -104,7 +104,7 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
     accessor.invoke(() -> {
       Cache cache = getCache();
       LuceneService service = LuceneServiceProvider.get(cache);
-      LuceneQuery query = service.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, index ->  {
+      LuceneQuery query = service.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, index -> {
         return new TermQuery(new Term("text", "world"));
       });
       final PageableLuceneQueryResults results = query.findPages();
@@ -117,7 +117,7 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
       Cache cache = getCache();
 
       LuceneService service = LuceneServiceProvider.get(cache);
-      LuceneIndexImpl index = (LuceneIndexImpl)service.getIndex(INDEX_NAME, REGION_NAME);
+      LuceneIndexImpl index = (LuceneIndexImpl) service.getIndex(INDEX_NAME, REGION_NAME);
 
       return index.waitUntilFlushed(ms);
     });
@@ -140,7 +140,7 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
         data.put(row.getKey(), row.getValue());
       }
 
-      assertEquals(new HashMap(region),data);
+      assertEquals(new HashMap(region), data);
       return null;
     });
   }
@@ -151,10 +151,7 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
 
       LuceneService service = LuceneServiceProvider.get(cache);
       LuceneQuery<Integer, TestObject> query;
-      query = service.createLuceneQueryFactory()
-        .setResultLimit(1000)
-        .setPageSize(1000)
-        .create(INDEX_NAME, REGION_NAME, queryString, defaultField);
+      query = service.createLuceneQueryFactory().setResultLimit(1000).setPageSize(1000).create(INDEX_NAME, REGION_NAME, queryString, defaultField);
       Collection<?> results = query.findKeys();
 
       assertEquals(expectedResultsSize, results.size());

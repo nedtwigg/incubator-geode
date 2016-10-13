@@ -24,7 +24,8 @@ package org.apache.geode.distributed;
  * @since GemFire     4.0
  */
 public class LockServiceDestroyedException extends IllegalStateException {
-private static final long serialVersionUID = 7528711924957352636L;
+  private static final long serialVersionUID = 7528711924957352636L;
+
   /**
    * Constructs a new exception with <code>null</code> as its detail message.
    * The cause is not initialized, and may subsequently be initialized by a
@@ -47,4 +48,3 @@ private static final long serialVersionUID = 7528711924957352636L;
   }
 
 }
-

@@ -52,13 +52,12 @@ import static org.junit.Assert.fail;
  * 
  */
 @Category(IntegrationTest.class)
-public class ClientHealthMonitorJUnitTest
-{
+public class ClientHealthMonitorJUnitTest {
   /**
    * Default to 0; override in sub tests to add thread pool
    */
   protected int getMaxThreads() {
-    return 0; 
+    return 0;
   }
 
   /** connection proxy object for the client */
@@ -82,7 +81,7 @@ public class ClientHealthMonitorJUnitTest
   public void tearDown() throws Exception
 
   {
-    removeExceptions(); 
+    removeExceptions();
     this.cache.close();
     this.system.disconnect();
   }
@@ -91,22 +90,15 @@ public class ClientHealthMonitorJUnitTest
    * Initializes proxy object and creates region for client
    * 
    */
-  private void createProxyAndRegionForClient()
-  {
+  private void createProxyAndRegionForClient() {
     try {
       //props.setProperty("retryAttempts", "5");
       PoolFactory pf = PoolManager.createFactory();
-      proxy = (PoolImpl)pf.addServer("localhost", PORT)
-        .setThreadLocalConnections(true)
-        .setReadTimeout(10000)
-        .setPingInterval(10000)
-        .setMinConnections(0)
-        .create("junitPool");
+      proxy = (PoolImpl) pf.addServer("localhost", PORT).setThreadLocalConnections(true).setReadTimeout(10000).setPingInterval(10000).setMinConnections(0).create("junitPool");
       AttributesFactory factory = new AttributesFactory();
       factory.setScope(Scope.DISTRIBUTED_ACK);
       cache.createVMRegion(regionName, factory.createRegionAttributes());
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
       fail("Failed to initialize client");
     }
@@ -118,15 +110,14 @@ public class ClientHealthMonitorJUnitTest
    * Creates and starts the server instance
    * 
    */
-  private int createServer()
-  {
+  private int createServer() {
     CacheServer server = null;
     try {
       Properties p = new Properties();
       // make it a loner
       p.put(MCAST_PORT, "0");
       p.put(LOCATORS, "");
-      
+
       this.system = DistributedSystem.connect(p);
       this.cache = CacheFactory.create(system);
       server = this.cache.addCacheServer();
@@ -135,8 +126,7 @@ public class ClientHealthMonitorJUnitTest
       server.setMaxThreads(getMaxThreads());
       server.setPort(port);
       server.start();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("Failed to create server");
     }
@@ -155,11 +145,10 @@ public class ClientHealthMonitorJUnitTest
    * the put that the Connection object used was new one.
    */
   @Test
-  public void testDeadClientRemovalByServer() throws Exception
-  {
+  public void testDeadClientRemovalByServer() throws Exception {
     PORT = createServer();
     createProxyAndRegionForClient();
-//    String connection2String = null;
+    //    String connection2String = null;
     StatisticsType st = this.system.findType("CacheServerStats");
     final Statistics s = this.system.findStatisticsByType(st)[0];
     assertEquals(0, s.getInt("currentClients"));
@@ -172,23 +161,25 @@ public class ClientHealthMonitorJUnitTest
       public boolean done() {
         return s.getInt("currentClients") != 0;
       }
+
       public String description() {
         return null;
       }
     };
     Wait.waitForCriterion(ev, 20 * 1000, 200, true);
-    
+
     assertEquals(1, s.getInt("currentClients"));
     assertEquals(1, s.getInt("currentClientConnections"));
-//    String connection1String = connection1.toString();
+    //    String connection1String = connection1.toString();
     ServerRegionProxy srp = new ServerRegionProxy("region1", proxy);
-    srp.putOnForTestsOnly(connection1, "key-1", "value-1", new EventID(new byte[] { 1 },1,1), null);
+    srp.putOnForTestsOnly(connection1, "key-1", "value-1", new EventID(new byte[] { 1 }, 1, 1), null);
     this.system.getLogWriter().info("did put 1");
     //proxy.testfinalizeServerConnectionMonitor();
     ev = new WaitCriterion() {
       public boolean done() {
         return s.getInt("currentClients") == 0;
       }
+
       public String description() {
         return null;
       }
@@ -196,66 +187,60 @@ public class ClientHealthMonitorJUnitTest
     Wait.waitForCriterion(ev, TIME_BETWEEN_PINGS * 5, 200, true);
 
     {
-      this.system.getLogWriter().info("currentClients="
-                                      + s.getInt("currentClients")
-                                      + " currentClientConnections="
-                                      + s.getInt("currentClientConnections"));
+      this.system.getLogWriter().info("currentClients=" + s.getInt("currentClients") + " currentClientConnections=" + s.getInt("currentClientConnections"));
       assertEquals(0, s.getInt("currentClients"));
       assertEquals(0, s.getInt("currentClientConnections"));
     }
     addExceptions();
     // the connection should now fail since the server timed it out
     try {
-      srp.putOnForTestsOnly(connection1, "key-1", "fail",new EventID(new byte[] {1},1,2), null);
+      srp.putOnForTestsOnly(connection1, "key-1", "fail", new EventID(new byte[] { 1 }, 1, 2), null);
       fail("expected EOF");
     } catch (ServerConnectivityException expected) {
     }
     // The rest of this test no longer works.
-//     connection1.finalizeConnection();
-//     proxy.release();
-    
-//     connection1 = proxy.acquireConnection();
-//     connection2String = connection1.toString();
-//     this.system.getLogWriter().info("connection is now " + connection2String);
+    //     connection1.finalizeConnection();
+    //     proxy.release();
 
-//     if (connection1String.equals(connection2String)) {
-//       fail("New connection object was not obtained");
-//     }
-//     connection1.putObject("region1", "key-1", "value-2", new EventID(new byte[] {1},1,3), null);
-//     this.system.getLogWriter().info("did put 2");
-//     assertIndexDetailsEquals(1, s.getInt("currentClients"));
-//     assertIndexDetailsEquals(1, s.getInt("currentClientConnections"));
+    //     connection1 = proxy.acquireConnection();
+    //     connection2String = connection1.toString();
+    //     this.system.getLogWriter().info("connection is now " + connection2String);
 
-//     // now lets see what happens when we close our connection
-//     // note we use a nasty close which just closes the socket instead
-//     // of sending a nice message to the server telling him we are going away
-//     ((ConnectionImpl)connection1).finalizeConnection();
-//     {
-//       int retry = (TIME_BETWEEN_PINGS*5) / 100; 
-//       while (s.getInt("currentClients") > 0 && retry-- > 0) {
-//         Thread.sleep(100);
-//       }
-//       this.system.getLogWriter().info("currentClients="
-//                                       + s.getInt("currentClients")
-//                                       + " currentClientConnections="
-//                                       + s.getInt("currentClientConnections"));
-//       assertIndexDetailsEquals(0, s.getInt("currentClients"));
-//       assertIndexDetailsEquals(0, s.getInt("currentClientConnections"));
-//     }
+    //     if (connection1String.equals(connection2String)) {
+    //       fail("New connection object was not obtained");
+    //     }
+    //     connection1.putObject("region1", "key-1", "value-2", new EventID(new byte[] {1},1,3), null);
+    //     this.system.getLogWriter().info("did put 2");
+    //     assertIndexDetailsEquals(1, s.getInt("currentClients"));
+    //     assertIndexDetailsEquals(1, s.getInt("currentClientConnections"));
+
+    //     // now lets see what happens when we close our connection
+    //     // note we use a nasty close which just closes the socket instead
+    //     // of sending a nice message to the server telling him we are going away
+    //     ((ConnectionImpl)connection1).finalizeConnection();
+    //     {
+    //       int retry = (TIME_BETWEEN_PINGS*5) / 100; 
+    //       while (s.getInt("currentClients") > 0 && retry-- > 0) {
+    //         Thread.sleep(100);
+    //       }
+    //       this.system.getLogWriter().info("currentClients="
+    //                                       + s.getInt("currentClients")
+    //                                       + " currentClientConnections="
+    //                                       + s.getInt("currentClientConnections"));
+    //       assertIndexDetailsEquals(0, s.getInt("currentClients"));
+    //       assertIndexDetailsEquals(0, s.getInt("currentClientConnections"));
+    //     }
   }
- public void addExceptions() throws Exception {
+
+  public void addExceptions() throws Exception {
     if (this.system != null) {
-      this.system.getLogWriter().info(
-          "<ExpectedException action=add>" + "java.io.EOFException"
-              + "</ExpectedException>");
+      this.system.getLogWriter().info("<ExpectedException action=add>" + "java.io.EOFException" + "</ExpectedException>");
     }
   }
 
- public void removeExceptions() {
+  public void removeExceptions() {
     if (this.system != null) {
-      this.system.getLogWriter().info(
-          "<ExpectedException action=remove>" + "java.io.EOFException"
-              + "</ExpectedException>");
+      this.system.getLogWriter().info("<ExpectedException action=remove>" + "java.io.EOFException" + "</ExpectedException>");
     }
- }
+  }
 }

@@ -36,7 +36,7 @@ public interface GatewayEvent {
    * Returns the <code>Region</code> associated with this <code>GatewayEvent</code>.
    * @return the <code>Region</code> associated with this <code>GatewayEvent</code>
    */
-  public Region<?,?> getRegion();
+  public Region<?, ?> getRegion();
 
   /**
    * Returns the <code>Operation</code> that triggered this event.
@@ -79,7 +79,7 @@ public interface GatewayEvent {
    * @return whether this event is a possible duplicate
    */
   public boolean getPossibleDuplicate();
-  
+
   /**
    * Returns the creation timestamp in milliseconds.
    * @return the creation timestamp in milliseconds

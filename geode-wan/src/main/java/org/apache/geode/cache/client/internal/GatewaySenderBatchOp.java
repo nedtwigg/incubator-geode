@@ -39,9 +39,9 @@ import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("unchecked")
 public class GatewaySenderBatchOp {
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Send a list of gateway events to a server to execute
    * using connections from the given pool
@@ -51,8 +51,7 @@ public class GatewaySenderBatchOp {
    * @param events list of gateway events
    * @param batchId the ID of this batch
    */
-  public static void executeOn(Connection con, ExecutablePool pool, List events, int batchId, boolean isRetry)
-  {
+  public static void executeOn(Connection con, ExecutablePool pool, List events, int batchId, boolean isRetry) {
     AbstractOp op = null;
     //System.out.println("Version: "+con.getWanSiteVersion());
     //Is this check even needed anymore?  It looks like we just create the same exact op impl with the same parameters...
@@ -64,24 +63,22 @@ public class GatewaySenderBatchOp {
     }
     pool.executeOn(con, op, true/*timeoutFatal*/);
   }
-  
-  
-  public static Object executeOn(Connection con, ExecutablePool pool)
-  {
+
+  public static Object executeOn(Connection con, ExecutablePool pool) {
     AbstractOp op = new GatewaySenderGFEBatchOpImpl();
     return pool.executeOn(con, op, true/*timeoutFatal*/);
   }
-                                                               
+
   private GatewaySenderBatchOp() {
     // no instances allowed
   }
-  
+
   static class GatewaySenderGFEBatchOpImpl extends AbstractOp {
-    
+
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public GatewaySenderGFEBatchOpImpl(List events, int batchId, int dsId, boolean isRetry)  {
+    public GatewaySenderGFEBatchOpImpl(List events, int batchId, int dsId, boolean isRetry) {
       super(MessageType.GATEWAY_RECEIVER_COMMAND, calcPartCount(events));
       boolean removeFromQueueOnException = true;
       if (isRetry) {
@@ -90,17 +87,16 @@ public class GatewaySenderBatchOp {
       getMessage().addIntPart(events.size());
       getMessage().addIntPart(batchId);
       getMessage().addIntPart(dsId);
-      getMessage().addBytesPart(
-          new byte[] { removeFromQueueOnException ? (byte)1 : (byte)0 });
+      getMessage().addBytesPart(new byte[] { removeFromQueueOnException ? (byte) 1 : (byte) 0 });
       // Add each event
       for (Iterator i = events.iterator(); i.hasNext();) {
-        GatewaySenderEventImpl event = (GatewaySenderEventImpl)i.next();
+        GatewaySenderEventImpl event = (GatewaySenderEventImpl) i.next();
         // Add action
         int action = event.getAction();
         getMessage().addIntPart(action);
         { // Add posDup flag
-          byte posDupByte = (byte)(event.getPossibleDuplicate()?0x01:0x00);
-          getMessage().addBytesPart(new byte[] {posDupByte});
+          byte posDupByte = (byte) (event.getPossibleDuplicate() ? 0x01 : 0x00);
+          getMessage().addBytesPart(new byte[] { posDupByte });
         }
         if (action >= 0 && action <= 3) {
           // 0 = create
@@ -119,15 +115,16 @@ public class GatewaySenderBatchOp {
           getMessage().addStringOrObjPart(key);
           if (action < 2 /* it is 0 or 1 */) {
             byte[] value = event.getSerializedValue();
-            byte valueIsObject = event.getValueIsObject();;
+            byte valueIsObject = event.getValueIsObject();
+            ;
             // Add value (which is already a serialized byte[])
             getMessage().addRawPart(value, (valueIsObject == 0x01));
           }
           // Add callback arg if necessary
           if (callbackArg == null) {
-            getMessage().addBytesPart(new byte[] {0x00});
+            getMessage().addBytesPart(new byte[] { 0x00 });
           } else {
-            getMessage().addBytesPart(new byte[] {0x01});
+            getMessage().addBytesPart(new byte[] { 0x01 });
             getMessage().addObjPart(callbackArg);
           }
           getMessage().addLongPart(event.getVersionTimeStamp());
@@ -159,7 +156,7 @@ public class GatewaySenderBatchOp {
       }
       return this.failed;
     }
-    
+
     private Object attemptRead(Connection cnx) throws Exception {
       this.failed = true;
       try {
@@ -174,8 +171,7 @@ public class GatewaySenderBatchOp {
         throw e;
       }
     }
-    
-    
+
     /**
      * Attempts to read a response to this operation by reading it from the
      * given connection, and returning it.
@@ -187,9 +183,7 @@ public class GatewaySenderBatchOp {
     protected Object attemptReadResponse(Connection cnx) throws Exception {
       Message msg = createResponseMessage();
       if (msg != null) {
-        msg.setComms(cnx.getSocket(), cnx.getInputStream(),
-            cnx.getOutputStream(),
-            ((ConnectionImpl)cnx).getCommBufferForAsyncRead(), cnx.getStats());
+        msg.setComms(cnx.getSocket(), cnx.getInputStream(), cnx.getOutputStream(), ((ConnectionImpl) cnx).getCommBufferForAsyncRead(), cnx.getStats());
         if (msg instanceof ChunkedMessage) {
           try {
             return processResponse(msg, cnx);
@@ -209,23 +203,21 @@ public class GatewaySenderBatchOp {
         }
         return processResponse(msg, cnx);
       }
-      
+
       return null;
     }
-    
-    
+
     private static int calcPartCount(List events) {
       int numberOfParts = 4; // for the number of events and the batchId
       for (Iterator i = events.iterator(); i.hasNext();) {
-        GatewaySenderEventImpl event = (GatewaySenderEventImpl)i.next();
+        GatewaySenderEventImpl event = (GatewaySenderEventImpl) i.next();
         numberOfParts += event.getNumberOfParts();
       }
       return numberOfParts;
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override
@@ -261,49 +253,49 @@ public class GatewaySenderBatchOp {
 
           Object obj = part0.getObject();
           if (obj instanceof List) {
-            List<BatchException70> l = (List<BatchException70>)part0.getObject();
+            List<BatchException70> l = (List<BatchException70>) part0.getObject();
 
-           // if (logger.isDebugEnabled()) {
-              logger.info("We got an exception from the GatewayReceiver. MessageType : {} obj :{}", msg.getMessageType(), obj);
+            // if (logger.isDebugEnabled()) {
+            logger.info("We got an exception from the GatewayReceiver. MessageType : {} obj :{}", msg.getMessageType(), obj);
             //}
             // don't throw Exception but set it in the Ack
             BatchException70 be = new BatchException70(l);
             ack = new GatewayAck(be, l.get(0).getBatchId());
 
           } else if (obj instanceof Throwable) {
-            String s = ": While reading Ack from receiver "
-                + ((Throwable)obj).getMessage();
-            throw new ServerOperationException(s, (Throwable)obj);
+            String s = ": While reading Ack from receiver " + ((Throwable) obj).getMessage();
+            throw new ServerOperationException(s, (Throwable) obj);
           }
           break;
         default:
-          throw new InternalGemFireError(
-              LocalizedStrings.Op_UNKNOWN_MESSAGE_TYPE_0
-                  .toLocalizedString(Integer.valueOf(msg.getMessageType())));
+          throw new InternalGemFireError(LocalizedStrings.Op_UNKNOWN_MESSAGE_TYPE_0.toLocalizedString(Integer.valueOf(msg.getMessageType())));
         }
       } finally {
         msg.clear();
       }
       return ack;
     }
-    
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startGatewayBatch();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endGatewayBatchSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endGatewayBatch(start, hasTimedOut(), hasFailed());
     }
-    
+
     @Override
     public boolean isGatewaySenderOp() {
       return true;

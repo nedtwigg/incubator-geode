@@ -32,15 +32,14 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
  */
 public interface ClientHandShake {
   public boolean isOK();
-  
+
   public byte getCode();
-  
+
   public ClientProxyMembershipID getMembership();
 
   public int getClientReadTimeout();
-  
+
   public Version getVersion();
-  
-  public void accept(OutputStream out, InputStream in, byte epType, int qSize,
-      byte communicationMode, Principal principal) throws IOException;
+
+  public void accept(OutputStream out, InputStream in, byte epType, int qSize, byte communicationMode, Principal principal) throws IOException;
 }

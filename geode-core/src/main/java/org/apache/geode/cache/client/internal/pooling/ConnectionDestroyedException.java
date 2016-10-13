@@ -25,7 +25,7 @@ import org.apache.geode.GemFireException;
  *
  */
 public class ConnectionDestroyedException extends GemFireException {
-private static final long serialVersionUID = -6918516787578041316L;
+  private static final long serialVersionUID = -6918516787578041316L;
 
   public ConnectionDestroyedException() {
     super();
@@ -43,5 +43,4 @@ private static final long serialVersionUID = -6918516787578041316L;
     super(cause);
   }
 
-  
 }

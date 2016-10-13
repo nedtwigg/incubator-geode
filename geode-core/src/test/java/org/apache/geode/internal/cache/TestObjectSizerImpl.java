@@ -44,25 +44,23 @@ public class TestObjectSizerImpl implements ObjectSizer, Serializable {
 
   public int sizeof(Object o) {
     if (o instanceof Integer) {
-     return 5;
-    }
-    else if (o instanceof TestNonSizerObject) {
-      return ((TestNonSizerObject)o).getTestString().length();
-    } else if (o instanceof CachedDeserializable) { 
-      throw new IllegalStateException("ObjectSize should not be passed (see bug 40718) instances of CachedDeserializable: " + o); 
-            //       if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestObjectSizerImpl) { 
-            //         TestObjectSizerImpl obj = (TestObjectSizerImpl)((VMCachedDeserializable)o) 
-            //           .getDeserializedCopy(); 
-            //         return Sizeof.sizeof(obj.one) + Sizeof.sizeof(obj.two) 
-            //           + Sizeof.sizeof(obj.three); 
-            //       } 
-            //       else if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestNonSizerObject) { 
+      return 5;
+    } else if (o instanceof TestNonSizerObject) {
+      return ((TestNonSizerObject) o).getTestString().length();
+    } else if (o instanceof CachedDeserializable) {
+      throw new IllegalStateException("ObjectSize should not be passed (see bug 40718) instances of CachedDeserializable: " + o);
+      //       if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestObjectSizerImpl) { 
+      //         TestObjectSizerImpl obj = (TestObjectSizerImpl)((VMCachedDeserializable)o) 
+      //           .getDeserializedCopy(); 
+      //         return Sizeof.sizeof(obj.one) + Sizeof.sizeof(obj.two) 
+      //           + Sizeof.sizeof(obj.three); 
+      //       } 
+      //       else if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestNonSizerObject) { 
 
-//      TestNonSizerObject testNonObjectSizerObject = (TestNonSizerObject)((VMCachedDeserializable)o)
-//          .getDeserializedCopy();
-//      return testNonObjectSizerObject.getTestString().length();
-    }
-    else {
+      //      TestNonSizerObject testNonObjectSizerObject = (TestNonSizerObject)((VMCachedDeserializable)o)
+      //          .getDeserializedCopy();
+      //      return testNonObjectSizerObject.getTestString().length();
+    } else {
       return ObjectSizer.DEFAULT.sizeof(o);
     }
 

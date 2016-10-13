@@ -51,8 +51,7 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
   }
 
   protected CommandResult connectToLocator(final int locatorPort) {
-    return executeCommand(new CommandStringBuilder(CliStrings.CONNECT).addOption(CliStrings.CONNECT__LOCATOR,
-        "localhost[" + locatorPort + "]").toString());
+    return executeCommand(new CommandStringBuilder(CliStrings.CONNECT).addOption(CliStrings.CONNECT__LOCATOR, "localhost[" + locatorPort + "]").toString());
   }
 
   @Category(FlakyTest.class) // GEODE-989: random ports, suspect string: DiskAccessException, disk pollution, HeadlessGfsh, time sensitive
@@ -76,9 +75,7 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
 
     assertTrue(workingDirectory.isDirectory());
 
-    final LocatorLauncher locatorLauncher = new LocatorLauncher.Builder().setBindAddress(null).setForce(
-        true).setMemberName(pathname).setPort(locatorPort).setWorkingDirectory(
-        IOUtils.tryGetCanonicalPathElseGetAbsolutePath(workingDirectory)).build();
+    final LocatorLauncher locatorLauncher = new LocatorLauncher.Builder().setBindAddress(null).setForce(true).setMemberName(pathname).setPort(locatorPort).setWorkingDirectory(IOUtils.tryGetCanonicalPathElseGetAbsolutePath(workingDirectory)).build();
 
     assertNotNull(locatorLauncher);
     assertEquals(locatorPort, locatorLauncher.getPort().intValue());
@@ -233,7 +230,6 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
     String command = "echo --string=${TESTSYS}";
     CommandResult cmdResult = executeCommand(command);
     printCommandOutput(cmdResult);
-
 
     if (cmdResult != null) {
       assertEquals(Result.Status.OK, cmdResult.getStatus());
@@ -393,7 +389,7 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
       String resultString = commandResultToString(cmdResult);
       getLogWriter().info("testClearHistory resultString=" + resultString);
       assertTrue(resultString.contains(CliStrings.HISTORY__MSG__CLEARED_HISTORY));
-      assertTrue(gfshInstance.getGfshHistory().size()<= 1);
+      assertTrue(gfshInstance.getGfshHistory().size() <= 1);
     } else {
       fail("testClearHistory failed");
     }

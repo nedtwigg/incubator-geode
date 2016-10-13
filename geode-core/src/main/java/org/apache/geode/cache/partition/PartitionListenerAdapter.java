@@ -40,10 +40,10 @@ public class PartitionListenerAdapter implements PartitionListener {
 
   public void afterRegionCreate(Region<?, ?> region) {
   }
-  
+
   public void afterBucketRemoved(int bucketId, Iterable<?> keys) {
   }
-  
+
   public void afterBucketCreated(int bucketId, Iterable<?> keys) {
   }
 }

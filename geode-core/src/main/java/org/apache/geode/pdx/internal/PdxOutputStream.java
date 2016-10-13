@@ -39,7 +39,7 @@ import org.apache.geode.internal.tcp.ByteBufferInputStream.ByteSource;
 public class PdxOutputStream implements ByteBufferWriter {
 
   private final HeapDataOutputStream hdos;
-  
+
   /**
    * 
    */
@@ -230,7 +230,7 @@ public class PdxOutputStream implements ByteBufferWriter {
   public ByteBuffer toByteBuffer() {
     return this.hdos.toByteBuffer();
   }
-  
+
   public byte[] toByteArray() {
     return this.hdos.toByteArray();
   }

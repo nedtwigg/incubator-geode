@@ -57,11 +57,10 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * 
  */
-public class PRUpdateEntryVersionMessage extends
-    PartitionMessageWithDirectReply {
+public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** The key associated with the value that must be sent */
   private Object key;
 
@@ -82,9 +81,7 @@ public class PRUpdateEntryVersionMessage extends
    * @param regionId
    * @param processor
    */
-  public PRUpdateEntryVersionMessage(
-      Collection<InternalDistributedMember> recipients, int regionId,
-      DirectReplyProcessor processor) {
+  public PRUpdateEntryVersionMessage(Collection<InternalDistributedMember> recipients, int regionId, DirectReplyProcessor processor) {
     super(recipients, regionId, processor);
   }
 
@@ -94,8 +91,7 @@ public class PRUpdateEntryVersionMessage extends
    * @param processor
    * @param event
    */
-  public PRUpdateEntryVersionMessage(Set recipients, int regionId,
-      DirectReplyProcessor processor, EntryEventImpl event) {
+  public PRUpdateEntryVersionMessage(Set recipients, int regionId, DirectReplyProcessor processor, EntryEventImpl event) {
     super(recipients, regionId, processor, event);
     this.key = event.getKey();
     this.op = event.getOperation();
@@ -122,15 +118,11 @@ public class PRUpdateEntryVersionMessage extends
    * org.apache.geode.internal.cache.PartitionedRegion, long)
    */
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm,
-      PartitionedRegion pr, long startTime) throws CacheException,
-      QueryException, DataLocationException, InterruptedException, IOException {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, QueryException, DataLocationException, InterruptedException, IOException {
     // release not needed because disallowOffHeapValues called
-    final EntryEventImpl event = EntryEventImpl.create(pr, getOperation(),
-        getKey(), null, /* newValue */
+    final EntryEventImpl event = EntryEventImpl.create(pr, getOperation(), getKey(), null, /* newValue */
         null, /* callbackargs */
-        false /* originRemote - false to force distribution in buckets */,
-        getSender() /* eventSender */, false /* generateCallbacks */, false /* initializeId */);
+        false /* originRemote - false to force distribution in buckets */, getSender() /* eventSender */, false /* generateCallbacks */, false /* initializeId */);
     event.disallowOffHeapValues();
 
     Assert.assertTrue(eventId != null);
@@ -147,11 +139,9 @@ public class PRUpdateEntryVersionMessage extends
     if (!notificationOnly) {
 
       PartitionedRegionDataStore ds = pr.getDataStore();
-      Assert.assertTrue(ds != null,
-          "This process should have storage for an item in " + this.toString());
+      Assert.assertTrue(ds != null, "This process should have storage for an item in " + this.toString());
       try {
-        Integer bucket = Integer.valueOf(PartitionedRegionHelper
-            .getHashKey(event));
+        Integer bucket = Integer.valueOf(PartitionedRegionHelper.getHashKey(event));
 
         pr.getDataView().updateEntryVersion(event);
 
@@ -169,8 +159,7 @@ public class PRUpdateEntryVersionMessage extends
                                                            */, pr, startTime);
         sendReply = false; // this prevents us from acknowledging later
       } catch (PrimaryBucketException pbe) {
-        sendReply(getSender(), getProcessorId(), dm, new ReplyException(pbe),
-            pr, startTime);
+        sendReply(getSender(), getProcessorId(), dm, new ReplyException(pbe), pr, startTime);
         return false;
       }
 
@@ -228,20 +217,17 @@ public class PRUpdateEntryVersionMessage extends
    * Response for PartitionMessage {@link PRUpdateEntryVersionMessage}.
    * 
    */
-  public static final class UpdateEntryVersionResponse extends
-      PartitionResponse {
+  public static final class UpdateEntryVersionResponse extends PartitionResponse {
 
     private volatile boolean versionUpdated;
     private final Object key;
 
-    public UpdateEntryVersionResponse(InternalDistributedSystem dm,
-        InternalDistributedMember member, Object k) {
+    public UpdateEntryVersionResponse(InternalDistributedSystem dm, InternalDistributedMember member, Object k) {
       super(dm, member);
       this.key = k;
     }
 
-    public UpdateEntryVersionResponse(InternalDistributedSystem dm,
-        Set recipients, Object k) {
+    public UpdateEntryVersionResponse(InternalDistributedSystem dm, Set recipients, Object k) {
       super(dm, recipients, false);
       this.key = k;
     }
@@ -270,20 +256,14 @@ public class PRUpdateEntryVersionMessage extends
     }
   }
 
-  public static UpdateEntryVersionResponse send(
-      InternalDistributedMember recipient, PartitionedRegion r,
-      EntryEventImpl event) throws ForceReattemptException {
+  public static UpdateEntryVersionResponse send(InternalDistributedMember recipient, PartitionedRegion r, EntryEventImpl event) throws ForceReattemptException {
     Set recipients = Collections.singleton(recipient);
-    UpdateEntryVersionResponse p = new UpdateEntryVersionResponse(
-        r.getSystem(), recipient, event.getKey());
-    PRUpdateEntryVersionMessage m = new PRUpdateEntryVersionMessage(recipients,
-        r.getPRId(), p, event);
+    UpdateEntryVersionResponse p = new UpdateEntryVersionResponse(r.getSystem(), recipient, event.getKey());
+    PRUpdateEntryVersionMessage m = new PRUpdateEntryVersionMessage(recipients, r.getPRId(), p, event);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(
-          LocalizedStrings.UpdateEntryVersionMessage_FAILED_SENDING_0
-              .toLocalizedString(m));
+      throw new ForceReattemptException(LocalizedStrings.UpdateEntryVersionMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
     return p;
   }

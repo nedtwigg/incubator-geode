@@ -28,41 +28,37 @@ import org.apache.geode.management.internal.beans.stats.StatsKey;
 import org.apache.geode.management.internal.beans.stats.StatsRate;
 
 public class ServerBridge {
-  
+
   protected MBeanStatsMonitor monitor;
-  
 
   protected StatsRate getRequestRate;
-  
+
   protected StatsRate putRequestRate;
 
   protected StatsAverageLatency getRequestAvgLatency;
-  
+
   protected StatsAverageLatency putRequestAvgLatency;
-  
-  
+
   protected AcceptorImpl acceptor;
 
-  
-  public ServerBridge(CacheServer cacheServer){
-    this.monitor = new MBeanStatsMonitor(ManagementStrings.SERVER_MONITOR
-        .toLocalizedString());
-    this.acceptor =  ((CacheServerImpl) cacheServer).getAcceptor();
+  public ServerBridge(CacheServer cacheServer) {
+    this.monitor = new MBeanStatsMonitor(ManagementStrings.SERVER_MONITOR.toLocalizedString());
+    this.acceptor = ((CacheServerImpl) cacheServer).getAcceptor();
     initializeStats();
     startMonitor();
   }
-  
+
   public void addCacheServerStats(CacheServerStats cacheServerStats) {
     monitor.addStatisticsToMonitor(cacheServerStats.getStats());
   }
-  
-  protected void addServer(CacheServer cacheServer){
-    this.acceptor =  ((CacheServerImpl) cacheServer).getAcceptor();
+
+  protected void addServer(CacheServer cacheServer) {
+    this.acceptor = ((CacheServerImpl) cacheServer).getAcceptor();
     startMonitor();
   }
-  
-  protected void removeServer(){
-    this.acceptor =  null;
+
+  protected void removeServer() {
+    this.acceptor = null;
     stopMonitor();
   }
 
@@ -72,30 +68,27 @@ public class ServerBridge {
   private void startMonitor() {
     CacheServerStats stats = acceptor.getStats();
     addCacheServerStats(stats);
-   
+
   }
 
   public void stopMonitor() {
     monitor.removeStatisticsFromMonitor(null);
     monitor.stopListener();
   }
-  
+
   private void initializeStats() {
     getRequestRate = new StatsRate(StatsKey.GET_REQUESTS, StatType.INT_TYPE, monitor);
-    
+
     putRequestRate = new StatsRate(StatsKey.PUT_REQUESTS, StatType.INT_TYPE, monitor);
 
-    getRequestAvgLatency = new StatsAverageLatency(StatsKey.GET_REQUESTS,
-        StatType.INT_TYPE, StatsKey.PROCESS_GET_TIME, monitor);
-    
-    putRequestAvgLatency = new StatsAverageLatency(StatsKey.PUT_REQUESTS,
-        StatType.INT_TYPE, StatsKey.PROCESS_PUT_TIME, monitor);
+    getRequestAvgLatency = new StatsAverageLatency(StatsKey.GET_REQUESTS, StatType.INT_TYPE, StatsKey.PROCESS_GET_TIME, monitor);
+
+    putRequestAvgLatency = new StatsAverageLatency(StatsKey.PUT_REQUESTS, StatType.INT_TYPE, StatsKey.PROCESS_PUT_TIME, monitor);
 
   }
 
   public ServerBridge() {
-    this.monitor = new MBeanStatsMonitor(ManagementStrings.SERVER_MONITOR
-        .toLocalizedString());
+    this.monitor = new MBeanStatsMonitor(ManagementStrings.SERVER_MONITOR.toLocalizedString());
 
     initializeStats();
   }
@@ -107,7 +100,7 @@ public class ServerBridge {
   public int getConnectionThreads() {
     return getStatistic(StatsKey.CONNECTION_THREADS).intValue();
   }
-  
+
   public long getGetRequestAvgLatency() {
     return getRequestAvgLatency.getAverageLatency();
   }
@@ -124,7 +117,6 @@ public class ServerBridge {
     return putRequestRate.getRate();
   }
 
-  
   public double getLoadPerConnection() {
     return getStatistic(StatsKey.LOAD_PER_CONNECTION).intValue();
   }
@@ -132,7 +124,7 @@ public class ServerBridge {
   public double getLoadPerQueue() {
     return getStatistic(StatsKey.LOAD_PER_QUEUE).intValue();
   }
-  
+
   public double getQueueLoad() {
     return getStatistic(StatsKey.QUEUE_LOAD).doubleValue();
   }
@@ -160,25 +152,18 @@ public class ServerBridge {
   public int getClientConnectionCount() {
     return getStatistic(StatsKey.CURRENT_CLIENT_CONNECTIONS).intValue();
   }
-  
+
   public int getCurrentClients() {
     return getStatistic(StatsKey.CURRENT_CLIENTS).intValue();
   }
-  
 
-
-  protected Number getStatistic(String statName){
-    if(monitor != null){
+  protected Number getStatistic(String statName) {
+    if (monitor != null) {
       return monitor.getStatistic(statName);
-    }else{
+    } else {
       return 0;
     }
-    
-    
+
   }
- 
-
-
-  
 
 }

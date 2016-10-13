@@ -50,20 +50,20 @@ public class MainLauncherJUnitTest {
 
   @Rule
   public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
-  
+
   @Before
   public void before() {
     flag = false;
     this.futures = Executors.newSingleThreadExecutor();
     assertFalse(flag);
   }
-  
+
   @After
   public void after() {
     flag = false;
     assertTrue(this.futures.shutdownNow().isEmpty());
   }
-  
+
   @Test
   public void testInvokeMainWithNullArgs() throws Exception {
     Class<?> clazz = getClass();
@@ -72,7 +72,7 @@ public class MainLauncherJUnitTest {
     mainMethod.invoke(null, new Object[] { args });
     assertTrue(flag);
   }
-  
+
   @Test
   public void testInvokeMainWithEmptyArgs() throws Exception {
     Class<?> clazz = getClass();
@@ -81,7 +81,7 @@ public class MainLauncherJUnitTest {
     mainMethod.invoke(null, new Object[] { args });
     assertTrue(flag);
   }
-  
+
   @Test
   public void testInvokeMainWithOneArg() throws Exception {
     Class<?> clazz = getClass();
@@ -90,7 +90,7 @@ public class MainLauncherJUnitTest {
     mainMethod.invoke(null, new Object[] { args });
     assertTrue(flag);
   }
-  
+
   @Test
   public void testInvokeMainWithTwoArgs() throws Exception {
     Class<?> clazz = getClass();
@@ -99,7 +99,7 @@ public class MainLauncherJUnitTest {
     mainMethod.invoke(null, new Object[] { args });
     assertTrue(flag);
   }
-  
+
   @Test
   public void testInvokeMainWithMainLauncherWithNoArgs() throws Exception {
     Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
@@ -116,7 +116,7 @@ public class MainLauncherJUnitTest {
     assertTrue(future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS));
     assertTrue(flag);
   }
-  
+
   @Test
   public void testInvokeMainWithMainLauncherWithOneArg() throws Exception {
     Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
@@ -133,7 +133,7 @@ public class MainLauncherJUnitTest {
     assertTrue(future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS));
     assertTrue(flag);
   }
-  
+
   @Test
   public void testInvokeMainWithMainLauncherWithTwoArgs() throws Exception {
     Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
@@ -150,7 +150,7 @@ public class MainLauncherJUnitTest {
     assertTrue(future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS));
     assertTrue(flag);
   }
-  
+
   public static void main(String... args) throws Exception {
     flag = true;
   }

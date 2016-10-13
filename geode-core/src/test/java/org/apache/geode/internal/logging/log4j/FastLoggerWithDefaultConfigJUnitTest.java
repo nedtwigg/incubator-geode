@@ -38,18 +38,18 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class FastLoggerWithDefaultConfigJUnitTest {
 
   private static final String TEST_LOGGER_NAME = FastLogger.class.getPackage().getName();
-  
+
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
-  
+
   private Logger logger;
-  
+
   @Before
   public void setUp() throws Exception {
     System.clearProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     LogService.reconfigure();
   }
-  
+
   /**
    * System property "log4j.configurationFile" should be "/org/apache/geode/internal/logging/log4j/log4j2-default.xml"
    */
@@ -57,7 +57,7 @@ public class FastLoggerWithDefaultConfigJUnitTest {
   public void configurationFilePropertyIsDefaultConfig() {
     assertThat(System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY), isEmptyOrNullString());
   }
-  
+
   /**
    * LogService isUsingGemFireDefaultConfig should be true
    */
@@ -65,24 +65,24 @@ public class FastLoggerWithDefaultConfigJUnitTest {
   public void isUsingGemFireDefaultConfig() {
     assertThat(LogService.isUsingGemFireDefaultConfig(), is(true));
   }
-  
+
   /**
    * LogService getLogger should return loggers wrapped in FastLogger
    */
   @Test
   public void logServiceReturnsFastLoggers() {
     this.logger = LogService.getLogger(TEST_LOGGER_NAME);
-    
+
     assertThat(this.logger, is(instanceOf(FastLogger.class)));
   }
-  
+
   /**
    * FastLogger isDelegating should be false
    */
   @Test
   public void isDelegatingShouldBeFalse() {
     this.logger = LogService.getLogger(TEST_LOGGER_NAME);
-    
-    assertThat(((FastLogger)this.logger).isDelegating(), is(false));
+
+    assertThat(((FastLogger) this.logger).isDelegating(), is(false));
   }
 }

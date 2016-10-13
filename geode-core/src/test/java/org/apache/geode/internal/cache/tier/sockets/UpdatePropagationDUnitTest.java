@@ -85,8 +85,8 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
   private VM client1 = null;
   private VM client2 = null;
 
-  private int PORT1 ;
-  private int PORT2 ;
+  private int PORT1;
+  private int PORT2;
 
   @Override
   public final void postSetUp() throws Exception {
@@ -104,15 +104,13 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
 
     //client 2 VM
     client2 = host.getVM(3);
-    
-    PORT1 =  server1.invoke(() -> createServerCache());
-    PORT2 =  server2.invoke(() -> createServerCache());
 
-    client1.invoke(() -> createClientCache(
-      NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
-    client2.invoke(() -> createClientCache(
-      NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
-    
+    PORT1 = server1.invoke(() -> createServerCache());
+    PORT2 = server2.invoke(() -> createServerCache());
+
+    client1.invoke(() -> createClientCache(NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
+    client2.invoke(() -> createClientCache(NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
+
     IgnoredException.addIgnoredException("java.net.SocketException");
     IgnoredException.addIgnoredException("Unexpected IOException");
   }
@@ -133,8 +131,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     //Wait for 10 seconds to allow fail over. This would mean that Interstist has failed
     // over to Server2.
     final CacheSerializableRunnable waitToDetectDeadServer = new CacheSerializableRunnable("Wait for server on port1 to be dead") {
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         Region r = getCache().getRegion(REGION_NAME);
 
         String poolName = r.getAttributes().getPoolName();
@@ -149,8 +146,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     server1.invoke(() -> startServer(new Integer(PORT1)));
 
     final CacheSerializableRunnable waitToDetectLiveServer = new CacheSerializableRunnable("Wait for servers to be alive") {
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         Region r = getCache().getRegion(REGION_NAME);
         String poolName = r.getAttributes().getPoolName();
         final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
@@ -162,7 +158,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
 
     //Do a put on Server1 via Connection object from client1.
     // Client1 should not receive updated value while client2 should receive
-    client1.invoke(() -> acquireConnectionsAndPutonK1andK2( NetworkUtils.getServerHostName(client1.getHost())));
+    client1.invoke(() -> acquireConnectionsAndPutonK1andK2(NetworkUtils.getServerHostName(client1.getHost())));
     //Check if both the puts ( on key1 & key2 ) have reached the servers
     server1.invoke(() -> verifyUpdates());
     server2.invoke(() -> verifyUpdates());
@@ -178,8 +174,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
    */
   private boolean hasEndPointWithPort(final PoolImpl pool, final int port) {
     EndpointManager endpointManager = pool.getEndpointManager();
-    final Set<ServerLocation> servers = endpointManager
-      .getEndpointMap().keySet();
+    final Set<ServerLocation> servers = endpointManager.getEndpointMap().keySet();
     return servers.stream().anyMatch(location -> location.getPort() == port);
   }
 
@@ -189,11 +184,11 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     r1.put("key2", "server-value2");
   }
 
-  private void killServer(Integer port ) {
+  private void killServer(Integer port) {
     Iterator iter = getCache().getCacheServers().iterator();
     if (iter.hasNext()) {
-      CacheServer server = (CacheServer)iter.next();
-      if(server.getPort() == port.intValue()){
+      CacheServer server = (CacheServer) iter.next();
+      if (server.getPort() == port.intValue()) {
         server.stop();
       }
     }
@@ -210,7 +205,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
    * Creates entries on the server
    */
   private void createEntriesK1andK2() {
-    Region r1 = getCache().getRegion(Region.SEPARATOR+REGION_NAME);
+    Region r1 = getCache().getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r1);
     if (!r1.containsKey("key1")) {
       r1.put("key1", "key-1");
@@ -222,39 +217,29 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     if (r1.getAttributes().getPartitionAttributes() == null) {
       assertEquals(r1.getEntry("key1").getValue(), "key-1");
       assertEquals(r1.getEntry("key2").getValue(), "key-2");
-    }
-    else {
+    } else {
       assertEquals(r1.get("key1"), "key-1");
       assertEquals(r1.get("key2"), "key-2");
     }
   }
 
-  private void createClientCache(String host, Integer port1 , Integer port2 ) throws Exception {
+  private void createClientCache(String host, Integer port1, Integer port2) throws Exception {
     ClientCache cache;
     try {
       System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "PoolImpl.DISABLE_RANDOM", "true");
-      int PORT1 = port1.intValue() ;
+      int PORT1 = port1.intValue();
       int PORT2 = port2.intValue();
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, "");
       ClientCacheFactory cf = new ClientCacheFactory();
-      cf.addPoolServer(host, PORT1)
-      .addPoolServer(host, PORT2)
-      .setPoolSubscriptionEnabled(true)
-      .setPoolSubscriptionRedundancy(-1)
-      .setPoolMinConnections(4)
-      .setPoolSocketBufferSize(1000)
-      .setPoolReadTimeout(2000)
-      .setPoolPingInterval(300);
-       cache = getClientCache(cf);
+      cf.addPoolServer(host, PORT1).addPoolServer(host, PORT2).setPoolSubscriptionEnabled(true).setPoolSubscriptionRedundancy(-1).setPoolMinConnections(4).setPoolSocketBufferSize(1000).setPoolReadTimeout(2000).setPoolPingInterval(300);
+      cache = getClientCache(cf);
     } finally {
       System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "PoolImpl.DISABLE_RANDOM", "false");
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
-    cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
-      .addCacheListener(new EventTrackingCacheListener())
-      .create(REGION_NAME);
+    cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).addCacheListener(new EventTrackingCacheListener()).create(REGION_NAME);
   }
 
   private Integer createServerCache() throws Exception {
@@ -269,7 +254,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     server.start();
     return new Integer(server.getPort());
   }
-  
+
   protected RegionAttributes createCacheServerAttributes() {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -278,7 +263,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void registerKeysK1andK2() {
-    Region r = getCache().getRegion(Region.SEPARATOR+ REGION_NAME);
+    Region r = getCache().getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r);
     List list = new ArrayList();
     list.add("key1");
@@ -287,7 +272,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void verifySenderUpdateCount() {
-    Region r = getCache().getRegion(Region.SEPARATOR+ REGION_NAME);
+    Region r = getCache().getRegion(Region.SEPARATOR + REGION_NAME);
     EventTrackingCacheListener listener = (EventTrackingCacheListener) r.getAttributes().getCacheListeners()[0];
 
     final List<EntryEvent> events = listener.receivedEvents;
@@ -304,8 +289,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
       if (r.getAttributes().getPartitionAttributes() == null) {
         assertEquals("server-value2", r.getEntry("key2").getValue());
         assertEquals("server-value1", r.getEntry("key1").getValue());
-      }
-      else {
+      } else {
         assertEquals("server-value2", r.get("key2"));
         assertEquals("server-value1", r.get("key1"));
       }
@@ -332,6 +316,3 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     }
   }
 }
-
-
-

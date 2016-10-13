@@ -34,10 +34,8 @@ public class ServerLoadData {
    * This constructor is to be used by internal JMX framework only. User
    * should not try to create an instance of this class.
    */
-  @ConstructorProperties( { "connectionLoad", "subscriberLoad",
-      "loadPerConnection", "loadPerSubscriber" })
-  public ServerLoadData(float connectionLoad, float subscriberLoad,
-      float loadPerConnection, float loadPerSubscriber) {
+  @ConstructorProperties({ "connectionLoad", "subscriberLoad", "loadPerConnection", "loadPerSubscriber" })
+  public ServerLoadData(float connectionLoad, float subscriberLoad, float loadPerConnection, float loadPerSubscriber) {
     this.connectionLoad = connectionLoad;
     this.subscriberLoad = subscriberLoad;
     this.loadPerConnection = loadPerConnection;
@@ -83,10 +81,7 @@ public class ServerLoadData {
   @Override
   public String toString() {
 
-    return "{ServerLoad is : connectionLoad = " + connectionLoad
-        + " subscriberLoad = " + subscriberLoad + " loadPerConnection = "
-        + loadPerConnection + " loadPerSubscriber = " + loadPerSubscriber
-        + " }";
+    return "{ServerLoad is : connectionLoad = " + connectionLoad + " subscriberLoad = " + subscriberLoad + " loadPerConnection = " + loadPerConnection + " loadPerSubscriber = " + loadPerSubscriber + " }";
   }
 
 }

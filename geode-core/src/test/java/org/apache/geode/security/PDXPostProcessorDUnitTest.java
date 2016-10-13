@@ -61,12 +61,12 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
   private static byte[] BYTES = PDXPostProcessor.BYTES;
 
   @Parameterized.Parameters
-  public static Collection<Object[]> parameters(){
-    Object[][] params = {{true}, {false}};
+  public static Collection<Object[]> parameters() {
+    Object[][] params = { { true }, { false } };
     return Arrays.asList(params);
   }
 
-  public PDXPostProcessorDUnitTest(boolean pdxPersistent){
+  public PDXPostProcessorDUnitTest(boolean pdxPersistent) {
     this.postProcessor = PDXPostProcessor.class;
     this.pdxPersistent = pdxPersistent;
     this.jmxPort = AvailablePortHelper.getRandomAvailableTCPPort();
@@ -74,8 +74,8 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
   }
 
   @Test
-  public void testRegionGet(){
-    client2.invoke(()->{
+  public void testRegionGet() {
+    client2.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
       // put in a value that's a domain object
@@ -84,7 +84,7 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       region.put("key2", BYTES);
     });
 
-    client1.invoke(()->{
+    client1.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
 
@@ -94,7 +94,7 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
 
       // post process for get the raw byte value
       value = region.get("key2");
-      assertTrue(Arrays.equals(BYTES, (byte[])value));
+      assertTrue(Arrays.equals(BYTES, (byte[]) value));
     });
 
     // this makes sure PostProcessor is getting called
@@ -103,8 +103,8 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
   }
 
   @Test
-  public void testQuery(){
-    client2.invoke(()->{
+  public void testQuery() {
+    client2.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
       // put in a value that's a domain object
@@ -112,7 +112,7 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       region.put("key2", BYTES);
     });
 
-    client1.invoke(()->{
+    client1.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
 
@@ -123,10 +123,9 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       Iterator itr = result.iterator();
       while (itr.hasNext()) {
         Object obj = itr.next();
-        if(obj instanceof byte[]){
-          assertTrue(Arrays.equals(BYTES, (byte[])obj));
-        }
-        else{
+        if (obj instanceof byte[]) {
+          assertTrue(Arrays.equals(BYTES, (byte[]) obj));
+        } else {
           assertTrue(obj instanceof SimpleClass);
         }
       }
@@ -138,24 +137,20 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
   }
 
   @Test
-  public void testRegisterInterest(){
-    client1.invoke(()->{
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567"))
-        .setPoolSubscriptionEnabled(true)
-        .addPoolServer("localhost", serverPort)
-        .create();
+  public void testRegisterInterest() {
+    client1.invoke(() -> {
+      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
-      ClientRegionFactory factory =  cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
+      ClientRegionFactory factory = cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
       factory.addCacheListener(new CacheListenerAdapter() {
         @Override
         public void afterUpdate(EntryEvent event) {
           Object key = event.getKey();
           Object value = ((EntryEventImpl) event).getDeserializedValue();
-          if(key.equals("key1")) {
+          if (key.equals("key1")) {
             assertTrue(value instanceof SimpleClass);
-          }
-          else if(key.equals("key2")){
-            assertTrue(Arrays.equals(BYTES, (byte[])value));
+          } else if (key.equals("key2")) {
+            assertTrue(Arrays.equals(BYTES, (byte[]) value));
           }
         }
       });
@@ -166,7 +161,7 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       region.registerInterest("key2");
     });
 
-    client2.invoke(()->{
+    client2.invoke(() -> {
       ClientCache cache = createClientCache("dataUser", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
       // put in a value that's a domain object
@@ -182,9 +177,9 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
 
   @Category(FlakyTest.class) // GEODE-1719
   @Test
-  public void testGfshCommand(){
+  public void testGfshCommand() {
     // have client2 input some domain data into the region
-    client2.invoke(()->{
+    client2.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
       // put in a value that's a domain object
@@ -193,7 +188,7 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       region.put("key2", BYTES);
     });
 
-    client1.invoke(()->{
+    client1.invoke(() -> {
       CliUtil.isGfshVM = true;
       String shellId = getClass().getSimpleName();
       HeadlessGfsh gfsh = new HeadlessGfsh(shellId, 30, "gfsh_files");
@@ -213,18 +208,18 @@ public class PDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
       gfsh.executeCommand("get --key=key1 --region=AuthRegion");
       result = (CommandResult) gfsh.getResult();
       assertEquals(result.getStatus(), Status.OK);
-      if(pdxPersistent)
+      if (pdxPersistent)
         assertTrue(result.getContent().toString().contains("org.apache.geode.pdx.internal.PdxInstanceImpl"));
       else
         assertTrue(result.getContent().toString().contains("SimpleClass"));
 
       gfsh.executeCommand("get --key=key2 --region=AuthRegion");
-      result = (CommandResult)gfsh.getResult();
+      result = (CommandResult) gfsh.getResult();
       assertEquals(result.getStatus(), Status.OK);
       assertTrue(result.getContent().toString().contains("byte[]"));
 
       gfsh.executeCommand("query --query=\"select * from /AuthRegion\"");
-      result = (CommandResult)gfsh.getResult();
+      result = (CommandResult) gfsh.getResult();
       System.out.println("gfsh result: " + result);
     });
 

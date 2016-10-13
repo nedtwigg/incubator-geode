@@ -55,7 +55,7 @@ public class PRBasicRemoveIndexDUnitTest extends PartitionedRegionDUnitTestCase 
       vm.invoke(() -> PRQueryDUnitHelper.setCache(getCache()));
     }
   }
-  
+
   /**
    * Remove index test to remove all the indexes in a given partitioned region
    */
@@ -67,38 +67,28 @@ public class PRBasicRemoveIndexDUnitTest extends PartitionedRegionDUnitTestCase 
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
     setCacheInVMs(vm0, vm1, vm2, vm3);
-    LogWriterUtils.getLogWriter().info(
-        "PRBasicRemoveIndexDUnitTest.testPRBasicIndexCreate test now starts ....");
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
-    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
-    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
-    
+    LogWriterUtils.getLogWriter().info("PRBasicRemoveIndexDUnitTest.testPRBasicIndexCreate test now starts ....");
+    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+
     final PortfolioData[] portfolio = createPortfolioData(start, end);
     // Putting the data into the PR's created
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio,
-        start, end));
-    
+    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, start, end));
+
     // create all the indexes.
-    
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name,
-        "PrIndexOnPKID", "p.pkid",null, "p"));
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name,
-        "PrIndexOnStatus", "p.status",null, "p"));
-    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name,
-        "PrIndexOnId", "p.ID",null, "p"));
-    
+
+    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name, "PrIndexOnPKID", "p.pkid", null, "p"));
+    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name, "PrIndexOnStatus", "p.status", null, "p"));
+    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name, "PrIndexOnId", "p.ID", null, "p"));
+
     //remove indexes
     vm1.invoke(PRQHelp.getCacheSerializableRunnableForRemoveIndex(name, false));
-    
-    LogWriterUtils.getLogWriter().info(
-    "PRBasicRemoveIndexDUnitTest.testPRBasicRemoveIndex test now  ends sucessfully");
+
+    LogWriterUtils.getLogWriter().info("PRBasicRemoveIndexDUnitTest.testPRBasicRemoveIndex test now  ends sucessfully");
   }
-  
+
   /**
    * Test removing single index on a pr.
    */
@@ -110,28 +100,19 @@ public class PRBasicRemoveIndexDUnitTest extends PartitionedRegionDUnitTestCase 
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
     setCacheInVMs(vm0, vm1, vm2, vm3);
-    LogWriterUtils.getLogWriter().info(
-        "PRBasicRemoveIndexDUnitTest.testPRBasicIndexCreate test now starts ....");
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
-    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
-    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name,
-        redundancy, PortfolioData.class));
+    LogWriterUtils.getLogWriter().info("PRBasicRemoveIndexDUnitTest.testPRBasicIndexCreate test now starts ....");
+    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
     final PortfolioData[] portfolio = createPortfolioData(start, end);
     // Putting the data into the PR's created
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio,
-        start, end));
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name,
-        "PrIndexOnPKID", "p.pkid",null, "p"));
-    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name,
-        "PrIndexOnStatus", "p.status",null, "p"));
-    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name,
-        "PrIndexOnId", "p.ID",null, "p"));
-    
-//  remove indexes
+    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, start, end));
+    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name, "PrIndexOnPKID", "p.pkid", null, "p"));
+    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name, "PrIndexOnStatus", "p.status", null, "p"));
+    vm3.invoke(PRQHelp.getCacheSerializableRunnableForPRIndexCreate(name, "PrIndexOnId", "p.ID", null, "p"));
+
+    //  remove indexes
     vm1.invoke(PRQHelp.getCacheSerializableRunnableForRemoveIndex(name, true));
   }
 }

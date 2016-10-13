@@ -58,7 +58,7 @@ public class DiskStatsJUnitTest extends MBeanStatsTestCase {
     diskStoreStats.setQueueSize(10);
 
     sample();
-    
+
     assertEquals(1, getTotalBackupInProgress());
     assertEquals(1, getTotalRecoveriesInProgress());
     assertEquals(20, getTotalBytesOnDisk());
@@ -70,13 +70,13 @@ public class DiskStatsJUnitTest extends MBeanStatsTestCase {
     diskStoreStats.endFlush(testStartTime);
 
     sample();
-    
+
     assertEquals(1, getTotalBackupCompleted());
-    assertTrue(getFlushTimeAvgLatency()>0);
-    assertTrue(getDiskReadsAvgLatency()>0);
-    assertTrue(getDiskWritesAvgLatency()>0);
-    assertTrue(getDiskReadsRate()>0);
-    assertTrue(getDiskWritesRate()>0);
+    assertTrue(getFlushTimeAvgLatency() > 0);
+    assertTrue(getDiskReadsAvgLatency() > 0);
+    assertTrue(getDiskWritesAvgLatency() > 0);
+    assertTrue(getDiskReadsRate() > 0);
+    assertTrue(getDiskWritesRate() > 0);
   }
 
   private long getDiskReadsAvgLatency() {

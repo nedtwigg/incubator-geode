@@ -197,7 +197,7 @@ public class SemaphoreReadWriteLockJUnitTest {
       }
     });
     writer.start();
-    
+
     Thread reader2 = new Thread(new Runnable() {
       @Override
       public void run() {

@@ -57,8 +57,7 @@ public class TestClientsDUnitTest extends ManagementTestBase {
       @Override
       public boolean done() {
         final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service
-            .getDistributedSystemMXBean();
+        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
         if (bean != null) {
           if (bean.getNumClients() > 0) {
             return true;
@@ -74,8 +73,7 @@ public class TestClientsDUnitTest extends ManagementTestBase {
     };
 
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
-    final DistributedSystemMXBean bean = getManagementService()
-        .getDistributedSystemMXBean();
+    final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
     return Integer.valueOf(bean.getNumClients());
   }

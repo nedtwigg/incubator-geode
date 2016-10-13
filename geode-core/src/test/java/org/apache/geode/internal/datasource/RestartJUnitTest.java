@@ -53,29 +53,28 @@ public class RestartJUnitTest {
 
   @Test
   public void testCleanUp() {
-	TransactionManager tm1 = null;
-	TransactionManager tm2 = null;
-    try{
-    props = new Properties();
+    TransactionManager tm1 = null;
+    TransactionManager tm2 = null;
+    try {
+      props = new Properties();
       props.setProperty(MCAST_PORT, "0");
-    String path = TestUtil.getResourcePath(RestartJUnitTest.class, "/jta/cachejta.xml");
+      String path = TestUtil.getResourcePath(RestartJUnitTest.class, "/jta/cachejta.xml");
       props.setProperty(CACHE_XML_FILE, path);
 
-    ds1 = DistributedSystem.connect(props);
-    cache = CacheFactory.create(ds1);
-    tm1 = JNDIInvoker.getTransactionManager();
-    cache.close();
-    ds1.disconnect();
+      ds1 = DistributedSystem.connect(props);
+      cache = CacheFactory.create(ds1);
+      tm1 = JNDIInvoker.getTransactionManager();
+      cache.close();
+      ds1.disconnect();
 
-    ds1 = DistributedSystem.connect(props);
-    cache = CacheFactory.create(ds1);
-    tm2 = JNDIInvoker.getTransactionManager();
-    assertNotSame("TransactionManager are same in before restart and after restart",tm1,tm2);
-    
-    ds1.disconnect();
-  }catch(Exception e){
-    fail("Failed in restarting the distributed system");
-}
+      ds1 = DistributedSystem.connect(props);
+      cache = CacheFactory.create(ds1);
+      tm2 = JNDIInvoker.getTransactionManager();
+      assertNotSame("TransactionManager are same in before restart and after restart", tm1, tm2);
+
+      ds1.disconnect();
+    } catch (Exception e) {
+      fail("Failed in restarting the distributed system");
+    }
   }
 }
-

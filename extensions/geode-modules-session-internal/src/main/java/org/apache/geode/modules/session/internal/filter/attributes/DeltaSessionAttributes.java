@@ -28,8 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DeltaSessionAttributes extends AbstractDeltaSessionAttributes {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(DeltaSessionAttributes.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(DeltaSessionAttributes.class.getName());
 
   /**
    * Register ourselves for de-serialization

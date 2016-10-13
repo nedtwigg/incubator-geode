@@ -64,7 +64,7 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
   @Override
   protected void initMessage(CacheOperationMessage msg, DirectReplyProcessor p) {
     super.initMessage(msg, p);
-    UpdateEntryVersionMessage imsg = (UpdateEntryVersionMessage)msg;
+    UpdateEntryVersionMessage imsg = (UpdateEntryVersionMessage) msg;
     EntryEventImpl eei = getEvent();
     imsg.key = eei.getKey();
     imsg.eventId = eei.getEventId();
@@ -75,7 +75,7 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
 
     protected Object key;
     protected EventID eventId = null;
-    protected EntryEventImpl event = null;    
+    protected EntryEventImpl event = null;
     private Long tailKey = 0L; // Used for Parallel Gateway Senders
 
     public UpdateEntryVersionMessage() {
@@ -92,22 +92,19 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
 
     @Override
     @Retained
-    protected InternalCacheEvent createEvent(DistributedRegion rgn)
-        throws EntryNotFoundException {
-      @Retained EntryEventImpl ev = EntryEventImpl.create(rgn, getOperation(), this.key,
-         null /* newValue */, this.callbackArg /*callbackArg*/, true /* originRemote*/ , getSender(), false /*generateCallbacks*/);
+    protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
+      @Retained
+      EntryEventImpl ev = EntryEventImpl.create(rgn, getOperation(), this.key, null /* newValue */, this.callbackArg /*callbackArg*/, true /* originRemote*/ , getSender(), false /*generateCallbacks*/);
       ev.setEventId(this.eventId);
       ev.setVersionTag(this.versionTag);
       ev.setTailKey(this.tailKey);
-      
+
       return ev;
     }
 
     @Override
     public List getOperations() {
-      return Collections.singletonList(new QueuedOperation(getOperation(),
-          this.key, null, null, DistributedCacheOperation
-              .DESERIALIZATION_POLICY_NONE, this.callbackArg));
+      return Collections.singletonList(new QueuedOperation(getOperation(), this.key, null, null, DistributedCacheOperation.DESERIALIZATION_POLICY_NONE, this.callbackArg));
     }
 
     @Override
@@ -121,10 +118,9 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
-        throws EntryNotFoundException {
-      EntryEventImpl ev = (EntryEventImpl)event;
-      DistributedRegion rgn = (DistributedRegion)ev.region;
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+      EntryEventImpl ev = (EntryEventImpl) event;
+      DistributedRegion rgn = (DistributedRegion) ev.region;
 
       try {
         if (!rgn.isCacheContentProxy()) {
@@ -152,13 +148,12 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
-      this.eventId = (EventID)DataSerializer.readObject(in);
+      this.eventId = (EventID) DataSerializer.readObject(in);
       this.key = DataSerializer.readObject(in);
       Boolean hasTailKey = DataSerializer.readBoolean(in);
-      if(hasTailKey.booleanValue()){
+      if (hasTailKey.booleanValue()) {
         this.tailKey = DataSerializer.readLong(in);
       }
     }
@@ -168,22 +163,20 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
       super.toData(out);
       DataSerializer.writeObject(this.eventId, out);
       DataSerializer.writeObject(this.key, out);
-      
-      DistributedRegion region = (DistributedRegion)this.event.getRegion();
+
+      DistributedRegion region = (DistributedRegion) this.event.getRegion();
       if (region instanceof BucketRegion) {
         PartitionedRegion pr = region.getPartitionedRegion();
         if (pr.isParallelWanEnabled()) {
           DataSerializer.writeBoolean(Boolean.TRUE, out);
           DataSerializer.writeLong(this.event.getTailKey(), out);
-        }else {
+        } else {
           DataSerializer.writeBoolean(Boolean.FALSE, out);
         }
-      }
-      else if(((LocalRegion)region).isUsedForSerialGatewaySenderQueue()){
+      } else if (((LocalRegion) region).isUsedForSerialGatewaySenderQueue()) {
         DataSerializer.writeBoolean(Boolean.TRUE, out);
         DataSerializer.writeLong(this.event.getTailKey(), out);
-      }
-      else{
+      } else {
         DataSerializer.writeBoolean(Boolean.FALSE, out);
       }
     }

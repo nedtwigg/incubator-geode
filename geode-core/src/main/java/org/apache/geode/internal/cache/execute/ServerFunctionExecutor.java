@@ -34,6 +34,7 @@ import org.apache.geode.cache.execute.FunctionService;
 import org.apache.geode.cache.execute.ResultCollector;
 import org.apache.geode.internal.cache.TXManagerImpl;
 import org.apache.geode.internal.i18n.LocalizedStrings;
+
 /**
  * 
  *
@@ -43,22 +44,22 @@ public class ServerFunctionExecutor extends AbstractExecution {
   private PoolImpl pool;
 
   private final boolean allServers;
-  
+
   private String[] groups;
 
   public ServerFunctionExecutor(Pool p, boolean allServers, String... groups) {
-    this.pool = (PoolImpl)p;
+    this.pool = (PoolImpl) p;
     this.allServers = allServers;
     this.groups = groups;
   }
 
   public ServerFunctionExecutor(Pool p, boolean allServers, ProxyCache proxyCache, String... groups) {
-    this.pool = (PoolImpl)p;
+    this.pool = (PoolImpl) p;
     this.allServers = allServers;
     this.proxyCache = proxyCache;
     this.groups = groups;
   }
-  
+
   public ServerFunctionExecutor(ServerFunctionExecutor sfe) {
     super(sfe);
     if (sfe.pool != null) {
@@ -67,23 +68,23 @@ public class ServerFunctionExecutor extends AbstractExecution {
     this.allServers = sfe.allServers;
     this.groups = sfe.groups;
   }
-  
-  private ServerFunctionExecutor(ServerFunctionExecutor sfe,Object args) {
+
+  private ServerFunctionExecutor(ServerFunctionExecutor sfe, Object args) {
     this(sfe);
     this.args = args;
   }
-  
+
   private ServerFunctionExecutor(ServerFunctionExecutor sfe, ResultCollector rs) {
     this(sfe);
     this.rc = rs;
   }
-  
+
   private ServerFunctionExecutor(ServerFunctionExecutor sfe, MemberMappedArgument argument) {
     this(sfe);
     this.memberMappedArg = argument;
     this.isMemberMappedArgument = true;
   }
-  
+
   protected ResultCollector executeFunction(final String functionId, boolean result, boolean isHA, boolean optimizeForWrite) {
     try {
       if (proxyCache != null) {
@@ -93,21 +94,19 @@ public class ServerFunctionExecutor extends AbstractExecution {
         UserAttributes.userAttributes.set(this.proxyCache.getUserAttributes());
       }
 
-    byte hasResult = 0;
-    if (result) { // have Results
-      hasResult = 1;
-      if (this.rc == null) { // Default Result Collector
-        ResultCollector defaultCollector = new DefaultResultCollector();
-        return executeOnServer(functionId, defaultCollector, hasResult, isHA, optimizeForWrite);
+      byte hasResult = 0;
+      if (result) { // have Results
+        hasResult = 1;
+        if (this.rc == null) { // Default Result Collector
+          ResultCollector defaultCollector = new DefaultResultCollector();
+          return executeOnServer(functionId, defaultCollector, hasResult, isHA, optimizeForWrite);
+        } else { // Custome Result COllector
+          return executeOnServer(functionId, this.rc, hasResult, isHA, optimizeForWrite);
+        }
+      } else { // No results
+        executeOnServerNoAck(functionId, hasResult, isHA, optimizeForWrite);
+        return new NoResult();
       }
-      else { // Custome Result COllector
-        return executeOnServer(functionId, this.rc, hasResult, isHA, optimizeForWrite);
-      }
-    }
-    else { // No results
-      executeOnServerNoAck(functionId, hasResult, isHA, optimizeForWrite);
-      return new NoResult();
-    }
     } finally {
       UserAttributes.userAttributes.set(null);
     }
@@ -129,70 +128,56 @@ public class ServerFunctionExecutor extends AbstractExecution {
         if (this.rc == null) { // Default Result Collector
           ResultCollector defaultCollector = new DefaultResultCollector();
           return executeOnServer(function, defaultCollector, hasResult);
-        }
-        else { // Custome Result COllector
+        } else { // Custome Result COllector
           return executeOnServer(function, this.rc, hasResult);
         }
-      }
-      else { // No results
+      } else { // No results
         executeOnServerNoAck(function, hasResult);
         return new NoResult();
       }
-    }
-    finally {
+    } finally {
       UserAttributes.userAttributes.set(null);
     }
 
   }
 
-  private ResultCollector executeOnServer(Function function,
-      ResultCollector rc, byte hasResult) {
+  private ResultCollector executeOnServer(Function function, ResultCollector rc, byte hasResult) {
     FunctionStats stats = FunctionStats.getFunctionStats(function.getId());
     try {
       validateExecution(function, null);
       long start = stats.startTime();
       stats.startFunctionExecution(true);
-      ExecuteFunctionOp.execute(this.pool, function, this, args, memberMappedArg,
-          this.allServers, hasResult, rc, this.isFnSerializationReqd,
-          UserAttributes.userAttributes.get(), groups);
+      ExecuteFunctionOp.execute(this.pool, function, this, args, memberMappedArg, this.allServers, hasResult, rc, this.isFnSerializationReqd, UserAttributes.userAttributes.get(), groups);
       stats.endFunctionExecution(start, true);
       rc.endResults();
       return rc;
-    }
-    catch(FunctionException functionException){
+    } catch (FunctionException functionException) {
       stats.endFunctionExecutionWithException(true);
       throw functionException;
-    }
-    catch(ServerConnectivityException exception){
+    } catch (ServerConnectivityException exception) {
       throw exception;
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
       stats.endFunctionExecutionWithException(true);
       throw new FunctionException(exception);
     }
   }
-  
-  private ResultCollector executeOnServer(String functionId,
-      ResultCollector rc, byte hasResult, boolean isHA, boolean optimizeForWrite) {
+
+  private ResultCollector executeOnServer(String functionId, ResultCollector rc, byte hasResult, boolean isHA, boolean optimizeForWrite) {
     FunctionStats stats = FunctionStats.getFunctionStats(functionId);
     try {
       validateExecution(null, null);
       long start = stats.startTime();
       stats.startFunctionExecution(true);
-      ExecuteFunctionOp.execute(this.pool, functionId,this, args, memberMappedArg,
-          this.allServers, hasResult, rc, this.isFnSerializationReqd, isHA, optimizeForWrite, UserAttributes.userAttributes.get(), groups);
+      ExecuteFunctionOp.execute(this.pool, functionId, this, args, memberMappedArg, this.allServers, hasResult, rc, this.isFnSerializationReqd, isHA, optimizeForWrite, UserAttributes.userAttributes.get(), groups);
       stats.endFunctionExecution(start, true);
       rc.endResults();
       return rc;
-    }
-    catch(FunctionException functionException){
+    } catch (FunctionException functionException) {
       stats.endFunctionExecutionWithException(true);
       throw functionException;
-    }
-    catch(ServerConnectivityException exception){
+    } catch (ServerConnectivityException exception) {
       throw exception;
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
       stats.endFunctionExecutionWithException(true);
       throw new FunctionException(exception);
     }
@@ -204,47 +189,38 @@ public class ServerFunctionExecutor extends AbstractExecution {
       validateExecution(function, null);
       long start = stats.startTime();
       stats.startFunctionExecution(false);
-      ExecuteFunctionNoAckOp.execute(this.pool, function, args,
-          memberMappedArg, this.allServers, hasResult, this.isFnSerializationReqd, groups);
+      ExecuteFunctionNoAckOp.execute(this.pool, function, args, memberMappedArg, this.allServers, hasResult, this.isFnSerializationReqd, groups);
       stats.endFunctionExecution(start, false);
-    }
-    catch(FunctionException functionException){
+    } catch (FunctionException functionException) {
       stats.endFunctionExecutionWithException(false);
       throw functionException;
-    }
-    catch(ServerConnectivityException exception){
+    } catch (ServerConnectivityException exception) {
       throw exception;
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
       stats.endFunctionExecutionWithException(false);
       throw new FunctionException(exception);
     }
   }
 
-  private void executeOnServerNoAck(String functionId, byte hasResult,
-      boolean isHA, boolean optimizeForWrite) {
+  private void executeOnServerNoAck(String functionId, byte hasResult, boolean isHA, boolean optimizeForWrite) {
     FunctionStats stats = FunctionStats.getFunctionStats(functionId);
     try {
       validateExecution(null, null);
       long start = stats.startTime();
       stats.startFunctionExecution(false);
-      ExecuteFunctionNoAckOp.execute(this.pool, functionId, args,
-          memberMappedArg, this.allServers, hasResult, this.isFnSerializationReqd, isHA, optimizeForWrite, groups);
+      ExecuteFunctionNoAckOp.execute(this.pool, functionId, args, memberMappedArg, this.allServers, hasResult, this.isFnSerializationReqd, isHA, optimizeForWrite, groups);
       stats.endFunctionExecution(start, false);
-    }
-    catch(FunctionException functionException){
+    } catch (FunctionException functionException) {
       stats.endFunctionExecutionWithException(false);
       throw functionException;
-    }
-    catch(ServerConnectivityException exception){
+    } catch (ServerConnectivityException exception) {
       throw exception;
-    }
-    catch (Exception exception) {
+    } catch (Exception exception) {
       stats.endFunctionExecutionWithException(false);
       throw new FunctionException(exception);
     }
   }
-  
+
   public Pool getPool() {
     return this.pool;
   }
@@ -254,42 +230,31 @@ public class ServerFunctionExecutor extends AbstractExecution {
   }
 
   public Execution withFilter(Set filter) {
-    throw new FunctionException(
-        LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS
-            .toLocalizedString("filter"));
+    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS.toLocalizedString("filter"));
   }
-  
+
   @Override
   public InternalExecution withBucketFilter(Set<Integer> bucketIDs) {
-    throw new FunctionException(
-        LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS
-            .toLocalizedString("buckets as filter"));
+    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_DATA_INDEPENDENT_FUNCTIONS.toLocalizedString("buckets as filter"));
   }
 
   public Execution withArgs(Object args) {
     if (args == null) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString("args"));
-      }
+      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("args"));
+    }
     return new ServerFunctionExecutor(this, args);
   }
 
   public Execution withCollector(ResultCollector rs) {
     if (rs == null) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString("Result Collector"));
+      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("Result Collector"));
     }
     return new ServerFunctionExecutor(this, rs);
   }
 
-  public InternalExecution withMemberMappedArgument(
-      MemberMappedArgument argument) {
+  public InternalExecution withMemberMappedArgument(MemberMappedArgument argument) {
     if (argument == null) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString("MemberMapped Args"));
+      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("MemberMapped Args"));
     }
     return new ServerFunctionExecutor(this, argument);
   }
@@ -306,9 +271,7 @@ public class ServerFunctionExecutor extends AbstractExecution {
 
   public ResultCollector execute(final String functionName) {
     if (functionName == null) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     Function functionObject = FunctionService.getFunction(functionName);
@@ -316,105 +279,78 @@ public class ServerFunctionExecutor extends AbstractExecution {
       byte[] functionAttributes = getFunctionAttributes(functionName);
       if (functionAttributes == null) {
         Object obj = GetFunctionAttributeOp.execute(this.pool, functionName);
-        functionAttributes = (byte[])obj;
+        functionAttributes = (byte[]) obj;
         addFunctionAttributes(functionName, functionAttributes);
       }
       boolean hasResult = ((functionAttributes[0] == 1) ? true : false);
       boolean isHA = ((functionAttributes[1] == 1) ? true : false);
       boolean optimizeForWrite = ((functionAttributes[2] == 1) ? true : false);
       return executeFunction(functionName, hasResult, isHA, optimizeForWrite);
-    }
-    else {
+    } else {
       return executeFunction(functionObject);
     }
   }
 
-  public ResultCollector execute(String functionName, boolean hasResult)
-      throws FunctionException {
+  public ResultCollector execute(String functionName, boolean hasResult) throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
-      return executeFunction(functionName,hasResult, hasResult, false);   
-    }
-    else {
-      byte registeredFunctionState = AbstractExecution.getFunctionState(
-          functionObject.isHA(), functionObject.hasResult(), functionObject
-              .optimizeForWrite());
+      return executeFunction(functionName, hasResult, hasResult, false);
+    } else {
+      byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
       byte functionState = AbstractExecution.getFunctionState(hasResult, hasResult, false);
       if (registeredFunctionState != functionState) {
-        throw new FunctionException(
-            LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
-                .toLocalizedString(functionName));
+        throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
       }
       return executeFunction(functionObject);
     }
   }
-  
+
   public ResultCollector execute(String functionName, boolean hasResult, boolean isHA) throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     if (isHA && !hasResult) {
-      throw new FunctionException(
-          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
     }
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
-      return executeFunction(functionName,hasResult, isHA, false);
-    }
-    else{
-      byte registeredFunctionState = AbstractExecution.getFunctionState(
-          functionObject.isHA(), functionObject.hasResult(), functionObject
-              .optimizeForWrite());
+      return executeFunction(functionName, hasResult, isHA, false);
+    } else {
+      byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
       byte functionState = AbstractExecution.getFunctionState(isHA, hasResult, false);
       if (registeredFunctionState != functionState) {
-        throw new FunctionException(
-            LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
-                .toLocalizedString(functionName));
+        throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
       }
       return executeFunction(functionObject);
     }
   }
-  
+
   public ResultCollector execute(String functionName, boolean hasResult, boolean isHA, boolean isOptimizeForWrite) throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(
-          LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     if (isHA && !hasResult) {
-      throw new FunctionException(
-          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH
-              .toLocalizedString());
+      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
     }
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
-      return executeFunction(functionName,hasResult, isHA, isOptimizeForWrite);
-    }
-    else {
-      byte registeredFunctionState = AbstractExecution.getFunctionState(
-          functionObject.isHA(), functionObject.hasResult(), functionObject
-              .optimizeForWrite());
+      return executeFunction(functionName, hasResult, isHA, isOptimizeForWrite);
+    } else {
+      byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
       byte functionState = AbstractExecution.getFunctionState(isHA, hasResult, isOptimizeForWrite);
       if (registeredFunctionState != functionState) {
-        throw new FunctionException(
-            LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
-                .toLocalizedString(functionName));
+        throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
       }
-      return executeFunction(functionObject);      
+      return executeFunction(functionObject);
     }
   }
 }

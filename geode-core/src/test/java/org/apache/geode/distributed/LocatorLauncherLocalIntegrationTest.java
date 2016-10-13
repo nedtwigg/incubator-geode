@@ -57,7 +57,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
   @Before
   public final void setUpLocatorLauncherLocalIntegrationTest() throws Exception {
     disconnectFromDS();
-    System.setProperty(ProcessType.TEST_PREFIX_PROPERTY, getUniqueName()+"-");
+    System.setProperty(ProcessType.TEST_PREFIX_PROPERTY, getUniqueName() + "-");
   }
 
   @After
@@ -67,26 +67,17 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
 
   @Test
   public void testBuilderSetProperties() throws Throwable {
-    this.launcher = new Builder()
-        .setForce(true)
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(DISABLE_AUTO_RECONNECT, "true")
-        .set(LOG_LEVEL, "config")
-        .set(MCAST_PORT, "0")
-        .build();
+    this.launcher = new Builder().setForce(true).setMemberName(getUniqueName()).setPort(this.locatorPort).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(DISABLE_AUTO_RECONNECT, "true").set(LOG_LEVEL, "config").set(MCAST_PORT, "0").build();
 
     try {
       assertEquals(Status.ONLINE, this.launcher.start().getStatus());
       waitForLocatorToStart(this.launcher, true);
-  
+
       final InternalLocator locator = this.launcher.getLocator();
       assertNotNull(locator);
-  
+
       final DistributedSystem distributedSystem = locator.getDistributedSystem();
-  
+
       assertNotNull(distributedSystem);
       assertEquals("true", distributedSystem.getProperties().getProperty(DISABLE_AUTO_RECONNECT));
       assertEquals("0", distributedSystem.getProperties().getProperty(MCAST_PORT));
@@ -109,17 +100,10 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     final ProcessControllerFactory factory = new ProcessControllerFactory();
     assertTrue(factory.isAttachAPIFound());
   }
-  
+
   @Test
   public void testStartCreatesPidFile() throws Throwable {
-    this.launcher = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config")
-        .build();
+    this.launcher = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config").build();
 
     try {
       this.launcher.start();
@@ -135,11 +119,11 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       assertEquals(getPid(), pid);
 
       assertEquals(Status.ONLINE, this.launcher.status().getStatus());
-      
+
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
-      
+
     try {
       assertEquals(Status.STOPPED, this.launcher.stop().getStatus());
       waitForFileToDelete(this.pidFile);
@@ -162,27 +146,21 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     this.statusFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getStatusFileName());
     this.statusFile.createNewFile();
     assertTrue(this.statusFile.exists());
-    
+
     // build and start the locator
-    final Builder builder = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config");
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
     assertFalse(this.launcher.isForcing());
     this.launcher.start();
-    
+
     try {
       waitForLocatorToStart(this.launcher);
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
-    
+
     try {
       // validate the pid file and its contents
       this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
@@ -191,12 +169,12 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       assertTrue(pid > 0);
       assertTrue(ProcessUtils.isProcessAlive(pid));
       assertEquals(getPid(), pid);
-      
+
       // validate stale control files were deleted
       assertFalse(stopRequestFile.exists());
       assertFalse(statusRequestFile.exists());
       assertFalse(statusFile.exists());
-      
+
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
@@ -208,7 +186,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       this.errorCollector.addError(e);
     }
   }
-  
+
   @Test
   public void testStartOverwritesStalePidFile() throws Throwable {
     // create existing pid file
@@ -217,25 +195,19 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     writePid(this.pidFile, Integer.MAX_VALUE);
 
     // build and start the locator
-    final Builder builder = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config");
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
     assertFalse(this.launcher.isForcing());
     this.launcher.start();
-    
+
     try {
       waitForLocatorToStart(this.launcher);
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
-    
+
     try {
       // validate the pid file and its contents
       assertTrue(this.pidFile.exists());
@@ -267,25 +239,25 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     final int realPid = Host.getHost(0).getVM(3).invoke(() -> ProcessUtils.identifyPid());
     assertFalse(realPid == ProcessUtils.identifyPid());
     writePid(this.pidFile, realPid);
-
+  
     // build and start the locator
     final Builder builder = new Builder()
         .setForce(true)
         .setMemberName(getUniqueName())
         .setPort(this.locatorPort)
         .setRedirectOutput(true)
-
+  
     assertTrue(builder.getForce());
     this.launcher = builder.build();
     assertTrue(this.launcher.isForcing());
     this.launcher.start();
-
+  
     // collect and throw the FIRST failure
     Throwable failure = null;
-
+  
     try {
       waitForLocatorToStart(this.launcher);
-
+  
       // validate the pid file and its contents
       assertTrue(this.pidFile.exists());
       final int pid = readPid(this.pidFile);
@@ -303,7 +275,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
         failure = e;
       }
     }
-
+  
     try {
       assertIndexDetailsEquals(Status.STOPPED, this.launcher.stop().getStatus());
       waitForFileToDelete(this.pidFile);
@@ -319,7 +291,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     }
   } // testStartUsingForceOverwritesExistingPidFile
   */
-  
+
   @Test
   public void testStartWithDefaultPortInUseFails() throws Throwable {
     // Test makes no sense in this case
@@ -335,21 +307,15 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     assertNotNull(System.getProperty(DistributionLocator.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY));
     assertEquals(this.locatorPort, Integer.valueOf(System.getProperty(DistributionLocator.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY)).intValue());
     assertFalse(AvailablePort.isPortAvailable(this.locatorPort, AvailablePort.SOCKET));
-    
-    this.launcher = new Builder()
-        .setMemberName(getUniqueName())
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config")
-        .build();
-    
+
+    this.launcher = new Builder().setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config").build();
+
     assertEquals(this.locatorPort, this.launcher.getPort().intValue());
-    
+
     RuntimeException expected = null;
     try {
       this.launcher.start();
-     
+
       // why did it not fail like it's supposed to?
       final String property = System.getProperty(DistributionLocator.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY);
       assertNotNull(property);
@@ -359,7 +325,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       assertEquals(this.locatorPort, this.socket.getLocalPort());
       assertTrue(this.socket.isBound());
       assertFalse(this.socket.isClosed());
-      
+
       fail("LocatorLauncher start should have thrown RuntimeException caused by BindException");
     } catch (RuntimeException e) {
       expected = e;
@@ -368,7 +334,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
-    
+
     try {
       assertNotNull(expected);
       final Throwable cause = expected.getCause();
@@ -380,25 +346,25 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     }
 
     try {
-      this.pidFile = new File (this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
+      this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
       assertFalse("Pid file should not exist: " + this.pidFile, this.pidFile.exists());
-      
+
       // creation of log file seems to be random -- look into why sometime
-      final String logFileName = getUniqueName()+".log";
+      final String logFileName = getUniqueName() + ".log";
       assertFalse("Log file should not exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
-      
+
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
-    
+
     // just in case the launcher started...
     LocatorState status = null;
     try {
       status = this.launcher.stop();
-    } catch (Throwable t) { 
+    } catch (Throwable t) {
       // ignore
     }
-    
+
     try {
       waitForFileToDelete(this.pidFile);
       assertEquals(getExpectedStopStatusForNotRunning(), status.getStatus());
@@ -406,7 +372,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       this.errorCollector.addError(e);
     }
   }
-  
+
   @Test
   @Ignore("Need to rewrite this without using dunit.Host")
   public void testStartWithExistingPidFileFails() throws Throwable {
@@ -414,7 +380,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     // create existing pid file
     final int realPid = Host.getHost(0).getVM(3).invoke(() -> ProcessUtils.identifyPid());
     assertFalse("Remote pid shouldn't be the same as local pid " + realPid, realPid == ProcessUtils.identifyPid());
-
+   
     this.pidFile = new File(ProcessType.LOCATOR.getPidFileName());
     writePid(this.pidFile, realPid);
     
@@ -424,11 +390,11 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
         .setPort(this.locatorPort)
         .setRedirectOutput(true)
         .set(logLevel, "config");
-
+   
     assertFalse(builder.getForce());
     this.launcher = builder.build();
     assertFalse(this.launcher.isForcing());
-
+   
     // collect and throw the FIRST failure
     Throwable failure = null;
     RuntimeException expected = null;
@@ -447,7 +413,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
         failure = e;
       }
     }
-
+   
     // just in case the launcher started...
     LocatorState status = null;
     try {
@@ -485,8 +451,8 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     if (failure != null) {
       throw failure;
     }
-  } // testStartWithExistingPidFileFails
-  */
+   } // testStartWithExistingPidFileFails
+   */
 
   @Test
   public void testStartUsingPort() throws Throwable {
@@ -494,14 +460,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     final int freeTCPPort = AvailablePortHelper.getRandomAvailableTCPPort();
     assertTrue(AvailablePort.isPortAvailable(freeTCPPort, AvailablePort.SOCKET));
 
-    this.launcher = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(freeTCPPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config")
-        .build();
+    this.launcher = new Builder().setMemberName(getUniqueName()).setPort(freeTCPPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config").build();
 
     int pid = 0;
     try {
@@ -519,7 +478,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
 
       // verify locator did not use default port
       assertTrue(AvailablePort.isPortAvailable(this.locatorPort, AvailablePort.SOCKET));
-      
+
       final LocatorState status = this.launcher.status();
       final String portString = status.getPort();
       assertEquals("Port should be \"" + freeTCPPort + "\" instead of " + portString, String.valueOf(freeTCPPort), portString);
@@ -535,7 +494,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       this.errorCollector.addError(e);
     }
   }
-  
+
   @Test
   public void testStartUsingPortInUseFails() throws Throwable {
     // Test makes no sense in this case
@@ -545,16 +504,9 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
 
     // generate one free port and then use it instead of default
     this.socket = SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.CLUSTER).createServerSocket(this.locatorPort, 50, null, -1);
-    
-    this.launcher = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config")
-        .build();
-    
+
+    this.launcher = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config").build();
+
     RuntimeException expected = null;
     try {
       this.launcher.start();
@@ -566,7 +518,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
-    
+
     try {
       assertNotNull(expected);
       final Throwable cause = expected.getCause();
@@ -578,25 +530,25 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     }
 
     try {
-      this.pidFile = new File (this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
+      this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
       assertFalse("Pid file should not exist: " + this.pidFile, this.pidFile.exists());
-      
+
       // creation of log file seems to be random -- look into why sometime
-      final String logFileName = getUniqueName()+".log";
+      final String logFileName = getUniqueName() + ".log";
       assertFalse("Log file should not exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
-      
+
     } catch (Throwable e) {
       this.errorCollector.addError(e);
     }
-    
+
     // just in case the launcher started...
     LocatorState status = null;
     try {
       status = this.launcher.stop();
-    } catch (Throwable t) { 
+    } catch (Throwable t) {
       // ignore
     }
-    
+
     try {
       waitForFileToDelete(this.pidFile);
       assertEquals(getExpectedStopStatusForNotRunning(), status.getStatus());
@@ -604,33 +556,27 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       this.errorCollector.addError(e);
     }
   }
-  
+
   @Test
   public void testStatusUsingPid() throws Throwable {
     // build and start the locator
-    final Builder builder = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config");
-    
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config");
+
     assertFalse(builder.getForce());
     this.launcher = builder.build();
     assertFalse(this.launcher.isForcing());
-    
+
     LocatorLauncher pidLauncher = null;
     try {
       this.launcher.start();
       waitForLocatorToStart(this.launcher);
-      
+
       this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
       assertTrue("Pid file " + this.pidFile.getCanonicalPath().toString() + " should exist", this.pidFile.exists());
       final int pid = readPid(this.pidFile);
       assertTrue(pid > 0);
       assertEquals(ProcessUtils.identifyPid(), pid);
-  
+
       pidLauncher = new Builder().setPid(pid).build();
       assertNotNull(pidLauncher);
       assertFalse(pidLauncher.isRunning());
@@ -643,7 +589,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       // getWorkingDirectory returns user.dir instead of rootFolder because test is starting Locator in this process (to move logFile and pidFile into temp dir)
       assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
       assertEquals(GemFireVersion.getGemFireVersion(), actualStatus.getGemFireVersion());
-      assertEquals(System.getProperty("java.version"),  actualStatus.getJavaVersion());
+      assertEquals(System.getProperty("java.version"), actualStatus.getJavaVersion());
       assertEquals(this.workingDirectory + File.separator + getUniqueName() + ".log", actualStatus.getLogFile());
       assertEquals(InetAddress.getLocalHost().getCanonicalHostName(), actualStatus.getHost());
       assertEquals(getUniqueName(), actualStatus.getMemberName());
@@ -658,7 +604,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       } catch (Throwable e) {
         this.errorCollector.addError(e);
       }
-      
+
     } else {
       try {
         assertEquals(Status.STOPPED, pidLauncher.stop().getStatus());
@@ -668,32 +614,26 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       }
     }
   }
-  
+
   @Test
   public void testStatusUsingWorkingDirectory() throws Throwable {
-    final Builder builder = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config");
-    
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config");
+
     assertFalse(builder.getForce());
     this.launcher = builder.build();
     assertFalse(this.launcher.isForcing());
-    
+
     LocatorLauncher dirLauncher = null;
     try {
       this.launcher.start();
       waitForLocatorToStart(this.launcher);
-      
+
       this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
       assertTrue("Pid file " + this.pidFile.getCanonicalPath().toString() + " should exist", this.pidFile.exists());
       final int pid = readPid(this.pidFile);
       assertTrue(pid > 0);
       assertEquals(ProcessUtils.identifyPid(), pid);
-  
+
       dirLauncher = new Builder().setWorkingDirectory(this.workingDirectory).build();
       assertNotNull(dirLauncher);
       assertFalse(dirLauncher.isRunning());
@@ -706,7 +646,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       // getWorkingDirectory returns user.dir instead of rootFolder because test is starting Locator in this process (to move logFile and pidFile into temp dir)
       assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
       assertEquals(GemFireVersion.getGemFireVersion(), actualStatus.getGemFireVersion());
-      assertEquals(System.getProperty("java.version"),  actualStatus.getJavaVersion());
+      assertEquals(System.getProperty("java.version"), actualStatus.getJavaVersion());
       assertEquals(this.workingDirectory + File.separator + getUniqueName() + ".log", actualStatus.getLogFile());
       assertEquals(InetAddress.getLocalHost().getCanonicalHostName(), actualStatus.getHost());
       assertEquals(getUniqueName(), actualStatus.getMemberName());
@@ -721,7 +661,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       } catch (Throwable e) {
         this.errorCollector.addError(e);
       }
-      
+
     } else {
       try {
         assertEquals(Status.STOPPED, dirLauncher.stop().getStatus());
@@ -731,16 +671,10 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       }
     }
   }
-  
+
   @Test
   public void testStopUsingPid() throws Throwable {
-    final Builder builder = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config");
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
@@ -750,7 +684,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     try {
       this.launcher.start();
       waitForLocatorToStart(this.launcher);
-  
+
       // validate the pid file and its contents
       this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
       assertTrue(this.pidFile.exists());
@@ -761,7 +695,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       pidLauncher = new Builder().setPid(pid).build();
       assertNotNull(pidLauncher);
       assertFalse(pidLauncher.isRunning());
-      
+
       // stop the locator
       final LocatorState locatorState = pidLauncher.stop();
       assertNotNull(locatorState);
@@ -783,16 +717,10 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       this.errorCollector.addError(e);
     }
   }
-  
+
   @Test
   public void testStopUsingWorkingDirectory() throws Throwable {
-    final Builder builder = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(true)
-        .setWorkingDirectory(this.workingDirectory)
-        .set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory)
-        .set(LOG_LEVEL, "config");
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(true).setWorkingDirectory(this.workingDirectory).set(CLUSTER_CONFIGURATION_DIR, this.clusterConfigDirectory).set(LOG_LEVEL, "config");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
@@ -802,7 +730,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
     try {
       this.launcher.start();
       waitForLocatorToStart(this.launcher);
-    
+
       // validate the pid file and its contents
       this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
       assertTrue("Pid file " + this.pidFile.getCanonicalPath().toString() + " should exist", this.pidFile.exists());
@@ -813,7 +741,7 @@ public class LocatorLauncherLocalIntegrationTest extends AbstractLocatorLauncher
       dirLauncher = new Builder().setWorkingDirectory(this.workingDirectory).build();
       assertNotNull(dirLauncher);
       assertFalse(dirLauncher.isRunning());
-      
+
       // stop the locator
       final LocatorState locatorState = dirLauncher.stop();
       assertNotNull(locatorState);

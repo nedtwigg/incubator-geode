@@ -41,24 +41,9 @@ public class DummyAuthorization implements AccessControl {
   private DistributedMember remoteMember;
   private LogWriter securityLogWriter;
 
-  public static final OperationCode[] READER_OPS = {
-      OperationCode.GET,
-      OperationCode.QUERY,
-      OperationCode.EXECUTE_CQ,
-      OperationCode.CLOSE_CQ,
-      OperationCode.STOP_CQ,
-      OperationCode.REGISTER_INTEREST,
-      OperationCode.UNREGISTER_INTEREST,
-      OperationCode.KEY_SET,
-      OperationCode.CONTAINS_KEY,
-      OperationCode.EXECUTE_FUNCTION };
+  public static final OperationCode[] READER_OPS = { OperationCode.GET, OperationCode.QUERY, OperationCode.EXECUTE_CQ, OperationCode.CLOSE_CQ, OperationCode.STOP_CQ, OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, OperationCode.KEY_SET, OperationCode.CONTAINS_KEY, OperationCode.EXECUTE_FUNCTION };
 
-  public static final OperationCode[] WRITER_OPS = {
-      OperationCode.PUT,
-      OperationCode.PUTALL,
-      OperationCode.DESTROY,
-      OperationCode.INVALIDATE,
-      OperationCode.REGION_CLEAR };
+  public static final OperationCode[] WRITER_OPS = { OperationCode.PUT, OperationCode.PUTALL, OperationCode.DESTROY, OperationCode.INVALIDATE, OperationCode.REGION_CLEAR };
 
   public static AccessControl create() {
     return new DummyAuthorization();

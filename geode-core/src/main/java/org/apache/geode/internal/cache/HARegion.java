@@ -56,12 +56,11 @@ import org.apache.geode.internal.offheap.annotations.Released;
  * @since GemFire 4.3
  *  
  */
-public final class HARegion extends DistributedRegion
-{
+public final class HARegion extends DistributedRegion {
   private static final Logger logger = LogService.getLogger();
-  
+
   CachePerfStats haRegionStats;
-  
+
   // Prevent this region from participating in a TX, bug 38709 
   @Override
   protected boolean isSecret() {
@@ -72,7 +71,7 @@ public final class HARegion extends DistributedRegion
   protected boolean isCopyOnRead() {
     return false;
   }
-  
+
   @Override
   public boolean doesNotDistribute() {
     return true;
@@ -82,18 +81,17 @@ public final class HARegion extends DistributedRegion
   protected StringBuilder getStringBuilder() {
     StringBuilder buf = new StringBuilder();
     buf.append("HARegion");
-    buf.append("[path='")
-       .append(getFullPath());
+    buf.append("[path='").append(getFullPath());
     return buf;
   }
 
   //  protected Object conditionalCopy(Object o) {
-//    return o;
-//  }
+  //    return o;
+  //  }
 
   private volatile HARegionQueue owningQueue;
 
-//  private Map giiProviderStates;
+  //  private Map giiProviderStates;
 
   /**
    * @param regionName
@@ -101,14 +99,11 @@ public final class HARegion extends DistributedRegion
    * @param parentRegion
    * @param cache
    */
-  private HARegion(String regionName, RegionAttributes attrs,
-      LocalRegion parentRegion, GemFireCacheImpl cache) {
-    super(regionName, attrs, parentRegion, cache, new InternalRegionArguments()
-        .setDestroyLockFlag(true).setRecreateFlag(false)
-        .setSnapshotInputStream(null).setImageTarget(null));
+  private HARegion(String regionName, RegionAttributes attrs, LocalRegion parentRegion, GemFireCacheImpl cache) {
+    super(regionName, attrs, parentRegion, cache, new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null));
     this.haRegionStats = new DummyCachePerfStats();
   }
-  
+
   @Override
   public boolean allowsPersistence() {
     return false;
@@ -148,14 +143,12 @@ public final class HARegion extends DistributedRegion
    * <p>author Asif
    */
   @Override
-  public ExpirationAttributes setEntryTimeToLive(ExpirationAttributes timeToLive)
-  {
+  public ExpirationAttributes setEntryTimeToLive(ExpirationAttributes timeToLive) {
     //checkReadiness();
     if (timeToLive == null) {
       throw new IllegalArgumentException(LocalizedStrings.HARegion_TIMETOLIVE_MUST_NOT_BE_NULL.toLocalizedString());
     }
-    if ((timeToLive.getAction() == ExpirationAction.LOCAL_DESTROY && this.dataPolicy
-        .withReplication())) {
+    if ((timeToLive.getAction() == ExpirationAction.LOCAL_DESTROY && this.dataPolicy.withReplication())) {
       throw new IllegalArgumentException(LocalizedStrings.HARegion_TIMETOLIVE_ACTION_IS_INCOMPATIBLE_WITH_THIS_REGIONS_MIRROR_TYPE.toLocalizedString());
     }
     if (!this.statisticsEnabled) {
@@ -179,20 +172,15 @@ public final class HARegion extends DistributedRegion
    * <p>author Asif
    */
   @Override
-  protected void basicInvalidate(final EntryEventImpl event,
-      boolean invokeCallbacks, final boolean forceNewEntry)
-      throws EntryNotFoundException
-  {
+  protected void basicInvalidate(final EntryEventImpl event, boolean invokeCallbacks, final boolean forceNewEntry) throws EntryNotFoundException {
     Object key = event.getKey();
     if (key instanceof Long) {
       boolean removedFromAvID = false;
       Conflatable conflatable = null;
       try {
-        conflatable = (Conflatable)this.get(key);
-        removedFromAvID = !this.owningQueue.isPrimary()
-            && this.owningQueue.destroyFromAvailableIDs((Long)key);
-      }
-      catch (InterruptedException ie) {
+        conflatable = (Conflatable) this.get(key);
+        removedFromAvID = !this.owningQueue.isPrimary() && this.owningQueue.destroyFromAvailableIDs((Long) key);
+      } catch (InterruptedException ie) {
         Thread.currentThread().interrupt();
         getCancelCriterion().checkCancelInProgress(ie);
         return;
@@ -200,17 +188,16 @@ public final class HARegion extends DistributedRegion
       if (!removedFromAvID) {
         return;
       }
-      
+
       // <HA overflow>
-      if(conflatable instanceof HAEventWrapper) {
-        this.owningQueue
-            .decAndRemoveFromHAContainer((HAEventWrapper)conflatable);
+      if (conflatable instanceof HAEventWrapper) {
+        this.owningQueue.decAndRemoveFromHAContainer((HAEventWrapper) conflatable);
       }
       // </HA overflow>
       //update the stats
       this.owningQueue.stats.incEventsExpired();
     }
-    this.entries.invalidate(event, invokeCallbacks, forceNewEntry,false);
+    this.entries.invalidate(event, invokeCallbacks, forceNewEntry, false);
     return;
 
   }
@@ -220,30 +207,28 @@ public final class HARegion extends DistributedRegion
    * objects to happen
    */
   @Override
-  protected boolean checkEntryNotValid(RegionEntry mapEntry)
-  {
+  protected boolean checkEntryNotValid(RegionEntry mapEntry) {
     return (super.checkEntryNotValid(mapEntry) || mapEntry.getKey() instanceof ThreadIdentifier);
   }
 
   @Override
-  public final Object put(Object key, Object value, Object aCallbackArgument)
-      throws TimeoutException, CacheWriterException {
+  public final Object put(Object key, Object value, Object aCallbackArgument) throws TimeoutException, CacheWriterException {
     checkReadiness();
 
-    @Released EntryEventImpl event = EntryEventImpl.create(this, Operation.UPDATE, key,
-        value, aCallbackArgument, false, getMyId());
+    @Released
+    EntryEventImpl event = EntryEventImpl.create(this, Operation.UPDATE, key, value, aCallbackArgument, false, getMyId());
     try {
 
-    Object oldValue = null;
+      Object oldValue = null;
 
-    if (basicPut(event, false, // ifNew
-        false, // ifOld
-        null, // expectedOldValue
-        false // requireOldValue
-    )) {
-      oldValue = event.getOldValue();
-    }
-    return handleNotAvailable(oldValue);
+      if (basicPut(event, false, // ifNew
+          false, // ifOld
+          null, // expectedOldValue
+          false // requireOldValue
+      )) {
+        oldValue = event.getOldValue();
+      }
+      return handleNotAvailable(oldValue);
     } finally {
       event.release();
     }
@@ -266,42 +251,34 @@ public final class HARegion extends DistributedRegion
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public static HARegion getInstance(String regionName, GemFireCacheImpl cache,
-      HARegionQueue hrq, RegionAttributes ra) throws TimeoutException,
-      RegionExistsException, IOException, ClassNotFoundException
-  {
+  public static HARegion getInstance(String regionName, GemFireCacheImpl cache, HARegionQueue hrq, RegionAttributes ra) throws TimeoutException, RegionExistsException, IOException, ClassNotFoundException {
 
     HARegion haRegion = new HARegion(regionName, ra, null, cache);
     haRegion.setOwner(hrq);
-    Region region = cache.createVMRegion(regionName, ra, new InternalRegionArguments().setInternalMetaRegion(haRegion)
-                                                                                      .setDestroyLockFlag(true)
-                                                                                      .setSnapshotInputStream(null)
-                                                                                      .setInternalRegion(true)
-                                                                                      .setImageTarget(null));
+    Region region = cache.createVMRegion(regionName, ra, new InternalRegionArguments().setInternalMetaRegion(haRegion).setDestroyLockFlag(true).setSnapshotInputStream(null).setInternalRegion(true).setImageTarget(null));
 
-    return (HARegion)region;
+    return (HARegion) region;
   }
 
   public boolean isPrimaryQueue() {
     if (this.owningQueue != null) {
       return this.owningQueue.isPrimary();
-    } 
+    }
     return false;
   }
-  
-  public HARegionQueue getOwner()
-  {
+
+  public HARegionQueue getOwner() {
     // fix for bug #41634 - don't release a reference to the owning queue until
     // it is fully initialized.  The previous implementation of this rule did
     // not protect subclasses of HARegionQueue and caused the bug.
-    return this.owningQueue.isQueueInitialized()? this.owningQueue : null;
+    return this.owningQueue.isQueueInitialized() ? this.owningQueue : null;
   }
 
   @Override
   public CachePerfStats getCachePerfStats() {
     return this.haRegionStats;
   }
-  
+
   /**
    * This method is used to set the HARegionQueue owning the HARegion. It is set
    * after the HARegionQueue is properly constructed
@@ -309,26 +286,22 @@ public final class HARegion extends DistributedRegion
    * @param hrq
    *          The owning HARegionQueue instance
    */
-  public void setOwner(HARegionQueue hrq)
-  {
+  public void setOwner(HARegionQueue hrq) {
     this.owningQueue = hrq;
   }
 
   @Override
-  final protected boolean shouldNotifyBridgeClients()
-  {
+  final protected boolean shouldNotifyBridgeClients() {
     return false;
   }
-  
+
   // re-implemented from LocalRegion to avoid recording the event in GemFireCache
   // before it's applied to the cache's region
-//  public boolean hasSeenClientEvent(InternalCacheEvent event) {
-//    return false;
-//  }
+  //  public boolean hasSeenClientEvent(InternalCacheEvent event) {
+  //    return false;
+  //  }
 
-  protected void notifyGatewayHub(EnumListenerEvent operation,
-      EntryEventImpl event)
-  {
+  protected void notifyGatewayHub(EnumListenerEvent operation, EntryEventImpl event) {
   }
 
   /**
@@ -338,12 +311,9 @@ public final class HARegion extends DistributedRegion
    * @see org.apache.geode.internal.cache.AbstractRegion#destroyRegion()
    */
   @Override
-  public void destroyRegion(Object aCallbackArgument)
-      throws CacheWriterException, TimeoutException
-  {
+  public void destroyRegion(Object aCallbackArgument) throws CacheWriterException, TimeoutException {
     //Do not generate EventID
-    RegionEventImpl event = new RegionEventImpl(this, Operation.REGION_DESTROY,
-        aCallbackArgument, true /* isOriginRemote */, getMyId());
+    RegionEventImpl event = new RegionEventImpl(this, Operation.REGION_DESTROY, aCallbackArgument, true /* isOriginRemote */, getMyId());
 
     basicDestroyRegion(event, true);
   }
@@ -352,43 +322,28 @@ public final class HARegion extends DistributedRegion
    * Never genearte EventID for any Entry or Region operation on the HARegion
    */
   @Override
-  final public boolean generateEventID()
-  {
+  final public boolean generateEventID() {
     return false;
   }
-  
+
   @Override
-  protected void initialize(InputStream snapshotInputStream,
-      InternalDistributedMember imageTarget,
-      InternalRegionArguments internalRegionArgs) 
-    throws TimeoutException, IOException, ClassNotFoundException
-  {
+  protected void initialize(InputStream snapshotInputStream, InternalDistributedMember imageTarget, InternalRegionArguments internalRegionArgs) throws TimeoutException, IOException, ClassNotFoundException {
     // Set this region in the ProxyBucketRegion early so that profile exchange will
     // perform the correct fillInProfile method
-//    try {
-      super.initialize(snapshotInputStream, imageTarget, internalRegionArgs);
-//    } finally {
-//      this.giiProviderStates = null;
-//    }
+    //    try {
+    super.initialize(snapshotInputStream, imageTarget, internalRegionArgs);
+    //    } finally {
+    //      this.giiProviderStates = null;
+    //    }
   }
-  
+
   /**
    * @return the deserialized value
    * @see LocalRegion#findObjectInSystem(KeyInfo, boolean, TXStateInterface, boolean, Object, boolean, boolean, ClientProxyMembershipID, EntryEventImpl, boolean)
    *      
    */
   @Override
-  protected Object findObjectInSystem(KeyInfo keyInfo,
-                                      boolean isCreate,
-                                      TXStateInterface txState,
-                                      boolean generateCallbacks,
-                                      Object localValue,
-                                      boolean disableCopyOnRead,
-                                      boolean preferCD,
-                                      ClientProxyMembershipID requestingClient,
-                                      EntryEventImpl clientEvent,
-                                      boolean returnTombstones)
-    throws CacheLoaderException, TimeoutException  {
+  protected Object findObjectInSystem(KeyInfo keyInfo, boolean isCreate, TXStateInterface txState, boolean generateCallbacks, Object localValue, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) throws CacheLoaderException, TimeoutException {
 
     Object value = null;
     final Object key = keyInfo.getKey();
@@ -398,13 +353,10 @@ public final class HARegion extends DistributedRegion
     Assert.assertTrue(!hasServerProxy());
     CacheLoader loader = basicGetLoader();
     if (loader != null) {
-      final LoaderHelper loaderHelper = loaderHelperFactory.createLoaderHelper(
-          key, aCallbackArgument, false /* netSearchAllowed */,
-          true /* netloadallowed */, null/* searcher */);
+      final LoaderHelper loaderHelper = loaderHelperFactory.createLoaderHelper(key, aCallbackArgument, false /* netSearchAllowed */, true /* netloadallowed */, null/* searcher */);
       try {
         value = loader.load(loaderHelper);
-      }
-      finally {
+      } finally {
       }
 
       if (value != null) {
@@ -413,23 +365,20 @@ public final class HARegion extends DistributedRegion
           Operation op;
           if (isCreate) {
             op = Operation.LOCAL_LOAD_CREATE;
-          }
-          else {
+          } else {
             op = Operation.LOCAL_LOAD_UPDATE;
           }
 
-          @Released EntryEventImpl event = EntryEventImpl.create(
-              this, op, key, value,
-              aCallbackArgument, false, getMyId(), generateCallbacks);
+          @Released
+          EntryEventImpl event = EntryEventImpl.create(this, op, key, value, aCallbackArgument, false, getMyId(), generateCallbacks);
           try {
-          re = basicPutEntry(event, 0L);
+            re = basicPutEntry(event, 0L);
           } finally {
             event.release();
           }
           if (txState == null) {
           }
-        }
-        catch (CacheWriterException cwe) {
+        } catch (CacheWriterException cwe) {
           // @todo smenon Log the exception
         }
       }
@@ -439,7 +388,7 @@ public final class HARegion extends DistributedRegion
     }
     return value;
   }
-  
+
   /**
    * invoked when we start providing a GII image
    */
@@ -454,7 +403,7 @@ public final class HARegion extends DistributedRegion
     }
     this.owningQueue.startGiiQueueing();
   }
-  
+
   /**
    * invoked when we finish providing a GII image
    */
@@ -466,13 +415,13 @@ public final class HARegion extends DistributedRegion
 
   @Override
   protected CacheDistributionAdvisor createDistributionAdvisor(InternalRegionArguments internalRegionArgs) {
-    return HARegionAdvisor.createHARegionAdvisor(this);  // Warning: potential early escape of object before full construction
+    return HARegionAdvisor.createHARegionAdvisor(this); // Warning: potential early escape of object before full construction
   }
-  
+
   @Override
   public void fillInProfile(Profile p) {
     super.fillInProfile(p);
-    HARegionAdvisor.HAProfile h = (HARegionAdvisor.HAProfile)p;
+    HARegionAdvisor.HAProfile h = (HARegionAdvisor.HAProfile) p;
     // dunit tests create HARegions without encapsulating them in queues
     if (this.owningQueue != null) {
       h.isPrimary = this.owningQueue.isPrimary();
@@ -504,23 +453,20 @@ public final class HARegion extends DistributedRegion
       this.owningQueue.recordEventState(sender, eventState);
     }
   }
-  
-  
+
   /** send a distribution advisor profile update to other members */
   public void sendProfileUpdate() {
     new UpdateAttributesProcessor(this).distribute(false);
   }
 
-  
   /**
    * whether the primary queue for the client has registered interest, or
    * there is no primary present
    */
   public boolean noPrimaryOrHasRegisteredInterest() {
-    return ((HARegionAdvisor)this.distAdvisor).noPrimaryOrHasRegisteredInterest();
+    return ((HARegionAdvisor) this.distAdvisor).noPrimaryOrHasRegisteredInterest();
   }
-  
-  
+
   /** HARegions have their own advisors so that interest registration state can be tracked */
   public static class HARegionAdvisor extends CacheDistributionAdvisor {
     /**
@@ -529,34 +475,32 @@ public final class HARegion extends DistributedRegion
     private HARegionAdvisor(CacheDistributionAdvisee region) {
       super(region);
     }
-    
+
     public static HARegionAdvisor createHARegionAdvisor(CacheDistributionAdvisee region) {
       HARegionAdvisor advisor = new HARegionAdvisor(region);
       advisor.initialize();
       return advisor;
     }
-    
+
     /* (non-Javadoc)
      * @see org.apache.geode.internal.cache.CacheDistributionAdvisor#adviseInitialImage(org.apache.geode.internal.cache.CacheDistributionAdvisor.InitialImageAdvice)
      */
     @Override
-    public InitialImageAdvice adviseInitialImage(
-        InitialImageAdvice previousAdvice) {
+    public InitialImageAdvice adviseInitialImage(InitialImageAdvice previousAdvice) {
       InitialImageAdvice r = super.adviseInitialImage(previousAdvice);
       r.setOthers(this.getAdvisee().getDistributionManager().getOtherDistributionManagerIds());
       return r;
     }
-      
+
     @Override
-    protected Profile instantiateProfile(
-        InternalDistributedMember memberId, int version) {
+    protected Profile instantiateProfile(InternalDistributedMember memberId, int version) {
       return new HAProfile(memberId, version);
     }
 
     public boolean noPrimaryOrHasRegisteredInterest() {
       Profile[] locProfiles = this.profiles; // grab current profiles
-      for (int i=0; i<locProfiles.length; i++) {
-        HAProfile p = (HAProfile)locProfiles[i];
+      for (int i = 0; i < locProfiles.length; i++) {
+        HAProfile p = (HAProfile) locProfiles[i];
         if (p.isPrimary) {
           return p.hasRegisteredInterest;
         }
@@ -564,15 +508,15 @@ public final class HARegion extends DistributedRegion
       // if no primary, we want to accept events
       return true;
     }
-    
+
     public static class HAProfile extends CacheProfile {
       private static int HAS_REGISTERED_INTEREST_BIT = 0x01;
       private static int IS_PRIMARY_BIT = 0x02;
-      
+
       boolean hasRegisteredInterest;
 
       boolean isPrimary;
-      
+
       public HAProfile() {
         // for deserialization only
       }
@@ -585,14 +529,13 @@ public final class HARegion extends DistributedRegion
        * @see org.apache.geode.internal.cache.CacheDistributionAdvisor.CacheProfile#fromData(java.io.DataInput)
        */
       @Override
-      public void fromData(DataInput in) throws IOException,
-          ClassNotFoundException {
+      public void fromData(DataInput in) throws IOException, ClassNotFoundException {
         super.fromData(in);
         int flags = in.readByte();
         hasRegisteredInterest = (flags & HAS_REGISTERED_INTEREST_BIT) != 0;
         isPrimary = (flags & IS_PRIMARY_BIT) != 0;
       }
-      
+
       /* (non-Javadoc)
        * @see org.apache.geode.internal.cache.CacheDistributionAdvisor.CacheProfile#toData(java.io.DataOutput)
        */
@@ -600,8 +543,12 @@ public final class HARegion extends DistributedRegion
       public void toData(DataOutput out) throws IOException {
         super.toData(out);
         int flags = 0;
-        if (hasRegisteredInterest) { flags |= HAS_REGISTERED_INTEREST_BIT; }
-        if (isPrimary)             { flags |= IS_PRIMARY_BIT; }
+        if (hasRegisteredInterest) {
+          flags |= HAS_REGISTERED_INTEREST_BIT;
+        }
+        if (isPrimary) {
+          flags |= IS_PRIMARY_BIT;
+        }
         out.writeByte(flags & 0xff);
       }
 

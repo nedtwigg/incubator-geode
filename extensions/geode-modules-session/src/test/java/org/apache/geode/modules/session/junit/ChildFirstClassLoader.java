@@ -23,7 +23,7 @@ import java.net.URLClassLoader;
 public class ChildFirstClassLoader extends URLClassLoader {
 
   public ChildFirstClassLoader() {
-    super(new URL[]{});
+    super(new URL[] {});
   }
 
   public ChildFirstClassLoader(URL[] urls) {
@@ -49,8 +49,7 @@ public class ChildFirstClassLoader extends URLClassLoader {
    * java.lang.Classloader.
    */
   @Override
-  protected Class loadClass(String name, boolean resolve)
-      throws ClassNotFoundException {
+  protected Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
     Class c = null;
 
     if (name.startsWith("org.apache")) {

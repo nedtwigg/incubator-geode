@@ -40,7 +40,7 @@ public class LocalExporter<K, V> implements Exporter<K, V> {
   @Override
   public long export(Region<K, V> region, ExportSink sink, SnapshotOptions<K, V> options) throws IOException {
     LocalRegion local = RegionSnapshotServiceImpl.getLocalRegion(region);
-    
+
     long count = 0;
     for (Entry<K, V> entry : region.entrySet()) {
       try {

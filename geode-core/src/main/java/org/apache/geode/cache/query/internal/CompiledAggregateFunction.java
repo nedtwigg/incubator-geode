@@ -53,8 +53,7 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
     this(expr, aggFunc, false);
   }
 
-  public CompiledAggregateFunction(CompiledValue expr, int aggFunc,
-      boolean distinctOnly) {
+  public CompiledAggregateFunction(CompiledValue expr, int aggFunc, boolean distinctOnly) {
     this.expr = expr;
     this.aggFuncType = aggFunc;
     this.distinctOnly = distinctOnly;
@@ -67,9 +66,7 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
   }
 
   @Override
-  public Object evaluate(ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     boolean isPRQueryNode = context.getIsPRQueryNode();
     boolean isBucketNode = context.getBucketList() != null;
     switch (this.aggFuncType) {
@@ -78,8 +75,7 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
       if (isPRQueryNode) {
         return this.distinctOnly ? new SumDistinctPRQueryNode() : new Sum();
       } else {
-        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator()
-            : new SumDistinct()) : new Sum();
+        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator() : new SumDistinct()) : new Sum();
       }
 
     case OQLLexerTokenTypes.MAX:
@@ -90,26 +86,20 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
 
     case OQLLexerTokenTypes.AVG:
       if (isPRQueryNode) {
-        return this.distinctOnly ? new AvgDistinctPRQueryNode()
-            : new AvgPRQueryNode();
+        return this.distinctOnly ? new AvgDistinctPRQueryNode() : new AvgPRQueryNode();
       } else {
-        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator()
-            : new AvgDistinct()) : (isBucketNode ? new AvgBucketNode()
-            : new Avg());
+        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator() : new AvgDistinct()) : (isBucketNode ? new AvgBucketNode() : new Avg());
       }
 
     case OQLLexerTokenTypes.COUNT:
       if (isPRQueryNode) {
-        return this.distinctOnly ? new CountDistinctPRQueryNode()
-            : new CountPRQueryNode();
+        return this.distinctOnly ? new CountDistinctPRQueryNode() : new CountPRQueryNode();
       } else {
-        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator()
-            : new CountDistinct()) : new Count();
+        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator() : new CountDistinct()) : new Count();
       }
 
     default:
-      throw new UnsupportedOperationException(
-          "Aggregate function not implemented");
+      throw new UnsupportedOperationException("Aggregate function not implemented");
 
     }
 
@@ -132,8 +122,7 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
     case OQLLexerTokenTypes.COUNT:
       return "count";
     default:
-      throw new UnsupportedOperationException(
-          "Aggregate function not implemented");
+      throw new UnsupportedOperationException("Aggregate function not implemented");
 
     }
   }
@@ -159,16 +148,13 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
       return new ObjectTypeImpl(Integer.class);
 
     default:
-      throw new UnsupportedOperationException(
-          "Aggregate function not implemented");
+      throw new UnsupportedOperationException("Aggregate function not implemented");
 
     }
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer,
-      ExecutionContext context) throws AmbiguousNameException,
-      TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     clauseBuffer.insert(0, ')');
     if (this.expr != null) {
       this.expr.generateCanonicalizedExpression(clauseBuffer, context);

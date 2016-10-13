@@ -30,8 +30,7 @@ import org.apache.geode.internal.cache.tier.sockets.Part;
 
 public class ProxyCacheCloseOp {
 
-  public static Object executeOn(ServerLocation location, ExecutablePool pool,
-      Properties securityProps, boolean keepAlive) {
+  public static Object executeOn(ServerLocation location, ExecutablePool pool, Properties securityProps, boolean keepAlive) {
     AbstractOp op = new ProxyCacheCloseOpImpl(pool, securityProps, keepAlive);
     return pool.executeOn(location, op);
   }
@@ -42,11 +41,10 @@ public class ProxyCacheCloseOp {
 
   static class ProxyCacheCloseOpImpl extends AbstractOp {
 
-    public ProxyCacheCloseOpImpl(ExecutablePool pool, Properties securityProps,
-        boolean keepAlive) {
+    public ProxyCacheCloseOpImpl(ExecutablePool pool, Properties securityProps, boolean keepAlive) {
       super(MessageType.REMOVE_USER_AUTH, 1);
       getMessage().setMessageHasSecurePartFlag();
-      getMessage().addBytesPart(keepAlive ? new byte[] {1} : new byte[] {0});
+      getMessage().addBytesPart(keepAlive ? new byte[] { 1 } : new byte[] { 0 });
     }
 
     @Override
@@ -63,13 +61,11 @@ public class ProxyCacheCloseOp {
       if (userId == null) {
         // This will ensure that this op is retried on another server, unless
         // the retryCount is exhausted. Fix for Bug 41501
-        throw new ServerConnectivityException(
-            "Connection error while authenticating user");
+        throw new ServerConnectivityException("Connection error while authenticating user");
       }
-      hdos.writeLong((Long)userId);
+      hdos.writeLong((Long) userId);
       try {
-        secureBytes = ((ConnectionImpl)cnx).getHandShake().encryptBytes(
-            hdos.toByteArray());
+        secureBytes = ((ConnectionImpl) cnx).getHandShake().encryptBytes(hdos.toByteArray());
       } finally {
         hdos.close();
       }
@@ -83,20 +79,16 @@ public class ProxyCacheCloseOp {
       final int msgType = msg.getMessageType();
       if (msgType == MessageType.REPLY) {
         return part.getObject();
-      }
-      else if (msgType == MessageType.EXCEPTION) {
+      } else if (msgType == MessageType.EXCEPTION) {
         String s = "While performing a remote proxy cache close";
-        throw new ServerOperationException(s, (Throwable)part.getObject());
+        throw new ServerOperationException(s, (Throwable) part.getObject());
         // Get the exception toString part.
         // This was added for c++ thin client and not used in java
         // Part exceptionToStringPart = msg.getPart(1);
-      }
-      else if (isErrorResponse(msgType)) {
+      } else if (isErrorResponse(msgType)) {
         throw new ServerOperationException(part.getString());
-      }
-      else {
-        throw new InternalGemFireError("Unexpected message type "
-            + MessageType.getString(msgType));
+      } else {
+        throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
       }
     }
 

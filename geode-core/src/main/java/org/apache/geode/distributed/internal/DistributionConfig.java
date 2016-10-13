@@ -2039,14 +2039,14 @@ public interface DistributionConfig extends Config, LogConfig {
    */
   @ConfigAttributeGetter(name = SECURITY_CLIENT_DHALGO)
   String getSecurityClientDHAlgo();
-  
+
   /**
    * Set the name of algorithm to use for Diffie-Hellman key exchange {@link ConfigurationProperties#SECURITY_CLIENT_DHALGO}
    * property.
    */
   @ConfigAttributeSetter(name = SECURITY_CLIENT_DHALGO)
   void setSecurityClientDHAlgo(String attValue);
-  
+
   /**
    * Returns name of algorithm to use for Diffie-Hellman key exchange <a
    * href="../DistributedSystem.html#security-udp-dhalgo">"security-udp-dhalgo"</a>
@@ -2068,7 +2068,7 @@ public interface DistributionConfig extends Config, LogConfig {
    */
   @ConfigAttribute(type = String.class)
   String SECURITY_CLIENT_DHALGO_NAME = SECURITY_CLIENT_DHALGO;
-  
+
   /**
    * The name of the Diffie-Hellman symmetric algorithm "security-client-dhalgo"
    * property.
@@ -2083,7 +2083,7 @@ public interface DistributionConfig extends Config, LogConfig {
    * JDK like "DES", "DESede", "AES", "Blowfish".
    */
   String DEFAULT_SECURITY_CLIENT_DHALGO = "";
-  
+
   /**
    * The default Diffie-Hellman symmetric algorithm name.
    * <p>
@@ -2302,7 +2302,6 @@ public interface DistributionConfig extends Config, LogConfig {
   void setSecurity(String attName, String attValue);
 
   String SECURITY_PREFIX_NAME = SECURITY_PREFIX;
-
 
   /**
    * The static String definition of the cluster ssl prefix <i>"cluster-ssl"</i> used in conjunction with other <i>cluster-ssl-*</i> properties property
@@ -4215,7 +4214,6 @@ public interface DistributionConfig extends Config, LogConfig {
 
   @ConfigAttributeGetter(name = SECURITY_SHIRO_INIT)
   String getShiroInit();
-
 
   /**
    * Returns the value of the {@link ConfigurationProperties#SSL_CLUSTER_ALIAS}

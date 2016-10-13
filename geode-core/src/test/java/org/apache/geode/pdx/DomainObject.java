@@ -58,8 +58,7 @@ public abstract class DomainObject implements PdxSerializerObject {
       try {
         f = this.getClass().getSuperclass().getDeclaredField(varName);
       } catch (NoSuchFieldException nex) {
-        f = this.getClass().getSuperclass().getSuperclass()
-            .getDeclaredField(varName);
+        f = this.getClass().getSuperclass().getSuperclass().getDeclaredField(varName);
       }
     }
 
@@ -73,8 +72,7 @@ public abstract class DomainObject implements PdxSerializerObject {
     result = prime * result + (int) (long_0 ^ (long_0 >>> 32));
     result = prime * result + ((string_0 == null) ? 0 : string_0.hashCode());
     result = prime * result + Arrays.hashCode(string_array);
-    result = prime * result
-        + ((string_list == null) ? 0 : string_list.hashCode());
+    result = prime * result + ((string_list == null) ? 0 : string_list.hashCode());
     return result;
   }
 

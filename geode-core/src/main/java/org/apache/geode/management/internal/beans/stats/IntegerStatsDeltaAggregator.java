@@ -83,9 +83,9 @@ public class IntegerStatsDeltaAggregator {
     }
     return currCounters.get(keys.indexOf(key)) - prevCounters.get(keys.indexOf(key));
   }
-  
-  private void initializeArray(AtomicIntegerArray arr){
-    for(int i = 0; i<arr.length() ; i++){
+
+  private void initializeArray(AtomicIntegerArray arr) {
+    for (int i = 0; i < arr.length(); i++) {
       arr.set(i, Integer.valueOf(0));
     }
   }

@@ -30,51 +30,52 @@ import java.io.*;
 /**
  *
  */
-public class State implements Serializable{
-    public String name;
-    public String zone;
-    public Set districts;
-    /** Creates a new instance of State */
-    public State(String name, String zone, Set districts) {
-        this.name = name;
-        this.zone = zone;
-        this.districts = districts;
-    }//end of contructor 1
-    
-    public State(int i, Set districts) {
-        String arr1 [] = {"MAHARASHTRA", "GUJARAT","PUNJAB","KERALA","AASAM"};
-        String arr2 [] = {"WEST", "WEST","NORTH","SOUTH","EAST"}; 
-        /*this is for the test to have 33.33% of the objects belonging to one state*/
-        this.name = arr1[i%3];
-        this.zone = arr2[i%3];
-        this.districts = districts;
-    }//end of contructor 2
-    
-    //////////////////////////////
-  
-    public String getName(){
-        return name;
+public class State implements Serializable {
+  public String name;
+  public String zone;
+  public Set districts;
+
+  /** Creates a new instance of State */
+  public State(String name, String zone, Set districts) {
+    this.name = name;
+    this.zone = zone;
+    this.districts = districts;
+  }//end of contructor 1
+
+  public State(int i, Set districts) {
+    String arr1[] = { "MAHARASHTRA", "GUJARAT", "PUNJAB", "KERALA", "AASAM" };
+    String arr2[] = { "WEST", "WEST", "NORTH", "SOUTH", "EAST" };
+    /*this is for the test to have 33.33% of the objects belonging to one state*/
+    this.name = arr1[i % 3];
+    this.zone = arr2[i % 3];
+    this.districts = districts;
+  }//end of contructor 2
+
+  //////////////////////////////
+
+  public String getName() {
+    return name;
+  }
+
+  public String getZone() {
+    return zone;
+  }
+
+  public Set getDistricts() {
+    return districts;
+  }
+
+  public Set getDistrictsWithSameName(District dist) {
+    Set districtsWithSameName = new HashSet();
+    Iterator itr2 = districts.iterator();
+    District dist1;
+    while (itr2.hasNext()) {
+      dist1 = (District) itr2.next();
+      if (dist1.getName().equalsIgnoreCase(dist.getName())) {
+        districtsWithSameName.add(dist1);
+      }
     }
-    
-     public String getZone(){
-        return zone;
-    }
-      public Set getDistricts(){
-        return districts;
-    }
-      
-      
-    public Set getDistrictsWithSameName(District dist){
-    	Set districtsWithSameName = new HashSet();    	
-    	Iterator itr2 = districts.iterator();
-    	District dist1;
-    	while(itr2.hasNext()){    		 
-    		 dist1 = (District)itr2.next();
-    		 if(dist1.getName().equalsIgnoreCase(dist.getName())){
-    			 districtsWithSameName.add(dist1);
-    		 }    		 
-    	}    	
-    	return districtsWithSameName;
-    }//end of   getDistrictsWithSameName
-      
+    return districtsWithSameName;
+  }//end of   getDistrictsWithSameName
+
 }//end of class

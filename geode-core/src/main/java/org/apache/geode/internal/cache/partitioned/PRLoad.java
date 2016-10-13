@@ -36,7 +36,7 @@ public final class PRLoad implements DataSerializable {
   private final float weight;
   private final float[] bucketReadLoads;
   private final float[] bucketWriteLoads;
-  
+
   /**
    * Creates a new immutable instance of PRLoad from the provided DataInput.
    * Actually {@link #addBucket(int, float, float)} will allow the bucket
@@ -49,20 +49,18 @@ public final class PRLoad implements DataSerializable {
    * @throws ClassNotFoundException if DataSerializer failed to find class to
    * read object from input
    */
-  public static PRLoad createFromDataInput(DataInput in) 
-  throws IOException, ClassNotFoundException {
+  public static PRLoad createFromDataInput(DataInput in) throws IOException, ClassNotFoundException {
     float weight = in.readFloat();
     float[] bucketReadLoads = DataSerializer.readFloatArray(in);
     float[] bucketWriteLoads = DataSerializer.readFloatArray(in);
     return new PRLoad(weight, bucketReadLoads, bucketWriteLoads);
   }
-  
+
   /**
    * Use {@link PRLoad#createFromDataInput(DataInput)} instead.
    */
   public PRLoad() {
-    throw new UnsupportedOperationException(
-        "Use PRLoad#createFromDataInput(DataInput) instead.");
+    throw new UnsupportedOperationException("Use PRLoad#createFromDataInput(DataInput) instead.");
   }
 
   /**
@@ -92,13 +90,13 @@ public final class PRLoad implements DataSerializable {
     this.bucketReadLoads = bucketReadLoads;
     this.bucketWriteLoads = bucketWriteLoads;
   }
-  
+
   /**
    * Add a bucket to the list of bucket loads
    */
   public void addBucket(int bucketId, float readLoad, float writeLoad) {
-    this.bucketReadLoads[bucketId] =  readLoad;
-    this.bucketWriteLoads[bucketId] =  writeLoad;
+    this.bucketReadLoads[bucketId] = readLoad;
+    this.bucketWriteLoads[bucketId] = writeLoad;
   }
 
   /**
@@ -127,26 +125,24 @@ public final class PRLoad implements DataSerializable {
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer("PRLoad@");
-    sb.append(Integer.toHexString(hashCode())); 
+    sb.append(Integer.toHexString(hashCode()));
     sb.append(", weight: ").append(this.weight);
     sb.append(", numBuckets: ").append(this.bucketReadLoads.length);
     sb.append(", bucketReadLoads: ").append(Arrays.toString(this.bucketReadLoads));
     sb.append(", bucketWriteLoads: ").append(Arrays.toString(this.bucketWriteLoads));
     return sb.toString();
   }
-  
+
   public void toData(DataOutput out) throws IOException {
     out.writeFloat(this.weight);
     DataSerializer.writeFloatArray(this.bucketReadLoads, out);
     DataSerializer.writeFloatArray(this.bucketWriteLoads, out);
   }
-  
+
   /**
    * Unsupported. Use {@link PRLoad#createFromDataInput(DataInput)} instead.
    */
-  public void fromData(DataInput in) 
-  throws IOException, ClassNotFoundException {
-    throw new UnsupportedOperationException(
-        "Use PRLoad#createFromDataInput(DataInput) instead.");
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
+    throw new UnsupportedOperationException("Use PRLoad#createFromDataInput(DataInput) instead.");
   }
 }

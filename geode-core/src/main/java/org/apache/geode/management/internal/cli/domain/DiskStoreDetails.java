@@ -69,7 +69,7 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
 
   private Float diskUsageWarningPercentage;
   private Float diskUsageCriticalPercentage;
-  
+
   private Set<AsyncEventQueueDetails> asyncEventQueueDetailsSet = new TreeSet<AsyncEventQueueDetails>();
 
   private Set<CacheServerDetails> cacheServerDetailsSet = new TreeSet<CacheServerDetails>();
@@ -234,7 +234,7 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
   public void setWriteBufferSize(final Integer writeBufferSize) {
     this.writeBufferSize = writeBufferSize;
   }
-  
+
   public Float getDiskUsageWarningPercentage() {
     return diskUsageWarningPercentage;
   }
@@ -242,11 +242,11 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
   public void setDiskUsageWarningPercentage(Float warningPct) {
     diskUsageWarningPercentage = warningPct;
   }
-  
+
   public Float getDiskUsageCriticalPercentage() {
     return diskUsageCriticalPercentage;
   }
-  
+
   public void setDiskUsageCriticalPercentage(Float criticalPct) {
     diskUsageCriticalPercentage = criticalPct;
   }
@@ -294,9 +294,7 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
 
     final DiskStoreDetails that = (DiskStoreDetails) obj;
 
-    return ObjectUtils.equalsIgnoreNull(getId(), that.getId())
-      && ObjectUtils.equals(getName(), that.getName())
-      && ObjectUtils.equals(getMemberId(), that.getMemberId());
+    return ObjectUtils.equalsIgnoreNull(getId(), that.getId()) && ObjectUtils.equals(getName(), that.getName()) && ObjectUtils.equals(getMemberId(), that.getMemberId());
   }
 
   @Override
@@ -464,8 +462,7 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
 
       final CacheServerDetails that = (CacheServerDetails) obj;
 
-      return ObjectUtils.equals(getBindAddress(), that.getBindAddress())
-        && ObjectUtils.equals(getPort(), that.getPort());
+      return ObjectUtils.equals(getBindAddress(), that.getBindAddress()) && ObjectUtils.equals(getPort(), that.getPort());
     }
 
     @Override

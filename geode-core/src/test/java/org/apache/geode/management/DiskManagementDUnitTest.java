@@ -87,7 +87,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
 
   public DiskManagementDUnitTest() throws Exception {
     super();
-  
+
     diskDir = new File("diskDir-" + getName()).getAbsoluteFile();
     org.apache.geode.internal.FileUtil.delete(diskDir);
     diskDir.mkdir();
@@ -119,7 +119,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
       createPersistentRegion(vm);
       makeDiskCompactable(vm);
     }
-    
+
     for (VM vm : getManagedNodeList()) {
       compactAllDiskStores(vm);
     }
@@ -190,7 +190,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
     VM vm0 = getManagedNodeList().get(0);
     VM vm1 = getManagedNodeList().get(1);
     VM vm2 = getManagedNodeList().get(2);
-    
+
     org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating region in VM0");
     createPersistentRegion(vm0);
     org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating region in VM1");
@@ -198,15 +198,13 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
 
     putAnEntry(vm0);
 
- 
     managingNode.invoke(new SerializableRunnable("Check for waiting regions") {
 
       public void run() {
         Cache cache = getCache();
         ManagementService service = getManagementService();
         DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        PersistentMemberDetails[] missingDiskStores = bean
-            .listMissingDiskStores();
+        PersistentMemberDetails[] missingDiskStores = bean.listMissingDiskStores();
 
         assertNull(missingDiskStores);
       }
@@ -230,8 +228,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
         GemFireCacheImpl cacheImpl = (GemFireCacheImpl) cache;
         ManagementService service = getManagementService();
         DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        PersistentMemberDetails[] missingDiskStores = bean
-        .listMissingDiskStores();
+        PersistentMemberDetails[] missingDiskStores = bean.listMissingDiskStores();
         org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("waiting members=" + missingDiskStores);
         assertNotNull(missingDiskStores);
         assertEquals(1, missingDiskStores.length);
@@ -260,8 +257,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
     checkForRecoveryStat(vm0, true);
     // Check to make sure we recovered the old
     // value of the entry.
-    SerializableRunnable checkForEntry = new SerializableRunnable(
-        "check for the entry") {
+    SerializableRunnable checkForEntry = new SerializableRunnable("check for the entry") {
 
       public void run() {
         Cache cache = getCache();
@@ -273,10 +269,8 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
 
   }
 
-  protected void checkNavigation(final VM vm,
-      final DistributedMember diskMember, final String diskStoreName) {
-    SerializableRunnable checkNavigation = new SerializableRunnable(
-        "Check Navigation") {
+  protected void checkNavigation(final VM vm, final DistributedMember diskMember, final String diskStoreName) {
+    SerializableRunnable checkNavigation = new SerializableRunnable("Check Navigation") {
       public void run() {
 
         final ManagementService service = getManagementService();
@@ -289,7 +283,6 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
         } catch (Exception e) {
           fail("Disk Store Navigation Failed " + e);
         }
-
 
       }
     };
@@ -313,8 +306,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   public void invokeFlush(final VM vm) {
-    SerializableRunnable invokeFlush = new SerializableRunnable(
-        "Invoke Flush On Disk") {
+    SerializableRunnable invokeFlush = new SerializableRunnable("Invoke Flush On Disk") {
       public void run() {
         Cache cache = getCache();
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -338,8 +330,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   public void invokeForceRoll(final VM vm) {
-    SerializableRunnable invokeForceRoll = new SerializableRunnable(
-        "Invoke Force Roll") {
+    SerializableRunnable invokeForceRoll = new SerializableRunnable("Invoke Force Roll") {
       public void run() {
         Cache cache = getCache();
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -362,8 +353,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   public void invokeForceCompaction(final VM vm) {
-    SerializableRunnable invokeForceCompaction = new SerializableRunnable(
-        "Invoke Force Compaction") {
+    SerializableRunnable invokeForceCompaction = new SerializableRunnable("Invoke Force Compaction") {
       public void run() {
         Cache cache = getCache();
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -405,10 +395,6 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
 
   }
 
-
-
- 
-
   /**
    * Compacts all DiskStores belonging to a member
    * 
@@ -428,9 +414,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
 
         assertTrue(compactedDiskStores.length > 0);
         for (int i = 0; i < compactedDiskStores.length; i++) {
-          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info(
-              "<ExpectedString> Compacted Store " + i + " "
-                  + compactedDiskStores[i] + "</ExpectedString> ");
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("<ExpectedString> Compacted Store " + i + " " + compactedDiskStores[i] + "</ExpectedString> ");
         }
 
         return null;
@@ -450,8 +434,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
       public Object call() throws Exception {
         ManagementService service = getManagementService();
         DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        DiskBackupStatus status = bean.backupAllMembers(getBackupDir("test_backupAllMembers")
-            .getAbsolutePath(), null);
+        DiskBackupStatus status = bean.backupAllMembers(getBackupDir("test_backupAllMembers").getAbsolutePath(), null);
 
         return null;
       }
@@ -470,23 +453,18 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
 
         public Object call() throws Exception {
           GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-          Set<DistributedMember> otherMemberSet = cache
-              .getDistributionManager().getOtherNormalDistributionManagerIds();
+          Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
           for (DistributedMember member : otherMemberSet) {
             MemberMXBean bean = MBeanUtil.getMemberMbeanProxy(member);
             String[] allDisks = bean.listDiskStores(true);
             assertNotNull(allDisks);
             List<String> listString = Arrays.asList(allDisks);
-            org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info(
-                "<ExpectedString> Remote All Disk Stores Are  "
-                    + listString.toString() + "</ExpectedString> ");
+            org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("<ExpectedString> Remote All Disk Stores Are  " + listString.toString() + "</ExpectedString> ");
             String[] compactedDiskStores = bean.compactAllDiskStores();
             assertTrue(compactedDiskStores.length > 0);
             for (int i = 0; i < compactedDiskStores.length; i++) {
-              org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info(
-                  "<ExpectedString> Remote Compacted Store " + i + " "
-                      + compactedDiskStores[i] + "</ExpectedString> ");
+              org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("<ExpectedString> Remote Compacted Store " + i + " " + compactedDiskStores[i] + "</ExpectedString> ");
             }
 
           }
@@ -505,8 +483,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
    *          file extension
    * @throws Exception
    */
-  protected void checkIfContainsFileWithExt(String fileExtension)
-      throws Exception {
+  protected void checkIfContainsFileWithExt(String fileExtension) throws Exception {
     File[] files = diskDir.listFiles();
     for (int j = 0; j < files.length; j++) {
       if (files[j].getAbsolutePath().endsWith(fileExtension)) {
@@ -571,8 +548,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void closeRegion(final VM vm) {
-    SerializableRunnable closeRegion = new SerializableRunnable(
-        "Close persistent region") {
+    SerializableRunnable closeRegion = new SerializableRunnable("Close persistent region") {
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion(REGION_NAME);
@@ -603,8 +579,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
             Cache cache = getCache();
             GemFireCacheImpl cacheImpl = (GemFireCacheImpl) cache;
             PersistentMemberManager mm = cacheImpl.getPersistentMemberManager();
-            Map<String, Set<PersistentMemberID>> regions = mm
-                .getWaitingRegions();
+            Map<String, Set<PersistentMemberID>> regions = mm.getWaitingRegions();
             boolean done = !regions.isEmpty();
             return done;
           }
@@ -643,8 +618,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected AsyncInvocation createPersistentRegionAsync(final VM vm) {
-    SerializableRunnable createRegion = new SerializableRunnable(
-        "Create persistent region") {
+    SerializableRunnable createRegion = new SerializableRunnable("Create persistent region") {
       public void run() {
         Cache cache = getCache();
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -674,8 +648,7 @@ public class DiskManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void validatePersistentRegion(final VM vm) {
-    SerializableRunnable validateDisk = new SerializableRunnable(
-        "Validate persistent region") {
+    SerializableRunnable validateDisk = new SerializableRunnable("Validate persistent region") {
       public void run() {
         Cache cache = getCache();
         ManagementService service = getManagementService();

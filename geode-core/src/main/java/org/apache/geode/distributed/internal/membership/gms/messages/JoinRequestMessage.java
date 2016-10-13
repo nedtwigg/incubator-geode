@@ -31,9 +31,8 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
   private Object credentials;
   private int failureDetectionPort = -1;
   private int requestId;
-    
-  public JoinRequestMessage(InternalDistributedMember coord,
-                            InternalDistributedMember id, Object credentials, int fdPort, int requestId) {
+
+  public JoinRequestMessage(InternalDistributedMember coord, InternalDistributedMember id, Object credentials, int fdPort, int requestId) {
     super();
     setRecipient(coord);
     this.memberID = id;
@@ -41,6 +40,7 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
     this.failureDetectionPort = fdPort;
     this.requestId = requestId;
   }
+
   public JoinRequestMessage() {
     // no-arg constructor for serialization
   }
@@ -48,15 +48,15 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
   public int getRequestId() {
     return requestId;
   }
-  
+
   @Override
   public int getDSFID() {
     return JOIN_REQUEST;
   }
-  
+
   @Override
   public void process(DistributionManager dm) {
-    throw new IllegalStateException("this message is not intended to execute in a thread pool"); 
+    throw new IllegalStateException("this message is not intended to execute in a thread pool");
   }
 
   public InternalDistributedMember getMemberID() {
@@ -69,7 +69,7 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
 
   @Override
   public String toString() {
-    return getShortClassName() + "(" + memberID + (credentials==null? ")" : "; with credentials)") + " failureDetectionPort:" + failureDetectionPort;
+    return getShortClassName() + "(" + memberID + (credentials == null ? ")" : "; with credentials)") + " failureDetectionPort:" + failureDetectionPort;
   }
 
   @Override
@@ -100,7 +100,7 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
   public int getFailureDetectionPort() {
     return failureDetectionPort;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -125,5 +125,5 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
     if (requestId != other.requestId)
       return false;
     return true;
-  }  
+  }
 }

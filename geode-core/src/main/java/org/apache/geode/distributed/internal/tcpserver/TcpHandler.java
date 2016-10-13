@@ -34,24 +34,24 @@ public interface TcpHandler {
    * @throws IOException
    */
   Object processRequest(Object request) throws IOException;
-  
-  void endRequest(Object request,long startTime);
-  
-  void endResponse(Object request,long startTime);
-  
+
+  void endRequest(Object request, long startTime);
+
+  void endResponse(Object request, long startTime);
+
   /**
    * Perform any shutdown code in the handler after the TCP server
    * has closed the socket.
    */
   void shutDown();
-  
+
   /**
    * Informs the handler that TcpServer is restarting with the given
    * distributed system and cache
    * @param sharedConfig TODO
    */
   void restarting(DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig);
-  
+
   /**
    * Initialize the handler with the TcpServer. Called before the TcpServer
    * starts accepting connections.

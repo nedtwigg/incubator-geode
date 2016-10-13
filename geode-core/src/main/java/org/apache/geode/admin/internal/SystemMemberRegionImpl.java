@@ -44,10 +44,9 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
   private final SystemMemberCacheImpl cache;
 
   // constructors
-  public SystemMemberRegionImpl(SystemMemberCacheImpl cache, Region r)
-  {
+  public SystemMemberRegionImpl(SystemMemberCacheImpl cache, Region r) {
     this.cache = cache;
-    this.r = (AdminRegion)r;
+    this.r = (AdminRegion) r;
   }
 
   private void refreshFields() {
@@ -63,7 +62,7 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
       Set paths = new TreeSet();
       Iterator it = s.iterator();
       while (it.hasNext()) {
-        Region r = (Region)it.next();
+        Region r = (Region) it.next();
         String name = r.getName();
         names.add(name);
         paths.add(this.getFullPath() + Region.SEPARATOR_CHAR + name);
@@ -80,12 +79,12 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
       this.subregionCount = 0;
     }
   }
-  
+
   // attributes
   public String getName() {
     return this.r.getName();
   }
-  
+
   public String getFullPath() {
     return this.r.getFullPath();
   }
@@ -99,7 +98,7 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
   }
 
   public String getUserAttribute() {
-    return (String)r.getUserAttribute();
+    return (String) r.getUserAttribute();
   }
 
   public String getCacheLoader() {
@@ -110,6 +109,7 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
       return o.toString();
     }
   }
+
   public String getCacheWriter() {
     Object o = this.ra.getCacheWriter();
     if (o == null) {
@@ -165,7 +165,7 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
       return o.toString();
     }
   }
-  
+
   public int getRegionIdleTimeoutTimeLimit() {
     return this.ra.getRegionIdleTimeout().getTimeout();
   }
@@ -190,15 +190,15 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
       return o.toString();
     }
   }
-  
+
   public MirrorType getMirrorType() {
     return this.ra.getMirrorType();
   }
-  
+
   public DataPolicy getDataPolicy() {
     return this.ra.getDataPolicy();
   }
-  
+
   public Scope getScope() {
     return this.ra.getScope();
   }
@@ -222,8 +222,7 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
     String[] o = this.getCacheListeners();
     if (o.length == 0) {
       return "";
-    }
-    else {
+    } else {
       return o[0].toString();
     }
   }
@@ -243,8 +242,7 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
     String[] ret = null;
     if (o == null || o.length == 0) {
       ret = new String[0];
-    }
-    else {
+    } else {
       ret = new String[o.length];
       for (int i = 0; i < o.length; i++) {
         ret[i] = o[i].toString();
@@ -288,7 +286,7 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
   public int getEntryCount() {
     return this.entryCount;
   }
-  
+
   public int getSubregionCount() {
     return this.subregionCount;
   }
@@ -332,29 +330,25 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
       return this.rs.getHitRatio();
     }
   }
-  
+
   // operations
   public void refresh() {
     refreshFields();
   }
 
-	/**
-	 * Returns a string representation of the object.
-	 * 
-	 * @return a string representation of the object
-	 */
+  /**
+   * Returns a string representation of the object.
+   * 
+   * @return a string representation of the object
+   */
   @Override
-	public String toString() {
-		return getName();
-	}
+  public String toString() {
+    return getName();
+  }
 
-  public SystemMemberRegion createSubregion(String name,
-                                            RegionAttributes attrs)
-    throws AdminException {
+  public SystemMemberRegion createSubregion(String name, RegionAttributes attrs) throws AdminException {
 
-    Region r =
-      this.cache.getVM().createSubregion(this.cache.getCacheInfo(),
-                                         this.getFullPath(), name, attrs);
+    Region r = this.cache.getVM().createSubregion(this.cache.getCacheInfo(), this.getFullPath(), name, attrs);
     if (r == null) {
       return null;
 
@@ -367,14 +361,13 @@ public class SystemMemberRegionImpl implements SystemMemberRegion {
   public MembershipAttributes getMembershipAttributes() {
     return this.ra.getMembershipAttributes();
   }
-  
+
   public SubscriptionAttributes getSubscriptionAttributes() {
     return this.ra.getSubscriptionAttributes();
   }
-  
+
   public PartitionAttributes getPartitionAttributes() {
     return this.ra.getPartitionAttributes();
   }
 
 }
-

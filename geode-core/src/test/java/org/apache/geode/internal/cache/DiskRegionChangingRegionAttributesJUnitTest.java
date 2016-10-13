@@ -43,26 +43,26 @@ public class DiskRegionChangingRegionAttributesJUnitTest extends DiskRegionTesti
 
   private void createOverflowOnly() {
     props.setOverFlowCapacity(1);
-    region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache,props);
+    region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache, props);
   }
-  
+
   private void createPersistOnly() {
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache,props, Scope.LOCAL);
+    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
   }
-  
+
   private void createPersistAndOverflow() {
-    region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache,props); 
+    region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, props);
   }
-  
+
   @Test
   public void testOverflowOnlyAndThenPersistOnly() {
     createOverflowOnly();
     put100Int();
     region.close();
     createPersistOnly();
-    assertTrue(region.size()==0);
+    assertTrue(region.size() == 0);
   }
-  
+
   @Test
   public void testPersistOnlyAndThenOverflowOnly() {
     createPersistOnly();
@@ -76,18 +76,18 @@ public class DiskRegionChangingRegionAttributesJUnitTest extends DiskRegionTesti
     //Asif Recreate the region so that it gets destroyed in teardown 
     //clearing up the old Oplogs
     createPersistOnly();
-    
+
   }
-  
+
   @Test
   public void testOverflowOnlyAndThenPeristAndOverflow() {
     createOverflowOnly();
     put100Int();
     region.close();
     createPersistAndOverflow();
-    assertTrue(region.size()==0);
+    assertTrue(region.size() == 0);
   }
-  
+
   @Test
   public void testPersistAndOverflowAndThenOverflowOnly() {
     createPersistAndOverflow();
@@ -100,22 +100,22 @@ public class DiskRegionChangingRegionAttributesJUnitTest extends DiskRegionTesti
     }
     createPersistAndOverflow();
   }
-  
- @Test
+
+  @Test
   public void testPersistOnlyAndThenPeristAndOverflow() {
-   createPersistOnly();
-   put100Int();
-   region.close();
-   createPersistAndOverflow();
-   assertTrue(region.size()==100);
+    createPersistOnly();
+    put100Int();
+    region.close();
+    createPersistAndOverflow();
+    assertTrue(region.size() == 100);
   }
-  
+
   @Test
   public void testPersistAndOverflowAndThenPersistOnly() {
     createPersistAndOverflow();
     put100Int();
     region.close();
     createPersistOnly();
-    assertTrue(region.size()==100);
+    assertTrue(region.size() == 100);
   }
 }

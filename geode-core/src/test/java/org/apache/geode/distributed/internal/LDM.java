@@ -31,14 +31,13 @@ import org.apache.geode.internal.logging.LogService;
 public class LDM {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   public static void main(String[] args) throws Exception {
     Properties props = new Properties();
     props.setProperty(LOCATORS, "localhost[31576]");
     props.setProperty("mcastPort", "0");
     props.setProperty("logLevel", "config");
-    InternalDistributedSystem system = (InternalDistributedSystem)
-      DistributedSystem.connect(props);
+    InternalDistributedSystem system = (InternalDistributedSystem) DistributedSystem.connect(props);
     DM dm = system.getDistributionManager();
 
     DistributionMessage message = new HelloMessage();
@@ -58,11 +57,14 @@ public class LDM {
 
   static class HelloMessage extends SerialDistributionMessage {
 
-    public HelloMessage() { }   // for Externalizable
+    public HelloMessage() {
+    } // for Externalizable
+
     @Override
     public void process(DistributionManager dm) {
       logger.fatal("Hello World");
     }
+
     public int getDSFID() {
       return NO_FIXED_ID;
     }

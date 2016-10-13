@@ -20,7 +20,6 @@ import org.apache.geode.redis.internal.ByteArrayWrapper;
 import org.apache.geode.redis.internal.RedisDataType;
 import org.apache.geode.redis.internal.RegionProvider;
 
-
 public class ExpirationExecutor implements Runnable {
   private final ByteArrayWrapper key;
   private final RedisDataType type;
@@ -36,6 +35,5 @@ public class ExpirationExecutor implements Runnable {
   public void run() {
     rC.removeKey(key, type, false);
   }
-
 
 }

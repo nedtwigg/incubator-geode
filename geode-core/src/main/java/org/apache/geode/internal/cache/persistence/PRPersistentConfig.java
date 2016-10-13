@@ -22,7 +22,7 @@ package org.apache.geode.internal.cache.persistence;
 public class PRPersistentConfig {
   private final int totalNumBuckets;
   private final String colocatedWith;
-  
+
   public PRPersistentConfig(int totalNumBuckets, String colocatedWith) {
     super();
     this.totalNumBuckets = totalNumBuckets;
@@ -36,7 +36,7 @@ public class PRPersistentConfig {
   public String getColocatedWith() {
     return colocatedWith;
   }
-  
+
   @Override
   public String toString() {
     return "numBuckets=" + totalNumBuckets + ", colocatedWith=" + colocatedWith;
@@ -46,8 +46,7 @@ public class PRPersistentConfig {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
-        + ((colocatedWith == null) ? 0 : colocatedWith.hashCode());
+    result = prime * result + ((colocatedWith == null) ? 0 : colocatedWith.hashCode());
     result = prime * result + totalNumBuckets;
     return result;
   }

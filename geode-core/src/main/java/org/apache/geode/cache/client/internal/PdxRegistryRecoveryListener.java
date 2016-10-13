@@ -43,14 +43,14 @@ import org.apache.geode.pdx.internal.TypeRegistry;
  */
 public class PdxRegistryRecoveryListener extends EndpointManager.EndpointListenerAdapter {
   private static final Logger logger = LogService.getLogger();
-  
+
   private final AtomicInteger endpointCount = new AtomicInteger();
   private final InternalPool pool;
-  
+
   public PdxRegistryRecoveryListener(InternalPool pool) {
     this.pool = pool;
   }
-  
+
   @Override
   public void endpointCrashed(Endpoint endpoint) {
     int count = endpointCount.decrementAndGet();
@@ -69,7 +69,7 @@ public class PdxRegistryRecoveryListener extends EndpointManager.EndpointListene
 
   @Override
   public void endpointNowInUse(Endpoint endpoint) {
-    int count  = endpointCount.incrementAndGet();
+    int count = endpointCount.incrementAndGet();
     if (logger.isDebugEnabled()) {
       logger.debug("PdxRegistryRecoveryListener - EndpointNowInUse. Now have {} endpoints", count);
     }
@@ -79,7 +79,7 @@ public class PdxRegistryRecoveryListener extends EndpointManager.EndpointListene
         return;
       }
       TypeRegistry registry = cache.getPdxRegistry();
-      
+
       if (registry == null) {
         return;
       }

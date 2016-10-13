@@ -53,7 +53,7 @@ public class IncrExecutor extends StringExecutor {
      */
 
     if (valueWrapper == null) {
-      byte[] newValue = {Coder.NUMBER_1_BYTE};
+      byte[] newValue = { Coder.NUMBER_1_BYTE };
       r.put(key, new ByteArrayWrapper(newValue));
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), INIT_VALUE_INT));
       return;
@@ -82,7 +82,6 @@ public class IncrExecutor extends StringExecutor {
 
     stringValue = "" + value;
     r.put(key, new ByteArrayWrapper(Coder.stringToBytes(stringValue)));
-
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), value));
 

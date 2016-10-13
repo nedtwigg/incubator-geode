@@ -39,13 +39,13 @@ public class DebuggerUtils {
 
   protected DebuggerUtils() {
   }
-  
+
   @SuppressWarnings("serial")
   public static void attachDebugger(final VM vm, final String message) {
-    vm.invoke(new SerializableRunnable(DebuggerSupport.class.getSimpleName()+" waitForJavaDebugger") {
+    vm.invoke(new SerializableRunnable(DebuggerSupport.class.getSimpleName() + " waitForJavaDebugger") {
       public void run() {
         DebuggerSupport.waitForJavaDebugger(message);
-      } 
+      }
     });
   }
 

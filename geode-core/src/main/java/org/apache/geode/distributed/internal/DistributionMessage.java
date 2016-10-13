@@ -59,11 +59,10 @@ import org.apache.geode.internal.util.Breadcrumbs;
  *
  *
  */
-public abstract class DistributionMessage
-  implements DataSerializableFixedID, Cloneable {
-  
+public abstract class DistributionMessage implements DataSerializableFixedID, Cloneable {
+
   private static final Logger logger = LogService.getLogger();
-  
+
   /** Indicates that a distribution message should be sent to all
    * other distribution managers. */
   public static final InternalDistributedMember ALL_RECIPIENTS = null;
@@ -83,8 +82,7 @@ public abstract class DistributionMessage
   protected static final short HAS_PROCESSOR_TYPE = 0x20;
 
   /** the unreserved flags start for child classes */
-  protected static final short UNRESERVED_FLAGS_START =
-    (HAS_PROCESSOR_TYPE << 1);
+  protected static final short UNRESERVED_FLAGS_START = (HAS_PROCESSOR_TYPE << 1);
 
   ////////////////////  Instance Fields  ////////////////////
 
@@ -105,18 +103,18 @@ public abstract class DistributionMessage
 
   /** true if messageBeingReceived stats need decrementing when done with msg */
   private transient boolean doDecMessagesBeingReceived = false;
-  
+
   /**
    * This field will be set if we can send a direct ack for
    * this message.
    */
   private transient ReplySender acker = null;
-  
+
   /**
    * True if the P2P reader that received this message is a SHARED reader.
    */
   private transient boolean sharedReceiver;
-  
+
   //////////////////////  Constructors  //////////////////////
 
   protected DistributionMessage() {
@@ -140,9 +138,7 @@ public abstract class DistributionMessage
   protected static final int getNextBitMask(int mask, final int maxValue) {
     mask <<= 1;
     if (mask > maxValue) {
-      Assert.fail("exhausted bit flags with all available bits: 0x"
-          + Integer.toHexString(mask) + ", max: 0x"
-          + Integer.toHexString(maxValue));
+      Assert.fail("exhausted bit flags with all available bits: 0x" + Integer.toHexString(mask) + ", max: 0x" + Integer.toHexString(maxValue));
     }
     return mask;
   }
@@ -160,19 +156,19 @@ public abstract class DistributionMessage
   public void setDoDecMessagesBeingReceived(boolean v) {
     this.doDecMessagesBeingReceived = v;
   }
-  
+
   public final void setReplySender(ReplySender acker) {
     this.acker = acker;
   }
-  
+
   public ReplySender getReplySender(DM dm) {
-    if(acker != null) {
+    if (acker != null) {
       return acker;
     } else {
       return dm;
     }
-  } 
-  
+  }
+
   public boolean isDirectAck() {
     return acker != null;
   }
@@ -185,19 +181,18 @@ public abstract class DistributionMessage
   public boolean orderedDelivery() {
     final int processorType = getProcessorType();
     switch (processorType) {
-      case DistributionManager.SERIAL_EXECUTOR:
+    case DistributionManager.SERIAL_EXECUTOR:
       // no need to use orderedDelivery for PR ops particularly when thread
       // does not own resources
       //case DistributionManager.PARTITIONED_REGION_EXECUTOR:
-        return true;
-      case DistributionManager.REGION_FUNCTION_EXECUTION_EXECUTOR:
-        // allow nested distributed functions to be executed from within the
-        // execution of a function
-        return false;
-      default:
-        InternalDistributedSystem ids = InternalDistributedSystem
-            .getAnyInstance();
-        return (ids != null && ids.threadOwnsResources());
+      return true;
+    case DistributionManager.REGION_FUNCTION_EXECUTION_EXECUTOR:
+      // allow nested distributed functions to be executed from within the
+      // execution of a function
+      return false;
+    default:
+      InternalDistributedSystem ids = InternalDistributedSystem.getAnyInstance();
+      return (ids != null && ids.threadOwnsResources());
     }
   }
 
@@ -208,9 +203,9 @@ public abstract class DistributionMessage
    */
   public void setRecipient(InternalDistributedMember recipient) {
     if (this.recipients != null) {
-       throw new IllegalStateException(LocalizedStrings.DistributionMessage_RECIPIENTS_CAN_ONLY_BE_SET_ONCE.toLocalizedString());
+      throw new IllegalStateException(LocalizedStrings.DistributionMessage_RECIPIENTS_CAN_ONLY_BE_SET_ONCE.toLocalizedString());
     }
-    this.recipients = new InternalDistributedMember[] {recipient};
+    this.recipients = new InternalDistributedMember[] { recipient };
   }
 
   /**
@@ -220,6 +215,7 @@ public abstract class DistributionMessage
   public void setMulticast(boolean v) {
     this.multicast = v;
   }
+
   /**
    * Return true if this message should be sent using multicast.
    * @since GemFire 5.0
@@ -227,6 +223,7 @@ public abstract class DistributionMessage
   public boolean getMulticast() {
     return this.multicast;
   }
+
   /**
    * Return true of this message should be sent via UDP instead of the
    * direct-channel.  This is typically only done for messages that are
@@ -235,6 +232,7 @@ public abstract class DistributionMessage
   public boolean sendViaUDP() {
     return false;
   }
+
   /**
    * Sets the intended recipient of the message.  If recipient set contains
    * {@link #ALL_RECIPIENTS} then the message will be sent to all
@@ -242,9 +240,9 @@ public abstract class DistributionMessage
    */
   public void setRecipients(Collection recipients) {
     if (this.recipients != null) {
-       throw new IllegalStateException(LocalizedStrings.DistributionMessage_RECIPIENTS_CAN_ONLY_BE_SET_ONCE.toLocalizedString());
+      throw new IllegalStateException(LocalizedStrings.DistributionMessage_RECIPIENTS_CAN_ONLY_BE_SET_ONCE.toLocalizedString());
     }
-    this.recipients = (InternalDistributedMember[])recipients.toArray(new InternalDistributedMember[recipients.size()]);
+    this.recipients = (InternalDistributedMember[]) recipients.toArray(new InternalDistributedMember[recipients.size()]);
   }
 
   public void resetRecipients() {
@@ -259,7 +257,7 @@ public abstract class DistributionMessage
     Set successfulRecipients = new HashSet(Arrays.asList(plannedRecipients));
     return successfulRecipients;
   }
-  
+
   /**
    * Returns the intended recipient(s) of this message.  If the message
    * is intended to delivered to all distribution managers, then
@@ -268,35 +266,32 @@ public abstract class DistributionMessage
    */
   public InternalDistributedMember[] getRecipients() {
     if (this.multicast) {
-      return new InternalDistributedMember[] {ALL_RECIPIENTS};
-    }else if (this.recipients != null) {
+      return new InternalDistributedMember[] { ALL_RECIPIENTS };
+    } else if (this.recipients != null) {
       return this.recipients;
     } else {
-      return new InternalDistributedMember[] {ALL_RECIPIENTS};
+      return new InternalDistributedMember[] { ALL_RECIPIENTS };
     }
   }
+
   /**
    * Returns true if message will be sent to everyone.
    */
   public boolean forAll() {
-    return (this.recipients == null)
-      || (this.multicast)
-      || ((this.recipients.length > 0)
-          && (this.recipients[0] == ALL_RECIPIENTS));
+    return (this.recipients == null) || (this.multicast) || ((this.recipients.length > 0) && (this.recipients[0] == ALL_RECIPIENTS));
   }
 
   public String getRecipientsDescription() {
     if (this.recipients == null) {
       return "recipients: ALL";
-    }
-    else if (this.multicast) {
+    } else if (this.multicast) {
       return "recipients: multicast";
     } else if (this.recipients.length > 0 && this.recipients[0] == ALL_RECIPIENTS) {
       return "recipients: ALL";
     } else {
       StringBuffer sb = new StringBuffer(100);
       sb.append("recipients: <");
-      for (int i=0; i < this.recipients.length; i++) {
+      for (int i = 0; i < this.recipients.length; i++) {
         if (i != 0) {
           sb.append(", ");
         }
@@ -306,6 +301,7 @@ public abstract class DistributionMessage
       return sb.toString();
     }
   }
+
   /**
    * Returns the sender of this message.  Note that this value is not
    * set until this message is received by a distribution manager.
@@ -329,10 +325,10 @@ public abstract class DistributionMessage
   protected Executor getExecutor(DistributionManager dm) {
     return dm.getExecutor(getProcessorType(), sender);
   }
-  
-//  private Executor getExecutor(DistributionManager dm, Class clazz) {
-//    return dm.getExecutor(getProcessorType());
-//  }
+
+  //  private Executor getExecutor(DistributionManager dm, Class clazz) {
+  //    return dm.getExecutor(getProcessorType());
+  //  }
 
   public abstract int getProcessorType();
 
@@ -342,7 +338,7 @@ public abstract class DistributionMessage
    * @param dm the distribution manager that is processing the message.
    */
   protected abstract void process(DistributionManager dm);
-  
+
   /**
    * Scheduled action to take when on this message when we are ready
    * to process it.
@@ -359,39 +355,36 @@ public abstract class DistributionMessage
       }
       return;
     }
-    if(MessageLogger.isEnabled()) {
-      MessageLogger.logMessage(this, getSender(),  dm.getDistributionManagerId());
+    if (MessageLogger.isEnabled()) {
+      MessageLogger.logMessage(this, getSender(), dm.getDistributionManagerId());
     }
     MessageDependencyMonitor.processingMessage(this);
     long time = 0;
     if (DistributionStats.enableClockStats) {
       time = DistributionStats.getStatTime();
-      dm.getStats().incMessageProcessingScheduleTime(time-getTimestamp());
+      dm.getStats().incMessageProcessingScheduleTime(time - getTimestamp());
     }
     setBreadcrumbsInReceiver();
     try {
-      
+
       DistributionMessageObserver observer = DistributionMessageObserver.getInstance();
-      if(observer != null) {
+      if (observer != null) {
         observer.beforeProcessMessage(dm, this);
       }
       process(dm);
-      if(observer != null) { 
+      if (observer != null) {
         observer.afterProcessMessage(dm, this);
       }
-    }
-    catch (CancelException e) {
+    } catch (CancelException e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Cancelled caught processing {}: {}", this, e.getMessage(), e);
       }
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -399,8 +392,7 @@ public abstract class DistributionMessage
       // is still usable:
       SystemFailure.checkFailure();
       logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributionMessage_UNCAUGHT_EXCEPTION_PROCESSING__0, this), t);
-    }
-    finally {
+    } finally {
       if (doDecMessagesBeingReceived) {
         dm.getStats().decMessagesBeingReceived(this.bytesRead);
       }
@@ -418,12 +410,10 @@ public abstract class DistributionMessage
    * by getExecutor()
    */
   protected final void schedule(final DistributionManager dm) {
-    boolean inlineProcess = DistributionManager.INLINE_PROCESS
-      && getProcessorType() == DistributionManager.SERIAL_EXECUTOR
-      && !isPreciousThread();
-    
+    boolean inlineProcess = DistributionManager.INLINE_PROCESS && getProcessorType() == DistributionManager.SERIAL_EXECUTOR && !isPreciousThread();
+
     boolean forceInline = this.acker != null || getInlineProcess() || Connection.isDominoThread();
-    
+
     if (inlineProcess && !forceInline && isSharedReceiver()) {
       // If processing this message may need to add
       // to more than one serial gateway then don't
@@ -432,9 +422,9 @@ public abstract class DistributionMessage
         inlineProcess = false;
       }
     }
-    
+
     inlineProcess |= forceInline;
-    
+
     if (inlineProcess) {
       dm.getStats().incNumSerialThreads(1);
       try {
@@ -454,19 +444,16 @@ public abstract class DistributionMessage
             return "Processing {" + DistributionMessage.this.toString() + "}";
           }
         });
-      }
-      catch (RejectedExecutionException ex) {
+      } catch (RejectedExecutionException ex) {
         if (!dm.shutdownInProgress()) { // fix for bug 32395
           logger.warn(LocalizedMessage.create(LocalizedStrings.DistributionMessage_0__SCHEDULE_REJECTED, this.toString()), ex);
         }
-      }
-      catch (VirtualMachineError err) {
+      } catch (VirtualMachineError err) {
         SystemFailure.initiateFailure(err);
         // If this ever returns, rethrow the error.  We're poisoned
         // now, so don't let this thread continue.
         throw err;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         // Whenever you catch Error or Throwable, you must also
         // catch VirtualMachineError (see above).  However, there is
         // _still_ a possibility that you are dealing with a cascading
@@ -496,17 +483,16 @@ public abstract class DistributionMessage
     return thrname.startsWith("unicast receiver") || thrname.startsWith("multicast receiver");
   }
 
-
   /** most messages should not force in-line processing */
   public boolean getInlineProcess() {
     return false;
   }
-  
+
   /**
    * sets the breadcrumbs for this message into the current thread's name
    */
   public void setBreadcrumbsInReceiver() {
-    if (Breadcrumbs.ENABLED) { 
+    if (Breadcrumbs.ENABLED) {
       String sender = null;
       String procId = "";
       long pid = getProcessorId();
@@ -515,8 +501,7 @@ public abstract class DistributionMessage
       }
       if (Thread.currentThread().getName().startsWith("P2P Message Reader")) {
         sender = procId;
-      }
-      else {
+      } else {
         sender = "sender=" + getSender() + procId;
       }
       if (sender.length() > 0) {
@@ -528,7 +513,7 @@ public abstract class DistributionMessage
       }
     }
   }
-  
+
   /**
    * sets breadcrumbs in a thread that is sending a message to another member
    */
@@ -540,10 +525,8 @@ public abstract class DistributionMessage
         procId = "processorId=" + pid;
       }
       if (this.recipients != null && this.recipients.length <= 10) { // set a limit on recipients
-        Breadcrumbs.setSendSide(procId 
-            + " recipients="+Arrays.toString(this.recipients));
-      }
-      else {
+        Breadcrumbs.setSendSide(procId + " recipients=" + Arrays.toString(this.recipients));
+      } else {
         if (procId.length() > 0) {
           Breadcrumbs.setSendSide(procId);
         }
@@ -554,11 +537,11 @@ public abstract class DistributionMessage
       }
     }
   }
-  
+
   public EventID getEventID() {
     return null;
   }
-  
+
   /**
    * This method resets the state of this message, usually releasing
    * objects and resources it was using.  It is invoked after the
@@ -579,7 +562,7 @@ public abstract class DistributionMessage
    * (<code>super.toData()</code>).
    */
   public void toData(DataOutput out) throws IOException {
-//     DataSerializer.writeObject(this.recipients, out); // no need to serialize; filled in later
+    //     DataSerializer.writeObject(this.recipients, out); // no need to serialize; filled in later
     //((IpAddress)this.sender).toData(out); // no need to serialize; filled in later
     //out.writeLong(this.timeStamp);
   }
@@ -591,10 +574,9 @@ public abstract class DistributionMessage
    * method should always invoke the inherited method
    * (<code>super.fromData()</code>).
    */
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
 
-//     this.recipients = (Set)DataSerializer.readObject(in); // no to deserialize; filled in later
+    //     this.recipients = (Set)DataSerializer.readObject(in); // no to deserialize; filled in later
     // this.sender = DataSerializer.readIpAddress(in); // no to deserialize; filled in later
     // this.timeStamp = (long)in.readLong();
   }
@@ -621,19 +603,18 @@ public abstract class DistributionMessage
     }
   }
 
-  public void setBytesRead(int bytesRead)
-  {
+  public void setBytesRead(int bytesRead) {
     this.bytesRead = bytesRead;
   }
 
-  public int getBytesRead()
-  {
+  public int getBytesRead() {
     return bytesRead;
   }
-  
+
   public void setSharedReceiver(boolean v) {
     this.sharedReceiver = v;
   }
+
   public boolean isSharedReceiver() {
     return this.sharedReceiver;
   }
@@ -655,7 +636,7 @@ public abstract class DistributionMessage
   public int getProcessorId() {
     return 0;
   }
-  
+
   /**
    * Severe alert processing enables suspect processing at the ack-wait-threshold
    * and issuing of a severe alert at the end of the ack-severe-alert-threshold.
@@ -667,7 +648,7 @@ public abstract class DistributionMessage
   public boolean isSevereAlertCompatible() {
     return false;
   }
-  
+
   /**
    * Returns true if the message is for internal-use such as a meta-data region.
    * 
@@ -677,7 +658,7 @@ public abstract class DistributionMessage
   public boolean isInternal() {
     return false;
   }
-  
+
   /**
    * does this message carry state that will alter the content of
    * one or more cache regions?  This is used to track the
@@ -690,7 +671,7 @@ public abstract class DistributionMessage
   /** returns the class name w/o package information.  useful in logging */
   public String getShortClassName() {
     String cname = getClass().getName();
-    return cname.substring(getClass().getPackage().getName().length()+1);
+    return cname.substring(getClass().getPackage().getName().length() + 1);
   }
 
   @Override

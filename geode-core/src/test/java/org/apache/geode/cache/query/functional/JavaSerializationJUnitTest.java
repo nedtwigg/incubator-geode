@@ -38,19 +38,19 @@ public class JavaSerializationJUnitTest {
 
   @Test
   public void testStructImplSerialization() throws Exception {
-    String[] fieldNames = {"col1", "col2"};
-    ObjectType[] fieldTypes = {new ObjectTypeImpl(Integer.class), new ObjectTypeImpl(String.class)};
+    String[] fieldNames = { "col1", "col2" };
+    ObjectType[] fieldTypes = { new ObjectTypeImpl(Integer.class), new ObjectTypeImpl(String.class) };
     StructTypeImpl type = new StructTypeImpl(fieldNames, fieldTypes);
-    Object[] values = {new Integer(123), new String("456")};
+    Object[] values = { new Integer(123), new String("456") };
     StructImpl si = new StructImpl(type, values);
-    verifyJavaSerialization(si);   
+    verifyJavaSerialization(si);
   }
 
   @Test
   public void testUndefinedSerialization() throws Exception {
-    verifyJavaSerialization(QueryService.UNDEFINED);   
+    verifyJavaSerialization(QueryService.UNDEFINED);
   }
-  
+
   private void verifyJavaSerialization(Object obj) throws Exception {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ObjectOutputStream out = new ObjectOutputStream(baos);

@@ -48,9 +48,8 @@ public class CacheServerLoadMessage extends SerialDistributionMessage {
   public CacheServerLoadMessage() {
     super();
   }
-  
-  public CacheServerLoadMessage(ServerLoad load, ServerLocation location,
-                                 ArrayList clientIds) {
+
+  public CacheServerLoadMessage(ServerLoad load, ServerLocation location, ArrayList clientIds) {
     super();
     this.load = load;
     this.location = location;
@@ -64,19 +63,17 @@ public class CacheServerLoadMessage extends SerialDistributionMessage {
 
   public void updateLocalLocators() {
     List locators = Locator.getLocators();
-    for (int i=0; i < locators.size(); i++) {
-      InternalLocator l = (InternalLocator)locators.get(i);
+    for (int i = 0; i < locators.size(); i++) {
+      InternalLocator l = (InternalLocator) locators.get(i);
       ServerLocator serverLocator = l.getServerLocatorAdvisee();
-      if(serverLocator != null) {
+      if (serverLocator != null) {
         serverLocator.updateLoad(location, load, this.clientIds);
       }
     }
   }
-  
-  
 
   public int getDSFID() {
-   return CACHE_SERVER_LOAD_MESSAGE;
+    return CACHE_SERVER_LOAD_MESSAGE;
   }
 
   @Override
@@ -101,7 +98,5 @@ public class CacheServerLoadMessage extends SerialDistributionMessage {
   protected Object clone() throws CloneNotSupportedException {
     return super.clone();
   }
-  
-  
 
 }

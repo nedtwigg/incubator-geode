@@ -39,8 +39,7 @@ public class GetPdxTypes70 extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received get pdx types from {}", servConn.getName(), servConn.getSocketString());
@@ -55,7 +54,7 @@ public class GetPdxTypes70 extends BaseCommand {
       servConn.setAsTrue(RESPONDED);
       return;
     }
-    
+
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setNumberOfParts(1);

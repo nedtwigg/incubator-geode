@@ -16,7 +16,6 @@
  */
 package org.apache.geode.cache.query.internal.cq;
 
-
 /**
  * Interface for CqEvent. Offers methods to get information from
  * CqEvent.
@@ -33,7 +32,7 @@ import org.apache.geode.internal.cache.EventID;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 public class CqEventImpl implements CqEvent {
-  
+
   private final CqQuery cQuery;
   private final Operation baseOp;
   private final Operation queryOp;
@@ -43,11 +42,10 @@ public class CqEventImpl implements CqEvent {
   private Throwable throwable = null;
   private final QueueManager qManager;
   private final EventID eventId;
-  
-  CqEventImpl(CqQuery cQuery, Operation baseOp, Operation cqOp, Object key, 
-      Object value, byte[] deltaVal, QueueManager qManager, EventID eventId) {
+
+  CqEventImpl(CqQuery cQuery, Operation baseOp, Operation cqOp, Object key, Object value, byte[] deltaVal, QueueManager qManager, EventID eventId) {
     this.cQuery = cQuery;
-    this.queryOp = cqOp; 
+    this.queryOp = cqOp;
     this.baseOp = baseOp;
     this.key = key;
     this.newValue = value;
@@ -59,18 +57,18 @@ public class CqEventImpl implements CqEvent {
     this.qManager = qManager;
     this.eventId = eventId;
   }
-    
+
   public CqQuery getCq() {
     return this.cQuery;
   }
-    
+
   /** 
    * Get the operation on the base region that triggered this event.
    */
   public Operation getBaseOperation() {
     return this.baseOp;
   }
-  
+
   /** 
    * Get the the operation on the query results. Supported operations include
    * update, create, and destroy.
@@ -78,7 +76,7 @@ public class CqEventImpl implements CqEvent {
   public Operation getQueryOperation() {
     return this.queryOp;
   }
-  
+
   /**
    * Get the key relating to the event.
    * @return Object key. 
@@ -97,7 +95,7 @@ public class CqEventImpl implements CqEvent {
     return this.oldValue;
   }
   */
-  
+
   /** 
    * Get the new value of the modification.
    *  If there is no new value because this is a delete, then
@@ -109,7 +107,7 @@ public class CqEventImpl implements CqEvent {
     }
     return this.newValue;
   }
-  
+
   /** 
    * If an error occurred, return the Throwable, otherwise return null.
    * If an error occurred, then this event will be passed to the
@@ -119,7 +117,7 @@ public class CqEventImpl implements CqEvent {
   public Throwable getThrowable() {
     return this.throwable;
   }
-  
+
   public byte[] getDeltaValue() {
     return this.delta;
   }
@@ -130,32 +128,25 @@ public class CqEventImpl implements CqEvent {
    */
   public void setException() {
     // Needs to be changed.
-    this.throwable = new Throwable(LocalizedStrings.CqEventImpl_EXCEPTION_OCCURED_WHILE_APPLYING_QUERY_ON_A_CACHE_EVENT.toLocalizedString());  
+    this.throwable = new Throwable(LocalizedStrings.CqEventImpl_EXCEPTION_OCCURED_WHILE_APPLYING_QUERY_ON_A_CACHE_EVENT.toLocalizedString());
   }
-  
+
   public void setException(String exceptionText) {
-    this.throwable = new Throwable(exceptionText);  
+    this.throwable = new Throwable(exceptionText);
   }
-  
+
   public QueueManager getQueueManager() {
     return this.qManager;
   }
-  
+
   public EventID getEventID() {
-    return this.eventId;  
+    return this.eventId;
   }
-  
+
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("CqEvent [").append(
-     "CqName=").append(this.cQuery.getName()).append(
-     "; base operation=").append(this.baseOp).append(
-     "; cq operation=").append(this.queryOp).append(
-     "; key=").append(this.key).append(
-     "; value=").append(this.newValue).append(
-     "]");
+    buffer.append("CqEvent [").append("CqName=").append(this.cQuery.getName()).append("; base operation=").append(this.baseOp).append("; cq operation=").append(this.queryOp).append("; key=").append(this.key).append("; value=").append(this.newValue).append("]");
     return buffer.toString();
   }
 }
-

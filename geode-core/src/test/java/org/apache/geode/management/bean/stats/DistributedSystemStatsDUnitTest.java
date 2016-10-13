@@ -45,8 +45,8 @@ import org.apache.geode.test.dunit.VM;
 /**
  */
 @Category(DistributedTest.class)
-public class DistributedSystemStatsDUnitTest extends ManagementTestBase{
-  
+public class DistributedSystemStatsDUnitTest extends ManagementTestBase {
+
   private static final long serialVersionUID = 1L;
 
   public DistributedSystemStatsDUnitTest() {
@@ -57,12 +57,12 @@ public class DistributedSystemStatsDUnitTest extends ManagementTestBase{
   public void testDistributedSystemStats() throws Exception {
     initManagement(true);
 
-    for(VM vm : managedNodeList){
+    for (VM vm : managedNodeList) {
       setDiskStats(vm);
     }
     verifyDiskStats(managingNode);
   }
-  
+
   @SuppressWarnings("serial")
   public void setDiskStats(VM vm1) throws Exception {
     vm1.invoke(new SerializableRunnable("Set Member Stats") {
@@ -87,13 +87,12 @@ public class DistributedSystemStatsDUnitTest extends ManagementTestBase{
     vm1.invoke(new SerializableRunnable("Set Member Stats") {
       public void run() {
         GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        
+
         SystemManagementService service = (SystemManagementService) getManagementService();
         DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
         assertNotNull(bean);
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager()
-            .getOtherNormalDistributionManagerIds();
-         
+        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+
         for (DistributedMember member : otherMemberSet) {
           ObjectName memberMBeanName;
           try {

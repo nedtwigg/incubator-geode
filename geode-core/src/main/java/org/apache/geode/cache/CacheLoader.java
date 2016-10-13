@@ -35,7 +35,7 @@ package org.apache.geode.cache;
  * @see AttributesMutator#setCacheLoader
  * @since GemFire 2.0
  */
-public interface CacheLoader<K,V> extends CacheCallback {
+public interface CacheLoader<K, V> extends CacheCallback {
   /**
    * Loads a value. Application writers should implement this
    * method to customize the loading of a value. This method is called
@@ -58,6 +58,5 @@ public interface CacheLoader<K,V> extends CacheCallback {
    *
    * @see   Region#get(Object, Object) Region.get
    */
-  public V load(LoaderHelper<K,V> helper)
-  throws CacheLoaderException;
+  public V load(LoaderHelper<K, V> helper) throws CacheLoaderException;
 }

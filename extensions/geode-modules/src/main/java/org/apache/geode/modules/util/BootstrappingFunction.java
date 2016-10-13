@@ -182,7 +182,6 @@ public class BootstrappingFunction implements Function, MembershipListener {
   }
 
   @Override
-  public void quorumLost(Set<InternalDistributedMember> internalDistributedMembers,
-      List<InternalDistributedMember> internalDistributedMembers2) {
+  public void quorumLost(Set<InternalDistributedMember> internalDistributedMembers, List<InternalDistributedMember> internalDistributedMembers2) {
   }
 }

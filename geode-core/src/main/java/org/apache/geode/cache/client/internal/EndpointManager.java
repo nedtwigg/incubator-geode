@@ -62,7 +62,7 @@ public interface EndpointManager {
    * Remove a listener. 
    */
   void removeListener(EndpointManager.EndpointListener listener);
-  
+
   /**
    * Get the stats for all of the servers we ever connected too.
    * @return a map of ServerLocation-> ConnectionStats
@@ -75,22 +75,22 @@ public interface EndpointManager {
   public int getConnectedServerCount();
 
   public static interface EndpointListener {
-    
+
     void endpointNoLongerInUse(Endpoint endpoint);
-    
+
     void endpointCrashed(Endpoint endpoint);
-    
+
     void endpointNowInUse(Endpoint endpoint);
   }
 
   public static class EndpointListenerAdapter implements EndpointListener {
-  
+
     public void endpointCrashed(Endpoint endpoint) {
     }
-  
+
     public void endpointNoLongerInUse(Endpoint endpoint) {
     }
-  
+
     public void endpointNowInUse(Endpoint endpoint) {
     }
   }

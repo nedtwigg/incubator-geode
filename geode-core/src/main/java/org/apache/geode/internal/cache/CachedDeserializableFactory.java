@@ -45,8 +45,7 @@ public class CachedDeserializableFactory {
   public static CachedDeserializable create(byte[] v) {
     if (STORE_ALL_VALUE_FORMS) {
       return new StoreAllCachedDeserializable(v);
-    }
-    else if (PREFER_DESERIALIZED) {
+    } else if (PREFER_DESERIALIZED) {
       if (isPdxEncoded(v) && cachePrefersPdx()) {
         return new PreferBytesCachedDeserializable(v);
       } else {
@@ -56,7 +55,7 @@ public class CachedDeserializableFactory {
       return new PreferBytesCachedDeserializable(v);
     }
   }
-  
+
   private static boolean isPdxEncoded(byte[] v) {
     // assert v != null;
     if (v.length > 0) {
@@ -72,8 +71,7 @@ public class CachedDeserializableFactory {
   public static CachedDeserializable create(Object object, int serializedSize) {
     if (STORE_ALL_VALUE_FORMS) {
       return new StoreAllCachedDeserializable(object);
-    }
-    else if (PREFER_DESERIALIZED) {
+    } else if (PREFER_DESERIALIZED) {
       if (object instanceof PdxInstance && cachePrefersPdx()) {
         return new PreferBytesCachedDeserializable(object);
 
@@ -100,8 +98,7 @@ public class CachedDeserializableFactory {
     if (STORE_ALL_VALUE_FORMS) {
       // storeAll cds are immutable just return it w/o wrapping
       return cd;
-    }
-    else if (PREFER_DESERIALIZED) {
+    } else if (PREFER_DESERIALIZED) {
       if (cd instanceof PreferBytesCachedDeserializable) {
         return cd;
       } else {
@@ -119,18 +116,18 @@ public class CachedDeserializableFactory {
   public static int overhead() {
     // TODO: revisit this code. If we move to per-region cds then this can no longer be static.
     // TODO: This method also does not work well with the way off heap is determined using the cache.
-    
+
     if (STORE_ALL_VALUE_FORMS) {
       return StoreAllCachedDeserializable.MEM_OVERHEAD;
-    }
-    else if (PREFER_DESERIALIZED) {
+    } else if (PREFER_DESERIALIZED) {
       // PDX: this may instead be PreferBytesCachedDeserializable.MEM_OVERHEAD
       return VMCachedDeserializable.MEM_OVERHEAD;
     } else {
       return PreferBytesCachedDeserializable.MEM_OVERHEAD;
     }
-    
+
   }
+
   /**
    * Return the number of bytes the specified byte array will consume
    * of heap memory.
@@ -140,8 +137,7 @@ public class CachedDeserializableFactory {
     return serializedValue.length + Sizeable.PER_OBJECT_OVERHEAD + 4;
   }
 
-  public static int getArrayOfBytesSize(final byte[][] value,
-      final boolean addObjectOverhead) {
+  public static int getArrayOfBytesSize(final byte[][] value, final boolean addObjectOverhead) {
     int result = 4 * (value.length + 1);
     if (addObjectOverhead) {
       result += Sizeable.PER_OBJECT_OVERHEAD * (value.length + 1);
@@ -162,9 +158,11 @@ public class CachedDeserializableFactory {
   public static int calcMemSize(Object o) {
     return calcMemSize(o, null, true);
   }
+
   public static int calcMemSize(Object o, ObjectSizer os, boolean addOverhead) {
     return calcMemSize(o, os, addOverhead, true);
   }
+
   /**
    * If not calcSerializedSize then return -1 if we can't figure out the mem size.
    */
@@ -172,30 +170,29 @@ public class CachedDeserializableFactory {
     int result;
     if (o instanceof byte[]) {
       // does not need to be wrapped so overhead never added
-      result = getByteSize((byte[])o);
+      result = getByteSize((byte[]) o);
       addOverhead = false;
     } else if (o == null) {
       // does not need to be wrapped so overhead never added
       result = 0;
       addOverhead = false;
     } else if (o instanceof String) {
-      result = (((String)o).length() * 2)
-        + 4 // for the length of the char[]
-        + (Sizeable.PER_OBJECT_OVERHEAD * 2) // for String obj and Char[] obj
-        + 4 // for obj ref to char[] on String; note should be 8 on 64-bit vm
-        + 4 // for offset int field on String
-        + 4 // for count int field on String
-        + 4 // for hash int field on String
-        ;
+      result = (((String) o).length() * 2) + 4 // for the length of the char[]
+          + (Sizeable.PER_OBJECT_OVERHEAD * 2) // for String obj and Char[] obj
+          + 4 // for obj ref to char[] on String; note should be 8 on 64-bit vm
+          + 4 // for offset int field on String
+          + 4 // for count int field on String
+          + 4 // for hash int field on String
+      ;
     } else if (o instanceof byte[][]) {
-      result = getArrayOfBytesSize((byte[][])o, true);
+      result = getArrayOfBytesSize((byte[][]) o, true);
       addOverhead = false;
     } else if (o instanceof CachedDeserializable) {
       // overhead never added
-      result = ((CachedDeserializable)o).getSizeInBytes();
+      result = ((CachedDeserializable) o).getSizeInBytes();
       addOverhead = false;
     } else if (o instanceof Sizeable) {
-      result = ((Sizeable)o).getSizeInBytes();
+      result = ((Sizeable) o).getSizeInBytes();
     } else if (os != null) {
       result = os.sizeof(o);
     } else if (calcSerializedSize) {
@@ -217,9 +214,10 @@ public class CachedDeserializableFactory {
     if (addOverhead) {
       result += overhead();
     }
-//     GemFireCache.getInstance().getLogger().info("DEBUG calcMemSize: o=<" + o + "> o.class=" + (o != null ? o.getClass() : "<null>") + " os=" + os + " result=" + result, new RuntimeException("STACK"));
+    //     GemFireCache.getInstance().getLogger().info("DEBUG calcMemSize: o=<" + o + "> o.class=" + (o != null ? o.getClass() : "<null>") + " os=" + os + " result=" + result, new RuntimeException("STACK"));
     return result;
   }
+
   /**
    * Return an estimate of the number of bytes this object will consume
    * when serialized. This is the number of bytes that will be written
@@ -228,15 +226,15 @@ public class CachedDeserializableFactory {
   public static int calcSerializedSize(Object o) {
     int result;
     if (o instanceof byte[]) {
-      result = getByteSize((byte[])o) - Sizeable.PER_OBJECT_OVERHEAD;
+      result = getByteSize((byte[]) o) - Sizeable.PER_OBJECT_OVERHEAD;
     } else if (o instanceof byte[][]) {
-      result = getArrayOfBytesSize((byte[][])o, false);
+      result = getArrayOfBytesSize((byte[][]) o, false);
     } else if (o instanceof CachedDeserializable) {
-      result = ((CachedDeserializable)o).getSizeInBytes() + 4 - overhead();
+      result = ((CachedDeserializable) o).getSizeInBytes() + 4 - overhead();
     } else if (o instanceof Sizeable) {
-      result = ((Sizeable)o).getSizeInBytes() + 4;
+      result = ((Sizeable) o).getSizeInBytes() + 4;
     } else if (o instanceof HeapDataOutputStream) {
-      result = ((HeapDataOutputStream)o).size() + 4;
+      result = ((HeapDataOutputStream) o).size() + 4;
     } else {
       result = 4;
       NullDataOutputStream dos = new NullDataOutputStream();
@@ -249,9 +247,10 @@ public class CachedDeserializableFactory {
         throw ex2;
       }
     }
-//     GemFireCache.getInstance().getLogger().info("DEBUG calcSerializedSize: o=<" + o + "> o.class=" + (o != null ? o.getClass() : "<null>") + " result=" + result, new RuntimeException("STACK"));
+    //     GemFireCache.getInstance().getLogger().info("DEBUG calcSerializedSize: o=<" + o + "> o.class=" + (o != null ? o.getClass() : "<null>") + " result=" + result, new RuntimeException("STACK"));
     return result;
   }
+
   /**
    * Return how much memory this object will consume
    * if it is in serialized form

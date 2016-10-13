@@ -39,7 +39,8 @@ public class RepeatRule implements TestRule, Serializable {
   @Override
   public Statement apply(final Statement statement, final Description description) {
     return new Statement() {
-      @Override public void evaluate() throws Throwable {
+      @Override
+      public void evaluate() throws Throwable {
         RepeatRule.this.evaluate(statement, description);
       }
     };
@@ -65,7 +66,7 @@ public class RepeatRule implements TestRule, Serializable {
         repetitions = repeat.value();
       }
     }
-    
+
     if (repetitions < 1) {
       throw new IllegalArgumentException("Repeat value must be a positive integer");
     }

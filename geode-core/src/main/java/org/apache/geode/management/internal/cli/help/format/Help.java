@@ -34,10 +34,10 @@ public class Help {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    for(Block block:blocks){
-      buffer.append(block.getHeading()+"\n");
-      for(Row row:block.getRows()){
-        buffer.append("\t"+row.getInfo()[0]+"\n");
+    for (Block block : blocks) {
+      buffer.append(block.getHeading() + "\n");
+      for (Row row : block.getRows()) {
+        buffer.append("\t" + row.getInfo()[0] + "\n");
       }
       buffer.append("\n");
     }

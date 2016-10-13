@@ -48,12 +48,11 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  *
  */
-public final class PrimaryRequestMessage extends PartitionMessage
-{
+public final class PrimaryRequestMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
-  
+
   /** The bucketId needing primary */
   private int bucketId;
 
@@ -65,10 +64,7 @@ public final class PrimaryRequestMessage extends PartitionMessage
    * @return a response object on which the caller waits for acknowledgement of which member is the primary
    * @throws ForceReattemptException if the message was unable to be sent
    */
-  public static PrimaryResponse send(Set recipients, 
-      PartitionedRegion r, int bucketId) 
-      throws ForceReattemptException
-  {
+  public static PrimaryResponse send(Set recipients, PartitionedRegion r, int bucketId) throws ForceReattemptException {
     Assert.assertTrue(recipients != null, "PrimaryRequestMessage NULL recipient");
     PrimaryResponse p = new PrimaryResponse(r.getSystem(), recipients);
     PrimaryRequestMessage m = new PrimaryRequestMessage(recipients, r.getPRId(), p, bucketId);
@@ -81,7 +77,8 @@ public final class PrimaryRequestMessage extends PartitionMessage
     return p;
   }
 
-  public PrimaryRequestMessage() {}
+  public PrimaryRequestMessage() {
+  }
 
   private PrimaryRequestMessage(Set recipients, int regionId, ReplyProcessor21 processor, int bId) {
     super(recipients, regionId, processor);
@@ -93,14 +90,13 @@ public final class PrimaryRequestMessage extends PartitionMessage
     // allow forced-disconnect processing for all cache op messages
     return true;
   }
+
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm,
-      PartitionedRegion pr, long startTime) throws CacheException, ForceReattemptException
-  {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, ForceReattemptException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "PrimaryRequestMessage operateOnRegion: {}", pr.getFullPath());
     }
-    
+
     pr.checkReadiness();
     final boolean isPrimary;
     // TODO, I am sure if this is the method to call to elect the primary -- mthomas 4/19/2007
@@ -113,29 +109,25 @@ public final class PrimaryRequestMessage extends PartitionMessage
     PrimaryRequestReplyMessage.sendReply(getSender(), getProcessorId(), isPrimary, dm);
     return false;
   }
-  
+
   public int getDSFID() {
     return PR_PRIMARY_REQUEST_MESSAGE;
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-  ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.bucketId = in.readInt();
   }
-  
+
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeInt(this.bucketId);
   }
 
   @Override
-  public int getProcessorType()
-  {
+  public int getProcessorType() {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
 
@@ -146,12 +138,13 @@ public final class PrimaryRequestMessage extends PartitionMessage
     private static final long serialVersionUID = 1L;
 
     public volatile boolean isPrimary;
-    
+
     protected static void sendReply(InternalDistributedMember member, int procId, boolean isPrimary, DM dm) {
       dm.putOutgoing(new PrimaryRequestReplyMessage(member, procId, isPrimary));
     }
-    
-    public PrimaryRequestReplyMessage() {}
+
+    public PrimaryRequestReplyMessage() {
+    }
 
     private PrimaryRequestReplyMessage(InternalDistributedMember member, int procId, boolean isPrimary2) {
       setRecipient(member);
@@ -165,14 +158,13 @@ public final class PrimaryRequestMessage extends PartitionMessage
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException
-    {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.isPrimary = in.readBoolean();
     }
+
     @Override
-    public void toData(DataOutput out) throws IOException
-    {
+    public void toData(DataOutput out) throws IOException {
       super.toData(out);
       out.writeBoolean(this.isPrimary);
     }
@@ -190,19 +182,18 @@ public final class PrimaryRequestMessage extends PartitionMessage
     }
 
     @Override
-    public void process(DistributionMessage msg)
-    {
+    public void process(DistributionMessage msg) {
       try {
         if (msg instanceof PrimaryRequestReplyMessage) {
-          PrimaryRequestReplyMessage reply =(PrimaryRequestReplyMessage) msg;
+          PrimaryRequestReplyMessage reply = (PrimaryRequestReplyMessage) msg;
           if (reply.isPrimary) {
             this.msg = reply;
             if (logger.isTraceEnabled(LogMarker.DM)) {
-              logger.trace(LogMarker.DM, "PrimaryRequestResponse primary is {}", this.msg.getSender()); 
+              logger.trace(LogMarker.DM, "PrimaryRequestResponse primary is {}", this.msg.getSender());
             }
           } else {
             if (logger.isTraceEnabled(LogMarker.DM)) {
-              logger.debug("PrimaryRequestResponse {} is not primary", this.msg.getSender()); 
+              logger.debug("PrimaryRequestResponse {} is not primary", this.msg.getSender());
             }
           }
         } else {
@@ -212,13 +203,11 @@ public final class PrimaryRequestMessage extends PartitionMessage
         super.process(msg);
       }
     }
-    
-    public InternalDistributedMember waitForPrimary()  throws ForceReattemptException
-    {
+
+    public InternalDistributedMember waitForPrimary() throws ForceReattemptException {
       try {
         waitForRepliesUninterruptibly();
-      }
-      catch (ReplyException e) {
+      } catch (ReplyException e) {
         Throwable t = e.getCause();
         if (t instanceof CancelException) {
           if (logger.isTraceEnabled(LogMarker.DM)) {

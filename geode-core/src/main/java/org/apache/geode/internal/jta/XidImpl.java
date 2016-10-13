@@ -85,7 +85,7 @@ public class XidImpl implements Xid {
     byte[] globalID = new byte[GTid.length];
     byte[] branchID = new byte[1];
     // we are supporting only one RM So the branch ID is a constant
-    branchID[0] = (byte)1; 
+    branchID[0] = (byte) 1;
     System.arraycopy(GTid, 0, globalID, 0, GTid.length);
     Xid xid = new XidImpl(0x1234, globalID, branchID);
     return xid;

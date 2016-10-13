@@ -38,13 +38,13 @@ public class SimpleSecurityManagerTest {
   private Properties credentials;
 
   @Before
-  public void before(){
+  public void before() {
     manager = new SimpleSecurityManager();
     credentials = new Properties();
   }
 
   @Test
-  public void testAuthenticateSuccess(){
+  public void testAuthenticateSuccess() {
     credentials.put("security-username", "user");
     credentials.put("security-password", "user");
     assertEquals("user", manager.authenticate(credentials));
@@ -58,12 +58,12 @@ public class SimpleSecurityManagerTest {
   }
 
   @Test
-  public void testAuthenticateFailNull(){
-    assertThatThrownBy(()->manager.authenticate(credentials)).isInstanceOf(AuthenticationFailedException.class);
+  public void testAuthenticateFailNull() {
+    assertThatThrownBy(() -> manager.authenticate(credentials)).isInstanceOf(AuthenticationFailedException.class);
   }
 
   @Test
-  public void testAuthorization(){
+  public void testAuthorization() {
     ResourcePermission permission = new ResourcePermission("CLUSTER", "READ");
     assertTrue(manager.authorize("clusterRead", permission));
     assertTrue(manager.authorize("cluster", permission));

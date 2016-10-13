@@ -37,12 +37,12 @@ public class InterestListEndpointPRDUnitTest extends InterestListEndpointDUnitTe
   public InterestListEndpointPRDUnitTest() {
     super();
   }
+
   public static void createImpl() {
     impl = new InterestListEndpointPRDUnitTest();
   }
-  
-  protected RegionAttributes createServerCacheAttributes()
-  {
+
+  protected RegionAttributes createServerCacheAttributes() {
     AttributesFactory factory = new AttributesFactory();
     factory.setDataPolicy(DataPolicy.PARTITION);
     factory.setPartitionAttributes((new PartitionAttributesFactory()).create());

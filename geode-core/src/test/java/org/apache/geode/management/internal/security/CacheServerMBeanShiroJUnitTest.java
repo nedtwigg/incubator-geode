@@ -75,7 +75,7 @@ public class CacheServerMBeanShiroJUnitTest {
 
   @Test
   @JMXConnectionConfiguration(user = "regionAReader", password = "password")
-  public void testRegionAccess() throws Exception{
+  public void testRegionAccess() throws Exception {
     assertThatThrownBy(() -> bean.removeIndex("foo")).hasMessageContaining(TestCommand.dataManage.toString());
     assertThatThrownBy(() -> bean.fetchLoadProbe()).hasMessageContaining(TestCommand.clusterRead.toString());
     assertThatThrownBy(() -> bean.getActiveCQCount()).hasMessageContaining(TestCommand.clusterRead.toString());
@@ -85,7 +85,7 @@ public class CacheServerMBeanShiroJUnitTest {
 
   @Test
   @JMXConnectionConfiguration(user = "dataReader", password = "12345")
-  public void testDataRead() throws Exception{
+  public void testDataRead() throws Exception {
     assertThatThrownBy(() -> bean.removeIndex("foo")).hasMessageContaining(TestCommand.dataManage.toString());
     assertThatThrownBy(() -> bean.fetchLoadProbe()).hasMessageContaining(TestCommand.clusterRead.toString());
     assertThatThrownBy(() -> bean.getActiveCQCount()).hasMessageContaining(TestCommand.clusterRead.toString());

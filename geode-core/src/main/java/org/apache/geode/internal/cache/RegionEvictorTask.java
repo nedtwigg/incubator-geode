@@ -37,16 +37,15 @@ import java.util.concurrent.Callable;
  * 
  */
 public class RegionEvictorTask implements Callable<Object> {
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final int EVICTION_BURST_PAUSE_TIME_MILLIS;
 
   public static int TEST_EVICTION_BURST_PAUSE_TIME_MILLIS = Integer.MAX_VALUE;
 
   static {
-    EVICTION_BURST_PAUSE_TIME_MILLIS = Integer.getInteger(
-        DistributionConfig.GEMFIRE_PREFIX + "evictionBurstPauseTimeMillis", 1000);
+    EVICTION_BURST_PAUSE_TIME_MILLIS = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "evictionBurstPauseTimeMillis", 1000);
   }
 
   private static volatile long lastTaskCompletionTime = 0;
@@ -54,6 +53,7 @@ public class RegionEvictorTask implements Callable<Object> {
   public static void setLastTaskCompletionTime(long v) {
     lastTaskCompletionTime = v;
   }
+
   public static long getLastTaskCompletionTime() {
     return lastTaskCompletionTime;
   }
@@ -62,15 +62,14 @@ public class RegionEvictorTask implements Callable<Object> {
 
   private final HeapEvictor evictor;
 
-  private final long bytesToEvictPerTask ; 
-  
+  private final long bytesToEvictPerTask;
+
   public RegionEvictorTask(List<LocalRegion> regionSet, HeapEvictor evictor, long bytesToEvictPerTask) {
     this.evictor = evictor;
     this.regionSet = regionSet;
     this.bytesToEvictPerTask = bytesToEvictPerTask;
   }
 
-  
   public List<LocalRegion> getRegionList() {
     synchronized (this.regionSet) {
       return this.regionSet;
@@ -103,14 +102,12 @@ public class RegionEvictorTask implements Callable<Object> {
           while (iter.hasNext()) {
             LocalRegion region = iter.next();
             try {
-              bytesEvicted = ((AbstractLRURegionMap)region.entries)
-                  .centralizedLruUpdateCallback();
+              bytesEvicted = ((AbstractLRURegionMap) region.entries).centralizedLruUpdateCallback();
               if (bytesEvicted == 0) {
                 iter.remove();
               }
               totalBytesEvicted += bytesEvicted;
-              if (totalBytesEvicted >= bytesToEvictPerTask
-                  || !getHeapEvictor().mustEvict() || this.regionSet.size() == 0) {
+              if (totalBytesEvicted >= bytesToEvictPerTask || !getHeapEvictor().mustEvict() || this.regionSet.size() == 0) {
                 lastTaskCompletionTime = System.currentTimeMillis();
                 return null;
               }
@@ -118,13 +115,11 @@ public class RegionEvictorTask implements Callable<Object> {
               region.cache.getCancelCriterion().checkCancelInProgress(rd);
             } catch (Exception e) {
               region.cache.getCancelCriterion().checkCancelInProgress(e);
-              logger.warn(LocalizedMessage.create(
-                  LocalizedStrings.Eviction_EVICTOR_TASK_EXCEPTION,
-                  new Object[] { e.getMessage() }), e);
+              logger.warn(LocalizedMessage.create(LocalizedStrings.Eviction_EVICTOR_TASK_EXCEPTION, new Object[] { e.getMessage() }), e);
             } finally {
               getGemFireCache().getCachePerfStats();
               long end = CachePerfStats.getStatTime();
-              getGemFireCache().getCachePerfStats().incEvictWorkTime(end-start);
+              getGemFireCache().getCachePerfStats().incEvictWorkTime(end - start);
             }
           }
         }

@@ -32,8 +32,7 @@ import org.apache.geode.cache.execute.ResultCollector;
  */
 public interface InternalExecution extends Execution {
 
-  public InternalExecution withMemberMappedArgument(
-      MemberMappedArgument argument); 
+  public InternalExecution withMemberMappedArgument(MemberMappedArgument argument);
 
   /**
    * Specifies a  filter of bucketIDs for selecting the GemFire
@@ -51,7 +50,7 @@ public interface InternalExecution extends Execution {
    * @since Geode 1.0
    */
   public InternalExecution withBucketFilter(Set<Integer> bucketIDs);
-  
+
   /**
    * If true, function execution waits for all exceptions from target nodes <br>
    * If false, function execution returns when first exception is occurred.
@@ -59,7 +58,7 @@ public interface InternalExecution extends Execution {
    * @param setWaitOnException
    */
   public void setWaitOnExceptionFlag(boolean setWaitOnException);
-  
+
   /**
    * Sets the exception delivery flag.  If set, all exceptions will be forwarded
    * directly to the {@link ResultCollector}.  The user will not need to invoke

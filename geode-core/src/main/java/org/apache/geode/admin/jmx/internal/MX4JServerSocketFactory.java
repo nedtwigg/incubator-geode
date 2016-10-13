@@ -48,18 +48,16 @@ import java.util.Properties;
  *
  * @since GemFire     3.5 (old name was SSLAdaptorServerSocketFactory)
  */
-public class MX4JServerSocketFactory 
-implements mx4j.tools.adaptor.AdaptorServerSocketFactory,
-           java.rmi.server.RMIServerSocketFactory {
+public class MX4JServerSocketFactory implements mx4j.tools.adaptor.AdaptorServerSocketFactory, java.rmi.server.RMIServerSocketFactory {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final int DEFAULT_BACKLOG = 50;
-  
+
   private final SocketCreator socketCreator;
   private String bindAddress = DistributedSystemConfig.DEFAULT_BIND_ADDRESS;
   private int backlog = DEFAULT_BACKLOG;
-  
+
   /**
    * Constructs new instance of MX4JServerSocketFactory.
    * 
@@ -74,19 +72,14 @@ implements mx4j.tools.adaptor.AdaptorServerSocketFactory,
    * @param gfsecurityProps
    *          vendor properties passed in through gfsecurity.properties
    */
-  public MX4JServerSocketFactory(boolean useSSL,
-                                       boolean needClientAuth,
-                                       String protocols,
-                                       String ciphers,
-                                       Properties gfsecurityProps) {
+  public MX4JServerSocketFactory(boolean useSSL, boolean needClientAuth, String protocols, String ciphers, Properties gfsecurityProps) {
     if (protocols == null || protocols.length() == 0) {
       protocols = DistributionConfig.DEFAULT_SSL_PROTOCOLS;
     }
     if (ciphers == null || ciphers.length() == 0) {
       ciphers = DistributionConfig.DEFAULT_SSL_CIPHERS;
     }
-    this.socketCreator = SocketCreatorFactory.createNonDefaultInstance(
-        useSSL, needClientAuth, protocols, ciphers, gfsecurityProps);
+    this.socketCreator = SocketCreatorFactory.createNonDefaultInstance(useSSL, needClientAuth, protocols, ciphers, gfsecurityProps);
   }
 
   /**
@@ -107,13 +100,9 @@ implements mx4j.tools.adaptor.AdaptorServerSocketFactory,
    * @param gfsecurityProps
    *          vendor properties passed in through gfsecurity.properties
    */
-  public MX4JServerSocketFactory(boolean useSSL,
-                                       boolean needClientAuth,
-                                       String protocols,
-                                       String ciphers,
-                                       String bindAddress, // optional for RMI impl
-                                       int backlog, // optional for RMI impl
-                                       Properties gfsecurityProps) {
+  public MX4JServerSocketFactory(boolean useSSL, boolean needClientAuth, String protocols, String ciphers, String bindAddress, // optional for RMI impl
+      int backlog, // optional for RMI impl
+      Properties gfsecurityProps) {
     this(useSSL, needClientAuth, protocols, ciphers, gfsecurityProps);
     this.bindAddress = bindAddress;
     this.backlog = backlog;
@@ -122,39 +111,32 @@ implements mx4j.tools.adaptor.AdaptorServerSocketFactory,
   // -------------------------------------------------------------------------
   //   mx4j.tools.adaptor.AdaptorServerSocketFactory impl...
   // -------------------------------------------------------------------------
-  
-	public ServerSocket createServerSocket(int port, 
-                                         int backlog, 
-                                         String bindAddress) throws IOException {
-          if ("".equals(bindAddress)) {
-            return socketCreator.createServerSocket(
-              port, backlog);
 
-          } else {
-            return socketCreator.createServerSocket(
-              port, backlog, InetAddressUtil.toInetAddress(bindAddress));
-          }
+  public ServerSocket createServerSocket(int port, int backlog, String bindAddress) throws IOException {
+    if ("".equals(bindAddress)) {
+      return socketCreator.createServerSocket(port, backlog);
+
+    } else {
+      return socketCreator.createServerSocket(port, backlog, InetAddressUtil.toInetAddress(bindAddress));
+    }
   }
-  
+
   // -------------------------------------------------------------------------
   //   java.rmi.server.RMIServerSocketFactory impl...
   // -------------------------------------------------------------------------
-  
-   public ServerSocket createServerSocket(int port) throws IOException {
-     ServerSocket sock = null;    
-     if ("".equals(bindAddress)) {
-       sock = socketCreator.createServerSocket(port, this.backlog);
-     } else {
-       sock = socketCreator.createServerSocket(
-               port, this.backlog, InetAddressUtil.toInetAddress(this.bindAddress));
-     }
-     
-     if (logger.isDebugEnabled()) {
-      logger.debug("MX4JServerSocketFactory RMIServerSocketFactory, INetAddress {}, LocalPort {}, LocalSocketAddress {}",
-          sock.getInetAddress(), sock.getLocalPort(), sock.getLocalSocketAddress());
-     }
-     return sock;
-   }
-   
-}
 
+  public ServerSocket createServerSocket(int port) throws IOException {
+    ServerSocket sock = null;
+    if ("".equals(bindAddress)) {
+      sock = socketCreator.createServerSocket(port, this.backlog);
+    } else {
+      sock = socketCreator.createServerSocket(port, this.backlog, InetAddressUtil.toInetAddress(this.bindAddress));
+    }
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("MX4JServerSocketFactory RMIServerSocketFactory, INetAddress {}, LocalPort {}, LocalSocketAddress {}", sock.getInetAddress(), sock.getLocalPort(), sock.getLocalSocketAddress());
+    }
+    return sock;
+  }
+
+}

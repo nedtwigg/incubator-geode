@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.geode.admin;
+
 import java.util.Properties;
 
 /**
@@ -41,8 +42,7 @@ import java.util.Properties;
  * @since GemFire 4.0
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
-public interface DistributionLocatorConfig
-  extends ManagedEntityConfig {
+public interface DistributionLocatorConfig extends ManagedEntityConfig {
 
   /**
    * Returns the port on which ths distribution locator listens for
@@ -77,13 +77,12 @@ public interface DistributionLocatorConfig
    * @since GemFire 5.0
    */
   public void setDistributedSystemProperties(Properties props);
-  
+
   /**
    * Retrieves the properties used to configure the locator's
    * DistributedSystem.
    * @since GemFire 5.0
    */
   public Properties getDistributedSystemProperties();
-
 
 }

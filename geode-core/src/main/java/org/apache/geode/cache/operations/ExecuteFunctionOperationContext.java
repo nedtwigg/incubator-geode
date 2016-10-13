@@ -34,16 +34,14 @@ public class ExecuteFunctionOperationContext extends OperationContext {
   private boolean optizeForWrite;
 
   private boolean isPostOperation;
-  
+
   private Set keySet;
-  
+
   private Object arguments;
 
   private Object result;
 
-  public ExecuteFunctionOperationContext(String functionName,
-      String regionName, Set keySet, Object arguments,
-      boolean optimizeForWrite, boolean isPostOperation) {
+  public ExecuteFunctionOperationContext(String functionName, String regionName, Set keySet, Object arguments, boolean optimizeForWrite, boolean isPostOperation) {
     this.functionId = functionName;
     this.regionName = regionName;
     this.keySet = keySet;
@@ -73,7 +71,7 @@ public class ExecuteFunctionOperationContext extends OperationContext {
   public boolean isOptimizeForWrite() {
     return this.optizeForWrite;
   }
-  
+
   public Object getResult() {
     return this.result;
   }
@@ -81,7 +79,7 @@ public class ExecuteFunctionOperationContext extends OperationContext {
   public Set getKeySet() {
     return this.keySet;
   }
-  
+
   public Object getArguments() {
     return this.arguments;
   }
@@ -89,7 +87,7 @@ public class ExecuteFunctionOperationContext extends OperationContext {
   public void setResult(Object oneResult) {
     this.result = oneResult;
   }
-  
+
   public void setIsPostOperation(boolean isPostOperation) {
     this.isPostOperation = isPostOperation;
   }

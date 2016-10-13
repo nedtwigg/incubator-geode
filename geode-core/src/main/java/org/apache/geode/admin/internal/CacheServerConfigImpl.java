@@ -27,8 +27,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
  *
  * @since GemFire 4.0
  */
-public class CacheServerConfigImpl extends ManagedEntityConfigImpl 
-  implements CacheVmConfig, CacheServerConfig {
+public class CacheServerConfigImpl extends ManagedEntityConfigImpl implements CacheVmConfig, CacheServerConfig {
 
   /** Declarative caching XML file that is used to initialize the
    * Cache in the cache server. */
@@ -118,7 +117,7 @@ public class CacheServerConfigImpl extends ManagedEntityConfigImpl
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new CacheServerConfigImpl((CacheVmConfig)this);
+    return new CacheServerConfigImpl((CacheVmConfig) this);
   }
 
   @Override
@@ -130,7 +129,7 @@ public class CacheServerConfigImpl extends ManagedEntityConfigImpl
     sb.append(" classPath=");
     sb.append(this.getClassPath());
 
-    return sb.toString();    
+    return sb.toString();
   }
 
 }

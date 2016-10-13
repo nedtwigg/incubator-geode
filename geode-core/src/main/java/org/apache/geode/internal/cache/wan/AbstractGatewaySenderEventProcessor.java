@@ -54,11 +54,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractGatewaySenderEventProcessor extends Thread {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   public static boolean TEST_HOOK = false;
 
   protected RegionQueue queue;
-  
+
   protected GatewaySenderEventDispatcher dispatcher;
 
   protected final AbstractGatewaySender sender;
@@ -86,7 +86,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
    * is now waiting for resuming
    */
   protected boolean isDispatcherWaiting = false;
-  
+
   /**
    * A lock object used to control pausing this dispatcher
    */
@@ -101,24 +101,22 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
   protected boolean eventQueueSizeWarning = false;
 
   private Exception exception;
-  
+
   /*
    * The batchIdToEventsMap contains a mapping between batch id and an array of
    * events. The first element of the array is the list of events peeked from
    * the queue. The second element of the array is the list of filtered events.
    * These are the events actually sent.
    */
-  private Map<Integer, List<GatewaySenderEventImpl>[]> batchIdToEventsMap = Collections
-      .synchronizedMap(new HashMap<Integer, List<GatewaySenderEventImpl>[]>());
-  private Map<Integer, List<GatewaySenderEventImpl>> batchIdToPDXEventsMap = Collections
-      .synchronizedMap(new HashMap<Integer, List<GatewaySenderEventImpl>>());
+  private Map<Integer, List<GatewaySenderEventImpl>[]> batchIdToEventsMap = Collections.synchronizedMap(new HashMap<Integer, List<GatewaySenderEventImpl>[]>());
+  private Map<Integer, List<GatewaySenderEventImpl>> batchIdToPDXEventsMap = Collections.synchronizedMap(new HashMap<Integer, List<GatewaySenderEventImpl>>());
 
   private List<GatewaySenderEventImpl> pdxSenderEventsList = new ArrayList<GatewaySenderEventImpl>();
-  private Map<Object, GatewaySenderEventImpl> pdxEventsMap = new HashMap<Object,GatewaySenderEventImpl>();
+  private Map<Object, GatewaySenderEventImpl> pdxEventsMap = new HashMap<Object, GatewaySenderEventImpl>();
   private volatile boolean rebuildPdxList = false;
-  
+
   private volatile boolean resetLastPeekedEvents;
-  
+
   private long numEventsDispatched;
 
   /**
@@ -127,24 +125,21 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
    * MessageTooLargeException occurs.
    */
   private int batchSize;
-  
+
   /**
    * @param createThreadGroup
    * @param string
    */
-  public AbstractGatewaySenderEventProcessor(LoggingThreadGroup createThreadGroup,
-      String string, GatewaySender sender) {
+  public AbstractGatewaySenderEventProcessor(LoggingThreadGroup createThreadGroup, String string, GatewaySender sender) {
     super(createThreadGroup, string);
-    this.sender = (AbstractGatewaySender)sender;
+    this.sender = (AbstractGatewaySender) sender;
     this.batchSize = sender.getBatchSize();
   }
 
   abstract protected void initializeMessageQueue(String id);
-  
-  public abstract void enqueueEvent(EnumListenerEvent operation,
-      EntryEvent event, Object substituteValue) throws IOException,
-      CacheException;
-  
+
+  public abstract void enqueueEvent(EnumListenerEvent operation, EntryEvent event, Object substituteValue) throws IOException, CacheException;
+
   protected abstract void rebalance();
 
   public boolean isStopped() {
@@ -207,12 +202,10 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     int currentBatchSize = this.batchSize;
     if (batchSize <= 0) {
       this.batchSize = 1;
-      logger.warn(LocalizedMessage.create(
-          LocalizedStrings.AbstractGatewaySenderEventProcessor_ATTEMPT_TO_SET_BATCH_SIZE_FAILED, new Object[] { currentBatchSize, batchSize }));
+      logger.warn(LocalizedMessage.create(LocalizedStrings.AbstractGatewaySenderEventProcessor_ATTEMPT_TO_SET_BATCH_SIZE_FAILED, new Object[] { currentBatchSize, batchSize }));
     } else {
       this.batchSize = batchSize;
-      logger.info(LocalizedMessage.create(
-          LocalizedStrings.AbstractGatewaySenderEventProcessor_SET_BATCH_SIZE, new Object[] { currentBatchSize, this.batchSize }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.AbstractGatewaySenderEventProcessor_SET_BATCH_SIZE, new Object[] { currentBatchSize, this.batchSize }));
     }
   }
 
@@ -228,9 +221,8 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
   protected boolean isConnectionReset() {
     return this.resetLastPeekedEvents;
   }
-  
-  protected void eventQueueRemove() throws CacheException,
-      InterruptedException {
+
+  protected void eventQueueRemove() throws CacheException, InterruptedException {
     this.queue.remove();
   }
 
@@ -247,20 +239,20 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
   }
 
   public int eventQueueSize() {
-    if(queue == null) {
+    if (queue == null) {
       return 0;
     }
-    
+
     // This should be local size instead of pr size
     if (this.queue instanceof ParallelGatewaySenderQueue) {
       return ((ParallelGatewaySenderQueue) queue).localSize();
     }
     if (this.queue instanceof ConcurrentParallelGatewaySenderQueue) {
       return ((ConcurrentParallelGatewaySenderQueue) queue).localSize();
-    } 
+    }
     return this.queue.size();
   }
-  
+
   /**
    * @return the sender
    */
@@ -280,22 +272,21 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     if (!this.isPaused) {
       throw new IllegalStateException("Should be trying to pause!");
     }
-    boolean interrupted=false;
-    synchronized(this.pausedLock) {
-      while(!isDispatcherWaiting && !isStopped()
-            && sender.getSenderAdvisor().isPrimary()) {
+    boolean interrupted = false;
+    synchronized (this.pausedLock) {
+      while (!isDispatcherWaiting && !isStopped() && sender.getSenderAdvisor().isPrimary()) {
         try {
           this.pausedLock.wait();
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
           interrupted = true;
         }
       }
     }
-    if(interrupted) {
+    if (interrupted) {
       Thread.currentThread().interrupt();
     }
   }
-  
+
   public void resumeDispatching() {
     if (!this.isPaused) {
       return;
@@ -325,23 +316,20 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
    * When a batch fails, then this keeps the last time when a failure was
    * logged . We don't want to swamp the logs in retries due to same batch failures.
    */
-  private final ConcurrentHashMap<Integer, long[]> failureLogInterval =
-      new ConcurrentHashMap<Integer, long[]>();
-      
+  private final ConcurrentHashMap<Integer, long[]> failureLogInterval = new ConcurrentHashMap<Integer, long[]>();
+
   /**
    * The maximum size of {@link #failureLogInterval} beyond which it will start
    * logging all failure instances. Hopefully this should never happen in
    * practice.
    */
-  protected static final int FAILURE_MAP_MAXSIZE = Integer.getInteger(
-      DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.FAILURE_MAP_MAXSIZE", 1000000);
+  protected static final int FAILURE_MAP_MAXSIZE = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.FAILURE_MAP_MAXSIZE", 1000000);
 
   /**
    * The maximum interval for logging failures of the same event in millis.
    */
-  protected static final int FAILURE_LOG_MAX_INTERVAL = Integer.getInteger(
-      DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.FAILURE_LOG_MAX_INTERVAL", 300000);
-  
+  protected static final int FAILURE_LOG_MAX_INTERVAL = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.FAILURE_LOG_MAX_INTERVAL", 300000);
+
   public final boolean skipFailureLogging(Integer batchId) {
     boolean skipLogging = false;
     // if map has become large then give up on new events but we don't expect
@@ -356,15 +344,13 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       // logging for quite a while in any case)
       long[] logInterval = this.failureLogInterval.get(batchId);
       if (logInterval == null) {
-        logInterval = this.failureLogInterval.putIfAbsent(batchId,
-            new long[] { System.currentTimeMillis(), 1000 });
+        logInterval = this.failureLogInterval.putIfAbsent(batchId, new long[] { System.currentTimeMillis(), 1000 });
       }
       if (logInterval != null) {
         long currentTime = System.currentTimeMillis();
         if ((currentTime - logInterval[0]) < logInterval[1]) {
           skipLogging = true;
-        }
-        else {
+        } else {
           logInterval[0] = currentTime;
           // don't increase logInterval to beyond a limit (5 mins by default)
           if (logInterval[1] <= (FAILURE_LOG_MAX_INTERVAL / 4)) {
@@ -384,14 +370,14 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
   public final boolean removeEventFromFailureMap(Integer batchId) {
     return this.failureLogInterval.remove(batchId) != null;
   }
-  
+
   protected void processQueue() {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     final boolean isTraceEnabled = logger.isTraceEnabled();
-    
+
     final int batchTimeInterval = sender.getBatchTimeInterval();
     final GatewaySenderStats statistics = this.sender.getStatistics();
-    
+
     if (isDebugEnabled) {
       logger.debug("STARTED processQueue {}", this.getId());
     }
@@ -403,8 +389,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     List<GatewaySenderEventImpl> pdxEventsToBeDispatched = new ArrayList<GatewaySenderEventImpl>();
     // list of filteredList + pdxEventsToBeDispatched events
     List<GatewaySenderEventImpl> eventsToBeDispatched = new ArrayList<GatewaySenderEventImpl>();
-    
-    
+
     for (;;) {
       if (stopped()) {
         break;
@@ -438,16 +423,14 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
           // filtering VERSION_ACTION events from being sent.
           boolean sendUpdateVersionEvents = shouldSendVersionEvents(this.dispatcher);
 
-          
           // sleep a little bit, look for events
           boolean interrupted = Thread.interrupted();
           try {
-            if(resetLastPeekedEvents) {
+            if (resetLastPeekedEvents) {
               resetLastPeekedEvents();
               resetLastPeekedEvents = false;
             }
-            
-             
+
             {
               // Below code was added to consider the case of queue region is
               // destroyed due to userPRs localdestroy or destroy operation.
@@ -456,13 +439,13 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
               // With latest change of multiple PR with single ParalleSender, we
               // cant wait for particular regionqueue to get recreated as there
               // will be other region queue from which events can be picked
-              
-            /*// Check if paused. If so, wait for resumption
-            if (this.isPaused) {
-              waitForResumption();
-            }
 
-            synchronized (this.getQueue()) {
+              /*// Check if paused. If so, wait for resumption
+              if (this.isPaused) {
+              waitForResumption();
+              }
+              
+              synchronized (this.getQueue()) {
               // its quite possible that the queue region is
               // destroyed(userRegion
               // localdestroy destroys shadow region locally). In this case
@@ -480,7 +463,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
                   Thread.currentThread().interrupt();
                 }
               }
-            }*/
+              }*/
             }
             events = this.queue.peek(this.batchSize, batchTimeInterval);
           } catch (InterruptedException e) {
@@ -498,13 +481,12 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
 
           //this list is access by ack reader thread so create new every time. #50220
           filteredList = new ArrayList<GatewaySenderEventImpl>();
-          
+
           filteredList.addAll(events);
 
           // If the exception has been set and its cause is an IllegalStateExcetption,
           // remove all events whose serialized value is no longer available
-          if (this.exception != null && this.exception.getCause() != null
-              && this.exception.getCause() instanceof IllegalStateException) {
+          if (this.exception != null && this.exception.getCause() != null && this.exception.getCause() instanceof IllegalStateException) {
             for (Iterator<GatewaySenderEventImpl> i = filteredList.iterator(); i.hasNext();) {
               GatewaySenderEventImpl event = i.next();
               if (event.isSerializedValueNotAvailable()) {
@@ -526,12 +508,12 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
                 if (isTraceEnabled) {
                   logger.trace("Update Event Version event: {} removed from Gateway Sender queue: {}", event, sender);
                 }
-                
+
                 itr.remove();
                 statistics.incEventsNotQueued();
                 continue;
               }
-              
+
               boolean transmit = filter.beforeTransmit(event);
               if (!transmit) {
                 if (isDebugEnabled) {
@@ -546,41 +528,35 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
             eventQueueRemove(events.size());
             continue;
           }*/
-          
+
           // if the bucket becomes secondary after the event is picked from it,
           // check again before dispatching the event. Do this only for
           // AsyncEventQueue since possibleDuplicate flag is not used in WAN.
-          if (this.getSender().isParallel()
-              && (this.getDispatcher() instanceof GatewaySenderEventCallbackDispatcher)) {
+          if (this.getSender().isParallel() && (this.getDispatcher() instanceof GatewaySenderEventCallbackDispatcher)) {
             Iterator<GatewaySenderEventImpl> itr = filteredList.iterator();
             while (itr.hasNext()) {
-              GatewaySenderEventImpl event = (GatewaySenderEventImpl)itr.next();
+              GatewaySenderEventImpl event = (GatewaySenderEventImpl) itr.next();
               PartitionedRegion qpr = null;
               if (this.getQueue() instanceof ConcurrentParallelGatewaySenderQueue) {
-                qpr = ((ConcurrentParallelGatewaySenderQueue)this.getQueue())
-                    .getRegion(event.getRegionPath());
-              }
-              else {
-                qpr = ((ParallelGatewaySenderQueue)this.getQueue())
-                    .getRegion(event.getRegionPath());
+                qpr = ((ConcurrentParallelGatewaySenderQueue) this.getQueue()).getRegion(event.getRegionPath());
+              } else {
+                qpr = ((ParallelGatewaySenderQueue) this.getQueue()).getRegion(event.getRegionPath());
               }
               int bucketId = event.getBucketId();
               // if the bucket from which the event has been picked is no longer
               // primary, then set possibleDuplicate to true on the event
               if (qpr != null) {
-                BucketRegion bucket = qpr.getDataStore().getLocalBucketById(
-                    bucketId);
+                BucketRegion bucket = qpr.getDataStore().getLocalBucketById(bucketId);
                 if (bucket == null || !bucket.getBucketAdvisor().isPrimary()) {
                   event.setPossibleDuplicate(true);
                 }
               }
               if (isDebugEnabled) {
-                logger.debug("Bucket id: {} is no longer primary on this node. The event {} will be dispatched from this node with possibleDuplicate set to true.",
-                    bucketId, event);
+                logger.debug("Bucket id: {} is no longer primary on this node. The event {} will be dispatched from this node with possibleDuplicate set to true.", bucketId, event);
               }
             }
           }
-          
+
           eventsToBeDispatched.clear();
           if (!(this.dispatcher instanceof GatewaySenderEventCallbackDispatcher)) {
             // store the batch before dispatching so it can be retrieved by the ack thread.
@@ -592,36 +568,32 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
             pdxEventsToBeDispatched = addPDXEvent();
             eventsToBeDispatched.addAll(pdxEventsToBeDispatched);
             if (!pdxEventsToBeDispatched.isEmpty()) {
-              this.batchIdToPDXEventsMap.put(getBatchId(),
-                  pdxEventsToBeDispatched);
+              this.batchIdToPDXEventsMap.put(getBatchId(), pdxEventsToBeDispatched);
             }
           }
-          
+
           eventsToBeDispatched.addAll(filteredList);
-          
+
           // Conflate the batch. Event conflation only occurs on the queue.
           // Once an event has been peeked into a batch, it won't be
           // conflated. So if events go through the queue quickly (as in the
           // no-ack case), then multiple events for the same key may end up in
           // the batch.
-          List conflatedEventsToBeDispatched = conflate(eventsToBeDispatched);          
-          
+          List conflatedEventsToBeDispatched = conflate(eventsToBeDispatched);
+
           if (isDebugEnabled) {
             logBatchFine("During normal processing, dispatching the following ", conflatedEventsToBeDispatched);
           }
-          
+
           boolean success = this.dispatcher.dispatchBatch(conflatedEventsToBeDispatched, false);
           if (success) {
             if (isDebugEnabled) {
-              logger.debug("During normal processing, successfully dispatched {} events (batch #{})",
-                  conflatedEventsToBeDispatched.size(), getBatchId());
+              logger.debug("During normal processing, successfully dispatched {} events (batch #{})", conflatedEventsToBeDispatched.size(), getBatchId());
             }
-                            removeEventFromFailureMap(getBatchId());
-          }
-          else {
-            if (!skipFailureLogging(getBatchId())) { 
-              logger.warn(LocalizedMessage.create(
-                  LocalizedStrings.GatewayImpl_EVENT_QUEUE_DISPATCH_FAILED, new Object[] { filteredList.size(), getBatchId() }));       
+            removeEventFromFailureMap(getBatchId());
+          } else {
+            if (!skipFailureLogging(getBatchId())) {
+              logger.warn(LocalizedMessage.create(LocalizedStrings.GatewayImpl_EVENT_QUEUE_DISPATCH_FAILED, new Object[] { filteredList.size(), getBatchId() }));
             }
           }
           // check again, don't do post-processing if we're stopped.
@@ -636,7 +608,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
             } else {
               incrementBatchId();
             }
-            
+
             // pdx related gateway sender events needs to be updated for
             // isDispatched
             for (GatewaySenderEventImpl pdxGatewaySenderEvent : pdxEventsToBeDispatched) {
@@ -655,8 +627,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
               if (!resetLastPeekedEvents) {
                 while (!this.dispatcher.dispatchBatch(conflatedEventsToBeDispatched, true)) {
                   if (isDebugEnabled) {
-                    logger.debug("During normal processing, unsuccessfully dispatched {} events (batch #{})",
-                        conflatedEventsToBeDispatched.size(), getBatchId());
+                    logger.debug("During normal processing, unsuccessfully dispatched {} events (batch #{})", conflatedEventsToBeDispatched.size(), getBatchId());
                   }
                   if (stopped() || resetLastPeekedEvents) {
                     break;
@@ -672,7 +643,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
             }
           } // unsuccessful batch
           if (logger.isDebugEnabled()) {
-            logger.debug("Finished processing events (batch #{})", (getBatchId()-1));
+            logger.debug("Finished processing events (batch #{})", (getBatchId() - 1));
           }
         } // for
       } catch (RegionDestroyedException e) {
@@ -704,32 +675,30 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
         if (stopped()) {
           return; // don't complain, just exit.
         }
-        
+
         if (events != null) {
           handleUnSuccessfulBatchDispatch(events);
         }
         this.resetLastPeekedEvents = true;
-        
+
         if (e instanceof GatewaySenderException) {
           Throwable cause = e.getCause();
-          if (cause instanceof IOException
-              || e instanceof GatewaySenderConfigurationException) {
+          if (cause instanceof IOException || e instanceof GatewaySenderConfigurationException) {
             continue;
           }
         }
-        
+
         // We'll log it but continue on with the next batch.
         logger.warn(LocalizedMessage.create(LocalizedStrings.GatewayImpl_AN_EXCEPTION_OCCURRED_THE_DISPATCHER_WILL_CONTINUE), e);
       }
     } // for
   }
-  
-  private boolean shouldSendVersionEvents(
-      GatewaySenderEventDispatcher dispatcher) {
+
+  private boolean shouldSendVersionEvents(GatewaySenderEventDispatcher dispatcher) {
     // onyly in case of remote dispatcher we send versioned events
     return false;
   }
-    
+
   private List conflate(List<GatewaySenderEventImpl> events) {
     List<GatewaySenderEventImpl> conflatedEvents = null;
     // Conflate the batch if necessary
@@ -741,8 +710,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
         if (gsEvent.shouldBeConflated()) {
           // The event should be conflated. Create the conflation key
           // (comprised of the event's region, key and the operation).
-          ConflationKey key = new ConflationKey(gsEvent.getRegion().getFullPath(), gsEvent.getKeyToConflate(),
-              gsEvent.getOperation());
+          ConflationKey key = new ConflationKey(gsEvent.getRegion().getFullPath(), gsEvent.getKeyToConflate(), gsEvent.getOperation());
 
           // Attempt to remove the key. If the entry is removed, that means a
           // duplicate key was found. If not, this is a no-op.
@@ -750,12 +718,10 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
 
           // Add the key to the end of the map.
           conflatedEventsMap.put(key, gsEvent);
-        }
-        else {
+        } else {
           // The event should not be conflated (create or destroy). Add it to
           // the map.
-          ConflationKey key = new ConflationKey(gsEvent.getRegion().getFullPath(), gsEvent.getKeyToConflate(),
-              gsEvent.getOperation());
+          ConflationKey key = new ConflationKey(gsEvent.getRegion().getFullPath(), gsEvent.getKeyToConflate(), gsEvent.getOperation());
           conflatedEventsMap.put(key, gsEvent);
         }
       }
@@ -766,29 +732,26 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       }
 
       // Increment the events conflated from batches statistic
-      this.sender.getStatistics().incEventsConflatedFromBatches(
-          events.size() - conflatedEvents.size());
-    }
-    else {
+      this.sender.getStatistics().incEventsConflatedFromBatches(events.size() - conflatedEvents.size());
+    } else {
       conflatedEvents = events;
     }
     return conflatedEvents;
-  } 
-  
+  }
+
   private List<GatewaySenderEventImpl> addPDXEvent() throws IOException {
     List<GatewaySenderEventImpl> pdxEventsToBeDispatched = new ArrayList<GatewaySenderEventImpl>();
-    
+
     //getPDXRegion
     GemFireCacheImpl cache = (GemFireCacheImpl) this.sender.getCache();
-    Region<Object, Object> pdxRegion = cache
-        .getRegion(PeerTypeRegistration.REGION_NAME);
-    
-    if(rebuildPdxList) {
+    Region<Object, Object> pdxRegion = cache.getRegion(PeerTypeRegistration.REGION_NAME);
+
+    if (rebuildPdxList) {
       pdxEventsMap.clear();
       pdxSenderEventsList.clear();
       rebuildPdxList = false;
     }
-    
+
     // find out the list of the PDXEvents which needs to be send across remote
     // site
     // these events will be added to list pdxSenderEventsList. I am expecting
@@ -796,33 +759,26 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     // PDX region
     if (pdxRegion != null && pdxRegion.size() != pdxEventsMap.size()) {
       for (Map.Entry<Object, Object> typeEntry : pdxRegion.entrySet()) {
-        if(!pdxEventsMap.containsKey(typeEntry.getKey())){
+        if (!pdxEventsMap.containsKey(typeEntry.getKey())) {
           // event should never be off-heap so it does not need to be released
-          EntryEventImpl event = EntryEventImpl.create(
-              (LocalRegion) pdxRegion, Operation.UPDATE,
-              typeEntry.getKey(), typeEntry.getValue(), null, false,
-              cache.getMyId());
+          EntryEventImpl event = EntryEventImpl.create((LocalRegion) pdxRegion, Operation.UPDATE, typeEntry.getKey(), typeEntry.getValue(), null, false, cache.getMyId());
           event.disallowOffHeapValues();
           event.setEventId(new EventID(cache.getSystem()));
           List<Integer> allRemoteDSIds = new ArrayList<Integer>();
           for (GatewaySender sender : cache.getGatewaySenders()) {
             allRemoteDSIds.add(sender.getRemoteDSId());
           }
-          GatewaySenderEventCallbackArgument geCallbackArg = new GatewaySenderEventCallbackArgument(
-              event.getRawCallbackArgument(), this.sender.getMyDSId(),
-              allRemoteDSIds);
+          GatewaySenderEventCallbackArgument geCallbackArg = new GatewaySenderEventCallbackArgument(event.getRawCallbackArgument(), this.sender.getMyDSId(), allRemoteDSIds);
           event.setCallbackArgument(geCallbackArg);
-          GatewaySenderEventImpl pdxSenderEvent = new GatewaySenderEventImpl(
-              EnumListenerEvent.AFTER_UPDATE, event, null); // OFFHEAP: event for pdx type meta data so it should never be off-heap
+          GatewaySenderEventImpl pdxSenderEvent = new GatewaySenderEventImpl(EnumListenerEvent.AFTER_UPDATE, event, null); // OFFHEAP: event for pdx type meta data so it should never be off-heap
           pdxEventsMap.put(typeEntry.getKey(), pdxSenderEvent);
           pdxSenderEventsList.add(pdxSenderEvent);
         }
       }
     }
-    
-    
+
     Iterator<GatewaySenderEventImpl> iterator = pdxSenderEventsList.iterator();
-    while(iterator.hasNext()){
+    while (iterator.hasNext()) {
       GatewaySenderEventImpl pdxEvent = iterator.next();
       if (pdxEvent.isAcked) {
         // Since this is acked, it means it has reached to remote site.Dont add
@@ -839,14 +795,14 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       pdxEventsToBeDispatched.add(pdxEvent);
     }
 
-    if(!pdxEventsToBeDispatched.isEmpty() && logger.isDebugEnabled()){
-      logger.debug("List of PDX Event to be dispatched : {}", pdxEventsToBeDispatched);  
+    if (!pdxEventsToBeDispatched.isEmpty() && logger.isDebugEnabled()) {
+      logger.debug("List of PDX Event to be dispatched : {}", pdxEventsToBeDispatched);
     }
-    
+
     // add all these pdx events before filtered events
     return pdxEventsToBeDispatched;
   }
-  
+
   /**
    * Mark all PDX types as requiring dispatch so that they will be
    * sent over the connection again.
@@ -854,32 +810,31 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
    */
   public void checkIfPdxNeedsResend(int remotePdxSize) {
     GemFireCacheImpl cache = (GemFireCacheImpl) this.sender.getCache();
-    Region<Object, Object> pdxRegion = cache
-        .getRegion(PeerTypeRegistration.REGION_NAME);
-    
+    Region<Object, Object> pdxRegion = cache.getRegion(PeerTypeRegistration.REGION_NAME);
+
     //The peer has not seen all of our PDX types. This may be because
     //they have been lost on the remote side. Resend the PDX types.
-    if(pdxRegion != null && pdxRegion.size() > remotePdxSize) {
+    if (pdxRegion != null && pdxRegion.size() > remotePdxSize) {
       rebuildPdxList = true;
     }
-  } 
+  }
 
   private void resetLastPeekedEvents() {
     this.batchIdToEventsMap.clear();
     // make sure that when there is problem while receiving ack, pdx gateway
     // sender events isDispatched is set to false so that same events will be
     // dispatched in next batch
-    for(Map.Entry<Integer, List<GatewaySenderEventImpl>> entry : this.batchIdToPDXEventsMap.entrySet()){
-      for(GatewaySenderEventImpl event : entry.getValue()){
+    for (Map.Entry<Integer, List<GatewaySenderEventImpl>> entry : this.batchIdToPDXEventsMap.entrySet()) {
+      for (GatewaySenderEventImpl event : entry.getValue()) {
         event.isDispatched = false;
       }
     }
     this.batchIdToPDXEventsMap.clear();
-    if(this.queue instanceof SerialGatewaySenderQueue)
-      ((SerialGatewaySenderQueue)this.queue).resetLastPeeked();
-    else if (this.queue instanceof ParallelGatewaySenderQueue){
-      ((ParallelGatewaySenderQueue)this.queue).resetLastPeeked();
-    }else{
+    if (this.queue instanceof SerialGatewaySenderQueue)
+      ((SerialGatewaySenderQueue) this.queue).resetLastPeeked();
+    else if (this.queue instanceof ParallelGatewaySenderQueue) {
+      ((ParallelGatewaySenderQueue) this.queue).resetLastPeeked();
+    } else {
       //we will never come here
       throw new RuntimeException("resetLastPeekedEvents : no matching queue found " + this);
     }
@@ -892,14 +847,9 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
           Object o = i.next();
           if (o != null && o instanceof GatewaySenderEventImpl) {
             try {
-              filter.afterAcknowledgement((GatewaySenderEventImpl)o);
+              filter.afterAcknowledgement((GatewaySenderEventImpl) o);
             } catch (Exception e) {
-              logger
-              .fatal(
-                  LocalizedMessage
-                      .create(
-                          LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1,
-                          new Object[] { filter.toString(), o }), e);
+              logger.fatal(LocalizedMessage.create(LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1, new Object[] { filter.toString(), o }), e);
             }
           }
         }
@@ -918,28 +868,23 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       while (it.hasNext()) {
         Object o = it.next();
         if (o != null && o instanceof GatewaySenderEventImpl) {
-          GatewaySenderEventImpl ge = (GatewaySenderEventImpl)o;
+          GatewaySenderEventImpl ge = (GatewaySenderEventImpl) o;
           if (ge.getCreationTime() + this.sender.getAlertThreshold() < currentTime) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.GatewayImpl_EVENT_QUEUE_ALERT_OPERATION_0_REGION_1_KEY_2_VALUE_3_TIME_4,
-                new Object[] { ge.getOperation(), ge.getRegionPath(), ge.getKey(),
-                ge.getValueAsString(true), currentTime - ge.getCreationTime() }));
+            logger.warn(LocalizedMessage.create(LocalizedStrings.GatewayImpl_EVENT_QUEUE_ALERT_OPERATION_0_REGION_1_KEY_2_VALUE_3_TIME_4, new Object[] { ge.getOperation(), ge.getRegionPath(), ge.getKey(), ge.getValueAsString(true), currentTime - ge.getCreationTime() }));
             statistics.incEventsExceedingAlertThreshold();
           }
         }
       }
     }
 
-    if (this.eventQueueSizeWarning
-        && queueSize <= AbstractGatewaySender.QUEUE_SIZE_THRESHOLD) {
-      logger.info(LocalizedMessage.create(
-              LocalizedStrings.GatewayImpl_THE_EVENT_QUEUE_SIZE_HAS_DROPPED_BELOW_THE_THRESHOLD_0,
-              AbstractGatewaySender.QUEUE_SIZE_THRESHOLD));
+    if (this.eventQueueSizeWarning && queueSize <= AbstractGatewaySender.QUEUE_SIZE_THRESHOLD) {
+      logger.info(LocalizedMessage.create(LocalizedStrings.GatewayImpl_THE_EVENT_QUEUE_SIZE_HAS_DROPPED_BELOW_THE_THRESHOLD_0, AbstractGatewaySender.QUEUE_SIZE_THRESHOLD));
       this.eventQueueSizeWarning = false;
     }
     incrementBatchId();
-  
+
   }
-  
+
   private void handleUnSuccessfulBatchDispatch(List events) {
     final GatewaySenderStats statistics = this.sender.getStatistics();
     statistics.incBatchesRedistributed();
@@ -949,12 +894,12 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     while (it.hasNext() && !this.isStopped) {
       Object o = it.next();
       if (o != null && o instanceof GatewaySenderEventImpl) {
-        GatewaySenderEventImpl ge = (GatewaySenderEventImpl)o;
+        GatewaySenderEventImpl ge = (GatewaySenderEventImpl) o;
         ge.setPossibleDuplicate(true);
       }
     }
   }
-  
+
   /**
    * In case of BatchException we expect that the dispatcher has removed all
    * the events till the event that threw BatchException.
@@ -967,16 +912,14 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
 
   public void handleSuccessBatchAck(int batchId) {
     // this is to acknowledge PDX related events
-    List<GatewaySenderEventImpl> pdxEvents = this.batchIdToPDXEventsMap
-        .remove(batchId);
+    List<GatewaySenderEventImpl> pdxEvents = this.batchIdToPDXEventsMap.remove(batchId);
     if (pdxEvents != null) {
       for (GatewaySenderEventImpl senderEvent : pdxEvents) {
         senderEvent.isAcked = true;
       }
     }
-    
-    List<GatewaySenderEventImpl>[] eventsArr = this.batchIdToEventsMap
-        .remove(batchId);
+
+    List<GatewaySenderEventImpl>[] eventsArr = this.batchIdToEventsMap.remove(batchId);
     if (eventsArr != null) {
       List<GatewaySenderEventImpl> filteredEvents = eventsArr[1];
       for (GatewayEventFilter filter : sender.getGatewayEventFilters()) {
@@ -984,12 +927,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
           try {
             filter.afterAcknowledgement(event);
           } catch (Exception e) {
-            logger
-                .fatal(
-                    LocalizedMessage
-                        .create(
-                            LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1,
-                            new Object[] { filter.toString(), event }), e);
+            logger.fatal(LocalizedMessage.create(LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1, new Object[] { filter.toString(), event }), e);
           }
         }
       }
@@ -999,26 +937,26 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       }
       eventQueueRemove(events.size());
     }
-    
+
   }
-  
+
   public void handleUnSuccessBatchAck(int bId) {
     this.sender.getStatistics().incBatchesRedistributed();
     // Set posDup flag on each event in the batch
     List<GatewaySenderEventImpl>[] eventsArr = this.batchIdToEventsMap.get(bId);
-    if(eventsArr!=null){
+    if (eventsArr != null) {
       List<GatewaySenderEventImpl> events = eventsArr[0];
       Iterator it = events.iterator();
       while (it.hasNext() && !this.isStopped) {
         Object o = it.next();
         if (o != null && o instanceof GatewaySenderEventImpl) {
-          GatewaySenderEventImpl ge = (GatewaySenderEventImpl)o;
+          GatewaySenderEventImpl ge = (GatewaySenderEventImpl) o;
           ge.setPossibleDuplicate(true);
         }
       }
     }
   }
-  
+
   //merge44957: While merging 44957, changed this method as per revision 42024.
   protected void waitForResumption() throws InterruptedException {
     synchronized (this.pausedLock) {
@@ -1037,20 +975,20 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     }
   }
 
-  
   public abstract void initializeEventDispatcher();
-  
-  public GatewaySenderEventDispatcher getDispatcher(){
+
+  public GatewaySenderEventDispatcher getDispatcher() {
     return this.dispatcher;
   }
 
   public Map<Integer, List<GatewaySenderEventImpl>[]> getBatchIdToEventsMap() {
     return this.batchIdToEventsMap;
   }
-  
+
   public Map<Integer, List<GatewaySenderEventImpl>> getBatchIdToPDXEventsMap() {
     return this.batchIdToPDXEventsMap;
   }
+
   @Override
   public void run() {
     try {
@@ -1081,16 +1019,14 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     GemFireException ex = null;
     try {
       this.initializeEventDispatcher();
-    }
-    catch (GemFireException e) {
+    } catch (GemFireException e) {
       ex = e;
     }
     synchronized (this.runningStateLock) {
       if (ex != null) {
         this.setException(ex);
         setIsStopped(true);
-      }
-      else {
+      } else {
         setIsStopped(false);
       }
       this.runningStateLock.notifyAll();
@@ -1103,10 +1039,11 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
   public void setException(GemFireException ex) {
     this.exception = ex;
   }
-  
-  public Exception getException(){
+
+  public Exception getException() {
     return this.exception;
   }
+
   /**
    * Stops the dispatcher from dispatching events . The dispatcher will stay
    * alive for a predefined time OR until its queue is empty.
@@ -1114,7 +1051,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
    * @see AbstractGatewaySender#MAXIMUM_SHUTDOWN_WAIT_TIME
    */
   public void stopProcessing() {
-    
+
     if (!this.isAlive()) {
       return;
     }
@@ -1135,11 +1072,9 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
               logger.debug("{}: Waiting for the queue to get empty.", this);
             }
           }
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           // interrupted
-        }
-        catch (CancelException e) {
+        } catch (CancelException e) {
           // cancelled
         }
       } else {
@@ -1174,14 +1109,14 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
         logger.warn(LocalizedMessage.create(LocalizedStrings.GatewayImpl_0_INTERRUPTEDEXCEPTION_IN_JOINING_WITH_DISPATCHER_THREAD, this));
       }
     }
-    
+
     closeProcessor();
-    
+
     if (logger.isDebugEnabled()) {
       logger.debug("Stopped dispatching: {}", this);
     }
   }
-  
+
   public void closeProcessor() {
     if (logger.isDebugEnabled()) {
       logger.debug("Closing dispatcher");
@@ -1226,9 +1161,9 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       }
     }
   }
-  
-  public void removeCacheListener(){
-    
+
+  public void removeCacheListener() {
+
   }
 
   /**
@@ -1255,26 +1190,26 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       logger.debug(buffer);
     }
   }
- 
+
   public long getNumEventsDispatched() {
     return numEventsDispatched;
   }
-  public void clear(PartitionedRegion pr, int bucketId) {
-    ((ParallelGatewaySenderQueue)this.queue).clear(pr, bucketId);
-}
 
-/*public int size(PartitionedRegion pr, int bucketId)
+  public void clear(PartitionedRegion pr, int bucketId) {
+    ((ParallelGatewaySenderQueue) this.queue).clear(pr, bucketId);
+  }
+
+  /*public int size(PartitionedRegion pr, int bucketId)
   throws ForceReattemptException {
     return ((ParallelGatewaySenderQueue)this.queue).size(pr, bucketId);
-}*/
+  }*/
 
   public void notifyEventProcessorIfRequired(int bucketId) {
     ((ParallelGatewaySenderQueue) this.queue).notifyEventProcessorIfRequired();
   }
 
   public BlockingQueue<GatewaySenderEventImpl> getBucketTmpQueue(int bucketId) {
-    return ((ParallelGatewaySenderQueue) this.queue).getBucketToTempQueueMap()
-        .get(bucketId);
+    return ((ParallelGatewaySenderQueue) this.queue).getBucketToTempQueueMap().get(bucketId);
   }
 
   public PartitionedRegion getRegion(String prRegionName) {
@@ -1285,22 +1220,18 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
     ((ParallelGatewaySenderQueue) this.queue).removeShadowPR(prRegionName);
   }
 
-  public void conflateEvent(Conflatable conflatableObject, int bucketId,
-      Long tailKey) {
-    ((ParallelGatewaySenderQueue) this.queue).conflateEvent(conflatableObject,
-        bucketId, tailKey);
+  public void conflateEvent(Conflatable conflatableObject, int bucketId, Long tailKey) {
+    ((ParallelGatewaySenderQueue) this.queue).conflateEvent(conflatableObject, bucketId, tailKey);
   }
 
   public void addShadowPartitionedRegionForUserPR(PartitionedRegion pr) {
-    ((ParallelGatewaySenderQueue) this.queue)
-        .addShadowPartitionedRegionForUserPR(pr);
+    ((ParallelGatewaySenderQueue) this.queue).addShadowPartitionedRegionForUserPR(pr);
   }
 
   public void addShadowPartitionedRegionForUserRR(DistributedRegion userRegion) {
-    ((ParallelGatewaySenderQueue) this.queue)
-        .addShadowPartitionedRegionForUserRR(userRegion);
+    ((ParallelGatewaySenderQueue) this.queue).addShadowPartitionedRegionForUserRR(userRegion);
   }
-  
+
   protected class SenderStopperCallable implements Callable<Boolean> {
     private final AbstractGatewaySenderEventProcessor p;
 
@@ -1311,17 +1242,17 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       this.p = processor;
     }
 
-    public Boolean call () {
+    public Boolean call() {
       this.p.stopProcessing();
       return true;
     }
   }
-  
+
   private static class ConflationKey {
     private Object key;
 
     private Operation operation;
-    
+
     private String regionName;
 
     private ConflationKey(String region, Object key, Operation operation) {
@@ -1351,7 +1282,7 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       if (getClass() != obj.getClass()) {
         return false;
       }
-      ConflationKey that = (ConflationKey)obj;
+      ConflationKey that = (ConflationKey) obj;
       if (!this.regionName.equals(that.regionName)) {
         return false;
       }
@@ -1363,5 +1294,5 @@ public abstract class AbstractGatewaySenderEventProcessor extends Thread {
       }
       return true;
     }
-  }   
+  }
 }

@@ -39,19 +39,17 @@ import static org.junit.Assert.assertEquals;
  */
 @Category(IntegrationTest.class)
 public class Bug34583JUnitTest {
-  
+
   public Bug34583JUnitTest() {
   }
-  
+
   public void setup() {
   }
-  
+
   @After
   public void tearDown() {
   }
-  
-  
-  
+
   @Test
   public void testBunchOfInvalidEntries() throws Exception {
     Properties props = new Properties();
@@ -61,11 +59,11 @@ public class Bug34583JUnitTest {
       AttributesFactory factory = new AttributesFactory();
       Cache cache = null;
       cache = CacheFactory.create(ds);
-     
+
       Region r = cache.createRegion("testRegion", factory.create());
       final int ENTRY_COUNT = 25000;
       {
-        for (int i=1; i <= ENTRY_COUNT; i++) {
+        for (int i = 1; i <= ENTRY_COUNT; i++) {
           r.put("key" + i, "value" + i);
         }
       }

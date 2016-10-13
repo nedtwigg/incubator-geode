@@ -32,15 +32,14 @@ import org.apache.geode.GemFireCheckedException;
  * @since GemFire 3.0
  */
 public class InternalStatisticsDisabledException extends GemFireCheckedException {
-private static final long serialVersionUID = 4146181546364258311L;
-  
+  private static final long serialVersionUID = 4146181546364258311L;
+
   /**
    * Creates a new instance of <code>StatisticsDisabledException</code> without detail message.
    */
   public InternalStatisticsDisabledException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail message.
    * @param msg the detail message
@@ -48,7 +47,7 @@ private static final long serialVersionUID = 4146181546364258311L;
   public InternalStatisticsDisabledException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail message
    * and cause.
@@ -58,7 +57,7 @@ private static final long serialVersionUID = 4146181546364258311L;
   public InternalStatisticsDisabledException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>StatisticsDisabledException</code> with the specified cause.
    * @param cause the causal Throwable

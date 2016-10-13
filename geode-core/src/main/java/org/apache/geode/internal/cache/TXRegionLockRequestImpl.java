@@ -38,12 +38,10 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * @since GemFire 4.0
  * 
  */
-public class TXRegionLockRequestImpl
-  implements org.apache.geode.internal.cache.locks.TXRegionLockRequest
-{
+public class TXRegionLockRequestImpl implements org.apache.geode.internal.cache.locks.TXRegionLockRequest {
   private static final long serialVersionUID = 5840033961584078082L;
   private static final Logger logger = LogService.getLogger();
-  
+
   private transient LocalRegion r;
   private String regionPath;
   private Set<Object> entryKeys;
@@ -51,13 +49,13 @@ public class TXRegionLockRequestImpl
   public TXRegionLockRequestImpl() {
     // for DataSerializer
   }
-  
-  public TXRegionLockRequestImpl(LocalRegion r)
-  {
+
+  public TXRegionLockRequestImpl(LocalRegion r) {
     this.r = r;
     this.regionPath = null;
     this.entryKeys = null;
   }
+
   /**
    * Used by unit tests
    */
@@ -79,11 +77,10 @@ public class TXRegionLockRequestImpl
       final HashSet<Object> tmp = new HashSet<Object>(s.size());
       tmp.addAll(s);
       this.entryKeys = tmp;
-    	
+
     } else {
       // Need to make a copy so we can do a union
-      final HashSet<Object> tmp = new HashSet<Object>(this.entryKeys.size()
-          + s.size());
+      final HashSet<Object> tmp = new HashSet<Object>(this.entryKeys.size() + s.size());
       tmp.addAll(s);
       tmp.addAll(this.entryKeys);
       this.entryKeys = tmp;
@@ -96,16 +93,15 @@ public class TXRegionLockRequestImpl
     }
     this.entryKeys.add(key);
   }
-  
-  public final void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+
+  public final void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.regionPath = DataSerializer.readString(in);
 
     final GemFireCacheImpl cache = getCache(false);
     try {
       final int size = InternalDataSerializer.readArrayLength(in);
       if (cache != null && size > 0) {
-        this.r = (LocalRegion)cache.getRegion(this.regionPath);
+        this.r = (LocalRegion) cache.getRegion(this.regionPath);
       }
       this.entryKeys = readEntryKeySet(size, in);
     } catch (CacheClosedException cce) {
@@ -113,10 +109,8 @@ public class TXRegionLockRequestImpl
       this.entryKeys = null;
     }
   }
-  
-  private final Set<Object> readEntryKeySet(
-      final int size, final DataInput in) throws IOException,
-      ClassNotFoundException {
+
+  private final Set<Object> readEntryKeySet(final int size, final DataInput in) throws IOException, ClassNotFoundException {
 
     if (logger.isDebugEnabled()) {
       logger.trace(LogMarker.SERIALIZER, "Reading HashSet with size {}", size);
@@ -141,9 +135,7 @@ public class TXRegionLockRequestImpl
     InternalDataSerializer.writeSet(this.entryKeys, out);
   }
 
-  public static final TXRegionLockRequestImpl createFromData(DataInput in) 
-    throws IOException, ClassNotFoundException
-  {
+  public static final TXRegionLockRequestImpl createFromData(DataInput in) throws IOException, ClassNotFoundException {
     TXRegionLockRequestImpl result = new TXRegionLockRequestImpl();
     InternalDataSerializer.invokeFromData(result, in);
     return result;
@@ -189,10 +181,7 @@ public class TXRegionLockRequestImpl
   @Override
   public String toString() {
     final StringBuilder result = new StringBuilder(256);
-    result.append("regionPath=")
-      .append(getRegionFullPath())
-      .append(" keys=")
-      .append(this.entryKeys);
+    result.append("regionPath=").append(getRegionFullPath()).append(" keys=").append(this.entryKeys);
     return result.toString();
   }
 }

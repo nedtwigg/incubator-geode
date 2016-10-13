@@ -45,32 +45,32 @@ import org.apache.geode.internal.util.ArrayUtils;
 public class CompactRequest extends CliLegacyMessage {
   public CompactRequest() {
   }
-  
+
   public static Map<DistributedMember, Set<PersistentID>> send(DM dm) {
     Set recipients = dm.getOtherDistributionManagerIds();
     CompactRequest request = new CompactRequest();
     request.setRecipients(recipients);
-    
+
     CompactReplyProcessor replyProcessor = new CompactReplyProcessor(dm, recipients);
     request.msgId = replyProcessor.getProcessorId();
     dm.putOutgoing(request);
-    
+
     request.setSender(dm.getDistributionManagerId());
-    request.process((DistributionManager)dm);
-    
+    request.process((DistributionManager) dm);
+
     try {
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
-      if(!(e.getCause() instanceof CancelException)) {
+      if (!(e.getCause() instanceof CancelException)) {
         throw e;
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    
+
     return replyProcessor.results;
   }
-  
+
   @Override
   protected void process(DistributionManager dm) {
     super.process(dm);
@@ -80,9 +80,9 @@ public class CompactRequest extends CliLegacyMessage {
   protected AdminResponse createResponse(DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     HashSet<PersistentID> compactedStores = new HashSet<PersistentID>();
-    if(cache != null && !cache.isClosed()) {
-      for(DiskStoreImpl store : cache.listDiskStoresIncludingRegionOwned()) {
-        if(store.forceCompaction()) {
+    if (cache != null && !cache.isClosed()) {
+      for (DiskStoreImpl store : cache.listDiskStoresIncludingRegionOwned()) {
+        if (store.forceCompaction()) {
           compactedStores.add(store.getPersistentID());
         }
       }
@@ -94,9 +94,9 @@ public class CompactRequest extends CliLegacyMessage {
   public int getDSFID() {
     return COMPACT_REQUEST;
   }
-  
+
   @Override
-  public void fromData(DataInput in) throws IOException,ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 
@@ -105,19 +105,18 @@ public class CompactRequest extends CliLegacyMessage {
     super.toData(out);
   }
 
-  @Override  
+  @Override
   public String toString() {
-    return "Compact request sent to " + ArrayUtils.toString((Object[])this.getRecipients()) +
-      " from " + this.getSender();
+    return "Compact request sent to " + ArrayUtils.toString((Object[]) this.getRecipients()) + " from " + this.getSender();
   }
 
   private static class CompactReplyProcessor extends AdminMultipleReplyProcessor {
     Map<DistributedMember, Set<PersistentID>> results = Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
-    
+
     public CompactReplyProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
     }
-    
+
     @Override
     protected boolean stopBecauseOfExceptions() {
       return false;
@@ -130,15 +129,14 @@ public class CompactRequest extends CliLegacyMessage {
 
     @Override
     protected void process(DistributionMessage msg, boolean warn) {
-      if(msg instanceof CompactResponse) {
+      if (msg instanceof CompactResponse) {
         final HashSet<PersistentID> persistentIds = ((CompactResponse) msg).getPersistentIds();
-        if(persistentIds != null && !persistentIds.isEmpty()) {
+        if (persistentIds != null && !persistentIds.isEmpty()) {
           results.put(msg.getSender(), persistentIds);
         }
       }
       super.process(msg, warn);
     }
-    
-    
+
   }
 }

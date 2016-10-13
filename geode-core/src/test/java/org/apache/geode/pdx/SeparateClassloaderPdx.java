@@ -19,17 +19,15 @@ package org.apache.geode.pdx;
 import java.io.IOException;
 
 class SeparateClassloaderPdx implements PdxSerializable {
-  
+
   private final boolean fieldOneFirst;
 
   public SeparateClassloaderPdx(boolean fieldOneFirst) {
     this.fieldOneFirst = fieldOneFirst;
   }
 
-
-
   public void toData(PdxWriter writer) {
-    if(fieldOneFirst) {
+    if (fieldOneFirst) {
       writer.writeString("field1", "hello");
       writer.writeString("field2", "world");
     } else {

@@ -15,21 +15,23 @@
  * limitations under the License.
  */
 package org.apache.geode.management;
+
 /**
  * Interface for A simple MBean to test various aspects of federation
  *
  */
 public interface CustomMXBean {
-  
+
   public long getSystemTime();
 
-  public void setSystemTime(long systemTime) ;
-  
+  public void setSystemTime(long systemTime);
+
   public String getName();
 
-  public void setName(String staticField) ;
-  
+  public void setName(String staticField);
+
   public String fetchName();
-  public void  writeName(String staticField);
+
+  public void writeName(String staticField);
 
 }

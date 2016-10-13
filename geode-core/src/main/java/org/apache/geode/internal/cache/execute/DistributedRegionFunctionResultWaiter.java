@@ -26,33 +26,26 @@ import org.apache.geode.distributed.internal.DistributionMessage;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.cache.DistributedRegionFunctionStreamingMessage;
+
 /**
  * 
  *
  */
-public class DistributedRegionFunctionResultWaiter extends
-    StreamingFunctionOperation {
+public class DistributedRegionFunctionResultWaiter extends StreamingFunctionOperation {
 
   private Set filter;
 
   private String regionPath;
 
-  public DistributedRegionFunctionResultWaiter(InternalDistributedSystem sys,
-      String regionPath, ResultCollector rc, final Function function,
-      final Set filter, Set recipients,
-      final HashMap<InternalDistributedMember, Object> memberArgs,
-      ResultSender resultSender) {
-    super(sys, rc, function, memberArgs, recipients,resultSender);
+  public DistributedRegionFunctionResultWaiter(InternalDistributedSystem sys, String regionPath, ResultCollector rc, final Function function, final Set filter, Set recipients, final HashMap<InternalDistributedMember, Object> memberArgs, ResultSender resultSender) {
+    super(sys, rc, function, memberArgs, recipients, resultSender);
     this.regionPath = regionPath;
     this.filter = filter;
   }
-  
+
   @Override
-  protected DistributionMessage createRequestMessage(Set recipients,
-      FunctionStreamingResultCollector processor, boolean isReExecute, boolean isFnSerializationReqd) {
-    DistributedRegionFunctionStreamingMessage msg = new DistributedRegionFunctionStreamingMessage(
-        this.regionPath, this.functionObject, processor.getProcessorId(),
-        this.filter, this.memberArgs.get(recipients.toArray()[0]), isReExecute, isFnSerializationReqd);
+  protected DistributionMessage createRequestMessage(Set recipients, FunctionStreamingResultCollector processor, boolean isReExecute, boolean isFnSerializationReqd) {
+    DistributedRegionFunctionStreamingMessage msg = new DistributedRegionFunctionStreamingMessage(this.regionPath, this.functionObject, processor.getProcessorId(), this.filter, this.memberArgs.get(recipients.toArray()[0]), isReExecute, isFnSerializationReqd);
     msg.setRecipients(recipients);
     return msg;
   }

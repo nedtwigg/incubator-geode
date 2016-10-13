@@ -25,8 +25,7 @@ import org.apache.geode.distributed.internal.ReplyProcessor21;
  * required internally by the product.
  * 
  */
-public interface LocalResultCollector<T, S>
-    extends ResultCollector<T, S> {
+public interface LocalResultCollector<T, S> extends ResultCollector<T, S> {
 
   /** set any exception during execution of a Function in the collector */
   void setException(Throwable exception);

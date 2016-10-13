@@ -43,9 +43,7 @@ public class Destroy70 extends Destroy65 {
   }
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg,
-      ServerConnection servConn, PartitionedRegion pr,
-      boolean entryNotFoundForRemove, byte nwHop, VersionTag versionTag) throws IOException {
+  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, boolean entryNotFoundForRemove, byte nwHop, VersionTag versionTag) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -56,17 +54,17 @@ public class Destroy70 extends Destroy65 {
       numParts++;
     }
     flags |= DestroyOp.HAS_ENTRY_NOT_FOUND_PART;
-//    if (logger.isDebugEnabled()) {
-//      logger.fine("writing response with metadata and " + numParts + " parts");
-//    }
+    //    if (logger.isDebugEnabled()) {
+    //      logger.fine("writing response with metadata and " + numParts + " parts");
+    //    }
     replyMsg.setNumberOfParts(numParts);
     replyMsg.setTransactionId(origMsg.getTransactionId());
     replyMsg.addIntPart(flags);
     if (versionTag != null) {
       replyMsg.addObjPart(versionTag);
     }
-    replyMsg.addBytesPart(new byte[]{pr.getMetadataVersion(), nwHop});
-    replyMsg.addIntPart(entryNotFoundForRemove? 1 : 0);
+    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
+    replyMsg.addIntPart(entryNotFoundForRemove ? 1 : 0);
     pr.getPrStats().incPRMetaDataSentCount();
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
@@ -75,9 +73,7 @@ public class Destroy70 extends Destroy65 {
   }
 
   @Override
-  protected void writeReply(Message origMsg, ServerConnection servConn,
-      boolean entryNotFound, VersionTag versionTag)
-  throws IOException {
+  protected void writeReply(Message origMsg, ServerConnection servConn, boolean entryNotFound, VersionTag versionTag) throws IOException {
     if (logger.isDebugEnabled()) {
       logger.debug("Destroy70.writeReply(entryNotFound={}, tag={})", entryNotFound, versionTag);
     }
@@ -91,24 +87,24 @@ public class Destroy70 extends Destroy65 {
       numParts++;
     }
     flags |= DestroyOp.HAS_ENTRY_NOT_FOUND_PART;
-//    if (logger.isDebugEnabled()) {
-//      logger.fine("writing response with 1-byte metadata and " + numParts + " parts");
-//    }
+    //    if (logger.isDebugEnabled()) {
+    //      logger.fine("writing response with 1-byte metadata and " + numParts + " parts");
+    //    }
     replyMsg.setNumberOfParts(numParts);
     replyMsg.setTransactionId(origMsg.getTransactionId());
     replyMsg.addIntPart(flags);
     if (versionTag != null) {
-//      if (logger.isDebugEnabled()) {
-//        logger.fine("wrote version tag in response: " + versionTag);
-//      }
+      //      if (logger.isDebugEnabled()) {
+      //        logger.fine("wrote version tag in response: " + versionTag);
+      //      }
       replyMsg.addObjPart(versionTag);
-//    } else {
-//      if (logger.isDebugEnabled()) {
-//        logger.fine("response has no version tag");
-//    }
+      //    } else {
+      //      if (logger.isDebugEnabled()) {
+      //        logger.fine("response has no version tag");
+      //    }
     }
     replyMsg.addBytesPart(OK_BYTES); // make old single-hop code happy by puting byte[]{0} here
-    replyMsg.addIntPart(entryNotFound? 1 : 0);
+    replyMsg.addIntPart(entryNotFound ? 1 : 0);
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
       logger.trace("{}: rpl tx: {} parts={}", servConn.getName(), origMsg.getTransactionId(), replyMsg.getNumberOfParts());

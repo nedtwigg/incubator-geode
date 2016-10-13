@@ -29,18 +29,19 @@ import java.util.Collection;
 public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
   private static final long serialVersionUID = -1846248853494394996L;
   protected final QueueStatHelper stats;
-  
+
   /** Creates new OverflowQueueWithDMStats */
   public OverflowQueueWithDMStats(QueueStatHelper stats) {
     super();
     this.stats = stats;
   }
+
   /** Creates new OverflowQueueWithDMStats with a maximum capacity. */
   public OverflowQueueWithDMStats(int capacity, QueueStatHelper stats) {
     super(capacity);
     this.stats = stats;
   }
-  
+
   @Override
   public boolean add(Object e) {
     preAdd(e);
@@ -52,6 +53,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
       return false;
     }
   }
+
   @Override
   public boolean offer(Object e) {
     preAdd(e);
@@ -63,9 +65,11 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
       return false;
     }
   }
+
   @Override
   public void put(Object e) throws InterruptedException {
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     preAddInterruptibly(e);
     boolean didOp = false;
     try {
@@ -78,10 +82,11 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
       }
     }
   }
+
   @Override
-  public boolean offer(Object e, long timeout, TimeUnit unit)
-    throws InterruptedException {
-    if (Thread.interrupted()) throw new InterruptedException();
+  public boolean offer(Object e, long timeout, TimeUnit unit) throws InterruptedException {
+    if (Thread.interrupted())
+      throw new InterruptedException();
     preAddInterruptibly(e);
     boolean didOp = false;
     try {
@@ -98,18 +103,21 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
       }
     }
   }
+
   @Override
   public Object take() throws InterruptedException {
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     Object result = super.take();
     postRemove(result);
     this.stats.remove();
     return result;
   }
+
   @Override
-  public Object poll(long timeout, TimeUnit unit)
-    throws InterruptedException {
-    if (Thread.interrupted()) throw new InterruptedException();
+  public Object poll(long timeout, TimeUnit unit) throws InterruptedException {
+    if (Thread.interrupted())
+      throw new InterruptedException();
     Object result = super.poll(timeout, unit);
     if (result != null) {
       postRemove(result);
@@ -117,6 +125,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
     }
     return result;
   }
+
   @Override
   public boolean remove(Object o) {
     if (super.remove(o)) {
@@ -127,6 +136,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
       return false;
     }
   }
+
   @Override
   public int drainTo(Collection c) {
     int result = super.drainTo(c);
@@ -136,6 +146,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
     }
     return result;
   }
+
   @Override
   public int drainTo(Collection c, int maxElements) {
     int result = super.drainTo(c, maxElements);
@@ -145,24 +156,28 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
     }
     return result;
   }
+
   /**
    * Called before the specified object is added to this queue.
    */
   protected void preAddInterruptibly(Object o) throws InterruptedException {
     // do nothing in this class. sub-classes can override
   }
+
   /**
    * Called before the specified object is added to this queue.
    */
   protected void preAdd(Object o) {
     // do nothing in this class. sub-classes can override
   }
+
   /**
    * Called after the specified object is removed from this queue.
    */
   protected void postRemove(Object o) {
     // do nothing in this class. sub-classes can override
   }
+
   /**
    * Called after the specified collection of objects have been
    * drained (i.e. removed) from this queue.

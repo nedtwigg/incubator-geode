@@ -46,12 +46,12 @@ public class CacheXml80GatewayDUnitTest extends CacheXmlTestCase {
   protected String getGemFireVersion() {
     return CacheXml.VERSION_8_0;
   }
-  
+
   @Test
-  public void testGatewayReceiverWithManualStartTRUE() throws CacheException{
+  public void testGatewayReceiverWithManualStartTRUE() throws CacheException {
     //getSystem();
     CacheCreation cache = new CacheCreation();
-    
+
     GatewayReceiverFactory gatewayReceiverFactory = cache.createGatewayReceiverFactory();
     gatewayReceiverFactory.setBindAddress("");
     gatewayReceiverFactory.setStartPort(20000);
@@ -66,15 +66,14 @@ public class CacheXml80GatewayDUnitTest extends CacheXmlTestCase {
     GatewayReceiver receiver1 = gatewayReceiverFactory.create();
     try {
       receiver1.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       fail("Could not start GatewayReceiver");
     }
     testXml(cache);
     Cache c = getCache();
     assertNotNull(c);
     Set<GatewayReceiver> receivers = c.getGatewayReceivers();
-    for(GatewayReceiver receiver : receivers){
+    for (GatewayReceiver receiver : receivers) {
       validateGatewayReceiver(receiver1, receiver);
     }
   }
@@ -129,8 +128,7 @@ public class CacheXml80GatewayDUnitTest extends CacheXmlTestCase {
     assertNotNull(senderOnCache.getGatewayEventSubstitutionFilter());
   }
 
-  protected void validateGatewayReceiver(GatewayReceiver receiver1,
-      GatewayReceiver gatewayReceiver){
+  protected void validateGatewayReceiver(GatewayReceiver receiver1, GatewayReceiver gatewayReceiver) {
     CacheXml70GatewayDUnitTest.validateGatewayReceiver(receiver1, gatewayReceiver);
     assertEquals(receiver1.isManualStart(), gatewayReceiver.isManualStart());
   }

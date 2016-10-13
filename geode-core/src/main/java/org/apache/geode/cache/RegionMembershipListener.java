@@ -35,7 +35,7 @@ import org.apache.geode.distributed.DistributedMember;
  * @see AttributesMutator#initCacheListeners
  * @since GemFire 5.0
  */
-public interface RegionMembershipListener<K,V> extends CacheListener<K,V> {
+public interface RegionMembershipListener<K, V> extends CacheListener<K, V> {
   /**
    * Invoked when the listener is first initialized and is
    * given the set of members that have the region created at that time.
@@ -48,13 +48,14 @@ public interface RegionMembershipListener<K,V> extends CacheListener<K,V> {
    * @param initialMembers an array of the other members that have this region
    *   at the time this listener is added.
    */
-  public void initialMembers(Region<K,V> region, DistributedMember[] initialMembers);
+  public void initialMembers(Region<K, V> region, DistributedMember[] initialMembers);
+
   /**
    * Invoked when another member has created the distributed region this
    * listener is on.
    * @param event the event from the member whose region was created.
    */
-  public void afterRemoteRegionCreate(RegionEvent<K,V> event);
+  public void afterRemoteRegionCreate(RegionEvent<K, V> event);
 
   /**
    * Invoked when another member's distributed region is no longer
@@ -70,13 +71,14 @@ public interface RegionMembershipListener<K,V> extends CacheListener<K,V> {
    * its region or cache.
    * @param event the event from the member whose region is no longer available.
    */
-  public void afterRemoteRegionDeparture(RegionEvent<K,V> event);
+  public void afterRemoteRegionDeparture(RegionEvent<K, V> event);
+
   /**
    * Invoked when another member's distributed region is no longer
    * available to this cache because the member has crashed or is no
    * longer reachable on the network.<p>
-
+  
    * @param event the event from the member whose region is no longer available.
    */
-  public void afterRemoteRegionCrash(RegionEvent<K,V> event);
+  public void afterRemoteRegionCrash(RegionEvent<K, V> event);
 }

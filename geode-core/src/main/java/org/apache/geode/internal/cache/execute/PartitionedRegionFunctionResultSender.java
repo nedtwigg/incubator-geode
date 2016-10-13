@@ -42,11 +42,10 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * 
  */
 
-public final class PartitionedRegionFunctionResultSender implements
-    InternalResultSender {
+public final class PartitionedRegionFunctionResultSender implements InternalResultSender {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   PartitionedRegionFunctionStreamingMessage msg = null;
 
   private final DM dm;
@@ -56,7 +55,7 @@ public final class PartitionedRegionFunctionResultSender implements
   private final long time;
 
   private final boolean forwardExceptions;
-  
+
   private ResultCollector rc;
 
   private ServerToClientFunctionResultSender serverSender;
@@ -74,9 +73,9 @@ public final class PartitionedRegionFunctionResultSender implements
   private boolean enableOrderedResultStreming;
 
   private Set<Integer> bucketSet;
-  
+
   private BucketMovedException bme;
-  
+
   /**
    * Have to combine next two constructor in one and make a new class which will 
    * send Results back.
@@ -85,16 +84,14 @@ public final class PartitionedRegionFunctionResultSender implements
    * @param pr
    * @param time
    */
-  public PartitionedRegionFunctionResultSender(DM dm, PartitionedRegion pr,
-      long time, PartitionedRegionFunctionStreamingMessage msg,
-      Function function, Set<Integer> bucketSet) {
+  public PartitionedRegionFunctionResultSender(DM dm, PartitionedRegion pr, long time, PartitionedRegionFunctionStreamingMessage msg, Function function, Set<Integer> bucketSet) {
     this.msg = msg;
     this.dm = dm;
     this.pr = pr;
     this.time = time;
     this.function = function;
     this.bucketSet = bucketSet;
-    
+
     forwardExceptions = false;
   }
 
@@ -106,10 +103,7 @@ public final class PartitionedRegionFunctionResultSender implements
    * @param time
    * @param rc
    */
-  public PartitionedRegionFunctionResultSender(DM dm,
-      PartitionedRegion partitionedRegion, long time, ResultCollector rc,
-      ServerToClientFunctionResultSender sender, boolean onlyLocal, boolean onlyRemote,
-      boolean forwardExceptions, Function function, Set<Integer> bucketSet) {
+  public PartitionedRegionFunctionResultSender(DM dm, PartitionedRegion partitionedRegion, long time, ResultCollector rc, ServerToClientFunctionResultSender sender, boolean onlyLocal, boolean onlyRemote, boolean forwardExceptions, Function function, Set<Integer> bucketSet) {
     this.dm = dm;
     this.pr = partitionedRegion;
     this.time = time;
@@ -122,34 +116,28 @@ public final class PartitionedRegionFunctionResultSender implements
     this.bucketSet = bucketSet;
   }
 
-  private void checkForBucketMovement(Object oneResult){
-    if (!(forwardExceptions && oneResult instanceof Throwable) 
-        && !pr.getDataStore().areAllBucketsHosted(bucketSet)) {
+  private void checkForBucketMovement(Object oneResult) {
+    if (!(forwardExceptions && oneResult instanceof Throwable) && !pr.getDataStore().areAllBucketsHosted(bucketSet)) {
       // making sure that we send all the local results first
       // before sending this exception to client
-      bme =  new BucketMovedException(
-          LocalizedStrings.FunctionService_BUCKET_MIGRATED_TO_ANOTHER_NODE
-              .toLocalizedString());
-      if(function.isHA()){
+      bme = new BucketMovedException(LocalizedStrings.FunctionService_BUCKET_MIGRATED_TO_ANOTHER_NODE.toLocalizedString());
+      if (function.isHA()) {
         throw bme;
       }
     }
-    
-    
+
   }
-  
+
   // this must be getting called directly from function
   public void lastResult(Object oneResult) {
     if (!this.function.hasResult()) {
-      throw new IllegalStateException(
-          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
-              .toLocalizedString("send"));
+      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
     }
     // this could be done before doing end result
     // so that client receives all the results before
 
     if (this.serverSender != null) { // Client-Server
-      if(this.localLastResultRecieved){
+      if (this.localLastResultRecieved) {
         return;
       }
       if (onlyLocal) {
@@ -157,40 +145,35 @@ public final class PartitionedRegionFunctionResultSender implements
         if (bme != null) {
           clientSend(oneResult, dm.getDistributionManagerId());
           lastClientSend(dm.getDistributionManagerId(), bme);
-        }else{
+        } else {
           lastClientSend(dm.getDistributionManagerId(), oneResult);
         }
         this.rc.endResults();
         this.localLastResultRecieved = true;
-        
-      }
-      else {
-      //call a synchronized method as local node is also waiting to send lastResult 
+
+      } else {
+        //call a synchronized method as local node is also waiting to send lastResult 
         lastResult(oneResult, rc, false, true, dm.getDistributionManagerId());
       }
-    }
-    else { // P2P
+    } else { // P2P
 
       if (this.msg != null) {
         checkForBucketMovement(oneResult);
-        try {          
-          if(this.bme !=null){
+        try {
+          if (this.bme != null) {
             this.msg.sendReplyForOneResult(dm, pr, time, oneResult, false, enableOrderedResultStreming);
             throw bme;
-          }else{
-            this.msg.sendReplyForOneResult(dm, pr, time, oneResult, true, enableOrderedResultStreming);  
+          } else {
+            this.msg.sendReplyForOneResult(dm, pr, time, oneResult, true, enableOrderedResultStreming);
           }
-          
-        }
-        catch (ForceReattemptException e) {
+
+        } catch (ForceReattemptException e) {
+          throw new FunctionException(e);
+        } catch (InterruptedException e) {
           throw new FunctionException(e);
         }
-        catch (InterruptedException e) {
-          throw new FunctionException(e);
-        }
-      }
-      else {
-        if(this.localLastResultRecieved){
+      } else {
+        if (this.localLastResultRecieved) {
           return;
         }
         if (onlyLocal) {
@@ -198,137 +181,122 @@ public final class PartitionedRegionFunctionResultSender implements
           if (bme != null) {
             this.rc.addResult(dm.getDistributionManagerId(), oneResult);
             this.rc.addResult(dm.getDistributionManagerId(), bme);
-          }else{
+          } else {
             this.rc.addResult(dm.getDistributionManagerId(), oneResult);
           }
           // exception thrown will do end result
           this.rc.endResults();
           this.localLastResultRecieved = true;
-        }
-        else {
-        //call a synchronized method as local node is also waiting to send lastResult 
+        } else {
+          //call a synchronized method as local node is also waiting to send lastResult 
           lastResult(oneResult, rc, false, true, dm.getDistributionManagerId());
         }
-        FunctionStats.getFunctionStats(function.getId(),
-            this.dm.getSystem()).incResultsReceived();
+        FunctionStats.getFunctionStats(function.getId(), this.dm.getSystem()).incResultsReceived();
       }
       // incrementing result sent stats.
       // Bug : remote node as well as local node calls this method to send
       // the result When the remote nodes are added to the local result collector at that
       // time the stats for the result sent is again incremented : Once the PR team comes with the concept of the Streaming FunctionOperation
       // for the partitioned Region then it will be simple to fix this problem.
-      FunctionStats.getFunctionStats(function.getId(),
-          this.dm.getSystem()).incResultsReturned();
+      FunctionStats.getFunctionStats(function.getId(), this.dm.getSystem()).incResultsReturned();
     }
-  } 
+  }
 
-  private synchronized void lastResult(Object oneResult,
-      ResultCollector collector, boolean lastRemoteResult,
-      boolean lastLocalResult, DistributedMember memberID) {
+  private synchronized void lastResult(Object oneResult, ResultCollector collector, boolean lastRemoteResult, boolean lastLocalResult, DistributedMember memberID) {
 
-    if(lastRemoteResult){
+    if (lastRemoteResult) {
       this.completelyDoneFromRemote = true;
     }
-    
-    if(lastLocalResult) {
+
+    if (lastLocalResult) {
       this.localLastResultRecieved = true;
     }
-    
+
     if (this.serverSender != null) { // Client-Server
       if (this.completelyDoneFromRemote && this.localLastResultRecieved) {
-        if(lastLocalResult){
+        if (lastLocalResult) {
           checkForBucketMovement(oneResult);
           if (bme != null) {
             clientSend(oneResult, dm.getDistributionManagerId());
             lastClientSend(dm.getDistributionManagerId(), bme);
-          }else{
+          } else {
             lastClientSend(memberID, oneResult);
           }
-        }else{
+        } else {
           lastClientSend(memberID, oneResult);
         }
-            
+
         collector.endResults();
-      }
-      else {
-        if(lastLocalResult){
+      } else {
+        if (lastLocalResult) {
           checkForBucketMovement(oneResult);
           if (bme != null) {
             clientSend(oneResult, memberID);
-            clientSend(bme,memberID);
-          }else{
+            clientSend(bme, memberID);
+          } else {
             clientSend(oneResult, memberID);
           }
-        }else{
-          clientSend(oneResult, memberID);  
+        } else {
+          clientSend(oneResult, memberID);
         }
-        
+
       }
-    }
-    else { // P2P
+    } else { // P2P
       if (this.completelyDoneFromRemote && this.localLastResultRecieved) {
-        if(lastLocalResult){
+        if (lastLocalResult) {
           checkForBucketMovement(oneResult);
-          if(bme!=null){
+          if (bme != null) {
             collector.addResult(memberID, oneResult);
             collector.addResult(memberID, bme);
-          }else{
+          } else {
             collector.addResult(memberID, oneResult);
           }
-        }else{
+        } else {
           collector.addResult(memberID, oneResult);
         }
         collector.endResults();
-      }
-      else {
-        if(lastLocalResult){
+      } else {
+        if (lastLocalResult) {
           checkForBucketMovement(oneResult);
-          if(bme!=null){
+          if (bme != null) {
             collector.addResult(memberID, oneResult);
             collector.addResult(memberID, bme);
-          }else{
+          } else {
             collector.addResult(memberID, oneResult);
           }
-        }
-        else{
+        } else {
           collector.addResult(memberID, oneResult);
         }
       }
     }
   }
 
-  public synchronized void lastResult(Object oneResult, boolean completelyDoneFromRemote,
-      ResultCollector reply, DistributedMember memberID) {
+  public synchronized void lastResult(Object oneResult, boolean completelyDoneFromRemote, ResultCollector reply, DistributedMember memberID) {
     logger.debug("PartitionedRegionFunctionResultSender Sending lastResult {}", oneResult);
 
     if (this.serverSender != null) { // Client-Server
-      
+
       if (completelyDoneFromRemote) {
         if (this.onlyRemote) {
           lastClientSend(memberID, oneResult);
           reply.endResults();
-        }
-        else {
+        } else {
           //call a synchronized method as local node is also waiting to send lastResult 
           lastResult(oneResult, reply, true, false, memberID);
         }
-      }
-      else {
+      } else {
         clientSend(oneResult, memberID);
       }
-    }
-    else{
+    } else {
       if (completelyDoneFromRemote) {
         if (this.onlyRemote) {
           reply.addResult(memberID, oneResult);
           reply.endResults();
-        }
-        else {
-        //call a synchronized method as local node is also waiting to send lastResult 
+        } else {
+          //call a synchronized method as local node is also waiting to send lastResult 
           lastResult(oneResult, reply, true, false, memberID);
         }
-      }
-      else {
+      } else {
         reply.addResult(memberID, oneResult);
       }
       if (this.dm == null) {
@@ -343,78 +311,64 @@ public final class PartitionedRegionFunctionResultSender implements
       FunctionStats.getFunctionStats(function.getId(), this.dm.getSystem()).incResultsReturned();
     }
   }
-      
+
   public void sendResult(Object oneResult) {
     if (!this.function.hasResult()) {
-      throw new IllegalStateException(
-          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
-              .toLocalizedString("send"));
+      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
     }
     if (this.serverSender != null) {
       logger.debug("PartitionedRegionFunctionResultSender sending result from local node to client {}", oneResult);
       clientSend(oneResult, dm.getDistributionManagerId());
-    }
-    else { // P2P
+    } else { // P2P
       if (this.msg != null) {
         try {
           logger.debug("PartitionedRegionFunctionResultSender sending result from remote node {}", oneResult);
           this.msg.sendReplyForOneResult(dm, pr, time, oneResult, false, enableOrderedResultStreming);
-        }
-        catch (ForceReattemptException e) {
+        } catch (ForceReattemptException e) {
+          throw new FunctionException(e);
+        } catch (InterruptedException e) {
           throw new FunctionException(e);
         }
-        catch (InterruptedException e) {
-          throw new FunctionException(e);
-        }
-      }
-      else {
+      } else {
         logger.debug("PartitionedRegionFunctionResultSender adding result to ResultCollector on local node {}", oneResult);
         this.rc.addResult(dm.getDistributionManagerId(), oneResult);
-        FunctionStats.getFunctionStats(function.getId(),
-            this.dm.getSystem()).incResultsReceived();
+        FunctionStats.getFunctionStats(function.getId(), this.dm.getSystem()).incResultsReceived();
       }
-    //incrementing result sent stats.
-      FunctionStats.getFunctionStats(function.getId(),
-          this.dm.getSystem()).incResultsReturned();
+      //incrementing result sent stats.
+      FunctionStats.getFunctionStats(function.getId(), this.dm.getSystem()).incResultsReturned();
     }
-  }  
-  
+  }
+
   private void clientSend(Object oneResult, DistributedMember memberID) {
     this.serverSender.sendResult(oneResult, memberID);
   }
 
-  private void lastClientSend(DistributedMember memberID,
-      Object lastResult) {
+  private void lastClientSend(DistributedMember memberID, Object lastResult) {
     this.serverSender.lastResult(lastResult, memberID);
   }
 
   public void sendException(Throwable exception) {
-    InternalFunctionException iFunxtionException = new InternalFunctionException(
-        exception);
+    InternalFunctionException iFunxtionException = new InternalFunctionException(exception);
     this.lastResult(iFunxtionException);
     this.localLastResultRecieved = true;
   }
-  
+
   public void setException(Throwable exception) {
     if (this.serverSender != null) {
       this.serverSender.setException(exception);
-    }
-    else {
-      ((LocalResultCollector)this.rc).setException(exception);
-      logger.info(LocalizedMessage.create(
-          LocalizedStrings.PartitionedRegionFunctionResultSender_UNEXPECTED_EXCEPTION_DURING_FUNCTION_EXECUTION_ON_LOCAL_NODE),
-          exception);
+    } else {
+      ((LocalResultCollector) this.rc).setException(exception);
+      logger.info(LocalizedMessage.create(LocalizedStrings.PartitionedRegionFunctionResultSender_UNEXPECTED_EXCEPTION_DURING_FUNCTION_EXECUTION_ON_LOCAL_NODE), exception);
     }
     this.rc.endResults();
     this.localLastResultRecieved = true;
   }
-  
+
   public void enableOrderedResultStreming(boolean enable) {
     this.enableOrderedResultStreming = enable;
   }
 
-  public boolean isLocallyExecuted()
-  {
+  public boolean isLocallyExecuted() {
     return this.msg == null;
   }
 

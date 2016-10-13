@@ -30,65 +30,65 @@ import org.apache.commons.lang.StringUtils;
  */
 public class TXLockToken implements DataSerializable {
   private static final long serialVersionUID = 8172108573123093776L;
-  
+
   private String regionFullPath;
-  
+
   private Object name;
-  
+
   public TXLockToken(String regionFullPath, Object name) {
     this.regionFullPath = regionFullPath;
     this.name = name;
   }
-  
+
   @Override
-	public int hashCode() {
-		int result = 17;
-		final int mult = 37;
+  public int hashCode() {
+    int result = 17;
+    final int mult = 37;
 
-		result = mult * result + 
-			(this.regionFullPath == null ? 0 : this.regionFullPath.hashCode());
-		result = mult * result + 
-			(this.name == null ? 0 : this.name.hashCode());
+    result = mult * result + (this.regionFullPath == null ? 0 : this.regionFullPath.hashCode());
+    result = mult * result + (this.name == null ? 0 : this.name.hashCode());
 
-		return result;
-	}
-  
+    return result;
+  }
+
   @Override
-	public boolean equals(Object other) {
-		if (other == this) return true;
-		if (other == null) return false;
-		if (!(other instanceof TXLockToken)) return  false;
-		final TXLockToken that = (TXLockToken) other;
+  public boolean equals(Object other) {
+    if (other == this)
+      return true;
+    if (other == null)
+      return false;
+    if (!(other instanceof TXLockToken))
+      return false;
+    final TXLockToken that = (TXLockToken) other;
 
-		if (!StringUtils.equals(this.regionFullPath, that.regionFullPath)) return false;
-		if (this.name != that.name &&
-	  		!(this.name != null &&
-	  		this.name.equals(that.name))) return false;
+    if (!StringUtils.equals(this.regionFullPath, that.regionFullPath))
+      return false;
+    if (this.name != that.name && !(this.name != null && this.name.equals(that.name)))
+      return false;
 
-		return true;
-	}
-  
+    return true;
+  }
+
   @Override
   public String toString() {
     return "[TXLockToken: " + this.regionFullPath + "//" + this.name + "]";
-	}
+  }
 
   // -------------------------------------------------------------------------
   //   DataSerializable support
   // -------------------------------------------------------------------------
-  
-  public TXLockToken() {}
-  
-  public void fromData(DataInput in)
-  throws IOException, ClassNotFoundException {
+
+  public TXLockToken() {
+  }
+
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.regionFullPath = DataSerializer.readString(in);
     this.name = DataSerializer.readObject(in);
   }
-  
+
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeString(this.regionFullPath, out);
     DataSerializer.writeObject(this.name, out);
   }
-  
-}
 
+}

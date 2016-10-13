@@ -27,12 +27,9 @@ package org.apache.geode.internal.cache;
  */
 final class VMRegionMap extends AbstractRegionMap {
 
-  VMRegionMap(Object owner, Attributes attr,
-      InternalRegionArguments internalRegionArgs) {
+  VMRegionMap(Object owner, Attributes attr, InternalRegionArguments internalRegionArgs) {
     super(internalRegionArgs);
     initialize(owner, attr, internalRegionArgs, false/*isLRU*/);
   }
-
-
 
 }

@@ -84,26 +84,8 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     String search = "<jndi-binding type=\"XAPooledDataSource\"";
     String last_search = "</jndi-binding>";
     String newDB = "newDB1_" + OSProcess.getId();
-    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\" jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"5\" max-pool-size=\"30\" idle-timeout-seconds=\"300\" blocking-timeout-seconds=\"15\" login-timeout-seconds=\"30\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:"+newDB+";create=true\" >";
-    String config_prop = "<config-property>"
-        + "<config-property-name>description</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>hi</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>user</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>mitul</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>password</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        "
-        + "</config-property>" + "<config-property>"
-        + "<config-property-name>databaseName</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>"+newDB+"</config-property-value>"
-        + "</config-property>\n";
+    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\" jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"5\" max-pool-size=\"30\" idle-timeout-seconds=\"300\" blocking-timeout-seconds=\"15\" login-timeout-seconds=\"30\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:" + newDB + ";create=true\" >";
+    String config_prop = "<config-property>" + "<config-property-name>description</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>hi</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>user</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>mitul</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>password</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        " + "</config-property>" + "<config-property>" + "<config-property-name>databaseName</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>" + newDB + "</config-property-value>" + "</config-property>\n";
     String new_str = jndi_str + config_prop;
     /*
      * String new_str = " <jndi-binding type=\"XAPooledDataSource\"
@@ -132,26 +114,8 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     String search = "<jndi-binding type=\"SimpleDataSource\"";
     String last_search = "</jndi-binding>";
     String newDB = "newDB1_" + OSProcess.getId();
-    String jndi_str = "<jndi-binding type=\"SimpleDataSource\" jndi-name=\"SimpleDataSource\" jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"5\" max-pool-size=\"30\" idle-timeout-seconds=\"300\" blocking-timeout-seconds=\"15\" login-timeout-seconds=\"30\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:"+newDB+";create=true\" >";
-    String config_prop = "<config-property>"
-        + "<config-property-name>description</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>hi</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>user</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>mitul</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>password</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        "
-        + "</config-property>" + "<config-property>"
-        + "<config-property-name>databaseName</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>"+newDB+"</config-property-value>"
-        + "</config-property>\n";
+    String jndi_str = "<jndi-binding type=\"SimpleDataSource\" jndi-name=\"SimpleDataSource\" jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"5\" max-pool-size=\"30\" idle-timeout-seconds=\"300\" blocking-timeout-seconds=\"15\" login-timeout-seconds=\"30\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:" + newDB + ";create=true\" >";
+    String config_prop = "<config-property>" + "<config-property-name>description</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>hi</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>user</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>mitul</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>password</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        " + "</config-property>" + "<config-property>" + "<config-property-name>databaseName</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>" + newDB + "</config-property-value>" + "</config-property>\n";
     String new_str = jndi_str + config_prop;
     /*
      * String new_str = " <jndi-binding type=\"SimpleDataSource\"
@@ -213,9 +177,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     cache = TxnManagerMultiThreadDUnitTest.getCache();
     Context ctx = cache.getJNDIContext();
     DataSource ds = (DataSource) ctx.lookup("java:/SimpleDataSource");
-    String sql = "create table "
-        + tableName
-        + " (id integer NOT NULL, name varchar(50), CONSTRAINT "+tableName+"_key PRIMARY KEY(id))";
+    String sql = "create table " + tableName + " (id integer NOT NULL, name varchar(50), CONSTRAINT " + tableName + "_key PRIMARY KEY(id))";
     LogWriterUtils.getLogWriter().fine(sql);
     Connection conn = ds.getConnection();
     Statement sm = conn.createStatement();
@@ -236,8 +198,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     // before destroyTable is called.
     try {
       Thread.sleep(10 * 1000);
-    }
-    catch (InterruptedException ie) {
+    } catch (InterruptedException ie) {
       fail("interrupted", ie);
     }
     try {
@@ -253,16 +214,13 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
       sm.execute(sql);
       conn.close();
       LogWriterUtils.getLogWriter().fine("destroyTable is Successful!");
-    }
-    catch (NamingException ne) {
+    } catch (NamingException ne) {
       LogWriterUtils.getLogWriter().fine("destroy table naming exception: " + ne);
       throw ne;
-    }
-    catch (SQLException se) {
+    } catch (SQLException se) {
       LogWriterUtils.getLogWriter().fine("destroy table sql exception: " + se);
       throw se;
-    }
-    finally {
+    } finally {
       LogWriterUtils.getLogWriter().fine("Closing cache...");
       closeCache();
     }
@@ -277,8 +235,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
       if (cache.isClosed()) {
         cache = CacheFactory.create(ds);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().warning("exception while creating cache", e);
     }
   }
@@ -289,15 +246,13 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
         cache.close();
         LogWriterUtils.getLogWriter().fine("Cache closed");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().warning("exception while closing cache", e);
     }
     try {
       CacheUtils.ds.disconnect();
       LogWriterUtils.getLogWriter().fine("Disconnected from Distribuited System");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().fine("Error in disconnecting from Distributed System");
     }
   }
@@ -307,8 +262,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     VM vm0 = Host.getHost(0).getVM(0);
     Object o[] = new Object[1];
     o[0] = "TxnManagerMultiThreadDUnitTest";
-    Object tableName = vm0.invoke(TxnManagerMultiThreadDUnitTest.class, "init",
-        o);
+    Object tableName = vm0.invoke(TxnManagerMultiThreadDUnitTest.class, "init", o);
     //setting the table name using the CacheUtils method setTableName
     //This is to access the table name in test methods
     CacheUtils.setTableName(tableName.toString());
@@ -335,8 +289,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
       //get the table name from CacheUtils
       String tblName_delRows = CacheUtils.getTableName();
       /*int rowsDeleted = */jtaObj.deleteRows(tblName_delRows);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Error: while deleting rows from database using JTAUtils", e);
     }
   }
@@ -377,8 +330,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     // before getNumberOfRows is called.
     try {
       Thread.sleep(7 * 1000);
-    }
-    catch (InterruptedException ie) {
+    } catch (InterruptedException ie) {
       fail("interrupted", ie);
     }
     Region currRegion = null;
@@ -394,10 +346,8 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     //get how many rows actually got committed
     try {
       int rows = jtaObj.getRows(tblName);
-      LogWriterUtils.getLogWriter().fine("Number of rows committed current test method  are: "
-          + rows);
-    }
-    catch (Exception e) {
+      LogWriterUtils.getLogWriter().fine("Number of rows committed current test method  are: " + rows);
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().warning("Error: while getting rows from database using JTAUtils", e);
       fail("Error: while getting rows from database using JTAUtils", e);
     }
@@ -413,7 +363,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     VM vm0 = Host.getHost(0).getVM(0);
     AsyncInvocation asyncObj1 = vm0.invokeAsync(() -> TxnManagerMultiThreadDUnitTest.callCommitThreads());
     ThreadUtils.join(asyncObj1, 30 * 1000);
-    if(asyncObj1.exceptionOccurred()){
+    if (asyncObj1.exceptionOccurred()) {
       Assert.fail("asyncObj1 failed", asyncObj1.getException());
     }
     vm0.invoke(() -> TxnManagerMultiThreadDUnitTest.getNumberOfRows());
@@ -429,8 +379,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
       new CommitThread("ct2", LogWriterUtils.getLogWriter());
       new CommitThread("ct3", LogWriterUtils.getLogWriter());
       new CommitThread("ct4", LogWriterUtils.getLogWriter());
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().warning("Failed in Commit Threads", e);
       fail("Failed in Commit Threads", e);
     }
@@ -446,7 +395,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
     VM vm0 = Host.getHost(0).getVM(0);
     AsyncInvocation asyncObj1 = vm0.invokeAsync(() -> TxnManagerMultiThreadDUnitTest.callCommitandRollbackThreads());
     ThreadUtils.join(asyncObj1, 30 * 1000);
-    if(asyncObj1.exceptionOccurred()){
+    if (asyncObj1.exceptionOccurred()) {
       Assert.fail("asyncObj1 failed", asyncObj1.getException());
     }
     vm0.invoke(() -> TxnManagerMultiThreadDUnitTest.getNumberOfRows());
@@ -460,8 +409,7 @@ public class TxnManagerMultiThreadDUnitTest extends JUnit4DistributedTestCase {
       new CommitThread("ct3", LogWriterUtils.getLogWriter());
       new RollbackThread("rt1", LogWriterUtils.getLogWriter());
       new RollbackThread("rt2", LogWriterUtils.getLogWriter());
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().info("Failed in Commit and Rollback threads", e);
       fail("Failed in Commit and Rollback Threads", e);
     }

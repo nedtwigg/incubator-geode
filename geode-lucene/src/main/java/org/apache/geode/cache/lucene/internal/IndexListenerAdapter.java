@@ -23,8 +23,7 @@ import java.util.Map;
 
 public class IndexListenerAdapter implements IndexListener {
   @Override
-  public void beforeIndexCreated(String indexName, String regionPath, Analyzer analyzer,
-      Map<String, Analyzer> fieldAnalyzers, String... fields) {
+  public void beforeIndexCreated(String indexName, String regionPath, Analyzer analyzer, Map<String, Analyzer> fieldAnalyzers, String... fields) {
   }
 
   @Override

@@ -41,7 +41,7 @@ public class DurableClientReconnectAutoDUnitTest extends DurableClientReconnectD
   public static void caseSetUp() throws Exception {
     disconnectAllFromDS();
   }
- 
+
   @Ignore("do nothing, this test doesn't make sense with the locator")
   @Override
   @Test
@@ -55,11 +55,10 @@ public class DurableClientReconnectAutoDUnitTest extends DurableClientReconnectD
   public void testDurableReconnectSingleServer() throws Exception {
     //do nothing, this test doesn't make sense with the locator
   }
-  
+
   protected PoolFactory getPoolFactory() {
     Host host = Host.getHost(0);
-    PoolFactory factory = PoolManager.createFactory()
-    .addLocator(NetworkUtils.getServerHostName(host), DistributedTestUtils.getDUnitLocatorPort());
+    PoolFactory factory = PoolManager.createFactory().addLocator(NetworkUtils.getServerHostName(host), DistributedTestUtils.getDUnitLocatorPort());
     return factory;
   }
 

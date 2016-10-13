@@ -44,7 +44,7 @@ public class PartitionedRegionLocalMaxMemoryOffHeapDUnitTest extends Partitioned
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -60,12 +60,11 @@ public class PartitionedRegionLocalMaxMemoryOffHeapDUnitTest extends Partitioned
     props.setProperty(OFF_HEAP_MEMORY_SIZE, "2m");
     return props;
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes<?, ?> createRegionAttrsForPR(int red, int localMaxMem, long recoveryDelay, EvictionAttributes evictionAttrs) {
-    RegionAttributes<?, ?> attrs = super.createRegionAttrsForPR(
-        red, localMaxMem, recoveryDelay, evictionAttrs);
+    RegionAttributes<?, ?> attrs = super.createRegionAttrsForPR(red, localMaxMem, recoveryDelay, evictionAttrs);
     AttributesFactory factory = new AttributesFactory(attrs);
     factory.setOffHeap(true);
     return factory.create();

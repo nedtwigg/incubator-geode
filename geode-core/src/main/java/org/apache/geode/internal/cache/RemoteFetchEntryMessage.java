@@ -56,10 +56,9 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * @since GemFire 5.1
  */
-public final class RemoteFetchEntryMessage extends RemoteOperationMessage
-  {
+public final class RemoteFetchEntryMessage extends RemoteOperationMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   private Object key;
 
   /**
@@ -68,8 +67,7 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
   public RemoteFetchEntryMessage() {
   }
 
-  private RemoteFetchEntryMessage(InternalDistributedMember recipient, String regionPath,
-      ReplyProcessor21 processor, final Object key) {
+  private RemoteFetchEntryMessage(InternalDistributedMember recipient, String regionPath, ReplyProcessor21 processor, final Object key) {
     super(recipient, regionPath, processor);
     this.key = key;
   }
@@ -88,13 +86,9 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
    *         key
    * @throws RemoteOperationException if the peer is no longer available
    */
-  public static FetchEntryResponse send(InternalDistributedMember recipient,
-      LocalRegion r, final Object key)
-      throws RemoteOperationException
-  {
+  public static FetchEntryResponse send(InternalDistributedMember recipient, LocalRegion r, final Object key) throws RemoteOperationException {
     Assert.assertTrue(recipient != null, "RemoteFetchEntryMessage NULL recipient");
-    FetchEntryResponse p = new FetchEntryResponse(r.getSystem(), Collections
-        .singleton(recipient), r, key);
+    FetchEntryResponse p = new FetchEntryResponse(r.getSystem(), Collections.singleton(recipient), r, key);
     RemoteFetchEntryMessage m = new RemoteFetchEntryMessage(recipient, r.getFullPath(), p, key);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
@@ -105,10 +99,10 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
     return p;
   }
 
-//  final public int getProcessorType()
-//  {
-//    return DistributionManager.PARTITIONED_REGION_EXECUTOR;
-//  }
+  //  final public int getProcessorType()
+  //  {
+  //    return DistributionManager.PARTITIONED_REGION_EXECUTOR;
+  //  }
 
   @Override
   public boolean isSevereAlertCompatible() {
@@ -117,50 +111,40 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
   }
 
   @Override
-  protected final boolean operateOnRegion(DistributionManager dm,
-      LocalRegion r, long startTime) throws RemoteOperationException
-  {
+  protected final boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws RemoteOperationException {
     // RemoteFetchEntryMessage is used in refreshing client caches during interest list recovery,
     // so don't be too verbose or hydra tasks may time out
 
-    if ( ! (r instanceof PartitionedRegion) ) {
+    if (!(r instanceof PartitionedRegion)) {
       r.waitOnInitialization(); // bug #43371 - accessing a region before it's initialized
     }
     EntrySnapshot val;
-      try {
-        final KeyInfo keyInfo = r.getKeyInfo(key);
-        Region.Entry re = r.getDataView().getEntry(keyInfo, r, true);
-        if(re==null) {
-          r.checkEntryNotFound(key);
-        }
-        NonLocalRegionEntry nlre = new NonLocalRegionEntry(re, r);
-        LocalRegion dataReg = r.getDataRegionForRead(keyInfo);
-        val = new EntrySnapshot(nlre,dataReg,r, false);
-        //r.getPrStats().endRemoteOperationMessagesProcessing(startTime); 
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), val, dm, null);
+    try {
+      final KeyInfo keyInfo = r.getKeyInfo(key);
+      Region.Entry re = r.getDataView().getEntry(keyInfo, r, true);
+      if (re == null) {
+        r.checkEntryNotFound(key);
       }
-      catch (TransactionException tex) {
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, 
-            new ReplyException(tex));
-      }
-      catch (EntryNotFoundException enfe) {
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, 
-            new ReplyException(LocalizedStrings.RemoteFetchEntryMessage_ENTRY_NOT_FOUND.toLocalizedString(), enfe));
-      }
-      catch (PrimaryBucketException pbe) {
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, 
-            new ReplyException(pbe));
-      }
+      NonLocalRegionEntry nlre = new NonLocalRegionEntry(re, r);
+      LocalRegion dataReg = r.getDataRegionForRead(keyInfo);
+      val = new EntrySnapshot(nlre, dataReg, r, false);
+      //r.getPrStats().endRemoteOperationMessagesProcessing(startTime); 
+      FetchEntryReplyMessage.send(getSender(), getProcessorId(), val, dm, null);
+    } catch (TransactionException tex) {
+      FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(tex));
+    } catch (EntryNotFoundException enfe) {
+      FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(LocalizedStrings.RemoteFetchEntryMessage_ENTRY_NOT_FOUND.toLocalizedString(), enfe));
+    } catch (PrimaryBucketException pbe) {
+      FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(pbe));
+    }
 
     // Unless there was an exception thrown, this message handles sending the
     // response
     return false;
   }
 
-
   @Override
-  protected void appendFields(StringBuffer buff)
-  {
+  protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
     buff.append("; key=").append(this.key);
   }
@@ -170,21 +154,18 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.key = DataSerializer.readObject(in);
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(this.key, out);
   }
 
-  public void setKey(Object key)
-  {
+  public void setKey(Object key) {
     this.key = key;
   }
 
@@ -193,8 +174,7 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
    * 
    * @since GemFire 5.0
    */
-  public static final class FetchEntryReplyMessage extends ReplyMessage
-   {
+  public static final class FetchEntryReplyMessage extends ReplyMessage {
     /** Propagated exception from remote node to operation initiator */
     private EntrySnapshot value;
 
@@ -204,19 +184,15 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
     public FetchEntryReplyMessage() {
     }
 
-    private FetchEntryReplyMessage(int processorId,
-        EntrySnapshot value, ReplyException re) {
+    private FetchEntryReplyMessage(int processorId, EntrySnapshot value, ReplyException re) {
       this.processorId = processorId;
       this.value = value;
       setException(re);
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient,
-        int processorId, EntrySnapshot value, DM dm, ReplyException re)
-    {
-      Assert.assertTrue(recipient != null,
-          "FetchEntryReplyMessage NULL recipient");
+    public static void send(InternalDistributedMember recipient, int processorId, EntrySnapshot value, DM dm, ReplyException re) {
+      Assert.assertTrue(recipient != null, "FetchEntryReplyMessage NULL recipient");
       FetchEntryReplyMessage m = new FetchEntryReplyMessage(processorId, value, re);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
@@ -230,10 +206,9 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
      *          the distribution manager that is processing the message.
      */
     @Override
-    public void process(final DM dm, final ReplyProcessor21 processor)
-    {
+    public void process(final DM dm, final ReplyProcessor21 processor) {
       final boolean isDebugEnabled = logger.isTraceEnabled(LogMarker.DM);
-      
+
       final long startTime = getTimestamp();
       if (isDebugEnabled) {
         logger.trace(LogMarker.DM, "FetchEntryReplyMessage process invoking reply processor with processorId:{}", this.processorId);
@@ -253,21 +228,18 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
       dm.getStats().incReplyMessageTime(NanoTimer.getTime() - startTime);
     }
 
-    public EntrySnapshot getValue()
-    {
+    public EntrySnapshot getValue() {
       return this.value;
     }
 
     @Override
-    public void toData(DataOutput out) throws IOException
-    {
+    public void toData(DataOutput out) throws IOException {
       super.toData(out);
       if (this.value == null) {
         out.writeBoolean(true); // null entry
-      }
-      else {
+      } else {
         out.writeBoolean(false); // null entry
-        InternalDataSerializer.invokeToData((DataSerializable)this.value, out);
+        InternalDataSerializer.invokeToData((DataSerializable) this.value, out);
       }
     }
 
@@ -277,32 +249,25 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException
-    {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       boolean nullEntry = in.readBoolean();
       if (!nullEntry) {
         // since the Entry object shares state with the PartitionedRegion,
         // we have to find the region and ask it to create a new Entry instance
         // to be populated from the DataInput
-        FetchEntryResponse processor = (FetchEntryResponse)ReplyProcessor21
-            .getProcessor(this.processorId);
+        FetchEntryResponse processor = (FetchEntryResponse) ReplyProcessor21.getProcessor(this.processorId);
         if (processor == null) {
           throw new OperationCancelledException("This operation was cancelled (null processor)");
         }
-        this.value = new EntrySnapshot(in,processor.region);
+        this.value = new EntrySnapshot(in, processor.region);
       }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("FetchEntryReplyMessage ").append("processorid=").append(
-          this.processorId).append(" reply to sender ")
-          .append(this.getSender()).append(" returning value=").append(
-              this.value);
+      sb.append("FetchEntryReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender()).append(" returning value=").append(this.value);
       return sb.toString();
     }
   }
@@ -312,33 +277,29 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
    * org.apache.geode.internal.cache.RemoteFetchEntryMessage.FetchEntryReplyMessage}
    * 
    */
-  public static class FetchEntryResponse extends RemoteOperationResponse
-   {
+  public static class FetchEntryResponse extends RemoteOperationResponse {
     private volatile EntrySnapshot returnValue;
 
     final LocalRegion region;
     final Object key;
 
-    public FetchEntryResponse(InternalDistributedSystem ds, Set recipients,
-        LocalRegion theRegion, Object key) {
+    public FetchEntryResponse(InternalDistributedSystem ds, Set recipients, LocalRegion theRegion, Object key) {
       super(ds, recipients);
       this.region = theRegion;
       this.key = key;
     }
 
     @Override
-    public void process(DistributionMessage msg)
-    {
+    public void process(DistributionMessage msg) {
       try {
         if (msg instanceof FetchEntryReplyMessage) {
-          FetchEntryReplyMessage reply = (FetchEntryReplyMessage)msg;
+          FetchEntryReplyMessage reply = (FetchEntryReplyMessage) msg;
           this.returnValue = reply.getValue();
           if (logger.isTraceEnabled(LogMarker.DM)) {
-            logger.trace(LogMarker.DM, "FetchEntryResponse return value is {}" , this.returnValue);
+            logger.trace(LogMarker.DM, "FetchEntryResponse return value is {}", this.returnValue);
           }
         }
-      }
-      finally {
+      } finally {
         super.process(msg);
       }
     }
@@ -349,28 +310,22 @@ public final class RemoteFetchEntryMessage extends RemoteOperationMessage
      * @throws RemoteOperationException if the peer is no longer available
      * @throws EntryNotFoundException
      */
-    public EntrySnapshot waitForResponse() 
-        throws EntryNotFoundException, RemoteOperationException {
+    public EntrySnapshot waitForResponse() throws EntryNotFoundException, RemoteOperationException {
       try {
         // waitForRepliesUninterruptibly();
         waitForCacheException();
-      }
-      catch (RemoteOperationException e) {
+      } catch (RemoteOperationException e) {
         e.checkKey(key);
         final String msg = "FetchEntryResponse got remote RemoteOperationException; rethrowing";
         logger.debug(msg, e);
         throw e;
-      }
-      catch (EntryNotFoundException e) {
+      } catch (EntryNotFoundException e) {
         throw e;
-      }
-      catch (TransactionException e) {
+      } catch (TransactionException e) {
         throw e;
-      }
-      catch (RegionDestroyedException e) {
+      } catch (RegionDestroyedException e) {
         throw e;
-      }
-      catch (CacheException ce) {
+      } catch (CacheException ce) {
         logger.debug("FetchEntryResponse got remote CacheException; forcing reattempt.", ce);
         throw new RemoteOperationException(LocalizedStrings.RemoteFetchEntryMessage_FETCHENTRYRESPONSE_GOT_REMOTE_CACHEEXCEPTION_FORCING_REATTEMPT.toLocalizedString(), ce);
       }

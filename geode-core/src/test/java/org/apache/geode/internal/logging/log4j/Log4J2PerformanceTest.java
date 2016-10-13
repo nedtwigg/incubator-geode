@@ -46,45 +46,43 @@ public class Log4J2PerformanceTest extends LoggingPerformanceTestCase {
 
   protected static final int DEFAULT_LOG_FILE_SIZE_LIMIT = Integer.MAX_VALUE;
   protected static final int DEFAULT_LOG_FILE_COUNT_LIMIT = 20;
-  
+
   protected static final String SYS_LOG_FILE = "gemfire-log-file";
   protected static final String SYS_LOG_FILE_SIZE_LIMIT = "gemfire-log-file-size-limit";
   protected static final String SYS_LOG_FILE_COUNT_LIMIT = "gemfire-log-file-count-limit";
-  
+
   private File config = null;
-  
+
   @After
   public void tearDownLog4J2PerformanceTest() throws Exception {
     this.config = null; // leave this file in place for now
   }
-  
+
   protected void writeConfigFile(final File file) throws FileNotFoundException {
     final PrintWriter pw = new PrintWriter(new FileOutputStream(file));
     pw.println();
     pw.close();
   }
 
-  protected void setPropertySubstitutionValues(final String logFile, 
-                                               final int logFileSizeLimitMB,
-                                               final int logFileCountLimit) {
-      if (logFileSizeLimitMB < 0) {
-        throw new IllegalArgumentException("logFileSizeLimitMB must be zero or positive integer");
-      }
-      if (logFileCountLimit < 0) {
-        throw new IllegalArgumentException("logFileCountLimit must be zero or positive integer");
-      }
-      
-      // flip \ to / if any exist
-      final String logFileValue = logFile.replace("\\", "/");
-      // append MB
-      final String logFileSizeLimitMBValue = new StringBuilder(String.valueOf(logFileSizeLimitMB)).append(" MB").toString();
-      final String logFileCountLimitValue = new StringBuilder(String.valueOf(logFileCountLimit)).toString();
-      
-      System.setProperty(SYS_LOG_FILE, logFileValue);
-      System.setProperty(SYS_LOG_FILE_SIZE_LIMIT, logFileSizeLimitMBValue);
-      System.setProperty(SYS_LOG_FILE_COUNT_LIMIT, logFileCountLimitValue);
+  protected void setPropertySubstitutionValues(final String logFile, final int logFileSizeLimitMB, final int logFileCountLimit) {
+    if (logFileSizeLimitMB < 0) {
+      throw new IllegalArgumentException("logFileSizeLimitMB must be zero or positive integer");
+    }
+    if (logFileCountLimit < 0) {
+      throw new IllegalArgumentException("logFileCountLimit must be zero or positive integer");
+    }
+
+    // flip \ to / if any exist
+    final String logFileValue = logFile.replace("\\", "/");
+    // append MB
+    final String logFileSizeLimitMBValue = new StringBuilder(String.valueOf(logFileSizeLimitMB)).append(" MB").toString();
+    final String logFileCountLimitValue = new StringBuilder(String.valueOf(logFileCountLimit)).toString();
+
+    System.setProperty(SYS_LOG_FILE, logFileValue);
+    System.setProperty(SYS_LOG_FILE_SIZE_LIMIT, logFileSizeLimitMBValue);
+    System.setProperty(SYS_LOG_FILE_COUNT_LIMIT, logFileCountLimitValue);
   }
-  
+
   protected Logger createLogger() throws IOException {
     // create configuration with log-file and log-level
     this.configDirectory = new File(getUniqueName());
@@ -103,10 +101,10 @@ public class Log4J2PerformanceTest extends LoggingPerformanceTestCase {
     final String logFilePath = IOUtils.tryGetCanonicalPathElseGetAbsolutePath(logFile);
     final String logFileName = FileUtil.stripOffExtension(logFilePath);
     setPropertySubstitutionValues(logFileName, DEFAULT_LOG_FILE_SIZE_LIMIT, DEFAULT_LOG_FILE_COUNT_LIMIT);
-    
+
     final String configPath = "file://" + IOUtils.tryGetCanonicalPathElseGetAbsolutePath(this.config);
     System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, configPath);
-    
+
     final Logger logger = LogManager.getLogger();
     return logger;
   }
@@ -114,18 +112,19 @@ public class Log4J2PerformanceTest extends LoggingPerformanceTestCase {
   @Override
   protected PerformanceLogger createPerformanceLogger() throws IOException {
     final Logger logger = createLogger();
-    
+
     final PerformanceLogger perfLogger = new PerformanceLogger() {
       @Override
       public void log(String message) {
         logger.info(message);
       }
+
       @Override
       public boolean isEnabled() {
         return logger.isEnabled(Level.INFO);
       }
     };
-    
+
     return perfLogger;
   }
 }

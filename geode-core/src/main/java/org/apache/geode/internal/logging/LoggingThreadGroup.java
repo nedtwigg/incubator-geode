@@ -45,7 +45,7 @@ public class LoggingThreadGroup extends ThreadGroup {
 
   /** A "local" log writer that logs exceptions to standard error */
   private static final StandardErrorPrinter stderr = new StandardErrorPrinter(InternalLogWriter.ALL_LEVEL);
-  
+
   /** A set of all created LoggingThreadGroups */
   private static final Collection<LoggingThreadGroup> loggingThreadGroups = new ArrayList<LoggingThreadGroup>();
 
@@ -60,7 +60,7 @@ public class LoggingThreadGroup extends ThreadGroup {
   public static LoggingThreadGroup createThreadGroup(final String name) {
     return createThreadGroup(name, (Logger) null);
   }
-  
+
   /**
    * Returns a <code>ThreadGroup</code> whose {@link
    * ThreadGroup#uncaughtException} method logs to both {#link
@@ -75,13 +75,12 @@ public class LoggingThreadGroup extends ThreadGroup {
    * author David Whitlock
    * @since GemFire 3.0
    */
-  public static LoggingThreadGroup createThreadGroup(final String name,
-                                                     final InternalLogWriter logWriter) {
+  public static LoggingThreadGroup createThreadGroup(final String name, final InternalLogWriter logWriter) {
     // Cache the LoggingThreadGroups so that we don't create a
     // gazillion of them.
     LoggingThreadGroup group = null;
     synchronized (loggingThreadGroups) {
-      for (Iterator<LoggingThreadGroup> iter = loggingThreadGroups.iterator(); iter.hasNext(); ) {
+      for (Iterator<LoggingThreadGroup> iter = loggingThreadGroups.iterator(); iter.hasNext();) {
 
         LoggingThreadGroup group2 = (LoggingThreadGroup) iter.next();
         if (group2.isDestroyed()) {
@@ -129,13 +128,12 @@ public class LoggingThreadGroup extends ThreadGroup {
    * author David Whitlock
    * @since GemFire 3.0
    */
-  public static LoggingThreadGroup createThreadGroup(final String name,
-                                                     final Logger logger) {
+  public static LoggingThreadGroup createThreadGroup(final String name, final Logger logger) {
     // Cache the LoggingThreadGroups so that we don't create a
     // gazillion of them.
     LoggingThreadGroup group = null;
     synchronized (loggingThreadGroups) {
-      for (Iterator<LoggingThreadGroup> iter = loggingThreadGroups.iterator(); iter.hasNext(); ) {
+      for (Iterator<LoggingThreadGroup> iter = loggingThreadGroups.iterator(); iter.hasNext();) {
 
         LoggingThreadGroup group2 = (LoggingThreadGroup) iter.next();
         if (group2.isDestroyed()) {
@@ -169,37 +167,34 @@ public class LoggingThreadGroup extends ThreadGroup {
     return group;
   }
 
-//  /**
-//   * @deprecated Only for use by hydra for backwards compatability reasons.
-//   * Returns a <code>ThreadGroup</code> whose {@link
-//   * ThreadGroup#uncaughtException} method logs to both {#link
-//   * System#err} and the given <code>LogWriterI18n</code>.
-//   *
-//   * @param name
-//   *        The name of the <code>ThreadGroup</code>
-//   * @param logger
-//   *        A <code>LogWriter</code> to log uncaught exceptions to.  It
-//   *        is okay for this argument to be <code>null</code>.
-//   *
-//   * author kbanks 
-//   * @since GemFire 6.0
-//   */
-//  @Deprecated public static LoggingThreadGroup createThreadGroup(final String name,
-//                                                                 final LogWriter logger) {
-//    return createThreadGroup(name,
-//        logger != null ? logger.convertToLogWriterI18n() : null);
-//  }
+  //  /**
+  //   * @deprecated Only for use by hydra for backwards compatability reasons.
+  //   * Returns a <code>ThreadGroup</code> whose {@link
+  //   * ThreadGroup#uncaughtException} method logs to both {#link
+  //   * System#err} and the given <code>LogWriterI18n</code>.
+  //   *
+  //   * @param name
+  //   *        The name of the <code>ThreadGroup</code>
+  //   * @param logger
+  //   *        A <code>LogWriter</code> to log uncaught exceptions to.  It
+  //   *        is okay for this argument to be <code>null</code>.
+  //   *
+  //   * author kbanks 
+  //   * @since GemFire 6.0
+  //   */
+  //  @Deprecated public static LoggingThreadGroup createThreadGroup(final String name,
+  //                                                                 final LogWriter logger) {
+  //    return createThreadGroup(name,
+  //        logger != null ? logger.convertToLogWriterI18n() : null);
+  //  }
 
   public static void cleanUpThreadGroups() {
     synchronized (loggingThreadGroups) {
       LoggingThreadGroup group;
       Iterator<?> itr = loggingThreadGroups.iterator();
       while (itr.hasNext()) {
-        group = (LoggingThreadGroup)itr.next();
-        if (!group.getName().equals(
-            InternalDistributedSystem.SHUTDOWN_HOOK_NAME)
-            && !group.getName()
-                .equals("GemFireConnectionFactory Shutdown Hook")) {
+        group = (LoggingThreadGroup) itr.next();
+        if (!group.getName().equals(InternalDistributedSystem.SHUTDOWN_HOOK_NAME) && !group.getName().equals("GemFireConnectionFactory Shutdown Hook")) {
           group.cleanup();
         }
       }
@@ -214,8 +209,8 @@ public class LoggingThreadGroup extends ThreadGroup {
    */
   public static ThreadGroup getThreadGroup(final String threadGroupName) {
     synchronized (loggingThreadGroups) {
-      for (Object object: loggingThreadGroups) {
-        LoggingThreadGroup threadGroup = (LoggingThreadGroup)object;
+      for (Object object : loggingThreadGroups) {
+        LoggingThreadGroup threadGroup = (LoggingThreadGroup) object;
         if (threadGroup.getName().equals(threadGroupName)) {
           return threadGroup;
         }
@@ -223,7 +218,7 @@ public class LoggingThreadGroup extends ThreadGroup {
       return null;
     }
   }
-  
+
   /** A log writer that the user has specified for logging uncaught
    * exceptions. */
   protected volatile InternalLogWriter logWriter;
@@ -250,7 +245,7 @@ public class LoggingThreadGroup extends ThreadGroup {
     super(name);
     this.logWriter = logWriter;
   }
-  
+
   /**
    * Creates a new <code>LoggingThreadGroup</code> that logs
    * uncaught exceptions to the given logger.
@@ -265,7 +260,7 @@ public class LoggingThreadGroup extends ThreadGroup {
     super(name);
     this.logger = logger;
   }
-  
+
   private Object dispatchLock = new Object();
 
   /**
@@ -273,18 +268,16 @@ public class LoggingThreadGroup extends ThreadGroup {
    */
   @Override
   public void uncaughtException(final Thread t, final Throwable ex) {
-    synchronized(this.dispatchLock) {
+    synchronized (this.dispatchLock) {
       if (ex instanceof VirtualMachineError) {
-        SystemFailure.setFailure((VirtualMachineError)ex); // don't throw
+        SystemFailure.setFailure((VirtualMachineError) ex); // don't throw
       }
       // Solution to treat the shutdown hook error as a special case.
       // Do not change the hook's thread name without also changing it here.
-      String threadName = t.getName();  
-      if ((ex instanceof NoClassDefFoundError) 
-          && (threadName.equals(InternalDistributedSystem.SHUTDOWN_HOOK_NAME)))
-      {
+      String threadName = t.getName();
+      if ((ex instanceof NoClassDefFoundError) && (threadName.equals(InternalDistributedSystem.SHUTDOWN_HOOK_NAME))) {
         final StringId msg = LocalizedStrings.UNCAUGHT_EXCEPTION_IN_THREAD_0_THIS_MESSAGE_CAN_BE_DISREGARDED_IF_IT_OCCURED_DURING_AN_APPLICATION_SERVER_SHUTDOWN_THE_EXCEPTION_MESSAGE_WAS_1;
-        final Object[] msgArgs = new Object[] {t, ex.getLocalizedMessage()};
+        final Object[] msgArgs = new Object[] { t, ex.getLocalizedMessage() };
         stderr.info(msg, msgArgs);
         if (this.logger != null) {
           this.logger.info(LocalizedMessage.create(msg, msgArgs));
@@ -292,7 +285,7 @@ public class LoggingThreadGroup extends ThreadGroup {
         if (this.logWriter != null) {
           this.logWriter.info(msg, msgArgs);
         }
-      } else { 
+      } else {
         stderr.severe(LocalizedStrings.UNCAUGHT_EXCEPTION_IN_THREAD_0, t, ex);
         if (this.logger != null) {
           this.logger.fatal(LocalizedMessage.create(LocalizedStrings.UNCAUGHT_EXCEPTION_IN_THREAD_0, t), ex);
@@ -309,12 +302,11 @@ public class LoggingThreadGroup extends ThreadGroup {
     }
   }
 
-
   /**
    * clear number of uncaught exceptions
    */
   public void clearUncaughtExceptionsCount() {
-    synchronized(this.dispatchLock) {
+    synchronized (this.dispatchLock) {
       this.uncaughtExceptionsCount = 0;
     }
   }
@@ -324,11 +316,11 @@ public class LoggingThreadGroup extends ThreadGroup {
    * this thread group.
    */
   public long getUncaughtExceptionsCount() {
-    synchronized(this.dispatchLock) {
+    synchronized (this.dispatchLock) {
       return uncaughtExceptionsCount;
     }
   }
-  
+
   /**
    * clean up the threadgroup, releasing resources that could be problematic
    * (bug 35388)

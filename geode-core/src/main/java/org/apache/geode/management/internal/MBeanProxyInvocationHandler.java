@@ -44,9 +44,6 @@ import org.apache.geode.cache.execute.ResultCollector;
 import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.internal.logging.LogService;
 
-
-
-
 /**
  * This class is the proxy handler for all the proxies created for federated
  * MBeans. Its designed with Java proxy mechanism. All data calls are 
@@ -59,7 +56,7 @@ import org.apache.geode.internal.logging.LogService;
 public class MBeanProxyInvocationHandler implements InvocationHandler {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Name of the MBean
    */
@@ -76,19 +73,16 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
 
   private DistributedMember member;
 
-
   /**
    * emitter is a helper class for sending notifications on behalf of the proxy
    */
   private final NotificationBroadcasterSupport emitter;
 
   private final ProxyInterface proxyImpl;
- 
+
   private boolean isMXBean;
-  
+
   private MXBeanProxyInvocationHandler mxbeanInvocationRef;
-  
-  
 
   /**
    * 
@@ -104,28 +98,21 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
    * @throws ClassNotFoundException
    * @throws IntrospectionException
    */
-  public static Object newProxyInstance(DistributedMember member,
-      Region<String, Object> monitoringRegion, ObjectName objectName,
-      Class interfaceClass) throws ClassNotFoundException,
-      IntrospectionException {
+  public static Object newProxyInstance(DistributedMember member, Region<String, Object> monitoringRegion, ObjectName objectName, Class interfaceClass) throws ClassNotFoundException, IntrospectionException {
     boolean isMXBean = JMX.isMXBeanInterface(interfaceClass);
-    boolean notificationBroadcaster = ((FederationComponent) monitoringRegion
-        .get(objectName.toString())).isNotificationEmitter();
+    boolean notificationBroadcaster = ((FederationComponent) monitoringRegion.get(objectName.toString())).isNotificationEmitter();
 
-    InvocationHandler handler = new MBeanProxyInvocationHandler(member,
-        objectName, monitoringRegion, isMXBean);
+    InvocationHandler handler = new MBeanProxyInvocationHandler(member, objectName, monitoringRegion, isMXBean);
 
     Class[] interfaces;
 
     if (notificationBroadcaster) {
-      interfaces = new Class[] { interfaceClass, ProxyInterface.class,
-          NotificationBroadCasterProxy.class };
+      interfaces = new Class[] { interfaceClass, ProxyInterface.class, NotificationBroadCasterProxy.class };
     } else {
       interfaces = new Class[] { interfaceClass, ProxyInterface.class };
     }
 
-    Object proxy = Proxy.newProxyInstance(MBeanProxyInvocationHandler.class
-        .getClassLoader(), interfaces, handler);
+    Object proxy = Proxy.newProxyInstance(MBeanProxyInvocationHandler.class.getClassLoader(), interfaces, handler);
 
     return interfaceClass.cast(proxy);
   }
@@ -141,16 +128,14 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
    * @throws IntrospectionException
    * @throws ClassNotFoundException
    */
-  private MBeanProxyInvocationHandler(DistributedMember member,
-      ObjectName objectName, Region<String, Object> monitoringRegion, boolean isMXBean)
-      throws IntrospectionException, ClassNotFoundException {
+  private MBeanProxyInvocationHandler(DistributedMember member, ObjectName objectName, Region<String, Object> monitoringRegion, boolean isMXBean) throws IntrospectionException, ClassNotFoundException {
     this.member = member;
     this.objectName = objectName;
     this.monitoringRegion = monitoringRegion;
     this.emitter = new NotificationBroadcasterSupport();
     this.proxyImpl = new ProxyInterfaceImpl();
     this.isMXBean = isMXBean;
-    
+
   }
 
   /**
@@ -162,26 +147,20 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
    * Notification emmitter methods are also delegated to the function service
    */
   @Override
-  public Object invoke(Object proxy, Method method, Object[] args)
-      throws Throwable {
+  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
     if (logger.isTraceEnabled()) {
       logger.trace("Invoking Method {}", method.getName());
     }
     final Class methodClass = method.getDeclaringClass();
-   
-    
 
-    if (methodClass.equals(NotificationBroadcaster.class)
-        || methodClass.equals(NotificationEmitter.class))
+    if (methodClass.equals(NotificationBroadcaster.class) || methodClass.equals(NotificationEmitter.class))
       return invokeBroadcasterMethod(proxy, method, args);
 
     final String methodName = method.getName();
     final Class[] paramTypes = method.getParameterTypes();
     final Class returnType = method.getReturnType();
 
-  
-    
     final int nargs = (args == null) ? 0 : args.length;
 
     if (methodName.equals("setLastRefreshedTime")) {
@@ -196,27 +175,23 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
       sendNotification(args[0]);
       return null;
     }
-    
+
     // local or not: equals, toString, hashCode
-    if (shouldDoLocally(proxy, method)){
+    if (shouldDoLocally(proxy, method)) {
       return doLocally(proxy, method, args);
     }
-      
+
     // Support For MXBean open types
     if (isMXBean) {
       MXBeanProxyInvocationHandler p = findMXBeanProxy(objectName, methodClass, this);
-      return p.invoke( proxy, method, args);
+      return p.invoke(proxy, method, args);
     }
 
-    if (methodName.startsWith("get") && methodName.length() > 3 && nargs == 0
-        && !returnType.equals(Void.TYPE)) {
+    if (methodName.startsWith("get") && methodName.length() > 3 && nargs == 0 && !returnType.equals(Void.TYPE)) {
       return delegateToObjectState(methodName.substring(3));
     }
 
-    if (methodName.startsWith("is")
-        && methodName.length() > 2
-        && nargs == 0
-        && (returnType.equals(Boolean.TYPE) || returnType.equals(Boolean.class))) {
+    if (methodName.startsWith("is") && methodName.length() > 2 && nargs == 0 && (returnType.equals(Boolean.TYPE) || returnType.equals(Boolean.class))) {
       return delegateToObjectState(methodName.substring(2));
     }
 
@@ -224,8 +199,7 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
     for (int i = 0; i < paramTypes.length; i++)
       signature[i] = paramTypes[i].getName();
 
-    if (methodName.startsWith("set") && methodName.length() > 3 && nargs == 1
-        && returnType.equals(Void.TYPE)) {
+    if (methodName.startsWith("set") && methodName.length() > 3 && nargs == 1 && returnType.equals(Void.TYPE)) {
       return delegateToFucntionService(objectName, methodName, args, signature);
 
     }
@@ -233,9 +207,6 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
     return delegateToFucntionService(objectName, methodName, args, signature);
 
   }
-
-  
-   
 
   /**
    * As this proxy may behave as an notification emitter it delegates to the
@@ -256,11 +227,9 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
    */
   protected Object delegateToObjectState(String attributeName) throws Throwable {
 
-    
     Object returnObj;
     try {
-      FederationComponent fedComp = (FederationComponent) monitoringRegion
-          .get(objectName.toString());
+      FederationComponent fedComp = (FederationComponent) monitoringRegion.get(objectName.toString());
       returnObj = fedComp.getValue(attributeName);
     } catch (IllegalArgumentException e) {
       throw new MBeanException(e);
@@ -289,8 +258,7 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
    *          signature of the method
    * @return result Object
    */
-  protected Object delegateToFucntionService(ObjectName objectName,
-      String methodName, Object[] args, String[] signature) throws Throwable {
+  protected Object delegateToFucntionService(ObjectName objectName, String methodName, Object[] args, String[] signature) throws Throwable {
 
     Object[] functionArgs = new Object[5];
     functionArgs[0] = objectName;
@@ -301,16 +269,14 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
     List<Object> result = null;
     try {
 
-      ResultCollector rc = FunctionService.onMember(member).withArgs(
-          functionArgs).execute(ManagementConstants.MGMT_FUNCTION_ID);
+      ResultCollector rc = FunctionService.onMember(member).withArgs(functionArgs).execute(ManagementConstants.MGMT_FUNCTION_ID);
       result = (List<Object>) rc.getResult();
       // Exceptions of ManagementFunctions
-     
 
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
         logger.debug(" Exception while Executing Funtion {}", e.getMessage(), e);
-      } 
+      }
       //Only in case of Exception caused for Function framework.
       return null;
     } catch (VirtualMachineError e) {
@@ -320,17 +286,16 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
       SystemFailure.checkFailure();
       if (logger.isDebugEnabled()) {
         logger.debug(" Exception while Executing Funtion {}", th.getMessage(), th);
-      }    
+      }
       return null;
     }
 
     return checkErrors(result.get(ManagementConstants.RESULT_INDEX));
 
   }
-  
+
   private Object checkErrors(Object lastResult) throws Throwable {
-   
-    
+
     if (lastResult instanceof MBeanException) {
       // Convert all MBean public API exceptions to MBeanException
       throw (Exception) lastResult;
@@ -361,8 +326,7 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
    * @return result value if any
    * @throws Exception
    */
-  private Object invokeBroadcasterMethod(Object proxy, Method method,
-      Object[] args) throws Throwable {
+  private Object invokeBroadcasterMethod(Object proxy, Method method, Object[] args) throws Throwable {
     final String methodName = method.getName();
     final int nargs = (args == null) ? 0 : args.length;
 
@@ -419,8 +383,7 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
         return null;
 
       default:
-        final String msg = "Bad arg count to removeNotificationListener: "
-            + nargs;
+        final String msg = "Bad arg count to removeNotificationListener: " + nargs;
         throw new IllegalArgumentException(msg);
       }
 
@@ -429,21 +392,19 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
       if (args != null) {
         throw new IllegalArgumentException("getNotificationInfo has " + "args");
       }
-       
-      if(!MBeanJMXAdapter.mbeanServer.isRegistered(objectName)){
+
+      if (!MBeanJMXAdapter.mbeanServer.isRegistered(objectName)) {
         return new MBeanNotificationInfo[0];
       }
-      
+
       /**
        * MBean info is delegated to function service as intention is to get the
        * info of the actual mbean rather than the proxy
        */
-      
-      
-      Object obj = delegateToFucntionService(objectName,
-          methodName, args, signature);
-      if(obj instanceof String){
-          return new MBeanNotificationInfo[0];
+
+      Object obj = delegateToFucntionService(objectName, methodName, args, signature);
+      if (obj instanceof String) {
+        return new MBeanNotificationInfo[0];
       }
       MBeanInfo info = (MBeanInfo) obj;
       return info.getNotifications();
@@ -452,8 +413,6 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
       throw new IllegalArgumentException("Bad method name: " + methodName);
     }
   }
-  
- 
 
   /**
    * Internal implementation of all the generic proxy methods
@@ -491,20 +450,16 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
 
   private boolean shouldDoLocally(Object proxy, Method method) {
     final String methodName = method.getName();
-    if ((methodName.equals("hashCode") || methodName.equals("toString"))
-        && method.getParameterTypes().length == 0)
+    if ((methodName.equals("hashCode") || methodName.equals("toString")) && method.getParameterTypes().length == 0)
       return true;
-    if (methodName.equals("equals")
-        && Arrays.equals(method.getParameterTypes(),
-            new Class[] { Object.class }))
+    if (methodName.equals("equals") && Arrays.equals(method.getParameterTypes(), new Class[] { Object.class }))
       return true;
     return false;
   }
 
   private Object doLocally(Object proxy, Method method, Object[] args) {
     final String methodName = method.getName();
-    FederationComponent fedComp = (FederationComponent) monitoringRegion
-        .get(objectName.toString());
+    FederationComponent fedComp = (FederationComponent) monitoringRegion.get(objectName.toString());
     if (methodName.equals("equals")) {
 
       return fedComp.equals(args[0]);
@@ -518,19 +473,15 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
     throw new RuntimeException("Unexpected method name: " + methodName);
   }
 
-  private MXBeanProxyInvocationHandler findMXBeanProxy(ObjectName objectName,
-      Class<?> mxbeanInterface, MBeanProxyInvocationHandler handler)
-      throws Throwable {
+  private MXBeanProxyInvocationHandler findMXBeanProxy(ObjectName objectName, Class<?> mxbeanInterface, MBeanProxyInvocationHandler handler) throws Throwable {
     MXBeanProxyInvocationHandler proxyRef = mxbeanInvocationRef;
 
     if (mxbeanInvocationRef == null) {
       synchronized (this) {
         try {
-          mxbeanInvocationRef = new MXBeanProxyInvocationHandler(objectName,
-              mxbeanInterface, handler);
+          mxbeanInvocationRef = new MXBeanProxyInvocationHandler(objectName, mxbeanInterface, handler);
         } catch (IllegalArgumentException e) {
-          String msg = "Cannot make MXBean proxy for "
-              + mxbeanInterface.getName() + ": " + e.getMessage();
+          String msg = "Cannot make MXBean proxy for " + mxbeanInterface.getName() + ": " + e.getMessage();
           throw new IllegalArgumentException(msg, e.getCause());
         }
 
@@ -539,6 +490,5 @@ public class MBeanProxyInvocationHandler implements InvocationHandler {
     }
     return mxbeanInvocationRef;
   }
- 
-}
 
+}

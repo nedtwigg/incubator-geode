@@ -55,10 +55,10 @@ public abstract class Host implements Serializable {
 
   /** The GemFire systems that are available on this host */
   private List systems;
-  
+
   /** Key is system name, value is GemFireSystem instance */
   private HashMap systemNames;
-  
+
   ////////////////////  Static Methods  /////////////////////
 
   /**
@@ -87,8 +87,7 @@ public abstract class Host implements Serializable {
   public static Host getHost(int n) {
     int size = hosts.size();
     if (n >= size) {
-      String s = "Cannot request host " + n + ".  There are only " +
-        size + " hosts.";
+      String s = "Cannot request host " + n + ".  There are only " + size + " hosts.";
       throw new IllegalArgumentException(s);
 
     } else {
@@ -141,8 +140,7 @@ public abstract class Host implements Serializable {
   public VM getVM(int n) {
     int size = vms.size();
     if (n >= size) {
-      String s = "Cannot request VM " + n + ".  There are only " +
-        size + " VMs on " + this;
+      String s = "Cannot request VM " + n + ".  There are only " + size + " VMs on " + this;
       throw new IllegalArgumentException(s);
 
     } else {
@@ -161,11 +159,11 @@ public abstract class Host implements Serializable {
   public static VM getLocator() {
     return locator;
   }
-  
+
   private static void setLocator(VM l) {
     locator = l;
   }
-  
+
   protected void addLocator(int pid, RemoteDUnitVMIF client) {
     setLocator(new VM(this, pid, client));
   }

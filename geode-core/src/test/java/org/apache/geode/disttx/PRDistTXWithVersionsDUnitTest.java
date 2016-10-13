@@ -36,7 +36,7 @@ public class PRDistTXWithVersionsDUnitTest extends PRTransactionWithVersionsDUni
     props.setProperty(DISTRIBUTED_TRANSACTIONS, "true");
     return props;
   }
-  
+
   @Ignore("[DISTTX] TODO test overridden and intentionally left blank as they fail.")
   @Override
   @Test

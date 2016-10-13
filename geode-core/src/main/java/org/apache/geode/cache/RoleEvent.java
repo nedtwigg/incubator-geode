@@ -27,12 +27,12 @@ import java.util.Set;
  * @deprecated this feature is scheduled to be removed
  * @see RegionRoleListener
  */
-public interface RoleEvent<K,V> extends RegionEvent<K,V> {
-  
+public interface RoleEvent<K, V> extends RegionEvent<K, V> {
+
   /**
    * Returns the required roles that were lost or gained because of this
    * event.
    */
   public Set<String> getRequiredRoles();
-  
+
 }

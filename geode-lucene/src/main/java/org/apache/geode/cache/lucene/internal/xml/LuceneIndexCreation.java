@@ -41,7 +41,6 @@ public class LuceneIndexCreation implements LuceneIndex, Extension<Region<?, ?>>
   private Set<String> fieldNames = new LinkedHashSet<String>();
   private Map<String, Analyzer> fieldAnalyzers;
 
-  
   public void setRegion(Region region) {
     this.region = region;
   }
@@ -50,11 +49,10 @@ public class LuceneIndexCreation implements LuceneIndex, Extension<Region<?, ?>>
     this.name = name;
   }
 
-  public void setFieldAnalyzers(
-      Map<String, Analyzer> fieldAnalyzers) {
+  public void setFieldAnalyzers(Map<String, Analyzer> fieldAnalyzers) {
     this.fieldAnalyzers = fieldAnalyzers;
   }
-  
+
   @Override
   public Map<String, Analyzer> getFieldAnalyzers() {
     if (this.fieldAnalyzers == null) {
@@ -84,14 +82,13 @@ public class LuceneIndexCreation implements LuceneIndex, Extension<Region<?, ?>>
   @Override
   public void beforeCreate(Extensible<Region<?, ?>> source, Cache cache) {
     LuceneServiceImpl service = (LuceneServiceImpl) LuceneServiceProvider.get(cache);
-    Analyzer analyzer = this.fieldAnalyzers == null
-        ? new StandardAnalyzer()
-        : new PerFieldAnalyzerWrapper(new StandardAnalyzer(), this.fieldAnalyzers);
+    Analyzer analyzer = this.fieldAnalyzers == null ? new StandardAnalyzer() : new PerFieldAnalyzerWrapper(new StandardAnalyzer(), this.fieldAnalyzers);
     service.createIndex(getName(), getRegionPath(), analyzer, this.fieldAnalyzers, getFieldNames());
   }
 
   @Override
-  public void onCreate(Extensible<Region<?, ?>> source, Extensible<Region<?, ?>> target) {}
+  public void onCreate(Extensible<Region<?, ?>> source, Extensible<Region<?, ?>> target) {
+  }
 
   protected void addField(String name) {
     this.fieldNames.add(name);

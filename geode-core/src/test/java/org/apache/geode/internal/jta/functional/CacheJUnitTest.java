@@ -83,10 +83,10 @@ public class CacheJUnitTest {
   public void setUp() throws Exception {
     this.tblName = CacheUtils.init("CacheJUnitTest");
     assertFalse(this.tblName == null || this.tblName.equals(""));
-    
+
     this.cache = CacheUtils.getCache();
     assertNotNull(this.cache);
-    
+
     this.currRegion = this.cache.getRegion("root");
     assertTrue(this.currRegion.getFullPath().equals("/root"));
   }
@@ -1097,7 +1097,7 @@ public class CacheJUnitTest {
     Context ctx = cache.getJNDIContext();
 
     Connection conn2 = null; // connection within txn
-    
+
     DataSource da = (DataSource) ctx.lookup("java:/PooledDataSource");
     Connection conn1 = da.getConnection(); // connection outside txn
     UserTransaction ta = (UserTransaction) ctx.lookup("java:/UserTransaction");

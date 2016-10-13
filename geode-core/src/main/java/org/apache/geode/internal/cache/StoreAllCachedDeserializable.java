@@ -41,13 +41,12 @@ public class StoreAllCachedDeserializable implements CachedDeserializable, DataS
    */
   public StoreAllCachedDeserializable() {
   }
-  
-  
+
   private /*final*/ Object objValue;
 
   /** The cached value */
   private /*final*/ byte[] value;
-  
+
   /**
    * +PER_OBJECT_OVERHEAD for VMCachedDeserializable object
    * +4 for value field
@@ -62,8 +61,7 @@ public class StoreAllCachedDeserializable implements CachedDeserializable, DataS
    */
   StoreAllCachedDeserializable(byte[] serializedValue) {
     if (serializedValue == null) {
-      throw new NullPointerException(
-        LocalizedStrings.StoreAllCachedDeserializable_VALUE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new NullPointerException(LocalizedStrings.StoreAllCachedDeserializable_VALUE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.value = serializedValue;
     this.objValue = EntryEventImpl.deserialize(this.value);
@@ -80,26 +78,24 @@ public class StoreAllCachedDeserializable implements CachedDeserializable, DataS
   public Object getDeserializedValue(Region r, RegionEntry re) {
     return this.objValue;
   }
-  
+
   public Object getDeserializedForReading() {
     return this.objValue;
   }
-  
+
   public Object getDeserializedWritableCopy(Region r, RegionEntry re) {
     return EntryEventImpl.deserialize(this.value);
   }
-  
+
   /**
    * Return the serialized value as a byte[]
    */
   public byte[] getSerializedValue() {
     return this.value;
   }
-  
+
   public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits) {
-    wrapper
-      .setData(this.value, userBits, this.value.length, 
-               false /* Not Reusable as it refers to underlying value */);
+    wrapper.setData(this.value, userBits, this.value.length, false /* Not Reusable as it refers to underlying value */);
   }
 
   /**
@@ -112,9 +108,9 @@ public class StoreAllCachedDeserializable implements CachedDeserializable, DataS
   }
 
   public int getSizeInBytes() {
-    return MEM_OVERHEAD + CachedDeserializableFactory.getByteSize(this.value)*2;
+    return MEM_OVERHEAD + CachedDeserializableFactory.getByteSize(this.value) * 2;
   }
-  
+
   public int getValueSizeInBytes() {
     return CachedDeserializableFactory.getByteSize(this.value);
   }
@@ -131,15 +127,15 @@ public class StoreAllCachedDeserializable implements CachedDeserializable, DataS
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeByteArray(this.value, out);
   }
-  
+
   String getShortClassName() {
     String cname = getClass().getName();
-    return cname.substring(getClass().getPackage().getName().length()+1);
+    return cname.substring(getClass().getPackage().getName().length() + 1);
   }
 
   @Override
   public String toString() {
-    return getShortClassName()+"@"+this.hashCode();
+    return getShortClassName() + "@" + this.hashCode();
   }
 
   public void writeValueAsByteArray(DataOutput out) throws IOException {

@@ -37,17 +37,15 @@ public class PrimaryAckOp {
    * @param pool the pool to use to communicate with the server.
    * @param events list of events to acknowledge
    */
-  public static void execute(Connection connection, ExecutablePool pool,
-                             List events)
-  {
+  public static void execute(Connection connection, ExecutablePool pool, List events) {
     AbstractOp op = new PrimaryAckOpImpl(events);
     pool.executeOn(connection, op);
   }
-                                                               
+
   private PrimaryAckOp() {
     // no instances allowed
   }
-  
+
   private static class PrimaryAckOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -60,8 +58,7 @@ public class PrimaryAckOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override
@@ -80,18 +77,22 @@ public class PrimaryAckOp {
       processAck(msg, "primaryAck");
       return null;
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startPrimaryAck();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endPrimaryAckSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endPrimaryAck(start, hasTimedOut(), hasFailed());

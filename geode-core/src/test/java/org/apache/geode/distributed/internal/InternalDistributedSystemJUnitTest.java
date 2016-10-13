@@ -727,7 +727,6 @@ public class InternalDistributedSystemJUnitTest {
     illegalArgumentException.expectMessage("There is no registered component for the name: testing");
   }
 
-
   @Test(expected = IllegalArgumentException.class)
   public void testSSLEnabledComponentsWithLegacyJMXSSLSettings() {
     Properties props = getCommonProperties();

@@ -29,7 +29,6 @@ import java.io.IOException;
  */
 public class VersionResponse implements DataSerializable {
 
-
   private static final long serialVersionUID = 8320323031808601748L;
   private short versionOrdinal = Version.TOKEN.ordinal();
 

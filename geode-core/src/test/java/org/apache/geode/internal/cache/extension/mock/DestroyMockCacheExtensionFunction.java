@@ -68,8 +68,7 @@ public class DestroyMockCacheExtensionFunction extends FunctionAdapter {
     final ResultSender<Object> resultSender = context.getResultSender();
     final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
 
-    resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format("Mock cache extension destroyed on \"{0}\"",
-        new Object[] { memberNameOrId })));
+    resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format("Mock cache extension destroyed on \"{0}\"", new Object[] { memberNameOrId })));
   }
 
   @Override

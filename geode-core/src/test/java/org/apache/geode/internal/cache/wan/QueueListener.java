@@ -24,11 +24,11 @@ import org.apache.geode.cache.CacheListener;
 import org.apache.geode.cache.EntryEvent;
 import org.apache.geode.cache.RegionEvent;
 
-public class QueueListener implements CacheListener{
+public class QueueListener implements CacheListener {
   public List createList = Collections.synchronizedList(new ArrayList());
   public List destroyList = Collections.synchronizedList(new ArrayList());
   public List updateList = Collections.synchronizedList(new ArrayList());
-  
+
   public void afterCreate(EntryEvent event) {
     createList.add(event.getKey());
   }
@@ -39,32 +39,32 @@ public class QueueListener implements CacheListener{
 
   public void afterInvalidate(EntryEvent event) {
     // TODO Auto-generated method stub
-    
+
   }
 
   public void afterRegionClear(RegionEvent event) {
     // TODO Auto-generated method stub
-    
+
   }
 
   public void afterRegionCreate(RegionEvent event) {
     // TODO Auto-generated method stub
-    
+
   }
 
   public void afterRegionDestroy(RegionEvent event) {
     // TODO Auto-generated method stub
-    
+
   }
 
   public void afterRegionInvalidate(RegionEvent event) {
     // TODO Auto-generated method stub
-    
+
   }
 
   public void afterRegionLive(RegionEvent event) {
     // TODO Auto-generated method stub
-    
+
   }
 
   public void afterUpdate(EntryEvent event) {
@@ -73,7 +73,7 @@ public class QueueListener implements CacheListener{
 
   public void close() {
     // TODO Auto-generated method stub
-    
+
   }
-  
+
 }

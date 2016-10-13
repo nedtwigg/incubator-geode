@@ -31,11 +31,10 @@ import org.apache.geode.internal.logging.LogService;
 /**
  *
  */
-public class WaitForViewInstallation extends HighPriorityDistributionMessage
-    implements MessageWithReply {
-  
+public class WaitForViewInstallation extends HighPriorityDistributionMessage implements MessageWithReply {
+
   private static final Logger logger = LogService.getLogger();
-  
+
   public static void send(DistributionManager dm) throws InterruptedException {
     long viewId = dm.getMembershipManager().getView().getViewId();
     ReplyProcessor21 rp = new ReplyProcessor21(dm, dm.getOtherDistributionManagerIds());
@@ -44,7 +43,7 @@ public class WaitForViewInstallation extends HighPriorityDistributionMessage
     try {
       rp.waitForReplies();
     } catch (ReplyException e) {
-      if (e.getCause() != null  &&  !(e.getCause() instanceof CancelException)) {
+      if (e.getCause() != null && !(e.getCause() instanceof CancelException)) {
         if (logger.isDebugEnabled()) {
           logger.debug("Reply to WaitForViewInstallation received odd exception", e.getCause());
         }
@@ -54,7 +53,7 @@ public class WaitForViewInstallation extends HighPriorityDistributionMessage
     // message right now.  TXFailoverCommand performs messaging to all servers,
     // which will force us to wait for the view containing the crash of another
     // server to be processed.
-//    dm.waitForViewInstallation(viewId);
+    //    dm.waitForViewInstallation(viewId);
   }
 
   @Override
@@ -73,31 +72,31 @@ public class WaitForViewInstallation extends HighPriorityDistributionMessage
   /** for deserialization */
   public WaitForViewInstallation() {
   }
-  
+
   private WaitForViewInstallation(long viewId, int processorId) {
     this.viewId = viewId;
     this.processorId = processorId;
   }
-  
+
   @Override
   public int getProcessorId() {
     return this.processorId;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.internal.DataSerializableFixedID#getDSFID()
    */
   public int getDSFID() {
     return WAIT_FOR_VIEW_INSTALLATION;
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeLong(this.viewId);
     out.writeInt(this.processorId);
   }
-  
+
   @Override
   public void fromData(DataInput in) throws ClassNotFoundException, IOException {
     super.fromData(in);
@@ -117,8 +116,7 @@ public class WaitForViewInstallation extends HighPriorityDistributionMessage
       interrupted = true;
     } finally {
       if (!interrupted) {
-        ReplyMessage.send(getSender(), this.processorId, null,
-            getReplySender(dm));
+        ReplyMessage.send(getSender(), this.processorId, null, getReplySender(dm));
       }
     }
   }

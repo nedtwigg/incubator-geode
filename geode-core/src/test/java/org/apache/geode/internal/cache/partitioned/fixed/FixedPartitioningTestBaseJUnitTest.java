@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 import org.junit.Test;
-import org.junit.Before; 
+import org.junit.Before;
 import org.junit.After;
 import org.junit.experimental.categories.Category;
 
@@ -33,31 +33,30 @@ import org.apache.geode.test.junit.categories.UnitTest;
 * FixedPartitioningTestBase Tester. 
 */
 @Category(UnitTest.class)
-public class FixedPartitioningTestBaseJUnitTest { 
-
+public class FixedPartitioningTestBaseJUnitTest {
 
   @Test
   @SuppressWarnings("RedundantStringConstructorCall")
   public void testGenerateDate() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-    Class[] classes = {int.class, String.class, String.class};
+    Class[] classes = { int.class, String.class, String.class };
 
-    Method method = FixedPartitioningTestBase.class.getDeclaredMethod("generateDate",classes);
+    Method method = FixedPartitioningTestBase.class.getDeclaredMethod("generateDate", classes);
     method.setAccessible(true);
-    Date date = (Date)method.invoke(null, 5, "May", "MyDate1");
-    Date date1 = (Date)method.invoke(null, 5, "May", new String("MyDate1"));
+    Date date = (Date) method.invoke(null, 5, "May", "MyDate1");
+    Date date1 = (Date) method.invoke(null, 5, "May", new String("MyDate1"));
     assertEquals(date, date1);
 
-    date = (Date)method.invoke(null, 5, "May", "Date");
-    date1 = (Date)method.invoke(null, 5, "May", new String("Date"));
+    date = (Date) method.invoke(null, 5, "May", "Date");
+    date1 = (Date) method.invoke(null, 5, "May", new String("Date"));
     assertEquals(date, date1);
 
-    date = (Date)method.invoke(null, 5, "May", "MyDate2");
-    date1 = (Date)method.invoke(null, 5, "May", new String("MyDate2"));
+    date = (Date) method.invoke(null, 5, "May", "MyDate2");
+    date1 = (Date) method.invoke(null, 5, "May", new String("MyDate2"));
     assertEquals(date, date1);
 
-    date = (Date)method.invoke(null, 5, "May", "MyDate3");
-    date1 = (Date)method.invoke(null, 5, "May", new String("MyDate3"));
+    date = (Date) method.invoke(null, 5, "May", "MyDate3");
+    date1 = (Date) method.invoke(null, 5, "May", new String("MyDate3"));
     assertEquals(date, date1);
   }
-} 
+}

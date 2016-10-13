@@ -23,8 +23,5 @@ package org.apache.geode.rest.internal.web.controllers.support;
 
 @SuppressWarnings("unused")
 public enum UpdateOp {
-  CAS,
-  PUT,
-  REPLACE
+  CAS, PUT, REPLACE
 }
-

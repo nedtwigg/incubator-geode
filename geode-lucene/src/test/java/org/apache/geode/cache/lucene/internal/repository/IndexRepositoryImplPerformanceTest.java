@@ -49,7 +49,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -59,7 +58,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-
 /**
  * Microbenchmark of the IndexRepository to compare an
  * IndexRepository built on top of cache with a 
@@ -68,17 +66,16 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 @Category(PerformanceTest.class)
 @Ignore("Tests have no assertions")
 public class IndexRepositoryImplPerformanceTest {
-  
+
   private static final int NUM_WORDS = 1000;
-  private static int[] COMMIT_INTERVAL = new int[] {100, 1000, 5000};
+  private static int[] COMMIT_INTERVAL = new int[] { 100, 1000, 5000 };
   private static int NUM_ENTRIES = 500_000;
   private static int NUM_QUERIES = 500_000;
 
   private StandardAnalyzer analyzer = new StandardAnalyzer();
 
   @Test
-  public  void testIndexRepository() throws Exception {
-    
+  public void testIndexRepository() throws Exception {
 
     doTest("IndexRepository", new TestCallbacks() {
 
@@ -92,25 +89,22 @@ public class IndexRepositoryImplPerformanceTest {
       }
 
       @Override
-      public void commit()  throws Exception {
+      public void commit() throws Exception {
         repo.commit();
       }
 
       @Override
       public void init() throws Exception {
-        cache = new CacheFactory().set(MCAST_PORT, "0")
-            .set(LOG_LEVEL, "error")
-            .create();
-        Region<String, File> fileRegion = cache.<String, File>createRegionFactory(RegionShortcut.REPLICATE).create("files");
-        Region<ChunkKey, byte[]> chunkRegion = cache.<ChunkKey, byte[]>createRegionFactory(RegionShortcut.REPLICATE).create("chunks");
+        cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error").create();
+        Region<String, File> fileRegion = cache.<String, File> createRegionFactory(RegionShortcut.REPLICATE).create("files");
+        Region<ChunkKey, byte[]> chunkRegion = cache.<ChunkKey, byte[]> createRegionFactory(RegionShortcut.REPLICATE).create("chunks");
 
         RegionDirectory dir = new RegionDirectory(fileRegion, chunkRegion, new FileSystemStats(cache.getDistributedSystem(), "region-index"));
         final LuceneIndexStats stats = new LuceneIndexStats(cache.getDistributedSystem(), "region-index");
-        
-        
+
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         writer = new IndexWriter(dir, config);
-        String[] indexedFields= new String[] {"text"};
+        String[] indexedFields = new String[] { "text" };
         HeterogeneousLuceneSerializer mapper = new HeterogeneousLuceneSerializer(indexedFields);
         repo = new IndexRepositoryImpl(fileRegion, writer, mapper, stats, null);
       }
@@ -134,14 +128,13 @@ public class IndexRepositoryImplPerformanceTest {
       }
     });
   }
-  
+
   /**
    * Test our full lucene index implementation
    * @throws Exception
    */
   @Test
   public void testLuceneIndex() throws Exception {
-    
 
     doTest("LuceneIndex", new TestCallbacks() {
 
@@ -155,33 +148,29 @@ public class IndexRepositoryImplPerformanceTest {
       }
 
       @Override
-      public void commit()  throws Exception {
+      public void commit() throws Exception {
         //NA
       }
 
       @Override
       public void init() throws Exception {
-        cache = new CacheFactory().set(MCAST_PORT, "0")
-            .set(LOG_LEVEL, "warning")
-            .create();
+        cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "warning").create();
         service = LuceneServiceProvider.get(cache);
         service.createIndex("index", "/region", "text");
-        region = cache.<String, TestObject>createRegionFactory(RegionShortcut.PARTITION)
-            .setPartitionAttributes(new PartitionAttributesFactory<>().setTotalNumBuckets(1).create())
-            .create("region");
+        region = cache.<String, TestObject> createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(new PartitionAttributesFactory<>().setTotalNumBuckets(1).create()).create("region");
       }
 
       @Override
       public void cleanup() throws IOException {
         cache.close();
       }
-      
+
       @Override
       public void waitForAsync() throws Exception {
         AsyncEventQueue aeq = cache.getAsyncEventQueue(LuceneServiceImpl.getUniqueIndexName("index", "/region"));
-        
+
         //We will be at most 10 ms off
-        while(aeq.size() > 0) {
+        while (aeq.size() > 0) {
           Thread.sleep(10);
         }
       }
@@ -189,21 +178,21 @@ public class IndexRepositoryImplPerformanceTest {
       @Override
       public int query(final Query query) throws Exception {
         LuceneQuery<Object, Object> luceneQuery = service.createLuceneQueryFactory().create("index", "/region", new LuceneQueryProvider() {
-          
+
           @Override
           public Query getQuery(LuceneIndex index) throws LuceneQueryException {
             return query;
           }
         });
-        
+
         PageableLuceneQueryResults<Object, Object> results = luceneQuery.findPages();
         return results.size();
       }
     });
   }
-  
+
   @Test
-  public  void testLuceneWithRegionDirectory() throws Exception {
+  public void testLuceneWithRegionDirectory() throws Exception {
     doTest("RegionDirectory", new TestCallbacks() {
 
       public Cache cache;
@@ -212,9 +201,7 @@ public class IndexRepositoryImplPerformanceTest {
 
       @Override
       public void init() throws Exception {
-        cache = new CacheFactory().set(MCAST_PORT, "0")
-          .set(LOG_LEVEL, "warning")
-          .create();
+        cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "warning").create();
         final FileSystemStats stats = new FileSystemStats(cache.getDistributedSystem(), "stats");
         RegionDirectory dir = new RegionDirectory(new ConcurrentHashMap<String, File>(), new ConcurrentHashMap<ChunkKey, byte[]>(), stats);
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -239,9 +226,10 @@ public class IndexRepositoryImplPerformanceTest {
       @Override
       public void cleanup() throws Exception {
         writer.close();
-        cache.close();;
+        cache.close();
+        ;
       }
-      
+
       @Override
       public void waitForAsync() throws Exception {
         //do nothing
@@ -256,13 +244,13 @@ public class IndexRepositoryImplPerformanceTest {
           searcherManager.release(searcher);
         }
       }
-      
+
     });
-    
+
   }
-  
+
   @Test
-  public  void testLucene() throws Exception {
+  public void testLucene() throws Exception {
     doTest("Lucene", new TestCallbacks() {
 
       private IndexWriter writer;
@@ -294,7 +282,7 @@ public class IndexRepositoryImplPerformanceTest {
       public void cleanup() throws Exception {
         writer.close();
       }
-      
+
       @Override
       public void waitForAsync() throws Exception {
         //do nothing
@@ -309,51 +297,48 @@ public class IndexRepositoryImplPerformanceTest {
           searcherManager.release(searcher);
         }
       }
-      
+
     });
-    
+
   }
-  
+
   private void doTest(String testName, TestCallbacks callbacks) throws Exception {
 
     //Create some random words. We need to be careful
     //to make sure we get NUM_WORDS distinct words here
     Set<String> wordSet = new HashSet<String>();
     Random rand = new Random();
-    while(wordSet.size() < NUM_WORDS) {
+    while (wordSet.size() < NUM_WORDS) {
       int length = rand.nextInt(12) + 3;
       char[] text = new char[length];
-      for(int i = 0; i < length; i++) {
+      for (int i = 0; i < length; i++) {
         text[i] = (char) (rand.nextInt(26) + 97);
       }
       wordSet.add(new String(text));
     }
     List<String> words = new ArrayList<String>(wordSet.size());
     words.addAll(wordSet);
-    
-    
-    
+
     //warm up
     writeRandomWords(callbacks, words, rand, NUM_ENTRIES / 10, NUM_QUERIES / 10, COMMIT_INTERVAL[0]);
-    
+
     //Do the actual test
-    
-    for(int i = 0; i < COMMIT_INTERVAL.length; i++) {
+
+    for (int i = 0; i < COMMIT_INTERVAL.length; i++) {
       Results results = writeRandomWords(callbacks, words, rand, NUM_ENTRIES, NUM_QUERIES / 10, COMMIT_INTERVAL[i]);
-    
+
       System.out.println(testName + " writes(entries=" + NUM_ENTRIES + ", commit=" + COMMIT_INTERVAL[i] + "): " + TimeUnit.NANOSECONDS.toMillis(results.writeTime));
       System.out.println(testName + " queries(entries=" + NUM_ENTRIES + ", commit=" + COMMIT_INTERVAL[i] + "): " + TimeUnit.NANOSECONDS.toMillis(results.queryTime));
     }
   }
 
-  private Results writeRandomWords(TestCallbacks callbacks, List<String> words,
-      Random rand, int numEntries, int numQueries, int commitInterval) throws Exception {
-    Results results  = new Results();
+  private Results writeRandomWords(TestCallbacks callbacks, List<String> words, Random rand, int numEntries, int numQueries, int commitInterval) throws Exception {
+    Results results = new Results();
     callbacks.init();
     int[] counts = new int[words.size()];
     long start = System.nanoTime();
     try {
-      for(int i =0; i < numEntries; i++) {
+      for (int i = 0; i < numEntries; i++) {
         int word1 = rand.nextInt(words.size());
         int word2 = rand.nextInt(words.size());
         counts[word1]++;
@@ -361,7 +346,7 @@ public class IndexRepositoryImplPerformanceTest {
         String value = words.get(word1) + " " + words.get(word2);
         callbacks.addObject("key" + i, value);
 
-        if(i % commitInterval == 0 && i != 0) {
+        if (i % commitInterval == 0 && i != 0) {
           callbacks.commit();
         }
       }
@@ -369,21 +354,20 @@ public class IndexRepositoryImplPerformanceTest {
       callbacks.waitForAsync();
       long end = System.nanoTime();
       results.writeTime = end - start;
-      
-      
+
       start = System.nanoTime();
-      for(int i=0; i < numQueries; i++) {
+      for (int i = 0; i < numQueries; i++) {
         int wordIndex = rand.nextInt(words.size());
         String word = words.get(wordIndex);
         Query query = new TermQuery(new Term("text", word));
-        int size  = callbacks.query(query);
-//        int size  = callbacks.query(parser.parse(word));
+        int size = callbacks.query(query);
+        //        int size  = callbacks.query(parser.parse(word));
         //All of my tests sometimes seem to be missing a couple of words, including the stock lucene
-//        assertIndexDetailsEquals("Error on query " + i + " word=" + word, counts[wordIndex], size);
+        //        assertIndexDetailsEquals("Error on query " + i + " word=" + word, counts[wordIndex], size);
       }
       end = System.nanoTime();
       results.queryTime = end - start;
-      
+
       return results;
     } finally {
       callbacks.cleanup();
@@ -394,9 +378,9 @@ public class IndexRepositoryImplPerformanceTest {
     private String text;
 
     public TestObject() {
-      
+
     }
-    
+
     public TestObject(String text) {
       super();
       this.text = text;
@@ -408,8 +392,7 @@ public class IndexRepositoryImplPerformanceTest {
     }
 
     @Override
-    public void fromData(DataInput in)
-        throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       text = DataSerializer.readString(in);
     }
 
@@ -417,19 +400,23 @@ public class IndexRepositoryImplPerformanceTest {
     public String toString() {
       return text;
     }
-    
-    
+
   }
-  
+
   private interface TestCallbacks {
     public void init() throws Exception;
+
     public int query(Query query) throws Exception;
-    public void addObject(String key, String text)  throws Exception;
+
+    public void addObject(String key, String text) throws Exception;
+
     public void commit() throws Exception;
+
     public void waitForAsync() throws Exception;
+
     public void cleanup() throws Exception;
   }
-  
+
   private static class Results {
     long writeTime;
     long queryTime;

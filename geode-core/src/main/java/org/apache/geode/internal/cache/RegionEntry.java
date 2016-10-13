@@ -76,7 +76,7 @@ public interface RegionEntry {
   // It is being referenced by the Map.Entry whose value field
   // references this RegionEntry.
   // Object getKey();
-    
+
   /**
    * returns the time of last modification.  Prior to v7.0 this only reflected
    * creation time of an entry or the time it was last modified with an Update.
@@ -91,15 +91,15 @@ public interface RegionEntry {
    * @since GemFire 6.0
    */
   public boolean hasStats();
-    
+
   public long getLastAccessed() throws InternalStatisticsDisabledException;
-    
+
   public long getHitCount() throws InternalStatisticsDisabledException;
-    
+
   public long getMissCount() throws InternalStatisticsDisabledException;
 
   public void updateStatsForPut(long lastModifiedTime);
-  
+
   /**
    * @return the version information for this entry
    */
@@ -122,14 +122,13 @@ public interface RegionEntry {
    * 
    * This is done within the RegionEntry synchronization lock.
    */
-  public boolean dispatchListenerEvents(EntryEventImpl event)
-    throws InterruptedException;
-  
+  public boolean dispatchListenerEvents(EntryEventImpl event) throws InterruptedException;
+
   /**
    * Used to mark an LRU entry as having been recently used.
    */
   public void setRecentlyUsed();
-    
+
   public void updateStatsForGet(boolean hit, long time);
 
   /**
@@ -138,9 +137,9 @@ public interface RegionEntry {
    * @param currTime Current Cache Time.
    */
   public void txDidDestroy(long currTime);
-  
+
   public void resetCounts() throws InternalStatisticsDisabledException;
-    
+
   /**
    * this is done instead of removePhase2 if the entry needs to be kept for
    * concurrency control
@@ -149,7 +148,7 @@ public interface RegionEntry {
    * @throws RegionClearedException 
    */
   public void makeTombstone(LocalRegion r, VersionTag version) throws RegionClearedException;
-    
+
   /**
    * Mark this entry as being in the process of removal from the map that
    * contains it by setting its value to Token.REMOVED_PHASE1.  An entry
@@ -162,24 +161,26 @@ public interface RegionEntry {
    *  
    */
   public void removePhase1(LocalRegion r, boolean clear) throws RegionClearedException;
+
   /**
    * Mark this entry as having been removed from the map that contained it
    * by setting its value to Token.REMOVED_PHASE2
    */
   public void removePhase2();
+
   /**
    * Returns true if this entry does not exist.  This is true if removal
    * has started (value == Token.REMOVED_PHASE1) or has completed
    * (value == Token.REMOVED_PHASE2).
    */
   public boolean isRemoved();
-  
+
   /**
    * Returns true if this entry does not exist and will not be resurrected
    * (value == Token.REMOVED_PHASE2)
    */
   public boolean isRemovedPhase2();
-  
+
   /**
    * Returns true if this entry is a tombstone, meaning that it has been
    * removed but is being retained for concurrent modification detection.
@@ -188,37 +189,38 @@ public interface RegionEntry {
    */
   public boolean isTombstone();
 
-    /**
-   * Fill in value, and isSerialized fields
-   * in this entry object (used for getInitialImage and sync recovered)
-   * Also sets the lastModified time in cacheTime.
-   * Only called for DistributedRegions.<p>
-   * 
-   * This method returns tombstones so that they can be transferred with
-   * the initial image.
-   *
-   * @see InitialImageOperation.RequestImageMessage#chunkEntries
-   *
-   * @return false if map entry not found
-   * @since GemFire 3.2.1
-   */
-  public boolean fillInValue(LocalRegion r,
-      @Retained(ABSTRACT_REGION_ENTRY_FILL_IN_VALUE) InitialImageOperation.Entry entry,
-      ByteArrayDataInput in, DM mgr);
+  /**
+  * Fill in value, and isSerialized fields
+  * in this entry object (used for getInitialImage and sync recovered)
+  * Also sets the lastModified time in cacheTime.
+  * Only called for DistributedRegions.<p>
+  * 
+  * This method returns tombstones so that they can be transferred with
+  * the initial image.
+  *
+  * @see InitialImageOperation.RequestImageMessage#chunkEntries
+  *
+  * @return false if map entry not found
+  * @since GemFire 3.2.1
+  */
+  public boolean fillInValue(LocalRegion r, @Retained(ABSTRACT_REGION_ENTRY_FILL_IN_VALUE) InitialImageOperation.Entry entry, ByteArrayDataInput in, DM mgr);
 
   /**
    * Returns true if this entry has overflowed to disk.
    * @param dp if overflowed then the position of the value is set in dp
    */
   public boolean isOverflowedToDisk(LocalRegion r, DistributedRegion.DiskPosition dp);
+
   /**
    * Gets the key for this entry.
    */
   public Object getKey();
+
   /** Gets the value for this entry. For DiskRegions, faults in value
      *  and returns it
      */
   public Object getValue(RegionEntryContext context);
+
   /**
    * Just like getValue but the result may be a retained off-heap reference.
    */
@@ -227,13 +229,14 @@ public interface RegionEntry {
 
   @Released
   public void setValue(RegionEntryContext context, @Unretained Object value) throws RegionClearedException;
-  
+
   /**
    * This flavor of setValue was added so that the event could be passed down to Helper.writeToDisk.
    * The event can be used to cache the serialized form of the value we are writing.
    * See bug 43781.
    */
   public void setValue(RegionEntryContext context, Object value, EntryEventImpl event) throws RegionClearedException;
+
   /**
    * Obtain, retain and return the value of this entry.
    * WARNING: if a StoredObject is returned and it has a refCount then the caller MUST
@@ -245,19 +248,21 @@ public interface RegionEntry {
    * @param decompress if true returned value will be decompressed if it is compressed
    * @return possible OFF_HEAP_OBJECT (caller must release)
    */
-  @Retained 
+  @Retained
   public Object _getValueRetain(RegionEntryContext context, boolean decompress);
+
   /** Gets the value field of this entry. */
-  
+
   @Unretained
   public Object _getValue();
+
   /**
    * Returns a tokenized form of the value.
    * If the value can not be represented as a token
    * then Token.NOT_A_TOKEN is returned.
    */
   public Token getValueAsToken();
-  
+
   /**
    * Set the value of this entry and perform checks to see if a GC task
    * needs to be scheduled.
@@ -266,7 +271,7 @@ public interface RegionEntry {
    * @throws RegionClearedException thrown if the region is concurrently cleared
    */
   public void setValueWithTombstoneCheck(@Unretained Object value, EntryEvent event) throws RegionClearedException;
-  
+
   /**
    * Returns the value as stored by the RegionEntry implementation.  For instance, if compressed this
    * value would be the compressed form.
@@ -275,7 +280,7 @@ public interface RegionEntry {
    */
   @Retained
   public Object getTransformedValue();
-  
+
   /**
    * Returns the value of an entry as it resides in the VM.
    * @return the value or EntryEvent.NOT_AVAILABLE token if it's not in
@@ -284,15 +289,15 @@ public interface RegionEntry {
    * @see LocalRegion#getValueInVM
    */
   public Object getValueInVM(RegionEntryContext context);
+
   /**
    * Returns the value of an entry as it resides on disk.  For
    * testing purposes only.
    *
    * @see LocalRegion#getValueOnDisk
    */
-  public Object getValueOnDisk(LocalRegion r)
-    throws EntryNotFoundException;
-  
+  public Object getValueOnDisk(LocalRegion r) throws EntryNotFoundException;
+
   /**
    * Returns the value of an entry as it resides on buffer or disk.  For asynch mode
    * a value is not immediately written to the disk & so checking in asynch buffers
@@ -300,21 +305,15 @@ public interface RegionEntry {
    *
    * @see LocalRegion#getValueOnDisk
    */
-  
-  public Object getValueOnDiskOrBuffer(LocalRegion r)
-  throws EntryNotFoundException;
 
-  
+  public Object getValueOnDiskOrBuffer(LocalRegion r) throws EntryNotFoundException;
 
   /**
    * Used to modify an existing RegionEntry when processing the
    * values obtained during a getInitialImage.
    */
-  public boolean initialImagePut(LocalRegion region,
-                                 long lastModified,
-                                 Object newValue,
-                                 boolean wasRecovered,
-                                 boolean acceptedVersionTag) throws RegionClearedException;
+  public boolean initialImagePut(LocalRegion region, long lastModified, Object newValue, boolean wasRecovered, boolean acceptedVersionTag) throws RegionClearedException;
+
   /**
    * Used to initialize a created RegionEntry when processing the
    * values obtained during a getInitialImage.
@@ -331,12 +330,8 @@ public interface RegionEntry {
       // must write-synchronize to protect agains puts from other
       // threads running this method
    */
-  public boolean initialImageInit(LocalRegion region,
-                                  long lastModified,
-                                  Object newValue,
-                                  boolean create,
-                                  boolean wasRecovered,
-                                  boolean acceptedVersionTag) throws RegionClearedException;
+  public boolean initialImageInit(LocalRegion region, long lastModified, Object newValue, boolean create, boolean wasRecovered, boolean acceptedVersionTag) throws RegionClearedException;
+
   /**
    * @param expectedOldValue only succeed with destroy if current value
    *        is equal to expectedOldValue
@@ -346,20 +341,14 @@ public interface RegionEntry {
    * @return true if destroy was done; false if not
    */
   @Released
-  public boolean destroy(LocalRegion region,
-                         EntryEventImpl event,
-                         boolean inTokenMode,
-                         boolean cacheWrite,
-                         @Unretained Object expectedOldValue,
-                         boolean forceDestroy,
-                         boolean removeRecoveredEntry)
-    throws CacheWriterException, EntryNotFoundException, TimeoutException, RegionClearedException;
+  public boolean destroy(LocalRegion region, EntryEventImpl event, boolean inTokenMode, boolean cacheWrite, @Unretained Object expectedOldValue, boolean forceDestroy, boolean removeRecoveredEntry) throws CacheWriterException, EntryNotFoundException, TimeoutException, RegionClearedException;
 
   /**
    * @return true if entry's value came from a netsearch
    * @since GemFire 6.5
    */
   public boolean getValueWasResultOfSearch();
+
   /**
    * @param v true if entry's value should be marked as having been
    * the result of a netsearch.
@@ -426,37 +415,37 @@ public interface RegionEntry {
    * @param isListenerInvoked
    */
   public void setCacheListenerInvocationInProgress(final boolean isListenerInvoked);
-  
+
   /**
    * Returns true if the entry value is null.
    */
   public boolean isValueNull();
-  
+
   /**
    * Returns true if the entry value is equal to {@link Token#INVALID} or {@link Token#LOCAL_INVALID}.
    */
   public boolean isInvalid();
-  
+
   /**
    * Returns true if the entry value is equal to {@link Token#DESTROYED}.
    */
   public boolean isDestroyed();
-  
+
   /**
    * Returns true if the entry value is equal to {@link Token#DESTROYED} or {@link Token#REMOVED_PHASE1} or {@link Token#REMOVED_PHASE2} or {@link Token#TOMBSTONE}.
    */
   public boolean isDestroyedOrRemoved();
-  
+
   /**
    * Returns true if the entry value is equal to {@link Token#DESTROYED} or {@link Token#REMOVED_PHASE1} or {@link Token#REMOVED_PHASE2}.
    */
   public boolean isDestroyedOrRemovedButNotTombstone();
-  
+
   /**
    * @see Token#isInvalidOrRemoved(Object)
    */
   public boolean isInvalidOrRemoved();
-  
+
   /**
    * Sets the entry value to null.
    */
@@ -465,13 +454,15 @@ public interface RegionEntry {
   public void returnToPool();
 
   public boolean isInUseByTransaction();
+
   public void setInUseByTransaction(final boolean v);
-  
+
   /**
    * Increments the number of transactions that are currently referencing
    * this node.
    */
   public void incRefCount();
+
   /**
    * Decrements the number of transactions that are currently referencing
    * this node.

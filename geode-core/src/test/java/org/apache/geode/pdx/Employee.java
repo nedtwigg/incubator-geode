@@ -16,40 +16,40 @@
  */
 package org.apache.geode.pdx;
 
-public class Employee implements PdxSerializable
-{
+public class Employee implements PdxSerializable {
   private Long Id;
   private String fname;
   private String lname;
-  
-  public Employee(){}
-  
-  public Employee(Long id, String fn, String ln){
+
+  public Employee() {
+  }
+
+  public Employee(Long id, String fn, String ln) {
     this.Id = id;
     this.fname = fn;
     this.lname = ln;
   }
-  
+
   public Long getId() {
     return Id;
   }
-  
+
   public void setId(Long id) {
     Id = id;
   }
-  
+
   public String getFname() {
     return fname;
   }
-  
+
   public void setFname(String fname) {
     this.fname = fname;
   }
-  
+
   public String getLname() {
     return lname;
   }
-  
+
   public void setLname(String lname) {
     this.lname = lname;
   }
@@ -67,7 +67,7 @@ public class Employee implements PdxSerializable
     out.writeString("fname", fname);
     out.writeString("lname", lname);
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -76,17 +76,17 @@ public class Employee implements PdxSerializable
       return false;
     if (getClass() != obj.getClass())
       return false;
-      
+
     Employee other = (Employee) obj;
-    if( Id.longValue() != other.Id.longValue() )
+    if (Id.longValue() != other.Id.longValue())
       return false;
-    
-    if(!fname.equals(other.fname))
+
+    if (!fname.equals(other.fname))
       return false;
-    
-    if(!lname.equals(other.lname))
+
+    if (!lname.equals(other.lname))
       return false;
-    
+
     return true;
   }
 }

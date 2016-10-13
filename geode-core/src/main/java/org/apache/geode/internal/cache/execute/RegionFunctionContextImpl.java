@@ -39,8 +39,7 @@ import org.apache.geode.internal.cache.LocalDataSet;
  * 
  * @see FunctionContextImpl
  */
-public class RegionFunctionContextImpl extends FunctionContextImpl implements
-    InternalRegionFunctionContext {
+public class RegionFunctionContextImpl extends FunctionContextImpl implements InternalRegionFunctionContext {
 
   private final Region dataSet;
 
@@ -52,12 +51,7 @@ public class RegionFunctionContextImpl extends FunctionContextImpl implements
 
   private final boolean isPossibleDuplicate;
 
-  public RegionFunctionContextImpl(final String functionId,
-      final Region dataSet, final Object args,
-      final Set<?> routingObjects,
-      final Map<String, LocalDataSet> colocatedLocalDataMap,
-      Set<Integer> localBucketSet, ResultSender<?> resultSender,
-      boolean isPossibleDuplicate) {
+  public RegionFunctionContextImpl(final String functionId, final Region dataSet, final Object args, final Set<?> routingObjects, final Map<String, LocalDataSet> colocatedLocalDataMap, Set<Integer> localBucketSet, ResultSender<?> resultSender, boolean isPossibleDuplicate) {
     super(functionId, args, resultSender);
     this.dataSet = dataSet;
     this.filter = routingObjects;
@@ -115,20 +109,17 @@ public class RegionFunctionContextImpl extends FunctionContextImpl implements
   public Region getLocalDataSet(Region r) {
     if (this.colocatedLocalDataMap != null) {
       return this.colocatedLocalDataMap.get(r.getFullPath());
-    }
-    else {
+    } else {
       return null;
     }
   }
 
   public Map<String, LocalDataSet> getColocatedLocalDataSets() {
     if (this.colocatedLocalDataMap != null) {
-      HashMap<String, LocalDataSet> ret = new HashMap<String, LocalDataSet>(
-          this.colocatedLocalDataMap);
+      HashMap<String, LocalDataSet> ret = new HashMap<String, LocalDataSet>(this.colocatedLocalDataMap);
       ret.remove(this.dataSet.getFullPath());
       return Collections.unmodifiableMap(ret);
-    }
-    else {
+    } else {
       return Collections.emptyMap();
     }
   }

@@ -34,7 +34,6 @@ public class MemberResult implements Serializable {
   protected String successMessage;
   protected String errorMessage;
 
-
   public MemberResult(String memberNameOrId) {
     this.memberNameOrId = memberNameOrId;
     this.isSuccessful = true;

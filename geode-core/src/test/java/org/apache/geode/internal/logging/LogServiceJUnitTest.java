@@ -47,17 +47,17 @@ public class LogServiceJUnitTest {
 
   @Rule
   public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
-  
+
   @Before
   public void setUp() {
     this.defaultConfigUrl = LogService.class.getResource(LogService.DEFAULT_CONFIG);
     this.cliConfigUrl = LogService.class.getResource(LogService.CLI_CONFIG);
   }
-  
+
   @Test
   public void getAppenderContextShouldHaveEmptyName() throws Exception {
     final AppenderContext appenderContext = LogService.getAppenderContext();
-    
+
     assertThat(appenderContext.getName()).isEmpty();
   }
 
@@ -65,10 +65,10 @@ public class LogServiceJUnitTest {
   public void getAppenderContextWithNameShouldHaveName() throws Exception {
     final String name = "someName";
     final AppenderContext appenderContext = LogService.getAppenderContext(name);
-    
+
     assertThat(appenderContext.getName()).isEqualTo(name);
   }
-  
+
   @Test
   @Parameters(method = "getToLevelParameters")
   public void toLevelShouldReturnMatchingLog4jLevel(final int intLevel, final Level level) {
@@ -80,38 +80,27 @@ public class LogServiceJUnitTest {
     assertThat(this.cliConfigUrl).isNotNull();
     assertThat(this.cliConfigUrl.toString()).contains(LogService.CLI_CONFIG);
   }
-  
+
   @Test
   public void defaultConfigLoadsAsResource() {
     assertThat(this.defaultConfigUrl).isNotNull();
     assertThat(this.defaultConfigUrl.toString()).contains(LogService.DEFAULT_CONFIG);
   }
-  
+
   @Test
   public void defaultConfigShouldBeLoadableAsResource() {
     final URL configUrlFromLogService = LogService.class.getResource(LogService.DEFAULT_CONFIG);
     final URL configUrlFromClassLoader = getClass().getClassLoader().getResource(LogService.DEFAULT_CONFIG.substring(1));
     final URL configUrlFromClassPathLoader = ClassPathLoader.getLatest().getResource(LogService.DEFAULT_CONFIG.substring(1));
-    
+
     assertThat(configUrlFromLogService).isNotNull();
     assertThat(configUrlFromClassLoader).isNotNull();
     assertThat(configUrlFromClassPathLoader).isNotNull();
-    assertThat(configUrlFromLogService)
-        .isEqualTo(configUrlFromClassLoader)
-        .isEqualTo(configUrlFromClassPathLoader);
+    assertThat(configUrlFromLogService).isEqualTo(configUrlFromClassLoader).isEqualTo(configUrlFromClassPathLoader);
   }
-  
+
   @SuppressWarnings("unused")
   private static final Object[] getToLevelParameters() {
-    return $(
-        new Object[] { 0, Level.OFF },
-        new Object[] { 100, Level.FATAL },
-        new Object[] { 200, Level.ERROR },
-        new Object[] { 300, Level.WARN },
-        new Object[] { 400, Level.INFO },
-        new Object[] { 500, Level.DEBUG },
-        new Object[] { 600, Level.TRACE },
-        new Object[] { Integer.MAX_VALUE, Level.ALL }
-    );
+    return $(new Object[] { 0, Level.OFF }, new Object[] { 100, Level.FATAL }, new Object[] { 200, Level.ERROR }, new Object[] { 300, Level.WARN }, new Object[] { 400, Level.INFO }, new Object[] { 500, Level.DEBUG }, new Object[] { 600, Level.TRACE }, new Object[] { Integer.MAX_VALUE, Level.ALL });
   }
 }

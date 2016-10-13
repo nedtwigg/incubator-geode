@@ -47,11 +47,11 @@ public @interface CliMetaData {
 
   /** Indicates that the effect of the command is persisted or the commands affects the persistent configuration */
   boolean isPersisted() default false;
-  
+
   boolean readsSharedConfiguration() default false;
-  
+
   boolean writesToSharedConfiguration() default false;
-  
+
   /** In help, topics that are related to this command **/
   String[] relatedTopic() default org.apache.geode.management.internal.cli.i18n.CliStrings.DEFAULT_TOPIC_GEODE;
 
@@ -67,20 +67,19 @@ public @interface CliMetaData {
    */
   String valueSeparator() default org.apache.geode.management.cli.CliMetaData.ANNOTATION_NULL_VALUE;
 
-
   // TODO - Abhishek - refactor to group this
-//  /**
-//   *
-//   * @since GemFire 8.0
-//   */
-//  @Retention(RetentionPolicy.RUNTIME)
-//  @Target({ ElementType.PARAMETER })
-//  public @interface ParameterMetadata {
-//    /**
-//     * String used as a separator when multiple values for a command are specified
-//     */
-//    String valueSeparator() default CliMetaData.ANNOTATION_NULL_VALUE;
-//  }
+  //  /**
+  //   *
+  //   * @since GemFire 8.0
+  //   */
+  //  @Retention(RetentionPolicy.RUNTIME)
+  //  @Target({ ElementType.PARAMETER })
+  //  public @interface ParameterMetadata {
+  //    /**
+  //     * String used as a separator when multiple values for a command are specified
+  //     */
+  //    String valueSeparator() default CliMetaData.ANNOTATION_NULL_VALUE;
+  //  }
 
   /**
    * An annotation to define additional meta-data for availability of commands.

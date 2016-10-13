@@ -62,8 +62,7 @@ public class MemberDetailsService implements PulseService {
     String memberName = requestDataJSON.get("MemberDetails").get("memberName").textValue();
     DecimalFormat df2 = new DecimalFormat(PulseConstants.DECIMAL_FORMAT_PATTERN);
 
-    Cluster.Member clusterMember = cluster.getMember(StringUtils
-        .makeCompliantName(memberName));
+    Cluster.Member clusterMember = cluster.getMember(StringUtils.makeCompliantName(memberName));
     if (clusterMember != null) {
       responseJSON.put("memberId", clusterMember.getId());
       responseJSON.put("name", clusterMember.getName());
@@ -80,8 +79,7 @@ public class MemberDetailsService implements PulseService {
       responseJSON.put("regionsCount", clusterMember.getMemberRegionsList().length);
 
       // Number of member clients
-      if (PulseController.getPulseProductSupport().equalsIgnoreCase(
-          PulseConstants.PRODUCT_NAME_SQLFIRE)){
+      if (PulseController.getPulseProductSupport().equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
         responseJSON.put("numClients", clusterMember.getNumSqlfireClients());
       } else {
         responseJSON.put("numClients", clusterMember.getMemberClientsHMap().size());
@@ -112,8 +110,7 @@ public class MemberDetailsService implements PulseService {
       responseJSON.put("status", status);
 
     } else {
-      responseJSON.put("errorOnMember", "Member [" + memberName
-          + "] is not available");
+      responseJSON.put("errorOnMember", "Member [" + memberName + "] is not available");
     }
 
     // Send json response

@@ -67,7 +67,6 @@ public class BitOpExecutor extends StringExecutor {
         break;
     }
 
-
     if (operation.equals("AND"))
       and(context, r, destKey, values, maxLength);
     else if (operation.equals("OR"))
@@ -86,8 +85,7 @@ public class BitOpExecutor extends StringExecutor {
 
   private void and(ExecutionHandlerContext context, Region<ByteArrayWrapper, ByteArrayWrapper> r, ByteArrayWrapper destKey, byte[][] values, int max) {
     byte[] dest = new byte[max];
-    outer:
-    for (int i = 0; i < max; i++) {
+    outer: for (int i = 0; i < max; i++) {
       byte b = values[0][i];
       for (int j = 1; j < values.length; j++) {
         if (values[j] == null) {

@@ -17,8 +17,6 @@
 
 package org.apache.geode.cache;
 
-
-
 /**
  * Exception thrown by implementors of {@link TransactionWriter#beforeCommit} to 
  * signal that the current transaction should be aborted.
@@ -37,7 +35,7 @@ public class TransactionWriterException extends Exception {
   public TransactionWriterException(String s) {
     super(s);
   }
-  
+
   public TransactionWriterException(Throwable t) {
     super(t);
   }

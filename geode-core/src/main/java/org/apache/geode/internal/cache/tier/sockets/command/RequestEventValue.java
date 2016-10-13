@@ -54,8 +54,7 @@ public class RequestEventValue extends BaseCommand {
   private RequestEventValue() {
   }
 
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     Part eventIDPart = null, valuePart = null;
     EventID event = null;
     Object callbackArg = null;
@@ -67,20 +66,16 @@ public class RequestEventValue extends BaseCommand {
     // Retrieve the data from the message parts
     int parts = msg.getNumberOfParts();
     eventIDPart = msg.getPart(0);
-    
+
     if (eventIDPart == null) {
       logger.warn(LocalizedMessage.create(LocalizedStrings.RequestEventValue_0_THE_EVENT_ID_FOR_THE_GET_EVENT_VALUE_REQUEST_IS_NULL, servConn.getName()));
-      errMessage
-          .append(" The event id for the get event value request is null.");
-      writeErrorResponse(msg, MessageType.REQUESTDATAERROR, errMessage
-          .toString(), servConn);
+      errMessage.append(" The event id for the get event value request is null.");
+      writeErrorResponse(msg, MessageType.REQUESTDATAERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
-    }
-    else {
+    } else {
       try {
-        event = (EventID)eventIDPart.getObject();
-      }
-      catch (Exception e) {
+        event = (EventID) eventIDPart.getObject();
+      } catch (Exception e) {
         writeException(msg, e, false, servConn);
         servConn.setAsTrue(RESPONDED);
         return;
@@ -91,8 +86,7 @@ public class RequestEventValue extends BaseCommand {
           if (valuePart != null) {
             callbackArg = valuePart.getObject();
           }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           writeException(msg, e, false, servConn);
           servConn.setAsTrue(RESPONDED);
           return;
@@ -103,13 +97,12 @@ public class RequestEventValue extends BaseCommand {
       }
       CacheClientNotifier ccn = servConn.getAcceptor().getCacheClientNotifier();
       // Get the ha container.
-      HAContainerWrapper haContainer = (HAContainerWrapper)ccn.getHaContainer();
+      HAContainerWrapper haContainer = (HAContainerWrapper) ccn.getHaContainer();
       if (haContainer == null) {
         String reason = " was not found during get event value request";
         writeRegionDestroyedEx(msg, "ha container", reason, servConn);
         servConn.setAsTrue(RESPONDED);
-      }
-      else {
+      } else {
         Object[] valueAndIsObject = new Object[2];
         try {
           Object data = haContainer.get(new HAEventWrapper(event));
@@ -120,32 +113,30 @@ public class RequestEventValue extends BaseCommand {
             writeErrorResponse(msg, MessageType.REQUEST_EVENT_VALUE_ERROR, msgStr, servConn);
             servConn.setAsTrue(RESPONDED);
             return;
-          }
-          else {
+          } else {
             if (logger.isDebugEnabled()) {
               logger.debug("Value retrieved for event {}", event);
             }
-            Object val = ((ClientUpdateMessageImpl)data).getValueToConflate();
+            Object val = ((ClientUpdateMessageImpl) data).getValueToConflate();
             if (!(val instanceof byte[])) {
-              if(val instanceof CachedDeserializable) {
+              if (val instanceof CachedDeserializable) {
                 val = ((CachedDeserializable) val).getSerializedValue();
               } else {
                 val = CacheServerHelper.serialize(val);
               }
-              ((ClientUpdateMessageImpl)data).setLatestValue(val);
+              ((ClientUpdateMessageImpl) data).setLatestValue(val);
             }
             valueAndIsObject[0] = val;
-            valueAndIsObject[1] = Boolean.valueOf(((ClientUpdateMessageImpl)data).valueIsObject());
+            valueAndIsObject[1] = Boolean.valueOf(((ClientUpdateMessageImpl) data).valueIsObject());
           }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           writeException(msg, e, false, servConn);
           servConn.setAsTrue(RESPONDED);
           return;
         }
 
         Object data = valueAndIsObject[0];
-        boolean isObject = (Boolean)valueAndIsObject[1];
+        boolean isObject = (Boolean) valueAndIsObject[1];
 
         writeResponse(data, callbackArg, msg, isObject, servConn);
         servConn.setAsTrue(RESPONDED);

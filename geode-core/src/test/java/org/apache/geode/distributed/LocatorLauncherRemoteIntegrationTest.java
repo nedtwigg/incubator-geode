@@ -102,7 +102,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     this.temporaryFolder.getRoot() = new File(getUniqueName());
     this.temporaryFolder.getRoot().mkdir();
     assertTrue(this.temporaryFolder.getRoot().isDirectory() && this.temporaryFolder.getRoot().canWrite());
-
+   
     // launch LocatorLauncherForkingProcess which then launches the GemFire Locator
     final List<String> jvmArguments = getJvmArguments();
     
@@ -115,11 +115,11 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     command.add(System.getProperty("java.class.path"));
     command.add(LocatorLauncherRemoteDUnitTest.class.getName().concat("$").concat(LocatorLauncherForkingProcess.class.getSimpleName()));
     command.add(String.valueOf(this.locatorPort));
-
+   
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
     this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
     this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
-
+   
     Thread waiting = new Thread(new Runnable() {
       public void run() {
         try {
@@ -130,7 +130,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
         }
       }
     });
-
+   
     try {
       waiting.start();
       waiting.join(TIMEOUT_MILLISECONDS);
@@ -141,13 +141,13 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
         waiting.interrupt();
       }
     }
-
+   
     LocatorLauncher locatorLauncher = new Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
-
+   
     assertIndexDetailsEquals(Status.ONLINE, locatorLauncher.status().getStatus());
     assertIndexDetailsEquals(Status.STOPPED, locatorLauncher.stop().getStatus());
-  }
-  */
+   }
+   */
 
   @Category(FlakyTest.class) // GEODE-473: random ports, BindException, forks JVM, uses ErrorCollector
   @Test
@@ -173,9 +173,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
 
     int pid = 0;
-    this.launcher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    this.launcher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(this.launcher);
 
@@ -244,9 +242,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
 
     // wait for locator to start
     int pid = 0;
-    this.launcher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    this.launcher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(this.launcher);
 
@@ -306,9 +302,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
 
     int pid = 0;
-    this.launcher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    this.launcher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(this.launcher);
 
@@ -366,9 +360,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
 
     // wait for locator to start
     int pid = 0;
-    this.launcher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    this.launcher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(this.launcher);
 
@@ -397,7 +389,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
 
   @Test
   public void testStartUsingPortInUseFails() throws Throwable {
-    this.socket = SocketCreatorFactory.createNonDefaultInstance(false,false,null,null,System.getProperties()).createServerSocket(this.locatorPort, 50, null, -1);
+    this.socket = SocketCreatorFactory.createNonDefaultInstance(false, false, null, null, System.getProperties()).createServerSocket(this.locatorPort, 50, null, -1);
     this.locatorPort = this.socket.getLocalPort();
 
     final List<String> jvmArguments = getJvmArguments();
@@ -419,15 +411,11 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     AtomicBoolean outputContainedExpectedString = new AtomicBoolean();
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream())
-        .inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream())
-        .inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
+    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
+    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
 
     // wait for locator to start and fail
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       int code = process.waitFor();
       assertEquals("Expected exit code 1 but was " + code, 1, code);
@@ -469,7 +457,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     String expectedString = "java.net.BindException";
     AtomicBoolean outputContainedExpectedString = new AtomicBoolean();
 
-    this.socket = SocketCreatorFactory.createNonDefaultInstance(false,false,null,null,System.getProperties()).createServerSocket(this.locatorPort, 50, null, -1);
+    this.socket = SocketCreatorFactory.createNonDefaultInstance(false, false, null, null, System.getProperties()).createServerSocket(this.locatorPort, 50, null, -1);
     this.locatorPort = this.socket.getLocalPort();
 
     assertFalse(AvailablePort.isPortAvailable(this.locatorPort, AvailablePort.SOCKET));
@@ -493,15 +481,11 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream())
-        .inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream())
-        .inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
+    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
+    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
 
     // wait for locator to start up
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       int code = process.waitFor(); // TODO: create flavor with timeout in ProcessUtils
       assertEquals("Expected exit code 1 but was " + code, 1, code);
@@ -546,7 +530,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     this.temporaryFolder.getRoot() = new File(getUniqueName());
     this.temporaryFolder.getRoot().mkdir();
     assertTrue(this.temporaryFolder.getRoot().isDirectory() && this.temporaryFolder.getRoot().canWrite());
-
+   
     // create existing pid file
     this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
     final int realPid = Host.getHost(0).getVM(3).invoke(() -> ProcessUtils.identifyPid());
@@ -568,11 +552,11 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     command.add(getUniqueName());
     command.add("--port=" + this.locatorPort);
     command.add("--redirect-output");
-
+   
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
     this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
     this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
-
+   
     // collect and throw the FIRST failure
     Throwable failure = null;
     
@@ -603,7 +587,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
         failure = e;
       }
     }
-
+   
     // just in case the launcher started...
     try {
       final LocatorState status = dirLauncher.stop();
@@ -620,8 +604,8 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     if (failure != null) {
       throw failure;
     }
-  } // testStartWithExistingPidFileFails
-  */
+   } // testStartWithExistingPidFileFails
+   */
 
   @Test
   public void testStatusUsingPid() throws Throwable {
@@ -647,9 +631,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     // wait for locator to start
     int pid = 0;
     LocatorLauncher pidLauncher = null;
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(dirLauncher);
 
@@ -665,9 +647,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
       assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
-      pidLauncher = new Builder()
-          .setPid(pid)
-          .build();
+      pidLauncher = new Builder().setPid(pid).build();
 
       assertNotNull(pidLauncher);
       assertFalse(pidLauncher.isRunning());
@@ -729,9 +709,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
 
     // wait for locator to start
     int pid = 0;
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(dirLauncher);
 
@@ -781,9 +759,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
     assertTrue(this.pidFile + " already exists", this.pidFile.createNewFile());
 
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     final LocatorState actualStatus = dirLauncher.status();
     assertThat(actualStatus, is(notNullValue()));
     assertThat(actualStatus.getStatus(), is(equalTo(Status.NOT_RESPONDING)));
@@ -800,9 +776,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
 
   @Test
   public void testStatusWithNoPidFile() throws Exception {
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     LocatorState locatorState = dirLauncher.status();
     assertEquals(Status.NOT_RESPONDING, locatorState.getStatus());
   }
@@ -814,9 +788,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     assertFalse(ProcessUtils.isProcessAlive(pid));
     writePid(this.pidFile, pid);
 
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     final LocatorState actualStatus = dirLauncher.status();
     assertThat(actualStatus, is(notNullValue()));
     assertThat(actualStatus.getStatus(), is(equalTo(Status.NOT_RESPONDING)));
@@ -849,17 +821,13 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream())
-        .inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout")).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream())
-        .inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr")).build().start();
+    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout")).build().start();
+    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr")).build().start();
 
     // wait for locator to start
     int pid = 0;
     LocatorLauncher pidLauncher = null;
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(dirLauncher);
 
@@ -875,9 +843,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
       assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
-      pidLauncher = new Builder()
-          .setPid(pid)
-          .build();
+      pidLauncher = new Builder().setPid(pid).build();
 
       assertNotNull(pidLauncher);
       assertFalse(pidLauncher.isRunning());
@@ -931,9 +897,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
 
     // wait for locator to start
     int pid = 0;
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder()
-        .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-        .build();
+    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForLocatorToStart(dirLauncher);
 
@@ -981,7 +945,7 @@ public class LocatorLauncherRemoteIntegrationTest extends AbstractLocatorLaunche
         command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getAbsolutePath());
         command.add("-cp");
         command.add(System.getProperty("java.class.path"));
-        command.add("-D" + DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT+"=0");
+        command.add("-D" + DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT + "=0");
         command.add(LocatorLauncher.class.getName());
         command.add(LocatorLauncher.Command.START.getName());
         command.add(LocatorLauncherForkingProcess.class.getSimpleName() + "_Locator");

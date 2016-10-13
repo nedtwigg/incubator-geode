@@ -38,14 +38,14 @@ public class SuiteRunner extends Suite {
     super(klass, getRunners(klass));
   }
 
-  private static List<Runner> getRunners(final Class<?> klass) throws InitializationError{
+  private static List<Runner> getRunners(final Class<?> klass) throws InitializationError {
     SuiteClasses annotation = klass.getAnnotation(SuiteClasses.class);
     if (annotation == null) {
       throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
     }
     Class<?>[] childClasses = annotation.value();
     List<Runner> runners = new ArrayList<>();
-    for(Class childClass:childClasses){
+    for (Class childClass : childClasses) {
       runners.add(new SuiteBlockRunner(klass, childClass));
     }
     return runners;

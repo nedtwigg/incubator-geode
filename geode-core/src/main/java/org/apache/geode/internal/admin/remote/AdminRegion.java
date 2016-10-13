@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.internal.admin.remote;
 
 //import org.apache.geode.*;
@@ -29,7 +28,6 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 //import org.apache.geode.internal.admin.*;
 //import org.apache.geode.distributed.internal.*;
 //import org.apache.geode.util.*;
-
 
 import java.io.*;
 //import java.net.*;
@@ -51,12 +49,11 @@ public class AdminRegion implements Region {
   /**
    * Creates a root region
    */
-  public AdminRegion(String localName, RemoteGemFireVM vm,
-                     String userAttributeDesc) {
+  public AdminRegion(String localName, RemoteGemFireVM vm, String userAttributeDesc) {
     String gn = localName;
     int idx = localName.lastIndexOf(nameSep);
     if (idx != -1) {
-      localName = localName.substring(idx+1);
+      localName = localName.substring(idx + 1);
     } else {
       gn = nameSep + gn;
     }
@@ -88,7 +85,7 @@ public class AdminRegion implements Region {
 
   public RegionAttributes getAttributes() {
     try {
-      RegionAttributesResponse resp = (RegionAttributesResponse)sendAndWait(RegionAttributesRequest.create());
+      RegionAttributesResponse resp = (RegionAttributesResponse) sendAndWait(RegionAttributesRequest.create());
       return resp.getRegionAttributes();
     } catch (CacheException c) {
       throw new RuntimeAdminException(c);
@@ -101,7 +98,7 @@ public class AdminRegion implements Region {
 
   public CacheStatistics getStatistics() {
     try {
-      RegionStatisticsResponse resp = (RegionStatisticsResponse)sendAndWait(RegionStatisticsRequest.create());
+      RegionStatisticsResponse resp = (RegionStatisticsResponse) sendAndWait(RegionStatisticsRequest.create());
       return resp.getRegionStatistics();
     } catch (CacheException c) {
       throw new RuntimeAdminException(c);
@@ -148,30 +145,27 @@ public class AdminRegion implements Region {
     throw new UnsupportedOperationException();
   }
 
-  public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes)
-    throws RegionExistsException, TimeoutException {
+  public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes) throws RegionExistsException, TimeoutException {
     throw new UnsupportedOperationException();
   }
 
-   public Set subregions(boolean recursive) {
+  public Set subregions(boolean recursive) {
     if (recursive) {
       throw new UnsupportedOperationException();
     }
     try {
-      SubRegionResponse resp = (SubRegionResponse)sendAndWait(SubRegionRequest.create());
+      SubRegionResponse resp = (SubRegionResponse) sendAndWait(SubRegionRequest.create());
       return resp.getRegionSet(this);
     } catch (CacheException c) {
       throw new RuntimeAdminException(c);
     }
   }
 
-   public Entry getEntry(Object key) {
+  public Entry getEntry(Object key) {
     try {
-      ObjectDetailsResponse resp = (ObjectDetailsResponse)
-        sendAndWait(ObjectDetailsRequest.create(key, vm.getCacheInspectionMode()));
+      ObjectDetailsResponse resp = (ObjectDetailsResponse) sendAndWait(ObjectDetailsRequest.create(key, vm.getCacheInspectionMode()));
 
-      return new DummyEntry(this, key, resp.getObjectValue(),
-                            resp.getUserAttribute(), resp.getStatistics());
+      return new DummyEntry(this, key, resp.getObjectValue(), resp.getUserAttribute(), resp.getStatistics());
     } catch (CacheException c) {
       throw new RuntimeAdminException(c);
     }
@@ -179,52 +173,45 @@ public class AdminRegion implements Region {
 
   public Object get(Object key) throws CacheLoaderException, TimeoutException {
     throw new UnsupportedOperationException();
-//     try {
-//       ObjectValueResponse resp = (ObjectValueResponse)sendAndWait(ObjectValueRequest.create(key));
-//       return resp.getObjectValue();
-//     } catch (CacheException c) {
-//       if (c instanceof CacheLoaderException) {
-//         throw (CacheLoaderException)c;
-//       } else if (c instanceof TimeoutException) {
-//         throw (TimeoutException)c;
-//       } else {
-//         throw new RuntimeAdminException(c);
-//       }
-//     }
+    //     try {
+    //       ObjectValueResponse resp = (ObjectValueResponse)sendAndWait(ObjectValueRequest.create(key));
+    //       return resp.getObjectValue();
+    //     } catch (CacheException c) {
+    //       if (c instanceof CacheLoaderException) {
+    //         throw (CacheLoaderException)c;
+    //       } else if (c instanceof TimeoutException) {
+    //         throw (TimeoutException)c;
+    //       } else {
+    //         throw new RuntimeAdminException(c);
+    //       }
+    //     }
   }
 
-  public Object get(Object key, Object aCallbackArgument)
-    throws TimeoutException, CacheLoaderException {
-     throw new UnsupportedOperationException();
-  }
-
-  public Object put(Object key, Object value)
-    throws TimeoutException, CacheWriterException {
+  public Object get(Object key, Object aCallbackArgument) throws TimeoutException, CacheLoaderException {
     throw new UnsupportedOperationException();
   }
 
-  public Object put(Object key, Object value, Object aCallbackArgument)
-    throws TimeoutException, CacheWriterException {
+  public Object put(Object key, Object value) throws TimeoutException, CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
-  public void create(Object key, Object value)
-    throws TimeoutException, EntryExistsException, CacheWriterException {
+  public Object put(Object key, Object value, Object aCallbackArgument) throws TimeoutException, CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
-  public void create(Object key, Object value, Object aCacheWriterParam)
-    throws TimeoutException, EntryExistsException, CacheWriterException {
+  public void create(Object key, Object value) throws TimeoutException, EntryExistsException, CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
-  public void invalidate(Object key)
-    throws TimeoutException, EntryNotFoundException {
+  public void create(Object key, Object value, Object aCacheWriterParam) throws TimeoutException, EntryExistsException, CacheWriterException {
+    throw new UnsupportedOperationException();
+  }
+
+  public void invalidate(Object key) throws TimeoutException, EntryNotFoundException {
     sendAsync(DestroyEntryMessage.create(key, ExpirationAction.INVALIDATE));
   }
 
-  public void invalidate(Object key, Object aCallbackArgument)
-    throws TimeoutException, EntryNotFoundException {
+  public void invalidate(Object key, Object aCallbackArgument) throws TimeoutException, EntryNotFoundException {
     throw new UnsupportedOperationException();
   }
 
@@ -232,19 +219,16 @@ public class AdminRegion implements Region {
     sendAsync(DestroyEntryMessage.create(key, ExpirationAction.LOCAL_INVALIDATE));
   }
 
-  public void localInvalidate(Object key,Object aCallbackArgument)
-    throws EntryNotFoundException {
+  public void localInvalidate(Object key, Object aCallbackArgument) throws EntryNotFoundException {
     throw new UnsupportedOperationException();
   }
 
-  public Object destroy(Object key)
-    throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public Object destroy(Object key) throws TimeoutException, EntryNotFoundException, CacheWriterException {
     sendAsync(DestroyEntryMessage.create(key, ExpirationAction.DESTROY));
     return null;
   }
 
-  public Object destroy(Object key, Object aCacheWriterParam)
-    throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public Object destroy(Object key, Object aCacheWriterParam) throws TimeoutException, EntryNotFoundException, CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
@@ -252,13 +236,13 @@ public class AdminRegion implements Region {
     sendAsync(DestroyEntryMessage.create(key, ExpirationAction.LOCAL_DESTROY));
   }
 
-  public void localDestroy(Object key,Object aCallbackArgument) throws EntryNotFoundException {
+  public void localDestroy(Object key, Object aCallbackArgument) throws EntryNotFoundException {
     throw new UnsupportedOperationException();
   }
 
   public Set keys() {
     try {
-      ObjectNamesResponse resp = (ObjectNamesResponse)sendAndWait(ObjectNamesRequest.create());
+      ObjectNamesResponse resp = (ObjectNamesResponse) sendAndWait(ObjectNamesRequest.create());
       return resp.getNameSet();
     } catch (CacheException ce) {
       throw new RuntimeAdminException(ce);
@@ -282,7 +266,7 @@ public class AdminRegion implements Region {
   }
 
   public Object getUserAttribute() {
-    return  userAttributeDesc;
+    return userAttributeDesc;
   }
 
   public void setUserAttribute(Object value) {
@@ -342,58 +326,45 @@ public class AdminRegion implements Region {
   }
 
   public void registerInterest(Object key, boolean isDurable) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
-  
-  public void registerInterest(Object key, boolean isDurable,
-      boolean receiveValues) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+
+  public void registerInterest(Object key, boolean isDurable, boolean receiveValues) throws CacheWriterException {
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void registerInterestRegex(String regex, boolean isDurable) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
-  
-  public void registerInterestRegex(String regex, boolean isDurable,
-      boolean receiveValues) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+
+  public void registerInterestRegex(String regex, boolean isDurable, boolean receiveValues) throws CacheWriterException {
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
-  
-  public void registerInterest(Object key, InterestResultPolicy policy,
-      boolean isDurable, boolean receiveValues) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+
+  public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) throws CacheWriterException {
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
-  
-  public void registerInterestRegex(String regex, InterestResultPolicy policy,
-      boolean isDurable, boolean receiveValues) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+
+  public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) throws CacheWriterException {
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void unregisterInterest(Object key, boolean isDurable) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void unregisterInterestRegex(String regex, boolean isDurable) throws CacheWriterException {
-    throw new UnsupportedOperationException(
-      LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
+
   public List getInterestList() throws CacheWriterException {
     throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
@@ -422,14 +393,14 @@ public class AdminRegion implements Region {
    * count, the second is the subregion count
    */
   public int[] sizes() throws CacheException {
-    RegionSizeResponse resp = (RegionSizeResponse)sendAndWait(RegionSizeRequest.create());
-    return new int[]{resp.getEntryCount(), resp.getSubregionCount()};
+    RegionSizeResponse resp = (RegionSizeResponse) sendAndWait(RegionSizeRequest.create());
+    return new int[] { resp.getEntryCount(), resp.getSubregionCount() };
   }
 
   // Additional instance methods
-    /**
-   * Sends an AdminRequest to this application's vm and waits for the AdminReponse
-   */
+  /**
+  * Sends an AdminRequest to this application's vm and waits for the AdminReponse
+  */
   AdminResponse sendAndWait(RegionAdminRequest msg) throws CacheException {
     msg.setRegionName(getFullPath());
     try {
@@ -437,9 +408,9 @@ public class AdminRegion implements Region {
     } catch (RuntimeAdminException ex) {
       Throwable cause = ex.getRootCause();
       if (cause instanceof CacheException) {
-        throw (CacheException)cause;
+        throw (CacheException) cause;
       } else if (cause instanceof CacheRuntimeException) {
-        throw (CacheRuntimeException)cause;
+        throw (CacheRuntimeException) cause;
       } else {
         throw ex;
       }
@@ -463,8 +434,7 @@ public class AdminRegion implements Region {
     throw new UnsupportedOperationException();
   }
 
-  public void loadSnapshot(InputStream inputStream)
-  throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
+  public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
     throw new UnsupportedOperationException();
   }
 
@@ -478,7 +448,7 @@ public class AdminRegion implements Region {
 
   public void clear() {
     throw new UnsupportedOperationException();
-    
+
   }
 
   public boolean isEmpty() {
@@ -499,11 +469,11 @@ public class AdminRegion implements Region {
   }
 
   public Map getAll(Collection keys) {
-    throw new UnsupportedOperationException(); 
+    throw new UnsupportedOperationException();
   }
 
   public Map getAll(Collection keys, Object callback) {
-    throw new UnsupportedOperationException(); 
+    throw new UnsupportedOperationException();
   }
 
   public Set entrySet() {
@@ -514,25 +484,25 @@ public class AdminRegion implements Region {
     throw new UnsupportedOperationException();
   }
 
-   public Object remove(Object arg0) {
-     throw new UnsupportedOperationException();
+  public Object remove(Object arg0) {
+    throw new UnsupportedOperationException();
   }
 
   public Set entrySet(boolean recursive) {
     throw new UnsupportedOperationException("Not implemented yet");
-//    return entries(recursive);
+    //    return entries(recursive);
   }
 
   public void localClear() {
     throw new UnsupportedOperationException();
-    
+
   }
 
-  public void forceRolling(){
+  public void forceRolling() {
     throw new UnsupportedOperationException();
   }
 
-  public int[] forceCompaction() {   
+  public int[] forceCompaction() {
     throw new UnsupportedOperationException();
   }
 
@@ -556,7 +526,7 @@ public class AdminRegion implements Region {
   public Object replace(Object key, Object value) {
     throw new UnsupportedOperationException();
   }
-  
+
   /* (non-Javadoc)
    * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object, java.lang.Object)
    */

@@ -91,7 +91,7 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
      */
     int numOfUsers = 2;
     int numOfPuts = 5;
-    boolean[] postAuthzAllowed = new boolean[] {true, true};
+    boolean[] postAuthzAllowed = new boolean[] { true, true };
 
     doTest(numOfUsers, numOfPuts, postAuthzAllowed, getXmlAuthzGenerator(), null);
   }
@@ -110,7 +110,7 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
      */
     int numOfUsers = 2;
     int numOfPuts = 5;
-    boolean[] postAuthzAllowed = new boolean[] {true, true};
+    boolean[] postAuthzAllowed = new boolean[] { true, true };
 
     doTest(numOfUsers, numOfPuts, postAuthzAllowed, getXmlAuthzGenerator(), true);
   }
@@ -129,7 +129,7 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
      */
     int numOfUsers = 2;
     int numOfPuts = 5;
-    boolean[] postAuthzAllowed = new boolean[] {true, true};
+    boolean[] postAuthzAllowed = new boolean[] { true, true };
 
     doTest(numOfUsers, numOfPuts, postAuthzAllowed, getXmlAuthzGenerator(), false);
   }
@@ -167,28 +167,18 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
     for (int i = 0; i < numOfUsers; i++) {
       int rand = random.nextInt(100) + 1;
       if (postAuthzAllowed[i]) {
-        opCredentials = tgen.getAllowedCredentials(
-            new OperationCode[] {OperationCode.EXECUTE_CQ, OperationCode.GET}, // For callback, GET should be allowed
-            new String[] {regionName},
-            indices,
-            rand);
+        opCredentials = tgen.getAllowedCredentials(new OperationCode[] { OperationCode.EXECUTE_CQ, OperationCode.GET }, // For callback, GET should be allowed
+            new String[] { regionName }, indices, rand);
 
       } else {
-        opCredentials = tgen.getDisallowedCredentials(
-            new OperationCode[] {OperationCode.GET}, // For callback, GET should be disallowed
-            new String[] {regionName},
-            indices,
-            rand);
+        opCredentials = tgen.getDisallowedCredentials(new OperationCode[] { OperationCode.GET }, // For callback, GET should be disallowed
+            new String[] { regionName }, indices, rand);
       }
 
-      authProps[i] = concatProperties(new Properties[] {opCredentials, extraAuthProps, extraAuthzProps});
+      authProps[i] = concatProperties(new Properties[] { opCredentials, extraAuthProps, extraAuthzProps });
 
       if (client2Credentials == null) {
-        client2Credentials = tgen.getAllowedCredentials(
-            new OperationCode[] {OperationCode.PUT},
-            new String[] {regionName},
-            indices,
-            rand);
+        client2Credentials = tgen.getAllowedCredentials(new OperationCode[] { OperationCode.PUT }, new String[] { regionName }, indices, rand);
       }
     }
 
@@ -203,10 +193,10 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
     server2.invoke(() -> closeCache());
 
     server1.invoke(() -> createServerCache(serverProps, javaProps, locatorPort, port1));
-    client1.invoke(() -> createClientCache(javaProps2, authInit, authProps, new int[] {port1, port2}, numOfUsers, durableClientId, postAuthzAllowed));
+    client1.invoke(() -> createClientCache(javaProps2, authInit, authProps, new int[] { port1, port2 }, numOfUsers, durableClientId, postAuthzAllowed));
 
     client1.invoke(() -> createCQ(numOfUsers, true));
-    client1.invoke(() -> executeCQ(numOfUsers, new boolean[] {false, false}, numOfPuts, new String[numOfUsers]));
+    client1.invoke(() -> executeCQ(numOfUsers, new boolean[] { false, false }, numOfPuts, new String[numOfUsers]));
     client1.invoke(() -> readyForEvents());
 
     if (keepAlive == null) {
@@ -217,9 +207,9 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
 
     server1.invoke(() -> doPuts(numOfPuts, true/* put last key */));
 
-    client1.invoke(() -> createClientCache(javaProps2, authInit, authProps, new int[] {port1, port2}, numOfUsers, durableClientId, postAuthzAllowed));
+    client1.invoke(() -> createClientCache(javaProps2, authInit, authProps, new int[] { port1, port2 }, numOfUsers, durableClientId, postAuthzAllowed));
     client1.invoke(() -> createCQ(numOfUsers, true));
-    client1.invoke(() ->executeCQ(numOfUsers, new boolean[] {false, false}, numOfPuts, new String[numOfUsers]));
+    client1.invoke(() -> executeCQ(numOfUsers, new boolean[] { false, false }, numOfPuts, new String[numOfUsers]));
     client1.invoke(() -> readyForEvents());
 
     if (!postAuthzAllowed[0] || keepAlive == null || !keepAlive) {
@@ -231,10 +221,10 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
 
     int numOfCreates = keepAlive == null ? 0 : (keepAlive ? numOfPuts + 1/* last key */ : 0);
     client1.invoke(() -> checkCQListeners(numOfUsers, postAuthzAllowed, numOfCreates, 0));
-    client1.invoke(() -> proxyCacheClose(new int[] {0, 1}, keepAlive));
-    client1.invoke(() -> createProxyCache(new int[] {0, 1}, authProps));
+    client1.invoke(() -> proxyCacheClose(new int[] { 0, 1 }, keepAlive));
+    client1.invoke(() -> createProxyCache(new int[] { 0, 1 }, authProps));
     client1.invoke(() -> createCQ(numOfUsers, true));
-    client1.invoke(() -> executeCQ(numOfUsers, new boolean[] {false, false}, numOfPuts, new String[numOfUsers]));
+    client1.invoke(() -> executeCQ(numOfUsers, new boolean[] { false, false }, numOfPuts, new String[numOfUsers]));
 
     server1.invoke(() -> doPuts(numOfPuts, true/* put last key */));
 
@@ -272,8 +262,8 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
 
       // Create CQ Attributes.
       CqAttributesFactory cqf = new CqAttributesFactory();
-      CqListener[] cqListeners = {new CqQueryTestListener(getLogWriter())};
-      ((CqQueryTestListener)cqListeners[0]).cqName = cqName;
+      CqListener[] cqListeners = { new CqQueryTestListener(getLogWriter()) };
+      ((CqQueryTestListener) cqListeners[0]).cqName = cqName;
 
       cqf.initCqListeners(cqListeners);
       CqAttributes cqa = cqf.create();
@@ -288,7 +278,7 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
     for (int i = 0; i < num; i++) {
       try {
         if (expectedErr[i] != null) {
-          getLogWriter().info("<ExpectedException action=add>" + expectedErr[i]+ "</ExpectedException>");
+          getLogWriter().info("<ExpectedException action=add>" + expectedErr[i] + "</ExpectedException>");
         }
 
         CqQuery cq1 = null;
@@ -313,8 +303,7 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
           cqResults = cq1.executeWithInitialResults();
 
           getLogWriter().info("initial result size = " + cqResults.size());
-          assertTrue("executeWithInitialResults() state mismatch", cq1
-              .getState().isRunning());
+          assertTrue("executeWithInitialResults() state mismatch", cq1.getState().isRunning());
           if (expectedResultsSize >= 0) {
             assertEquals("unexpected results size", expectedResultsSize, cqResults.size());
           }
@@ -326,7 +315,7 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
 
       } finally {
         if (expectedErr[i] != null) {
-          getLogWriter().info("<ExpectedException action=remove>" + expectedErr[i]+ "</ExpectedException>");
+          getLogWriter().info("<ExpectedException action=remove>" + expectedErr[i] + "</ExpectedException>");
         }
       }
     }
@@ -335,7 +324,7 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
   private void doPuts(final int num, final boolean putLastKey) {
     Region region = GemFireCacheImpl.getInstance().getRegion(regionName);
     for (int i = 0; i < num; i++) {
-      region.put("CQ_key"+i, "CQ_value"+i);
+      region.put("CQ_key" + i, "CQ_value" + i);
     }
     if (putLastKey) {
       region.put("LAST_KEY", "LAST_KEY");
@@ -345,11 +334,11 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
   private void waitForLastKey(final int cqIndex, final boolean isCreate) {
     String cqName = "CQ_" + cqIndex;
     QueryService qService = getProxyCaches(cqIndex).getQueryService();
-    ClientCQImpl cqQuery = (ClientCQImpl)qService.getCq(cqName);
+    ClientCQImpl cqQuery = (ClientCQImpl) qService.getCq(cqName);
     if (isCreate) {
-      ((CqQueryTestListener)cqQuery.getCqListeners()[cqIndex]).waitForCreated("LAST_KEY");
+      ((CqQueryTestListener) cqQuery.getCqListeners()[cqIndex]).waitForCreated("LAST_KEY");
     } else {
-      ((CqQueryTestListener)cqQuery.getCqListeners()[cqIndex]).waitForUpdated("LAST_KEY");
+      ((CqQueryTestListener) cqQuery.getCqListeners()[cqIndex]).waitForUpdated("LAST_KEY");
     }
   }
 
@@ -357,17 +346,17 @@ public class MultiUserDurableCQAuthzDUnitTest extends ClientAuthorizationTestCas
     for (int i = 0; i < numOfUsers; i++) {
       String cqName = "CQ_" + i;
       QueryService qService = getProxyCaches(i).getQueryService();
-      ClientCQImpl cqQuery = (ClientCQImpl)qService.getCq(cqName);
+      ClientCQImpl cqQuery = (ClientCQImpl) qService.getCq(cqName);
 
       if (expectedListenerInvocation[i]) {
         for (CqListener listener : cqQuery.getCqListeners()) {
-          assertEquals(createEventsSize, ((CqQueryTestListener)listener).getCreateEventCount());
-          assertEquals(updateEventsSize, ((CqQueryTestListener)listener).getUpdateEventCount());
+          assertEquals(createEventsSize, ((CqQueryTestListener) listener).getCreateEventCount());
+          assertEquals(updateEventsSize, ((CqQueryTestListener) listener).getUpdateEventCount());
         }
 
       } else {
         for (CqListener listener : cqQuery.getCqListeners()) {
-          assertEquals(0, ((CqQueryTestListener)listener).getTotalEventCount());
+          assertEquals(0, ((CqQueryTestListener) listener).getTotalEventCount());
         }
       }
     }

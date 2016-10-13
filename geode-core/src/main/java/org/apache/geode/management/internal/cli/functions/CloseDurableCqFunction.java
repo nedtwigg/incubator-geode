@@ -31,8 +31,7 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
  * Function to close a durable cq
  *
  */
-public class CloseDurableCqFunction extends FunctionAdapter implements
-InternalEntity {
+public class CloseDurableCqFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -42,7 +41,7 @@ InternalEntity {
     final Cache cache = CliUtil.getCacheIfExists();
     final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
     CacheClientNotifier cacheClientNotifier = CacheClientNotifier.getInstance();
-    String [] args = (String []) context.getArguments();
+    String[] args = (String[]) context.getArguments();
     String durableClientId = args[0];
     String cqName = args[1];
 

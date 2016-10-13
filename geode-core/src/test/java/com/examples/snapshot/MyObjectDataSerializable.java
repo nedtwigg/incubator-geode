@@ -29,7 +29,7 @@ public class MyObjectDataSerializable extends MyObject implements DataSerializab
   public MyObjectDataSerializable(long number, String s) {
     super(number, s);
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     out.writeLong(f1);
@@ -37,8 +37,7 @@ public class MyObjectDataSerializable extends MyObject implements DataSerializab
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     f1 = in.readLong();
     f2 = in.readUTF();
   }

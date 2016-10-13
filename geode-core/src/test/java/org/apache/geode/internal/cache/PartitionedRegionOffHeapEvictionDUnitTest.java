@@ -32,14 +32,14 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 @Category(DistributedTest.class)
 public class PartitionedRegionOffHeapEvictionDUnitTest extends PartitionedRegionEvictionDUnitTest {
-  
+
   @Override
   public final void preTearDownAssertions() throws Exception {
     SerializableRunnable checkOrphans = new SerializableRunnable() {
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -52,13 +52,13 @@ public class PartitionedRegionOffHeapEvictionDUnitTest extends PartitionedRegion
   public Properties getDistributedSystemProperties() {
     Properties properties = super.getDistributedSystemProperties();
     properties.setProperty(OFF_HEAP_MEMORY_SIZE, "100m");
-    
+
     return properties;
   }
-  
+
   @Override
   protected void setEvictionPercentage(float percentage) {
-    getCache().getResourceManager().setEvictionOffHeapPercentage(percentage);    
+    getCache().getResourceManager().setEvictionOffHeapPercentage(percentage);
   }
 
   @Override
@@ -73,20 +73,20 @@ public class PartitionedRegionOffHeapEvictionDUnitTest extends PartitionedRegion
 
   @Override
   protected HeapEvictor getEvictor(Region region) {
-    return ((GemFireCacheImpl)region.getRegionService()).getOffHeapEvictor();
+    return ((GemFireCacheImpl) region.getRegionService()).getOffHeapEvictor();
   }
-  
+
   @Override
   protected void raiseFakeNotification() {
     ((GemFireCacheImpl) getCache()).getOffHeapEvictor().testAbortAfterLoopCount = 1;
-    
+
     setEvictionPercentage(85);
     OffHeapMemoryMonitor ohmm = ((GemFireCacheImpl) getCache()).getResourceManager().getOffHeapMonitor();
     ohmm.stopMonitoring(true);
 
     ohmm.updateStateAndSendEvent(94371840);
   }
-  
+
   @Override
   protected void cleanUpAfterFakeNotification() {
     ((GemFireCacheImpl) getCache()).getOffHeapEvictor().testAbortAfterLoopCount = Integer.MAX_VALUE;

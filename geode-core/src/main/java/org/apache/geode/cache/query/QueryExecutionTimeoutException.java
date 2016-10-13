@@ -18,6 +18,7 @@
 package org.apache.geode.cache.query;
 
 import org.apache.geode.cache.CacheRuntimeException;
+
 /**
  * Thrown when the query execution takes more than the specified max time.
  * The Max query execution time is set using the system  variable 
@@ -26,13 +27,13 @@ import org.apache.geode.cache.CacheRuntimeException;
  * @since GemFire 6.0
  */
 public class QueryExecutionTimeoutException extends CacheRuntimeException {
-  
+
   /**
    * Creates a new instance of <code>QueryExecutionTimeoutException</code> without detail message.
    */
   public QueryExecutionTimeoutException() {
   }
-  
+
   /**
    * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified detail message.
    * @param msg the detail message.
@@ -40,7 +41,7 @@ public class QueryExecutionTimeoutException extends CacheRuntimeException {
   public QueryExecutionTimeoutException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified detail message
    * and cause.
@@ -50,7 +51,7 @@ public class QueryExecutionTimeoutException extends CacheRuntimeException {
   public QueryExecutionTimeoutException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified cause.
    * @param cause the causal Throwable

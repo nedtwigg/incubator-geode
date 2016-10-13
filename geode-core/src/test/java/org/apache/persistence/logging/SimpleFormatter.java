@@ -35,10 +35,10 @@ public class SimpleFormatter extends Formatter {
     sb.append(record.getMessage());
     sb.append('\n');
 
-    if(record.getSourceClassName() != null) {
+    if (record.getSourceClassName() != null) {
       sb.append(" In ");
       sb.append(record.getSourceClassName());
-      if(record.getSourceMethodName() != null) {
+      if (record.getSourceMethodName() != null) {
         sb.append(".");
         sb.append(record.getSourceMethodName());
       }
@@ -46,14 +46,14 @@ public class SimpleFormatter extends Formatter {
     }
 
     Object[] params = record.getParameters();
-    if(params != null) {
-      for(int i = 0; i < params.length; i++) {
+    if (params != null) {
+      for (int i = 0; i < params.length; i++) {
         sb.append(params[i]);
         sb.append('\n');
       }
     }
 
-    if(record.getThrown() != null) {
+    if (record.getThrown() != null) {
       Throwable thr = record.getThrown();
       StringWriter sw = new StringWriter();
       thr.printStackTrace(new PrintWriter(sw, true));
@@ -71,7 +71,7 @@ public class SimpleFormatter extends Formatter {
 
     sb.append('\n');
 
-    return(sb.toString());
+    return (sb.toString());
   }
 
 }

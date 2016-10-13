@@ -28,14 +28,14 @@ import org.apache.geode.distributed.DistributedMember;
  * @since GemFire 6.0
  */
 public interface PartitionMemberInfo {
-  
+
   /**
    * Identifies the member for which these details pertain to.
    * 
    * @return the member for which these details pertain to
    */
   public DistributedMember getDistributedMember();
-  
+
   /**
    * Returns the {@link 
    * org.apache.geode.cache.PartitionAttributes#getLocalMaxMemory() max 
@@ -46,7 +46,7 @@ public interface PartitionMemberInfo {
    * provide for storage
    */
   public long getConfiguredMaxMemory(); // in bytes
-  
+
   /**
    * The total size in bytes of memory being used by the member for storage
    * of actual data in the partitioned region.
@@ -54,7 +54,7 @@ public interface PartitionMemberInfo {
    * @return size in bytes of memory being used by the member for storage
    */
   public long getSize(); // in bytes
-  
+
   /**
    * Returns the number of buckets hosted within the member's partition space
    * for the partitioned region.
@@ -62,7 +62,7 @@ public interface PartitionMemberInfo {
    * @return the number of buckets hosted within the member
    */
   public int getBucketCount();
-  
+
   /**
    * The number of hosted buckets for which the member is hosting the primary
    * copy. Other copies are known as redundant backup copies.

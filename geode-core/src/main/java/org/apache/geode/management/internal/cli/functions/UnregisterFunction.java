@@ -33,7 +33,6 @@ import org.apache.geode.internal.admin.remote.ShutdownAllRequest;
  * 
  */
 
-
 public class UnregisterFunction implements Function, InternalEntity {
   public static final String ID = UnregisterFunction.class.getName();
   private static final long serialVersionUID = 1L;
@@ -41,11 +40,11 @@ public class UnregisterFunction implements Function, InternalEntity {
   @Override
   public void execute(FunctionContext context) {
     Object[] args = (Object[]) context.getArguments();
-    String functionId = (String) args[0];  
-    try{
-    FunctionService.unregisterFunction(functionId);
-    }catch(Exception e){
-      context.getResultSender().lastResult("Failed in unregistering "+ e.getMessage());
+    String functionId = (String) args[0];
+    try {
+      FunctionService.unregisterFunction(functionId);
+    } catch (Exception e) {
+      context.getResultSender().lastResult("Failed in unregistering " + e.getMessage());
     }
     context.getResultSender().lastResult("Succeeded in unregistering");
   }

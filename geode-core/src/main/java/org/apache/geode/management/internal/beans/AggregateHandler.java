@@ -41,8 +41,7 @@ public interface AggregateHandler {
    * @param newVal
    *          new value of the Proxy
    */
-  public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject,
-      FederationComponent newVal);
+  public void handleProxyAddition(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal);
 
   /**
    * 
@@ -55,8 +54,7 @@ public interface AggregateHandler {
    * @param oldVal
    *          old value of the Proxy
    */
-  public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject,
-      FederationComponent oldVal);
+  public void handleProxyRemoval(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal);
 
   /**
    * 
@@ -71,9 +69,8 @@ public interface AggregateHandler {
    * @param oldVal
    *          old value of the proxy
    */
-  public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject,
-      FederationComponent newVal, FederationComponent oldVal);
-  
+  public void handleProxyUpdate(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal);
+
   /**
    * 
    * @param objectName
@@ -85,7 +82,6 @@ public interface AggregateHandler {
    * @param newVal
    *          new value of the Proxy
    */
-  public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject,
-      FederationComponent newVal);
+  public void handlePseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal);
 
 }

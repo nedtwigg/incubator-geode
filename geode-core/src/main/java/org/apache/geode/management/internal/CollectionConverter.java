@@ -38,8 +38,7 @@ import javax.management.openmbean.OpenDataException;
  * 
  */
 public final class CollectionConverter extends OpenTypeConverter {
-  CollectionConverter(Type targetType, ArrayType openArrayType,
-      Class openArrayClass, OpenTypeConverter elementConverter) {
+  CollectionConverter(Type targetType, ArrayType openArrayType, Class openArrayClass, OpenTypeConverter elementConverter) {
     super(targetType, openArrayType, openArrayClass);
     this.elementConverter = elementConverter;
 
@@ -67,21 +66,18 @@ public final class CollectionConverter extends OpenTypeConverter {
     if (valueCollection instanceof SortedSet) {
       Comparator comparator = ((SortedSet) valueCollection).comparator();
       if (comparator != null) {
-        final String msg = "Cannot convert SortedSet with non-null comparator: "
-            + comparator;
+        final String msg = "Cannot convert SortedSet with non-null comparator: " + comparator;
         throw openDataException(msg, new IllegalArgumentException(msg));
       }
     }
-    final Object[] openArray = (Object[]) Array.newInstance(getOpenClass()
-        .getComponentType(), valueCollection.size());
+    final Object[] openArray = (Object[]) Array.newInstance(getOpenClass().getComponentType(), valueCollection.size());
     int i = 0;
     for (Object o : valueCollection)
       openArray[i++] = elementConverter.toOpenValue(o);
     return openArray;
   }
 
-  public final Object fromNonNullOpenValue(Object openValue)
-      throws InvalidObjectException {
+  public final Object fromNonNullOpenValue(Object openValue) throws InvalidObjectException {
     final Object[] openArray = (Object[]) openValue;
     final Collection<Object> valueCollection;
     try {
@@ -92,8 +88,7 @@ public final class CollectionConverter extends OpenTypeConverter {
     for (Object o : openArray) {
       Object value = elementConverter.fromOpenValue(o);
       if (!valueCollection.add(value)) {
-        final String msg = "Could not add " + o + " to "
-            + collectionClass.getName() + " (duplicate set element?)";
+        final String msg = "Could not add " + o + " to " + collectionClass.getName() + " (duplicate set element?)";
         throw new InvalidObjectException(msg);
       }
     }

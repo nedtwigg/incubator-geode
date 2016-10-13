@@ -30,9 +30,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  * with thread pool (i.e. selector).
  */
 @Category(DistributedTest.class)
-public class CacheServerTransactionsSelectorDUnitTest
-  extends CacheServerTransactionsDUnitTest
-{
+public class CacheServerTransactionsSelectorDUnitTest extends CacheServerTransactionsDUnitTest {
   /** constructor */
   public CacheServerTransactionsSelectorDUnitTest() {
     super();

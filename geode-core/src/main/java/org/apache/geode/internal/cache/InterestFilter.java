@@ -30,5 +30,4 @@ public interface InterestFilter extends CacheCallback {
 
   public boolean notifyOnRegister(InterestEvent event);
 
-
 }

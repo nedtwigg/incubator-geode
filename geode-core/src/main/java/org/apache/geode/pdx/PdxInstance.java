@@ -58,6 +58,7 @@ public interface PdxInstance extends java.io.Serializable {
    * @since GemFire 6.6.2
    */
   public String getClassName();
+
   /**
    * Returns true if this instance represents an enum.
    * Enum's have a String field named "name" and an int field named "ordinal".
@@ -66,6 +67,7 @@ public interface PdxInstance extends java.io.Serializable {
    * @return true if this instance represents an enum.
    */
   public boolean isEnum();
+
   /**
    * Deserializes and returns the domain object that this instance represents.
    * 
@@ -82,13 +84,13 @@ public interface PdxInstance extends java.io.Serializable {
    * @return <code>true</code> if the named field exists; otherwise <code>false</code>
    */
   public boolean hasField(String fieldName);
-  
+
   /**
    * Return an unmodifiable list of the field names on this PdxInstance.
    * @return an unmodifiable list of the field names on this PdxInstance
    */
   public List<String> getFieldNames();
-  
+
   /**
    * Checks if the named field was {@link PdxWriter#markIdentityField(String) marked} as an identity field.
    * <p>Note that if no fields have been marked then all the fields are used as identity fields even though
@@ -96,7 +98,7 @@ public interface PdxInstance extends java.io.Serializable {
    * @param fieldName the name of the field to check
    * @return <code>true</code> if the named field exists and was marked as an identify field; otherwise <code>false</code>
    */
-public boolean isIdentityField(String fieldName);
+  public boolean isIdentityField(String fieldName);
 
   /**
    * Reads the named field and returns its value. If the field does
@@ -186,7 +188,7 @@ public boolean isIdentityField(String fieldName);
    * Otherwise all its fields are identity fields.
    */
   public String toString();
-  
+
   /**
    * Creates and returns a {@link WritablePdxInstance} whose initial
    * values are those of this PdxInstance.

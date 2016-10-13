@@ -19,12 +19,12 @@ package org.apache.geode.management;
 import javax.management.AttributeChangeNotification;
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
+
 /**
  * A simple MBean to test various aspects of federation
  *
  */
-public class CustomMBean extends NotificationBroadcasterSupport implements
-    CustomMXBean {
+public class CustomMBean extends NotificationBroadcasterSupport implements CustomMXBean {
 
   private long systemTime;
   private String name;
@@ -63,9 +63,7 @@ public class CustomMBean extends NotificationBroadcasterSupport implements
   public void writeName(String name) {
     this.name = name;
 
-    Notification n = new AttributeChangeNotification(this, sequenceNumber++,
-        System.currentTimeMillis(), "staticField changed", "staticField",
-        "int", name, this.name);
+    Notification n = new AttributeChangeNotification(this, sequenceNumber++, System.currentTimeMillis(), "staticField changed", "staticField", "int", name, this.name);
 
     sendNotification(n);
   }

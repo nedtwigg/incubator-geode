@@ -35,27 +35,27 @@ public class ObjectPartListJUnitTest {
   public void testValueAsObject() throws Exception {
     VersionedObjectList list = new VersionedObjectList(100, false, false);
     byte[] normalBytes = "value1".getBytes();
-    list.addObjectPart("key", normalBytes , false, null);
+    list.addObjectPart("key", normalBytes, false, null);
     list.addObjectPart("key", "value2", true, null);
     byte[] serializedObjectBytes = BlobHelper.serializeToBlob("value3");
     list.addObjectPart("key", serializedObjectBytes, true, null);
     list.addExceptionPart("key", new AssertionError("hello"));
     list.addObjectPartForAbsentKey("key", null);
-    
+
     //Create a clone of the this.
     VersionedObjectList newList = CopyHelper.copy(list);
-    
+
     checkObjectValues(newList);
-    
+
     //THIS TEST FAILS! ObjectPartArrayList doesn't
     //preserve all its state when it is serialized (it loses track of type information
     //for values of type BYTES by writing the type info as OBJECT). However, 
     //we'll have to leave it to avoid breaking old clients.
     //create another copy, just to double check
-//    newList = CopyHelper.copy(newList);
-//    
-//    checkObjectValues(newList);
-    
+    //    newList = CopyHelper.copy(newList);
+    //    
+    //    checkObjectValues(newList);
+
   }
 
   private void checkObjectValues(ObjectPartList newList) {
@@ -73,37 +73,36 @@ public class ObjectPartListJUnitTest {
   public void testValueAsObjectByteArray() throws Exception {
     ObjectPartList list = new VersionedObjectList(100, false, false, true);
     byte[] normalBytes = "value1".getBytes();
-    list.addObjectPart("key", normalBytes , false, null);
+    list.addObjectPart("key", normalBytes, false, null);
     list.addObjectPart("key", "value2", true, null);
     byte[] serializedObjectBytes = BlobHelper.serializeToBlob("value3");
     list.addObjectPart("key", serializedObjectBytes, true, null);
     list.addExceptionPart("key", new AssertionError("hello"));
     list.addObjectPartForAbsentKey("key", null);
-    
+
     //Create a clone of the this list.
     ObjectPartList newList = CopyHelper.copy(list);
-    
+
     checkSerializedValues(newList);
-    
+
     //Create another copy, just to double check
     //all the info was perserved
     newList = CopyHelper.copy(newList);
-    
+
     checkSerializedValues(newList);
   }
 
-  private void checkSerializedValues(ObjectPartList newList)
-      throws IOException, ClassNotFoundException {
+  private void checkSerializedValues(ObjectPartList newList) throws IOException, ClassNotFoundException {
     assertEquals(5, newList.size());
     assertNull(newList.getKeysForTest());
     List values = newList.getObjects();
     assertEquals("value1", new String((byte[]) values.get(0)));
-    assertEquals("value2", BlobHelper.deserializeBlob((byte[])values.get(1)));
-    assertEquals("value3", BlobHelper.deserializeBlob((byte[])values.get(2)));
+    assertEquals("value2", BlobHelper.deserializeBlob((byte[]) values.get(1)));
+    assertEquals("value3", BlobHelper.deserializeBlob((byte[]) values.get(2)));
     assertEquals(new AssertionError("hello"), values.get(3));
     assertNull(values.get(4));
   }
-  
+
   private static class AssertionError extends Exception {
 
     public AssertionError(String message) {
@@ -112,10 +111,10 @@ public class ObjectPartListJUnitTest {
 
     @Override
     public boolean equals(Object o) {
-      if(!(o instanceof AssertionError)) {
+      if (!(o instanceof AssertionError)) {
         return false;
       }
-      if(!((AssertionError) o ).getMessage().equals(getMessage())) {
+      if (!((AssertionError) o).getMessage().equals(getMessage())) {
         return false;
       }
       return true;

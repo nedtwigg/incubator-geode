@@ -37,15 +37,16 @@ public class FunctionServiceLocalRRDUnitTest extends FunctionServiceBase {
 
   @Before
   public void createRegions() {
-    region = getCache().createRegionFactory(RegionShortcut.REPLICATE)
-      .create(REGION);
+    region = getCache().createRegionFactory(RegionShortcut.REPLICATE).create(REGION);
   }
 
-  @Override public Execution getExecution() {
+  @Override
+  public Execution getExecution() {
     return FunctionService.onRegion(region);
   }
 
-  @Override public int numberOfExecutions() {
+  @Override
+  public int numberOfExecutions() {
     return 1;
   }
 

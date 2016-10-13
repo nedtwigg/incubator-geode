@@ -47,8 +47,7 @@ import org.apache.geode.internal.offheap.StoredObject;
  * @since GemFire 3.0
  */
 
-public class ByteBufferInputStream extends InputStream implements DataInput, java.io.Externalizable
-{
+public class ByteBufferInputStream extends InputStream implements DataInput, java.io.Externalizable {
   /**
    * This interface is used to wrap either a ByteBuffer or an offheap Chunk
    * as the source of bytes for a ByteBufferInputStream.
@@ -57,54 +56,80 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
    */
   public static interface ByteSource {
     int position();
+
     int limit();
+
     int capacity();
+
     int remaining();
 
     void position(int newPosition);
+
     void limit(int endOffset);
 
     void get(byte[] b);
+
     void get(byte[] b, int off, int len);
+
     byte get();
+
     byte get(int pos);
+
     short getShort();
+
     short getShort(int pos);
+
     char getChar();
+
     char getChar(int pos);
+
     int getInt();
+
     int getInt(int pos);
+
     long getLong();
+
     long getLong(int pos);
+
     float getFloat();
+
     float getFloat(int pos);
+
     double getDouble();
+
     double getDouble(int pos);
 
     boolean hasArray();
+
     byte[] array();
+
     int arrayOffset();
 
     ByteSource duplicate();
+
     ByteSource slice(int length);
+
     ByteSource slice(int pos, int limit);
-    
+
     /**
      * Returns the ByteBuffer that this ByteSource wraps; null if no ByteBuffer
      */
     ByteBuffer getBackingByteBuffer();
 
     void sendTo(ByteBuffer out);
+
     void sendTo(DataOutput out) throws IOException;
   }
-  
+
   public static class ByteSourceFactory {
     public static ByteSource wrap(byte[] bytes) {
       return new ByteBufferByteSource(ByteBuffer.wrap(bytes));
     }
+
     public static ByteSource create(ByteBuffer bb) {
       return new ByteBufferByteSource(bb);
     }
+
     public static ByteSource create(StoredObject so) {
       // Since I found a way to create a DirectByteBuffer (using reflection) from a StoredObject
       // we might not even need the ByteSource abstraction any more.
@@ -117,12 +142,14 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       }
     }
   }
-  
+
   public static class ByteBufferByteSource implements ByteSource {
     private final ByteBuffer bb;
+
     public ByteBufferByteSource(ByteBuffer bb) {
       this.bb = bb;
     }
+
     /**
      * Returns the current hash code of this byte source.
      *
@@ -141,10 +168,11 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       int h = 1;
       int p = position();
       for (int i = limit() - 1; i >= p; i--) {
-        h = 31 * h + (int)get(i);
+        h = 31 * h + (int) get(i);
       }
       return h;
     }
+
     @Override
     public boolean equals(Object ob) {
       if (this == ob) {
@@ -153,7 +181,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       if (!(ob instanceof ByteSource)) {
         return false;
       }
-      ByteSource that = (ByteSource)ob;
+      ByteSource that = (ByteSource) ob;
       if (this.remaining() != that.remaining()) {
         return false;
       }
@@ -170,102 +198,127 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     public ByteSource duplicate() {
       return ByteSourceFactory.create(this.bb.duplicate());
     }
+
     @Override
     public byte get() {
       return this.bb.get();
     }
+
     @Override
     public void get(byte[] b, int off, int len) {
       this.bb.get(b, off, len);
     }
+
     @Override
     public int remaining() {
       return this.bb.remaining();
     }
+
     @Override
     public int position() {
       return this.bb.position();
     }
+
     @Override
     public byte get(int pos) {
       return this.bb.get(pos);
     }
+
     @Override
     public char getChar() {
       return this.bb.getChar();
     }
+
     @Override
     public char getChar(int pos) {
       return this.bb.getChar(pos);
     }
+
     @Override
     public double getDouble() {
       return this.bb.getDouble();
     }
+
     @Override
     public double getDouble(int pos) {
       return this.bb.getDouble(pos);
     }
+
     @Override
     public float getFloat() {
       return this.bb.getFloat();
     }
+
     @Override
     public float getFloat(int pos) {
       return this.bb.getFloat(pos);
     }
+
     @Override
     public void get(byte[] b) {
       this.bb.get(b);
     }
+
     @Override
     public int getInt() {
       return this.bb.getInt();
     }
+
     @Override
     public int getInt(int pos) {
       return this.bb.getInt(pos);
     }
+
     @Override
     public long getLong() {
       return this.bb.getLong();
     }
+
     @Override
     public long getLong(int pos) {
       return this.bb.getLong(pos);
     }
+
     @Override
     public short getShort() {
       return this.bb.getShort();
     }
+
     @Override
     public short getShort(int pos) {
       return this.bb.getShort(pos);
     }
+
     @Override
     public int limit() {
       return this.bb.limit();
     }
+
     @Override
     public void position(int newPosition) {
       this.bb.position(newPosition);
     }
+
     @Override
     public boolean hasArray() {
       return this.bb.hasArray();
     }
+
     @Override
     public byte[] array() {
       return this.bb.array();
     }
+
     @Override
     public int arrayOffset() {
       return this.bb.arrayOffset();
     }
+
     @Override
     public void limit(int endOffset) {
       this.bb.limit(endOffset);
     }
+
     @Override
     public ByteSource slice(int length) {
       if (length < 0) {
@@ -275,6 +328,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       dup.limit(dup.position() + length);
       return ByteSourceFactory.create(dup.slice());
     }
+
     @Override
     public ByteSource slice(int pos, int limit) {
       ByteBuffer dup = this.bb.duplicate();
@@ -282,18 +336,22 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       dup.position(pos);
       return ByteSourceFactory.create(dup.slice());
     }
+
     @Override
     public int capacity() {
       return this.bb.capacity();
     }
+
     @Override
     public void sendTo(ByteBuffer out) {
       out.put(this.bb);
     }
+
     @Override
     public void sendTo(DataOutput out) throws IOException {
       int len = remaining();
-      if (len == 0) return;
+      if (len == 0)
+        return;
       if (out instanceof ByteBufferWriter) {
         ((ByteBufferWriter) out).write(this.bb);
         return;
@@ -310,12 +368,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         }
       }
     }
+
     @Override
     public ByteBuffer getBackingByteBuffer() {
       return this.bb;
     }
   }
-  
+
   public static class OffHeapByteSource implements ByteSource {
     private int position;
     private int limit;
@@ -326,12 +385,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       this.position = 0;
       this.limit = capacity();
     }
+
     private OffHeapByteSource(OffHeapByteSource other) {
       this.chunk = other.chunk;
       this.position = other.position;
       this.limit = other.limit;
     }
-    
+
     /**
      * Returns the current hash code of this byte source.
      *
@@ -350,11 +410,11 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       int h = 1;
       int p = position();
       for (int i = limit() - 1; i >= p; i--) {
-        h = 31 * h + (int)get(i);
+        h = 31 * h + (int) get(i);
       }
       return h;
     }
-     
+
     @Override
     public boolean equals(Object ob) {
       if (this == ob) {
@@ -363,7 +423,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       if (!(ob instanceof ByteSource)) {
         return false;
       }
-      ByteSource that = (ByteSource)ob;
+      ByteSource that = (ByteSource) ob;
       if (this.remaining() != that.remaining()) {
         return false;
       }
@@ -375,7 +435,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       }
       return true;
     }
-    
+
     @Override
     public int remaining() {
       return this.limit - this.position;
@@ -398,7 +458,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       }
       this.position = newPosition;
     }
-    
+
     @Override
     public void limit(int newLimit) {
       if ((newLimit > capacity()) || (newLimit < 0)) {
@@ -409,7 +469,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         this.position = this.limit;
       }
     }
-    
+
     @Override
     public int capacity() {
       return this.chunk.getDataSize();
@@ -449,21 +509,24 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         throw new IndexOutOfBoundsException();
       }
     }
+
     private static void checkBounds(int off, int len, int size) {
       if ((off | len | (off + len) | (size - (off + len))) < 0) {
         throw new IndexOutOfBoundsException();
       }
     }
-    
+
     @Override
     public void get(byte[] b) {
       basicGet(b, 0, b.length);
     }
+
     @Override
     public void get(byte[] dst, int offset, int length) {
       checkBounds(offset, length, dst.length);
       basicGet(dst, offset, length);
     }
+
     private void basicGet(byte[] dst, int offset, int length) {
       if (length > remaining()) {
         throw new BufferUnderflowException();
@@ -477,6 +540,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     public byte get() {
       return this.chunk.readDataByte(nextGetIndex());
     }
+
     @Override
     public byte get(int pos) {
       checkIndex(pos);
@@ -497,17 +561,20 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         //throw new IllegalStateException("Could not invoke java.nio.Bits.unaligned()", e);
       }
     }
+
     private static final boolean unaligned = determineUnaligned();
-    
+
     @Override
     public short getShort() {
       return basicGetShort(this.nextGetIndex(2));
     }
+
     @Override
     public short getShort(int pos) {
       this.checkIndex(pos, 2);
       return basicGetShort(pos);
     }
+
     private short basicGetShort(int pos) {
       long addr = this.chunk.getAddressForReadingData(pos, 2);
       if (unaligned) {
@@ -519,7 +586,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       } else {
         int ch1 = AddressableMemoryManager.readByte(addr++);
         int ch2 = AddressableMemoryManager.readByte(addr);
-        return (short)((ch1 << 8) + (ch2 << 0));
+        return (short) ((ch1 << 8) + (ch2 << 0));
       }
     }
 
@@ -527,11 +594,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     public char getChar() {
       return basicGetChar(this.nextGetIndex(2));
     }
+
     @Override
     public char getChar(int pos) {
       this.checkIndex(pos, 2);
       return basicGetChar(pos);
     }
+
     private char basicGetChar(int pos) {
       long addr = this.chunk.getAddressForReadingData(pos, 2);
       if (unaligned) {
@@ -543,7 +612,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       } else {
         int ch1 = AddressableMemoryManager.readByte(addr++);
         int ch2 = AddressableMemoryManager.readByte(addr);
-        return (char)((ch1 << 8) + (ch2 << 0));
+        return (char) ((ch1 << 8) + (ch2 << 0));
       }
     }
 
@@ -551,12 +620,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     public int getInt() {
       return basicGetInt(this.nextGetIndex(4));
     }
+
     @Override
     public int getInt(int pos) {
       this.checkIndex(pos, 4);
       return basicGetInt(pos);
     }
-    
+
     private int basicGetInt(final int pos) {
       long addr = this.chunk.getAddressForReadingData(pos, 4);
       if (unaligned) {
@@ -578,11 +648,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     public long getLong() {
       return basicGetLong(this.nextGetIndex(8));
     }
+
     @Override
     public long getLong(int pos) {
       this.checkIndex(pos, 8);
       return basicGetLong(pos);
     }
+
     private long basicGetLong(final int pos) {
       long addr = this.chunk.getAddressForReadingData(pos, 8);
       if (unaligned) {
@@ -600,14 +672,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         byte b5 = AddressableMemoryManager.readByte(addr++);
         byte b6 = AddressableMemoryManager.readByte(addr++);
         byte b7 = AddressableMemoryManager.readByte(addr);
-        return (((long)b0 << 56) +
-            ((long)(b1 & 255) << 48) +
-            ((long)(b2 & 255) << 40) +
-            ((long)(b3 & 255) << 32) +
-            ((long)(b4 & 255) << 24) +
-            ((b5 & 255) << 16) +
-            ((b6 & 255) <<  8) +
-            ((b7 & 255) <<  0));
+        return (((long) b0 << 56) + ((long) (b1 & 255) << 48) + ((long) (b2 & 255) << 40) + ((long) (b3 & 255) << 32) + ((long) (b4 & 255) << 24) + ((b5 & 255) << 16) + ((b6 & 255) << 8) + ((b7 & 255) << 0));
       }
     }
 
@@ -615,11 +680,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     public float getFloat() {
       return basicGetFloat(this.nextGetIndex(4));
     }
+
     @Override
     public float getFloat(int pos) {
       this.checkIndex(pos, 4);
       return basicGetFloat(pos);
-   }
+    }
+
     private float basicGetFloat(int pos) {
       return Float.intBitsToFloat(basicGetInt(pos));
     }
@@ -628,11 +695,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     public double getDouble() {
       return basicGetDouble(this.nextGetIndex(8));
     }
+
     @Override
     public double getDouble(int pos) {
       this.checkIndex(pos, 8);
       return basicGetDouble(pos);
     }
+
     private double basicGetDouble(int pos) {
       return Double.longBitsToDouble(basicGetLong(pos));
     }
@@ -684,15 +753,15 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         len--;
       }
       // We will not even create an instance of this class if createByteBuffer works on this platform.
-//      if (len > 0) {
-//        ByteBuffer bb = this.chunk.createByteBuffer();
-//        bb.position(position());
-//        bb.limit(limit());
-//        out.put(bb);
-//        position(limit());
-//      }
+      //      if (len > 0) {
+      //        ByteBuffer bb = this.chunk.createByteBuffer();
+      //        bb.position(position());
+      //        bb.limit(limit());
+      //        out.put(bb);
+      //        position(limit());
+      //      }
     }
-    
+
     @Override
     public void sendTo(DataOutput out) throws IOException {
       int len = remaining();
@@ -701,21 +770,22 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         len--;
       }
     }
+
     @Override
     public ByteBuffer getBackingByteBuffer() {
       return null;
     }
   }
-  
+
   private ByteSource buffer;
 
   public ByteBufferInputStream(ByteBuffer buffer) {
     setBuffer(buffer);
   }
-  
+
   public ByteBufferInputStream() {
   }
-  
+
   protected ByteBufferInputStream(ByteBufferInputStream copy) {
     this.buffer = copy.buffer.duplicate();
   }
@@ -725,19 +795,19 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   }
 
   public final void setBuffer(ByteSource buffer) {
-    if(buffer == null) {
+    if (buffer == null) {
       throw new NullPointerException();
     }
     this.buffer = buffer;
   }
-  
+
   public final void setBuffer(ByteBuffer bb) {
     if (bb == null) {
       throw new NullPointerException();
     }
     setBuffer(ByteSourceFactory.create(bb));
   }
-  
+
   /**
    * See the InputStream read method for javadocs.
    * Note that if an attempt
@@ -748,7 +818,6 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public final int read() {
     return (buffer.get() & 0xff);
   }
-  
 
   /* this method is not thread safe
    * See the InputStream read method for javadocs.
@@ -766,7 +835,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public int available() {
     return this.buffer.remaining();
   }
-  
+
   public int position() {
     return this.buffer.position();
   }
@@ -774,21 +843,21 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   // GemFire does not use mark or reset so I changed this class
   // to just inherit from InputStream which does not support mark/reset.
   // That way we do not need to add support for them to the new ByteSource class.
-  
-//  @Override
-//  public boolean markSupported() {
-//    return true;
-//  }
-//
-//  @Override
-//  public void mark(int limit) {
-//    this.buffer.mark();
-//  }
-//
-//  @Override
-//  public void reset() {
-//    this.buffer.reset();
-//  }
+
+  //  @Override
+  //  public boolean markSupported() {
+  //    return true;
+  //  }
+  //
+  //  @Override
+  //  public void mark(int limit) {
+  //    this.buffer.mark();
+  //  }
+  //
+  //  @Override
+  //  public void reset() {
+  //    this.buffer.reset();
+  //  }
 
   @Override
   public long skip(long n) throws IOException {
@@ -802,6 +871,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public boolean readBoolean() {
     return this.buffer.get() != 0;
   }
+
   public boolean readBoolean(int pos) {
     return this.buffer.get(pos) != 0;
   }
@@ -812,6 +882,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public byte readByte() {
     return this.buffer.get();
   }
+
   public byte readByte(int pos) {
     return this.buffer.get(pos);
   }
@@ -822,6 +893,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public char readChar() {
     return this.buffer.getChar();
   }
+
   public char readChar(int pos) {
     return this.buffer.getChar(pos);
   }
@@ -832,6 +904,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public double readDouble() {
     return this.buffer.getDouble();
   }
+
   public double readDouble(int pos) {
     return this.buffer.getDouble(pos);
   }
@@ -842,6 +915,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public float readFloat() {
     return this.buffer.getFloat();
   }
+
   public float readFloat(int pos) {
     return this.buffer.getFloat(pos);
   }
@@ -851,7 +925,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
    */
   public void readFully(byte[] b) {
     this.buffer.get(b);
-    
+
   }
 
   /* (non-Javadoc)
@@ -859,7 +933,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
    */
   public void readFully(byte[] b, int off, int len) {
     this.buffer.get(b, off, len);
-    
+
   }
 
   /* (non-Javadoc)
@@ -868,6 +942,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public int readInt() {
     return this.buffer.getInt();
   }
+
   public int readInt(int pos) {
     return this.buffer.getInt(pos);
   }
@@ -885,6 +960,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public long readLong() {
     return this.buffer.getLong();
   }
+
   public long readLong(int pos) {
     return this.buffer.getLong(pos);
   }
@@ -895,6 +971,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public short readShort() {
     return this.buffer.getShort();
   }
+
   public short readShort(int pos) {
     return this.buffer.getShort(pos);
   }
@@ -912,6 +989,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public int readUnsignedByte() {
     return this.buffer.get() & 0xff;
   }
+
   public int readUnsignedByte(int pos) {
     return this.buffer.get(pos) & 0xff;
   }
@@ -922,6 +1000,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   public int readUnsignedShort() {
     return this.buffer.getShort() & 0xffff;
   }
+
   public int readUnsignedShort(int pos) {
     return this.buffer.getShort(pos) & 0xffff;
   }
@@ -931,7 +1010,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
    */
   public int skipBytes(int n) {
     int newPosition = this.buffer.position() + n;
-    if(newPosition > this.buffer.limit()) {
+    if (newPosition > this.buffer.limit()) {
       newPosition = this.buffer.limit();
       n = newPosition - this.buffer.position();
     }
@@ -956,28 +1035,28 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   }
 
   public void position(int absPos) {
-//    if (absPos < 0) {
-//      throw new IllegalArgumentException("position was less than zero " + absPos);
-//    } else if (absPos > this.buffer.limit()) {
-//      throw new IllegalArgumentException( "position " + absPos + " was greater than the limit " + this.buffer.limit());
-//    }
+    //    if (absPos < 0) {
+    //      throw new IllegalArgumentException("position was less than zero " + absPos);
+    //    } else if (absPos > this.buffer.limit()) {
+    //      throw new IllegalArgumentException( "position " + absPos + " was greater than the limit " + this.buffer.limit());
+    //    }
     this.buffer.position(absPos);
   }
 
   public void sendTo(DataOutput out) throws IOException {
     this.buffer.position(0);
     this.buffer.sendTo(out);
- }
-  
+  }
+
   public void sendTo(ByteBuffer out) {
     this.buffer.position(0);
     this.buffer.sendTo(out);
- }
+  }
 
   public ByteSource slice(int length) {
     return this.buffer.slice(length);
   }
-  
+
   public ByteSource slice(int startOffset, int endOffset) {
     return this.buffer.slice(startOffset, endOffset);
   }
@@ -988,14 +1067,13 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       out.writeInt(this.buffer.capacity());
       out.writeInt(this.buffer.limit());
       out.writeInt(this.buffer.position());
-      for (int i=0; i < this.buffer.capacity(); i++) {
+      for (int i = 0; i < this.buffer.capacity(); i++) {
         out.write(this.buffer.get(i));
       }
     }
   }
 
-  public void readExternal(ObjectInput in) throws IOException,
-      ClassNotFoundException {
+  public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
     boolean hasBuffer = in.readBoolean();
     if (hasBuffer) {
       int capacity = in.readInt();
@@ -1006,7 +1084,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       if (bytesRead != capacity) {
         throw new IOException("Expected to read " + capacity + " bytes but only read " + bytesRead + " bytes.");
       }
-      setBuffer(ByteBuffer.wrap(bytes, position, limit-position));
+      setBuffer(ByteBuffer.wrap(bytes, position, limit - position));
     } else {
       this.buffer = null;
     }

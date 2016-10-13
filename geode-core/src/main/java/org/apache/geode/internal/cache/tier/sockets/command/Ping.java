@@ -42,8 +42,7 @@ public class Ping extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
       logger.debug("{}: rcv tx: {} from {} rcvTime: {}", servConn.getName(), msg.getTransactionId(), servConn.getSocketString(), (DistributionStats.getStatTime() - start));
@@ -61,8 +60,7 @@ public class Ping extends BaseCommand {
   }
 
   @Override
-  protected void writeReply(Message origMsg, ServerConnection servConn)
-      throws IOException {
+  protected void writeReply(Message origMsg, ServerConnection servConn) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);

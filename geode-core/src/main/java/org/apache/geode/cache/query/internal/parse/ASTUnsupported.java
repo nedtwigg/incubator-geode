@@ -29,14 +29,14 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  */
 public class ASTUnsupported extends GemFireAST {
   private static final long serialVersionUID = -1192307218047393827L;
-  
-  public ASTUnsupported() {  
+
+  public ASTUnsupported() {
   }
-  
+
   public ASTUnsupported(Token t) {
     super(t);
   }
-  
+
   @Override
   public void compile(QCompiler compiler) {
     throw new UnsupportedOperationException(LocalizedStrings.ASTUnsupported_UNSUPPORTED_FEATURE_0.toLocalizedString(getText()));

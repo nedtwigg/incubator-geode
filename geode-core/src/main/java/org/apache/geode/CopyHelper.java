@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.geode;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -91,24 +92,35 @@ public final class CopyHelper {
       return true;
     }
     if (o instanceof Number) {
-      if (o instanceof Integer) return true;
-      if (o instanceof Long) return true;
-      if (o instanceof Byte) return true;
-      if (o instanceof Short) return true;
-      if (o instanceof Float) return true;
-      if (o instanceof Double) return true;
+      if (o instanceof Integer)
+        return true;
+      if (o instanceof Long)
+        return true;
+      if (o instanceof Byte)
+        return true;
+      if (o instanceof Short)
+        return true;
+      if (o instanceof Float)
+        return true;
+      if (o instanceof Double)
+        return true;
       // subclasses of non-final classes may be mutable
-      if (o.getClass().equals(BigInteger.class)) return true;
-      if (o.getClass().equals(BigDecimal.class)) return true;
+      if (o.getClass().equals(BigInteger.class))
+        return true;
+      if (o.getClass().equals(BigDecimal.class))
+        return true;
     }
     if (o instanceof PdxInstance && !(o instanceof WritablePdxInstance)) {
       // no need to copy since it is immutable
       return true;
     }
-    if (o instanceof Character) return true;
-    if (o instanceof UUID) return true;
+    if (o instanceof Character)
+      return true;
+    if (o instanceof UUID)
+      return true;
     return false;
   }
+
   /**
    * <p>Makes a copy of the specified object. The object returned is not guaranteed
    * to be a deep copy of the original object, as explained below.
@@ -145,7 +157,8 @@ public final class CopyHelper {
       } else if (o instanceof Token) {
         return o;
       } else {
-        if (isWellKnownImmutableInstance(o)) return o;
+        if (isWellKnownImmutableInstance(o))
+          return o;
         if (o instanceof Cloneable) {
           try {
             // Note that Object.clone is protected so we need to use reflection
@@ -158,7 +171,7 @@ public final class CopyHelper {
             // because Object.clone is protected.
             Method m = c.getDeclaredMethod("clone", new Class[0]);
             m.setAccessible(true);
-            copy = (T)m.invoke(o, new Object[0]);
+            copy = (T) m.invoke(o, new Object[0]);
             return copy;
           } catch (NoSuchMethodException ignore) {
             // try using Serialization
@@ -179,28 +192,28 @@ public final class CopyHelper {
           return copy;
         } else if (o.getClass().isArray() && o.getClass().getComponentType().isPrimitive()) {
           if (o instanceof byte[]) {
-            byte[] a = (byte[])o;
+            byte[] a = (byte[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           } else if (o instanceof boolean[]) {
-            boolean[] a = (boolean[])o;
+            boolean[] a = (boolean[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           } else if (o instanceof char[]) {
-            char[] a = (char[])o;
+            char[] a = (char[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           } else if (o instanceof int[]) {
-            int[] a = (int[])o;
+            int[] a = (int[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           } else if (o instanceof long[]) {
-            long[] a = (long[])o;
+            long[] a = (long[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           } else if (o instanceof short[]) {
-            short[] a = (short[])o;
+            short[] a = (short[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           } else if (o instanceof float[]) {
-            float[] a = (float[])o;
+            float[] a = (float[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           } else if (o instanceof double[]) {
-            double[] a = (double[])o;
+            double[] a = (double[]) o;
             copy = (T) Arrays.copyOf(a, a.length);
           }
           return copy;
@@ -252,11 +265,11 @@ public final class CopyHelper {
   }
 
   @SuppressWarnings("unchecked")
-  private static<T> T doDeepCopy(T o) {
+  private static <T> T doDeepCopy(T o) {
     try {
       HeapDataOutputStream hdos = new HeapDataOutputStream(Version.CURRENT);
       DataSerializer.writeObject(o, hdos);
-      return (T)DataSerializer.readObject(new DataInputStream(hdos.getInputStream()));
+      return (T) DataSerializer.readObject(new DataInputStream(hdos.getInputStream()));
     } catch (ClassNotFoundException ex) {
       throw new CopyException(LocalizedStrings.CopyHelper_COPY_FAILED_ON_INSTANCE_OF_0.toLocalizedString(o.getClass()), ex);
     } catch (IOException ex) {

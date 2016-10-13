@@ -40,7 +40,7 @@ public class WanSnapshotJUnitTest extends SnapshotTestCase {
   private Region<Integer, MyObject> region;
   private WanListener wan;
   private static final long MAX_WAIT = 5 * 60 * 1000; //6 minutes
-  
+
   @Test
   public void testWanCallback() throws Exception {
     int count = 1000;
@@ -51,12 +51,12 @@ public class WanSnapshotJUnitTest extends SnapshotTestCase {
     File snapshot = new File("wan.snapshot");
     region.getSnapshotService().save(snapshot, SnapshotFormat.GEMFIRE);
     region.clear();
-    
+
     long start = System.currentTimeMillis();
     // wait for the events to drain out
     while (!wan.ticker.compareAndSet(count, 0)) {
       Thread.sleep(100);
-      if(System.currentTimeMillis() - start > MAX_WAIT) {
+      if (System.currentTimeMillis() - start > MAX_WAIT) {
         fail("Event did not drain in 5 minutes");
       }
     }
@@ -65,24 +65,23 @@ public class WanSnapshotJUnitTest extends SnapshotTestCase {
 
     // delay, just in case we get any events
     Thread.sleep(1000);
-    
+
     assertEquals("WAN callback detected during import", 0, wan.ticker.get());
     assertEquals(count, region.size());
   }
-  
+
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    
+
     wan = new WanListener();
     cache.createAsyncEventQueueFactory().setBatchSize(1).create("wanqueue", wan);
-    region = cache.<Integer, MyObject>createRegionFactory(RegionShortcut.REPLICATE)
-        .addAsyncEventQueueId("wanqueue").create("test");
+    region = cache.<Integer, MyObject> createRegionFactory(RegionShortcut.REPLICATE).addAsyncEventQueueId("wanqueue").create("test");
   }
-  
+
   private class WanListener implements AsyncEventListener {
     private final AtomicInteger ticker = new AtomicInteger(0);
-    
+
     @Override
     public void close() {
     }
@@ -95,4 +94,3 @@ public class WanSnapshotJUnitTest extends SnapshotTestCase {
   }
 
 }
-

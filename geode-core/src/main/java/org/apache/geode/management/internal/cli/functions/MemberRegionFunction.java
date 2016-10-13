@@ -25,7 +25,6 @@ import org.apache.geode.cache.execute.FunctionException;
 import org.apache.geode.cache.execute.FunctionService;
 import org.apache.geode.internal.InternalEntity;
 
-
 public class MemberRegionFunction implements Function, InternalEntity {
   public static final String ID = MemberRegionFunction.class.getName();
   private static final long serialVersionUID = 1L;
@@ -34,30 +33,28 @@ public class MemberRegionFunction implements Function, InternalEntity {
   public void execute(FunctionContext context) {
     Object[] args = (Object[]) context.getArguments();
     String region = (String) args[0];
-    String functionId = (String) args[1];    
-    Cache cache = CacheFactory.getAnyInstance();    
-    
-    try {      
+    String functionId = (String) args[1];
+    Cache cache = CacheFactory.getAnyInstance();
+
+    try {
       Function function = FunctionService.getFunction(functionId);
-      if (function == null){
-        context.getResultSender().lastResult("For region on a member did not get function "+functionId);
+      if (function == null) {
+        context.getResultSender().lastResult("For region on a member did not get function " + functionId);
       }
       Execution execution = FunctionService.onRegion(cache.getRegion(region));
-      if (execution == null){
+      if (execution == null) {
         context.getResultSender().lastResult("For region on a member could not execute");
-      }else{
+      } else {
         execution.execute(function);
-        context.getResultSender().lastResult("succeeded in executing on region "+region);
+        context.getResultSender().lastResult("succeeded in executing on region " + region);
       }
 
-    }catch(FunctionException e){
-      context.getResultSender().lastResult(
-          "FunctionException in MemberRegionFunction =" + e.getMessage());
-    }catch (Exception e) {
-      context.getResultSender().lastResult(
-          "Exception in MemberRegionFunction =" + e.getMessage());
+    } catch (FunctionException e) {
+      context.getResultSender().lastResult("FunctionException in MemberRegionFunction =" + e.getMessage());
+    } catch (Exception e) {
+      context.getResultSender().lastResult("Exception in MemberRegionFunction =" + e.getMessage());
     }
-    
+
   }
 
   @Override

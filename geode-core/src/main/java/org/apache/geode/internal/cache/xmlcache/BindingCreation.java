@@ -30,7 +30,7 @@ import java.util.*;
  *         will get created for every <jndi-binding></jndi-binding>
  *  
  */
-public class BindingCreation  {
+public class BindingCreation {
 
   private Map gfSpecific = null;
   // private Map vendorSpecific = null;

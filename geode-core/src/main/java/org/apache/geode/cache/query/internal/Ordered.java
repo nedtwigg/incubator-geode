@@ -33,11 +33,11 @@ import java.util.Comparator;
  *
  */
 public interface Ordered {
-  Comparator comparator(); 
-  
+  Comparator comparator();
+
   //Implies that underlying structure is a LinkedHashMap or LinkedHashSet & the structs are stored
   // directly , ie not in terms of Object[]
   // SortedResultsBag, LinkedResultSet are two such types.
-  
+
   boolean dataPreordered();
 }

@@ -50,9 +50,11 @@ public class SocketUtilsJUnitTest {
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {{
-      setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    mockContext = new Mockery() {
+      {
+        setImposteriser(ClassImposteriser.INSTANCE);
+      }
+    };
   }
 
   @After
@@ -64,9 +66,11 @@ public class SocketUtilsJUnitTest {
   public void testCloseSocket() throws IOException {
     final Socket mockSocket = mockContext.mock(Socket.class, "closeSocketTest");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockSocket).close();
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockSocket).close();
+      }
+    });
 
     assertTrue(SocketUtils.close(mockSocket));
   }
@@ -75,15 +79,16 @@ public class SocketUtilsJUnitTest {
   public void testCloseSocketThrowsIOException() throws IOException {
     final Socket mockSocket = mockContext.mock(Socket.class, "closeSocketThrowsIOExceptionTest");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockSocket).close();
-      will(throwException(new IOException("test")));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockSocket).close();
+        will(throwException(new IOException("test")));
+      }
+    });
 
     try {
       assertFalse(SocketUtils.close(mockSocket));
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       fail("Calling close on a Socket using SocketUtils threw an unexpected Throwable (" + t + ")!");
     }
   }
@@ -97,9 +102,11 @@ public class SocketUtilsJUnitTest {
   public void testCloseServerSocket() throws IOException {
     final ServerSocket mockServerSocket = mockContext.mock(ServerSocket.class, "closeServerSocketTest");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockServerSocket).close();
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockServerSocket).close();
+      }
+    });
 
     assertTrue(SocketUtils.close(mockServerSocket));
   }
@@ -108,15 +115,16 @@ public class SocketUtilsJUnitTest {
   public void testCloseServerSocketThrowsIOException() throws IOException {
     final ServerSocket mockServerSocket = mockContext.mock(ServerSocket.class, "closeServerSocketThrowsIOExceptionTest");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockServerSocket).close();
-      will(throwException(new IOException("test")));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockServerSocket).close();
+        will(throwException(new IOException("test")));
+      }
+    });
 
     try {
       assertFalse(SocketUtils.close(mockServerSocket));
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       fail("Calling close on a ServerSocket using SocketUtils threw an unexpected Throwable (" + t + ")!");
     }
   }

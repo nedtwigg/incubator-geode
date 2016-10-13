@@ -48,7 +48,6 @@ import org.apache.geode.management.internal.cli.util.DiskStoreNotFoundException;
 import org.apache.geode.management.internal.cli.util.MemberNotFoundException;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-
 /**
  * The DiskStoreCommandsJUnitTest class is a test suite of test cases testing the contract and functionality of the
  * DiskStoreCommands class implementing commands in the GemFire shell (gfsh) that access and modify disk stores in
@@ -72,9 +71,11 @@ public class DiskStoreCommandsJUnitTest {
 
   @Before
   public void setUp() {
-    mockContext = new Mockery() {{
-      setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    mockContext = new Mockery() {
+      {
+        setImposteriser(ClassImposteriser.INSTANCE);
+      }
+    };
   }
 
   @After
@@ -83,10 +84,7 @@ public class DiskStoreCommandsJUnitTest {
     mockContext = null;
   }
 
-  private DiskStoreCommands createDiskStoreCommands(final Cache cache,
-                                                      final DistributedMember distributedMember,
-                                                      final Execution functionExecutor)
-  {
+  private DiskStoreCommands createDiskStoreCommands(final Cache cache, final DistributedMember distributedMember, final Execution functionExecutor) {
     return new TestDiskStoreCommands(cache, distributedMember, functionExecutor);
   }
 
@@ -109,18 +107,20 @@ public class DiskStoreCommandsJUnitTest {
 
     final DiskStoreDetails expectedDiskStoredDetails = createDiskStoreDetails(memberId, diskStoreName);
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockMember).getName();
-      will(returnValue(null));
-      oneOf(mockMember).getId();
-      will(returnValue(memberId));
-      oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
-      will(returnValue(mockFunctionExecutor));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
-      will(returnValue(mockResultCollector));
-      oneOf(mockResultCollector).getResult();
-      will(returnValue(Arrays.asList(expectedDiskStoredDetails)));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockMember).getName();
+        will(returnValue(null));
+        oneOf(mockMember).getId();
+        will(returnValue(memberId));
+        oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
+        will(returnValue(mockFunctionExecutor));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
+        will(returnValue(mockResultCollector));
+        oneOf(mockResultCollector).getResult();
+        will(returnValue(Arrays.asList(expectedDiskStoredDetails)));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockMember, mockFunctionExecutor);
 
@@ -139,19 +139,20 @@ public class DiskStoreCommandsJUnitTest {
 
     final DistributedMember mockMember = mockContext.mock(DistributedMember.class, "DistributedMember");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockMember).getName();
-      will(returnValue(null));
-      oneOf(mockMember).getId();
-      will(returnValue("testMember"));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockMember).getName();
+        will(returnValue(null));
+        oneOf(mockMember).getId();
+        will(returnValue("testMember"));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockMember, null);
 
     try {
       commands.getDiskStoreDescription(memberId, diskStoreName);
-    }
-    catch (MemberNotFoundException expected) {
+    } catch (MemberNotFoundException expected) {
       assertEquals(CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberId), expected.getMessage());
       throw expected;
     }
@@ -168,23 +169,24 @@ public class DiskStoreCommandsJUnitTest {
 
     final Execution mockFunctionExecutor = mockContext.mock(Execution.class, "Function Executor");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockMember).getName();
-      will(returnValue(null));
-      oneOf(mockMember).getId();
-      will(returnValue(memberId));
-      oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
-      will(returnValue(mockFunctionExecutor));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
-      will(throwException(new DiskStoreNotFoundException("expected")));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockMember).getName();
+        will(returnValue(null));
+        oneOf(mockMember).getId();
+        will(returnValue(memberId));
+        oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
+        will(returnValue(mockFunctionExecutor));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
+        will(throwException(new DiskStoreNotFoundException("expected")));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockMember, mockFunctionExecutor);
 
     try {
       commands.getDiskStoreDescription(memberId, diskStoreName);
-    }
-    catch (DiskStoreNotFoundException expected) {
+    } catch (DiskStoreNotFoundException expected) {
       assertEquals("expected", expected.getMessage());
       throw expected;
     }
@@ -201,23 +203,24 @@ public class DiskStoreCommandsJUnitTest {
 
     final Execution mockFunctionExecutor = mockContext.mock(Execution.class, "Function Executor");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockMember).getName();
-      will(returnValue(null));
-      oneOf(mockMember).getId();
-      will(returnValue(memberId));
-      oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
-      will(returnValue(mockFunctionExecutor));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
-      will(throwException(new RuntimeException("expected")));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockMember).getName();
+        will(returnValue(null));
+        oneOf(mockMember).getId();
+        will(returnValue(memberId));
+        oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
+        will(returnValue(mockFunctionExecutor));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
+        will(throwException(new RuntimeException("expected")));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockMember, mockFunctionExecutor);
 
     try {
       commands.getDiskStoreDescription(memberId, diskStoreName);
-    }
-    catch (RuntimeException expected) {
+    } catch (RuntimeException expected) {
       assertEquals("expected", expected.getMessage());
       throw expected;
     }
@@ -236,27 +239,27 @@ public class DiskStoreCommandsJUnitTest {
 
     final ResultCollector mockResultCollector = mockContext.mock(ResultCollector.class, "ResultCollector");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockMember).getName();
-      will(returnValue(null));
-      oneOf(mockMember).getId();
-      will(returnValue(memberId));
-      oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
-      will(returnValue(mockFunctionExecutor));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
-      will(returnValue(mockResultCollector));
-      oneOf(mockResultCollector).getResult();
-      will(returnValue(Arrays.asList(new Object())));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockMember).getName();
+        will(returnValue(null));
+        oneOf(mockMember).getId();
+        will(returnValue(memberId));
+        oneOf(mockFunctionExecutor).withArgs(with(equal(diskStoreName)));
+        will(returnValue(mockFunctionExecutor));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(DescribeDiskStoreFunction.class)));
+        will(returnValue(mockResultCollector));
+        oneOf(mockResultCollector).getResult();
+        will(returnValue(Arrays.asList(new Object())));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockMember, mockFunctionExecutor);
 
     try {
       commands.getDiskStoreDescription(memberId, diskStoreName);
-    }
-    catch (RuntimeException expected) {
-      assertEquals(CliStrings.format(CliStrings.UNEXPECTED_RETURN_TYPE_EXECUTING_COMMAND_ERROR_MESSAGE,
-        Object.class.getName(), CliStrings.DESCRIBE_DISK_STORE), expected.getMessage());
+    } catch (RuntimeException expected) {
+      assertEquals(CliStrings.format(CliStrings.UNEXPECTED_RETURN_TYPE_EXECUTING_COMMAND_ERROR_MESSAGE, Object.class.getName(), CliStrings.DESCRIBE_DISK_STORE), expected.getMessage());
       assertNull(expected.getCause());
       throw expected;
     }
@@ -277,25 +280,22 @@ public class DiskStoreCommandsJUnitTest {
     final DiskStoreDetails diskStoreDetails3 = createDiskStoreDetails("memberTwo", "pdxDiskStore");
     final DiskStoreDetails diskStoreDetails4 = createDiskStoreDetails("memberTwo", "regionDiskStore");
 
-    final List<DiskStoreDetails> expectedDiskStores = Arrays.asList(
-      diskStoreDetails1,
-      diskStoreDetails2,
-      diskStoreDetails3,
-      diskStoreDetails4
-    );
+    final List<DiskStoreDetails> expectedDiskStores = Arrays.asList(diskStoreDetails1, diskStoreDetails2, diskStoreDetails3, diskStoreDetails4);
 
     final List<Set<DiskStoreDetails>> results = new ArrayList<Set<DiskStoreDetails>>();
 
     results.add(CollectionUtils.asSet(diskStoreDetails4, diskStoreDetails3));
     results.add(CollectionUtils.asSet(diskStoreDetails1, diskStoreDetails2));
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(ListDiskStoresFunction.class)));
-      will(returnValue(mockResultCollector));
-      oneOf(mockResultCollector).getResult();
-      will(returnValue(results));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(ListDiskStoresFunction.class)));
+        will(returnValue(mockResultCollector));
+        oneOf(mockResultCollector).getResult();
+        will(returnValue(results));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockDistributedMember, mockFunctionExecutor);
 
@@ -313,17 +313,18 @@ public class DiskStoreCommandsJUnitTest {
 
     final Execution mockFunctionExecutor = mockContext.mock(Execution.class, "Function Executor");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(ListDiskStoresFunction.class)));
-      will(throwException(new RuntimeException("expected")));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(ListDiskStoresFunction.class)));
+        will(throwException(new RuntimeException("expected")));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockDistributedMember, mockFunctionExecutor);
 
     try {
       commands.getDiskStoreListing(commands.getNormalMembers(mockCache));
-    }
-    catch (RuntimeException expected) {
+    } catch (RuntimeException expected) {
       assertEquals("expected", expected.getMessage());
       throw expected;
     }
@@ -348,13 +349,15 @@ public class DiskStoreCommandsJUnitTest {
     results.add(CollectionUtils.asSet(diskStoreDetails));
     results.add(new FunctionInvocationTargetException("expected"));
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(ListDiskStoresFunction.class)));
-      will(returnValue(mockResultCollector));
-      oneOf(mockResultCollector).getResult();
-      will(returnValue(results));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(ListDiskStoresFunction.class)));
+        will(returnValue(mockResultCollector));
+        oneOf(mockResultCollector).getResult();
+        will(returnValue(results));
+      }
+    });
 
     final DiskStoreCommands commands = createDiskStoreCommands(mockCache, mockDistributedMember, mockFunctionExecutor);
 
@@ -393,7 +396,7 @@ public class DiskStoreCommandsJUnitTest {
       Assert.assertNotNull(members);
       return this.functionExecutor;
     }
-    
+
     @Override
     protected Set<DistributedMember> getNormalMembers(final Cache cache) {
       assertSame(getCache(), cache);

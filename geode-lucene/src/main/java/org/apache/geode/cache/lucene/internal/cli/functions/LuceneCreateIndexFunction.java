@@ -41,7 +41,6 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
-
 /**
  * The LuceneCreateIndexFunction class is a function used to create Lucene indexes.
  * </p>
@@ -76,9 +75,9 @@ public class LuceneCreateIndexFunction extends FunctionAdapter implements Intern
 
       if (analyzerName == null || analyzerName.length == 0) {
         service.createIndex(indexInfo.getIndexName(), indexInfo.getRegionPath(), fields);
-      }
-      else {
-        if (analyzerName.length != fields.length) throw new Exception("Mismatch in lengths of fields and analyzers");
+      } else {
+        if (analyzerName.length != fields.length)
+          throw new Exception("Mismatch in lengths of fields and analyzers");
         Map<String, Analyzer> fieldAnalyzer = new HashMap<>();
         for (int i = 0; i < fields.length; i++) {
           Analyzer analyzer = toAnalyzer(analyzerName[i]);
@@ -90,19 +89,16 @@ public class LuceneCreateIndexFunction extends FunctionAdapter implements Intern
       //TODO - update cluster configuration by returning a valid XmlEntity
       XmlEntity xmlEntity = null;
       context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
-    }
-    catch (Exception e) {
-      String exceptionMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(),
-        e.getMessage());
+    } catch (Exception e) {
+      String exceptionMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, e.getMessage()));
     }
   }
 
-  private Analyzer toAnalyzer(String className)
-  {
-    if (className==null)
-      className=StandardAnalyzer.class.getCanonicalName();
-    else if (StringUtils.trim(className).equals("") | StringUtils.trim(className).equals("null") )
+  private Analyzer toAnalyzer(String className) {
+    if (className == null)
+      className = StandardAnalyzer.class.getCanonicalName();
+    else if (StringUtils.trim(className).equals("") | StringUtils.trim(className).equals("null"))
       className = StandardAnalyzer.class.getCanonicalName();
 
     Class<? extends Analyzer> clazz = CliUtil.forName(className, LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER);

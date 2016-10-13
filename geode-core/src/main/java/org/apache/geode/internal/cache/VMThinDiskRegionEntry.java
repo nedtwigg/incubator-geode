@@ -17,7 +17,6 @@
 
 package org.apache.geode.internal.cache;
 
-
 //import org.apache.geode.cache.*;
 //import org.apache.geode.distributed.internal.DM;
 
@@ -31,9 +30,7 @@ package org.apache.geode.internal.cache;
  *
  *
  */
-public abstract class VMThinDiskRegionEntry
-  extends AbstractOplogDiskRegionEntry
-{
+public abstract class VMThinDiskRegionEntry extends AbstractOplogDiskRegionEntry {
   protected VMThinDiskRegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }

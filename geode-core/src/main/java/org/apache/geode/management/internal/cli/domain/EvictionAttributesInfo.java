@@ -27,74 +27,72 @@ import org.apache.geode.cache.EvictionAttributes;
 import org.apache.geode.management.internal.cli.util.RegionAttributesDefault;
 import org.apache.geode.management.internal.cli.util.RegionAttributesNames;
 
-public class EvictionAttributesInfo implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long	serialVersionUID	= 1L;
-	private String evictionAction = "";
-	private String evictionAlgorithm = "";
-	private int  evictionMaxValue = 0;
-	private Map<String, String> nonDefaultAttributes;
-	
-	public EvictionAttributesInfo(EvictionAttributes ea) {
-		EvictionAction evictAction = ea.getAction();
-		
-		if (evictAction != null) {
-				evictionAction = evictAction.toString();
-		}
-		EvictionAlgorithm evictionAlgo = ea.getAlgorithm();
-		if (evictionAlgo != null){
-			evictionAlgorithm = evictionAlgo.toString();
-		}
-		if (!EvictionAlgorithm.LRU_HEAP.equals(evictionAlgo)) {
-	    evictionMaxValue = ea.getMaximum();
+public class EvictionAttributesInfo implements Serializable {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+  private String evictionAction = "";
+  private String evictionAlgorithm = "";
+  private int evictionMaxValue = 0;
+  private Map<String, String> nonDefaultAttributes;
+
+  public EvictionAttributesInfo(EvictionAttributes ea) {
+    EvictionAction evictAction = ea.getAction();
+
+    if (evictAction != null) {
+      evictionAction = evictAction.toString();
     }
-	}
+    EvictionAlgorithm evictionAlgo = ea.getAlgorithm();
+    if (evictionAlgo != null) {
+      evictionAlgorithm = evictionAlgo.toString();
+    }
+    if (!EvictionAlgorithm.LRU_HEAP.equals(evictionAlgo)) {
+      evictionMaxValue = ea.getMaximum();
+    }
+  }
 
-	public String getEvictionAction() {
-		return evictionAction;
-	}
+  public String getEvictionAction() {
+    return evictionAction;
+  }
 
-	public String getEvictionAlgorithm() {
-		return evictionAlgorithm;
-	}
+  public String getEvictionAlgorithm() {
+    return evictionAlgorithm;
+  }
 
-	public int getEvictionMaxValue() {
-		return evictionMaxValue;
-	}
-	
-	public boolean equals(Object obj) {
-	  if (obj instanceof EvictionAttributesInfo) {
-	    EvictionAttributesInfo their = (EvictionAttributesInfo) obj;
-	    return this.evictionAction.equals(their.getEvictionAction()) 
-	          && this.evictionAlgorithm.equals(their.getEvictionAlgorithm())
-	          && this.evictionMaxValue == their.getEvictionMaxValue();
-	  } else {
-	    return false;
-	  }
-	}
-	
-	public int hashCode() {
-	  return 42; // any arbitrary constant will do
-	  
-	}
-	
-	public Map<String, String> getNonDefaultAttributes() {
-	  if (nonDefaultAttributes == null) {
-	    nonDefaultAttributes = new HashMap<String, String>();
-	  }
-	  
-	  if (this.evictionMaxValue != RegionAttributesDefault.EVICTION_MAX_VALUE) {
-	    nonDefaultAttributes.put(RegionAttributesNames.EVICTION_MAX_VALUE, Long.toString(evictionMaxValue));
-	  }
-	  if (this.evictionAction != null && !this.evictionAction.equals(RegionAttributesDefault.EVICTION_ACTION)) {
-	    nonDefaultAttributes.put(RegionAttributesNames.EVICTION_ACTION, this.evictionAction);
-	  }
-	  if (this.evictionAlgorithm != null && !this.evictionAlgorithm.equals(RegionAttributesDefault.EVICTION_ALGORITHM)) {
-	    nonDefaultAttributes.put(RegionAttributesNames.EVICTION_ALGORITHM, this.evictionAlgorithm);
-	  }
-	  return nonDefaultAttributes;
-	}
+  public int getEvictionMaxValue() {
+    return evictionMaxValue;
+  }
+
+  public boolean equals(Object obj) {
+    if (obj instanceof EvictionAttributesInfo) {
+      EvictionAttributesInfo their = (EvictionAttributesInfo) obj;
+      return this.evictionAction.equals(their.getEvictionAction()) && this.evictionAlgorithm.equals(their.getEvictionAlgorithm()) && this.evictionMaxValue == their.getEvictionMaxValue();
+    } else {
+      return false;
+    }
+  }
+
+  public int hashCode() {
+    return 42; // any arbitrary constant will do
+
+  }
+
+  public Map<String, String> getNonDefaultAttributes() {
+    if (nonDefaultAttributes == null) {
+      nonDefaultAttributes = new HashMap<String, String>();
+    }
+
+    if (this.evictionMaxValue != RegionAttributesDefault.EVICTION_MAX_VALUE) {
+      nonDefaultAttributes.put(RegionAttributesNames.EVICTION_MAX_VALUE, Long.toString(evictionMaxValue));
+    }
+    if (this.evictionAction != null && !this.evictionAction.equals(RegionAttributesDefault.EVICTION_ACTION)) {
+      nonDefaultAttributes.put(RegionAttributesNames.EVICTION_ACTION, this.evictionAction);
+    }
+    if (this.evictionAlgorithm != null && !this.evictionAlgorithm.equals(RegionAttributesDefault.EVICTION_ALGORITHM)) {
+      nonDefaultAttributes.put(RegionAttributesNames.EVICTION_ALGORITHM, this.evictionAlgorithm);
+    }
+    return nonDefaultAttributes;
+  }
 }

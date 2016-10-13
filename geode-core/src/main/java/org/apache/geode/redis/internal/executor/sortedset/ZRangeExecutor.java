@@ -62,7 +62,6 @@ public class ZRangeExecutor extends SortedSetExecutor implements Extendable {
       return;
     }
 
-
     int start;
     int stop;
     int sSetSize = keyRegion.size();
@@ -104,7 +103,7 @@ public class ZRangeExecutor extends SortedSetExecutor implements Extendable {
     else
       query = getQuery(key, SortedSetQuery.ZREVRANGE, context);
 
-    Object[] params = {stop + 1};
+    Object[] params = { stop + 1 };
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 

@@ -70,7 +70,7 @@ public class HABug36738DUnitTest extends JUnit4DistributedTestCase {
   @Override
   public final void preTearDown() throws Exception {
     disconnectAllFromDS();
-    invokeInEveryVM( () -> cache = null );
+    invokeInEveryVM(() -> cache = null);
   }
 
   @Test
@@ -79,7 +79,7 @@ public class HABug36738DUnitTest extends JUnit4DistributedTestCase {
     final VM server2 = Host.getHost(0).getVM(1);
 
     server1.invoke(() -> createServerCacheWithHAAndRegion());
-    await().atMost(TEN_SECONDS).until( () -> regionExists(server1, HAREGION_NAME) );
+    await().atMost(TEN_SECONDS).until(() -> regionExists(server1, HAREGION_NAME));
     server1.invoke(() -> checkRegionQueueSize());
 
     server2.invoke(() -> createServerCacheWithHA());
@@ -101,15 +101,7 @@ public class HABug36738DUnitTest extends JUnit4DistributedTestCase {
     cache.createVMRegion(REGION_NAME, factory.createRegionAttributes());
 
     for (int i = 0; i < COUNT; i++) {
-      ClientUpdateMessage clientMessage = new ClientUpdateMessageImpl(
-              EnumListenerEvent.AFTER_UPDATE,
-              (LocalRegion)this.haRegion,
-              null,
-              ("value" + i).getBytes(),
-              (byte)0x01,
-              null,
-              new ClientProxyMembershipID(),
-              new EventID(("memberID" + i).getBytes(), i, i));
+      ClientUpdateMessage clientMessage = new ClientUpdateMessageImpl(EnumListenerEvent.AFTER_UPDATE, (LocalRegion) this.haRegion, null, ("value" + i).getBytes(), (byte) 0x01, null, new ClientProxyMembershipID(), new EventID(("memberID" + i).getBytes(), i, i));
 
       this.haRegion.put(i, clientMessage);
     }

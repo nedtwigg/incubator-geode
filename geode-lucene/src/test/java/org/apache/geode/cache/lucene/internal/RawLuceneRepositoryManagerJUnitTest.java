@@ -47,12 +47,12 @@ public class RawLuceneRepositoryManagerJUnitTest extends PartitionedRepositoryMa
 
   @After
   public void tearDown() {
-    ((RawLuceneRepositoryManager)repoManager).close();
+    ((RawLuceneRepositoryManager) repoManager).close();
   }
-  
+
   protected void createIndexAndRepoManager() {
     LuceneServiceImpl.luceneIndexFactory = new LuceneRawIndexFactory();
-    
+
     indexStats = Mockito.mock(LuceneIndexStats.class);
     indexForPR = Mockito.mock(LuceneRawIndex.class);
     when(indexForPR.getIndexStats()).thenReturn(indexStats);
@@ -62,12 +62,12 @@ public class RawLuceneRepositoryManagerJUnitTest extends PartitionedRepositoryMa
     when(indexForPR.withPersistence()).thenReturn(true);
     repoManager = new RawLuceneRepositoryManager(indexForPR, serializer);
   }
-  
+
   @Test
   public void testIndexRepositoryFactoryShouldBeRaw() {
     assertTrue(RawLuceneRepositoryManager.indexRepositoryFactory instanceof RawIndexRepositoryFactory);
   }
-  
+
   @Override
   protected void checkRepository(IndexRepositoryImpl repo0, int bucketId) {
     IndexWriter writer0 = repo0.getWriter();
@@ -86,11 +86,11 @@ public class RawLuceneRepositoryManagerJUnitTest extends PartitionedRepositoryMa
     dataBuckets.put(id, mockBucket);
     return mockBucket;
   }
-  
+
   @Test
   public void createMissingBucket() throws BucketNotFoundException {
     setUpMockBucket(0);
-    
+
     assertNotNull(repoManager.getRepository(userRegion, 0, null));
   }
 

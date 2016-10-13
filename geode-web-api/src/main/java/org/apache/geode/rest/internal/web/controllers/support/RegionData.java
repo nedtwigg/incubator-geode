@@ -76,16 +76,16 @@ public class RegionData<T> implements Iterable<T>, JsonSerializable {
     return regionNamePath;
   }
 
- public final void setRegionNamePath(final String regionNamePath) {
-   Assert.hasText(regionNamePath, "The name or path of the Region must be specified!");
-   this.regionNamePath = regionNamePath;
- }
+  public final void setRegionNamePath(final String regionNamePath) {
+    Assert.hasText(regionNamePath, "The name or path of the Region must be specified!");
+    this.regionNamePath = regionNamePath;
+  }
 
   public RegionData<T> add(final T data) {
     //We are adding null data into the response
     //Assert.notNull(data, String.format("The data to add to Region (%1$s) cannot be null!", getRegionNamePath()));
     //if(data != null) {
-      this.data.add(data);
+    this.data.add(data);
     //}
     return this;
   }
@@ -137,33 +137,27 @@ public class RegionData<T> implements Iterable<T>, JsonSerializable {
   protected String convertToJson(final PdxInstance pdxObj) {
     return (pdxObj != null ? JSONFormatter.toJSON(pdxObj) : null);
   }
-  
-  public void serialize(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider)
-    throws IOException
-  {
- 
+
+  public void serialize(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider) throws IOException {
+
     //if(this!=null && this.size() > 1) {
     jsonGenerator.writeStartObject();
     jsonGenerator.writeArrayFieldStart(getRegionNamePath());
     //}
-    
+
     for (T element : this) {
       JsonWriter.writeValueAsJson(jsonGenerator, element, null);
     }
-    
+
     //if(this!=null && this.size() > 1) {
     jsonGenerator.writeEndArray();
     jsonGenerator.writeEndObject();
     //}   
   }
 
-  public void serializeWithType(final JsonGenerator jsonGenerator,
-                               final SerializerProvider serializerProvider,
-                               final TypeSerializer typeSerializer)
-   throws IOException
-  {
+  public void serializeWithType(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider, final TypeSerializer typeSerializer) throws IOException {
     // NOTE serializing "type" meta-data is not necessary in this case; just call serialize.
     serialize(jsonGenerator, serializerProvider);
   }
-  
+
 }

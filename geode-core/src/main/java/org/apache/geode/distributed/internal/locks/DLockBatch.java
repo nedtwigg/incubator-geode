@@ -25,21 +25,20 @@ import org.apache.geode.distributed.internal.membership.*;
  *
  */
 public interface DLockBatch {
-  
+
   /** Returns the originator (owner) of this batch of locks */
   public InternalDistributedMember getOwner();
-  
+
   /** Returns the identity object of the batch; like a hash map key */
   public DLockBatchId getBatchId();
-  
+
   /** Returns the list of TXRegionLockRequest instances */
   public List getReqs();
-  
+
   /** 
    * Specifies the lock grantor id that granted this lock batch.
    * @param lockGrantorId the lock grantor id that granted this lock batch
    */
   public void grantedBy(LockGrantorId lockGrantorId);
-  
-}
 
+}

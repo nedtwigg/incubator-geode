@@ -41,33 +41,28 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  * @since GemFire     3.5
  *
  */
-public class ConfigurationParameterJmxImpl
-extends org.apache.geode.admin.internal.ConfigurationParameterImpl
-implements Serializable {
+public class ConfigurationParameterJmxImpl extends org.apache.geode.admin.internal.ConfigurationParameterImpl implements Serializable {
 
   private static final long serialVersionUID = -7822171853906772375L;
   private boolean deserialized = false;
-  
+
   // -------------------------------------------------------------------------
   //   Constructor(s)
   // -------------------------------------------------------------------------
-  
-  protected ConfigurationParameterJmxImpl(String name,
-                                          String description,
-                                          Object value,
-                                          Class type,
-                                          boolean userModifiable) {
+
+  protected ConfigurationParameterJmxImpl(String name, String description, Object value, Class type, boolean userModifiable) {
     super(name, description, value, type, userModifiable);
   }
-  
-  protected ConfigurationParameterJmxImpl(String name,
-                                          Object value) {
+
+  protected ConfigurationParameterJmxImpl(String name, Object value) {
     super(name, value);
   }
-  
+
   /** Constructor to allow serialization */
-  protected ConfigurationParameterJmxImpl() { super(); }
-  
+  protected ConfigurationParameterJmxImpl() {
+    super();
+  }
+
   @Override
   public void setValue(Object value) throws UnmodifiableConfigurationException {
     if (deserialized) {
@@ -97,73 +92,73 @@ implements Serializable {
       throw e;
     }
   }
-  
+
   // -------------------------------------------------------------------------
   //   HACK
   // -------------------------------------------------------------------------
   public void setJmxValue(Integer value) throws UnmodifiableConfigurationException {
     setValue(value);
   }
+
   public void setJmxValue(String value) throws UnmodifiableConfigurationException {
     setValue(value);
   }
+
   public void setJmxValue(java.io.File value) throws UnmodifiableConfigurationException {
     setValue(value);
   }
+
   public void setJmxValue(Boolean value) throws UnmodifiableConfigurationException {
     setValue(value);
   }
-  
+
   public Class getJmxValueType() {
     if (isInetAddress() || isFile() || isOctal()) {
       return java.lang.String.class;
     }
     return getValueType();
   }
-  
+
   public Object getJmxValue() {
     if (isInetAddress() || isFile() || isOctal()) {
       return getValueAsString();
     }
     return getValue();
   }
-  
+
   /** 
    * Override writeObject which is used in serialization. This class is
    * serialized when JMX client acquires MBeanInfo for ConfigurationParameter
    * MBean. Super class is not serializable.
    */
-  private void writeObject(java.io.ObjectOutputStream out)
-  throws IOException {
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
     out.writeObject(this.name);
     out.writeObject(this.description);
     out.writeObject(this.value);
     out.writeObject(this.type);
     out.writeBoolean(this.userModifiable);
   }
-  
+
   /** 
    * Override readObject which is used in serialization. Customize 
    * serialization of this exception to avoid escape of InternalRole
    * which is not Serializable. 
    */
-  private void readObject(java.io.ObjectInputStream in)
-  throws IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
     String inName = (String) in.readObject();
     String inDescription = (String) in.readObject();
     Object inValue = in.readObject();
     Class inClass = (Class) in.readObject();
     boolean inUserModifiable = in.readBoolean();
-    
+
     Assert.assertTrue(inName != null);
     Assert.assertTrue(inDescription != null);
     Assert.assertTrue(inValue != null);
     Assert.assertTrue(inClass != null);
-    
+
     this.deserialized = true;
     this.name = inName;
     setInternalState(inDescription, inValue, inClass, inUserModifiable);
   }
-     
-}
 
+}

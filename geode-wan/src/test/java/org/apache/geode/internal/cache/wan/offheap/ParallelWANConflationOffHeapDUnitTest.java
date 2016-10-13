@@ -29,8 +29,7 @@ import org.apache.geode.internal.cache.wan.parallel.ParallelWANConflationDUnitTe
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class ParallelWANConflationOffHeapDUnitTest extends
-    ParallelWANConflationDUnitTest {
+public class ParallelWANConflationOffHeapDUnitTest extends ParallelWANConflationDUnitTest {
 
   public ParallelWANConflationOffHeapDUnitTest() {
     super();

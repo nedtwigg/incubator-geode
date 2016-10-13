@@ -29,7 +29,6 @@ import org.apache.geode.pdx.PdxWriter;
  * @since GemFire 8.0
  */
 
-
 public class Item implements PdxSerializable {
 
   private Long itemNo;
@@ -93,7 +92,7 @@ public class Item implements PdxSerializable {
     this.unitPrice = uprice;
     this.totalPrice = tprice;
   }
-  
+
   @Override
   public boolean equals(final Object obj) {
     if (obj == this) {
@@ -106,11 +105,7 @@ public class Item implements PdxSerializable {
 
     final Item that = (Item) obj;
 
-    return (ObjectUtils.equals(this.getItemNo(), that.getItemNo())
-        && ObjectUtils.equals(this.getDescription(), that.getDescription())
-        && ObjectUtils.equals(this.getQuantity(), that.getQuantity())
-        && ObjectUtils.equals(this.getQuantity(), that.getUnitPrice())
-        && ObjectUtils.equals(this.getQuantity(), that.getTotalPrice()));
+    return (ObjectUtils.equals(this.getItemNo(), that.getItemNo()) && ObjectUtils.equals(this.getDescription(), that.getDescription()) && ObjectUtils.equals(this.getQuantity(), that.getQuantity()) && ObjectUtils.equals(this.getQuantity(), that.getUnitPrice()) && ObjectUtils.equals(this.getQuantity(), that.getTotalPrice()));
   }
 
   @Override
@@ -153,7 +148,7 @@ public class Item implements PdxSerializable {
     quantity = reader.readInt("quantity");
     unitPrice = reader.readFloat("unitPrice");
     totalPrice = reader.readFloat("totalPrice");
-    
+
   }
 
 }

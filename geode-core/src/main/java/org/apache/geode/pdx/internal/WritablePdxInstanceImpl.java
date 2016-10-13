@@ -25,8 +25,7 @@ import org.apache.geode.pdx.PdxFieldDoesNotExistException;
 import org.apache.geode.pdx.PdxFieldTypeMismatchException;
 import org.apache.geode.pdx.WritablePdxInstance;
 
-public class WritablePdxInstanceImpl extends PdxInstanceImpl implements
-    WritablePdxInstance {
+public class WritablePdxInstanceImpl extends PdxInstanceImpl implements WritablePdxInstance {
   private static final long serialVersionUID = 7398999150097596214L;
   private static final Object NULL_TOKEN = new Object();
   private Object[] dirtyFields = null;
@@ -45,6 +44,7 @@ public class WritablePdxInstanceImpl extends PdxInstanceImpl implements
     this.dirtyFields[f.getFieldIndex()] = value;
     clearCachedState();
   }
+
   /**
    * Flush pending writes if the given field is dirty.
    */
@@ -60,7 +60,7 @@ public class WritablePdxInstanceImpl extends PdxInstanceImpl implements
     }
     return new PdxReaderImpl(this);
   }
-  
+
   @Override
   public synchronized Object getCachedObject() {
     return super.getCachedObject();
@@ -88,7 +88,7 @@ public class WritablePdxInstanceImpl extends PdxInstanceImpl implements
       } else {
         writer = new PdxWriterImpl(getPdxType(), os);
       }
-      for (PdxField f: getPdxType().getFields()) {
+      for (PdxField f : getPdxType().getFields()) {
         if (f.isDeleted()) {
           continue;
         }
@@ -233,16 +233,16 @@ public class WritablePdxInstanceImpl extends PdxInstanceImpl implements
     } else {
       switch (f.getFieldType()) {
       case CHAR:
-        value = Character.valueOf((char)0);
+        value = Character.valueOf((char) 0);
         break;
       case BOOLEAN:
         value = Boolean.valueOf(false);
         break;
       case BYTE:
-        value = Byte.valueOf((byte)0);
+        value = Byte.valueOf((byte) 0);
         break;
       case SHORT:
-        value = Short.valueOf((short)0);
+        value = Short.valueOf((short) 0);
         break;
       case INT:
         value = Integer.valueOf(0);
@@ -278,7 +278,7 @@ public class WritablePdxInstanceImpl extends PdxInstanceImpl implements
     }
     dirtyField(f, value);
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     // no need to compare dirtyFields

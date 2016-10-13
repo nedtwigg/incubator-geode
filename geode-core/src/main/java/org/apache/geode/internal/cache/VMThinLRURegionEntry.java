@@ -27,10 +27,8 @@ package org.apache.geode.internal.cache;
  *
  *
  */
-public abstract class VMThinLRURegionEntry extends AbstractLRURegionEntry
-{
+public abstract class VMThinLRURegionEntry extends AbstractLRURegionEntry {
   protected VMThinLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }
 }
-

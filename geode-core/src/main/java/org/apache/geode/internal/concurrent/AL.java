@@ -114,7 +114,7 @@ public interface AL {
    * @return the updated value
    */
   public long addAndGet(long delta);
-  
+
   /**
    * Atomically sets the value to the given updated value
    * if the given value {@code >} the current value.

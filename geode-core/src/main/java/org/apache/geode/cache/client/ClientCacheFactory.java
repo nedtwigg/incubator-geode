@@ -205,8 +205,7 @@ public class ClientCacheFactory {
       {
         String propValue = this.dsProps.getProperty(LOCATORS);
         if (propValue != null && !propValue.equals("")) {
-          throw new IllegalStateException(
-              "On a client cache the locators property must be set to an empty string or not set. It was set to \"" + propValue + "\".");
+          throw new IllegalStateException("On a client cache the locators property must be set to an empty string or not set. It was set to \"" + propValue + "\".");
         }
       }
       this.dsProps.setProperty(MCAST_PORT, "0");

@@ -40,17 +40,14 @@ public class RemoteAlert implements Alert {
   private final String message;
   private final InternalDistributedMember sender;
 
-  public RemoteAlert(GemFireVM manager, int level, Date date, 
-                     String connectionName, String threadName, long tid, 
-                     String msg, String exceptionText, 
-                     InternalDistributedMember sender) {
+  public RemoteAlert(GemFireVM manager, int level, Date date, String connectionName, String threadName, long tid, String msg, String exceptionText, InternalDistributedMember sender) {
     this.manager = manager;
     this.level = level;
     this.date = date;
     this.connectionName = connectionName;
     {
       StringBuffer tmpSourceId = new StringBuffer();
-    
+
       tmpSourceId.append(threadName);
       if (tmpSourceId.length() > 0) {
         tmpSourceId.append(' ');
@@ -70,22 +67,27 @@ public class RemoteAlert implements Alert {
     }
     this.sender = sender;
   }
-  
+
   public int getLevel() {
     return level;
   }
+
   public GemFireVM getGemFireVM() {
     return manager;
   }
+
   public String getConnectionName() {
     return connectionName;
   }
+
   public String getSourceId() {
     return sourceId;
   }
+
   public String getMessage() {
     return message;
   }
+
   public Date getDate() {
     return date;
   }
@@ -147,35 +149,35 @@ public class RemoteAlert implements Alert {
     Assert.assertTrue(!st.hasMoreTokens());
 
     return new Alert() {
-        public int getLevel() {
-          return level;
-        }
+      public int getLevel() {
+        return level;
+      }
 
-        public GemFireVM getGemFireVM() {
-          return null;
-        }
+      public GemFireVM getGemFireVM() {
+        return null;
+      }
 
-        public String getConnectionName() {
-          return connectionName;
-        }
+      public String getConnectionName() {
+        return connectionName;
+      }
 
-        public String getSourceId() {
-          return sourceId;
-        }
+      public String getSourceId() {
+        return sourceId;
+      }
 
-        public String getMessage() {
-          return message;
-        }
+      public String getMessage() {
+        return message;
+      }
 
-        public Date getDate() {
-          return date;
-        }
+      public Date getDate() {
+        return date;
+      }
 
-        public InternalDistributedMember getSender() {
-          /* Not implemented, currently this is used only for testing purpose */
-          return null;
-        }
-      };
+      public InternalDistributedMember getSender() {
+        /* Not implemented, currently this is used only for testing purpose */
+        return null;
+      }
+    };
   }
 
   @Override
@@ -184,7 +186,6 @@ public class RemoteAlert implements Alert {
     java.io.StringWriter sw = new java.io.StringWriter();
     PrintWriter pw = new PrintWriter(sw);
 
-      
     pw.print('[');
     pw.print(LogWriterImpl.levelToString(level));
     pw.print(' ');
@@ -199,7 +200,8 @@ public class RemoteAlert implements Alert {
     pw.close();
     try {
       sw.close();
-    } catch (java.io.IOException ignore) {}
+    } catch (java.io.IOException ignore) {
+    }
     return sw.toString();
   }
 }

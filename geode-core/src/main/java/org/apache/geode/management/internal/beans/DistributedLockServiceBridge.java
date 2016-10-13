@@ -72,8 +72,7 @@ public class DistributedLockServiceBridge {
    * @param proxy
    *          reference to the proxy
    */
-  public DistributedLockServiceBridge(ObjectName objectName,
-      LockServiceMXBean proxy, FederationComponent newState) {
+  public DistributedLockServiceBridge(ObjectName objectName, LockServiceMXBean proxy, FederationComponent newState) {
     this.mapOfProxy = new ConcurrentHashMap<ObjectName, LockServiceMXBean>();
     this.listHeldLock = new ArrayList<String>();
     this.threadsHoldingLock = new HashMap<String, String>();
@@ -104,8 +103,7 @@ public class DistributedLockServiceBridge {
    *          reference to the proxy
    * @return true if no proxies left for this aggregator to work on
    */
-  public boolean removeProxyFromMap(ObjectName objectName,
-      LockServiceMXBean proxy) {
+  public boolean removeProxyFromMap(ObjectName objectName, LockServiceMXBean proxy) {
     if (mapOfProxy != null) {
       mapOfProxy.remove(objectName);
       setSize = mapOfProxy.values().size();
@@ -117,8 +115,6 @@ public class DistributedLockServiceBridge {
     }
     return false;
   }
-
-  
 
   /**
    * 
@@ -210,12 +206,10 @@ public class DistributedLockServiceBridge {
     threadsHoldingLock.clear();
     if (it != null) {
       while (it.hasNext()) {
-        Map<String, String> threadLockMap = it.next()
-            .listThreadsHoldingLock();
+        Map<String, String> threadLockMap = it.next().listThreadsHoldingLock();
         if (threadLockMap != null) {
           threadsHoldingLock.putAll(threadLockMap);
         }
-
 
       }
 

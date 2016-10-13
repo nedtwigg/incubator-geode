@@ -44,8 +44,7 @@ public class HostName {
     String hostname;
     try {
       Process process = new ProcessBuilder(HOSTNAME).start();
-      try (InputStream stream = process.getInputStream();
-           Scanner s = new Scanner(stream).useDelimiter(START_OF_STRING);) {
+      try (InputStream stream = process.getInputStream(); Scanner s = new Scanner(stream).useDelimiter(START_OF_STRING);) {
         hostname = s.hasNext() ? s.next().trim() : UNKNOWN;
       }
     } catch (IOException hostnameBinaryNotFound) {

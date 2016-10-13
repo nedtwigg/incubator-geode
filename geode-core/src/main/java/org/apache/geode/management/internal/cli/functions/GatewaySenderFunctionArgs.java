@@ -18,7 +18,6 @@ package org.apache.geode.management.internal.cli.functions;
 
 import java.io.Serializable;
 
-
 public class GatewaySenderFunctionArgs implements Serializable {
   private static final long serialVersionUID = -5158224572470173267L;
 
@@ -41,15 +40,9 @@ public class GatewaySenderFunctionArgs implements Serializable {
   //array of fully qualified class names of the filters
   private final String[] gatewayEventFilters;
   private final String[] gatewayTransportFilters;
-  
-  public GatewaySenderFunctionArgs(String id,
-      Integer remoteDSId, Boolean parallel, Boolean manualStart, Integer socketBufferSize, 
-      Integer socketReadTimeout, Boolean enableBatchConflation, Integer batchSize, 
-      Integer batchTimeInterval, Boolean enablePersistence, String diskStoreName, 
-      Boolean diskSynchronous, Integer maxQueueMemory, Integer alertThreshold, 
-      Integer dispatcherThreads, String orderPolicy, String[] gatewayEventFilters, 
-      String[] gatewayTransportFilters) {
-    
+
+  public GatewaySenderFunctionArgs(String id, Integer remoteDSId, Boolean parallel, Boolean manualStart, Integer socketBufferSize, Integer socketReadTimeout, Boolean enableBatchConflation, Integer batchSize, Integer batchTimeInterval, Boolean enablePersistence, String diskStoreName, Boolean diskSynchronous, Integer maxQueueMemory, Integer alertThreshold, Integer dispatcherThreads, String orderPolicy, String[] gatewayEventFilters, String[] gatewayTransportFilters) {
+
     this.id = id;
     this.remoteDSId = remoteDSId;
     this.parallel = parallel;
@@ -69,75 +62,75 @@ public class GatewaySenderFunctionArgs implements Serializable {
     this.gatewayEventFilters = gatewayEventFilters;
     this.gatewayTransportFilters = gatewayTransportFilters;
   }
-  
+
   public String getId() {
     return this.id;
   }
-  
+
   public Integer getRemoteDistributedSystemId() {
     return this.remoteDSId;
   }
-  
+
   public Boolean isParallel() {
     return this.parallel;
   }
-  
+
   public Boolean isManualStart() {
     return this.manualStart;
   }
-  
+
   public Integer getSocketBufferSize() {
     return this.socketBufferSize;
   }
-  
+
   public Integer getSocketReadTimeout() {
     return this.socketReadTimeout;
   }
-  
+
   public Boolean isBatchConflationEnabled() {
     return this.enableBatchConflation;
   }
-  
+
   public Integer getBatchSize() {
     return this.batchSize;
   }
-  
+
   public Integer getBatchTimeInterval() {
     return this.batchTimeInterval;
   }
-  
+
   public Boolean isPersistenceEnabled() {
     return this.enablePersistence;
   }
-  
+
   public String getDiskStoreName() {
     return this.diskStoreName;
   }
-  
+
   public Boolean isDiskSynchronous() {
     return this.diskSynchronous;
   }
-  
+
   public Integer getMaxQueueMemory() {
     return this.maxQueueMemory;
   }
-  
+
   public Integer getAlertThreshold() {
     return this.alertThreshold;
   }
-  
+
   public Integer getDispatcherThreads() {
     return this.dispatcherThreads;
   }
-  
+
   public String getOrderPolicy() {
     return this.orderPolicy;
   }
-  
+
   public String[] getGatewayEventFilter() {
     return this.gatewayEventFilters;
   }
-  
+
   public String[] getGatewayTransportFilter() {
     return this.gatewayTransportFilters;
   }

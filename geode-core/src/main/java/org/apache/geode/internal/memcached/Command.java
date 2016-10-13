@@ -61,6 +61,7 @@ public enum Command {
 
   SET {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -71,6 +72,7 @@ public enum Command {
   },
   SETQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -81,6 +83,7 @@ public enum Command {
   },
   ADD {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -91,6 +94,7 @@ public enum Command {
   },
   ADDQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -101,6 +105,7 @@ public enum Command {
   },
   REPLACE {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -111,6 +116,7 @@ public enum Command {
   },
   REPLACEQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -121,6 +127,7 @@ public enum Command {
   },
   APPEND {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -131,6 +138,7 @@ public enum Command {
   },
   APPENDQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -141,6 +149,7 @@ public enum Command {
   },
   PREPEND {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -151,6 +160,7 @@ public enum Command {
   },
   PREPENDQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -161,6 +171,7 @@ public enum Command {
   },
   CAS {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -171,6 +182,7 @@ public enum Command {
   },
   GET {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -181,6 +193,7 @@ public enum Command {
   },
   GETS {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -191,6 +204,7 @@ public enum Command {
   },
   GETQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -201,6 +215,7 @@ public enum Command {
   },
   GETK {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -211,6 +226,7 @@ public enum Command {
   },
   GETKQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -221,6 +237,7 @@ public enum Command {
   },
   DELETE {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -231,6 +248,7 @@ public enum Command {
   },
   DELETEQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -241,6 +259,7 @@ public enum Command {
   },
   INCR {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -251,6 +270,7 @@ public enum Command {
   },
   INCRQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -261,6 +281,7 @@ public enum Command {
   },
   DECR {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -271,6 +292,7 @@ public enum Command {
   },
   DECRQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -281,6 +303,7 @@ public enum Command {
   },
   STATS {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -291,6 +314,7 @@ public enum Command {
   },
   FLUSH_ALL {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -301,6 +325,7 @@ public enum Command {
   },
   FLUSH_ALLQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -311,6 +336,7 @@ public enum Command {
   },
   VERSION {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -321,6 +347,7 @@ public enum Command {
   },
   VERBOSITY {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -331,6 +358,7 @@ public enum Command {
   },
   QUIT {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -341,6 +369,7 @@ public enum Command {
   },
   QUITQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -351,6 +380,7 @@ public enum Command {
   },
   NOOP {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -361,6 +391,7 @@ public enum Command {
   },
   TOUCH {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -371,6 +402,7 @@ public enum Command {
   },
   GAT {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -381,6 +413,7 @@ public enum Command {
   },
   GATQ {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -391,6 +424,7 @@ public enum Command {
   },
   NOT_SUPPORTED {
     private CommandProcessor processor;
+
     @Override
     public CommandProcessor getCommandProcessor() {
       if (processor == null) {
@@ -398,7 +432,7 @@ public enum Command {
       }
       return processor;
     }
-      
+
   };
 
   /**
@@ -409,11 +443,11 @@ public enum Command {
 
   public static String buffertoString(ByteBuffer header) {
     StringBuilder str = new StringBuilder("\n0: ");
-    for (int i=0; i<header.limit(); i++) {
-      str.append(byteToHex(header.get(i))+" | ");
+    for (int i = 0; i < header.limit(); i++) {
+      str.append(byteToHex(header.get(i)) + " | ");
       if ((i + 1) % 4 == 0) {
         str.append("\n");
-        str.append((i+1)+": ");
+        str.append((i + 1) + ": ");
       }
     }
     return str.toString();
@@ -490,11 +524,8 @@ public enum Command {
 
   static public String byteToHex(byte b) {
     // Returns hex String representation of byte b
-    char hexDigit[] = {
-       '0', '1', '2', '3', '4', '5', '6', '7',
-       '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-    };
+    char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
     char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
     return "0x" + new String(array);
- }
+  }
 }

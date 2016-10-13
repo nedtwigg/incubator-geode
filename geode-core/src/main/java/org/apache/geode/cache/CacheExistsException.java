@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache;
 
-
 /** Thrown when attempting to create a {@link Cache} if one already exists.
  *
  *
@@ -25,7 +24,7 @@ package org.apache.geode.cache;
  * @since GemFire 3.0
  */
 public class CacheExistsException extends CacheException {
-private static final long serialVersionUID = 4090002289325418100L;
+  private static final long serialVersionUID = 4090002289325418100L;
 
   /** The <code>Cache</code> that already exists */
   private final transient Cache cache;
@@ -40,7 +39,7 @@ private static final long serialVersionUID = 4090002289325418100L;
     super(msg);
     this.cache = cache;
   }
-  
+
   /**
    * Constructs an instance of <code>CacheExistsException</code> with the specified detail message
    * and cause.

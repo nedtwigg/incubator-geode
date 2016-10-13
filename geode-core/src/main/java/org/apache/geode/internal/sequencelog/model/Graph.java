@@ -35,7 +35,7 @@ import java.util.TreeMap;
 public class Graph {
 
   private GraphID id;
-  
+
   private Set<Edge> edges = new HashSet<Edge>();
   //A map used to find vertices by location id and timestamp.
   //locationId-> map(timestamp->vertex)
@@ -53,37 +53,36 @@ public class Graph {
    * @param dest
    * @param isFromPattern 
    */
-  public void addEdge(long timestamp, String edgeName, String state, String source,
-      String dest, boolean isFromPattern) {
+  public void addEdge(long timestamp, String edgeName, String state, String source, String dest, boolean isFromPattern) {
 
     Vertex destVertex = new Vertex(this, dest, state, timestamp);
-    SortedMap<Long, Vertex> map  = this.indexedVertices.get(dest);
-    if(map == null) {
+    SortedMap<Long, Vertex> map = this.indexedVertices.get(dest);
+    if (map == null) {
       map = new TreeMap<Long, Vertex>();
       this.indexedVertices.put(dest, map);
     }
-    
+
     //If this edge is being added by a pattern event, only
     //add the edge if the destination changes state as a result
     //of this edge. This cuts down on noise in the graph.
-    if(isFromPattern) {
+    if (isFromPattern) {
       SortedMap<Long, Vertex> headMap = map.headMap(timestamp);
-      if(headMap != null && !headMap.isEmpty()) {
+      if (headMap != null && !headMap.isEmpty()) {
         Long previousKey = headMap.lastKey();
         Vertex previousVertex = headMap.get(previousKey);
-        if(previousVertex.getState().equals(state)) {
+        if (previousVertex.getState().equals(state)) {
           return;
         }
       } else {
         //Super hack here. Don't add a transition from the non existent state to
         //the destroyed state in a lifeline.
-        if(state.equals("destroyed")) {
+        if (state.equals("destroyed")) {
           return;
         }
       }
     }
     map.put(timestamp, destVertex);
-    
+
     edges.add(new Edge(this, timestamp, edgeName, source, destVertex));
   }
 

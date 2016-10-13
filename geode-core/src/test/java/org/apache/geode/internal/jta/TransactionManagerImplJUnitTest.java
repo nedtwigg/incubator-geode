@@ -39,17 +39,17 @@ public class TransactionManagerImplJUnitTest {
 
   private static DistributedSystem ds;
   private static TransactionManagerImpl tm;
-  
+
   protected UserTransaction utx;
-  
+
   @BeforeClass
-  public static void beforeClass() throws Exception{
+  public static void beforeClass() throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     ds = DistributedSystem.connect(props);
     tm = TransactionManagerImpl.getTransactionManager();
   }
-  
+
   @AfterClass
   public static void afterClass() {
     ds.disconnect();
@@ -221,7 +221,7 @@ public class TransactionManagerImplJUnitTest {
   }
 
   @Test
-  public void testRollback() throws Exception{
+  public void testRollback() throws Exception {
     utx.begin();
     Thread thread = Thread.currentThread();
     Transaction txn = (Transaction) tm.getTransactionMap().get(thread);

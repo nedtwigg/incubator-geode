@@ -32,12 +32,12 @@ import org.apache.geode.cache.execute.FunctionContext;
 * @since GemFire 8.0
 */
 
-public class GetRegions implements Function  {
+public class GetRegions implements Function {
 
   public void execute(FunctionContext context) {
-    
+
     ArrayList<String> vals = new ArrayList<String>();
-    
+
     Cache c = null;
     try {
       c = CacheFactory.getAnyInstance();
@@ -50,7 +50,7 @@ public class GetRegions implements Function  {
     for (Region<?, ?> r : regionSet) {
       vals.add(r.getName());
     }
-    
+
     context.getResultSender().lastResult(vals);
   }
 

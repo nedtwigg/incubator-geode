@@ -33,21 +33,19 @@ public class CollectingReplyProcessor<T> extends ReplyProcessor21 {
 
   private Map<InternalDistributedMember, T> results = new HashMap<InternalDistributedMember, T>();
 
-  public CollectingReplyProcessor(DM dm,
-      Collection initMembers) {
+  public CollectingReplyProcessor(DM dm, Collection initMembers) {
     super(dm, initMembers);
   }
-  
+
   @Override
   protected void process(DistributionMessage msg, boolean warn) {
     if (msg instanceof ReplyMessage) {
-      InternalDistributedSystem.getLoggerI18n().info(LocalizedStrings.DEBUG,
-          "processing message with return value " + ((ReplyMessage)msg).getReturnValue());
-      results.put(msg.getSender(), (T)((ReplyMessage)msg).getReturnValue());
+      InternalDistributedSystem.getLoggerI18n().info(LocalizedStrings.DEBUG, "processing message with return value " + ((ReplyMessage) msg).getReturnValue());
+      results.put(msg.getSender(), (T) ((ReplyMessage) msg).getReturnValue());
     }
     super.process(msg, warn);
   }
-  
+
   public Map<InternalDistributedMember, T> getResults() {
     return this.results;
   }

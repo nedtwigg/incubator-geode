@@ -19,7 +19,7 @@ package org.apache.geode.test.dunit.standalone;
 public class BounceResult {
   private final int newPid;
   private final RemoteDUnitVMIF newClient;
-  
+
   public BounceResult(int newPid, RemoteDUnitVMIF newClient) {
     this.newPid = newPid;
     this.newClient = newClient;

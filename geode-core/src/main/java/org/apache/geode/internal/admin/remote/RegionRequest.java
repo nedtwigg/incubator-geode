@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -82,9 +81,7 @@ public final class RegionRequest extends AdminRequest {
    * Returns a <code>RegionRequest</code> for creating a VM root
    * region with the given name and attributes. 
    */
-  public static RegionRequest createForCreateRoot(CacheInfo c,
-                                                  String name,
-                                                  RegionAttributes attrs) {
+  public static RegionRequest createForCreateRoot(CacheInfo c, String name, RegionAttributes attrs) {
     RegionRequest m = new RegionRequest();
     m.action = CREATE_VM_ROOT;
     m.cacheId = c.getId();
@@ -98,9 +95,7 @@ public final class RegionRequest extends AdminRequest {
    * Returns a <code>RegionRequest</code> for creating a VM root
    * region with the given name and attributes. 
    */
-  public static RegionRequest 
-    createForCreateSubregion(CacheInfo c, String parentPath,
-                             String name, RegionAttributes attrs) {
+  public static RegionRequest createForCreateSubregion(CacheInfo c, String parentPath, String name, RegionAttributes attrs) {
     RegionRequest m = new RegionRequest();
     m.action = CREATE_VM_REGION;
     m.cacheId = c.getId();
@@ -139,15 +134,13 @@ public final class RegionRequest extends AdminRequest {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.action = in.readInt();
     this.cacheId = in.readInt();
     this.path = DataSerializer.readString(in);
     this.newRegionName = DataSerializer.readString(in);
-    this.newRegionAttributes =
-      (RegionAttributes) DataSerializer.readObject(in);
+    this.newRegionAttributes = (RegionAttributes) DataSerializer.readObject(in);
     RegionRequest.setFriendlyName(this);
   }
 
@@ -155,21 +148,21 @@ public final class RegionRequest extends AdminRequest {
   public String toString() {
     return "RegionRequest from " + getRecipient() + " path=" + this.path;
   }
-  
+
   private static void setFriendlyName(RegionRequest rgnRqst) {
     switch (rgnRqst.action) {
-      case GET_REGION:
-        rgnRqst.friendlyName = LocalizedStrings.RegionRequest_GET_A_SPECIFIC_REGION_FROM_THE_ROOT.toLocalizedString();
-        break;
-      case CREATE_VM_ROOT:
-        rgnRqst.friendlyName = LocalizedStrings.RegionRequest_CREATE_A_NEW_ROOT_VM_REGION.toLocalizedString();
-        break;
-      case CREATE_VM_REGION:
-        rgnRqst.friendlyName = LocalizedStrings.RegionRequest_CREATE_A_NEW_VM_REGION.toLocalizedString();
-        break;
-      default:
-        rgnRqst.friendlyName = LocalizedStrings.RegionRequest_UNKNOWN_OPERATION_0.toLocalizedString(Integer.valueOf(rgnRqst.action));
-        break;
-      }
+    case GET_REGION:
+      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_GET_A_SPECIFIC_REGION_FROM_THE_ROOT.toLocalizedString();
+      break;
+    case CREATE_VM_ROOT:
+      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_CREATE_A_NEW_ROOT_VM_REGION.toLocalizedString();
+      break;
+    case CREATE_VM_REGION:
+      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_CREATE_A_NEW_VM_REGION.toLocalizedString();
+      break;
+    default:
+      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_UNKNOWN_OPERATION_0.toLocalizedString(Integer.valueOf(rgnRqst.action));
+      break;
+    }
   }
 }

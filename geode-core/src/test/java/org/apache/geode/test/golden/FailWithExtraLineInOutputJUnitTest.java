@@ -31,26 +31,23 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class FailWithExtraLineInOutputJUnitTest extends FailOutputTestCase {
-  
+
   @Override
   String problem() {
     return "This is an extra line";
   }
-  
+
   @Override
   void outputProblemInProcess(final String message) {
     System.out.println(message);
   }
-  
+
   /**
    * Process output has an extra line and should fail
    */
   @Test
   public void testFailWithExtraLineInOutput() throws Exception {
-    final String goldenString = 
-        "Begin " + name() + ".main" + "\n" +
-        "Press Enter to continue." + "\n" + 
-        "End " + name() + ".main" + "\n";
+    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "End " + name() + ".main" + "\n";
     debug(goldenString, "GOLDEN");
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());
@@ -60,7 +57,7 @@ public class FailWithExtraLineInOutputJUnitTest extends FailOutputTestCase {
     process.sendInput();
     process.waitForOutputToMatch("End " + name() + "\\.main");
     process.waitFor();
-    
+
     try {
       assertOutputMatchesGoldenFile(process.getOutput(), goldenString);
       fail("assertOutputMatchesGoldenFile should have failed due to " + problem());
@@ -68,7 +65,7 @@ public class FailWithExtraLineInOutputJUnitTest extends FailOutputTestCase {
       assertTrue(expected.getMessage().contains(problem()));
     }
   }
-  
+
   public static void main(final String[] args) throws Exception {
     new FailWithExtraLineInOutputJUnitTest().executeInProcess();
   }

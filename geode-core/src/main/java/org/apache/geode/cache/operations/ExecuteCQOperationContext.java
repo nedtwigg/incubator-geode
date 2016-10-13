@@ -42,8 +42,7 @@ public class ExecuteCQOperationContext extends QueryOperationContext {
    * @param postOperation
    *                true to set the post-operation flag
    */
-  public ExecuteCQOperationContext(String cqName, String queryString,
-      Set regionNames, boolean postOperation) {
+  public ExecuteCQOperationContext(String cqName, String queryString, Set regionNames, boolean postOperation) {
     super(queryString, regionNames, postOperation);
     this.cqName = cqName;
   }

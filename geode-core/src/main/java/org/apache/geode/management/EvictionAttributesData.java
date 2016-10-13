@@ -22,6 +22,7 @@ import org.apache.geode.cache.EvictionAction;
 import org.apache.geode.cache.EvictionAlgorithm;
 import org.apache.geode.cache.EvictionAttributes;
 import org.apache.geode.cache.Region;
+
 /**
  * Composite data type used to distribute the eviction attributes for
  * a {@link Region}.
@@ -30,7 +31,7 @@ import org.apache.geode.cache.Region;
  */
 
 public class EvictionAttributesData {
-  
+
   /**
    * Algorithm used for eviction
    */
@@ -45,7 +46,7 @@ public class EvictionAttributesData {
    * Action to be taken if entries reaches maximum value
    */
   private String action;
-  
+
   /**
    * 
    * This constructor is to be used by internal JMX framework only. User should
@@ -54,7 +55,7 @@ public class EvictionAttributesData {
   @ConstructorProperties({ "algorithm", "maximum", "action"
 
   })
-  public EvictionAttributesData(String algorithm, Integer maximum, String action){
+  public EvictionAttributesData(String algorithm, Integer maximum, String action) {
     this.algorithm = algorithm;
     this.maximum = maximum;
     this.action = action;
@@ -106,6 +107,5 @@ public class EvictionAttributesData {
     buffer.append("]");
     return buffer.toString();
   }
-
 
 }

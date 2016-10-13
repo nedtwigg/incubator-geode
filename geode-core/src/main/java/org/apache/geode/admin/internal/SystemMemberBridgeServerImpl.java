@@ -31,8 +31,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @since GemFire 4.0
  */
-public class SystemMemberBridgeServerImpl
-  implements SystemMemberCacheServer, SystemMemberBridgeServer {
+public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, SystemMemberBridgeServer {
 
   /** The VM in which the bridge server resides */
   private final GemFireVM vm;
@@ -49,10 +48,9 @@ public class SystemMemberBridgeServerImpl
    * Creates a new <code>SystemMemberBridgeServerImpl</code> that
    * administers the given bridge server in the given VM.
    */
-  protected SystemMemberBridgeServerImpl(SystemMemberCacheImpl cache,
-                                         AdminBridgeServer bridgeInfo)
-                                         
-    throws AdminException {
+  protected SystemMemberBridgeServerImpl(SystemMemberCacheImpl cache, AdminBridgeServer bridgeInfo)
+
+                                                                                                    throws AdminException {
 
     this.vm = cache.getVM();
     this.cache = cache.getCacheInfo();
@@ -101,8 +99,7 @@ public class SystemMemberBridgeServerImpl
 
   public void refresh() {
     try {
-      this.bridgeInfo =
-        this.vm.getBridgeInfo(this.cache, this.bridgeInfo.getId());
+      this.bridgeInfo = this.vm.getBridgeInfo(this.cache, this.bridgeInfo.getId());
 
     } catch (AdminException ex) {
       throw new InternalGemFireException(LocalizedStrings.SystemMemberBridgeServerImpl_UNEXPECTED_EXCEPTION_WHILE_REFRESHING.toLocalizedString(), ex);
@@ -144,12 +141,12 @@ public class SystemMemberBridgeServerImpl
   public int getSocketBufferSize() {
     return this.bridgeInfo.getSocketBufferSize();
   }
-  
+
   public void setTcpDelay(boolean setting) throws AdminException {
     checkRunning();
     this.bridgeInfo.setTcpNoDelay(setting);
   }
-  
+
   public boolean getTcpDelay() {
     return this.bridgeInfo.getTcpNoDelay();
   }
@@ -207,14 +204,14 @@ public class SystemMemberBridgeServerImpl
   public String[] getGroups() {
     return this.bridgeInfo.getGroups();
   }
-  
+
   public String getLoadProbe() {
     return this.bridgeInfo.getLoadProbe().toString();
   }
 
   public void setLoadProbe(ServerLoadProbe loadProbe) throws AdminException {
     checkRunning();
-    if(!(loadProbe instanceof Serializable)) {
+    if (!(loadProbe instanceof Serializable)) {
       throw new IllegalArgumentException("Load probe must be Serializable to be used with admin API");
     }
     this.bridgeInfo.setLoadProbe(loadProbe);
@@ -228,6 +225,5 @@ public class SystemMemberBridgeServerImpl
     checkRunning();
     this.bridgeInfo.setLoadPollInterval(loadPollInterval);
   }
-  
-  
+
 }

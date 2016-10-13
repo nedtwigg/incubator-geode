@@ -39,84 +39,79 @@ public class ExpectedTimeoutRuleTest {
   @Test
   public void passesUnused() {
     Result result = TestRunner.runTest(PassingTestShouldPassWhenUnused.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
   }
-  
+
   @Test
   public void failsWithoutExpectedException() {
     Result result = TestRunner.runTest(FailsWithoutExpectedException.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
-    
+
     Failure failure = failures.get(0);
     assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage("Expected test to throw an instance of " + TimeoutException.class.getName());
   }
-  
+
   @Test
   public void failsWithoutExpectedTimeoutException() {
     Result result = TestRunner.runTest(FailsWithoutExpectedTimeoutException.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
-    
+
     Failure failure = failures.get(0);
     assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage("Expected test to throw (an instance of " + TimeoutException.class.getName() + " and exception with message a string containing \"" + FailsWithoutExpectedTimeoutException.message + "\")");
   }
-  
+
   @Test
   public void failsWithExpectedTimeoutButWrongError() {
     Result result = TestRunner.runTest(FailsWithExpectedTimeoutButWrongError.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
-    
+
     Failure failure = failures.get(0);
-    String expectedMessage = 
-        "\n" + 
-        "Expected: (an instance of java.util.concurrent.TimeoutException and exception with message a string containing \"this is a message for FailsWithExpectedTimeoutButWrongError\")" +
-        "\n" + 
-        "     " +
-        "but: an instance of java.util.concurrent.TimeoutException <java.lang.NullPointerException> is a java.lang.NullPointerException";
+    String expectedMessage = "\n" + "Expected: (an instance of java.util.concurrent.TimeoutException and exception with message a string containing \"this is a message for FailsWithExpectedTimeoutButWrongError\")" + "\n" + "     " + "but: an instance of java.util.concurrent.TimeoutException <java.lang.NullPointerException> is a java.lang.NullPointerException";
     assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessageContaining(expectedMessage);
   }
-  
+
   @Test
   public void passesWithExpectedTimeoutAndTimeoutException() {
     Result result = TestRunner.runTest(PassesWithExpectedTimeoutAndTimeoutException.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
   }
-  
+
   @Test
   public void failsWhenTimeoutIsEarly() {
     Result result = TestRunner.runTest(FailsWhenTimeoutIsEarly.class);
-   
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
-    
+
     Failure failure = failures.get(0);
     assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage("Expected test to throw (an instance of " + TimeoutException.class.getName() + " and exception with message a string containing \"" + FailsWhenTimeoutIsEarly.message + "\")");
   }
-  
+
   @Test
   public void failsWhenTimeoutIsLate() {
     Result result = TestRunner.runTest(FailsWhenTimeoutIsLate.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
-    
+
     Failure failure = failures.get(0);
     assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage("Expected test to throw (an instance of " + TimeoutException.class.getName() + " and exception with message a string containing \"" + FailsWhenTimeoutIsLate.message + "\")");
   }

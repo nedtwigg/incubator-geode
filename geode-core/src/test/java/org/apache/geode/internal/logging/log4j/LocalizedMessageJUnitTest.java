@@ -37,7 +37,7 @@ public class LocalizedMessageJUnitTest {
     final LocalizedMessage message = LocalizedMessage.create(stringId);
     assertNull(message.getParameters());
   }
-  
+
   @Test
   public void testEmptyParams() {
     final StringId stringId = new StringId(100, "This is a message for testEmptyParams");
@@ -46,7 +46,7 @@ public class LocalizedMessageJUnitTest {
     assertNotNull(object);
     assertEquals(0, object.length);
   }
-  
+
   @Test
   public void testGetThrowable() {
     final Throwable t = new Throwable();

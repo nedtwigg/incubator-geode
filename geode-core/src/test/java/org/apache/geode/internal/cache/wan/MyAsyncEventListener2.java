@@ -34,16 +34,14 @@ public class MyAsyncEventListener2 implements AsyncEventListener {
 
   public boolean processEvents(List<AsyncEvent> events) {
     for (AsyncEvent event : events) {
-      GatewaySenderEventImpl gatewayEvent = (GatewaySenderEventImpl)event;
+      GatewaySenderEventImpl gatewayEvent = (GatewaySenderEventImpl) event;
       int bucketId = gatewayEvent.getBucketId();
-      List<GatewaySenderEventImpl> bucketEvents = this.bucketToEventsMap
-          .get(bucketId);
+      List<GatewaySenderEventImpl> bucketEvents = this.bucketToEventsMap.get(bucketId);
       if (bucketEvents == null) {
         bucketEvents = new ArrayList<GatewaySenderEventImpl>();
         bucketEvents.add(gatewayEvent);
         this.bucketToEventsMap.put(bucketId, bucketEvents);
-      }
-      else {
+      } else {
         bucketEvents.add(gatewayEvent);
       }
     }
@@ -56,43 +54,43 @@ public class MyAsyncEventListener2 implements AsyncEventListener {
 
   public void close() {
   }
-  
-//  protected void addExceptionTag(final String expectedException)
-//  {
-//        
-//          SerializableRunnable addExceptionTag = new CacheSerializableRunnable("addExceptionTag")
-//          {
-//                 public void run2()
-//                 {
-//                         getCache().getLogger().info("<ExpectedException action=add>" + 
-//                                                expectedException + "</ExpectedException>"); 
-//                 }
-//          };
-//          
-//         vm2.invoke(addExceptionTag);
-//         vm3.invoke(addExceptionTag);
-//         vm4.invoke(addExceptionTag);
-//         vm5.invoke(addExceptionTag);
-//         vm6.invoke(addExceptionTag);
-//         vm7.invoke(addExceptionTag);
-//  }
-// 
-//  protected void removeExceptionTag(final String expectedException)
-//  {     
-//        
-//          SerializableRunnable removeExceptionTag = new CacheSerializableRunnable("removeExceptionTag")
-//          {
-//                public void run2() throws CacheException
-//                {
-//                          getCache().getLogger().info("<ExpectedException action=remove>" + 
-//                                                 expectedException + "</ExpectedException>");   
-//                }
-//          };
-//          vm2.invoke(removeExceptionTag);
-//          vm3.invoke(removeExceptionTag);
-//          vm4.invoke(removeExceptionTag);
-//          vm5.invoke(removeExceptionTag);
-//          vm6.invoke(removeExceptionTag);
-//          vm7.invoke(removeExceptionTag);
-//  }
+
+  //  protected void addExceptionTag(final String expectedException)
+  //  {
+  //        
+  //          SerializableRunnable addExceptionTag = new CacheSerializableRunnable("addExceptionTag")
+  //          {
+  //                 public void run2()
+  //                 {
+  //                         getCache().getLogger().info("<ExpectedException action=add>" + 
+  //                                                expectedException + "</ExpectedException>"); 
+  //                 }
+  //          };
+  //          
+  //         vm2.invoke(addExceptionTag);
+  //         vm3.invoke(addExceptionTag);
+  //         vm4.invoke(addExceptionTag);
+  //         vm5.invoke(addExceptionTag);
+  //         vm6.invoke(addExceptionTag);
+  //         vm7.invoke(addExceptionTag);
+  //  }
+  // 
+  //  protected void removeExceptionTag(final String expectedException)
+  //  {     
+  //        
+  //          SerializableRunnable removeExceptionTag = new CacheSerializableRunnable("removeExceptionTag")
+  //          {
+  //                public void run2() throws CacheException
+  //                {
+  //                          getCache().getLogger().info("<ExpectedException action=remove>" + 
+  //                                                 expectedException + "</ExpectedException>");   
+  //                }
+  //          };
+  //          vm2.invoke(removeExceptionTag);
+  //          vm3.invoke(removeExceptionTag);
+  //          vm4.invoke(removeExceptionTag);
+  //          vm5.invoke(removeExceptionTag);
+  //          vm6.invoke(removeExceptionTag);
+  //          vm7.invoke(removeExceptionTag);
+  //  }
 }

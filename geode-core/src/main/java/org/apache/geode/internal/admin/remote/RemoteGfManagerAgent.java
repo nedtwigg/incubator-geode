@@ -52,13 +52,12 @@ import java.util.concurrent.*;
  * snapshot}.
  */
 public
-  // Note that since we export the instances in a public list,
-  // I'm not permitting subclasses
-  final 
-  class RemoteGfManagerAgent implements GfManagerAgent {
+// Note that since we export the instances in a public list,
+// I'm not permitting subclasses
+final class RemoteGfManagerAgent implements GfManagerAgent {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   // instance variables
 
   /** The connection to the distributed system through which this
@@ -85,7 +84,7 @@ public
 
   /** The transport configuration used to connect to the distributed system */
   private final RemoteTransportConfig transport;
-  
+
   /** 
    * Optional display name used for {@link 
    * org.apache.geode.distributed.DistributedSystem#getName()}.
@@ -144,16 +143,16 @@ public
   /** DM MembershipListener for this RemoteGfManagerAgent */
   private MyMembershipListener myMembershipListener;
   private final Object myMembershipListenerLock = new Object();
-  
-  private DisconnectListener  disconnectListener;
-  
+
+  private DisconnectListener disconnectListener;
+
   static private final Object enumerationSync = new Object();
-  
+
   /**
    * Safe to read, updates controlled by {@link #enumerationSync}
    */
   static private volatile ArrayList allAgents = new ArrayList();
-  
+
   static private void addAgent(RemoteGfManagerAgent toAdd) {
     synchronized (enumerationSync) {
       ArrayList replace = new ArrayList(allAgents);
@@ -161,7 +160,7 @@ public
       allAgents = replace;
     }
   }
-  
+
   static private void removeAgent(RemoteGfManagerAgent toRemove) {
     synchronized (enumerationSync) {
       ArrayList replace = new ArrayList(allAgents);
@@ -169,23 +168,24 @@ public
       allAgents = replace;
     }
   }
-  
+
   /**
    * break any potential circularity in {@link #loadEmergencyClasses()}
    */
   private static volatile boolean emergencyClassesLoaded = false;
-  
+
   /**
    * Ensure that the InternalDistributedSystem class gets loaded.
    * 
    * @see SystemFailure#loadEmergencyClasses()
    */
   static public void loadEmergencyClasses() {
-    if (emergencyClassesLoaded) return;
+    if (emergencyClassesLoaded)
+      return;
     emergencyClassesLoaded = true;
     InternalDistributedSystem.loadEmergencyClasses();
   }
-  
+
   /**
    * Close all of the RemoteGfManagerAgent's.
    * 
@@ -193,12 +193,12 @@ public
    */
   static public void emergencyClose() {
     ArrayList members = allAgents; // volatile fetch
-    for (int i = 0; i < members.size(); i ++) {
-      RemoteGfManagerAgent each = (RemoteGfManagerAgent)members.get(i);
+    for (int i = 0; i < members.size(); i++) {
+      RemoteGfManagerAgent each = (RemoteGfManagerAgent) members.get(i);
       each.system.emergencyClose();
     }
   }
-  
+
   /**
    * Return a recent (though possibly incomplete) list of
    * all existing agents
@@ -208,7 +208,7 @@ public
   static public ArrayList getAgents() {
     return allAgents;
   }
-  
+
   // constructors
 
   /**
@@ -220,12 +220,12 @@ public
     if (!(cfg.getTransport() instanceof RemoteTransportConfig)) {
       throw new IllegalArgumentException(LocalizedStrings.RemoteGfManagerAgent_EXPECTED_0_TO_BE_A_REMOTETRANSPORTCONFIG.toLocalizedString(cfg.getTransport()));
     }
-    this.transport = (RemoteTransportConfig)cfg.getTransport();
+    this.transport = (RemoteTransportConfig) cfg.getTransport();
     this.displayName = cfg.getDisplayName();
     this.alertListener = cfg.getAlertListener();
     if (this.alertListener != null) {
       if (this.alertListener instanceof JoinLeaveListener) {
-        addJoinLeaveListener((JoinLeaveListener)this.alertListener);
+        addJoinLeaveListener((JoinLeaveListener) this.alertListener);
       }
     }
     int tmp = cfg.getAlertLevel();
@@ -233,7 +233,7 @@ public
       tmp = Alert.OFF;
     }
     alertLevel = tmp;
-    
+
     // LOG: get LogWriter from the AdminDistributedSystemImpl -- used for AuthenticationFailedException
     InternalLogWriter logWriter = cfg.getLogWriter();
     if (logWriter == null) {
@@ -244,11 +244,10 @@ public
     } else {
       this.securityLogWriter = LogWriterFactory.toSecurityLogWriter(logWriter);
     }
-    
+
     this.disconnectListener = cfg.getDisconnectListener();
 
-    this.threadGroup =
-      LoggingThreadGroup.createThreadGroup("ConsoleDMDaemon", logger);
+    this.threadGroup = LoggingThreadGroup.createThreadGroup("ConsoleDMDaemon", logger);
     this.joinProcessor = new JoinProcessor();
     this.joinProcessor.start();
 
@@ -256,12 +255,12 @@ public
 
     snapshotDispatcher = new SnapshotResultDispatcher();
     snapshotDispatcher.start();
-    
+
     // Note that this makes this instance externally visible.
     // This is why this class is final.
     addAgent(this);
   }
-  
+
   private void join() {
     daemon = new DSConnectionDaemon();
     daemon.start();
@@ -272,8 +271,7 @@ public
       while (!connected && daemon.isAlive() && System.currentTimeMillis() < endTime) {
         daemon.join(200);
       }
-    } 
-    catch (InterruptedException ignore) {
+    } catch (InterruptedException ignore) {
       Thread.currentThread().interrupt();
       // Peremptory cancellation check, but keep going
       this.system.getCancelCriterion().checkCancelInProgress(ignore);
@@ -281,7 +279,6 @@ public
   }
 
   // static methods
-
 
   /**
    * Handles an <code>ExecutionException</code> by examining its cause
@@ -309,10 +306,9 @@ public
   // Object methodsg
 
   @Override
-  public String toString(){
+  public String toString() {
     return "Distributed System " + this.transport;
   }
-
 
   // GfManagerAgent methods
 
@@ -327,7 +323,7 @@ public
   @Override
   public boolean disconnect() {
     boolean disconnectedTrue = false;
-    synchronized(this) {
+    synchronized (this) {
       if (disconnected) {
         return false;
       }
@@ -339,9 +335,9 @@ public
       //joinProcessor.interrupt();
       joinProcessor.shutDown();
       boolean removeListener = this.alertLevel != Alert.OFF;
-      if (this.isConnected() ||(this.membersMap.size()>0)) { //Hot fix from 6.6.3
-        RemoteApplicationVM[] apps = (RemoteApplicationVM[])listApplications(disconnectedTrue);
-        for (int i=0; i < apps.length; i++) {
+      if (this.isConnected() || (this.membersMap.size() > 0)) { //Hot fix from 6.6.3
+        RemoteApplicationVM[] apps = (RemoteApplicationVM[]) listApplications(disconnectedTrue);
+        for (int i = 0; i < apps.length; i++) {
           try {
             apps[i].disconnect(removeListener); // hit NPE here in ConsoleDistributionManagerTest so fixed listApplications to exclude nulls returned from future
           } catch (RuntimeException ignore) {
@@ -368,8 +364,7 @@ public
           // ignore a forced disconnect and finish clean-up
         }
 
-        if (system != null && DistributionManager.isDedicatedAdminVM &&
-            system.isConnected()) {
+        if (system != null && DistributionManager.isDedicatedAdminVM && system.isConnected()) {
           system.disconnect();
         }
 
@@ -378,12 +373,11 @@ public
       }
 
       daemon.shutDown();
-      
+
       if (snapshotDispatcher != null) {
         snapshotDispatcher.shutDown();
       }
-    }
-    finally {
+    } finally {
       removeAgent(this);
     }
     return true;
@@ -406,17 +400,16 @@ public
   public boolean isConnected() {
     return this.connected && system != null && system.isConnected();
   }
-  
+
   public ApplicationVM[] listApplications() {
     return listApplications(false);
   }
 
   public ApplicationVM[] listApplications(boolean disconnected) {//Hot fix from 6.6.3
-    if (isConnected() ||(this.membersMap.size()>0 && disconnected)) {
+    if (isConnected() || (this.membersMap.size() > 0 && disconnected)) {
       // removed synchronization on members...
       Collection remoteApplicationVMs = new ArrayList(this.membersMap.size());
-      VMS: for (Iterator iter = this.membersMap.values().iterator();
-           iter.hasNext(); ) {
+      VMS: for (Iterator iter = this.membersMap.values().iterator(); iter.hasNext();) {
         Future future = (Future) iter.next();
         for (;;) {
           try {
@@ -431,18 +424,14 @@ public
               remoteApplicationVMs.add(obj);
             }
             break;
-          } 
-          catch (InterruptedException ex) {
+          } catch (InterruptedException ex) {
             interrupted = true;
-          } 
-          catch (CancellationException ex) {
+          } catch (CancellationException ex) {
             continue VMS;
-          } 
-          catch (ExecutionException ex) {
+          } catch (ExecutionException ex) {
             handle(ex);
             continue VMS;
-          }
-          finally {
+          } finally {
             if (interrupted) {
               Thread.currentThread().interrupt();
             }
@@ -450,8 +439,7 @@ public
         } // for
       } // VMS
 
-      RemoteApplicationVM[] array =
-        new RemoteApplicationVM[remoteApplicationVMs.size()];
+      RemoteApplicationVM[] array = new RemoteApplicationVM[remoteApplicationVMs.size()];
       remoteApplicationVMs.toArray(array);
       return array;
 
@@ -468,7 +456,7 @@ public
    * Registers a <code>JoinLeaveListener</code>. on this agent that is
    * notified when membership in the distributed system changes.
    */
-  public void addJoinLeaveListener( JoinLeaveListener observer ) {
+  public void addJoinLeaveListener(JoinLeaveListener observer) {
     synchronized (this.listenersLock) {
       final Set oldListeners = this.listeners;
       if (!oldListeners.contains(observer)) {
@@ -482,7 +470,7 @@ public
   /**
    * Deregisters a <code>JoinLeaveListener</code> from this agent.
    */
-  public void removeJoinLeaveListener( JoinLeaveListener observer ) {
+  public void removeJoinLeaveListener(JoinLeaveListener observer) {
     synchronized (this.listenersLock) {
       final Set oldListeners = this.listeners;
       if (oldListeners.contains(observer)) {
@@ -511,10 +499,10 @@ public
   /** Is this thread currently sending a message? */
   private static ThreadLocal sending = new ThreadLocal() {
     @Override
-      protected Object initialValue() {
-        return Boolean.FALSE;
-      }
-    };
+    protected Object initialValue() {
+      return Boolean.FALSE;
+    }
+  };
 
   /**
    * Sends an AdminRequest and waits for the AdminReponse
@@ -528,12 +516,10 @@ public
         sending.set(Boolean.TRUE);
       }
 
-      DistributionManager dm =
-        (DistributionManager) this.system.getDistributionManager();
+      DistributionManager dm = (DistributionManager) this.system.getDistributionManager();
       if (isConnected()) {
         return msg.sendAndWait(dm);
-      } 
-      else {
+      } else {
         // bug 39824: generate CancelException if we're shutting down
         dm.getCancelCriterion().checkCancelInProgress(null);
         throw new RuntimeAdminException(LocalizedStrings.RemoteGfManagerAgent_0_IS_NOT_CURRENTLY_CONNECTED.toLocalizedString(this));
@@ -543,6 +529,7 @@ public
       sending.set(Boolean.FALSE);
     }
   }
+
   /**
    * Sends a message and does not wait for a response
    */
@@ -575,25 +562,20 @@ public
         boolean interrupted = Thread.interrupted();
         try {
           return (RemoteApplicationVM) future.get();
-        } 
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
           interrupted = true;
-        } 
-        catch (CancellationException ex) {
+        } catch (CancellationException ex) {
           return null;
-        } 
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
           handle(ex);
           return null;
-        }
-        finally {
+        } finally {
           if (interrupted) {
             Thread.currentThread().interrupt();
           }
         }
       } // for
-    } 
-    else {
+    } else {
       return null;
     }
   }
@@ -611,25 +593,26 @@ public
       future = (FutureTask) oldMembersMap.get(id);
       if (future == null) {
         runFuture = true;
-        if (this.abortCurrentJoin) return null;
+        if (this.abortCurrentJoin)
+          return null;
         future = new FutureTask(new Callable() {
-            public Object call() throws Exception {
-              // Do this work in a Future to avoid deadlock seen in
-              // bug 31562.
-              RemoteGfManagerAgent agent = RemoteGfManagerAgent.this;
-              RemoteApplicationVM result =
-                new RemoteApplicationVM(agent, id, alertLevel);
-              result.startStatDispatcher();
-              if (agent.abortCurrentJoin) {
-                result.stopStatListening();
-                return null;
-              }
-              return result;
+          public Object call() throws Exception {
+            // Do this work in a Future to avoid deadlock seen in
+            // bug 31562.
+            RemoteGfManagerAgent agent = RemoteGfManagerAgent.this;
+            RemoteApplicationVM result = new RemoteApplicationVM(agent, id, alertLevel);
+            result.startStatDispatcher();
+            if (agent.abortCurrentJoin) {
+              result.stopStatListening();
+              return null;
             }
-          });
+            return result;
+          }
+        });
         Map newMembersMap = new HashMap(oldMembersMap);
         newMembersMap.put(id, future);
-        if (this.abortCurrentJoin) return null;
+        if (this.abortCurrentJoin)
+          return null;
         this.membersMap = newMembersMap;
       }
     }
@@ -644,18 +627,14 @@ public
       boolean interrupted = Thread.interrupted();
       try {
         return (RemoteApplicationVM) future.get();
-      } 
-      catch (InterruptedException ex) {
+      } catch (InterruptedException ex) {
         interrupted = true;
-      } 
-      catch (CancellationException ex) {
+      } catch (CancellationException ex) {
         return null;
-      } 
-      catch (ExecutionException ex) {
+      } catch (ExecutionException ex) {
         handle(ex);
         return null;
-      }
-      finally {
+      } finally {
         if (interrupted) {
           Thread.currentThread().interrupt();
         }
@@ -674,7 +653,7 @@ public
       if (oldMembersMap.containsKey(id)) {
         Map newMembersMap = new HashMap(oldMembersMap);
         future = (Future) newMembersMap.remove(id);
-        if ( future != null) {
+        if (future != null) {
           this.membersMap = newMembersMap;
         }
       }
@@ -687,18 +666,14 @@ public
         boolean interrupted = Thread.interrupted();
         try {
           return (RemoteApplicationVM) future.get();
-        } 
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
           interrupted = true;
-        } 
-        catch (CancellationException ex) {
+        } catch (CancellationException ex) {
           return null;
-        } 
-        catch (ExecutionException ex) {
+        } catch (ExecutionException ex) {
           handle(ex);
           return null;
-        }
-        finally {
+        } finally {
           if (interrupted) {
             Thread.currentThread().interrupt();
           }
@@ -724,11 +699,9 @@ public
       try {
         snapshotResults.put(msg);
         break;
-      } 
-      catch (InterruptedException ignore) {
+      } catch (InterruptedException ignore) {
         interrupted = true;
-      }
-      finally {
+      } finally {
         if (interrupted) {
           Thread.currentThread().interrupt();
         }
@@ -753,25 +726,24 @@ public
    * Invokes the {@link CacheCollector#resultsReturned} method of this
    * agent's cache collector.
    */
-  protected void callCacheCollector(CacheSnapshot results, InternalDistributedMember sender,
-                                  int snapshotId) {
+  protected void callCacheCollector(CacheSnapshot results, InternalDistributedMember sender, int snapshotId) {
     if (!isListening()) {
       return;
     }
-    if (collector != null ) {
+    if (collector != null) {
       GemFireVM vm = getMemberById(sender);
       if (vm != null && collector != null) {
         collector.resultsReturned(results, vm, snapshotId);
       }
     }
   }
-  
+
   protected DisconnectListener getDisconnectListener() {
     synchronized (this) {
       return this.disconnectListener;
     }
   }
-  
+
   /**
    * Creates a new {@link InternalDistributedSystem} connection for
    * this agent.  If one alread exists, it is
@@ -791,43 +763,42 @@ public
     if (this.displayName != null && this.displayName.length() > 0) {
       props.setProperty("name", this.displayName);
     }
-    this.system = (InternalDistributedSystem)
-      InternalDistributedSystem.connectForAdmin(props);
+    this.system = (InternalDistributedSystem) InternalDistributedSystem.connectForAdmin(props);
     DM dm = system.getDistributionManager();
     if (dm instanceof DistributionManager) {
       ((DistributionManager) dm).setAgent(this);
     }
-    
-    synchronized(this) {
+
+    synchronized (this) {
       this.disconnected = false;
     }
 
-    this.system.addDisconnectListener(new
-      InternalDistributedSystem.DisconnectListener() {
+    this.system.addDisconnectListener(new InternalDistributedSystem.DisconnectListener() {
       @Override
-        public String toString() {
-          return LocalizedStrings.RemoteGfManagerAgent_DISCONNECT_LISTENER_FOR_0.toLocalizedString(RemoteGfManagerAgent.this);
-        }
-        
-        public void onDisconnect(InternalDistributedSystem sys) {
-         //Before the disconnect handler is called, the InternalDistributedSystem has already marked itself for 
-         //the disconnection. Hence the check for RemoteGfManagerAgent.this.isConnected() always returns false.
-         //Hence commenting the same.	
-         //if(RemoteGfManagerAgent.this.isConnected()) {
-          boolean reconnect = sys.isReconnecting();
-          if (!reconnect) {
-            final DisconnectListener listener = RemoteGfManagerAgent.this.getDisconnectListener();
-            if (RemoteGfManagerAgent.this.disconnect()) { // returns true if disconnected during this call
-              if (listener != null) {
-                listener.onDisconnect(sys); 
-              }
+      public String toString() {
+        return LocalizedStrings.RemoteGfManagerAgent_DISCONNECT_LISTENER_FOR_0.toLocalizedString(RemoteGfManagerAgent.this);
+      }
+
+      public void onDisconnect(InternalDistributedSystem sys) {
+        //Before the disconnect handler is called, the InternalDistributedSystem has already marked itself for 
+        //the disconnection. Hence the check for RemoteGfManagerAgent.this.isConnected() always returns false.
+        //Hence commenting the same.	
+        //if(RemoteGfManagerAgent.this.isConnected()) {
+        boolean reconnect = sys.isReconnecting();
+        if (!reconnect) {
+          final DisconnectListener listener = RemoteGfManagerAgent.this.getDisconnectListener();
+          if (RemoteGfManagerAgent.this.disconnect()) { // returns true if disconnected during this call
+            if (listener != null) {
+              listener.onDisconnect(sys);
             }
           }
         }
-      });
+      }
+    });
     InternalDistributedSystem.addReconnectListener(new ReconnectListener() {
       public void reconnecting(InternalDistributedSystem oldsys) {
       }
+
       public void onReconnect(InternalDistributedSystem oldsys, InternalDistributedSystem newsys) {
         if (logger.isDebugEnabled()) {
           logger.debug("RemoteGfManagerAgent.onReconnect attempting to join new distributed system");
@@ -836,7 +807,7 @@ public
       }
     });
 
-    synchronized(this.myMembershipListenerLock) {
+    synchronized (this.myMembershipListenerLock) {
       this.myMembershipListener = new MyMembershipListener();
       dm.addMembershipListener(this.myMembershipListener);
       Set initialMembers = dm.getDistributionManagerIds();
@@ -847,21 +818,21 @@ public
         sb.append("Connected to DS with ");
         sb.append(initialMembers.size());
         sb.append(" members: ");
-        
-        for (Iterator it = initialMembers.iterator(); it.hasNext(); ) {
+
+        for (Iterator it = initialMembers.iterator(); it.hasNext();) {
           InternalDistributedMember member = (InternalDistributedMember) it.next();
           sb.append(member);
           sb.append(" ");
         }
-  
+
         this.logger.debug(sb.toString());
       }
-  
+
       connected = true;
-  
-      for (Iterator it = initialMembers.iterator(); it.hasNext(); ) {
+
+      for (Iterator it = initialMembers.iterator(); it.hasNext();) {
         InternalDistributedMember member = (InternalDistributedMember) it.next();
-  
+
         // Create the admin objects synchronously.  We don't need to use
         // the JoinProcess when we first start up.
         try {
@@ -872,20 +843,20 @@ public
           }
         }
       }
-  
+
       this.initialized = true;
     } //sync
   }
 
-//  /**
-//   * Returns whether or not there are any members of the distributed
-//   * system. 
-//   */
-//  private boolean membersExist() {
-//    // removed synchronized(members) {
-//    // removed synchronized (managers) {
-//    return this.members.size() > 0 || this.managers.size() > 0;
-//  }
+  //  /**
+  //   * Returns whether or not there are any members of the distributed
+  //   * system. 
+  //   */
+  //  private boolean membersExist() {
+  //    // removed synchronized(members) {
+  //    // removed synchronized (managers) {
+  //    return this.members.size() > 0 || this.managers.size() > 0;
+  //  }
 
   /**
    * Returns the thread group in which admin threads should run.  This
@@ -906,13 +877,12 @@ public
    * members or attempts to connect to a distributed system whose
    * member run a different version of GemFire.
    */
-  private class DSConnectionDaemon extends Thread  {
+  private class DSConnectionDaemon extends Thread {
     /** Has this thread been told to stop? */
     private volatile boolean shutDown = false;
 
     protected DSConnectionDaemon() {
-      super(RemoteGfManagerAgent.this.threadGroup,
-            "DSConnectionDaemon");
+      super(RemoteGfManagerAgent.this.threadGroup, "DSConnectionDaemon");
       setDaemon(true);
     }
 
@@ -928,8 +898,7 @@ public
      */
     @Override
     public void run() {
-    TOP:
-      while(!shutDown) {
+      TOP: while (!shutDown) {
         SystemFailure.checkFailure();
         try {
           connected = false;
@@ -938,17 +907,16 @@ public
             connectToDS();
 
             // If we're successful, this thread is done
-            if (isListening()){
+            if (isListening()) {
               Assert.assertTrue(system != null);
             }
             return;
           }
-        } catch(IncompatibleSystemException ise) {
+        } catch (IncompatibleSystemException ise) {
           logger.fatal(ise.getMessage(), ise);
           callAlertListener(new VersionMismatchAlert(RemoteGfManagerAgent.this, ise.getMessage()));
         } catch (Exception e) {
-          for (Throwable cause = e; cause != null;
-               cause = cause.getCause()) {
+          for (Throwable cause = e; cause != null; cause = cause.getCause()) {
             if (cause instanceof InterruptedException) {
               // We were interrupted while connecting.  Most likely we
               // are being shutdown.
@@ -960,8 +928,7 @@ public
             if (cause instanceof AuthenticationFailedException) {
               // Incorrect credentials. Log & Shutdown
               shutDown = true;
-              securityLogWriter.warning(
-                LocalizedStrings.RemoteGFManagerAgent_AN_AUTHENTICATIONFAILEDEXCEPTION_WAS_CAUGHT_WHILE_CONNECTING_TO_DS, e);
+              securityLogWriter.warning(LocalizedStrings.RemoteGFManagerAgent_AN_AUTHENTICATIONFAILEDEXCEPTION_WAS_CAUGHT_WHILE_CONNECTING_TO_DS, e);
               break TOP;
             }
           }
@@ -970,7 +937,7 @@ public
         }
         try {
           sleep(1000);
-        } catch (InterruptedException ignore){
+        } catch (InterruptedException ignore) {
           // We're just exiting, no need to restore the interrupt bit.
         }
       }
@@ -984,12 +951,11 @@ public
    * A daemon thread that reads {@link SnapshotResultMessage}s from a
    * queue and invokes the <code>CacheCollector</code> accordingly.
    */
-  private class SnapshotResultDispatcher extends Thread  {
+  private class SnapshotResultDispatcher extends Thread {
     private volatile boolean shutDown = false;
 
     public SnapshotResultDispatcher() {
-      super(RemoteGfManagerAgent.this.threadGroup,
-            "SnapshotResultDispatcher");
+      super(RemoteGfManagerAgent.this.threadGroup, "SnapshotResultDispatcher");
       setDaemon(true);
     }
 
@@ -1003,9 +969,8 @@ public
       while (!shutDown) {
         SystemFailure.checkFailure();
         try {
-          SnapshotResultMessage msg = (SnapshotResultMessage)snapshotResults.take();
-          callCacheCollector(msg.getSnapshot(), msg.getSender(),
-                             msg.getSnapshotId());
+          SnapshotResultMessage msg = (SnapshotResultMessage) snapshotResults.take();
+          callCacheCollector(msg.getSnapshot(), msg.getSender(), msg.getSnapshotId());
           yield(); // TODO: this is a hot thread
         } catch (InterruptedException ignore) {
           // We'll just exit, no need to reset interrupt bit.
@@ -1013,7 +978,7 @@ public
             break;
           }
           logger.warn(LocalizedMessage.create(LocalizedStrings.RemoteGfManagerAgent_IGNORING_STRANGE_INTERRUPT), ignore);
-        } catch (Exception ex) {          
+        } catch (Exception ex) {
           logger.fatal(ex.getMessage(), ex);
         }
       }
@@ -1035,7 +1000,8 @@ public
 
   /** Returns true if this vm is using a non-default bind address (Kirk Lund) */
   public boolean hasNonDefaultBindAddress() {
-    if (getBindAddress() == null) return false;
+    if (getBindAddress() == null)
+      return false;
     return !DistributionConfig.DEFAULT_BIND_ADDRESS.equals(getBindAddress());
   }
 
@@ -1069,51 +1035,47 @@ public
     // set current join and begin handling of it...
     this.currentJoin = id;
     try {
-        GemFireVM member = null;
-        switch (id.getVmKind()) {
-        case DistributionManager.NORMAL_DM_TYPE:
-          member = addMember(id);
-          break;
-        case DistributionManager.LOCATOR_DM_TYPE:
-          break;
-        case DistributionManager.ADMIN_ONLY_DM_TYPE:
-          break;
-        case DistributionManager.LONER_DM_TYPE:
-          break;  // should this ever happen? :-)
-        default:
-          throw new IllegalArgumentException(LocalizedStrings.RemoteGfManagerAgent_UNKNOWN_VM_KIND_0.toLocalizedString(Integer.valueOf(id.getVmKind())));
-        }
+      GemFireVM member = null;
+      switch (id.getVmKind()) {
+      case DistributionManager.NORMAL_DM_TYPE:
+        member = addMember(id);
+        break;
+      case DistributionManager.LOCATOR_DM_TYPE:
+        break;
+      case DistributionManager.ADMIN_ONLY_DM_TYPE:
+        break;
+      case DistributionManager.LONER_DM_TYPE:
+        break; // should this ever happen? :-)
+      default:
+        throw new IllegalArgumentException(LocalizedStrings.RemoteGfManagerAgent_UNKNOWN_VM_KIND_0.toLocalizedString(Integer.valueOf(id.getVmKind())));
+      }
 
-        // if we have a valid member process it...
+      // if we have a valid member process it...
+      if (this.abortCurrentJoin) {
+        return;
+      }
+      if (member != null) {
         if (this.abortCurrentJoin) {
           return;
         }
-        if (member != null) {
+        for (Iterator it = this.listeners.iterator(); it.hasNext();) {
           if (this.abortCurrentJoin) {
             return;
           }
-          for (Iterator it = this.listeners.iterator(); it.hasNext();) {
-            if (this.abortCurrentJoin) {
-              return;
-            }
-            JoinLeaveListener l = (JoinLeaveListener)it.next();
-            try {
-              l.nodeJoined(RemoteGfManagerAgent.this, member);
-            }
-            catch (VirtualMachineError e) {
-              SystemFailure.initiateFailure(e);
-              throw e;
-            }
-            catch (Throwable e) {
-              SystemFailure.checkFailure();
-              logger.warn(LocalizedMessage.create(
-                LocalizedStrings.RemoteGfManagerAgent_LISTENER_THREW_AN_EXCEPTION), e);
-            }
+          JoinLeaveListener l = (JoinLeaveListener) it.next();
+          try {
+            l.nodeJoined(RemoteGfManagerAgent.this, member);
+          } catch (VirtualMachineError e) {
+            SystemFailure.initiateFailure(e);
+            throw e;
+          } catch (Throwable e) {
+            SystemFailure.checkFailure();
+            logger.warn(LocalizedMessage.create(LocalizedStrings.RemoteGfManagerAgent_LISTENER_THREW_AN_EXCEPTION), e);
           }
         }
+      }
 
-    }
-    finally {
+    } finally {
       // finished this join so remove it...
       removePendingJoins(id);
 
@@ -1169,8 +1131,7 @@ public
 
       // abort any in-process handling of the member id...
       this.joinProcessor.abort(id);
-    }
-    finally {
+    } finally {
       AdminWaiters.cancelWaiters(id);
       this.joinProcessor.resumeHandling();
     }
@@ -1182,17 +1143,17 @@ public
    * then we run the risk of getting deadlocks and such.
    */
   //FIXME: Revisit/redesign this code
-  private class JoinProcessor extends Thread  {
+  private class JoinProcessor extends Thread {
     private volatile boolean paused = false;
     private volatile boolean shutDown = false;
     private volatile InternalDistributedMember id;
     private final Object lock = new Object();
 
     public JoinProcessor() {
-      super(RemoteGfManagerAgent.this.threadGroup,
-            "JoinProcessor");
+      super(RemoteGfManagerAgent.this.threadGroup, "JoinProcessor");
       setDaemon(true);
     }
+
     public void shutDown() {
       if (logger.isTraceEnabled(LogMarker.DM)) {
         logger.trace(LogMarker.DM, "JoinProcessor: shutting down");
@@ -1200,24 +1161,26 @@ public
       this.shutDown = true;
       this.interrupt();
     }
+
     private void pauseHandling() {
       this.paused = true;
     }
+
     private void resumeHandling() {
-//       if (this.shutDown) {
-//         return;
-//       }
+      //       if (this.shutDown) {
+      //         return;
+      //       }
 
       if (logger.isTraceEnabled(LogMarker.DM)) {
         logger.trace(LogMarker.DM, "JoinProcessor: resuming.  Is alive? {}", this.isAlive());
       }
-//       Assert.assertTrue(this.isAlive());
+      //       Assert.assertTrue(this.isAlive());
 
       // unpause if paused during a cancel...
       this.paused = false;
 
       // notify to wake up...
-      synchronized(this.lock) {
+      synchronized (this.lock) {
         this.lock.notify();
       }
     }
@@ -1238,10 +1201,9 @@ public
     public void run() {
       /* Used to check whether there were pendingJoins before waiting */
       boolean noPendingJoins = false;
-    OUTER:
-      while (!this.shutDown) {
+      OUTER: while (!this.shutDown) {
         SystemFailure.checkFailure();
-//        Thread.interrupted(); // clear the interrupted flag
+        //        Thread.interrupted(); // clear the interrupted flag
         try {
           if (!RemoteGfManagerAgent.this.isListening()) {
             shutDown();
@@ -1257,15 +1219,16 @@ public
             if (logger.isTraceEnabled(LogMarker.DM)) {
               logger.trace(LogMarker.DM, "JoinProcessor is about to wait...");
             }
-//            Thread.interrupted(); // clear the interrupted flag
-            synchronized(this.lock) {
+            //            Thread.interrupted(); // clear the interrupted flag
+            synchronized (this.lock) {
               this.lock.wait();
             }
           }
           if (logger.isTraceEnabled(LogMarker.DM)) {
             logger.trace(LogMarker.DM, "JoinProcessor has woken up...");
           }
-          if (this.paused) continue;
+          if (this.paused)
+            continue;
 
           // if no join was already in process or if aborted, get a new one...
           if (this.id == null) {
@@ -1280,7 +1243,8 @@ public
               }
             }
           }
-          if (this.paused) continue;
+          if (this.paused)
+            continue;
 
           // process the join...
           if (this.id != null) {
@@ -1289,19 +1253,16 @@ public
             }
             try {
               RemoteGfManagerAgent.this.handleJoined(this.id);
-            }
-            finally {
+            } finally {
               this.id = null;
             }
           }
 
-        }
-        catch (CancelException e) {
+        } catch (CancelException e) {
           // we're done!
           shutDown = true; // for safety
           break;
-        }
-        catch (InterruptedException ignore) {
+        } catch (InterruptedException ignore) {
           // When this thread is "paused", it is interrupted
           if (logger.isTraceEnabled(LogMarker.DM)) {
             logger.trace(LogMarker.DM, "JoinProcessor has been interrupted...");
@@ -1327,7 +1288,7 @@ public
             noPendingJoins = false;
             continue;
           }
-//          logger.warning("Unexpected thread interrupt", ignore);
+          //          logger.warning("Unexpected thread interrupt", ignore);
           break; // Panic!
 
         } catch (OperationCancelledException ex) {
@@ -1336,22 +1297,19 @@ public
           }
           continue;
 
-        } 
-        catch (VirtualMachineError err) {
+        } catch (VirtualMachineError err) {
           SystemFailure.initiateFailure(err);
           // If this ever returns, rethrow the error.  We're poisoned
           // now, so don't let this thread continue.
           throw err;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
           // Whenever you catch Error or Throwable, you must also
           // catch VirtualMachineError (see above).  However, there is
           // _still_ a possibility that you are dealing with a cascading
           // error condition, so you also need to check to see if the JVM
           // is still usable:
           SystemFailure.checkFailure();
-          for (Throwable cause = e.getCause(); cause != null;
-               cause = cause.getCause()) {
+          for (Throwable cause = e.getCause(); cause != null; cause = cause.getCause()) {
             if (cause instanceof InterruptedException) {
               if (logger.isTraceEnabled(LogMarker.DM)) {
                 logger.trace(LogMarker.DM, "JoinProcessor has been interrupted...");
@@ -1366,15 +1324,16 @@ public
   }
 
   private class MyMembershipListener implements MembershipListener {
-    
+
     private final Set distributedMembers = new HashSet();
-  
-    protected MyMembershipListener() {}
-    
+
+    protected MyMembershipListener() {
+    }
+
     protected void addMembers(Set initMembers) {
       distributedMembers.addAll(initMembers);
     }
-    
+
     /**
      * This method is invoked when a new member joins the system.  If
      * the member is an application VM or a GemFire system manager, we
@@ -1386,7 +1345,7 @@ public
       if (!isListening()) {
         return;
       }
-      synchronized(this) {
+      synchronized (this) {
         if (!this.distributedMembers.contains(id)) {
           this.distributedMembers.add(id);
           addPendingJoin(id);
@@ -1394,11 +1353,10 @@ public
         }
       }
     }
-    
-    public void memberSuspect(InternalDistributedMember id,
-        InternalDistributedMember whoSuspected, String reason) {
+
+    public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
     }
-    
+
     public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
     }
 
@@ -1411,7 +1369,7 @@ public
      * @see JoinLeaveListener#nodeLeft
      */
     public void memberDeparted(InternalDistributedMember id, boolean crashed) {
-      synchronized(this) {
+      synchronized (this) {
         if (!this.distributedMembers.remove(id)) {
           return;
         }
@@ -1420,9 +1378,9 @@ public
           return;
         }
       }
-      
+
       // remove the member...
-  
+
       RemoteGemFireVM member = null;
       switch (id.getVmKind()) {
       case DistributionManager.NORMAL_DM_TYPE:
@@ -1433,15 +1391,15 @@ public
       case DistributionManager.LOCATOR_DM_TYPE:
         break;
       case DistributionManager.LONER_DM_TYPE:
-        break;  // should this ever happen?
+        break; // should this ever happen?
       default:
         throw new IllegalArgumentException(LocalizedStrings.RemoteGfManagerAgent_UNKNOWN_VM_KIND.toLocalizedString());
       }
-      
+
       // clean up and notify JoinLeaveListeners...
       if (member != null) {
         for (Iterator it = listeners.iterator(); it.hasNext();) {
-          JoinLeaveListener l = (JoinLeaveListener)it.next();
+          JoinLeaveListener l = (JoinLeaveListener) it.next();
           if (crashed) {
             l.nodeCrashed(RemoteGfManagerAgent.this, member);
           } else {
@@ -1452,6 +1410,5 @@ public
       }
     }
   }
-  
-}
 
+}

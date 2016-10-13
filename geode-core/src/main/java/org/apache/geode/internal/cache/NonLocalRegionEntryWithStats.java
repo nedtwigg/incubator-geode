@@ -31,7 +31,7 @@ public class NonLocalRegionEntryWithStats extends NonLocalRegionEntry {
   private long hitCount;
   private long missCount;
   private long lastAccessed;
-  
+
   public NonLocalRegionEntryWithStats(RegionEntry re, LocalRegion br, boolean allowTombstones) {
     super(re, br, allowTombstones);
     try {
@@ -39,10 +39,10 @@ public class NonLocalRegionEntryWithStats extends NonLocalRegionEntry {
       this.hitCount = re.getHitCount();
       this.missCount = re.getMissCount();
     } catch (InternalStatisticsDisabledException unexpected) {
-      Assert.assertTrue(false, "Unexpected " + unexpected); 
+      Assert.assertTrue(false, "Unexpected " + unexpected);
     }
   }
-  
+
   @Override
   public boolean hasStats() {
     return true;
@@ -76,8 +76,7 @@ public class NonLocalRegionEntryWithStats extends NonLocalRegionEntry {
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.lastAccessed = in.readLong();
     this.hitCount = in.readLong();

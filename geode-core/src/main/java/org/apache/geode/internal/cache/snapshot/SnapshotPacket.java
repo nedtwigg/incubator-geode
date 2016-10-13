@@ -50,7 +50,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
   public static class SnapshotRecord implements DataSerializableFixedID {
     /** the serialized key */
     private byte[] key;
-    
+
     /** the serialized value */
     private byte[] value;
 
@@ -62,7 +62,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
       this.key = key;
       this.value = value;
     }
-    
+
     public <K, V> SnapshotRecord(K keyObj, V valObj) throws IOException {
       key = BlobHelper.serializeToBlob(keyObj);
       value = convertToBytes(valObj);
@@ -71,7 +71,8 @@ public class SnapshotPacket implements DataSerializableFixedID {
     public <K, V> SnapshotRecord(LocalRegion region, Entry<K, V> entry) throws IOException {
       key = BlobHelper.serializeToBlob(entry.getKey());
       if (entry instanceof NonTXEntry && region != null) {
-        @Released Object v = ((NonTXEntry) entry).getRegionEntry().getValueOffHeapOrDiskWithoutFaultIn(region);
+        @Released
+        Object v = ((NonTXEntry) entry).getRegionEntry().getValueOffHeapOrDiskWithoutFaultIn(region);
         try {
           value = convertToBytes(v);
         } finally {
@@ -89,7 +90,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
     public byte[] getKey() {
       return key;
     }
-    
+
     /**
      * Returns the serialized value.
      * @return the value
@@ -97,7 +98,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
     public byte[] getValue() {
       return value;
     }
-    
+
     /**
      * Returns the deserialized key object.
      * @return the key
@@ -108,7 +109,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
     public <K> K getKeyObject() throws IOException, ClassNotFoundException {
       return (K) BlobHelper.deserializeBlob(key);
     }
-    
+
     /**
      * Returns the deserialized value object.
      * @return the value
@@ -119,7 +120,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
     public <V> V getValueObject() throws IOException, ClassNotFoundException {
       return value == null ? null : (V) BlobHelper.deserializeBlob(value);
     }
-    
+
     /**
      * Returns true if the record has a value.
      * @return the value, or null
@@ -127,7 +128,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
     public boolean hasValue() {
       return value != null;
     }
-    
+
     /**
      * Returns the size in bytes of the serialized key and value.
      * @return the record size
@@ -135,13 +136,12 @@ public class SnapshotPacket implements DataSerializableFixedID {
     public int getSize() {
       return key.length + (value == null ? 0 : value.length);
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       InternalDataSerializer.writeByteArray(key, out);
       InternalDataSerializer.writeByteArray(value, out);
     }
-
 
     @Override
     public int getDSFID() {
@@ -173,16 +173,16 @@ public class SnapshotPacket implements DataSerializableFixedID {
       return null;
     }
   }
-  
+
   /** the window id for responses */
   private int windowId;
-  
+
   /** the packet id */
   private String packetId;
-  
+
   /** the member sending the packet */
   private DistributedMember sender;
-  
+
   /** the snapshot data */
   private SnapshotRecord[] records;
 
@@ -196,7 +196,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
     this.sender = sender;
     records = recs.toArray(new SnapshotRecord[recs.size()]);
   }
-  
+
   /**
    * Returns the window id for sending responses.
    * @return the window id
@@ -204,7 +204,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
   public int getWindowId() {
     return windowId;
   }
-  
+
   /**
    * Returns the packet id.
    * @return the packet id
@@ -212,7 +212,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
   public String getPacketId() {
     return packetId;
   }
-  
+
   /**
    * Returns the member that sent the packet.
    * @return the sender
@@ -220,7 +220,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
   public DistributedMember getSender() {
     return sender;
   }
-  
+
   /**
    * Returns the snapshot data
    * @return the records
@@ -228,7 +228,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
   public SnapshotRecord[] getRecords() {
     return records;
   }
-  
+
   @Override
   public int getDSFID() {
     return SNAPSHOT_PACKET;
@@ -239,7 +239,7 @@ public class SnapshotPacket implements DataSerializableFixedID {
     out.writeInt(windowId);
     InternalDataSerializer.writeString(packetId, out);
     InternalDataSerializer.writeObject(sender, out);
-    
+
     InternalDataSerializer.writeArrayLength(records.length, out);
     for (SnapshotRecord rec : records) {
       InternalDataSerializer.invokeToData(rec, out);
@@ -251,10 +251,10 @@ public class SnapshotPacket implements DataSerializableFixedID {
     windowId = in.readInt();
     packetId = InternalDataSerializer.readString(in);
     sender = InternalDataSerializer.readObject(in);
-    
+
     int count = InternalDataSerializer.readArrayLength(in);
     records = new SnapshotRecord[count];
-    
+
     for (int i = 0; i < count; i++) {
       SnapshotRecord rec = new SnapshotRecord();
       InternalDataSerializer.invokeFromData(rec, in);

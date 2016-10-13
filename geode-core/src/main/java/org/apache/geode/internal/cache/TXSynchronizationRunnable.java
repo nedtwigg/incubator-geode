@@ -37,11 +37,11 @@ public class TXSynchronizationRunnable implements Runnable {
   private Runnable firstRunnable;
   private final Object firstRunnableSync = new Object();
   private boolean firstRunnableCompleted;
-  
+
   private Runnable secondRunnable;
   private final Object secondRunnableSync = new Object();
   private boolean secondRunnableCompleted;
-  
+
   private boolean abort;
 
   public TXSynchronizationRunnable(Runnable beforeCompletion) {
@@ -49,7 +49,7 @@ public class TXSynchronizationRunnable implements Runnable {
   }
 
   public void run() {
-    synchronized(this.firstRunnableSync) {
+    synchronized (this.firstRunnableSync) {
       try {
         this.firstRunnable.run();
       } finally {
@@ -61,7 +61,7 @@ public class TXSynchronizationRunnable implements Runnable {
         this.firstRunnableSync.notify();
       }
     }
-    synchronized(this.secondRunnableSync){ 
+    synchronized (this.secondRunnableSync) {
       // TODO there should be a transaction timeout that keeps this thread
       // from sitting around forever in the event the client goes away
       final boolean isTraceEnabled = logger.isTraceEnabled();
@@ -98,13 +98,13 @@ public class TXSynchronizationRunnable implements Runnable {
       }
     }
   }
-  
+
   /**
    * wait for the initial beforeCompletion step to finish
    */
   public void waitForFirstExecution() {
-    synchronized(this.firstRunnableSync) {
-      while(!this.firstRunnableCompleted) {
+    synchronized (this.firstRunnableSync) {
+      while (!this.firstRunnableCompleted) {
         try {
           this.firstRunnableSync.wait(1000);
         } catch (InterruptedException e) {
@@ -128,10 +128,10 @@ public class TXSynchronizationRunnable implements Runnable {
    * @param r
    */
   public void runSecondRunnable(Runnable r) {
-    synchronized(this.secondRunnableSync){ 
+    synchronized (this.secondRunnableSync) {
       this.secondRunnable = r;
       this.secondRunnableSync.notify();
-      while(!this.secondRunnableCompleted && !this.abort) {
+      while (!this.secondRunnableCompleted && !this.abort) {
         try {
           this.secondRunnableSync.wait(1000);
         } catch (InterruptedException e) {
@@ -147,12 +147,12 @@ public class TXSynchronizationRunnable implements Runnable {
       }
     }
   }
-  
+
   /**
    * stop waiting for an afterCompletion to arrive and just exit
    */
   public void abort() {
-    synchronized(this.secondRunnableSync) {
+    synchronized (this.secondRunnableSync) {
       this.abort = true;
     }
   }

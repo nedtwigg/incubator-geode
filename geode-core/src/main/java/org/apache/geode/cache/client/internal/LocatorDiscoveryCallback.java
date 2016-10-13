@@ -24,7 +24,7 @@ import java.util.List;
  * @since GemFire 5.7
  */
 public interface LocatorDiscoveryCallback {
-  
+
   /**
    * Called to indicate that new locators
    * have been discovered
@@ -32,7 +32,7 @@ public interface LocatorDiscoveryCallback {
    * locators that have been discovered.
    */
   void locatorsDiscovered(List locators);
-  
+
   /**
    * Called to indicated that locators
    * have been removed from the list
@@ -41,6 +41,5 @@ public interface LocatorDiscoveryCallback {
    * of locators that have been removed
    */
   void locatorsRemoved(List locators);
-  
 
 }

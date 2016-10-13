@@ -39,7 +39,7 @@ public interface GatewayReceiverFactory {
    * @param endPort
    */
   public GatewayReceiverFactory setEndPort(int endPort);
-  
+
   /**
    * Sets the buffer size in bytes of the socket connection for this
    * <code>GatewayReceiver</code>. The default is 32768 bytes.
@@ -64,8 +64,7 @@ public interface GatewayReceiverFactory {
    * @param filter
    *          GatewayTransportFilter
    */
-  public GatewayReceiverFactory addGatewayTransportFilter(
-      GatewayTransportFilter filter);
+  public GatewayReceiverFactory addGatewayTransportFilter(GatewayTransportFilter filter);
 
   /**
    * Removes a <code>GatewayTransportFilter</code>
@@ -73,8 +72,7 @@ public interface GatewayReceiverFactory {
    * @param filter
    *          GatewayTransportFilter
    */
-  public GatewayReceiverFactory removeGatewayTransportFilter(
-      GatewayTransportFilter filter);
+  public GatewayReceiverFactory removeGatewayTransportFilter(GatewayTransportFilter filter);
 
   /**
    * Sets the maximum amount of time between client pings.The default is 60000
@@ -84,7 +82,7 @@ public interface GatewayReceiverFactory {
    *          The maximum amount of time between client pings
    */
   public GatewayReceiverFactory setMaximumTimeBetweenPings(int time);
-  
+
   /**
    * Sets the ip address or host name that server locators will tell
    * GatewaySenders that this GatewayReceiver is listening on.
@@ -93,7 +91,7 @@ public interface GatewayReceiverFactory {
    *          String representing ip address or host name
    */
   public GatewayReceiverFactory setHostnameForSenders(String address);
-  
+
   /**
    * Sets the manual start boolean property for this
    * <code>GatewayReceiver</code>. 
@@ -109,7 +107,7 @@ public interface GatewayReceiverFactory {
    *          <code>GatewayReceiver</code>
    */
   public GatewayReceiverFactory setManualStart(boolean start);
-  
+
   /**
    * Creates and returns an instance of <code>GatewayReceiver</code>
    * 

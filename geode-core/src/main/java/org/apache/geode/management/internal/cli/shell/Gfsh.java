@@ -93,13 +93,13 @@ import jline.console.ConsoleReader;
  * @since GemFire 7.0
  */
 public class Gfsh extends JLineShell {
-  public static final int     DEFAULT_APP_FETCH_SIZE                 = 1000;
-  public static final int     DEFAULT_APP_LAST_EXIT_STATUS           = 0;
-  public static final int     DEFAULT_APP_COLLECTION_LIMIT           = 20;
-  public static final boolean DEFAULT_APP_QUIET_EXECUTION            = false;
-  public static final String  DEFAULT_APP_QUERY_RESULTS_DISPLAY_MODE = "table";
-  public static final String  DEFAULT_APP_RESULT_VIEWER = "basic";
-  public static final String  EXTERNAL_RESULT_VIEWER = "external";
+  public static final int DEFAULT_APP_FETCH_SIZE = 1000;
+  public static final int DEFAULT_APP_LAST_EXIT_STATUS = 0;
+  public static final int DEFAULT_APP_COLLECTION_LIMIT = 20;
+  public static final boolean DEFAULT_APP_QUIET_EXECUTION = false;
+  public static final String DEFAULT_APP_QUERY_RESULTS_DISPLAY_MODE = "table";
+  public static final String DEFAULT_APP_RESULT_VIEWER = "basic";
+  public static final String EXTERNAL_RESULT_VIEWER = "external";
 
   public static final String GFSH_APP_NAME = "gfsh";
 
@@ -109,70 +109,70 @@ public class Gfsh extends JLineShell {
   private static final String DEFAULT_SECONDARY_PROMPT = ">";
 
   // Default Window dimensions
-  public static final int DEFAULT_WIDTH  = 100;
+  public static final int DEFAULT_WIDTH = 100;
   private static final int DEFAULT_HEIGHT = 100;
 
-  public static final String ENV_APP_NAME                       = "APP_NAME";
-  public static final String ENV_APP_CONTEXT_PATH               = "APP_CONTEXT_PATH";
-  public static final String ENV_APP_FETCH_SIZE                 = "APP_FETCH_SIZE";
-  public static final String ENV_APP_LAST_EXIT_STATUS           = "APP_LAST_EXIT_STATUS";
-  public static final String ENV_APP_COLLECTION_LIMIT           = "APP_COLLECTION_LIMIT";
+  public static final String ENV_APP_NAME = "APP_NAME";
+  public static final String ENV_APP_CONTEXT_PATH = "APP_CONTEXT_PATH";
+  public static final String ENV_APP_FETCH_SIZE = "APP_FETCH_SIZE";
+  public static final String ENV_APP_LAST_EXIT_STATUS = "APP_LAST_EXIT_STATUS";
+  public static final String ENV_APP_COLLECTION_LIMIT = "APP_COLLECTION_LIMIT";
   public static final String ENV_APP_QUERY_RESULTS_DISPLAY_MODE = "APP_QUERY_RESULTS_DISPLAY_MODE";
-  public static final String ENV_APP_QUIET_EXECUTION            = "APP_QUIET_EXECUTION";
-  public static final String ENV_APP_LOGGING_ENABLED            = "APP_LOGGING_ENABLED";
-  public static final String ENV_APP_LOG_FILE                   = "APP_LOG_FILE";
-  public static final String ENV_APP_PWD                        = "APP_PWD";
-  public static final String ENV_APP_RESULT_VIEWER              = "APP_RESULT_VIEWER";
+  public static final String ENV_APP_QUIET_EXECUTION = "APP_QUIET_EXECUTION";
+  public static final String ENV_APP_LOGGING_ENABLED = "APP_LOGGING_ENABLED";
+  public static final String ENV_APP_LOG_FILE = "APP_LOG_FILE";
+  public static final String ENV_APP_PWD = "APP_PWD";
+  public static final String ENV_APP_RESULT_VIEWER = "APP_RESULT_VIEWER";
 
   // Environment Properties taken from the OS
-  public static final String ENV_SYS_USER                       = "SYS_USER";
-  public static final String ENV_SYS_USER_HOME                  = "SYS_USER_HOME";
-  public static final String ENV_SYS_HOST_NAME                  = "SYS_HOST_NAME";
-  public static final String ENV_SYS_CLASSPATH                  = "SYS_CLASSPATH";
-  public static final String ENV_SYS_JAVA_VERSION               = "SYS_JAVA_VERSION";
-  public static final String ENV_SYS_OS                         = "SYS_OS";
-  public static final String ENV_SYS_OS_LINE_SEPARATOR          = "SYS_OS_LINE_SEPARATOR";
-  public static final String ENV_SYS_GEMFIRE_DIR                = "SYS_GEMFIRE_DIR";
+  public static final String ENV_SYS_USER = "SYS_USER";
+  public static final String ENV_SYS_USER_HOME = "SYS_USER_HOME";
+  public static final String ENV_SYS_HOST_NAME = "SYS_HOST_NAME";
+  public static final String ENV_SYS_CLASSPATH = "SYS_CLASSPATH";
+  public static final String ENV_SYS_JAVA_VERSION = "SYS_JAVA_VERSION";
+  public static final String ENV_SYS_OS = "SYS_OS";
+  public static final String ENV_SYS_OS_LINE_SEPARATOR = "SYS_OS_LINE_SEPARATOR";
+  public static final String ENV_SYS_GEMFIRE_DIR = "SYS_GEMFIRE_DIR";
 
   // TODO merge find a better place for these
   // SSL Configuration properties. keystore/truststore type is not include
-  public static final String SSL_KEYSTORE                       = "javax.net.ssl.keyStore";
-  public static final String SSL_KEYSTORE_PASSWORD   = "javax.net.ssl.keyStorePassword";
-  public static final String SSL_TRUSTSTORE          = "javax.net.ssl.trustStore";
+  public static final String SSL_KEYSTORE = "javax.net.ssl.keyStore";
+  public static final String SSL_KEYSTORE_PASSWORD = "javax.net.ssl.keyStorePassword";
+  public static final String SSL_TRUSTSTORE = "javax.net.ssl.trustStore";
   public static final String SSL_TRUSTSTORE_PASSWORD = "javax.net.ssl.trustStorePassword";
-  public static final String SSL_ENABLED_CIPHERS     = "javax.rmi.ssl.client.enabledCipherSuites";
-  public static final String SSL_ENABLED_PROTOCOLS   = "javax.rmi.ssl.client.enabledProtocols";
+  public static final String SSL_ENABLED_CIPHERS = "javax.rmi.ssl.client.enabledCipherSuites";
+  public static final String SSL_ENABLED_PROTOCOLS = "javax.rmi.ssl.client.enabledProtocols";
 
   protected static PrintStream gfshout = System.out;
   protected static PrintStream gfsherr = System.err;
 
-//  private static final String ANIMATION_SLOT = "A"; //see 46072
+  //  private static final String ANIMATION_SLOT = "A"; //see 46072
 
-  private static       Gfsh   instance;
+  private static Gfsh instance;
   private static final Object INSTANCE_LOCK = new Object();
 
-  private final Map<String, String> env     = new TreeMap<String, String>();
+  private final Map<String, String> env = new TreeMap<String, String>();
   private final List<String> readonlyAppEnv = new ArrayList<String>();
 
   // Map to keep reference to actual user specified Command String
   // Should always have one value at the max
   private final Map<String, String> expandedPropCommandsMap = new HashMap<String, String>();
 
-  private final CommandManager    commandManager;
+  private final CommandManager commandManager;
   private final ExecutionStrategy executionStrategy;
-  private final GfshParser        parser;
-  private       OperationInvoker  operationInvoker;
-  private       int               lastExecutionStatus;
-  private       Thread            runner;
-  private       boolean           debugON;
-  private final LogWrapper        gfshFileLogger;
-  private final GfshConfig        gfshConfig;
-  private final GfshHistory       gfshHistory;
-  private final ANSIHandler       ansiHandler;
-  private       Terminal          terminal;
-  private final boolean           isHeadlessMode;
-  private       boolean           supressScriptCmdOutput;
-  private       boolean           isScriptRunning;
+  private final GfshParser parser;
+  private OperationInvoker operationInvoker;
+  private int lastExecutionStatus;
+  private Thread runner;
+  private boolean debugON;
+  private final LogWrapper gfshFileLogger;
+  private final GfshConfig gfshConfig;
+  private final GfshHistory gfshHistory;
+  private final ANSIHandler ansiHandler;
+  private Terminal terminal;
+  private final boolean isHeadlessMode;
+  private boolean supressScriptCmdOutput;
+  private boolean isScriptRunning;
 
   private AbstractSignalNotificationHandler signalHandler;
   //This flag is used to restrict column trimming to table only types
@@ -248,12 +248,12 @@ public class Gfsh extends JLineShell {
 
     // Setup signal handler for various signals (such as CTRL-C)...
     try {
-      ClassUtils.forName("sun.misc.Signal", new SunAPINotFoundException(
-        "WARNING!!! Not running a Sun JVM.  Could not find the sun.misc.Signal class; Signal handling disabled."));
-      signalHandler = (CliUtil.isGfshVM() ? new GfshSignalHandler() : new AbstractSignalNotificationHandler() { });
-    }
-    catch (SunAPINotFoundException e) {
-      signalHandler = new AbstractSignalNotificationHandler() { };
+      ClassUtils.forName("sun.misc.Signal", new SunAPINotFoundException("WARNING!!! Not running a Sun JVM.  Could not find the sun.misc.Signal class; Signal handling disabled."));
+      signalHandler = (CliUtil.isGfshVM() ? new GfshSignalHandler() : new AbstractSignalNotificationHandler() {
+      });
+    } catch (SunAPINotFoundException e) {
+      signalHandler = new AbstractSignalNotificationHandler() {
+      };
       this.gfshFileLogger.warning(e.getMessage());
     }
 
@@ -279,35 +279,33 @@ public class Gfsh extends JLineShell {
    * Initializes default environment variables to default values
    */
   private void initializeEnvironment() {
-    env.put(ENV_SYS_USER,              System.getProperty("user.name"));
-    env.put(ENV_SYS_USER_HOME,         System.getProperty("user.home"));
-    env.put(ENV_SYS_HOST_NAME,         new HostName().determineHostName());
-    env.put(ENV_SYS_CLASSPATH,         System.getProperty("java.class.path"));
-    env.put(ENV_SYS_JAVA_VERSION,      System.getProperty("java.version"));
-    env.put(ENV_SYS_OS,                System.getProperty("os.name"));
+    env.put(ENV_SYS_USER, System.getProperty("user.name"));
+    env.put(ENV_SYS_USER_HOME, System.getProperty("user.home"));
+    env.put(ENV_SYS_HOST_NAME, new HostName().determineHostName());
+    env.put(ENV_SYS_CLASSPATH, System.getProperty("java.class.path"));
+    env.put(ENV_SYS_JAVA_VERSION, System.getProperty("java.version"));
+    env.put(ENV_SYS_OS, System.getProperty("os.name"));
     env.put(ENV_SYS_OS_LINE_SEPARATOR, System.getProperty("line.separator"));
-    env.put(ENV_SYS_GEMFIRE_DIR,       System.getenv("GEMFIRE"));
+    env.put(ENV_SYS_GEMFIRE_DIR, System.getenv("GEMFIRE"));
 
-    env.put(ENV_APP_NAME,                       org.apache.geode.management.internal.cli.shell.Gfsh.GFSH_APP_NAME);
+    env.put(ENV_APP_NAME, org.apache.geode.management.internal.cli.shell.Gfsh.GFSH_APP_NAME);
     readonlyAppEnv.add(ENV_APP_NAME);
-    env.put(ENV_APP_LOGGING_ENABLED,                String.valueOf(!Level.OFF.equals(this.gfshConfig.getLogLevel())) );
+    env.put(ENV_APP_LOGGING_ENABLED, String.valueOf(!Level.OFF.equals(this.gfshConfig.getLogLevel())));
     readonlyAppEnv.add(ENV_APP_LOGGING_ENABLED);
-    env.put(ENV_APP_LOG_FILE,                   this.gfshConfig.getLogFilePath());
+    env.put(ENV_APP_LOG_FILE, this.gfshConfig.getLogFilePath());
     readonlyAppEnv.add(ENV_APP_LOG_FILE);
-    env.put(ENV_APP_PWD,                        System.getProperty("user.dir"));
+    env.put(ENV_APP_PWD, System.getProperty("user.dir"));
     readonlyAppEnv.add(ENV_APP_PWD);
-    env.put(ENV_APP_FETCH_SIZE,                 String.valueOf(DEFAULT_APP_FETCH_SIZE));
-    env.put(ENV_APP_LAST_EXIT_STATUS,           String.valueOf(DEFAULT_APP_LAST_EXIT_STATUS));
+    env.put(ENV_APP_FETCH_SIZE, String.valueOf(DEFAULT_APP_FETCH_SIZE));
+    env.put(ENV_APP_LAST_EXIT_STATUS, String.valueOf(DEFAULT_APP_LAST_EXIT_STATUS));
     readonlyAppEnv.add(ENV_APP_LAST_EXIT_STATUS);
-    env.put(ENV_APP_COLLECTION_LIMIT,           String.valueOf(DEFAULT_APP_COLLECTION_LIMIT));
+    env.put(ENV_APP_COLLECTION_LIMIT, String.valueOf(DEFAULT_APP_COLLECTION_LIMIT));
     env.put(ENV_APP_QUERY_RESULTS_DISPLAY_MODE, DEFAULT_APP_QUERY_RESULTS_DISPLAY_MODE);
-    env.put(ENV_APP_QUIET_EXECUTION,            String.valueOf(DEFAULT_APP_QUIET_EXECUTION));
-    env.put(ENV_APP_RESULT_VIEWER,            String.valueOf(DEFAULT_APP_RESULT_VIEWER));
+    env.put(ENV_APP_QUIET_EXECUTION, String.valueOf(DEFAULT_APP_QUIET_EXECUTION));
+    env.put(ENV_APP_RESULT_VIEWER, String.valueOf(DEFAULT_APP_RESULT_VIEWER));
   }
 
-  public static Gfsh getInstance(boolean launchShell, String[] args, GfshConfig gfshConfig)
-    throws ClassNotFoundException, IOException
-  {
+  public static Gfsh getInstance(boolean launchShell, String[] args, GfshConfig gfshConfig) throws ClassNotFoundException, IOException {
     if (instance == null) {
       synchronized (INSTANCE_LOCK) {
         if (instance == null) {
@@ -340,7 +338,7 @@ public class Gfsh extends JLineShell {
    * Stops this GemFire Shell.
    */
   public void stop() {
-//    flashMessage("\b"); // see 46072
+    //    flashMessage("\b"); // see 46072
     closeShell();
     LogWrapper.close();
     if (operationInvoker != null && operationInvoker.isConnected()) {
@@ -378,7 +376,7 @@ public class Gfsh extends JLineShell {
    * See findResources in {@link AbstractShell}
    */
   protected Collection<URL> findResources(String resourceName) {
-//    return Collections.singleton(ClassPathLoader.getLatest().getResource(resourceName));
+    //    return Collections.singleton(ClassPathLoader.getLatest().getResource(resourceName));
     return null;
   }
 
@@ -428,7 +426,7 @@ public class Gfsh extends JLineShell {
       String logMessage = "Command String to execute .. ";
       if (!line.equals(withPropsExpanded)) {
         if (!isQuietMode()) {
-          Gfsh.println("Post substitution: "+withPropsExpanded);
+          Gfsh.println("Post substitution: " + withPropsExpanded);
         }
         logMessage = "Command String after substitution : ";
         expandedPropCommandsMap.put(withPropsExpanded, line);
@@ -514,14 +512,14 @@ public class Gfsh extends JLineShell {
     try {
       if (result instanceof Result) {
         Result commandResult = (Result) result;
-        boolean isError = Result.Status.ERROR.equals(commandResult.getStatus());        
+        boolean isError = Result.Status.ERROR.equals(commandResult.getStatus());
 
         if (isError) {
           setLastExecutionStatus(-2);
         } else {
           setLastExecutionStatus(0);
         }
-        
+
         if (useExternalViewer(commandResult)) {
           // - Save file and pass to less so that viewer can scroll through
           // results
@@ -539,7 +537,7 @@ public class Gfsh extends JLineShell {
             }
           }
         }
-        
+
         resultTypeTL.set(null);
 
         if (result instanceof CommandResult) {
@@ -564,16 +562,16 @@ public class Gfsh extends JLineShell {
 
   private boolean useExternalViewer(Result result) {
     boolean flag = EXTERNAL_RESULT_VIEWER.equals(getEnvProperty(Gfsh.ENV_APP_RESULT_VIEWER)) && isUnix();
-    if(result instanceof CommandResult) {
+    if (result instanceof CommandResult) {
       CommandResult commandResult = (CommandResult) result;
       resultTypeTL.set(commandResult.getType().equals("info"));
-      return flag && !commandResult.getType().equals("info");      
-    }else
+      return flag && !commandResult.getType().equals("info");
+    } else
       return false;
   }
-  
-  public static boolean isInfoResult(){
-    if(resultTypeTL.get()==null)
+
+  public static boolean isInfoResult() {
+    if (resultTypeTL.get() == null)
       return false;
     return resultTypeTL.get();
   }
@@ -619,12 +617,12 @@ public class Gfsh extends JLineShell {
     return getVersion();
   }
 
-// causes instability on MacOS See #46072
-//  public void flashMessage(String message) {
-//    if (reader != null) {
-//      flash(Level.FINE, message, ANIMATION_SLOT);
-//    }
-//  }
+  // causes instability on MacOS See #46072
+  //  public void flashMessage(String message) {
+  //    if (reader != null) {
+  //      flash(Level.FINE, message, ANIMATION_SLOT);
+  //    }
+  //  }
   /////// Save multiple-line commands as single line in history - ends /////////
   ///////////////////// JLineShell Class Methods End  //////////////////////////
 
@@ -650,15 +648,15 @@ public class Gfsh extends JLineShell {
     gfshout.println();
   }
 
-  public static <T>void println(T toPrint) {
+  public static <T> void println(T toPrint) {
     gfshout.println(toPrint);
   }
 
-  public static <T>void print(T toPrint) {
+  public static <T> void print(T toPrint) {
     gfshout.print(toPrint);
   }
 
-  public static <T>void printlnErr(T toPrint) {
+  public static <T> void printlnErr(T toPrint) {
     gfsherr.println(toPrint);
   }
 
@@ -754,7 +752,7 @@ public class Gfsh extends JLineShell {
     Result result = null;
     String initialIsQuiet = getEnvProperty(ENV_APP_QUIET_EXECUTION);
     try {
-      this.isScriptRunning = true;  
+      this.isScriptRunning = true;
       if (scriptFile == null) {
         throw new IllegalArgumentException("Given script file is null.");
       } else if (!scriptFile.exists()) {
@@ -774,8 +772,7 @@ public class Gfsh extends JLineShell {
         int commandSrNum = 0;
         CommentSkipHelper commentSkipper = new CommentSkipHelper();
 
-        LINEREAD_LOOP:
-        while (exitShellRequest == null && (lineRead = reader.readLine()) != null) {
+        LINEREAD_LOOP: while (exitShellRequest == null && (lineRead = reader.readLine()) != null) {
           if (linesBuffer == null) {
             linesBuffer = new StringBuilder();
           }
@@ -792,28 +789,27 @@ public class Gfsh extends JLineShell {
           // NOTE: Similar code is in promptLoop()
           if (!linesBufferString.endsWith(SyntaxConstants.CONTINUATION_CHARACTER)) { // see 45893
             //String command = null;
-            
-            
+
             List<String> commandList = MultiCommandHelper.getMultipleCommands(linesBufferString);
-            for(String cmdLet : commandList) {
+            for (String cmdLet : commandList) {
               String trimmedCommand = cmdLet.trim();
               if (!trimmedCommand.isEmpty()) {
                 ++commandSrNum;
-                Gfsh.println(commandSrNum+". Executing - " + cmdLet);                
+                Gfsh.println(commandSrNum + ". Executing - " + cmdLet);
                 Gfsh.println();
                 boolean executeSuccess = executeScriptLine(cmdLet);
                 if (!executeSuccess) {
                   setLastExecutionStatus(-1);
                 }
-                scriptInfo.addCommandAndStatus(cmdLet, getLastExecutionStatus() == -1 || getLastExecutionStatus() == -2 ? "FAILED" : "PASSED");                
+                scriptInfo.addCommandAndStatus(cmdLet, getLastExecutionStatus() == -1 || getLastExecutionStatus() == -2 ? "FAILED" : "PASSED");
                 if ((getLastExecutionStatus() == -1 || getLastExecutionStatus() == -2) && !continueOnError) {
                   break LINEREAD_LOOP;
                 }
               }
             }
-            
+
             // reset buffer
-            linesBuffer       = null;
+            linesBuffer = null;
             linesBufferString = null;
           } else {
             linesBuffer.deleteCharAt(linesBuffer.length() - 1);
@@ -821,7 +817,7 @@ public class Gfsh extends JLineShell {
         }
         reader.close();
       } else {
-        throw new CommandProcessingException(scriptFile.getPath()+" doesn't exist.", CommandProcessingException.ARGUMENT_INVALID, scriptFile);
+        throw new CommandProcessingException(scriptFile.getPath() + " doesn't exist.", CommandProcessingException.ARGUMENT_INVALID, scriptFile);
       }
       result = scriptInfo.getResult();
       scriptInfo.logScriptExecutionInfo(gfshFileLogger, result);
@@ -830,7 +826,7 @@ public class Gfsh extends JLineShell {
         result = ResultBuilder.createInfoResult("");
       }
     } catch (IOException e) {
-      throw new CommandProcessingException("Error while reading file "+scriptFile, CommandProcessingException.RESOURCE_ACCESS_ERROR, e);
+      throw new CommandProcessingException("Error while reading file " + scriptFile, CommandProcessingException.RESOURCE_ACCESS_ERROR, e);
     } finally {
       // reset to original Quiet Execution value
       setEnvProperty(ENV_APP_QUIET_EXECUTION, initialIsQuiet);
@@ -864,19 +860,19 @@ public class Gfsh extends JLineShell {
   @Override
   public void setPromptPath(String currentContext) {
     super.setPromptPath(currentContext);
-// Enable when "use region" command is required. See #46110
-//    env.put(CliConstants.ENV_APP_CONTEXT_PATH, currentContext);
+    // Enable when "use region" command is required. See #46110
+    //    env.put(CliConstants.ENV_APP_CONTEXT_PATH, currentContext);
   }
 
   public boolean isQuietMode() {
-//    System.out.println(env.get(CliConstants.ENV_APP_QUIET_EXECUTION));
+    //    System.out.println(env.get(CliConstants.ENV_APP_QUIET_EXECUTION));
     return Boolean.parseBoolean(env.get(ENV_APP_QUIET_EXECUTION));
   }
 
   ////////////////// Providing Multiple-line support starts ///////////////////
   @Override
   public void promptLoop() {
-    String line   = null;
+    String line = null;
     String prompt = getPromptText();
     try {
       gfshHistory.setAutoFlush(false);
@@ -884,13 +880,13 @@ public class Gfsh extends JLineShell {
       while (exitShellRequest == null && (line = readLine(reader, prompt)) != null) {
         if (!line.endsWith(SyntaxConstants.CONTINUATION_CHARACTER)) { // see 45893                   
           List<String> commandList = MultiCommandHelper.getMultipleCommands(line);
-          for(String cmdLet : commandList) {
+          for (String cmdLet : commandList) {
             String trimmedCommand = cmdLet.trim();
-            if (!trimmedCommand.isEmpty()) {            
+            if (!trimmedCommand.isEmpty()) {
               executeCommand(cmdLet);
             }
           }
-          prompt = getPromptText();          
+          prompt = getPromptText();
         } else {
           prompt = getDefaultSecondaryPrompt();
           reader.getCursorBuffer().cursor = 0;
@@ -913,7 +909,7 @@ public class Gfsh extends JLineShell {
   // See 46369
   private static String readLine(ConsoleReader reader, String prompt) throws IOException {
     String earlierLine = reader.getCursorBuffer().toString();
-    String readLine    = null;
+    String readLine = null;
     try {
       readLine = reader.readLine(prompt);
     } catch (IndexOutOfBoundsException e) {
@@ -944,9 +940,7 @@ public class Gfsh extends JLineShell {
 
   /////////////////////// OperationInvoker code START //////////////////////////
   public boolean isConnectedAndReady() {
-    return operationInvoker != null
-            && operationInvoker.isConnected()
-              && operationInvoker.isReady();
+    return operationInvoker != null && operationInvoker.isConnected() && operationInvoker.isReady();
   }
 
   /**
@@ -979,7 +973,7 @@ public class Gfsh extends JLineShell {
       while (loggerNames.hasMoreElements()) {
         String loggerName = loggerNames.nextElement();
         if (loggerName.startsWith("java.") || loggerName.startsWith("javax.")) {
-//          System.out.println(loggerName);
+          //          System.out.println(loggerName);
           Logger javaLogger = logManager.getLogger(loggerName);
           /*
            * From Java Docs: It is also important to note that the Logger
@@ -995,7 +989,7 @@ public class Gfsh extends JLineShell {
         }
       }
     } catch (SecurityException e) {
-//      e.printStackTrace();
+      //      e.printStackTrace();
       LogWrapper.getInstance().warning(e.getMessage(), e);
     }
   }
@@ -1009,7 +1003,7 @@ public class Gfsh extends JLineShell {
   }
 
   public String obtainHelp(String userInput, Set<String> requiredCommandNames) {
-      return parser.obtainHelp(userInput, requiredCommandNames);
+    return parser.obtainHelp(userInput, requiredCommandNames);
   }
 
   public List<String> obtainHelpCommandNames(String userInput) {
@@ -1031,7 +1025,7 @@ public class Gfsh extends JLineShell {
 
   public void clearHistory() {
     gfshHistory.clear();
-    if(!gfshConfig.deleteHistoryFile()){
+    if (!gfshConfig.deleteHistoryFile()) {
       printAsWarning("Gfsh history file is not deleted");
     }
   }
@@ -1053,25 +1047,25 @@ public class Gfsh extends JLineShell {
     if (getOperationInvoker() != null && isConnectedAndReady()) {
       int clusterId = getOperationInvoker().getClusterId();
       if (clusterId != OperationInvoker.CLUSTER_ID_WHEN_NOT_CONNECTED) {
-        clusterString = "Cluster-" + clusterId+" ";
+        clusterString = "Cluster-" + clusterId + " ";
       }
-//  //As "use region" is not in scope for 7.0, see 46110.
-//      if (contextPath == null) {
-//        contextPath = "." + CliConstants.DEFAULT_APP_CONTEXT_PATH;
-//      } else {
-//        contextPath = "." + contextPath;
-//      }
-//    } else {
-//      contextPath = "." + CliConstants.DEFAULT_APP_CONTEXT_PATH;
+      //  //As "use region" is not in scope for 7.0, see 46110.
+      //      if (contextPath == null) {
+      //        contextPath = "." + CliConstants.DEFAULT_APP_CONTEXT_PATH;
+      //      } else {
+      //        contextPath = "." + contextPath;
+      //      }
+      //    } else {
+      //      contextPath = "." + CliConstants.DEFAULT_APP_CONTEXT_PATH;
     }
 
-    defaultPrompt = MessageFormat.format(defaultPrompt, new Object[] {clusterString, contextPath});
+    defaultPrompt = MessageFormat.format(defaultPrompt, new Object[] { clusterString, contextPath });
 
     return ansiHandler.decorateString(defaultPrompt, ANSIStyle.YELLOW);
   }
 
   public void notifyDisconnect(String endPoints) {
-    String message = CliStrings.format(CliStrings.GFSH__MSG__NO_LONGER_CONNECTED_TO_0, new Object[] {endPoints});
+    String message = CliStrings.format(CliStrings.GFSH__MSG__NO_LONGER_CONNECTED_TO_0, new Object[] { endPoints });
     printAsSevere(LINE_SEPARATOR + message);
     if (gfshFileLogger.severeEnabled()) {
       gfshFileLogger.severe(message);
@@ -1079,11 +1073,11 @@ public class Gfsh extends JLineShell {
     setPromptPath(org.apache.geode.management.internal.cli.converters.RegionPathConverter.DEFAULT_APP_CONTEXT_PATH);
   }
 
-  public boolean getDebug(){
+  public boolean getDebug() {
     return debugON;
   }
 
-  public void setDebug(boolean flag){
+  public void setDebug(boolean flag) {
     debugON = flag;
   }
 
@@ -1091,7 +1085,7 @@ public class Gfsh extends JLineShell {
     return isHeadlessMode;
   }
 
-  public GfshHistory getGfshHistory(){
+  public GfshHistory getGfshHistory() {
     return gfshHistory;
   }
 
@@ -1099,7 +1093,7 @@ public class Gfsh extends JLineShell {
     String output = input;
     Scanner s = new Scanner(output);
     String foundInLine = null;
-    while ( (foundInLine = s.findInLine("(\\$[\\{]\\w+[\\}])"))  != null) {
+    while ((foundInLine = s.findInLine("(\\$[\\{]\\w+[\\}])")) != null) {
       String envProperty = getEnvProperty(extractKey(foundInLine));
       envProperty = envProperty != null ? envProperty : "";
       output = output.replace(foundInLine, envProperty);
@@ -1111,7 +1105,7 @@ public class Gfsh extends JLineShell {
     return input.substring("${".length(), input.length() - "}".length());
   }
 
-  public static ConsoleReader getConsoleReader(){
+  public static ConsoleReader getConsoleReader() {
     Gfsh gfsh = Gfsh.getCurrentInstance();
     return (gfsh == null ? null : gfsh.reader);
   }
@@ -1166,7 +1160,7 @@ public class Gfsh extends JLineShell {
         index++;
         startOfCurrentLine = index;
 
-      // If the end of the string was reached or the last character just happened to be a space character
+        // If the end of the string was reached or the last character just happened to be a space character
       } else if (index == string.length() || string.charAt(index) == ' ') {
         stringBuf.append(string.substring(startOfCurrentLine, index));
         if (index != string.length()) {
@@ -1184,7 +1178,7 @@ public class Gfsh extends JLineShell {
           // Else split the string cleanly between words
         } else {
           stringBuf.append(string.substring(startOfCurrentLine, spaceCharIndex)).append(LINE_SEPARATOR);
-          index = spaceCharIndex+1;
+          index = spaceCharIndex + 1;
         }
       }
 
@@ -1193,19 +1187,19 @@ public class Gfsh extends JLineShell {
     return stringBuf.toString();
   }
 
-//  // for testing only
-//  public static void main(String[] args) {
-//    try {
-//      Gfsh gfsh = new Gfsh();
-//      String expandProperties = gfsh.expandProperties("execute function --id=group-with-arguments-with-result-collector --result-collector=management.operations.ops.FunctionOperations$CustomResultCollector --arguments=group-with-arguments-with-result-collector --group=managed1");
-////      String expandProperties = gfsh.expandProperties("My name is ${NAME}");
-//      System.out.println(expandProperties);
-//    } catch (ClassNotFoundException e) {
-//      e.printStackTrace();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//  }
+  //  // for testing only
+  //  public static void main(String[] args) {
+  //    try {
+  //      Gfsh gfsh = new Gfsh();
+  //      String expandProperties = gfsh.expandProperties("execute function --id=group-with-arguments-with-result-collector --result-collector=management.operations.ops.FunctionOperations$CustomResultCollector --arguments=group-with-arguments-with-result-collector --group=managed1");
+  ////      String expandProperties = gfsh.expandProperties("My name is ${NAME}");
+  //      System.out.println(expandProperties);
+  //    } catch (ClassNotFoundException e) {
+  //      e.printStackTrace();
+  //    } catch (IOException e) {
+  //      e.printStackTrace();
+  //    }
+  //  }
 }
 
 class ScriptExecutionDetails {
@@ -1227,9 +1221,9 @@ class ScriptExecutionDetails {
 
     for (int i = 0; i < this.commandAndStatusList.size(); i++) {
       int commandSrNo = i + 1;
-      SectionResultData section = compositeResultData.addSection(""+(i+1));
+      SectionResultData section = compositeResultData.addSection("" + (i + 1));
       CommandAndStatus commandAndStatus = commandAndStatusList.get(i);
-      section.addData("Command-"+String.valueOf(commandSrNo), commandAndStatus.command);
+      section.addData("Command-" + String.valueOf(commandSrNo), commandAndStatus.command);
       section.addData("Status", commandAndStatus.status);
       if (commandAndStatus.status.equals("FAILED")) {
         compositeResultData.setStatus(org.apache.geode.management.cli.Result.Status.ERROR);
@@ -1257,7 +1251,7 @@ class ScriptExecutionDetails {
 
     @Override
     public String toString() {
-      return command + "     " +status;
+      return command + "     " + status;
     }
   }
 }

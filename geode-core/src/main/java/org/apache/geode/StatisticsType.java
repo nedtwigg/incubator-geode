@@ -58,6 +58,7 @@ public interface StatisticsType {
    *         statistics instance.
    */
   public int nameToId(String name);
+
   /**
    * Returns the descriptor of the statistic with the given name in this
    * statistics instance.

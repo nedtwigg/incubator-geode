@@ -48,30 +48,31 @@ public class IndexRegionSpy {
     }
 
     @Override
-    public RegionAttributes beforeCreate(final Region parent,
-                                         final String regionName,
-                                         final RegionAttributes attrs,
-                                         final InternalRegionArguments internalRegionArgs)
-    {
+    public RegionAttributes beforeCreate(final Region parent, final String regionName, final RegionAttributes attrs, final InternalRegionArguments internalRegionArgs) {
       return attrs;
     }
 
-    @Override public void afterCreate(final Region region) {
-      if(region.getName().contains(".files") || region.getName().contains(".chunks")) {
+    @Override
+    public void afterCreate(final Region region) {
+      if (region.getName().contains(".files") || region.getName().contains(".chunks")) {
         region.getAttributesMutator().addCacheListener(new CacheListenerAdapter() {
-          @Override public void afterCreate(final EntryEvent event) {
+          @Override
+          public void afterCreate(final EntryEvent event) {
             beforeWrite.accept(event.getKey());
           }
 
-          @Override public void afterDestroy(final EntryEvent event) {
+          @Override
+          public void afterDestroy(final EntryEvent event) {
             beforeWrite.accept(event.getKey());
           }
 
-          @Override public void afterInvalidate(final EntryEvent event) {
+          @Override
+          public void afterInvalidate(final EntryEvent event) {
             beforeWrite.accept(event.getKey());
           }
 
-          @Override public void afterUpdate(final EntryEvent event) {
+          @Override
+          public void afterUpdate(final EntryEvent event) {
             beforeWrite.accept(event.getKey());
           }
         });

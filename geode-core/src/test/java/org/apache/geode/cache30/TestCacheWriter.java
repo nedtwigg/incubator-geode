@@ -29,40 +29,33 @@ import org.apache.geode.cache.*;
  *
  * @since GemFire 3.0
  */
-public abstract class TestCacheWriter extends TestCacheCallback
-  implements CacheWriter {
+public abstract class TestCacheWriter extends TestCacheCallback implements CacheWriter {
 
-
-  public final void beforeUpdate(EntryEvent event)
-    throws CacheWriterException {
+  public final void beforeUpdate(EntryEvent event) throws CacheWriterException {
 
     this.invoked = true;
     beforeUpdate2(event);
   }
 
-  public void beforeUpdate2(EntryEvent event)
-    throws CacheWriterException {
+  public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
 
     String s = "Unexpected callback invocation";
     throw new UnsupportedOperationException(s);
   }
 
-  public final void beforeUpdate2(EntryEvent event, Object arg)
-    throws CacheWriterException {
+  public final void beforeUpdate2(EntryEvent event, Object arg) throws CacheWriterException {
 
     String s = "Shouldn't be invoked";
     throw new UnsupportedOperationException(s);
   }
 
-  public final void beforeCreate(EntryEvent event)
-    throws CacheWriterException {
+  public final void beforeCreate(EntryEvent event) throws CacheWriterException {
 
     this.invoked = true;
     beforeCreate2(event);
   }
 
-  public void beforeCreate2(EntryEvent event)
-    throws CacheWriterException {
+  public void beforeCreate2(EntryEvent event) throws CacheWriterException {
 
     String s = "Unexpected callback invocation";
     throw new UnsupportedOperationException(s);
@@ -71,59 +64,53 @@ public abstract class TestCacheWriter extends TestCacheCallback
   /**
    * Causes code that uses the old API to not compile
    */
-  public final void beforeCreate2(EntryEvent event, Object arg)
-    throws CacheWriterException {
+  public final void beforeCreate2(EntryEvent event, Object arg) throws CacheWriterException {
 
     String s = "Shouldn't be invoked";
     throw new UnsupportedOperationException(s);
   }
 
-  public final void beforeDestroy(EntryEvent event)
-    throws CacheWriterException {
+  public final void beforeDestroy(EntryEvent event) throws CacheWriterException {
 
     this.invoked = true;
     beforeDestroy2(event);
   }
 
-  public void beforeDestroy2(EntryEvent event)
-    throws CacheWriterException {
+  public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
 
     String s = "Unexpected callback invocation";
     throw new UnsupportedOperationException(s);
   }
 
-  public final void beforeDestroy2(EntryEvent event, Object arg)
-    throws CacheWriterException {
+  public final void beforeDestroy2(EntryEvent event, Object arg) throws CacheWriterException {
 
     String s = "Shouldn't be invoked";
     throw new UnsupportedOperationException(s);
   }
 
-  public final void beforeRegionDestroy(RegionEvent event)
-    throws CacheWriterException {
+  public final void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {
 
     // check argument to see if this is during tearDown
-    if ("teardown".equals(event.getCallbackArgument())) return;
+    if ("teardown".equals(event.getCallbackArgument()))
+      return;
 
     this.invoked = true;
     beforeRegionDestroy2(event);
   }
 
-  public void beforeRegionDestroy2(RegionEvent event)
-    throws CacheWriterException {
+  public void beforeRegionDestroy2(RegionEvent event) throws CacheWriterException {
 
     String s = "Unexpected callback invocation";
     throw new UnsupportedOperationException(s);
   }
 
-  public final void beforeRegionDestroy2(RegionEvent event, Object arg)
-    throws CacheWriterException {
+  public final void beforeRegionDestroy2(RegionEvent event, Object arg) throws CacheWriterException {
 
     String s = "Shouldn't be invoked";
     throw new UnsupportedOperationException(s);
   }
-  public final void beforeRegionClear(RegionEvent event)
-    throws CacheWriterException {
+
+  public final void beforeRegionClear(RegionEvent event) throws CacheWriterException {
     String s = "Unexpected callback invocation";
     throw new UnsupportedOperationException(s);
   }

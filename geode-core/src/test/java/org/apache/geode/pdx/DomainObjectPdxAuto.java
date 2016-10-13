@@ -22,13 +22,13 @@ import java.util.Date;
 import java.util.Map;
 
 public class DomainObjectPdxAuto extends DomainObject {
-  
+
   protected String string_immediate;
-  
+
   public Integer anInteger;
 
   public enum Day {
-    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY 
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
   }
 
   public char aChar;
@@ -56,7 +56,7 @@ public class DomainObjectPdxAuto extends DomainObject {
   public String[] aStringArray;
   public Object[] anObjectArray;
   public byte[][] anArrayOfByteArray;
-  
+
   public DomainObjectPdxAuto() {
   }
 
@@ -74,8 +74,7 @@ public class DomainObjectPdxAuto extends DomainObject {
     result = prime * result + Arrays.hashCode(aByteArray);
     result = prime * result + aChar;
     result = prime * result + Arrays.hashCode(aCharArray);
-    result = prime * result
-        + ((aCollection == null) ? 0 : aCollection.hashCode());
+    result = prime * result + ((aCollection == null) ? 0 : aCollection.hashCode());
     result = prime * result + ((aDate == null) ? 0 : aDate.hashCode());
     long temp;
     temp = Double.doubleToLongBits(aDouble);
@@ -97,8 +96,7 @@ public class DomainObjectPdxAuto extends DomainObject {
     result = prime * result + ((anInteger == null) ? 0 : anInteger.hashCode());
     result = prime * result + ((anObject == null) ? 0 : anObject.hashCode());
     result = prime * result + Arrays.hashCode(anObjectArray);
-    result = prime * result
-        + ((string_immediate == null) ? 0 : string_immediate.hashCode());
+    result = prime * result + ((string_immediate == null) ? 0 : string_immediate.hashCode());
     return result;
   }
 
@@ -133,8 +131,7 @@ public class DomainObjectPdxAuto extends DomainObject {
         return false;
     } else if (!aDate.equals(other.aDate))
       return false;
-    if (Double.doubleToLongBits(aDouble) != Double
-        .doubleToLongBits(other.aDouble))
+    if (Double.doubleToLongBits(aDouble) != Double.doubleToLongBits(other.aDouble))
       return false;
     if (!Arrays.equals(aDoubleArray, other.aDoubleArray))
       return false;

@@ -43,13 +43,11 @@ import org.slf4j.LoggerFactory;
  */
 public class ClientServerSessionCache extends AbstractSessionCache {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(PeerToPeerSessionCache.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(PeerToPeerSessionCache.class.getName());
 
   private ClientCache cache;
 
-  protected static final String DEFAULT_REGION_ATTRIBUTES_ID =
-      RegionShortcut.PARTITION_REDUNDANT.toString();
+  protected static final String DEFAULT_REGION_ATTRIBUTES_ID = RegionShortcut.PARTITION_REDUNDANT.toString();
 
   protected static final Boolean DEFAULT_ENABLE_LOCAL_CACHE = true;
 
@@ -59,8 +57,7 @@ public class ClientServerSessionCache extends AbstractSessionCache {
    * @param cache
    * @param properties
    */
-  public ClientServerSessionCache(ClientCache cache,
-      Map<CacheProperty, Object> properties) {
+  public ClientServerSessionCache(ClientCache cache, Map<CacheProperty, Object> properties) {
     super();
     this.cache = cache;
 
@@ -68,10 +65,8 @@ public class ClientServerSessionCache extends AbstractSessionCache {
      * Set some default properties for this cache if they haven't already
      * been set
      */
-    this.properties.put(CacheProperty.REGION_ATTRIBUTES_ID,
-        DEFAULT_REGION_ATTRIBUTES_ID);
-    this.properties.put(CacheProperty.ENABLE_LOCAL_CACHE,
-        DEFAULT_ENABLE_LOCAL_CACHE);
+    this.properties.put(CacheProperty.REGION_ATTRIBUTES_ID, DEFAULT_REGION_ATTRIBUTES_ID);
+    this.properties.put(CacheProperty.ENABLE_LOCAL_CACHE, DEFAULT_ENABLE_LOCAL_CACHE);
     this.properties.putAll(properties);
   }
 
@@ -101,7 +96,6 @@ public class ClientServerSessionCache extends AbstractSessionCache {
     return true;
   }
 
-
   ////////////////////////////////////////////////////////////////////////
   // Private methods
 
@@ -119,9 +113,7 @@ public class ClientServerSessionCache extends AbstractSessionCache {
 
   private void createOrRetrieveRegion() {
     // Retrieve the local session region
-    this.sessionRegion =
-        this.cache.getRegion(
-            (String) properties.get(CacheProperty.REGION_NAME));
+    this.sessionRegion = this.cache.getRegion((String) properties.get(CacheProperty.REGION_NAME));
 
     // If necessary, create the regions on the server and client
     if (this.sessionRegion == null) {
@@ -141,8 +133,7 @@ public class ClientServerSessionCache extends AbstractSessionCache {
     RegionConfiguration configuration = createRegionConfiguration();
 
     // Send it to the server tier
-    Execution execution = FunctionService.onServer(this.cache).withArgs(
-        configuration);
+    Execution execution = FunctionService.onServer(this.cache).withArgs(configuration);
     ResultCollector collector = execution.execute(CreateRegionFunction.ID);
 
     // Verify the region was successfully created on the servers
@@ -150,8 +141,7 @@ public class ClientServerSessionCache extends AbstractSessionCache {
     for (RegionStatus status : results) {
       if (status == RegionStatus.INVALID) {
         StringBuilder builder = new StringBuilder();
-        builder.append(
-            "An exception occurred on the server while attempting to create or validate region named ");
+        builder.append("An exception occurred on the server while attempting to create or validate region named ");
         builder.append(properties.get(CacheProperty.REGION_NAME));
         builder.append(". See the server log for additional details.");
         throw new IllegalStateException(builder.toString());
@@ -161,23 +151,17 @@ public class ClientServerSessionCache extends AbstractSessionCache {
 
   private Region<String, HttpSession> createLocalSessionRegion() {
     ClientRegionFactory<String, HttpSession> factory = null;
-    boolean enableLocalCache =
-        (Boolean) properties.get(CacheProperty.ENABLE_LOCAL_CACHE);
+    boolean enableLocalCache = (Boolean) properties.get(CacheProperty.ENABLE_LOCAL_CACHE);
 
     String regionName = (String) properties.get(CacheProperty.REGION_NAME);
     if (enableLocalCache) {
       // Create the region factory with caching and heap LRU enabled
-      factory = ((ClientCache) this.cache).
-          createClientRegionFactory(
-              ClientRegionShortcut.CACHING_PROXY_HEAP_LRU);
+      factory = ((ClientCache) this.cache).createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY_HEAP_LRU);
       LOG.info("Created new local client session region: {}", regionName);
     } else {
       // Create the region factory without caching enabled
-      factory = ((ClientCache) this.cache).createClientRegionFactory(
-          ClientRegionShortcut.PROXY);
-      LOG.info(
-          "Created new local client (uncached) session region: {} without any session expiry",
-          regionName);
+      factory = ((ClientCache) this.cache).createClientRegionFactory(ClientRegionShortcut.PROXY);
+      LOG.info("Created new local client (uncached) session region: {} without any session expiry", regionName);
     }
 
     // Create the region

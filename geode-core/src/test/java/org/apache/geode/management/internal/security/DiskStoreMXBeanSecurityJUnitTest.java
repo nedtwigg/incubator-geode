@@ -38,14 +38,13 @@ public class DiskStoreMXBeanSecurityJUnitTest {
   private DiskStoreMXBean bean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(
-      jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
 
   @BeforeClass
-  public static void beforeClass(){
+  public static void beforeClass() {
     serverRule.getCache().createDiskStoreFactory().create("diskstore");
   }
 

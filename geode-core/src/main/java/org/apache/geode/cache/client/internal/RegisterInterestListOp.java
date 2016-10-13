@@ -39,22 +39,15 @@ public class RegisterInterestListOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List execute(ExecutablePool pool,
-                             String region,
-                             List keys,
-                             InterestResultPolicy policy,
-                             boolean isDurable,
-                             boolean receiveUpdatesAsInvalidates,
-                             byte regionDataPolicy)
-  {
-    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy,
-        isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+  public static List execute(ExecutablePool pool, String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
+    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
     return (List) pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
-                                                               
+
   private RegisterInterestListOp() {
     // no instances allowed
   }
+
   /**
    * Does a region registerInterestList on a server using connections from the given pool
    * to communicate with the given server location.
@@ -67,21 +60,11 @@ public class RegisterInterestListOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List executeOn(ServerLocation sl,
-                               ExecutablePool pool,
-                               String region,
-                               List keys,
-                               InterestResultPolicy policy,
-                               boolean isDurable,
-                               boolean receiveUpdatesAsInvalidates,
-                               byte regionDataPolicy)
-  { 
-    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy,
-        isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
-    return  (List) pool.executeOn(sl, op);
+  public static List executeOn(ServerLocation sl, ExecutablePool pool, String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
+    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+    return (List) pool.executeOn(sl, op);
   }
 
-  
   /**
    * Does a region registerInterestList on a server using connections from the given pool
    * to communicate with the given server location.
@@ -94,49 +77,36 @@ public class RegisterInterestListOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List executeOn(Connection conn,
-                               ExecutablePool pool,
-                               String region,
-                               List keys,
-                               InterestResultPolicy policy,
-                               boolean isDurable,
-                               boolean receiveUpdatesAsInvalidates,
-                               byte regionDataPolicy)
-  {
-    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy,
-        isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
-    return  (List) pool.executeOn(conn, op);
+  public static List executeOn(Connection conn, ExecutablePool pool, String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
+    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+    return (List) pool.executeOn(conn, op);
   }
-  
+
   private static class RegisterInterestListOpImpl extends RegisterInterestOpImpl {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public RegisterInterestListOpImpl(String region,
-                                      List keys,
-                                      InterestResultPolicy policy,
-                                      boolean isDurable,
-                                      boolean receiveUpdatesAsInvalidates,
-                                      byte regionDataPolicy) {
+    public RegisterInterestListOpImpl(String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
       super(region, MessageType.REGISTER_INTEREST_LIST, 6);
       getMessage().addStringPart(region);
       getMessage().addObjPart(policy);
       {
-        byte durableByte = (byte)(isDurable ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] {durableByte});
-      }      
+        byte durableByte = (byte) (isDurable ? 0x01 : 0x00);
+        getMessage().addBytesPart(new byte[] { durableByte });
+      }
       //Set chunk size of HDOS for keys      
-      getMessage().setChunkSize(keys.size()*16);
+      getMessage().setChunkSize(keys.size() * 16);
       getMessage().addObjPart(keys);
-      
-      byte notifyByte = (byte)(receiveUpdatesAsInvalidates ? 0x01 : 0x00);
-      getMessage().addBytesPart(new byte[] {notifyByte});
+
+      byte notifyByte = (byte) (receiveUpdatesAsInvalidates ? 0x01 : 0x00);
+      getMessage().addBytesPart(new byte[] { notifyByte });
 
       // The second byte '1' below tells server to serialize values in VersionObjectList.
       // Java clients always expect serializeValues to be true in VersionObjectList unlike Native clients.
       // This was being sent as part of GetAllOp prior to fixing #43684.
-      getMessage().addBytesPart(new byte[] {regionDataPolicy, (byte)0x01});
+      getMessage().addBytesPart(new byte[] { regionDataPolicy, (byte) 0x01 });
     }
+
     @Override
     protected String getOpName() {
       return "registerInterestList";

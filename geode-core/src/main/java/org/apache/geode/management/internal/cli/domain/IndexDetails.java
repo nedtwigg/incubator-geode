@@ -188,9 +188,7 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
 
     final IndexDetails that = (IndexDetails) obj;
 
-    return ObjectUtils.equals(getMemberId(), that.getMemberId())
-      && ObjectUtils.equals(getRegionPath(), that.getRegionPath())
-      && ObjectUtils.equals(getIndexName(), that.getIndexName());
+    return ObjectUtils.equals(getMemberId(), that.getMemberId()) && ObjectUtils.equals(getRegionPath(), that.getRegionPath()) && ObjectUtils.equals(getIndexName(), that.getIndexName());
   }
 
   @Override
@@ -284,9 +282,7 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
   }
 
   public static enum IndexType {
-    FUNCTIONAL("RANGE"),
-    HASH("HASH"),
-    PRIMARY_KEY("KEY");
+    FUNCTIONAL("RANGE"), HASH("HASH"), PRIMARY_KEY("KEY");
 
     private final String description;
 
@@ -310,13 +306,13 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
 
     public org.apache.geode.cache.query.IndexType getType() {
       switch (this) {
-        case HASH:
-          return null;
-        case PRIMARY_KEY:
-          return org.apache.geode.cache.query.IndexType.PRIMARY_KEY;
-        case FUNCTIONAL:
-        default:
-          return org.apache.geode.cache.query.IndexType.FUNCTIONAL;
+      case HASH:
+        return null;
+      case PRIMARY_KEY:
+        return org.apache.geode.cache.query.IndexType.PRIMARY_KEY;
+      case FUNCTIONAL:
+      default:
+        return org.apache.geode.cache.query.IndexType.FUNCTIONAL;
       }
     }
 

@@ -52,7 +52,7 @@ public class PreloadedRegionTestCase extends MultiVMRegionTestCase {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.PRELOADED);
     return factory.create();
-  } 
+  }
 
   /**
    * Tests that created entries are not propagated to other caches
@@ -66,8 +66,7 @@ public class PreloadedRegionTestCase extends MultiVMRegionTestCase {
         try {
           createRegion(rgnName);
           getSystem().getLogWriter().info("testDistributedCreate: Created Region");
-        }
-        catch (CacheException e) {
+        } catch (CacheException e) {
           Assert.fail("While creating region", e);
         }
       }
@@ -80,8 +79,7 @@ public class PreloadedRegionTestCase extends MultiVMRegionTestCase {
           Region rgn = root.getSubregion(rgnName);
           rgn.create("key", null);
           getSystem().getLogWriter().info("testDistributedCReate: Created Key");
-        }
-        catch (CacheException e) {
+        } catch (CacheException e) {
           Assert.fail("While creating region", e);
         }
       }
@@ -95,10 +93,10 @@ public class PreloadedRegionTestCase extends MultiVMRegionTestCase {
 
     // Create empty version locally
     Region rgn = createRegion(rgnName);
-    
+
     // Add a key in first cache
     vm0.invoke(newKey);
-    
+
     // We should NOT see the update here.
     assertTrue(rgn.getEntry("key") == null);
   }

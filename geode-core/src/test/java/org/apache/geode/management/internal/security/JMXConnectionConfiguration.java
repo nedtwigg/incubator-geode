@@ -26,8 +26,9 @@ import java.lang.annotation.Target;
  * connection with a specific user and password.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 public @interface JMXConnectionConfiguration {
   String user();
+
   String password();
 }

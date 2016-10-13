@@ -30,14 +30,13 @@ import org.apache.geode.distributed.internal.DistributionManager;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.InternalDataSerializer;
 
-
 /**
  * Used to give advice to a cache server.
  * Cache server currently need to know about controller's
  *
  */
 public class CacheServerAdvisor extends GridAdvisor {
-  
+
   private CacheServerAdvisor(DistributionAdvisee server) {
     super(server);
   }
@@ -55,11 +54,10 @@ public class CacheServerAdvisor extends GridAdvisor {
 
   /** Instantiate new distribution profile for this member */
   @Override
-  protected Profile instantiateProfile(
-      InternalDistributedMember memberId, int version) {
+  protected Profile instantiateProfile(InternalDistributedMember memberId, int version) {
     return new CacheServerProfile(memberId, version);
   }
-  
+
   /**
    * Describes a cache server for distribution purposes.
    */
@@ -86,18 +84,19 @@ public class CacheServerAdvisor extends GridAdvisor {
     public String[] getGroups() {
       return this.groups;
     }
+
     public void setGroups(String[] groups) {
       this.groups = groups;
     }
-    
+
     public ServerLoad getInitialLoad() {
       return initialLoad;
     }
-    
+
     public int getMaxConnections() {
       return maxConnections;
     }
-    
+
     public void setMaxConnections(int maxConnections) {
       this.maxConnections = maxConnections;
     }
@@ -105,9 +104,11 @@ public class CacheServerAdvisor extends GridAdvisor {
     public void setInitialLoad(ServerLoad initialLoad) {
       this.initialLoad = initialLoad;
     }
+
     public long getLoadPollInterval() {
       return this.loadPollInterval;
     }
+
     public void setLoadPollInterval(long v) {
       this.loadPollInterval = v;
     }
@@ -120,9 +121,7 @@ public class CacheServerAdvisor extends GridAdvisor {
      * @since GemFire 5.7
      */
     @Override
-    public void processIncoming(DistributionManager dm, String adviseePath,
-        boolean removeProfile, boolean exchangeProfiles,
-        final List<Profile> replyProfiles) {
+    public void processIncoming(DistributionManager dm, String adviseePath, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
       // tell local controllers about this cache server
       tellLocalControllers(removeProfile, exchangeProfiles, replyProfiles);
       // for QRM messaging we need cache servers to know about each other

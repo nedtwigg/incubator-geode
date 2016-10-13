@@ -40,7 +40,7 @@ public class StandAloneDUnitEnv extends DUnitEnv {
   public String getLocatorAddress() {
     return "localhost";
   }
-  
+
   @Override
   public int getLocatorPort() {
     return DUnitLauncher.locatorPort;

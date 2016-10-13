@@ -59,15 +59,14 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
   private static String regionName = "LIFOMemoryEvictionEnabledRegion";
 
   private static int maximumMegabytes = 1;
-  
-  private static int byteArraySize = 20480;
-  
-  private static long memEntryCountForFirstPutOperation ;
-  
-  private int deltaSize = 20738;
-  
-  private static NewLRUClockHand lifoClockHand = null;
 
+  private static int byteArraySize = 20480;
+
+  private static long memEntryCountForFirstPutOperation;
+
+  private int deltaSize = 20738;
+
+  private static NewLRUClockHand lifoClockHand = null;
 
   @Before
   public void setUp() throws Exception {
@@ -81,7 +80,7 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
     assertNotNull(rgn);
     rgn.localDestroyRegion();
     cache.close();
-     
+
   }
 
   /**
@@ -119,16 +118,14 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
 
     /* setting LIFO MEMORY related eviction attributes */
 
-    factory.setEvictionAttributes(EvictionAttributesImpl.createLIFOMemoryAttributes(
-        maximumMegabytes, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(EvictionAttributesImpl.createLIFOMemoryAttributes(maximumMegabytes, EvictionAction.OVERFLOW_TO_DISK));
     RegionAttributes attr = factory.create();
-    
-    ((GemFireCacheImpl)cache).createRegion(regionName, attr);
+
+    ((GemFireCacheImpl) cache).createRegion(regionName, attr);
     /*
      * NewLIFOClockHand extends NewLRUClockHand to hold on to the list reference
      */
-    lifoClockHand = ((VMLRURegionMap)((LocalRegion)cache.getRegion(Region.SEPARATOR + regionName)).entries)
-        ._getLruList();
+    lifoClockHand = ((VMLRURegionMap) ((LocalRegion) cache.getRegion(Region.SEPARATOR + regionName)).entries)._getLruList();
 
     /* storing stats reference */
     lifoStats = lifoClockHand.stats();
@@ -144,37 +141,31 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
   public void test000EntryFaultinCount() {
     try {
       assertNotNull(cache);
-      LocalRegion rgn = (LocalRegion)cache.getRegion(Region.SEPARATOR + regionName);
+      LocalRegion rgn = (LocalRegion) cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(rgn);
 
       DiskRegionStats diskRegionStats = rgn.getDiskRegion().getStats();
-      assertTrue("Entry count not 0 ", new Long(0).equals(new Long(lifoStats
-          .getCounter())));
+      assertTrue("Entry count not 0 ", new Long(0).equals(new Long(lifoStats.getCounter())));
 
       // put 60 entries into the region
       for (long i = 0L; i < 60L; i++) {
         rgn.put("key" + i, newDummyObject(i));
       }
 
-      assertEquals(
-          "LRU eviction entry count and entries overflown to disk count from diskstats is not equal ",
-          lifoStats.getEvictions(), diskRegionStats.getNumOverflowOnDisk());
+      assertEquals("LRU eviction entry count and entries overflown to disk count from diskstats is not equal ", lifoStats.getEvictions(), diskRegionStats.getNumOverflowOnDisk());
       assertNull("Entry value in VM is not null", rgn.getValueInVM("key59"));
       //used to get number of entries required to reach the limit of memory assign
       memEntryCountForFirstPutOperation = diskRegionStats.getNumEntriesInVM();
       rgn.get("key59");
-      assertEquals("Not equal to number of entries present in VM : ", 51L,
-          diskRegionStats.getNumEntriesInVM());
-      assertEquals("Not equal to number of entries present on disk : ", 9L,
-          diskRegionStats.getNumOverflowOnDisk());
+      assertEquals("Not equal to number of entries present in VM : ", 51L, diskRegionStats.getNumEntriesInVM());
+      assertEquals("Not equal to number of entries present on disk : ", 9L, diskRegionStats.getNumOverflowOnDisk());
 
-    }
-    catch (Exception ex) {
-      ex.printStackTrace(); 
+    } catch (Exception ex) {
+      ex.printStackTrace();
       fail("Test failed");
     }
   }
-  
+
   /**
    * This test does the following :<br>
    * 1)Varify region is LIFO Enabled <br>
@@ -190,27 +181,21 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
   public void test001LIFOStatsUpdation() {
     try {
       assertNotNull(cache);
-      LocalRegion rgn = (LocalRegion)cache.getRegion(Region.SEPARATOR + regionName);
+      LocalRegion rgn = (LocalRegion) cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(rgn);
 
       // check for is LIFO Enable
-      assertTrue(
-          "Eviction Algorithm is not LIFO",
-          (((EvictionAttributesImpl)rgn.getAttributes().getEvictionAttributes())
-              .isLIFO()));
+      assertTrue("Eviction Algorithm is not LIFO", (((EvictionAttributesImpl) rgn.getAttributes().getEvictionAttributes()).isLIFO()));
 
-//    put 60 entries into the region
+      //    put 60 entries into the region
       for (long i = 0L; i < 60L; i++) {
         rgn.put(new Long(i), newDummyObject(i));
       }
-      
+
       // verifies evicted entry values are null in memory
-      assertTrue("In memory ",
-          rgn.entries.getEntry(new Long(51)).isValueNull());
-      assertTrue("In memory ",
-          rgn.entries.getEntry(new Long(52)).isValueNull());
-      assertTrue("In memory ",
-          rgn.entries.getEntry(new Long(53)).isValueNull());
+      assertTrue("In memory ", rgn.entries.getEntry(new Long(51)).isValueNull());
+      assertTrue("In memory ", rgn.entries.getEntry(new Long(52)).isValueNull());
+      assertTrue("In memory ", rgn.entries.getEntry(new Long(53)).isValueNull());
 
       // get an entry back
       rgn.get(new Long(46));
@@ -220,12 +205,11 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
       rgn.put(new Long(60), newDummyObject(60));
       rgn.put(new Long(61), newDummyObject(61));
       assertNull("Entry value in VM is not null", rgn.getValueInVM(new Long(58)));
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
       fail("Test failed");
     }
-   
+
   }
 
   /**
@@ -237,27 +221,24 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
   public void test002LIFOEntryEviction() {
     try {
       assertNotNull(cache);
-      LocalRegion rgn = (LocalRegion)cache.getRegion(Region.SEPARATOR + regionName);
+      LocalRegion rgn = (LocalRegion) cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(rgn);
 
       assertEquals("Region is not properly cleared ", 0, rgn.size());
-      assertTrue("Entry count not 0 ", new Long(0).equals(new Long(lifoStats
-          .getCounter())));
+      assertTrue("Entry count not 0 ", new Long(0).equals(new Long(lifoStats.getCounter())));
       // put sixty entries into the region
       for (long i = 0L; i < 60L; i++) {
         rgn.put(new Long(i), newDummyObject(i));
-        if (i < memEntryCountForFirstPutOperation ) {
+        if (i < memEntryCountForFirstPutOperation) {
           // entries are in memory  
-            assertNotNull("Entry is not in VM ", rgn.getValueInVM(new Long(i)));
-        }
-        else {
+          assertNotNull("Entry is not in VM ", rgn.getValueInVM(new Long(i)));
+        } else {
           /*assertTrue("LIFO Entry is not evicted", lifoClockHand.getLRUEntry()
               .testEvicted());*/
-            assertTrue("Entry is not null ", rgn.entries.getEntry(new Long(i)).isValueNull());
+          assertTrue("Entry is not null ", rgn.entries.getEntry(new Long(i)).isValueNull());
         }
       }
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
       fail("Test failed");
     }
@@ -275,149 +256,143 @@ public class LIFOEvictionAlgoMemoryEnabledRegionJUnitTest {
       Region rgn = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(rgn);
 
-      assertTrue("Entry count not 0 ", new Long(0).equals(new Long(lifoStats
-          .getCounter())));
-//    put 60 entries into the region
+      assertTrue("Entry count not 0 ", new Long(0).equals(new Long(lifoStats.getCounter())));
+      //    put 60 entries into the region
       for (long i = 0L; i < 60L; i++) {
         rgn.put(new Long(i), newDummyObject(i));
       }
 
-      assertTrue("1)Total eviction count is not correct ", new Long(10)
-          .equals(new Long(lifoStats.getEvictions())));
+      assertTrue("1)Total eviction count is not correct ", new Long(10).equals(new Long(lifoStats.getEvictions())));
       rgn.put(new Long(60), newDummyObject(60));
       rgn.get(new Long(55));
-      assertTrue("2)Total eviction count is not correct ", new Long(11)
-          .equals(new Long(lifoStats.getEvictions())));
-    }
-    catch (Exception ex) {
+      assertTrue("2)Total eviction count is not correct ", new Long(11).equals(new Long(lifoStats.getEvictions())));
+    } catch (Exception ex) {
       ex.printStackTrace();
       fail("Test failed");
     }
   }
-  
-//Basic checks to validate lifo queue implementation works as expected
-    @Test
-    public void testLIFOQueue() {
-        try {
-            assertNotNull(cache);
-            Region rgn = cache.getRegion(Region.SEPARATOR + regionName);
-            assertNotNull(rgn);
-            //insert data
-            lifoClockHand.appendEntry(new TestLRUNode(1));
-            lifoClockHand.appendEntry(new TestLRUNode(2));
-            lifoClockHand.appendEntry(new TestLRUNode(3));
-            assertTrue(lifoClockHand.size() == 3);
-            //make sure data is removed in LIFO fashion
-            TestLRUNode tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
-            assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 3);
-            assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 2);
-            tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
-            assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 2);
-            assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 1);
-            tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
-            assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 1);
-            assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
-            tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
-            assertTrue("No Value - null", tailValue == null);
-            assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
-            //check that entries not available or already evicted are skipped and removed
-            TestLRUNode testlrunode = new TestLRUNode(1);
-            lifoClockHand.appendEntry(testlrunode);
-            testlrunode = new TestLRUNode(2);
-            testlrunode.setEvicted();
-            lifoClockHand.appendEntry(testlrunode);
-            testlrunode = new TestLRUNode(3);
-            testlrunode.setEvicted();
-            lifoClockHand.appendEntry(testlrunode);
-            tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
-            assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 1);
-            assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
-            tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
-            assertTrue("No Value - null", tailValue == null);
-            assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
-            //TODO : need tests for data still part of transaction 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        }
-    }
 
-  
+  //Basic checks to validate lifo queue implementation works as expected
+  @Test
+  public void testLIFOQueue() {
+    try {
+      assertNotNull(cache);
+      Region rgn = cache.getRegion(Region.SEPARATOR + regionName);
+      assertNotNull(rgn);
+      //insert data
+      lifoClockHand.appendEntry(new TestLRUNode(1));
+      lifoClockHand.appendEntry(new TestLRUNode(2));
+      lifoClockHand.appendEntry(new TestLRUNode(3));
+      assertTrue(lifoClockHand.size() == 3);
+      //make sure data is removed in LIFO fashion
+      TestLRUNode tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
+      assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 3);
+      assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 2);
+      tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
+      assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 2);
+      assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 1);
+      tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
+      assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 1);
+      assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
+      tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
+      assertTrue("No Value - null", tailValue == null);
+      assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
+      //check that entries not available or already evicted are skipped and removed
+      TestLRUNode testlrunode = new TestLRUNode(1);
+      lifoClockHand.appendEntry(testlrunode);
+      testlrunode = new TestLRUNode(2);
+      testlrunode.setEvicted();
+      lifoClockHand.appendEntry(testlrunode);
+      testlrunode = new TestLRUNode(3);
+      testlrunode.setEvicted();
+      lifoClockHand.appendEntry(testlrunode);
+      tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
+      assertTrue("Value = " + tailValue.getValue(), tailValue.getValue() == 1);
+      assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
+      tailValue = (TestLRUNode) lifoClockHand.getLRUEntry();
+      assertTrue("No Value - null", tailValue == null);
+      assertTrue("LIFO Queue Size = " + lifoClockHand.size(), lifoClockHand.size() == 0);
+      //TODO : need tests for data still part of transaction 
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail(ex.getMessage());
+    }
+  }
+
   // purpose to create object ,size of byteArraySize 
-  private Object newDummyObject(long i){
+  private Object newDummyObject(long i) {
     byte[] value = new byte[byteArraySize];
-    Arrays.fill(value,(byte)i);
+    Arrays.fill(value, (byte) i);
     return value;
   }
 }
 
 //test class for validating LIFO queue
-class TestLRUNode implements LRUClockNode{
-  
-    LRUClockNode next=null;
-    LRUClockNode prev=null;
-    boolean evicted=false;
-    boolean recentlyUsed=false;
-    int value=0;
-    
-  public TestLRUNode(int value){
-      this.value=value;
-  }
-  
-  public int getValue(){ 
-      return value;
-  }
-  
-  public void setNextLRUNode( LRUClockNode next ){
-      this.next=next;
-  }
-  
-  public void setPrevLRUNode( LRUClockNode prev ){
-      this.prev=prev;
-  }
-  
-  public LRUClockNode nextLRUNode(){
-      return next;
-  }
-  
-  public LRUClockNode prevLRUNode(){
-      return prev;
+class TestLRUNode implements LRUClockNode {
+
+  LRUClockNode next = null;
+  LRUClockNode prev = null;
+  boolean evicted = false;
+  boolean recentlyUsed = false;
+  int value = 0;
+
+  public TestLRUNode(int value) {
+    this.value = value;
   }
 
-  public int updateEntrySize(EnableLRU ccHelper){
-      return 0;
+  public int getValue() {
+    return value;
   }
- 
-  public int updateEntrySize(EnableLRU ccHelper, Object value){
-      return 0;
+
+  public void setNextLRUNode(LRUClockNode next) {
+    this.next = next;
   }
-  
-  public int getEntrySize(){
-      return 0;
+
+  public void setPrevLRUNode(LRUClockNode prev) {
+    this.prev = prev;
   }
-  
-  public boolean testRecentlyUsed(){
-      return recentlyUsed;
+
+  public LRUClockNode nextLRUNode() {
+    return next;
   }
-  
-  public void setRecentlyUsed(){
-      recentlyUsed=true;
+
+  public LRUClockNode prevLRUNode() {
+    return prev;
   }
-  
-  public void unsetRecentlyUsed(){
-      recentlyUsed=false;
+
+  public int updateEntrySize(EnableLRU ccHelper) {
+    return 0;
   }
-  
-  public void setEvicted(){
-      evicted=true;
+
+  public int updateEntrySize(EnableLRU ccHelper, Object value) {
+    return 0;
   }
-  
-  public void unsetEvicted(){
-      evicted=false;
+
+  public int getEntrySize() {
+    return 0;
   }
-  
-  public boolean testEvicted(){
-      return evicted;
-  } 
+
+  public boolean testRecentlyUsed() {
+    return recentlyUsed;
+  }
+
+  public void setRecentlyUsed() {
+    recentlyUsed = true;
+  }
+
+  public void unsetRecentlyUsed() {
+    recentlyUsed = false;
+  }
+
+  public void setEvicted() {
+    evicted = true;
+  }
+
+  public void unsetEvicted() {
+    evicted = false;
+  }
+
+  public boolean testEvicted() {
+    return evicted;
+  }
 }
-

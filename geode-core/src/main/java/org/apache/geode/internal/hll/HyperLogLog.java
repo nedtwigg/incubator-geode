@@ -80,7 +80,6 @@ public class HyperLogLog implements ICardinality, Serializable {
   private final int log2m;
   private final double alphaMM;
 
-
   /**
    * Create a new HyperLogLog instance using the specified standard deviation.
    *
@@ -116,8 +115,7 @@ public class HyperLogLog implements ICardinality, Serializable {
   @Deprecated
   public HyperLogLog(int log2m, RegisterSet registerSet) {
     if (log2m < 0 || log2m > 30) {
-      throw new IllegalArgumentException("log2m argument is "
-          + log2m + " and is outside the range [0, 30]");
+      throw new IllegalArgumentException("log2m argument is " + log2m + " and is outside the range [0, 30]");
     }
     this.registerSet = registerSet;
     this.log2m = log2m;
@@ -149,7 +147,6 @@ public class HyperLogLog implements ICardinality, Serializable {
     final int x = MurmurHash.hash(o);
     return offerHashed(x);
   }
-
 
   @Override
   public long cardinality() {
@@ -312,8 +309,7 @@ public class HyperLogLog implements ICardinality, Serializable {
     public static HyperLogLog build(DataInput serializedByteStream) throws IOException {
       int log2m = serializedByteStream.readInt();
       int byteArraySize = serializedByteStream.readInt();
-      return new HyperLogLog(log2m,
-          new RegisterSet(1 << log2m, Bits.getBits(serializedByteStream, byteArraySize)));
+      return new HyperLogLog(log2m, new RegisterSet(1 << log2m, Bits.getBits(serializedByteStream, byteArraySize)));
     }
   }
 

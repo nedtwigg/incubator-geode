@@ -73,14 +73,14 @@ public class Bug41957DUnitTest extends ClientServerTestCase {
 
     createBridgeServer(server, regionName, serverPort, false);
 
-    createBridgeClient(client, regionName, serverHost, new int[] {serverPort});
+    createBridgeClient(client, regionName, serverHost, new int[] { serverPort });
 
     client.invoke(new CacheSerializableRunnable("register interest") {
       public void run2() throws CacheException {
         Region region = getRootRegion(regionName);
         int ENTRIES_ON_SERVER = 10;
-        for (int i=1; i <= ENTRIES_ON_SERVER; i++) {
-          region.registerInterest("k"+i, InterestResultPolicy.KEYS_VALUES);
+        for (int i = 1; i <= ENTRIES_ON_SERVER; i++) {
+          region.registerInterest("k" + i, InterestResultPolicy.KEYS_VALUES);
         }
         assertEquals(2, region.size());
       }
@@ -112,8 +112,8 @@ public class Bug41957DUnitTest extends ClientServerTestCase {
           assertTrue(region instanceof PartitionedRegion);
         }
         int ENTRIES_ON_SERVER = 10;
-        for (int i=1; i <= ENTRIES_ON_SERVER; i++) {
-          region.create("k"+i, "v"+i);
+        for (int i = 1; i <= ENTRIES_ON_SERVER; i++) {
+          region.create("k" + i, "v" + i);
         }
         try {
           startBridgeServer(serverPort);
@@ -139,7 +139,7 @@ public class Bug41957DUnitTest extends ClientServerTestCase {
         {
           PoolFactory pf = PoolManager.createFactory();
           pf.setSubscriptionEnabled(true);
-          for (int i=0; i < serverPorts.length; i++) {
+          for (int i = 0; i < serverPorts.length; i++) {
             pf.addServer(serverHost, serverPorts[i]);
           }
           pf.create("myPool");
@@ -161,4 +161,3 @@ public class Bug41957DUnitTest extends ClientServerTestCase {
     });
   }
 }
-

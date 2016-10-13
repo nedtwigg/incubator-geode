@@ -30,38 +30,38 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   private static final long serialVersionUID = 6295026394298398004L;
   /** The name of the Region */
   private String name;
-//   private String constraintClass;
-  
+  //   private String constraintClass;
+
   private long lastModifiedTime = 0L; //the lates modified time
-  private long lastAccessTime   = 0L; //the latest access time
-  private long numHits          = 0L; //sum of all hits
-  private long numMisses        = 0L; //sum of all misses
-  private float hitRatio        = 0f; //calculated from all
-  private long hitResponders    = 0;
-  private double hitRatioSum    = 0.0;
-//  private int entryCount        = 0; //largest entryCount
-//  private int subregionCount    = 0; //largest subregionCount
+  private long lastAccessTime = 0L; //the latest access time
+  private long numHits = 0L; //sum of all hits
+  private long numMisses = 0L; //sum of all misses
+  private float hitRatio = 0f; //calculated from all
+  private long hitResponders = 0;
+  private double hitRatioSum = 0.0;
+  //  private int entryCount        = 0; //largest entryCount
+  //  private int subregionCount    = 0; //largest subregionCount
 
   //private Map individuals          = new HashMap();
-  private Set allCapControllers    = new HashSet();
-  private Set allListeners         = new HashSet();
-  private Set allDataPolicies           = new HashSet();
-  private Set allRegionTtl         = new HashSet();
-  private Set allEntryTtl          = new HashSet();
-  private HashSet allCustomTtl     = new HashSet();
+  private Set allCapControllers = new HashSet();
+  private Set allListeners = new HashSet();
+  private Set allDataPolicies = new HashSet();
+  private Set allRegionTtl = new HashSet();
+  private Set allEntryTtl = new HashSet();
+  private HashSet allCustomTtl = new HashSet();
   private Set allRegionIdleTimeout = new HashSet();
-  private Set allEntryIdleTimeout  = new HashSet();
-  private HashSet allCustomIdle    = new HashSet();
-  private Set allScopes            = new HashSet();
-  private Set allUserAttributes    = new HashSet();
-  private Set allCacheLoaders      = new HashSet();
-  private Set allCacheWriters      = new HashSet();
-  private Set allLoadFactors       = new HashSet();
-  private Set allInitialCaps       = new HashSet();
-  private Set allConcLevels        = new HashSet();
-  private Set allStatsEnabled      = new HashSet();
-  private Set allKeyConstraints    = new HashSet();
-  private Set allValueConstraints    = new HashSet();
+  private Set allEntryIdleTimeout = new HashSet();
+  private HashSet allCustomIdle = new HashSet();
+  private Set allScopes = new HashSet();
+  private Set allUserAttributes = new HashSet();
+  private Set allCacheLoaders = new HashSet();
+  private Set allCacheWriters = new HashSet();
+  private Set allLoadFactors = new HashSet();
+  private Set allInitialCaps = new HashSet();
+  private Set allConcLevels = new HashSet();
+  private Set allStatsEnabled = new HashSet();
+  private Set allKeyConstraints = new HashSet();
+  private Set allValueConstraints = new HashSet();
 
   /**
    * Creates a new <code>CompoundRegionSnapshot</code> for the region
@@ -115,7 +115,7 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
       allRegionIdleTimeout.add(ra.getRegionIdleTimeout());
       allEntryIdleTimeout.add(ra.getEntryIdleTimeout());
       allCustomIdle.add(ra.getCustomEntryIdleTimeout().toString());
-      allScopes.add(ra.getScope());    
+      allScopes.add(ra.getScope());
       allLoadFactors.add(new Float(ra.getLoadFactor()));
       allInitialCaps.add(Integer.valueOf(ra.getInitialCapacity()));
       allConcLevels.add(Integer.valueOf(ra.getConcurrencyLevel()));
@@ -124,12 +124,12 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
       allKeyConstraints.add(ra.getKeyConstraint());
       allValueConstraints.add(ra.getValueConstraint());
 
-//       if (constraintClass == null) {
-//         Class clazz = ra.getKeyConstraint();
-//         if (clazz != null) {
-//           constraintClass = clazz.getName();
-//         }
-//       }
+      //       if (constraintClass == null) {
+      //         Class clazz = ra.getKeyConstraint();
+      //         if (clazz != null) {
+      //           constraintClass = clazz.getName();
+      //         }
+      //       }
     }
 
     long modified = snap.getLastModifiedTime();
@@ -156,9 +156,9 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
     if (hitRatio >= 0.00) {
       hitResponders++;
       hitRatioSum += hitRatio;
-      this.hitRatio = (float)(hitRatioSum/hitResponders);      
+      this.hitRatio = (float) (hitRatioSum / hitResponders);
     }
-  }  
+  }
 
   /**
    * Returns the name of the <code>Region</code> whose information is
@@ -239,14 +239,14 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   public Iterator getAllRegionTtl() {
     return allRegionTtl.iterator();
   }
-  
+
   /**
    * Returns an {@link java.util.Iterator} of {@link org.apache.geode.cache.ExpirationAttributes}
    */
   public Iterator getAllEntryTtl() {
     return allEntryTtl.iterator();
   }
-  
+
   /**
    * Returns an <code>Iterator</code> containing the
    * <code>toString</code> of the custom TTL CustomExpiry's of each
@@ -255,7 +255,7 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   public Iterator getAllCustomTtl() {
     return allCustomTtl.iterator();
   }
-  
+
   /**
    * Returns an {@link java.util.Iterator} of {@link org.apache.geode.cache.ExpirationAttributes}
    */
@@ -263,14 +263,13 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
     return allRegionIdleTimeout.iterator();
   }
 
-  
   /**
    * Returns an {@link java.util.Iterator} of {@link org.apache.geode.cache.ExpirationAttributes}
    */
   public Iterator getAllEntryIdleTimeout() {
     return allEntryIdleTimeout.iterator();
   }
-  
+
   /**
    * Returns an <code>Iterator</code> containing the
    * <code>toString</code> of the custom idleTimeout CustomExpiry's of each
@@ -279,6 +278,7 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   public Iterator getAllCustomIdleTimeout() {
     return allCustomIdle.iterator();
   }
+
   /**
    * Returns an {@link java.util.Iterator} of {@link org.apache.geode.cache.Scope}
    */
@@ -375,7 +375,7 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   public long getNumberOfMisses() {
     return this.numMisses;
   }
-  
+
   /**
    * Returns the aggregate hit ratio across all instances of this
    * snapshot's <code>Region</code>.

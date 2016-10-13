@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.internal.cache;
+
 import org.apache.geode.cache.*;
 import org.apache.geode.internal.cache.locks.*;
 
@@ -31,27 +32,29 @@ import java.util.*;
 public class TXLockRequest {
   private boolean localLockHeld;
   private TXLockId distLockId;
-  private IdentityArrayList localLocks;  // of TXRegionLockRequest
+  private IdentityArrayList localLocks; // of TXRegionLockRequest
   private ArrayList<TXRegionLockRequest> distLocks; // of TXRegionLockRequest
   private Set otherMembers;
 
-  public TXLockRequest()
-  {
+  public TXLockRequest() {
     this.localLockHeld = false;
     this.distLockId = null;
     this.localLocks = null;
     this.distLocks = null;
     this.otherMembers = null;
   }
+
   void setOtherMembers(Set s) {
     this.otherMembers = s;
   }
+
   public void addLocalRequest(TXRegionLockRequest req) {
     if (this.localLocks == null) {
       this.localLocks = new IdentityArrayList();
     }
     this.localLocks.add(req);
   }
+
   public TXRegionLockRequest getRegionLockRequest(String regionFullPath) {
     if (this.localLocks == null || regionFullPath == null) {
       return null;
@@ -65,22 +68,24 @@ public class TXLockRequest {
     }
     return null;
   }
+
   void addDistributedRequest(TXRegionLockRequest req) {
     if (this.distLocks == null) {
       this.distLocks = new ArrayList<TXRegionLockRequest>();
     }
     this.distLocks.add(req);
   }
+
   public void obtain() throws CommitConflictException {
     if (this.localLocks != null && !this.localLocks.isEmpty()) {
       txLocalLock(this.localLocks);
       this.localLockHeld = true;
     }
     if (this.distLocks != null && !this.distLocks.isEmpty()) {
-      this.distLockId = TXLockService.createDTLS().txLock(this.distLocks,
-                                                          this.otherMembers);
+      this.distLockId = TXLockService.createDTLS().txLock(this.distLocks, this.otherMembers);
     }
   }
+
   /**
    * Release any local locks obtained by this request
    */
@@ -90,6 +95,7 @@ public class TXLockRequest {
       this.localLockHeld = false;
     }
   }
+
   /**
    * Release any distributed locks obtained by this request
    */
@@ -132,16 +138,16 @@ public class TXLockRequest {
     releaseLocal();
     releaseDistributed();
   }
+
   static private final TXReservationMgr resMgr = new TXReservationMgr(true);
 
   /**
    * @param localLocks is a list of TXRegionLockRequest instances
    */
-  private static void txLocalLock(IdentityArrayList localLocks)
-    throws CommitConflictException
-  {
+  private static void txLocalLock(IdentityArrayList localLocks) throws CommitConflictException {
     resMgr.makeReservation(localLocks);
   }
+
   private static void txLocalRelease(IdentityArrayList localLocks) {
     resMgr.releaseReservation(localLocks);
   }

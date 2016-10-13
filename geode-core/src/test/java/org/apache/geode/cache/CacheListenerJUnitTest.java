@@ -44,12 +44,12 @@ import static org.junit.Assert.*;
  */
 @Category(IntegrationTest.class)
 public class CacheListenerJUnitTest {
-  
+
   private DistributedSystem ds;
   private Cache c;
   private int invokeCount;
   private CacheEvent lastEvent;
-  
+
   @Before
   public void setUp() throws Exception {
     Properties p = new Properties();
@@ -70,30 +70,30 @@ public class CacheListenerJUnitTest {
       this.ds = null;
     }
   }
-  
+
   /**
    * Confirms that listeners are invoked in the correct order
    */
   @Test
   public void testInvocationOrder() throws Exception {
     CacheListener cl1 = new CacheListenerAdapter() {
-        public void afterCreate(EntryEvent event) {
-          CacheListenerJUnitTest.this.invokeCount++;
-          assertEquals(1, CacheListenerJUnitTest.this.invokeCount);
-        }
-      };
+      public void afterCreate(EntryEvent event) {
+        CacheListenerJUnitTest.this.invokeCount++;
+        assertEquals(1, CacheListenerJUnitTest.this.invokeCount);
+      }
+    };
     CacheListener cl2 = new RegionMembershipListenerAdapter() {
-        public void afterCreate(EntryEvent event) {
-          CacheListenerJUnitTest.this.invokeCount++;
-          assertEquals(2, CacheListenerJUnitTest.this.invokeCount);
-        }
-      };
+      public void afterCreate(EntryEvent event) {
+        CacheListenerJUnitTest.this.invokeCount++;
+        assertEquals(2, CacheListenerJUnitTest.this.invokeCount);
+      }
+    };
     CacheListener cl3 = new RegionRoleListenerAdapter() {
-        public void afterCreate(EntryEvent event) {
-          CacheListenerJUnitTest.this.invokeCount++;
-          assertEquals(3, CacheListenerJUnitTest.this.invokeCount);
-        }
-      };
+      public void afterCreate(EntryEvent event) {
+        CacheListenerJUnitTest.this.invokeCount++;
+        assertEquals(3, CacheListenerJUnitTest.this.invokeCount);
+      }
+    };
     AttributesFactory af = new AttributesFactory();
     af.addCacheListener(cl1);
     af.addCacheListener(cl2);
@@ -105,11 +105,11 @@ public class CacheListenerJUnitTest {
     assertEquals(3, this.invokeCount);
 
     CacheListener cl4 = new CacheListenerAdapter() {
-        public void afterCreate(EntryEvent event) {
-          CacheListenerJUnitTest.this.invokeCount++;
-          assertEquals(4, CacheListenerJUnitTest.this.invokeCount);
-        }
-      };
+      public void afterCreate(EntryEvent event) {
+        CacheListenerJUnitTest.this.invokeCount++;
+        assertEquals(4, CacheListenerJUnitTest.this.invokeCount);
+      }
+    };
     clearListener();
     r.getAttributesMutator().addCacheListener(cl4);
     r.create("key2", "value2");
@@ -121,9 +121,11 @@ public class CacheListenerJUnitTest {
    */
   @Test
   public void testBasicMutator() throws Exception {
-    CacheListener cl1 = new CacheListenerAdapter() {};
-    CacheListener cl2 = new CacheListenerAdapter() {};
-//    CacheListener cl3 = new CacheListenerAdapter() {};
+    CacheListener cl1 = new CacheListenerAdapter() {
+    };
+    CacheListener cl2 = new CacheListenerAdapter() {
+    };
+    //    CacheListener cl3 = new CacheListenerAdapter() {};
     AttributesFactory af = new AttributesFactory();
     Region r = this.c.createRegion("r", af.create());
     RegionAttributes ra = r.getAttributes();
@@ -141,16 +143,16 @@ public class CacheListenerJUnitTest {
     } catch (IllegalArgumentException expected) {
     }
     try {
-      am.initCacheListeners(new CacheListener[]{cl1, null});
+      am.initCacheListeners(new CacheListener[] { cl1, null });
       fail("expected IllegalArgumentException");
     } catch (IllegalArgumentException expected) {
     }
     am.addCacheListener(cl1);
     assertEquals(cl1, ra.getCacheListener());
-    assertEquals(Arrays.asList(new CacheListener[]{cl1}), Arrays.asList(ra.getCacheListeners()));
+    assertEquals(Arrays.asList(new CacheListener[] { cl1 }), Arrays.asList(ra.getCacheListeners()));
 
     am.addCacheListener(cl2);
-    assertEquals(Arrays.asList(new CacheListener[]{cl1,cl2}), Arrays.asList(ra.getCacheListeners()));
+    assertEquals(Arrays.asList(new CacheListener[] { cl1, cl2 }), Arrays.asList(ra.getCacheListeners()));
     try {
       ra.getCacheListener();
       fail("expected IllegalStateException");
@@ -162,34 +164,35 @@ public class CacheListenerJUnitTest {
     } catch (IllegalStateException expected) {
     }
     am.removeCacheListener(cl1);
-    assertEquals(Arrays.asList(new CacheListener[]{cl2}), Arrays.asList(ra.getCacheListeners()));
+    assertEquals(Arrays.asList(new CacheListener[] { cl2 }), Arrays.asList(ra.getCacheListeners()));
     am.removeCacheListener(cl1);
-    assertEquals(Arrays.asList(new CacheListener[]{cl2}), Arrays.asList(ra.getCacheListeners()));
+    assertEquals(Arrays.asList(new CacheListener[] { cl2 }), Arrays.asList(ra.getCacheListeners()));
     am.removeCacheListener(cl2);
-    assertEquals(Arrays.asList(new CacheListener[]{}), Arrays.asList(ra.getCacheListeners()));
-    am.initCacheListeners(new CacheListener[]{cl1, cl2});
-    assertEquals(Arrays.asList(new CacheListener[]{cl1,cl2}), Arrays.asList(ra.getCacheListeners()));
+    assertEquals(Arrays.asList(new CacheListener[] {}), Arrays.asList(ra.getCacheListeners()));
+    am.initCacheListeners(new CacheListener[] { cl1, cl2 });
+    assertEquals(Arrays.asList(new CacheListener[] { cl1, cl2 }), Arrays.asList(ra.getCacheListeners()));
     am.initCacheListeners(null);
-    assertEquals(Arrays.asList(new CacheListener[]{}), Arrays.asList(ra.getCacheListeners()));
-    am.initCacheListeners(new CacheListener[]{});
-    assertEquals(Arrays.asList(new CacheListener[]{}), Arrays.asList(ra.getCacheListeners()));
+    assertEquals(Arrays.asList(new CacheListener[] {}), Arrays.asList(ra.getCacheListeners()));
+    am.initCacheListeners(new CacheListener[] {});
+    assertEquals(Arrays.asList(new CacheListener[] {}), Arrays.asList(ra.getCacheListeners()));
   }
 
   private void clearListener() {
     this.invokeCount = 0;
     this.lastEvent = null;
   }
+
   /**
    * Tests the local afterRegionCreate event
    */
   @Test
   public void testAfterRegionCreate() throws Exception {
     CacheListener cl1 = new CacheListenerAdapter() {
-        public void afterRegionCreate(RegionEvent event) {
-          CacheListenerJUnitTest.this.invokeCount++;
-          CacheListenerJUnitTest.this.lastEvent = event;
-        }
-      };
+      public void afterRegionCreate(RegionEvent event) {
+        CacheListenerJUnitTest.this.invokeCount++;
+        CacheListenerJUnitTest.this.lastEvent = event;
+      }
+    };
     AttributesFactory af = new AttributesFactory();
     af.addCacheListener(cl1);
     clearListener();
@@ -201,7 +204,7 @@ public class CacheListenerJUnitTest {
     assertEquals(this.ds.getDistributedMember(), e.getDistributedMember());
     assertEquals(null, e.getCallbackArgument());
     assertEquals(Operation.REGION_CREATE, e.getOperation());
-    assertEquals(false, ((RegionEvent)e).isReinitializing());
+    assertEquals(false, ((RegionEvent) e).isReinitializing());
     assertEquals(false, e.isOriginRemote());
     assertEquals(false, e.isExpiration());
     assertEquals(false, e.isDistributed());
@@ -210,15 +213,16 @@ public class CacheListenerJUnitTest {
   @Test
   public void testTxPutThatIsCreate() throws Exception {
     CacheListener cl1 = new CacheListenerAdapter() {
-        public void afterUpdate(EntryEvent e) {
-          CacheListenerJUnitTest.this.invokeCount = 2;
-          CacheListenerJUnitTest.this.lastEvent = e;
-        }
-        public void afterCreate(EntryEvent e) {
-          CacheListenerJUnitTest.this.invokeCount = 1;
-          CacheListenerJUnitTest.this.lastEvent = e;
-        }
-      };
+      public void afterUpdate(EntryEvent e) {
+        CacheListenerJUnitTest.this.invokeCount = 2;
+        CacheListenerJUnitTest.this.lastEvent = e;
+      }
+
+      public void afterCreate(EntryEvent e) {
+        CacheListenerJUnitTest.this.invokeCount = 1;
+        CacheListenerJUnitTest.this.lastEvent = e;
+      }
+    };
     AttributesFactory af = new AttributesFactory();
     af.addCacheListener(cl1);
     clearListener();
@@ -236,13 +240,13 @@ public class CacheListenerJUnitTest {
 
     // now try it with a transaction
     TransactionListener tl1 = new TransactionListenerAdapter() {
-        public void afterRollback(TransactionEvent e) {
-          CacheListenerJUnitTest.this.invokeCount = 1;
-          assertEquals(1, e.getEvents().size());
-          CacheListenerJUnitTest.this.lastEvent = e.getEvents().get(0);
-        }
-      };
-    CacheTransactionManager ctm =  this.c.getCacheTransactionManager();
+      public void afterRollback(TransactionEvent e) {
+        CacheListenerJUnitTest.this.invokeCount = 1;
+        assertEquals(1, e.getEvents().size());
+        CacheListenerJUnitTest.this.lastEvent = e.getEvents().get(0);
+      }
+    };
+    CacheTransactionManager ctm = this.c.getCacheTransactionManager();
     ctm.addListener(tl1);
 
     ctm.begin();
@@ -259,7 +263,7 @@ public class CacheListenerJUnitTest {
     ctm.rollback();
     assertEquals(1, this.invokeCount);
     assertEquals(Operation.CREATE, this.lastEvent.getOperation());
-    
+
     ctm.begin();
     clearListener();
     r.put("key1", "value1-0");
@@ -284,18 +288,14 @@ public class CacheListenerJUnitTest {
     Region r = this.c.createRegion("r", af.create());
 
     TransactionListener tl1 = new TransactionListenerAdapter() {
-        public void afterRollback(TransactionEvent e) {
-          assertEquals(3, e.getEvents().size());
-          String[] keys = new String[] {
-            (String)((EntryEvent)e.getEvents().get(0)).getKey(),
-            (String)((EntryEvent)e.getEvents().get(1)).getKey(),
-            (String)((EntryEvent)e.getEvents().get(2)).getKey()};
-          assertEquals(Arrays.asList(new String[]{"b", "c", "a"}),
-                       Arrays.asList(keys));
-          CacheListenerJUnitTest.this.invokeCount = 1;
-        }
-      };
-    CacheTransactionManager ctm =  this.c.getCacheTransactionManager();
+      public void afterRollback(TransactionEvent e) {
+        assertEquals(3, e.getEvents().size());
+        String[] keys = new String[] { (String) ((EntryEvent) e.getEvents().get(0)).getKey(), (String) ((EntryEvent) e.getEvents().get(1)).getKey(), (String) ((EntryEvent) e.getEvents().get(2)).getKey() };
+        assertEquals(Arrays.asList(new String[] { "b", "c", "a" }), Arrays.asList(keys));
+        CacheListenerJUnitTest.this.invokeCount = 1;
+      }
+    };
+    CacheTransactionManager ctm = this.c.getCacheTransactionManager();
     ctm.addListener(tl1);
 
     ctm.begin();
@@ -316,18 +316,14 @@ public class CacheListenerJUnitTest {
     Region r3 = r2.createSubregion("r3", af.create());
 
     TransactionListener tl1 = new TransactionListenerAdapter() {
-        public void afterCommit(TransactionEvent e) {
-          assertEquals(3, e.getEvents().size());
-          String[] keys = new String[] {
-            (String)((EntryEvent)e.getEvents().get(0)).getKey(),
-            (String)((EntryEvent)e.getEvents().get(1)).getKey(),
-            (String)((EntryEvent)e.getEvents().get(2)).getKey()};
-          assertEquals(Arrays.asList(new String[]{"b", "c", "a"}),
-                       Arrays.asList(keys));
-          CacheListenerJUnitTest.this.invokeCount = 1;
-        }
-      };
-    CacheTransactionManager ctm =  this.c.getCacheTransactionManager();
+      public void afterCommit(TransactionEvent e) {
+        assertEquals(3, e.getEvents().size());
+        String[] keys = new String[] { (String) ((EntryEvent) e.getEvents().get(0)).getKey(), (String) ((EntryEvent) e.getEvents().get(1)).getKey(), (String) ((EntryEvent) e.getEvents().get(2)).getKey() };
+        assertEquals(Arrays.asList(new String[] { "b", "c", "a" }), Arrays.asList(keys));
+        CacheListenerJUnitTest.this.invokeCount = 1;
+      }
+    };
+    CacheTransactionManager ctm = this.c.getCacheTransactionManager();
     ctm.addListener(tl1);
 
     ctm.begin();

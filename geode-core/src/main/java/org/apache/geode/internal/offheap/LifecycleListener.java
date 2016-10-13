@@ -36,6 +36,7 @@ public interface LifecycleListener {
    * @param allocator the instance that has just been created
    */
   public void afterCreate(MemoryAllocatorImpl allocator);
+
   /**
    * Callback is invoked after reopening an existing MemoryAllocatorImpl 
    * for reuse. 
@@ -47,6 +48,7 @@ public interface LifecycleListener {
    * @param allocator the instance that has just been reopened for reuse
    */
   public void afterReuse(MemoryAllocatorImpl allocator);
+
   /**
    * Callback is invoked before closing the MemoryAllocatorImpl
    * 
@@ -56,25 +58,28 @@ public interface LifecycleListener {
    * @param allocator the instance that is about to be closed
    */
   public void beforeClose(MemoryAllocatorImpl allocator);
-  
-  static  void invokeBeforeClose(MemoryAllocatorImpl allocator) {
+
+  static void invokeBeforeClose(MemoryAllocatorImpl allocator) {
     for (Iterator<LifecycleListener> iter = lifecycleListeners.iterator(); iter.hasNext();) {
       LifecycleListener listener = iter.next();
       listener.beforeClose(allocator);
     }
   }
+
   static void invokeAfterReuse(MemoryAllocatorImpl allocator) {
     for (Iterator<LifecycleListener> iter = lifecycleListeners.iterator(); iter.hasNext();) {
       LifecycleListener listener = iter.next();
       listener.afterReuse(allocator);
     }
   }
+
   static void invokeAfterCreate(MemoryAllocatorImpl allocator) {
     for (Iterator<LifecycleListener> iter = lifecycleListeners.iterator(); iter.hasNext();) {
       LifecycleListener listener = iter.next();
       listener.afterCreate(allocator);
     }
   }
+
   /**
    * Removes a LifecycleListener. Does nothing if the instance has not been added.
    * @param listener the instance to remove
@@ -82,6 +87,7 @@ public interface LifecycleListener {
   public static void removeLifecycleListener(LifecycleListener listener) {
     lifecycleListeners.remove(listener);
   }
+
   /**
    * Adds a LifecycleListener.
    * @param listener the instance to add

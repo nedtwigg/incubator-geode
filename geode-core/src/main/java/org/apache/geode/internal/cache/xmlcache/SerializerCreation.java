@@ -37,13 +37,13 @@ import org.apache.logging.log4j.Logger;
  */
 public class SerializerCreation {
   private static final Logger logger = LogService.getLogger();
-  
+
   private final Vector<Class> serializerReg = new Vector<Class>();
   private final HashMap<Class, Integer> instantiatorReg = new HashMap<Class, Integer>();
- 
-  public static class InstantiatorImpl extends Instantiator{
+
+  public static class InstantiatorImpl extends Instantiator {
     private Class m_class;
-    
+
     /**
      * @param c
      * @param classId
@@ -58,37 +58,36 @@ public class SerializerCreation {
      */
     @Override
     public DataSerializable newInstance() {
-      try {            
+      try {
         return (DataSerializable) m_class.newInstance();
-      }
-      catch(Exception ex) {
-        logger.error(LocalizedMessage.create(LocalizedStrings.SerializerCreation_A_0_INSTANTIATION_FAILED, new Object[] {m_class.getName()}), ex);
+      } catch (Exception ex) {
+        logger.error(LocalizedMessage.create(LocalizedStrings.SerializerCreation_A_0_INSTANTIATION_FAILED, new Object[] { m_class.getName() }), ex);
         return null;
-      }              
-    }    
+      }
+    }
   }
-  
+
   public SerializerCreation() {
   }
-    
+
   public void registerSerializer(Class c) {
     serializerReg.add(c);
   }
-  
+
   public void registerInstantiator(Class c, Integer id) {
     instantiatorReg.put(c, id);
   }
-  
-  public void create(){
+
+  public void create() {
     final boolean isDebugEnabled = logger.isDebugEnabled();
-    for(Class c : serializerReg ) {
+    for (Class c : serializerReg) {
       if (isDebugEnabled) {
         logger.debug("Registering serializer: {}", c.getName());
       }
       DataSerializer.register(c);
     }
-    
-    for(Map.Entry<Class, Integer> e : instantiatorReg.entrySet()) {
+
+    for (Map.Entry<Class, Integer> e : instantiatorReg.entrySet()) {
       final Class k = e.getKey();
       if (isDebugEnabled) {
         logger.debug("Registering instantiator: {}", k.getName());
@@ -96,11 +95,11 @@ public class SerializerCreation {
       Instantiator.register(new InstantiatorImpl(k, e.getValue()));
     }
   }
-  
-  public Vector<Class> getSerializerRegistrations(){
+
+  public Vector<Class> getSerializerRegistrations() {
     return serializerReg;
   }
-  
+
   public HashMap<Class, Integer> getInstantiatorRegistrations() {
     return instantiatorReg;
   }

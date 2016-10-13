@@ -22,8 +22,7 @@ import javax.servlet.http.HttpSession;
 /**
  */
 public class ThreadLocalSession {
-  private static ThreadLocal<HttpSession> threadLocal =
-      new ThreadLocal<HttpSession>();
+  private static ThreadLocal<HttpSession> threadLocal = new ThreadLocal<HttpSession>();
 
   public static HttpSession get() {
     return threadLocal.get();

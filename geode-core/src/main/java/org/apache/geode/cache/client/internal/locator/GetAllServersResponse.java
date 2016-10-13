@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.geode.DataSerializer;
 import org.apache.geode.distributed.internal.ServerLocation;
 import org.apache.geode.internal.DataSerializableFixedID;
+
 /**
  * 
  *
@@ -75,5 +76,5 @@ public class GetAllServersResponse extends ServerLocationResponse {
   public boolean hasResult() {
     return this.serversFound;
   }
-  
+
 }

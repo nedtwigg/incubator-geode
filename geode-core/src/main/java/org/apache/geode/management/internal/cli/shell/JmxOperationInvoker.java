@@ -99,12 +99,7 @@ public class JmxOperationInvoker implements OperationInvoker {
 
   private int clusterId = CLUSTER_ID_WHEN_NOT_CONNECTED;
 
-  public JmxOperationInvoker(final String host,
-                             final int port,
-                             final String userName,
-                             final String password,
-                             final Map<String, String> sslConfigProps,
-                             String gfSecurityPropertiesPath) throws Exception {
+  public JmxOperationInvoker(final String host, final int port, final String userName, final String password, final Map<String, String> sslConfigProps, String gfSecurityPropertiesPath) throws Exception {
     final Set<String> propsToClear = new TreeSet<String>();
     try {
       this.managerHost = host;
@@ -120,7 +115,7 @@ public class JmxOperationInvoker implements OperationInvoker {
         env.put(JMXConnector.CREDENTIALS, new String[] { userName, password });
       }
       Set<Entry<String, String>> entrySet = sslConfigProps.entrySet();
-      for (Iterator<Entry<String, String>> it = entrySet.iterator(); it.hasNext(); ) {
+      for (Iterator<Entry<String, String>> it = entrySet.iterator(); it.hasNext();) {
         Entry<String, String> entry = it.next();
         String key = entry.getKey();
         String value = entry.getValue();
@@ -159,8 +154,7 @@ public class JmxOperationInvoker implements OperationInvoker {
       } else {
         this.managerMemberObjectName = this.distributedSystemMXBeanProxy.getMemberObjectName();
         if (this.managerMemberObjectName == null || !JMX.isMXBeanInterface(MemberMXBean.class)) {
-          LogWrapper.getInstance()
-                    .info("MemberMXBean with ObjectName " + this.managerMemberObjectName + " is not present on member with endpoints : " + endpoints);
+          LogWrapper.getInstance().info("MemberMXBean with ObjectName " + this.managerMemberObjectName + " is not present on member with endpoints : " + endpoints);
           throw new JMXConnectionException(JMXConnectionException.MANAGER_NOT_FOUND_EXCEPTION);
         } else {
           this.memberMXBeanProxy = JMX.newMXBeanProxy(mbsc, managerMemberObjectName, MemberMXBean.class);
@@ -219,8 +213,7 @@ public class JmxOperationInvoker implements OperationInvoker {
         inputStream = gfSecurityPropertiesUrl.openStream();
         props.load(inputStream);
       } catch (IOException io) {
-        throw new RuntimeException(CliStrings.format(CliStrings.CONNECT__MSG__COULD_NOT_READ_CONFIG_FROM_0, CliUtil.decodeWithDefaultCharSet(gfSecurityPropertiesUrl
-          .getPath())), io);
+        throw new RuntimeException(CliStrings.format(CliStrings.CONNECT__MSG__COULD_NOT_READ_CONFIG_FROM_0, CliUtil.decodeWithDefaultCharSet(gfSecurityPropertiesUrl.getPath())), io);
       } finally {
         IOUtils.close(inputStream);
       }
@@ -395,7 +388,7 @@ public class JmxOperationInvoker implements OperationInvoker {
     return this.clusterId;
   }
 
-  /*package*/ void resetClusterId() {
+      /*package*/ void resetClusterId() {
     clusterId = CLUSTER_ID_WHEN_NOT_CONNECTED;
   }
 

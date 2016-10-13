@@ -29,17 +29,17 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class FailWithErrorInOutputJUnitTest extends FailWithProblemInOutputTestCase {
-  
+
   @Override
   String problem() {
     return "ExpectedStrings: Description of a problem.";
   }
-  
+
   @Override
   void outputProblemInProcess(final String message) {
     new LocalLogWriter(LogWriterImpl.INFO_LEVEL).error(message);
   }
-  
+
   public static void main(final String[] args) throws Exception {
     new FailWithErrorInOutputJUnitTest().executeInProcess();
   }

@@ -58,6 +58,6 @@ public enum ResponseStatus {
       return 0x0084;
     }
   };
-  
+
   public abstract short asShort();
 }

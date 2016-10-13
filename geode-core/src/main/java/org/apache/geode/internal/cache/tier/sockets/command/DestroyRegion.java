@@ -72,8 +72,7 @@ public class DestroyRegion extends BaseCommand {
       } catch (DistributedSystemDisconnectedException se) {
         // FIXME this can't happen
         if (logger.isDebugEnabled()) {
-          logger.debug("{} ignoring message of type {} from client {} because shutdown occurred during message processing.", servConn
-            .getName(), MessageType.getString(msg.getMessageType()), servConn.getProxyID());
+          logger.debug("{} ignoring message of type {} from client {} because shutdown occurred during message processing.", servConn.getName(), MessageType.getString(msg.getMessageType()), servConn.getProxyID());
         }
 
         servConn.setFlagProcessMessagesAsFalse();
@@ -86,14 +85,12 @@ public class DestroyRegion extends BaseCommand {
     }
     regionName = regionNamePart.getString();
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received destroy region request ({} bytes) from {} for region {}", servConn.getName(), msg.getPayloadLength(), servConn
-        .getSocketString(), regionName);
+      logger.debug("{}: Received destroy region request ({} bytes) from {} for region {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName);
     }
 
     // Process the destroy region request
     if (regionName == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.DestroyRegion_0_THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REGION_REQUEST_IS_NULL, servConn
-        .getName()));
+      logger.warn(LocalizedMessage.create(LocalizedStrings.DestroyRegion_0_THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REGION_REQUEST_IS_NULL, servConn.getName()));
       errMessage.append(LocalizedStrings.DestroyRegion__THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REGION_REQUEST_IS_NULL.toLocalizedString());
 
       writeErrorResponse(msg, MessageType.DESTROY_REGION_DATA_ERROR, errMessage.toString(), servConn);
@@ -130,8 +127,7 @@ public class DestroyRegion extends BaseCommand {
       // FIXME better exception hierarchy would avoid this check
       if (servConn.getCachedRegionHelper().getCache().getCancelCriterion().cancelInProgress() != null) {
         if (logger.isDebugEnabled()) {
-          logger.debug("{} ignoring message of type {} from client {} because shutdown occurred during message processing.", servConn
-            .getName(), MessageType.getString(msg.getMessageType()), servConn.getProxyID());
+          logger.debug("{} ignoring message of type {} from client {} because shutdown occurred during message processing.", servConn.getName(), MessageType.getString(msg.getMessageType()), servConn.getProxyID());
         }
         servConn.setFlagProcessMessagesAsFalse();
       } else {

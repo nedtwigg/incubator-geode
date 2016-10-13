@@ -34,8 +34,12 @@ import org.apache.geode.cache.query.types.CollectionType;
 public interface StructFields {
 
   public boolean addFieldValues(Object[] fieldValues);
+
   public boolean removeFieldValues(Object[] fieldValues);
+
   public Iterator fieldValuesIterator();
+
   public CollectionType getCollectionType();
+
   public boolean containsFieldValues(Object[] fieldValues);
 }

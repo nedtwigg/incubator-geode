@@ -33,21 +33,21 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class CommitCommandTest {
 
-	/**
-	 * Test for GEODE-537
-	 * No NPE should be thrown from the {@link CommitCommand#writeCommitResponse(org.apache.geode.internal.cache.TXCommitMessage, Message, ServerConnection)}
-	 * if the response message is null as it is the case when JTA
-	 * transaction is rolled back with TX_SYNCHRONIZATION AFTER_COMPLETION STATUS_ROLLEDBACK 
-	 */
-	@Test
-	public void testWriteNullResponse() throws Exception {
-		Cache cache = mock(Cache.class);
-		Message origMsg = mock(Message.class);
-		ServerConnection servConn = mock(ServerConnection.class);
-		when(servConn.getResponseMessage()).thenReturn(mock(Message.class));
-		when(servConn.getCache()).thenReturn(cache);
-		when(cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
-		
-		CommitCommand.writeCommitResponse(null, origMsg, servConn);
-	}
+  /**
+   * Test for GEODE-537
+   * No NPE should be thrown from the {@link CommitCommand#writeCommitResponse(org.apache.geode.internal.cache.TXCommitMessage, Message, ServerConnection)}
+   * if the response message is null as it is the case when JTA
+   * transaction is rolled back with TX_SYNCHRONIZATION AFTER_COMPLETION STATUS_ROLLEDBACK 
+   */
+  @Test
+  public void testWriteNullResponse() throws Exception {
+    Cache cache = mock(Cache.class);
+    Message origMsg = mock(Message.class);
+    ServerConnection servConn = mock(ServerConnection.class);
+    when(servConn.getResponseMessage()).thenReturn(mock(Message.class));
+    when(servConn.getCache()).thenReturn(cache);
+    when(cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
+
+    CommitCommand.writeCommitResponse(null, origMsg, servConn);
+  }
 }

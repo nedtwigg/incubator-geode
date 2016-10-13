@@ -34,37 +34,69 @@ import org.apache.geode.security.SecurityManager;
 public interface SecurityService {
 
   ThreadState bindSubject(Subject subject);
+
   Subject getSubject();
+
   Subject login(Properties credentials);
+
   Subject login(String username, String password);
+
   void logout();
+
   Callable associateWith(Callable callable);
+
   void authorize(ResourceOperation resourceOperation);
+
   void authorizeClusterManage();
+
   void authorizeClusterWrite();
+
   void authorizeClusterRead();
+
   void authorizeDataManage();
+
   void authorizeDataWrite();
+
   void authorizeDataRead();
+
   void authorizeRegionManage(String regionName);
+
   void authorizeRegionManage(String regionName, String key);
+
   void authorizeRegionWrite(String regionName);
+
   void authorizeRegionWrite(String regionName, String key);
+
   void authorizeRegionRead(String regionName);
+
   void authorizeRegionRead(String regionName, String key);
+
   void authorize(String resource, String operation);
+
   void authorize(String resource, String operation, String regionName);
+
   void authorize(String resource, String operation, String regionName, String key);
+
   void authorize(ResourcePermission context);
+
   void initSecurity(Properties securityProps);
+
   void close();
+
   boolean needPostProcess();
+
   Object postProcess(String regionPath, Object key, Object value, boolean valueIsSerialized);
+
   Object postProcess(Object principal, String regionPath, Object key, Object value, boolean valueIsSerialized);
+
   boolean isClientSecurityRequired();
+
   boolean isIntegratedSecurity();
+
   boolean isPeerSecurityRequired();
+
   SecurityManager getSecurityManager();
+
   PostProcessor getPostProcessor();
 
   /**
@@ -75,20 +107,19 @@ public interface SecurityService {
     Class actualClass = null;
     try {
       actualClass = ClassLoadUtil.classFromName(className);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       throw new GemFireSecurityException("Instance could not be obtained, " + ex.toString(), ex);
     }
 
-    if(!expectedClazz.isAssignableFrom(actualClass)){
-      throw new GemFireSecurityException("Instance could not be obtained. Expecting a "+expectedClazz.getName()+" class.");
+    if (!expectedClazz.isAssignableFrom(actualClass)) {
+      throw new GemFireSecurityException("Instance could not be obtained. Expecting a " + expectedClazz.getName() + " class.");
     }
 
     T actualObject = null;
     try {
-      actualObject =  (T)actualClass.newInstance();
+      actualObject = (T) actualClass.newInstance();
     } catch (Exception e) {
-      throw new GemFireSecurityException("Instance could not be obtained. Error instantiating "+actualClass.getName(), e);
+      throw new GemFireSecurityException("Instance could not be obtained. Error instantiating " + actualClass.getName(), e);
     }
     return actualObject;
   }
@@ -97,16 +128,16 @@ public interface SecurityService {
    * this method would never return null, it either throws an exception or
    * returns an object
    */
-  public static <T> T getObjectOfTypeFromFactoryMethod(String factoryMethodName, Class<T> expectedClazz){
+  public static <T> T getObjectOfTypeFromFactoryMethod(String factoryMethodName, Class<T> expectedClazz) {
     T actualObject = null;
     try {
       Method factoryMethod = ClassLoadUtil.methodFromName(factoryMethodName);
-      actualObject = (T)factoryMethod.invoke(null, (Object[])null);
+      actualObject = (T) factoryMethod.invoke(null, (Object[]) null);
     } catch (Exception e) {
-      throw new GemFireSecurityException("Instance could not be obtained from "+factoryMethodName, e);
+      throw new GemFireSecurityException("Instance could not be obtained from " + factoryMethodName, e);
     }
 
-    if(actualObject == null){
+    if (actualObject == null) {
       throw new GemFireSecurityException("Instance could not be obtained from " + factoryMethodName);
     }
 
@@ -122,18 +153,17 @@ public interface SecurityService {
    */
   public static <T> T getObjectOfType(String classOrMethod, Class<T> expectedClazz) {
     T object = null;
-    try{
+    try {
       object = getObjectOfTypeFromClassName(classOrMethod, expectedClazz);
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       object = getObjectOfTypeFromFactoryMethod(classOrMethod, expectedClazz);
     }
     return object;
   }
 
-  public static Properties getCredentials(Properties securityProps){
+  public static Properties getCredentials(Properties securityProps) {
     Properties credentials = null;
-    if(securityProps.containsKey(ResourceConstants.USER_NAME) && securityProps.containsKey(ResourceConstants.PASSWORD)){
+    if (securityProps.containsKey(ResourceConstants.USER_NAME) && securityProps.containsKey(ResourceConstants.PASSWORD)) {
       credentials = new Properties();
       credentials.setProperty(ResourceConstants.USER_NAME, securityProps.getProperty(ResourceConstants.USER_NAME));
       credentials.setProperty(ResourceConstants.PASSWORD, securityProps.getProperty(ResourceConstants.PASSWORD));
@@ -141,7 +171,7 @@ public interface SecurityService {
     return credentials;
   }
 
-  static SecurityService getSecurityService(){
+  static SecurityService getSecurityService() {
     return IntegratedSecurityService.getSecurityService();
   }
 

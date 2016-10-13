@@ -46,13 +46,11 @@ import org.apache.geode.internal.logging.InternalLogWriter;
  *
  * @since GemFire     3.5
  */
-public class SystemMemberCacheJmxImpl 
-extends org.apache.geode.admin.internal.SystemMemberCacheImpl
-implements org.apache.geode.admin.jmx.internal.ManagedResource {
+public class SystemMemberCacheJmxImpl extends org.apache.geode.admin.internal.SystemMemberCacheImpl implements org.apache.geode.admin.jmx.internal.ManagedResource {
 
   /** The object name of this managed resource */
   private ObjectName objectName;
-  
+
   /** collection to collect all the resources created for this member */
   private Map<String, SystemMemberRegionJmxImpl> managedRegionResourcesMap = new HashMap<String, SystemMemberRegionJmxImpl>();
   private Map<Number, SystemMemberBridgeServerJmxImpl> managedCacheServerResourcesMap = new HashMap<Number, SystemMemberBridgeServerJmxImpl>();
@@ -60,36 +58,25 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
   // -------------------------------------------------------------------------
   //   Constructor(s)
   // -------------------------------------------------------------------------
-  
+
   /** 
    * Constructs an instance of SystemMemberCacheJmxImpl.
    *
    * @param vm
    *        The vm owning the cache this object will manage
    */
-  public SystemMemberCacheJmxImpl(GemFireVM vm)
-  throws org.apache.geode.admin.AdminException { 
+  public SystemMemberCacheJmxImpl(GemFireVM vm) throws org.apache.geode.admin.AdminException {
     super(vm);
     initializeMBean();
   }
 
   /** Create and register the MBean to manage this resource */
-  private void initializeMBean() 
-  throws org.apache.geode.admin.AdminException {
-    this.mbeanName = new StringBuffer("GemFire.Cache:")
-        .append("name=")
-        .append(MBeanUtil.makeCompliantMBeanNameProperty(getName()))
-        .append(",id=")
-        .append(getId())
-        .append(",owner=")
-        .append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString()))
-        .append(",type=Cache").toString();
-      
-    this.objectName = 
-      MBeanUtil.createMBean(this, 
-                            addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
+  private void initializeMBean() throws org.apache.geode.admin.AdminException {
+    this.mbeanName = new StringBuffer("GemFire.Cache:").append("name=").append(MBeanUtil.makeCompliantMBeanNameProperty(getName())).append(",id=").append(getId()).append(",owner=").append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString())).append(",type=Cache").toString();
+
+    this.objectName = MBeanUtil.createMBean(this, addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
   }
-  
+
   // -------------------------------------------------------------------------
   //   Template methods overriden from superclass...
   // -------------------------------------------------------------------------
@@ -107,9 +94,8 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    * @throws AdminException
    *           if constructing SystemMemberRegionJmxImpl instance fails
    */
-  @Override  
-  protected SystemMemberRegion createSystemMemberRegion(Region r)
-    throws org.apache.geode.admin.AdminException {
+  @Override
+  protected SystemMemberRegion createSystemMemberRegion(Region r) throws org.apache.geode.admin.AdminException {
     SystemMemberRegionJmxImpl managedSystemMemberRegion = null;
     boolean needsRefresh = false;
     synchronized (this.managedRegionResourcesMap) {
@@ -144,10 +130,8 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    * @throws AdminException
    *           if constructing SystemMemberBridgeServerJmxImpl instance fails
    */
-  @Override  
-  protected SystemMemberBridgeServerImpl
-    createSystemMemberBridgeServer(AdminBridgeServer bridge) 
-    throws AdminException {
+  @Override
+  protected SystemMemberBridgeServerImpl createSystemMemberBridgeServer(AdminBridgeServer bridge) throws AdminException {
     SystemMemberBridgeServerJmxImpl managedSystemMemberBridgeServer = null;
     synchronized (this.managedCacheServerResourcesMap) {
       /* 
@@ -168,7 +152,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
   // -------------------------------------------------------------------------
   //   Create MBean attributes for each Statistic
   // -------------------------------------------------------------------------
-  
+
   /**
    * Add MBean attribute definitions for each Statistic.
    *
@@ -176,14 +160,13 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    * @return a new instance of ManagedBean copied from <code>managed</code> but 
    *         with the new attributes added
    */
-  ManagedBean addDynamicAttributes(ManagedBean managed)
-  throws org.apache.geode.admin.AdminException {
+  ManagedBean addDynamicAttributes(ManagedBean managed) throws org.apache.geode.admin.AdminException {
     if (managed == null) {
       throw new IllegalArgumentException(LocalizedStrings.SystemMemberCacheJmxImpl_MANAGEDBEAN_IS_NULL.toLocalizedString());
     }
-    
+
     refresh(); // to get the stats...
-    
+
     // need to create a new instance of ManagedBean to clean the "slate"...
     ManagedBean newManagedBean = new DynamicManagedBean(managed);
     for (int i = 0; i < this.statistics.length; i++) {
@@ -199,7 +182,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
       attrInfo.setWriteable(false);
 
       attrInfo.setStat(this.statistics[i]);
-      
+
       newManagedBean.addAttribute(attrInfo);
     }
 
@@ -216,8 +199,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    * @throws AdminException
    *         If no region with path <code>path</code> exists
    */
-  public ObjectName manageRegion(String path)
-  throws AdminException, MalformedObjectNameException {
+  public ObjectName manageRegion(String path) throws AdminException, MalformedObjectNameException {
     try {
       SystemMemberRegionJmxImpl region = null;
 
@@ -231,19 +213,19 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
 
       if (region == null) {
         throw new AdminException(LocalizedStrings.SystemMemberCacheJmxImpl_THIS_CACHE_DOES_NOT_CONTAIN_REGION_0.toLocalizedString(path));
-          
+
       } else {
         return ObjectName.getInstance(region.getMBeanName());
       }
-    } catch (RuntimeException e) { 
+    } catch (RuntimeException e) {
       MBeanUtil.logStackTrace(Level.WARN, e);
-      throw e; 
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -251,7 +233,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
       // is still usable:
       SystemFailure.checkFailure();
       MBeanUtil.logStackTrace(Level.ERROR, e);
-      throw e; 
+      throw e;
     }
   }
 
@@ -261,33 +243,31 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    *
    * @since GemFire 5.7
    */
-  public ObjectName manageCacheServer()
-    throws AdminException, MalformedObjectNameException {
+  public ObjectName manageCacheServer() throws AdminException, MalformedObjectNameException {
 
     try {
-      SystemMemberBridgeServerJmxImpl bridge =
-        (SystemMemberBridgeServerJmxImpl) addCacheServer();
+      SystemMemberBridgeServerJmxImpl bridge = (SystemMemberBridgeServerJmxImpl) addCacheServer();
       return ObjectName.getInstance(bridge.getMBeanName());
-    } catch (AdminException e) { 
- 	  MBeanUtil.logStackTrace(Level.WARN, e);
- 	  throw e; 
-    } catch (RuntimeException e) { 
-	  MBeanUtil.logStackTrace(Level.WARN, e); 
-	  throw e;
+    } catch (AdminException e) {
+      MBeanUtil.logStackTrace(Level.WARN, e);
+      throw e;
+    } catch (RuntimeException e) {
+      MBeanUtil.logStackTrace(Level.WARN, e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
       // error condition, so you also need to check to see if the JVM
       // is still usable:
       SystemFailure.checkFailure();
-      MBeanUtil.logStackTrace(Level.ERROR, e); 
-      throw e; 
+      MBeanUtil.logStackTrace(Level.ERROR, e);
+      throw e;
     }
   }
 
@@ -297,38 +277,36 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    *
    * @since GemFire 4.0
    */
-  public ObjectName[] manageCacheServers()
-    throws AdminException, MalformedObjectNameException {
+  public ObjectName[] manageCacheServers() throws AdminException, MalformedObjectNameException {
 
     try {
       SystemMemberCacheServer[] bridges = getCacheServers();
       ObjectName[] names = new ObjectName[bridges.length];
       for (int i = 0; i < bridges.length; i++) {
-        SystemMemberBridgeServerJmxImpl bridge =
-          (SystemMemberBridgeServerJmxImpl) bridges[i];
+        SystemMemberBridgeServerJmxImpl bridge = (SystemMemberBridgeServerJmxImpl) bridges[i];
         names[i] = ObjectName.getInstance(bridge.getMBeanName());
       }
 
       return names;
-    } catch (AdminException e) { 
-  	  MBeanUtil.logStackTrace(Level.WARN, e); 
-  	  throw e;
-    } catch (RuntimeException e) { 
-      MBeanUtil.logStackTrace(Level.WARN, e); 
-      throw e; 
+    } catch (AdminException e) {
+      MBeanUtil.logStackTrace(Level.WARN, e);
+      throw e;
+    } catch (RuntimeException e) {
+      MBeanUtil.logStackTrace(Level.WARN, e);
+      throw e;
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    } catch (Error e) { 
+    } catch (Error e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
       // error condition, so you also need to check to see if the JVM
       // is still usable:
       SystemFailure.checkFailure();
-      MBeanUtil.logStackTrace(Level.ERROR, e); 
+      MBeanUtil.logStackTrace(Level.ERROR, e);
       throw e;
     }
   }
@@ -341,32 +319,32 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    * @deprecated as of 5.7
    */
   @Deprecated
-  public ObjectName[] manageBridgeServers()
-    throws AdminException, MalformedObjectNameException {
+  public ObjectName[] manageBridgeServers() throws AdminException, MalformedObjectNameException {
     return manageCacheServers();
   }
 
   // -------------------------------------------------------------------------
   //   ManagedResource implementation
   // -------------------------------------------------------------------------
-  
+
   /** The name of the MBean that will manage this resource */
   private String mbeanName;
 
   /** The ModelMBean that is configured to manage this resource */
   private ModelMBean modelMBean;
-  
-	public String getMBeanName() {
-		return this.mbeanName;
-	}
-  
-	public ModelMBean getModelMBean() {
-		return this.modelMBean;
-	}
-	public void setModelMBean(ModelMBean modelMBean) {
-		this.modelMBean = modelMBean;
-	}
-  
+
+  public String getMBeanName() {
+    return this.mbeanName;
+  }
+
+  public ModelMBean getModelMBean() {
+    return this.modelMBean;
+  }
+
+  public void setModelMBean(ModelMBean modelMBean) {
+    this.modelMBean = modelMBean;
+  }
+
   public ObjectName getObjectName() {
     return this.objectName;
   }
@@ -375,7 +353,6 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
     return ManagedResourceType.SYSTEM_MEMBER_CACHE;
   }
 
-  
   /**
    * Un-registers all the statistics & cache managed resource created for this 
    * member. After un-registering the resource MBean instances, clears 
@@ -388,21 +365,21 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
   public void cleanupResource() {
     synchronized (this.managedRegionResourcesMap) {
       Collection<SystemMemberRegionJmxImpl> values = managedRegionResourcesMap.values();
-      
+
       for (SystemMemberRegionJmxImpl systemMemberRegionJmxImpl : values) {
         MBeanUtil.unregisterMBean(systemMemberRegionJmxImpl);
       }
-      
+
       this.managedRegionResourcesMap.clear();
     }
-    
+
     synchronized (this.managedCacheServerResourcesMap) {
       Collection<SystemMemberBridgeServerJmxImpl> values = managedCacheServerResourcesMap.values();
-      
+
       for (SystemMemberBridgeServerJmxImpl SystemMemberBridgeServerJmxImpl : values) {
         MBeanUtil.unregisterMBean(SystemMemberBridgeServerJmxImpl);
       }
-      
+
       this.managedCacheServerResourcesMap.clear();
     }
   }
@@ -417,19 +394,19 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    */
   public ManagedResource cleanupRegionResources(String regionPath) {
     ManagedResource cleaned = null;
-    
+
     synchronized (this.managedRegionResourcesMap) {
       Set<Entry<String, SystemMemberRegionJmxImpl>> entries = managedRegionResourcesMap.entrySet();
       for (Iterator<Entry<String, SystemMemberRegionJmxImpl>> it = entries.iterator(); it.hasNext();) {
         Entry<String, SystemMemberRegionJmxImpl> entry = it.next();
         SystemMemberRegionJmxImpl managedResource = entry.getValue();
-        ObjectName                objName         = managedResource.getObjectName();
-        
+        ObjectName objName = managedResource.getObjectName();
+
         String pathProp = objName.getKeyProperty("path");
         if (pathProp != null && pathProp.equals(regionPath)) {
           cleaned = managedResource;
           it.remove();
-          
+
           break;
         }
       }
@@ -437,7 +414,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
 
     return cleaned;
   }
-  
+
   /**
    * Checks equality of the given object with <code>this</code> based on the
    * type (Class) and the MBean Name returned by <code>getMBeanName()</code>
@@ -450,15 +427,15 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    */
   @Override
   public boolean equals(Object obj) {
-    if ( !(obj instanceof SystemMemberCacheJmxImpl) ) {
+    if (!(obj instanceof SystemMemberCacheJmxImpl)) {
       return false;
     }
-    
+
     SystemMemberCacheJmxImpl other = (SystemMemberCacheJmxImpl) obj;
 
     return this.getMBeanName().equals(other.getMBeanName());
   }
-  
+
   /**
    * Returns hash code for <code>this</code> object which is based on the MBean 
    * Name generated. 
@@ -470,4 +447,3 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
     return this.getMBeanName().hashCode();
   }
 }
-

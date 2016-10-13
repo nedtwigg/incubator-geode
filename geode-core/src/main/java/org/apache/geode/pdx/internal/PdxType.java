@@ -43,12 +43,12 @@ import org.apache.geode.pdx.PdxFieldAlreadyExistsException;
 import org.apache.geode.pdx.PdxSerializationException;
 import org.apache.geode.pdx.internal.AutoSerializableManager.AutoClassInfo;
 
-public class PdxType implements DataSerializable {  
-  
+public class PdxType implements DataSerializable {
+
   private static final long serialVersionUID = -1950047949756115279L;
 
-  private int cachedHash = 0; 
-  
+  private int cachedHash = 0;
+
   private int typeId;
   private String className;
   private boolean noDomainClass;
@@ -67,11 +67,11 @@ public class PdxType implements DataSerializable {
 
   private final transient Map<String, PdxField> fieldsMap = new HashMap<String, PdxField>();
   private transient volatile SortedSet<PdxField> sortedIdentityFields;
-  
+
   public PdxType() {
     // for deserialization
   }
-  
+
   public PdxType(String name, boolean expectDomainClass) {
     this.className = name;
     this.noDomainClass = !expectDomainClass;
@@ -83,7 +83,7 @@ public class PdxType implements DataSerializable {
     this.className = copy.className;
     this.noDomainClass = copy.noDomainClass;
     this.vlfCount = copy.vlfCount;
-    for (PdxField ft: copy.fields) {
+    for (PdxField ft : copy.fields) {
       addField(ft);
     }
   }
@@ -97,7 +97,7 @@ public class PdxType implements DataSerializable {
       this.className = svc.processIncomingClassName(this.className);
     }
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.className = DataSerializer.readString(in);
     swizzleGemFireClassNames();
@@ -157,20 +157,20 @@ public class PdxType implements DataSerializable {
       vft.toData(out);
     }
   }
-   
+
   @Override
   public int hashCode() {
     int hash = cachedHash;
-    if(hash == 0) {
+    if (hash == 0) {
       hash = 1;
       hash = hash * 31 + this.className.hashCode();
-      for(PdxField field : this.fields) {
+      for (PdxField field : this.fields) {
         hash = hash * 31 + field.hashCode();
       }
-      if(hash == 0) {
+      if (hash == 0) {
         hash = 1;
       }
-      cachedHash = hash;      
+      cachedHash = hash;
     }
     return cachedHash;
   }
@@ -184,15 +184,14 @@ public class PdxType implements DataSerializable {
       return false;
     }
     // Note: do not compare type id in equals
-    PdxType otherVT = (PdxType)other;
+    PdxType otherVT = (PdxType) other;
     if (!(this.className.equals(otherVT.className))) {
       return false;
     }
     if (this.noDomainClass != otherVT.noDomainClass) {
       return false;
     }
-    if (otherVT.fields.size() != this.fields.size()
-        || otherVT.vlfCount != this.vlfCount) {
+    if (otherVT.fields.size() != this.fields.size() || otherVT.vlfCount != this.vlfCount) {
       return false;
     }
     for (int i = 0; i < this.fields.size(); i++) {
@@ -202,7 +201,7 @@ public class PdxType implements DataSerializable {
     }
     return true;
   }
-  
+
   /**
    * Return true if two pdx types have same class name and the same fields
    * but, unlike equals, field order does not matter.
@@ -212,8 +211,9 @@ public class PdxType implements DataSerializable {
    * @return true if two pdx types are compatible.
    */
   public boolean compatible(PdxType other) {
-    if (other == null) return false;
-    if(!getClassName().equals(other.getClassName())) {
+    if (other == null)
+      return false;
+    if (!getClassName().equals(other.getClassName())) {
       return false;
     }
 
@@ -226,55 +226,54 @@ public class PdxType implements DataSerializable {
   public int getVariableLengthFieldCount() {
     return this.vlfCount;
   }
-  
+
   public String getClassName() {
     return this.className;
   }
-  
+
   public Class<?> getPdxClass() {
     try {
       return InternalDataSerializer.getCachedClass(getClassName());
     } catch (Exception e) {
-      PdxSerializationException ex = new PdxSerializationException(
-          LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0
-          .toLocalizedString(getClassName()), e);
+      PdxSerializationException ex = new PdxSerializationException(LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0.toLocalizedString(getClassName()), e);
       throw ex;
     }
   }
-  
+
   public boolean getNoDomainClass() {
     return this.noDomainClass;
   }
-  
+
   public int getTypeId() {
     return this.typeId;
   }
-  
+
   public int getDSId() {
     return this.typeId >> 24;
   }
-  
+
   public int getTypeNum() {
     return this.typeId & 0x00FFFFFF;
   }
-  
+
   public void setTypeId(int tId) {
     this.typeId = tId;
   }
- 
+
   /*
    * This method is use to create Pdxtype for which classname is not available; while creating PdxInstance
    */
   public void setClassName(String className) {
     this.className = className;
-  } 
+  }
+
   public void addField(PdxField ft) {
     if (this.fieldsMap.put(ft.getFieldName(), ft) != null) {
       throw new PdxFieldAlreadyExistsException("The field \"" + ft.getFieldName() + "\" already exists.");
     }
     this.fields.add(ft);
   }
-  
+
   public void initialize(PdxWriterImpl writer) {
     this.vlfCount = writer.getVlfCount();
     int size = this.fields.size();
@@ -294,7 +293,7 @@ public class PdxType implements DataSerializable {
       } else if (seenVariableLenType) {
         PdxField tmp = null;
         int minusOffset = vft.getFieldType().getWidth();
-        for (int j = (i+1); j < size; j++) {
+        for (int j = (i + 1); j < size; j++) {
           tmp = this.fields.get(j);
           if (tmp.isVariableLengthType()) {
             break;
@@ -316,11 +315,11 @@ public class PdxType implements DataSerializable {
     }
     // no longer mark identity fields implicitly. Fixes bug 42976.
 
-      // System.out.println("Printing the position array:");
-      // for (int i = 0; i < this.positionArray.length; i++) {
-      // System.out.println("[" + i + "][0]=" + this.positionArray[i][0] + ", ["
-      // + i + "][1]=" + this.positionArray[i][1]);
-      // }
+    // System.out.println("Printing the position array:");
+    // for (int i = 0; i < this.positionArray.length; i++) {
+    // System.out.println("[" + i + "][0]=" + this.positionArray[i][0] + ", ["
+    // + i + "][1]=" + this.positionArray[i][1]);
+    // }
   }
 
   public PdxField getPdxField(String fieldName) {
@@ -330,30 +329,32 @@ public class PdxType implements DataSerializable {
     }
     return result;
   }
-  
+
   public List<PdxField> getFields() {
     return Collections.unmodifiableList(this.fields);
   }
-  
+
   public PdxField getPdxFieldByIndex(int index) {
     return this.fields.get(index);
   }
-  
+
   public int getFieldCount() {
     return this.fields.size();
   }
+
   public int getUndeletedFieldCount() {
     if (!getHasDeletedField()) {
       return 0;
     }
     int result = this.fields.size();
-    for (PdxField f: this.fields) {
+    for (PdxField f : this.fields) {
       if (f.isDeleted()) {
         result--;
       }
     }
     return result;
   }
+
   public String toFormattedString() {
     StringBuffer sb = new StringBuffer("PdxType[\n    ");
     sb.append("dsid=").append(getDSId());
@@ -388,7 +389,7 @@ public class PdxType implements DataSerializable {
    */
   public List<Integer> getUnreadFieldIndexes(List<String> readFields) {
     ArrayList<Integer> result = new ArrayList<Integer>();
-    for (PdxField ft: this.fields) {
+    for (PdxField ft : this.fields) {
       if (!ft.isDeleted() && !readFields.contains(ft.getFieldName())) {
         result.add(ft.getFieldIndex());
       }
@@ -402,26 +403,26 @@ public class PdxType implements DataSerializable {
    * @return true if the this type has a field that the other type does not have.
    */
   public boolean hasExtraFields(PdxType other) {
-    for (PdxField ft: this.fields) {
+    for (PdxField ft : this.fields) {
       if (!ft.isDeleted() && other.getPdxField(ft.getFieldName()) == null) {
         return true;
       }
     }
     return false;
   }
-  
+
   // Result does not include deleted fields
   public SortedSet<PdxField> getSortedIdentityFields() {
-    if(this.sortedIdentityFields == null) {
+    if (this.sortedIdentityFields == null) {
       TreeSet<PdxField> sortedSet = new TreeSet<PdxField>();
-      for(PdxField field: fields) {
-        if(field.isIdentityField() && !field.isDeleted()) {
+      for (PdxField field : fields) {
+        if (field.isIdentityField() && !field.isDeleted()) {
           sortedSet.add(field);
         }
       }
       //If we don't find any marked identity fields, use all of the fields.
-      if(sortedSet.isEmpty()) {
-        for (PdxField field: fields) {
+      if (sortedSet.isEmpty()) {
+        for (PdxField field : fields) {
           if (!field.isDeleted()) {
             sortedSet.add(field);
           }
@@ -435,7 +436,7 @@ public class PdxType implements DataSerializable {
   // Result does not include deleted fields
   public Collection<PdxField> getSortedFields() {
     TreeSet<PdxField> sortedSet = new TreeSet<PdxField>();
-    for (PdxField pf: this.fields) {
+    for (PdxField pf : this.fields) {
       if (!pf.isDeleted()) {
         sortedSet.add(pf);
       }
@@ -446,7 +447,7 @@ public class PdxType implements DataSerializable {
   // Result does not include deleted fields
   public List<String> getFieldNames() {
     ArrayList<String> result = new ArrayList<String>(this.fields.size());
-    for (PdxField f: this.fields) {
+    for (PdxField f : this.fields) {
       if (!f.isDeleted()) {
         result.add(f.getFieldName());
       }
@@ -458,11 +459,11 @@ public class PdxType implements DataSerializable {
    * Used to optimize auto deserialization
    */
   private transient final AtomicReference<AutoClassInfo> autoClassInfo = new AtomicReference<AutoClassInfo>();
-  
+
   public void setAutoInfo(AutoClassInfo autoClassInfo) {
     this.autoClassInfo.set(autoClassInfo);
   }
-  
+
   public AutoClassInfo getAutoInfo(Class<?> c) {
     AutoClassInfo ci = this.autoClassInfo.get();
     if (ci != null) {
@@ -490,7 +491,7 @@ public class PdxType implements DataSerializable {
     }
     printStream.println();
     if (printFields) {
-      for (PdxField field: this.fields) {
+      for (PdxField field : this.fields) {
         field.toStream(printStream);
       }
     }
@@ -499,6 +500,7 @@ public class PdxType implements DataSerializable {
   public boolean getHasDeletedField() {
     return this.hasDeletedField;
   }
+
   public void setHasDeletedField(boolean b) {
     this.hasDeletedField = b;
   }

@@ -33,8 +33,7 @@ public class ResumptionAction implements java.io.Serializable {
   private static final long serialVersionUID = 6632254151314915610L;
 
   /** No special action takes place when reliability resumes. */
-  public static final ResumptionAction NONE = 
-      new ResumptionAction("NONE");
+  public static final ResumptionAction NONE = new ResumptionAction("NONE");
 
   /** 
    * Resumption of reliability causes the region to be cleared of all data 
@@ -44,8 +43,7 @@ public class ResumptionAction implements java.io.Serializable {
    * invoked on those references will throw a {@link 
    * RegionReinitializedException}.
    */
-  public static final ResumptionAction REINITIALIZE = 
-      new ResumptionAction("REINITIALIZE");
+  public static final ResumptionAction REINITIALIZE = new ResumptionAction("REINITIALIZE");
 
   /** The name of this mirror type. */
   private final transient String name;
@@ -55,28 +53,26 @@ public class ResumptionAction implements java.io.Serializable {
   public final byte ordinal = nextOrdinal++;
 
   private static byte nextOrdinal = 0;
-  
-  private static final ResumptionAction[] PRIVATE_VALUES =
-    { NONE, REINITIALIZE };
+
+  private static final ResumptionAction[] PRIVATE_VALUES = { NONE, REINITIALIZE };
 
   /** List of all ResumptionAction values */
-  public static final List VALUES = 
-    Collections.unmodifiableList(Arrays.asList(PRIVATE_VALUES));
-    
+  public static final List VALUES = Collections.unmodifiableList(Arrays.asList(PRIVATE_VALUES));
+
   private Object readResolve() throws ObjectStreamException {
-    return PRIVATE_VALUES[ordinal];  // Canonicalize
+    return PRIVATE_VALUES[ordinal]; // Canonicalize
   }
-  
+
   /** Creates a new instance of ResumptionAction. */
   private ResumptionAction(String name) {
-      this.name = name;
+    this.name = name;
   }
-  
+
   /** Return the ResumptionAction represented by specified ordinal */
   public static ResumptionAction fromOrdinal(byte ordinal) {
     return PRIVATE_VALUES[ordinal];
   }
-  
+
   /** Return the ResumptionAction specified by name */
   public static ResumptionAction fromName(String name) {
     if (name == null || name.length() == 0) {
@@ -89,25 +85,24 @@ public class ResumptionAction implements java.io.Serializable {
     }
     throw new IllegalArgumentException(LocalizedStrings.ResumptionAction_INVALID_RESUMPTIONACTION_NAME_0.toLocalizedString(name));
   }
-  
+
   /** Returns true if this is <code>NONE</code>. */
   public boolean isNone() {
     return this == NONE;
   }
-  
+
   /** Returns true if this is <code>REINITIALIZE</code>. */
   public boolean isReinitialize() {
     return this == REINITIALIZE;
   }
-  
+
   /** 
    * Returns a string representation for this resumption action.
    * @return the name of this resumption action
    */
   @Override
   public String toString() {
-      return this.name;
+    return this.name;
   }
-  
-}
 
+}

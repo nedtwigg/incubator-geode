@@ -66,7 +66,7 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
    * @see #SimpleHttpOperationInvoker(org.apache.geode.management.internal.cli.shell.Gfsh, String, Map)
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    */
-  public SimpleHttpOperationInvoker(final Gfsh gfsh, Map<String,String> securityProperties) {
+  public SimpleHttpOperationInvoker(final Gfsh gfsh, Map<String, String> securityProperties) {
     this(gfsh, REST_API_URL, securityProperties);
   }
 
@@ -80,7 +80,7 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
    * @param baseUrl the base URL to the GemFire Manager's HTTP service.
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    */
-  public SimpleHttpOperationInvoker(final Gfsh gfsh, final String baseUrl, Map<String,String> securityProperties) {
+  public SimpleHttpOperationInvoker(final Gfsh gfsh, final String baseUrl, Map<String, String> securityProperties) {
     super(gfsh, baseUrl, securityProperties);
   }
 
@@ -126,10 +126,7 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
    * @see org.springframework.web.util.UriComponentsBuilder
    */
   protected URI getHttpRequestUrl(final CommandRequest command) {
-    return UriComponentsBuilder.fromHttpUrl(getBaseUrl())
-      .path(REST_API_MANAGEMENT_COMMANDS_URI)
-      .queryParam(CMD_QUERY_PARAMETER, command.getInput())
-      .build().encode().toUri();
+    return UriComponentsBuilder.fromHttpUrl(getBaseUrl()).path(REST_API_MANAGEMENT_COMMANDS_URI).queryParam(CMD_QUERY_PARAMETER, command.getInput()).build().encode().toUri();
   }
 
   /**
@@ -152,8 +149,7 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
       final ResponseEntity<String> response = send(createHttpRequest(command), String.class);
 
       return response.getBody();
-    }
-    catch (ResourceAccessException e) {
+    } catch (ResourceAccessException e) {
       return handleResourceAccessException(e);
     }
   }

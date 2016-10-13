@@ -70,8 +70,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  * @see org.apache.geode.cache.AttributesFactory#setPartitionAttributes(PartitionAttributes)
  * @since GemFire 5.0
  */
-public class PartitionAttributesFactory<K,V>
-{
+public class PartitionAttributesFactory<K, V> {
   private final PartitionAttributesImpl partitionAttributes = new PartitionAttributesImpl();
 
   /**
@@ -87,13 +86,12 @@ public class PartitionAttributesFactory<K,V>
    * Default local max memory value in megabytes.  By default each partitioned
    * Region can contribute 90% of the maximum memory allocated to a VM.
    */
-  static int computeMaxMem()
-  {
+  static int computeMaxMem() {
     final long maxMemInMegabytes = Runtime.getRuntime().maxMemory() / (1024 * 1024);
-    final long maxMemoryToUse = (long) (maxMemInMegabytes * 0.90); 
+    final long maxMemoryToUse = (long) (maxMemInMegabytes * 0.90);
     int ret;
     if (maxMemoryToUse < Integer.MAX_VALUE) {
-      ret = (int) maxMemoryToUse; 
+      ret = (int) maxMemoryToUse;
       if (ret < 1) {
         ret = 1;
       }
@@ -102,7 +100,7 @@ public class PartitionAttributesFactory<K,V>
     }
     return ret;
   }
-  
+
   /**
    * The default maximum amount of memory to be used by this region in this
    * process, in megabytes.
@@ -110,7 +108,7 @@ public class PartitionAttributesFactory<K,V>
    * @deprecated Use {@link
    *             PartitionAttributesImpl#getLocalMaxMemoryDefault()} instead.
    */
-  @Deprecated 
+  @Deprecated
   public static final int LOCAL_MAX_MEMORY_DEFAULT = computeMaxMem();
 
   /**
@@ -158,7 +156,7 @@ public class PartitionAttributesFactory<K,V>
    */
   public PartitionAttributesFactory(PartitionAttributes pa) {
     this.partitionAttributes.setAll(pa);
-  
+
   }
 
   // CALLBACKS
@@ -175,8 +173,7 @@ public class PartitionAttributesFactory<K,V>
    * 
    * @return this
    */
-  public PartitionAttributesFactory<K,V> setRedundantCopies(int redundantCopies)
-  {
+  public PartitionAttributesFactory<K, V> setRedundantCopies(int redundantCopies) {
     this.partitionAttributes.setRedundantCopies(redundantCopies);
     return this;
   }
@@ -200,22 +197,22 @@ public class PartitionAttributesFactory<K,V>
    * region in this process.  If not set, a default of 
    * 90% of available heap is used.
    */
-  public PartitionAttributesFactory<K,V> setLocalMaxMemory(int mb) {
+  public PartitionAttributesFactory<K, V> setLocalMaxMemory(int mb) {
     this.partitionAttributes.setLocalMaxMemory(mb);
     return this;
   }
-  
+
   /**
    * Sets the maximum amount of memory, in megabytes, to be used by the
    * region in all processes.<p>
    * <em>This setting must be the same in all processes using the Region.</em>
    * The default value is Integer.MAX_VALUE.
    */
-  public PartitionAttributesFactory<K,V> setTotalMaxMemory(long mb) {
+  public PartitionAttributesFactory<K, V> setTotalMaxMemory(long mb) {
     this.partitionAttributes.setTotalMaxMemory(mb);
     return this;
   }
-  
+
   /**
    * Sets the total number of hash buckets to be used by the region in
    * all processes.
@@ -236,27 +233,28 @@ public class PartitionAttributesFactory<K,V>
    * </p>
    * The default number of buckets for a PartitionedRegion is 113.
    */
-  public PartitionAttributesFactory<K,V> setTotalNumBuckets(int numBuckets) {
+  public PartitionAttributesFactory<K, V> setTotalNumBuckets(int numBuckets) {
     this.partitionAttributes.setTotalNumBuckets(numBuckets);
     return this;
   }
+
   /**
    * Sets the <code>PartitionResolver</code> for the PartitionRegion.
    */
-  public PartitionAttributesFactory<K,V> setPartitionResolver(
-                  PartitionResolver<K,V> resolver) {
+  public PartitionAttributesFactory<K, V> setPartitionResolver(PartitionResolver<K, V> resolver) {
     this.partitionAttributes.setPartitionResolver(resolver);
     return this;
   }
+
   /**
    *  Sets the name of the PartitionRegion with which this newly created
    *  partitioned region is colocated 
    */
-  public PartitionAttributesFactory<K,V> setColocatedWith(String colocatedRegionFullPath) {
+  public PartitionAttributesFactory<K, V> setColocatedWith(String colocatedRegionFullPath) {
     this.partitionAttributes.setColocatedWith(colocatedRegionFullPath);
     return this;
   }
-  
+
   /**
    *  Sets the delay in milliseconds that
    * existing members will wait before satisfying redundancy
@@ -266,11 +264,11 @@ public class PartitionAttributesFactory<K,V>
    * 
    * @since GemFire 6.0
    */
-  public PartitionAttributesFactory<K,V> setRecoveryDelay(long recoveryDelay) {
+  public PartitionAttributesFactory<K, V> setRecoveryDelay(long recoveryDelay) {
     this.partitionAttributes.setRecoveryDelay(recoveryDelay);
     return this;
   }
-  
+
   /**
    *  Sets the delay in milliseconds that
    * new members will wait before satisfying redundancy. -1 indicates
@@ -280,11 +278,11 @@ public class PartitionAttributesFactory<K,V>
    * 
    * @since GemFire 6.0
    */
-  public PartitionAttributesFactory<K,V> setStartupRecoveryDelay(long startupRecoveryDelay) {
+  public PartitionAttributesFactory<K, V> setStartupRecoveryDelay(long startupRecoveryDelay) {
     this.partitionAttributes.setStartupRecoveryDelay(startupRecoveryDelay);
     return this;
   }
-  
+
   /**
    * adds a PartitionListener for the partitioned region.
    * 
@@ -292,19 +290,16 @@ public class PartitionAttributesFactory<K,V>
    * @return PartitionAttributeFactory
    * @since GemFire 6.5
    */
-  public PartitionAttributesFactory<K, V> addPartitionListener(
-      PartitionListener listener) {
+  public PartitionAttributesFactory<K, V> addPartitionListener(PartitionListener listener) {
     if (listener == null) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.PartitionAttributesFactory_PARTITION_LISTENER_PARAMETER_WAS_NULL
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.PartitionAttributesFactory_PARTITION_LISTENER_PARAMETER_WAS_NULL.toLocalizedString());
     }
     synchronized (this.partitionAttributes) {
       this.partitionAttributes.addPartitionListener(listener);
     }
     return this;
-  }  
-  
+  }
+
   /**
    * Sets the <code>Properties</code> for the local instance the partitioned
    * Region. Local properties define how the local instance of the partitioned
@@ -316,13 +311,12 @@ public class PartitionAttributesFactory<K,V>
    * 
    */
   @Deprecated
-  public PartitionAttributesFactory<K,V> setLocalProperties(Properties localProps)
-  {
+  public PartitionAttributesFactory<K, V> setLocalProperties(Properties localProps) {
     if (localProps == null) {
       return this;
     }
     this.partitionAttributes.setLocalProperties(localProps);
- 
+
     return this;
   }
 
@@ -339,26 +333,24 @@ public class PartitionAttributesFactory<K,V>
    * @see #GLOBAL_MAX_MEMORY_PROPERTY
    */
   @Deprecated
-  public PartitionAttributesFactory<K,V> setGlobalProperties(Properties globalProps)
-  {
+  public PartitionAttributesFactory<K, V> setGlobalProperties(Properties globalProps) {
     this.partitionAttributes.setGlobalProperties(globalProps);
     return this;
   }
-  
+
   /**
    * FixedPartitionAttributes defined for this partitioned region is added to
    * PR attributes.
    * 
    * @since GemFire 6.6
    */
-  public PartitionAttributesFactory<K, V> addFixedPartitionAttributes(
-      FixedPartitionAttributes fpa) {
+  public PartitionAttributesFactory<K, V> addFixedPartitionAttributes(FixedPartitionAttributes fpa) {
     synchronized (this.partitionAttributes) {
       this.partitionAttributes.addFixedPartitionAttributes(fpa);
       return this;
     }
   }
-  
+
   // EXPIRATION ATTRIBUTES
 
   /**
@@ -429,27 +421,26 @@ public class PartitionAttributesFactory<K,V>
    *           href="#compatibility">compatibility rules </a>
    */
   @SuppressWarnings("unchecked")
-  public PartitionAttributes<K,V> create()
-  {
+  public PartitionAttributes<K, V> create() {
     this.partitionAttributes.validateAttributes();
-//    setDefaults();  [bruce] defaults are set in the PartitionedRegion when the
-//                            attributes are applied
-    return (PartitionAttributes<K,V>)this.partitionAttributes.clone();
+    //    setDefaults();  [bruce] defaults are set in the PartitionedRegion when the
+    //                            attributes are applied
+    return (PartitionAttributes<K, V>) this.partitionAttributes.clone();
   }
 
-//  /**
-//   * This method sets the properties to their default values in preparation
-//   * for returning a PartitionAttributes to the user. For example, if it
-//   * doesn't have localMaxMemory, it would set it to
-//   * LOCAL_MAX_MEMORY_DEFAULT.
-//   * 
-//   */
-//  private void setDefaults()
-//  {
-//    if (this.partitionAttributes.localProperties
-//        .get(PartitionAttributesFactory.LOCAL_MAX_MEMORY_PROPERTY) == null) {
-//      this.partitionAttributes.setLocalMaxMemory(PartitionAttributesFactory.LOCAL_MAX_MEMORY_DEFAULT);
-//    }
-//
-//  }
+  //  /**
+  //   * This method sets the properties to their default values in preparation
+  //   * for returning a PartitionAttributes to the user. For example, if it
+  //   * doesn't have localMaxMemory, it would set it to
+  //   * LOCAL_MAX_MEMORY_DEFAULT.
+  //   * 
+  //   */
+  //  private void setDefaults()
+  //  {
+  //    if (this.partitionAttributes.localProperties
+  //        .get(PartitionAttributesFactory.LOCAL_MAX_MEMORY_PROPERTY) == null) {
+  //      this.partitionAttributes.setLocalMaxMemory(PartitionAttributesFactory.LOCAL_MAX_MEMORY_DEFAULT);
+  //    }
+  //
+  //  }
 }

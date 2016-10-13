@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.DataSerializer;
@@ -26,9 +25,9 @@ import java.io.*;
 //import java.util.*;
 
 public final class FetchStatsRequest extends AdminRequest {
-  
+
   private String statisticsTypeName;
-  
+
   /**
    * Returns a <code>FetchStatsRequest</code> to be sent to the specified recipient.
    */
@@ -43,8 +42,8 @@ public final class FetchStatsRequest extends AdminRequest {
     statisticsTypeName = null;
   }
 
-  @Override  
-  public AdminResponse createResponse(DistributionManager dm){
+  @Override
+  public AdminResponse createResponse(DistributionManager dm) {
     return FetchStatsResponse.create(dm, this.getSender(), this.statisticsTypeName);
   }
 
@@ -52,21 +51,20 @@ public final class FetchStatsRequest extends AdminRequest {
     return FETCH_STATS_REQUEST;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeString(this.statisticsTypeName, out);
   }
 
-  @Override  
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.statisticsTypeName =DataSerializer.readString(in);
+    this.statisticsTypeName = DataSerializer.readString(in);
   }
 
-  @Override  
-  public String toString(){
+  @Override
+  public String toString() {
     return "FetchStatsRequest from " + this.getRecipient();
   }
 }

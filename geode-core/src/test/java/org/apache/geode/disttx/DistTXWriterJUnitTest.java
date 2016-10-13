@@ -36,23 +36,23 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
  * Same tests as that of {@link TXWriterJUnitTest} after setting
  * "distributed-transactions" property to true
  */
-@Category({IntegrationTest.class, DistributedTransactionsTest.class})
+@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
 public class DistTXWriterJUnitTest extends TXWriterJUnitTest {
 
   public DistTXWriterJUnitTest() {
   }
-  
+
   protected void createCache() throws CacheException {
     Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0"); // loner
     p.setProperty(ConfigurationProperties.DISTRIBUTED_TRANSACTIONS, "true");
-    this.cache = (GemFireCacheImpl)CacheFactory.create(DistributedSystem.connect(p));
+    this.cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(p));
     AttributesFactory<?, ?> af = new AttributesFactory<String, String>();
     af.setScope(Scope.DISTRIBUTED_NO_ACK);
     af.setIndexMaintenanceSynchronous(true);
     this.region = this.cache.createRegion("TXTest", af.create());
     this.txMgr = this.cache.getCacheTransactionManager();
-    assert(this.txMgr.isDistributed());
+    assert (this.txMgr.isDistributed());
   }
 
 }

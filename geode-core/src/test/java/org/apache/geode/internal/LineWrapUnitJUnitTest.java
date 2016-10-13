@@ -32,18 +32,18 @@ public class LineWrapUnitJUnitTest {
   @Test
   public void test() {
     String test = new String("aaa aaaaa  aaa aaaa");
-    
+
     assertEquals(list("aaa", "aaaaa", "aaa", "aaaa"), SystemAdmin.lineWrapOut(test, 3));
     assertEquals(list("aaa", "aaaaa", "aaa aaaa"), SystemAdmin.lineWrapOut(test, 8));
 
     assertEquals(list("aaa aaaaa", "aaa aaaa"), SystemAdmin.lineWrapOut(test, 9));
-    assertEquals(list("aaa aaaaa  aaa",  "aaaa"), SystemAdmin.lineWrapOut(test, 14));
-    
+    assertEquals(list("aaa aaaaa  aaa", "aaaa"), SystemAdmin.lineWrapOut(test, 14));
+
     String test2 = new String("aaa\n aaaaa  aaa aaaa");
-    assertEquals(list("aaa", " aaaaa  aaa",  "aaaa"), SystemAdmin.lineWrapOut(test2, 14));
+    assertEquals(list("aaa", " aaaaa  aaa", "aaaa"), SystemAdmin.lineWrapOut(test2, 14));
   }
 
-  private List<String> list(String  ...strings) {
+  private List<String> list(String... strings) {
     return Arrays.asList(strings);
   }
 

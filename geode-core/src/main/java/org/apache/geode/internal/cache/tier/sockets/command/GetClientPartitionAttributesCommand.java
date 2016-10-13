@@ -45,33 +45,22 @@ public class GetClientPartitionAttributesCommand extends BaseCommand {
 
   @SuppressWarnings("unchecked")
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-    throws IOException, ClassNotFoundException, InterruptedException
-  {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
     String regionFullPath = null;
     regionFullPath = msg.getPart(0).getString();
     String errMessage = "";
     if (regionFullPath == null) {
       logger.warn(LocalizedMessage.create(LocalizedStrings.GetClientPartitionAttributes_THE_INPUT_REGION_PATH_IS_NULL));
-      errMessage = LocalizedStrings.GetClientPartitionAttributes_THE_INPUT_REGION_PATH_IS_NULL
-        .toLocalizedString();
-      writeErrorResponse(msg,
-        MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage
-          .toString(), servConn);
+      errMessage = LocalizedStrings.GetClientPartitionAttributes_THE_INPUT_REGION_PATH_IS_NULL.toLocalizedString();
+      writeErrorResponse(msg, MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
       return;
     }
     Region region = servConn.getCache().getRegion(regionFullPath);
     if (region == null) {
-      logger.warn(LocalizedMessage
-        .create(LocalizedStrings.GetClientPartitionAttributes_REGION_NOT_FOUND_FOR_SPECIFIED_REGION_PATH,
-          regionFullPath));
-      errMessage = LocalizedStrings.GetClientPartitionAttributes_REGION_NOT_FOUND
-        .toLocalizedString()
-        + regionFullPath;
-      writeErrorResponse(msg,
-        MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage
-          .toString(), servConn);
+      logger.warn(LocalizedMessage.create(LocalizedStrings.GetClientPartitionAttributes_REGION_NOT_FOUND_FOR_SPECIFIED_REGION_PATH, regionFullPath));
+      errMessage = LocalizedStrings.GetClientPartitionAttributes_REGION_NOT_FOUND.toLocalizedString() + regionFullPath;
+      writeErrorResponse(msg, MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
       return;
     }
@@ -79,8 +68,7 @@ public class GetClientPartitionAttributesCommand extends BaseCommand {
     try {
       Message responseMsg = servConn.getResponseMessage();
       responseMsg.setTransactionId(msg.getTransactionId());
-      responseMsg
-        .setMessageType(MessageType.RESPONSE_CLIENT_PARTITION_ATTRIBUTES);
+      responseMsg.setMessageType(MessageType.RESPONSE_CLIENT_PARTITION_ATTRIBUTES);
 
       PartitionedRegion prRgion = (PartitionedRegion) region;
 
@@ -95,8 +83,7 @@ public class GetClientPartitionAttributesCommand extends BaseCommand {
 
       // PART 2
       if (partitionResolver != null) {
-        responseMsg.addObjPart(partitionResolver.getClass().toString()
-          .substring(6));
+        responseMsg.addObjPart(partitionResolver.getClass().toString().substring(6));
       }
 
       // PART 3
@@ -106,13 +93,11 @@ public class GetClientPartitionAttributesCommand extends BaseCommand {
       if (leaderRegionName != null) {
         Cache cache = prRgion.getCache();
         while (leaderRegionName != null) {
-          leaderRegion = (PartitionedRegion) cache
-            .getRegion(leaderRegionName);
+          leaderRegion = (PartitionedRegion) cache.getRegion(leaderRegionName);
           if (leaderRegion.getColocatedWith() == null) {
             leaderRegionPath = leaderRegion.getFullPath();
             break;
-          }
-          else {
+          } else {
             leaderRegionName = leaderRegion.getColocatedWith();
           }
         }
@@ -120,14 +105,10 @@ public class GetClientPartitionAttributesCommand extends BaseCommand {
       responseMsg.addObjPart(leaderRegionPath);
       responseMsg.send();
       msg.clearParts();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       writeException(msg, e, false, servConn);
-    }
-    finally {
+    } finally {
       servConn.setAsTrue(Command.RESPONDED);
     }
   }
 }
-
-

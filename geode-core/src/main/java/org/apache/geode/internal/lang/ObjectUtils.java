@@ -134,7 +134,7 @@ public abstract class ObjectUtils {
    * @return a value of the method invocation on Object cast to the generized type.
    * @see #invoke(Object, String, Class[], Object...)
    */
-  public static <T> T invoke (final Object obj, final String methodName) {
+  public static <T> T invoke(final Object obj, final String methodName) {
     return invoke(obj, methodName, (Class<?>[]) null, (Object[]) null);
   }
 
@@ -173,18 +173,12 @@ public abstract class ObjectUtils {
       final Method method = obj.getClass().getMethod(methodName, parameterTypes);
       method.setAccessible(true);
       return (T) method.invoke(obj, arguments);
-    }
-    catch (NoSuchMethodException e) {
-      throw new RuntimeException(String.format("Method (%1$s) does not exist on Object of type (%2$s)!",
-        methodName, obj.getClass().getName()), e);
-    }
-    catch (InvocationTargetException e) {
-      throw new RuntimeException(String.format("The invocation of method (%1$s) on an Object of type (%2$s) failed!",
-        methodName, obj.getClass().getName()), e);
-    }
-    catch (IllegalAccessException e) {
-      throw new RuntimeException(String.format("The method (%1$s) on an Object of type (%2$s) is not accessible!",
-        methodName, obj.getClass().getName()), e);
+    } catch (NoSuchMethodException e) {
+      throw new RuntimeException(String.format("Method (%1$s) does not exist on Object of type (%2$s)!", methodName, obj.getClass().getName()), e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(String.format("The invocation of method (%1$s) on an Object of type (%2$s) failed!", methodName, obj.getClass().getName()), e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(String.format("The method (%1$s) on an Object of type (%2$s) is not accessible!", methodName, obj.getClass().getName()), e);
     }
   }
 

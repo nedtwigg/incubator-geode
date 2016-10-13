@@ -43,8 +43,7 @@ import org.apache.geode.tools.pulse.internal.data.PulseConstants;
 public class PulseLogger {
 
   // Pulse Application Log File
-  private static final String LOG_FILE_NAME = PulseConstants.PULSE_LOG_FILE_LOCATION
-      + "/" + PulseConstants.PULSE_LOG_FILE;
+  private static final String LOG_FILE_NAME = PulseConstants.PULSE_LOG_FILE_LOCATION + "/" + PulseConstants.PULSE_LOG_FILE;
 
   // Date pattern to be used in log messages
   public static final String LOG_MESSAGE_DATE_PATTERN = "dd/MM/yyyy hh:mm:ss.SSS";

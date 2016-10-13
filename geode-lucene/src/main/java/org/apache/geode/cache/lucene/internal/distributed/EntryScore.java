@@ -46,7 +46,7 @@ public class EntryScore<K> implements DataSerializableFixedID {
     this.key = key;
     this.score = score;
   }
-  
+
   public K getKey() {
     return key;
   }

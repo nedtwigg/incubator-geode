@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -33,7 +32,7 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class RegionStatisticsResponse extends AdminResponse {
   // instance variables
   RemoteCacheStatistics regionStatistics;
-  
+
   /**
    * Returns a <code>RegionStatisticsResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of the local manager's
@@ -50,7 +49,7 @@ public final class RegionStatisticsResponse extends AdminResponse {
   public CacheStatistics getRegionStatistics() {
     return this.regionStatistics;
   }
-  
+
   public int getDSFID() {
     return REGION_STATISTICS_RESPONSE;
   }
@@ -62,10 +61,9 @@ public final class RegionStatisticsResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.regionStatistics = (RemoteCacheStatistics)DataSerializer.readObject(in);
+    this.regionStatistics = (RemoteCacheStatistics) DataSerializer.readObject(in);
   }
 
   @Override

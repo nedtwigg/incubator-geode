@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import java.io.DataInput;
@@ -40,7 +39,7 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  */
 public final class AdminConsoleDisconnectMessage extends PooledDistributionMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   //instance variables
   private boolean alertListenerExpected;
   private transient boolean ignoreAlertListenerRemovalFailure;
@@ -64,7 +63,7 @@ public final class AdminConsoleDisconnectMessage extends PooledDistributionMessa
   public void setAlertListenerExpected(boolean alertListenerExpected) {
     this.alertListenerExpected = alertListenerExpected;
   }
-  
+
   public void setIgnoreAlertListenerRemovalFailure(boolean ignore) {
     this.ignoreAlertListenerRemovalFailure = ignore;
   }
@@ -81,20 +80,18 @@ public final class AdminConsoleDisconnectMessage extends PooledDistributionMessa
   @Override
   public void process(DistributionManager dm) {
     InternalDistributedSystem sys = dm.getSystem();
-//    DistributionConfig config = sys.getConfig();
-    if (alertListenerExpected) {  
+    //    DistributionConfig config = sys.getConfig();
+    if (alertListenerExpected) {
       if (!AlertAppender.getInstance().removeAlertListener(this.getSender()) && !this.ignoreAlertListenerRemovalFailure) {
-        logger.warn(LocalizedMessage.create(
-          LocalizedStrings.ManagerLogWriter_UNABLE_TO_REMOVE_CONSOLE_WITH_ID_0_FROM_ALERT_LISTENERS,
-          this.getSender()));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.ManagerLogWriter_UNABLE_TO_REMOVE_CONSOLE_WITH_ID_0_FROM_ALERT_LISTENERS, this.getSender()));
       }
-    } 
+    }
     GemFireStatSampler sampler = sys.getStatSampler();
     if (sampler != null) {
       sampler.removeListenersByRecipient(this.getSender());
     }
     dm.handleConsoleShutdown(this.getSender(), crashed, LocalizedStrings.AdminConsoleDisconnectMessage_AUTOMATIC_ADMIN_DISCONNECT_0.toLocalizedString(reason));
-//     AppCacheSnapshotMessage.flushSnapshots(this.getSender());
+    //     AppCacheSnapshotMessage.flushSnapshots(this.getSender());
   }
 
   public int getDSFID() {
@@ -110,8 +107,7 @@ public final class AdminConsoleDisconnectMessage extends PooledDistributionMessa
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.alertListenerExpected = in.readBoolean();
     this.crashed = in.readBoolean();
@@ -119,7 +115,7 @@ public final class AdminConsoleDisconnectMessage extends PooledDistributionMessa
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     return "AdminConsoleDisconnectMessage from " + this.getSender();
   }
 }

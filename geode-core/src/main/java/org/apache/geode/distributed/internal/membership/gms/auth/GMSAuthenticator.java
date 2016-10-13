@@ -81,7 +81,7 @@ public class GMSAuthenticator implements Authenticator {
   @Override
   public void beHealthy() {
   }
-  
+
   @Override
   public void memberSuspected(InternalDistributedMember initiator, InternalDistributedMember suspect, String reason) {
   }
@@ -118,30 +118,26 @@ public class GMSAuthenticator implements Authenticator {
 
     InternalLogWriter securityLogWriter = this.services.getSecurityLogWriter();
 
-    if(credentials == null){
+    if (credentials == null) {
       securityLogWriter.warning(AUTH_PEER_AUTHENTICATION_MISSING_CREDENTIALS, member);
       return AUTH_PEER_AUTHENTICATION_MISSING_CREDENTIALS.toLocalizedString(member);
     }
 
     String failMsg = null;
     try {
-      if(this.securityService.isIntegratedSecurity()){
+      if (this.securityService.isIntegratedSecurity()) {
         this.securityService.login(credentials);
         this.securityService.authorizeClusterManage();
-      }
-      else {
+      } else {
         invokeAuthenticator(secProps, member, credentials);
       }
     } catch (Exception ex) {
-      securityLogWriter.warning(AUTH_PEER_AUTHENTICATION_FAILED_WITH_EXCEPTION, new Object[] {
-        member, ex.getLocalizedMessage()
-      }, ex);
+      securityLogWriter.warning(AUTH_PEER_AUTHENTICATION_FAILED_WITH_EXCEPTION, new Object[] { member, ex.getLocalizedMessage() }, ex);
       failMsg = AUTH_PEER_AUTHENTICATION_FAILED.toLocalizedString(ex.getLocalizedMessage());
     }
 
     return failMsg;
   }
-
 
   /**
    * Method is package protected to be used in testing.
@@ -164,7 +160,8 @@ public class GMSAuthenticator implements Authenticator {
       throw new AuthenticationFailedException(HandShake_FAILED_TO_ACQUIRE_AUTHENTICATOR_OBJECT.toLocalizedString(), ex);
 
     } finally {
-      if (auth != null) auth.close();
+      if (auth != null)
+        auth.close();
     }
   }
 

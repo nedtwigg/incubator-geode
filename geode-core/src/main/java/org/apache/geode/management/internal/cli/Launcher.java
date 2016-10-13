@@ -69,11 +69,10 @@ import joptsimple.OptionSet;
  */
 public final class Launcher {
   private static final String EXECUTE_OPTION = "execute";
-  private static final String HELP_OPTION    = "help";
-  private static final String HELP           = CliStrings.HELP;
+  private static final String HELP_OPTION = "help";
+  private static final String HELP = CliStrings.HELP;
 
-  private static final String MSG_INVALID_COMMAND_OR_OPTION = "Invalid command or option : {0}." + GfshParser.LINE_SEPARATOR
-      + "Use 'gfsh help' to display additional information.";
+  private static final String MSG_INVALID_COMMAND_OR_OPTION = "Invalid command or option : {0}." + GfshParser.LINE_SEPARATOR + "Use 'gfsh help' to display additional information.";
 
   private final Set<String> allowedCommandLineCommands;
   private final OptionParser commandLineParser;
@@ -121,7 +120,7 @@ public final class Launcher {
     this.allowedCommandLineCommands.add(CliStrings.VALIDATE_DISK_STORE);
     this.allowedCommandLineCommands.add(CliStrings.PDX_DELETE_FIELD);
     this.allowedCommandLineCommands.add(CliStrings.PDX_RENAME);
-    
+
     this.commandLineParser = new OptionParser();
     this.commandLineParser.accepts(EXECUTE_OPTION).withOptionalArg().ofType(String.class);
     this.commandLineParser.accepts(HELP_OPTION).withOptionalArg().ofType(Boolean.class);
@@ -142,7 +141,7 @@ public final class Launcher {
     }
 
     ExitShellRequest exitRequest = ExitShellRequest.NORMAL_EXIT;
-    
+
     if (gfsh != null) {
       final String commandLineCommand = combineStrings(args);
 
@@ -167,15 +166,15 @@ public final class Launcher {
           exitRequest = ExitShellRequest.FATAL_EXIT;
         } else {
           if (!gfsh.executeScriptLine(commandLineCommand)) {
-              if (gfsh.getLastExecutionStatus() != 0) 
-                exitRequest = ExitShellRequest.FATAL_EXIT;
-          } else if (gfsh.getLastExecutionStatus() != 0) {
+            if (gfsh.getLastExecutionStatus() != 0)
               exitRequest = ExitShellRequest.FATAL_EXIT;
+          } else if (gfsh.getLastExecutionStatus() != 0) {
+            exitRequest = ExitShellRequest.FATAL_EXIT;
           }
         }
       }
     }
-    
+
     return exitRequest.getExitCode();
   }
 
@@ -187,7 +186,7 @@ public final class Launcher {
       System.err.println(CliStrings.format(MSG_INVALID_COMMAND_OR_OPTION, CliUtil.arrayToString(args)));
       return ExitShellRequest.FATAL_EXIT.getExitCode();
     }
-    boolean launchShell    = true;
+    boolean launchShell = true;
     boolean onlyPrintUsage = parsedOptions.has(HELP_OPTION);
     if (parsedOptions.has(EXECUTE_OPTION) || onlyPrintUsage) {
       launchShell = false;
@@ -223,8 +222,7 @@ public final class Launcher {
           for (int i = 0; i < commandsToExecute.size() && exitRequest == ExitShellRequest.NORMAL_EXIT; i++) {
             String command = commandsToExecute.get(i);
             // sanitize the output string to not show the password
-            System.out.println(GfshParser.LINE_SEPARATOR + "(" + (i + 1) + ") Executing - " + GfshHistory.redact(command)
-                + GfshParser.LINE_SEPARATOR);
+            System.out.println(GfshParser.LINE_SEPARATOR + "(" + (i + 1) + ") Executing - " + GfshHistory.redact(command) + GfshParser.LINE_SEPARATOR);
             if (!gfsh.executeScriptLine(command) || gfsh.getLastExecutionStatus() != 0) {
               exitRequest = ExitShellRequest.FATAL_EXIT;
             }
@@ -240,9 +238,9 @@ public final class Launcher {
 
   private int parseCommandLine(final String... args) {
     if (args.length > 0 && !args[0].startsWith(SyntaxConstants.SHORT_OPTION_SPECIFIER)) {
-     return parseCommandLineCommand(args);
+      return parseCommandLineCommand(args);
     }
-    
+
     return parseOptions(args);
   }
 
@@ -270,8 +268,7 @@ public final class Launcher {
     stream.println("gfsh [ <command> [option]* | <help> [command] | [--help | -h] | [-e \"<command> [option]*\"]* ]" + GfshParser.LINE_SEPARATOR);
     stream.println("OPTIONS");
     stream.println("-e  Execute a command");
-    stream.println(Gfsh.wrapText("Commands may be any that are available from the interactive gfsh prompt.  "
-            + "For commands that require a Manager to complete, the first command in the list must be \"connect\".", 1));
+    stream.println(Gfsh.wrapText("Commands may be any that are available from the interactive gfsh prompt.  " + "For commands that require a Manager to complete, the first command in the list must be \"connect\".", 1));
     stream.println(GfshParser.LINE_SEPARATOR + "AVAILABLE COMMANDS");
     stream.print(gfsh.obtainHelp("", this.allowedCommandLineCommands));
     stream.println("EXAMPLES");
@@ -284,8 +281,7 @@ public final class Launcher {
     stream.println("gfsh start locator --name=locator1");
     stream.println(Gfsh.wrapText("Start a Locator with the name \"locator1\".", 1));
     stream.println("gfsh -e \"connect\" -e \"list members\"");
-    stream.println(Gfsh.wrapText(
-        "Connect to a running Locator using the default connection information and run the \"list members\" command.", 1));
+    stream.println(Gfsh.wrapText("Connect to a running Locator using the default connection information and run the \"list members\" command.", 1));
     stream.println();
 
     printExecuteUsage(stream);
@@ -305,7 +301,7 @@ public final class Launcher {
 
     public void logStartupTime() {
       done = System.currentTimeMillis();
-      LogWrapper.getInstance().info("Startup done in " + ( (done - start) / 1000.0) + " seconds.");
+      LogWrapper.getInstance().info("Startup done in " + ((done - start) / 1000.0) + " seconds.");
     }
 
     @Override

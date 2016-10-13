@@ -52,7 +52,7 @@ public class TestNonSizerObject implements Serializable {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof TestNonSizerObject) {
-      TestNonSizerObject other = (TestNonSizerObject)obj;
+      TestNonSizerObject other = (TestNonSizerObject) obj;
       if (StringUtils.equals(this.testString, other.testString)) {
         return true;
       }

@@ -19,37 +19,37 @@ package org.apache.geode.management;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CompositeTestMBean implements CompositeTestMXBean{
+public class CompositeTestMBean implements CompositeTestMXBean {
   private final String connectionStatsType = "AX";
-  private long connectionsOpened  =100;
+  private long connectionsOpened = 100;
   private long connectionsClosed = 50;
   private long connectionsAttempted = 120;
   private long connectionsFailed = 20;
-  private long connectionLifeTime = 100; 
-  
+  private long connectionLifeTime = 100;
+
   @Override
   public CompositeStats getCompositeStats() {
-    return new CompositeStats(connectionStatsType,connectionsOpened,connectionsClosed,connectionsAttempted,connectionsFailed,connectionLifeTime);
+    return new CompositeStats(connectionStatsType, connectionsOpened, connectionsClosed, connectionsAttempted, connectionsFailed, connectionLifeTime);
   }
 
   @Override
   public CompositeStats listCompositeStats() {
-    return new CompositeStats(connectionStatsType,connectionsOpened,connectionsClosed,connectionsAttempted,connectionsFailed,connectionLifeTime);
+    return new CompositeStats(connectionStatsType, connectionsOpened, connectionsClosed, connectionsAttempted, connectionsFailed, connectionLifeTime);
   }
 
   @Override
   public Map<String, Integer> getMap() {
-    Map<String, Integer> testMap = new HashMap<String,Integer>();
+    Map<String, Integer> testMap = new HashMap<String, Integer>();
     testMap.put("KEY-1", 5);
     return testMap;
   }
 
   @Override
   public CompositeStats[] getCompositeArray() {
-    
+
     CompositeStats[] arr = new CompositeStats[2];
-    for(int i=0 ;i < arr.length; i++){
-      arr[i] = new CompositeStats("AX"+i,connectionsOpened,connectionsClosed,connectionsAttempted,connectionsFailed,connectionLifeTime);
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = new CompositeStats("AX" + i, connectionsOpened, connectionsClosed, connectionsAttempted, connectionsFailed, connectionLifeTime);
     }
     return arr;
   }
@@ -57,7 +57,7 @@ public class CompositeTestMBean implements CompositeTestMXBean{
   @Override
   public Integer[] getIntegerArray() {
     Integer[] arr = new Integer[2];
-    for(int i=0 ;i < arr.length; i++){
+    for (int i = 0; i < arr.length; i++) {
       arr[i] = new Integer(0);
     }
     return arr;

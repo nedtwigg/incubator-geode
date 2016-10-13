@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -39,7 +38,7 @@ public final class FetchSysCfgRequest extends AdminRequest {
   public FetchSysCfgRequest() {
     friendlyName = LocalizedStrings.FetchSysCfgRequest_FETCH_CONFIGURATION_PARAMETERS.toLocalizedString();
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
@@ -48,29 +47,27 @@ public final class FetchSysCfgRequest extends AdminRequest {
   /**
    * Must return a proper response to this request.
    */
-  @Override  
+  @Override
   protected AdminResponse createResponse(DistributionManager dm) {
-    return FetchSysCfgResponse.create(dm, this.getSender()); 
+    return FetchSysCfgResponse.create(dm, this.getSender());
   }
 
   public int getDSFID() {
     return FETCH_SYS_CFG_REQUEST;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 
-  @Override  
+  @Override
   public String toString() {
-    return "FetchSysCfgRequest sent to " + this.getRecipient() +
-      " from " + this.getSender();
+    return "FetchSysCfgRequest sent to " + this.getRecipient() + " from " + this.getSender();
   }
 }

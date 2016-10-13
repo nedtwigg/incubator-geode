@@ -39,14 +39,11 @@ public class CreateCQWithIROp {
    * @param isDurable true if CQ is durable
    * @param regionDataPolicy the data policy ordinal of the region
    */
-  public static SelectResults execute(ExecutablePool pool, String cqName,
-      String queryStr, int cqState, boolean isDurable, byte regionDataPolicy)
-  {
-    AbstractOp op = new CreateCQWithIROpImpl(cqName,
-        queryStr, cqState, isDurable, regionDataPolicy);
-    return (SelectResults)pool.executeOnQueuesAndReturnPrimaryResult(op);
+  public static SelectResults execute(ExecutablePool pool, String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+    AbstractOp op = new CreateCQWithIROpImpl(cqName, queryStr, cqState, isDurable, regionDataPolicy);
+    return (SelectResults) pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
-                                                               
+
   private CreateCQWithIROp() {
     // no instances allowed
   }
@@ -58,31 +55,34 @@ public class CreateCQWithIROp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public CreateCQWithIROpImpl(String cqName, String queryStr,
-        int cqState, boolean isDurable, byte regionDataPolicy) {
+    public CreateCQWithIROpImpl(String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
       super(MessageType.EXECUTECQ_WITH_IR_MSG_TYPE, 5);
       getMessage().addStringPart(cqName);
       getMessage().addStringPart(queryStr);
       getMessage().addIntPart(cqState);
       {
-        byte durableByte = (byte)(isDurable ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] {durableByte});
+        byte durableByte = (byte) (isDurable ? 0x01 : 0x00);
+        getMessage().addBytesPart(new byte[] { durableByte });
       }
-      getMessage().addBytesPart(new byte[] {regionDataPolicy});
+      getMessage().addBytesPart(new byte[] { regionDataPolicy });
     }
+
     @Override
     protected String getOpName() {
       return "createCQfetchInitialResult";
     }
+
     // using same stats as CreateCQOp
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startCreateCQ();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endCreateCQSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endCreateCQ(start, hasTimedOut(), hasFailed());

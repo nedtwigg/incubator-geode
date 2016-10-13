@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.internal.admin.*;
@@ -24,8 +23,7 @@ import org.apache.geode.distributed.internal.membership.*;
 /**
  * Represents an application VM (member of the distributed system).
  */
-public final class RemoteApplicationVM extends RemoteGemFireVM
-  implements ApplicationVM {
+public final class RemoteApplicationVM extends RemoteGemFireVM implements ApplicationVM {
 
   // constructors
 
@@ -41,8 +39,7 @@ public final class RemoteApplicationVM extends RemoteGemFireVM
    *        console should receive from this member of the distributed
    *        system. 
    */
-  public RemoteApplicationVM(RemoteGfManagerAgent agent,
-                             InternalDistributedMember id, int alertLevel) {
+  public RemoteApplicationVM(RemoteGfManagerAgent agent, InternalDistributedMember id, int alertLevel) {
     super(agent, id, alertLevel);
   }
 
@@ -53,7 +50,7 @@ public final class RemoteApplicationVM extends RemoteGemFireVM
     if (obj == null || !(obj instanceof RemoteApplicationVM)) {
       return false;
     } else {
-      RemoteApplicationVM vm = (RemoteApplicationVM)obj;
+      RemoteApplicationVM vm = (RemoteApplicationVM) obj;
       return (this.agent == vm.agent) && this.id.equals(vm.id);
     }
   }

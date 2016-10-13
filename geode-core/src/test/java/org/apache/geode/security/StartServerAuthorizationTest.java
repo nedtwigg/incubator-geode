@@ -52,20 +52,20 @@ public class StartServerAuthorizationTest extends JUnit4DistributedTestCase {
   }
 
   @Test
-  public void testStartServerWithInvalidCredential() throws Exception{
+  public void testStartServerWithInvalidCredential() throws Exception {
     Properties props = new Properties();
     // the following are needed for peer-to-peer authentication
     props.setProperty("security-username", "user");
     props.setProperty("security-password", "wrongPswd");
 
     VM server = lsRule.getNodeVM(1);
-    server.invoke(()->{
-      assertThatThrownBy(()->lsRule.getSystem(props)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("Security check failed. Authentication error. Please check your credentials");
+    server.invoke(() -> {
+      assertThatThrownBy(() -> lsRule.getSystem(props)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("Security check failed. Authentication error. Please check your credentials");
     });
   }
 
   @Test
-  public void testStartServerWithInsufficientPrevilage() throws Exception{
+  public void testStartServerWithInsufficientPrevilage() throws Exception {
     Properties props = new Properties();
 
     // the following are needed for peer-to-peer authentication
@@ -73,15 +73,14 @@ public class StartServerAuthorizationTest extends JUnit4DistributedTestCase {
     props.setProperty("security-password", "user");
 
     VM server = lsRule.getNodeVM(1);
-    server.invoke(()->{
-      assertThatThrownBy(()->lsRule.getSystem(props)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("user not authorized for CLUSTER:MANAGE");
+    server.invoke(() -> {
+      assertThatThrownBy(() -> lsRule.getSystem(props)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("user not authorized for CLUSTER:MANAGE");
     });
-
 
   }
 
   @Test
-  public void testStartServerWithSufficientPrevilage() throws Exception{
+  public void testStartServerWithSufficientPrevilage() throws Exception {
     Properties props = new Properties();
 
     // the following are needed for peer-to-peer authentication

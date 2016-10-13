@@ -62,7 +62,7 @@ import org.apache.geode.distributed.DistributedMember;
  * @since GemFire 6.0
  * 
  */
-public interface ResultCollector<T,S> {
+public interface ResultCollector<T, S> {
 
   /**
    * Method used to pull results from the ResultCollector. It returns the result
@@ -94,8 +94,7 @@ public interface ResultCollector<T,S> {
    * @since GemFire 6.0
    * 
    */
-  public S getResult(long timeout, TimeUnit unit)
-      throws FunctionException, InterruptedException;
+  public S getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException;
 
   /**
    * Method used to feed result to the ResultCollector. It adds a single
@@ -122,7 +121,7 @@ public interface ResultCollector<T,S> {
    * @see ResultSender#lastResult(Object)
    */
   public void endResults();
-  
+
   /**
    * GemFire will invoke this method before re-executing function (in case of
    * Function Execution HA). This is to clear the previous execution results from

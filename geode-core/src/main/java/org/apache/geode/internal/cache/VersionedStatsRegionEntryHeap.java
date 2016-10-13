@@ -22,19 +22,21 @@ public abstract class VersionedStatsRegionEntryHeap extends VersionedStatsRegion
   public VersionedStatsRegionEntryHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VersionedStatsRegionEntryHeapFactory factory = new VersionedStatsRegionEntryHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VersionedStatsRegionEntryHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VersionedStatsRegionEntryHeapIntKey(context, (Integer)key, value);
+          return new VersionedStatsRegionEntryHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VersionedStatsRegionEntryHeapLongKey(context, (Long)key, value);
+          return new VersionedStatsRegionEntryHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -47,7 +49,7 @@ public abstract class VersionedStatsRegionEntryHeap extends VersionedStatsRegion
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VersionedStatsRegionEntryHeapUUIDKey(context, (UUID)key, value);
+          return new VersionedStatsRegionEntryHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VersionedStatsRegionEntryHeapObjectKey(context, key, value);
@@ -58,10 +60,12 @@ public abstract class VersionedStatsRegionEntryHeap extends VersionedStatsRegion
       // This estimate will not take into account the memory saved by inlining the keys.
       return VersionedStatsRegionEntryHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return this;
     }
-	 @Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return this;
     }

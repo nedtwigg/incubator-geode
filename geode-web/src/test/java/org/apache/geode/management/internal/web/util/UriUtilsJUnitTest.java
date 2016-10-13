@@ -45,13 +45,7 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testDecodeStringArray() throws Exception {
-    final String[] encodedValues = {
-      null,
-      "123",
-      "test",
-      encode("Path/Subpath"),
-      encode(encode(encode("/Customers/Accounts/Orders/Items")))
-    };
+    final String[] encodedValues = { null, "123", "test", encode("Path/Subpath"), encode(encode(encode("/Customers/Accounts/Orders/Items"))) };
 
     final String[] decodedValues = UriUtils.decode(encodedValues);
 
@@ -66,8 +60,7 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testDecodeMap() throws Exception {
-    final Map<String, Object> encodedForm = createMap(createArray("0", "1", "2", "3", "4"),
-      (Object[]) createArray(null, "123", "test", encode("Path/Subpath"), encode(encode(encode("/Customers/Accounts/Orders/Items")))));
+    final Map<String, Object> encodedForm = createMap(createArray("0", "1", "2", "3", "4"), (Object[]) createArray(null, "123", "test", encode("Path/Subpath"), encode(encode(encode("/Customers/Accounts/Orders/Items")))));
 
     final Map<String, Object> decodedForm = UriUtils.decode(encodedForm);
 
@@ -101,8 +94,7 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testEncodeMap() throws Exception {
-    final Map<String, Object> form = createMap(createArray("0", "1", "2", "3", "4"),
-      (Object[]) createArray(null, "123", "test", "Path/Subpath", "/Customers/Accounts/Orders/Items"));
+    final Map<String, Object> form = createMap(createArray("0", "1", "2", "3", "4"), (Object[]) createArray(null, "123", "test", "Path/Subpath", "/Customers/Accounts/Orders/Items"));
 
     final Map<String, Object> encodedForm = UriUtils.encode(form);
 

@@ -36,6 +36,7 @@ public class BytesAndBits {
   public final byte[] getBytes() {
     return this.data;
   }
+
   public final byte getBits() {
     return this.userBits;
   }

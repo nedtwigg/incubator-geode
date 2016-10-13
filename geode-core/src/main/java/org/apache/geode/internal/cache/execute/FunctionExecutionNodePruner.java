@@ -33,18 +33,18 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.cache.PartitionedRegionHelper;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
+
 /**
  * 
  *
  */
 public class FunctionExecutionNodePruner {
   public static final Logger logger = LogService.getLogger();
-  
-  public static HashMap<InternalDistributedMember, HashSet<Integer>> pruneNodes(
-      PartitionedRegion pr, Set<Integer> buckets) {
+
+  public static HashMap<InternalDistributedMember, HashSet<Integer>> pruneNodes(PartitionedRegion pr, Set<Integer> buckets) {
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
-    
+
     if (isDebugEnabled) {
       logger.debug("FunctionExecutionNodePruner: The buckets to be pruned are: {}", buckets);
     }
@@ -52,32 +52,30 @@ public class FunctionExecutionNodePruner {
     HashMap<InternalDistributedMember, HashSet<Integer>> prunedNodeToBucketsMap = new HashMap<InternalDistributedMember, HashSet<Integer>>();
     try {
       for (Integer bucketId : buckets) {
-        Set<InternalDistributedMember> nodes = pr.getRegionAdvisor()
-            .getBucketOwners(bucketId);
+        Set<InternalDistributedMember> nodes = pr.getRegionAdvisor().getBucketOwners(bucketId);
 
         if (isDebugEnabled) {
-          logger.debug("FunctionExecutionNodePruner: The buckets owners of the bucket: {} are: {}", bucketId , nodes);
+          logger.debug("FunctionExecutionNodePruner: The buckets owners of the bucket: {} are: {}", bucketId, nodes);
         }
         for (InternalDistributedMember node : nodes) {
           if (nodeToBucketsMap.get(node) == null) {
             HashSet<Integer> bucketSet = new HashSet<Integer>();
             bucketSet.add(bucketId);
             nodeToBucketsMap.put(node, bucketSet);
-          }
-          else {
+          } else {
             HashSet<Integer> bucketSet = nodeToBucketsMap.get(node);
             bucketSet.add(bucketId);
             nodeToBucketsMap.put(node, bucketSet);
           }
         }
       }
+    } catch (NoSuchElementException e) {
     }
-    catch (NoSuchElementException e) {}
     if (isDebugEnabled) {
       logger.debug("FunctionExecutionNodePruner: The node to buckets map is: {}", nodeToBucketsMap);
     }
     HashSet<Integer> currentBucketSet = new HashSet<Integer>();
-    
+
     /**
      * First Logic:
      *  Just implement the Greedy algorithm where you keep adding nodes which has the biggest set of 
@@ -94,25 +92,22 @@ public class FunctionExecutionNodePruner {
      *  until your curentBucketSet has all the required buckets. 
      *  // No optimization for number of nodes to execute the function  
      */
-    
-    
+
     InternalDistributedMember localNode = pr.getRegionAdvisor().getDistributionManager().getId();
-    if(nodeToBucketsMap.get(localNode) != null){
+    if (nodeToBucketsMap.get(localNode) != null) {
       HashSet<Integer> bucketSet = nodeToBucketsMap.get(localNode);
       if (isDebugEnabled) {
-        logger.debug("FunctionExecutionNodePruner: Adding the node: {} which is lcoal and buckets {} to prunedMap",
-            localNode, bucketSet);
+        logger.debug("FunctionExecutionNodePruner: Adding the node: {} which is lcoal and buckets {} to prunedMap", localNode, bucketSet);
       }
       currentBucketSet.addAll(bucketSet);
       prunedNodeToBucketsMap.put(localNode, bucketSet);
       nodeToBucketsMap.remove(localNode);
     }
     while (!currentBucketSet.equals(buckets)) {
-      if(nodeToBucketsMap.size() ==  0){
+      if (nodeToBucketsMap.size() == 0) {
         break;
       }
-      InternalDistributedMember node = findNextNode(
-          nodeToBucketsMap.entrySet(), currentBucketSet);
+      InternalDistributedMember node = findNextNode(nodeToBucketsMap.entrySet(), currentBucketSet);
       if (node == null) {
         if (isDebugEnabled) {
           logger.debug("FunctionExecutionNodePruner: Breaking out of prunedMap calculation due to no available nodes for remaining buckets");
@@ -125,8 +120,7 @@ public class FunctionExecutionNodePruner {
         currentBucketSet.addAll(bucketSet);
         prunedNodeToBucketsMap.put(node, bucketSet);
         if (isDebugEnabled) {
-          logger.debug("FunctionExecutionNodePruner: Adding the node: {} and buckets {} to prunedMap",
-              node, bucketSet);
+          logger.debug("FunctionExecutionNodePruner: Adding the node: {} and buckets {} to prunedMap", node, bucketSet);
         }
       }
       nodeToBucketsMap.remove(node);
@@ -136,15 +130,12 @@ public class FunctionExecutionNodePruner {
     }
     return prunedNodeToBucketsMap;
   }
-  
-  
-  private static InternalDistributedMember findNextNode(
-      Set<Map.Entry<InternalDistributedMember, HashSet<Integer>>> entrySet,
-      HashSet<Integer> currentBucketSet) {
-   
+
+  private static InternalDistributedMember findNextNode(Set<Map.Entry<InternalDistributedMember, HashSet<Integer>>> entrySet, HashSet<Integer> currentBucketSet) {
+
     InternalDistributedMember node = null;
     int max = -1;
-    ArrayList<InternalDistributedMember> nodesOfEqualSize = new ArrayList<InternalDistributedMember>(); 
+    ArrayList<InternalDistributedMember> nodesOfEqualSize = new ArrayList<InternalDistributedMember>();
     for (Map.Entry<InternalDistributedMember, HashSet<Integer>> entry : entrySet) {
       HashSet<Integer> buckets = new HashSet<Integer>();
       buckets.addAll(entry.getValue());
@@ -155,23 +146,19 @@ public class FunctionExecutionNodePruner {
         node = entry.getKey();
         nodesOfEqualSize.clear();
         nodesOfEqualSize.add(node);
-      }
-      else if (max == buckets.size()){
+      } else if (max == buckets.size()) {
         nodesOfEqualSize.add(node);
       }
     }
-    
+
     //return node;
-    return (nodesOfEqualSize.size() > 0 ? nodesOfEqualSize
-        .get(PartitionedRegion.rand.nextInt(nodesOfEqualSize.size())) : null);
+    return (nodesOfEqualSize.size() > 0 ? nodesOfEqualSize.get(PartitionedRegion.rand.nextInt(nodesOfEqualSize.size())) : null);
   }
 
-  public static HashMap<Integer, HashSet> groupByBucket(PartitionedRegion pr,
-      Set routingKeys, final boolean primaryMembersNeeded,
-      final boolean hasRoutingObjects, final boolean isBucketSetAsFilter) {
+  public static HashMap<Integer, HashSet> groupByBucket(PartitionedRegion pr, Set routingKeys, final boolean primaryMembersNeeded, final boolean hasRoutingObjects, final boolean isBucketSetAsFilter) {
     HashMap bucketToKeysMap = new HashMap();
     Iterator i = routingKeys.iterator();
-    
+
     while (i.hasNext()) {
       final Integer bucketId;
       Object key = i.next();
@@ -179,38 +166,31 @@ public class FunctionExecutionNodePruner {
         bucketId = ((Integer) key);
       } else {
         if (hasRoutingObjects) {
-          bucketId = Integer.valueOf(PartitionedRegionHelper
-              .getHashKey(pr, key));
+          bucketId = Integer.valueOf(PartitionedRegionHelper.getHashKey(pr, key));
         } else {
-          bucketId = Integer.valueOf(PartitionedRegionHelper.getHashKey(pr,
-              Operation.FUNCTION_EXECUTION, key, null, null));
+          bucketId = Integer.valueOf(PartitionedRegionHelper.getHashKey(pr, Operation.FUNCTION_EXECUTION, key, null, null));
         }
       }
       InternalDistributedMember mem = null;
       if (primaryMembersNeeded) {
         mem = pr.getOrCreateNodeForBucketWrite(bucketId.intValue(), null);
-      }
-      else {
+      } else {
         mem = pr.getOrCreateNodeForBucketRead(bucketId.intValue());
       }
       if (mem == null) {
-        throw new FunctionException(LocalizedStrings.
-          PartitionedRegion_NO_TARGET_NODE_FOUND_FOR_KEY_0
-            .toLocalizedString(key));
+        throw new FunctionException(LocalizedStrings.PartitionedRegion_NO_TARGET_NODE_FOUND_FOR_KEY_0.toLocalizedString(key));
       }
-      HashSet bucketKeys = (HashSet)bucketToKeysMap.get(bucketId);
+      HashSet bucketKeys = (HashSet) bucketToKeysMap.get(bucketId);
       if (bucketKeys == null) {
         bucketKeys = new HashSet(); // faster if this was an ArrayList
         bucketToKeysMap.put(bucketId, bucketKeys);
       }
       bucketKeys.add(key);
-    }   
+    }
     return bucketToKeysMap;
   }
 
-  public static HashSet<Integer> getBucketSet(PartitionedRegion pr,
-      Set routingKeys, final boolean hasRoutingObjects,
-      boolean isBucketSetAsFilter) {
+  public static HashSet<Integer> getBucketSet(PartitionedRegion pr, Set routingKeys, final boolean hasRoutingObjects, boolean isBucketSetAsFilter) {
     HashSet<Integer> bucketSet = null;
     for (Object key : routingKeys) {
       final Integer bucketId;
@@ -218,11 +198,9 @@ public class FunctionExecutionNodePruner {
         bucketId = (Integer) key;
       } else {
         if (hasRoutingObjects) {
-          bucketId = Integer.valueOf(PartitionedRegionHelper
-              .getHashKey(pr, key));
+          bucketId = Integer.valueOf(PartitionedRegionHelper.getHashKey(pr, key));
         } else {
-          bucketId = Integer.valueOf(PartitionedRegionHelper.getHashKey(pr,
-              Operation.FUNCTION_EXECUTION, key, null, null));
+          bucketId = Integer.valueOf(PartitionedRegionHelper.getHashKey(pr, Operation.FUNCTION_EXECUTION, key, null, null));
         }
       }
       if (bucketSet == null) {
@@ -233,14 +211,12 @@ public class FunctionExecutionNodePruner {
     return bucketSet;
   }
 
-  public static HashMap<InternalDistributedMember, HashSet<Integer>> groupByMemberToBuckets(
-      PartitionedRegion pr, Set<Integer> bucketSet, boolean primaryOnly) {
-    if (primaryOnly) {      
+  public static HashMap<InternalDistributedMember, HashSet<Integer>> groupByMemberToBuckets(PartitionedRegion pr, Set<Integer> bucketSet, boolean primaryOnly) {
+    if (primaryOnly) {
       HashMap<InternalDistributedMember, HashSet<Integer>> memberToBucketsMap = new HashMap();
       try {
         for (Integer bucketId : bucketSet) {
-          InternalDistributedMember mem = pr.getOrCreateNodeForBucketWrite(
-              bucketId, null);
+          InternalDistributedMember mem = pr.getOrCreateNodeForBucketWrite(bucketId, null);
           HashSet buckets = memberToBucketsMap.get(mem);
           if (buckets == null) {
             buckets = new HashSet(); // faster if this was an ArrayList
@@ -251,9 +227,8 @@ public class FunctionExecutionNodePruner {
       } catch (NoSuchElementException done) {
       }
       return memberToBucketsMap;
-    }
-    else {
-      return pruneNodes(pr,bucketSet);
+    } else {
+      return pruneNodes(pr, bucketSet);
     }
   }
 }

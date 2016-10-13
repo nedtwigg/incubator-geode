@@ -107,8 +107,7 @@ public class DerivedInfo {
 
   }
 
-  public void computeDerivedJoinResults(IndexInfo theCallingIndex, ExecutionContext context, CompiledValue iterOps) throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  public void computeDerivedJoinResults(IndexInfo theCallingIndex, ExecutionContext context, CompiledValue iterOps) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     // Call this computeDerivedResults()
     // We are looking for join conditions so we can filter eval instead of iterate eval
     // Then we can apply the rest of the ops on the results
@@ -123,8 +122,7 @@ public class DerivedInfo {
     }
   }
 
-  private void createDerivedJoinResultsFromOpsList(String theCallingIndexId, ExecutionContext context, List opsList) throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  private void createDerivedJoinResultsFromOpsList(String theCallingIndexId, ExecutionContext context, List opsList) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     Iterator iter = opsList.iterator();
     while (iter.hasNext()) {
       CompiledValue cv = (CompiledValue) iter.next();
@@ -146,8 +144,7 @@ public class DerivedInfo {
     }
   }
 
-  private void derivedDerivative(Object[] idDerivedAndResults, ExecutionContext context, List expansionList) throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  private void derivedDerivative(Object[] idDerivedAndResults, ExecutionContext context, List expansionList) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
 
     String idDerived = (String) idDerivedAndResults[0];
     SelectResults results = (SelectResults) idDerivedAndResults[1];
@@ -181,38 +178,36 @@ public class DerivedInfo {
    This new cc will set the left side as s.id and the right side as the evaluated value, in this case it happens to be 1 but
    it could be another field from the object instead.
    */
-  private void createDerivedJoinResultsFromCC(String theCallingIndexReceiverId, CompiledComparison cc, ExecutionContext context) throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  private void createDerivedJoinResultsFromCC(String theCallingIndexReceiverId, CompiledComparison cc, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     if (isCompiledPath(cc._right) && matchingPathIds(theCallingIndexReceiverId, cc._left)) {
       evaluateDerivedJoin(context, cc._right, new CompiledLiteral(cc._left.evaluate(context)), cc.getOperator());
     } else if (isCompiledPath(cc._left) && matchingPathIds(theCallingIndexReceiverId, cc._right)) {
       evaluateDerivedJoin(context, cc._left, new CompiledLiteral(cc._right.evaluate(context)), cc.getOperator());
     }
   }
- 
+
   /*
    Called by createDerivedJoinResultsFromCCa
    Creates the new cc, executes the cc and releases any newly obtain index locks
-  */ 
-  private void evaluateDerivedJoin(ExecutionContext context, CompiledValue newLeftSide, CompiledValue newRightSide, int operator) 
-   throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
-   CompiledComparison dcc = createDerivedJoin(context, newLeftSide, newRightSide, operator);
-   IndexInfo[] indexInfos = (IndexInfo[]) dcc.getIndexInfo(context);
-   try {
-     if (indexInfos != null && isValidIndexTypeToDerive(indexInfos[0]._getIndex())) {
-       populateDerivedResultsFromDerivedJoin(context, dcc, indexInfos[0]);
-     }
-   } finally {
-     if (indexInfos != null) {
-       Index index = (Index) indexInfos[0]._index;
-       Index prIndex = ((AbstractIndex) index).getPRIndex();
-       if (prIndex != null) {
-         ((PartitionedIndex) prIndex).releaseIndexReadLockForRemove();
-       } else {
-         ((AbstractIndex) index).releaseIndexReadLockForRemove();
-       }
-     }
-   }
+  */
+  private void evaluateDerivedJoin(ExecutionContext context, CompiledValue newLeftSide, CompiledValue newRightSide, int operator) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+    CompiledComparison dcc = createDerivedJoin(context, newLeftSide, newRightSide, operator);
+    IndexInfo[] indexInfos = (IndexInfo[]) dcc.getIndexInfo(context);
+    try {
+      if (indexInfos != null && isValidIndexTypeToDerive(indexInfos[0]._getIndex())) {
+        populateDerivedResultsFromDerivedJoin(context, dcc, indexInfos[0]);
+      }
+    } finally {
+      if (indexInfos != null) {
+        Index index = (Index) indexInfos[0]._index;
+        Index prIndex = ((AbstractIndex) index).getPRIndex();
+        if (prIndex != null) {
+          ((PartitionedIndex) prIndex).releaseIndexReadLockForRemove();
+        } else {
+          ((AbstractIndex) index).releaseIndexReadLockForRemove();
+        }
+      }
+    }
   }
 
   /*
@@ -221,8 +216,7 @@ public class DerivedInfo {
    We have no idea what the other operands are and do not want to limit results as the first X results may not 
    fulfill all operands.
    */
-  private void populateDerivedResultsFromDerivedJoin(ExecutionContext context, CompiledComparison dcc, IndexInfo indexInfo) throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  private void populateDerivedResultsFromDerivedJoin(ExecutionContext context, CompiledComparison dcc, IndexInfo indexInfo) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     // overwrite context values to disable limit, order by etc that should not be done by a derived join
     // If we apply limit at this point, we cannot guarantee that after we iterate, the we do not continue to
     // reduce the count below the limited amount
@@ -256,7 +250,7 @@ public class DerivedInfo {
   private void createObjectResultsFromStructResults(IndexInfo indexInfo, SelectResults sr) {
     Iterator srIterator = sr.iterator();
     SelectResults[] newSrs = null;
-
+  
     while (srIterator.hasNext()) {
       Struct struct = (Struct) srIterator.next();
       Object[] fieldValues = struct.getFieldValues();
@@ -271,7 +265,7 @@ public class DerivedInfo {
         newSrs[i].add(fieldValues[i]);
       }
     }
-
+  
     if (newSrs != null) {
       this.addDerivedResults(indexInfo, newSrs);
     }
@@ -283,8 +277,7 @@ public class DerivedInfo {
     return !(type.isCollectionType() || type.isMapType() || type.isStructType());
   }
 
-  private CompiledComparison createDerivedJoin(ExecutionContext context, CompiledValue newLeft, CompiledValue newRight, int op)
-    throws TypeMismatchException, NameResolutionException {
+  private CompiledComparison createDerivedJoin(ExecutionContext context, CompiledValue newLeft, CompiledValue newRight, int op) throws TypeMismatchException, NameResolutionException {
     CompiledComparison cc = new CompiledComparison(newLeft, newRight, op);
     cc.computeDependencies(context);
     return cc;
@@ -293,7 +286,7 @@ public class DerivedInfo {
   //Given a compiled value, we check to see if the receiver id of a CompiledPath matches the receiverId passed in
   private boolean matchingPathIds(String receiverId, CompiledValue cv) {
     if (isCompiledPath(cv)) {
-      CompiledPath path = (CompiledPath)cv;
+      CompiledPath path = (CompiledPath) cv;
       return receiverId.equals(QueryUtils.getCompiledIdFromPath(path).getId());
     }
     return false;

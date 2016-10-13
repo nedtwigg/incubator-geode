@@ -52,7 +52,7 @@ public class CauseFinder {
   public static int indexOfCause(Throwable parent, Class<? extends Throwable> causeClass, final boolean isSubtypeOk) {
     return indexOfCause(parent, causeClass, START_INDEX, isSubtypeOk);
   }
-  
+
   /**
    * Returns the index of a first nested cause which is of the given Throwable
    * type or its sub-type depending on <code>isSubtypeOk</code> value. <p /> 
@@ -86,10 +86,10 @@ public class CauseFinder {
     } else if (cause == null) {
       resultIndex = -1;
     }
-    
+
     return resultIndex;
   }
-  
+
   /**
    * Returns whether the given <code>cause</code> is assignable or has same
    * type as that of <code>causeClass</code> depending on
@@ -109,7 +109,7 @@ public class CauseFinder {
   private static boolean isMatching(Throwable cause, Class<? extends Throwable> causeClass, final boolean isSubtypeOk) {
     return isSubtypeOk ? causeClass.isInstance(cause) : causeClass == cause.getClass();
   }
-  
+
   /**
    * Returns nested 'root' cause of the given parent Throwable. Will return the
    * same Throwable if it has no 'cause'.
@@ -154,7 +154,7 @@ public class CauseFinder {
 
     return parent;
   }
-  
+
   /**
    * Returns cause at the specified depth/index starting from the 'top most'
    * Throwable <code>parent</code> in the stack. Returns <code>null</code> if
@@ -176,7 +176,7 @@ public class CauseFinder {
       //recurse deeper
       return causeAt(parent.getCause(), requiredIndex - 1);
     }
-    
+
     //when there isn't required depth
     if (requiredIndex > 0) {
       return null;
@@ -184,7 +184,7 @@ public class CauseFinder {
 
     return parent;
   }
-  
+
   /**
    * Returns the first occurrence of nested cause of <code>parent</code> which
    * matches the specified <code>causeType</code> or its sub-type depending on
@@ -210,4 +210,3 @@ public class CauseFinder {
     return cause;
   }
 }
-

@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache;
+
 import java.io.*;
 import org.apache.geode.internal.cache.OpType;
 import org.apache.geode.cache.execute.FunctionService;
@@ -70,328 +70,220 @@ public final class Operation implements java.io.Serializable {
   /**
    * A marker operation.
    */
-  public static final Operation MARKER
-    = new Operation("MARKER",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_MARKER,
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation MARKER = new Operation("MARKER", false, // isLocal
+      false, // isRegion
+      OP_TYPE_MARKER, OP_DETAILS_NONE);
+
   /**
    * An entry creation.
    * @see Region#create(Object, Object)
    */
-  public static final Operation CREATE
-    = new Operation("CREATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation CREATE = new Operation("CREATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_NONE);
 
   /**
    * An entry creation caused by a putAll invocation
    * @see Region#putAll
    */
-  public static final Operation PUTALL_CREATE
-    = new Operation("PUTALL_CREATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_PUTALL
-                    );
+  public static final Operation PUTALL_CREATE = new Operation("PUTALL_CREATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_PUTALL);
 
   /**
    * A 'value for key' operation.
    * @see Region#get(Object)
    */
-  public static final Operation GET
-    = new Operation("GET",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_GET,
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation GET = new Operation("GET", false, // isLocal
+      false, // isRegion
+      OP_TYPE_GET, OP_DETAILS_NONE);
+
   /**
    * A 'entry for key' operation.
    * @see Region#getEntry(Object)
    */
-  public static final Operation GET_ENTRY
-    = new Operation("GET_ENTRY",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_GET_ENTRY,
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation GET_ENTRY = new Operation("GET_ENTRY", false, // isLocal
+      false, // isRegion
+      OP_TYPE_GET_ENTRY, OP_DETAILS_NONE);
+
   /**
    * A 'check for existence of key' operation.
    * @see Region#containsKey(Object)
    */
-  public static final Operation CONTAINS_KEY
-    = new Operation("CONTAINS_KEY",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CONTAINS_KEY,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation CONTAINS_KEY = new Operation("CONTAINS_KEY", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CONTAINS_KEY, OP_DETAILS_NONE);
   /**
    * A 'check for existence of value' operation.
    * @see Region#containsValueForKey(Object)
    */
-  public static final Operation CONTAINS_VALUE
-    = new Operation("CONTAINS_VALUE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CONTAINS_VALUE,
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation CONTAINS_VALUE = new Operation("CONTAINS_VALUE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CONTAINS_VALUE, OP_DETAILS_NONE);
+
   /**
    * A 'check for existence of value for given key' operation.
    * @see Region#containsValueForKey(Object)
    */
-  public static final Operation CONTAINS_VALUE_FOR_KEY
-    = new Operation("CONTAINS_VALUE_FOR_KEY",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CONTAINS_VALUE_FOR_KEY,
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation CONTAINS_VALUE_FOR_KEY = new Operation("CONTAINS_VALUE_FOR_KEY", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CONTAINS_VALUE_FOR_KEY, OP_DETAILS_NONE);
+
   /**
    * A 'function execution' operation.
    * @see FunctionService
    */
-  public static final Operation FUNCTION_EXECUTION
-    = new Operation("FUNCTION_EXECUTION",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_FUNCTION_EXECUTION,
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation FUNCTION_EXECUTION = new Operation("FUNCTION_EXECUTION", false, // isLocal
+      false, // isRegion
+      OP_TYPE_FUNCTION_EXECUTION, OP_DETAILS_NONE);
+
   /**
    * An entry creation caused by a netsearch
    * @see Region#get(Object)
    */
-  public static final Operation SEARCH_CREATE
-    = new Operation("SEARCH_CREATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_SEARCH
-                    );
-    
+  public static final Operation SEARCH_CREATE = new Operation("SEARCH_CREATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_SEARCH);
+
   /**
    * An entry creation caused by a local loader
    * @see Region#get(Object)
    * @see CacheLoader
    */
-  public static final Operation LOCAL_LOAD_CREATE
-    = new Operation("LOCAL_LOAD_CREATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_LOCAL_LOAD
-                    );
+  public static final Operation LOCAL_LOAD_CREATE = new Operation("LOCAL_LOAD_CREATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_LOCAL_LOAD);
   /**
    * An entry creation caused by a net loader
    * @see Region#get(Object)
    * @see CacheLoader
    */
-  public static final Operation NET_LOAD_CREATE
-    = new Operation("NET_LOAD_CREATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_NET_LOAD
-                    );
-    
+  public static final Operation NET_LOAD_CREATE = new Operation("NET_LOAD_CREATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_NET_LOAD);
+
   /**
    * An entry update.
    * @see Region#put(Object, Object)
    */
-  public static final Operation UPDATE
-    = new Operation("UPDATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_UPDATE,
-                    OP_DETAILS_NONE
-                    );
-    
+  public static final Operation UPDATE = new Operation("UPDATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_UPDATE, OP_DETAILS_NONE);
+
   /**
    * An entry update caused by a putAll invocation.
    * @see Region#putAll
    */
-  public static final Operation PUTALL_UPDATE
-    = new Operation("PUTALL_UPDATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_UPDATE,
-                    OP_DETAILS_PUTALL
-                    );
-    
+  public static final Operation PUTALL_UPDATE = new Operation("PUTALL_UPDATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_UPDATE, OP_DETAILS_PUTALL);
+
   /**
    * An entry update caused by a net search.
    * @see Region#get(Object)
    */
-  public static final Operation SEARCH_UPDATE
-    = new Operation("SEARCH_UPDATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_UPDATE,
-                    OP_DETAILS_SEARCH
-                    );
+  public static final Operation SEARCH_UPDATE = new Operation("SEARCH_UPDATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_UPDATE, OP_DETAILS_SEARCH);
 
   /**
    * An entry update caused by a local load.
    * @see Region#get(Object)
    * @see CacheLoader
    */
-  public static final Operation LOCAL_LOAD_UPDATE
-    = new Operation("LOCAL_LOAD_UPDATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_UPDATE,
-                    OP_DETAILS_LOCAL_LOAD
-                    );
-    
+  public static final Operation LOCAL_LOAD_UPDATE = new Operation("LOCAL_LOAD_UPDATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_UPDATE, OP_DETAILS_LOCAL_LOAD);
+
   /**
    * An entry update caused by a net load.
    * @see Region#get(Object)
    * @see CacheLoader
    */
-  public static final Operation NET_LOAD_UPDATE
-    = new Operation("NET_LOAD_UPDATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_UPDATE,
-                    OP_DETAILS_NET_LOAD
-                    );
-    
+  public static final Operation NET_LOAD_UPDATE = new Operation("NET_LOAD_UPDATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_UPDATE, OP_DETAILS_NET_LOAD);
+
   /**
    * An entry distributed invalidate.
    * @see Region#invalidate(Object)
    */
-  public static final Operation INVALIDATE
-    = new Operation("INVALIDATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_NONE
-                    );
-    
+  public static final Operation INVALIDATE = new Operation("INVALIDATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_NONE);
+
   /**
    * An entry local invalidate.
    * @see Region#localInvalidate(Object)
    */
-  public static final Operation LOCAL_INVALIDATE
-    = new Operation("LOCAL_INVALIDATE",
-                    true, // isLocal
-                    false, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation LOCAL_INVALIDATE = new Operation("LOCAL_INVALIDATE", true, // isLocal
+      false, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_NONE);
 
   /**
    * An entry distributed destroy.
    * @see Region#destroy(Object)
    */
-  public static final Operation DESTROY
-    = new Operation("DESTROY",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation DESTROY = new Operation("DESTROY", false, // isLocal
+      false, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
   /**
    * An entry local destroy.
    * @see Region#localDestroy(Object)
    */
-  public static final Operation LOCAL_DESTROY
-    = new Operation("LOCAL_DESTROY",
-                    true, // isLocal
-                    false, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
-    
+  public static final Operation LOCAL_DESTROY = new Operation("LOCAL_DESTROY", true, // isLocal
+      false, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
+
   /**
    * An entry local destroy caused by an eviction.
    * @see Region#localDestroy(Object)
    */
-  public static final Operation EVICT_DESTROY
-    = new Operation("EVICT_DESTROY",
-                    true, // isLocal
-                    false, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_EVICT
-                    );
+  public static final Operation EVICT_DESTROY = new Operation("EVICT_DESTROY", true, // isLocal
+      false, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_EVICT);
 
-  
   /**
    * A region load snapshot.
    * @see Region#loadSnapshot
    */
-  public static final Operation REGION_LOAD_SNAPSHOT
-    = new Operation("REGION_LOAD_SNAPSHOT",
-                    false, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_LOAD_SNAPSHOT = new Operation("REGION_LOAD_SNAPSHOT", false, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
 
   /**
    * A region local destroy.
    * @see Region#localDestroyRegion()
    */
-  public static final Operation REGION_LOCAL_DESTROY
-    = new Operation("REGION_LOCAL_DESTROY",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_LOCAL_DESTROY = new Operation("REGION_LOCAL_DESTROY", true, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
 
   /**
    * A region create.
    * @see Region#createSubregion
    * @see Cache#createRegion
    */
-  public static final Operation REGION_CREATE
-    = new Operation("REGION_CREATE",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_CREATE = new Operation("REGION_CREATE", true, // isLocal
+      true, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_NONE);
 
   /**
    * A region close
    * @see Region#close
    */
-  public static final Operation REGION_CLOSE
-    = new Operation("REGION_CLOSE",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY, // @todo darrel: should close be a destroy?
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_CLOSE = new Operation("REGION_CLOSE", true, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, // @todo darrel: should close be a destroy?
+      OP_DETAILS_NONE);
 
   /**
    * A region distributed destroy.
    * @see Region#destroyRegion()
    */
-  public static final Operation REGION_DESTROY
-    = new Operation("REGION_DESTROY",
-                    false, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_DESTROY = new Operation("REGION_DESTROY", false, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
 
   /**
    * An entry distributed destroy triggered by expiration 
@@ -399,39 +291,27 @@ public final class Operation implements java.io.Serializable {
    * @see RegionAttributes#getEntryIdleTimeout
    * @see ExpirationAction#DESTROY
    */
-  public static final Operation EXPIRE_DESTROY
-    = new Operation("EXPIRE_DESTROY",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation EXPIRE_DESTROY = new Operation("EXPIRE_DESTROY", false, // isLocal
+      false, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_EXPIRE);
   /**
    * An entry local destroy triggered by expiration 
    * @see RegionAttributes#getEntryTimeToLive
    * @see RegionAttributes#getEntryIdleTimeout
    * @see ExpirationAction#LOCAL_DESTROY
    */
-  public static final Operation EXPIRE_LOCAL_DESTROY
-    = new Operation("EXPIRE_LOCAL_DESTROY",
-                    true, // isLocal
-                    false, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation EXPIRE_LOCAL_DESTROY = new Operation("EXPIRE_LOCAL_DESTROY", true, // isLocal
+      false, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_EXPIRE);
   /**
    * An entry distributed invalidate triggered by expiration 
    * @see RegionAttributes#getEntryTimeToLive
    * @see RegionAttributes#getEntryIdleTimeout
    * @see ExpirationAction#INVALIDATE
    */
-  public static final Operation EXPIRE_INVALIDATE
-    = new Operation("EXPIRE_INVALIDATE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation EXPIRE_INVALIDATE = new Operation("EXPIRE_INVALIDATE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_EXPIRE);
 
   /**
    * An entry local invalidate triggered by expiration 
@@ -439,13 +319,9 @@ public final class Operation implements java.io.Serializable {
    * @see RegionAttributes#getEntryIdleTimeout
    * @see ExpirationAction#LOCAL_INVALIDATE
    */
-  public static final Operation EXPIRE_LOCAL_INVALIDATE
-    = new Operation("EXPIRE_LOCAL_INVALIDATE",
-                    true, // isLocal
-                    false, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation EXPIRE_LOCAL_INVALIDATE = new Operation("EXPIRE_LOCAL_INVALIDATE", true, // isLocal
+      false, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_EXPIRE);
 
   /**
    * A region distributed destroy triggered by expiration 
@@ -453,123 +329,84 @@ public final class Operation implements java.io.Serializable {
    * @see RegionAttributes#getRegionIdleTimeout
    * @see ExpirationAction#DESTROY
    */
-  public static final Operation REGION_EXPIRE_DESTROY
-    = new Operation("REGION_EXPIRE_DESTROY",
-                    false, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation REGION_EXPIRE_DESTROY = new Operation("REGION_EXPIRE_DESTROY", false, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_EXPIRE);
   /**
    * A region local destroy triggered by expiration 
    * @see RegionAttributes#getRegionTimeToLive
    * @see RegionAttributes#getRegionIdleTimeout
    * @see ExpirationAction#LOCAL_DESTROY
    */
-  public static final Operation REGION_EXPIRE_LOCAL_DESTROY
-    = new Operation("REGION_EXPIRE_LOCAL_DESTROY",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation REGION_EXPIRE_LOCAL_DESTROY = new Operation("REGION_EXPIRE_LOCAL_DESTROY", true, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_EXPIRE);
   /**
    * A region distributed invalidate triggered by expiration 
    * @see RegionAttributes#getRegionTimeToLive
    * @see RegionAttributes#getRegionIdleTimeout
    * @see ExpirationAction#INVALIDATE
    */
-  public static final Operation REGION_EXPIRE_INVALIDATE
-    = new Operation("REGION_EXPIRE_INVALIDATE",
-                    false, // isLocal
-                    true, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation REGION_EXPIRE_INVALIDATE = new Operation("REGION_EXPIRE_INVALIDATE", false, // isLocal
+      true, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_EXPIRE);
   /**
    * A region local invalidate triggered by expiration 
    * @see RegionAttributes#getRegionTimeToLive
    * @see RegionAttributes#getRegionIdleTimeout
    * @see ExpirationAction#LOCAL_INVALIDATE
    */
-  public static final Operation REGION_EXPIRE_LOCAL_INVALIDATE
-    = new Operation("REGION_EXPIRE_LOCAL_INVALIDATE",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_EXPIRE
-                    );
+  public static final Operation REGION_EXPIRE_LOCAL_INVALIDATE = new Operation("REGION_EXPIRE_LOCAL_INVALIDATE", true, // isLocal
+      true, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_EXPIRE);
   /**
    * A region local invalidate.
    * @see Region#localInvalidateRegion()
    */
-  public static final Operation REGION_LOCAL_INVALIDATE
-    = new Operation("REGION_LOCAL_INVALIDATE",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_LOCAL_INVALIDATE = new Operation("REGION_LOCAL_INVALIDATE", true, // isLocal
+      true, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_NONE);
 
   /**
    * A region distributed invalidate.
    * @see Region#invalidateRegion()
    */
-  public static final Operation REGION_INVALIDATE
-    = new Operation("REGION_INVALIDATE",
-                    false, // isLocal
-                    true, // isRegion
-                    OP_TYPE_INVALIDATE,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_INVALIDATE = new Operation("REGION_INVALIDATE", false, // isLocal
+      true, // isRegion
+      OP_TYPE_INVALIDATE, OP_DETAILS_NONE);
 
   /**
    * A region clear.
    * @see Region#clear
    */
-  public static final Operation REGION_CLEAR
-    = new Operation("REGION_CLEAR",
-                    false, // isLocal
-                    true, // isRegion
-                    OP_TYPE_CLEAR,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REGION_CLEAR = new Operation("REGION_CLEAR", false, // isLocal
+      true, // isRegion
+      OP_TYPE_CLEAR, OP_DETAILS_NONE);
   /**
    * A region local clear.
    * @see Region#localClear
    */
-  public static final Operation REGION_LOCAL_CLEAR
-    = new Operation("REGION_LOCAL_CLEAR",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_CLEAR,
-                    OP_DETAILS_NONE
-                    );
-    
+  public static final Operation REGION_LOCAL_CLEAR = new Operation("REGION_LOCAL_CLEAR", true, // isLocal
+      true, // isRegion
+      OP_TYPE_CLEAR, OP_DETAILS_NONE);
+
   /**
    * A cache create. Note that this is marked as a region operation.
    * @see CacheFactory#create
    */
-  public static final Operation CACHE_CREATE
-    = new Operation("CACHE_CREATE",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation CACHE_CREATE = new Operation("CACHE_CREATE", true, // isLocal
+      true, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_NONE);
 
   /**
    * A cache close.  Note that this is marked as a region operation.
    * @see Cache#close()
    */
-  public static final Operation CACHE_CLOSE
-    = new Operation("CACHE_CLOSE",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY, // @todo darrel: should close be a destroy?
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation CACHE_CLOSE = new Operation("CACHE_CLOSE", true, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, // @todo darrel: should close be a destroy?
+      OP_DETAILS_NONE);
+
   /**
    * A cache close due to being forced out of the distributed system
    * by other members.  This typically happens
@@ -578,103 +415,74 @@ public final class Operation implements java.io.Serializable {
    * period.<br>
    * Note that this is marked as a region operation.
    */
-  public static final Operation FORCED_DISCONNECT
-    = new Operation("FORCED_DISCONNECT",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
-  
+  public static final Operation FORCED_DISCONNECT = new Operation("FORCED_DISCONNECT", true, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
+
   /**
    * A region destroy triggered by {@link ResumptionAction#REINITIALIZE}.
    * @see ResumptionAction#REINITIALIZE
    */
-  public static final Operation REGION_REINITIALIZE
-    = new Operation("REGION_REINITIALIZE",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
-                    
+  public static final Operation REGION_REINITIALIZE = new Operation("REGION_REINITIALIZE", true, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
+
   /**
    * A cache close triggered by {@link LossAction#RECONNECT}.
    * @see LossAction#RECONNECT
    */
-  public static final Operation CACHE_RECONNECT 
-    = new Operation("CACHE_RECONNECT",
-                    true, // isLocal
-                    true, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
-                    
+  public static final Operation CACHE_RECONNECT = new Operation("CACHE_RECONNECT", true, // isLocal
+      true, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
+
   /**
    * An atomic entry creation operation
    * @see java.util.concurrent.ConcurrentMap#putIfAbsent(Object, Object)
    * @since GemFire 6.5
    */
-  public static final Operation PUT_IF_ABSENT
-    = new Operation("PUT_IF_ABSENT",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_CREATE,
-                    OP_DETAILS_GUARANTEES_OLD_VALUE
-                    );
+  public static final Operation PUT_IF_ABSENT = new Operation("PUT_IF_ABSENT", false, // isLocal
+      false, // isRegion
+      OP_TYPE_CREATE, OP_DETAILS_GUARANTEES_OLD_VALUE);
 
   /**
    * An atomic update operation 
    * @see java.util.concurrent.ConcurrentMap#replace(Object, Object, Object)
    * @since GemFire 6.5
    */
-  public static final Operation REPLACE
-    = new Operation("REPLACE",
-        false, // isLocal
-        false, // isRegion
-        OP_TYPE_UPDATE,
-        OP_DETAILS_GUARANTEES_OLD_VALUE);
-  
+  public static final Operation REPLACE = new Operation("REPLACE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_UPDATE, OP_DETAILS_GUARANTEES_OLD_VALUE);
+
   /**
    * An atomic destroy destroy operation
    * @see java.util.concurrent.ConcurrentMap#remove(Object, Object)
    * @since GemFire 6.5
    */
-  public static final Operation REMOVE
-    = new Operation("REMOVE",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_NONE
-                    );
+  public static final Operation REMOVE = new Operation("REMOVE", false, // isLocal
+      false, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_NONE);
 
   /**
    * An internal operation used to update the version stamp of an entry.
    */
-  public static final Operation UPDATE_VERSION_STAMP 
-    = new Operation("UPDATE_VERSION",
-                     false, //isLocal
-                     false, //isRegion
-                     OP_TYPE_UPDATE_VERSION, //opType
-                     OP_DETAILS_NONE //opDetails
-                     );
+  public static final Operation UPDATE_VERSION_STAMP = new Operation("UPDATE_VERSION", false, //isLocal
+      false, //isRegion
+      OP_TYPE_UPDATE_VERSION, //opType
+      OP_DETAILS_NONE //opDetails
+  );
 
   /**
    * An entry distributed destroy caused by a removeAll.
    * @see Region#removeAll(java.util.Collection)
    * @since GemFire 8.1
    */
-  public static final Operation REMOVEALL_DESTROY
-    = new Operation("REMOVEALL_DESTROY",
-                    false, // isLocal
-                    false, // isRegion
-                    OP_TYPE_DESTROY,
-                    OP_DETAILS_REMOVEALL
-                    );
-    
+  public static final Operation REMOVEALL_DESTROY = new Operation("REMOVEALL_DESTROY", false, // isLocal
+      false, // isRegion
+      OP_TYPE_DESTROY, OP_DETAILS_REMOVEALL);
+
   /** The name of this mirror type. */
   private final transient String name;
-    
+
   /** byte used as ordinal to represent this Operation */
   public final byte ordinal;
 
@@ -706,12 +514,10 @@ public final class Operation implements java.io.Serializable {
    */
   private final transient int opDetails;
 
-  
   private Object readResolve() throws ObjectStreamException {
-    return VALUES[ordinal];  // Canonicalize
+    return VALUES[ordinal]; // Canonicalize
   }
-    
-    
+
   /** Creates a new instance of Operation. */
   private Operation(String name, boolean isLocal, boolean isRegion, byte opType, int opDetails) {
     this.name = name;
@@ -722,12 +528,11 @@ public final class Operation implements java.io.Serializable {
     this.ordinal = nextOrdinal++;
     VALUES[this.ordinal] = this;
   }
-    
+
   /** Return the Operation represented by specified ordinal */
   public static Operation fromOrdinal(byte ordinal) {
     return VALUES[ordinal];
   }
-    
 
   /**
    * Returns true if this operation created a new entry.
@@ -749,39 +554,42 @@ public final class Operation implements java.io.Serializable {
   public boolean isGet() {
     return this.opType == OP_TYPE_GET;
   }
-  
+
   /**
    * Returns true if this operation checks whether given key is present in region.
    */
   public boolean isContainsKey() {
     return this.opType == OP_TYPE_CONTAINS_KEY;
   }
-  
+
   /**
    * Returns true if this operation checks whether given value is present in region.
    */
   public boolean isContainsValue() {
     return this.opType == OP_TYPE_CONTAINS_VALUE;
   }
-  
+
   /**
    * Returns true if this operation checks whether value is present for the given key.
    */
   public boolean isContainsValueForKey() {
     return this.opType == OP_TYPE_CONTAINS_VALUE_FOR_KEY;
   }
+
   /**
    * Returns true if this operation is function execution operation.
    */
   public boolean isFunctionExecution() {
     return this.opType == OP_TYPE_FUNCTION_EXECUTION;
   }
+
   /**
    * Returns true if this operation gets the entry for given key.
    */
   public boolean isGetEntry() {
     return this.opType == OP_TYPE_GET_ENTRY;
   }
+
   /**
    * Returns true if the operation invalidated an entry.
    */
@@ -802,15 +610,14 @@ public final class Operation implements java.io.Serializable {
   public boolean isClear() {
     return this.opType == OP_TYPE_CLEAR;
   }
+
   /**
    * Returns true if the operation closed the cache or a region.
    */
   public boolean isClose() {
-    return (this == REGION_CLOSE)
-      || (this == CACHE_CLOSE)
-      || (this == CACHE_RECONNECT)
-      || (this == FORCED_DISCONNECT);
+    return (this == REGION_CLOSE) || (this == CACHE_CLOSE) || (this == CACHE_RECONNECT) || (this == FORCED_DISCONNECT);
   }
+
   /**
    * Returns true if this operation was initiated by a putAll.
    */
@@ -833,36 +640,42 @@ public final class Operation implements java.io.Serializable {
   public boolean isRegionInvalidate() {
     return this.opType == OP_TYPE_INVALIDATE && isRegion();
   }
+
   /**
    * Returns true if the operation destroyed a region.
    */
   public boolean isRegionDestroy() {
     return this.opType == OP_TYPE_DESTROY && isRegion();
   }
+
   /**
    * Returns true if the operation applies to the entire region.
    */
   public boolean isRegion() {
     return this.isRegion;
   }
+
   /**
    * Returns true if the operation is limited to the local cache.
    */
   public boolean isLocal() {
     return this.isLocal;
   }
+
   /**
    * Returns true if the operation may be distributed.
    */
   public boolean isDistributed() {
     return !isLocal();
   }
+
   /**
    * Returns true if the operation applies to a single entry.
    */
   public boolean isEntry() {
     return !isRegion();
   }
+
   /** Answer true if this operation resulted from expiration.
    * @return true if this operation resulted from expiration
    *
@@ -870,7 +683,7 @@ public final class Operation implements java.io.Serializable {
   public boolean isExpiration() {
     return (this.opDetails & OP_DETAILS_EXPIRE) != 0;
   }
-  
+
   /**
    * Answer true if this operation resulted from eviction
    * @return true if this operatino resulted from eviction
@@ -900,14 +713,14 @@ public final class Operation implements java.io.Serializable {
   public boolean isNetLoad() {
     return (this.opDetails & OP_DETAILS_NET_LOAD) != 0;
   }
-  
+
   /** Returns true if this operation included running a loader.
    * @return true if isLocalLoad or isNetLoad
    */
   public boolean isLoad() {
-    return (this.opDetails & (OP_DETAILS_LOCAL_LOAD|OP_DETAILS_NET_LOAD)) != 0;
+    return (this.opDetails & (OP_DETAILS_LOCAL_LOAD | OP_DETAILS_NET_LOAD)) != 0;
   }
-  
+
   /** Returns true if this operation included a <code>netSearch</code>. If the <code>netSearch</code>
    * was invoked by a loader however, this will return false and <code>isLocalLoad()</code>
    * or <code>isNetLoad()</code> will return true instead.
@@ -924,7 +737,7 @@ public final class Operation implements java.io.Serializable {
    * @return true if this operation include a netSearch or any type of load.
    */
   public boolean isSearchOrLoad() {
-    return (this.opDetails & (OP_DETAILS_SEARCH|OP_DETAILS_LOCAL_LOAD|OP_DETAILS_NET_LOAD)) != 0;
+    return (this.opDetails & (OP_DETAILS_SEARCH | OP_DETAILS_LOCAL_LOAD | OP_DETAILS_NET_LOAD)) != 0;
   }
 
   /**
@@ -985,7 +798,7 @@ public final class Operation implements java.io.Serializable {
       return this;
     }
   }
-  
+
   /** Returns a string representation for this operation.
      * @return the name of this operation.
      */

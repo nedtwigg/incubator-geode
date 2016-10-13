@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.apache.geode.cache.wan.GatewayTransportFilter;
 import org.apache.geode.internal.cache.xmlcache.Declarable2;
 
-public class MyGatewayTransportFilter1 implements GatewayTransportFilter, Declarable2, Serializable{
+public class MyGatewayTransportFilter1 implements GatewayTransportFilter, Declarable2, Serializable {
 
   public InputStream getInputStream(InputStream stream) {
     // TODO Auto-generated method stub
@@ -47,7 +47,6 @@ public class MyGatewayTransportFilter1 implements GatewayTransportFilter, Declar
 
   public void init(Properties props) {
     // TODO Auto-generated method stub
-    
+
   }
 }
-

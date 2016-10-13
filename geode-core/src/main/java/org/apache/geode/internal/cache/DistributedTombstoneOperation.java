@@ -115,7 +115,7 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
     protected Map<VersionSource, Long> regionGCVersions;
     protected TOperation op;
     protected EventID eventID;
-    
+
     private static Version[] serializationVersions = null; // new Version[]{ };
 
     /**
@@ -125,23 +125,20 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
     }
 
     @Override
-    protected InternalCacheEvent createEvent(DistributedRegion rgn)
-            throws EntryNotFoundException {
+    protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
       RegionEventImpl event = createRegionEvent(rgn);
       event.setEventID(this.eventID);
       return event;
     }
 
     protected RegionEventImpl createRegionEvent(DistributedRegion rgn) {
-      RegionEventImpl event = new RegionEventImpl(rgn, getOperation(),
-              this.callbackArg, true /* originRemote */, getSender());
+      RegionEventImpl event = new RegionEventImpl(rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender());
       event.setEventID(this.eventID);
       return event;
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
-            throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
       boolean sendReply = true;
 
       DistributedRegion region = (DistributedRegion) event.getRegion();
@@ -165,8 +162,7 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-            ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.op = TOperation.values()[in.readByte()];
       //      this.regionVersion = in.readLong();
@@ -184,9 +180,9 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
         }
         this.regionGCVersions.put(mbr, Long.valueOf(in.readLong()));
       }
-      this.eventID = (EventID)DataSerializer.readObject(in);
+      this.eventID = (EventID) DataSerializer.readObject(in);
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);

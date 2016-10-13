@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.query.types;
 
-
 /**
  * Describes the field names and types for each field in a {@link
  * org.apache.geode.cache.query.Struct}.
@@ -25,7 +24,7 @@ package org.apache.geode.cache.query.types;
  * @since GemFire 4.0
  */
 public interface StructType extends ObjectType {
-  
+
   /**
    * The the types of the fields for this struct
    * @return the array of Class for the fields
@@ -47,5 +46,5 @@ public interface StructType extends ObjectType {
    *         named <code>fieldName</code>.
    */
   public int getFieldIndex(String fieldName);
-  
+
 }

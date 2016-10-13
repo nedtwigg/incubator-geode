@@ -38,13 +38,12 @@ public class LogoutHandler extends SimpleUrlLogoutSuccessHandler implements Logo
     this.setDefaultTargetUrl(defaultTargetURL);
   }
 
-  public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-      throws IOException, ServletException {
+  public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
     PulseLogWriter LOGGER = PulseLogWriter.getLogger();
     LOGGER.fine("Invoked #LogoutHandler ...");
     if (Repository.get().isUseGemFireCredentials()) {
       GemFireAuthentication gemauthentication = (GemFireAuthentication) authentication;
-      if(gemauthentication!=null) {
+      if (gemauthentication != null) {
         gemauthentication.getJmxc().close();
         LOGGER.info("#LogoutHandler : Closing GemFireAuthentication JMX Connection...");
       }

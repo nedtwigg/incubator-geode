@@ -46,25 +46,21 @@ import org.apache.logging.log4j.Logger;
  * 
  */
 public class ReflectionObjectSizer implements ObjectSizer, Serializable {
-  
+
   private static final ReflectionObjectSizer INSTANCE = new ReflectionObjectSizer();
-  
+
   private static final ObjectFilter FILTER = new ObjectFilter() {
 
     public boolean accept(Object parent, Object object) {
       //Protect the user from a couple of pitfalls. If their object
       //has a link to a region or cache, we don't want to size the whole thing.
-      if (object instanceof Region || object instanceof Cache
-          || object instanceof PlaceHolderDiskRegion
-          || object instanceof InternalDistributedSystem
-          || object instanceof ClassLoader
-          || object instanceof Logger) {
+      if (object instanceof Region || object instanceof Cache || object instanceof PlaceHolderDiskRegion || object instanceof InternalDistributedSystem || object instanceof ClassLoader || object instanceof Logger) {
         return false;
       }
 
       return true;
     }
-    
+
   };
 
   public int sizeof(Object o) {
@@ -76,25 +72,23 @@ public class ReflectionObjectSizer implements ObjectSizer, Serializable {
       throw new InternalGemFireError(e);
     }
   }
-  
+
   public static ReflectionObjectSizer getInstance() {
     return INSTANCE;
   }
-  
-  private void writeObject(java.io.ObjectOutputStream out)
-  throws IOException {
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
   }
-  
-  private void readObject(java.io.ObjectInputStream in)
-       throws IOException, ClassNotFoundException {
+
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
   }
-  
+
   private Object readResolve() throws ObjectStreamException {
     return INSTANCE;
   }
-  
+
   private ReflectionObjectSizer() {
-    
+
   }
 
 }

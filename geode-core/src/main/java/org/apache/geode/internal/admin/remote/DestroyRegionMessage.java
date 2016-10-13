@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import java.io.DataInput;
@@ -39,9 +39,9 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * it know that the sender is an administation console that just connected.
  */
 public final class DestroyRegionMessage extends RegionAdminMessage {
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   private ExpirationAction action;
 
   public static DestroyRegionMessage create(ExpirationAction action) {
@@ -65,9 +65,7 @@ public final class DestroyRegionMessage extends RegionAdminMessage {
           r.localInvalidateRegion();
         }
       } catch (Exception e) {
-        logger.warn(LocalizedMessage.create(
-            LocalizedStrings.DestroRegionMessage_FAILED_ATTEMPT_TO_DESTROY_OR_INVALIDATE_REGION_0_FROM_CONSOLE_AT_1,
-            new Object[] {r.getFullPath(), this.getSender()}));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.DestroRegionMessage_FAILED_ATTEMPT_TO_DESTROY_OR_INVALIDATE_REGION_0_FROM_CONSOLE_AT_1, new Object[] { r.getFullPath(), this.getSender() }));
       }
     }
   }
@@ -83,14 +81,13 @@ public final class DestroyRegionMessage extends RegionAdminMessage {
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.action = (ExpirationAction)DataSerializer.readObject(in);
+    this.action = (ExpirationAction) DataSerializer.readObject(in);
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     return LocalizedStrings.DestroyRegionMessage_DESTROYREGIONMESSAGE_FROM_0.toLocalizedString(this.getSender());
   }
 }

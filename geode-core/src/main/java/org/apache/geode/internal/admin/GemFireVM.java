@@ -65,7 +65,7 @@ public interface GemFireVM {
    * Returns the name of the remote system connection.
    */
   public String getName();
-    
+
   /**
    * Returns the directory in which the member runs
    *
@@ -77,7 +77,7 @@ public interface GemFireVM {
    * Returns the product directory (the value of GEMFIRE env variable)
    */
   public java.io.File getGemFireDir();
-  
+
   /**
    * Returns the time the system was started
    */
@@ -98,7 +98,7 @@ public interface GemFireVM {
    * Returns all statistic resources
    */
   public StatResource[] getAllStats();
-   
+
   /**
    * Returns a snapshot of the distributed lock services
    */
@@ -108,14 +108,12 @@ public interface GemFireVM {
    * Adds a {@link StatListener} for the given resource and attribute.
    * Changes in value will be streamed back from the vm.
    */
-  public void addStatListener(StatListener observer,
-                              StatResource observedResource,
-                              Stat observedStat);
-  
+  public void addStatListener(StatListener observer, StatResource observedResource, Stat observedStat);
+
   /**
    * Removes {@link StatListener}
    */
-  public void removeStatListener(StatListener observer);  
+  public void removeStatListener(StatListener observer);
 
   /**
    * Adds a {@link HealthListener} with the given configuration to the vm.
@@ -124,9 +122,8 @@ public interface GemFireVM {
    * @param cfg determines how and when the health will be checked.
    * @since GemFire 3.5
    */
-  public void addHealthListener(HealthListener observer,
-                                GemFireHealthConfig cfg);
-  
+  public void addHealthListener(HealthListener observer, GemFireHealthConfig cfg);
+
   /**
    * Removes an added health listener.
    * @since GemFire 3.5
@@ -164,14 +161,14 @@ public interface GemFireVM {
    * @since GemFire 5.7
    */
   public GemFireMemberStatus getSnapshot();
-  
+
   /**
    * Returns the runtime {@link org.apache.geode.admin.RegionSubRegionSnapshot} from the vm
    * The idea is this snapshot is quickly salvageable to present a cache's region's info 
    * @since GemFire 5.7
    */
   public RegionSubRegionSnapshot getRegionSnapshot();
-  
+
   /**
    * Sets the runtime configurable parameters in the gemfire vm's
    * {@link Config} 
@@ -182,7 +179,6 @@ public interface GemFireVM {
    * Returns the locally running agent through which we access the remote vm
    */
   public GfManagerAgent getManagerAgent();
-  
 
   /**
    * Returns the the main log and the tail of the currently active child log,
@@ -196,17 +192,18 @@ public interface GemFireVM {
    * in between messages.
    */
   public void setInspectionClasspath(String classpath);
-  
+
   /**
    * Returns classpath info set by {@link GemFireVM#setInspectionClasspath}
    */
   public String getInspectionClasspath();
-  
+
   /**
    * Returns the root cache region or null if the root
    * region hasn't been created.
    */
   public Region[] getRootRegions();
+
   /**
    * Return the existing region (or subregion) with the specified
    * path that already exists or is already mapped into the cache.
@@ -231,9 +228,7 @@ public interface GemFireVM {
    *
    * @since GemFire 4.0
    */
-  public Region createVMRootRegion(CacheInfo c, String name,
-                                   RegionAttributes attrs)
-    throws AdminException;
+  public Region createVMRootRegion(CacheInfo c, String name, RegionAttributes attrs) throws AdminException;
 
   /**
    * Creates a new root VM region with the given name and attributes
@@ -244,9 +239,7 @@ public interface GemFireVM {
    *
    * @since GemFire 4.0
    */
-  public Region createSubregion(CacheInfo c, String parentPath,
-                                String name, RegionAttributes attrs)
-    throws AdminException;
+  public Region createSubregion(CacheInfo c, String parentPath, String name, RegionAttributes attrs) throws AdminException;
 
   /**
    * Sets the cache inspection mode to {@link #LIGHTWEIGHT_CACHE_VALUE},
@@ -269,22 +262,21 @@ public interface GemFireVM {
    */
   public void takeRegionSnapshot(String regionName, int snapshotId);
 
-//   /**
-//    * Clears any results of a snapshot request still waiting to be streamed back
-//    */
-//   public void flushSnapshots();  
-  
-  
+  //   /**
+  //    * Clears any results of a snapshot request still waiting to be streamed back
+  //    */
+  //   public void flushSnapshots();  
+
   /**
    * Returns the name given to the {@link org.apache.geode.GemFireConnection}
    * of this process
    */
   //public String getName();
-  
-//   /**
-//    * Returns true if a cache has been created.
-//    */
-//   public boolean hasCache();
+
+  //   /**
+  //    * Returns true if a cache has been created.
+  //    */
+  //   public boolean hasCache();
   /**
    * The distribution ID if this VM. Its used to identify this VM
    * by members if this VM's distributed system.
@@ -301,28 +293,26 @@ public interface GemFireVM {
    * Sets the lockTimeout configuration value for the given cache and
    * then returns the current info for that cache.
    */
-  public CacheInfo setCacheLockTimeout(CacheInfo c, int v)
-    throws AdminException ;
+  public CacheInfo setCacheLockTimeout(CacheInfo c, int v) throws AdminException;
+
   /**
    * Sets the lockLease configuration value for the given cache and
    * then returns the current info for that cache.
    */
-  public CacheInfo setCacheLockLease(CacheInfo c, int v)
-    throws AdminException;
+  public CacheInfo setCacheLockLease(CacheInfo c, int v) throws AdminException;
+
   /**
    * Sets the searchTimeout configuration value for the given cache and
    * then returns the current info for that cache.
    */
-  public CacheInfo setCacheSearchTimeout(CacheInfo c, int v)
-    throws AdminException;
+  public CacheInfo setCacheSearchTimeout(CacheInfo c, int v) throws AdminException;
 
   /**
    * Adds a bridge server a cache in this VM
    *
    * @since GemFire 4.0
    */
-  public AdminBridgeServer addCacheServer(CacheInfo cache)
-    throws AdminException;
+  public AdminBridgeServer addCacheServer(CacheInfo cache) throws AdminException;
 
   /**
    * Returns information about a bridge server that runs in this VM
@@ -331,28 +321,22 @@ public interface GemFireVM {
    *        The unique {@link AdminBridgeServer#getId id} of the
    *        bridge server
    */
-  public AdminBridgeServer getBridgeInfo(CacheInfo cache, 
-                                         int id)
-    throws AdminException;
+  public AdminBridgeServer getBridgeInfo(CacheInfo cache, int id) throws AdminException;
 
   /**
    * Starts a bridge server in this VM
    *
    * @since GemFire 4.0
    */
-  public AdminBridgeServer startBridgeServer(CacheInfo cache,
-                                             AdminBridgeServer bridge)
-    throws AdminException;
+  public AdminBridgeServer startBridgeServer(CacheInfo cache, AdminBridgeServer bridge) throws AdminException;
 
   /**
    * Stops a bridge server in this VM
    *
    * @since GemFire 4.0
    */
-  public AdminBridgeServer stopBridgeServer(CacheInfo cache,
-                                            AdminBridgeServer bridge)
-    throws AdminException;
-  
+  public AdminBridgeServer stopBridgeServer(CacheInfo cache, AdminBridgeServer bridge) throws AdminException;
+
   /**
    * This method should be used to set the Alerts Manager for the member agent. 
    * Stat Alerts Aggregator would use this method to set stat Alerts Manager 
@@ -366,7 +350,7 @@ public interface GemFireVM {
    * @since GemFire 5.7
    */
   public void setAlertsManager(StatAlertDefinition[] alertDefs, long refreshInterval, boolean setRemotely);
-  
+
   /**
    * This method would be used to set refresh interval for the GemFireVM. This 
    * method would mostly be called on each member after initial set up whenever 
@@ -377,7 +361,7 @@ public interface GemFireVM {
    * @since GemFire 5.7
    */
   public void setRefreshInterval(long refreshInterval);
-  
+
   /**
    * This method would be used to set Sta Alert Definitions for the GemFireVM. 
    * This method would mostly be called on each member after initial set up 

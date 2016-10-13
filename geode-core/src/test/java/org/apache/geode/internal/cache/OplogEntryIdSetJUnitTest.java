@@ -33,13 +33,13 @@ public class OplogEntryIdSetJUnitTest {
   @Test
   public void testBasics() {
     OplogEntryIdSet s = new OplogEntryIdSet();
-    for (long i=1; i < 777777; i++) {
+    for (long i = 1; i < 777777; i++) {
       assertEquals(false, s.contains(i));
     }
-    for (long i=1; i < 777777; i++) {
+    for (long i = 1; i < 777777; i++) {
       s.add(i);
     }
-    for (long i=1; i < 777777; i++) {
+    for (long i = 1; i < 777777; i++) {
       assertEquals(true, s.contains(i));
     }
 
@@ -54,17 +54,17 @@ public class OplogEntryIdSetJUnitTest {
     s.add(0x00000000FFFFFFFFL);
     assertEquals(true, s.contains(0x00000000FFFFFFFFL));
 
-    for (long i=0x00000000FFFFFFFFL+1; i < 0x00000000FFFFFFFFL+777777; i++) {
+    for (long i = 0x00000000FFFFFFFFL + 1; i < 0x00000000FFFFFFFFL + 777777; i++) {
       assertEquals(false, s.contains(i));
     }
-    for (long i=0x00000000FFFFFFFFL+1; i < 0x00000000FFFFFFFFL+777777; i++) {
+    for (long i = 0x00000000FFFFFFFFL + 1; i < 0x00000000FFFFFFFFL + 777777; i++) {
       s.add(i);
     }
-    for (long i=0x00000000FFFFFFFFL+1; i < 0x00000000FFFFFFFFL+777777; i++) {
+    for (long i = 0x00000000FFFFFFFFL + 1; i < 0x00000000FFFFFFFFL + 777777; i++) {
       assertEquals(true, s.contains(i));
     }
 
-    for (long i=1; i < 777777; i++) {
+    for (long i = 1; i < 777777; i++) {
       assertEquals(true, s.contains(i));
     }
 

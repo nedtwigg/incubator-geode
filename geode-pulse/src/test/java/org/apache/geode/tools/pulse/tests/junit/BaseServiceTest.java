@@ -49,7 +49,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
-
 /**
  * Base class to be extended by other JUnit test classes. This class defines and automatically invokes test for testing server login-logout so no need to add
  * this test in each sub-class. It also provides doLogin(), doLogout() and print error functionality as protected
@@ -95,14 +94,14 @@ public abstract class BaseServiceTest {
     }
     strHost = propsForJUnit.getProperty("pulse.host");
     strPort = propsForJUnit.getProperty("pulse.port");
-    System.out.println(
-        "BaseServiceTest :: Loaded properties from classpath. Checking properties for hostname. Hostname found = " + strHost);
+    System.out.println("BaseServiceTest :: Loaded properties from classpath. Checking properties for hostname. Hostname found = " + strHost);
     LOGIN_URL = "http://" + strHost + ":" + strPort + "/pulse/j_spring_security_check";
     LOGOUT_URL = "http://" + strHost + ":" + strPort + "/pulse/clusterLogout";
     IS_AUTHENTICATED_USER_URL = "http://" + strHost + ":" + strPort + "/pulse/authenticateUser";
     PULSE_UPDATE_URL = "http://" + strHost + ":" + strPort + "/pulse/pulseUpdate";
 
   }
+
   /**
   *
   * @throws java.lang.Exception
@@ -131,29 +130,27 @@ public abstract class BaseServiceTest {
     System.out.println("BaseServiceTest ::  Executing doLogin with user : admin, password : admin.");
 
     CloseableHttpResponse loginResponse = null;
-    try{
+    try {
       BasicCookieStore cookieStore = new BasicCookieStore();
       httpclient = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
-      HttpUriRequest login = RequestBuilder.post().setUri(new URI(LOGIN_URL))
-        .addParameter("j_username", "admin").addParameter("j_password", "admin")
-        .build();
+      HttpUriRequest login = RequestBuilder.post().setUri(new URI(LOGIN_URL)).addParameter("j_username", "admin").addParameter("j_password", "admin").build();
       loginResponse = httpclient.execute(login);
       try {
-           HttpEntity entity = loginResponse.getEntity();
-           EntityUtils.consume(entity);
-           System.out.println("BaseServiceTest :: HTTP request status : " + loginResponse.getStatusLine());
+        HttpEntity entity = loginResponse.getEntity();
+        EntityUtils.consume(entity);
+        System.out.println("BaseServiceTest :: HTTP request status : " + loginResponse.getStatusLine());
 
-           List<Cookie> cookies = cookieStore.getCookies();
-           if (cookies.isEmpty()) {
-           } else {
-               for (int i = 0; i < cookies.size(); i++) {
-               }
-           }
+        List<Cookie> cookies = cookieStore.getCookies();
+        if (cookies.isEmpty()) {
+        } else {
+          for (int i = 0; i < cookies.size(); i++) {
+          }
+        }
       } finally {
-         if(loginResponse != null)
-           loginResponse.close();
+        if (loginResponse != null)
+          loginResponse.close();
       }
-    } catch(Exception failed) {
+    } catch (Exception failed) {
       logException(failed);
       throw failed;
     }
@@ -167,27 +164,26 @@ public abstract class BaseServiceTest {
    */
   protected static void doLogout() throws Exception {
     System.out.println("BaseServiceTest ::  Executing doLogout with user : admin, password : admin.");
-    if(httpclient != null){
+    if (httpclient != null) {
       CloseableHttpResponse logoutResponse = null;
-      try{
-        HttpUriRequest logout = RequestBuilder.get().setUri(new URI(LOGOUT_URL))
-            .build();
+      try {
+        HttpUriRequest logout = RequestBuilder.get().setUri(new URI(LOGOUT_URL)).build();
         logoutResponse = httpclient.execute(logout);
         try {
-             HttpEntity entity = logoutResponse.getEntity();
-             EntityUtils.consume(entity);
+          HttpEntity entity = logoutResponse.getEntity();
+          EntityUtils.consume(entity);
         } finally {
-           if(logoutResponse != null)
-             logoutResponse.close();
-           httpclient.close();
-           httpclient = null;
+          if (logoutResponse != null)
+            logoutResponse.close();
+          httpclient.close();
+          httpclient = null;
         }
-      } catch(Exception failed) {
+      } catch (Exception failed) {
         logException(failed);
         throw failed;
       }
       System.out.println("BaseServiceTest ::  Executed doLogout");
-    } else{
+    } else {
       System.out.println("BaseServiceTest ::  User NOT logged-in");
     }
   }
@@ -197,7 +193,7 @@ public abstract class BaseServiceTest {
    *
    * @param failed
    */
-  protected static void logException(Exception failed){
+  protected static void logException(Exception failed) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     failed.printStackTrace(pw);
@@ -212,43 +208,41 @@ public abstract class BaseServiceTest {
   */
   @Test
   public void testServerLoginLogout() {
-      System.out.println("BaseServiceTest ::  ------TESTCASE BEGIN : SERVER LOGIN-LOGOUT------");
-      try{
-          doLogin();
+    System.out.println("BaseServiceTest ::  ------TESTCASE BEGIN : SERVER LOGIN-LOGOUT------");
+    try {
+      doLogin();
 
-          HttpUriRequest pulseupdate = RequestBuilder.get()
-            .setUri(new URI(IS_AUTHENTICATED_USER_URL))
-            .build();
-          CloseableHttpResponse response = httpclient.execute(pulseupdate);
-          try {
-            HttpEntity entity = response.getEntity();
+      HttpUriRequest pulseupdate = RequestBuilder.get().setUri(new URI(IS_AUTHENTICATED_USER_URL)).build();
+      CloseableHttpResponse response = httpclient.execute(pulseupdate);
+      try {
+        HttpEntity entity = response.getEntity();
 
-            System.out.println("BaseServiceTest :: HTTP request status : " + response.getStatusLine());
+        System.out.println("BaseServiceTest :: HTTP request status : " + response.getStatusLine());
 
-            BufferedReader respReader = new BufferedReader(new InputStreamReader(entity.getContent()));
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            String sz = null;
-            while((sz = respReader.readLine()) != null){
-              pw.print(sz);
-            }
-            String jsonResp = sw.getBuffer().toString();
-            System.out.println("BaseServiceTest :: JSON response returned : " + jsonResp);
-            EntityUtils.consume(entity);
+        BufferedReader respReader = new BufferedReader(new InputStreamReader(entity.getContent()));
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        String sz = null;
+        while ((sz = respReader.readLine()) != null) {
+          pw.print(sz);
+        }
+        String jsonResp = sw.getBuffer().toString();
+        System.out.println("BaseServiceTest :: JSON response returned : " + jsonResp);
+        EntityUtils.consume(entity);
 
-            JsonNode jsonObj = mapper.readTree(jsonResp);
-            boolean isUserLoggedIn = jsonObj.get("isUserLoggedIn").booleanValue();
-            Assert.assertNotNull("BaseServiceTest :: Server returned null response in 'isUserLoggedIn'", isUserLoggedIn);
-            Assert.assertTrue("BaseServiceTest :: User login failed for this username, password", (isUserLoggedIn == true));
-          } finally {
-            response.close();
-          }
-
-          doLogout();
-      } catch(Exception failed) {
-          logException(failed);
-          Assert.fail("Exception ! ");
+        JsonNode jsonObj = mapper.readTree(jsonResp);
+        boolean isUserLoggedIn = jsonObj.get("isUserLoggedIn").booleanValue();
+        Assert.assertNotNull("BaseServiceTest :: Server returned null response in 'isUserLoggedIn'", isUserLoggedIn);
+        Assert.assertTrue("BaseServiceTest :: User login failed for this username, password", (isUserLoggedIn == true));
+      } finally {
+        response.close();
       }
-      System.out.println("BaseServiceTest ::  ------TESTCASE END : SERVER LOGIN-LOGOUT------");
+
+      doLogout();
+    } catch (Exception failed) {
+      logException(failed);
+      Assert.fail("Exception ! ");
+    }
+    System.out.println("BaseServiceTest ::  ------TESTCASE END : SERVER LOGIN-LOGOUT------");
   }
 }

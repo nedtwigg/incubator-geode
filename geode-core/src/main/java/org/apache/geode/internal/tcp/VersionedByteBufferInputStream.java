@@ -29,8 +29,7 @@ import org.apache.geode.internal.VersionedDataStream;
  * 
  * @since GemFire 7.1
  */
-public class VersionedByteBufferInputStream extends ByteBufferInputStream
-    implements VersionedDataStream {
+public class VersionedByteBufferInputStream extends ByteBufferInputStream implements VersionedDataStream {
 
   private final Version version;
 

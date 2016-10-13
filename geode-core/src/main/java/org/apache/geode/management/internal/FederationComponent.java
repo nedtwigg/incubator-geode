@@ -41,11 +41,10 @@ import org.apache.geode.management.ManagementException;
  * 
  */
 
-public class FederationComponent implements java.io.Serializable,  DataSerializable, DataSerializableFixedID {
+public class FederationComponent implements java.io.Serializable, DataSerializable, DataSerializableFixedID {
   private static final Logger logger = LogService.getLogger();
 
-  private static final String THIS_COMPONENT = FederationComponent.class
-      .getName();
+  private static final String THIS_COMPONENT = FederationComponent.class.getName();
   /**
    * 
    */
@@ -73,17 +72,16 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
    */
   private Map<String, Object> objectState = new HashMap<String, Object>();
 
-  private transient  Map<String , Method> getterMethodMap;
-  
+  private transient Map<String, Method> getterMethodMap;
+
   private transient Object mbeanObject;
-  
+
   private transient Class mbeanInterfaceClass;
-  
-  
+
   private transient Map<String, Object> oldObjectState = new HashMap<String, Object>();
-  
+
   private transient final Map<Method, OpenMethod> methodHandlerMap = OpenTypeUtil.newMap();
-  
+
   private transient boolean prevRefreshChangeDetected = false;
 
   /**
@@ -95,8 +93,7 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
    * @param notificationEmitter
    *          specifies whether this MBean is going to emit notifications
     */
-  public FederationComponent(Object object, ObjectName objectName,
-      Class interfaceClass, boolean notificationEmitter) {
+  public FederationComponent(Object object, ObjectName objectName, Class interfaceClass, boolean notificationEmitter) {
     this.objectName = objectName.toString();
     this.interfaceClassName = interfaceClass.getCanonicalName();
     this.mbeanInterfaceClass = interfaceClass;
@@ -106,10 +103,10 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
     initGetters(interfaceClass);
 
   }
-  
-  public FederationComponent(){
+
+  public FederationComponent() {
   }
-  
+
   // Introspect the mbeanInterface and initialize this object's maps.
   //
   private void initGetters(Class<?> mbeanInterface) {
@@ -125,8 +122,7 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
         attrName = name.substring(2);
       }
 
-      if (attrName.length() != 0 && m.getParameterTypes().length == 0
-          && m.getReturnType() != void.class) { // For Getters
+      if (attrName.length() != 0 && m.getParameterTypes().length == 0 && m.getReturnType() != void.class) { // For Getters
         m.setAccessible(true);
         getterMethodMap.put(attrName, m);
         methodHandlerMap.put(m, OpenMethod.from(m));
@@ -170,18 +166,17 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
   public boolean refreshObjectState(boolean keepOldState) {
     boolean changeDetected = false;
     Object[] args = null;
-    if(keepOldState){
+    if (keepOldState) {
       oldObjectState.putAll(objectState);
     }
-    for (Map.Entry<String, Method> gettorMethodEntry: getterMethodMap.entrySet()) {
+    for (Map.Entry<String, Method> gettorMethodEntry : getterMethodMap.entrySet()) {
       String property = gettorMethodEntry.getKey();
       Object propertyValue = null;
 
       try {
         Method m = gettorMethodEntry.getValue();
         propertyValue = m.invoke(mbeanObject, args);
-        
-        
+
         //To Handle open types in getter values
         OpenMethod op = methodHandlerMap.get(m);
         propertyValue = op.toOpenReturnValue(propertyValue);
@@ -193,7 +188,7 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
         }
 
       }
-      
+
       Object oldValue = objectState.put(property, propertyValue);
       if (!changeDetected) {
         if (propertyValue != null) {
@@ -212,7 +207,6 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
     return retVal;
   }
 
-
   public boolean equals(Object anObject) {
 
     if (this == anObject) {
@@ -220,16 +214,12 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
     }
     if (anObject instanceof FederationComponent) {
       FederationComponent anotherFedComp = (FederationComponent) anObject;
-      if (anotherFedComp.interfaceClassName.equals(this.interfaceClassName)
-          && anotherFedComp.notificationEmitter == this.notificationEmitter
-          && anotherFedComp.objectState.equals(this.objectState)
-          && anotherFedComp.objectName.equals(this.objectName))
+      if (anotherFedComp.interfaceClassName.equals(this.interfaceClassName) && anotherFedComp.notificationEmitter == this.notificationEmitter && anotherFedComp.objectState.equals(this.objectState) && anotherFedComp.objectName.equals(this.objectName))
         return true;
     }
 
     return false;
   }
-
 
   public int hashCode() {
     return objectName.hashCode();
@@ -247,22 +237,19 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
 
   public String toString() {
     if (Boolean.getBoolean("debug.Management")) {
-      return " ObjectName = " + objectName + ",InterfaceClassName = "
-          + interfaceClassName + ", NotificationEmitter = "
-          + notificationEmitter + ", ObjectState = " + objectState.toString();
+      return " ObjectName = " + objectName + ",InterfaceClassName = " + interfaceClassName + ", NotificationEmitter = " + notificationEmitter + ", ObjectState = " + objectState.toString();
     } else {
       return "ObjectName = " + objectName;
     }
   }
-  
-  public Map<String, Object> getObjectState(){
+
+  public Map<String, Object> getObjectState() {
     return objectState;
   }
-  
-  public Map<String, Object> getOldState(){
+
+  public Map<String, Object> getOldState() {
     return oldObjectState;
   }
-
 
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -283,23 +270,21 @@ public class FederationComponent implements java.io.Serializable,  DataSerializa
 
   @Override
   public int getDSFID() {
-   return DataSerializableFixedID.MGMT_FEDERATION_COMPONENT;
+    return DataSerializableFixedID.MGMT_FEDERATION_COMPONENT;
   }
-  
-  public Object getMBeanObject(){
+
+  public Object getMBeanObject() {
     return mbeanObject;
   }
 
-  public Class getInterfaceClass(){
+  public Class getInterfaceClass() {
     return mbeanInterfaceClass;
   }
-  
-  
+
   @Override
   public Version[] getSerializationVersions() {
     // TODO Auto-generated method stub
     return null;
   }
-  
 
 }

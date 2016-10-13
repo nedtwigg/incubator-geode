@@ -258,8 +258,7 @@ public abstract class AbstractCache {
       } else if (System.getProperty("weblogic.Name") != null) {
         String weblogicName = System.getProperty("weblogic.Name");
         String separator = System.getProperty("file.separator");
-        logFile = new File("servers" + separator + weblogicName + separator +
-            "logs" + separator + logFileName);
+        logFile = new File("servers" + separator + weblogicName + separator + "logs" + separator + logFileName);
       } else {
         logFile = new File(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "logdir"), logFileName);
       }
@@ -280,8 +279,7 @@ public abstract class AbstractCache {
         } else if (System.getProperty("weblogic.Name") != null) {
           String weblogicName = System.getProperty("weblogic.Name");
           String separator = System.getProperty("file.separator");
-          statisticsArchiveFile = new File("servers" + separator + weblogicName + separator +
-              "logs" + separator + statisticsArchiveFileName);
+          statisticsArchiveFile = new File("servers" + separator + weblogicName + separator + "logs" + separator + statisticsArchiveFileName);
         } else {
           statisticsArchiveFile = new File(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "statisticsdir"), statisticsArchiveFileName);
         }
@@ -300,16 +298,10 @@ public abstract class AbstractCache {
     if (getEvictionHeapPercentage() != currentEvictionHeapPercentage || getCriticalHeapPercentage() != currentCriticalHeapPercentage) {
       if (getLogger().isDebugEnabled()) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Previous eviction heap percentage=")
-            .append(currentEvictionHeapPercentage)
-            .append("; critical heap percentage=")
-            .append(currentCriticalHeapPercentage);
+        builder.append("Previous eviction heap percentage=").append(currentEvictionHeapPercentage).append("; critical heap percentage=").append(currentCriticalHeapPercentage);
         getLogger().debug(builder.toString());
         builder.setLength(0);
-        builder.append("Requested eviction heap percentage=")
-            .append(getEvictionHeapPercentage())
-            .append("; critical heap percentage=")
-            .append(getCriticalHeapPercentage());
+        builder.append("Requested eviction heap percentage=").append(getEvictionHeapPercentage()).append("; critical heap percentage=").append(getCriticalHeapPercentage());
         getLogger().debug(builder.toString());
       }
       if (currentCriticalHeapPercentage == 0.0f) {
@@ -351,10 +343,7 @@ public abstract class AbstractCache {
       }
       if (getLogger().isDebugEnabled()) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Actual eviction heap percentage=")
-            .append(rm.getEvictionHeapPercentage())
-            .append("; critical heap percentage=")
-            .append(rm.getCriticalHeapPercentage());
+        builder.append("Actual eviction heap percentage=").append(rm.getEvictionHeapPercentage()).append("; critical heap percentage=").append(rm.getCriticalHeapPercentage());
         getLogger().debug(builder.toString());
       }
     }
@@ -365,29 +354,15 @@ public abstract class AbstractCache {
     ResourceManagerValidator.validateJavaStartupParameters(getCache());
   }
 
-  private void handleResourceManagerException(IllegalArgumentException e, float currentEvictionHeapPercentage,
-      float currentCriticalHeapPercentage) {
+  private void handleResourceManagerException(IllegalArgumentException e, float currentEvictionHeapPercentage, float currentCriticalHeapPercentage) {
     StringBuilder builder = new StringBuilder();
-    builder.append("Caught exception attempting to set eviction heap percentage=")
-        .append(getEvictionHeapPercentage())
-        .append(" and critical heap percentage=")
-        .append(getCriticalHeapPercentage())
-        .append(". The percentages will be set back to their previous values (eviction heap percentage=")
-        .append(currentEvictionHeapPercentage)
-        .append(" and critical heap percentage=")
-        .append(currentCriticalHeapPercentage)
-        .append(").");
+    builder.append("Caught exception attempting to set eviction heap percentage=").append(getEvictionHeapPercentage()).append(" and critical heap percentage=").append(getCriticalHeapPercentage()).append(". The percentages will be set back to their previous values (eviction heap percentage=").append(currentEvictionHeapPercentage).append(" and critical heap percentage=").append(currentCriticalHeapPercentage).append(").");
     getLogger().warn(builder.toString(), e);
   }
 
   @Override
   public String toString() {
-    return new StringBuilder().append(getClass().getSimpleName())
-        .append("[")
-        .append("cache=")
-        .append(this.cache)
-        .append("]")
-        .toString();
+    return new StringBuilder().append(getClass().getSimpleName()).append("[").append("cache=").append(this.cache).append("]").toString();
   }
 
   protected abstract void createOrRetrieveCache();

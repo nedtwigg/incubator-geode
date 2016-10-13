@@ -40,8 +40,7 @@ public class EntryOperationImpl implements EntryOperation {
 
   private final Object callbackArgument;
 
-  public EntryOperationImpl(Region region, Operation operation, Object key,
-      Object value, Object callbackArgument) {
+  public EntryOperationImpl(Region region, Operation operation, Object key, Object value, Object callbackArgument) {
     this.region = region;
     this.operation = operation;
     this.key = key;
@@ -83,14 +82,14 @@ public class EntryOperationImpl implements EntryOperation {
     Object result = this.callbackArgument;
     if (result == Token.NOT_AVAILABLE) {
       result = AbstractRegion.handleNotAvailable(result);
-    }else if (result instanceof WrappedCallbackArgument) {
-      WrappedCallbackArgument wca = (WrappedCallbackArgument)result;
+    } else if (result instanceof WrappedCallbackArgument) {
+      WrappedCallbackArgument wca = (WrappedCallbackArgument) result;
       result = wca.getOriginalCallbackArg();
     }
     return result;
     //return AbstractRegion.handleNotAvailable(this.callbackArgument);
   }
-  
+
   public boolean isCallbackArgumentAvailable() {
     return this.callbackArgument != Token.NOT_AVAILABLE;
   }

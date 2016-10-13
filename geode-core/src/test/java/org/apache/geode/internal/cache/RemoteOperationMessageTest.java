@@ -31,7 +31,6 @@ import org.apache.geode.internal.cache.TXStateProxyImpl;
 import org.apache.geode.test.fake.Fakes;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-
 @Category(UnitTest.class)
 public class RemoteOperationMessageTest {
   private GemFireCacheImpl cache;
@@ -41,16 +40,16 @@ public class RemoteOperationMessageTest {
   private TXManagerImpl txMgr;
   private long startTime = 0;
   TXStateProxy tx;
-  
+
   @Before
   public void setUp() throws InterruptedException {
     cache = Fakes.cache();
-    dm = mock(DistributionManager.class);  
+    dm = mock(DistributionManager.class);
     msg = mock(RemoteOperationMessage.class);
     r = mock(LocalRegion.class);
     txMgr = mock(TXManagerImpl.class);
     tx = mock(TXStateProxyImpl.class);
-    
+
     when(msg.checkCacheClosing(dm)).thenReturn(false);
     when(msg.checkDSClosing(dm)).thenReturn(false);
     when(msg.getCache(dm)).thenReturn(cache);
@@ -59,7 +58,7 @@ public class RemoteOperationMessageTest {
 
     doAnswer(new CallsRealMethods()).when(msg).process(dm);
   }
-  
+
   @Test
   public void messageWithNoTXPerformsOnRegion() throws InterruptedException, RemoteOperationException {
     when(txMgr.masqueradeAs(msg)).thenReturn(null);
@@ -76,11 +75,11 @@ public class RemoteOperationMessageTest {
 
     verify(msg, times(1)).operateOnRegion(dm, r, startTime);
   }
-  
+
   @Test
   public void messageForFinishedTXDoesNotPerformOnRegion() throws InterruptedException, RemoteOperationException {
     when(txMgr.masqueradeAs(msg)).thenReturn(tx);
-    when(tx.isInProgress()).thenReturn(false); 
+    when(tx.isInProgress()).thenReturn(false);
     msg.process(dm);
 
     verify(msg, times(0)).operateOnRegion(dm, r, startTime);
@@ -89,7 +88,7 @@ public class RemoteOperationMessageTest {
   @Test
   public void noNewTxProcessingAfterTXManagerImplClosed() throws RemoteOperationException {
     txMgr = new TXManagerImpl(null, cache);
-    
+
     when(msg.checkCacheClosing(dm)).thenReturn(false);
     when(msg.checkDSClosing(dm)).thenReturn(false);
     when(msg.getCache(dm)).thenReturn(cache);
@@ -98,11 +97,11 @@ public class RemoteOperationMessageTest {
 
     when(msg.canParticipateInTransaction()).thenReturn(true);
     when(msg.canStartRemoteTransaction()).thenReturn(true);
-    
+
     msg.process(dm);
-    
+
     txMgr.close();
-    
+
     msg.process(dm);
 
     verify(msg, times(1)).operateOnRegion(dm, r, startTime);

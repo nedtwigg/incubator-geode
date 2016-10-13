@@ -45,7 +45,7 @@ public class IncrByFloatExecutor extends StringExecutor {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.INCRBYFLOAT));
       return;
     }
-    
+
     ByteArrayWrapper key = command.getKey();
     checkAndSetDataType(key, context);
     ByteArrayWrapper valueWrapper = r.get(key);
@@ -63,8 +63,7 @@ public class IncrByFloatExecutor extends StringExecutor {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
       return;
     }
-    
-    
+
     Double increment;
 
     try {

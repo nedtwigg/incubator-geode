@@ -154,7 +154,7 @@ import org.apache.geode.cache.snapshot.RegionSnapshotService;
  * @since GemFire 2.0
  */
 
-public interface Region<K,V>  extends ConcurrentMap<K, V> {
+public interface Region<K, V> extends ConcurrentMap<K, V> {
   /** The region name separator character. */
   public static final char SEPARATOR_CHAR = '/';
 
@@ -214,7 +214,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    */
   public RegionAttributes<K, V> getAttributes();
 
-
   /** Returns a mutator object used for modifying this region's attributes
    *  after region creation.
    * Note that some attributes are immutable after region creation.
@@ -222,7 +221,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @return the <code>AttributesMutator</code> object
    * @see #getAttributes
    */
-  public AttributesMutator<K,V> getAttributesMutator();
+  public AttributesMutator<K, V> getAttributesMutator();
 
   /** Returns the <code>CacheStatistics</code> for this region.
    *
@@ -264,8 +263,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    */
   public void invalidateRegion(Object aCallbackArgument) throws TimeoutException;
 
-
-
   /** Invalidates this region in the local cache only. Invalidation
    * cascades to all entries and subregions. After
    * the <code>invalidateRegion</code>, this region and the entries in it still
@@ -299,7 +296,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    */
 
   public void localInvalidateRegion(Object aCallbackArgument);
-
 
   /** Destroys the whole region.
    * Destroy cascades to all entries
@@ -394,7 +390,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @return the snapshot service for the region
    */
   public RegionSnapshotService<K, V> getSnapshotService();
-  
+
   /**
    * Saves the data in this region in a snapshot file. The data is a
    * "concurrent" snapshot in that modifications to the region
@@ -463,8 +459,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * 
    * @deprecated as of 7.0 use {@link #getSnapshotService()}
    */
-  public void loadSnapshot(InputStream inputStream)
-  throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException;
+  public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException;
 
   /** Returns a subregion with the specified name or null if doesn't exist. The
    * name is relative from this region, so it can be either a simple region name
@@ -479,7 +474,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see Region#getFullPath
    */
   public <SK, SV> Region<SK, SV> getSubregion(String path);
-
 
   /** Creates a subregion with the specified name and <code>RegionAttributes</code>.
    * The name must not contain a region name separator.
@@ -507,8 +501,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see Region#getFullPath
    * @deprecated as of 7.0 use {@link RegionFactory#createSubregion(Region, String)} or {@link ClientRegionFactory#createSubregion(Region, String)}.
    */
-  public <SK,SV> Region<SK,SV> createSubregion(String subregionName, RegionAttributes<SK,SV> aRegionAttributes)
-  throws RegionExistsException, TimeoutException;
+  public <SK, SV> Region<SK, SV> createSubregion(String subregionName, RegionAttributes<SK, SV> aRegionAttributes) throws RegionExistsException, TimeoutException;
 
   /** Returns a Set of all subregions. If the recursive parameter is
    * set to true, this call will recursively collect all subregions
@@ -529,7 +522,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    */
   public Set<Region<?, ?>> subregions(boolean recursive);
 
-
   /** Returns the <code>Region.Entry</code> for the specified key, or null if it doesn't
    * exist.
    *
@@ -538,7 +530,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    *         region
    * @throws NullPointerException if key is null
    */
-  public Entry<K,V> getEntry(Object key);
+  public Entry<K, V> getEntry(Object key);
 
   /** Returns the value associated with the specified key. If the value
    * is not present locally for this entry, a netSearch and/or a CacheLoader
@@ -655,8 +647,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheWriter#beforeCreate
    * @see CacheWriter#beforeUpdate
    */
-  public V get(Object key, Object aCallbackArgument)
-  throws TimeoutException, CacheLoaderException;
+  public V get(Object key, Object aCallbackArgument) throws TimeoutException, CacheLoaderException;
 
   /** Places a new value into an entry in this region with the specified key.
    * If there is already an entry associated with the specified key in this region,
@@ -694,9 +685,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheWriter#beforeCreate
    * @see CacheWriter#beforeUpdate
    */
-  public V put(K key, V value)
-  throws TimeoutException, CacheWriterException;
-
+  public V put(K key, V value) throws TimeoutException, CacheWriterException;
 
   /** Places a new value into an entry in this region with the specified key,
    * providing a user-defined parameter
@@ -739,8 +728,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheWriter#beforeCreate
    * @see CacheWriter#beforeUpdate
    */
-  public V put(K key, V value, Object aCallbackArgument)
-  throws TimeoutException, CacheWriterException;
+  public V put(K key, V value, Object aCallbackArgument) throws TimeoutException, CacheWriterException;
 
   /** Creates a new entry in this region with the specified key and value.
    *
@@ -773,8 +761,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheWriter#beforeCreate
    * @see CacheWriter#beforeUpdate
    */
-  public void create(K key, V value)
-  throws TimeoutException, EntryExistsException, CacheWriterException;
+  public void create(K key, V value) throws TimeoutException, EntryExistsException, CacheWriterException;
 
   /** Creates a new entry in this region with the specified key and value,
    * providing a user-defined parameter
@@ -810,8 +797,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheWriter#beforeCreate
    * @see CacheWriter#beforeUpdate
    */
-  public void create(K key, V value, Object aCallbackArgument)
-  throws TimeoutException, EntryExistsException, CacheWriterException;
+  public void create(K key, V value, Object aCallbackArgument) throws TimeoutException, EntryExistsException, CacheWriterException;
 
   /** Invalidates the entry with the specified key. Invalidate
    * only removes the value from the entry, the key is kept intact.
@@ -831,8 +817,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @throws EntryNotFoundException if the entry does not exist in this region
    * @see CacheListener#afterInvalidate
    */
-  public void invalidate(Object key)
-  throws TimeoutException, EntryNotFoundException;
+  public void invalidate(Object key) throws TimeoutException, EntryNotFoundException;
 
   /** Invalidates the entry with the specified key,
    * and provides a user-defined argument to the <code>CacheListener</code>.
@@ -854,8 +839,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheListener#afterInvalidate
    */
 
-  public void invalidate(Object key, Object aCallbackArgument)
-  throws TimeoutException, EntryNotFoundException;
+  public void invalidate(Object key, Object aCallbackArgument) throws TimeoutException, EntryNotFoundException;
 
   /** Invalidates the value with the specified key in the local cache only.
    * Invalidate will only remove the value from the entry, the key will be kept intact.
@@ -898,9 +882,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @throws UnsupportedOperationInTransactionException If called in a transactional context
    * @see CacheListener#afterInvalidate
    */
-  public void localInvalidate(Object key, Object aCallbackArgument)
-  throws EntryNotFoundException;
-
+  public void localInvalidate(Object key, Object aCallbackArgument) throws EntryNotFoundException;
 
   /** Destroys the entry with the specified key. Destroy removes
    * not only the value but also the key and entry from this region.
@@ -930,9 +912,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheListener#afterDestroy
    * @see CacheWriter#beforeDestroy
    */
-  public V destroy(Object key)
-  throws TimeoutException, EntryNotFoundException, CacheWriterException;
-
+  public V destroy(Object key) throws TimeoutException, EntryNotFoundException, CacheWriterException;
 
   /** Destroys the entry with the specified key, and provides a user-defined
    * parameter object to any <code>CacheWriter</code> invoked in the process.
@@ -966,8 +946,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see CacheListener#afterDestroy
    * @see CacheWriter#beforeDestroy
    */
-  public V destroy(Object key, Object aCallbackArgument)
-  throws TimeoutException, EntryNotFoundException, CacheWriterException;
+  public V destroy(Object key, Object aCallbackArgument) throws TimeoutException, EntryNotFoundException, CacheWriterException;
 
   /** Destroys the value with the specified key in the local cache only,
    * No <code>CacheWriter</code> is
@@ -1027,7 +1006,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    */
   @Deprecated
   public Set<K> keys();
-
 
   /** Returns a set of keys in the region.
    *
@@ -1089,7 +1067,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see Region.Entry
    */
   @Deprecated
-  public Set<Region.Entry<?,?>> entries(boolean recursive);
+  public Set<Region.Entry<?, ?>> entries(boolean recursive);
 
   /** Returns the <code>Set</code> of <code>Region.Entry</code> objects in this region.
    * If the recursive parameter is set to true, this call will
@@ -1113,7 +1091,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @return a Set of all the cached objects
    * @see Region.Entry
    */
-  public Set<Region.Entry<?,?>> entrySet(boolean recursive);
+  public Set<Region.Entry<?, ?>> entrySet(boolean recursive);
 
   /** Returns the <code>Cache</code> associated with this region.
    *  <p>Does not throw a <code>CacheClosedException</code> if the Cache is closed.
@@ -1129,7 +1107,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @since GemFire 6.5
    */
   public RegionService getRegionService();
-  
+
   /**
    * Returns the application-defined object associated with this region.
    * GemFire does not use this object for any purpose.
@@ -1172,7 +1150,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @return true if there is an entry in this region for the specified key
    */
   public boolean containsKey(Object key);
-
 
   /** For {@link Scope#GLOBAL} regions, gets a <em>distributed</em>
    * lock on this whole region. This region lock
@@ -1284,9 +1261,8 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    *
    * @since GemFire 4.0
    */
-  public boolean existsValue(String queryPredicate)
-  throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-         QueryInvocationTargetException;
+  public boolean existsValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
+
   /**
    * Filters the values of this region using the <code>queryPredicate</code>.
    * The queryPredicate should follow the syntax of query WHERE clause.
@@ -1314,9 +1290,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    *
    * @since GemFire 4.0
    */
-  public <E> SelectResults<E> query(String queryPredicate)
-  throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-         QueryInvocationTargetException;
+  public <E> SelectResults<E> query(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * Selects the single value in this <code>Region</code> that matches
@@ -1342,9 +1316,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see QueryService
    * @since GemFire 4.0
    */
-  public Object selectValue(String queryPredicate)
-  throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-         QueryInvocationTargetException;
+  public Object selectValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * Asks the region to start writing to a new oplog (if persistence/overflow
@@ -1361,7 +1333,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    */
   @Deprecated
   public void forceRolling();
-  
+
   /**
    * Specifies this member to become the grantor for this region's lock
    * service.  The grantor will be the lock authority which is responsible
@@ -1404,7 +1376,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    */
   public void localClear();
 
-////// Map API's ////
+  ////// Map API's ////
   /**
    * Removes all entries from this region. Clear will be distributed to other caches if the scope
    * is not <code>Scope.LOCAL</code>.
@@ -1451,7 +1423,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @since GemFire 5.0
    * @see java.util.Map#entrySet()
    */
-  public Set<Map.Entry<K,V>> entrySet(); //@todo darrel: should be Region.Entry
+  public Set<Map.Entry<K, V>> entrySet(); //@todo darrel: should be Region.Entry
 
   /**
    * Returns true if this region contains no entries.
@@ -1501,6 +1473,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see Region#destroy(Object)
    */
   public void removeAll(Collection<? extends K> keys);
+
   /**
    * Removes all of the entries for the specified keys from this region.
    * The effect of this call is equivalent to that of calling {@link #destroy(Object, Object)} on
@@ -1515,7 +1488,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see Region#destroy(Object, Object)
    */
   public void removeAll(Collection<? extends K> keys, Object aCallbackArgument);
-  
+
   /**
    * Gets values for all the keys in the input Collection.
    * If a given key does not exist in the region then that key's value in the
@@ -1530,6 +1503,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @since GemFire 5.7
    */
   public Map<K, V> getAll(Collection<?> keys);
+
   /**
    * Gets and returns values for all the keys in the input Collection.
    * If a given key does not exist in the region then that key's value in the
@@ -1549,7 +1523,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @since GemFire 8.1
    */
   public <T extends K> Map<T, V> getAll(Collection<T> keys, Object aCallbackArgument);
-
 
   /**
    * Removes the entry with the specified key. The operation removes
@@ -1600,6 +1573,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @return int the number of entries present in this region
    */
   public int size();
+
   /**
    *
    * Compares the specified object with this region for equality.
@@ -1613,6 +1587,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @see Object#equals
    */
   public boolean equals(Object other);
+
   /**
    * Returns the hash code value for this region.  The hash code of a region is
    * based on identity and uses {@link Object#hashCode}.
@@ -1795,6 +1770,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @since GemFire 4.2.3
    */
   public void unregisterInterestRegex(String regex);
+
   /**
    * Returns the list of keys on which this client is interested and will be
    * notified of changes. This method is currently supported only on clients
@@ -1806,7 +1782,6 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @since GemFire 4.2
    */
   public List<K> getInterestList();
-
 
   /**
    * Sends a request to the CacheServer to register interest in a key for
@@ -1846,7 +1821,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @throws UnsupportedOperationException if the region is a replicate with distributed scope.
    */
   public void registerInterest(K key, boolean isDurable);
-  
+
   /**
    * Sends a request to the CacheServer to register interest in a key for
    * this client. Updates to this key by other clients will be pushed to
@@ -1934,8 +1909,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    *
    * @since GemFire 6.0.3
    */
-  public void registerInterest(K key, InterestResultPolicy policy,
-      boolean isDurable, boolean receiveValues);
+  public void registerInterest(K key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues);
 
   /**
    * Sends a request to the CacheServer to register interest in a key for
@@ -1981,7 +1955,7 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    * @since GemFire 5.5
    */
   public void registerInterest(K key, InterestResultPolicy policy, boolean isDurable);
-  
+
   /**
    * Sends a request to the CacheServer to register interest in a regular
    * expression pattern for this client. Updates to any keys of type {@link String}
@@ -2048,9 +2022,8 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    *
    * @since GemFire 6.0.3
    */
-  public void registerInterestRegex(String regex, boolean isDurable,
-      boolean receiveValues);
-  
+  public void registerInterestRegex(String regex, boolean isDurable, boolean receiveValues);
+
   /**
    * Sends a request to the CacheServer to register interest in a regular
    * expression pattern for this client. Updates to any keys of type {@link String}
@@ -2127,9 +2100,8 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
    *
    * @since GemFire 6.0.3
    */
-  public void registerInterestRegex(String regex, InterestResultPolicy policy,
-      boolean isDurable, boolean receiveValues);
-  
+  public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues);
+
   /**
    * Returns the list of regular expresssions on which this client is interested
    * and will be notified of changes. This method is currently supported only on
@@ -2149,9 +2121,9 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
   *
   * @since GemFire 5.0.2
   */
- public Set<K> keySetOnServer();
+  public Set<K> keySetOnServer();
 
- /** Returns whether the specified key currently exists in this region on the
+  /** Returns whether the specified key currently exists in this region on the
   * server.
   *
   * @param key the key to check for an existing entry
@@ -2161,9 +2133,9 @@ public interface Region<K,V>  extends ConcurrentMap<K, V> {
   *
   * @since GemFire 5.0.2
   */
-public boolean containsKeyOnServer(Object key);
+  public boolean containsKeyOnServer(Object key);
 
- /**
+  /**
   * If the specified key is not already associated
   * with a value, associate it with the given value.
   * This is equivalent to
@@ -2201,9 +2173,9 @@ public boolean containsKeyOnServer(Object key);
    * @since GemFire 6.5
   *
   */
- V putIfAbsent(K key, V value);
+  V putIfAbsent(K key, V value);
 
- /**
+  /**
   * Removes the entry for a key only if currently mapped to a given value.
   * This is equivalent to
   * <pre>
@@ -2234,9 +2206,9 @@ public boolean containsKeyOnServer(Object key);
    * @throws LowMemoryException if a low memory condition is detected.
    * @since GemFire 6.5
   */
- boolean remove(Object key, Object value);
+  boolean remove(Object key, Object value);
 
- /**
+  /**
   * Replaces the entry for a key only if currently mapped to a given value.
   * This is equivalent to
   * <pre>
@@ -2270,9 +2242,9 @@ public boolean containsKeyOnServer(Object key);
    * @throws LowMemoryException if a low memory condition is detected.
    * @since GemFire 6.5
   */
- boolean replace(K key, V oldValue, V newValue);
+  boolean replace(K key, V oldValue, V newValue);
 
- /**
+  /**
   * Replaces the entry for a key only if currently mapped to some value.
   * This is equivalent to
   * <pre>
@@ -2306,7 +2278,7 @@ public boolean containsKeyOnServer(Object key);
    * @throws LowMemoryException if a low memory condition is detected.
    * @since GemFire 6.5
   */
- V replace(K key, V value);
+  V replace(K key, V value);
 
   /** A key-value pair containing the cached data in a region. This object's
    * operations (except for{Entry#setValue()}), are not distributed, do not acquire any locks, and do not affect
@@ -2317,7 +2289,7 @@ public boolean containsKeyOnServer(Object key);
    * invocation, or an <code>EntryDestroyedException</code> if the entry has been
    * destroyed.
    */
-  public interface Entry<K, V> extends Map.Entry<K,V>{
+  public interface Entry<K, V> extends Map.Entry<K, V> {
 
     /** Returns the key for this entry.
      *
@@ -2336,7 +2308,7 @@ public boolean containsKeyOnServer(Object key);
      *
      * @return the Region that contains this entry
      */
-    public Region<K,V> getRegion();
+    public Region<K, V> getRegion();
 
     /** This method checks to see if the entry is in the in-process cache, or
      * is in another process.  Only Regions with {@link DataPolicy#PARTITION} may return

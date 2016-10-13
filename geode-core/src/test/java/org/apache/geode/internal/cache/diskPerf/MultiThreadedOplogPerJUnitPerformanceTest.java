@@ -32,11 +32,11 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 @Category(IntegrationTest.class)
-public class MultiThreadedOplogPerJUnitPerformanceTest
-{
+public class MultiThreadedOplogPerJUnitPerformanceTest {
 
-  @Rule public TestName name = new TestName();
-  
+  @Rule
+  public TestName name = new TestName();
+
   protected Region region;
 
   private static File[] dirs;
@@ -81,8 +81,7 @@ public class MultiThreadedOplogPerJUnitPerformanceTest
    * cleans all the directory of all the files present in them
    *  
    */
-  protected static void deleteFiles()
-  {
+  protected static void deleteFiles() {
     for (int i = 0; i < 4; i++) {
       File[] files = dirs[i].listFiles();
       if (files != null) {
@@ -94,8 +93,7 @@ public class MultiThreadedOplogPerJUnitPerformanceTest
   }
 
   @Test
-  public void testPerf()
-  {
+  public void testPerf() {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
@@ -104,27 +102,23 @@ public class MultiThreadedOplogPerJUnitPerformanceTest
     Cache cache = null;
     try {
       cache = CacheFactory.create(ds);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     AttributesFactory factory = new AttributesFactory();
     factory.setPersistBackup(false);
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(
-        10, EvictionAction.OVERFLOW_TO_DISK));
-//    Properties props1 = new Properties();
+    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(10, EvictionAction.OVERFLOW_TO_DISK));
+    //    Properties props1 = new Properties();
     factory.setDiskSynchronous(true);
     dsf.setAutoCompact(false);
-    ((DiskStoreFactoryImpl)dsf).setMaxOplogSizeInBytes(200000000);
+    ((DiskStoreFactoryImpl) dsf).setMaxOplogSizeInBytes(200000000);
     dsf.setDiskDirs(dirs);
     factory.setDiskStoreName(dsf.create("perfTestRegion").getName());
     try {
-      region = cache.createVMRegion("perfTestRegion", factory
-          .createRegionAttributes());
-    }
-    catch (Exception e) {
+      region = cache.createVMRegion("perfTestRegion", factory.createRegionAttributes());
+    } catch (Exception e) {
       e.printStackTrace();
     }
 
@@ -139,33 +133,28 @@ public class MultiThreadedOplogPerJUnitPerformanceTest
       ThreadUtils.join(threads[i], 30 * 1000);
     }
 
-    long totalPuts = ((long)numberOfIterations * numberOfKeysPerThread * numberOfThreads);
+    long totalPuts = ((long) numberOfIterations * numberOfKeysPerThread * numberOfThreads);
 
     System.out.println(" total puts is " + totalPuts);
     System.out.println(" total time in milliseconds is " + totalTime);
-    System.out.println(" writes per second is "
-        + (totalPuts * 1000 * numberOfThreads) / (totalTime));
+    System.out.println(" writes per second is " + (totalPuts * 1000 * numberOfThreads) / (totalTime));
     region.destroyRegion();
   }
 
-  synchronized void increaseCounter()
-  {
+  synchronized void increaseCounter() {
     counter++;
   }
 
-  synchronized void increaseTotalTime(long time)
-  {
+  synchronized void increaseTotalTime(long time) {
     totalTime = (totalTime + time);
   }
 
-  synchronized int getStartPoint()
-  {
+  synchronized int getStartPoint() {
     startPoint++;
     return startPoint;
   }
 
-  class Writer implements Runnable
-  {
+  class Writer implements Runnable {
     private int num = 0;
 
     private byte[] bytes;
@@ -178,8 +167,7 @@ public class MultiThreadedOplogPerJUnitPerformanceTest
 
     }
 
-    public void run()
-    {
+    public void run() {
       long startTime, endTime;
       startTime = System.currentTimeMillis();
       int startPoint = getStartPoint();

@@ -93,8 +93,7 @@ public abstract class AbstractSessionCache implements SessionCache {
   }
 
   protected void createStatistics() {
-    this.statistics = new DeltaSessionStatistics(getCache().getDistributedSystem(),
-        getSessionManager().getStatisticsName());
+    this.statistics = new DeltaSessionStatistics(getCache().getDistributedSystem(), getSessionManager().getStatisticsName());
   }
 
   protected RegionConfiguration createRegionConfiguration() {

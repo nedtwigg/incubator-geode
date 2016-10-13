@@ -40,7 +40,7 @@ import java.util.Map;
  * @since GemFire 6.0
  * 
  */
-public class MemberMappedArgument implements Serializable{
+public class MemberMappedArgument implements Serializable {
 
   private static final long serialVersionUID = -6465867775653599576L;
 
@@ -48,8 +48,7 @@ public class MemberMappedArgument implements Serializable{
 
   private Map<String, Object> memberToArgMap;
 
-  public MemberMappedArgument(Object defaultArgument,
-      Map<String, Object> memberToArgMap) {
+  public MemberMappedArgument(Object defaultArgument, Map<String, Object> memberToArgMap) {
     this.defaultArgument = defaultArgument;
     this.memberToArgMap = memberToArgMap;
   }
@@ -57,15 +56,15 @@ public class MemberMappedArgument implements Serializable{
   public Object getArgumentsForMember(String memberId) {
     if (memberToArgMap.containsKey(memberId)) {
       return memberToArgMap.get(memberId);
-    }
-    else {
+    } else {
       return this.defaultArgument;
     }
   }
-  
+
   public Object getDefaultArgument() {
     return this.defaultArgument;
   }
+
   //TODO:Asif: Not good to return the refernec of the mapping. Should we return a copy?
   public Map<String, Object> getMemberSpecificArgumentsMap() {
     return this.memberToArgMap;

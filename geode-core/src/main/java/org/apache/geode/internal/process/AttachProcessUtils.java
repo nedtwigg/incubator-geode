@@ -26,9 +26,10 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
  * @since GemFire 8.0
  */
 final class AttachProcessUtils implements InternalProcessUtils {
-  
-  AttachProcessUtils() {}
-  
+
+  AttachProcessUtils() {
+  }
+
   @Override
   public boolean isProcessAlive(final int pid) {
     for (VirtualMachineDescriptor vm : VirtualMachine.list()) {

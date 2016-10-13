@@ -48,13 +48,13 @@ public interface HealthMonitor extends Service {
    * @param initiateRemoval if the member should be removed if it is not available
    */
   public boolean checkIfAvailable(DistributedMember mbr, String reason, boolean initiateRemoval);
-  
+
   /**
    * Invoked by the Manager, this notifies the HealthMonitor that a
    * ShutdownMessage has been received from the given member
    */
   public void memberShutdown(DistributedMember mbr, String reason);
-  
+
   /**
    * Returns the failure detection port for this member, or -1 if
    * there is no such port

@@ -21,15 +21,16 @@ package org.apache.geode.internal.cache;
  * was in progress, which would result in the ongoing entry operation to abort
  * @since GemFire 5.1
  */
-public class RegionClearedException extends Exception  {
-private static final long serialVersionUID = 1266503771775907997L;
+public class RegionClearedException extends Exception {
+  private static final long serialVersionUID = 1266503771775907997L;
+
   /**
    * Constructs a new <code>RegionClearedException</code>.
    */
   public RegionClearedException() {
     super();
   }
-  
+
   /**
    * Constructs a new <code>RegionClearedException</code> with a message string.
    *
@@ -38,7 +39,7 @@ private static final long serialVersionUID = 1266503771775907997L;
   public RegionClearedException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs a new <code>RegionClearedException</code> with a message string
    * and a cause.
@@ -49,7 +50,7 @@ private static final long serialVersionUID = 1266503771775907997L;
   public RegionClearedException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs a new <code>RegionClearedException</code> with a cause.
    *

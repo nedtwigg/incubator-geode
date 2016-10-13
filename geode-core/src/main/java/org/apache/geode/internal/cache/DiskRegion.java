@@ -55,83 +55,64 @@ public class DiskRegion extends AbstractDiskRegion {
 
   /** True if overflow is enabled on this region */
   final boolean overflowEnabled;
-  
+
   /** boolean to determine if region is closed* */
   private volatile boolean isRegionClosed = false;
 
   private final boolean isSync;
-  
+
   private final String name;
 
   private final CancelCriterion cancel;
 
   private final DiskExceptionHandler exceptionHandler;
-  
+
   // changed rwLock to lock to fix bug 41390
   // private final StoppableReentrantLock lock;
   private final StoppableReentrantReadWriteLock rwLock;
-  
+
   /**
    * Creates a new <code>DiskRegion</code> that access disk on behalf of the
    * given region.
-   */ 
-  protected DiskRegion(DiskStoreImpl ds,
-                       String name,
-                       boolean isBucket,
-                       boolean isPersistBackup,
-                       boolean overflowEnabled,
-                       boolean isSynchronous,
-                       DiskRegionStats stats,
-                       CancelCriterion cancel,
-                       DiskExceptionHandler exceptionHandler,
-                       RegionAttributes ra, EnumSet<DiskRegionFlag> flags,
-                       String partitionName, int startingBucketId, 
-                       String compressorClassName,  boolean offHeap) {
+   */
+  protected DiskRegion(DiskStoreImpl ds, String name, boolean isBucket, boolean isPersistBackup, boolean overflowEnabled, boolean isSynchronous, DiskRegionStats stats, CancelCriterion cancel, DiskExceptionHandler exceptionHandler, RegionAttributes ra, EnumSet<DiskRegionFlag> flags, String partitionName, int startingBucketId, String compressorClassName, boolean offHeap) {
     super(ds, name);
-    if(this.getPartitionName() != null){
+    if (this.getPartitionName() != null) {
       // I think this code is saying to prefer the recovered partitionName and startingBucketId.
       // Only use the passed in values of these if we have not already recovered this region from disk.
-      if(this.getStartingBucketId() != startingBucketId || !this.getPartitionName().equals(partitionName)){
+      if (this.getStartingBucketId() != startingBucketId || !this.getPartitionName().equals(partitionName)) {
         partitionName = this.getPartitionName();
         startingBucketId = this.getStartingBucketId();
       }
     }
-    
+
     if (isRecreated() && isBackup() && !isPersistBackup) {
       // We recovered a persistent region from disk and tried
       // to create an overflow only region of the same name on the same disk store.
-      throw new IllegalStateException("The region \""
-                                      + name
-                                      + "\" has been persisted to disk so it can not be recreated on the same disk store without persistence. Either destroy the persistent region, recreate it as overflow and persistent, or create the overflow only region on a different disk store.");
+      throw new IllegalStateException("The region \"" + name + "\" has been persisted to disk so it can not be recreated on the same disk store without persistence. Either destroy the persistent region, recreate it as overflow and persistent, or create the overflow only region on a different disk store.");
     }
     if (isRecreated() && isBucket != isBucket()) {
       if (isBucket()) {
-        throw new IllegalStateException("The region \""
-                                        + name
-                                        + "\" has been persisted to disk as a partition region bucket but is not being recreated as a bucket. This should not be possible.");
+        throw new IllegalStateException("The region \"" + name + "\" has been persisted to disk as a partition region bucket but is not being recreated as a bucket. This should not be possible.");
       } else {
-        throw new IllegalStateException("The region \""
-                                        + name
-                                        + "\" has not been persisted to disk as a partition region bucket but is now being recreated as a bucket. This should not be possible.");
+        throw new IllegalStateException("The region \"" + name + "\" has not been persisted to disk as a partition region bucket but is now being recreated as a bucket. This should not be possible.");
       }
     }
-    if(isRecreated() && !flags.equals(getFlags())) {
-      throw new IllegalStateException("The region \""
-          + name
-          + "\" has changed it's concurrency enabled setting. Old setting " + getFlags() + ", new setting " + flags);
+    if (isRecreated() && !flags.equals(getFlags())) {
+      throw new IllegalStateException("The region \"" + name + "\" has changed it's concurrency enabled setting. Old setting " + getFlags() + ", new setting " + flags);
     }
-    
+
     setBackup(isPersistBackup);
-//    EvictionAttributes ea = region.getAttributes().getEvictionAttributes();
-//    this.overflowEnabled = ea != null && ea.getAction().isOverflowToDisk();
+    //    EvictionAttributes ea = region.getAttributes().getEvictionAttributes();
+    //    this.overflowEnabled = ea != null && ea.getAction().isOverflowToDisk();
     this.overflowEnabled = overflowEnabled;
-//    if (region instanceof BucketRegion) {
-//      this.stats = internalRegionArgs.getPartitionedRegion()
-//          .getDiskRegionStats();
-//    }
-//    else {
-//      this.stats = new DiskRegionStats(factory, name);
-//    }
+    //    if (region instanceof BucketRegion) {
+    //      this.stats = internalRegionArgs.getPartitionedRegion()
+    //          .getDiskRegionStats();
+    //    }
+    //    else {
+    //      this.stats = new DiskRegionStats(factory, name);
+    //    }
     this.stats = stats;
 
     this.name = name;
@@ -145,85 +126,60 @@ public class DiskRegion extends AbstractDiskRegion {
     this.rwLock = new StoppableReentrantReadWriteLock(ds.getCancelCriterion());
 
     if (ra != null) {
-      byte raLruAlgorithm = (byte)(ra.getEvictionAttributes().getAlgorithm().getValue());
-      byte raLruAction = (byte)(ra.getEvictionAttributes().getAction().getValue());
+      byte raLruAlgorithm = (byte) (ra.getEvictionAttributes().getAlgorithm().getValue());
+      byte raLruAction = (byte) (ra.getEvictionAttributes().getAction().getValue());
       int raLruLimit = 0;
       if (!ra.getEvictionAttributes().getAlgorithm().isLRUHeap()) {
         raLruLimit = ra.getEvictionAttributes().getMaximum();
       }
-//       GemFireCache.getInstance().getLogger()
-//         .info("DEBUG isRecreated=" + isRecreated()
-//               + " raLruLimit=" + raLruLimit
-//               + " getLruLimit()=" + getLruLimit(),
-//               new RuntimeException("STACK"));
+      //       GemFireCache.getInstance().getLogger()
+      //         .info("DEBUG isRecreated=" + isRecreated()
+      //               + " raLruLimit=" + raLruLimit
+      //               + " getLruLimit()=" + getLruLimit(),
+      //               new RuntimeException("STACK"));
       if (isRecreated()) {
         // check to see if recovered config differs from current config
-        if (raLruAlgorithm != getLruAlgorithm()
-            || raLruAction != getLruAction()
-            || raLruLimit != getLruLimit()
-            || ra.getConcurrencyLevel() != getConcurrencyLevel()
-            || ra.getInitialCapacity() != getInitialCapacity()
-            || ra.getLoadFactor() != getLoadFactor()
-            || ra.getStatisticsEnabled() != getStatisticsEnabled()
-            || offHeap != getOffHeap()
-            || !hasSameCompressor(ra)) { 
+        if (raLruAlgorithm != getLruAlgorithm() || raLruAction != getLruAction() || raLruLimit != getLruLimit() || ra.getConcurrencyLevel() != getConcurrencyLevel() || ra.getInitialCapacity() != getInitialCapacity() || ra.getLoadFactor() != getLoadFactor() || ra.getStatisticsEnabled() != getStatisticsEnabled() || offHeap != getOffHeap() || !hasSameCompressor(ra)) {
           if (getRecoveredEntryMap() != null) {
             getRecoveredEntryMap().lruCloseStats();
           }
-          
+
           setEntriesMapIncompatible(true);
           setConfigChanged(true);
         }
       }
-      setConfig(raLruAlgorithm, raLruAction, raLruLimit,
-                ra.getConcurrencyLevel(),
-                ra.getInitialCapacity(),
-                ra.getLoadFactor(),
-                ra.getStatisticsEnabled(),
-                isBucket, flags, partitionName, startingBucketId,
-                compressorClassName, offHeap);
+      setConfig(raLruAlgorithm, raLruAction, raLruLimit, ra.getConcurrencyLevel(), ra.getInitialCapacity(), ra.getLoadFactor(), ra.getStatisticsEnabled(), isBucket, flags, partitionName, startingBucketId, compressorClassName, offHeap);
     }
-    
-    if(!isBucket) {
+
+    if (!isBucket) {
       //Bucket should create data storage only when the actual bucket
       //is created.
       createDataStorage();
     }
   }
 
-  static DiskRegion create(DiskStoreImpl dsi, String name,
-                           boolean isBucket, boolean isPersistBackup,
-                           boolean overflowEnabled, boolean isSynchronous,
-                           DiskRegionStats stats, CancelCriterion cancel,
-                           DiskExceptionHandler exceptionHandler,
-                           RegionAttributes ra, EnumSet<DiskRegionFlag> flags,
-                           String partitionName, int startingBucketId,
-                           Compressor compressor, boolean offHeap) {
-    return dsi.getDiskInitFile().createDiskRegion(dsi, name, isBucket, isPersistBackup,
-                                                  overflowEnabled, isSynchronous,
-                                                  stats, cancel, exceptionHandler, ra, flags,
-                                                  partitionName, startingBucketId,
-                                                  compressor, offHeap);
+  static DiskRegion create(DiskStoreImpl dsi, String name, boolean isBucket, boolean isPersistBackup, boolean overflowEnabled, boolean isSynchronous, DiskRegionStats stats, CancelCriterion cancel, DiskExceptionHandler exceptionHandler, RegionAttributes ra, EnumSet<DiskRegionFlag> flags, String partitionName, int startingBucketId, Compressor compressor, boolean offHeap) {
+    return dsi.getDiskInitFile().createDiskRegion(dsi, name, isBucket, isPersistBackup, overflowEnabled, isSynchronous, stats, cancel, exceptionHandler, ra, flags, partitionName, startingBucketId, compressor, offHeap);
   }
 
   public CancelCriterion getCancelCriterion() {
     return cancel;
   }
-  
+
   public DiskExceptionHandler getExceptionHandler() {
     return exceptionHandler;
   }
 
   //////////////////////  Instance Methods  //////////////////////
 
-  private boolean hasSameCompressor(final RegionAttributes<?,?> ra) {
+  private boolean hasSameCompressor(final RegionAttributes<?, ?> ra) {
     Compressor raCompressor = ra.getCompressor();
     if (raCompressor == null) {
       return Strings.isNullOrEmpty(getCompressorClassName()) ? true : false;
     }
     return raCompressor.getClass().getName().equals(getCompressorClassName());
   }
-  
+
   protected void register() {
     getDiskStore().addDiskRegion(this);
   }
@@ -266,6 +222,7 @@ public class DiskRegion extends AbstractDiskRegion {
   final void initializeOwner(LocalRegion drs) {
     getDiskStore().initializeOwner(drs);
   }
+
   final void finishInitializeOwner(LocalRegion drs, GIIStatus giiStatus) {
     if (isReadyForRecovery()) {
       //this.scheduleCompaction();
@@ -273,65 +230,65 @@ public class DiskRegion extends AbstractDiskRegion {
         destroyRemainingRecoveredEntries(drs);
       } else if (GIIStatus.didDeltaGII(giiStatus)) {
         // TODO: not sure if we should destroy old tombstones for deltaGII
-      } else if(getRegionVersionVector() != null){
+      } else if (getRegionVersionVector() != null) {
         destroyOldTomstones(drs);
       }
       releaseRecoveryData();
     }
     if (isBackup() && !this.isRegionClosed() && !this.getRVVTrusted()) {
-      if(!GIIStatus.didGII(giiStatus)) {
+      if (!GIIStatus.didGII(giiStatus)) {
         //If we did not do a GII, but we are still recovering using
         //an untrusted RVV, that means that the RVV may not reflect
         //what is in the region. We need to fix the RVV before
         //we mark the RVV as trusted and allow the region to recover.
         drs.repairRVV();
       }
-      
+
       // since rvvTrust will be true, so persist disk region rvv directly. It does not care inmemory rvv
       if (this.isSync()) {
         writeRVV(null, true);
-        writeRVVGC((LocalRegion)drs);
+        writeRVVGC((LocalRegion) drs);
       } else {
         // put RVV and RVVGC into asyncQueue
-        this.getDiskStore().addDiskRegionToQueue((LocalRegion)drs);
+        this.getDiskStore().addDiskRegionToQueue((LocalRegion) drs);
       }
     }
   }
 
   private void destroyOldTomstones(final DiskRecoveryStore drs) {
- // iterate over all region entries in drs
+    // iterate over all region entries in drs
     drs.foreachRegionEntry(new RegionEntryCallback() {
-        public void handleRegionEntry(RegionEntry re) {
-          DiskEntry de = (DiskEntry)re;
-          synchronized (de) {
-            DiskId id = de.getDiskId();
-            if (id != null && re.isTombstone()) {
-              VersionStamp stamp = re.getVersionStamp();
-              if(getRegionVersionVector().isTombstoneTooOld(stamp.getMemberID(), stamp.getRegionVersion())) {
-                drs.destroyRecoveredEntry(de.getKey());
-              }
+      public void handleRegionEntry(RegionEntry re) {
+        DiskEntry de = (DiskEntry) re;
+        synchronized (de) {
+          DiskId id = de.getDiskId();
+          if (id != null && re.isTombstone()) {
+            VersionStamp stamp = re.getVersionStamp();
+            if (getRegionVersionVector().isTombstoneTooOld(stamp.getMemberID(), stamp.getRegionVersion())) {
+              drs.destroyRecoveredEntry(de.getKey());
             }
           }
         }
-      });
-    
+      }
+    });
+
   }
 
   private void destroyRemainingRecoveredEntries(final DiskRecoveryStore drs) {
     // iterate over all region entries in drs
     drs.foreachRegionEntry(new RegionEntryCallback() {
-        public void handleRegionEntry(RegionEntry re) {
-          DiskEntry de = (DiskEntry)re;
-          synchronized (de) {
-            DiskId id = de.getDiskId();
-            if (id != null) {
-              if (EntryBits.isRecoveredFromDisk(id.getUserBits())) {
-                drs.destroyRecoveredEntry(de.getKey());
-              }
+      public void handleRegionEntry(RegionEntry re) {
+        DiskEntry de = (DiskEntry) re;
+        synchronized (de) {
+          DiskId id = de.getDiskId();
+          if (id != null) {
+            if (EntryBits.isRecoveredFromDisk(id.getUserBits())) {
+              drs.destroyRecoveredEntry(de.getKey());
             }
           }
         }
-      });
+      }
+    });
   }
 
   /**
@@ -342,22 +299,22 @@ public class DiskRegion extends AbstractDiskRegion {
   public void resetRecoveredEntries(final DiskRecoveryStore drs) {
     // iterate over all region entries in drs
     drs.foreachRegionEntry(new RegionEntryCallback() {
-        public void handleRegionEntry(RegionEntry re) {
-          DiskEntry de = (DiskEntry)re;
-          synchronized (de) {
-            DiskId id = de.getDiskId();
-            if (id != null) {
-              id.setRecoveredFromDisk(true);
-            }
+      public void handleRegionEntry(RegionEntry re) {
+        DiskEntry de = (DiskEntry) re;
+        synchronized (de) {
+          DiskId id = de.getDiskId();
+          if (id != null) {
+            id.setRecoveredFromDisk(true);
           }
         }
-      });
+      }
+    });
   }
 
   public final boolean isOverflowEnabled() {
     return this.overflowEnabled;
   }
-  
+
   /**
    * Stores a key/value pair from a region entry on disk. Updates all of the
    * necessary {@linkplain DiskRegionStats statistics}and invokes
@@ -372,12 +329,10 @@ public class DiskRegion extends AbstractDiskRegion {
    * @throws IllegalArgumentException
    *         If <code>id</code> is less than zero
    */
-  final void put(DiskEntry entry, LocalRegion region, ValueWrapper value, boolean async)
-      throws  RegionClearedException
-  {
+  final void put(DiskEntry entry, LocalRegion region, ValueWrapper value, boolean async) throws RegionClearedException {
     getDiskStore().put(region, entry, value, async);
   }
-    
+
   /**
    * Returns the value of the key/value pair with the given diskId. Updates all
    * of the necessary {@linkplain DiskRegionStats statistics}
@@ -398,8 +353,7 @@ public class DiskRegion extends AbstractDiskRegion {
    *          DiskId object for the entry
    * @return value of the entry
    */
-  final BytesAndBits getBytesAndBitsWithoutLock(DiskId id, boolean faultIn,
-                                                boolean bitOnly) {
+  final BytesAndBits getBytesAndBitsWithoutLock(DiskId id, boolean faultIn, boolean bitOnly) {
     return getDiskStore().getBytesAndBitsWithoutLock(this, id, faultIn, bitOnly);
   }
 
@@ -408,8 +362,8 @@ public class DiskRegion extends AbstractDiskRegion {
    */
   final BytesAndBits getBytesAndBits(DiskId id) {
     return getBytesAndBits(id, true);
-   }
-  
+  }
+
   final BytesAndBits getBytesAndBits(DiskId id, boolean faultingIn) {
     return getDiskStore().getBytesAndBits(this, id, faultingIn);
   }
@@ -453,6 +407,7 @@ public class DiskRegion extends AbstractDiskRegion {
   final void remove(LocalRegion region, DiskEntry entry) throws RegionClearedException {
     getDiskStore().remove(region, entry, false, false);
   }
+
   final void remove(LocalRegion region, DiskEntry entry, boolean async, boolean isClear) throws RegionClearedException {
     getDiskStore().remove(region, entry, async, isClear);
   }
@@ -462,11 +417,11 @@ public class DiskRegion extends AbstractDiskRegion {
   public void forceRolling() {
     getDiskStore().forceRolling(this);
   }
-  
+
   public boolean forceCompaction() {
     return getDiskStore().forceCompaction(this);
   }
-  
+
   /**
    * Get serialized form of data off the disk
    * @param id
@@ -482,6 +437,7 @@ public class DiskRegion extends AbstractDiskRegion {
   public void scheduleAsyncWrite(AsyncDiskEntry ade) {
     getDiskStore().scheduleAsyncWrite(ade);
   }
+
   /**
    * @since GemFire prPersistSprint1
    */
@@ -492,7 +448,7 @@ public class DiskRegion extends AbstractDiskRegion {
   public boolean testWaitForAsyncFlusherThread(int waitMs) {
     return getDiskStore().testWaitForAsyncFlusherThread(waitMs);
   }
-  
+
   /**
    * force a flush but do it async (don't wait for the flush to complete).
    */
@@ -511,22 +467,22 @@ public class DiskRegion extends AbstractDiskRegion {
    */
   private void statsClose(LocalRegion region) {
     if (region instanceof BucketRegion) {
-//       region.getGemFireCache().getLogger().info("DEBUG statsClose br= " + region.getFullPath()
-//                                                + " inVm=" + owner.getNumEntriesInVM()
-//                                                + " onDisk=" + owner.getNumOverflowOnDisk());
+      //       region.getGemFireCache().getLogger().info("DEBUG statsClose br= " + region.getFullPath()
+      //                                                + " inVm=" + owner.getNumEntriesInVM()
+      //                                                + " onDisk=" + owner.getNumOverflowOnDisk());
       statsClear(region);
     } else {
-//       region.getGemFireCache().getLogger().info("DEBUG statsClose r=" + region.getFullPath());
+      //       region.getGemFireCache().getLogger().info("DEBUG statsClose r=" + region.getFullPath());
       this.stats.close();
     }
   }
 
   void statsClear(LocalRegion region) {
     if (region instanceof BucketRegion) {
-      BucketRegion owner=(BucketRegion)region;
-      long curInVM = owner.getNumEntriesInVM()*-1;
-      long curOnDisk = owner.getNumOverflowOnDisk()*-1;
-      long curOnDiskBytes = owner.getNumOverflowBytesOnDisk()*-1;
+      BucketRegion owner = (BucketRegion) region;
+      long curInVM = owner.getNumEntriesInVM() * -1;
+      long curOnDisk = owner.getNumOverflowOnDisk() * -1;
+      long curOnDiskBytes = owner.getNumOverflowBytesOnDisk() * -1;
       incNumEntriesInVM(curInVM);
       incNumOverflowOnDisk(curOnDisk);
       incNumOverflowBytesOnDisk(curOnDiskBytes);
@@ -535,9 +491,9 @@ public class DiskRegion extends AbstractDiskRegion {
       owner.incNumOverflowBytesOnDisk(curOnDiskBytes);
     } else {
       // set them both to zero
-      incNumEntriesInVM(getNumEntriesInVM()*-1);
-      incNumOverflowOnDisk(getNumOverflowOnDisk()*-1);
-      incNumOverflowBytesOnDisk(getNumOverflowBytesOnDisk()*-1);
+      incNumEntriesInVM(getNumEntriesInVM() * -1);
+      incNumOverflowOnDisk(getNumOverflowOnDisk() * -1);
+      incNumOverflowBytesOnDisk(getNumOverflowBytesOnDisk() * -1);
     }
   }
 
@@ -547,13 +503,15 @@ public class DiskRegion extends AbstractDiskRegion {
    * @since GemFire prPersistSprint1
    */
   public boolean testIsRecoveredAndClear(RegionEntry re) {
-    DiskEntry de = (DiskEntry)re;
+    DiskEntry de = (DiskEntry) re;
     return testIsRecoveredAndClear(de.getDiskId());
   }
 
   public boolean testIsRecoveredAndClear(DiskId id) {
-    if (!isReadyForRecovery()) return false;
-    if (id == null) return false;
+    if (!isReadyForRecovery())
+      return false;
+    if (id == null)
+      return false;
     synchronized (id) {
       byte bits = id.getUserBits();
       if (EntryBits.isRecoveredFromDisk(bits)) {
@@ -565,27 +523,27 @@ public class DiskRegion extends AbstractDiskRegion {
     return false;
   }
 
-
   /**
    * returns the active child
    */
   final Oplog testHook_getChild() {
     return getDiskStore().persistentOplogs.getChild();
   }
-  
-  /** For Testing * */
-//   void addToOplogSet(long oplogID, File opFile, DirectoryHolder dirHolder) {
-//     getDiskStore().addToOplogSet(oplogID, opFile, dirHolder);
-//   }
 
-//   /** For Testing * */
-//   void setIsRecovering(boolean isRecovering) {
-//     this.isRecovering = isRecovering;
-//   }
+  /** For Testing * */
+  //   void addToOplogSet(long oplogID, File opFile, DirectoryHolder dirHolder) {
+  //     getDiskStore().addToOplogSet(oplogID, opFile, dirHolder);
+  //   }
+
+  //   /** For Testing * */
+  //   void setIsRecovering(boolean isRecovering) {
+  //     this.isRecovering = isRecovering;
+  //   }
 
   public void flushForTesting() {
     getDiskStore().flushForTesting();
   }
+
   public void pauseFlusherForTesting() {
     getDiskStore().pauseFlusherForTesting();
   }
@@ -602,7 +560,7 @@ public class DiskRegion extends AbstractDiskRegion {
   void clear(LocalRegion region, RegionVersionVector rvv) {
     getDiskStore().clear(region, this, rvv);
   }
-  
+
   /**
    * stops the compactor outside the write lock. Once stopped then it proceeds to
    * close the current * old oplogs
@@ -614,7 +572,7 @@ public class DiskRegion extends AbstractDiskRegion {
       statsClose(region);
     }
   }
-  
+
   /**
    * stops the compactor outside the write lock. Once stopped then it proceeds to
    * close the current * old oplogs
@@ -648,27 +606,28 @@ public class DiskRegion extends AbstractDiskRegion {
   public boolean didClearCountChange() {
     Integer i = childReference.get();
     boolean result = i != null && i.intValue() != this.clearCount.get();
-//     // now that we get a readLock it should not be possible for the lock to change
-//     assert !result;
+    //     // now that we get a readLock it should not be possible for the lock to change
+    //     assert !result;
     return result;
   }
-  
+
   void removeClearCountReference() {
-//     releaseReadLock();
+    //     releaseReadLock();
     // TODO: After Java 1.5 transition use .remove
     childReference.set(null);
   }
-  
+
   void setClearCountReference() {
-//     acquireReadLock();
+    //     acquireReadLock();
     if (LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER) {
       CacheObserverHolder.getInstance().beforeSettingDiskRef();
       childReference.set(Integer.valueOf(this.clearCount.get()));
       CacheObserverHolder.getInstance().afterSettingDiskRef();
-    }else{
+    } else {
       childReference.set(Integer.valueOf(this.clearCount.get()));
     }
   }
+
   /**
    * Note that this is no longer implemented by getting a write lock
    * but instead locks the same lock that acquireReadLock does.
@@ -677,6 +636,7 @@ public class DiskRegion extends AbstractDiskRegion {
     this.rwLock.writeLock().lock();
     // basicAcquireLock();
   }
+
   /**
    * Note that this is no longer implemented by getting a read lock
    * but instead locks the same lock that acquireWriteLock does.
@@ -685,21 +645,25 @@ public class DiskRegion extends AbstractDiskRegion {
     this.rwLock.writeLock().unlock();
     // this.lock.unlock();
   }
+
   public void acquireReadLock() {
     getDiskStore().acquireReadLock(this);
   }
+
   public void releaseReadLock() {
     getDiskStore().releaseReadLock(this);
   }
+
   void basicAcquireReadLock() {
     this.rwLock.readLock().lock();
     // basicAcquireLock();
   }
+
   void basicReleaseReadLock() {
     this.rwLock.readLock().unlock();
     // basicReleaseLock();
   }
-/*
+  /*
   private void basicAcquireLock() {
     this.lock.lock();
   }
@@ -708,114 +672,127 @@ public class DiskRegion extends AbstractDiskRegion {
     // ShutdownException
     this.lock.unlock();
   }
-*/
+  */
 
   boolean isCompactionPossible() {
     return getDiskStore().isCompactionPossible();
   }
+
   void cleanupFailedInitialization(LocalRegion region) {
-    if (isRecreated() 
-        && !this.wasAboutToDestroy()
-        && !this.wasAboutToDestroyDataStorage()) {
+    if (isRecreated() && !this.wasAboutToDestroy() && !this.wasAboutToDestroyDataStorage()) {
       close(region, isBucket());
     } else {
-      if(this.isBucket() && !this.wasAboutToDestroy()) {
+      if (this.isBucket() && !this.wasAboutToDestroy()) {
         //Fix for 48642
         //If this is a bucket, only destroy the data, if required.
         beginDestroyDataStorage();
       }
       endDestroy(region);
-    }  
+    }
   }
+
   void prepareForClose(LocalRegion region) {
     getDiskStore().prepareForClose(region, this);
   }
+
   public boolean isRegionClosed() {
     return this.isRegionClosed;
   }
+
   void setRegionClosed(boolean v) {
     this.isRegionClosed = v;
   }
-  
+
   // test hook
   public void forceIFCompaction() {
     getDiskStore().forceIFCompaction();
   }
 
   // unit test access
-  
+
   void addToBeCompacted(Oplog oplog) {
     getOplogSet().addToBeCompacted(oplog);
   }
+
   CompactableOplog[] getOplogToBeCompacted() {
     return getDiskStore().getOplogToBeCompacted();
   }
+
   Oplog removeOplog(long id) {
     return getOplogSet().removeOplog(id);
   }
+
   DirectoryHolder getNextDir() {
     return getOplogSet().getNextDir();
   }
+
   final long newOplogEntryId() {
     return getOplogSet().newOplogEntryId();
   }
+
   void setChild(Oplog oplog) {
     getOplogSet().setChild(oplog);
   }
+
   DirectoryHolder getInfoFileDir() {
     return getDiskStore().getInfoFileDir();
   }
+
   public DirectoryHolder[] getDirectories() {
     return getDiskStore().directories;
   }
+
   Map<Long, Oplog> getOplogIdToOplog() {
     return getOplogSet().oplogIdToOplog;
   }
+
   void testHookCloseAllOverflowChannels() {
     getDiskStore().testHookCloseAllOverflowChannels();
   }
+
   void testHookCloseAllOverflowOplogs() {
     getDiskStore().testHookCloseAllOverflowOplogs();
   }
+
   /**
    * Only called on overflow-only regions.
    * Needs to take every entry currently using disk storage and free up that storage
    */
   void freeAllEntriesOnDisk(LocalRegion region) {
-    if(region == null) {
+    if (region == null) {
       return;
     }
     region.foreachRegionEntry(new RegionEntryCallback() {
-        public void handleRegionEntry(RegionEntry re) {
-          DiskEntry de = (DiskEntry)re;
-          DiskId id = de.getDiskId();
-          if (id != null) {
-            synchronized (id) {
-              re.setValueToNull(); // TODO why call _setValue twice in a row?
-              re.removePhase2();
-              id.unmarkForWriting();
-              if (EntryBits.isNeedsValue(id.getUserBits())) {
-                long oplogId = id.getOplogId();
-                long offset = id.getOffsetInOplog();
-                //int length = id.getValueLength();
-                if (oplogId != -1 && offset != -1) {
-                  id.setOplogId(-1);
-                  OverflowOplog oplog = getDiskStore().overflowOplogs.getChild((int)oplogId);
-                  if (oplog != null) {
-                    oplog.freeEntry(de);
-                  }
+      public void handleRegionEntry(RegionEntry re) {
+        DiskEntry de = (DiskEntry) re;
+        DiskId id = de.getDiskId();
+        if (id != null) {
+          synchronized (id) {
+            re.setValueToNull(); // TODO why call _setValue twice in a row?
+            re.removePhase2();
+            id.unmarkForWriting();
+            if (EntryBits.isNeedsValue(id.getUserBits())) {
+              long oplogId = id.getOplogId();
+              long offset = id.getOffsetInOplog();
+              //int length = id.getValueLength();
+              if (oplogId != -1 && offset != -1) {
+                id.setOplogId(-1);
+                OverflowOplog oplog = getDiskStore().overflowOplogs.getChild((int) oplogId);
+                if (oplog != null) {
+                  oplog.freeEntry(de);
                 }
               }
             }
           }
         }
-      });
+      }
+    });
   }
-  
+
   public void finishPendingDestroy() {
     boolean wasFullDestroy = wasAboutToDestroy();
     super.endDestroy(null);
-    if(wasFullDestroy) {
+    if (wasFullDestroy) {
       // now do some recreate work
       setRegionClosed(false);
       register();
@@ -828,7 +805,7 @@ public class DiskRegion extends AbstractDiskRegion {
 
   public void waitForAsyncRecovery() {
     getDiskStore().waitForAsyncRecovery(this);
-    
+
   }
 
   public void endRead(long start, long end, long bytesRead) {
@@ -841,23 +818,23 @@ public class DiskRegion extends AbstractDiskRegion {
    * the GC RVV. 
    */
   public void writeRVVGC(LocalRegion region) {
-    if(this.getFlags().contains(DiskRegionFlag.IS_WITH_VERSIONING)) {
+    if (this.getFlags().contains(DiskRegionFlag.IS_WITH_VERSIONING)) {
       getDiskStore().writeRVVGC(this, region);
     }
   }
-  
+
   /**
    * Record current RVV to disk and update into disk region RVV. 
    */
   public void writeRVV(LocalRegion region, Boolean isRVVTrusted) {
-    if(this.getFlags().contains(DiskRegionFlag.IS_WITH_VERSIONING)) {
+    if (this.getFlags().contains(DiskRegionFlag.IS_WITH_VERSIONING)) {
       getDiskStore().writeRVV(this, region, isRVVTrusted);
     }
   }
-  
+
   public void replaceIncompatibleEntry(DiskEntry old, DiskEntry repl) {
     acquireReadLock();
-    try { 
+    try {
       getOplogSet().getChild().replaceIncompatibleEntry(this, old, repl);
     } finally {
       releaseReadLock();

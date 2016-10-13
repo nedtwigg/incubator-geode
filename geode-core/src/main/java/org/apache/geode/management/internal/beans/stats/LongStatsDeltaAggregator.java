@@ -40,7 +40,7 @@ public class LongStatsDeltaAggregator {
   public void aggregate(FederationComponent newState, FederationComponent oldState) {
     incData(newState, oldState);// Only increase the value. No need to decrease
                                 // when a
-    // member goes away.
+                                // member goes away.
   }
 
   private void incData(FederationComponent newComp, FederationComponent oldComp) {
@@ -83,9 +83,9 @@ public class LongStatsDeltaAggregator {
     }
     return currCounters.get(keys.indexOf(key)) - prevCounters.get(keys.indexOf(key));
   }
-  
-  private void initializeArray(AtomicLongArray arr){
-    for(int i = 0; i<arr.length() ; i++){
+
+  private void initializeArray(AtomicLongArray arr) {
+    for (int i = 0; i < arr.length(); i++) {
       arr.set(i, Long.valueOf(0));
     }
   }

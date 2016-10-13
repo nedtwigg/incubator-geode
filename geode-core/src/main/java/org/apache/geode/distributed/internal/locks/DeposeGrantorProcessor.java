@@ -43,32 +43,23 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * (renamed from ExpectTransferProcessor)
  */
 public class DeposeGrantorProcessor extends ReplyProcessor21 {
-  
-  private static final Logger logger = LogService.getLogger();
-  
-  ////////// Public static entry point /////////
 
+  private static final Logger logger = LogService.getLogger();
+
+  ////////// Public static entry point /////////
 
   /**
    * Send a message to oldGrantor telling him that he is deposed by newGrantor. 
    * Send does not complete until an ack is received or the oldGrantor leaves
    *  the system.
    */
-  static void send(String serviceName, 
-                   InternalDistributedMember oldGrantor,
-                   InternalDistributedMember newGrantor, 
-                   long newGrantorVersion,
-                   int newGrantorSerialNumber,
-                   DM dm) {
+  static void send(String serviceName, InternalDistributedMember oldGrantor, InternalDistributedMember newGrantor, long newGrantorVersion, int newGrantorSerialNumber, DM dm) {
     final InternalDistributedMember elder = dm.getId();
     if (elder.equals(oldGrantor)) {
-      doOldGrantorWork(
-          serviceName, elder, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm, null);
+      doOldGrantorWork(serviceName, elder, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm, null);
     } else {
-      DeposeGrantorProcessor processor = 
-          new DeposeGrantorProcessor(dm, oldGrantor);
-      DeposeGrantorMessage.send(
-          serviceName, oldGrantor, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm, processor);
+      DeposeGrantorProcessor processor = new DeposeGrantorProcessor(dm, oldGrantor);
+      DeposeGrantorMessage.send(serviceName, oldGrantor, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm, processor);
       try {
         processor.waitForRepliesUninterruptibly();
       } catch (ReplyException e) {
@@ -76,57 +67,39 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
       }
     }
   }
-  static protected void doOldGrantorWork(final String serviceName,
-                                         final InternalDistributedMember elder,
-                                         final InternalDistributedMember youngTurk,
-                                         final long newGrantorVersion,
-                                         final int newGrantorSerialNumber,
-                                         final DM dm,
-                                         final DeposeGrantorMessage msg) {
+
+  static protected void doOldGrantorWork(final String serviceName, final InternalDistributedMember elder, final InternalDistributedMember youngTurk, final long newGrantorVersion, final int newGrantorSerialNumber, final DM dm, final DeposeGrantorMessage msg) {
     try {
-      DLockService svc = 
-        DLockService.getInternalServiceNamed(serviceName);
+      DLockService svc = DLockService.getInternalServiceNamed(serviceName);
       if (svc != null) {
-        LockGrantorId newLockGrantorId = 
-            new LockGrantorId(dm, youngTurk, newGrantorVersion, newGrantorSerialNumber);
+        LockGrantorId newLockGrantorId = new LockGrantorId(dm, youngTurk, newGrantorVersion, newGrantorSerialNumber);
         svc.deposeOlderLockGrantorId(newLockGrantorId);
       }
-    }
-    finally {
+    } finally {
       if (msg != null) {
         msg.reply(dm);
       }
     }
   }
-  
+
   ////////////  Instance methods //////////////
-  
+
   /** Creates a new instance of DeposeGrantorProcessor
    */
   private DeposeGrantorProcessor(DM dm, InternalDistributedMember oldGrantor) {
     super(dm, oldGrantor);
   }
 
-  
   ///////////////   Inner message classes  //////////////////
-  
-  public static final class DeposeGrantorMessage
-    extends PooledDistributionMessage implements MessageWithReply
-  {
+
+  public static final class DeposeGrantorMessage extends PooledDistributionMessage implements MessageWithReply {
     private int processorId;
     private String serviceName;
     private InternalDistributedMember newGrantor;
     private long newGrantorVersion;
     private int newGrantorSerialNumber;
-    
-    protected static void send(String serviceName,
-                             InternalDistributedMember oldGrantor,
-                             InternalDistributedMember newGrantor,
-                             long newGrantorVersion,
-                             int newGrantorSerialNumber,
-                             DM dm, 
-                             ReplyProcessor21 proc)
-    {
+
+    protected static void send(String serviceName, InternalDistributedMember oldGrantor, InternalDistributedMember newGrantor, long newGrantorVersion, int newGrantorSerialNumber, DM dm, ReplyProcessor21 proc) {
       DeposeGrantorMessage msg = new DeposeGrantorMessage();
       msg.serviceName = serviceName;
       msg.newGrantor = newGrantor;
@@ -139,45 +112,42 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
       }
       dm.putOutgoing(msg);
     }
-  
+
     @Override
     public int getProcessorId() {
       return this.processorId;
     }
 
     void reply(DM dm) {
-      ReplyMessage.send(this.getSender(), this.getProcessorId(),
-                        null, dm);
+      ReplyMessage.send(this.getSender(), this.getProcessorId(), null, dm);
     }
-    
+
     @Override
     protected void process(final DistributionManager dm) {
       // if we are currently the grantor then
       // mark it as being destroyed until we hear from this.newGrantor
       // or he goes away or the grantor that sent us this message goes away.
-      
+
       InternalDistributedMember elder = this.getSender();
       InternalDistributedMember youngTurk = this.newGrantor;
 
-      doOldGrantorWork(
-          this.serviceName, elder, youngTurk, this.newGrantorVersion, this.newGrantorSerialNumber, dm, this);
+      doOldGrantorWork(this.serviceName, elder, youngTurk, this.newGrantorVersion, this.newGrantorSerialNumber, dm, this);
     }
-    
+
     public int getDSFID() {
       return DEPOSE_GRANTOR_MESSAGE;
     }
 
     @Override
-    public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.processorId = in.readInt();
       this.serviceName = DataSerializer.readString(in);
-      this.newGrantor = (InternalDistributedMember)DataSerializer.readObject(in);
+      this.newGrantor = (InternalDistributedMember) DataSerializer.readObject(in);
       this.newGrantorVersion = in.readLong();
       this.newGrantorSerialNumber = in.readInt();
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -187,23 +157,12 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
       out.writeLong(this.newGrantorVersion);
       out.writeInt(this.newGrantorSerialNumber);
     }
-    
+
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("DeposeGrantorMessage (serviceName='")
-        .append(this.serviceName)
-        .append("' processorId=")
-        .append(this.processorId)
-        .append(" newGrantor=")
-        .append(this.newGrantor)
-        .append(" newGrantorVersion=")
-        .append(this.newGrantorVersion)
-        .append(" newGrantorSerialNumber=")
-        .append(this.newGrantorSerialNumber)
-        .append(")");
+      buff.append("DeposeGrantorMessage (serviceName='").append(this.serviceName).append("' processorId=").append(this.processorId).append(" newGrantor=").append(this.newGrantor).append(" newGrantorVersion=").append(this.newGrantorVersion).append(" newGrantorSerialNumber=").append(this.newGrantorSerialNumber).append(")");
       return buff.toString();
     }
   }
 }
-

@@ -63,7 +63,7 @@ public class JsonAuthorizationCacheStartRule extends ExternalResource {
     properties.put(HTTP_SERVICE_PORT, String.valueOf(httpPort));
     properties.put(SECURITY_MANAGER, SampleSecurityManager.class.getName());
 
-    if (postProcessor!=null) {
+    if (postProcessor != null) {
       properties.put(SECURITY_POST_PROCESSOR, postProcessor.getName());
     }
 

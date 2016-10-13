@@ -37,18 +37,16 @@ import org.apache.geode.internal.lang.StringUtils;
  *
  */
 public final class PreferBytesCachedDeserializable implements CachedDeserializable, DataSerializableFixedID {
-  
-  
+
   /**
    * empty constructor for serialization only
    */
   public PreferBytesCachedDeserializable() {
   }
-  
-  
+
   /** The cached value */
   private byte[] value;
-  
+
   /**
    * +PER_OBJECT_OVERHEAD for VMCachedDeserializable object
    * +4 for value field
@@ -74,10 +72,11 @@ public final class PreferBytesCachedDeserializable implements CachedDeserializab
   public Object getDeserializedValue(Region r, RegionEntry re) {
     return EntryEventImpl.deserialize(this.value);
   }
-  
+
   public Object getDeserializedForReading() {
     return getDeserializedValue(null, null);
   }
+
   public Object getDeserializedWritableCopy(Region r, RegionEntry re) {
     return getDeserializedValue(r, re);
   }
@@ -88,13 +87,10 @@ public final class PreferBytesCachedDeserializable implements CachedDeserializab
   public byte[] getSerializedValue() {
     return this.value;
   }
-  
-  public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits) {
-    wrapper
-      .setData(this.value, userBits, this.value.length, 
-               false /* Not Reusable as it refers to underlying value */);
-  }
 
+  public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits) {
+    wrapper.setData(this.value, userBits, this.value.length, false /* Not Reusable as it refers to underlying value */);
+  }
 
   /**
    * Return current value regardless of whether it is serialized or
@@ -108,7 +104,7 @@ public final class PreferBytesCachedDeserializable implements CachedDeserializab
   public int getSizeInBytes() {
     return MEM_OVERHEAD + CachedDeserializableFactory.getByteSize(this.value);
   }
-  
+
   public int getValueSizeInBytes() {
     return CachedDeserializableFactory.getByteSize(this.value);
   }
@@ -124,15 +120,15 @@ public final class PreferBytesCachedDeserializable implements CachedDeserializab
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeByteArray(this.value, out);
   }
-  
+
   String getShortClassName() {
     String cname = getClass().getName();
-    return cname.substring(getClass().getPackage().getName().length()+1);
+    return cname.substring(getClass().getPackage().getName().length() + 1);
   }
 
   @Override
   public String toString() {
-    return getShortClassName()+"@"+this.hashCode();
+    return getShortClassName() + "@" + this.hashCode();
   }
 
   public void writeValueAsByteArray(DataOutput out) throws IOException {

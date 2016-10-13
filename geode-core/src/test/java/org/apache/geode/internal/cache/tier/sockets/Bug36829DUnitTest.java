@@ -66,13 +66,9 @@ public class Bug36829DUnitTest extends JUnit4DistributedTestCase {
 
     final int durableClientTimeout = 600; // keep the client alive for 600
 
-    PORT = ((Integer)this.serverVM.invoke(() -> CacheServerTestUtil.createCacheServer( "DUMMY_REGION", new Boolean(true)
-          ))).intValue();
+    PORT = ((Integer) this.serverVM.invoke(() -> CacheServerTestUtil.createCacheServer("DUMMY_REGION", new Boolean(true)))).intValue();
 
-    this.ClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(
-            getClientPool(NetworkUtils.getServerHostName(ClientVM.getHost()), PORT, true, 0), REGION_NAME,
-            getClientDistributedSystemProperties(durableClientId,
-                durableClientTimeout), Boolean.TRUE ));
+    this.ClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(ClientVM.getHost()), PORT, true, 0), REGION_NAME, getClientDistributedSystemProperties(durableClientId, durableClientTimeout), Boolean.TRUE));
 
     // Send clientReady message
     this.ClientVM.invoke(new CacheSerializableRunnable("Send clientReady") {
@@ -83,10 +79,10 @@ public class Bug36829DUnitTest extends JUnit4DistributedTestCase {
 
     // We expect in registerKey() that the RegionNotFoundException is thrown.
     // If exception is not thrown then the test fails.
-    this.ClientVM.invoke(() -> Bug36829DUnitTest.registerKey( "Key1" ));
+    this.ClientVM.invoke(() -> Bug36829DUnitTest.registerKey("Key1"));
 
     // creating Region on the Server
-/*    this.serverVM.invoke(() -> CacheServerTestUtil.createRegion( REGION_NAME ));
+    /*    this.serverVM.invoke(() -> CacheServerTestUtil.createRegion( REGION_NAME ));
      // should be successful.
     this.ClientVM.invoke(() -> Bug36829DUnitTest.registerKeyAfterRegionCreation( "Key1" ));*/
 
@@ -104,8 +100,7 @@ public class Bug36829DUnitTest extends JUnit4DistributedTestCase {
     try {
       region.registerInterest(key, InterestResultPolicy.NONE);
       fail("expected ServerOperationException");
-    }
-    catch (ServerOperationException expected) {
+    } catch (ServerOperationException expected) {
     }
   }
 
@@ -117,27 +112,21 @@ public class Bug36829DUnitTest extends JUnit4DistributedTestCase {
     region.registerInterest(key, InterestResultPolicy.NONE);
   }
 
-  private Pool getClientPool(String host, int server1Port,
-      boolean establishCallbackConnection, int redundancyLevel) {
+  private Pool getClientPool(String host, int server1Port, boolean establishCallbackConnection, int redundancyLevel) {
     PoolFactory pf = PoolManager.createFactory();
-    pf.addServer(host, server1Port)
-      .setSubscriptionEnabled(establishCallbackConnection)
-      .setSubscriptionRedundancy(redundancyLevel);
-    return ((PoolFactoryImpl)pf).getPoolAttributes();
+    pf.addServer(host, server1Port).setSubscriptionEnabled(establishCallbackConnection).setSubscriptionRedundancy(redundancyLevel);
+    return ((PoolFactoryImpl) pf).getPoolAttributes();
   }
 
-  private Properties getClientDistributedSystemProperties(
-      String durableClientId, int durableClientTimeout) {
+  private Properties getClientDistributedSystemProperties(String durableClientId, int durableClientTimeout) {
     Properties properties = new Properties();
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(LOCATORS, "");
-    properties.setProperty(DURABLE_CLIENT_ID,
-        durableClientId);
-    properties.setProperty(DURABLE_CLIENT_TIMEOUT,
-        String.valueOf(durableClientTimeout));
+    properties.setProperty(DURABLE_CLIENT_ID, durableClientId);
+    properties.setProperty(DURABLE_CLIENT_TIMEOUT, String.valueOf(durableClientTimeout));
     return properties;
   }
-  
+
   @Override
   public final void preTearDown() throws Exception {
     CacheServerTestUtil.resetDisableShufflingOfEndpointsFlag();

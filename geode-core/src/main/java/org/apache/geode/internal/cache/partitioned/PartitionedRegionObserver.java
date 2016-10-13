@@ -33,8 +33,9 @@ public interface PartitionedRegionObserver {
    * datastore
    */
   public void beforeCalculatingStartingBucketId();
-  
+
   public void beforeBucketCreation(PartitionedRegion region, int bucketId);
+
   /**
    * Called after a bucket region is created, but before it is added to the 
    * map of buckets.

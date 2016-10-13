@@ -23,8 +23,7 @@ import java.util.List;
  * @since GemFire 5.7
  *
  */
-public class LocatorDiscoveryCallbackAdapter implements
-    LocatorDiscoveryCallback {
+public class LocatorDiscoveryCallbackAdapter implements LocatorDiscoveryCallback {
 
   public void locatorsDiscovered(List locators) {
   }

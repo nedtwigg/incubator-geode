@@ -85,7 +85,6 @@ public class ZLexCountExecutor extends SortedSetExecutor {
       return;
     }
 
-
     int count;
     try {
       count = getCount(key, keyRegion, context, Coder.stringToByteArrayWrapper(startString), Coder.stringToByteArrayWrapper(stopString), minInclusive, maxInclusive);
@@ -111,17 +110,17 @@ public class ZLexCountExecutor extends SortedSetExecutor {
       } else {
         query = getQuery(key, SortedSetQuery.ZLEXCOUNTNINF, context);
       }
-      params = new Object[]{stop};
+      params = new Object[] { stop };
     } else if (stop.equals("+")) {
       if (startInclusive) {
         query = getQuery(key, SortedSetQuery.ZLEXCOUNTPINFI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZLEXCOUNTPINF, context);
       }
-      params = new Object[]{start};
+      params = new Object[] { start };
     } else {
       if (startInclusive) {
-        if(stopInclusive) {
+        if (stopInclusive) {
           query = getQuery(key, SortedSetQuery.ZLEXCOUNTSTISI, context);
         } else {
           query = getQuery(key, SortedSetQuery.ZLEXCOUNTSTI, context);
@@ -133,7 +132,7 @@ public class ZLexCountExecutor extends SortedSetExecutor {
           query = getQuery(key, SortedSetQuery.ZLEXCOUNT, context);
         }
       }
-      params = new Object[]{start, stop};
+      params = new Object[] { start, stop };
     }
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);

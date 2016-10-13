@@ -57,17 +57,20 @@ public class CacheTransactionManagerCreation implements CacheTransactionManager 
     }
     return result;
   }
+
   public void initListeners(TransactionListener[] newListeners) {
     this.txListeners.clear();
     if (newListeners != null && newListeners.length > 0) {
       this.txListeners.addAll(Arrays.asList(newListeners));
     }
   }
+
   public void addListener(TransactionListener newListener) {
     if (!this.txListeners.contains(newListener)) {
       this.txListeners.add(newListener);
     }
   }
+
   public void removeListener(TransactionListener newListener) {
     this.txListeners.remove(newListener);
   }
@@ -77,11 +80,12 @@ public class CacheTransactionManagerCreation implements CacheTransactionManager 
     this.txListeners.toArray(result);
     return result;
   }
+
   public final TransactionListener getListener() {
     if (this.txListeners.isEmpty()) {
       return null;
     } else if (this.txListeners.size() == 1) {
-      return (TransactionListener)this.txListeners.get(0);
+      return (TransactionListener) this.txListeners.get(0);
     } else {
       throw new IllegalStateException(LocalizedStrings.CacheTransactionManagerCreation_MORE_THAN_ONE_TRANSACTION_LISTENER_EXISTS.toLocalizedString());
     }
@@ -90,15 +94,19 @@ public class CacheTransactionManagerCreation implements CacheTransactionManager 
   public TransactionId getTransactionId() {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_GETTING_A_TRANSACTIONID_NOT_SUPPORTED.toLocalizedString());
   }
+
   public void begin() {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
+
   public void commit() throws CommitConflictException {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
+
   public void rollback() {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
+
   public boolean exists() {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
@@ -122,6 +130,7 @@ public class CacheTransactionManagerCreation implements CacheTransactionManager 
   public boolean isSuspended(TransactionId transactionId) {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
+
   public boolean tryResume(TransactionId transactionId) {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
@@ -133,12 +142,12 @@ public class CacheTransactionManagerCreation implements CacheTransactionManager 
   public boolean exists(TransactionId transactionId) {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
-  
+
   public void setDistributed(boolean distributed) {
     throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
-  
+
   public boolean isDistributed() {
-    throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());    
+    throw new UnsupportedOperationException(LocalizedStrings.CacheTransactionManagerCreation_TRANSACTIONS_NOT_SUPPORTED.toLocalizedString());
   }
 }

@@ -39,15 +39,32 @@ public class VersionMismatchAlert implements Alert {
       this.sender = null;
     }
   }
-  
-  public int getLevel(){ return Alert.SEVERE; }
-  public GemFireVM getGemFireVM() { return null; }
-  public String getConnectionName(){ return null; }
-  public String getSourceId(){ return this.sourceId; }
-  public String getMessage(){ return this.message; }
-  public java.util.Date getDate(){ return this.time; }
 
-  public RemoteGfManagerAgent getManagerAgent(){
+  public int getLevel() {
+    return Alert.SEVERE;
+  }
+
+  public GemFireVM getGemFireVM() {
+    return null;
+  }
+
+  public String getConnectionName() {
+    return null;
+  }
+
+  public String getSourceId() {
+    return this.sourceId;
+  }
+
+  public String getMessage() {
+    return this.message;
+  }
+
+  public java.util.Date getDate() {
+    return this.time;
+  }
+
+  public RemoteGfManagerAgent getManagerAgent() {
     return this.source;
   }
 

@@ -42,6 +42,6 @@ public interface InternalCache extends Cache, Extensible<Cache> {
   public Collection<DiskStoreImpl> listDiskStoresIncludingRegionOwned();
 
   public CqService getCqService();
-  
+
   public <T extends CacheService> T getService(Class<T> clazz);
 }

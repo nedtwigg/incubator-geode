@@ -21,8 +21,7 @@ package org.apache.geode.management.internal.beans.stats;
  *
  */
 public enum StatType {
-  
-  LONG_TYPE, 
-  INT_TYPE, 
+
+  LONG_TYPE, INT_TYPE,
 
 }

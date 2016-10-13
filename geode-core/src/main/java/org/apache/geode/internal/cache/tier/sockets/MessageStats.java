@@ -23,7 +23,10 @@ package org.apache.geode.internal.cache.tier.sockets;
  */
 public interface MessageStats {
   public void incReceivedBytes(long v);
+
   public void incSentBytes(long v);
+
   public void incMessagesBeingReceived(int bytes);
+
   public void decMessagesBeingReceived(int bytes);
 }

@@ -34,7 +34,7 @@ import org.apache.geode.pdx.internal.unsafe.UnsafeWrapper;
 public class ReflectionSingleObjectSizer implements SingleObjectSizer {
   public static final int REFERENCE_SIZE = SharedLibrary.getReferenceSize();
   public static final int OBJECT_SIZE = SharedLibrary.getObjectHeaderSize();
-  
+
   private static final UnsafeWrapper unsafe;
   static {
     UnsafeWrapper tmp = null;
@@ -53,7 +53,7 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
   public long sizeof(Object object, boolean roundResult) {
     Class<?> clazz = object.getClass();
     long size;
-    if(clazz.isArray()) {
+    if (clazz.isArray()) {
       if (unsafe != null) {
         size = unsafe.arrayBaseOffset(clazz);
         int arrayLength = Array.getLength(object);
@@ -64,14 +64,14 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
             // If it did then we use sizeType.
             typeSize = sizeType(clazz.getComponentType());
           }
-          size += (long)arrayLength * typeSize;
+          size += (long) arrayLength * typeSize;
         }
       } else {
         // not as accurate but does not use unsafe
         size = OBJECT_SIZE + 4 /* for array length */;
         int arrayLength = Array.getLength(object);
         if (arrayLength > 0) {
-          size += (long)arrayLength * sizeType(clazz.getComponentType());
+          size += (long) arrayLength * sizeType(clazz.getComponentType());
         }
       }
       if (roundResult) {
@@ -86,6 +86,7 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
   public static long sizeof(Class clazz) {
     return sizeof(clazz, true);
   }
+
   /**
    * Since unsafe.fieldOffset(Field) will give us the offset to the first byte
    * of that field all we need to do is find which of the non-static declared
@@ -99,8 +100,8 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
       long lastFieldOffset = 0;
       do {
         Field[] fields = clazz.getDeclaredFields();
-        for(Field field: fields) {
-          if(!Modifier.isStatic(field.getModifiers())) {
+        for (Field field : fields) {
+          if (!Modifier.isStatic(field.getModifiers())) {
             long offset = unsafe.fieldOffset(field);
             if (offset >= lastFieldOffset) {
               lastFieldOffset = offset;
@@ -129,8 +130,8 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
       size = OBJECT_SIZE;
       do {
         Field[] fields = clazz.getDeclaredFields();
-        for(Field field: fields) {
-          if(!Modifier.isStatic(field.getModifiers())) {
+        for (Field field : fields) {
+          if (!Modifier.isStatic(field.getModifiers())) {
             size += sizeType(field.getType());
           }
         }
@@ -149,34 +150,33 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
     //See https://wiki.gemstone.com/display/rusage/Per+Entry+Overhead
     long remainder = size % 8;
     if (remainder != 0) {
-      size = size - remainder  + 8;
+      size = size - remainder + 8;
     }
     return size;
   }
-  
+
   private static int sizeType(Class<?> t) {
-      
-      if (t == Boolean.TYPE)
-        return 1;
-      else if (t == Byte.TYPE)
-        return 1;
-      else if (t == Character.TYPE)
-        return 2;
-      else if (t == Short.TYPE)
-        return 2;
-      else if (t == Integer.TYPE)
-        return 4;
-      else if (t == Long.TYPE)
-        return 8;
-      else if (t == Float.TYPE)
-        return 4;
-      else if (t == Double.TYPE)
-        return 8;
-      else if (t == Void.TYPE)
-        return 0;
-      else
-        return REFERENCE_SIZE;
+
+    if (t == Boolean.TYPE)
+      return 1;
+    else if (t == Byte.TYPE)
+      return 1;
+    else if (t == Character.TYPE)
+      return 2;
+    else if (t == Short.TYPE)
+      return 2;
+    else if (t == Integer.TYPE)
+      return 4;
+    else if (t == Long.TYPE)
+      return 8;
+    else if (t == Float.TYPE)
+      return 4;
+    else if (t == Double.TYPE)
+      return 8;
+    else if (t == Void.TYPE)
+      return 0;
+    else
+      return REFERENCE_SIZE;
   }
-  
 
 }

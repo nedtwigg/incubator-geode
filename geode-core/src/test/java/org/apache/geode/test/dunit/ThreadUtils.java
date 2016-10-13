@@ -40,23 +40,23 @@ import org.apache.geode.internal.logging.LogService;
  * Extracted from DistributedTestCase.
  */
 public class ThreadUtils {
-  
+
   private static final Logger logger = LogService.getLogger();
 
   protected ThreadUtils() {
   }
-  
+
   /**
    * Print stack dumps for all vms.
    * 
    * @since GemFire 5.0
    */
   public static void dumpAllStacks() {
-    for (int h=0; h < Host.getHostCount(); h++) {
+    for (int h = 0; h < Host.getHostCount(); h++) {
       dumpStack(Host.getHost(h));
     }
   }
-  
+
   /**
    * Dump all thread stacks
    */
@@ -79,7 +79,7 @@ public class ThreadUtils {
    * @since GemFire 5.0
    */
   public static void dumpStack(final Host host) {
-    for (int v=0; v < host.getVMCount(); v++) {
+    for (int v = 0; v < host.getVMCount(); v++) {
       host.getVM(v).invoke(org.apache.geode.test.dunit.DistributedTestCase.class, "dumpStack");
     }
   }
@@ -95,13 +95,9 @@ public class ThreadUtils {
 
   public static void dumpStackTrace(final Thread thread, final StackTraceElement[] stackTrace) {
     StringBuilder msg = new StringBuilder();
-    msg.append("Thread=<")
-      .append(thread)
-      .append("> stackDump:\n");
-    for (int i=0; i < stackTrace.length; i++) {
-      msg.append("\t")
-        .append(stackTrace[i])
-        .append("\n");
+    msg.append("Thread=<").append(thread).append("> stackDump:\n");
+    for (int i = 0; i < stackTrace.length; i++) {
+      msg.append("\t").append(stackTrace[i]).append("\n");
     }
     logger.info(msg.toString());
   }

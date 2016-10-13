@@ -61,7 +61,7 @@ public class QueueStateImpl implements QueueState {
   }
 
   public void processMarker() {
-    if (!this.processedMarker) {     
+    if (!this.processedMarker) {
       handleMarker();
       this.processedMarker = true;
     } else {
@@ -84,7 +84,6 @@ public class QueueStateImpl implements QueueState {
 
     Set rootRegions = cache.rootRegions();
 
-    
     for (Iterator iter1 = rootRegions.iterator(); iter1.hasNext();) {
       Region rootRegion = (Region) iter1.next();
       regions.add(rootRegion);
@@ -101,11 +100,10 @@ public class QueueStateImpl implements QueueState {
     for (Iterator iter = regions.iterator(); iter.hasNext();) {
       LocalRegion region = (LocalRegion) iter.next();
       try {
-        if (region.getAttributes().getPoolName()!=null && region.getAttributes().getPoolName().equals(qManager.getPool().getName())) {
+        if (region.getAttributes().getPoolName() != null && region.getAttributes().getPoolName().equals(qManager.getPool().getName())) {
           region.handleMarker(); // can this throw RDE??
         }
-      }
-      catch (RegionDestroyedException e) {
+      } catch (RegionDestroyedException e) {
         continue; // region is gone go to the next one bug 38705
       }
     }
@@ -115,24 +113,24 @@ public class QueueStateImpl implements QueueState {
     this.invalidateCount.incrementAndGet();
 
   }
+
   public int getInvalidateCount() {
     return this.invalidateCount.get();
   }
-  
+
   /** test hook - access to this map should be synchronized on the
    * map to avoid concurrent modification exceptions
    */
   public Map getThreadIdToSequenceIdMap() {
     return this.threadIdToSequenceId;
   }
-  
+
   public boolean verifyIfDuplicate(EventID eid) {
-    return verifyIfDuplicate(eid, true);  
+    return verifyIfDuplicate(eid, true);
   }
-  
+
   public boolean verifyIfDuplicate(EventID eid, boolean addToMap) {
-    ThreadIdentifier tid = new ThreadIdentifier(eid.getMembershipID(), eid
-        .getThreadID());
+    ThreadIdentifier tid = new ThreadIdentifier(eid.getMembershipID(), eid.getThreadID());
     long seqId = eid.getSequenceID();
     SequenceIdAndExpirationObject seo = null;
 
@@ -163,11 +161,9 @@ public class QueueStateImpl implements QueueState {
         // this.threadIdToSequenceId.put(tid, new SequenceIdAndExpirationObject(
         // seo.getSequenceId()));
         return true;
-      }
-      else if (addToMap) {
-        ThreadIdentifier real_tid = new ThreadIdentifier(eid.getMembershipID(), 
-            ThreadIdentifier.getRealThreadIDIncludingWan(eid.getThreadID()));
-        if  (ThreadIdentifier.isPutAllFakeThreadID(eid.getThreadID())) {
+      } else if (addToMap) {
+        ThreadIdentifier real_tid = new ThreadIdentifier(eid.getMembershipID(), ThreadIdentifier.getRealThreadIDIncludingWan(eid.getThreadID()));
+        if (ThreadIdentifier.isPutAllFakeThreadID(eid.getThreadID())) {
           // it's a putAll
           seo = (SequenceIdAndExpirationObject) this.threadIdToSequenceId.get(real_tid);
           if (seo != null && seo.getSequenceId() >= seqId) {
@@ -176,13 +172,10 @@ public class QueueStateImpl implements QueueState {
             }
             seo.setAckSend(false); // bug #41289: send ack to servers that send old events
             return true;
-          }
-          else {
+          } else {
             // save the seqno for real thread id into a putAllSequenceId 
             this.threadIdToSequenceId.remove(real_tid);
-            this.threadIdToSequenceId.put(real_tid, seo == null? 
-                new SequenceIdAndExpirationObject(-1, seqId): 
-                new SequenceIdAndExpirationObject(seo.getSequenceId(), seqId));
+            this.threadIdToSequenceId.put(real_tid, seo == null ? new SequenceIdAndExpirationObject(-1, seqId) : new SequenceIdAndExpirationObject(seo.getSequenceId(), seqId));
             // save seqno for tid
             // here tid!=real_tid, for fake tid, putAllSeqno should be 0
             this.threadIdToSequenceId.remove(tid);
@@ -200,24 +193,21 @@ public class QueueStateImpl implements QueueState {
             }
             seo.setAckSend(false); // bug #41289: send ack to servers that send old events
             return true;
-          }
-          else {
+          } else {
             // here tid==real_tid
             this.threadIdToSequenceId.remove(tid);
-            this.threadIdToSequenceId.put(tid, seo == null? 
-                new SequenceIdAndExpirationObject(seqId, -1):
-                new SequenceIdAndExpirationObject(seqId, seo.getPutAllSequenceId()));
+            this.threadIdToSequenceId.put(tid, seo == null ? new SequenceIdAndExpirationObject(seqId, -1) : new SequenceIdAndExpirationObject(seqId, seo.getPutAllSequenceId()));
           }
         }
       }
     }
     return false;
   }
+
   public void start(ScheduledExecutorService timer, int interval) {
-    timer.scheduleWithFixedDelay(new ThreadIdToSequenceIdExpiryTask(),
-                              interval, interval, TimeUnit.MILLISECONDS);
+    timer.scheduleWithFixedDelay(new ThreadIdToSequenceIdExpiryTask(), interval, interval, TimeUnit.MILLISECONDS);
   }
-  
+
   /**
    * 
    * Thread which will iterate over threadIdToSequenceId map
@@ -239,23 +229,22 @@ public class QueueStateImpl implements QueueState {
     /**
      * The peridic ack interval for client
      */
-//     private final long ackTime;
-//       ackTime = QueueStateImpl.this.qManager.getPool().getQueueAckInterval();
+    //     private final long ackTime;
+    //       ackTime = QueueStateImpl.this.qManager.getPool().getQueueAckInterval();
 
-//     /**
-//      * boolean to specify if the thread should continue running
-//      */
-//     private volatile boolean continueRunning = true;
+    //     /**
+    //      * boolean to specify if the thread should continue running
+    //      */
+    //     private volatile boolean continueRunning = true;
 
     /**
      * constructs the Thread and initializes the expiry time
      * 
      */
     public ThreadIdToSequenceIdExpiryTask() {
-      expiryTime = QueueStateImpl.this.qManager.getPool()
-          .getSubscriptionMessageTrackingTimeout();
+      expiryTime = QueueStateImpl.this.qManager.getPool().getSubscriptionMessageTrackingTimeout();
     }
-    
+
     @Override
     public void run2() {
       SystemFailure.checkFailure();
@@ -267,26 +256,26 @@ public class QueueStateImpl implements QueueState {
         bo.beforeSendingClientAck();
       }
       //if ((qManager.getPool().getSubscriptionRedundancy() != 0) || (qManager.getPool().isDurableClient())) {
-        sendPeriodicAck();
+      sendPeriodicAck();
       //}
       checkForExpiry();
     }
 
-//     void shutdown() {
-//       synchronized (this) {
-//         continueRunning = false;
-//         this.notify();
-//         // Since the wait is timed, it is not necessary to interrupt
-//         // the thread; it will wake up of its own accord.
-//         // this.interrupt();
-//       }
-//       try {
-//         this.join();
-//       } catch (InterruptedException e) {
-//         Thread.currentThread().interrupt();
-//         // TODO:
-//       }
-//     }
+    //     void shutdown() {
+    //       synchronized (this) {
+    //         continueRunning = false;
+    //         this.notify();
+    //         // Since the wait is timed, it is not necessary to interrupt
+    //         // the thread; it will wake up of its own accord.
+    //         // this.interrupt();
+    //       }
+    //       try {
+    //         this.join();
+    //       } catch (InterruptedException e) {
+    //         Thread.currentThread().interrupt();
+    //         // TODO:
+    //       }
+    //     }
 
     void checkForExpiry() {
       synchronized (threadIdToSequenceId) {
@@ -299,8 +288,7 @@ public class QueueStateImpl implements QueueState {
           entry = (Map.Entry) iterator.next();
           seo = (SequenceIdAndExpirationObject) entry.getValue();
           if ((currentTime - seo.getCreationTime() > this.expiryTime)) {
-            if (seo.getAckSend()
-                || (qManager.getPool().getSubscriptionRedundancy() == 0 && !qManager.getPool().isDurableClient())) {
+            if (seo.getAckSend() || (qManager.getPool().getSubscriptionRedundancy() == 0 && !qManager.getPool().isDurableClient())) {
               iterator.remove();
             }
           } else {
@@ -321,17 +309,15 @@ public class QueueStateImpl implements QueueState {
         Iterator iterator = threadIdToSequenceId.entrySet().iterator();
         while (iterator.hasNext()) {
           Map.Entry entry = (Map.Entry) iterator.next();
-          SequenceIdAndExpirationObject seo = (SequenceIdAndExpirationObject) entry
-              .getValue();
+          SequenceIdAndExpirationObject seo = (SequenceIdAndExpirationObject) entry.getValue();
           if (!seo.getAckSend()) {
             ThreadIdentifier tid = (ThreadIdentifier) entry.getKey();
-            events.add(new EventID(tid.getMembershipID(), tid.getThreadID(),
-                seo.getSequenceId()));
+            events.add(new EventID(tid.getMembershipID(), tid.getThreadID(), seo.getSequenceId()));
             seo.setAckSend(true);
             // entry.setValue(entry);
-          }// if ends
-        }// while ends
-      }// synchronized ends
+          } // if ends
+        } // while ends
+      } // synchronized ends
 
       if (events.size() > 0) {
         try {
@@ -345,26 +331,22 @@ public class QueueStateImpl implements QueueState {
             Iterator iter = events.iterator();
             while (iter.hasNext()) {
               EventID eid = (EventID) iter.next();
-              ThreadIdentifier tid = new ThreadIdentifier(
-                  eid.getMembershipID(), eid.getThreadID());
+              ThreadIdentifier tid = new ThreadIdentifier(eid.getMembershipID(), eid.getThreadID());
               synchronized (threadIdToSequenceId) {
-                SequenceIdAndExpirationObject seo = (SequenceIdAndExpirationObject) threadIdToSequenceId
-                    .get(tid);
+                SequenceIdAndExpirationObject seo = (SequenceIdAndExpirationObject) threadIdToSequenceId.get(tid);
                 if (seo != null && seo.getAckSend()) {
-                  seo = (SequenceIdAndExpirationObject) threadIdToSequenceId
-                      .remove(tid);
+                  seo = (SequenceIdAndExpirationObject) threadIdToSequenceId.remove(tid);
                   if (seo != null) {
                     // put back the old seqId with a new time stamp
-                    SequenceIdAndExpirationObject siaeo = new SequenceIdAndExpirationObject(
-                        seo.getSequenceId(), seo.getPutAllSequenceId());
+                    SequenceIdAndExpirationObject siaeo = new SequenceIdAndExpirationObject(seo.getSequenceId(), seo.getPutAllSequenceId());
                     threadIdToSequenceId.put(tid, siaeo);
                   }
-                }// if ends
-              }// synchronized ends
-            }// while ends
-          }// if(!success) ends
-        }// finally ends
-      }// if(events.size() > 0)ends
+                } // if ends
+              } // synchronized ends
+            } // while ends
+          } // if(!success) ends
+        } // finally ends
+      } // if(events.size() > 0)ends
     }// method ends
   }
 

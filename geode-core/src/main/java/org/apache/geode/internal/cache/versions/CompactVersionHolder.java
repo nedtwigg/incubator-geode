@@ -16,7 +16,6 @@
  */
 package org.apache.geode.internal.cache.versions;
 
-
 /**
  * A in memory representation of a VersionTag that is more compact than the VersionTag.
  * 
@@ -35,26 +34,24 @@ public class CompactVersionHolder<T extends VersionSource> implements VersionHol
   private final byte entryVersionHighByte;
   private final byte distributedSystemId;
   private final long versionTimeStamp;
-  
+
   public CompactVersionHolder(VersionHolder<T> tag) {
     int eVersion = tag.getEntryVersion();
-    this.entryVersionLowBytes = (short)(eVersion & 0xffff);
-    this.entryVersionHighByte = (byte)((eVersion & 0xff0000) >> 16);
+    this.entryVersionLowBytes = (short) (eVersion & 0xffff);
+    this.entryVersionHighByte = (byte) ((eVersion & 0xff0000) >> 16);
     this.regionVersionHighBytes = tag.getRegionVersionHighBytes();
     this.regionVersionLowBytes = tag.getRegionVersionLowBytes();
     this.versionTimeStamp = tag.getVersionTimeStamp();
-    this.distributedSystemId = (byte)(tag.getDistributedSystemId() & 0xff);
+    this.distributedSystemId = (byte) (tag.getDistributedSystemId() & 0xff);
     this.memberID = tag.getMemberID();
   }
-
-
 
   public int getEntryVersion() {
     return ((entryVersionHighByte << 16) & 0xFF0000) | (entryVersionLowBytes & 0xFFFF);
   }
 
   public long getRegionVersion() {
-    return (((long)regionVersionHighBytes) << 32) | (regionVersionLowBytes & 0x00000000FFFFFFFFL);  
+    return (((long) regionVersionHighBytes) << 32) | (regionVersionLowBytes & 0x00000000FFFFFFFFL);
   }
 
   public long getVersionTimeStamp() {
@@ -64,6 +61,7 @@ public class CompactVersionHolder<T extends VersionSource> implements VersionHol
   public T getMemberID() {
     return this.memberID;
   }
+
   public int getDistributedSystemId() {
     return this.distributedSystemId;
   }
@@ -76,12 +74,12 @@ public class CompactVersionHolder<T extends VersionSource> implements VersionHol
     tag.setDistributedSystemId(this.distributedSystemId);
     return tag;
   }
-  
+
   /** get rvv internal high byte.  Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.regionVersionHighBytes;
   }
-  
+
   /** get rvv internal low bytes.  Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.regionVersionLowBytes;

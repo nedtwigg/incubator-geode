@@ -61,14 +61,10 @@ public class MemberKeyStatisticsService implements PulseService {
 
     if (clusterMember != null) {
       // response
-      responseJSON.put("cpuUsageTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_CPU_USAGE_SAMPLE)));
-      responseJSON.put("memoryUsageTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_HEAP_USAGE_SAMPLE)));
-      responseJSON.put("readPerSecTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_GETS_PER_SECOND)));
-      responseJSON.put("writePerSecTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_PUTS_PER_SECOND)));
+      responseJSON.put("cpuUsageTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_CPU_USAGE_SAMPLE)));
+      responseJSON.put("memoryUsageTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_HEAP_USAGE_SAMPLE)));
+      responseJSON.put("readPerSecTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_GETS_PER_SECOND)));
+      responseJSON.put("writePerSecTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_PUTS_PER_SECOND)));
     }
     // Send json response
     return responseJSON;

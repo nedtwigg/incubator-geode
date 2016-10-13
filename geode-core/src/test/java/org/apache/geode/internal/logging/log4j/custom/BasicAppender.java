@@ -42,10 +42,7 @@ public class BasicAppender extends AbstractAppender {
   }
 
   @PluginFactory
-  public static BasicAppender createAppender(@PluginAttribute("name") String name,
-                                             @PluginAttribute("ignoreExceptions") boolean ignoreExceptions,
-                                             @PluginElement("Layout") Layout layout,
-                                             @PluginElement("Filters") Filter filter) {
+  public static BasicAppender createAppender(@PluginAttribute("name") String name, @PluginAttribute("ignoreExceptions") boolean ignoreExceptions, @PluginElement("Layout") Layout layout, @PluginElement("Filters") Filter filter) {
     if (layout == null) {
       layout = PatternLayout.createDefaultLayout();
     }

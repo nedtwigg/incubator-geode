@@ -28,7 +28,7 @@ package org.apache.geode.cache.util;
  */
 public class ObjectSizerImpl implements ObjectSizer {
 
-  public int sizeof( Object o ) {
+  public int sizeof(Object o) {
     return ObjectSizer.DEFAULT.sizeof(o);
   }
 }

@@ -30,8 +30,7 @@ public class StatsAverageLatency {
 
   private MBeanStatsMonitor monitor;
 
-  public StatsAverageLatency(String numberKey, StatType numKeyType,
-      String timeKey, MBeanStatsMonitor monitor) {
+  public StatsAverageLatency(String numberKey, StatType numKeyType, String timeKey, MBeanStatsMonitor monitor) {
     this.numberKey = numberKey;
     this.numKeyType = numKeyType;
     this.timeKey = timeKey;

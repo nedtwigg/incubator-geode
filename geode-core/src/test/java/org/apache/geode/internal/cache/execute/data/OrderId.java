@@ -42,7 +42,7 @@ public class OrderId implements DataSerializable {
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.orderId = DataSerializer.readInteger(in);
-    this.custId = (CustId)DataSerializer.readObject(in);
+    this.custId = (CustId) DataSerializer.readObject(in);
 
   }
 
@@ -52,7 +52,7 @@ public class OrderId implements DataSerializable {
   }
 
   public String toString() {
-    return "(OrderId:" + this.orderId + " , " + this.custId+")";
+    return "(OrderId:" + this.orderId + " , " + this.custId + ")";
   }
 
   public Integer getOrderId() {
@@ -70,13 +70,12 @@ public class OrderId implements DataSerializable {
     if (!(o instanceof OrderId))
       return false;
 
-    OrderId otherOrderId = (OrderId)o;
-    return (otherOrderId.orderId.equals(orderId) && otherOrderId.custId
-        .equals(custId));
+    OrderId otherOrderId = (OrderId) o;
+    return (otherOrderId.orderId.equals(orderId) && otherOrderId.custId.equals(custId));
 
   }
-    
-  public int hashCode() {  
+
+  public int hashCode() {
     return custId.hashCode();
   }
 }

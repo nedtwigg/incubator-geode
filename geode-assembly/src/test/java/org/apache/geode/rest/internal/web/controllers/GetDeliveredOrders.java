@@ -31,16 +31,15 @@ import org.apache.geode.cache.query.QueryInvocationTargetException;
 import org.apache.geode.cache.query.SelectResults;
 import org.apache.geode.cache.query.TypeMismatchException;
 
-
 /**
 * The GetDeliveredOrders class is a gemfire function that gives details about delivered orders.
 * <p/>
 * @since GemFire 8.0
 */
 
-public class GetDeliveredOrders  implements Function {
+public class GetDeliveredOrders implements Function {
   public void execute(FunctionContext context) {
-    
+
     Cache c = null;
     ArrayList<Object> vals = new ArrayList<Object>();
     try {
@@ -49,37 +48,37 @@ public class GetDeliveredOrders  implements Function {
       vals.add("NoCacheFoundResult");
       context.getResultSender().lastResult(vals);
     }
-    
+
     String oql = "SELECT o.purchaseOrderNo, o.deliveryDate  FROM /orders o WHERE o.deliveryDate != NULL";
     final Query query = c.getQueryService().newQuery(oql);
-   
+
     SelectResults result = null;
     try {
       result = (SelectResults) query.execute();
       int resultSize = result.size();
-      
-      if(result instanceof Collection<?>)
-        for(Object item : result){
+
+      if (result instanceof Collection<?>)
+        for (Object item : result) {
           vals.add(item);
         }
     } catch (FunctionDomainException e) {
-      if(c != null)
+      if (c != null)
         c.getLogger().info("Caught FunctionDomainException while executing function GetDeliveredOrders: " + e.getMessage());
-        
+
     } catch (TypeMismatchException e) {
-      if(c != null)
+      if (c != null)
         c.getLogger().info("Caught TypeMismatchException while executing function GetDeliveredOrders: " + e.getMessage());
-      
+
     } catch (NameResolutionException e) {
-      if(c != null)
+      if (c != null)
         c.getLogger().info("Caught NameResolutionException while executing function GetDeliveredOrders: " + e.getMessage());
-      
+
     } catch (QueryInvocationTargetException e) {
-      if(c != null)
+      if (c != null)
         c.getLogger().info("Caught QueryInvocationTargetException while executing function GetDeliveredOrders: " + e.getMessage());
-      
+
     }
-    
+
     context.getResultSender().lastResult(vals);
   }
 

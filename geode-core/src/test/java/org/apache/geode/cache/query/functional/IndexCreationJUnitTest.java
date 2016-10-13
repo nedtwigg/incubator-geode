@@ -21,7 +21,6 @@
  * Added a Test Case for testing the Task, IUM10 :  May 16, 2005, 2:45 PM
  */
 
-
 /**
  */
 package org.apache.geode.cache.query.functional;
@@ -80,17 +79,17 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public class IndexCreationJUnitTest {
 
-  private ObjectType resType1=null;
-  private ObjectType resType2= null;
+  private ObjectType resType1 = null;
+  private ObjectType resType2 = null;
 
-  private int resSize1=0;
-  private int resSize2=0;
+  private int resSize1 = 0;
+  private int resSize2 = 0;
 
-  private Iterator itert1=null;
-  private Iterator itert2=null;
+  private Iterator itert1 = null;
+  private Iterator itert2 = null;
 
-  private Set set1=null;
-  private Set set2=null;
+  private Set set1 = null;
+  private Set set2 = null;
 
   private String s1;
   private String s2;
@@ -123,7 +122,7 @@ public class IndexCreationJUnitTest {
     Index i7 = qs.createIndex("statusIndex7", IndexType.FUNCTIONAL, "a.status", "/portfolios.getValues().asList() a, positions");
     Index i8 = qs.createIndex("statusIndex8", IndexType.FUNCTIONAL, "a.status", "/portfolios.values.asSet a, positions");
     //TASK ICM6
-    Object indices[] = { i1, i2, i5, i6, i7, i8 };   //remove any commented Index
+    Object indices[] = { i1, i2, i5, i6, i7, i8 }; //remove any commented Index
     // from Array
 
     for (int j = 0; j < indices.length; j++) {
@@ -229,8 +228,7 @@ public class IndexCreationJUnitTest {
     Query query = null;
     qs.createIndex("NVLIndex1", IndexType.FUNCTIONAL, "nvl(pf.position2, pf.position1).secId", "/portfolios pf");
 
-    query = CacheUtils.getQueryService()
-                      .newQuery("select distinct * from /portfolios pf where nvl(pf.position2, pf.position1).secId = 'SUN'");
+    query = CacheUtils.getQueryService().newQuery("select distinct * from /portfolios pf where nvl(pf.position2, pf.position1).secId = 'SUN'");
     QueryObserverImpl observer = new QueryObserverImpl();
     QueryObserverHolder.setInstance(observer);
     query.execute();
@@ -239,9 +237,7 @@ public class IndexCreationJUnitTest {
       fail("NO INDEX USED");
     }
 
-
-    query = CacheUtils.getQueryService()
-                      .newQuery("select distinct nvl(pf.position2, 'inProjection') from /portfolios pf where nvl(pf.position2, pf.position1).secId = 'SUN'");
+    query = CacheUtils.getQueryService().newQuery("select distinct nvl(pf.position2, 'inProjection') from /portfolios pf where nvl(pf.position2, pf.position1).secId = 'SUN'");
     observer = new QueryObserverImpl();
     QueryObserverHolder.setInstance(observer);
     query.execute();
@@ -263,7 +259,7 @@ public class IndexCreationJUnitTest {
     // pf.positions.values b");
     //TASK ICM5 org.apache.geode.cache.query.IndexInvalidException
 
-    Object indices[] = { i3 };   //remove any commented Index from Array
+    Object indices[] = { i3 }; //remove any commented Index from Array
 
     for (int j = 0; j < indices.length; j++) {
       CacheUtils.log(((IndexProtocol) indices[j]).isValid());
@@ -283,12 +279,8 @@ public class IndexCreationJUnitTest {
     SelectResults r[][] = new SelectResults[4][2];
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-      "select distinct * from /portfolios pf where pf.getCW(pf.ID) = $1",
-      "select distinct * from /portfolios pf where pf.getCW(pf.ID) > $1",
-      "select distinct * from /portfolios pf where pf.getCW(pf.ID) < $1",
-      "select distinct * from /portfolios pf where pf.getCW(pf.ID) != $1"
-      // TASK IUM 10
+    String queries[] = { "select distinct * from /portfolios pf where pf.getCW(pf.ID) = $1", "select distinct * from /portfolios pf where pf.getCW(pf.ID) > $1", "select distinct * from /portfolios pf where pf.getCW(pf.ID) < $1", "select distinct * from /portfolios pf where pf.getCW(pf.ID) != $1"
+        // TASK IUM 10
     };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -343,9 +335,7 @@ public class IndexCreationJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
 
-    String[] queries = {
-      "select distinct * from /portfolios pf where pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID] != -1"
-    };
+    String[] queries = { "select distinct * from /portfolios pf where pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID] != -1" };
 
     Object r[][] = new Object[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
@@ -424,7 +414,6 @@ public class IndexCreationJUnitTest {
     CacheUtils.log(((CompactRangeIndex) i1).dump());
     //CacheUtils.log(((RangeIndex)i2).dump());
   }
-
 
   /**
    * Creation of index on a path derived from Region.Entry object obtained
@@ -655,16 +644,9 @@ public class IndexCreationJUnitTest {
     }
 
     // Execute query.
-    String[] queryStr = new String[] {
-      "Select * from /portfolios_overflow pf where pf.ID = 2",
-      "Select * from /portfolios_overflow.keys key where key.ID = 2",
-      "Select * from /portfolios_overflow pf where pf.ID > 1",
-      "Select * from /portfolios_overflow pf where pf.ID < 2",
-    };
+    String[] queryStr = new String[] { "Select * from /portfolios_overflow pf where pf.ID = 2", "Select * from /portfolios_overflow.keys key where key.ID = 2", "Select * from /portfolios_overflow pf where pf.ID > 1", "Select * from /portfolios_overflow pf where pf.ID < 2", };
 
-    int[] resultSize = new int[] {
-      1, 1, 2, 2
-    };
+    int[] resultSize = new int[] { 1, 1, 2, 2 };
 
     for (int i = 0; i < queryStr.length; i++) {
       Query q = qs.newQuery(queryStr[i]);
@@ -754,8 +736,7 @@ public class IndexCreationJUnitTest {
       }
 
       //verify that a query on the creation time works as expected
-      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L")
-                                                .execute();
+      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L").execute();
       assertEquals("OQL index results did not match", 1, results.size());
       cache.close();
       ds.disconnect();
@@ -774,8 +755,7 @@ public class IndexCreationJUnitTest {
       Region region = cache.getRegion("mainReportRegion");
 
       //verify that a query on the creation time works as expected
-      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L")
-                                                .execute();
+      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L").execute();
       assertEquals("OQL index results did not match", 1, results.size());
       ds.disconnect();
       FileUtil.delete(file);
@@ -803,8 +783,7 @@ public class IndexCreationJUnitTest {
     Index ind = qs.getIndex(localRegion, "localIndex");
     assertNotNull("Index localIndex should have been created ", ind);
     // verify that a query on the creation time works as expected
-    SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM " + localRegion.getFullPath() + " Where ID > 0")
-                                              .execute();
+    SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM " + localRegion.getFullPath() + " Where ID > 0").execute();
     assertEquals("OQL index results did not match", 99, results.size());
     ds.disconnect();
     FileUtil.delete(file);
@@ -831,8 +810,7 @@ public class IndexCreationJUnitTest {
     Index ind = qs.getIndex(localDiskRegion, "localDiskIndex");
     assertNotNull("Index localIndex should have been created ", ind);
     // verify that a query on the creation time works as expected
-    SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM " + localDiskRegion.getFullPath() + " Where status = 'active'")
-                                              .execute();
+    SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM " + localDiskRegion.getFullPath() + " Where status = 'active'").execute();
     assertEquals("OQL index results did not match", 50, results.size());
     ds.disconnect();
     FileUtil.delete(file);
@@ -872,8 +850,7 @@ public class IndexCreationJUnitTest {
       assertEquals(100, is2.getNumberOfValues());
 
       //verify that a query on the creation time works as expected
-      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L")
-                                                .execute();
+      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L").execute();
       assertEquals("OQL index results did not match", 1, results.size());
       cache.close();
       ds.disconnect();
@@ -891,8 +868,7 @@ public class IndexCreationJUnitTest {
       QueryService qs = cache.getQueryService();
       Region region = cache.getRegion("mainReportRegion");
 
-      assertTrue("Index initialization time should not be 0.", ((LocalRegion) region).getCachePerfStats()
-                                                                                     .getIndexInitializationTime() > 0);
+      assertTrue("Index initialization time should not be 0.", ((LocalRegion) region).getCachePerfStats().getIndexInitializationTime() > 0);
 
       IndexStatistics is1 = qs.getIndex(region, "status").getStatistics();
       assertEquals(2, is1.getNumberOfKeys());
@@ -903,8 +879,7 @@ public class IndexCreationJUnitTest {
       assertEquals(100, is2.getNumberOfValues());
 
       //verify that a query on the creation time works as expected
-      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L")
-                                                .execute();
+      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT * FROM /mainReportRegion.entrySet mr Where mr.value.createTime > 1L and mr.value.createTime < 3L").execute();
       assertEquals("OQL index results did not match", 1, results.size());
       ds.disconnect();
       FileUtil.delete(file);
@@ -937,8 +912,7 @@ public class IndexCreationJUnitTest {
     assertEquals("Index should not have been empty ", 4, i1.getStatistics().getNumberOfValues());
     assertEquals("Index should not have been empty ", 8, i2.getStatistics().getNumberOfKeys());
     assertEquals("Index should not have been empty ", 8, i2.getStatistics().getNumberOfValues());
-    assertEquals("Index should not have been empty ", 0, i3.getStatistics()
-                                                           .getNumberOfKeys()); // hash index does not have keys
+    assertEquals("Index should not have been empty ", 0, i3.getStatistics().getNumberOfKeys()); // hash index does not have keys
     assertEquals("Index should not have been empty ", 4, i3.getStatistics().getNumberOfValues());
   }
 

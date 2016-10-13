@@ -32,10 +32,8 @@ public class MapBasedStatisticsNotification implements StatisticsNotification {
   private final long millisTimeStamp;
   private final Type type;
   private final Map<StatisticId, Number> stats;
-  
-  protected MapBasedStatisticsNotification(long millisTimeStamp,
-                                           Type type,
-                                           Map<StatisticId, Number> stats) {
+
+  protected MapBasedStatisticsNotification(long millisTimeStamp, Type type, Map<StatisticId, Number> stats) {
     this.millisTimeStamp = millisTimeStamp;
     this.type = type;
     this.stats = Collections.unmodifiableMap(stats);
@@ -68,8 +66,7 @@ public class MapBasedStatisticsNotification implements StatisticsNotification {
   public Number getValue(StatisticId statId) throws StatisticNotFoundException {
     Number value = this.stats.get(statId);
     if (value == null) {
-      throw new StatisticNotFoundException(statId.getStatisticDescriptor().getName()
-          + " not found in notification");
+      throw new StatisticNotFoundException(statId.getStatisticDescriptor().getName() + " not found in notification");
     }
     return value;
   }

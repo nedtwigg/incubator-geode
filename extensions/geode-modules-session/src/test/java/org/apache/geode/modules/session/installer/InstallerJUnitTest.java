@@ -45,13 +45,10 @@ public class InstallerJUnitTest {
   private void testTransformation(final String name) throws Exception {
     File webXmlFile = temporaryFolder.newFile();
     FileUtil.copy(getClass().getResource(name), webXmlFile);
-    final String[] args = {
-      "-t", "peer-to-peer",
-      "-w", webXmlFile.getAbsolutePath()
-    };
+    final String[] args = { "-t", "peer-to-peer", "-w", webXmlFile.getAbsolutePath() };
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
-    try(InputStream input = new FileInputStream(webXmlFile)){
+    try (InputStream input = new FileInputStream(webXmlFile)) {
       new Installer(args).processWebXml(input, output);
     }
 

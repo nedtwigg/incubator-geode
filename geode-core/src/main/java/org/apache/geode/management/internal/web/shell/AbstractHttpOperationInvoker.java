@@ -117,7 +117,6 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
   // the base URL of the GemFire Manager's embedded HTTP service and REST API interface
   private final String baseUrl;
 
-
   protected Map<String, String> securityProperties;
 
   /**
@@ -180,25 +179,25 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
         final HttpStatus status = response.getStatusCode();
 
         switch (status) {
-          case BAD_REQUEST: // 400 *
-          case UNAUTHORIZED: // 401
-          case FORBIDDEN: // 403
-          case NOT_FOUND: // 404 *
-          case METHOD_NOT_ALLOWED: // 405 *
-          case NOT_ACCEPTABLE: // 406 *
-          case REQUEST_TIMEOUT: // 408
-          case CONFLICT: // 409
-          case REQUEST_ENTITY_TOO_LARGE: // 413
-          case REQUEST_URI_TOO_LONG: // 414
-          case UNSUPPORTED_MEDIA_TYPE: // 415 *
-          case TOO_MANY_REQUESTS: // 429
-          case INTERNAL_SERVER_ERROR: // 500 *
-          case NOT_IMPLEMENTED: // 501
-          case BAD_GATEWAY: // 502 ?
-          case SERVICE_UNAVAILABLE: // 503
-            return true;
-          default:
-            return false;
+        case BAD_REQUEST: // 400 *
+        case UNAUTHORIZED: // 401
+        case FORBIDDEN: // 403
+        case NOT_FOUND: // 404 *
+        case METHOD_NOT_ALLOWED: // 405 *
+        case NOT_ACCEPTABLE: // 406 *
+        case REQUEST_TIMEOUT: // 408
+        case CONFLICT: // 409
+        case REQUEST_ENTITY_TOO_LARGE: // 413
+        case REQUEST_URI_TOO_LONG: // 414
+        case UNSUPPORTED_MEDIA_TYPE: // 415 *
+        case TOO_MANY_REQUESTS: // 429
+        case INTERNAL_SERVER_ERROR: // 500 *
+        case NOT_IMPLEMENTED: // 501
+        case BAD_GATEWAY: // 502 ?
+        case SERVICE_UNAVAILABLE: // 503
+          return true;
+        default:
+          return false;
         }
       }
 
@@ -213,11 +212,9 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
 
         if (response.getRawStatusCode() == 401) {
           throw new AuthenticationFailedException(message);
-        }
-        else if (response.getRawStatusCode() == 403) {
+        } else if (response.getRawStatusCode() == 403) {
           throw new NotAuthorizedException(message);
-        }
-        else {
+        } else {
           throw new RuntimeException(message);
         }
       }
@@ -236,8 +233,7 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
           }
 
           return buffer.toString().trim();
-        }
-        finally {
+        } finally {
           IOUtils.close(responseBodyReader);
         }
       }
@@ -321,9 +317,7 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
    * @see java.util.concurrent.ScheduledExecutorService
    */
   protected final ScheduledExecutorService getExecutorService() {
-    assertState(this.executorService != null,
-      "The ExecutorService for this HTTP OperationInvoker (%1$s) was not properly initialized!",
-      getClass().getName());
+    assertState(this.executorService != null, "The ExecutorService for this HTTP OperationInvoker (%1$s) was not properly initialized!", getClass().getName());
     return this.executorService;
   }
 
@@ -467,9 +461,7 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
   protected String handleResourceAccessException(final ResourceAccessException e) {
     stop();
 
-    return String.format("The connection to the GemFire Manager's HTTP service @ %1$s failed with: %2$s. "
-        + "Please try reconnecting or see the GemFire Manager's log file for further details.",
-      getBaseUrl(), e.getMessage());
+    return String.format("The connection to the GemFire Manager's HTTP service @ %1$s failed with: %2$s. " + "Please try reconnecting or see the GemFire Manager's log file for further details.", getBaseUrl(), e.getMessage());
   }
 
   /**
@@ -523,7 +515,7 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
    * @see org.springframework.http.ResponseEntity
    */
   protected <T> ResponseEntity<T> send(final ClientHttpRequest request, final Class<T> responseType) {
-    return send(request, responseType, Collections.<String, Object>emptyMap());
+    return send(request, responseType, Collections.<String, Object> emptyMap());
   }
 
   /**
@@ -548,14 +540,12 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
       printInfo("HTTP request parameters: %1$s", request.getParameters());
     }
 
-    final ResponseEntity<T> response = getRestTemplate().exchange(url, request.getMethod(),
-      request.createRequestEntity(), responseType);
+    final ResponseEntity<T> response = getRestTemplate().exchange(url, request.getMethod(), request.createRequestEntity(), responseType);
 
     if (isDebugEnabled()) {
       printInfo("------------------------------------------------------------------------");
       printInfo("HTTP response headers: %1$s", response.getHeaders());
-      printInfo("HTTP response status: %1$d - %2$s", response.getStatusCode().value(),
-        response.getStatusCode().getReasonPhrase());
+      printInfo("HTTP response status: %1$d - %2$s", response.getStatusCode().value(), response.getStatusCode().getReasonPhrase());
 
       printInfo("HTTP response body: ", response.getBody());
     }
@@ -613,21 +603,13 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
 
       try {
         return IOUtils.deserializeObject(response.getBody());
+      } catch (IOException e) {
+        throw new MBeanAccessException(String.format("De-serializing the result of accessing attribute (%1$s) on MBean (%2$s) failed!", resourceName, attributeName), e);
+      } catch (ClassNotFoundException e) {
+        throw new MBeanAccessException(String.format("The Class type of the result when accessing attribute (%1$s) on MBean (%2$s) was not found!", resourceName, attributeName), e);
       }
-      catch (IOException e) {
-        throw new MBeanAccessException(String.format(
-          "De-serializing the result of accessing attribute (%1$s) on MBean (%2$s) failed!",
-          resourceName, attributeName), e);
-      }
-      catch (ClassNotFoundException e) {
-        throw new MBeanAccessException(String.format(
-          "The Class type of the result when accessing attribute (%1$s) on MBean (%2$s) was not found!",
-          resourceName, attributeName), e);
-      }
-    }
-    else {
-      printSevere("Getting the value of attribute (%1$s) on MBean (%2$s) is currently an unsupported operation!",
-        attributeName, resourceName);
+    } else {
+      printSevere("Getting the value of attribute (%1$s) on MBean (%2$s) is currently an unsupported operation!", attributeName, resourceName);
       throw new RestApiCallForCommandNotFoundException(MBEAN_ATTRIBUTE_LINK_RELATION);
     }
   }
@@ -647,8 +629,7 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
       try {
         clusterId = (Integer) getAttribute(ManagementConstants.OBJECTNAME__DISTRIBUTEDSYSTEM_MXBEAN, "DistributedSystemId");
         printDebug("Cluster ID (%1$s)", clusterId);
-      }
-      catch (Exception ignore) {
+      } catch (Exception ignore) {
         printDebug("Failed to determine cluster ID: %1$s", ignore.getMessage());
       }
     }
@@ -711,21 +692,13 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
 
       try {
         return IOUtils.deserializeObject(response.getBody());
+      } catch (IOException e) {
+        throw new MBeanAccessException(String.format("De-serializing the result from invoking operation (%1$s) on MBean (%2$s) failed!", resourceName, operationName), e);
+      } catch (ClassNotFoundException e) {
+        throw new MBeanAccessException(String.format("The Class type of the result from invoking operation (%1$s) on MBean (%2$s) was not found!", resourceName, operationName), e);
       }
-      catch (IOException e) {
-        throw new MBeanAccessException(String.format(
-          "De-serializing the result from invoking operation (%1$s) on MBean (%2$s) failed!",
-          resourceName, operationName), e);
-      }
-      catch (ClassNotFoundException e) {
-        throw new MBeanAccessException(String.format(
-          "The Class type of the result from invoking operation (%1$s) on MBean (%2$s) was not found!",
-          resourceName, operationName), e);
-      }
-    }
-    else {
-      printSevere("Invoking operation (%1$s) on MBean (%2$s) is currently an unsupported operation!",
-        operationName, resourceName);
+    } else {
+      printSevere("Invoking operation (%1$s) on MBean (%2$s) is currently an unsupported operation!", operationName, resourceName);
       throw new RestApiCallForCommandNotFoundException(MBEAN_OPERATION_LINK_RELATION);
     }
   }
@@ -758,17 +731,11 @@ public abstract class AbstractHttpOperationInvoker implements HttpOperationInvok
 
       try {
         return (Set<ObjectName>) IOUtils.deserializeObject(response.getBody());
+      } catch (Exception e) {
+        throw new MBeanAccessException(String.format("An error occurred while querying for MBean names using ObjectName pattern (%1$s) and Query expression (%2$s)!", objectName, queryExpression), e);
       }
-      catch (Exception e) {
-        throw new MBeanAccessException(String.format(
-          "An error occurred while querying for MBean names using ObjectName pattern (%1$s) and Query expression (%2$s)!",
-          objectName, queryExpression), e);
-      }
-    }
-    else {
-      printSevere(
-        "Running a query to get the ObjectNames of all MBeans matching the ObjectName pattern (%1$s) and Query expression (%2$s) is currently unsupported!",
-        objectName, queryExpression);
+    } else {
+      printSevere("Running a query to get the ObjectNames of all MBeans matching the ObjectName pattern (%1$s) and Query expression (%2$s) is currently unsupported!", objectName, queryExpression);
       throw new RestApiCallForCommandNotFoundException(MBEAN_QUERY_LINK_RELATION);
     }
   }

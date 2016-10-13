@@ -39,16 +39,14 @@ import org.apache.geode.internal.Version;
  */
 public class ServerPingMessage extends PooledDistributionMessage {
   private int processorId = 0;
-  
+
   public ServerPingMessage() {
   }
 
-  
   public ServerPingMessage(ReplyProcessor21 processor) {
     this.processorId = processor.getProcessorId();
   }
 
-  
   @Override
   public int getDSFID() {
     return SERVER_PING_MESSAGE;
@@ -60,74 +58,72 @@ public class ServerPingMessage extends PooledDistributionMessage {
    * 
    * @return true if all the recipients are pingable
    */
-  public static boolean send (GemFireCacheImpl cache, 
-      Set<InternalDistributedMember> recipients) {
-    
+  public static boolean send(GemFireCacheImpl cache, Set<InternalDistributedMember> recipients) {
+
     InternalDistributedSystem ids = cache.getDistributedSystem();
     DM dm = ids.getDistributionManager();
-    Set <InternalDistributedMember> filteredRecipients = new HashSet<InternalDistributedMember>();
-     
+    Set<InternalDistributedMember> filteredRecipients = new HashSet<InternalDistributedMember>();
+
     // filtered recipients 
     for (InternalDistributedMember recipient : recipients) {
-      if(Version.GFE_81.compareTo(recipient.getVersionObject()) <= 0) {
+      if (Version.GFE_81.compareTo(recipient.getVersionObject()) <= 0) {
         filteredRecipients.add(recipient);
-      } 
+      }
     }
     if (filteredRecipients == null || filteredRecipients.size() == 0)
       return true;
-   
+
     ReplyProcessor21 replyProcessor = new ReplyProcessor21(dm, filteredRecipients);
     ServerPingMessage spm = new ServerPingMessage(replyProcessor);
-   
+
     spm.setRecipients(filteredRecipients);
     Set failedServers = null;
     try {
       if (cache.getLoggerI18n().fineEnabled())
-        cache.getLoggerI18n().fine("Pinging following servers " +  filteredRecipients);
+        cache.getLoggerI18n().fine("Pinging following servers " + filteredRecipients);
       failedServers = dm.putOutgoing(spm);
-      
+
       // wait for the replies for timeout msecs
       boolean receivedReplies = replyProcessor.waitForReplies(0L);
-      
+
       dm.getCancelCriterion().checkCancelInProgress(null);
-      
+
       // If the reply is not received in the stipulated time, throw an exception
       if (!receivedReplies) {
         cache.getLoggerI18n().error(LocalizedStrings.Server_Ping_Failure, filteredRecipients);
         return false;
       }
     } catch (Throwable e) {
-      cache.getLoggerI18n().error(LocalizedStrings.Server_Ping_Failure, filteredRecipients, e );
+      cache.getLoggerI18n().error(LocalizedStrings.Server_Ping_Failure, filteredRecipients, e);
       return false;
     }
-   
-    if (failedServers == null  || failedServers.size() == 0)
-      return true; 
-    
+
+    if (failedServers == null || failedServers.size() == 0)
+      return true;
+
     cache.getLoggerI18n().info(LocalizedStrings.Server_Ping_Failure, failedServers);
-    
+
     return false;
   }
-  
+
   @Override
   protected void process(DistributionManager dm) {
     // do nothing. We are just pinging the server. send the reply back. 
-    ReplyMessage.send(getSender(), this.processorId,  null, dm); 
+    ReplyMessage.send(getSender(), this.processorId, null, dm);
   }
 
- 
   @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeInt(this.processorId);
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.processorId = in.readInt();
   }
-  
+
   @Override
   public int getProcessorId() {
     return this.processorId;

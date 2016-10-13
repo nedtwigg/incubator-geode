@@ -29,13 +29,11 @@ import java.lang.reflect.Array;
  * 
  * @version $Revision: 1.1 $
  */
-public class CompiledIndexOperation extends AbstractCompiledValue implements 
-   MapIndexable 
-{
+public class CompiledIndexOperation extends AbstractCompiledValue implements MapIndexable {
 
   private CompiledValue receiver;
   private CompiledValue indexExpr;
-  
+
   private boolean evalRegionAsEntry = false;
 
   public CompiledIndexOperation(CompiledValue receiver, CompiledValue indexExpr) {
@@ -43,8 +41,7 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements
     this.indexExpr = indexExpr;
   }
 
-  public CompiledIndexOperation(CompiledValue receiver,
-      CompiledValue indexExpr, boolean evalRegionAsEntry) {
+  public CompiledIndexOperation(CompiledValue receiver, CompiledValue indexExpr, boolean evalRegionAsEntry) {
     this.receiver = receiver;
     this.indexExpr = indexExpr;
     this.evalRegionAsEntry = evalRegionAsEntry;
@@ -57,32 +54,27 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements
     list.add(indexExpr);
     return list;
   }
-  
+
   public int getType() {
     return TOK_LBRACK;
   }
 
   @Override
-  public Set computeDependencies(ExecutionContext context)
-      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     context.addDependencies(this, this.receiver.computeDependencies(context));
-    return context.addDependencies(this, this.indexExpr
-        .computeDependencies(context));
+    return context.addDependencies(this, this.indexExpr.computeDependencies(context));
   }
 
-  public Object evaluate(ExecutionContext context)
-      throws TypeMismatchException, FunctionDomainException,
-      NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
     Object rcvr = this.receiver.evaluate(context);
     Object index = this.indexExpr.evaluate(context);
 
-    if (rcvr == null || rcvr == QueryService.UNDEFINED){ 
+    if (rcvr == null || rcvr == QueryService.UNDEFINED) {
       return QueryService.UNDEFINED;
     }
     // In case of cq, the rcvr could be Region.Entry or CqEntry
     // get the value from the entry for further processing
-    if (context.isCqQueryContext()
-        && (rcvr instanceof Region.Entry || rcvr instanceof CqEntry)) {
+    if (context.isCqQueryContext() && (rcvr instanceof Region.Entry || rcvr instanceof CqEntry)) {
       try {
         if (rcvr instanceof Region.Entry) {
           Region.Entry re = (Region.Entry) rcvr;
@@ -100,16 +92,21 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements
         return QueryService.UNDEFINED;
       }
     }
-    
-    if (rcvr instanceof Map) { return ((Map) rcvr).get(index); }
-    if ((rcvr instanceof List) || rcvr.getClass().isArray()
-        || (rcvr instanceof String)) {
-      if (!(index instanceof Integer)) { throw new TypeMismatchException(LocalizedStrings.CompiledIndexOperation_INDEX_EXPRESSION_MUST_BE_AN_INTEGER_FOR_LISTS_OR_ARRAYS.toLocalizedString()); }
+
+    if (rcvr instanceof Map) {
+      return ((Map) rcvr).get(index);
     }
-    if (rcvr instanceof List) { return ((List) rcvr).get(((Integer) index)
-        .intValue()); }
-    if (rcvr instanceof String) { return new Character(((String) rcvr)
-        .charAt(((Integer) index).intValue())); }
+    if ((rcvr instanceof List) || rcvr.getClass().isArray() || (rcvr instanceof String)) {
+      if (!(index instanceof Integer)) {
+        throw new TypeMismatchException(LocalizedStrings.CompiledIndexOperation_INDEX_EXPRESSION_MUST_BE_AN_INTEGER_FOR_LISTS_OR_ARRAYS.toLocalizedString());
+      }
+    }
+    if (rcvr instanceof List) {
+      return ((List) rcvr).get(((Integer) index).intValue());
+    }
+    if (rcvr instanceof String) {
+      return new Character(((String) rcvr).charAt(((Integer) index).intValue()));
+    }
     if (rcvr.getClass().isArray()) {
       // @todo we need to handle primitive arrays here and wrap the result //
       /*
@@ -128,7 +125,9 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements
     // it is an instance of QRegion only
     if (rcvr instanceof QRegion) {
       Region.Entry entry = ((QRegion) rcvr).getEntry(index);
-      if (entry == null) { return null; }
+      if (entry == null) {
+        return null;
+      }
       return this.evalRegionAsEntry ? entry : entry.getValue();
     }
     /*
@@ -141,9 +140,7 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements
 
   //Asif :Function for generating canonicalized expression
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer,
-      ExecutionContext context) throws AmbiguousNameException,
-      TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     //  Asif: The canonicalization of Index operator will be of
     // the form IterX.getPositions[IterY.a.b.c]
     clauseBuffer.insert(0, ']');
@@ -160,21 +157,15 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements
     return indexExpr;
   }
 
-
-  public CompiledValue getMapLookupKey()
-  {
+  public CompiledValue getMapLookupKey() {
     return this.indexExpr;
   }
 
-  
-  public CompiledValue getRecieverSansIndexArgs()
-  {
+  public CompiledValue getRecieverSansIndexArgs() {
     return this.receiver;
   }
 
-  
-  public List<CompiledValue> getIndexingKeys()
-  {
+  public List<CompiledValue> getIndexingKeys() {
     List<CompiledValue> list = new ArrayList<CompiledValue>(1);
     list.add(this.indexExpr);
     return list;

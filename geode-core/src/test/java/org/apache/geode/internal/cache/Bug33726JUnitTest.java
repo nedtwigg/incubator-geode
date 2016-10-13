@@ -35,28 +35,26 @@ import static org.junit.Assert.fail;
  *
  */
 @Category(IntegrationTest.class)
-public class Bug33726JUnitTest{
-  
+public class Bug33726JUnitTest {
+
   boolean[] flags = new boolean[2];
-//  private boolean failed = false;
-//  private boolean done = false;
+  //  private boolean failed = false;
+  //  private boolean done = false;
   static boolean isOK = false;
-  
-  public Bug33726JUnitTest(){
-    
+
+  public Bug33726JUnitTest() {
+
   }
-  
-  public void setup(){
-    
+
+  public void setup() {
+
   }
-  
+
   @After
-  public void tearDown(){
-    
+  public void tearDown() {
+
   }
-  
-  
-  
+
   @Test
   public void testAfterRegionCreate() {
     Properties props = new Properties();
@@ -67,35 +65,30 @@ public class Bug33726JUnitTest{
     Cache cache = null;
     try {
       cache = CacheFactory.create(ds);
-     
+
       Region region = cache.createRegion("testRegion", factory.create());
-      region.createSubregion("testSubRegion",factory.create());
-    }
-    catch (Exception e) {
+      region.createSubregion("testSubRegion", factory.create());
+    } catch (Exception e) {
       fail("Failed to create cache due to " + e);
       e.printStackTrace();
     }
-    
-   
-    if(!testFlag()){
+
+    if (!testFlag()) {
       fail("After create sent although region was not initialized");
     }
   }
-  
-  public  boolean testFlag() {
+
+  public boolean testFlag() {
     if (isOK) {
       return isOK;
-    }
-    else {
+    } else {
       synchronized (Bug33726JUnitTest.class) {
         if (isOK) {
           return isOK;
-        }
-        else {
+        } else {
           try {
             Bug33726JUnitTest.class.wait(120000);
-          }
-          catch (InterruptedException ie) {
+          } catch (InterruptedException ie) {
             fail("interrupted");
           }
         }
@@ -103,7 +96,7 @@ public class Bug33726JUnitTest{
       return isOK;
     }
   }
-  
+
   protected class TestCacheListener extends CacheListenerAdapter {
 
     public void afterRegionCreate(RegionEvent event) {
@@ -112,16 +105,15 @@ public class Bug33726JUnitTest{
         String regionPath = event.getRegion().getFullPath();
         if (regionPath.indexOf("/testRegion/testSubRegion") >= 0) {
           flags[1] = true;
-        }
-        else if (regionPath.indexOf("/testRegion") >= 0) {
+        } else if (regionPath.indexOf("/testRegion") >= 0) {
           flags[0] = true;
         }
-      
+
       }
-      if(flags[0] && flags[1]){
+      if (flags[0] && flags[1]) {
         isOK = true;
         synchronized (Bug33726JUnitTest.class) {
-        Bug33726JUnitTest.class.notify();
+          Bug33726JUnitTest.class.notify();
         }
       }
     }

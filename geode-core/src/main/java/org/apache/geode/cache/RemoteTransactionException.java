@@ -28,13 +28,13 @@ package org.apache.geode.cache;
  * @deprecated as of 6.6 exceptions from a remote node are no longer wrapped in this exception.  Instead of this, {@link TransactionDataNodeHasDepartedException} is thrown.
  */
 public class RemoteTransactionException extends TransactionException {
-  
+
   private static final long serialVersionUID = -2217135580436381984L;
 
   public RemoteTransactionException(String s) {
     super(s);
   }
-  
+
   public RemoteTransactionException(Exception e) {
     super(e);
   }

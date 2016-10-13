@@ -31,13 +31,13 @@ public class PartitionedRegionHelperJUnitTest {
     {
       String bucketName = PartitionedRegionHelper.getBucketName("/root/region", 5);
       assertEquals("Name = " + bucketName, -1, bucketName.indexOf('/'));
-      assertEquals("/root/region" , PartitionedRegionHelper.getPRPath(bucketName));
+      assertEquals("/root/region", PartitionedRegionHelper.getPRPath(bucketName));
     }
 
     {
       String bucketName = PartitionedRegionHelper.getBucketName("/root/region_one", 5);
       assertEquals("Name = " + bucketName, -1, bucketName.indexOf('/'));
-      assertEquals("/root/region_one" , PartitionedRegionHelper.getPRPath(bucketName));
+      assertEquals("/root/region_one", PartitionedRegionHelper.getPRPath(bucketName));
     }
   }
 

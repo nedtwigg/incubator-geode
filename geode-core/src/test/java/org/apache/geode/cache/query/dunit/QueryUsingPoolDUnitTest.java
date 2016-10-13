@@ -77,7 +77,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 @Category(DistributedTest.class)
 public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * The port on which the bridge server was started in this VM
    */
@@ -96,13 +96,12 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     this.regionName = this.getName();
     this.regName = "/" + this.rootRegionName + "/" + this.regionName;
 
-    this.queryString = new String[] {
-      "SELECT itr.value FROM " + this.regName + ".entries itr where itr.key = $1", // 0
-      "SELECT DISTINCT * FROM " + this.regName + " WHERE id < $1 ORDER BY   id", // 1
-      "SELECT DISTINCT * FROM " + this.regName + " WHERE id < $1 ORDER BY id", // 2
-      "(SELECT DISTINCT * FROM " + this.regName + " WHERE id < $1).size", // 3
-      "SELECT * FROM " + this.regName + " WHERE id = $1 and Ticker = $2", // 4
-      "SELECT * FROM " + this.regName + " WHERE id < $1 and Ticker = $2", // 5
+    this.queryString = new String[] { "SELECT itr.value FROM " + this.regName + ".entries itr where itr.key = $1", // 0
+        "SELECT DISTINCT * FROM " + this.regName + " WHERE id < $1 ORDER BY   id", // 1
+        "SELECT DISTINCT * FROM " + this.regName + " WHERE id < $1 ORDER BY id", // 2
+        "(SELECT DISTINCT * FROM " + this.regName + " WHERE id < $1).size", // 3
+        "SELECT * FROM " + this.regName + " WHERE id = $1 and Ticker = $2", // 4
+        "SELECT * FROM " + this.regName + " WHERE id < $1 and Ticker = $2", // 5
     };
 
     disconnectAllFromDS();
@@ -123,8 +122,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     createPool(poolName, new String[] { server }, new int[] { port }, false);
   }
 
-  public void createPool(final String poolName, final String[] servers, final int[] ports,
-      final boolean subscriptionEnabled) {
+  public void createPool(final String poolName, final String[] servers, final int[] ports, final boolean subscriptionEnabled) {
     // Create Cache.
     getCache(true);
 
@@ -141,9 +139,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
   }
 
   public void validateCompiledQuery(final long compiledQueryCount) {
-    Awaitility.await().pollInterval(100, TimeUnit.MILLISECONDS)
-        .pollDelay(100, TimeUnit.MILLISECONDS).timeout(60, TimeUnit.SECONDS)
-        .until(() -> CacheClientNotifier.getInstance().getStats().getCompiledQueryCount() == compiledQueryCount);
+    Awaitility.await().pollInterval(100, TimeUnit.MILLISECONDS).pollDelay(100, TimeUnit.MILLISECONDS).timeout(60, TimeUnit.SECONDS).until(() -> CacheClientNotifier.getInstance().getStats().getCompiledQueryCount() == compiledQueryCount);
   }
 
   /**
@@ -249,8 +245,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       assertEquals(1, results.size());
       assertTrue(!results.getCollectionType().allowsDuplicates());
 
-      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct * from " + regionName
-          + " where ticker = 'ibm' and price = 50";
+      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct * from " + regionName + " where ticker = 'ibm' and price = 50";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -316,8 +311,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       assertEquals(numberOfEntries, results.size());
       assertTrue(!results.getCollectionType().allowsDuplicates() && results.getCollectionType().getElementType().isStructType());
 
-      queryString =
-          "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where ticker = 'ibm'";
+      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where ticker = 'ibm'";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -327,8 +321,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       assertEquals(numberOfEntries, results.size());
       assertTrue(!results.getCollectionType().allowsDuplicates() && results.getCollectionType().getElementType().isStructType());
 
-      queryString =
-          "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where ticker = 'IBM'";
+      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where ticker = 'IBM'";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -338,8 +331,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       assertEquals(0, results.size());
       assertTrue(!results.getCollectionType().allowsDuplicates() && results.getCollectionType().getElementType().isStructType());
 
-      queryString =
-          "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where price > 49";
+      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where price > 49";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -349,8 +341,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       assertEquals(numberOfEntries / 2, results.size());
       assertTrue(!results.getCollectionType().allowsDuplicates() && results.getCollectionType().getElementType().isStructType());
 
-      queryString =
-          "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where price = 50";
+      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where price = 50";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -360,8 +351,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       assertEquals(1, results.size());
       assertTrue(!results.getCollectionType().allowsDuplicates() && results.getCollectionType().getElementType().isStructType());
 
-      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName
-          + " where ticker = 'ibm' and price = 50";
+      queryString = "import org.apache.geode.admin.QueryUsingPoolDUnitTest.TestObject; select distinct ticker, price from " + regionName + " where ticker = 'ibm' and price = 50";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -386,7 +376,6 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       region.put("key-" + i, new TestObject(i, "ibm"));
     }
   }
-
 
   /**
    * Tests remote full region query execution.
@@ -486,8 +475,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
         if (i + 1 != resultsArray.length) {
           // The id of the current element in the result set must be less
           // than the id of the next one to pass.
-          assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1],
-              comparator.compare(resultsArray[i], resultsArray[i + 1]) == -1);
+          assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1], comparator.compare(resultsArray[i], resultsArray[i + 1]) == -1);
         }
       }
 
@@ -511,8 +499,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
         if (i + 1 != resultsArray.length) {
           // The id of the current element in the result set must be less
           // than the id of the next one to pass.
-          assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1],
-              comparator.compare(resultsArray[i], resultsArray[i + 1]) == -1);
+          assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1], comparator.compare(resultsArray[i], resultsArray[i + 1]) == -1);
         }
       }
 
@@ -568,8 +555,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final int numberOfEntries = 100;
 
-    final Object[][] params = new Object[][] {
-        { "key-1" }, // 0
+    final Object[][] params = new Object[][] { { "key-1" }, // 0
         { 101 }, // 1
         { 101 }, // 2
         { 101 }, // 3
@@ -577,8 +563,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
         { 50, "ibm" }, // 5
     };
 
-    final int[] expectedResults = new int[] {
-        1, // 0
+    final int[] expectedResults = new int[] { 1, // 0
         100, // 1
         100, // 2
         1, // 3
@@ -681,8 +666,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     VM vm3 = host.getVM(3);
     final int numberOfEntries = 100;
 
-    final Object[][] params = new Object[][] {
-        { "key-1" }, // 0
+    final Object[][] params = new Object[][] { { "key-1" }, // 0
         { 101 }, // 1
         { 101 }, // 2
         { 101 }, // 3
@@ -690,8 +674,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
         { 50, "ibm" }, // 5
     };
 
-    final int[] expectedResults = new int[] {
-        1, // 0
+    final int[] expectedResults = new int[] { 1, // 0
         100, // 1
         100, // 2
         1, // 3
@@ -798,8 +781,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(2);
     final int numberOfEntries = 100;
 
-    final Object[][] params = new Object[][] {
-        { "key-1" }, // 0
+    final Object[][] params = new Object[][] { { "key-1" }, // 0
         { 101 }, // 1
         { 101 }, // 2
         { 101 }, // 3
@@ -858,8 +840,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(2);
     final int numberOfEntries = 100;
 
-    final Object[][] params = new Object[][] {
-        { "key-1" }, // 0
+    final Object[][] params = new Object[][] { { "key-1" }, // 0
         { 101 }, // 1
         { 101 }, // 2
         { 101 }, // 3
@@ -941,8 +922,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(2);
     final int numberOfEntries = 100;
 
-    final Object[][] params = new Object[][] {
-        { "key-1" }, // 0
+    final Object[][] params = new Object[][] { { "key-1" }, // 0
         { 101 }, // 1
         { 101 }, // 2
         { 101 }, // 3
@@ -1034,8 +1014,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     VM vm3 = host.getVM(3);
     final int numberOfEntries = 100;
 
-    final Object[][] params = new Object[][] {
-        { "key-1" }, // 0
+    final Object[][] params = new Object[][] { { "key-1" }, // 0
         { 101 }, // 1
         { 101 }, // 2
         { 101 }, // 3
@@ -1043,8 +1022,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
         { 50, "ibm" }, // 5
     };
 
-    final String[] querys = new String[] {
-        "SELECT itr.value FROM " + regName + ".entries itr where itr.key = 'key-1'", // 0
+    final String[] querys = new String[] { "SELECT itr.value FROM " + regName + ".entries itr where itr.key = 'key-1'", // 0
         "SELECT DISTINCT * FROM " + regName + " WHERE id < 101 ORDER BY id", // 1
         "SELECT DISTINCT * FROM " + regName + " WHERE id < 101 ORDER BY id", // 2
         "(SELECT DISTINCT * FROM " + regName + " WHERE id < 101).size", // 3
@@ -1201,8 +1179,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
         Assert.fail("Failed to get QueryService.", e);
       }
 
-      queryString =
-          "select distinct a, b.price from " + regionName1 + " a, " + regionName2 + " b where a.price = b.price";
+      queryString = "select distinct a, b.price from " + regionName1 + " a, " + regionName2 + " b where a.price = b.price";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -1212,8 +1189,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       assertEquals(numberOfEntries, results.size());
       assertTrue(!results.getCollectionType().allowsDuplicates() && results.getCollectionType().getElementType().isStructType());
 
-      queryString =
-          "select distinct a, b.price from " + regionName1 + " a, " + regionName2 + " b where a.price = b.price and a.price = 50";
+      queryString = "select distinct a, b.price from " + regionName1 + " a, " + regionName2 + " b where a.price = b.price and a.price = 50";
       try {
         Query query = qService.newQuery(queryString);
         results = (SelectResults) query.execute();
@@ -1454,10 +1430,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       }
 
       // order by value query
-      String[] qString = {
-          "SELECT DISTINCT * FROM " + regionName + " WHERE id < 101 ORDER BY id",
-          "SELECT DISTINCT id FROM " + regionName + " WHERE id < 101 ORDER BY id",
-      };
+      String[] qString = { "SELECT DISTINCT * FROM " + regionName + " WHERE id < 101 ORDER BY id", "SELECT DISTINCT id FROM " + regionName + " WHERE id < 101 ORDER BY id", };
 
       for (int cnt = 0; cnt < qString.length; cnt++) {
         queryString = qString[cnt];
@@ -1487,18 +1460,13 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
               v1 = (Integer) resultsArray[i];
               v2 = (Integer) resultsArray[i + 1];
             }
-            assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1],
-                comparator.compare(v1, v2) == -1);
+            assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1], comparator.compare(v1, v2) == -1);
           }
         }
       }
 
       // order by struct query
-      String[] qString2 = {
-          "SELECT DISTINCT id, ticker, price FROM " + regionName + " WHERE id < 101 ORDER BY id",
-          "SELECT DISTINCT ticker, id FROM " + regionName + " WHERE id < 101  ORDER BY id",
-          "SELECT DISTINCT id, ticker FROM " + regionName + " WHERE id < 101  ORDER BY id asc",
-      };
+      String[] qString2 = { "SELECT DISTINCT id, ticker, price FROM " + regionName + " WHERE id < 101 ORDER BY id", "SELECT DISTINCT ticker, id FROM " + regionName + " WHERE id < 101  ORDER BY id", "SELECT DISTINCT id, ticker FROM " + regionName + " WHERE id < 101  ORDER BY id asc", };
 
       for (int cnt = 0; cnt < qString2.length; cnt++) {
         queryString = qString2[cnt];
@@ -1520,8 +1488,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
           if (i + 1 != resultsArray.length) {
             // The id of the current element in the result set must be less
             // than the id of the next one to pass.
-            assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1],
-                comparator.compare(resultsArray[i], resultsArray[i + 1]) == -1);
+            assertTrue("The id for " + resultsArray[i] + " should be less than the id for " + resultsArray[i + 1], comparator.compare(resultsArray[i], resultsArray[i + 1]) == -1);
           }
         }
       }
@@ -1667,20 +1634,15 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
       type1 = ((SelectResults) r[j][0]).getCollectionType().getElementType();
       type2 = ((SelectResults) r[j][1]).getCollectionType().getElementType();
       if ((type1.getClass().getName()).equals(type2.getClass().getName())) {
-        logger.info("Both SelectResults are of the same Type i.e.--> "
-            + ((SelectResults) r[j][0]).getCollectionType().getElementType());
+        logger.info("Both SelectResults are of the same Type i.e.--> " + ((SelectResults) r[j][0]).getCollectionType().getElementType());
       } else {
-        logger.info("Classes are : " + type1.getClass().getName() + " "
-            + type2.getClass().getName());
+        logger.info("Classes are : " + type1.getClass().getName() + " " + type2.getClass().getName());
         fail("FAILED:Select result Type is different in both the cases");
       }
       if (((SelectResults) r[j][0]).size() == ((SelectResults) r[j][1]).size()) {
-        logger.info("Both SelectResults are of Same Size i.e.  Size= "
-            + ((SelectResults) r[j][1]).size());
+        logger.info("Both SelectResults are of Same Size i.e.  Size= " + ((SelectResults) r[j][1]).size());
       } else {
-        fail("FAILED:SelectResults size is different in both the cases. Size1="
-            + ((SelectResults) r[j][0]).size() + " Size2 = "
-            + ((SelectResults) r[j][1]).size());
+        fail("FAILED:SelectResults size is different in both the cases. Size1=" + ((SelectResults) r[j][0]).size() + " Size2 = " + ((SelectResults) r[j][1]).size());
       }
       set2 = (((SelectResults) r[j][1]).asSet());
       set1 = (((SelectResults) r[j][0]).asSet());
@@ -1704,9 +1666,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
             assertEquals(values1.length, values2.length);
             boolean elementEqual = true;
             for (int i = 0; i < values1.length; ++i) {
-              elementEqual = elementEqual
-                  && ((values1[i] == values2[i]) || values1[i]
-                  .equals(values2[i]));
+              elementEqual = elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
             }
             exactMatch = elementEqual;
           } else {
@@ -1758,8 +1718,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
    * deserializeValues and notifyBySubscription to serve up the
    * given region.
    */
-  protected int startBridgeServer(int port, boolean notifyBySubscription)
-      throws IOException {
+  protected int startBridgeServer(int port, boolean notifyBySubscription) throws IOException {
     Cache cache = getCache();
     CacheServer bridge = cache.addCacheServer();
     bridge.setPort(port);
@@ -1773,8 +1732,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
    * Stops the bridge server that serves up the given cache.
    */
   protected void stopBridgeServer(Cache cache) {
-    CacheServer bridge =
-        (CacheServer) cache.getCacheServers().iterator().next();
+    CacheServer bridge = (CacheServer) cache.getCacheServers().iterator().next();
     bridge.stop();
     assertFalse(bridge.isRunning());
   }
@@ -1841,15 +1799,7 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     @Override
     public String toString() {
       StringBuffer buffer = new StringBuffer();
-      buffer
-          .append("TestObject [")
-          .append("id=")
-          .append(this.id)
-          .append("; ticker=")
-          .append(this._ticker)
-          .append("; price=")
-          .append(this._price)
-          .append("]");
+      buffer.append("TestObject [").append("id=").append(this.id).append("; ticker=").append(this._ticker).append("; price=").append(this._price).append("]");
       return buffer.toString();
     }
 
@@ -1915,4 +1865,3 @@ public class QueryUsingPoolDUnitTest extends JUnit4CacheTestCase {
     }
   }
 }
-

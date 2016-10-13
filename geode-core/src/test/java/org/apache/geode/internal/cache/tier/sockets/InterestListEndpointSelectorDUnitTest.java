@@ -31,9 +31,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  *
  */
 @Category(DistributedTest.class)
-public class InterestListEndpointSelectorDUnitTest
-  extends InterestListEndpointDUnitTest
-{
+public class InterestListEndpointSelectorDUnitTest extends InterestListEndpointDUnitTest {
   public InterestListEndpointSelectorDUnitTest() {
     super();
   }

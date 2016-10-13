@@ -45,21 +45,22 @@ import org.apache.geode.management.internal.cli.result.ResultBuilder;
 // Doesn't have to be org.springframework.roo.shell.ExecutionStrategy
 public class RemoteExecutionStrategy {
   private LogWrapper logWrapper = LogWrapper.getInstance();
+
   public Object execute(ParseResult parseResult) throws RuntimeException {
     Result result = null;
     try {
-      
+
       Assert.notNull(parseResult, "Parse result required");
       if (!GfshParseResult.class.isInstance(parseResult)) {
         //Remote command means implemented for Gfsh and ParseResult should be GfshParseResult.
         //TODO: should this message be more specific?
         throw new IllegalArgumentException("Command Configuration/Definition error.");
       }
-      
+
       GfshParseResult gfshParseResult = (GfshParseResult) parseResult;
-      
+
       Method method = gfshParseResult.getMethod();
-      
+
       if (!isShellOnly(method)) {
         Boolean fromShell = CommandExecutionContext.isShellRequest();
         boolean sentFromShell = fromShell != null && fromShell.booleanValue();
@@ -81,9 +82,9 @@ public class RemoteExecutionStrategy {
             Result preExecResult = interceptor.preExecution(gfshParseResult);
             if (Status.ERROR.equals(preExecResult.getStatus())) {
               return preExecResult;
-            } else if (preExecResult instanceof FileResult) {            
+            } else if (preExecResult instanceof FileResult) {
               FileResult fileResult = (FileResult) preExecResult;
-              byte[][]fileData = fileResult.toBytes();
+              byte[][] fileData = fileResult.toBytes();
               CommandExecutionContext.setBytesFromShell(fileData);
             }
           } else {
@@ -91,13 +92,12 @@ public class RemoteExecutionStrategy {
           }
         }
         logWrapper.info("Executing " + gfshParseResult.getUserInput());
-        
+
         GemFireCacheImpl gfc = GemFireCacheImpl.getInstance();
-        
+
         //Do the locking and annotation check only if the shared configuration service is enabled 
         //Else go the usual route of command execution
-        if (gfc.getDistributionManager().isSharedConfigurationServiceEnabledForDS() && 
-            (writesToSharedConfiguration(method) || readsFromSharedConfiguration(method))) {
+        if (gfc.getDistributionManager().isSharedConfigurationServiceEnabledForDS() && (writesToSharedConfiguration(method) || readsFromSharedConfiguration(method))) {
           DistributedLockService dls = SharedConfiguration.getSharedConfigLockService(InternalDistributedSystem.getAnyInstance());
           if (dls.lock(SharedConfiguration.SHARED_CONFIG_LOCK_NAME, 10000, -1)) {
             try {
@@ -111,12 +111,11 @@ public class RemoteExecutionStrategy {
         } else {
           result = (Result) ReflectionUtils.invokeMethod(gfshParseResult.getMethod(), gfshParseResult.getInstance(), gfshParseResult.getArguments());
         }
-        
-        
+
         if (result != null && Status.ERROR.equals(result.getStatus())) {
-          logWrapper.info("Error occurred while executing \""+gfshParseResult.getUserInput()+"\".");
+          logWrapper.info("Error occurred while executing \"" + gfshParseResult.getUserInput() + "\".");
         }
-        
+
         if (interceptor != null) {
           Result postExecResult = interceptor.postExecution(gfshParseResult, result);
           if (postExecResult != null) {
@@ -130,29 +129,24 @@ public class RemoteExecutionStrategy {
           CommandExecutionContext.setBytesFromShell(null); // for remote commands with bytes
         }
       } else {
-        throw new IllegalArgumentException(
-            "Only Remote command can be executed through "
-                + ManagementService.class.getSimpleName()
-                + ".processCommand() or ManagementMBean's processCommand " 
-                + "operation. Please refer documentation for the list of " 
-                + "commands.");
+        throw new IllegalArgumentException("Only Remote command can be executed through " + ManagementService.class.getSimpleName() + ".processCommand() or ManagementMBean's processCommand " + "operation. Please refer documentation for the list of " + "commands.");
       }
-    } catch(RuntimeException e) {
+    } catch (RuntimeException e) {
       throw e;
     }
     return result;
   }
-  
-  private boolean writesToSharedConfiguration (Method method) {
+
+  private boolean writesToSharedConfiguration(Method method) {
     CliMetaData cliMetadata = method.getAnnotation(CliMetaData.class);
     return cliMetadata != null && cliMetadata.writesToSharedConfiguration();
   }
-  
-  private boolean readsFromSharedConfiguration (Method method) {
+
+  private boolean readsFromSharedConfiguration(Method method) {
     CliMetaData cliMetadata = method.getAnnotation(CliMetaData.class);
     return cliMetadata != null && cliMetadata.readsSharedConfiguration();
   }
-  
+
   private boolean isShellOnly(Method method) {
     CliMetaData cliMetadata = method.getAnnotation(CliMetaData.class);
     return cliMetadata != null && cliMetadata.shellOnly();

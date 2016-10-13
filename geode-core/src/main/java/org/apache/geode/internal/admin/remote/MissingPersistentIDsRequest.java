@@ -45,21 +45,21 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberPattern;
  * to a single member. Maybe we need to a new base class.
  */
 public class MissingPersistentIDsRequest extends CliLegacyMessage {
-  
+
   public static Set<PersistentID> send(DM dm) {
     Set recipients = dm.getOtherDistributionManagerIds();
-    
+
     MissingPersistentIDsRequest request = new MissingPersistentIDsRequest();
-    
+
     request.setRecipients(recipients);
-    
+
     MissingPersistentIDProcessor replyProcessor = new MissingPersistentIDProcessor(dm, recipients);
     request.msgId = replyProcessor.getProcessorId();
     dm.putOutgoing(request);
     try {
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
-      if(!(e.getCause() instanceof CancelException)) {
+      if (!(e.getCause() instanceof CancelException)) {
         throw e;
       }
     } catch (InterruptedException e) {
@@ -67,12 +67,11 @@ public class MissingPersistentIDsRequest extends CliLegacyMessage {
     }
     Set<PersistentID> results = replyProcessor.missing;
     Set<PersistentID> existing = replyProcessor.existing;
-    
-    
-    MissingPersistentIDsResponse localResponse= (MissingPersistentIDsResponse) request.createResponse((DistributionManager)dm);
+
+    MissingPersistentIDsResponse localResponse = (MissingPersistentIDsResponse) request.createResponse((DistributionManager) dm);
     results.addAll(localResponse.getMissingIds());
     existing.addAll(localResponse.getLocalIds());
-    
+
     results.removeAll(existing);
     return results;
   }
@@ -82,24 +81,22 @@ public class MissingPersistentIDsRequest extends CliLegacyMessage {
     Set<PersistentID> missingIds = new HashSet<PersistentID>();
     Set<PersistentID> localPatterns = new HashSet<PersistentID>();
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-    if(cache != null && !cache.isClosed()) {
+    if (cache != null && !cache.isClosed()) {
       PersistentMemberManager mm = cache.getPersistentMemberManager();
       Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
-      for(Map.Entry<String, Set<PersistentMemberID>> entry: waitingRegions.entrySet()) {
-        for(PersistentMemberID id : entry.getValue()) {
+      for (Map.Entry<String, Set<PersistentMemberID>> entry : waitingRegions.entrySet()) {
+        for (PersistentMemberID id : entry.getValue()) {
           missingIds.add(new PersistentMemberPattern(id));
         }
       }
       Set<PersistentMemberID> localIds = mm.getPersistentIDs();
-      for(PersistentMemberID id : localIds) {
+      for (PersistentMemberID id : localIds) {
         localPatterns.add(new PersistentMemberPattern(id));
       }
     }
-    
+
     return new MissingPersistentIDsResponse(missingIds, localPatterns, this.getSender());
   }
-  
-  
 
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -115,7 +112,7 @@ public class MissingPersistentIDsRequest extends CliLegacyMessage {
   public int getDSFID() {
     return MISSING_PERSISTENT_IDS_REQUEST;
   }
-  
+
   private static class MissingPersistentIDProcessor extends AdminMultipleReplyProcessor {
     Set<PersistentID> missing = Collections.synchronizedSet(new TreeSet<PersistentID>());
     Set<PersistentID> existing = Collections.synchronizedSet(new TreeSet<PersistentID>());
@@ -130,9 +127,9 @@ public class MissingPersistentIDsRequest extends CliLegacyMessage {
 
     @Override
     protected void process(DistributionMessage msg, boolean warn) {
-      if(msg instanceof MissingPersistentIDsResponse) {
-        missing.addAll(((MissingPersistentIDsResponse)msg).getMissingIds());
-        existing.addAll(((MissingPersistentIDsResponse)msg).getLocalIds());
+      if (msg instanceof MissingPersistentIDsResponse) {
+        missing.addAll(((MissingPersistentIDsResponse) msg).getMissingIds());
+        existing.addAll(((MissingPersistentIDsResponse) msg).getLocalIds());
       }
       super.process(msg, warn);
     }

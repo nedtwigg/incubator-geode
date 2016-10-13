@@ -24,15 +24,30 @@ import org.apache.geode.test.dunit.VM;
 
 public class ARMLockTestHookAdapter implements AbstractRegionMap.ARMLockTestHook, Serializable {
 
-  public void beforeBulkLock(LocalRegion region) {};
-  public void afterBulkLock(LocalRegion region) {};
-  public void beforeBulkRelease(LocalRegion region) {};
-  public void afterBulkRelease(LocalRegion region) {};
+  public void beforeBulkLock(LocalRegion region) {
+  };
 
-  public void beforeLock(LocalRegion region, CacheEvent event) {};
-  public void afterLock(LocalRegion region, CacheEvent event) {};
-  public void beforeRelease(LocalRegion region, CacheEvent event) {};
-  public void afterRelease(LocalRegion region, CacheEvent event) {};
+  public void afterBulkLock(LocalRegion region) {
+  };
 
-  public void beforeStateFlushWait() {}
+  public void beforeBulkRelease(LocalRegion region) {
+  };
+
+  public void afterBulkRelease(LocalRegion region) {
+  };
+
+  public void beforeLock(LocalRegion region, CacheEvent event) {
+  };
+
+  public void afterLock(LocalRegion region, CacheEvent event) {
+  };
+
+  public void beforeRelease(LocalRegion region, CacheEvent event) {
+  };
+
+  public void afterRelease(LocalRegion region, CacheEvent event) {
+  };
+
+  public void beforeStateFlushWait() {
+  }
 }

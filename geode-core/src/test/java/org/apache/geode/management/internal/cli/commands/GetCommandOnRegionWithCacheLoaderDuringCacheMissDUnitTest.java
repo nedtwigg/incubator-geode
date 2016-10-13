@@ -209,13 +209,11 @@ public class GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest extends C
   private void doHousekeeping() {
     runCommand(CliStrings.LIST_MEMBER);
 
-    runCommand(new CommandStringBuilder(CliStrings.DESCRIBE_MEMBER).addOption(CliStrings.DESCRIBE_MEMBER__IDENTIFIER,
-        GEMFIRE_SERVER_NAME).toString());
+    runCommand(new CommandStringBuilder(CliStrings.DESCRIBE_MEMBER).addOption(CliStrings.DESCRIBE_MEMBER__IDENTIFIER, GEMFIRE_SERVER_NAME).toString());
 
     runCommand(CliStrings.LIST_REGION);
 
-    runCommand(new CommandStringBuilder(CliStrings.DESCRIBE_REGION).addOption(CliStrings.DESCRIBE_REGION__NAME,
-        USERS_REGION_NAME).toString());
+    runCommand(new CommandStringBuilder(CliStrings.DESCRIBE_REGION).addOption(CliStrings.DESCRIBE_REGION__NAME, USERS_REGION_NAME).toString());
   }
 
   private void log(final Result result) {

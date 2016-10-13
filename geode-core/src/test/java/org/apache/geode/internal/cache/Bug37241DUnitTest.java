@@ -55,7 +55,7 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
   static VM server2 = null;
 
   private static final String REGION_NAME = "Bug37241DUnitTest_region";
-  
+
   static final String expectedReplyException = ReplyException.class.getName();
 
   static final String expectedException = IllegalStateException.class.getName();
@@ -74,36 +74,31 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
    *    gets deleted.
    */
   @Test
-  public void testBug37241ForNewDiskRegion()
-  {
-    server1.invoke(() -> Bug37241DUnitTest.createRegionOnServer1());   
+  public void testBug37241ForNewDiskRegion() {
+    server1.invoke(() -> Bug37241DUnitTest.createRegionOnServer1());
 
-    try{
+    try {
       server2.invoke(() -> Bug37241DUnitTest.createRegionOnServer2(Scope.DISTRIBUTED_ACK));
-    }
-    catch(Exception e){
+    } catch (Exception e) {
       server2.invoke(() -> Bug37241DUnitTest.ignoreExceptionInLogs());
       server2.invoke(() -> Bug37241DUnitTest.checkForCleanup());
     }
   }
 
   @Test
-  public void testBug37241ForRecreatedDiskRegion()
-  {
+  public void testBug37241ForRecreatedDiskRegion() {
     server1.invoke(() -> Bug37241DUnitTest.createRegionOnServer1());
     server2.invoke(() -> Bug37241DUnitTest.createRegionOnServer2(Scope.GLOBAL));
     server2.invoke(() -> Bug37241DUnitTest.closeRegion());
     try {
-      server2.invoke(() -> Bug37241DUnitTest.createRegionOnServer2(Scope.DISTRIBUTED_ACK ));
-    }
-    catch (Exception e) {
+      server2.invoke(() -> Bug37241DUnitTest.createRegionOnServer2(Scope.DISTRIBUTED_ACK));
+    } catch (Exception e) {
       server2.invoke(() -> Bug37241DUnitTest.ignoreExceptionInLogs());
       server2.invoke(() -> Bug37241DUnitTest.checkForCleanupAfterRecreation());
     }
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     ds.disconnect();
     ds = getSystem(props);
@@ -112,8 +107,7 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  public static void createRegionOnServer1() throws Exception
-  {
+  public static void createRegionOnServer1() throws Exception {
     new Bug37241DUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.GLOBAL);
@@ -127,16 +121,12 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
     dirs[0] = file1;
     dirs[1] = file2;
     factory.setDiskSynchronous(false);
-    factory.setDiskStoreName(cache.createDiskStoreFactory()
-                             .setDiskDirs(dirs)
-                             .create("Bug37241DUnitTest")
-                             .getName());
+    factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37241DUnitTest").getName());
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
   }
 
-  public static void createRegionOnServer2(Scope scope) throws Exception
-  {
+  public static void createRegionOnServer2(Scope scope) throws Exception {
     new Bug37241DUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(scope);
@@ -150,32 +140,20 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
     dirs[0] = file1;
     dirs[1] = file2;
     factory.setDiskSynchronous(false);
-    factory.setDiskStoreName(cache.createDiskStoreFactory()
-                             .setDiskDirs(dirs)
-                             .create("Bug37241DUnitTest")
-                             .getName());
+    factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37241DUnitTest").getName());
 
     //added for not to log exepected IllegalStateExcepion.
-    LogWriterUtils.getLogWriter().info(
-        "<ExpectedException action=add>" + expectedReplyException
-            + "</ExpectedException>");
-    LogWriterUtils.getLogWriter().info(
-            "<ExpectedException action=add>" + expectedException
-            + "</ExpectedException>");
-    cache.getLogger().info(
-        "<ExpectedException action=add>" + expectedReplyException
-            + "</ExpectedException>");
-    cache.getLogger().info(
-        "<ExpectedException action=add>" + expectedException
-            + "</ExpectedException>");
-    
+    LogWriterUtils.getLogWriter().info("<ExpectedException action=add>" + expectedReplyException + "</ExpectedException>");
+    LogWriterUtils.getLogWriter().info("<ExpectedException action=add>" + expectedException + "</ExpectedException>");
+    cache.getLogger().info("<ExpectedException action=add>" + expectedReplyException + "</ExpectedException>");
+    cache.getLogger().info("<ExpectedException action=add>" + expectedException + "</ExpectedException>");
+
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-    
+
   }
 
-  public static void checkForCleanup()
-  {
+  public static void checkForCleanup() {
     try {
       Thread.sleep(200);
     } catch (InterruptedException ignore) {
@@ -184,39 +162,26 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
     assertEquals(0, new File("server2_disk2").listFiles().length);
   }
 
-
-  public static void checkForCleanupAfterRecreation()
-  {
+  public static void checkForCleanupAfterRecreation() {
     checkForCleanup();
   }
-  
-  public static void ignoreExceptionInLogs()
-  {
-        
-    cache.getLogger().info(
-      "<ExpectedException action=remove>" + expectedException
-      + "</ExpectedException>");
-    
-    cache.getLogger().info(
-        "<ExpectedException action=remove>" + expectedReplyException
-        + "</ExpectedException>");
-    LogWriterUtils.getLogWriter().info(
-        "<ExpectedException action=remove>" + expectedException
-        + "</ExpectedException>");
-    LogWriterUtils.getLogWriter().info(
-        "<ExpectedException action=remove>" + expectedReplyException
-        + "</ExpectedException>");
-  }  
-  
-  public static void closeRegion()
-  {
+
+  public static void ignoreExceptionInLogs() {
+
+    cache.getLogger().info("<ExpectedException action=remove>" + expectedException + "</ExpectedException>");
+
+    cache.getLogger().info("<ExpectedException action=remove>" + expectedReplyException + "</ExpectedException>");
+    LogWriterUtils.getLogWriter().info("<ExpectedException action=remove>" + expectedException + "</ExpectedException>");
+    LogWriterUtils.getLogWriter().info("<ExpectedException action=remove>" + expectedReplyException + "</ExpectedException>");
+  }
+
+  public static void closeRegion() {
     Cache cache = CacheFactory.getAnyInstance();
     Region region = cache.getRegion("/" + REGION_NAME);
     region.close();
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();
@@ -229,5 +194,3 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
     server2.invoke(() -> Bug37241DUnitTest.closeCache());
   }
 }
-
-

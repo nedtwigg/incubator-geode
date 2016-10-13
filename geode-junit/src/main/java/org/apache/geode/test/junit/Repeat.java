@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 public @interface Repeat {
 
   public static int DEFAULT = 1;
-  
+
   int value() default DEFAULT;
 
   String property() default "";

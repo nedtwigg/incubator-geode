@@ -43,9 +43,9 @@ public class ExceptionJUnitTest {
 
   private static DistributedSystem ds;
   private static TransactionManagerImpl tm;
-  
+
   private UserTransaction utx = null;
-  
+
   @BeforeClass
   public static void beforeClass() throws Exception {
     Properties props = new Properties();

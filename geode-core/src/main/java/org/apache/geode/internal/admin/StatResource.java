@@ -24,15 +24,21 @@ package org.apache.geode.internal.admin;
  *
  */
 public interface StatResource extends GfObject {
-  
+
   public long getResourceID();
+
   public long getResourceUniqueID();
+
   public String getSystemName();
+
   public GemFireVM getGemFireVM();
+
   public Stat[] getStats();
+
   public Stat getStatByName(String name);
+
   public String getName();
-  
+
   /**
    * @return the full description of this statistic resource
    */

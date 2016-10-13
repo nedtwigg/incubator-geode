@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface Retry {
-  
+
   public static int DEFAULT = 1;
-  
+
   int value() default DEFAULT;
-  
+
 }

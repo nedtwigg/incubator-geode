@@ -98,8 +98,7 @@ public final class XmlGeneratorUtils {
    *           throws {@link SAXException}.
    * @since GemFire 8.1
    */
-  static public void startElement(final ContentHandler contentHandler, final String prefix, final String localName, final AttributesImpl attributes)
-      throws SAXException {
+  static public void startElement(final ContentHandler contentHandler, final String prefix, final String localName, final AttributesImpl attributes) throws SAXException {
     contentHandler.startElement(XMLConstants.NULL_NS_URI, localName, prefix + ":" + localName, attributes);
   }
 
@@ -141,8 +140,7 @@ public final class XmlGeneratorUtils {
    *           throws {@link SAXException}.
    * @since GemFire 8.1
    */
-  static public void emptyElement(final ContentHandler contentHandler, final String prefix, final String localName, final AttributesImpl attributes)
-      throws SAXException {
+  static public void emptyElement(final ContentHandler contentHandler, final String prefix, final String localName, final AttributesImpl attributes) throws SAXException {
     startElement(contentHandler, prefix, localName, attributes);
     endElement(contentHandler, prefix, localName);
   }

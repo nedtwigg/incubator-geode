@@ -20,12 +20,13 @@ import java.util.Properties;
 
 import org.apache.geode.distributed.internal.DistributionConfig;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
-public class ReconnectWithUDPSecurityDUnitTest extends ReconnectDUnitTest{
+
+public class ReconnectWithUDPSecurityDUnitTest extends ReconnectDUnitTest {
 
   public ReconnectWithUDPSecurityDUnitTest() {
     super();
   }
-  
+
   @Override
   protected void addDSProps(Properties p) {
     p.setProperty(SECURITY_UDP_DHALGO, "AES:128");

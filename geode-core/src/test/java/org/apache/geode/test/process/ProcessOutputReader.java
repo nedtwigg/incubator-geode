@@ -28,11 +28,11 @@ import java.util.concurrent.TimeUnit;
 public class ProcessOutputReader {
 
   private boolean started;
-  
+
   private final Process process;
   private final ProcessStreamReader stdout;
   private final ProcessStreamReader stderr;
-  
+
   public ProcessOutputReader(final Process process, final ProcessStreamReader stdout, final ProcessStreamReader stderr) {
     this.process = process;
     this.stdout = stdout;
@@ -40,22 +40,22 @@ public class ProcessOutputReader {
   }
 
   public void start() {
-    synchronized(this) {
+    synchronized (this) {
       this.stdout.start();
       this.stderr.start();
       this.started = true;
     }
   }
-  
+
   public boolean waitFor(final long timeout, final TimeUnit unit) throws InterruptedException {
-    synchronized(this) {
+    synchronized (this) {
       if (!this.started) {
         throw new IllegalStateException("Must be started before waitFor");
       }
     }
-    
+
     final long startTime = System.nanoTime();
-    
+
     long millisToJoin = unit.toMillis(timeout);
     this.stderr.join(millisToJoin);
 
@@ -75,9 +75,9 @@ public class ProcessOutputReader {
       try {
         this.process.exitValue();
         return true;
-      } catch(IllegalThreadStateException ex) {
+      } catch (IllegalThreadStateException ex) {
         if (nanosRemaining > 0) {
-          long millisToSleep =Math.min(TimeUnit.NANOSECONDS.toMillis(nanosRemaining) + 1, 100);
+          long millisToSleep = Math.min(TimeUnit.NANOSECONDS.toMillis(nanosRemaining) + 1, 100);
           Thread.sleep(millisToSleep);
         }
       }

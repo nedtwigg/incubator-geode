@@ -36,7 +36,7 @@ import org.apache.geode.internal.logging.LogService;
 
 public class ConnectionPoolCacheImpl extends AbstractPoolCache {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = -3096029291871746431L;
 
   private ConnectionPoolDataSource m_cpds;
@@ -44,10 +44,7 @@ public class ConnectionPoolCacheImpl extends AbstractPoolCache {
   /**
    * Constructor initializes the ConnectionPoolCacheImpl properties.
    */
-  public ConnectionPoolCacheImpl(
-      ConnectionPoolDataSource connectionpooldatasource,
-      ConnectionEventListener eventListner,
-      ConfiguredDataSourceProperties configs) throws PoolException {
+  public ConnectionPoolCacheImpl(ConnectionPoolDataSource connectionpooldatasource, ConnectionEventListener eventListner, ConfiguredDataSourceProperties configs) throws PoolException {
     super(eventListner, configs);
     m_cpds = connectionpooldatasource;
     initializePool();
@@ -59,15 +56,12 @@ public class ConnectionPoolCacheImpl extends AbstractPoolCache {
   @Override
   void destroyPooledConnection(Object connectionObject) {
     try {
-      ((PooledConnection) connectionObject)
-          .removeConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
+      ((PooledConnection) connectionObject).removeConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
       ((PooledConnection) connectionObject).close();
       connectionObject = null;
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       if (logger.isTraceEnabled()) {
-          logger.trace("AbstractPoolcache::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}", 
-              ex.getMessage(), ex);
+        logger.trace("AbstractPoolcache::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}", ex.getMessage(), ex);
       }
     }
   }
@@ -83,17 +77,13 @@ public class ConnectionPoolCacheImpl extends AbstractPoolCache {
     if (m_cpds != null) {
       PooledConnection poolConn = null;
       try {
-        poolConn = m_cpds.getPooledConnection(configProps.getUser(),
-            configProps.getPassword());
-      }
-      catch (SQLException sqx) {
+        poolConn = m_cpds.getPooledConnection(configProps.getUser(), configProps.getPassword());
+      } catch (SQLException sqx) {
         throw new PoolException(LocalizedStrings.ConnectionPoolCacheImpl_CONNECTIONPOOLCACHEIMPLGENEWCONNECTION_EXCEPTION_IN_CREATING_NEW_POOLEDCONNECTION.toLocalizedString(), sqx);
       }
-      poolConn
-          .addConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
+      poolConn.addConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
       return poolConn;
-    }
-    else {
+    } else {
       if (logger.isDebugEnabled()) {
         logger.debug("ConnectionPoolCacheImpl::geNewConnection: ConnectionPoolCache not intialized with ConnectionPoolDatasource");
       }

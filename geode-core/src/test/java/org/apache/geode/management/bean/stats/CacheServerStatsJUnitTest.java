@@ -38,15 +38,15 @@ public class CacheServerStatsJUnitTest extends MBeanStatsTestCase {
 
   public void init() {
     cacheServerStats = new CacheServerStats("Test Sock Name");
-    
+
     bridge = new CacheServerBridge();
     bridge.addCacheServerStats(cacheServerStats);
   }
-  
+
   @Test
-  public void testServerStats() throws InterruptedException{
+  public void testServerStats() throws InterruptedException {
     long startTime = System.currentTimeMillis();
-    
+
     cacheServerStats.incCurrentClients();
     cacheServerStats.incConnectionThreads();
     cacheServerStats.incThreadQueueSize();
@@ -60,12 +60,12 @@ public class CacheServerStatsJUnitTest extends MBeanStatsTestCase {
     cacheServerStats.incProcessGetTime(startTime);
     cacheServerStats.incReadPutRequestTime(startTime);
     cacheServerStats.incProcessPutTime(startTime);
-    
-    ServerLoad load = new ServerLoad(1,1,1,1);
+
+    ServerLoad load = new ServerLoad(1, 1, 1, 1);
     cacheServerStats.setLoad(load);
-    
+
     sample();
-    
+
     assertEquals(1, getCurrentClients());
     assertEquals(1, getConnectionThreads());
     assertEquals(1, getThreadQueueSize());
@@ -74,20 +74,20 @@ public class CacheServerStatsJUnitTest extends MBeanStatsTestCase {
     assertEquals(1, getTotalConnectionsTimedOut());
     assertEquals(20, getTotalSentBytes());
     assertEquals(20, getTotalReceivedBytes());
-    
-    assertEquals(1.0,getConnectionLoad(), 0.01);
-    assertEquals(1.0,getLoadPerConnection(), 0.01);
-    assertEquals(1.0,getLoadPerQueue(), 0.01);
-    assertEquals(1.0,getQueueLoad(), 0.01);
-    
-    assertTrue(getQueryRequestRate() >0);
-    assertTrue(getGetRequestRate() >0);
-    assertTrue(getGetRequestAvgLatency() >0);
-    assertTrue(getPutRequestRate() >0);
-    assertTrue(getPutRequestAvgLatency() >0);
-    
+
+    assertEquals(1.0, getConnectionLoad(), 0.01);
+    assertEquals(1.0, getLoadPerConnection(), 0.01);
+    assertEquals(1.0, getLoadPerQueue(), 0.01);
+    assertEquals(1.0, getQueueLoad(), 0.01);
+
+    assertTrue(getQueryRequestRate() > 0);
+    assertTrue(getGetRequestRate() > 0);
+    assertTrue(getGetRequestAvgLatency() > 0);
+    assertTrue(getPutRequestRate() > 0);
+    assertTrue(getPutRequestAvgLatency() > 0);
+
     bridge.stopMonitor();
-    
+
     assertEquals(0, getCurrentClients());
     assertEquals(0, getConnectionThreads());
   }

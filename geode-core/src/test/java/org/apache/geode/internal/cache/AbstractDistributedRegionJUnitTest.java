@@ -36,9 +36,8 @@ import org.apache.geode.test.fake.Fakes;
 public abstract class AbstractDistributedRegionJUnitTest {
 
   protected static final Logger logger = LogService.getLogger();
-  
-  private RegionAttributes createRegionAttributes(
-      boolean isConcurrencyChecksEnabled) {
+
+  private RegionAttributes createRegionAttributes(boolean isConcurrencyChecksEnabled) {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
@@ -46,9 +45,9 @@ public abstract class AbstractDistributedRegionJUnitTest {
     RegionAttributes ra = factory.create();
     return ra;
   }
-  
+
   private EventID createDummyEventID() {
-    byte[] memId = { 1,2,3 };
+    byte[] memId = { 1, 2, 3 };
     EventID eventId = new EventID(memId, 11, 12, 13);
     return eventId;
   }
@@ -60,16 +59,13 @@ public abstract class AbstractDistributedRegionJUnitTest {
     String value = "Value1";
 
     // create an event
-    EntryEventImpl event = EntryEventImpl.create(region, Operation.CREATE, key,
-        value, null,  false /* origin remote */, null,
-        false /* generateCallbacks */,
-        eventId);
+    EntryEventImpl event = EntryEventImpl.create(region, Operation.CREATE, key, value, null, false /* origin remote */, null, false /* generateCallbacks */, eventId);
     // avoid calling invokeCallbacks
     event.callbacksInvoked(true);
 
     return event;
   }
-  
+
   private VersionTag createVersionTag(boolean validVersionTag) {
     InternalDistributedMember remotemember = mock(InternalDistributedMember.class);
     VersionTag tag = VersionTag.create(remotemember);
@@ -83,45 +79,49 @@ public abstract class AbstractDistributedRegionJUnitTest {
   private void doTest(DistributedRegion region, EntryEventImpl event, int cnt) {
     // do the virtualPut test
     verifyDistributeUpdate(region, event, cnt);
-    
+
     // do the basicDestroy test
     verifyDistributeDestroy(region, event, cnt);
-    
+
     // do the basicInvalidate test
     verifyDistributeInvalidate(region, event, cnt);
-    
+
     // do the basicUpdateEntryVersion test
     verifyDistributeUpdateEntryVersion(region, event, cnt);
   }
-  
+
   protected abstract void setInternalRegionArguments(InternalRegionArguments ira);
-  protected abstract DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled,RegionAttributes ra, 
-      InternalRegionArguments ira, GemFireCacheImpl cache);
+
+  protected abstract DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled, RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache);
+
   protected abstract void verifyDistributeUpdate(DistributedRegion region, EntryEventImpl event, int cnt);
+
   protected abstract void verifyDistributeDestroy(DistributedRegion region, EntryEventImpl event, int cnt);
+
   protected abstract void verifyDistributeInvalidate(DistributedRegion region, EntryEventImpl event, int cnt);
+
   protected abstract void verifyDistributeUpdateEntryVersion(DistributedRegion region, EntryEventImpl event, int cnt);
 
   protected DistributedRegion prepare(boolean isConcurrencyChecksEnabled) {
     GemFireCacheImpl cache = Fakes.cache();
-    
+
     // create region attributes and internal region arguments
     RegionAttributes ra = createRegionAttributes(isConcurrencyChecksEnabled);
     InternalRegionArguments ira = new InternalRegionArguments();
-    
+
     setInternalRegionArguments(ira);
-    
+
     // create a region object
     DistributedRegion region = createAndDefineRegion(isConcurrencyChecksEnabled, ra, ira, cache);
     if (isConcurrencyChecksEnabled) {
       region.enableConcurrencyChecks();
     }
-    
+
     doNothing().when(region).notifyGatewaySender(any(), any());
     doReturn(true).when(region).hasSeenEvent(any(EntryEventImpl.class));
     return region;
   }
-  
+
   @Test
   public void testConcurrencyFalseTagNull() {
     // case 1: concurrencyCheckEanbled = false, version tag is null: distribute
@@ -139,7 +139,7 @@ public abstract class AbstractDistributedRegionJUnitTest {
     assertNull(event.getVersionTag());
     doTest(region, event, 0);
   }
-  
+
   @Test
   public void testConcurrencyTrueTagInvalid() {
     // case 3: concurrencyCheckEanbled = true,  version tag is invalid: not to distribute
@@ -150,7 +150,7 @@ public abstract class AbstractDistributedRegionJUnitTest {
     assertFalse(tag.hasValidVersion());
     doTest(region, event, 0);
   }
-    
+
   @Test
   public void testConcurrencyTrueTagValid() {
     // case 4: concurrencyCheckEanbled = true,  version tag is valid: distribute

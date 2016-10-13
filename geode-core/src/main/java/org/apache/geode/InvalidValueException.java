@@ -23,7 +23,7 @@ package org.apache.geode;
  * not compatible with the attribute's type.
  */
 public class InvalidValueException extends GemFireException {
-private static final long serialVersionUID = 6186767885369527709L;
+  private static final long serialVersionUID = 6186767885369527709L;
 
   //////////////////////  Constructors  //////////////////////
 
@@ -33,6 +33,7 @@ private static final long serialVersionUID = 6186767885369527709L;
   public InvalidValueException(String message) {
     super(message);
   }
+
   /**
    * Creates a new <code>InvalidValueException</code>.
    */

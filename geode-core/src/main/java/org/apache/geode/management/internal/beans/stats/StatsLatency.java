@@ -35,8 +35,7 @@ public class StatsLatency {
 
   private MBeanStatsMonitor monitor;
 
-  public StatsLatency(String numberKey, StatType numKeyType, String timeKey,
-      MBeanStatsMonitor monitor) {
+  public StatsLatency(String numberKey, StatType numKeyType, String timeKey, MBeanStatsMonitor monitor) {
     this.numberKey = numberKey;
     this.numKeyType = numKeyType;
     this.timeKey = timeKey;
@@ -49,16 +48,14 @@ public class StatsLatency {
 
       long latestTimeCounter = monitor.getStatistic(timeKey).longValue();
 
-      long latency = MetricsCalculator.getLatency(prevIntNumberCounter,
-          latestNumberCounter, prevTimeCounter, latestTimeCounter);
+      long latency = MetricsCalculator.getLatency(prevIntNumberCounter, latestNumberCounter, prevTimeCounter, latestTimeCounter);
       prevTimeCounter = latestTimeCounter;
       prevIntNumberCounter = latestNumberCounter;
       return latency;
     } else {
       long latestNumberCounter = monitor.getStatistic(numberKey).longValue();
       long latestTimeCounter = monitor.getStatistic(timeKey).longValue();
-      long latency = MetricsCalculator.getLatency(prevLongNumberCounter,
-          latestNumberCounter, prevTimeCounter, latestTimeCounter);
+      long latency = MetricsCalculator.getLatency(prevLongNumberCounter, latestNumberCounter, prevTimeCounter, latestTimeCounter);
       prevLongNumberCounter = latestNumberCounter;
       prevTimeCounter = latestTimeCounter;
       return latency;

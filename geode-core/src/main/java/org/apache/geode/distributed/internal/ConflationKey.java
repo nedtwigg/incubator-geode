@@ -29,6 +29,7 @@ public class ConflationKey {
   private final String regionPath;
   private final boolean allowsConflation;
   private ByteBuffer buffer;
+
   /**
    * Create a new conflation key given its entry key and region
    */
@@ -37,36 +38,41 @@ public class ConflationKey {
     this.regionPath = regionPath;
     this.allowsConflation = allowsConflation;
   }
+
   @Override
   public int hashCode() {
     // Note: we intentionally leave out buffer and allowsConflation
     return this.entryKey.hashCode() ^ this.regionPath.hashCode();
   }
+
   @Override
   public boolean equals(Object obj) {
     // Note: we intentionally leave out buffer and allowsConflation
     boolean result = false;
     if (obj != null) {
       if (obj instanceof ConflationKey) {
-        ConflationKey other = (ConflationKey)obj;
-        result = this.regionPath.equals(other.regionPath)
-          && this.entryKey.equals(other.entryKey);
+        ConflationKey other = (ConflationKey) obj;
+        result = this.regionPath.equals(other.regionPath) && this.entryKey.equals(other.entryKey);
       }
     }
     return result;
   }
+
   @Override
   public String toString() {
     StringBuffer result = new StringBuffer(128);
     result.append(this.regionPath).append('/').append(this.entryKey);
     return result.toString();
   }
+
   public ByteBuffer getBuffer() {
     return this.buffer;
   }
+
   public void setBuffer(ByteBuffer bb) {
     this.buffer = bb;
   }
+
   /**
    * Returns true if this key (and the operation that generated it) allows conflation; returns false if it does not support conflation.
    * Retur
@@ -75,4 +81,3 @@ public class ConflationKey {
     return this.allowsConflation;
   }
 }
-  

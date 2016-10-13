@@ -35,11 +35,12 @@ import org.apache.geode.internal.logging.LogService;
 public class ManagementMembershipListener implements MembershipListener {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Resource Manager
    */
   private SystemManagementService service;
+
   public ManagementMembershipListener(SystemManagementService service) {
     this.service = service;
   }
@@ -51,11 +52,11 @@ public class ManagementMembershipListener implements MembershipListener {
     }
     if (service.isManager()) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Removing member artifacts for {} from manager ",  id.getId());
+        logger.debug("Removing member artifacts for {} from manager ", id.getId());
       }
       service.getFederatingManager().removeMember(id, crashed);
     }
-    
+
     service.getUniversalListenerContainer().memberDeparted(id, crashed);
   }
 

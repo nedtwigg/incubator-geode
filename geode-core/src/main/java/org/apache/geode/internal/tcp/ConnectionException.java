@@ -22,16 +22,15 @@ import org.apache.geode.GemFireException;
     @since GemFire 3.0
    
  */
-public class ConnectionException extends GemFireException
-{
+public class ConnectionException extends GemFireException {
   private static final long serialVersionUID = -1977443644277412122L;
 
   public ConnectionException(String message) {
-     super(message);
+    super(message);
   }
 
   public ConnectionException(String message, Throwable cause) {
-     super(message, cause);
+    super(message, cause);
   }
-  
+
 }

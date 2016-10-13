@@ -38,7 +38,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     readLock = new SemaphoreReadLock(readerSemaphore, writerSemaphore);
     writeLock = new SemaphoreWriteLock(writerSemaphore);
   }
-  
+
   @Override
   public Lock readLock() {
     return readLock;
@@ -54,8 +54,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     private final Semaphore readerSemaphore;
     private final Semaphore writerSemaphore;
 
-    public SemaphoreReadLock(Semaphore readerSemaphore,
-        Semaphore writerSemaphore) {
+    public SemaphoreReadLock(Semaphore readerSemaphore, Semaphore writerSemaphore) {
       this.readerSemaphore = readerSemaphore;
       this.writerSemaphore = writerSemaphore;
     }
@@ -73,7 +72,8 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           }
         }
       } finally {
-        if (interrupted) Thread.currentThread().interrupt();
+        if (interrupted)
+          Thread.currentThread().interrupt();
       }
     }
 
@@ -103,13 +103,13 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           }
         }
       } finally {
-        if (interrupted) Thread.currentThread().interrupt();
+        if (interrupted)
+          Thread.currentThread().interrupt();
       }
     }
 
     @Override
-    public boolean tryLock(long time, TimeUnit unit)
-        throws InterruptedException {
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
       if (readerSemaphore.tryAcquire(time, unit)) {
         int oldNumReaders = numReaders;
         numReaders++;
@@ -140,7 +140,8 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           interrupted = true;
           continue;
         } finally {
-          if (interrupted) Thread.currentThread().interrupt();
+          if (interrupted)
+            Thread.currentThread().interrupt();
         }
         numReaders--;
         // The unlock method is forgiving
@@ -160,7 +161,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
       throw new UnsupportedOperationException();
     }
   }
-  
+
   public static class SemaphoreWriteLock implements Lock {
 
     private final Semaphore writerSemaphore;
@@ -173,7 +174,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     public void lock() {
       boolean interrupted = false;
       try {
-        for(;;) {
+        for (;;) {
           try {
             lockInterruptibly();
             break;
@@ -182,7 +183,8 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           }
         }
       } finally {
-        if (interrupted) Thread.currentThread().interrupt();
+        if (interrupted)
+          Thread.currentThread().interrupt();
       }
     }
 
@@ -197,8 +199,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     }
 
     @Override
-    public boolean tryLock(long time, TimeUnit unit)
-        throws InterruptedException {
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
       return writerSemaphore.tryAcquire(time, unit);
     }
 
@@ -211,6 +212,6 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     public Condition newCondition() {
       throw new UnsupportedOperationException();
     }
-    
+
   }
 }

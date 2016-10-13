@@ -43,7 +43,7 @@ public class GetOperationContextImpl extends GetOperationContext implements Rele
   public @Unretained Object getRawValue() {
     return super.getValue();
   }
-  
+
   @Override
   public Object getObject() {
     Object result = super.getObject();
@@ -72,7 +72,7 @@ public class GetOperationContextImpl extends GetOperationContext implements Rele
       throw new IllegalStateException("Attempt to access off-heap value after the OperationContext callback returned.");
     }
   }
-  
+
   @Override
   public byte[] getSerializedValue() {
     byte[] result = super.getSerializedValue();

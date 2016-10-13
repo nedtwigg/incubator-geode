@@ -50,8 +50,7 @@ public class PrependCommand extends StorageCommand {
   }
 
   @Override
-  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas,
-      int flags, Cache cache, RequestReader request) {
+  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
     ByteBuffer response = request.getResponse();
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     try {

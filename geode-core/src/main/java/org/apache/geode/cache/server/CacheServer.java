@@ -70,9 +70,9 @@ public interface CacheServer {
   /** The default notify-by-subscription value which tells the 
    * <Code>CacheServer</code> whether or not to notify clients 
    * based on key subscription.
-   */ 
-  public static final boolean DEFAULT_NOTIFY_BY_SUBSCRIPTION = true; 
- 
+   */
+  public static final boolean DEFAULT_NOTIFY_BY_SUBSCRIPTION = true;
+
   /**
    * The default socket buffer size for socket buffers from the cache server
    * to the client.
@@ -97,7 +97,7 @@ public interface CacheServer {
    * will expire.
    */
   public static final int DEFAULT_MESSAGE_TIME_TO_LIVE = 180;
-  
+
   /**
    * The default list of server groups a cache server belongs to.
    * The current default is an empty list.
@@ -105,7 +105,7 @@ public interface CacheServer {
    * @deprecated as of 7.0 use the groups gemfire property
    */
   public static final String[] DEFAULT_GROUPS = new String[0];
-  
+
   /**
    * The default load balancing probe. The default load balancing
    * probe reports the connections counts of this cache server. 
@@ -113,7 +113,7 @@ public interface CacheServer {
    *  
    */
   public static final ServerLoadProbe DEFAULT_LOAD_PROBE = new ConnectionCountProbe();
-  
+
   /**
    * The default frequency at which to poll the load probe for the load
    * on this cache server. Defaults to 5000 (5 seconds).
@@ -136,17 +136,15 @@ public interface CacheServer {
    * @since GemFire 5.7
    */
   public static final String DEFAULT_HOSTNAME_FOR_CLIENTS = "";
-  
+
   /**
    * The default setting for outgoing tcp/ip connections.  By
    * default the product enables tcpNoDelay.
    */
   public static final boolean DEFAULT_TCP_NO_DELAY = true;
 
-
   public static final int HTTP_DEFAULT_PORT = 8080;
   public static final String HTTP_SERVICE_DEFAULT_BIND_ADDRESS = "";
-
 
   /**
    * Returns the port on which this cache server listens for clients.
@@ -169,6 +167,7 @@ public interface CacheServer {
    * @since GemFire 5.7
    */
   public String getBindAddress();
+
   /**
    * Sets the ip address or host name that this cache server is to listen on for
    * client connections.
@@ -188,6 +187,7 @@ public interface CacheServer {
    * @since GemFire 5.7
    */
   public void setBindAddress(String address);
+
   /**
    * Returns a string representing the ip address or host name that server locators
    * will tell clients that this cache server is listening on.
@@ -197,6 +197,7 @@ public interface CacheServer {
    * @since GemFire 5.7
    */
   public String getHostnameForClients();
+
   /**
    * Sets the ip address or host name that this cache server is to listen on for
    * client connections.
@@ -213,6 +214,7 @@ public interface CacheServer {
    * @since GemFire 5.7
    */
   public void setHostnameForClients(String name);
+
   /**
    * Sets whether or not this cache server should notify clients based on
    * key subscription.
@@ -356,7 +358,7 @@ public interface CacheServer {
    * @see #DEFAULT_MAXIMUM_MESSAGE_COUNT
    */
   public void setMaximumMessageCount(int maxMessageCount);
-  
+
   /**
    * Returns the time (in seconds ) after which a message in the client queue
    * will expire.
@@ -382,6 +384,7 @@ public interface CacheServer {
    * @deprecated as of 7.0 use the groups gemfire property
    */
   public void setGroups(String[] groups);
+
   /**
    * Returns the list of server groups that this cache server belongs to.
    * @return a possibly empty array of <code>String</code>s where
@@ -426,7 +429,7 @@ public interface CacheServer {
    * the load probe. Must be greater than 0.
    */
   public void setLoadPollInterval(long loadPollInterval);
-  
+
   /**
    * Get the outgoing connection tcp-no-delay setting.  If it is set to true
    * (the default) this cache server is configured to enable tcp-no-delay on outgoing
@@ -436,7 +439,7 @@ public interface CacheServer {
    * @return the tcp-no-delay setting
    */
   public boolean getTcpNoDelay();
-  
+
   /**
    * Configures the tcpNoDelay setting of sockets used to send messages
    * to clients.  TcpNoDelay is enabled by default.
@@ -444,7 +447,7 @@ public interface CacheServer {
    * @param noDelay if false, sets tcp-no-delay to false on out-going connections
    */
   public void setTcpNoDelay(boolean noDelay);
-  
+
   /**
    * Get the ClientSubscriptionConfig for this cache server. See
    * {@link ClientSubscriptionConfig} for details on the client subscription configuration.
@@ -453,7 +456,7 @@ public interface CacheServer {
    * @since GemFire 5.7
    */
   public ClientSubscriptionConfig getClientSubscriptionConfig();
-  
+
   /**
    * Returns the <code>ClientSession</code> associated with the
    * <code>DistributedMember</code>
@@ -462,7 +465,7 @@ public interface CacheServer {
    * @since GemFire 6.0
    */
   public ClientSession getClientSession(DistributedMember member);
-  
+
   /**
    * Returns the <code>ClientSession</code> associated with the
    * durable client id
@@ -471,7 +474,7 @@ public interface CacheServer {
    * @since GemFire 6.0
    */
   public ClientSession getClientSession(String durableClientId);
-  
+
   /**
    * Returns a set of all <code>ClientSession</code>s
    * @return a set of all <code>ClientSession</code>s
@@ -487,9 +490,8 @@ public interface CacheServer {
    *          The <code>InterestRegistrationListener</code> to register 
    * 
    * @since GemFire 6.0
-   */ 
-  public void registerInterestRegistrationListener( 
-      InterestRegistrationListener listener); 
+   */
+  public void registerInterestRegistrationListener(InterestRegistrationListener listener);
 
   /** 
    * Unregisters an existing <code>InterestRegistrationListener</code> from 
@@ -499,9 +501,8 @@ public interface CacheServer {
    *          The <code>InterestRegistrationListener</code> to unregister 
    * 
    * @since GemFire 6.0
-   */ 
-  public void unregisterInterestRegistrationListener( 
-      InterestRegistrationListener listener); 
+   */
+  public void unregisterInterestRegistrationListener(InterestRegistrationListener listener);
 
   /** 
    * Returns a read-only set of <code>InterestRegistrationListener</code>s 
@@ -511,7 +512,7 @@ public interface CacheServer {
    *         registered with this notifier 
    * 
    * @since GemFire 6.0
-   */ 
-  public Set<InterestRegistrationListener> getInterestRegistrationListeners(); 
-  
+   */
+  public Set<InterestRegistrationListener> getInterestRegistrationListeners();
+
 }

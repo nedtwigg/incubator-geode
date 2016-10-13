@@ -27,8 +27,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class ConcurrentSerialGatewaySenderOperationsOffHeapDUnitTest extends
-    ConcurrentSerialGatewaySenderOperationsDUnitTest {
+public class ConcurrentSerialGatewaySenderOperationsOffHeapDUnitTest extends ConcurrentSerialGatewaySenderOperationsDUnitTest {
 
   public ConcurrentSerialGatewaySenderOperationsOffHeapDUnitTest() {
     super();
@@ -38,5 +37,5 @@ public class ConcurrentSerialGatewaySenderOperationsOffHeapDUnitTest extends
   public boolean isOffHeap() {
     return true;
   }
-  
+
 }

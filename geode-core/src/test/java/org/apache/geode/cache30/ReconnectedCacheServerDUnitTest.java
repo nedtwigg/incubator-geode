@@ -33,7 +33,6 @@ import org.apache.geode.distributed.internal.membership.gms.MembershipManagerHel
 import org.apache.geode.distributed.internal.membership.gms.mgr.GMSMembershipManager;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
-
 @Category(DistributedTest.class)
 public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
 
@@ -42,7 +41,7 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
   }
 
   private static final long serialVersionUID = 1L;
-  
+
   private boolean addedCacheServer = false;
 
   private Cache cache;
@@ -56,7 +55,7 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
       addedCacheServer = true;
     }
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     if (addedCacheServer && this.cache != null && !this.cache.isClosed()) {
@@ -71,13 +70,12 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
     // make sure the environment isn't polluted
     assertFalse(Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autoReconnect-useCacheXMLFile"));
 
-    GemFireCacheImpl gc = (GemFireCacheImpl)this.cache;
-    
+    GemFireCacheImpl gc = (GemFireCacheImpl) this.cache;
+
     // fool the system into thinking cluster-config is being used
-    GMSMembershipManager mgr = (GMSMembershipManager)MembershipManagerHelper
-           .getMembershipManager(gc.getDistributedSystem());
+    GMSMembershipManager mgr = (GMSMembershipManager) MembershipManagerHelper.getMembershipManager(gc.getDistributedSystem());
     mgr.saveCacheXmlForReconnect(true);
-    
+
     // the cache server config should now be stored in the cache's config
     assertFalse(gc.getCacheServers().isEmpty());
     assertNotNull(gc.getCacheConfig().getCacheServerCreation());
@@ -87,12 +85,11 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
   public void testDefaultCacheServerNotCreatedOnReconnect() {
 
     assertFalse(Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autoReconnect-useCacheXMLFile"));
-    
-    GemFireCacheImpl gc = (GemFireCacheImpl)this.cache;
+
+    GemFireCacheImpl gc = (GemFireCacheImpl) this.cache;
 
     // fool the system into thinking cluster-config is being used
-    GMSMembershipManager mgr = (GMSMembershipManager)MembershipManagerHelper
-        .getMembershipManager(gc.getDistributedSystem());
+    GMSMembershipManager mgr = (GMSMembershipManager) MembershipManagerHelper.getMembershipManager(gc.getDistributedSystem());
     final boolean sharedConfigEnabled = true;
     mgr.saveCacheXmlForReconnect(sharedConfigEnabled);
 
@@ -105,8 +102,7 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
     InternalDistributedSystem system = gc.getDistributedSystem();
     system.createAndStartCacheServers(gc.getCacheConfig().getCacheServerCreation(), gc);
 
-    assertEquals("found these cache servers:" + gc.getCacheServers(),
-        numServers, gc.getCacheServers().size());
-      
+    assertEquals("found these cache servers:" + gc.getCacheServers(), numServers, gc.getCacheServers().size());
+
   }
 }

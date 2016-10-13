@@ -52,7 +52,6 @@ public class LSetExecutor extends ListExecutor {
 
     int index;
 
-
     checkDataType(key, RedisDataType.REDIS_LIST, context);
     Region<Integer, ByteArrayWrapper> keyRegion = getRegion(context, key);
 
@@ -95,8 +94,8 @@ public class LSetExecutor extends ListExecutor {
   private Integer getIndexKey(ExecutionHandlerContext context, ByteArrayWrapper key, int index) throws Exception {
     Query query = getQuery(key, ListQuery.LSET, context);
 
-    Object[] params = {Integer.valueOf(index + 1)};
-    
+    Object[] params = { Integer.valueOf(index + 1) };
+
     SelectResults<Integer> results = (SelectResults<Integer>) query.execute(params);
     int size = results.size();
     if (results == null || size == 0) {

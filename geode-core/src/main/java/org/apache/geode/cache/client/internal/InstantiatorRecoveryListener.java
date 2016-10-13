@@ -47,20 +47,20 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  */
 public class InstantiatorRecoveryListener extends EndpointManager.EndpointListenerAdapter {
   private static final Logger logger = LogService.getLogger();
-  
+
   private final AtomicInteger endpointCount = new AtomicInteger();
   protected final InternalPool pool;
   protected final ScheduledExecutorService background;
   protected final long pingInterval;
   protected final Object recoveryScheduledLock = new Object();
   protected boolean recoveryScheduled;
-  
+
   public InstantiatorRecoveryListener(ScheduledExecutorService background, InternalPool pool) {
     this.pool = pool;
     this.pingInterval = pool.getPingInterval();
     this.background = background;
   }
-  
+
   @Override
   public void endpointCrashed(Endpoint endpoint) {
     int count = endpointCount.decrementAndGet();
@@ -79,28 +79,28 @@ public class InstantiatorRecoveryListener extends EndpointManager.EndpointListen
 
   @Override
   public void endpointNowInUse(Endpoint endpoint) {
-    int count  = endpointCount.incrementAndGet();
+    int count = endpointCount.incrementAndGet();
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
       logger.debug("InstantiatorRecoveryTask - EndpointNowInUse. Now have {} endpoints", count);
     }
-    if(count == 1) {
-      synchronized(recoveryScheduledLock) {
-        if(!recoveryScheduled) {
+    if (count == 1) {
+      synchronized (recoveryScheduledLock) {
+        if (!recoveryScheduled) {
           try {
             recoveryScheduled = true;
             background.execute(new RecoveryTask());
             if (isDebugEnabled) {
               logger.debug("InstantiatorRecoveryTask - Scheduled Recovery Task");
             }
-          } catch(RejectedExecutionException e) {
+          } catch (RejectedExecutionException e) {
             //ignore, the timer has been cancelled, which means we're shutting down.
           }
         }
       }
     }
   }
-  
+
   protected class RecoveryTask extends PoolTask {
 
     @Override
@@ -108,46 +108,36 @@ public class InstantiatorRecoveryListener extends EndpointManager.EndpointListen
       if (pool.getCancelCriterion().isCancelInProgress()) {
         return;
       }
-      synchronized(recoveryScheduledLock) {
+      synchronized (recoveryScheduledLock) {
         recoveryScheduled = false;
       }
-      Object[] objects = InternalInstantiator
-          .getInstantiatorsForSerialization();
+      Object[] objects = InternalInstantiator.getInstantiatorsForSerialization();
       if (objects.length == 0) {
         return;
       }
       EventID eventId = InternalInstantiator.generateEventId();
       //Fix for bug:40930
       if (eventId == null) {
-        background.schedule(new RecoveryTask(), pingInterval,
-            TimeUnit.MILLISECONDS);
+        background.schedule(new RecoveryTask(), pingInterval, TimeUnit.MILLISECONDS);
         recoveryScheduled = true;
-      }
-      else {
+      } else {
         try {
           RegisterInstantiatorsOp.execute(pool, objects, eventId);
-        } 
-        catch (CancelException e) {
+        } catch (CancelException e) {
           throw e;
-        }
-        catch (RejectedExecutionException e) {
+        } catch (RejectedExecutionException e) {
           // This is probably because we've started to shut down.
           pool.getCancelCriterion().checkCancelInProgress(e);
           throw e; // weird
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
           pool.getCancelCriterion().checkCancelInProgress(e);
-          
+
           // If an exception occurred on the server, don't retry
           Throwable cause = e.getCause();
           if (cause instanceof ClassNotFoundException) {
-            logger.warn(LocalizedMessage.create(
-                LocalizedStrings.InstantiatorRecoveryListener_INSTANTIATORRECOVERYTASK_ERROR_CLASSNOTFOUNDEXCEPTION,
-                cause.getMessage()));
+            logger.warn(LocalizedMessage.create(LocalizedStrings.InstantiatorRecoveryListener_INSTANTIATORRECOVERYTASK_ERROR_CLASSNOTFOUNDEXCEPTION, cause.getMessage()));
           } else {
-            logger.warn(LocalizedMessage.create(
-              LocalizedStrings.InstantiatorRecoveryListener_INSTANTIATORRECOVERYTASK_ERROR_RECOVERING_INSTANTIATORS),
-              e);
+            logger.warn(LocalizedMessage.create(LocalizedStrings.InstantiatorRecoveryListener_INSTANTIATORRECOVERYTASK_ERROR_RECOVERING_INSTANTIATORS), e);
           }
         } finally {
           pool.releaseThreadLocalConnection();

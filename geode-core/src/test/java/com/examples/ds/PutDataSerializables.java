@@ -35,9 +35,7 @@ public class PutDataSerializables {
     DistributedSystem system = DistributedSystem.connect(props);
     Cache cache = CacheFactory.create(system);
     AttributesFactory factory = new AttributesFactory();
-    Region region =
-      cache.createRegion("DataSerializable",
-                           factory.create());
+    Region region = cache.createRegion("DataSerializable", factory.create());
     region.put("User", new User("Fred", 42));
 
     new CompanySerializer();
@@ -45,8 +43,7 @@ public class PutDataSerializables {
     Company company = new Company("My Company", address);
 
     region.put("Company", company);
-    region.put("Employee",
-               new Employee(43, "Bob", new Date(), company));
+    region.put("Employee", new Employee(43, "Bob", new Date(), company));
 
     Thread.sleep(60 * 1000);
   }

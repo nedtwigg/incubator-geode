@@ -35,7 +35,6 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public abstract class AbstractIndexMaintenanceIntegrationTest {
 
-
   @After
   public void tearDown() throws Exception {
     CacheUtils.closeCache();
@@ -45,7 +44,7 @@ public abstract class AbstractIndexMaintenanceIntegrationTest {
   public void whenRemovingRegionEntryFromIndexIfEntryDestroyedIsThrownCorrectlyRemoveFromIndexAndNotThrowException() throws Exception {
     CacheUtils.startCache();
     Cache cache = CacheUtils.getCache();
-    LocalRegion region = (LocalRegion)cache.createRegionFactory(RegionShortcut.REPLICATE).create("portfolios");
+    LocalRegion region = (LocalRegion) cache.createRegionFactory(RegionShortcut.REPLICATE).create("portfolios");
     QueryService qs = cache.getQueryService();
     AbstractIndex statusIndex = createIndex(qs, "statusIndex", "value.status", "/portfolios.entrySet()");
 
@@ -57,6 +56,5 @@ public abstract class AbstractIndexMaintenanceIntegrationTest {
     statusIndex.removeIndexMapping(entry, IndexProtocol.OTHER_OP);
   }
 
-  protected abstract AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath)
-    throws IndexNameConflictException, IndexExistsException, RegionNotFoundException ;
+  protected abstract AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException;
 }

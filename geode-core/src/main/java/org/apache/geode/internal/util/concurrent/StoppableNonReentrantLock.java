@@ -24,8 +24,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  * recursion
  * 
  */
-public class StoppableNonReentrantLock extends StoppableReentrantLock
-{
+public class StoppableNonReentrantLock extends StoppableReentrantLock {
   /**
    * Creates an instance.
    * @param stopper the cancellation object
@@ -53,7 +52,7 @@ public class StoppableNonReentrantLock extends StoppableReentrantLock
       throw new IllegalStateException(LocalizedStrings.StoppableNonReentrantLock_LOCK_REENTRY_IS_NOT_ALLOWED.toLocalizedString());
     }
   }
-  
+
   /**
    * @throws IllegalStateException if the lock is already held by the current thread
    */
@@ -71,7 +70,7 @@ public class StoppableNonReentrantLock extends StoppableReentrantLock
     checkForRentry();
     super.lockInterruptibly();
   }
-  
+
   /**
    * @throws IllegalStateException if the lock is already held by the current thread
    */

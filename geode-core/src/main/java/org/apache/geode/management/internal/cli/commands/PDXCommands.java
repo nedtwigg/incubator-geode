@@ -48,47 +48,24 @@ import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 
-public class PDXCommands extends AbstractCommandsSupport{
+public class PDXCommands extends AbstractCommandsSupport {
 
+  @CliCommand(value = CliStrings.CONFIGURE_PDX, help = CliStrings.CONFIGURE_PDX__HELP)
+  @CliMetaData(relatedTopic = CliStrings.TOPIC_GEODE_REGION, writesToSharedConfiguration = true)
+  @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
+  public Result configurePDX(@CliOption(key = CliStrings.CONFIGURE_PDX__READ__SERIALIZED, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONFIGURE_PDX__READ__SERIALIZED__HELP) Boolean readSerialized,
 
-  @CliCommand (value = CliStrings.CONFIGURE_PDX, help = CliStrings.CONFIGURE_PDX__HELP)
-  @CliMetaData (relatedTopic = CliStrings.TOPIC_GEODE_REGION, writesToSharedConfiguration = true)
-  @ResourceOperation( resource= Resource.DATA, operation = Operation.MANAGE)
-  public Result configurePDX(
-      @CliOption (key = CliStrings.CONFIGURE_PDX__READ__SERIALIZED,
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONFIGURE_PDX__READ__SERIALIZED__HELP) 
-      Boolean readSerialized,
+      @CliOption(key = CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS__HELP) Boolean ignoreUnreadFields,
 
-      @CliOption (key = CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS,
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS__HELP) 
-      Boolean ignoreUnreadFields,
+      @CliOption(key = CliStrings.CONFIGURE_PDX__DISKSTORE, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, specifiedDefaultValue = "", help = CliStrings.CONFIGURE_PDX__DISKSTORE__HELP) String diskStore,
 
-      @CliOption (key = CliStrings.CONFIGURE_PDX__DISKSTORE,
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      specifiedDefaultValue = "",
-      help = CliStrings.CONFIGURE_PDX__DISKSTORE__HELP)
-      String diskStore, 
+      @CliMetaData(valueSeparator = ",") @CliOption(key = CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, specifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES__HELP) String[] patterns,
 
-      @CliMetaData (valueSeparator = ",")
-      @CliOption (key = CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES,
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      specifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES__HELP)
-      String[] patterns,
-
-
-      @CliMetaData (valueSeparator = ",")
-      @CliOption (key = CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES,
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      specifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES__HELP)
-      String[] portablePatterns){
+      @CliMetaData(valueSeparator = ",") @CliOption(key = CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, specifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES__HELP) String[] portablePatterns) {
     Result result = null;
 
     try {
-      InfoResultData ird  = ResultBuilder.createInfoResultData();
+      InfoResultData ird = ResultBuilder.createInfoResultData();
       CacheCreation cache = new CacheCreation(true);
 
       if ((portablePatterns != null && portablePatterns.length > 0) && (patterns != null && patterns.length > 0)) {
@@ -120,7 +97,6 @@ public class PDXCommands extends AbstractCommandsSupport{
       }
       ird.addLine(CliStrings.CONFIGURE_PDX__READ__SERIALIZED + " = " + cache.getPdxReadSerialized());
 
-
       //Set ingoreUnreadFields
       if (ignoreUnreadFields != null) {
         cache.setPdxIgnoreUnreadFields(ignoreUnreadFields);
@@ -129,16 +105,15 @@ public class PDXCommands extends AbstractCommandsSupport{
       }
       ird.addLine(CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS + " = " + cache.getPdxIgnoreUnreadFields());
 
-
       if (portablePatterns != null) {
-        ReflectionBasedAutoSerializer autoSerializer =  new ReflectionBasedAutoSerializer(portablePatterns);
+        ReflectionBasedAutoSerializer autoSerializer = new ReflectionBasedAutoSerializer(portablePatterns);
         cache.setPdxSerializer(autoSerializer);
         ird.addLine("PDX Serializer " + cache.getPdxSerializer().getClass().getName());
         ird.addLine("Portable classes " + Arrays.toString(portablePatterns));
-      } 
+      }
 
-      if (patterns!=null) {
-        ReflectionBasedAutoSerializer nonPortableAutoSerializer =  new ReflectionBasedAutoSerializer(true, patterns);
+      if (patterns != null) {
+        ReflectionBasedAutoSerializer nonPortableAutoSerializer = new ReflectionBasedAutoSerializer(true, patterns);
         cache.setPdxSerializer(nonPortableAutoSerializer);
         ird.addLine("PDX Serializer : " + cache.getPdxSerializer().getClass().getName());
         ird.addLine("Non portable classes :" + Arrays.toString(patterns));
@@ -152,7 +127,6 @@ public class PDXCommands extends AbstractCommandsSupport{
       // TODO jbarrett - shouldn't this use the same loadXmlDefinition that other constructors use?
       XmlEntity xmlEntity = XmlEntity.builder().withType(CacheXml.PDX).withConfig(xmlDefinition).build();
 
-
       SharedConfigurationWriter scWriter = new SharedConfigurationWriter();
       boolean commandPersisted = scWriter.addXmlEntity(xmlEntity, null);
 
@@ -165,7 +139,7 @@ public class PDXCommands extends AbstractCommandsSupport{
     return result;
   }
 
-  @CliAvailabilityIndicator({CliStrings.CONFIGURE_PDX})
+  @CliAvailabilityIndicator({ CliStrings.CONFIGURE_PDX })
   public boolean isRegionCommandAvailable() {
     if (!CliUtil.isGfshVM()) {
       return true;
@@ -173,50 +147,36 @@ public class PDXCommands extends AbstractCommandsSupport{
     return (getGfsh() != null && getGfsh().isConnectedAndReady());
   }
 
-  @CliCommand (value = CliStrings.PDX_RENAME, help = CliStrings.PDX_RENAME__HELP)
-  @CliMetaData(shellOnly=true, relatedTopic={CliStrings.TOPIC_GEODE_DISKSTORE})
+  @CliCommand(value = CliStrings.PDX_RENAME, help = CliStrings.PDX_RENAME__HELP)
+  @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GEODE_DISKSTORE })
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
-  public Result pdxRename(
-      @CliOption (key = CliStrings.PDX_RENAME_OLD,
-      mandatory=true,
-      help = CliStrings.PDX_RENAME_OLD__HELP) 
-      String oldClassName,
+  public Result pdxRename(@CliOption(key = CliStrings.PDX_RENAME_OLD, mandatory = true, help = CliStrings.PDX_RENAME_OLD__HELP) String oldClassName,
 
-      @CliOption (key = CliStrings.PDX_RENAME_NEW,
-      mandatory=true,
-      help = CliStrings.PDX_RENAME_NEW__HELP) 
-      String newClassName,
+      @CliOption(key = CliStrings.PDX_RENAME_NEW, mandatory = true, help = CliStrings.PDX_RENAME_NEW__HELP) String newClassName,
 
-      @CliOption (key = CliStrings.PDX_DISKSTORE,
-      mandatory=true,
-      help = CliStrings.PDX_DISKSTORE__HELP)
-      String diskStore, 
+      @CliOption(key = CliStrings.PDX_DISKSTORE, mandatory = true, help = CliStrings.PDX_DISKSTORE__HELP) String diskStore,
 
-      @CliOption (key = CliStrings.PDX_DISKDIR,
-      mandatory=true,
-      help = CliStrings.PDX_DISKDIR__HELP)
-      @CliMetaData (valueSeparator = ",")
-      String[] diskDirs){
-    
+      @CliOption(key = CliStrings.PDX_DISKDIR, mandatory = true, help = CliStrings.PDX_DISKDIR__HELP) @CliMetaData(valueSeparator = ",") String[] diskDirs) {
+
     try {
       final File[] dirs = new File[diskDirs.length];
       for (int i = 0; i < diskDirs.length; i++) {
         dirs[i] = new File((diskDirs[i]));
       }
-      
+
       Collection<Object> results = DiskStoreImpl.pdxRename(diskStore, dirs, oldClassName, newClassName);
-      
-      if(results.isEmpty()) {
+
+      if (results.isEmpty()) {
         return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.PDX_RENAME__EMPTY));
       }
-      
+
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       PrintStream printStream = new PrintStream(outputStream);
-      for(Object p : results) {
-        if(p instanceof PdxType) {
-          ((PdxType)p).toStream(printStream, false);
+      for (Object p : results) {
+        if (p instanceof PdxType) {
+          ((PdxType) p).toStream(printStream, false);
         } else {
-          ((EnumInfo)p).toStream(printStream);
+          ((EnumInfo) p).toStream(printStream);
         }
       }
       String resultString = CliStrings.format(CliStrings.PDX_RENAME__SUCCESS, outputStream.toString());
@@ -225,10 +185,10 @@ public class PDXCommands extends AbstractCommandsSupport{
     } catch (Exception e) {
       return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.PDX_RENAME__ERROR, e.getMessage()));
     }
-    
+
   }
 
-  @CliAvailabilityIndicator({CliStrings.PDX_RENAME})
+  @CliAvailabilityIndicator({ CliStrings.PDX_RENAME })
   public boolean pdxRenameCommandsAvailable() {
     return true;
   }

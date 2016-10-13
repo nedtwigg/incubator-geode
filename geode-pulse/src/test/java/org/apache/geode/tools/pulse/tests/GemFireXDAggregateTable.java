@@ -20,8 +20,7 @@ package org.apache.geode.tools.pulse.tests;
 
 import javax.management.NotificationBroadcasterSupport;
 
-public class GemFireXDAggregateTable extends NotificationBroadcasterSupport
-    implements GemFireXDAggregateTableMBean {
+public class GemFireXDAggregateTable extends NotificationBroadcasterSupport implements GemFireXDAggregateTableMBean {
   private String name = null;
 
   public GemFireXDAggregateTable(String name) {
@@ -34,13 +33,11 @@ public class GemFireXDAggregateTable extends NotificationBroadcasterSupport
 
   @Override
   public long getEntrySize() {
-    return Long.parseLong(JMXProperties.getInstance().getProperty(
-        getKey("EntrySize")));
+    return Long.parseLong(JMXProperties.getInstance().getProperty(getKey("EntrySize")));
   }
 
   @Override
   public int getNumberOfRows() {
-    return Integer.parseInt(JMXProperties.getInstance().getProperty(
-        getKey("NumberOfRows")));
+    return Integer.parseInt(JMXProperties.getInstance().getProperty(getKey("NumberOfRows")));
   }
 }

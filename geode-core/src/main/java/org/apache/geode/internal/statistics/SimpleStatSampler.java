@@ -38,20 +38,20 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 public class SimpleStatSampler extends HostStatSampler {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String ARCHIVE_FILE_NAME_PROPERTY = "stats.archive-file";
   public static final String FILE_SIZE_LIMIT_PROPERTY = "stats.file-size-limit";
   public static final String DISK_SPACE_LIMIT_PROPERTY = "stats.disk-space-limit";
   public static final String SAMPLE_RATE_PROPERTY = "stats.sample-rate";
-  
+
   public static final String DEFAULT_ARCHIVE_FILE_NAME = "stats.gfs";
   public static final long DEFAULT_FILE_SIZE_LIMIT = 0;
   public static final long DEFAULT_DISK_SPACE_LIMIT = 0;
   public static final int DEFAULT_SAMPLE_RATE = 1000;
-  
+
   private final File archiveFileName = new File(System.getProperty(ARCHIVE_FILE_NAME_PROPERTY, DEFAULT_ARCHIVE_FILE_NAME));
-  private final long archiveFileSizeLimit = Long.getLong(FILE_SIZE_LIMIT_PROPERTY, DEFAULT_FILE_SIZE_LIMIT).longValue() * (1024*1024);
-  private final long archiveDiskSpaceLimit = Long.getLong(DISK_SPACE_LIMIT_PROPERTY, DEFAULT_DISK_SPACE_LIMIT).longValue() * (1024*1024);
+  private final long archiveFileSizeLimit = Long.getLong(FILE_SIZE_LIMIT_PROPERTY, DEFAULT_FILE_SIZE_LIMIT).longValue() * (1024 * 1024);
+  private final long archiveDiskSpaceLimit = Long.getLong(DISK_SPACE_LIMIT_PROPERTY, DEFAULT_DISK_SPACE_LIMIT).longValue() * (1024 * 1024);
   private final int sampleRate = Integer.getInteger(SAMPLE_RATE_PROPERTY, DEFAULT_SAMPLE_RATE).intValue();
 
   private final StatisticsManager sm;
@@ -66,12 +66,12 @@ public class SimpleStatSampler extends HostStatSampler {
   protected void checkListeners() {
     // do nothing
   }
-  
+
   @Override
   public File getArchiveFileName() {
     return this.archiveFileName;
   }
-  
+
   @Override
   public long getArchiveFileSizeLimit() {
     if (fileSizeLimitInKB()) {
@@ -80,7 +80,7 @@ public class SimpleStatSampler extends HostStatSampler {
       return this.archiveFileSizeLimit;
     }
   }
-  
+
   @Override
   public long getArchiveDiskSpaceLimit() {
     if (fileSizeLimitInKB()) {
@@ -89,7 +89,7 @@ public class SimpleStatSampler extends HostStatSampler {
       return this.archiveDiskSpaceLimit;
     }
   }
-  
+
   @Override
   public String getProductDescription() {
     return "Unknown product";
@@ -99,12 +99,12 @@ public class SimpleStatSampler extends HostStatSampler {
   protected StatisticsManager getStatisticsManager() {
     return this.sm;
   }
-  
+
   @Override
   protected int getSampleRate() {
     return this.sampleRate;
   }
-  
+
   @Override
   public boolean isSamplingEnabled() {
     return true;

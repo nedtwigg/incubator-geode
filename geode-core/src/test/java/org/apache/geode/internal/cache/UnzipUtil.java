@@ -35,49 +35,45 @@ import java.util.zip.ZipInputStream;
 public class UnzipUtil {
 
   public static final void unzip(InputStream input, String targetDir) throws IOException {
-    
+
     File dir = new File(targetDir);
-    if(!dir.exists() && !dir.mkdir()) {
+    if (!dir.exists() && !dir.mkdir()) {
       throw new IOException("Unable to create dir" + dir);
     }
-    
+
     ZipInputStream zipInput;
 
     zipInput = new ZipInputStream(input);
 
-
     ZipEntry entry;
-    while((entry = zipInput.getNextEntry()) != null) {
+    while ((entry = zipInput.getNextEntry()) != null) {
 
-      File newFile = new File(dir,entry.getName());
-      if(entry.isDirectory()) {
-        if(!newFile.mkdirs()) {
+      File newFile = new File(dir, entry.getName());
+      if (entry.isDirectory()) {
+        if (!newFile.mkdirs()) {
           throw new IOException("Unable to create directory" + newFile);
         }
         continue;
       }
 
-      copyInputStream(zipInput,
-          new BufferedOutputStream(new FileOutputStream(newFile)));
+      copyInputStream(zipInput, new BufferedOutputStream(new FileOutputStream(newFile)));
       zipInput.closeEntry();
     }
 
     zipInput.close();
   }
-  
-  public static final void copyInputStream(InputStream in, OutputStream out)
-  throws IOException
-  {
+
+  public static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
     byte[] buffer = new byte[1024];
     int len;
 
-    while((len = in.read(buffer)) >= 0)
+    while ((len = in.read(buffer)) >= 0)
       out.write(buffer, 0, len);
 
     out.close();
   }
 
   private UnzipUtil() {
-    
+
   }
 }

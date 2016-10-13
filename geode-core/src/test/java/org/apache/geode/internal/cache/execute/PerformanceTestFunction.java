@@ -39,7 +39,7 @@ public class PerformanceTestFunction extends FunctionAdapter {
    */
   public void execute(FunctionContext context) {
     if (context instanceof RegionFunctionContext) {
-      RegionFunctionContext prContext = (RegionFunctionContext)context;
+      RegionFunctionContext prContext = (RegionFunctionContext) context;
       final Set allKeysSet = prContext.getFilter();
 
       ArrayList vals = new ArrayList();
@@ -50,9 +50,8 @@ public class PerformanceTestFunction extends FunctionAdapter {
         vals.add(val);
       }
       context.getResultSender().lastResult(vals);
-    }
-    else {
-      context.getResultSender().lastResult( null);
+    } else {
+      context.getResultSender().lastResult(null);
     }
   }
 
@@ -68,6 +67,7 @@ public class PerformanceTestFunction extends FunctionAdapter {
   public boolean hasResult() {
     return true;
   }
+
   public boolean isHA() {
     return false;
   }

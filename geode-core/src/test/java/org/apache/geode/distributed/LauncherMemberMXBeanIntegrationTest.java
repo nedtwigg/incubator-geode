@@ -64,26 +64,25 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
     props.setProperty(LOCATORS, "");
     props.setProperty("name", getUniqueName());
     new CacheFactory(props).create();
-    
+
     final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
     final ObjectName pattern = ObjectName.getInstance("GemFire:type=Member,*");
 
     waitForMemberMXBean(mbeanServer, pattern);
-    
+
     final Set<ObjectName> mbeanNames = mbeanServer.queryNames(pattern, null);
     assertFalse(mbeanNames.isEmpty());
     assertEquals("mbeanNames=" + mbeanNames, 1, mbeanNames.size());
-    
+
     final ObjectName objectName = mbeanNames.iterator().next();
-    final MemberMXBean mbean = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName,
-      MemberMXBean.class, false);
+    final MemberMXBean mbean = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, MemberMXBean.class, false);
 
     assertNotNull(mbean);
     assertEquals(ProcessUtils.identifyPid(), mbean.getProcessId());
     assertEquals(getUniqueName(), mbean.getName());
     assertEquals(getUniqueName(), mbean.getMember());
   }
-  
+
   @Test
   public void testQueryForMemberMXBeanWithProcessId() throws Exception {
     final Properties props = new Properties();
@@ -91,17 +90,17 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
     props.setProperty(LOCATORS, "");
     props.setProperty("name", getUniqueName());
     new CacheFactory(props).create();
-    
+
     final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
     final ObjectName pattern = ObjectName.getInstance("GemFire:type=Member,*");
-    final QueryExp constraint = Query.eq(Query.attr("ProcessId"),Query.value(ProcessUtils.identifyPid()));
-    
+    final QueryExp constraint = Query.eq(Query.attr("ProcessId"), Query.value(ProcessUtils.identifyPid()));
+
     waitForMemberMXBean(mbeanServer, pattern);
-    
+
     final Set<ObjectName> mbeanNames = mbeanServer.queryNames(pattern, constraint);
     assertFalse(mbeanNames.isEmpty());
     assertEquals(1, mbeanNames.size());
-    
+
     final ObjectName objectName = mbeanNames.iterator().next();
     final MemberMXBean mbean = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, MemberMXBean.class, false);
 
@@ -110,7 +109,7 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
     assertEquals(getUniqueName(), mbean.getName());
     assertEquals(getUniqueName(), mbean.getMember());
   }
-  
+
   @Test
   public void testQueryForMemberMXBeanWithMemberName() throws Exception {
     final Properties props = new Properties();
@@ -118,24 +117,24 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
     props.setProperty(LOCATORS, "");
     props.setProperty("name", getUniqueName());
     new CacheFactory(props).create();
-    
+
     final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
     final ObjectName pattern = ObjectName.getInstance("GemFire:type=Member,*");
     final QueryExp constraint = Query.eq(Query.attr("Name"), Query.value(getUniqueName()));
-    
+
     waitForMemberMXBean(mbeanServer, pattern);
-    
+
     final Set<ObjectName> mbeanNames = mbeanServer.queryNames(pattern, constraint);
     assertFalse(mbeanNames.isEmpty());
     assertEquals(1, mbeanNames.size());
-    
+
     final ObjectName objectName = mbeanNames.iterator().next();
     final MemberMXBean mbean = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, MemberMXBean.class, false);
 
     assertNotNull(mbean);
     assertEquals(getUniqueName(), mbean.getMember());
   }
-  
+
   private void waitForMemberMXBean(final MBeanServer mbeanServer, final ObjectName pattern) throws Exception {
     assertEventuallyTrue("waiting for MemberMXBean to be registered", new Callable<Boolean>() {
       @Override

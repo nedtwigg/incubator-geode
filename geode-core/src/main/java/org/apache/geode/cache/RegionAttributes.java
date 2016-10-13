@@ -42,17 +42,17 @@ import org.apache.geode.compression.Compressor;
  * @see org.apache.geode.cache.EvictionAttributes
  * @since GemFire 2.0
  */
-public interface RegionAttributes<K,V> {
+public interface RegionAttributes<K, V> {
 
   /** Returns the cache loader associated with this region.
    * @return the cache loader
    */
-  public CacheLoader<K,V> getCacheLoader();
+  public CacheLoader<K, V> getCacheLoader();
 
   /** Returns the cache writer associated with this region.
    * @return the cache writer
    */
-  public CacheWriter<K,V> getCacheWriter();
+  public CacheWriter<K, V> getCacheWriter();
 
   /** Returns the class that the keys in this region are constrained to.
    *
@@ -66,9 +66,8 @@ public interface RegionAttributes<K,V> {
    * @return the <code>Class</code> the values must be an
    * <code>instanceof</code>
    */
-  
-  public Class<V> getValueConstraint();
 
+  public Class<V> getValueConstraint();
 
   /** Gets the <code>timeToLive</code> expiration attributes for the region as a whole.
    * Default is 0 which indicates that no expiration of this type will happen.
@@ -101,13 +100,13 @@ public interface RegionAttributes<K,V> {
    * for entries in this region
    * @return the entryTimeToLive CustomExpiry for entries in this region
    */
-  public CustomExpiry<K,V> getCustomEntryTimeToLive();
-  
+  public CustomExpiry<K, V> getCustomEntryTimeToLive();
+
   /** Gets the <code>idleTimeout</code> <code>CustomExpiry</code>, if any 
    * for entries in this region
    * @return the idleTimeout CustomExpiry for entries in this region
    */
-  public CustomExpiry<K,V> getCustomEntryIdleTimeout();
+  public CustomExpiry<K, V> getCustomEntryIdleTimeout();
 
   /**
    * Gets the flag telling a region to ignore JTA transactions.
@@ -124,7 +123,6 @@ public interface RegionAttributes<K,V> {
   @Deprecated
   public MirrorType getMirrorType();
 
-
   /** Returns the data policy for this region.
    * Default value of DataPolicy is set to 'Normal'. Please refer the gemfire documentation for more details on this.
    *
@@ -139,8 +137,7 @@ public interface RegionAttributes<K,V> {
    */
   public Scope getScope();
 
-
- /**
+  /**
    * Attributes that control the size of the <code>Region</code> using an
    * {@link EvictionAlgorithm} and a {@link EvictionAction}.
    * @return the region's EvictionAttributes
@@ -153,17 +150,16 @@ public interface RegionAttributes<K,V> {
    * @deprecated as of GemFire 5.0, use {@link #getCacheListeners} instead
    */
   @Deprecated
-  public CacheListener<K,V> getCacheListener();
+  public CacheListener<K, V> getCacheListener();
 
   /** Returns an array of all the cache listeners on this attributes.
    * Modifications to the returned array will not effect the attributes.
    * @return the region's <code>CacheListener</code>s; an empty array if no listeners
    * @since GemFire 5.0
    */
-  public CacheListener<K,V>[] getCacheListeners();
+  public CacheListener<K, V>[] getCacheListeners();
 
   // MAP ATTRIBUTES
-
 
   /** Returns the initial capacity of the entries map.
    * Default is 16.
@@ -279,7 +275,6 @@ public interface RegionAttributes<K,V> {
    */
   public SubscriptionAttributes getSubscriptionAttributes();
 
-
   // STATISTICS
   /** Returns whether the statistics are enabled for this region and its
    * entries.
@@ -358,6 +353,7 @@ public interface RegionAttributes<K,V> {
    * @since GemFire 5.7
    */
   public boolean getEnableSubscriptionConflation();
+
   /**
    * Returns whether or not async conflation is enabled for sending
    * messages to async peers.
@@ -377,8 +373,7 @@ public interface RegionAttributes<K,V> {
    * @deprecated as of 6.5 use {@link DiskStore#getDiskDirSizes} instead.
    */
   public int[] getDiskDirSizes();
-  
-  
+
   /**
    * Returns the name of the {@link Pool} that this region
    * will use to communicate with servers, if any.
@@ -389,7 +384,7 @@ public interface RegionAttributes<K,V> {
    * @since GemFire 5.7
    */
   public String getPoolName();
-  
+
   /**
    * Returns whether or not cloning is enabled on region.
    * Default is false.
@@ -411,7 +406,7 @@ public interface RegionAttributes<K,V> {
    * @since GemFire 6.5
    */
   public String getDiskStoreName();
-  
+
   /**
    * Returns true if configured synchronous disk writes.
    * Default is set to true.
@@ -420,17 +415,17 @@ public interface RegionAttributes<K,V> {
    * @since GemFire 6.5
    */
   public boolean isDiskSynchronous();
-  
+
   /**
    * Returns a set of gatewaysenderIds
    */
   public Set<String> getGatewaySenderIds();
-  
+
   /**
    * Returns a set of AsyncEventQueueIds added to the region
    */
   public Set<String> getAsyncEventQueueIds();
-  
+
   /**
    * Returns true if concurrent update checks are turned on for this region.
    * <p>
@@ -445,7 +440,7 @@ public interface RegionAttributes<K,V> {
    * @return true if concurrent update checks are turned on
    */
   public boolean getConcurrencyChecksEnabled();
-  
+
   /**
    * Returns the compressor used by this region's entry values.
    * @since GemFire 8.0
@@ -461,6 +456,3 @@ public interface RegionAttributes<K,V> {
    */
   public boolean getOffHeap();
 }
-
-
-

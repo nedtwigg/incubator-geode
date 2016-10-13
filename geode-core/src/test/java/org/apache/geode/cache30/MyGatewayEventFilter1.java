@@ -23,16 +23,16 @@ import org.apache.geode.cache.wan.GatewayEventFilter;
 import org.apache.geode.cache.wan.GatewayQueueEvent;
 import org.apache.geode.internal.cache.xmlcache.Declarable2;
 
-public class MyGatewayEventFilter1 implements GatewayEventFilter, Declarable2{
-  
+public class MyGatewayEventFilter1 implements GatewayEventFilter, Declarable2 {
+
   private final Properties resolveProps;
-  
+
   public MyGatewayEventFilter1() {
     this.resolveProps = new Properties();
   }
 
   public void close() {
-    
+
   }
 
   public Properties getConfig() {
@@ -42,7 +42,6 @@ public class MyGatewayEventFilter1 implements GatewayEventFilter, Declarable2{
   public void init(Properties props) {
     this.resolveProps.putAll(props);
   }
-
 
   public boolean beforeEnqueue(GatewayQueueEvent event) {
     // TODO Auto-generated method stub
@@ -56,6 +55,6 @@ public class MyGatewayEventFilter1 implements GatewayEventFilter, Declarable2{
 
   public void afterAcknowledgement(GatewayQueueEvent event) {
     // TODO Auto-generated method stub
-    
+
   }
 }

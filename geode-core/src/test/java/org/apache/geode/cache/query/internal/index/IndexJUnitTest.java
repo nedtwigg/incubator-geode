@@ -42,52 +42,52 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class IndexJUnitTest {
-  
+
   private static final String indexName = "testIndex";
   private static Index index;
   private static Region region;
-  
+
   @BeforeClass
   public static void beforeClass() throws Exception {
     CacheUtils.startCache();
     QueryService qs = CacheUtils.getQueryService();
     region = CacheUtils.createRegion("Portfolios", Portfolio.class);
-    index = qs.createIndex(indexName, IndexType.FUNCTIONAL,"p.status","/Portfolios p");
+    index = qs.createIndex(indexName, IndexType.FUNCTIONAL, "p.status", "/Portfolios p");
   }
-  
+
   @AfterClass
   public static void afterClass() {
     CacheUtils.closeCache();
     region = null;
     index = null;
   }
-  
+
   @Test
   public void testGetName() {
     assertEquals("Index.getName does not return correct index name", indexName, index.getName());
   }
-  
+
   @Test
   public void testGetType() {
     assertSame("Index.getName does not return correct index type", IndexType.FUNCTIONAL, index.getType());
   }
-  
+
   @Test
   public void testGetRegion() {
     assertSame("Index.getName does not return correct region", region, index.getRegion());
   }
-  
+
   @Test
   public void testGetFromClause() {
     CacheUtils.log("testGetCanonicalizedFromClause");
     assertEquals("Index.getName does not return correct from clause", "/Portfolios index_iter1", index.getCanonicalizedFromClause());
   }
-  
+
   @Test
   public void testGetCanonicalizedIndexedExpression() {
     assertEquals("Index.getName does not return correct index expression", "index_iter1.status", index.getCanonicalizedIndexedExpression());
   }
-  
+
   @Test
   public void testGetCanonicalizedProjectionAttributes() {
     assertEquals("Index.getName does not return correct projection attributes", "*", index.getCanonicalizedProjectionAttributes());

@@ -133,12 +133,7 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
     return function.invocationCount;
   }
 
-  CloseableHttpResponse executeFunctionThroughRestCall(String function,
-                                                       String regionName,
-                                                       String filter,
-                                                       String jsonBody,
-                                                       String groups,
-                                                       String members) {
+  CloseableHttpResponse executeFunctionThroughRestCall(String function, String regionName, String filter, String jsonBody, String groups, String members) {
     System.out.println("Entering executeFunctionThroughRestCall");
     CloseableHttpResponse value = null;
     try {
@@ -156,13 +151,7 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
     return value;
   }
 
-  private HttpPost createHTTPPost(String function,
-                                  String regionName,
-                                  String filter,
-                                  int restUrlIndex,
-                                  String groups,
-                                  String members,
-                                  String jsonBody) {
+  private HttpPost createHTTPPost(String function, String regionName, String filter, int restUrlIndex, String groups, String members, String jsonBody) {
     StringBuilder restURLBuilder = new StringBuilder();
     restURLBuilder.append(restURLs.get(restUrlIndex)).append("/functions/").append(function).append("?");
     if (regionName != null && !regionName.isEmpty()) {

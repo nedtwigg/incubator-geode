@@ -70,7 +70,7 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
   public PdxInputStream(PdxInputStream copy) {
     super(copy);
   }
-  
+
   public PdxInputStream() {
     // for serialization
   }
@@ -80,68 +80,68 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
   }
 
   public String readString(int positionForField) {
-      position(positionForField);
-      return readString();
+    position(positionForField);
+    return readString();
   }
 
   public Object readObject(int positionForField) {
-      position(positionForField);
-      return readObject();
+    position(positionForField);
+    return readObject();
   }
 
   public char[] readCharArray(int positionForField) {
-      position(positionForField);
-      return readCharArray();
+    position(positionForField);
+    return readCharArray();
   }
 
   public boolean[] readBooleanArray(int positionForField) {
-      position(positionForField);
-      return readBooleanArray();
+    position(positionForField);
+    return readBooleanArray();
   }
 
   public byte[] readByteArray(int positionForField) {
-      position(positionForField);
-      return readByteArray();
+    position(positionForField);
+    return readByteArray();
   }
 
   public short[] readShortArray(int positionForField) {
-      position(positionForField);
-      return readShortArray();
+    position(positionForField);
+    return readShortArray();
   }
 
   public int[] readIntArray(int positionForField) {
-      position(positionForField);
-      return readIntArray();
+    position(positionForField);
+    return readIntArray();
   }
 
   public long[] readLongArray(int positionForField) {
-      position(positionForField);
-      return readLongArray();
+    position(positionForField);
+    return readLongArray();
   }
 
   public float[] readFloatArray(int positionForField) {
-      position(positionForField);
-      return readFloatArray();
+    position(positionForField);
+    return readFloatArray();
   }
 
   public double[] readDoubleArray(int positionForField) {
-      position(positionForField);
-      return readDoubleArray();
+    position(positionForField);
+    return readDoubleArray();
   }
 
   public String[] readStringArray(int positionForField) {
-      position(positionForField);
-      return readStringArray();
+    position(positionForField);
+    return readStringArray();
   }
 
   public Object[] readObjectArray(int positionForField) {
-      position(positionForField);
-      return readObjectArray();
+    position(positionForField);
+    return readObjectArray();
   }
 
   public byte[][] readArrayOfByteArrays(int positionForField) {
-      position(positionForField);
-      return readArrayOfByteArrays();
+    position(positionForField);
+    return readArrayOfByteArrays();
   }
 
   public Date readDate(int offset) {
@@ -337,8 +337,7 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
     } catch (IOException e) {
       throw new PdxSerializationException("Exception deserializing a PDX field", e);
     } catch (ClassNotFoundException ex) {
-      throw new InternalGemFireException(
-          "ClassNotFoundException should never be thrown but it was", ex);
+      throw new InternalGemFireException("ClassNotFoundException should never be thrown but it was", ex);
     }
   }
 
@@ -418,13 +417,13 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
       throw new PdxSerializationException("Failed reading a PDX short field", e);
     }
   }
-  
+
   @Override
   public ByteSource slice(int startOffset, int endOffset) {
     try {
       return super.slice(startOffset, endOffset);
     } catch (IllegalArgumentException e) {
-      throw new PdxSerializationException("Internal error; failed to slice start=" + startOffset + " end="+ endOffset, e);
+      throw new PdxSerializationException("Internal error; failed to slice start=" + startOffset + " end=" + endOffset, e);
     }
   }
 

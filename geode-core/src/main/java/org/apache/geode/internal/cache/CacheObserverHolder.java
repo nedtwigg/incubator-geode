@@ -48,7 +48,7 @@ package org.apache.geode.internal.cache;
  * observer.stopMethod(arguments); }
  * 
  */
-public class CacheObserverHolder  {
+public class CacheObserverHolder {
 
   /**
    * The default 'do-nothing' query observer *
@@ -64,7 +64,8 @@ public class CacheObserverHolder  {
    * observer.
    */
   public static final CacheObserver setInstance(CacheObserver observer) {
-    if (observer == null) observer = NO_OBSERVER;
+    if (observer == null)
+      observer = NO_OBSERVER;
     CacheObserver oldObserver = _instance;
     _instance = observer;
     return oldObserver;

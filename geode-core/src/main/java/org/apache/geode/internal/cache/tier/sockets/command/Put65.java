@@ -65,8 +65,7 @@ public class Put65 extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long p_start)
-    throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long p_start) throws IOException, InterruptedException {
     long start = p_start;
     Part regionNamePart = null, keyPart = null, valuePart = null, callbackArgPart = null;
     String regionName = null;
@@ -145,8 +144,7 @@ public class Put65 extends BaseCommand {
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("{}: Received {}put request ({} bytes) from {} for region {} key {} txId {} posdup: {}", servConn.getName(), (isDelta ? " delta " : " "), msg
-        .getPayloadLength(), servConn.getSocketString(), regionName, key, msg.getTransactionId(), msg.isRetry());
+      logger.debug("{}: Received {}put request ({} bytes) from {} for region {} key {} txId {} posdup: {}", servConn.getName(), (isDelta ? " delta " : " "), msg.getPayloadLength(), servConn.getSocketString(), regionName, key, msg.getTransactionId(), msg.isRetry());
     }
 
     // Process the put request
@@ -391,10 +389,7 @@ public class Put65 extends BaseCommand {
       servConn.setAsTrue(RESPONDED);
       return;
     } catch (InvalidDeltaException ide) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.UpdateOperation_ERROR_APPLYING_DELTA_FOR_KEY_0_OF_REGION_1, new Object[] {
-        key,
-        regionName
-      }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.UpdateOperation_ERROR_APPLYING_DELTA_FOR_KEY_0_OF_REGION_1, new Object[] { key, regionName }));
       writeException(msg, MessageType.PUT_DELTA_ERROR, ide, false, servConn);
       servConn.setAsTrue(RESPONDED);
       region.getCachePerfStats().incDeltaFullValuesRequested();
@@ -426,8 +421,7 @@ public class Put65 extends BaseCommand {
     if (region instanceof PartitionedRegion) {
       PartitionedRegion pr = (PartitionedRegion) region;
       if (pr.getNetworkHopType() != PartitionedRegion.NETWORK_HOP_NONE) {
-        writeReplyWithRefreshMetadata(msg, servConn, pr, sendOldValue, oldValueIsObject, oldValue, pr.getNetworkHopType()
-          , clientEvent.getVersionTag());
+        writeReplyWithRefreshMetadata(msg, servConn, pr, sendOldValue, oldValueIsObject, oldValue, pr.getNetworkHopType(), clientEvent.getVersionTag());
         pr.clearNetworkHopData();
       } else {
         writeReply(msg, servConn, sendOldValue, oldValueIsObject, oldValue, clientEvent.getVersionTag());
@@ -441,15 +435,9 @@ public class Put65 extends BaseCommand {
     }
     stats.incWritePutResponseTime(DistributionStats.getStatTime() - start);
 
-
   }
 
-  protected void writeReply(Message origMsg,
-                            ServerConnection servConn,
-                            boolean sendOldValue,
-                            boolean oldValueIsObject,
-                            Object oldValue,
-                            VersionTag tag) throws IOException {
+  protected void writeReply(Message origMsg, ServerConnection servConn, boolean sendOldValue, boolean oldValueIsObject, Object oldValue, VersionTag tag) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -466,14 +454,7 @@ public class Put65 extends BaseCommand {
     }
   }
 
-  protected void writeReplyWithRefreshMetadata(Message origMsg,
-                                               ServerConnection servConn,
-                                               PartitionedRegion pr,
-                                               boolean sendOldValue,
-                                               boolean oldValueIsObject,
-                                               Object oldValue,
-                                               byte nwHopType,
-                                               VersionTag tag) throws IOException {
+  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, boolean sendOldValue, boolean oldValueIsObject, Object oldValue, byte nwHopType, VersionTag tag) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -487,8 +468,7 @@ public class Put65 extends BaseCommand {
     replyMsg.send(servConn);
     pr.getPrStats().incPRMetaDataSentCount();
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl with REFRESH_METADAT tx: {} parts={}", servConn.getName(), origMsg.getTransactionId(), replyMsg
-        .getNumberOfParts());
+      logger.trace("{}: rpl with REFRESH_METADAT tx: {} parts={}", servConn.getName(), origMsg.getTransactionId(), replyMsg.getNumberOfParts());
     }
   }
 

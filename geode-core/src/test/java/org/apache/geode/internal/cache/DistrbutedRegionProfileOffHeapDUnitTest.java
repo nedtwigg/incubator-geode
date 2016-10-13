@@ -47,7 +47,7 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -79,7 +79,7 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
         RegionFactory regionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
         regionFactory.setOffHeap(true);
         Region region = regionFactory.create(regionName);
-        
+
         assertNotNull("Region is null", region);
         assertNotNull("Cache does not contain region", cache.getRegion(regionName));
       }
@@ -105,7 +105,7 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
         } finally {
           removeExceptionTag1("IllegalStateException");
         }
-        
+
         assertNull("Region is not null", region);
         assertNull("Cache contains region", cache.getRegion(regionName));
       }
@@ -150,7 +150,7 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
       });
     }
   }
-  
+
   /**
    * Asserts that creating a region on two members, with one being off-heap with local
    * storage and the other being on-heap without local storage, will not cause an
@@ -175,7 +175,7 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
         RegionFactory regionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
         regionFactory.setOffHeap(true);
         Region region = regionFactory.create(regionName);
-        
+
         assertNotNull("Region is null", region);
         assertNotNull("Cache does not contain region", cache.getRegion(regionName));
       }
@@ -194,18 +194,18 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
 
         GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         RegionFactory regionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        
+
         PartitionAttributes partitionAttributes = new PartitionAttributesFactory().setLocalMaxMemory(0).create();
         regionFactory.setPartitionAttributes(partitionAttributes);
-        
+
         Region region = regionFactory.create(regionName);
-        
+
         assertNotNull("Region is null", region);
         assertNotNull("Cache does not contain region", cache.getRegion(regionName));
       }
     });
   }
-  
+
   /**
    * Asserts that creating a region on two members, with one being off-heap with local
    * storage and the other being a proxy will not cause an exception.
@@ -229,7 +229,7 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
         RegionFactory regionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
         regionFactory.setOffHeap(true);
         Region region = regionFactory.create(regionName);
-        
+
         assertNotNull("Region is null", region);
         assertNotNull("Cache does not contain region", cache.getRegion(regionName));
       }
@@ -249,7 +249,7 @@ public class DistrbutedRegionProfileOffHeapDUnitTest extends JUnit4CacheTestCase
         GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         RegionFactory regionFactory = cache.createRegionFactory(RegionShortcut.PARTITION_PROXY);
         Region region = regionFactory.create(regionName);
-        
+
         assertNotNull("Region is null", region);
         assertNotNull("Cache does not contain region", cache.getRegion(regionName));
       }

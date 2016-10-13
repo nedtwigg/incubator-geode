@@ -23,14 +23,14 @@ import org.apache.geode.distributed.internal.HighPriorityDistributionMessage;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
 public class NetworkPartitionMessage extends HighPriorityDistributionMessage {
-  
+
   public NetworkPartitionMessage() {
   }
-  
+
   public NetworkPartitionMessage(Collection<InternalDistributedMember> recipients) {
     setRecipients(recipients);
   }
-  
+
   @Override
   public int getDSFID() {
     return NETWORK_PARTITION_MESSAGE;
@@ -40,5 +40,5 @@ public class NetworkPartitionMessage extends HighPriorityDistributionMessage {
   protected void process(DistributionManager dm) {
     throw new IllegalStateException("this message is not intended to be executed");
   }
-  
+
 }

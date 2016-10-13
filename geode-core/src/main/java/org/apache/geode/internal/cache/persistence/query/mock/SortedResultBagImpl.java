@@ -34,22 +34,22 @@ public class SortedResultBagImpl implements ResultBag {
   private AtomicLong counter = new AtomicLong();
   private SortKeyExtractor extractor;
   private boolean reverse;
-  
+
   public SortedResultBagImpl(SortKeyExtractor extractor, boolean reverse) {
     this.extractor = extractor == null ? new IdentityExtractor() : extractor;
     map = new IndexMapImpl();
-    this.reverse =reverse;
+    this.reverse = reverse;
   }
 
   @Override
   public void add(Object e) {
     map.put(extractor.getSortKey(e), counter.incrementAndGet(), e);
-    
+
   }
 
   @Override
   public CloseableIterator<CachedDeserializable> iterator() {
-    if(reverse) {
+    if (reverse) {
       return map.descendingValueIterator();
     } else {
       return map.valueIterator();

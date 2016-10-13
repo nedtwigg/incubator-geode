@@ -32,31 +32,27 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberID;
  */
 public class OfflineMemberDetailsImpl implements OfflineMemberDetails, Serializable, DataSerializable {
   private Set<PersistentMemberID>[] offlineMembers;
-  
+
   //Used for DataSerializer
   public OfflineMemberDetailsImpl() {
-    
+
   }
-  
+
   public OfflineMemberDetailsImpl(Set<PersistentMemberID>[] offlineMembers) {
     this.offlineMembers = offlineMembers;
   }
-
-
 
   public Set<PersistentMemberID> getOfflineMembers(int bucketId) {
     return offlineMembers[bucketId];
   }
 
-
-
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     int offlineMembersLength = in.readInt();
     this.offlineMembers = new Set[offlineMembersLength];
-    for(int i = 0; i < offlineMembersLength; i++) {
+    for (int i = 0; i < offlineMembersLength; i++) {
       int setSize = in.readInt();
-      Set<PersistentMemberID> set= new HashSet<PersistentMemberID>(setSize);
-      for(int j = 0; j < setSize; j++) {
+      Set<PersistentMemberID> set = new HashSet<PersistentMemberID>(setSize);
+      for (int j = 0; j < setSize; j++) {
         PersistentMemberID id = new PersistentMemberID();
         InternalDataSerializer.invokeFromData(id, in);
         set.add(id);
@@ -65,12 +61,11 @@ public class OfflineMemberDetailsImpl implements OfflineMemberDetails, Serializa
     }
   }
 
-
   public void toData(DataOutput out) throws IOException {
     out.writeInt(offlineMembers.length);
-    for(Set<PersistentMemberID> set : offlineMembers) {
+    for (Set<PersistentMemberID> set : offlineMembers) {
       out.writeInt(set.size());
-      for(PersistentMemberID id : set) {
+      for (PersistentMemberID id : set) {
         InternalDataSerializer.invokeToData(id, out);
       }
     }

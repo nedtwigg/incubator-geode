@@ -38,7 +38,7 @@ import org.apache.geode.test.dunit.VM;
  *
  */
 @Category(DistributedTest.class)
-public class ConcurrentSerialGatewaySenderOperationsDUnitTest  extends SerialGatewaySenderOperationsDUnitTest {
+public class ConcurrentSerialGatewaySenderOperationsDUnitTest extends SerialGatewaySenderOperationsDUnitTest {
 
   private static final long serialVersionUID = 1L;
 
@@ -47,21 +47,19 @@ public class ConcurrentSerialGatewaySenderOperationsDUnitTest  extends SerialGat
   }
 
   protected void createSenderVM5() {
-    vm5.invoke(() -> WANTestBase.createConcurrentSender( "ln", 2,
-        false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY ));
+    vm5.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY));
   }
 
   protected void createSenderVM4() {
-    vm4.invoke(() -> WANTestBase.createConcurrentSender( "ln", 2,
-        false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY ));
+    vm4.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY));
   }
 
   protected void validateQueueClosedVM4() {
-    vm4.invoke(() -> WANTestBase.validateQueueClosedForConcurrentSerialGatewaySender( "ln"));
+    vm4.invoke(() -> WANTestBase.validateQueueClosedForConcurrentSerialGatewaySender("ln"));
   }
-  
+
   private void validateQueueContents(VM vm, String site, int size) {
-    vm.invoke(() -> WANTestBase.validateQueueContentsForConcurrentSerialGatewaySender( site, size));
+    vm.invoke(() -> WANTestBase.validateQueueContentsForConcurrentSerialGatewaySender(site, size));
   }
 
   public static void verifySenderPausedState(String senderId) {
@@ -69,7 +67,7 @@ public class ConcurrentSerialGatewaySenderOperationsDUnitTest  extends SerialGat
     AbstractGatewaySender sender = null;
     for (GatewaySender s : senders) {
       if (s.getId().equals(senderId)) {
-        sender = (AbstractGatewaySender)s;
+        sender = (AbstractGatewaySender) s;
         break;
       }
     }
@@ -81,7 +79,7 @@ public class ConcurrentSerialGatewaySenderOperationsDUnitTest  extends SerialGat
     AbstractGatewaySender sender = null;
     for (GatewaySender s : senders) {
       if (s.getId().equals(senderId)) {
-        sender = (AbstractGatewaySender)s;
+        sender = (AbstractGatewaySender) s;
         break;
       }
     }
@@ -94,7 +92,7 @@ public class ConcurrentSerialGatewaySenderOperationsDUnitTest  extends SerialGat
     AbstractGatewaySender sender = null;
     for (GatewaySender s : senders) {
       if (s.getId().equals(senderId)) {
-        sender = (AbstractGatewaySender)s;
+        sender = (AbstractGatewaySender) s;
         break;
       }
     }
@@ -112,7 +110,7 @@ public class ConcurrentSerialGatewaySenderOperationsDUnitTest  extends SerialGat
       }
     }
     assertFalse(sender.isPaused());
-    assertFalse(((AbstractGatewaySender)sender).isRunning());
+    assertFalse(((AbstractGatewaySender) sender).isRunning());
     sender.pause();
     sender.resume();
     sender.stop();

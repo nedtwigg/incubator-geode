@@ -78,7 +78,6 @@ public interface Statistics {
    */
   public int nameToId(String name);
 
-  
   /**
    * Returns the descriptor of the statistic with the given name in this
    * statistics instance.
@@ -100,14 +99,17 @@ public interface Statistics {
    * Gets the {@link StatisticsType} of this instance.
    */
   public StatisticsType getType();
+
   /**
    * Gets the text associated with this instance that helps identify it.
    */
   public String getTextId();
+
   /**
    * Gets the number associated with this instance that helps identify it.
    */
   public long getNumericId();
+
   /**
    * Returns true if modifications are atomic. This means that multiple threads,
    * can safely modify this instance without extra synchronization.
@@ -116,11 +118,12 @@ public interface Statistics {
    * to this instance are cheaper but not thread safe.
    */
   public boolean isAtomic();
+
   /**
    * Returns true if the instance has been {@link #close closed}.
    */
   public boolean isClosed();
-  
+
   ////////////////////////  set() Methods  ///////////////////////
 
   /**
@@ -205,6 +208,7 @@ public interface Statistics {
    *         type <code>double</code>.
    */
   public void setDouble(StatisticDescriptor descriptor, double value);
+
   /**
    * Sets the value of a named statistic of type <code>double</code>.
    *
@@ -236,6 +240,7 @@ public interface Statistics {
    *         type <code>int</code>.
    */
   public int getInt(StatisticDescriptor descriptor);
+
   /**
    * Returns the value of the statistic of type <code>int</code> at
    * the given name.
@@ -257,7 +262,6 @@ public interface Statistics {
    */
   public long getLong(int id);
 
-
   /**
    * Returns the value of the described statistic of type <code>long</code>.
    *
@@ -267,6 +271,7 @@ public interface Statistics {
    *         type <code>long</code>.
    */
   public long getLong(StatisticDescriptor descriptor);
+
   /**
    * Returns the value of the statistic of type <code>long</code> at
    * the given name.
@@ -297,6 +302,7 @@ public interface Statistics {
    *         type <code>double</code>.
    */
   public double getDouble(StatisticDescriptor descriptor);
+
   /**
    * Returns the value of the statistic of type <code>double</code> at
    * the given name.
@@ -402,6 +408,7 @@ public interface Statistics {
    *         type <code>long</code>.
    */
   public void incLong(StatisticDescriptor descriptor, long delta);
+
   /**
    * Increments the value of the statistic of type <code>long</code> with
    * the given name by a given amount.
@@ -435,6 +442,7 @@ public interface Statistics {
    *         type <code>double</code>.
    */
   public void incDouble(StatisticDescriptor descriptor, double delta);
+
   /**
    * Increments the value of the statistic of type <code>double</code> with
    * the given name by a given amount.
@@ -497,7 +505,6 @@ public interface Statistics {
    * @since Geode 1.0
    */
   public IntSupplier setIntSupplier(String name, IntSupplier supplier);
-
 
   /**
    * Provide a callback to compute the value of this statistic
@@ -577,7 +584,6 @@ public interface Statistics {
    */
   public LongSupplier setLongSupplier(String name, LongSupplier supplier);
 
-
   /**
    * Provide a callback to compute the value of this statistic
    * every sample interval and use that as the value of the stat.
@@ -656,7 +662,6 @@ public interface Statistics {
    * @since Geode 1.0
    */
   public DoubleSupplier setDoubleSupplier(String name, DoubleSupplier supplier);
-
 
   /**
    * Provide a callback to compute the value of this statistic

@@ -34,7 +34,7 @@ import org.apache.geode.internal.admin.remote.AdminResponse;
 public class PrepareBackupResponse extends AdminResponse {
 
   private HashSet<PersistentID> persistentIds;
-  
+
   public PrepareBackupResponse() {
     super();
   }
@@ -43,7 +43,7 @@ public class PrepareBackupResponse extends AdminResponse {
     this.setRecipient(sender);
     this.persistentIds = persistentIds;
   }
-  
+
   public HashSet<PersistentID> getPersistentIds() {
     return persistentIds;
   }
@@ -54,15 +54,11 @@ public class PrepareBackupResponse extends AdminResponse {
     persistentIds = DataSerializer.readHashSet(in);
   }
 
-
-
   @Override
   public void toData(DataOutput out) throws IOException {
-    super.toData(out);    
+    super.toData(out);
     DataSerializer.writeHashSet(persistentIds, out);
   }
-
-
 
   @Override
   protected Object clone() throws CloneNotSupportedException {
@@ -73,7 +69,7 @@ public class PrepareBackupResponse extends AdminResponse {
   public int getDSFID() {
     return PREPARE_BACKUP_RESPONSE;
   }
-  
+
   @Override
   public String toString() {
     return getClass().getName() + ": " + persistentIds;

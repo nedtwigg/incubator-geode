@@ -159,8 +159,7 @@ public class ObjectUtilsJUnitTest {
   public void testInvokeWithParametersAndArguments() {
     final ValueHolder<Integer> value = new ValueHolder<Integer>(1);
 
-    assertEquals("1 is the loneliest number!", ObjectUtils.invoke(value, "transform", new Class[] { String.class },
-      " is the loneliest number!"));
+    assertEquals("1 is the loneliest number!", ObjectUtils.invoke(value, "transform", new Class[] { String.class }, " is the loneliest number!"));
   }
 
   private static final class ValueHolder<T> {

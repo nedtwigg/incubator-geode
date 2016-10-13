@@ -20,14 +20,13 @@ import java.util.Iterator;
 
 import org.apache.geode.internal.cache.PartitionedRegion;
 
-
 /**
  * This interface provides the
  * bucket ID from which the current local entry is being fetched from
  * and the PartitionedRegion being iterated.
  * 
  */
-public interface PREntriesIterator<T> extends Iterator<T>{
+public interface PREntriesIterator<T> extends Iterator<T> {
 
   /**
    * @return the PartitionedRegion being iterated

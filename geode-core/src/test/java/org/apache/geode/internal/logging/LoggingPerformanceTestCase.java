@@ -39,9 +39,9 @@ public abstract class LoggingPerformanceTestCase {
   protected static final int LOG_SETS = 1000;
   protected static final int LOG_REPETITIONS_PER_SET = 1000;
   protected static final String message = "This is a log message";
-  
+
   protected File configDirectory = new File(getUniqueName());//null;
-  protected File logFile = new File(configDirectory, getUniqueName()+".log");
+  protected File logFile = new File(configDirectory, getUniqueName() + ".log");
 
   @Rule
   public TestName testName = new TestName();
@@ -54,7 +54,7 @@ public abstract class LoggingPerformanceTestCase {
   protected String getUniqueName() {
     return getClass().getSimpleName() + "_" + testName.getMethodName();
   }
-  
+
   protected long performLoggingTest(final PerformanceLogger perfLogger) {
     if (TIME_BASED) {
       return performTimeBasedLoggingTest(perfLogger);
@@ -62,7 +62,7 @@ public abstract class LoggingPerformanceTestCase {
       return performCountBasedLoggingTest(perfLogger);
     }
   }
-  
+
   protected long performIsEnabledTest(final PerformanceLogger perfLogger) {
     if (TIME_BASED) {
       return performTimeBasedIsEnabledTest(perfLogger);
@@ -70,10 +70,10 @@ public abstract class LoggingPerformanceTestCase {
       return performCountBasedIsEnabledTest(perfLogger);
     }
   }
-  
+
   protected long performTimeBasedLoggingTest(final PerformanceLogger perfLogger) {
     System.out.println("\nBeginning " + getUniqueName());
-    
+
     final StopWatch stopWatch = new StopWatch(true);
     long count = 0;
     while (stopWatch.elapsedTimeMillis() < TIME_TO_RUN) {
@@ -81,23 +81,23 @@ public abstract class LoggingPerformanceTestCase {
       count++;
     }
     stopWatch.stop();
-    
+
     final long millis = stopWatch.elapsedTimeMillis();
     final long seconds = millis / 1000;
     final long minutes = seconds / 60;
-    
+
     System.out.println(getUniqueName() + " performTimeBasedLoggingTest");
     System.out.println("Number of log statements: " + count);
     System.out.println("Total elapsed time in millis: " + millis);
     System.out.println("Total elapsed time in seconds: " + seconds);
     System.out.println("Total elapsed time in minutes: " + minutes);
-    
+
     return millis;
   }
-  
+
   protected long performCountBasedLoggingTest(final PerformanceLogger perfLogger) {
     System.out.println("\nBeginning " + getUniqueName());
-    
+
     final StopWatch stopWatch = new StopWatch(true);
     for (int sets = 0; sets < LOG_SETS; sets++) {
       for (int count = 0; count < LOG_REPETITIONS_PER_SET; count++) {
@@ -106,23 +106,23 @@ public abstract class LoggingPerformanceTestCase {
       }
     }
     stopWatch.stop();
-    
+
     final long millis = stopWatch.elapsedTimeMillis();
     final long seconds = millis / 1000;
     final long minutes = seconds / 60;
-    
+
     System.out.println(getUniqueName() + " performCountBasedLoggingTest");
     System.out.println("Number of log statements: " + LOG_SETS * LOG_REPETITIONS_PER_SET);
     System.out.println("Total elapsed time in millis: " + millis);
     System.out.println("Total elapsed time in seconds: " + seconds);
     System.out.println("Total elapsed time in minutes: " + minutes);
-    
+
     return millis;
   }
-  
+
   protected long performTimeBasedIsEnabledTest(final PerformanceLogger perfLogger) {
     System.out.println("\nBeginning " + getUniqueName());
-    
+
     final StopWatch stopWatch = new StopWatch(true);
     long count = 0;
     while (stopWatch.elapsedTimeMillis() < TIME_TO_RUN) {
@@ -130,23 +130,23 @@ public abstract class LoggingPerformanceTestCase {
       count++;
     }
     stopWatch.stop();
-    
+
     final long millis = stopWatch.elapsedTimeMillis();
     final long seconds = millis / 1000;
     final long minutes = seconds / 60;
-    
+
     System.out.println(getUniqueName() + " performTimeBasedIsEnabledTest");
     System.out.println("Number of isEnabled statements: " + count);
     System.out.println("Total elapsed time in millis: " + millis);
     System.out.println("Total elapsed time in seconds: " + seconds);
     System.out.println("Total elapsed time in minutes: " + minutes);
-    
+
     return millis;
   }
-  
+
   protected long performCountBasedIsEnabledTest(final PerformanceLogger perfLogger) {
     System.out.println("\nBeginning " + getUniqueName());
-    
+
     final StopWatch stopWatch = new StopWatch(true);
     for (int sets = 0; sets < LOG_SETS; sets++) {
       for (int count = 0; count < LOG_REPETITIONS_PER_SET; count++) {
@@ -154,20 +154,20 @@ public abstract class LoggingPerformanceTestCase {
       }
     }
     stopWatch.stop();
-    
+
     final long millis = stopWatch.elapsedTimeMillis();
     final long seconds = millis / 1000;
     final long minutes = seconds / 60;
-    
+
     System.out.println(getUniqueName() + " performCountBasedIsEnabledTest");
     System.out.println("Number of isEnabled statements: " + LOG_SETS * LOG_REPETITIONS_PER_SET);
     System.out.println("Total elapsed time in millis: " + millis);
     System.out.println("Total elapsed time in seconds: " + seconds);
     System.out.println("Total elapsed time in minutes: " + minutes);
-    
+
     return millis;
   }
-  
+
   protected abstract PerformanceLogger createPerformanceLogger() throws IOException;
 
   @Test
@@ -193,9 +193,10 @@ public abstract class LoggingPerformanceTestCase {
     performTimeBasedIsEnabledTest(createPerformanceLogger());
     assertTrue(this.logFile.exists());
   }
-  
+
   public static interface PerformanceLogger {
     public void log(final String message);
+
     public boolean isEnabled();
   }
 }

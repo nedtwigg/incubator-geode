@@ -16,7 +16,6 @@
  */
 package org.apache.geode.cache.client;
 
-
 /**
  * Indicates that the connection pool is at its maximum size and
  * all connections are in use.
@@ -39,7 +38,7 @@ public class AllConnectionsInUseException extends ServerConnectivityException {
   public AllConnectionsInUseException(String message) {
     super(message);
   }
-  
+
   /**
    * Create a new instance of AllConnectionsInUseException with a cause
    * @param cause the cause
@@ -47,7 +46,7 @@ public class AllConnectionsInUseException extends ServerConnectivityException {
   public AllConnectionsInUseException(Throwable cause) {
     super(cause);
   }
-  
+
   /**
    * Create a new instance of AllConnectionsInUseException with a detail message and cause
    * @param message the detail message

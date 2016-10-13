@@ -47,11 +47,9 @@ import org.slf4j.LoggerFactory;
  * Class which implements a Gemfire persisted {@code HttpSession}
  */
 @SuppressWarnings("deprecation")
-public class GemfireHttpSession implements
-    HttpSession, DataSerializable, Delta {
+public class GemfireHttpSession implements HttpSession, DataSerializable, Delta {
 
-  private static transient final Logger LOG =
-      LoggerFactory.getLogger(GemfireHttpSession.class.getName());
+  private static transient final Logger LOG = LoggerFactory.getLogger(GemfireHttpSession.class.getName());
 
   /**
    * Serial id
@@ -133,9 +131,7 @@ public class GemfireHttpSession implements
       ClassLoader loader = ((GemfireSessionManager) manager).getReferenceClassLoader();
 
       if (obj.getClass().getClassLoader() != loader) {
-        LOG.debug(
-            "Attribute '{}' needs to be reconstructed with a new classloader",
-            name);
+        LOG.debug("Attribute '{}' needs to be reconstructed with a new classloader", name);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -143,16 +139,12 @@ public class GemfireHttpSession implements
           oos.writeObject(obj);
           oos.close();
 
-          ObjectInputStream ois = new ClassLoaderObjectInputStream(
-              new ByteArrayInputStream(baos.toByteArray()),
-              loader);
+          ObjectInputStream ois = new ClassLoaderObjectInputStream(new ByteArrayInputStream(baos.toByteArray()), loader);
           tmpObj = ois.readObject();
         } catch (IOException e) {
-          LOG.error("Exception while recreating attribute '" + name +
-              "'", e);
+          LOG.error("Exception while recreating attribute '" + name + "'", e);
         } catch (ClassNotFoundException e) {
-          LOG.error("Exception while recreating attribute '" + name +
-              "'", e);
+          LOG.error("Exception while recreating attribute '" + name + "'", e);
         }
         if (tmpObj != null) {
           setAttribute(name, tmpObj);
@@ -324,8 +316,7 @@ public class GemfireHttpSession implements
   public void setAttribute(final String name, final Object value) {
 
     if (LOG.isDebugEnabled()) {
-      LOG.debug("Session {} setting attribute {} = '{}'",
-          new Object[]{id, name, value});
+      LOG.debug("Session {} setting attribute {} = '{}'", new Object[] { id, name, value });
     }
 
     isDirty = true;
@@ -350,8 +341,7 @@ public class GemfireHttpSession implements
    * Gemfire de-serialization {@inheritDoc}
    */
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     id = DataSerializer.readString(in);
     attributes = DataSerializer.readObject(in);
     if (getNativeSession() != null) {
@@ -384,16 +374,14 @@ public class GemfireHttpSession implements
   }
 
   @Override
-  public void fromDelta(DataInput in) throws IOException,
-      InvalidDeltaException {
+  public void fromDelta(DataInput in) throws IOException, InvalidDeltaException {
     if (attributes instanceof Delta) {
       ((Delta) attributes).fromDelta(in);
     } else {
       try {
         fromData(in);
       } catch (ClassNotFoundException cex) {
-        throw new IOException("Unable to forward fromDelta() call "
-            + "to fromData()", cex);
+        throw new IOException("Unable to forward fromDelta() call " + "to fromData()", cex);
       }
     }
   }
@@ -401,12 +389,7 @@ public class GemfireHttpSession implements
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("[id=").append(id)
-        .append(", isNew=").append(isNew)
-        .append(", isValid=").append(isValid)
-        .append(", hasDelta=").append(hasDelta())
-        .append(", lastAccessedTime=").append(attributes.getLastAccessedTime())
-        .append(", jvmOwnerId=").append(attributes.getJvmOwnerId());
+    builder.append("[id=").append(id).append(", isNew=").append(isNew).append(", isValid=").append(isValid).append(", hasDelta=").append(hasDelta()).append(", lastAccessedTime=").append(attributes.getLastAccessedTime()).append(", jvmOwnerId=").append(attributes.getJvmOwnerId());
     builder.append("]");
     return builder.toString();
   }
@@ -456,7 +439,6 @@ public class GemfireHttpSession implements
     return nativeSession;
   }
 
-
   public void setNativeSession(HttpSession session) {
     this.nativeSession = session;
   }
@@ -477,7 +459,6 @@ public class GemfireHttpSession implements
     session.setMaxInactiveInterval(attributes.getMaxIntactiveInterval());
     manager.putSession(this);
   }
-
 
   /**
    * Update the last accessed time
@@ -524,4 +505,3 @@ public class GemfireHttpSession implements
     return null;
   }
 }
-

@@ -35,28 +35,24 @@ import com.sun.jmx.remote.security.MBeanServerFileAccessController;
  * 
  */
 
+public class ReadOpFileAccessController extends MBeanServerFileAccessController {
 
-public class ReadOpFileAccessController extends MBeanServerFileAccessController{
-  
   public static final String readOnlyJMXOperations = "(^list.*|^fetch.*|^view.*|^show.*|^queryData.*)";
 
   public ReadOpFileAccessController(String accessFileName) throws IOException {
     super(accessFileName);
   }
-  
+
   @Override
-  public Object invoke(ObjectName name, String operationName, Object params[],
-      String signature[]) throws InstanceNotFoundException, MBeanException,
-      ReflectionException {
-    
-    
-    if(operationName.matches(readOnlyJMXOperations)) {
+  public Object invoke(ObjectName name, String operationName, Object params[], String signature[]) throws InstanceNotFoundException, MBeanException, ReflectionException {
+
+    if (operationName.matches(readOnlyJMXOperations)) {
       checkRead();
       return getMBeanServer().invoke(name, operationName, params, signature);
     } else {
       return super.invoke(name, operationName, params, signature);
     }
-    
-  }  
+
+  }
 
 }

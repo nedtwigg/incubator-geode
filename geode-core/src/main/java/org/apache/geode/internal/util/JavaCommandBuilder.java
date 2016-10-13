@@ -32,11 +32,7 @@ public class JavaCommandBuilder {
    * Builds a command line containing all basic arguments required by java
    * @return cmdVec - The caller can then add additional arguments
    */
-  public static List<String> buildCommand(final String className,
-                                          final String additionalClasspath,
-                                          final Properties systemProperties,
-                                          final List<String> jvmOptions)
-  {
+  public static List<String> buildCommand(final String className, final String additionalClasspath, final Properties systemProperties, final List<String> jvmOptions) {
     final List<String> javaCommandLine = new ArrayList<String>();
 
     final File javaBinDir = new File(System.getProperty("java.home"), "bin");

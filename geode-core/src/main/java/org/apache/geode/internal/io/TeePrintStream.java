@@ -24,16 +24,16 @@ import java.io.PrintStream;
 public class TeePrintStream extends PrintStream {
 
   private final TeeOutputStream teeOut;
-  
+
   public TeePrintStream(TeeOutputStream teeOut) {
     super(teeOut, true);
     this.teeOut = teeOut;
   }
-  
+
   public TeeOutputStream getTeeOutputStream() {
     return this.teeOut;
   }
-  
+
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(getClass().getSimpleName());

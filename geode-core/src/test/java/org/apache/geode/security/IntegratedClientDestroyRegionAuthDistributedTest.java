@@ -34,27 +34,21 @@ public class IntegratedClientDestroyRegionAuthDistributedTest extends AbstractSe
   @Test
   public void testDestroyRegion() throws InterruptedException {
     client1.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("dataWriter", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                 .addPoolServer("localhost", serverPort)
-                                                                                                 .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("dataWriter", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
       assertNotAuthorized(() -> region.destroyRegion(), "DATA:MANAGE");
     });
 
     client2.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionManager", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                        .addPoolServer("localhost", serverPort)
-                                                                                                        .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionManager", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
       assertNotAuthorized(() -> region.destroyRegion(), "DATA:MANAGE");
     });
 
     client3.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                 .addPoolServer("localhost", serverPort)
-                                                                                                 .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
       region.destroyRegion();

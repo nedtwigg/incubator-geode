@@ -58,10 +58,10 @@ import org.apache.geode.management.membership.ClientMembershipListener;
  *
  * @since GemFire 4.2.1
  */
-public final class InternalClientMembership  {
+public final class InternalClientMembership {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** 
    * The membership listeners registered on this InternalClientMembership
    * 
@@ -69,7 +69,7 @@ public final class InternalClientMembership  {
    * only under the control of (@link #membershipLock}.
    */
   private static volatile List<ClientMembershipListener> clientMembershipListeners = Collections.emptyList();
-  
+
   /**
    * Must be locked whenever references to the volatile field 
    * {@link #clientMembershipListeners} is changed.
@@ -83,9 +83,7 @@ public final class InternalClientMembership  {
    */
   private static ThreadPoolExecutor executor;
 
-  private static final ThreadGroup threadGroup =
-      LoggingThreadGroup.createThreadGroup(
-          "ClientMembership Event Invoker Group", logger);
+  private static final ThreadGroup threadGroup = LoggingThreadGroup.createThreadGroup("ClientMembership Event Invoker Group", logger);
 
   /** List of connected <code>DistributedSystem</code>s */
   private static final List systems = new ArrayList(1);
@@ -96,7 +94,7 @@ public final class InternalClientMembership  {
    * guarded.By InternalClientMembership.class
    */
   private static boolean isMonitoring = false;
-  
+
   /**
    * This work used to be in a class initializer.  Unfortunately, this allowed
    * the class to escape before it was fully initialized, so now we just
@@ -107,18 +105,17 @@ public final class InternalClientMembership  {
     if (isMonitoring) {
       return;
     }
-    
-    synchronized(systems) {
+
+    synchronized (systems) {
       // Initialize our own list of distributed systems via a connect listener
-      List existingSystems = InternalDistributedSystem.addConnectListener(
-        new InternalDistributedSystem.ConnectListener() {
-          public void onConnect(InternalDistributedSystem sys) {
-            addInternalDistributedSystem(sys);
-          }
-        });
-      
+      List existingSystems = InternalDistributedSystem.addConnectListener(new InternalDistributedSystem.ConnectListener() {
+        public void onConnect(InternalDistributedSystem sys) {
+          addInternalDistributedSystem(sys);
+        }
+      });
+
       isMonitoring = true;
-      
+
       // While still holding the lock on systems, add all currently known
       // systems to our own list
       for (Iterator iter = existingSystems.iterator(); iter.hasNext();) {
@@ -127,16 +124,16 @@ public final class InternalClientMembership  {
           if (sys.isConnected()) {
             addInternalDistributedSystem(sys);
           }
-        }
-        catch (DistributedSystemDisconnectedException e) {
+        } catch (DistributedSystemDisconnectedException e) {
           // it doesn't care (bug 37379)
         }
       }
-      
+
     } // synchronized
   }
-  
-  private InternalClientMembership() {}
+
+  private InternalClientMembership() {
+  }
 
   /**
    * Registers a {@link ClientMembershipListener} for notification of connection
@@ -156,7 +153,7 @@ public final class InternalClientMembership  {
       }
     }
   }
-  
+
   /**
    * Removes registration of a previously registered
    * {@link ClientMembershipListener}.
@@ -192,8 +189,7 @@ public final class InternalClientMembership  {
 
     List<ClientMembershipListener> l = clientMembershipListeners; // volatile fetch
     // convert to an array
-    ClientMembershipListener[] listeners = (ClientMembershipListener[]) l
-        .toArray(new ClientMembershipListener[l.size()]);
+    ClientMembershipListener[] listeners = (ClientMembershipListener[]) l.toArray(new ClientMembershipListener[l.size()]);
     return listeners;
   }
 
@@ -207,9 +203,7 @@ public final class InternalClientMembership  {
       clientMembershipListeners = new ArrayList<ClientMembershipListener>();
     }
   }
-  
-  
-  
+
   /**
    * Returns a map of client memberIds to count of connections to that client.
    * The map entry key is a String representation of the client memberId, and
@@ -225,18 +219,17 @@ public final class InternalClientMembership  {
   public static Map getConnectedClients(boolean onlyClientsNotifiedByThisServer) {
     ClientHealthMonitor chMon = ClientHealthMonitor.getInstance();
     Set filterProxyIDs = null;
-    if(onlyClientsNotifiedByThisServer) {
+    if (onlyClientsNotifiedByThisServer) {
       // Note it is not necessary to synchronize on the list of Client servers here, 
       // since this is only a status (snapshot) of the system.
-      for (Iterator bsii = CacheFactory.getAnyInstance().getCacheServers().iterator(); bsii.hasNext(); ) {
+      for (Iterator bsii = CacheFactory.getAnyInstance().getCacheServers().iterator(); bsii.hasNext();) {
         CacheServerImpl bsi = (CacheServerImpl) bsii.next();
         AcceptorImpl ai = bsi.getAcceptor();
         if (ai != null && ai.getCacheClientNotifier() != null) {
           if (filterProxyIDs != null) {
             // notifierClients is a copy set from CacheClientNotifier
             filterProxyIDs.addAll(ai.getCacheClientNotifier().getActiveClients());
-          }
-          else {
+          } else {
             // notifierClients is a copy set from CacheClientNotifier
             filterProxyIDs = ai.getCacheClientNotifier().getActiveClients();
           }
@@ -245,7 +238,7 @@ public final class InternalClientMembership  {
     }
 
     Map map = chMon.getConnectedClients(filterProxyIDs);
-   /*if (onlyClientsNotifiedByThisServer) {
+    /*if (onlyClientsNotifiedByThisServer) {
       Map notifyMap = new HashMap();
       
       for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
@@ -259,7 +252,7 @@ public final class InternalClientMembership  {
     }*/
     return map;
   }
-  
+
   /**
    * This method returns the CacheClientStatus for all the clients that are
    * connected to this server. This method returns all clients irrespective of
@@ -273,7 +266,7 @@ public final class InternalClientMembership  {
       result = ClientHealthMonitor.getInstance().getStatusForAllClients();
 
     return result;
-  }  
+  }
 
   /**
    * Caller must synchronize on cache.allClientServersLock
@@ -283,7 +276,7 @@ public final class InternalClientMembership  {
 
     // Get all clients
     Map allClients = new HashMap();
-    for (Iterator bsii = CacheFactory.getAnyInstance().getCacheServers().iterator(); bsii.hasNext(); ) {
+    for (Iterator bsii = CacheFactory.getAnyInstance().getCacheServers().iterator(); bsii.hasNext();) {
       CacheServerImpl bsi = (CacheServerImpl) bsii.next();
       AcceptorImpl ai = bsi.getAcceptor();
       if (ai != null && ai.getCacheClientNotifier() != null) {
@@ -292,19 +285,19 @@ public final class InternalClientMembership  {
     }
 
     // Fill in the missing info, if HealthMonitor started
-    if (ClientHealthMonitor.getInstance()!=null)
-        ClientHealthMonitor.getInstance().fillInClientInfo(allClients);
+    if (ClientHealthMonitor.getInstance() != null)
+      ClientHealthMonitor.getInstance().fillInClientInfo(allClients);
 
     return allClients;
   }
 
   public static Map getClientQueueSizes() {
     Map clientQueueSizes = new HashMap();
-    GemFireCacheImpl c =  (GemFireCacheImpl)CacheFactory.getAnyInstance();
-    if (c==null) // Add a NULL Check
+    GemFireCacheImpl c = (GemFireCacheImpl) CacheFactory.getAnyInstance();
+    if (c == null) // Add a NULL Check
       return clientQueueSizes;
 
-    for (Iterator bsii = c.getCacheServers().iterator(); bsii.hasNext(); ) {
+    for (Iterator bsii = c.getCacheServers().iterator(); bsii.hasNext();) {
       CacheServerImpl bsi = (CacheServerImpl) bsii.next();
       AcceptorImpl ai = bsi.getAcceptor();
       if (ai != null && ai.getCacheClientNotifier() != null) {
@@ -324,20 +317,20 @@ public final class InternalClientMembership  {
     // returns an unmodifiable set
     Map/*<String,Pool>*/ poolMap = PoolManager.getAll();
     Iterator pools = poolMap.values().iterator();
-    while(pools.hasNext()) {
-      PoolImpl pi = (PoolImpl)pools.next();
+    while (pools.hasNext()) {
+      PoolImpl pi = (PoolImpl) pools.next();
       Map/*<ServerLocation,Endpoint>*/ eps = pi.getEndpointMap();
       Iterator it = eps.entrySet().iterator();
-      while(it.hasNext()) {
-        Map.Entry entry = (Map.Entry)it.next();
-        ServerLocation loc = (ServerLocation)entry.getKey();
-        org.apache.geode.cache.client.internal.Endpoint ep = (org.apache.geode.cache.client.internal.Endpoint)entry.getValue();
-        String server = loc.getHostName()+"["+loc.getPort()+"]";
-        Integer count = (Integer)map.get(server);
-        if(count==null) {
-          map.put(server,Integer.valueOf(1));  
+      while (it.hasNext()) {
+        Map.Entry entry = (Map.Entry) it.next();
+        ServerLocation loc = (ServerLocation) entry.getKey();
+        org.apache.geode.cache.client.internal.Endpoint ep = (org.apache.geode.cache.client.internal.Endpoint) entry.getValue();
+        String server = loc.getHostName() + "[" + loc.getPort() + "]";
+        Integer count = (Integer) map.get(server);
+        if (count == null) {
+          map.put(server, Integer.valueOf(1));
         } else {
-          map.put(server,Integer.valueOf(count.intValue()+1));
+          map.put(server, Integer.valueOf(count.intValue() + 1));
         }
       }
     }
@@ -354,8 +347,6 @@ public final class InternalClientMembership  {
     }
     return connectedIncomingGateways;
   }
-  
-  
 
   /**
    * Notifies registered listeners that a Client member has joined. The new
@@ -372,26 +363,21 @@ public final class InternalClientMembership  {
       return;
     }
 
-    final ClientMembershipEvent event =
-        new InternalClientMembershipEvent(member, client);
+    final ClientMembershipEvent event = new InternalClientMembershipEvent(member, client);
     if (forceSynchronous) {
-      doNotifyClientMembershipListener(member, client, event,EventType.CLIENT_JOINED);
-    }
-    else {
+      doNotifyClientMembershipListener(member, client, event, EventType.CLIENT_JOINED);
+    } else {
       try {
-          queuedExecutor.execute(new Runnable() {
-              public void run() {
-                doNotifyClientMembershipListener(member, client, event,EventType.CLIENT_JOINED);
-              }
-            });
-      }
-      catch (RejectedExecutionException e) {
+        queuedExecutor.execute(new Runnable() {
+          public void run() {
+            doNotifyClientMembershipListener(member, client, event, EventType.CLIENT_JOINED);
+          }
+        });
+      } catch (RejectedExecutionException e) {
         // executor must have been shutdown
-        }
+      }
     }
   }
-
-
 
   /**
    * Notifies registered listeners that a member has left. The departed
@@ -408,26 +394,21 @@ public final class InternalClientMembership  {
       return;
     }
 
-    
-    final ClientMembershipEvent event =
-        new InternalClientMembershipEvent(member, client);
+    final ClientMembershipEvent event = new InternalClientMembershipEvent(member, client);
     if (forceSynchronous) {
-      doNotifyClientMembershipListener(member, client, event,EventType.CLIENT_LEFT);
-    }
-    else {
+      doNotifyClientMembershipListener(member, client, event, EventType.CLIENT_LEFT);
+    } else {
       try {
-          queuedExecutor.execute(new Runnable() {
-              public void run() {
-                doNotifyClientMembershipListener(member, client, event,EventType.CLIENT_LEFT);
-              }
-            });
-      }
-      catch (RejectedExecutionException e) {
+        queuedExecutor.execute(new Runnable() {
+          public void run() {
+            doNotifyClientMembershipListener(member, client, event, EventType.CLIENT_LEFT);
+          }
+        });
+      } catch (RejectedExecutionException e) {
         // executor must have been shutdown
-        }
+      }
     }
   }
-
 
   /**
    * Notifies registered listeners that a member has crashed. The
@@ -443,28 +424,24 @@ public final class InternalClientMembership  {
       return;
     }
 
-    final ClientMembershipEvent event =
-        new InternalClientMembershipEvent(member, client);
+    final ClientMembershipEvent event = new InternalClientMembershipEvent(member, client);
     if (forceSynchronous) {
-      doNotifyClientMembershipListener(member, client, event,EventType.CLIENT_CRASHED);
-    }
-    else {
+      doNotifyClientMembershipListener(member, client, event, EventType.CLIENT_CRASHED);
+    } else {
 
       try {
-          queuedExecutor.execute(new Runnable() {
-            public void run() {
-              doNotifyClientMembershipListener(member, client, event,EventType.CLIENT_CRASHED);
-            }
-          });
-      }
-      catch (RejectedExecutionException e) {
+        queuedExecutor.execute(new Runnable() {
+          public void run() {
+            doNotifyClientMembershipListener(member, client, event, EventType.CLIENT_CRASHED);
+          }
+        });
+      } catch (RejectedExecutionException e) {
         // executor must have been shutdown
-        }
+      }
     }
   }
 
-  private static void doNotifyClientMembershipListener(DistributedMember member, boolean client,
-      ClientMembershipEvent clientMembershipEvent, EventType eventType) {
+  private static void doNotifyClientMembershipListener(DistributedMember member, boolean client, ClientMembershipEvent clientMembershipEvent, EventType eventType) {
 
     for (Iterator<ClientMembershipListener> iter = clientMembershipListeners.iterator(); iter.hasNext();) {
 
@@ -490,30 +467,29 @@ public final class InternalClientMembership  {
       }
     }
   }
-  
-//  /**
-//   * Returns true if there are any registered
-//   * <code>ClientMembershipListener</code>s.
-//   */
-//  private static boolean hasClientMembershipListeners() {
-//    synchronized (membershipLock) {
-//      return !membershipListeners.isEmpty();
-//    }
-//  }
+
+  //  /**
+  //   * Returns true if there are any registered
+  //   * <code>ClientMembershipListener</code>s.
+  //   */
+  //  private static boolean hasClientMembershipListeners() {
+  //    synchronized (membershipLock) {
+  //      return !membershipListeners.isEmpty();
+  //    }
+  //  }
 
   protected static void addInternalDistributedSystem(InternalDistributedSystem s) {
-    synchronized(systems) {
-      s.addDisconnectListener(
-        new InternalDistributedSystem.DisconnectListener() {
-          @Override
-          public String toString() {
-            return "Disconnect listener for InternalClientMembership";
-          }
-          
-          public void onDisconnect(InternalDistributedSystem ss) {
-            removeInternalDistributedSystem(ss);
-          }
-        });
+    synchronized (systems) {
+      s.addDisconnectListener(new InternalDistributedSystem.DisconnectListener() {
+        @Override
+        public String toString() {
+          return "Disconnect listener for InternalClientMembership";
+        }
+
+        public void onDisconnect(InternalDistributedSystem ss) {
+          removeInternalDistributedSystem(ss);
+        }
+      });
       systems.add(s);
       // make sure executor is alive
       ensureExecutorIsRunning(); // optimized to do nothing if already running
@@ -521,29 +497,29 @@ public final class InternalClientMembership  {
   }
 
   protected static void removeInternalDistributedSystem(InternalDistributedSystem sys) {
-    synchronized(systems) {
+    synchronized (systems) {
       systems.remove(sys);
       if (systems.isEmpty()) {
         // clean up executor
-/*
-Object[] queueElementsBefore = new Object[executorQueue.size()];
-queueElementsBefore = executorQueue.toArray(queueElementsBefore);
-System.out.println("Before shut down, the executor's queue contains the following " + queueElementsBefore.length + " elements");
-for (int i=0; i<queueElementsBefore.length; i++) {
-  System.out.println("\t" + queueElementsBefore[i]);
-}
-*/
+        /*
+        Object[] queueElementsBefore = new Object[executorQueue.size()];
+        queueElementsBefore = executorQueue.toArray(queueElementsBefore);
+        System.out.println("Before shut down, the executor's queue contains the following " + queueElementsBefore.length + " elements");
+        for (int i=0; i<queueElementsBefore.length; i++) {
+          System.out.println("\t" + queueElementsBefore[i]);
+        }
+        */
         if (executor != null) {
           executor.shutdown();
         }
-/*
-Object[] queueElementsAfter = new Object[executorQueue.size()];
-queueElementsAfter = executorQueue.toArray(queueElementsAfter);
-System.out.println("After shut down, the executor's queue contains the following " + queueElementsAfter.length + " elements");
-for (int i=0; i<queueElementsAfter.length; i++) {
-  System.out.println("\t" + queueElementsAfter[i]);
-}
-*/
+        /*
+        Object[] queueElementsAfter = new Object[executorQueue.size()];
+        queueElementsAfter = executorQueue.toArray(queueElementsAfter);
+        System.out.println("After shut down, the executor's queue contains the following " + queueElementsAfter.length + " elements");
+        for (int i=0; i<queueElementsAfter.length; i++) {
+          System.out.println("\t" + queueElementsAfter[i]);
+        }
+        */
         // deadcoded this clear to fix bug 35675 - clearing removed the shutdown token from the queue!
         // executorQueue.clear();
         executor = null;
@@ -559,24 +535,21 @@ for (int i=0; i<queueElementsAfter.length; i++) {
     if (executor == null) {
       final ThreadGroup group = threadGroup;
       ThreadFactory tf = new ThreadFactory() {
-          public Thread newThread(Runnable command) {
-            Thread thread =
-                new Thread(group, command, "ClientMembership Event Invoker");
-            thread.setDaemon(true);
-            return thread;
-          }
-        };
+        public Thread newThread(Runnable command) {
+          Thread thread = new Thread(group, command, "ClientMembership Event Invoker");
+          thread.setDaemon(true);
+          return thread;
+        }
+      };
       LinkedBlockingQueue q = new LinkedBlockingQueue();
-      executor = new ThreadPoolExecutor(1, 1/*max unused*/,
-                                        15, TimeUnit.SECONDS, q, tf);
+      executor = new ThreadPoolExecutor(1, 1/*max unused*/, 15, TimeUnit.SECONDS, q, tf);
     }
   }
 
   /**
    * Internal implementation of ClientMembershipEvent.
    */
-  protected static class InternalClientMembershipEvent
-  implements ClientMembershipEvent {
+  protected static class InternalClientMembershipEvent implements ClientMembershipEvent {
 
     private final DistributedMember member;
     private final boolean client;
@@ -608,18 +581,16 @@ for (int i=0; i<queueElementsAfter.length; i++) {
       return sb.toString();
     }
   }
-  
+
   /** If set to true for testing then notification will be synchronous */
   private static boolean forceSynchronous = false;
+
   /** Set to true if synchronous notification is needed for testing */
   public static void setForceSynchronous(boolean value) {
     forceSynchronous = value;
   }
-  
-  private static enum EventType{
-    CLIENT_JOINED,
-    CLIENT_LEFT,
-    CLIENT_CRASHED
+
+  private static enum EventType {
+    CLIENT_JOINED, CLIENT_LEFT, CLIENT_CRASHED
   }
 }
-

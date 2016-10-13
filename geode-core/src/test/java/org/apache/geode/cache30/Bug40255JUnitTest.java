@@ -67,7 +67,7 @@ public class Bug40255JUnitTest {
   Cache cache;
 
   @Test
-  public void testResolveReplacePropertyStringForLonerCache(){
+  public void testResolveReplacePropertyStringForLonerCache() {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
@@ -77,7 +77,7 @@ public class Bug40255JUnitTest {
     System.setProperty(ATTR_PROPERTY_STRING, ATTR_PROPERTY_VALUE);
     System.setProperty(ELEMENT_PROPERTY_STRING, ELEMENT_PROPERTY_VALUE);
     System.setProperty(CONCAT_ELEMENT_PROPERTY_STRING, CONCAT_ELEMENT_PROPERTY_VALUE);
-    
+
     // create the directory where data is going to be stored
     File dir = new File("persistData1");
     dir.mkdir();
@@ -90,14 +90,14 @@ public class Bug40255JUnitTest {
 
     //Check if disk store got same name as passed in system properties in setup().
     assertEquals(attrs.getDiskStoreName(), System.getProperty(ATTR_PROPERTY_STRING));
-    assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE+CONCAT_ELEMENT_PROPERTY_VALUE));
-    assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE+CONCAT_ELEMENT_PROPERTY_VALUE), ELEMENT_KEY_VALUE);
+    assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE));
+    assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE), ELEMENT_KEY_VALUE);
     assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE));
     assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE), CONCAT_ELEMENT_PROPERTY_VALUE);
   }
 
   @Test
-  public void testResolveReplacePropertyStringForNonLonerCache(){
+  public void testResolveReplacePropertyStringForNonLonerCache() {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "10333");
     props.setProperty(LOCATORS, "");
@@ -107,7 +107,7 @@ public class Bug40255JUnitTest {
     System.setProperty(ATTR_PROPERTY_STRING, ATTR_PROPERTY_VALUE);
     System.setProperty(ELEMENT_PROPERTY_STRING, ELEMENT_PROPERTY_VALUE);
     System.setProperty(CONCAT_ELEMENT_PROPERTY_STRING, CONCAT_ELEMENT_PROPERTY_VALUE);
-    
+
     // create the directory where data is going to be stored
     File dir = new File("persistData1");
     dir.mkdir();
@@ -120,8 +120,8 @@ public class Bug40255JUnitTest {
 
     //Check if disk store got same name as passed in system properties in setup().
     assertEquals(attrs.getDiskStoreName(), System.getProperty(ATTR_PROPERTY_STRING));
-    assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE+CONCAT_ELEMENT_PROPERTY_VALUE));
-    assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE+CONCAT_ELEMENT_PROPERTY_VALUE), ELEMENT_KEY_VALUE);
+    assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE));
+    assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE), ELEMENT_KEY_VALUE);
   }
 
   @After

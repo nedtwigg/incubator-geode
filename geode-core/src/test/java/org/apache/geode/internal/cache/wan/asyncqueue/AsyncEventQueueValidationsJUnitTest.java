@@ -54,7 +54,7 @@ public class AsyncEventQueueValidationsJUnitTest {
 
   @After
   public void closeCache() {
-    if(this.cache != null) {
+    if (this.cache != null) {
       this.cache.close();
     }
   }
@@ -70,8 +70,7 @@ public class AsyncEventQueueValidationsJUnitTest {
       fact.create("id", new org.apache.geode.internal.cache.wan.MyAsyncEventListener());
       fail("Expected AsyncEventQueueConfigurationException.");
     } catch (AsyncEventQueueConfigurationException e) {
-      assertTrue(e.getMessage()
-          .contains(" can not be created with dispatcher threads less than 1"));
+      assertTrue(e.getMessage().contains(" can not be created with dispatcher threads less than 1"));
     }
   }
 
@@ -86,8 +85,7 @@ public class AsyncEventQueueValidationsJUnitTest {
       fact.create("id", new org.apache.geode.internal.cache.wan.MyAsyncEventListener());
       fail("Expected AsyncEventQueueConfigurationException.");
     } catch (AsyncEventQueueConfigurationException e) {
-      assertTrue(e.getMessage()
-          .contains("can not be created with OrderPolicy"));
+      assertTrue(e.getMessage().contains("can not be created with OrderPolicy"));
     }
   }
 
@@ -101,8 +99,8 @@ public class AsyncEventQueueValidationsJUnitTest {
     // Get region and do puts
     Region region = cache.getRegion(cacheXmlFileBaseName);
     int numPuts = 10;
-    for (int i=0; i<numPuts; i++) {
-      region.put(i,i);
+    for (int i = 0; i < numPuts; i++) {
+      region.put(i, i);
     }
 
     // Get AsyncEventQueue and GatewayEventFilter
@@ -118,10 +116,7 @@ public class AsyncEventQueueValidationsJUnitTest {
   }
 
   private final Object[] getCacheXmlFileBaseNames() {
-    return $(
-        new Object[] { "testSerialAsyncEventQueueConfiguredFromXmlUsesFilter" },
-        new Object[] { "testParallelAsyncEventQueueConfiguredFromXmlUsesFilter" }
-    );
+    return $(new Object[] { "testSerialAsyncEventQueueConfiguredFromXmlUsesFilter" }, new Object[] { "testParallelAsyncEventQueueConfiguredFromXmlUsesFilter" });
   }
 
 }

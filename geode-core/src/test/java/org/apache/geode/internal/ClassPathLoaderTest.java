@@ -522,7 +522,6 @@ public class ClassPathLoaderTest {
 
   }
 
-
   /**
    * Verifies that <tt>getResource</tt> will skip TCCL if <tt>excludeThreadContextClassLoader</tt> has been set to true.
    */
@@ -687,7 +686,7 @@ public class ClassPathLoaderTest {
 
       final Object obj = clazz.newInstance();
       assertEquals(classToLoad, obj.getClass().getName());
-      
+
       final Class<?> clazz2 = dcl.forName(classToLoad);
       assertSame("Should load same class as calling classLoader.", clazz, clazz2);
 
@@ -868,7 +867,7 @@ public class ClassPathLoaderTest {
       super(null); // no parent!!
       this.className = className;
     }
-    
+
     @Override
     public Class<?> findClass(String name) throws ClassNotFoundException {
       if (!name.equals(className)) {
@@ -877,13 +876,13 @@ public class ClassPathLoaderTest {
         return this.genClassLoader.findClass(name);
       }
     }
-    
+
     @Override
     public boolean equals(final Object other) {
       return (other instanceof OneClassClassLoader);
     }
   }
-  
+
   @SuppressWarnings("serial")
   static class BrokenError extends Error {
   }

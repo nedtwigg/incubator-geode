@@ -26,14 +26,15 @@ import org.apache.geode.management.internal.cli.json.GfJsonObject;
  */
 public class InfoResultData extends AbstractResultData {
   public static final String RESULT_CONTENT_MESSAGE = "message";
-  /*package*/InfoResultData() {
-    super();  
+
+  /*package*/ InfoResultData() {
+    super();
   }
-  
-  /*package*/InfoResultData(GfJsonObject gfJsonObject) {
+
+  /*package*/ InfoResultData(GfJsonObject gfJsonObject) {
     super(gfJsonObject);
   }
-  
+
   /**
    * 
    * @param headerText
@@ -43,7 +44,7 @@ public class InfoResultData extends AbstractResultData {
   public InfoResultData setHeader(String headerText) {
     return (InfoResultData) super.setHeader(headerText);
   }
-  
+
   /**
    * 
    * @param line message to add
@@ -55,17 +56,17 @@ public class InfoResultData extends AbstractResultData {
     } catch (GfJsonException e) {
       throw new ResultDataException(e.getMessage());
     }
-    
+
     return this;
   }
-  
+
   /**
    * 
    * @param footerText
    * @return this InfoResultData
    * @throws ResultDataException 
    */
-  public InfoResultData setFooter(String footerText) {    
+  public InfoResultData setFooter(String footerText) {
     return (InfoResultData) super.setFooter(footerText);
   }
 

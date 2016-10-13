@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.rest.internal.web.exception;
 
 /**
@@ -32,7 +31,7 @@ public class ResourceNotFoundException extends RuntimeException {
   public ResourceNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
   }
-  
+
   public ResourceNotFoundException(String message) {
     super(message);
   }
@@ -40,5 +39,5 @@ public class ResourceNotFoundException extends RuntimeException {
   public ResourceNotFoundException(Throwable cause) {
     super(cause);
   }
-  
+
 }

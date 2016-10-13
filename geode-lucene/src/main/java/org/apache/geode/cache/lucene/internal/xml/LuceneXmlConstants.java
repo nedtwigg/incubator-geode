@@ -20,7 +20,7 @@
 package org.apache.geode.cache.lucene.internal.xml;
 
 public class LuceneXmlConstants {
-  public static final String NAMESPACE= "http://geode.apache.org/schema/lucene";
+  public static final String NAMESPACE = "http://geode.apache.org/schema/lucene";
   public static final String PREFIX = "lucene";
   public static final String SERVICE = "service";
   public static final String NAME = "name";

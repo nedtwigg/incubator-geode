@@ -26,69 +26,62 @@ import org.apache.geode.cache.query.CacheUtils;
 import org.apache.geode.cache.query.QueryService;
 import java.util.*;
 
-
-
 class Utils {
   private static final Random RANDOM = new Random();
   private static Cache _cache;
-  
-  static{
-    try{
+
+  static {
+    try {
       init();
-    }catch(Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
-  
-  
-  static void init() throws Exception{
+
+  static void init() throws Exception {
     CacheUtils.startCache();
     _cache = CacheUtils.getCache();
   }
-  
-  static void installObserver()
-  throws Exception {
+
+  static void installObserver() throws Exception {
     //         Class holderClass = Class.forName("org.apache.persistence.query.internal.query.QueryObserverHolder");
     //         Method meth = holderClass.getMethod(null, "getInstance", null);
-    
+
   }
-  
-  
+
   static QueryService getQueryService() {
     return _cache.getQueryService();
   }
-  
-  static Region createRegion(String regionName, Class valueConstraint)
-  throws Exception {
+
+  static Region createRegion(String regionName, Class valueConstraint) throws Exception {
     AttributesFactory attributesFactory = new AttributesFactory();
     attributesFactory.setValueConstraint(valueConstraint);
     RegionAttributes regionAttributes = attributesFactory.create();
-    
+
     Region region = _cache.createRegion(regionName, regionAttributes);
     return region;
   }
-  
-  static LogWriter getLogger(){
+
+  static LogWriter getLogger() {
     return _cache.getLogger();
   }
-  
-  static void log(Object message){
+
+  static void log(Object message) {
     CacheUtils.log(message);
   }
-  
+
   static void setSeed(long seed) {
     RANDOM.setSeed(seed);
   }
-  
-  
+
   static List toTokens(String s) {
     StringTokenizer tokenizer = new StringTokenizer(s, " ");
     List l = new ArrayList();
-    while(tokenizer.hasMoreTokens())
+    while (tokenizer.hasMoreTokens())
       l.add(tokenizer.nextToken());
     return l;
   }
-  
+
   /*
   static void checkpoint(GsSession gsSession)
   throws Exception {
@@ -123,12 +116,11 @@ class Utils {
    */
   static int randomInt(int low, int high) {
     int range = high - low + 1;
-    return (int)(range * RANDOM.nextDouble()) + low;
+    return (int) (range * RANDOM.nextDouble()) + low;
   }
-  
+
   static char randomAlphabetic() {
-    return (char)randomInt('A', 'z');
+    return (char) randomInt('A', 'z');
   }
-  
-  
+
 }

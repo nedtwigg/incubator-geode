@@ -28,15 +28,14 @@ import java.util.*;
  * This message simply contains a date
  */
 public class DateMessage extends SerialDistributionMessage {
-  
+
   /** Formats a data */
-  private static final DateFormat format = 
-    new SimpleDateFormat("M/dd/yyyy hh:mm:ss.SSS");
+  private static final DateFormat format = new SimpleDateFormat("M/dd/yyyy hh:mm:ss.SSS");
 
   /** The date being distributed */
   private Date date;
   /** The versions in which this message was modified */
-  private static final Version[] dsfidVersions = new Version[]{};
+  private static final Version[] dsfidVersions = new Version[] {};
 
   /////////////////////  Instance Methods  /////////////////////
 
@@ -79,8 +78,7 @@ public class DateMessage extends SerialDistributionMessage {
     DataSerializer.writeObject(this.date, out);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
 
     super.fromData(in);
     this.date = (Date) DataSerializer.readObject(in);

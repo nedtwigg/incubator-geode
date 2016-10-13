@@ -23,17 +23,17 @@ import org.apache.geode.cache.CacheException;
 public abstract class DiskDistributedNoAckRegionTestCase extends DistributedNoAckRegionDUnitTest {
 
   protected DiskRegionTestImpl regionTestImpl;
-  
+
   @Override
   public final void postSetUp() throws Exception {
     this.regionTestImpl = new DiskRegionTestImpl(this);
   }
-  
+
   @Test
   public void testCreateDiskRegion() throws CacheException {
     this.regionTestImpl.testCreateDiskRegion();
   }
-  
+
   @Test
   public void testBackupFillInValues() throws CacheException {
     this.regionTestImpl.testBackupFillValues();

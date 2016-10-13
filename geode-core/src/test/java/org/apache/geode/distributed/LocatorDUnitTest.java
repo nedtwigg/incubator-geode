@@ -332,7 +332,6 @@ public class LocatorDUnitTest extends JUnit4DistributedTestCase {
     return TestUtil.getResourcePath(getClass(), "/ssl/trusted.keystore");
   }
 
-
   private String getMultiKeyKeystore() {
     return TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKey.jks");
   }
@@ -422,7 +421,6 @@ public class LocatorDUnitTest extends JUnit4DistributedTestCase {
     properties.put(SSL_TRUSTSTORE_PASSWORD, "password");
     properties.put(SSL_LOCATOR_ALIAS, "locatorkey");
     properties.put(SSL_ENABLED_COMPONENTS, SecurableCommunicationChannel.LOCATOR.getConstant());
-
 
     try {
       loc2.invoke("startLocator2", () -> startLocatorWithPortAndProperties(port2, properties));
@@ -526,7 +524,6 @@ public class LocatorDUnitTest extends JUnit4DistributedTestCase {
     properties.put(ENABLE_CLUSTER_CONFIGURATION, "false");
     properties.put(SSL_CIPHERS, "any");
     properties.put(SSL_PROTOCOLS, "any");
-
 
     try {
       loc1.invoke("start Locator1", () -> startLocator(port1, properties));
@@ -962,8 +959,7 @@ public class LocatorDUnitTest extends JUnit4DistributedTestCase {
       assertTrue("Distributed system should not have disconnected", locvm.invoke(() -> LocatorDUnitTest.isSystemConnected()));
 
       // the remaining non-locator member should now be the lead member
-      assertEquals("This test sometimes fails.  If the log contains " + "'failed to collect all ACKs' it is a false failure.", mem2, vm2.invoke(() -> LocatorDUnitTest
-        .getLeadMember()));
+      assertEquals("This test sometimes fails.  If the log contains " + "'failed to collect all ACKs' it is a false failure.", mem2, vm2.invoke(() -> LocatorDUnitTest.getLeadMember()));
 
       SerializableRunnable disconnect = new SerializableRunnable("Disconnect from " + locators) {
         public void run() {
@@ -1342,18 +1338,17 @@ public class LocatorDUnitTest extends JUnit4DistributedTestCase {
     });
     try {
 
-      SerializableRunnable connect =
-          new SerializableRunnable("Connect to " + locators) {
-            public void run() {
-              //System.setProperty("p2p.joinTimeout", "5000");
-              Properties props = new Properties();
-              props.setProperty(MCAST_PORT, "0");
-              props.setProperty(LOCATORS, locators);
-              props.setProperty(MEMBER_TIMEOUT, "1000");
-              addDSProps(props);
-              DistributedSystem.connect(props);
-            }
-          };
+      SerializableRunnable connect = new SerializableRunnable("Connect to " + locators) {
+        public void run() {
+          //System.setProperty("p2p.joinTimeout", "5000");
+          Properties props = new Properties();
+          props.setProperty(MCAST_PORT, "0");
+          props.setProperty(LOCATORS, locators);
+          props.setProperty(MEMBER_TIMEOUT, "1000");
+          addDSProps(props);
+          DistributedSystem.connect(props);
+        }
+      };
       vm1.invoke(connect);
       vm2.invoke(connect);
 
@@ -1429,14 +1424,13 @@ public class LocatorDUnitTest extends JUnit4DistributedTestCase {
       props.put(ENABLE_CLUSTER_CONFIGURATION, "false");
 
       addDSProps(props);
-      SerializableRunnable connect =
-          new SerializableRunnable("Connect to " + locators) {
-            public void run() {
-              //System.setProperty("p2p.joinTimeout", "5000");
-              DistributedSystem sys = getSystem(props);
-              sys.getLogWriter().info(addExpected);
-            }
-          };
+      SerializableRunnable connect = new SerializableRunnable("Connect to " + locators) {
+        public void run() {
+          //System.setProperty("p2p.joinTimeout", "5000");
+          DistributedSystem sys = getSystem(props);
+          sys.getLogWriter().info(addExpected);
+        }
+      };
       vm1.invoke(connect);
       vm2.invoke(connect);
 
@@ -1720,9 +1714,7 @@ public class LocatorDUnitTest extends JUnit4DistributedTestCase {
 
         final InternalDistributedMember currentCoordinator = GMSJoinLeaveTestHelper.getCurrentCoordinator();
         DistributedMember vm3ID = vm3.invoke(() -> GMSJoinLeaveTestHelper.getInternalDistributedSystem().getDM().getDistributionManagerId());
-        assertTrue("View is " + system.getDM()
-                                      .getMembershipManager()
-                                      .getView() + " and vm3's ID is " + vm3ID, vm3.invoke(() -> GMSJoinLeaveTestHelper.isViewCreator()));
+        assertTrue("View is " + system.getDM().getMembershipManager().getView() + " and vm3's ID is " + vm3ID, vm3.invoke(() -> GMSJoinLeaveTestHelper.isViewCreator()));
 
         startLocatorAsync(vm1, new Object[] { port2, dsProps });
         startLocatorAsync(vm2, new Object[] { port3, dsProps });

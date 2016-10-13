@@ -27,14 +27,7 @@ public class LogServiceIntegrationTestSupport {
 
   public static void writeConfigFile(final File configFile, final Level level) throws IOException {
     final BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
-    writer.write(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-        "<Configuration>" +
-          "<Loggers>" +
-            "<Root level=\"" + level.name() + "\"/>" +
-          "</Loggers>" +
-         "</Configuration>"
-         );
+    writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<Configuration>" + "<Loggers>" + "<Root level=\"" + level.name() + "\"/>" + "</Loggers>" + "</Configuration>");
     writer.close();
   }
 }

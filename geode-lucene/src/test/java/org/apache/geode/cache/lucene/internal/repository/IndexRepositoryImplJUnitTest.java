@@ -77,7 +77,7 @@ public class IndexRepositoryImplJUnitTest {
     RegionDirectory dir = new RegionDirectory(fileRegion, chunkRegion, fileSystemStats);
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
     writer = new IndexWriter(dir, config);
-    String[] indexedFields= new String[] {"s", "i", "l", "d", "f", "s2", "missing"};
+    String[] indexedFields = new String[] { "s", "i", "l", "d", "f", "s2", "missing" };
     mapper = new HeterogeneousLuceneSerializer(indexedFields);
     region = Mockito.mock(Region.class);
     userRegion = Mockito.mock(Region.class);
@@ -85,7 +85,7 @@ public class IndexRepositoryImplJUnitTest {
     Mockito.when(userRegion.isDestroyed()).thenReturn(false);
     repo = new IndexRepositoryImpl(region, writer, mapper, stats, userRegion);
   }
-  
+
   @Test
   public void testAddDocs() throws IOException, ParseException {
     repo.create("key1", new Type2("bacon maple bar", 1, 2L, 3.0, 4.0f, "Grape Ape doughnut"));
@@ -97,25 +97,25 @@ public class IndexRepositoryImplJUnitTest {
     checkQuery("Cream", "s", "key2", "key4");
     checkQuery("NotARealWord", "s");
   }
-  
+
   @Test
   public void testEmptyRepo() throws IOException, ParseException {
     checkQuery("NotARealWord", "s");
   }
-  
+
   @Test
   public void testUpdateAndRemoveStringKeys() throws IOException, ParseException {
     updateAndRemove("key1", "key2", "key3", "key4");
   }
-  
+
   @Test
   public void testUpdateAndRemoveBinaryKeys() throws IOException, ParseException {
-    
+
     ByteWrapper key1 = randomKey();
     ByteWrapper key2 = randomKey();
     ByteWrapper key3 = randomKey();
     ByteWrapper key4 = randomKey();
-    
+
     updateAndRemove(key1, key2, key3, key4);
   }
 
@@ -174,23 +174,22 @@ public class IndexRepositoryImplJUnitTest {
     assertFalse(writer.isOpen());
   }
 
-  private void updateAndRemove(Object key1, Object key2, Object key3,
-      Object key4) throws IOException, ParseException {
+  private void updateAndRemove(Object key1, Object key2, Object key3, Object key4) throws IOException, ParseException {
     repo.create(key1, new Type2("bacon maple bar", 1, 2L, 3.0, 4.0f, "Grape Ape doughnut"));
     repo.create(key2, new Type2("McMinnville Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
     repo.create(key3, new Type2("Voodoo Doll doughnut", 1, 2L, 3.0, 4.0f, "Toasted coconut doughnut"));
     repo.create(key4, new Type2("Portland Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
     repo.commit();
-    
+
     repo.update(key3, new Type2("Boston Cream Pie", 1, 2L, 3.0, 4.0f, "Toasted coconut doughnut"));
     repo.delete(key4);
     repo.commit();
 
-//    BooleanQuery q = new BooleanQuery();
-//    q.add(new TermQuery(SerializerUtil.toKeyTerm("key3")), Occur.MUST_NOT);
-//    writer.deleteDocuments(q);
-//    writer.commit();
-    
+    //    BooleanQuery q = new BooleanQuery();
+    //    q.add(new TermQuery(SerializerUtil.toKeyTerm("key3")), Occur.MUST_NOT);
+    //    writer.deleteDocuments(q);
+    //    writer.commit();
+
     //Make sure the updates and deletes were applied
     checkQuery("doughnut", "s", key2);
     checkQuery("Cream", "s", key2, key3);
@@ -204,31 +203,32 @@ public class IndexRepositoryImplJUnitTest {
     return new ByteWrapper(key);
   }
 
-  private void checkQuery(String queryTerm, String queryField, Object ... expectedKeys)
-      throws IOException, ParseException {
+  private void checkQuery(String queryTerm, String queryField, Object... expectedKeys) throws IOException, ParseException {
     Set<Object> expectedSet = new HashSet<Object>();
     expectedSet.addAll(Arrays.asList(expectedKeys));
-    
+
     QueryParser parser = new QueryParser(queryField, analyzer);
-    
+
     KeyCollector collector = new KeyCollector();
     repo.query(parser.parse(queryTerm), 100, collector);
-    
+
     assertEquals(expectedSet, collector.results);
   }
-  
+
   private static class KeyCollector implements IndexResultCollector {
 
     Set<Object> results = new HashSet<Object>();
+
     @Override
     public void collect(Object key, float score) {
       results.add(key);
     }
-    
+
     @Override
     public String getName() {
       return null;
     }
+
     @Override
     public int size() {
       return results.size();
@@ -242,7 +242,6 @@ public class IndexRepositoryImplJUnitTest {
   private static class ByteWrapper implements Serializable {
     private byte[] bytes;
 
-    
     public ByteWrapper(byte[] bytes) {
       super();
       this.bytes = bytes;

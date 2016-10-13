@@ -27,8 +27,7 @@ import org.apache.geode.management.LockServiceMXBean;
  * 
  * 
  */
-public class LockServiceMBean extends NotificationBroadcasterSupport implements
-    LockServiceMXBean {
+public class LockServiceMBean extends NotificationBroadcasterSupport implements LockServiceMXBean {
 
   private LockServiceMBeanBridge bridge;
 
@@ -47,7 +46,6 @@ public class LockServiceMBean extends NotificationBroadcasterSupport implements
     return bridge.fetchGrantorMember();
   }
 
-  
   @Override
   public int getMemberCount() {
 

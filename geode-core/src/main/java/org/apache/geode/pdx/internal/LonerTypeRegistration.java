@@ -30,12 +30,11 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
  *
  */
 public class LonerTypeRegistration implements TypeRegistration {
-  
+
   private volatile TypeRegistration delegate = null;
-  
+
   private final GemFireCacheImpl cache;
-  
-  
+
   public LonerTypeRegistration(GemFireCacheImpl cache) {
     this.cache = cache;
   }
@@ -68,9 +67,9 @@ public class LonerTypeRegistration implements TypeRegistration {
     initializeRegistry(false);
     delegate.gatewaySenderStarted(gatewaySender);
   }
-  
+
   public void creatingPersistentRegion() {
-    if(delegate != null) {
+    if (delegate != null) {
       delegate.creatingPersistentRegion();
     }
 
@@ -80,7 +79,7 @@ public class LonerTypeRegistration implements TypeRegistration {
     initializeRegistry(true);
     delegate.creatingPool();
   }
-  
+
   /**
    * Actually initialize the delegate. This is method
    * is called when the type registry is used. At that time,
@@ -89,13 +88,13 @@ public class LonerTypeRegistration implements TypeRegistration {
   private synchronized void initializeRegistry() {
     initializeRegistry(cache.hasPool());
   }
-  
+
   private synchronized void initializeRegistry(boolean client) {
-    if(delegate != null) {
+    if (delegate != null) {
       return;
     }
     TypeRegistration delegateTmp;
-    
+
     if (client) {
       delegateTmp = new ClientTypeRegistration(cache);
     } else {
@@ -158,7 +157,7 @@ public class LonerTypeRegistration implements TypeRegistration {
   @Override
   public void testClearRegistry() {
   }
-  
+
   @Override
   public boolean isClient() {
     return delegate.isClient();
@@ -175,7 +174,7 @@ public class LonerTypeRegistration implements TypeRegistration {
     initializeRegistry();
     this.delegate.addImportedEnum(enumId, importedInfo);
   }
-  
+
   @Override
   public int getLocalSize() {
     return delegate.getLocalSize();

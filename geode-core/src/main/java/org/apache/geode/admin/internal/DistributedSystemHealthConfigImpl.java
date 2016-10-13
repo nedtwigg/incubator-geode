@@ -27,13 +27,11 @@ import org.apache.geode.admin.*;
  *
  * @since GemFire 3.5
  */
-public class DistributedSystemHealthConfigImpl
-  implements DistributedSystemHealthConfig {
+public class DistributedSystemHealthConfigImpl implements DistributedSystemHealthConfig {
 
   /** The maximum number of application members that can
    * unexceptedly leave a healthy the distributed system. */
-  private long maxDepartedApplications =
-    DEFAULT_MAX_DEPARTED_APPLICATIONS;
+  private long maxDepartedApplications = DEFAULT_MAX_DEPARTED_APPLICATIONS;
 
   //////////////////////  Constructors  //////////////////////
 
@@ -51,8 +49,7 @@ public class DistributedSystemHealthConfigImpl
     return this.maxDepartedApplications;
   }
 
-  public void setMaxDepartedApplications(long maxDepartedApplications)
-  {
+  public void setMaxDepartedApplications(long maxDepartedApplications) {
     this.maxDepartedApplications = maxDepartedApplications;
   }
 }

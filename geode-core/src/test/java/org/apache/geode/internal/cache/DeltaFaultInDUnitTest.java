@@ -46,7 +46,6 @@ import org.apache.geode.test.dunit.VM;
  */
 @Category(DistributedTest.class)
 public class DeltaFaultInDUnitTest extends JUnit4CacheTestCase {
-  
 
   /**
    * @param name
@@ -61,13 +60,12 @@ public class DeltaFaultInDUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     final boolean copyOnRead = false;
     final boolean clone = true;
 
     SerializableCallable createDataRegion = new SerializableCallable("createDataRegion") {
-      public Object call() throws Exception
-      {
+      public Object call() throws Exception {
         Cache cache = getCache();
         cache.setCopyOnRead(copyOnRead);
         cache.createDiskStoreFactory().create("DeltaFaultInDUnitTestData");
@@ -80,16 +78,15 @@ public class DeltaFaultInDUnitTest extends JUnit4CacheTestCase {
         attr.setCloningEnabled(clone);
         attr.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
         Region region = cache.createRegion("region1", attr.create());
-        
+
         return null;
       }
     };
-    
+
     vm0.invoke(createDataRegion);
-    
+
     SerializableRunnable createEmptyRegion = new SerializableRunnable("createEmptyRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         cache.setCopyOnRead(copyOnRead);
         AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
@@ -103,41 +100,37 @@ public class DeltaFaultInDUnitTest extends JUnit4CacheTestCase {
         attr.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
         Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
 
-        
         //Put an entry
         region.put(new Integer(0), new TestDelta(false, "initial"));
-        
+
         //Put a delta object that is larger
         region.put(new Integer(0), new TestDelta(true, "initial_plus_some_more_data"));
       }
     };
-    
+
     vm1.invoke(createEmptyRegion);
-    
+
     vm0.invoke(new SerializableRunnable("doPut") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         Region<Integer, TestDelta> region = cache.getRegion("region1");
 
-        
         //Evict the other object
         region.put(new Integer(113), new TestDelta(false, "bogus"));
-        
+
         //Something was going weird with the LRU list. It was evicting this object.
         //I want to make sure the other object is the one evicted.
         region.get(new Integer(113));
-        
-        long entriesEvicted = ((AbstractLRURegionMap)((PartitionedRegion)region).entries)._getLruList().stats()
-        .getEvictions();
-//        assertIndexDetailsEquals(1, entriesEvicted);
-        
+
+        long entriesEvicted = ((AbstractLRURegionMap) ((PartitionedRegion) region).entries)._getLruList().stats().getEvictions();
+        //        assertIndexDetailsEquals(1, entriesEvicted);
+
         TestDelta result = region.get(new Integer(0));
         assertEquals("initial_plus_some_more_data", result.info);
       }
     });
   }
-  
+
   private long checkObjects(VM vm, final int serializations, final int deserializations, final int deltas, final int clones) {
     SerializableCallable getSize = new SerializableCallable("check objects") {
       public Object call() {

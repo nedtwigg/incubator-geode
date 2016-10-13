@@ -22,18 +22,17 @@ package org.apache.geode.management.internal;
  *
  */
 public interface ProxyInterface {
-	
-	  /**
-	   * Last refreshed time for proxy
-	   * @return last refreshed time
-	   */
-		public long getLastRefreshedTime();
-		
-		/**
-		 * Sets the last refreshed time for the proxy
-		 * @param lastRefreshedTime
-		 */
-		public void setLastRefreshedTime(long lastRefreshedTime);
-		
+
+  /**
+   * Last refreshed time for proxy
+   * @return last refreshed time
+   */
+  public long getLastRefreshedTime();
+
+  /**
+   * Sets the last refreshed time for the proxy
+   * @param lastRefreshedTime
+   */
+  public void setLastRefreshedTime(long lastRefreshedTime);
 
 }

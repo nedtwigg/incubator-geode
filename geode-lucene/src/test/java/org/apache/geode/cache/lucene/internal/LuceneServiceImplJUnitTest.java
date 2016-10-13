@@ -49,5 +49,4 @@ public class LuceneServiceImplJUnitTest {
     service.createIndex("index", "region", Collections.emptyMap());
   }
 
-
 }

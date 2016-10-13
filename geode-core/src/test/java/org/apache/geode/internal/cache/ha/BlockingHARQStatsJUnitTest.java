@@ -30,8 +30,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * 
  */
 @Category(IntegrationTest.class)
-public class BlockingHARQStatsJUnitTest extends HARegionQueueStatsJUnitTest
-{
+public class BlockingHARQStatsJUnitTest extends HARegionQueueStatsJUnitTest {
 
   /**
    * Creates a BlockingHARegionQueue object.
@@ -44,11 +43,8 @@ public class BlockingHARQStatsJUnitTest extends HARegionQueueStatsJUnitTest
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name)
-      throws IOException, ClassNotFoundException, CacheException, InterruptedException
-  {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name,
-        cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
@@ -65,11 +61,8 @@ public class BlockingHARQStatsJUnitTest extends HARegionQueueStatsJUnitTest
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name,
-      HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException
-  {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name,
-        cache,attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 

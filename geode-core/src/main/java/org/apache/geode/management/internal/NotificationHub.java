@@ -52,10 +52,9 @@ public class NotificationHub {
    * Platform MBean Server
    */
   private MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
-  
-  private Map<ObjectName , NotificationHubListener> listenerObjectMap;
- 
-  
+
+  private Map<ObjectName, NotificationHubListener> listenerObjectMap;
+
   /** Member Name **/
   private String memberSource;
 
@@ -69,9 +68,7 @@ public class NotificationHub {
     this.repo = repo;
     logger = InternalDistributedSystem.getLoggerI18n();
     this.listenerObjectMap = new HashMap<ObjectName, NotificationHubListener>();
-    memberSource = MBeanJMXAdapter.getMemberNameOrId(InternalDistributedSystem
-        .getConnectedInstance().getDistributedMember());
-   
+    memberSource = MBeanJMXAdapter.getMemberNameOrId(InternalDistributedSystem.getConnectedInstance().getDistributedMember());
 
   }
 
@@ -80,8 +77,7 @@ public class NotificationHub {
    * 
    * @param objectName
    */
-  public void addHubNotificationListener(String memberName,
-      ObjectName objectName) {
+  public void addHubNotificationListener(String memberName, ObjectName objectName) {
 
     try {
       synchronized (listenerObjectMap) {
@@ -126,7 +122,7 @@ public class NotificationHub {
       // No op
     }
   }
-  
+
   /**
    * This method is basically to cleanup resources which might cause leaks if
    * the same VM is used again for cache creation.
@@ -169,29 +165,28 @@ public class NotificationHub {
      * MBean for which this listener is added
      */
     private ObjectName name;
-    
+
     /**
      * Counter to indicate how many listener are attached to this MBean
      */
     private int numCounter = 0;
 
-
     protected NotificationHubListener(ObjectName name) {
       this.name = name;
-    }   
+    }
 
     public int incNumCounter() {
-       return ++numCounter;
+      return ++numCounter;
     }
 
     public int decNumCounter() {
-       return --numCounter;
+      return --numCounter;
     }
-    
-    public int getNumCounter(){
+
+    public int getNumCounter() {
       return this.numCounter;
     }
-    
+
     @Override
     public void handleNotification(Notification notification, Object handback) {
       NotificationKey key = new NotificationKey(name);

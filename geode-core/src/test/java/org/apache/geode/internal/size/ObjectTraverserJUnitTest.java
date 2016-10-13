@@ -38,12 +38,12 @@ public class ObjectTraverserJUnitTest {
     Object[] two = new Object[2];
     testData.add(two);
     ArrayList three = new ArrayList();
-    two[0]= three;
+    two[0] = three;
     three.add(testData);
-    
+
     TestVisitor visitor = new TestVisitor();
     ObjectTraverser.breadthFirstSearch(testData, visitor, false);
-    
+
     assertNotNull(visitor.visited.remove(testData));
     assertNotNull(visitor.visited.remove(one));
     assertNotNull(visitor.visited.remove(two));
@@ -55,11 +55,11 @@ public class ObjectTraverserJUnitTest {
     final Object staticObject = new Object();
     TestObject1.test2 = staticObject;
     TestObject1 test1 = new TestObject1();
-    
+
     TestVisitor visitor = new TestVisitor();
     ObjectTraverser.breadthFirstSearch(test1, visitor, false);
     assertNull(visitor.visited.get(staticObject));
-    
+
     visitor = new TestVisitor();
     ObjectTraverser.breadthFirstSearch(test1, visitor, true);
     assertNotNull(visitor.visited.get(staticObject));
@@ -72,7 +72,7 @@ public class ObjectTraverserJUnitTest {
     Object object3 = new Object();
     set1.add(set2);
     set2.add(object3);
-    
+
     TestVisitor visitor = new TestVisitor();
     visitor = new TestVisitor() {
       public boolean visit(Object parent, Object object) {
@@ -80,14 +80,14 @@ public class ObjectTraverserJUnitTest {
         return object != set2;
       }
     };
-    
+
     ObjectTraverser.breadthFirstSearch(set1, visitor, true);
-    
+
     assertNotNull(visitor.visited.get(set1));
     assertNotNull(visitor.visited.get(set2));
     assertNull(visitor.visited.get(object3));
   }
-  
+
   /** This test is commented out because it needs to be verified manually */
   @Ignore("commented out because it needs to be verified manually")
   @Test
@@ -101,10 +101,10 @@ public class ObjectTraverserJUnitTest {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "ObjectSizer.SIZE_OF_CLASS", "org.apache.geode.internal.size.SizeOfUtil0");
     System.out.println(ObjectGraphSizer.histogram(set1, true));
   }
-  
+
   private static class TestVisitor implements ObjectTraverser.Visitor {
     private static final Object VALUE = new Object();
-    
+
     public Map visited = new IdentityHashMap();
 
     public boolean visit(Object parent, Object object) {
@@ -112,9 +112,9 @@ public class ObjectTraverserJUnitTest {
       return true;
     }
   }
-  
+
   private static class TestObject1 {
     protected static Object test2;
   }
-  
+
 }

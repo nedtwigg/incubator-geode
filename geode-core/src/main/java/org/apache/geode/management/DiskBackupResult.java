@@ -40,8 +40,8 @@ public class DiskBackupResult {
    * This constructor is to be used by internal JMX framework only. User
    * should not try to create an instance of this class.
    */
-  @ConstructorProperties( { "diskDirectory", "offilne"
-    
+  @ConstructorProperties({ "diskDirectory", "offilne"
+
   })
   public DiskBackupResult(String diskDirectory, boolean offline) {
     this.diskDirectory = diskDirectory;

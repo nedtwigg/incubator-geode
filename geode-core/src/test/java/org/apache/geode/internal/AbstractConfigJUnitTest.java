@@ -36,7 +36,7 @@ public class AbstractConfigJUnitTest {
     Method method = actc.getClass().getSuperclass().getDeclaredMethod("okToDisplayPropertyValue", String.class);
     method.setAccessible(true);
     assertFalse((Boolean) method.invoke(actc, "password"));
-    assertFalse((Boolean) method.invoke(actc,CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+    assertFalse((Boolean) method.invoke(actc, CLUSTER_SSL_TRUSTSTORE_PASSWORD));
     assertTrue((Boolean) method.invoke(actc, CLUSTER_SSL_ENABLED));
     assertFalse((Boolean) method.invoke(actc, GATEWAY_SSL_TRUSTSTORE_PASSWORD));
     assertFalse((Boolean) method.invoke(actc, SERVER_SSL_KEYSTORE_PASSWORD));

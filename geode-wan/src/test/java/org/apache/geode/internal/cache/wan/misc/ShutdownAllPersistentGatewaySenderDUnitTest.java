@@ -51,7 +51,7 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
   public ShutdownAllPersistentGatewaySenderDUnitTest() {
     super();
   }
-  
+
   @Override
   protected final void postSetUpWANTestBase() throws Exception {
     IgnoredException.addIgnoredException("Cache is being closed by ShutdownAll");
@@ -63,25 +63,24 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
   public void testGatewaySender() throws Exception {
     IgnoredException.addIgnoredException("Cache is shutting down");
 
-    Integer lnPort = (Integer)vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId( 1 ));
+    Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
 
-    Integer nyPort = (Integer)vm1.invoke(() -> WANTestBase.createFirstRemoteLocator( 2, lnPort ));
+    Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
-    vm2.invoke(() -> WANTestBase.createCache( nyPort ));
-    vm3.invoke(() -> WANTestBase.createCache( nyPort ));
+    vm2.invoke(() -> WANTestBase.createCache(nyPort));
+    vm3.invoke(() -> WANTestBase.createCache(nyPort));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
-    vm2.invoke(() -> WANTestBase.createPersistentPartitionedRegion( getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap() ));
-    vm3.invoke(() -> WANTestBase.createPersistentPartitionedRegion( getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap() ));
+    vm2.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm3.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createCache( lnPort ));
+    vm4.invoke(() -> WANTestBase.createCache(lnPort));
 
-    vm4.invoke(() -> WANTestBase.createSender( "ln", 2,
-        false, 100, 400, false, false, null, true ));
+    vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 400, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.startSender( "ln" ));
+    vm4.invoke(() -> WANTestBase.startSender("ln"));
 
-    vm4.invoke(() -> WANTestBase.createPersistentPartitionedRegion( getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap() ));
+    vm4.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
     // set the CacheObserver to block the ShutdownAll
     SerializableRunnable waitAtShutdownAll = new SerializableRunnable() {
@@ -109,8 +108,8 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
     };
     vm2.invoke(waitAtShutdownAll);
     vm3.invoke(waitAtShutdownAll);
-    
-    AsyncInvocation vm4_future = vm4.invokeAsync(() -> WANTestBase.doPuts( getTestMethodName() + "_PR", NUM_KEYS ));
+
+    AsyncInvocation vm4_future = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", NUM_KEYS));
 
     // ShutdownAll will be suspended at observer, so puts will continue
     AsyncInvocation future = shutDownAllMembers(vm2, 2, MAX_WAIT);
@@ -118,18 +117,16 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
 
     // now restart vm1 with gatewayHub
     LogWriterUtils.getLogWriter().info("restart in VM2");
-    vm2.invoke(() -> WANTestBase.createCache( nyPort ));
-    vm3.invoke(() -> WANTestBase.createCache( nyPort ));
-    AsyncInvocation vm3_future = vm3.invokeAsync(() -> WANTestBase.createPersistentPartitionedRegion( getTestMethodName() + "_PR",
-            "ln", 1, 100, isOffHeap() ));
-    vm2.invoke(() -> WANTestBase.createPersistentPartitionedRegion( getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap() ));
+    vm2.invoke(() -> WANTestBase.createCache(nyPort));
+    vm3.invoke(() -> WANTestBase.createCache(nyPort));
+    AsyncInvocation vm3_future = vm3.invokeAsync(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm2.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
     vm3_future.join(MAX_WAIT);
 
     vm3.invoke(new SerializableRunnable() {
       public void run() {
         final Region region = cache.getRegion(getTestMethodName() + "_PR");
-        cache.getLogger().info(
-            "vm1's region size before restart gatewayHub is " + region.size());
+        cache.getLogger().info("vm1's region size before restart gatewayHub is " + region.size());
       }
     });
     vm2.invoke(() -> WANTestBase.createReceiver());
@@ -148,24 +145,19 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
       public void run() {
         final Region region = cache.getRegion(getTestMethodName() + "_PR");
 
-        cache.getLogger().info(
-            "vm1's region size after restart gatewayHub is " + region.size());
+        cache.getLogger().info("vm1's region size after restart gatewayHub is " + region.size());
         Wait.waitForCriterion(new WaitCriterion() {
           public boolean done() {
             Object lastValue = region.get(NUM_KEYS - 1);
             if (lastValue != null && lastValue.equals(NUM_KEYS - 1)) {
-              region.getCache().getLogger().info(
-                  "Last key has arrived, its value is " + lastValue
-                      + ", end of wait.");
+              region.getCache().getLogger().info("Last key has arrived, its value is " + lastValue + ", end of wait.");
               return true;
-            }
-            else
+            } else
               return (region.size() == NUM_KEYS);
           }
 
           public String description() {
-            return "Waiting for destination region to reach size: " + NUM_KEYS
-                + ", current is " + region.size();
+            return "Waiting for destination region to reach size: " + NUM_KEYS + ", current is " + region.size();
           }
         }, MAX_WAIT, 100, true);
         assertEquals(NUM_KEYS, region.size());
@@ -175,25 +167,21 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
   }
 
   private AsyncInvocation shutDownAllMembers(VM vm, final int expectedNumber, final long timeout) {
-      AsyncInvocation future = vm.invokeAsync(new SerializableRunnable("Shutdown all the members") {
+    AsyncInvocation future = vm.invokeAsync(new SerializableRunnable("Shutdown all the members") {
 
       public void run() {
         DistributedSystemConfig config;
         AdminDistributedSystemImpl adminDS = null;
         try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(cache
-              .getDistributedSystem(), "");
-          adminDS = (AdminDistributedSystemImpl)AdminDistributedSystemFactory
-              .getDistributedSystem(config);
+          config = AdminDistributedSystemFactory.defineDistributedSystem(cache.getDistributedSystem(), "");
+          adminDS = (AdminDistributedSystemImpl) AdminDistributedSystemFactory.getDistributedSystem(config);
           adminDS.connect();
           Set members = adminDS.shutDownAllMembers(timeout);
           int num = members == null ? 0 : members.size();
           assertEquals(expectedNumber, num);
-        }
-        catch (AdminException e) {
+        } catch (AdminException e) {
           throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
           if (adminDS != null) {
             adminDS.disconnect();
           }

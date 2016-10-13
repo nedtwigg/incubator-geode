@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache;
+
 import java.io.*;
 
 /**
@@ -34,7 +34,7 @@ public class InterestPolicy implements java.io.Serializable {
   private static final long serialVersionUID = 1567179436331385968L;
 
   private static byte nextOrdinal = 0;
-    
+
   private static final InterestPolicy[] VALUES = new InterestPolicy[2];
 
   /**
@@ -91,31 +91,28 @@ public class InterestPolicy implements java.io.Serializable {
    */
   public static final InterestPolicy DEFAULT = CACHE_CONTENT;
 
-    
   /** The name of this mirror type. */
   private final transient String name;
-    
+
   /** used as ordinal to represent this InterestPolicy */
   public final byte ordinal;
 
   private Object readResolve() throws ObjectStreamException {
-    return VALUES[ordinal];  // Canonicalize
+    return VALUES[ordinal]; // Canonicalize
   }
-    
-    
+
   /** Creates a new instance of InterestPolicy. */
   private InterestPolicy(String name) {
     this.name = name;
     this.ordinal = nextOrdinal++;
     VALUES[this.ordinal] = this;
   }
-    
+
   /** Return the InterestPolicy represented by specified ordinal */
   public static InterestPolicy fromOrdinal(byte ordinal) {
     return VALUES[ordinal];
   }
-    
-    
+
   /**
    * Return true if this policy is {@link #ALL}.
    * @return true if this policy is {@link #ALL}.
@@ -123,6 +120,7 @@ public class InterestPolicy implements java.io.Serializable {
   public boolean isAll() {
     return this == ALL;
   }
+
   /**
    * Return true if this policy is {@link #CACHE_CONTENT}.
    * @return true if this policy is {@link #CACHE_CONTENT}.
@@ -130,6 +128,7 @@ public class InterestPolicy implements java.io.Serializable {
   public boolean isCacheContent() {
     return this == CACHE_CONTENT;
   }
+
   /**
    * Return true if this policy is the default.
    * @return true if this policy is the default.
@@ -137,7 +136,7 @@ public class InterestPolicy implements java.io.Serializable {
   public boolean isDefault() {
     return this == DEFAULT;
   }
-  
+
   /** Returns a string representation for this interest policy.
      * @return the name of this interest policy.
      */

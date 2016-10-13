@@ -33,11 +33,11 @@ public class FlushToDiskResponse extends AdminResponse {
   public FlushToDiskResponse(InternalDistributedMember sender) {
     this.setRecipient(sender);
   }
-  
+
   public int getDSFID() {
     return FLUSH_TO_DISK_RESPONSE;
   }
-  
+
   @Override
   public String toString() {
     return getClass().getName();

@@ -33,7 +33,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * 
  * Class for change log level function
@@ -52,9 +51,9 @@ public class ChangeLogLevelFunction implements Function, InternalEntity {
   public void execute(FunctionContext context) {
     Cache cache = CacheFactory.getAnyInstance();
     Map<String, String> result = new HashMap<String, String>();
-    try{      
-      LogWriterLogger logwriterLogger = (LogWriterLogger) cache.getLogger();      
-      Object[] args = (Object[]) context.getArguments();      
+    try {
+      LogWriterLogger logwriterLogger = (LogWriterLogger) cache.getLogger();
+      Object[] args = (Object[]) context.getArguments();
       final String logLevel = (String) args[0];
       Level log4jLevel = LogWriterLogger.logWriterNametoLog4jLevel(logLevel);
       logwriterLogger.setLevel(log4jLevel);
@@ -63,12 +62,12 @@ public class ChangeLogLevelFunction implements Function, InternalEntity {
       logger.info(LogMarker.CONFIG, "GFSH Changed log level to {}", log4jLevel);
       result.put(cache.getDistributedSystem().getDistributedMember().getId(), "New log level is " + log4jLevel);
       context.getResultSender().lastResult(result);
-    }catch(Exception ex){      
+    } catch (Exception ex) {
       // LOG:CONFIG:
       logger.info(LogMarker.CONFIG, "GFSH Changing log level exception {}", ex.getMessage(), ex);
       result.put(cache.getDistributedSystem().getDistributedMember().getId(), "ChangeLogLevelFunction exception " + ex.getMessage());
       context.getResultSender().lastResult(result);
-    }   
+    }
   }
 
   @Override

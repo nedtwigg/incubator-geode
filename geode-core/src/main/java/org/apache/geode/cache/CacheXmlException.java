@@ -28,7 +28,7 @@ package org.apache.geode.cache;
  * @since GemFire 3.0
  */
 public class CacheXmlException extends CacheRuntimeException {
-private static final long serialVersionUID = -4343870964883131754L;
+  private static final long serialVersionUID = -4343870964883131754L;
 
   /**
    * Creates a new <code>CacheXmlException</code> with the given

@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import java.util.Set;
@@ -47,7 +46,7 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  */
 public class AdminWaiters {
   private static final Logger logger = LogService.getLogger();
-  
+
   //private static final long TIMEOUT = 10000L;
 
   /**
@@ -71,7 +70,7 @@ public class AdminWaiters {
 
     AdminResponse result = null;
     try {
-      synchronized(msg) {
+      synchronized (msg) {
         Set failures = dm.putOutgoing(msg);
         if (failures != null && failures.size() > 0) { // didn't go out
           if (dm.getDistributionManagerIds().contains(msg.getRecipient())) {
@@ -82,17 +81,16 @@ public class AdminWaiters {
             }
             throw new RuntimeAdminException(LocalizedStrings.AdminWaiters_COULD_NOT_SEND_REQUEST_0.toLocalizedString(s));
           }
-          throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1.toLocalizedString(new Object[] {msg.getRecipient(), ""}));
+          throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1.toLocalizedString(new Object[] { msg.getRecipient(), "" }));
         }
         // sent it
-        
+
         long timeout = getWaitTimeout();
         boolean gotResponse = msg.waitForResponse(timeout);
         if (!gotResponse) {
           if (dm.isCurrentMember(msg.getRecipient())) { // still here?
             //no one ever replied
-            StringBuffer sb =
-              new StringBuffer("Administration request ");
+            StringBuffer sb = new StringBuffer("Administration request ");
             sb.append(msg);
             sb.append(" sent to ");
             sb.append(msg.getRecipient());
@@ -107,13 +105,12 @@ public class AdminWaiters {
           if (logger.isTraceEnabled(LogMarker.DM)) {
             s = " (" + msg + ")";
           }
-          throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1.toLocalizedString(new Object[] {msg.getRecipient(), s}));
+          throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1.toLocalizedString(new Object[] { msg.getRecipient(), s }));
         } // !gotResponse
-        
+
         result = msg.getResponse();
       } // synchronized
-    } 
-    catch (InterruptedException ex) {
+    } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
       dm.getCancelCriterion().checkCancelInProgress(ex);
       String s = LocalizedStrings.AdminWaiters_REQUEST_WAIT_WAS_INTERRUPTED.toLocalizedString();
@@ -128,10 +125,10 @@ public class AdminWaiters {
       if (logger.isTraceEnabled(LogMarker.DM)) {
         s += " (" + msg + ")";
       }
-      throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SEND_TO_0_WAS_CANCELLED_1.toLocalizedString(new Object[] {msg.getRecipient(), s}));
+      throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SEND_TO_0_WAS_CANCELLED_1.toLocalizedString(new Object[] { msg.getRecipient(), s }));
 
     } else if (result instanceof AdminFailureResponse) {
-      throw new RuntimeAdminException(LocalizedStrings.AdminWaiters_REQUEST_FAILED.toLocalizedString(), ((AdminFailureResponse)result).getCause());
+      throw new RuntimeAdminException(LocalizedStrings.AdminWaiters_REQUEST_FAILED.toLocalizedString(), ((AdminFailureResponse) result).getCause());
     }
     return result;
   }
@@ -141,8 +138,7 @@ public class AdminWaiters {
    */
   public static void sendResponse(AdminResponse msg) {
     int id = msg.getMsgId();
-    ReplyProcessor21 processor =
-      (ReplyProcessor21) ReplyProcessor21.getProcessor(id);
+    ReplyProcessor21 processor = (ReplyProcessor21) ReplyProcessor21.getProcessor(id);
 
     if (processor == null) {
       return; //must've been cancelled
@@ -151,6 +147,7 @@ public class AdminWaiters {
       processor.process(msg);
     }
   }
+
   /**
    * Call with the id of a RemoteGfManager that no longer exists.
    * All outstanding requests to that manager will be cancelled.
@@ -162,13 +159,12 @@ public class AdminWaiters {
   }
 
   public static void cancelRequest(int msgId, DistributionManager dm) {
-    AdminReplyProcessor processor =
-      (AdminReplyProcessor) ReplyProcessor21.getProcessor(msgId);
+    AdminReplyProcessor processor = (AdminReplyProcessor) ReplyProcessor21.getProcessor(msgId);
     if (processor != null) {
       InternalDistributedMember recipient = processor.getResponder();
       dm.putOutgoing(CancellationMessage.create(recipient, msgId));
       processor.cancel();
-    }    
+    }
   }
 
   private static long getWaitTimeout() {
@@ -180,5 +176,5 @@ public class AdminWaiters {
       return 1800 * 1000L;
     }
   }
-  
+
 }

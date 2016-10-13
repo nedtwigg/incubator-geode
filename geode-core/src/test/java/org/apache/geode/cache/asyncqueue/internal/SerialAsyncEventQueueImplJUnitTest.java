@@ -32,16 +32,18 @@ import static org.junit.Assert.assertEquals;
 public class SerialAsyncEventQueueImplJUnitTest {
 
   private Cache cache;
+
   @Before
   public void setUp() {
     CacheFactory cf = new CacheFactory().set(MCAST_PORT, "0");
     cache = cf.create();
   }
-  
+
   @After
   public void tearDown() {
     cache.close();
   }
+
   @Test
   public void testStopClearsStats() {
     GatewaySenderAttributes attrs = new GatewaySenderAttributes();
@@ -49,12 +51,12 @@ public class SerialAsyncEventQueueImplJUnitTest {
     SerialAsyncEventQueueImpl queue = new SerialAsyncEventQueueImpl(cache, attrs);
     queue.getStatistics().incQueueSize(5);
     queue.getStatistics().incTempQueueSize(10);
-    
+
     assertEquals(5, queue.getStatistics().getEventQueueSize());
     assertEquals(10, queue.getStatistics().getTempEventQueueSize());
-   
+
     queue.stop();
-    
+
     assertEquals(0, queue.getStatistics().getEventQueueSize());
     assertEquals(0, queue.getStatistics().getTempEventQueueSize());
   }

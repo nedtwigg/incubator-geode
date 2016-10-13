@@ -171,7 +171,7 @@ public class ParameterBindingJUnitTest {
     Collection<Object> results = MultithreadedTester.runMultithreaded(callables);
     results.forEach(result -> {
       assertTrue(result.getClass().getName() + " was not an expected result", result instanceof Collection);
-      assertEquals(numObjects, ((Collection)result).size());
+      assertEquals(numObjects, ((Collection) result).size());
     });
   }
 }

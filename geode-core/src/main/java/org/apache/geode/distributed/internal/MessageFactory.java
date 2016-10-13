@@ -33,8 +33,8 @@ public class MessageFactory {
    * Returns a message of the given type.
    */
   public static DistributionMessage getMessage(Class messageType) {
-    
-//    DistributionMessage message;
+
+    //    DistributionMessage message;
     // create a new message
     try {
       Object o = messageType.newInstance();
@@ -43,7 +43,7 @@ public class MessageFactory {
 
       } else {
         // no need for further processing on the new message, so return it
-        return (DistributionMessage)o;
+        return (DistributionMessage) o;
       }
 
     } catch (InstantiationException ex) {

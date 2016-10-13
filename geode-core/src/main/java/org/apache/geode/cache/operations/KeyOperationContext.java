@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.operations;
 
-
 /**
  * Encapsulates a region operation that requires only a key object for the
  * pre-operation case. The operations this class encapsulates are

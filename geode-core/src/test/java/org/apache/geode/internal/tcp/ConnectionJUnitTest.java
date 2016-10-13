@@ -44,7 +44,7 @@ public class ConnectionJUnitTest {
   public void testSuspicionRaised() throws Exception {
     // this test has to create a lot of mocks because Connection
     // uses a lot of objects
-    
+
     // mock the socket
     ConnectionTable table = mock(ConnectionTable.class);
     DM distMgr = mock(DM.class);
@@ -52,7 +52,7 @@ public class ConnectionJUnitTest {
     TCPConduit conduit = mock(TCPConduit.class);
 
     // mock the connection table and conduit
-    
+
     when(table.getConduit()).thenReturn(conduit);
 
     CancelCriterion stopper = mock(CancelCriterion.class);
@@ -60,11 +60,11 @@ public class ConnectionJUnitTest {
     when(conduit.getCancelCriterion()).thenReturn(stopper);
 
     when(conduit.getId()).thenReturn(new InetSocketAddress(SocketCreator.getLocalHost(), 10337));
-    
+
     // NIO can't be mocked because SocketChannel has a final method that
     // is used by Connection - configureBlocking
     when(conduit.useNIO()).thenReturn(false);
-    
+
     // mock the distribution manager and membership manager
     when(distMgr.getMembershipManager()).thenReturn(membership);
     when(conduit.getDM()).thenReturn(distMgr);
@@ -76,7 +76,7 @@ public class ConnectionJUnitTest {
     when(instream.read()).thenReturn(-1);
     Socket socket = mock(Socket.class);
     when(socket.getInputStream()).thenReturn(instream);
-    
+
     Connection conn = new Connection(table, socket);
     conn.setSharedUnorderedForTest();
     conn.run();

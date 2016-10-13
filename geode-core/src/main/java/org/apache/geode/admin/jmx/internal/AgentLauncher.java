@@ -63,10 +63,9 @@ import org.apache.geode.internal.util.JavaCommandBuilder;
 public class AgentLauncher {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** Should the launch command be printed? */
-  public static final boolean PRINT_LAUNCH_COMMAND = Boolean.getBoolean(AgentLauncher.class.getSimpleName()
-      + ".PRINT_LAUNCH_COMMAND");
+  public static final boolean PRINT_LAUNCH_COMMAND = Boolean.getBoolean(AgentLauncher.class.getSimpleName() + ".PRINT_LAUNCH_COMMAND");
 
   /* constants used to define state */
   static final int SHUTDOWN = 0;
@@ -135,15 +134,14 @@ public class AgentLauncher {
     SortedMap<String, String> map = new TreeMap<String, String>();
 
     int maxLength = 0;
-    for (Iterator<Object> iter = props.keySet().iterator(); iter.hasNext(); ) {
+    for (Iterator<Object> iter = props.keySet().iterator(); iter.hasNext();) {
       String prop = (String) iter.next();
       int length = prop.length();
       if (length > maxLength) {
         maxLength = length;
       }
 
-      map.put(prop, AgentConfigImpl.getPropertyDescription(prop) +
-              " (" + LocalizedStrings.AgentLauncher_DEFAULT.toLocalizedString() + "  \"" + props.getProperty(prop) + "\")");
+      map.put(prop, AgentConfigImpl.getPropertyDescription(prop) + " (" + LocalizedStrings.AgentLauncher_DEFAULT.toLocalizedString() + "  \"" + props.getProperty(prop) + "\")");
     }
 
     Iterator<Entry<String, String>> entries = map.entrySet().iterator();
@@ -193,16 +191,12 @@ public class AgentLauncher {
     for (final String arg : args) {
       if (arg.startsWith("-classpath=")) {
         options.put(CLASSPATH, arg.substring("-classpath=".length()));
-      }
-      else if (arg.startsWith("-dir=")) {
+      } else if (arg.startsWith("-dir=")) {
         final File workingDirectory = processDirOption(options, arg.substring("-dir=".length()));
-        System.setProperty(AgentConfigImpl.AGENT_PROPSFILE_PROPERTY_NAME,
-          new File(workingDirectory, AgentConfig.DEFAULT_PROPERTY_FILE).getPath());
-      }
-      else if (arg.startsWith("-J")) {
+        System.setProperty(AgentConfigImpl.AGENT_PROPSFILE_PROPERTY_NAME, new File(workingDirectory, AgentConfig.DEFAULT_PROPERTY_FILE).getPath());
+      } else if (arg.startsWith("-J")) {
         vmArgs.add(arg.substring(2));
-      }
-      else if (arg.contains("=")) {
+      } else if (arg.contains("=")) {
         final int index = arg.indexOf("=");
         final String prop = arg.substring(0, index);
         final String value = arg.substring(index + 1);
@@ -267,8 +261,7 @@ public class AgentLauncher {
   }
 
   private String[] buildCommandLine(final Map<String, Object> options) {
-    final List<String> commands = JavaCommandBuilder.buildCommand(AgentLauncher.class.getName(), (String) options.get(CLASSPATH), null,
-      (List<String>) options.get(VMARGS));
+    final List<String> commands = JavaCommandBuilder.buildCommand(AgentLauncher.class.getName(), (String) options.get(CLASSPATH), null, (List<String>) options.get(VMARGS));
 
     commands.add("server");
     commands.add("-dir=" + workingDirectory);
@@ -295,12 +288,10 @@ public class AgentLauncher {
 
   private int runCommandLine(final Map<String, Object> options, final String[] commandLine) throws IOException {
     // initialize the startup log starting with a fresh log file (where all startup messages are printed)
-    final File startLogFile = IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(
-      new File(workingDirectory, startLogFileName));
+    final File startLogFile = IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(new File(workingDirectory, startLogFileName));
 
     if (startLogFile.exists() && !startLogFile.delete()) {
-      throw new IOException(LocalizedStrings.AgentLauncher_UNABLE_TO_DELETE_FILE_0.toLocalizedString(
-        startLogFile.getAbsolutePath()));
+      throw new IOException(LocalizedStrings.AgentLauncher_UNABLE_TO_DELETE_FILE_0.toLocalizedString(startLogFile.getAbsolutePath()));
     }
 
     Map<String, String> env = new HashMap<String, String>();
@@ -332,8 +323,7 @@ public class AgentLauncher {
     if (status == null) {
       // TODO throw a more appropriate Exception here!
       throw new Exception(LocalizedStrings.AgentLauncher_NO_AVAILABLE_STATUS.toLocalizedString());
-    }
-    else {
+    } else {
       System.out.println(status);
     }
   }
@@ -377,14 +367,14 @@ public class AgentLauncher {
 
   private ThreadGroup createAgentProcessThreadGroup() {
     return new ThreadGroup(LocalizedStrings.AgentLauncher_STARTING_AGENT.toLocalizedString()) {
-        @Override
-        public void uncaughtException(final Thread t, final Throwable e) {
-          if (e instanceof VirtualMachineError) {
-            SystemFailure.setFailure((VirtualMachineError) e);
-          }
-          setServerError(LocalizedStrings.AgentLauncher_UNCAUGHT_EXCEPTION_IN_THREAD_0.toLocalizedString(t.getName()), e);
+      @Override
+      public void uncaughtException(final Thread t, final Throwable e) {
+        if (e instanceof VirtualMachineError) {
+          SystemFailure.setFailure((VirtualMachineError) e);
         }
-      };
+        setServerError(LocalizedStrings.AgentLauncher_UNCAUGHT_EXCEPTION_IN_THREAD_0.toLocalizedString(t.getName()), e);
+      }
+    };
   }
 
   private Thread createAgentProcessThread(final ThreadGroup group, final Agent agent) {
@@ -397,11 +387,9 @@ public class AgentLauncher {
         try {
           agent.start();
           writeStatus(createStatus(AgentLauncher.this.basename, RUNNING, OSProcess.getId()));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           e.printStackTrace();
-        }
-        catch (GemFireException e) {
+        } catch (GemFireException e) {
           e.printStackTrace();
           handleGemFireException(e);
         }
@@ -421,15 +409,13 @@ public class AgentLauncher {
     };
   }
 
-
   /**
    * Notes that an error has occurred in the agent and that it has shut down because of it.
    */
   private void setServerError(final String message, final Throwable cause) {
     try {
       writeStatus(createStatus(this.basename, SHUTDOWN_PENDING_AFTER_FAILED_STARTUP, OSProcess.getId(), message, cause));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.fatal(e.getMessage(), e);
       System.exit(1);
     }
@@ -462,11 +448,9 @@ public class AgentLauncher {
     for (final String arg : args) {
       if (arg.equals("stop") || arg.equals("status")) {
         // expected
-      }
-      else if (arg.startsWith("-dir=")) {
+      } else if (arg.startsWith("-dir=")) {
         processDirOption(options, arg.substring("-dir=".length()));
-      }
-      else {
+      } else {
         throw new Exception(LocalizedStrings.AgentLauncher_UNKNOWN_ARGUMENT_0.toLocalizedString(arg));
       }
     }
@@ -497,15 +481,11 @@ public class AgentLauncher {
         System.out.println(LocalizedStrings.AgentLauncher_0_HAS_STOPPED.toLocalizedString(this.basename));
         deleteStatus();
         exitStatus = 0;
+      } else {
+        System.out.println(LocalizedStrings.AgentLauncher_TIMEOUT_WAITING_FOR_0_TO_SHUTDOWN_STATUS_IS_1.toLocalizedString(this.basename, status));
       }
-      else {
-        System.out.println(LocalizedStrings.AgentLauncher_TIMEOUT_WAITING_FOR_0_TO_SHUTDOWN_STATUS_IS_1
-          .toLocalizedString(this.basename, status));
-      }
-    }
-    else {
-      System.out.println(LocalizedStrings.AgentLauncher_THE_SPECIFIED_WORKING_DIRECTORY_0_CONTAINS_NO_STATUS_FILE
-        .toLocalizedString(workingDirectory));
+    } else {
+      System.out.println(LocalizedStrings.AgentLauncher_THE_SPECIFIED_WORKING_DIRECTORY_0_CONTAINS_NO_STATUS_FILE.toLocalizedString(workingDirectory));
     }
 
     System.exit(exitStatus);
@@ -539,10 +519,8 @@ public class AgentLauncher {
 
     if (new File(workingDirectory, statusFileName).exists()) {
       status = spinReadStatus();
-    }
-    else {
-      status = createStatus(this.basename, SHUTDOWN, 0, LocalizedStrings.AgentLauncher_0_IS_NOT_RUNNING_IN_SPECIFIED_WORKING_DIRECTORY_1
-        .toLocalizedString(this.basename, this.workingDirectory), null);
+    } else {
+      status = createStatus(this.basename, SHUTDOWN, 0, LocalizedStrings.AgentLauncher_0_IS_NOT_RUNNING_IN_SPECIFIED_WORKING_DIRECTORY_1.toLocalizedString(this.basename, this.workingDirectory), null);
     }
 
     return status;
@@ -587,11 +565,9 @@ public class AgentLauncher {
       objectIn = new ObjectInputStream(fileIn);
       this.status = (Status) objectIn.readObject();
       return this.status;
-    }
-    catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException e) {
       throw new RuntimeException(e);
-    }
-    finally {
+    } finally {
       IOUtils.close(objectIn);
       IOUtils.close(fileIn);
     }
@@ -632,15 +608,13 @@ public class AgentLauncher {
     while (status == null && clock < endTime) {
       try {
         status = nativeReadStatus();
-      }
-      catch (Exception ignore) {
+      } catch (Exception ignore) {
         // see bug 31575
         // see bug 36998
         // try again after a short delay... the status file might have been read prematurely before it existed
         // or while the server was trying to write to it resulting in a possible EOFException, or other IOException.
         pause(500);
-      }
-      finally {
+      } finally {
         clock = System.currentTimeMillis();
       }
     }
@@ -667,8 +641,7 @@ public class AgentLauncher {
       objectOut.flush();
       this.status = status;
       return this.status;
-    }
-    finally {
+    } finally {
       IOUtils.close(objectOut);
       IOUtils.close(fileOut);
     }
@@ -700,8 +673,7 @@ public class AgentLauncher {
     try {
       Thread.sleep(milliseconds);
       return true;
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       return false;
     }
@@ -711,8 +683,7 @@ public class AgentLauncher {
     final File workingDirectory = new File(dirValue);
 
     if (!workingDirectory.exists()) {
-      throw new FileNotFoundException(LocalizedStrings.AgentLauncher_THE_INPUT_WORKING_DIRECTORY_DOES_NOT_EXIST_0
-        .toLocalizedString(dirValue));
+      throw new FileNotFoundException(LocalizedStrings.AgentLauncher_THE_INPUT_WORKING_DIRECTORY_DOES_NOT_EXIST_0.toLocalizedString(dirValue));
     }
 
     options.put(DIR, workingDirectory);
@@ -732,7 +703,7 @@ public class AgentLauncher {
 
     out.println("agent start [-J<vmarg>]* [-dir=<dir>] [prop=value]*");
     out.println(LocalizedStrings.AgentLauncher_STARTS_THE_GEMFIRE_JMX_AGENT.toLocalizedString());
-    out.println("\t" + LocalizedStrings.AgentLauncher_VMARG.toLocalizedString() );
+    out.println("\t" + LocalizedStrings.AgentLauncher_VMARG.toLocalizedString());
     out.println("\t" + LocalizedStrings.AgentLauncher_DIR.toLocalizedString());
     out.println("\t" + LocalizedStrings.AgentLauncher_PROP.toLocalizedString());
     out.println("\t" + LocalizedStrings.AgentLauncher_SEE_HELP_CONFIG.toLocalizedString());
@@ -770,39 +741,31 @@ public class AgentLauncher {
 
       if (command.equalsIgnoreCase("start")) {
         launcher.start(args);
-      }
-      else if (command.equalsIgnoreCase("server")) {
+      } else if (command.equalsIgnoreCase("server")) {
         launcher.server(args);
-      }
-      else if (command.equalsIgnoreCase("stop")) {
+      } else if (command.equalsIgnoreCase("stop")) {
         launcher.stop(args);
-      }
-      else if (command.equalsIgnoreCase("status")) {
+      } else if (command.equalsIgnoreCase("status")) {
         launcher.status(args);
-      }
-      else if (command.toLowerCase().matches("-{0,2}help")) {
+      } else if (command.toLowerCase().matches("-{0,2}help")) {
         if (args.length > 1) {
           final String topic = args[1];
 
           if (topic.equals("config")) {
             launcher.configHelp();
-          }
-          else {
+          } else {
             usage(LocalizedStrings.AgentLauncher_NO_HELP_AVAILABLE_FOR_0.toLocalizedString(topic));
           }
         }
 
         usage(LocalizedStrings.AgentLauncher_AGENT_HELP.toLocalizedString());
-      }
-      else {
+      } else {
         usage(LocalizedStrings.AgentLauncher_UNKNOWN_COMMAND_0.toLocalizedString(command));
       }
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       SystemFailure.checkFailure();
       t.printStackTrace();
       System.err.println(LocalizedStrings.AgentLauncher_ERROR_0.toLocalizedString(t.getLocalizedMessage()));
@@ -844,38 +807,35 @@ public class AgentLauncher {
 
       if (pid == Integer.MIN_VALUE && state == SHUTDOWN && msg != null) {
         buffer.append(msg);
-      }
-      else {
+      } else {
         buffer.append(LocalizedStrings.AgentLauncher_0_PID_1_STATUS.toLocalizedString(this.baseName, pid));
 
         switch (state) {
-          case SHUTDOWN:
-            buffer.append(LocalizedStrings.AgentLauncher_SHUTDOWN.toLocalizedString());
-            break;
-          case STARTING:
-            buffer.append(LocalizedStrings.AgentLauncher_STARTING.toLocalizedString());
-            break;
-          case RUNNING:
-            buffer.append(LocalizedStrings.AgentLauncher_RUNNING.toLocalizedString());
-            break;
-          case SHUTDOWN_PENDING:
-            buffer.append(LocalizedStrings.AgentLauncher_SHUTDOWN_PENDING.toLocalizedString());
-            break;
-          case SHUTDOWN_PENDING_AFTER_FAILED_STARTUP:
-            buffer.append(LocalizedStrings.AgentLauncher_SHUTDOWN_PENDING_AFTER_FAILED_STARTUP.toLocalizedString());
-            break;
-          default:
-            buffer.append(LocalizedStrings.AgentLauncher_UNKNOWN.toLocalizedString());
-            break;
+        case SHUTDOWN:
+          buffer.append(LocalizedStrings.AgentLauncher_SHUTDOWN.toLocalizedString());
+          break;
+        case STARTING:
+          buffer.append(LocalizedStrings.AgentLauncher_STARTING.toLocalizedString());
+          break;
+        case RUNNING:
+          buffer.append(LocalizedStrings.AgentLauncher_RUNNING.toLocalizedString());
+          break;
+        case SHUTDOWN_PENDING:
+          buffer.append(LocalizedStrings.AgentLauncher_SHUTDOWN_PENDING.toLocalizedString());
+          break;
+        case SHUTDOWN_PENDING_AFTER_FAILED_STARTUP:
+          buffer.append(LocalizedStrings.AgentLauncher_SHUTDOWN_PENDING_AFTER_FAILED_STARTUP.toLocalizedString());
+          break;
+        default:
+          buffer.append(LocalizedStrings.AgentLauncher_UNKNOWN.toLocalizedString());
+          break;
         }
 
         if (exception != null) {
           if (msg != null) {
             buffer.append("\n").append(msg).append(" - ");
-          }
-          else {
-            buffer.append("\n " + LocalizedStrings.AgentLauncher_EXCEPTION_IN_0_1
-              .toLocalizedString(this.baseName, exception.getMessage()) + " - ");
+          } else {
+            buffer.append("\n " + LocalizedStrings.AgentLauncher_EXCEPTION_IN_0_1.toLocalizedString(this.baseName, exception.getMessage()) + " - ");
           }
           buffer.append(LocalizedStrings.AgentLauncher_SEE_LOG_FILE_FOR_DETAILS.toLocalizedString());
         }

@@ -24,40 +24,40 @@ import org.apache.geode.cache.EvictionAction;
 import org.apache.geode.cache.EvictionAlgorithm;
 import org.apache.geode.cache.EvictionAttributes;
 
-public class EvictionAttributesInfo implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long	serialVersionUID	= 1L;
-	private String evictionAction = "";
-	private String evictionAlgorithm = "";
-	private int  evictionMaxValue = 0;
-	
-	public EvictionAttributesInfo(EvictionAttributes ea) {
-		EvictionAction evictAction = ea.getAction();
-		
-		if (evictAction != null) {
-				evictionAction = evictAction.toString();
-		}
-		EvictionAlgorithm evictionAlgo = ea.getAlgorithm();
-		if (evictionAlgo != null){
-			evictionAlgorithm = evictionAlgo.toString();
-		}
-			
-		evictionMaxValue = ea.getMaximum();
-	}
+public class EvictionAttributesInfo implements Serializable {
 
-	public String getEvictionAction() {
-		return evictionAction;
-	}
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+  private String evictionAction = "";
+  private String evictionAlgorithm = "";
+  private int evictionMaxValue = 0;
 
-	public String getEvictionAlgorithm() {
-		return evictionAlgorithm;
-	}
+  public EvictionAttributesInfo(EvictionAttributes ea) {
+    EvictionAction evictAction = ea.getAction();
 
-	public int getEvictionMaxValue() {
-		return evictionMaxValue;
-	}
+    if (evictAction != null) {
+      evictionAction = evictAction.toString();
+    }
+    EvictionAlgorithm evictionAlgo = ea.getAlgorithm();
+    if (evictionAlgo != null) {
+      evictionAlgorithm = evictionAlgo.toString();
+    }
+
+    evictionMaxValue = ea.getMaximum();
+  }
+
+  public String getEvictionAction() {
+    return evictionAction;
+  }
+
+  public String getEvictionAlgorithm() {
+    return evictionAlgorithm;
+  }
+
+  public int getEvictionMaxValue() {
+    return evictionMaxValue;
+  }
 
 }

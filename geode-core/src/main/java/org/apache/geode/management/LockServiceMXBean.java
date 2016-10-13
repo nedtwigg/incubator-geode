@@ -68,7 +68,6 @@ public interface LockServiceMXBean {
    */
   public boolean isLockGrantor();
 
- 
   /**
    * Requests that this member become the granter.
    */

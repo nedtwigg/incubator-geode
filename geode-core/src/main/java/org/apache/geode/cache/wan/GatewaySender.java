@@ -35,7 +35,7 @@ public interface GatewaySender {
   /**
    * The default value ( true) for writing to disk synchronously in case
    * of persistence.
-   */  
+   */
   public static final boolean DEFAULT_DISK_SYNCHRONOUS = true;
   /**
    * The default buffer size for socket buffers from a sending GatewaySender to
@@ -48,26 +48,22 @@ public interface GatewaySender {
    * sending <code>Gateway</code> and its receiving <code>Gateway</code> will
    * block.
    */
-  public static final int DEFAULT_SOCKET_READ_TIMEOUT = Integer.getInteger(
-      DistributionConfig.GEMFIRE_PREFIX + "cache.gatewaySender.default-socket-read-timeout", 0).intValue();
+  public static final int DEFAULT_SOCKET_READ_TIMEOUT = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "cache.gatewaySender.default-socket-read-timeout", 0).intValue();
 
   /**
    * The default minimum socket read timeout.
    */
   public static final int MINIMUM_SOCKET_READ_TIMEOUT = 30000;
-  
+
   /**
    * Size of the oplog file used for the persistent queue in bytes
    */
-  static public final int QUEUE_OPLOG_SIZE
-      = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "cache.gatewaySender.queueOpLogSize", 1024 * 1024 * 100).intValue();
+  static public final int QUEUE_OPLOG_SIZE = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "cache.gatewaySender.queueOpLogSize", 1024 * 1024 * 100).intValue();
 
-  
   /**
    * The default value (false)of whether to persist queue data to disk or not.
    */
   public static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
-
 
   /**
    * The default batch conflation
@@ -89,10 +85,7 @@ public interface GatewaySender {
    */
   public static final int DEFAULT_ALERT_THRESHOLD = 0;
 
-  public static final int DEFAULT_PARALLELISM_REPLICATED_REGION = Integer
-      .getInteger(
-          DistributionConfig.GEMFIRE_PREFIX + "cache.gatewaySender.defaultParallelismForReplicatedRegion",
-          113).intValue();  
+  public static final int DEFAULT_PARALLELISM_REPLICATED_REGION = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "cache.gatewaySender.defaultParallelismForReplicatedRegion", 113).intValue();
 
   public static final int DEFAULT_DISTRIBUTED_SYSTEM_ID = -1;
 
@@ -111,40 +104,33 @@ public interface GatewaySender {
    * Time, in seconds, that we allow before a <code>GatewaySender is considered
    * dead and should be aborted
    */
-  public static final long GATEWAY_SENDER_TIMEOUT
-      = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "GATEWAY_SENDER_TIMEOUT", 30).intValue();
+  public static final long GATEWAY_SENDER_TIMEOUT = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "GATEWAY_SENDER_TIMEOUT", 30).intValue();
 
-  
   /**
    * The obsolete socket read timeout java system property. Since customers have
    * been given this property, it is used to log a warning.
    */
   public static final String GATEWAY_CONNECTION_READ_TIMEOUT_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.GATEWAY_CONNECTION_READ_TIMEOUT";
 
-  public static final int GATEWAY_CONNECTION_IDLE_TIMEOUT = Integer
-      .getInteger(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.GATEWAY_CONNECTION_IDLE_TIMEOUT", -1).intValue();
-  
+  public static final int GATEWAY_CONNECTION_IDLE_TIMEOUT = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.GATEWAY_CONNECTION_IDLE_TIMEOUT", -1).intValue();
+
   /**
    * If the System property is set, use it. Otherwise, set default to 'true'.
    */
-  public static final boolean REMOVE_FROM_QUEUE_ON_EXCEPTION =
-      (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION") != null)
-          ? Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION")
-      : true;
+  public static final boolean REMOVE_FROM_QUEUE_ON_EXCEPTION = (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION") != null) ? Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION") : true;
 
   public static final boolean EARLY_ACK = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.EARLY_ACK");
 
   public static final boolean DEFAULT_IS_PARALLEL = false;
-  
+
   public static final boolean DEFAULT_IS_FOR_INTERNAL_USE = false;
-  
+
   /**
    * Retry a connection from sender to receiver after specified time interval (in milliseconds) 
    * in case receiver is not up and running. Default is set to 1000 milliseconds i.e. 1 second.
    */
-  public static final int CONNECTION_RETRY_INTERVAL = Integer.getInteger(
-      DistributionConfig.GEMFIRE_PREFIX + "gateway-connection-retry-interval", 1000).intValue();
-  
+  public static final int CONNECTION_RETRY_INTERVAL = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "gateway-connection-retry-interval", 1000).intValue();
+
   /**
    * The order policy. This enum is applicable only when concurrency-level is > 1.
    * 
@@ -167,6 +153,7 @@ public interface GatewaySender {
      */
     PARTITION
   }
+
   /**
    * Starts this GatewaySender. Once the GatewaySender is running, its
    * configuration cannot be changed.
@@ -218,12 +205,12 @@ public interface GatewaySender {
    * Rebalances this GatewaySender.
    */
   public void rebalance();
-  
+
   /**
    * Returns whether or not this GatewaySender is running.
    */
   public boolean isRunning();
-  
+
   /**
    * Returns whether or not this GatewaySender is paused.
    * 
@@ -250,7 +237,7 @@ public interface GatewaySender {
    * @return this <code>GatewaySender's</code> <code>GatewayEventSubstitutionFilter</code>
    */
   public GatewayEventSubstitutionFilter getGatewayEventSubstitutionFilter();
-  
+
   /**
    * Returns the id of this GatewaySender.
    * 
@@ -374,7 +361,7 @@ public interface GatewaySender {
    * 
    */
   public boolean isDiskSynchronous();
-  
+
   /**
    * Returns the manual start boolean property for this GatewaySender.
    * Default is false i.e. the GatewaySender will automatically start once created.
@@ -391,8 +378,7 @@ public interface GatewaySender {
    * 
    */
   public boolean isParallel();
-  
-  
+
   /**
    * Returns the number of dispatcher threads working for this <code>GatewaySender</code>.
    * Default number of dispatcher threads is 5.
@@ -400,16 +386,16 @@ public interface GatewaySender {
    * @return the number of dispatcher threads working for this <code>GatewaySender</code>
    */
   public int getDispatcherThreads();
-  
+
   /**
    * Returns the order policy followed while dispatching the events to remote ds.
    * Order policy is set only when dispatcher threads are > 1.
    * Default value of order policy is KEY.
    * @return the order policy followed while dispatching the events to remote ds.
    */
-  
+
   public OrderPolicy getOrderPolicy();
-  
+
   public int getMaxParallelismForReplicatedRegion();
 
 }

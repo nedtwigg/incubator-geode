@@ -38,16 +38,17 @@ public class IndexInfo implements Serializable {
   public IndexInfo(String indexName) {
     this.indexName = indexName;
   }
-  
+
   /***
    * Used for passing index information for destroying index.
    * @param indexName
    * @param regionPath
    */
-  public IndexInfo (String indexName, String regionPath) {
+  public IndexInfo(String indexName, String regionPath) {
     this.indexName = indexName;
     this.regionPath = regionPath;
   }
+
   public IndexInfo(String indexName, String indexedExpression, String regionPath) {
     this.indexName = indexName;
     this.indexedExpression = indexedExpression;
@@ -64,28 +65,35 @@ public class IndexInfo implements Serializable {
   public String getIndexName() {
     return indexName;
   }
+
   public void setIndexName(String indexName) {
     this.indexName = indexName;
   }
+
   public String getIndexedExpression() {
     return indexedExpression;
   }
+
   public void setIndexedExpression(String indexedExpression) {
     this.indexedExpression = indexedExpression;
   }
+
   public String getRegionPath() {
     return this.regionPath;
   }
+
   public void setRegionPath(String regionPath) {
     this.regionPath = regionPath;
   }
+
   public int getIndexType() {
     return indexType;
   }
+
   public void setIndexType(int indexType) {
     this.indexType = indexType;
   }
-  
+
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append("Index Name : ");

@@ -28,9 +28,9 @@ package org.apache.geode.cache;
  * @since GemFire 2.0
  */
 public class RegionExistsException extends CacheException {
-private static final long serialVersionUID = -5643670216230359426L;
+  private static final long serialVersionUID = -5643670216230359426L;
   private transient Region region;
-  
+
   /**
    * Constructs an instance of <code>RegionExistsException</code> with the specified Region.
    * @param rgn the Region that exists
@@ -39,7 +39,7 @@ private static final long serialVersionUID = -5643670216230359426L;
     super(rgn.getFullPath());
     this.region = rgn;
   }
-  
+
   /**
    * Constructs an instance of <code>RegionExistsException</code> with the specified detail message
    * and cause.

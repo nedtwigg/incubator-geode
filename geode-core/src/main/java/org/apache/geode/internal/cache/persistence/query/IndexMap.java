@@ -65,7 +65,7 @@ public interface IndexMap {
    * Return all of the IndexEntries that map to a given region key.
    */
   CloseableIterator<IndexEntry> get(Object indexKey);
-  
+
   /**
    * Return the set of index keys for a given region key.
    */
@@ -76,25 +76,23 @@ public interface IndexMap {
    * If end < start, this will return a descending iterator going from end
    * to start. 
    */
-  CloseableIterator<IndexEntry> iterator(Object start, boolean startInclusive, 
-      Object end, boolean endInclusive);
-  
+  CloseableIterator<IndexEntry> iterator(Object start, boolean startInclusive, Object end, boolean endInclusive);
+
   /**
    * Return all of the IndexEntries that from start to the tail of the map.
    */
   CloseableIterator<IndexEntry> iterator(Object start, boolean startInclusive);
-  
+
   /**
    * Return all of the IndexEntries in the map.
    */
   CloseableIterator<IndexEntry> iterator();
-  
+
   /**
    * Return all of the IndexEntries from the end to the head of the map.
    */
-  CloseableIterator<IndexEntry> descendingIterator(Object end, 
-      boolean endInclusive);
-  
+  CloseableIterator<IndexEntry> descendingIterator(Object end, boolean endInclusive);
+
   /**
    * Return all of the IndexEntries in the map in descending order.
    */
@@ -103,33 +101,29 @@ public interface IndexMap {
   /**
    * Return all of the region keys from start to end.
    */
-  CloseableIterator<CachedDeserializable> keyIterator(Object start, 
-      boolean startInclusive, Object end, boolean endInclusive);
-  
+  CloseableIterator<CachedDeserializable> keyIterator(Object start, boolean startInclusive, Object end, boolean endInclusive);
+
   /**
    * Return all of the region keys from start to the tail of the map
    */
-  CloseableIterator<CachedDeserializable> keyIterator(Object start, 
-      boolean startInclusive);
-  
+  CloseableIterator<CachedDeserializable> keyIterator(Object start, boolean startInclusive);
+
   /**
    * Return all of the region keys in the map
    */
   CloseableIterator<CachedDeserializable> keyIterator();
-  
+
   /**
    * Return all of the region keys from the end to the head of the map, in
    * descending order.
    */
-  CloseableIterator<CachedDeserializable> descendingKeyIterator(Object end, 
-      boolean endInclusive);
-  
+  CloseableIterator<CachedDeserializable> descendingKeyIterator(Object end, boolean endInclusive);
+
   /**
    * Return all of the region keys in the map, in
    * descending order.
    */
   CloseableIterator<CachedDeserializable> descendingKeyIterator();
-
 
   /**
    * Return the estimate of the size of the map in the given range,
@@ -149,12 +143,11 @@ public interface IndexMap {
    */
   long sizeFromStart(Object end);
 
-
   /**
    * Return an estimate of the size of the map.
    */
   long size();
-  
+
   /**
    * Destroy the index map and remove all data from disk. Once a map is
    * destroyed, it will not be recovered.
@@ -170,16 +163,16 @@ public interface IndexMap {
      * Return the index key of the entry. May be NULL.
      */
     CachedDeserializable getKey();
+
     /**
      * Return the region key for the index
      */
     CachedDeserializable getRegionKey();
+
     /**
      * Return the value of the entry. May be NULL.
      */
     CachedDeserializable getValue();
   }
 
-  
-  
 }

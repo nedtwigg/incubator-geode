@@ -34,7 +34,7 @@ package org.apache.geode.cache.query.internal;
  * 
  *  
  */
-class OrganizedOperands  {
+class OrganizedOperands {
 
   Filter filterOperand;
   CompiledValue iterateOperand;

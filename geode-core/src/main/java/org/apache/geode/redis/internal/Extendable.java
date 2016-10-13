@@ -28,5 +28,5 @@ public interface Extendable {
    * @return Error string
    */
   public String getArgsError();
-  
+
 }

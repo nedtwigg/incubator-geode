@@ -29,6 +29,4 @@ public abstract class SerialDistributionMessage extends DistributionMessage {
     return DistributionManager.SERIAL_EXECUTOR;
   }
 
-
 }
-

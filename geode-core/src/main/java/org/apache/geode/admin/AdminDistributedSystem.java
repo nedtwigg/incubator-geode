@@ -40,12 +40,12 @@ import java.util.UUID;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public interface AdminDistributedSystem {
-	
+
   /**
    * Retrieves the unique id for this system.
    */
   public String getId();
-  
+
   /**
    * Retrieves display friendly name for this system.  If this administrative
    * VM defined an optional name for its connection to the distributed system,
@@ -53,7 +53,7 @@ public interface AdminDistributedSystem {
    * org.apache.geode.admin.AdminDistributedSystem#getId}.
    */
   public String getName();
-  
+
   /**
    * Retrieves the remote command and formatting this system should use to 
    * access and/or manipulate resources on remote machines.
@@ -82,7 +82,7 @@ public interface AdminDistributedSystem {
    * @see #setAlertLevel
    */
   public AlertLevel getAlertLevel();
-  
+
   /**
    * Sets the lowest level of alert that should be delivered to the
    * {@link AlertListener}s registered on this
@@ -132,7 +132,7 @@ public interface AdminDistributedSystem {
    * Returns true if this system has enabled the use of multicast for communications
    */
   public boolean isMcastEnabled();
-  
+
   /**
    * Returns true if any members of this system are currently running.
    */
@@ -143,7 +143,7 @@ public interface AdminDistributedSystem {
    * system.
    */
   public boolean isConnected();
-    
+
   /**
    * Starts all managed entities that are not currently running.
    *
@@ -187,27 +187,26 @@ public interface AdminDistributedSystem {
    * attribute of this <code>AdminDistributedSystem</code>.
    */
   public DistributionLocator addDistributionLocator();
-  
+
   /** 
    * Returns array of <code>DistributionLocator</code>s administered
    * by this <code>AdminDistributedSystem</code>.
-   */ 
+   */
   public DistributionLocator[] getDistributionLocators();
-  
+
   /**
    * Retrieves SystemMember instances for every
    * application that is running and currently connection to this
    * system.  Note that this list does not include dedicated
    * {@linkplain #getCacheVms cache server vms}.
    */
-  public SystemMember[] getSystemMemberApplications() 
-  throws org.apache.geode.admin.AdminException;
+  public SystemMember[] getSystemMemberApplications() throws org.apache.geode.admin.AdminException;
 
   /**
    * Display in readable format the latest Alert in this distributed system.
    */
   public String getLatestAlert();
-  
+
   /**
    * Returns an object for monitoring the health of GemFire.
    */
@@ -245,17 +244,16 @@ public interface AdminDistributedSystem {
    * @throws IllegalStateException
    *         If {@link #connect} has not yet been called.
    */
-  public boolean waitToBeConnected(long timeout)
-    throws InterruptedException;
+  public boolean waitToBeConnected(long timeout) throws InterruptedException;
 
   /**
    * Disconnects from the distributed system.
    */
   public void disconnect();
 
-  /** Returns this system's configuration .*/  
+  /** Returns this system's configuration .*/
   public DistributedSystemConfig getConfig();
-  
+
   /**
    * Registers a listener that receives callbacks when a member joins
    * or leaves the distributed system.
@@ -276,15 +274,15 @@ public interface AdminDistributedSystem {
    * @param listener the listener to register.
     * @since GemFire 5.0
    */
-   public void addCacheListener(SystemMemberCacheListener listener);
+  public void addCacheListener(SystemMemberCacheListener listener);
 
-   /**
-    * Unregisters a cache listener. Does nothing if the listener is
-    * not registered.
-    * @param listener the listener to unregister.
-    * @since GemFire 5.0
-    */
-   public void removeCacheListener(SystemMemberCacheListener listener);
+  /**
+   * Unregisters a cache listener. Does nothing if the listener is
+   * not registered.
+   * @param listener the listener to unregister.
+   * @since GemFire 5.0
+   */
+  public void removeCacheListener(SystemMemberCacheListener listener);
 
   /**
    * Creates a new cache server that is ready to {@linkplain
@@ -321,8 +319,7 @@ public interface AdminDistributedSystem {
    *
    * @since GemFire 5.6
    */
-  public CacheServer[] getCacheServers(String durableClientId)
-      throws AdminException;
+  public CacheServer[] getCacheServers(String durableClientId) throws AdminException;
 
   /**
    * Creates a new cache vm that is ready to {@linkplain
@@ -351,8 +348,7 @@ public interface AdminDistributedSystem {
    * @return administrative SystemMember for that distributed member
    * @since GemFire 5.0
    */
-  public SystemMember lookupSystemMember(DistributedMember distributedMember) 
-  throws AdminException;
+  public SystemMember lookupSystemMember(DistributedMember distributedMember) throws AdminException;
 
   /**
    * Indicate to the distributed system that persistent files have been lost.
@@ -369,7 +365,7 @@ public interface AdminDistributedSystem {
    * @deprecated use {@link #revokePersistentMember(UUID)} instead
    */
   public void revokePersistentMember(InetAddress host, String directory) throws AdminException;
-  
+
   /**
    * Indicate to the distributed system that persistent files have been lost.
    * When a member recovers from a set of persistent files, it will wait for
@@ -384,7 +380,7 @@ public interface AdminDistributedSystem {
    * @since GemFire 7.0
    */
   public void revokePersistentMember(UUID diskStoreID) throws AdminException;
-  
+
   /**
    * Retrieve the set of persistent files that the existing members are waiting
    * for. See {@link AdminDistributedSystem#revokePersistentMember(InetAddress, String)}
@@ -412,7 +408,7 @@ public interface AdminDistributedSystem {
    * @since GemFire 6.5
    */
   public Set<DistributedMember> shutDownAllMembers() throws AdminException;
-  
+
   /**
    * Shuts down all the members of the distributed system with a cache that the
    * admin member is connected to, excluding the stand-alone locators. Calling
@@ -445,7 +441,7 @@ public interface AdminDistributedSystem {
    * @since GemFire 6.5
    */
   public BackupStatus backupAllMembers(File targetDir) throws AdminException;
-  
+
   /**
    * Incrementally backup the persistent files for all of the members of the distributed
    * system that the admin member is connected to. Only new operation log files since the previous backup will be copied during this backup.
@@ -461,8 +457,8 @@ public interface AdminDistributedSystem {
    * offline at the time of backup.
    * @since GemFire 6.5
    */
-  public BackupStatus backupAllMembers(File targetDir,File baselineDir) throws AdminException;
-  
+  public BackupStatus backupAllMembers(File targetDir, File baselineDir) throws AdminException;
+
   /**
    * Compact the persistent files for all of the members of the distributed
    * system that the admin member connected to. 
@@ -474,4 +470,3 @@ public interface AdminDistributedSystem {
    */
   public Map<DistributedMember, Set<PersistentID>> compactAllDiskStores() throws AdminException;
 }
-

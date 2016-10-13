@@ -35,15 +35,15 @@ import java.io.IOException;
 public class MemoryThresholds {
 
   public enum MemoryState {
-    DISABLED,                   // Both eviction and critical disabled
-    EVICTION_DISABLED,          // Eviction disabled, critical enabled, critical threshold not exceeded
+    DISABLED, // Both eviction and critical disabled
+    EVICTION_DISABLED, // Eviction disabled, critical enabled, critical threshold not exceeded
     EVICTION_DISABLED_CRITICAL, // Eviction disabled, critical enabled, critical threshold exceeded
-    CRITICAL_DISABLED,          // Critical disabled, eviction enabled, eviction threshold not exceeded
+    CRITICAL_DISABLED, // Critical disabled, eviction enabled, eviction threshold not exceeded
     EVICTION_CRITICAL_DISABLED, // Critical disabled, eviction enabled, eviction threshold exceeded
-    NORMAL,                     // Both eviction and critical enabled, neither threshold exceeded
-    EVICTION,                   // Both eviction and critical enabled, eviction threshold exceeded
-    CRITICAL,                   // Both eviction and critical enabled, critical threshold exceeded
-    EVICTION_CRITICAL;          // Both eviction and critical enabled, both thresholds exceeded
+    NORMAL, // Both eviction and critical enabled, neither threshold exceeded
+    EVICTION, // Both eviction and critical enabled, eviction threshold exceeded
+    CRITICAL, // Both eviction and critical enabled, critical threshold exceeded
+    EVICTION_CRITICAL; // Both eviction and critical enabled, both thresholds exceeded
 
     public static MemoryState fromData(DataInput in) throws IOException {
       return MemoryState.values()[in.readInt()];
@@ -79,7 +79,7 @@ public class MemoryThresholds {
    * thrown, even when usage crosses the critical threshold.
    */
   private static final boolean DISABLE_LOW_MEM_EXCEPTION = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableLowMemoryException");
-  
+
   /**
    * The default percent of memory at which the VM is considered in a
    * critical state.
@@ -99,15 +99,13 @@ public class MemoryThresholds {
    * Memory usage must fall below THRESHOLD-THRESHOLD_THICKNESS before we deliver
    * a down event
    */
-  private static final double THRESHOLD_THICKNESS = Double.parseDouble(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "thresholdThickness",
-      "2.00"));
+  private static final double THRESHOLD_THICKNESS = Double.parseDouble(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "thresholdThickness", "2.00"));
 
   /**
    * Memory usage must fall below THRESHOLD-THRESHOLD_THICKNESS_EVICT before we
    * deliver an eviction down event
    */
-  private static final double THRESHOLD_THICKNESS_EVICT = Double.parseDouble(System.getProperty(
-      DistributionConfig.GEMFIRE_PREFIX + "eviction-thresholdThickness", Double.toString(THRESHOLD_THICKNESS)));
+  private static final double THRESHOLD_THICKNESS_EVICT = Double.parseDouble(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "eviction-thresholdThickness", Double.toString(THRESHOLD_THICKNESS)));
 
   private final long maxMemoryBytes;
 
@@ -125,7 +123,7 @@ public class MemoryThresholds {
 
   // Number of bytes used below which memory will leave the critical state
   private final long criticalThresholdClearBytes;
-  
+
   // Number of bytes used below which memory will leave the eviction state
   private final long evictionThresholdClearBytes;
 
@@ -138,26 +136,23 @@ public class MemoryThresholds {
    */
   public MemoryThresholds(long maxMemoryBytes, float criticalThreshold, float evictionThreshold) {
     if (criticalThreshold > 100.0f || criticalThreshold < 0.0f) {
-      throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GT_ZERO_AND_LTE_100
-          .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GT_ZERO_AND_LTE_100.toLocalizedString());
     }
 
     if (evictionThreshold > 100.0f || evictionThreshold < 0.0f) {
-      throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_EVICTION_PERCENTAGE_GT_ZERO_AND_LTE_100
-          .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_EVICTION_PERCENTAGE_GT_ZERO_AND_LTE_100.toLocalizedString());
     }
-    
+
     if (evictionThreshold != 0 && criticalThreshold != 0 && evictionThreshold >= criticalThreshold) {
-      throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GTE_EVICTION_PERCENTAGE
-          .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GTE_EVICTION_PERCENTAGE.toLocalizedString());
     }
-        
+
     this.maxMemoryBytes = maxMemoryBytes;
-    
+
     this.criticalThreshold = criticalThreshold;
     this.criticalThresholdBytes = (long) (criticalThreshold * 0.01 * maxMemoryBytes);
     this.criticalThresholdClearBytes = (long) (this.criticalThresholdBytes - (0.01 * THRESHOLD_THICKNESS * this.maxMemoryBytes));
-    
+
     this.evictionThreshold = evictionThreshold;
     this.evictionThresholdBytes = (long) (evictionThreshold * 0.01 * maxMemoryBytes);
     this.evictionThresholdClearBytes = (long) (this.evictionThresholdBytes - (0.01 * THRESHOLD_THICKNESS_EVICT * this.maxMemoryBytes));
@@ -166,11 +161,11 @@ public class MemoryThresholds {
   public static final boolean isLowMemoryExceptionDisabled() {
     return DISABLE_LOW_MEM_EXCEPTION;
   }
-  
+
   public MemoryState computeNextState(final MemoryState oldState, final long bytesUsed) {
     assert oldState != null;
     assert bytesUsed >= 0;
-    
+
     // Are both eviction and critical thresholds enabled?
     if (this.evictionThreshold != 0 && this.criticalThreshold != 0) {
       if (bytesUsed < this.evictionThresholdClearBytes || (!oldState.isEviction() && bytesUsed < this.evictionThresholdBytes)) {
@@ -181,12 +176,12 @@ public class MemoryThresholds {
       }
       return MemoryState.EVICTION_CRITICAL;
     }
-    
+
     // Are both eviction and critical thresholds disabled?
     if (this.evictionThreshold == 0 && this.criticalThreshold == 0) {
       return MemoryState.DISABLED;
     }
-    
+
     // Is just critical threshold enabled?
     if (this.evictionThreshold == 0) {
       if (bytesUsed < this.criticalThresholdClearBytes || (!oldState.isCritical() && bytesUsed < this.criticalThresholdBytes)) {
@@ -194,26 +189,18 @@ public class MemoryThresholds {
       }
       return MemoryState.EVICTION_DISABLED_CRITICAL;
     }
-    
+
     // Just the eviction threshold is enabled
     if (bytesUsed < this.evictionThresholdClearBytes || (!oldState.isEviction() && bytesUsed < this.evictionThresholdBytes)) {
       return MemoryState.CRITICAL_DISABLED;
     }
-    
+
     return MemoryState.EVICTION_CRITICAL_DISABLED;
   }
 
   @Override
   public String toString() {
-    return new StringBuilder().append("MemoryThresholds@[").append(System.identityHashCode(this))
-        .append(" maxMemoryBytes:" + this.maxMemoryBytes)
-        .append(", criticalThreshold:" + this.criticalThreshold)
-        .append(", criticalThresholdBytes:" + this.criticalThresholdBytes)
-        .append(", criticalThresholdClearBytes:" + this.criticalThresholdClearBytes)
-        .append(", evictionThreshold:" + this.evictionThreshold)
-        .append(", evictionThresholdBytes:" + this.evictionThresholdBytes)
-        .append(", evictionThresholdClearBytes:" + this.evictionThresholdClearBytes)
-        .append("]").toString();
+    return new StringBuilder().append("MemoryThresholds@[").append(System.identityHashCode(this)).append(" maxMemoryBytes:" + this.maxMemoryBytes).append(", criticalThreshold:" + this.criticalThreshold).append(", criticalThresholdBytes:" + this.criticalThresholdBytes).append(", criticalThresholdClearBytes:" + this.criticalThresholdClearBytes).append(", evictionThreshold:" + this.evictionThreshold).append(", evictionThresholdBytes:" + this.evictionThresholdBytes).append(", evictionThresholdClearBytes:" + this.evictionThresholdClearBytes).append("]").toString();
   }
 
   public long getMaxMemoryBytes() {
@@ -231,7 +218,7 @@ public class MemoryThresholds {
   public long getCriticalThresholdClearBytes() {
     return this.criticalThresholdClearBytes;
   }
-  
+
   public boolean isCriticalThresholdEnabled() {
     return this.criticalThreshold > 0.0f;
   }
@@ -247,7 +234,7 @@ public class MemoryThresholds {
   public long getEvictionThresholdClearBytes() {
     return this.evictionThresholdClearBytes;
   }
-  
+
   public boolean isEvictionThresholdEnabled() {
     return this.evictionThreshold > 0.0f;
   }

@@ -31,15 +31,15 @@ import org.apache.geode.distributed.internal.membership.InternalRole;
  * @deprecated the MembershipAttributes API is scheduled to be removed
  */
 public class RegionAccessException extends RegionRoleException {
-private static final long serialVersionUID = 3142958723089038406L;
-  
+  private static final long serialVersionUID = 3142958723089038406L;
+
   /** 
    * Set of missing required roles causing access to the region to fail.
    * missingRoles is transient to avoid NotSerializableException. See {@link
    * #writeObject} and {@link #readObject} for custom serialization.
    */
   private transient Set missingRoles = Collections.EMPTY_SET;
-  
+
   /** 
    * Constructs a <code>RegionAccessException</code> with a message.
    * @param s the String message
@@ -53,7 +53,7 @@ private static final long serialVersionUID = 3142958723089038406L;
       this.missingRoles = Collections.EMPTY_SET;
     }
   }
-  
+
   /** 
    * Constructs a <code>RegionAccessException</code> with a message and
    * a cause.
@@ -62,14 +62,14 @@ private static final long serialVersionUID = 3142958723089038406L;
    * @param missingRoles the missing required roles that caused this exception
    * @param ex the Throwable cause
    */
-  public RegionAccessException(String s,  String regionFullPath, Set missingRoles, Throwable ex) {
+  public RegionAccessException(String s, String regionFullPath, Set missingRoles, Throwable ex) {
     super(s, regionFullPath, ex);
     this.missingRoles = missingRoles;
     if (this.missingRoles == null) {
       this.missingRoles = Collections.EMPTY_SET;
     }
   }
-  
+
   /** 
    * Returns the missing required roles that caused this exception.
    * @return the missing required roles that caused this exception
@@ -77,34 +77,32 @@ private static final long serialVersionUID = 3142958723089038406L;
   public Set getMissingRoles() {
     return this.missingRoles;
   }
-  
+
   /** 
    * Override writeObject which is used in serialization. Customize 
    * serialization of this exception to avoid escape of InternalRole
    * which is not Serializable. 
    */
-  private void writeObject(java.io.ObjectOutputStream out)
-  throws IOException {
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
     out.defaultWriteObject();
     // transform roles to string names which are serializable...
     Set roleNames = new HashSet(this.missingRoles.size());
     for (Iterator iter = this.missingRoles.iterator(); iter.hasNext();) {
-      String name = ((Role)iter.next()).getName();
+      String name = ((Role) iter.next()).getName();
       roleNames.add(name);
     }
     out.writeObject(roleNames);
   }
-  
+
   /** 
    * Override readObject which is used in serialization. Customize 
    * serialization of this exception to avoid escape of InternalRole
    * which is not Serializable. 
    */
-  private void readObject(java.io.ObjectInputStream in)
-  throws IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     // transform string names which are serializable back into roles...
-    Set roleNames = (Set)in.readObject();
+    Set roleNames = (Set) in.readObject();
     Set roles = new HashSet(roleNames.size());
     for (Iterator iter = roleNames.iterator(); iter.hasNext();) {
       String name = (String) iter.next();
@@ -112,6 +110,5 @@ private static final long serialVersionUID = 3142958723089038406L;
     }
     this.missingRoles = roles;
   }
-     
-}
 
+}

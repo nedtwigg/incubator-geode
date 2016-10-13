@@ -99,8 +99,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     NodeList nodes = XmlUtils.query(config, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewNamed.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewNamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     Element element = (Element) nodes.item(0);
@@ -120,20 +119,20 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("r3", childNodes.get(5).getAttributes().getNamedItem("name").getNodeValue());
     assertEquals("test:cache", childNodes.get(6).getNodeName());
   }
-  
+
   /**
    * Return just the nodes from a nodelist that are of type
    * element.
    */
   private List<Node> getElementNodes(NodeList nodes) {
     ArrayList<Node> result = new ArrayList<Node>();
-    for(int i = 0; i < nodes.getLength(); i++) {
+    for (int i = 0; i < nodes.getLength(); i++) {
       Node node = nodes.item(i);
-      if(node.getNodeType() == Node.ELEMENT_NODE) {
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
         result.add(node);
       }
     }
-    
+
     return result;
   }
 
@@ -152,8 +151,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     NodeList nodes = XmlUtils.query(config, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamed.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     Element element = (Element) nodes.item(0);
@@ -189,14 +187,13 @@ public class XmlUtilsAddNewNodeJUnitTest {
     NodeList nodes = XmlUtils.query(config, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamedExtension.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamedExtension.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     Element element = (Element) nodes.item(0);
     assertEquals(TEST_NAMESPACE, element.getNamespaceURI());
     assertEquals("test:region", element.getNodeName());
-    
+
     final XmlEntity xmlEntity = XmlEntity.builder().withType("region").withNamespace(TEST_PREFIX, TEST_NAMESPACE).withConfig(changes).build();
     XmlUtils.addNewNode(config, xmlEntity);
 
@@ -207,8 +204,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("test:region", element.getNodeName());
 
     final List<Node> childElements = getElementNodes(config.getFirstChild().getChildNodes());
-    
-    
+
     assertEquals("test:cache", childElements.get(5).getNodeName());
     assertEquals("test:region", childElements.get(6).getNodeName());
     assertEquals(7, childElements.size());
@@ -232,8 +228,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals(1, getElementNodes(element.getChildNodes()).size());
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceNamed.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceNamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     element = (Element) nodes.item(0);
@@ -267,8 +262,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("foo", XmlUtils.getAttribute(element, "disk-store-name"));
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamed.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     element = (Element) nodes.item(0);
@@ -303,8 +297,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("1", XmlUtils.getAttribute(element, "value"));
     assertEquals(TEST_NAMESPACE, element.getNamespaceURI());
 
-    final org.w3c.dom.Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamedExtension.xml")));
+    final org.w3c.dom.Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamedExtension.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     element = (Element) nodes.item(0);
@@ -339,8 +332,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals(1, getElementNodes(element.getChildNodes()).size());
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testDeleteNodeNamed.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeNamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
@@ -368,8 +360,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("foo", XmlUtils.getAttribute(element, "disk-store-name"));
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamed.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
@@ -398,8 +389,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("1", XmlUtils.getAttribute(element, "value"));
     assertEquals(TEST_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream(
-        "XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamedExtension.xml")));
+    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamedExtension.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 

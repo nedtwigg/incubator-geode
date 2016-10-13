@@ -33,7 +33,7 @@ public class QueryAPITestPartitionResolver implements PartitionResolver {
 
   @Override
   public Serializable getRoutingObject(EntryOperation opDetails) {
-    return (((Integer)opDetails.getKey()).intValue()%QueryUsingFunctionContextDUnitTest.numOfBuckets);
+    return (((Integer) opDetails.getKey()).intValue() % QueryUsingFunctionContextDUnitTest.numOfBuckets);
   }
 
   @Override

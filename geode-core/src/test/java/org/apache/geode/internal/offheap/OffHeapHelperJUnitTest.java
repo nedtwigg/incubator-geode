@@ -36,7 +36,7 @@ public class OffHeapHelperJUnitTest extends AbstractStoredObjectTestBase {
 
   private StoredObject storedObject = null;
   private Object deserializedRegionEntryValue = null;
-  private byte[] serializedRegionEntryValue   = null;
+  private byte[] serializedRegionEntryValue = null;
   private MemoryAllocator ma;
 
   @Before
@@ -132,8 +132,7 @@ public class OffHeapHelperJUnitTest extends AbstractStoredObjectTestBase {
     Object heapObject = OffHeapHelper.getHeapForm(storedObject);
     assertThat("getHeapForm returns non-null object", heapObject, notNullValue());
     assertThat("Heap and off heap objects are different objects", heapObject, is(not(storedObject)));
-    assertThat("Deserialzed values of offHeap object and returned object are equal", heapObject,
-        is(equalTo(deserializedRegionEntryValue)));
+    assertThat("Deserialzed values of offHeap object and returned object are equal", heapObject, is(equalTo(deserializedRegionEntryValue)));
   }
 
   @Test
@@ -188,8 +187,7 @@ public class OffHeapHelperJUnitTest extends AbstractStoredObjectTestBase {
   public void copyAndReleaseWithSerializedReturnsValueOfOriginal() {
     allocateOffHeapSerialized();
     assertTrue(storedObject.retain());
-    Object returnObject = ((VMCachedDeserializable) OffHeapHelper.copyAndReleaseIfNeeded(storedObject))
-        .getSerializedValue();
+    Object returnObject = ((VMCachedDeserializable) OffHeapHelper.copyAndReleaseIfNeeded(storedObject)).getSerializedValue();
     assertThat(returnObject, is(equalTo(serializedRegionEntryValue)));
   }
 

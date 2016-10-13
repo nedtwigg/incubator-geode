@@ -38,7 +38,8 @@ public interface SecurityManager {
    * @throws AuthenticationFailedException
    *                 if some exception occurs during the initialization
    */
-  default void init(Properties securityProps) {}
+  default void init(Properties securityProps) {
+  }
 
   /**
    * Verify the credentials provided in the properties
@@ -66,5 +67,6 @@ public interface SecurityManager {
   /**
    * Close any resources used by the SecurityManager, called when a cache is closed.
    */
-  default void close() {}
+  default void close() {
+  }
 }

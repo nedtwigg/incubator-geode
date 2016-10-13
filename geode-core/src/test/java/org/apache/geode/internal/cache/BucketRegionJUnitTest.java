@@ -43,21 +43,18 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
     Lock activeWriteLock = primaryMoveLock.readLock();
     when(ba.getActiveWriteLock()).thenReturn(activeWriteLock);
     when(ba.isPrimary()).thenReturn(true);
-    
-    ira.setPartitionedRegion(pr)
-      .setPartitionedRegionBucketRedundancy(1)
-      .setBucketAdvisor(ba);
+
+    ira.setPartitionedRegion(pr).setPartitionedRegionBucketRedundancy(1).setBucketAdvisor(ba);
   }
 
   @Override
-  protected DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled,
-      RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache) {
+  protected DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled, RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache) {
     BucketRegion br = new BucketRegion("testRegion", ra, null, cache, ira);
 
     // since br is a real bucket region object, we need to tell mockito to monitor it
     br = spy(br);
 
-//    doNothing().when(dm).addMembershipListener(any());
+    //    doNothing().when(dm).addMembershipListener(any());
     doNothing().when(br).distributeUpdateOperation(any(), anyLong());
     doNothing().when(br).distributeDestroyOperation(any());
     doNothing().when(br).distributeInvalidateOperation(any());
@@ -65,14 +62,14 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
     doNothing().when(br).checkForPrimary();
     doNothing().when(br).handleWANEvent(any());
     doReturn(false).when(br).needWriteLock(any());
-    
+
     return br;
   }
 
   @Override
   protected void verifyDistributeUpdate(DistributedRegion region, EntryEventImpl event, int cnt) {
     assertTrue(region instanceof BucketRegion);
-    BucketRegion br = (BucketRegion)region;
+    BucketRegion br = (BucketRegion) region;
     br.virtualPut(event, false, false, null, false, 12345L, false);
     // verify the result
     if (cnt > 0) {
@@ -85,7 +82,7 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
   @Override
   protected void verifyDistributeDestroy(DistributedRegion region, EntryEventImpl event, int cnt) {
     assertTrue(region instanceof BucketRegion);
-    BucketRegion br = (BucketRegion)region;
+    BucketRegion br = (BucketRegion) region;
     br.basicDestroy(event, false, null);
     // verify the result
     if (cnt > 0) {
@@ -98,7 +95,7 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
   @Override
   protected void verifyDistributeInvalidate(DistributedRegion region, EntryEventImpl event, int cnt) {
     assertTrue(region instanceof BucketRegion);
-    BucketRegion br = (BucketRegion)region;
+    BucketRegion br = (BucketRegion) region;
     br.basicInvalidate(event);
     // verify the result
     if (cnt > 0) {
@@ -111,7 +108,7 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
   @Override
   protected void verifyDistributeUpdateEntryVersion(DistributedRegion region, EntryEventImpl event, int cnt) {
     assertTrue(region instanceof BucketRegion);
-    BucketRegion br = (BucketRegion)region;
+    BucketRegion br = (BucketRegion) region;
     br.basicUpdateEntryVersion(event);
     // verify the result
     if (cnt > 0) {
@@ -120,6 +117,5 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
       verify(br, never()).distributeUpdateEntryVersionOperation(eq(event));
     }
   }
-  
-}
 
+}

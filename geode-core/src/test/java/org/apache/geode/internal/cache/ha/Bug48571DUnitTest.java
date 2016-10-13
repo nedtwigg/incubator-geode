@@ -65,7 +65,7 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
   private static VM server = null;
   private VM client = null;
   private static GemFireCacheImpl cache = null;
-  
+
   private static final String region = Bug48571DUnitTest.class.getSimpleName() + "_region";
   private static int numOfCreates = 0;
   private static int numOfUpdates = 0;
@@ -78,7 +78,7 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
     server = host.getVM(0);
     client = host.getVM(1);
   }
-  
+
   @Override
   public final void preTearDown() throws Exception {
     reset();
@@ -114,6 +114,7 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
         }
         return false;
       }
+
       @Override
       public String description() {
         return "Proxy has not paused yet";
@@ -121,7 +122,7 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
     };
     Wait.waitForCriterion(criterion, 15 * 1000, 200, true);
   }
-  
+
   @Category(FlakyTest.class) // GEODE-510
   @Test
   public void testStatsMatchWithSize() throws Exception {
@@ -134,8 +135,8 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
     server.invoke(() -> Bug48571DUnitTest.doPuts());
     // close durable client
     client.invoke(() -> Bug48571DUnitTest.closeClientCache());
-    
-    server.invoke("verifyProxyHasBeenPaused", () -> verifyProxyHasBeenPaused() );
+
+    server.invoke("verifyProxyHasBeenPaused", () -> verifyProxyHasBeenPaused());
     // resume puts on server, add another 100.
     server.invokeAsync(() -> Bug48571DUnitTest.resumePuts()); // TODO: join or await result
     // start durable client
@@ -151,15 +152,14 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
     props.setProperty(LOG_FILE, "server_" + OSProcess.getId() + ".log");
     props.setProperty(LOG_LEVEL, "info");
-    props.setProperty(STATISTIC_ARCHIVE_FILE, "server_" + OSProcess.getId()
-        + ".gfs");
+    props.setProperty(STATISTIC_ARCHIVE_FILE, "server_" + OSProcess.getId() + ".gfs");
     props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
     CacheFactory cf = new CacheFactory(props);
 
     DistributedSystem ds = new Bug48571DUnitTest().getSystem(props);
     ds.disconnect();
 
-    cache = (GemFireCacheImpl)cf.create();
+    cache = (GemFireCacheImpl) cf.create();
 
     RegionFactory<String, String> rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     rf.setConcurrencyChecksEnabled(false);
@@ -185,8 +185,7 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
 
     props.setProperty(LOG_FILE, "client_" + OSProcess.getId() + ".log");
     props.setProperty(LOG_LEVEL, "info");
-    props.setProperty(STATISTIC_ARCHIVE_FILE, "client_" + OSProcess.getId()
-        + ".gfs");
+    props.setProperty(STATISTIC_ARCHIVE_FILE, "client_" + OSProcess.getId() + ".gfs");
     props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
 
     ClientCacheFactory ccf = new ClientCacheFactory(props);
@@ -205,21 +204,20 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
 
     crf.addCacheListener(new CacheListenerAdapter<String, String>() {
       public void afterInvalidate(EntryEvent<String, String> event) {
-        cache.getLoggerI18n().fine(
-            "Invalidate Event: " + event.getKey() + ", " + event.getNewValue());
+        cache.getLoggerI18n().fine("Invalidate Event: " + event.getKey() + ", " + event.getNewValue());
         numOfInvalidates++;
       }
+
       public void afterCreate(EntryEvent<String, String> event) {
         if (((String) event.getKey()).equals("last_key")) {
           lastKeyReceived = true;
         }
-        cache.getLoggerI18n().fine(
-            "Create Event: " + event.getKey() + ", " + event.getNewValue());
+        cache.getLoggerI18n().fine("Create Event: " + event.getKey() + ", " + event.getNewValue());
         numOfCreates++;
       }
+
       public void afterUpdate(EntryEvent<String, String> event) {
-        cache.getLoggerI18n().fine(
-            "Update Event: " + event.getKey() + ", " + event.getNewValue());
+        cache.getLoggerI18n().fine("Update Event: " + event.getKey() + ", " + event.getNewValue());
         numOfUpdates++;
       }
     });
@@ -234,21 +232,21 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
     Thread t1 = new Thread(new Runnable() {
       public void run() {
         for (int i = 0; i < 500; i++) {
-          r.put("T1_KEY_"+i, "VALUE_"+i);
+          r.put("T1_KEY_" + i, "VALUE_" + i);
         }
       }
     });
     Thread t2 = new Thread(new Runnable() {
       public void run() {
         for (int i = 0; i < 500; i++) {
-          r.put("T2_KEY_"+i, "VALUE_"+i);
+          r.put("T2_KEY_" + i, "VALUE_" + i);
         }
       }
     });
     Thread t3 = new Thread(new Runnable() {
       public void run() {
         for (int i = 0; i < 500; i++) {
-          r.put("T3_KEY_"+i, "VALUE_"+i);
+          r.put("T3_KEY_" + i, "VALUE_" + i);
         }
       }
     });
@@ -261,11 +259,11 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
     t2.join();
     t3.join();
   }
-  
+
   public static void resumePuts() {
     Region<String, String> r = cache.getRegion(region);
     for (int i = 0; i < 100; i++) {
-      r.put("NEWKEY_"+i, "NEWVALUE_"+i);
+      r.put("NEWKEY_" + i, "NEWVALUE_" + i);
     }
     r.put("last_key", "last_value");
   }
@@ -276,12 +274,13 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
       public boolean done() {
         return lastKeyReceived;
       }
+
       @Override
       public String description() {
         return "Did not receive last key.";
       }
     };
-    Wait.waitForCriterion(wc, 60*1000, 500, true);
+    Wait.waitForCriterion(wc, 60 * 1000, 500, true);
   }
 
   public static void verifyStats() throws Exception {

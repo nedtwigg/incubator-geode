@@ -39,11 +39,10 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-
 public class RegisterInstantiators extends BaseCommand {
 
   private final static RegisterInstantiators singleton = new RegisterInstantiators();
-  
+
   public static Command getCommand() {
     return singleton;
   }
@@ -52,8 +51,7 @@ public class RegisterInstantiators extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received register instantiator request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
     }
@@ -64,14 +62,10 @@ public class RegisterInstantiators extends BaseCommand {
     int noOfInstantiators = (noOfParts - 1) / 3;
 
     // retrieve eventID from the last Part
-    ByteBuffer eventIdPartsBuffer = ByteBuffer.wrap(msg.getPart(noOfParts - 1)
-        .getSerializedForm());
-    long threadId = EventID
-        .readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
-    long sequenceId = EventID
-        .readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
-    EventID eventId = new EventID(servConn.getEventMemberIDByteArray(), threadId,
-        sequenceId);
+    ByteBuffer eventIdPartsBuffer = ByteBuffer.wrap(msg.getPart(noOfParts - 1).getSerializedForm());
+    long threadId = EventID.readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
+    long sequenceId = EventID.readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
+    EventID eventId = new EventID(servConn.getEventMemberIDByteArray(), threadId, sequenceId);
 
     byte[][] serializedInstantiators = new byte[noOfInstantiators * 3][];
     boolean caughtCNFE = false;
@@ -81,13 +75,11 @@ public class RegisterInstantiators extends BaseCommand {
 
         Part instantiatorPart = msg.getPart(i);
         serializedInstantiators[i] = instantiatorPart.getSerializedForm();
-        String instantiatorClassName = (String)CacheServerHelper
-            .deserialize(serializedInstantiators[i]);
+        String instantiatorClassName = (String) CacheServerHelper.deserialize(serializedInstantiators[i]);
 
         Part instantiatedPart = msg.getPart(i + 1);
         serializedInstantiators[i + 1] = instantiatedPart.getSerializedForm();
-        String instantiatedClassName = (String)CacheServerHelper
-            .deserialize(serializedInstantiators[i + 1]);
+        String instantiatedClassName = (String) CacheServerHelper.deserialize(serializedInstantiators[i + 1]);
 
         Part idPart = msg.getPart(i + 2);
         serializedInstantiators[i + 2] = idPart.getSerializedForm();
@@ -97,23 +89,20 @@ public class RegisterInstantiators extends BaseCommand {
         try {
           instantiatorClass = InternalDataSerializer.getCachedClass(instantiatorClassName);
           instantiatedClass = InternalDataSerializer.getCachedClass(instantiatedClassName);
-          InternalInstantiator.register(instantiatorClass, instantiatedClass,
-            id, true, eventId, servConn.getProxyID());
-        }
-        catch (ClassNotFoundException e) {
+          InternalInstantiator.register(instantiatorClass, instantiatedClass, id, true, eventId, servConn.getProxyID());
+        } catch (ClassNotFoundException e) {
           // If a ClassNotFoundException is caught, store it, but continue
           // processing other instantiators
           caughtCNFE = true;
           cnfe = e;
         }
       }
-    }
-    catch (Exception e) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.RegisterInstantiators_BAD_CLIENT, new Object[] {servConn.getMembershipID(), e.getLocalizedMessage()}));
+    } catch (Exception e) {
+      logger.warn(LocalizedMessage.create(LocalizedStrings.RegisterInstantiators_BAD_CLIENT, new Object[] { servConn.getMembershipID(), e.getLocalizedMessage() }));
       writeException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
     }
-    
+
     // If a ClassNotFoundException was caught while processing the
     // instantiators, send it back to the client. Note: This only sends
     // the last CNFE.
@@ -125,15 +114,13 @@ public class RegisterInstantiators extends BaseCommand {
       //due to a missing class, because they were not distributed
       //in InternalInstantiator.register. Otherwise they will have
       //been distributed if successfully registered.
-      ClientInstantiatorMessage clientInstantiatorMessage = new ClientInstantiatorMessage(
-          EnumListenerEvent.AFTER_REGISTER_INSTANTIATOR, serializedInstantiators,
-          servConn.getProxyID(), eventId);
+      ClientInstantiatorMessage clientInstantiatorMessage = new ClientInstantiatorMessage(EnumListenerEvent.AFTER_REGISTER_INSTANTIATOR, serializedInstantiators, servConn.getProxyID(), eventId);
 
       // Notify other clients
       CacheClientNotifier.routeClientMessage(clientInstantiatorMessage);
 
     }
-    
+
     // Send reply to client if necessary. If an exception occurs in the above
     // code, then the reply has already been sent.
     if (!servConn.getTransientFlag(RESPONDED)) {

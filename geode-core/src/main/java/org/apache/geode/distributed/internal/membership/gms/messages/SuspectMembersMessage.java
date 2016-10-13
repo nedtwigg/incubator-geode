@@ -70,7 +70,7 @@ public class SuspectMembersMessage extends HighPriorityDistributionMessage {
   public void toData(DataOutput out) throws IOException {
     if (suspectRequests != null) {
       out.writeInt(suspectRequests.size());
-      for (SuspectRequest sr: suspectRequests) {        
+      for (SuspectRequest sr : suspectRequests) {
         DataSerializer.writeObject(sr.getSuspectMember(), out);
         DataSerializer.writeString(sr.getReason(), out);
       }

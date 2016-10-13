@@ -33,7 +33,7 @@ public interface Compressor {
    * @throws CompressionException
    */
   public byte[] compress(byte[] input);
-  
+
   /**
    * Decompresses a compressed byte array.
    * 

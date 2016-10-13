@@ -31,28 +31,23 @@ import org.apache.geode.internal.OSProcess;
 
 @Category(DistributedTest.class)
 public class DiskDistributedNoAckAsyncRegionDUnitTest extends DiskDistributedNoAckRegionTestCase {
-  
+
   /** Creates a new instance of DiskDistributedNoAckSyncOverflowRegionTest */
   public DiskDistributedNoAckAsyncRegionDUnitTest() {
     super();
   }
-  
+
   protected RegionAttributes getRegionAttributes() {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_NO_ACK);
-    
+
     File[] diskDirs = new File[1];
     diskDirs[0] = new File("diskRegionDirs/" + OSProcess.getId());
     diskDirs[0].mkdirs();
-    factory.setDiskStoreName(getCache().createDiskStoreFactory()
-                             .setDiskDirs(getDiskDirs())
-                             .setTimeInterval(1000)
-                             .setQueueSize(0)
-                             .create(getUniqueName())
-                             .getName());
+    factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(getDiskDirs()).setTimeInterval(1000).setQueueSize(0).create(getUniqueName()).getName());
     factory.setDiskSynchronous(false);
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     return factory.create();
   }
- 
+
 }

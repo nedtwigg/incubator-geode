@@ -83,7 +83,7 @@ public class ZRemRangeByRankExecutor extends SortedSetExecutor {
     int numRemoved = 0;
     List<?> removeList = null;
     try {
-      if (startRank == 0 && stopRank == sSetSize- 1) {
+      if (startRank == 0 && stopRank == sSetSize - 1) {
         numRemoved = keyRegion.size();
         context.getRegionProvider().removeKey(key);
       } else {
@@ -94,7 +94,7 @@ public class ZRemRangeByRankExecutor extends SortedSetExecutor {
     }
 
     if (removeList != null) {
-      for (Object entry: removeList) {
+      for (Object entry : removeList) {
         ByteArrayWrapper removeKey;
         if (entry instanceof Entry)
           removeKey = (ByteArrayWrapper) ((Entry<?, ?>) entry).getKey();
@@ -112,7 +112,7 @@ public class ZRemRangeByRankExecutor extends SortedSetExecutor {
 
   private List<?> getRemoveKeys(ExecutionHandlerContext context, ByteArrayWrapper key, int startRank, int stopRank) throws Exception {
     Query query = getQuery(key, SortedSetQuery.ZREMRANGEBYRANK, context);
-    Object[] params = {stopRank + 1};
+    Object[] params = { stopRank + 1 };
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 

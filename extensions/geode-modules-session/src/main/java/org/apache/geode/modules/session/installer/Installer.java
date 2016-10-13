@@ -44,35 +44,19 @@ import java.io.OutputStream;
  */
 public class Installer {
 
-  private static final String GEMFIRE_FILTER_CLASS =
-      "org.apache.geode.modules.session.filter.SessionCachingFilter";
+  private static final String GEMFIRE_FILTER_CLASS = "org.apache.geode.modules.session.filter.SessionCachingFilter";
 
-  private static final String GEMFIRE_LISTENER_CLASS =
-      "org.apache.geode.modules.session.filter.SessionListener";
+  private static final String GEMFIRE_LISTENER_CLASS = "org.apache.geode.modules.session.filter.SessionListener";
 
   private ArgumentValues argValues;
 
-  private static final Argument ARG_HELP =
-      new Argument("-h", false).
-          setDescription("Displays this help message.");
+  private static final Argument ARG_HELP = new Argument("-h", false).setDescription("Displays this help message.");
 
-  private static Argument ARG_GEMFIRE_PARAMETERS =
-      new Argument("-p", false, "param=value").
-          setDescription("Specific parameter for inclusion into the "
-              + "session filter definition as a regular "
-              + "init-param. Can be given multiple times.");
+  private static Argument ARG_GEMFIRE_PARAMETERS = new Argument("-p", false, "param=value").setDescription("Specific parameter for inclusion into the " + "session filter definition as a regular " + "init-param. Can be given multiple times.");
 
-  private static Argument ARG_CACHE_TYPE =
-      new Argument("-t", false, "cache-type").
-          setDescription(
-              "Type of cache. Must be one of 'peer-to-peer' or "
-                  + "'client-server'. Default is peer-to-peer.").
-          setDefaults("peer-to-peer");
+  private static Argument ARG_CACHE_TYPE = new Argument("-t", false, "cache-type").setDescription("Type of cache. Must be one of 'peer-to-peer' or " + "'client-server'. Default is peer-to-peer.").setDefaults("peer-to-peer");
 
-  private static Argument ARG_WEB_XML_FILE =
-      new Argument("-w", true, "web.xml file").
-          setDescription("The web.xml file to be modified.");
-
+  private static Argument ARG_WEB_XML_FILE = new Argument("-w", true, "web.xml file").setDescription("The web.xml file to be modified.");
 
   /**
    * Class main method
@@ -88,7 +72,6 @@ public class Installer {
     System.err.println(message);
   }
 
-
   public Installer(String[] args) throws Exception {
     final ArgumentProcessor processor = new ArgumentProcessor("Installer");
 
@@ -102,18 +85,15 @@ public class Installer {
 
       processor.setUnknownArgumentHandler(new UnknownArgumentHandler() {
         @Override
-        public void handleUnknownArgument(
-            final String form, final String[] params) {
-          log("Unknown argument being ignored: "
-              + form + " (" + params.length + " params)");
+        public void handleUnknownArgument(final String form, final String[] params) {
+          log("Unknown argument being ignored: " + form + " (" + params.length + " params)");
           log("Use '-h' argument to display usage");
         }
       });
       argValues = processor.process(args);
 
       if (argValues.isDefined(ARG_HELP)) {
-        final UsageException usageException =
-            new UsageException("Usage requested by user");
+        final UsageException usageException = new UsageException("Usage requested by user");
         usageException.setUsage(processor.getUsage());
         throw (usageException);
       }
@@ -132,7 +112,6 @@ public class Installer {
 
   }
 
-
   /**
    * The main entry point for processing
    *
@@ -150,9 +129,7 @@ public class Installer {
     System.out.println(output.toString());
   }
 
-
-  public void processWebXml(final InputStream webXml,
-      final OutputStream out) throws Exception {
+  public void processWebXml(final InputStream webXml, final OutputStream out) throws Exception {
 
     Document doc = createWebXmlDoc(webXml);
     mangleWebXml(doc);
@@ -160,18 +137,14 @@ public class Installer {
     streamXML(doc, out);
   }
 
-
-  private Document createWebXmlDoc(final InputStream webXml)
-      throws Exception {
+  private Document createWebXmlDoc(final InputStream webXml) throws Exception {
     Document doc;
-    final DocumentBuilderFactory factory =
-        DocumentBuilderFactory.newInstance();
+    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     final DocumentBuilder builder = factory.newDocumentBuilder();
     doc = builder.parse(webXml);
 
     return doc;
   }
-
 
   private Document mangleWebXml(final Document doc) {
     final Element docElement = doc.getDocumentElement();
@@ -205,9 +178,7 @@ public class Installer {
     // Set the type of cache
     initParam = append(doc, filter, "init-param", null);
     append(doc, initParam, "param-name", "cache-type");
-    append(doc, initParam, "param-value",
-        argValues.getFirstResult(ARG_CACHE_TYPE));
-
+    append(doc, initParam, "param-value", argValues.getFirstResult(ARG_CACHE_TYPE));
 
     if (argValues.isDefined(ARG_GEMFIRE_PARAMETERS)) {
       for (String[] val : argValues.getAllResults(ARG_GEMFIRE_PARAMETERS)) {
@@ -235,8 +206,7 @@ public class Installer {
     final Element contextListener = doc.createElement("listener");
     append(doc, contextListener, "listener-class", GEMFIRE_LISTENER_CLASS);
     docElement.insertBefore(filterMapping, after(docElement, "filter"));
-    docElement.insertBefore(contextListener,
-        after(docElement, "filter-mapping"));
+    docElement.insertBefore(contextListener, after(docElement, "filter-mapping"));
     return doc;
   }
 
@@ -258,9 +228,7 @@ public class Installer {
     return null;
   }
 
-  private Node append(final Document doc, final Node parent,
-      final String element,
-      final String value) {
+  private Node append(final Document doc, final Node parent, final String element, final String value) {
     final Element child = doc.createElement(element);
     if (value != null)
       child.setTextContent(value);
@@ -279,8 +247,7 @@ public class Installer {
         transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, systemId);
       }
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
-          "4");
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
       final DOMSource source = new DOMSource(doc);
       final StreamResult result = new StreamResult(out);
       transformer.transform(source, result);

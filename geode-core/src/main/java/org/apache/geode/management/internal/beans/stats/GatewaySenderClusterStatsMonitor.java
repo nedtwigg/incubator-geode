@@ -39,13 +39,11 @@ public class GatewaySenderClusterStatsMonitor {
 
   private static final String TOTAL_EVENTS_CONFLATED = "TotalEventsConflated";
 
-
   private StatsAggregator aggregator;
 
   private Map<String, Class<?>> typeMap;
 
-  public void aggregate(FederationComponent newState,
-      FederationComponent oldState) {
+  public void aggregate(FederationComponent newState, FederationComponent oldState) {
     aggregator.aggregate(newState, oldState);
   }
 

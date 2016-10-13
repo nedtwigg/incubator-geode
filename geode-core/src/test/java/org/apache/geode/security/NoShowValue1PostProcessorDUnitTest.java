@@ -36,17 +36,17 @@ import org.apache.geode.test.junit.categories.SecurityTest;
 @Category({ DistributedTest.class, SecurityTest.class })
 public class NoShowValue1PostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
 
-  public NoShowValue1PostProcessorDUnitTest(){
+  public NoShowValue1PostProcessorDUnitTest() {
     this.postProcessor = NoShowValue1PostProcessor.class;
   }
 
   @Test
-  public void testPostProcess(){
+  public void testPostProcess() {
     List<String> keys = new ArrayList<>();
     keys.add("key1");
     keys.add("key2");
 
-    client1.invoke(()->{
+    client1.invoke(() -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
       Region region = cache.getRegion(REGION_NAME);
 
@@ -64,7 +64,7 @@ public class NoShowValue1PostProcessorDUnitTest extends AbstractSecureServerDUni
       // post process for query
       String query = "select * from /AuthRegion";
       SelectResults result = region.query(query);
-      System.out.println("query result: "+result);
+      System.out.println("query result: " + result);
       assertEquals(5, result.size());
       assertTrue(result.contains("value0"));
       assertFalse(result.contains("value1"));
@@ -73,8 +73,8 @@ public class NoShowValue1PostProcessorDUnitTest extends AbstractSecureServerDUni
       assertTrue(result.contains("value4"));
 
       Pool pool = PoolManager.find(region);
-      result =  (SelectResults)pool.getQueryService().newQuery(query).execute();
-      System.out.println("query result: "+result);
+      result = (SelectResults) pool.getQueryService().newQuery(query).execute();
+      System.out.println("query result: " + result);
       assertTrue(result.contains("value0"));
       assertFalse(result.contains("value1"));
       assertTrue(result.contains("value2"));

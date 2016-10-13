@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 //import org.apache.geode.*;
@@ -33,14 +32,13 @@ import org.apache.geode.internal.statistics.GemFireStatSampler;
  */
 public final class CancelStatListenerResponse extends AdminResponse {
   // instance variables
-  
+
   /**
    * Returns a <code>CancelStatListenerResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of the local manager's
    * system config.
    */
-  public static CancelStatListenerResponse create(DistributionManager dm,
-                                                  InternalDistributedMember recipient, int listenerId) {
+  public static CancelStatListenerResponse create(DistributionManager dm, InternalDistributedMember recipient, int listenerId) {
     CancelStatListenerResponse m = new CancelStatListenerResponse();
     m.setRecipient(recipient);
     GemFireStatSampler sampler = null;
@@ -62,8 +60,7 @@ public final class CancelStatListenerResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 

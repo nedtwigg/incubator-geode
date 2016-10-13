@@ -18,6 +18,7 @@ package org.apache.geode.cache.query.internal.parse;
 
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
+
 /**
  * 
  *
@@ -28,16 +29,14 @@ public class ASTOrderBy extends GemFireAST {
   public ASTOrderBy(Token t) {
     super(t);
   }
-  
-  public ASTOrderBy() { }
 
+  public ASTOrderBy() {
+  }
 
   @Override
-    public void compile(QCompiler compiler)
-    {
-        super.compile(compiler);
-        compiler.compileOrederByClause(this.getNumberOfChildren());
-    }
+  public void compile(QCompiler compiler) {
+    super.compile(compiler);
+    compiler.compileOrederByClause(this.getNumberOfChildren());
+  }
 
 }
-

@@ -39,8 +39,7 @@ import org.apache.geode.internal.cache.Node;
  * @see java.util.ConcurrentModificationException
  * 
  */
-public class VersionedArrayList implements DataSerializable, Versionable, Iterable<Node>
-{
+public class VersionedArrayList implements DataSerializable, Versionable, Iterable<Node> {
   private static final long serialVersionUID = -1455442285961593385L;
 
   /** Version of the list. */
@@ -48,9 +47,9 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /** ArrayList */
   private List<Node> list;
-  
-//  private List vhist = new ArrayList();  // DEBUG
-  
+
+  //  private List vhist = new ArrayList();  // DEBUG
+
   /**
    * Constructor for DataSerializable.
    */
@@ -69,7 +68,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   public VersionedArrayList(List<? extends Node> list) {
     this.list = Collections.unmodifiableList(list);
-//    incrementVersion("i->" + list);
+    //    incrementVersion("i->" + list);
     incrementVersion();
   }
 
@@ -82,13 +81,12 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * @see java.util.ConcurrentModificationException
    * @param obj
    */
-  public synchronized void add(Node obj)
-  {
+  public synchronized void add(Node obj) {
 
     ArrayList newList = new ArrayList<Node>(this.list);
     newList.add(obj);
     this.list = Collections.unmodifiableList(newList);
-//    incrementVersion("a->" + obj);
+    //    incrementVersion("a->" + obj);
     incrementVersion();
   }
 
@@ -103,15 +101,14 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * @see java.util.ConcurrentModificationException
    * @param obj the object to remove from the list
    */
-  public synchronized boolean remove(Node obj)
-  {
+  public synchronized boolean remove(Node obj) {
     ArrayList<Node> newList = new ArrayList<Node>(this.list);
     boolean ret = newList.remove(obj);
     if (ret) {
       this.list = Collections.unmodifiableList(newList);
-//      incrementVersion("r->" + obj);
+      //      incrementVersion("r->" + obj);
       incrementVersion();
-    } 
+    }
     return ret;
   }
 
@@ -120,8 +117,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * 
    * @return a list Iterator
    */
-  public synchronized Iterator<Node> iterator()
-  {
+  public synchronized Iterator<Node> iterator() {
     return this.list.iterator();
   }
 
@@ -130,8 +126,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * 
    * @return int
    */
-  public synchronized int size()
-  {
+  public synchronized int size() {
     return this.list.size();
   }
 
@@ -141,16 +136,13 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * @param obj
    * @return true if obj is present in the list
    */
-  public boolean contains(Node obj)
-  {
-    final List<Node> l; 
-    synchronized(this) {
+  public boolean contains(Node obj) {
+    final List<Node> l;
+    synchronized (this) {
       l = this.list;
     }
     return l.contains(obj);
   }
-
-  
 
   /**
    * Returns Object at index i.
@@ -158,10 +150,9 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * @param i
    * @return Object
    */
-  public Object get(int i)
-  {
-    final List<Node> l; 
-    synchronized(this) {
+  public Object get(int i) {
+    final List<Node> l;
+    synchronized (this) {
       l = this.list;
     }
     return l.get(i);
@@ -173,10 +164,9 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * @param obj
    * @return int
    */
-  public int indexOf(Object obj)
-  {
+  public int indexOf(Object obj) {
     final List<Node> l;
-    synchronized(this) {
+    synchronized (this) {
       l = this.list;
     }
     return l.indexOf(obj);
@@ -187,10 +177,9 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * 
    * @return ArrayList
    */
-  public Set<Node> getListCopy()
-  {
+  public Set<Node> getListCopy() {
     final List<Node> l;
-    synchronized(this) {
+    synchronized (this) {
       l = this.list;
     }
     return new HashSet<Node>(l);
@@ -202,34 +191,31 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
    * @return String with version and elements of the list.
    */
   @Override
-  public String toString()
-  {
+  public String toString() {
     final List<Node> l;
-//    final List vh;
-    synchronized(this) {
+    //    final List vh;
+    synchronized (this) {
       l = this.list;
-//      vh = this.vhist;
+      //      vh = this.vhist;
     }
     StringBuffer sb = new StringBuffer();
     sb.append("ArrayList version = " + getVersion() + " Elements = { ");
     for (int i = 0; i < l.size(); i++) {
       sb.append(l.get(i).toString() + ", ");
     }
-//    sb.append("vhist:\n " + vh);
+    //    sb.append("vhist:\n " + vh);
     sb.append("}");
     return sb.toString();
   }
 
- 
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     long v = -1;
     final List<Node> l;
-//    final List vh;
+    //    final List vh;
     synchronized (this) {
       v = this.version;
       l = this.list;
-//      vh = this.vhist;
+      //      vh = this.vhist;
     }
 
     out.writeLong(v);
@@ -239,107 +225,101 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
       InternalDataSerializer.invokeToData((l.get(k)), out);
     }
 
-//    final int sh = vh.size();
-//    out.writeInt(sh);
-//    for (int k = 0; k < sh; k++) {
-//      out.writeUTF((String) vh.get(k));
-//    }
+    //    final int sh = vh.size();
+    //    out.writeInt(sh);
+    //    for (int k = 0; k < sh; k++) {
+    //      out.writeUTF((String) vh.get(k));
+    //    }
   }
 
-
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     final ArrayList<Node> l = new ArrayList<Node>();
     final long v = in.readLong();
     final int size = in.readInt();
-    for (int k = 0; k < size; k++) {      
+    for (int k = 0; k < size; k++) {
       l.add(new Node(in));
     }
-    
-//    final ArrayList vh = new ArrayList();
-//    final int vhsize = in.readInt();
-//    for (int k = 0; k < vhsize; k++) {      
-//      vh.add(in.readUTF());
-//    }
-    
+
+    //    final ArrayList vh = new ArrayList();
+    //    final int vhsize = in.readInt();
+    //    for (int k = 0; k < vhsize; k++) {      
+    //      vh.add(in.readUTF());
+    //    }
+
     synchronized (this) {
       this.version = v;
       this.list = Collections.unmodifiableList(l);
-//      this.vhist = Collections.unmodifiableList(vh);
+      //      this.vhist = Collections.unmodifiableList(vh);
     }
   }
 
-  
   /* (non-Javadoc)
    * @see org.apache.geode.internal.util.Versionable#getVersion()
    */
-  public synchronized Comparable getVersion()
-  {
+  public synchronized Comparable getVersion() {
     return Long.valueOf(this.version);
   }
-  
+
   public boolean isNewerThan(Versionable other) {
     if (other instanceof VersionedArrayList) {
       final long v = ((Long) other.getVersion()).longValue();
-      synchronized(this) {
+      synchronized (this) {
         return this.version > v;
       }
     } else {
       final Comparable o = other.getVersion();
       return getVersion().compareTo(o) > 0;
-    } 
+    }
   }
-  
+
   public boolean isOlderThan(Versionable other) {
     if (other instanceof VersionedArrayList) {
       final long v;
-      synchronized(other) {
-        v = ((VersionedArrayList) other).version;        
+      synchronized (other) {
+        v = ((VersionedArrayList) other).version;
       }
-      synchronized(this) {
+      synchronized (this) {
         return this.version < v;
       }
     } else {
       final Comparable o = other.getVersion();
       return getVersion().compareTo(o) < 0;
-    } 
+    }
   }
-  
-  public boolean isSame(Versionable other)
-  {
+
+  public boolean isSame(Versionable other) {
     if (other instanceof VersionedArrayList) {
       final long v;
-      synchronized(other) {
-        v = ((VersionedArrayList) other).version;        
+      synchronized (other) {
+        v = ((VersionedArrayList) other).version;
       }
-      synchronized(this) {
+      synchronized (this) {
         return this.version == v;
       }
     } else {
       final Comparable o = other.getVersion();
       return getVersion().compareTo(o) == 0;
-    } 
+    }
   }
 
-//private synchronized void incrementVersion(String op)
-  private synchronized void incrementVersion()
-  {
-// DEBUG
-//    {
-//      StringWriter s = new StringWriter();
-//      final String pre = 
-//        "o=" + op + 
-//        ":t=" + System.currentTimeMillis() + 
-//        ":m=" + InternalDistributedSystem.getAnyInstance().getDistributedMember().toString() + ": ";
-//      s.write(pre);
-//      PrintWriter p = new PrintWriter(s);
-//      new Exception().fillInStackTrace().printStackTrace(p);
-//      
-//      ArrayList newList = new ArrayList(this.vhist);
-//      newList.add(pre); // Capture what code added this version
-//      this.vhist = Collections.unmodifiableList(newList);
-//    }
-    
+  //private synchronized void incrementVersion(String op)
+  private synchronized void incrementVersion() {
+    // DEBUG
+    //    {
+    //      StringWriter s = new StringWriter();
+    //      final String pre = 
+    //        "o=" + op + 
+    //        ":t=" + System.currentTimeMillis() + 
+    //        ":m=" + InternalDistributedSystem.getAnyInstance().getDistributedMember().toString() + ": ";
+    //      s.write(pre);
+    //      PrintWriter p = new PrintWriter(s);
+    //      new Exception().fillInStackTrace().printStackTrace(p);
+    //      
+    //      ArrayList newList = new ArrayList(this.vhist);
+    //      newList.add(pre); // Capture what code added this version
+    //      this.vhist = Collections.unmodifiableList(newList);
+    //    }
+
     ++this.version;
   }
 }

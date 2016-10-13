@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import org.apache.geode.cache.CacheCallback;
 
 public interface GatewayTransportFilter extends CacheCallback {
-  public InputStream  getInputStream(InputStream stream);
+  public InputStream getInputStream(InputStream stream);
+
   public OutputStream getOutputStream(OutputStream stream);
 }

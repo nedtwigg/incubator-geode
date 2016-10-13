@@ -43,10 +43,8 @@ public class IPAddressUtil {
 
   static {
     try {
-      VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern,
-          Pattern.CASE_INSENSITIVE);
-      VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern,
-          Pattern.CASE_INSENSITIVE);
+      VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern, Pattern.CASE_INSENSITIVE);
+      VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern, Pattern.CASE_INSENSITIVE);
     } catch (PatternSyntaxException e) {
 
     }

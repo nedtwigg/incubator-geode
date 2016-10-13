@@ -16,7 +16,6 @@
  */
 package org.apache.geode.pdx;
 
-
 /**
  * WritablePdxInstance is a {@link PdxInstance} that also supports field modification 
  * using the {@link #setField setField} method. 

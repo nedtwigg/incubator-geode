@@ -36,18 +36,14 @@ public class RawIndexRepositoryFactory extends IndexRepositoryFactory {
   public RawIndexRepositoryFactory() {
   }
 
-  public IndexRepository createIndexRepository(final Integer bucketId,
-                                        LuceneSerializer serializer,
-                                        LuceneIndexImpl index, PartitionedRegion userRegion)
-    throws IOException
-  {
+  public IndexRepository createIndexRepository(final Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
     final IndexRepository repo;
-    LuceneRawIndex indexForRaw = (LuceneRawIndex)index;
+    LuceneRawIndex indexForRaw = (LuceneRawIndex) index;
     BucketRegion dataBucket = getMatchingBucket(userRegion, bucketId);
 
     Directory dir = null;
     if (indexForRaw.withPersistence()) {
-      String bucketLocation = LuceneServiceImpl.getUniqueIndexName(index.getName(), index.getRegionPath()+"_"+bucketId);
+      String bucketLocation = LuceneServiceImpl.getUniqueIndexName(index.getName(), index.getRegionPath() + "_" + bucketId);
       File location = new File(index.getName(), bucketLocation);
       if (!location.exists()) {
         location.mkdirs();

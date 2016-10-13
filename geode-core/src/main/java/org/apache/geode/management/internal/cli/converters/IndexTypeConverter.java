@@ -28,7 +28,7 @@ import org.apache.geode.management.cli.ConverterHint;
  * Added converter to enable auto-completion for index-type
  *
  */
-public class IndexTypeConverter implements Converter<String>{
+public class IndexTypeConverter implements Converter<String> {
 
   @Override
   public boolean supports(Class<?> type, String optionContext) {
@@ -36,16 +36,13 @@ public class IndexTypeConverter implements Converter<String>{
   }
 
   @Override
-  public String convertFromText(String value, Class<?> targetType,
-      String optionContext) {
+  public String convertFromText(String value, Class<?> targetType, String optionContext) {
     return value;
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String existingData, String optionContext,
-      MethodTarget target) {
-    
+  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+
     if (String.class.equals(targetType) && ConverterHint.INDEX_TYPE.equals(optionContext)) {
       completions.add(new Completion("range"));
       completions.add(new Completion("key"));

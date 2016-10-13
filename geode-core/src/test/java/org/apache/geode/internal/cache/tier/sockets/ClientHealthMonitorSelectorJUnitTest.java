@@ -26,9 +26,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * 
  */
 @Category(IntegrationTest.class)
-public class ClientHealthMonitorSelectorJUnitTest extends ClientHealthMonitorJUnitTest
-{
+public class ClientHealthMonitorSelectorJUnitTest extends ClientHealthMonitorJUnitTest {
   protected int getMaxThreads() {
-    return 2; 
+    return 2;
   }
 }

@@ -40,25 +40,20 @@ public class RegisterDataSerializers extends BaseCommand {
   private RegisterDataSerializers() {
   }
 
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received register dataserializer request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
     }
     int noOfParts = msg.getNumberOfParts();
-    
+
     // 2 parts per instantiator and one eventId part
     int noOfDataSerializers = (noOfParts - 1) / 2;
 
     // retrieve eventID from the last Part
-    ByteBuffer eventIdPartsBuffer = ByteBuffer.wrap(msg.getPart(noOfParts - 1)
-        .getSerializedForm());
-    long threadId = EventID
-        .readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
-    long sequenceId = EventID
-        .readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
-    EventID eventId = new EventID(servConn.getEventMemberIDByteArray(), threadId,
-        sequenceId);
+    ByteBuffer eventIdPartsBuffer = ByteBuffer.wrap(msg.getPart(noOfParts - 1).getSerializedForm());
+    long threadId = EventID.readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
+    long sequenceId = EventID.readEventIdPartsFromOptmizedByteArray(eventIdPartsBuffer);
+    EventID eventId = new EventID(servConn.getEventMemberIDByteArray(), threadId, sequenceId);
 
     byte[][] serializedDataSerializers = new byte[noOfDataSerializers * 2][];
     boolean caughtCNFE = false;
@@ -68,8 +63,7 @@ public class RegisterDataSerializers extends BaseCommand {
 
         Part dataSerializerClassNamePart = msg.getPart(i);
         serializedDataSerializers[i] = dataSerializerClassNamePart.getSerializedForm();
-        String dataSerializerClassName = (String)CacheServerHelper
-            .deserialize(serializedDataSerializers[i]);
+        String dataSerializerClassName = (String) CacheServerHelper.deserialize(serializedDataSerializers[i]);
 
         Part idPart = msg.getPart(i + 1);
         serializedDataSerializers[i + 1] = idPart.getSerializedForm();
@@ -79,16 +73,14 @@ public class RegisterDataSerializers extends BaseCommand {
         try {
           dataSerializerClass = InternalDataSerializer.getCachedClass(dataSerializerClassName);
           InternalDataSerializer.register(dataSerializerClass, true, eventId, servConn.getProxyID());
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
           // If a ClassNotFoundException is caught, store it, but continue
           // processing other instantiators
           caughtCNFE = true;
           cnfe = e;
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       writeException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
     }

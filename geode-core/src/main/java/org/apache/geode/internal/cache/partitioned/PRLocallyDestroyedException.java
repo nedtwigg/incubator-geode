@@ -27,13 +27,14 @@ import org.apache.geode.internal.cache.DataLocationException;
  */
 public class PRLocallyDestroyedException extends DataLocationException {
   private static final long serialVersionUID = -1291911181409686840L;
+
   public PRLocallyDestroyedException(Throwable cause) {
     super();
     this.initCause(cause);
   }
-  
+
   public PRLocallyDestroyedException(String message) {
     super(message);
   }
-  
+
 }

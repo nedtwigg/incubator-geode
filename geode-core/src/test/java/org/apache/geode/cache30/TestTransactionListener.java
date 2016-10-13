@@ -28,19 +28,16 @@ import org.apache.geode.cache.*;
  *
  * @since GemFire 4.0
  */
-public abstract class TestTransactionListener extends TestCacheCallback
-  implements TransactionListener {
+public abstract class TestTransactionListener extends TestCacheCallback implements TransactionListener {
 
   public final void afterCommit(TransactionEvent event) {
     this.invoked = true;
     try {
       afterCommit2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -54,12 +51,10 @@ public abstract class TestTransactionListener extends TestCacheCallback
     this.invoked = true;
     try {
       afterFailedCommit2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -69,17 +64,14 @@ public abstract class TestTransactionListener extends TestCacheCallback
     throw new UnsupportedOperationException(s);
   }
 
-
   public final void afterRollback(TransactionEvent event) {
     this.invoked = true;
     try {
       afterRollback2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }

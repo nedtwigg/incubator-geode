@@ -43,7 +43,7 @@ import org.apache.geode.internal.offheap.StoredObject;
 public class Part {
   private static final byte BYTE_CODE = 0;
   private static final byte OBJECT_CODE = 1;
-  
+
   private Version version;
   /**
    * Used to represent and empty byte array for bug 36279
@@ -64,18 +64,16 @@ public class Part {
   public void init(byte[] v, byte tc) {
     if (tc == EMPTY_BYTEARRAY_CODE) {
       this.part = EMPTY_BYTE_ARRAY;
-    }
-    else {
+    } else {
       this.part = v;
     }
     this.typeCode = tc;
   }
 
-
   public void clear() {
     if (this.part != null) {
       if (this.part instanceof HeapDataOutputStream) {
-        ((HeapDataOutputStream)this.part).close();
+        ((HeapDataOutputStream) this.part).close();
       }
       this.part = null;
     }
@@ -87,16 +85,18 @@ public class Part {
       return true;
     }
     if (isObject() && this.part instanceof byte[]) {
-      byte[] b = (byte[])this.part;
+      byte[] b = (byte[]) this.part;
       if (b.length == 1 && b[0] == DSCODE.NULL) {
         return true;
       }
     }
     return false;
   }
+
   public boolean isObject() {
     return this.typeCode == OBJECT_CODE;
   }
+
   public boolean isBytes() {
     return this.typeCode == BYTE_CODE || this.typeCode == EMPTY_BYTEARRAY_CODE;
   }
@@ -112,7 +112,7 @@ public class Part {
     }
     this.part = b;
   }
-  
+
   public void setPartState(HeapDataOutputStream os, boolean isObject) {
     if (isObject) {
       this.typeCode = OBJECT_CODE;
@@ -125,6 +125,7 @@ public class Part {
       this.part = os;
     }
   }
+
   public void setPartState(StoredObject so, boolean isObject) {
     if (isObject) {
       this.typeCode = OBJECT_CODE;
@@ -141,9 +142,11 @@ public class Part {
       this.part = so.getValueAsHeapByteArray();
     }
   }
+
   public byte getTypeCode() {
     return this.typeCode;
   }
+
   /**
    * Return the length of the part. The length is the number of bytes needed
    * for its serialized form.
@@ -152,47 +155,41 @@ public class Part {
     if (this.part == null) {
       return 0;
     } else if (this.part instanceof byte[]) {
-      return ((byte[])this.part).length;
+      return ((byte[]) this.part).length;
     } else if (this.part instanceof StoredObject) {
       return ((StoredObject) this.part).getDataSize();
     } else {
-      return ((HeapDataOutputStream)this.part).size();
+      return ((HeapDataOutputStream) this.part).size();
     }
   }
+
   public String getString() {
     if (this.part == null) {
       return null;
     }
     if (!isBytes()) {
-      Assert.assertTrue(false, "expected String part to be of type BYTE, part ="
-          + this.toString());
+      Assert.assertTrue(false, "expected String part to be of type BYTE, part =" + this.toString());
     }
-    return CacheServerHelper.fromUTF((byte[])this.part);
+    return CacheServerHelper.fromUTF((byte[]) this.part);
   }
-  
+
   public int getInt() {
     if (!isBytes()) {
-      Assert.assertTrue(false, "expected int part to be of type BYTE, part = "
-          + this.toString()); 
+      Assert.assertTrue(false, "expected int part to be of type BYTE, part = " + this.toString());
     }
     if (getLength() != 4) {
-      Assert.assertTrue(false, 
-          "expected int length to be 4 but it was " + getLength()
-          + "; part = " + this.toString());
+      Assert.assertTrue(false, "expected int length to be 4 but it was " + getLength() + "; part = " + this.toString());
     }
     byte[] bytes = getSerializedForm();
     return decodeInt(bytes, 0);
   }
 
   public static int decodeInt(byte[] bytes, int offset) {
-    return (((bytes[offset + 0]) << 24) & 0xFF000000)
-        | (((bytes[offset + 1]) << 16) & 0x00FF0000)
-        | (((bytes[offset + 2]) << 8) & 0x0000FF00)
-        | ((bytes[offset + 3]) & 0x000000FF);
+    return (((bytes[offset + 0]) << 24) & 0xFF000000) | (((bytes[offset + 1]) << 16) & 0x00FF0000) | (((bytes[offset + 2]) << 8) & 0x0000FF00) | ((bytes[offset + 3]) & 0x000000FF);
   }
 
-  private static final Map<Integer,byte[]> CACHED_INTS = new ConcurrentHashMap<Integer,byte[]>();
-  
+  private static final Map<Integer, byte[]> CACHED_INTS = new ConcurrentHashMap<Integer, byte[]>();
+
   public void setInt(int v) {
     byte[] bytes = CACHED_INTS.get(v);
     if (bytes == null) {
@@ -215,10 +212,10 @@ public class Part {
     // encode an int into the given byte array
     bytes[offset + 0] = (byte) ((v & 0xFF000000) >> 24);
     bytes[offset + 1] = (byte) ((v & 0x00FF0000) >> 16);
-    bytes[offset + 2] = (byte) ((v & 0x0000FF00) >> 8 );
+    bytes[offset + 2] = (byte) ((v & 0x0000FF00) >> 8);
     bytes[offset + 3] = (byte) (v & 0x000000FF);
   }
-  
+
   public void setLong(long v) {
     byte[] bytes = new byte[8];
     bytes[0] = (byte) ((v & 0xFF00000000000000l) >> 56);
@@ -227,7 +224,7 @@ public class Part {
     bytes[3] = (byte) ((v & 0x000000FF00000000l) >> 32);
     bytes[4] = (byte) ((v & 0x00000000FF000000l) >> 24);
     bytes[5] = (byte) ((v & 0x0000000000FF0000l) >> 16);
-    bytes[6] = (byte) ((v & 0x000000000000FF00l) >>  8);
+    bytes[6] = (byte) ((v & 0x000000000000FF00l) >> 8);
     bytes[7] = (byte) (v & 0xFF);
     this.typeCode = BYTE_CODE;
     this.part = bytes;
@@ -235,49 +232,37 @@ public class Part {
 
   public long getLong() {
     if (!isBytes()) {
-      Assert.assertTrue(false, "expected long part to be of type BYTE, part = "
-          + this.toString()); 
+      Assert.assertTrue(false, "expected long part to be of type BYTE, part = " + this.toString());
     }
     if (getLength() != 8) {
-      Assert.assertTrue(false, 
-          "expected long length to be 8 but it was " + getLength()
-          + "; part = " + this.toString());
+      Assert.assertTrue(false, "expected long length to be 8 but it was " + getLength() + "; part = " + this.toString());
     }
     byte[] bytes = getSerializedForm();
-    return ((((long)bytes[0]) << 56) & 0xFF00000000000000l) |
-           ((((long)bytes[1]) << 48) & 0x00FF000000000000l) |
-           ((((long)bytes[2]) << 40) & 0x0000FF0000000000l) |
-           ((((long)bytes[3]) << 32) & 0x000000FF00000000l) |
-           ((((long)bytes[4]) << 24) & 0x00000000FF000000l) |
-           ((((long)bytes[5]) << 16) & 0x0000000000FF0000l) |
-           ((((long)bytes[6]) <<  8) & 0x000000000000FF00l) |
-           (        bytes[7]         & 0x00000000000000FFl);
+    return ((((long) bytes[0]) << 56) & 0xFF00000000000000l) | ((((long) bytes[1]) << 48) & 0x00FF000000000000l) | ((((long) bytes[2]) << 40) & 0x0000FF0000000000l) | ((((long) bytes[3]) << 32) & 0x000000FF00000000l) | ((((long) bytes[4]) << 24) & 0x00000000FF000000l) | ((((long) bytes[5]) << 16) & 0x0000000000FF0000l) | ((((long) bytes[6]) << 8) & 0x000000000000FF00l) | (bytes[7] & 0x00000000000000FFl);
   }
-
 
   public byte[] getSerializedForm() {
     if (this.part == null) {
       return null;
     } else if (this.part instanceof byte[]) {
-      return (byte[])this.part;
+      return (byte[]) this.part;
     } else {
       return null; // should not be called on sender side?
     }
   }
+
   public Object getObject(boolean unzip) throws IOException, ClassNotFoundException {
     if (isBytes()) {
       return this.part;
-    }
-    else {
+    } else {
       if (this.version != null) {
-        return CacheServerHelper.deserialize((byte[])this.part, this.version,
-            unzip);
-      }
-      else {
-        return CacheServerHelper.deserialize((byte[])this.part, unzip);
+        return CacheServerHelper.deserialize((byte[]) this.part, this.version, unzip);
+      } else {
+        return CacheServerHelper.deserialize((byte[]) this.part, unzip);
       }
     }
   }
+
   public Object getObject() throws IOException, ClassNotFoundException {
     return getObject(false);
   }
@@ -289,7 +274,7 @@ public class Part {
       return getString();
     }
   }
-  
+
   /**
    * Write the contents of this part to the specified output stream.
    * This is only called for parts that will not fit into the commBuffer
@@ -300,19 +285,19 @@ public class Part {
   public final void writeTo(OutputStream out, ByteBuffer buf) throws IOException {
     if (getLength() > 0) {
       if (this.part instanceof byte[]) {
-        byte[] bytes = (byte[])this.part;
+        byte[] bytes = (byte[]) this.part;
         out.write(bytes, 0, bytes.length);
       } else if (this.part instanceof StoredObject) {
         StoredObject so = (StoredObject) this.part;
         ByteBuffer sobb = so.createDirectByteBuffer();
         if (sobb != null) {
-          HeapDataOutputStream.writeByteBufferToStream(out,  buf, sobb);
+          HeapDataOutputStream.writeByteBufferToStream(out, buf, sobb);
         } else {
           int bytesToSend = so.getDataSize();
           long addr = so.getAddressForReadingData(0, bytesToSend);
           while (bytesToSend > 0) {
             if (buf.remaining() == 0) {
-              HeapDataOutputStream.flushStream(out,  buf);
+              HeapDataOutputStream.flushStream(out, buf);
             }
             buf.put(AddressableMemoryManager.readByte(addr));
             addr++;
@@ -320,12 +305,13 @@ public class Part {
           }
         }
       } else {
-        HeapDataOutputStream hdos = (HeapDataOutputStream)this.part;
+        HeapDataOutputStream hdos = (HeapDataOutputStream) this.part;
         hdos.sendTo(out, buf);
         hdos.rewind();
       }
     }
   }
+
   /**
    * Write the contents of this part to the specified byte buffer.
    * Precondition: caller has already checked the length of this part
@@ -334,7 +320,7 @@ public class Part {
   public final void writeTo(ByteBuffer buf) {
     if (getLength() > 0) {
       if (this.part instanceof byte[]) {
-        buf.put((byte[])this.part);
+        buf.put((byte[]) this.part);
       } else if (this.part instanceof StoredObject) {
         StoredObject c = (StoredObject) this.part;
         ByteBuffer bb = c.createDirectByteBuffer();
@@ -350,12 +336,13 @@ public class Part {
           }
         }
       } else {
-        HeapDataOutputStream hdos = (HeapDataOutputStream)this.part;
+        HeapDataOutputStream hdos = (HeapDataOutputStream) this.part;
         hdos.sendTo(buf);
         hdos.rewind();
       }
     }
   }
+
   /**
    * Write the contents of this part to the specified socket channel
    * using the specified byte buffer.
@@ -367,7 +354,7 @@ public class Part {
     if (getLength() > 0) {
       final int BUF_MAX = buf.capacity();
       if (this.part instanceof byte[]) {
-        final byte[] bytes = (byte[])this.part;
+        final byte[] bytes = (byte[]) this.part;
         int off = 0;
         int len = bytes.length;
         buf.clear();
@@ -417,13 +404,13 @@ public class Part {
           }
         }
       } else {
-        HeapDataOutputStream hdos = (HeapDataOutputStream)this.part;
+        HeapDataOutputStream hdos = (HeapDataOutputStream) this.part;
         hdos.sendTo(sc, buf);
         hdos.rewind();
       }
     }
   }
-  
+
   static private String typeCodeToString(byte c) {
     switch (c) {
     case BYTE_CODE:
@@ -443,19 +430,19 @@ public class Part {
     sb.append("partCode=");
     sb.append(typeCodeToString(this.typeCode));
     sb.append(" partLength=" + getLength());
-//    sb.append(" partBytes=");
-//    byte[] b = getSerializedForm();
-//    if (b == null) {
-//      sb.append("null");
-//    }
-//    else {
-//      sb.append("(");
-//      for (int i = 0; i < b.length; i ++) {
-//        sb.append(Integer.toString(b[i]));
-//        sb.append(" ");
-//      }
-//      sb.append(")");
-//    }
+    //    sb.append(" partBytes=");
+    //    byte[] b = getSerializedForm();
+    //    if (b == null) {
+    //      sb.append("null");
+    //    }
+    //    else {
+    //      sb.append("(");
+    //      for (int i = 0; i < b.length; i ++) {
+    //        sb.append(Integer.toString(b[i]));
+    //        sb.append(" ");
+    //      }
+    //      sb.append(")");
+    //    }
     return sb.toString();
   }
 

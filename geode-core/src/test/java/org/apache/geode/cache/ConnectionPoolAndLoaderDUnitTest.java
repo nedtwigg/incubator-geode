@@ -44,7 +44,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  */
 @Category(DistributedTest.class)
 public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
-  
+
   private static int bridgeServerPort;
   private boolean useLocator;
 
@@ -52,7 +52,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
   public final void preTearDownCacheTestCase() {
     disconnectAllFromDS();
   }
-  
+
   /**
    * Tests that we can have both a connection pool and a bridge loader.
    * The expected order of operations for get is.
@@ -75,19 +75,19 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         AttributesFactory af = new AttributesFactory();
         RegionAttributes attrs = af.create();
         cache.createRegion(regionName, attrs);
-        
+
         startBridgeServer(serverPort, true);
         return null;
       }
     });
-    
+
     client.invoke(new SerializableCallable() {
       public Object call() {
         Cache cache = getCache();
         PoolFactory factory = PoolManager.createFactory();
         factory.addServer(NetworkUtils.getServerHostName(host), serverPort);
         factory.create("pool1");
-        
+
         AttributesFactory af = new AttributesFactory();
         af.setDataPolicy(DataPolicy.DEFAULT);
         af.setScope(Scope.LOCAL);
@@ -95,11 +95,11 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         af.setCacheLoader(new MyCacheLoader("loaded"));
         RegionAttributes attrs = af.create();
         cache.createRegion(regionName, attrs);
-        
+
         return null;
       }
     });
-    
+
     client.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -109,7 +109,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         assertEquals("loaded-d", region.get("d"));
       }
     });
-    
+
     server.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -120,7 +120,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         region.put("e", "server-e");
       }
     });
-    
+
     client.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -132,7 +132,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * Test the we can have both a connection pool
    * and a cache writer.
@@ -155,19 +155,19 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         AttributesFactory af = new AttributesFactory();
         RegionAttributes attrs = af.create();
         cache.createRegion(regionName, attrs);
-        
+
         startBridgeServer(serverPort, true);
         return null;
       }
     });
-    
+
     client.invoke(new SerializableCallable() {
       public Object call() {
         Cache cache = getCache();
         PoolFactory factory = PoolManager.createFactory();
         factory.addServer(NetworkUtils.getServerHostName(host), serverPort);
         factory.create("pool1");
-        
+
         AttributesFactory af = new AttributesFactory();
         af.setDataPolicy(DataPolicy.DEFAULT);
         af.setScope(Scope.LOCAL);
@@ -175,11 +175,11 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         af.setCacheWriter(new MyCacheWriter());
         RegionAttributes attrs = af.create();
         cache.createRegion(regionName, attrs);
-        
+
         return null;
       }
     });
-    
+
     client.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -192,36 +192,36 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         try {
           region.put("a", "new-a");
           fail("Should have gotten a cache writer exception");
-        } catch(CacheWriterException e) {
+        } catch (CacheWriterException e) {
           assertEquals("beforeUpdate", e.getMessage());
         }
         try {
           region.destroy("b");
           fail("Should have gotten a cache writer exception");
-        } catch(CacheWriterException e) {
+        } catch (CacheWriterException e) {
           assertEquals("beforeDestroy", e.getMessage());
         }
         try {
           region.put("d", "d");
           fail("Should have gotten a cache writer exception");
-        } catch(CacheWriterException e) {
+        } catch (CacheWriterException e) {
           assertEquals("beforeCreate", e.getMessage());
         }
         try {
           region.clear();
           fail("Should have gotten a cache writer exception");
-        } catch(CacheWriterException e) {
+        } catch (CacheWriterException e) {
           assertEquals("beforeRegionClear", e.getMessage());
         }
         try {
           region.destroyRegion();
           fail("Should have gotten a cache writer exception");
-        } catch(CacheWriterException e) {
+        } catch (CacheWriterException e) {
           assertEquals("beforeRegionDestroy", e.getMessage());
         }
       }
     });
-    
+
     server.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -232,7 +232,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   /**
    * Test that we can have a peer, a server,
    * and a bridge loader for the same region.
@@ -259,7 +259,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         RegionAttributes attrs = af.create();
 
         cache.createRegion(regionName, attrs);
-        
+
         startBridgeServer(serverPort, true);
         return null;
       }
@@ -329,7 +329,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         region.put("f", "client1-f");
       }
     });
-    
+
     client2.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -339,7 +339,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         region.put("g", "client2-g");
       }
     });
-    
+
     server.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -349,7 +349,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         region.localDestroy("g");
       }
     });
-    
+
     //Test the scenarios
     client1.invoke(new SerializableRunnable() {
       public void run() {
@@ -364,7 +364,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         assertEquals("loaded1-h", region.get("h"));
       }
     });
-    
+
     server.invoke(new SerializableRunnable() {
       public void run() {
         Region region = getRootRegion(regionName);
@@ -374,7 +374,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
         assertEquals("client2-d", region.get("d"));
         assertEquals(null, region.get("e"));
         assertEquals(null, region.get("f"));
-        
+
         //dsmith - This result seems somewhat suspect. client1 did a net load
         //which found a value in client2, but it never propagated that result
         //to the server. After talking with Darrel we decided to keep it this
@@ -384,7 +384,7 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private void startBridgeServer(int port, boolean notifyBySubscription) throws IOException {
     Cache cache = getCache();
     CacheServer bridge = cache.addCacheServer();
@@ -397,13 +397,13 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
   @Override
   public Properties getDistributedSystemProperties() {
     Properties p = new Properties();
-    if(!useLocator) {
+    if (!useLocator) {
       p.setProperty(LOCATORS, "");
       p.setProperty(MCAST_PORT, "0");
     }
     return p;
   }
-  
+
   private static class MyCacheWriter extends CacheWriterAdapter {
 
     protected boolean throwException = false;
@@ -423,16 +423,14 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
     }
 
     @Override
-    public void beforeRegionClear(RegionEvent event)
-        throws CacheWriterException {
+    public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
       if (throwException) {
         throw new CacheWriterException("beforeRegionClear");
       }
     }
 
     @Override
-    public void beforeRegionDestroy(RegionEvent event)
-        throws CacheWriterException {
+    public void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {
       if (throwException) {
         throw new CacheWriterException("beforeRegionDestroy");
       }
@@ -445,9 +443,9 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
       }
     }
   }
-  
+
   private static class MyCacheLoader implements CacheLoader {
-    
+
     private String message;
 
     public MyCacheLoader(String message) {
@@ -456,15 +454,15 @@ public class ConnectionPoolAndLoaderDUnitTest extends JUnit4CacheTestCase {
 
     @Override
     public Object load(LoaderHelper helper) throws CacheLoaderException {
-      if(helper.getRegion().getAttributes().getScope().equals(Scope.DISTRIBUTED_ACK)) {
+      if (helper.getRegion().getAttributes().getScope().equals(Scope.DISTRIBUTED_ACK)) {
         System.err.println("Doing a net search for " + helper.getKey());
         Object result = helper.netSearch(false);
         System.err.println("Net search found " + result);
-        if(result != null) {
+        if (result != null) {
           return result;
         }
       }
-      
+
       Object key = helper.getKey();
       return message + "-" + key;
     }

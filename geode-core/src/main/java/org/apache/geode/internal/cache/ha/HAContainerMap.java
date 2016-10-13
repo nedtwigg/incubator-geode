@@ -53,7 +53,7 @@ public class HAContainerMap implements HAContainerWrapper {
 
   public ClientProxyMembershipID getProxyID(String haRegionName) {
     CacheClientProxy proxy = haRegionNameToProxy.get(haRegionName);
-    if (proxy != null){
+    if (proxy != null) {
       return proxy.getProxyID();
     } else {
       return null;
@@ -61,7 +61,7 @@ public class HAContainerMap implements HAContainerWrapper {
   }
 
   public Object putProxy(String haName, CacheClientProxy proxy) {
-//    InternalDistributedSystem.getLoggerI18n().info(LocalizedStrings.DEBUG, "adding proxy for " + haName + ": " + proxy, new Exception("stack trace"));
+    //    InternalDistributedSystem.getLoggerI18n().info(LocalizedStrings.DEBUG, "adding proxy for " + haName + ": " + proxy, new Exception("stack trace"));
     return haRegionNameToProxy.put(haName, proxy);
   }
 
@@ -70,18 +70,18 @@ public class HAContainerMap implements HAContainerWrapper {
   }
 
   public Object removeProxy(String haName) {
-//    InternalDistributedSystem.getLoggerI18n().info(LocalizedStrings.DEBUG, "removing proxy for " + haName, new Exception("stack trace"));
+    //    InternalDistributedSystem.getLoggerI18n().info(LocalizedStrings.DEBUG, "removing proxy for " + haName, new Exception("stack trace"));
     return haRegionNameToProxy.remove(haName);
   }
-  
+
   /**
    * @param key
    * @return Object
    */
-	public Object getKey(Object key) {
-		Entry entry = (Entry) map.get(key);
-		return (entry == null) ? null : entry.getKey();
-	}
+  public Object getKey(Object key) {
+    Entry entry = (Entry) map.get(key);
+    return (entry == null) ? null : entry.getKey();
+  }
 
   public String getName() {
     return "HashMap";
@@ -111,7 +111,7 @@ public class HAContainerMap implements HAContainerWrapper {
   }
 
   public Object get(Object key) {
-    Entry entry = (Entry)map.get(key);
+    Entry entry = (Entry) map.get(key);
     return (entry == null) ? null : entry.getValue();
   }
 
@@ -143,7 +143,7 @@ public class HAContainerMap implements HAContainerWrapper {
   }
 
   public Object remove(Object key) {
-    Entry entry = (Entry)map.remove(key);
+    Entry entry = (Entry) map.remove(key);
     return (entry == null) ? null : entry.getValue();
   }
 

@@ -27,7 +27,8 @@ import org.apache.geode.distributed.DistributedMember;
  * @since GemFire 5.7
  */
 public class ServerRefusedConnectionException extends OperationAbortedException {
-private static final long serialVersionUID = 1794959225832197946L;
+  private static final long serialVersionUID = 1794959225832197946L;
+
   /**
    * Constructs an instance of <code>ServerRefusedConnectionException</code> with the
    * specified detail message.

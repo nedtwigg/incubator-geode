@@ -41,19 +41,19 @@ import java.util.concurrent.RejectedExecutionException;
  *
  */
 public class StatRecorder extends Protocol {
-  
+
   private static final Logger logger = Services.getLogger();
-  
+
   private static final int OUTGOING = 0;
   private static final int INCOMING = 1;
-  
+
   DMStats stats;
   Services services;
-  
+
   private final short nakackHeaderId = ClassConfigurator.getProtocolId(NAKACK2.class);
   private final short unicastHeaderId = ClassConfigurator.getProtocolId(UNICAST3.class);
   private final short frag2HeaderId = ClassConfigurator.getProtocolId(FRAG2.class);
-  
+
   /**
    * sets the services object of the GMS that is using this recorder
    * @param services the Services collective of the GMS
@@ -62,24 +62,24 @@ public class StatRecorder extends Protocol {
     this.services = services;
     this.stats = services.getStatistics();
   }
-  
+
   @Override
   public Object up(Event evt) {
     switch (evt.getType()) {
     case Event.MSG:
-      Message msg = (Message)evt.getArg();
+      Message msg = (Message) evt.getArg();
       processForMulticast(msg, INCOMING);
       processForUnicast(msg, INCOMING);
       filter(msg, INCOMING);
     }
     return up_prot.up(evt);
   }
-  
+
   @Override
   public Object down(Event evt) {
     switch (evt.getType()) {
     case Event.MSG:
-      Message msg = (Message)evt.getArg();
+      Message msg = (Message) evt.getArg();
       processForMulticast(msg, OUTGOING);
       processForUnicast(msg, OUTGOING);
       filter(msg, OUTGOING);
@@ -98,24 +98,21 @@ public class StatRecorder extends Protocol {
           return null;
         }
       }
-    } while (services != null
-      && !services.getManager().shutdownInProgress()
-      && !services.getCancelCriterion().isCancelInProgress());
+    } while (services != null && !services.getManager().shutdownInProgress() && !services.getCancelCriterion().isCancelInProgress());
     return null;
   }
-  
 
   private void processForMulticast(Message msg, int direction) {
     Object o = msg.getHeader(nakackHeaderId);
-//    logger.debug("sending message with NakAck header {}: {}", o, msg);
-    if (o instanceof NakAckHeader2  &&  stats != null) {
-      NakAckHeader2 hdr = (NakAckHeader2)o;
+    //    logger.debug("sending message with NakAck header {}: {}", o, msg);
+    if (o instanceof NakAckHeader2 && stats != null) {
+      NakAckHeader2 hdr = (NakAckHeader2) o;
       switch (direction) {
       case INCOMING:
-        stats.incMcastReadBytes((int)msg.size());
+        stats.incMcastReadBytes((int) msg.size());
         break;
       case OUTGOING:
-        stats.incMcastWriteBytes((int)msg.size());
+        stats.incMcastWriteBytes((int) msg.size());
         switch (hdr.getType()) {
         case NakAckHeader2.XMIT_RSP:
           stats.incMcastRetransmits();
@@ -131,14 +128,14 @@ public class StatRecorder extends Protocol {
 
   private void processForUnicast(Message msg, int direction) {
     Object o = msg.getHeader(unicastHeaderId);
-    if (o instanceof UNICAST3.Header  &&  stats != null) {
-      UNICAST3.Header hdr = (UNICAST3.Header)o;
+    if (o instanceof UNICAST3.Header && stats != null) {
+      UNICAST3.Header hdr = (UNICAST3.Header) o;
       switch (direction) {
       case INCOMING:
-        stats.incUcastReadBytes((int)msg.size());
+        stats.incUcastReadBytes((int) msg.size());
         break;
       case OUTGOING:
-        stats.incUcastWriteBytes((int)msg.size());
+        stats.incUcastWriteBytes((int) msg.size());
         switch (hdr.type()) {
         case UNICAST3.Header.XMIT_REQ:
           stats.incUcastRetransmits();
@@ -148,18 +145,18 @@ public class StatRecorder extends Protocol {
       }
     }
   }
-  
+
   private void filter(Message msg, int direction) {
     if (direction == INCOMING) {
       Header h = msg.getHeader(frag2HeaderId);
       boolean copyBuffer = false;
       if (h != null && h instanceof FragHeader) {
         copyBuffer = true;
-//      String str = direction == OUTGOING? "sending" : "receiving";
-//      logger.debug("{} fragment {} msg buffer hash {}  offset {} msg size {} first bytes=\n{}", str, hdr, 
-//          msg.getRawBuffer().hashCode(), msg.getOffset(), msg.getLength(),
-//          GMSUtil.formatBytes(msg.getRawBuffer(), msg.getOffset(),
-//              Math.min(200, msg.getLength())));
+        //      String str = direction == OUTGOING? "sending" : "receiving";
+        //      logger.debug("{} fragment {} msg buffer hash {}  offset {} msg size {} first bytes=\n{}", str, hdr, 
+        //          msg.getRawBuffer().hashCode(), msg.getOffset(), msg.getLength(),
+        //          GMSUtil.formatBytes(msg.getRawBuffer(), msg.getOffset(),
+        //              Math.min(200, msg.getLength())));
       } else {
         h = msg.getHeader(unicastHeaderId);
         if (h instanceof UNICAST3.Header) {

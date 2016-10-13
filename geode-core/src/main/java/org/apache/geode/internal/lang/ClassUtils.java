@@ -42,11 +42,9 @@ public abstract class ClassUtils {
   public static Class forName(final String className, final RuntimeException e) {
     try {
       return Class.forName(className);
-    }
-    catch (ClassNotFoundException ignore) {
+    } catch (ClassNotFoundException ignore) {
       throw e;
-    }
-    catch (NoClassDefFoundError ignore) {
+    } catch (NoClassDefFoundError ignore) {
       throw e;
     }
   }
@@ -86,8 +84,7 @@ public abstract class ClassUtils {
     try {
       forName(className, new IllegalArgumentException(String.format("Class (%1$s) is not available!", className)));
       return true;
-    }
-    catch (IllegalArgumentException ignore) {
+    } catch (IllegalArgumentException ignore) {
       // NOTE the Exception could be logged at fine/debug level if we used category-based logging
       return false;
     }

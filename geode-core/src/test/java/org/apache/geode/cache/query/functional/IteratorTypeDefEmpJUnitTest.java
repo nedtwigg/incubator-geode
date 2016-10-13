@@ -68,16 +68,14 @@ public class IteratorTypeDefEmpJUnitTest {
 
   @Test
   public void testIteratorDef() throws Exception {
-    String queries[] = { "IMPORT org.apache.geode.cache.\"query\".data.Manager;"
-        + "SELECT DISTINCT manager_id FROM (set<Manager>)/employees where empId > 0"};
+    String queries[] = { "IMPORT org.apache.geode.cache.\"query\".data.Manager;" + "SELECT DISTINCT manager_id FROM (set<Manager>)/employees where empId > 0" };
     Query q = null;
     for (int i = 0; i < queries.length; i++) {
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         Object r = q.execute();
         CacheUtils.log(Utils.printResult(r));
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }

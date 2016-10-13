@@ -42,7 +42,7 @@ import org.apache.geode.internal.logging.LogService;
  */
 public class EndpointManagerImpl implements EndpointManager {
   private static final Logger logger = LogService.getLogger();
-  
+
   private volatile Map<ServerLocation, Endpoint> endpointMap = Collections.emptyMap();
   private final Map/*<ServerLocation, ConnectionStats>*/<ServerLocation, ConnectionStats> statMap = new HashMap<ServerLocation, ConnectionStats>();
   private final DistributedSystem ds;
@@ -50,15 +50,15 @@ public class EndpointManagerImpl implements EndpointManager {
   private final EndpointListenerBroadcaster listener = new EndpointListenerBroadcaster();
   protected final CancelCriterion cancelCriterion;
   private final PoolStats poolStats;
-  
-  public EndpointManagerImpl(String poolName, DistributedSystem ds,CancelCriterion cancelCriterion, PoolStats poolStats) {
+
+  public EndpointManagerImpl(String poolName, DistributedSystem ds, CancelCriterion cancelCriterion, PoolStats poolStats) {
     this.ds = ds;
     this.poolName = poolName;
     this.cancelCriterion = cancelCriterion;
     this.poolStats = poolStats;
     listener.addListener(new EndpointListenerForBridgeMembership());
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.client.internal.EndpointManager#referenceEndpoint(org.apache.geode.distributed.internal.ServerLocation)
    */
@@ -66,11 +66,11 @@ public class EndpointManagerImpl implements EndpointManager {
     //logger.warn("REFENDPOINT server:"+server+" memberId:"+memberId);
     Endpoint endpoint = endpointMap.get(server);
     boolean addedEndpoint = false;
-    if(endpoint == null || endpoint.isClosed()) {
-      synchronized(this) {
+    if (endpoint == null || endpoint.isClosed()) {
+      synchronized (this) {
         endpoint = endpointMap.get(server);
-        if(endpoint == null || endpoint.isClosed()) {
-          ConnectionStats stats  = getStats(server);
+        if (endpoint == null || endpoint.isClosed()) {
+          ConnectionStats stats = getStats(server);
           Map<ServerLocation, Endpoint> endpointMapTemp = new HashMap<ServerLocation, Endpoint>(endpointMap);
           endpoint = new Endpoint(this, ds, server, stats, memberId);
           endpointMapTemp.put(server, endpoint);
@@ -80,64 +80,63 @@ public class EndpointManagerImpl implements EndpointManager {
         }
       }
     }
-    
+
     endpoint.addReference();
-    
-    if(addedEndpoint) {
+
+    if (addedEndpoint) {
       //logger.warn("EMANFIRE2:JOIN:"+endpoint.getLocation()+" mid:"+endpoint.getMemberId());
       listener.endpointNowInUse(endpoint);
     } else {
       //logger.warn("EMANFIRE33:NOJOIN:"+endpoint.getLocation()+" mid:"+endpoint.getMemberId());
     }
-    
+
     return endpoint;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.client.internal.EndpointManager#serverCrashed(org.apache.geode.cache.client.internal.Endpoint)
    */
   public void serverCrashed(Endpoint endpoint) {
     removeEndpoint(endpoint, true);
   }
-  
+
   void endpointNotInUse(Endpoint endpoint) {
     removeEndpoint(endpoint, false);
   }
-  
+
   /** Used by Endpoint only, when the reference count for this endpoint reaches 0 */
   private void removeEndpoint(Endpoint endpoint, boolean crashed) {
     endpoint.close();
     boolean removedEndpoint = false;
-    synchronized(this) {
+    synchronized (this) {
       Map<ServerLocation, Endpoint> endpointMapTemp = new HashMap<ServerLocation, Endpoint>(endpointMap);
       endpoint = endpointMapTemp.remove(endpoint.getLocation());
-      if(endpoint != null) {
+      if (endpoint != null) {
         endpointMap = Collections.unmodifiableMap(endpointMapTemp);
         removedEndpoint = true;
       }
       poolStats.setServerCount(endpointMap.size());
     }
-    if(removedEndpoint) {
-      PoolImpl pool = (PoolImpl)PoolManager.find(this.poolName);
+    if (removedEndpoint) {
+      PoolImpl pool = (PoolImpl) PoolManager.find(this.poolName);
       if (pool != null && pool.getMultiuserAuthentication()) {
         int size = 0;
         ArrayList<ProxyCache> proxyCaches = pool.getProxyCacheList();
         synchronized (proxyCaches) {
-        for (ProxyCache proxyCache : proxyCaches) {
-          try {
-            Long userId = proxyCache.getUserAttributes().getServerToId().remove(
-                endpoint.getLocation());
-            if (userId != null) {
-              ++size;
+          for (ProxyCache proxyCache : proxyCaches) {
+            try {
+              Long userId = proxyCache.getUserAttributes().getServerToId().remove(endpoint.getLocation());
+              if (userId != null) {
+                ++size;
+              }
+            } catch (CacheClosedException cce) {
+              // If this call is triggered by a Cache.close(), then this can be
+              // expected.
             }
-          } catch (CacheClosedException cce) {
-            // If this call is triggered by a Cache.close(), then this can be
-            // expected.
           }
-        }
-        if (logger.isDebugEnabled()) {
-          logger.debug("EndpointManagerImpl.removeEndpoint() Removed server {} from {} user's ProxyCache", endpoint.getLocation(), size);
-        }
+          if (logger.isDebugEnabled()) {
+            logger.debug("EndpointManagerImpl.removeEndpoint() Removed server {} from {} user's ProxyCache", endpoint.getLocation(), size);
+          }
         }
         UserAttributes ua = UserAttributes.userAttributes.get();
         if (ua != null) {
@@ -149,16 +148,13 @@ public class EndpointManagerImpl implements EndpointManager {
       } else if (pool != null && !pool.getMultiuserAuthentication()) {
         endpoint.getLocation().setUserId(-1);
       }
-      if(crashed) {
+      if (crashed) {
         listener.endpointCrashed(endpoint);
-      }
-      else {
+      } else {
         listener.endpointNoLongerInUse(endpoint);
       }
     }
   }
-  
-  
 
   /* (non-Javadoc)
    * @see org.apache.geode.cache.client.internal.EndpointManager#getEndpointMap()
@@ -171,51 +167,50 @@ public class EndpointManagerImpl implements EndpointManager {
    * @see org.apache.geode.cache.client.internal.EndpointManager#close()
    */
   public synchronized void close() {
-    for(Iterator<ConnectionStats> itr = statMap.values().iterator(); itr.hasNext(); ) {
+    for (Iterator<ConnectionStats> itr = statMap.values().iterator(); itr.hasNext();) {
       ConnectionStats stats = itr.next();
       stats.close();
     }
-    
+
     statMap.clear();
     endpointMap = Collections.emptyMap();
     listener.clear();
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.client.internal.EndpointManager#addListener(org.apache.geode.cache.client.internal.EndpointManagerImpl.EndpointListener)
    */
   public void addListener(EndpointManager.EndpointListener listener) {
     this.listener.addListener(listener);
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.client.internal.EndpointManager#removeListener(org.apache.geode.cache.client.internal.EndpointManagerImpl.EndpointListener)
    */
   public void removeListener(EndpointManager.EndpointListener listener) {
     this.listener.removeListener(listener);
   }
-  
+
   private synchronized ConnectionStats getStats(ServerLocation location) {
     ConnectionStats stats = statMap.get(location);
-    if(stats == null) {
+    if (stats == null) {
       String statName = poolName + "-" + location.toString();
-      PoolImpl pool = (PoolImpl)PoolManager.find(this.poolName);
+      PoolImpl pool = (PoolImpl) PoolManager.find(this.poolName);
       if (pool != null) {
         if (pool.getGatewaySender() != null) {
-          stats = new ConnectionStats(new DummyStatisticsFactory(), statName,
-              this.poolStats/*, this.gatewayStats*/);
+          stats = new ConnectionStats(new DummyStatisticsFactory(), statName, this.poolStats/*, this.gatewayStats*/);
         }
       }
       if (stats == null) {
         stats = new ConnectionStats(ds, statName, this.poolStats/*,
-            this.gatewayStats*/);
+                                                                this.gatewayStats*/);
       }
       statMap.put(location, stats);
     }
-    
+
     return stats;
   }
-  
+
   public synchronized Map<ServerLocation, ConnectionStats> getAllStats() {
     return new HashMap<ServerLocation, ConnectionStats>(statMap);
   }
@@ -223,15 +218,15 @@ public class EndpointManagerImpl implements EndpointManager {
   public int getConnectedServerCount() {
     return getEndpointMap().size();
   }
-  
+
   public static void loadEmergencyClasses() {
     //do nothing
   }
-  
+
   protected static class EndpointListenerBroadcaster implements EndpointManager.EndpointListener {
-  
+
     private volatile Set/*<EndpointListener>*/<EndpointListener> endpointListeners = Collections.emptySet();
-    
+
     public synchronized void addListener(EndpointManager.EndpointListener listener) {
       HashSet<EndpointListener> tmpListeners = new HashSet<EndpointListener>(endpointListeners);
       tmpListeners.add(listener);
@@ -249,14 +244,14 @@ public class EndpointManagerImpl implements EndpointManager {
     }
 
     public void endpointCrashed(Endpoint endpoint) {
-      for(Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext(); ) {
+      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext();) {
         EndpointManager.EndpointListener listener = itr.next();
         listener.endpointCrashed(endpoint);
       }
     }
 
     public void endpointNoLongerInUse(Endpoint endpoint) {
-      for(Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext(); ) {
+      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext();) {
         EndpointManager.EndpointListener listener = itr.next();
         listener.endpointNoLongerInUse(endpoint);
       }
@@ -264,19 +259,17 @@ public class EndpointManagerImpl implements EndpointManager {
 
     public void endpointNowInUse(Endpoint endpoint) {
       //logger.warn("HIGHUP:JOIN:"+endpoint.getLocation());
-      for(Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext(); ) {
+      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext();) {
         EndpointManager.EndpointListener listener = itr.next();
         listener.endpointNowInUse(endpoint);
       }
     }
   }
-  
-  
-  
+
   public class EndpointListenerForBridgeMembership implements EndpointManager.EndpointListener {
-    
+
     public void endpointCrashed(Endpoint endpoint) {
-      if(endpoint.getMemberId()==null || cancelCriterion.isCancelInProgress()) {
+      if (endpoint.getMemberId() == null || cancelCriterion.isCancelInProgress()) {
         return;
       }
       //logger.warn("EMANFIRE:CRASH:"+endpoint.getLocation());
@@ -284,7 +277,7 @@ public class EndpointManagerImpl implements EndpointManager {
     }
 
     public void endpointNoLongerInUse(Endpoint endpoint) {
-      if(endpoint.getMemberId()==null || cancelCriterion.isCancelInProgress()) {
+      if (endpoint.getMemberId() == null || cancelCriterion.isCancelInProgress()) {
         return;
       }
       //logger.warn("EMANFIRE:LEFT:"+endpoint.getLocation());
@@ -292,7 +285,7 @@ public class EndpointManagerImpl implements EndpointManager {
     }
 
     public void endpointNowInUse(Endpoint endpoint) {
-      if(cancelCriterion.isCancelInProgress()) {
+      if (cancelCriterion.isCancelInProgress()) {
         return;
       }
       //logger.warn("EMANFIRE:JOIN:"+endpoint.getLocation()+" mid:"+endpoint.getMemberId(),new Exception());
@@ -302,6 +295,6 @@ public class EndpointManagerImpl implements EndpointManager {
 
   public String getPoolName() {
     return poolName;
-  }  
-  
+  }
+
 }

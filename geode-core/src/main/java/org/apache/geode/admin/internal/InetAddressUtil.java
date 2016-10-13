@@ -29,7 +29,6 @@ import org.apache.geode.internal.net.SocketCreator;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
-
 /**
  * Provides static utilities for manipulating, validating, and converting
  * InetAddresses and host strings.
@@ -38,20 +37,19 @@ import org.apache.geode.internal.logging.LogService;
  */
 @Deprecated
 public class InetAddressUtil {
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   /** InetAddress instance representing the local host  */
   public static final InetAddress LOCALHOST = createLocalHost();
-  
-  public static  final String LOOPBACK_ADDRESS =
-    SocketCreator.preferIPv6Addresses() ? "::1" : "127.0.0.1"; 
-  
-  public static final InetAddress LOOPBACK = 
-      InetAddressUtil.toInetAddress(LOOPBACK_ADDRESS);
-  
+
+  public static final String LOOPBACK_ADDRESS = SocketCreator.preferIPv6Addresses() ? "::1" : "127.0.0.1";
+
+  public static final InetAddress LOOPBACK = InetAddressUtil.toInetAddress(LOOPBACK_ADDRESS);
+
   /** Disallows InetAddressUtil instantiation. */
-  private InetAddressUtil() {}
+  private InetAddressUtil() {
+  }
 
   /** 
    * Returns a string version of InetAddress which can be converted back to an 
@@ -71,7 +69,7 @@ public class InetAddressUtil {
       return trimLeadingSlash(val.toString());
     }
   }
-  
+
   /** 
    * Converts the string host to an instance of InetAddress.  Returns null if
    * the string is empty.  Fails Assertion if the conversion would result in
@@ -89,8 +87,7 @@ public class InetAddressUtil {
     try {
       if (host.indexOf("/") > -1) {
         return InetAddress.getByName(host.substring(host.indexOf("/") + 1));
-      }
-      else {
+      } else {
         return InetAddress.getByName(host);
       }
     } catch (java.net.UnknownHostException e) {
@@ -129,12 +126,12 @@ public class InetAddressUtil {
    */
   public static String validateHost(String host) {
     if (host == null || host.length() == 0) {
-      return null; 
+      return null;
     }
     try {
       InetAddress.getByName(trimLeadingSlash(host));
       return host;
-    } catch (java.net.UnknownHostException e) { 
+    } catch (java.net.UnknownHostException e) {
       logStackTrace(e);
       return null;
     }
@@ -145,45 +142,42 @@ public class InetAddressUtil {
     if (host instanceof InetAddress) {
       if (LOCALHOST.equals(host)) {
         return true;
-      }
-      else {
-//        InetAddress hostAddr = (InetAddress)host;
+      } else {
+        //        InetAddress hostAddr = (InetAddress)host;
         try {
-          Enumeration en=NetworkInterface.getNetworkInterfaces();
-          while(en.hasMoreElements()) {
-            NetworkInterface i=(NetworkInterface)en.nextElement();
-            for(Enumeration en2=i.getInetAddresses(); en2.hasMoreElements();) {
-              InetAddress addr=(InetAddress)en2.nextElement();
+          Enumeration en = NetworkInterface.getNetworkInterfaces();
+          while (en.hasMoreElements()) {
+            NetworkInterface i = (NetworkInterface) en.nextElement();
+            for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements();) {
+              InetAddress addr = (InetAddress) en2.nextElement();
               if (host.equals(addr)) {
                 return true;
               }
             }
           }
           return false;
-        }
-        catch (SocketException e) {
+        } catch (SocketException e) {
           throw new GemFireIOException(LocalizedStrings.InetAddressUtil_UNABLE_TO_QUERY_NETWORK_INTERFACE.toLocalizedString(), e);
         }
       }
-    }
-    else {
+    } else {
       return isLocalHost(InetAddressUtil.toInetAddress(host.toString()));
     }
   }
-  
+
   /** Returns true if host matches the LOOPBACK (127.0.0.1). */
   public static boolean isLoopback(Object host) {
     if (host instanceof InetAddress) {
       return LOOPBACK.equals(host);
-    }
-    else {
+    } else {
       return isLoopback(InetAddressUtil.toInetAddress(host.toString()));
     }
   }
-  
+
   /** Returns a version of the value after removing any leading slashes */
   private static String trimLeadingSlash(String value) {
-    if (value == null) return "";
+    if (value == null)
+      return "";
     while (value.indexOf("/") > -1) {
       value = value.substring(value.indexOf("/") + 1);
     }
@@ -199,11 +193,9 @@ public class InetAddressUtil {
    *          Throwable to log stack trace for
    */
   private static void logStackTrace(Throwable throwable) {
-    AdminDistributedSystemImpl adminDS = 
-                              AdminDistributedSystemImpl.getConnectedInstance();
+    AdminDistributedSystemImpl adminDS = AdminDistributedSystemImpl.getConnectedInstance();
 
     logger.warn(throwable.getMessage(), throwable);
-  }  
-  
-}
+  }
 
+}

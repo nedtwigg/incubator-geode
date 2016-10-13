@@ -65,22 +65,21 @@ public class DumpDirectoryFiles implements Function, InternalEntity {
   public void execute(FunctionContext context) {
     RegionFunctionContext ctx = (RegionFunctionContext) context;
 
-    if(!(context.getArguments() instanceof String[])) {
+    if (!(context.getArguments() instanceof String[])) {
       throw new IllegalArgumentException("Arguments should be a string array");
     }
     String[] args = (String[]) context.getArguments();
-    if(args.length != 2) {
+    if (args.length != 2) {
       throw new IllegalArgumentException("Expected 2 arguments: exportLocation, indexName");
     }
 
-
-    String exportLocation =args[0];
-    String indexName =args[1];
+    String exportLocation = args[0];
+    String indexName = args[1];
 
     final Region<Object, Object> region = ctx.getDataSet();
     LuceneService service = LuceneServiceProvider.get(ctx.getDataSet().getCache());
     InternalLuceneIndex index = (InternalLuceneIndex) service.getIndex(indexName, region.getFullPath());
-    if(index == null) {
+    if (index == null) {
       throw new IllegalStateException("Index not found for region " + region + " index " + indexName);
     }
 
@@ -99,13 +98,13 @@ public class DumpDirectoryFiles implements Function, InternalEntity {
         fs.export(bucketDirectory);
       });
       context.getResultSender().lastResult(null);
-    }
-    catch (BucketNotFoundException e) {
+    } catch (BucketNotFoundException e) {
       throw new FunctionException(e);
     }
   }
 
-  @Override public String getId() {
+  @Override
+  public String getId() {
     return ID;
   }
 

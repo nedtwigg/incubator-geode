@@ -29,16 +29,15 @@ import org.junit.experimental.categories.Category;
 @Category(DistributedTest.class)
 public class LuceneQueriesPeerPROverflowDUnitTest extends LuceneQueriesPRBase {
 
-  @Override protected void initDataStore(final SerializableRunnableIF createIndex) throws Exception {
+  @Override
+  protected void initDataStore(final SerializableRunnableIF createIndex) throws Exception {
     createIndex.run();
     EvictionAttributes evicAttr = EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK);
-    getCache().createRegionFactory(RegionShortcut.PARTITION_OVERFLOW)
-      .setPartitionAttributes(getPartitionAttributes())
-      .setEvictionAttributes(evicAttr)
-      .create(REGION_NAME);
+    getCache().createRegionFactory(RegionShortcut.PARTITION_OVERFLOW).setPartitionAttributes(getPartitionAttributes()).setEvictionAttributes(evicAttr).create(REGION_NAME);
   }
 
-  @Override protected void initAccessor(final SerializableRunnableIF createIndex) throws Exception {
+  @Override
+  protected void initAccessor(final SerializableRunnableIF createIndex) throws Exception {
     initDataStore(createIndex);
   }
 }

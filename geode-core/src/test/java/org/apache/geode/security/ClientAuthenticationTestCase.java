@@ -44,21 +44,9 @@ public abstract class ClientAuthenticationTestCase extends JUnit4DistributedTest
   private VM client1 = null;
   private VM client2 = null;
 
-  private static final String[] serverIgnoredExceptions = {
-      AuthenticationRequiredException.class.getName(),
-      AuthenticationFailedException.class.getName(),
-      GemFireSecurityException.class.getName(),
-      ClassNotFoundException.class.getName(),
-      IOException.class.getName(),
-      SSLException.class.getName(),
-      SSLHandshakeException.class.getName()
-  };
+  private static final String[] serverIgnoredExceptions = { AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), GemFireSecurityException.class.getName(), ClassNotFoundException.class.getName(), IOException.class.getName(), SSLException.class.getName(), SSLHandshakeException.class.getName() };
 
-  private static final String[] clientIgnoredExceptions = {
-      AuthenticationRequiredException.class.getName(),
-      AuthenticationFailedException.class.getName(),
-      SSLHandshakeException.class.getName()
-  };
+  private static final String[] clientIgnoredExceptions = { AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), SSLHandshakeException.class.getName() };
 
   @Override
   public final void postSetUp() throws Exception {

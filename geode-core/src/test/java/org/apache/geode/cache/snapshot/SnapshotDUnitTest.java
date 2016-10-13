@@ -58,7 +58,7 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
   public void testExportAndImport() throws Exception {
     File dir = new File(getDiskDirs()[0], "snap");
     dir.mkdir();
-    
+
     // save all regions
     getCache().getSnapshotService().save(dir, SnapshotFormat.GEMFIRE);
 
@@ -73,7 +73,7 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
         }
       }
     }
-        
+
     SerializableCallable callbacks = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -89,7 +89,7 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
                 fail("CacheWriter invoked during import");
               }
             });
-            
+
             region.getAttributesMutator().addCacheListener(new CacheListenerAdapter<Integer, MyObject>() {
               @Override
               public void afterUpdate(EntryEvent<Integer, MyObject> event) {
@@ -104,7 +104,7 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
 
     // add callbacks
     forEachVm(callbacks, true);
-    
+
     // load all regions
     RegionGenerator rgen = new RegionGenerator();
     getCache().getSnapshotService().load(dir, SnapshotFormat.GEMFIRE);
@@ -112,8 +112,7 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
       for (final SerializationType st : SerializationType.values()) {
         Region<Integer, MyObject> region = getCache().getRegion("test-" + rt.name() + "-" + st.name());
         for (Entry<Integer, MyObject> entry : createExpected(st, rgen).entrySet()) {
-          assertEquals("Comparison failure for " + rt.name() + "/" + st.name(), 
-              entry.getValue(), region.get(entry.getKey()));
+          assertEquals("Comparison failure for " + rt.name() + "/" + st.name(), entry.getValue(), region.get(entry.getKey()));
         }
       }
     }
@@ -127,23 +126,23 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
         throw new RuntimeException();
       }
     };
-    
+
     CacheSnapshotService css = getCache().getSnapshotService();
     SnapshotOptions<Object, Object> options = css.createOptions().setFilter(oops);
-    
+
     boolean caughtException = false;
     try {
       File dir = new File(getDiskDirs()[0], "export");
       dir.mkdir();
-      
+
       css.save(dir, SnapshotFormat.GEMFIRE, options);
     } catch (Exception e) {
       caughtException = true;
     }
-    
+
     assertTrue(caughtException);
   }
-  
+
   @Test
   public void testCacheImportFilterException() throws Exception {
     SnapshotFilter<Object, Object> oops = new SnapshotFilter<Object, Object>() {
@@ -152,30 +151,30 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
         throw new RuntimeException();
       }
     };
-    
+
     File dir = new File(getDiskDirs()[0], "import");
     dir.mkdir();
-    
+
     // save all regions
     CacheSnapshotService css = getCache().getSnapshotService();
     css.save(dir, SnapshotFormat.GEMFIRE);
-    
+
     SnapshotOptions<Object, Object> options = css.createOptions().setFilter(oops);
-    
+
     boolean caughtException = false;
     try {
       css.load(dir.listFiles(), SnapshotFormat.GEMFIRE, options);
     } catch (Exception e) {
       caughtException = true;
     }
-    
+
     assertTrue(caughtException);
   }
 
   @Override
   public final void postSetUp() throws Exception {
     loadCache();
-    
+
     RegionGenerator rgen = new RegionGenerator();
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
@@ -184,7 +183,7 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
       }
     }
   }
-  
+
   public static Map<Integer, MyObject> createExpected(SerializationType type, RegionGenerator rgen) {
     Map<Integer, MyObject> expected = new HashMap<Integer, MyObject>();
     for (int i = 0; i < 1000; i++) {
@@ -197,18 +196,13 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
     SerializableCallable setup = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory()
-          .setPdxSerializer(new MyPdxSerializer())
-          .setPdxPersistent(true);
-    
+        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer()).setPdxPersistent(true);
+
         Cache cache = getCache(cf);
-        DiskStore ds = cache.createDiskStoreFactory()
-            .setMaxOplogSize(1)
-            .setDiskDirs(getDiskDirs())
-            .create("snapshotTest");
-        
+        DiskStore ds = cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(getDiskDirs()).create("snapshotTest");
+
         RegionGenerator rgen = new RegionGenerator();
-        
+
         for (final RegionType rt : RegionType.values()) {
           for (final SerializationType st : SerializationType.values()) {
             rgen.createRegion(cache, ds.getName(), rt, "test-" + rt.name() + "-" + st.name());
@@ -217,18 +211,18 @@ public class SnapshotDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     };
-    
+
     forEachVm(setup, true);
   }
-  
+
   public static Object forEachVm(SerializableCallable call, boolean local) throws Exception {
     Host host = Host.getHost(0);
     int vms = host.getVMCount();
-    
-    for(int i = 0; i < vms; ++i) {
+
+    for (int i = 0; i < vms; ++i) {
       host.getVM(i).invoke(call);
     }
-    
+
     if (local) {
       return call.call();
     }

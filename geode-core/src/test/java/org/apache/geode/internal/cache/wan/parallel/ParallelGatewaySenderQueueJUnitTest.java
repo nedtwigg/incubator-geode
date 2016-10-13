@@ -54,7 +54,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class ParallelGatewaySenderQueueJUnitTest {
-  
+
   private ParallelGatewaySenderQueue queue;
   private MetaRegionFactory metaRegionFactory;
   private GemFireCacheImpl cache;
@@ -126,12 +126,12 @@ public class ParallelGatewaySenderQueueJUnitTest {
     ParallelGatewaySenderQueueMetaRegion mockMetaRegion = mock(ParallelGatewaySenderQueueMetaRegion.class);
     PartitionedRegionDataStore dataStore = mock(PartitionedRegionDataStore.class);
     when(mockMetaRegion.getDataStore()).thenReturn(dataStore);
-    when(dataStore.getSizeOfLocalPrimaryBuckets()).thenReturn(3); 
+    when(dataStore.getSizeOfLocalPrimaryBuckets()).thenReturn(3);
     when(metaRegionFactory.newMetataRegion(any(), any(), any(), any())).thenReturn(mockMetaRegion);
     when(cache.createVMRegion(any(), any(), any())).thenReturn(mockMetaRegion);
-    
+
     queue.addShadowPartitionedRegionForUserPR(mockPR("region1"));
-    
+
     assertEquals(3, queue.localSize());
   }
 
@@ -143,7 +143,7 @@ public class ParallelGatewaySenderQueueJUnitTest {
     when(region.getDataPolicy()).thenReturn(DataPolicy.PARTITION);
     return region;
   }
-  
+
   private BucketRegionQueue mockBucketRegionQueue(final Queue backingList) {
     PartitionedRegion mockBucketRegion = mockPR("bucketRegion");
     //These next mocked return calls are for when peek is called.  It ends up checking these on the mocked pr region
@@ -151,32 +151,22 @@ public class ParallelGatewaySenderQueueJUnitTest {
     when(mockBucketRegion.size()).thenReturn(backingList.size());
 
     BucketRegionQueue bucketRegionQueue = mock(BucketRegionQueue.class);
-    when (bucketRegionQueue.getPartitionedRegion()).thenReturn(mockBucketRegion);
+    when(bucketRegionQueue.getPartitionedRegion()).thenReturn(mockBucketRegion);
     when(bucketRegionQueue.peek()).thenAnswer((Answer) invocation -> backingList.poll());
     return bucketRegionQueue;
   }
-
-
 
   private class TestableParallelGatewaySenderQueue extends ParallelGatewaySenderQueue {
 
     private BucketRegionQueue mockedAbstractBucketRegionQueue;
 
-    public TestableParallelGatewaySenderQueue(final AbstractGatewaySender sender,
-                                              final Set<Region> userRegions,
-                                              final int idx,
-                                              final int nDispatcher) {
+    public TestableParallelGatewaySenderQueue(final AbstractGatewaySender sender, final Set<Region> userRegions, final int idx, final int nDispatcher) {
       super(sender, userRegions, idx, nDispatcher);
     }
 
-    public TestableParallelGatewaySenderQueue(final AbstractGatewaySender sender,
-                                              final Set<Region> userRegions,
-                                              final int idx,
-                                              final int nDispatcher,
-                                              final MetaRegionFactory metaRegionFactory) {
+    public TestableParallelGatewaySenderQueue(final AbstractGatewaySender sender, final Set<Region> userRegions, final int idx, final int nDispatcher, final MetaRegionFactory metaRegionFactory) {
       super(sender, userRegions, idx, nDispatcher, metaRegionFactory);
     }
-
 
     public void setMockedAbstractBucketRegionQueue(BucketRegionQueue mocked) {
       this.mockedAbstractBucketRegionQueue = mocked;
@@ -206,10 +196,10 @@ public class ParallelGatewaySenderQueueJUnitTest {
       return mockedAbstractBucketRegionQueue;
     }
 
-//    @Override
-//    public int localSizeForProcessor() {
-//      return 1;
-//    }
+    //    @Override
+    //    public int localSizeForProcessor() {
+    //      return 1;
+    //    }
   }
 
 }

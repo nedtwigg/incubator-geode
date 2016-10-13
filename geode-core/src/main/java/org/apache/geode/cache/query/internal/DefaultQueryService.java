@@ -49,33 +49,30 @@ import java.util.Map.Entry;
  */
 public class DefaultQueryService implements QueryService {
   private static final Logger logger = LogService.getLogger();
-  
+
   /** 
    * System property to allow query on region with heterogeneous objects. 
    * By default its set to false.
    */
-  public static final boolean QUERY_HETEROGENEOUS_OBJECTS =
-      Boolean.valueOf(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "QueryService.QueryHeterogeneousObjects", "true")).booleanValue();
+  public static final boolean QUERY_HETEROGENEOUS_OBJECTS = Boolean.valueOf(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "QueryService.QueryHeterogeneousObjects", "true")).booleanValue();
 
-  public static boolean COPY_ON_READ_AT_ENTRY_LEVEL =
-      Boolean.valueOf(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "QueryService.CopyOnReadAtEntryLevel", "false")).booleanValue();
+  public static boolean COPY_ON_READ_AT_ENTRY_LEVEL = Boolean.valueOf(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "QueryService.CopyOnReadAtEntryLevel", "false")).booleanValue();
 
-  
   /** Test purpose only */
   public static boolean TEST_QUERY_HETEROGENEOUS_OBJECTS = false;
 
   private final InternalCache cache;
 
   private InternalPool pool;
-  
+
   private Map<Region, HashSet<IndexCreationData>> indexDefinitions = Collections.synchronizedMap(new HashMap<Region, HashSet<IndexCreationData>>());
-  
+
   public DefaultQueryService(InternalCache cache) {
     if (cache == null)
-        throw new IllegalArgumentException(LocalizedStrings.DefaultQueryService_CACHE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.DefaultQueryService_CACHE_MUST_NOT_BE_NULL.toLocalizedString());
     this.cache = cache;
   }
-  
+
   /**
    * Constructs a new <code>Query</code> object. Uses the default namespace,
    * which is the Objects Context of the current application.
@@ -90,91 +87,59 @@ public class DefaultQueryService implements QueryService {
       throw new QueryExecutionLowMemoryException(reason);
     }
     if (queryString == null)
-        throw new QueryInvalidException(LocalizedStrings.DefaultQueryService_THE_QUERY_STRING_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new QueryInvalidException(LocalizedStrings.DefaultQueryService_THE_QUERY_STRING_MUST_NOT_BE_NULL.toLocalizedString());
     if (queryString.length() == 0)
-        throw new QueryInvalidException(LocalizedStrings.DefaultQueryService_THE_QUERY_STRING_MUST_NOT_BE_EMPTY.toLocalizedString());
+      throw new QueryInvalidException(LocalizedStrings.DefaultQueryService_THE_QUERY_STRING_MUST_NOT_BE_EMPTY.toLocalizedString());
     ServerProxy serverProxy = pool == null ? null : new ServerProxy(pool);
     DefaultQuery query = new DefaultQuery(queryString, this.cache, serverProxy != null);
     query.setServerProxy(serverProxy);
     return query;
   }
-  
-  public Query newQuery(String queryString,ProxyCache proxyCache){
+
+  public Query newQuery(String queryString, ProxyCache proxyCache) {
     Query query = newQuery(queryString);
     ((DefaultQuery) query).setProxyCache(proxyCache);
     return query;
   }
 
-  public Index createHashIndex(String indexName,
-      String indexedExpression, String fromClause)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
-    return createHashIndex(indexName, indexedExpression, fromClause,
-        null);
-    }
-  
-  public Index createHashIndex(String indexName,
-      String indexedExpression, String fromClause, String imports)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
-    return createIndex(indexName, IndexType.HASH, indexedExpression, fromClause,
-        imports);
-  }
-  
-  public Index createIndex(String indexName,
-      String indexedExpression, String fromClause)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
-    return createIndex(indexName, IndexType.FUNCTIONAL, indexedExpression, fromClause,
-        null);
+  public Index createHashIndex(String indexName, String indexedExpression, String fromClause) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    return createHashIndex(indexName, indexedExpression, fromClause, null);
   }
 
-  public Index createIndex(String indexName,
-      String indexedExpression, String fromClause, String imports)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
-    return createIndex(indexName, IndexType.FUNCTIONAL, indexedExpression, fromClause,
-        imports);
+  public Index createHashIndex(String indexName, String indexedExpression, String fromClause, String imports) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    return createIndex(indexName, IndexType.HASH, indexedExpression, fromClause, imports);
   }
 
-  public Index createKeyIndex(String indexName,
-      String indexedExpression, String fromClause)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
-    return createIndex(indexName, IndexType.PRIMARY_KEY, indexedExpression, fromClause,
-        null);
-  }
-  
-  public Index createIndex(String indexName, IndexType indexType,
-      String indexedExpression, String fromClause)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
-    return createIndex(indexName, indexType, indexedExpression, fromClause,
-        null);
+  public Index createIndex(String indexName, String indexedExpression, String fromClause) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    return createIndex(indexName, IndexType.FUNCTIONAL, indexedExpression, fromClause, null);
   }
 
-  public Index createIndex(String indexName, IndexType indexType,
-      String indexedExpression, String fromClause, String imports, boolean loadEntries)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
+  public Index createIndex(String indexName, String indexedExpression, String fromClause, String imports) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    return createIndex(indexName, IndexType.FUNCTIONAL, indexedExpression, fromClause, imports);
+  }
+
+  public Index createKeyIndex(String indexName, String indexedExpression, String fromClause) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    return createIndex(indexName, IndexType.PRIMARY_KEY, indexedExpression, fromClause, null);
+  }
+
+  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    return createIndex(indexName, indexType, indexedExpression, fromClause, null);
+  }
+
+  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause, String imports, boolean loadEntries) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
     return createIndex(indexName, indexType, indexedExpression, fromClause, imports, loadEntries, null);
   }
-  
-  public Index createIndex(String indexName, IndexType indexType,
-      String indexedExpression, String fromClause, String imports, boolean loadEntries, Region region)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
 
-    
-    if (pool != null){
-      throw new UnsupportedOperationException("Index creation on the server is not supported from the client.");  
+  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause, String imports, boolean loadEntries, Region region) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+
+    if (pool != null) {
+      throw new UnsupportedOperationException("Index creation on the server is not supported from the client.");
     }
     PartitionedIndex parIndex = null;
-    if(region == null) {
+    if (region == null) {
       region = getRegionFromPath(imports, fromClause);
     }
     RegionAttributes ra = region.getAttributes();
-    
 
     //Asif: If the evistion action is Overflow to disk then do not allow index creation
     //It is Ok to have index creation if it is persist only mode as data will always
@@ -183,76 +148,54 @@ public class DefaultQueryService implements QueryService {
     //  throw new UnsupportedOperationException(LocalizedStrings.DefaultQueryService_INDEX_CREATION_IS_NOT_SUPPORTED_FOR_REGIONS_WHICH_OVERFLOW_TO_DISK_THE_REGION_INVOLVED_IS_0.toLocalizedString(regionPath));
     //}
     // if its a pr the create index on all of the local buckets.
-    if (((LocalRegion)region).memoryThresholdReached.get() &&
-        !MemoryThresholds.isLowMemoryExceptionDisabled()) {
-      LocalRegion lr = (LocalRegion)region;
-      throw new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_INDEX
-          .toLocalizedString(region.getName()), lr.getMemoryThresholdReachedMembers());
+    if (((LocalRegion) region).memoryThresholdReached.get() && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
+      LocalRegion lr = (LocalRegion) region;
+      throw new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_INDEX.toLocalizedString(region.getName()), lr.getMemoryThresholdReachedMembers());
     }
     if (region instanceof PartitionedRegion) {
       try {
-        parIndex = (PartitionedIndex)((PartitionedRegion)region).createIndex(
-            false, indexType, indexName, indexedExpression, fromClause,  imports, loadEntries);
-      }
-      catch (ForceReattemptException ex) {
-        region.getCache().getLoggerI18n().info(
-          LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR,
-          ex);
-      }
-      catch (IndexCreationException exx) {
-        region.getCache().getLoggerI18n().info(
-          LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR,
-          exx);
+        parIndex = (PartitionedIndex) ((PartitionedRegion) region).createIndex(false, indexType, indexName, indexedExpression, fromClause, imports, loadEntries);
+      } catch (ForceReattemptException ex) {
+        region.getCache().getLoggerI18n().info(LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR, ex);
+      } catch (IndexCreationException exx) {
+        region.getCache().getLoggerI18n().info(LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR, exx);
       }
       return parIndex;
 
-    }
-    else {
-        
+    } else {
+
       IndexManager indexManager = IndexUtils.getIndexManager(region, true);
-      Index index = indexManager.createIndex(indexName, indexType,
-        indexedExpression, fromClause , imports, null, null, loadEntries);
-      
+      Index index = indexManager.createIndex(indexName, indexType, indexedExpression, fromClause, imports, null, null, loadEntries);
+
       return index;
     }
   }
 
+  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause, String imports) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
 
-  public Index createIndex(String indexName, IndexType indexType,
-      String indexedExpression, String fromClause, String imports)
-      throws IndexNameConflictException, IndexExistsException, 
-      RegionNotFoundException {
-    
     return createIndex(indexName, indexType, indexedExpression, fromClause, imports, true);
   }
 
-  private Region getRegionFromPath(String imports, String fromClause)
-      throws RegionNotFoundException {
+  private Region getRegionFromPath(String imports, String fromClause) throws RegionNotFoundException {
     QCompiler compiler = new QCompiler();
     if (imports != null) {
       compiler.compileImports(imports);
     }
     List list = compiler.compileFromClause(fromClause);
-    CompiledValue cv = QueryUtils
-        .obtainTheBottomMostCompiledValue(((CompiledIteratorDef) list.get(0))
-            .getCollectionExpr());
+    CompiledValue cv = QueryUtils.obtainTheBottomMostCompiledValue(((CompiledIteratorDef) list.get(0)).getCollectionExpr());
     String regionPath = null;
     if (cv.getType() == OQLLexerTokenTypes.RegionPath) {
       regionPath = ((CompiledRegion) cv).getRegionPath();
     } else {
-      throw new RegionNotFoundException(
-          LocalizedStrings.DefaultQueryService_DEFAULTQUERYSERVICECREATEINDEXFIRST_ITERATOR_OF_INDEX_FROM_CLAUSE_DOES_NOT_EVALUATE_TO_A_REGION_PATH_THE_FROM_CLAUSE_USED_FOR_INDEX_CREATION_IS_0
-              .toLocalizedString(fromClause));
+      throw new RegionNotFoundException(LocalizedStrings.DefaultQueryService_DEFAULTQUERYSERVICECREATEINDEXFIRST_ITERATOR_OF_INDEX_FROM_CLAUSE_DOES_NOT_EVALUATE_TO_A_REGION_PATH_THE_FROM_CLAUSE_USED_FOR_INDEX_CREATION_IS_0.toLocalizedString(fromClause));
     }
     Region region = cache.getRegion(regionPath);
     if (region == null) {
-      throw new RegionNotFoundException(
-          LocalizedStrings.DefaultQueryService_REGION_0_NOT_FOUND_FROM_1
-              .toLocalizedString(new Object[] { regionPath, fromClause }));
+      throw new RegionNotFoundException(LocalizedStrings.DefaultQueryService_REGION_0_NOT_FOUND_FROM_1.toLocalizedString(new Object[] { regionPath, fromClause }));
     }
     return region;
   }
-  
+
   /**
    * Asif : Gets an exact match index ( match level 0)
    * 
@@ -271,21 +214,20 @@ public class DefaultQueryService implements QueryService {
    * @throws TypeMismatchException 
    * @throws AmbiguousNameException 
    */
-  public IndexData getIndex(String regionPath, String[] definitions,
-      IndexType indexType, CompiledValue indexedExpression, ExecutionContext context) 
-  throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public IndexData getIndex(String regionPath, String[] definitions, IndexType indexType, CompiledValue indexedExpression, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     Region region = cache.getRegion(regionPath);
-    if (region == null) { return null; }
+    if (region == null) {
+      return null;
+    }
     IndexManager indexManager = IndexUtils.getIndexManager(region, true);
-    IndexData indexData = indexManager.getIndex(indexType, definitions,
-        indexedExpression, context);
+    IndexData indexData = indexManager.getIndex(indexType, definitions, indexedExpression, context);
     return indexData;
   }
 
   public Index getIndex(Region region, String indexName) {
-    
-    if (pool != null){
-      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");  
+
+    if (pool != null) {
+      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");
     }
 
     // A Partition Region does not have an IndexManager, but it's buckets have.
@@ -331,20 +273,18 @@ public class DefaultQueryService implements QueryService {
    * @throws TypeMismatchException 
    * @throws AmbiguousNameException 
    */
-  public IndexData getBestMatchIndex(String regionPath, String definitions[],
-      IndexType indexType, CompiledValue indexedExpression, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public IndexData getBestMatchIndex(String regionPath, String definitions[], IndexType indexType, CompiledValue indexedExpression, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     Region region = cache.getRegion(regionPath);
-    if (region == null){ 
-      return null; 
+    if (region == null) {
+      return null;
     }
     // return getBestMatchIndex(region, indexType, definitions,
     // indexedExpression);
     IndexManager indexManager = IndexUtils.getIndexManager(region, false);
-    if (indexManager == null) { 
+    if (indexManager == null) {
       return null;
     }
-    return indexManager.getBestMatchIndex(indexType, definitions,
-        indexedExpression, context);
+    return indexManager.getBestMatchIndex(indexType, definitions, indexedExpression, context);
   }
 
   public Collection getIndexes() {
@@ -353,11 +293,13 @@ public class DefaultQueryService implements QueryService {
     while (rootRegions.hasNext()) {
       Region region = (Region) rootRegions.next();
       Collection indexes = getIndexes(region);
-      if (indexes != null) allIndexes.addAll(indexes);
+      if (indexes != null)
+        allIndexes.addAll(indexes);
       Iterator subRegions = region.subregions(true).iterator();
       while (subRegions.hasNext()) {
         indexes = getIndexes((Region) subRegions.next());
-        if (indexes != null) allIndexes.addAll(indexes);
+        if (indexes != null)
+          allIndexes.addAll(indexes);
       }
     }
     return allIndexes;
@@ -365,41 +307,42 @@ public class DefaultQueryService implements QueryService {
 
   public Collection getIndexes(Region region) {
 
-    if (pool != null){
-      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");  
+    if (pool != null) {
+      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");
     }
 
     if (region instanceof PartitionedRegion) {
-      return ((PartitionedRegion)region).getIndexes();
+      return ((PartitionedRegion) region).getIndexes();
     }
     IndexManager indexManager = IndexUtils.getIndexManager(region, false);
-    if (indexManager == null) return null;
+    if (indexManager == null)
+      return null;
     return indexManager.getIndexes();
   }
 
   public Collection getIndexes(Region region, IndexType indexType) {
 
-    if (pool != null){
-      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");  
+    if (pool != null) {
+      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");
     }
 
     IndexManager indexManager = IndexUtils.getIndexManager(region, false);
-    if (indexManager == null) return null;
+    if (indexManager == null)
+      return null;
     return indexManager.getIndexes(indexType);
   }
 
   public void removeIndex(Index index) {
 
-    if (pool != null){
-      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");  
+    if (pool != null) {
+      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");
     }
 
     Region region = index.getRegion();
     if (region instanceof PartitionedRegion) {
       try {
-       ((PartitionedRegion)region).removeIndex(index, false);
-      }
-      catch (ForceReattemptException ex) {
+        ((PartitionedRegion) region).removeIndex(index, false);
+      } catch (ForceReattemptException ex) {
         logger.info(LocalizedMessage.create(LocalizedStrings.DefaultQueryService_EXCEPTION_REMOVING_INDEX___0), ex);
       }
       return;
@@ -408,8 +351,7 @@ public class DefaultQueryService implements QueryService {
     // for PR lock will be taken in PartitionRegion.removeIndex
     ((AbstractIndex) index).acquireIndexWriteLockForRemove();
     try {
-      IndexManager indexManager = ((LocalRegion) index.getRegion())
-          .getIndexManager();
+      IndexManager indexManager = ((LocalRegion) index.getRegion()).getIndexManager();
       indexManager.removeIndex(index);
     } finally {
       ((AbstractIndex) index).releaseIndexWriteLockForRemove();
@@ -417,8 +359,8 @@ public class DefaultQueryService implements QueryService {
   }
 
   public void removeIndexes() {
-    if (pool != null){
-      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");  
+    if (pool != null) {
+      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");
     }
 
     Iterator rootRegions = cache.rootRegions().iterator();
@@ -434,31 +376,30 @@ public class DefaultQueryService implements QueryService {
 
   public void removeIndexes(Region region) {
 
-    if (pool != null){
-      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");  
+    if (pool != null) {
+      throw new UnsupportedOperationException("Index Operation is not supported on the Server Region.");
     }
-    
+
     // removing indexes on paritioned region will reguire sending message and
     // remvoing all the local indexes on the local bucket regions.
     if (region instanceof PartitionedRegion) {
       try {
         //not remotely orignated
-        ((PartitionedRegion)region).removeIndexes(false);
-      }
-      catch(ForceReattemptException ex ) {
-           // will have to throw a proper exception relating to remove index.
-           logger.info(LocalizedMessage.create(LocalizedStrings.DefaultQueryService_EXCEPTION_REMOVING_INDEX___0), ex);
+        ((PartitionedRegion) region).removeIndexes(false);
+      } catch (ForceReattemptException ex) {
+        // will have to throw a proper exception relating to remove index.
+        logger.info(LocalizedMessage.create(LocalizedStrings.DefaultQueryService_EXCEPTION_REMOVING_INDEX___0), ex);
       }
     }
     IndexManager indexManager = IndexUtils.getIndexManager(region, false);
-    if (indexManager == null) return;
-    
+    if (indexManager == null)
+      return;
+
     indexManager.removeIndexes();
   }
 
-  
   // CqService Related API implementation.
-  
+
   /**
    * Constructs a new continuous query, represented by an instance of
    * CqQuery. The CqQuery is not executed until the execute method
@@ -479,11 +420,10 @@ public class DefaultQueryService implements QueryService {
    *         Only one iterator in the FROM clause is supported, and it must be a region path. 
    *         Bind parameters in the query are not yet supported.
    */
-  public CqQuery newCq(String queryString, CqAttributes  cqAttributes) 
-  throws QueryInvalidException, CqException {
+  public CqQuery newCq(String queryString, CqAttributes cqAttributes) throws QueryInvalidException, CqException {
     ClientCQ cq = null;
     try {
-      cq = (ClientCQ)getCqService().newCq(null, queryString, cqAttributes, this.pool, false);
+      cq = (ClientCQ) getCqService().newCq(null, queryString, cqAttributes, this.pool, false);
     } catch (CqExistsException cqe) {
       // Should not throw in here.
       if (logger.isDebugEnabled()) {
@@ -492,7 +432,7 @@ public class DefaultQueryService implements QueryService {
     }
     return cq;
   }
-  
+
   /**
    * Constructs a new continuous query, represented by an instance of
    * CqQuery. The CqQuery is not executed until the execute method
@@ -514,11 +454,10 @@ public class DefaultQueryService implements QueryService {
    *         Only one iterator in the FROM clause is supported, and it must be a region path. 
    *         Bind parameters in the query are not yet supported.
    */
-  public CqQuery newCq(String queryString, CqAttributes  cqAttributes, boolean isDurable) 
-  throws QueryInvalidException, CqException {
+  public CqQuery newCq(String queryString, CqAttributes cqAttributes, boolean isDurable) throws QueryInvalidException, CqException {
     ClientCQ cq = null;
     try {
-      cq = (ClientCQ)getCqService().newCq(null, queryString, cqAttributes, this.pool, isDurable);
+      cq = (ClientCQ) getCqService().newCq(null, queryString, cqAttributes, this.pool, isDurable);
     } catch (CqExistsException cqe) {
       // Should not throw in here.
       if (logger.isDebugEnabled()) {
@@ -527,8 +466,7 @@ public class DefaultQueryService implements QueryService {
     }
     return cq;
   }
-  
-  
+
   /**
    * Constructs a new named continuous query, represented by an instance of
    * CqQuery. The CqQuery is not executed, however, until the execute method
@@ -554,15 +492,14 @@ public class DefaultQueryService implements QueryService {
    *         Only one iterator in the FROM clause is supported, and it must be a region path. 
    *         Bind parameters in the query are not yet supported.
    */
-  public CqQuery newCq(String cqName, String queryString, CqAttributes cqAttributes)
-  throws QueryInvalidException, CqExistsException, CqException {
+  public CqQuery newCq(String cqName, String queryString, CqAttributes cqAttributes) throws QueryInvalidException, CqExistsException, CqException {
     if (cqName == null) {
       throw new IllegalArgumentException(LocalizedStrings.DefaultQueryService_CQNAME_MUST_NOT_BE_NULL.toLocalizedString());
     }
-    ClientCQ cq = (ClientCQ)getCqService().newCq(cqName, queryString, cqAttributes, this.pool, false);
+    ClientCQ cq = (ClientCQ) getCqService().newCq(cqName, queryString, cqAttributes, this.pool, false);
     return cq;
   }
-  
+
   /**
    * Constructs a new named continuous query, represented by an instance of
    * CqQuery. The CqQuery is not executed, however, until the execute method
@@ -589,15 +526,14 @@ public class DefaultQueryService implements QueryService {
    *         Only one iterator in the FROM clause is supported, and it must be a region path. 
    *         Bind parameters in the query are not yet supported.
    */
-  public CqQuery newCq(String cqName, String queryString, CqAttributes cqAttributes, boolean isDurable)
-  throws QueryInvalidException, CqExistsException, CqException {
+  public CqQuery newCq(String cqName, String queryString, CqAttributes cqAttributes, boolean isDurable) throws QueryInvalidException, CqExistsException, CqException {
     if (cqName == null) {
       throw new IllegalArgumentException(LocalizedStrings.DefaultQueryService_CQNAME_MUST_NOT_BE_NULL.toLocalizedString());
     }
-    ClientCQ cq = (ClientCQ)getCqService().newCq(cqName, queryString, cqAttributes, this.pool, isDurable);
+    ClientCQ cq = (ClientCQ) getCqService().newCq(cqName, queryString, cqAttributes, this.pool, isDurable);
     return cq;
   }
-  
+
   /** 
    * Close all CQs executing in this VM, and release resources
    * associated with executing CQs.
@@ -613,7 +549,7 @@ public class DefaultQueryService implements QueryService {
       }
     }
   }
-  
+
   /**
    * Retrieve a CqQuery by name.
    * @return the CqQuery or null if not found
@@ -629,11 +565,11 @@ public class DefaultQueryService implements QueryService {
     }
     return cq;
   }
-  
+
   /**
    * Retrieve  all CqQuerys created by this VM.
    * @return null if there are no cqs.   
-   */ 
+   */
   public CqQuery[] getCqs() {
     CqQuery[] cqs = null;
     try {
@@ -645,7 +581,7 @@ public class DefaultQueryService implements QueryService {
     }
     return cqs;
   }
-  
+
   private CqQuery[] toArray(Collection<? extends InternalCqQuery> allCqs) {
     CqQuery[] cqs = new CqQuery[allCqs.size()];
     allCqs.toArray(cqs);
@@ -655,8 +591,7 @@ public class DefaultQueryService implements QueryService {
   /**
    * Returns all the cq on a given region.
    */
-  public CqQuery[] getCqs(final String regionName) throws CqException
-  {
+  public CqQuery[] getCqs(final String regionName) throws CqException {
     return toArray(getCqService().getAllCqs(regionName));
   }
 
@@ -676,8 +611,7 @@ public class DefaultQueryService implements QueryService {
       }
     }
   }
-  
-  
+
   /**
    * Stops execution of all the continuous queries for this client to become inactive.
    * This is useful when client needs to control the incoming cq messages during
@@ -695,7 +629,7 @@ public class DefaultQueryService implements QueryService {
       }
     }
   }
-  
+
   /**
    * Starts execution of all the continuous queries registered on the specified 
    * region for this client. 
@@ -713,7 +647,7 @@ public class DefaultQueryService implements QueryService {
       }
     }
   }
-  
+
   /**
    * Stops execution of all the continuous queries registered on the specified 
    * region for this client. 
@@ -722,7 +656,7 @@ public class DefaultQueryService implements QueryService {
    * @see QueryService#executeCqs()
    * 
    * @throws CqException if failure to execute CQs.
-   */  
+   */
   public void stopCqs(String regionName) throws CqException {
     try {
       getCqService().stopAllRegionCqs(regionName);
@@ -732,7 +666,7 @@ public class DefaultQueryService implements QueryService {
       }
     }
   }
-  
+
   /**
    * Get statistics information for this query.
    * @return CQ statistics
@@ -749,7 +683,7 @@ public class DefaultQueryService implements QueryService {
     }
     return stats;
   }
-  
+
   /**
    * Is the CQ service in a cache server environment
    * @return true if cache server, false otherwise
@@ -757,10 +691,10 @@ public class DefaultQueryService implements QueryService {
   public boolean isServer() {
     if (this.cache.getCacheServers().isEmpty()) {
       return false;
-    }    
+    }
     return true;
   }
-  
+
   /**
    * Close the CQ Service after clean up if any.
    *
@@ -768,7 +702,7 @@ public class DefaultQueryService implements QueryService {
   public void closeCqService() {
     cache.getCqService().close();
   }
-  
+
   /**
    * @return CqService
    */
@@ -777,24 +711,22 @@ public class DefaultQueryService implements QueryService {
     service.start();
     return service;
   }
-  
+
   public void setPool(InternalPool pool) {
     this.pool = pool;
     if (logger.isDebugEnabled()) {
       logger.debug("Setting ServerProxy with the Query Service using the pool :{} ", pool.getName());
     }
   }
-  
+
   public List<String> getAllDurableCqsFromServer() throws CqException {
     if (!isServer()) {
       if (pool != null) {
         return getCqService().getAllDurableCqsFromServer(pool);
+      } else {
+        throw new UnsupportedOperationException("GetAllDurableCQsFromServer requires a pool to be configured.");
       }
-      else {
-        throw new UnsupportedOperationException("GetAllDurableCQsFromServer requires a pool to be configured.");  
-      }
-    }
-    else {
+    } else {
       //we are a server
       return Collections.EMPTY_LIST;
     }
@@ -809,40 +741,31 @@ public class DefaultQueryService implements QueryService {
   }
 
   @Override
-  public void defineKeyIndex(String indexName,
-      String indexedExpression, String fromClause)
-      throws RegionNotFoundException {
-    defineIndex(indexName, IndexType.PRIMARY_KEY, indexedExpression, fromClause,
-        null);
+  public void defineKeyIndex(String indexName, String indexedExpression, String fromClause) throws RegionNotFoundException {
+    defineIndex(indexName, IndexType.PRIMARY_KEY, indexedExpression, fromClause, null);
   }
 
   @Override
-  public void defineHashIndex(String indexName, String indexedExpression,
-      String fromClause) throws RegionNotFoundException {
+  public void defineHashIndex(String indexName, String indexedExpression, String fromClause) throws RegionNotFoundException {
     defineIndex(indexName, IndexType.HASH, indexedExpression, fromClause, null);
   }
 
   @Override
-  public void defineHashIndex(String indexName, String indexedExpression,
-      String fromClause, String imports) throws RegionNotFoundException {
+  public void defineHashIndex(String indexName, String indexedExpression, String fromClause, String imports) throws RegionNotFoundException {
     defineIndex(indexName, IndexType.HASH, indexedExpression, fromClause, imports);
   }
 
   @Override
-  public void defineIndex(String indexName, String indexedExpression,
-      String fromClause) throws RegionNotFoundException {
+  public void defineIndex(String indexName, String indexedExpression, String fromClause) throws RegionNotFoundException {
     defineIndex(indexName, IndexType.FUNCTIONAL, indexedExpression, fromClause, null);
   }
 
-
   @Override
-  public void defineIndex(String indexName, String indexedExpression,
-      String fromClause, String imports) throws RegionNotFoundException  {
+  public void defineIndex(String indexName, String indexedExpression, String fromClause, String imports) throws RegionNotFoundException {
     defineIndex(indexName, IndexType.FUNCTIONAL, indexedExpression, fromClause, imports);
   }
-  
-  public void defineIndex(String indexName, IndexType indexType, String indexedExpression,
-      String fromClause, String imports) throws RegionNotFoundException  {
+
+  public void defineIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause, String imports) throws RegionNotFoundException {
     IndexCreationData indexData = new IndexCreationData(indexName);
     indexData.setIndexData(indexType, fromClause, indexedExpression, imports);
     Region r = getRegionFromPath(imports, fromClause);
@@ -861,18 +784,15 @@ public class DefaultQueryService implements QueryService {
     HashSet<Index> indexes = new HashSet<Index>();
     boolean throwException = false;
     HashMap<String, Exception> exceptionsMap = new HashMap<String, Exception>();
-    
+
     synchronized (indexDefinitions) {
-      for (Entry<Region, HashSet<IndexCreationData>> e : indexDefinitions
-          .entrySet()) {
+      for (Entry<Region, HashSet<IndexCreationData>> e : indexDefinitions.entrySet()) {
         Region region = e.getKey();
         HashSet<IndexCreationData> icds = e.getValue();
         if (region instanceof PartitionedRegion) {
-          throwException = createDefinedIndexesForPR(indexes,
-              (PartitionedRegion) region, icds, exceptionsMap);
+          throwException = createDefinedIndexesForPR(indexes, (PartitionedRegion) region, icds, exceptionsMap);
         } else {
-          throwException = createDefinedIndexesForReplicatedRegion(indexes,
-              region, icds, exceptionsMap);
+          throwException = createDefinedIndexesForReplicatedRegion(indexes, region, icds, exceptionsMap);
         }
       }
     } // end sync
@@ -884,21 +804,16 @@ public class DefaultQueryService implements QueryService {
     return new ArrayList<Index>(indexes);
   }
 
-  private boolean createDefinedIndexesForPR(HashSet<Index> indexes,
-      PartitionedRegion region, HashSet<IndexCreationData> icds,
-      HashMap<String, Exception> exceptionsMap) {
+  private boolean createDefinedIndexesForPR(HashSet<Index> indexes, PartitionedRegion region, HashSet<IndexCreationData> icds, HashMap<String, Exception> exceptionsMap) {
     try {
       indexes.addAll(((PartitionedRegion) region).createIndexes(false, icds));
     } catch (IndexCreationException e1) {
-      logger.info(LocalizedMessage.create(
-              LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR), e1);
+      logger.info(LocalizedMessage.create(LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR), e1);
     } catch (CacheException e1) {
-      logger.info(LocalizedMessage.create(
-              LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR), e1);
+      logger.info(LocalizedMessage.create(LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR), e1);
       return true;
     } catch (ForceReattemptException e1) {
-      logger.info(LocalizedMessage.create(
-              LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR), e1);
+      logger.info(LocalizedMessage.create(LocalizedStrings.DefaultQueryService_EXCEPTION_WHILE_CREATING_INDEX_ON_PR_DEFAULT_QUERY_PROCESSOR), e1);
       return true;
     } catch (MultiIndexCreationException e) {
       exceptionsMap.putAll(e.getExceptionsMap());
@@ -907,18 +822,14 @@ public class DefaultQueryService implements QueryService {
     return false;
   }
 
-  private boolean createDefinedIndexesForReplicatedRegion(HashSet<Index> indexes,
-      Region region, Set<IndexCreationData> icds,
-      HashMap<String, Exception> exceptionsMap) {
+  private boolean createDefinedIndexesForReplicatedRegion(HashSet<Index> indexes, Region region, Set<IndexCreationData> icds, HashMap<String, Exception> exceptionsMap) {
     boolean throwException = false;
     for (IndexCreationData icd : icds) {
       try {
         // First step is creating all the defined indexes. Do this only if
         // the region is not PR. For PR creation and population is done in
         // the PartitionedRegion#createDefinedIndexes
-        indexes.add(createIndex(icd.getIndexName(), icd.getIndexType(),
-            icd.getIndexExpression(), icd.getIndexFromClause(),
-            icd.getIndexImportString(), false, region));
+        indexes.add(createIndex(icd.getIndexName(), icd.getIndexType(), icd.getIndexExpression(), icd.getIndexFromClause(), icd.getIndexImportString(), false, region));
       } catch (Exception ex) {
         // If an index creation fails, add the exception to the map and
         // continue creating rest of the indexes.The failed indexes will
@@ -940,13 +851,12 @@ public class DefaultQueryService implements QueryService {
     IndexManager indexManager = IndexUtils.getIndexManager(region, false);
     if (indexManager == null) {
       for (IndexCreationData icd : icds) {
-        exceptionsMap.put(icd.getIndexName(), new IndexCreationException(
-            "Index Creation Failed due to region destroy"));
+        exceptionsMap.put(icd.getIndexName(), new IndexCreationException("Index Creation Failed due to region destroy"));
       }
       return true;
     }
 
-    if(indexes.size() > 0) {
+    if (indexes.size() > 0) {
       try {
         indexManager.populateIndexes(indexes);
       } catch (MultiIndexCreationException ex) {
@@ -957,7 +867,7 @@ public class DefaultQueryService implements QueryService {
     return throwException;
 
   }
-  
+
   public boolean clearDefinedIndexes() {
     this.indexDefinitions.clear();
     return true;
@@ -966,5 +876,5 @@ public class DefaultQueryService implements QueryService {
   public InternalPool getPool() {
     return pool;
   }
-  
+
 }

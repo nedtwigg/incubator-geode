@@ -56,7 +56,7 @@ public class DeadlockDetectorIntegrationTest {
    */
   @After
   public void tearDown() throws Exception {
-    for (Thread thread: stuckThreads) {
+    for (Thread thread : stuckThreads) {
       thread.interrupt();
     }
 
@@ -71,16 +71,16 @@ public class DeadlockDetectorIntegrationTest {
     final Object lock1 = new Object();
     final Object lock2 = new Object();
 
-    Thread thread1 =  new Thread() {
+    Thread thread1 = new Thread() {
       public void run() {
         stuckThreads.add(Thread.currentThread());
 
-        synchronized(lock1) {
+        synchronized (lock1) {
           Thread thread2 = new Thread() {
             public void run() {
               stuckThreads.add(Thread.currentThread());
-              synchronized(lock2) {
-                synchronized(lock1) {
+              synchronized (lock2) {
+                synchronized (lock1) {
                   System.out.println("we won't get here");
                 }
               }
@@ -91,7 +91,7 @@ public class DeadlockDetectorIntegrationTest {
 
           try {
             Thread.sleep(1000);
-            synchronized(lock2) {
+            synchronized (lock2) {
               System.out.println("We won't get here");
             }
           } catch (InterruptedException ignore) {
@@ -108,7 +108,7 @@ public class DeadlockDetectorIntegrationTest {
     detector.addDependencies(DeadlockDetector.collectAllDependencies("here"));
     LinkedList<Dependency> deadlocks = detector.findDeadlock();
 
-    System.out.println("deadlocks=" +  DeadlockDetector.prettyFormat(deadlocks));
+    System.out.println("deadlocks=" + DeadlockDetector.prettyFormat(deadlocks));
 
     assertEquals(4, detector.findDeadlock().size());
   }
@@ -122,7 +122,7 @@ public class DeadlockDetectorIntegrationTest {
     final Lock lock1 = new ReentrantLock();
     final Lock lock2 = new ReentrantLock();
 
-    Thread thread1 =  new Thread() {
+    Thread thread1 = new Thread() {
       public void run() {
         stuckThreads.add(Thread.currentThread());
 
@@ -161,7 +161,7 @@ public class DeadlockDetectorIntegrationTest {
     detector.addDependencies(DeadlockDetector.collectAllDependencies("here"));
     LinkedList<Dependency> deadlocks = detector.findDeadlock();
 
-    System.out.println("deadlocks=" +  DeadlockDetector.prettyFormat(deadlocks));
+    System.out.println("deadlocks=" + DeadlockDetector.prettyFormat(deadlocks));
 
     assertEquals(4, detector.findDeadlock().size());
   }
@@ -172,7 +172,7 @@ public class DeadlockDetectorIntegrationTest {
     final Semaphore lock1 = new Semaphore(1);
     final Semaphore lock2 = new Semaphore(1);
 
-    Thread thread1 =  new Thread() {
+    Thread thread1 = new Thread() {
       public void run() {
         stuckThreads.add(Thread.currentThread());
 
@@ -214,7 +214,7 @@ public class DeadlockDetectorIntegrationTest {
     detector.addDependencies(DeadlockDetector.collectAllDependencies("here"));
     LinkedList<Dependency> deadlocks = detector.findDeadlock();
 
-    System.out.println("deadlocks=" +  DeadlockDetector.prettyFormat(deadlocks));
+    System.out.println("deadlocks=" + DeadlockDetector.prettyFormat(deadlocks));
 
     assertEquals(4, detector.findDeadlock().size());
   }
@@ -225,7 +225,7 @@ public class DeadlockDetectorIntegrationTest {
     final ReadWriteLock lock1 = new ReentrantReadWriteLock();
     final ReadWriteLock lock2 = new ReentrantReadWriteLock();
 
-    Thread thread1 =  new Thread() {
+    Thread thread1 = new Thread() {
       @Override
       public void run() {
         stuckThreads.add(Thread.currentThread());
@@ -265,7 +265,7 @@ public class DeadlockDetectorIntegrationTest {
     detector.addDependencies(DeadlockDetector.collectAllDependencies("here"));
     LinkedList<Dependency> deadlocks = detector.findDeadlock();
 
-    System.out.println("deadlocks=" +  deadlocks);
+    System.out.println("deadlocks=" + deadlocks);
 
     assertEquals(4, detector.findDeadlock().size());
   }

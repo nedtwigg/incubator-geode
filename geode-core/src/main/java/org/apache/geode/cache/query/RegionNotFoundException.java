@@ -23,8 +23,8 @@ package org.apache.geode.cache.query;
  */
 
 public class RegionNotFoundException extends NameResolutionException {
-private static final long serialVersionUID = 592495934010222373L;
-  
+  private static final long serialVersionUID = 592495934010222373L;
+
   /**
    * Construct an instance of RegionNotFoundException
    * @param msg the error message
@@ -32,7 +32,7 @@ private static final long serialVersionUID = 592495934010222373L;
   public RegionNotFoundException(String msg) {
     super(msg);
   }
-    
+
   /**
    * Constructs an instance of RegionNotFoundException
    * @param msg the error message

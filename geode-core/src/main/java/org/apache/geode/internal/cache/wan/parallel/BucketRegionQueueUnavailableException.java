@@ -27,9 +27,9 @@ public class BucketRegionQueueUnavailableException extends GemFireException {
 
   public BucketRegionQueueUnavailableException() {
   }
-  
+
   public BucketRegionQueueUnavailableException(String msg) {
     super(msg);
   }
-  
+
 }

@@ -47,10 +47,8 @@ public final class FetchStatsResponse extends AdminResponse {
    * @param recipient  the recipient who made the original request
    * @return           response containing all remote stat resources
    */
-  public static FetchStatsResponse create(DistributionManager dm,
-                                          InternalDistributedMember recipient, 
-                                          final String statisticsTypeName) {
-//    LogWriterI18n log = dm.getLogger();
+  public static FetchStatsResponse create(DistributionManager dm, InternalDistributedMember recipient, final String statisticsTypeName) {
+    //    LogWriterI18n log = dm.getLogger();
     FetchStatsResponse m = new FetchStatsResponse();
     m.setRecipient(recipient);
     final List<RemoteStatResource> statList = new ArrayList<RemoteStatResource>();
@@ -58,25 +56,24 @@ public final class FetchStatsResponse extends AdminResponse {
     // call visitStatistics to fix for bug 40358
     if (statisticsTypeName == null) {
       dm.getSystem().visitStatistics(new StatisticsVisitor() {
-          public void visit(Statistics s) {
-            statList.add(new RemoteStatResource(s));
-          }
-        });
+        public void visit(Statistics s) {
+          statList.add(new RemoteStatResource(s));
+        }
+      });
     } else {
       dm.getSystem().visitStatistics(new StatisticsVisitor() {
-          public void visit(Statistics s) {
-            if (s.getType().getName().equals(statisticsTypeName)) {
-              statList.add(new RemoteStatResource(s));
-            }
+        public void visit(Statistics s) {
+          if (s.getType().getName().equals(statisticsTypeName)) {
+            statList.add(new RemoteStatResource(s));
           }
-        });
+        }
+      });
     }
     m.stats = new RemoteStatResource[statList.size()];
     m.stats = (RemoteStatResource[]) statList.toArray(m.stats);
     return m;
   }
 
-  
   @Override
   public boolean sendViaUDP() {
     return true;
@@ -86,16 +83,14 @@ public final class FetchStatsResponse extends AdminResponse {
     return FETCH_STATS_RESPONSE;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(stats, out);
   }
 
-  @Override  
-  public void fromData(DataInput in) 
-                throws IOException,
-                       ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     stats = (RemoteStatResource[]) DataSerializer.readObject(in);
   }
@@ -129,15 +124,14 @@ public final class FetchStatsResponse extends AdminResponse {
     return (RemoteStatResource[]) statList.toArray(new RemoteStatResource[0]);
   }
 
-	/**
-	 * Returns a string representation of the object.
-	 * 
-	 * @return a string representation of the object
-	 */
-  @Override  
+  /**
+   * Returns a string representation of the object.
+   * 
+   * @return a string representation of the object
+   */
+  @Override
   public String toString() {
     return "FetchStatsResponse from " + this.getRecipient() + " stats.length=" + stats.length;
   }
-  
-}
 
+}

@@ -52,52 +52,50 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  *
  */
-public final class CqServiceImpl implements CqService  {
+public final class CqServiceImpl implements CqService {
   private static final Logger logger = LogService.getLogger();
-  
-  private static final Integer MESSAGE_TYPE_LOCAL_CREATE = Integer.valueOf(MessageType.LOCAL_CREATE); 
-  private static final Integer MESSAGE_TYPE_LOCAL_UPDATE = Integer.valueOf(MessageType.LOCAL_UPDATE); 
-  private static final Integer MESSAGE_TYPE_LOCAL_DESTROY = Integer.valueOf(MessageType.LOCAL_DESTROY); 
+
+  private static final Integer MESSAGE_TYPE_LOCAL_CREATE = Integer.valueOf(MessageType.LOCAL_CREATE);
+  private static final Integer MESSAGE_TYPE_LOCAL_UPDATE = Integer.valueOf(MessageType.LOCAL_UPDATE);
+  private static final Integer MESSAGE_TYPE_LOCAL_DESTROY = Integer.valueOf(MessageType.LOCAL_DESTROY);
   private static final Integer MESSAGE_TYPE_EXCEPTION = Integer.valueOf(MessageType.EXCEPTION);
-  
+
   /** 
    * System property to evaluate the query even though the initial results are not required
    * when cq is executed using the execute() method. 
    */
-  public static boolean EXECUTE_QUERY_DURING_INIT =
-      Boolean.valueOf(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "cq.EXECUTE_QUERY_DURING_INIT", "true")).booleanValue();
+  public static boolean EXECUTE_QUERY_DURING_INIT = Boolean.valueOf(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "cq.EXECUTE_QUERY_DURING_INIT", "true")).booleanValue();
 
   private static final String CQ_NAME_PREFIX = "GfCq";
-  
+
   private final Cache cache;
-  
+
   /**
    * Manages cq pools to determine if a status of connect or disconnect needs to be sent out
    */
   private final HashMap<String, Boolean> cqPoolsConnected = new HashMap<String, Boolean>();
 
-  
   /** Manages CQ objects. uses serverCqName as key and CqQueryImpl as value 
    * @guarded.By cqQueryMapLock
    */
   private volatile HashMap<String, CqQueryImpl> cqQueryMap = new HashMap<String, CqQueryImpl>();
   private final Object cqQueryMapLock = new Object();
-  
+
   private volatile boolean isRunning = false;
 
   /**
    * Used by client when multiuser-authentication is true.
    */
   private final HashMap<String, UserAttributes> cqNameToUserAttributesMap = new HashMap<String, UserAttributes>();
-  
+
   // private boolean isServer = true;
-  
+
   /*
   // Map to manage CQ to satisfied CQ events (keys) for optimizing updates. 
   private final HashMap cqToCqEventKeysMap = 
       CqService.MAINTAIN_KEYS ? new HashMap() : null;
   */
-  
+
   // Map to manage the similar CQs (having same query - performance optimization).
   // With query as key and Set of CQs as values.
   private final ConcurrentHashMap matchingCqMap;
@@ -105,19 +103,18 @@ public final class CqServiceImpl implements CqService  {
   // CQ Service statistics
   public final CqServiceStatisticsImpl cqServiceStats;
   public final CqServiceVsdStats stats;
-  
+
   // CQ identifier, also used in auto generated CQ names
   private volatile long cqId = 1;
-  
+
   /**
    * Used to synchronize access to CQs in the repository
    */
   final Object cqSync = new Object();
-    
+
   /* This is to manage region to CQs map, client side book keeping. */
   private HashMap<String, ArrayList<String>> baseRegionToCqNameMap = new HashMap<String, ArrayList<String>>();
-  
-  
+
   /**
    * Constructor. 
    * @param c The cache used for the service
@@ -131,72 +128,65 @@ public final class CqServiceImpl implements CqService  {
 
     this.cache = gfc;
 
-    
     // Initialize the Map which maintains the matching cqs.
     this.matchingCqMap = new ConcurrentHashMap<String, HashSet<String>>();
-    
+
     // Initialize the VSD statistics
     StatisticsFactory factory = cache.getDistributedSystem();
     this.stats = new CqServiceVsdStats(factory);
-    this.cqServiceStats  = new CqServiceStatisticsImpl(this);
+    this.cqServiceStats = new CqServiceStatisticsImpl(this);
 
-//    final LoggingThreadGroup group =
-//      LoggingThreadGroup.createThreadGroup("CqExecutor Threads", logger);
-    
+    //    final LoggingThreadGroup group =
+    //      LoggingThreadGroup.createThreadGroup("CqExecutor Threads", logger);
+
     //if (this.cache.getCacheServers().isEmpty()) {
     //  isServer = false;
     //}    
   }
-  
+
   /**
    * Returns the cache associated with the cqService.
    */
   public Cache getCache() {
     return this.cache;
   }
-    
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#newCq(java.lang.String, java.lang.String, org.apache.geode.cache.query.CqAttributes, org.apache.geode.cache.client.internal.ServerCQProxy, boolean)
    */
   @Override
-  public synchronized ClientCQ newCq(String cqName, String queryString, CqAttributes cqAttributes, InternalPool pool, boolean isDurable)
-  throws QueryInvalidException, CqExistsException, CqException {
+  public synchronized ClientCQ newCq(String cqName, String queryString, CqAttributes cqAttributes, InternalPool pool, boolean isDurable) throws QueryInvalidException, CqExistsException, CqException {
     if (queryString == null) {
       throw new IllegalArgumentException(LocalizedStrings.CqService_NULL_ARGUMENT_0.toLocalizedString("queryString"));
 
-    } else if (cqAttributes == null ) {
+    } else if (cqAttributes == null) {
       throw new IllegalArgumentException(LocalizedStrings.CqService_NULL_ARGUMENT_0.toLocalizedString("cqAttribute"));
     }
-    
+
     if (isServer()) {
-      throw new IllegalStateException(
-        LocalizedStrings.CqService_CLIENT_SIDE_NEWCQ_METHOD_INVOCATION_ON_SERVER.toLocalizedString());
+      throw new IllegalStateException(LocalizedStrings.CqService_CLIENT_SIDE_NEWCQ_METHOD_INVOCATION_ON_SERVER.toLocalizedString());
     }
-    
+
     // Check if the given cq already exists.
     if (cqName != null && isCqExists(cqName)) {
-      throw new CqExistsException(
-        LocalizedStrings.
-          CqService_CQ_WITH_THE_GIVEN_NAME_ALREADY_EXISTS_CQNAME_0
-        .toLocalizedString(cqName));
+      throw new CqExistsException(LocalizedStrings.CqService_CQ_WITH_THE_GIVEN_NAME_ALREADY_EXISTS_CQNAME_0.toLocalizedString(cqName));
     }
-    
-    
-    ServerCQProxyImpl serverProxy= pool == null ? null : new ServerCQProxyImpl(pool);
+
+    ServerCQProxyImpl serverProxy = pool == null ? null : new ServerCQProxyImpl(pool);
     ClientCQImpl cQuery = new ClientCQImpl(this, cqName, queryString, cqAttributes, serverProxy, isDurable);
     cQuery.updateCqCreateStats();
 
     //cQuery.initCq();
-    
+
     // Check if query is valid.  
     cQuery.validateCq();
-    
+
     // Add cq into meta region.    
     // Check if Name needs to be generated.
     if (cqName == null) {
       // in the case of cqname internally generated, the CqExistsException needs
       // to be taken care internally.
-      while(true) {
+      while (true) {
         cQuery.setName(generateCqName());
         try {
           addToCqMap(cQuery);
@@ -207,16 +197,15 @@ public final class CqServiceImpl implements CqService  {
           continue;
         }
         break;
-      } 
+      }
     } else {
       addToCqMap(cQuery);
     }
 
     this.addToBaseRegionToCqNameMap(cQuery.getBaseRegionName(), cQuery.getServerCqName());
-    
+
     return cQuery;
   }
-  
 
   /**
    * Executes the given CqQuery, if the CqQuery for that name is not there
@@ -234,46 +223,38 @@ public final class CqServiceImpl implements CqService  {
    * @throws CqException
    */
   @Override
-  public synchronized ServerCQ executeCq(String cqName, String queryString,
-      int cqState, ClientProxyMembershipID clientProxyId, 
-      CacheClientNotifier ccn, boolean isDurable, boolean manageEmptyRegions,
-      int regionDataPolicy, Map emptyRegionsMap) 
-    throws CqException, RegionNotFoundException, CqClosedException {
+  public synchronized ServerCQ executeCq(String cqName, String queryString, int cqState, ClientProxyMembershipID clientProxyId, CacheClientNotifier ccn, boolean isDurable, boolean manageEmptyRegions, int regionDataPolicy, Map emptyRegionsMap) throws CqException, RegionNotFoundException, CqClosedException {
     if (!isServer()) {
-      throw new IllegalStateException(
-          LocalizedStrings.CqService_SERVER_SIDE_EXECUTECQ_METHOD_IS_CALLED_ON_CLIENT_CQNAME_0
-              .toLocalizedString(cqName));
+      throw new IllegalStateException(LocalizedStrings.CqService_SERVER_SIDE_EXECUTECQ_METHOD_IS_CALLED_ON_CLIENT_CQNAME_0.toLocalizedString(cqName));
     }
-    
+
     String serverCqName = constructServerCqName(cqName, clientProxyId);
     ServerCQImpl cQuery = null;
-    
+
     // If this CQ is not yet registered in Server, register CQ.
     if (!isCqExists(serverCqName)) {
       cQuery = new ServerCQImpl(this, cqName, queryString, isDurable, constructServerCqName(cqName, clientProxyId));
-      
+
       try {
         cQuery.registerCq(clientProxyId, ccn, cqState);
         if (manageEmptyRegions) { // new in 6.1
-          if (emptyRegionsMap != null && emptyRegionsMap.containsKey(cQuery.getBaseRegionName())){
+          if (emptyRegionsMap != null && emptyRegionsMap.containsKey(cQuery.getBaseRegionName())) {
             regionDataPolicy = 0;
           }
-          ccn.updateMapOfEmptyRegions(ccn.getClientProxy(clientProxyId, true).getRegionsWithEmptyDataPolicy(), 
-              cQuery.getBaseRegionName(), regionDataPolicy);
+          ccn.updateMapOfEmptyRegions(ccn.getClientProxy(clientProxyId, true).getRegionsWithEmptyDataPolicy(), cQuery.getBaseRegionName(), regionDataPolicy);
         }
       } catch (CqException cqe) {
         logger.info(LocalizedMessage.create(LocalizedStrings.CqService_EXCEPTION_WHILE_REGISTERING_CQ_ON_SERVER_CQNAME___0, cQuery.getName()));
         cQuery = null;
         throw cqe;
       }
-      
+
     } else {
-      cQuery = (ServerCQImpl)getCq(serverCqName);
+      cQuery = (ServerCQImpl) getCq(serverCqName);
       resumeCQ(cqState, cQuery);
-   }
-    
-    
-    if (logger.isDebugEnabled() ) {
+    }
+
+    if (logger.isDebugEnabled()) {
       logger.debug("Successfully created CQ on the server. CqName : {}", cQuery.getName());
     }
     return cQuery;
@@ -281,7 +262,7 @@ public final class CqServiceImpl implements CqService  {
 
   public void resumeCQ(int cqState, ServerCQ cQuery) {
     // Initialize the state of CQ.
-    if(((CqStateImpl)cQuery.getState()).getState() != cqState) {
+    if (((CqStateImpl) cQuery.getState()).getState() != cqState) {
       cQuery.setCqState(cqState);
       // addToCqEventKeysMap(cQuery);
       // Send state change info to peers.
@@ -290,10 +271,10 @@ public final class CqServiceImpl implements CqService  {
     //If we are going to set the state to running, we need to check to see if it matches any other cq
     if (cqState == CqStateImpl.RUNNING) {
       // Add to the matchedCqMap.
-        addToMatchingCqMap((CqQueryImpl) cQuery);    
+      addToMatchingCqMap((CqQueryImpl) cQuery);
     }
   }
-  
+
   /*
   public void addToCqEventKeysMap(CqQuery cq){
     if (cqToCqEventKeysMap != null) {
@@ -312,12 +293,11 @@ public final class CqServiceImpl implements CqService  {
   }
   */
 
-  public boolean hasCq(){
+  public boolean hasCq() {
     HashMap<String, CqQueryImpl> cqMap = cqQueryMap;
     return (cqMap.size() > 0);
   }
-  
-  
+
   /**
    * Adds the given CQ and cqQuery object into the CQ map.
    */
@@ -328,27 +308,26 @@ public final class CqServiceImpl implements CqService  {
       logger.debug("Adding to CQ Repository. CqName : {} ServerCqName : {}", cq.getName(), sCqName);
     }
     HashMap<String, CqQueryImpl> cqMap = cqQueryMap;
-      if (cqMap.containsKey(sCqName)) {
-        throw new CqExistsException(
-          LocalizedStrings.CqService_A_CQ_WITH_THE_GIVEN_NAME_0_ALREADY_EXISTS.toLocalizedString(sCqName));
+    if (cqMap.containsKey(sCqName)) {
+      throw new CqExistsException(LocalizedStrings.CqService_A_CQ_WITH_THE_GIVEN_NAME_0_ALREADY_EXISTS.toLocalizedString(sCqName));
+    }
+    synchronized (cqQueryMapLock) {
+      HashMap<String, CqQueryImpl> tmpCqQueryMap = new HashMap<String, CqQueryImpl>(cqQueryMap);
+      try {
+        tmpCqQueryMap.put(sCqName, cq);
+      } catch (Exception ex) {
+        StringId errMsg = LocalizedStrings.CqQueryImpl_FAILED_TO_STORE_CONTINUOUS_QUERY_IN_THE_REPOSITORY_CQNAME_0_1;
+        Object[] errMsgArgs = new Object[] { sCqName, ex.getLocalizedMessage() };
+        String s = errMsg.toLocalizedString(errMsgArgs);
+        logger.error(s);
+        throw new CqException(s, ex);
       }
-      synchronized (cqQueryMapLock) {
-        HashMap<String, CqQueryImpl> tmpCqQueryMap = new HashMap<String, CqQueryImpl>(cqQueryMap);
-        try {
-          tmpCqQueryMap.put(sCqName, cq);
-        }catch (Exception ex){
-          StringId errMsg = LocalizedStrings.CqQueryImpl_FAILED_TO_STORE_CONTINUOUS_QUERY_IN_THE_REPOSITORY_CQNAME_0_1;
-          Object[] errMsgArgs = new Object[] {sCqName, ex.getLocalizedMessage()};
-          String s = errMsg.toLocalizedString(errMsgArgs);
-          logger.error(s);
-          throw new CqException(s, ex);
-        }    
-        UserAttributes attributes = UserAttributes.userAttributes.get();
-        if (attributes != null) {
-          this.cqNameToUserAttributesMap.put(cq.getName(), attributes);
-        }
-        cqQueryMap = tmpCqQueryMap;
+      UserAttributes attributes = UserAttributes.userAttributes.get();
+      if (attributes != null) {
+        this.cqNameToUserAttributesMap.put(cq.getName(), attributes);
       }
+      cqQueryMap = tmpCqQueryMap;
+    }
   }
 
   /**
@@ -363,7 +342,7 @@ public final class CqServiceImpl implements CqService  {
       cqQueryMap = tmpCqQueryMap;
     }
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#getClientCqFromServer(org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID, java.lang.String)
    */
@@ -371,7 +350,7 @@ public final class CqServiceImpl implements CqService  {
   public CqQuery getClientCqFromServer(ClientProxyMembershipID clientProxyId, String clientCqName) {
     // On server side cqName will be server side cqName.
     HashMap<String, CqQueryImpl> cqMap = cqQueryMap;
-    return (CqQuery)cqMap.get(this.constructServerCqName(clientCqName, clientProxyId));
+    return (CqQuery) cqMap.get(this.constructServerCqName(clientCqName, clientProxyId));
   }
 
   /* (non-Javadoc)
@@ -380,7 +359,7 @@ public final class CqServiceImpl implements CqService  {
   @Override
   public InternalCqQuery getCq(String cqName) {
     // On server side cqName will be server side cqName.
-    return (InternalCqQuery)cqQueryMap.get(cqName);
+    return (InternalCqQuery) cqQueryMap.get(cqName);
   }
 
   /**
@@ -397,7 +376,7 @@ public final class CqServiceImpl implements CqService  {
    * @see org.apache.geode.cache.query.internal.InternalCqService#getAllCqs()
    */
   @Override
-  public Collection<? extends InternalCqQuery> getAllCqs(){
+  public Collection<? extends InternalCqQuery> getAllCqs() {
     return cqQueryMap.values();
   }
 
@@ -405,30 +384,30 @@ public final class CqServiceImpl implements CqService  {
    * @see org.apache.geode.cache.query.internal.InternalCqService#getAllCqs(java.lang.String)
    */
   @Override
-  public Collection<? extends InternalCqQuery> getAllCqs(final String regionName)throws CqException{
-    if (regionName == null){
+  public Collection<? extends InternalCqQuery> getAllCqs(final String regionName) throws CqException {
+    if (regionName == null) {
       throw new IllegalArgumentException(LocalizedStrings.CqService_NULL_ARGUMENT_0.toLocalizedString("regionName"));
     }
-    
+
     String[] cqNames = null;
-    
-    synchronized(this.baseRegionToCqNameMap){
+
+    synchronized (this.baseRegionToCqNameMap) {
       ArrayList<String> cqs = this.baseRegionToCqNameMap.get(regionName);
-      if(cqs == null) {
+      if (cqs == null) {
         return null;
       }
       cqNames = new String[cqs.size()];
       cqs.toArray(cqNames);
     }
-    
+
     ArrayList<InternalCqQuery> cQueryList = new ArrayList<InternalCqQuery>();
-    for(int cqCnt=0; cqCnt < cqNames.length; cqCnt++){
+    for (int cqCnt = 0; cqCnt < cqNames.length; cqCnt++) {
       InternalCqQuery cq = getCq(cqNames[cqCnt]);
-      if (cq != null){
+      if (cq != null) {
         cQueryList.add(cq);
       }
     }
-    
+
     return cQueryList;
   }
 
@@ -436,24 +415,24 @@ public final class CqServiceImpl implements CqService  {
    * @see org.apache.geode.cache.query.internal.InternalCqService#executeAllClientCqs()
    */
   @Override
-  public synchronized void executeAllClientCqs()throws CqException{
+  public synchronized void executeAllClientCqs() throws CqException {
     executeCqs(this.getAllCqs());
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#executeAllRegionCqs(java.lang.String)
    */
   @Override
-  public synchronized void executeAllRegionCqs(final String regionName)throws CqException{
-     executeCqs(getAllCqs(regionName));
+  public synchronized void executeAllRegionCqs(final String regionName) throws CqException {
+    executeCqs(getAllCqs(regionName));
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#executeCqs(org.apache.geode.cache.query.CqQuery[])
    */
   @Override
-  public synchronized void executeCqs(Collection<? extends InternalCqQuery> cqs)throws CqException{
-    if(cqs == null) {
+  public synchronized void executeCqs(Collection<? extends InternalCqQuery> cqs) throws CqException {
+    if (cqs == null) {
       return;
     }
     String cqName = null;
@@ -467,36 +446,36 @@ public final class CqServiceImpl implements CqService  {
           if (logger.isDebugEnabled()) {
             logger.debug("Failed to execute the CQ, CqName : {} Error : {}", cqName, qe.getMessage());
           }
-        } catch (CqClosedException cce){
+        } catch (CqClosedException cce) {
           if (logger.isDebugEnabled()) {
             logger.debug("Failed to execute the CQ, CqName : {} Error : {}", cqName, cce.getMessage());
           }
         }
       }
-    }    
+    }
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#stopAllClientCqs()
    */
   @Override
-  public synchronized void stopAllClientCqs()throws CqException{
+  public synchronized void stopAllClientCqs() throws CqException {
     stopCqs(this.getAllCqs());
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#stopAllRegionCqs(java.lang.String)
    */
   @Override
-  public synchronized void stopAllRegionCqs(final String regionName)throws CqException{
+  public synchronized void stopAllRegionCqs(final String regionName) throws CqException {
     stopCqs(this.getAllCqs(regionName));
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#stopCqs(org.apache.geode.cache.query.CqQuery[])
    */
   @Override
-  public synchronized void stopCqs(Collection<? extends InternalCqQuery> cqs)throws CqException{
+  public synchronized void stopCqs(Collection<? extends InternalCqQuery> cqs) throws CqException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
       if (cqs == null) {
@@ -506,10 +485,10 @@ public final class CqServiceImpl implements CqService  {
       }
     }
 
-    if(cqs == null) {
+    if (cqs == null) {
       return;
     }
-    
+
     String cqName = null;
     for (InternalCqQuery internalCqQuery : cqs) {
       CqQuery cq = (CqQuery) internalCqQuery;
@@ -518,11 +497,11 @@ public final class CqServiceImpl implements CqService  {
           cqName = cq.getName();
           cq.stop();
         } catch (QueryException qe) {
-          if (isDebugEnabled){
+          if (isDebugEnabled) {
             logger.debug("Failed to stop the CQ, CqName : {} Error : {}", cqName, qe.getMessage());
           }
-        } catch (CqClosedException cce){
-          if (isDebugEnabled){
+        } catch (CqClosedException cce) {
+          if (isDebugEnabled) {
             logger.debug("Failed to stop the CQ, CqName : {} Error : {}", cqName, cce.getMessage());
           }
         }
@@ -534,25 +513,24 @@ public final class CqServiceImpl implements CqService  {
    * @see org.apache.geode.cache.query.internal.InternalCqService#closeCqs(java.lang.String)
    */
   @Override
-  public void closeCqs(final String regionName)throws CqException{
+  public void closeCqs(final String regionName) throws CqException {
     Collection<? extends InternalCqQuery> cqs = this.getAllCqs(regionName);
-    if(cqs != null) {
+    if (cqs != null) {
       String cqName = null;
-      for (InternalCqQuery cq: cqs) {
+      for (InternalCqQuery cq : cqs) {
         try {
           cqName = cq.getName();
-          
-          if(isServer()) {
+
+          if (isServer()) {
             // invoked on the server
-            cq.close(false);  
-          } else { 
+            cq.close(false);
+          } else {
             // @todo grid: if regionName has a pool check its keepAlive
-            boolean keepAlive = ((GemFireCacheImpl)this.cache).keepDurableSubscriptionsAlive();
-            if(cq.isDurable() && keepAlive){
+            boolean keepAlive = ((GemFireCacheImpl) this.cache).keepDurableSubscriptionsAlive();
+            if (cq.isDurable() && keepAlive) {
               logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_NOT_SENDING_CQ_CLOSE_TO_THE_SERVER_AS_IT_IS_A_DURABLE_CQ));
-              cq.close(false);  
-            } 
-            else {
+              cq.close(false);
+            } else {
               cq.close(true);
             }
           }
@@ -577,26 +555,25 @@ public final class CqServiceImpl implements CqService  {
    * @throws CqException
    */
   @Override
-  public void stopCq(String cqName, ClientProxyMembershipID clientId)
-  throws CqException {
+  public void stopCq(String cqName, ClientProxyMembershipID clientId) throws CqException {
     String serverCqName = cqName;
     if (clientId != null) {
-      serverCqName = this.constructServerCqName(cqName, clientId); 
+      serverCqName = this.constructServerCqName(cqName, clientId);
     }
-  
+
     ServerCQImpl cQuery = null;
     StringId errMsg = null;
     Exception ex = null;
-    
+
     try {
       HashMap<String, CqQueryImpl> cqMap = cqQueryMap;
       if (!cqMap.containsKey(serverCqName)) {
-//        throw new CqException(LocalizedStrings.CqService_CQ_NOT_FOUND_FAILED_TO_STOP_THE_SPECIFIED_CQ_0.toLocalizedString(serverCqName));
+        //        throw new CqException(LocalizedStrings.CqService_CQ_NOT_FOUND_FAILED_TO_STOP_THE_SPECIFIED_CQ_0.toLocalizedString(serverCqName));
         /* gregp 052808: We should silently fail here instead of throwing error. This is to deal with races in recovery */
         return;
       }
-      cQuery = (ServerCQImpl)getCq(serverCqName);
-      
+      cQuery = (ServerCQImpl) getCq(serverCqName);
+
     } catch (CacheLoaderException e1) {
       errMsg = LocalizedStrings.CqService_CQ_NOT_FOUND_IN_THE_CQ_META_REGION_CQNAME_0;
       ex = e1;
@@ -604,7 +581,7 @@ public final class CqServiceImpl implements CqService  {
       errMsg = LocalizedStrings.CqService_TIMEOUT_WHILE_TRYING_TO_GET_CQ_FROM_META_REGION_CQNAME_0;
       ex = e2;
     } finally {
-      if (ex != null){
+      if (ex != null) {
         String s = errMsg.toLocalizedString(cqName);
         if (logger.isDebugEnabled()) {
           logger.debug(s);
@@ -612,12 +589,12 @@ public final class CqServiceImpl implements CqService  {
         throw new CqException(s, ex);
       }
     }
-    
+
     try {
-      if(!cQuery.isStopped()) {
+      if (!cQuery.isStopped()) {
         cQuery.stop();
       }
-    } catch (CqClosedException cce){
+    } catch (CqClosedException cce) {
       throw new CqException(cce.getMessage());
     } finally {
       // If this CQ is stopped, disable caching event keys for this CQ.
@@ -633,27 +610,26 @@ public final class CqServiceImpl implements CqService  {
    * @see org.apache.geode.cache.query.internal.InternalCqService#closeCq(java.lang.String, org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID)
    */
   @Override
-  public void closeCq(String cqName, ClientProxyMembershipID clientProxyId)
-  throws CqException {
+  public void closeCq(String cqName, ClientProxyMembershipID clientProxyId) throws CqException {
     String serverCqName = cqName;
     if (clientProxyId != null) {
-      serverCqName = this.constructServerCqName(cqName, clientProxyId); 
+      serverCqName = this.constructServerCqName(cqName, clientProxyId);
     }
-    
+
     ServerCQImpl cQuery = null;
     StringId errMsg = null;
     Exception ex = null;
-    
+
     try {
       HashMap<String, CqQueryImpl> cqMap = cqQueryMap;
       if (!cqMap.containsKey(serverCqName)) {
-//        throw new CqException(LocalizedStrings.CqService_CQ_NOT_FOUND_FAILED_TO_CLOSE_THE_SPECIFIED_CQ_0
-//            .toLocalizedString(serverCqName));
+        //        throw new CqException(LocalizedStrings.CqService_CQ_NOT_FOUND_FAILED_TO_CLOSE_THE_SPECIFIED_CQ_0
+        //            .toLocalizedString(serverCqName));
         /* gregp 052808: We should silently fail here instead of throwing error. This is to deal with races in recovery */
         return;
       }
-      cQuery = (ServerCQImpl)cqMap.get(serverCqName);
-      
+      cQuery = (ServerCQImpl) cqMap.get(serverCqName);
+
     } catch (CacheLoaderException e1) {
       errMsg = LocalizedStrings.CqService_CQ_NOT_FOUND_IN_THE_CQ_META_REGION_CQNAME_0;
       ex = e1;
@@ -661,7 +637,7 @@ public final class CqServiceImpl implements CqService  {
       errMsg = LocalizedStrings.CqService_TIMEOUT_WHILE_TRYING_TO_GET_CQ_FROM_META_REGION_CQNAME_0;
       ex = e2;
     } finally {
-      if (ex != null){
+      if (ex != null) {
         String s = errMsg.toLocalizedString(cqName);
         if (logger.isDebugEnabled()) {
           logger.debug(s);
@@ -669,20 +645,20 @@ public final class CqServiceImpl implements CqService  {
         throw new CqException(s, ex);
       }
     }
-    
+
     try {
       cQuery.close(false);
 
       // Repository Region.
       // If CQ event caching is enabled, remove this CQs event cache reference.
       // removeCQFromCaching(serverCqName);
-      
+
       // CqBaseRegion 
       try {
         LocalRegion baseRegion = cQuery.getCqBaseRegion();
         if (baseRegion != null && !baseRegion.isDestroyed()) {
           // Server specific clean up.
-          if (isServer()){
+          if (isServer()) {
             FilterProfile fp = baseRegion.getFilterProfile();
             if (fp != null) {
               fp.closeCq(cQuery);
@@ -693,32 +669,31 @@ public final class CqServiceImpl implements CqService  {
               this.stats.decClientsWithCqs();
             }
           }
-        } 
-      }catch (Exception e){
+        }
+      } catch (Exception e) {
         // May be cache is being shutdown
         if (logger.isDebugEnabled()) {
           logger.debug("Failed to remove CQ from the base region. CqName : {}", cqName);
         }
       }
-    
-      if (isServer()){
-        removeFromBaseRegionToCqNameMap(cQuery.getRegionName(), serverCqName);      
+
+      if (isServer()) {
+        removeFromBaseRegionToCqNameMap(cQuery.getRegionName(), serverCqName);
       }
 
       LocalRegion baseRegion = cQuery.getCqBaseRegion();
-      if(baseRegion.getFilterProfile().getCqCount() <= 0){
+      if (baseRegion.getFilterProfile().getCqCount() <= 0) {
         if (logger.isDebugEnabled()) {
           logger.debug("Should update the profile for this partitioned region {} for not requiring old value", baseRegion);
         }
       }
-    } catch (CqClosedException cce){
+    } catch (CqClosedException cce) {
       throw new CqException(cce.getMessage());
     } finally {
       this.removeFromMatchingCqMap(cQuery);
     }
   }
-  
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#closeAllCqs(boolean)
    */
@@ -733,40 +708,36 @@ public final class CqServiceImpl implements CqService  {
    * CqQuerys created by other VMs are unaffected.
    */
   private void closeAllCqs(boolean clientInitiated, Collection<? extends InternalCqQuery> cqs) {
-    closeAllCqs(clientInitiated, cqs, ((GemFireCacheImpl)this.cache)
-        .keepDurableSubscriptionsAlive());
+    closeAllCqs(clientInitiated, cqs, ((GemFireCacheImpl) this.cache).keepDurableSubscriptionsAlive());
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#closeAllCqs(boolean, org.apache.geode.cache.query.CqQuery[], boolean)
    */
   @Override
-  public void closeAllCqs(boolean clientInitiated, Collection<? extends InternalCqQuery> cqs,
-      boolean keepAlive) {
-    
+  public void closeAllCqs(boolean clientInitiated, Collection<? extends InternalCqQuery> cqs, boolean keepAlive) {
+
     //CqQuery[] cqs = getAllCqs();
     if (cqs != null) {
       String cqName = null;
-      if (logger.isDebugEnabled()){
+      if (logger.isDebugEnabled()) {
         logger.debug("Closing all CQs, number of CQ to be closed : {}", cqs.size());
       }
-      for (InternalCqQuery cQuery: cqs){
+      for (InternalCqQuery cQuery : cqs) {
         try {
           cqName = cQuery.getName();
-//          boolean keepAlive = ((GemFireCache)this.cache).keepDurableSubscriptionsAlive();
-         
-          if(isServer()) {
-            cQuery.close(false);  
+          //          boolean keepAlive = ((GemFireCache)this.cache).keepDurableSubscriptionsAlive();
+
+          if (isServer()) {
+            cQuery.close(false);
           } else {
             if (clientInitiated) {
               cQuery.close(true);
-            } 
-            else {
-              if(!isServer() && cQuery.isDurable() && keepAlive){
+            } else {
+              if (!isServer() && cQuery.isDurable() && keepAlive) {
                 logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_NOT_SENDING_CQ_CLOSE_TO_THE_SERVER_AS_IT_IS_A_DURABLE_CQ));
                 cQuery.close(false);
-              }
-              else {
+              } else {
                 cQuery.close(true);
               }
             }
@@ -774,24 +745,24 @@ public final class CqServiceImpl implements CqService  {
         } catch (QueryException cqe) {
           if (!isRunning()) {
             // Not cache shutdown
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_FAILED_TO_CLOSE_CQ__0___1, new Object[] {cqName, cqe.getMessage()}));
+            logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_FAILED_TO_CLOSE_CQ__0___1, new Object[] { cqName, cqe.getMessage() }));
           }
           if (logger.isDebugEnabled()) {
             logger.debug(cqe.getMessage(), cqe);
           }
-        } catch (CqClosedException cqe){
+        } catch (CqClosedException cqe) {
           if (!isRunning()) {
             // Not cache shutdown
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_FAILED_TO_CLOSE_CQ__0___1, new Object[] {cqName, cqe.getMessage()}));
+            logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_FAILED_TO_CLOSE_CQ__0___1, new Object[] { cqName, cqe.getMessage() }));
           }
           if (logger.isDebugEnabled()) {
             logger.debug(cqe.getMessage(), cqe);
-          } 
+          }
         }
       }
     }
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#getCqStatistics()
    */
@@ -799,20 +770,19 @@ public final class CqServiceImpl implements CqService  {
   public CqServiceStatistics getCqStatistics() {
     return cqServiceStats;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#closeClientCqs(org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID)
    */
   @Override
-  public void closeClientCqs(ClientProxyMembershipID clientProxyId)
-  throws CqException {
+  public void closeClientCqs(ClientProxyMembershipID clientProxyId) throws CqException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
       logger.debug("Closing Client CQs for the client: {}", clientProxyId);
     }
     List<ServerCQ> cqs = getAllClientCqs(clientProxyId);
-    for (ServerCQ cq: cqs) {
-      CqQueryImpl cQuery = (CqQueryImpl)cq;
+    for (ServerCQ cq : cqs) {
+      CqQueryImpl cQuery = (CqQueryImpl) cq;
       try {
         cQuery.close(false);
       } catch (QueryException qe) {
@@ -831,43 +801,43 @@ public final class CqServiceImpl implements CqService  {
    * @see org.apache.geode.cache.query.internal.InternalCqService#getAllClientCqs(org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID)
    */
   @Override
-  public List<ServerCQ> getAllClientCqs(ClientProxyMembershipID clientProxyId){
+  public List<ServerCQ> getAllClientCqs(ClientProxyMembershipID clientProxyId) {
     Collection<? extends InternalCqQuery> cqs = getAllCqs();
     ArrayList<ServerCQ> clientCqs = new ArrayList<ServerCQ>();
-    
-    for (InternalCqQuery cq: cqs) {
-      ServerCQImpl cQuery = (ServerCQImpl)cq;
-      ClientProxyMembershipID id = cQuery.getClientProxyId(); 
+
+    for (InternalCqQuery cq : cqs) {
+      ServerCQImpl cQuery = (ServerCQImpl) cq;
+      ClientProxyMembershipID id = cQuery.getClientProxyId();
       if (id != null && id.equals(clientProxyId)) {
-          clientCqs.add(cQuery);
+        clientCqs.add(cQuery);
       }
     }
-    return clientCqs;   
+    return clientCqs;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#getAllDurableClientCqs(org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID)
    */
   @Override
   public List<String> getAllDurableClientCqs(ClientProxyMembershipID clientProxyId) throws CqException {
     if (clientProxyId == null) {
-      throw new CqException (LocalizedStrings.CqService_UNABLE_TO_RETRIEVE_DURABLE_CQS_FOR_CLIENT_PROXY_ID.toLocalizedString(clientProxyId));
+      throw new CqException(LocalizedStrings.CqService_UNABLE_TO_RETRIEVE_DURABLE_CQS_FOR_CLIENT_PROXY_ID.toLocalizedString(clientProxyId));
     }
     List<ServerCQ> cqs = getAllClientCqs(clientProxyId);
     ArrayList<String> durableClientCqs = new ArrayList<String>();
-    
-    for (ServerCQ cq: cqs) {
-      ServerCQImpl cQuery = (ServerCQImpl)cq;
+
+    for (ServerCQ cq : cqs) {
+      ServerCQImpl cQuery = (ServerCQImpl) cq;
       if (cQuery != null && cQuery.isDurable()) {
-        ClientProxyMembershipID id = cQuery.getClientProxyId(); 
+        ClientProxyMembershipID id = cQuery.getClientProxyId();
         if (id != null && id.equals(clientProxyId)) {
-            durableClientCqs.add(cQuery.getName());
+          durableClientCqs.add(cQuery.getName());
         }
       }
     }
-    return durableClientCqs;   
+    return durableClientCqs;
   }
-  
+
   /**
    * Server side method.
    * Closes non-durable CQs for the given client proxy id.
@@ -875,15 +845,14 @@ public final class CqServiceImpl implements CqService  {
    * @throws CqException
    */
   @Override
-  public void closeNonDurableClientCqs(ClientProxyMembershipID clientProxyId)
-  throws CqException {
+  public void closeNonDurableClientCqs(ClientProxyMembershipID clientProxyId) throws CqException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
       logger.debug("Closing Client CQs for the client: {}", clientProxyId);
     }
     List<ServerCQ> cqs = getAllClientCqs(clientProxyId);
-    for (ServerCQ cq: cqs) {
-      ServerCQImpl cQuery = (ServerCQImpl)cq;
+    for (ServerCQ cq : cqs) {
+      ServerCQImpl cQuery = (ServerCQImpl) cq;
       try {
         if (!cQuery.isDurable()) {
           cQuery.close(false);
@@ -899,7 +868,7 @@ public final class CqServiceImpl implements CqService  {
       }
     }
   }
-  
+
   /**
    * Is the CQ service in a cache server environment
    * @return true if cache server, false otherwise
@@ -907,16 +876,16 @@ public final class CqServiceImpl implements CqService  {
   public boolean isServer() {
     if (this.cache.getCacheServers().isEmpty()) {
       return false;
-    }    
+    }
     return true;
   }
-  
+
   /**
    * Cleans up the CqService.
    */
   @Override
   public void close() {
-    if (logger.isDebugEnabled()){
+    if (logger.isDebugEnabled()) {
       logger.debug("Closing CqService. {}", this);
     }
     // Close All the CQs.
@@ -924,16 +893,16 @@ public final class CqServiceImpl implements CqService  {
     closeAllCqs(false);
     isRunning = false;
   }
-  
+
   @Override
   public boolean isRunning() {
     return this.isRunning;
   }
-  
+
   public void start() {
     this.isRunning = true;
   }
-  
+
   private static final ConcurrentHashMap<String, ConcurrentHashMap<ClientProxyMembershipID, String>> serverCqNameCache = new ConcurrentHashMap<>();
 
   /**
@@ -942,8 +911,7 @@ public final class CqServiceImpl implements CqService  {
   public String constructServerCqName(String cqName, ClientProxyMembershipID clientProxyId) {
     ConcurrentHashMap<ClientProxyMembershipID, String> cache = serverCqNameCache.get(cqName);
     if (null == cache) {
-      final ConcurrentHashMap<ClientProxyMembershipID, String> old = serverCqNameCache.putIfAbsent(cqName,
-          cache = new ConcurrentHashMap<ClientProxyMembershipID, String>());
+      final ConcurrentHashMap<ClientProxyMembershipID, String> old = serverCqNameCache.putIfAbsent(cqName, cache = new ConcurrentHashMap<ClientProxyMembershipID, String>());
       if (null != old) {
         cache = old;
       }
@@ -963,7 +931,7 @@ public final class CqServiceImpl implements CqService  {
 
     return cName;
   }
-  
+
   /*
    * Checks if CQ with the given name already exists.
    * @param cqName name of the CQ.
@@ -971,7 +939,7 @@ public final class CqServiceImpl implements CqService  {
    */
   private synchronized boolean isCqExists(String cqName) {
     boolean status = false;
-    HashMap<String, CqQueryImpl> cqMap =cqQueryMap;
+    HashMap<String, CqQueryImpl> cqMap = cqQueryMap;
     status = cqMap.containsKey(cqName);
     return status;
   }
@@ -988,13 +956,12 @@ public final class CqServiceImpl implements CqService  {
       }
     }
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#dispatchCqListeners(java.util.HashMap, int, java.lang.Object, java.lang.Object, byte[], org.apache.geode.cache.client.internal.QueueManager, org.apache.geode.internal.cache.EventID)
    */
   @Override
-  public void dispatchCqListeners(HashMap<String, Integer> cqs, int messageType, Object key,
-      Object value, byte[] delta, QueueManager qManager, EventID eventId) {
+  public void dispatchCqListeners(HashMap<String, Integer> cqs, int messageType, Object key, Object value, byte[] delta, QueueManager qManager, EventID eventId) {
     ClientCQImpl cQuery = null;
     Object[] fullValue = new Object[1];
     Iterator<Map.Entry<String, Integer>> iter = cqs.entrySet().iterator();
@@ -1002,65 +969,64 @@ public final class CqServiceImpl implements CqService  {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     while (iter.hasNext()) {
       try {
-      Map.Entry<String, Integer> entry = iter.next();
-      cqName = entry.getKey();
-      cQuery = (ClientCQImpl) this.getCq(cqName);
-      
-      if (cQuery == null || (!cQuery.isRunning() && cQuery.getQueuedEvents() == null)) {
-        if (isDebugEnabled) {
-          logger.debug("Unable to invoke CqListener, {}, CqName : {}", ((cQuery == null)? "CQ not found":" CQ is Not running"), cqName);
-        }
-        continue;
-      }
-      
-      Integer cqOp = (Integer)entry.getValue();
-      
-      // If Region destroy event, close the cq.
-      if (cqOp.intValue() == MessageType.DESTROY_REGION) {
-        // The close will also invoke the listeners close().
-        try {
-          cQuery.close(false);
-        } catch (Exception ex) {
-          // handle?
-        }
-        continue;
-      }
-      
-      // Construct CqEvent.
-      CqEventImpl cqEvent = null;
-      cqEvent = new CqEventImpl(cQuery, getOperation(messageType),
-          getOperation(cqOp.intValue()), key, value, delta, qManager, eventId);
-      
-      // Update statistics
-      cQuery.updateStats(cqEvent);
+        Map.Entry<String, Integer> entry = iter.next();
+        cqName = entry.getKey();
+        cQuery = (ClientCQImpl) this.getCq(cqName);
 
-      // Check if CQ Event needs to be queued.
-      if (cQuery.getQueuedEvents() != null) {
-        synchronized(cQuery.queuedEventsSynchObject) {
-          // Get latest value.
-          ConcurrentLinkedQueue<CqEventImpl> queuedEvents = cQuery.getQueuedEvents();
-          // Check to see, if its not set to null while waiting to get 
-          // Synchronization lock.
-          if (queuedEvents != null) {
-            if (isDebugEnabled) {
-              logger.debug("Queueing event for key: {}", key);
+        if (cQuery == null || (!cQuery.isRunning() && cQuery.getQueuedEvents() == null)) {
+          if (isDebugEnabled) {
+            logger.debug("Unable to invoke CqListener, {}, CqName : {}", ((cQuery == null) ? "CQ not found" : " CQ is Not running"), cqName);
+          }
+          continue;
+        }
+
+        Integer cqOp = (Integer) entry.getValue();
+
+        // If Region destroy event, close the cq.
+        if (cqOp.intValue() == MessageType.DESTROY_REGION) {
+          // The close will also invoke the listeners close().
+          try {
+            cQuery.close(false);
+          } catch (Exception ex) {
+            // handle?
+          }
+          continue;
+        }
+
+        // Construct CqEvent.
+        CqEventImpl cqEvent = null;
+        cqEvent = new CqEventImpl(cQuery, getOperation(messageType), getOperation(cqOp.intValue()), key, value, delta, qManager, eventId);
+
+        // Update statistics
+        cQuery.updateStats(cqEvent);
+
+        // Check if CQ Event needs to be queued.
+        if (cQuery.getQueuedEvents() != null) {
+          synchronized (cQuery.queuedEventsSynchObject) {
+            // Get latest value.
+            ConcurrentLinkedQueue<CqEventImpl> queuedEvents = cQuery.getQueuedEvents();
+            // Check to see, if its not set to null while waiting to get 
+            // Synchronization lock.
+            if (queuedEvents != null) {
+              if (isDebugEnabled) {
+                logger.debug("Queueing event for key: {}", key);
+              }
+              cQuery.getVsdStats().incQueuedCqListenerEvents();
+              queuedEvents.add(cqEvent);
+              continue;
             }
-            cQuery.getVsdStats().incQueuedCqListenerEvents();
-            queuedEvents.add(cqEvent);
-            continue;
           }
         }
-      }
 
-      this.invokeListeners(cqName, cQuery, cqEvent, fullValue);
-      if (value == null) {
-        value = fullValue[0];
-      }
+        this.invokeListeners(cqName, cQuery, cqEvent, fullValue);
+        if (value == null) {
+          value = fullValue[0];
+        }
 
       } // outer try
-      catch(Throwable t) {
+      catch (Throwable t) {
         logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_ERROR_PROCESSING_CQLISTENER_FOR_CQ_0, cqName), t);
-        
+
         if (t instanceof VirtualMachineError) {
           logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_VIRTUALMACHINEERROR_PROCESSING_CQLISTENER_FOR_CQ_0, cqName), t);
           return;
@@ -1069,61 +1035,51 @@ public final class CqServiceImpl implements CqService  {
     } // iteration.
   }
 
-  public void invokeListeners(String cqName, ClientCQImpl cQuery,
-      CqEventImpl cqEvent) {
+  public void invokeListeners(String cqName, ClientCQImpl cQuery, CqEventImpl cqEvent) {
     invokeListeners(cqName, cQuery, cqEvent, null);
   }
 
-  public void invokeListeners(String cqName, ClientCQImpl cQuery,
-      CqEventImpl cqEvent, Object[] fullValue) {
+  public void invokeListeners(String cqName, ClientCQImpl cQuery, CqEventImpl cqEvent, Object[] fullValue) {
     if (!cQuery.isRunning() || cQuery.getCqAttributes() == null) {
       return;
     }
     // invoke CQ Listeners.
     CqListener[] cqListeners = cQuery.getCqAttributes().getCqListeners();
-    
+
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
       logger.debug("Invoking CQ listeners for {}, number of listeners : {} cqEvent : {}", cqName, cqListeners.length, cqEvent);
     }
-    
-    for (int lCnt=0; lCnt < cqListeners.length; lCnt++) {
+
+    for (int lCnt = 0; lCnt < cqListeners.length; lCnt++) {
       try {
         // Check if the listener is not null, it could have been changed/reset
         // by the CqAttributeMutator.
-        if (cqListeners[lCnt] != null){
+        if (cqListeners[lCnt] != null) {
           cQuery.getVsdStats().incNumCqListenerInvocations();
           try {
-          if (cqEvent.getThrowable() != null) {
-            cqListeners[lCnt].onError(cqEvent);
-          } else {
-            cqListeners[lCnt].onEvent(cqEvent);
-          }
+            if (cqEvent.getThrowable() != null) {
+              cqListeners[lCnt].onError(cqEvent);
+            } else {
+              cqListeners[lCnt].onEvent(cqEvent);
+            }
           } catch (InvalidDeltaException ide) {
             if (isDebugEnabled) {
               logger.debug("CqService.dispatchCqListeners(): Requesting full value...");
             }
-            Part result = (Part)GetEventValueOp.executeOnPrimary(cqEvent
-                .getQueueManager().getPool(), cqEvent.getEventID(), null);
+            Part result = (Part) GetEventValueOp.executeOnPrimary(cqEvent.getQueueManager().getPool(), cqEvent.getEventID(), null);
             Object newVal = null;
             if (result == null || (newVal = result.getObject()) == null) {
               if (!cache.getCancelCriterion().isCancelInProgress()) {
-                Exception ex = new Exception(
-                    "Failed to retrieve full value from server for eventID "
-                    + cqEvent.getEventID());
-                logger.warn(LocalizedMessage.create(
-                    LocalizedStrings.CqService_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1,
-                    new Object[] { cqName, ex.getMessage() }));
+                Exception ex = new Exception("Failed to retrieve full value from server for eventID " + cqEvent.getEventID());
+                logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1, new Object[] { cqName, ex.getMessage() }));
                 if (isDebugEnabled) {
                   logger.debug(ex.getMessage(), ex);
                 }
               }
-            }
-            else {
-              ((GemFireCacheImpl)this.cache).getCachePerfStats().incDeltaFullValuesRequested();
-              cqEvent = new CqEventImpl(cQuery, cqEvent.getBaseOperation(),
-                    cqEvent.getQueryOperation(), cqEvent.getKey(), newVal,
-                    cqEvent.getDeltaValue(), cqEvent.getQueueManager(), cqEvent.getEventID());
+            } else {
+              ((GemFireCacheImpl) this.cache).getCachePerfStats().incDeltaFullValuesRequested();
+              cqEvent = new CqEventImpl(cQuery, cqEvent.getBaseOperation(), cqEvent.getQueryOperation(), cqEvent.getKey(), newVal, cqEvent.getDeltaValue(), cqEvent.getQueueManager(), cqEvent.getEventID());
               if (cqEvent.getThrowable() != null) {
                 cqListeners[lCnt].onError(cqEvent);
               } else {
@@ -1138,35 +1094,31 @@ public final class CqServiceImpl implements CqService  {
         // Handle client side exceptions.
       } catch (Exception ex) {
         if (!cache.getCancelCriterion().isCancelInProgress()) {
-          logger.warn(LocalizedMessage.create(
-              LocalizedStrings.CqService_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1,
-              new Object[] { cqName, ex.getMessage()}));
+          logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1, new Object[] { cqName, ex.getMessage() }));
           if (isDebugEnabled) {
             logger.debug(ex.getMessage(), ex);
           }
         }
-      } 
-      catch (VirtualMachineError err) {
+      } catch (VirtualMachineError err) {
         SystemFailure.initiateFailure(err);
         // If this ever returns, rethrow the error.  We're poisoned
         // now, so don't let this thread continue.
         throw err;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         // Whenever you catch Error or Throwable, you must also
         // catch VirtualMachineError (see above).  However, there is
         // _still_ a possibility that you are dealing with a cascading
         // error condition, so you also need to check to see if the JVM
         // is still usable:
         SystemFailure.checkFailure();
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_RUNTIME_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1, new Object[] {cqName, t.getLocalizedMessage()}));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_RUNTIME_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1, new Object[] { cqName, t.getLocalizedMessage() }));
         if (isDebugEnabled) {
           logger.debug(t.getMessage(), t);
         }
-      }      
-    }    
+      }
+    }
   }
-  
+
   public void invokeCqConnectedListeners(String cqName, ClientCQImpl cQuery, boolean connected) {
     if (!cQuery.isRunning() || cQuery.getCqAttributes() == null) {
       return;
@@ -1174,20 +1126,19 @@ public final class CqServiceImpl implements CqService  {
     cQuery.setConnected(connected);
     // invoke CQ Listeners.
     CqListener[] cqListeners = cQuery.getCqAttributes().getCqListeners();
-    
-    if (logger.isDebugEnabled()){
+
+    if (logger.isDebugEnabled()) {
       logger.debug("Invoking CQ status listeners for {}, number of listeners : {}", cqName, cqListeners.length);
     }
-    
-    for (int lCnt=0; lCnt < cqListeners.length; lCnt++) {
+
+    for (int lCnt = 0; lCnt < cqListeners.length; lCnt++) {
       try {
         if (cqListeners[lCnt] != null) {
           if (cqListeners[lCnt] instanceof CqStatusListener) {
             CqStatusListener listener = (CqStatusListener) cqListeners[lCnt];
             if (connected) {
               listener.onCqConnected();
-            }
-            else {
+            } else {
               listener.onCqDisconnected();
             }
           }
@@ -1195,107 +1146,101 @@ public final class CqServiceImpl implements CqService  {
         // Handle client side exceptions.
       } catch (Exception ex) {
         if (!cache.getCancelCriterion().isCancelInProgress()) {
-          logger.warn(LocalizedMessage.create(
-              LocalizedStrings.CqService_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1,
-              new Object[] { cqName, ex.getMessage()}));
+          logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1, new Object[] { cqName, ex.getMessage() }));
           if (logger.isDebugEnabled()) {
             logger.debug(ex.getMessage(), ex);
           }
         }
-      } 
-      catch (VirtualMachineError err) {
+      } catch (VirtualMachineError err) {
         SystemFailure.initiateFailure(err);
         // If this ever returns, rethrow the error.  We're poisoned
         // now, so don't let this thread continue.
         throw err;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         // Whenever you catch Error or Throwable, you must also
         // catch VirtualMachineError (see above).  However, there is
         // _still_ a possibility that you are dealing with a cascading
         // error condition, so you also need to check to see if the JVM
         // is still usable:
         SystemFailure.checkFailure();
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_RUNTIME_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1, new Object[] {cqName, t.getLocalizedMessage()}));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_RUNTIME_EXCEPTION_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR__1, new Object[] { cqName, t.getLocalizedMessage() }));
         if (logger.isDebugEnabled()) {
           logger.debug(t.getMessage(), t);
         }
-      }      
-    }    
+      }
+    }
   }
-  
-  
+
   /**
    * Returns the Operation for the given EnumListenerEvent type.
    * @param eventType
    * @return Operation
    */
-  private Operation getOperation(int eventType) {  
+  private Operation getOperation(int eventType) {
     Operation op = null;
     switch (eventType) {
-      case MessageType.LOCAL_CREATE :
-        op = Operation.CREATE;
-        break;
-        
-      case MessageType.LOCAL_UPDATE :
-        op = Operation.UPDATE;
-        break;
-        
-      case MessageType.LOCAL_DESTROY :
-        op = Operation.DESTROY;
-        break;        
-        
-      case MessageType.LOCAL_INVALIDATE :
-        op = Operation.INVALIDATE;
-        break;        
-        
-      case MessageType.CLEAR_REGION :
-        op = Operation.REGION_CLEAR;
-        break;        
-        
-      case MessageType.INVALIDATE_REGION :
-        op = Operation.REGION_INVALIDATE;
-        break;        
+    case MessageType.LOCAL_CREATE:
+      op = Operation.CREATE;
+      break;
+
+    case MessageType.LOCAL_UPDATE:
+      op = Operation.UPDATE;
+      break;
+
+    case MessageType.LOCAL_DESTROY:
+      op = Operation.DESTROY;
+      break;
+
+    case MessageType.LOCAL_INVALIDATE:
+      op = Operation.INVALIDATE;
+      break;
+
+    case MessageType.CLEAR_REGION:
+      op = Operation.REGION_CLEAR;
+      break;
+
+    case MessageType.INVALIDATE_REGION:
+      op = Operation.REGION_INVALIDATE;
+      break;
     }
-    return op;    
+    return op;
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.cache.query.internal.InternalCqService#processEvents(org.apache.geode.cache.CacheEvent, org.apache.geode.distributed.internal.DistributionAdvisor.Profile, org.apache.geode.distributed.internal.DistributionAdvisor.Profile[], org.apache.geode.internal.cache.FilterRoutingInfo)
    */
   @Override
-  public void processEvents (CacheEvent event, Profile localProfile, Profile[] profiles, FilterRoutingInfo frInfo) 
-    throws CqException {
+  public void processEvents(CacheEvent event, Profile localProfile, Profile[] profiles, FilterRoutingInfo frInfo) throws CqException {
     //Is this a region event or an entry event
-    if (event instanceof RegionEvent){
+    if (event instanceof RegionEvent) {
       processRegionEvent(event, localProfile, profiles, frInfo);
     } else {
       // Use the PDX types in serialized form.
       DefaultQuery.setPdxReadSerialized(this.cache, true);
       try {
-        processEntryEvent (event, localProfile, profiles, frInfo);
+        processEntryEvent(event, localProfile, profiles, frInfo);
       } finally {
         DefaultQuery.setPdxReadSerialized(this.cache, false);
       }
     }
   }
 
-  private void processRegionEvent(CacheEvent event, Profile localProfile, Profile[] profiles, FilterRoutingInfo frInfo)  
-    throws CqException {
+  private void processRegionEvent(CacheEvent event, Profile localProfile, Profile[] profiles, FilterRoutingInfo frInfo) throws CqException {
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("CQ service processing region event {}", event); 
+      logger.debug("CQ service processing region event {}", event);
     }
     Integer cqRegionEvent = generateCqRegionEvent(event);
-    
-    for (int i=-1; i < profiles.length; i++) {
+
+    for (int i = -1; i < profiles.length; i++) {
       CacheProfile cf;
-      if (i<0) {
-        cf = (CacheProfile)localProfile;
-        if (cf == null) continue;
+      if (i < 0) {
+        cf = (CacheProfile) localProfile;
+        if (cf == null)
+          continue;
       } else {
-        cf = (CacheProfile)profiles[i];
+        cf = (CacheProfile) profiles[i];
       }
       FilterProfile pf = cf.filterProfile;
       if (pf == null || pf.getCqMap().isEmpty()) {
@@ -1304,27 +1249,25 @@ public final class CqServiceImpl implements CqService  {
       Map cqs = pf.getCqMap();
       HashMap<Long, Integer> cqInfo = new HashMap<Long, Integer>();
       Iterator cqIter = cqs.entrySet().iterator();
-      while (cqIter.hasNext()){
-        Map.Entry cqEntry = (Map.Entry)cqIter.next();
-        ServerCQImpl cQuery = (ServerCQImpl)cqEntry.getValue();
-        if (!event.isOriginRemote() && event.getOperation().isRegionDestroy() &&
-            !((LocalRegion)event.getRegion()).isUsedForPartitionedRegionBucket()) {
+      while (cqIter.hasNext()) {
+        Map.Entry cqEntry = (Map.Entry) cqIter.next();
+        ServerCQImpl cQuery = (ServerCQImpl) cqEntry.getValue();
+        if (!event.isOriginRemote() && event.getOperation().isRegionDestroy() && !((LocalRegion) event.getRegion()).isUsedForPartitionedRegionBucket()) {
           try {
-            if (isDebugEnabled){
+            if (isDebugEnabled) {
               logger.debug("Closing CQ on region destroy event. CqName : {}", cQuery.getName());
             }
             cQuery.close(false);
-          } 
-          catch (Exception ex) {
+          } catch (Exception ex) {
             if (isDebugEnabled) {
               logger.debug("Failed to Close CQ on region destroy. CqName : {}", cQuery.getName(), ex);
             }
-          }      
+          }
         }
         cqInfo.put(cQuery.getFilterID(), cqRegionEvent);
         cQuery.getVsdStats().updateStats(cqRegionEvent);
       }
-      if(pf.isLocalProfile()){
+      if (pf.isLocalProfile()) {
         frInfo.setLocalCqInfo(cqInfo);
       } else {
         frInfo.setCqRoutingInfo(cf.getDistributedMember(), cqInfo);
@@ -1332,37 +1275,34 @@ public final class CqServiceImpl implements CqService  {
     }
   }
 
-  private void processEntryEvent(CacheEvent event, Profile localProfile, Profile[] profiles, FilterRoutingInfo frInfo)
-  throws CqException {
+  private void processEntryEvent(CacheEvent event, Profile localProfile, Profile[] profiles, FilterRoutingInfo frInfo) throws CqException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     HashSet<Object> cqUnfilteredEventsSet_newValue = new HashSet<Object>();
     HashSet<Object> cqUnfilteredEventsSet_oldValue = new HashSet<Object>();
     boolean b_cqResults_newValue = false;
     boolean b_cqResults_oldValue = false;
     boolean queryOldValue;
-    EntryEvent entryEvent = (EntryEvent)event;
+    EntryEvent entryEvent = (EntryEvent) event;
     Object eventKey = entryEvent.getKey();
-   
-    boolean isDupEvent = ((EntryEventImpl)event).isPossibleDuplicate();
+
+    boolean isDupEvent = ((EntryEventImpl) event).isPossibleDuplicate();
     // The CQ query needs to be applied when the op is update, destroy
     // invalidate and in case when op is create and its an duplicate 
     // event, the reason for this is when peer sends a duplicate event
     // it marks it as create and sends it, so that the receiving node
     // applies it (see DR.virtualPut()).
-    boolean opRequiringQueryOnOldValue = (event.getOperation().isUpdate() || 
-        event.getOperation().isDestroy() ||
-        event.getOperation().isInvalidate() || 
-        (event.getOperation().isCreate() && isDupEvent));
+    boolean opRequiringQueryOnOldValue = (event.getOperation().isUpdate() || event.getOperation().isDestroy() || event.getOperation().isInvalidate() || (event.getOperation().isCreate() && isDupEvent));
 
     HashMap<String, Integer> matchedCqs = new HashMap<String, Integer>();
     long executionStartTime = 0;
-    for (int i=-1; i < profiles.length; i++) {
+    for (int i = -1; i < profiles.length; i++) {
       CacheProfile cf;
-      if (i<0) {
-        cf = (CacheProfile)localProfile;
-        if (cf == null) continue;
+      if (i < 0) {
+        cf = (CacheProfile) localProfile;
+        if (cf == null)
+          continue;
       } else {
-        cf = (CacheProfile)profiles[i];
+        cf = (CacheProfile) profiles[i];
       }
       FilterProfile pf = cf.filterProfile;
       if (pf == null || pf.getCqMap().isEmpty()) {
@@ -1370,7 +1310,7 @@ public final class CqServiceImpl implements CqService  {
       }
 
       Map cqs = pf.getCqMap();
-      
+
       if (isDebugEnabled) {
         logger.debug("Profile for {} processing {} CQs", cf.peerMemberId, cqs.size());
       }
@@ -1378,29 +1318,28 @@ public final class CqServiceImpl implements CqService  {
       if (cqs.isEmpty()) {
         continue;
       }
-      
-      
+
       // Get new value. If its not retrieved.
-      if (cqUnfilteredEventsSet_newValue.isEmpty() && (event.getOperation().isCreate() ||  event.getOperation().isUpdate())) {
+      if (cqUnfilteredEventsSet_newValue.isEmpty() && (event.getOperation().isCreate() || event.getOperation().isUpdate())) {
         Object newValue = entryEvent.getNewValue();
         if (newValue != null) {
           //We have a new value to run the query on
           cqUnfilteredEventsSet_newValue.add(newValue);
         }
       }
-      
+
       HashMap<Long, Integer> cqInfo = new HashMap<Long, Integer>();
       Iterator cqIter = cqs.entrySet().iterator();
-      
-      while (cqIter.hasNext()){
-        Map.Entry cqEntry = (Map.Entry)cqIter.next();
-        ServerCQImpl cQuery = (ServerCQImpl)cqEntry.getValue();
+
+      while (cqIter.hasNext()) {
+        Map.Entry cqEntry = (Map.Entry) cqIter.next();
+        ServerCQImpl cQuery = (ServerCQImpl) cqEntry.getValue();
         b_cqResults_newValue = false;
         b_cqResults_oldValue = false;
         queryOldValue = false;
-        if (cQuery == null){
+        if (cQuery == null) {
           continue;
-        }        
+        }
         String cqName = cQuery.getServerCqName();
         Long filterID = cQuery.getFilterID();
 
@@ -1418,11 +1357,10 @@ public final class CqServiceImpl implements CqService  {
             continue;
           }
           // Update the Cache Results for this CQ.
-          if (cqEvent.intValue() == MessageType.LOCAL_CREATE ||
-              cqEvent.intValue() == MessageType.LOCAL_UPDATE) {
-              cQuery.addToCqResultKeys(eventKey);
+          if (cqEvent.intValue() == MessageType.LOCAL_CREATE || cqEvent.intValue() == MessageType.LOCAL_UPDATE) {
+            cQuery.addToCqResultKeys(eventKey);
           } else if (cqEvent.intValue() == MessageType.LOCAL_DESTROY) {
-              cQuery.markAsDestroyedInCqResultKeys(eventKey);
+            cQuery.markAsDestroyedInCqResultKeys(eventKey);
           }
         } else {
           boolean error = false;
@@ -1452,9 +1390,9 @@ public final class CqServiceImpl implements CqService  {
                   // Also apply if the query was not executed during cq execute 
                   if ((cQuery.isPR || !CqServiceImpl.EXECUTE_QUERY_DURING_INIT) && b_cqResults_oldValue == false) {
                     queryOldValue = true;
-                  } 
+                  }
                   if (isDebugEnabled && !cQuery.isPR && !b_cqResults_oldValue) {
-                    logger.debug("Event Key not found in the CQ Result Queue. EventKey : {} CQ Name : {}", eventKey, cqName );
+                    logger.debug("Event Key not found in the CQ Result Queue. EventKey : {} CQ Name : {}", eventKey, cqName);
                   }
                 } else {
                   queryOldValue = true;
@@ -1467,7 +1405,7 @@ public final class CqServiceImpl implements CqService  {
                       cqUnfilteredEventsSet_oldValue.add(oldValue);
                     }
                   }
-                  
+
                   synchronized (cQuery) {
                     // Apply query on old value.
                     if (!cqUnfilteredEventsSet_oldValue.isEmpty()) {
@@ -1481,23 +1419,20 @@ public final class CqServiceImpl implements CqService  {
                     }
                   }
                 } // Query oldValue
-                
-              } 
+
+              }
             } catch (Exception ex) {
               // Any exception in running the query should be caught here and 
               // buried because this code is running in-line with the message 
               // processing code and we don't want to kill that thread
               error = true;
               // CHANGE LOG MESSAGE:
-              logger.info(LocalizedMessage.create(
-                 LocalizedStrings.CqService_ERROR_WHILE_PROCESSING_CQ_ON_THE_EVENT_KEY_0_CQNAME_1_ERROR_2,
-                  new Object[] { ((EntryEvent)event).getKey(), cQuery.getName(), ex.getLocalizedMessage()}));
+              logger.info(LocalizedMessage.create(LocalizedStrings.CqService_ERROR_WHILE_PROCESSING_CQ_ON_THE_EVENT_KEY_0_CQNAME_1_ERROR_2, new Object[] { ((EntryEvent) event).getKey(), cQuery.getName(), ex.getLocalizedMessage() }));
             }
 
             if (error) {
-              cqEvent = MESSAGE_TYPE_EXCEPTION; 
-            } 
-            else { 
+              cqEvent = MESSAGE_TYPE_EXCEPTION;
+            } else {
               if (b_cqResults_newValue) {
                 if (b_cqResults_oldValue) {
                   cqEvent = MESSAGE_TYPE_LOCAL_UPDATE;
@@ -1521,36 +1456,36 @@ public final class CqServiceImpl implements CqService  {
 
           // Get the matching CQs if any.
           //synchronized (this.matchingCqMap){
-            String query = cQuery.getQueryString();
-            Set matchingCqs = (Set)matchingCqMap.get(query);
-            if (matchingCqs != null) {
-              Iterator iter = matchingCqs.iterator();
-              while (iter.hasNext()) {
-                String matchingCqName = (String)iter.next();
-                if (!matchingCqName.equals(cqName)){
-                  matchedCqs.put(matchingCqName, cqEvent);
-                  if (isDebugEnabled) {
-                    logger.debug("Adding CQ into Matching CQ Map: {} Event is: {}", matchingCqName, cqEvent);
-                  }
+          String query = cQuery.getQueryString();
+          Set matchingCqs = (Set) matchingCqMap.get(query);
+          if (matchingCqs != null) {
+            Iterator iter = matchingCqs.iterator();
+            while (iter.hasNext()) {
+              String matchingCqName = (String) iter.next();
+              if (!matchingCqName.equals(cqName)) {
+                matchedCqs.put(matchingCqName, cqEvent);
+                if (isDebugEnabled) {
+                  logger.debug("Adding CQ into Matching CQ Map: {} Event is: {}", matchingCqName, cqEvent);
                 }
               }
             }
+          }
           //}
         }
 
-        if (cqEvent != null && cQuery.isRunning()){
+        if (cqEvent != null && cQuery.isRunning()) {
           if (isDebugEnabled) {
             logger.debug("Added event to CQ with client-side name: {} key: {} operation : {}", cQuery.cqName, eventKey, cqEvent);
-          }         
+          }
           cqInfo.put(filterID, cqEvent);
           CqQueryVsdStats stats = cQuery.getVsdStats();
           if (stats != null) {
             stats.updateStats(cqEvent);
           }
         }
-      } 
+      }
       if (cqInfo.size() > 0) {
-        if(pf.isLocalProfile()){
+        if (pf.isLocalProfile()) {
           if (isDebugEnabled) {
             logger.debug("Setting local CQ matches to {}", cqInfo);
           }
@@ -1565,8 +1500,7 @@ public final class CqServiceImpl implements CqService  {
     } // iteration over Profiles.
   }
 
-
-/*  public void processEvents (EnumListenerEvent operation, CacheEvent event,
+  /*  public void processEvents (EnumListenerEvent operation, CacheEvent event,
                              ClientUpdateMessage clientMessage, 
                              CM<ClientProxyMembershipID, CM<CqQuery, Boolean>> clientIds) 
   throws CqException {
@@ -1577,7 +1511,7 @@ public final class CqServiceImpl implements CqService  {
     } else {
       processEntryEvent (operation, event, clientMessage, clientIds);
     }
-
+  
   }
   
   private void processRegionEvent(EnumListenerEvent operation, CacheEvent event,
@@ -1619,7 +1553,7 @@ public final class CqServiceImpl implements CqService  {
             logger.debug("Failed to Close CQ on region destroy. CqName :" + 
                          cQuery.getName(), ex);
           }      
-
+  
         }
         filteredCqs.put(cQuery.cqName, cqRegionEvent);
         cQuery.getVsdStats().updateStats(cqRegionEvent);
@@ -1765,7 +1699,7 @@ public final class CqServiceImpl implements CqService  {
             }
             
           } //end synchronized(cQuery)
-
+  
           // Get the matching CQs if any.
           synchronized (this.matchingCqMap){
             String query = cQuery.getQueryString();
@@ -1782,7 +1716,7 @@ public final class CqServiceImpl implements CqService  {
           }
           
         }
- 
+   
         if (cqEvent != null){
           if (logger.isDebugEnabled()) {
             logger.debug("Event is added for the CQ, CqName (clientside): " + cQuery.cqName + 
@@ -1791,7 +1725,7 @@ public final class CqServiceImpl implements CqService  {
           filteredCqs.put(cQuery.cqName, cqEvent);
           cQuery.getVsdStats().updateStats(cqEvent);
         }
- 
+   
       } // iteration over cqsToBooleans.keySet()
       if (!filteredCqs.isEmpty()){
         logger.debug("Adding event map for client : "+clientId + " with event map size : "+filteredCqs.size());
@@ -1799,45 +1733,42 @@ public final class CqServiceImpl implements CqService  {
       }
     } // iteration over clientIds.entrySet()
   }
-*/ 
- 
+  */
+
   private Integer generateCqRegionEvent(CacheEvent event) {
     Integer cqEvent = null;
     if (event.getOperation().isRegionDestroy()) {
       cqEvent = Integer.valueOf(MessageType.DESTROY_REGION);
-    }
-    else if (event.getOperation().isRegionInvalidate()) {
+    } else if (event.getOperation().isRegionInvalidate()) {
       cqEvent = Integer.valueOf(MessageType.INVALIDATE_REGION);
-    }
-    else if (event.getOperation().isClear()){
+    } else if (event.getOperation().isClear()) {
       cqEvent = Integer.valueOf(MessageType.CLEAR_REGION);
-    } 
+    }
     return cqEvent;
   }
 
-  
   /**
    * Manages the CQs created for the base region.
    * This is managed here, instead of on the base region; since the cq could be
    * created on the base region, before base region is created (using newCq()).
    */
-  public void addToBaseRegionToCqNameMap(String regionName, String cqName){
-    synchronized(this.baseRegionToCqNameMap){
+  public void addToBaseRegionToCqNameMap(String regionName, String cqName) {
+    synchronized (this.baseRegionToCqNameMap) {
       ArrayList<String> cqs = this.baseRegionToCqNameMap.get(regionName);
-      if (cqs == null){
+      if (cqs == null) {
         cqs = new ArrayList<String>();
       }
       cqs.add(cqName);
       this.baseRegionToCqNameMap.put(regionName, cqs);
     }
   }
-  
-  public void removeFromBaseRegionToCqNameMap(String regionName, String cqName){
-    synchronized(this.baseRegionToCqNameMap){
+
+  public void removeFromBaseRegionToCqNameMap(String regionName, String cqName) {
+    synchronized (this.baseRegionToCqNameMap) {
       ArrayList<String> cqs = this.baseRegionToCqNameMap.get(regionName);
-      if (cqs != null){
+      if (cqs != null) {
         cqs.remove(cqName);
-        if (cqs.isEmpty()){
+        if (cqs.isEmpty()) {
           this.baseRegionToCqNameMap.remove(regionName);
         } else {
           this.baseRegionToCqNameMap.put(regionName, cqs);
@@ -1845,7 +1776,7 @@ public final class CqServiceImpl implements CqService  {
       }
     }
   }
-  
+
   /**
    * Get the VSD ststs for CQ Service. There is one CQ Service per cache
    * @return reference to VSD stats object for the CQ service
@@ -1872,7 +1803,7 @@ public final class CqServiceImpl implements CqService  {
     } 
   }
   */
-  
+
   /**
    * Returns the CQ event cache map.
    * @return HashMap cqToCqEventKeysMap
@@ -1885,25 +1816,25 @@ public final class CqServiceImpl implements CqService  {
     return cqToCqEventKeysMap; 
   }
   */
-  
+
   /**
    * Adds the query from the given CQ to the matched CQ map.
    * @param cq
    */
   public void addToMatchingCqMap(CqQueryImpl cq) {
-    synchronized(this.matchingCqMap){
+    synchronized (this.matchingCqMap) {
       String cqQuery = cq.getQueryString();
       Set<String> matchingCQs = null;
-      if (!matchingCqMap.containsKey(cqQuery)){
+      if (!matchingCqMap.containsKey(cqQuery)) {
         matchingCQs = Collections.newSetFromMap(new ConcurrentHashMap());
         matchingCqMap.put(cqQuery, matchingCQs);
         this.stats.incUniqueCqQuery();
       } else {
-        matchingCQs = (Set)matchingCqMap.get(cqQuery);
+        matchingCQs = (Set) matchingCqMap.get(cqQuery);
       }
       matchingCQs.add(cq.getServerCqName());
       if (logger.isDebugEnabled()) {
-        logger.debug("Adding CQ into MatchingCQ map, CQName: {} Number of matched querys are: {}" , cq.getServerCqName(), matchingCQs.size());
+        logger.debug("Adding CQ into MatchingCQ map, CQName: {} Number of matched querys are: {}", cq.getServerCqName(), matchingCQs.size());
       }
     }
   }
@@ -1913,19 +1844,19 @@ public final class CqServiceImpl implements CqService  {
    * @param cq
    */
   public void removeFromMatchingCqMap(CqQueryImpl cq) {
-    synchronized(this.matchingCqMap){
+    synchronized (this.matchingCqMap) {
       String cqQuery = cq.getQueryString();
-      if (matchingCqMap.containsKey(cqQuery)){
-    	  Set matchingCQs = (Set)matchingCqMap.get(cqQuery);
+      if (matchingCqMap.containsKey(cqQuery)) {
+        Set matchingCQs = (Set) matchingCqMap.get(cqQuery);
         matchingCQs.remove(cq.getServerCqName());
         if (logger.isDebugEnabled()) {
           logger.debug("Removing CQ from MatchingCQ map, CQName: {} Number of matched querys are: {}", cq.getServerCqName(), matchingCQs.size());
         }
-        if (matchingCQs.isEmpty()){
+        if (matchingCQs.isEmpty()) {
           matchingCqMap.remove(cqQuery);
           this.stats.decUniqueCqQuery();
         }
-      } 
+      }
     }
   }
 
@@ -1933,8 +1864,8 @@ public final class CqServiceImpl implements CqService  {
    * Returns the matching CQ map.
    * @return HashMap matchingCqMap
    */
-  public Map<String, HashSet<String>> getMatchingCqMap(){
-    return matchingCqMap; 
+  public Map<String, HashSet<String>> getMatchingCqMap() {
+    return matchingCqMap;
   }
 
   /**
@@ -1952,21 +1883,21 @@ public final class CqServiceImpl implements CqService  {
     execContext.reset();
     execContext.setBindArguments(event);
     boolean status = false;
-    
+
     // Check if the CQ query is executed once.
     // If not execute the query in normal way.
     // During this phase the query execution related info are stored in the
     // ExecutionContext.
     if (execContext.getScopeNum() <= 0) {
-      SelectResults results = (SelectResults)((DefaultQuery)cQuery.getQuery()).executeUsingContext(execContext);
+      SelectResults results = (SelectResults) ((DefaultQuery) cQuery.getQuery()).executeUsingContext(execContext);
       if (results != null && results.size() > 0) {
         status = true;
-      } 
+      }
     } else {
       // Execute using the saved query info (in ExecutionContext).
       // This avoids building resultSet, index look-up, generating build-plans
       // that are not required for; query execution on single object.
-      CompiledSelect cs = ((DefaultQuery)(cQuery.getQuery())).getSelect();
+      CompiledSelect cs = ((DefaultQuery) (cQuery.getQuery())).getSelect();
       status = cs.evaluateCq(execContext);
     }
     return status;
@@ -1976,30 +1907,30 @@ public final class CqServiceImpl implements CqService  {
   public UserAttributes getUserAttributes(String cqName) {
     return this.cqNameToUserAttributesMap.get(cqName);
   }
-  
-//  public static void memberLeft(String poolName) {
-//    if (cqServiceSingleton != null  && !cqServiceSingleton.isServer()) {
-//      cqServiceSingleton.sendMemberDisconnectedMessageToCqs(poolName);
-//    }
-//  }
-//  
-//  public static void memberCrashed(String poolName) {
-//    if (cqServiceSingleton != null && !cqServiceSingleton.isServer()) {
-//      cqServiceSingleton.sendMemberDisconnectedMessageToCqs(poolName);
-//    }
-//  }
-//  
-  
+
+  //  public static void memberLeft(String poolName) {
+  //    if (cqServiceSingleton != null  && !cqServiceSingleton.isServer()) {
+  //      cqServiceSingleton.sendMemberDisconnectedMessageToCqs(poolName);
+  //    }
+  //  }
+  //  
+  //  public static void memberCrashed(String poolName) {
+  //    if (cqServiceSingleton != null && !cqServiceSingleton.isServer()) {
+  //      cqServiceSingleton.sendMemberDisconnectedMessageToCqs(poolName);
+  //    }
+  //  }
+  //  
+
   @Override
   public void cqsDisconnected(Pool pool) {
     invokeCqsConnected(pool, false);
   }
-  
+
   @Override
   public void cqsConnected(Pool pool) {
     invokeCqsConnected(pool, true);
   }
-  
+
   /**
    * Let cq listeners know that they are connected or disconnected
    */
@@ -2007,42 +1938,42 @@ public final class CqServiceImpl implements CqService  {
     String poolName = pool.getName();
     //Check to see if we are already connected/disconnected.
     //If state has not changed, do not invoke another connected/disconnected 
-    synchronized(cqPoolsConnected) {
+    synchronized (cqPoolsConnected) {
       //don't repeatily send same connect/disconnect message to cq's on repeated fails of RedundancySatisfier
-      if (cqPoolsConnected.containsKey(poolName) && connected == cqPoolsConnected.get(poolName)){
+      if (cqPoolsConnected.containsKey(poolName) && connected == cqPoolsConnected.get(poolName)) {
         return;
       }
       cqPoolsConnected.put(poolName, connected);
-    
+
       Collection<? extends InternalCqQuery> cqs = this.getAllCqs();
       String cqName = null;
       final boolean isDebugEnabled = logger.isDebugEnabled();
-      for (InternalCqQuery query: cqs) {
+      for (InternalCqQuery query : cqs) {
         try {
           if (query == null) {
             continue;
           }
-          
+
           cqName = query.getName();
           ClientCQImpl cQuery = (ClientCQImpl) this.getCq(cqName);
-  
+
           //Check cq pool to determine if the pool matches, if not continue.
           //Also if the connected state is already the same, we do not have to send status again.
-	  if (cQuery == null || cQuery.getCQProxy() == null) {
+          if (cQuery == null || cQuery.getCQProxy() == null) {
             continue;
           }
           Pool cqPool = cQuery.getCQProxy().getPool();
           if (cQuery.isConnected() == connected || !cqPool.getName().equals(poolName)) {
             continue;
           }
-          
+
           if ((!cQuery.isRunning() && cQuery.getQueuedEvents() == null)) {
             if (isDebugEnabled) {
               logger.debug("Unable to invoke CqListener, {}, CqName : {}", ((cQuery == null) ? "CQ not found" : " CQ is Not running"), cqName);
             }
             continue;
           }
-        
+
           this.invokeCqConnectedListeners(cqName, cQuery, connected);
         } catch (VirtualMachineError e) {
           SystemFailure.initiateFailure(e);
@@ -2050,11 +1981,9 @@ public final class CqServiceImpl implements CqService  {
         } catch (Throwable t) {
           SystemFailure.checkFailure();
           logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_ERROR_SENDING_CQ_CONNECTION_STATUS, cqName), t);
-  
+
           if (t instanceof VirtualMachineError) {
-            logger.warn(LocalizedMessage.create(
-                    LocalizedStrings.CqService_VIRTUALMACHINEERROR_PROCESSING_CQLISTENER_FOR_CQ_0,
-                    cqName), t);
+            logger.warn(LocalizedMessage.create(LocalizedStrings.CqService_VIRTUALMACHINEERROR_PROCESSING_CQLISTENER_FOR_CQ_0, cqName), t);
             return;
           }
         }
@@ -2066,7 +1995,5 @@ public final class CqServiceImpl implements CqService  {
   public List<String> getAllDurableCqsFromServer(InternalPool pool) {
     return new ServerCQProxyImpl(pool).getAllDurableCqsFromServer();
   }
-  
-  
-}
 
+}

@@ -35,32 +35,31 @@ import org.apache.geode.management.internal.configuration.domain.SharedConfigura
  *
  */
 public class SharedConfigurationStatusResponse implements DataSerializable {
-  
-  
+
   private SharedConfigurationStatus status;
   private static final long serialVersionUID = 1L;
-  
+
   private Set<PersistentMemberPattern> waitingLocatorsInfo;
-  
+
   public SharedConfigurationStatusResponse() {
   }
 
   public void setStatus(SharedConfigurationStatus status) {
     this.status = status;
   }
-  
+
   public SharedConfigurationStatus getStatus() {
     return this.status;
   }
-  
+
   public void addWaitingLocatorInfo(Set<PersistentMemberPattern> waitingLocatorsInfo) {
     this.waitingLocatorsInfo = waitingLocatorsInfo;
   }
-  
+
   public Set<PersistentMemberPattern> getOtherLocatorInformation() {
     return this.waitingLocatorsInfo;
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeEnum(status, out);
@@ -72,6 +71,5 @@ public class SharedConfigurationStatusResponse implements DataSerializable {
     this.status = DataSerializer.readEnum(SharedConfigurationStatus.class, in);
     this.waitingLocatorsInfo = DataSerializer.readHashSet(in);
   }
-  
-  
+
 }

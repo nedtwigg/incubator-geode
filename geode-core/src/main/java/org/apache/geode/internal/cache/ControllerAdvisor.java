@@ -28,19 +28,18 @@ import org.apache.geode.distributed.internal.DistributionManager;
 import org.apache.geode.distributed.internal.ServerLocator;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-
 /**
  * Used to give advise to a connection controller.
  * Bridge server currently need to know about controller's
  *
  */
 public class ControllerAdvisor extends GridAdvisor {
-  
+
   /** Creates a new instance of ControllerAdvisor */
   private ControllerAdvisor(DistributionAdvisee server) {
     super(server);
   }
-  
+
   public static ControllerAdvisor createControllerAdvisor(DistributionAdvisee server) {
     ControllerAdvisor advisor = new ControllerAdvisor(server);
     advisor.initialize();
@@ -52,7 +51,7 @@ public class ControllerAdvisor extends GridAdvisor {
     super.profileCreated(profile);
     ((ServerLocator) getAdvisee()).profileCreated(profile);
   }
-  
+
   @Override
   protected void profileRemoved(Profile profile) {
     super.profileRemoved(profile);
@@ -65,13 +64,11 @@ public class ControllerAdvisor extends GridAdvisor {
     ((ServerLocator) getAdvisee()).profileUpdated(profile);
   }
 
-
-
   @Override
   protected void profilesChanged() {
     if (pollIsInitialized()) {
       super.profilesChanged();
-      ServerLocator sl = (ServerLocator)getAdvisee();
+      ServerLocator sl = (ServerLocator) getAdvisee();
       sl.setLocatorCount(getControllerCount());
       sl.setServerCount(getBridgeServerCount());
     }
@@ -84,11 +81,10 @@ public class ControllerAdvisor extends GridAdvisor {
 
   /** Instantiate new distribution profile for this member */
   @Override
-  protected Profile instantiateProfile(
-      InternalDistributedMember memberId, int version) {
+  protected Profile instantiateProfile(InternalDistributedMember memberId, int version) {
     return new ControllerProfile(memberId, version);
   }
-  
+
   /**
    * Describes a bridge server for distribution purposes.
    */
@@ -115,9 +111,7 @@ public class ControllerAdvisor extends GridAdvisor {
      * @since GemFire 5.7
      */
     @Override
-    public void processIncoming(DistributionManager dm, String adviseePath,
-        boolean removeProfile, boolean exchangeProfiles,
-        final List<Profile> replyProfiles) {
+    public void processIncoming(DistributionManager dm, String adviseePath, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
       // tell local controllers about this remote controller
       tellLocalControllers(removeProfile, exchangeProfiles, replyProfiles);
       // tell local bridge servers about this remote controller
@@ -130,8 +124,7 @@ public class ControllerAdvisor extends GridAdvisor {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
     }
 

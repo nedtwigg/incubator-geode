@@ -33,20 +33,20 @@ public class DiskVersionTag extends VersionTag<DiskStoreID> {
 
   public DiskVersionTag() {
   }
-  
+
   @Override
   public void setMemberID(DiskStoreID memberID) {
     assert (memberID == null) || (memberID instanceof DiskStoreID);
     super.setMemberID(memberID);
   }
-  
+
   /**
    * For a persistent version tag, the member id should not be null, because
    * we can't fill the member id in later. 
    */
   @Override
   public void replaceNullIDs(VersionSource memberID) {
-    if(this.getMemberID() == null) {
+    if (this.getMemberID() == null) {
       throw new AssertionError("Member id should not be null for persistent version tags");
     }
   }
@@ -57,12 +57,12 @@ public class DiskVersionTag extends VersionTag<DiskStoreID> {
   public int getDSFID() {
     return DataSerializableFixedID.PERSISTENT_VERSION_TAG;
   }
-  
+
   @Override
   public void writeMember(DiskStoreID member, DataOutput out) throws IOException {
     out.writeLong(member.getMostSignificantBits());
     out.writeLong(member.getLeastSignificantBits());
-    
+
   }
 
   @Override

@@ -30,7 +30,7 @@ import org.apache.geode.cache.query.CqListener;
 import org.apache.geode.cache.query.CqEvent;
 
 public abstract class CqListenerAdapter implements CqListener {
-  
+
   /**
    * An event occurred that modifies the results of the query.
    * This event does not contain an error.
@@ -45,7 +45,7 @@ public abstract class CqListenerAdapter implements CqListener {
    */
   public void onError(CqEvent aCqEvent) {
   }
-  
+
   /**
   * Called when the CQ is closed, the base region is destroyed, when
   * the cache is closed, or when this listener is removed from a CqQuery

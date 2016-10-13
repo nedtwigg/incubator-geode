@@ -48,7 +48,7 @@ public class AddressableMemoryManager {
     unsafe = tmp;
     ARRAY_BYTE_BASE_OFFSET = unsafe != null ? unsafe.arrayBaseOffset(byte[].class) : 0;
   }
-  
+
   public static long allocate(int size) {
     if (unsafe == null) {
       throw new OutOfMemoryError("Off-heap memory is not available because: " + reason);
@@ -60,7 +60,7 @@ public class AddressableMemoryManager {
       if (err.getMessage() != null && !err.getMessage().isEmpty()) {
         msg += " Cause: " + err.getMessage();
       }
-      if (!SharedLibrary.is64Bit() && size >= (1024*1024*1024)) {
+      if (!SharedLibrary.is64Bit() && size >= (1024 * 1024 * 1024)) {
         msg += " The JVM looks like a 32-bit one. For large amounts of off-heap memory a 64-bit JVM is needed.";
       }
       throw new OutOfMemoryError(msg);
@@ -70,7 +70,7 @@ public class AddressableMemoryManager {
   public static void free(long addr) {
     unsafe.freeMemory(addr);
   }
-  
+
   public static Slab allocateSlab(int size) {
     return new SlabImpl(size);
   }
@@ -78,45 +78,59 @@ public class AddressableMemoryManager {
   public static byte readByte(long addr) {
     return unsafe.getByte(addr);
   }
+
   public static char readChar(long addr) {
     return unsafe.getChar(null, addr);
   }
+
   public static short readShort(long addr) {
     return unsafe.getShort(null, addr);
   }
+
   public static int readInt(long addr) {
     return unsafe.getInt(null, addr);
   }
+
   public static int readIntVolatile(long addr) {
     return unsafe.getIntVolatile(null, addr);
   }
+
   public static long readLong(long addr) {
     return unsafe.getLong(null, addr);
   }
+
   public static long readLongVolatile(long addr) {
     return unsafe.getLongVolatile(null, addr);
   }
+
   public static void writeByte(long addr, byte value) {
     unsafe.putByte(addr, value);
   }
+
   public static void writeInt(long addr, int value) {
     unsafe.putInt(null, addr, value);
   }
+
   public static void writeIntVolatile(long addr, int value) {
     unsafe.putIntVolatile(null, addr, value);
   }
+
   public static boolean writeIntVolatile(long addr, int expected, int value) {
     return unsafe.compareAndSwapInt(null, addr, expected, value);
   }
+
   public static void writeLong(long addr, long value) {
     unsafe.putLong(null, addr, value);
   }
+
   public static void writeLongVolatile(long addr, long value) {
     unsafe.putLongVolatile(null, addr, value);
   }
+
   public static boolean writeLongVolatile(long addr, long expected, long value) {
     return unsafe.compareAndSwapLong(null, addr, expected, value);
   }
+
   public static void readBytes(long addr, byte[] bytes, int bytesOffset, int size) {
     // Throwing an Error instead of using the "assert" keyword because passing < 0 to
     // copyMemory(...) can lead to a core dump with some JVMs and we don't want to
@@ -124,18 +138,20 @@ public class AddressableMemoryManager {
     if (size < 0) {
       throw new AssertionError("Size=" + size + ", but size must be >= 0");
     }
-    
+
     assert bytesOffset >= 0 : "byteOffset=" + bytesOffset;
     assert bytesOffset + size <= bytes.length : "byteOffset=" + bytesOffset + ",size=" + size + ",bytes.length=" + bytes.length;
-    
+
     if (size == 0) {
       return; // No point in wasting time copying 0 bytes
     }
-    unsafe.copyMemory(null, addr, bytes, ARRAY_BYTE_BASE_OFFSET+bytesOffset, size);
+    unsafe.copyMemory(null, addr, bytes, ARRAY_BYTE_BASE_OFFSET + bytesOffset, size);
   }
+
   public static void copyMemory(long srcAddr, long dstAddr, long size) {
     unsafe.copyMemory(srcAddr, dstAddr, size);
   }
+
   public static void writeBytes(long addr, byte[] bytes, int bytesOffset, int size) {
     // Throwing an Error instead of using the "assert" keyword because passing < 0 to
     // copyMemory(...) can lead to a core dump with some JVMs and we don't want to
@@ -143,15 +159,16 @@ public class AddressableMemoryManager {
     if (size < 0) {
       throw new AssertionError("Size=" + size + ", but size must be >= 0");
     }
-  
+
     assert bytesOffset >= 0 : "byteOffset=" + bytesOffset;
     assert bytesOffset + size <= bytes.length : "byteOffset=" + bytesOffset + ",size=" + size + ",bytes.length=" + bytes.length;
-    
+
     if (size == 0) {
       return; // No point in wasting time copying 0 bytes
     }
-    unsafe.copyMemory(bytes, ARRAY_BYTE_BASE_OFFSET+bytesOffset, null, addr, size);
+    unsafe.copyMemory(bytes, ARRAY_BYTE_BASE_OFFSET + bytesOffset, null, addr, size);
   }
+
   public static void fill(long addr, int size, byte fill) {
     unsafe.setMemory(addr, size, fill);
   }
@@ -202,7 +219,7 @@ public class AddressableMemoryManager {
       dbbAddressMethod = m;
     }
     try {
-      return (Long)m.invoke(bb);
+      return (Long) m.invoke(bb);
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
       //throw new IllegalStateException("Could not create an invoke DirectByteBuffer.address()", e);
       dbbClass = null;
@@ -248,7 +265,7 @@ public class AddressableMemoryManager {
       dbbCtor = ctor;
     }
     try {
-      return (ByteBuffer)ctor.newInstance(address, size);
+      return (ByteBuffer) ctor.newInstance(address, size);
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
       //throw new IllegalStateException("Could not create an instance using DirectByteBuffer(long, int)", e);
       dbbClass = null;

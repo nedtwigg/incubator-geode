@@ -60,13 +60,13 @@ public class IncrementCommand extends AbstractCommand {
     flb.flip();
     String firstLine = getFirstLine();
     String[] firstLineElements = firstLine.split(" ");
-    
+
     assert "incr".equals(firstLineElements[0]);
     String key = firstLineElements[1];
     String incrByStr = stripNewline(firstLineElements[2]);
     Long incrBy = Long.parseLong(incrByStr);
     boolean noReply = firstLineElements.length > 3;
-    
+
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     String reply = Reply.NOT_FOUND.toString();
     ByteBuffer newVal = ByteBuffer.allocate(8);
@@ -90,21 +90,21 @@ public class IncrementCommand extends AbstractCommand {
   }
 
   private static final int LONG_LENGTH = 8;
-  
+
   private ByteBuffer processBinaryProtocol(RequestReader request, Cache cache) {
     ByteBuffer buffer = request.getRequest();
     int extrasLength = buffer.get(EXTRAS_LENGTH_INDEX);
     final KeyWrapper key = getKey(buffer, HEADER_LENGTH + extrasLength);
-    
+
     long incrBy = buffer.getLong(HEADER_LENGTH);
     long initialVal = buffer.getLong(HEADER_LENGTH + LONG_LENGTH);
     int expiration = buffer.getInt(HEADER_LENGTH + LONG_LENGTH + LONG_LENGTH);
-    
+
     final Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     ByteBuffer newVal = ByteBuffer.allocate(8);
     boolean notFound = false;
     ValueWrapper newValWrapper = null;
-    
+
     try {
       while (true) {
         ValueWrapper oldValWrapper = r.get(key);
@@ -130,7 +130,7 @@ public class IncrementCommand extends AbstractCommand {
     } catch (Exception e) {
       return handleBinaryException(key, request, request.getResponse(), "increment", e);
     }
-    
+
     if (expiration > 0) {
       StorageCommand.getExpiryExecutor().schedule(new Runnable() {
         @Override
@@ -139,11 +139,11 @@ public class IncrementCommand extends AbstractCommand {
         }
       }, expiration, TimeUnit.SECONDS);
     }
-    
+
     if (getLogger().fineEnabled()) {
-      getLogger().fine("incr:key:"+key+" incrBy:"+incrBy+" initVal:"+initialVal+" exp:"+expiration+" notFound:"+notFound);
+      getLogger().fine("incr:key:" + key + " incrBy:" + incrBy + " initVal:" + initialVal + " exp:" + expiration + " notFound:" + notFound);
     }
-    
+
     ByteBuffer response = null;
     if (notFound) {
       response = request.getResponse();
@@ -159,7 +159,7 @@ public class IncrementCommand extends AbstractCommand {
     }
     return response;
   }
-  
+
   /**
    * Overridden by Q command
    */

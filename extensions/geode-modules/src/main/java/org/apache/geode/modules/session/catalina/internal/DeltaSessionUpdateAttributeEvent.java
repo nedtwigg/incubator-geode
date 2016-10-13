@@ -72,13 +72,6 @@ public class DeltaSessionUpdateAttributeEvent implements DeltaSessionAttributeEv
   }
 
   public String toString() {
-    return new StringBuilder().append("DeltaSessionUpdateAttributeEvent[")
-        .append("attributeName=")
-        .append(this.attributeName)
-        .append("; attributeValue=")
-        .append(this.attributeValue)
-        .append("]")
-        .toString();
+    return new StringBuilder().append("DeltaSessionUpdateAttributeEvent[").append("attributeName=").append(this.attributeName).append("; attributeValue=").append(this.attributeValue).append("]").toString();
   }
 }
-

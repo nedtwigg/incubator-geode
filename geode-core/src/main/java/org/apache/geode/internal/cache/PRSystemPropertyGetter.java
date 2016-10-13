@@ -25,43 +25,36 @@ package org.apache.geode.internal.cache;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public  class PRSystemPropertyGetter
-{
-  public static int parseInt(String i, int defaultValue)
-  {
+public class PRSystemPropertyGetter {
+  public static int parseInt(String i, int defaultValue) {
     if (i == null || i.equals("")) {
       return defaultValue;
     }
     try {
       return (Integer.parseInt(i));
-    }
-    catch (NumberFormatException nfe) {
+    } catch (NumberFormatException nfe) {
       return defaultValue;
     }
   }
 
-  public static long parseLong(String l, long defaultValue)
-  {
+  public static long parseLong(String l, long defaultValue) {
     if (l == null || l.equals("")) {
       return defaultValue;
     }
     try {
       return (Long.parseLong(l));
-    }
-    catch (NumberFormatException nfe) {
+    } catch (NumberFormatException nfe) {
       return defaultValue;
     }
   }
 
-  public static boolean booleanvalueOf(String s, boolean defaultValue)
-  {
+  public static boolean booleanvalueOf(String s, boolean defaultValue) {
     if (s == null) {
       return defaultValue;
     }
     try {
       return (Boolean.valueOf(s).booleanValue());
-    }
-    catch (NumberFormatException nfe) {
+    } catch (NumberFormatException nfe) {
       return defaultValue;
     }
 

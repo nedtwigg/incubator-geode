@@ -58,11 +58,11 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
 
   VM client1 = null;
 
-  private int PORT1 ;
+  private int PORT1;
 
   private static final String REGION_NAME = "RegionCloseDUnitTest_region";
 
-  protected static String  clientMembershipId;
+  protected static String clientMembershipId;
 
   private static Cache cache = null;
 
@@ -79,13 +79,11 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
     //Client 1 VM
     client1 = host.getVM(1);
 
-    PORT1 =  ((Integer)server1.invoke(() -> RegionCloseDUnitTest.createServerCache())).intValue();
-    client1.invoke(() -> RegionCloseDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(host), new Integer(PORT1)));
+    PORT1 = ((Integer) server1.invoke(() -> RegionCloseDUnitTest.createServerCache())).intValue();
+    client1.invoke(() -> RegionCloseDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1)));
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     assertNotNull(ds);
     ds.disconnect();
@@ -94,34 +92,24 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-
   @Test
-  public void testCloseRegionOnClient()
-  {
+  public void testCloseRegionOnClient() {
     server1.invoke(() -> RegionCloseDUnitTest.VerifyClientProxyOnServerBeforeClose());
     client1.invoke(() -> RegionCloseDUnitTest.closeRegion());
-   // pause(10000);
+    // pause(10000);
     server1.invoke(() -> RegionCloseDUnitTest.VerifyClientProxyOnServerAfterClose());
   }
 
-  public static void createClientCache(String host, Integer port1) throws Exception
-  {
-    int PORT1 = port1.intValue() ;
+  public static void createClientCache(String host, Integer port1) throws Exception {
+    int PORT1 = port1.intValue();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new RegionCloseDUnitTest().createCache(props);
-    Pool p = PoolManager.createFactory()
-      .addServer(host, PORT1)
-      .setSubscriptionEnabled(true)
-      .setSubscriptionRedundancy(-1)
-      .setReadTimeout(2000)
-      .setThreadLocalConnections(true)
-      .setSocketBufferSize(1000)
-      .setMinConnections(2)
-      // .setRetryAttempts(2)
-      // .setRetryInterval(250)
-      .create("RegionCloseDUnitTestPool");
+    Pool p = PoolManager.createFactory().addServer(host, PORT1).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(2000).setThreadLocalConnections(true).setSocketBufferSize(1000).setMinConnections(2)
+        // .setRetryAttempts(2)
+        // .setRetryInterval(250)
+        .create("RegionCloseDUnitTestPool");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -131,8 +119,7 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
     cache.createRegion(REGION_NAME, attrs);
   }
 
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     new RegionCloseDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -148,17 +135,16 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  public static void VerifyClientProxyOnServerBeforeClose()
-  {
+  public static void VerifyClientProxyOnServerBeforeClose() {
     Cache c = CacheFactory.getAnyInstance();
     assertEquals("More than one CacheServer", 1, c.getCacheServers().size());
-
 
     final CacheServerImpl bs = (CacheServerImpl) c.getCacheServers().iterator().next();
     WaitCriterion ev = new WaitCriterion() {
       public boolean done() {
         return bs.getAcceptor().getCacheClientNotifier().getClientProxies().size() == 1;
       }
+
       public String description() {
         return null;
       }
@@ -168,16 +154,15 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
 
     Iterator iter = bs.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
     if (iter.hasNext()) {
-      CacheClientProxy proxy = (CacheClientProxy)iter.next();
+      CacheClientProxy proxy = (CacheClientProxy) iter.next();
       clientMembershipId = proxy.getProxyID().toString();
       assertNotNull(proxy.getHARegion());
     }
   }
 
-  public static void closeRegion()
-  {
+  public static void closeRegion() {
     try {
-      Region r = cache.getRegion("/"+ REGION_NAME);
+      Region r = cache.getRegion("/" + REGION_NAME);
       assertNotNull(r);
       String poolName = r.getAttributes().getPoolName();
       assertNotNull(poolName);
@@ -185,53 +170,51 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(pool);
       r.close();
       pool.destroy();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while region close", ex);
     }
   }
 
-  public static void VerifyClientProxyOnServerAfterClose()
-  {
+  public static void VerifyClientProxyOnServerAfterClose() {
     final Cache c = CacheFactory.getAnyInstance();
     WaitCriterion ev = new WaitCriterion() {
       public boolean done() {
         return c.getCacheServers().size() == 1;
       }
+
       public String description() {
         return null;
       }
     };
     Wait.waitForCriterion(ev, 40 * 1000, 200, true);
 
-    final CacheServerImpl bs = (CacheServerImpl)c.getCacheServers().iterator()
-        .next();
+    final CacheServerImpl bs = (CacheServerImpl) c.getCacheServers().iterator().next();
     ev = new WaitCriterion() {
       public boolean done() {
         return c.getRegion("/" + clientMembershipId) == null;
       }
+
       public String description() {
         return null;
       }
     };
     Wait.waitForCriterion(ev, 40 * 1000, 200, true);
-    
+
     ev = new WaitCriterion() {
       public boolean done() {
         return bs.getAcceptor().getCacheClientNotifier().getClientProxies().size() != 1;
       }
+
       public String description() {
         return null;
       }
     };
     Wait.waitForCriterion(ev, 40 * 1000, 200, true);
     // assertNull(c.getRegion("/"+clientMembershipId));
-    assertEquals(0, bs.getAcceptor().getCacheClientNotifier()
-        .getClientProxies().size());
+    assertEquals(0, bs.getAcceptor().getCacheClientNotifier().getClientProxies().size());
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();

@@ -102,8 +102,7 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
         DiskStore diskStore = gemfireCache.findDiskStore(diskStoreName);
 
         if (diskStore != null) {
-          DiskStoreDetails diskStoreDetails = new DiskStoreDetails(diskStore.getDiskStoreUUID(),
-            diskStore.getName(), memberId, memberName);
+          DiskStoreDetails diskStoreDetails = new DiskStoreDetails(diskStore.getDiskStoreUUID(), diskStore.getName(), memberId, memberName);
 
           diskStoreDetails.setAllowForceCompaction(diskStore.getAllowForceCompaction());
           diskStoreDetails.setAutoCompact(diskStore.getAutoCompact());
@@ -114,7 +113,7 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
           diskStoreDetails.setWriteBufferSize(diskStore.getWriteBufferSize());
           diskStoreDetails.setDiskUsageWarningPercentage(diskStore.getDiskUsageWarningPercentage());
           diskStoreDetails.setDiskUsageCriticalPercentage(diskStore.getDiskUsageCriticalPercentage());
-          
+
           setDiskDirDetails(diskStore, diskStoreDetails);
           setRegionDetails(gemfireCache, diskStore, diskStoreDetails);
           setCacheServerDetails(gemfireCache, diskStore, diskStoreDetails);
@@ -123,15 +122,11 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
           setAsyncEventQueueDetails(gemfireCache, diskStore, diskStoreDetails);
 
           context.getResultSender().lastResult(diskStoreDetails);
-        }
-        else {
-          context.getResultSender().sendException(new DiskStoreNotFoundException(String.format(
-            "A disk store with name (%1$s) was not found on member (%2$s).",
-              diskStoreName, memberName)));
+        } else {
+          context.getResultSender().sendException(new DiskStoreNotFoundException(String.format("A disk store with name (%1$s) was not found on member (%2$s).", diskStoreName, memberName)));
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.error("Error occurred while executing 'describe disk-store': {}!", e.getMessage(), e);
       context.getResultSender().sendException(e);
     }
@@ -141,24 +136,19 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
     File[] diskDirs = diskStore.getDiskDirs();
     Integer[] diskDirSizes = ArrayUtils.toIntegerArray(diskStore.getDiskDirSizes());
 
-    assertState(diskDirs.length == diskDirSizes.length,
-      "The number of disk directories with a specified size (%1$d) does not match the number of disk directories (%2$d)!",
-        diskDirSizes.length, diskDirs.length);
+    assertState(diskDirs.length == diskDirSizes.length, "The number of disk directories with a specified size (%1$d) does not match the number of disk directories (%2$d)!", diskDirSizes.length, diskDirs.length);
 
     for (int index = 0; index < diskDirs.length; index++) {
-      diskStoreDetails.add(new DiskStoreDetails.DiskDirDetails(diskDirs[index].getAbsolutePath(),
-        ArrayUtils.getElementAtIndex(diskDirSizes, index, 0)));
+      diskStoreDetails.add(new DiskStoreDetails.DiskDirDetails(diskDirs[index].getAbsolutePath(), ArrayUtils.getElementAtIndex(diskDirSizes, index, 0)));
     }
   }
 
   protected String getDiskStoreName(final Region region) {
-    return StringUtils.defaultIfBlank(region.getAttributes().getDiskStoreName(),
-      DiskStoreDetails.DEFAULT_DISK_STORE_NAME);
+    return StringUtils.defaultIfBlank(region.getAttributes().getDiskStoreName(), DiskStoreDetails.DEFAULT_DISK_STORE_NAME);
   }
 
   protected boolean isOverflowToDisk(final Region region) {
-    return (region.getAttributes().getEvictionAttributes() != null && EvictionAction.OVERFLOW_TO_DISK.equals(
-      region.getAttributes().getEvictionAttributes().getAction()));
+    return (region.getAttributes().getEvictionAttributes() != null && EvictionAction.OVERFLOW_TO_DISK.equals(region.getAttributes().getEvictionAttributes().getAction()));
   }
 
   protected boolean isPersistent(final Region region) {
@@ -178,8 +168,7 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
   private void setRegionDetails(final Region<?, ?> region, final DiskStore diskStore, final DiskStoreDetails diskStoreDetails) {
     if (isUsingDiskStore(region, diskStore)) {
       String regionFullPath = region.getFullPath();
-      DiskStoreDetails.RegionDetails regionDetails = new DiskStoreDetails.RegionDetails(regionFullPath,
-        StringUtils.defaultIfBlank(region.getName(), regionFullPath));
+      DiskStoreDetails.RegionDetails regionDetails = new DiskStoreDetails.RegionDetails(regionFullPath, StringUtils.defaultIfBlank(region.getName(), regionFullPath));
       regionDetails.setOverflowToDisk(isOverflowToDisk(region));
       regionDetails.setPersistent(isPersistent(region));
       diskStoreDetails.add(regionDetails);
@@ -191,8 +180,7 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
   }
 
   protected String getDiskStoreName(final CacheServer cacheServer) {
-    return (cacheServer.getClientSubscriptionConfig() == null ? null : StringUtils.defaultIfBlank(
-      cacheServer.getClientSubscriptionConfig().getDiskStoreName(), DiskStoreDetails.DEFAULT_DISK_STORE_NAME));
+    return (cacheServer.getClientSubscriptionConfig() == null ? null : StringUtils.defaultIfBlank(cacheServer.getClientSubscriptionConfig().getDiskStoreName(), DiskStoreDetails.DEFAULT_DISK_STORE_NAME));
   }
 
   protected boolean isUsingDiskStore(final CacheServer cacheServer, final DiskStore diskStore) {
@@ -202,8 +190,7 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
   protected void setCacheServerDetails(final InternalCache cache, final DiskStore diskStore, final DiskStoreDetails diskStoreDetails) {
     for (CacheServer cacheServer : cache.getCacheServers()) {
       if (isUsingDiskStore(cacheServer, diskStore)) {
-        DiskStoreDetails.CacheServerDetails cacheServerDetails = new DiskStoreDetails.CacheServerDetails(
-          cacheServer.getBindAddress(), cacheServer.getPort());
+        DiskStoreDetails.CacheServerDetails cacheServerDetails = new DiskStoreDetails.CacheServerDetails(cacheServer.getBindAddress(), cacheServer.getPort());
         cacheServerDetails.setHostName(cacheServer.getHostnameForClients());
         diskStoreDetails.add(cacheServerDetails);
       }
@@ -213,11 +200,11 @@ public class DescribeDiskStoreFunction extends FunctionAdapter implements Intern
   protected String getDiskStoreName(final GatewaySender gateway) {
     return StringUtils.defaultIfBlank(gateway.getDiskStoreName(), DiskStoreDetails.DEFAULT_DISK_STORE_NAME);
   }
-  
+
   protected boolean isPersistent(final GatewaySender gateway) {
     return gateway.isPersistenceEnabled();
   }
-  
+
   protected boolean isUsingDiskStore(final GatewaySender gateway, final DiskStore diskStore) {
     return ObjectUtils.equals(getDiskStoreName(gateway), diskStore.getName());
   }

@@ -75,7 +75,7 @@ import org.springframework.shell.core.annotation.CliOption;
  */
 @SuppressWarnings("unused")
 public class IndexCommands extends AbstractCommandsSupport {
-  
+
   private static final CreateIndexFunction createIndexFunction = new CreateIndexFunction();
   private static final DestroyIndexFunction destroyIndexFunction = new DestroyIndexFunction();
   private static final CreateDefinedIndexesFunction createDefinedIndexesFunction = new CreateDefinedIndexesFunction();
@@ -90,30 +90,21 @@ public class IndexCommands extends AbstractCommandsSupport {
   }
 
   @CliCommand(value = CliStrings.LIST_INDEX, help = CliStrings.LIST_INDEX__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic={CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA})
+  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result listIndex(@CliOption(key = CliStrings.LIST_INDEX__STATS,
-                                     mandatory = false,
-                                     specifiedDefaultValue = "true",
-                                     unspecifiedDefaultValue = "false",
-                                     help = CliStrings.LIST_INDEX__STATS__HELP)
-                            final boolean showStats) {
+  public Result listIndex(@CliOption(key = CliStrings.LIST_INDEX__STATS, mandatory = false, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.LIST_INDEX__STATS__HELP)
+  final boolean showStats) {
     try {
       return toTabularResult(getIndexListing(), showStats);
-    }
-    catch (FunctionInvocationTargetException ignore) {
-      return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.COULD_NOT_EXECUTE_COMMAND_TRY_AGAIN,
-        CliStrings.LIST_INDEX));
-    }
-    catch (VirtualMachineError e) {
+    } catch (FunctionInvocationTargetException ignore) {
+      return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.COULD_NOT_EXECUTE_COMMAND_TRY_AGAIN, CliStrings.LIST_INDEX));
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       SystemFailure.checkFailure();
       getCache().getLogger().error(t);
-      return ResultBuilder.createGemFireErrorResult(String.format(CliStrings.LIST_INDEX__ERROR_MESSAGE,
-        toString(t, isDebugging())));
+      return ResultBuilder.createGemFireErrorResult(String.format(CliStrings.LIST_INDEX__ERROR_MESSAGE, toString(t, isDebugging())));
     }
   }
 
@@ -155,8 +146,7 @@ public class IndexCommands extends AbstractCommandsSupport {
         indexData.accumulate("From Clause", indexDetails.getFromClause());
 
         if (showStats) {
-          final IndexStatisticsDetailsAdapter adapter = new IndexStatisticsDetailsAdapter(
-            indexDetails.getIndexStatisticsDetails());
+          final IndexStatisticsDetailsAdapter adapter = new IndexStatisticsDetailsAdapter(indexDetails.getIndexStatisticsDetails());
 
           indexData.accumulate("Uses", adapter.getTotalUses());
           indexData.accumulate("Updates", adapter.getNumberOfUpdates());
@@ -167,44 +157,30 @@ public class IndexCommands extends AbstractCommandsSupport {
       }
 
       return ResultBuilder.buildResult(indexData);
-    }
-    else {
+    } else {
       return ResultBuilder.createInfoResult(CliStrings.LIST_INDEX__INDEXES_NOT_FOUND_MESSAGE);
     }
   }
 
   @CliCommand(value = CliStrings.CREATE_INDEX, help = CliStrings.CREATE_INDEX__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic={CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration=true)
+  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration = true)
   //TODO : Add optionContext for indexName
-  public Result createIndex(
-      @CliOption (key = CliStrings.CREATE_INDEX__NAME,
-      mandatory=true,
-      help = CliStrings.CREATE_INDEX__NAME__HELP) final String indexName,
+  public Result createIndex(@CliOption(key = CliStrings.CREATE_INDEX__NAME, mandatory = true, help = CliStrings.CREATE_INDEX__NAME__HELP)
+  final String indexName,
 
-      @CliOption (key = CliStrings.CREATE_INDEX__EXPRESSION,
-      mandatory = true,
-      help = CliStrings.CREATE_INDEX__EXPRESSION__HELP) final String indexedExpression,
+      @CliOption(key = CliStrings.CREATE_INDEX__EXPRESSION, mandatory = true, help = CliStrings.CREATE_INDEX__EXPRESSION__HELP)
+      final String indexedExpression,
 
-      @CliOption(key = CliStrings.CREATE_INDEX__REGION,
-      mandatory = true,
-      optionContext = ConverterHint.REGIONPATH,
-      help = CliStrings.CREATE_INDEX__REGION__HELP) String regionPath,
+      @CliOption(key = CliStrings.CREATE_INDEX__REGION, mandatory = true, optionContext = ConverterHint.REGIONPATH, help = CliStrings.CREATE_INDEX__REGION__HELP) String regionPath,
 
-      @CliOption(key = CliStrings.CREATE_INDEX__MEMBER,
-      mandatory = false,
-      optionContext = ConverterHint.MEMBERIDNAME,
-      help = CliStrings.CREATE_INDEX__MEMBER__HELP) final String memberNameOrID,
+      @CliOption(key = CliStrings.CREATE_INDEX__MEMBER, mandatory = false, optionContext = ConverterHint.MEMBERIDNAME, help = CliStrings.CREATE_INDEX__MEMBER__HELP)
+      final String memberNameOrID,
 
-      @CliOption(key = CliStrings.CREATE_INDEX__TYPE,
-      mandatory = false,
-      unspecifiedDefaultValue = "range",
-      optionContext = ConverterHint.INDEX_TYPE,
-      help = CliStrings.CREATE_INDEX__TYPE__HELP) final String indexType,
+      @CliOption(key = CliStrings.CREATE_INDEX__TYPE, mandatory = false, unspecifiedDefaultValue = "range", optionContext = ConverterHint.INDEX_TYPE, help = CliStrings.CREATE_INDEX__TYPE__HELP)
+      final String indexType,
 
-      @CliOption (key = CliStrings.CREATE_INDEX__GROUP,
-      mandatory = false,
-      optionContext = ConverterHint.MEMBERGROUP, 
-      help = CliStrings.CREATE_INDEX__GROUP__HELP) final String group) {
+      @CliOption(key = CliStrings.CREATE_INDEX__GROUP, mandatory = false, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.CREATE_INDEX__GROUP__HELP)
+      final String group) {
 
     Result result = null;
     XmlEntity xmlEntity = null;
@@ -216,15 +192,15 @@ public class IndexCommands extends AbstractCommandsSupport {
       int idxType = IndexInfo.RANGE_INDEX;
 
       //Index type check
-        if ("range".equalsIgnoreCase(indexType)) {
-          idxType = IndexInfo.RANGE_INDEX;
-        } else if ("hash".equalsIgnoreCase(indexType)) {
-          idxType = IndexInfo.HASH_INDEX;
-        } else if ("key".equalsIgnoreCase(indexType)) {
-          idxType = IndexInfo.KEY_INDEX;
-        } else {
-          return ResultBuilder.createUserErrorResult(CliStrings.CREATE_INDEX__INVALID__INDEX__TYPE__MESSAGE);
-        }
+      if ("range".equalsIgnoreCase(indexType)) {
+        idxType = IndexInfo.RANGE_INDEX;
+      } else if ("hash".equalsIgnoreCase(indexType)) {
+        idxType = IndexInfo.HASH_INDEX;
+      } else if ("key".equalsIgnoreCase(indexType)) {
+        idxType = IndexInfo.KEY_INDEX;
+      } else {
+        return ResultBuilder.createUserErrorResult(CliStrings.CREATE_INDEX__INVALID__INDEX__TYPE__MESSAGE);
+      }
 
       if (indexName == null || indexName.isEmpty()) {
         return ResultBuilder.createUserErrorResult(CliStrings.CREATE_INDEX__INVALID__INDEX__NAME);
@@ -237,15 +213,15 @@ public class IndexCommands extends AbstractCommandsSupport {
       if (StringUtils.isBlank(regionPath) || regionPath.equals(Region.SEPARATOR)) {
         return ResultBuilder.createUserErrorResult(CliStrings.CREATE_INDEX__INVALID__REGIONPATH);
       }
-      
+
       if (!regionPath.startsWith(Region.SEPARATOR)) {
-        regionPath = Region.SEPARATOR +regionPath;
+        regionPath = Region.SEPARATOR + regionPath;
       }
-      
+
       IndexInfo indexInfo = new IndexInfo(indexName, indexedExpression, regionPath, idxType);
 
       final Set<DistributedMember> targetMembers = CliUtil.findAllMatchingMembers(group, memberNameOrID);
-      final ResultCollector<?,?> rc = CliUtil.executeFunction(createIndexFunction, indexInfo, targetMembers);
+      final ResultCollector<?, ?> rc = CliUtil.executeFunction(createIndexFunction, indexInfo, targetMembers);
 
       final List<Object> funcResults = (List<Object>) rc.getResult();
       final Set<String> successfulMembers = new TreeSet<String>();
@@ -257,12 +233,12 @@ public class IndexCommands extends AbstractCommandsSupport {
 
           if (cliFunctionResult.isSuccessful()) {
             successfulMembers.add(cliFunctionResult.getMemberIdOrName());
-            
+
             if (xmlEntity == null) {
               xmlEntity = cliFunctionResult.getXmlEntity();
             }
           } else {
-            final String exceptionMessage  = cliFunctionResult.getMessage();
+            final String exceptionMessage = cliFunctionResult.getMessage();
             Set<String> failedMembers = indexOpFailMap.get(exceptionMessage);
 
             if (failedMembers == null) {
@@ -316,44 +292,31 @@ public class IndexCommands extends AbstractCommandsSupport {
     } catch (Exception e) {
       result = ResultBuilder.createGemFireErrorResult(e.getMessage());
     }
-    
+
     if (xmlEntity != null) {
-      result.setCommandPersisted((new SharedConfigurationWriter()).addXmlEntity(xmlEntity, group !=null ? group.split(",") : null));
+      result.setCommandPersisted((new SharedConfigurationWriter()).addXmlEntity(xmlEntity, group != null ? group.split(",") : null));
     }
     return result;
   }
 
   @CliCommand(value = CliStrings.DESTROY_INDEX, help = CliStrings.DESTROY_INDEX__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic={CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration=true)
-  public Result destroyIndex(
-      @CliOption(
-      key = CliStrings.DESTROY_INDEX__NAME,
-      mandatory = false,
-      unspecifiedDefaultValue = "",
-      help = CliStrings.DESTROY_INDEX__NAME__HELP) final String indexName,
+  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration = true)
+  public Result destroyIndex(@CliOption(key = CliStrings.DESTROY_INDEX__NAME, mandatory = false, unspecifiedDefaultValue = "", help = CliStrings.DESTROY_INDEX__NAME__HELP)
+  final String indexName,
 
-      @CliOption(key = CliStrings.DESTROY_INDEX__REGION,
-      mandatory = false,
-      optionContext = ConverterHint.REGIONPATH,
-      help = CliStrings.DESTROY_INDEX__REGION__HELP) final String regionPath,
+      @CliOption(key = CliStrings.DESTROY_INDEX__REGION, mandatory = false, optionContext = ConverterHint.REGIONPATH, help = CliStrings.DESTROY_INDEX__REGION__HELP)
+      final String regionPath,
 
-      @CliOption(key = CliStrings.DESTROY_INDEX__MEMBER,
-      mandatory = false,
-      optionContext = ConverterHint.MEMBERIDNAME,
-      help = CliStrings.DESTROY_INDEX__MEMBER__HELP) final String memberNameOrID,
+      @CliOption(key = CliStrings.DESTROY_INDEX__MEMBER, mandatory = false, optionContext = ConverterHint.MEMBERIDNAME, help = CliStrings.DESTROY_INDEX__MEMBER__HELP)
+      final String memberNameOrID,
 
-      @CliOption (key = CliStrings.DESTROY_INDEX__GROUP,
-      mandatory = false,
-      optionContext = ConverterHint.MEMBERGROUP,
-      help = CliStrings.DESTROY_INDEX__GROUP__HELP) final String group) {
+      @CliOption(key = CliStrings.DESTROY_INDEX__GROUP, mandatory = false, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.DESTROY_INDEX__GROUP__HELP)
+      final String group) {
 
     Result result = null;
     XmlEntity xmlEntity = null;
 
-    if (StringUtils.isBlank(indexName)
-        && StringUtils.isBlank(regionPath)
-        && StringUtils.isBlank(memberNameOrID)
-        && StringUtils.isBlank(group)) {
+    if (StringUtils.isBlank(indexName) && StringUtils.isBlank(regionPath) && StringUtils.isBlank(memberNameOrID) && StringUtils.isBlank(group)) {
       return ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.PROVIDE_ATLEAST_ONE_OPTION, CliStrings.DESTROY_INDEX));
     }
 
@@ -364,8 +327,7 @@ public class IndexCommands extends AbstractCommandsSupport {
     if (!StringUtils.isBlank(regionPath)) {
       regionName = regionPath.startsWith("/") ? regionPath.substring(1) : regionPath;
       this.securityService.authorizeRegionManage(regionName);
-    }
-    else{
+    } else {
       this.securityService.authorizeDataManage();
     }
 
@@ -374,8 +336,7 @@ public class IndexCommands extends AbstractCommandsSupport {
 
     try {
       targetMembers = CliUtil.findAllMatchingMembers(group, memberNameOrID);
-    }
-    catch (CommandResultException e) {
+    } catch (CommandResultException e) {
       return e.getResult();
     }
 
@@ -385,8 +346,8 @@ public class IndexCommands extends AbstractCommandsSupport {
     Set<String> successfulMembers = new TreeSet<String>();
     Map<String, Set<String>> indexOpFailMap = new HashMap<String, Set<String>>();
 
-    for (Object funcResult : funcResults){
-      if(!(funcResult instanceof CliFunctionResult)){
+    for (Object funcResult : funcResults) {
+      if (!(funcResult instanceof CliFunctionResult)) {
         continue;
       }
 
@@ -398,7 +359,7 @@ public class IndexCommands extends AbstractCommandsSupport {
           xmlEntity = cliFunctionResult.getXmlEntity();
         }
       } else {
-        String exceptionMessage  = cliFunctionResult.getMessage();
+        String exceptionMessage = cliFunctionResult.getMessage();
         Set<String> failedMembers = indexOpFailMap.get(exceptionMessage);
 
         if (failedMembers == null) {
@@ -419,16 +380,17 @@ public class IndexCommands extends AbstractCommandsSupport {
           infoResult.addLine(CliStrings.format(CliStrings.DESTROY_INDEX__SUCCESS__MSG, indexName));
         }
       } else {
-         if (!StringUtils.isBlank(regionPath)) {
-           infoResult.addLine(CliStrings.format(CliStrings.DESTROY_INDEX__ON__REGION__ONLY__SUCCESS__MSG, regionPath));
-         } else {
-           infoResult.addLine(CliStrings.DESTROY_INDEX__ON__MEMBERS__ONLY__SUCCESS__MSG);
-         }
+        if (!StringUtils.isBlank(regionPath)) {
+          infoResult.addLine(CliStrings.format(CliStrings.DESTROY_INDEX__ON__REGION__ONLY__SUCCESS__MSG, regionPath));
+        } else {
+          infoResult.addLine(CliStrings.DESTROY_INDEX__ON__MEMBERS__ONLY__SUCCESS__MSG);
+        }
       }
 
       int num = 0;
       for (String memberId : successfulMembers) {
-        infoResult.addLine(CliStrings.format(CliStrings.format(CliStrings.DESTROY_INDEX__NUMBER__AND__MEMBER, ++num, memberId)));;
+        infoResult.addLine(CliStrings.format(CliStrings.format(CliStrings.DESTROY_INDEX__NUMBER__AND__MEMBER, ++num, memberId)));
+        ;
       }
       result = ResultBuilder.buildResult(infoResult);
 
@@ -458,41 +420,31 @@ public class IndexCommands extends AbstractCommandsSupport {
       result = ResultBuilder.buildResult(erd);
     }
 
-    
     if (xmlEntity != null) {
-      result.setCommandPersisted((new SharedConfigurationWriter()).deleteXmlEntity(xmlEntity, group !=null ? group.split(",") : null));
+      result.setCommandPersisted((new SharedConfigurationWriter()).deleteXmlEntity(xmlEntity, group != null ? group.split(",") : null));
     }
     return result;
   }
 
   @CliCommand(value = CliStrings.DEFINE_INDEX, help = CliStrings.DEFINE_INDEX__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic={CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration=true)
+  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration = true)
   //TODO : Add optionContext for indexName
-  public Result defineIndex(
-      @CliOption (key = CliStrings.DEFINE_INDEX_NAME,
-      mandatory=true,
-      help = CliStrings.DEFINE_INDEX__HELP) final String indexName,
+  public Result defineIndex(@CliOption(key = CliStrings.DEFINE_INDEX_NAME, mandatory = true, help = CliStrings.DEFINE_INDEX__HELP)
+  final String indexName,
 
-      @CliOption (key = CliStrings.DEFINE_INDEX__EXPRESSION,
-      mandatory = true,
-      help = CliStrings.DEFINE_INDEX__EXPRESSION__HELP) final String indexedExpression,
+      @CliOption(key = CliStrings.DEFINE_INDEX__EXPRESSION, mandatory = true, help = CliStrings.DEFINE_INDEX__EXPRESSION__HELP)
+      final String indexedExpression,
 
-      @CliOption(key = CliStrings.DEFINE_INDEX__REGION,
-      mandatory = true,
-      optionContext = ConverterHint.REGIONPATH,
-      help = CliStrings.DEFINE_INDEX__REGION__HELP) String regionPath,
+      @CliOption(key = CliStrings.DEFINE_INDEX__REGION, mandatory = true, optionContext = ConverterHint.REGIONPATH, help = CliStrings.DEFINE_INDEX__REGION__HELP) String regionPath,
 
-      @CliOption(key = CliStrings.DEFINE_INDEX__TYPE,
-      mandatory = false,
-      unspecifiedDefaultValue = "range",
-      optionContext = ConverterHint.INDEX_TYPE,
-      help = CliStrings.DEFINE_INDEX__TYPE__HELP) final String indexType) {
+      @CliOption(key = CliStrings.DEFINE_INDEX__TYPE, mandatory = false, unspecifiedDefaultValue = "range", optionContext = ConverterHint.INDEX_TYPE, help = CliStrings.DEFINE_INDEX__TYPE__HELP)
+      final String indexType) {
 
     Result result = null;
     XmlEntity xmlEntity = null;
 
     this.securityService.authorizeRegionManage(regionPath);
-    
+
     int idxType = IndexInfo.RANGE_INDEX;
 
     //Index type check
@@ -517,11 +469,11 @@ public class IndexCommands extends AbstractCommandsSupport {
     if (StringUtils.isBlank(regionPath) || regionPath.equals(Region.SEPARATOR)) {
       return ResultBuilder.createUserErrorResult(CliStrings.DEFINE_INDEX__INVALID__REGIONPATH);
     }
-      
+
     if (!regionPath.startsWith(Region.SEPARATOR)) {
-      regionPath = Region.SEPARATOR +regionPath;
+      regionPath = Region.SEPARATOR + regionPath;
     }
-      
+
     IndexInfo indexInfo = new IndexInfo(indexName, indexedExpression, regionPath, idxType);
     indexDefinitions.add(indexInfo);
 
@@ -534,37 +486,33 @@ public class IndexCommands extends AbstractCommandsSupport {
 
     return result;
   }
-  
+
   @CliCommand(value = CliStrings.CREATE_DEFINED_INDEXES, help = CliStrings.CREATE_DEFINED__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic={CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA}, writesToSharedConfiguration=true)
+  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   //TODO : Add optionContext for indexName
   public Result createDefinedIndexes(
 
-      @CliOption(key = CliStrings.CREATE_DEFINED_INDEXES__MEMBER,
-      mandatory = false,
-      optionContext = ConverterHint.MEMBERIDNAME,
-      help = CliStrings.CREATE_DEFINED_INDEXES__MEMBER__HELP) final String memberNameOrID,
+      @CliOption(key = CliStrings.CREATE_DEFINED_INDEXES__MEMBER, mandatory = false, optionContext = ConverterHint.MEMBERIDNAME, help = CliStrings.CREATE_DEFINED_INDEXES__MEMBER__HELP)
+      final String memberNameOrID,
 
-      @CliOption (key = CliStrings.CREATE_DEFINED_INDEXES__GROUP,
-      mandatory = false,
-      optionContext = ConverterHint.MEMBERGROUP, 
-      help = CliStrings.CREATE_DEFINED_INDEXES__GROUP__HELP) final String group) {
+      @CliOption(key = CliStrings.CREATE_DEFINED_INDEXES__GROUP, mandatory = false, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.CREATE_DEFINED_INDEXES__GROUP__HELP)
+      final String group) {
 
     Result result = null;
     XmlEntity xmlEntity = null;
-    
-    if(indexDefinitions.isEmpty()) {
+
+    if (indexDefinitions.isEmpty()) {
       final InfoResultData infoResult = ResultBuilder.createInfoResultData();
       infoResult.addLine(CliStrings.DEFINE_INDEX__FAILURE__MSG);
       return ResultBuilder.buildResult(infoResult);
     }
-    
+
     try {
       final Cache cache = CacheFactory.getAnyInstance();
 
       final Set<DistributedMember> targetMembers = CliUtil.findAllMatchingMembers(group, memberNameOrID);
-      final ResultCollector<?,?> rc = CliUtil.executeFunction(createDefinedIndexesFunction, indexDefinitions, targetMembers);
+      final ResultCollector<?, ?> rc = CliUtil.executeFunction(createDefinedIndexesFunction, indexDefinitions, targetMembers);
 
       final List<Object> funcResults = (List<Object>) rc.getResult();
       final Set<String> successfulMembers = new TreeSet<String>();
@@ -576,12 +524,12 @@ public class IndexCommands extends AbstractCommandsSupport {
 
           if (cliFunctionResult.isSuccessful()) {
             successfulMembers.add(cliFunctionResult.getMemberIdOrName());
-            
+
             if (xmlEntity == null) {
               xmlEntity = cliFunctionResult.getXmlEntity();
             }
           } else {
-            final String exceptionMessage  = cliFunctionResult.getMessage();
+            final String exceptionMessage = cliFunctionResult.getMessage();
             Set<String> failedMembers = indexOpFailMap.get(exceptionMessage);
 
             if (failedMembers == null) {
@@ -629,15 +577,15 @@ public class IndexCommands extends AbstractCommandsSupport {
     } catch (Exception e) {
       result = ResultBuilder.createGemFireErrorResult(e.getMessage());
     }
-    
+
     if (xmlEntity != null) {
-      result.setCommandPersisted((new SharedConfigurationWriter()).addXmlEntity(xmlEntity, group !=null ? group.split(",") : null));
+      result.setCommandPersisted((new SharedConfigurationWriter()).addXmlEntity(xmlEntity, group != null ? group.split(",") : null));
     }
     return result;
   }
 
   @CliCommand(value = CliStrings.CLEAR_DEFINED_INDEXES, help = CliStrings.CLEAR_DEFINED__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic={CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA}, writesToSharedConfiguration=true)
+  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_DATA }, writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   //TODO : Add optionContext for indexName
   public Result clearDefinedIndexes() {
@@ -648,7 +596,7 @@ public class IndexCommands extends AbstractCommandsSupport {
 
   }
 
-  @CliAvailabilityIndicator({CliStrings.LIST_INDEX, CliStrings.CREATE_INDEX, CliStrings.DESTROY_INDEX})
+  @CliAvailabilityIndicator({ CliStrings.LIST_INDEX, CliStrings.CREATE_INDEX, CliStrings.DESTROY_INDEX })
   public boolean indexCommandsAvailable() {
     return (!CliUtil.isGfshVM() || (getGfsh() != null && getGfsh().isConnectedAndReady()));
   }
@@ -666,8 +614,7 @@ public class IndexCommands extends AbstractCommandsSupport {
     }
 
     public String getNumberOfKeys() {
-      return (getIndexStatisticsDetails() != null ? StringUtils.valueOf(getIndexStatisticsDetails()
-        .getNumberOfKeys(), "") : "");
+      return (getIndexStatisticsDetails() != null ? StringUtils.valueOf(getIndexStatisticsDetails().getNumberOfKeys(), "") : "");
     }
 
     public String getNumberOfUpdates() {

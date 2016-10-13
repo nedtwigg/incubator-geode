@@ -38,11 +38,10 @@ import static org.junit.Assert.assertNotNull;
 public abstract class MBeanStatsTestCase {
 
   protected static final long SLEEP = 100;
-  protected static final long TIMEOUT = 4*1000;
-  
+  protected static final long TIMEOUT = 4 * 1000;
+
   protected InternalDistributedSystem system;
 
-  
   @SuppressWarnings("deprecation")
   @Before
   public void setUp() throws Exception {
@@ -53,15 +52,15 @@ public abstract class MBeanStatsTestCase {
     props.setProperty(ENABLE_TIME_STATISTICS, "true");
     props.setProperty(STATISTIC_SAMPLING_ENABLED, "false");
     props.setProperty(STATISTIC_SAMPLE_RATE, "60000");
-    
+
     this.system = (InternalDistributedSystem) DistributedSystem.connect(props);
     assertNotNull(this.system.getStatSampler());
     assertNotNull(this.system.getStatSampler().waitForSampleCollector(TIMEOUT));
-    
+
     new CacheFactory().create();
-    
+
     init();
-    
+
     sample();
   }
 
@@ -71,16 +70,16 @@ public abstract class MBeanStatsTestCase {
     this.system.disconnect();
     this.system = null;
   }
-  
+
   protected void waitForNotification() throws InterruptedException {
     this.system.getStatSampler().waitForSample(TIMEOUT);
     Thread.sleep(SLEEP);
   }
-  
+
   protected void sample() throws InterruptedException {
     this.system.getStatSampler().getSampleCollector().sample(NanoTimer.getTime());
     Thread.sleep(SLEEP);
   }
-  
+
   protected abstract void init();
 }

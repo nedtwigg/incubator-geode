@@ -57,9 +57,7 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
    * @param eventIdentifier
    *                EventID of this message
    */
-  public ClientInstantiatorMessage(EnumListenerEvent operation,
-      byte[][] instantiator, ClientProxyMembershipID memberId,
-      EventID eventIdentifier) {
+  public ClientInstantiatorMessage(EnumListenerEvent operation, byte[][] instantiator, ClientProxyMembershipID memberId, EventID eventIdentifier) {
     super(operation, memberId, eventIdentifier);
     this.serializedInstantiators = instantiator;
   }
@@ -72,7 +70,7 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
   public boolean isClientInterested(ClientProxyMembershipID clientId) {
     return true;
   }
-  
+
   @Override
   public boolean needsNoAuthorizationCheck() {
     return true;
@@ -86,15 +84,15 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
 
   }
 
-//   /**
-//    * Returns the serialized value of Instantiators.
-//    * 
-//    * @return the serialized value of Instantiators
-//    */
-//   public byte[][] getInstantiators()
-//   {
-//     return this.serializedInstantiators;
-//   }
+  //   /**
+  //    * Returns the serialized value of Instantiators.
+  //    * 
+  //    * @return the serialized value of Instantiators
+  //    */
+  //   public byte[][] getInstantiators()
+  //   {
+  //     return this.serializedInstantiators;
+  //   }
 
   /**
    * Determines whether or not to conflate this message.
@@ -102,30 +100,25 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
    * @return Whether to conflate this message
    */
   @Override
-  public boolean shouldBeConflated()
-  {
+  public boolean shouldBeConflated() {
     return false;
   }
 
   @Override
-  protected Message getMessage(CacheClientProxy proxy, byte[] latestValue) throws IOException
-  {
+  protected Message getMessage(CacheClientProxy proxy, byte[] latestValue) throws IOException {
     Version clientVersion = proxy.getVersion();
     Message message = null;
     if (clientVersion.compareTo(Version.GFE_57) >= 0) {
       message = getGFEMessage(proxy.getProxyID(), null, clientVersion);
     } else {
-      throw new IOException(
-          "Unsupported client version for server-to-client message creation: "
-              + clientVersion);
+      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
     }
-      
+
     return message;
   }
 
   @Override
-  protected Message getGFEMessage(ClientProxyMembershipID proxy,
-      byte[] latestValue, Version clientVersion) throws IOException {
+  protected Message getGFEMessage(ClientProxyMembershipID proxy, byte[] latestValue, Version clientVersion) throws IOException {
     Message message = null;
     int instantiatorsLength = this.serializedInstantiators.length;
     message = new Message(instantiatorsLength + 1, clientVersion); // one for eventID
@@ -140,7 +133,7 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
     message.addObjPart(this.getEventId());
     return message;
   }
-  
+
   @Override
   public int getDSFID() {
     return CLIENT_INSTANTIATOR_MESSAGE;
@@ -178,8 +171,7 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
    * @see #toData
    */
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     // Note: does not call super.fromData what a HACK
     _operation = EnumListenerEvent.getEnumListenerEvent(in.readByte());
     int instantiatorCount = in.readInt(); // is byte suficient for this ?
@@ -188,42 +180,33 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
       this.serializedInstantiators[i] = DataSerializer.readByteArray(in);
     }
     _membershipId = ClientProxyMembershipID.readCanonicalized(in);
-    _eventIdentifier = (EventID)DataSerializer.readObject(in);
+    _eventIdentifier = (EventID) DataSerializer.readObject(in);
   }
 
   @Override
-  public Object getKeyToConflate()
-  {
+  public Object getKeyToConflate() {
     return null;
   }
 
   @Override
-  public String getRegionToConflate()
-  {
+  public String getRegionToConflate() {
     return null;
   }
 
   @Override
-  public Object getValueToConflate()
-  {
+  public Object getValueToConflate() {
     return null;
   }
 
   @Override
-  public void setLatestValue(Object value)
-  {
+  public void setLatestValue(Object value) {
   }
-  
+
   @Override
-  public String toString()
-  {
+  public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ClientInstantiatorMessage[").append(";value=").append(
-        (Arrays.toString(this.serializedInstantiators))).append(";memberId=").append(
-        getMembershipId()).append(";eventId=").append(getEventId()).append(
-        ";notifyAll=").append("]");
+    buffer.append("ClientInstantiatorMessage[").append(";value=").append((Arrays.toString(this.serializedInstantiators))).append(";memberId=").append(getMembershipId()).append(";eventId=").append(getEventId()).append(";notifyAll=").append("]");
     return buffer.toString();
   }
 
 }
-

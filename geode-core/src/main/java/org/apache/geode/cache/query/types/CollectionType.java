@@ -24,11 +24,11 @@ package org.apache.geode.cache.query.types;
  * @since GemFire 4.0
  */
 public interface CollectionType extends ObjectType {
-  
+
   /** Return the type of the elements of this collection type.
    */
   public ObjectType getElementType();
-  
+
   /**
    * Return whether duplicates are kept in this type of collection. Duplicates
    * are two objects are equal to each other as defined by the <code>equals</code>
@@ -37,7 +37,7 @@ public interface CollectionType extends ObjectType {
    * been eliminated
    */
   public boolean allowsDuplicates();
-  
+
   /**
    * Return whether this collection type has ordered elements. 
    * @return true if this collection type is ordered, false if not

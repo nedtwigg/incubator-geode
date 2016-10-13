@@ -24,9 +24,9 @@ import java.util.List;
 import org.apache.geode.cache.wan.GatewayTransportFilter;
 
 public class TransportFilterServerSocket extends ServerSocket {
-  
+
   private List<GatewayTransportFilter> gatewayTransportFilters;
-  
+
   public TransportFilterServerSocket(List<GatewayTransportFilter> transportFilters) throws IOException {
     super();
     this.gatewayTransportFilters = transportFilters;

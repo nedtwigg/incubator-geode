@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 //import org.apache.geode.*;
@@ -47,13 +46,19 @@ public final class RegionSizeResponse extends AdminResponse implements Cancellab
   }
 
   public void calcSize(Region r) {
-    if (cancelled) { return; }
+    if (cancelled) {
+      return;
+    }
 
     Set nameSet = r.keys();
-    if (cancelled) { return; }
+    if (cancelled) {
+      return;
+    }
     this.entryCount = nameSet.size();
     Set subRegions = r.subregions(false);
-    if (cancelled) { return; }
+    if (cancelled) {
+      return;
+    }
     this.subregionCount = subRegions.size();
   }
 
@@ -69,7 +74,7 @@ public final class RegionSizeResponse extends AdminResponse implements Cancellab
   public int getSubregionCount() {
     return this.subregionCount;
   }
-  
+
   public int getDSFID() {
     return REGION_SIZE_RESPONSE;
   }
@@ -82,8 +87,7 @@ public final class RegionSizeResponse extends AdminResponse implements Cancellab
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.entryCount = in.readInt();
     this.subregionCount = in.readInt();

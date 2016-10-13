@@ -89,8 +89,7 @@ public class MiscellaneousCommandsExportLogsPart4DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForTimeRange1" + dir, null, null, logLevel, false,
-        false, start, end, 1);
+    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForTimeRange1" + dir, null, null, logLevel, false, false, start, end, 1);
 
     getLogWriter().info("testExportLogsForTimeRange1 command result =" + cmdResult);
 
@@ -119,8 +118,7 @@ public class MiscellaneousCommandsExportLogsPart4DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForTimeRangeForOnlyStartTime" + dir, null, null,
-        logLevel, false, false, s, null, 1);
+    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForTimeRangeForOnlyStartTime" + dir, null, null, logLevel, false, false, s, null, 1);
 
     getLogWriter().info("testExportLogsForTimeRangeForOnlyStartTime command result =" + cmdResult);
 

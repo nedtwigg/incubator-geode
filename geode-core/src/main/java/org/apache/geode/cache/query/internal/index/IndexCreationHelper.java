@@ -32,8 +32,8 @@ import org.apache.geode.cache.query.internal.QCompiler;
 /**
  * 
  */
-public abstract class IndexCreationHelper {  
-  
+public abstract class IndexCreationHelper {
+
   public static int INDEX_QUERY_SCOPE_ID = -2;
   // Canonicalized attributes.
   //	The value in these fields is set during the execution of prepareFromClause
@@ -57,8 +57,7 @@ public abstract class IndexCreationHelper {
   // modifying it
   String[] canonicalizedIteratorDefinitions = null;
 
-  IndexCreationHelper(String fromClause, String projectionAttributes,
-      Cache cache) throws IndexInvalidException {
+  IndexCreationHelper(String fromClause, String projectionAttributes, Cache cache) throws IndexInvalidException {
     this.cache = cache;
     // Asif:LThe fromClause,indexedExpression & projectionAttributes
     // will get modified with the canonicalized value , once the
@@ -100,12 +99,14 @@ public abstract class IndexCreationHelper {
   public String[] getCanonicalizedIteratorDefinitions() {
     return this.canonicalizedIteratorDefinitions;
   }
-  
+
   boolean isMapTypeIndex() {
-   return false; 
-  } 
-  
+    return false;
+  }
+
   public abstract List getIterators();
+
   abstract CompiledValue getCompiledIndexedExpression();
+
   abstract Region getRegion();
 }

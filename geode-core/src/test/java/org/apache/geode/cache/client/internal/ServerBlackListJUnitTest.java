@@ -36,43 +36,43 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class ServerBlackListJUnitTest {
-  
+
   private ScheduledExecutorService background;
   private ServerBlackList blackList;
 
   @Before
-  public void setUp()  throws Exception {
+  public void setUp() throws Exception {
     background = Executors.newSingleThreadScheduledExecutor();
     blackList = new ServerBlackList(100);
     blackList.start(background);
   }
-  
+
   @After
   public void tearDown() {
     assertTrue(background.shutdownNow().isEmpty());
   }
-  
+
   @Test
-  public void testBlackListing()  throws Exception {
+  public void testBlackListing() throws Exception {
     ServerLocation location1 = new ServerLocation("localhost", 1);
     FailureTracker tracker1 = blackList.getFailureTracker(location1);
     tracker1.addFailure();
     tracker1.addFailure();
-    assertEquals(Collections.EMPTY_SET,  blackList.getBadServers());
+    assertEquals(Collections.EMPTY_SET, blackList.getBadServers());
     tracker1.addFailure();
-    assertEquals(Collections.singleton(location1),  blackList.getBadServers());
-    
+    assertEquals(Collections.singleton(location1), blackList.getBadServers());
+
     boolean done = false;
     for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < 10000; done = (blackList.getBadServers().size() == 0)) {
       Thread.sleep(200);
     }
     assertTrue("blackList still has bad servers", done);
-    
-    assertEquals(Collections.EMPTY_SET,  blackList.getBadServers());
+
+    assertEquals(Collections.EMPTY_SET, blackList.getBadServers());
   }
 
   @Test
-  public void testListener()  throws Exception {
+  public void testListener() throws Exception {
     final AtomicInteger adds = new AtomicInteger();
     final AtomicInteger removes = new AtomicInteger();
     blackList.addListener(new BlackListListenerAdapter() {
@@ -87,24 +87,24 @@ public class ServerBlackListJUnitTest {
         removes.incrementAndGet();
       }
     });
-    
+
     ServerLocation location1 = new ServerLocation("localhost", 1);
     FailureTracker tracker1 = blackList.getFailureTracker(location1);
     tracker1.addFailure();
     tracker1.addFailure();
-    
+
     assertEquals(0, adds.get());
     assertEquals(0, removes.get());
     tracker1.addFailure();
     assertEquals(1, adds.get());
     assertEquals(0, removes.get());
-    
+
     boolean done = false;
     for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < 10000; done = (removes.get() != 0)) {
       Thread.sleep(200);
     }
     assertTrue("removes still empty", done);
-    
+
     assertEquals(1, adds.get());
     assertEquals(1, removes.get());
   }

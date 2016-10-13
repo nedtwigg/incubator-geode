@@ -121,8 +121,7 @@ public class CacheServerSSLConnectionDUnitTest extends JUnit4DistributedTestCase
       gemFireProps.put(SSL_KEYSTORE_PASSWORD, "password");
       gemFireProps.put(SSL_TRUSTSTORE, trustStore);
       gemFireProps.put(SSL_TRUSTSTORE_PASSWORD, "password");
-    }
-    else{
+    } else {
       gemFireProps.put(CLUSTER_SSL_ENABLED, String.valueOf(cacheServerSslenabled));
       gemFireProps.put(CLUSTER_SSL_PROTOCOLS, cacheServerSslprotocols);
       gemFireProps.put(CLUSTER_SSL_CIPHERS, cacheServerSslciphers);
@@ -147,13 +146,7 @@ public class CacheServerSSLConnectionDUnitTest extends JUnit4DistributedTestCase
     r.put("serverkey", "servervalue");
   }
 
-  public void setUpClientVM(String host,
-                            int port,
-                            boolean cacheServerSslenabled,
-                            boolean cacheServerSslRequireAuth,
-                            String keyStore,
-                            String trustStore,
-                            boolean subscription) {
+  public void setUpClientVM(String host, int port, boolean cacheServerSslenabled, boolean cacheServerSslRequireAuth, String keyStore, String trustStore, boolean subscription) {
 
     Properties gemFireProps = new Properties();
 
@@ -201,7 +194,6 @@ public class CacheServerSSLConnectionDUnitTest extends JUnit4DistributedTestCase
     assertEquals("clientvalue", region.get("clientkey"));
   }
 
-
   public static void setUpServerVMTask(boolean cacheServerSslenabled, boolean legacy) throws Exception {
     instance.setUpServerVM(cacheServerSslenabled, legacy);
   }
@@ -210,21 +202,11 @@ public class CacheServerSSLConnectionDUnitTest extends JUnit4DistributedTestCase
     return instance.createServer();
   }
 
-  public static void setUpClientVMTask(String host,
-                                       int port,
-                                       boolean cacheServerSslenabled,
-                                       boolean cacheServerSslRequireAuth,
-                                       String keyStore,
-                                       String trustStore) throws Exception {
+  public static void setUpClientVMTask(String host, int port, boolean cacheServerSslenabled, boolean cacheServerSslRequireAuth, String keyStore, String trustStore) throws Exception {
     instance.setUpClientVM(host, port, cacheServerSslenabled, cacheServerSslRequireAuth, keyStore, trustStore, true);
   }
 
-  public static void setUpClientVMTaskNoSubscription(String host,
-                                                     int port,
-                                                     boolean cacheServerSslenabled,
-                                                     boolean cacheServerSslRequireAuth,
-                                                     String keyStore,
-                                                     String trustStore) throws Exception {
+  public static void setUpClientVMTaskNoSubscription(String host, int port, boolean cacheServerSslenabled, boolean cacheServerSslRequireAuth, String keyStore, String trustStore) throws Exception {
     instance.setUpClientVM(host, port, cacheServerSslenabled, cacheServerSslRequireAuth, keyStore, trustStore, false);
   }
 
@@ -414,4 +396,3 @@ public class CacheServerSSLConnectionDUnitTest extends JUnit4DistributedTestCase
 
   }
 }
-

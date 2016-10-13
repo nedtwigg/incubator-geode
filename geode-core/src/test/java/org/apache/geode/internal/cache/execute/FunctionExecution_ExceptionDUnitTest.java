@@ -50,8 +50,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
 @Category(DistributedTest.class)
-public class FunctionExecution_ExceptionDUnitTest extends
-    PartitionedRegionDUnitTestCase {
+public class FunctionExecution_ExceptionDUnitTest extends PartitionedRegionDUnitTestCase {
 
   /**
    * 
@@ -61,64 +60,56 @@ public class FunctionExecution_ExceptionDUnitTest extends
   public FunctionExecution_ExceptionDUnitTest() {
     super();
   }
-  
+
   @Test
-  public void testSingleKeyExecution_SendException_Datastore()
-      throws Exception {
+  public void testSingleKeyExecution_SendException_Datastore() throws Exception {
     final String rName = getUniqueName();
     Host host = Host.getHost(0);
     final VM datastore = host.getVM(3);
     getCache();
-    datastore
-        .invoke(new SerializableCallable("Create PR with Function Factory") {
-          public Object call() throws Exception {
-            RegionAttributes ra = PartitionedRegionTestHelper
-                .createRegionAttrsForPR(0, 10);
-            AttributesFactory raf = new AttributesFactory(ra);
-
-            PartitionAttributesImpl pa = new PartitionAttributesImpl();
-            pa.setAll(ra.getPartitionAttributes());
-            raf.setPartitionAttributes(pa);
-
-            getCache().createRegion(rName, raf.create());
-            Function function = new TestFunction(true,
-                TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
-            FunctionService.registerFunction(function);
-            return Boolean.TRUE;
-          }
-        });
-
-    Object o = datastore.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    datastore.invoke(new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
+        AttributesFactory raf = new AttributesFactory(ra);
+
+        PartitionAttributesImpl pa = new PartitionAttributesImpl();
+        pa.setAll(ra.getPartitionAttributes());
+        raf.setPartitionAttributes(pa);
+
+        getCache().createRegion(rName, raf.create());
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        FunctionService.registerFunction(function);
+        return Boolean.TRUE;
+      }
+    });
+
+    Object o = datastore.invoke(new SerializableCallable("Create data, invoke exectuable") {
+      public Object call() throws Exception {
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
 
         final String testKey = "execKey";
         final Set testKeysSet = new HashSet();
         testKeysSet.add(testKey);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
         FunctionService.registerFunction(function);
         // DefaultResultCollector rs = new DefaultResultCollector();
         Execution dataSet = FunctionService.onRegion(pr);// .withCollector(rs);
 
         pr.put(testKey, new Integer(1));
         ResultCollector rs1 = null;
-        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(
-            function);
-        ArrayList results = (ArrayList)rs1.getResult();
+        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function);
+        ArrayList results = (ArrayList) rs1.getResult();
         assertTrue(results.get(0) instanceof Exception);
-        
-        rs1 = dataSet.withFilter(testKeysSet).withArgs((Serializable)testKeysSet).execute(
-            function);
-        results = (ArrayList)rs1.getResult();
-        assertEquals((testKeysSet.size()+1), results.size());
+
+        rs1 = dataSet.withFilter(testKeysSet).withArgs((Serializable) testKeysSet).execute(function);
+        results = (ArrayList) rs1.getResult();
+        assertEquals((testKeysSet.size() + 1), results.size());
         Iterator resultIterator = results.iterator();
         int exceptionCount = 0;
-        while(resultIterator.hasNext()){
+        while (resultIterator.hasNext()) {
           Object o = resultIterator.next();
-          if(o instanceof MyFunctionExecutionException){
+          if (o instanceof MyFunctionExecutionException) {
             exceptionCount++;
           }
         }
@@ -130,106 +121,91 @@ public class FunctionExecution_ExceptionDUnitTest extends
   }
 
   @Test
-  public void testSingleKeyExecution_SendException_MultipleTimes_Datastore()
-      throws Exception {
+  public void testSingleKeyExecution_SendException_MultipleTimes_Datastore() throws Exception {
     final String rName = getUniqueName();
     Host host = Host.getHost(0);
     final VM datastore = host.getVM(3);
     getCache();
-    datastore
-        .invoke(new SerializableCallable("Create PR with Function Factory") {
-          public Object call() throws Exception {
-            RegionAttributes ra = PartitionedRegionTestHelper
-                .createRegionAttrsForPR(0, 10);
-            AttributesFactory raf = new AttributesFactory(ra);
-
-            PartitionAttributesImpl pa = new PartitionAttributesImpl();
-            pa.setAll(ra.getPartitionAttributes());
-            raf.setPartitionAttributes(pa);
-
-            getCache().createRegion(rName, raf.create());
-            Function function = new TestFunction(true,
-                TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
-            FunctionService.registerFunction(function);
-            return Boolean.TRUE;
-          }
-        });
-
-    Object o = datastore.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    datastore.invoke(new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
+        AttributesFactory raf = new AttributesFactory(ra);
+
+        PartitionAttributesImpl pa = new PartitionAttributesImpl();
+        pa.setAll(ra.getPartitionAttributes());
+        raf.setPartitionAttributes(pa);
+
+        getCache().createRegion(rName, raf.create());
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        FunctionService.registerFunction(function);
+        return Boolean.TRUE;
+      }
+    });
+
+    Object o = datastore.invoke(new SerializableCallable("Create data, invoke exectuable") {
+      public Object call() throws Exception {
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
 
         final String testKey = "execKey";
         final Set testKeysSet = new HashSet();
         testKeysSet.add(testKey);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
         FunctionService.registerFunction(function);
         Execution dataSet = FunctionService.onRegion(pr);// .withCollector(rs);
 
         pr.put(testKey, new Integer(1));
         ResultCollector rs1 = null;
-        rs1 = dataSet.withFilter(testKeysSet).withArgs("Multiple").execute(
-            function);
-        ArrayList results = (ArrayList)rs1.getResult();
+        rs1 = dataSet.withFilter(testKeysSet).withArgs("Multiple").execute(function);
+        ArrayList results = (ArrayList) rs1.getResult();
         assertTrue(results.get(0) instanceof Exception);
         return Boolean.TRUE;
       }
     });
     assertEquals(Boolean.TRUE, o);
   }
-  
+
   @Test
-  public void testRemoteSingleKeyExecution_ThrowException_Datastore()
-      throws Exception {
+  public void testRemoteSingleKeyExecution_ThrowException_Datastore() throws Exception {
     final String rName = getUniqueName();
     Host host = Host.getHost(0);
     final VM datastore = host.getVM(3);
-    datastore
-        .invoke(new SerializableCallable("Create PR with Function Factory") {
-          public Object call() throws Exception {
-            RegionAttributes ra = PartitionedRegionTestHelper
-                .createRegionAttrsForPR(0, 10);
-            AttributesFactory raf = new AttributesFactory(ra);
-
-            PartitionAttributesImpl pa = new PartitionAttributesImpl();
-            pa.setAll(ra.getPartitionAttributes());
-            raf.setPartitionAttributes(pa);
-
-            getCache().createRegion(rName, raf.create());
-            Function function = new TestFunction(true,
-                TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
-            FunctionService.registerFunction(function);
-            return Boolean.TRUE;
-          }
-        });
-
-    Object o = datastore.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    datastore.invoke(new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
+        AttributesFactory raf = new AttributesFactory(ra);
+
+        PartitionAttributesImpl pa = new PartitionAttributesImpl();
+        pa.setAll(ra.getPartitionAttributes());
+        raf.setPartitionAttributes(pa);
+
+        getCache().createRegion(rName, raf.create());
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        FunctionService.registerFunction(function);
+        return Boolean.TRUE;
+      }
+    });
+
+    Object o = datastore.invoke(new SerializableCallable("Create data, invoke exectuable") {
+      public Object call() throws Exception {
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
 
         final String testKey = "execKey";
         final Set testKeysSet = new HashSet();
         testKeysSet.add(testKey);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
         FunctionService.registerFunction(function);
         // DefaultResultCollector rs = new DefaultResultCollector();
         Execution dataSet = FunctionService.onRegion(pr);// .withCollector(rs);
 
         pr.put(testKey, new Integer(1));
         ResultCollector rs1 = null;
-        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(
-            function);
+        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function);
         try {
-          ArrayList results = (ArrayList)rs1.getResult();
+          ArrayList results = (ArrayList) rs1.getResult();
           fail("Expecting Exception");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
           return Boolean.TRUE;
         }
@@ -240,8 +216,7 @@ public class FunctionExecution_ExceptionDUnitTest extends
   }
 
   @Test
-  public void testRemoteSingleKeyExecution_SendException_Accessor()
-      throws Exception {
+  public void testRemoteSingleKeyExecution_SendException_Accessor() throws Exception {
     final String rName = getUniqueName();
     Host host = Host.getHost(0);
     final VM accessor = host.getVM(2);
@@ -249,64 +224,57 @@ public class FunctionExecution_ExceptionDUnitTest extends
     getCache();
     accessor.invoke(new SerializableCallable("Create PR") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 0);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 0);
 
         getCache().createRegion(rName, ra);
         return Boolean.TRUE;
       }
     });
 
-    datastore
-        .invoke(new SerializableCallable("Create PR with Function Factory") {
-          public Object call() throws Exception {
-            RegionAttributes ra = PartitionedRegionTestHelper
-                .createRegionAttrsForPR(0, 10);
-            AttributesFactory raf = new AttributesFactory(ra);
-
-            PartitionAttributesImpl pa = new PartitionAttributesImpl();
-            pa.setAll(ra.getPartitionAttributes());
-            raf.setPartitionAttributes(pa);
-
-            getCache().createRegion(rName, raf.create());
-            Function function = new TestFunction(true,
-                TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
-            FunctionService.registerFunction(function);
-            return Boolean.TRUE;
-          }
-        });
-
-    Object o = accessor.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    datastore.invoke(new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
+        AttributesFactory raf = new AttributesFactory(ra);
+
+        PartitionAttributesImpl pa = new PartitionAttributesImpl();
+        pa.setAll(ra.getPartitionAttributes());
+        raf.setPartitionAttributes(pa);
+
+        getCache().createRegion(rName, raf.create());
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        FunctionService.registerFunction(function);
+        return Boolean.TRUE;
+      }
+    });
+
+    Object o = accessor.invoke(new SerializableCallable("Create data, invoke exectuable") {
+      public Object call() throws Exception {
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
 
         final String testKey = "execKey";
         final Set testKeysSet = new HashSet();
         testKeysSet.add(testKey);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
         FunctionService.registerFunction(function);
         // DefaultResultCollector rs = new DefaultResultCollector();
         Execution dataSet = FunctionService.onRegion(pr);// .withCollector(rs);
 
         pr.put(testKey, new Integer(1));
         ResultCollector rs1 = null;
-//        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(
-//            function);
-//        ArrayList results = (ArrayList)rs1.getResult();
-//        assertTrue(results.get(0) instanceof Exception);
-//        
-        rs1 = dataSet.withFilter(testKeysSet).withArgs((Serializable)testKeysSet).execute(
-            function);
-        ArrayList results = (ArrayList)rs1.getResult();
-        assertEquals((testKeysSet.size()+1), results.size());
+        //        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(
+        //            function);
+        //        ArrayList results = (ArrayList)rs1.getResult();
+        //        assertTrue(results.get(0) instanceof Exception);
+        //        
+        rs1 = dataSet.withFilter(testKeysSet).withArgs((Serializable) testKeysSet).execute(function);
+        ArrayList results = (ArrayList) rs1.getResult();
+        assertEquals((testKeysSet.size() + 1), results.size());
         Iterator resultIterator = results.iterator();
         int exceptionCount = 0;
-        while(resultIterator.hasNext()){
+        while (resultIterator.hasNext()) {
           Object o = resultIterator.next();
-          if(o instanceof MyFunctionExecutionException){
+          if (o instanceof MyFunctionExecutionException) {
             exceptionCount++;
           }
         }
@@ -318,8 +286,7 @@ public class FunctionExecution_ExceptionDUnitTest extends
   }
 
   @Test
-  public void testRemoteSingleKeyExecution_ThrowException_Accessor()
-      throws Exception {
+  public void testRemoteSingleKeyExecution_ThrowException_Accessor() throws Exception {
     final String rName = getUniqueName();
     Host host = Host.getHost(0);
     final VM accessor = host.getVM(2);
@@ -327,57 +294,49 @@ public class FunctionExecution_ExceptionDUnitTest extends
     getCache();
     accessor.invoke(new SerializableCallable("Create PR") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 0);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 0);
 
         getCache().createRegion(rName, ra);
         return Boolean.TRUE;
       }
     });
 
-    datastore
-        .invoke(new SerializableCallable("Create PR with Function Factory") {
-          public Object call() throws Exception {
-            RegionAttributes ra = PartitionedRegionTestHelper
-                .createRegionAttrsForPR(0, 10);
-            AttributesFactory raf = new AttributesFactory(ra);
-
-            PartitionAttributesImpl pa = new PartitionAttributesImpl();
-            pa.setAll(ra.getPartitionAttributes());
-            raf.setPartitionAttributes(pa);
-
-            getCache().createRegion(rName, raf.create());
-            Function function = new TestFunction(true,
-                TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
-            FunctionService.registerFunction(function);
-            return Boolean.TRUE;
-          }
-        });
-
-    Object o = accessor.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    datastore.invoke(new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
+        AttributesFactory raf = new AttributesFactory(ra);
+
+        PartitionAttributesImpl pa = new PartitionAttributesImpl();
+        pa.setAll(ra.getPartitionAttributes());
+        raf.setPartitionAttributes(pa);
+
+        getCache().createRegion(rName, raf.create());
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        FunctionService.registerFunction(function);
+        return Boolean.TRUE;
+      }
+    });
+
+    Object o = accessor.invoke(new SerializableCallable("Create data, invoke exectuable") {
+      public Object call() throws Exception {
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
 
         final String testKey = "execKey";
         final Set testKeysSet = new HashSet();
         testKeysSet.add(testKey);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
         FunctionService.registerFunction(function);
         // DefaultResultCollector rs = new DefaultResultCollector();
         Execution dataSet = FunctionService.onRegion(pr);// .withCollector(rs);
 
         pr.put(testKey, new Integer(1));
         ResultCollector rs1 = null;
-        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(
-            function);
+        rs1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function);
         try {
-          ArrayList results = (ArrayList)rs1.getResult();
+          ArrayList results = (ArrayList) rs1.getResult();
           fail("Expecting Exception");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
           return Boolean.TRUE;
         }
@@ -398,25 +357,21 @@ public class FunctionExecution_ExceptionDUnitTest extends
     getCache();
     accessor.invoke(new SerializableCallable("Create PR") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 0);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 0);
         getCache().createRegion(rName, ra);
         return Boolean.TRUE;
       }
     });
 
-    SerializableCallable dataStoreCreate = new SerializableCallable(
-        "Create PR with Function Factory") {
+    SerializableCallable dataStoreCreate = new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 10);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
         AttributesFactory raf = new AttributesFactory(ra);
         PartitionAttributesImpl pa = new PartitionAttributesImpl();
         pa.setAll(ra.getPartitionAttributes());
         raf.setPartitionAttributes(pa);
         getCache().createRegion(rName, raf.create());
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
         FunctionService.registerFunction(function);
         return Boolean.TRUE;
       }
@@ -425,13 +380,11 @@ public class FunctionExecution_ExceptionDUnitTest extends
     datastore1.invoke(dataStoreCreate);
     datastore2.invoke(dataStoreCreate);
 
-    Object o = accessor.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    Object o = accessor.invoke(new SerializableCallable("Create data, invoke exectuable") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
         FunctionService.registerFunction(function);
         Execution dataSet = FunctionService.onRegion(pr);
 
@@ -441,15 +394,14 @@ public class FunctionExecution_ExceptionDUnitTest extends
           origVals.add(val);
           pr.put(val, "MyValue_" + i);
         }
-        ResultCollector rs1 = dataSet.withFilter(origVals).withArgs((Serializable)origVals).execute(
-            function);
-        List results = (ArrayList)rs1.getResult();
-        assertEquals(((origVals.size()*3)+3), results.size());
+        ResultCollector rs1 = dataSet.withFilter(origVals).withArgs((Serializable) origVals).execute(function);
+        List results = (ArrayList) rs1.getResult();
+        assertEquals(((origVals.size() * 3) + 3), results.size());
         Iterator resultIterator = results.iterator();
         int exceptionCount = 0;
-        while(resultIterator.hasNext()){
+        while (resultIterator.hasNext()) {
           Object o = resultIterator.next();
-          if(o instanceof MyFunctionExecutionException){
+          if (o instanceof MyFunctionExecutionException) {
             exceptionCount++;
           }
         }
@@ -469,18 +421,15 @@ public class FunctionExecution_ExceptionDUnitTest extends
     final VM datastore2 = host.getVM(2);
     final VM datastore3 = host.getVM(3);
     getCache();
-    SerializableCallable dataStoreCreate = new SerializableCallable(
-        "Create PR with Function Factory") {
+    SerializableCallable dataStoreCreate = new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 10);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
         AttributesFactory raf = new AttributesFactory(ra);
         PartitionAttributesImpl pa = new PartitionAttributesImpl();
         pa.setAll(ra.getPartitionAttributes());
         raf.setPartitionAttributes(pa);
         getCache().createRegion(rName, raf.create());
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
         FunctionService.registerFunction(function);
         return Boolean.TRUE;
       }
@@ -490,13 +439,11 @@ public class FunctionExecution_ExceptionDUnitTest extends
     datastore2.invoke(dataStoreCreate);
     datastore3.invoke(dataStoreCreate);
 
-    Object o = datastore0.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    Object o = datastore0.invoke(new SerializableCallable("Create data, invoke exectuable") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
         FunctionService.registerFunction(function);
         Execution dataSet = FunctionService.onRegion(pr);
 
@@ -507,15 +454,14 @@ public class FunctionExecution_ExceptionDUnitTest extends
           pr.put(val, "MyValue_" + i);
         }
         ResultCollector rc2 = null;
-        ResultCollector rs1 = dataSet.withFilter(origVals).withArgs((Serializable)origVals).execute(
-            function);
-        List results = (ArrayList)rs1.getResult();
-        assertEquals(((origVals.size()*4)+4), results.size());
+        ResultCollector rs1 = dataSet.withFilter(origVals).withArgs((Serializable) origVals).execute(function);
+        List results = (ArrayList) rs1.getResult();
+        assertEquals(((origVals.size() * 4) + 4), results.size());
         Iterator resultIterator = results.iterator();
         int exceptionCount = 0;
-        while(resultIterator.hasNext()){
+        while (resultIterator.hasNext()) {
           Object o = resultIterator.next();
-          if(o instanceof MyFunctionExecutionException){
+          if (o instanceof MyFunctionExecutionException) {
             exceptionCount++;
           }
         }
@@ -538,25 +484,21 @@ public class FunctionExecution_ExceptionDUnitTest extends
     getCache();
     accessor.invoke(new SerializableCallable("Create PR") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 0);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 0);
         getCache().createRegion(rName, ra);
         return Boolean.TRUE;
       }
     });
 
-    SerializableCallable dataStoreCreate = new SerializableCallable(
-        "Create PR with Function Factory") {
+    SerializableCallable dataStoreCreate = new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 10);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
         AttributesFactory raf = new AttributesFactory(ra);
         PartitionAttributesImpl pa = new PartitionAttributesImpl();
         pa.setAll(ra.getPartitionAttributes());
         raf.setPartitionAttributes(pa);
         getCache().createRegion(rName, raf.create());
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
         FunctionService.registerFunction(function);
         return Boolean.TRUE;
       }
@@ -565,13 +507,11 @@ public class FunctionExecution_ExceptionDUnitTest extends
     datastore1.invoke(dataStoreCreate);
     datastore2.invoke(dataStoreCreate);
 
-    Object o = accessor.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    Object o = accessor.invoke(new SerializableCallable("Create data, invoke exectuable") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
         FunctionService.registerFunction(function);
         Execution dataSet = FunctionService.onRegion(pr);
 
@@ -582,13 +522,11 @@ public class FunctionExecution_ExceptionDUnitTest extends
           pr.put(val, "MyValue_" + i);
         }
         ResultCollector rc2 = null;
-        rc2 = dataSet.withFilter(origVals).withArgs(origVals).execute(
-            function.getId());
+        rc2 = dataSet.withFilter(origVals).withArgs(origVals).execute(function.getId());
         try {
-          ArrayList results = (ArrayList)rc2.getResult();
+          ArrayList results = (ArrayList) rc2.getResult();
           fail("Expecting Exception");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
           return Boolean.TRUE;
         }
@@ -608,18 +546,15 @@ public class FunctionExecution_ExceptionDUnitTest extends
     final VM datastore3 = host.getVM(3);
     getCache();
 
-    SerializableCallable dataStoreCreate = new SerializableCallable(
-        "Create PR with Function Factory") {
+    SerializableCallable dataStoreCreate = new SerializableCallable("Create PR with Function Factory") {
       public Object call() throws Exception {
-        RegionAttributes ra = PartitionedRegionTestHelper
-            .createRegionAttrsForPR(0, 10);
+        RegionAttributes ra = PartitionedRegionTestHelper.createRegionAttrsForPR(0, 10);
         AttributesFactory raf = new AttributesFactory(ra);
         PartitionAttributesImpl pa = new PartitionAttributesImpl();
         pa.setAll(ra.getPartitionAttributes());
         raf.setPartitionAttributes(pa);
         getCache().createRegion(rName, raf.create());
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
         FunctionService.registerFunction(function);
         return Boolean.TRUE;
       }
@@ -629,13 +564,11 @@ public class FunctionExecution_ExceptionDUnitTest extends
     datastore2.invoke(dataStoreCreate);
     datastore3.invoke(dataStoreCreate);
 
-    Object o = datastore0.invoke(new SerializableCallable(
-        "Create data, invoke exectuable") {
+    Object o = datastore0.invoke(new SerializableCallable("Create data, invoke exectuable") {
       public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion)getCache().getRegion(rName);
+        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(rName);
         DistributedSystem.setThreadsSocketPolicy(false);
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
         FunctionService.registerFunction(function);
         Execution dataSet = FunctionService.onRegion(pr);
 
@@ -646,13 +579,11 @@ public class FunctionExecution_ExceptionDUnitTest extends
           pr.put(val, "MyValue_" + i);
         }
         ResultCollector rc2 = null;
-        rc2 = dataSet.withFilter(origVals).withArgs(origVals).execute(
-            function.getId());
+        rc2 = dataSet.withFilter(origVals).withArgs(origVals).execute(function.getId());
         try {
-          ArrayList results = (ArrayList)rc2.getResult();
+          ArrayList results = (ArrayList) rc2.getResult();
           fail("Expecting Exception");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
           return Boolean.TRUE;
         }

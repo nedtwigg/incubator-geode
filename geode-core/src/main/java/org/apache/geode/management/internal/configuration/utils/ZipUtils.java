@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.configuration.utils;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,14 +38,14 @@ import org.apache.commons.io.IOUtils;
  */
 public class ZipUtils {
 
-  public static void zip(String sourceFolderPath , String targetFilePath) throws Exception {
+  public static void zip(String sourceFolderPath, String targetFilePath) throws Exception {
     File sourceFolder = new File(sourceFolderPath);
     File targetFile = new File(targetFilePath);
-    
+
     if (!sourceFolder.exists()) {
       throw new Exception("Source folder does not exist");
     }
-    
+
     FileOutputStream fos = new FileOutputStream(targetFile);
     ZipOutputStream zos = new ZipOutputStream(fos);
     URI baseURI = sourceFolder.toURI();
@@ -77,8 +76,7 @@ public class ZipUtils {
     IOUtils.closeQuietly(zos);
   }
 
-
-  public static void unzip (String zipFilePath, String outputFolderPath) throws IOException {
+  public static void unzip(String zipFilePath, String outputFolderPath) throws IOException {
     ZipFile zipFile = new ZipFile(zipFilePath);
     @SuppressWarnings("unchecked")
     Enumeration<ZipEntry> zipEntries = (Enumeration<ZipEntry>) zipFile.entries();
@@ -116,5 +114,3 @@ public class ZipUtils {
     }
   }
 }
-
-

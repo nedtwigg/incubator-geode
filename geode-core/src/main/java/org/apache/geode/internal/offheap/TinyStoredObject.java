@@ -41,11 +41,11 @@ import org.apache.geode.internal.cache.RegionEntryContext;
  */
 public class TinyStoredObject extends AbstractStoredObject {
   private final long address;
-  
+
   public TinyStoredObject(long addr) {
     this.address = addr;
   }
-  
+
   @Override
   public long getAddress() {
     return this.address;
@@ -61,11 +61,11 @@ public class TinyStoredObject extends AbstractStoredObject {
     }
     return false;
   }
-  
+
   @Override
   public int hashCode() {
     long value = getAddress();
-    return (int)(value ^ (value >>> 32));
+    return (int) (value ^ (value >>> 32));
   }
 
   @Override
@@ -75,11 +75,11 @@ public class TinyStoredObject extends AbstractStoredObject {
 
   public byte[] getDecompressedBytes(RegionEntryContext r) {
     if (isCompressed()) {
-        byte[] bytes = OffHeapRegionEntryHelper.decodeAddressToRawBytes(getAddress());
-        long time = r.getCachePerfStats().startDecompression();
-        bytes = r.getCompressor().decompress(bytes);
-        r.getCachePerfStats().endDecompression(time);
-        return bytes;
+      byte[] bytes = OffHeapRegionEntryHelper.decodeAddressToRawBytes(getAddress());
+      long time = r.getCachePerfStats().startDecompression();
+      bytes = r.getCompressor().decompress(bytes);
+      r.getCachePerfStats().endDecompression(time);
+      return bytes;
     }
     return getRawBytes();
   }
@@ -91,7 +91,7 @@ public class TinyStoredObject extends AbstractStoredObject {
   public byte[] getRawBytes() {
     return OffHeapRegionEntryHelper.decodeUncompressedAddressToBytes(getAddress());
   }
-  
+
   @Override
   public byte[] getSerializedValue() {
     byte[] value = getRawBytes();
@@ -107,8 +107,7 @@ public class TinyStoredObject extends AbstractStoredObject {
   }
 
   @Override
-  public void fillSerializedValue(BytesAndBitsForCompactor wrapper,
-      byte userBits) {
+  public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits) {
     byte[] value;
     if (isSerialized()) {
       value = getSerializedValue();
@@ -123,7 +122,7 @@ public class TinyStoredObject extends AbstractStoredObject {
   public int getValueSizeInBytes() {
     return 0;
   }
-  
+
   @Override
   public boolean isSerialized() {
     return OffHeapRegionEntryHelper.isSerialized(this.address);
@@ -183,7 +182,7 @@ public class TinyStoredObject extends AbstractStoredObject {
   public void readDataBytes(int offset, byte[] bytes, int bytesOffset, int size) {
     byte[] src = getRawBytes();
     int dstIdx = bytesOffset;
-    for (int i = offset; i < offset+size; i++) {
+    for (int i = offset; i < offset + size; i++) {
       bytes[dstIdx++] = src[i];
     }
   }

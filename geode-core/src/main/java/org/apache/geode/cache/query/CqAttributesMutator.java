@@ -25,14 +25,14 @@ package org.apache.geode.cache.query;
  * @since GemFire 5.5
  */
 public interface CqAttributesMutator {
-  
+
   /**
    * Adds a CQ listener to the end of the list of CQ listeners on this CqQuery.
    * @param aListener the user defined CQ listener to add to the CqQuery.
    * @throws IllegalArgumentException if <code>aListener</code> is null
    */
   public void addCqListener(CqListener aListener);
-  
+
   /**
    * Removes given CQ listener from the list of CQ listeners on this CqQuery.
    * Does nothing if the specified listener has not been added.
@@ -42,7 +42,7 @@ public interface CqAttributesMutator {
    * @throws IllegalArgumentException if <code>aListener</code> is null
    */
   public void removeCqListener(CqListener aListener);
-  
+
   /**
    * Adds the given set CqListner on this CQ. If the CQ already has CqListeners, this 
    * removes those old CQs and initializes with the newListeners.
@@ -52,5 +52,5 @@ public interface CqAttributesMutator {
    * has a null element
    */
   public void initCqListeners(CqListener[] newListeners);
-  
+
 }

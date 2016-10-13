@@ -49,20 +49,19 @@ import org.apache.geode.internal.logging.LogService;
 /**
  *
  */
-public class PrepareNewPersistentMemberMessage extends
-    HighPriorityDistributionMessage implements MessageWithReply {
+public class PrepareNewPersistentMemberMessage extends HighPriorityDistributionMessage implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private String regionPath;
   private PersistentMemberID oldId;
   private PersistentMemberID newId;
   private int processorId;
 
   public PrepareNewPersistentMemberMessage() {
-    
+
   }
-  
+
   public PrepareNewPersistentMemberMessage(String regionPath, PersistentMemberID oldId, PersistentMemberID newId, int processorId) {
     this.regionPath = regionPath;
     this.newId = newId;
@@ -70,9 +69,7 @@ public class PrepareNewPersistentMemberMessage extends
     this.processorId = processorId;
   }
 
-  public static void send(
-      Set<InternalDistributedMember> members, DM dm, String regionPath,
-      PersistentMemberID oldId, PersistentMemberID newId) throws ReplyException {
+  public static void send(Set<InternalDistributedMember> members, DM dm, String regionPath, PersistentMemberID oldId, PersistentMemberID newId) throws ReplyException {
     ReplyProcessor21 processor = new ReplyProcessor21(dm, members);
     PrepareNewPersistentMemberMessage msg = new PrepareNewPersistentMemberMessage(regionPath, oldId, newId, processor.getProcessorId());
     msg.setRecipients(members);
@@ -82,8 +79,8 @@ public class PrepareNewPersistentMemberMessage extends
 
   @Override
   protected void process(DistributionManager dm) {
-    int oldLevel =         // Set thread local flag to allow entrance through initialization Latch
-      LocalRegion.setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
+    int oldLevel = // Set thread local flag to allow entrance through initialization Latch
+        LocalRegion.setThreadInitLevelRequirement(LocalRegion.ANY_INIT);
 
     PersistentMemberState state = null;
     PersistentMemberID myId = null;
@@ -95,39 +92,35 @@ public class PrepareNewPersistentMemberMessage extends
       Cache cache = CacheFactory.getInstance(dm.getSystem());
       Region region = cache.getRegion(this.regionPath);
       PersistenceAdvisor persistenceAdvisor = null;
-      if(region instanceof DistributedRegion) {
+      if (region instanceof DistributedRegion) {
         persistenceAdvisor = ((DistributedRegion) region).getPersistenceAdvisor();
-      } else if ( region == null) {
+      } else if (region == null) {
         Bucket proxy = PartitionedRegionHelper.getProxyBucketRegion(GemFireCacheImpl.getInstance(), this.regionPath, false);
-        if(proxy != null) {
+        if (proxy != null) {
           persistenceAdvisor = proxy.getPersistenceAdvisor();
         }
       }
-      
-      if(persistenceAdvisor != null) {
+
+      if (persistenceAdvisor != null) {
         persistenceAdvisor.prepareNewMember(getSender(), oldId, newId);
       }
-      
+
     } catch (RegionDestroyedException e) {
       logger.debug("<RegionDestroyed> {}", this);
-    }
-    catch (CancelException e) {
+    } catch (CancelException e) {
       logger.debug("<CancelException> {}", this);
-    }
-    catch(VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch(Throwable t) {
+    } catch (Throwable t) {
       SystemFailure.checkFailure();
       exception = new ReplyException(t);
-    }
-    finally {
+    } finally {
       LocalRegion.setThreadInitLevelRequirement(oldLevel);
       ReplyMessage replyMsg = new ReplyMessage();
       replyMsg.setRecipient(getSender());
       replyMsg.setProcessorId(processorId);
-      if(exception != null) {
+      if (exception != null) {
         replyMsg.setException(exception);
       }
       dm.putOutgoing(replyMsg);
@@ -137,15 +130,14 @@ public class PrepareNewPersistentMemberMessage extends
   public int getDSFID() {
     return PREPARE_NEW_PERSISTENT_MEMBER_REQUEST;
   }
-  
+
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     regionPath = DataSerializer.readString(in);
     processorId = in.readInt();
     boolean hasOldId = in.readBoolean();
-    if(hasOldId) {
+    if (hasOldId) {
       oldId = new PersistentMemberID();
       InternalDataSerializer.invokeFromData(oldId, in);
     }
@@ -159,7 +151,7 @@ public class PrepareNewPersistentMemberMessage extends
     DataSerializer.writeString(regionPath, out);
     out.writeInt(processorId);
     out.writeBoolean(oldId != null);
-    if(oldId != null) {
+    if (oldId != null) {
       InternalDataSerializer.invokeToData(oldId, out);
     }
     InternalDataSerializer.invokeToData(newId, out);

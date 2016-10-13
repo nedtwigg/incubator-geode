@@ -33,8 +33,7 @@ public abstract class RoleException extends CacheRuntimeException {
    */
   public RoleException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>RoleException</code> with the
    * specified detail message.
@@ -43,7 +42,7 @@ public abstract class RoleException extends CacheRuntimeException {
   public RoleException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>RoleException</code> with the
    * specified detail message and cause.
@@ -53,7 +52,7 @@ public abstract class RoleException extends CacheRuntimeException {
   public RoleException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>RoleException</code> with the
    * specified cause.
@@ -64,4 +63,3 @@ public abstract class RoleException extends CacheRuntimeException {
   }
 
 }
-

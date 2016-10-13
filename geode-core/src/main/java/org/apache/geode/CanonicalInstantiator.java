@@ -59,7 +59,7 @@ public abstract class CanonicalInstantiator extends Instantiator {
   public CanonicalInstantiator(Class<? extends DataSerializable> c, int classId) {
     super(c, classId);
   }
-  
+
   /**
    * This method is not supported and if called will
    * throw UnsupportedOperationException.
@@ -71,6 +71,7 @@ public abstract class CanonicalInstantiator extends Instantiator {
   public final DataSerializable newInstance() {
     throw new UnsupportedOperationException();
   }
+
   /**
    * Creates a new "empty" instance of a <Code>DataSerializable</code>
    * class whose state will be filled in by invoking its 
@@ -80,6 +81,5 @@ public abstract class CanonicalInstantiator extends Instantiator {
    * @throws IOException if a read from <code>in</code> fails.
    * @since GemFire 5.1
    */
-  public abstract DataSerializable newInstance(DataInput in)
-    throws IOException;
+  public abstract DataSerializable newInstance(DataInput in) throws IOException;
 }

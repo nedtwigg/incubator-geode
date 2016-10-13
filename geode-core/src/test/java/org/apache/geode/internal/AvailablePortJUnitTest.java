@@ -36,21 +36,21 @@ import static org.junit.Assert.assertTrue;
  */
 @Category(IntegrationTest.class)
 public class AvailablePortJUnitTest {
-  
+
   private ServerSocket socket;
-  
+
   @After
   public void tearDown() throws IOException {
     if (socket != null) {
       socket.close();
     }
   }
-  
+
   @Test
   public void testIsPortAvailable() throws IOException {
     socket = new ServerSocket();
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    socket.bind(new InetSocketAddress(InetAddressUtil.LOOPBACK,  port));
+    socket.bind(new InetSocketAddress(InetAddressUtil.LOOPBACK, port));
 
     assertFalse(AvailablePort.isPortAvailable(port, AvailablePort.SOCKET, InetAddress.getByName(InetAddressUtil.LOOPBACK_ADDRESS)));
     //Get local host will return the hostname for the server, so this should succeed, since we're bound to the loopback address only.
@@ -58,15 +58,15 @@ public class AvailablePortJUnitTest {
     //This should test all interfaces.
     assertFalse(AvailablePort.isPortAvailable(port, AvailablePort.SOCKET));
   }
-  
+
   @Test
   public void testWildcardAddressBound() throws IOException {
     //assumeFalse(SystemUtils.isWindows()); // See bug #39368
     socket = new ServerSocket();
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    socket.bind(new InetSocketAddress((InetAddress)null, port));
+    socket.bind(new InetSocketAddress((InetAddress) null, port));
     System.out.println("bind addr=" + System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "bind-address"));
     assertFalse(AvailablePort.isPortAvailable(port, AvailablePort.SOCKET));
   }
-  
+
 }

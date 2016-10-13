@@ -43,8 +43,7 @@ import org.apache.geode.internal.cache.PartitionedRegionDataStore;
  * 
  * @since GemFire 5.0
  */
-public final class DestroyRegionOnDataStoreMessage extends PartitionMessage
-  {
+public final class DestroyRegionOnDataStoreMessage extends PartitionMessage {
 
   private Object callbackArg;
 
@@ -65,8 +64,7 @@ public final class DestroyRegionOnDataStoreMessage extends PartitionMessage
    * region
    * 
    */
-  public static void send(InternalDistributedMember recipient, PartitionedRegion r, Object callbackArg)
-  {
+  public static void send(InternalDistributedMember recipient, PartitionedRegion r, Object callbackArg) {
     DM dm = r.getDistributionManager();
     ReplyProcessor21 rp = new ReplyProcessor21(dm, recipient);
     int procId = rp.getProcessorId();
@@ -74,17 +72,15 @@ public final class DestroyRegionOnDataStoreMessage extends PartitionMessage
     r.getDistributionManager().putOutgoing(m);
     rp.waitForRepliesUninterruptibly();
   }
-  
+
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, 
-      PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
 
     // This call has come to an uninitialized region.
-    if(pr == null || !pr.isInitialized()) {
-    	return true;
+    if (pr == null || !pr.isInitialized()) {
+      return true;
     }
-    
-    
+
     org.apache.logging.log4j.Logger logger = pr.getLogger();
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace("DestroyRegionOnDataStore operateOnRegion: " + pr.getFullPath());
@@ -92,26 +88,24 @@ public final class DestroyRegionOnDataStoreMessage extends PartitionMessage
     pr.destroyRegion(callbackArg);
     return true;
   }
-  
+
   @Override
-  public int getProcessorType()
-  {
+  public int getProcessorType() {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
+
   public int getDSFID() {
     return PR_DESTROY_ON_DATA_STORE_MESSAGE;
   }
 
   @Override
-  public final void fromData(final DataInput in)
-      throws IOException, ClassNotFoundException {
+  public final void fromData(final DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    callbackArg= DataSerializer.readObject(in);
+    callbackArg = DataSerializer.readObject(in);
   }
 
   @Override
-  public final void toData(final DataOutput out)
-      throws IOException {
+  public final void toData(final DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(callbackArg, out);
   }

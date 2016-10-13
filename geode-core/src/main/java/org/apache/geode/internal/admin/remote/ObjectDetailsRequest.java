@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -67,8 +66,7 @@ public final class ObjectDetailsRequest extends RegionAdminRequest implements Ca
     if (cancelled) {
       return null;
     }
-    resp.buildDetails(this.getRegion(dm.getSystem()),
-                      this.objName, this.inspectionType);
+    resp.buildDetails(this.getRegion(dm.getSystem()), this.objName, this.inspectionType);
     if (cancelled) {
       return null;
     }
@@ -88,8 +86,7 @@ public final class ObjectDetailsRequest extends RegionAdminRequest implements Ca
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.objName = DataSerializer.readObject(in);
     this.inspectionType = in.readInt();
@@ -97,7 +94,6 @@ public final class ObjectDetailsRequest extends RegionAdminRequest implements Ca
 
   @Override
   public String toString() {
-    return "ObjectDetailsRequest from " + getRecipient() + " region=" +
-      getRegionName() + " object=" + this.objName;
+    return "ObjectDetailsRequest from " + getRecipient() + " region=" + getRegionName() + " object=" + this.objName;
   }
 }

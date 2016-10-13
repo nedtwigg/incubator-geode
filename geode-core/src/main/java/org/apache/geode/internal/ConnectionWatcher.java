@@ -31,7 +31,7 @@ public interface ConnectionWatcher {
    * to monitor the connection attempt.  
    */
   public void beforeConnect(Socket socket);
-  
+
   /**
    * this is invoked after the connection attempt has finished.  It can
    * be used to cancel the task started by beforeConnect

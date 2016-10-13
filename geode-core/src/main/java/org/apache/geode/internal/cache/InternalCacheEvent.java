@@ -25,31 +25,31 @@ import org.apache.geode.internal.cache.versions.VersionTag;
  * A CacheEvent, but the isGenerateCallbacks() is hidden from public consumption
  *
  */
-public interface InternalCacheEvent extends CacheEvent
-{
+public interface InternalCacheEvent extends CacheEvent {
   /**
    * Answers true if this event should generate user callbacks.
    * @return true if this event will generate user callbacks
    */
   public boolean isGenerateCallbacks();
-  
+
   /**
    * Answers true if this event is from a client
    * @deprecated as of 5.7 use {@link #hasClientOrigin} instead.
    */
   @Deprecated
   public boolean isBridgeEvent();
+
   /**
    * Answers true if this event is from a client
    * @since GemFire 5.7
    */
   public boolean hasClientOrigin();
-  
+
   /**
    * returns the ID associated with this event
    */
   public EventID getEventId();
-  
+
   /**
    * Returns the Operation type.
    * @return eventType
@@ -61,23 +61,23 @@ public interface InternalCacheEvent extends CacheEvent
    * @param operation the operation performed by this event
    */
   public void setEventType(EnumListenerEvent operation);
-  
+
   /**
    * returns the bridge context for the event, if any
    */
   public ClientProxyMembershipID getContext();
-  
+
   /**
    * set the client routing information for this event
    * @param info TODO
    */
   public void setLocalFilterInfo(FilterInfo info);
-  
+
   /**
    * get the local routing information for this event
    */
   public FilterInfo getLocalFilterInfo();
-  
+
   /**
    * get the version tag for the event
    */

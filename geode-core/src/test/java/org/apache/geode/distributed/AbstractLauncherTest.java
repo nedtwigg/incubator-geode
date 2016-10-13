@@ -49,22 +49,14 @@ public class AbstractLauncherTest {
   public void testIsAttachAPINotFound() {
     final AbstractLauncher<?> launcher = createAbstractLauncher("012", "TestMember");
 
-    assertTrue(launcher.isAttachAPINotFound(new NoClassDefFoundError(
-      "Exception in thread \"main\" java.lang.NoClassDefFoundError: com/sun/tools/attach/AttachNotSupportedException")));
-    assertTrue(launcher.isAttachAPINotFound(new ClassNotFoundException(
-      "Caused by: java.lang.ClassNotFoundException: com.sun.tools.attach.AttachNotSupportedException")));
-    assertTrue(launcher.isAttachAPINotFound(new NoClassDefFoundError(
-      "Exception in thread \"main\" java.lang.NoClassDefFoundError: com/ibm/tools/attach/AgentNotSupportedException")));
-    assertTrue(launcher.isAttachAPINotFound(new ClassNotFoundException(
-      "Caused by: java.lang.ClassNotFoundException: com.ibm.tools.attach.AgentNotSupportedException")));
-    assertFalse(launcher.isAttachAPINotFound(new IllegalArgumentException(
-      "Caused by: java.lang.ClassNotFoundException: com.sun.tools.attach.AttachNotSupportedException")));
-    assertFalse(launcher.isAttachAPINotFound(new IllegalStateException(
-      "Caused by: java.lang.ClassNotFoundException: com.ibm.tools.attach.AgentNotSupportedException")));
-    assertFalse(launcher.isAttachAPINotFound(new NoClassDefFoundError(
-      "Exception in thread \"main\" java.lang.NoClassDefFoundError: com/companyx/app/service/MyServiceClass")));
-    assertFalse(launcher.isAttachAPINotFound(new ClassNotFoundException(
-      "Caused by: java.lang.ClassNotFoundException: com.companyx.app.attach.NutsNotAttachedException")));
+    assertTrue(launcher.isAttachAPINotFound(new NoClassDefFoundError("Exception in thread \"main\" java.lang.NoClassDefFoundError: com/sun/tools/attach/AttachNotSupportedException")));
+    assertTrue(launcher.isAttachAPINotFound(new ClassNotFoundException("Caused by: java.lang.ClassNotFoundException: com.sun.tools.attach.AttachNotSupportedException")));
+    assertTrue(launcher.isAttachAPINotFound(new NoClassDefFoundError("Exception in thread \"main\" java.lang.NoClassDefFoundError: com/ibm/tools/attach/AgentNotSupportedException")));
+    assertTrue(launcher.isAttachAPINotFound(new ClassNotFoundException("Caused by: java.lang.ClassNotFoundException: com.ibm.tools.attach.AgentNotSupportedException")));
+    assertFalse(launcher.isAttachAPINotFound(new IllegalArgumentException("Caused by: java.lang.ClassNotFoundException: com.sun.tools.attach.AttachNotSupportedException")));
+    assertFalse(launcher.isAttachAPINotFound(new IllegalStateException("Caused by: java.lang.ClassNotFoundException: com.ibm.tools.attach.AgentNotSupportedException")));
+    assertFalse(launcher.isAttachAPINotFound(new NoClassDefFoundError("Exception in thread \"main\" java.lang.NoClassDefFoundError: com/companyx/app/service/MyServiceClass")));
+    assertFalse(launcher.isAttachAPINotFound(new ClassNotFoundException("Caused by: java.lang.ClassNotFoundException: com.companyx.app.attach.NutsNotAttachedException")));
   }
 
   @Test
@@ -240,12 +232,9 @@ public class AbstractLauncherTest {
     assertEquals("1 hour 5 minutes 1 second", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(60 * 65 * 1000l + 1000l));
     assertEquals("1 hour 5 minutes 10 seconds", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(60 * 65 * 1000l + 10000l));
     assertEquals("1 hour 59 minutes 11 seconds", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(60 * 119 * 1000l + 11000l));
-    assertEquals("1 day 1 hour 1 minute 1 second", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(
-      TimeUnit.DAYS.toMillis(1) + TimeUnit.HOURS.toMillis(1) + TimeUnit.MINUTES.toMillis(1) + TimeUnit.SECONDS.toMillis(1)));
-    assertEquals("1 day 5 hours 15 minutes 45 seconds", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(
-      TimeUnit.DAYS.toMillis(1) + TimeUnit.HOURS.toMillis(5) + TimeUnit.MINUTES.toMillis(15) + TimeUnit.SECONDS.toMillis(45)));
-    assertEquals("2 days 1 hour 30 minutes 1 second", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(
-      TimeUnit.DAYS.toMillis(2) + TimeUnit.HOURS.toMillis(1) + TimeUnit.MINUTES.toMillis(30) + TimeUnit.SECONDS.toMillis(1)));
+    assertEquals("1 day 1 hour 1 minute 1 second", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(TimeUnit.DAYS.toMillis(1) + TimeUnit.HOURS.toMillis(1) + TimeUnit.MINUTES.toMillis(1) + TimeUnit.SECONDS.toMillis(1)));
+    assertEquals("1 day 5 hours 15 minutes 45 seconds", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(TimeUnit.DAYS.toMillis(1) + TimeUnit.HOURS.toMillis(5) + TimeUnit.MINUTES.toMillis(15) + TimeUnit.SECONDS.toMillis(45)));
+    assertEquals("2 days 1 hour 30 minutes 1 second", AbstractLauncher.ServiceState.toDaysHoursMinutesSeconds(TimeUnit.DAYS.toMillis(2) + TimeUnit.HOURS.toMillis(1) + TimeUnit.MINUTES.toMillis(30) + TimeUnit.SECONDS.toMillis(1)));
   }
 
   private static final class FakeServiceLauncher extends AbstractLauncher<String> {

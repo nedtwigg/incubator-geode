@@ -32,8 +32,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class AbstractCliAroundInterceptorJUnitTest {
 
   @Test
-  public void isNullOrEmpty()
-  {
+  public void isNullOrEmpty() {
     AbstractCliAroundInterceptor interceptor = new AbstractCliAroundInterceptor() {
       @Override
       public Result preExecution(final GfshParseResult parseResult) {
@@ -47,7 +46,7 @@ public class AbstractCliAroundInterceptorJUnitTest {
     };
     String empty = "";
     @SuppressWarnings("RedundantStringConstructorCall")
-    String otherEmpty = new String(empty);  // create a new instance, not another reference
+    String otherEmpty = new String(empty); // create a new instance, not another reference
 
     //noinspection StringEquality
     assertFalse(empty == otherEmpty);

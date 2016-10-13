@@ -51,7 +51,6 @@ public class LRemExecutor extends ListExecutor {
 
     int count;
 
-
     checkDataType(key, RedisDataType.REDIS_LIST, context);
     Region<Integer, ByteArrayWrapper> keyRegion = getRegion(context, key);
 
@@ -66,7 +65,7 @@ public class LRemExecutor extends ListExecutor {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
       return;
     }
-    
+
     List<Struct> removeList;
     try {
       removeList = getRemoveList(context, key, new ByteArrayWrapper(value), count);
@@ -75,13 +74,13 @@ public class LRemExecutor extends ListExecutor {
     }
 
     int numRemoved = 0;
-    
-    if (removeList ==  null) {
+
+    if (removeList == null) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numRemoved));
       return;
     }
 
-    for (Struct entry: removeList) {
+    for (Struct entry : removeList) {
       Integer removeKey = (Integer) entry.getFieldValues()[0];
       Object oldVal = keyRegion.remove(removeKey);
       if (oldVal != null)
@@ -95,16 +94,15 @@ public class LRemExecutor extends ListExecutor {
     Query query;
     if (count > 0) {
       query = getQuery(key, ListQuery.LREMG, context);
-      params = new Object[]{value, Integer.valueOf(count)};
+      params = new Object[] { value, Integer.valueOf(count) };
     } else if (count < 0) {
       query = getQuery(key, ListQuery.LREML, context);
-      params = new Object[]{value, Integer.valueOf(-count)};
+      params = new Object[] { value, Integer.valueOf(-count) };
     } else {
       query = getQuery(key, ListQuery.LREME, context);
-      params = new Object[]{value};
+      params = new Object[] { value };
     }
 
-    
     SelectResults<Struct> results = (SelectResults<Struct>) query.execute(params);
 
     if (results == null || results.isEmpty()) {

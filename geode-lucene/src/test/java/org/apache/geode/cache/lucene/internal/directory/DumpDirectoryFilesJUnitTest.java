@@ -75,7 +75,7 @@ public class DumpDirectoryFilesJUnitTest {
     Region bucket = mock(Region.class);
     when(bucket.getFullPath()).thenReturn(bucketName);
 
-    when(context.getArguments()).thenReturn(new String[] {directoryName, indexName});
+    when(context.getArguments()).thenReturn(new String[] { directoryName, indexName });
     when(context.getResultSender()).thenReturn(sender);
     when(context.getDataSet()).thenReturn(region);
     when(region.getCache()).thenReturn(cache);
@@ -102,7 +102,7 @@ public class DumpDirectoryFilesJUnitTest {
   @Test
   public void shouldThrowIllegalStateWhenMissingIndex() throws BucketNotFoundException {
     DumpDirectoryFiles dump = new DumpDirectoryFiles();
-    when(context.getArguments()).thenReturn(new String[] {"badDirectory", "badIndex"});
+    when(context.getArguments()).thenReturn(new String[] { "badDirectory", "badIndex" });
     expectedException.expect(IllegalStateException.class);
     dump.execute(context);
   }
@@ -118,10 +118,9 @@ public class DumpDirectoryFilesJUnitTest {
   @Test
   public void shouldThrowIllegalArgumentWhenMissingArgument() throws BucketNotFoundException {
     DumpDirectoryFiles dump = new DumpDirectoryFiles();
-    when(context.getArguments()).thenReturn(new String[] {"not enough args"});
+    when(context.getArguments()).thenReturn(new String[] { "not enough args" });
     expectedException.expect(IllegalArgumentException.class);
     dump.execute(context);
   }
-
 
 }

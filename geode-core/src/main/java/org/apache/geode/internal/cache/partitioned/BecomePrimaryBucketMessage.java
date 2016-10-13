@@ -57,21 +57,17 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 public class BecomePrimaryBucketMessage extends PartitionMessage {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private int bucketId;
   private boolean isRebalance;
-  
+
   /**
    * Empty constructor to satisfy {@link DataSerializer} requirements
    */
   public BecomePrimaryBucketMessage() {
   }
 
-  private BecomePrimaryBucketMessage(InternalDistributedMember recipient, 
-                                     int regionId, 
-                                     ReplyProcessor21 processor,
-                                     int bucketId,
-                                     boolean isRebalance) {
+  private BecomePrimaryBucketMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId, boolean isRebalance) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
     this.isRebalance = isRebalance;
@@ -86,22 +82,14 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
    * @param isRebalance true if directed to become primary by rebalancing
    * @return the processor used to wait for the response
    */
-  public static BecomePrimaryBucketResponse send(
-      InternalDistributedMember recipient, 
-      PartitionedRegion pr, 
-      int bid,
-      boolean isRebalance) {
-    
-    Assert.assertTrue(recipient != null, 
-        "BecomePrimaryBucketMessage NULL recipient");
-    
-    BecomePrimaryBucketResponse response = new BecomePrimaryBucketResponse(
-        pr.getSystem(), recipient, pr);
-    BecomePrimaryBucketMessage msg = new BecomePrimaryBucketMessage(
-        recipient, pr.getPRId(), response, bid, isRebalance);
+  public static BecomePrimaryBucketResponse send(InternalDistributedMember recipient, PartitionedRegion pr, int bid, boolean isRebalance) {
 
-    Set<InternalDistributedMember> failures = 
-      pr.getDistributionManager().putOutgoing(msg);
+    Assert.assertTrue(recipient != null, "BecomePrimaryBucketMessage NULL recipient");
+
+    BecomePrimaryBucketResponse response = new BecomePrimaryBucketResponse(pr.getSystem(), recipient, pr);
+    BecomePrimaryBucketMessage msg = new BecomePrimaryBucketMessage(recipient, pr.getPRId(), response, bid, isRebalance);
+
+    Set<InternalDistributedMember> failures = pr.getDistributionManager().putOutgoing(msg);
     if (failures != null && failures.size() > 0) {
       //throw new ForceReattemptException("Failed sending <" + msg + ">");
       return null;
@@ -110,8 +98,7 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     return response;
   }
 
-  public BecomePrimaryBucketMessage(DataInput in) 
-  throws IOException, ClassNotFoundException {
+  public BecomePrimaryBucketMessage(DataInput in) throws IOException, ClassNotFoundException {
     fromData(in);
   }
 
@@ -121,7 +108,7 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     // send out a DeposePrimaryBucketMessage and wait for the reply
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
-  
+
   @Override
   public boolean isSevereAlertCompatible() {
     // allow forced-disconnect processing for all cache op messages
@@ -129,28 +116,23 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm,
-                                                     PartitionedRegion region, 
-                                                     long startTime) 
-                                              throws ForceReattemptException {
-    
+  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion region, long startTime) throws ForceReattemptException {
+
     // this is executing in the WAITING_POOL_EXECUTOR
     byte responseCode = BecomePrimaryBucketReplyMessage.NOT_SECONDARY;
-    BucketAdvisor bucketAdvisor = 
-        region.getRegionAdvisor().getBucketAdvisor(this.bucketId);
-    
+    BucketAdvisor bucketAdvisor = region.getRegionAdvisor().getBucketAdvisor(this.bucketId);
+
     if (bucketAdvisor.isHosting()) {
       if (bucketAdvisor.becomePrimary(this.isRebalance)) { // sends a request/reply message
         responseCode = BecomePrimaryBucketReplyMessage.OK;
       }
     }
-    
+
     region.getPrStats().endPartitionMessagesProcessing(startTime);
-    BecomePrimaryBucketReplyMessage.send(
-        getSender(), getProcessorId(), dm, null, responseCode);
-    
+    BecomePrimaryBucketReplyMessage.send(getSender(), getProcessorId(), dm, null, responseCode);
+
     return false;
-    
+
   }
 
   @Override
@@ -165,8 +147,7 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
   }
 
   @Override
-  public void fromData(DataInput in) 
-  throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.bucketId = in.readInt();
     this.isRebalance = in.readBoolean();
@@ -179,46 +160,37 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     out.writeBoolean(this.isRebalance);
   }
 
-  public static final class BecomePrimaryBucketReplyMessage 
-  extends ReplyMessage {
-    
+  public static final class BecomePrimaryBucketReplyMessage extends ReplyMessage {
+
     static final byte NOT_SECONDARY = 0;
     static final byte OK = 1;
-    
+
     private byte responseCode = NOT_SECONDARY;
-    
+
     /**
      * Empty constructor to conform to DataSerializable interface
      */
     public BecomePrimaryBucketReplyMessage() {
     }
 
-    public BecomePrimaryBucketReplyMessage(DataInput in)
-        throws IOException, ClassNotFoundException {
+    public BecomePrimaryBucketReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
     }
 
-    private BecomePrimaryBucketReplyMessage(
-        int processorId, ReplyException re, byte responseCode) {
+    private BecomePrimaryBucketReplyMessage(int processorId, ReplyException re, byte responseCode) {
       setProcessorId(processorId);
       setException(re);
       this.responseCode = responseCode;
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient,
-                            int processorId, 
-                            DM dm, 
-                            ReplyException re,
-                            byte responseCode) {
-      Assert.assertTrue(recipient != null,
-          "BecomePrimaryBucketReplyMessage NULL recipient");
-      BecomePrimaryBucketReplyMessage m = 
-          new BecomePrimaryBucketReplyMessage(processorId, re, responseCode);
+    public static void send(InternalDistributedMember recipient, int processorId, DM dm, ReplyException re, byte responseCode) {
+      Assert.assertTrue(recipient != null, "BecomePrimaryBucketReplyMessage NULL recipient");
+      BecomePrimaryBucketReplyMessage m = new BecomePrimaryBucketReplyMessage(processorId, re, responseCode);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
-    
+
     boolean isSuccess() {
       return this.responseCode == OK;
     }
@@ -227,8 +199,7 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     public void process(final DM dm, final ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "BecomePrimaryBucketReplyMessage process invoking reply processor with processorId:{}",
-            this.processorId);
+        logger.trace(LogMarker.DM, "BecomePrimaryBucketReplyMessage process invoking reply processor with processorId:{}", this.processorId);
       }
 
       if (processor == null) {
@@ -257,8 +228,7 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.responseCode = in.readByte();
     }
@@ -266,10 +236,7 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("BecomePrimaryBucketReplyMessage ")
-        .append("processorid=").append(this.processorId)
-        .append(" reply to sender ").append(this.getSender())
-        .append(" returning responseCode=").append(this.responseCode);
+      sb.append("BecomePrimaryBucketReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender()).append(" returning responseCode=").append(this.responseCode);
       return sb.toString();
     }
   }
@@ -279,12 +246,10 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
    * BecomePrimaryBucketReplyMessage.
    */
   public static class BecomePrimaryBucketResponse extends PartitionResponse {
-    
-    private volatile boolean success; 
 
-    public BecomePrimaryBucketResponse(InternalDistributedSystem ds,
-                                       InternalDistributedMember recipient, 
-                                       PartitionedRegion theRegion) {
+    private volatile boolean success;
+
+    public BecomePrimaryBucketResponse(InternalDistributedSystem ds, InternalDistributedMember recipient, PartitionedRegion theRegion) {
       super(ds, recipient);
     }
 
@@ -292,20 +257,17 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     public void process(DistributionMessage msg) {
       try {
         if (msg instanceof BecomePrimaryBucketReplyMessage) {
-          BecomePrimaryBucketReplyMessage reply = 
-              (BecomePrimaryBucketReplyMessage)msg;
+          BecomePrimaryBucketReplyMessage reply = (BecomePrimaryBucketReplyMessage) msg;
           this.success = reply.isSuccess();
           if (reply.isSuccess()) {
             if (logger.isTraceEnabled(LogMarker.DM)) {
               logger.trace(LogMarker.DM, "BecomePrimaryBucketResponse return OK");
             }
-          }
-          else if (logger.isTraceEnabled(LogMarker.DM)) {
+          } else if (logger.isTraceEnabled(LogMarker.DM)) {
             logger.trace(LogMarker.DM, "BecomePrimaryBucketResponse return NOT_PRIMARY");
           }
         }
-      }
-      finally {
+      } finally {
         super.process(msg);
       }
     }
@@ -318,7 +280,7 @@ public class BecomePrimaryBucketMessage extends PartitionMessage {
     protected void processException(ReplyException ex) {
       logger.debug("BecomePrimaryBucketMessage ignoring exception {}", ex.getMessage(), ex);
     }
-    
+
     /**
      * @return true if recipient successfully became or was already the primary
      */

@@ -28,8 +28,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.internal.cache.wan.concurrent.ConcurrentParallelGatewaySenderOperation_2_DUnitTest;
 
 @Category(DistributedTest.class)
-public class ConcurrentParallelGatewaySenderOperation_2_OffHeapDUnitTest
-    extends ConcurrentParallelGatewaySenderOperation_2_DUnitTest {
+public class ConcurrentParallelGatewaySenderOperation_2_OffHeapDUnitTest extends ConcurrentParallelGatewaySenderOperation_2_DUnitTest {
 
   public ConcurrentParallelGatewaySenderOperation_2_OffHeapDUnitTest() {
     super();

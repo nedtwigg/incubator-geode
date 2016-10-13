@@ -32,6 +32,7 @@ import org.apache.geode.distributed.internal.ServerLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Does a region registerInterest on a server
  * @since GemFire 5.7
@@ -49,20 +50,11 @@ public class RegisterInterestOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List execute(ExecutablePool pool,
-                             String region,
-                             Object key,
-                             int interestType,
-                             InterestResultPolicy policy,
-                             boolean isDurable,
-                             boolean receiveUpdatesAsInvalidates,
-                             byte regionDataPolicy)
-  {
-    AbstractOp op = new RegisterInterestOpImpl(region, key,
-        interestType, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
-    return  (List) pool.executeOnQueuesAndReturnPrimaryResult(op);
+  public static List execute(ExecutablePool pool, String region, Object key, int interestType, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
+    AbstractOp op = new RegisterInterestOpImpl(region, key, interestType, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+    return (List) pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
-                                                               
+
   /**
    * Does a region registerInterest on a server using connections from the given pool
    * to communicate with the given server location.
@@ -76,22 +68,11 @@ public class RegisterInterestOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List executeOn(ServerLocation sl,
-                               ExecutablePool pool,
-                               String region,
-                               Object key,
-                               int interestType,
-                               InterestResultPolicy policy,
-                               boolean isDurable,
-                               boolean receiveUpdatesAsInvalidates,
-                               byte regionDataPolicy)
-  {
-    AbstractOp op = new RegisterInterestOpImpl(region, key,
-        interestType, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
-    return  (List) pool.executeOn(sl, op);
+  public static List executeOn(ServerLocation sl, ExecutablePool pool, String region, Object key, int interestType, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
+    AbstractOp op = new RegisterInterestOpImpl(region, key, interestType, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+    return (List) pool.executeOn(sl, op);
   }
 
-  
   /**
    * Does a region registerInterest on a server using connections from the given pool
    * to communicate with the given server location.
@@ -105,56 +86,41 @@ public class RegisterInterestOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List executeOn(Connection conn,
-                               ExecutablePool pool,
-                               String region,
-                               Object key,
-                               int interestType,
-                               InterestResultPolicy policy,
-                               boolean isDurable,
-                               boolean receiveUpdatesAsInvalidates,
-                               byte regionDataPolicy)
-  {
-    AbstractOp op = new RegisterInterestOpImpl(region, key,
-        interestType, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
-    return  (List) pool.executeOn(conn, op);
+  public static List executeOn(Connection conn, ExecutablePool pool, String region, Object key, int interestType, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
+    AbstractOp op = new RegisterInterestOpImpl(region, key, interestType, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+    return (List) pool.executeOn(conn, op);
   }
 
-  
   private RegisterInterestOp() {
     // no instances allowed
   }
 
   protected static class RegisterInterestOpImpl extends AbstractOp {
     protected String region;
+
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public RegisterInterestOpImpl(String region,
-                                  Object key,
-                                  int interestType,
-                                  InterestResultPolicy policy,
-                                  boolean isDurable,
-                                  boolean receiveUpdatesAsInvalidates,
-                                  byte regionDataPolicy) {
+    public RegisterInterestOpImpl(String region, Object key, int interestType, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
       super(MessageType.REGISTER_INTEREST, 7);
       this.region = region;
       getMessage().addStringPart(region);
       getMessage().addIntPart(interestType);
       getMessage().addObjPart(policy);
       {
-        byte durableByte = (byte)(isDurable ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] {durableByte});
+        byte durableByte = (byte) (isDurable ? 0x01 : 0x00);
+        getMessage().addBytesPart(new byte[] { durableByte });
       }
       getMessage().addStringOrObjPart(key);
-      byte notifyByte = (byte)(receiveUpdatesAsInvalidates ? 0x01 : 0x00);
-      getMessage().addBytesPart(new byte[] {notifyByte});
+      byte notifyByte = (byte) (receiveUpdatesAsInvalidates ? 0x01 : 0x00);
+      getMessage().addBytesPart(new byte[] { notifyByte });
 
       // The second byte '1' below tells server to serialize values in VersionObjectList.
       // Java clients always expect serializeValues to be true in VersionObjectList unlike Native clients.
       // This was being sent as part of GetAllOp prior to fixing #43684.
-      getMessage().addBytesPart(new byte[] {regionDataPolicy, (byte)0x01});
+      getMessage().addBytesPart(new byte[] { regionDataPolicy, (byte) 0x01 });
     }
+
     /**
      * This constructor is used by our subclass CreateCQWithIROpImpl
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -164,33 +130,33 @@ public class RegisterInterestOp {
       this.region = region;
     }
 
-    @Override  
+    @Override
     protected Message createResponseMessage() {
       return new ChunkedMessage(1, Version.CURRENT);
     }
-    
+
     @Override
     protected Object processResponse(Message msg) throws Exception {
       throw new UnsupportedOperationException();
     }
 
-    @Override  
+    @Override
     protected Object processResponse(Message m, Connection con) throws Exception {
-      ChunkedMessage msg = (ChunkedMessage)m;
+      ChunkedMessage msg = (ChunkedMessage) m;
       msg.readHeader();
       switch (msg.getMessageType()) {
       case MessageType.RESPONSE_FROM_PRIMARY: {
         ArrayList serverKeys = new ArrayList();
         VersionedObjectList serverEntries = null;
         LocalRegion r = null;
-        
+
         try {
-          r = (LocalRegion)GemFireCacheImpl.getInstance().getRegion(this.region);
-        }catch(Exception ex) {
-		//ignore but read message
-	//	GemFireCacheImpl.getInstance().getLogger().config("hitesh error " + ex.getClass());
+          r = (LocalRegion) GemFireCacheImpl.getInstance().getRegion(this.region);
+        } catch (Exception ex) {
+          //ignore but read message
+          //	GemFireCacheImpl.getInstance().getLogger().config("hitesh error " + ex.getClass());
         }
-        
+
         ArrayList list = new ArrayList();
         ArrayList listOfList = new ArrayList();
         listOfList.add(list);
@@ -206,31 +172,30 @@ public class RegisterInterestOp {
           Object partObj = part.getObject();
           if (partObj instanceof Throwable) {
             String s = "While performing a remote " + getOpName();
-            throw new ServerOperationException(s, (Throwable)partObj);
+            throw new ServerOperationException(s, (Throwable) partObj);
             // Get the exception toString part.
             // This was added for c++ thin client and not used in java
             //Part exceptionToStringPart = msg.getPart(1);
-          }
-          else {
+          } else {
             if (partObj instanceof VersionedObjectList) {
               if (serverEntries == null) {
                 serverEntries = new VersionedObjectList(true);
               }
-              ((VersionedObjectList)partObj).replaceNullIDs(con.getEndpoint().getMemberId());
+              ((VersionedObjectList) partObj).replaceNullIDs(con.getEndpoint().getMemberId());
               // serverEntries.addAll((VersionedObjectList)partObj);
               list.clear();
               list.add(partObj);
 
-	      if(r != null) {
-		try {      
+              if (r != null) {
+                try {
                   r.refreshEntriesFromServerKeys(con, listOfList, InterestResultPolicy.KEYS_VALUES);
-		}catch(Exception ex) {
-	//	  GemFireCacheImpl.getInstance().getLogger().config("hitesh error2 " + ex.getClass());
-		}
-	      }
+                } catch (Exception ex) {
+                  //	  GemFireCacheImpl.getInstance().getLogger().config("hitesh error2 " + ex.getClass());
+                }
+              }
             } else {
               // Add the result to the list of results
-              serverKeys.add((List)partObj);
+              serverKeys.add((List) partObj);
             }
           }
 
@@ -254,11 +219,10 @@ public class RegisterInterestOp {
         // Get the exception toString part.
         // This was added for c++ thin client and not used in java
         //Part exceptionToStringPart = msg.getPart(1);
-        Object obj = part.getObject();
-        {
-          String s = this + ": While performing a remote " + getOpName();
-          throw new ServerOperationException(s, (Throwable) obj);
-        }
+        Object obj = part.getObject(); {
+        String s = this + ": While performing a remote " + getOpName();
+        throw new ServerOperationException(s, (Throwable) obj);
+      }
       case MessageType.REGISTER_INTEREST_DATA_ERROR:
         // Read the chunk
         msg.receiveChunk();
@@ -268,26 +232,30 @@ public class RegisterInterestOp {
         String s = this + ": While performing a remote " + getOpName() + ": ";
         throw new ServerOperationException(s + errorMessage);
       default:
-        throw new InternalGemFireError("Unknown message type "
-                                       + msg.getMessageType());
+        throw new InternalGemFireError("Unknown message type " + msg.getMessageType());
       }
     }
+
     protected String getOpName() {
       return "registerInterest";
     }
-    @Override  
+
+    @Override
     protected boolean isErrorResponse(int msgType) {
       return msgType == MessageType.REGISTER_INTEREST_DATA_ERROR;
     }
-    @Override  
+
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startRegisterInterest();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endRegisterInterestSend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endRegisterInterest(start, hasTimedOut(), hasFailed());
     }

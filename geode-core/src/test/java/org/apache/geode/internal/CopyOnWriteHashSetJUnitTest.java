@@ -42,7 +42,7 @@ public class CopyOnWriteHashSetJUnitTest {
     Set<String> snap = set.getSnapshot();
     Set<String> copy = new HashSet<String>(set);
     set.add("b");
-    
+
     assertEquals(copy, snap);
   }
 
@@ -56,39 +56,39 @@ public class CopyOnWriteHashSetJUnitTest {
     assertEquals("a", itr.next());
     assertFalse(itr.hasNext());
     assertEquals(1, set.size());
-    
-    assertTrue(set.addAll(Arrays.asList(new String[] {"b", "c", "d"})));
+
+    assertTrue(set.addAll(Arrays.asList(new String[] { "b", "c", "d" })));
     assertTrue(set.contains("b"));
     assertTrue(set.contains("c"));
     assertTrue(set.contains("d"));
-    
-    assertTrue(set.retainAll(Arrays.asList(new String[] {"a", "b", "c"})));
-    assertFalse(set.retainAll(Arrays.asList(new String[] {"a", "b", "c"})));
-    
+
+    assertTrue(set.retainAll(Arrays.asList(new String[] { "a", "b", "c" })));
+    assertFalse(set.retainAll(Arrays.asList(new String[] { "a", "b", "c" })));
+
     HashSet<String> test = new HashSet<String>();
-    test.addAll(Arrays.asList(new String[] {"a", "b", "c"}));
+    test.addAll(Arrays.asList(new String[] { "a", "b", "c" }));
     assertEquals(test, set);
     assertEquals(set, test);
     assertEquals(test.toString(), set.toString());
     assertEquals(Arrays.asList(test.toArray()), Arrays.asList(set.toArray()));
     assertEquals(Arrays.asList(test.toArray(new String[0])), Arrays.asList(set.toArray(new String[0])));
-    
+
     assertTrue(set.containsAll(test));
     assertTrue(set.containsAll(test));
-    
+
     set.remove("b");
-    
+
     assertFalse(set.containsAll(test));
-    
+
     set.clear();
-    
-    set.addAll(Arrays.asList(new String[] {"b", "c", "d"}));
-    
-    assertTrue(set.removeAll(Arrays.asList(new String[] {"b", "c"})));
-    assertFalse(set.removeAll(Arrays.asList(new String[] {"b", "c"})));
-    
-    assertEquals(new HashSet(Arrays.asList(new String[] {"d"})), set);
-    
+
+    set.addAll(Arrays.asList(new String[] { "b", "c", "d" }));
+
+    assertTrue(set.removeAll(Arrays.asList(new String[] { "b", "c" })));
+    assertFalse(set.removeAll(Arrays.asList(new String[] { "b", "c" })));
+
+    assertEquals(new HashSet(Arrays.asList(new String[] { "d" })), set);
+
     ByteArrayOutputStream boas = new ByteArrayOutputStream();
     ObjectOutputStream out = new ObjectOutputStream(boas);
     out.writeObject(set);

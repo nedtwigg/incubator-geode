@@ -24,9 +24,9 @@ import org.apache.geode.cache.query.internal.cq.ServerCQ;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 public interface CqServiceFactory {
-  
+
   public void initialize();
-  
+
   /**
    * Create a new CqService for the given cache
    */

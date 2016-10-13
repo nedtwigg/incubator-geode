@@ -25,10 +25,10 @@ import org.apache.geode.cache.Region;
  *
  */
 public class FilterByPath implements RegionFilter {
-  
+
   private final Set<String> included;
   private final Set<String> excluded;
-  
+
   public FilterByPath(Set<String> included, Set<String> excluded) {
     super();
     if (included != null) {
@@ -36,7 +36,7 @@ public class FilterByPath implements RegionFilter {
       for (String regionName : included) {
         this.included.add((!regionName.startsWith("/")) ? ("/" + regionName) : regionName);
       }
-    }else{
+    } else {
       this.included = null;
     }
     if (excluded != null) {
@@ -44,21 +44,20 @@ public class FilterByPath implements RegionFilter {
       for (String regionName : excluded) {
         this.excluded.add((!regionName.startsWith("/")) ? ("/" + regionName) : regionName);
       }
-    }else{
+    } else {
       this.excluded = null;
     }
   }
 
-
   public boolean include(Region<?, ?> region) {
     String fullPath = region.getFullPath();
-    if(included != null) {
+    if (included != null) {
       return included.contains(fullPath);
     }
-    if(excluded != null) {
+    if (excluded != null) {
       return !excluded.contains(fullPath);
     }
-    
+
     return true;
   }
 

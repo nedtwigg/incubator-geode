@@ -52,7 +52,7 @@ public class UpdateVersionJUnitTest {
     updateTimeStampEvent.setOperation(Operation.UPDATE_VERSION_STAMP);
     updateTimeStampEvent.setRegion(region);
     if (region instanceof PartitionedRegion) {
-      updateTimeStampEvent.setKeyInfo(((PartitionedRegion)region).getKeyInfo(key));
+      updateTimeStampEvent.setKeyInfo(((PartitionedRegion) region).getKeyInfo(key));
     } else {
       updateTimeStampEvent.setKeyInfo(new KeyInfo(key, null, 0));
     }
@@ -65,7 +65,7 @@ public class UpdateVersionJUnitTest {
   /**
    * Tests for LocalRegion.
    */
-  
+
   @Test
   public void testUpdateVersionAfterCreate() {
 
@@ -74,41 +74,39 @@ public class UpdateVersionJUnitTest {
 
     try {
       region.create("key-1", "value-1");
-  
+
       Entry entry = region.getEntry("key-1");
       assertTrue(entry instanceof NonTXEntry);
-      RegionEntry regionEntry = ((NonTXEntry)entry).getRegionEntry();
-  
+      RegionEntry regionEntry = ((NonTXEntry) entry).getRegionEntry();
+
       VersionStamp stamp = regionEntry.getVersionStamp();
-  
+
       // Create a duplicate entry version tag from stamp with newer time-stamp.
       VersionTag tag = VersionTag.create(stamp.getMemberID());
-  
+
       int entryVersion = stamp.getEntryVersion();
       VersionSource member = stamp.getMemberID();
       int dsid = stamp.getDistributedSystemId();
       long time = System.currentTimeMillis() + 1;
-      
+
       tag.setEntryVersion(entryVersion);
       tag.setDistributedSystemId(dsid);
       tag.setVersionTimeStamp(time);
       tag.setIsGatewayTag(true);
 
       assertTrue(region instanceof LocalRegion);
-      
-      EntryEventImpl event = createNewEvent((LocalRegion)region, tag, entry.getKey());
-      
-      ((LocalRegion)region).basicUpdateEntryVersion(event);
-  
+
+      EntryEventImpl event = createNewEvent((LocalRegion) region, tag, entry.getKey());
+
+      ((LocalRegion) region).basicUpdateEntryVersion(event);
+
       // Verify the new stamp
       entry = region.getEntry("key-1");
       assertTrue(entry instanceof NonTXEntry);
-      regionEntry = ((NonTXEntry)entry).getRegionEntry();
-  
+      regionEntry = ((NonTXEntry) entry).getRegionEntry();
+
       stamp = regionEntry.getVersionStamp();
-      assertEquals(
-          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
-          time, stamp.getVersionTimeStamp());
+      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -127,43 +125,42 @@ public class UpdateVersionJUnitTest {
       region.create("key-1", "value-1");
       try {
         Thread.sleep(10);
-      } catch (InterruptedException e) { }
+      } catch (InterruptedException e) {
+      }
       region.put("key-1", "value-2");
-  
+
       Entry entry = region.getEntry("key-1");
       assertTrue(entry instanceof NonTXEntry);
-      RegionEntry regionEntry = ((NonTXEntry)entry).getRegionEntry();
-  
+      RegionEntry regionEntry = ((NonTXEntry) entry).getRegionEntry();
+
       VersionStamp stamp = regionEntry.getVersionStamp();
-  
+
       // Create a duplicate entry version tag from stamp with newer time-stamp.
       VersionTag tag = VersionTag.create(stamp.getMemberID());
-  
+
       int entryVersion = stamp.getEntryVersion();
       VersionSource member = stamp.getMemberID();
       int dsid = stamp.getDistributedSystemId();
       long time = System.currentTimeMillis() + 1; // Just in case if clock hasn't ticked.
-      
+
       tag.setEntryVersion(entryVersion);
       tag.setDistributedSystemId(dsid);
       tag.setVersionTimeStamp(time);
       tag.setIsGatewayTag(true);
-      
+
       assertTrue(region instanceof LocalRegion);
-      
-      EntryEventImpl event = createNewEvent((LocalRegion)region, tag, entry.getKey());
-      
-      ((LocalRegion)region).basicUpdateEntryVersion(event);
-  
+
+      EntryEventImpl event = createNewEvent((LocalRegion) region, tag, entry.getKey());
+
+      ((LocalRegion) region).basicUpdateEntryVersion(event);
+
       // Verify the new stamp
       entry = region.getEntry("key-1");
       assertTrue(entry instanceof NonTXEntry);
-      regionEntry = ((NonTXEntry)entry).getRegionEntry();
-  
+      regionEntry = ((NonTXEntry) entry).getRegionEntry();
+
       stamp = regionEntry.getVersionStamp();
-      assertEquals(
-          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
-          time, stamp.getVersionTimeStamp());
+      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -180,48 +177,47 @@ public class UpdateVersionJUnitTest {
     Region region = cache.createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
 
     try {
-      
+
       region.create("key-1", "value-1");
       try {
         Thread.sleep(10);
-      } catch (InterruptedException e) { }
+      } catch (InterruptedException e) {
+      }
       region.destroy("key-1");
-  
+
       assertTrue(region instanceof LocalRegion);
-      
-      Entry entry = ((LocalRegion)region).getEntry("key-1", true);
-      
+
+      Entry entry = ((LocalRegion) region).getEntry("key-1", true);
+
       assertTrue(entry instanceof NonTXEntry);
-      RegionEntry regionEntry = ((NonTXEntry)entry).getRegionEntry();
-  
+      RegionEntry regionEntry = ((NonTXEntry) entry).getRegionEntry();
+
       VersionStamp stamp = regionEntry.getVersionStamp();
-  
+
       // Create a duplicate entry version tag from stamp with newer time-stamp.
       VersionTag tag = VersionTag.create(stamp.getMemberID());
-  
+
       int entryVersion = stamp.getEntryVersion();
       VersionSource member = stamp.getMemberID();
       int dsid = stamp.getDistributedSystemId();
       long time = System.currentTimeMillis() + 1;
-      
+
       tag.setEntryVersion(entryVersion);
       tag.setDistributedSystemId(dsid);
       tag.setVersionTimeStamp(time);
       tag.setIsGatewayTag(true);
-      
-      EntryEventImpl event = createNewEvent((LocalRegion)region, tag, "key-1");
-      
-      ((LocalRegion)region).basicUpdateEntryVersion(event);
-  
+
+      EntryEventImpl event = createNewEvent((LocalRegion) region, tag, "key-1");
+
+      ((LocalRegion) region).basicUpdateEntryVersion(event);
+
       // Verify the new stamp
-      entry = ((LocalRegion)region).getEntry("key-1", true);
+      entry = ((LocalRegion) region).getEntry("key-1", true);
       assertTrue(entry instanceof NonTXEntry);
-      regionEntry = ((NonTXEntry)entry).getRegionEntry();
-  
+      regionEntry = ((NonTXEntry) entry).getRegionEntry();
+
       stamp = regionEntry.getVersionStamp();
-      assertEquals(
-          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
-          time, stamp.getVersionTimeStamp());
+      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -234,7 +230,7 @@ public class UpdateVersionJUnitTest {
   /**
    * Tests for Partitioned Region.
    */
-  
+
   @Test
   public void testUpdateVersionAfterCreateOnPR() {
 
@@ -243,41 +239,39 @@ public class UpdateVersionJUnitTest {
 
     try {
       region.create("key-1", "value-1");
-  
+
       Entry entry = region.getEntry("key-1");
       assertTrue(entry instanceof EntrySnapshot);
-      RegionEntry regionEntry = ((EntrySnapshot)entry).getRegionEntry();
-  
+      RegionEntry regionEntry = ((EntrySnapshot) entry).getRegionEntry();
+
       VersionStamp stamp = regionEntry.getVersionStamp();
-  
+
       // Create a duplicate entry version tag from stamp with newer time-stamp.
       VersionTag tag = VersionTag.create(stamp.getMemberID());
-  
+
       int entryVersion = stamp.getEntryVersion();
       VersionSource member = stamp.getMemberID();
       int dsid = stamp.getDistributedSystemId();
       long time = System.currentTimeMillis();
-      
+
       tag.setEntryVersion(entryVersion);
-      tag.setDistributedSystemId(dsid);      
+      tag.setDistributedSystemId(dsid);
       tag.setVersionTimeStamp(time);
       tag.setIsGatewayTag(true);
 
       assertTrue(region instanceof PartitionedRegion);
-      
-      EntryEventImpl event = createNewEvent((PartitionedRegion)region, tag, entry.getKey());
-      
-      ((PartitionedRegion)region).basicUpdateEntryVersion(event);
-  
+
+      EntryEventImpl event = createNewEvent((PartitionedRegion) region, tag, entry.getKey());
+
+      ((PartitionedRegion) region).basicUpdateEntryVersion(event);
+
       // Verify the new stamp
       entry = region.getEntry("key-1");
       assertTrue(entry instanceof EntrySnapshot);
-      regionEntry = ((EntrySnapshot)entry).getRegionEntry();
-  
+      regionEntry = ((EntrySnapshot) entry).getRegionEntry();
+
       stamp = regionEntry.getVersionStamp();
-      assertEquals(
-          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
-          time, stamp.getVersionTimeStamp());
+      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -296,43 +290,42 @@ public class UpdateVersionJUnitTest {
       region.create("key-1", "value-1");
       try {
         Thread.sleep(10);
-      } catch (InterruptedException e) { }
+      } catch (InterruptedException e) {
+      }
       region.put("key-1", "value-2");
-  
+
       Entry entry = region.getEntry("key-1");
       assertTrue(entry instanceof EntrySnapshot);
-      RegionEntry regionEntry = ((EntrySnapshot)entry).getRegionEntry();
-  
+      RegionEntry regionEntry = ((EntrySnapshot) entry).getRegionEntry();
+
       VersionStamp stamp = regionEntry.getVersionStamp();
-  
+
       // Create a duplicate entry version tag from stamp with newer time-stamp.
       VersionTag tag = VersionTag.create(stamp.getMemberID());
-  
+
       int entryVersion = stamp.getEntryVersion();
       VersionSource member = stamp.getMemberID();
       int dsid = stamp.getDistributedSystemId();
       long time = System.currentTimeMillis();
-      
+
       tag.setEntryVersion(entryVersion);
       tag.setDistributedSystemId(dsid);
       tag.setVersionTimeStamp(time);
       tag.setIsGatewayTag(true);
-  
+
       assertTrue(region instanceof PartitionedRegion);
-      
-      EntryEventImpl event = createNewEvent((PartitionedRegion)region, tag, entry.getKey());
-      
-      ((PartitionedRegion)region).basicUpdateEntryVersion(event);
-  
+
+      EntryEventImpl event = createNewEvent((PartitionedRegion) region, tag, entry.getKey());
+
+      ((PartitionedRegion) region).basicUpdateEntryVersion(event);
+
       // Verify the new stamp
       entry = region.getEntry("key-1");
       assertTrue(entry instanceof EntrySnapshot);
-      regionEntry = ((EntrySnapshot)entry).getRegionEntry();
-  
+      regionEntry = ((EntrySnapshot) entry).getRegionEntry();
+
       stamp = regionEntry.getVersionStamp();
-      assertEquals(
-          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
-          time, stamp.getVersionTimeStamp());
+      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -349,48 +342,47 @@ public class UpdateVersionJUnitTest {
     Region region = cache.createRegionFactory(RegionShortcut.PARTITION).create(regionName);
 
     try {
-      
+
       region.create("key-1", "value-1");
       try {
         Thread.sleep(10);
-      } catch (InterruptedException e) { }
+      } catch (InterruptedException e) {
+      }
       region.destroy("key-1");
-  
+
       assertTrue(region instanceof PartitionedRegion);
-      Entry entry = ((PartitionedRegion)region).getEntry("key-1", true);
+      Entry entry = ((PartitionedRegion) region).getEntry("key-1", true);
       assertTrue(entry instanceof EntrySnapshot);
-      RegionEntry regionEntry = ((EntrySnapshot)entry).getRegionEntry();
-  
+      RegionEntry regionEntry = ((EntrySnapshot) entry).getRegionEntry();
+
       VersionStamp stamp = regionEntry.getVersionStamp();
-  
+
       // Create a duplicate entry version tag from stamp with newer time-stamp.
       VersionTag tag = VersionTag.create(stamp.getMemberID());
-  
+
       int entryVersion = stamp.getEntryVersion();
       VersionSource member = stamp.getMemberID();
       int dsid = stamp.getDistributedSystemId();
       long time = System.currentTimeMillis();
-      
+
       tag.setEntryVersion(entryVersion);
       tag.setDistributedSystemId(dsid);
       tag.setVersionTimeStamp(time);
       tag.setIsGatewayTag(true);
 
       assertTrue(region instanceof PartitionedRegion);
-      
-      EntryEventImpl event = createNewEvent((PartitionedRegion)region, tag, "key-1");
-      
-      ((PartitionedRegion)region).basicUpdateEntryVersion(event);
-  
+
+      EntryEventImpl event = createNewEvent((PartitionedRegion) region, tag, "key-1");
+
+      ((PartitionedRegion) region).basicUpdateEntryVersion(event);
+
       // Verify the new stamp
-      entry = ((PartitionedRegion)region).getEntry("key-1", true);
+      entry = ((PartitionedRegion) region).getEntry("key-1", true);
       assertTrue(entry instanceof EntrySnapshot);
-      regionEntry = ((EntrySnapshot)entry).getRegionEntry();
-  
+      regionEntry = ((EntrySnapshot) entry).getRegionEntry();
+
       stamp = regionEntry.getVersionStamp();
-      assertEquals(
-          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
-          time, stamp.getVersionTimeStamp());
+      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());

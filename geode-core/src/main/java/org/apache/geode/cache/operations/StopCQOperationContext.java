@@ -19,7 +19,6 @@ package org.apache.geode.cache.operations;
 
 import java.util.Set;
 
-
 /**
  * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#STOP_CQ} operation for the pre-operation
  * case.
@@ -38,8 +37,7 @@ public class StopCQOperationContext extends ExecuteCQOperationContext {
    * @param regionNames
    *                names of regions that are part of the query string
    */
-  public StopCQOperationContext(String cqName, String queryString,
-      Set regionNames) {
+  public StopCQOperationContext(String cqName, String queryString, Set regionNames) {
     super(cqName, queryString, regionNames, false);
   }
 

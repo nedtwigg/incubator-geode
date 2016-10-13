@@ -44,11 +44,11 @@ public class LocatorLauncherLocalFileIntegrationTest extends LocatorLauncherLoca
   public final void setUpLocatorLauncherLocalFileIntegrationTest() throws Exception {
     System.setProperty(ProcessControllerFactory.PROPERTY_DISABLE_ATTACH_API, "true");
   }
-  
+
   @After
   public final void tearDownLocatorLauncherLocalFileIntegrationTest() throws Exception {
   }
-  
+
   @Override
   @Test
   public void testIsAttachAPIFound() throws Exception {

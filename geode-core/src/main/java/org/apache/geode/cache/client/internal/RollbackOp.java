@@ -34,11 +34,11 @@ public class RollbackOp {
     RollbackOpImpl op = new RollbackOpImpl(txId);
     pool.execute(op);
   }
-  
+
   private RollbackOp() {
     // no instance allowed
   }
-  
+
   private static class RollbackOpImpl extends AbstractOp {
     private int txId;
 
@@ -47,10 +47,10 @@ public class RollbackOp {
       getMessage().setTransactionId(txId);
       this.txId = txId;
     }
-    
+
     @Override
     public String toString() {
-      return "Rollback(txId="+this.txId+")";
+      return "Rollback(txId=" + this.txId + ")";
     }
 
     @Override
@@ -78,10 +78,9 @@ public class RollbackOp {
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endRollback(start, hasTimedOut(), hasFailed());
     }
-     
+
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override

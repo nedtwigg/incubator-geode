@@ -30,8 +30,7 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 import org.apache.geode.internal.cache.CachePerfStats;
 
-public class ResultsBag extends Bag implements
-    DataSerializableFixedID {
+public class ResultsBag extends Bag implements DataSerializableFixedID {
 
   protected ObjectIntHashMap map;
 
@@ -74,8 +73,7 @@ public class ResultsBag extends Bag implements
     }
   }
 
-  protected ResultsBag(Collection c, HashingStrategy strategy,
-      CachePerfStats stats) {
+  protected ResultsBag(Collection c, HashingStrategy strategy, CachePerfStats stats) {
     this(strategy, stats);
     for (Iterator itr = c.iterator(); itr.hasNext();) {
       this.add(itr.next());
@@ -122,8 +120,7 @@ public class ResultsBag extends Bag implements
     this.map = new ObjectIntHashMap(initialCapacity, loadFactor);
   }
 
-  protected ResultsBag(int initialCapacity, float loadFactor,
-      HashingStrategy strategy, CachePerfStats stats) {
+  protected ResultsBag(int initialCapacity, float loadFactor, HashingStrategy strategy, CachePerfStats stats) {
     super(stats);
     this.map = new ObjectIntHashMap(initialCapacity, loadFactor, strategy);
   }
@@ -134,8 +131,7 @@ public class ResultsBag extends Bag implements
 
   }
 
-  protected ResultsBag(int initialCapacity, HashingStrategy strategy,
-      CachePerfStats stats) {
+  protected ResultsBag(int initialCapacity, HashingStrategy strategy, CachePerfStats stats) {
     super(stats);
     this.map = new ObjectIntHashMap(initialCapacity, strategy);
 
@@ -176,8 +172,7 @@ public class ResultsBag extends Bag implements
     // it
     // out.writeInt(this.limit);
     int numLeft = this.size() - this.numNulls;
-    for (Iterator<Entry> itr = this.map.entrySet().iterator(); itr.hasNext()
-        && numLeft > 0;) {
+    for (Iterator<Entry> itr = this.map.entrySet().iterator(); itr.hasNext() && numLeft > 0;) {
       Entry entry = itr.next();
       Object key = entry.getKey();
       DataSerializer.writeObject(key, out);

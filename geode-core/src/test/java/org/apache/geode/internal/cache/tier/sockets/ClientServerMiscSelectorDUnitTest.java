@@ -25,7 +25,6 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-
 /**
  * Just like parent but enables server thread pool
  * (ie. selector)
@@ -33,13 +32,12 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  *
  */
 @Category(DistributedTest.class)
-public class ClientServerMiscSelectorDUnitTest extends ClientServerMiscDUnitTest
-{
+public class ClientServerMiscSelectorDUnitTest extends ClientServerMiscDUnitTest {
   public ClientServerMiscSelectorDUnitTest() {
     super();
   }
 
   protected int getMaxThreads() {
-    return 2; 
+    return 2;
   }
 }

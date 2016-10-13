@@ -50,7 +50,7 @@ public interface ResultBag {
    * Return all of the elements in the set.
    */
   CloseableIterator<CachedDeserializable> iterator();
-  
+
   /**
    * Close the result set and free up any resources on disk
    * associated with the result set.

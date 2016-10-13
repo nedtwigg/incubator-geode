@@ -31,17 +31,17 @@ import org.apache.geode.internal.concurrent.LI;
  */
 class LocalLockInfo implements Serializable {
   private static final long serialVersionUID = 1L;
-  
+
   private final Serializable locatility;
   private final LI info;
-  
+
   public LocalLockInfo(Serializable locatility, LockInfo sync) {
     super();
     this.locatility = locatility;
     //LockInfo and Monitor info aren't serializable, so copy the information from
     //them. For backwards compatibility, use the LI class which is used
     //in older versions of gemfire.
-    if(sync instanceof MonitorInfo) {
+    if (sync instanceof MonitorInfo) {
       this.info = new LI(sync.getClassName(), sync.getIdentityHashCode(), ((MonitorInfo) sync).getLockedStackFrame());
     } else {
       this.info = new LI(sync.getClassName(), sync.getIdentityHashCode());
@@ -62,8 +62,7 @@ class LocalLockInfo implements Serializable {
     int result = 1;
     result = prime * result + ((info == null) ? 0 : info.getClassName().hashCode());
     result = prime * result + ((info == null) ? 0 : info.getIdentityHashCode());
-    result = prime * result
-        + ((locatility == null) ? 0 : locatility.hashCode());
+    result = prime * result + ((locatility == null) ? 0 : locatility.hashCode());
     return result;
   }
 
@@ -91,10 +90,10 @@ class LocalLockInfo implements Serializable {
       return false;
     return true;
   }
-  
+
   @Override
   public String toString() {
-    return locatility + ":" + info; 
-    
+    return locatility + ":" + info;
+
   }
 }

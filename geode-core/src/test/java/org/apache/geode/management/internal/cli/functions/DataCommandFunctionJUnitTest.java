@@ -74,7 +74,7 @@ public class DataCommandFunctionJUnitTest {
         return true;
       }
       if (other instanceof StringCheese) {
-        return this.cheese.equals(((StringCheese)other).cheese);
+        return this.cheese.equals(((StringCheese) other).cheese);
       }
       return false;
     }
@@ -82,9 +82,7 @@ public class DataCommandFunctionJUnitTest {
 
   @BeforeClass
   public static void setUp() throws Exception {
-    cache = new CacheFactory().
-        set(MCAST_PORT, "0").
-        create();
+    cache = new CacheFactory().set(MCAST_PORT, "0").create();
     RegionFactory factory = cache.createRegionFactory(RegionShortcut.PARTITION);
     region1 = factory.create(PARTITIONED_REGION);
 

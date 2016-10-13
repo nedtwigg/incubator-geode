@@ -49,7 +49,6 @@ public class Put extends BaseCommand {
     return singleton;
   }
 
-
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
     Part regionNamePart = null, keyPart = null, valuePart = null, callbackArgPart = null;
@@ -94,8 +93,7 @@ public class Put extends BaseCommand {
     }
 
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: Received put request ({} bytes) from {} for region {} key {} value {}", servConn.getName(), msg.getPayloadLength(), servConn
-        .getSocketString(), regionName, key, valuePart);
+      logger.trace("{}: Received put request ({} bytes) from {} for region {} key {} value {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName, key, valuePart);
     }
 
     // Process the put request
@@ -105,8 +103,7 @@ public class Put extends BaseCommand {
         errMessage = LocalizedStrings.Put_THE_INPUT_KEY_FOR_THE_PUT_REQUEST_IS_NULL.toLocalizedString();
       }
       if (regionName == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.Put_0_THE_INPUT_REGION_NAME_FOR_THE_PUT_REQUEST_IS_NULL, servConn
-          .getName()));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.Put_0_THE_INPUT_REGION_NAME_FOR_THE_PUT_REQUEST_IS_NULL, servConn.getName()));
         errMessage = LocalizedStrings.Put_THE_INPUT_REGION_NAME_FOR_THE_PUT_REQUEST_IS_NULL.toLocalizedString();
       }
       writeErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
@@ -124,10 +121,7 @@ public class Put extends BaseCommand {
 
     if (valuePart.isNull() && region.containsKey(key)) {
       // Invalid to 'put' a null value in an existing key
-      logger.info(LocalizedMessage.create(LocalizedStrings.Put_0_ATTEMPTED_TO_PUT_A_NULL_VALUE_FOR_EXISTING_KEY_1, new Object[] {
-        servConn.getName(),
-        key
-      }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.Put_0_ATTEMPTED_TO_PUT_A_NULL_VALUE_FOR_EXISTING_KEY_1, new Object[] { servConn.getName(), key }));
       errMessage = LocalizedStrings.Put_ATTEMPTED_TO_PUT_A_NULL_VALUE_FOR_EXISTING_KEY_0.toLocalizedString();
       writeErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage, servConn);
       servConn.setAsTrue(RESPONDED);

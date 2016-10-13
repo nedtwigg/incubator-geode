@@ -64,13 +64,12 @@ public interface ClientUpdateMessage extends ClientMessage {
    * @return the key that was updated
    */
   public Object getKeyOfInterest();
-  
+
   /**
    * Returns the operation
    * @return the operation performed by this message
    */
   public EnumListenerEvent getOperation();
-  
 
   /**
    * Returns the membership Id of the originator of the event.
@@ -78,24 +77,23 @@ public interface ClientUpdateMessage extends ClientMessage {
    * @return the membership Id of the originator of the event.
    */
   public ClientProxyMembershipID getMembershipId();
-  
+
   /**
    * Returns whether the message satisfies cqs.
    *
    * @return boolean true if cq info is present.
    */
   public boolean hasCqs();
-  
-  
+
   public CqNameToOp getClientCq(ClientProxyMembershipID clientId);
-  
+
   /**
    * Returns whether the message satisfies CQs for the given clientId.
    * @param clientId ClientProxyMembershipID 
    * @return boolean true if CQ info is present for the given proxy.
    */
-  public boolean hasCqs(ClientProxyMembershipID clientId); 
-  
+  public boolean hasCqs(ClientProxyMembershipID clientId);
+
   /**
    * Returns the version of the region entry affected by this operation
    * on the server
@@ -109,20 +107,20 @@ public interface ClientUpdateMessage extends ClientMessage {
    * @return true if the given client is interested in this message
    */
   public boolean isClientInterested(ClientProxyMembershipID clientId);
-    
+
   /**
    * Returns whether the message is due to a result of net load.
    *
    * @return boolean true if the event is due to net load.
    */
-  public boolean isNetLoad(); 
+  public boolean isNetLoad();
 
   /**
    * Sets the isNetLoad flag.
    *
    * @param isNetLoad boolean true if the event is due to net load.
    */
-  public void setIsNetLoad(boolean isNetLoad); 
+  public void setIsNetLoad(boolean isNetLoad);
 
   /**
    * Returns whether this <code>ClientUpdateMessage</code>'s operation is
@@ -177,11 +175,11 @@ public interface ClientUpdateMessage extends ClientMessage {
    *         AFTER_REGION_CLEAR
    */
   public boolean isClearRegion();
-  
+
   /**
    * @return whether this message can be sent without going through an
    * authorization check
    */
   public boolean needsNoAuthorizationCheck();
-     
+
 }

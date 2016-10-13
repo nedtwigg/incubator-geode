@@ -22,7 +22,7 @@ import org.apache.geode.cache.query.CqClosedException;
 import org.apache.geode.cache.query.CqException;
 import org.apache.geode.cache.query.CqQuery;
 
-public interface ClientCQ extends InternalCqQuery  {
+public interface ClientCQ extends InternalCqQuery {
 
   /**
    * Closes the Query.
@@ -31,12 +31,10 @@ public interface ClientCQ extends InternalCqQuery  {
    * @param sendRequestToServer true to send the request to server.
    * @throws CqException
    */
-  public abstract void close(boolean sendRequestToServer)
-      throws CqClosedException, CqException;
+  public abstract void close(boolean sendRequestToServer) throws CqClosedException, CqException;
 
   public abstract void setProxyCache(ProxyCache proxyCache);
 
-  public abstract void createOn(Connection recoveredConnection,
-      boolean isDurable);
+  public abstract void createOn(Connection recoveredConnection, boolean isDurable);
 
 }

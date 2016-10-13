@@ -31,8 +31,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.internal.cache.tier.InterestType;
 import org.apache.geode.internal.cache.tier.sockets.CacheClientProxy;
 
-public class InterestRegistrationEventImpl implements
-    InterestRegistrationEvent, DataSerializable {
+public class InterestRegistrationEventImpl implements InterestRegistrationEvent, DataSerializable {
 
   private static final long serialVersionUID = -5791294858933070049L;
 
@@ -55,16 +54,16 @@ public class InterestRegistrationEventImpl implements
    * Whether this interest event represents an interest registration
    */
   private boolean isRegister;
-  
+
   /** 
    * The <code>ClientSession</code> initiating this interest event 
-   */ 
-  private transient ClientSession clientSession; 
-  
+   */
+  private transient ClientSession clientSession;
+
   /**
    * The GemFire <code>Cache</code>
    */
-  private transient Cache cache; 
+  private transient Cache cache;
 
   /**
    * Constructor. No-arg constructor for data serialization.
@@ -79,8 +78,7 @@ public class InterestRegistrationEventImpl implements
    *          The name of the region to which this interest event belongs
    */
 
-  public InterestRegistrationEventImpl(CacheClientProxy clientSession, String regionName, Set keysOfInterest,
-      int interestType, boolean isRegister) {
+  public InterestRegistrationEventImpl(CacheClientProxy clientSession, String regionName, Set keysOfInterest, int interestType, boolean isRegister) {
     this.cache = clientSession.getCache();
     this.clientSession = clientSession;
     this.regionName = regionName;
@@ -89,19 +87,18 @@ public class InterestRegistrationEventImpl implements
     this.isRegister = isRegister;
   }
 
-  
   public ClientSession getClientSession() {
     return this.clientSession;
   }
-  
+
   public String getRegionName() {
     return this.regionName;
   }
-  
+
   public Region getRegion() {
     return this.cache.getRegion(this.regionName);
   }
-  
+
   public Set getKeysOfInterest() {
     return this.keysOfInterest;
   }
@@ -126,7 +123,7 @@ public class InterestRegistrationEventImpl implements
     // The proxy isn't being serialized right now, but if it needs to be 
     // then the proxyId would probably be the best way to do it. 
     DataSerializer.writeString(this.regionName, out);
-    DataSerializer.writeHashSet((HashSet)this.keysOfInterest, out);
+    DataSerializer.writeHashSet((HashSet) this.keysOfInterest, out);
     DataSerializer.writePrimitiveInt(this.interestType, out);
     DataSerializer.writePrimitiveBoolean(this.isRegister, out);
   }
@@ -141,12 +138,7 @@ public class InterestRegistrationEventImpl implements
   @Override // GemStoneAddition
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("InterestRegistrationEvent [").append("isRegister=").append(
-        this.isRegister).append("clientSession=").append(this.clientSession)
-        .append("; isRegister=").append("; regionName=")
-        .append(this.regionName).append("; keysOfInterest=").append(
-            this.keysOfInterest).append("; interestType=").append(
-            InterestType.getString(this.interestType)).append("]");
+    buffer.append("InterestRegistrationEvent [").append("isRegister=").append(this.isRegister).append("clientSession=").append(this.clientSession).append("; isRegister=").append("; regionName=").append(this.regionName).append("; keysOfInterest=").append(this.keysOfInterest).append("; interestType=").append(InterestType.getString(this.interestType)).append("]");
     return buffer.toString();
   }
 }

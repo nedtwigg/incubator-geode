@@ -121,7 +121,7 @@ public class DiskWriteAttributesJUnitTest {
     assertTrue(!dwa.isSynchronous());
     assertTrue(!dwa.isRollOplogs());
   }
-  
+
   /**
    * Tests the behaviour of DiskWriteAttributesFactory & DiskWritesAttrbutes with
    * various combinations of  time interval & buffer size.
@@ -131,72 +131,71 @@ public class DiskWriteAttributesJUnitTest {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
     dwaf.setSynchronous(true);
     DiskWriteAttributes dwa = dwaf.create();
-    assertEquals(dwa.getBytesThreshold(),0);
-    assertEquals(dwa.getTimeInterval(),0);
-    
+    assertEquals(dwa.getBytesThreshold(), 0);
+    assertEquals(dwa.getTimeInterval(), 0);
+
     dwaf.setSynchronous(false);
     dwa = dwaf.create();
-    assertEquals(dwa.getBytesThreshold(),0);
-    assertEquals(dwa.getTimeInterval(),DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
-    
+    assertEquals(dwa.getBytesThreshold(), 0);
+    assertEquals(dwa.getTimeInterval(), DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
+
     dwaf.setBytesThreshold(0);
     dwa = dwaf.create();
-    assertEquals(dwa.getBytesThreshold(),0);
-    assertEquals(dwa.getTimeInterval(),DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
-    
+    assertEquals(dwa.getBytesThreshold(), 0);
+    assertEquals(dwa.getTimeInterval(), DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
+
     dwaf.setBytesThreshold(1);
     dwa = dwaf.create();
-    assertEquals(dwa.getBytesThreshold(),1);
-    assertEquals(dwa.getTimeInterval(),0);
-    
+    assertEquals(dwa.getBytesThreshold(), 1);
+    assertEquals(dwa.getTimeInterval(), 0);
+
     dwaf.setBytesThreshold(0);
     dwaf.setTimeInterval(0);
     dwa = dwaf.create();
-    assertEquals(dwa.getBytesThreshold(),0);
-    assertEquals(dwa.getTimeInterval(),0);
-    
-    DiskWriteAttributesFactory dwaf1 = new DiskWriteAttributesFactory();    
+    assertEquals(dwa.getBytesThreshold(), 0);
+    assertEquals(dwa.getTimeInterval(), 0);
+
+    DiskWriteAttributesFactory dwaf1 = new DiskWriteAttributesFactory();
     DiskWriteAttributes dwa1 = dwaf1.create();
-    assertEquals(dwa1.getBytesThreshold(),0);
-    assertEquals(dwa1.getTimeInterval(),DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
-    
+    assertEquals(dwa1.getBytesThreshold(), 0);
+    assertEquals(dwa1.getTimeInterval(), DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
+
     DiskWriteAttributesFactory dwaf2 = new DiskWriteAttributesFactory(dwa1);
     DiskWriteAttributes dwa2 = dwaf2.create();
-    assertEquals(dwa2.getBytesThreshold(),0);
-    assertEquals(dwa2.getTimeInterval(),DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
-    
+    assertEquals(dwa2.getBytesThreshold(), 0);
+    assertEquals(dwa2.getTimeInterval(), DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
+
     dwaf1 = new DiskWriteAttributesFactory();
     dwaf1.setBytesThreshold(100);
     dwaf2 = new DiskWriteAttributesFactory(dwaf1.create());
     dwa2 = dwaf2.create();
-    assertEquals(dwa2.getBytesThreshold(),100);
-    assertEquals(dwa2.getTimeInterval(),0);
-    
+    assertEquals(dwa2.getBytesThreshold(), 100);
+    assertEquals(dwa2.getTimeInterval(), 0);
+
     dwaf1 = new DiskWriteAttributesFactory();
     dwaf1.setBytesThreshold(0);
     dwaf1.setTimeInterval(0);
     dwaf2 = new DiskWriteAttributesFactory(dwaf1.create());
     dwa2 = dwaf2.create();
-    assertEquals(dwa2.getBytesThreshold(),0);
-    assertEquals(dwa2.getTimeInterval(),0);
-    
-    
+    assertEquals(dwa2.getBytesThreshold(), 0);
+    assertEquals(dwa2.getTimeInterval(), 0);
+
     dwaf1 = new DiskWriteAttributesFactory();
     dwa1 = dwaf1.create();
     dwaf2 = new DiskWriteAttributesFactory(dwa1);
     dwa2 = dwaf2.create();
-    assertEquals(dwa2.getBytesThreshold(),0);
-    assertEquals(dwa2.getTimeInterval(),DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
-    assertEquals(dwa1.getBytesThreshold(),0);
-    assertEquals(dwa1.getTimeInterval(),DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
+    assertEquals(dwa2.getBytesThreshold(), 0);
+    assertEquals(dwa2.getTimeInterval(), DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
+    assertEquals(dwa1.getBytesThreshold(), 0);
+    assertEquals(dwa1.getTimeInterval(), DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
     //Important :Notice the behaviour difference in the time nterval setting
     dwaf1.setBytesThreshold(1);
     dwaf2.setBytesThreshold(1);
     dwa1 = dwaf1.create();
     dwa2 = dwaf2.create();
-    assertEquals(dwa2.getBytesThreshold(),1);
-    assertEquals(dwa2.getTimeInterval(),DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
-    assertEquals(dwa1.getBytesThreshold(),1);
-    assertEquals(dwa1.getTimeInterval(),0);     
-  }  
+    assertEquals(dwa2.getBytesThreshold(), 1);
+    assertEquals(dwa2.getTimeInterval(), DiskWriteAttributesImpl.DEFAULT_TIME_INTERVAL);
+    assertEquals(dwa1.getBytesThreshold(), 1);
+    assertEquals(dwa1.getTimeInterval(), 0);
+  }
 }

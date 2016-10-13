@@ -35,11 +35,12 @@ public class JmxManagerAdvisee implements DistributionAdvisee {
   private final int serialNumber;
   private final GemFireCacheImpl cache;
   private JmxManagerProfile myMostRecentProfile;
-  
+
   public JmxManagerAdvisee(GemFireCacheImpl cache) {
     this.serialNumber = DistributionAdvisor.createSerialNumber();
     this.cache = cache;
   }
+
   @Override
   public DM getDistributionManager() {
     return this.cache.getDistributionManager();
@@ -90,7 +91,7 @@ public class JmxManagerAdvisee implements DistributionAdvisee {
     int port = 0;
     boolean ssl = false;
     boolean started = false;
-    SystemManagementService service = (SystemManagementService)ManagementService.getExistingManagementService(this.cache);
+    SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(this.cache);
     if (service != null) {
       jmxManager = service.isManagerCreated();
       started = service.isManager();
@@ -133,10 +134,11 @@ public class JmxManagerAdvisee implements DistributionAdvisee {
   public int getSerialNumber() {
     return this.serialNumber;
   }
-  
+
   public JmxManagerProfile getMyMostRecentProfile() {
     return this.myMostRecentProfile;
   }
+
   void initProfile(JmxManagerProfile p) {
     this.myMostRecentProfile = p;
   }

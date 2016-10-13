@@ -58,12 +58,7 @@ public class TouchPartitionedRegionEntriesFunction implements Function, Declarab
 
     if (this.cache.getLogger().fineEnabled()) {
       StringBuilder builder = new StringBuilder();
-      builder.append("Function ")
-          .append(ID)
-          .append(" received request to touch ")
-          .append(primaryDataSet.getFullPath())
-          .append("->")
-          .append(keys);
+      builder.append("Function ").append(ID).append(" received request to touch ").append(primaryDataSet.getFullPath()).append("->").append(keys);
       this.cache.getLogger().fine(builder.toString());
     }
 
@@ -96,4 +91,3 @@ public class TouchPartitionedRegionEntriesFunction implements Function, Declarab
   public void init(Properties properties) {
   }
 }
-

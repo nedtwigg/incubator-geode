@@ -26,7 +26,7 @@ package org.apache.geode;
  * <p>As of GemFire 5.0 this exception should be named LocatorIsRunningException.
  */
 public class SystemIsRunningException extends GemFireException {
-private static final long serialVersionUID = 3516268055878767189L;
+  private static final long serialVersionUID = 3516268055878767189L;
 
   //////////////////////  Constructors  //////////////////////
 

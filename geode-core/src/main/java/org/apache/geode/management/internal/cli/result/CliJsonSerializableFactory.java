@@ -21,27 +21,27 @@ import org.apache.geode.management.internal.cli.commands.dto.RegionDetails;
 import org.apache.geode.management.internal.cli.commands.dto.RegionMemberDetails;
 
 public class CliJsonSerializableFactory implements CliJsonSerializableIds {
-  
+
   public static CliJsonSerializable getCliJsonSerializable(int id) {
     CliJsonSerializable cliJsonSerializable = null;
-    
-    switch (id) {      
+
+    switch (id) {
     case CLI_DOMAIN_OBJECT__REGION_DETAILS:
       cliJsonSerializable = new RegionDetails();
       break;
-      
+
     case CLI_DOMAIN_OBJECT__REGION_ATTR_INFO:
       cliJsonSerializable = new RegionAttributesInfo();
       break;
-      
+
     case CLI_DOMAIN_OBJECT__REGION_MEMBER_DETAILS:
       cliJsonSerializable = new RegionMemberDetails();
-      break;      
+      break;
 
     default:
       throw new IllegalArgumentException("Could not find type with given identifer.");
     }
-    
+
     return cliJsonSerializable;
   }
 

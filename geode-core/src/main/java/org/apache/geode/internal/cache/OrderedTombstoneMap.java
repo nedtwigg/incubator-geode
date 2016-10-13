@@ -41,14 +41,14 @@ import org.apache.geode.internal.cache.versions.VersionTag;
  *
  */
 public class OrderedTombstoneMap<T> {
-  
+
   /**
    * A map of
    * member id-> sort map of version tag-> region entry
    * 
    */
   private Map<VersionSource, TreeMap<VersionTag, T>> tombstoneMap = new HashMap();
-  
+
   /**
    * Add a new version tag to map
    */
@@ -56,7 +56,7 @@ public class OrderedTombstoneMap<T> {
     //Add the version tag to the appropriate map
     VersionSource member = tag.getMemberID();
     TreeMap<VersionTag, T> memberMap = tombstoneMap.get(member);
-    if(memberMap == null) {
+    if (memberMap == null) {
       memberMap = new TreeMap<VersionTag, T>(new VersionTagComparator());
       tombstoneMap.put(member, memberMap);
     }
@@ -68,7 +68,7 @@ public class OrderedTombstoneMap<T> {
    * Remove a version tag from the map.
    */
   public Map.Entry<VersionTag, T> take() {
-    if(tombstoneMap.isEmpty()) {
+    if (tombstoneMap.isEmpty()) {
       //if there are no more entries, return null;
       return null;
     } else {
@@ -76,30 +76,29 @@ public class OrderedTombstoneMap<T> {
       //lowest timestamp.
       long lowestTimestamp = Long.MAX_VALUE;
       TreeMap<VersionTag, T> lowestMap = null;
-      for(TreeMap<VersionTag, T> memberMap: tombstoneMap.values()) {
+      for (TreeMap<VersionTag, T> memberMap : tombstoneMap.values()) {
         VersionTag firstTag = memberMap.firstKey();
         long stamp = firstTag.getVersionTimeStamp();
-        if(stamp < lowestTimestamp) {
+        if (stamp < lowestTimestamp) {
           lowestTimestamp = stamp;
           lowestMap = memberMap;
         }
       }
-      if(lowestMap == null) {
+      if (lowestMap == null) {
         return null;
       }
       //Remove the lowest entry
       Entry<VersionTag, T> result = lowestMap.firstEntry();
       lowestMap.remove(result.getKey());
-      if(lowestMap.isEmpty()) {
+      if (lowestMap.isEmpty()) {
         //if this is the last entry from a given member,
         //the map for that member
         tombstoneMap.remove(result.getKey().getMemberID());
       }
-      
+
       return result;
     }
   }
-  
 
   /**
    * A comparator that sorts version tags based on the region version, and
@@ -111,11 +110,11 @@ public class OrderedTombstoneMap<T> {
     @Override
     public int compare(VersionTag o1, VersionTag o2) {
       long result = o1.getRegionVersion() - o2.getRegionVersion();
-      if(result == 0) {
+      if (result == 0) {
         result = o1.getVersionTimeStamp() - o2.getVersionTimeStamp();
       }
       return Long.signum(result);
     }
-    
+
   }
 }

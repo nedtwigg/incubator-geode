@@ -59,7 +59,7 @@ public class LocalStatisticsImpl extends StatisticsImpl {
 
   /** The StatisticsFactory that created this instance */
   private final StatisticsManager dSystem;
-  
+
   ///////////////////////  Constructors  ///////////////////////
 
   /**
@@ -84,18 +84,12 @@ public class LocalStatisticsImpl extends StatisticsImpl {
    *        statistics are stored (and collected) in GemFire shared
    *        memory or in the local VM
    */
-  public LocalStatisticsImpl(StatisticsType type, String textId,
-                             long numericId,
-                             long uniqueId,
-                             boolean atomicIncrements,
-                             int osStatFlags,
-                             StatisticsManager system) {
-    super(type, calcTextId(system, textId), calcNumericId(system, numericId),
-          uniqueId, osStatFlags);
+  public LocalStatisticsImpl(StatisticsType type, String textId, long numericId, long uniqueId, boolean atomicIncrements, int osStatFlags, StatisticsManager system) {
+    super(type, calcTextId(system, textId), calcNumericId(system, numericId), uniqueId, osStatFlags);
 
     this.dSystem = system;
 
-    StatisticsTypeImpl realType = (StatisticsTypeImpl)type;
+    StatisticsTypeImpl realType = (StatisticsTypeImpl) type;
     int intCount = realType.getIntStatCount();
     int longCount = realType.getLongStatCount();
     int doubleCount = realType.getDoubleStatCount();
@@ -263,9 +257,11 @@ public class LocalStatisticsImpl extends StatisticsImpl {
   final int[] _getIntStorage() {
     return this.intStorage;
   }
+
   final long[] _getLongStorage() {
     return this.longStorage;
   }
+
   final double[] _getDoubleStorage() {
     return this.doubleStorage;
   }

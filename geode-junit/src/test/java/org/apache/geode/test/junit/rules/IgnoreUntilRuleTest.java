@@ -37,21 +37,21 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class IgnoreUntilRuleTest {
 
   private static final String ASSERTION_ERROR_MESSAGE = "failing test";
-  
+
   @Test
   public void shouldIgnoreWhenUntilIsInFuture() {
     Result result = TestRunner.runTest(ShouldIgnoreWhenUntilIsInFuture.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(ShouldIgnoreWhenUntilIsInFuture.count).isEqualTo(0);
   }
-  
+
   @Test
   public void shouldExecuteWhenUntilIsInPast() {
     Result result = TestRunner.runTest(ShouldExecuteWhenUntilIsInPast.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -59,13 +59,13 @@ public class IgnoreUntilRuleTest {
     assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage(ASSERTION_ERROR_MESSAGE);
     assertThat(ShouldExecuteWhenUntilIsInPast.count).isEqualTo(1);
   }
-  
+
   @Test
   public void shouldExecuteWhenUntilIsDefault() {
     Result result = TestRunner.runTest(ShouldExecuteWhenUntilIsDefault.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 

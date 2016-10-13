@@ -57,7 +57,6 @@ import org.apache.geode.security.AbstractSecureServerDUnitTest;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-
 @Category({ DistributedTest.class, SecurityTest.class })
 public class RestSecurityDUnitTest extends AbstractSecureServerDUnitTest {
 
@@ -456,14 +455,12 @@ public class RestSecurityDUnitTest extends AbstractSecureServerDUnitTest {
     return doRequest(httpHead, username, password);
   }
 
-
   protected HttpResponse doPost(String query, String username, String password, String body) throws MalformedURLException {
     HttpPost httpPost = new HttpPost(CONTEXT + query);
     httpPost.addHeader("content-type", "application/json");
     httpPost.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
     return doRequest(httpPost, username, password);
   }
-
 
   protected HttpResponse doPut(String query, String username, String password, String body) throws MalformedURLException {
     HttpPut httpPut = new HttpPut(CONTEXT + query);
@@ -517,8 +514,7 @@ public class RestSecurityDUnitTest extends AbstractSecureServerDUnitTest {
   protected JSONTokener getResponseBody(HttpResponse response) throws IOException {
     HttpEntity entity = response.getEntity();
     InputStream content = entity.getContent();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(
-      content));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
     String line;
     StringBuilder str = new StringBuilder();
     while ((line = reader.readLine()) != null) {

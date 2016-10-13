@@ -40,6 +40,7 @@ import org.apache.geode.internal.cache.PartitionedRegion;
  */
 public class RegionSubRegionSnapshot implements DataSerializable {
   private static final long serialVersionUID = -8052137675270041871L;
+
   public RegionSubRegionSnapshot() {
     this.parent = null;
     this.subRegionSnapshots = new HashSet();
@@ -49,17 +50,14 @@ public class RegionSubRegionSnapshot implements DataSerializable {
     this();
     this.name = reg.getName();
     if (reg instanceof PartitionedRegion) {
-      PartitionedRegion p_reg = (PartitionedRegion)reg;
+      PartitionedRegion p_reg = (PartitionedRegion) reg;
       this.entryCount = p_reg.entryCount(true);
-    }
-    else {
+    } else {
       this.entryCount = reg.entrySet().size();
     }
     final LogWriterI18n logger = reg.getCache().getLoggerI18n();
-    if((logger != null) && logger.fineEnabled()) {
-      logger.fine(
-        "RegionSubRegionSnapshot Region entry count =" + this.entryCount
-        + " for region =" + this.name);
+    if ((logger != null) && logger.fineEnabled()) {
+      logger.fine("RegionSubRegionSnapshot Region entry count =" + this.entryCount + " for region =" + this.name);
     }
   }
 
@@ -148,14 +146,13 @@ public class RegionSubRegionSnapshot implements DataSerializable {
    * @return full path of region
    */
   public String getFullPath() {
-    return (getParent() == null ? "/" : getParent().getFullPath()) + getName()
-        + "/";
+    return (getParent() == null ? "/" : getParent().getFullPath()) + getName() + "/";
   }
 
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeString(this.name, out);
     out.writeInt(this.entryCount);
-    DataSerializer.writeHashSet((HashSet)this.subRegionSnapshots, out);
+    DataSerializer.writeHashSet((HashSet) this.subRegionSnapshots, out);
   }
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -163,19 +160,16 @@ public class RegionSubRegionSnapshot implements DataSerializable {
     this.entryCount = in.readInt();
     this.subRegionSnapshots = DataSerializer.readHashSet(in);
     for (Iterator iter = this.subRegionSnapshots.iterator(); iter.hasNext();) {
-      ((RegionSubRegionSnapshot)iter.next()).setParent(this);
+      ((RegionSubRegionSnapshot) iter.next()).setParent(this);
     }
   }
 
   @Override
   public String toString() {
-    String toStr = "RegionSnapshot [" + "path=" + this.getFullPath()
-        + ",parent=" + (this.parent == null ? "null" : this.parent.name)
-        + ", entryCount=" + this.entryCount + ", subRegionCount="
-        + this.subRegionSnapshots.size() + "<<";
+    String toStr = "RegionSnapshot [" + "path=" + this.getFullPath() + ",parent=" + (this.parent == null ? "null" : this.parent.name) + ", entryCount=" + this.entryCount + ", subRegionCount=" + this.subRegionSnapshots.size() + "<<";
 
     for (Iterator iter = subRegionSnapshots.iterator(); iter.hasNext();) {
-      toStr = toStr + ((RegionSubRegionSnapshot)iter.next()).getName() + ", ";
+      toStr = toStr + ((RegionSubRegionSnapshot) iter.next()).getName() + ", ";
     }
 
     toStr = toStr + ">>" + "]";

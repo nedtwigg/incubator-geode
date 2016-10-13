@@ -62,8 +62,7 @@ public class MemberGatewayHubService implements PulseService {
     JsonNode requestDataJSON = mapper.readTree(request.getParameter("pulseData"));
     String memberName = requestDataJSON.get("MemberGatewayHub").get("memberName").textValue();
 
-    Cluster.Member clusterMember = cluster.getMember(StringUtils
-        .makeCompliantName(memberName));
+    Cluster.Member clusterMember = cluster.getMember(StringUtils.makeCompliantName(memberName));
 
     if (clusterMember != null) {
       // response
@@ -127,7 +126,7 @@ public class MemberGatewayHubService implements PulseService {
       }
       responseJSON.put("asyncEventQueues", asyncEventQueueJsonList);
 
-      Map<String,Cluster.Region> clusterRegions = cluster.getClusterRegions();
+      Map<String, Cluster.Region> clusterRegions = cluster.getClusterRegions();
 
       List<Cluster.Region> clusterRegionsList = new ArrayList<Cluster.Region>();
       clusterRegionsList.addAll(clusterRegions.values());

@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.cache;
+
 import java.util.*;
 
 /**
@@ -64,7 +65,7 @@ public interface TransactionEvent {
    * @deprecated as of GemFire 5.0, use {@link #getEvents} instead
    */
   @Deprecated
-  public List<EntryEvent<?,?>> getCreateEvents();
+  public List<EntryEvent<?, ?>> getCreateEvents();
 
   /** Gets all "destroy" EntryEvents for this
    * transaction; <code>Region.destroy</code> and
@@ -74,7 +75,7 @@ public interface TransactionEvent {
    * @deprecated as of GemFire 5.0, use {@link #getEvents} instead
    */
   @Deprecated
-  public List<EntryEvent<?,?>> getDestroyEvents();
+  public List<EntryEvent<?, ?>> getDestroyEvents();
 
   /** Gets all <code>Region.put</code> EntryEvents for this transaction.
    *
@@ -82,7 +83,7 @@ public interface TransactionEvent {
    * @deprecated as of GemFire 5.0, use {@link #getEvents} instead
    */
   @Deprecated
-  public List<EntryEvent<?,?>> getPutEvents();
+  public List<EntryEvent<?, ?>> getPutEvents();
 
   /** Gets all "invalidate" EntryEvents for this transaction; 
    *  <code>Region.invalidate</code> and
@@ -92,7 +93,7 @@ public interface TransactionEvent {
    * @deprecated as of GemFire 5.0, use {@link #getEvents} instead
    */
   @Deprecated
-  public List<EntryEvent<?,?>> getInvalidateEvents();
+  public List<EntryEvent<?, ?>> getInvalidateEvents();
 
   /**
    * Returns an ordered list of every {@link CacheEvent} for this transaction.
@@ -102,8 +103,8 @@ public interface TransactionEvent {
    * one for each operation performed by this transaction.
    * @since GemFire 5.0
    */
-  public List<CacheEvent<?,?>> getEvents();
-  
+  public List<CacheEvent<?, ?>> getEvents();
+
   /** Gets the Cache for this transaction event
    *
    * @return <code>Cache</code>

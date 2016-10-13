@@ -34,19 +34,19 @@ import org.apache.geode.internal.admin.remote.AdminResponse;
 //and modified as per requirements. (original-author Dan Smith)
 public class CompactResponse extends AdminResponse {
   private PersistentID persistentId;
-  
+
   public CompactResponse() {
   }
-  
+
   public CompactResponse(InternalDistributedMember sender, PersistentID persistentId) {
     this.setRecipient(sender);
     this.persistentId = persistentId;
   }
-  
+
   public PersistentID getPersistentId() {
     return persistentId;
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
@@ -55,10 +55,10 @@ public class CompactResponse extends AdminResponse {
 
   @Override
   public void toData(DataOutput out) throws IOException {
-    super.toData(out);    
+    super.toData(out);
     DataSerializer.writeObject(persistentId, out);
   }
-  
+
   public CompactResponse(InternalDistributedMember sender) {
     this.setRecipient(sender);
   }

@@ -30,9 +30,9 @@ public final class DateFormatter {
    * The format string used to format the timestamp of GemFire log messages
    */
   public final static String FORMAT_STRING = "yyyy/MM/dd HH:mm:ss.SSS z";
-  
+
   private final static DateFormat timeFormatter = createDateFormat();
-  
+
   /**
    * Creates a SimpleDateFormat using {@link #FORMAT_STRING}.
    * 
@@ -52,7 +52,7 @@ public final class DateFormatter {
   public static DateFormat createDateFormat(final String formatString) {
     return new SimpleDateFormat(formatString);
   }
-  
+
   /**
    * Gets a String representation of the current time.
    * @return a String representation of the current time.
@@ -60,6 +60,7 @@ public final class DateFormatter {
   public static String getTimeStamp() {
     return formatDate(new Date());
   }
+
   /**
    * Convert a Date to a timestamp String.
    * @param d a Date to format as a timestamp String.
@@ -84,7 +85,7 @@ public final class DateFormatter {
       }
     }
   }
-  
+
   /**
    * Do not instantiate this class.
    */

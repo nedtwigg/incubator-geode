@@ -35,25 +35,11 @@ public class XmlAuthzCredentialGenerator extends AuthzCredentialGenerator {
 
   private static final String[] QUERY_REGIONS = { "/Portfolios", "/Positions", "/AuthRegion" };
 
-  public static OperationCode[] READER_OPS = {
-      OperationCode.GET,
-      OperationCode.REGISTER_INTEREST,
-      OperationCode.UNREGISTER_INTEREST,
-      OperationCode.KEY_SET,
-      OperationCode.CONTAINS_KEY,
-      OperationCode.EXECUTE_FUNCTION };
+  public static OperationCode[] READER_OPS = { OperationCode.GET, OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, OperationCode.KEY_SET, OperationCode.CONTAINS_KEY, OperationCode.EXECUTE_FUNCTION };
 
-  public static OperationCode[] WRITER_OPS = {
-      OperationCode.PUT,
-      OperationCode.DESTROY,
-      OperationCode.INVALIDATE,
-      OperationCode.REGION_CLEAR };
+  public static OperationCode[] WRITER_OPS = { OperationCode.PUT, OperationCode.DESTROY, OperationCode.INVALIDATE, OperationCode.REGION_CLEAR };
 
-  public static OperationCode[] QUERY_OPS = {
-      OperationCode.QUERY,
-      OperationCode.EXECUTE_CQ,
-      OperationCode.STOP_CQ,
-      OperationCode.CLOSE_CQ };
+  public static OperationCode[] QUERY_OPS = { OperationCode.QUERY, OperationCode.EXECUTE_CQ, OperationCode.STOP_CQ, OperationCode.CLOSE_CQ };
 
   private static final byte READER_ROLE = 1;
   private static final byte WRITER_ROLE = 2;
@@ -129,14 +115,14 @@ public class XmlAuthzCredentialGenerator extends AuthzCredentialGenerator {
     final int numWriters = 3;
 
     switch (roleType) {
-      case READER_ROLE:
-        return new UsernamePrincipal("reader" + (index % numReaders));
-      case WRITER_ROLE:
-        return new UsernamePrincipal("writer" + (index % numWriters));
-      case QUERY_ROLE:
-        return new UsernamePrincipal("reader" + ((index % 2) + 3));
-      default:
-        return new UsernamePrincipal(admins[index % admins.length]);
+    case READER_ROLE:
+      return new UsernamePrincipal("reader" + (index % numReaders));
+    case WRITER_ROLE:
+      return new UsernamePrincipal("writer" + (index % numWriters));
+    case QUERY_ROLE:
+      return new UsernamePrincipal("reader" + ((index % 2) + 3));
+    default:
+      return new UsernamePrincipal(admins[index % admins.length]);
     }
   }
 
@@ -160,18 +146,18 @@ public class XmlAuthzCredentialGenerator extends AuthzCredentialGenerator {
 
     byte disallowedRoleType = READER_ROLE;
     switch (roleType) {
-      case READER_ROLE:
-        disallowedRoleType = WRITER_ROLE;
-        break;
-      case WRITER_ROLE:
-        disallowedRoleType = READER_ROLE;
-        break;
-      case QUERY_ROLE:
-        disallowedRoleType = READER_ROLE;
-        break;
-      case ADMIN_ROLE:
-        disallowedRoleType = READER_ROLE;
-        break;
+    case READER_ROLE:
+      disallowedRoleType = WRITER_ROLE;
+      break;
+    case WRITER_ROLE:
+      disallowedRoleType = READER_ROLE;
+      break;
+    case QUERY_ROLE:
+      disallowedRoleType = READER_ROLE;
+      break;
+    case ADMIN_ROLE:
+      disallowedRoleType = READER_ROLE;
+      break;
     }
 
     if (this.generator.classCode().isDummy()) {
@@ -197,18 +183,18 @@ public class XmlAuthzCredentialGenerator extends AuthzCredentialGenerator {
     final int[] adminIndices = { 1, 2 };
 
     switch (roleType) {
-      case READER_ROLE:
-        int readerIndex = readerIndices[index % readerIndices.length];
-        return new UsernamePrincipal(userPrefix + readerIndex);
-      case WRITER_ROLE:
-        int writerIndex = writerIndices[index % writerIndices.length];
-        return new UsernamePrincipal(userPrefix + writerIndex);
-      case QUERY_ROLE:
-        int queryIndex = queryIndices[index % queryIndices.length];
-        return new UsernamePrincipal(userPrefix + queryIndex);
-      default:
-        int adminIndex = adminIndices[index % adminIndices.length];
-        return new UsernamePrincipal(userPrefix + adminIndex);
+    case READER_ROLE:
+      int readerIndex = readerIndices[index % readerIndices.length];
+      return new UsernamePrincipal(userPrefix + readerIndex);
+    case WRITER_ROLE:
+      int writerIndex = writerIndices[index % writerIndices.length];
+      return new UsernamePrincipal(userPrefix + writerIndex);
+    case QUERY_ROLE:
+      int queryIndex = queryIndices[index % queryIndices.length];
+      return new UsernamePrincipal(userPrefix + queryIndex);
+    default:
+      int adminIndex = adminIndices[index % adminIndices.length];
+      return new UsernamePrincipal(userPrefix + adminIndex);
     }
   }
 

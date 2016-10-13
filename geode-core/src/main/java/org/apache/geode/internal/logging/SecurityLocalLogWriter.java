@@ -20,7 +20,6 @@ import java.io.PrintStream;
 
 import org.apache.geode.i18n.StringId;
 
-
 /**
  * Implementation of {@link org.apache.geode.LogWriter} that will write
  * security related logs to a local stream.
@@ -60,8 +59,7 @@ public class SecurityLocalLogWriter extends PureLogWriter {
    * @throws IllegalArgumentException
    *                 if level is not in legal range
    */
-  public SecurityLocalLogWriter(int level, PrintStream logWriter,
-      String connectionName) {
+  public SecurityLocalLogWriter(int level, PrintStream logWriter, String connectionName) {
     super(level, logWriter, connectionName);
   }
 
@@ -69,12 +67,12 @@ public class SecurityLocalLogWriter extends PureLogWriter {
   public boolean isSecure() {
     return true;
   }
-  
+
   @Override
   public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception) {
     put(msgLevel, msgId.toLocalizedString(params), exception);
   }
-  
+
   /**
    * Adds the {@link SecurityLogWriter#SECURITY_PREFIX} prefix to the log-level
    * to distinguish security related log-lines.

@@ -42,17 +42,17 @@ public interface ObjectType extends DataSerializable {
    * query language and therefore return true to this method.
    */
   public boolean isCollectionType();
-  
+
   /** Return true if this is a MapType */
   public boolean isMapType();
-  
+
   /** Return true if this is a StructType */
   public boolean isStructType();
-  
+
   /** @return the simple name for the class this resolves to without including
     * the package */
   public String getSimpleClassName();
-  
+
   /** @return the Class that this type corresponds to.
    */
   public Class resolveClass();

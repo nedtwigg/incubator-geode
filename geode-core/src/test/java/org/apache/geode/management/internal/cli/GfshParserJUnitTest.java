@@ -69,40 +69,30 @@ public class GfshParserJUnitTest {
   private static final String ARGUMENT1_NAME = "argument1";
   private static final String ARGUMENT1_HELP = "help for argument1";
   private static final String ARGUMENT1_CONTEXT = "context for argument 1";
-  private static final Completion[] ARGUMENT1_COMPLETIONS = {
-    new Completion("arg1"), new Completion("arg1alt")
-  };
+  private static final Completion[] ARGUMENT1_COMPLETIONS = { new Completion("arg1"), new Completion("arg1alt") };
   private static final String ARGUMENT2_NAME = "argument2";
   private static final String ARGUMENT2_CONTEXT = "context for argument 2";
   private static final String ARGUMENT2_HELP = "help for argument2";
   private static final String ARGUMENT2_UNSPECIFIED_DEFAULT_VALUE = "{unspecified default value for argument2}";
-  private static final Completion[] ARGUMENT2_COMPLETIONS = {
-    new Completion("arg2"), new Completion("arg2alt")
-  };
+  private static final Completion[] ARGUMENT2_COMPLETIONS = { new Completion("arg2"), new Completion("arg2alt") };
 
   // OPTIONS
   private static final String OPTION1_NAME = "option1";
   private static final String OPTION1_SYNONYM = "opt1";
   private static final String OPTION1_HELP = "help for option1";
   private static final String OPTION1_CONTEXT = "context for option1";
-  private static final Completion[] OPTION1_COMPLETIONS = {
-    new Completion("option1"), new Completion("option1Alternate")
-  };
+  private static final Completion[] OPTION1_COMPLETIONS = { new Completion("option1"), new Completion("option1Alternate") };
   private static final String OPTION2_NAME = "option2";
   private static final String OPTION2_HELP = "help for option2";
   private static final String OPTION2_CONTEXT = "context for option2";
   private static final String OPTION2_SPECIFIED_DEFAULT_VALUE = "{specified default value for option2}";
-  private static final Completion[] OPTION2_COMPLETIONS = {
-    new Completion("option2"), new Completion("option2Alternate")
-  };
+  private static final Completion[] OPTION2_COMPLETIONS = { new Completion("option2"), new Completion("option2Alternate") };
   private static final String OPTION3_NAME = "option3";
   private static final String OPTION3_SYNONYM = "opt3";
   private static final String OPTION3_HELP = "help for option3";
   private static final String OPTION3_CONTEXT = "context for option3";
   private static final String OPTION3_UNSPECIFIED_DEFAULT_VALUE = "{unspecified default value for option3}";
-  private static final Completion[] OPTION3_COMPLETIONS = {
-    new Completion("option3"), new Completion("option3Alternate")
-  };
+  private static final Completion[] OPTION3_COMPLETIONS = { new Completion("option3"), new Completion("option3Alternate") };
 
   private Method methodCommand1;
   private Method methodTestParamConcat;
@@ -196,8 +186,7 @@ public class GfshParserJUnitTest {
 
     // Input contains command name, first argument, second argument
     // and first option
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME;
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME;
     clearAndSimpleComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the values for the first option
     for (Completion completion : OPTION1_COMPLETIONS) {
@@ -208,10 +197,7 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option and prefix of one of the values provided
     // by the auto-completor.
-    input = command1Names[1] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue()
-              .substring(0, 2);
+    input = command1Names[1] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue().substring(0, 2);
     clearAndSimpleComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the values for the first option
     for (Completion completion : OPTION1_COMPLETIONS) {
@@ -224,9 +210,7 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option and one of the values provided
     // by the auto-completor.
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue();
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue();
     clearAndSimpleComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the remaining options
     // As only first option is mandatory, we expect the
@@ -238,9 +222,7 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option, one value for the option and value separator at
     // the end
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue() + SyntaxConstants.VALUE_SEPARATOR;
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue() + SyntaxConstants.VALUE_SEPARATOR;
     clearAndSimpleComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the other values for completion
     completionValues.add(SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue());
@@ -248,9 +230,7 @@ public class GfshParserJUnitTest {
 
     // Input contains command name, first argument, second argument,
     // first option and both the values for the option
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue();
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue();
     clearAndSimpleComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the remaining options
     // As only first option is mandatory, we expect the
@@ -262,18 +242,13 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option, both the values for the option and valueSeparator
     // at the end
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue() + SyntaxConstants.VALUE_SEPARATOR;
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue() + SyntaxConstants.VALUE_SEPARATOR;
     clearAndSimpleComplete(completionCandidates, completionValues, input, parser);
     // Here we expect nothing for completion
     assertSimpleCompletionValues(completionValues, completionCandidates);
   }
 
-  private void clearAndSimpleComplete(List<String> completionCandidates,
-                                      List<String> completionValues,
-                                      String input,
-                                      Parser parser) {
+  private void clearAndSimpleComplete(List<String> completionCandidates, List<String> completionValues, String input, Parser parser) {
     completionCandidates.clear();
     completionValues.clear();
     parser.complete(input, input.length(), completionCandidates);
@@ -343,8 +318,7 @@ public class GfshParserJUnitTest {
 
     // Input contains command name, first argument, second argument
     // and first option
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME;
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME;
     clearAndAdvancedComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the values for the first option
     for (Completion completion : OPTION1_COMPLETIONS) {
@@ -355,10 +329,7 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option and prefix of one of the values provided
     // by the auto-completor.
-    input = command1Names[1] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue()
-              .substring(0, 2);
+    input = command1Names[1] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue().substring(0, 2);
     clearAndAdvancedComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the values for the first option
     for (Completion completion : OPTION1_COMPLETIONS) {
@@ -371,9 +342,7 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option and one of the values provided
     // by the auto-completor.
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue();
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue();
     clearAndAdvancedComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the remaining options
     // As only first option is mandatory, we expect the
@@ -385,20 +354,15 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option, one value for the option and value separator at
     // the end
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue() + SyntaxConstants.VALUE_SEPARATOR;
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue() + SyntaxConstants.VALUE_SEPARATOR;
     clearAndAdvancedComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the other values for completion
-    completionValues.add(new Completion(SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue(), OPTION1_COMPLETIONS[1]
-      .getValue(), null, 0));
+    completionValues.add(new Completion(SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue(), OPTION1_COMPLETIONS[1].getValue(), null, 0));
     assertAdvancedCompletionValues(completionValues, completionCandidates);
 
     // Input contains command name, first argument, second argument,
     // first option and both the values for the option
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue();
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue();
     clearAndAdvancedComplete(completionCandidates, completionValues, input, parser);
     // Here we expect the remaining options
     // As only first option is mandatory, we expect the
@@ -410,18 +374,13 @@ public class GfshParserJUnitTest {
     // Input contains command name, first argument, second argument,
     // first option, both the values for the option and valueSeparator
     // at the end
-    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0]
-      .getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0]
-              .getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue() + SyntaxConstants.VALUE_SEPARATOR;
+    input = command1Names[0] + " " + ARGUMENT1_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + ARGUMENT2_COMPLETIONS[0].getValue() + SyntaxConstants.ARGUMENT_SEPARATOR + " " + SyntaxConstants.LONG_OPTION_SPECIFIER + OPTION1_NAME + SyntaxConstants.OPTION_VALUE_SPECIFIER + OPTION1_COMPLETIONS[0].getValue() + SyntaxConstants.VALUE_SEPARATOR + OPTION1_COMPLETIONS[1].getValue() + SyntaxConstants.VALUE_SEPARATOR;
     clearAndAdvancedComplete(completionCandidates, completionValues, input, parser);
     // Here we expect nothing for completion
     assertAdvancedCompletionValues(completionValues, completionCandidates);
   }
 
-  private void clearAndAdvancedComplete(List<Completion> completionCandidates,
-                                        List<Completion> completionValues,
-                                        String input,
-                                        Parser parser) {
+  private void clearAndAdvancedComplete(List<Completion> completionCandidates, List<Completion> completionValues, String input, Parser parser) {
     completionCandidates.clear();
     completionValues.clear();
     parser.completeAdvanced(input, input.length(), completionCandidates);
@@ -430,15 +389,9 @@ public class GfshParserJUnitTest {
   private void assertAdvancedCompletionValues(List<Completion> expected, List<Completion> actual) {
     assertEquals("Check size", expected.size(), actual.size());
     for (int i = 0; i < expected.size(); i++) {
-      assertEquals("Check completion value no." + i + ". Expected(" + expected.get(i) + ") & Actual(" + actual.get(i) + ").", expected
-        .get(i)
-        .getValue(), actual.get(i).getValue());
+      assertEquals("Check completion value no." + i + ". Expected(" + expected.get(i) + ") & Actual(" + actual.get(i) + ").", expected.get(i).getValue(), actual.get(i).getValue());
       if (expected.get(i).getFormattedValue() != null) {
-        assertEquals("Check completion formatted value no." + i + ". Expected(" + expected.get(i)
-                                                                                          .getFormattedValue() + ") & Actual(" + actual
-                       .get(i)
-                       .getFormattedValue() + ").", expected.get(i).getFormattedValue(), actual.get(i)
-                                                                                               .getFormattedValue());
+        assertEquals("Check completion formatted value no." + i + ". Expected(" + expected.get(i).getFormattedValue() + ") & Actual(" + actual.get(i).getFormattedValue() + ").", expected.get(i).getFormattedValue(), actual.get(i).getFormattedValue());
       }
     }
   }
@@ -465,8 +418,7 @@ public class GfshParserJUnitTest {
       expectedException = expected;
     } finally {
       assertNotNull("Expecting a " + CommandProcessingException.class + " for an invalid command name: " + input, expectedException);
-      assertEquals("CommandProcessingException type doesn't match. " + "Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE + ") ", expectedException
-        .getErrorType(), CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE);
+      assertEquals("CommandProcessingException type doesn't match. " + "Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE + ") ", expectedException.getErrorType(), CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE);
     }
 
     // Input contains a string which is prefix
@@ -479,8 +431,7 @@ public class GfshParserJUnitTest {
       expectedException = e;
     } finally {
       assertNotNull("Expecting a " + CommandProcessingException.class + " for an invalid/incomplete command name: " + input, expectedException);
-      assertEquals("CommandProcessingException type doesn't match. Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE + ") ", expectedException
-        .getErrorType(), CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE);
+      assertEquals("CommandProcessingException type doesn't match. Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE + ") ", expectedException.getErrorType(), CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE);
     }
 
     // Input contains only prefix of the command
@@ -495,8 +446,7 @@ public class GfshParserJUnitTest {
     } finally {
       //FIXME - Nikhil/Abhishek prefix shouldn't work
       assertNotNull("Expecting a " + CommandProcessingException.class + " for an invalid/incomplete command name: " + input, expectedException);
-      assertEquals("CommandProcessingException type doesn't match. Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE + ") ", expectedException
-        .getErrorType(), CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE);
+      assertEquals("CommandProcessingException type doesn't match. Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE + ") ", expectedException.getErrorType(), CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE);
     }
 
     // Input contains only command name
@@ -508,8 +458,7 @@ public class GfshParserJUnitTest {
       expectedException = expected;
     } finally {
       assertNotNull("Expecting a " + CommandProcessingException.class + " for an invalid/incomplete command name: " + input, expectedException);
-      assertEquals("CommandProcessingException type doesn't match. Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.REQUIRED_ARGUMENT_MISSING + ") ", CommandProcessingException.REQUIRED_ARGUMENT_MISSING, expectedException
-        .getErrorType());
+      assertEquals("CommandProcessingException type doesn't match. Actual(" + expectedException.getErrorType() + ") & Expected(" + CommandProcessingException.REQUIRED_ARGUMENT_MISSING + ") ", CommandProcessingException.REQUIRED_ARGUMENT_MISSING, expectedException.getErrorType());
     }
 
     // Input contains first argument and first option with value
@@ -642,10 +591,7 @@ public class GfshParserJUnitTest {
     checkAvailabilityMessage(new AvailabilityCommands(), AvailabilityCommands.C1_NAME, AvailabilityCommands.C1_MSG_UNAVAILABLE, AvailabilityCommands.C1_PROP);
   }
 
-  public void checkAvailabilityMessage(CommandMarker availabilityCommands,
-                                       String commandString,
-                                       String unavailableMessage,
-                                       String availabiltyBooleanProp) throws Exception {
+  public void checkAvailabilityMessage(CommandMarker availabilityCommands, String commandString, String unavailableMessage, String availabiltyBooleanProp) throws Exception {
     CommandManager cmdManager = CommandManager.getInstance(false);
     cmdManager.add(availabilityCommands);
 
@@ -657,10 +603,7 @@ public class GfshParserJUnitTest {
       parseResult = parser.parse(commandString);
     } catch (CommandProcessingException e) {
       String actualMessage = e.getMessage();
-      String expectedMessage = CliStrings.format(CliStrings.GFSHPARSER__MSG__0_IS_NOT_AVAILABLE_REASON_1, new Object[] {
-        commandString,
-        unavailableMessage
-      });
+      String expectedMessage = CliStrings.format(CliStrings.GFSHPARSER__MSG__0_IS_NOT_AVAILABLE_REASON_1, new Object[] { commandString, unavailableMessage });
       assertEquals("1. Unavailability message [" + actualMessage + "] is not as expected[" + expectedMessage + "].", actualMessage, expectedMessage);
     }
 
@@ -678,10 +621,7 @@ public class GfshParserJUnitTest {
       parseResult = parser.parse(commandString);
     } catch (CommandProcessingException e) {
       String actualMessage = e.getMessage();
-      String expectedMessage = CliStrings.format(CliStrings.GFSHPARSER__MSG__0_IS_NOT_AVAILABLE_REASON_1, new Object[] {
-        commandString,
-        unavailableMessage
-      });
+      String expectedMessage = CliStrings.format(CliStrings.GFSHPARSER__MSG__0_IS_NOT_AVAILABLE_REASON_1, new Object[] { commandString, unavailableMessage });
       assertEquals("2. Unavailabilty message [" + actualMessage + "] is not as expected[" + expectedMessage + "].", actualMessage, expectedMessage);
     }
   }
@@ -690,17 +630,7 @@ public class GfshParserJUnitTest {
 
     @CliCommand(value = { COMMAND1_NAME, COMMAND1_NAME_ALIAS }, help = COMMAND1_HELP)
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static String command1(@CliArgument(name = ARGUMENT1_NAME, argumentContext = ARGUMENT1_CONTEXT, help = ARGUMENT1_HELP, mandatory = true) String argument1,
-                                  @CliArgument(name = ARGUMENT2_NAME, argumentContext = ARGUMENT2_CONTEXT, help = ARGUMENT2_HELP, mandatory = false, unspecifiedDefaultValue = ARGUMENT2_UNSPECIFIED_DEFAULT_VALUE, systemProvided = false) String argument2,
-                                  @CliOption(key = {
-                                    OPTION1_NAME,
-                                    OPTION1_SYNONYM
-                                  }, help = OPTION1_HELP, mandatory = true, optionContext = OPTION1_CONTEXT) String option1,
-                                  @CliOption(key = { OPTION2_NAME }, help = OPTION2_HELP, mandatory = false, optionContext = OPTION2_CONTEXT, specifiedDefaultValue = OPTION2_SPECIFIED_DEFAULT_VALUE) String option2,
-                                  @CliOption(key = {
-                                    OPTION3_NAME,
-                                    OPTION3_SYNONYM
-                                  }, help = OPTION3_HELP, mandatory = false, optionContext = OPTION3_CONTEXT, unspecifiedDefaultValue = OPTION3_UNSPECIFIED_DEFAULT_VALUE) String option3) {
+    public static String command1(@CliArgument(name = ARGUMENT1_NAME, argumentContext = ARGUMENT1_CONTEXT, help = ARGUMENT1_HELP, mandatory = true) String argument1, @CliArgument(name = ARGUMENT2_NAME, argumentContext = ARGUMENT2_CONTEXT, help = ARGUMENT2_HELP, mandatory = false, unspecifiedDefaultValue = ARGUMENT2_UNSPECIFIED_DEFAULT_VALUE, systemProvided = false) String argument2, @CliOption(key = { OPTION1_NAME, OPTION1_SYNONYM }, help = OPTION1_HELP, mandatory = true, optionContext = OPTION1_CONTEXT) String option1, @CliOption(key = { OPTION2_NAME }, help = OPTION2_HELP, mandatory = false, optionContext = OPTION2_CONTEXT, specifiedDefaultValue = OPTION2_SPECIFIED_DEFAULT_VALUE) String option2, @CliOption(key = { OPTION3_NAME, OPTION3_SYNONYM }, help = OPTION3_HELP, mandatory = false, optionContext = OPTION3_CONTEXT, unspecifiedDefaultValue = OPTION3_UNSPECIFIED_DEFAULT_VALUE) String option3) {
       return null;
     }
 
@@ -712,18 +642,13 @@ public class GfshParserJUnitTest {
 
     @CliCommand(value = { "testParamConcat" })
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static Result testParamConcat(@CliOption(key = { "string" }) String string,
-                                         @CliOption(key = { "stringArray" }) @CliMetaData(valueSeparator = ",") String[] stringArray,
-                                         @CliOption(key = { "stringList" }, optionContext = ConverterHint.STRING_LIST) @CliMetaData(valueSeparator = ",") List<String> stringList,
-                                         @CliOption(key = { "integer" }) Integer integer,
-                                         @CliOption(key = { "colonArray" }) @CliMetaData(valueSeparator = ":") String[] colonArray) {
+    public static Result testParamConcat(@CliOption(key = { "string" }) String string, @CliOption(key = { "stringArray" }) @CliMetaData(valueSeparator = ",") String[] stringArray, @CliOption(key = { "stringList" }, optionContext = ConverterHint.STRING_LIST) @CliMetaData(valueSeparator = ",") List<String> stringList, @CliOption(key = { "integer" }) Integer integer, @CliOption(key = { "colonArray" }) @CliMetaData(valueSeparator = ":") String[] colonArray) {
       return null;
     }
 
     @CliCommand(value = { "testMultiWordArg" })
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static Result testMultiWordArg(@CliArgument(name = "arg1") String arg1,
-                                          @CliArgument(name = "arg2") String arg2) {
+    public static Result testMultiWordArg(@CliArgument(name = "arg1") String arg1, @CliArgument(name = "arg2") String arg2) {
       return null;
     }
   }
@@ -744,11 +669,7 @@ public class GfshParserJUnitTest {
     }
 
     @Override
-    public boolean getAllPossibleValues(List<Completion> completions,
-                                        Class<?> targetType,
-                                        String existingData,
-                                        String context,
-                                        MethodTarget target) {
+    public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String context, MethodTarget target) {
       if (context.equals(ARGUMENT1_CONTEXT)) {
         for (Completion completion : ARGUMENT1_COMPLETIONS) {
           completions.add(completion);

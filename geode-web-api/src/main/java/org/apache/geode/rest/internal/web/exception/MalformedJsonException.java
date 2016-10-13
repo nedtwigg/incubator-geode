@@ -34,11 +34,11 @@ public class MalformedJsonException extends RuntimeException {
   public MalformedJsonException(String message) {
     super(message);
   }
- 
+
   public MalformedJsonException(String message, JSONFormatterException jfe) {
     super(message, jfe);
   }
-  
+
   public MalformedJsonException(Throwable cause) {
     super(cause);
   }

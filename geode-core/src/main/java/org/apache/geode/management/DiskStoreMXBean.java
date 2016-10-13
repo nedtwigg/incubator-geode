@@ -30,7 +30,7 @@ import org.apache.geode.security.ResourcePermission.Resource;
  */
 @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
 public interface DiskStoreMXBean {
-  
+
   /**
    * Returns the name of the DiskStore.
    */
@@ -42,7 +42,7 @@ public interface DiskStoreMXBean {
    * @return True if disk files are automatically compacted, false otherwise
    */
   public boolean isAutoCompact();
-  
+
   /**
    * Returns the threshold at which an op-log may be compacted. Until it
    * reaches this threshold the op-log will not be compacted. The threshold is
@@ -67,7 +67,7 @@ public interface DiskStoreMXBean {
    * data is saved to disk.
    */
   public long getTimeInterval();
-  
+
   /**
    * Returns the size of the write buffer that this DiskStore will use when
    * writing data to disk.
@@ -139,7 +139,7 @@ public interface DiskStoreMXBean {
    * Returns the number of backups currently in progress on this DiskStore.
    */
   public int getTotalBackupInProgress();
-  
+
   /**
    * Returns the number of backups of this DiskStore that have been completed.
    */
@@ -175,7 +175,7 @@ public interface DiskStoreMXBean {
    */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   public boolean forceCompaction();
-  
+
   /**
    * Causes any data that is currently in the asynchronous queue to be written
    * to disk. Does not return until the flush is complete.
@@ -200,7 +200,7 @@ public interface DiskStoreMXBean {
    * @since GemFire 8.0
    */
   public float getDiskUsageCriticalPercentage();
-  
+
   /**
    * Sets the value of the disk usage warning percentage.
    * 
@@ -208,7 +208,7 @@ public interface DiskStoreMXBean {
    */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   public void setDiskUsageWarningPercentage(float warningPercent);
-  
+
   /**
    * Sets the value of the disk usage critical percentage.
    * 

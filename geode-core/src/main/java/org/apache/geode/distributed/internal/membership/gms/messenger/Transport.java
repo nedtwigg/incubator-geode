@@ -35,13 +35,13 @@ public class Transport extends UDP {
    * This is the initial part of the name of all JGroups threads that deliver messages
    */
   public static final String THREAD_POOL_NAME_PREFIX = "Geode UDP";
-  
+
   private JGroupsMessenger messenger;
-  
+
   public void setMessenger(JGroupsMessenger m) {
     messenger = m;
   }
-  
+
   /*
    * (non-Javadoc)
    * copied from JGroups to perform Geode-specific error handling when there
@@ -51,30 +51,25 @@ public class Transport extends UDP {
   @Override
   protected void _send(Message msg, Address dest) {
     try {
-        send(msg, dest);
-    }
-    catch(InterruptedIOException iex) {
-    }
-    catch(InterruptedException interruptedEx) {
-        Thread.currentThread().interrupt(); // let someone else handle the interrupt
-    }
-    catch(SocketException e) {
+      send(msg, dest);
+    } catch (InterruptedIOException iex) {
+    } catch (InterruptedException interruptedEx) {
+      Thread.currentThread().interrupt(); // let someone else handle the interrupt
+    } catch (SocketException e) {
       if (!this.sock.isClosed() && !stack.getChannel().isClosed()) {
         log.error("Exception caught while sending message", e);
       }
-//        log.trace(Util.getMessage("SendFailure"),
-//                  local_addr, (dest == null? "cluster" : dest), msg.size(), e.toString(), msg.printHeaders());
-    }
-    catch (IOException e) {
+      //        log.trace(Util.getMessage("SendFailure"),
+      //                  local_addr, (dest == null? "cluster" : dest), msg.size(), e.toString(), msg.printHeaders());
+    } catch (IOException e) {
       if (messenger != null
-          /*&& e.getMessage().contains("Operation not permitted")*/) { // this is the english Oracle JDK exception condition we really want to catch
+      /*&& e.getMessage().contains("Operation not permitted")*/) { // this is the english Oracle JDK exception condition we really want to catch
         messenger.handleJGroupsIOException(e, dest);
       }
-    }
-    catch(Throwable e) {
-        log.error("Exception caught while sending message", e);
-//        Util.getMessage("SendFailure"),
-//                  local_addr, (dest == null? "cluster" : dest), msg.size(), e.toString(), msg.printHeaders());
+    } catch (Throwable e) {
+      log.error("Exception caught while sending message", e);
+      //        Util.getMessage("SendFailure"),
+      //                  local_addr, (dest == null? "cluster" : dest), msg.size(), e.toString(), msg.printHeaders());
     }
   }
 
@@ -87,21 +82,20 @@ public class Transport extends UDP {
   protected void doSend(AsciiString cluster_name, byte[] buf, int offset, int length, Address dest) throws Exception {
     try {
       super.doSend(cluster_name, buf, offset, length, dest);
-    } catch(SocketException sock_ex) {
+    } catch (SocketException sock_ex) {
       if (!this.sock.isClosed() && !stack.getChannel().isClosed()) {
         log.error("Exception caught while sending message", sock_ex);
       }
     } catch (IOException e) {
       if (messenger != null
-          /*&& e.getMessage().contains("Operation not permitted")*/) { // this is the english Oracle JDK exception condition we really want to catch
+      /*&& e.getMessage().contains("Operation not permitted")*/) { // this is the english Oracle JDK exception condition we really want to catch
         messenger.handleJGroupsIOException(e, dest);
       }
-    } catch(Throwable e) {
-        log.error("Exception caught while sending message", e);
+    } catch (Throwable e) {
+      log.error("Exception caught while sending message", e);
     }
   }
 
-    
   /*
    * (non-Javadoc)
    * JGroups does not currently (3.6.6) allow you to specify that
@@ -111,11 +105,11 @@ public class Transport extends UDP {
    */
   @Override
   public void init() throws Exception {
-    global_thread_factory=new DefaultThreadFactory("Geode ", true);
-    timer_thread_factory=new LazyThreadFactory(THREAD_POOL_NAME_PREFIX + " Timer", true, true);
-    default_thread_factory=new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " Incoming", true, true);
-    oob_thread_factory=new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " OOB", true, true);
-    internal_thread_factory=new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " INT", true, true);
+    global_thread_factory = new DefaultThreadFactory("Geode ", true);
+    timer_thread_factory = new LazyThreadFactory(THREAD_POOL_NAME_PREFIX + " Timer", true, true);
+    default_thread_factory = new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " Incoming", true, true);
+    oob_thread_factory = new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " OOB", true, true);
+    internal_thread_factory = new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " INT", true, true);
     super.init();
   }
 
@@ -141,16 +135,12 @@ public class Transport extends UDP {
     }
 
     // drop message from self; it has already been looped back up (https://issues.jboss.org/browse/JGRP-1765)
-    if(local_physical_addr != null && local_physical_addr.equals(sender))
-        return;
+    if (local_physical_addr != null && local_physical_addr.equals(sender))
+      return;
 
-    if (length-offset == 4
-        && data[offset] == 'p'
-        && data[offset+1] == 'i'
-        && data[offset+2] == 'n'
-        && data[offset+3] == 'g') {
+    if (length - offset == 4 && data[offset] == 'p' && data[offset + 1] == 'i' && data[offset + 2] == 'n' && data[offset + 3] == 'g') {
       // AvailablePort check
-      data[offset+1] = 'o';
+      data[offset + 1] = 'o';
       try {
         sendToSingleMember(sender, data, offset, length);
       } catch (Exception e) {
@@ -159,7 +149,7 @@ public class Transport extends UDP {
       return;
     }
 
-    super.receive(sender,  data,  offset,  length);
+    super.receive(sender, data, offset, length);
   }
 
 }

@@ -43,12 +43,10 @@ public class UnsafeThreadLocal<T> extends ThreadLocal<T> {
 
   private static Object get(ThreadLocal threadLocal, Thread thread) {
     try {
-      Object threadLocalMap = invokePrivate(threadLocal, "getMap",
-          new Class[] { Thread.class }, new Object[] { thread });
+      Object threadLocalMap = invokePrivate(threadLocal, "getMap", new Class[] { Thread.class }, new Object[] { thread });
 
       if (threadLocalMap != null) {
-        Object entry = invokePrivate(threadLocalMap, "getEntry",
-            new Class[] { ThreadLocal.class }, new Object[] { threadLocal });
+        Object entry = invokePrivate(threadLocalMap, "getEntry", new Class[] { ThreadLocal.class }, new Object[] { threadLocal });
         if (entry != null)
           return getPrivate(entry, "value");
       }
@@ -58,18 +56,13 @@ public class UnsafeThreadLocal<T> extends ThreadLocal<T> {
     }
   }
 
-  private static Object getPrivate(Object object, String fieldName)
-      throws SecurityException, NoSuchFieldException, IllegalArgumentException,
-      IllegalAccessException {
+  private static Object getPrivate(Object object, String fieldName) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
     Field field = object.getClass().getDeclaredField(fieldName);
     field.setAccessible(true);
     return field.get(object);
   }
 
-  private static Object invokePrivate(Object object, String methodName,
-      Class[] argTypes, Object[] args) throws SecurityException,
-      NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
-      InvocationTargetException {
+  private static Object invokePrivate(Object object, String methodName, Class[] argTypes, Object[] args) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
     Method method = null;
     Class clazz = object.getClass();

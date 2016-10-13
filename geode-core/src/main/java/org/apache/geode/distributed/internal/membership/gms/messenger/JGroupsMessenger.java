@@ -101,7 +101,6 @@ import org.apache.geode.internal.tcp.MemberShunnedException;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-
 @SuppressWarnings("StatementWithEmptyBody")
 public class JGroupsMessenger implements Messenger {
 
@@ -124,7 +123,7 @@ public class JGroupsMessenger implements Messenger {
   public static boolean THROW_EXCEPTION_ON_START_HOOK;
 
   private String jgStackConfig;
-  
+
   JChannel myChannel;
   InternalDistributedMember localAddress;
   JGAddress jgAddress;
@@ -132,13 +131,13 @@ public class JGroupsMessenger implements Messenger {
 
   /** handlers that receive certain classes of messages instead of the Manager */
   private final Map<Class, MessageHandler> handlers = new ConcurrentHashMap<>();
-  
+
   private volatile NetView view;
 
   private final GMSPingPonger pingPonger = new GMSPingPonger();
-  
+
   protected final AtomicLong pongsReceived = new AtomicLong(0);
-  
+
   /**
    * A set that contains addresses that we have logged JGroups IOExceptions for in the
    * current membership view and possibly initiated suspect processing.  This
@@ -146,7 +145,7 @@ public class JGroupsMessenger implements Messenger {
    * amount of exceptions logged
    */
   private final Set<Address> addressesWithIoExceptionsProcessed = Collections.synchronizedSet(new HashSet<Address>());
-  
+
   static {
     // register classes that we've added to jgroups that are put on the wire
     // or need a header ID
@@ -157,13 +156,12 @@ public class JGroupsMessenger implements Messenger {
   private GMSEncrypt encrypt;
 
   @Override
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
   public void init(Services s) {
     this.services = s;
 
     RemoteTransportConfig transport = services.getConfig().getTransport();
     DistributionConfig dc = services.getConfig().getDistributionConfig();
-    
 
     boolean b = dc.getEnableNetworkPartitionDetection();
     System.setProperty("jgroups.resolve_dns", String.valueOf(!b));
@@ -189,41 +187,36 @@ public class JGroupsMessenger implements Messenger {
       BufferedReader br;
       br = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
       String input;
-      while ((input=br.readLine()) != null) {
+      while ((input = br.readLine()) != null) {
         sb.append(input);
       }
       br.close();
       properties = sb.toString();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       throw new GemFireConfigException(LocalizedStrings.GroupMembershipService_AN_EXCEPTION_WAS_THROWN_WHILE_READING_JGROUPS_CONFIG.toLocalizedString(), ex);
     }
-    
+
     if (properties.startsWith("<!--")) {
       int commentEnd = properties.indexOf("-->");
-      properties = properties.substring(commentEnd+3);
+      properties = properties.substring(commentEnd + 3);
     }
-    
-    
+
     if (transport.isMcastEnabled()) {
       properties = replaceStrings(properties, "MCAST_PORT", String.valueOf(transport.getMcastId().getPort()));
       properties = replaceStrings(properties, "MCAST_ADDRESS", dc.getMcastAddress().getHostAddress());
       properties = replaceStrings(properties, "MCAST_TTL", String.valueOf(dc.getMcastTtl()));
       properties = replaceStrings(properties, "MCAST_SEND_BUFFER_SIZE", String.valueOf(dc.getMcastSendBufferSize()));
       properties = replaceStrings(properties, "MCAST_RECV_BUFFER_SIZE", String.valueOf(dc.getMcastRecvBufferSize()));
-      properties = replaceStrings(properties, "MCAST_RETRANSMIT_INTERVAL",
-          "" + Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "mcast-retransmit-interval", 500));
-      properties = replaceStrings(properties, "RETRANSMIT_LIMIT", String.valueOf(dc.getUdpFragmentSize()-256));
+      properties = replaceStrings(properties, "MCAST_RETRANSMIT_INTERVAL", "" + Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "mcast-retransmit-interval", 500));
+      properties = replaceStrings(properties, "RETRANSMIT_LIMIT", String.valueOf(dc.getUdpFragmentSize() - 256));
     }
 
-    if (transport.isMcastEnabled() || transport.isTcpDisabled() ||
-        (dc.getUdpRecvBufferSize() != DistributionConfig.DEFAULT_UDP_RECV_BUFFER_SIZE) ) {
-      properties = replaceStrings(properties, "UDP_RECV_BUFFER_SIZE", ""+dc.getUdpRecvBufferSize());
+    if (transport.isMcastEnabled() || transport.isTcpDisabled() || (dc.getUdpRecvBufferSize() != DistributionConfig.DEFAULT_UDP_RECV_BUFFER_SIZE)) {
+      properties = replaceStrings(properties, "UDP_RECV_BUFFER_SIZE", "" + dc.getUdpRecvBufferSize());
+    } else {
+      properties = replaceStrings(properties, "UDP_RECV_BUFFER_SIZE", "" + DistributionConfig.DEFAULT_UDP_RECV_BUFFER_SIZE_REDUCED);
     }
-    else {
-      properties = replaceStrings(properties, "UDP_RECV_BUFFER_SIZE", ""+DistributionConfig.DEFAULT_UDP_RECV_BUFFER_SIZE_REDUCED);
-    }
-    properties = replaceStrings(properties, "UDP_SEND_BUFFER_SIZE", ""+dc.getUdpSendBufferSize());
+    properties = replaceStrings(properties, "UDP_SEND_BUFFER_SIZE", "" + dc.getUdpSendBufferSize());
 
     String str = transport.getBindAddress();
     // JGroups UDP protocol requires a bind address
@@ -234,27 +227,27 @@ public class JGroupsMessenger implements Messenger {
         throw new GemFireConfigException(e.getMessage(), e);
       }
     }
-    properties = replaceStrings(properties, "BIND_ADDR_SETTING", "bind_addr=\""+str+"\"");
+    properties = replaceStrings(properties, "BIND_ADDR_SETTING", "bind_addr=\"" + str + "\"");
 
     int port = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "jg-bind-port", 0);
     if (port != 0) {
-      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE_START", ""+port);
-      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE", ""+0);
+      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE_START", "" + port);
+      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE", "" + 0);
     } else {
       int[] ports = dc.getMembershipPortRange();
-      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE_START", ""+ports[0]);
-      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE", ""+(ports[1]-ports[0]));
+      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE_START", "" + ports[0]);
+      properties = replaceStrings(properties, "MEMBERSHIP_PORT_RANGE", "" + (ports[1] - ports[0]));
     }
-    
-    properties = replaceStrings(properties, "UDP_FRAGMENT_SIZE", ""+dc.getUdpFragmentSize());
-    
-    properties = replaceStrings(properties, "FC_MAX_CREDITS", ""+dc.getMcastFlowControl().getByteAllowance());
-    properties = replaceStrings(properties, "FC_THRESHOLD", ""+dc.getMcastFlowControl().getRechargeThreshold());
-    properties = replaceStrings(properties, "FC_MAX_BLOCK", ""+dc.getMcastFlowControl().getRechargeBlockMs());
+
+    properties = replaceStrings(properties, "UDP_FRAGMENT_SIZE", "" + dc.getUdpFragmentSize());
+
+    properties = replaceStrings(properties, "FC_MAX_CREDITS", "" + dc.getMcastFlowControl().getByteAllowance());
+    properties = replaceStrings(properties, "FC_THRESHOLD", "" + dc.getMcastFlowControl().getRechargeThreshold());
+    properties = replaceStrings(properties, "FC_MAX_BLOCK", "" + dc.getMcastFlowControl().getRechargeBlockMs());
 
     this.jgStackConfig = properties;
 
-    if ( !dc.getSecurityUDPDHAlgo().isEmpty() ) {
+    if (!dc.getSecurityUDPDHAlgo().isEmpty()) {
       try {
         this.encrypt = new GMSEncrypt(services);
         logger.info("Initializing GMSEncrypt ");
@@ -265,34 +258,33 @@ public class JGroupsMessenger implements Messenger {
   }
 
   @Override
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
   public void start() {
     // create the configuration XML string for JGroups
     String properties = this.jgStackConfig;
-    
+
     long start = System.currentTimeMillis();
-    
+
     // start the jgroups channel and establish the membership ID
     boolean reconnecting = false;
     try {
       Object oldChannel = services.getConfig().getTransport().getOldDSMembershipInfo();
       if (oldChannel != null) {
         logger.debug("Reusing JGroups channel from previous system", properties);
-        
-        myChannel = (JChannel)oldChannel;
+
+        myChannel = (JChannel) oldChannel;
         // scrub the old channel
         ViewId vid = new ViewId(new JGAddress(), 0);
         View jgv = new View(vid, new ArrayList<>());
         this.myChannel.down(new Event(Event.VIEW_CHANGE, jgv));
-        UUID logicalAddress = (UUID)myChannel.getAddress();
+        UUID logicalAddress = (UUID) myChannel.getAddress();
         if (logicalAddress instanceof JGAddress) {
-          ((JGAddress)logicalAddress).setVmViewId(-1);
+          ((JGAddress) logicalAddress).setVmViewId(-1);
         }
         reconnecting = true;
-      }
-      else {
+      } else {
         logger.debug("JGroups configuration: {}", properties);
-        
+
         checkForIPv6();
         InputStream is = new ByteArrayInputStream(properties.getBytes("UTF-8"));
         myChannel = new JChannel(is);
@@ -300,14 +292,14 @@ public class JGroupsMessenger implements Messenger {
     } catch (Exception e) {
       throw new GemFireConfigException("unable to create jgroups channel", e);
     }
-    
+
     // give the stats to the jchannel statistics recorder
-    StatRecorder sr = (StatRecorder)myChannel.getProtocolStack().findProtocol(StatRecorder.class);
+    StatRecorder sr = (StatRecorder) myChannel.getProtocolStack().findProtocol(StatRecorder.class);
     if (sr != null) {
       sr.setServices(services);
     }
-    
-    Transport transport = (Transport)myChannel.getProtocolStack().getTransport();
+
+    Transport transport = (Transport) myChannel.getProtocolStack().getTransport();
     transport.setMessenger(this);
 
     try {
@@ -320,18 +312,18 @@ public class JGroupsMessenger implements Messenger {
       myChannel.close();
       throw new SystemConnectException("unable to create jgroups channel", e);
     }
-    
+
     if (JGroupsMessenger.THROW_EXCEPTION_ON_START_HOOK) {
       JGroupsMessenger.THROW_EXCEPTION_ON_START_HOOK = false;
       throw new SystemConnectException("failing for test");
     }
-    
+
     establishLocalAddress();
-    
-    logger.info("JGroups channel {} (took {}ms)", (reconnecting? "reinitialized" : "created"), System.currentTimeMillis()-start);
-    
+
+    logger.info("JGroups channel {} (took {}ms)", (reconnecting ? "reinitialized" : "created"), System.currentTimeMillis() - start);
+
   }
-  
+
   /**
    * JGroups picks an IPv6 address if preferIPv4Stack is false or not set
    * and preferIPv6Addresses is not set or is true.  We want it to use an
@@ -356,8 +348,7 @@ public class JGroupsMessenger implements Messenger {
     if (this.myChannel != null) {
       if ((services.isShutdownDueToForcedDisconnect() && services.isAutoReconnectEnabled()) || services.getManager().isReconnectingDS()) {
         // leave the channel open for reconnect attempts
-      }
-      else {
+      } else {
         this.myChannel.close();
       }
     }
@@ -374,7 +365,7 @@ public class JGroupsMessenger implements Messenger {
   @Override
   public void installView(NetView v) {
     this.view = v;
-    
+
     if (this.jgAddress.getVmViewId() < 0) {
       this.jgAddress.setVmViewId(this.localAddress.getVmViewId());
     }
@@ -390,7 +381,6 @@ public class JGroupsMessenger implements Messenger {
       encrypt.installView(v);
     }
   }
-  
 
   /**
    * If JGroups is unable to send a message it may mean that the network
@@ -408,95 +398,80 @@ public class JGroupsMessenger implements Messenger {
     }
     addressesWithIoExceptionsProcessed.add(dest);
     NetView v = this.view;
-    JGAddress jgMbr = (JGAddress)dest;
+    JGAddress jgMbr = (JGAddress) dest;
     if (jgMbr != null && v != null) {
       List<InternalDistributedMember> members = v.getMembers();
       InternalDistributedMember recipient = null;
-      for (InternalDistributedMember mbr: members) {
-        GMSMember gmsMbr = ((GMSMember)mbr.getNetMember());
-        if (jgMbr.getUUIDLsbs() == gmsMbr.getUuidLSBs()
-            && jgMbr.getUUIDMsbs() == gmsMbr.getUuidMSBs()
-            && jgMbr.getVmViewId() == gmsMbr.getVmViewId()) {
+      for (InternalDistributedMember mbr : members) {
+        GMSMember gmsMbr = ((GMSMember) mbr.getNetMember());
+        if (jgMbr.getUUIDLsbs() == gmsMbr.getUuidLSBs() && jgMbr.getUUIDMsbs() == gmsMbr.getUuidMSBs() && jgMbr.getVmViewId() == gmsMbr.getVmViewId()) {
           recipient = mbr;
           break;
         }
       }
       if (recipient != null) {
-        services.getHealthMonitor().suspect(recipient,
-            "Unable to send messages to this member via JGroups");
+        services.getHealthMonitor().suspect(recipient, "Unable to send messages to this member via JGroups");
       }
     }
   }
-  
+
   private void establishLocalAddress() {
-    UUID logicalAddress = (UUID)myChannel.getAddress();
+    UUID logicalAddress = (UUID) myChannel.getAddress();
     logicalAddress = logicalAddress.copy();
-    
-    IpAddress ipaddr = (IpAddress)myChannel.down(new Event(Event.GET_PHYSICAL_ADDRESS));
-    
+
+    IpAddress ipaddr = (IpAddress) myChannel.down(new Event(Event.GET_PHYSICAL_ADDRESS));
+
     if (ipaddr != null) {
       this.jgAddress = new JGAddress(logicalAddress, ipaddr);
-    }
-    else {
-      UDP udp = (UDP)myChannel.getProtocolStack().getTransport();
+    } else {
+      UDP udp = (UDP) myChannel.getProtocolStack().getTransport();
 
       try {
         Method getAddress = UDP.class.getDeclaredMethod("getPhysicalAddress");
         getAddress.setAccessible(true);
-        ipaddr = (IpAddress)getAddress.invoke(udp, new Object[0]);
+        ipaddr = (IpAddress) getAddress.invoke(udp, new Object[0]);
         this.jgAddress = new JGAddress(logicalAddress, ipaddr);
       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
         logger.info("Unable to find getPhysicallAddress method in UDP - parsing its address instead");
       }
-      
-//      if (this.jgAddress == null) {
-//        String addr = udp.getLocalPhysicalAddress();
-//        int cidx = addr.lastIndexOf(':');  // IPv6 literals might have colons
-//        String host = addr.substring(0, cidx);
-//        int jgport = Integer.parseInt(addr.substring(cidx+1, addr.length()));
-//        try {
-//          this.jgAddress = new JGAddress(logicalAddress, new IpAddress(InetAddress.getByName(host), jgport));
-//        } catch (UnknownHostException e) {
-//          myChannel.disconnect();
-//          throw new SystemConnectException("unable to initialize jgroups address", e);
-//        }
-//      }
+
+      //      if (this.jgAddress == null) {
+      //        String addr = udp.getLocalPhysicalAddress();
+      //        int cidx = addr.lastIndexOf(':');  // IPv6 literals might have colons
+      //        String host = addr.substring(0, cidx);
+      //        int jgport = Integer.parseInt(addr.substring(cidx+1, addr.length()));
+      //        try {
+      //          this.jgAddress = new JGAddress(logicalAddress, new IpAddress(InetAddress.getByName(host), jgport));
+      //        } catch (UnknownHostException e) {
+      //          myChannel.disconnect();
+      //          throw new SystemConnectException("unable to initialize jgroups address", e);
+      //        }
+      //      }
     }
-  
+
     // install the address in the JGroups channel protocols
     myChannel.down(new Event(Event.SET_LOCAL_ADDRESS, this.jgAddress));
 
     DistributionConfig config = services.getConfig().getDistributionConfig();
-    boolean isLocator = (services.getConfig().getTransport().getVmKind() == DistributionManager.LOCATOR_DM_TYPE)
-        || !services.getConfig().getDistributionConfig().getStartLocator().isEmpty();
-    
+    boolean isLocator = (services.getConfig().getTransport().getVmKind() == DistributionManager.LOCATOR_DM_TYPE) || !services.getConfig().getDistributionConfig().getStartLocator().isEmpty();
+
     // establish the DistributedSystem's address
     DurableClientAttributes dca = null;
     if (config.getDurableClientId() != null) {
-      dca = new DurableClientAttributes(config.getDurableClientId(), config
-          .getDurableClientTimeout());
+      dca = new DurableClientAttributes(config.getDurableClientId(), config.getDurableClientTimeout());
     }
-    MemberAttributes attr = new MemberAttributes(
-        -1/*dcPort - not known at this time*/,
-        OSProcess.getId(),
-        services.getConfig().getTransport().getVmKind(),
-        -1/*view id - not known at this time*/,
-        config.getName(),
-        MemberAttributes.parseGroups(config.getRoles(), config.getGroups()),
-        dca);
-    localAddress = new InternalDistributedMember(jgAddress.getInetAddress(),
-        jgAddress.getPort(), config.getEnableNetworkPartitionDetection(),
-        isLocator, attr);
+    MemberAttributes attr = new MemberAttributes(-1/*dcPort - not known at this time*/, OSProcess.getId(), services.getConfig().getTransport().getVmKind(), -1/*view id - not known at this time*/, config.getName(), MemberAttributes.parseGroups(config.getRoles(), config.getGroups()), dca);
+    localAddress = new InternalDistributedMember(jgAddress.getInetAddress(), jgAddress.getPort(), config.getEnableNetworkPartitionDetection(), isLocator, attr);
 
     // add the JGroups logical address to the GMSMember
     UUID uuid = this.jgAddress;
-    GMSMember gmsMember = (GMSMember)localAddress.getNetMember();
+    GMSMember gmsMember = (GMSMember) localAddress.getNetMember();
     gmsMember.setUUID(uuid);
-    gmsMember.setMemberWeight((byte)(services.getConfig().getMemberWeight() & 0xff));
+    gmsMember.setMemberWeight((byte) (services.getConfig().getMemberWeight() & 0xff));
     gmsMember.setNetworkPartitionDetectionEnabled(services.getConfig().getDistributionConfig().getEnableNetworkPartitionDetection());
 
   }
-  
+
   @Override
   public void beSick() {
   }
@@ -513,7 +488,7 @@ public class JGroupsMessenger implements Messenger {
   public void addHandler(Class c, MessageHandler h) {
     handlers.put(c, h);
   }
-  
+
   @Override
   public boolean testMulticast(long timeout) throws InterruptedException {
     long pongsSnapshot = pongsReceived.longValue();
@@ -522,8 +497,7 @@ public class JGroupsMessenger implements Messenger {
       //noinspection ConstantConditions
       pingPonger.sendPingMessage(myChannel, jgAddress, dest);
     } catch (Exception e) {
-      logger.warn("unable to send multicast message: {}", (jgAddress==null? "multicast recipients":jgAddress),
-          e.getMessage());
+      logger.warn("unable to send multicast message: {}", (jgAddress == null ? "multicast recipients" : jgAddress), e.getMessage());
       return false;
     }
     long giveupTime = System.currentTimeMillis() + timeout;
@@ -532,40 +506,39 @@ public class JGroupsMessenger implements Messenger {
     }
     return pongsReceived.longValue() > pongsSnapshot;
   }
-  
+
   @Override
   public void getMessageState(InternalDistributedMember target, Map state, boolean includeMulticast) {
     if (includeMulticast) {
-      NAKACK2 nakack = (NAKACK2)myChannel.getProtocolStack().findProtocol("NAKACK2");
+      NAKACK2 nakack = (NAKACK2) myChannel.getProtocolStack().findProtocol("NAKACK2");
       if (nakack != null) {
         long seqno = nakack.getCurrentSeqno();
         state.put("JGroups.mcastState", Long.valueOf(seqno));
       }
     }
   }
-  
+
   @Override
   public void waitForMessageState(InternalDistributedMember sender, Map state) throws InterruptedException {
-    NAKACK2 nakack = (NAKACK2)myChannel.getProtocolStack().findProtocol("NAKACK2");
-    Long seqno = (Long)state.get("JGroups.mcastState");
+    NAKACK2 nakack = (NAKACK2) myChannel.getProtocolStack().findProtocol("NAKACK2");
+    Long seqno = (Long) state.get("JGroups.mcastState");
     if (nakack != null && seqno != null) {
       waitForMessageState(nakack, sender, seqno);
     }
   }
-  
+
   /**
    * wait for the mcast state from the given member to reach the given seqno 
    */
-  protected void waitForMessageState(NAKACK2 nakack, InternalDistributedMember sender, Long seqno)
-    throws InterruptedException {
+  protected void waitForMessageState(NAKACK2 nakack, InternalDistributedMember sender, Long seqno) throws InterruptedException {
     long timeout = services.getConfig().getDistributionConfig().getAckWaitThreshold() * 1000L;
     long startTime = System.currentTimeMillis();
     long warnTime = startTime + timeout;
     long quitTime = warnTime + timeout - 1000L;
     boolean warned = false;
-    
+
     JGAddress jgSender = new JGAddress(sender);
-    
+
     for (;;) {
       Digest digest = nakack.getDigest(jgSender);
       if (digest == null) {
@@ -586,8 +559,7 @@ public class JGroupsMessenger implements Messenger {
       if (!warned && now >= warnTime) {
         warned = true;
         received = String.valueOf(senderSeqnos[0]);
-        logger.warn("{} seconds have elapsed while waiting for multicast messages from {}.  Received {} but expecting at least {}.",
-            Long.toString((warnTime-startTime)/1000L), sender, received, seqno);
+        logger.warn("{} seconds have elapsed while waiting for multicast messages from {}.  Received {} but expecting at least {}.", Long.toString((warnTime - startTime) / 1000L), sender, received, seqno);
       }
       if (now >= quitTime) {
         throw new GemFireIOException("Multicast operations from " + sender + " did not distribute within " + (now - startTime) + " milliseconds");
@@ -600,14 +572,14 @@ public class JGroupsMessenger implements Messenger {
   public Set<InternalDistributedMember> sendUnreliably(DistributionMessage msg) {
     return send(msg, false);
   }
-    
+
   @Override
   public Set<InternalDistributedMember> send(DistributionMessage msg) {
     return send(msg, true);
   }
-    
+
   private Set<InternalDistributedMember> send(DistributionMessage msg, boolean reliably) {
-      
+
     // perform the same jgroups messaging as in 8.2's GMSMembershipManager.send() method
 
     // BUT: when marshalling messages we need to include the version of the product and
@@ -621,32 +593,32 @@ public class JGroupsMessenger implements Messenger {
       logger.info("JGroupsMessenger channel is closed - messaging is not possible");
       throw new DistributedSystemDisconnectedException("Distributed System is shutting down");
     }
-    
+
     filterOutgoingMessage(msg);
 
     // JGroupsMessenger does not support direct-replies, so register
     // the message's processor if necessary
     if ((msg instanceof DirectReplyMessage) && msg.isDirectAck() && msg.getProcessorId() <= 0) {
-      ((DirectReplyMessage)msg).registerProcessor();
+      ((DirectReplyMessage) msg).registerProcessor();
     }
 
     InternalDistributedMember[] destinations = msg.getRecipients();
     boolean allDestinations = msg.forAll();
-    
+
     boolean useMcast = false;
     if (services.getConfig().getTransport().isMcastEnabled()) {
       if (msg.getMulticast() || allDestinations) {
         useMcast = services.getManager().isMulticastAllowed();
       }
     }
-    
+
     if (logger.isDebugEnabled() && reliably) {
-      String recips = useMcast? "multicast" : Arrays.toString(msg.getRecipients());
+      String recips = useMcast ? "multicast" : Arrays.toString(msg.getRecipients());
       logger.debug("sending via JGroups: [{}] recipients: {}", msg, recips);
     }
-    
+
     JGAddress local = this.jgAddress;
-    
+
     if (useMcast) {
 
       long startSer = theStats.startMsgSerialization();
@@ -662,8 +634,7 @@ public class JGroupsMessenger implements Messenger {
         theStats.incSentBytes(jmsg.getLength());
         logger.trace("Sending JGroups message: {}", jmsg);
         myChannel.send(jmsg);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.debug("caught unexpected exception", e);
         Throwable cause = e.getCause();
         if (cause instanceof ForcedDisconnectException) {
@@ -686,7 +657,7 @@ public class JGroupsMessenger implements Messenger {
           }
         }
         final String channelClosed = LocalizedStrings.GroupMembershipService_CHANNEL_CLOSED.toLocalizedString();
-//        services.getManager().membershipFailure(channelClosed, problem);
+        //        services.getManager().membershipFailure(channelClosed, problem);
         throw new DistributedSystemDisconnectedException(channelClosed, problem);
       }
     } // useMcast
@@ -701,24 +672,24 @@ public class JGroupsMessenger implements Messenger {
         // Construct the list
         calculatedLen = v.size();
         calculatedMembers = new LinkedList<GMSMember>();
-        for (int i = 0; i < calculatedLen; i ++) {
-          InternalDistributedMember m = (InternalDistributedMember)v.get(i);
-          calculatedMembers.add((GMSMember)m.getNetMember());
+        for (int i = 0; i < calculatedLen; i++) {
+          InternalDistributedMember m = (InternalDistributedMember) v.get(i);
+          calculatedMembers.add((GMSMember) m.getNetMember());
         }
       } // send to all
       else { // send to explicit list
         calculatedLen = len;
         calculatedMembers = new LinkedList<GMSMember>();
-        for (int i = 0; i < calculatedLen; i ++) {
-          calculatedMembers.add((GMSMember)destinations[i].getNetMember());
+        for (int i = 0; i < calculatedLen; i++) {
+          calculatedMembers.add((GMSMember) destinations[i].getNetMember());
         }
       } // send to explicit list
       Int2ObjectOpenHashMap<Message> messages = new Int2ObjectOpenHashMap<>();
       long startSer = theStats.startMsgSerialization();
       boolean firstMessage = true;
-      for (GMSMember mbr : calculatedMembers ) {
+      for (GMSMember mbr : calculatedMembers) {
         short version = mbr.getVersionOrdinal();
-        if ( !messages.containsKey(version) ) {
+        if (!messages.containsKey(version)) {
           Message jmsg = createJGMessage(msg, local, version);
           messages.put(version, jmsg);
           if (firstMessage) {
@@ -729,14 +700,14 @@ public class JGroupsMessenger implements Messenger {
       }
       theStats.endMsgSerialization(startSer);
       Collections.shuffle(calculatedMembers);
-      int i=0;
-      for (GMSMember mbr: calculatedMembers) {
+      int i = 0;
+      for (GMSMember mbr : calculatedMembers) {
         JGAddress to = new JGAddress(mbr);
         short version = mbr.getVersionOrdinal();
         Message jmsg = messages.get(version);
         Exception problem = null;
         try {
-          Message tmp = (i < (calculatedLen-1)) ? jmsg.copy(true) : jmsg;
+          Message tmp = (i < (calculatedLen - 1)) ? jmsg.copy(true) : jmsg;
           if (!reliably) {
             jmsg.setFlag(Message.Flag.NO_RELIABILITY);
           }
@@ -744,8 +715,7 @@ public class JGroupsMessenger implements Messenger {
           tmp.setSrc(this.jgAddress);
           logger.trace("Unicasting to {}", to);
           myChannel.send(tmp);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           problem = e;
         }
         if (problem != null) {
@@ -800,7 +770,7 @@ public class JGroupsMessenger implements Messenger {
    * @return the new message
    */
   Message createJGMessage(DistributionMessage gfmsg, JGAddress src, short version) {
-    if(gfmsg instanceof DirectReplyMessage) {
+    if (gfmsg instanceof DirectReplyMessage) {
       ((DirectReplyMessage) gfmsg).registerProcessor();
     }
     Message msg = new Message();
@@ -811,37 +781,34 @@ public class JGroupsMessenger implements Messenger {
       long start = services.getStatistics().startMsgSerialization();
       HeapDataOutputStream out_stream = new HeapDataOutputStream(Version.fromOrdinalOrCurrent(version));
       Version.CURRENT.writeOrdinal(out_stream, true);
-      if(encrypt != null) {
+      if (encrypt != null) {
         out_stream.writeBoolean(true);
-        writeEncryptedMessage(gfmsg, version, out_stream);                
+        writeEncryptedMessage(gfmsg, version, out_stream);
       } else {
         out_stream.writeBoolean(false);
         serializeMessage(gfmsg, out_stream);
       }
-      
+
       msg.setBuffer(out_stream.toByteArray());
       services.getStatistics().endMsgSerialization(start);
-    }
-    catch(IOException | GemFireIOException ex) {
+    } catch (IOException | GemFireIOException ex) {
       logger.warn("Error serializing message", ex);
       if (ex instanceof GemFireIOException) {
-        throw (GemFireIOException)ex;
+        throw (GemFireIOException) ex;
       } else {
-        GemFireIOException ioe = new
-          GemFireIOException("Error serializing message");
+        GemFireIOException ioe = new GemFireIOException("Error serializing message");
         ioe.initCause(ex);
         throw ioe;
       }
-    } catch(Exception ex){
+    } catch (Exception ex) {
       logger.warn("Error serializing message", ex);
-      GemFireIOException ioe = new
-          GemFireIOException("Error serializing message");
-        ioe.initCause(ex.getCause());
-        throw ioe;
+      GemFireIOException ioe = new GemFireIOException("Error serializing message");
+      ioe.initCause(ex.getCause());
+      throw ioe;
     }
     return msg;
   }
-  
+
   void writeEncryptedMessage(DistributionMessage gfmsg, short version, HeapDataOutputStream out) throws Exception {
     long start = services.getStatistics().startUDPMsgEncryption();
     try {
@@ -886,7 +853,7 @@ public class JGroupsMessenger implements Messenger {
       services.getStatistics().endUDPMsgEncryption(start);
     }
   }
-  
+
   int getRequestId(DistributionMessage gfmsg, boolean add) {
     int requestId = 0;
     if (gfmsg instanceof FindCoordinatorRequest) {
@@ -905,12 +872,12 @@ public class JGroupsMessenger implements Messenger {
 
     return requestId;
   }
-  
+
   byte[] serializeMessage(DistributionMessage gfmsg, HeapDataOutputStream out_stream) throws IOException {
-    GMSMember m = (GMSMember)this.localAddress.getNetMember();
+    GMSMember m = (GMSMember) this.localAddress.getNetMember();
     m.writeEssentialData(out_stream);
     DataSerializer.writeObject(gfmsg, out_stream);
-    
+
     return out_stream.toByteArray();
   }
 
@@ -922,9 +889,7 @@ public class JGroupsMessenger implements Messenger {
     // which is fairly rare
     msg.setFlag(Flag.DONT_BUNDLE);
 
-    if (gfmsg.getProcessorType() == DistributionManager.HIGH_PRIORITY_EXECUTOR
-        || gfmsg instanceof HighPriorityDistributionMessage
-        || AlertAppender.isThreadAlerting()) {
+    if (gfmsg.getProcessorType() == DistributionManager.HIGH_PRIORITY_EXECUTOR || gfmsg instanceof HighPriorityDistributionMessage || AlertAppender.isThreadAlerting()) {
       msg.setFlag(Flag.NO_FC);
       msg.setFlag(Flag.SKIP_BARRIER);
     }
@@ -934,72 +899,66 @@ public class JGroupsMessenger implements Messenger {
     }
   }
 
-
   /**
    * deserialize a jgroups payload.  If it's a DistributionMessage find
    * the ID of the sender and establish it as the message's sender
    */
   Object readJGMessage(Message jgmsg) {
     Object result = null;
-    
+
     int messageLength = jgmsg.getLength();
-    
+
     if (logger.isTraceEnabled()) {
-      logger.trace("deserializing a message of length "+messageLength);
+      logger.trace("deserializing a message of length " + messageLength);
     }
-    
+
     if (messageLength == 0) {
       // jgroups messages with no payload are used for protocol interchange, such
       // as STABLE_GOSSIP
       logger.trace("message length is zero - ignoring");
       return null;
-    }    
+    }
 
     Exception problem = null;
     byte[] buf = jgmsg.getRawBuffer();
     try {
       long start = services.getStatistics().startMsgDeserialization();
-      
-      DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf, 
-          jgmsg.getOffset(), jgmsg.getLength()));
+
+      DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf, jgmsg.getOffset(), jgmsg.getLength()));
 
       short ordinal = Version.readOrdinal(dis);
-      
+
       if (ordinal < Version.CURRENT_ORDINAL) {
-        dis = new VersionedDataInputStream(dis, Version.fromOrdinalNoThrow(
-            ordinal, true));
+        dis = new VersionedDataInputStream(dis, Version.fromOrdinalNoThrow(ordinal, true));
       }
-    
+
       //read
       boolean isEncrypted = dis.readBoolean();
-      
-      if(isEncrypted && encrypt == null) {
+
+      if (isEncrypted && encrypt == null) {
         throw new GemFireConfigException("Got remote message as encrypted");
-      } 
-      
-      if(isEncrypted) {
+      }
+
+      if (isEncrypted) {
         result = readEncryptedMessage(dis, ordinal, encrypt);
       } else {
-        result = deserializeMessage(dis, ordinal);        
+        result = deserializeMessage(dis, ordinal);
       }
-      
-      
+
       services.getStatistics().endMsgDeserialization(start);
-    }
-    catch (ClassNotFoundException | IOException | RuntimeException e) {
+    } catch (ClassNotFoundException | IOException | RuntimeException e) {
       problem = e;
-    } catch(Exception e) {
+    } catch (Exception e) {
       problem = e;
     }
     if (problem != null) {
-      logger.error(LocalizedMessage.create(
-            LocalizedStrings.GroupMembershipService_EXCEPTION_DESERIALIZING_MESSAGE_PAYLOAD_0, jgmsg), problem);
+      logger.error(LocalizedMessage.create(LocalizedStrings.GroupMembershipService_EXCEPTION_DESERIALIZING_MESSAGE_PAYLOAD_0, jgmsg), problem);
       return null;
     }
 
     return result;
   }
-  
+
   void setSender(DistributionMessage dm, GMSMember m, short ordinal) {
     InternalDistributedMember sender = null;
     // JoinRequestMessages are sent with an ID that may have been
@@ -1007,7 +966,7 @@ public class JGroupsMessenger implements Messenger {
     // so we don't want to find a canonical reference for the
     // request's sender ID
     if (dm.getDSFID() == JOIN_REQUEST) {
-      sender = ((JoinRequestMessage)dm).getMemberID();
+      sender = ((JoinRequestMessage) dm).getMemberID();
     } else {
       sender = getMemberFromView(m, ordinal);
     }
@@ -1066,9 +1025,9 @@ public class JGroupsMessenger implements Messenger {
         }
 
         DistributionMessage result = deserializeMessage(in, ordinal);
-        
+
         if (pk != null) {
-          logger.info("Setting public key for " + result.getSender() +  " len " + pk.length);
+          logger.info("Setting public key for " + result.getSender() + " len " + pk.length);
           setPublicKey(pk, result.getSender());
         }
 
@@ -1081,7 +1040,7 @@ public class JGroupsMessenger implements Messenger {
     }
 
   }
-  
+
   DistributionMessage deserializeMessage(DataInputStream in, short ordinal) throws ClassNotFoundException, IOException {
     GMSMember m = new GMSMember();
     m.readEssentialData(in);
@@ -1091,18 +1050,16 @@ public class JGroupsMessenger implements Messenger {
 
     return result;
   }
-  
+
   /** look for certain messages that may need to be altered before being sent */
   void filterOutgoingMessage(DistributionMessage m) {
     switch (m.getDSFID()) {
     case JOIN_RESPONSE:
-      JoinResponseMessage jrsp = (JoinResponseMessage)m;
-      
-      if (jrsp.getRejectionMessage() == null
-          &&  services.getConfig().getTransport().isMcastEnabled()) {
+      JoinResponseMessage jrsp = (JoinResponseMessage) m;
+
+      if (jrsp.getRejectionMessage() == null && services.getConfig().getTransport().isMcastEnabled()) {
         // get the multicast message digest and pass it with the join response
-        Digest digest = (Digest)this.myChannel.getProtocolStack()
-            .getTopProtocol().down(Event.GET_DIGEST_EVT);
+        Digest digest = (Digest) this.myChannel.getProtocolStack().getTopProtocol().down(Event.GET_DIGEST_EVT);
         HeapDataOutputStream hdos = new HeapDataOutputStream(500, Version.CURRENT);
         try {
           digest.writeTo(hdos);
@@ -1116,14 +1073,13 @@ public class JGroupsMessenger implements Messenger {
       break;
     }
   }
-  
+
   void filterIncomingMessage(DistributionMessage m) {
     switch (m.getDSFID()) {
     case JOIN_RESPONSE:
-      JoinResponseMessage jrsp = (JoinResponseMessage)m;
-      
-      if (jrsp.getRejectionMessage() == null
-          &&  services.getConfig().getTransport().isMcastEnabled()) {
+      JoinResponseMessage jrsp = (JoinResponseMessage) m;
+
+      if (jrsp.getRejectionMessage() == null && services.getConfig().getTransport().isMcastEnabled()) {
         byte[] serializedDigest = jrsp.getMessengerData();
         ByteArrayInputStream bis = new ByteArrayInputStream(serializedDigest);
         DataInputStream dis = new DataInputStream(bis);
@@ -1131,8 +1087,7 @@ public class JGroupsMessenger implements Messenger {
           Digest digest = new Digest();
           digest.readFrom(dis);
           logger.trace("installing JGroups message digest {}", digest);
-          this.myChannel.getProtocolStack()
-              .getTopProtocol().down(new Event(Event.MERGE_DIGEST, digest));
+          this.myChannel.getProtocolStack().getTopProtocol().down(new Event(Event.MERGE_DIGEST, digest));
           jrsp.setMessengerData(null);
         } catch (Exception e) {
           logger.fatal("Unable to read JGroups messaging digest", e);
@@ -1143,26 +1098,26 @@ public class JGroupsMessenger implements Messenger {
       break;
     }
   }
-  
+
   @Override
   public InternalDistributedMember getMemberID() {
     return localAddress;
   }
-  
+
   /**
    * returns the JGroups configuration string, for testing
    */
   public String getJGroupsStackConfig() {
     return this.jgStackConfig;
   }
-  
+
   /**
    * returns the pinger, for testing
    */
   public GMSPingPonger getPingPonger() {
     return this.pingPonger;
   }
-  
+
   /**
    * for unit testing we need to replace UDP with a fake UDP protocol 
    */
@@ -1178,20 +1133,18 @@ public class JGroupsMessenger implements Messenger {
     return this.services.getJoinLeave().getMemberID(jgId);
   }
 
-
   @Override
   public void emergencyClose() {
     this.view = null;
     if (this.myChannel != null) {
       if ((services.isShutdownDueToForcedDisconnect() && services.isAutoReconnectEnabled()) || services.getManager().isReconnectingDS()) {
-      }
-      else {
+      } else {
         this.myChannel.disconnect();
       }
     }
   }
-  
-  public QuorumChecker getQuorumChecker() {    
+
+  public QuorumChecker getQuorumChecker() {
     NetView view = this.view;
     if (view == null) {
       view = services.getJoinLeave().getView();
@@ -1202,18 +1155,17 @@ public class JGroupsMessenger implements Messenger {
         }
       }
     }
-    GMSQuorumChecker qc = new GMSQuorumChecker(
-          view, services.getConfig().getLossThreshold(),
-          this.myChannel);
+    GMSQuorumChecker qc = new GMSQuorumChecker(view, services.getConfig().getLossThreshold(), this.myChannel);
     qc.initialize();
     return qc;
   }
+
   /**
    * JGroupsReceiver receives incoming JGroups messages and passes them to a handler.
    * It may be accessed through JChannel.getReceiver().
    */
-  class JGroupsReceiver extends ReceiverAdapter  {
-  
+  class JGroupsReceiver extends ReceiverAdapter {
+
     @Override
     public void receive(Message jgmsg) {
       long startTime = DistributionStats.getStatTime();
@@ -1221,11 +1173,11 @@ public class JGroupsMessenger implements Messenger {
         if (services.getManager().shutdownInProgress()) {
           return;
         }
-  
+
         if (logger.isTraceEnabled()) {
           logger.trace("JGroupsMessenger received {} headers: {}", jgmsg, jgmsg.getHeaders());
         }
-        
+
         //Respond to ping messages sent from other systems that are in a auto reconnect state
         byte[] contents = jgmsg.getBuffer();
         if (contents == null) {
@@ -1234,8 +1186,7 @@ public class JGroupsMessenger implements Messenger {
         if (pingPonger.isPingMessage(contents)) {
           try {
             pingPonger.sendPongMessage(myChannel, jgAddress, jgmsg.getSrc());
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             logger.info("Failed sending Pong response to " + jgmsg.getSrc());
           }
           return;
@@ -1243,40 +1194,38 @@ public class JGroupsMessenger implements Messenger {
           pongsReceived.incrementAndGet();
           return;
         }
-        
+
         Object o = readJGMessage(jgmsg);
         if (o == null) {
           return;
         }
-  
-        DistributionMessage msg = (DistributionMessage)o;
+
+        DistributionMessage msg = (DistributionMessage) o;
         assert msg.getSender() != null;
-        
+
         // admin-only VMs don't have caches, so we ignore cache operations
         // multicast to them, avoiding deserialization cost and classpath
         // problems
-        if ( (services.getConfig().getTransport().getVmKind() == DistributionManager.ADMIN_ONLY_DM_TYPE)
-             && (msg instanceof DistributedCacheOperation.CacheOperationMessage)) {
+        if ((services.getConfig().getTransport().getVmKind() == DistributionManager.ADMIN_ONLY_DM_TYPE) && (msg instanceof DistributedCacheOperation.CacheOperationMessage)) {
           return;
         }
-  
+
         msg.resetTimestamp();
         msg.setBytesRead(jgmsg.getLength());
-              
+
         try {
           logger.trace("JGroupsMessenger dispatching {} from {}", msg, msg.getSender());
           filterIncomingMessage(msg);
           getMessageHandler(msg).processMessage(msg);
-        }
-        catch (MemberShunnedException e) {
+        } catch (MemberShunnedException e) {
           // message from non-member - ignore
         }
-      }finally {
-        long delta = DistributionStats.getStatTime() - startTime ;
+      } finally {
+        long delta = DistributionStats.getStatTime() - startTime;
         JGroupsMessenger.this.services.getStatistics().incUDPDispatchRequestTime(delta);
       }
     }
-    
+
     /**
      * returns the handler that should process the given message.
      * The default handler is the membership manager
@@ -1285,11 +1234,11 @@ public class JGroupsMessenger implements Messenger {
       Class<?> msgClazz = msg.getClass();
       MessageHandler h = handlers.get(msgClazz);
       if (h == null) {
-        for (Class<?> clazz: handlers.keySet()) {
+        for (Class<?> clazz : handlers.keySet()) {
           if (clazz.isAssignableFrom(msgClazz)) {
             h = handlers.get(clazz);
             handlers.put(msg.getClass(), h);
-            break;              
+            break;
           }
         }
       }
@@ -1299,11 +1248,11 @@ public class JGroupsMessenger implements Messenger {
       return h;
     }
   }
-  
+
   @Override
   public Set<InternalDistributedMember> send(DistributionMessage msg, NetView alternateView) {
     if (this.encrypt != null) {
-      this.encrypt.installView(alternateView);      
+      this.encrypt.installView(alternateView);
     }
     return send(msg, true);
   }
@@ -1342,15 +1291,15 @@ public class JGroupsMessenger implements Messenger {
 
   private AtomicInteger requestId = new AtomicInteger((new Random().nextInt()));
   private HashMap<Integer, InternalDistributedMember> requestIdVsRecipients = new HashMap<>();
-  
+
   InternalDistributedMember getRequestedMember(int requestId) {
     return requestIdVsRecipients.remove(requestId);
   }
-  
+
   void addRequestId(int requestId, InternalDistributedMember mbr) {
     requestIdVsRecipients.put(requestId, mbr);
   }
-  
+
   @Override
   public int getRequestId() {
     return requestId.incrementAndGet();

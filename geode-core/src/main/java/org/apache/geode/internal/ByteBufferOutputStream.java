@@ -30,6 +30,7 @@ public class ByteBufferOutputStream extends OutputStream {
   public ByteBufferOutputStream() {
     this.buffer = ByteBuffer.allocate(DEFAULT_SIZE);
   }
+
   public ByteBufferOutputStream(int initialSize) {
     this.buffer = ByteBuffer.allocate(initialSize);
   }
@@ -38,14 +39,13 @@ public class ByteBufferOutputStream extends OutputStream {
   @Override
   public final void write(int b) {
     try {
-      this.buffer.put((byte)(b & 0xff));
-    }
-    catch (BufferOverflowException e) {
+      this.buffer.put((byte) (b & 0xff));
+    } catch (BufferOverflowException e) {
       expand(1);
-      this.buffer.put((byte)(b & 0xff));
+      this.buffer.put((byte) (b & 0xff));
     } catch (BufferUnderflowException e) {
       expand(1);
-      this.buffer.put((byte)(b & 0xff));
+      this.buffer.put((byte) (b & 0xff));
     }
   }
 
@@ -67,13 +67,11 @@ public class ByteBufferOutputStream extends OutputStream {
       //System.out.println("writing len="+len + " cap=" + buffer.capacity() + " pos="+buffer.position());
       //Thread.dumpStack();
       buffer.put(source, offset, len);
-    }
-    catch (BufferOverflowException e) {
-      expand(len - (buffer.capacity()-buffer.position()));
+    } catch (BufferOverflowException e) {
+      expand(len - (buffer.capacity() - buffer.position()));
       buffer.put(source, offset, len);
-    }
-    catch (BufferUnderflowException e) {
-      expand(len - (buffer.capacity()-buffer.position()));
+    } catch (BufferUnderflowException e) {
+      expand(len - (buffer.capacity() - buffer.position()));
       buffer.put(source, offset, len);
     }
   }
@@ -81,7 +79,7 @@ public class ByteBufferOutputStream extends OutputStream {
   public final int size() {
     return buffer.position();
   }
-  
+
   public final void reset() {
     buffer.clear();
   }

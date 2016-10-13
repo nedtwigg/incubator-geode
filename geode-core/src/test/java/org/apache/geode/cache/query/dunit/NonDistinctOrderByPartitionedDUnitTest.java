@@ -49,8 +49,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  *
  */
 @Category(DistributedTest.class)
-public class NonDistinctOrderByPartitionedDUnitTest extends
-    NonDistinctOrderByDUnitImpl {
+public class NonDistinctOrderByPartitionedDUnitTest extends NonDistinctOrderByDUnitImpl {
 
   public NonDistinctOrderByPartitionedDUnitTest() {
     super();
@@ -64,8 +63,7 @@ public class NonDistinctOrderByPartitionedDUnitTest extends
     final VM vm2 = host.getVM(2);
     final VM vm3 = host.getVM(3);
 
-    NonDistinctOrderByTestImplementation test = new NonDistinctOrderByTestImplementation(
-        ) {
+    NonDistinctOrderByTestImplementation test = new NonDistinctOrderByTestImplementation() {
 
       @Override
       public Region createRegion(String regionName, Class valueConstraint) {
@@ -78,12 +76,8 @@ public class NonDistinctOrderByPartitionedDUnitTest extends
       }
 
       @Override
-      public Index createIndex(String indexName, String indexedExpression,
-          String regionPath) throws IndexInvalidException,
-          IndexNameConflictException, IndexExistsException,
-          RegionNotFoundException, UnsupportedOperationException {
-        Index indx = createIndexOnAccessor(indexName, indexedExpression,
-            regionPath);
+      public Index createIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
+        Index indx = createIndexOnAccessor(indexName, indexedExpression, regionPath);
         /*
          * NonDistinctOrderByPartitionedDUnit.this.createIndex(vm1, indexName,
          * indexedExpression, regionPath);
@@ -96,13 +90,8 @@ public class NonDistinctOrderByPartitionedDUnitTest extends
       }
 
       @Override
-      public Index createIndex(String indexName, IndexType indexType,
-          String indexedExpression, String fromClause)
-          throws IndexInvalidException, IndexNameConflictException,
-          IndexExistsException, RegionNotFoundException,
-          UnsupportedOperationException {
-        Index indx = createIndexOnAccessor(indexName, indexType,
-            indexedExpression, fromClause);
+      public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
+        Index indx = createIndexOnAccessor(indexName, indexType, indexedExpression, fromClause);
         /*
          * NonDistinctOrderByPartitionedDUnit.this.createIndex(vm1, indexName,
          * indexType, indexedExpression, fromClause);
@@ -134,16 +123,13 @@ public class NonDistinctOrderByPartitionedDUnitTest extends
     });
   }
 
-  private void createPR(VM vm, final String regionName,
-      final Class valueConstraint) {
+  private void createPR(VM vm, final String regionName, final Class valueConstraint) {
     vm.invoke(new SerializableRunnable("create data store") {
       public void run() {
         Cache cache = getCache();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setTotalNumBuckets(10);
-        cache.createRegionFactory(RegionShortcut.PARTITION)
-            .setValueConstraint(valueConstraint)
-            .setPartitionAttributes(paf.create()).create(regionName);
+        cache.createRegionFactory(RegionShortcut.PARTITION).setValueConstraint(valueConstraint).setPartitionAttributes(paf.create()).create(regionName);
       }
     });
   }
@@ -154,9 +140,7 @@ public class NonDistinctOrderByPartitionedDUnitTest extends
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     paf.setTotalNumBuckets(10);
     paf.setLocalMaxMemory(0);
-    return cache.createRegionFactory(RegionShortcut.PARTITION_PROXY)
-        .setValueConstraint(valueConstraint)
-        .setPartitionAttributes(paf.create()).create(regionName);
+    return cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).setValueConstraint(valueConstraint).setPartitionAttributes(paf.create()).create(regionName);
   }
 
 }

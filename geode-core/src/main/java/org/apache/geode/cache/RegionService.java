@@ -53,6 +53,7 @@ public interface RegionService extends AutoCloseable {
    * @return the service's cancellation object
    */
   public CancelCriterion getCancelCriterion();
+
   /**
    * Return the existing region (or subregion) with the specified
    * path.
@@ -63,7 +64,7 @@ public interface RegionService extends AutoCloseable {
    * @return the Region or null if not found
    * @throws IllegalArgumentException if path is null, the empty string, or "/"
    */
-  public <K,V> Region<K,V> getRegion(String path);
+  public <K, V> Region<K, V> getRegion(String path);
 
   /**
    * Returns unmodifiable set of the root regions that are in the region service.
@@ -71,25 +72,25 @@ public interface RegionService extends AutoCloseable {
    *
    * @return a Set of regions
    */
-  public Set<Region<?,?>> rootRegions();
-  
+  public Set<Region<?, ?>> rootRegions();
+
   // We did not have time to add this feature to 6.6.2
-//  /**
-//   * Returns a factory that can create a {@link PdxInstance}.
-//   * If you want to be able to deserialize the PdxInstance then name
-//   * must be a correct class name and expectDomainClass should be set to true.
-//   * If you want to just create an object that will always be a PdxInstance set expectDomainClass to false.
-//   * @param name the name of the pdx type that
-//   * the PdxInstance will represent. If expectDomainClass is true then
-//   * this must be the full class and package name of the domain class.
-//   * Otherwise it just needs to be a unique string that identifies this instances type.
-//   * @param expectDomainClass if true then during deserialization a domain class will
-//   * be expected. If false then this type will always deserialize to a PdxInstance
-//   * even if read-serialized is false and {@link PdxInstance#getObject()} will return
-//   * the PdxInstance.
-//   * @return the factory
-//   */
-//  public PdxInstanceFactory createPdxInstanceFactory(String name, boolean expectDomainClass);
+  //  /**
+  //   * Returns a factory that can create a {@link PdxInstance}.
+  //   * If you want to be able to deserialize the PdxInstance then name
+  //   * must be a correct class name and expectDomainClass should be set to true.
+  //   * If you want to just create an object that will always be a PdxInstance set expectDomainClass to false.
+  //   * @param name the name of the pdx type that
+  //   * the PdxInstance will represent. If expectDomainClass is true then
+  //   * this must be the full class and package name of the domain class.
+  //   * Otherwise it just needs to be a unique string that identifies this instances type.
+  //   * @param expectDomainClass if true then during deserialization a domain class will
+  //   * be expected. If false then this type will always deserialize to a PdxInstance
+  //   * even if read-serialized is false and {@link PdxInstance#getObject()} will return
+  //   * the PdxInstance.
+  //   * @return the factory
+  //   */
+  //  public PdxInstanceFactory createPdxInstanceFactory(String name, boolean expectDomainClass);
 
   /**
    * Returns a factory that can create a {@link PdxInstance}.
@@ -99,6 +100,7 @@ public interface RegionService extends AutoCloseable {
    * @since GemFire 6.6.2
    */
   public PdxInstanceFactory createPdxInstanceFactory(String className);
+
   /**
    * Creates and returns a PdxInstance that represents an enum value.
    * @param className the name of the enum class
@@ -118,6 +120,7 @@ public interface RegionService extends AutoCloseable {
    * execute queries on the local and peer regions.
    */
   public QueryService getQueryService();
+
   /**
    * Terminates this region service and releases all its resources.
    * Calls {@link Region#close} on each region in the service.
@@ -128,6 +131,7 @@ public interface RegionService extends AutoCloseable {
    * @throws CacheClosedException if the service is already closed.
    */
   public void close();
+
   /**
    * Indicates if this region service has been closed.
    * After a new service is created, this method returns false;

@@ -44,44 +44,45 @@ public class RemoteStat implements Stat, DataSerializable {
     this.units = stat.getUnit();
     this.isCounter = stat.isCounter();
     this.desc = stat.getDescription();
-    this.typeCode = ((StatisticDescriptorImpl)stat).getTypeCode();
+    this.typeCode = ((StatisticDescriptorImpl) stat).getTypeCode();
     this.value = rsrc.get(stat);
   }
-  
+
   /**
    * Constructor for <code>DataSerializable</code>
    */
-  public RemoteStat() { }
+  public RemoteStat() {
+  }
 
   // Stat methods
-  
+
   public Number getValue() {
     return this.value;
   }
-    
+
   public String getUnits() {
     return this.units;
   }
-    
+
   public boolean isCounter() {
     return this.isCounter;
   }
 
   // GfObject methods
 
-  public int getID(){
+  public int getID() {
     return this.id;
   }
 
-  public String getName(){
+  public String getName() {
     return this.name;
   }
 
-  public String getType(){
+  public String getType() {
     return StatisticDescriptorImpl.getTypeCodeName(this.typeCode);
   }
 
-  public String getDescription(){
+  public String getDescription() {
     return this.desc;
   }
 
@@ -89,8 +90,7 @@ public class RemoteStat implements Stat, DataSerializable {
 
   @Override
   public String toString() {
-    return "<STAT name=" + getName() + " type=" + getType() + " units=" + getUnits() +  " isCounter=" + isCounter() +
-      " value=" + getValue() + " desc=\"" + getDescription() + "\">";
+    return "<STAT name=" + getName() + " type=" + getType() + " units=" + getUnits() + " isCounter=" + isCounter() + " value=" + getValue() + " desc=\"" + getDescription() + "\">";
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -103,8 +103,7 @@ public class RemoteStat implements Stat, DataSerializable {
     out.writeBoolean(this.isCounter);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
 
     this.name = DataSerializer.readString(in);
     this.typeCode = in.readByte();

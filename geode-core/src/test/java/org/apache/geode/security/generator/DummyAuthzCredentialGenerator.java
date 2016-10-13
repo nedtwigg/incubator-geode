@@ -61,8 +61,7 @@ public class DummyAuthzCredentialGenerator extends AuthzCredentialGenerator {
     }
     if (requiresReader) {
       roleType = READER_ROLE;
-    }
-    else if (requiresWriter) {
+    } else if (requiresWriter) {
       roleType = WRITER_ROLE;
     }
     return roleType;
@@ -97,33 +96,33 @@ public class DummyAuthzCredentialGenerator extends AuthzCredentialGenerator {
     byte roleType = getRequiredRole(opCodes);
     byte disallowedRoleType;
     switch (roleType) {
-      case READER_ROLE:
-        disallowedRoleType = WRITER_ROLE;
-        break;
-      case WRITER_ROLE:
-        disallowedRoleType = READER_ROLE;
-        break;
-      default:
-        disallowedRoleType = READER_ROLE;
-        break;
+    case READER_ROLE:
+      disallowedRoleType = WRITER_ROLE;
+      break;
+    case WRITER_ROLE:
+      disallowedRoleType = READER_ROLE;
+      break;
+    default:
+      disallowedRoleType = READER_ROLE;
+      break;
     }
     return getPrincipal(disallowedRoleType, index);
   }
 
   @Override
-  protected int getNumPrincipalTries(final OperationCode[] opCodes,  final String[] regionNames) {
+  protected int getNumPrincipalTries(final OperationCode[] opCodes, final String[] regionNames) {
     return 5;
   }
 
   private Principal getPrincipal(final byte roleType, final int index) {
     String[] admins = new String[] { "root", "admin", "administrator" };
     switch (roleType) {
-      case READER_ROLE:
-        return new UsernamePrincipal("reader" + index);
-      case WRITER_ROLE:
-        return new UsernamePrincipal("writer" + index);
-      default:
-        return new UsernamePrincipal(admins[index % admins.length]);
+    case READER_ROLE:
+      return new UsernamePrincipal("reader" + index);
+    case WRITER_ROLE:
+      return new UsernamePrincipal("writer" + index);
+    default:
+      return new UsernamePrincipal(admins[index % admins.length]);
     }
   }
 }

@@ -41,7 +41,7 @@ public class CqStatsUsingPoolOptimizedExecuteDUnitTest extends CqStatsUsingPoolD
       }
     });
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {

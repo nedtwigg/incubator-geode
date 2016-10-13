@@ -31,11 +31,11 @@ public class DistributedDisconnectRule extends DistributedExternalResource {
   public static Builder builder() {
     return new Builder();
   }
-  
+
   public DistributedDisconnectRule(final Builder builder) {
     this(new RemoteInvoker(), builder);
   }
-   
+
   public DistributedDisconnectRule(final RemoteInvoker invoker, final Builder builder) {
     super(invoker);
     this.disconnectBefore = builder.disconnectBefore;
@@ -64,26 +64,27 @@ public class DistributedDisconnectRule extends DistributedExternalResource {
       }
     };
   }
-  
+
   /**
    * Builds an instance of DistributedDisconnectRule
    */
   public static class Builder {
     private boolean disconnectBefore;
     private boolean disconnectAfter;
-    
-    public Builder() {}
+
+    public Builder() {
+    }
 
     public Builder disconnectBefore(final boolean disconnectBefore) {
       this.disconnectBefore = disconnectBefore;
       return this;
     }
-    
+
     public Builder disconnectAfter(final boolean disconnectAfter) {
       this.disconnectAfter = disconnectAfter;
       return this;
     }
-    
+
     public DistributedDisconnectRule build() {
       return new DistributedDisconnectRule(this);
     }

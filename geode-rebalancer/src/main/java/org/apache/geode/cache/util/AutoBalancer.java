@@ -147,8 +147,7 @@ public class AutoBalancer implements Declarable {
     this(null, null, null, null);
   }
 
-  public AutoBalancer(AuditScheduler scheduler, OOBAuditor auditor, TimeProvider clock,
-      CacheOperationFacade cacheFacade) {
+  public AutoBalancer(AuditScheduler scheduler, OOBAuditor auditor, TimeProvider clock, CacheOperationFacade cacheFacade) {
     this.cacheFacade = cacheFacade == null ? new GeodeCacheFacade() : cacheFacade;
     this.scheduler = scheduler == null ? new CronScheduler() : scheduler;
     this.auditor = auditor == null ? new SizeBasedOOBAuditor(this.cacheFacade) : auditor;
@@ -206,7 +205,7 @@ public class AutoBalancer implements Declarable {
 
       try {
         generator = new CronSequenceGenerator(schedule);
-      } catch(Exception e) {
+      } catch (Exception e) {
         throw new GemFireConfigException("Cron expression could not be parsed: " + schedule, e);
       }
 
@@ -402,12 +401,7 @@ public class AutoBalancer implements Declarable {
         RebalanceOperation operation = getCache().getResourceManager().createRebalanceFactory().simulate();
         RebalanceResults result = operation.getResults();
         if (logger.isDebugEnabled()) {
-          logger.debug(
-              "Rebalance estimate: RebalanceResultsImpl [TotalBucketCreateBytes=" + result.getTotalBucketCreateBytes()
-                  + ", TotalBucketCreatesCompleted=" + result.getTotalBucketCreatesCompleted()
-                  + ", TotalBucketTransferBytes=" + result.getTotalBucketTransferBytes()
-                  + ", TotalBucketTransfersCompleted=" + result.getTotalBucketTransfersCompleted()
-                  + ", TotalPrimaryTransfersCompleted=" + result.getTotalPrimaryTransfersCompleted() + "]");
+          logger.debug("Rebalance estimate: RebalanceResultsImpl [TotalBucketCreateBytes=" + result.getTotalBucketCreateBytes() + ", TotalBucketCreatesCompleted=" + result.getTotalBucketCreatesCompleted() + ", TotalBucketTransferBytes=" + result.getTotalBucketTransferBytes() + ", TotalBucketTransfersCompleted=" + result.getTotalBucketTransfersCompleted() + ", TotalPrimaryTransfersCompleted=" + result.getTotalPrimaryTransfersCompleted() + "]");
         }
         return result.getTotalBucketTransferBytes();
       } catch (CancellationException e) {
@@ -433,13 +427,7 @@ public class AutoBalancer implements Declarable {
       try {
         RebalanceOperation operation = getCache().getResourceManager().createRebalanceFactory().start();
         RebalanceResults result = operation.getResults();
-        logger.info("Rebalance result: [TotalBucketCreateBytes=" + result.getTotalBucketCreateBytes()
-            + ", TotalBucketCreateTime=" + result.getTotalBucketCreateTime() + ", TotalBucketCreatesCompleted="
-            + result.getTotalBucketCreatesCompleted() + ", TotalBucketTransferBytes="
-            + result.getTotalBucketTransferBytes() + ", TotalBucketTransferTime=" + result.getTotalBucketTransferTime()
-            + ", TotalBucketTransfersCompleted=" + +result.getTotalBucketTransfersCompleted()
-            + ", TotalPrimaryTransferTime=" + result.getTotalPrimaryTransferTime() + ", TotalPrimaryTransfersCompleted="
-            + result.getTotalPrimaryTransfersCompleted() + ", TotalTime=" + result.getTotalTime() + "]");
+        logger.info("Rebalance result: [TotalBucketCreateBytes=" + result.getTotalBucketCreateBytes() + ", TotalBucketCreateTime=" + result.getTotalBucketCreateTime() + ", TotalBucketCreatesCompleted=" + result.getTotalBucketCreatesCompleted() + ", TotalBucketTransferBytes=" + result.getTotalBucketTransferBytes() + ", TotalBucketTransferTime=" + result.getTotalBucketTransferTime() + ", TotalBucketTransfersCompleted=" + +result.getTotalBucketTransfersCompleted() + ", TotalPrimaryTransferTime=" + result.getTotalPrimaryTransferTime() + ", TotalPrimaryTransfersCompleted=" + result.getTotalPrimaryTransfersCompleted() + ", TotalTime=" + result.getTotalTime() + "]");
       } catch (CancellationException e) {
         logger.info("Error rebalancing the cluster", e);
       } catch (InterruptedException e) {

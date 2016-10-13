@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 //import org.apache.geode.*;
@@ -32,7 +31,7 @@ import org.apache.geode.distributed.internal.membership.*;
  */
 public final class ResetHealthStatusResponse extends AdminResponse {
   // instance variables
-  
+
   /**
    * Returns a <code>ResetHealthStatusResponse</code> that will be returned to the
    * specified recipient.
@@ -54,18 +53,17 @@ public final class ResetHealthStatusResponse extends AdminResponse {
     return RESET_HEALTH_STATUS_RESPONSE;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 
-  @Override  
+  @Override
   public String toString() {
     return "ResetHealthStatusResponse from " + this.getRecipient();
   }

@@ -15,30 +15,26 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache.query.internal.parse;
 
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-
 public class ASTTypeCast extends GemFireAST {
   private static final long serialVersionUID = -6368577668325776355L;
-  
-  public ASTTypeCast() { }
-  
+
+  public ASTTypeCast() {
+  }
+
   public ASTTypeCast(Token t) {
     super(t);
   }
-  
-  
-  
+
   @Override
   public void compile(QCompiler compiler) {
     super.compile(compiler);
     // there's a type on the stack now
     compiler.typecast();
   }
-  
-  
+
 }

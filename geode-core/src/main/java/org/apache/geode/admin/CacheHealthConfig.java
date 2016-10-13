@@ -86,7 +86,7 @@ public interface CacheHealthConfig {
   public static final long DEFAULT_MAX_EVENT_QUEUE_SIZE = 1000;
 
   ///////////////////////  Instance Methods  ///////////////////////
-  
+
   /**
    * Returns the maximum number of milliseconds a
    * <code>netSearch</code> operation can take before the cache member

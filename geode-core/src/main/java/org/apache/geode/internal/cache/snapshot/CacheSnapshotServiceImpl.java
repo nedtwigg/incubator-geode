@@ -40,11 +40,11 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 public class CacheSnapshotServiceImpl implements CacheSnapshotService {
   /** the cache */
   private final GemFireCacheImpl cache;
-  
+
   public CacheSnapshotServiceImpl(GemFireCacheImpl cache) {
     this.cache = cache;
   }
-  
+
   @Override
   public SnapshotOptions<Object, Object> createOptions() {
     return new SnapshotOptionsImpl<Object, Object>();
@@ -57,15 +57,14 @@ public class CacheSnapshotServiceImpl implements CacheSnapshotService {
 
   @SuppressWarnings("unchecked")
   @Override
-  public void save(File dir, SnapshotFormat format,
-      SnapshotOptions<Object, Object> options) throws IOException {
+  public void save(File dir, SnapshotFormat format, SnapshotOptions<Object, Object> options) throws IOException {
     if (!dir.exists()) {
       boolean created = dir.mkdirs();
       if (!created) {
         throw new IOException(LocalizedStrings.Snapshot_UNABLE_TO_CREATE_DIR_0.toLocalizedString(dir));
       }
     }
-    
+
     for (Region<?, ?> r : (Set<Region<?, ?>>) cache.rootRegions()) {
       for (Region<?, ?> sub : r.subregions(true)) {
         saveRegion(sub, dir, format, options);
@@ -75,15 +74,14 @@ public class CacheSnapshotServiceImpl implements CacheSnapshotService {
   }
 
   @Override
-  public void load(File dir, SnapshotFormat format) throws IOException,
-      ClassNotFoundException {
+  public void load(File dir, SnapshotFormat format) throws IOException, ClassNotFoundException {
     File[] snapshots = dir.listFiles(new FileFilter() {
       @Override
       public boolean accept(File pathname) {
         return !pathname.isDirectory();
       }
     });
-    
+
     if (snapshots == null) {
       throw new FileNotFoundException(LocalizedStrings.Snapshot_NO_SNAPSHOT_FILES_FOUND_0.toLocalizedString(dir));
     }
@@ -91,10 +89,8 @@ public class CacheSnapshotServiceImpl implements CacheSnapshotService {
   }
 
   @Override
-  public void load(File[] snapshots, SnapshotFormat format,
-      SnapshotOptions<Object, Object> options) throws IOException,
-      ClassNotFoundException {
-    
+  public void load(File[] snapshots, SnapshotFormat format, SnapshotOptions<Object, Object> options) throws IOException, ClassNotFoundException {
+
     for (File f : snapshots) {
       GFSnapshotImporter in = new GFSnapshotImporter(f);
       try {
@@ -102,13 +98,13 @@ public class CacheSnapshotServiceImpl implements CacheSnapshotService {
         if (version == GFSnapshot.SNAP_VER_1) {
           throw new IOException(LocalizedStrings.Snapshot_UNSUPPORTED_SNAPSHOT_VERSION_0.toLocalizedString(version));
         }
-        
+
         String regionName = in.getRegionName();
         Region<Object, Object> region = cache.getRegion(regionName);
         if (region == null) {
           throw new RegionNotFoundException(LocalizedStrings.Snapshot_COULD_NOT_FIND_REGION_0_1.toLocalizedString(regionName, f));
         }
-        
+
         RegionSnapshotService<Object, Object> rs = region.getSnapshotService();
         rs.load(f, format, options);
 
@@ -117,10 +113,9 @@ public class CacheSnapshotServiceImpl implements CacheSnapshotService {
       }
     }
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  private void saveRegion(Region<?, ?> region, File dir, SnapshotFormat format, SnapshotOptions options) 
-      throws IOException {
+  private void saveRegion(Region<?, ?> region, File dir, SnapshotFormat format, SnapshotOptions options) throws IOException {
     RegionSnapshotService<?, ?> rs = region.getSnapshotService();
     String name = "snapshot" + region.getFullPath().replace('/', '-');
     File f = new File(dir, name);

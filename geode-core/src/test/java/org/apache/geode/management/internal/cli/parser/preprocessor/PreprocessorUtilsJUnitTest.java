@@ -54,32 +54,27 @@ public class PreprocessorUtilsJUnitTest {
     String input = " command argument1 argument2 ";
     TrimmedInput trim = PreprocessorUtils.trim(input);
     assertEquals("No of spaces removed", 1, trim.getNoOfSpacesRemoved());
-    assertEquals("input after trimming", "command argument1 argument2",
-        trim.getString());
+    assertEquals("input after trimming", "command argument1 argument2", trim.getString());
 
     input = "   command   argument1   argument2 ";
     trim = PreprocessorUtils.trim(input);
     assertEquals("No of spaces removed", 7, trim.getNoOfSpacesRemoved());
-    assertEquals("input after trimming", "command argument1 argument2",
-        trim.getString());
+    assertEquals("input after trimming", "command argument1 argument2", trim.getString());
 
     input = "command argument1 argument2 -- -- - - - -- -- -- -- -- --- --------- - - - --- --";
     trim = PreprocessorUtils.trim(input);
     assertEquals("No of spaces removed", 0, trim.getNoOfSpacesRemoved());
-    assertEquals("input after trimming", "command argument1 argument2",
-        trim.getString());
+    assertEquals("input after trimming", "command argument1 argument2", trim.getString());
 
     input = "command argument1 argument2 --";
     trim = PreprocessorUtils.trim(input);
     assertEquals("No of spaces removed", 0, trim.getNoOfSpacesRemoved());
-    assertEquals("input after trimming", "command argument1 argument2",
-        trim.getString());
+    assertEquals("input after trimming", "command argument1 argument2", trim.getString());
 
     input = "command argument1 argument2 -";
     trim = PreprocessorUtils.trim(input);
     assertEquals("No of spaces removed", 0, trim.getNoOfSpacesRemoved());
-    assertEquals("input after trimming", "command argument1 argument2",
-        trim.getString());
+    assertEquals("input after trimming", "command argument1 argument2", trim.getString());
   }
 
   /**
@@ -109,10 +104,8 @@ public class PreprocessorUtilsJUnitTest {
    */
   @Test
   public void testContainsOnlyWhiteSpaces() {
-    assertTrue(PreprocessorUtils
-        .containsOnlyWhiteSpaces("                                                  "));
-    assertFalse(PreprocessorUtils
-        .containsOnlyWhiteSpaces("              d       "));
+    assertTrue(PreprocessorUtils.containsOnlyWhiteSpaces("                                                  "));
+    assertFalse(PreprocessorUtils.containsOnlyWhiteSpaces("              d       "));
   }
 
   /**

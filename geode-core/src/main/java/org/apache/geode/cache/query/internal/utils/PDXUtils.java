@@ -24,9 +24,7 @@ import org.apache.geode.pdx.internal.PdxString;
 
 public class PDXUtils {
 
-  public static Object convertPDX(Object obj, boolean isStruct,
-      boolean getDomainObjectForPdx, boolean getDeserializedObject,
-      boolean localResults, boolean[] objectChangedMarker, boolean isDistinct) {
+  public static Object convertPDX(Object obj, boolean isStruct, boolean getDomainObjectForPdx, boolean getDeserializedObject, boolean localResults, boolean[] objectChangedMarker, boolean isDistinct) {
     objectChangedMarker[0] = false;
     if (isStruct) {
       StructImpl simpl = (StructImpl) obj;
@@ -39,9 +37,7 @@ public class PDXUtils {
             obj = simpl.getFieldValues();
           }
         } catch (Exception ex) {
-          throw new CacheException(
-              "Unable to retrieve domain object from PdxInstance while building the ResultSet. "
-                  + ex.getMessage()) {
+          throw new CacheException("Unable to retrieve domain object from PdxInstance while building the ResultSet. " + ex.getMessage()) {
           };
         }
       } else {
@@ -49,8 +45,7 @@ public class PDXUtils {
         if (getDeserializedObject) {
           for (int i = 0; i < values.length; i++) {
             if (values[i] instanceof VMCachedDeserializable) {
-              values[i] = ((VMCachedDeserializable) values[i])
-                  .getDeserializedForReading();
+              values[i] = ((VMCachedDeserializable) values[i]).getDeserializedForReading();
             }
           }
         }
@@ -71,9 +66,7 @@ public class PDXUtils {
             obj = ((PdxInstance) obj).getObject();
             objectChangedMarker[0] = true;
           } catch (Exception ex) {
-            throw new CacheException(
-                "Unable to retrieve domain object from PdxInstance while building the ResultSet. "
-                    + ex.getMessage()) {
+            throw new CacheException("Unable to retrieve domain object from PdxInstance while building the ResultSet. " + ex.getMessage()) {
             };
           }
         } else if (obj instanceof PdxString) {
@@ -91,5 +84,5 @@ public class PDXUtils {
 
     }
     return obj;
-  }  
+  }
 }

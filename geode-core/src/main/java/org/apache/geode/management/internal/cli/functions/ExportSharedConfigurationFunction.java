@@ -30,8 +30,7 @@ import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 import org.apache.geode.management.internal.configuration.utils.ZipUtils;
 
-public class ExportSharedConfigurationFunction extends FunctionAdapter
-    implements InternalEntity {
+public class ExportSharedConfigurationFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -39,19 +38,19 @@ public class ExportSharedConfigurationFunction extends FunctionAdapter
   public void execute(FunctionContext context) {
     InternalLocator locator = InternalLocator.getLocator();
     String memberName = locator.getDistributedSystem().getName();
-    
+
     if (locator.isSharedConfigurationRunning()) {
       SharedConfiguration sc = locator.getSharedConfiguration();
 
-      String zipFileName =  CliStrings.format(CliStrings.EXPORT_SHARED_CONFIG__FILE__NAME, UUID.randomUUID());
-      
+      String zipFileName = CliStrings.format(CliStrings.EXPORT_SHARED_CONFIG__FILE__NAME, UUID.randomUUID());
+
       String targetFilePath = FilenameUtils.concat(sc.getSharedConfigurationDirPath(), zipFileName);
       try {
         ZipUtils.zip(sc.getSharedConfigurationDirPath(), targetFilePath);
         File zippedSharedConfig = new File(targetFilePath);
         byte[] zippedConfigData = FileUtils.readFileToByteArray(zippedSharedConfig);
         FileUtils.forceDelete(zippedSharedConfig);
-        CliFunctionResult result = new CliFunctionResult(locator.getDistributedSystem().getName(), zippedConfigData, new String[] {zipFileName});
+        CliFunctionResult result = new CliFunctionResult(locator.getDistributedSystem().getName(), zippedConfigData, new String[] { zipFileName });
         context.getResultSender().lastResult(result);
       } catch (Exception e) {
         context.getResultSender().lastResult(new CliFunctionResult(memberName, e, e.getMessage()));

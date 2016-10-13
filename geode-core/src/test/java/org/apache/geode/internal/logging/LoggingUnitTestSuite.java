@@ -27,16 +27,6 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessageJUnitTest;
 import org.apache.geode.internal.logging.log4j.LogWriterAppenderJUnitTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-  LogServiceJUnitTest.class,
-  LogWriterImplJUnitTest.class,
-  SortLogFileJUnitTest.class,
-  AlertAppenderJUnitTest.class,
-  ConfigLocatorJUnitTest.class,
-  FastLoggerJUnitTest.class,
-  FastLoggerWithDefaultConfigJUnitTest.class,
-  LocalizedMessageJUnitTest.class,
-  LogWriterAppenderJUnitTest.class,
-})
+@Suite.SuiteClasses({ LogServiceJUnitTest.class, LogWriterImplJUnitTest.class, SortLogFileJUnitTest.class, AlertAppenderJUnitTest.class, ConfigLocatorJUnitTest.class, FastLoggerJUnitTest.class, FastLoggerWithDefaultConfigJUnitTest.class, LocalizedMessageJUnitTest.class, LogWriterAppenderJUnitTest.class, })
 public class LoggingUnitTestSuite {
 }

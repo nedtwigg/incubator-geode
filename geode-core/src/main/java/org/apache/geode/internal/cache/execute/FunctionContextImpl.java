@@ -39,21 +39,19 @@ public class FunctionContextImpl implements FunctionContext {
   private Object args = null;
 
   private String functionId = null;
-  
-  private ResultSender resultSender = null ;
-  
+
+  private ResultSender resultSender = null;
+
   private final boolean isPossDup;
-  
-  public FunctionContextImpl(final String functionId, final Object args,
-      ResultSender resultSender) {
+
+  public FunctionContextImpl(final String functionId, final Object args, ResultSender resultSender) {
     this.functionId = functionId;
     this.args = args;
     this.resultSender = resultSender;
     this.isPossDup = false;
   }
-  
-  public FunctionContextImpl(final String functionId, final Object args,
-      ResultSender resultSender, boolean isPossibleDuplicate) {
+
+  public FunctionContextImpl(final String functionId, final Object args, ResultSender resultSender, boolean isPossibleDuplicate) {
     this.functionId = functionId;
     this.args = args;
     this.resultSender = resultSender;
@@ -94,12 +92,12 @@ public class FunctionContextImpl implements FunctionContext {
     return buf.toString();
   }
 
-  public <T> ResultSender<T> getResultSender() {    
+  public <T> ResultSender<T> getResultSender() {
     return this.resultSender;
   }
 
   public boolean isPossibleDuplicate() {
     return this.isPossDup;
   }
-  
+
 }

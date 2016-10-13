@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.geode.internal.cache;
+
 /**
  * 
  *
  */
-public interface GatewayEventFilter
-{
+public interface GatewayEventFilter {
   boolean enqueueEvent(EntryEventImpl event);
 
 }

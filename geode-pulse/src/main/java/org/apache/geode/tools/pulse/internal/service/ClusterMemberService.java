@@ -76,7 +76,7 @@ public class ClusterMemberService implements PulseService {
       memberJSON.put("host", clusterMember.getHost());
 
       List<String> serverGroups = clusterMember.getServerGroups();
-      if(serverGroups.size() == 0){
+      if (serverGroups.size() == 0) {
         serverGroups = new ArrayList<>();
         serverGroups.add(PulseConstants.DEFAULT_SERVER_GROUP);
       }
@@ -84,7 +84,7 @@ public class ClusterMemberService implements PulseService {
       memberJSON.put("serverGroups", mapper.valueToTree(serverGroups));
 
       List<String> redundancyZones = clusterMember.getRedundancyZones();
-      if(redundancyZones.size() == 0){
+      if (redundancyZones.size() == 0) {
         redundancyZones = new ArrayList<String>();
         redundancyZones.add(PulseConstants.DEFAULT_REDUNDANCY_ZONE);
       }
@@ -110,10 +110,9 @@ public class ClusterMemberService implements PulseService {
       memberJSON.put("threads", clusterMember.getNumThreads());
 
       // Number of member clients
-      if (PulseController.getPulseProductSupport().equalsIgnoreCase(
-          PulseConstants.PRODUCT_NAME_SQLFIRE)){
+      if (PulseController.getPulseProductSupport().equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
         memberJSON.put("clients", clusterMember.getNumSqlfireClients());
-      }else{
+      } else {
         memberJSON.put("clients", clusterMember.getMemberClientsHMap().size());
       }
       memberJSON.put("queues", clusterMember.getQueueBacklog());

@@ -36,7 +36,7 @@ import org.apache.geode.internal.logging.LogService;
 
 public class DeployFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String ID = DeployFunction.class.getName();
 
   private static final long serialVersionUID = 1L;
@@ -72,22 +72,22 @@ public class DeployFunction implements Function, InternalEntity {
           deployedList.add("Already deployed");
         }
       }
-      
+
       CliFunctionResult result = new CliFunctionResult(memberId, deployedList.toArray(new String[0]));
       context.getResultSender().lastResult(result);
-      
+
     } catch (CacheClosedException cce) {
       CliFunctionResult result = new CliFunctionResult(memberId, false, null);
       context.getResultSender().lastResult(result);
-      
+
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not deploy JAR file {}", th.getMessage(), th);
-      
+
       CliFunctionResult result = new CliFunctionResult(memberId, th, null);
       context.getResultSender().lastResult(result);
     }

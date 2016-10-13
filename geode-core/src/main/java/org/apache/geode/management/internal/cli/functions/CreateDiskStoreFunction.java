@@ -41,7 +41,7 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 public class CreateDiskStoreFunction extends FunctionAdapter implements InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -62,20 +62,20 @@ public class CreateDiskStoreFunction extends FunctionAdapter implements Internal
       if (!member.getName().equals("")) {
         memberId = member.getName();
       }
-      
+
       DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory(diskStoreAttrs);
       diskStoreFactory.create(diskStoreName);
-      
+
       XmlEntity xmlEntity = new XmlEntity(CacheXml.DISK_STORE, "name", diskStoreName);
       context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity, "Success"));
-      
+
     } catch (CacheClosedException cce) {
       context.getResultSender().lastResult(new CliFunctionResult(memberId, false, null));
-      
+
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not create disk store: {}", th.getMessage(), th);

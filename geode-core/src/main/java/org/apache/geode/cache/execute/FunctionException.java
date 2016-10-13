@@ -99,8 +99,7 @@ public class FunctionException extends GemFireException {
    * @since GemFire 6.5
    */
   public final void addException(Throwable cause) {
-    Assert.assertTrue(cause != null,
-        "unexpected null exception to add to FunctionException");
+    Assert.assertTrue(cause != null, "unexpected null exception to add to FunctionException");
     getExceptions().add(cause);
   }
 

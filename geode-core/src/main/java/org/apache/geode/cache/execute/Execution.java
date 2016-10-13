@@ -74,8 +74,7 @@ public interface Execution {
    * @see ResultCollector
    * @since GemFire 6.0
    */
-  public Execution withCollector(
-      ResultCollector<?, ?> rc);
+  public Execution withCollector(ResultCollector<?, ?> rc);
 
   /**
    * Executes the function using its {@linkplain Function#getId() id}
@@ -96,8 +95,7 @@ public interface Execution {
    * 
    * @since GemFire 6.0
    */
-  public ResultCollector<?, ?> execute(
-      String functionId) throws FunctionException;
+  public ResultCollector<?, ?> execute(String functionId) throws FunctionException;
 
   /**
    * Executes the function instance provided.
@@ -117,8 +115,7 @@ public interface Execution {
    * 
    * @since GemFire 6.0
    */
-  public ResultCollector<?, ?> execute(
-      Function function) throws FunctionException;
+  public ResultCollector<?, ?> execute(Function function) throws FunctionException;
 
   /**
    * Executes the function using its {@linkplain Function#getId() id}
@@ -147,8 +144,7 @@ public interface Execution {
    * @deprecated as of 6.6, use {@link #execute(String)} instead
    */
   @Deprecated
-  public ResultCollector<?, ?> execute(
-      String functionId, boolean hasResult) throws FunctionException;
+  public ResultCollector<?, ?> execute(String functionId, boolean hasResult) throws FunctionException;
 
   /**
    * Executes the function using its {@linkplain Function#getId() id}
@@ -180,9 +176,7 @@ public interface Execution {
    * @deprecated as of 6.6, use {@link #execute(String)} instead
    */
   @Deprecated
-  public ResultCollector<?, ?> execute(
-      String functionId, boolean hasResult, boolean isHA)
-      throws FunctionException;
+  public ResultCollector<?, ?> execute(String functionId, boolean hasResult, boolean isHA) throws FunctionException;
 
   /**
    * Executes the function using its {@linkplain Function#getId() id}
@@ -216,7 +210,5 @@ public interface Execution {
    * @deprecated as of 6.6, use {@link #execute(String)} instead
    */
   @Deprecated
-  public ResultCollector<?, ?> execute(
-      String functionId, boolean hasResult, boolean isHA,
-      boolean optimizeForWrite) throws FunctionException;
+  public ResultCollector<?, ?> execute(String functionId, boolean hasResult, boolean isHA, boolean optimizeForWrite) throws FunctionException;
 }

@@ -19,6 +19,6 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.cache.Cache;
 
 public interface MockCacheService extends CacheService {
-  
+
   public Cache getCache();
 }

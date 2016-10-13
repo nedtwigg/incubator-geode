@@ -39,57 +39,55 @@ import org.apache.geode.internal.util.concurrent.CopyOnWriteWeakHashMap;
  * 
  */
 public class SizeClassOnceObjectSizer implements ObjectSizer, Serializable, Declarable {
-  
+
   private static final SizeClassOnceObjectSizer INSTANCE = new SizeClassOnceObjectSizer();
-  
+
   private transient final Map<Class, Integer> savedSizes = new CopyOnWriteWeakHashMap<Class, Integer>();
-  
+
   private transient final ReflectionObjectSizer sizer = ReflectionObjectSizer.getInstance();
-  
+
   public int sizeof(Object o) {
-    if(o == null) {
+    if (o == null) {
       return 0;
     }
     int wellKnownObjectSize = WellKnownClassSizer.sizeof(o);
-    if(wellKnownObjectSize != 0) {
+    if (wellKnownObjectSize != 0) {
       return wellKnownObjectSize;
     }
-    
+
     //Now do the sizing
     Class clazz = o.getClass();
     Integer size = savedSizes.get(clazz);
-    if(size == null) {
+    if (size == null) {
       size = Integer.valueOf(sizer.sizeof(o));
       savedSizes.put(clazz, size);
     }
     return size.intValue();
   }
-  
+
   public static SizeClassOnceObjectSizer getInstance() {
     return INSTANCE;
   }
-  
+
   //This object is serializable because EvictionAttributes is serializable
   //We want to resolve to the same singleton when deserializing
-  private void writeObject(java.io.ObjectOutputStream out)
-  throws IOException {
-    
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+
   }
-  
-  private void readObject(java.io.ObjectInputStream in)
-    throws IOException, ClassNotFoundException {
+
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
   }
-  
+
   private Object readResolve() throws ObjectStreamException {
     return INSTANCE;
   }
 
   private SizeClassOnceObjectSizer() {
-    
+
   }
 
   public void init(Properties props) {
     // TODO Auto-generated method stub
-    
+
   }
 }

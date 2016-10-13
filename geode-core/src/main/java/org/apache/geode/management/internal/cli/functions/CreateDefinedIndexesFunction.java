@@ -32,8 +32,7 @@ import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.domain.IndexInfo;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-public class CreateDefinedIndexesFunction extends FunctionAdapter implements
-    InternalEntity {
+public class CreateDefinedIndexesFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -47,13 +46,13 @@ public class CreateDefinedIndexesFunction extends FunctionAdapter implements
       memberId = cache.getDistributedSystem().getDistributedMember().getId();
       QueryService queryService = cache.getQueryService();
       Set<IndexInfo> indexDefinitions = (Set<IndexInfo>) context.getArguments();
-      for(IndexInfo indexDefinition : indexDefinitions) {
+      for (IndexInfo indexDefinition : indexDefinitions) {
         String indexName = indexDefinition.getIndexName();
         String indexedExpression = indexDefinition.getIndexedExpression();
-        String regionPath = indexDefinition.getRegionPath();        
-        if(indexDefinition.getIndexType() == IndexInfo.KEY_INDEX) {
+        String regionPath = indexDefinition.getRegionPath();
+        if (indexDefinition.getIndexType() == IndexInfo.KEY_INDEX) {
           queryService.defineKeyIndex(indexName, indexedExpression, regionPath);
-        } else if(indexDefinition.getIndexType() == IndexInfo.HASH_INDEX) {
+        } else if (indexDefinition.getIndexType() == IndexInfo.HASH_INDEX) {
           queryService.defineHashIndex(indexName, indexedExpression, regionPath);
         } else {
           queryService.defineIndex(indexName, indexedExpression, regionPath);
@@ -64,17 +63,13 @@ public class CreateDefinedIndexesFunction extends FunctionAdapter implements
     } catch (MultiIndexCreationException e) {
       StringBuffer sb = new StringBuffer();
       sb.append("Index creation failed for indexes: ").append("\n");
-      for(Map.Entry<String, Exception> failedIndex : e.getExceptionsMap().entrySet()) {
-         sb.append(failedIndex.getKey()).append(" : ").append(failedIndex.getValue().getMessage()).append("\n");
-      }     
-      context.getResultSender().lastResult(
-          new CliFunctionResult(memberId, e, sb.toString()));
+      for (Map.Entry<String, Exception> failedIndex : e.getExceptionsMap().entrySet()) {
+        sb.append(failedIndex.getKey()).append(" : ").append(failedIndex.getValue().getMessage()).append("\n");
+      }
+      context.getResultSender().lastResult(new CliFunctionResult(memberId, e, sb.toString()));
     } catch (Exception e) {
-      String exceptionMessage = CliStrings.format(
-          CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(),
-          e.getMessage());
-      context.getResultSender().lastResult(
-          new CliFunctionResult(memberId, e, exceptionMessage));
+      String exceptionMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
+      context.getResultSender().lastResult(new CliFunctionResult(memberId, e, exceptionMessage));
     }
   }
 

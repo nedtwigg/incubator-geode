@@ -30,7 +30,7 @@ import java.util.Locale;
 public class StringId {
   /** The root name of the ResourceBundle */
   private static final String RESOURCE_CLASS = "org/apache/geode/internal/i18n/StringIdResourceBundle";
-  
+
   /** A unique identifier that is written when this StringId is logged to 
    * allow for reverse translation.
    * @see org.apache.geode.internal.logging.LogWriterImpl
@@ -44,12 +44,12 @@ public class StringId {
    * if this changes we must update the ResourceBundle.
    */
   private static volatile Locale currentLocale = null;
-  
+
   private static boolean includeMsgIDs;
-  
+
   /** A StringId to allow users to log a literal String using the {@link org.apache.geode.i18n.LogWriterI18n} */
-  public static final StringId LITERAL = new StringId(1, "{0}"); 
-  
+  public static final StringId LITERAL = new StringId(1, "{0}");
+
   static {
     setLocale(Locale.getDefault());
   }
@@ -63,94 +63,92 @@ public class StringId {
    */
   public static void setLocale(Locale l) {
     Locale locale = l;
-    if ( locale == null ) {
+    if (locale == null) {
       locale = Locale.getDefault();
     }
-    
-    if ( locale != currentLocale ) {
-      AbstractStringIdResourceBundle tempResourceBundle = 
-        StringId.getBundle(locale);
-      currentLocale = locale;      
+
+    if (locale != currentLocale) {
+      AbstractStringIdResourceBundle tempResourceBundle = StringId.getBundle(locale);
+      currentLocale = locale;
       rb = tempResourceBundle;
       // do we want message ids included in output?
       // Only if we are using a resource bundle that has localized strings.
       includeMsgIDs = !rb.usingRawMode();
     }
   }
-  
+
   /*
    * @return AbstractStringIdResourceBundle for the locale 
    */
   private static AbstractStringIdResourceBundle getBundle(Locale l) {
     return AbstractStringIdResourceBundle.getBundle(RESOURCE_CLASS, l);
   }
-  
+
   /** 
    * Gemstone internal constructor, customers have no need to  
    * create instances of this class.
-   */  
+   */
   public StringId(int id, String text) {
     this.id = id;
     this.text = text;
   }
-  
+
   /**
    * Accessor for the raw (unformatted) text of this StringId
    * @return unformated text
-   **/ 
+   **/
   public String getRawText() {
-        return this.text;
-  }  
-  
-  /**
-   * @return the English translation of this StringId
-   **/ 
-  @Override
-  public String toString() {
-    return MessageFormat.format(this.text, (Object[])null);
+    return this.text;
   }
 
+  /**
+   * @return the English translation of this StringId
+   **/
+  @Override
+  public String toString() {
+    return MessageFormat.format(this.text, (Object[]) null);
+  }
 
   /**
    * Substitutes parameter Objects into the text
    * @see java.text.MessageFormat
    * @return the English translation of this StringId
-   **/ 
-  public String toString(Object ... params) {
-  return MessageFormat.format(this.text, params);
+   **/
+  public String toString(Object... params) {
+    return MessageFormat.format(this.text, params);
   }
 
   /**
    * @return the translation of this StringId based on the current {@link java.util.Locale}
-   **/ 
+   **/
   public String toLocalizedString() {
     String idStr = "";
     if (includeMsgIDs) {
-      idStr = "msgID "+this.id+": ";
+      idStr = "msgID " + this.id + ": ";
     }
-    return MessageFormat.format(idStr + StringId.rb.getString(this), (Object[])null);
+    return MessageFormat.format(idStr + StringId.rb.getString(this), (Object[]) null);
   }
-  
+
   /**
    * Substitutes parameter Objects into the text
    * @see java.text.MessageFormat
    * @return the translation of this StringId based on the current {@link java.util.Locale}
-   **/ 
-  public String toLocalizedString(Object ... params) {
+   **/
+  public String toLocalizedString(Object... params) {
     String idStr = "";
     if (includeMsgIDs) {
-      idStr = "msgID "+this.id+": ";
+      idStr = "msgID " + this.id + ": ";
     }
     return MessageFormat.format(idStr + StringId.rb.getString(this), params);
   }
-  
+
   /**
    * Gemstone internal test method to access {@link #currentLocale}
    */
   static Locale getCurrentLocale() {
     return currentLocale;
   }
-  
+
   /**
    * Gemstone internal test method to access {@link #rb}
    */

@@ -34,15 +34,15 @@ import org.apache.geode.management.internal.cli.shell.Gfsh;
  */
 public class GfshConsoleReader extends GfeConsoleReader {
   private Gfsh gfsh;
-  
+
   public GfshConsoleReader() {
     gfsh = Gfsh.getCurrentInstance();
   }
-  
+
   public boolean isSupported() {
     return gfsh != null && !gfsh.isHeadlessMode();
   }
-  
+
   public String readLine(String textToPrompt) {
     String lineRead = null;
     if (isSupported()) {
@@ -54,7 +54,7 @@ public class GfshConsoleReader extends GfeConsoleReader {
     }
     return lineRead;
   }
-  
+
   public char[] readPassword(String textToPrompt) {
     char[] password = null;
     if (isSupported()) {

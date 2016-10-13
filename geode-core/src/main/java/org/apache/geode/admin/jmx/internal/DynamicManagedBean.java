@@ -16,7 +16,6 @@
  */
 package org.apache.geode.admin.jmx.internal;
 
-
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +32,10 @@ import org.apache.commons.modeler.ManagedBean;
  */
 public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
   private static final long serialVersionUID = 4051924500150228160L;
-  
+
   public DynamicManagedBean(ManagedBean managed) {
     super();
-    
+
     this.attributes = managed.getAttributes();
     this.className = managed.getClassName();
     this.constructors = managed.getConstructors();
@@ -48,7 +47,7 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
     this.notifications = managed.getNotifications();
     this.operations = managed.getOperations();
     this.type = managed.getType();
-    
+
     /* we don't use modelerType and it's nice to remove it to keep the list of 
        attributes cleaned up...*/
     removeAttribute("modelerType");
@@ -70,9 +69,8 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
           attributesList.add(this.attributes[i]);
         }
       }
-      this.attributes = (AttributeInfo[]) 
-          attributesList.toArray(new AttributeInfo[attributesList.size()]);
-      
+      this.attributes = (AttributeInfo[]) attributesList.toArray(new AttributeInfo[attributesList.size()]);
+
       /* super.info should be nulled out anytime the structure is changed,
        * such as altering the attributes, operations, or notifications
        *
@@ -101,9 +99,8 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
           operationsList.add(this.operations[i]);
         }
       }
-      this.operations = (OperationInfo[]) 
-          operationsList.toArray(new OperationInfo[operationsList.size()]);
-      
+      this.operations = (OperationInfo[]) operationsList.toArray(new OperationInfo[operationsList.size()]);
+
       /* super.info should be nulled out anytime the structure is changed,
        * such as altering the operations, operations, or notifications
        *
@@ -138,4 +135,3 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
     return (sb.toString());
   }
 }
-

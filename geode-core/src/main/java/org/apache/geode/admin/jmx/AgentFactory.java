@@ -43,8 +43,7 @@ public class AgentFactory {
    *
    * @see Agent#start
    */
-  public static Agent getAgent(AgentConfig config) 
-    throws AdminException {
+  public static Agent getAgent(AgentConfig config) throws AdminException {
     return new AgentImpl((AgentConfigImpl) config);
   }
 

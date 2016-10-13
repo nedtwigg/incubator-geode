@@ -66,7 +66,7 @@ public interface AsyncEventQueueFactory {
    *          <code>AsyncEventQueue</code>'s queue
    */
   public AsyncEventQueueFactory setMaximumQueueMemory(int memory);
-  
+
   /**
    * Sets whether or not the writing to the disk is synchronous.
    * Default is true.
@@ -85,7 +85,7 @@ public interface AsyncEventQueueFactory {
    *          The size of batches sent to its <code>AsyncEventListener</code>
    */
   public AsyncEventQueueFactory setBatchSize(int size);
-  
+
   /**
    * Sets the batch time interval (in milliseconds) for a <code>AsyncEventQueue</code>.
    * Default is 5 ms.
@@ -116,7 +116,7 @@ public interface AsyncEventQueueFactory {
    */
 
   public AsyncEventQueueFactory setParallel(boolean isParallel);
-  
+
   /**
    * Sets whether to enable batch conflation for <code>AsyncEventQueue</code>.
    * Default is false.
@@ -126,7 +126,7 @@ public interface AsyncEventQueueFactory {
    *              <code>AsyncEventQueue</code>
    */
   public AsyncEventQueueFactory setBatchConflationEnabled(boolean isConflation);
-  
+
   /**
    * Sets the number of dispatcher thread.
    * Default is 5.
@@ -150,9 +150,8 @@ public interface AsyncEventQueueFactory {
    * 
    * @param filter
    */
-  public AsyncEventQueueFactory removeGatewayEventFilter(
-      GatewayEventFilter filter);
-  
+  public AsyncEventQueueFactory removeGatewayEventFilter(GatewayEventFilter filter);
+
   /**
    * Sets the order policy for multiple dispatchers.
    * Default is KEY.
@@ -160,15 +159,14 @@ public interface AsyncEventQueueFactory {
    * @param policy
    */
   public AsyncEventQueueFactory setOrderPolicy(OrderPolicy policy);
-  
+
   /**
    * Sets the <code>GatewayEventSubstitutionFilter</code>.
    * 
    * @param filter
    *          The <code>GatewayEventSubstitutionFilter</code>
    */
-  public AsyncEventQueueFactory setGatewayEventSubstitutionListener(
-      GatewayEventSubstitutionFilter filter);
+  public AsyncEventQueueFactory setGatewayEventSubstitutionListener(GatewayEventSubstitutionFilter filter);
 
   /**
    * Forwards destroy operations from expiration action to AsyncEventQueue.

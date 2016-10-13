@@ -47,7 +47,7 @@ import org.apache.geode.internal.security.SecurityService;
 import org.apache.geode.security.NotAuthorizedException;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-@Category(UnitTest.class )
+@Category(UnitTest.class)
 public class GetAll70Test {
   private static final String REGION_NAME = "region1";
   private static final Object[] KEYS = new Object[] { "key1", "key2", "key3" };
@@ -100,7 +100,7 @@ public class GetAll70Test {
 
     when(this.regionNamePart.getString()).thenReturn(REGION_NAME);
 
-    when (this.requestSerializableValuesPart.getInt()).thenReturn(0);
+    when(this.requestSerializableValuesPart.getInt()).thenReturn(0);
 
     when(this.serverConnection.getCache()).thenReturn(this.cache);
     when(this.serverConnection.getCacheServerStats()).thenReturn(mock(CacheServerStats.class));
@@ -129,7 +129,7 @@ public class GetAll70Test {
     verify(this.chunkedResponseMessage).addObjPartNoCopying(argument.capture());
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object key : argument.getValue().getKeys()) {
+    for (Object key : argument.getValue().getKeys()) {
       assertThat(key).isIn(KEYS);
     }
     for (Object key : KEYS) {
@@ -158,7 +158,7 @@ public class GetAll70Test {
     verify(this.chunkedResponseMessage).addObjPartNoCopying(argument.capture());
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object key : argument.getValue().getObjects()){
+    for (Object key : argument.getValue().getObjects()) {
       assertThat(key).isExactlyInstanceOf(NotAuthorizedException.class);
     }
 
@@ -176,11 +176,11 @@ public class GetAll70Test {
     verify(this.chunkedResponseMessage).addObjPartNoCopying(argument.capture());
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object key : argument.getValue().getKeys()) {
+    for (Object key : argument.getValue().getKeys()) {
       assertThat(key).isIn(KEYS);
     }
 
-    for (Object key: KEYS) {
+    for (Object key : KEYS) {
       verify(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(key.toString()), eq(null));
     }
 
@@ -202,10 +202,10 @@ public class GetAll70Test {
     verify(this.chunkedResponseMessage).addObjPartNoCopying(argument.capture());
 
     assertThat(argument.getValue().getObjects()).hasSize(KEYS.length);
-    for(Object o : argument.getValue().getObjects()){
+    for (Object o : argument.getValue().getObjects()) {
       assertThat(o).isExactlyInstanceOf(NotAuthorizedException.class);
     }
-    for (Object key: KEYS) {
+    for (Object key : KEYS) {
       verify(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(key.toString()), eq(null));
     }
     verify(this.chunkedResponseMessage).sendChunk(eq(this.serverConnection));

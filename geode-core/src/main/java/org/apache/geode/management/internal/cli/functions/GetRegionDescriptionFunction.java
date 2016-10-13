@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.cli.functions;
 
-
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.CacheClosedException;
 import org.apache.geode.cache.CacheFactory;
@@ -26,37 +25,35 @@ import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.domain.RegionDescriptionPerMember;
 
-public class GetRegionDescriptionFunction extends FunctionAdapter implements
-		InternalEntity {
+public class GetRegionDescriptionFunction extends FunctionAdapter implements InternalEntity {
 
+  private static final long serialVersionUID = 1L;
 
-	private static final long	serialVersionUID	= 1L;
+  @Override
+  public void execute(FunctionContext context) {
+    String regionPath = (String) context.getArguments();
+    try {
+      Cache cache = CacheFactory.getAnyInstance();
+      Region<?, ?> region = cache.getRegion(regionPath);
 
-	@Override
-	public void execute(FunctionContext context) {
-		String regionPath  = (String) context.getArguments();
-		try {
-			Cache cache = CacheFactory.getAnyInstance();
-			Region<?, ?> region = cache.getRegion(regionPath);
-			
-			if (region != null) {
-				String memberName = cache.getDistributedSystem().getDistributedMember().getName();
-				RegionDescriptionPerMember regionDescription =  new RegionDescriptionPerMember(region, memberName);
-				context.getResultSender().lastResult(regionDescription);
-			} else {
-				context.getResultSender().lastResult(null);
-			}
-		} catch (CacheClosedException e) {
-			context.getResultSender().sendException(e);
-		} catch (Exception e) {
-			context.getResultSender().sendException(e);
-		}
-	}
+      if (region != null) {
+        String memberName = cache.getDistributedSystem().getDistributedMember().getName();
+        RegionDescriptionPerMember regionDescription = new RegionDescriptionPerMember(region, memberName);
+        context.getResultSender().lastResult(regionDescription);
+      } else {
+        context.getResultSender().lastResult(null);
+      }
+    } catch (CacheClosedException e) {
+      context.getResultSender().sendException(e);
+    } catch (Exception e) {
+      context.getResultSender().sendException(e);
+    }
+  }
 
-	@Override
-	public String getId() {
-		// TODO Auto-generated method stub
-		return GetRegionDescriptionFunction.class.toString();
-	}
+  @Override
+  public String getId() {
+    // TODO Auto-generated method stub
+    return GetRegionDescriptionFunction.class.toString();
+  }
 
 }

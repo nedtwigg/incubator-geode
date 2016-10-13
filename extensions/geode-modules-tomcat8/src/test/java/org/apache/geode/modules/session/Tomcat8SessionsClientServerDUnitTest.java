@@ -49,7 +49,7 @@ public class Tomcat8SessionsClientServerDUnitTest extends TestSessionsTomcat8Bas
   @Override
   public void preTearDown() {
     vm0.invoke(() -> {
-      GemFireCacheImpl.getInstance().getCacheServers().forEach(e -> ((CacheServer)e).stop());
+      GemFireCacheImpl.getInstance().getCacheServers().forEach(e -> ((CacheServer) e).stop());
     });
     server.stopContainer();
   }

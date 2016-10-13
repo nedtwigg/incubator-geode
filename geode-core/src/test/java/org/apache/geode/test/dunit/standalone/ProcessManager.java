@@ -71,8 +71,7 @@ public class ProcessManager {
     } catch (IOException e) {
       //This delete is occasionally failing on some platforms, maybe due to a lingering
       //process. Allow the process to be launched anyway.
-      System.err.println("Unable to delete " + workingDir + ". Currently contains "
-          + Arrays.asList(workingDir.list()));
+      System.err.println("Unable to delete " + workingDir + ". Currently contains " + Arrays.asList(workingDir.list()));
     }
     workingDir.mkdirs();
     if (log4jConfig != null) {
@@ -179,9 +178,9 @@ public class ProcessManager {
       // most distributed unit tests were written under the assumption that network partition
       // detection is disabled, so we turn it off in the locator.  Tests for network partition
       // detection should create a separate locator that has it enabled
-      cmds.add("-D"+DistributionConfig.GEMFIRE_PREFIX+ENABLE_NETWORK_PARTITION_DETECTION+"=false");
+      cmds.add("-D" + DistributionConfig.GEMFIRE_PREFIX + ENABLE_NETWORK_PARTITION_DETECTION + "=false");
     }
-    cmds.add("-D"+LOG_LEVEL+"=" + DUnitLauncher.logLevel);
+    cmds.add("-D" + LOG_LEVEL + "=" + DUnitLauncher.logLevel);
     if (DUnitLauncher.LOG4J != null) {
       cmds.add("-Dlog4j.configurationFile=" + DUnitLauncher.LOG4J);
     }
@@ -204,13 +203,13 @@ public class ProcessManager {
 
     return rst;
   }
-  
+
   private String removeJREJars(String classpath) {
     String[] jars = classpath.split(File.pathSeparator);
     StringBuilder sb = new StringBuilder(classpath.length());
     String jreLib = File.separator + "jre" + File.separator + "lib" + File.separator;
     Boolean firstjar = true;
-    for (String jar: jars) {
+    for (String jar : jars) {
       if (!jar.contains(jreLib)) {
         if (!firstjar) {
           sb.append(File.pathSeparator);

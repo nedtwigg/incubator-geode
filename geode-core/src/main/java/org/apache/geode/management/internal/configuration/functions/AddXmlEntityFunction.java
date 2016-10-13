@@ -25,8 +25,7 @@ import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.configuration.domain.ConfigurationChangeResult;
 import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
-public class AddXmlEntityFunction extends FunctionAdapter implements
-InternalEntity {
+public class AddXmlEntityFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -38,7 +37,7 @@ InternalEntity {
       if (locator.isSharedConfigurationRunning()) {
         Object[] args = (Object[]) context.getArguments();
         XmlEntity xmlEntity = (XmlEntity) args[0];
-        String[] groups = (String[])args[1];
+        String[] groups = (String[]) args[1];
         SharedConfiguration sharedConfig = locator.getSharedConfiguration();
         sharedConfig.addXmlEntity(xmlEntity, groups);
       } else {

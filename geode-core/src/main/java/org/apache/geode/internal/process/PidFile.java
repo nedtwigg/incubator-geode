@@ -37,9 +37,9 @@ import org.apache.geode.internal.util.StopWatch;
 public class PidFile {
 
   private static final long SLEEP_INTERVAL_MILLIS = 10;
-  
+
   private final File pidFile;
-  
+
   /**
    * Constructs a PidFile for reading pid stored in a file.
    * 
@@ -57,7 +57,7 @@ public class PidFile {
   File getFile() {
     return this.pidFile;
   }
-  
+
   /**
    * Constructs a PidFile for reading pid stored in a file.
    * 
@@ -103,11 +103,9 @@ public class PidFile {
       }
 
       return pid;
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       throw new IllegalArgumentException("Invalid pid '" + pidValue + "' found in " + this.pidFile.getCanonicalPath());
-    }
-    finally {
+    } finally {
       IOUtils.close(fileReader);
     }
   }
@@ -129,10 +127,10 @@ public class PidFile {
     IllegalArgumentException iae = null;
     IOException ioe = null;
     int pid = 0;
-    
+
     final long timeoutMillis = unit.toMillis(timeout);
     final StopWatch stopWatch = new StopWatch(true);
-    
+
     while (pid <= 0) {
       try {
         pid = readPid();

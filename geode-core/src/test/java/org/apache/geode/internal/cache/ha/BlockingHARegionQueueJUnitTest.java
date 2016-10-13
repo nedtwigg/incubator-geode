@@ -39,8 +39,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  *  
  */
 @Category(IntegrationTest.class)
-public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
-{
+public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest {
 
   /**
    * Creates Blocking HA region-queue object
@@ -51,11 +50,8 @@ public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name)
-      throws IOException, ClassNotFoundException, CacheException, InterruptedException
-  {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name,
-        cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
@@ -68,11 +64,8 @@ public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name,
-      HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException
-  {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name,
-        cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
@@ -82,36 +75,33 @@ public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
    * 
    */
   @Test
-  public void testBlockingPutAndTake()
-  {
+  public void testBlockingPutAndTake() {
     try {
       HARegionQueueAttributes hrqa = new HARegionQueueAttributes();
       hrqa.setBlockingQueueCapacity(1);
-      final HARegionQueue hrq = this.createHARegionQueue("testBlockingPutAndTake",
-          hrqa);
+      final HARegionQueue hrq = this.createHARegionQueue("testBlockingPutAndTake", hrqa);
       hrq.setPrimary(true);//fix for 40314 - capacity constraint is checked for primary only.
       EventID id1 = new EventID(new byte[] { 1 }, 1, 1);
       hrq.put(new ConflatableObject("key1", "val1", id1, false, "testing"));
       Thread t1 = new Thread(new Runnable() {
         public void run() {
-          try{
-          EventID id2 = new EventID(new byte[] { 1 }, 1, 2);
-          hrq.put(new ConflatableObject("key1", "val2", id2, false, "testing"));
-          }catch(Exception e) {
-            encounteredException=true;
+          try {
+            EventID id2 = new EventID(new byte[] { 1 }, 1, 2);
+            hrq.put(new ConflatableObject("key1", "val2", id2, false, "testing"));
+          } catch (Exception e) {
+            encounteredException = true;
           }
         }
       });
       t1.start();
       Thread.sleep(4000);
       assertTrue(t1.isAlive());
-      Conflatable conf = (Conflatable)hrq.take();
+      Conflatable conf = (Conflatable) hrq.take();
       assertNotNull(conf);
       Thread.sleep(2000);
-      assertTrue(!t1.isAlive());      
+      assertTrue(!t1.isAlive());
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("Test failed because of exception " + e);
     }
@@ -123,26 +113,20 @@ public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
    * 
    */
   @Test
-  public void testBlockingPutAndPeekRemove()
-  {
+  public void testBlockingPutAndPeekRemove() {
     try {
       HARegionQueueAttributes hrqa = new HARegionQueueAttributes();
       hrqa.setBlockingQueueCapacity(1);
-      final HARegionQueue hrq = this.createHARegionQueue(
-          "testBlockingPutAndPeekRemove", hrqa);
+      final HARegionQueue hrq = this.createHARegionQueue("testBlockingPutAndPeekRemove", hrqa);
       hrq.setPrimary(true);//fix for 40314 - capacity constraint is checked for primary only.
       EventID id1 = new EventID(new byte[] { 1 }, 1, 1);
       hrq.put(new ConflatableObject("key1", "val1", id1, false, "testing"));
       Thread t1 = new Thread(new Runnable() {
-        public void run()
-        {
+        public void run() {
           try {
             EventID id2 = new EventID(new byte[] { 1 }, 1, 2);
-            hrq
-                .put(new ConflatableObject("key1", "val2", id2, false,
-                    "testing"));
-          }
-          catch (Exception e) {
+            hrq.put(new ConflatableObject("key1", "val2", id2, false, "testing"));
+          } catch (Exception e) {
             encounteredException = true;
           }
         }
@@ -150,15 +134,14 @@ public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
       t1.start();
       Thread.sleep(4000);
       assertTrue("put-thread expected to blocked, but was not ", t1.isAlive());
-      Conflatable conf = (Conflatable)hrq.peek();
+      Conflatable conf = (Conflatable) hrq.peek();
       assertNotNull(conf);
       hrq.remove();
       Thread.sleep(2000);
       assertFalse("Put-thread blocked unexpectedly", t1.isAlive());
       assertFalse("Exception occured in put-thread", encounteredException);
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("Test failed because of exception " + e);
     }
@@ -173,27 +156,21 @@ public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
   //expiry is not applicable on primary so marking this test as invalid.
   @Ignore
   @Test
-  public void testBlockingPutAndExpiry()
-  {
+  public void testBlockingPutAndExpiry() {
     try {
       HARegionQueueAttributes hrqa = new HARegionQueueAttributes();
       hrqa.setBlockingQueueCapacity(1);
       hrqa.setExpiryTime(4);
-      final HARegionQueue hrq = this.createHARegionQueue(
-          "testBlockingPutAndExpiry", hrqa);
-      
+      final HARegionQueue hrq = this.createHARegionQueue("testBlockingPutAndExpiry", hrqa);
+
       EventID id1 = new EventID(new byte[] { 1 }, 1, 1);
       hrq.put(new ConflatableObject("key1", "val1", id1, false, "testing"));
       Thread t1 = new Thread(new Runnable() {
-        public void run()
-        {
+        public void run() {
           try {
             EventID id2 = new EventID(new byte[] { 1 }, 1, 2);
-            hrq
-                .put(new ConflatableObject("key1", "val2", id2, false,
-                    "testing"));
-          }
-          catch (Exception e) {
+            hrq.put(new ConflatableObject("key1", "val2", id2, false, "testing"));
+          } catch (Exception e) {
             encounteredException = true;
           }
         }
@@ -205,8 +182,7 @@ public class BlockingHARegionQueueJUnitTest extends HARegionQueueJUnitTest
       assertFalse("Put-thread blocked unexpectedly", t1.isAlive());
       assertFalse("Exception occured in put-thread", encounteredException);
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("Test failed because of exception " + e);
     }

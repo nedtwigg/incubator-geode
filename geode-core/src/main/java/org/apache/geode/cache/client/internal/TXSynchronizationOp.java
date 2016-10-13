@@ -51,7 +51,7 @@ public class TXSynchronizationOp {
     pool.execute(impl);
     return impl.tXCommitMessageResponse;
   }
-  
+
   static class Impl extends AbstractOp {
 
     private int status;
@@ -63,7 +63,7 @@ public class TXSynchronizationOp {
      * @param type
      */
     public Impl(int status, int txId, CompletionType type) {
-      super(MessageType.TX_SYNCHRONIZATION, (type==CompletionType.AFTER_COMPLETION)? 3 : 2);
+      super(MessageType.TX_SYNCHRONIZATION, (type == CompletionType.AFTER_COMPLETION) ? 3 : 2);
       this.status = status;
       this.type = type;
       getMessage().addIntPart(type.ordinal());
@@ -72,34 +72,29 @@ public class TXSynchronizationOp {
         getMessage().addIntPart(status);
       }
     }
-    
+
     @Override
     public String toString() {
-      return "TXSynchronization(threadTxId=" + TXManagerImpl.getCurrentTXUniqueId()
-      +"; "+this.type + "; status=" + this.status + ")";
+      return "TXSynchronization(threadTxId=" + TXManagerImpl.getCurrentTXUniqueId() + "; " + this.type + "; status=" + this.status + ")";
     }
 
     @Override
-  protected void processAck(Message msg, String opName)
-    throws Exception
-  {
-    final int msgType = msg.getMessageType();
-    if (msgType == MessageType.REPLY) {
-      return;
-    } else {
-      Part part = msg.getPart(0);
-      if (msgType == MessageType.EXCEPTION) {
-        Throwable t = (Throwable) part.getObject();
-        if (t instanceof CommitConflictException ||
-            t instanceof SynchronizationCommitConflictException) {
-          throw (GemFireException)t;
+    protected void processAck(Message msg, String opName) throws Exception {
+      final int msgType = msg.getMessageType();
+      if (msgType == MessageType.REPLY) {
+        return;
+      } else {
+        Part part = msg.getPart(0);
+        if (msgType == MessageType.EXCEPTION) {
+          Throwable t = (Throwable) part.getObject();
+          if (t instanceof CommitConflictException || t instanceof SynchronizationCommitConflictException) {
+            throw (GemFireException) t;
+          }
         }
+        super.processAck(msg, opName);
       }
-      super.processAck(msg, opName);
     }
-  }
 
-    
     /* (non-Javadoc)
      * @see org.apache.geode.cache.client.internal.AbstractOp#processResponse(org.apache.geode.internal.cache.tier.sockets.Message)
      */
@@ -110,12 +105,12 @@ public class TXSynchronizationOp {
           processAck(msg, type.toString());
         } catch (ServerOperationException e) {
           if (e.getCause() instanceof SynchronizationCommitConflictException) {
-            throw (SynchronizationCommitConflictException)e.getCause();
+            throw (SynchronizationCommitConflictException) e.getCause();
           }
         }
         return null;
       } else {
-        TXCommitMessage rcs = (TXCommitMessage)processObjResponse(msg, this.type.toString());
+        TXCommitMessage rcs = (TXCommitMessage) processObjResponse(msg, this.type.toString());
         this.tXCommitMessageResponse = rcs;
         return rcs;
       }
@@ -129,22 +124,23 @@ public class TXSynchronizationOp {
       return msgType == MessageType.REQUESTDATAERROR;
     }
 
-    @Override  
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startTxSynchronization();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endTxSynchronizationSend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endTxSynchronization(start, hasTimedOut(), hasFailed());
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override

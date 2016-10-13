@@ -82,10 +82,10 @@ public class MockExtensionCommands implements CommandMarker {
   @CliCommand(value = CREATE_MOCK_REGION_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result createMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true) final String regionName,
-      @CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
-    return executeFunctionOnAllMembersTabulateResultPersist(CreateMockRegionExtensionFunction.INSTANCE, true,
-        CreateMockRegionExtensionFunction.toArgs(regionName, value));
+  public Result createMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true)
+  final String regionName, @CliOption(key = OPTION_VALUE, mandatory = true)
+  final String value) {
+    return executeFunctionOnAllMembersTabulateResultPersist(CreateMockRegionExtensionFunction.INSTANCE, true, CreateMockRegionExtensionFunction.toArgs(regionName, value));
   }
 
   /**
@@ -103,10 +103,10 @@ public class MockExtensionCommands implements CommandMarker {
   @CliCommand(value = ALTER_MOCK_REGION_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result alterMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true) final String regionName,
-      @CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
-    return executeFunctionOnAllMembersTabulateResultPersist(AlterMockRegionExtensionFunction.INSTANCE, true,
-        AlterMockRegionExtensionFunction.toArgs(regionName, value));
+  public Result alterMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true)
+  final String regionName, @CliOption(key = OPTION_VALUE, mandatory = true)
+  final String value) {
+    return executeFunctionOnAllMembersTabulateResultPersist(AlterMockRegionExtensionFunction.INSTANCE, true, AlterMockRegionExtensionFunction.toArgs(regionName, value));
   }
 
   /**
@@ -122,9 +122,9 @@ public class MockExtensionCommands implements CommandMarker {
   @CliCommand(value = DESTROY_MOCK_REGION_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result destroyMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true) final String regionName) {
-    return executeFunctionOnAllMembersTabulateResultPersist(DestroyMockRegionExtensionFunction.INSTANCE, true,
-        DestroyMockRegionExtensionFunction.toArgs(regionName));
+  public Result destroyMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true)
+  final String regionName) {
+    return executeFunctionOnAllMembersTabulateResultPersist(DestroyMockRegionExtensionFunction.INSTANCE, true, DestroyMockRegionExtensionFunction.toArgs(regionName));
   }
 
   /**
@@ -139,7 +139,8 @@ public class MockExtensionCommands implements CommandMarker {
   @CliCommand(value = CREATE_MOCK_CACHE_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result createMockCacheExtension(@CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
+  public Result createMockCacheExtension(@CliOption(key = OPTION_VALUE, mandatory = true)
+  final String value) {
     return executeFunctionOnAllMembersTabulateResultPersist(CreateMockCacheExtensionFunction.INSTANCE, true, CreateMockCacheExtensionFunction.toArgs(value));
   }
 
@@ -155,7 +156,8 @@ public class MockExtensionCommands implements CommandMarker {
   @CliCommand(value = ALTER_MOCK_CACHE_EXTENSION)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
   @CliMetaData(writesToSharedConfiguration = true)
-  public Result alterMockCacheExtension(@CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
+  public Result alterMockCacheExtension(@CliOption(key = OPTION_VALUE, mandatory = true)
+  final String value) {
     return executeFunctionOnAllMembersTabulateResultPersist(AlterMockCacheExtensionFunction.INSTANCE, true, AlterMockCacheExtensionFunction.toArgs(value));
   }
 
@@ -191,8 +193,7 @@ public class MockExtensionCommands implements CommandMarker {
     final Set<DistributedMember> members = CliUtil.getAllNormalMembers(cache);
 
     @SuppressWarnings("unchecked")
-    final ResultCollector<CliFunctionResult, List<CliFunctionResult>> resultCollector = (ResultCollector<CliFunctionResult, List<CliFunctionResult>>) CliUtil
-        .executeFunction(function, args, members);
+    final ResultCollector<CliFunctionResult, List<CliFunctionResult>> resultCollector = (ResultCollector<CliFunctionResult, List<CliFunctionResult>>) CliUtil.executeFunction(function, args, members);
     final List<CliFunctionResult> functionResults = (List<CliFunctionResult>) resultCollector.getResult();
 
     XmlEntity xmlEntity = null;

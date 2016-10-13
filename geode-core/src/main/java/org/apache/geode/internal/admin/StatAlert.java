@@ -42,7 +42,7 @@ public class StatAlert implements Serializable {
     sb.append("StatAlert[");
     sb.append("def=" + definitionId);
     sb.append("; values (" + values.length + ") = [");
-    for (int i = 0; i < values.length; i ++) {
+    for (int i = 0; i < values.length; i++) {
       sb.append(values[i].toString());
       if (i != values.length - 1) {
         sb.append(", ");
@@ -52,6 +52,7 @@ public class StatAlert implements Serializable {
     sb.append("]");
     return sb.toString();
   }
+
   /**
    * The default constructor.
    */

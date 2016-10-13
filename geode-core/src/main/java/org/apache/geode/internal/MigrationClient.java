@@ -63,21 +63,21 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
  */
 public class MigrationClient {
   final static boolean VERBOSE = MigrationServer.VERBOSE;
-  
+
   final static int VERSION = 551; // version for backward communications compatibility
 
   protected static final int CODE_ERROR = MigrationServer.CODE_ERROR;
   protected static final int CODE_ENTRY = MigrationServer.CODE_ENTRY; /* serialized key, serialized value */
   protected static final int CODE_COMPLETED = MigrationServer.CODE_COMPLETED;
-  
+
   public static void main(String[] args) throws Exception {
     int argIdx = 0;
     String cacheXmlFileName = null;
     String regionName = null;
     String bindAddressName = null;
     int serverPort = 10533;
-    
-    if (args.length > argIdx+1) {
+
+    if (args.length > argIdx + 1) {
       regionName = args[argIdx++];
       cacheXmlFileName = args[argIdx++];
     } else {
@@ -90,7 +90,7 @@ public class MigrationClient {
     if (args.length > argIdx) {
       bindAddressName = args[argIdx++];
     }
-    
+
     MigrationClient instance = null;
     try {
       instance = new MigrationClient(cacheXmlFileName, bindAddressName, serverPort);
@@ -103,7 +103,6 @@ public class MigrationClient {
     instance.getRegion(regionName);
   }
 
-
   private InetAddress serverAddress;
   private int port;
   private DistributedSystem distributedSystem;
@@ -114,8 +113,7 @@ public class MigrationClient {
   private int serverVersion;
   private DataInputStream dis;
   private DataOutputStream dos;
-  
-  
+
   /**
    * Create a MigrationClient to be used with a DistributedSystem and Cache
    * that are created using GemFire APIs
@@ -130,7 +128,7 @@ public class MigrationClient {
       throw new IllegalArgumentException("Error - bind address cannot be resolved: '" + bindAddressName + "'");
     }
   }
-  
+
   /**
    * this is for use by main()
    * 
@@ -157,8 +155,7 @@ public class MigrationClient {
   private void createDistributedSystem() throws Exception {
     Properties dsProps = new Properties();
     // if no discovery information has been explicitly given, use a loner ds 
-    if (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT) == null
-        && System.getProperty(DistributionConfig.GEMFIRE_PREFIX + LOCATORS) == null) {
+    if (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT) == null && System.getProperty(DistributionConfig.GEMFIRE_PREFIX + LOCATORS) == null) {
       dsProps.put(MCAST_PORT, "0");
     }
     dsProps.put(LOG_FILE, "migrationClient.log");
@@ -167,8 +164,7 @@ public class MigrationClient {
     }
     this.distributedSystem = DistributedSystem.connect(dsProps);
   }
-  
-  
+
   /**
    * create the cache to be used by this migration server
    * @throws Exception if there are any problems
@@ -179,7 +175,7 @@ public class MigrationClient {
     }
     this.cache = CacheFactory.create(this.distributedSystem);
   }
-  
+
   private void initDSAndCache() {
     if (this.distributedSystem == null) {
       this.distributedSystem = InternalDistributedSystem.getConnectedInstance();
@@ -187,7 +183,7 @@ public class MigrationClient {
     if (this.cache == null) {
       this.cache = GemFireCacheImpl.getInstance();
     }
-  }  
+  }
 
   public Region getRegion(String regionName) throws IOException, ClassNotFoundException {
     initDSAndCache();
@@ -238,8 +234,7 @@ public class MigrationClient {
     }
     return region;
   }
-  
-  
+
   private void connectToServer() throws IOException {
     this.server = new Socket();
     SocketAddress addr;

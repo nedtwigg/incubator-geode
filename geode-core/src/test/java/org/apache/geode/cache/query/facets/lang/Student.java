@@ -19,85 +19,61 @@ package org.apache.geode.cache.query.facets.lang;
 
 import java.util.*;
 
+public class Student extends Person {
+  private Set _courses;
+  private float _gpa;
+  private Department _dept;
 
+  public Student() {
+  }
 
-public class Student extends Person
-{
-    private Set _courses;
-    private float _gpa;
-    private Department _dept;
+  public Student(String ssn, String name, Date birthdate, Collection courses, float gpa, Department dept) {
+    super(ssn, name, birthdate);
+    initCourses();
+    _courses.addAll(courses);
+    _gpa = gpa;
+    _dept = dept;
+  }
 
+  public Set getCourses() {
+    if (_courses.isEmpty())
+      return Collections.EMPTY_SET;
+    return _courses;
+  }
 
-    public Student()
-    {
-    }
+  public float getGPA() {
+    return _gpa;
+  }
 
-    public Student(String ssn, String name, Date birthdate,
-                   Collection courses, float gpa, Department dept)
-    {
-        super(ssn, name, birthdate);
-        initCourses();
-        _courses.addAll(courses);
-        _gpa = gpa;
-        _dept = dept;
-    }
+  public Department getDepartment() {
+    return _dept;
+  }
 
-    public Set getCourses()
-    {
-        if (_courses.isEmpty())
-            return Collections.EMPTY_SET;
-        return _courses;
-    }
+  public void addCourse(Course course) {
+    if (_courses == null)
+      initCourses();
+    _courses.add(course);
+  }
 
-    public float getGPA()
-    {
-        return _gpa;
-    }
+  public void removeCourse(Course course) {
+    if (_courses == null)
+      return;
+    _courses.remove(course);
+    if (_courses.isEmpty())
+      _courses = null;
+  }
 
-    public Department getDepartment()
-    {
-        return _dept;
-    }
+  public void setGPA(float gpa) {
+    _gpa = gpa;
+  }
 
-    public void addCourse(Course course)
-    {
-        if (_courses == null)
-            initCourses();
-        _courses.add(course);
-    }
+  public void setDepartment(Department dept) {
+    _dept = dept;
+  }
 
-    public void removeCourse(Course course)
-    {
-        if (_courses == null)
-            return;
-        _courses.remove(course);
-        if (_courses.isEmpty())
-            _courses = null;
-    }
+  private void initCourses() {
+    //_courses = Utils.getQueryService().newIndexableSet(Course.class);
+    _courses = new HashSet();
+  }
 
-    public void setGPA(float gpa)
-    {
-        _gpa = gpa;
-    }
-
-
-    public void setDepartment(Department dept)
-    {
-        _dept = dept;
-    }
-
-    private void initCourses()
-    {
-        //_courses = Utils.getQueryService().newIndexableSet(Course.class);
-      _courses = new HashSet();
-    }
-
-
-    
-    
-    
 }
-
-    
-
-    

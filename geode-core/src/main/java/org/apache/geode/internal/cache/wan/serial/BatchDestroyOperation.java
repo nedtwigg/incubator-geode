@@ -58,7 +58,7 @@ import org.apache.geode.internal.offheap.annotations.Retained;
 public class BatchDestroyOperation extends DistributedCacheOperation {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** Creates a new instance of DestroyOperation */
   public BatchDestroyOperation(EntryEventImpl event) {
     super(event);
@@ -70,10 +70,9 @@ public class BatchDestroyOperation extends DistributedCacheOperation {
   }
 
   @Override
-  protected void initMessage(CacheOperationMessage msg,
-      DirectReplyProcessor processor) {
+  protected void initMessage(CacheOperationMessage msg, DirectReplyProcessor processor) {
     super.initMessage(msg, processor);
-    DestroyMessage m = (DestroyMessage)msg;
+    DestroyMessage m = (DestroyMessage) msg;
     EntryEventImpl event = getEvent();
     m.key = event.getKey();
     m.eventId = event.getEventId();
@@ -92,41 +91,31 @@ public class BatchDestroyOperation extends DistributedCacheOperation {
     }
 
     public DestroyMessage(InternalCacheEvent event) {
-      this.event = (EntryEventImpl)event;
+      this.event = (EntryEventImpl) event;
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
-        throws EntryNotFoundException {
-      EntryEventImpl ev = (EntryEventImpl)event;
-      DistributedRegion rgn = (DistributedRegion)ev.getRegion();
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+      EntryEventImpl ev = (EntryEventImpl) event;
+      DistributedRegion rgn = (DistributedRegion) ev.getRegion();
 
       final boolean isDebugEnabled = logger.isDebugEnabled();
       try {
         if (isDebugEnabled) {
-          logger.debug("Received batch destroyed message with key {} tail key {} this size of the region is {} they keys are {}",
-              key, tailKey, rgn.size(), rgn.keys());
+          logger.debug("Received batch destroyed message with key {} tail key {} this size of the region is {} they keys are {}", key, tailKey, rgn.size(), rgn.keys());
         }
-        
+
         // Optimized way
-        for (long k = (Long)this.key; k <= this.tailKey; k++) {
+        for (long k = (Long) this.key; k <= this.tailKey; k++) {
           try {
-            for (GatewayEventFilter filter : rgn.getSerialGatewaySender()
-                .getGatewayEventFilters()) {
-              GatewayQueueEvent eventForFilter = (GatewayQueueEvent)rgn.get(k);
+            for (GatewayEventFilter filter : rgn.getSerialGatewaySender().getGatewayEventFilters()) {
+              GatewayQueueEvent eventForFilter = (GatewayQueueEvent) rgn.get(k);
               try {
                 if (eventForFilter != null) {
                   filter.afterAcknowledgement(eventForFilter);
                 }
-              }
-              catch (Exception e) {
-                logger
-                    .fatal(
-                        LocalizedMessage
-                            .create(
-                                LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1,
-                                new Object[] { filter.toString(),
-                                    eventForFilter }), e);
+              } catch (Exception e) {
+                logger.fatal(LocalizedMessage.create(LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1, new Object[] { filter.toString(), eventForFilter }), e);
               }
             }
             rgn.localDestroy(k, RegionQueue.WAN_QUEUE_TOKEN);
@@ -137,51 +126,45 @@ public class BatchDestroyOperation extends DistributedCacheOperation {
           }
         }
         // Non-optimized way
-//        for (Long k : (Set<Long>)rgn.keys()) {
-//          if (k > this.tailKey) {
-//            continue;
-//          }
-//          rgn.localDestroy(k, RegionQueue.WAN_QUEUE_TOKEN);
-//        }
+        //        for (Long k : (Set<Long>)rgn.keys()) {
+        //          if (k > this.tailKey) {
+        //            continue;
+        //          }
+        //          rgn.localDestroy(k, RegionQueue.WAN_QUEUE_TOKEN);
+        //        }
         this.appliedOperation = true;
       } catch (CacheWriterException e) {
-        throw new Error(
-            LocalizedStrings.DestroyOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED
-                .toLocalizedString(),
-            e);
+        throw new Error(LocalizedStrings.DestroyOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(), e);
       } catch (TimeoutException e) {
-        throw new Error(
-            LocalizedStrings.DestroyOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED
-                .toLocalizedString(), e);
+        throw new Error(LocalizedStrings.DestroyOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED.toLocalizedString(), e);
       }
       return true;
     }
 
     @Override
     @Retained
-    protected final InternalCacheEvent createEvent(DistributedRegion rgn)
-        throws EntryNotFoundException {
+    protected final InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
       EntryEventImpl ev = createEntryEvent(rgn);
       boolean evReturned = false;
       try {
-      ev.setEventId(this.eventId);
-      ev.setOldValueFromRegion();
-      if (this.filterRouting != null) {
-        ev.setLocalFilterInfo(this.filterRouting.getFilterInfo(rgn.getCache()
-            .getMyId()));
-      }
-      ev.setTailKey(tailKey);
-      evReturned = true;
-      return ev;
+        ev.setEventId(this.eventId);
+        ev.setOldValueFromRegion();
+        if (this.filterRouting != null) {
+          ev.setLocalFilterInfo(this.filterRouting.getFilterInfo(rgn.getCache().getMyId()));
+        }
+        ev.setTailKey(tailKey);
+        evReturned = true;
+        return ev;
       } finally {
-        if (!evReturned) ev.release();
+        if (!evReturned)
+          ev.release();
       }
     }
 
     @Retained
     EntryEventImpl createEntryEvent(DistributedRegion rgn) {
-      @Retained EntryEventImpl event = EntryEventImpl.create(rgn, getOperation(), this.key,
-          null, this.callbackArg, true, getSender());
+      @Retained
+      EntryEventImpl event = EntryEventImpl.create(rgn, getOperation(), this.key, null, this.callbackArg, true, getSender());
       // event.setNewEventId(); Don't set the event here...
       setOldValueInEvent(event);
       event.setTailKey(this.tailKey);
@@ -191,9 +174,7 @@ public class BatchDestroyOperation extends DistributedCacheOperation {
     @Override
     protected void appendFields(StringBuilder buff) {
       super.appendFields(buff);
-      buff.append(" lastDestroydKey=").append(this.key)
-          .append(" lastDispatchedKey=").append(this.tailKey).append(" id=")
-          .append(this.eventId);
+      buff.append(" lastDestroydKey=").append(this.key).append(" lastDispatchedKey=").append(this.tailKey).append(" id=").append(this.eventId);
     }
 
     public int getDSFID() {
@@ -201,10 +182,9 @@ public class BatchDestroyOperation extends DistributedCacheOperation {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
-      this.eventId = (EventID)DataSerializer.readObject(in);
+      this.eventId = (EventID) DataSerializer.readObject(in);
       this.key = DataSerializer.readObject(in);
       Boolean hasTailKey = DataSerializer.readBoolean(in);
       if (hasTailKey.booleanValue()) {
@@ -223,10 +203,7 @@ public class BatchDestroyOperation extends DistributedCacheOperation {
 
     @Override
     public List getOperations() {
-      return Collections.singletonList(new QueuedOperation(getOperation(),
-          this.key, null, null,
-          DistributedCacheOperation.DESERIALIZATION_POLICY_NONE,
-          this.callbackArg));
+      return Collections.singletonList(new QueuedOperation(getOperation(), this.key, null, null, DistributedCacheOperation.DESERIALIZATION_POLICY_NONE, this.callbackArg));
     }
 
     @Override

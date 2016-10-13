@@ -29,7 +29,7 @@ import org.apache.geode.internal.cache.partitioned.RemoteFetchKeysMessage;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 public abstract class AbstractPeerTXRegionStub implements TXRegionStub {
-  
+
   protected final TXStateStub state;
   protected final LocalRegion region;
 
@@ -44,15 +44,12 @@ public abstract class AbstractPeerTXRegionStub implements TXRegionStub {
       RemoteFetchKeysMessage.FetchKeysResponse response = RemoteFetchKeysMessage.send(currRegion, state.getTarget());
       return response.waitForKeys();
     } catch (RegionDestroyedException e) {
-      throw new TransactionDataNotColocatedException(LocalizedStrings.RemoteMessage_REGION_0_NOT_COLOCATED_WITH_TRANSACTION
-              .toLocalizedString(e.getRegionFullPath()), e);
-    } catch(CacheClosedException e) {
+      throw new TransactionDataNotColocatedException(LocalizedStrings.RemoteMessage_REGION_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(e.getRegionFullPath()), e);
+    } catch (CacheClosedException e) {
       throw new TransactionDataNodeHasDepartedException("Cache was closed while fetching keys");
     } catch (Exception e) {
       throw new TransactionException(e);
     }
   }
-
-
 
 }

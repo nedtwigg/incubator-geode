@@ -53,14 +53,11 @@ public class LuceneIndexStatsMonitor extends MBeanStatsMonitor {
 
     this.commitRate = new StatsRate(StatsKey.COMMITS, StatType.INT_TYPE, this);
 
-    this.queryRateAverageLatency = new StatsAverageLatency(
-        StatsKey.QUERIES, StatType.INT_TYPE, StatsKey.QUERY_TIME, this);
+    this.queryRateAverageLatency = new StatsAverageLatency(StatsKey.QUERIES, StatType.INT_TYPE, StatsKey.QUERY_TIME, this);
 
-    this.updateRateAverageLatency = new StatsAverageLatency(
-        StatsKey.UPDATES, StatType.INT_TYPE, StatsKey.UPDATE_TIME, this);
+    this.updateRateAverageLatency = new StatsAverageLatency(StatsKey.UPDATES, StatType.INT_TYPE, StatsKey.UPDATE_TIME, this);
 
-    this.commitRateAverageLatency = new StatsAverageLatency(
-        StatsKey.COMMITS, StatType.INT_TYPE, StatsKey.COMMIT_TIME, this);
+    this.commitRateAverageLatency = new StatsAverageLatency(StatsKey.COMMITS, StatType.INT_TYPE, StatsKey.COMMIT_TIME, this);
   }
 
   protected LuceneIndexMetrics getIndexMetrics(LuceneIndex index) {
@@ -85,9 +82,6 @@ public class LuceneIndexStatsMonitor extends MBeanStatsMonitor {
 
     int documents = getStatistic(StatsKey.DOCUMENTS).intValue();
 
-    return new LuceneIndexMetrics(index.getRegionPath(), index.getName(), queryExecutions, queryExecutionTime,
-        queryRateValue, queryRateAverageLatencyValue, queryExecutionsInProgress, queryExecutionTotalHits,
-        updates, updateTime, updateRateValue, updateRateAverageLatencyValue, updatesInProgress, commits,
-        commitTime, commitRateValue, commitRateAverageLatencyValue, commitsInProgress, documents);
+    return new LuceneIndexMetrics(index.getRegionPath(), index.getName(), queryExecutions, queryExecutionTime, queryRateValue, queryRateAverageLatencyValue, queryExecutionsInProgress, queryExecutionTotalHits, updates, updateTime, updateRateValue, updateRateAverageLatencyValue, updatesInProgress, commits, commitTime, commitRateValue, commitRateAverageLatencyValue, commitsInProgress, documents);
   }
 }

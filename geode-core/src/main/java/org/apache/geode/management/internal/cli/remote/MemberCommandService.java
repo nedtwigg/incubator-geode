@@ -29,8 +29,8 @@ import org.apache.geode.management.cli.Result;
  */
 public class MemberCommandService extends CommandService {
   private final Object modLock = new Object();
-  
-  private Cache            cache;
+
+  private Cache cache;
   private CommandProcessor commandProcessor;
 
   public MemberCommandService(Cache cache) throws CommandServiceException {
@@ -45,19 +45,19 @@ public class MemberCommandService extends CommandService {
       throw new CommandServiceException(e.getMessage(), e);
     }
   }
-  
+
   public Result processCommand(String commandString) {
     return this.processCommand(commandString, EMPTY_ENV);
   }
-  
+
   public Result processCommand(String commandString, Map<String, String> env) {
     return createCommandStatement(commandString, env).process();
   }
-  
+
   public CommandStatement createCommandStatement(String commandString) {
     return this.createCommandStatement(commandString, EMPTY_ENV);
   }
-  
+
   public CommandStatement createCommandStatement(String commandString, Map<String, String> env) {
     if (!isUsable()) {
       throw new IllegalStateException("Cache instance is not available.");
@@ -72,12 +72,12 @@ public class MemberCommandService extends CommandService {
     return (this.cache != null && !this.cache.isClosed());
   }
 
-//  @Override
-//  public void stop() {
-//    cache = null;
-//    synchronized (modLock) {
-//      this.commandProcessor.stop();
-//      this.commandProcessor = null;
-//    }
-//  }  
+  //  @Override
+  //  public void stop() {
+  //    cache = null;
+  //    synchronized (modLock) {
+  //      this.commandProcessor.stop();
+  //      this.commandProcessor = null;
+  //    }
+  //  }  
 }

@@ -36,9 +36,9 @@ import org.apache.geode.i18n.StringId;
  * which provides connections. fromthe databse without any pooling.
  * 
  */
-public class GemFireBasicDataSource extends AbstractDataSource  {
+public class GemFireBasicDataSource extends AbstractDataSource {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = -4010116024816908360L;
 
   /** Creates a new instance of BaseDataSource */
@@ -53,9 +53,9 @@ public class GemFireBasicDataSource extends AbstractDataSource  {
    * @throws SQLException 
    * @return boolean
    */
-   public boolean isWrapperFor(Class iface) throws SQLException {
-     return true;
-   }
+  public boolean isWrapperFor(Class iface) throws SQLException {
+    return true;
+  }
 
   /**
    * Place holder for abstract method 
@@ -66,9 +66,9 @@ public class GemFireBasicDataSource extends AbstractDataSource  {
    * @throws SQLException
    * @return java.lang.Object
    */
-   public Object unwrap(Class iface)  throws SQLException { 
-     return iface;
-   }
+  public Object unwrap(Class iface) throws SQLException {
+    return iface;
+  }
 
   /**
    * Creates a new instance of GemFireBasicDataSource
@@ -77,8 +77,7 @@ public class GemFireBasicDataSource extends AbstractDataSource  {
    *          properties.
    * @throws SQLException
    */
-  public GemFireBasicDataSource(ConfiguredDataSourceProperties configs)
-      throws SQLException {
+  public GemFireBasicDataSource(ConfiguredDataSourceProperties configs) throws SQLException {
     super(configs);
     loadDriver();
   }
@@ -99,7 +98,8 @@ public class GemFireBasicDataSource extends AbstractDataSource  {
     Connection connection = null;
     if (driverObject == null) {
       synchronized (this) {
-        if (driverObject == null) loadDriver();
+        if (driverObject == null)
+          loadDriver();
       }
     }
     if (url != null) {
@@ -107,8 +107,7 @@ public class GemFireBasicDataSource extends AbstractDataSource  {
       props.put("user", user);
       props.put("password", password);
       connection = driverObject.connect(url, props);
-    }
-    else {
+    } else {
       StringId exception = LocalizedStrings.GemFireBasicDataSource_GEMFIREBASICDATASOURCE_GETCONNECTION_URL_FOR_THE_DATASOURCE_NOT_AVAILABLE;
       logger.info(LocalizedMessage.create(exception));
       throw new SQLException(exception.toLocalizedString());
@@ -126,8 +125,7 @@ public class GemFireBasicDataSource extends AbstractDataSource  {
    * @return ???
    */
   @Override
-  public Connection getConnection(String clUsername, String clPassword)
-      throws SQLException {
+  public Connection getConnection(String clUsername, String clPassword) throws SQLException {
     //First Autheticate the user
     checkCredentials(clUsername, clPassword);
     return getConnection();
@@ -137,8 +135,7 @@ public class GemFireBasicDataSource extends AbstractDataSource  {
     try {
       Class driverClass = ClassPathLoader.getLatest().forName(jdbcDriver);
       driverObject = (Driver) driverClass.newInstance();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       StringId msg = LocalizedStrings.GemFireBasicDataSource_AN_EXCEPTION_WAS_CAUGHT_WHILE_TRYING_TO_LOAD_THE_DRIVER;
       String msgArg = ex.getLocalizedMessage();
       logger.error(LocalizedMessage.create(msg, msgArg), ex);

@@ -60,8 +60,7 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForByteByte() {
     int expectedLength = 2 + 1 + 1;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_BYTE,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_BYTE, expectedLength);
   }
 
   /**
@@ -73,8 +72,7 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForShortShort() {
     int expectedLength = 2 + 2 + 2;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_SHORT,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_SHORT, expectedLength);
   }
 
   /**
@@ -86,8 +84,7 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForIntInt() {
     int expectedLength = 2 + 4 + 4;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_INT,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_INT, expectedLength);
   }
 
   /**
@@ -99,8 +96,7 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForLongLong() {
     int expectedLength = 2 + 8 + 8;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_LONG,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_LONG, expectedLength);
   }
 
   /**
@@ -112,10 +108,8 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForByteShort() {
     int expectedLength = 2 + 1 + 2;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_SHORT,
-        expectedLength);
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_BYTE,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_SHORT, expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_BYTE, expectedLength);
   }
 
   /**
@@ -127,10 +121,8 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForByteInt() {
     int expectedLength = 2 + 1 + 4;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_INT,
-        expectedLength);
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_BYTE,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_INT, expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_BYTE, expectedLength);
   }
 
   /**
@@ -142,10 +134,8 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForByteLong() {
     int expectedLength = 2 + 1 + 8;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_LONG,
-        expectedLength);
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_BYTE,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_BYTE, ID_VALUE_LONG, expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_BYTE, expectedLength);
   }
 
   /**
@@ -157,10 +147,8 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForShortInt() {
     int expectedLength = 2 + 2 + 4;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_INT,
-        expectedLength);
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_SHORT,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_INT, expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_SHORT, expectedLength);
   }
 
   /**
@@ -172,10 +160,8 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForShortLong() {
     int expectedLength = 2 + 2 + 8;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_LONG,
-        expectedLength);
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_SHORT,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_SHORT, ID_VALUE_LONG, expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_SHORT, expectedLength);
   }
 
   /**
@@ -187,10 +173,8 @@ public class EventIdOptimizationJUnitTest {
   @Test
   public void testOptimizationForIntLong() {
     int expectedLength = 2 + 4 + 8;
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_LONG,
-        expectedLength);
-    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_INT,
-        expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_INT, ID_VALUE_LONG, expectedLength);
+    writeReadAndVerifyOptimizedByteArray(ID_VALUE_LONG, ID_VALUE_INT, expectedLength);
   }
 
   /**
@@ -209,21 +193,13 @@ public class EventIdOptimizationJUnitTest {
    *          expected length of the optimized byte-array
    */
   private void writeReadAndVerifyOptimizedByteArray(long threadId, long sequenceId, int expectedArrayLength) {
-    byte[] array = EventID
-        .getOptimizedByteArrayForEventID(threadId, sequenceId);
-    assertEquals("optimized byte-array length not as expected",
-        expectedArrayLength, array.length);
+    byte[] array = EventID.getOptimizedByteArrayForEventID(threadId, sequenceId);
+    assertEquals("optimized byte-array length not as expected", expectedArrayLength, array.length);
     ByteBuffer buffer = ByteBuffer.wrap(array);
-    long threadIdReadFromOptArray = EventID
-        .readEventIdPartsFromOptmizedByteArray(buffer);
-    long sequenceIdReadFromOptArray = EventID
-        .readEventIdPartsFromOptmizedByteArray(buffer);
-    assertEquals(
-        "threadId value read is not same as that written to the byte-buffer",
-        threadId, threadIdReadFromOptArray);
-    assertEquals(
-        "sequenceId value read is not same as that written to the byte-buffer",
-        sequenceId, sequenceIdReadFromOptArray);
+    long threadIdReadFromOptArray = EventID.readEventIdPartsFromOptmizedByteArray(buffer);
+    long sequenceIdReadFromOptArray = EventID.readEventIdPartsFromOptmizedByteArray(buffer);
+    assertEquals("threadId value read is not same as that written to the byte-buffer", threadId, threadIdReadFromOptArray);
+    assertEquals("sequenceId value read is not same as that written to the byte-buffer", sequenceId, sequenceIdReadFromOptArray);
   }
 
 }

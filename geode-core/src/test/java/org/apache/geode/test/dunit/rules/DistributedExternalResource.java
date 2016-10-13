@@ -29,7 +29,7 @@ public class DistributedExternalResource extends SerializableExternalResource {
   public DistributedExternalResource() {
     this(new RemoteInvoker());
   }
-   
+
   public DistributedExternalResource(final RemoteInvoker invoker) {
     super();
     this.invoker = invoker;

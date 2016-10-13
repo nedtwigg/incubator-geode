@@ -23,7 +23,6 @@ import org.apache.lucene.analysis.Analyzer;
 
 import org.apache.geode.annotations.Experimental;
 
-
 /**
  * An lucene index is built over the data stored in a GemFire Region.
  * <p>
@@ -45,22 +44,22 @@ public interface LuceneIndex {
    * @return the region name for this index
    */
   public String getRegionPath();
-      
+
   /**
    * @return the indexed field names in a Set
    */
   public String[] getFieldNames();
-  
+
   /**
    * @return the field to analyzer map
    */
   public Map<String, Analyzer> getFieldAnalyzers();
-  
+
   /* 
    * wait until the current entries in cache are indexed
    * @param maxWaitInMilliseconds max wait time in millisecond
    * @return if entries are flushed within maxWait
    */
   public boolean waitUntilFlushed(int maxWaitInMillisecond);
-  
+
 }

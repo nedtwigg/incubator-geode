@@ -25,8 +25,7 @@ import org.apache.geode.GemFireException;
  * @since GemFire 5.1
  *
  */
-public class PrimaryBucketException extends GemFireException
-{
+public class PrimaryBucketException extends GemFireException {
   private static final long serialVersionUID = 1L;
 
   public PrimaryBucketException() {

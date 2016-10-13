@@ -54,10 +54,9 @@ public class CommitCommand extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
-    TXManagerImpl txMgr = (TXManagerImpl)servConn.getCache().getCacheTransactionManager();
+    TXManagerImpl txMgr = (TXManagerImpl) servConn.getCache().getCacheTransactionManager();
     InternalDistributedMember client = (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
     int uniqId = msg.getTransactionId();
     TXId txId = new TXId(client, uniqId);
@@ -69,7 +68,7 @@ public class CommitCommand extends BaseCommand {
       }
       if (!txMgr.isExceptionToken(commitMsg)) {
         writeCommitResponse(commitMsg, msg, servConn);
-        commitMsg.setClientVersion(null);  // fixes bug 46529
+        commitMsg.setClientVersion(null); // fixes bug 46529
         servConn.setAsTrue(RESPONDED);
       } else {
         sendException(msg, servConn, txMgr.getExceptionForToken(commitMsg, txId));
@@ -93,33 +92,28 @@ public class CommitCommand extends BaseCommand {
       commitMsg = txProxy.getCommitMessage();
       writeCommitResponse(commitMsg, msg, servConn);
       servConn.setAsTrue(RESPONDED);
-    }
-    catch (Exception e) {
-      sendException(msg, servConn,e);
+    } catch (Exception e) {
+      sendException(msg, servConn, e);
     } finally {
-      if(txId!=null) {
+      if (txId != null) {
         txMgr.removeHostedTXState(txId);
       }
       if (!wasInProgress) {
         txMgr.setInProgress(false);
       }
       if (commitMsg != null) {
-        commitMsg.setClientVersion(null);  // fixes bug 46529
+        commitMsg.setClientVersion(null); // fixes bug 46529
       }
     }
   }
 
-  
-  
-  protected static void writeCommitResponse(TXCommitMessage response,
-      Message origMsg, ServerConnection servConn)
-      throws IOException {
+  protected static void writeCommitResponse(TXCommitMessage response, Message origMsg, ServerConnection servConn) throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setTransactionId(origMsg.getTransactionId());
     responseMsg.setNumberOfParts(1);
-    if( response != null ) {
-    	response.setClientVersion(servConn.getClientVersion());
+    if (response != null) {
+      response.setClientVersion(servConn.getClientVersion());
     }
     responseMsg.addObjPart(response, zipValues);
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
@@ -129,13 +123,10 @@ public class CommitCommand extends BaseCommand {
     responseMsg.send(servConn);
     origMsg.clearParts();
   }
-  
-  private void sendException(Message msg,
-      ServerConnection servConn, Throwable e) throws IOException {
-      writeException(msg, MessageType.EXCEPTION,
-          e, false,servConn);
-      servConn.setAsTrue(RESPONDED);
+
+  private void sendException(Message msg, ServerConnection servConn, Throwable e) throws IOException {
+    writeException(msg, MessageType.EXCEPTION, e, false, servConn);
+    servConn.setAsTrue(RESPONDED);
   }
-  
-  
+
 }

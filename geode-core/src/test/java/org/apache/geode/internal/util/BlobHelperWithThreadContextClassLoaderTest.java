@@ -133,8 +133,8 @@ public class BlobHelperWithThreadContextClassLoaderTest {
   public void handlesObjectWithStateFromOtherClassLoader() throws Exception {
     Class loadedClass = Class.forName(CLASS_NAME_SERIALIZABLE_IMPL_WITH_VALUE, true, Thread.currentThread().getContextClassLoader());
 
-    Constructor ctor = loadedClass.getConstructor(new Class[] {Object.class});
-    Valuable instance = (Valuable) ctor.newInstance(new Object[] {123});
+    Constructor ctor = loadedClass.getConstructor(new Class[] { Object.class });
+    Valuable instance = (Valuable) ctor.newInstance(new Object[] { 123 });
     assertThat(instance.getValue()).isEqualTo(123);
 
     byte[] bytes = BlobHelper.serializeToBlob(instance);
@@ -206,7 +206,7 @@ public class BlobHelperWithThreadContextClassLoaderTest {
      * </pre>
      */
     private Class<?> generateSerializableImpl() throws ClassNotFoundException {
-      ClassGen cg = new ClassGen(CLASS_NAME_SERIALIZABLE_IMPL, Object.class.getName(), GENERATED, Constants.ACC_PUBLIC | Constants.ACC_SUPER, new String[] {Serializable.class.getName()});
+      ClassGen cg = new ClassGen(CLASS_NAME_SERIALIZABLE_IMPL, Object.class.getName(), GENERATED, Constants.ACC_PUBLIC | Constants.ACC_SUPER, new String[] { Serializable.class.getName() });
       cg.addEmptyConstructor(Constants.ACC_PUBLIC);
       JavaClass jClazz = cg.getJavaClass();
       byte[] bytes = jClazz.getBytes();
@@ -239,7 +239,7 @@ public class BlobHelperWithThreadContextClassLoaderTest {
      * @see Valuable
      */
     private Class<?> generateSerializableImplWithValue() throws ClassNotFoundException {
-      ClassGen cg = new ClassGen(CLASS_NAME_SERIALIZABLE_IMPL_WITH_VALUE, CLASS_NAME_SERIALIZABLE_IMPL, GENERATED, Constants.ACC_PUBLIC | Constants.ACC_SUPER, new String[] {Valuable.class.getName()});
+      ClassGen cg = new ClassGen(CLASS_NAME_SERIALIZABLE_IMPL_WITH_VALUE, CLASS_NAME_SERIALIZABLE_IMPL, GENERATED, Constants.ACC_PUBLIC | Constants.ACC_SUPER, new String[] { Valuable.class.getName() });
       ConstantPoolGen cp = cg.getConstantPool();
       InstructionFactory fac = new InstructionFactory(cg, cp);
 
@@ -280,7 +280,7 @@ public class BlobHelperWithThreadContextClassLoaderTest {
 
       // setter
       InstructionList setter = new InstructionList();
-      MethodGen setterMethod = new MethodGen(Constants.ACC_PUBLIC, Type.VOID, new Type[] {Type.OBJECT}, new String[] {field.getName()}, SET_VALUE, CLASS_NAME_SERIALIZABLE_IMPL_WITH_VALUE, setter, cp);
+      MethodGen setterMethod = new MethodGen(Constants.ACC_PUBLIC, Type.VOID, new Type[] { Type.OBJECT }, new String[] { field.getName() }, SET_VALUE, CLASS_NAME_SERIALIZABLE_IMPL_WITH_VALUE, setter, cp);
       setterMethod.setMaxStack(2);
 
       InstructionHandle setter_ih_0 = setter.append(fac.createLoad(Type.OBJECT, 0));
@@ -303,4 +303,3 @@ public class BlobHelperWithThreadContextClassLoaderTest {
     }
   }
 }
-

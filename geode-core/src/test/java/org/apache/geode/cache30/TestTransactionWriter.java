@@ -23,10 +23,9 @@ import org.apache.geode.cache.TransactionEvent;
 import org.apache.geode.cache.TransactionWriter;
 import org.apache.geode.cache.TransactionWriterException;
 
-public class TestTransactionWriter implements TransactionWriter,Declarable {
+public class TestTransactionWriter implements TransactionWriter, Declarable {
 
-  public void beforeCommit(TransactionEvent event)
-      throws TransactionWriterException {
+  public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
     // TODO Auto-generated method stub
 
   }
@@ -38,7 +37,7 @@ public class TestTransactionWriter implements TransactionWriter,Declarable {
 
   public void init(Properties props) {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

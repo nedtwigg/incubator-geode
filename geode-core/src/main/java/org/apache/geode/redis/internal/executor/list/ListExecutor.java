@@ -26,12 +26,13 @@ import org.apache.geode.redis.internal.ExecutionHandlerContext;
 import org.apache.geode.redis.internal.RedisDataType;
 import org.apache.geode.redis.internal.executor.AbstractExecutor;
 
-
 public abstract class ListExecutor extends AbstractExecutor {
 
   protected static final int LIST_EMPTY_SIZE = 2;
-  
-  protected static enum ListDirection {LEFT, RIGHT};
+
+  protected static enum ListDirection {
+    LEFT, RIGHT
+  };
 
   protected final static QueryService getQueryService() {
     return GemFireCacheImpl.getInstance().getQueryService();
@@ -42,7 +43,7 @@ public abstract class ListExecutor extends AbstractExecutor {
   protected Region<Integer, ByteArrayWrapper> getOrCreateRegion(ExecutionHandlerContext context, ByteArrayWrapper key, RedisDataType type) {
     return (Region<Integer, ByteArrayWrapper>) context.getRegionProvider().getOrCreateRegion(key, type, context);
   }
-  
+
   @SuppressWarnings("unchecked")
   protected Region<Integer, ByteArrayWrapper> getRegion(ExecutionHandlerContext context, ByteArrayWrapper key) {
     return (Region<Integer, ByteArrayWrapper>) context.getRegionProvider().getRegion(key);
@@ -62,8 +63,7 @@ public abstract class ListExecutor extends AbstractExecutor {
    * @param pushType ListDirection.LEFT || ListDirection.RIGHT
    * @param context Context of this push
    */
-  protected void pushElements(ByteArrayWrapper key, List<byte[]> commandElems, int startIndex, int endIndex,
-      Region keyRegion, ListDirection pushType, ExecutionHandlerContext context) {
+  protected void pushElements(ByteArrayWrapper key, List<byte[]> commandElems, int startIndex, int endIndex, Region keyRegion, ListDirection pushType, ExecutionHandlerContext context) {
 
     String indexKey = pushType == ListDirection.LEFT ? "head" : "tail";
     String oppositeKey = pushType == ListDirection.RIGHT ? "head" : "tail";

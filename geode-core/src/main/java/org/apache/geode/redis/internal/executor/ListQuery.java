@@ -22,27 +22,33 @@ public enum ListQuery {
     public String getQueryString(String fullpath) {
       return "SELECT DISTINCT entry.key, entry.value FROM " + fullpath + ".entrySet entry WHERE key != 'head' AND key != 'tail' ORDER BY key asc LIMIT $1";
     }
-  }, LRANGE {
+  },
+  LRANGE {
     public String getQueryString(String fullpath) {
       return "SELECT DISTINCT entry.key, entry.value FROM " + fullpath + ".entrySet entry WHERE key != 'head' AND key != 'tail' ORDER BY key asc LIMIT $1";
     }
-  }, LREMG {
+  },
+  LREMG {
     public String getQueryString(String fullpath) {
       return "SELECT DISTINCT entry.key, entry.value FROM " + fullpath + ".entrySet entry WHERE value = $1 AND key != 'head' AND key != 'tail' ORDER BY key asc LIMIT $2";
     }
-  }, LREML {
+  },
+  LREML {
     public String getQueryString(String fullpath) {
       return "SELECT DISTINCT entry.key, entry.value FROM " + fullpath + ".entrySet entry WHERE value = $1 AND key != 'head' AND key != 'tail' ORDER BY key desc LIMIT $2";
     }
-  }, LREME {
+  },
+  LREME {
     public String getQueryString(String fullpath) {
       return "SELECT DISTINCT entry.key, entry.value FROM " + fullpath + ".entrySet entry WHERE value = $1 ORDER BY key asc";
     }
-  }, LSET {
+  },
+  LSET {
     public String getQueryString(String fullpath) {
       return "SELECT DISTINCT * FROM " + fullpath + ".keySet key WHERE key != 'head' AND key != 'tail' ORDER BY key asc LIMIT $1";
     }
-  }, LTRIM {
+  },
+  LTRIM {
     public String getQueryString(String fullpath) {
       return "SELECT DISTINCT * FROM " + fullpath + ".keySet key WHERE key != 'head' AND key != 'tail' ORDER BY key asc LIMIT $1";
     }

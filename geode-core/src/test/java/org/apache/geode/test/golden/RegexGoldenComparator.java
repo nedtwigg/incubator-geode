@@ -23,11 +23,11 @@ import java.util.regex.Pattern;
  * 
  */
 public class RegexGoldenComparator extends GoldenComparator {
-  
+
   protected RegexGoldenComparator(final String[] expectedProblemLines) {
     super(expectedProblemLines);
   }
-  
+
   @Override
   protected boolean compareLines(final String actualLine, final String goldenLine) {
     debug("RegexGoldenComparator:compareLines comparing \" + actualLine + \" to \" + goldenLine + \"");

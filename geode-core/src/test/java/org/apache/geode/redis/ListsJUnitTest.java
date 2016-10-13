@@ -73,7 +73,6 @@ public class ListsJUnitTest {
     }
     String[] stringArray = strings.toArray(new String[strings.size()]);
     jedis.rpush(key, stringArray);
-    
 
     for (int i = 0; i < elements; i++) {
       String gemString = jedis.lindex(key, i);
@@ -135,7 +134,7 @@ public class ListsJUnitTest {
 
     for (int i = 0; i < elements; i++) {
       List<String> range = jedis.lrange(key, 0, i);
-      assertEquals(range, strings.subList(0, i+1));
+      assertEquals(range, strings.subList(0, i + 1));
     }
 
     for (int i = 0; i < elements; i++) {
@@ -159,7 +158,7 @@ public class ListsJUnitTest {
     for (int i = elements - 1; i >= 0; i--) {
       jedis.ltrim(key, 0, i);
       List<String> range = jedis.lrange(key, 0, -1);
-      assertEquals(range, strings.subList(0, i+1));
+      assertEquals(range, strings.subList(0, i + 1));
     }
     jedis.rpop(key);
     jedis.rpush(key, stringArray);

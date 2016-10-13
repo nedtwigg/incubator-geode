@@ -37,7 +37,8 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
 
   private static final Logger logger = LogService.getLogger();
 
-  private final JUnit4DistributedTestCase delegate = new JUnit4DistributedTestCase(this) {};
+  private final JUnit4DistributedTestCase delegate = new JUnit4DistributedTestCase(this) {
+  };
 
   /**
    * Constructs a new distributed test. All JUnit 3 test classes need to have a

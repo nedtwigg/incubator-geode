@@ -41,8 +41,7 @@ public class RegisterInterestOperationContext extends InterestOperationContext {
    *                the <code>InterestResultPolicy</code> of the register
    *                request
    */
-  public RegisterInterestOperationContext(Object key,
-      InterestType interestType, InterestResultPolicy policy) {
+  public RegisterInterestOperationContext(Object key, InterestType interestType, InterestResultPolicy policy) {
     super(key, interestType);
     this.policy = policy;
   }

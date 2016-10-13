@@ -22,8 +22,7 @@ import org.apache.geode.internal.cache.RegionEntry;
  * 
  *
  */
-public interface TXEntryStateFactory
-{
+public interface TXEntryStateFactory {
 
   /**
    * Creates an instance of TXEntryState.
@@ -32,6 +31,6 @@ public interface TXEntryStateFactory
    */
   public TXEntryState createEntry();
 
-  public TXEntryState createEntry(RegionEntry re, Object vId, Object pendingValue, Object entryKey,TXRegionState txrs,boolean isDistributed);
+  public TXEntryState createEntry(RegionEntry re, Object vId, Object pendingValue, Object entryKey, TXRegionState txrs, boolean isDistributed);
 
 }

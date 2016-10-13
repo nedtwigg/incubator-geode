@@ -49,23 +49,22 @@ public class CacheSnapshotJUnitTest extends SnapshotTestCase {
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
         String name = "test-" + rt.name() + "-" + st.name();
-        
+
         Region<Integer, MyObject> region = cache.getRegion(name);
         region.destroyRegion();
-        
+
         rgen.createRegion(cache, ds.getName(), rt, name);
       }
     }
-    
+
     // load all regions
     cache.getSnapshotService().load(snaps, SnapshotFormat.GEMFIRE);
-    
+
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
         Region<Integer, MyObject> region = cache.getRegion("test-" + rt.name() + "-" + st.name());
         for (Entry<Integer, MyObject> entry : createExpected(st).entrySet()) {
-          assertEquals("Comparison failure for " + rt.name() + "/" + st.name(), 
-              entry.getValue(), region.get(entry.getKey()));
+          assertEquals("Comparison failure for " + rt.name() + "/" + st.name(), entry.getValue(), region.get(entry.getKey()));
         }
       }
     }
@@ -79,14 +78,14 @@ public class CacheSnapshotJUnitTest extends SnapshotTestCase {
         region.putAll(createExpected(st));
       }
     }
-    
+
     SnapshotFilter<Object, Object> even = new SnapshotFilter<Object, Object>() {
       @Override
       public boolean accept(Entry<Object, Object> entry) {
         return ((Integer) entry.getKey()) % 2 == 0;
       }
     };
-    
+
     SnapshotFilter<Object, Object> odd = new SnapshotFilter<Object, Object>() {
       @Override
       public boolean accept(Entry<Object, Object> entry) {
@@ -114,10 +113,10 @@ public class CacheSnapshotJUnitTest extends SnapshotTestCase {
         return pathname.getName().startsWith("snapshot-");
       }
     });
-    
+
     options = css.createOptions().setFilter(odd);
     css.load(snapshots, SnapshotFormat.GEMFIRE, options);
-    
+
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
         Region region = cache.getRegion("test-" + rt.name() + "-" + st.name());

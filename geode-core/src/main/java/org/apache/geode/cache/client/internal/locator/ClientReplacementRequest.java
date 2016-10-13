@@ -32,9 +32,9 @@ import org.apache.geode.internal.InternalDataSerializer;
  */
 public class ClientReplacementRequest extends ClientConnectionRequest {
   private ServerLocation currentServer;
-  
+
   public ClientReplacementRequest() {
-    
+
   }
 
   public ClientReplacementRequest(ServerLocation currentServer, Set/*<ServerLocation>*/ excludedServers, String serverGroup) {
@@ -58,13 +58,10 @@ public class ClientReplacementRequest extends ClientConnectionRequest {
   public ServerLocation getCurrentServer() {
     return this.currentServer;
   }
-  
+
   @Override
   public String toString() {
-    return "ClientReplacementRequest{group=" + getServerGroup()
-      + ", excluded=" + getExcludedServers()
-      + ", currentServer=" + getCurrentServer()
-      + "}";
+    return "ClientReplacementRequest{group=" + getServerGroup() + ", excluded=" + getExcludedServers() + ", currentServer=" + getCurrentServer() + "}";
   }
 
   @Override

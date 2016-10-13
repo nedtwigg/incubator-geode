@@ -38,18 +38,14 @@ public class IntegratedClientRemoveAllAuthDistributedTest extends AbstractSecure
   public void testRemoveAll() throws InterruptedException {
 
     AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                       .addPoolServer("localhost", serverPort)
-                                                                                                       .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
       assertNotAuthorized(() -> region.removeAll(Arrays.asList("key1", "key2", "key3", "key4")), "DATA:WRITE:AuthRegion");
     });
 
     AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionWriter", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                       .addPoolServer("localhost", serverPort)
-                                                                                                       .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionWriter", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
       region.removeAll(Arrays.asList("key1", "key2", "key3", "key4"));

@@ -43,12 +43,11 @@ public class DiskRegOverflowAsyncGetInMemPerfJUnitTest extends DiskRegionTesting
   @Override
   protected final void postSetUp() throws Exception {
     diskProps.setDiskDirs(dirs);
-//    Properties properties = new Properties();
+    //    Properties properties = new Properties();
     diskProps.setBytesThreshold(10000l);
     diskProps.setTimeInterval(1000l);
     diskProps.setOverFlowCapacity(1000);
-    region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache,
-        diskProps);
+    region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache, diskProps);
     log = ds.getLogWriter();
   }
 
@@ -63,7 +62,7 @@ public class DiskRegOverflowAsyncGetInMemPerfJUnitTest extends DiskRegionTesting
   }
 
   private static int ENTRY_SIZE = 1024;
-  
+
   /* OP_COUNT can be increased/decrease as per the requirement.
    * If required to be set as higher value such as 1000000
    * one needs to set the VM heap size accordingly.
@@ -73,10 +72,10 @@ public class DiskRegOverflowAsyncGetInMemPerfJUnitTest extends DiskRegionTesting
 
   @Test
   public void testPopulatefor1Kbwrites() {
-//    RegionAttributes ra = region.getAttributes();
-//    final String key = "K";
+    //    RegionAttributes ra = region.getAttributes();
+    //    final String key = "K";
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
+    Arrays.fill(value, (byte) 77);
 
     long startTime = System.currentTimeMillis();
     for (int i = 0; i < OP_COUNT; i++) {
@@ -96,22 +95,18 @@ public class DiskRegOverflowAsyncGetInMemPerfJUnitTest extends DiskRegionTesting
     float et = endTime - startTime;
     float etSecs = et / 1000f;
     float opPerSec = etSecs == 0 ? 0 : (OP_COUNT / (et / 1000f));
-    float bytesPerSec = etSecs == 0 ? 0
-        : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
+    float bytesPerSec = etSecs == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
 
-    String stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec="
-        + bytesPerSec;
+    String stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec=" + bytesPerSec;
     log.info(stats);
     System.out.println("Stats for 1 kb writes: :" + stats);
     // Perf stats for get op
     float etGet = endTimeGet - startTimeGet;
     float etSecsGet = etGet / 1000f;
     float opPerSecGet = etSecsGet == 0 ? 0 : (OP_COUNT / (etGet / 1000f));
-    float bytesPerSecGet = etSecsGet == 0 ? 0
-        : ((OP_COUNT * ENTRY_SIZE) / (etGet / 1000f));
+    float bytesPerSecGet = etSecsGet == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (etGet / 1000f));
 
-    String statsGet = "et=" + etGet + "ms gets/sec=" + opPerSecGet
-        + " bytes/sec=" + bytesPerSecGet;
+    String statsGet = "et=" + etGet + "ms gets/sec=" + opPerSecGet + " bytes/sec=" + bytesPerSecGet;
     log.info(statsGet);
     System.out.println("Perf Stats of get which is in memory :" + statsGet);
   }

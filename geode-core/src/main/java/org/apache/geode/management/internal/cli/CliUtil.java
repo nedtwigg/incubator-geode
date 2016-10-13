@@ -142,7 +142,7 @@ public class CliUtil {
       File file = new File(fileNames[i]);
 
       if (!file.exists()) {
-        throw new FileNotFoundException("Could not find "+file.getCanonicalPath());
+        throw new FileNotFoundException("Could not find " + file.getCanonicalPath());
       }
 
       if (file.isDirectory()) { //TODO - Abhishek: (1) No recursive search yet. (2) Do we need to check/limit size of the files too?
@@ -195,18 +195,17 @@ public class CliUtil {
     return data;
   }
 
-  public static void bytesToFiles(byte[][] fileData, String parentDirPath, boolean mkRequireddirs)
-      throws FileNotFoundException, IOException, UnsupportedOperationException {
+  public static void bytesToFiles(byte[][] fileData, String parentDirPath, boolean mkRequireddirs) throws FileNotFoundException, IOException, UnsupportedOperationException {
     FileOutputStream fos = null;
 
     File parentDir = new File(parentDirPath);
     if (mkRequireddirs && !parentDir.exists()) {
       if (!parentDir.mkdirs()) {
-        throw new UnsupportedOperationException("Couldn't create required directory structure for "+parentDirPath);
+        throw new UnsupportedOperationException("Couldn't create required directory structure for " + parentDirPath);
       }
     }
     for (int i = 0; i < fileData.length; i++) {
-      if (i%2 == 0) {
+      if (i % 2 == 0) {
         // Expect file name as bytes at even index
         String fileName = new String(fileData[i]);
         fos = new FileOutputStream(new File(parentDir, fileName));
@@ -218,29 +217,27 @@ public class CliUtil {
     }
   }
 
-  
-
-  public static boolean isValidFileName (String filePath, String extension) {
+  public static boolean isValidFileName(String filePath, String extension) {
     boolean isValid = true;
     return isValid;
   }
-  
+
   public static Set<String> getAllRegionNames() {
     Cache cache = CacheFactory.getAnyInstance();
     Set<String> regionNames = new HashSet<String>();
-    Set<Region<?,?>> rootRegions = cache.rootRegions();
+    Set<Region<?, ?>> rootRegions = cache.rootRegions();
 
-    Iterator<Region<?,?>> rootRegionIters = rootRegions.iterator();
+    Iterator<Region<?, ?>> rootRegionIters = rootRegions.iterator();
 
     while (rootRegionIters.hasNext()) {
-      Region<?,?> rootRegion = rootRegionIters.next();
+      Region<?, ?> rootRegion = rootRegionIters.next();
       regionNames.add(rootRegion.getFullPath().substring(1));
 
       Set<Region<?, ?>> subRegions = rootRegion.subregions(true);
-      Iterator<Region<?,?>> subRegionIters = subRegions.iterator();
+      Iterator<Region<?, ?>> subRegionIters = subRegions.iterator();
 
       while (subRegionIters.hasNext()) {
-        Region<?,?> subRegion = subRegionIters.next();
+        Region<?, ?> subRegion = subRegionIters.next();
         regionNames.add(subRegion.getFullPath().substring(1));
       }
     }
@@ -274,18 +271,15 @@ public class CliUtil {
     }
     return sb.toString();
   }
-  
 
-        
-  public static Set<DistributedMember> findAllMatchingMembers(final String groups, final String members)
-      throws CommandResultException {
-    
+  public static Set<DistributedMember> findAllMatchingMembers(final String groups, final String members) throws CommandResultException {
+
     String[] groupsArray = (groups == null ? null : groups.split(","));
     String[] membersArray = (members == null ? null : members.split(","));
-    
+
     return findAllMatchingMembers(groupsArray, membersArray);
   }
-  
+
   public static Set<DistributedMember> findAllMatchingMembers(final String[] groups, final String[] members) throws CommandResultException {
     Set<DistributedMember> matchingMembers = new HashSet<DistributedMember>();
     Cache cache = CacheFactory.getAnyInstance();
@@ -300,8 +294,7 @@ public class CliUtil {
         if (member != null) {
           matchingMembers.add(member);
         } else {
-          throw new CommandResultException(ResultBuilder.createUserErrorResult(CliStrings.format(
-              CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberNameOrId)));
+          throw new CommandResultException(ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberNameOrId)));
         }
       }
     } else if (groups != null && groups.length > 0) {
@@ -318,8 +311,7 @@ public class CliUtil {
           matchingMembers.addAll(groupMembers);
 
         } else {
-          throw new CommandResultException(ResultBuilder.createUserErrorResult(CliStrings.format(
-              CliStrings.NO_MEMBERS_IN_GROUP_ERROR_MESSAGE, group)));
+          throw new CommandResultException(ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.NO_MEMBERS_IN_GROUP_ERROR_MESSAGE, group)));
         }
       }
     } else {
@@ -332,13 +324,13 @@ public class CliUtil {
     return matchingMembers;
   }
 
-  public static DistributedMember getDistributedMemberByNameOrId (String memberNameOrId) {
+  public static DistributedMember getDistributedMemberByNameOrId(String memberNameOrId) {
     DistributedMember memberFound = null;
 
     if (memberNameOrId != null) {
       Cache cache = CacheFactory.getAnyInstance();
-      Set<DistributedMember>memberSet = CliUtil.getAllMembers(cache);
-      for (DistributedMember member: memberSet) {
+      Set<DistributedMember> memberSet = CliUtil.getAllMembers(cache);
+      for (DistributedMember member : memberSet) {
         if (memberNameOrId.equalsIgnoreCase(member.getId()) || memberNameOrId.equals(member.getName())) {
           memberFound = member;
           break;
@@ -369,10 +361,9 @@ public class CliUtil {
         loadedClass = (Class<K>) classPathLoader.forName(classToLoadName);
       }
     } catch (ClassNotFoundException | NoClassDefFoundError e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1, new Object[] {classToLoadName, neededFor}), e);
-    }
-    catch (ClassCastException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__CLASS_SPECIFIED_FOR_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE, new Object[] {classToLoadName, neededFor}), e);
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1, new Object[] { classToLoadName, neededFor }), e);
+    } catch (ClassCastException e) {
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__CLASS_SPECIFIED_FOR_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE, new Object[] { classToLoadName, neededFor }), e);
     }
 
     return loadedClass;
@@ -383,9 +374,9 @@ public class CliUtil {
     try {
       instance = klass.newInstance();
     } catch (InstantiationException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1, new Object[] {klass, neededFor}), e);
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1, new Object[] {klass, neededFor}), e);
+      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
     }
 
     return instance;
@@ -420,11 +411,11 @@ public class CliUtil {
 
       compressedDataLength = compresser.deflate(buffer);
       totalCompressedDataLength += compressedDataLength;
-//      System.out.println(compressedDataLength);
-//      System.out.println("uc: b  "+buffer.length);
-//      System.out.println("uc: r  "+result.length);
-//      System.out.println("uc: nr "+newResult.length);
-//      System.out.println();
+      //      System.out.println(compressedDataLength);
+      //      System.out.println("uc: b  "+buffer.length);
+      //      System.out.println("uc: r  "+result.length);
+      //      System.out.println("uc: nr "+newResult.length);
+      //      System.out.println();
       System.arraycopy(buffer, 0, newResult, result.length, buffer.length);
       result = newResult;
     } while (compressedDataLength != 0);
@@ -444,7 +435,7 @@ public class CliUtil {
       System.arraycopy(buffer, 0, newResult, result.length, bytesRead);
       result = newResult;
     }
-//    System.out.println(new String(result));
+    //    System.out.println(new String(result));
     decompresser.end();
 
     return new DeflaterInflaterData(result.length, result);
@@ -455,6 +446,7 @@ public class CliUtil {
 
     private final int dataLength;
     private final byte[] data;
+
     /**
      * @param dataLength
      * @param data
@@ -480,7 +472,7 @@ public class CliUtil {
 
   public static void main(String[] args) {
     try {
-      byte[][] filesToBytes = filesToBytes(new String[] {"/export/abhishek1/work/aspenmm/GFTryouts/test.json"});
+      byte[][] filesToBytes = filesToBytes(new String[] { "/export/abhishek1/work/aspenmm/GFTryouts/test.json" });
 
       System.out.println(filesToBytes[1].length);
 
@@ -502,7 +494,7 @@ public class CliUtil {
 
   public static void main1(String[] args) {
     try {
-      byte[][] fileToBytes = filesToBytes(new String[] {"../dumped/source/lib"});
+      byte[][] fileToBytes = filesToBytes(new String[] { "../dumped/source/lib" });
 
       bytesToFiles(fileToBytes, "../dumped/dest/lib/", true);
 
@@ -528,7 +520,7 @@ public class CliUtil {
    */
   @SuppressWarnings("unchecked")
   public static Set<DistributedMember> getAllNormalMembers(Cache cache) {
-    return new HashSet<DistributedMember>(((InternalDistributedSystem)cache.getDistributedSystem()).getDistributionManager().getNormalDistributionManagerIds());
+    return new HashSet<DistributedMember>(((InternalDistributedSystem) cache.getDistributedSystem()).getDistributionManager().getNormalDistributionManagerIds());
   }
 
   /**
@@ -536,7 +528,7 @@ public class CliUtil {
    */
   @SuppressWarnings("unchecked")
   public static Set<DistributedMember> getAllMembers(Cache cache) {
-    return new HashSet<DistributedMember>(((InternalDistributedSystem)cache.getDistributedSystem()).getDistributionManager().getDistributionManagerIds());
+    return new HashSet<DistributedMember>(((InternalDistributedSystem) cache.getDistributedSystem()).getDistributionManager().getDistributionManagerIds());
   }
 
   @SuppressWarnings("unchecked")
@@ -547,10 +539,10 @@ public class CliUtil {
   /**
    * Returns a set of all the members of the distributed system for the given groups.
    */
-  public static Set<DistributedMember> getDistributedMembersByGroup(Cache cache,  String[] groups) {
+  public static Set<DistributedMember> getDistributedMembersByGroup(Cache cache, String[] groups) {
     Set<DistributedMember> groupMembers = new HashSet<DistributedMember>();
-    for(String group : groups){
-      groupMembers.addAll(((InternalDistributedSystem)cache.getDistributedSystem()).getDistributionManager().getGroupMembers(group));
+    for (String group : groups) {
+      groupMembers.addAll(((InternalDistributedSystem) cache.getDistributedSystem()).getDistributionManager().getGroupMembers(group));
     }
     return groupMembers;
   }
@@ -563,7 +555,7 @@ public class CliUtil {
    *
    * @return ResultCollector
    */
-  public static ResultCollector<?, ?> executeFunction(final Function function, Object args , final Set<DistributedMember> targetMembers) {
+  public static ResultCollector<?, ?> executeFunction(final Function function, Object args, final Set<DistributedMember> targetMembers) {
     Execution execution = null;
 
     if (args != null) {
@@ -583,7 +575,7 @@ public class CliUtil {
    * @param targetMember Member on which the function is to be executed.
    * @return ResultCollector
    */
-  public static ResultCollector<?, ?> executeFunction(final Function function, Object args , final DistributedMember targetMember) {
+  public static ResultCollector<?, ?> executeFunction(final Function function, Object args, final DistributedMember targetMember) {
     Execution execution = null;
 
     if (args != null) {
@@ -636,7 +628,7 @@ public class CliUtil {
       nameOrId = distributedMember.getName();
       nameOrId = nameOrId != null && !nameOrId.isEmpty() ? nameOrId : distributedMember.getId();
     }
-    return nameOrId ;
+    return nameOrId;
   }
 
   public static String collectionToString(Collection<?> col, int newlineAfter) {
@@ -660,7 +652,7 @@ public class CliUtil {
     }
   }
 
-  public static <T>String arrayToString(T[] array) {
+  public static <T> String arrayToString(T[] array) {
     if (array != null) {
       StringBuilder builder = new StringBuilder();
       for (int i = 0; i < array.length; i++) {
@@ -696,55 +688,47 @@ public class CliUtil {
   public static String resolvePathname(final String pathname) {
     return (StringUtils.isBlank(pathname) ? pathname : IOUtils.tryGetCanonicalPathElseGetAbsolutePath(new File(pathname)));
   }
-  
-  
-  public static void runLessCommandAsExternalViewer(Result commandResult, boolean isError){
-    
+
+  public static void runLessCommandAsExternalViewer(Result commandResult, boolean isError) {
+
     StringBuilder sb = new StringBuilder();
-    String NEW_LINE = System.getProperty("line.separator");    
-    
+    String NEW_LINE = System.getProperty("line.separator");
+
     while (commandResult.hasNextLine()) {
       sb.append(commandResult.nextLine()).append(NEW_LINE);
     }
-    
+
     File file = null;
     FileWriter fw = null;
     try {
-      file = File.createTempFile("gfsh_output", "less");      
+      file = File.createTempFile("gfsh_output", "less");
       fw = new FileWriter(file);
       fw.append(sb.toString());
       fw.close();
       File workingDir = file.getParentFile();
-      Process p = Runtime.getRuntime().exec(
-          new String[] {
-              "sh",
-              "-c",
-              "LESSOPEN=\"|color %s\" less -SR " + file.getName()
-                  + " < /dev/tty > /dev/tty " }, null, workingDir);
-      p.waitFor();      
+      Process p = Runtime.getRuntime().exec(new String[] { "sh", "-c", "LESSOPEN=\"|color %s\" less -SR " + file.getName() + " < /dev/tty > /dev/tty " }, null, workingDir);
+      p.waitFor();
     } catch (IOException e) {
       Gfsh.printlnErr(e.getMessage());
     } catch (InterruptedException e) {
-      Gfsh.printlnErr(e.getMessage());     
+      Gfsh.printlnErr(e.getMessage());
     } finally {
-      if(file!=null)
+      if (file != null)
         file.delete();
-    }    
-    
+    }
+
   }
-  
-    public static String getClientIdFromCacheClientProxy(CacheClientProxy p){
-      if(p == null){
-        return null;
-      }
-      StringBuffer buffer = new StringBuffer();
-      buffer.append("[").append(p.getProxyID()).append(":port=").append(p.getRemotePort()).append(":primary=")
-          .append(p.isPrimary()).append("]");
-      return buffer.toString();
+
+  public static String getClientIdFromCacheClientProxy(CacheClientProxy p) {
+    if (p == null) {
+      return null;
+    }
+    StringBuffer buffer = new StringBuffer();
+    buffer.append("[").append(p.getProxyID()).append(":port=").append(p.getRemotePort()).append(":primary=").append(p.isPrimary()).append("]");
+    return buffer.toString();
   }
- 
-  public static Set<DistributedMember> getMembersForeRegionViaFunction(
-      Cache cache, String regionPath) {
+
+  public static Set<DistributedMember> getMembersForeRegionViaFunction(Cache cache, String regionPath) {
     try {
       Set<DistributedMember> regionMembers = new HashSet<DistributedMember>();
       MembersForRegionFunction membersForRegionFunction = new MembersForRegionFunction();
@@ -758,7 +742,7 @@ public class CliUtil {
             LogWrapper.getInstance().warning("Exception in getMembersForeRegionViaFunction " + ((Throwable) object).getMessage(), ((Throwable) object));
             continue;
           } else if (object instanceof Throwable) {
-            LogWrapper.getInstance().warning( "Exception in getMembersForeRegionViaFunction "+ ((Throwable) object).getMessage(), ((Throwable) object));
+            LogWrapper.getInstance().warning("Exception in getMembersForeRegionViaFunction " + ((Throwable) object).getMessage(), ((Throwable) object));
             continue;
           }
           if (object != null) {
@@ -785,5 +769,5 @@ public class CliUtil {
       return null;
     }
   }
-  
+
 }

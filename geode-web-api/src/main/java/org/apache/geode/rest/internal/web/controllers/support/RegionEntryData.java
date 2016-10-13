@@ -58,7 +58,7 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("unused")
 @XmlRootElement(name = "region")
 @XmlType(name = "org.gopivotal.app.web.controllers.support.RegionData")
-public class RegionEntryData<T> extends  RegionData<T> {
+public class RegionEntryData<T> extends RegionData<T> {
 
   public RegionEntryData() {
     super();
@@ -67,11 +67,9 @@ public class RegionEntryData<T> extends  RegionData<T> {
   public RegionEntryData(final String regionNamePath) {
     super(regionNamePath);
   }
-  
+
   @Override
-  public void serialize(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider)
-    throws IOException
-  {
+  public void serialize(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider) throws IOException {
     /*
     if(this!=null && this.size() > 1) {
       jsonGenerator.writeStartObject();
@@ -81,24 +79,19 @@ public class RegionEntryData<T> extends  RegionData<T> {
     for (T element : this) {
       JsonWriter.writeValueAsJson(jsonGenerator, element, null);
     }
-    
+
     /*
     if(this!=null && this.size() > 1) {
       jsonGenerator.writeEndArray();
       jsonGenerator.writeEndObject();
     } 
-    */  
+    */
   }
 
   @Override
-  public void serializeWithType(final JsonGenerator jsonGenerator,
-                               final SerializerProvider serializerProvider,
-                               final TypeSerializer typeSerializer)
-   throws IOException
-  {
+  public void serializeWithType(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider, final TypeSerializer typeSerializer) throws IOException {
     // NOTE serializing "type" meta-data is not necessary in this case; just call serialize.
     serialize(jsonGenerator, serializerProvider);
   }
-  
-}
 
+}

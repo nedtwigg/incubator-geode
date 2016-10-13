@@ -21,14 +21,7 @@ import org.apache.geode.security.SecurableCommunicationChannels;
 import org.apache.geode.GemFireConfigException;
 
 public enum SecurableCommunicationChannel {
-  ALL(SecurableCommunicationChannels.ALL),
-  CLUSTER(SecurableCommunicationChannels.CLUSTER),
-  SERVER(SecurableCommunicationChannels.SERVER),
-  JMX(SecurableCommunicationChannels.JMX),
-  WEB(SecurableCommunicationChannels.WEB),
-  GATEWAY(SecurableCommunicationChannels.GATEWAY),
-  LOCATOR(SecurableCommunicationChannels.LOCATOR),
-  NONE("NO_COMPONENT");
+  ALL(SecurableCommunicationChannels.ALL), CLUSTER(SecurableCommunicationChannels.CLUSTER), SERVER(SecurableCommunicationChannels.SERVER), JMX(SecurableCommunicationChannels.JMX), WEB(SecurableCommunicationChannels.WEB), GATEWAY(SecurableCommunicationChannels.GATEWAY), LOCATOR(SecurableCommunicationChannels.LOCATOR), NONE("NO_COMPONENT");
 
   private final String constant;
 

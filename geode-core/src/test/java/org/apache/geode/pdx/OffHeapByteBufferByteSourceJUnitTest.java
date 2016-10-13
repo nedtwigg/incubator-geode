@@ -31,7 +31,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class OffHeapByteBufferByteSourceJUnitTest extends OffHeapByteSourceJUnitTest {
-  
+
   @Override
   protected ByteSource createByteSource(byte[] bytes) {
     StoredObject so = MemoryAllocatorImpl.getAllocator().allocateAndInitialize(bytes, false, false);

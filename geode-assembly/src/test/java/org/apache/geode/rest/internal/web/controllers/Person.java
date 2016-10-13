@@ -33,31 +33,31 @@ import java.io.Serializable;
 public class Person implements PdxSerializable {
 
   private static final long serialVersionUID = 42108163264l;
-  
+
   protected static final String DOB_FORMAT_PATTERN = "MM/dd/yyyy";
-  
-  private  Long id;
-  
+
+  private Long id;
+
   private Date birthDate;
-  
+
   private Gender gender;
-  
+
   private String firstName;
   private String middleName;
   private String lastName;
-  
+
   public Person() {
   }
-  
+
   public Person(final Long id) {
     this.id = id;
   }
-  
+
   public Person(final String firstName, final String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
   }
-  
+
   public Person(Long id, String fn, String mn, String ln, Date bDate, Gender g) {
     this.id = id;
     this.firstName = fn;
@@ -66,73 +66,70 @@ public class Person implements PdxSerializable {
     this.birthDate = bDate;
     this.gender = g;
   }
-  
+
   public Long getId() {
     return id;
   }
-  
+
   public void setId(final Long id) {
     this.id = id;
   }
-  
+
   public String getFirstName() {
     return firstName;
   }
-  
+
   public void setFirstName(final String firstName) {
     this.firstName = firstName;
   }
-  
+
   public String getLastName() {
     return lastName;
   }
-  
+
   public void setLastName(final String lastName) {
     this.lastName = lastName;
   }
-  
+
   public String getMiddleName() {
     return middleName;
   }
-  
+
   public void setMiddleName(final String middleName) {
     this.middleName = middleName;
   }
-  
+
   public Date getBirthDate() {
     return birthDate;
   }
-  
+
   public void setBirthDate(final Date birthDate) {
     this.birthDate = birthDate;
   }
-  
+
   public Gender getGender() {
     return gender;
   }
-  
+
   public void setGender(final Gender gender) {
     this.gender = gender;
   }
-  
+
   @Override
   public boolean equals(final Object obj) {
     if (obj == this) {
       return true;
     }
-  
+
     if (!(obj instanceof Person)) {
       return false;
     }
-  
+
     final Person that = (Person) obj;
-  
-    return (ObjectUtils.equals(this.getId(), that.getId())
-      || (ObjectUtils.equals(this.getBirthDate(), that.getBirthDate())
-      && ObjectUtils.equals(this.getLastName(), that.getLastName())
-      && ObjectUtils.equals(this.getFirstName(), that.getFirstName())));
+
+    return (ObjectUtils.equals(this.getId(), that.getId()) || (ObjectUtils.equals(this.getBirthDate(), that.getBirthDate()) && ObjectUtils.equals(this.getLastName(), that.getLastName()) && ObjectUtils.equals(this.getFirstName(), that.getFirstName())));
   }
-  
+
   @Override
   public int hashCode() {
     int hashValue = 17;
@@ -142,7 +139,7 @@ public class Person implements PdxSerializable {
     hashValue = 37 * hashValue + ObjectUtils.hashCode(getFirstName());
     return hashValue;
   }
-  
+
   @Override
   public String toString() {
     final StringBuilder buffer = new StringBuilder("{ type = ");
@@ -156,7 +153,7 @@ public class Person implements PdxSerializable {
     buffer.append(" }");
     return buffer.toString();
   }
-  
+
   @Override
   public void toData(PdxWriter writer) {
     writer.writeString("@type", getClass().getName());
@@ -166,9 +163,9 @@ public class Person implements PdxSerializable {
     writer.writeString("lastName", lastName);
     writer.writeObject("gender", gender);
     writer.writeDate("birthDate", birthDate);
-    
+
   }
-  
+
   @Override
   public void fromData(PdxReader reader) {
     String type = reader.readString("@type");
@@ -176,9 +173,9 @@ public class Person implements PdxSerializable {
     firstName = reader.readString("firstName");
     middleName = reader.readString("middleName");
     lastName = reader.readString("lastName");
-    gender = (Gender)reader.readObject("gender");
+    gender = (Gender) reader.readObject("gender");
     birthDate = reader.readDate("birthDate");
-    
+
   }
 
 }

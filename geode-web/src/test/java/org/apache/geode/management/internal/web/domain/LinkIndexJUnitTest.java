@@ -71,8 +71,7 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
     try {
       linkIndex.add(null);
-    }
-    finally {
+    } finally {
       assertTrue(linkIndex.isEmpty());
     }
   }
@@ -100,8 +99,7 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
     try {
       linkIndex.addAll((Iterable<Link>) null);
-    }
-    finally {
+    } finally {
       assertTrue(linkIndex.isEmpty());
     }
   }

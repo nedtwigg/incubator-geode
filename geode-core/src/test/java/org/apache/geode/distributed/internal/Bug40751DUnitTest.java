@@ -41,15 +41,15 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
-	
+
 @Category(DistributedTest.class)
 public class Bug40751DUnitTest extends JUnit4CacheTestCase {
-	 
+
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     disconnectAllFromDS();
   }
-	 
+
   @Test
   public void testRR() {
     System.setProperty("p2p.nodirectBuffers", "true");
@@ -59,8 +59,7 @@ public class Bug40751DUnitTest extends JUnit4CacheTestCase {
       VM vm1 = host.getVM(2);
 
       SerializableRunnable createDataRegion = new SerializableRunnable("createRegion") {
-        public void run()
-        {
+        public void run() {
           Cache cache = getCache();
           AttributesFactory attr = new AttributesFactory();
           attr.setScope(Scope.DISTRIBUTED_ACK);
@@ -73,8 +72,7 @@ public class Bug40751DUnitTest extends JUnit4CacheTestCase {
       vm0.invoke(createDataRegion);
 
       SerializableRunnable createEmptyRegion = new SerializableRunnable("createRegion") {
-        public void run()
-        {
+        public void run() {
           Cache cache = getCache();
           AttributesFactory attr = new AttributesFactory();
           attr.setScope(Scope.DISTRIBUTED_ACK);
@@ -104,10 +102,9 @@ public class Bug40751DUnitTest extends JUnit4CacheTestCase {
       System.getProperties().remove("p2p.nodirectBuffers");
     }
   }
-	 
-	
+
   @Override
-    public Properties getDistributedSystemProperties() {
+  public Properties getDistributedSystemProperties() {
     Properties props = new Properties();
     System.setProperty("p2p.oldIO", "true");
     props.setProperty(CONSERVE_SOCKETS, "true");
@@ -115,23 +112,18 @@ public class Bug40751DUnitTest extends JUnit4CacheTestCase {
     //    props.setProperty(DistributionConfig.DISABLE_TCP_NAME, "true");
     return props;
   }
-	 
-	 
+
   private static final class MyClass implements DataSerializable {
-	
-	   
+
     public MyClass() {
     }
-	
-	
-	
-    public void fromData(DataInput in) throws IOException,
-                                              ClassNotFoundException {
+
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     }
-	
+
     public void toData(DataOutput out) throws IOException {
       throw new RuntimeException("A Fake runtime exception in toData");
     }
-	
+
   }
 }

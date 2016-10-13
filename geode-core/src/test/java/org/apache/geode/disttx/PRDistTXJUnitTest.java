@@ -37,7 +37,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
  * "distributed-transactions" property to true
  *
  */
-@Category({IntegrationTest.class, DistributedTransactionsTest.class})
+@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
 public class PRDistTXJUnitTest extends PRTXJUnitTest {
 
   public PRDistTXJUnitTest() {
@@ -48,11 +48,10 @@ public class PRDistTXJUnitTest extends PRTXJUnitTest {
     Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0"); // loner
     p.setProperty(ConfigurationProperties.DISTRIBUTED_TRANSACTIONS, "true");
-    this.cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem
-        .connect(p));
+    this.cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(p));
     createRegion();
     this.txMgr = this.cache.getCacheTransactionManager();
-    assert(this.txMgr.isDistributed());
+    assert (this.txMgr.isDistributed());
     this.listenerAfterCommit = 0;
     this.listenerAfterFailedCommit = 0;
     this.listenerAfterRollback = 0;

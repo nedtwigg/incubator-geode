@@ -32,10 +32,13 @@ import org.apache.geode.internal.cache.tier.sockets.ServerQueueStatus;
  */
 public interface Connection {
   public static final long DEFAULT_CONNECTION_ID = 26739;
-  
+
   public Socket getSocket();
+
   public ByteBuffer getCommBuffer() throws SocketException;
+
   public ConnectionStats getStats();
+
   /**
    * Forcefully close the resources used by this connection.
    * This should be called if the connection or the server dies.
@@ -57,25 +60,25 @@ public interface Connection {
    * The connection will still be destroyed.
    */
   public void close(boolean keepAlive) throws Exception;
-  
+
   public ServerLocation getServer();
-  
+
   public Endpoint getEndpoint();
-  
+
   public ServerQueueStatus getQueueStatus();
-  
+
   public Object execute(Op op) throws Exception;
 
   public void emergencyClose();
-  
+
   public short getWanSiteVersion();
-   
+
   public void setWanSiteVersion(short wanSiteVersion);
-  
+
   public int getDistributedSystemId();
-  
+
   public OutputStream getOutputStream();
-  
+
   public InputStream getInputStream();
 
   public void setConnectionID(long id);

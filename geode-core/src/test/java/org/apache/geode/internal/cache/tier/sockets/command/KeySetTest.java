@@ -152,9 +152,8 @@ public class KeySetTest {
 
     ArgumentCaptor<NotAuthorizedException> argument = ArgumentCaptor.forClass(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).addObjPart(argument.capture());
-    assertThat( argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);
+    assertThat(argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).sendChunk(eq(this.serverConnection));
   }
-
 
 }

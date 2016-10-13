@@ -35,7 +35,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class IndexElemArrayJUnitTest {
-  
+
   private IndexElemArray list;
 
   @Before
@@ -67,9 +67,9 @@ public class IndexElemArrayJUnitTest {
     Collection<Callable> callables = new ConcurrentLinkedQueue<>();
     IntStream.range(0, 1000).parallel().forEach(i -> {
       callables.add(() -> {
-        if (i%3 == 0) {
+        if (i % 3 == 0) {
           return add(Integer.valueOf(new Random().nextInt(4)));
-        } else if (i%3 == 1) {
+        } else if (i % 3 == 1) {
           return remove(Integer.valueOf(new Random().nextInt(4)));
         } else {
           return iterateList();
@@ -84,30 +84,30 @@ public class IndexElemArrayJUnitTest {
       assertTrue(result.getClass().getName() + " was not an expected result", result instanceof Integer);
     });
   }
-  
+
   private Integer add(Integer i) {
     list.add(i);
     return i;
   }
-  
+
   private Integer remove(Integer i) {
     list.remove(i);
     return i;
   }
-  
-  private Integer iterateList() {    
+
+  private Integer iterateList() {
     Iterator iter = list.iterator();
-    if (iter.hasNext()){ 
-      iter.next(); 
+    if (iter.hasNext()) {
+      iter.next();
     }
     return Integer.valueOf(list.size());
   }
-  
+
   private void add() {
     Object objBefore = list.getElementData();
     insert(7);
     Object objAfter = list.getElementData();
-    assertSame("Before: " + Arrays.asList((Object[])objBefore) + " After:" + Arrays.asList((Object[])objAfter), objBefore, objAfter);
+    assertSame("Before: " + Arrays.asList((Object[]) objBefore) + " After:" + Arrays.asList((Object[]) objAfter), objBefore, objAfter);
 
     assertEquals(7, list.size());
     for (int i = 0; i < 7; i++) {
@@ -115,8 +115,8 @@ public class IndexElemArrayJUnitTest {
     }
     list.add(8);
     objAfter = list.getElementData();
-    assertNotSame("Before: " + Arrays.asList((Object[])objBefore) + " After:" + Arrays.asList((Object[])objAfter), objBefore, objAfter);
-    
+    assertNotSame("Before: " + Arrays.asList((Object[]) objBefore) + " After:" + Arrays.asList((Object[]) objAfter), objBefore, objAfter);
+
     assertEquals(8, list.size());
     for (int i = 0; i < 8; i++) {
       assertEquals(i + 1, list.get(i));
@@ -166,7 +166,7 @@ public class IndexElemArrayJUnitTest {
       assertEquals(i++, itr.next());
     }
   }
-  
+
   private void boundaryCondition() {
     try {
       Object o = list.get(2);
@@ -175,5 +175,5 @@ public class IndexElemArrayJUnitTest {
       // ok
     }
   }
-  
+
 }

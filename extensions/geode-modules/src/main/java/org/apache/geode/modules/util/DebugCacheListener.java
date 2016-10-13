@@ -43,10 +43,7 @@ public class DebugCacheListener extends CacheListenerAdapter implements Declarab
 
   private void log(EntryEvent event) {
     StringBuilder builder = new StringBuilder();
-    builder.append("DebugCacheListener: Received ")
-        .append(event.getOperation())
-        .append(" for key=")
-        .append(event.getKey());
+    builder.append("DebugCacheListener: Received ").append(event.getOperation()).append(" for key=").append(event.getKey());
     if (event.getNewValue() != null) {
       builder.append("; value=").append(event.getNewValue());
     }

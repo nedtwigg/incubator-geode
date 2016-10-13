@@ -28,8 +28,7 @@ import org.apache.geode.management.DiskStoreMXBean;
  * 
  * 
  */
-public class DiskStoreMBean extends NotificationBroadcasterSupport implements
-    DiskStoreMXBean {
+public class DiskStoreMBean extends NotificationBroadcasterSupport implements DiskStoreMXBean {
 
   private DiskStoreMBeanBridge bridge;
 
@@ -149,7 +148,7 @@ public class DiskStoreMBean extends NotificationBroadcasterSupport implements
   public int getTotalBackupCompleted() {
     return bridge.getTotalBackupCompleted();
   }
-  
+
   @Override
   public float getDiskUsageWarningPercentage() {
     return bridge.getDiskUsageWarningPercentage();
@@ -159,22 +158,22 @@ public class DiskStoreMBean extends NotificationBroadcasterSupport implements
   public float getDiskUsageCriticalPercentage() {
     return bridge.getDiskUsageCriticalPercentage();
   }
-  
+
   @Override
   public void setDiskUsageWarningPercentage(float warningPercent) {
     bridge.setDiskUsageWarningPercentage(warningPercent);
   }
-  
+
   @Override
   public void setDiskUsageCriticalPercentage(float criticalPercent) {
     bridge.setDiskUsageCriticalPercentage(criticalPercent);
   }
-  
-  public DiskStoreMBeanBridge getBridge(){
+
+  public DiskStoreMBeanBridge getBridge() {
     return bridge;
   }
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     bridge.stopMonitor();
   }
 

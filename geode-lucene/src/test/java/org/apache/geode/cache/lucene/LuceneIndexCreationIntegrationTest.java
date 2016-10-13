@@ -87,9 +87,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   public ExpectedException expectedException = ExpectedException.none();
 
   @Test
-  public void shouldCreateIndexWriterWithAnalyzersWhenSettingPerFieldAnalyzers()
-    throws BucketNotFoundException, InterruptedException
-  {
+  public void shouldCreateIndexWriterWithAnalyzersWhenSettingPerFieldAnalyzers() throws BucketNotFoundException, InterruptedException {
     Map<String, Analyzer> analyzers = new HashMap<>();
 
     final RecordingAnalyzer field1Analyzer = new RecordingAnalyzer();
@@ -107,7 +105,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   }
 
   @Test
-  @Parameters({"0", "1", "2"})
+  @Parameters({ "0", "1", "2" })
   public void shouldUseRedundancyForInternalRegionsWhenUserRegionHasRedundancy(int redundancy) {
     createIndex("text");
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -122,9 +120,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   @Test
   public void shouldNotUseIdleTimeoutForInternalRegionsWhenUserRegionHasIdleTimeout() {
     createIndex("text");
-    cache.createRegionFactory(RegionShortcut.PARTITION)
-      .setEntryIdleTimeout(new ExpirationAttributes(5))
-      .create(REGION_NAME);
+    cache.createRegionFactory(RegionShortcut.PARTITION).setEntryIdleTimeout(new ExpirationAttributes(5)).create(REGION_NAME);
 
     verifyInternalRegions(region -> {
       assertEquals(0, region.getAttributes().getEntryIdleTimeout().getTimeout());
@@ -134,9 +130,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   @Test
   public void shouldNotUseTTLForInternalRegionsWhenUserRegionHasTTL() {
     createIndex("text");
-    cache.createRegionFactory(RegionShortcut.PARTITION)
-      .setEntryTimeToLive(new ExpirationAttributes(5))
-      .create(REGION_NAME);
+    cache.createRegionFactory(RegionShortcut.PARTITION).setEntryTimeToLive(new ExpirationAttributes(5)).create(REGION_NAME);
 
     verifyInternalRegions(region -> {
       assertEquals(0, region.getAttributes().getEntryTimeToLive().getTimeout());
@@ -150,9 +144,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
     PartitionAttributesFactory partitionAttributesFactory = new PartitionAttributesFactory<>();
     final FixedPartitionAttributes fixedAttributes = FixedPartitionAttributes.createFixedPartition("A", true, 1);
     partitionAttributesFactory.addFixedPartitionAttributes(fixedAttributes);
-    cache.createRegionFactory(RegionShortcut.PARTITION)
-      .setPartitionAttributes(partitionAttributesFactory.create())
-      .create(REGION_NAME);
+    cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(partitionAttributesFactory.create()).create(REGION_NAME);
 
     verifyInternalRegions(region -> {
       //Fixed partitioned regions don't allow you to specify the partitions on the colocated region
@@ -162,9 +154,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   }
 
   @Test
-  public void shouldCreateRawIndexIfSpecifiedItsFactory()
-    throws BucketNotFoundException, InterruptedException
-  {
+  public void shouldCreateRawIndexIfSpecifiedItsFactory() throws BucketNotFoundException, InterruptedException {
     Map<String, Analyzer> analyzers = new HashMap<>();
 
     final RecordingAnalyzer field1Analyzer = new RecordingAnalyzer();
@@ -210,8 +200,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
     try {
       createIndex("field1", "field2", "field3");
       RegionFactory regionFactory = this.cache.createRegionFactory(RegionShortcut.PARTITION);
-      regionFactory.setEvictionAttributes(
-        EvictionAttributes.createLIFOEntryAttributes(100, EvictionAction.LOCAL_DESTROY));
+      regionFactory.setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(100, EvictionAction.LOCAL_DESTROY));
       regionFactory.create(REGION_NAME);
     } catch (UnsupportedOperationException e) {
       assertEquals("Lucene indexes on regions with eviction and action local destroy are not supported", e.getMessage());
@@ -220,40 +209,36 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   }
 
   @Test
-  public void cannotCreateLuceneIndexWithExistingIndexName()
-  {
+  public void cannotCreateLuceneIndexWithExistingIndexName() {
     expectedException.expect(IllegalArgumentException.class);
-    createIndex("field1","field2","field3");
-    createIndex("field4","field5","field6");
+    createIndex("field1", "field2", "field3");
+    createIndex("field4", "field5", "field6");
   }
 
   @Test
-  public void shouldReturnAllDefinedIndexes()
-  {
+  public void shouldReturnAllDefinedIndexes() {
     LuceneServiceImpl luceneServiceImpl = (LuceneServiceImpl) luceneService;
-    luceneServiceImpl.createIndex(INDEX_NAME,REGION_NAME,"field1","field2","field3");
-    luceneServiceImpl.createIndex("index2", "region2", "field4","field5","field6");
+    luceneServiceImpl.createIndex(INDEX_NAME, REGION_NAME, "field1", "field2", "field3");
+    luceneServiceImpl.createIndex("index2", "region2", "field4", "field5", "field6");
     final Collection<LuceneIndexCreationProfile> indexList = luceneServiceImpl.getAllDefinedIndexes();
 
-    assertEquals(Arrays.asList(INDEX_NAME,"index2"), indexList.stream().map(LuceneIndexCreationProfile::getIndexName)
-                                                              .sorted().collect(Collectors.toList()));
+    assertEquals(Arrays.asList(INDEX_NAME, "index2"), indexList.stream().map(LuceneIndexCreationProfile::getIndexName).sorted().collect(Collectors.toList()));
     createRegion();
-    assertEquals(Collections.singletonList("index2"), indexList.stream().map(LuceneIndexCreationProfile::getIndexName)
-                                                    .collect(Collectors.toList()));
+    assertEquals(Collections.singletonList("index2"), indexList.stream().map(LuceneIndexCreationProfile::getIndexName).collect(Collectors.toList()));
   }
 
   @Test
-  public void shouldRemoveDefinedIndexIfRegionAlreadyExists()
-  {
+  public void shouldRemoveDefinedIndexIfRegionAlreadyExists() {
     try {
       createRegion();
       createIndex("field1", "field2", "field3");
 
-    } catch(IllegalStateException e) {
+    } catch (IllegalStateException e) {
       assertEquals("The lucene index must be created before region", e.getMessage());
-      assertEquals(0,((LuceneServiceImpl) luceneService).getAllDefinedIndexes().size());
+      assertEquals(0, ((LuceneServiceImpl) luceneService).getAllDefinedIndexes().size());
     }
   }
+
   private void verifyInternalRegions(Consumer<LocalRegion> verify) {
     LuceneTestUtilities.verifyInternalRegions(luceneService, cache, verify);
   }
@@ -262,7 +247,7 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
     return createRegion(REGION_NAME, RegionShortcut.PARTITION);
   }
 
-  private void createIndex(String ... fieldNames) {
+  private void createIndex(String... fieldNames) {
     LuceneTestUtilities.createIndex(cache, fieldNames);
   }
 
@@ -270,7 +255,8 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
 
     private List<String> analyzedfields = new ArrayList<String>();
 
-    @Override protected TokenStreamComponents createComponents(final String fieldName) {
+    @Override
+    protected TokenStreamComponents createComponents(final String fieldName) {
       analyzedfields.add(fieldName);
       return new TokenStreamComponents(new KeywordTokenizer());
     }

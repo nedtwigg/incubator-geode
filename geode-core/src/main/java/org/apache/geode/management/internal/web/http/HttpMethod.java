@@ -23,13 +23,6 @@ package org.apache.geode.management.internal.web.http;
  */
 @SuppressWarnings("unused")
 public enum HttpMethod {
-  CONNECT,
-  DELETE,
-  GET,
-  HEAD,
-  OPTIONS,
-  POST,
-  PUT,
-  TRACE
+  CONNECT, DELETE, GET, HEAD, OPTIONS, POST, PUT, TRACE
 
 }

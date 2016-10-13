@@ -45,7 +45,7 @@ public class IncrByExecutor extends StringExecutor {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.INCRBY));
       return;
     }
-    
+
     ByteArrayWrapper key = command.getKey();
     checkAndSetDataType(key, context);
     ByteArrayWrapper valueWrapper = r.get(key);

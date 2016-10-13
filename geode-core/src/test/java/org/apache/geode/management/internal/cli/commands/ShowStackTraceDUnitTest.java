@@ -68,7 +68,7 @@ public class ShowStackTraceDUnitTest extends CliCommandTestBase {
   private void setupSystem() {
     disconnectAllFromDS();
     final Host host = Host.getHost(0);
-    final VM[] servers = {host.getVM(0), host.getVM(1)};
+    final VM[] servers = { host.getVM(0), host.getVM(1) };
 
     final Properties propsManager = createProperties(host, "Manager", "G1");
     final Properties propsServer2 = createProperties(host, "Server", "G2");

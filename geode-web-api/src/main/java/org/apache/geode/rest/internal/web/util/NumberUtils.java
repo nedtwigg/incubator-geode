@@ -61,51 +61,22 @@ public abstract class NumberUtils {
   }
 
   public static boolean isPrimitiveOrWrapper(Class<?> klass) {
-    return Byte.class.equals(klass)
-        || byte.class.equals(klass)
-        || Short.class.equals(klass)
-        || short.class.equals(klass)
-        || Integer.class.equals(klass)
-        || int.class.equals(klass)
-        || Long.class.equals(klass)
-        || long.class.equals(klass)
-        || Float.class.equals(klass)
-        || float.class.equals(klass)
-        || Double.class.equals(klass)
-        || double.class.equals(klass)
-        || Boolean.class.equals(klass)
-        || boolean.class.equals(klass)
-        || String.class.equals(klass);
-  }        
-  
+    return Byte.class.equals(klass) || byte.class.equals(klass) || Short.class.equals(klass) || short.class.equals(klass) || Integer.class.equals(klass) || int.class.equals(klass) || Long.class.equals(klass) || long.class.equals(klass) || Float.class.equals(klass) || float.class.equals(klass) || Double.class.equals(klass) || double.class.equals(klass) || Boolean.class.equals(klass) || boolean.class.equals(klass) || String.class.equals(klass);
+  }
+
   public static boolean isPrimitiveOrObject(final String type) {
-    return "byte".equalsIgnoreCase(type)
-        || "short".equalsIgnoreCase(type)
-        || "int".equalsIgnoreCase(type)
-        || "long".equalsIgnoreCase(type)
-        || "float".equalsIgnoreCase(type)
-        || "double".equalsIgnoreCase(type)
-        || "boolean".equalsIgnoreCase(type)
-        || "string".equalsIgnoreCase(type);
+    return "byte".equalsIgnoreCase(type) || "short".equalsIgnoreCase(type) || "int".equalsIgnoreCase(type) || "long".equalsIgnoreCase(type) || "float".equalsIgnoreCase(type) || "double".equalsIgnoreCase(type) || "boolean".equalsIgnoreCase(type) || "string".equalsIgnoreCase(type);
   }
-  
-  public static boolean isValuePrimitiveType(final Object value){
-    return Byte.class.equals(ClassUtils.getClass(value))
-        || Short.class.equals(ClassUtils.getClass(value))
-        || Integer.class.equals(ClassUtils.getClass(value))
-        || Long.class.equals(ClassUtils.getClass(value))
-        || Float.class.equals(ClassUtils.getClass(value))
-        || Double.class.equals(ClassUtils.getClass(value))
-        || Boolean.class.equals(ClassUtils.getClass(value))
-        || String.class.equals(ClassUtils.getClass(value));
+
+  public static boolean isValuePrimitiveType(final Object value) {
+    return Byte.class.equals(ClassUtils.getClass(value)) || Short.class.equals(ClassUtils.getClass(value)) || Integer.class.equals(ClassUtils.getClass(value)) || Long.class.equals(ClassUtils.getClass(value)) || Float.class.equals(ClassUtils.getClass(value)) || Double.class.equals(ClassUtils.getClass(value)) || Boolean.class.equals(ClassUtils.getClass(value)) || String.class.equals(ClassUtils.getClass(value));
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  public static Object convertToActualType(String stringValue, String type)
-      throws IllegalArgumentException {
+  public static Object convertToActualType(String stringValue, String type) throws IllegalArgumentException {
     if (stringValue != null && type == null) {
       return stringValue;
-    }else {
+    } else {
       Object o = null;
 
       if ("string".equalsIgnoreCase(type))
@@ -136,10 +107,9 @@ public abstract class NumberUtils {
         }
         return o;
       } catch (NumberFormatException e) {
-        throw new IllegalArgumentException("Failed to convert input key to "
-            + type + " Msg : " + e.getMessage());
+        throw new IllegalArgumentException("Failed to convert input key to " + type + " Msg : " + e.getMessage());
       }
-      
+
     }
   }
 }

@@ -43,7 +43,7 @@ public enum RedisDataType {
     public String toString() {
       return "string";
     }
-  }, 
+  },
 
   /**
    * Hashes Regions
@@ -63,7 +63,7 @@ public enum RedisDataType {
     public String toString() {
       return "list";
     }
-  }, 
+  },
 
   /**
    * Sets Regions
@@ -73,7 +73,7 @@ public enum RedisDataType {
     public String toString() {
       return "set";
     }
-  }, 
+  },
 
   /**
    * SortedSets Regions
@@ -83,7 +83,7 @@ public enum RedisDataType {
     public String toString() {
       return "zset";
     }
-  }, 
+  },
 
   /**
    * HyperLogLog Regions

@@ -69,7 +69,7 @@ public class DurableClientNetDownDUnitTest extends DurableClientCrashDUnitTest {
 
   @Override
   public void restartDurableClient(Object[] args) {
-    this.durableClientVM.invoke(() -> CacheServerTestUtil.reconnectClient());  
+    this.durableClientVM.invoke(() -> CacheServerTestUtil.reconnectClient());
   }
 
   @Override
@@ -81,5 +81,5 @@ public class DurableClientNetDownDUnitTest extends DurableClientCrashDUnitTest {
   public void verifyListenerUpdates(int numEntries, int numEntriesBeforeDisconnect) {
     this.verifyListenerUpdatesEntries(numEntries, numEntriesBeforeDisconnect);
   }
-  
+
 }

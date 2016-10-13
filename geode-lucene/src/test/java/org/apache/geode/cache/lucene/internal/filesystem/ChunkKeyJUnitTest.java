@@ -37,7 +37,7 @@ public class ChunkKeyJUnitTest {
     LuceneServiceImpl.registerDataSerializables();
     ChunkKey key = new ChunkKey(UUID.randomUUID(), 5);
     ChunkKey copy = CopyHelper.deepCopy(key);
-    
+
     assertEquals(key, copy);
     assertEquals(key.hashCode(), copy.hashCode());
     assertEquals(key.getFileId(), copy.getFileId());

@@ -16,7 +16,6 @@
  */
 package org.apache.geode.internal.size;
 
-
 /**
  * An efficient sizer for some commonly used
  * classes.
@@ -26,10 +25,10 @@ package org.apache.geode.internal.size;
  *
  */
 public class WellKnownClassSizer {
-  
+
   private static final int BYTE_ARRAY_OVERHEAD;
   private static final int STRING_OVERHEAD;
-  
+
   static {
     try {
       ReflectionSingleObjectSizer objSizer = new ReflectionSingleObjectSizer();
@@ -42,16 +41,15 @@ public class WellKnownClassSizer {
 
   public static int sizeof(Object o) {
     int size = 0;
-    
-    if(o instanceof byte[]) {
-      size =  BYTE_ARRAY_OVERHEAD + ((byte[]) o).length;
-    }
-    else if(o instanceof String) {
-      size = STRING_OVERHEAD + ((String) o).length() * 2; 
+
+    if (o instanceof byte[]) {
+      size = BYTE_ARRAY_OVERHEAD + ((byte[]) o).length;
+    } else if (o instanceof String) {
+      size = STRING_OVERHEAD + ((String) o).length() * 2;
     } else {
       return 0;
     }
-    
+
     size = (int) ReflectionSingleObjectSizer.roundUpSize(size);
     return size;
   }

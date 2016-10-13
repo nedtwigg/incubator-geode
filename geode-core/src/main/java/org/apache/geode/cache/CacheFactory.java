@@ -31,7 +31,6 @@ import org.apache.geode.internal.jndi.JNDIInvoker;
 import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.pdx.PdxSerializer;
 
-
 /**
  * Factory class used to create the singleton {@link Cache cache} and connect to the GemFire singleton {@link DistributedSystem distributed system}. If the application wants to connect to GemFire as a client it should use {@link org.apache.geode.cache.client.ClientCacheFactory} instead.
 <p> Once the factory has been configured using its {@link #set(String, String)} method you produce a {@link Cache} by calling the {@link #create()} method.
@@ -82,9 +81,9 @@ Applications that need to explicitly control the individual region attributes ca
 public class CacheFactory {
 
   private final Properties dsProps;
-  
-  private final CacheConfig cacheConfig =  new CacheConfig();
-       
+
+  private final CacheConfig cacheConfig = new CacheConfig();
+
   /**
    * Creates a default cache factory.
    * @since GemFire 6.5
@@ -92,6 +91,7 @@ public class CacheFactory {
   public CacheFactory() {
     this(null);
   }
+
   /**
    * Create a CacheFactory initialized with the given gemfire properties.
    * For a list of valid GemFire properties and their meanings
@@ -119,6 +119,7 @@ public class CacheFactory {
     this.dsProps.setProperty(name, value);
     return this;
   }
+
   /**
    * Creates a new cache that uses the specified <code>system</code>.
    *
@@ -164,19 +165,11 @@ public class CacheFactory {
    * @deprecated as of 6.5 use {@link #CacheFactory(Properties)} instead.
    */
   @Deprecated
-  public static synchronized Cache create(DistributedSystem system)
-    throws CacheExistsException, TimeoutException, CacheWriterException,
-           GatewayException,
-           RegionExistsException 
-  {
+  public static synchronized Cache create(DistributedSystem system) throws CacheExistsException, TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
     return create(system, false, new CacheConfig());
   }
-  
-  private static synchronized Cache create(DistributedSystem system, boolean existingOk, CacheConfig cacheConfig)
-    throws CacheExistsException, TimeoutException, CacheWriterException,
-           GatewayException,
-           RegionExistsException 
-  {
+
+  private static synchronized Cache create(DistributedSystem system, boolean existingOk, CacheConfig cacheConfig) throws CacheExistsException, TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
     // Moved code in this method to GemFireCacheImpl.create
     return GemFireCacheImpl.create(system, existingOk, cacheConfig);
   }
@@ -214,12 +207,8 @@ public class CacheFactory {
    *         and this new member is not configured with security credentials.
    * @since GemFire 6.5
    */
-  public Cache create()
-    throws TimeoutException, CacheWriterException,
-           GatewayException,
-           RegionExistsException 
-  {
-    synchronized(CacheFactory.class) {
+  public Cache create() throws TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
+    synchronized (CacheFactory.class) {
       DistributedSystem ds = null;
       if (this.dsProps.isEmpty()) {
         // any ds will do
@@ -261,8 +250,7 @@ public class CacheFactory {
     // Avoid synchronization if this is an initialization thread to avoid
     // deadlock when messaging returns to this VM
     final int initReq = LocalRegion.threadInitLevelRequirement();
-    if (initReq == LocalRegion.ANY_INIT
-        || initReq == LocalRegion.BEFORE_INITIAL_IMAGE) { // fix bug 33471
+    if (initReq == LocalRegion.ANY_INIT || initReq == LocalRegion.BEFORE_INITIAL_IMAGE) { // fix bug 33471
       return basicGetInstancePart2(system, closeOk);
     } else {
       synchronized (CacheFactory.class) {
@@ -270,6 +258,7 @@ public class CacheFactory {
       }
     }
   }
+
   private static Cache basicGetInstancePart2(DistributedSystem system, boolean closeOk) {
     GemFireCacheImpl instance = GemFireCacheImpl.getInstance();
     if (instance == null) {
@@ -307,7 +296,7 @@ public class CacheFactory {
   public static String getVersion() {
     return GemFireVersion.getGemFireVersion();
   }
-  
+
   /** Sets the object preference to PdxInstance type. 
    * When a cached object that was serialized as a PDX is read
    * from the cache a {@link PdxInstance} will be returned instead of the actual domain class.
@@ -325,11 +314,11 @@ public class CacheFactory {
    *  @since GemFire 6.6
    *  @see org.apache.geode.pdx.PdxInstance 
    */
-  public  CacheFactory setPdxReadSerialized(boolean readSerialized) {
+  public CacheFactory setPdxReadSerialized(boolean readSerialized) {
     this.cacheConfig.setPdxReadSerialized(readSerialized);
     return this;
   }
-  
+
   /**
    * Set the PDX serializer for the cache. If this serializer is set,
    * it will be consulted to see if it can serialize any domain classes which are 
@@ -343,7 +332,7 @@ public class CacheFactory {
     this.cacheConfig.setPdxSerializer(serializer);
     return this;
   }
-  
+
   /**
    * Set the disk store that is used for PDX meta data. When
    * serializing objects in the PDX format, the type definitions
@@ -377,6 +366,7 @@ public class CacheFactory {
     this.cacheConfig.setPdxPersistent(isPersistent);
     return this;
   }
+
   /**
    * Control whether pdx ignores fields that were unread during deserialization.
    * The default is to preserve unread fields be including their data during serialization.
@@ -395,5 +385,4 @@ public class CacheFactory {
     this.cacheConfig.setPdxIgnoreUnreadFields(ignore);
     return this;
   }
-} 
-
+}

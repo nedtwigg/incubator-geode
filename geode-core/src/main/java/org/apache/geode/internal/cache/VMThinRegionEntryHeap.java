@@ -25,18 +25,19 @@ public abstract class VMThinRegionEntryHeap extends VMThinRegionEntry {
   }
 
   private static final VMThinRegionEntryHeapFactory factory = new VMThinRegionEntryHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VMThinRegionEntryHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VMThinRegionEntryHeapIntKey(context, (Integer)key, value);
+          return new VMThinRegionEntryHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VMThinRegionEntryHeapLongKey(context, (Long)key, value);
+          return new VMThinRegionEntryHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -49,7 +50,7 @@ public abstract class VMThinRegionEntryHeap extends VMThinRegionEntry {
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VMThinRegionEntryHeapUUIDKey(context, (UUID)key, value);
+          return new VMThinRegionEntryHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VMThinRegionEntryHeapObjectKey(context, key, value);
@@ -60,10 +61,12 @@ public abstract class VMThinRegionEntryHeap extends VMThinRegionEntry {
       // This estimate will not take into account the memory saved by inlining the keys.
       return VMThinRegionEntryHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return VersionedThinRegionEntryHeap.getEntryFactory();
     }
-	@Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return this;
     }

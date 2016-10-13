@@ -80,12 +80,11 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
   @Override
   public final void postSetUp() throws Exception {
     IgnoredException.addIgnoredException("java.io.IOException");
-    
+
     final Host host = Host.getHost(0);
     server = host.getVM(0);
     client = host.getVM(2);
-    PORT = ((Integer)server
-        .invoke(() -> Bug37210DUnitTest.createServerCache())).intValue();
+    PORT = ((Integer) server.invoke(() -> Bug37210DUnitTest.createServerCache())).intValue();
   }
 
   /**
@@ -97,8 +96,7 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
    * @throws Exception -
    *                 thrown if any problem occurs in cache creation
    */
-  private Cache createCache(Properties props) throws Exception
-  {
+  private Cache createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     ds.disconnect();
     ds = getSystem(props);
@@ -138,18 +136,17 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
    *                 thrown if any problem occurs in test execution
    */
   @Test
-  public void testHAStatsCleanup() throws Exception
-  {
+  public void testHAStatsCleanup() throws Exception {
     Host host = Host.getHost(0);
     LogWriterUtils.getLogWriter().info("testHAStatsCleanup : BEGIN");
     IgnoredException.addIgnoredException("java.net.SocketException");
     IgnoredException.addIgnoredException("Unexpected IOException");
-    client.invoke(() -> Bug37210DUnitTest.createClientCache( NetworkUtils.getServerHostName(host), new Integer(PORT) ));
+    client.invoke(() -> Bug37210DUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT)));
     server.invoke(() -> Bug37210DUnitTest.doEntryOperations());
-    
+
     server.invoke(() -> Bug37210DUnitTest.closeCacheClientProxyAndVerifyStats());
     client.invoke(() -> Bug37210DUnitTest.closeCache());
-  //we don't send close response thus needs to wait for client termination
+    //we don't send close response thus needs to wait for client termination
     Thread.currentThread().sleep(1000);
     server.invoke(() -> Bug37210DUnitTest.closeCacheClientProxyAndVerifyStats2());
     LogWriterUtils.getLogWriter().info("testHAStatsCleanup : END");
@@ -162,8 +159,7 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
    * @throws Exception -
    *                 thrown if any problem occurs in cache/server creation
    */
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     Bug37210DUnitTest test = new Bug37210DUnitTest();
     Properties props = new Properties();
     cache = test.createCache(props);
@@ -194,24 +190,16 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
    * @throws Exception-thrown
    *                 if any problem occurs in initializing the client
    */
-  public static void createClientCache(String host, Integer port) throws Exception
-  {
+  public static void createClientCache(String host, Integer port) throws Exception {
     Bug37210DUnitTest test = new Bug37210DUnitTest();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     cache = test.createCache(props);
-    Pool p = PoolManager.createFactory()
-      .addServer(host, port.intValue())
-      .setSubscriptionEnabled(true)
-      .setThreadLocalConnections(true)
-      .setReadTimeout(10000)
-      .setSocketBufferSize(32768)
-      .setMinConnections(3)
-      .setSubscriptionRedundancy(-1)
-      // .setRetryInterval(10000)
-      // .setRetryAttempts(5)
-      .create("Bug37210UnitTestPool");
+    Pool p = PoolManager.createFactory().addServer(host, port.intValue()).setSubscriptionEnabled(true).setThreadLocalConnections(true).setReadTimeout(10000).setSocketBufferSize(32768).setMinConnections(3).setSubscriptionRedundancy(-1)
+        // .setRetryInterval(10000)
+        // .setRetryAttempts(5)
+        .create("Bug37210UnitTestPool");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
 
@@ -228,34 +216,27 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
    * dispatchedMessagesMap.
    * 
    */
-  public static void closeCacheClientProxyAndVerifyStats()
-  {
-    assertEquals("More than one BridgeServers found ", 1, cache
-        .getCacheServers().size());
-    CacheServerImpl bs = (CacheServerImpl)cache.getCacheServers().iterator()
-        .next();
+  public static void closeCacheClientProxyAndVerifyStats() {
+    assertEquals("More than one BridgeServers found ", 1, cache.getCacheServers().size());
+    CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
     assertNotNull(bs);
     assertNotNull(bs.getAcceptor());
     assertNotNull(bs.getAcceptor().getCacheClientNotifier());
-    Iterator proxies = bs.getAcceptor().getCacheClientNotifier()
-        .getClientProxies().iterator();
-    assertTrue("No proxy found",proxies.hasNext());
-    CacheClientProxy proxy = (CacheClientProxy)proxies.next();
+    Iterator proxies = bs.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
+    assertTrue("No proxy found", proxies.hasNext());
+    CacheClientProxy proxy = (CacheClientProxy) proxies.next();
     Map dispatchedMsgMap = HARegionQueue.getDispatchedMessagesMapForTesting();
     HARegionQueue rq = proxy.getHARegionQueue();
     Object value = dispatchedMsgMap.get(rq.getRegion().getName());
     proxy.close();
 
-    assertTrue("HARegionQueue stats were not closed on proxy.close()", rq
-        .getStatistics().isClosed());
-    
+    assertTrue("HARegionQueue stats were not closed on proxy.close()", rq.getStatistics().isClosed());
+
   }
-  
+
   public static void closeCacheClientProxyAndVerifyStats2() {
-	  Map dispatchedMsgMap = HARegionQueue.getDispatchedMessagesMapForTesting();
-	  assertTrue(
-		        "HARegionQueue.dispatchedMessagesMap contains entry for the region even after proxy.close()",
-		        dispatchedMsgMap.size() == 0);  
+    Map dispatchedMsgMap = HARegionQueue.getDispatchedMessagesMapForTesting();
+    assertTrue("HARegionQueue.dispatchedMessagesMap contains entry for the region even after proxy.close()", dispatchedMsgMap.size() == 0);
   }
 
   /**
@@ -264,8 +245,7 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
    * @throws Exception -
    *                 thrown if any exception occurs in doing PUTs
    */
-  public static void doEntryOperations() throws Exception
-  {
+  public static void doEntryOperations() throws Exception {
     Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     String keyPrefix = "server-";
     for (int i = 0; i < 10; i++) {
@@ -277,8 +257,7 @@ public class Bug37210DUnitTest extends JUnit4DistributedTestCase {
    * Close the cache
    * 
    */
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();

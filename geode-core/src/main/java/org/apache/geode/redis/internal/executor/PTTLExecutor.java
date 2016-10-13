@@ -20,12 +20,11 @@ import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class PTTLExecutor extends TTLExecutor {
 
-  
   @Override
   protected boolean timeUnitMillis() {
     return true;
   }
-  
+
   @Override
   public String getArgsError() {
     return ArityDef.PTTL;

@@ -29,7 +29,7 @@ import java.io.*;
  * @since GemFire 5.0
  */
 public class SubscriptionAttributes implements DataSerializable, Externalizable {
-  
+
   /** 
    * this subscriber's interest policy
    */
@@ -42,6 +42,7 @@ public class SubscriptionAttributes implements DataSerializable, Externalizable 
   public SubscriptionAttributes() {
     this.interestPolicy = InterestPolicy.DEFAULT;
   }
+
   /**
    * Creates a new <code>SubscriptionAttributes</code> with the given
    * interest policy.
@@ -50,23 +51,26 @@ public class SubscriptionAttributes implements DataSerializable, Externalizable 
   public SubscriptionAttributes(InterestPolicy interestPolicy) {
     this.interestPolicy = interestPolicy;
   }
+
   /**
    * Returns the interest policy of this subscriber.
    */
   public InterestPolicy getInterestPolicy() {
     return this.interestPolicy;
   }
-  
+
   @Override
   public boolean equals(Object other) {
-    if (other == this) return true;
-    if (other == null) return false;
-    if (!(other instanceof SubscriptionAttributes)) return  false;
+    if (other == this)
+      return true;
+    if (other == null)
+      return false;
+    if (!(other instanceof SubscriptionAttributes))
+      return false;
     final SubscriptionAttributes that = (SubscriptionAttributes) other;
 
-    if (this.interestPolicy != that.interestPolicy &&
-        !(this.interestPolicy != null &&
-          this.interestPolicy.equals(that.interestPolicy))) return false;
+    if (this.interestPolicy != that.interestPolicy && !(this.interestPolicy != null && this.interestPolicy.equals(that.interestPolicy)))
+      return false;
 
     return true;
   }
@@ -93,13 +97,12 @@ public class SubscriptionAttributes implements DataSerializable, Externalizable 
     sb.append(this.interestPolicy.toString());
     return sb.toString();
   }
-  
+
   public void toData(DataOutput out) throws IOException {
     out.writeByte(this.interestPolicy.ordinal);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.interestPolicy = InterestPolicy.fromOrdinal(in.readByte());
   }
 
@@ -107,9 +110,8 @@ public class SubscriptionAttributes implements DataSerializable, Externalizable 
     // added to fix bug 36619
     toData(out);
   }
-  
-  public void readExternal(ObjectInput in)
-    throws IOException, ClassNotFoundException {
+
+  public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
     // added to fix bug 36619
     fromData(in);
   }

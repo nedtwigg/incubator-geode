@@ -38,40 +38,39 @@ public interface JoinLeave extends Service {
    * force another member out of the system
    */
   void remove(InternalDistributedMember m, String reason);
-  
+
   /**
    * Invoked by the Manager, this notifies the HealthMonitor that a
    * ShutdownMessage has been received from the given member
    */
   public void memberShutdown(DistributedMember mbr, String reason);
-  
+
   /**
    * returns the local address
    */
   InternalDistributedMember getMemberID();
-  
+
   /**
    * Get "InternalDistributedMember" from current view or prepared view.
    */
   InternalDistributedMember getMemberID(NetMember m);
-  
+
   /**
    * returns the current membership view
    */
   NetView getView();
-  
-  
+
   /**
    * returns the last known view prior to close - for reconnecting
    */
   NetView getPreviousView();
-  
+
   /**
    * check to see if a member is already in the process of leaving or
    * being removed (in the next view)
    */
   boolean isMemberLeaving(DistributedMember mbr);
-  
+
   /**
    * test hook
    */

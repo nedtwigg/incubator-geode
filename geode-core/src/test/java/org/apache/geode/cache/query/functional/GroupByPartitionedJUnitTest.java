@@ -31,10 +31,10 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public class GroupByPartitionedJUnitTest extends GroupByTestImpl {
 
-//  public static Test suite() {
-//    TestSuite suite = new TestSuite(GroupByPartitionedJUnitTest.class);
-//    return suite;
-//  }
+  //  public static Test suite() {
+  //    TestSuite suite = new TestSuite(GroupByPartitionedJUnitTest.class);
+  //    return suite;
+  //  }
 
   @Override
   public Region createRegion(String regionName, Class valueConstraint) {

@@ -28,15 +28,14 @@ package org.apache.geode.cache;
  * @since GemFire 3.0
  */
 public class CacheLoaderException extends OperationAbortedException {
-private static final long serialVersionUID = -3383072059406642140L;
-  
+  private static final long serialVersionUID = -3383072059406642140L;
+
   /**
    * Creates a new instance of <code>CacheLoaderException</code>.
    */
   public CacheLoaderException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>CacheLoaderException</code> with the specified detail message.
    * @param msg the detail message
@@ -44,7 +43,7 @@ private static final long serialVersionUID = -3383072059406642140L;
   public CacheLoaderException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>CacheLoaderException</code> with the specified detail message
    * and cause.
@@ -54,7 +53,7 @@ private static final long serialVersionUID = -3383072059406642140L;
   public CacheLoaderException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>CacheLoaderException</code> with the specified cause.
    * @param cause the causal Throwable

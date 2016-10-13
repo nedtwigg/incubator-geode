@@ -32,11 +32,11 @@ public class GetViewResponse implements DataSerializableFixedID {
   public GetViewResponse(NetView view) {
     this.view = view;
   }
-  
+
   public GetViewResponse() {
     // no-arg constructor for serialization
   }
-  
+
   public NetView getView() {
     return view;
   }

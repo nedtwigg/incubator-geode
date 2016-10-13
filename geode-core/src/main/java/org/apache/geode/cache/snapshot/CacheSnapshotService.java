@@ -75,7 +75,7 @@ public interface CacheSnapshotService {
    * @return the default options
    */
   SnapshotOptions<Object, Object> createOptions();
-  
+
   /**
    * Exports all regions in the cache to the specified directory.  The cache
    * entries in each region will be written to a separate file.
@@ -86,8 +86,7 @@ public interface CacheSnapshotService {
    * 
    * @throws IOException error writing snapshot
    */
-  void save(File dir, SnapshotFormat format)
-  throws IOException;
+  void save(File dir, SnapshotFormat format) throws IOException;
 
   /**
    * Exports all regions in the cache to the specified directory by applying
@@ -101,9 +100,8 @@ public interface CacheSnapshotService {
    * 
    * @throws IOException error writing snapshot
    */
-  void save(File dir, SnapshotFormat format, SnapshotOptions<Object, Object> options) 
-  throws IOException;  
-  
+  void save(File dir, SnapshotFormat format, SnapshotOptions<Object, Object> options) throws IOException;
+
   /**
    * Imports all files in the specified directory into the cache. The cache
    * entries in a given snapshot file are loaded into the same region they were
@@ -121,8 +119,7 @@ public interface CacheSnapshotService {
    * @throws IOException Unable to import data
    * @throws ClassNotFoundException Unable to import data
    */
-  void load(File dir, SnapshotFormat format) 
-  throws IOException, ClassNotFoundException;
+  void load(File dir, SnapshotFormat format) throws IOException, ClassNotFoundException;
 
   /**
    * Imports the specified files into the cache by applying user-configured
@@ -143,6 +140,5 @@ public interface CacheSnapshotService {
    * @throws IOException Unable to import data
    * @throws ClassNotFoundException Unable to import data
    */
-  void load(File[] snapshots, SnapshotFormat format, SnapshotOptions<Object, Object> options) 
-  throws IOException, ClassNotFoundException;  
+  void load(File[] snapshots, SnapshotFormat format, SnapshotOptions<Object, Object> options) throws IOException, ClassNotFoundException;
 }

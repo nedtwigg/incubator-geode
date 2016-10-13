@@ -24,12 +24,12 @@ import org.apache.geode.cache.wan.GatewayQueueEvent;
  * 
  * @since GemFire 7.0
  */
-public interface AsyncEvent<K, V> extends GatewayQueueEvent<K, V>{
+public interface AsyncEvent<K, V> extends GatewayQueueEvent<K, V> {
   /**
    * Returns whether possibleDuplicate is set for this event.
    */
   public boolean getPossibleDuplicate();
-  
+
   /**
    * Returns the wrapper over the DistributedMembershipID, ThreadID, SequenceID
    * which are used to uniquely identify any region operation like create, update etc.

@@ -35,13 +35,13 @@ public class GemFireFormatter extends Formatter {
    * Use the log writer to use some of its formatting code.
    */
   private final LogWriter logWriter;
-  
+
   private final DateFormat dateFormat = DateFormatter.createDateFormat();
 
   public GemFireFormatter(LogWriter logWriter) {
     this.logWriter = logWriter;
   }
-    
+
   @Override
   public String format(LogRecord record) {
     java.io.StringWriter sw = new java.io.StringWriter();
@@ -65,18 +65,18 @@ public class GemFireFormatter extends Formatter {
 
     pw.print(" msgSN=");
     pw.print(record.getSequenceNumber());
-//     if (record.getLoggerName() != null) {
-//       pw.print(' ');
-//       pw.print(record.getLoggerName());
-//     }
-//     if (record.getSourceClassName() != null) {
-//       pw.print(' ');
-//       pw.print(record.getSourceClassName());
-//     }
-//     if (record.getSourceMethodName() != null) {
-//       pw.print(' ');
-//       pw.print(record.getSourceMethodName());
-//     }
+    //     if (record.getLoggerName() != null) {
+    //       pw.print(' ');
+    //       pw.print(record.getLoggerName());
+    //     }
+    //     if (record.getSourceClassName() != null) {
+    //       pw.print(' ');
+    //       pw.print(record.getSourceClassName());
+    //     }
+    //     if (record.getSourceMethodName() != null) {
+    //       pw.print(' ');
+    //       pw.print(record.getSourceMethodName());
+    //     }
     pw.print(") ");
 
     String msg = record.getMessage();
@@ -97,7 +97,8 @@ public class GemFireFormatter extends Formatter {
     pw.close();
     try {
       sw.close();
-    } catch (java.io.IOException ignore) {}
+    } catch (java.io.IOException ignore) {
+    }
     String result = sw.toString();
     return result;
   }

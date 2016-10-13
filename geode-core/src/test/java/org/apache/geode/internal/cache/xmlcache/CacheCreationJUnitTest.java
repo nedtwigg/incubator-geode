@@ -222,7 +222,7 @@ public class CacheCreationJUnitTest {
     InOrder inOrder = inOrder(cache, receiverFactory);
     cacheCreation.create(cache);
 
-    inOrder.verify(cache).basicCreateRegion(eq("region"),any());
+    inOrder.verify(cache).basicCreateRegion(eq("region"), any());
     inOrder.verify(cache).createGatewayReceiverFactory();
     inOrder.verify(receiverFactory).create();
   }

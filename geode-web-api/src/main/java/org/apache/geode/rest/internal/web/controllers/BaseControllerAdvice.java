@@ -37,7 +37,6 @@ import org.apache.geode.rest.internal.web.exception.RegionNotFoundException;
 import org.apache.geode.rest.internal.web.exception.ResourceNotFoundException;
 import org.apache.geode.security.NotAuthorizedException;
 
-
 /**
  * The CrudControllerAdvice class handles exception thrown while serving the REST request
  * <p/>
@@ -49,13 +48,14 @@ import org.apache.geode.security.NotAuthorizedException;
 public class BaseControllerAdvice extends AbstractBaseController {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   protected static final String REST_API_VERSION = "/v1";
-   
+
   @Override
   protected String getRestApiVersion() {
     return REST_API_VERSION;
   }
+
   /**
    * Handles both ResourceNotFoundExceptions and specifically, RegionNotFoundExceptions, occurring when a resource
    * or a Region (a.k.a. resource) does not exist in GemFire.
@@ -82,7 +82,7 @@ public class BaseControllerAdvice extends AbstractBaseController {
   public String handleException(final RuntimeException e) {
     return convertErrorAsJson(e.getMessage());
   }
-  
+
   /**
    * Handles any GemfireRestException thrown by a REST API web service endpoint, HTTP request handler method.
    * <p/>
@@ -95,7 +95,7 @@ public class BaseControllerAdvice extends AbstractBaseController {
   public String handleException(final GemfireRestException ge) {
     return convertErrorAsJson(ge);
   }
-  
+
   /**
    * Handles any DataTypeNotSupportedException thrown by a REST API web service endpoint, HTTP request handler method.
    * <p/>
@@ -108,7 +108,7 @@ public class BaseControllerAdvice extends AbstractBaseController {
   public String handleException(final DataTypeNotSupportedException tns) {
     return convertErrorAsJson(tns.getMessage());
   }
-  
+
   /**
    * Handles HttpRequestMethodNotSupportedException thrown by a REST API web service when request is 
    * received with unsupported HTTP method.
@@ -164,7 +164,7 @@ public class BaseControllerAdvice extends AbstractBaseController {
     cause.printStackTrace(new PrintWriter(stackTraceWriter));
     final String stackTrace = stackTraceWriter.toString();
 
-    if(logger.isDebugEnabled()){
+    if (logger.isDebugEnabled()) {
       logger.debug(stackTrace);
     }
 
@@ -172,4 +172,3 @@ public class BaseControllerAdvice extends AbstractBaseController {
   }
 
 }
-

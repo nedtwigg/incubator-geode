@@ -106,10 +106,10 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     // Client 1 VM
     client1 = host.getVM(2);
 
-    int PORT1 = ((Integer)server1.invoke(() -> HAConflationDUnitTest.createServerCache( new Boolean(false) ))).intValue();
+    int PORT1 = ((Integer) server1.invoke(() -> HAConflationDUnitTest.createServerCache(new Boolean(false)))).intValue();
     server1.invoke(() -> ConflationDUnitTest.setIsSlowStart());
     server1.invoke(() -> HAConflationDUnitTest.makeDispatcherSlow());
-    client1.invoke(() -> HAConflationDUnitTest.createClientCache( NetworkUtils.getServerHostName(host), new Integer(PORT1), new Boolean(true) ));
+    client1.invoke(() -> HAConflationDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1), new Boolean(true)));
   }
 
   @Override
@@ -118,9 +118,8 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     // close server
     server1.invoke(() -> HAConflationDUnitTest.closeCacheAndDisconnect());
   }
-  
-  public static void closeCacheAndDisconnect()
-  {
+
+  public static void closeCacheAndDisconnect() {
     if (basicGetCache() != null && !basicGetCache().isClosed()) {
       basicGetCache().close();
       basicGetCache().getDistributedSystem().disconnect();
@@ -134,8 +133,7 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
    */
 
   @Test
-  public void testConflationCreateUpdate() throws Exception
-  {
+  public void testConflationCreateUpdate() throws Exception {
     server1.invoke(putFromServer(KEY1, VALUE1));
     server1.invoke(putFromServer(KEY1, VALUE2));
     server1.invoke(putFromServer(LAST_KEY, LAST_VALUE));
@@ -150,8 +148,7 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
    * @throws Exception
    */
   @Test
-  public void testConflationUpdate() throws Exception
-  {
+  public void testConflationUpdate() throws Exception {
 
     server1.invoke(putFromServer(KEY1, VALUE1));
     server1.invoke(putFromServer(KEY1, VALUE2));
@@ -175,8 +172,7 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
    * @throws Exception
    */
   @Test
-  public void testConflationCreateUpdateInvalidate() throws Exception
-  {
+  public void testConflationCreateUpdateInvalidate() throws Exception {
 
     server1.invoke(putFromServer(KEY1, VALUE1));
     server1.invoke(putFromServer(KEY1, VALUE2));
@@ -194,8 +190,7 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
    * @throws Exception
    */
   @Test
-  public void testConflationCreateUpdateDestroy() throws Exception
-  {
+  public void testConflationCreateUpdateDestroy() throws Exception {
 
     server1.invoke(putFromServer(KEY1, VALUE1));
     server1.invoke(putFromServer(KEY1, VALUE2));
@@ -207,13 +202,9 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
 
   }
 
-  private CacheSerializableRunnable putFromServer(final String key,
-      final String value)
-  {
-    CacheSerializableRunnable performPut = new CacheSerializableRunnable(
-        "putFromServer") {
-      public void run2() throws CacheException
-      {
+  private CacheSerializableRunnable putFromServer(final String key, final String value) {
+    CacheSerializableRunnable performPut = new CacheSerializableRunnable("putFromServer") {
+      public void run2() throws CacheException {
         Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
         assertNotNull(region);
         basicGetCache().getLogger().info("starting put()");
@@ -225,12 +216,9 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     return performPut;
   }
 
-  private CacheSerializableRunnable invalidateFromServer(final String key)
-  {
-    CacheSerializableRunnable performInvalidate = new CacheSerializableRunnable(
-        "invalidateFromServer") {
-      public void run2() throws CacheException
-      {
+  private CacheSerializableRunnable invalidateFromServer(final String key) {
+    CacheSerializableRunnable performInvalidate = new CacheSerializableRunnable("invalidateFromServer") {
+      public void run2() throws CacheException {
         Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
         assertNotNull(region);
         region.invalidate(key);
@@ -242,12 +230,9 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     return performInvalidate;
   }
 
-  private CacheSerializableRunnable destroyFromServer(final String key)
-  {
-    CacheSerializableRunnable performDestroy = new CacheSerializableRunnable(
-        "performDestroy") {
-      public void run2() throws CacheException
-      {
+  private CacheSerializableRunnable destroyFromServer(final String key) {
+    CacheSerializableRunnable performDestroy = new CacheSerializableRunnable("performDestroy") {
+      public void run2() throws CacheException {
         Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
         assertNotNull(region);
         region.destroy(key);
@@ -259,47 +244,44 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     return performDestroy;
   }
 
-  private CacheSerializableRunnable checkNoEvents(final int expectedEvents)
-  {
-    CacheSerializableRunnable checkEvents = new CacheSerializableRunnable(
-        "checkEvents") {
+  private CacheSerializableRunnable checkNoEvents(final int expectedEvents) {
+    CacheSerializableRunnable checkEvents = new CacheSerializableRunnable("checkEvents") {
       final int interval = 200; // millis
-      public void run2() throws CacheException {
-          WaitCriterion w = new WaitCriterion() {
-            public boolean done() {
-              synchronized (HAConflationDUnitTest.LOCK) {
 
-                if (!lastKeyArrived) {
-                  try {
-                    LOCK.wait(interval);
-                  }
-                  catch (InterruptedException e) {
-                    fail("interrupted");
-                  }
+      public void run2() throws CacheException {
+        WaitCriterion w = new WaitCriterion() {
+          public boolean done() {
+            synchronized (HAConflationDUnitTest.LOCK) {
+
+              if (!lastKeyArrived) {
+                try {
+                  LOCK.wait(interval);
+                } catch (InterruptedException e) {
+                  fail("interrupted");
                 }
               }
-              return lastKeyArrived;
             }
-            public String description() {
-              return "expected " + expectedEvents + " events but received " + actualNoEvents;
-            }
-          };
-          
-          Wait.waitForCriterion(w, 3 * 60 * 1000, interval, true);
+            return lastKeyArrived;
+          }
+
+          public String description() {
+            return "expected " + expectedEvents + " events but received " + actualNoEvents;
+          }
+        };
+
+        Wait.waitForCriterion(w, 3 * 60 * 1000, interval, true);
       }
     };
     return checkEvents;
   }
 
-  public static void makeDispatcherSlow()
-  {
+  public static void makeDispatcherSlow() {
 
     System.setProperty("slowStartTimeForTesting", "15000");
 
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     assertNotNull(ds);
     ds.disconnect();
@@ -308,9 +290,7 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(basicGetCache());
   }
 
-  public static void createClientCache(String host, Integer port1, Boolean isListenerPresent)
-      throws Exception
-  {
+  public static void createClientCache(String host, Integer port1, Boolean isListenerPresent) throws Exception {
     int PORT1 = port1.intValue();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -338,9 +318,7 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
 
   }
 
-  public static Integer createServerCache(Boolean isListenerPresent)
-      throws Exception
-  {
+  public static Integer createServerCache(Boolean isListenerPresent) throws Exception {
     new HAConflationDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -352,7 +330,7 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     }
     RegionAttributes attrs = factory.create();
     basicGetCache().createRegion(regionName, attrs);
-    CacheServerImpl server = (CacheServerImpl)basicGetCache().addCacheServer();
+    CacheServerImpl server = (CacheServerImpl) basicGetCache().addCacheServer();
     assertNotNull(server);
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     server.setPort(port);
@@ -363,82 +341,69 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
 
 }
 
-class HAClientCountEventListener implements
-    CacheListener, Declarable
-{
+class HAClientCountEventListener implements CacheListener, Declarable {
 
-  public void afterCreate(EntryEvent event)
-  {
-    String key = (String)event.getKey();
+  public void afterCreate(EntryEvent event) {
+    String key = (String) event.getKey();
     if (key.equals(HAConflationDUnitTest.LAST_KEY)) {
       synchronized (HAConflationDUnitTest.LOCK) {
         HAConflationDUnitTest.lastKeyArrived = true;
         HAConflationDUnitTest.LOCK.notifyAll();
       }
-    }
-    else {
+    } else {
       HAConflationDUnitTest.actualNoEvents++;
     }
 
   }
 
-  public void afterUpdate(EntryEvent event)
-  {
+  public void afterUpdate(EntryEvent event) {
 
     HAConflationDUnitTest.actualNoEvents++;
 
   }
 
-  public void afterInvalidate(EntryEvent event)
-  {
+  public void afterInvalidate(EntryEvent event) {
 
     HAConflationDUnitTest.actualNoEvents++;
 
   }
 
-  public void afterDestroy(EntryEvent event)
-  {
+  public void afterDestroy(EntryEvent event) {
     HAConflationDUnitTest.actualNoEvents++;
 
   }
 
-  public void afterRegionInvalidate(RegionEvent event)
-  {
+  public void afterRegionInvalidate(RegionEvent event) {
     // TODO Auto-generated method stub
 
   }
 
-  public void afterRegionDestroy(RegionEvent event)
-  {
+  public void afterRegionDestroy(RegionEvent event) {
     // TODO Auto-generated method stub
 
   }
-  public void afterRegionClear(RegionEvent event)
-  {
+
+  public void afterRegionClear(RegionEvent event) {
     // TODO Auto-generated method stub
 
   }
-  public void afterRegionCreate(RegionEvent event)
-  {
+
+  public void afterRegionCreate(RegionEvent event) {
     // TODO Auto-generated method stub
 
   }
-  public void afterRegionLive(RegionEvent event)
-  {
+
+  public void afterRegionLive(RegionEvent event) {
     // TODO NOT Auto-generated method stub, added by vrao
 
   }
 
-
-
-  public void close()
-  {
+  public void close() {
     // TODO Auto-generated method stub
 
   }
 
-  public void init(Properties props)
-  {
+  public void init(Properties props) {
     // TODO Auto-generated method stub
 
   }

@@ -26,12 +26,12 @@ public class Block {
   public String getHeading() {
     return heading;
   }
-  
+
   public Block setHeading(String heading) {
     this.heading = heading;
     return this;
   }
-  
+
   public Row[] getRows() {
     return rows;
   }

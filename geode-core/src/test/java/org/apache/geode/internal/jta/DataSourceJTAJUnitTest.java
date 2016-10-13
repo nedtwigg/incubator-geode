@@ -64,15 +64,13 @@ public class DataSourceJTAJUnitTest {
   public static void beforeClass() throws java.lang.Exception {
     disconnectDS();
   }
-  
+
   static void disconnectDS() {
     DistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
     if (ds != null) {
       ds.disconnect();
     }
   }
-
-  
 
   @Test
   public void testInsertUpdateOnSimpleAndXAdsCommit() throws Exception {
@@ -90,7 +88,7 @@ public class DataSourceJTAJUnitTest {
     // call to init method
     try {
       Properties props = new Properties();
-      String path= TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
+      String path = TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
       props.setProperty(CACHE_XML_FILE, path);
       ds = connect(props);
       tableName = CacheUtils.init(ds, "JTATest");
@@ -159,16 +157,14 @@ public class DataSourceJTAJUnitTest {
       // insert XA_INSERTS rows into timestamped table
       for (int i = 0; i < XA_INSERTS; i++) {
         tblIDFld = tblIDFld + i;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         xa_stmt.executeUpdate(sqlSTR);
       }
 
       // insert SM_INSERTS rows into timestamped table
       for (int j = 0; j < SM_INSERTS; j++) {
         tblIDFld = tblIDFld + j + 1;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         sm_stmt.executeUpdate(sqlSTR);
       }
 
@@ -202,20 +198,17 @@ public class DataSourceJTAJUnitTest {
 
     try {
       int num_rows = jtaObj.getRows(tblName);
-      System.out.println(
-          "\nNumber of rows in Table under tests are: " + num_rows);
+      System.out.println("\nNumber of rows in Table under tests are: " + num_rows);
 
       // determine what got commited and what not
 
       switch (num_rows) {
       case SM_INSERTS + XA_INSERTS:
-        System.out.println(
-            "Both Simple and XA DataSource transactions got committed!!");
+        System.out.println("Both Simple and XA DataSource transactions got committed!!");
         break;
 
       case SM_INSERTS:
-        System.out.println(
-            "Only Simple DataSource transactions got committed!");
+        System.out.println("Only Simple DataSource transactions got committed!");
         break;
 
       case XA_INSERTS:
@@ -223,8 +216,7 @@ public class DataSourceJTAJUnitTest {
         break;
 
       default:
-        System.out.println(
-            "Looks like that things are messed up...look into it");
+        System.out.println("Looks like that things are messed up...look into it");
 
       }
 
@@ -248,7 +240,7 @@ public class DataSourceJTAJUnitTest {
       ds.disconnect();
     }
   }
-  
+
   /**
    * The following test scenario is to test rollback. In this test scenario it
    * is tested that if transactions are rolled back then XA datasource
@@ -271,7 +263,7 @@ public class DataSourceJTAJUnitTest {
     // call to init method
     try {
       Properties props = new Properties();
-      String path= TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
+      String path = TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
       props.setProperty(CACHE_XML_FILE, path);
       ds = connect(props);
       tableName = CacheUtils.init(ds, "JTATest");
@@ -340,16 +332,14 @@ public class DataSourceJTAJUnitTest {
       // insert XA_INSERTS rows into timestamped table
       for (int i = 0; i < XA_INSERTS; i++) {
         tblIDFld = tblIDFld + i;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         xa_stmt.executeUpdate(sqlSTR);
       }
 
       // insert SM_INSERTS rows into timestamped table
       for (int j = 0; j < SM_INSERTS; j++) {
         tblIDFld = tblIDFld + j + 1;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         sm_stmt.executeUpdate(sqlSTR);
       }
 
@@ -383,20 +373,17 @@ public class DataSourceJTAJUnitTest {
 
     try {
       int num_rows = jtaObj.getRows(tblName);
-      System.out.println(
-          "\nNumber of rows in Table under tests are: " + num_rows);
+      System.out.println("\nNumber of rows in Table under tests are: " + num_rows);
 
       // determine what got commited and what not
 
       switch (num_rows) {
       case 0:
-        System.out.println(
-            "Both Simple and XA DataSource transactions got rolled back!!");
+        System.out.println("Both Simple and XA DataSource transactions got rolled back!!");
         break;
 
       case SM_INSERTS:
-        System.out.println(
-            "Only Simple DataSource transactions got committed!");
+        System.out.println("Only Simple DataSource transactions got committed!");
         break;
 
       case XA_INSERTS:
@@ -404,8 +391,7 @@ public class DataSourceJTAJUnitTest {
         break;
 
       default:
-        System.out.println(
-            "Looks like that things are messed up...look into it");
+        System.out.println("Looks like that things are messed up...look into it");
 
       }
 
@@ -582,7 +568,7 @@ public class DataSourceJTAJUnitTest {
     // call to init method
     try {
       Properties props = new Properties();
-      String path= TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
+      String path = TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
       props.setProperty(CACHE_XML_FILE, path);
       ds = connect(props);
       tableName = CacheUtils.init(ds, "JTATest");
@@ -645,8 +631,7 @@ public class DataSourceJTAJUnitTest {
       // insert XA_INSERTS rows into timestamped table
       for (int i = 0; i < XA_INSERTS; i++) {
         tblIDFld = tblIDFld + i;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         stmt.executeUpdate(sqlSTR);
       }
 
@@ -685,8 +670,7 @@ public class DataSourceJTAJUnitTest {
 
     try {
       int num_rows = jtaObj.getRows(tblName);
-      System.out.println(
-          "\nNumber of rows in Table under tests are: " + num_rows);
+      System.out.println("\nNumber of rows in Table under tests are: " + num_rows);
 
       // determine what got commited and what not
 
@@ -696,13 +680,11 @@ public class DataSourceJTAJUnitTest {
         break;
 
       case XA_INSERTS:
-        System.out.println(
-            "Inserts are committed to database...they should not!!:-(");
+        System.out.println("Inserts are committed to database...they should not!!:-(");
         break;
 
       default:
-        System.out.println(
-            "Looks like that things are messed up...look into it");
+        System.out.println("Looks like that things are messed up...look into it");
 
       }
 
@@ -746,7 +728,7 @@ public class DataSourceJTAJUnitTest {
     // call to init method
     try {
       Properties props = new Properties();
-      String path= TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
+      String path = TestUtil.getResourcePath(CacheUtils.class, "cachejta.xml");
       props.setProperty(CACHE_XML_FILE, path);
       ds = connect(props);
       tableName = CacheUtils.init(ds, "JTATest");
@@ -799,8 +781,7 @@ public class DataSourceJTAJUnitTest {
       String sqlSTR;
       for (int i = 0; i < XA_INSERTS; i++) {
         tblIDFld = tblIDFld + i;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         stmt1.executeUpdate(sqlSTR);
       }
       stmt1.close();
@@ -812,8 +793,7 @@ public class DataSourceJTAJUnitTest {
       Statement stmt2 = xaCon2.createStatement();
       for (int i = 0; i < XA_INSERTS; i++) {
         tblIDFld = tblIDFld + i + 5;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         stmt2.executeUpdate(sqlSTR);
       }
       stmt2.close();
@@ -825,8 +805,7 @@ public class DataSourceJTAJUnitTest {
       Statement stmt3 = xaCon3.createStatement();
       for (int i = 0; i < XA_INSERTS; i++) {
         tblIDFld = tblIDFld + 10;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'"
-            + tblNameFld + "'" + ")";
+        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         stmt3.executeUpdate(sqlSTR);
       }
       stmt3.close();
@@ -857,8 +836,7 @@ public class DataSourceJTAJUnitTest {
 
     try {
       int num_rows = jtaObj.getRows(tblName);
-      System.out.println(
-          "\nNumber of rows in Table under tests are: " + num_rows);
+      System.out.println("\nNumber of rows in Table under tests are: " + num_rows);
 
       // determine what got commited and what not
 
@@ -868,13 +846,11 @@ public class DataSourceJTAJUnitTest {
         break;
 
       case 3 * XA_INSERTS:
-        System.out.println(
-            "All inserts successfully are committed to database");
+        System.out.println("All inserts successfully are committed to database");
         break;
 
       default:
-        System.out.println(
-            "Looks like that things are messed up...look into it");
+        System.out.println("Looks like that things are messed up...look into it");
 
       }
 
@@ -1014,7 +990,7 @@ public class DataSourceJTAJUnitTest {
   private static void fail(String str, Throwable thr) {
     throw new AssertionError(str, thr);
   }
-  
+
   private static void fail(String str) {
     throw new AssertionError(str);
   }

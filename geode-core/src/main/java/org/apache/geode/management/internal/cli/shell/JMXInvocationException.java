@@ -23,7 +23,7 @@ package org.apache.geode.management.internal.cli.shell;
  * @since GemFire 7.0
  */
 public class JMXInvocationException extends RuntimeException {
-  
+
   private static final long serialVersionUID = -4265451314790394366L;
 
   public JMXInvocationException(String message, Throwable cause) {

@@ -33,7 +33,7 @@ public class ExecExecutor extends TransactionExecutor {
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
 
-    CacheTransactionManager txm = context.getCacheTransactionManager();    
+    CacheTransactionManager txm = context.getCacheTransactionManager();
 
     if (!context.hasTransaction()) {
       command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
@@ -71,7 +71,7 @@ public class ExecExecutor extends TransactionExecutor {
     response.writeBytes(Coder.intToBytes(cQ.size()));
     response.writeBytes(Coder.CRLFar);
 
-    for (Command c: cQ) {
+    for (Command c : cQ) {
       ByteBuf r = c.getResponse();
       response.writeBytes(r);
     }
@@ -79,7 +79,7 @@ public class ExecExecutor extends TransactionExecutor {
   }
 
   private boolean hasError(Queue<Command> queue) {
-    for (Command c: queue) {
+    for (Command c : queue) {
       if (c.hasError())
         return true;
     }

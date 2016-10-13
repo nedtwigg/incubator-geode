@@ -51,8 +51,7 @@ public class TestHeapThresholdObserver {
     return thresholdInBytes;
   }
 
-  public void setNotificationInfo(int threshold, long maxMemory,
-      long thresholdInBytes, long delta) {
+  public void setNotificationInfo(int threshold, long maxMemory, long thresholdInBytes, long delta) {
     this.threshold = threshold;
     this.maxMemory = maxMemory;
     this.thresholdInBytes = thresholdInBytes;

@@ -69,7 +69,7 @@ public interface MemberHealthConfig {
    * value is 0.20 (twenty percent of messages retransmitted)
    */
   public static final double DEFAULT_MAX_RETRANSMISSION_RATIO = 0.20;
-  
+
   ///////////////////////  Instance Methods  ///////////////////////
 
   /**
@@ -87,7 +87,7 @@ public interface MemberHealthConfig {
    * @see #getMaxVMProcessSize
    */
   public void setMaxVMProcessSize(long size);
-  
+
   /**
    * Returns the maximum number of enqueued incoming or outgoing
    * messages that a healthy member of a distributed system can have.
@@ -130,12 +130,12 @@ public interface MemberHealthConfig {
    * @see #DEFAULT_MAX_RETRANSMISSION_RATIO
    */
   public double getMaxRetransmissionRatio();
-  
+
   /**
    * Sets the maximum ratio of multicast retransmissions / total multicast
    * messages.
    * @see #getMaxRetransmissionRatio
    */
   public void setMaxRetransmissionRatio(double ratio);
-   
+
 }

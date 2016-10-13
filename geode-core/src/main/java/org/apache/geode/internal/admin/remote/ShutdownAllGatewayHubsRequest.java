@@ -37,7 +37,7 @@ import org.apache.geode.distributed.internal.ReplyMessage;
  *
  */
 public class ShutdownAllGatewayHubsRequest extends DistributionMessage {
-  
+
   protected int rpid;
 
   @Override

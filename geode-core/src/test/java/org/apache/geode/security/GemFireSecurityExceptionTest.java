@@ -67,16 +67,16 @@ public class GemFireSecurityExceptionTest {
 
   private void assertPreConditions() {
     catchException(this).clone(this.nonSerializableNamingException);
-    assertThat((Throwable)caughtException()).isNotNull();
-    assertThat((Throwable)caughtException().getCause()).isInstanceOf(NotSerializableException.class);
+    assertThat((Throwable) caughtException()).isNotNull();
+    assertThat((Throwable) caughtException().getCause()).isInstanceOf(NotSerializableException.class);
 
     catchException(this).clone(this.serializableNamingException);
-    assertThat((Throwable)caughtException()).isNull();
+    assertThat((Throwable) caughtException()).isNull();
 
     assertThat(this.nonSerializableResolvedObj).isNotInstanceOf(Serializable.class);
 
     catchException(this).clone(this.serializableResolvedObj);
-    assertThat((Throwable)caughtException()).isNull();
+    assertThat((Throwable) caughtException()).isNull();
   }
 
   @Test
@@ -152,8 +152,10 @@ public class GemFireSecurityExceptionTest {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if (this == o)
+        return true;
+      if (o == null || getClass() != o.getClass())
+        return false;
 
       SerializableObject that = (SerializableObject) o;
 

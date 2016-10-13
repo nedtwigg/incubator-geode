@@ -40,7 +40,7 @@ public class TXWriterTestCase {
   protected int failedCommits = 0;
   protected int afterCommits = 0;
   protected int afterRollbacks = 0;
-  
+
   protected GemFireCacheImpl cache;
   protected CacheTransactionManager txMgr;
   protected Region<String, String> region;
@@ -48,13 +48,14 @@ public class TXWriterTestCase {
   protected void createCache() throws CacheException {
     Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0"); // loner
-    this.cache = (GemFireCacheImpl)CacheFactory.create(DistributedSystem.connect(p));
+    this.cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(p));
     AttributesFactory<?, ?> af = new AttributesFactory<String, String>();
     af.setScope(Scope.DISTRIBUTED_NO_ACK);
     af.setIndexMaintenanceSynchronous(true);
     this.region = this.cache.createRegion("TXTest", af.create());
     this.txMgr = this.cache.getCacheTransactionManager();
   }
+
   private void closeCache() {
     if (this.cache != null) {
       if (this.txMgr != null) {
@@ -70,7 +71,7 @@ public class TXWriterTestCase {
       c.close();
     }
   }
-  
+
   @Before
   public void setUp() {
     createCache();
@@ -80,14 +81,14 @@ public class TXWriterTestCase {
   public void tearDown() {
     try {
       if (this.txMgr != null) {
-        ((CacheTransactionManager)this.txMgr).setWriter(null);
-        ((CacheTransactionManager)this.txMgr).setListener(null);
+        ((CacheTransactionManager) this.txMgr).setWriter(null);
+        ((CacheTransactionManager) this.txMgr).setListener(null);
       }
     } finally {
       closeCache();
     }
   }
-  
+
   @AfterClass
   public static void afterClass() {
     InternalDistributedSystem ids = InternalDistributedSystem.getAnyInstance();
@@ -99,41 +100,77 @@ public class TXWriterTestCase {
   protected void installCacheListenerAndWriter() {
     AttributesMutator<String, String> mutator = this.region.getAttributesMutator();
     mutator.setCacheListener(new CacheListenerAdapter<String, String>() {
-        public void close() {cbCount++;}
-        public void afterCreate(EntryEvent<String, String> event) {cbCount++;}
-        public void afterUpdate(EntryEvent<String, String> event) {cbCount++;}
-        public void afterInvalidate(EntryEvent<String, String> event) {cbCount++;}
-        public void afterDestroy(EntryEvent<String, String> event) {cbCount++;}
-        public void afterRegionInvalidate(RegionEvent<String, String> event) {cbCount++;}
-        public void afterRegionDestroy(RegionEvent<String, String> event) {cbCount++;}
-      });
+      public void close() {
+        cbCount++;
+      }
+
+      public void afterCreate(EntryEvent<String, String> event) {
+        cbCount++;
+      }
+
+      public void afterUpdate(EntryEvent<String, String> event) {
+        cbCount++;
+      }
+
+      public void afterInvalidate(EntryEvent<String, String> event) {
+        cbCount++;
+      }
+
+      public void afterDestroy(EntryEvent<String, String> event) {
+        cbCount++;
+      }
+
+      public void afterRegionInvalidate(RegionEvent<String, String> event) {
+        cbCount++;
+      }
+
+      public void afterRegionDestroy(RegionEvent<String, String> event) {
+        cbCount++;
+      }
+    });
     mutator.setCacheWriter(new CacheWriter<String, String>() {
-        public void close() {cbCount++;}
-        public void beforeUpdate(EntryEvent<String, String> event)
-          throws CacheWriterException {cbCount++;}
-        public void beforeCreate(EntryEvent<String, String> event)
-          throws CacheWriterException {cbCount++;}
-        public void beforeDestroy(EntryEvent<String, String> event)
-          throws CacheWriterException {cbCount++;}
-        public void beforeRegionDestroy(RegionEvent<String, String> event)
-          throws CacheWriterException {cbCount++;}
-        public void beforeRegionClear(RegionEvent<String, String> event)
-          throws CacheWriterException {cbCount++;}
-      });
+      public void close() {
+        cbCount++;
+      }
+
+      public void beforeUpdate(EntryEvent<String, String> event) throws CacheWriterException {
+        cbCount++;
+      }
+
+      public void beforeCreate(EntryEvent<String, String> event) throws CacheWriterException {
+        cbCount++;
+      }
+
+      public void beforeDestroy(EntryEvent<String, String> event) throws CacheWriterException {
+        cbCount++;
+      }
+
+      public void beforeRegionDestroy(RegionEvent<String, String> event) throws CacheWriterException {
+        cbCount++;
+      }
+
+      public void beforeRegionClear(RegionEvent<String, String> event) throws CacheWriterException {
+        cbCount++;
+      }
+    });
   }
-  
+
   protected void installTransactionListener() {
-    ((CacheTransactionManager)this.txMgr).setListener(new TransactionListener() {
+    ((CacheTransactionManager) this.txMgr).setListener(new TransactionListener() {
       public void afterFailedCommit(TransactionEvent event) {
         failedCommits++;
       }
+
       public void afterCommit(TransactionEvent event) {
         afterCommits++;
       }
+
       public void afterRollback(TransactionEvent event) {
         afterRollbacks++;
       }
-      public void close() {}
+
+      public void close() {
+      }
     });
   }
 }

@@ -28,55 +28,54 @@ import org.apache.geode.internal.Version;
  *
  * @since GemFire 2.0.2
  */
-public abstract class Acceptor
-{
+public abstract class Acceptor {
   /**
    * Byte meaning that the Socket is being used for 'client to server'
    * communication.
    */
-  public static final byte CLIENT_TO_SERVER = (byte)100;
+  public static final byte CLIENT_TO_SERVER = (byte) 100;
 
   /**
    * Byte meaning that the Socket is being used for 'primary server to client'
    * communication.
    */
-  public static final byte PRIMARY_SERVER_TO_CLIENT = (byte)101;
+  public static final byte PRIMARY_SERVER_TO_CLIENT = (byte) 101;
 
   /**
    * Byte meaning that the Socket is being used for 'seconadry server to client'
    * communication.
    */
-  public static final byte SECONDARY_SERVER_TO_CLIENT = (byte)102;
+  public static final byte SECONDARY_SERVER_TO_CLIENT = (byte) 102;
 
   /**
    * Byte meaning that the Socket is being used for 'gateway to gateway'
    * communication.
    */
-  public static final byte GATEWAY_TO_GATEWAY = (byte)103;
+  public static final byte GATEWAY_TO_GATEWAY = (byte) 103;
 
   /**
    * Byte meaning that the Socket is being used for 'monitor to gateway'
    * communication.
    */
-  public static final byte MONITOR_TO_SERVER = (byte)104;
+  public static final byte MONITOR_TO_SERVER = (byte) 104;
 
   /**
    * Byte meaning that the connection between the server and client was
    * successful.
    */
-  public static final byte SUCCESSFUL_SERVER_TO_CLIENT = (byte)105;
+  public static final byte SUCCESSFUL_SERVER_TO_CLIENT = (byte) 105;
 
   /**
    * Byte meaning that the connection between the server and client was
    * unsuccessful.
    */
-  public static final byte UNSUCCESSFUL_SERVER_TO_CLIENT = (byte)106;
-  
+  public static final byte UNSUCCESSFUL_SERVER_TO_CLIENT = (byte) 106;
+
   /**
    * Byte meaning that the Socket is being used for 'client to server'
    * messages related to a client queue (register interest, create cq, etc.).
    */
-  public static final byte CLIENT_TO_SERVER_FOR_QUEUE = (byte)107;
+  public static final byte CLIENT_TO_SERVER_FOR_QUEUE = (byte) 107;
 
   /**
    * The GFE version of the server.
@@ -110,5 +109,5 @@ public abstract class Acceptor
    * Is this acceptor running (handling connections)?
    */
   public abstract boolean isRunning();
-  
+
 }

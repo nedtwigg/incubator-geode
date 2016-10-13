@@ -42,7 +42,7 @@ import org.apache.geode.GemFireException;
 public class PartitionOfflineException extends GemFireException {
 
   private static final long serialVersionUID = -6471045959318795870L;
-  
+
   private Set<PersistentID> offlineMembers;
 
   public PartitionOfflineException(Set<PersistentID> offlineMembers) {

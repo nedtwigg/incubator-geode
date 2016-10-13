@@ -42,7 +42,7 @@ interface ResourceMonitor {
    * Ask the monitor to stop monitoring.
    */
   public void stopMonitoring();
-  
+
   /**
    * Populate the fields in the profile that are appropriate for this monitor.
    * 

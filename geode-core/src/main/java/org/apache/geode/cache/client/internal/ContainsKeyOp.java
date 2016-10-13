@@ -32,32 +32,26 @@ public class ContainsKeyOp {
    * @param key the entry key to do the containsKey on
    * @return the result of invoking containsKey on the server
    */
-  public static boolean execute(ExecutablePool pool,
-                                String region,
-                                Object key,
-                                MODE mode)
-  {
+  public static boolean execute(ExecutablePool pool, String region, Object key, MODE mode) {
     AbstractOp op = new ContainsKeyOpImpl(region, key, mode);
-    Boolean result = (Boolean)pool.execute(op);
+    Boolean result = (Boolean) pool.execute(op);
     return result.booleanValue();
   }
-                                                               
+
   private ContainsKeyOp() {
     // no instances allowed
   }
-  
+
   private static class ContainsKeyOpImpl extends AbstractOp {
-    
+
     private String region;
     private Object key;
     private final MODE mode;
-    
+
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public ContainsKeyOpImpl(String region,
-                         Object key,
-                         MODE mode) {
+    public ContainsKeyOpImpl(String region, Object key, MODE mode) {
       super(MessageType.CONTAINS_KEY, 3);
       getMessage().addStringPart(region);
       getMessage().addStringOrObjPart(key);
@@ -66,36 +60,39 @@ public class ContainsKeyOp {
       this.key = key;
       this.mode = mode;
     }
+
     @Override
     protected Object processResponse(Message msg) throws Exception {
       return processObjResponse(msg, "containsKey");
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return msgType == MessageType.CONTAINS_KEY_DATA_ERROR;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startContainsKey();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endContainsKeySend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endContainsKey(start, hasTimedOut(), hasFailed());
     }
-    
+
     @Override
     public String toString() {
-      return "ContainsKeyOp(region=" + region + ";key=" + key+";mode="+mode;
+      return "ContainsKeyOp(region=" + region + ";key=" + key + ";mode=" + mode;
     }
   }
-  
+
   public enum MODE {
-    KEY,
-    VALUE_FOR_KEY,
-    VALUE;
+    KEY, VALUE_FOR_KEY, VALUE;
   }
 }

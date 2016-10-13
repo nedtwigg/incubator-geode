@@ -29,8 +29,7 @@ import java.util.*;
  *
  * @since GemFire 3.0
  */
-public abstract class TestCacheListener extends TestCacheCallback
-  implements CacheListener {
+public abstract class TestCacheListener extends TestCacheCallback implements CacheListener {
 
   private List eventHistory = null;
 
@@ -47,9 +46,11 @@ public abstract class TestCacheListener extends TestCacheCallback
       }
     }
   }
+
   private void addEvent(CacheEvent e) {
     addEvent(e, true);
   }
+
   /**
    * Enables collection of event history.
    * @since GemFire 5.0
@@ -59,6 +60,7 @@ public abstract class TestCacheListener extends TestCacheCallback
       this.eventHistory = new ArrayList();
     }
   }
+
   /**
    * Disables collection of events.
    * @since GemFire 5.0
@@ -66,6 +68,7 @@ public abstract class TestCacheListener extends TestCacheCallback
   public void disableEventHistory() {
     this.eventHistory = null;
   }
+
   /**
    * Returns a copy of the list of events collected in this listener's history.
    * Also clears the current history.
@@ -82,16 +85,15 @@ public abstract class TestCacheListener extends TestCacheCallback
       }
     }
   }
+
   public final void afterCreate(EntryEvent event) {
     addEvent(event);
     try {
       afterCreate2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -105,12 +107,10 @@ public abstract class TestCacheListener extends TestCacheCallback
     addEvent(event);
     try {
       afterUpdate2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -124,12 +124,10 @@ public abstract class TestCacheListener extends TestCacheCallback
     addEvent(event);
     try {
       afterInvalidate2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -144,12 +142,10 @@ public abstract class TestCacheListener extends TestCacheCallback
     addEvent(event);
     try {
       afterDestroy2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -167,12 +163,10 @@ public abstract class TestCacheListener extends TestCacheCallback
     addEvent(event);
     try {
       afterRegionInvalidate2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -184,17 +178,16 @@ public abstract class TestCacheListener extends TestCacheCallback
 
   public final void afterRegionDestroy(RegionEvent event) {
     // check argument to see if this is during tearDown
-    if ("teardown".equals(event.getCallbackArgument())) return;
+    if ("teardown".equals(event.getCallbackArgument()))
+      return;
     afterRegionDestroyBeforeAddEvent(event);
     addEvent(event);
     try {
       afterRegionDestroy2(event);
-    }
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       this.callbackError = t;
     }
   }
@@ -202,20 +195,23 @@ public abstract class TestCacheListener extends TestCacheCallback
   public void afterRegionDestroyBeforeAddEvent(RegionEvent event) {
     // do nothing by default
   }
+
   public void afterRegionDestroy2(RegionEvent event) {
     if (!event.getOperation().isClose()) {
       String s = "Unexpected callback invocation";
       throw new UnsupportedOperationException(s);
     }
   }
-  
-  public void afterRegionClear(RegionEvent event ) {
+
+  public void afterRegionClear(RegionEvent event) {
     addEvent(event, false);
   }
-  public void afterRegionCreate(RegionEvent event ) {
+
+  public void afterRegionCreate(RegionEvent event) {
     addEvent(event, false);
   }
-  public void afterRegionLive(RegionEvent event ) {
+
+  public void afterRegionLive(RegionEvent event) {
     addEvent(event, false);
-  }  
+  }
 }

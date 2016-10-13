@@ -30,21 +30,21 @@ import org.apache.geode.cache.RegionEvent;
  *
  * @since GemFire 3.0
  */
-public class CacheWriterAdapter<K,V> implements CacheWriter<K,V> {
+public class CacheWriterAdapter<K, V> implements CacheWriter<K, V> {
 
-  public void beforeCreate(EntryEvent<K,V> event) throws CacheWriterException {
+  public void beforeCreate(EntryEvent<K, V> event) throws CacheWriterException {
   }
 
-  public void beforeDestroy(EntryEvent<K,V> event) throws CacheWriterException {
+  public void beforeDestroy(EntryEvent<K, V> event) throws CacheWriterException {
   }
 
-  public void beforeRegionDestroy(RegionEvent<K,V> event) throws CacheWriterException {
+  public void beforeRegionDestroy(RegionEvent<K, V> event) throws CacheWriterException {
   }
 
-  public void beforeRegionClear(RegionEvent<K,V> event) throws CacheWriterException {
+  public void beforeRegionClear(RegionEvent<K, V> event) throws CacheWriterException {
   }
 
-  public void beforeUpdate(EntryEvent<K,V> event) throws CacheWriterException {
+  public void beforeUpdate(EntryEvent<K, V> event) throws CacheWriterException {
   }
 
   public void close() {

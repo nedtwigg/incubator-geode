@@ -27,7 +27,6 @@ import org.apache.geode.pdx.PdxSerializationException;
  */
 public class PdxInstanceInputStream extends PdxInputStream {
 
-
   public PdxInstanceInputStream(PdxInputStream in, int len) {
     super(in, len);
   }
@@ -35,7 +34,7 @@ public class PdxInstanceInputStream extends PdxInputStream {
   public PdxInstanceInputStream(byte[] bytes) {
     super(bytes);
   }
-  
+
   public PdxInstanceInputStream() {
     // for serialization
   }

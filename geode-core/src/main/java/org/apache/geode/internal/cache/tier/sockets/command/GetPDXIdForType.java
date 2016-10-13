@@ -30,7 +30,6 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import org.apache.geode.pdx.internal.PdxType;
 import org.apache.geode.pdx.internal.TypeRegistry;
 
-
 public class GetPDXIdForType extends BaseCommand {
 
   private final static GetPDXIdForType singleton = new GetPDXIdForType();
@@ -43,8 +42,7 @@ public class GetPDXIdForType extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received get pdx id for type request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
@@ -52,7 +50,7 @@ public class GetPDXIdForType extends BaseCommand {
     int noOfParts = msg.getNumberOfParts();
 
     PdxType type = (PdxType) msg.getPart(0).getObject();
-    
+
     int pdxId;
     try {
       GemFireCacheImpl cache = (GemFireCacheImpl) servConn.getCache();

@@ -40,32 +40,32 @@ import org.jgroups.util.UUID;
  * to Unicast to keep it from retransmitting
  */
 public class InterceptUDP extends Protocol {
-  
+
   static final int MEMBERSHIP_PORT = 12345;
-  
+
   private final short nakackHeaderId = ClassConfigurator.getProtocolId(NAKACK2.class);
   private final short unicastHeaderId = ClassConfigurator.getProtocolId(UNICAST3.class);
-  
+
   UUID uuid;
-//  IpAddress addr;
-//  Map<UUID, IpAddress> addressMap;
+  //  IpAddress addr;
+  //  Map<UUID, IpAddress> addressMap;
   int unicastSentDataMessages;
   int mcastSentDataMessages;
-  
+
   boolean collectMessages = false;
   List<Message> collectedMessages = new LinkedList<>();
-  
+
   public InterceptUDP() {
-//    uuid = new UUID();
-//    try {
-//      addr = new IpAddress("localhost", MEMBERSHIP_PORT);
-//    } catch (UnknownHostException e) {
-//      throw new RuntimeException("unexpected exception", e);
-//    }
-//    addressMap = new HashMap<>();
-//    addressMap.put(uuid, addr);
+    //    uuid = new UUID();
+    //    try {
+    //      addr = new IpAddress("localhost", MEMBERSHIP_PORT);
+    //    } catch (UnknownHostException e) {
+    //      throw new RuntimeException("unexpected exception", e);
+    //    }
+    //    addressMap = new HashMap<>();
+    //    addressMap.put(uuid, addr);
   }
-  
+
   @Override
   public Object up(Event evt) {
     return up_prot.up(evt);
@@ -75,15 +75,15 @@ public class InterceptUDP extends Protocol {
   public Object down(Event evt) {
     switch (evt.getType()) {
     case Event.MSG:
-      handleMessage((Message)evt.getArg());
+      handleMessage((Message) evt.getArg());
       return null;
     case Event.SET_LOCAL_ADDRESS:
-      uuid=(UUID)evt.getArg();
+      uuid = (UUID) evt.getArg();
       break;
     }
     return down_prot.down(evt);
   }
-  
+
   private void handleMessage(Message msg) {
     if (collectMessages) {
       collectedMessages.add(msg);
@@ -94,7 +94,7 @@ public class InterceptUDP extends Protocol {
     } else {
       o = msg.getHeader(unicastHeaderId);
       if (o != null) {
-        UNICAST3.Header hdr = (UNICAST3.Header)o;
+        UNICAST3.Header hdr = (UNICAST3.Header) o;
         switch (hdr.type()) {
         case UNICAST3.Header.DATA:
           unicastSentDataMessages++;

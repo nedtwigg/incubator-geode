@@ -59,20 +59,14 @@ public class MBeanSecurityJUnitTest {
    */
   @Test
   @JMXConnectionConfiguration(user = "super-user", password = "1234567")
-  public void testNoAccessWithWhoever() throws Exception{
+  public void testNoAccessWithWhoever() throws Exception {
     MBeanServerConnection con = connectionRule.getMBeanServerConnection();
-    assertThatThrownBy(
-        () -> con.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo"))
-    ).isInstanceOf(SecurityException.class);
+    assertThatThrownBy(() -> con.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo"))).isInstanceOf(SecurityException.class);
 
-    assertThatThrownBy(
-        () -> con.unregisterMBean(new ObjectName("GemFire", "name", "foo"))
-    ).isInstanceOf(SecurityException.class);
+    assertThatThrownBy(() -> con.unregisterMBean(new ObjectName("GemFire", "name", "foo"))).isInstanceOf(SecurityException.class);
 
     // user is allowed to create beans of other domains
-    assertThatThrownBy(
-        () -> con.createMBean("FakeClassName", new ObjectName("OtherDomain", "name", "foo"))
-    ).isInstanceOf(ReflectionException.class);
+    assertThatThrownBy(() -> con.createMBean("FakeClassName", new ObjectName("OtherDomain", "name", "foo"))).isInstanceOf(ReflectionException.class);
   }
 
   /**
@@ -93,21 +87,17 @@ public class MBeanSecurityJUnitTest {
    * These calls does not go through the MBeanServerWrapper authentication, therefore is not throwing the SecurityExceptions
    */
   @Test
-  public void testLocalCalls() throws Exception{
+  public void testLocalCalls() throws Exception {
     MBeanServer server = MBeanJMXAdapter.mbeanServer;
-    assertThatThrownBy(
-        () -> server.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo"))
-    ).isInstanceOf(ReflectionException.class);
+    assertThatThrownBy(() -> server.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo"))).isInstanceOf(ReflectionException.class);
 
     MBeanJMXAdapter adapter = new MBeanJMXAdapter();
-    assertThatThrownBy(
-        () -> adapter.registerMBean(mock(DynamicMBean.class), new ObjectName("MockDomain", "name", "mock"), false)
-    ).isInstanceOf(ManagementException.class);
+    assertThatThrownBy(() -> adapter.registerMBean(mock(DynamicMBean.class), new ObjectName("MockDomain", "name", "mock"), false)).isInstanceOf(ManagementException.class);
   }
 
   @Test
   @JMXConnectionConfiguration(user = "stranger", password = "1234567")
-  public void testServerSideCalls(){
+  public void testServerSideCalls() {
     // calls through ManagementService is not going through authorization checks
     ManagementService service = ManagementService.getManagementService(serverRule.getCache());
     MemberMXBean bean = service.getMemberMXBean();

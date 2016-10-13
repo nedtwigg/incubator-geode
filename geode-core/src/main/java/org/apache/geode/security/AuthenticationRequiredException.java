@@ -24,7 +24,7 @@ package org.apache.geode.security;
  * @since GemFire 5.5
  */
 public class AuthenticationRequiredException extends GemFireSecurityException {
-private static final long serialVersionUID = 4675976651103154919L;
+  private static final long serialVersionUID = 4675976651103154919L;
 
   /**
    * Constructs instance of <code>NotAuthenticatedException</code> with error

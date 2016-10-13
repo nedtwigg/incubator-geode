@@ -29,41 +29,48 @@ import java.io.Serializable;
  *
  */
 public class ComparableWrapper implements Comparable, Serializable {
-    private int val;
-    /** Creates a new instance of ComparableWrapper */
-    public ComparableWrapper() {
+  private int val;
+
+  /** Creates a new instance of ComparableWrapper */
+  public ComparableWrapper() {
+  }
+
+  public ComparableWrapper(int x) {
+    this.val = x;
+  }
+
+  public int getVal() {
+    return this.val;
+  }
+
+  public int hashCode() {
+    return val;
+  }
+
+  public int compareTo(Object obj) {
+    if (!(obj instanceof ComparableWrapper)) {
+      throw new ClassCastException("Can't compare Object " + obj + " : Not of type ComparableWrapper");
+    } else {
+      ComparableWrapper cwObj = (ComparableWrapper) obj;
+      if (cwObj.getVal() == this.val) {
+        return 0;
+      } else if (cwObj.getVal() > this.val) {
+        return -1;
+      } else
+        return 1;
     }
-    public ComparableWrapper(int x){
-        this.val=x;
+  }
+
+  public boolean equals(Object obj) {
+    if (!(obj instanceof ComparableWrapper)) {
+      return false;
+    } else {
+      ComparableWrapper cwObj = (ComparableWrapper) obj;
+      if (cwObj.getVal() == this.val) {
+        return true;
+      } else {
+        return false;
+      }
     }
-    public int getVal() {
-        return this.val;
-    }
-    public int hashCode() {
-        return val;
-    }
-    public int compareTo(Object obj) {
-        if(!(obj instanceof ComparableWrapper)){
-            throw new ClassCastException("Can't compare Object " + obj + " : Not of type ComparableWrapper");
-        } else {
-           ComparableWrapper cwObj = (ComparableWrapper) obj;
-           if(cwObj.getVal() == this.val) {
-             return 0;   
-           } else if(cwObj.getVal() > this.val ) {
-               return -1;
-           } else return 1;
-        }
-    }
-    public boolean equals(Object obj) {
-        if(!(obj instanceof ComparableWrapper)){
-          return false;
-        } else {
-           ComparableWrapper cwObj = (ComparableWrapper) obj;
-           if(cwObj.getVal() == this.val) {
-             return true;   
-           } else {
-             return false;  
-           } 
-        }
-    }
+  }
 }

@@ -35,13 +35,12 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
   }
 
   @Override
-  protected DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled,
-      RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache) {
+  protected DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled, RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache) {
     DistributedRegion region = new DistributedRegion("testRegion", ra, null, cache, ira);
     if (isConcurrencyChecksEnabled) {
       region.enableConcurrencyChecks();
     }
-    
+
     // since it is a real region object, we need to tell mockito to monitor it
     region = spy(region);
 
@@ -49,7 +48,7 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
     doNothing().when(region).distributeDestroy(any(), any());
     doNothing().when(region).distributeInvalidate(any());
     doNothing().when(region).distributeUpdateEntryVersion(any());
-    
+
     return region;
   }
 
@@ -96,6 +95,5 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
       verify(region, never()).distributeUpdateEntryVersion(eq(event));
     }
   }
-  
-}
 
+}

@@ -46,8 +46,8 @@ public class TemporaryResultSetFactoryJUnitTest {
     set.add(4);
     set.add(3);
     set.add(2);
-    
-    assertItrEquals(set.iterator(), 1,2, 3, 4);
+
+    assertItrEquals(set.iterator(), 1, 2, 3, 4);
   }
 
   @Test
@@ -59,7 +59,7 @@ public class TemporaryResultSetFactoryJUnitTest {
     set.add(3);
     set.add(2);
 
-    assertItrEquals(set.iterator(), 1,2, 2,3, 4);
+    assertItrEquals(set.iterator(), 1, 2, 2, 3, 4);
   }
 
   @Test
@@ -71,8 +71,8 @@ public class TemporaryResultSetFactoryJUnitTest {
     set.add(3);
     set.add(2);
 
-    assertItrEquals(set.iterator(), 1,2, 4,3, 2);
-    assertItrEquals(set.iterator(2), 4,3, 2);
+    assertItrEquals(set.iterator(), 1, 2, 4, 3, 2);
+    assertItrEquals(set.iterator(2), 4, 3, 2);
   }
 
   @Test
@@ -83,12 +83,12 @@ public class TemporaryResultSetFactoryJUnitTest {
     put("i2", "r2", "v4", map, expected);
     put("i4", "r4", "v4", map, expected);
     put("i2", "r5", "v5", map, expected);
-    
+
     assertItrEquals(map.keyIterator(), "r1", "r2", "r5", "r4");
     assertItrEquals(map.keyIterator("i2", true, "i3", true), "r2", "r5");
     assertItrEquals(map.keyIterator("i2", true, "i2", true), "r2", "r5");
     assertItrEquals(map.getKey("i2"), "r2", "r5");
-    
+
     //See if we can get an entry range
     assertEntryEquals(map.iterator("i2", true, "i4", true), expected.tailMap(new Pair("i1", "r2")));
   }
@@ -98,27 +98,27 @@ public class TemporaryResultSetFactoryJUnitTest {
     expected.put(new Pair(ikey, rkey), value);
   }
 
-  private void assertItrEquals(CloseableIterator<CachedDeserializable> iterator, Object ... values) {
+  private void assertItrEquals(CloseableIterator<CachedDeserializable> iterator, Object... values) {
     ArrayList actual = new ArrayList();
-    
-    while(iterator.hasNext()) {
+
+    while (iterator.hasNext()) {
       actual.add(iterator.next().getDeserializedForReading());
     }
-    
+
     assertEquals(Arrays.asList(values), actual);
   }
-  
+
   private void assertEntryEquals(CloseableIterator<IndexEntry> closeableIterator, Map expected) {
     LinkedHashMap actual = new LinkedHashMap();
-    
-    while(closeableIterator.hasNext()) {
+
+    while (closeableIterator.hasNext()) {
       IndexEntry entry = closeableIterator.next();
       Object ikey = entry.getKey().getDeserializedForReading();
       Object rkey = entry.getRegionKey().getDeserializedForReading();
       Object value = entry.getValue().getDeserializedForReading();
       actual.put(new Pair(ikey, rkey), value);
     }
-    
+
     assertEquals(expected, actual);
   }
 }

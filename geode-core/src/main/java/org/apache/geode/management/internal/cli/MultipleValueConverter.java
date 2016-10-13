@@ -53,7 +53,5 @@ public interface MultipleValueConverter<T> extends Converter<T> {
    * @param target
    * @return required Data
    */
-  boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String[] existingData, String context,
-      MethodTarget target);
+  boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String[] existingData, String context, MethodTarget target);
 }

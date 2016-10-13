@@ -22,13 +22,12 @@ import java.util.SortedMap;
  *
  */
 public class Vertex implements Comparable<Vertex> {
-  
+
   private final Graph graph;
   private final String name;
   private final long timestamp;
   private final String state;
-  
-  
+
   public Vertex(Graph graph, String source, String state, long timestamp) {
     this.graph = graph;
     this.name = source;
@@ -36,20 +35,18 @@ public class Vertex implements Comparable<Vertex> {
     this.timestamp = timestamp;
   }
 
-
   public String getName() {
     return name;
   }
 
-
   public long getTimestamp() {
     return timestamp;
   }
-  
+
   public String getState() {
     return state;
   }
-  
+
   @Override
   public String toString() {
     return name;
@@ -90,31 +87,27 @@ public class Vertex implements Comparable<Vertex> {
   }
 
   public int compareTo(Vertex o) {
-    int difference = o.name == null ? (this.name == null ? 0 : -1)
-        : (this.name == null ? 1 : 0);
-    if(difference != 0) {
+    int difference = o.name == null ? (this.name == null ? 0 : -1) : (this.name == null ? 1 : 0);
+    if (difference != 0) {
       return difference;
     }
     difference = o.name.compareTo(this.name);
-    if(difference != 0) {
+    if (difference != 0) {
       return difference;
     }
-    difference = o.timestamp > this.timestamp ? 1 
-        : (o.timestamp == this.timestamp ? 0 : -1);
-    if(difference != 0) {
+    difference = o.timestamp > this.timestamp ? 1 : (o.timestamp == this.timestamp ? 0 : -1);
+    if (difference != 0) {
       return difference;
     }
-    difference = o.state == null ? (this.state == null ? 0 : -1)
-        : (this.state == null ? 1 : o.state.compareTo(this.state));
+    difference = o.state == null ? (this.state == null ? 0 : -1) : (this.state == null ? 1 : o.state.compareTo(this.state));
 
     return difference;
   }
 
-
   public Vertex getNextVertexOnDest() {
     SortedMap<Long, Vertex> map = graph.getIndexedVertices().get(name);
     SortedMap<Long, Vertex> tailMap = map.tailMap(timestamp + 1);
-    if(tailMap.isEmpty()) {
+    if (tailMap.isEmpty()) {
       return null;
     } else {
       return tailMap.get(tailMap.firstKey());

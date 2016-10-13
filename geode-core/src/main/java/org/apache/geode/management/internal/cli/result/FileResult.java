@@ -98,8 +98,7 @@ public class FileResult implements Result {
   }
 
   @Override
-  public void saveIncomingFiles(String directory) 
-      throws UnsupportedOperationException, IOException {
+  public void saveIncomingFiles(String directory) throws UnsupportedOperationException, IOException {
     // dump file data if any
     CliUtil.bytesToFiles(localFileData, directory, true);
   }

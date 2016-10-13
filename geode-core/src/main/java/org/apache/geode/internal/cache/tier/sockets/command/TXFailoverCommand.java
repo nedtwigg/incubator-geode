@@ -39,17 +39,16 @@ import java.io.IOException;
 public class TXFailoverCommand extends BaseCommand {
 
   private static final Command singleton = new TXFailoverCommand();
-  
+
   public static Command getCommand() {
     return singleton;
   }
 
   private TXFailoverCommand() {
   }
-  
+
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     // Build the TXId for the transaction
     InternalDistributedMember client = (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
@@ -90,9 +89,9 @@ public class TXFailoverCommand extends BaseCommand {
         // bug #42228 and bug #43504 - this cannot return until the current view
         // has been installed by all members, so that dlocks are released and
         // the same keys can be used in a new transaction by the same client thread
-        GemFireCacheImpl cache = (GemFireCacheImpl)servConn.getCache();
+        GemFireCacheImpl cache = (GemFireCacheImpl) servConn.getCache();
         try {
-          WaitForViewInstallation.send((DistributionManager)cache.getDistributionManager());
+          WaitForViewInstallation.send((DistributionManager) cache.getDistributionManager());
         } catch (InterruptedException e) {
           cache.getDistributionManager().getCancelCriterion().checkCancelInProgress(e);
           Thread.currentThread().interrupt();
@@ -104,7 +103,7 @@ public class TXFailoverCommand extends BaseCommand {
           }
           mgr.saveTXCommitMessageForClientFailover(txId, processor.getTxCommitMessage());
         } else {
-          writeException(msg, new TransactionDataNodeHasDepartedException("Could not find transaction host for "+txId), false, servConn);
+          writeException(msg, new TransactionDataNodeHasDepartedException("Could not find transaction host for " + txId), false, servConn);
           servConn.setAsTrue(RESPONDED);
           mgr.removeHostedTXState(txId);
           return;

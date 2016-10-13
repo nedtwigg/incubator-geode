@@ -18,7 +18,6 @@ package org.apache.geode.cache.execute;
 
 import org.apache.geode.distributed.DistributedMember;
 
-
 /**
  * Thrown if one of the function execution nodes goes away or cache is closed.
  * Function needs to be re-executed if the
@@ -30,9 +29,9 @@ import org.apache.geode.distributed.DistributedMember;
 public class FunctionInvocationTargetException extends FunctionException {
 
   private static final long serialVersionUID = 1L;
-  
+
   private DistributedMember id;
-  
+
   /**
    * Construct an instance of FunctionInvocationTargetException
    * 
@@ -67,6 +66,7 @@ public class FunctionInvocationTargetException extends FunctionException {
   public FunctionInvocationTargetException(String msg) {
     super(msg);
   }
+
   /**
    * Construct an instance of FunctionInvocationTargetException
    * 
@@ -78,7 +78,7 @@ public class FunctionInvocationTargetException extends FunctionException {
   public FunctionInvocationTargetException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Method to get the member id of the Exception
    * 

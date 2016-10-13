@@ -41,7 +41,7 @@ public class PutOperationContextJUnitTest {
   @Test
   public void testGetSerializedValue() throws IOException {
     {
-      byte[] byteArrayValue = new byte[]{1,2,3,4};
+      byte[] byteArrayValue = new byte[] { 1, 2, 3, 4 };
       PutOperationContext poc = new PutOperationContext("key", byteArrayValue, false, PutOperationContext.CREATE, false);
       Assert.assertFalse(poc.isObject());
       Assert.assertNull("value is an actual byte array which is not a serialized blob", poc.getSerializedValue());
@@ -54,7 +54,7 @@ public class PutOperationContextJUnitTest {
     }
 
     {
-      PutOperationContext  poc = new PutOperationContext("key", "value", true, PutOperationContext.CREATE, false);
+      PutOperationContext poc = new PutOperationContext("key", "value", true, PutOperationContext.CREATE, false);
       Assert.assertTrue(poc.isObject());
       Assert.assertNull("value is a String which is not a serialized blob", poc.getSerializedValue());
     }
@@ -72,8 +72,7 @@ public class PutOperationContextJUnitTest {
 
     {
       // create a loner cache so that pdx serialization will work
-      Cache c = (new CacheFactory()).set(LOCATORS, "")
-          .set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
+      Cache c = (new CacheFactory()).set(LOCATORS, "").set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
       try {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -92,7 +91,7 @@ public class PutOperationContextJUnitTest {
   @Test
   public void testGetDeserializedValue() throws IOException {
     {
-      byte[] byteArrayValue = new byte[]{1,2,3,4};
+      byte[] byteArrayValue = new byte[] { 1, 2, 3, 4 };
       PutOperationContext poc = new PutOperationContext("key", byteArrayValue, false, PutOperationContext.CREATE, false);
       Assert.assertFalse(poc.isObject());
       Assert.assertArrayEquals(byteArrayValue, (byte[]) poc.getDeserializedValue());
@@ -105,7 +104,7 @@ public class PutOperationContextJUnitTest {
     }
 
     {
-      PutOperationContext  poc = new PutOperationContext("key", "value", true, PutOperationContext.CREATE, false);
+      PutOperationContext poc = new PutOperationContext("key", "value", true, PutOperationContext.CREATE, false);
       Assert.assertTrue(poc.isObject());
       Assert.assertEquals("value", poc.getDeserializedValue());
     }
@@ -143,7 +142,7 @@ public class PutOperationContextJUnitTest {
   @Test
   public void testGetValue() throws IOException {
     {
-      byte[] byteArrayValue = new byte[]{1,2,3,4};
+      byte[] byteArrayValue = new byte[] { 1, 2, 3, 4 };
       PutOperationContext poc = new PutOperationContext("key", byteArrayValue, false, PutOperationContext.CREATE, false);
       Assert.assertFalse(poc.isObject());
       Assert.assertArrayEquals(byteArrayValue, (byte[]) poc.getValue());
@@ -156,7 +155,7 @@ public class PutOperationContextJUnitTest {
     }
 
     {
-      PutOperationContext  poc = new PutOperationContext("key", "value", true, PutOperationContext.CREATE, false);
+      PutOperationContext poc = new PutOperationContext("key", "value", true, PutOperationContext.CREATE, false);
       Assert.assertTrue(poc.isObject());
       Assert.assertEquals("value", poc.getValue());
     }
@@ -198,6 +197,7 @@ public class PutOperationContextJUnitTest {
       result = prime * result + ((v == null) ? 0 : v.hashCode());
       return result;
     }
+
     @Override
     public boolean equals(Object obj) {
       if (this == obj)
@@ -216,13 +216,14 @@ public class PutOperationContextJUnitTest {
     }
 
     private String v;
-    
+
     public PdxValue() {
     }
-    
+
     public PdxValue(String v) {
       this.v = v;
     }
+
     @Override
     public void toData(PdxWriter writer) {
       writer.writeString("v", this.v);
@@ -232,6 +233,6 @@ public class PutOperationContextJUnitTest {
     public void fromData(PdxReader reader) {
       this.v = reader.readString("v");
     }
-    
+
   }
 }

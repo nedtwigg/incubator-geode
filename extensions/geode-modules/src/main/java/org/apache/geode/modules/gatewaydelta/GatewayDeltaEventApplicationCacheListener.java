@@ -39,11 +39,7 @@ public class GatewayDeltaEventApplicationCacheListener extends CacheListenerAdap
     EntryEventImpl eventImpl = (EntryEventImpl) event;
     if (this.cache.getLogger().fineEnabled()) {
       StringBuilder builder = new StringBuilder();
-      builder.append("GatewayDeltaApplierCacheListener: Received event for ")
-          .append(event.getKey())
-          .append("->")
-          .append(event.getNewValue())
-          .append(".");
+      builder.append("GatewayDeltaApplierCacheListener: Received event for ").append(event.getKey()).append("->").append(event.getNewValue()).append(".");
       this.cache.getLogger().fine(builder.toString());
     }
 

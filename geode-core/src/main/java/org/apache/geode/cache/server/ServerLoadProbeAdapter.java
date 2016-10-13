@@ -16,7 +16,6 @@
  */
 package org.apache.geode.cache.server;
 
-
 /**
  * Utility class that implements all methods in {@link ServerLoadProbe} with
  * empty implementations for open and close. Applications can subclass this
@@ -32,7 +31,7 @@ public abstract class ServerLoadProbeAdapter implements ServerLoadProbe {
    */
   public void close() {
   }
-  
+
   /**
    * Does nothing.
    */

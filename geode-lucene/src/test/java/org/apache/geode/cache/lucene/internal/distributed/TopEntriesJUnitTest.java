@@ -53,7 +53,7 @@ public class TopEntriesJUnitTest {
     hits.addHit(r2_1);
     hits.addHit(r1_2);
     hits.addHit(r2_2);
-    
+
     assertEquals(4, hits.size());
     verifyResultOrder(hits.getHits(), r1_1, r2_1, r1_2, r2_2);
   }
@@ -65,11 +65,11 @@ public class TopEntriesJUnitTest {
     EntryScore<String> r2 = new EntryScore<String>("2", .8f);
     hits.addHit(r1);
     hits.addHit(r2);
-    
+
     assertEquals(2, hits.size());
     verifyResultOrder(hits.getHits(), r1, r2);
   }
-  
+
   @Test
   public void testInitialization() {
     TopEntries<String> hits = new TopEntries<String>();
@@ -83,7 +83,7 @@ public class TopEntriesJUnitTest {
   public void testInvalidLimit() {
     new TopEntries<String>(-1);
   }
-  
+
   @Test
   public void enforceLimit() throws Exception {
     TopEntries<String> hits = new TopEntries<String>(3);
@@ -100,16 +100,16 @@ public class TopEntriesJUnitTest {
   public void testSerialization() {
     LuceneServiceImpl.registerDataSerializables();
     TopEntries<String> hits = new TopEntries<String>(3);
-    
+
     TopEntries<String> copy = CopyHelper.deepCopy(hits);
     assertEquals(3, copy.getLimit());
     assertEquals(0, copy.getHits().size());
-    
+
     hits = new TopEntries<String>(3);
     hits.addHit(r1_1);
     hits.addHit(r2_1);
     hits.addHit(r1_2);
-    
+
     copy = CopyHelper.deepCopy(hits);
     assertEquals(3, copy.size());
     verifyResultOrder(copy.getHits(), r1_1, r2_1, r1_2);

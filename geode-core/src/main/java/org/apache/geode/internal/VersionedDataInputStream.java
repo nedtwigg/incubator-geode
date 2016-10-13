@@ -20,7 +20,6 @@ package org.apache.geode.internal;
 import java.io.DataInputStream;
 import java.io.InputStream;
 
-
 /**
  * An extension to {@link DataInputStream} that implements
  * {@link VersionedDataStream} for a stream coming from a different product
@@ -28,8 +27,7 @@ import java.io.InputStream;
  * 
  * @since GemFire 7.1
  */
-public final class VersionedDataInputStream extends DataInputStream implements
-    VersionedDataStream {
+public final class VersionedDataInputStream extends DataInputStream implements VersionedDataStream {
 
   private final Version version;
 

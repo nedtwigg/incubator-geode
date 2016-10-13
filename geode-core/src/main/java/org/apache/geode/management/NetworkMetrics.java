@@ -27,7 +27,7 @@ import org.apache.geode.cache.DiskStore;
 public class NetworkMetrics {
   private float bytesReceivedRate;
   private float bytesSentRate;
-  
+
   /**
    * Returns the average number of bytes per second received.
    */

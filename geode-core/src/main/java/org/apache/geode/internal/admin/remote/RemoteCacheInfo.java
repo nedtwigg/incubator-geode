@@ -77,12 +77,12 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
         } else {
           roots = c.rootRegions(true);
         }
-        
+
         String[] rootNames = new String[roots.size()];
         int idx = 0;
         Iterator it = roots.iterator();
         while (it.hasNext()) {
-          Region r = (Region)it.next();
+          Region r = (Region) it.next();
           rootNames[idx] = r.getName();
           idx++;
         }
@@ -109,8 +109,8 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
   /**
    * For use only by DataExternalizable mechanism
    */
-  public RemoteCacheInfo() {}
-
+  public RemoteCacheInfo() {
+  }
 
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeString(this.name, out);
@@ -125,7 +125,7 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
     DataSerializer.writeIntArray(this.bridgeServerIds, out);
     out.writeBoolean(this.isServer);
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.name = DataSerializer.readString(in);
     this.id = in.readInt();
@@ -135,7 +135,7 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
     this.searchTimeout = in.readInt();
     this.upTime = in.readInt();
     this.rootRegionNames = DataSerializer.readStringArray(in);
-    this.perfStats = (RemoteStatResource)DataSerializer.readObject(in);
+    this.perfStats = (RemoteStatResource) DataSerializer.readObject(in);
     this.bridgeServerIds = DataSerializer.readIntArray(in);
     this.isServer = in.readBoolean();
   }
@@ -144,24 +144,31 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
   public String getName() {
     return this.name;
   }
+
   public int getId() {
     return this.id;
   }
+
   public boolean isClosed() {
     return this.closed;
   }
+
   public int getLockTimeout() {
     return this.lockTimeout;
   }
+
   public int getLockLease() {
     return this.lockLease;
   }
+
   public int getSearchTimeout() {
     return this.searchTimeout;
   }
+
   public int getUpTime() {
     return this.upTime;
   }
+
   public synchronized Set getRootRegionNames() {
     if (this.rootRegionNames == null) {
       return null;
@@ -169,23 +176,27 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
       return new TreeSet(Arrays.asList(this.rootRegionNames));
     }
   }
+
   public StatResource getPerfStats() {
     return this.perfStats;
   }
+
   public synchronized void setClosed() {
     this.closed = true;
     this.rootRegionNames = null;
   }
+
   public int[] getBridgeServerIds() {
     return this.bridgeServerIds;
   }
+
   public boolean isServer() {
     return this.isServer;
   }
 
   // other instance methods
 
-  void setGemFireVM( RemoteGemFireVM vm ){
+  void setGemFireVM(RemoteGemFireVM vm) {
     if (this.perfStats != null) {
       this.perfStats.setGemFireVM(vm);
     }
@@ -193,6 +204,6 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
 
   @Override
   public String toString() {
-    return LocalizedStrings.RemoteCacheInfo_INFORMATION_ABOUT_THE_CACHE_0_WITH_1_BRIDGE_SERVERS.toLocalizedString(new Object[] { this.name, Integer.valueOf(this.bridgeServerIds.length)});
+    return LocalizedStrings.RemoteCacheInfo_INFORMATION_ABOUT_THE_CACHE_0_WITH_1_BRIDGE_SERVERS.toLocalizedString(new Object[] { this.name, Integer.valueOf(this.bridgeServerIds.length) });
   }
 }

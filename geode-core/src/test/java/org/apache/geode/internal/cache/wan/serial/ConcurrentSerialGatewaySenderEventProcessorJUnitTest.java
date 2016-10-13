@@ -44,7 +44,7 @@ public class ConcurrentSerialGatewaySenderEventProcessorJUnitTest {
   @Test
   public void eventQueueSizeReturnsSizeOfQueues() {
     processor.getQueues().add(queue);
-    assertEquals(3,processor.eventQueueSize());
+    assertEquals(3, processor.eventQueueSize());
   }
 
 }

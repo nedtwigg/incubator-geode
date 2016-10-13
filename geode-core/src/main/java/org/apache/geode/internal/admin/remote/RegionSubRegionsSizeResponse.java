@@ -38,11 +38,10 @@ import org.apache.geode.internal.logging.LogService;
  * Admin response carrying region info for a member
  * 
  */
-public class RegionSubRegionsSizeResponse extends AdminResponse implements
-    Cancellable {
-  
+public class RegionSubRegionsSizeResponse extends AdminResponse implements Cancellable {
+
   private static final Logger logger = LogService.getLogger();
-  
+
   public RegionSubRegionsSizeResponse() {
   }
 
@@ -54,8 +53,7 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements
    * Returns a <code>RegionSubRegionsSizeResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of the region snapshot
    */
-  public static RegionSubRegionsSizeResponse create(DistributionManager dm,
-      InternalDistributedMember recipient) {
+  public static RegionSubRegionsSizeResponse create(DistributionManager dm, InternalDistributedMember recipient) {
     RegionSubRegionsSizeResponse m = new RegionSubRegionsSizeResponse();
     m.setRecipient(recipient);
     m.snapshot = null;
@@ -69,7 +67,7 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements
       return;
 
     DistributedSystem sys = dm.getSystem();
-    GemFireCacheImpl cache = (GemFireCacheImpl)CacheFactory.getInstance(sys);
+    GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.getInstance(sys);
 
     if (cancelled)
       return;
@@ -101,16 +99,15 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements
    *          exceptions if any
    */
   //Re-factored to fix #41060
-  void populateRegionSubRegions(RegionSubRegionSnapshot parentSnapShot,
-                                Set regions, GemFireCacheImpl cache) {
+  void populateRegionSubRegions(RegionSubRegionSnapshot parentSnapShot, Set regions, GemFireCacheImpl cache) {
     if (cancelled)
       return;
-    
-    Region                  subRegion         = null;
+
+    Region subRegion = null;
     RegionSubRegionSnapshot subRegionSnapShot = null;
     for (Iterator iter = regions.iterator(); iter.hasNext();) {
-      subRegion = (Region)iter.next();
-      
+      subRegion = (Region) iter.next();
+
       try {
         subRegionSnapShot = new RegionSubRegionSnapshot(subRegion);
         parentSnapShot.addSubRegion(subRegionSnapShot);
@@ -122,7 +119,6 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements
       }
     }
   }
-  
 
   public synchronized void cancel() {
     cancelled = true;
@@ -139,7 +135,7 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.cancelled = in.readBoolean();
-    this.snapshot = (RegionSubRegionSnapshot)DataSerializer.readObject(in);
+    this.snapshot = (RegionSubRegionSnapshot) DataSerializer.readObject(in);
   }
 
   /**
@@ -151,8 +147,7 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements
 
   @Override
   public String toString() {
-    return "RegionSubRegionsSizeResponse [from=" + this.getRecipient() + " "
-        + (snapshot == null ? "null" : snapshot.toString());
+    return "RegionSubRegionsSizeResponse [from=" + this.getRecipient() + " " + (snapshot == null ? "null" : snapshot.toString());
   }
 
   private RegionSubRegionSnapshot snapshot;

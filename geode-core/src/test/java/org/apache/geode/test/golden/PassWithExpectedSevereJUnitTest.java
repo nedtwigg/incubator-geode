@@ -29,17 +29,17 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class PassWithExpectedSevereJUnitTest extends PassWithExpectedProblemTestCase {
-  
+
   @Override
   String problem() {
     return "severe";
   }
-  
+
   @Override
   void outputProblemInProcess(final String message) {
     new LocalLogWriter(LogWriterImpl.INFO_LEVEL).severe(message);
   }
-  
+
   public static void main(final String[] args) throws Exception {
     new PassWithExpectedSevereJUnitTest().executeInProcess();
   }

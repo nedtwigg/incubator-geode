@@ -25,15 +25,14 @@ import org.apache.geode.GemFireCheckedException;
  * @since GemFire 4.0
  */
 
-
 public /*abstract*/ class QueryException extends GemFireCheckedException {
-private static final long serialVersionUID = 7100830250939955452L;
-  
+  private static final long serialVersionUID = 7100830250939955452L;
+
   /**
    * Required for serialization
    */
   public QueryException() {
-    
+
   }
 
   /**
@@ -43,8 +42,8 @@ private static final long serialVersionUID = 7100830250939955452L;
    */
   public QueryException(String msg, Throwable cause) {
     super(msg, cause);
-  }  
-  
+  }
+
   /**
    * Constructor used by concrete subclasses
    * @param msg the error message
@@ -52,14 +51,13 @@ private static final long serialVersionUID = 7100830250939955452L;
   public QueryException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructor used by concrete subclasses
    * @param cause a Throwable cause of this exception
    */
   public QueryException(Throwable cause) {
     super(cause);
-  }  
-  
-  
+  }
+
 }

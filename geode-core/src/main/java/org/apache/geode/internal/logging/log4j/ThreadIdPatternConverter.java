@@ -30,14 +30,13 @@ public final class ThreadIdPatternConverter extends LogEventPatternConverter {
   /**
    * Singleton.
    */
-  private static final ThreadIdPatternConverter INSTANCE =
-      new ThreadIdPatternConverter();
+  private static final ThreadIdPatternConverter INSTANCE = new ThreadIdPatternConverter();
 
   /**
    * Private constructor.
    */
   private ThreadIdPatternConverter() {
-      super("ThreadId", "threadId");
+    super("ThreadId", "threadId");
   }
 
   /**
@@ -46,9 +45,8 @@ public final class ThreadIdPatternConverter extends LogEventPatternConverter {
    * @param options options, currently ignored, may be null.
    * @return instance of ThreadPatternConverter.
    */
-  public static ThreadIdPatternConverter newInstance(
-      final String[] options) {
-      return INSTANCE;
+  public static ThreadIdPatternConverter newInstance(final String[] options) {
+    return INSTANCE;
   }
 
   /**
@@ -56,6 +54,6 @@ public final class ThreadIdPatternConverter extends LogEventPatternConverter {
    */
   @Override
   public void format(final LogEvent event, final StringBuilder toAppendTo) {
-      toAppendTo.append("0x").append(Long.toHexString(Thread.currentThread().getId()));
+    toAppendTo.append("0x").append(Long.toHexString(Thread.currentThread().getId()));
   }
 }

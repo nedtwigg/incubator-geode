@@ -37,13 +37,13 @@ public class ExpectedTimeoutRule implements TestRule {
   public static ExpectedTimeoutRule none() {
     return new ExpectedTimeoutRule();
   }
-  
+
   private ExpectedException delegate;
   private boolean expectsThrowable;
   private long minDuration;
   private long maxDuration;
   private TimeUnit timeUnit;
-  
+
   private ExpectedTimeoutRule() {
     this.delegate = ExpectedException.none();
   }
@@ -52,10 +52,12 @@ public class ExpectedTimeoutRule implements TestRule {
     this.minDuration = minDuration;
     return this;
   }
+
   public ExpectedTimeoutRule expectMaximumDuration(final long maxDuration) {
     this.maxDuration = maxDuration;
     return this;
   }
+
   public ExpectedTimeoutRule expectTimeUnit(final TimeUnit timeUnit) {
     this.timeUnit = timeUnit;
     return this;
@@ -114,31 +116,31 @@ public class ExpectedTimeoutRule implements TestRule {
   protected boolean expectsThrowable() {
     return this.expectsThrowable;
   }
-  
+
   @Override
   public Statement apply(final Statement base, final Description description) {
     Statement next = this.delegate.apply(base, description);
     return new ExpectedTimeoutStatement(next);
   }
-  
+
   private void handleTime(final Long duration) {
     if (expectsTimeout()) {
       assertThat(this.timeUnit.convert(duration, TimeUnit.NANOSECONDS), new TimeMatcher(this.timeUnit, this.minDuration, this.maxDuration));
     }
   }
-  
+
   private static class TimeMatcher extends org.hamcrest.TypeSafeMatcher<Long> {
-    
+
     private final TimeUnit timeUnit;
     private final long minDuration;
     private final long maxDuration;
- 
+
     public TimeMatcher(final TimeUnit timeUnit, final long minDuration, final long maxDuration) {
       this.timeUnit = timeUnit;
       this.minDuration = minDuration;
       this.maxDuration = maxDuration;
     }
- 
+
     @Override
     public boolean matchesSafely(final Long duration) {
       return duration >= this.minDuration && duration <= this.maxDuration;
@@ -146,15 +148,10 @@ public class ExpectedTimeoutRule implements TestRule {
 
     @Override
     public void describeTo(final org.hamcrest.Description description) {
-      description.appendText("expects duration to be greater than or equal to ")
-          .appendValue(this.minDuration)
-          .appendText(" and less than or equal to ")
-          .appendValue(this.maxDuration)
-          .appendText(" ")
-          .appendValue(this.timeUnit);
+      description.appendText("expects duration to be greater than or equal to ").appendValue(this.minDuration).appendText(" and less than or equal to ").appendValue(this.maxDuration).appendText(" ").appendValue(this.timeUnit);
     }
   }
-  
+
   private class ExpectedTimeoutStatement extends Statement {
     private final Statement next;
 

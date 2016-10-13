@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.operations;
 
-
 /**
  * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#INVALIDATE} region operation having the key
  * object for both the pre-operation case and for post-operation updates.

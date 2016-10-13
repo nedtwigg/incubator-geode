@@ -40,13 +40,13 @@ public interface CacheDistributionAdvisee extends DistributionAdvisee {
    * @return the Cache
    */
   public Cache getCache();
-  
+
   /** 
    * Returns the <code>RegionAttributes</code> associated with this advisee.
    * @return the <code>RegionAttributes</code> of this advisee
    */
   public RegionAttributes getAttributes();
-  
+
   /**
    * notifies the advisee that a new remote member has registered a profile
    * showing that it is now initialized

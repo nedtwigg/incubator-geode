@@ -60,8 +60,7 @@ public class SerializableObjectHttpMessageConverter extends AbstractHttpMessageC
   @Override
   protected boolean supports(final Class<?> type) {
     if (logger.isTraceEnabled()) {
-      logger.trace(String.format("%1$s.supports(%2$s)", getClass().getName(), type.getName()),
-        new Throwable());
+      logger.trace(String.format("%1$s.supports(%2$s)", getClass().getName(), type.getName()), new Throwable());
     }
     /*
     logger.warn(String.format("%1$s.supports(%2$s)", getClass().getName(), type.getName()));
@@ -73,16 +72,11 @@ public class SerializableObjectHttpMessageConverter extends AbstractHttpMessageC
   }
 
   @Override
-  protected Serializable readInternal(final Class<? extends Serializable> type, final HttpInputMessage inputMessage)
-    throws IOException, HttpMessageNotReadableException
-  {
+  protected Serializable readInternal(final Class<? extends Serializable> type, final HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
     try {
-      return type.cast(IOUtils.deserializeObject(IOUtils.toByteArray(inputMessage.getBody()),
-        ObjectUtils.defaultIfNull(type.getClassLoader(), getClass().getClassLoader())));
-    }
-    catch (ClassNotFoundException e) {
-      throw new HttpMessageNotReadableException(String.format(
-        "Unable to convert the HTTP message body into an Object of type (%1$s)", type.getName()), e);
+      return type.cast(IOUtils.deserializeObject(IOUtils.toByteArray(inputMessage.getBody()), ObjectUtils.defaultIfNull(type.getClassLoader(), getClass().getClassLoader())));
+    } catch (ClassNotFoundException e) {
+      throw new HttpMessageNotReadableException(String.format("Unable to convert the HTTP message body into an Object of type (%1$s)", type.getName()), e);
     }
   }
 
@@ -91,9 +85,7 @@ public class SerializableObjectHttpMessageConverter extends AbstractHttpMessageC
   }
 
   @Override
-  protected void writeInternal(final Serializable serializableObject, final HttpOutputMessage outputMessage)
-    throws IOException, HttpMessageNotWritableException
-  {
+  protected void writeInternal(final Serializable serializableObject, final HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
     final byte[] messageBody = IOUtils.serializeObject(serializableObject);
     setContentLength(outputMessage, messageBody);
     StreamUtils.copy(messageBody, outputMessage.getBody());

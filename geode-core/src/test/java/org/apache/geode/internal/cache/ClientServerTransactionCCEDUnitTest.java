@@ -42,9 +42,7 @@ import org.apache.geode.test.dunit.VM;
  * test client initiated transactions with concurrency checks enabled.
  */
 @Category(DistributedTest.class)
-public class ClientServerTransactionCCEDUnitTest extends
-    ClientServerTransactionDUnitTest {
-
+public class ClientServerTransactionCCEDUnitTest extends ClientServerTransactionDUnitTest {
 
   protected final void postSetUpClientServerTransactionDUnitTest() throws Exception {
     IgnoredException.addIgnoredException("Connection reset");
@@ -66,7 +64,7 @@ public class ClientServerTransactionCCEDUnitTest extends
   protected boolean getConcurrencyChecksEnabled() {
     return true;
   }
-  
+
   @SuppressWarnings("unchecked")
   public Map<Object, VersionTag> getVersionTagsForRegion(VM vm, final String regionName) {
     return (Map<Object, VersionTag>) vm.invoke(new SerializableCallable() {
@@ -107,7 +105,7 @@ public class ClientServerTransactionCCEDUnitTest extends
     for (Object key : clientTags.keySet()) {
       VersionTag serverTag = serverTags.get(key);
       serverTag.setMemberID(serverId);
-      LogWriterUtils.getLogWriter().fine("SWAP:key:"+key+" clientVersion:"+clientTags.get(key)+" serverVersion:"+serverTag);
+      LogWriterUtils.getLogWriter().fine("SWAP:key:" + key + " clientVersion:" + clientTags.get(key) + " serverVersion:" + serverTag);
       assertEquals(clientTags.get(key), serverTags.get(key));
       serverTags.remove(key);
     }

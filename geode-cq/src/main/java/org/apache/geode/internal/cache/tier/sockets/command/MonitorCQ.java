@@ -39,8 +39,7 @@ public class MonitorCQ extends BaseCQCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
     servConn.setAsTrue(REQUIRES_RESPONSE);
     servConn.setAsTrue(REQUIRES_CHUNKED_RESPONSE);
@@ -50,8 +49,7 @@ public class MonitorCQ extends BaseCQCommand {
     if (op < 1) {
       // This should have been taken care at the client - remove?
       String err = LocalizedStrings.MonitorCQ__0_THE_MONITORCQ_OPERATION_IS_INVALID.toLocalizedString(servConn.getName());
-      sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg
-          .getTransactionId(), null, servConn);
+      sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg.getTransactionId(), null, servConn);
       return;
     }
 
@@ -62,8 +60,7 @@ public class MonitorCQ extends BaseCQCommand {
       if (regionName == null) {
         // This should have been taken care at the client - remove?
         String err = LocalizedStrings.MonitorCQ__0_A_NULL_REGION_NAME_WAS_PASSED_FOR_MONITORCQ_OPERATION.toLocalizedString(servConn.getName());
-        sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg
-            .getTransactionId(), null, servConn);
+        sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg.getTransactionId(), null, servConn);
         return;
       }
     }
@@ -83,17 +80,13 @@ public class MonitorCQ extends BaseCQCommand {
       // This method is retained for future purpose, to support admin level apis
       // similar to enable/disable at system/client level.
       // Should never come.
-      throw new CqException (LocalizedStrings.CqService_INVALID_CQ_MONITOR_REQUEST_RECEIVED.toLocalizedString());
-    }
-    catch (CqException cqe) {
-      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(),
-          cqe, servConn);
+      throw new CqException(LocalizedStrings.CqService_INVALID_CQ_MONITOR_REQUEST_RECEIVED.toLocalizedString());
+    } catch (CqException cqe) {
+      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(), cqe, servConn);
       return;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       String err = LocalizedStrings.MonitorCQ_EXCEPTION_WHILE_HANDLING_THE_MONITOR_REQUEST_OP_IS_0.toLocalizedString(Integer.valueOf(op));
-      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, err,
-          msg.getTransactionId(), e, servConn);
+      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, err, msg.getTransactionId(), e, servConn);
       return;
     }
   }

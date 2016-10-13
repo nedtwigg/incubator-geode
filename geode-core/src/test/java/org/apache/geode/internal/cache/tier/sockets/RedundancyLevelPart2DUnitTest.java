@@ -42,14 +42,14 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       public boolean done() {
         return expected == pool.getConnectedServerCount();
       }
+
       public String description() {
-        return "Connected server count (" + pool.getConnectedServerCount() 
-        + ") never became " + expected;
+        return "Connected server count (" + pool.getConnectedServerCount() + ") never became " + expected;
       }
     };
     Wait.waitForCriterion(wc, 2 * 60 * 1000, 1000, true);
   }
-  
+
   /**
    * Redundancy level specified & less than total Eps. If an EP dies & is part
    * of the fail over list , then it should be removed from live server map &
@@ -82,14 +82,11 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertTrue(pool.getPrimaryName().equals(SERVER2));
       //assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
-    }
-    catch (Exception ex) {
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFails ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFails ", ex);
     }
   }
-  
+
   /**
    * Redundancy level specified & less than total Eps. If an EP dies & is part
    * of the fail over list , then it should be removed from live server map &
@@ -103,9 +100,9 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByCCU() {
     try {
-      
+
       FailOverDetectionByCCU = true;
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1,3000,100);
+      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -123,11 +120,8 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertTrue(pool.getPrimaryName().equals(SERVER2));
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
-    }
-    catch (Exception ex) {
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByCCU ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByCCU ", ex);
     }
   }
 
@@ -144,7 +138,7 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByRegisterInterest() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1,3000, 100);
+      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -164,14 +158,11 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertTrue(pool.getPrimaryName().equals(SERVER2));
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
-    }
-    catch (Exception ex) {
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByRegisterInterest ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByRegisterInterest ", ex);
     }
   }
-  
+
   /*
    * Redundancy level specified & less than total Eps. If an EP dies & is part
    * of the fail over list , then it should be removed from live server map &
@@ -181,11 +172,11 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
    * make sure that CCP is created on the server with relevant interest
    * registartion.
    * Failure Detection by Unregister Interest
-   */  
+   */
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByUnregisterInterest() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1,3000,100);
+      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -204,14 +195,11 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertTrue(pool.getPrimaryName().equals(SERVER2));
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
-    }
-    catch (Exception ex) {
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByUnregisterInterest ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByUnregisterInterest ", ex);
     }
   }
-  
+
   /*
    * Redundancy level specified & less than total Eps. If an EP dies & is part
    * of the fail over list , then it should be removed from live server map &
@@ -225,7 +213,7 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByPut() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1,3000, 100);
+      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -244,14 +232,11 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertTrue(pool.getPrimaryName().equals(SERVER2));
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
-    }
-    catch (Exception ex) {
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByPut ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByPut ", ex);
     }
   }
-  
+
   /*
    * If there are 4 servers in Live Server Map with redundancy level as 1. Kill
    * the primary & secondary. Two Eps should be added from the live server & the
@@ -280,11 +265,8 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       server2.invoke(() -> RedundancyLevelTestBase.verifyInterestRegistration());
       //assertTrue(pool.getRedundantNames().contains(SERVER3));
       server3.invoke(() -> RedundancyLevelTestBase.verifyInterestRegistration());
-    }
-    catch (Exception ex) {
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedPrimarySecondaryEPFails ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimarySecondaryEPFails ", ex);
     }
   }
 
@@ -338,11 +320,8 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       //assertIndexDetailsEquals(3, pool.getRedundantNames().size());
       //assertIndexDetailsEquals(4, pool.getConnectedServerCount());
       server2.invoke(() -> RedundancyLevelTestBase.verifyNoCCP());
-    }
-    catch (Exception ex) {
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedEPFails ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedEPFails ", ex);
     }
   }
 
@@ -396,10 +375,8 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertFalse(pool.getRedundantNames().contains(SERVER2));
       server1.invoke(() -> RedundancyLevelTestBase.verifyNoCCP());
 
-    }
-    catch (Exception ex) {
-      Assert.fail("test failed due to exception in test noRedundancyLevelServerFail ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test noRedundancyLevelServerFail ", ex);
     }
 
   }
@@ -437,10 +414,8 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertFalse(pool.getRedundantNames().contains(SERVER2));
       server1.invoke(() -> RedundancyLevelTestBase.verifyNoCCP());
 
-    }
-    catch (Exception ex) {
-      Assert.fail("test failed due to exception in test noRedundancyLevelServerFail ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test noRedundancyLevelServerFail ", ex);
     }
   }
 
@@ -480,10 +455,8 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       assertTrue(pool.getRedundantNames().contains(SERVER4));
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       server2.invoke(() -> RedundancyLevelTestBase.verifyInterestRegistration());
-    }
-    catch (Exception ex) {
-      Assert.fail("test failed due to exception in test noRedundancyLevelServerFail ",
-          ex);
+    } catch (Exception ex) {
+      Assert.fail("test failed due to exception in test noRedundancyLevelServerFail ", ex);
     }
   }
 
@@ -500,12 +473,9 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       server1.invoke(() -> RedundancyLevelTestBase.verifyCCP());
       server2.invoke(() -> RedundancyLevelTestBase.verifyCCP());
       server3.invoke(() -> RedundancyLevelTestBase.verifyCCP());
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
-      Assert.fail(
-          "test failed due to exception in test testRedundancySpecifiedMoreThanEPs ",
-          ex);
+      Assert.fail("test failed due to exception in test testRedundancySpecifiedMoreThanEPs ", ex);
     }
   }
 

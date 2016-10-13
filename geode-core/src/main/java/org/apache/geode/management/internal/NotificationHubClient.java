@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal;
 
-
 import javax.management.Notification;
 
 import org.apache.logging.log4j.Logger;
@@ -34,43 +33,42 @@ import org.apache.geode.internal.logging.LogService;
 public class NotificationHubClient {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * proxy factory
    */
-	private MBeanProxyFactory proxyFactory;
+  private MBeanProxyFactory proxyFactory;
 
-	protected NotificationHubClient(MBeanProxyFactory proxyFactory) {
-		this.proxyFactory = proxyFactory;
-	}
+  protected NotificationHubClient(MBeanProxyFactory proxyFactory) {
+    this.proxyFactory = proxyFactory;
+  }
 
-	/**
-	 * send the notification to actual client
-	 * on the Managing node VM
-	 * 
-	 * it does not throw any exception. it will capture all
-	 * exception and log a warning
-	 * @param event
-	 */
-	public void sendNotification(EntryEvent<NotificationKey, Notification> event) {
+  /**
+   * send the notification to actual client
+   * on the Managing node VM
+   * 
+   * it does not throw any exception. it will capture all
+   * exception and log a warning
+   * @param event
+   */
+  public void sendNotification(EntryEvent<NotificationKey, Notification> event) {
 
-		NotificationBroadCasterProxy notifBroadCaster;
-		try {
+    NotificationBroadCasterProxy notifBroadCaster;
+    try {
 
-      notifBroadCaster = proxyFactory.findProxy(event.getKey().getObjectName(),
-          NotificationBroadCasterProxy.class);
-			// Will return null if the Bean is filtered out.
-			if (notifBroadCaster != null) {
-				notifBroadCaster.sendNotification(event.getNewValue());
-			}
+      notifBroadCaster = proxyFactory.findProxy(event.getKey().getObjectName(), NotificationBroadCasterProxy.class);
+      // Will return null if the Bean is filtered out.
+      if (notifBroadCaster != null) {
+        notifBroadCaster.sendNotification(event.getNewValue());
+      }
 
-		} catch (Exception e) {
-		  if (logger.isDebugEnabled()) {
-		    logger.debug(" NOTIFICATION Not Done {}", e.getMessage(), e);
-		  }		  
+    } catch (Exception e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug(" NOTIFICATION Not Done {}", e.getMessage(), e);
+      }
       logger.warn(e.getMessage(), e);
     }
 
-	}
+  }
 
 }

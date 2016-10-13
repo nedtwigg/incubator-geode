@@ -32,8 +32,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  * @since Geode 1.0
  */
 @Category(DistributedTest.class)
-public class ForceInvalidateOffHeapEvictionDUnitTest extends
-    ForceInvalidateEvictionDUnitTest {
+public class ForceInvalidateOffHeapEvictionDUnitTest extends ForceInvalidateEvictionDUnitTest {
 
   public ForceInvalidateOffHeapEvictionDUnitTest() {
     super();
@@ -45,7 +44,7 @@ public class ForceInvalidateOffHeapEvictionDUnitTest extends
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -58,7 +57,7 @@ public class ForceInvalidateOffHeapEvictionDUnitTest extends
   public Properties getDistributedSystemProperties() {
     Properties properties = super.getDistributedSystemProperties();
     properties.setProperty(OFF_HEAP_MEMORY_SIZE, "100m");
-    
+
     return properties;
   }
 

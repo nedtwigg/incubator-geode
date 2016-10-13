@@ -51,6 +51,4 @@ public class ConflictingPersistentDataException extends GemFireException {
     super(cause);
   }
 
-  
-
 }

@@ -69,14 +69,12 @@ public class ListDiskStoresFunction extends FunctionAdapter implements InternalE
         final DistributedMember member = gemfireCache.getMyId();
 
         for (final DiskStore memberDiskStore : gemfireCache.listDiskStoresIncludingRegionOwned()) {
-          memberDiskStores.add(new DiskStoreDetails(memberDiskStore.getDiskStoreUUID(), memberDiskStore.getName(),
-            member.getId(), member.getName()));
+          memberDiskStores.add(new DiskStoreDetails(memberDiskStore.getDiskStoreUUID(), memberDiskStore.getName(), member.getId(), member.getName()));
         }
       }
 
       context.getResultSender().lastResult(memberDiskStores);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       context.getResultSender().sendException(e);
     }
   }

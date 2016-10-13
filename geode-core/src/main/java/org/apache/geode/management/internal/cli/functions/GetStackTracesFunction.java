@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.cli.functions;
 
-
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.CacheFactory;
 import org.apache.geode.cache.execute.FunctionAdapter;
@@ -25,8 +24,7 @@ import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.internal.OSProcess;
 import org.apache.geode.management.internal.cli.domain.StackTracesPerMember;
 
-public class GetStackTracesFunction extends FunctionAdapter implements
-    InternalEntity {
+public class GetStackTracesFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -35,7 +33,7 @@ public class GetStackTracesFunction extends FunctionAdapter implements
     try {
       Cache cache = CacheFactory.getAnyInstance();
       String memberNameOrId = cache.getDistributedSystem().getDistributedMember().getName();
-      
+
       if (memberNameOrId == null) {
         memberNameOrId = cache.getDistributedSystem().getDistributedMember().getId();
       }
@@ -43,7 +41,7 @@ public class GetStackTracesFunction extends FunctionAdapter implements
       context.getResultSender().lastResult(stackTracePerMember);
     } catch (Exception e) {
       context.getResultSender().sendException(e);
-    } 
+    }
   }
 
   @Override

@@ -109,12 +109,12 @@ import org.apache.geode.internal.logging.LogService;
  */
 @Deprecated
 public class Wait {
-  
+
   private static final Logger logger = LogService.getLogger();
 
   protected Wait() {
   }
-  
+
   /**
    * Pause for a default interval (250 milliseconds).
    *  
@@ -143,12 +143,11 @@ public class Wait {
         }
         Thread.sleep(msLeft);
       }
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Assert.fail("interrupted", e);
     }
   }
-  
+
   /**
    * Wait until given criterion is met
    * 
@@ -167,7 +166,7 @@ public class Wait {
         return; // success
       }
       if (waitCriterion instanceof StoppableWaitCriterion) {
-        StoppableWaitCriterion ev2 = (StoppableWaitCriterion)waitCriterion;
+        StoppableWaitCriterion ev2 = (StoppableWaitCriterion) waitCriterion;
         if (ev2.stopWaiting()) {
           if (throwOnTimeout) {
             fail("stopWaiting returned true: " + waitCriterion.description());
@@ -184,11 +183,11 @@ public class Wait {
         }
         fail("Event never occurred after " + timeoutMillis + " ms: " + waitCriterion.description());
       }
-      
+
       if (waitThisTime > timeLeft) {
         waitThisTime = timeLeft;
       }
-      
+
       // Wait a little bit
       Thread.yield();
       try {
@@ -246,7 +245,7 @@ public class Wait {
         if (waitCriterion.done()) {
           break;
         }
-        
+
         long timeLeft = tilt - System.currentTimeMillis();
         if (timeLeft <= 0) {
           if (!throwOnTimeout) {
@@ -254,11 +253,11 @@ public class Wait {
           }
           fail("Event never occurred after " + milliseconds + " ms: " + waitCriterion.description());
         }
-        
+
         if (waitThisTime > timeLeft) {
           waitThisTime = timeLeft;
         }
-        
+
         try {
           mutex.wait(waitThisTime);
         } catch (InterruptedException e) {

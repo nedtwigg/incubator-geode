@@ -24,7 +24,7 @@ public class ClientPDXSerializableObject implements PdxSerializable {
 
   @Override
   public void toData(final PdxWriter writer) {
-    
+
   }
 
   @Override

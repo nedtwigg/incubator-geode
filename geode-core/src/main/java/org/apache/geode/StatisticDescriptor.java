@@ -73,6 +73,7 @@ public interface StatisticDescriptor extends Comparable<StatisticDescriptor> {
    * Returns true if a larger statistic value indicates better performance.
    */
   public boolean isLargerBetter();
+
   /**
    * Returns the unit in which this statistic is measured
    */

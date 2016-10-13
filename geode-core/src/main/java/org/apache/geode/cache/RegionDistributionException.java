@@ -34,15 +34,15 @@ import org.apache.geode.distributed.internal.membership.InternalRole;
  * @deprecated the MembershipAttributes API is scheduled to be removed
  */
 public class RegionDistributionException extends RegionRoleException {
-private static final long serialVersionUID = -5950359426786805646L;
-  
+  private static final long serialVersionUID = -5950359426786805646L;
+
   /** 
    * Set of missing required roles causing access to the region to fail.
    * failedRoles is transient to avoid NotSerializableException. See {@link
    * #writeObject} and {@link #readObject} for custom serialization.
    */
   private transient Set failedRoles = Collections.EMPTY_SET;
-  
+
   /** 
    * Constructs a <code>RegionDistributionException</code> with a message.
    * @param s the String message
@@ -56,7 +56,7 @@ private static final long serialVersionUID = -5950359426786805646L;
       this.failedRoles = Collections.EMPTY_SET;
     }
   }
-  
+
   /** 
    * Constructs a <code>RegionDistributionException</code> with a message and
    * a cause.
@@ -65,14 +65,14 @@ private static final long serialVersionUID = -5950359426786805646L;
    * @param failedRoles the required roles that caused this exception
    * @param ex the Throwable cause
    */
-  public RegionDistributionException(String s,  String regionFullPath, Set failedRoles, Throwable ex) {
+  public RegionDistributionException(String s, String regionFullPath, Set failedRoles, Throwable ex) {
     super(s, regionFullPath, ex);
     this.failedRoles = failedRoles;
     if (this.failedRoles == null) {
       this.failedRoles = Collections.EMPTY_SET;
     }
   }
-  
+
   /** 
    * Returns the required roles that caused this exception. One or more
    * roles failed to receive a cache distribution message or acknowledge
@@ -82,34 +82,32 @@ private static final long serialVersionUID = -5950359426786805646L;
   public Set getFailedRoles() {
     return this.failedRoles;
   }
-  
+
   /** 
    * Override writeObject which is used in serialization. Customize 
    * serialization of this exception to avoid escape of InternalRole
    * which is not Serializable. 
    */
-  private void writeObject(java.io.ObjectOutputStream out)
-  throws IOException {
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
     out.defaultWriteObject();
     // transform roles to string names which are serializable...
     Set roleNames = new HashSet(this.failedRoles.size());
     for (Iterator iter = this.failedRoles.iterator(); iter.hasNext();) {
-      String name = ((Role)iter.next()).getName();
+      String name = ((Role) iter.next()).getName();
       roleNames.add(name);
     }
     out.writeObject(roleNames);
   }
-  
+
   /** 
    * Override readObject which is used in serialization. Customize 
    * serialization of this exception to avoid escape of InternalRole
    * which is not Serializable. 
    */
-  private void readObject(java.io.ObjectInputStream in)
-  throws IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     // transform string names which are serializable back into roles...
-    Set roleNames = (Set)in.readObject();
+    Set roleNames = (Set) in.readObject();
     Set roles = new HashSet(roleNames.size());
     for (Iterator iter = roleNames.iterator(); iter.hasNext();) {
       String name = (String) iter.next();
@@ -117,6 +115,5 @@ private static final long serialVersionUID = -5950359426786805646L;
     }
     this.failedRoles = roles;
   }
-     
-}
 
+}

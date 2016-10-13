@@ -114,7 +114,7 @@ public class ArrayUtilsJUnitTest {
     final byte[][] array = new byte[10][5];
     for (int i = 0; i < array.length; i++) {
       for (int j = 0; j < array[i].length; j++) {
-        array[i][j] = (byte)++count;
+        array[i][j] = (byte) ++count;
       }
     }
     assertEquals(50, count);
@@ -123,11 +123,11 @@ public class ArrayUtilsJUnitTest {
     final Byte[][] byteArray = ArrayUtils.toByteArray(array);
     for (int i = 0; i < byteArray.length; i++) {
       for (int j = 0; j < byteArray[i].length; j++) {
-        assertEquals((byte)++count, byteArray[i][j].byteValue());
+        assertEquals((byte) ++count, byteArray[i][j].byteValue());
       }
     }
     assertEquals(50, count);
-}
+  }
 
   @Test
   public void testFromByteArrayToBytes() {
@@ -135,33 +135,33 @@ public class ArrayUtilsJUnitTest {
     final Byte[][] byteArray = new Byte[5][10];
     for (int i = 0; i < byteArray.length; i++) {
       for (int j = 0; j < byteArray[i].length; j++) {
-        byteArray[i][j] = (byte)--count;
+        byteArray[i][j] = (byte) --count;
       }
     }
     assertEquals(50, count);
-    
+
     count = 100;
     final byte[][] array = ArrayUtils.toBytes(byteArray);
     for (int i = 0; i < array.length; i++) {
       for (int j = 0; j < array[i].length; j++) {
-        assertEquals((byte)--count, array[i][j]);
+        assertEquals((byte) --count, array[i][j]);
       }
     }
     assertEquals(50, count);
   }
-  
+
   @Test
   public void testFromEmptyBytesToByteArray() {
     final byte[][] array = new byte[0][0];
     assertArrayEquals(new Byte[0][0], ArrayUtils.toByteArray(array));
   }
-  
+
   @Test
   public void testFromNullBytesToByteArray() {
     final byte[][] array = null;
     assertNull(ArrayUtils.toByteArray(array));
   }
-  
+
   @Test
   public void testFromEmptyByteArrayToBytes() {
     final Byte[][] byteArray = new Byte[0][0];

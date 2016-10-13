@@ -52,32 +52,32 @@ public class AsyncIndexUpdaterThreadShutdownJUnitTest {
     RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     rf.setIndexMaintenanceSynchronous(false);
     Region localRegion = rf.create(name);
-    
+
     assertNotNull("Region ref null", localRegion);
-    
+
     try {
-      cache.getQueryService().createIndex("idIndex", "ID", "/"+name);
+      cache.getQueryService().createIndex("idIndex", "ID", "/" + name);
     } catch (Exception e) {
       cache.close();
       e.printStackTrace();
       fail("Index creation failed");
     }
-    
-    for (int i=0; i<500; i++) {
+
+    for (int i = 0; i < 500; i++) {
       localRegion.put(i, new Portfolio(i));
     }
-    
-    GemFireCacheImpl internalCache = (GemFireCacheImpl)cache;
+
+    GemFireCacheImpl internalCache = (GemFireCacheImpl) cache;
     // Don't disconnect distributed system yet to keep system thread groups alive.
     internalCache.close("Normal disconnect", null, false, false);
 
     // Get Asynchronous index updater thread group from Distributed System.
     ThreadGroup indexUpdaterThreadGroup = LoggingThreadGroup.getThreadGroup("QueryMonitor Thread Group");
-    
+
     assertEquals(0, indexUpdaterThreadGroup.activeCount());
-    
+
     internalCache.getSystem().disconnect();
-    
+
   }
 
   @Test
@@ -87,28 +87,28 @@ public class AsyncIndexUpdaterThreadShutdownJUnitTest {
     RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION);
     rf.setIndexMaintenanceSynchronous(false);
     Region localRegion = rf.create(name);
-    
+
     assertNotNull("Region ref null", localRegion);
-    
+
     try {
-      cache.getQueryService().createIndex("idIndex", "ID", "/"+name);
+      cache.getQueryService().createIndex("idIndex", "ID", "/" + name);
     } catch (Exception e) {
       cache.close();
       e.printStackTrace();
       fail("Index creation failed");
     }
-    
-    for (int i=0; i<500; i++) {
+
+    for (int i = 0; i < 500; i++) {
       localRegion.put(i, new Portfolio(i));
     }
 
-    GemFireCacheImpl internalCache = (GemFireCacheImpl)cache;
+    GemFireCacheImpl internalCache = (GemFireCacheImpl) cache;
     // Don't disconnect distributed system yet to keep system thread groups alive.
     internalCache.close("Normal disconnect", null, false, false);
 
     // Get Asynchronous index updater thread group from Distributed System.
     ThreadGroup indexUpdaterThreadGroup = LoggingThreadGroup.getThreadGroup("QueryMonitor Thread Group");
-    
+
     assertEquals(0, indexUpdaterThreadGroup.activeCount());
 
     internalCache.getSystem().disconnect();

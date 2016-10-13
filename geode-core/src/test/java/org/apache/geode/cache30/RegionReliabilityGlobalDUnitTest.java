@@ -39,10 +39,9 @@ public class RegionReliabilityGlobalDUnitTest extends RegionReliabilityTestCase 
   public RegionReliabilityGlobalDUnitTest() {
     super();
   }
-  
+
   protected Scope getRegionScope() {
     return Scope.GLOBAL;
   }
-  
-}
 
+}

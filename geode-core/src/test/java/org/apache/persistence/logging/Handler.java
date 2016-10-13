@@ -23,7 +23,7 @@ package org.apache.persistence.logging;
  * exporting the to the destination.
  */
 public abstract class Handler {
-  
+
   /** The minimum level for this handler.  Any records below this
    * level are ignored. */
   private Level level;
@@ -54,7 +54,7 @@ public abstract class Handler {
    * Returns the formatter for this handler
    */
   public Formatter getFormatter() {
-    return(this.formatter);
+    return (this.formatter);
   }
 
   /**
@@ -68,7 +68,7 @@ public abstract class Handler {
    * Returns the level below which this handler ignores
    */
   public Level getLevel() {
-    return(this.level);
+    return (this.level);
   }
 
   /**
@@ -83,10 +83,10 @@ public abstract class Handler {
    * handler.
    */
   public boolean isLoggable(LogRecord record) {
-    if(record.getLevel().intValue() >= this.getLevel().intValue()) {
-      return(true);
+    if (record.getLevel().intValue() >= this.getLevel().intValue()) {
+      return (true);
     } else {
-      return(false);
+      return (false);
     }
   }
 

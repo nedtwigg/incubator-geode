@@ -80,15 +80,15 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
   public boolean isReconnecting() {
     return false;
   }
-  
+
   public boolean waitUntilReconnected(long time, TimeUnit units) throws InterruptedException {
     return false;
   }
-  
+
   @Override
   public void stopReconnecting() {
   }
-  
+
   @Override
   public DistributedSystem getReconnectedSystem() {
     return null;
@@ -234,11 +234,13 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
-  @Override public StatisticsType findType(final String name) {
+  @Override
+  public StatisticsType findType(final String name) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
-  @Override public StatisticsType[] createTypesFromXml(final Reader reader) throws IOException {
+  @Override
+  public StatisticsType[] createTypesFromXml(final Reader reader) throws IOException {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
@@ -251,7 +253,5 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
   public DistributedMember findDistributedMember(String name) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
-  
-  
 
 }

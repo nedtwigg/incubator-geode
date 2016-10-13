@@ -70,8 +70,7 @@ public class Preprocessor {
         // 1. There are only arguments & we've reached the end OR
         // 2. We are at index where option (" --") has started OR
         // 3. One argument has finished & we are now at the next argument - check for Argument Separator (" ") 
-        if (index >= length || trimInput.regionMatches(index, OPTION_DELIMITER, 0, OPTION_DELIMITER.length())
-            || trimInput.regionMatches(index, ARGUMENT_SEPARATOR, 0, ARGUMENT_SEPARATOR.length())) {
+        if (index >= length || trimInput.regionMatches(index, OPTION_DELIMITER, 0, OPTION_DELIMITER.length()) || trimInput.regionMatches(index, ARGUMENT_SEPARATOR, 0, ARGUMENT_SEPARATOR.length())) {
           String stringToAdd = trimInput.substring(startOfString, (index > length ? length : index)).trim();
           returnStrings.add(stringToAdd);
 
@@ -88,8 +87,7 @@ public class Preprocessor {
     startOfString = index;
     while (index < length) {
       // Until we find the first occurrence of Option Separator (" ") or Value Specifier ("=")
-      while (index < length && !trimInput.regionMatches(index, OPTION_SEPARATOR, 0, OPTION_SEPARATOR.length())
-          && !trimInput.regionMatches(index, VALUE_SPECIFIER, 0, VALUE_SPECIFIER.length())) {
+      while (index < length && !trimInput.regionMatches(index, OPTION_SEPARATOR, 0, OPTION_SEPARATOR.length()) && !trimInput.regionMatches(index, VALUE_SPECIFIER, 0, VALUE_SPECIFIER.length())) {
         index++;
       }
 

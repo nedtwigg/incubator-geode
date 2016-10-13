@@ -37,15 +37,13 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * 
  */
 @Category(IntegrationTest.class)
-public class PRInvalidQueryJUnitTest
-{
+public class PRInvalidQueryJUnitTest {
   String regionName = "Portfolios";
 
   LogWriter logger = null;
 
   @Before
-  public void setUp() throws Exception
-  {
+  public void setUp() throws Exception {
     if (logger == null) {
       logger = PartitionedRegionTestHelper.getLogger();
     }
@@ -64,48 +62,35 @@ public class PRInvalidQueryJUnitTest
    * @throws Exception
    */
   @Test
-  public void testInvalidQueryOnSingleDS() throws Exception
-  {
-    logger
-        .info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Test Started  ");
-    Region region = PartitionedRegionTestHelper.createPartitionedRegion(
-        regionName, "100", 0);
+  public void testInvalidQueryOnSingleDS() throws Exception {
+    logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Test Started  ");
+    Region region = PartitionedRegionTestHelper.createPartitionedRegion(regionName, "100", 0);
 
-    logger
-        .info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: creating portfolioData objects");
+    logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: creating portfolioData objects");
     PortfolioData[] portfolios = new PortfolioData[100];
     for (int j = 0; j < 100; j++) {
       portfolios[j] = new PortfolioData(j);
     }
     populateData(region, portfolios);
 
-    logger
-        .info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: creating Select Query");
+    logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: creating Select Query");
 
     String queryString = "SELECT DISTINCT * FROM /Portfolios WHERE pkid < '5'";
 
-    final String expectedQueryInvalidException = QueryInvalidException.class
-        .getName();
-    logger.info("<ExpectedException action=add>"
-        + expectedQueryInvalidException + "</ExpectedException>");
+    final String expectedQueryInvalidException = QueryInvalidException.class.getName();
+    logger.info("<ExpectedException action=add>" + expectedQueryInvalidException + "</ExpectedException>");
     try {
       region.query(queryString);
-      fail("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Expected an Invalid Query Exception for the query :"
-          + queryString + " this is not supported for region#query()");
-    }
-    catch (QueryInvalidException qe) {
+      fail("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Expected an Invalid Query Exception for the query :" + queryString + " this is not supported for region#query()");
+    } catch (QueryInvalidException qe) {
 
-      logger
-          .info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Caught an Invalid Query Exception for the query :"
-              + queryString + " this is not supported for region#query()");
+      logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Caught an Invalid Query Exception for the query :" + queryString + " this is not supported for region#query()");
 
     }
 
-    logger
-        .info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Test Ended");
+    logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Test Ended");
 
-    logger.info("<ExpectedException action=remove>"
-        + expectedQueryInvalidException + "</ExpectedException>");
+    logger.info("<ExpectedException action=remove>" + expectedQueryInvalidException + "</ExpectedException>");
   }
 
   /**
@@ -114,10 +99,8 @@ public class PRInvalidQueryJUnitTest
    * @param region
    * @param data
    */
-  private void populateData(Region region, Object[] data)
-  {
-    logger
-        .info("PRInvalidQueryJUnitTest#populateData: Populating Data to the region");
+  private void populateData(Region region, Object[] data) {
+    logger.info("PRInvalidQueryJUnitTest#populateData: Populating Data to the region");
 
     for (int j = 0; j < data.length; j++) {
       region.put(new Integer(j), data[j]);

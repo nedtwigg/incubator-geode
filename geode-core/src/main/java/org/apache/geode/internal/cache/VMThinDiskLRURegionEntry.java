@@ -17,7 +17,6 @@
 
 package org.apache.geode.internal.cache;
 
-
 /**
  * Implementation class of RegionEntry interface.
  * VM -> entries stored in VM memory
@@ -29,9 +28,7 @@ package org.apache.geode.internal.cache;
  *
  *
  */
-public abstract class VMThinDiskLRURegionEntry
-  extends AbstractDiskLRURegionEntry
-{
+public abstract class VMThinDiskLRURegionEntry extends AbstractDiskLRURegionEntry {
   protected VMThinDiskLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }

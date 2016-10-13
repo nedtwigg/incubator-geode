@@ -50,60 +50,29 @@ public class DiskRegionStats {
 
   private static final int localInitializationsId;
   private static final int remoteInitializationsId;
-  
-  
 
   static {
     String statName = "DiskRegionStatistics";
-    String statDescription =
-      "Statistics about a Region's use of the disk";
+    String statDescription = "Statistics about a Region's use of the disk";
 
-    final String writesDesc =
-      "The total number of region entries that have been written to disk. A write is done every time an entry is created on disk or every time its value is modified on disk.";
-    final String writeTimeDesc =
-      "The total amount of time spent writing to disk";
-    final String bytesWrittenDesc =
-      "The total number of bytes that have been written to disk";
-    final String readsDesc =
-      "The total number of region entries that have been read from disk";
-    final String readTimeDesc =
-      "The total amount of time spent reading from disk";
-    final String bytesReadDesc =
-      "The total number of bytes that have been read from disk";
-    final String removesDesc =
-      "The total number of region entries that have been removed from disk";
-    final String removeTimeDesc =
-      "The total amount of time spent removing from disk";
-    final String numOverflowOnDiskDesc =
-      "The current number of entries whose value is on disk and is not in memory. This is true of overflowed entries. It is also true of recovered entries that have not yet been faulted in.";
-    final String numOverflowBytesOnDiskDesc =
-        "The current number bytes on disk and not in memory. This is true of overflowed entries. It is also true of recovered entries that have not yet been faulted in.";
-    final String numEntriesInVMDesc =
-      "The current number of entries whose value resides in the VM. The value may also have been written to disk.";
-    final String localInitializationsDesc =
-      "The number of times that this region has been initialized solely from the local disk files (0 or 1)";
-    final String remoteInitializationsDesc =
-      "The number of times that this region has been initialized by doing GII from a peer (0 or 1)";
+    final String writesDesc = "The total number of region entries that have been written to disk. A write is done every time an entry is created on disk or every time its value is modified on disk.";
+    final String writeTimeDesc = "The total amount of time spent writing to disk";
+    final String bytesWrittenDesc = "The total number of bytes that have been written to disk";
+    final String readsDesc = "The total number of region entries that have been read from disk";
+    final String readTimeDesc = "The total amount of time spent reading from disk";
+    final String bytesReadDesc = "The total number of bytes that have been read from disk";
+    final String removesDesc = "The total number of region entries that have been removed from disk";
+    final String removeTimeDesc = "The total amount of time spent removing from disk";
+    final String numOverflowOnDiskDesc = "The current number of entries whose value is on disk and is not in memory. This is true of overflowed entries. It is also true of recovered entries that have not yet been faulted in.";
+    final String numOverflowBytesOnDiskDesc = "The current number bytes on disk and not in memory. This is true of overflowed entries. It is also true of recovered entries that have not yet been faulted in.";
+    final String numEntriesInVMDesc = "The current number of entries whose value resides in the VM. The value may also have been written to disk.";
+    final String localInitializationsDesc = "The number of times that this region has been initialized solely from the local disk files (0 or 1)";
+    final String remoteInitializationsDesc = "The number of times that this region has been initialized by doing GII from a peer (0 or 1)";
 
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
     type = f.createType(statName, statDescription,
-       new StatisticDescriptor[] {
-         f.createLongCounter("writes", writesDesc, "ops"),
-         f.createLongCounter("writeTime", writeTimeDesc, "nanoseconds"),
-         f.createLongCounter("writtenBytes", bytesWrittenDesc, "bytes"),
-         f.createLongCounter("reads", readsDesc, "ops"),
-         f.createLongCounter("readTime", readTimeDesc, "nanoseconds"),
-         f.createLongCounter("readBytes", bytesReadDesc, "bytes"),
-         f.createLongCounter("removes", removesDesc, "ops"),
-         f.createLongCounter("removeTime", removeTimeDesc, "nanoseconds"),
-         f.createLongGauge("entriesOnlyOnDisk", numOverflowOnDiskDesc, "entries"),
-         f.createLongGauge("bytesOnlyOnDisk", numOverflowBytesOnDiskDesc, "bytes"),
-         f.createLongGauge("entriesInVM", numEntriesInVMDesc, "entries"),
-         f.createIntGauge("writesInProgress", "current number of oplog writes that are in progress", "writes"),
-         f.createIntGauge("localInitializations", localInitializationsDesc, "initializations"),
-         f.createIntGauge("remoteInitializations", remoteInitializationsDesc, "initializations"),
-       });
+        new StatisticDescriptor[] { f.createLongCounter("writes", writesDesc, "ops"), f.createLongCounter("writeTime", writeTimeDesc, "nanoseconds"), f.createLongCounter("writtenBytes", bytesWrittenDesc, "bytes"), f.createLongCounter("reads", readsDesc, "ops"), f.createLongCounter("readTime", readTimeDesc, "nanoseconds"), f.createLongCounter("readBytes", bytesReadDesc, "bytes"), f.createLongCounter("removes", removesDesc, "ops"), f.createLongCounter("removeTime", removeTimeDesc, "nanoseconds"), f.createLongGauge("entriesOnlyOnDisk", numOverflowOnDiskDesc, "entries"), f.createLongGauge("bytesOnlyOnDisk", numOverflowBytesOnDiskDesc, "bytes"), f.createLongGauge("entriesInVM", numEntriesInVMDesc, "entries"), f.createIntGauge("writesInProgress", "current number of oplog writes that are in progress", "writes"), f.createIntGauge("localInitializations", localInitializationsDesc, "initializations"), f.createIntGauge("remoteInitializations", remoteInitializationsDesc, "initializations"), });
 
     // Initialize id fields
     writesId = type.nameToId("writes");
@@ -127,7 +96,7 @@ public class DiskRegionStats {
 
   /** The Statistics object that we delegate most behavior to */
   private final Statistics stats;
-  
+
   ///////////////////////  Constructors  ///////////////////////
 
   /**
@@ -211,7 +180,7 @@ public class DiskRegionStats {
   public long getNumOverflowOnDisk() {
     return this.stats.getLong(numOverflowOnDiskId);
   }
-  
+
   /**
    * Returns the current number of entries whose value has been
    * overflowed to disk.  This value will decrease when a value is
@@ -245,7 +214,7 @@ public class DiskRegionStats {
   public void incNumEntriesInVM(long delta) {
     this.stats.incLong(numEntriesInVMId, delta);
   }
-  
+
   /**
    * Increments the current number of entries whose value has been
    * overflowed to disk by a given amount.
@@ -266,6 +235,7 @@ public class DiskRegionStats {
   public void incWrittenBytes(long bytesWritten) {
     this.stats.incLong(bytesWrittenId, bytesWritten);
   }
+
   /**
    * Invoked after data has been written to disk
    *
@@ -304,22 +274,22 @@ public class DiskRegionStats {
   }
 
   public void incInitializations(boolean local) {
-    if(local) {
+    if (local) {
       this.stats.incInt(localInitializationsId, 1);
     } else {
       this.stats.incInt(remoteInitializationsId, 1);
     }
   }
-  
+
   public int getLocalInitializations() {
     return this.stats.getInt(localInitializationsId);
   }
-  
+
   public int getRemoteInitializations() {
     return this.stats.getInt(remoteInitializationsId);
   }
-  
-  public Statistics getStats(){
+
+  public Statistics getStats() {
     return stats;
   }
 }

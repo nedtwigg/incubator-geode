@@ -51,12 +51,12 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
    */
   public CqListener[] getCqListeners() {
     final ArrayList listeners = this.cqListeners;
-    if (listeners == null){
+    if (listeners == null) {
       return CqAttributesImpl.EMPTY_LISTENERS;
     }
 
     CqListener[] result = null;
-    synchronized(this.clSync){
+    synchronized (this.clSync) {
       result = new CqListener[listeners.size()];
       listeners.toArray(result);
     }
@@ -88,8 +88,7 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
   public Object clone() {
     try {
       return super.clone();
-    }
-    catch (CloneNotSupportedException e) {
+    } catch (CloneNotSupportedException e) {
       throw new InternalError(LocalizedStrings.CqAttributesFactory_CLONENOTSUPPORTEDEXCEPTION_THROWN_IN_CLASS_THAT_IMPLEMENTS_CLONEABLE.toLocalizedString());
     }
   }
@@ -99,8 +98,7 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
    * @param cql the user defined cq listener to add to the CqQuery.
    * @throws IllegalArgumentException if <code>aListener</code> is null
    */
-  public void addCqListener(CqListener cql)
-  {
+  public void addCqListener(CqListener cql) {
     if (cql == null) {
       throw new IllegalArgumentException(LocalizedStrings.CqAttributesFactory_ADDCQLISTENER_PARAMETER_WAS_NULL.toLocalizedString());
     }
@@ -110,8 +108,7 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
         ArrayList<CqListener> al = new ArrayList<CqListener>(1);
         al.add(cql);
         this.setCqListeners(al);
-      }
-      else {
+      } else {
         if (!oldListeners.contains(cql)) {
           oldListeners.add(cql);
         }
@@ -124,15 +121,13 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
    * @param addedListeners a possibly null or empty array of listeners to add to this CqQuery.
    * @throws IllegalArgumentException if the <code>newListeners</code> array has a null element
    */
-  public void initCqListeners(CqListener[] addedListeners)
-  {
+  public void initCqListeners(CqListener[] addedListeners) {
     ArrayList<CqListener> oldListeners;
     synchronized (this.clSync) {
       oldListeners = this.cqListeners;
       if (addedListeners == null || addedListeners.length == 0) {
         this.setCqListeners(null);
-      }
-      else { // we have some listeners to add
+      } else { // we have some listeners to add
         List nl = Arrays.asList(addedListeners);
         if (nl.contains(null)) {
           throw new IllegalArgumentException(LocalizedStrings.CqAttributesFactory_INITCQLISTENERS_PARAMETER_HAD_A_NULL_ELEMENT.toLocalizedString());
@@ -149,19 +144,16 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
           cql.close();
           // Handle client side exceptions.
         } catch (Exception ex) {
-          logger.warn(LocalizedMessage
-            .create(LocalizedStrings.CqAttributesFactory_EXCEPTION_OCCURED_WHILE_CLOSING_CQ_LISTENER_ERROR_0, ex.getLocalizedMessage()));
+          logger.warn(LocalizedMessage.create(LocalizedStrings.CqAttributesFactory_EXCEPTION_OCCURED_WHILE_CLOSING_CQ_LISTENER_ERROR_0, ex.getLocalizedMessage()));
           if (logger.isDebugEnabled()) {
             logger.debug(ex.getMessage(), ex);
           }
-        }
-        catch (VirtualMachineError err) {
+        } catch (VirtualMachineError err) {
           SystemFailure.initiateFailure(err);
           // If this ever returns, rethrow the error.  We're poisoned
           // now, so don't let this thread continue.
           throw err;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
           // Whenever you catch Error or Throwable, you must also
           // catch VirtualMachineError (see above).  However, there is
           // _still_ a possibility that you are dealing with a cascading
@@ -185,8 +177,7 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
    * @param cql the Cqlistener to remove from the CqQuery.
    * @throws IllegalArgumentException if <code>cl</code> is null
    */
-  public void removeCqListener(CqListener cql)
-  {
+  public void removeCqListener(CqListener cql) {
     if (cql == null) {
       throw new IllegalArgumentException(LocalizedStrings.CqAttributesFactory_REMOVECQLISTENER_PARAMETER_WAS_NULL.toLocalizedString());
     }
@@ -205,14 +196,12 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
             if (logger.isDebugEnabled()) {
               logger.debug(ex.getMessage(), ex);
             }
-          }
-          catch (VirtualMachineError err) {
+          } catch (VirtualMachineError err) {
             SystemFailure.initiateFailure(err);
             // If this ever returns, rethrow the error.  We're poisoned
             // now, so don't let this thread continue.
             throw err;
-          }
-          catch (Throwable t) {
+          } catch (Throwable t) {
             // Whenever you catch Error or Throwable, you must also
             // catch VirtualMachineError (see above).  However, there is
             // _still_ a possibility that you are dealing with a cascading
@@ -223,14 +212,14 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
             if (logger.isDebugEnabled()) {
               logger.debug(t.getMessage(), t);
             }
-            }
+          }
         }
       }
     }
   }
 
   public void setCqListeners(ArrayList<CqListener> cqListeners) {
-    synchronized(this.clSync) {
+    synchronized (this.clSync) {
       this.cqListeners = cqListeners;
     }
   }

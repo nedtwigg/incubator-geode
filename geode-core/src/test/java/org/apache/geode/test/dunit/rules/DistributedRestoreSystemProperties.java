@@ -30,26 +30,26 @@ import org.apache.geode.test.junit.rules.serializable.SerializableTestRule;
  * JVMs including the Locator JVM.
  */
 public class DistributedRestoreSystemProperties extends RestoreSystemProperties implements SerializableTestRule {
-  
+
   private static volatile Properties originalProperties;
 
   private final RemoteInvoker invoker;
-  
+
   public DistributedRestoreSystemProperties() {
-   this(new RemoteInvoker());
+    this(new RemoteInvoker());
   }
-  
+
   public DistributedRestoreSystemProperties(final RemoteInvoker invoker) {
     super();
     this.invoker = invoker;
   }
-  
+
   @Override
   protected void before() throws Throwable {
     super.before();
     this.invoker.remoteInvokeInEveryVMAndLocator(new SerializableRunnable() {
       @Override
-      public void run() { 
+      public void run() {
         originalProperties = getProperties();
         setProperties(new Properties(originalProperties));
       }
@@ -61,7 +61,7 @@ public class DistributedRestoreSystemProperties extends RestoreSystemProperties 
     super.after();
     this.invoker.remoteInvokeInEveryVMAndLocator(new SerializableRunnable() {
       @Override
-      public void run() { 
+      public void run() {
         setProperties(originalProperties);
         originalProperties = null;
       }

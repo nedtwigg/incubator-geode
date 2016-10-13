@@ -36,9 +36,8 @@ import org.apache.geode.compression.SnappyCompressor;
  * @since GemFire 8.0
  */
 @Category(DistributedTest.class)
-public class PartitionedRegionCompressionDUnitTest extends
-    PartitionedRegionDUnitTest {
-  
+public class PartitionedRegionCompressionDUnitTest extends PartitionedRegionDUnitTest {
+
   public PartitionedRegionCompressionDUnitTest() {
     super();
   }
@@ -58,7 +57,7 @@ public class PartitionedRegionCompressionDUnitTest extends
     factory.setCompressor(compressor);
     return factory.create();
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
@@ -71,7 +70,7 @@ public class PartitionedRegionCompressionDUnitTest extends
     }
     RegionAttributes ra = super.getRegionAttributes(type);
     AttributesFactory factory = new AttributesFactory(ra);
-    if(!ra.getDataPolicy().isEmpty()) {
+    if (!ra.getDataPolicy().isEmpty()) {
       factory.setCompressor(compressor);
     }
     return factory.create();

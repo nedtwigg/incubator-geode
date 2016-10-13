@@ -48,7 +48,7 @@ public class JUnit4GetDefaultDiskStoreNameDUnitTest extends JUnit4DistributedTes
 
     for (int vmIndex = 0; vmIndex < Host.getHost(0).getVMCount(); vmIndex++) {
       String expectedInVM = createDefaultDiskStoreName(0, vmIndex, "testGetTestMethodNameInAllVMs");
-      Host.getHost(0).getVM(vmIndex).invoke(()->assertGetDefaultDiskStoreName(expectedInVM));
+      Host.getHost(0).getVM(vmIndex).invoke(() -> assertGetDefaultDiskStoreName(expectedInVM));
     }
   }
 

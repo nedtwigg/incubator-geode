@@ -26,61 +26,59 @@ import org.apache.geode.management.internal.cli.json.GfJsonObject;
  * @since GemFire 7.0
  */
 public class CommandResponse {
-  
+
   private final String sender;
   private final String version;
-  private final int    status;
+  private final int status;
   private final String contentType;
   private final String page;
   private final String when;
   private final String tokenAccessor;
   private final String debugInfo;
-  private final Data   data;
+  private final Data data;
   private final boolean failedToPersist;
-  
-  CommandResponse(String sender, String contentType, int status, 
-      String page, String tokenAccessor, String debugInfo, String header, 
-      GfJsonObject content, String footer, boolean failedToPersist) {
-    this.sender        = sender;
-    this.contentType   = contentType;
-    this.status        = status;
-    this.page          = page;
+
+  CommandResponse(String sender, String contentType, int status, String page, String tokenAccessor, String debugInfo, String header, GfJsonObject content, String footer, boolean failedToPersist) {
+    this.sender = sender;
+    this.contentType = contentType;
+    this.status = status;
+    this.page = page;
     this.tokenAccessor = tokenAccessor;
-    this.debugInfo     = debugInfo;
-    this.data          = new Data(header, content, footer);
-    this.when          = DateFormat.getInstance().format(new java.util.Date());
-    this.version       = GemFireVersion.getGemFireVersion();
+    this.debugInfo = debugInfo;
+    this.data = new Data(header, content, footer);
+    this.when = DateFormat.getInstance().format(new java.util.Date());
+    this.version = GemFireVersion.getGemFireVersion();
     this.failedToPersist = failedToPersist;
   }
-  
+
   // For de-serializing
   CommandResponse(GfJsonObject jsonObject) {
-    this.sender        = jsonObject.getString("sender");
-    this.contentType   = jsonObject.getString("contentType");
-    this.status        = jsonObject.getInt("status");
-    this.page          = jsonObject.getString("page");
+    this.sender = jsonObject.getString("sender");
+    this.contentType = jsonObject.getString("contentType");
+    this.status = jsonObject.getInt("status");
+    this.page = jsonObject.getString("page");
     this.tokenAccessor = jsonObject.getString("tokenAccessor");
-    this.debugInfo     = jsonObject.getString("debugInfo");
-    this.data          = new Data(jsonObject.getJSONObject("data"));
-    this.when          = jsonObject.getString("when");
-    this.version       = jsonObject.getString("version");
+    this.debugInfo = jsonObject.getString("debugInfo");
+    this.data = new Data(jsonObject.getJSONObject("data"));
+    this.when = jsonObject.getString("when");
+    this.version = jsonObject.getString("version");
     this.failedToPersist = jsonObject.getBoolean("failedToPersist");
   }
-  
+
   /**
    * @return the sender
    */
   public String getSender() {
     return sender;
   }
-  
+
   /**
    * @return the version
    */
   public String getVersion() {
     return version;
   }
-  
+
   /**
    * @return the status
    */
@@ -94,21 +92,21 @@ public class CommandResponse {
   public String getContentType() {
     return contentType;
   }
-  
+
   /**
    * @return the page
    */
   public String getPage() {
     return page;
   }
-  
+
   /**
    * @return the when
    */
   public String getWhen() {
     return when;
   }
-  
+
   /**
    * @return the tokenAccessor
    */
@@ -122,7 +120,7 @@ public class CommandResponse {
   public Data getData() {
     return data;
   }
-  
+
   /**
    * @return the debugInfo
    */
@@ -135,20 +133,20 @@ public class CommandResponse {
   }
 
   public static class Data {
-    private String       header;
+    private String header;
     private GfJsonObject content;
-    private String       footer;
-    
+    private String footer;
+
     public Data(String header, GfJsonObject content, String footer) {
-      this.header  = header;
+      this.header = header;
       this.content = content;
-      this.footer  = footer;
+      this.footer = footer;
     }
-    
+
     public Data(GfJsonObject dataJsonObject) {
-      this.header  = dataJsonObject.getString("header");
+      this.header = dataJsonObject.getString("header");
       this.content = dataJsonObject.getJSONObject("content");
-      this.footer  = dataJsonObject.getString("footer");
+      this.footer = dataJsonObject.getString("footer");
     }
 
     /**
@@ -174,14 +172,11 @@ public class CommandResponse {
 
     public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("Data [header=").append(header)
-             .append(", content=").append(content)
-             .append(", footer=").append(footer).append("]");
+      builder.append("Data [header=").append(header).append(", content=").append(content).append(", footer=").append(footer).append("]");
       return builder.toString();
     }
   }
 }
-
 
 /*
 ** TABLE

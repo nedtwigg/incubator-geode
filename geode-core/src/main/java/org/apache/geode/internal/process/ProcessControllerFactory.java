@@ -32,13 +32,13 @@ import java.util.concurrent.TimeoutException;
 public final class ProcessControllerFactory {
 
   public static final String PROPERTY_DISABLE_ATTACH_API = DistributionConfig.GEMFIRE_PREFIX + "test.ProcessControllerFactory.DisableAttachApi";
-  
+
   private final boolean disableAttachApi;
-  
+
   public ProcessControllerFactory() {
     this.disableAttachApi = Boolean.getBoolean(PROPERTY_DISABLE_ATTACH_API);
   }
-  
+
   public ProcessController createProcessController(final ProcessControllerParameters arguments, final int pid) {
     if (arguments == null) {
       throw new NullPointerException("ProcessControllerParameters must not be null");
@@ -48,16 +48,16 @@ public final class ProcessControllerFactory {
     }
     try {
       if (isAttachAPIFound()) {
-        return new MBeanProcessController((MBeanControllerParameters)arguments, pid);
+        return new MBeanProcessController((MBeanControllerParameters) arguments, pid);
       } else {
-        return new FileProcessController((FileControllerParameters)arguments, pid);
+        return new FileProcessController((FileControllerParameters) arguments, pid);
       }
     } catch (final ExceptionInInitializerError e) {
       //LOGGER.warn("Attach API class not found", e);
     }
     return null;
   }
-  
+
   public ProcessController createProcessController(final ProcessControllerParameters arguments, final File pidFile, final long timeout, final TimeUnit unit) throws IOException, InterruptedException, TimeoutException {
     if (arguments == null) {
       throw new NullPointerException("ProcessControllerParameters must not be null");
@@ -67,7 +67,7 @@ public final class ProcessControllerFactory {
     }
     return createProcessController(arguments, new PidFile(pidFile).readPid(timeout, unit));
   }
-  
+
   public ProcessController createProcessController(final ProcessControllerParameters arguments, final File directory, final String pidFilename, final long timeout, final TimeUnit unit) throws IOException, InterruptedException, TimeoutException {
     if (arguments == null) {
       throw new NullPointerException("ProcessControllerParameters must not be null");

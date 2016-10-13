@@ -34,45 +34,39 @@ import javax.management.modelmbean.ModelMBeanAttributeInfo;
  */
 class StatisticAttributeInfo extends org.apache.commons.modeler.AttributeInfo {
   private static final long serialVersionUID = 28022387514935560L;
-    
+
   private Statistic stat;
-  
+
   public StatisticAttributeInfo() {
     super();
   }
-  
+
   public Statistic getStat() {
     return this.stat;
   }
+
   public void setStat(Statistic stat) {
     //System.out.println(">> stat = " + stat);
     Assert.assertTrue(stat != null, "Attempting to set stat to null");
     this.stat = stat;
   }
-  
+
   @Override
   public ModelMBeanAttributeInfo createAttributeInfo() {
-    Descriptor desc = new DescriptorSupport(
-        new String[] {
-        "name=" + this.displayName,
-        "descriptorType=attribute",
-        "currencyTimeLimit=-1", // always stale
-        "displayName=" + this.displayName,
-        "getMethod=getValue" });
+    Descriptor desc = new DescriptorSupport(new String[] { "name=" + this.displayName, "descriptorType=attribute", "currencyTimeLimit=-1", // always stale
+        "displayName=" + this.displayName, "getMethod=getValue" });
 
     Assert.assertTrue(this.stat != null, "Stat target object is null!");
     desc.setField("targetObject", this.stat);
 
-    ModelMBeanAttributeInfo info = new ModelMBeanAttributeInfo(
-        this.displayName, // name
-        this.type,        // type
+    ModelMBeanAttributeInfo info = new ModelMBeanAttributeInfo(this.displayName, // name
+        this.type, // type
         this.description, // description
-        this.readable,    // isReadable
-        this.writeable,   // isWritable
-        this.is,          // isIs
+        this.readable, // isReadable
+        this.writeable, // isWritable
+        this.is, // isIs
         desc);
-        
+
     return info;
   }
 }
-

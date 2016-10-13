@@ -58,15 +58,15 @@ public class ClientConnectionResponse extends ServerLocationResponse {
   public void toData(DataOutput out) throws IOException {
     boolean serverFound = server != null;
     DataSerializer.writePrimitiveBoolean(serverFound, out);
-    if(serverFound) {
+    if (serverFound) {
       server.toData(out);
     }
   }
-  
+
   public ServerLocation getServer() {
     return server;
   }
-  
+
   @Override
   public String toString() {
     return "ClientConnectionResponse{server=" + getServer() + "}";
@@ -75,10 +75,10 @@ public class ClientConnectionResponse extends ServerLocationResponse {
   public int getDSFID() {
     return DataSerializableFixedID.CLIENT_CONNECTION_RESPONSE;
   }
-  
+
   @Override
   public boolean hasResult() {
     return this.serverFound;
   }
-  
+
 }

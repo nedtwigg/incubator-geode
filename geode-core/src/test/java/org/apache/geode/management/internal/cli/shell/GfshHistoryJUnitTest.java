@@ -46,14 +46,13 @@ public class GfshHistoryJUnitTest {
   public void setUp() throws Exception {
     teardown();
     gfshHistoryFile = tempDirectory.newFile("historyFile");
-    gfshConfig = new GfshConfig(gfshHistoryFile.getAbsolutePath(),
-        "",                                         // defaultPrompt
-        0,                                          // historySize
-        tempDirectory.getRoot().getAbsolutePath(),  // logDir
-        null,                                       // logLevel
-        null,                                       // logLimit
-        null,                                       // logCount
-        null                                        // initFileName
+    gfshConfig = new GfshConfig(gfshHistoryFile.getAbsolutePath(), "", // defaultPrompt
+        0, // historySize
+        tempDirectory.getRoot().getAbsolutePath(), // logDir
+        null, // logLevel
+        null, // logLimit
+        null, // logCount
+        null // initFileName
     );
   }
 
@@ -85,7 +84,7 @@ public class GfshHistoryJUnitTest {
   }
 
   @Test
-  public void testClearHistory() throws Exception{
+  public void testClearHistory() throws Exception {
     Gfsh gfsh = Gfsh.getInstance(false, new String[] {}, gfshConfig);
     gfsh.executeScriptLine("connect --fake-param=foo");
     List<String> lines = Files.readAllLines(gfshHistoryFile.toPath());

@@ -50,30 +50,31 @@ public class TestServerDUnitTest extends ManagementTestBase {
   }
 
   public static int getNumOfServersFromMBean() {
-   
-   final WaitCriterion waitCriteria = new WaitCriterion() {
+
+    final WaitCriterion waitCriteria = new WaitCriterion() {
       @Override
       public boolean done() {
-        final ManagementService service = getManagementService();        
+        final ManagementService service = getManagementService();
         final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        if(bean !=null){
+        if (bean != null) {
           if (bean.listCacheServers().length > 0) {
             return true;
           }
         }
         return false;
       }
+
       @Override
       public String description() {
         return "wait for getDistributedSystemMXBean to complete and get results";
       }
     };
 
-    Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);    
+    Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
     return bean.listCacheServers().length;
-   
+
   }
 
   protected CqQueryDUnitTest cqDUnitTest = new CqQueryDUnitTest();
@@ -81,9 +82,9 @@ public class TestServerDUnitTest extends ManagementTestBase {
   @Test
   public void testNumOfServersDUnitTest() throws Exception {
     initManagement(false);
-    VM server = managedNodeList.get(1);    
+    VM server = managedNodeList.get(1);
     int serverPort = AvailablePortHelper.getRandomAvailableTCPPort();
-    cqDUnitTest.createServer(server, serverPort);    
+    cqDUnitTest.createServer(server, serverPort);
     int serverCount = ((Number) managingNode.invoke(() -> TestServerDUnitTest.getNumOfServersFromMBean())).intValue();
     LogWriterUtils.getLogWriter().info("TestServerDUnitTest serverCount =" + serverCount);
     cqDUnitTest.closeServer(server);

@@ -57,8 +57,7 @@ public class Put61 extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long p_start)
-    throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long p_start) throws IOException, InterruptedException {
     long start = p_start;
     Part regionNamePart = null, keyPart = null, valuePart = null, callbackArgPart = null;
     String regionName = null;
@@ -111,8 +110,7 @@ public class Put61 extends BaseCommand {
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("{}: Received 6.1{}put request ({} bytes) from {} for region {} key {}", servConn.getName(), (isDelta ? " delta " : " "), msg
-        .getPayloadLength(), servConn.getSocketString(), regionName, key);
+      logger.debug("{}: Received 6.1{}put request ({} bytes) from {} for region {} key {}", servConn.getName(), (isDelta ? " delta " : " "), msg.getPayloadLength(), servConn.getSocketString(), regionName, key);
     }
 
     // Process the put request
@@ -226,10 +224,7 @@ public class Put61 extends BaseCommand {
       servConn.setAsTrue(RESPONDED);
       return;
     } catch (InvalidDeltaException ide) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.UpdateOperation_ERROR_APPLYING_DELTA_FOR_KEY_0_OF_REGION_1, new Object[] {
-        key,
-        regionName
-      }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.UpdateOperation_ERROR_APPLYING_DELTA_FOR_KEY_0_OF_REGION_1, new Object[] { key, regionName }));
       writeException(msg, MessageType.PUT_DELTA_ERROR, ide, false, servConn);
       servConn.setAsTrue(RESPONDED);
       region.getCachePerfStats().incDeltaFullValuesRequested();

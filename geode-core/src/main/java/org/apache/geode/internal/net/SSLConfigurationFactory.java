@@ -46,16 +46,14 @@ public class SSLConfigurationFactory {
   }
 
   private DistributionConfig getDistributionConfig() {
-    if(distributionConfig == null)
-    {
+    if (distributionConfig == null) {
       throw new GemFireConfigException("SSL Configuration requires a valid distribution config.");
     }
     return distributionConfig;
   }
 
   public static void setDistributionConfig(final DistributionConfig distributionConfig) {
-    if(distributionConfig == null)
-    {
+    if (distributionConfig == null) {
       throw new GemFireConfigException("SSL Configuration requires a valid distribution config.");
     }
     getInstance().distributionConfig = distributionConfig;
@@ -82,58 +80,58 @@ public class SSLConfigurationFactory {
     }
     sslConfig.setSecurableCommunicationChannel(sslEnabledComponent);
     switch (sslEnabledComponent) {
-      case ALL: {
-        //Create a SSLConfig separate for HTTP Service. As the require-authentication might differ
-        createSSLConfigForComponent(SecurableCommunicationChannel.WEB);
-        break;
+    case ALL: {
+      //Create a SSLConfig separate for HTTP Service. As the require-authentication might differ
+      createSSLConfigForComponent(SecurableCommunicationChannel.WEB);
+      break;
+    }
+    case CLUSTER: {
+      if (sslEnabledComponents.length > 0) {
+        sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getClusterSSLAlias());
+      } else {
+        sslConfig = configureLegacyClusterSSL(sslConfig);
       }
-      case CLUSTER: {
-        if (sslEnabledComponents.length > 0) {
-          sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getClusterSSLAlias());
-        }else {
-          sslConfig = configureLegacyClusterSSL(sslConfig);
-        }
-        break;
+      break;
+    }
+    case LOCATOR: {
+      if (sslEnabledComponents.length > 0) {
+        sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getLocatorSSLAlias());
       }
-      case LOCATOR: {
-        if (sslEnabledComponents.length > 0) {
-          sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getLocatorSSLAlias());
-        }
-        break;
+      break;
+    }
+    case SERVER: {
+      if (sslEnabledComponents.length > 0) {
+        sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getServerSSLAlias());
+      } else {
+        sslConfig = configureLegacyServerSSL(sslConfig);
       }
-      case SERVER: {
-        if (sslEnabledComponents.length > 0) {
-          sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getServerSSLAlias());
-        } else {
-          sslConfig = configureLegacyServerSSL(sslConfig);
-        }
-        break;
+      break;
+    }
+    case GATEWAY: {
+      if (sslEnabledComponents.length > 0) {
+        sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getGatewaySSLAlias());
+      } else {
+        sslConfig = configureLegacyGatewaySSL(sslConfig);
       }
-      case GATEWAY: {
-        if (sslEnabledComponents.length > 0) {
-          sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getGatewaySSLAlias());
-        } else {
-          sslConfig = configureLegacyGatewaySSL(sslConfig);
-        }
-        break;
+      break;
+    }
+    case WEB: {
+      if (sslEnabledComponents.length > 0) {
+        sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getHTTPServiceSSLAlias());
+        sslConfig.setRequireAuth(getDistributionConfig().getSSLWebRequireAuthentication());
+      } else {
+        sslConfig = configureLegacyHttpServiceSSL(sslConfig);
       }
-      case WEB: {
-        if (sslEnabledComponents.length > 0) {
-          sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getHTTPServiceSSLAlias());
-          sslConfig.setRequireAuth(getDistributionConfig().getSSLWebRequireAuthentication());
-        } else {
-          sslConfig = configureLegacyHttpServiceSSL(sslConfig);
-        }
-        break;
+      break;
+    }
+    case JMX: {
+      if (sslEnabledComponents.length > 0) {
+        sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getJMXSSLAlias());
+      } else {
+        sslConfig = configureLegacyJMXSSL(sslConfig);
       }
-      case JMX: {
-        if (sslEnabledComponents.length > 0) {
-          sslConfig = setAliasForComponent(sslConfig, getDistributionConfig().getJMXSSLAlias());
-        } else {
-          sslConfig = configureLegacyJMXSSL(sslConfig);
-        }
-        break;
-      }
+      break;
+    }
     }
     configureSSLPropertiesFromSystemProperties(sslConfig);
     return sslConfig;
@@ -322,12 +320,7 @@ public class SSLConfigurationFactory {
   }
 
   @Deprecated
-  public static SSLConfig getSSLConfigForComponent(final boolean useSSL,
-                                                   final boolean needClientAuth,
-                                                   final String protocols,
-                                                   final String ciphers,
-                                                   final Properties gfsecurityProps,
-                                                   final String alias) {
+  public static SSLConfig getSSLConfigForComponent(final boolean useSSL, final boolean needClientAuth, final String protocols, final String ciphers, final Properties gfsecurityProps, final String alias) {
     SSLConfig sslConfig = new SSLConfig();
     sslConfig.setAlias(alias);
     sslConfig.setCiphers(ciphers);

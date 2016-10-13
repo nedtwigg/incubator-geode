@@ -48,7 +48,7 @@ public final class DistributedMemberLock implements Lock {
 
   /** Lock lease timeout value that never expires. */
   public static final long NON_EXPIRING_LEASE = -1;
-  
+
   /**
    * Defines the behavior when attempting to reenter a held lock.
    * 
@@ -60,7 +60,7 @@ public final class DistributedMemberLock implements Lock {
     THROW_ERROR,
     /** Silently returns without doing anything if lock reentry is attempted */
     PREVENT_SILENTLY;
-    
+
     /**
      * Returns true if lock reentry should be rejected.
      * 
@@ -70,31 +70,31 @@ public final class DistributedMemberLock implements Lock {
      */
     boolean preventReentry(DistributedMemberLock lock) {
       switch (this) {
-        case ALLOW:
-          return false; // allow
-        case THROW_ERROR:
-          throw new IllegalStateException("Attempted to reenter held lock " + lock);
-        case PREVENT_SILENTLY:
-          return true; // reject
+      case ALLOW:
+        return false; // allow
+      case THROW_ERROR:
+        throw new IllegalStateException("Attempted to reenter held lock " + lock);
+      case PREVENT_SILENTLY:
+        return true; // reject
       }
       throw new AssertionError("Unknown LockReentryPolicy: " + this);
     }
-    
+
     @Override
     public String toString() {
       String myToString = "Unknown";
       switch (this) {
-        case ALLOW:
-          myToString = "ALLOW";
-          break;
-        case THROW_ERROR:
-          myToString = "THROW_ERROR";
-          break;
-        case PREVENT_SILENTLY:
-          myToString = "PREVENT_SILENTLY";
-          break;
-        default:
-          // leave as "Unknown"
+      case ALLOW:
+        myToString = "ALLOW";
+        break;
+      case THROW_ERROR:
+        myToString = "THROW_ERROR";
+        break;
+      case PREVENT_SILENTLY:
+        myToString = "PREVENT_SILENTLY";
+        break;
+      default:
+        // leave as "Unknown"
       }
       return myToString;
     }
@@ -102,19 +102,19 @@ public final class DistributedMemberLock implements Lock {
 
   /** Underlying distributed lock service to use */
   final DLockService dls;
-  
+
   /** The name of the key for this lock */
   final Serializable key;
 
   /** The lease in milliseconds to hold the lock*/
   final long leaseTimeout;
-  
+
   /** Defines the behavior if lock reentry is attempted */
   final LockReentryPolicy reentryPolicy;
 
   /** Thread identity so that all caller threads appear as the same to dlock */
   final ThreadRequestState threadState;
-  
+
   /**
    * Constructs a new <code>DistributedMemberLock</code>.
    * @param dls the instance of <code>DistributedLockService</code> to use
@@ -124,7 +124,7 @@ public final class DistributedMemberLock implements Lock {
   public DistributedMemberLock(DistributedLockService dls, Serializable key) {
     this(dls, key, NON_EXPIRING_LEASE, LockReentryPolicy.ALLOW);
   }
-  
+
   /**
    * Constructs a new <code>DistributedMemberLock</code>.
    * @param dls the instance of <code>DistributedLockService</code> to use
@@ -134,26 +134,22 @@ public final class DistributedMemberLock implements Lock {
    * @param reentryPolicy defines behavior for lock reentry
    * @throws NullPointerException if dls or key is null
    */
-  public DistributedMemberLock(DistributedLockService dls, Serializable key, 
-  long leaseTimeout, LockReentryPolicy reentryPolicy) {
+  public DistributedMemberLock(DistributedLockService dls, Serializable key, long leaseTimeout, LockReentryPolicy reentryPolicy) {
     if (dls == null || key == null) {
       throw new NullPointerException();
     }
-    this.dls = (DLockService)dls;
+    this.dls = (DLockService) dls;
     this.key = key;
     this.leaseTimeout = leaseTimeout;
     this.reentryPolicy = reentryPolicy;
-    RemoteThread rThread = 
-      new RemoteThread(getDM().getId(), this.dls.incThreadSequence()); 
-    this.threadState = 
-        new ThreadRequestState(rThread.getThreadId(), true);
+    RemoteThread rThread = new RemoteThread(getDM().getId(), this.dls.incThreadSequence());
+    this.threadState = new ThreadRequestState(rThread.getThreadId(), true);
   }
 
   public synchronized void lock() {
     executeOperation(new Operation() {
       public boolean operate() {
-        if (holdsLock() && 
-            reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
           return true;
         }
         boolean locked = dls.lock(key, -1, leaseTimeout);
@@ -163,12 +159,10 @@ public final class DistributedMemberLock implements Lock {
     });
   }
 
-  public synchronized void lockInterruptibly() 
-  throws InterruptedException {
+  public synchronized void lockInterruptibly() throws InterruptedException {
     executeOperationInterruptibly(new Operation() {
       public boolean operate() throws InterruptedException {
-        if (holdsLock() && 
-            reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
           return true;
         }
         boolean locked = dls.lockInterruptibly(key, -1, leaseTimeout);
@@ -181,8 +175,7 @@ public final class DistributedMemberLock implements Lock {
   public synchronized boolean tryLock() {
     return executeOperation(new Operation() {
       public boolean operate() {
-        if (holdsLock() && 
-            reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
           return true;
         }
         return dls.lock(key, 0, leaseTimeout);
@@ -190,16 +183,13 @@ public final class DistributedMemberLock implements Lock {
     });
   }
 
-  public synchronized boolean tryLock(final long time, final TimeUnit unit)
-  throws InterruptedException {
+  public synchronized boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
     return executeOperationInterruptibly(new Operation() {
       public boolean operate() throws InterruptedException {
-        if (holdsLock() && 
-            reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
           return true;
         }
-        return dls.lockInterruptibly(
-            key, getLockTimeoutForLock(time, unit), leaseTimeout);
+        return dls.lockInterruptibly(key, getLockTimeoutForLock(time, unit), leaseTimeout);
       }
     });
   }
@@ -212,7 +202,7 @@ public final class DistributedMemberLock implements Lock {
       }
     });
   }
-  
+
   public synchronized boolean holdsLock() {
     return executeOperation(new Operation() {
       public boolean operate() {
@@ -220,70 +210,64 @@ public final class DistributedMemberLock implements Lock {
       }
     });
   }
-  
-  private boolean executeOperationInterruptibly(Operation lockOp) 
-  throws InterruptedException {
+
+  private boolean executeOperationInterruptibly(Operation lockOp) throws InterruptedException {
     return doExecuteOperation(lockOp, true);
   }
-  
+
   private boolean executeOperation(Operation lockOp) {
     for (;;) {
       this.dls.getCancelCriterion().checkCancelInProgress(null);
       boolean interrupted = Thread.interrupted();
       try {
         return doExecuteOperation(lockOp, false);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         interrupted = true;
         continue; // keep trying
-      }
-      finally {
+      } finally {
         if (interrupted) {
           Thread.currentThread().interrupt();
         }
       }
     } // for
   }
-  
-  private boolean doExecuteOperation(Operation lockOp, boolean interruptible) 
-  throws InterruptedException {
-    
-    ThreadRequestState oldThreadState = (ThreadRequestState) 
-      this.dls.getThreadRequestState().get();
-  
+
+  private boolean doExecuteOperation(Operation lockOp, boolean interruptible) throws InterruptedException {
+
+    ThreadRequestState oldThreadState = (ThreadRequestState) this.dls.getThreadRequestState().get();
+
     try {
       this.threadState.interruptible = interruptible;
       this.dls.getThreadRequestState().set(this.threadState);
       return lockOp.operate();
-    }
-    finally {
+    } finally {
       this.threadState.interruptible = false;
       this.dls.getThreadRequestState().set(oldThreadState);
     }
   }
-  
+
   private DM getDM() {
     return this.dls.getDistributionManager();
   }
-  
+
   long getLockTimeoutForLock(long time, TimeUnit unit) {
     if (time == -1) {
       return -1;
     }
     return TimeUnit.MILLISECONDS.convert(time, unit);
   }
-  
+
   @Override
   public String toString() {
     String identity = super.toString();
-    identity = identity.substring(identity.lastIndexOf(".")+1);
+    identity = identity.substring(identity.lastIndexOf(".") + 1);
     final StringBuffer sb = new StringBuffer("[" + identity + ": ");
     sb.append("dls=").append(this.dls.getName());
     sb.append("key=").append(this.key);
     sb.append("]");
     return sb.toString();
   }
-  
+
   private interface Operation {
     public boolean operate() throws InterruptedException;
   }

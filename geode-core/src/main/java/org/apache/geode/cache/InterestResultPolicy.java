@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache;
 
 import org.apache.geode.internal.cache.tier.sockets.InterestResultPolicyImpl;
@@ -49,7 +48,6 @@ public class InterestResultPolicy implements Serializable {
    */
   public static final InterestResultPolicy DEFAULT = KEYS_VALUES;
 
-
   /** The name of this <code>InterestResultPolicy</code>. */
   private final transient String name;
 
@@ -57,9 +55,8 @@ public class InterestResultPolicy implements Serializable {
   public final byte ordinal;
 
   protected Object readResolve() throws ObjectStreamException {
-    return VALUES[ordinal];  // Canonicalize
+    return VALUES[ordinal]; // Canonicalize
   }
-
 
   /** should only be called from InterestResultPolicyImpl */
   protected InterestResultPolicy(String name) {
@@ -72,6 +69,7 @@ public class InterestResultPolicy implements Serializable {
   public static InterestResultPolicy fromOrdinal(byte ordinal) {
     return VALUES[ordinal];
   }
+
   /** Returns the ordinal value.
    * @since GemFire 5.0
    */

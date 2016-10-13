@@ -49,7 +49,7 @@ public class KeyInfo {
     this.key = key;
     this.callbackArg = callbackArg;
     this.bucketId = UNKNOWN_BUCKET;
-    this.value =  value;
+    this.value = value;
   }
 
   public KeyInfo(Object key, Object callbackArg, int bucketId) {
@@ -58,18 +58,18 @@ public class KeyInfo {
     this.bucketId = bucketId;
     this.value = null;
   }
-  
+
   public KeyInfo(KeyInfo keyInfo) {
     this.bucketId = keyInfo.bucketId;
     this.callbackArg = keyInfo.callbackArg;
     this.value = keyInfo.value;
     this.key = keyInfo.key;
   }
-  
+
   public final Object getKey() {
     return this.key;
   }
-  
+
   public final Object getCallbackArg() {
     return this.callbackArg;
   }
@@ -78,7 +78,7 @@ public class KeyInfo {
   public Object getValue() {
     return this.value;
   }
-  
+
   public final int getBucketId() {
     return this.bucketId;
   }
@@ -96,30 +96,26 @@ public class KeyInfo {
   }
 
   public String toString() {
-    return "(key="+key+",bucketId="+bucketId+")";
-  }
-  
-  /*
-   * For Distributed Join Purpose
-   */
-  public boolean isCheckPrimary()
-      throws UnsupportedOperationInTransactionException {
-    return true;
-//    throw new UnsupportedOperationInTransactionException(
-//        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION
-//            .toLocalizedString("isCheckPrimary"));
+    return "(key=" + key + ",bucketId=" + bucketId + ")";
   }
 
   /*
    * For Distributed Join Purpose
    */
-  public void setCheckPrimary(boolean checkPrimary)
-      throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(
-        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION
-            .toLocalizedString("setCheckPrimary"));
+  public boolean isCheckPrimary() throws UnsupportedOperationInTransactionException {
+    return true;
+    //    throw new UnsupportedOperationInTransactionException(
+    //        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION
+    //            .toLocalizedString("isCheckPrimary"));
   }
-  
+
+  /*
+   * For Distributed Join Purpose
+   */
+  public void setCheckPrimary(boolean checkPrimary) throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("setCheckPrimary"));
+  }
+
   public boolean isDistKeyInfo() {
     return false;
   }

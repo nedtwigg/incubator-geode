@@ -44,19 +44,18 @@ import org.apache.geode.internal.logging.LogService;
  * 
  * @since GemFire 5.1
  */
-public final class BucketProfileUpdateMessage extends DistributionMessage
-    implements MessageWithReply
-{
+public final class BucketProfileUpdateMessage extends DistributionMessage implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
   private int prId;
   private int bucketId;
   private int processorId = 0;
   private BucketAdvisor.BucketProfile profile;
 
-  public BucketProfileUpdateMessage() {}
-  
+  public BucketProfileUpdateMessage() {
+  }
+
   @Override
   final public int getProcessorType() {
     return DistributionManager.WAITING_POOL_EXECUTOR;
@@ -81,46 +80,39 @@ public final class BucketProfileUpdateMessage extends DistributionMessage
   }
 
   @Override
-  protected void process(DistributionManager dm)
-  {
+  protected void process(DistributionManager dm) {
     try {
       PartitionedRegion pr = PartitionedRegion.getPRFromId(this.prId);
-//      pr.waitOnBucketInitialization();  // While PR doesn't directly do GII, wait on this for bucket initialization -- mthomas 5/17/2007
+      //      pr.waitOnBucketInitialization();  // While PR doesn't directly do GII, wait on this for bucket initialization -- mthomas 5/17/2007
       pr.getRegionAdvisor().putBucketProfile(this.bucketId, this.profile);
-    }
-    catch (PRLocallyDestroyedException fre) {
+    } catch (PRLocallyDestroyedException fre) {
       if (logger.isDebugEnabled())
         logger.debug("<region locally destroyed> ///{}", this);
-    }
-    catch (RegionDestroyedException e) {
+    } catch (RegionDestroyedException e) {
       if (logger.isDebugEnabled())
         logger.debug("<region destroyed> ///{}", this);
-    }
-    catch (CancelException e) {
+    } catch (CancelException e) {
       if (logger.isDebugEnabled())
         logger.debug("<cache closed> ///{}", this);
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable ignore) {
+    } catch (Throwable ignore) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
       // error condition, so you also need to check to see if the JVM
       // is still usable:
       SystemFailure.checkFailure();
-    }
-    finally {
+    } finally {
       if (this.processorId != 0) {
         ReplyMessage.send(getSender(), this.processorId, null, dm);
       }
     }
   }
-  
+
   /**
    * Send a profile update to a set of members.
    * @param recipients the set of members to be notified
@@ -132,13 +124,12 @@ public final class BucketProfileUpdateMessage extends DistributionMessage
    * @return an instance of reply processor if requireAck is true on which the caller
    * can wait until the event has finished. 
    */
-  public static ReplyProcessor21 send(Set recipients, DM dm, int prId, int bucketId, BucketProfile bp, boolean requireAck)
-  {
+  public static ReplyProcessor21 send(Set recipients, DM dm, int prId, int bucketId, BucketProfile bp, boolean requireAck) {
     if (recipients.isEmpty()) {
       return null;
     }
     ReplyProcessor21 rp = null;
-    int procId = 0; 
+    int procId = 0;
     if (requireAck) {
       rp = new ReplyProcessor21(dm, recipients);
       procId = rp.getProcessorId();
@@ -151,20 +142,18 @@ public final class BucketProfileUpdateMessage extends DistributionMessage
   public int getDSFID() {
     return PR_BUCKET_PROFILE_UPDATE_MESSAGE;
   }
-  
+
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.prId = in.readInt();
     this.bucketId = in.readInt();
     this.processorId = in.readInt();
-    this.profile = (BucketAdvisor.BucketProfile)DataSerializer.readObject(in);
+    this.profile = (BucketAdvisor.BucketProfile) DataSerializer.readObject(in);
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeInt(this.prId);
     out.writeInt(this.bucketId);
@@ -173,19 +162,10 @@ public final class BucketProfileUpdateMessage extends DistributionMessage
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     StringBuffer buff = new StringBuffer();
     String className = getClass().getName();
-    String shortName = 
-      className.substring(
-          className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo>
-    return buff.append(shortName)
-    .append("(prid=").append(this.prId)
-    .append("; bucketid=").append(this.bucketId)
-    .append("; sender=").append(getSender())
-    .append("]; processorId=").append(this.processorId)
-    .append("; profile=").append(this.profile)
-    .append(")").toString();
+    String shortName = className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1); // partition.<foo>
+    return buff.append(shortName).append("(prid=").append(this.prId).append("; bucketid=").append(this.bucketId).append("; sender=").append(getSender()).append("]; processorId=").append(this.processorId).append("; profile=").append(this.profile).append(")").toString();
   }
 }

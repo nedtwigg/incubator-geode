@@ -33,20 +33,16 @@ import java.io.InputStream;
 abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
 
   /** The location of the DTD file */
-  protected static final String DTD_LOCATION =
-    "/org/apache/geode/admin/doc-files/ds5_0.dtd";
+  protected static final String DTD_LOCATION = "/org/apache/geode/admin/doc-files/ds5_0.dtd";
 
   /** The URL for the DTD */
-  protected static final String SYSTEM_ID =
-    "http://www.gemstone.com/dtd/ds5_0.dtd";
+  protected static final String SYSTEM_ID = "http://www.gemstone.com/dtd/ds5_0.dtd";
 
   /** The public ID for the DTD */
-  protected static final String PUBLIC_ID = 
-    "-//GemStone Systems, Inc.//GemFire Distributed System 5.0//EN";
+  protected static final String PUBLIC_ID = "-//GemStone Systems, Inc.//GemFire Distributed System 5.0//EN";
 
   /** The name of the <code>distributed-system</code> element. */
-  public static final String DISTRIBUTED_SYSTEM =
-    "distributed-system";
+  public static final String DISTRIBUTED_SYSTEM = "distributed-system";
 
   /** The name of the <code>id</code> attribute. */
   public static final String ID = "id";
@@ -97,15 +93,14 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
   public static final String PROPERTY = "property";
 
   /** Name of the <code>authentication-required</code> attribute */
-  public static final String AUTHENTICATION_REQUIRED =
-    "authentication-required";
+  public static final String AUTHENTICATION_REQUIRED = "authentication-required";
 
   /** The name of the <code>key</code> element */
   public static final String KEY = "key";
 
   /** The name of the <code>value</code> element */
   public static final String VALUE = "value";
-  
+
   /** The name of the <code>classpath</code> element */
   public static final String CLASSPATH = "classpath";
 
@@ -115,18 +110,17 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
    * Given a public id, attempt to resolve it to a DTD.  Returns an
    * <code>InputSoure</code> for the DTD.
    */
-  public InputSource resolveEntity(String publicId, String systemId) 
-    throws SAXException {
+  public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 
     if (publicId == null || systemId == null) {
-      throw new SAXException(LocalizedStrings.ManagedEntityConfigXml_PUBLIC_ID_0_SYSTEM_ID_1.toLocalizedString(new Object[] {publicId, systemId}));
+      throw new SAXException(LocalizedStrings.ManagedEntityConfigXml_PUBLIC_ID_0_SYSTEM_ID_1.toLocalizedString(new Object[] { publicId, systemId }));
     }
 
     // Figure out the location for the publicId.
     String location = DTD_LOCATION;
 
     InputSource result;
-//    if (location != null) (cannot be null) 
+    //    if (location != null) (cannot be null) 
     {
       InputStream stream = ClassPathLoader.getLatest().getResourceAsStream(getClass(), location);
       if (stream != null) {
@@ -135,8 +129,8 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
         throw new SAXNotRecognizedException(LocalizedStrings.ManagedEntityConfigXml_DTD_NOT_FOUND_0.toLocalizedString(location));
       }
 
-//    } else {
-//      throw new SAXNotRecognizedException(LocalizedStrings.ManagedEntityConfigXml_COULD_NOT_FIND_DTD_FOR_0_1.toLocalizedString(new Object[] {publicId, systemId}));
+      //    } else {
+      //      throw new SAXNotRecognizedException(LocalizedStrings.ManagedEntityConfigXml_COULD_NOT_FIND_DTD_FOR_0_1.toLocalizedString(new Object[] {publicId, systemId}));
     }
 
     return result;
@@ -145,7 +139,7 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
   /**
    * Warnings are ignored
    */
-  public void warning(SAXParseException ex) throws SAXException { 
+  public void warning(SAXParseException ex) throws SAXException {
 
   }
 
@@ -157,7 +151,7 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
     ex2.initCause(ex);
     throw ex2;
   }
-  
+
   /**
    * Throws a {@link org.apache.geode.cache.CacheXmlException}
    */

@@ -43,14 +43,14 @@ import org.apache.geode.test.junit.categories.SecurityTest;
 @Category({ DistributedTest.class, SecurityTest.class })
 public class CQClientAuthDunitTest extends AbstractSecureServerDUnitTest {
 
-  public CQClientAuthDunitTest(){
+  public CQClientAuthDunitTest() {
     this.postProcessor = SamplePostProcessor.class;
   }
 
   @Test
-  public void testPostProcess(){
+  public void testPostProcess() {
     String query = "select * from /AuthRegion";
-    client1.invoke(()-> {
+    client1.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(LOCATORS, "");
       props.setProperty(MCAST_PORT, "0");
@@ -63,7 +63,6 @@ public class CQClientAuthDunitTest extends AbstractSecureServerDUnitTest {
       factory.setPoolSubscriptionEnabled(true);
       factory.setPoolMultiuserAuthentication(true);
 
-
       ClientCache clientCache = factory.create();
       Region region = clientCache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
       Pool pool = PoolManager.find(region);
@@ -71,7 +70,7 @@ public class CQClientAuthDunitTest extends AbstractSecureServerDUnitTest {
       Properties userProps = new Properties();
       userProps.setProperty("security-username", "super-user");
       userProps.setProperty("security-password", "1234567");
-      ProxyCache cache = (ProxyCache)clientCache.createAuthenticatedView(userProps, pool.getName());
+      ProxyCache cache = (ProxyCache) clientCache.createAuthenticatedView(userProps, pool.getName());
 
       QueryService qs = cache.getQueryService();
 

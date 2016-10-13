@@ -37,12 +37,10 @@ public class GetEventValueOp {
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    * @return the entry value found by the get if any
    */
-  public static Object executeOnPrimary(ExecutablePool pool, EventID event,
-      Object callbackArg) {
+  public static Object executeOnPrimary(ExecutablePool pool, EventID event, Object callbackArg) {
     AbstractOp op = new GetEventValueOpImpl(event, callbackArg);
     return pool.executeOnPrimary(op);
   }
-
 
   private GetEventValueOp() {
     // no instances allowed
@@ -61,8 +59,7 @@ public class GetEventValueOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override
@@ -86,8 +83,7 @@ public class GetEventValueOp {
         if (msgType == MessageType.REQUEST_EVENT_VALUE_ERROR) {
           // Value not found in haContainer.
           return null;
-        }
-        else if (msgType == MessageType.EXCEPTION) {
+        } else if (msgType == MessageType.EXCEPTION) {
           String s = "While performing a remote " + "getFullValue";
           throw new ServerOperationException(s, (Throwable) part.getObject());
           // Get the exception toString part.
@@ -96,8 +92,7 @@ public class GetEventValueOp {
         } else if (isErrorResponse(msgType)) {
           throw new ServerOperationException(part.getString());
         } else {
-          throw new InternalGemFireError("Unexpected message type "
-                                         + MessageType.getString(msgType));
+          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }

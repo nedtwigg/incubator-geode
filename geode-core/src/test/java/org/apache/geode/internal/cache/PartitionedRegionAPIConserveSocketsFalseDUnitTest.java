@@ -37,6 +37,6 @@ public class PartitionedRegionAPIConserveSocketsFalseDUnitTest extends Partition
   public Properties getDistributedSystemProperties() {
     Properties ret = new Properties();
     ret.setProperty(CONSERVE_SOCKETS, "false");
-    return ret; 
+    return ret;
   }
 }

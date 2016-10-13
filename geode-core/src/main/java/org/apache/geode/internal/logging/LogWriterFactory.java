@@ -52,22 +52,19 @@ public class LogWriterFactory {
    *                The DistributionConfig for the target distributed system
    * @param logConfig if true log the configuration
    */
-  public static InternalLogWriter createLogWriterLogger(final boolean isLoner,
-                                                        final boolean isSecure,
-                                                        final LogConfig config,
-                                                        final boolean logConfig) {
+  public static InternalLogWriter createLogWriterLogger(final boolean isLoner, final boolean isSecure, final LogConfig config, final boolean logConfig) {
 
     // if isSecurity then use "org.apache.geode.security" else use "org.apache.geode"
     String name = null;
-    if (isSecure){
+    if (isSecure) {
       name = LogService.SECURITY_LOGGER_NAME;
     } else {
       name = LogService.MAIN_LOGGER_NAME;
     }
-    
+
     // create the LogWriterLogger
     final LogWriterLogger logger = LogService.createLogWriterLogger(name, config.getName(), isSecure);
-    
+
     if (isSecure) {
       logger.setLogWriterLevel(((DistributionConfig) config).getSecurityLogLevel());
     } else {
@@ -81,15 +78,15 @@ public class LogWriterFactory {
       if (!defaultSource) {
         // LOG: fix bug #51709 by not setting if log-level was not specified
         // LOG: let log4j2.xml specify log level which defaults to INFO
-        logger.setLogWriterLevel(config.getLogLevel()); 
+        logger.setLogWriterLevel(config.getLogLevel());
       }
     }
-    
+
     // log the banner
     if (!Boolean.getBoolean(InternalLocator.INHIBIT_DM_BANNER)) {
       if (InternalDistributedSystem.getReconnectAttemptCounter() == 0 // avoid filling up logs during auto-reconnect
           && !isSecure //&& !isLoner /* do this on a loner to fix bug 35602 */
-          ) {
+      ) {
         // LOG:CONFIG:
         logger.info(LogMarker.CONFIG, Banner.getString(null));
       }

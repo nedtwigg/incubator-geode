@@ -27,8 +27,7 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
  * @since GemFire 5.1
  *  
  */
-public interface ClientServerObserver
-{
+public interface ClientServerObserver {
   /**
    * This callback is called when now primary Ep is identified.
    */
@@ -53,19 +52,21 @@ public interface ClientServerObserver
    * This callback is called just before Interest Recovery by DSM thread happens
    */
   public void beforeInterestRecovery();
-  
+
   /**
    * Invoked by CacheClientUpdater just before invoking endpointDied for
    * fail over
    * @param location ServerLocation which has failed
    */
   public void beforeFailoverByCacheClientUpdater(ServerLocation location);
+
   /**
    * Invoked before sending an instantiator message to server
    * 
    * @param eventId
    */
   public void beforeSendingToServer(EventID eventId);
+
   /**
    * Invoked after sending an instantiator message to server 
    * 
@@ -76,23 +77,23 @@ public interface ClientServerObserver
   /**
    * This callback is called just before sending client ack to the primary servrer.
    */
-   public void beforeSendingClientAck();  
+  public void beforeSendingClientAck();
 
-   /**
-    * Invoked after Message is created
-    *
-    * @param msg
-    */
-   public void afterMessageCreation(Message msg);
-   
-   /**
-    * Invoked after Queue Destroy Message has been sent
-    */
-   public void afterQueueDestroyMessage();
-   
-   /**
-    * Invoked after a primary is recovered from a backup or new connection. 
-    */
-   public void afterPrimaryRecovered(ServerLocation location);
-   
+  /**
+   * Invoked after Message is created
+   *
+   * @param msg
+   */
+  public void afterMessageCreation(Message msg);
+
+  /**
+   * Invoked after Queue Destroy Message has been sent
+   */
+  public void afterQueueDestroyMessage();
+
+  /**
+   * Invoked after a primary is recovered from a backup or new connection. 
+   */
+  public void afterPrimaryRecovered(ServerLocation location);
+
 }

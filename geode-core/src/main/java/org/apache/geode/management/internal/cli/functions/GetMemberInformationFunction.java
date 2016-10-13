@@ -61,7 +61,7 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
     return true;
   }
 
-  @Override 
+  @Override
 
   public boolean isHA() {
     return true;
@@ -86,7 +86,7 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
 
       InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
       DistributionConfig config = system.getConfig();
-      String 	serverBindAddress     = config.getServerBindAddress();
+      String serverBindAddress = config.getServerBindAddress();
       MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
 
       MemberInformation memberInfo = new MemberInformation();
@@ -104,9 +104,9 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
       memberInfo.setMaxHeapSize(Long.toString(bytesToMeg(memUsage.getMax())));
       memberInfo.setInitHeapSize(Long.toString(bytesToMeg(memUsage.getInit())));
       memberInfo.setHostedRegions(CliUtil.getAllRegionNames());
-      
+
       List<CacheServer> csList = cache.getCacheServers();
-      
+
       //A member is a server only if it has a cacheserver
       if (csList != null) {
         memberInfo.setServer(true);
@@ -121,8 +121,7 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
           CacheServerInfo cacheServerInfo = new CacheServerInfo(bindAddress, port, isRunning);
           memberInfo.addCacheServerInfo(cacheServerInfo);
         }
-        Map<ClientProxyMembershipID, CacheClientStatus> allConnectedClients = InternalClientMembership
-            .getStatusForAllClientsIgnoreSubscriptionStatus();
+        Map<ClientProxyMembershipID, CacheClientStatus> allConnectedClients = InternalClientMembership.getStatusForAllClientsIgnoreSubscriptionStatus();
         Iterator<ClientProxyMembershipID> it = allConnectedClients.keySet().iterator();
         int numConnections = 0;
 
@@ -141,8 +140,8 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
       functionContext.getResultSender().sendException(e);
     }
   }
-  
+
   private long bytesToMeg(long bytes) {
-    return bytes/(1024L * 1024L);
+    return bytes / (1024L * 1024L);
   }
 }

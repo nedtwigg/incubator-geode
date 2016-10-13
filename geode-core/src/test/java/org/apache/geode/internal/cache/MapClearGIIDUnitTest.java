@@ -61,24 +61,13 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
       fail("Map region not yet created");
     }
     if (((LocalRegion) rgn).getImageState().getClearRegionFlag()) {
-      fail(
-          "The image state clear region flag should have been cleared"
-          + " (region size=" + rgn.size() + ")."
-          + " Hence failing");
+      fail("The image state clear region flag should have been cleared" + " (region size=" + rgn.size() + ")." + " Hence failing");
     }
     if (!wasGIIInProgressDuringClear) {
-      fail(
-          "The clear operation invoked from VM1 reached VM0 after the "
-          + "GII completed, or it reached VM0 even before the region in "
-          + " VM0 got inserted in the subregion Map"
-          + " (region size=" + rgn.size() + ")."
-          + " Hence failing");
+      fail("The clear operation invoked from VM1 reached VM0 after the " + "GII completed, or it reached VM0 even before the region in " + " VM0 got inserted in the subregion Map" + " (region size=" + rgn.size() + ")." + " Hence failing");
     }
     if (rgn.size() != 0) {
-      fail(
-          "The clear operation invoked from VM1 should have made the "
-          + "size of region zero. Hence failing. Size = "
-          + rgn.size());
+      fail("The clear operation invoked from VM1 should have made the " + "size of region zero. Hence failing. Size = " + rgn.size());
     }
     return true;
   }
@@ -97,8 +86,7 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
 
   public static void clearRegionInVm1() {
     // wait for profile of getInitialImage cache to show up
-    final org.apache.geode.internal.cache.CacheDistributionAdvisor adv =
-      ((org.apache.geode.internal.cache.DistributedRegion)region).getCacheDistributionAdvisor();
+    final org.apache.geode.internal.cache.CacheDistributionAdvisor adv = ((org.apache.geode.internal.cache.DistributedRegion) region).getCacheDistributionAdvisor();
     final int expectedProfiles = 1;
     WaitCriterion ev = new WaitCriterion() {
       public boolean done() {
@@ -106,6 +94,7 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
         numProfiles = adv.adviseReplicates().size();
         return numProfiles == expectedProfiles;
       }
+
       public String description() {
         return null;
       }
@@ -122,15 +111,14 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     //vm0.invoke(() -> MapClearGIIDUnitTest.createCacheVM0());
-    
+
     vm0.invoke(new CacheSerializableRunnable("createCacheVM0") {
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         InitialImageOperation.slowImageProcessing = 10;
         InitialImageOperation.slowImageSleeps = 0;
         Properties mprops = new Properties();
         // mprops.setProperty(DistributionConfig.SystemConfigurationProperties.MCAST_PORT, "7777");
-        
+
         getSystem(mprops);
         //ds = DistributedSystem.connect(props);
         getCache();
@@ -140,8 +128,7 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
       }
     });
     vm1.invoke(new CacheSerializableRunnable("createCacheVM1") {
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         Properties mprops = new Properties();
         // mprops.setProperty(DistributionConfig.SystemConfigurationProperties.MCAST_PORT, "7777");
         getSystem(mprops);
@@ -165,18 +152,19 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
       // wait until vm0's gii has done 20 slow image sleeps (10ms*20 = 200ms)
       // before starting the clear
       vm0.invoke(new CacheSerializableRunnable("wait for sleeps") {
-          public void run2() throws CacheException {
-            WaitCriterion ev = new WaitCriterion() {
-              public boolean done() {
-                return InitialImageOperation.slowImageSleeps >= 20;
-              }
-              public String description() {
-                return null;
-              }
-            };
-            Wait.waitForCriterion(ev, 30 * 1000, 200, true);
-          }
-        });
+        public void run2() throws CacheException {
+          WaitCriterion ev = new WaitCriterion() {
+            public boolean done() {
+              return InitialImageOperation.slowImageSleeps >= 20;
+            }
+
+            public String description() {
+              return null;
+            }
+          };
+          Wait.waitForCriterion(ev, 30 * 1000, 200, true);
+        }
+      });
       // now that the gii has received some entries do the clear
       vm1.invoke(() -> MapClearGIIDUnitTest.clearRegionInVm1());
       // wait for GII to complete
@@ -185,26 +173,22 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
         Throwable t = asyncGII.getException();
         Assert.fail("createRegionInVM0 failed", t);
       }
-      assertTrue(vm0
-          .invoke(() -> MapClearGIIDUnitTest.checkImageStateFlag()));
+      assertTrue(vm0.invoke(() -> MapClearGIIDUnitTest.checkImageStateFlag()));
 
       if (asyncGII.exceptionOccurred()) {
         Assert.fail("asyncGII failed", asyncGII.getException());
       }
-				   
-	  
-    }
-    catch (Exception e) {
+
+    } catch (Exception e) {
       Assert.fail("Test failed", e);
-    }
-    finally {
+    } finally {
       vm0.invoke(new SerializableRunnable("Set fast image processing") {
         public void run() {
           InitialImageOperation.slowImageProcessing = 0;
           InitialImageOperation.slowImageSleeps = 0;
         }
       });
-      
+
     }
   }//end of test case
 
@@ -213,14 +197,10 @@ public class MapClearGIIDUnitTest extends JUnit4CacheTestCase {
     public void afterRegionClear(RegionEvent event) {
       LogWriterUtils.getLogWriter().info("**********Received clear event in VM0 . ");
       Region rgn = event.getRegion();
-      wasGIIInProgressDuringClear = ((LocalRegion) rgn).getImageState()
-        .wasRegionClearedDuringGII();
+      wasGIIInProgressDuringClear = ((LocalRegion) rgn).getImageState().wasRegionClearedDuringGII();
       InitialImageOperation.slowImageProcessing = 0;
       InitialImageOperation.slowImageSleeps = 0;
-      LogWriterUtils.getLogWriter().info(
-          "wasGIIInProgressDuringClear when clear event was received= "
-              + wasGIIInProgressDuringClear);
+      LogWriterUtils.getLogWriter().info("wasGIIInProgressDuringClear when clear event was received= " + wasGIIInProgressDuringClear);
     }
   }
 }// end of test class
-

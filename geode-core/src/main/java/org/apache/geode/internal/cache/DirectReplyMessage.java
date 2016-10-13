@@ -31,7 +31,7 @@ public interface DirectReplyMessage {
    * will be handed the responses from the message.
    */
   DirectReplyProcessor getDirectReplyProcessor();
-  
+
   /**
    * Indicates whether the message could send an acknowledgement
    * back on the connection the request was sent on.  This flag 
@@ -45,7 +45,7 @@ public interface DirectReplyMessage {
    * @see org.apache.geode.distributed.internal.direct.DirectChannel
    */
   boolean supportsDirectAck();
-  
+
   /**
    * Called on the sending side. This method is invoked
    * if the message will end up using the shared channel.

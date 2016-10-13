@@ -42,19 +42,18 @@ import org.apache.geode.internal.offheap.MemoryUsageListener;
 public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListener {
   private static final Logger logger = LogService.getLogger();
   private volatile MemoryThresholds thresholds = new MemoryThresholds(0);
-  private volatile MemoryEvent mostRecentEvent = new MemoryEvent(ResourceType.OFFHEAP_MEMORY, MemoryState.DISABLED,
-      MemoryState.DISABLED, null, 0L, true, this.thresholds);
+  private volatile MemoryEvent mostRecentEvent = new MemoryEvent(ResourceType.OFFHEAP_MEMORY, MemoryState.DISABLED, MemoryState.DISABLED, null, 0L, true, this.thresholds);
   private volatile MemoryState currentState = MemoryState.DISABLED;
 
   // Set when startMonitoring() and stopMonitoring() are called
   // Package private for testing
   Boolean started = false;
-  
+
   // Set to true when setEvictionThreshold(...) is called.
   private boolean hasEvictionThreshold = false;
 
   private Thread memoryListenerThread;
-  
+
   private final OffHeapMemoryUsageListener offHeapMemoryUsageListener;
   private final InternalResourceManager resourceManager;
   private final ResourceAdvisor resourceAdvisor;
@@ -71,12 +70,12 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
     this.resourceAdvisor = (ResourceAdvisor) cache.getDistributionAdvisor();
     this.cache = cache;
     this.stats = stats;
-    
+
     this.memoryAllocator = memoryAllocator;
     if (memoryAllocator != null) {
       this.thresholds = new MemoryThresholds(this.memoryAllocator.getTotalMemory());
     }
-    
+
     this.offHeapMemoryUsageListener = new OffHeapMemoryUsageListener();
   }
 
@@ -97,9 +96,9 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
       t.setDaemon(true);
       t.start();
       this.memoryListenerThread = t;
-      
+
       this.memoryAllocator.addMemoryUsageListener(this);
-      
+
       this.started = true;
     }
   }
@@ -111,15 +110,16 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
   public void stopMonitoring() {
     stopMonitoring(false);
   }
+
   public void stopMonitoring(boolean waitForThread) {
     Thread threadToWaitFor = null;
     synchronized (this) {
       if (!this.started) {
         return;
       }
-      
+
       this.memoryAllocator.removeMemoryUsageListener(this);
-      
+
       this.offHeapMemoryUsageListener.stop();
       if (waitForThread) {
         threadToWaitFor = this.memoryListenerThread;
@@ -137,7 +137,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
   }
 
   public volatile OffHeapMemoryMonitorObserver testHook;
-  
+
   /**
    * Used by unit tests to be notified when OffHeapMemoryMonitor
    * does something.
@@ -149,18 +149,23 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
      * @param willSendEvent true if an event will be sent to the OffHeapMemoryUsageListener. 
      */
     public void beginUpdateMemoryUsed(long bytesUsed, boolean willSendEvent);
+
     public void afterNotifyUpdateMemoryUsed(long bytesUsed);
+
     /**
      * Called at the beginning of updateStateAndSendEvent.
      * @param bytesUsed the number of bytes of off-heap memory currently used
      * @param willSendEvent true if an event will be sent to the OffHeapMemoryUsageListener. 
      */
     public void beginUpdateStateAndSendEvent(long bytesUsed, boolean willSendEvent);
+
     public void updateStateAndSendEventBeforeProcess(long bytesUsed, MemoryEvent event);
+
     public void updateStateAndSendEventBeforeAbnormalProcess(long bytesUsed, MemoryEvent event);
-    public void updateStateAndSendEventIgnore(long bytesUsed, MemoryState oldState, MemoryState newState, long mostRecentBytesUsed,
-        boolean deliverNextAbnormalEvent);
+
+    public void updateStateAndSendEventIgnore(long bytesUsed, MemoryState oldState, MemoryState newState, long mostRecentBytesUsed, boolean deliverNextAbnormalEvent);
   }
+
   @Override
   public void updateMemoryUsed(final long bytesUsed) {
     final boolean willSendEvent = mightSendEvent(bytesUsed);
@@ -176,7 +181,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
       _testHook.afterNotifyUpdateMemoryUsed(bytesUsed);
     }
   }
-  
+
   void setCriticalThreshold(final float criticalThreshold) {
     synchronized (this) {
       // If the threshold isn't changing then don't do anything.
@@ -186,23 +191,18 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
 
       // Do some basic sanity checking on the new threshold
       if (criticalThreshold > 100.0f || criticalThreshold < 0.0f) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GT_ZERO_AND_LTE_100
-            .toLocalizedString());
+        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GT_ZERO_AND_LTE_100.toLocalizedString());
       }
       if (this.memoryAllocator == null) {
-        throw new IllegalStateException(LocalizedStrings.OffHeapMemoryMonitor_NO_OFF_HEAP_MEMORY_HAS_BEEN_CONFIGURED
-            .toLocalizedString());
+        throw new IllegalStateException(LocalizedStrings.OffHeapMemoryMonitor_NO_OFF_HEAP_MEMORY_HAS_BEEN_CONFIGURED.toLocalizedString());
       }
-      if (criticalThreshold != 0 && this.thresholds.isEvictionThresholdEnabled()
-          && criticalThreshold <= this.thresholds.getEvictionThreshold()) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GTE_EVICTION_PERCENTAGE
-            .toLocalizedString());
+      if (criticalThreshold != 0 && this.thresholds.isEvictionThresholdEnabled() && criticalThreshold <= this.thresholds.getEvictionThreshold()) {
+        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GTE_EVICTION_PERCENTAGE.toLocalizedString());
       }
 
       this.cache.setQueryMonitorRequiredForResourceManager(criticalThreshold != 0);
 
-      this.thresholds = new MemoryThresholds(this.thresholds.getMaxMemoryBytes(), criticalThreshold, this.thresholds
-          .getEvictionThreshold());
+      this.thresholds = new MemoryThresholds(this.thresholds.getMaxMemoryBytes(), criticalThreshold, this.thresholds.getEvictionThreshold());
 
       updateStateAndSendEvent(getBytesUsed());
 
@@ -220,14 +220,14 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
   float getCriticalThreshold() {
     return this.thresholds.getCriticalThreshold();
   }
-  
+
   public boolean hasEvictionThreshold() {
     return this.hasEvictionThreshold;
   }
-  
+
   void setEvictionThreshold(final float evictionThreshold) {
     this.hasEvictionThreshold = true;
-    
+
     synchronized (this) {
       // If the threshold isn't changing then don't do anything.
       if (evictionThreshold == this.thresholds.getEvictionThreshold()) {
@@ -236,21 +236,16 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
 
       // Do some basic sanity checking on the new threshold
       if (evictionThreshold > 100.0f || evictionThreshold < 0.0f) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_EVICTION_PERCENTAGE_GT_ZERO_AND_LTE_100
-            .toLocalizedString());
+        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_EVICTION_PERCENTAGE_GT_ZERO_AND_LTE_100.toLocalizedString());
       }
       if (this.memoryAllocator == null) {
-        throw new IllegalStateException(LocalizedStrings.OffHeapMemoryMonitor_NO_OFF_HEAP_MEMORY_HAS_BEEN_CONFIGURED
-            .toLocalizedString());
+        throw new IllegalStateException(LocalizedStrings.OffHeapMemoryMonitor_NO_OFF_HEAP_MEMORY_HAS_BEEN_CONFIGURED.toLocalizedString());
       }
-      if (evictionThreshold != 0 && this.thresholds.isCriticalThresholdEnabled()
-          && evictionThreshold >= this.thresholds.getCriticalThreshold()) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryMonitor_EVICTION_PERCENTAGE_LTE_CRITICAL_PERCENTAGE
-            .toLocalizedString());
+      if (evictionThreshold != 0 && this.thresholds.isCriticalThresholdEnabled() && evictionThreshold >= this.thresholds.getCriticalThreshold()) {
+        throw new IllegalArgumentException(LocalizedStrings.MemoryMonitor_EVICTION_PERCENTAGE_LTE_CRITICAL_PERCENTAGE.toLocalizedString());
       }
 
-      this.thresholds = new MemoryThresholds(this.thresholds.getMaxMemoryBytes(), this.thresholds.getCriticalThreshold(),
-          evictionThreshold);
+      this.thresholds = new MemoryThresholds(this.thresholds.getMaxMemoryBytes(), this.thresholds.getCriticalThreshold(), evictionThreshold);
 
       updateStateAndSendEvent(getBytesUsed());
 
@@ -298,7 +293,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
       MemoryState newState = thresholds.computeNextState(oldState, bytesUsed);
       if (oldState != newState) {
         this.currentState = newState;
-        
+
         MemoryEvent event = new MemoryEvent(ResourceType.OFFHEAP_MEMORY, oldState, newState, this.cache.getMyId(), bytesUsed, true, thresholds);
         if (_testHook != null) {
           _testHook.updateStateAndSendEventBeforeProcess(bytesUsed, event);
@@ -307,10 +302,8 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
         processLocalEvent(event);
         updateStatsFromEvent(event);
         result = true;
-        
-      } else if (!oldState.isNormal()
-          && bytesUsed != mre.getBytesUsed()
-          && this.deliverNextAbnormalEvent) {
+
+      } else if (!oldState.isNormal() && bytesUsed != mre.getBytesUsed() && this.deliverNextAbnormalEvent) {
         this.deliverNextAbnormalEvent = false;
         MemoryEvent event = new MemoryEvent(ResourceType.OFFHEAP_MEMORY, oldState, newState, this.cache.getMyId(), bytesUsed, true, thresholds);
         if (_testHook != null) {
@@ -323,12 +316,12 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
         if (_testHook != null) {
           _testHook.updateStateAndSendEventIgnore(bytesUsed, oldState, newState, mre.getBytesUsed(), this.deliverNextAbnormalEvent);
         }
-        
+
       }
     }
     return result;
   }
-  
+
   /**
    * Return true if the given number of bytes compared to the
    * current monitor state would generate a new memory event.
@@ -344,16 +337,14 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
     MemoryState newState = thresholds.computeNextState(oldState, bytesUsed);
     if (oldState != newState) {
       return true;
-    } else if (!oldState.isNormal()
-        && bytesUsed != mre.getBytesUsed()
-        && this.deliverNextAbnormalEvent) {
+    } else if (!oldState.isNormal() && bytesUsed != mre.getBytesUsed() && this.deliverNextAbnormalEvent) {
       return true;
     }
     return false;
   }
-  
+
   private volatile boolean deliverNextAbnormalEvent = false;
-   
+
   /**
    * Used by the OffHeapMemoryUsageListener to tell us that
    * the next abnormal event should be delivered even if the
@@ -407,8 +398,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
   public MemoryThresholds getThresholds() {
     MemoryThresholds saveThresholds = this.thresholds;
 
-    return new MemoryThresholds(saveThresholds.getMaxMemoryBytes(), saveThresholds.getCriticalThreshold(), saveThresholds
-        .getEvictionThreshold());
+    return new MemoryThresholds(saveThresholds.getMaxMemoryBytes(), saveThresholds.getCriticalThreshold(), saveThresholds.getEvictionThreshold());
   }
 
   /**
@@ -440,29 +430,25 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
     }
 
     if (event.getState().isCritical() && !event.getPreviousState().isCritical()) {
-      logger.error(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD,
-          new Object[] { event.getMember(), "off-heap" }));
+      logger.error(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD, new Object[] { event.getMember(), "off-heap" }));
     } else if (!event.getState().isCritical() && event.getPreviousState().isCritical()) {
-      logger.error(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD,
-          new Object[] { event.getMember(), "off-heap" }));
+      logger.error(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD, new Object[] { event.getMember(), "off-heap" }));
     }
 
     if (event.getState().isEviction() && !event.getPreviousState().isEviction()) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_HIGH_THRESHOLD,
-          new Object[] { event.getMember(), "off-heap" }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_HIGH_THRESHOLD, new Object[] { event.getMember(), "off-heap" }));
     } else if (!event.getState().isEviction() && event.getPreviousState().isEviction()) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_BELOW_HIGH_THRESHOLD,
-          new Object[] { event.getMember(),  "off-heap" }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.MemoryMonitor_MEMBER_BELOW_HIGH_THRESHOLD, new Object[] { event.getMember(), "off-heap" }));
     }
 
     if (logger.isDebugEnabled()) {
       logger.debug("Informing remote members of event {}", event);
     }
-    
+
     this.resourceAdvisor.updateRemoteProfile();
     this.resourceManager.deliverLocalEvent(event);
   }
-  
+
   @Override
   public void notifyListeners(final Set<ResourceListener> listeners, final ResourceEvent event) {
     for (ResourceListener listener : listeners) {
@@ -475,19 +461,19 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
       }
     }
   }
-  
+
   @Override
   public String toString() {
     return "OffHeapMemoryMonitor [thresholds=" + this.thresholds + ", mostRecentEvent=" + this.mostRecentEvent + "]";
   }
-  
+
   class OffHeapMemoryUsageListener implements Runnable {
     private boolean deliverEvent = false;
     private boolean stopRequested = false;
-    
+
     OffHeapMemoryUsageListener() {
     }
-    
+
     public synchronized void deliverEvent() {
       this.deliverEvent = true;
       this.notifyAll();
@@ -497,7 +483,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
       this.stopRequested = true;
       this.notifyAll();
     }
-    
+
     @Override
     public void run() {
       if (logger.isDebugEnabled()) {
@@ -505,7 +491,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
       }
       int callsWithNoEvent = 0;
       final int MS_TIMEOUT = 10;
-      final int MAX_CALLS_WITH_NO_EVENT = 1000/MS_TIMEOUT;
+      final int MAX_CALLS_WITH_NO_EVENT = 1000 / MS_TIMEOUT;
       boolean exitRunLoop = false;
       while (!exitRunLoop) {
         if (!updateStateAndSendEvent()) {
@@ -531,7 +517,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
             // In some cases we need to generate an event even
             // when we have not been notified (see GEODE-438).
             // So we don't want this wait to be for very long.
-            try {  
+            try {
               this.wait(MS_TIMEOUT);
               this.deliverEvent = false;
             } catch (InterruptedException iex) {
@@ -542,7 +528,7 @@ public class OffHeapMemoryMonitor implements ResourceMonitor, MemoryUsageListene
           }
         }
       }
-        
+
       if (logger.isDebugEnabled()) {
         logger.debug("OffHeapMemoryUsageListener is stopping {}", this);
       }

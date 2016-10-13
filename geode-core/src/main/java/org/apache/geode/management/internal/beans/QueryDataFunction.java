@@ -172,7 +172,7 @@ public class QueryDataFunction extends FunctionAdapter implements InternalEntity
       if (results != null && results instanceof SelectResults) {
 
         SelectResults selectResults = (SelectResults) results;
-        for (Iterator iter = selectResults.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = selectResults.iterator(); iter.hasNext();) {
           Object object = iter.next();
           result.add(RESULT_KEY, object);
           noDataFound = false;

@@ -42,8 +42,8 @@ import org.apache.geode.pdx.PdxInstance;
  * if the total price for that order is greater then the argument
  */
 
-public class AddFreeItemToOrders implements Function  {
-  
+public class AddFreeItemToOrders implements Function {
+
   public void execute(FunctionContext context) {
 
     Cache c = null;
@@ -52,23 +52,23 @@ public class AddFreeItemToOrders implements Function  {
     List<Object> keys = new ArrayList<Object>();
     List<Object> argsList = new ArrayList<Object>();
     Object[] argsArray = null;
-    
+
     if (context.getArguments() instanceof Boolean) {
-    
+
     } else if (context.getArguments() instanceof String) {
       String arg = (String) context.getArguments();
-    }else if(context.getArguments() instanceof Vector ) {
-      
-    }else if (context.getArguments() instanceof Object[]) {
+    } else if (context.getArguments() instanceof Vector) {
+
+    } else if (context.getArguments() instanceof Object[]) {
       argsArray = (Object[]) context.getArguments();
       argsList = Arrays.asList(argsArray);
-    }else {
+    } else {
       System.out.println("AddFreeItemToOrders : Invalid Arguments");
     }
-    
+
     try {
       c = CacheFactory.getAnyInstance();
-      ((GemFireCacheImpl)c).getCacheConfig().setPdxReadSerialized(true);
+      ((GemFireCacheImpl) c).getCacheConfig().setPdxReadSerialized(true);
       r = c.getRegion("orders");
     } catch (CacheClosedException ex) {
       vals.add("NoCacheFoundResult");
@@ -78,57 +78,56 @@ public class AddFreeItemToOrders implements Function  {
     String oql = "SELECT DISTINCT entry.key FROM /orders.entries entry WHERE entry.value.totalPrice > $1";
     Object queryArgs[] = new Object[1];
     queryArgs[0] = argsList.get(0);
-    
+
     final Query query = c.getQueryService().newQuery(oql);
 
     SelectResults result = null;
     try {
       result = (SelectResults) query.execute(queryArgs);
       int resultSize = result.size();
-      
-      if (result instanceof Collection<?>)  
+
+      if (result instanceof Collection<?>)
         for (Object item : result) {
           keys.add(item);
         }
     } catch (FunctionDomainException e) {
-     if(c != null)
-      c.getLogger().info("Caught FunctionDomainException while executing function AddFreeItemToOrders: " + e.getMessage());
-      
+      if (c != null)
+        c.getLogger().info("Caught FunctionDomainException while executing function AddFreeItemToOrders: " + e.getMessage());
+
     } catch (TypeMismatchException e) {
-      if(c != null)
-        c.getLogger().info("Caught TypeMismatchException while executing function AddFreeItemToOrders: " + e.getMessage()); 
+      if (c != null)
+        c.getLogger().info("Caught TypeMismatchException while executing function AddFreeItemToOrders: " + e.getMessage());
     } catch (NameResolutionException e) {
-      if(c != null)
-        c.getLogger().info("Caught NameResolutionException while executing function AddFreeItemToOrders: "  + e.getMessage());
+      if (c != null)
+        c.getLogger().info("Caught NameResolutionException while executing function AddFreeItemToOrders: " + e.getMessage());
     } catch (QueryInvocationTargetException e) {
-      if(c != null)
+      if (c != null)
         c.getLogger().info("Caught QueryInvocationTargetException while executing function AddFreeItemToOrders" + e.getMessage());
     }
-    
+
     //class has to be in classpath.
     try {
-      Item it = (Item)(argsList.get(1));
-      for(Object key : keys)
-      {
+      Item it = (Item) (argsList.get(1));
+      for (Object key : keys) {
         Object obj = r.get(key);
-        if(obj instanceof PdxInstance) {
-          PdxInstance pi = (PdxInstance)obj;
-          Order receivedOrder = (Order)pi.getObject();
+        if (obj instanceof PdxInstance) {
+          PdxInstance pi = (PdxInstance) obj;
+          Order receivedOrder = (Order) pi.getObject();
           receivedOrder.addItem(it);
-              
+
           r.put(key, receivedOrder);
         }
       }
-      
+
       context.getResultSender().lastResult("success");
-      
-    }catch (ClassCastException e) {
-      
+
+    } catch (ClassCastException e) {
+
       context.getResultSender().lastResult("failure");
-    }catch (Exception e) {
+    } catch (Exception e) {
       context.getResultSender().lastResult("failure");
     }
-    
+
   }
 
   public String getId() {

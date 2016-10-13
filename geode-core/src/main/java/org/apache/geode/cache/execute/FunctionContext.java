@@ -52,7 +52,7 @@ public interface FunctionContext {
    * @since GemFire 6.0
    */
   public String getFunctionId();
-  
+
   /**
    * Returns the ResultSender which is used to add the ability for an execute
    * method to send a single result back, or break its result into multiple
@@ -61,9 +61,9 @@ public interface FunctionContext {
    * @return ResultSender
    * @since GemFire 6.0
    */
-  
+
   public <T> ResultSender<T> getResultSender();
-  
+
   /**
    * Returns a boolean to identify whether this is a re-execute. Returns true if
    * it is a re-execute else returns false

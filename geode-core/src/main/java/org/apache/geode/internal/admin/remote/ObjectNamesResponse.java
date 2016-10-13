@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -47,14 +46,18 @@ public final class ObjectNamesResponse extends AdminResponse implements Cancella
   }
 
   public void buildNames(Region r) {
-    if (cancelled) { return; }
+    if (cancelled) {
+      return;
+    }
 
     Set nameSet = r.keys();
     Iterator it = nameSet.iterator();
     objectNames = new HashSet();
-    synchronized(r) {
-      while(it.hasNext()) {
-        if (cancelled) { break; }
+    synchronized (r) {
+      while (it.hasNext()) {
+        if (cancelled) {
+          break;
+        }
         Object name = it.next();
         if (name instanceof String || name instanceof Number) {
           objectNames.add(name);
@@ -73,7 +76,7 @@ public final class ObjectNamesResponse extends AdminResponse implements Cancella
   public Set getNameSet() {
     return new HashSet(this.objectNames);
   }
-  
+
   public int getDSFID() {
     return OBJECT_NAMES_RESPONSE;
   }
@@ -85,10 +88,9 @@ public final class ObjectNamesResponse extends AdminResponse implements Cancella
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.objectNames = (HashSet)DataSerializer.readObject(in);
+    this.objectNames = (HashSet) DataSerializer.readObject(in);
   }
 
   @Override

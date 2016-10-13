@@ -285,8 +285,8 @@ public class TcpClient {
       }
     } finally {
       try {
-          sock.setSoLinger(true, 0); // initiate an abort on close to shut down the server's socket
-          sock.close();
+        sock.setSoLinger(true, 0); // initiate an abort on close to shut down the server's socket
+        sock.close();
       } catch (Exception e) {
         logger.error("Error closing socket ", e);
       }

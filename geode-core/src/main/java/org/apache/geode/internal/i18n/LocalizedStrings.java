@@ -19,7 +19,6 @@ package org.apache.geode.internal.i18n;
 
 import org.apache.geode.i18n.StringId;
 
-
 /**
  * This interface defines all of the {@link StringId} that
  * are used for internationalization, aka i18n.
@@ -475,7 +474,6 @@ public class LocalizedStrings {
   public static final StringId DistributionMessage_0__SCHEDULE_REJECTED = new StringId(1502, "{0}  schedule() rejected");
   public static final StringId DistributionMessage_UNCAUGHT_EXCEPTION_PROCESSING__0 = new StringId(1503, "Uncaught exception processing  {0}");
 
-
   public static final StringId DynamicRegionFactory_DYNAMICREGIONLISTENER__0__THREW_EXCEPTION_ON_AFTERREGIONCREATED = new StringId(1508, "DynamicRegionListener {0} threw exception on afterRegionCreated");
   public static final StringId DynamicRegionFactory_DYNAMICREGIONLISTENER__0__THREW_EXCEPTION_ON_AFTERREGIONDESTROYED = new StringId(1509, "DynamicRegionListener {0} threw exception on afterRegionDestroyed");
   public static final StringId DynamicRegionFactory_DYNAMICREGIONLISTENER__0__THREW_EXCEPTION_ON_BEFOREREGIONCREATED = new StringId(1510, "DynamicRegionListener {0} threw exception on beforeRegionCreated");
@@ -613,7 +611,6 @@ public class LocalizedStrings {
   public static final StringId GroupMembershipService_JOINED_TOOK__0__MS = new StringId(1714, "Joined the distributed system (took  {0}  ms)");
   public static final StringId GroupMembershipService_FAILED_TO_SEND_MESSAGE_0_TO_MEMBER_1_VIEW_2 = new StringId(1715, "Failed to send message <{0}> to member <{1}> view = {2}");
 
-
   public static final StringId GroupMembershipService_MEMBERSHIP_ERROR_HANDLING_STARTUP_EVENT = new StringId(1720, "Membership: Error handling startup event");
   public static final StringId GroupMembershipService_MEMBERSHIP_FAULT_WHILE_PROCESSING_VIEW_ADDITION_OF__0 = new StringId(1721, "Membership: Fault while processing view addition of  {0}");
   public static final StringId GroupMembershipService_MEMBERSHIP_FAULT_WHILE_PROCESSING_VIEW_REMOVAL_OF__0 = new StringId(1722, "Membership: Fault while processing view removal of  {0}");
@@ -666,7 +663,6 @@ public class LocalizedStrings {
 
   public static final StringId ManagerLogWriter_DELETED_INACTIVE__0___1_ = new StringId(1797, "Deleted inactive  {0}  \"{1}\".");
   public static final StringId ManagerLogWriter_SWITCHING_TO_LOG__0 = new StringId(1798, "Switching to log {0}");
-
 
   public static final StringId ManagerLogWriter_UNABLE_TO_REMOVE_CONSOLE_WITH_ID_0_FROM_ALERT_LISTENERS = new StringId(1799, "Unable to remove console with id {0} from alert listeners.");
 
@@ -2280,10 +2276,12 @@ public class LocalizedStrings {
   public static final StringId SystemAdmin_GEMFIRE_HELP = new StringId(3746, "gemfire requires one of the following command strings:\n{0}\nFor additional help on a command specify it along with the \"{1}\" option.\nThe \"{2}\" option causes gemfire to print out extra information when it fails.\nThe \"{1}\" and \"{3}\" are synonyms that cause gemfire to print out help information instead of performing a task.\nThe \"{4}\" option quiets gemfire down by suppressing extra messages.\nThe \"{5}\" option passes <vmOpt> to the java vm''s command line.");
   public static final StringId SystemAdmin_VERSION_HELP = new StringId(3747, "Prints GemFire product version information.");
   public static final StringId SystemAdmin_HELP_HELP = new StringId(3749, "Prints information on how to use this executable.\nIf an optional help topic is specified then more detailed help is printed.");
-  public static final StringId SystemAdmin_STATS_HELP_PART_A = new StringId(3750, "Prints statistic values from a statistic archive\nBy default all statistics are printed.\nThe statSpec arguments can be used to print individual resources or a specific statistic.\nThe format of a statSpec is: an optional combine operator, followed by an optional instanceId, followed by an optional typeId, followed by an optional statId.\nA combine operator can be \"{0}\" to combine all matches in the same file, or \"{1}\" to combine all matches across all files.\nAn instanceId must be the name or id of a resource.\nA typeId is a \"{2}\" followed by the name of a resource type.\nA statId is a \"{3}\" followed by the name of a statistic.\nA typeId or instanceId with no statId prints out all the matching resources and all their statistics.\nA typeId or instanceId with a statId prints out just the named statistic on the matching resources.\nA statId with no typeId or instanceId matches all statistics with that name.\nThe \"{4}\" option causes statistic descriptions to also be printed.\nThe \"{5}\" option, in conjunction with \"{6}\", causes the printed statistics to all be raw, unfiltered, values.\nThe \"{7}\" option, in conjunction with \"{6}\", causes the printed statistics to be the rate of change, per second, of the raw values.\nThe \"{8}\" option, in conjunction with \"{6}\", causes the printed statistics to be the rate of change, per sample, of the raw values.\nThe \"{9}\" option, in conjunction with \"{6}\", causes statistics whose values are all zero to not be printed.");
+  public static final StringId SystemAdmin_STATS_HELP_PART_A = new StringId(3750,
+      "Prints statistic values from a statistic archive\nBy default all statistics are printed.\nThe statSpec arguments can be used to print individual resources or a specific statistic.\nThe format of a statSpec is: an optional combine operator, followed by an optional instanceId, followed by an optional typeId, followed by an optional statId.\nA combine operator can be \"{0}\" to combine all matches in the same file, or \"{1}\" to combine all matches across all files.\nAn instanceId must be the name or id of a resource.\nA typeId is a \"{2}\" followed by the name of a resource type.\nA statId is a \"{3}\" followed by the name of a statistic.\nA typeId or instanceId with no statId prints out all the matching resources and all their statistics.\nA typeId or instanceId with a statId prints out just the named statistic on the matching resources.\nA statId with no typeId or instanceId matches all statistics with that name.\nThe \"{4}\" option causes statistic descriptions to also be printed.\nThe \"{5}\" option, in conjunction with \"{6}\", causes the printed statistics to all be raw, unfiltered, values.\nThe \"{7}\" option, in conjunction with \"{6}\", causes the printed statistics to be the rate of change, per second, of the raw values.\nThe \"{8}\" option, in conjunction with \"{6}\", causes the printed statistics to be the rate of change, per sample, of the raw values.\nThe \"{9}\" option, in conjunction with \"{6}\", causes statistics whose values are all zero to not be printed.");
   public static final StringId SystemAdmin_STATS_HELP_PART_B = new StringId(3751, "The \"{0}\" option, in conjunction with \"{1}\", causes statistics samples taken before this time to be ignored. The argument format must match \"{2}\".\nThe \"{3}\" option, in conjunction with \"{1}\", causes statistics samples taken after this time to be ignored. The argument format must match \"{2}\".\nThe \"{1}\" option causes the data to come from an archive file.");
   public static final StringId SystemAdmin_ENCRYPTS_A_PASSWORD_FOR_USE_IN_CACHE_XML_DATA_SOURCE_CONFIGURATION = new StringId(3752, "Encrypts a password for use in cache.xml data source configuration.");
-  public static final StringId SystemAdmin_START_LOCATOR_HELP = new StringId(3753, "Starts a locator.\nThe \"{0}\" option specifies the port the locator will listen on. It defaults to \"{1}\"\nThe \"{2}\" option specifies the address the locator will listen on. It defaults to listening on all local addresses.\nThe \"{3}\" option can be used to specify the directory the locator will run in.\nThe \"{4}\" option can be used to specify the gemfire.properties file for configuring the locator''s distributed system.  The file''s path should be absolute, or relative to the locator''s directory ({3})\nThe \"{5}\" option can be used to specify whether peer locator service should be enabled. True (the default) will enable the service.\nThe \"{6}\" option can be used to specify whether server locator service should be enabled. True (the default) will enable the service.\nThe \"{7}\" option can be used to specify a host name or ip address that will be sent to clients so they can connect to this locator. The default is to use the address the locator is listening on.\nThe \"{8}\" option can be used to set system properties for the locator VM\nThe \"{9}\" option can be used to set vendor-specific VM options and is usually used to increase the size of the locator VM when using multicast.\n");
+  public static final StringId SystemAdmin_START_LOCATOR_HELP = new StringId(3753,
+      "Starts a locator.\nThe \"{0}\" option specifies the port the locator will listen on. It defaults to \"{1}\"\nThe \"{2}\" option specifies the address the locator will listen on. It defaults to listening on all local addresses.\nThe \"{3}\" option can be used to specify the directory the locator will run in.\nThe \"{4}\" option can be used to specify the gemfire.properties file for configuring the locator''s distributed system.  The file''s path should be absolute, or relative to the locator''s directory ({3})\nThe \"{5}\" option can be used to specify whether peer locator service should be enabled. True (the default) will enable the service.\nThe \"{6}\" option can be used to specify whether server locator service should be enabled. True (the default) will enable the service.\nThe \"{7}\" option can be used to specify a host name or ip address that will be sent to clients so they can connect to this locator. The default is to use the address the locator is listening on.\nThe \"{8}\" option can be used to set system properties for the locator VM\nThe \"{9}\" option can be used to set vendor-specific VM options and is usually used to increase the size of the locator VM when using multicast.\n");
   public static final StringId SystemAdmin_STOP_LOCATOR_HELP = new StringId(3754, "Stops a locator.\nThe \"{0}\" option specifies the port the locator is listening on. It defaults to \"{1}\"\nThe \"{2}\" option specifies the address the locator is listening on. It defaults to the local host''s address.\nThe \"{3}\" option can be used to specify the directory the locator is running in.");
   public static final StringId SystemAdmin_STATUS_LOCATOR_HELP = new StringId(3755, "Prints the status of a locator. The status string will one of the following:\n{0}\nThe \"{1}\" option can be used to specify the directory of the locator whose status is desired.");
   public static final StringId SystemAdmin_INFO_LOCATOR_HELP = new StringId(3756, "Prints information on a locator.\nThe information includes the process id of the locator, if the product is not running in PureJava mode.\nThe \"{0}\" option can be used to specify the directory of the locator whose information is desired.");
@@ -2399,7 +2397,7 @@ public class LocalizedStrings {
   public static final StringId GemFireCacheImpl_STARTING_GEMFIRE_MEMCACHED_SERVER_ON_PORT_0_FOR_1_PROTOCOL = new StringId(3868, "Starting GemFireMemcachedServer on port {0} for {1} protocol");
   public static final StringId TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETTRANSACTIONTIMEOUT_TRANSACTION_HAS_EITHER_EXPIRED_OR_ROLLEDBACK_OR_COMITTED = new StringId(3869, "Transaction has either expired or rolledback or comitted");
   public static final StringId TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_CANNOT_RESUME_A_NULL_TRANSACTION = new StringId(3870, "cannot resume a null transaction");
-  public static final StringId AbstractDistributionConfig_SECURITY_CLIENT_DHALGO_NAME_0 = new StringId(3871, "User defined name for the symmetric encryption algorithm to use in Diffie-Hellman key exchange for encryption of credentials.  Defaults to \"{0}\". Legal values can be any of the available symmetric algorithm names in JDK like \"DES\", \"DESede\", \"AES\", \"Blowfish\". It may be required to install Unlimited Strength Jurisdiction Policy Files from Sun for some symmetric algorithms to work (like \"AES\")");  
+  public static final StringId AbstractDistributionConfig_SECURITY_CLIENT_DHALGO_NAME_0 = new StringId(3871, "User defined name for the symmetric encryption algorithm to use in Diffie-Hellman key exchange for encryption of credentials.  Defaults to \"{0}\". Legal values can be any of the available symmetric algorithm names in JDK like \"DES\", \"DESede\", \"AES\", \"Blowfish\". It may be required to install Unlimited Strength Jurisdiction Policy Files from Sun for some symmetric algorithms to work (like \"AES\")");
   public static final StringId TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_ERROR_IN_LISTING_THREAD_TO_TRANSACTION_MAP_DUE_TO_0 = new StringId(3872, "Error in listing thread to transaction map due to {0}");
   public static final StringId TransactionManagerImpl_TRANSACTIONMANAGERIMPL_GETGLOBALTRANSACTION_NO_TRANSACTION_EXISTS = new StringId(3873, "no transaction exists");
   public static final StringId UserTransactionImpl_USERTRANSACTIONIMPL_SETTRANSACTIONTIMEOUT_CANNOT_SET_A_NEGATIVE_TIME_OUT_FOR_TRANSACTIONS = new StringId(3874, "Cannot set a negative Time Out for transactions");
@@ -3077,7 +3075,8 @@ public class LocalizedStrings {
   public static final StringId QueryMonitor_LONG_RUNNING_QUERY_CANCELED = new StringId(4750, "Query execution cancelled after exceeding max execution time {0}ms.");
   public static final StringId AdminDistributedSystemJmxImpl_STATISTICS_ALERT_FROM_DISTRIBUTED_SYSTEM_MEMBER_0_STATISTICS_1 = new StringId(4751, "Statistics Alert from Distributed System\n\tMember: {0}\n\tStatistics: {1}");
   public static final StringId SystemAdmin_VALIDATE_DISK_STORE = new StringId(4752, "Checks to make sure files of a disk store are valid.\n The name of the disk store and the directories its files are stored in are required arguments.");
-  public static final StringId SystemAdmin_MODIFY_DISK_STORE = new StringId(4753, "Modifies the contents stored in a disk store.\n Note that this operation writes to the disk store files so use it with care. Requires that a region name by specified using -region=<regionName>\n Options:\n   -remove will remove the region from the disk store causing any data stored in the disk store for this region to no longer exist. Subregions of the removed region will not be removed.\n   -lru=<type> Sets region''s lru algorithm. Valid types are: none, lru-entry-count, lru-heap-percentage, or lru-memory-size\n   -lruAction=<action> Sets the region''s lru action. Valid actions are: none, overflow-to-disk, local-destroy\n   -lruLimit=<int> Sets the region''s lru limit. Valid values are >= 0\n   -concurrencyLevel=<int> Sets the region''s concurrency level. Valid values are >= 0\n   -initialCapacity=<int> Sets the region''s initial capacity. Valid values are >= 0.\n   -loadFactor=<float> Sets the region''s load factory. Valid values are >= 0.0\n   -statisticsEnabled=<boolean> Sets the region''s statistics enabled. Value values are true or false.\n The name of the disk store and the directories its files are stored in and the region to target are all required arguments.");
+  public static final StringId SystemAdmin_MODIFY_DISK_STORE = new StringId(4753,
+      "Modifies the contents stored in a disk store.\n Note that this operation writes to the disk store files so use it with care. Requires that a region name by specified using -region=<regionName>\n Options:\n   -remove will remove the region from the disk store causing any data stored in the disk store for this region to no longer exist. Subregions of the removed region will not be removed.\n   -lru=<type> Sets region''s lru algorithm. Valid types are: none, lru-entry-count, lru-heap-percentage, or lru-memory-size\n   -lruAction=<action> Sets the region''s lru action. Valid actions are: none, overflow-to-disk, local-destroy\n   -lruLimit=<int> Sets the region''s lru limit. Valid values are >= 0\n   -concurrencyLevel=<int> Sets the region''s concurrency level. Valid values are >= 0\n   -initialCapacity=<int> Sets the region''s initial capacity. Valid values are >= 0.\n   -loadFactor=<float> Sets the region''s load factory. Valid values are >= 0.0\n   -statisticsEnabled=<boolean> Sets the region''s statistics enabled. Value values are true or false.\n The name of the disk store and the directories its files are stored in and the region to target are all required arguments.");
   public static final StringId DiskRegion_COMPACTION_SUMMARY = new StringId(4756, "compaction did {0} creates and updates in {1} ms");
   public static final StringId DiskRegion_COMPACTION_OPLOGIDS = new StringId(4757, "OplogCompactor for {0} compaction oplog id(s): {1}");
   public static final StringId DiskRegion_COMPACTION_FAILURE = new StringId(4759, "OplogCompactor for {0} did NOT complete compaction of oplog id(s): {1}");
@@ -3181,7 +3180,6 @@ public class LocalizedStrings {
   public static final StringId InternalDistributedSystem_MEMORY_OVERCOMMIT = new StringId(4875, "Insufficient free memory ({0}) when attempting to lock {1} bytes.  Either reduce the amount of heap or off-heap memory requested or free up additional system memory.  You may also specify -Dgemfire.Cache.ALLOW_MEMORY_OVERCOMMIT=true on the command-line to override the constraint check.");
   public static final StringId InternalDistributedSystem_MEMORY_OVERCOMMIT_WARN = new StringId(4876, "System memory appears to be over committed by {0} bytes.  You may experience instability, performance issues, or terminated processes due to the Linux OOM killer.");
 
-
   public static final StringId BaseCommand__THE_INPUT_KEY_FOR_THE_0_REQUEST_IS_NULL = new StringId(4884, " The input key for the {0} request is null");
   public static final StringId GroupMembershipService_PROBLEM_GENERATING_CACHE_XML = new StringId(4885, "Unable to generate XML description for reconnect of cache due to exception");
   public static final StringId BaseCommand__THE_INPUT_REGION_NAME_FOR_THE_0_REQUEST_IS_NULL = new StringId(4886, " The input region name for the {0} request is null");
@@ -3284,7 +3282,6 @@ public class LocalizedStrings {
   public static final StringId MemberInfoWithStatsMBean_EXCEPTION_WHILE_UNREGISTERING_NOTIFICATION_LISTENER_FOR_0 = new StringId(5058, "Exception while unregistering notification listener for: {0}");
   public static final StringId AgentImpl_FAILED_TO_INITIALIZE_MEMBERINFOWITHSTATSMBEAN = new StringId(5059, "Failed to initialize MemberInfoWithStatsMBean.");
 
-
   public static final StringId PoolManagerImpl_ONLY_DURABLE_CLIENTS_SHOULD_CALL_READYFOREVENTS = new StringId(5060, "Only durable clients should call readyForEvents()");
   public static final StringId LocalRegion_DURABLE_FLAG_ONLY_APPLICABLE_FOR_DURABLE_CLIENTS = new StringId(5061, "Durable flag only applicable for durable clients.");
   public static final StringId DistributedRegion_NEW_PERSISTENT_REGION_CREATED = new StringId(5062, "Region {0} was created on this member with the persistent id {1}.");
@@ -3370,7 +3367,6 @@ public class LocalizedStrings {
   public static final StringId DiskStoreImpl_RecoveredDiskStore_0_With_Id_1 = new StringId(5143, "Recovered disk store {0} with unique id {1}");
   public static final StringId PersistentMemberManager_Member_0_is_already_revoked = new StringId(5144, "The persistent member id {0} has been revoked in this distributed system. You cannot recover from disk files which have been revoked.");
   public static final StringId RevokeFailedException_Member_0_is_already_running_1 = new StringId(5145, "Member {0} is already running with persistent files matching {1}. You cannot revoke the disk store of a running member.");
-
 
   public static final StringId CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAY_SENDER = new StringId(5148, "A  {0}  must be defined in the context of gateway-sender.");
   public static final StringId GemFireCache_A_GATEWAYSENDER_WITH_ID_0_IS_ALREADY_DEFINED_IN_THIS_CACHE = new StringId(5149, "A GatewaySender with id  {0}  is already defined in this cache.");
@@ -3650,7 +3646,6 @@ public class LocalizedStrings {
   public static final StringId MEMSCALE_JVM_INCOMPATIBLE_WITH_OFF_HEAP = new StringId(5662, "Your Java virtual machine is incompatible with off-heap memory.  Please refer to {0} documentation for suggested JVMs.");
   public static final StringId MEMSCALE_EVICTION_INIT_FAIL = new StringId(5663, "Cannot initialize the off-heap evictor.  There is no off-heap memory available for eviction.");
 
-
   // If the text is changed for this StringId, do the same in ConnectionPoolImplJUnitTest.java
   public static final StringId QueueManagerImpl_COULD_NOT_FIND_SERVER_TO_CREATE_PRIMARY_CLIENT_QUEUE = new StringId(5700, "Could not find any server to create primary client queue on. Number of excluded servers is {0} and exception is {1}.");
   // If the text is changed for this StringId, do the same in ConnectionPoolImplJUnitTest.java
@@ -3753,7 +3748,6 @@ public class LocalizedStrings {
   public static StringId GEMFIRE_CACHE_SECURITY_MISCONFIGURATION = new StringId(6644, "A server cannot specify its own security-manager or security-post-processor when using cluster configuration");
   public static StringId GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2 = new StringId(6645, "A server must use cluster configuration when joining a secured cluster.");
 
-
   /** Testing strings, messageId 90000-99999 **/
 
   /**
@@ -3766,6 +3760,5 @@ public class LocalizedStrings {
   public static final StringId LISTENER_PREFIX = new StringId(90004, "Listener_");
 
   public static final StringId DistributedRegion_INITIALIZING_REGION_COMPLETED_0 = new StringId(90005, "Initialization of region {0} completed");
-
 
 }

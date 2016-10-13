@@ -26,8 +26,7 @@ import org.apache.geode.management.internal.beans.stats.StatsKey;
  * 
  * 
  */
-public class AsyncEventQueueMBean extends NotificationBroadcasterSupport
-    implements AsyncEventQueueMXBean {
+public class AsyncEventQueueMBean extends NotificationBroadcasterSupport implements AsyncEventQueueMXBean {
 
   private AsyncEventQueueMBeanBridge bridge;
 
@@ -44,7 +43,7 @@ public class AsyncEventQueueMBean extends NotificationBroadcasterSupport
   public int getBatchSize() {
     return bridge.getBatchSize();
   }
-  
+
   @Override
   public long getBatchTimeInterval() {
     return bridge.getBatchTimeInteval();
@@ -79,31 +78,31 @@ public class AsyncEventQueueMBean extends NotificationBroadcasterSupport
   public boolean isPrimary() {
     return bridge.isPrimary();
   }
-  
+
   @Override
   public boolean isParallel() {
     return bridge.isParallel();
   }
-  
+
   @Override
   public int getDispatcherThreads() {
     return bridge.getDispatcherThreads();
   }
-  
+
   @Override
   public String getOrderPolicy() {
     return bridge.getOrderPolicy();
   }
- 
+
   @Override
   public boolean isDiskSynchronous() {
     return bridge.isDiskSynchronous();
   }
 
-  public AsyncEventQueueMBeanBridge getBridge(){
+  public AsyncEventQueueMBeanBridge getBridge() {
     return bridge;
   }
-  
+
   @Override
   public int getEventQueueSize() {
     return bridge.getEventQueueSize();

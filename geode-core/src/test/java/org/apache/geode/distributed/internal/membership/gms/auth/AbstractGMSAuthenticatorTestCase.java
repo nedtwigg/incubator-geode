@@ -64,7 +64,6 @@ public abstract class AbstractGMSAuthenticatorTestCase {
   @InjectMocks
   protected GMSAuthenticator authenticator;
 
-
   @Before
   public void setUp() throws Exception {
     clearStatics();

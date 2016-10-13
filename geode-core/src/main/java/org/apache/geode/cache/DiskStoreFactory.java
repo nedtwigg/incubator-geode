@@ -30,8 +30,7 @@ import java.io.File;
  * 
  * @since GemFire 6.5
  */
-public interface DiskStoreFactory
-{
+public interface DiskStoreFactory {
   /**
    * The name of the default disk store is "DEFAULT".
    * This name can be used to redefine the default disk store.
@@ -44,7 +43,7 @@ public interface DiskStoreFactory
    * <p>Current value: <code>true</code>.
    */
   public static final boolean DEFAULT_AUTO_COMPACT = true;
-  
+
   /**
    * The default compaction threshold.
    * <p>Current value: <code>50</code>.
@@ -61,15 +60,14 @@ public interface DiskStoreFactory
    * The default maximum oplog file size in megabytes.
    * <p>Current value: <code>1024</code> which is one gigabyte.
    */
-  public static final long DEFAULT_MAX_OPLOG_SIZE = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "DEFAULT_MAX_OPLOG_SIZE", 1024L)
-      .longValue(); // 1024 == 1 GB; // sys prop used by dunit and junit
+  public static final long DEFAULT_MAX_OPLOG_SIZE = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "DEFAULT_MAX_OPLOG_SIZE", 1024L).longValue(); // 1024 == 1 GB; // sys prop used by dunit and junit
 
   /**
    * The default time interval in milliseconds.
    * <p>Current value: <code>1000</code>.
    */
   public static final long DEFAULT_TIME_INTERVAL = 1000; // 1 sec;
-  
+
   /**
    * The default write buffer size.
    * <p>Current value: <code>32768</code>.
@@ -81,37 +79,37 @@ public interface DiskStoreFactory
    * <p>Current value: <code>0</code>.
    */
   public static final int DEFAULT_QUEUE_SIZE = 0;
-  
+
   /**
    * The default disk directories.
    * <p>Current value: <code>current directory</code>.
    */
   public static final File[] DEFAULT_DISK_DIRS = new File[] { new File(".") };
-  
+
   /**
    * The default disk directory size in megabytes.
    * <p>Current value: <code>2,147,483,647</code> which is two petabytes.
    */
   public static final int DEFAULT_DISK_DIR_SIZE = Integer.MAX_VALUE; // unlimited for bug 41863
-  
+
   /**
    * The default disk directory sizes.
    * <p>Current value: {@link #DEFAULT_DISK_DIR_SIZE} which is two petabytes each.
    */
-  public static final int[] DEFAULT_DISK_DIR_SIZES = new int[] {DEFAULT_DISK_DIR_SIZE};
+  public static final int[] DEFAULT_DISK_DIR_SIZES = new int[] { DEFAULT_DISK_DIR_SIZE };
 
   /**
    * The default disk usage warning percentage.
    * <p>Current value: <code>90</code>.
    */
   public static final float DEFAULT_DISK_USAGE_WARNING_PERCENTAGE = 90;
-  
+
   /**
    * The default disk usage critical percentage.
    * <p>Current value: <code>99</code>.
    */
   public static final float DEFAULT_DISK_USAGE_CRITICAL_PERCENTAGE = 99;
-  
+
   /** 
    * Set to <code>true</code> to cause the disk files to be automatically compacted.
    * Set to <code>false</code> if no compaction is needed or manual compaction will be used.
@@ -209,7 +207,7 @@ public interface DiskStoreFactory
    * @throws IllegalArgumentException if length of the size array
    * does not match to the length of the dir array
    */
-  public DiskStoreFactory setDiskDirsAndSizes(File[] diskDirs,int[] diskDirSizes);
+  public DiskStoreFactory setDiskDirsAndSizes(File[] diskDirs, int[] diskDirSizes);
 
   /**
    * Sets the warning threshold for disk usage as a percentage of the total disk

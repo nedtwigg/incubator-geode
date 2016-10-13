@@ -24,7 +24,7 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
  * @since GemFire 5.7
  */
 public class ServerOperationException extends ServerConnectivityException {
-private static final long serialVersionUID = -3106323103325266219L;
+  private static final long serialVersionUID = -3106323103325266219L;
 
   /**
    * Create a new instance of ServerOperationException without a detail message or cause.

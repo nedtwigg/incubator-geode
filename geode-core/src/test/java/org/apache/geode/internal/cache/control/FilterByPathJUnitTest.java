@@ -75,24 +75,23 @@ public class FilterByPathJUnitTest {
     assertTrue(filter.include(createRegion("b")));
     assertFalse(filter.include(createRegion("c")));
   }
-  
+
   private Region<?, ?> createRegion(String name) {
     RegionHandler handler = new RegionHandler(name);
     final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-    return (Region<?,?>) Proxy.newProxyInstance(contextClassLoader, new Class[] {Region.class}, handler);
+    return (Region<?, ?>) Proxy.newProxyInstance(contextClassLoader, new Class[] { Region.class }, handler);
   }
 
   private static class RegionHandler implements InvocationHandler {
 
     private String name;
-    
+
     public RegionHandler(String name) {
-      this.name = "/"+name;
+      this.name = "/" + name;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args)
-        throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       return name;
     }
   }

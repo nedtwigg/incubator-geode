@@ -28,49 +28,48 @@ import org.apache.geode.internal.cache.wan.spi.WANFactory;
 
 public class WANServiceProvider {
   private static final WANFactory factory;
-  
+
   static {
     ServiceLoader<WANFactory> loader = ServiceLoader.load(WANFactory.class);
     Iterator<WANFactory> itr = loader.iterator();
-    if(!itr.hasNext()) {
+    if (!itr.hasNext()) {
       factory = null;
     } else {
       factory = itr.next();
       factory.initialize();
     }
   }
-  
+
   public static GatewaySenderFactory createGatewaySenderFactory(Cache cache) {
-    if(factory == null) {
+    if (factory == null) {
       throw new IllegalStateException("WAN service is not available.");
     }
     return factory.createGatewaySenderFactory(cache);
-    
+
   }
 
-  public static GatewayReceiverFactory createGatewayReceiverFactory(
-      Cache cache) {
-    if(factory == null) {
+  public static GatewayReceiverFactory createGatewayReceiverFactory(Cache cache) {
+    if (factory == null) {
       throw new IllegalStateException("WAN service is not available.");
     }
     return factory.createGatewayReceiverFactory(cache);
   }
 
   public static WanLocatorDiscoverer createLocatorDiscoverer() {
-    if(factory == null) {
+    if (factory == null) {
       return null;
     }
     return factory.createLocatorDiscoverer();
   }
 
   public static LocatorMembershipListener createLocatorMembershipListener() {
-    if(factory == null) {
+    if (factory == null) {
       return null;
     }
     return factory.createLocatorMembershipListener();
   }
-  
+
   private WANServiceProvider() {
-    
+
   }
 }

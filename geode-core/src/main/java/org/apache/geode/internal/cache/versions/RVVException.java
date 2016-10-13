@@ -54,52 +54,48 @@ import org.apache.geode.internal.VersionedDataSerializable;
  */
 abstract class RVVException implements Comparable<RVVException>, Cloneable, VersionedDataSerializable {
   protected static boolean UseTreeSetsForTesting = false;
-  
+
   /**
    * The maximum version span that can be represented by a bitset
    * RVVException.  If the span is greater than this we use the
    * version of RVVException that collects "received versions" in a
    * regular collection.
    */
-  protected static final long RVV_MAX_BITSET_SPAN = 128 * 8;  // 128 bytes gives a span of 1k versions
-  
+  protected static final long RVV_MAX_BITSET_SPAN = 128 * 8; // 128 bytes gives a span of 1k versions
+
   long previousVersion;
   long nextVersion;
-  
 
   static RVVException createException(long previousVersion, long nextVersion) {
     return createException(previousVersion, nextVersion, 0);
   }
+
   /** Use this method to create a new RVVException */
   static RVVException createException(long previousVersion, long nextVersion, long initialExceptionCount) {
     // arbitrary cutoff of 100 bytes to use a treeSet instead of bitSet
     // But if we are deserializing an exception too many received versions use a
     // bitset anyway.
     long delta = nextVersion - previousVersion;
-    if (UseTreeSetsForTesting ||
-        ( delta > RVV_MAX_BITSET_SPAN 
-            && initialExceptionCount * 512 < delta )) {
+    if (UseTreeSetsForTesting || (delta > RVV_MAX_BITSET_SPAN && initialExceptionCount * 512 < delta)) {
       return new RVVExceptionT(previousVersion, nextVersion);
     }
     return new RVVExceptionB(previousVersion, nextVersion);
   }
-  
+
   RVVException(long previousVersion, long nextVersion) {
     this.previousVersion = previousVersion;
     this.nextVersion = nextVersion;
   }
-  
-  
-  
+
   /**
    * RegionVersionHolder.fromData() calls this to create an exception
    */
   static RVVException createException(DataInput in) throws IOException {
     long previousVersion = InternalDataSerializer.readUnsignedVL(in);
-    int size = (int)InternalDataSerializer.readUnsignedVL(in);
+    int size = (int) InternalDataSerializer.readUnsignedVL(in);
     long last = previousVersion;
-    long[] versions = new long[(int)size];
-    for(int i = 0; i < size; i++) {
+    long[] versions = new long[(int) size];
+    for (int i = 0; i < size; i++) {
       long delta = InternalDataSerializer.readUnsignedVL(in);
       long value = delta + last;
       versions[i] = value;
@@ -108,20 +104,19 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
     long delta = InternalDataSerializer.readUnsignedVL(in);
     long nextVersion = last + delta;
     RVVException result = createException(previousVersion, nextVersion, size);
-    
-    for (int i=0; i<size; i++) {
+
+    for (int i = 0; i < size; i++) {
       result.addReceived(versions[i]);
     }
     return result;
   }
-  
-  
+
   /** has the given version been recorded as having been received? */
   public abstract boolean contains(long version);
 
   /** return false if any revisions have been recorded in the range of this exception */
   public abstract boolean isEmpty();
-  
+
   /** internal method to add a new version to the received-versions collection */
   protected abstract void addReceived(long version);
 
@@ -129,20 +124,20 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
     InternalDataSerializer.writeUnsignedVL(this.previousVersion, out);
     writeReceived(out);
   }
-  
+
   /**
    * add a received version
    */
   public abstract void add(long receivedVersion);
-  
+
   /**
    * returns true if the missing versions that this exception represents have
    * all been received
    */
   public boolean isFilled() {
-    return this.previousVersion+1 >= this.nextVersion;
+    return this.previousVersion + 1 >= this.nextVersion;
   }
-  
+
   public abstract RVVException clone();
 
   /* (non-Javadoc)
@@ -151,20 +146,19 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
   public int compareTo(RVVException o) {
     long thisVal = this.previousVersion;
     long anotherVal = o.previousVersion;
-    return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+    return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
   }
-  
+
   /** Test hook - compare two exceptions */
   public boolean sameAs(RVVException other) {
-    return (this.previousVersion == other.previousVersion)
-      && (this.nextVersion == other.nextVersion);
+    return (this.previousVersion == other.previousVersion) && (this.nextVersion == other.nextVersion);
   }
 
   @Override
   public boolean equals(Object obj) {
     throw new UnsupportedOperationException("change the test to use sameAs");
   }
-  
+
   @Override
   public int hashCode() {
     throw new UnsupportedOperationException("this class does not support hashing at this time");
@@ -175,14 +169,14 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
   public abstract ReceivedVersionsIterator receivedVersionsIterator();
 
   public abstract long getHighestReceivedVersion();
-  
+
   /** it's a shame that BitSet has no iterator */
-  public abstract class ReceivedVersionsIterator  {
+  public abstract class ReceivedVersionsIterator {
 
     abstract boolean hasNext();
-    
+
     abstract long next();
-    
+
     abstract void remove();
 
   }

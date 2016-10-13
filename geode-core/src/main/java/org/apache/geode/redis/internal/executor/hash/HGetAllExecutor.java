@@ -50,14 +50,14 @@ public class HGetAllExecutor extends HashExecutor {
       return;
     }
 
-    Collection<Map.Entry<ByteArrayWrapper,ByteArrayWrapper>> entries = new ArrayList(keyRegion.entrySet()); // This creates a CopyOnRead behavior
-   
-   if (entries.isEmpty()) {
-     command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
-     return;
-   }
+    Collection<Map.Entry<ByteArrayWrapper, ByteArrayWrapper>> entries = new ArrayList(keyRegion.entrySet()); // This creates a CopyOnRead behavior
 
-   command.setResponse(Coder.getKeyValArrayResponse(context.getByteBufAllocator(), entries));
+    if (entries.isEmpty()) {
+      command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
+      return;
+    }
+
+    command.setResponse(Coder.getKeyValArrayResponse(context.getByteBufAllocator(), entries));
   }
 
 }

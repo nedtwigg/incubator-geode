@@ -36,49 +36,48 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 /** A test of 46438 - missing response to an update attributes message */
 @Category(DistributedTest.class)
 public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
-  
+
   private IgnoredException ex;
 
   // see bugs #50785 and #46438
   @Test
   public void testManyConnectsAndDisconnects() throws Throwable {
-//    invokeInEveryVM(new SerializableRunnable() {
-//
-//      @Override
-//      public void run() {
-//        Log.setLogWriterLevel("info");
-//      }
-//    });
+    //    invokeInEveryVM(new SerializableRunnable() {
+    //
+    //      @Override
+    //      public void run() {
+    //        Log.setLogWriterLevel("info");
+    //      }
+    //    });
 
-// uncomment these lines to use stand-alone locators
-//     int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(4);
-//     setLocatorPorts(ports);
+    // uncomment these lines to use stand-alone locators
+    //     int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(4);
+    //     setLocatorPorts(ports);
 
-    for(int i = 0; i < 20; i++) {
+    for (int i = 0; i < 20; i++) {
       LogWriterUtils.getLogWriter().info("Test run: " + i);
       runOnce();
       tearDown();
       setUp();
     }
   }
-  
-  
+
   static int LOCATOR_PORT;
   static String LOCATORS_STRING;
 
   static int[] locatorPorts;
-  
+
   public void setLocatorPorts(int[] ports) {
     DistributedTestUtils.deleteLocatorStateFile(ports);
     String locators = "";
-    for (int i=0; i<ports.length; i++) {
+    for (int i = 0; i < ports.length; i++) {
       if (i > 0) {
         locators += ",";
       }
-      locators += "localhost["+ports[i]+"]";
+      locators += "localhost[" + ports[i] + "]";
     }
     final String locators_string = locators;
-    for (int i=0; i<ports.length; i++) {
+    for (int i = 0; i < ports.length; i++) {
       final int port = ports[i];
       Host.getHost(0).getVM(i).invoke(new SerializableRunnable("set locator port") {
         public void run() {
@@ -89,7 +88,7 @@ public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
     }
     locatorPorts = ports;
   }
-  
+
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     if (locatorPorts != null) {
@@ -103,50 +102,48 @@ public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
    * @throws Throwable 
    */
   public void runOnce() throws Throwable {
-    
+
     int numVMs = 4;
-    
+
     VM[] vms = new VM[numVMs];
-    
-    for(int i= 0; i < numVMs; i++) {
-//      if(i == 0) {
-//        vms[i] = Host.getHost(0).getVM(4);
-//      } else {
-        vms[i] = Host.getHost(0).getVM(i);
-//      }
+
+    for (int i = 0; i < numVMs; i++) {
+      //      if(i == 0) {
+      //        vms[i] = Host.getHost(0).getVM(4);
+      //      } else {
+      vms[i] = Host.getHost(0).getVM(i);
+      //      }
     }
-    
+
     AsyncInvocation[] asyncs = new AsyncInvocation[numVMs];
-    for(int i= 0; i < numVMs; i++) {
+    for (int i = 0; i < numVMs; i++) {
       asyncs[i] = vms[i].invokeAsync(new SerializableRunnable("Create a cache") {
         @Override
         public void run() {
-//          try {
-//            JGroupMembershipManager.setDebugJGroups(true);
+          //          try {
+          //            JGroupMembershipManager.setDebugJGroups(true);
           getCache();
-//          } finally {
-//            JGroupMembershipManager.setDebugJGroups(false);
-//          }
+          //          } finally {
+          //            JGroupMembershipManager.setDebugJGroups(false);
+          //          }
         }
       });
     }
-    
-    
-    for(int i= 0; i < numVMs; i++) {
+
+    for (int i = 0; i < numVMs; i++) {
       asyncs[i].getResult();
-//      try {
-//        asyncs[i].getResult(30 * 1000);
-//      } catch(TimeoutException e) { 
-//        getLogWriter().severe("DAN DEBUG - we have a hang");
-//        dumpAllStacks();
-//        fail("DAN - WE HIT THE ISSUE",e);
-//        throw e;
-//      }
+      //      try {
+      //        asyncs[i].getResult(30 * 1000);
+      //      } catch(TimeoutException e) { 
+      //        getLogWriter().severe("DAN DEBUG - we have a hang");
+      //        dumpAllStacks();
+      //        fail("DAN - WE HIT THE ISSUE",e);
+      //        throw e;
+      //      }
     }
-    
+
     disconnectAllFromDS();
   }
-
 
   @Override
   public Properties getDistributedSystemProperties() {
@@ -159,6 +156,5 @@ public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
     }
     return props;
   }
-  
-  
+
 }

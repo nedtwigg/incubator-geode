@@ -46,15 +46,15 @@ public class BucketRegionEvictior implements Callable<Object> {
   }
 
   public void setRegion(Region reg) {
-    this.region = (LocalRegion)reg;
+    this.region = (LocalRegion) reg;
   }
 
   public void setDelta(int bytes) {
     this.bytesToEvict = bytes;
   }
-  
+
   public Object call() throws Exception {
-    ((AbstractLRURegionMap)region.entries).lruUpdateCallback(bytesToEvict);
+    ((AbstractLRURegionMap) region.entries).lruUpdateCallback(bytesToEvict);
     return null;
   }
 

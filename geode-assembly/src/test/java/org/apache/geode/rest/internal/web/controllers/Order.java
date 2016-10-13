@@ -32,7 +32,7 @@ import org.apache.geode.pdx.PdxWriter;
 */
 
 public class Order implements PdxSerializable {
-  
+
   private Long purchaseOrderNo;
   private Long customerId;
   private String description;
@@ -41,8 +41,8 @@ public class Order implements PdxSerializable {
   private String contact;
   private String email;
   private String phone;
-  private List<Item> items; 
-  private double totalPrice; 
+  private List<Item> items;
+  private double totalPrice;
 
   public Order() {
     items = new ArrayList<Item>();
@@ -52,9 +52,7 @@ public class Order implements PdxSerializable {
     this.purchaseOrderNo = orderNo;
   }
 
-  public Order(final Long orderNo, final Long custId, final String desc,
-    final Date odate, final Date ddate, final String contact, final String email,
-    final String phone, final List<Item> items, final double tprice) {
+  public Order(final Long orderNo, final Long custId, final String desc, final Date odate, final Date ddate, final String contact, final String email, final String phone, final List<Item> items, final double tprice) {
     this.purchaseOrderNo = orderNo;
     this.customerId = custId;
     this.description = desc;
@@ -131,11 +129,11 @@ public class Order implements PdxSerializable {
   public List<Item> getItems() {
     return items;
   }
-  
+
   public void setItems(List<Item> items) {
-    if(this.items == null)
+    if (this.items == null)
       this.items = new ArrayList<Item>();
-    
+
     for (Item it : items)
       this.items.add(it);
   }
@@ -180,9 +178,9 @@ public class Order implements PdxSerializable {
     contact = reader.readString("contact");
     email = reader.readString("email");
     phone = reader.readString("phone");
-    items = (List<Item>)reader.readObject("items");
+    items = (List<Item>) reader.readObject("items");
     totalPrice = reader.readDouble("totalPrice");
-    
+
   }
 
 }

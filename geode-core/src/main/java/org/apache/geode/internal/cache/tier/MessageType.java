@@ -37,7 +37,7 @@ public class MessageType {
   /** The get request data was bad (null key, for example) */
   public static final int REQUESTDATAERROR = 3;
 
-//   public static final int DATANOTFOUNDERROR = 4;
+  //   public static final int DATANOTFOUNDERROR = 4;
 
   /** A ping request */
   public static final int PING = 5;
@@ -203,30 +203,30 @@ public class MessageType {
   public static final int KEY_SET_DATA_ERROR = 41;
 
   public static final int EXECUTECQ_MSG_TYPE = 42;
-  
+
   public static final int EXECUTECQ_WITH_IR_MSG_TYPE = 43;
-  
+
   public static final int STOPCQ_MSG_TYPE = 44;
-  
+
   public static final int CLOSECQ_MSG_TYPE = 45;
-  
+
   public static final int CLOSECLIENTCQS_MSG_TYPE = 46;
-  
+
   public static final int CQDATAERROR_MSG_TYPE = 47;
-  
+
   public static final int GETCQSTATS_MSG_TYPE = 48;
 
   public static final int MONITORCQ_MSG_TYPE = 49;
 
   public static final int CQ_EXCEPTION_TYPE = 50;
-  
+
   /** A message to register the Instantiators. 
    * 
    * @since GemFire 5.0
-   */ 
-  public static final int REGISTER_INSTANTIATORS = 51; 
+   */
+  public static final int REGISTER_INSTANTIATORS = 51;
 
-  public static final int PERIODIC_ACK = 52;  
+  public static final int PERIODIC_ACK = 52;
 
   public static final int CLIENT_READY = 53;
 
@@ -235,28 +235,28 @@ public class MessageType {
   public static final int INVALIDATE_REGION = 55;
 
   public static final int PUTALL = 56;
-  
+
   public static final int GET_ALL = 57;
 
   public static final int GET_ALL_DATA_ERROR = 58;
 
   public static final int EXECUTE_REGION_FUNCTION = 59;
-   
+
   public static final int EXECUTE_REGION_FUNCTION_RESULT = 60;
-   
+
   public static final int EXECUTE_REGION_FUNCTION_ERROR = 61;
 
   public static final int EXECUTE_FUNCTION = 62;
 
   public static final int EXECUTE_FUNCTION_RESULT = 63;
-  
+
   public static final int EXECUTE_FUNCTION_ERROR = 64;
 
   public static final int CLIENT_REGISTER_INTEREST = 65;
-  
+
   public static final int CLIENT_UNREGISTER_INTEREST = 66;
-  
-  public static final int REGISTER_DATASERIALIZERS = 67; 
+
+  public static final int REGISTER_DATASERIALIZERS = 67;
 
   public static final int REQUEST_EVENT_VALUE = 68;
 
@@ -271,32 +271,32 @@ public class MessageType {
   public static final int GET_CLIENT_PARTITION_ATTRIBUTES = 73;
 
   public static final int RESPONSE_CLIENT_PARTITION_ATTRIBUTES = 74;
-  
+
   public static final int GET_CLIENT_PR_METADATA_ERROR = 75;
-  
+
   public static final int GET_CLIENT_PARTITION_ATTRIBUTES_ERROR = 76;
-  
+
   public static final int USER_CREDENTIAL_MESSAGE = 77;
 
   public static final int REMOVE_USER_AUTH = 78;
 
   public static final int EXECUTE_REGION_FUNCTION_SINGLE_HOP = 79;
-  
+
   public static final int QUERY_WITH_PARAMETERS = 80;
-  
+
   public static final int SIZE = 81;
   public static final int SIZE_ERROR = 82;
-  
+
   public static final int INVALIDATE = 83;
   public static final int INVALIDATE_ERROR = 84;
-  
+
   public static final int COMMIT = 85;
   public static final int COMMIT_ERROR = 86;
-  
+
   public static final int ROLLBACK = 87;
-  
+
   public static final int TX_FAILOVER = 88;
-  
+
   public static final int GET_ENTRY = 89;
 
   public static final int TX_SYNCHRONIZATION = 90;
@@ -304,17 +304,17 @@ public class MessageType {
   public static final int GET_FUNCTION_ATTRIBUTES = 91;
 
   public static final int GET_PDX_TYPE_BY_ID = 92;
-  
+
   public static final int GET_PDX_ID_FOR_TYPE = 93;
-  
+
   public static final int ADD_PDX_TYPE = 94;
-  
-  public static final int GET_ALL_FOR_RI = 95;  // this message type is not used after 6.x
-  
+
+  public static final int GET_ALL_FOR_RI = 95; // this message type is not used after 6.x
+
   public static final int ADD_PDX_ENUM = 96;
   public static final int GET_PDX_ID_FOR_ENUM = 97;
   public static final int GET_PDX_ENUM_BY_ID = 98;
-  
+
   public static final int SERVER_TO_CLIENT_PING = 99;
 
   public static final int GET_ALL_70 = 100;
@@ -326,11 +326,11 @@ public class MessageType {
   public static final int GET_PDX_ENUMS = 102;
 
   public static final int TOMBSTONE_OPERATION = 103;
-  
+
   public static final int GATEWAY_RECEIVER_COMMAND = 104;
-  
+
   public static final int GETDURABLECQS_MSG_TYPE = 105;
-  
+
   public static final int GET_DURABLE_CQS_DATA_ERROR = 106;
 
   public static final int GET_ALL_WITH_CALLBACK = 107;
@@ -342,7 +342,6 @@ public class MessageType {
    * Must be equal to last valid message id.
    */
   private static final int LAST_VALID_MESSAGE_ID = REMOVE_ALL;
-  
 
   public static boolean validate(int messageType) {
     if (messageType == -1 || messageType == 4) {
@@ -416,33 +415,33 @@ public class MessageType {
     case CREATE_REGION_DATA_ERROR:
       return "CREATE_REGION_DATA_ERROR";
     case MAKE_PRIMARY:
-       return "MAKE_PRIMARY" ;
-    case RESPONSE_FROM_PRIMARY :
-      return "RESPONSE_FROM_PRIMARY" ;
-    case RESPONSE_FROM_SECONDARY :
-      return "RESPONSE_FROM_SECONDARY" ;
+      return "MAKE_PRIMARY";
+    case RESPONSE_FROM_PRIMARY:
+      return "RESPONSE_FROM_PRIMARY";
+    case RESPONSE_FROM_SECONDARY:
+      return "RESPONSE_FROM_SECONDARY";
     case QUERY:
       return "QUERY";
     case QUERY_WITH_PARAMETERS:
       return "QUERY_WITH_PARAMETERS";
     case EXECUTECQ_MSG_TYPE:
-    	return "EXECUTECQ";
+      return "EXECUTECQ";
     case EXECUTECQ_WITH_IR_MSG_TYPE:
-    	return "EXECUTECQ_WITH_IR";
+      return "EXECUTECQ_WITH_IR";
     case STOPCQ_MSG_TYPE:
-    	return "STOPCQ";
+      return "STOPCQ";
     case CLOSECQ_MSG_TYPE:
-    	return "CLOSECQ";
+      return "CLOSECQ";
     case CLOSECLIENTCQS_MSG_TYPE:
-    	return "CLOSECLIENTCQS";
+      return "CLOSECLIENTCQS";
     case CQDATAERROR_MSG_TYPE:
-    	return "CQDATAERROR";
+      return "CQDATAERROR";
     case GETCQSTATS_MSG_TYPE:
-    	return "GETCQSTATS";
+      return "GETCQSTATS";
     case MONITORCQ_MSG_TYPE:
-    	return "MONITORCQ";
+      return "MONITORCQ";
     case CQ_EXCEPTION_TYPE:
-    	return "CQ_EXCEPTION_TYPE";
+      return "CQ_EXCEPTION_TYPE";
     case QUERY_DATA_ERROR:
       return "QUERY_DATA_ERROR";
     case CLEAR_REGION:
@@ -478,7 +477,7 @@ public class MessageType {
     case EXECUTE_FUNCTION_RESULT:
       return "EXECUTE_FUNCTION_RESULT";
     case EXECUTE_FUNCTION_ERROR:
-      return "EXECUTE_FUNCTION_ERROR";     
+      return "EXECUTE_FUNCTION_ERROR";
     case CLIENT_REGISTER_INTEREST:
       return "CLIENT_REGISTER_INTEREST";
     case CLIENT_UNREGISTER_INTEREST:

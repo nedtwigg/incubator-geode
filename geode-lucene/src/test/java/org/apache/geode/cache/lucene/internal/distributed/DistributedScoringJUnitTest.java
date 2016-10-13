@@ -73,18 +73,11 @@ public class DistributedScoringJUnitTest {
   @Test
   public void uniformDistributionProducesComparableScores() throws Exception {
     // the strings below have been grouped to be split between three index repositories
-    String[] testStrings = {
-        "hello world",
-        "foo bar",
-        "just any string",
+    String[] testStrings = { "hello world", "foo bar", "just any string",
 
-        "hello world is usually the first program",
-        "water on mars",
-        "test world",
+        "hello world is usually the first program", "water on mars", "test world",
 
-        "hello",
-        "test hello test",
-        "find the aliens", };
+        "hello", "test hello test", "find the aliens", };
 
     QueryParser parser = new QueryParser("txt", analyzer);
     Query query = parser.parse("hello world");
@@ -121,10 +114,10 @@ public class DistributedScoringJUnitTest {
     collectors.add(collector3);
 
     List<EntryScore<String>> distResult = manager.reduce(collectors).getEntries().getHits();
-    
+
     Assert.assertEquals(singleResult.size(), distResult.size());
     Assert.assertTrue(singleResult.size() > 0);
-    
+
     for (Iterator single = distResult.iterator(), dist = singleResult.iterator(); single.hasNext() && dist.hasNext();) {
       EntryScore<String> singleScore = (EntryScore<String>) single.next();
       EntryScore<String> distScore = (EntryScore<String>) dist.next();

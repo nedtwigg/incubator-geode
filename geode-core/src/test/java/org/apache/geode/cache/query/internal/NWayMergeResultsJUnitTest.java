@@ -70,8 +70,7 @@ public class NWayMergeResultsJUnitTest {
     }
     Arrays.sort(combinedArray);
 
-    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(
-        listOfSortedLists, false, -1);
+    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(listOfSortedLists, false, -1);
     Iterator<Integer> iter = mergedResults.iterator();
     for (int elem : combinedArray) {
       assertEquals(elem, iter.next().intValue());
@@ -110,8 +109,7 @@ public class NWayMergeResultsJUnitTest {
       }
     }
 
-    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(
-        listOfSortedLists, true, -1);
+    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(listOfSortedLists, true, -1);
 
     Iterator<Integer> iter = mergedResults.iterator();
     for (int elem : sortedSet) {
@@ -158,8 +156,7 @@ public class NWayMergeResultsJUnitTest {
     }
     Arrays.sort(combinedArray);
 
-    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(
-        listOfSortedLists, false, limit);
+    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(listOfSortedLists, false, limit);
 
     Iterator<Integer> iter = mergedResults.iterator();
     int count = 0;
@@ -205,8 +202,7 @@ public class NWayMergeResultsJUnitTest {
       }
     }
 
-    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(
-        listOfSortedLists, true, limit);
+    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(listOfSortedLists, true, limit);
 
     Iterator<Integer> iter = mergedResults.iterator();
 
@@ -233,9 +229,7 @@ public class NWayMergeResultsJUnitTest {
   @Test
   public void testNonDistinctStruct() throws Exception {
     final int numSortedLists = 40;
-    StructTypeImpl structType = new StructTypeImpl(new String[] { "a", "b" },
-        new ObjectType[] { new ObjectTypeImpl(Integer.TYPE),
-            new ObjectTypeImpl(Integer.TYPE) });
+    StructTypeImpl structType = new StructTypeImpl(new String[] { "a", "b" }, new ObjectType[] { new ObjectTypeImpl(Integer.TYPE), new ObjectTypeImpl(Integer.TYPE) });
     Collection<List<Struct>> listOfSortedLists = new ArrayList<List<Struct>>();
     for (int i = 0; i < numSortedLists; ++i) {
       listOfSortedLists.add(new ArrayList<Struct>());
@@ -245,8 +239,7 @@ public class NWayMergeResultsJUnitTest {
       step = step + 1;
       int j = 1000;
       for (int i = -500; i < 500; i = i + step) {
-        Struct struct = new StructImpl(structType, new Object[] {
-            Integer.valueOf(i), Integer.valueOf(j - step) });
+        Struct struct = new StructImpl(structType, new Object[] { Integer.valueOf(i), Integer.valueOf(j - step) });
         list.add(struct);
       }
     }
@@ -267,19 +260,16 @@ public class NWayMergeResultsJUnitTest {
       public int compare(Struct o1, Struct o2) {
         Object[] fields_1 = o1.getFieldValues();
         Object[] fields_2 = o2.getFieldValues();
-        int compare = ((Comparable) fields_1[0])
-            .compareTo((Comparable) fields_2[0]);
+        int compare = ((Comparable) fields_1[0]).compareTo((Comparable) fields_2[0]);
         if (compare == 0) {
           // second field is descending
-          compare = ((Comparable) fields_2[1])
-              .compareTo((Comparable) fields_1[1]);
+          compare = ((Comparable) fields_2[1]).compareTo((Comparable) fields_1[1]);
         }
         return compare;
       }
     });
 
-    NWayMergeResults<Struct> mergedResults = createStructFieldMergedResult(
-        listOfSortedLists, false, -1, structType);
+    NWayMergeResults<Struct> mergedResults = createStructFieldMergedResult(listOfSortedLists, false, -1, structType);
 
     Iterator<Struct> iter = mergedResults.iterator();
     for (Struct elem : combinedArray) {
@@ -297,9 +287,7 @@ public class NWayMergeResultsJUnitTest {
   @Test
   public void testDistinctStruct() throws Exception {
     final int numSortedLists = 40;
-    StructTypeImpl structType = new StructTypeImpl(new String[] { "a", "b" },
-        new ObjectType[] { new ObjectTypeImpl(Integer.TYPE),
-            new ObjectTypeImpl(Integer.TYPE) });
+    StructTypeImpl structType = new StructTypeImpl(new String[] { "a", "b" }, new ObjectType[] { new ObjectTypeImpl(Integer.TYPE), new ObjectTypeImpl(Integer.TYPE) });
     Collection<List<Struct>> listOfSortedLists = new ArrayList<List<Struct>>();
     for (int i = 0; i < numSortedLists; ++i) {
       listOfSortedLists.add(new ArrayList<Struct>());
@@ -309,8 +297,7 @@ public class NWayMergeResultsJUnitTest {
       step = step + 1;
       int j = 1000;
       for (int i = -500; i < 500; i = i + step) {
-        Struct struct = new StructImpl(structType, new Object[] {
-            Integer.valueOf(i), Integer.valueOf(j - step) });
+        Struct struct = new StructImpl(structType, new Object[] { Integer.valueOf(i), Integer.valueOf(j - step) });
         list.add(struct);
       }
     }
@@ -320,12 +307,10 @@ public class NWayMergeResultsJUnitTest {
       public int compare(Struct o1, Struct o2) {
         Object[] fields_1 = o1.getFieldValues();
         Object[] fields_2 = o2.getFieldValues();
-        int compare = ((Comparable) fields_1[0])
-            .compareTo((Comparable) fields_2[0]);
+        int compare = ((Comparable) fields_1[0]).compareTo((Comparable) fields_2[0]);
         if (compare == 0) {
           // second field is descending
-          compare = ((Comparable) fields_2[1])
-              .compareTo((Comparable) fields_1[1]);
+          compare = ((Comparable) fields_2[1]).compareTo((Comparable) fields_1[1]);
         }
         return compare;
       }
@@ -338,8 +323,7 @@ public class NWayMergeResultsJUnitTest {
       }
     }
 
-    NWayMergeResults<Struct> mergedResults = createStructFieldMergedResult(
-        listOfSortedLists, true, -1, structType);
+    NWayMergeResults<Struct> mergedResults = createStructFieldMergedResult(listOfSortedLists, true, -1, structType);
 
     Iterator<Struct> iter = mergedResults.iterator();
     for (Struct elem : sortedSet) {
@@ -394,8 +378,7 @@ public class NWayMergeResultsJUnitTest {
         ++num75;
       }
     }
-    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(
-        listOfSortedLists, false, -1);
+    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(listOfSortedLists, false, -1);
     assertEquals(num70, mergedResults.occurrences(Integer.valueOf(70)));
     assertEquals(num72, mergedResults.occurrences(Integer.valueOf(72)));
     assertEquals(num73, mergedResults.occurrences(Integer.valueOf(73)));
@@ -425,8 +408,7 @@ public class NWayMergeResultsJUnitTest {
       }
     }
 
-    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(
-        listOfSortedLists, true, -1);
+    NWayMergeResults<Integer> mergedResults = createSingleFieldMergedResult(listOfSortedLists, true, -1);
 
     assertEquals(1, mergedResults.occurrences(Integer.valueOf(70)));
     assertEquals(1, mergedResults.occurrences(Integer.valueOf(72)));
@@ -435,13 +417,9 @@ public class NWayMergeResultsJUnitTest {
 
   }
 
-  private <E> NWayMergeResults<E> createSingleFieldMergedResult(
-      Collection<? extends Collection<E>> sortedResults, boolean isDistinct,
-      int limit) throws Exception {
-    CompiledSortCriterion csc = new CompiledSortCriterion(false,
-        CompiledSortCriterion.ProjectionField.getProjectionField());
-    Method method = CompiledSortCriterion.class.getDeclaredMethod(
-        "substituteExpressionWithProjectionField", Integer.TYPE);
+  private <E> NWayMergeResults<E> createSingleFieldMergedResult(Collection<? extends Collection<E>> sortedResults, boolean isDistinct, int limit) throws Exception {
+    CompiledSortCriterion csc = new CompiledSortCriterion(false, CompiledSortCriterion.ProjectionField.getProjectionField());
+    Method method = CompiledSortCriterion.class.getDeclaredMethod("substituteExpressionWithProjectionField", Integer.TYPE);
     method.setAccessible(true);
     method.invoke(csc, 0);
     List<CompiledSortCriterion> orderByAttribs = new ArrayList<CompiledSortCriterion>();
@@ -449,20 +427,13 @@ public class NWayMergeResultsJUnitTest {
     ExecutionContext context = new ExecutionContext(null, null);
     ObjectType elementType = new ObjectTypeImpl(Object.class);
 
-    return new NWayMergeResults<E>(sortedResults, isDistinct, limit,
-        orderByAttribs, context, elementType);
+    return new NWayMergeResults<E>(sortedResults, isDistinct, limit, orderByAttribs, context, elementType);
   }
 
-  private NWayMergeResults<Struct> createStructFieldMergedResult(
-      Collection<? extends Collection<Struct>> sortedResults,
-      boolean isDistinct, int limit, StructTypeImpl structType)
-      throws Exception {
-    CompiledSortCriterion csc1 = new CompiledSortCriterion(false,
-        CompiledSortCriterion.ProjectionField.getProjectionField());
-    CompiledSortCriterion csc2 = new CompiledSortCriterion(true,
-        CompiledSortCriterion.ProjectionField.getProjectionField());
-    Method method = CompiledSortCriterion.class.getDeclaredMethod(
-        "substituteExpressionWithProjectionField", Integer.TYPE);
+  private NWayMergeResults<Struct> createStructFieldMergedResult(Collection<? extends Collection<Struct>> sortedResults, boolean isDistinct, int limit, StructTypeImpl structType) throws Exception {
+    CompiledSortCriterion csc1 = new CompiledSortCriterion(false, CompiledSortCriterion.ProjectionField.getProjectionField());
+    CompiledSortCriterion csc2 = new CompiledSortCriterion(true, CompiledSortCriterion.ProjectionField.getProjectionField());
+    Method method = CompiledSortCriterion.class.getDeclaredMethod("substituteExpressionWithProjectionField", Integer.TYPE);
     method.setAccessible(true);
     method.invoke(csc1, 0);
     method.invoke(csc2, 1);
@@ -471,8 +442,7 @@ public class NWayMergeResultsJUnitTest {
     orderByAttribs.add(csc2);
     ExecutionContext context = new ExecutionContext(null, null);
 
-    return new NWayMergeResults<Struct>(sortedResults, false, -1,
-        orderByAttribs, context, structType);
+    return new NWayMergeResults<Struct>(sortedResults, false, -1, orderByAttribs, context, structType);
   }
 
   @Test
@@ -506,8 +476,7 @@ public class NWayMergeResultsJUnitTest {
     sortedLists.add(results6);
     sortedLists.add(results7);
 
-    NWayMergeResults<String> mergedResults = createSingleFieldMergedResult(
-        sortedLists, true, -1);
+    NWayMergeResults<String> mergedResults = createSingleFieldMergedResult(sortedLists, true, -1);
 
     List<String> results8 = new ArrayList<String>();
     results8.add("DELL");
@@ -530,8 +499,7 @@ public class NWayMergeResultsJUnitTest {
     sortedLists1.add(results8);
     sortedLists1.add(results9);
 
-    NWayMergeResults<String> netMergedResults = createSingleFieldMergedResult(
-        sortedLists1, true, -1);
+    NWayMergeResults<String> netMergedResults = createSingleFieldMergedResult(sortedLists1, true, -1);
 
     assertEquals(12, netMergedResults.size());
   }

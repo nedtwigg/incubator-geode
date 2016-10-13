@@ -38,7 +38,7 @@ public interface SystemMemberRegion {
    * @see org.apache.geode.cache.Region#getName
    */
   public String getName();
-  
+
   /**
    * Returns the full path name that identifies this region in its
    * cache.
@@ -71,6 +71,7 @@ public interface SystemMemberRegion {
    * Returns a description of any CacheLoader associated with this region.
    */
   public String getCacheLoader();
+
   /**
    * Returns a description of any CacheWriter associated with this region.
    */
@@ -139,7 +140,7 @@ public interface SystemMemberRegion {
    * @return the CustomExpiry for entry-time-to-live
    */
   public String getCustomEntryTimeToLive();
-  
+
   /**
    * Returns the RegionIdleTimeout time limit in this region's attributes.
    */
@@ -159,25 +160,25 @@ public interface SystemMemberRegion {
    * Returns the EntryIdleTimeout action in this region's attributes.
    */
   public ExpirationAction getEntryIdleTimeoutAction();
-  
+
   /**
    * string describing the CustomExpiry for entry-idle-timeout
    * @return the CustomExpiry for entry-idle-timeout
    */
   public String getCustomEntryIdleTimeout();
-  
+
   /**
    * Returns the MirrorType in this region's attributes.
    * @deprecated as of 5.0, you should use getDataPolicy instead
    */
   @Deprecated
   public MirrorType getMirrorType();
-  
+
   /**
    * Returns the DataPolicy in this region's attributes.
    */
   public DataPolicy getDataPolicy();
-  
+
   /**
   
   /**
@@ -234,7 +235,7 @@ public interface SystemMemberRegion {
    * Returns the number of entries currently in this region.
    */
   public int getEntryCount();
-  
+
   /**
    * Returns the number of subregions currently in this region.
    */
@@ -294,9 +295,7 @@ public interface SystemMemberRegion {
    *
    * @since GemFire 4.0
    */
-  public SystemMemberRegion createSubregion(String name,
-                                            RegionAttributes attrs)
-    throws AdminException;
+  public SystemMemberRegion createSubregion(String name, RegionAttributes attrs) throws AdminException;
 
   /**
    * Returns the <code>MembershipAttributes</code> that configure required
@@ -304,13 +303,13 @@ public interface SystemMemberRegion {
    * @deprecated this API is scheduled to be removed
    */
   public MembershipAttributes getMembershipAttributes();
-  
+
   /**
    * Returns the <code>SubscriptionAttributes</code> for the region.
    * @since GemFire 5.0
    */
   public SubscriptionAttributes getSubscriptionAttributes();
-  
+
   /**
    * Returns the <code>PartitionAttributes</code> for the region.
    * @since GemFire 5.7
@@ -318,4 +317,3 @@ public interface SystemMemberRegion {
   public PartitionAttributes getPartitionAttributes();
 
 }
-

@@ -139,12 +139,7 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   }
 
   @SuppressWarnings("deprecation")
-  protected int startBridgeServer(String hostName,
-                                  int restServicePort,
-                                  final String locators,
-                                  final String[] regions,
-                                  final Properties sslProperties,
-                                  boolean clusterLevel) {
+  protected int startBridgeServer(String hostName, int restServicePort, final String locators, final String[] regions, final Properties sslProperties, boolean clusterLevel) {
 
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -442,7 +437,6 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
         HttpGet get = new HttpGet(restEndpoint + "/People/1");
         get.addHeader("Content-Type", "application/json");
         get.addHeader("Accept", "application/json");
-
 
         CloseableHttpClient httpclient = getSSLBasedHTTPClient(properties);
         CloseableHttpResponse response = httpclient.execute(get);

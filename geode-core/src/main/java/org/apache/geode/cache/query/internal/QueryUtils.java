@@ -57,23 +57,24 @@ import org.apache.geode.internal.logging.LogService;
 
 public class QueryUtils {
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Return a SelectResults that is the intersection of c1 and c2. May or may
    * not return a modified c1 or c2.
    */
-  public static SelectResults intersection(SelectResults c1,
-                                           SelectResults c2,
-                                           ExecutionContext contextOrNull) {
-    QueryObserverHolder.getInstance().invokedQueryUtilsIntersection(c1,c2);
+  public static SelectResults intersection(SelectResults c1, SelectResults c2, ExecutionContext contextOrNull) {
+    QueryObserverHolder.getInstance().invokedQueryUtilsIntersection(c1, c2);
     assertCompatible(c1, c2);
-    if (c1.isEmpty()) { return c1; }
-    if (c2.isEmpty()) { return c2; }
+    if (c1.isEmpty()) {
+      return c1;
+    }
+    if (c2.isEmpty()) {
+      return c2;
+    }
     // iterate on the smallest one
     if (c1.size() < c2.size()) {
       return sizeSortedIntersection(c1, c2, contextOrNull);
-    }
-    else {
+    } else {
       return sizeSortedIntersection(c2, c1, contextOrNull);
     }
   }
@@ -82,56 +83,43 @@ public class QueryUtils {
    * Return a SelectResults that is the union of c1 and c2. May or may not
    * return a modified c1 or c2.
    */
-  public static SelectResults union(SelectResults c1,
-                                    SelectResults c2,
-                                    ExecutionContext contextOrNull) {
-    QueryObserverHolder.getInstance().invokedQueryUtilsUnion(c1,c2);
+  public static SelectResults union(SelectResults c1, SelectResults c2, ExecutionContext contextOrNull) {
+    QueryObserverHolder.getInstance().invokedQueryUtilsUnion(c1, c2);
     assertCompatible(c1, c2);
     // iterate on the smallest one
     if (c1.size() < c2.size()) {
       return sizeSortedUnion(c1, c2, contextOrNull);
-    }
-    else {
+    } else {
       return sizeSortedUnion(c2, c1, contextOrNull);
     }
   }
 
   public static void assertCompatible(SelectResults sr1, SelectResults sr2) {
-    Assert.assertTrue(sr1.getCollectionType().getElementType().equals(
-        sr2.getCollectionType().getElementType()));
+    Assert.assertTrue(sr1.getCollectionType().getElementType().equals(sr2.getCollectionType().getElementType()));
   }
-  
 
   public static SelectResults createResultCollection(ExecutionContext context, ObjectType elementType) {
-    return context.isDistinct() ? new ResultsSet(elementType) :
-      new ResultsBag(elementType, context.getCachePerfStats());
+    return context.isDistinct() ? new ResultsSet(elementType) : new ResultsBag(elementType, context.getCachePerfStats());
   }
-  
+
   public static SelectResults createStructCollection(ExecutionContext context, StructType elementType) {
-    return context.isDistinct() ? new StructSet(elementType) :
-      new StructBag(elementType, context.getCachePerfStats()) ;
+    return context.isDistinct() ? new StructSet(elementType) : new StructBag(elementType, context.getCachePerfStats());
   }
-  
-  public static SelectResults createResultCollection(boolean distinct, ObjectType elementType,
-      ExecutionContext context) {
-    return distinct ? new ResultsSet(elementType) :
-      new ResultsBag(elementType, context.getCachePerfStats());
+
+  public static SelectResults createResultCollection(boolean distinct, ObjectType elementType, ExecutionContext context) {
+    return distinct ? new ResultsSet(elementType) : new ResultsBag(elementType, context.getCachePerfStats());
   }
-  
-  public static SelectResults createStructCollection(boolean distinct, StructType elementType, 
-      ExecutionContext context) {
-    return distinct ? new StructSet(elementType) :
-      new StructBag(elementType, context.getCachePerfStats()) ;
+
+  public static SelectResults createStructCollection(boolean distinct, StructType elementType, ExecutionContext context) {
+    return distinct ? new StructSet(elementType) : new StructBag(elementType, context.getCachePerfStats());
   }
-  
 
   /**
    * Returns an appropriate, empty <code>SelectResults</code>
    * @param objectType The <code>ObjectType</code> of the query results
    * @return an appropriate, empty <code>SelectResults</code>
    */
-  public static SelectResults getEmptySelectResults(ObjectType objectType,
-                                                    CachePerfStats statsOrNull) {
+  public static SelectResults getEmptySelectResults(ObjectType objectType, CachePerfStats statsOrNull) {
     SelectResults emptyResults = null;
     if (objectType instanceof StructType) {
       emptyResults = new StructBag((StructTypeImpl) objectType, statsOrNull);
@@ -146,25 +134,21 @@ public class QueryUtils {
    * @param collectionType The <code>CollectionType</code> of the query results
    * @return an appropriate, empty <code>SelectResults</code>
    */
-  public static SelectResults getEmptySelectResults(CollectionType collectionType,
-                                                    CachePerfStats statsOrNull) {
+  public static SelectResults getEmptySelectResults(CollectionType collectionType, CachePerfStats statsOrNull) {
     SelectResults emptyResults = null;
     if (collectionType.isOrdered()) {
       // The collectionType is ordered.
       // The 'order by' clause was used in the query.
       // Wrap an ArrayList with a ResultsCollectionWrapper
       emptyResults = new ResultsCollectionWrapper(collectionType.getElementType(), new ArrayList());
-    }
-    else if (!collectionType.allowsDuplicates()) {
+    } else if (!collectionType.allowsDuplicates()) {
       // The collectionType does not allow duplicates.
       // The distinct keyword was used in the query.
       // Wrap a HashSet with a ResultsCollectionWrapper
       emptyResults = new ResultsCollectionWrapper(collectionType.getElementType(), new HashSet());
-    }
-    else {
+    } else {
       // Use ObjectType to determine the correct SelectResults implementation
-      emptyResults = getEmptySelectResults(collectionType.getElementType(),
-                                           statsOrNull);
+      emptyResults = getEmptySelectResults(collectionType.getElementType(), statsOrNull);
     }
     return emptyResults;
   }
@@ -178,16 +162,14 @@ public class QueryUtils {
   // consider: taking intersection of two bags, only retain
   // the number of occurrences in the intersection equal to the
   // minimum number between the two bags
-  private static SelectResults sizeSortedIntersection(SelectResults small,
-                                                      SelectResults large,
-                                                      ExecutionContext contextOrNull) {
+  private static SelectResults sizeSortedIntersection(SelectResults small, SelectResults large, ExecutionContext contextOrNull) {
     // if one is a set and one is a bag,
     // then treat the set like a bag (and return a bag)
     boolean smallModifiable = small.isModifiable() && (isBag(small) || !isBag(large));
     boolean largeModifiable = large.isModifiable() && (isBag(large) || !isBag(small));
     if (smallModifiable) {
       try {
-        for (Iterator itr = small.iterator(); itr.hasNext(); ) {
+        for (Iterator itr = small.iterator(); itr.hasNext();) {
           Object element = itr.next();
           int count = large.occurrences(element);
           if (small.occurrences(element) > count) { // bag intersection: only retain smaller number of dups
@@ -195,14 +177,13 @@ public class QueryUtils {
           }
         }
         return small;
-      }
-      catch (UnsupportedOperationException e1) {
+      } catch (UnsupportedOperationException e1) {
         // didn't succeed because small is actually unmodifiable
       }
     }
     if (largeModifiable) {
       try {
-        for (Iterator itr = large.iterator(); itr.hasNext(); ) {
+        for (Iterator itr = large.iterator(); itr.hasNext();) {
           Object element = itr.next();
           int count = small.occurrences(element);
           if (large.occurrences(element) > count) { // bag intersection: only retain smaller number of dups
@@ -210,21 +191,19 @@ public class QueryUtils {
           }
         }
         return large;
-      }
-      catch (UnsupportedOperationException e2) {
+      } catch (UnsupportedOperationException e2) {
         // didn't succeed because large is actually unmodifiable
       }
     }
-    
-    SelectResults rs ;
-    if(contextOrNull != null) {
-        rs =  contextOrNull.isDistinct() ? new ResultsSet(small) :new ResultsBag(small,
-            contextOrNull.getCachePerfStats());
-    }else {
-      rs =new ResultsBag(small,null);
+
+    SelectResults rs;
+    if (contextOrNull != null) {
+      rs = contextOrNull.isDistinct() ? new ResultsSet(small) : new ResultsBag(small, contextOrNull.getCachePerfStats());
+    } else {
+      rs = new ResultsBag(small, null);
     }
-    
-    for (Iterator itr = rs.iterator(); itr.hasNext(); ) {
+
+    for (Iterator itr = rs.iterator(); itr.hasNext();) {
       Object element = itr.next();
       int count = large.occurrences(element);
       if (rs.occurrences(element) > count) { // bag intersection: only retain smaller number of dups
@@ -239,17 +218,15 @@ public class QueryUtils {
   // union should be the sum of the occurrences in the two bags
   // Is this Ok? There may be tuples which are actually common to both set so
   // union in such cases should not increase count. right.?
-  
-  private static SelectResults sizeSortedUnion(SelectResults small,
-                                               SelectResults large,
-                                               ExecutionContext contextOrNull) {
+
+  private static SelectResults sizeSortedUnion(SelectResults small, SelectResults large, ExecutionContext contextOrNull) {
     // if one is a set and one is a bag,
     // then treat the set like a bag (and return a bag)
     boolean smallModifiable = small.isModifiable() && (isBag(small) || !isBag(large));
     boolean largeModifiable = large.isModifiable() && (isBag(large) || !isBag(small));
     if (largeModifiable) {
       try {
-        for (Iterator itr = small.iterator(); itr.hasNext(); ) {
+        for (Iterator itr = small.iterator(); itr.hasNext();) {
           Object element = itr.next();
           int count = small.occurrences(element);
           if (large.occurrences(element) < count) {
@@ -257,14 +234,13 @@ public class QueryUtils {
           }
         }
         return large;
-      }
-      catch (UnsupportedOperationException e1) {
+      } catch (UnsupportedOperationException e1) {
         // didn't succeed because large is actually unmodifiable
       }
     }
     if (smallModifiable) {
       try {
-        for (Iterator itr = large.iterator(); itr.hasNext(); ) {
+        for (Iterator itr = large.iterator(); itr.hasNext();) {
           Object element = itr.next();
           int count = large.occurrences(element);
           if (small.occurrences(element) < count) {
@@ -272,20 +248,18 @@ public class QueryUtils {
           }
         }
         return small;
-      }
-      catch (UnsupportedOperationException e2) {
+      } catch (UnsupportedOperationException e2) {
         // didn't succeed because small is actually unmodifiable
       }
     }
     SelectResults rs;
-    if(contextOrNull != null) {
-      rs =  contextOrNull.isDistinct() ? new ResultsSet(large) :new ResultsBag(large,
-          contextOrNull.getCachePerfStats());
-    }else {
-      rs =new ResultsBag(large, null);
+    if (contextOrNull != null) {
+      rs = contextOrNull.isDistinct() ? new ResultsSet(large) : new ResultsBag(large, contextOrNull.getCachePerfStats());
+    } else {
+      rs = new ResultsBag(large, null);
     }
-    
-   for (Iterator itr = small.iterator(); itr.hasNext(); ) {
+
+    for (Iterator itr = small.iterator(); itr.hasNext();) {
       Object element = itr.next();
       rs.add(element);
     }
@@ -302,16 +276,13 @@ public class QueryUtils {
    * @param indpndntItrs array of independent RuntimeIterators
    * @param context
    */
-  public static List getDependentItrChainForIndpndntItrs(
-      RuntimeIterator[] indpndntItrs, ExecutionContext context) {
+  public static List getDependentItrChainForIndpndntItrs(RuntimeIterator[] indpndntItrs, ExecutionContext context) {
     List ret = new ArrayList();
     for (int k = 0; k < indpndntItrs.length; ++k) {
-      ret.addAll(context
-          .getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(indpndntItrs[k]));
+      ret.addAll(context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(indpndntItrs[k]));
     }
     return ret;
-  } 
-  
+  }
 
   /**
    * This util function does a cartesian of the array of SelectResults
@@ -355,42 +326,29 @@ public class QueryUtils {
    * @throws QueryInvocationTargetException
    *  
    */
-  public static SelectResults cartesian(SelectResults[] results,
-      RuntimeIterator[][] itrsForResultFields, List expansionList,
-      List finalList, ExecutionContext context, CompiledValue operand)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  public static SelectResults cartesian(SelectResults[] results, RuntimeIterator[][] itrsForResultFields, List expansionList, List finalList, ExecutionContext context, CompiledValue operand) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     SelectResults returnSet = null;
     if (finalList.size() == 1) {
-      ObjectType type = ((RuntimeIterator) finalList.iterator().next())
-          .getElementType();
+      ObjectType type = ((RuntimeIterator) finalList.iterator().next()).getElementType();
       if (type instanceof StructType) {
-        returnSet = QueryUtils.createStructCollection(context,(StructTypeImpl) type) ;
-      }
-      else {
+        returnSet = QueryUtils.createStructCollection(context, (StructTypeImpl) type);
+      } else {
         return QueryUtils.createResultCollection(context, type);
       }
-    }
-    else {
+    } else {
       StructType structType = createStructTypeForRuntimeIterators(finalList);
       returnSet = QueryUtils.createStructCollection(context, structType);
     }
     ListIterator expnItr = expansionList.listIterator();
     // RuntimeIterator levelExpnItr =
     // expnItr.hasNext()?(RuntimeIterator)expnItr.next():null;
-    doNestedIterations(0, returnSet, results, itrsForResultFields, finalList,
-        expnItr, (results.length + expansionList.size()), context, operand);
+    doNestedIterations(0, returnSet, results, itrsForResultFields, finalList, expnItr, (results.length + expansionList.size()), context, operand);
     return returnSet;
   }
 
   //TODO:Optimize the function further in terms of reducing the
   // parameters passed in the function, if possible
-  private static void doNestedIterations(int level, SelectResults returnSet,
-      SelectResults[] results, RuntimeIterator[][] itrsForResultFields,
-      List finalItrs, ListIterator expansionItrs, int finalLevel,
-      ExecutionContext context, CompiledValue operand)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  private static void doNestedIterations(int level, SelectResults returnSet, SelectResults[] results, RuntimeIterator[][] itrsForResultFields, List finalItrs, ListIterator expansionItrs, int finalLevel, ExecutionContext context, CompiledValue operand) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     if (level == finalLevel) {
       //end recusrion
       boolean select = true;
@@ -406,17 +364,15 @@ public class QueryUtils {
           values[j++] = ((RuntimeIterator) itr.next()).evaluate(context);
         }
         if (select) {
-          
-            ((StructFields) returnSet).addFieldValues(values);
-          
+
+          ((StructFields) returnSet).addFieldValues(values);
+
         }
-      }
-      else {
+      } else {
         if (select)
-            returnSet.add(((RuntimeIterator) itr.next()).evaluate(context));
+          returnSet.add(((RuntimeIterator) itr.next()).evaluate(context));
       }
-    }
-    else if (level < results.length) {
+    } else if (level < results.length) {
       SelectResults individualResultSet = results[level];
       RuntimeIterator[] itrsForFields = itrsForResultFields[level];
       int len = itrsForFields.length;
@@ -428,8 +384,7 @@ public class QueryUtils {
         if (len == 1) {
           // this means we have a ResultSet
           itrsForFields[0].setCurrent(value);
-        }
-        else {
+        } else {
           Struct struct = (Struct) value;
           Object fieldValues[] = struct.getFieldValues();
           int size = fieldValues.length;
@@ -437,11 +392,9 @@ public class QueryUtils {
             itrsForFields[i].setCurrent(fieldValues[i]);
           }
         }
-        doNestedIterations(level + 1, returnSet, results, itrsForResultFields,
-            finalItrs, expansionItrs, finalLevel, context, operand);
+        doNestedIterations(level + 1, returnSet, results, itrsForResultFields, finalItrs, expansionItrs, finalLevel, context, operand);
       }
-    }
-    else {
+    } else {
       RuntimeIterator currLevel = (RuntimeIterator) expansionItrs.next();
       SelectResults c = currLevel.evaluateCollection(context);
       if (c == null) {
@@ -452,26 +405,21 @@ public class QueryUtils {
       Iterator cIter = c.iterator();
       while (cIter.hasNext()) {
         currLevel.setCurrent(cIter.next());
-        doNestedIterations(level + 1, returnSet, results, itrsForResultFields,
-            finalItrs, expansionItrs, finalLevel, context, operand);
+        doNestedIterations(level + 1, returnSet, results, itrsForResultFields, finalItrs, expansionItrs, finalLevel, context, operand);
       }
       expansionItrs.previous();
     }
   }
 
-  public static boolean applyCondition(CompiledValue operand,
-      ExecutionContext context) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
-    if(operand == null) return true;
+  public static boolean applyCondition(CompiledValue operand, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    if (operand == null)
+      return true;
     Object result = operand.evaluate(context);
     if (result instanceof Boolean) {
       return ((Boolean) result).booleanValue();
-    }
-    else if (result != null && result != QueryService.UNDEFINED) {
+    } else if (result != null && result != QueryService.UNDEFINED) {
       throw new TypeMismatchException(LocalizedStrings.QueryUtils_ANDOR_OPERANDS_MUST_BE_OF_TYPE_BOOLEAN_NOT_TYPE_0.toLocalizedString(result.getClass().getName()));
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -480,45 +428,32 @@ public class QueryUtils {
   // expanding/cutting down index resultset
   // with the intermediate resultset
   //TODO :Asif :Explain the parameters& Unit test it
-  private static void mergeRelationshipIndexResultsWithIntermediateResults(
-      SelectResults returnSet, SelectResults[] intermediateResults /*
-                                                                    * Asif This
-                                                                    * should be
-                                                                    * a single
-                                                                    * element
-                                                                    * array
-                                                                    */, RuntimeIterator[][] itrsForIntermediateResults /*
-                                                           * Asif This should be
-                                                           * a two dimensional
-                                                           * array but with only
-                                                           * one row
-                                                           */, Object[][] indexResults, RuntimeIterator[][] indexFieldToItrsMapping,
-      ListIterator expansionListItr, List finalItrs, ExecutionContext context,
-      List[] checkList, CompiledValue iterOps,
-      IndexCutDownExpansionHelper icdeh[], int level, int maxExpnCartesianDepth)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
-//    Object[] checkFields = null;
-//    int len = indexFieldToItrsMapping[level].length;
-//    RuntimeIterator rItr = null;
+  private static void mergeRelationshipIndexResultsWithIntermediateResults(SelectResults returnSet, SelectResults[] intermediateResults /*
+                                                                                                                                         * Asif This
+                                                                                                                                         * should be
+                                                                                                                                         * a single
+                                                                                                                                         * element
+                                                                                                                                         * array
+                                                                                                                                         */, RuntimeIterator[][] itrsForIntermediateResults /*
+                                                                                                                                                                                            * Asif This should be
+                                                                                                                                                                                            * a two dimensional
+                                                                                                                                                                                            * array but with only
+                                                                                                                                                                                            * one row
+                                                                                                                                                                                            */, Object[][] indexResults, RuntimeIterator[][] indexFieldToItrsMapping, ListIterator expansionListItr, List finalItrs, ExecutionContext context, List[] checkList, CompiledValue iterOps, IndexCutDownExpansionHelper icdeh[], int level, int maxExpnCartesianDepth) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    //    Object[] checkFields = null;
+    //    int len = indexFieldToItrsMapping[level].length;
+    //    RuntimeIterator rItr = null;
     int resultSize = indexResults[level].length;
     //TODO ASif : Since this is constant for a given merge call, pass it as a
     // parameter to
     //the function rather than calling it every time
     for (int j = 0; j < resultSize; ++j) {
-      if (setIndexFieldValuesInRespectiveIterators(indexResults[level][j],
-          indexFieldToItrsMapping[level], icdeh[level])) {
+      if (setIndexFieldValuesInRespectiveIterators(indexResults[level][j], indexFieldToItrsMapping[level], icdeh[level])) {
         if (level == (indexResults.length - 1)) {
           //Asif :Set the values in the Intermedaite Resultset
-          doNestedIterations(0, returnSet, intermediateResults,
-              itrsForIntermediateResults, finalItrs, expansionListItr,
-              maxExpnCartesianDepth, context, iterOps);
-        }
-        else {
-          mergeRelationshipIndexResultsWithIntermediateResults(returnSet,
-              intermediateResults, itrsForIntermediateResults, indexResults,
-              indexFieldToItrsMapping, expansionListItr, finalItrs, context,
-              checkList, iterOps, icdeh, level + 1, maxExpnCartesianDepth);
+          doNestedIterations(0, returnSet, intermediateResults, itrsForIntermediateResults, finalItrs, expansionListItr, maxExpnCartesianDepth, context, iterOps);
+        } else {
+          mergeRelationshipIndexResultsWithIntermediateResults(returnSet, intermediateResults, itrsForIntermediateResults, indexResults, indexFieldToItrsMapping, expansionListItr, finalItrs, context, checkList, iterOps, icdeh, level + 1, maxExpnCartesianDepth);
           if (icdeh[level + 1].cutDownNeeded) {
             icdeh[level + 1].checkSet.clear();
           }
@@ -528,39 +463,27 @@ public class QueryUtils {
   }
 
   //TODO:Asif : Test the function & write expnanation of the parameters
-  private static void mergeAndExpandCutDownRelationshipIndexResults(
-      Object[][] values, SelectResults result,
-      RuntimeIterator[][] indexFieldToItrsMapping,
-      ListIterator expansionListIterator, List finalItrs,
-      ExecutionContext context, List[] checkList, CompiledValue iterOps,
-      IndexCutDownExpansionHelper icdeh[], int level)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
-//    int len = indexFieldToItrsMapping[level].length;
-//    RuntimeIterator rItr = null;
+  private static void mergeAndExpandCutDownRelationshipIndexResults(Object[][] values, SelectResults result, RuntimeIterator[][] indexFieldToItrsMapping, ListIterator expansionListIterator, List finalItrs, ExecutionContext context, List[] checkList, CompiledValue iterOps, IndexCutDownExpansionHelper icdeh[], int level) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    //    int len = indexFieldToItrsMapping[level].length;
+    //    RuntimeIterator rItr = null;
     int resultSize = values[level].length;
     int limit = getLimitValue(context);
     //stops recursion if limit has already been met
     if (limit != -1 && result.size() >= limit) {
       return;
-    }   
+    }
     for (int j = 0; j < resultSize; ++j) {
       // Check if query execution on this thread is canceled.
       QueryMonitor.isQueryExecutionCanceled();
 
-      if (setIndexFieldValuesInRespectiveIterators(values[level][j],
-          indexFieldToItrsMapping[level], icdeh[level])) {
+      if (setIndexFieldValuesInRespectiveIterators(values[level][j], indexFieldToItrsMapping[level], icdeh[level])) {
         if (level == (values.length - 1)) {
-          doNestedIterationsForIndex(expansionListIterator.hasNext(), result,
-              finalItrs, expansionListIterator, context, iterOps, limit, null);
+          doNestedIterationsForIndex(expansionListIterator.hasNext(), result, finalItrs, expansionListIterator, context, iterOps, limit, null);
           if (limit != -1 && result.size() >= limit) {
             break;
-          }     
-        }
-        else {
-          mergeAndExpandCutDownRelationshipIndexResults(values, result,
-              indexFieldToItrsMapping, expansionListIterator, finalItrs,
-              context, checkList, iterOps, icdeh, level + 1);
+          }
+        } else {
+          mergeAndExpandCutDownRelationshipIndexResults(values, result, indexFieldToItrsMapping, expansionListIterator, finalItrs, context, checkList, iterOps, icdeh, level + 1);
           if (icdeh[level + 1].cutDownNeeded) {
             icdeh[level + 1].checkSet.clear();
           }
@@ -572,29 +495,24 @@ public class QueryUtils {
   //TODO:Asif : Explain the function & write test cases. A boolean false means
   // ,
   // by pass i.e the set value to be ignored
-  
+
   //End result if we have not already expanded is that we have created a new struct and added to a set to prevent future expansions of the same object
   //It also advances the current object for the iterator.
-  private static boolean setIndexFieldValuesInRespectiveIterators(Object value,
-      RuntimeIterator[] indexFieldToItrsMapping,
-      IndexCutDownExpansionHelper icdeh) {
+  private static boolean setIndexFieldValuesInRespectiveIterators(Object value, RuntimeIterator[] indexFieldToItrsMapping, IndexCutDownExpansionHelper icdeh) {
     Object[] checkFields = null;
     boolean select = true;
     int len = indexFieldToItrsMapping.length;
     RuntimeIterator rItr = null;
     if (len == 1) {
       //Asif : this means we have a ResultSet
-      Support
-          .Assert(
-              !icdeh.cutDownNeeded,
-              "If the index fields to iter mapping is of of size 1 then cut down cannot occur");
+      Support.Assert(!icdeh.cutDownNeeded, "If the index fields to iter mapping is of of size 1 then cut down cannot occur");
       indexFieldToItrsMapping[0].setCurrent(value);
-    }
-    else {
+    } else {
       Struct struct = (Struct) value;
       Object fieldValues[] = struct.getFieldValues();
       int size = fieldValues.length;
-      if (icdeh.cutDownNeeded) checkFields = new Object[icdeh.checkSize];
+      if (icdeh.cutDownNeeded)
+        checkFields = new Object[icdeh.checkSize];
       // Object values[] = new Object[numItersInResultSet];
       int j = 0;
       for (int i = 0; i < size; i++) {
@@ -610,14 +528,12 @@ public class QueryUtils {
         Object temp = null;
         if (icdeh.checkSize == 1) {
           temp = checkFields[0];
-        }
-        else {
+        } else {
           temp = new StructImpl((StructTypeImpl) icdeh.checkType, checkFields);
         }
         if (icdeh.checkSet.contains(temp)) {
           select = false;
-        }
-        else {
+        } else {
           icdeh.checkSet.add(temp);
         }
       }
@@ -626,67 +542,50 @@ public class QueryUtils {
   }
 
   //creates the returned set and then calls other methods to do actual work
-  private static SelectResults cutDownAndExpandIndexResults(
-      SelectResults result, RuntimeIterator[] indexFieldToItrsMapping,
-      List expansionList, List finalItrs, ExecutionContext context,
-      List checkList, CompiledValue iterOps, IndexInfo theFilteringIndex) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  private static SelectResults cutDownAndExpandIndexResults(SelectResults result, RuntimeIterator[] indexFieldToItrsMapping, List expansionList, List finalItrs, ExecutionContext context, List checkList, CompiledValue iterOps, IndexInfo theFilteringIndex) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     SelectResults returnSet = null;
-    boolean useLinkedDataStructure = false; 
+    boolean useLinkedDataStructure = false;
     boolean nullValuesAtStart = true;
-    Boolean orderByClause = (Boolean)context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
-    if(orderByClause != null && orderByClause.booleanValue()) {
-      List orderByAttrs = (List)context.cacheGet(CompiledValue.ORDERBY_ATTRIB);        
-      useLinkedDataStructure = orderByAttrs.size()==1; 
-      nullValuesAtStart = !((CompiledSortCriterion)orderByAttrs.get(0)).getCriterion();
+    Boolean orderByClause = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
+    if (orderByClause != null && orderByClause.booleanValue()) {
+      List orderByAttrs = (List) context.cacheGet(CompiledValue.ORDERBY_ATTRIB);
+      useLinkedDataStructure = orderByAttrs.size() == 1;
+      nullValuesAtStart = !((CompiledSortCriterion) orderByAttrs.get(0)).getCriterion();
     }
     if (finalItrs.size() == 1) {
       ObjectType resultType = ((RuntimeIterator) finalItrs.iterator().next()).getElementType();
       if (useLinkedDataStructure) {
-        returnSet = context.isDistinct() ? new LinkedResultSet(resultType): 
-          new SortedResultsBag(resultType, nullValuesAtStart); 
+        returnSet = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType, nullValuesAtStart);
       } else {
-        returnSet =QueryUtils.createResultCollection(context, resultType);
+        returnSet = QueryUtils.createResultCollection(context, resultType);
       }
-    
-    }
-    else {
-      StructTypeImpl resultType =  (StructTypeImpl) createStructTypeForRuntimeIterators(finalItrs);
-      if(useLinkedDataStructure) {
-        returnSet = context.isDistinct() ? new LinkedStructSet(resultType)
-        : new SortedResultsBag<Struct>((StructTypeImpl)resultType, nullValuesAtStart);
-      }else {
+
+    } else {
+      StructTypeImpl resultType = (StructTypeImpl) createStructTypeForRuntimeIterators(finalItrs);
+      if (useLinkedDataStructure) {
+        returnSet = context.isDistinct() ? new LinkedStructSet(resultType) : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
+      } else {
         returnSet = QueryUtils.createStructCollection(context, resultType);
       }
-      
+
     }
-    cutDownAndExpandIndexResults(returnSet, result, indexFieldToItrsMapping,
-        expansionList, finalItrs, context, checkList, iterOps, theFilteringIndex);
+    cutDownAndExpandIndexResults(returnSet, result, indexFieldToItrsMapping, expansionList, finalItrs, context, checkList, iterOps, theFilteringIndex);
     return returnSet;
   }
 
   //TODO:Asif Explain the parameters passed
-  private static void cutDownAndExpandIndexResults(SelectResults returnSet,
-      SelectResults result, RuntimeIterator[] indexFieldToItrsMapping,
-      List expansionList, List finalItrs, ExecutionContext context,
-      List checkList, CompiledValue iterOps, IndexInfo theFilteringIndex) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
-//    Object[] checkFields = null;
-    IndexCutDownExpansionHelper icdeh =
-                                new IndexCutDownExpansionHelper(checkList,
-                                                                context);
+  private static void cutDownAndExpandIndexResults(SelectResults returnSet, SelectResults result, RuntimeIterator[] indexFieldToItrsMapping, List expansionList, List finalItrs, ExecutionContext context, List checkList, CompiledValue iterOps, IndexInfo theFilteringIndex) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    //    Object[] checkFields = null;
+    IndexCutDownExpansionHelper icdeh = new IndexCutDownExpansionHelper(checkList, context);
     int len = indexFieldToItrsMapping.length;
     // don't call instanceof ResultsBag here, since a StructBag is a subtype of ResultsBag
     if (result.getClass() == ResultsBag.class) {
-      Support.Assert(len == 1, "The array size of iterators should be 1 here, but got "
-                     + len);
+      Support.Assert(len == 1, "The array size of iterators should be 1 here, but got " + len);
     }
     Iterator itr = result.iterator();
     ListIterator expansionListIterator = expansionList.listIterator();
     int limit = getLimitValue(context);
-    
+
     while (itr.hasNext()) {
       DerivedInfo derivedInfo = null;
       if (IndexManager.JOIN_OPTIMIZATION) {
@@ -694,21 +593,19 @@ public class QueryUtils {
         derivedInfo.setExpansionList(expansionList);
       }
       Object value = itr.next();
-      if (setIndexFieldValuesInRespectiveIterators(value,  
-          indexFieldToItrsMapping, icdeh)) {  //does that mean we don't get dupes even if they exist in the index?
+      if (setIndexFieldValuesInRespectiveIterators(value, indexFieldToItrsMapping, icdeh)) { //does that mean we don't get dupes even if they exist in the index?
         //         DO NESTED LOOPING
         if (IndexManager.JOIN_OPTIMIZATION) {
           derivedInfo.computeDerivedJoinResults(theFilteringIndex, context, iterOps);
-        }  
-        doNestedIterationsForIndex(expansionListIterator.hasNext(), returnSet,
-            finalItrs, expansionListIterator, context, iterOps, limit, derivedInfo.derivedResults);
+        }
+        doNestedIterationsForIndex(expansionListIterator.hasNext(), returnSet, finalItrs, expansionListIterator, context, iterOps, limit, derivedInfo.derivedResults);
         if (limit != -1 && returnSet.size() >= limit) {
           break;
-        }     
+        }
       }
     }
   }
-  
+
   //returns the limit value from the context.  This was set in CompiledSelect evaluate
   //We do not apply limit if we have an order by attribute at this time
   //it may be possible but we need better understanding of when ordering is taking place
@@ -717,26 +614,22 @@ public class QueryUtils {
   private static int getLimitValue(ExecutionContext context) {
     int limit = -1;
     if (context.cacheGet(CompiledValue.ORDERBY_ATTRIB) == null) {
-      limit = ((Integer) context.cacheGet(CompiledValue.RESULT_LIMIT)) != null?((Integer) context.cacheGet(CompiledValue.RESULT_LIMIT)).intValue(): -1;
-    }   
+      limit = ((Integer) context.cacheGet(CompiledValue.RESULT_LIMIT)) != null ? ((Integer) context.cacheGet(CompiledValue.RESULT_LIMIT)).intValue() : -1;
+    }
     return limit;
   }
-  
+
   public static CompiledID getCompiledIdFromPath(CompiledValue path) {
     int type = path.getType();
     if (type == OQLLexerTokenTypes.Identifier) {
       return (CompiledID) path;
-    } 
+    }
     return getCompiledIdFromPath(path.getReceiver());
   }
 
   //Add comments
-  private static void doNestedIterationsForIndex(boolean continueRecursion,
-      SelectResults resultSet, List finalItrs, ListIterator expansionItrs,
-      ExecutionContext context, CompiledValue iterOps, int limit, Map<String, SelectResults> derivedResults)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
-    
+  private static void doNestedIterationsForIndex(boolean continueRecursion, SelectResults resultSet, List finalItrs, ListIterator expansionItrs, ExecutionContext context, CompiledValue iterOps, int limit, Map<String, SelectResults> derivedResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+
     if (!continueRecursion) {
       //end recusrion
       Iterator itr = finalItrs.iterator();
@@ -747,10 +640,10 @@ public class QueryUtils {
       }
       if (len > 1) {
         boolean isOrdered = resultSet.getCollectionType().isOrdered();
-        StructTypeImpl elementType = (StructTypeImpl)resultSet.getCollectionType().getElementType();
+        StructTypeImpl elementType = (StructTypeImpl) resultSet.getCollectionType().getElementType();
         //TODO:Asif Optimize the LinkedStructSet implementation so that
         // Object[] can be added rather than Struct
-        
+
         Object values[] = new Object[len];
         int j = 0;
         //creates tuple
@@ -761,23 +654,21 @@ public class QueryUtils {
           values[j++] = ((RuntimeIterator) itr.next()).evaluate(context);
         }
         if (select) {
-          if(isOrdered) {
+          if (isOrdered) {
             //((LinkedStructSet) resultSet).add(new StructImpl(elementType, values));
             // Can be LinkedStructSet or SortedResultsBag ( containing underlying LinkedHashMap)
             resultSet.add(new StructImpl(elementType, values));
-          }else {
-            
-              ((StructFields) resultSet).addFieldValues(values);
-            
+          } else {
+
+            ((StructFields) resultSet).addFieldValues(values);
+
           }
         }
-      }
-      else {
+      } else {
         if (select)
-           resultSet.add(((RuntimeIterator) itr.next()).evaluate(context));
+          resultSet.add(((RuntimeIterator) itr.next()).evaluate(context));
       }
-    }
-    else {
+    } else {
       RuntimeIterator currentLevel = (RuntimeIterator) expansionItrs.next();
       SelectResults c = null;
       // Calculate the key to find the derived join results. If we are a non nested lookup it will be a Compiled Region otherwise it will be a CompiledPath that
@@ -810,11 +701,10 @@ public class QueryUtils {
         QueryMonitor.isQueryExecutionCanceled();
 
         currentLevel.setCurrent(cIter.next());
-        doNestedIterationsForIndex(expansionItrs.hasNext(), resultSet,
-            finalItrs, expansionItrs, context, iterOps, limit, derivedResults);
+        doNestedIterationsForIndex(expansionItrs.hasNext(), resultSet, finalItrs, expansionItrs, context, iterOps, limit, derivedResults);
         if (limit != -1 && resultSet.size() >= limit) {
           break;
-        }     
+        }
       }
       expansionItrs.previous();
     }
@@ -833,38 +723,38 @@ public class QueryUtils {
    * @param expr CompiledValue object
    * @return CompiledValue
    */
-  public static CompiledValue obtainTheBottomMostCompiledValue(
-      CompiledValue expr) {
+  public static CompiledValue obtainTheBottomMostCompiledValue(CompiledValue expr) {
     boolean toContinue = true;
     int exprType = expr.getType();
     while (toContinue) {
       switch (exprType) {
-        case OQLLexerTokenTypes.RegionPath:
+      case OQLLexerTokenTypes.RegionPath:
+        toContinue = false;
+        break;
+      case OQLLexerTokenTypes.METHOD_INV:
+        CompiledOperation operation = (CompiledOperation) expr;
+        expr = operation.getReceiver(null/*
+                                          * pass the ExecutionContext as null,
+                                          * thus never implicitly resolving to
+                                          * RuntimeIterator
+                                          */);
+        if (expr == null) {
+          expr = operation;
           toContinue = false;
-          break;
-        case OQLLexerTokenTypes.METHOD_INV:
-          CompiledOperation operation = (CompiledOperation) expr;
-          expr = operation.getReceiver(null/*
-                                            * pass the ExecutionContext as null,
-                                            * thus never implicitly resolving to
-                                            * RuntimeIterator
-                                            */);
-          if (expr == null) {
-            expr = operation;
-            toContinue = false;
-          }
-          break;
-        case CompiledValue.PATH:
-          expr = ((CompiledPath) expr).getReceiver();
-          break;
-        case OQLLexerTokenTypes.TOK_LBRACK:
-          expr = ((CompiledIndexOperation) expr).getReceiver();
-          break;
-        default:
-          toContinue = false;
-          break;
+        }
+        break;
+      case CompiledValue.PATH:
+        expr = ((CompiledPath) expr).getReceiver();
+        break;
+      case OQLLexerTokenTypes.TOK_LBRACK:
+        expr = ((CompiledIndexOperation) expr).getReceiver();
+        break;
+      default:
+        toContinue = false;
+        break;
       }
-      if (toContinue) exprType = expr.getType();
+      if (toContinue)
+        exprType = expr.getType();
     }
     return expr;
   }
@@ -878,11 +768,8 @@ public class QueryUtils {
    * @return StructType object
    *  
    */
-  public static StructType createStructTypeForRuntimeIterators(
-      List runTimeIterators) {
-    Support
-        .Assert(runTimeIterators.size() > 1,
-            "The number of Iterators passed should be greater than 1 to create a structSet");
+  public static StructType createStructTypeForRuntimeIterators(List runTimeIterators) {
+    Support.Assert(runTimeIterators.size() > 1, "The number of Iterators passed should be greater than 1 to create a structSet");
     int len = runTimeIterators.size();
     String fieldNames[] = new String[len];
     String[] indexAlternativeFieldNames = new String[len];
@@ -893,7 +780,7 @@ public class QueryUtils {
     int i = 0;
     while (itr.hasNext()) {
       RuntimeIterator iter = (RuntimeIterator) itr.next();
-      fieldNames[i] =  iter.getInternalId();
+      fieldNames[i] = iter.getInternalId();
       indexAlternativeFieldNames[i] = iter.getIndexInternalID();
       fieldTypes[i++] = iter.getElementType();
     }
@@ -914,15 +801,15 @@ public class QueryUtils {
    *         scope
    *  
    */
-  public static Set getCurrentScopeUltimateRuntimeIteratorsIfAny(
-      CompiledValue compiledValue, ExecutionContext context) {
+  public static Set getCurrentScopeUltimateRuntimeIteratorsIfAny(CompiledValue compiledValue, ExecutionContext context) {
     HashSet set = new HashSet();
     context.computeUtlimateDependencies(compiledValue, set);
     //if (set.size() != 1) return null;
     Iterator iter = set.iterator();
     while (iter.hasNext()) {
       RuntimeIterator rIter = (RuntimeIterator) iter.next();
-      if (rIter.getScopeID() != context.currentScope().getScopeID()/*context.getScopeCount()*/) iter.remove();
+      if (rIter.getScopeID() != context.currentScope().getScopeID()/*context.getScopeCount()*/)
+        iter.remove();
     }
     return set;
   }
@@ -942,32 +829,29 @@ public class QueryUtils {
    * @throws TypeMismatchException
    *  
    */
-  static IndexData[] getRelationshipIndexIfAny(CompiledValue lhs,
-      CompiledValue rhs, ExecutionContext context, int operator)
-      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
-    if (operator != OQLLexerTokenTypes.TOK_EQ) return null;// Operator must be
+  static IndexData[] getRelationshipIndexIfAny(CompiledValue lhs, CompiledValue rhs, ExecutionContext context, int operator) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+    if (operator != OQLLexerTokenTypes.TOK_EQ)
+      return null;// Operator must be
     // '='
-    IndexData lhsIndxData = QueryUtils.getAvailableIndexIfAny(lhs, context,
-        false /* Do not use PrimaryKey Index */);// findOnlyFunctionalIndex.
-    if (lhsIndxData == null) return null;
-    IndexData rhsIndxData = QueryUtils.getAvailableIndexIfAny(rhs, context,
-        false /* Do not use PrimaryKey Index */);// findOnlyFunctionalIndex.
+    IndexData lhsIndxData = QueryUtils.getAvailableIndexIfAny(lhs, context, false /* Do not use PrimaryKey Index */);// findOnlyFunctionalIndex.
+    if (lhsIndxData == null)
+      return null;
+    IndexData rhsIndxData = QueryUtils.getAvailableIndexIfAny(rhs, context, false /* Do not use PrimaryKey Index */);// findOnlyFunctionalIndex.
     if (rhsIndxData == null) {
       // release the lock held on lhsIndex as it will not be used
       Index index = lhsIndxData.getIndex();
       Index prIndex = ((AbstractIndex) index).getPRIndex();
       if (prIndex != null) {
         ((PartitionedIndex) prIndex).releaseIndexReadLockForRemove();
-      } else {      
-         ((AbstractIndex) index).releaseIndexReadLockForRemove();
+      } else {
+        ((AbstractIndex) index).releaseIndexReadLockForRemove();
       }
       return null;
     }
     Index lhsIndx = lhsIndxData.getIndex();
     Index rhsIndx = rhsIndxData.getIndex();
-    if (((IndexProtocol) lhsIndx).isValid()
-       && ((IndexProtocol) rhsIndx).isValid()) { 
-       return new IndexData[] {lhsIndxData, rhsIndxData}; 
+    if (((IndexProtocol) lhsIndx).isValid() && ((IndexProtocol) rhsIndx).isValid()) {
+      return new IndexData[] { lhsIndxData, rhsIndxData };
     }
     return null;
   }
@@ -983,53 +867,47 @@ public class QueryUtils {
    * @throws TypeMismatchException
    *  
    */
-  static IndexData getAvailableIndexIfAny(CompiledValue cv,
-      ExecutionContext context, int operator) throws AmbiguousNameException,
-      TypeMismatchException, NameResolutionException {
+  static IndexData getAvailableIndexIfAny(CompiledValue cv, ExecutionContext context, int operator) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     // If operator is = or != then first search for PRIMARY_KEY Index
     boolean usePrimaryIndex = (operator == OQLLexerTokenTypes.TOK_EQ || operator == OQLLexerTokenTypes.TOK_NE);
     return getAvailableIndexIfAny(cv, context, usePrimaryIndex);
   }
 
   //TODO:Asif : Provide description of the function.
-  private static IndexData getAvailableIndexIfAny(CompiledValue cv,
-      ExecutionContext context, boolean usePrimaryIndex)
-      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  private static IndexData getAvailableIndexIfAny(CompiledValue cv, ExecutionContext context, boolean usePrimaryIndex) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     Set set = new HashSet();
     context.computeUtlimateDependencies(cv, set);
-    if (set.size() != 1) return null;
+    if (set.size() != 1)
+      return null;
     RuntimeIterator rIter = (RuntimeIterator) set.iterator().next();
     String regionPath = null;
     // An Index is not available if the ultimate independent RuntimeIterator is
     // of different scope or if the underlying
     // collection is not a Region
     if (rIter.getScopeID() != context.currentScope().getScopeID() /*context.getScopeCount()*/
-        || (regionPath = context
-            .getRegionPathForIndependentRuntimeIterator(rIter)) == null) {
+        || (regionPath = context.getRegionPathForIndependentRuntimeIterator(rIter)) == null) {
       return null;
     }
     //  Asif : The independent iterator is added as the first element
-    List groupRuntimeItrs = context
-        .getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(rIter);
+    List groupRuntimeItrs = context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(rIter);
     String[] definitions = new String[groupRuntimeItrs.size()];
     Iterator iterator = groupRuntimeItrs.iterator();
     int i = 0;
     while (iterator.hasNext()) {
       RuntimeIterator rIterator = (RuntimeIterator) iterator.next();
       definitions[i++] = rIterator.getDefinition();
-      
+
     }
-    
-//    StringBuffer sb = new StringBuffer();
-//    cv.generateCanonicalizedExpression(sb, context);
-    IndexData indexData = IndexUtils.findIndex(regionPath, definitions, cv,
-        "*", context.getCache(), usePrimaryIndex, context);
+
+    //    StringBuffer sb = new StringBuffer();
+    //    cv.generateCanonicalizedExpression(sb, context);
+    IndexData indexData = IndexUtils.findIndex(regionPath, definitions, cv, "*", context.getCache(), usePrimaryIndex, context);
     if (indexData != null) {
-      if (logger.isDebugEnabled() ) {
+      if (logger.isDebugEnabled()) {
         logger.debug("Indexed expression for indexed data : {}  for region : {}", indexData.getIndex().getCanonicalizedIndexedExpression(), regionPath);
       }
     }
-    
+
     return indexData;
   }
 
@@ -1073,14 +951,8 @@ public class QueryUtils {
    * @throws QueryInvocationTargetException
    *  
    */
-  static SelectResults getconditionedIndexResults(SelectResults indexResults,
-      IndexInfo indexInfo, ExecutionContext context, int indexFieldsSize,
-      boolean completeExpansion, CompiledValue iterOperands,
-      RuntimeIterator[] grpIndpndntItr) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
-    if (!completeExpansion && grpIndpndntItr != null
-        && grpIndpndntItr.length > 1) {
+  static SelectResults getconditionedIndexResults(SelectResults indexResults, IndexInfo indexInfo, ExecutionContext context, int indexFieldsSize, boolean completeExpansion, CompiledValue iterOperands, RuntimeIterator[] grpIndpndntItr) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    if (!completeExpansion && grpIndpndntItr != null && grpIndpndntItr.length > 1) {
       //Asif : If for a Single Base Collection Index usage we are having
       // independent
       // group of iterators with size greater than 1 , that implies it is being
@@ -1092,14 +964,12 @@ public class QueryUtils {
       // CompositeGroupJunction that
       // we pass an array of independent iterators of size > 1 only if complete
       // expansion is false
-      IndexConditioningHelper ich = new IndexConditioningHelper(indexInfo,
-          context, indexFieldsSize, completeExpansion, iterOperands, null);
+      IndexConditioningHelper ich = new IndexConditioningHelper(indexInfo, context, indexFieldsSize, completeExpansion, iterOperands, null);
       // We will definitely need shuffling as a CompositeGroupJunction itself
       // indicates
       // that there will be at least one independent group to which we need to
       // expand to
-      ich.finalList = getDependentItrChainForIndpndntItrs(grpIndpndntItr,
-          context);
+      ich.finalList = getDependentItrChainForIndpndntItrs(grpIndpndntItr, context);
       //Add the iterators of remaining independent grp to the expansion list
       List newExpList = new ArrayList();
       int len = grpIndpndntItr.length;
@@ -1107,42 +977,29 @@ public class QueryUtils {
       for (int i = 0; i < len; ++i) {
         tempItr = grpIndpndntItr[i];
         if (tempItr != ich.indpndntItr) {
-          newExpList.addAll(context
-              .getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(tempItr));
+          newExpList.addAll(context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(tempItr));
         }
       }
       newExpList.addAll(ich.expansionList);
       ich.expansionList = newExpList;
       QueryObserver observer = QueryObserverHolder.getInstance();
       try {
-        observer.beforeCutDownAndExpansionOfSingleIndexResult(indexInfo._index,
-            indexResults);
-        indexResults = QueryUtils.cutDownAndExpandIndexResults(indexResults,
-            ich.indexFieldToItrsMapping, ich.expansionList, ich.finalList,
-            context, ich.checkList, iterOperands, indexInfo);
-      }
-      finally {
+        observer.beforeCutDownAndExpansionOfSingleIndexResult(indexInfo._index, indexResults);
+        indexResults = QueryUtils.cutDownAndExpandIndexResults(indexResults, ich.indexFieldToItrsMapping, ich.expansionList, ich.finalList, context, ich.checkList, iterOperands, indexInfo);
+      } finally {
         observer.afterCutDownAndExpansionOfSingleIndexResult(indexResults);
       }
-    }
-    else {
-      IndexConditioningHelper ich = new IndexConditioningHelper(indexInfo,
-          context, indexFieldsSize, completeExpansion, iterOperands,
-          grpIndpndntItr != null ? grpIndpndntItr[0] : null);
+    } else {
+      IndexConditioningHelper ich = new IndexConditioningHelper(indexInfo, context, indexFieldsSize, completeExpansion, iterOperands, grpIndpndntItr != null ? grpIndpndntItr[0] : null);
       if (ich.shufflingNeeded) {
         QueryObserver observer = QueryObserverHolder.getInstance();
         try {
-          observer.beforeCutDownAndExpansionOfSingleIndexResult(
-              indexInfo._index, indexResults);
-          indexResults = QueryUtils.cutDownAndExpandIndexResults(indexResults,
-              ich.indexFieldToItrsMapping, ich.expansionList, ich.finalList,
-              context, ich.checkList, iterOperands, indexInfo);
-        }
-        finally {
+          observer.beforeCutDownAndExpansionOfSingleIndexResult(indexInfo._index, indexResults);
+          indexResults = QueryUtils.cutDownAndExpandIndexResults(indexResults, ich.indexFieldToItrsMapping, ich.expansionList, ich.finalList, context, ich.checkList, iterOperands, indexInfo);
+        } finally {
           observer.afterCutDownAndExpansionOfSingleIndexResult(indexResults);
         }
-      }
-      else if (indexInfo.mapping.length > 1) {
+      } else if (indexInfo.mapping.length > 1) {
         indexResults.setElementType(ich.structType);
       }
     }
@@ -1191,46 +1048,29 @@ public class QueryUtils {
    * @throws QueryInvocationTargetException
    *  
    */
-  static SelectResults getRelationshipIndexResultsMergedWithIntermediateResults(
-      SelectResults intermediateResults, IndexInfo[] indxInfo,
-      ExecutionContext context, boolean completeExpansionNeeded,
-      CompiledValue iterOperands, RuntimeIterator[] indpdntItrs)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  static SelectResults getRelationshipIndexResultsMergedWithIntermediateResults(SelectResults intermediateResults, IndexInfo[] indxInfo, ExecutionContext context, boolean completeExpansionNeeded, CompiledValue iterOperands, RuntimeIterator[] indpdntItrs) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     ObjectType resultType1 = indxInfo[0]._index.getResultSetType();
-    int indexFieldsSize1 = resultType1 instanceof StructType ? ((StructTypeImpl) resultType1)
-        .getFieldNames().length
-        : 1;
+    int indexFieldsSize1 = resultType1 instanceof StructType ? ((StructTypeImpl) resultType1).getFieldNames().length : 1;
     ObjectType resultType2 = indxInfo[1]._index.getResultSetType();
-    int indexFieldsSize2 = resultType2 instanceof StructType ? ((StructTypeImpl) resultType2)
-        .getFieldNames().length
-        : 1;
+    int indexFieldsSize2 = resultType2 instanceof StructType ? ((StructTypeImpl) resultType2).getFieldNames().length : 1;
     /*
      * Asif : even if th complete expansion is needed pass the flag of complete
      * expansion as false. Thus for LHS & RHS we will get the expnasionList for
      * that individual group.
      */
-    IndexConditioningHelper ich1 = new IndexConditioningHelper(indxInfo[0],
-        context, indexFieldsSize1,
-        false/* Asif : pass it as false, irrespective of actual value */,
-        iterOperands, null);
-    IndexConditioningHelper ich2 = new IndexConditioningHelper(indxInfo[1],
-        context, indexFieldsSize2,
-        false/* Asif : pass it as false, irrespective of actual value */,
-        iterOperands, null);
+    IndexConditioningHelper ich1 = new IndexConditioningHelper(indxInfo[0], context, indexFieldsSize1, false/* Asif : pass it as false, irrespective of actual value */, iterOperands, null);
+    IndexConditioningHelper ich2 = new IndexConditioningHelper(indxInfo[1], context, indexFieldsSize2, false/* Asif : pass it as false, irrespective of actual value */, iterOperands, null);
     //Asif : We cannot have a condition where in intermediateResultset is empty
     // or null & complete
     // expansion flag true because in that case instead of this function we should
     // have called
     //getconditionedRelationshipIndexResultsExpandedToTopOrCGJLevel
-    int noOfIndexesToUse = (intermediateResults == null || intermediateResults
-        .isEmpty()) ? 2 : 0;
+    int noOfIndexesToUse = (intermediateResults == null || intermediateResults.isEmpty()) ? 2 : 0;
     RuntimeIterator[] resultFieldsItrMapping = null;
     List allItrs = context.getCurrentIterators();
     IndexConditioningHelper singleUsableICH = null;
     IndexConditioningHelper nonUsableICH = null;
-    List finalList = completeExpansionNeeded ? allItrs
-        : indpdntItrs == null ? new ArrayList() : null;
+    List finalList = completeExpansionNeeded ? allItrs : indpdntItrs == null ? new ArrayList() : null;
     // Asif : the set will contain those iterators which we don't have to expand
     // to
     // either because they are already present ( because of intermediate results or
@@ -1241,8 +1081,7 @@ public class QueryUtils {
       // fields of intermediate
       //resultset contains any independent iterator of the current condition
       noOfIndexesToUse = 2;
-      StructType stype = (StructType) intermediateResults.getCollectionType()
-          .getElementType();
+      StructType stype = (StructType) intermediateResults.getCollectionType().getElementType();
       String[] fieldNames = stype.getFieldNames();
       int len = fieldNames.length;
       resultFieldsItrMapping = new RuntimeIterator[len];
@@ -1256,16 +1095,14 @@ public class QueryUtils {
             --noOfIndexesToUse;
             singleUsableICH = ich2;
             nonUsableICH = ich1;
-          }
-          else if (fieldName.equals(rhsID)) {
+          } else if (fieldName.equals(rhsID)) {
             --noOfIndexesToUse;
             singleUsableICH = ich1;
             nonUsableICH = ich2;
           }
         }
         int pos = Integer.parseInt(fieldName.substring(4));
-        RuntimeIterator itrPrsntInIntermdtRes = (RuntimeIterator) allItrs
-            .get(pos - 1);
+        RuntimeIterator itrPrsntInIntermdtRes = (RuntimeIterator) allItrs.get(pos - 1);
         resultFieldsItrMapping[i] = itrPrsntInIntermdtRes;
         //Asif : the iterator below is already present in resultset so needs to
         // be ignored for expansion
@@ -1274,8 +1111,7 @@ public class QueryUtils {
             expnItrsToIgnore = new HashSet();
           }
           expnItrsToIgnore.add(itrPrsntInIntermdtRes);
-        }
-        else if (indpdntItrs == null) {
+        } else if (indpdntItrs == null) {
           // Asif:We will need to know the intermediate iterators so as to know
           // the final list which will be used to obtain the correct structset.
           //But if the independent group of iterators is passed, the final list needs
@@ -1293,17 +1129,14 @@ public class QueryUtils {
       List data = null;
       try {
         ArrayList resultData = new ArrayList();
-        observer.beforeIndexLookup(indxInfo[0]._index,
-            OQLLexerTokenTypes.TOK_EQ, null);
-        observer.beforeIndexLookup(indxInfo[1]._index,
-            OQLLexerTokenTypes.TOK_EQ, null);
+        observer.beforeIndexLookup(indxInfo[0]._index, OQLLexerTokenTypes.TOK_EQ, null);
+        observer.beforeIndexLookup(indxInfo[1]._index, OQLLexerTokenTypes.TOK_EQ, null);
         if (context.getBucketList() != null) {
           data = queryEquijoinConditionBucketIndexes(indxInfo, context);
         } else {
           data = indxInfo[0]._index.queryEquijoinCondition(indxInfo[1]._index, context);
         }
-      }
-      finally {
+      } finally {
         observer.afterIndexLookup(data);
       }
       //For sure we need to evaluate both the conditions & expand it only to
@@ -1318,10 +1151,7 @@ public class QueryUtils {
           // that though
           // complete expansion flag is true but intermediate result set is
           // empty
-          Support
-              .Assert(
-                  intermediateResults == null || intermediateResults.isEmpty(),
-                  "expnItrsToIgnore should not have been null if the intermediate result set is not empty");
+          Support.Assert(intermediateResults == null || intermediateResults.isEmpty(), "expnItrsToIgnore should not have been null if the intermediate result set is not empty");
           expnItrsToIgnore = new HashSet();
         }
         expnItrsToIgnore.addAll(ich1.finalList);
@@ -1340,8 +1170,7 @@ public class QueryUtils {
             totalExpList.add(currItr);
           }
         }
-      }
-      else {
+      } else {
         //Asif : If the independent itrs passed is not null, this implies
         // that we are evaluating the last filterable cc of the AND junction
         // so the final resultset should have placement of iterators in the
@@ -1350,35 +1179,29 @@ public class QueryUtils {
         //set mismatch while doing intersection with GroupJunction results
         if (indpdntItrs != null) {
           finalList = getDependentItrChainForIndpndntItrs(indpdntItrs, context);
-        }
-        else {
+        } else {
           finalList.addAll(ich1.finalList);
           finalList.addAll(ich2.finalList);
         }
       }
-      List[] checkList = new List[] { ich1.checkList, ich2.checkList};
+      List[] checkList = new List[] { ich1.checkList, ich2.checkList };
       StructType stype = createStructTypeForRuntimeIterators(finalList);
-      SelectResults returnSet = QueryUtils.createStructCollection(context, stype) ;
+      SelectResults returnSet = QueryUtils.createStructCollection(context, stype);
       RuntimeIterator[][] mappings = new RuntimeIterator[2][];
       mappings[0] = ich1.indexFieldToItrsMapping;
       mappings[1] = ich2.indexFieldToItrsMapping;
-      List[] totalCheckList = new List[] { ich1.checkList, ich2.checkList};
+      List[] totalCheckList = new List[] { ich1.checkList, ich2.checkList };
       RuntimeIterator[][] resultMappings = new RuntimeIterator[1][];
       resultMappings[0] = resultFieldsItrMapping;
       Iterator dataItr = data.iterator();
-      IndexCutDownExpansionHelper[] icdeh = new IndexCutDownExpansionHelper[] {
-          new IndexCutDownExpansionHelper(ich1.checkList, context),
-          new IndexCutDownExpansionHelper(ich2.checkList, context)};
+      IndexCutDownExpansionHelper[] icdeh = new IndexCutDownExpansionHelper[] { new IndexCutDownExpansionHelper(ich1.checkList, context), new IndexCutDownExpansionHelper(ich2.checkList, context) };
       ListIterator expansionListIterator = totalExpList.listIterator();
       if (dataItr.hasNext()) {
         observer = QueryObserverHolder.getInstance();
         try {
-          observer.beforeMergeJoinOfDoubleIndexResults(indxInfo[0]._index,
-              indxInfo[1]._index, data);
-          boolean doMergeWithIntermediateResults = intermediateResults != null
-              && !intermediateResults.isEmpty();
-          int maxCartesianDepth = totalExpList.size()
-              + (doMergeWithIntermediateResults ? 1 : 0);
+          observer.beforeMergeJoinOfDoubleIndexResults(indxInfo[0]._index, indxInfo[1]._index, data);
+          boolean doMergeWithIntermediateResults = intermediateResults != null && !intermediateResults.isEmpty();
+          int maxCartesianDepth = totalExpList.size() + (doMergeWithIntermediateResults ? 1 : 0);
           while (dataItr.hasNext()) {
             //TODO:Asif Change the code in range Index so that while collecting
             // data
@@ -1398,26 +1221,19 @@ public class QueryUtils {
             // even when the row in its entirety
             // is unique ( made by different data in the other set)
             if (doMergeWithIntermediateResults) {
-              mergeRelationshipIndexResultsWithIntermediateResults(returnSet,
-                  new SelectResults[] { intermediateResults}, resultMappings,
-                  values, mappings, expansionListIterator, finalList, context,
-                  checkList, iterOperands, icdeh, 0, maxCartesianDepth);
+              mergeRelationshipIndexResultsWithIntermediateResults(returnSet, new SelectResults[] { intermediateResults }, resultMappings, values, mappings, expansionListIterator, finalList, context, checkList, iterOperands, icdeh, 0, maxCartesianDepth);
+            } else {
+              mergeAndExpandCutDownRelationshipIndexResults(values, returnSet, mappings, expansionListIterator, finalList, context, totalCheckList, iterOperands, icdeh, 0 /* Level */);
             }
-            else {
-              mergeAndExpandCutDownRelationshipIndexResults(values, returnSet,
-                  mappings, expansionListIterator, finalList, context,
-                  totalCheckList, iterOperands, icdeh, 0 /* Level */);
-            }
-            if (icdeh[0].cutDownNeeded) icdeh[0].checkSet.clear();
+            if (icdeh[0].cutDownNeeded)
+              icdeh[0].checkSet.clear();
           }
-        }
-        finally {
+        } finally {
           observer.afterMergeJoinOfDoubleIndexResults(returnSet);
         }
       }
       return returnSet;
-    }
-    else if (noOfIndexesToUse == 1) {
+    } else if (noOfIndexesToUse == 1) {
       //Asif : There exists one independent iterator in the current condition
       // which is also a part of the intermediate resultset
       // Identify the final List which will depend upon the complete expansion
@@ -1428,10 +1244,7 @@ public class QueryUtils {
       List totalExpList = new ArrayList();
       totalExpList.addAll(singleUsableICH.expansionList);
       if (completeExpansionNeeded) {
-        Support
-            .Assert(
-                expnItrsToIgnore != null,
-                "expnItrsToIgnore should not have been null as we are in this block itself indicates that intermediate results was not null");
+        Support.Assert(expnItrsToIgnore != null, "expnItrsToIgnore should not have been null as we are in this block itself indicates that intermediate results was not null");
         expnItrsToIgnore.addAll(singleUsableICH.finalList);
         //Asif : identify the iterators which we need to expand to
         //TODO:Asif :Make the code compact by using a common function to take
@@ -1447,8 +1260,7 @@ public class QueryUtils {
             totalExpList.add(currItr);
           }
         }
-      }
-      else {
+      } else {
         //        Asif : If the independent itrs passed is not null, this implies
         // that we are evaluating the last filterable cc of the AND junction
         // so the final resultset should have placement of iterators in the
@@ -1457,37 +1269,33 @@ public class QueryUtils {
         //set mismatch while doing intersection with GroupJunction results
         if (indpdntItrs != null) {
           finalList = getDependentItrChainForIndpndntItrs(indpdntItrs, context);
-        }
-        else {
+        } else {
           finalList.addAll(singleUsableICH.finalList);
         }
       }
-//      List[] checkList = new List[] { ich1.checkList, ich2.checkList};
+      //      List[] checkList = new List[] { ich1.checkList, ich2.checkList};
       StructType stype = createStructTypeForRuntimeIterators(finalList);
-      SelectResults returnSet = QueryUtils.createStructCollection(context, stype) ;
+      SelectResults returnSet = QueryUtils.createStructCollection(context, stype);
       //Asif :Obtain the empty resultset for the single usable index
       IndexProtocol singleUsblIndex = singleUsableICH.indxInfo._index;
       CompiledValue nonUsblIndxPath = nonUsableICH.indxInfo._path;
       ObjectType singlUsblIndxResType = singleUsblIndex.getResultSetType();
-//      int singleUsblIndexFieldsSize = -1;
+      //      int singleUsblIndexFieldsSize = -1;
       SelectResults singlUsblIndxRes = null;
       if (singlUsblIndxResType instanceof StructType) {
-        singlUsblIndxRes = QueryUtils.createStructCollection(context,(StructTypeImpl) singlUsblIndxResType);
-//        singleUsblIndexFieldsSize = ((StructTypeImpl) singlUsblIndxResType)
-//            .getFieldNames().length;
-      }
-      else {
+        singlUsblIndxRes = QueryUtils.createStructCollection(context, (StructTypeImpl) singlUsblIndxResType);
+        //        singleUsblIndexFieldsSize = ((StructTypeImpl) singlUsblIndxResType)
+        //            .getFieldNames().length;
+      } else {
         singlUsblIndxRes = QueryUtils.createResultCollection(context, singlUsblIndxResType);
-//        singleUsblIndexFieldsSize = 1;
+        //        singleUsblIndexFieldsSize = 1;
       }
       //Asif iterate over the intermediate structset
       Iterator intrmdtRsItr = intermediateResults.iterator();
       observer = QueryObserverHolder.getInstance();
       try {
-        observer.beforeIndexLookup(singleUsblIndex, OQLLexerTokenTypes.TOK_EQ,
-            null);
-        observer.beforeIterJoinOfSingleIndexResults(singleUsblIndex,
-            nonUsableICH.indxInfo._index);
+        observer.beforeIndexLookup(singleUsblIndex, OQLLexerTokenTypes.TOK_EQ, null);
+        observer.beforeIterJoinOfSingleIndexResults(singleUsblIndex, nonUsableICH.indxInfo._index);
         while (intrmdtRsItr.hasNext()) {
           Struct strc = (Struct) intrmdtRsItr.next();
           Object[] val = strc.getFieldValues();
@@ -1498,22 +1306,18 @@ public class QueryUtils {
           //TODO:Asif : Issue relevant index use callbacks to QueryObserver
           Object key = nonUsblIndxPath.evaluate(context);
           //TODO:Asif : Check this logic out
-          if (key != null && key.equals(QueryService.UNDEFINED)) continue;
-          singleUsblIndex.query(key, OQLLexerTokenTypes.TOK_EQ,
-              singlUsblIndxRes, context);
-          cutDownAndExpandIndexResults(returnSet, singlUsblIndxRes,
-              singleUsableICH.indexFieldToItrsMapping, totalExpList, finalList,
-              context, singleUsableICH.checkList, iterOperands, singleUsableICH.indxInfo);
+          if (key != null && key.equals(QueryService.UNDEFINED))
+            continue;
+          singleUsblIndex.query(key, OQLLexerTokenTypes.TOK_EQ, singlUsblIndxRes, context);
+          cutDownAndExpandIndexResults(returnSet, singlUsblIndxRes, singleUsableICH.indexFieldToItrsMapping, totalExpList, finalList, context, singleUsableICH.checkList, iterOperands, singleUsableICH.indxInfo);
           singlUsblIndxRes.clear();
         }
-      }
-      finally {
+      } finally {
         observer.afterIterJoinOfSingleIndexResults(returnSet);
         observer.afterIndexLookup(returnSet);
       }
       return returnSet;
-    }
-    else {
+    } else {
       //Asif : This condition is filter evaluatable but both the RHS group as
       // well as
       // LHS group of iterators are present in the intermediate resultset. As a
@@ -1526,14 +1330,11 @@ public class QueryUtils {
       if (logger.isDebugEnabled()) {
         StringBuffer tempBuffLhs = new StringBuffer();
         StringBuffer tempBuffRhs = new StringBuffer();
-        ich1.indxInfo._path.generateCanonicalizedExpression(tempBuffLhs,
-            context);
-        ich2.indxInfo._path.generateCanonicalizedExpression(tempBuffRhs,
-            context);
+        ich1.indxInfo._path.generateCanonicalizedExpression(tempBuffLhs, context);
+        ich2.indxInfo._path.generateCanonicalizedExpression(tempBuffRhs, context);
         logger.debug("For better performance indexes are not used for the condition {} = {}", tempBuffLhs, tempBuffRhs);
       }
-      CompiledValue reconstructedVal = new CompiledComparison(
-          ich1.indxInfo._path, ich2.indxInfo._path, OQLLexerTokenTypes.TOK_EQ);
+      CompiledValue reconstructedVal = new CompiledComparison(ich1.indxInfo._path, ich2.indxInfo._path, OQLLexerTokenTypes.TOK_EQ);
       //Add this reconstructed value to the iter operand if any
       CompiledValue finalVal = reconstructedVal;
       if (iterOperands != null) {
@@ -1545,13 +1346,11 @@ public class QueryUtils {
         // operands being a CompiledComparison & a CompiledJunction. We can live
         // without
         // creating a flat structure
-        finalVal = new CompiledJunction(new CompiledValue[] { iterOperands,
-            reconstructedVal}, OQLLexerTokenTypes.LITERAL_and);
+        finalVal = new CompiledJunction(new CompiledValue[] { iterOperands, reconstructedVal }, OQLLexerTokenTypes.LITERAL_and);
       }
       RuntimeIterator[][] resultMappings = new RuntimeIterator[1][];
       resultMappings[0] = resultFieldsItrMapping;
-      return cartesian(new SelectResults[] { intermediateResults},
-          resultMappings, Collections.EMPTY_LIST, finalList, context, finalVal);
+      return cartesian(new SelectResults[] { intermediateResults }, resultMappings, Collections.EMPTY_LIST, finalList, context, finalVal);
     }
   }
 
@@ -1594,20 +1393,11 @@ public class QueryUtils {
    * @throws QueryInvocationTargetException
    *  
    */
-  static SelectResults getconditionedRelationshipIndexResultsExpandedToTopOrCGJLevel(
-      List data, IndexInfo[] indxInfo, ExecutionContext context,
-      boolean completeExpansionNeeded, CompiledValue iterOperands,
-      RuntimeIterator[] indpdntItrs) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  static SelectResults getconditionedRelationshipIndexResultsExpandedToTopOrCGJLevel(List data, IndexInfo[] indxInfo, ExecutionContext context, boolean completeExpansionNeeded, CompiledValue iterOperands, RuntimeIterator[] indpdntItrs) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     ObjectType resultType1 = indxInfo[0]._index.getResultSetType();
-    int indexFieldsSize1 = resultType1 instanceof StructType ? ((StructTypeImpl) resultType1)
-        .getFieldNames().length
-        : 1;
+    int indexFieldsSize1 = resultType1 instanceof StructType ? ((StructTypeImpl) resultType1).getFieldNames().length : 1;
     ObjectType resultType2 = indxInfo[1]._index.getResultSetType();
-    int indexFieldsSize2 = resultType2 instanceof StructType ? ((StructTypeImpl) resultType2)
-        .getFieldNames().length
-        : 1;
+    int indexFieldsSize2 = resultType2 instanceof StructType ? ((StructTypeImpl) resultType2).getFieldNames().length : 1;
     /*
      * Asif : even if th complete expansion is needed pass the flag of complete
      * expansion as false. Thus for LHS & RHS we will get the expansionList for
@@ -1617,18 +1407,12 @@ public class QueryUtils {
      * i.e dependent on both the independent groups currently under
      * consideration
      */
-    IndexConditioningHelper ich1 = new IndexConditioningHelper(indxInfo[0],
-        context, indexFieldsSize1,
-        false/* Asif : pass it as false, irrespective of actual value */,
-        iterOperands, null);
-    IndexConditioningHelper ich2 = new IndexConditioningHelper(indxInfo[1],
-        context, indexFieldsSize2,
-        false/* Asif : pass it as false, irrespective of actual value */,
-        iterOperands, null);
+    IndexConditioningHelper ich1 = new IndexConditioningHelper(indxInfo[0], context, indexFieldsSize1, false/* Asif : pass it as false, irrespective of actual value */, iterOperands, null);
+    IndexConditioningHelper ich2 = new IndexConditioningHelper(indxInfo[1], context, indexFieldsSize2, false/* Asif : pass it as false, irrespective of actual value */, iterOperands, null);
     List totalExpList = new ArrayList();
     totalExpList.addAll(ich1.expansionList);
     totalExpList.addAll(ich2.expansionList);
-//    List[] checkList = new List[] { ich1.checkList, ich2.checkList};
+    //    List[] checkList = new List[] { ich1.checkList, ich2.checkList};
     List totalFinalList = null;
     if (completeExpansionNeeded) {
       totalFinalList = context.getCurrentIterators();
@@ -1645,45 +1429,35 @@ public class QueryUtils {
           totalExpList.add(currItr);
         }
       }
-    }
-    else {
+    } else {
       totalFinalList = new ArrayList();
       for (int i = 0; i < indpdntItrs.length; ++i) {
         RuntimeIterator indpndntItr = indpdntItrs[i];
         if (indpndntItr == ich1.finalList.get(0)) {
           totalFinalList.addAll(ich1.finalList);
-        }
-        else if (indpndntItr == ich2.finalList.get(0)) {
+        } else if (indpndntItr == ich2.finalList.get(0)) {
           totalFinalList.addAll(ich2.finalList);
-        }
-        else {
-          List temp = context
-              .getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(indpndntItr);
+        } else {
+          List temp = context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(indpndntItr);
           totalFinalList.addAll(temp);
           totalExpList.addAll(temp);
         }
       }
     }
-    Support
-        .Assert(
-            totalFinalList.size() > 1,
-            " Since we are in relationship index this itself means that we have atleast two RuntimeIterators");
+    Support.Assert(totalFinalList.size() > 1, " Since we are in relationship index this itself means that we have atleast two RuntimeIterators");
     StructType stype = createStructTypeForRuntimeIterators(totalFinalList);
-    SelectResults returnSet = QueryUtils.createStructCollection(context, stype) ; 
+    SelectResults returnSet = QueryUtils.createStructCollection(context, stype);
     RuntimeIterator[][] mappings = new RuntimeIterator[2][];
     mappings[0] = ich1.indexFieldToItrsMapping;
     mappings[1] = ich2.indexFieldToItrsMapping;
-    List[] totalCheckList = new List[] { ich1.checkList, ich2.checkList};
+    List[] totalCheckList = new List[] { ich1.checkList, ich2.checkList };
     Iterator dataItr = data.iterator();
-    IndexCutDownExpansionHelper[] icdeh = new IndexCutDownExpansionHelper[] {
-        new IndexCutDownExpansionHelper(ich1.checkList, context),
-        new IndexCutDownExpansionHelper(ich2.checkList, context)};
+    IndexCutDownExpansionHelper[] icdeh = new IndexCutDownExpansionHelper[] { new IndexCutDownExpansionHelper(ich1.checkList, context), new IndexCutDownExpansionHelper(ich2.checkList, context) };
     ListIterator expansionListIterator = totalExpList.listIterator();
     if (dataItr.hasNext()) {
       QueryObserver observer = QueryObserverHolder.getInstance();
       try {
-        observer.beforeMergeJoinOfDoubleIndexResults(ich1.indxInfo._index,
-            ich2.indxInfo._index, data);
+        observer.beforeMergeJoinOfDoubleIndexResults(ich1.indxInfo._index, ich2.indxInfo._index, data);
         while (dataItr.hasNext()) {
           //TODO:Asif Change the code in range Index so that while collecting
           // data
@@ -1705,13 +1479,11 @@ public class QueryUtils {
           // is
           // unique ( made by
           // different data in the other set)
-          mergeAndExpandCutDownRelationshipIndexResults(values, returnSet,
-              mappings, expansionListIterator, totalFinalList, context,
-              totalCheckList, iterOperands, icdeh, 0 /* Level */);
-          if (icdeh[0].cutDownNeeded) icdeh[0].checkSet.clear();
+          mergeAndExpandCutDownRelationshipIndexResults(values, returnSet, mappings, expansionListIterator, totalFinalList, context, totalCheckList, iterOperands, icdeh, 0 /* Level */);
+          if (icdeh[0].cutDownNeeded)
+            icdeh[0].checkSet.clear();
         }
-      }
-      finally {
+      } finally {
         observer.afterMergeJoinOfDoubleIndexResults(returnSet);
       }
     }
@@ -1722,19 +1494,11 @@ public class QueryUtils {
    * Asif : This function is used ony for testing the private visibility
    * function
    */
-  static SelectResults testCutDownAndExpandIndexResults(List dataList)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
-    return cutDownAndExpandIndexResults((SelectResults) dataList.get(0),
-        (RuntimeIterator[]) dataList.get(1), (List) dataList.get(2),
-        (List) dataList.get(3), (ExecutionContext) dataList.get(4),
-        (List) dataList.get(5), null, null);
-  } 
-  
-  static List queryEquijoinConditionBucketIndexes(IndexInfo[] indxInfo,
-      ExecutionContext context)
-      throws QueryInvocationTargetException, TypeMismatchException,
-      FunctionDomainException, NameResolutionException {
+  static SelectResults testCutDownAndExpandIndexResults(List dataList) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    return cutDownAndExpandIndexResults((SelectResults) dataList.get(0), (RuntimeIterator[]) dataList.get(1), (List) dataList.get(2), (List) dataList.get(3), (ExecutionContext) dataList.get(4), (List) dataList.get(5), null, null);
+  }
+
+  static List queryEquijoinConditionBucketIndexes(IndexInfo[] indxInfo, ExecutionContext context) throws QueryInvocationTargetException, TypeMismatchException, FunctionDomainException, NameResolutionException {
     List data = null;
     ArrayList resultData = new ArrayList();
     AbstractIndex index0 = (AbstractIndex) indxInfo[0]._index;
@@ -1753,10 +1517,8 @@ public class QueryUtils {
     }
 
     for (Object b : context.getBucketList()) {
-      i0 = (pr0 != null) ? PartitionedIndex.getBucketIndex(pr0,
-          index0.getName(), (Integer) b) : indxInfo[0]._index;
-      i1 = (pr1 != null) ? PartitionedIndex.getBucketIndex(pr1,
-          index1.getName(), (Integer) b) : indxInfo[1]._index;
+      i0 = (pr0 != null) ? PartitionedIndex.getBucketIndex(pr0, index0.getName(), (Integer) b) : indxInfo[0]._index;
+      i1 = (pr1 != null) ? PartitionedIndex.getBucketIndex(pr1, index1.getName(), (Integer) b) : indxInfo[1]._index;
 
       if (i0 == null || i1 == null) {
         continue;
@@ -1768,6 +1530,7 @@ public class QueryUtils {
     return data;
   }
 }
+
 /**
  * 
  * This is a helper class which provides information on how an
@@ -1866,9 +1629,7 @@ class IndexConditioningHelper {
   IndexInfo indxInfo = null;
 
   //TODO:Asif :Test this function out
-  public IndexConditioningHelper(IndexInfo indexInfo, ExecutionContext context,
-      int indexFieldsSize, boolean completeExpansion,
-      CompiledValue iterOperands, RuntimeIterator grpIndpndntItr) {
+  public IndexConditioningHelper(IndexInfo indexInfo, ExecutionContext context, int indexFieldsSize, boolean completeExpansion, CompiledValue iterOperands, RuntimeIterator grpIndpndntItr) {
     /*
      * Asif : First obtain the match level of index resultset. If the match
      * level happens to be zero , this implies that we just have to change the
@@ -1889,30 +1650,19 @@ class IndexConditioningHelper {
     if (this.indpndntItr == null) {
       Set set1 = new HashSet();
       context.computeUtlimateDependencies(indexInfo._path, set1);
-      Support
-          .Assert(
-              set1.size() == 1,
-              " Since we are in Indexed Evaluate that means there has to be exactly one independent iterator for this compiled comparison");
+      Support.Assert(set1.size() == 1, " Since we are in Indexed Evaluate that means there has to be exactly one independent iterator for this compiled comparison");
       // The ultimate independent RuntimeIterator
       this.indpndntItr = (RuntimeIterator) set1.iterator().next();
-      Support
-          .Assert(
-              this.indpndntItr.getScopeID() == context.currentScope().getScopeID()/*context.getScopeCount()*/,
-              " Since we are in Indexed Evaluate that means the current scope count & indpenedent iterator's scope count should match");
+      Support.Assert(this.indpndntItr.getScopeID() == context.currentScope().getScopeID()/*context.getScopeCount()*/, " Since we are in Indexed Evaluate that means the current scope count & indpenedent iterator's scope count should match");
     }
-    if (indexInfo._matchLevel == 0
-        && (!completeExpansion || context.getCurrentIterators().size() == size)) {
+    if (indexInfo._matchLevel == 0 && (!completeExpansion || context.getCurrentIterators().size() == size)) {
       //Asif: Don't do anything , just change the StructType if the set is
       // structset.
       if (size > 1) {
         // The Index resultset is a structType.
-        Support
-            .Assert(
-                indexInfo._index.getResultSetType() instanceof StructType,
-                " If the match level is zero & the size of mapping array is 1 then Index is surely ResultBag else StructBag");
+        Support.Assert(indexInfo._index.getResultSetType() instanceof StructType, " If the match level is zero & the size of mapping array is 1 then Index is surely ResultBag else StructBag");
         //Asif : The independent iterator is added as the first element
-        grpItrs = context
-            .getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(this.indpndntItr);
+        grpItrs = context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(this.indpndntItr);
         //Asif : Check if reshuffling is needed or just changing the struct
         // type will suffice
         boolean isReshufflingNeeded = false;
@@ -1920,8 +1670,7 @@ class IndexConditioningHelper {
         for (int i = 0; i < size; ++i) {
           pos = indexInfo.mapping[i];
           isReshufflingNeeded = isReshufflingNeeded || (pos != (i + 1));
-          this.indexFieldToItrsMapping[pos - 1] = (RuntimeIterator) grpItrs
-              .get(i);
+          this.indexFieldToItrsMapping[pos - 1] = (RuntimeIterator) grpItrs.get(i);
         }
         this.finalList = grpItrs;
         //Asif : Even if Reshuffle is not need but if the iter conditions are
@@ -1934,10 +1683,8 @@ class IndexConditioningHelper {
           //indexReults = QueryUtils.cutDownAndExpandIndexResults(indexReults,
           //  indexFieldToItrsMapping, Collections.EMPTY_LIST, grpItrs,
           //context, Collections.EMPTY_LIST, iterOperands);
-        }
-        else {
-          this.structType = QueryUtils
-              .createStructTypeForRuntimeIterators(grpItrs);
+        } else {
+          this.structType = QueryUtils.createStructTypeForRuntimeIterators(grpItrs);
           //indexReults.setElementType(structType);
           //Asif : Shuffling is not needed. Index results is a StructBag
           // with match level zero & no expansion needed & index fields map
@@ -1945,8 +1692,7 @@ class IndexConditioningHelper {
           //of the StructBag
           this.shufflingNeeded = false;
         }
-      }
-      else {
+      } else {
         //Asif : The finalList should not be left uninitialized, & if the match
         // level is zero
         // & the Index Results is a ResultBag ( & not an StructBag ) implying
@@ -1954,29 +1700,23 @@ class IndexConditioningHelper {
         //1 , then the final List should contain only the independent iterator
         this.finalList = new ArrayList();
         this.finalList.add(this.indpndntItr);
-        Support
-            .Assert(
-                this.indexFieldToItrsMapping.length == 1,
-                "In this else block , it should be guaranteed that there exists only one iterator in query as well as index from clause & that should be nothing but the independent RuntimeIterator of the group  ");
+        Support.Assert(this.indexFieldToItrsMapping.length == 1, "In this else block , it should be guaranteed that there exists only one iterator in query as well as index from clause & that should be nothing but the independent RuntimeIterator of the group  ");
         this.indexFieldToItrsMapping[0] = this.indpndntItr;
         //Asif :Shuffling is needed if iter operand is not null even if index results is a ResultSet
         // with match level zero & no expansion needed       
-        this.shufflingNeeded = (iterOperands != null)  ;        
+        this.shufflingNeeded = (iterOperands != null);
       }
-    }
-    else {
+    } else {
       //Asif : There is some expansion or truncation needed on the data
       // obtained from index.Identify a the iterators belonging to this group
       // The independent iterator is added as the first element
-      grpItrs = context
-          .getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(this.indpndntItr);
+      grpItrs = context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(this.indpndntItr);
       //Asif Create an array of RuntimeIterators which map to the fields of the
       // Index set.
       // For those fields which do not have corresponding RuntimeIterator , keep
       // it as null;
       int pos = -1;
-      this.finalList = completeExpansion ? context.getCurrentIterators()
-          : grpItrs;
+      this.finalList = completeExpansion ? context.getCurrentIterators() : grpItrs;
       // This is the List of runtimeIterators which have corresponding fields
       // in the resultset obtained from Index usage. This List will be populated
       // only if there exists fields in index resultset which will not be
@@ -2002,7 +1742,8 @@ class IndexConditioningHelper {
         }
       }
       boolean cutDownNeeded = unMappedFields > 0;
-      if (!cutDownNeeded) this.checkList = null;
+      if (!cutDownNeeded)
+        this.checkList = null;
       /*
        * indexReults = QueryUtils.cutDownAndExpandIndexResults(indexReults,
        * indexFieldToItrsMapping, expansionList, finalList, context, checkList,
@@ -2011,6 +1752,7 @@ class IndexConditioningHelper {
     }
   }
 }
+
 /**
  * 
  * This is a helper class which contains informaion on how to
@@ -2041,34 +1783,31 @@ class IndexCutDownExpansionHelper {
   IndexCutDownExpansionHelper(List checkList, ExecutionContext context) {
     cutDownNeeded = checkList != null && (checkSize = checkList.size()) > 0;
     if (cutDownNeeded) {
-      Boolean orderByClause = (Boolean)context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
+      Boolean orderByClause = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
       boolean useLinkedDataStructure = false;
       boolean nullValuesAtStart = true;
-      if(orderByClause != null && orderByClause.booleanValue()) {
-        List orderByAttrs = (List)context.cacheGet(CompiledValue.ORDERBY_ATTRIB);        
-        useLinkedDataStructure =orderByAttrs.size()==1;
-        nullValuesAtStart = !((CompiledSortCriterion)orderByAttrs.get(0)).getCriterion();
+      if (orderByClause != null && orderByClause.booleanValue()) {
+        List orderByAttrs = (List) context.cacheGet(CompiledValue.ORDERBY_ATTRIB);
+        useLinkedDataStructure = orderByAttrs.size() == 1;
+        nullValuesAtStart = !((CompiledSortCriterion) orderByAttrs.get(0)).getCriterion();
       }
       if (checkSize > 1) {
-        
+
         checkType = QueryUtils.createStructTypeForRuntimeIterators(checkList);
         if (useLinkedDataStructure) {
-          checkSet = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) checkType) 
-          : new SortedResultsBag<Struct>((StructTypeImpl)checkType, nullValuesAtStart);
+          checkSet = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) checkType) : new SortedResultsBag<Struct>((StructTypeImpl) checkType, nullValuesAtStart);
         } else {
-          checkSet = QueryUtils.createStructCollection(context, (StructTypeImpl)checkType) ;
+          checkSet = QueryUtils.createStructCollection(context, (StructTypeImpl) checkType);
         }
-      }
-      else {
+      } else {
         checkType = ((RuntimeIterator) checkList.get(0)).getElementType();
         if (useLinkedDataStructure) {
-          checkSet = context.isDistinct() ? new LinkedResultSet(checkType) :
-            new SortedResultsBag(checkType, nullValuesAtStart); 
+          checkSet = context.isDistinct() ? new LinkedResultSet(checkType) : new SortedResultsBag(checkType, nullValuesAtStart);
         } else {
-          checkSet = QueryUtils.createResultCollection(context, checkType) ;
+          checkSet = QueryUtils.createResultCollection(context, checkType);
         }
       }
     }
   }
-  
+
 }

@@ -44,8 +44,7 @@ public class MemberMessenger {
   private ManagementResourceRepo repo;
   private InternalDistributedSystem system;
 
-  public MemberMessenger(MBeanJMXAdapter jmxAdapter,
-      ManagementResourceRepo repo, InternalDistributedSystem system) {
+  public MemberMessenger(MBeanJMXAdapter jmxAdapter, ManagementResourceRepo repo, InternalDistributedSystem system) {
     this.jmxAdapter = jmxAdapter;
     this.repo = repo;
     this.system = system;
@@ -63,8 +62,7 @@ public class MemberMessenger {
   }
 
   public void broadcastManagerInfo() {
-    Set<DistributedMember> otherMemberSet = system.getDistributionManager()
-        .getAllOtherMembers();
+    Set<DistributedMember> otherMemberSet = system.getDistributionManager().getAllOtherMembers();
 
     String levelName = jmxAdapter.getDistributedSystemMXBean().getAlertLevel();
     int alertCode = LogWriterImpl.levelNameToCode(levelName);
@@ -74,12 +72,11 @@ public class MemberMessenger {
     }
 
     sendAsync(msg);
-    
+
     DM dm = system.getDistributionManager();
-    if(dm instanceof DistributionManager){
-      msg.process((DistributionManager)system.getDistributionManager());
+    if (dm instanceof DistributionManager) {
+      msg.process((DistributionManager) system.getDistributionManager());
     }
-    
 
   }
 

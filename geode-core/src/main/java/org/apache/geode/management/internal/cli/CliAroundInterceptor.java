@@ -27,9 +27,9 @@ import org.apache.geode.management.internal.cli.shell.GfshExecutionStrategy;
  * @since GemFire 7.0
  */
 public interface CliAroundInterceptor {
-  
+
   public Result preExecution(GfshParseResult parseResult);
-  
+
   public Result postExecution(GfshParseResult parseResult, Result commandResult);
 
 }

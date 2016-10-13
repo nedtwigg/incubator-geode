@@ -30,9 +30,9 @@ import java.util.Queue;
  * 
  */
 public class ProcessStreamReader extends Thread {
-  
+
   private volatile RuntimeException startStack;
-  
+
   private final String command;
   private final BufferedReader reader;
   private final Queue<String> lineBuffer;
@@ -52,7 +52,7 @@ public class ProcessStreamReader extends Thread {
     this.startStack = new RuntimeException(this.command);
     super.start();
   }
-  
+
   @Override
   public void run() {
     try {

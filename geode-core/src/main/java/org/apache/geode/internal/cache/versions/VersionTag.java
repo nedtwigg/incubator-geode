@@ -45,20 +45,18 @@ import org.apache.geode.internal.size.ReflectionSingleObjectSizer;
  */
 public abstract class VersionTag<T extends VersionSource> implements DataSerializableFixedID, java.io.Serializable, VersionHolder<T> {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 9098338414308465271L;
 
   // tag_size represents the tag, but does not count member ID sizes since they are
   // interned in the region version vectors
-  public static final int TAG_SIZE = ReflectionSingleObjectSizer.OBJECT_SIZE +
-          ReflectionSingleObjectSizer.REFERENCE_SIZE * 2 + 23;
+  public static final int TAG_SIZE = ReflectionSingleObjectSizer.OBJECT_SIZE + ReflectionSingleObjectSizer.REFERENCE_SIZE * 2 + 23;
 
   /**
    * A timestamp that cannot exist due to range restrictions.  This is used
    * to mark a timestamp as not being real
    */
   public static final long ILLEGAL_VERSION_TIMESTAMP = 0x8000000000000000l;
-
 
   // flags for serialization
   private static final int HAS_MEMBER_ID = 0x01;
@@ -76,7 +74,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
 
   private static final int BITS_ALLOWED_BY_RESOLVER = 0x40;
   // Note: the only valid BITS_* are 0xFFFF.
-  
+
   /**
    * the per-entry version number for the operation
    */
@@ -107,8 +105,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
   // setPreviousMemberID and setRecorded.
   // So bits has been changed to volatile and
   // all modification to it happens using AtomicIntegerFieldUpdater.
-  private static final AtomicIntegerFieldUpdater<VersionTag> bitsUpdater =
-      AtomicIntegerFieldUpdater.newUpdater(VersionTag.class, "bits");
+  private static final AtomicIntegerFieldUpdater<VersionTag> bitsUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionTag.class, "bits");
   /**
    * boolean bits
    * Note: this is an int field so it has 32 bits BUT only the lower 16 bits are serialized.
@@ -131,7 +128,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
   public boolean isFromOtherMember() {
     return (this.bits & BITS_IS_REMOTE_TAG) != 0;
   }
-  
+
   /** was the timestamp of this tag used to update the cache's timestamp? */
   public boolean isTimeStampUpdated() {
     return (this.bits & BITS_TIMESTAMP_APPLIED) != 0;
@@ -179,7 +176,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
   }
 
   public long getRegionVersion() {
-    return (((long)regionVersionHighBytes) << 32) | (regionVersionLowBytes & 0x00000000FFFFFFFFL);  
+    return (((long) regionVersionHighBytes) << 32) | (regionVersionLowBytes & 0x00000000FFFFFFFFL);
   }
 
   /**
@@ -217,7 +214,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
   public boolean isRecorded() {
     return ((this.bits & BITS_RECORDED) != 0);
   }
-  
+
   /**
    * Set canonical ID objects into this version tag using the DM's cache
    * of IDs
@@ -289,11 +286,11 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
     }
     return this;
   }
-  
+
   public boolean isAllowedByResolver() {
     return (this.bits & BITS_ALLOWED_BY_RESOLVER) != 0;
   }
-  
+
   public int getDistributedSystemId() {
     return this.distributedSystemId;
   }
@@ -410,7 +407,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
     }
     setIsRemoteForTesting();
   }
-  
+
   public void setIsRemoteForTesting() {
     setBits(BITS_IS_REMOTE_TAG);
   }
@@ -419,21 +416,19 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
 
   public abstract void writeMember(T memberID, DataOutput out) throws IOException;
 
-
   public int getSizeInBytes() {
     int size = org.apache.geode.internal.cache.lru.Sizeable.PER_OBJECT_OVERHEAD + VersionTag.TAG_SIZE;
     // member size calculation 
     size += memberID.getSizeInBytes();
     return size;
-    
+
   }
 
   @Override
   public String toString() {
     StringBuilder s = new StringBuilder();
     if (isGatewayTag()) {
-      s.append("{ds=").append(this.distributedSystemId)
-              .append("; time=").append(getVersionTimeStamp()).append("}");
+      s.append("{ds=").append(this.distributedSystemId).append("; time=").append(getVersionTimeStamp()).append("}");
     } else {
       s.append("{v").append(this.entryVersion);
       s.append("; rv").append(getRegionVersion());
@@ -457,7 +452,6 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
     }
     return s.toString();
   }
-
 
   /**
    * @return the time stamp of this operation.  This is an unsigned integer returned as a long
@@ -484,8 +478,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
     return tag;
   }
 
-  public static VersionTag create(boolean persistent, DataInput in)
-          throws IOException, ClassNotFoundException {
+  public static VersionTag create(boolean persistent, DataInput in) throws IOException, ClassNotFoundException {
     VersionTag<?> tag;
     if (persistent) {
       tag = new DiskVersionTag();
@@ -544,7 +537,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
     }
     return true;
   }
-  
+
   /**
    * Set any bits in the given bitMask on the bits field
    */
@@ -556,6 +549,7 @@ public abstract class VersionTag<T extends VersionSource> implements DataSeriali
       newBits = oldBits | bitMask;
     } while (!bitsUpdater.compareAndSet(this, oldBits, newBits));
   }
+
   /**
    * Clear any bits not in the given bitMask from the bits field
    */

@@ -63,11 +63,9 @@ public class MemberDiskThroughputService implements PulseService {
     if (clusterMember != null) {
       // response
       responseJSON.put("throughputWrites", clusterMember.getThroughputWrites());
-      responseJSON.put("throughputWritesTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_WRITES)));
+      responseJSON.put("throughputWritesTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_WRITES)));
       responseJSON.put("throughputReads", clusterMember.getThroughputWrites());
-      responseJSON.put("throughputReadsTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_READS)));
+      responseJSON.put("throughputReadsTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_READS)));
     }
 
     // Send json response

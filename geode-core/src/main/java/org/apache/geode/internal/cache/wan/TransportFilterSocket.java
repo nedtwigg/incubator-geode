@@ -41,8 +41,7 @@ public class TransportFilterSocket extends Socket {
     this.gatewayTransportFilters = transportFilters;
   }
 
-  public TransportFilterSocket(List<GatewayTransportFilter> transportFilters,
-      InetAddress host, int port) throws IOException {
+  public TransportFilterSocket(List<GatewayTransportFilter> transportFilters, InetAddress host, int port) throws IOException {
     super(host, port);
     this.gatewayTransportFilters = transportFilters;
   }

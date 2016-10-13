@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.CacheException;
 import org.apache.geode.internal.logging.LogService;
+
 /**
  * Test class for Blocking HA region queue functionalities
  *  
@@ -32,8 +33,7 @@ import org.apache.geode.internal.logging.LogService;
 
 //TODO:Asif: Modify the test to allow working with the new class containing 
 //ReadWrite lock functionality
-public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQueue
-{
+public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQueue {
   private static final Logger logger = LogService.getLogger();
 
   /**
@@ -45,8 +45,7 @@ public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQue
 
   boolean takeWhenPeekInProgress = false;
 
-  public TestBlockingHARegionQueue(String regionName, Cache cache)
-      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+  public TestBlockingHARegionQueue(String regionName, Cache cache) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
     super(regionName, cache);
   }
 
@@ -59,8 +58,7 @@ public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQue
    * @return boolean whether object was successfully put onto the queue
    */
 
-  public boolean put(Object object) throws CacheException, InterruptedException
-  {
+  public boolean put(Object object) throws CacheException, InterruptedException {
     boolean putDone = super.put(object);
 
     if (takeFirst) {
@@ -80,16 +78,16 @@ public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQue
    * @throws InterruptedException 
    */
 
-  public Object peek() throws  InterruptedException
-  {
+  public Object peek() throws InterruptedException {
     Object object = null;
     while (true) {
 
       if (takeWhenPeekInProgress) {
-        try{
-        this.take();
-        }catch (CacheException ce) {
-          throw new RuntimeException(ce){};
+        try {
+          this.take();
+        } catch (CacheException ce) {
+          throw new RuntimeException(ce) {
+          };
         }
         this.takeWhenPeekInProgress = false;
       }
@@ -102,8 +100,7 @@ public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQue
             boolean interrupted = Thread.interrupted();
             try {
               forWaiting.wait();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
               interrupted = true;
               /** ignore* */
               if (logger.isDebugEnabled()) {
@@ -114,13 +111,11 @@ public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQue
                 Thread.currentThread().interrupt();
               }
             }
-          }
-          else {
+          } else {
             break;
           }
         }
-      }
-      else {
+      } else {
         break;
       }
     }

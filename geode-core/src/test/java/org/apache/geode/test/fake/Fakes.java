@@ -57,7 +57,7 @@ import static org.mockito.Mockito.*;
  * used objects to this collection of fakes.
  */
 public class Fakes {
-  
+
   /**
    * A fake cache, which contains a fake distributed
    * system, distribution manager, etc.
@@ -71,22 +71,22 @@ public class Fakes {
     DSClock clock = mock(DSClock.class);
     LogWriter logger = mock(LogWriter.class);
     Statistics stats = mock(Statistics.class);
-    
+
     InternalDistributedMember member;
     try {
       member = new InternalDistributedMember("localhost", 5555);
     } catch (UnknownHostException e) {
       throw new RuntimeException(e);
     }
-    
+
     when(config.getCacheXmlFile()).thenReturn(new File(""));
     when(config.getDeployWorkingDir()).thenReturn(new File("."));
-    
+
     when(cache.getDistributedSystem()).thenReturn(system);
     when(cache.getMyId()).thenReturn(member);
     when(cache.getDistributionManager()).thenReturn(distributionManager);
     when(cache.getCancelCriterion()).thenReturn(systemCancelCriterion);
-    
+
     when(system.getDistributedMember()).thenReturn(member);
     when(system.getConfig()).thenReturn(config);
     when(system.getDistributionManager()).thenReturn(distributionManager);
@@ -100,7 +100,7 @@ public class Fakes {
     when(distributionManager.getConfig()).thenReturn(config);
     when(distributionManager.getSystem()).thenReturn(system);
     when(distributionManager.getCancelCriterion()).thenReturn(systemCancelCriterion);
-    
+
     return cache;
   }
 
@@ -134,10 +134,8 @@ public class Fakes {
   public static void addMapBehavior(Region mock) {
     //Allow the region to behave like a fake map
     Map underlyingMap = new HashMap();
-    when(mock.get(any()))
-      .then(invocation -> underlyingMap.get(invocation.getArguments()[0]));
-    when(mock.put(any(), any()))
-      .then(invocation -> underlyingMap.put(invocation.getArguments()[0], invocation.getArguments()[1]));
+    when(mock.get(any())).then(invocation -> underlyingMap.get(invocation.getArguments()[0]));
+    when(mock.put(any(), any())).then(invocation -> underlyingMap.put(invocation.getArguments()[0], invocation.getArguments()[1]));
   }
 
   private Fakes() {

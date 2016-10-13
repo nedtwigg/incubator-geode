@@ -30,27 +30,24 @@ import org.apache.geode.management.internal.beans.stats.StatsKey;
 public class AsyncEventQueueMBeanBridge {
 
   private AsyncEventQueueImpl queueImpl;
-  
+
   private MBeanStatsMonitor monitor;
 
   public AsyncEventQueueMBeanBridge(AsyncEventQueue queue) {
-    this.queueImpl = (AsyncEventQueueImpl)queue;
-    this.monitor = new MBeanStatsMonitor(
-        ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
-    
+    this.queueImpl = (AsyncEventQueueImpl) queue;
+    this.monitor = new MBeanStatsMonitor(ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
+
     AsyncEventQueueStats stats = queueImpl.getStatistics();
     addAsyncEventQueueStats(stats);
   }
-  
+
   public AsyncEventQueueMBeanBridge() {
-    this.monitor = new MBeanStatsMonitor(
-        ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
+    this.monitor = new MBeanStatsMonitor(ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
   }
-  
+
   public void addAsyncEventQueueStats(AsyncEventQueueStats asyncEventQueueStats) {
     monitor.addStatisticsToMonitor(asyncEventQueueStats.getStats());
   }
-  
 
   public String getAsyncEventListener() {
     return queueImpl.getAsyncEventListener().getClass().getCanonicalName();
@@ -59,11 +56,11 @@ public class AsyncEventQueueMBeanBridge {
   public int getBatchSize() {
     return queueImpl.getBatchSize();
   }
-  
+
   public int getBatchTimeInteval() {
     return queueImpl.getBatchTimeInterval();
   }
-  
+
   public boolean isBatchConflationEnabled() {
     return queueImpl.isBatchConflationEnabled();
   }
@@ -83,7 +80,7 @@ public class AsyncEventQueueMBeanBridge {
   public boolean isPersistent() {
     return queueImpl.isPersistent();
   }
-  
+
   public boolean isParallel() {
     return queueImpl.isParallel();
   }
@@ -91,24 +88,23 @@ public class AsyncEventQueueMBeanBridge {
   public boolean isPrimary() {
     return queueImpl.isPrimary();
   }
-  
+
   public int getDispatcherThreads() {
     return queueImpl.getDispatcherThreads();
   }
-  
+
   public String getOrderPolicy() {
-    return queueImpl.getOrderPolicy() != null ? queueImpl.getOrderPolicy().name()
-        : null;
+    return queueImpl.getOrderPolicy() != null ? queueImpl.getOrderPolicy().name() : null;
   }
- 
+
   public boolean isDiskSynchronous() {
     return queueImpl.isDiskSynchronous();
   }
-  
+
   public int getEventQueueSize() {
     return getStatistic(StatsKey.ASYNCEVENTQUEUE_EVENTS_QUEUE_SIZE).intValue();
   }
-  
+
   private Number getStatistic(String statName) {
     if (monitor != null) {
       return monitor.getStatistic(statName);

@@ -30,13 +30,13 @@ import org.iq80.snappy.Snappy;
  */
 public final class SnappyCompressor implements Compressor, Serializable {
   private static final long serialVersionUID = 496609875302446099L;
-  
+
   /**
    * Create a new instance of the SnappyCompressor.
    */
   public SnappyCompressor() {
   }
-  
+
   /**
    * Get the single, default instance of the SnappyCompressor.
    * @deprecated As of Geode 1.0, getDefaultInstance is deprecated. Use constructor instead.
@@ -47,7 +47,7 @@ public final class SnappyCompressor implements Compressor, Serializable {
 
   @Override
   public byte[] compress(byte[] input) {
-      return Snappy.compress(input);
+    return Snappy.compress(input);
   }
 
   @Override
@@ -58,18 +58,18 @@ public final class SnappyCompressor implements Compressor, Serializable {
       throw new CompressionException(e);
     }
   }
-  
+
   @Override
   public int hashCode() {
     return this.getClass().getName().hashCode();
   }
-  
+
   @Override
-  public boolean equals (final Object other) {
+  public boolean equals(final Object other) {
     if (other == null) {
       return false;
     }
-    
+
     return this.getClass().getName().equals(other.getClass().getName());
   }
 }

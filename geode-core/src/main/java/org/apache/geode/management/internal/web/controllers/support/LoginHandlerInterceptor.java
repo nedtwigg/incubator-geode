@@ -73,25 +73,20 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
   }
 
   @Override
-  public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
-    throws Exception
-  {
+  public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
     final Map<String, String> requestParameterValues = new HashMap<String, String>();
 
-    for (Enumeration<String> requestParameters = request.getParameterNames(); requestParameters.hasMoreElements(); ) {
+    for (Enumeration<String> requestParameters = request.getParameterNames(); requestParameters.hasMoreElements();) {
       final String requestParameter = requestParameters.nextElement();
       if (requestParameter.startsWith(ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX)) {
         String requestValue = request.getParameter(requestParameter);
         //GEODE-1469: since we enced stepArgs, we will need to decode it here. See #ClientHttpRequest
-        if(requestParameter.contains(CLIMultiStepHelper.STEP_ARGS)){
+        if (requestParameter.contains(CLIMultiStepHelper.STEP_ARGS)) {
           requestValue = UriUtils.decode(requestValue);
         }
-        requestParameterValues.put(requestParameter.substring(ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX.length()),
-          requestValue);
+        requestParameterValues.put(requestParameter.substring(ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX.length()), requestValue);
       }
     }
-
-
 
     for (Enumeration<String> requestHeaders = request.getHeaderNames(); requestHeaders.hasMoreElements();) {
 
@@ -112,22 +107,14 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
     return true;
   }
 
-
   @Override
-  public void afterCompletion(final HttpServletRequest request,
-                              final HttpServletResponse response,
-                              final Object handler,
-                              final Exception ex)
-    throws Exception
-  {
+  public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) throws Exception {
     afterConcurrentHandlingStarted(request, response, handler);
     this.securityService.logout();
   }
 
   @Override
-  public void afterConcurrentHandlingStarted(
-    HttpServletRequest request, HttpServletResponse response, Object handler)
-    throws Exception {
+  public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     ENV.remove();
   }
 }

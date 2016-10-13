@@ -96,12 +96,10 @@ public class DiskStoreFactoryJUnitTest {
     assertEquals(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE, ds.getWriteBufferSize());
     assertEquals(DiskStoreFactory.DEFAULT_QUEUE_SIZE, ds.getQueueSize());
     if (!Arrays.equals(DiskStoreFactory.DEFAULT_DISK_DIRS, ds.getDiskDirs())) {
-      fail("expected=" + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIRS)
-           + " had=" + Arrays.toString(ds.getDiskDirs()));
+      fail("expected=" + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIRS) + " had=" + Arrays.toString(ds.getDiskDirs()));
     }
     if (!Arrays.equals(DiskStoreFactory.DEFAULT_DISK_DIR_SIZES, ds.getDiskDirSizes())) {
-      fail("expected=" + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIR_SIZES)
-           + " had=" + Arrays.toString(ds.getDiskDirSizes()));
+      fail("expected=" + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIR_SIZES) + " had=" + Arrays.toString(ds.getDiskDirSizes()));
     }
   }
 
@@ -109,36 +107,24 @@ public class DiskStoreFactoryJUnitTest {
   public void testNonDefaults() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testNonDefaults";
-    DiskStore ds = dsf
-      .setAutoCompact(!DiskStoreFactory.DEFAULT_AUTO_COMPACT)
-      .setCompactionThreshold(DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD/2)
-      .setAllowForceCompaction(!DiskStoreFactory.DEFAULT_ALLOW_FORCE_COMPACTION)
-      .setMaxOplogSize(DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE+1)
-      .setTimeInterval(DiskStoreFactory.DEFAULT_TIME_INTERVAL+1)
-      .setWriteBufferSize(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE+1)
-      .setQueueSize(DiskStoreFactory.DEFAULT_QUEUE_SIZE+1)
-      .create(name);
+    DiskStore ds = dsf.setAutoCompact(!DiskStoreFactory.DEFAULT_AUTO_COMPACT).setCompactionThreshold(DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD / 2).setAllowForceCompaction(!DiskStoreFactory.DEFAULT_ALLOW_FORCE_COMPACTION).setMaxOplogSize(DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE + 1).setTimeInterval(DiskStoreFactory.DEFAULT_TIME_INTERVAL + 1).setWriteBufferSize(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE + 1).setQueueSize(DiskStoreFactory.DEFAULT_QUEUE_SIZE + 1).create(name);
     assertEquals(!DiskStoreFactory.DEFAULT_AUTO_COMPACT, ds.getAutoCompact());
-    assertEquals(DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD/2, ds.getCompactionThreshold());
+    assertEquals(DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD / 2, ds.getCompactionThreshold());
     assertEquals(!DiskStoreFactory.DEFAULT_ALLOW_FORCE_COMPACTION, ds.getAllowForceCompaction());
-    assertEquals(DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE+1, ds.getMaxOplogSize());
-    assertEquals(DiskStoreFactory.DEFAULT_TIME_INTERVAL+1, ds.getTimeInterval());
-    assertEquals(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE+1, ds.getWriteBufferSize());
-    assertEquals(DiskStoreFactory.DEFAULT_QUEUE_SIZE+1, ds.getQueueSize());
+    assertEquals(DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE + 1, ds.getMaxOplogSize());
+    assertEquals(DiskStoreFactory.DEFAULT_TIME_INTERVAL + 1, ds.getTimeInterval());
+    assertEquals(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE + 1, ds.getWriteBufferSize());
+    assertEquals(DiskStoreFactory.DEFAULT_QUEUE_SIZE + 1, ds.getQueueSize());
   }
 
   @Test
   public void testCompactionThreshold() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testCompactionThreshold1";
-    DiskStore ds = dsf
-      .setCompactionThreshold(0)
-      .create(name);
+    DiskStore ds = dsf.setCompactionThreshold(0).create(name);
     assertEquals(0, ds.getCompactionThreshold());
     name = "testCompactionThreshold2";
-    ds = dsf
-      .setCompactionThreshold(100)
-      .create(name);
+    ds = dsf.setCompactionThreshold(100).create(name);
     assertEquals(100, ds.getCompactionThreshold());
     // check illegal stuff
     try {
@@ -157,14 +143,10 @@ public class DiskStoreFactoryJUnitTest {
   public void testQueueSize() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testQueueSize";
-    DiskStore ds = dsf
-      .setQueueSize(0)
-      .create(name);
+    DiskStore ds = dsf.setQueueSize(0).create(name);
     assertEquals(0, ds.getQueueSize());
     name = "testQueueSize2";
-    ds = dsf
-      .setQueueSize(Integer.MAX_VALUE)
-      .create(name);
+    ds = dsf.setQueueSize(Integer.MAX_VALUE).create(name);
     assertEquals(Integer.MAX_VALUE, ds.getQueueSize());
     // check illegal stuff
     try {
@@ -173,18 +155,15 @@ public class DiskStoreFactoryJUnitTest {
     } catch (IllegalArgumentException expected) {
     }
   }
+
   @Test
   public void testWriteBufferSize() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testWriteBufferSize";
-    DiskStore ds = dsf
-      .setWriteBufferSize(0)
-      .create(name);
+    DiskStore ds = dsf.setWriteBufferSize(0).create(name);
     assertEquals(0, ds.getWriteBufferSize());
     name = "testWriteBufferSize2";
-    ds = dsf
-      .setWriteBufferSize(Integer.MAX_VALUE)
-      .create(name);
+    ds = dsf.setWriteBufferSize(Integer.MAX_VALUE).create(name);
     assertEquals(Integer.MAX_VALUE, ds.getWriteBufferSize());
     // check illegal stuff
     try {
@@ -198,14 +177,10 @@ public class DiskStoreFactoryJUnitTest {
   public void testTimeInterval() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testTimeInterval";
-    DiskStore ds = dsf
-      .setTimeInterval(0)
-      .create(name);
+    DiskStore ds = dsf.setTimeInterval(0).create(name);
     assertEquals(0, ds.getTimeInterval());
     name = "testTimeInterval2";
-    ds = dsf
-      .setTimeInterval(Long.MAX_VALUE)
-      .create(name);
+    ds = dsf.setTimeInterval(Long.MAX_VALUE).create(name);
     assertEquals(Long.MAX_VALUE, ds.getTimeInterval());
     // check illegal stuff
     try {
@@ -219,15 +194,11 @@ public class DiskStoreFactoryJUnitTest {
   public void testMaxOplogSize() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testMaxOplogSize";
-    DiskStore ds = dsf
-      .setMaxOplogSize(0)
-      .create(name);
+    DiskStore ds = dsf.setMaxOplogSize(0).create(name);
     assertEquals(0, ds.getMaxOplogSize());
     name = "testMaxOplogSize2";
-    long max = Long.MAX_VALUE / (1024*1024);
-    ds = dsf
-      .setMaxOplogSize(max)
-      .create(name);
+    long max = Long.MAX_VALUE / (1024 * 1024);
+    ds = dsf.setMaxOplogSize(max).create(name);
     assertEquals(max, ds.getMaxOplogSize());
     // check illegal stuff
     try {
@@ -236,7 +207,7 @@ public class DiskStoreFactoryJUnitTest {
     } catch (IllegalArgumentException expected) {
     }
     try {
-      dsf.setMaxOplogSize(max+1);
+      dsf.setMaxOplogSize(max + 1);
       fail("expected IllegalArgumentException");
     } catch (IllegalArgumentException expected) {
     }
@@ -257,65 +228,59 @@ public class DiskStoreFactoryJUnitTest {
     DiskStore ds = dsf.create(name);
     ds.forceRoll();
   }
-  
+
   @Test
   public void testDestroyWithPersistentRegion() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testDestroy";
     DiskStore ds = dsf.create(name);
-    
-    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
-    .setDiskStoreName("testDestroy")
-    .create("region");
-    
+
+    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setDiskStoreName("testDestroy").create("region");
+
     try {
       ds.destroy();
       fail("Should have thrown an exception");
-    } catch(IllegalStateException expected) {
+    } catch (IllegalStateException expected) {
       //expected
     }
-    
+
     region.destroyRegion();
-    
+
     //This should now work
     ds.destroy();
   }
-  
+
   @Test
   public void testDestroyWithClosedRegion() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testDestroy";
     DiskStore ds = dsf.create(name);
-    
-    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
-    .setDiskStoreName("testDestroy")
-    .create("region");
-    
+
+    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setDiskStoreName("testDestroy").create("region");
+
     region.close();
-    
+
     //This should now work
     ds.destroy();
   }
-  
+
   @Test
   public void testDestroyWithOverflowRegion() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testDestroy";
     DiskStore ds = dsf.create(name);
-    
-    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_OVERFLOW)
-    .setDiskStoreName("testDestroy")
-    .create("region");
-    
+
+    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_OVERFLOW).setDiskStoreName("testDestroy").create("region");
+
     try {
       ds.destroy();
       fail("Should have thrown an exception");
-    } catch(IllegalStateException expected) {
+    } catch (IllegalStateException expected) {
       System.err.println("Got expected :" + expected.getMessage());
     }
-    
+
     region.close();
-    
+
     //The destroy should now work.
     ds.destroy();
   }
@@ -346,7 +311,7 @@ public class DiskStoreFactoryJUnitTest {
     assertFalse(ifFile.exists());
     cache = createCache();
     dsf = cache.createDiskStoreFactory();
-    assertEquals(null, ((GemFireCacheImpl)cache).findDiskStore(name));
+    assertEquals(null, ((GemFireCacheImpl) cache).findDiskStore(name));
     try {
       dsf.create(name);
       fail("expected IllegalStateException");
@@ -359,17 +324,17 @@ public class DiskStoreFactoryJUnitTest {
   private void removeFiles(DiskStore diskStore) {
     final String diskStoreName = diskStore.getName();
     File[] dirs = diskStore.getDiskDirs();
-    
-    for(File dir : dirs) {
+
+    for (File dir : dirs) {
       File[] files = dir.listFiles(new FilenameFilter() {
 
         @Override
         public boolean accept(File dir, String name) {
           return name.startsWith("BACKUP" + diskStoreName);
         }
-        
+
       });
-      for(File file : files) {
+      for (File file : files) {
         file.delete();
       }
     }
@@ -393,7 +358,7 @@ public class DiskStoreFactoryJUnitTest {
     assertFalse(crfFile.exists());
     cache = createCache();
     dsf = cache.createDiskStoreFactory();
-    assertEquals(null, ((GemFireCacheImpl)cache).findDiskStore(name));
+    assertEquals(null, ((GemFireCacheImpl) cache).findDiskStore(name));
     try {
       dsf.create(name);
       fail("expected IllegalStateException");
@@ -402,7 +367,7 @@ public class DiskStoreFactoryJUnitTest {
     // if test passed clean up files
     removeFiles(diskStore);
   }
-  
+
   @Test
   public void testMissingDrfFile() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -421,7 +386,7 @@ public class DiskStoreFactoryJUnitTest {
     assertFalse(drfFile.exists());
     cache = createCache();
     dsf = cache.createDiskStoreFactory();
-    assertEquals(null, ((GemFireCacheImpl)cache).findDiskStore(name));
+    assertEquals(null, ((GemFireCacheImpl) cache).findDiskStore(name));
     try {
       dsf.create(name);
       fail("expected IllegalStateException");
@@ -442,7 +407,7 @@ public class DiskStoreFactoryJUnitTest {
     af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     Region r = cache.createRegion("r", af.create());
     r.put("key", "value");
-    DiskStore ds = ((LocalRegion)r).getDiskStore();
+    DiskStore ds = ((LocalRegion) r).getDiskStore();
     assertEquals(ds, cache.findDiskStore(DiskStoreFactory.DEFAULT_DISK_STORE_NAME));
     assertEquals(DiskStoreFactory.DEFAULT_DISK_STORE_NAME, ds.getName());
     assertEquals(!DiskStoreFactory.DEFAULT_AUTO_COMPACT, ds.getAutoCompact());
@@ -450,7 +415,7 @@ public class DiskStoreFactoryJUnitTest {
     // if test passed clean up files
     removeFiles(diskStore);
   }
-  
+
   // setDiskDirs and setDiskDirsAndSizes are tested in DiskRegionIllegalArguementsJUnitTest
   // also setDiskUsageWarningPercentage and setDiskUsageCriticalPercentage
 }

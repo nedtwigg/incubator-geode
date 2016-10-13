@@ -81,7 +81,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public abstract class AbstractCommandsController {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   protected static final String DEFAULT_ENCODING = UriUtils.DEFAULT_ENCODING;
   protected static final String REST_API_VERSION = "/v1";
 
@@ -91,21 +91,19 @@ public abstract class AbstractCommandsController {
 
   private Class accessControlKlass;
 
-
   // Convert a predefined exception to an HTTP Status code
-  @ResponseStatus(value=HttpStatus.UNAUTHORIZED, reason="Not authenticated")  // 401
+  @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Not authenticated") // 401
   @ExceptionHandler(org.apache.geode.security.AuthenticationFailedException.class)
   public void authenticate() {
 
   }
 
   // Convert a predefined exception to an HTTP Status code
-  @ResponseStatus(value=HttpStatus.FORBIDDEN, reason="Access Denied")  // 403
+  @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Access Denied") // 403
   @ExceptionHandler(java.lang.SecurityException.class)
   public void authorize() {
 
   }
-
 
   /**
    * Asserts the argument is valid, as determined by the caller passing the result of an evaluated expression to this
@@ -226,8 +224,7 @@ public abstract class AbstractCommandsController {
    * @see java.lang.Object
    */
   protected static boolean hasValue(final Object value) {
-    return (value instanceof String[] ? hasValue((String[]) value)
-      : (value instanceof String ? hasValue((String) value) : value != null));
+    return (value instanceof String[] ? hasValue((String[]) value) : (value instanceof String ? hasValue((String) value) : value != null));
   }
 
   /**
@@ -287,8 +284,7 @@ public abstract class AbstractCommandsController {
    * @see org.springframework.web.servlet.support.ServletUriComponentsBuilder
    */
   protected /*static*/ URI toUri(final String path, final String scheme) {
-    return ServletUriComponentsBuilder.fromCurrentContextPath()
-        .path(REST_API_VERSION).path(path).scheme(scheme).build().toUri();
+    return ServletUriComponentsBuilder.fromCurrentContextPath().path(REST_API_VERSION).path(path).scheme(scheme).build().toUri();
   }
 
   /**
@@ -320,8 +316,7 @@ public abstract class AbstractCommandsController {
    */
   @InitBinder
   public void initBinder(final WebDataBinder dataBinder) {
-    dataBinder.registerCustomEditor(String[].class, new StringArrayPropertyEditor(
-      StringArrayPropertyEditor.DEFAULT_SEPARATOR, false));
+    dataBinder.registerCustomEditor(String[].class, new StringArrayPropertyEditor(StringArrayPropertyEditor.DEFAULT_SEPARATOR, false));
   }
 
   /**
@@ -335,23 +330,22 @@ public abstract class AbstractCommandsController {
     if (request != null) {
       final Map<String, String> headers = new HashMap<java.lang.String, java.lang.String>();
 
-      for (Iterator<String> it = request.getHeaderNames(); it.hasNext(); ) {
+      for (Iterator<String> it = request.getHeaderNames(); it.hasNext();) {
         final String headerName = it.next();
         headers.put(headerName, ArrayUtils.toString((Object[]) request.getHeaderValues(headerName)));
       }
 
       final Map<String, String> parameters = new HashMap<String, String>(request.getParameterMap().size());
 
-      for (Iterator<String> it = request.getParameterNames(); it.hasNext(); ) {
+      for (Iterator<String> it = request.getParameterNames(); it.hasNext();) {
         final String parameterName = it.next();
         parameters.put(parameterName, ArrayUtils.toString((Object[]) request.getParameterValues(parameterName)));
       }
 
-      logger.info("HTTP-request: description ({}), context ({}), headers ({}), parameters ({})",
-        request.getDescription(false), request.getContextPath(), headers, parameters);
+      logger.info("HTTP-request: description ({}), context ({}), headers ({}), parameters ({})", request.getDescription(false), request.getContextPath(), headers, parameters);
     }
   }
-  
+
   /**
    * Gets a reference to the platform MBeanServer running in this JVM process.  The MBeanServer instance constitutes
    * a connection to the MBeanServer.
@@ -389,20 +383,14 @@ public abstract class AbstractCommandsController {
       // NOTE throws a MalformedObjectNameException, but this should not happen since we constructed the ObjectName above
       final ObjectName objectName = ObjectName.getInstance(objectNamePattern);
 
-      final QueryExp query = Query.or(
-        Query.eq(Query.attr("Name"), Query.value(memberNameId)),
-        Query.eq(Query.attr("Id"), Query.value(memberNameId))
-      );
+      final QueryExp query = Query.or(Query.eq(Query.attr("Name"), Query.value(memberNameId)), Query.eq(Query.attr("Id"), Query.value(memberNameId)));
 
       final Set<ObjectName> objectNames = connection.queryNames(objectName, query);
 
-      assertState(isMemberMXBeanFound(objectNames),
-        "No MemberMXBean with ObjectName (%1$s) based on Query (%2$s) was found in the Platform MBeanServer for member (%3$s)!",
-          objectName, query, memberNameId);
+      assertState(isMemberMXBeanFound(objectNames), "No MemberMXBean with ObjectName (%1$s) based on Query (%2$s) was found in the Platform MBeanServer for member (%3$s)!", objectName, query, memberNameId);
 
       return JMX.newMXBeanProxy(connection, objectNames.iterator().next(), MemberMXBean.class);
-    }
-    catch (MalformedObjectNameException e) {
+    } catch (MalformedObjectNameException e) {
       throw new RuntimeException(e);
     }
   }
@@ -432,15 +420,12 @@ public abstract class AbstractCommandsController {
    */
   protected synchronized MemberMXBean getManagingMemberMXBean() {
     if (managingMemberMXBeanProxy == null) {
-      SystemManagementService service = (SystemManagementService) ManagementService
-          .getExistingManagementService(GemFireCacheImpl.getInstance());
+      SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(GemFireCacheImpl.getInstance());
       MBeanServer mbs = getMBeanServer();
 
-      final DistributedSystemMXBean distributedSystemMXBean = JMX.newMXBeanProxy(mbs,
-        MBeanJMXAdapter.getDistributedSystemName(), DistributedSystemMXBean.class);
+      final DistributedSystemMXBean distributedSystemMXBean = JMX.newMXBeanProxy(mbs, MBeanJMXAdapter.getDistributedSystemName(), DistributedSystemMXBean.class);
 
-      managingMemberMXBeanProxy = createMemberMXBeanForManagerUsingProxy(mbs,
-        distributedSystemMXBean.getMemberObjectName());
+      managingMemberMXBeanProxy = createMemberMXBeanForManagerUsingProxy(mbs, distributedSystemMXBean.getMemberObjectName());
     }
 
     return managingMemberMXBeanProxy;
@@ -449,8 +434,7 @@ public abstract class AbstractCommandsController {
   protected synchronized ObjectName getMemberObjectName() {
     final MBeanServer platformMBeanServer = getMBeanServer();
 
-    final DistributedSystemMXBean distributedSystemMXBean = JMX.newMXBeanProxy(platformMBeanServer,
-        MBeanJMXAdapter.getDistributedSystemName(), DistributedSystemMXBean.class);
+    final DistributedSystemMXBean distributedSystemMXBean = JMX.newMXBeanProxy(platformMBeanServer, MBeanJMXAdapter.getDistributedSystemName(), DistributedSystemMXBean.class);
 
     return distributedSystemMXBean.getMemberObjectName();
   }
@@ -498,23 +482,16 @@ public abstract class AbstractCommandsController {
    * @see org.apache.geode.management.internal.cli.util.CommandStringBuilder
    * @see org.springframework.web.context.request.WebRequest
    */
-  protected void addCommandOption(final WebRequest request,
-                                  final CommandStringBuilder command,
-                                  final String optionName,
-                                  final Object optionValue)
-  {
+  protected void addCommandOption(final WebRequest request, final CommandStringBuilder command, final String optionName, final Object optionValue) {
     assertNotNull(command, "The command to append options to cannot be null!");
     assertNotNull(optionName, "The name of the option to add to the command cannot be null!");
 
     if (hasValue(optionValue)) {
-      final String optionValueString = (optionValue instanceof String[] ?
-        StringUtils.concat((String[]) optionValue, StringUtils.COMMA_DELIMITER) : String.valueOf(optionValue));
+      final String optionValueString = (optionValue instanceof String[] ? StringUtils.concat((String[]) optionValue, StringUtils.COMMA_DELIMITER) : String.valueOf(optionValue));
       command.addOption(optionName, optionValueString);
-    }
-    else if (request != null && request.getParameterMap().containsKey(optionName)) {
+    } else if (request != null && request.getParameterMap().containsKey(optionName)) {
       command.addOption(optionName);
-    }
-    else {
+    } else {
       // do nothing!
     }
   }
@@ -534,22 +511,20 @@ public abstract class AbstractCommandsController {
     return processCommand(command, getEnvironment(), null);
   }
 
-  protected Callable<ResponseEntity<String>> getProcessCommandCallable(final String command){
+  protected Callable<ResponseEntity<String>> getProcessCommandCallable(final String command) {
     return getProcessCommandCallable(command, getEnvironment(), null);
   }
 
-  protected Callable<ResponseEntity<String>> getProcessCommandCallable(final String command, final Map<String, String> environment, final byte[][] fileData){
+  protected Callable<ResponseEntity<String>> getProcessCommandCallable(final String command, final Map<String, String> environment, final byte[][] fileData) {
     Callable callable = new Callable<ResponseEntity<String>>() {
       @Override
       public ResponseEntity<String> call() throws Exception {
         String result = null;
         try {
           result = processCommand(command, environment, fileData);
-        }
-        catch(NotAuthorizedException ex){
+        } catch (NotAuthorizedException ex) {
           return new ResponseEntity<String>(ex.getMessage(), HttpStatus.FORBIDDEN);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
           return new ResponseEntity<String>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<String>(result, HttpStatus.OK);
@@ -557,7 +532,6 @@ public abstract class AbstractCommandsController {
     };
     return this.securityService.associateWith(callable);
   }
-
 
   /**
    * Executes the specified command as entered by the user using the GemFire Shell (Gfsh).  Note, Gfsh performs
@@ -609,8 +583,7 @@ public abstract class AbstractCommandsController {
    * @see org.apache.geode.management.MemberMXBean#processCommand(String, java.util.Map, Byte[][])
    */
   protected String processCommand(final String command, final Map<String, String> environment, final byte[][] fileData) {
-    logger.info(LogMarker.CONFIG, "Processing Command ({}) with Environment ({}) having File Data ({})...", command,
-      environment, (fileData != null));
+    logger.info(LogMarker.CONFIG, "Processing Command ({}) with Environment ({}) having File Data ({})...", command, environment, (fileData != null));
     return getManagingMemberMXBean().processCommand(command, environment, ArrayUtils.toByteArray(fileData));
   }
 

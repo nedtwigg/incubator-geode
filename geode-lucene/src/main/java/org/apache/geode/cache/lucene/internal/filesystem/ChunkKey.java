@@ -33,7 +33,7 @@ import org.apache.geode.internal.Version;
 public class ChunkKey implements DataSerializableFixedID {
   UUID fileId;
   int chunkId;
-  
+
   /**
    * Constructor used for serialization only.
    */
@@ -111,13 +111,11 @@ public class ChunkKey implements DataSerializableFixedID {
   }
 
   @Override
-  public void fromData(DataInput in)
-      throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     chunkId = in.readInt();
     long high = in.readLong();
     long low = in.readLong();
     fileId = new UUID(high, low);
   }
 
-  
 }

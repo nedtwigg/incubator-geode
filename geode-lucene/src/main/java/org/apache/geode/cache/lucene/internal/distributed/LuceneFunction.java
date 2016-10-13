@@ -73,7 +73,7 @@ public class LuceneFunction extends FunctionAdapter implements InternalEntity {
     if (queryProvider == null) {
       throw new IllegalArgumentException("Missing query provider");
     }
-    
+
     LuceneService service = LuceneServiceProvider.get(region.getCache());
     InternalLuceneIndex index = (InternalLuceneIndex) service.getIndex(searchContext.getIndexName(), region.getFullPath());
     RepositoryManager repoManager = index.getRepositoryManager();
@@ -107,18 +107,17 @@ public class LuceneFunction extends FunctionAdapter implements InternalEntity {
       }
       TopEntriesCollector mergedResult = (TopEntriesCollector) manager.reduce(results);
       resultSender.lastResult(mergedResult);
-    } catch (IOException|BucketNotFoundException e) {
+    } catch (IOException | BucketNotFoundException e) {
       logger.warn("", e);
       throw new FunctionException(e);
     }
   }
 
-
   @Override
   public String getId() {
     return ID;
   }
-  
+
   @Override
   public boolean optimizeForWrite() {
     return true;

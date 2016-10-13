@@ -35,11 +35,11 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @since GemFire prPersistSprint2
  */
-public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttributes  implements Serializable {
+public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttributes implements Serializable {
 
   /** An <code>AttributesFactory</code> for creating default
    * <code>RegionAttribute</code>s */
-//  private static final DiskStoreFactory defaultFactory = new DiskStoreFactoryImpl();
+  //  private static final DiskStoreFactory defaultFactory = new DiskStoreFactoryImpl();
 
   /**
    * Creates a new <code>DiskStoreCreation</code> with the
@@ -67,7 +67,7 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
     this.queueSize = attrs.getQueueSize();
     this.diskDirs = attrs.getDiskDirs();
     this.diskDirSizes = attrs.getDiskDirSizes();
-    
+
     setDiskUsageWarningPercentage(attrs.getDiskUsageWarningPercentage());
     setDiskUsageCriticalPercentage(attrs.getDiskUsageCriticalPercentage());
 
@@ -114,12 +114,13 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
       return false;
     }
     for (int i = 0; i < array1.length; i++) {
-      if (array1[i] != array2[i]) { return false; }
+      if (array1[i] != array2[i]) {
+        return false;
+      }
     }
     return true;
   }
-  
-  
+
   /**
    * returns true if two int[] are equal
    * 
@@ -132,11 +133,13 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
       return false;
     }
     for (int i = 0; i < array1.length; i++) {
-      if (array1[i] != array2[i]) { return false; }
+      if (array1[i] != array2[i]) {
+        return false;
+      }
     }
     return true;
   }
-  
+
   /**
    * Returns whether or not two <code>File</code> arrays specify the
    * same files.
@@ -149,8 +152,7 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
     for (int i = 0; i < array1.length; i++) {
       boolean found = false;
       for (int j = 0; j < array2.length; j++) {
-        if (equal(array1[i].getAbsoluteFile(),
-                  array2[j].getAbsoluteFile())) {
+        if (equal(array1[i].getAbsoluteFile(), array2[j].getAbsoluteFile())) {
           found = true;
           break;
         }
@@ -179,41 +181,41 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
    */
   public boolean sameAs(DiskStore other) {
     if (this.autoCompact != other.getAutoCompact()) {
-      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_AUTOCOMPACT_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] {name, this.autoCompact, other.getAutoCompact()}));
+      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_AUTOCOMPACT_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] { name, this.autoCompact, other.getAutoCompact() }));
     }
     if (this.compactionThreshold != other.getCompactionThreshold()) {
-      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_COMPACTIONTHRESHOLD_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] {name, this.compactionThreshold, other.getCompactionThreshold()}));
+      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_COMPACTIONTHRESHOLD_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] { name, this.compactionThreshold, other.getCompactionThreshold() }));
     }
     if (this.allowForceCompaction != other.getAllowForceCompaction()) {
-      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_ALLOWFORCECOMPACTION_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] {name, this.allowForceCompaction, other.getAllowForceCompaction()}));
+      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_ALLOWFORCECOMPACTION_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] { name, this.allowForceCompaction, other.getAllowForceCompaction() }));
     }
-    if (this.maxOplogSizeInBytes != other.getMaxOplogSize()*1024*1024) {
-      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_MAXOPLOGSIZE_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] {name, this.maxOplogSizeInBytes/1024/1024, other.getMaxOplogSize()}));
+    if (this.maxOplogSizeInBytes != other.getMaxOplogSize() * 1024 * 1024) {
+      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_MAXOPLOGSIZE_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] { name, this.maxOplogSizeInBytes / 1024 / 1024, other.getMaxOplogSize() }));
     }
     if (this.timeInterval != other.getTimeInterval()) {
-      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_TIMEINTERVAL_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] {name, this.timeInterval, other.getTimeInterval()}));
+      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_TIMEINTERVAL_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] { name, this.timeInterval, other.getTimeInterval() }));
     }
     if (this.writeBufferSize != other.getWriteBufferSize()) {
-      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_WRITEBUFFERSIZE_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] {name, this.writeBufferSize, other.getWriteBufferSize()}));
+      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_WRITEBUFFERSIZE_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] { name, this.writeBufferSize, other.getWriteBufferSize() }));
     }
     if (this.queueSize != other.getQueueSize()) {
-      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_QUEUESIZE_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] {name, this.queueSize, other.getQueueSize()}));
+      throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_QUEUESIZE_OF_0_IS_NOT_THE_SAME_THIS_1_OTHER_2.toLocalizedString(new Object[] { name, this.queueSize, other.getQueueSize() }));
     }
-    if (! equal(this.diskDirs, other.getDiskDirs())) {
+    if (!equal(this.diskDirs, other.getDiskDirs())) {
       throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_DISK_DIRS_OF_0_ARE_NOT_THE_SAME.toLocalizedString(name));
     }
-    if (! equal(this.diskDirSizes, other.getDiskDirSizes())) {
+    if (!equal(this.diskDirSizes, other.getDiskDirSizes())) {
       throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_DISK_DIR_SIZES_OF_0_ARE_NOT_THE_SAME.toLocalizedString(name));
     }
-    if (! equal(getDiskUsageWarningPercentage(), other.getDiskUsageWarningPercentage())) {
+    if (!equal(getDiskUsageWarningPercentage(), other.getDiskUsageWarningPercentage())) {
       throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_DISK_USAGE_WARN_ARE_NOT_THE_SAME.toLocalizedString(name));
     }
-    if (! equal(getDiskUsageCriticalPercentage(), other.getDiskUsageCriticalPercentage())) {
+    if (!equal(getDiskUsageCriticalPercentage(), other.getDiskUsageCriticalPercentage())) {
       throw new RuntimeException(LocalizedStrings.DiskStoreAttributesCreation_DISK_USAGE_CRITICAL_ARE_NOT_THE_SAME.toLocalizedString(name));
     }
     return true;
   }
-  
+
   public void setName(String name) {
     this.name = name;
   }
@@ -222,7 +224,7 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
     this.autoCompact = autoCompact;
     this.setHasAutoCompact(true);
   }
-  
+
   public void setCompactionThreshold(int compactionThreshold) {
     this.compactionThreshold = compactionThreshold;
     this.setHasCompactionThreshold(true);
@@ -234,27 +236,26 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
   }
 
   public void setMaxOplogSize(long maxOplogSize) {
-    this.maxOplogSizeInBytes = maxOplogSize *1024*1024;
+    this.maxOplogSizeInBytes = maxOplogSize * 1024 * 1024;
     this.setHasMaxOplogSize(true);
   }
-  
+
   public void setTimeInterval(long timeInterval) {
     this.timeInterval = timeInterval;
     this.setHasTimeInterval(true);
   }
-  
+
   public void setWriteBufferSize(int writeBufferSize) {
     this.writeBufferSize = writeBufferSize;
     this.setHasWriteBufferSize(true);
   }
-  
+
   public void setQueueSize(int queueSize) {
     this.queueSize = queueSize;
     this.setHasQueueSize(true);
   }
-  
-  public void setDiskDirs(File[] diskDirs)
-  {
+
+  public void setDiskDirs(File[] diskDirs) {
     checkIfDirectoriesExist(diskDirs);
     this.diskDirs = diskDirs;
     this.diskDirSizes = new int[diskDirs.length];
@@ -267,8 +268,8 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
   public void setDiskDirsAndSize(File[] diskDirs, int[] sizes) {
     checkIfDirectoriesExist(diskDirs);
     this.diskDirs = diskDirs;
-    if(sizes.length != this.diskDirs.length) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskStoreAttributesCreation_NUMBER_OF_DISKSIZES_IS_0_WHICH_IS_NOT_EQUAL_TO_NUMBER_OF_DISK_DIRS_WHICH_IS_1.toLocalizedString(new Object[] {Integer.valueOf(sizes.length), Integer.valueOf(diskDirs.length)}));
+    if (sizes.length != this.diskDirs.length) {
+      throw new IllegalArgumentException(LocalizedStrings.DiskStoreAttributesCreation_NUMBER_OF_DISKSIZES_IS_0_WHICH_IS_NOT_EQUAL_TO_NUMBER_OF_DISK_DIRS_WHICH_IS_1.toLocalizedString(new Object[] { Integer.valueOf(sizes.length), Integer.valueOf(diskDirs.length) }));
     }
     verifyNonNegativeDirSize(sizes);
     this.diskDirSizes = sizes;
@@ -279,7 +280,7 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
     super.setDiskUsageWarningPercentage(diskUsageWarningPercentage);
     this.setHasDiskUsageWarningPercentage(true);
   }
-  
+
   public void setDiskUsageCriticalPercentage(float diskUsageCriticalPercentage) {
     super.setDiskUsageCriticalPercentage(diskUsageCriticalPercentage);
     this.setHasDiskUsageCriticalPercentage(true);
@@ -290,24 +291,23 @@ public class DiskStoreAttributesCreation extends UserSpecifiedDiskStoreAttribute
    * 
    * @param disk_dirs
    */
-  private void checkIfDirectoriesExist(File[] disk_dirs)
-  {
-//    for (int i=0; i < disk_dirs.length; i++) {
-//      if (! disk_dirs[i].isDirectory()) {
-////        throw new IllegalArgumentException(LocalizedStrings.DiskStoreAttributesCreation_0_WAS_NOT_AN_EXISTING_DIRECTORY_FOR_DISKSTORE_1.toLocalizedString(new Object[] {disk_dirs[i], name}));
-//        if (!diskDirs[i].mkdirs()) {
-//          throw new RuntimeException("Cannot create directory" + diskDirs[i].getAbsolutePath() + "Num disk dirs to be created : " + disk_dirs.length + " Dir Name " + disk_dirs[i].getName());
-//        } 
-//      }
-//    }
+  private void checkIfDirectoriesExist(File[] disk_dirs) {
+    //    for (int i=0; i < disk_dirs.length; i++) {
+    //      if (! disk_dirs[i].isDirectory()) {
+    ////        throw new IllegalArgumentException(LocalizedStrings.DiskStoreAttributesCreation_0_WAS_NOT_AN_EXISTING_DIRECTORY_FOR_DISKSTORE_1.toLocalizedString(new Object[] {disk_dirs[i], name}));
+    //        if (!diskDirs[i].mkdirs()) {
+    //          throw new RuntimeException("Cannot create directory" + diskDirs[i].getAbsolutePath() + "Num disk dirs to be created : " + disk_dirs.length + " Dir Name " + disk_dirs[i].getName());
+    //        } 
+    //      }
+    //    }
     DiskStoreFactoryImpl.checkIfDirectoriesExist(disk_dirs);
   }
- 
- private void verifyNonNegativeDirSize(int[] sizes){
-   for(int i=0; i< sizes.length; i++){
-     if(sizes[i]<0){
-       throw new IllegalArgumentException(LocalizedStrings.DiskStoreAttributesCreation_DIR_SIZE_CANNOT_BE_NEGATIVE_0_FOR_DISKSTORE_1.toLocalizedString(new Object[] {Integer.valueOf(sizes[i]), name}));
-     }
-   }
- }
+
+  private void verifyNonNegativeDirSize(int[] sizes) {
+    for (int i = 0; i < sizes.length; i++) {
+      if (sizes[i] < 0) {
+        throw new IllegalArgumentException(LocalizedStrings.DiskStoreAttributesCreation_DIR_SIZE_CANNOT_BE_NEGATIVE_0_FOR_DISKSTORE_1.toLocalizedString(new Object[] { Integer.valueOf(sizes[i]), name }));
+      }
+    }
+  }
 }

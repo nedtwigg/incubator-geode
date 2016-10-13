@@ -30,23 +30,23 @@ import java.util.*;
  *
  */
 public abstract class TXLockService {
-  
+
   // -------------------------------------------------------------------------
   //   TLS instances
   // -------------------------------------------------------------------------
-  
+
   /** The distributed transaction lock service */
   static TXLockService DTLS = null;
-  
+
   // -------------------------------------------------------------------------
   //   Static methods
   // -------------------------------------------------------------------------
-  
+
   /** Returns the instance of the distributed TXLockService */
   public static TXLockService getDTLS() {
     return DTLS;
   }
-  
+
   /** Returns (or creates) the instance of the distributed TXLockService */
   public static TXLockService createDTLS() {
     synchronized (TXLockService.class) {
@@ -56,7 +56,7 @@ public abstract class TXLockService {
       return DTLS;
     }
   }
-  
+
   /** Destroys DTLS in this process to free up resources */
   public static void destroyServices() {
     synchronized (TXLockService.class) {
@@ -66,11 +66,11 @@ public abstract class TXLockService {
       }
     }
   }
-  
+
   // -------------------------------------------------------------------------
   //   Instance methods
   // -------------------------------------------------------------------------
-  
+
   /** 
    * Requests batch of try locks as scoped by a region.
    *
@@ -89,9 +89,8 @@ public abstract class TXLockService {
    * @throws IllegalArgumentException if regionLockReqs is null or or if either
    * arguments contain instances of unexpected classes 
    */
-  public abstract TXLockId txLock(List regionLockReqs, Set participants)
-  throws CommitConflictException;
-  
+  public abstract TXLockId txLock(List regionLockReqs, Set participants) throws CommitConflictException;
+
   /** 
    * Releases all locks represented by tx lock reference.
    *
@@ -119,24 +118,23 @@ public abstract class TXLockService {
    */
   public abstract void updateParticipants(TXLockId txLockId, Set updatedParticipants);
 
-    
   /** 
    * Returns true if this process is the lock grantor for this service. 
    *
    * @throws IllegalStateException if service is destroyed
    */
   public abstract boolean isLockGrantor();
-  
+
   /** 
    * Makes this process explicitly become the lock grantor for this service. 
    *
    * @throws IllegalStateException if service is destroyed
    */
   public abstract void becomeLockGrantor();
-  
+
   /** Returns true if this lock service is destroyed. */
   public abstract boolean isDestroyed();
-  
+
   /** 
    * Destroys this tx lock service and removes the static reference to it. 
    */
@@ -144,17 +142,17 @@ public abstract class TXLockService {
     synchronized (TXLockService.class) {
       if (!isDestroyed()) {
         basicDestroy();
-        if (this == DTLS) DTLS = null;
+        if (this == DTLS)
+          DTLS = null;
       }
     }
   }
-  
+
   // -------------------------------------------------------------------------
   //   Hidden template methods
   // -------------------------------------------------------------------------
-  
+
   /** Perfoms basic destroy of this tx lock service */
   abstract void basicDestroy();
 
 }
-

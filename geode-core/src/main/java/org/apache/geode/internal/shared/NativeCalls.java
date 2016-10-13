@@ -57,9 +57,8 @@ public abstract class NativeCalls {
       // try to load JNA implementation first
       // we do it via reflection since some clients
       // may not have it
-      final Class<?> c = Class
-          .forName("org.apache.geode.internal.shared.NativeCallsJNAImpl");
-      inst = (NativeCalls)c.getMethod("getInstance").invoke(null);
+      final Class<?> c = Class.forName("org.apache.geode.internal.shared.NativeCallsJNAImpl");
+      inst = (NativeCalls) c.getMethod("getInstance").invoke(null);
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
@@ -91,7 +90,7 @@ public abstract class NativeCalls {
     try {
       final Field m = env.getClass().getDeclaredField("m");
       m.setAccessible(true);
-      return (Map<String, String>)m.get(env);
+      return (Map<String, String>) m.get(env);
     } catch (Exception ex) {
       return null;
     }
@@ -100,10 +99,9 @@ public abstract class NativeCalls {
   @SuppressWarnings("unchecked")
   protected static final Map<String, String> getModifiableJavaEnvWIN() {
     try {
-      final Field envField = Class.forName("java.lang.ProcessEnvironment")
-          .getDeclaredField("theCaseInsensitiveEnvironment");
+      final Field envField = Class.forName("java.lang.ProcessEnvironment").getDeclaredField("theCaseInsensitiveEnvironment");
       envField.setAccessible(true);
-      return (Map<String, String>)envField.get(null);
+      return (Map<String, String>) envField.get(null);
     } catch (Exception ex) {
       return null;
     }
@@ -123,8 +121,7 @@ public abstract class NativeCalls {
    * @throws UnsupportedOperationException
    *           if the kernel descriptor could not be extracted
    */
-  protected int getSocketKernelDescriptor(Socket sock, InputStream sockStream)
-      throws UnsupportedOperationException {
+  protected int getSocketKernelDescriptor(Socket sock, InputStream sockStream) throws UnsupportedOperationException {
     Method m;
     Field f;
     Object obj;
@@ -136,7 +133,7 @@ public abstract class NativeCalls {
         f.setAccessible(true);
         final Object self = f.get(sock);
         if (self instanceof Socket) {
-          sock = (Socket)self;
+          sock = (Socket) self;
           sockStream = sock.getInputStream();
         }
       }
@@ -151,7 +148,7 @@ public abstract class NativeCalls {
     // first try using FileInputStream
     if (sockStream instanceof FileInputStream) {
       try {
-        fd = ((FileInputStream)sockStream).getFD();
+        fd = ((FileInputStream) sockStream).getFD();
       } catch (Exception e) {
         // go the fallback route
       }
@@ -171,23 +168,22 @@ public abstract class NativeCalls {
             if (sockStream == null) {
               sockStream = sock.getInputStream();
               if (sockStream instanceof FileInputStream) {
-                fd = ((FileInputStream)sockStream).getFD();
+                fd = ((FileInputStream) sockStream).getFD();
               }
-            }
-            else {
+            } else {
               throw e;
             }
           }
         }
         if (m != null) {
           m.setAccessible(true);
-          final SocketImpl sockImpl = (SocketImpl)m.invoke(sock);
+          final SocketImpl sockImpl = (SocketImpl) m.invoke(sock);
           if (sockImpl != null) {
             try {
               m = getAnyMethod(sockImpl.getClass(), "getFileDescriptor");
               if (m != null) {
                 m.setAccessible(true);
-                fd = (FileDescriptor)m.invoke(sockImpl);
+                fd = (FileDescriptor) m.invoke(sockImpl);
               }
             } catch (NoSuchMethodException nme) {
               // go to field reflection route
@@ -202,7 +198,7 @@ public abstract class NativeCalls {
           f.setAccessible(true);
           obj = f.get(fd);
           if (obj instanceof Integer) {
-            return ((Integer)obj).intValue();
+            return ((Integer) obj).intValue();
           }
         }
       }
@@ -216,9 +212,7 @@ public abstract class NativeCalls {
     }
   }
 
-  protected static Method getAnyMethod(Class<?> c, String name,
-      Class<?>... parameterTypes) throws NoSuchMethodException,
-      SecurityException {
+  protected static Method getAnyMethod(Class<?> c, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
     NoSuchMethodException firstEx = null;
     for (;;) {
       try {
@@ -235,8 +229,7 @@ public abstract class NativeCalls {
     }
   }
 
-  protected static Field getAnyField(Class<?> c, String name)
-      throws NoSuchFieldException, SecurityException {
+  protected static Field getAnyField(Class<?> c, String name) throws NoSuchFieldException, SecurityException {
     NoSuchFieldException firstEx = null;
     for (;;) {
       try {
@@ -254,8 +247,7 @@ public abstract class NativeCalls {
   }
 
   protected String getUnsupportedSocketOptionMessage(TCPSocketOptions opt) {
-    return "setSocketOption(): socket option " + opt
-        + " not supported by current platform " + getOSType();
+    return "setSocketOption(): socket option " + opt + " not supported by current platform " + getOSType();
   }
 
   /**
@@ -299,8 +291,7 @@ public abstract class NativeCalls {
    * @throws UnsupportedOperationException
    *           if no native API to determine the process status could be invoked
    */
-  public abstract boolean isProcessActive(int processId)
-      throws UnsupportedOperationException;
+  public abstract boolean isProcessActive(int processId) throws UnsupportedOperationException;
 
   /**
    * Kill the process with given process ID immediately (i.e. without giving it
@@ -312,8 +303,7 @@ public abstract class NativeCalls {
    * @throws UnsupportedOperationException
    *           if no native API to kill the process could be invoked
    */
-  public abstract boolean killProcess(int processId)
-      throws UnsupportedOperationException;
+  public abstract boolean killProcess(int processId) throws UnsupportedOperationException;
 
   /**
    * Perform the steps necessary to make the current JVM a proper UNIX daemon.
@@ -328,14 +318,11 @@ public abstract class NativeCalls {
    * @throws IllegalStateException
    *           for a non-UNIX platform
    */
-  public void daemonize(RehashServerOnSIGHUP callback)
-      throws UnsupportedOperationException, IllegalStateException {
-    throw new UnsupportedOperationException(
-        "daemonize() not available in base implementation");
+  public void daemonize(RehashServerOnSIGHUP callback) throws UnsupportedOperationException, IllegalStateException {
+    throw new UnsupportedOperationException("daemonize() not available in base implementation");
   }
 
-  public void preBlow(String path, long maxSize, boolean preAllocate)
-      throws IOException {
+  public void preBlow(String path, long maxSize, boolean preAllocate) throws IOException {
     RandomAccessFile raf = new RandomAccessFile(path, "rw");
     try {
       raf.setLength(maxSize);
@@ -343,7 +330,7 @@ public abstract class NativeCalls {
       raf.close();
     }
   }
-  
+
   /**
    * This will return whether the path passed in as arg is
    * part of a local file system or a remote file system.
@@ -356,6 +343,7 @@ public abstract class NativeCalls {
   public boolean isOnLocalFileSystem(final String path) {
     return false;
   }
+
   /**
    * Set given extended socket options on a Java {@link Socket}.
    * 
@@ -367,26 +355,20 @@ public abstract class NativeCalls {
    * 
    * @see TCPSocketOptions
    */
-  public abstract Map<TCPSocketOptions, Throwable> setSocketOptions(
-      Socket sock, InputStream sockStream,
-      Map<TCPSocketOptions, Object> optValueMap)
-      throws UnsupportedOperationException;
+  public abstract Map<TCPSocketOptions, Throwable> setSocketOptions(Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap) throws UnsupportedOperationException;
 
   // IPPROTO_TCP is used by setsockopt to denote a TCP option
   protected static final int OPT_IPPROTO_TCP = 6;
   // indicates an unsupported TCPSocketOptions enum
   protected static final int UNSUPPORTED_OPTION = Integer.MIN_VALUE;
+
   /**
    * A generic implementation of {@link #setSocketOptions} for POSIX like
    * systems that requires the child classes to implement a few platform
    * specific methods.
    */
-  protected final Map<TCPSocketOptions, Throwable> setGenericSocketOptions(
-      Socket sock, InputStream sockStream,
-      Map<TCPSocketOptions, Object> optValueMap)
-      throws UnsupportedOperationException {
-    final Set<Map.Entry<TCPSocketOptions, Object>> optValueEntries =
-        optValueMap.entrySet();
+  protected final Map<TCPSocketOptions, Throwable> setGenericSocketOptions(Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap) throws UnsupportedOperationException {
+    final Set<Map.Entry<TCPSocketOptions, Object>> optValueEntries = optValueMap.entrySet();
     for (Map.Entry<TCPSocketOptions, Object> e : optValueEntries) {
       TCPSocketOptions opt = e.getKey();
       Object value = e.getValue();
@@ -394,40 +376,31 @@ public abstract class NativeCalls {
       getPlatformOption(opt);
       // all options currently require an integer argument
       if (value == null || !(value instanceof Integer)) {
-        throw new IllegalArgumentException("bad argument type "
-            + (value != null ? value.getClass().getName() : "NULL") + " for "
-            + opt);
+        throw new IllegalArgumentException("bad argument type " + (value != null ? value.getClass().getName() : "NULL") + " for " + opt);
       }
     }
 
-    Map<TCPSocketOptions, Throwable> failures =
-        new HashMap<TCPSocketOptions, Throwable>(4);
+    Map<TCPSocketOptions, Throwable> failures = new HashMap<TCPSocketOptions, Throwable>(4);
     final int sockfd = getSocketKernelDescriptor(sock, sockStream);
     for (Map.Entry<TCPSocketOptions, Object> e : optValueEntries) {
       TCPSocketOptions opt = e.getKey();
       Object value = e.getValue();
       final int optName = getPlatformOption(opt);
       if (optName == UNSUPPORTED_OPTION) {
-        failures.put(opt, new UnsupportedOperationException(
-            getUnsupportedSocketOptionMessage(opt)));
+        failures.put(opt, new UnsupportedOperationException(getUnsupportedSocketOptionMessage(opt)));
         continue;
       }
       final int optSize = Integer.SIZE / Byte.SIZE;
       try {
-        if (setPlatformSocketOption(sockfd, OPT_IPPROTO_TCP, optName, opt,
-            (Integer)value, optSize) != 0) {
-          failures.put(opt, new SocketException(getOSType()
-              + ": error setting option " + opt + " to " + value));
+        if (setPlatformSocketOption(sockfd, OPT_IPPROTO_TCP, optName, opt, (Integer) value, optSize) != 0) {
+          failures.put(opt, new SocketException(getOSType() + ": error setting option " + opt + " to " + value));
         }
       } catch (NativeErrorException ne) {
         // check if the error indicates that option is not supported
         if (isNoProtocolOptionCode(ne.getErrorCode())) {
-          failures.put(opt, new UnsupportedOperationException(
-              getUnsupportedSocketOptionMessage(opt), ne));
-        }
-        else {
-          final SocketException se = new SocketException(getOSType()
-              + ": failed to set " + opt + " to " + value);
+          failures.put(opt, new UnsupportedOperationException(getUnsupportedSocketOptionMessage(opt), ne));
+        } else {
+          final SocketException se = new SocketException(getOSType() + ": failed to set " + opt + " to " + value);
           se.initCause(ne);
           failures.put(opt, se);
         }
@@ -436,26 +409,19 @@ public abstract class NativeCalls {
     return failures.size() > 0 ? failures : null;
   }
 
-  protected int getPlatformOption(TCPSocketOptions opt)
-      throws UnsupportedOperationException {
+  protected int getPlatformOption(TCPSocketOptions opt) throws UnsupportedOperationException {
     // no generic POSIX specification for this
-    throw new UnsupportedOperationException(
-        "setSocketOption not supported for generic POSIX platform");
+    throw new UnsupportedOperationException("setSocketOption not supported for generic POSIX platform");
   }
 
-  protected int setPlatformSocketOption(int sockfd, int level, int optName,
-      TCPSocketOptions opt, Integer optVal, int optSize)
-      throws UnsupportedOperationException, NativeErrorException {
+  protected int setPlatformSocketOption(int sockfd, int level, int optName, TCPSocketOptions opt, Integer optVal, int optSize) throws UnsupportedOperationException, NativeErrorException {
     // no generic POSIX specification for this
-    throw new UnsupportedOperationException(
-        "setSocketOption not supported for generic POSIX platform");
+    throw new UnsupportedOperationException("setSocketOption not supported for generic POSIX platform");
   }
 
-  protected boolean isNoProtocolOptionCode(int errno)
-      throws UnsupportedOperationException {
+  protected boolean isNoProtocolOptionCode(int errno) throws UnsupportedOperationException {
     // no generic POSIX specification for this
-    throw new UnsupportedOperationException(
-        "setSocketOption not supported for generic POSIX platform");
+    throw new UnsupportedOperationException("setSocketOption not supported for generic POSIX platform");
   }
 
   /**
@@ -483,7 +449,7 @@ public abstract class NativeCalls {
   public boolean isNativeTimerEnabled() {
     return false;
   }
-  
+
   /**
    * This is fall back for jni based library implementation of NanoTimer which
    * is more efficient than current impl through jna.
@@ -498,11 +464,11 @@ public abstract class NativeCalls {
   public long nanoTime(int clock_id) {
     return System.nanoTime();
   }
-  
+
   public long clockResolution(int clock_id) {
     return 0;
   }
-  
+
   public boolean isTTY() {
     return false;
   }
@@ -550,8 +516,7 @@ public abstract class NativeCalls {
       if (javaEnv != null) {
         if (value != null) {
           javaEnv.put(name, value);
-        }
-        else {
+        } else {
           javaEnv.remove(name);
         }
       }
@@ -562,8 +527,7 @@ public abstract class NativeCalls {
      */
     @Override
     public int getProcessId() {
-      final String name = java.lang.management.ManagementFactory
-          .getRuntimeMXBean().getName();
+      final String name = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
       final int idx = name.indexOf('@');
       if (idx > 0) {
         try {
@@ -579,31 +543,24 @@ public abstract class NativeCalls {
      * @see NativeCalls#isProcessActive(int)
      */
     @Override
-    public boolean isProcessActive(int processId)
-        throws UnsupportedOperationException {
-      throw new UnsupportedOperationException(
-          "isProcessActive() not available in generic implementation");
+    public boolean isProcessActive(int processId) throws UnsupportedOperationException {
+      throw new UnsupportedOperationException("isProcessActive() not available in generic implementation");
     }
 
     /**
      * @see NativeCalls#killProcess(int)
      */
     @Override
-    public boolean killProcess(int processId)
-        throws UnsupportedOperationException {
-      throw new UnsupportedOperationException(
-          "killProcess() not available in generic implementation");
+    public boolean killProcess(int processId) throws UnsupportedOperationException {
+      throw new UnsupportedOperationException("killProcess() not available in generic implementation");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Map<TCPSocketOptions, Throwable> setSocketOptions(Socket sock,
-        InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap)
-        throws UnsupportedOperationException {
-      throw new UnsupportedOperationException("setting native socket options "
-          + optValueMap.keySet() + " not possible in generic implementation");
+    public Map<TCPSocketOptions, Throwable> setSocketOptions(Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap) throws UnsupportedOperationException {
+      throw new UnsupportedOperationException("setting native socket options " + optValueMap.keySet() + " not possible in generic implementation");
     }
   }
 }

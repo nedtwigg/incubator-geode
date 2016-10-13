@@ -36,8 +36,8 @@ public class Member extends JMXBaseBean implements MemberMBean {
 
   @Override
   public int getTotalRegionCount() {
-// This count is built dynamically in Pulse backend and region count is maintained in Cluster.Member data structure
-//    return getInt("totalRegionCount");
+    // This count is built dynamically in Pulse backend and region count is maintained in Cluster.Member data structure
+    //    return getInt("totalRegionCount");
     return 0;
   }
 
@@ -91,13 +91,13 @@ public class Member extends JMXBaseBean implements MemberMBean {
 
   @Override
   public long getCurrentHeapSize() {
-//    return getLong("currentHeapSize");
+    //    return getLong("currentHeapSize");
     return getLong("UsedMemory");
   }
 
   @Override
   public long getMaximumHeapSize() {
-//    return getLong("maximumHeapSize");
+    //    return getLong("maximumHeapSize");
     return getLong("MaxMemory");
   }
 

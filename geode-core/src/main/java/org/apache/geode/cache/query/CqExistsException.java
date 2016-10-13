@@ -23,8 +23,8 @@ package org.apache.geode.cache.query;
  */
 
 public class CqExistsException extends QueryException {
-private static final long serialVersionUID = -4805225282677926623L;
-  
+  private static final long serialVersionUID = -4805225282677926623L;
+
   /**
    * Constructor used by concrete subclasses
    * @param msg the error message
@@ -32,8 +32,8 @@ private static final long serialVersionUID = -4805225282677926623L;
    */
   public CqExistsException(String msg, Throwable cause) {
     super(msg, cause);
-  }  
-  
+  }
+
   /**
    * Constructor used by concrete subclasses
    * @param msg the error message
@@ -41,12 +41,12 @@ private static final long serialVersionUID = -4805225282677926623L;
   public CqExistsException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructor used by concrete subclasses
    * @param cause a Throwable cause of this exception
    */
   public CqExistsException(Throwable cause) {
     super(cause);
-  }  
+  }
 }

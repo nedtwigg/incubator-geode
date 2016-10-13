@@ -29,5 +29,3 @@ public interface GatewayConflictHelper {
   /** modify the value stored in the cache */
   public void changeEventValue(Object value);
 }
-
-

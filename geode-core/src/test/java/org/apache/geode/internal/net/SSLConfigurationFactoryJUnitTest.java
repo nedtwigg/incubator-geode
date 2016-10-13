@@ -192,22 +192,22 @@ public class SSLConfigurationFactoryJUnitTest {
 
   private String getCorrectAlias(final SecurableCommunicationChannel expectedSecurableComponent, final Properties properties) {
     switch (expectedSecurableComponent) {
-      case ALL:
-        return properties.getProperty(SSL_DEFAULT_ALIAS);
-      case CLUSTER:
-        return getAliasForComponent(properties, SSL_CLUSTER_ALIAS);
-      case GATEWAY:
-        return getAliasForComponent(properties, SSL_GATEWAY_ALIAS);
-      case WEB:
-        return getAliasForComponent(properties, SSL_WEB_ALIAS);
-      case JMX:
-        return getAliasForComponent(properties, SSL_JMX_ALIAS);
-      case LOCATOR:
-        return getAliasForComponent(properties, SSL_LOCATOR_ALIAS);
-      case SERVER:
-        return getAliasForComponent(properties, SSL_SERVER_ALIAS);
-      default:
-        return properties.getProperty(SSL_DEFAULT_ALIAS);
+    case ALL:
+      return properties.getProperty(SSL_DEFAULT_ALIAS);
+    case CLUSTER:
+      return getAliasForComponent(properties, SSL_CLUSTER_ALIAS);
+    case GATEWAY:
+      return getAliasForComponent(properties, SSL_GATEWAY_ALIAS);
+    case WEB:
+      return getAliasForComponent(properties, SSL_WEB_ALIAS);
+    case JMX:
+      return getAliasForComponent(properties, SSL_JMX_ALIAS);
+    case LOCATOR:
+      return getAliasForComponent(properties, SSL_LOCATOR_ALIAS);
+    case SERVER:
+      return getAliasForComponent(properties, SSL_SERVER_ALIAS);
+    default:
+      return properties.getProperty(SSL_DEFAULT_ALIAS);
     }
   }
 

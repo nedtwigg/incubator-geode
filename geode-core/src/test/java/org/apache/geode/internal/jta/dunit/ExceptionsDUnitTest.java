@@ -51,10 +51,10 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
 
   static DistributedSystem ds;
   static Cache cache;
-//  private static String tblName;
+  //  private static String tblName;
 
   private static String readFile(String filename) throws IOException {
-//    String lineSep = System.getProperty("\n");
+    //    String lineSep = System.getProperty("\n");
     BufferedReader br = new BufferedReader(new FileReader(filename));
     String nextLine = "";
     StringBuffer sb = new StringBuffer();
@@ -78,26 +78,8 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
     String search = "<jndi-binding type=\"XAPooledDataSource\"";
     String last_search = "</jndi-binding>";
     String newDB = "newDB_" + OSProcess.getId();
-    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\"          jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"5\" max-pool-size=\"5\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\"6\" login-timeout-seconds=\"2\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:"+newDB+";create=true\" >";
-    String config_prop = "<config-property>"
-        + "<config-property-name>description</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>hi</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>user</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>jeeves</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>password</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        "
-        + "</config-property>" + "<config-property>"
-        + "<config-property-name>databaseName</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>"+newDB+"</config-property-value>"
-        + "</config-property>\n";
+    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\"          jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"5\" max-pool-size=\"5\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\"6\" login-timeout-seconds=\"2\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:" + newDB + ";create=true\" >";
+    String config_prop = "<config-property>" + "<config-property-name>description</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>hi</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>user</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>jeeves</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>password</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        " + "</config-property>" + "<config-property>" + "<config-property-name>databaseName</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>" + newDB + "</config-property-value>" + "</config-property>\n";
     String new_str = jndi_str + config_prop;
     /*
      * String new_str = " <jndi-binding type=\"XAPooledDataSource\"
@@ -138,14 +120,13 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
     wr.flush();
     wr.close();
     props.setProperty(CACHE_XML_FILE, path);
-//    String tableName = "";
+    //    String tableName = "";
     //		  props.setProperty(DistributionConfig.ConfigurationProperties.MCAST_PORT, "10339");
     try {
       //			   ds = DistributedSystem.connect(props);
       ds = (new ExceptionsDUnitTest()).getSystem(props);
       cache = CacheFactory.create(ds);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace(System.err);
       throw new Exception("" + e);
     }
@@ -160,8 +141,7 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
       if (cache == null || cache.isClosed()) {
         cache = CacheFactory.create(ds);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -171,14 +151,13 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
       if (cache != null && !cache.isClosed()) {
         cache.close();
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     try {
-      if (ds != null) ds.disconnect();
-    }
-    catch (Exception e) {
+      if (ds != null)
+        ds.disconnect();
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().fine("Error in disconnecting from Distributed System");
     }
   }
@@ -225,22 +204,18 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
       ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
       ds2.getConnection();
       ds1 = (DataSource) ctx.lookup("java:/XAPooledDataSource");
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       ds1.getConnection();
       Thread.sleep(8000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured)
-          fail("Exception did not occur on commit although was supposed"
-              + "occur");
-    }
-    catch (Exception e) {
+        fail("Exception did not occur on commit although was supposed" + "occur");
+    } catch (Exception e) {
       LogWriterUtils.getLogWriter().fine("Exception caught in runTest1 due to : " + e);
       fail("failed in runTest1 due to " + e);
     }
@@ -261,30 +236,24 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
       ds1.getConnection();
       ds1.getConnection();
       ds1.getConnection();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       try {
         ds1.getConnection();
         Thread.sleep(8000);
-      }
-      catch (SQLException e) {
+      } catch (SQLException e) {
         exceptionOccured1 = true;
       }
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured2 = true;
       }
       if (!exceptionOccured1)
-          fail("Exception (Login-Time-Out)did not occur although was supposed"
-              + "to occur");
+        fail("Exception (Login-Time-Out)did not occur although was supposed" + "to occur");
       if (exceptionOccured2)
-          fail("Exception did occur on commit, although was not supposed"
-              + "to occur");
-    }
-    catch (Exception e) {
+        fail("Exception did occur on commit, although was not supposed" + "to occur");
+    } catch (Exception e) {
       fail("failed in runTest2 due to " + e);
     }
   }
@@ -298,23 +267,19 @@ public class ExceptionsDUnitTest extends JUnit4DistributedTestCase {
       ds1 = (DataSource) ctx.lookup("java:/XAPooledDataSource");
       ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
       ds2.getConnection();
-      UserTransaction utx = (UserTransaction) ctx
-          .lookup("java:/UserTransaction");
+      UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
       utx.setTransactionTimeout(2);
       ds1.getConnection();
       Thread.sleep(4000);
       try {
         utx.commit();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exceptionOccured = true;
       }
       if (!exceptionOccured)
-          fail("Exception (Transaction-Time-Out)did not occur although was supposed"
-              + "to occur");
-    }
-    catch (Exception e) {
+        fail("Exception (Transaction-Time-Out)did not occur although was supposed" + "to occur");
+    } catch (Exception e) {
       fail("failed in runTest3 due to " + e);
     }
   }

@@ -26,7 +26,7 @@ import org.apache.geode.cache.wan.GatewaySender;
  *
  */
 public interface TypeRegistration {
-  
+
   /**
    * Define the type in the distributed system
    */
@@ -41,16 +41,16 @@ public interface TypeRegistration {
    * Add a type id that has come from a remote member.
    */
   public void addRemoteType(int typeId, PdxType type);
-  
+
   public void addImportedType(int typeId, PdxType importedType);
-  
+
   /**
    * Test hook to get the last allocated type id
    */
   public int getLastAllocatedTypeId();
 
   public void initialize();
-  
+
   public void gatewaySenderStarted(GatewaySender gatewaySender);
 
   public void creatingPersistentRegion();
@@ -62,7 +62,7 @@ public interface TypeRegistration {
   public void addRemoteEnum(int enumId, EnumInfo newInfo);
 
   public void addImportedEnum(int enumId, EnumInfo importedInfo);
-  
+
   public int defineEnum(EnumInfo newInfo);
 
   public EnumInfo getEnumById(int enumId);
@@ -87,13 +87,13 @@ public interface TypeRegistration {
    */
   public PdxType getPdxTypeForField(String fieldName, String className);
 
- /*
+  /*
    * test hook
    */
   public void testClearRegistry();
 
   public boolean isClient();
-  
+
   /**
    * Return the size of the type registry in this member.
    */

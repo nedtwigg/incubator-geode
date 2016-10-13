@@ -80,9 +80,7 @@ public class Customer implements Serializable {
 
     final Customer that = (Customer) obj;
 
-    return (ObjectUtils.equals(this.getCustomerId(), that.getCustomerId())
-        && ObjectUtils.equals(this.getLastName(), that.getLastName()) && ObjectUtils
-          .equals(this.getFirstName(), that.getFirstName()));
+    return (ObjectUtils.equals(this.getCustomerId(), that.getCustomerId()) && ObjectUtils.equals(this.getLastName(), that.getLastName()) && ObjectUtils.equals(this.getFirstName(), that.getFirstName()));
   }
 
   @Override

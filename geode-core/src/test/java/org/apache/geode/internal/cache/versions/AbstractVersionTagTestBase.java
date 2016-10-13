@@ -24,21 +24,22 @@ import org.junit.Test;
 public abstract class AbstractVersionTagTestBase {
   @SuppressWarnings("rawtypes")
   protected abstract VersionTag createVersionTag();
-  
+
   @SuppressWarnings("rawtypes")
   private VersionTag vt;
-  
+
   @Before
   public void setup() {
     this.vt = createVersionTag();
   }
+
   @Test
   public void testFromOtherMemberBit() {
     assertEquals(false, vt.isFromOtherMember());
     vt.setIsRemoteForTesting();
     assertEquals(true, vt.isFromOtherMember());
   }
-  
+
   @Test
   public void testTimeStampUpdatedBit() {
     assertEquals(false, vt.isTimeStampUpdated());
@@ -47,7 +48,7 @@ public abstract class AbstractVersionTagTestBase {
     vt.setTimeStampApplied(false);
     assertEquals(false, vt.isTimeStampUpdated());
   }
-  
+
   @Test
   public void testGatewayTagBit() {
     assertEquals(false, vt.isGatewayTag());
@@ -56,14 +57,14 @@ public abstract class AbstractVersionTagTestBase {
     vt.setIsGatewayTag(false);
     assertEquals(false, vt.isGatewayTag());
   }
-  
+
   @Test
   public void testRecordedBit() {
     assertEquals(false, vt.isRecorded());
     vt.setRecorded();
     assertEquals(true, vt.isRecorded());
   }
-  
+
   @SuppressWarnings("unchecked")
   @Test
   public void testPreviousMemberIDBit() {
@@ -71,7 +72,7 @@ public abstract class AbstractVersionTagTestBase {
     vt.setPreviousMemberID(null);
     assertEquals(true, vt.hasPreviousMemberID());
   }
-  
+
   @Test
   public void testPosDupBit() {
     assertEquals(false, vt.isPosDup());
@@ -80,7 +81,7 @@ public abstract class AbstractVersionTagTestBase {
     vt.setPosDup(false);
     assertEquals(false, vt.isPosDup());
   }
-  
+
   @Test
   public void testAllowedByResolverBit() {
     assertEquals(false, vt.isAllowedByResolver());

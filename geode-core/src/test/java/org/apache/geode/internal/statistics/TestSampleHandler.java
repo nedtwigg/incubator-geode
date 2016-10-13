@@ -28,19 +28,19 @@ public class TestSampleHandler implements SampleHandler {
 
   public TestSampleHandler() {
   }
-  
+
   public synchronized void clearAllNotifications() {
     this.notifications.clear();
   }
-  
+
   public synchronized int getNotificationCount() {
     return this.notifications.size();
   }
-  
+
   public synchronized List<Info> getNotifications() {
     return this.notifications;
   }
-  
+
   @Override
   public synchronized void sampled(long timeStamp, List<ResourceInstance> resourceInstances) {
     int resourceCount = resourceInstances.size();
@@ -71,21 +71,21 @@ public class TestSampleHandler implements SampleHandler {
     sb.append("}");
     return sb.toString();
   }
-  
+
   /**
    * @since GemFire 7.0
    */
   public static class Info {
     private final String name;
-    
+
     public Info(String name) {
       this.name = name;
     }
-    
+
     public String getName() {
       return this.name;
     }
-    
+
     @Override
     public String toString() {
       final StringBuilder sb = new StringBuilder(getClass().getName());
@@ -94,11 +94,11 @@ public class TestSampleHandler implements SampleHandler {
       appendToString(sb);
       return sb.append("}").toString();
     }
-    
+
     protected void appendToString(StringBuilder sb) {
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
@@ -109,17 +109,17 @@ public class TestSampleHandler implements SampleHandler {
       super(name);
       this.resource = resource;
     }
-    
+
     public ResourceInstance getResourceInstance() {
       return this.resource;
     }
-    
+
     @Override
     protected void appendToString(StringBuilder sb) {
       sb.append(", resource=").append(this.resource);
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
@@ -130,43 +130,43 @@ public class TestSampleHandler implements SampleHandler {
       super(name);
       this.type = type;
     }
-    
+
     public ResourceType getResourceType() {
       return this.type;
     }
-    
+
     @Override
     protected void appendToString(StringBuilder sb) {
       sb.append(", type=").append(this.type);
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
   public static class SampledInfo extends Info {
     private final long timeStamp;
     private final int resourceCount;
-    
+
     public SampledInfo(String name, long timeStamp, int resourceCount) {
       super(name);
       this.timeStamp = timeStamp;
       this.resourceCount = resourceCount;
     }
-    
+
     public long getTimeStamp() {
       return this.timeStamp;
     }
-    
+
     public int getResourceCount() {
       return this.resourceCount;
     }
-    
+
     @Override
     protected void appendToString(StringBuilder sb) {
       sb.append(", timeStamp=").append(this.timeStamp);
       sb.append(", resourceCount=").append(this.resourceCount);
     }
   }
-  
+
 }

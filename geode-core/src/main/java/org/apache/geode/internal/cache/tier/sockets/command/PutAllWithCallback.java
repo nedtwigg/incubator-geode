@@ -26,25 +26,27 @@ import org.apache.geode.internal.cache.tier.sockets.Part;
  *
  */
 public class PutAllWithCallback extends PutAll80 {
-  
+
   private final static PutAllWithCallback singleton = new PutAllWithCallback();
-  
+
   public static Command getCommand() {
     return singleton;
   }
-  
+
   protected PutAllWithCallback() {
   }
-  
+
   @Override
   protected String putAllClassName() {
     return "putAllWithCallback";
   }
+
   @Override
   protected Object getOptionalCallbackArg(Message msg) throws ClassNotFoundException, IOException {
     Part callbackPart = msg.getPart(5);
     return callbackPart.getObject();
   }
+
   @Override
   protected int getBasePartCount() {
     return 6;

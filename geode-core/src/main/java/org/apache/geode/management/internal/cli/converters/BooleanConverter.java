@@ -35,19 +35,19 @@ public class BooleanConverter implements Converter<Boolean> {
     return Boolean.class.isAssignableFrom(requiredType) || boolean.class.isAssignableFrom(requiredType);
   }
 
-	public Boolean convertFromText(final String value, final Class<?> requiredType, final String optionContext) {
-		if ("true".equalsIgnoreCase(value)) {
-			return true;
-		} else if ("false".equalsIgnoreCase(value)) {
-			return false;
-		} else {
-			throw new IllegalArgumentException("Cannot convert " + value + " to type Boolean.");
-		}
-	}
+  public Boolean convertFromText(final String value, final Class<?> requiredType, final String optionContext) {
+    if ("true".equalsIgnoreCase(value)) {
+      return true;
+    } else if ("false".equalsIgnoreCase(value)) {
+      return false;
+    } else {
+      throw new IllegalArgumentException("Cannot convert " + value + " to type Boolean.");
+    }
+  }
 
-	public boolean getAllPossibleValues(final List<Completion> completions, final Class<?> requiredType, final String existingData, final String optionContext, final MethodTarget target) {
-		completions.add(new Completion("true"));
-		completions.add(new Completion("false"));
-		return false;
-	}
+  public boolean getAllPossibleValues(final List<Completion> completions, final Class<?> requiredType, final String existingData, final String optionContext, final MethodTarget target) {
+    completions.add(new Completion("true"));
+    completions.add(new Completion("false"));
+    return false;
+  }
 }

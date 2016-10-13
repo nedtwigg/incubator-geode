@@ -57,13 +57,13 @@ public interface ClientCache extends GemFireCache {
    * with this pool.
    */
   public QueryService getQueryService(String poolName);
-  
+
   /**
    * Return a QueryService that queries the local state in the client cache.
    * These queries will not be sent to a server.
    */
   public QueryService getLocalQueryService();
-  
+
   /**
    * Terminates this object cache and releases all the resources.
    * Calls {@link Region#close} on each region in the cache.
@@ -73,7 +73,7 @@ public interface ClientCache extends GemFireCache {
    * @param keepalive whether the server should keep the durable client's queues alive for the timeout period
    * @throws CacheClosedException if the cache is already closed.
    */
-  public void close(boolean keepalive);  
+  public void close(boolean keepalive);
 
   /**
    * Create and return a client region factory that is initialized to create
@@ -81,7 +81,7 @@ public interface ClientCache extends GemFireCache {
    * @param shortcut the predefined region attributes to initialize the factory with.
    * @return a factory that will produce a client region.
    */
-  public <K,V> ClientRegionFactory<K,V> createClientRegionFactory(ClientRegionShortcut shortcut);
+  public <K, V> ClientRegionFactory<K, V> createClientRegionFactory(ClientRegionShortcut shortcut);
 
   /**
    * Create and return a client region factory that is initialized to create
@@ -92,7 +92,7 @@ public interface ClientCache extends GemFireCache {
    * @throws IllegalStateException if named region attributes has not been defined.
    * @return a factory that will produce a client region.
    */
-  public <K,V> ClientRegionFactory<K,V> createClientRegionFactory(String regionAttributesId);
+  public <K, V> ClientRegionFactory<K, V> createClientRegionFactory(String regionAttributesId);
 
   /**
    * Notifies the server that this durable client is ready to receive updates.
@@ -118,7 +118,7 @@ public interface ClientCache extends GemFireCache {
    * 
    * Requires that {@link ClientCacheFactory#setPoolMultiuserAuthentication(boolean) multiuser-authentication}
    * to be set to true on the default pool.
-
+  
    * Applications must use this instance to do operations, when
    * multiuser-authentication is set to true.
    *
@@ -135,7 +135,7 @@ public interface ClientCache extends GemFireCache {
    *           when invoked with multiuser-authentication as false.
    */
   public RegionService createAuthenticatedView(Properties userSecurityProperties);
-  
+
   /**
    * Creates an authenticated cache view using the given user security properties
    * using the given pool to connect to servers.
@@ -149,13 +149,13 @@ public interface ClientCache extends GemFireCache {
    *         properties.
    */
   public RegionService createAuthenticatedView(Properties userSecurityProperties, String poolName);
-  
+
   /**
    * Returns a set of the servers to which this client is currently connected.
    * @since GemFire 6.6
    */
   public Set<InetSocketAddress> getCurrentServers();
-  
+
   /**
    * Returns the default server pool. If one or more non-default pools were
    * configured, this may return null.
@@ -163,5 +163,5 @@ public interface ClientCache extends GemFireCache {
    * @see org.apache.geode.cache.client.Pool
    */
   public Pool getDefaultPool();
-  
+
 }

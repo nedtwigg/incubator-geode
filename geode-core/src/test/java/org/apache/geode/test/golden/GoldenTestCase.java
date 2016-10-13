@@ -41,20 +41,18 @@ public abstract class GoldenTestCase {
   /** Use to enable debug output in the JUnit process */
   protected static final String DEBUG_PROPERTY = "golden.test.DEBUG";
   protected static final boolean DEBUG = Boolean.getBoolean(DEBUG_PROPERTY);
-  
+
   /** The log4j2 config used within the spawned process */
   private static final String LOG4J2_CONFIG_URL_STRING = GoldenTestCase.class.getResource("log4j2-test.xml").toString();
-  private static final String[] JVM_ARGS = new String[] {
-      "-D"+ConfigurationFactory.CONFIGURATION_FILE_PROPERTY+"="+LOG4J2_CONFIG_URL_STRING
-    };
-  
+  private static final String[] JVM_ARGS = new String[] { "-D" + ConfigurationFactory.CONFIGURATION_FILE_PROPERTY + "=" + LOG4J2_CONFIG_URL_STRING };
+
   private final List<ProcessWrapper> processes = new ArrayList<ProcessWrapper>();
-  
+
   @Before
   public final void setUpGoldenTest() throws Exception {
     subSetUp();
   }
-  
+
   @After
   public final void tearDownGoldenTest() throws Exception {
     try {
@@ -67,7 +65,7 @@ public abstract class GoldenTestCase {
     }
     subTearDown();
   }
-  
+
   /**
    * Override this for additional set up.
    * 
@@ -76,7 +74,7 @@ public abstract class GoldenTestCase {
   public void subSetUp() throws Exception {
     // override me
   }
-  
+
   /**
    * Override this for additional tear down after destroying all processes and
    * printing output.
@@ -92,7 +90,7 @@ public abstract class GoldenTestCase {
     this.processes.add(processWrapper);
     return processWrapper;
   }
-  
+
   /** 
    * Creates and returns a new GoldenComparator instance. Default implementation
    * is RegexGoldenComparator. Override if you need a different implementation
@@ -101,7 +99,7 @@ public abstract class GoldenTestCase {
   protected GoldenComparator createGoldenComparator() {
     return new RegexGoldenComparator(expectedProblemLines());
   }
-  
+
   /**
    * Returns an array of expected problem strings. Without overriding this,
    * any line with warning, error or severe will cause the test to fail. By
@@ -112,7 +110,7 @@ public abstract class GoldenTestCase {
   protected String[] expectedProblemLines() {
     return null;
   }
-  
+
   protected void assertOutputMatchesGoldenFile(final String actualOutput, final String goldenFileName) throws IOException {
     GoldenComparator comparator = createGoldenComparator();
     comparator.assertOutputMatchesGoldenFile(actualOutput, goldenFileName);
@@ -130,28 +128,28 @@ public abstract class GoldenTestCase {
     properties.setProperty("file.encoding", "UTF-8");
     return editProperties(properties);
   }
-  
+
   /**
    * Override this to modify the properties that were created by createProperties().
    */
   protected Properties editProperties(final Properties properties) {
     return properties;
   }
-  
+
   protected final void outputLine(final String string) {
     System.out.println(string);
   }
-  
+
   protected final void printProcessOutput(final ProcessWrapper process, final boolean ignoreStopped) {
     debug(process.getOutput(ignoreStopped), "OUTPUT");
   }
-  
+
   protected static void debug(final String output, final String title) {
     debug("------------------ BEGIN " + title + " ------------------");
     debug(output);
     debug("------------------- END " + title + " -------------------");
   }
-  
+
   protected static void debug(final String string) {
     if (DEBUG) {
       System.out.println(string);

@@ -31,16 +31,15 @@ public class ReadyForEventsOp {
    * @param pool the pool to use to communicate with the server.
    * @param primary 
    */
-  public static void execute(ExecutablePool pool, QueueConnectionImpl primary)
-  {
+  public static void execute(ExecutablePool pool, QueueConnectionImpl primary) {
     AbstractOp op = new ReadyForEventsOpImpl();
     pool.executeOn(primary, op);
   }
-                                                               
+
   private ReadyForEventsOp() {
     // no instances allowed
   }
-  
+
   private static class ReadyForEventsOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -50,8 +49,7 @@ public class ReadyForEventsOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override
@@ -70,18 +68,22 @@ public class ReadyForEventsOp {
       processAck(msg, "readyForEvents");
       return null;
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startReadyForEvents();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endReadyForEventsSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endReadyForEvents(start, hasTimedOut(), hasFailed());

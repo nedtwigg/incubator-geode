@@ -31,29 +31,28 @@ import org.apache.geode.cache.Declarable;
 public class PartitionedRegionCacheLoaderForRootRegion implements CacheLoader, Declarable {
 
   @Override
-	public Object load(LoaderHelper helper) throws CacheLoaderException {
+  public Object load(LoaderHelper helper) throws CacheLoaderException {
 
-		/* checking the attributes set in xml file. */
-		PartitionedRegion pr = (PartitionedRegion) helper.getRegion();
-		if (pr.getAttributes().getPartitionAttributes().getRedundantCopies() != 1)
-			fail("Redundancy of the partition region is not 1");
+    /* checking the attributes set in xml file. */
+    PartitionedRegion pr = (PartitionedRegion) helper.getRegion();
+    if (pr.getAttributes().getPartitionAttributes().getRedundantCopies() != 1)
+      fail("Redundancy of the partition region is not 1");
 
-		assertEquals(
-                    pr.getAttributes().getPartitionAttributes().getLocalMaxMemory(), 200);
+    assertEquals(pr.getAttributes().getPartitionAttributes().getLocalMaxMemory(), 200);
 
-		/*
-		 * Returning the same key. This is to check CaccheLoader is invoked or
-		 * not
-		 */
-		return helper.getKey();
-	}
-
-  @Override
-	public void close() {
-	}
+    /*
+     * Returning the same key. This is to check CaccheLoader is invoked or
+     * not
+     */
+    return helper.getKey();
+  }
 
   @Override
-	public void init(Properties props) {
-	}
+  public void close() {
+  }
+
+  @Override
+  public void init(Properties props) {
+  }
 
 }

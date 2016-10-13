@@ -31,37 +31,37 @@ import org.apache.geode.management.internal.cli.GfshParser;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
 public class DiskStoreUpgrader {
-  
+
   public static String STACKTRACE_START = "--------------------------";
-  
+
   public static void main(String[] args) {
-    String errorString      = null;
+    String errorString = null;
     String stackTraceString = null;
-    
-    String   diskStoreName = null;
-    String   diskDirsStr   = null;
-    String[] diskDirs      = null;
-    String   maxOpLogSize  = null;
-    long     maxOplogSize  = -1;
-    
+
+    String diskStoreName = null;
+    String diskDirsStr = null;
+    String[] diskDirs = null;
+    String maxOpLogSize = null;
+    long maxOplogSize = -1;
+
     if (args.length < 3) {
-      throw new IllegalArgumentException("Requires 3 arguments : <diskStoreName> <diskDirs> <maxOpLogSize>") ;
+      throw new IllegalArgumentException("Requires 3 arguments : <diskStoreName> <diskDirs> <maxOpLogSize>");
     }
 
     Properties prop = new Properties();
     try {
-      prop.load(new StringReader(args[0]+GfshParser.LINE_SEPARATOR+args[1]+GfshParser.LINE_SEPARATOR+args[2]));
+      prop.load(new StringReader(args[0] + GfshParser.LINE_SEPARATOR + args[1] + GfshParser.LINE_SEPARATOR + args[2]));
     } catch (IOException e) {
       throw new IllegalArgumentException("Requires 3 arguments : <diskStoreName> <diskDirs> <maxOpLogSize>");
     }
-    
+
     try {
       diskStoreName = prop.getProperty(CliStrings.UPGRADE_OFFLINE_DISK_STORE__NAME);
       diskDirsStr = prop.getProperty(CliStrings.UPGRADE_OFFLINE_DISK_STORE__DISKDIRS);
       diskDirs = diskDirsStr.split(",");
       maxOpLogSize = prop.getProperty(CliStrings.UPGRADE_OFFLINE_DISK_STORE__MAXOPLOGSIZE);
-      maxOplogSize  = Long.valueOf(maxOpLogSize);
-      
+      maxOplogSize = Long.valueOf(maxOpLogSize);
+
       upgrade(diskStoreName, diskDirs, maxOplogSize);
     } catch (GemFireIOException e) {
       Throwable cause = e.getCause();
@@ -83,8 +83,7 @@ public class DiskStoreUpgrader {
           }
         }
         if (!isKnownCause) {
-          errorString = CliStrings.format(CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__CANNOT_ACCESS_DISKSTORE_0_FROM_1_CHECK_GFSH_LOGS, 
-                                          new Object[] {diskStoreName, CliUtil.arrayToString(diskDirs)});
+          errorString = CliStrings.format(CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__CANNOT_ACCESS_DISKSTORE_0_FROM_1_CHECK_GFSH_LOGS, new Object[] { diskStoreName, CliUtil.arrayToString(diskDirs) });
         }
       } else {
         errorString = e.getMessage(); // which are other known exceptions?
@@ -103,8 +102,8 @@ public class DiskStoreUpgrader {
       }
     }
   }
-  
-  private static void upgrade (String diskStoreName, String []diskDirs, long maxOplogSize) {
+
+  private static void upgrade(String diskStoreName, String[] diskDirs, long maxOplogSize) {
     File[] dirs = null;
     if (diskDirs != null) {
       dirs = new File[diskDirs.length];
@@ -115,15 +114,12 @@ public class DiskStoreUpgrader {
     try {
       DiskStoreImpl.offlineCompact(diskStoreName, dirs, true, maxOplogSize);
     } catch (Exception ex) {
-      String fieldsMessage = (maxOplogSize != -1 ? CliStrings.UPGRADE_OFFLINE_DISK_STORE__MAXOPLOGSIZE + "=" +maxOplogSize + "," : "");
+      String fieldsMessage = (maxOplogSize != -1 ? CliStrings.UPGRADE_OFFLINE_DISK_STORE__MAXOPLOGSIZE + "=" + maxOplogSize + "," : "");
       fieldsMessage += CliUtil.arrayToString(dirs);
-      throw new GemFireIOException(
-          CliStrings.format(
-              CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__ERROR_WHILE_COMPACTING_DISKSTORE_0_WITH_1_REASON_2,
-              new Object[] { diskStoreName, fieldsMessage, ex.getMessage() }), ex);
+      throw new GemFireIOException(CliStrings.format(CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__ERROR_WHILE_COMPACTING_DISKSTORE_0_WITH_1_REASON_2, new Object[] { diskStoreName, fieldsMessage, ex.getMessage() }), ex);
     }
   }
-  
+
   private static boolean stringMatches(String str1, String str2) {
     return Pattern.matches(str1, str2);
   }

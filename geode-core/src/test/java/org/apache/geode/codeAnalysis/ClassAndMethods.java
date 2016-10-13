@@ -22,29 +22,28 @@ import org.apache.geode.codeAnalysis.decode.CompiledMethod;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
 public class ClassAndMethods implements Comparable {
   public CompiledClass dclass;
-  public Map<String,CompiledMethod> methods = new HashMap<String,CompiledMethod>();
+  public Map<String, CompiledMethod> methods = new HashMap<String, CompiledMethod>();
   public short variableCount;
-  
+
   public ClassAndMethods(CompiledClass parsedClass) {
     this.dclass = parsedClass;
   }
-  
+
   public int compareTo(Object other) {
-    if ( !(other instanceof ClassAndMethods) ) {
+    if (!(other instanceof ClassAndMethods)) {
       return -1;
     }
-    return dclass.compareTo(((ClassAndMethods)other).dclass);
+    return dclass.compareTo(((ClassAndMethods) other).dclass);
   }
-  
+
   public int numMethods() {
     return methods.size();
   }
-  
-  @Override public String toString() {
+
+  @Override
+  public String toString() {
     return ClassAndMethodDetails.convertForStoring(this);
   }
 }

@@ -24,10 +24,10 @@ package org.apache.geode.cache;
  * @deprecated this feature is scheduled to be removed
  */
 public abstract class RegionRoleException extends RoleException {
-  
+
   /** The full path of the region affected by the reliability failure */
   private String regionFullPath;
-  
+
   /** 
    * Constructs a <code>RegionRoleException</code> with a message.
    * @param s the String message
@@ -37,7 +37,7 @@ public abstract class RegionRoleException extends RoleException {
     super(s);
     this.regionFullPath = regionFullPath;
   }
-  
+
   /** 
    * Constructs a <code>RegionRoleException</code> with a message and
    * a cause.
@@ -45,11 +45,11 @@ public abstract class RegionRoleException extends RoleException {
    * @param regionFullPath full path of region for which access was attempted
    * @param ex the Throwable cause
    */
-  public RegionRoleException(String s,  String regionFullPath, Throwable ex) {
+  public RegionRoleException(String s, String regionFullPath, Throwable ex) {
     super(s, ex);
     this.regionFullPath = regionFullPath;
   }
-  
+
   /** 
    * Returns the full path of the region for which access was attempted.
    * @return the full path of the region for which access was attempted
@@ -57,6 +57,5 @@ public abstract class RegionRoleException extends RoleException {
   public String getRegionFullPath() {
     return this.regionFullPath;
   }
-  
-}
 
+}

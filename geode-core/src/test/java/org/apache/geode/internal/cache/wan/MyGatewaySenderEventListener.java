@@ -24,8 +24,7 @@ import java.util.Map;
 import org.apache.geode.cache.asyncqueue.AsyncEvent;
 import org.apache.geode.cache.asyncqueue.AsyncEventListener;
 
-public class MyGatewaySenderEventListener implements
-    AsyncEventListener, Serializable {
+public class MyGatewaySenderEventListener implements AsyncEventListener, Serializable {
   String id = "MyGatewaySenderEventListener";
   /**
    * Creates a latency listener.
@@ -40,11 +39,11 @@ public class MyGatewaySenderEventListener implements
    * Processes events by recording their latencies.
    */
   public boolean processEvents(List<AsyncEvent> events) {
-	  System.out.println("hitesh got event");
-    synchronized (eventsMap) {		  
-   	 for (AsyncEvent event : events) {
-      	    this.eventsMap.put(event.getKey(), event.getDeserializedValue());
-        }
+    System.out.println("hitesh got event");
+    synchronized (eventsMap) {
+      for (AsyncEvent event : events) {
+        this.eventsMap.put(event.getKey(), event.getDeserializedValue());
+      }
     }
     return true;
   }
@@ -59,19 +58,20 @@ public class MyGatewaySenderEventListener implements
   public void printMap() {
     System.out.println("Printing Map " + this.eventsMap);
   }
-  
+
   @Override
-  public boolean equals(Object obj){
-    if(this == obj){
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if ( !(obj instanceof MyGatewaySenderEventListener) ) return false;
-    MyGatewaySenderEventListener listener = (MyGatewaySenderEventListener)obj;
+    if (!(obj instanceof MyGatewaySenderEventListener))
+      return false;
+    MyGatewaySenderEventListener listener = (MyGatewaySenderEventListener) obj;
     return this.id.equals(listener.id);
   }
-  
+
   @Override
-  public String toString(){
+  public String toString() {
     return id;
   }
 }

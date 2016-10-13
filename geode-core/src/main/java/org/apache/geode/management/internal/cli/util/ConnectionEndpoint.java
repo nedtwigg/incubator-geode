@@ -24,12 +24,12 @@ package org.apache.geode.management.internal.cli.util;
  *
  */
 public class ConnectionEndpoint {
-  public static final String JMXMANAGER_OPTION_CONTEXT  = "__jmx-manager__";
+  public static final String JMXMANAGER_OPTION_CONTEXT = "__jmx-manager__";
   public static final String LOCATOR_OPTION_CONTEXT = "__locator__";
-  
+
   private final String host;
   private final int port;
-  
+
   /**
    * @param host
    * @param port
@@ -52,16 +52,15 @@ public class ConnectionEndpoint {
   public int getPort() {
     return port;
   }
-  
+
   public String toString(boolean includeClassName) {
     StringBuilder builder = new StringBuilder();
-    
+
     if (includeClassName) {
       builder.append(ConnectionEndpoint.class.getSimpleName());
     }
-    builder.append("[host=").append(host).
-            append(", port=").append(port).append("]");
-    
+    builder.append("[host=").append(host).append(", port=").append(port).append("]");
+
     return builder.toString();
   }
 

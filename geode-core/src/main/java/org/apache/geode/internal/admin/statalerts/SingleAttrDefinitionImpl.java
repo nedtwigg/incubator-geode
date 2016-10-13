@@ -70,8 +70,7 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
       return false;
 
     if (statisticInfo != null) {
-      Statistics[] temp = factory.findStatisticsByTextId(statisticInfo
-          .getStatisticsTextId());
+      Statistics[] temp = factory.findStatisticsByTextId(statisticInfo.getStatisticsTextId());
 
       if (temp == null || temp.length == 0)
         return false;
@@ -145,16 +144,14 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
    */
   public void setStatisticInfo(StatisticInfo[] info) {
     if (info == null || info.length != 1)
-      throw new IllegalArgumentException(
-          "setStatisticInfo method requires 1 length array of StatisticInfo objects.");
+      throw new IllegalArgumentException("setStatisticInfo method requires 1 length array of StatisticInfo objects.");
 
     statisticInfo = info[0];
   }
 
   public Number[] getValue() {
     Number[] vals = new Number[1];
-    vals[0] = statisticInfo.getStatistics().get(
-        statisticInfo.getStatisticDescriptor());
+    vals[0] = statisticInfo.getStatistics().get(statisticInfo.getStatisticDescriptor());
     return vals;
   }
 
@@ -203,10 +200,9 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
     DataSerializer.writeObject(this.statisticInfo, out);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.name = DataSerializer.readString(in);
     this._id = DataSerializer.readPrimitiveInt(in);
-    this.statisticInfo = (StatisticInfo)DataSerializer.readObject(in);
+    this.statisticInfo = (StatisticInfo) DataSerializer.readObject(in);
   }
 }

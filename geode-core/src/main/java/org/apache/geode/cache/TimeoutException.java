@@ -35,15 +35,14 @@ package org.apache.geode.cache;
  * @since GemFire 3.0
  */
 public class TimeoutException extends OperationAbortedException {
-private static final long serialVersionUID = -6260761691185737442L;
-  
+  private static final long serialVersionUID = -6260761691185737442L;
+
   /**
    * Creates a new instance of <code>TimeoutException</code> without detail message.
    */
   public TimeoutException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>TimeoutException</code> with the specified detail message.
    * @param msg the detail message
@@ -51,7 +50,7 @@ private static final long serialVersionUID = -6260761691185737442L;
   public TimeoutException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>TimeoutException</code> with the specified detail message
    * and cause.
@@ -61,7 +60,7 @@ private static final long serialVersionUID = -6260761691185737442L;
   public TimeoutException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>TimeoutException</code> with the specified cause.
    * @param cause the causal Throwable

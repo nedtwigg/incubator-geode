@@ -45,14 +45,14 @@ import org.apache.geode.internal.logging.LogService;
  */
 public class FindVersionTagOperation {
   private static final Logger logger = LogService.getLogger();
-  
+
   public static VersionTag findVersionTag(LocalRegion r, EventID eventId, boolean isBulkOp) {
     DM dm = r.getDistributionManager();
     Set recipients;
     if (r instanceof DistributedRegion) {
-      recipients = ((DistributedRegion)r).getDistributionAdvisor().adviseCacheOp();
+      recipients = ((DistributedRegion) r).getDistributionAdvisor().adviseCacheOp();
     } else {
-      recipients = ((PartitionedRegion)r).getRegionAdvisor().adviseDataStore();
+      recipients = ((PartitionedRegion) r).getRegionAdvisor().adviseDataStore();
     }
     ResultReplyProcessor processor = new ResultReplyProcessor(dm, recipients);
     FindVersionTagMessage msg = new FindVersionTagMessage(recipients, processor.getProcessorId(), r.getFullPath(), eventId, isBulkOp);
@@ -66,15 +66,15 @@ public class FindVersionTagOperation {
     }
     return processor.getVersionTag();
   }
-  
+
   public static class ResultReplyProcessor extends ReplyProcessor21 {
 
     VersionTag versionTag;
-    
+
     public ResultReplyProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
     }
-    
+
     @Override
     public void process(DistributionMessage msg) {
       if (msg instanceof VersionTagReply) {
@@ -90,7 +90,7 @@ public class FindVersionTagOperation {
     public VersionTag getVersionTag() {
       return versionTag;
     }
-    
+
     @Override
     public boolean stillWaiting() {
       return this.versionTag == null && super.stillWaiting();
@@ -104,14 +104,13 @@ public class FindVersionTagOperation {
    * this cache as a new event.  When the event is then propagated to other servers
    * that have already seen the event it will be ignored, causing an inconsistency.
    */
-  public static class FindVersionTagMessage extends HighPriorityDistributionMessage 
-     implements MessageWithReply {
-    
+  public static class FindVersionTagMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+
     int processorId;
     String regionName;
     EventID eventId;
     private boolean isBulkOp;
-    
+
     protected FindVersionTagMessage(Collection recipients, int processorId, String regionName, EventID eventId, boolean isBulkOp) {
       super();
       setRecipients(recipients);
@@ -139,9 +138,9 @@ public class FindVersionTagOperation {
           }
           return;
         }
-        if(isBulkOp) {
+        if (isBulkOp) {
           result = r.findVersionTagForClientBulkOp(eventId);
-          
+
         } else {
           result = r.findVersionTagForClientEvent(eventId);
         }
@@ -151,12 +150,10 @@ public class FindVersionTagOperation {
         if (logger.isDebugEnabled()) {
           logger.debug("Found version tag {}", result);
         }
- 
-      }
-      catch (RuntimeException e) {
+
+      } catch (RuntimeException e) {
         logger.warn("Exception thrown while searching for a version tag", e);
-      }
-      finally {
+      } finally {
         VersionTagReply reply = new VersionTagReply(result);
         reply.setProcessorId(this.processorId);
         reply.setRecipient(getSender());
@@ -184,7 +181,7 @@ public class FindVersionTagOperation {
     public int getDSFID() {
       return FIND_VERSION_TAG;
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -203,20 +200,16 @@ public class FindVersionTagOperation {
       InternalDataSerializer.invokeFromData(this.eventId, in);
       this.isBulkOp = in.readBoolean();
     }
-    
+
     @Override
     public String toString() {
-      return this.getShortClassName() + "(processorId=" + this.processorId
-      + ";region=" + this.regionName
-      + ";eventId=" + this.eventId
-      + ";isBulkOp=" + this.isBulkOp
-      + ")";
+      return this.getShortClassName() + "(processorId=" + this.processorId + ";region=" + this.regionName + ";eventId=" + this.eventId + ";isBulkOp=" + this.isBulkOp + ")";
     }
   }
 
   public static class VersionTagReply extends ReplyMessage {
     VersionTag versionTag;
-    
+
     VersionTagReply(VersionTag result) {
       this.versionTag = result;
     }
@@ -224,10 +217,10 @@ public class FindVersionTagOperation {
     /** for deserialization */
     public VersionTagReply() {
     }
-    
+
     @Override
     public String toString() {
-      return "VersionTagReply("+this.versionTag+")";
+      return "VersionTagReply(" + this.versionTag + ")";
     }
 
     @Override
@@ -237,10 +230,9 @@ public class FindVersionTagOperation {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
-      this.versionTag = (VersionTag)DataSerializer.readObject(in);
+      this.versionTag = (VersionTag) DataSerializer.readObject(in);
     }
 
     @Override

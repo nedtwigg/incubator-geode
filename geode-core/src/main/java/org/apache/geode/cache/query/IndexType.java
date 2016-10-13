@@ -42,9 +42,8 @@ public class IndexType {
    *
    * @see QueryService#createIndex(String, IndexType, String, String)
    */
-  public static final IndexType FUNCTIONAL
-    = new IndexType("FUNCTIONAL");
-  
+  public static final IndexType FUNCTIONAL = new IndexType("FUNCTIONAL");
+
   /**
    * The index type of a hash index.
    * A hash index is used for the comparison of some function
@@ -61,10 +60,8 @@ public class IndexType {
    *
    * @see QueryService#createIndex(String, IndexType, String, String)
    */
-  public static final IndexType HASH
-  = new IndexType("HASH");
-  
-  
+  public static final IndexType HASH = new IndexType("HASH");
+
   /**
    * The index type of a primary key index. A primary key index uses the
    * keys in the region itself. By creating a primary key index, you make
@@ -83,16 +80,16 @@ public class IndexType {
    * @see QueryService#createIndex(String, IndexType, String, String)
    */
   public static final IndexType PRIMARY_KEY = new IndexType("PRIMARY_KEY");
-  
+
   //public static final IndexType MAP_INDEX = new IndexType("MAP_INDEX");
-  
+
   private String name;
-  
+
   /** Creates a new instance of IndexType */
   private IndexType(String name) {
     this.name = name;
   }
-  
+
   /**
    * Return the index type as a String
    * @return the String representation of this IndexType
@@ -101,5 +98,5 @@ public class IndexType {
   public String toString() {
     return this.name;
   }
-  
+
 }

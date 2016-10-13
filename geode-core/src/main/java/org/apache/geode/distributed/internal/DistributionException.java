@@ -24,7 +24,7 @@ import org.apache.geode.GemFireException;
  * another (checked) exception.
  */
 public class DistributionException extends GemFireException {
-private static final long serialVersionUID = 9039055444056269504L;
+  private static final long serialVersionUID = 9039055444056269504L;
 
   /**
    * Creates a new <code>DistributionException</code> with the given

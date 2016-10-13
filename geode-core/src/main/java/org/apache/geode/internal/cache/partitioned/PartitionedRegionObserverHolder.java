@@ -28,7 +28,6 @@ import org.apache.geode.cache.query.internal.Support;
 
 public class PartitionedRegionObserverHolder {
 
-
   /**
    * The default 'do-nothing' bridge observer *
    */
@@ -43,20 +42,16 @@ public class PartitionedRegionObserverHolder {
    * Set the given observer to be notified of events. Returns the current
    * observer.
    */
-  public static final PartitionedRegionObserver setInstance(PartitionedRegionObserver observer)
-  {
-    Support.assertArg(observer != null,
-        "setInstance expects a non-null argument!");
+  public static final PartitionedRegionObserver setInstance(PartitionedRegionObserver observer) {
+    Support.assertArg(observer != null, "setInstance expects a non-null argument!");
     PartitionedRegionObserver oldObserver = _instance;
     _instance = observer;
     return oldObserver;
   }
 
   /** Return the current ClientServerObserver instance */
-  public static final PartitionedRegionObserver getInstance()
-  {
+  public static final PartitionedRegionObserver getInstance() {
     return _instance;
   }
-
 
 }

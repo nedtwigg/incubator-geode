@@ -58,8 +58,7 @@ class AdminReplyProcessor extends ReplyProcessor21 {
    * <code>AdminRequest</code>s are only sent to one member of the
    * distributed system.
    */
-  AdminReplyProcessor(InternalDistributedSystem system,
-                      InternalDistributedMember member) {
+  AdminReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member) {
     super(system, member);
     this.isCancelled = false;
     this.responder = member;
@@ -111,11 +110,10 @@ class AdminReplyProcessor extends ReplyProcessor21 {
    *
    * Otherwise, re-throw the <code>InterruptedException</code>.
    */
-  protected boolean handleInterruption(InterruptedException ie,
-                                       long msecsRemaining)
-    throws InterruptedException, ReplyException {
+  protected boolean handleInterruption(InterruptedException ie, long msecsRemaining) throws InterruptedException, ReplyException {
 
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     if (this.isCancelled) {
       return true;
 

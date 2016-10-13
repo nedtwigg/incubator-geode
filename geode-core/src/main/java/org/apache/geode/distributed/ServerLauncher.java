@@ -126,7 +126,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
   private volatile transient boolean debug;
 
   private final transient ControlNotificationHandler controlHandler;
-  
+
   private final AtomicBoolean starting = new AtomicBoolean(false);
 
   private final boolean assignBuckets;
@@ -155,25 +155,25 @@ public class ServerLauncher extends AbstractLauncher<String> {
 
   // NOTE in addition to debug, the other shared, mutable state
   private volatile transient String statusMessage;
-  
+
   private final Float criticalHeapPercentage;
   private final Float evictionHeapPercentage;
-  
+
   private final Float criticalOffHeapPercentage;
   private final Float evictionOffHeapPercentage;
-  
-  private final String hostNameForClients; 
+
+  private final String hostNameForClients;
   private final Integer maxConnections;
   private final Integer maxMessageCount;
   private final Integer messageTimeToLive;
   private final Integer socketBufferSize;
-  
+
   private final Integer maxThreads;
 
   private volatile transient ControllableProcess process;
 
   private final transient ServerControllerParameters controllerParameters;
-  
+
   /**
    * Launches a GemFire Server from the command-line configured with the given arguments.
    * 
@@ -182,8 +182,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
   public static void main(final String... args) {
     try {
       new Builder(args).build().run();
-    }
-    catch (AttachAPINotFoundException e) {
+    } catch (AttachAPINotFoundException e) {
       System.err.println(e.getMessage());
     }
   }
@@ -265,6 +264,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
           stopInProcess();
         }
       }
+
       @Override
       public ServiceState<?> handleStatus() {
         return statusInProcess();
@@ -468,8 +468,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
       final InetAddress localhost = SocketCreator.getLocalHost();
 
       return localhost.getCanonicalHostName();
-    }
-    catch (UnknownHostException ignore) {
+    } catch (UnknownHostException ignore) {
       // TODO determine a better value for the host on which the Server is running to return here...
       // NOTE returning localhost/127.0.0.1 implies the serverBindAddress was null and no IP address for localhost
       // could be found
@@ -537,23 +536,23 @@ public class ServerLauncher extends AbstractLauncher<String> {
   public String getWorkingDirectory() {
     return this.workingDirectory;
   }
-  
+
   public Float getCriticalHeapPercentage() {
     return this.criticalHeapPercentage;
   }
-  
+
   public Float getEvictionHeapPercentage() {
     return this.evictionHeapPercentage;
   }
-  
+
   public Float getCriticalOffHeapPercentage() {
     return this.criticalOffHeapPercentage;
   }
-  
+
   public Float getEvictionOffHeapPercentage() {
     return this.evictionOffHeapPercentage;
   }
-  
+
   public String getHostNameForClients() {
     return this.hostNameForClients;
   }
@@ -577,7 +576,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
   public Integer getSocketBufferSize() {
     return this.socketBufferSize;
   }
-  
+
   /**
    * Displays help for the specified Server launcher command to standard err.  If the Server launcher command
    * is unspecified, then usage information is displayed instead.
@@ -588,8 +587,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
   public void help(final Command command) {
     if (Command.isUnspecified(command)) {
       usage();
-    }
-    else {
+    } else {
       info(StringUtils.wrap(helpMap.get(command.getName()), 80, ""));
       info("\n\nusage: \n\n");
       info(StringUtils.wrap("> java ... " + getClass().getName() + " " + usageMap.get(command), 80, "\t\t"));
@@ -629,24 +627,23 @@ public class ServerLauncher extends AbstractLauncher<String> {
   public void run() {
     if (!isHelping()) {
       switch (getCommand()) {
-        case START:
-          info(start());
-          waitOnServer();
-          break;
-        case STATUS:
-          info(status());
-          break;
-        case STOP:
-          info(stop());
-          break;
-        case VERSION:
-          info(version());
-          break;
-        default:
-          usage();
+      case START:
+        info(start());
+        waitOnServer();
+        break;
+      case STATUS:
+        info(status());
+        break;
+      case STOP:
+        info(stop());
+        break;
+      case VERSION:
+        info(version());
+        break;
+      default:
+        usage();
       }
-    }
-    else {
+    } else {
       help(getCommand());
     }
   }
@@ -659,7 +656,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
   protected File getServerPidFile() {
     return new File(getWorkingDirectory(), ProcessType.SERVER.getPidFileName());
   }
-  
+
   /**
    * Determines whether a GemFire Cache Server can be started with this instance of ServerLauncher.
    *
@@ -701,85 +698,71 @@ public class ServerLauncher extends AbstractLauncher<String> {
         try {
           final Properties gemfireProperties = getDistributedSystemProperties(getProperties());
           this.cache = createCache(gemfireProperties);
-          
+
           //Set the resource manager options
           if (this.criticalHeapPercentage != null) {
             this.cache.getResourceManager().setCriticalHeapPercentage(getCriticalHeapPercentage());
-          } 
+          }
           if (this.evictionHeapPercentage != null) {
             this.cache.getResourceManager().setEvictionHeapPercentage(getEvictionHeapPercentage());
           }
           if (this.criticalOffHeapPercentage != null) {
             this.cache.getResourceManager().setCriticalOffHeapPercentage(getCriticalOffHeapPercentage());
-          } 
+          }
           if (this.evictionOffHeapPercentage != null) {
             this.cache.getResourceManager().setEvictionOffHeapPercentage(getEvictionOffHeapPercentage());
           }
-          
+
           this.cache.setIsServer(true);
           startCacheServer(this.cache);
           assignBuckets(this.cache);
           rebalance(this.cache);
-        }
-        finally {
+        } finally {
           ProcessLauncherContext.remove();
         }
-        
+
         debug("Running Server on (%1$s) in (%2$s) as (%2$s)...", getId(), getWorkingDirectory(), getMember());
         this.running.set(true);
 
         return new ServerState(this, Status.ONLINE);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         failOnStart(e);
-        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_IO_ERROR_MESSAGE.toLocalizedString(
-          getServiceName(), getWorkingDirectory(), getId(), e.getMessage()), e);
-      }
-      catch (FileAlreadyExistsException e) {
+        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_IO_ERROR_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getId(), e.getMessage()), e);
+      } catch (FileAlreadyExistsException e) {
         failOnStart(e);
-        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_FILE_ALREADY_EXISTS_ERROR_MESSAGE.
-           toLocalizedString(getServiceName(), getWorkingDirectory(), getId()), e);
-      }
-      catch (PidUnavailableException e) {
+        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_FILE_ALREADY_EXISTS_ERROR_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getId()), e);
+      } catch (PidUnavailableException e) {
         failOnStart(e);
-        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_UNAVAILABLE_ERROR_MESSAGE
-          .toLocalizedString(getServiceName(), getId(), getWorkingDirectory(), e.getMessage()), e);
-      }
-      catch (ClusterConfigurationNotAvailableException e) {
+        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_UNAVAILABLE_ERROR_MESSAGE.toLocalizedString(getServiceName(), getId(), getWorkingDirectory(), e.getMessage()), e);
+      } catch (ClusterConfigurationNotAvailableException e) {
         failOnStart(e);
         throw e;
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         failOnStart(e);
         throw e;
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         failOnStart(e);
         throw new RuntimeException(e);
-      }
-      catch (Error e) {
+      } catch (Error e) {
         failOnStart(e);
         throw e;
-      }
-      finally {
+      } finally {
         this.starting.set(false);
       }
-    }
-    else {
-      throw new IllegalStateException(LocalizedStrings.Launcher_Command_START_SERVICE_ALREADY_RUNNING_ERROR_MESSAGE
-        .toLocalizedString(getServiceName(), getWorkingDirectory(), getId()));
+    } else {
+      throw new IllegalStateException(LocalizedStrings.Launcher_Command_START_SERVICE_ALREADY_RUNNING_ERROR_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getId()));
     }
   }
 
   private Cache createCache(Properties gemfireProperties) {
     ServiceLoader<ServerLauncherCacheProvider> loader = ServiceLoader.load(ServerLauncherCacheProvider.class);
-    for(ServerLauncherCacheProvider provider : loader) {
+    for (ServerLauncherCacheProvider provider : loader) {
       Cache cache = provider.createCache(gemfireProperties, this);
-      if(cache != null) {
+      if (cache != null) {
         return cache;
       }
     }
-    
+
     return DEFAULT_CACHE_PROVIDER.createCache(gemfireProperties, this);
   }
 
@@ -840,16 +823,13 @@ public class ServerLauncher extends AbstractLauncher<String> {
             synchronized (this) {
               wait(500l);
             }
-          }
-          catch (InterruptedException ignore) {
+          } catch (InterruptedException ignore) {
           }
         }
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         cause = e;
         throw e;
-      }
-      finally {
+      } finally {
         failOnStart(cause);
       }
     }
@@ -885,23 +865,23 @@ public class ServerLauncher extends AbstractLauncher<String> {
       final CacheServer cacheServer = cache.addCacheServer();
       cacheServer.setBindAddress(serverBindAddress);
       cacheServer.setPort(serverPort);
-      
+
       if (getMaxThreads() != null) {
         cacheServer.setMaxThreads(getMaxThreads());
       }
-      
+
       if (getMaxConnections() != null) {
         cacheServer.setMaxConnections(getMaxConnections());
       }
-      
+
       if (getMaxMessageCount() != null) {
         cacheServer.setMaximumMessageCount(getMaxMessageCount());
       }
-      
+
       if (getMessageTimeToLive() != null) {
         cacheServer.setMessageTimeToLive(getMessageTimeToLive());
       }
-      
+
       if (getSocketBufferSize() != null) {
         cacheServer.setSocketBufferSize(getSocketBufferSize());
       }
@@ -909,7 +889,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
       if (getHostNameForClients() != null) {
         cacheServer.setHostnameForClients(getHostNameForClients());
       }
-      
+
       CacheServerHelper.setIsDefaultServer(cacheServer);
 
       cacheServer.start();
@@ -972,11 +952,9 @@ public class ServerLauncher extends AbstractLauncher<String> {
     if (isStartingOrRunning()) {
       debug("Getting status from the ServerLauncher instance that actually launched the GemFire Cache Server.%n");
       return new ServerState(this, (isRunning() ? Status.ONLINE : Status.STARTING));
-    }
-    else if (isPidInProcess() && launcher != null) {
+    } else if (isPidInProcess() && launcher != null) {
       return launcher.statusInProcess();
-    }
-    else if (getPid() != null) {
+    } else if (getPid() != null) {
       debug("Getting Server status using process ID (%1$s)%n", getPid());
       return statusWithPid();
     }
@@ -986,12 +964,11 @@ public class ServerLauncher extends AbstractLauncher<String> {
       return statusWithWorkingDirectory();
     }
 
-    debug("This ServerLauncher was not the instance used to launch the GemFire Cache Server, and neither PID "
-      .concat("nor working directory were specified; the Server's state is unknown.%n"));
+    debug("This ServerLauncher was not the instance used to launch the GemFire Cache Server, and neither PID ".concat("nor working directory were specified; the Server's state is unknown.%n"));
 
     return new ServerState(this, Status.NOT_RESPONDING);
   }
-  
+
   private ServerState statusInProcess() {
     if (isStartingOrRunning()) {
       debug("Getting status from the ServerLauncher instance that actually launched the GemFire Cache Server.%n");
@@ -1000,7 +977,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
       return new ServerState(this, Status.NOT_RESPONDING);
     }
   }
-  
+
   private ServerState statusWithPid() {
     try {
       final ProcessController controller = new ProcessControllerFactory().createProcessController(this.controllerParameters, getPid());
@@ -1008,43 +985,40 @@ public class ServerLauncher extends AbstractLauncher<String> {
       final String statusJson = controller.status();
       return ServerState.fromJson(statusJson);
     }
-//    catch (NoClassDefFoundError error) {
-//      if (isAttachAPINotFound(error)) {
-//        throw new AttachAPINotFoundException(LocalizedStrings.Launcher_ATTACH_API_NOT_FOUND_ERROR_MESSAGE
-//          .toLocalizedString(), error);
-//      }
-//
-//      throw error;
-//    }
+    //    catch (NoClassDefFoundError error) {
+    //      if (isAttachAPINotFound(error)) {
+    //        throw new AttachAPINotFoundException(LocalizedStrings.Launcher_ATTACH_API_NOT_FOUND_ERROR_MESSAGE
+    //          .toLocalizedString(), error);
+    //      }
+    //
+    //      throw error;
+    //    }
     catch (ConnectionFailedException e) {
       // failed to attach to server JVM
       return createNoResponseState(e, "Failed to connect to server with process id " + getPid());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-    } 
-//    catch (MalformedObjectNameException e) { // impossible
-//      // JMX object name is bad
-//      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-//    } 
+    }
+    //    catch (MalformedObjectNameException e) { // impossible
+    //      // JMX object name is bad
+    //      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
+    //    } 
     catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-    } 
-//    catch (PidUnavailableException e) {
-//      // couldn't determine pid from within server JVM
-//      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-//    } 
+    }
+    //    catch (PidUnavailableException e) {
+    //      // couldn't determine pid from within server JVM
+    //      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
+    //    } 
     catch (UnableToControlProcessException e) {
       // TODO comment me
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-    } 
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       // TODO comment me
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-    } 
-    catch (TimeoutException e) {
+    } catch (TimeoutException e) {
       // TODO comment me
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
     }
@@ -1055,7 +1029,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     try {
       final ProcessController controller = new ProcessControllerFactory().createProcessController(this.controllerParameters, new File(getWorkingDirectory()), ProcessType.SERVER.getPidFileName(), READ_PID_FILE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
       parsedPid = controller.getProcessId();
-      
+
       // note: in-process request will go infinite loop unless we do the following
       if (parsedPid == identifyPid()) {
         final ServerLauncher runningLauncher = getInstance();
@@ -1066,35 +1040,27 @@ public class ServerLauncher extends AbstractLauncher<String> {
 
       final String statusJson = controller.status();
       return ServerState.fromJson(statusJson);
-    }
-    catch (ConnectionFailedException e) {
+    } catch (ConnectionFailedException e) {
       // failed to attach to server JVM
       return createNoResponseState(e, "Failed to connect to server with process id " + parsedPid);
-    } 
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       // could not find pid file
       return createNoResponseState(e, "Failed to find process file " + ProcessType.SERVER.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with server with process id " + parsedPid);
-    } 
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       return createNoResponseState(e, "Interrupted while trying to communicate with server with process id " + parsedPid);
-    } 
-    catch (MBeanInvocationFailedException e) {
+    } catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with server with process id " + parsedPid);
-    } 
-    catch (PidUnavailableException e) {
+    } catch (PidUnavailableException e) {
       // couldn't determine pid from within server JVM
       return createNoResponseState(e, "Failed to find usable process id within file " + ProcessType.SERVER.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (UnableToControlProcessException e) {
+    } catch (UnableToControlProcessException e) {
       return createNoResponseState(e, "Failed to communicate with server with process id " + parsedPid);
-    } 
-    catch (TimeoutException e) {
+    } catch (TimeoutException e) {
       return createNoResponseState(e, "Failed to communicate with server with process id " + parsedPid);
     }
   }
@@ -1135,7 +1101,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     // TODO give user detailed error message?
     return new ServerState(this, Status.NOT_RESPONDING);
   }
-  
+
   private ServerState stopInProcess() {
     if (isStoppable()) {
       if (this.cache.isReconnecting()) {
@@ -1162,34 +1128,33 @@ public class ServerLauncher extends AbstractLauncher<String> {
       controller.stop();
       return new ServerState(this, Status.STOPPED);
     }
-//    catch (NoClassDefFoundError error) {
-//      if (isAttachAPINotFound(error)) {
-//        throw new AttachAPINotFoundException(LocalizedStrings.Launcher_ATTACH_API_NOT_FOUND_ERROR_MESSAGE
-//          .toLocalizedString(), error);
-//      }
-//
-//      throw error;
-//    }
+    //    catch (NoClassDefFoundError error) {
+    //      if (isAttachAPINotFound(error)) {
+    //        throw new AttachAPINotFoundException(LocalizedStrings.Launcher_ATTACH_API_NOT_FOUND_ERROR_MESSAGE
+    //          .toLocalizedString(), error);
+    //      }
+    //
+    //      throw error;
+    //    }
     catch (ConnectionFailedException e) {
       // failed to attach to server JVM
       return createNoResponseState(e, "Failed to connect to server with process id " + getPid());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-    } 
-//    catch (MalformedObjectNameException e) { // impossible
-//      // JMX object name is bad
-//      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-//    } 
+    }
+    //    catch (MalformedObjectNameException e) { // impossible
+    //      // JMX object name is bad
+    //      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
+    //    } 
     catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-    } 
-//    catch (PidUnavailableException e) {
-//      // couldn't determine pid from within server JVM
-//      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
-//    } 
+    }
+    //    catch (PidUnavailableException e) {
+    //      // couldn't determine pid from within server JVM
+    //      return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
+    //    } 
     catch (UnableToControlProcessException e) {
       // TODO comment me
       return createNoResponseState(e, "Failed to communicate with server with process id " + getPid());
@@ -1201,7 +1166,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     try {
       final ProcessController controller = new ProcessControllerFactory().createProcessController(this.controllerParameters, new File(getWorkingDirectory()), ProcessType.SERVER.getPidFileName(), READ_PID_FILE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
       parsedPid = controller.getProcessId();
-      
+
       // NOTE in-process request will go infinite loop unless we do the following
       if (parsedPid == identifyPid()) {
         final ServerLauncher runningLauncher = getInstance();
@@ -1209,38 +1174,30 @@ public class ServerLauncher extends AbstractLauncher<String> {
           return runningLauncher.stopInProcess();
         }
       }
-      
+
       controller.stop();
       return new ServerState(this, Status.STOPPED);
-    }
-    catch (ConnectionFailedException e) {
+    } catch (ConnectionFailedException e) {
       // failed to attach to server JVM
       return createNoResponseState(e, "Failed to connect to server with process id " + parsedPid);
-    } 
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       // could not find pid file
       return createNoResponseState(e, "Failed to find process file " + ProcessType.SERVER.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with server with process id " + parsedPid);
-    } 
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       return createNoResponseState(e, "Interrupted while trying to communicate with server with process id " + parsedPid);
-    } 
-    catch (MBeanInvocationFailedException e) {
+    } catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with server with process id " + parsedPid);
-    } 
-    catch (PidUnavailableException e) {
+    } catch (PidUnavailableException e) {
       // couldn't determine pid from within server JVM
       return createNoResponseState(e, "Failed to find usable process id within file " + ProcessType.SERVER.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (TimeoutException e) {
+    } catch (TimeoutException e) {
       return createNoResponseState(e, "Timed out trying to find usable process id within file " + ProcessType.SERVER.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (UnableToControlProcessException e) {
+    } catch (UnableToControlProcessException e) {
       return createNoResponseState(e, "Failed to communicate with server with process id " + parsedPid);
     }
   }
@@ -1250,7 +1207,6 @@ public class ServerLauncher extends AbstractLauncher<String> {
     this.running.set(true);
   }
 
-
   private ServerState createNoResponseState(final Exception cause, final String errorMessage) {
     debug(cause);
     return new ServerState(this, Status.NOT_RESPONDING, errorMessage);
@@ -1258,10 +1214,8 @@ public class ServerLauncher extends AbstractLauncher<String> {
 
   private Properties getOverriddenDefaults() {
     final Properties overriddenDefaults = new Properties();
-    
-    overriddenDefaults.put(
-      ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX.concat(LOG_FILE),
-      getLogFileName());
+
+    overriddenDefaults.put(ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX.concat(LOG_FILE), getLogFileName());
 
     for (String key : System.getProperties().stringPropertyNames()) {
       if (key.startsWith(ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX)) {
@@ -1277,22 +1231,22 @@ public class ServerLauncher extends AbstractLauncher<String> {
     public File getPidFile() {
       return getServerPidFile();
     }
-  
+
     @Override
     public File getWorkingDirectory() {
       return new File(ServerLauncher.this.getWorkingDirectory());
     }
-  
+
     @Override
     public int getProcessId() {
       return getPid();
     }
-  
+
     @Override
     public ProcessType getProcessType() {
       return ProcessType.SERVER;
     }
-  
+
     @Override
     public ObjectName getNamePattern() {
       try {
@@ -1303,30 +1257,30 @@ public class ServerLauncher extends AbstractLauncher<String> {
         return null;
       }
     }
-  
+
     @Override
     public String getPidAttribute() {
       return "ProcessId";
     }
-  
+
     @Override
     public String getStopMethod() {
       return "shutDownMember";
     }
-    
+
     @Override
     public String getStatusMethod() {
       return "status";
     }
-  
+
     @Override
     public String[] getAttributes() {
-      return new String[] {"Server"};
+      return new String[] { "Server" };
     }
-  
+
     @Override
     public Object[] getValues() {
-      return new Object[] {Boolean.TRUE};
+      return new Object[] { Boolean.TRUE };
     }
   }
 
@@ -1365,14 +1319,14 @@ public class ServerLauncher extends AbstractLauncher<String> {
     private String memberName;
     private String springXmlLocation;
     private String workingDirectory;
-    
+
     private Float criticalHeapPercentage;
     private Float evictionHeapPercentage;
-    
+
     private Float criticalOffHeapPercentage;
     private Float evictionOffHeapPercentage;
-    
-    private String hostNameForClients; 
+
+    private String hostNameForClients;
     private Integer loadPollInterval;
     private Integer maxConnections;
     private Integer maxMessageCount;
@@ -1453,43 +1407,43 @@ public class ServerLauncher extends AbstractLauncher<String> {
         setHelp(options.has("help"));
         setRebalance(options.has("rebalance"));
         setRedirectOutput(options.has("redirect-output"));
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__CRITICAL__HEAP__PERCENTAGE)) {
           setCriticalHeapPercentage(Float.parseFloat(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__CRITICAL__HEAP__PERCENTAGE))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__EVICTION__HEAP__PERCENTAGE)) {
           setEvictionHeapPercentage(Float.parseFloat(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__EVICTION__HEAP__PERCENTAGE))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__CRITICAL_OFF_HEAP_PERCENTAGE)) {
           setCriticalOffHeapPercentage(Float.parseFloat(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__CRITICAL_OFF_HEAP_PERCENTAGE))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__EVICTION_OFF_HEAP_PERCENTAGE)) {
           setEvictionOffHeapPercentage(Float.parseFloat(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__EVICTION_OFF_HEAP_PERCENTAGE))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__MAX__CONNECTIONS)) {
           setMaxConnections(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__MAX__CONNECTIONS))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__MAX__MESSAGE__COUNT)) {
           setMaxConnections(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__MAX__MESSAGE__COUNT))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__MESSAGE__TIME__TO__LIVE)) {
           setMaxConnections(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__MESSAGE__TIME__TO__LIVE))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__SOCKET__BUFFER__SIZE)) {
           setMaxConnections(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__SOCKET__BUFFER__SIZE))));
-        } 
-        
+        }
+
         if (options.hasArgument(CliStrings.START_SERVER__MAX__THREADS)) {
           setMaxThreads(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__MAX__THREADS))));
         }
-        
+
         if (!isHelping()) {
           if (options.has("dir")) {
             setWorkingDirectory(ObjectUtils.toString(options.valueOf("dir")));
@@ -1523,18 +1477,15 @@ public class ServerLauncher extends AbstractLauncher<String> {
         }
 
         if (options.hasArgument(CliStrings.START_SERVER__EVICTION__HEAP__PERCENTAGE)) {
-          setEvictionHeapPercentage(Float.parseFloat(ObjectUtils.toString(options.valueOf(
-            CliStrings.START_SERVER__EVICTION__HEAP__PERCENTAGE))));
+          setEvictionHeapPercentage(Float.parseFloat(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__EVICTION__HEAP__PERCENTAGE))));
         }
 
         if (options.hasArgument(CliStrings.START_SERVER__MAX__CONNECTIONS)) {
-          setMaxConnections(Integer.parseInt(ObjectUtils.toString(options.valueOf(
-            CliStrings.START_SERVER__MAX__CONNECTIONS))));
+          setMaxConnections(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__MAX__CONNECTIONS))));
         }
 
         if (options.hasArgument(CliStrings.START_SERVER__MAX__MESSAGE__COUNT)) {
-          setMaxMessageCount(Integer.parseInt(ObjectUtils.toString(options.valueOf(
-            CliStrings.START_SERVER__MAX__MESSAGE__COUNT))));
+          setMaxMessageCount(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__MAX__MESSAGE__COUNT))));
         }
 
         if (options.hasArgument(CliStrings.START_SERVER__MAX__THREADS)) {
@@ -1542,25 +1493,20 @@ public class ServerLauncher extends AbstractLauncher<String> {
         }
 
         if (options.hasArgument(CliStrings.START_SERVER__MESSAGE__TIME__TO__LIVE)) {
-          setMessageTimeToLive(Integer.parseInt(ObjectUtils.toString(options.valueOf(
-            CliStrings.START_SERVER__MESSAGE__TIME__TO__LIVE))));
+          setMessageTimeToLive(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__MESSAGE__TIME__TO__LIVE))));
         }
-        
+
         if (options.hasArgument(CliStrings.START_SERVER__SOCKET__BUFFER__SIZE)) {
-          setSocketBufferSize(Integer.parseInt(ObjectUtils.toString(options.valueOf(
-            CliStrings.START_SERVER__SOCKET__BUFFER__SIZE))));
+          setSocketBufferSize(Integer.parseInt(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__SOCKET__BUFFER__SIZE))));
         }
 
         if (options.hasArgument(CliStrings.START_SERVER__HOSTNAME__FOR__CLIENTS)) {
           setHostNameForClients(ObjectUtils.toString(options.valueOf(CliStrings.START_SERVER__HOSTNAME__FOR__CLIENTS)));
         }
 
-      }
-      catch (OptionException e) {
-        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_PARSE_COMMAND_LINE_ARGUMENT_ERROR_MESSAGE
-          .toLocalizedString("Server", e.getMessage()), e);
-      }
-      catch (Exception e) {
+      } catch (OptionException e) {
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_PARSE_COMMAND_LINE_ARGUMENT_ERROR_MESSAGE.toLocalizedString("Server", e.getMessage()), e);
+      } catch (Exception e) {
         throw new RuntimeException(e.getMessage(), e);
       }
     }
@@ -1824,8 +1770,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
      */
     public Builder setMemberName(final String memberName) {
       if (StringUtils.isEmpty(StringUtils.trim(memberName))) {
-        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE
-          .toLocalizedString("Server"));
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE.toLocalizedString("Server"));
       }
       this.memberName = memberName;
       return this;
@@ -1905,7 +1850,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     public InetAddress getServerBindAddress() {
       return this.serverBindAddress;
     }
-    
+
     boolean isServerBindAddressSetByUser() {
       return this.serverBindAddressSetByUser;
     }
@@ -1934,14 +1879,11 @@ public class ServerLauncher extends AbstractLauncher<String> {
             this.serverBindAddress = bindAddress;
             this.serverBindAddressSetByUser = true;
             return this;
-          }
-          else {
+          } else {
             throw new IllegalArgumentException(serverBindAddress + " is not an address for this machine.");
           }
-        }
-        catch (UnknownHostException e) {
-          throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_UNKNOWN_HOST_ERROR_MESSAGE
-            .toLocalizedString("Server"), e);
+        } catch (UnknownHostException e) {
+          throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_UNKNOWN_HOST_ERROR_MESSAGE.toLocalizedString("Server"), e);
         }
       }
     }
@@ -1956,7 +1898,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     public Integer getServerPort() {
       return ObjectUtils.defaultIfNull(this.serverPort, getDefaultServerPort());
     }
-    
+
     boolean isServerPortSetByUser() {
       return this.serverPortSetByUser;
     }
@@ -1972,8 +1914,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
      */
     public Builder setServerPort(final Integer serverPort) {
       if (serverPort != null && (serverPort < 0 || serverPort > 65535)) {
-        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE
-          .toLocalizedString("Server"));
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE.toLocalizedString("Server"));
       }
       this.serverPort = serverPort;
       this.serverPortSetByUser = true;
@@ -2012,8 +1953,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
      * @see #setWorkingDirectory(String)
      */
     public String getWorkingDirectory() {
-      return IOUtils.tryGetCanonicalPathElseGetAbsolutePath(
-        new File(StringUtils.defaultIfBlank(this.workingDirectory, DEFAULT_WORKING_DIRECTORY)));
+      return IOUtils.tryGetCanonicalPathElseGetAbsolutePath(new File(StringUtils.defaultIfBlank(this.workingDirectory, DEFAULT_WORKING_DIRECTORY)));
     }
 
     /**
@@ -2030,14 +1970,12 @@ public class ServerLauncher extends AbstractLauncher<String> {
      */
     public Builder setWorkingDirectory(final String workingDirectory) {
       if (!(new File(StringUtils.defaultIfBlank(workingDirectory, DEFAULT_WORKING_DIRECTORY)).isDirectory())) {
-        throw new IllegalArgumentException(
-          LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Server"),
-            new FileNotFoundException(workingDirectory));
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Server"), new FileNotFoundException(workingDirectory));
       }
       this.workingDirectory = workingDirectory;
       return this;
     }
-    
+
     public Float getCriticalHeapPercentage() {
       return this.criticalHeapPercentage;
     }
@@ -2045,8 +1983,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     public Builder setCriticalHeapPercentage(final Float criticalHeapPercentage) {
       if (criticalHeapPercentage != null) {
         if (criticalHeapPercentage < 0 || criticalHeapPercentage > 100.0f) {
-          throw new IllegalArgumentException(String.format("Critical heap percentage (%1$s) must be between 0 and 100!",
-            criticalHeapPercentage));
+          throw new IllegalArgumentException(String.format("Critical heap percentage (%1$s) must be between 0 and 100!", criticalHeapPercentage));
         }
       }
       this.criticalHeapPercentage = criticalHeapPercentage;
@@ -2056,17 +1993,17 @@ public class ServerLauncher extends AbstractLauncher<String> {
     public Float getCriticalOffHeapPercentage() {
       return this.criticalOffHeapPercentage;
     }
-    
+
     public Builder setCriticalOffHeapPercentage(final Float criticalOffHeapPercentage) {
       if (criticalOffHeapPercentage != null) {
         if (criticalOffHeapPercentage < 0 || criticalOffHeapPercentage > 100.0f) {
           throw new IllegalArgumentException(String.format("Critical off-heap percentage (%1$s) must be between 0 and 100!", criticalOffHeapPercentage));
         }
       }
-     this.criticalOffHeapPercentage = criticalOffHeapPercentage;
-     return this;
+      this.criticalOffHeapPercentage = criticalOffHeapPercentage;
+      return this;
     }
-    
+
     public Float getEvictionHeapPercentage() {
       return this.evictionHeapPercentage;
     }
@@ -2074,18 +2011,17 @@ public class ServerLauncher extends AbstractLauncher<String> {
     public Builder setEvictionHeapPercentage(final Float evictionHeapPercentage) {
       if (evictionHeapPercentage != null) {
         if (evictionHeapPercentage < 0 || evictionHeapPercentage > 100.0f) {
-          throw new IllegalArgumentException(String.format("Eviction heap percentage (%1$s) must be between 0 and 100!",
-            evictionHeapPercentage));
+          throw new IllegalArgumentException(String.format("Eviction heap percentage (%1$s) must be between 0 and 100!", evictionHeapPercentage));
         }
       }
       this.evictionHeapPercentage = evictionHeapPercentage;
       return this;
     }
-    
+
     public Float getEvictionOffHeapPercentage() {
       return this.evictionOffHeapPercentage;
     }
-    
+
     public Builder setEvictionOffHeapPercentage(final Float evictionOffHeapPercentage) {
       if (evictionOffHeapPercentage != null) {
         if (evictionOffHeapPercentage < 0 || evictionOffHeapPercentage > 100.0f) {
@@ -2095,7 +2031,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
       this.evictionOffHeapPercentage = evictionOffHeapPercentage;
       return this;
     }
-    
+
     public String getHostNameForClients() {
       return this.hostNameForClients;
     }
@@ -2111,8 +2047,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
 
     public Builder setMaxConnections(Integer maxConnections) {
       if (maxConnections != null && maxConnections < 1) {
-        throw new IllegalArgumentException(String.format("Max Connections (%1$s) must be greater than 0!",
-          maxConnections));
+        throw new IllegalArgumentException(String.format("Max Connections (%1$s) must be greater than 0!", maxConnections));
       }
       this.maxConnections = maxConnections;
       return this;
@@ -2124,8 +2059,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
 
     public Builder setMaxMessageCount(Integer maxMessageCount) {
       if (maxMessageCount != null && maxMessageCount < 1) {
-        throw new IllegalArgumentException(String.format("Max Message Count (%1$s) must be greater than 0!",
-          maxMessageCount));
+        throw new IllegalArgumentException(String.format("Max Message Count (%1$s) must be greater than 0!", maxMessageCount));
       }
       this.maxMessageCount = maxMessageCount;
       return this;
@@ -2149,8 +2083,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
 
     public Builder setMessageTimeToLive(Integer messageTimeToLive) {
       if (messageTimeToLive != null && messageTimeToLive < 1) {
-        throw new IllegalArgumentException(String.format("Message Time To Live (%1$s) must be greater than 0!",
-          messageTimeToLive));
+        throw new IllegalArgumentException(String.format("Message Time To Live (%1$s) must be greater than 0!", messageTimeToLive));
       }
       this.messageTimeToLive = messageTimeToLive;
       return this;
@@ -2162,14 +2095,11 @@ public class ServerLauncher extends AbstractLauncher<String> {
 
     public Builder setSocketBufferSize(Integer socketBufferSize) {
       if (socketBufferSize != null && socketBufferSize < 1) {
-        throw new IllegalArgumentException(String.format("The Server's Socket Buffer Size (%1$s) must be greater than 0!",
-          socketBufferSize));
+        throw new IllegalArgumentException(String.format("The Server's Socket Buffer Size (%1$s) must be greater than 0!", socketBufferSize));
       }
       this.socketBufferSize = socketBufferSize;
       return this;
     }
-    
-    
 
     /**
      * Sets a GemFire Distributed System Property.
@@ -2263,18 +2193,12 @@ public class ServerLauncher extends AbstractLauncher<String> {
      */
     protected void validateOnStart() {
       if (Command.START.equals(getCommand())) {
-        if (StringUtils.isBlank(getMemberName())
-            && !isSet(System.getProperties(), DistributionConfig.GEMFIRE_PREFIX + NAME)
-            && !isSet(getDistributedSystemProperties(), NAME)
-            && !isSet(loadGemFireProperties(DistributedSystem.getPropertyFileURL()), NAME))
-        {
-          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE
-            .toLocalizedString("Server"));
+        if (StringUtils.isBlank(getMemberName()) && !isSet(System.getProperties(), DistributionConfig.GEMFIRE_PREFIX + NAME) && !isSet(getDistributedSystemProperties(), NAME) && !isSet(loadGemFireProperties(DistributedSystem.getPropertyFileURL()), NAME)) {
+          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE.toLocalizedString("Server"));
         }
 
         if (!SystemUtils.CURRENT_DIRECTORY.equals(getWorkingDirectory())) {
-          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE
-            .toLocalizedString("Server"));
+          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE.toLocalizedString("Server"));
         }
       }
     }
@@ -2319,11 +2243,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
    * An enumerated type representing valid commands to the Server launcher.
    */
   public static enum Command {
-    START("start", "assign-buckets", "disable-default-server", "rebalance", SERVER_BIND_ADDRESS, "server-port", "force", "debug", "help"),
-    STATUS("status", "member", "pid", "dir", "debug", "help"),
-    STOP("stop", "member", "pid", "dir", "debug", "help"),
-    UNSPECIFIED("unspecified"),
-    VERSION("version");
+    START("start", "assign-buckets", "disable-default-server", "rebalance", SERVER_BIND_ADDRESS, "server-port", "force", "debug", "help"), STATUS("status", "member", "pid", "dir", "debug", "help"), STOP("stop", "member", "pid", "dir", "debug", "help"), UNSPECIFIED("unspecified"), VERSION("version");
 
     private final List<String> options;
 
@@ -2332,8 +2252,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     Command(final String name, final String... options) {
       assert !StringUtils.isBlank(name) : "The name of the command must be specified!";
       this.name = name;
-      this.options = (options != null ? Collections.unmodifiableList(Arrays.asList(options))
-        : Collections.<String>emptyList());
+      this.options = (options != null ? Collections.unmodifiableList(Arrays.asList(options)) : Collections.<String> emptyList());
     }
 
     /**
@@ -2443,47 +2362,17 @@ public class ServerLauncher extends AbstractLauncher<String> {
         final GfJsonObject gfJsonObject = new GfJsonObject(json);
 
         final Status status = Status.valueOfDescription(gfJsonObject.getString(JSON_STATUS));
-        final List<String> jvmArguments = Arrays.asList(GfJsonArray.toStringArray(gfJsonObject.getJSONArray(
-          JSON_JVMARGUMENTS)));
+        final List<String> jvmArguments = Arrays.asList(GfJsonArray.toStringArray(gfJsonObject.getJSONArray(JSON_JVMARGUMENTS)));
 
-        return new ServerState(status,
-          gfJsonObject.getString(JSON_STATUSMESSAGE),
-          gfJsonObject.getLong(JSON_TIMESTAMP),
-          gfJsonObject.getString(JSON_LOCATION),
-          gfJsonObject.getInt(JSON_PID),
-          gfJsonObject.getLong(JSON_UPTIME),
-          gfJsonObject.getString(JSON_WORKINGDIRECTORY),
-          jvmArguments,
-          gfJsonObject.getString(JSON_CLASSPATH),
-          gfJsonObject.getString(JSON_GEMFIREVERSION),
-          gfJsonObject.getString(JSON_JAVAVERSION),
-          gfJsonObject.getString(JSON_LOGFILE),
-          gfJsonObject.getString(JSON_HOST),
-          gfJsonObject.getString(JSON_PORT),
-          gfJsonObject.getString(JSON_MEMBERNAME));
-      }
-      catch (GfJsonException e) {
+        return new ServerState(status, gfJsonObject.getString(JSON_STATUSMESSAGE), gfJsonObject.getLong(JSON_TIMESTAMP), gfJsonObject.getString(JSON_LOCATION), gfJsonObject.getInt(JSON_PID), gfJsonObject.getLong(JSON_UPTIME), gfJsonObject.getString(JSON_WORKINGDIRECTORY), jvmArguments, gfJsonObject.getString(JSON_CLASSPATH), gfJsonObject.getString(JSON_GEMFIREVERSION), gfJsonObject.getString(JSON_JAVAVERSION), gfJsonObject.getString(JSON_LOGFILE), gfJsonObject.getString(JSON_HOST), gfJsonObject.getString(JSON_PORT), gfJsonObject.getString(JSON_MEMBERNAME));
+      } catch (GfJsonException e) {
         // TODO: or should we return OFFLINE?
         throw new IllegalArgumentException("Unable to create ServerStatus from JSON: " + json, e);
       }
     }
 
     public ServerState(final ServerLauncher launcher, final Status status) {
-      this(status,
-        launcher.statusMessage,
-        System.currentTimeMillis(),
-        launcher.getId(),
-        identifyPid(),
-        ManagementFactory.getRuntimeMXBean().getUptime(),
-        launcher.getWorkingDirectory(),
-        ManagementFactory.getRuntimeMXBean().getInputArguments(),
-        System.getProperty("java.class.path"),
-        GemFireVersion.getGemFireVersion(),
-        System.getProperty("java.version"),
-        getServerLogFileCanonicalPath(launcher),
-        getServerBindAddressAsString(launcher),
-        getServerPortAsString(launcher),
-        launcher.getMemberName());
+      this(status, launcher.statusMessage, System.currentTimeMillis(), launcher.getId(), identifyPid(), ManagementFactory.getRuntimeMXBean().getUptime(), launcher.getWorkingDirectory(), ManagementFactory.getRuntimeMXBean().getInputArguments(), System.getProperty("java.class.path"), GemFireVersion.getGemFireVersion(), System.getProperty("java.version"), getServerLogFileCanonicalPath(launcher), getServerBindAddressAsString(launcher), getServerPortAsString(launcher), launcher.getMemberName());
     }
 
     public ServerState(final ServerLauncher launcher, final Status status, final String errorMessage) {
@@ -2494,7 +2383,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
           null, // pid
           0L, // uptime
           launcher.getWorkingDirectory(), // workingDirectory
-          Collections.<String>emptyList(), // jvmArguments
+          Collections.<String> emptyList(), // jvmArguments
           null, // classpath
           GemFireVersion.getGemFireVersion(), // gemfireVersion
           null, // javaVersion
@@ -2503,25 +2392,9 @@ public class ServerLauncher extends AbstractLauncher<String> {
           null, // port
           null);// memberName
     }
-    
-    protected ServerState(final Status status,
-                          final String statusMessage,
-                          final long timestamp,
-                          final String serverLocation,
-                          final Integer pid,
-                          final Long uptime,
-                          final String workingDirectory,
-                          final List<String> jvmArguments,
-                          final String classpath,
-                          final String gemfireVersion,
-                          final String javaVersion,
-                          final String logFile,
-                          final String host,
-                          final String port,
-                          final String memberName)
-    {
-      super(status, statusMessage, timestamp, serverLocation, pid, uptime, workingDirectory, jvmArguments, classpath,
-        gemfireVersion, javaVersion, logFile, host, port, memberName);
+
+    protected ServerState(final Status status, final String statusMessage, final long timestamp, final String serverLocation, final Integer pid, final Long uptime, final String workingDirectory, final List<String> jvmArguments, final String classpath, final String gemfireVersion, final String javaVersion, final String logFile, final String host, final String port, final String memberName) {
+      super(status, statusMessage, timestamp, serverLocation, pid, uptime, workingDirectory, jvmArguments, classpath, gemfireVersion, javaVersion, logFile, host, port, memberName);
     }
 
     private static String getServerLogFileCanonicalPath(final ServerLauncher launcher) {
@@ -2531,7 +2404,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
         final File logFile = system.getConfig().getLogFile();
         if (logFile != null && logFile.isFile()) {
           final String logFileCanonicalPath = IOUtils.tryGetCanonicalPathElseGetAbsolutePath(logFile);
-          if (!StringUtils.isBlank(logFileCanonicalPath)) { 
+          if (!StringUtils.isBlank(logFileCanonicalPath)) {
             return logFileCanonicalPath;
           }
         }
@@ -2543,7 +2416,7 @@ public class ServerLauncher extends AbstractLauncher<String> {
     @SuppressWarnings("unchecked")
     private static String getServerBindAddressAsString(final ServerLauncher launcher) {
       final GemFireCacheImpl gemfireCache = GemFireCacheImpl.getInstance();
-      
+
       if (gemfireCache != null) {
         final List<CacheServer> csList = gemfireCache.getCacheServers();
         if (csList != null && !csList.isEmpty()) {

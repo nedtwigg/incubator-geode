@@ -136,8 +136,7 @@ public class GfshParser implements Parser {
     // in between is not supported, only if the
     // cursor is at the end
 
-    if (cursor <= buffer.length() - 1 && !PreprocessorUtils.containsOnlyWhiteSpaces(buffer.substring(cursor)) || (ParserUtils
-                                                                                                                    .contains(buffer, SyntaxConstants.COMMAND_DELIMITER))) {
+    if (cursor <= buffer.length() - 1 && !PreprocessorUtils.containsOnlyWhiteSpaces(buffer.substring(cursor)) || (ParserUtils.contains(buffer, SyntaxConstants.COMMAND_DELIMITER))) {
       return cursor;
     }
 
@@ -161,10 +160,7 @@ public class GfshParser implements Parser {
           // whether the user has properly entered it or not
           if (simpleTrim.getString().length() >= commandTarget.getGfshMethodTarget().getKey().length()) {
             /* int position = */
-            return completeParameters(commandTarget, desiredCursorPosition + commandTarget.getGfshMethodTarget()
-                                                                                          .getKey()
-                                                                                          .length(), commandTarget.getGfshMethodTarget()
-                                                                                                                  .getRemainingBuffer(), cursor, completionCandidates);
+            return completeParameters(commandTarget, desiredCursorPosition + commandTarget.getGfshMethodTarget().getKey().length(), commandTarget.getGfshMethodTarget().getRemainingBuffer(), cursor, completionCandidates);
             /*
              * updateCompletionCandidates(completionCandidates, buffer,
              * position); return 0;
@@ -199,16 +195,11 @@ public class GfshParser implements Parser {
       temp.add(completionCandidates.remove(0));
     }
     for (Completion completion : temp) {
-      completionCandidates.add(new Completion(buffer.substring(0, position) + completion.getValue(), completion.getFormattedValue(), completion
-        .getHeading(), completion.getOrder()));
+      completionCandidates.add(new Completion(buffer.substring(0, position) + completion.getValue(), completion.getFormattedValue(), completion.getHeading(), completion.getOrder()));
     }
   }
 
-  private int completeParameters(CommandTarget commandTarget,
-                                 int cursorStart,
-                                 String remainingBuffer,
-                                 int cursor,
-                                 List<Completion> completionCandidates) {
+  private int completeParameters(CommandTarget commandTarget, int cursorStart, String remainingBuffer, int cursor, List<Completion> completionCandidates) {
     int desiredCursorPosition = cursorStart;
     // Factor for remainingBuffer
     boolean sizeReduced = false;
@@ -251,8 +242,7 @@ public class GfshParser implements Parser {
             boolean incrementCursor = true;
             // Here we need to get all the possible values for this
             // argument
-            if (getAllPossibleValuesForParameter(completionCandidates, argument, userOptionSet.getValue(argument), commandTarget
-              .getGfshMethodTarget())) {
+            if (getAllPossibleValuesForParameter(completionCandidates, argument, userOptionSet.getValue(argument), commandTarget.getGfshMethodTarget())) {
               // Check whether the list of completionCandidates is
               // not empty
               if (completionCandidates.size() > 0) {
@@ -318,9 +308,7 @@ public class GfshParser implements Parser {
             }
           }
           if (warning) {
-            String argMessage = argument.getArgumentName() + ((argument.getHelp() != null && !argument.getHelp()
-                                                                                                      .equals("")) ? ": " + argument
-              .getHelp() : "");
+            String argMessage = argument.getArgumentName() + ((argument.getHelp() != null && !argument.getHelp().equals("")) ? ": " + argument.getHelp() : "");
             logWarning(CliStrings.format(CliStrings.GFSHPARSER__MSG__REQUIRED_ARGUMENT_0, argMessage));
             return desiredCursorPosition + userOptionSet.getNoOfSpacesRemoved();
           }
@@ -335,8 +323,6 @@ public class GfshParser implements Parser {
 
       boolean warningValueRequired = false;
       Option warningOption = null;
-
-
 
       for (Option option : commandTarget.getOptionParser().getOptions()) {
         if (userOptionSet.hasOption(option)) {
@@ -353,8 +339,7 @@ public class GfshParser implements Parser {
                   // This means that user has entered the whole option and
                   // Increment desiredCursorPostion by the length of the
                   // option and the option specifier, including space
-                  desiredCursorPosition += /* space */1 + SyntaxConstants.LONG_OPTION_SPECIFIER.length() + option.getLongOption()
-                                                                                                                 .length();
+                  desiredCursorPosition += /* space */1 + SyntaxConstants.LONG_OPTION_SPECIFIER.length() + option.getLongOption().length();
                   break;
 
                 } else {
@@ -366,8 +351,7 @@ public class GfshParser implements Parser {
                       // This means that what the user has
                       // entered is actually a
                       // synonym for the option
-                      desiredCursorPosition += /* space */1 + SyntaxConstants.LONG_OPTION_SPECIFIER.length() + optionSynonym
-                        .length();
+                      desiredCursorPosition += /* space */1 + SyntaxConstants.LONG_OPTION_SPECIFIER.length() + optionSynonym.length();
                       break;
                     }
                   }
@@ -415,8 +399,7 @@ public class GfshParser implements Parser {
             if (completionCandidates.size() == 0) {
               // Here also we might need to invoke converter to
               // get values apt for the option
-              if (!endsWithOptionSpecifiers(userOptionSet.getUserInput()) && getAllPossibleValuesForParameter(completionCandidates, option, value, commandTarget
-                .getGfshMethodTarget())) {
+              if (!endsWithOptionSpecifiers(userOptionSet.getUserInput()) && getAllPossibleValuesForParameter(completionCandidates, option, value, commandTarget.getGfshMethodTarget())) {
 
                 // If the value returned by getAllPossibleValues
                 // is the same as that entered by the
@@ -476,8 +459,7 @@ public class GfshParser implements Parser {
             lengthToBeAdded = value.substring(0, (lastIndexOf > 0 ? lastIndexOf : value.length())).length();
             // Increment desiredCursorPosition
             if (incrementCursor) {
-              desiredCursorPosition += /* value specifier length */SyntaxConstants.OPTION_VALUE_SPECIFIER.length() + lengthToBeAdded + ((considerLastValue) ? value
-                                                                                                                                                                .length() - lengthToBeAdded : 0);
+              desiredCursorPosition += /* value specifier length */SyntaxConstants.OPTION_VALUE_SPECIFIER.length() + lengthToBeAdded + ((considerLastValue) ? value.length() - lengthToBeAdded : 0);
               if (value.endsWith(" ") && considerLastValue) {
                 desiredCursorPosition--;
               }
@@ -502,9 +484,7 @@ public class GfshParser implements Parser {
                 if (completionCandidates.size() == 0) {
                   warningValueRequired = true;
                 } else {
-                  modifyCompletionCandidates(completionCandidates, SyntaxConstants.OPTION_VALUE_SPECIFIER, new String[] {
-                    null
-                  });
+                  modifyCompletionCandidates(completionCandidates, SyntaxConstants.OPTION_VALUE_SPECIFIER, new String[] { null });
                 }
               } else {
                 // The completion candidates should be cleared if the Converter
@@ -528,13 +508,9 @@ public class GfshParser implements Parser {
             if (userOptString.startsWith(SyntaxConstants.LONG_OPTION_SPECIFIER)) {
               // Now remove the option specifier part
               userOptString = StringUtils.removeStart(userOptString, SyntaxConstants.LONG_OPTION_SPECIFIER);
-              if (option.getLongOption()
-                        .startsWith(userOptString) && !userOptString.equals("") && !option.getLongOption()
-                                                                                          .equals(userOptString) && !optionsPresentMap
-                .containsKey(userOptString)) {
+              if (option.getLongOption().startsWith(userOptString) && !userOptString.equals("") && !option.getLongOption().equals(userOptString) && !optionsPresentMap.containsKey(userOptString)) {
 
-                completionCandidates.add(new Completion(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption(), option
-                  .getLongOption(), "", 0));
+                completionCandidates.add(new Completion(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption(), option.getLongOption(), "", 0));
               } else {
                 for (String optionSynonym : option.getSynonyms()) {
                   if (optionSynonym.startsWith(userOptString) && !userOptString.equals("") && !optionSynonym.equals(userOptString)) {
@@ -562,9 +538,7 @@ public class GfshParser implements Parser {
 
       // Display warning if something not specified
       if (warningOption != null) {
-        String optionMsg = warningOption.getLongOption() + ((warningOption.getHelp() != null && !warningOption.getHelp()
-                                                                                                              .equals("")) ? ": " + warningOption
-          .getHelp() : "");
+        String optionMsg = warningOption.getLongOption() + ((warningOption.getHelp() != null && !warningOption.getHelp().equals("")) ? ": " + warningOption.getHelp() : "");
         logWarning(CliStrings.format(CliStrings.GFSHPARSER__MSG__VALUE_REQUIRED_FOR_OPTION_0, optionMsg));
 
         desiredCursorPosition += userOptionSet.getNoOfSpacesRemoved();
@@ -586,11 +560,11 @@ public class GfshParser implements Parser {
 
     // Exception handling
     if (coe != null // hasException
-      && newCursor < cursor // newCursorIsEarlierThanCursor
-      && completionCandidates.size() == 0 // zeroCompletionCandidates
-      &&!(PreprocessorUtils.containsOnlyWhiteSpaces(subString) // onlyHasWhiteSpaces
-        || ((subString.endsWith(SyntaxConstants.LONG_OPTION_SPECIFIER) && subString.startsWith(SyntaxConstants.LONG_OPTION_SPECIFIER)) // isHypenHyphen
-        || (subString.startsWith(SyntaxConstants.SHORT_OPTION_SPECIFIER) && subString.endsWith(SyntaxConstants.SHORT_OPTION_SPECIFIER))))) { // isHyphen
+        && newCursor < cursor // newCursorIsEarlierThanCursor
+        && completionCandidates.size() == 0 // zeroCompletionCandidates
+        && !(PreprocessorUtils.containsOnlyWhiteSpaces(subString) // onlyHasWhiteSpaces
+            || ((subString.endsWith(SyntaxConstants.LONG_OPTION_SPECIFIER) && subString.startsWith(SyntaxConstants.LONG_OPTION_SPECIFIER)) // isHypenHyphen
+                || (subString.startsWith(SyntaxConstants.SHORT_OPTION_SPECIFIER) && subString.endsWith(SyntaxConstants.SHORT_OPTION_SPECIFIER))))) { // isHyphen
 
       ExceptionHandler.handleException(coe);
       return cursor;
@@ -601,33 +575,28 @@ public class GfshParser implements Parser {
       if (mandatoryOptions.size() > 0) {
 
         for (Option option : mandatoryOptions) {
-          completionCandidates.add(new Completion(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption(), option
-            .getLongOption(), "", 0));
+          completionCandidates.add(new Completion(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption(), option.getLongOption(), "", 0));
         }
       } else {
         // As all the mandatory options have been specified we can prompt the
         // user for optional options.
         unspecifiedOptions = getUnspecifiedOptionsWithMode(unspecifiedOptions, commandTarget, optionsPresentMap);
         for (Option option : unspecifiedOptions) {
-          completionCandidates.add(new Completion(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption(), option
-            .getLongOption(), "", 0));
+          completionCandidates.add(new Completion(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption(), option.getLongOption(), "", 0));
         }
       }
     }
     return newCursor;
   }
 
-  private List<Option> getUnspecifiedOptionsWithMode(List<Option> unspecifiedOptions,
-                                                     CommandTarget commandTarget,
-                                                     Map<String, Option> optionsPresentMap) {
+  private List<Option> getUnspecifiedOptionsWithMode(List<Option> unspecifiedOptions, CommandTarget commandTarget, Map<String, Option> optionsPresentMap) {
 
     Collection<CommandMode> cmodes = CommandModes.getInstance().getCommandModes(commandTarget.getCommandName());
     if (cmodes != null) {
       List<Option> filteredList = new ArrayList<Option>();
 
       //Populate with default options
-      CommandMode defaultMode = CommandModes.getInstance()
-                                            .getCommandMode(commandTarget.getCommandName(), CommandModes.DEFAULT_MODE);
+      CommandMode defaultMode = CommandModes.getInstance().getCommandMode(commandTarget.getCommandName(), CommandModes.DEFAULT_MODE);
       for (String opt : defaultMode.options) {
         for (Option option : unspecifiedOptions) {
           if (option.getLongOption().equals(opt)) {
@@ -676,8 +645,7 @@ public class GfshParser implements Parser {
     }
   }
 
-  private void checkOptionSetForValidCommandModes(OptionSet userOptionSet, CommandTarget commandTarget)
-    throws CliCommandMultiModeOptionException {
+  private void checkOptionSetForValidCommandModes(OptionSet userOptionSet, CommandTarget commandTarget) throws CliCommandMultiModeOptionException {
     CommandModes modes = CommandModes.getInstance();
     Collection<CommandMode> cmodes = modes.getCommandModes(commandTarget.getCommandName());
 
@@ -782,16 +750,11 @@ public class GfshParser implements Parser {
     return false;
   }
 
-  private void modifyCompletionCandidates(List<Completion> completionCandidates,
-                                          String prefix,
-                                          String... existingData) {
+  private void modifyCompletionCandidates(List<Completion> completionCandidates, String prefix, String... existingData) {
     modifyCompletionCandidates(completionCandidates, prefix, false, existingData);
   }
 
-  private void modifyCompletionCandidates(List<Completion> completionCandidates,
-                                          String prefix,
-                                          boolean endsWithValueSeparator,
-                                          String... existingData) {
+  private void modifyCompletionCandidates(List<Completion> completionCandidates, String prefix, boolean endsWithValueSeparator, String... existingData) {
     List<Completion> temp = new ArrayList<Completion>();
     while (completionCandidates.size() > 0) {
       temp.add(completionCandidates.remove(0));
@@ -828,10 +791,7 @@ public class GfshParser implements Parser {
   }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  private boolean getAllPossibleValuesForParameter(List<Completion> completionCandidates,
-                                                   Parameter parameter,
-                                                   String existingData,
-                                                   GfshMethodTarget gfshMethodTarget) {
+  private boolean getAllPossibleValuesForParameter(List<Completion> completionCandidates, Parameter parameter, String existingData, GfshMethodTarget gfshMethodTarget) {
     Converter<?> converter = parameter.getConverter();
     // Check if any new converter is available which
     // satisfies the requirements for this argument
@@ -852,12 +812,9 @@ public class GfshParser implements Parser {
         valueSeparator = ((Option) parameter).getValueSeparator();
       }
       if (converter instanceof MultipleValueConverter) {
-        ((MultipleValueConverter) converter).getAllPossibleValues(completionCandidates, parameter.getDataType(), ParserUtils
-          .splitValues(existingData, valueSeparator), parameter.getContext(), new MethodTarget(gfshMethodTarget.getMethod(), gfshMethodTarget
-          .getTarget(), gfshMethodTarget.getRemainingBuffer(), gfshMethodTarget.getKey()));
+        ((MultipleValueConverter) converter).getAllPossibleValues(completionCandidates, parameter.getDataType(), ParserUtils.splitValues(existingData, valueSeparator), parameter.getContext(), new MethodTarget(gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(), gfshMethodTarget.getRemainingBuffer(), gfshMethodTarget.getKey()));
       } else {
-        converter.getAllPossibleValues(completionCandidates, parameter.getDataType(), existingData, parameter.getContext(), new MethodTarget(gfshMethodTarget
-          .getMethod(), gfshMethodTarget.getTarget(), gfshMethodTarget.getRemainingBuffer(), gfshMethodTarget.getKey()));
+        converter.getAllPossibleValues(completionCandidates, parameter.getDataType(), existingData, parameter.getContext(), new MethodTarget(gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(), gfshMethodTarget.getRemainingBuffer(), gfshMethodTarget.getKey()));
       }
     }
     if (completionCandidates.size() > 0) {
@@ -884,9 +841,7 @@ public class GfshParser implements Parser {
       List<CommandTarget> targets = locateTargets(ParserUtils.trimBeginning(userInput), false);
       if (targets.size() > 1) {
         if (userInput.length() > 0) {
-          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__AMBIGIOUS_COMMAND_0_FOR_ASSISTANCE_USE_1_OR_HINT_HELP, new Object[] {
-            userInput, AbstractShell.completionKeys
-          }), CommandProcessingException.COMMAND_NAME_AMBIGUOUS, userInput);
+          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__AMBIGIOUS_COMMAND_0_FOR_ASSISTANCE_USE_1_OR_HINT_HELP, new Object[] { userInput, AbstractShell.completionKeys }), CommandProcessingException.COMMAND_NAME_AMBIGUOUS, userInput);
         }
       } else {
         if (targets.size() == 1) {
@@ -925,8 +880,7 @@ public class GfshParser implements Parser {
             for (MethodParameter parameter : parameters) {
               methodParameters[parameter.getParameterNo()] = parameter.getParameter();
             }
-            parseResult = new GfshParseResult(gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(), methodParameters, userInput, commandTarget
-              .getCommandName(), paramValMap);
+            parseResult = new GfshParseResult(gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(), methodParameters, userInput, commandTarget.getCommandName(), paramValMap);
           } else {
             if (coe != null) {
               logWrapper.fine("Handling exception: " + coe.getMessage());
@@ -945,9 +899,7 @@ public class GfshParser implements Parser {
           if (commandTarget != null) {
             String commandName = commandTarget.getCommandName();
             AvailabilityTarget availabilityIndicator = commandTarget.getAvailabilityIndicator();
-            message = CliStrings.format(CliStrings.GFSHPARSER__MSG__0_IS_NOT_AVAILABLE_REASON_1, new Object[] {
-              commandName, availabilityIndicator.getAvailabilityDescription()
-            });
+            message = CliStrings.format(CliStrings.GFSHPARSER__MSG__0_IS_NOT_AVAILABLE_REASON_1, new Object[] { commandName, availabilityIndicator.getAvailabilityDescription() });
           }
           handleCondition(message, CommandProcessingException.COMMAND_INVALID_OR_UNAVAILABLE, userInput);
         }
@@ -981,11 +933,7 @@ public class GfshParser implements Parser {
     }
   }
 
-  private boolean processOptions(OptionSet parse,
-                                 CommandTarget commandTarget,
-                                 Map<String, String> paramValMap,
-                                 List<MethodParameter> parameters,
-                                 boolean errorState) {
+  private boolean processOptions(OptionSet parse, CommandTarget commandTarget, Map<String, String> paramValMap, List<MethodParameter> parameters, boolean errorState) {
     boolean error = errorState;
     for (Option option : commandTarget.getOptionParser().getOptions()) {
       String value = null;
@@ -994,15 +942,13 @@ public class GfshParser implements Parser {
           value = parse.getValue(option);
         }
         if (value == null) {
-          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__VALUE_REQUIRED_FOR_OPTION_0, option.getLongOption()), CommandProcessingException.OPTION_VALUE_REQUIRED, option
-            .getLongOption());
+          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__VALUE_REQUIRED_FOR_OPTION_0, option.getLongOption()), CommandProcessingException.OPTION_VALUE_REQUIRED, option.getLongOption());
           logWrapper.fine("Value required for Parameter " + option.getLongOption());
           error = true;
         }
       } else {
         if (option.isRequired()) {
-          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__COMMAND_OPTION_0_IS_REQUIRED_USE_HELP, option.getLongOption()), CommandProcessingException.REQUIRED_OPTION_MISSING, option
-            .getLongOption());
+          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__COMMAND_OPTION_0_IS_REQUIRED_USE_HELP, option.getLongOption()), CommandProcessingException.REQUIRED_OPTION_MISSING, option.getLongOption());
           logWrapper.fine("Required Parameter " + option.getLongOption());
           error = true;
         } else {
@@ -1024,10 +970,7 @@ public class GfshParser implements Parser {
       Object object = getConversionObject(option.getConverter(), value, option.getDataType(), option.getContext(), valueSeparator);
       // Check if conversion fails
       if (value != null && object == null) {
-        handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__VALUE_0_IS_NOT_APPLICABLE_FOR_1, new Object[] {
-          value.trim(),
-          option.getLongOption()
-        }), CommandProcessingException.OPTION_VALUE_INVALID, option.getLongOption() + "=" + value);
+        handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__VALUE_0_IS_NOT_APPLICABLE_FOR_1, new Object[] { value.trim(), option.getLongOption() }), CommandProcessingException.OPTION_VALUE_INVALID, option.getLongOption() + "=" + value);
         logWrapper.fine("Value \"" + value.trim() + "\" is not applicable for " + option.getLongOption());
         error = true;
       }
@@ -1037,11 +980,7 @@ public class GfshParser implements Parser {
     return error;
   }
 
-  private boolean processArguments(OptionSet parse,
-                                   CommandTarget commandTarget,
-                                   Map<String, String> paramValMap,
-                                   List<MethodParameter> parameters,
-                                   boolean errorState) {
+  private boolean processArguments(OptionSet parse, CommandTarget commandTarget, Map<String, String> paramValMap, List<MethodParameter> parameters, boolean errorState) {
     boolean error = errorState;
     for (Argument argument : commandTarget.getOptionParser().getArguments()) {
       String value = null;
@@ -1050,8 +989,7 @@ public class GfshParser implements Parser {
         value = parse.getValue(argument);
       } else {
         if (argument.isRequired()) {
-          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__COMMAND_ARGUMENT_0_IS_REQUIRED_USE_HELP, argument
-            .getArgumentName()), CommandProcessingException.REQUIRED_ARGUMENT_MISSING, argument.getArgumentName());
+          handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__COMMAND_ARGUMENT_0_IS_REQUIRED_USE_HELP, argument.getArgumentName()), CommandProcessingException.REQUIRED_ARGUMENT_MISSING, argument.getArgumentName());
           logWrapper.fine("Required Argument " + argument.getArgumentName());
           error = true;
         } else {
@@ -1068,10 +1006,7 @@ public class GfshParser implements Parser {
 
       Object conversionObject = getConversionObject(argument.getConverter(), value, argument.getDataType(), argument.getContext(), SyntaxConstants.VALUE_SEPARATOR);
       if (value != null && conversionObject == null) {
-        handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__VALUE_0_IS_NOT_APPLICABLE_FOR_1, new Object[] {
-          value.trim(),
-          argument.getArgumentName()
-        }), CommandProcessingException.ARGUMENT_INVALID, argument.getArgumentName() + "=" + value);
+        handleCondition(CliStrings.format(CliStrings.GFSHPARSER__MSG__VALUE_0_IS_NOT_APPLICABLE_FOR_1, new Object[] { value.trim(), argument.getArgumentName() }), CommandProcessingException.ARGUMENT_INVALID, argument.getArgumentName() + "=" + value);
         logWrapper.fine("Value '" + value.trim() + "' not applicable for argument: " + argument.getArgumentName());
         error = true;
       } else {
@@ -1083,11 +1018,7 @@ public class GfshParser implements Parser {
   }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  private Object getConversionObject(Converter<?> converter,
-                                     String string,
-                                     Class<?> dataType,
-                                     String context,
-                                     String valueSeparator) {
+  private Object getConversionObject(Converter<?> converter, String string, Class<?> dataType, String context, String valueSeparator) {
 
     try {
       if (converter != null && converter instanceof MultipleValueConverter) {
@@ -1142,14 +1073,11 @@ public class GfshParser implements Parser {
     return null;
   }
 
-  private List<CommandTarget> locateTargets(String userInput)
-    throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+  private List<CommandTarget> locateTargets(String userInput) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     return locateTargets(userInput, true);
   }
 
-
-  private List<CommandTarget> locateTargets(String userInput, boolean matchIncomplete)
-    throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+  private List<CommandTarget> locateTargets(String userInput, boolean matchIncomplete) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     List<CommandTarget> commandTargets = new ArrayList<CommandTarget>();
     Map<String, CommandTarget> commands = commandManager.getCommands();
     // Now we need to locate the CommandTargets from the entries in the map
@@ -1189,7 +1117,7 @@ public class GfshParser implements Parser {
   //TODO - Abhishek - create an inner CommandTargetLocater instead of multiple
   //methods like these.
   private CommandTarget locateExactMatchingTarget(final String userInput)//exact matching
-    throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+                                                                         throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     CommandTarget commandTarget = null;
 
     Map<String, CommandTarget> commandTargetsMap = commandManager.getCommands();
@@ -1239,7 +1167,6 @@ public class GfshParser implements Parser {
     return commandWordsMatch;
   }
 
-
   private Map<String, CommandTarget> getRequiredCommandTargets(Set<String> requiredCommands) {
     Map<String, CommandTarget> existingCommands = commandManager.getCommands();
     Map<String, CommandTarget> requiredCommandsMap = existingCommands;
@@ -1257,9 +1184,7 @@ public class GfshParser implements Parser {
     return requiredCommandsMap;
   }
 
-  private Map<Short, List<CommandTarget>> findMatchingCommands(String userSpecifiedCommand,
-                                                               Set<String> requiredCommands)
-    throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+  private Map<Short, List<CommandTarget>> findMatchingCommands(String userSpecifiedCommand, Set<String> requiredCommands) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
     Map<String, CommandTarget> existingCommands = getRequiredCommandTargets(requiredCommands);
     CommandTarget exactCommandTarget = existingCommands.get(userSpecifiedCommand);
@@ -1294,9 +1219,7 @@ public class GfshParser implements Parser {
     return commandTargetsArr;
   }
 
-
-  private boolean isAvailable(CommandTarget commandTarget, String commandName)
-    throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+  private boolean isAvailable(CommandTarget commandTarget, String commandName) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     AvailabilityTarget availabilityIndicator = commandTarget.getAvailabilityIndicator();
     if (availabilityIndicator == null) {
       availabilityIndicator = commandManager.getAvailabilityIndicator(commandName);
@@ -1382,8 +1305,7 @@ public class GfshParser implements Parser {
           helpText.append(GfshParser.LINE_SEPARATOR);
 
           if (withinShell) {
-            helpText.append(Gfsh.wrapText(CliStrings.format(CliStrings.GFSHPARSER__MSG__USE_0_HELP_COMMAND_TODISPLAY_DETAILS, appName), 0))
-                    .append(GfshParser.LINE_SEPARATOR);
+            helpText.append(Gfsh.wrapText(CliStrings.format(CliStrings.GFSHPARSER__MSG__USE_0_HELP_COMMAND_TODISPLAY_DETAILS, appName), 0)).append(GfshParser.LINE_SEPARATOR);
             helpText.append(Gfsh.wrapText(CliStrings.format(CliStrings.GFSHPARSER__MSG__HELP_CAN_ALSO_BE_OBTAINED_BY_0_KEY, AbstractShell.completionKeys), 0));
           }
         }

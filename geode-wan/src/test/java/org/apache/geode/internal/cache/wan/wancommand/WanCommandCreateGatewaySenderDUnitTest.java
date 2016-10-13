@@ -39,7 +39,7 @@ import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 
 @Category(DistributedTest.class)
 public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
-  
+
   private static final long serialVersionUID = 1L;
 
   private CommandResult executeCommandWithIgnoredExceptions(String command) {
@@ -52,14 +52,13 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     }
   }
 
-
   /**
    * GatewaySender with all default attributes
    */
   @Test
   public void testCreateGatewaySenderWithDefault() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -67,24 +66,20 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
 
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2";
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(5, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -94,21 +89,18 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", true, false ));
-    vm4.invoke(() -> verifySenderState(
-        "ln", true, false ));
-    vm5.invoke(() -> verifySenderState(
-        "ln", true, false ));
+    vm3.invoke(() -> verifySenderState("ln", true, false));
+    vm4.invoke(() -> verifySenderState("ln", true, false));
+    vm5.invoke(() -> verifySenderState("ln", true, false));
   }
-  
+
   /**
    * GatewaySender with given attribute values
    */
   @Test
   public void testCreateGatewaySender() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -116,38 +108,22 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";   
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(5, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -157,19 +133,13 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm4.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm5.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    
-    vm3.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null ));
-    vm4.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null ));
-    vm5.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null ));
+    vm3.invoke(() -> verifySenderState("ln", false, false));
+    vm4.invoke(() -> verifySenderState("ln", false, false));
+    vm5.invoke(() -> verifySenderState("ln", false, false));
+
+    vm3.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null));
+    vm4.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null));
+    vm5.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null));
   }
 
   /**
@@ -180,7 +150,7 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
   @Test
   public void testCreateGatewaySender_Error() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -188,37 +158,22 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2";
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(5, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -236,7 +191,7 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
   @Test
   public void testCreateGatewaySenderWithGatewayEventFilters() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -244,40 +199,22 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__GATEWAYEVENTFILTER + 
-        "=org.apache.geode.cache30.MyGatewayEventFilter1,org.apache.geode.cache30.MyGatewayEventFilter2";
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD" + " --" + CliStrings.CREATE_GATEWAYSENDER__GATEWAYEVENTFILTER + "=org.apache.geode.cache30.MyGatewayEventFilter1,org.apache.geode.cache30.MyGatewayEventFilter2";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(5, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -287,22 +224,16 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm4.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm5.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    
+    vm3.invoke(() -> verifySenderState("ln", false, false));
+    vm4.invoke(() -> verifySenderState("ln", false, false));
+    vm5.invoke(() -> verifySenderState("ln", false, false));
+
     List<String> eventFilters = new ArrayList<String>();
     eventFilters.add("org.apache.geode.cache30.MyGatewayEventFilter1");
     eventFilters.add("org.apache.geode.cache30.MyGatewayEventFilter2");
-    vm3.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, eventFilters, null ));
-    vm4.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, eventFilters, null ));
-    vm5.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, eventFilters, null ));
+    vm3.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, eventFilters, null));
+    vm4.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, eventFilters, null));
+    vm5.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, eventFilters, null));
   }
 
   /**
@@ -311,7 +242,7 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
   @Test
   public void testCreateGatewaySenderWithGatewayTransportFilters() {
 
-    Integer punePort = (Integer) vm1.invoke(() ->createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -319,39 +250,22 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__GATEWAYTRANSPORTFILTER + "=org.apache.geode.cache30.MyGatewayTransportFilter1";
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD" + " --" + CliStrings.CREATE_GATEWAYSENDER__GATEWAYTRANSPORTFILTER + "=org.apache.geode.cache30.MyGatewayTransportFilter1";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(5, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -361,21 +275,15 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm4.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm5.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    
+    vm3.invoke(() -> verifySenderState("ln", false, false));
+    vm4.invoke(() -> verifySenderState("ln", false, false));
+    vm5.invoke(() -> verifySenderState("ln", false, false));
+
     List<String> transportFilters = new ArrayList<String>();
     transportFilters.add("org.apache.geode.cache30.MyGatewayTransportFilter1");
-    vm3.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, null, transportFilters ));
-    vm4.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, null, transportFilters ));
-    vm5.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, null, transportFilters ));
+    vm3.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, null, transportFilters));
+    vm4.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, null, transportFilters));
+    vm5.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, null, transportFilters));
   }
 
   /**
@@ -384,7 +292,7 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
   @Test
   public void testCreateGatewaySender_OnMember() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -392,41 +300,24 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
-    
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
+
     final DistributedMember vm3Member = (DistributedMember) vm3.invoke(() -> getMember());
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MEMBER + "=" + vm3Member.getId()
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__MEMBER + "=" + vm3Member.getId() + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(1, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -436,11 +327,9 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    
-    vm3.invoke(() -> verifySenderAttributes( "ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null ));
+    vm3.invoke(() -> verifySenderState("ln", false, false));
+
+    vm3.invoke(() -> verifySenderAttributes("ln", 2, false, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, 2, OrderPolicy.THREAD, null, null));
   }
 
   /**
@@ -449,7 +338,7 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
   @Test
   public void testCreateGatewaySender_Group() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -457,39 +346,22 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCacheWithGroups( punePort, "SenderGroup1" ));
-    vm4.invoke(() -> createCacheWithGroups( punePort, "SenderGroup1" ));
-    vm5.invoke(() -> createCacheWithGroups( punePort, "SenderGroup1" ));
+    vm3.invoke(() -> createCacheWithGroups(punePort, "SenderGroup1"));
+    vm4.invoke(() -> createCacheWithGroups(punePort, "SenderGroup1"));
+    vm5.invoke(() -> createCacheWithGroups(punePort, "SenderGroup1"));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__GROUP + "=SenderGroup1"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__GROUP + "=SenderGroup1" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(3, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -499,14 +371,11 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", true, false ));
-    vm4.invoke(() -> verifySenderState(
-        "ln", true, false ));
-    vm5.invoke(() -> verifySenderState(
-        "ln", true, false ));
+    vm3.invoke(() -> verifySenderState("ln", true, false));
+    vm4.invoke(() -> verifySenderState("ln", true, false));
+    vm5.invoke(() -> verifySenderState("ln", true, false));
   }
-  
+
   /**
    * GatewaySender with given attribute values on given group.
    * Only 2 of 3 members are part of the group.
@@ -514,7 +383,7 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
   @Test
   public void testCreateGatewaySender_Group_Scenario2() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -522,39 +391,22 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCacheWithGroups( punePort, "SenderGroup1" ));
-    vm4.invoke(() -> createCacheWithGroups( punePort, "SenderGroup1" ));
-    vm5.invoke(() -> createCacheWithGroups( punePort, "SenderGroup2" ));
+    vm3.invoke(() -> createCacheWithGroups(punePort, "SenderGroup1"));
+    vm4.invoke(() -> createCacheWithGroups(punePort, "SenderGroup1"));
+    vm5.invoke(() -> createCacheWithGroups(punePort, "SenderGroup2"));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__GROUP + "=SenderGroup1"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__GROUP + "=SenderGroup1" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(2, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -564,19 +416,17 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", true, false ));
-    vm4.invoke(() -> verifySenderState(
-        "ln", true, false ));
+    vm3.invoke(() -> verifySenderState("ln", true, false));
+    vm4.invoke(() -> verifySenderState("ln", true, false));
   }
-  
+
   /**
    * Parallel GatewaySender with given attribute values
    */
   @Test
   public void testCreateParallelGatewaySender() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -584,36 +434,21 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
     props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" 
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100";
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info(
-          "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+      getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData resultData = (TabularResultData) cmdResult
-          .getResultData();
+      TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
       List<String> status = resultData.retrieveAllValues("Status");
       assertEquals(5, status.size());
       for (int i = 0; i < status.size(); i++) {
@@ -623,21 +458,15 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
       fail("testCreateGatewaySender failed as did not get CommandResult");
     }
 
-    vm3.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm4.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    vm5.invoke(() -> verifySenderState(
-        "ln", false, false ));
-    
-    vm3.invoke(() -> verifySenderAttributes( "ln", 2, true, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, GatewaySender.DEFAULT_DISPATCHER_THREADS, null, null, null ));
-    vm4.invoke(() -> verifySenderAttributes( "ln", 2, true, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, GatewaySender.DEFAULT_DISPATCHER_THREADS, null, null, null ));
-    vm5.invoke(() -> verifySenderAttributes( "ln", 2, true, true, 1000, socketReadTimeout, true, 1000, 5000,
-            true, false, 1000, 100, GatewaySender.DEFAULT_DISPATCHER_THREADS, null, null, null ));
+    vm3.invoke(() -> verifySenderState("ln", false, false));
+    vm4.invoke(() -> verifySenderState("ln", false, false));
+    vm5.invoke(() -> verifySenderState("ln", false, false));
+
+    vm3.invoke(() -> verifySenderAttributes("ln", 2, true, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, GatewaySender.DEFAULT_DISPATCHER_THREADS, null, null, null));
+    vm4.invoke(() -> verifySenderAttributes("ln", 2, true, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, GatewaySender.DEFAULT_DISPATCHER_THREADS, null, null, null));
+    vm5.invoke(() -> verifySenderAttributes("ln", 2, true, true, 1000, socketReadTimeout, true, 1000, 5000, true, false, 1000, 100, GatewaySender.DEFAULT_DISPATCHER_THREADS, null, null, null));
   }
-  
+
   /**
    * Parallel GatewaySender with given attribute values.
    * Provide dispatcherThreads as 2 which is not valid for Parallel sender.
@@ -645,55 +474,36 @@ public class WanCommandCreateGatewaySenderDUnitTest extends WANCommandTestBase {
   @Test
   public void testCreateParallelGatewaySender_Error() {
 
-    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId( 1 ));
+    Integer punePort = (Integer) vm1.invoke(() -> createFirstLocatorWithDSId(1));
 
     Properties props = getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(DISTRIBUTED_SYSTEM_ID, "1");
-    props.setProperty(LOCATORS, "localhost[" + punePort
-        + "]");
+    props.setProperty(LOCATORS, "localhost[" + punePort + "]");
     setUpJmxManagerOnVm0ThenConnect(props);
 
-    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator( 2, punePort ));
+    Integer nyPort = (Integer) vm2.invoke(() -> createFirstRemoteLocator(2, punePort));
 
-    vm3.invoke(() -> createCache( punePort ));
-    vm4.invoke(() -> createCache( punePort ));
-    vm5.invoke(() -> createCache( punePort ));
+    vm3.invoke(() -> createCache(punePort));
+    vm4.invoke(() -> createCache(punePort));
+    vm5.invoke(() -> createCache(punePort));
 
-    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT+1000;
-    String command = CliStrings.CREATE_GATEWAYSENDER + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=true" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true"
-        + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --"
-        + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
-    IgnoredException exp = IgnoredException.addIgnoredException(GatewaySenderException.class
-        .getName());
+    int socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT + 1000;
+    String command = CliStrings.CREATE_GATEWAYSENDER + " --" + CliStrings.CREATE_GATEWAYSENDER__ID + "=ln" + " --" + CliStrings.CREATE_GATEWAYSENDER__REMOTEDISTRIBUTEDSYSTEMID + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__PARALLEL + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__MANUALSTART + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETBUFFERSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__SOCKETREADTIMEOUT + "=" + socketReadTimeout + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEBATCHCONFLATION + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHSIZE + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__BATCHTIMEINTERVAL + "=5000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ENABLEPERSISTENCE + "=true" + " --" + CliStrings.CREATE_GATEWAYSENDER__DISKSYNCHRONOUS + "=false" + " --" + CliStrings.CREATE_GATEWAYSENDER__MAXQUEUEMEMORY + "=1000" + " --" + CliStrings.CREATE_GATEWAYSENDER__ALERTTHRESHOLD + "=100" + " --"
+        + CliStrings.CREATE_GATEWAYSENDER__DISPATCHERTHREADS + "=2" + " --" + CliStrings.CREATE_GATEWAYSENDER__ORDERPOLICY + "=THREAD";
+    IgnoredException exp = IgnoredException.addIgnoredException(GatewaySenderException.class.getName());
     try {
       CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
       if (cmdResult != null) {
         String strCmdResult = commandResultToString(cmdResult);
-        getLogWriter().info(
-            "testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
+        getLogWriter().info("testCreateGatewaySender stringResult : " + strCmdResult + ">>>>");
         assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-        TabularResultData resultData = (TabularResultData) cmdResult
-            .getResultData();
+        TabularResultData resultData = (TabularResultData) cmdResult.getResultData();
         List<String> status = resultData.retrieveAllValues("Status");
         assertEquals(5, status.size());
         for (int i = 0; i < status.size(); i++) {
-          assertTrue("GatewaySender creation should have failed", status.get(i)
-              .indexOf("ERROR:") != -1);
+          assertTrue("GatewaySender creation should have failed", status.get(i).indexOf("ERROR:") != -1);
         }
       } else {
         fail("testCreateGatewaySender failed as did not get CommandResult");

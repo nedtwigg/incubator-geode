@@ -31,7 +31,7 @@ package org.apache.geode.cache;
  * @see AttributesMutator#setCacheListener
  * @deprecated this feature is scheduled to be removed
  */
-public interface RegionRoleListener<K,V> extends CacheListener<K,V> {
+public interface RegionRoleListener<K, V> extends CacheListener<K, V> {
 
   /**
    * Invoked when a required role has returned to the distributed system
@@ -39,15 +39,14 @@ public interface RegionRoleListener<K,V> extends CacheListener<K,V> {
    *
    * @param event describes the member that fills the required role.
    */
-  public void afterRoleGain(RoleEvent<K,V> event);
-  
+  public void afterRoleGain(RoleEvent<K, V> event);
+
   /**
    * Invoked when a required role is no longer available in the distributed
    * system.
    *
    * @param event describes the member that last filled the required role.
    */
-  public void afterRoleLoss(RoleEvent<K,V> event);
-  
-}
+  public void afterRoleLoss(RoleEvent<K, V> event);
 
+}

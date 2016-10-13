@@ -31,14 +31,14 @@ public class CachingSingleObjectSizer implements SingleObjectSizer {
   public CachingSingleObjectSizer(SingleObjectSizer sizer) {
     this.wrappedSizer = sizer;
   }
+
   public long sizeof(Object object) {
     Class clazz = object.getClass();
-    if(clazz.isArray()) {
+    if (clazz.isArray()) {
       return wrappedSizer.sizeof(object);
-    }
-    else {
+    } else {
       Long size = sizeCache.get(clazz);
-      if(size != null) {
+      if (size != null) {
         return size.longValue();
       }
       size = Long.valueOf(wrappedSizer.sizeof(object));

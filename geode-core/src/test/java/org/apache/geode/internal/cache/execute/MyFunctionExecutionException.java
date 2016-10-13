@@ -16,9 +16,8 @@
  */
 package org.apache.geode.internal.cache.execute;
 
+public class MyFunctionExecutionException extends RuntimeException {
 
-public class MyFunctionExecutionException extends RuntimeException{
-  
   /**
    * Creates new exception with given error message.
    * 

@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -33,7 +32,7 @@ import org.apache.geode.distributed.internal.membership.*;
  * @since GemFire 3.5
  */
 public final class RegionResponse extends AdminResponse {
-//   instance variables
+  //   instance variables
 
   /** The name of the region returned in the response. */
   private String name;
@@ -45,15 +44,13 @@ public final class RegionResponse extends AdminResponse {
   private Exception exception;
 
   ///////////////////////  Static Methods  ///////////////////////
-  
+
   /**
    * Returns a <code>RegionResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of the local manager's
    * system config.
    */
-  public static RegionResponse create(DistributionManager dm,
-                                      InternalDistributedMember recipient,
-                                      RegionRequest request) {
+  public static RegionResponse create(DistributionManager dm, InternalDistributedMember recipient, RegionRequest request) {
     RegionResponse m = new RegionResponse();
 
     try {
@@ -69,14 +66,12 @@ public final class RegionResponse extends AdminResponse {
           break;
 
         case RegionRequest.CREATE_VM_ROOT:
-          r = cache.createRegion(request.newRegionName,
-                                 request.newRegionAttributes);
+          r = cache.createRegion(request.newRegionName, request.newRegionAttributes);
           break;
 
         case RegionRequest.CREATE_VM_REGION:
           Region parent = cache.getRegion(request.path);
-          r = parent.createSubregion(request.newRegionName,
-                                     request.newRegionAttributes); 
+          r = parent.createSubregion(request.newRegionName, request.newRegionAttributes);
           break;
 
         default:
@@ -85,26 +80,25 @@ public final class RegionResponse extends AdminResponse {
 
         if (r != null) {
           m.name = r.getFullPath();
-          m.userAttribute = (String)CacheDisplay.getCachedObjectDisplay(r.getUserAttribute(), GemFireVM.LIGHTWEIGHT_CACHE_VALUE);
+          m.userAttribute = (String) CacheDisplay.getCachedObjectDisplay(r.getUserAttribute(), GemFireVM.LIGHTWEIGHT_CACHE_VALUE);
 
         } else {
           m.name = null;
         }
       }
-    } 
-    catch (CancelException cce){
+    } catch (CancelException cce) {
       /*no cache yet*/
 
     } catch (Exception ex) {
       // Something went wrong while creating the region
       m.exception = ex;
     }
-    m.setRecipient(recipient);    
+    m.setRecipient(recipient);
     return m;
   }
-  
+
   // instance methods
-  
+
   public Region getRegion(RemoteGemFireVM vm) {
     if (this.name == null) {
       return null;
@@ -112,7 +106,7 @@ public final class RegionResponse extends AdminResponse {
       return new AdminRegion(this.name, vm, this.userAttribute);
     }
   }
-  
+
   /**
    * Returns any exception that was thrown while generating this
    * response.
@@ -134,8 +128,7 @@ public final class RegionResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.name = DataSerializer.readString(in);
     this.userAttribute = DataSerializer.readString(in);

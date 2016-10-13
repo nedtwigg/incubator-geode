@@ -44,10 +44,11 @@ public class InlineKeyJUnitTest {
     GemFireCacheImpl result = (GemFireCacheImpl) new CacheFactory(props).create();
     return result;
   }
+
   private void closeCache(GemFireCacheImpl gfc) {
     gfc.close();
   }
-  
+
   @Test
   public void testInlineKeys() {
     GemFireCacheImpl gfc = createCache();
@@ -130,21 +131,21 @@ public class InlineKeyJUnitTest {
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
       assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
-      
+
       key = "1234567890123456";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
       assertTrue("expected string object but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapObjectKey);
-     
+
     } finally {
       closeCache(gfc);
     }
   }
-  
+
   private static int getMemSize(Object o) {
     return ObjectSizer.REFLECTION_SIZE.sizeof(o);
   }
-  
+
   @Test
   public void testMemoryOverhead() {
     Object re = new VMThinRegionEntryOffHeapIntKey(null, 1, null);
@@ -152,19 +153,19 @@ public class InlineKeyJUnitTest {
     Object re2 = new VMThinRegionEntryOffHeapObjectKey(null, 1, null);
     //System.out.println("VMThinRegionEntryObjectKey=" + getMemSize(re2));
     assertTrue(getMemSize(re) < getMemSize(re2));
-    
+
     re = new VMThinRegionEntryOffHeapLongKey(null, 1L, null);
     //System.out.println("VMThinRegionEntryLongKey=" + getMemSize(re));
     re2 = new VMThinRegionEntryOffHeapObjectKey(null, 1L, null);
     //System.out.println("VMThinRegionEntryObjectKey=" + getMemSize(re2));
     assertTrue(getMemSize(re) < getMemSize(re2));
-    
+
     re = new VMThinRegionEntryOffHeapUUIDKey(null, new UUID(1L, 2L), null);
     //System.out.println("VMThinRegionEntryUUIDKey=" + getMemSize(re));
     re2 = new VMThinRegionEntryOffHeapObjectKey(null, new UUID(1L, 2L), null);
     //System.out.println("VMThinRegionEntryObjectKey=" + getMemSize(re2));
     assertTrue(getMemSize(re) < getMemSize(re2));
-    
+
     re = new VMThinRegionEntryOffHeapStringKey1(null, "1234567", null, true);
     //System.out.println("VMThinRegionEntryStringKey1=" + getMemSize(re));
     re2 = new VMThinRegionEntryOffHeapObjectKey(null, "1234567", null);

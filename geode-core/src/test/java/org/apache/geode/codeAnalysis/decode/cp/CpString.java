@@ -15,11 +15,13 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis.decode.cp;
+
 import java.io.*;
 
 public class CpString extends Cp {
-    int string_index;  // har har - points to a Utf8 holding the string's guts
-    CpString( DataInputStream source ) throws IOException {
-        string_index = source.readUnsignedShort();
-    }
+  int string_index; // har har - points to a Utf8 holding the string's guts
+
+  CpString(DataInputStream source) throws IOException {
+    string_index = source.readUnsignedShort();
+  }
 }

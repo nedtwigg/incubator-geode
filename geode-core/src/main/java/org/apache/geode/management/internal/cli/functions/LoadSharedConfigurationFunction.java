@@ -28,8 +28,7 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
  * Function to load the shared configuration (already imported) from the disk. 
  *
  */
-public class LoadSharedConfigurationFunction extends FunctionAdapter implements
-InternalEntity {
+public class LoadSharedConfigurationFunction extends FunctionAdapter implements InternalEntity {
 
   /**
    * 

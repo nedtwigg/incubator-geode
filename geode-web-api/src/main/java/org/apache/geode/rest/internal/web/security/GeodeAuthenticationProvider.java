@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 import org.apache.geode.internal.security.SecurityService;
 import org.apache.geode.security.GemFireSecurityException;
 
-
 @Component
 public class GeodeAuthenticationProvider implements AuthenticationProvider {
   private SecurityService securityService = SecurityService.getSecurityService();
@@ -42,8 +41,7 @@ public class GeodeAuthenticationProvider implements AuthenticationProvider {
     try {
       securityService.login(username, password);
       return new UsernamePasswordAuthenticationToken(username, password, AuthorityUtils.NO_AUTHORITIES);
-    }
-    catch (GemFireSecurityException e){
+    } catch (GemFireSecurityException e) {
       throw new BadCredentialsException(e.getLocalizedMessage(), e);
     }
   }

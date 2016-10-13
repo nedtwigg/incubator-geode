@@ -25,24 +25,17 @@ import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;
 
-public class GemFireXDMember extends JMXBaseBean implements
-    GemFireXDMemberMBean {
+public class GemFireXDMember extends JMXBaseBean implements GemFireXDMemberMBean {
   private String name = null;
 
-  private static String[] itemNames = { "connectionsAttempted",
-      "connectionsActive", "connectionsClosed", "connectionsFailed" };;
-  private static String[] itemDescriptions = { "connectionsAttempted",
-      "connectionsActive", "connectionsClosed", "connectionsFailed" };
-  private static OpenType[] itemTypes = { SimpleType.LONG, SimpleType.LONG,
-      SimpleType.LONG, SimpleType.LONG };
+  private static String[] itemNames = { "connectionsAttempted", "connectionsActive", "connectionsClosed", "connectionsFailed" };;
+  private static String[] itemDescriptions = { "connectionsAttempted", "connectionsActive", "connectionsClosed", "connectionsFailed" };
+  private static OpenType[] itemTypes = { SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.LONG };
   private static CompositeType networkServerClientConnectionStats = null;
 
   static {
     try {
-      networkServerClientConnectionStats = new CompositeType(
-          "NetworkServerClientConnectionStats",
-          "Network Server Client Connection Stats Information", itemNames,
-          itemDescriptions, itemTypes);
+      networkServerClientConnectionStats = new CompositeType("NetworkServerClientConnectionStats", "Network Server Client Connection Stats Information", itemNames, itemDescriptions, itemTypes);
 
     } catch (OpenDataException e) {
       e.printStackTrace();
@@ -68,8 +61,7 @@ public class GemFireXDMember extends JMXBaseBean implements
     Long[] itemValues = getLongArray("NetworkServerClientConnectionStats");
     CompositeData nscCompData;
     try {
-      nscCompData = new CompositeDataSupport(
-          networkServerClientConnectionStats, itemNames, itemValues);
+      nscCompData = new CompositeDataSupport(networkServerClientConnectionStats, itemNames, itemValues);
     } catch (OpenDataException e) {
       e.printStackTrace();
       nscCompData = null;

@@ -55,24 +55,21 @@ public class ServerToClientFunctionResultSender implements ResultSender {
 
   protected ExecuteFunctionOperationContext authContext;
 
-  protected InternalDistributedSystem ids = InternalDistributedSystem
-      .getAnyInstance();
+  protected InternalDistributedSystem ids = InternalDistributedSystem.getAnyInstance();
 
   protected AtomicBoolean alreadySendException = new AtomicBoolean(false);
-  
+
   protected boolean lastResultReceived;
-  
-  protected ByteBuffer commBuffer ; 
-  
+
+  protected ByteBuffer commBuffer;
+
   protected boolean isSelector;
-  
+
   public boolean isLastResultReceived() {
     return lastResultReceived;
   }
 
-  public ServerToClientFunctionResultSender(ChunkedMessage msg,
-      int messageType, ServerConnection sc, Function function,
-      ExecuteFunctionOperationContext authzContext) {
+  public ServerToClientFunctionResultSender(ChunkedMessage msg, int messageType, ServerConnection sc, Function function, ExecuteFunctionOperationContext authzContext) {
     this.msg = msg;
     this.msg.setVersion(sc.getClientVersion());
     this.messageType = messageType;
@@ -80,9 +77,9 @@ public class ServerToClientFunctionResultSender implements ResultSender {
     this.fn = function;
     this.authContext = authzContext;
     this.isSelector = sc.getAcceptor().isSelector();
-    
-    if(this.isSelector){
-      this.commBuffer = msg.getCommBuffer();  
+
+    if (this.isSelector) {
+      this.commBuffer = msg.getCommBuffer();
     }
   }
 
@@ -94,7 +91,7 @@ public class ServerToClientFunctionResultSender implements ResultSender {
       }
       return;
     }
-    if(this.lastResultReceived){
+    if (this.lastResultReceived) {
       return;
     }
     if (logger.isDebugEnabled()) {
@@ -103,9 +100,7 @@ public class ServerToClientFunctionResultSender implements ResultSender {
     try {
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(
-            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
-                .toLocalizedString("send"));
+        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
       }
 
       if (!headerSent) {
@@ -120,20 +115,16 @@ public class ServerToClientFunctionResultSender implements ResultSender {
       this.msg.setLastChunk(true);
       this.msg.sendChunk(this.sc);
       this.sc.setAsTrue(Command.RESPONDED);
-      
+
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(
-            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK
-                .toLocalizedString(), ex);
+        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK.toLocalizedString(), ex);
       }
-    } 
+    }
   }
 
-  public synchronized void lastResult(Object oneResult,
-      DistributedMember memberID) {
+  public synchronized void lastResult(Object oneResult, DistributedMember memberID) {
     this.lastResultReceived = true;
     if (!isOkayToSendResult()) {
       if (logger.isDebugEnabled()) {
@@ -147,9 +138,7 @@ public class ServerToClientFunctionResultSender implements ResultSender {
     try {
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(
-            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
-                .toLocalizedString("send"));
+        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
       }
 
       if (!headerSent) {
@@ -165,12 +154,9 @@ public class ServerToClientFunctionResultSender implements ResultSender {
       this.msg.sendChunk(this.sc);
       this.sc.setAsTrue(Command.RESPONDED);
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(
-            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK
-                .toLocalizedString(), ex);
+        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK.toLocalizedString(), ex);
       }
     }
   }
@@ -188,9 +174,7 @@ public class ServerToClientFunctionResultSender implements ResultSender {
     try {
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(
-            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
-                .toLocalizedString("send"));
+        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
       }
       if (!headerSent) {
         sendHeader();
@@ -203,18 +187,14 @@ public class ServerToClientFunctionResultSender implements ResultSender {
       this.msg.addObjPart(oneResult);
       this.msg.sendChunk(this.sc);
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(
-            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK
-                .toLocalizedString(), ex);
+        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK.toLocalizedString(), ex);
       }
     }
   }
 
-  public synchronized void sendResult(Object oneResult,
-      DistributedMember memberID) {
+  public synchronized void sendResult(Object oneResult, DistributedMember memberID) {
     if (!isOkayToSendResult()) {
       if (logger.isDebugEnabled()) {
         logger.debug("ServerToClientFunctionResultSender not sending result {} as the server has shutdown", oneResult);
@@ -227,9 +207,7 @@ public class ServerToClientFunctionResultSender implements ResultSender {
     try {
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(
-            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
-                .toLocalizedString("send"));
+        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
       }
       if (!headerSent) {
         sendHeader();
@@ -242,12 +220,9 @@ public class ServerToClientFunctionResultSender implements ResultSender {
       this.msg.addObjPart(oneResult);
       this.msg.sendChunk(this.sc);
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(
-            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK
-                .toLocalizedString(), ex);
+        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK.toLocalizedString(), ex);
       }
     }
   }
@@ -258,13 +233,11 @@ public class ServerToClientFunctionResultSender implements ResultSender {
     AuthorizeRequestPP authzRequestPP = this.sc.getPostAuthzRequest();
     if (authzRequestPP != null) {
       this.authContext.setIsPostOperation(true);
-      this.authContext = authzRequestPP.executeFunctionAuthorize(oneResult,
-          this.authContext);
+      this.authContext = authzRequestPP.executeFunctionAuthorize(oneResult, this.authContext);
     }
   }
 
-  protected void writeFunctionExceptionResponse(ChunkedMessage message,
-      String errormessage, Throwable e) throws IOException {
+  protected void writeFunctionExceptionResponse(ChunkedMessage message, String errormessage, Throwable e) throws IOException {
     if (logger.isDebugEnabled()) {
       logger.debug("ServerToClientFunctionResultSender sending Function Error Response: {}", errormessage);
     }
@@ -288,12 +261,11 @@ public class ServerToClientFunctionResultSender implements ResultSender {
   }
 
   public void sendException(Throwable exception) {
-    InternalFunctionException iFunxtionException = new InternalFunctionException(
-        exception);
+    InternalFunctionException iFunxtionException = new InternalFunctionException(exception);
     this.lastResult(iFunxtionException);
     this.lastResultReceived = true;
   }
-  
+
   public synchronized void setException(Throwable exception) {
     this.lastResultReceived = true;
     if (logger.isDebugEnabled()) {
@@ -306,26 +278,20 @@ public class ServerToClientFunctionResultSender implements ResultSender {
           if (!headerSent) {
             sendHeader();
           }
-          String exceptionMessage = exception.getMessage() != null ? exception
-              .getMessage() : "Exception occured during function execution";
-          logger.warn(LocalizedMessage.create(LocalizedStrings.
-            ExecuteRegionFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0, 
-            this.fn), exception);
+          String exceptionMessage = exception.getMessage() != null ? exception.getMessage() : "Exception occured during function execution";
+          logger.warn(LocalizedMessage.create(LocalizedStrings.ExecuteRegionFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0, this.fn), exception);
           if (logger.isDebugEnabled()) {
             logger.debug("ServerToClientFunctionResultSender sending Function Exception : ");
           }
           writeFunctionExceptionResponse(msg, exceptionMessage, exception);
-        }
-        catch (IOException ignoreAsSocketIsClosed) {
+        } catch (IOException ignoreAsSocketIsClosed) {
         }
       }
     }
   }
 
   protected boolean isOkayToSendResult() {
-    return (sc.getAcceptor().isRunning() && !ids.isDisconnecting()
-        && !sc.getCachedRegionHelper().getCache().isClosed() && !alreadySendException
-        .get());
+    return (sc.getAcceptor().isRunning() && !ids.isDisconnecting() && !sc.getCachedRegionHelper().getCache().isClosed() && !alreadySendException.get());
   }
 
   protected void setBuffer() {

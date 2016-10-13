@@ -29,18 +29,19 @@ public class LogWriterDisabledPerformanceTest extends LogWriterPerformanceTest {
   @Override
   protected PerformanceLogger createPerformanceLogger() {
     final LogWriter logWriter = createLogWriter();
-    
+
     final PerformanceLogger perfLogger = new PerformanceLogger() {
       @Override
       public void log(final String message) {
         logWriter.fine(message);
       }
+
       @Override
       public boolean isEnabled() {
         return logWriter.fineEnabled();
       }
     };
-    
+
     return perfLogger;
   }
 }

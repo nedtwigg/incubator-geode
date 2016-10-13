@@ -31,7 +31,8 @@ public interface PostProcessor {
    * Initialized at cache creation
    * @param securityProps
    */
-  default void init(Properties securityProps) {}
+  default void init(Properties securityProps) {
+  }
 
   /**
    * Process the value before sending it to the requester
@@ -54,5 +55,6 @@ public interface PostProcessor {
    * Give the implementation a chance to close the resources used.
    * Called when cache is closed.
    */
-  default void close() {}
+  default void close() {
+  }
 }

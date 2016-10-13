@@ -22,24 +22,24 @@ package org.apache.geode.management;
  * 
  * @since GemFire  8.0
  */
-public interface JMXNotificationUserData { 
+public interface JMXNotificationUserData {
   /**
    * The level at which this alert is issued.
    */
-  public static final String ALERT_LEVEL = "AlertLevel"; 
-  
+  public static final String ALERT_LEVEL = "AlertLevel";
+
   /**
    * The member of the distributed system that issued the alert, or
    * null if the issuer is no longer a member of the distributed system.
    * This constant is defined in org.apache.geode.management.UserData
    */
-  
-  public static final String MEMBER = "Member"; 
-  
+
+  public static final String MEMBER = "Member";
+
   /** 
    * The thread causing the alert
    */
-  
+
   public static final String THREAD = "Thread";
 
 }

@@ -73,8 +73,7 @@ public abstract class AbstractCommandsSupport implements CommandMarker {
   }
 
   protected static String toString(final Boolean condition, final String trueValue, final String falseValue) {
-    return (Boolean.TRUE.equals(condition) ? StringUtils.defaultIfBlank(trueValue, "true")
-      : StringUtils.defaultIfBlank(falseValue, "false"));
+    return (Boolean.TRUE.equals(condition) ? StringUtils.defaultIfBlank(trueValue, "true") : StringUtils.defaultIfBlank(falseValue, "false"));
   }
 
   protected static String toString(final Throwable t, final boolean printStackTrace) {
@@ -185,8 +184,7 @@ public abstract class AbstractCommandsSupport implements CommandMarker {
   protected <T extends Function> T register(T function) {
     if (FunctionService.isRegistered(function.getId())) {
       function = (T) FunctionService.getFunction(function.getId());
-    }
-    else {
+    } else {
       FunctionService.registerFunction(function);
     }
 

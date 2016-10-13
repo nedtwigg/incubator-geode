@@ -89,8 +89,7 @@ public class MiscellaneousCommandsExportLogsPart1DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogs" + dir, null, null, logLevel, false, false, start,
-        end, 1);
+    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogs" + dir, null, null, logLevel, false, false, start, end, 1);
 
     getLogWriter().info("testExportLogs command result =" + cmdResult);
 
@@ -121,8 +120,7 @@ public class MiscellaneousCommandsExportLogsPart1DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForMerge" + dir, null, null, logLevel, false, true,
-        start, end, 1);
+    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForMerge" + dir, null, null, logLevel, false, true, start, end, 1);
     getLogWriter().info("testExportLogsForMerge command=" + cmdResult);
 
     if (cmdResult != null) {

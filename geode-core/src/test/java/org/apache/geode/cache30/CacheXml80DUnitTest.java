@@ -62,8 +62,7 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     super();
   }
 
-  protected String getGemFireVersion()
-  {
+  protected String getGemFireVersion() {
     return CacheXml.VERSION_8_0;
   }
 
@@ -71,14 +70,14 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
   @Test
   public void testCompressor() {
     final String regionName = "testCompressor";
-    
+
     final CacheCreation cache = new CacheCreation();
     final RegionAttributesCreation attrs = new RegionAttributesCreation(cache);
     attrs.setCompressor(SnappyCompressor.getDefaultInstance());
     /* Region regionBefore = */ cache.createRegion(regionName, attrs);
-    
+
     testXml(cache);
-    
+
     final Cache c = getCache();
     assertNotNull(c);
 
@@ -87,7 +86,7 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     assertTrue(SnappyCompressor.getDefaultInstance().equals(regionAfter.getAttributes().getCompressor()));
     regionAfter.localDestroyRegion();
   }
-  
+
   /*
    * Tests xml creation for indexes
    * First creates 3 indexes and makes sure the cache creates all 3
@@ -102,13 +101,13 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     attrs.setScope(Scope.DISTRIBUTED_ACK);
     attrs.setDataPolicy(DataPolicy.REPLICATE);
     cache.createRegion("replicated", attrs);
-   
+
     cache.getQueryService().createIndex("crIndex", "CR_ID", "/replicated");
     cache.getQueryService().createHashIndex("hashIndex", "HASH_ID", "/replicated");
     cache.getQueryService().createKeyIndex("primaryKeyIndex", "ID", "/replicated");
-    
+
     testXml(cache);
-    
+
     Cache c = getCache();
     assertNotNull(c);
     QueryService qs = c.getQueryService();
@@ -124,33 +123,32 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
       PrintWriter pw = new PrintWriter(new FileWriter(file), true);
       CacheXmlGenerator.generate(c, pw, this.getUseSchema(), this.getGemFireVersion());
       pw.close();
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       Assert.fail("IOException during cache.xml generation to " + file, ex);
     }
-    
+
     // Get index info before closing cache.
     indexes = qs.getIndexes();
-    
+
     c.close();
     GemFireCacheImpl.testCacheXml = file;
-    assert(c.isClosed());
-    
+    assert (c.isClosed());
+
     c = getCache();
     qs = c.getQueryService();
     Collection<Index> newIndexes = qs.getIndexes();
     assertEquals(5, newIndexes.size());
-    
+
     Region r = c.getRegion("/replicated");
-    for (int i = 0; i < 5;i++) {
+    for (int i = 0; i < 5; i++) {
       r.put(i, new TestObject(i));
     }
 
     // Validate to see, newly created indexes match the initial configuration
     for (Index index : indexes) {
       Index newIndex = qs.getIndex(r, index.getName());
-      assertEquals ("Index from clause is not same for index " + index.getName(), newIndex.getFromClause(), index.getFromClause());
-      assertEquals ("Index expression is not same for index " + index.getName(), newIndex.getIndexedExpression(), index.getIndexedExpression());
+      assertEquals("Index from clause is not same for index " + index.getName(), newIndex.getFromClause(), index.getFromClause());
+      assertEquals("Index expression is not same for index " + index.getName(), newIndex.getIndexedExpression(), index.getIndexedExpression());
     }
 
     QueryObserverImpl observer = new QueryObserverImpl();
@@ -159,32 +157,30 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     assertEquals(1, results.size());
     assertTrue(checkIndexUsed(observer, "primaryKeyIndex"));
     observer.reset();
-    
+
     results = (SelectResults) qs.newQuery("select * from /replicated r where r.CR_ID = 1").execute();
     assertEquals(2, results.size());
     assertTrue(checkIndexUsed(observer, "crIndex"));
     observer.reset();
-    
+
     results = (SelectResults) qs.newQuery("select * from /replicated r where r.CR_ID_2 = 1").execute();
     assertEquals(2, results.size());
     assertTrue(checkIndexUsed(observer, "crIndex2"));
     observer.reset();
-    
+
     results = (SelectResults) qs.newQuery("select * from /replicated r, r.positions.values rv where r.R_ID > 1").execute();
     assertEquals(3, results.size());
     assertTrue(checkIndexUsed(observer, "rIndex"));
     observer.reset();
-    
+
     results = (SelectResults) qs.newQuery("select * from /replicated r where r.HASH_ID = 1").execute();
     assertEquals(1, results.size());
     assertTrue(checkIndexUsed(observer, "hashIndex"));
     observer.reset();
   }
-  
+
   @Test
-  public void testCacheServerDisableTcpNoDelay()
-      throws CacheException
-  {
+  public void testCacheServerDisableTcpNoDelay() throws CacheException {
     CacheCreation cache = new CacheCreation();
 
     CacheServer cs = cache.addCacheServer();
@@ -196,11 +192,8 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     testXml(cache);
   }
 
-  
   @Test
-  public void testCacheServerEnableTcpNoDelay()
-      throws CacheException
-  {
+  public void testCacheServerEnableTcpNoDelay() throws CacheException {
     CacheCreation cache = new CacheCreation();
 
     CacheServer cs = cache.addCacheServer();
@@ -215,26 +208,25 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
   @Test
   public void testDiskUsage() {
     CacheCreation cache = new CacheCreation();
-    
-    
+
     DiskStoreAttributesCreation disk = new DiskStoreAttributesCreation();
     disk.setDiskUsageWarningPercentage(97);
     disk.setDiskUsageCriticalPercentage(98);
     disk.setName("mydisk");
     cache.addDiskStore(disk);
-    
+
     RegionAttributesCreation attrs = new RegionAttributesCreation(cache);
     attrs.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     attrs.setDiskStoreName("mydisk");
-    
+
     cache.createVMRegion("whatever", attrs);
     testXml(cache);
   }
-  
+
   private boolean checkIndexUsed(QueryObserverImpl observer, String indexName) {
     return observer.isIndexesUsed && observer.indexName.equals(indexName);
   }
-  
+
   private class QueryObserverImpl extends QueryObserverAdapter {
 
     boolean isIndexesUsed = false;
@@ -246,7 +238,7 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     public void beforeIndexLookup(Index index, int oper, Object key) {
       indexName = index.getName();
       indexesUsed.add(index.getName());
-     
+
     }
 
     public void afterIndexLookup(Collection results) {
@@ -258,14 +250,14 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     public int numIndexesUsed() {
       return indexesUsed.size();
     }
-    
+
     public void reset() {
       indexName = null;
       isIndexesUsed = false;
       indexesUsed.clear();
     }
   }
-  
+
   private class TestObject {
     public int CR_ID;
     public int CR_ID_2;
@@ -273,32 +265,33 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     public int HASH_ID;
     public int ID;
     public Map positions;
-    
+
     public TestObject(int ID) {
-     this.ID = ID;
-     CR_ID = ID % 2;
-     CR_ID_2 = ID % 2;
-     R_ID = ID;
-     HASH_ID = ID;
-     positions = new HashMap();
-     positions.put(ID, "TEST_STRING");
+      this.ID = ID;
+      CR_ID = ID % 2;
+      CR_ID_2 = ID % 2;
+      R_ID = ID;
+      HASH_ID = ID;
+      positions = new HashMap();
+      positions.put(ID, "TEST_STRING");
     }
+
     public int getCR_ID() {
       return CR_ID;
     }
-    
+
     public int getCR_ID_2() {
       return CR_ID_2;
     }
-    
+
     public int getR_ID() {
       return R_ID;
     }
-    
+
     public int ID() {
       return ID;
     }
-    
+
     public int getHASH_ID() {
       return HASH_ID;
     }

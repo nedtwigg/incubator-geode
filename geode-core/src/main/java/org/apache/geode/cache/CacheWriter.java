@@ -44,7 +44,7 @@ package org.apache.geode.cache;
  * @see AttributesMutator#setCacheWriter
  * @since GemFire 3.0
  */
-public interface CacheWriter<K,V> extends CacheCallback {
+public interface CacheWriter<K, V> extends CacheCallback {
 
   /**
    * Called before an entry is updated. The entry update is initiated by a <code>put</code>
@@ -61,8 +61,7 @@ public interface CacheWriter<K,V> extends CacheCallback {
    * @see Region#put(Object, Object)
    * @see Region#get(Object)
    */
-  public void beforeUpdate(EntryEvent<K,V> event)
-  throws CacheWriterException;
+  public void beforeUpdate(EntryEvent<K, V> event) throws CacheWriterException;
 
   /** Called before an entry is created. Entry creation is initiated by a
    * <code>create</code>, a <code>put</code>, or a <code>get</code>.
@@ -78,8 +77,7 @@ public interface CacheWriter<K,V> extends CacheCallback {
    * @see Region#put(Object, Object)
    * @see Region#get(Object)
    */
-  public void beforeCreate(EntryEvent<K,V> event)
-  throws CacheWriterException;
+  public void beforeCreate(EntryEvent<K, V> event) throws CacheWriterException;
 
   /**
    * Called before an entry is destroyed. The entry being destroyed may or may
@@ -94,8 +92,7 @@ public interface CacheWriter<K,V> extends CacheCallback {
    *
    * @see Region#destroy(Object)
    */
-  public void beforeDestroy(EntryEvent<K,V> event)
-  throws CacheWriterException;
+  public void beforeDestroy(EntryEvent<K, V> event) throws CacheWriterException;
 
   /**
    * Called before a region is destroyed. The <code>CacheWriter</code>
@@ -123,8 +120,7 @@ public interface CacheWriter<K,V> extends CacheCallback {
    *
    * @see Region#destroyRegion()
    */
-  public void beforeRegionDestroy(RegionEvent<K,V> event)
-  throws CacheWriterException;
+  public void beforeRegionDestroy(RegionEvent<K, V> event) throws CacheWriterException;
 
   /**
    * Called before a region is cleared. The <code>CacheWriter</code>
@@ -145,6 +141,5 @@ public interface CacheWriter<K,V> extends CacheCallback {
    *
    * @see Region#clear
    */
-  public void beforeRegionClear(RegionEvent<K,V> event)
-  throws CacheWriterException;
+  public void beforeRegionClear(RegionEvent<K, V> event) throws CacheWriterException;
 }

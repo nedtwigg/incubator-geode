@@ -51,21 +51,19 @@ public class ReplaceWithOverflowJUnitTest {
     props.setProperty("log-level", "info");
     cache = new CacheFactory(props).create();
   }
-  
+
   @AfterClass
   public static void tearDown() {
-    if(cache != null && !cache.isClosed()) {
+    if (cache != null && !cache.isClosed()) {
       cache.close();
     }
   }
 
   @Before
   public void createRegion() {
-    region = cache.<String,String>createRegionFactory()
-        .setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK))
-        .setPartitionAttributes(new PartitionAttributesFactory<String, String>().setTotalNumBuckets(1).create())
-        .setDataPolicy(DataPolicy.PARTITION).create("ReplaceWithOverflowJUnitTest");
+    region = cache.<String, String> createRegionFactory().setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK)).setPartitionAttributes(new PartitionAttributesFactory<String, String>().setTotalNumBuckets(1).create()).setDataPolicy(DataPolicy.PARTITION).create("ReplaceWithOverflowJUnitTest");
   }
+
   @After
   public void destroyRegion() {
     if (region != null) {
@@ -74,11 +72,12 @@ public class ReplaceWithOverflowJUnitTest {
   }
 
   @Test
-  public void testReplaceWithOverflow()  { 
+  public void testReplaceWithOverflow() {
     region.put("1", "1");
     region.put("2", "2");
     assertEquals(true, region.replace("1", "1", "one"));
   }
+
   @Test
   public void testReplaceWithNullValue() {
     region.create("3", null);

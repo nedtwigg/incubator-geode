@@ -32,32 +32,28 @@ import org.apache.geode.cache.Declarable;
 public class PartitionedRegionCacheLoaderForSubRegion implements CacheLoader, Declarable {
 
   @Override
-	public Object load(LoaderHelper helper) throws CacheLoaderException {
+  public Object load(LoaderHelper helper) throws CacheLoaderException {
 
-		/* checking the attributes set in xml file */
-		PartitionedRegion pr = (PartitionedRegion) helper.getRegion();
-		if (pr.getAttributes().getPartitionAttributes().getRedundantCopies() != 1)
-			fail("Redundancy of the partition region is not 1");
-		
-		assertEquals(pr.getAttributes()
-				.getPartitionAttributes().getGlobalProperties().getProperty(
-						PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_PROPERTY),
-				"11");
-		assertEquals(pr.getAttributes()
-				.getPartitionAttributes().getLocalMaxMemory(), 200);
-		/*
-		 * Returning the same key. This is to check CaccheLoader is invoked or
-		 * not
-		 */
-		return helper.getKey();
-	}
+    /* checking the attributes set in xml file */
+    PartitionedRegion pr = (PartitionedRegion) helper.getRegion();
+    if (pr.getAttributes().getPartitionAttributes().getRedundantCopies() != 1)
+      fail("Redundancy of the partition region is not 1");
+
+    assertEquals(pr.getAttributes().getPartitionAttributes().getGlobalProperties().getProperty(PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_PROPERTY), "11");
+    assertEquals(pr.getAttributes().getPartitionAttributes().getLocalMaxMemory(), 200);
+    /*
+     * Returning the same key. This is to check CaccheLoader is invoked or
+     * not
+     */
+    return helper.getKey();
+  }
 
   @Override
-	public void close() {
-	}
+  public void close() {
+  }
 
   @Override
-	public void init(Properties props) {
-	}
+  public void init(Properties props) {
+  }
 
 }

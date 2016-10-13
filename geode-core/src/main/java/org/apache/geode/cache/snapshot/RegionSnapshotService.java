@@ -76,7 +76,7 @@ public interface RegionSnapshotService<K, V> {
    * @return the default options
    */
   SnapshotOptions<K, V> createOptions();
-  
+
   /**
    * Exports the region data into the snapshot file.
    * 
@@ -85,8 +85,7 @@ public interface RegionSnapshotService<K, V> {
    * 
    * @throws IOException error writing snapshot
    */
-  void save(File snapshot, SnapshotFormat format)
-  throws IOException;
+  void save(File snapshot, SnapshotFormat format) throws IOException;
 
   /**
    * Exports the region data into the snapshot file by applying user-configured 
@@ -98,9 +97,8 @@ public interface RegionSnapshotService<K, V> {
    * 
    * @throws IOException error writing snapshot
    */
-  void save(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) 
-  throws IOException;  
-  
+  void save(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) throws IOException;
+
   /**
    * Imports the snapshot file into the specified region.
    * <p>
@@ -115,9 +113,8 @@ public interface RegionSnapshotService<K, V> {
    * @throws IOException Unable to import data
    * @throws ClassNotFoundException Unable to import data
    */
-  void load(File snapshot, SnapshotFormat format) 
-  throws IOException, ClassNotFoundException;
-  
+  void load(File snapshot, SnapshotFormat format) throws IOException, ClassNotFoundException;
+
   /**
    * Imports the snapshot file into the specified region by applying user-
    * configured options.
@@ -134,6 +131,5 @@ public interface RegionSnapshotService<K, V> {
    * @throws IOException Unable to import data
    * @throws ClassNotFoundException Unable to import data
    */
-  void load(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) 
-  throws IOException, ClassNotFoundException;
+  void load(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) throws IOException, ClassNotFoundException;
 }

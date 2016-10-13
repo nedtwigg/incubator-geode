@@ -38,7 +38,7 @@ public class CompressionCacheListenerOffHeapDUnitTest extends CompressionCacheLi
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -58,6 +58,5 @@ public class CompressionCacheListenerOffHeapDUnitTest extends CompressionCacheLi
   protected void createRegion() {
     createCompressedRegionOnVm(getVM(TEST_VM), REGION_NAME, new SnappyCompressor(), true);
   }
-  
 
 }

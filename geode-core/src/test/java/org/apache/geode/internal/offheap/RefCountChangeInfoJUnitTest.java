@@ -62,12 +62,13 @@ public class RefCountChangeInfoJUnitTest {
   private boolean isOwnerNull(Object own1) {
     return own1 == null;
   }
-  
+
   private boolean hasStringLit(String str, String has) {
-    if(str.indexOf(has) == -1) return false;
+    if (str.indexOf(has) == -1)
+      return false;
     return true;
   }
-  
+
   @Test
   public void testGetUseCount() {
 
@@ -155,21 +156,20 @@ public class RefCountChangeInfoJUnitTest {
     assertEquals(1, refInfo1.getUseCount());
     String str = refInfo1.toString();
     str = refInfo1.toString();
-    
-    assertTrue(hasStringLit(refInfo1.toString(), " useCount=1"));
 
+    assertTrue(hasStringLit(refInfo1.toString(), " useCount=1"));
 
     RefCountChangeInfo refInfo3 = new RefCountChangeInfo(false, 1, owner1);
     assertFalse(refInfo1.isSameCaller(refInfo3));
     assertEquals(1, refInfo1.getUseCount());
-    
+
     RefCountChangeInfo refInfo4 = new RefCountChangeInfo(true, 1, owner2);
     assertTrue(refInfo1.isSameCaller(refInfo4));
     refInfo1.incUseCount();
     assertEquals(2, refInfo1.getUseCount());
 
     assertTrue(hasStringLit(refInfo1.toString(), " useCount=2"));
-    
+
     refInfo1.setStackTraceString("not_the_same");
     assertFalse(refInfo1.isSameCaller(refInfo4));
     assertEquals(2, refInfo1.getUseCount());
@@ -184,12 +184,12 @@ public class RefCountChangeInfoJUnitTest {
 
   private static class SameHashDifferentTrace {
 
-    public int hashCode() { 
-      return 1; 
+    public int hashCode() {
+      return 1;
     }
 
-    public boolean equals(Object notused) { 
-      return false; 
+    public boolean equals(Object notused) {
+      return false;
     }
   }
 }

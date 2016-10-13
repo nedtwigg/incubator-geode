@@ -29,23 +29,22 @@ import org.apache.geode.distributed.internal.SharedConfiguration;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.configuration.domain.Configuration;
 
-public class GetAllJarsFunction extends FunctionAdapter implements
-    InternalEntity {
-  
+public class GetAllJarsFunction extends FunctionAdapter implements InternalEntity {
+
   private static final long serialVersionUID = 1L;
 
   public GetAllJarsFunction() {
   }
 
   @Override
-  public void execute(FunctionContext context)  {
+  public void execute(FunctionContext context) {
     InternalLocator locator = (InternalLocator) Locator.getLocator();
-    
+
     if (locator != null) {
       SharedConfiguration sharedConfig = locator.getSharedConfiguration();
       if (sharedConfig != null) {
         try {
-          Map<String, Configuration> entireConfig  = sharedConfig.getEntireConfiguration();
+          Map<String, Configuration> entireConfig = sharedConfig.getEntireConfiguration();
           Set<String> configNames = entireConfig.keySet();
           context.getResultSender().lastResult(sharedConfig.getAllJars(configNames));
         } catch (IOException e) {
@@ -55,7 +54,7 @@ public class GetAllJarsFunction extends FunctionAdapter implements
         }
       }
     }
-    
+
     context.getResultSender().lastResult(null);
   }
 

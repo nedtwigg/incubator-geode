@@ -23,7 +23,7 @@ package org.apache.geode.internal.offheap;
  */
 public class OffHeapStoredObjectWithHeapForm extends OffHeapStoredObject {
   private final byte[] heapForm;
-  
+
   public OffHeapStoredObjectWithHeapForm(OffHeapStoredObject chunk, byte[] heapForm) {
     super(chunk);
     this.heapForm = heapForm;
@@ -33,7 +33,7 @@ public class OffHeapStoredObjectWithHeapForm extends OffHeapStoredObject {
   protected byte[] getRawBytes() {
     return this.heapForm;
   }
-  
+
   @Override
   public StoredObject getStoredObjectWithoutHeapForm() {
     return new OffHeapStoredObject(this);

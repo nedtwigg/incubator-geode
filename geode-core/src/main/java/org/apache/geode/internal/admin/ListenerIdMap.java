@@ -58,13 +58,13 @@ public class ListenerIdMap {
       throw new IllegalArgumentException(LocalizedStrings.ListenerIdMap_ILLEGAL_LOAD_FACTOR_0.toLocalizedString(new Float(loadFactor)));
     }
 
-    if (initialCapacity==0) {
+    if (initialCapacity == 0) {
       initialCapacity = 1;
     }
 
     this.loadFactor = loadFactor;
     table = new Entry[initialCapacity];
-    threshold = (int)(initialCapacity * loadFactor);
+    threshold = (int) (initialCapacity * loadFactor);
   }
 
   /**
@@ -112,7 +112,7 @@ public class ListenerIdMap {
    *         <code>key</code> is less than zero
    */
   public Object get(int key) {
- 
+
     Entry[] table = this.table;
     int bucket = Math.abs(key) % table.length;
     for (Entry e = table[bucket]; e != null; e = e.next) {
@@ -136,11 +136,11 @@ public class ListenerIdMap {
     int newCapacity = oldCapacity * 2 + 1;
     Entry newMap[] = new Entry[newCapacity];
 
-    threshold = (int)(newCapacity * loadFactor);
+    threshold = (int) (newCapacity * loadFactor);
     table = newMap;
 
-    for (int i = oldCapacity ; i-- > 0 ;) {
-      for (Entry old = oldMap[i] ; old != null ; ) {
+    for (int i = oldCapacity; i-- > 0;) {
+      for (Entry old = oldMap[i]; old != null;) {
         Entry e = old;
         old = old.next;
 
@@ -197,8 +197,7 @@ public class ListenerIdMap {
     Entry[] table = this.table;
     int bucket = Math.abs(key) % table.length;
 
-    for (Entry e = table[bucket], prev = null; e != null;
-         prev = e, e = e.next) {
+    for (Entry e = table[bucket], prev = null; e != null; prev = e, e = e.next) {
       if (key == e.key) {
         if (prev != null)
           prev.next = e.next;
@@ -276,6 +275,7 @@ public class ListenerIdMap {
     public int getKey() {
       return this.key;
     }
+
     public Object getValue() {
       return this.value;
     }
@@ -284,7 +284,7 @@ public class ListenerIdMap {
   /**
    * A class for iterating over the contents of an
    * <code>ObjIdMap</code> 
-   */ 
+   */
   public class EntryIterator {
     /** The current collision chain we're traversing */
     private int index;

@@ -29,8 +29,7 @@ package org.apache.geode.cache;
  * @since GemFire 2.0
  */
 
-public interface CacheStatistics
-{
+public interface CacheStatistics {
   /** For an entry, returns the time that the entry's value was last modified;
    * for a region, the last time any of the region's entries' values or the
    * values in subregions' entries were modified. The
@@ -90,7 +89,7 @@ public interface CacheStatistics
    * @throws StatisticsDisabledException if statistics are not available
    */
   public long getMissCount() throws StatisticsDisabledException;
-  
+
   /**
    * Returns the number of hits for this region or entry.  The number
    * of hits is defined as the number of times when the 
@@ -103,7 +102,7 @@ public interface CacheStatistics
    * @throws StatisticsDisabledException if statistics are not available
    */
   public long getHitCount() throws StatisticsDisabledException;
-  
+
   /** Return the hit ratio, a convenience method defined as the ratio of hits
    *  to the number of calls to {@link Region#get(Object) Region.get}. If there have been zero
    *  calls to <code>Region.get</code>, then zero is returned.
@@ -119,8 +118,7 @@ public interface CacheStatistics
    *  @return the hit ratio as a float
    */
   public float getHitRatio() throws StatisticsDisabledException;
-    
-  
+
   /** Reset the missCount and hitCount to zero for this entry.
    * 
    * @throws StatisticsDisabledException if statistics are not available

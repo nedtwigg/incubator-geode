@@ -52,25 +52,25 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * 
  *
  */
-public class FinishBackupRequest  extends CliLegacyMessage {
+public class FinishBackupRequest extends CliLegacyMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   private File targetDir;
   private File baselineDir;
   private boolean abort;
-  
+
   public FinishBackupRequest() {
     super();
   }
 
-  public FinishBackupRequest(File targetDir,File baselineDir, boolean abort) {
+  public FinishBackupRequest(File targetDir, File baselineDir, boolean abort) {
     this.targetDir = targetDir;
     this.baselineDir = baselineDir;
     this.abort = abort;
   }
-  
+
   public static Map<DistributedMember, Set<PersistentID>> send(DM dm, Set recipients, File targetDir, File baselineDir, boolean abort) {
-    FinishBackupRequest request = new FinishBackupRequest(targetDir,baselineDir, abort);
+    FinishBackupRequest request = new FinishBackupRequest(targetDir, baselineDir, abort);
     request.setRecipients(recipients);
 
     FinishBackupReplyProcessor replyProcessor = new FinishBackupReplyProcessor(dm, recipients);
@@ -79,23 +79,23 @@ public class FinishBackupRequest  extends CliLegacyMessage {
     try {
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
-      if(!(e.getCause() instanceof CancelException)) {
+      if (!(e.getCause() instanceof CancelException)) {
         throw e;
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    AdminResponse response = request.createResponse((DistributionManager)dm);
+    AdminResponse response = request.createResponse((DistributionManager) dm);
     response.setSender(dm.getDistributionManagerId());
     replyProcessor.process(response);
     return replyProcessor.results;
   }
-  
+
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     HashSet<PersistentID> persistentIds;
-    if(cache == null || cache.getBackupManager() == null) {
+    if (cache == null || cache.getBackupManager() == null) {
       persistentIds = new HashSet<PersistentID>();
     } else {
       try {
@@ -105,14 +105,14 @@ public class FinishBackupRequest  extends CliLegacyMessage {
         return AdminFailureResponse.create(dm, getSender(), e);
       }
     }
-    
+
     return new FinishBackupResponse(this.getSender(), persistentIds);
   }
 
   public int getDSFID() {
     return FINISH_BACKUP_REQUEST;
   }
-  
+
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
@@ -131,17 +131,16 @@ public class FinishBackupRequest  extends CliLegacyMessage {
 
   private static class FinishBackupReplyProcessor extends AdminMultipleReplyProcessor {
     Map<DistributedMember, Set<PersistentID>> results = Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
+
     public FinishBackupReplyProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
     }
-    
+
     @Override
     protected boolean stopBecauseOfExceptions() {
       return false;
     }
 
-    
-    
     @Override
     protected int getAckWaitThreshold() {
       //Disable the 15 second warning if the backup is taking a long time
@@ -156,16 +155,14 @@ public class FinishBackupRequest  extends CliLegacyMessage {
 
     @Override
     protected void process(DistributionMessage msg, boolean warn) {
-      if(msg instanceof FinishBackupResponse) {
+      if (msg instanceof FinishBackupResponse) {
         final HashSet<PersistentID> persistentIds = ((FinishBackupResponse) msg).getPersistentIds();
-        if(persistentIds != null && !persistentIds.isEmpty()) {
+        if (persistentIds != null && !persistentIds.isEmpty()) {
           results.put(msg.getSender(), persistentIds);
         }
       }
       super.process(msg, warn);
     }
-    
-    
 
   }
 }

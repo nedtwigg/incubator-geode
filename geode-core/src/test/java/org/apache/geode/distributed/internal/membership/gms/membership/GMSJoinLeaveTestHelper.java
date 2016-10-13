@@ -63,7 +63,7 @@ public class GMSJoinLeaveTestHelper {
     };
     Wait.waitForCriterion(waitCriterion, 10 * 1000, 200, true);
   }
-  
+
   private static GMSJoinLeave getGmsJoinLeave() {
     InternalDistributedSystem distributedSystem = getInternalDistributedSystem();
     DM dm = distributedSystem.getDM();
@@ -71,7 +71,7 @@ public class GMSJoinLeaveTestHelper {
     Services services = membershipManager.getServices();
     return (GMSJoinLeave) services.getJoinLeave();
   }
-  
+
   public static InternalDistributedMember getCurrentCoordinator() {
     return getGmsJoinLeave().getView().getCoordinator();
   }
@@ -84,6 +84,7 @@ public class GMSJoinLeaveTestHelper {
     waitCriterion();
     return getIDS();
   }
+
   private static InternalDistributedSystem getIDS() {
     InternalDistributedSystem distributedSystem = InternalDistributedSystem.getAnyInstance();
     if (distributedSystem == null) {

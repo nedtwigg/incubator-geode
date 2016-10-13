@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package com.gemstone.gemfire;
 
 /**
@@ -37,7 +37,7 @@ public abstract class GemFireException extends RuntimeException {
   public static final long serialVersionUID = -6972360779789402295L;
 
   /** The cause of this <code>GemFireException</code> */
-//  private Throwable cause;
+  //  private Throwable cause;
 
   //////////////////////  Constructors  //////////////////////
 
@@ -62,16 +62,16 @@ public abstract class GemFireException extends RuntimeException {
    */
   public GemFireException(String message, Throwable cause) {
     super(message, cause);
-//    this.cause = cause;
+    //    this.cause = cause;
   }
-  
+
   /**
    * Creates a new <code>GemFireException</code> with the given cause and
    * no detail message
    */
   public GemFireException(Throwable cause) {
     super(cause);
-//    this.cause = cause;
+    //    this.cause = cause;
   }
 
   ////////////////////  Instance Methods  ////////////////////
@@ -80,71 +80,71 @@ public abstract class GemFireException extends RuntimeException {
    * Returns the cause of this <code>GemFireException</code> or
    * <code>null</code> if the cause is nonexistent or unknown.
    */
-//  public Throwable getCause() {
-//    return this.cause;
-//  }
+  //  public Throwable getCause() {
+  //    return this.cause;
+  //  }
 
   /**
    * Returns the root cause of this <code>GemFireException</code> or
    * <code>null</code> if the cause is nonexistent or unknown.
    */
   public Throwable getRootCause() {
-    if ( this.getCause() == null ) {
+    if (this.getCause() == null) {
       return null;
     }
     Throwable root = this.getCause();
-    while ( root.getCause() != null ) {
+    while (root.getCause() != null) {
       root = root.getCause();
     }
     return root;
   }
-  
-//  public void printStackTrace() {
-//    super.printStackTrace();
-//    if (this.cause != null) {
-//      System.err.println("Caused by:");
-//      this.cause.printStackTrace();
-//    }
-//  }
-  
-//  public void printStackTrace(java.io.PrintWriter pw) {
-//    super.printStackTrace(pw);
-//
-//    if (this.cause != null) {
-//      pw.println("Caused by:");
-//      this.cause.printStackTrace(pw);
-//    }
-//  }
-//  
-//  public String getMessage() {
-//    if (this.cause != null) {
-//      String ourMsg = super.getMessage();
-//      if (ourMsg == null || ourMsg.length() == 0) {
-//        //ourMsg = super.toString(); //causes inifinite recursion
-//        ourMsg = "";
-//      }
-//      StringBuffer sb = new StringBuffer(ourMsg);
-//      sb.append(" Caused by: ");
-//      String causeMsg = this.cause.getMessage();
-//      if (causeMsg == null || causeMsg.length() == 0) {
-//        causeMsg = this.cause.toString();
-//      }
-//      sb.append(causeMsg);
-//      return sb.toString();
-//    } else {
-//      return super.getMessage();
-//    }
-//  }
+
+  //  public void printStackTrace() {
+  //    super.printStackTrace();
+  //    if (this.cause != null) {
+  //      System.err.println("Caused by:");
+  //      this.cause.printStackTrace();
+  //    }
+  //  }
+
+  //  public void printStackTrace(java.io.PrintWriter pw) {
+  //    super.printStackTrace(pw);
+  //
+  //    if (this.cause != null) {
+  //      pw.println("Caused by:");
+  //      this.cause.printStackTrace(pw);
+  //    }
+  //  }
+  //  
+  //  public String getMessage() {
+  //    if (this.cause != null) {
+  //      String ourMsg = super.getMessage();
+  //      if (ourMsg == null || ourMsg.length() == 0) {
+  //        //ourMsg = super.toString(); //causes inifinite recursion
+  //        ourMsg = "";
+  //      }
+  //      StringBuffer sb = new StringBuffer(ourMsg);
+  //      sb.append(" Caused by: ");
+  //      String causeMsg = this.cause.getMessage();
+  //      if (causeMsg == null || causeMsg.length() == 0) {
+  //        causeMsg = this.cause.toString();
+  //      }
+  //      sb.append(causeMsg);
+  //      return sb.toString();
+  //    } else {
+  //      return super.getMessage();
+  //    }
+  //  }
 
   /**
    * Represent the receiver as well as the cause
    */
-//  public String toString() {
-//    String result = super.toString();
-//    if (cause != null) {
-//      result = result + ", caused by " + cause.toString();
-//    }
-//    return result;
-//  }
+  //  public String toString() {
+  //    String result = super.toString();
+  //    if (cause != null) {
+  //      result = result + ", caused by " + cause.toString();
+  //    }
+  //    return result;
+  //  }
 
 }

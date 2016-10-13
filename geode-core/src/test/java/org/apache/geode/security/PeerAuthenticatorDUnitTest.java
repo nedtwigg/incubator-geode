@@ -51,8 +51,8 @@ public class PeerAuthenticatorDUnitTest extends JUnit4DistributedTestCase {
   }
 
   @Test
-  public void testPeerAuthenticator() throws Exception{
-    int locatorPort = locator.invoke(()->{
+  public void testPeerAuthenticator() throws Exception {
+    int locatorPort = locator.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(SECURITY_PEER_AUTHENTICATOR, DummyAuthenticator.class.getName());
       props.setProperty(MCAST_PORT, "0");
@@ -65,7 +65,7 @@ public class PeerAuthenticatorDUnitTest extends JUnit4DistributedTestCase {
 
     // set up server with security
     String locators = "localhost[" + locatorPort + "]";
-    server.invoke(()->{
+    server.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, locators);
@@ -77,7 +77,7 @@ public class PeerAuthenticatorDUnitTest extends JUnit4DistributedTestCase {
       InternalDistributedSystem ds = getSystem(props);
     });
 
-    server1.invoke(()->{
+    server1.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, locators);
@@ -86,7 +86,7 @@ public class PeerAuthenticatorDUnitTest extends JUnit4DistributedTestCase {
       props.setProperty("security-username", "bogus");
       props.setProperty("security-password", "user");
 
-      assertThatThrownBy(()->getSystem(props)).isInstanceOf(GemFireSecurityException.class);
+      assertThatThrownBy(() -> getSystem(props)).isInstanceOf(GemFireSecurityException.class);
     });
   }
 

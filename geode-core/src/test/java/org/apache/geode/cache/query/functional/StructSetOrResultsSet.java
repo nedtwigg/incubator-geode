@@ -98,9 +98,9 @@ public class StructSetOrResultsSet {
     Collection coll1 = null;
     Collection coll2 = null;
     for (int j = 0; j < len; j++) {
-      checkSelectResultTypes((SelectResults)r[j][0], (SelectResults)r[j][1], queries[j]);
-      checkResultSizes((SelectResults)r[j][0], (SelectResults)r[j][1], queries[j]);
-      
+      checkSelectResultTypes((SelectResults) r[j][0], (SelectResults) r[j][1], queries[j]);
+      checkResultSizes((SelectResults) r[j][0], (SelectResults) r[j][1], queries[j]);
+
       if (checkOrder) {
         coll2 = (((SelectResults) r[j][1]).asList());
         coll1 = (((SelectResults) r[j][0]).asList());
@@ -122,30 +122,25 @@ public class StructSetOrResultsSet {
         q = CacheUtils.getQueryService().newQuery(query);
         CacheUtils.getLogger().info("Executing query: " + query);
         baseResults[i][1] = q.execute();
-        int unorderedResultsSize =  ((SelectResults) baseResults[i][1]).size(); 
-        if(unorderedResultsSize == 0) {
+        int unorderedResultsSize = ((SelectResults) baseResults[i][1]).size();
+        if (unorderedResultsSize == 0) {
           fail("The test results size is 0 , it possibly is not validating anything. rewrite the test");
         }
-        Wrapper wrapper = getOrderByComparatorAndLimitForQuery(queries[i],unorderedResultsSize );
+        Wrapper wrapper = getOrderByComparatorAndLimitForQuery(queries[i], unorderedResultsSize);
         if (wrapper.validationLevel != ValidationLevel.NONE) {
-          Object[] externallySorted = ((SelectResults) baseResults[i][1])
-              .toArray();
+          Object[] externallySorted = ((SelectResults) baseResults[i][1]).toArray();
           if (wrapper.validationLevel != ValidationLevel.MATCH_ONLY) {
             Arrays.sort(externallySorted, wrapper.obc);
           }
           if (wrapper.limit != -1) {
             if (externallySorted.length > wrapper.limit) {
               Object[] newExternallySorted = new Object[wrapper.limit];
-              System.arraycopy(externallySorted, 0, newExternallySorted, 0,
-                  wrapper.limit);
+              System.arraycopy(externallySorted, 0, newExternallySorted, 0, wrapper.limit);
               externallySorted = newExternallySorted;
             }
           }
           StructSetOrResultsSet ssOrrs1 = new StructSetOrResultsSet();
-          ssOrrs1.compareQueryResultsWithExternallySortedResults(
-              (SelectResults) baseResults[i][0], externallySorted, queries[i],
-              wrapper);
-
+          ssOrrs1.compareQueryResultsWithExternallySortedResults((SelectResults) baseResults[i][0], externallySorted, queries[i], wrapper);
 
         }
       } catch (Exception e) {
@@ -158,12 +153,9 @@ public class StructSetOrResultsSet {
   private void compareQueryResultsWithExternallySortedResults(SelectResults sr, Object[] externallySorted, String query, Wrapper wrapper) {
 
     if (sr.size() == externallySorted.length) {
-      CacheUtils.log("Both SelectResults are of Same Size i.e.  Size= "
-          + sr.size());
+      CacheUtils.log("Both SelectResults are of Same Size i.e.  Size= " + sr.size());
     } else {
-      fail("FAILED:SelectResults size is different in both the cases. Size1="
-          + sr.size() + " Size2 = " + externallySorted.length
-          + "; failed query=" + query);
+      fail("FAILED:SelectResults size is different in both the cases. Size1=" + sr.size() + " Size2 = " + externallySorted.length + "; failed query=" + query);
     }
 
     Collection coll1 = null;
@@ -180,7 +172,7 @@ public class StructSetOrResultsSet {
           logger.error(" query result elementType=" + sr.getCollectionType().getElementType());
           logger.error(" externally sorted result =****");
           logger.error(ArrayUtils.toString(externallySorted));
-         
+
           fail("failed query due to element mismatch=" + query);
         }
         ++j;
@@ -208,23 +200,20 @@ public class StructSetOrResultsSet {
     }
   }
 
-  public Wrapper getOrderByComparatorAndLimitForQuery(String orderByQuery, int unorderedResultSize)
-  throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-    DefaultQuery q = (DefaultQuery) CacheUtils.getQueryService().newQuery(
-        orderByQuery);
-    CompiledSelect cs = q.getSimpleSelect();    
+  public Wrapper getOrderByComparatorAndLimitForQuery(String orderByQuery, int unorderedResultSize) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    DefaultQuery q = (DefaultQuery) CacheUtils.getQueryService().newQuery(orderByQuery);
+    CompiledSelect cs = q.getSimpleSelect();
     List<CompiledSortCriterion> orderByAttribs = null;
-    if(cs.getType() == CompiledValue.GROUP_BY_SELECT) {
+    if (cs.getType() == CompiledValue.GROUP_BY_SELECT) {
       Field originalOrderByMethod = CompiledGroupBySelect.class.getDeclaredField("originalOrderByClause");
       originalOrderByMethod.setAccessible(true);
-      orderByAttribs = ( List<CompiledSortCriterion>)originalOrderByMethod.get(cs);
-    }else {
+      orderByAttribs = (List<CompiledSortCriterion>) originalOrderByMethod.get(cs);
+    } else {
       orderByAttribs = cs.getOrderByAttrs();
     }
     ObjectType resultType = cs.getElementTypeForOrderByQueries();
     ExecutionContext context = new ExecutionContext(null, CacheUtils.getCache());
-    final OrderByComparator obc = new OrderByComparator(orderByAttribs,
-        resultType, context);
+    final OrderByComparator obc = new OrderByComparator(orderByAttribs, resultType, context);
     Comparator baseComparator = obc;
     if (resultType.isStructType()) {
       baseComparator = new Comparator<Struct>() {
@@ -256,27 +245,24 @@ public class StructSetOrResultsSet {
 
     };
 
-    Field hasUnmappedOrderByColsField = CompiledSelect.class
-        .getDeclaredField("hasUnmappedOrderByCols");
+    Field hasUnmappedOrderByColsField = CompiledSelect.class.getDeclaredField("hasUnmappedOrderByCols");
     hasUnmappedOrderByColsField.setAccessible(true);
-    boolean skip = ((Boolean) hasUnmappedOrderByColsField.get(cs))
-        .booleanValue();
+    boolean skip = ((Boolean) hasUnmappedOrderByColsField.get(cs)).booleanValue();
     ValidationLevel validationLevel = ValidationLevel.ALL;
-    
-    int limit ;
-    
-    if(cs.getType() == CompiledValue.GROUP_BY_SELECT) {
+
+    int limit;
+
+    if (cs.getType() == CompiledValue.GROUP_BY_SELECT) {
       Field limitCVField = CompiledGroupBySelect.class.getDeclaredField("limit");
       limitCVField.setAccessible(true);
-      CompiledValue limitCV = ( CompiledValue)limitCVField.get(cs);
-      Method evaluateLimitMethod = CompiledSelect.class.getDeclaredMethod("evaluateLimitValue",
-          ExecutionContext.class, CompiledValue.class );
+      CompiledValue limitCV = (CompiledValue) limitCVField.get(cs);
+      Method evaluateLimitMethod = CompiledSelect.class.getDeclaredMethod("evaluateLimitValue", ExecutionContext.class, CompiledValue.class);
       evaluateLimitMethod.setAccessible(true);
-      limit = ((Integer)evaluateLimitMethod.invoke(null, context, limitCV)).intValue();
-    }else {
+      limit = ((Integer) evaluateLimitMethod.invoke(null, context, limitCV)).intValue();
+    } else {
       limit = cs.getLimitValue(null);
     }
-   
+
     if (limit != -1 && limit < unorderedResultSize) {
       // chances are that results will not match
       if (skip) {
@@ -331,8 +317,7 @@ public class StructSetOrResultsSet {
    * Compares two ArrayLists containing query results with/without order.
    */
   public void CompareQueryResultsAsListWithoutAndWithIndexes(Object[][] r, int len, boolean checkOrder, String queries[]) {
-    CompareQueryResultsAsListWithoutAndWithIndexes(r, len, checkOrder, true,
-        queries);
+    CompareQueryResultsAsListWithoutAndWithIndexes(r, len, checkOrder, true, queries);
   }
 
   public void CompareQueryResultsAsListWithoutAndWithIndexes(Object[][] r, int len, boolean checkOrder, boolean checkClass, String queries[]) {
@@ -345,29 +330,24 @@ public class StructSetOrResultsSet {
       result2 = ((ArrayList) r[j][1]);
       result1.trimToSize();
       result2.trimToSize();
-    
+
       compareQueryResultLists(result1, result2, len, checkOrder, checkClass, queries[j]);
     }
   }
-  
+
   public void compareQueryResultLists(List r1, List r2, int len, boolean checkOrder, boolean checkClass, String query) {
     if (checkClass) {
-      if ((r1.get(0).getClass().getName()).equals(r2.get(0)
-          .getClass().getName())) {
-        CacheUtils.log("Both SelectResults are of the same Type i.e.--> "
-            + r1.get(0).getClass().getName());
+      if ((r1.get(0).getClass().getName()).equals(r2.get(0).getClass().getName())) {
+        CacheUtils.log("Both SelectResults are of the same Type i.e.--> " + r1.get(0).getClass().getName());
       } else {
-        fail("FAILED:Select result Type is different in both the cases."
-            + r1.get(0).getClass().getName() + "and"
-            + r1.get(0).getClass().getName() + "; failed query="
-            + query);
+        fail("FAILED:Select result Type is different in both the cases." + r1.get(0).getClass().getName() + "and" + r1.get(0).getClass().getName() + "; failed query=" + query);
       }
     }
 
     checkResultSizes(r1, r2, query);
     compareResults(r1, r2, query, checkOrder);
   }
-  
+
   private void checkSelectResultTypes(SelectResults r1, SelectResults r2, String query) {
     ObjectType type1, type2;
     type1 = r1.getCollectionType().getElementType();
@@ -377,12 +357,10 @@ public class StructSetOrResultsSet {
       fail("FAILED:Select result Type is different in both the cases." + "; failed query=" + query);
     }
   }
-  
+
   private void checkResultSizes(Collection r1, Collection r2, String query) {
     if (r1.size() != r2.size()) {
-      fail("FAILED:SelectResults size is different in both the cases. Size1="
-          + r1.size() + " Size2 = "
-          + r2.size() + "; failed query=" + query);
+      fail("FAILED:SelectResults size is different in both the cases. Size1=" + r1.size() + " Size2 = " + r2.size() + "; failed query=" + query);
     }
   }
 
@@ -395,31 +373,22 @@ public class StructSetOrResultsSet {
       Object p2 = null;
       if (!checkOrder) {
         if (!collectionContains(result2, p1)) {
-          fail("Atleast one element in the pair of SelectResults "
-              + "supposedly identical, is not equal " + "Match not found for :"
-              + p1 + " compared with:" + p2 + "; failed query=" + query + "; element unmatched ="
-              + p1 + ";p1 class=" + p1.getClass() + " ; other set has ="
-              + result2);
+          fail("Atleast one element in the pair of SelectResults " + "supposedly identical, is not equal " + "Match not found for :" + p1 + " compared with:" + p2 + "; failed query=" + query + "; element unmatched =" + p1 + ";p1 class=" + p1.getClass() + " ; other set has =" + result2);
         }
-      }
-      else {
+      } else {
         boolean matched = false;
         if (itert2.hasNext()) {
           p2 = itert2.next();
           matched = objectsEqual(p1, p2);
           if (!matched) {
-            fail("Order of results was not the same, match not found for :"
-                + p1 + " compared with:" + p2 + "; failed query=" + query + "; element unmatched ="
-                + p1 + ";p1 class=" + p1.getClass() + " compared with " + p2 + ";p2 class=" + p2.getClass()
-                + "currentIndex:" + currentIndex 
-                + "\nr1:" + result1 + "\n\nr2:" + result2);
+            fail("Order of results was not the same, match not found for :" + p1 + " compared with:" + p2 + "; failed query=" + query + "; element unmatched =" + p1 + ";p1 class=" + p1.getClass() + " compared with " + p2 + ";p2 class=" + p2.getClass() + "currentIndex:" + currentIndex + "\nr1:" + result1 + "\n\nr2:" + result2);
           }
         }
       }
-      currentIndex ++;
+      currentIndex++;
     }
   }
-  
+
   private boolean collectionContains(Collection collection, Object object) {
     Iterator iterator = collection.iterator();
     while (iterator.hasNext()) {
@@ -430,7 +399,7 @@ public class StructSetOrResultsSet {
     }
     return false;
   }
-  
+
   private boolean objectsEqual(Object o1, Object o2) {
     //Assumed that o1 and o2 are the same object type as both are from collections created by executing the same query
     if (o1 instanceof Struct) {
@@ -440,15 +409,12 @@ public class StructSetOrResultsSet {
       assertEquals(values1.length, values2.length);
       boolean elementEqual = true;
       for (int i = 0; i < values1.length; ++i) {
-        elementEqual = elementEqual
-            && ((values1[i] == values2[i]) || values1[i]
-                .equals(values2[i]));
+        elementEqual = elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
       }
       if (elementEqual) {
         return true;
       }
-    } 
-    else {
+    } else {
       //if o1 is null and o2 is not, an NPE will be thrown
       if (o1 == o2 || o1.equals(o2)) {
         return true;

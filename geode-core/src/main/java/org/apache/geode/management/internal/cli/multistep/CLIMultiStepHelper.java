@@ -60,8 +60,7 @@ public class CLIMultiStepHelper {
   public static final int DEFAULT_PAGE_SIZE = 20;
 
   public static Object execCLISteps(LogWrapper logWrapper, Gfsh shell, ParseResult parseResult) {
-    CLIStep[] steps = (CLIStep[]) ReflectionUtils.invokeMethod(parseResult.getMethod(), parseResult.getInstance(),
-        parseResult.getArguments());
+    CLIStep[] steps = (CLIStep[]) ReflectionUtils.invokeMethod(parseResult.getMethod(), parseResult.getInstance(), parseResult.getArguments());
     if (steps != null) {
       boolean endStepReached = false;
       int stepNumber = 0;
@@ -73,7 +72,7 @@ public class CLIMultiStepHelper {
           Result result = executeStep(logWrapper, shell, nextStep, parseResult, nextStepArgs);
           String nextStepString = null;
           nextStepString = getNextStep(result);
-          nextStepArgs = extractArgumentsForNextStep(result);          
+          nextStepArgs = extractArgumentsForNextStep(result);
           if (!"END".equals(nextStepString)) {
             String step = nextStepString;
             boolean stepFound = false;
@@ -83,8 +82,7 @@ public class CLIMultiStepHelper {
                 stepFound = true;
               }
             if (!stepFound) {
-              return ResultBuilder.buildResult(ResultBuilder.createErrorResultData().addLine(
-                  "Wrong step name returned by previous step : " + step));
+              return ResultBuilder.buildResult(ResultBuilder.createErrorResultData().addLine("Wrong step name returned by previous step : " + step));
             }
           } else {
             lastResult = result;
@@ -99,19 +97,13 @@ public class CLIMultiStepHelper {
       return lastResult;
     } else {
       Gfsh.println("Command returned null steps");
-      return ResultBuilder.buildResult(ResultBuilder.createErrorResultData().addLine(
-          "Multi-step command Return NULL STEP Array"));
+      return ResultBuilder.buildResult(ResultBuilder.createErrorResultData().addLine("Multi-step command Return NULL STEP Array"));
     }
   }
 
-  private static Result executeStep(final LogWrapper logWrapper,
-                                    final Gfsh shell,
-                                    final CLIStep nextStep,
-                                    final ParseResult parseResult,
-                                    final SectionResultData nextStepArgs)
-  {
+  private static Result executeStep(final LogWrapper logWrapper, final Gfsh shell, final CLIStep nextStep, final ParseResult parseResult, final SectionResultData nextStepArgs) {
     try {
-      if (nextStep instanceof CLIRemoteStep) {        
+      if (nextStep instanceof CLIRemoteStep) {
         if (shell.isConnectedAndReady()) {
           if (GfshParseResult.class.isInstance(parseResult)) {
             GfshParseResult gfshParseResult = (GfshParseResult) parseResult;
@@ -131,7 +123,11 @@ public class CLIMultiStepHelper {
             throw new IllegalArgumentException("Command Configuration/Definition error.");
           }
         } else {
-          try{throw new Exception();} catch (Exception ex) {ex.printStackTrace();}
+          try {
+            throw new Exception();
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
           throw new IllegalStateException("Can't execute a remote command without connection. Use 'connect' first to connect.");
         }
       } else {
@@ -153,7 +149,7 @@ public class CLIMultiStepHelper {
   }
 
   private static String changeStepName(String userInput, String stepName) {
-    int i = userInput.indexOf("--step-name=");    
+    int i = userInput.indexOf("--step-name=");
     if (i == -1) {
       return userInput + " --step-name=" + stepName;
     } else {
@@ -173,8 +169,7 @@ public class CLIMultiStepHelper {
       if (ResultData.TYPE_ERROR.equals(cResult.getType())) {
         throw new CLIStepExecption(cResult);
       } else {
-        throw new StepExecutionException("Step returned result of type other than " + ResultData.TYPE_COMPOSITE + " Type "
-            + cResult.getType());
+        throw new StepExecutionException("Step returned result of type other than " + ResultData.TYPE_COMPOSITE + " Type " + cResult.getType());
       }
     }
   }
@@ -190,8 +185,7 @@ public class CLIMultiStepHelper {
       if (ResultData.TYPE_ERROR.equals(cResult.getType())) {
         throw new CLIStepExecption(cResult);
       } else {
-        throw new RuntimeException("Step returned result of type other than " + ResultData.TYPE_COMPOSITE + " Type "
-            + cResult.getType());
+        throw new RuntimeException("Step returned result of type other than " + ResultData.TYPE_COMPOSITE + " Type " + cResult.getType());
       }
     }
   }
@@ -205,9 +199,9 @@ public class CLIMultiStepHelper {
 
   public static GfJsonObject getStepArgs() {
     Map<String, String> args = null;
-    if(CliUtil.isGfshVM){
+    if (CliUtil.isGfshVM) {
       args = Gfsh.getCurrentInstance().getEnv();
-    }else{
+    } else {
       args = CommandExecutionContext.getShellEnv();
     }
     if (args == null)
@@ -230,7 +224,7 @@ public class CLIMultiStepHelper {
     section.addData(NEXT_STEP_NAME, nextStep);
     return ResultBuilder.buildResult(result);
   }
-  
+
   public static Object chooseStep(CLIStep[] steps, String stepName) {
     if ("ALL".equals(stepName)) {
       return steps;
@@ -254,13 +248,13 @@ public class CLIMultiStepHelper {
     section.addData(NEXT_STEP_NAMES, array);
     return ResultBuilder.buildResult(result);
   }
-  
+
   public static Result createEmptyResult(String step) {
     CompositeResultData result = ResultBuilder.createCompositeResultData();
     SectionResultData section = result.addSection(STEP_SECTION);
     section.addData(NEXT_STEP_NAME, step);
     return ResultBuilder.buildResult(result);
-  }   
+  }
 
   public static Result createPageResult(String fields[], Object values[], String step, String[] header, Object[][] table) {
     CompositeResultData result = ResultBuilder.createCompositeResultData();
@@ -321,7 +315,7 @@ public class CLIMultiStepHelper {
     }
     return ResultBuilder.buildResult(result);
   }
-  
+
   public static Result createBannerResult(List<String> fields, @SuppressWarnings("rawtypes") List values, String step) {
     CompositeResultData result = ResultBuilder.createCompositeResultData();
     SectionResultData section = result.addSection(STEP_SECTION);
@@ -340,56 +334,55 @@ public class CLIMultiStepHelper {
     Gfsh.println(msg);
     // TODO Use gemfire Logging for code path running on manager
   }
-  
-  public static abstract class LocalStep implements CLIStep{
-    private String name=null;
+
+  public static abstract class LocalStep implements CLIStep {
+    private String name = null;
     protected Object[] commandArguments = null;
-    
-    public LocalStep(String name, Object[] arguments){
+
+    public LocalStep(String name, Object[] arguments) {
       this.name = name;
       this.commandArguments = arguments;
     }
-    
-    public String getName(){
+
+    public String getName() {
       return name;
-    }    
+    }
   }
-  
+
   @SuppressWarnings("serial")
-  public static abstract class RemoteStep implements CLIRemoteStep{
-    private String name=null;
+  public static abstract class RemoteStep implements CLIRemoteStep {
+    private String name = null;
     protected Object[] commandArguments = null;
-    
-    public RemoteStep(String name, Object[] arguments){
+
+    public RemoteStep(String name, Object[] arguments) {
       this.name = name;
       this.commandArguments = arguments;
     }
-    
-    public String getName(){
+
+    public String getName() {
       return name;
-    }    
+    }
   }
-  
-  public static class StepExecutionException extends RuntimeException{
+
+  public static class StepExecutionException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     private String message;
-    
-    public StepExecutionException(String message){
+
+    public StepExecutionException(String message) {
       LogWriter logger = CacheFactory.getAnyInstance().getLogger();
       logger.severe(message);
       this.message = message;
     }
-    
+
     @Override
-    public String getMessage(){
+    public String getMessage() {
       return StepExecutionException.class.getName();
     }
-    
-    public String getStepExecutionExceptionMessage(){
+
+    public String getStepExecutionExceptionMessage() {
       return message;
     }
-    
+
   }
-  
 
 }

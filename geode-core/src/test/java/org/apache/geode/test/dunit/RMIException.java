@@ -71,10 +71,8 @@ public class RMIException extends GemFireException {
    * Creates a new <code>RMIException</code> that was caused by a
    * given <code>Throwable</code> while invoking a given method.
    */
-  public RMIException(VM vm, String className, String methodName,
-                      Throwable cause) {
-    super("While invoking " + className + "." + methodName + " in " +
-          vm, cause);
+  public RMIException(VM vm, String className, String methodName, Throwable cause) {
+    super("While invoking " + className + "." + methodName + " in " + vm, cause);
     this.cause = cause;
     this.className = className;
     this.methodName = methodName;
@@ -98,15 +96,13 @@ public class RMIException extends GemFireException {
    * @param stackTrace
    *        The stack trace of the exception from the remote VM
    */
-  public RMIException(VM vm, String className, String methodName, 
-                      Throwable cause, String stackTrace) {
-    super("While invoking " + className + "." + methodName + " in " +
-          vm, new HokeyException(cause, stackTrace));
+  public RMIException(VM vm, String className, String methodName, Throwable cause, String stackTrace) {
+    super("While invoking " + className + "." + methodName + " in " + vm, new HokeyException(cause, stackTrace));
     this.vm = vm;
     this.cause = cause;
     this.className = className;
     this.methodName = methodName;
-//    this.exceptionClassName = exceptionClassName; assignment has no effect
+    //    this.exceptionClassName = exceptionClassName; assignment has no effect
     this.stackTrace = stackTrace;
   }
 
@@ -118,13 +114,13 @@ public class RMIException extends GemFireException {
     return this.exceptionClassName;
   }
 
-//   /**
-//    * Returns the stack trace for the exception that was thrown in a
-//    * remote method invocation.
-//    */
-//   public String getStackTrace() {
-//     return this.stackTrace;
-//   }
+  //   /**
+  //    * Returns the stack trace for the exception that was thrown in a
+  //    * remote method invocation.
+  //    */
+  //   public String getStackTrace() {
+  //     return this.stackTrace;
+  //   }
 
   /**
    * Returns the cause of this exception.  Note that this is not

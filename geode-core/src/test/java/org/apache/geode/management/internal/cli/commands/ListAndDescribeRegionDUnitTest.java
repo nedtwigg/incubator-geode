@@ -83,7 +83,7 @@ public class ListAndDescribeRegionDUnitTest extends CliCommandTestBase {
 
     final Properties server1Props = createProperties("Server1", "G2");
     final Host host = Host.getHost(0);
-    final VM[] servers = {host.getVM(0), host.getVM(1)};
+    final VM[] servers = { host.getVM(0), host.getVM(1) };
 
     //The mananger VM
     servers[0].invoke(new SerializableRunnable() {
@@ -96,8 +96,7 @@ public class ListAndDescribeRegionDUnitTest extends CliCommandTestBase {
         dataRegionFactory.setEnableAsyncConflation(true);
 
         FixedPartitionAttributes fpa = FixedPartitionAttributes.createFixedPartition("Par1", true);
-        PartitionAttributes pa = new PartitionAttributesFactory().setLocalMaxMemory(100).setRecoveryDelay(
-            2).setTotalMaxMemory(200).setRedundantCopies(1).addFixedPartitionAttributes(fpa).create();
+        PartitionAttributes pa = new PartitionAttributesFactory().setLocalMaxMemory(100).setRecoveryDelay(2).setTotalMaxMemory(200).setRedundantCopies(1).addFixedPartitionAttributes(fpa).create();
         dataRegionFactory.setPartitionAttributes(pa);
 
         dataRegionFactory.create(PR1);
@@ -116,8 +115,7 @@ public class ListAndDescribeRegionDUnitTest extends CliCommandTestBase {
         dataRegionFactory.setEnableAsyncConflation(true);
 
         FixedPartitionAttributes fpa = FixedPartitionAttributes.createFixedPartition("Par2", 4);
-        PartitionAttributes pa = new PartitionAttributesFactory().setLocalMaxMemory(150).setRecoveryDelay(
-            4).setTotalMaxMemory(200).setRedundantCopies(1).addFixedPartitionAttributes(fpa).create();
+        PartitionAttributes pa = new PartitionAttributesFactory().setLocalMaxMemory(150).setRecoveryDelay(4).setTotalMaxMemory(200).setRedundantCopies(1).addFixedPartitionAttributes(fpa).create();
         dataRegionFactory.setPartitionAttributes(pa);
 
         dataRegionFactory.create(PR1);
@@ -137,14 +135,12 @@ public class ListAndDescribeRegionDUnitTest extends CliCommandTestBase {
     dataRegionFactory.setEnableAsyncConflation(true);
 
     FixedPartitionAttributes fpa = FixedPartitionAttributes.createFixedPartition("Par1", true);
-    PartitionAttributes pa = new PartitionAttributesFactory().setLocalMaxMemory(100).setRecoveryDelay(
-        2).setTotalMaxMemory(200).setRedundantCopies(1).addFixedPartitionAttributes(fpa).create();
+    PartitionAttributes pa = new PartitionAttributesFactory().setLocalMaxMemory(100).setRecoveryDelay(2).setTotalMaxMemory(200).setRedundantCopies(1).addFixedPartitionAttributes(fpa).create();
     dataRegionFactory.setPartitionAttributes(pa);
     dataRegionFactory.addCacheListener(new CacheListener1());
     dataRegionFactory.addCacheListener(new CacheListener2());
     dataRegionFactory.create(regionName);
   }
-
 
   private void createLocalRegion(final String regionName) {
     final Cache cache = getCache();
@@ -196,7 +192,6 @@ public class ListAndDescribeRegionDUnitTest extends CliCommandTestBase {
     assertTrue(commandResultAsString.contains(REGION1));
     assertTrue(commandResultAsString.contains(REGION2));
     assertTrue(commandResultAsString.contains(REGION3));
-
 
     csb = new CommandStringBuilder(CliStrings.LIST_REGION);
     csb.addOption(CliStrings.LIST_REGION__MEMBER, "Manager");

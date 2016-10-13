@@ -41,8 +41,7 @@ public interface IndexStore {
    * @param indexKey
    * @param re
    */
-  public void removeMapping(Object indexKey, RegionEntry re)
-      throws IMQException;
+  public void removeMapping(Object indexKey, RegionEntry re) throws IMQException;
 
   /**
    * Update a mapping in the index store. This method adds a new
@@ -52,11 +51,10 @@ public interface IndexStore {
    * @param oldKey
    * @param re
    */
-  public void updateMapping(Object indexKey, Object oldKey, RegionEntry re, Object oldValue)
-      throws IMQException;
+  public void updateMapping(Object indexKey, Object oldKey, RegionEntry re, Object oldValue) throws IMQException;
 
   public String printAll();
-  
+
   /**
    * Return all of the IndexStoreEntries that map to a given region key.
    */
@@ -65,16 +63,13 @@ public interface IndexStore {
   /**
    * Return all of the IndexStoreEntries in the range between start and end.
    */
-  public CloseableIterator<IndexStoreEntry> iterator(Object start,
-      boolean startInclusive, Object end, boolean endInclusive,
-      Collection keysToRemove);
+  public CloseableIterator<IndexStoreEntry> iterator(Object start, boolean startInclusive, Object end, boolean endInclusive, Collection keysToRemove);
 
   /**
    * Return all of the IndexStorageEntries that from start to the tail of the
    * map.
    */
-  public CloseableIterator<IndexStoreEntry> iterator(Object start,
-      boolean startInclusive, Collection keysToRemove);
+  public CloseableIterator<IndexStoreEntry> iterator(Object start, boolean startInclusive, Collection keysToRemove);
 
   /**
    * Return all of the IndexStorageEntries in the map.
@@ -84,21 +79,17 @@ public interface IndexStore {
   /**
    * Return all of the IndexStoreEntries from the end to the head of the map.
    */
-  public CloseableIterator<IndexStoreEntry> descendingIterator(Object end,
-      boolean endInclusive, Collection keysToRemove);
+  public CloseableIterator<IndexStoreEntry> descendingIterator(Object end, boolean endInclusive, Collection keysToRemove);
 
   /**
    * Return all of the IndexStoreEntries in the map in descending order.
    */
-  public CloseableIterator<IndexStoreEntry> descendingIterator(
-      Collection keysToRemove);
+  public CloseableIterator<IndexStoreEntry> descendingIterator(Collection keysToRemove);
 
   /**
    * Return all of the IndexStoreEntries in the range between end and start.
    */
-  public CloseableIterator<IndexStoreEntry> descendingIterator(Object start,
-      boolean startInclusive, Object end, boolean endInclusive,
-      Collection keysToRemove);
+  public CloseableIterator<IndexStoreEntry> descendingIterator(Object start, boolean startInclusive, Object end, boolean endInclusive, Collection keysToRemove);
 
   /**
    * Return the number of IndexStoreEntries that map to a given Index key.

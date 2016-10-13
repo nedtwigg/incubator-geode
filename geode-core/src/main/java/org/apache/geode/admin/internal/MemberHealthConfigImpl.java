@@ -26,11 +26,10 @@ import org.apache.geode.admin.*;
  *
  * @since GemFire 3.5
  */
-public abstract class MemberHealthConfigImpl
-  implements MemberHealthConfig, java.io.Serializable {
+public abstract class MemberHealthConfigImpl implements MemberHealthConfig, java.io.Serializable {
 
   private static final long serialVersionUID = 3966032573073580490L;
-  
+
   /** The maximum process size (in megabytes) of a healthy member of
    * the distributed system. */
   private long maxVMProcessSize = DEFAULT_MAX_VM_PROCESS_SIZE;
@@ -47,7 +46,6 @@ public abstract class MemberHealthConfigImpl
   /** The maximum multicast retransmit / multicast message count ratio
    */
   private double maxRetransmissionRatio = DEFAULT_MAX_RETRANSMISSION_RATIO;
-
 
   ///////////////////////  Constructors  ///////////////////////
 

@@ -62,13 +62,7 @@ public class JvmRouteBinderValve extends ValveBase {
       if (requestJvmRoute != null && !requestJvmRoute.equals(localJvmRoute)) {
         if (manager.getLogger().isDebugEnabled()) {
           StringBuilder builder = new StringBuilder();
-          builder.append(this)
-              .append(": Handling failover of session ")
-              .append(sessionId)
-              .append(" from ")
-              .append(requestJvmRoute)
-              .append(" to ")
-              .append(localJvmRoute);
+          builder.append(this).append(": Handling failover of session ").append(sessionId).append(" from ").append(requestJvmRoute).append(" to ").append(localJvmRoute);
           manager.getLogger().debug(builder.toString());
         }
         // Get the original session
@@ -77,21 +71,13 @@ public class JvmRouteBinderValve extends ValveBase {
           session = manager.findSession(sessionId);
         } catch (IOException e) {
           StringBuilder builder = new StringBuilder();
-          builder.append(this)
-              .append(": Caught exception attempting to find session ")
-              .append(sessionId)
-              .append(" in ")
-              .append(manager);
+          builder.append(this).append(": Caught exception attempting to find session ").append(sessionId).append(" in ").append(manager);
           manager.getLogger().warn(builder.toString(), e);
         }
 
         if (session == null) {
           StringBuilder builder = new StringBuilder();
-          builder.append(this)
-              .append(": Did not find session ")
-              .append(sessionId)
-              .append(" to failover in ")
-              .append(manager);
+          builder.append(this).append(": Did not find session ").append(sessionId).append(" to failover in ").append(manager);
           manager.getLogger().warn(builder.toString());
         } else {
           // Change its session id. This removes the previous session and creates the new one.

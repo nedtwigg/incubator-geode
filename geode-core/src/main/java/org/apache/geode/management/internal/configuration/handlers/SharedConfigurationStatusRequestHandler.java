@@ -28,8 +28,7 @@ import org.apache.geode.management.internal.configuration.messages.Configuration
 import org.apache.geode.management.internal.configuration.messages.SharedConfigurationStatusRequest;
 
 public class SharedConfigurationStatusRequestHandler implements TcpHandler {
-  
-  
+
   @Override
   public Object processRequest(Object request) throws IOException {
     assert request instanceof SharedConfigurationStatusRequest;
@@ -56,7 +55,7 @@ public class SharedConfigurationStatusRequestHandler implements TcpHandler {
   public void init(TcpServer tcpServer) {
 
   }
-  
+
   @Override
   public void restarting(DistributedSystem system, GemFireCache cache, SharedConfiguration sharedConfig) {
 

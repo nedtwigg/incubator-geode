@@ -59,12 +59,12 @@ public class GFSnapshotJUnitPerformanceTest {
     while (i++ < 10) {
       long start = System.currentTimeMillis();
       int count = 100000;
-      
+
       writeFile(count, val);
-      
+
       long elapsed = System.currentTimeMillis() - start;
       double rate = 1000.0 * count / elapsed;
-  
+
       System.out.println(rate + " stream write operations / sec");
     }
   }
@@ -75,7 +75,7 @@ public class GFSnapshotJUnitPerformanceTest {
     while (j++ < 10) {
       long start = System.currentTimeMillis();
       int count = 100000;
-      
+
       String s = val;
       SnapshotWriter ss = GFSnapshot.create(f, "test");
       try {
@@ -85,39 +85,38 @@ public class GFSnapshotJUnitPerformanceTest {
       } finally {
         ss.snapshotComplete();
       }
-      
+
       long elapsed = System.currentTimeMillis() - start;
       double rate = 1000.0 * count / elapsed;
-  
+
       System.out.println(rate + " write operations / sec");
     }
   }
-  
+
   @Test
-  public void testStreamReadPerformance() throws IOException,
-      ClassNotFoundException {
+  public void testStreamReadPerformance() throws IOException, ClassNotFoundException {
     writeFile(100000, val);
-    
+
     int i = 0;
     while (i++ < 10) {
       long start = System.currentTimeMillis();
       int count = 0;
-  
+
       GFSnapshotImporter in = new GFSnapshotImporter(f);
-      
+
       SnapshotRecord entry;
       while ((entry = in.readSnapshotRecord()) != null) {
         count++;
       }
       in.close();
-      
+
       long elapsed = System.currentTimeMillis() - start;
       double rate = 1000.0 * count / elapsed;
-  
+
       System.out.println(rate + " stream read operations / sec");
     }
   }
-  
+
   @Test
   public void testCopyPerformance() throws IOException, ClassNotFoundException {
     int count = 100000;
@@ -126,9 +125,9 @@ public class GFSnapshotJUnitPerformanceTest {
 
       File tmp = File.createTempFile("snapshot-copy", null);
       tmp.deleteOnExit();
-      
+
       final SnapshotWriter writer = GFSnapshot.create(tmp, "test");
-      
+
       long start = System.currentTimeMillis();
       SnapshotIterator<Integer, String> iter = GFSnapshot.read(f);
       try {
@@ -137,10 +136,10 @@ public class GFSnapshotJUnitPerformanceTest {
           writer.snapshotEntry(new SnapshotRecord(null, entry));
         }
         writer.snapshotComplete();
-        
+
         long elapsed = System.currentTimeMillis() - start;
         double rate = 1.0 * count / elapsed;
-        
+
         System.out.println("rate = " + rate + " entries / ms");
       } finally {
         iter.close();

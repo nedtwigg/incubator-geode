@@ -22,8 +22,8 @@ import org.apache.geode.GemFireCheckedException;
  * Exception thrown from DataSource factory.
  * 
  */
-public class DataSourceCreateException extends GemFireCheckedException  {
-private static final long serialVersionUID = 8759147832954825309L;
+public class DataSourceCreateException extends GemFireCheckedException {
+  private static final long serialVersionUID = 8759147832954825309L;
 
   public Exception excep;
 

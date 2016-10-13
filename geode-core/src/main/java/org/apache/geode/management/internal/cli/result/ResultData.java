@@ -25,28 +25,27 @@ import org.apache.geode.management.internal.cli.json.GfJsonObject;
  * @since GemFire 7.0
  */
 public interface ResultData {
-  String RESULT_HEADER  = "header";
+  String RESULT_HEADER = "header";
   String RESULT_CONTENT = "content";
-  String RESULT_FOOTER  = "footer";
-  
+  String RESULT_FOOTER = "footer";
 
-//  String TYPE_CATALOGED = "catalog";
+  //  String TYPE_CATALOGED = "catalog";
   String TYPE_COMPOSITE = "composite";
-  String TYPE_ERROR     = "error";
-  String TYPE_INFO      = "info";
-  String TYPE_OBJECT    = "object";
-//  String TYPE_SECTION   = "composite-section";
-  String TYPE_TABULAR   = "table";
-  
+  String TYPE_ERROR = "error";
+  String TYPE_INFO = "info";
+  String TYPE_OBJECT = "object";
+  //  String TYPE_SECTION   = "composite-section";
+  String TYPE_TABULAR = "table";
+
   String getHeader();
-  
+
   String getFooter();
-  
+
   GfJsonObject getGfJsonObject();
-  
+
   String getType();
-  
+
   public Status getStatus();
-  
+
   public void setStatus(final Status status);
 }

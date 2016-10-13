@@ -74,7 +74,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  * @see FunctionService#onRegion(Region)
  */
 public final class PartitionRegionHelper {
-  private PartitionRegionHelper() {}
+  private PartitionRegionHelper() {
+  }
 
   /**
    * Given a partitioned Region, return a map of {@linkplain PartitionAttributesFactory#setColocatedWith(String) colocated Regions}.
@@ -89,13 +90,13 @@ public final class PartitionRegionHelper {
   public static Map<String, Region<?, ?>> getColocatedRegions(final Region<?, ?> r) {
     Map ret;
     if (isPartitionedRegion(r)) {
-      final PartitionedRegion pr = (PartitionedRegion)r;
+      final PartitionedRegion pr = (PartitionedRegion) r;
       ret = ColocationHelper.getAllColocationRegions(pr);
       if (ret.isEmpty()) {
         ret = Collections.emptyMap();
       }
     } else if (r instanceof LocalDataSet) {
-      LocalDataSet lds = (LocalDataSet)r;
+      LocalDataSet lds = (LocalDataSet) r;
       InternalRegionFunctionContext fc = lds.getFunctionContext();
       if (fc != null) {
         ret = ColocationHelper.getAllColocatedLocalDataSets(lds.getProxy(), fc);
@@ -105,15 +106,12 @@ public final class PartitionRegionHelper {
       } else {
         ret = ColocationHelper.getColocatedLocalDataSetsForBuckets(lds.getProxy(), lds.getBucketSet());
       }
-    }
-    else {
-      throw new IllegalArgumentException(
-          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION
-              .toLocalizedString(r.getFullPath()));
+    } else {
+      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
     }
     return Collections.unmodifiableMap(ret);
   }
-  
+
   /**
    * Test a Region to see if it is a partitioned Region
    * 
@@ -121,15 +119,13 @@ public final class PartitionRegionHelper {
    * @return true if it is a partitioned Region
    * @since GemFire 6.0
    */
-  public static boolean isPartitionedRegion(final Region<?,?> r) {
+  public static boolean isPartitionedRegion(final Region<?, ?> r) {
     if (r == null) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.PartitionRegionHelper_ARGUMENT_REGION_IS_NULL
-              .toString());
+      throw new IllegalArgumentException(LocalizedStrings.PartitionRegionHelper_ARGUMENT_REGION_IS_NULL.toString());
     }
-    return r instanceof PartitionedRegion?true:false;
+    return r instanceof PartitionedRegion ? true : false;
   }
-  
+
   /**
    * Test a Region to see if it is a partitioned Region
    * 
@@ -138,11 +134,9 @@ public final class PartitionRegionHelper {
    * @return PartitionedRegion if it is a partitioned Region
    * @since GemFire 6.0
    */
-  private static PartitionedRegion isPartitionedCheck(final Region<?,?> r) {
-    if (! isPartitionedRegion(r)) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION
-              .toLocalizedString(r.getFullPath()));
+  private static PartitionedRegion isPartitionedCheck(final Region<?, ?> r) {
+    if (!isPartitionedRegion(r)) {
+      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
     }
     return (PartitionedRegion) r;
   }
@@ -155,10 +149,8 @@ public final class PartitionRegionHelper {
    * @return set of details about all locally defined partitioned regions
    * @since GemFire 6.0
    */
-  public static Set<PartitionRegionInfo> getPartitionRegionInfo(
-      final Cache cache) {
-    Set<PartitionRegionInfo> prDetailsSet = 
-      new TreeSet<PartitionRegionInfo>();
+  public static Set<PartitionRegionInfo> getPartitionRegionInfo(final Cache cache) {
+    Set<PartitionRegionInfo> prDetailsSet = new TreeSet<PartitionRegionInfo>();
     fillInPartitionedRegionInfo((GemFireCacheImpl) cache, prDetailsSet, false);
     return prDetailsSet;
   }
@@ -171,22 +163,18 @@ public final class PartitionRegionHelper {
    * @return details about the specified partitioned region
    * @since GemFire 6.0
    */
-  public static PartitionRegionInfo getPartitionRegionInfo(
-      final Region<?,?> region) {
+  public static PartitionRegionInfo getPartitionRegionInfo(final Region<?, ?> region) {
     try {
       PartitionedRegion pr = isPartitionedCheck(region);
-      GemFireCacheImpl cache =  (GemFireCacheImpl) region.getCache();
-      return pr.getRedundancyProvider().buildPartitionedRegionInfo(
-          false, cache.getResourceManager().getLoadProbe()); // may return null
-    } 
-    catch (ClassCastException e) {
+      GemFireCacheImpl cache = (GemFireCacheImpl) region.getCache();
+      return pr.getRedundancyProvider().buildPartitionedRegionInfo(false, cache.getResourceManager().getLoadProbe()); // may return null
+    } catch (ClassCastException e) {
       // not a PR so return null
     }
     return null;
   }
-  
-  private static void fillInPartitionedRegionInfo(GemFireCacheImpl cache, final Set prDetailsSet, 
-                                              final boolean internal) {
+
+  private static void fillInPartitionedRegionInfo(GemFireCacheImpl cache, final Set prDetailsSet, final boolean internal) {
     // TODO: optimize by fetching all PR details from each member at once
     Set<PartitionedRegion> prSet = cache.getPartitionedRegions();
     if (prSet.isEmpty()) {
@@ -194,8 +182,7 @@ public final class PartitionRegionHelper {
     }
     for (Iterator<PartitionedRegion> iter = prSet.iterator(); iter.hasNext();) {
       PartitionedRegion pr = iter.next();
-      PartitionRegionInfo prDetails = pr.getRedundancyProvider().
-          buildPartitionedRegionInfo(internal, cache.getResourceManager().getLoadProbe());
+      PartitionRegionInfo prDetails = pr.getRedundancyProvider().buildPartitionedRegionInfo(internal, cache.getResourceManager().getLoadProbe());
       if (prDetails != null) {
         prDetailsSet.add(prDetails);
       }
@@ -220,28 +207,27 @@ public final class PartitionRegionHelper {
    *         {@linkplain DataPolicy#PARTITION partitioned Region}
    * @since GemFire 6.0
    */
-  public static void assignBucketsToPartitions(Region<?,?> region) {
+  public static void assignBucketsToPartitions(Region<?, ?> region) {
     PartitionedRegion pr = isPartitionedCheck(region);
     RecoveryLock lock = null;
     try {
       lock = pr.getRecoveryLock();
       lock.lock();
-      for(int i = 0; i < getNumberOfBuckets(pr); i++) {
+      for (int i = 0; i < getNumberOfBuckets(pr); i++) {
         //This method will return quickly if the bucket already exists
         pr.createBucket(i, 0, null);
       }
     } finally {
-      if(lock != null) {
+      if (lock != null) {
         lock.unlock();
       }
     }
   }
-  
+
   private static int getNumberOfBuckets(PartitionedRegion pr) {
     if (pr.isFixedPartitionedRegion()) {
       int numBuckets = 0;
-      Set<FixedPartitionAttributesImpl> fpaSet = new HashSet<FixedPartitionAttributesImpl>(
-          pr.getRegionAdvisor().adviseAllFixedPartitionAttributes());
+      Set<FixedPartitionAttributesImpl> fpaSet = new HashSet<FixedPartitionAttributesImpl>(pr.getRegionAdvisor().adviseAllFixedPartitionAttributes());
       if (pr.getFixedPartitionAttributesImpl() != null) {
         fpaSet.addAll(pr.getFixedPartitionAttributesImpl());
       }
@@ -265,7 +251,7 @@ public final class PartitionRegionHelper {
    * @return the primary member for the key, possibly null if a primary is not yet determined
    * @since GemFire 6.0
    */
-  public static <K,V> DistributedMember getPrimaryMemberForKey(final Region<K,V> r, final K key) {
+  public static <K, V> DistributedMember getPrimaryMemberForKey(final Region<K, V> r, final K key) {
     PartitionedRegion pr = isPartitionedCheck(r);
     int bucketId = PartitionedRegionHelper.getHashKey(pr, null, key, null, null);
     return pr.getBucketPrimary(bucketId);
@@ -291,7 +277,7 @@ public final class PartitionRegionHelper {
    * @return an unmodifiable set of members minus the primary
    * @since GemFire 6.0
    */
-  public static <K,V> Set<DistributedMember> getRedundantMembersForKey(final Region<K,V> r, final K key) {
+  public static <K, V> Set<DistributedMember> getRedundantMembersForKey(final Region<K, V> r, final K key) {
     DistributedMember primary = getPrimaryMemberForKey(r, key);
     Set<? extends DistributedMember> owners = getAllForKey(r, key);
     if (primary != null) {
@@ -314,15 +300,16 @@ public final class PartitionRegionHelper {
    * @return an unmodifiable set of all members
    * @since GemFire 6.0
    */
-  public static <K,V> Set<DistributedMember> getAllMembersForKey(final Region<K,V> r, final K key) {
+  public static <K, V> Set<DistributedMember> getAllMembersForKey(final Region<K, V> r, final K key) {
     return Collections.unmodifiableSet(getAllForKey(r, key));
   }
-  private static <K,V> Set<? extends DistributedMember> getAllForKey(final Region<K,V> r, final K key) {
+
+  private static <K, V> Set<? extends DistributedMember> getAllForKey(final Region<K, V> r, final K key) {
     PartitionedRegion pr = isPartitionedCheck(r);
     int bucketId = PartitionedRegionHelper.getHashKey(pr, null, key, null, null);
     return pr.getRegionAdvisor().getBucketOwners(bucketId);
   }
-  
+
   /**
    * Given a RegionFunctionContext {@linkplain RegionFunctionContext#getDataSet()
    * for a partitioned Region}, return a map of {@linkplain PartitionAttributesFactory#setColocatedWith(String) colocated Regions}
@@ -340,7 +327,7 @@ public final class PartitionRegionHelper {
   public static Map<String, Region<?, ?>> getLocalColocatedRegions(final RegionFunctionContext c) {
     final Region r = c.getDataSet();
     isPartitionedCheck(r);
-    final InternalRegionFunctionContext rfci = (InternalRegionFunctionContext)c;
+    final InternalRegionFunctionContext rfci = (InternalRegionFunctionContext) c;
     Map ret = rfci.getColocatedLocalDataSets();
     return ret;
   }
@@ -369,11 +356,11 @@ public final class PartitionRegionHelper {
   public static <K, V> Region<K, V> getLocalDataForContext(final RegionFunctionContext c) {
     final Region r = c.getDataSet();
     isPartitionedCheck(r);
-    InternalRegionFunctionContext rfci = (InternalRegionFunctionContext)c;
+    InternalRegionFunctionContext rfci = (InternalRegionFunctionContext) c;
     return rfci.getLocalDataSet(r);
   }
-  
- /**
+
+  /**
    * Given a partitioned Region return a Region providing read access limited to
    * the local heap, writes using this Region have no constraints and behave the
    * same as a partitioned Region.<br>
@@ -386,9 +373,9 @@ public final class PartitionRegionHelper {
    * @return a Region for efficient reads
    * @since GemFire 6.0
    */
-  public static <K,V> Region<K,V> getLocalData(final Region<K,V> r) {
+  public static <K, V> Region<K, V> getLocalData(final Region<K, V> r) {
     if (isPartitionedRegion(r)) {
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       final Set<Integer> buckets;
       if (pr.getDataStore() != null) {
         buckets = pr.getDataStore().getAllLocalBucketIds();
@@ -399,11 +386,10 @@ public final class PartitionRegionHelper {
     } else if (r instanceof LocalDataSet) {
       return r;
     } else {
-      throw new IllegalArgumentException(
-          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION
-              .toLocalizedString(r.getFullPath()));
+      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
     }
   }
+
   /**
    * Given a partitioned Region return a Region providing read access to primary
    * copy of the data which is limited to the local heap, writes using this
@@ -417,9 +403,9 @@ public final class PartitionRegionHelper {
    * @return a Region for efficient reads
    * @since GemFire 6.5
    */
-  public static <K,V> Region<K,V> getLocalPrimaryData(final Region<K,V> r) {
+  public static <K, V> Region<K, V> getLocalPrimaryData(final Region<K, V> r) {
     if (isPartitionedRegion(r)) {
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       final Set<Integer> buckets;
       if (pr.getDataStore() != null) {
         buckets = pr.getDataStore().getAllLocalPrimaryBucketIds();
@@ -430,12 +416,10 @@ public final class PartitionRegionHelper {
     } else if (r instanceof LocalDataSet) {
       return r;
     } else {
-      throw new IllegalArgumentException(
-          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION
-              .toLocalizedString(r.getFullPath()));
+      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
     }
   }
-  
+
   /**
    * Moves the bucket which contains the given key from the source member to the
    * destination member. The bucket will be fully transferred once this method
@@ -472,79 +456,79 @@ public final class PartitionRegionHelper {
    * 
    * @since GemFire 7.1
    */
-   public static <K> void moveBucketByKey(Region<K,?> region, DistributedMember source, DistributedMember destination, K key) {
-     PartitionedRegion pr = isPartitionedCheck(region);
-     if(pr.isFixedPartitionedRegion()) {
-       throw new IllegalStateException("Cannot move data in a fixed partitioned region");
-     }
-     int bucketId = pr.getKeyInfo(key).getBucketId();
-     ExplicitMoveDirector director = new ExplicitMoveDirector(key, bucketId, source, destination, region.getCache().getDistributedSystem());
-     PartitionedRegionRebalanceOp rebalance = new PartitionedRegionRebalanceOp(pr, false, director, true, true);
-     rebalance.execute();
-   }
+  public static <K> void moveBucketByKey(Region<K, ?> region, DistributedMember source, DistributedMember destination, K key) {
+    PartitionedRegion pr = isPartitionedCheck(region);
+    if (pr.isFixedPartitionedRegion()) {
+      throw new IllegalStateException("Cannot move data in a fixed partitioned region");
+    }
+    int bucketId = pr.getKeyInfo(key).getBucketId();
+    ExplicitMoveDirector director = new ExplicitMoveDirector(key, bucketId, source, destination, region.getCache().getDistributedSystem());
+    PartitionedRegionRebalanceOp rebalance = new PartitionedRegionRebalanceOp(pr, false, director, true, true);
+    rebalance.execute();
+  }
 
-   /**
-   * Moves data from the source member to the destination member, up to the
-   * given percentage of data (measured in bytes). The data will be fully
-   * transferred once this method is complete, if the method does not throw an
-   * exception. The percentage is a percentage of the amount of data in bytes on
-   * the source member for this region.
-   * <p>
-   * 
-   * If this region has colocated regions, the colocated data will also be
-   * moved. The total amount of data in all colocated regions will be taken into
-   * consideration when determining what percentage of data will be moved.
-   * <p>
-   * It may not be possible to move data to the destination member, if the
-   * destination member has no available space, no bucket smaller than the given
-   * percentage exists, or if moving data would violate redundancy constraints.
-   * If data cannot be moved, this method will return a RebalanceResult object
-   * with 0 total bucket transfers.
-   * <p>
-   * This method allows direct control of what data to move. To automatically
-   * balance buckets, see {@link ResourceManager#createRebalanceFactory()}
-   * 
-   * @param region
-   *          The region in which to move data. Data in regions colocated with
-   *          this region will also be moved.
-   * @param source
-   *          A member that is currently hosting data. The bucket is moved off
-   *          of this member.
-   * @param destination
-   *          A member that that has the partitioned region defined. Data is
-   *          moved to this member.
-   * @param percentage
-   *          the maximum amount of data to move, as a percentage from 0 to 100.
-   * 
-   * @throws IllegalStateException
-   *           if the source or destination are not valid members of the system.
-   * @throws IllegalArgumentException
-   *           if the percentage is not between 0 to 100.
-   * 
-   * @return A RebalanceResult object that contains information about what what
-   *         data was actually moved.
-   * 
-   * @since GemFire 7.1
-   */
-   public static RebalanceResults moveData(Region<?,?> region, DistributedMember source, DistributedMember destination, float percentage) {
-     PartitionedRegion pr = isPartitionedCheck(region);
-     if(pr.isFixedPartitionedRegion()) {
-       throw new IllegalStateException("Cannot move data in a fixed partitioned region");
-     }
-     if(percentage <=0 || percentage > 100.0) {
-       throw new IllegalArgumentException("Percentage must be between 0 and 100");
-     }
-     
-     PercentageMoveDirector director = new PercentageMoveDirector(source, destination, percentage);
-     PartitionedRegionRebalanceOp rebalance = new PartitionedRegionRebalanceOp(pr, false, director, true, true);
-     Set<PartitionRebalanceInfo> results = rebalance.execute();
+  /**
+  * Moves data from the source member to the destination member, up to the
+  * given percentage of data (measured in bytes). The data will be fully
+  * transferred once this method is complete, if the method does not throw an
+  * exception. The percentage is a percentage of the amount of data in bytes on
+  * the source member for this region.
+  * <p>
+  * 
+  * If this region has colocated regions, the colocated data will also be
+  * moved. The total amount of data in all colocated regions will be taken into
+  * consideration when determining what percentage of data will be moved.
+  * <p>
+  * It may not be possible to move data to the destination member, if the
+  * destination member has no available space, no bucket smaller than the given
+  * percentage exists, or if moving data would violate redundancy constraints.
+  * If data cannot be moved, this method will return a RebalanceResult object
+  * with 0 total bucket transfers.
+  * <p>
+  * This method allows direct control of what data to move. To automatically
+  * balance buckets, see {@link ResourceManager#createRebalanceFactory()}
+  * 
+  * @param region
+  *          The region in which to move data. Data in regions colocated with
+  *          this region will also be moved.
+  * @param source
+  *          A member that is currently hosting data. The bucket is moved off
+  *          of this member.
+  * @param destination
+  *          A member that that has the partitioned region defined. Data is
+  *          moved to this member.
+  * @param percentage
+  *          the maximum amount of data to move, as a percentage from 0 to 100.
+  * 
+  * @throws IllegalStateException
+  *           if the source or destination are not valid members of the system.
+  * @throws IllegalArgumentException
+  *           if the percentage is not between 0 to 100.
+  * 
+  * @return A RebalanceResult object that contains information about what what
+  *         data was actually moved.
+  * 
+  * @since GemFire 7.1
+  */
+  public static RebalanceResults moveData(Region<?, ?> region, DistributedMember source, DistributedMember destination, float percentage) {
+    PartitionedRegion pr = isPartitionedCheck(region);
+    if (pr.isFixedPartitionedRegion()) {
+      throw new IllegalStateException("Cannot move data in a fixed partitioned region");
+    }
+    if (percentage <= 0 || percentage > 100.0) {
+      throw new IllegalArgumentException("Percentage must be between 0 and 100");
+    }
 
-     RebalanceResultsImpl rebalanceResults = new RebalanceResultsImpl();
-     for(PartitionRebalanceInfo details : results) {
-       rebalanceResults.addDetails(details);
-     }
-     
-     return rebalanceResults;
-   }
+    PercentageMoveDirector director = new PercentageMoveDirector(source, destination, percentage);
+    PartitionedRegionRebalanceOp rebalance = new PartitionedRegionRebalanceOp(pr, false, director, true, true);
+    Set<PartitionRebalanceInfo> results = rebalance.execute();
+
+    RebalanceResultsImpl rebalanceResults = new RebalanceResultsImpl();
+    for (PartitionRebalanceInfo details : results) {
+      rebalanceResults.addDetails(details);
+    }
+
+    return rebalanceResults;
+  }
 
 }

@@ -32,7 +32,7 @@ public class LuceneServiceBridge {
 
   private LuceneService service;
 
-  private Map<String,LuceneIndexStatsMonitor> monitors;
+  private Map<String, LuceneIndexStatsMonitor> monitors;
 
   public LuceneServiceBridge(LuceneService service) {
     this.service = service;
@@ -50,15 +50,15 @@ public class LuceneServiceBridge {
   public LuceneIndexMetrics[] listIndexMetrics() {
     Collection<LuceneIndex> indexes = this.service.getAllIndexes();
     LuceneIndexMetrics[] indexMetrics = new LuceneIndexMetrics[indexes.size()];
-    int i=0;
+    int i = 0;
     for (LuceneIndex index : this.service.getAllIndexes()) {
-      indexMetrics[i++] = getIndexMetrics((LuceneIndexImpl)index);
+      indexMetrics[i++] = getIndexMetrics((LuceneIndexImpl) index);
     }
     return indexMetrics;
   }
 
   public LuceneIndexMetrics[] listIndexMetrics(String regionPath) {
-    if(!regionPath.startsWith(Region.SEPARATOR)) {
+    if (!regionPath.startsWith(Region.SEPARATOR)) {
       regionPath = Region.SEPARATOR + regionPath;
     }
     List<LuceneIndexMetrics> indexMetrics = new ArrayList();

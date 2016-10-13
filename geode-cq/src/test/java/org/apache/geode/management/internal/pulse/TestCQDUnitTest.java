@@ -55,14 +55,14 @@ public class TestCQDUnitTest extends ManagementTestBase {
   }
 
   public static long getNumOfCQ() {
-    
+
     final WaitCriterion waitCriteria = new WaitCriterion() {
       @Override
       public boolean done() {
-        final ManagementService service = getManagementService();        
+        final ManagementService service = getManagementService();
         final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
         if (bean != null) {
-          if(bean.getActiveCQCount() > 0){
+          if (bean.getActiveCQCount() > 0) {
             return true;
           }
         }
@@ -74,7 +74,7 @@ public class TestCQDUnitTest extends ManagementTestBase {
         return "wait for getNumOfCQ to complete and get results";
       }
     };
-    Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);    
+    Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
     return bean.getActiveCQCount();
@@ -86,8 +86,8 @@ public class TestCQDUnitTest extends ManagementTestBase {
     LogWriterUtils.getLogWriter().info("started testNumOfCQ");
 
     VM server = managedNodeList.get(1);
-    VM client = managedNodeList.get(2);    
-    
+    VM client = managedNodeList.get(2);
+
     final String host0 = NetworkUtils.getServerHostName(server.getHost());
 
     int serverPort = AvailablePortHelper.getRandomAvailableTCPPort();
@@ -95,39 +95,22 @@ public class TestCQDUnitTest extends ManagementTestBase {
 
     final int port = server.invoke(() -> CqQueryDUnitTest.getCacheServerPort());
 
-    cqDUnitTest.createClient(client, port, host0);    
-    cqDUnitTest.createCQ(client, queryName, cqDUnitTest.cqs[0]);    
-    cqDUnitTest.executeCQ(client, queryName, false, null);    
-    
-    cqDUnitTest.createCQ(client, queryName2, cqDUnitTest.cqs[3]);    
+    cqDUnitTest.createClient(client, port, host0);
+    cqDUnitTest.createCQ(client, queryName, cqDUnitTest.cqs[0]);
+    cqDUnitTest.executeCQ(client, queryName, false, null);
+
+    cqDUnitTest.createCQ(client, queryName2, cqDUnitTest.cqs[3]);
     cqDUnitTest.executeCQ(client, queryName2, false, null);
 
-    final int size = 1000;    
+    final int size = 1000;
     cqDUnitTest.createValues(client, cqDUnitTest.regions[0], size);
     cqDUnitTest.waitForCreated(client, queryName, CqQueryDUnitTest.KEY + size);
-    cqDUnitTest.waitForCreated(client, queryName2, CqQueryDUnitTest.KEY + size );
-    
-    
-    cqDUnitTest.validateCQ(client, queryName,
-    /* resultSize: */CqQueryDUnitTest.noTest,
-    /* creates: */size,
-    /* updates: */0,
-    /* deletes; */0,
-    /* queryInserts: */size,
-    /* queryUpdates: */0,
-    /* queryDeletes: */0,
-    /* totalEvents: */size);    
-    
-    cqDUnitTest.validateCQ(client, queryName2,
-        /* resultSize: */CqQueryDUnitTest.noTest,
-        /* creates: */size,
-        /* updates: */0,
-        /* deletes; */0,
-        /* queryInserts: */size,
-        /* queryUpdates: */0,
-        /* queryDeletes: */0,
-        /* totalEvents: */size);   
-    
+    cqDUnitTest.waitForCreated(client, queryName2, CqQueryDUnitTest.KEY + size);
+
+    cqDUnitTest.validateCQ(client, queryName, /* resultSize: */CqQueryDUnitTest.noTest, /* creates: */size, /* updates: */0, /* deletes; */0, /* queryInserts: */size, /* queryUpdates: */0, /* queryDeletes: */0, /* totalEvents: */size);
+
+    cqDUnitTest.validateCQ(client, queryName2, /* resultSize: */CqQueryDUnitTest.noTest, /* creates: */size, /* updates: */0, /* deletes; */0, /* queryInserts: */size, /* queryUpdates: */0, /* queryDeletes: */0, /* totalEvents: */size);
+
     long numOfCQ = ((Number) managingNode.invoke(() -> TestCQDUnitTest.getNumOfCQ())).intValue();
 
     LogWriterUtils.getLogWriter().info("testNumOfCQ numOfCQ= " + numOfCQ);

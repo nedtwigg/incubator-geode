@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.admin;
 
 /**
@@ -25,8 +25,7 @@ package org.apache.geode.admin;
  *
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
-public class RuntimeAdminException 
-extends org.apache.geode.GemFireException {
+public class RuntimeAdminException extends org.apache.geode.GemFireException {
 
   private static final long serialVersionUID = -7512771113818634005L;
 
@@ -45,5 +44,5 @@ extends org.apache.geode.GemFireException {
   public RuntimeAdminException(Throwable cause) {
     super(cause);
   }
-    
+
 }

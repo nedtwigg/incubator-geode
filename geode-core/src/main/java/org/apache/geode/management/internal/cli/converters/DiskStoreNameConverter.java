@@ -44,18 +44,15 @@ public class DiskStoreNameConverter implements Converter<String> {
   }
 
   @Override
-  public String convertFromText(String value, Class<?> targetType,
-      String optionContext) {
+  public String convertFromText(String value, Class<?> targetType, String optionContext) {
     return value;
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String existingData, String optionContext,
-      MethodTarget target) {
+  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.DISKSTORE_ALL.equals(optionContext)) {
       Set<String> diskStoreNames = getDiskStoreNames();
-      
+
       for (String diskStoreName : diskStoreNames) {
         if (existingData != null) {
           if (diskStoreName.startsWith(existingData)) {
@@ -66,7 +63,7 @@ public class DiskStoreNameConverter implements Converter<String> {
         }
       }
     }
-    
+
     return !completions.isEmpty();
   }
 

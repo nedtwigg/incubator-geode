@@ -28,21 +28,21 @@ package org.apache.geode.admin;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public class OperationCancelledException extends RuntimeAdminException {
-   private static final long serialVersionUID = 5474068770227602546L;
-    
-    public OperationCancelledException() {
-      super();
-    }
-    
-    public OperationCancelledException( String message ) {
-        super( message );
-    }
-    
-    public OperationCancelledException( Throwable cause ){
-      super(cause);
-    }
-    
-    public OperationCancelledException( String message, Throwable cause ) {
-      super(message, cause);
-    }
+  private static final long serialVersionUID = 5474068770227602546L;
+
+  public OperationCancelledException() {
+    super();
+  }
+
+  public OperationCancelledException(String message) {
+    super(message);
+  }
+
+  public OperationCancelledException(Throwable cause) {
+    super(cause);
+  }
+
+  public OperationCancelledException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

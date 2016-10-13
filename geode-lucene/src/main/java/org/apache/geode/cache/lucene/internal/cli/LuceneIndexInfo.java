@@ -42,7 +42,7 @@ public class LuceneIndexInfo implements Serializable {
   }
 
   public LuceneIndexInfo(final String indexName, final String regionPath) {
-    this(indexName,regionPath,null,null);
+    this(indexName, regionPath, null, null);
   }
 
   public String getIndexName() {

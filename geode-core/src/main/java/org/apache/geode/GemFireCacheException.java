@@ -25,7 +25,7 @@ import org.apache.geode.cache.CacheException;
  * a typed exception.
  */
 public class GemFireCacheException extends GemFireException {
-private static final long serialVersionUID = -2844020916351682908L;
+  private static final long serialVersionUID = -2844020916351682908L;
 
   //////////////////////  Constructors  //////////////////////
 
@@ -35,16 +35,18 @@ private static final long serialVersionUID = -2844020916351682908L;
   public GemFireCacheException(String message, CacheException ex) {
     super(message, ex);
   }
+
   /**
    * Creates a new <code>GemFireCacheException</code>.
    */
   public GemFireCacheException(CacheException ex) {
     super(ex);
   }
+
   /**
    * Gets the wrapped {@link CacheException}
    */
   public CacheException getCacheException() {
-    return (CacheException)getCause();
+    return (CacheException) getCause();
   }
 }

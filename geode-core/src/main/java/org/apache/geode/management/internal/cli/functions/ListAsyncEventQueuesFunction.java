@@ -45,7 +45,7 @@ import org.apache.geode.management.internal.cli.domain.AsyncEventQueueDetails;
  */
 public class ListAsyncEventQueuesFunction extends FunctionAdapter implements InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -83,8 +83,7 @@ public class ListAsyncEventQueuesFunction extends FunctionAdapter implements Int
         if (listener instanceof Declarable2) {
           listenerProperties = ((Declarable2) listener).getConfig();
         }
-        asyncEventQueueDetails[i++] = new AsyncEventQueueDetails(queue.getId(), queue.getBatchSize(), queue.isPersistent(), queue
-            .getDiskStoreName(), queue.getMaximumQueueMemory(), listener.getClass().getName(), listenerProperties);
+        asyncEventQueueDetails[i++] = new AsyncEventQueueDetails(queue.getId(), queue.getBatchSize(), queue.isPersistent(), queue.getDiskStoreName(), queue.getMaximumQueueMemory(), listener.getClass().getName(), listenerProperties);
       }
 
       CliFunctionResult result = new CliFunctionResult(memberId, asyncEventQueueDetails);
@@ -97,7 +96,7 @@ public class ListAsyncEventQueuesFunction extends FunctionAdapter implements Int
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not list async event queues: {}", th.getMessage(), th);

@@ -44,8 +44,7 @@ public final class ProcessLauncherContext {
    */
   private static final Properties OVERRIDDEN_DEFAULTS_DEFAULT = new Properties();
 
-  private static final ThreadLocal<ProcessLauncherContext> DATA =
-    new ThreadLocal<ProcessLauncherContext>();
+  private static final ThreadLocal<ProcessLauncherContext> DATA = new ThreadLocal<ProcessLauncherContext>();
 
   private static ProcessLauncherContext get() {
     return DATA.get();
@@ -79,7 +78,6 @@ public final class ProcessLauncherContext {
     return context.overriddenDefaults();
   }
 
-
   public static StartupStatusListener getStartupListener() {
     final ProcessLauncherContext context = get();
     if (context == null) {
@@ -92,9 +90,7 @@ public final class ProcessLauncherContext {
   /**
    * Sets the ProcessLauncherContext data for the calling thread.
    */
-  public static void set(final boolean redirectOutput,
-                         final Properties contingentProperties,
-                         final StartupStatusListener startupListener) {
+  public static void set(final boolean redirectOutput, final Properties contingentProperties, final StartupStatusListener startupListener) {
     DATA.set(new ProcessLauncherContext(redirectOutput, contingentProperties, startupListener));
     installLogListener(startupListener);
   }
@@ -123,9 +119,7 @@ public final class ProcessLauncherContext {
   private final StartupStatusListener startupListener;
   private PrintStream err;
 
-  private ProcessLauncherContext(final boolean redirectOutput,
-                                 final Properties overriddenDefaults,
-                                 final StartupStatusListener startupListener) {
+  private ProcessLauncherContext(final boolean redirectOutput, final Properties overriddenDefaults, final StartupStatusListener startupListener) {
     this.redirectOutput = redirectOutput;
     this.overriddenDefaults = overriddenDefaults;
     this.startupListener = startupListener;
@@ -142,7 +136,7 @@ public final class ProcessLauncherContext {
   private StartupStatusListener startupListener() {
     return this.startupListener;
   }
-  
+
   @SuppressWarnings("unused")
   private void teeErrorStream() {
     final FileOutputStream fdErr = new FileOutputStream(FileDescriptor.err);
@@ -159,11 +153,9 @@ public final class ProcessLauncherContext {
       PrintStream newStdErr = null;
       if (branch == null) {
         newStdErr = this.err;
-      }
-      else if (branch instanceof PrintStream) {
+      } else if (branch instanceof PrintStream) {
         newStdErr = (PrintStream) branch;
-      }
-      else {
+      } else {
         newStdErr = new PrintStream(new BufferedOutputStream(branch, 128), true);
       }
       System.setErr(newStdErr);

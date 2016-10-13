@@ -23,39 +23,38 @@ import java.util.Map;
  *
  */
 public abstract class DiskStoreObserver {
-  
+
   private static DiskStoreObserver INSTANCE = null;
-  
+
   public static void setInstance(DiskStoreObserver observer) {
     INSTANCE = observer;
   }
-  
+
   public void beforeAsyncValueRecovery(DiskStoreImpl store) {
-    
+
   }
-  
+
   public void afterAsyncValueRecovery(DiskStoreImpl store) {
-    
+
   }
-  
+
   public void afterWriteGCRVV(DiskRegion dr) {
   }
-  
-  
+
   static void startAsyncValueRecovery(DiskStoreImpl store) {
-    if(INSTANCE != null) {
+    if (INSTANCE != null) {
       INSTANCE.beforeAsyncValueRecovery(store);
     }
   }
-  
+
   static void endAsyncValueRecovery(DiskStoreImpl store) {
-    if(INSTANCE != null) {
+    if (INSTANCE != null) {
       INSTANCE.afterAsyncValueRecovery(store);
     }
   }
-  
+
   public static void endWriteGCRVV(DiskRegion dr) {
-    if(INSTANCE != null) {
+    if (INSTANCE != null) {
       INSTANCE.afterWriteGCRVV(dr);
     }
   }

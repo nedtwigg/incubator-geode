@@ -28,8 +28,7 @@ import org.apache.geode.cache.snapshot.SnapshotReader;
 
 public class SnapshotTestUtil {
 
-  public static <K,V> void checkSnapshotEntries(File dir, Map<K, V> expected, String diskStoreName, String regionName) 
-      throws Exception {
+  public static <K, V> void checkSnapshotEntries(File dir, Map<K, V> expected, String diskStoreName, String regionName) throws Exception {
     final Map<K, V> testData = new HashMap<K, V>(expected);
     String snapshot = "snapshot-" + diskStoreName + "-" + regionName + ".gfd";
     SnapshotIterator<Integer, MyObject> iter = SnapshotReader.read(new File(dir, snapshot));

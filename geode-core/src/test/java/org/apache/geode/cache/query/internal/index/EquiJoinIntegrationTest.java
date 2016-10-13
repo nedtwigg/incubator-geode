@@ -51,29 +51,29 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class EquiJoinIntegrationTest {
   QueryService qs;
   Region region1, region2, region3, region4;
-  
+
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
     qs = CacheUtils.getQueryService();
   }
-  
+
   @After
   public void tearDown() {
     region2.destroyRegion();
     region1.destroyRegion();
   }
-  
+
   protected void createRegions() throws Exception {
     region1 = createReplicatedRegion("region1");
     region2 = createReplicatedRegion("region2");
   }
-  
+
   protected void createAdditionalRegions() throws Exception {
     region3 = createReplicatedRegion("region3");
     region4 = createReplicatedRegion("region4");
   }
-  
+
   protected void destroyAdditionalRegions() throws Exception {
     if (region3 != null) {
       region3.destroyRegion();
@@ -87,49 +87,41 @@ public class EquiJoinIntegrationTest {
   public void testSingleFilterWithSingleEquijoinOneToOneMapping() throws Exception {
     createRegions();
 
-    String[] queries = new String[]{
-        "<trace>select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid",
-        "<trace>select * from /region1 c, /region2 s where c.pkid=1 and s.pkid = c.pkid",
-        "<trace>select * from /region1 c, /region2 s where c.pkid = s.pkid and c.pkid=1",
-        "<trace>select * from /region1 c, /region2 s where s.pkid = c.pkid and c.pkid=1",
-    };
-    
+    String[] queries = new String[] { "<trace>select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid", "<trace>select * from /region1 c, /region2 s where c.pkid=1 and s.pkid = c.pkid", "<trace>select * from /region1 c, /region2 s where c.pkid = s.pkid and c.pkid=1", "<trace>select * from /region1 c, /region2 s where s.pkid = c.pkid and c.pkid=1", };
+
     for (int i = 0; i < 1000; i++) {
-      region1.put( i, new Customer(i, i));
-      region2.put( i, new Customer(i, i));
+      region1.put(i, new Customer(i, i));
+      region2.put(i, new Customer(i, i));
     }
-    
+
     executeQueriesWithIndexCombinations(queries);
   }
-  
+
   @Test
   public void testSingleFilterWithSingleEquijoinOneToOneMappingWithAdditionalJoins() throws Exception {
     createRegions();
     try {
       createAdditionalRegions();
-      
-      String[] queries = new String[]{
-          "<trace>select * from /region1 c, /region2 s, /region3 d where c.pkid=1 and c.pkid = s.pkid and d.pkid = s.pkid",  //this should derive d after deriving s from c
-          "<trace>select * from /region1 c, /region2 s, /region3 d, /region4 f where c.pkid=1 and c.pkid = s.pkid and d.pkid = s.pkid and f.pkid = d.pkid",  //this should f from d from s from c
-          "<trace>select * from /region1 c, /region2 s, /region3 d where c.pkid=1 and c.pkid = s.pkid and d.pkid = c.pkid",  //this should derive d and s from c 
-          "<trace>select * from /region1 c, /region2 s, /region3 d where c.pkid=1 and c.pkid = s.pkid and s.pkid = d.pkid",  //this should derive d after deriving s from c (order is just switched in the query)
+
+      String[] queries = new String[] { "<trace>select * from /region1 c, /region2 s, /region3 d where c.pkid=1 and c.pkid = s.pkid and d.pkid = s.pkid", //this should derive d after deriving s from c
+          "<trace>select * from /region1 c, /region2 s, /region3 d, /region4 f where c.pkid=1 and c.pkid = s.pkid and d.pkid = s.pkid and f.pkid = d.pkid", //this should f from d from s from c
+          "<trace>select * from /region1 c, /region2 s, /region3 d where c.pkid=1 and c.pkid = s.pkid and d.pkid = c.pkid", //this should derive d and s from c 
+          "<trace>select * from /region1 c, /region2 s, /region3 d where c.pkid=1 and c.pkid = s.pkid and s.pkid = d.pkid", //this should derive d after deriving s from c (order is just switched in the query)
       };
-      
+
       for (int i = 0; i < 30; i++) {
-        region1.put( i, new Customer(i, i));
-        region2.put( i, new Customer(i, i));
-        region3.put( i, new Customer(i, i));
-        region4.put( i, new Customer(i, i));
+        region1.put(i, new Customer(i, i));
+        region2.put(i, new Customer(i, i));
+        region3.put(i, new Customer(i, i));
+        region4.put(i, new Customer(i, i));
       }
-      
+
       executeQueriesWithIndexCombinations(queries);
-    }
-    finally {
+    } finally {
       destroyAdditionalRegions();
     }
   }
 
-  
   /**
    * We do not want to test this with Primary Key on the many side or else only 1 result will be returned
    */
@@ -137,21 +129,16 @@ public class EquiJoinIntegrationTest {
   public void testSingleFilterWithSingleEquijoinOneToManyMapping() throws Exception {
     createRegions();
 
-    String[] queries = new String[]{
-        "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid",
-        "select * from /region1 c, /region2 s where c.pkid=1 and s.pkid = c.pkid",
-        "select * from /region1 c, /region2 s where c.pkid = s.pkid and c.pkid=1",
-        "select * from /region1 c, /region2 s where s.pkid = c.pkid and c.pkid=1",
-    };
-    
+    String[] queries = new String[] { "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid", "select * from /region1 c, /region2 s where c.pkid=1 and s.pkid = c.pkid", "select * from /region1 c, /region2 s where c.pkid = s.pkid and c.pkid=1", "select * from /region1 c, /region2 s where s.pkid = c.pkid and c.pkid=1", };
+
     for (int i = 0; i < 1000; i++) {
-      region1.put( i, new Customer(i, i));
-      region2.put( i, new Customer(i % 100, i));
+      region1.put(i, new Customer(i, i));
+      region2.put(i, new Customer(i % 100, i));
     }
-    
+
     executeQueriesWithIndexCombinations(queries, new DefaultIndexCreatorCallback(qs) {
       protected String[] createIndexTypesForRegion2() {
-        return new String[] { "Compact", "Hash"};
+        return new String[] { "Compact", "Hash" };
       }
     }, false);
   }
@@ -160,20 +147,18 @@ public class EquiJoinIntegrationTest {
   public void testSingleFilterWithSingleEquijoinMultipleFiltersOnSameRegionOnSameIteratorMapping() throws Exception {
     createRegions();
 
-    String[] queries = new String[]{
-        "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid and c.id = 1",
-        "select * from /region1 c, /region2 s where c.id = 1 and c.pkid=1 and s.pkid = c.pkid",
-        
+    String[] queries = new String[] { "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid and c.id = 1", "select * from /region1 c, /region2 s where c.id = 1 and c.pkid=1 and s.pkid = c.pkid",
+
     };
-    
+
     for (int i = 0; i < 1000; i++) {
-      region1.put( i, new Customer(i, i % 10));
-      region2.put( i, new Customer(i, i));
+      region1.put(i, new Customer(i, i % 10));
+      region2.put(i, new Customer(i, i));
     }
-    
+
     executeQueriesWithIndexCombinations(queries, new DefaultIndexCreatorCallback(qs) {
       Index secondaryIndex;
-      
+
       @Override
       public void createIndexForRegion1(int indexTypeId) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
         secondaryIndex = qs.createIndex("region1 id", "p.id", "/region1 p");
@@ -185,7 +170,7 @@ public class EquiJoinIntegrationTest {
         qs.removeIndex(secondaryIndex);
         super.destroyIndexForRegion1(indexTypeId);
       }
-      
+
     }, false /*want to compare actual results and not size only*/);
   }
 
@@ -193,20 +178,17 @@ public class EquiJoinIntegrationTest {
   public void testSingleFilterWithSingleEquijoinWithRangeFilters() throws Exception {
     createRegions();
 
-    String[] queries = new String[]{
-        "<trace>select * from /region1 c, /region2 s where c.pkid = 1 and c.id > 1 and c.id < 10 and c.pkid = s.pkid",
-        "<trace>select * from /region1 c, /region2 s where c.pkid >= 0 and c.pkid < 10 and c.id < 10 and c.pkid = s.pkid"
-    };
-    
+    String[] queries = new String[] { "<trace>select * from /region1 c, /region2 s where c.pkid = 1 and c.id > 1 and c.id < 10 and c.pkid = s.pkid", "<trace>select * from /region1 c, /region2 s where c.pkid >= 0 and c.pkid < 10 and c.id < 10 and c.pkid = s.pkid" };
+
     //just need enough so that there are 1-10 ids per pkid
     for (int i = 0; i < 1000; i++) {
       region1.put(i, new Customer(i % 5, i % 10));
       region2.put(i, new Customer(i, i));
     }
-    
+
     executeQueriesWithIndexCombinations(queries, new DefaultIndexCreatorCallback(qs) {
       protected String[] createIndexTypesForRegion1() {
-        return new String[] { "Compact", "Hash"};
+        return new String[] { "Compact", "Hash" };
       }
     }, false /*want to compare actual results and not size only*/);
   }
@@ -217,18 +199,16 @@ public class EquiJoinIntegrationTest {
     //This test is set up so that if the pkid index is used and limit applied, if id is not taken into consideration until later stages, it will lead to incorrect results (0)
     createRegions();
 
-    String[] queries = new String[]{
-        "select * from /region1 c, /region2 s where c.id = 3 and c.pkid > 2  and c.pkid = s.pkid limit 1",
-    };
-    
+    String[] queries = new String[] { "select * from /region1 c, /region2 s where c.id = 3 and c.pkid > 2  and c.pkid = s.pkid limit 1", };
+
     for (int i = 0; i < 1000; i++) {
-      region1.put( i, new Customer(i, i % 10));
-      region2.put( i, new Customer(i, i));
+      region1.put(i, new Customer(i, i % 10));
+      region2.put(i, new Customer(i, i));
     }
-    
+
     executeQueriesWithIndexCombinations(queries, new DefaultIndexCreatorCallback(qs) {
       Index secondaryIndex;
-      
+
       @Override
       public void createIndexForRegion1(int indexTypeId) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
         secondaryIndex = qs.createIndex("region1 id", "p.id", "/region1 p");
@@ -240,7 +220,7 @@ public class EquiJoinIntegrationTest {
         qs.removeIndex(secondaryIndex);
         super.destroyIndexForRegion1(indexTypeId);
       }
-      
+
     }, true);
   }
 
@@ -248,16 +228,13 @@ public class EquiJoinIntegrationTest {
   public void testSingleFilterWithSingleEquijoinNestedQuery() throws Exception {
     createRegions();
 
-    String[] queries = new String[]{
-        "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid and c.pkid in (select t.pkid from /region1 t,/region2 s where s.pkid=t.pkid and s.pkid = 1)",
-        "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid or c.pkid in set (1,2,3,4)",
-    };
-    
+    String[] queries = new String[] { "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid and c.pkid in (select t.pkid from /region1 t,/region2 s where s.pkid=t.pkid and s.pkid = 1)", "select * from /region1 c, /region2 s where c.pkid=1 and c.pkid = s.pkid or c.pkid in set (1,2,3,4)", };
+
     for (int i = 0; i < 1000; i++) {
-      region1.put( i, new Customer(i, i));
-      region2.put( i, new Customer(i, i));
+      region1.put(i, new Customer(i, i));
+      region2.put(i, new Customer(i, i));
     }
-    
+
     executeQueriesWithIndexCombinations(queries);
   }
 
@@ -289,10 +266,10 @@ public class EquiJoinIntegrationTest {
   protected void executeQueriesWithIndexCombinations(String[] queries) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException, QueryInvocationTargetException, NameResolutionException, TypeMismatchException, FunctionDomainException {
     executeQueriesWithIndexCombinations(queries, new DefaultIndexCreatorCallback(qs), false);
   }
-  
+
   protected void executeQueriesWithIndexCombinations(String[] queries, IndexCreatorCallback indexCreator, boolean sizeOnly) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException, QueryInvocationTargetException, NameResolutionException, TypeMismatchException, FunctionDomainException {
     Object[] nonIndexedResults = executeQueries(queries);
-    
+
     for (int r1Index = 0; r1Index < indexCreator.getNumIndexTypesForRegion1(); r1Index++) {
       indexCreator.createIndexForRegion1(r1Index);
       for (int r2Index = 0; r2Index < indexCreator.getNumIndexTypesForRegion2(); r2Index++) {
@@ -304,7 +281,7 @@ public class EquiJoinIntegrationTest {
       indexCreator.destroyIndexForRegion1(r1Index);
     }
   }
-  
+
   protected Object[] executeQueries(String[] queries) throws QueryInvocationTargetException, NameResolutionException, TypeMismatchException, FunctionDomainException {
     Object[] results = new SelectResults[queries.length];
     for (int i = 0; i < queries.length; i++) {
@@ -312,46 +289,52 @@ public class EquiJoinIntegrationTest {
     }
     return results;
   }
-  
+
   interface IndexCreatorCallback {
     int getNumIndexTypesForRegion1();
+
     int getNumIndexTypesForRegion2();
+
     void createIndexForRegion1(int indexTypeId) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException;
+
     void createIndexForRegion2(int indexTypeId) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException;
-    void destroyIndexForRegion1(int indexTypeId) ;
-    void destroyIndexForRegion2(int indexTypeId) ;
+
+    void destroyIndexForRegion1(int indexTypeId);
+
+    void destroyIndexForRegion2(int indexTypeId);
   }
-  
+
   static class DefaultIndexCreatorCallback implements IndexCreatorCallback {
     protected String[] indexTypesForRegion1 = createIndexTypesForRegion1();
     protected String[] indexTypesForRegion2 = createIndexTypesForRegion2();
     protected Index indexOnR1, indexOnR2;
     protected QueryService qs;
-    
+
     DefaultIndexCreatorCallback(QueryService qs) {
       this.qs = qs;
     }
+
     protected String[] createIndexTypesForRegion1() {
-      return new String[] { "Compact", "Hash", "PrimaryKey"};
+      return new String[] { "Compact", "Hash", "PrimaryKey" };
     }
-    
+
     protected String[] createIndexTypesForRegion2() {
-      return new String[] { "Compact", "Hash", "PrimaryKey"};
+      return new String[] { "Compact", "Hash", "PrimaryKey" };
     }
-    
+
     public int getNumIndexTypesForRegion1() {
-      return indexTypesForRegion1.length; 
+      return indexTypesForRegion1.length;
     }
-    
+
     public int getNumIndexTypesForRegion2() {
       return indexTypesForRegion2.length;
     }
-    
+
     public void createIndexForRegion1(int indexTypeId) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       indexOnR1 = createIndex(indexTypesForRegion1[indexTypeId], "region1", "pkid");
 
     }
-    
+
     public void createIndexForRegion2(int indexTypeId) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       indexOnR2 = createIndex(indexTypesForRegion2[indexTypeId], "region2", "pkid");
     }
@@ -360,12 +343,11 @@ public class EquiJoinIntegrationTest {
     public void destroyIndexForRegion1(int indexTypeId) {
       qs.removeIndex(indexOnR1);
     }
-    
+
     public void destroyIndexForRegion2(int indexTypeId) {
       qs.removeIndex(indexOnR2);
     }
-    
-    
+
     private Index createIndex(String type, String regionName, String field) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       Index index = null;
       switch (type) {
@@ -384,53 +366,52 @@ public class EquiJoinIntegrationTest {
       }
       return index;
     }
-    
+
     private Index createCompactRangeIndex(String regionName, String fieldName) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       String fromClause = "/" + regionName + " r";
       String indexedExpression = "r." + fieldName;
       return qs.createIndex("Compact " + fromClause + ":" + indexedExpression, indexedExpression, fromClause);
     }
-    
+
     private Index createHashIndex(String regionName, String fieldName) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       String fromClause = "/" + regionName + " r";
       String indexedExpression = "r." + fieldName;
       return qs.createHashIndex("Hash " + fromClause + ":" + indexedExpression, indexedExpression, fromClause);
     }
-    
+
     private Index createPrimaryKeyIndex(String regionName, String fieldName) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       String fromClause = "/" + regionName + " r";
       String indexedExpression = "r." + fieldName;
       return qs.createKeyIndex("PrimaryKey " + fromClause + ":" + indexedExpression, indexedExpression, fromClause);
     }
-    
+
     private Index createRangeIndexOnFirstIterator(String regionName, String fieldName) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       String fromClause = "/" + regionName + " r, r.nested.values v";
       String indexedExpression = "r." + fieldName;
       return qs.createIndex("Range " + fromClause + ":" + indexedExpression, indexedExpression, fromClause);
     }
-    
+
     private Index createRangeIndexOnSecondIterator(String regionName, String fieldName) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
       String fromClause = "/" + regionName + " r, r.nested.values v";
       String indexedExpression = "v." + fieldName;
       return qs.createIndex("Range " + fromClause + ":" + indexedExpression, indexedExpression, fromClause);
     }
   }
-  
+
   private void compareResults(Object[] nonIndexedResults, Object[] indexedResults, String[] queries, boolean sizeOnly) {
     if (sizeOnly) {
       for (int i = 0; i < queries.length; i++) {
-        assertTrue(((SelectResults)nonIndexedResults[i]).size() == ((SelectResults)indexedResults[i]).size());
-        assertTrue(((SelectResults)nonIndexedResults[i]).size() > 0);
+        assertTrue(((SelectResults) nonIndexedResults[i]).size() == ((SelectResults) indexedResults[i]).size());
+        assertTrue(((SelectResults) nonIndexedResults[i]).size() > 0);
       }
-    }
-    else {
+    } else {
       StructSetOrResultsSet util = new StructSetOrResultsSet();
       for (int i = 0; i < queries.length; i++) {
         Object[][] resultsToCompare = new Object[1][2];
         resultsToCompare[0][0] = nonIndexedResults[i];
         resultsToCompare[0][1] = indexedResults[i];
-        util.CompareQueryResultsWithoutAndWithIndexes(resultsToCompare, 1, new String[]{queries[i]});
-        assertTrue(((SelectResults)nonIndexedResults[i]).size() > 0);
+        util.CompareQueryResultsWithoutAndWithIndexes(resultsToCompare, 1, new String[] { queries[i] });
+        assertTrue(((SelectResults) nonIndexedResults[i]).size() > 0);
       }
     }
   }

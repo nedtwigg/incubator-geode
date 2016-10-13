@@ -29,7 +29,7 @@ import org.apache.geode.distributed.internal.ServerLocation;
  *
  */
 public class Endpoint {
-  
+
   private AtomicLong lastExecute = new AtomicLong();
   private AtomicInteger references = new AtomicInteger();
   private final ServerLocation location;
@@ -37,11 +37,9 @@ public class Endpoint {
   private final EndpointManagerImpl manager;
   private final DistributedMember memberId;
   private volatile boolean closed;
-  
-  Endpoint(EndpointManagerImpl endpointManager, DistributedSystem ds,
-      ServerLocation location, ConnectionStats stats,
-      DistributedMember memberId) {
-    this.manager =endpointManager;
+
+  Endpoint(EndpointManagerImpl endpointManager, DistributedSystem ds, ServerLocation location, ConnectionStats stats, DistributedMember memberId) {
+    this.manager = endpointManager;
     this.location = location;
     this.stats = stats;
     this.memberId = memberId;
@@ -60,13 +58,13 @@ public class Endpoint {
     long now = System.nanoTime();
     return getLastExecute() <= (now - pingIntervalNanos);
   }
-  
+
   public void close() {
-    if(!closed) {
+    if (!closed) {
       closed = true;
     }
   }
-  
+
   public boolean isClosed() {
     return closed;
   }
@@ -84,7 +82,7 @@ public class Endpoint {
    */
   public boolean removeReference() {
     boolean lastReference = (references.decrementAndGet() <= 0);
-    if(lastReference) {
+    if (lastReference) {
       manager.endpointNotInUse(this);
     }
     return lastReference;
@@ -101,10 +99,9 @@ public class Endpoint {
   public String toString() {
     return location.toString();
   }
-  
+
   public DistributedMember getMemberId() {
     return memberId;
   }
-  
-  
+
 }

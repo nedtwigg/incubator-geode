@@ -35,19 +35,15 @@ public class FailWithLineMissingFromEndOfOutputJUnitTest extends FailOutputTestC
   String problem() {
     return "This line is missing in actual output.";
   }
-  
+
   @Override
   void outputProblemInProcess(final String message) {
     // this tests that the message is missing from output
   }
-  
+
   @Test
   public void testFailWithLineMissingFromEndOfOutput() throws Exception {
-    final String goldenString = 
-        "Begin " + name() + ".main" + "\n" +
-        "Press Enter to continue." + "\n" +
-        "End " + name() + ".main" + "\n" +
-        problem() + "\n"; 
+    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "End " + name() + ".main" + "\n" + problem() + "\n";
     debug(goldenString, "GOLDEN");
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());
@@ -57,16 +53,15 @@ public class FailWithLineMissingFromEndOfOutputJUnitTest extends FailOutputTestC
     process.sendInput();
     process.waitForOutputToMatch("End " + name() + "\\.main");
     process.waitFor();
-    
+
     try {
       assertOutputMatchesGoldenFile(process.getOutput(), goldenString);
       fail("assertOutputMatchesGoldenFile should have failed due to " + problem());
     } catch (AssertionError expected) {
-      assertTrue("AssertionError message should contain \"" + problem() + "\"",
-          expected.getMessage().contains(problem()));
+      assertTrue("AssertionError message should contain \"" + problem() + "\"", expected.getMessage().contains(problem()));
     }
   }
-  
+
   public static void main(final String[] args) throws Exception {
     new FailWithLineMissingFromEndOfOutputJUnitTest().executeInProcess();
   }

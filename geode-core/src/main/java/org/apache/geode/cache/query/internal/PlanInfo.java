@@ -26,7 +26,7 @@ package org.apache.geode.cache.query.internal;
 import java.util.List;
 import java.util.ArrayList;
 
-class PlanInfo  {
+class PlanInfo {
 
   boolean evalAsFilter = false;
   boolean isPreferred = false;

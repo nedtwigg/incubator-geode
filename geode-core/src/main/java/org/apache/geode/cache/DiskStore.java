@@ -150,20 +150,20 @@ public interface DiskStore {
    */
   public void forceRoll();
 
-   /**
-    * Allows a disk compaction to be forced on this disk store. The compaction
-    * is done even if automatic compaction is not configured.
-    * If the current active oplog has had data written to it and it is
-    * compactable then an implicit call to {@link #forceRoll} will be made
-    * so that the active oplog can be compacted.
-    * <P>This method will block until the compaction completes.
-    * @return <code>true</code> if one or more oplogs were compacted;
-    * <code>false</code> indicates that no oplogs were ready
-    * to be compacted or that a compaction was already in progress.
-    * @see #getAllowForceCompaction
-    */
+  /**
+   * Allows a disk compaction to be forced on this disk store. The compaction
+   * is done even if automatic compaction is not configured.
+   * If the current active oplog has had data written to it and it is
+   * compactable then an implicit call to {@link #forceRoll} will be made
+   * so that the active oplog can be compacted.
+   * <P>This method will block until the compaction completes.
+   * @return <code>true</code> if one or more oplogs were compacted;
+   * <code>false</code> indicates that no oplogs were ready
+   * to be compacted or that a compaction was already in progress.
+   * @see #getAllowForceCompaction
+   */
   public boolean forceCompaction();
-  
+
   /**
    * Destroys this disk store. Removes the disk store from the cache,
    * and removes all files related to the disk store from disk.
@@ -179,7 +179,6 @@ public interface DiskStore {
    * @since GemFire 8.0
    */
   public void destroy();
-  
 
   /**
    * Returns the warning threshold for disk usage as a percentage of the total 
@@ -198,14 +197,14 @@ public interface DiskStore {
    * @since GemFire 8.0
    */
   public float getDiskUsageCriticalPercentage();
-  
+
   /**
    * Sets the value of the disk usage warning percentage.
    * 
    * @param warningPercent the warning percent
    */
   public void setDiskUsageWarningPercentage(float warningPercent);
-  
+
   /**
    * Sets the value of the disk usage critical percentage.
    * 

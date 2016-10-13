@@ -65,7 +65,7 @@ public class ExecuteFunction65Test {
   private static final String FUNCTION_ID = "function_id";
   private static final boolean OPTIMIZE_FOR_WRITE = false;
   private static final Object CALLBACK_ARG = "arg";
-  private static final byte[] RESULT = new byte[] {Integer.valueOf(0).byteValue()};
+  private static final byte[] RESULT = new byte[] { Integer.valueOf(0).byteValue() };
 
   @Mock
   private SecurityService securityService;
@@ -178,7 +178,7 @@ public class ExecuteFunction65Test {
     this.executeFunction65.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.securityService).authorizeDataWrite();
-//    verify(this.chunkedResponseMessage).sendChunk(this.serverConnection);
+    //    verify(this.chunkedResponseMessage).sendChunk(this.serverConnection);
   }
 
   @Test

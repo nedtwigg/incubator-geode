@@ -62,16 +62,8 @@ public class LuceneIndexMetrics {
    * This constructor is to be used by internal JMX framework only. A user should
    * not try to create an instance of this class.
    */
-  @ConstructorProperties( { "regionPath", "indexName", "queryExecutions", "queryExecutionTime", "queryRate",
-      "queryRateAverageLatency", "queryExecutionsInProgress", "queryExecutionTotalHits", "updates",
-      "updateTime", "updateRate", "updateRateAverageLatency", "updatesInProgress", "commits",
-      "commitTime", "commitRate", "commitRateAverageLatency", "commitsInProgress", "documents"
-  })
-  public LuceneIndexMetrics(String regionPath, String indexName, int queryExecutions, long queryExecutionTime,
-      float queryRate, long queryRateAverageLatency, int queryExecutionsInProgress, long queryExecutionTotalHits,
-      int updates, long updateTime, float updateRate, long updateRateAverageLatency, int updatesInProgress,
-      int commits, long commitTime, float commitRate, long commitRateAverageLatency, int commitsInProgress,
-      int documents) {
+  @ConstructorProperties({ "regionPath", "indexName", "queryExecutions", "queryExecutionTime", "queryRate", "queryRateAverageLatency", "queryExecutionsInProgress", "queryExecutionTotalHits", "updates", "updateTime", "updateRate", "updateRateAverageLatency", "updatesInProgress", "commits", "commitTime", "commitRate", "commitRateAverageLatency", "commitsInProgress", "documents" })
+  public LuceneIndexMetrics(String regionPath, String indexName, int queryExecutions, long queryExecutionTime, float queryRate, long queryRateAverageLatency, int queryExecutionsInProgress, long queryExecutionTotalHits, int updates, long updateTime, float updateRate, long updateRateAverageLatency, int updatesInProgress, int commits, long commitTime, float commitRate, long commitRateAverageLatency, int commitsInProgress, int documents) {
     this.regionPath = regionPath;
     this.indexName = indexName;
     this.queryExecutions = queryExecutions;
@@ -171,48 +163,7 @@ public class LuceneIndexMetrics {
 
   @Override
   public String toString() {
-    return new StringBuilder()
-        .append(getClass().getSimpleName())
-        .append("[")
-        .append("regionPath=")
-        .append(this.regionPath)
-        .append("; indexName=")
-        .append(this.indexName)
-        .append("; queryExecutions=")
-        .append(this.queryExecutions)
-        .append("; queryExecutionTime=")
-        .append(this.queryExecutionTime)
-        .append("; queryRate=")
-        .append(this.queryRate)
-        .append("; queryRateAverageLatency=")
-        .append(this.queryRateAverageLatency)
-        .append("; queryExecutionsInProgress=")
-        .append(this.queryExecutionsInProgress)
-        .append("; queryExecutionTotalHits=")
-        .append(this.queryExecutionTotalHits)
-        .append("; updates=")
-        .append(this.updates)
-        .append("; updateTime=")
-        .append(this.updateTime)
-        .append("; updateRate=")
-        .append(this.updateRate)
-        .append("; updateRateAverageLatency=")
-        .append(this.updateRateAverageLatency)
-        .append("; updatesInProgress=")
-        .append(this.updatesInProgress)
-        .append("; commits=")
-        .append(this.commits)
-        .append("; commitTime=")
-        .append(this.commitTime)
-        .append("; commitRate=")
-        .append(this.commitRate)
-        .append("; commitRateAverageLatency=")
-        .append(this.commitRateAverageLatency)
-        .append("; commitsInProgress=")
-        .append(this.commitsInProgress)
-        .append("; documents=")
-        .append(this.documents)
-        .append("]")
-        .toString();
+    return new StringBuilder().append(getClass().getSimpleName()).append("[").append("regionPath=").append(this.regionPath).append("; indexName=").append(this.indexName).append("; queryExecutions=").append(this.queryExecutions).append("; queryExecutionTime=").append(this.queryExecutionTime).append("; queryRate=").append(this.queryRate).append("; queryRateAverageLatency=").append(this.queryRateAverageLatency).append("; queryExecutionsInProgress=").append(this.queryExecutionsInProgress).append("; queryExecutionTotalHits=").append(this.queryExecutionTotalHits).append("; updates=").append(this.updates).append("; updateTime=").append(this.updateTime).append("; updateRate=").append(this.updateRate).append("; updateRateAverageLatency=").append(this.updateRateAverageLatency).append("; updatesInProgress=").append(this.updatesInProgress).append("; commits=").append(this.commits).append("; commitTime=").append(this.commitTime).append("; commitRate=").append(this.commitRate)
+        .append("; commitRateAverageLatency=").append(this.commitRateAverageLatency).append("; commitsInProgress=").append(this.commitsInProgress).append("; documents=").append(this.documents).append("]").toString();
   }
 }

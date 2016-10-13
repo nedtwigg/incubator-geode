@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -24,7 +23,7 @@ import java.io.*;
 import org.apache.geode.distributed.internal.membership.*;
 
 public final class FetchResourceAttributesResponse extends AdminResponse {
-  
+
   // instance variables
   private RemoteStat[] stats;
 
@@ -38,7 +37,7 @@ public final class FetchResourceAttributesResponse extends AdminResponse {
       StatisticsType type = s.getType();
       StatisticDescriptor[] tmp = type.getStatistics();
       m.stats = new RemoteStat[tmp.length];
-      for (int i=0; i < tmp.length; i++) {
+      for (int i = 0; i < tmp.length; i++) {
         m.stats[i] = new RemoteStat(s, tmp[i]);
       }
     }
@@ -48,34 +47,34 @@ public final class FetchResourceAttributesResponse extends AdminResponse {
     return m;
   }
 
-  public RemoteStat[] getStats(){
+  public RemoteStat[] getStats() {
     return stats;
   }
 
   /**
    * Constructor required by <code>DataSerializable</code>
    */
-  public FetchResourceAttributesResponse() { }
+  public FetchResourceAttributesResponse() {
+  }
 
   public int getDSFID() {
     return FETCH_RESOURCE_ATTRIBUTES_RESPONSE;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(stats, out);
   }
 
-  @Override  
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    stats = (RemoteStat[])DataSerializer.readObject(in);
+    stats = (RemoteStat[]) DataSerializer.readObject(in);
   }
 
-  @Override  
-  public String toString(){
+  @Override
+  public String toString() {
     return "FetchResourceAttributesResponse from " + this.getRecipient();
   }
 }

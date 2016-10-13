@@ -25,5 +25,5 @@ public class GetKCommand extends GetCommand {
   protected boolean sendKeysInResponse() {
     return true;
   }
-  
+
 }

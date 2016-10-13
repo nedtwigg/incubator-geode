@@ -39,7 +39,7 @@ public class LocatorStats {
   private static final String REQUEST_TIME = "requestProcessingTime"; // counter
   private static final String RESPONSE_TIME = "responseProcessingTime"; // counter
   private static final String SERVER_LOAD_UPDATES = "serverLoadUpdates"; // counter
-  
+
   private AtomicInteger known_locators = new AtomicInteger();
   private AtomicLong requests_to_locator = new AtomicLong();
   private AtomicLong requestTime = new AtomicLong();
@@ -49,7 +49,6 @@ public class LocatorStats {
   private AtomicInteger requestsInProgress = new AtomicInteger();
   private AtomicLong serverLoadUpdates = new AtomicLong();
 
-  
   private static final int _KNOWN_LOCATORS;
   private static final int _REQUESTS_TO_LOCATOR;
   private static final int _RESPONSES_FROM_LOCATOR;
@@ -58,30 +57,16 @@ public class LocatorStats {
   private final static int _REQUEST_TIME;
   private final static int _RESPONSE_TIME;
   private final static int _SERVER_LOAD_UPDATES;
-  
-  
+
   private Statistics _stats = null;
-  
+
   static {
     String statName = "LocatorStats";
     String statDescription = "Statistics on the gemfire locator.";
     String serverThreadsDesc = "The number of location requests currently being processed by the thread pool.";
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    type = f.createType(
-        statName, 
-        statDescription,
-        new StatisticDescriptor[] {
-            f.createIntGauge(KNOWN_LOCATORS, "Number of locators known to this locator", LOCATORS),
-            f.createLongCounter(REQUESTS_TO_LOCATOR, "Number of requests this locator has received from clients", "requests"),
-            f.createLongCounter(RESPONSES_FROM_LOCATOR, "Number of responses this locator has sent to clients", "responses"),
-            f.createIntGauge(ENDPOINTS_KNOWN, "Number of servers this locator knows about", "servers"),
-            f.createIntGauge(REQUESTS_IN_PROGRESS, serverThreadsDesc, "requests"),
-            f.createLongCounter(REQUEST_TIME, "Time spent processing server location requests", "nanoseconds"),
-            f.createLongCounter(RESPONSE_TIME, "Time spent sending location responses to clients", "nanoseconds"),
-            f.createLongCounter(SERVER_LOAD_UPDATES, "Total number of times a server load update has been received.", "updates"),
-        }
-    );
-    
+    type = f.createType(statName, statDescription, new StatisticDescriptor[] { f.createIntGauge(KNOWN_LOCATORS, "Number of locators known to this locator", LOCATORS), f.createLongCounter(REQUESTS_TO_LOCATOR, "Number of requests this locator has received from clients", "requests"), f.createLongCounter(RESPONSES_FROM_LOCATOR, "Number of responses this locator has sent to clients", "responses"), f.createIntGauge(ENDPOINTS_KNOWN, "Number of servers this locator knows about", "servers"), f.createIntGauge(REQUESTS_IN_PROGRESS, serverThreadsDesc, "requests"), f.createLongCounter(REQUEST_TIME, "Time spent processing server location requests", "nanoseconds"), f.createLongCounter(RESPONSE_TIME, "Time spent sending location responses to clients", "nanoseconds"), f.createLongCounter(SERVER_LOAD_UPDATES, "Total number of times a server load update has been received.", "updates"), });
+
     _REQUESTS_IN_PROGRESS = type.nameToId(REQUESTS_IN_PROGRESS);
     _KNOWN_LOCATORS = type.nameToId(KNOWN_LOCATORS);
     _REQUESTS_TO_LOCATOR = type.nameToId(REQUESTS_TO_LOCATOR);
@@ -98,12 +83,12 @@ public class LocatorStats {
    */
   public LocatorStats() {
   }
-  
+
   /**
    * Called when the DS comes online so we can hookup the stats
    */
-  public void hookupStats(StatisticsFactory f,String name) {
-    if(this._stats==null) {
+  public void hookupStats(StatisticsFactory f, String name) {
+    if (this._stats == null) {
       this._stats = f.createAtomicStatistics(type, name);
       setLocatorCount(known_locators.get());
       setServerCount(endpoints_known.get());
@@ -112,10 +97,9 @@ public class LocatorStats {
       setServerLoadUpdates(serverLoadUpdates.get());
     }
   }
-  
-  
+
   public final void setServerCount(int sc) {
-    if(this._stats==null) {
+    if (this._stats == null) {
       this.endpoints_known.set(sc);
     } else {
       this._stats.setInt(_ENDPOINTS_KNOWN, sc);
@@ -123,16 +107,16 @@ public class LocatorStats {
   }
 
   public final void setLocatorCount(int lc) {
-    if(this._stats==null) {
+    if (this._stats == null) {
       this.known_locators.set(lc);
     } else {
       this._stats.setInt(_KNOWN_LOCATORS, lc);
     }
   }
-  
+
   public final void endLocatorRequest(long startTime) {
-    long took = DistributionStats.getStatTime()-startTime;
-    if(this._stats==null) {
+    long took = DistributionStats.getStatTime() - startTime;
+    if (this._stats == null) {
       this.requests_to_locator.incrementAndGet();
       if (took > 0) {
         this.requestTime.getAndAdd(took);
@@ -143,11 +127,11 @@ public class LocatorStats {
         this._stats.incLong(_REQUEST_TIME, took);
       }
     }
-  } 
-  
+  }
+
   public final void endLocatorResponse(long startTime) {
-    long took = DistributionStats.getStatTime()-startTime;
-    if(this._stats==null) {
+    long took = DistributionStats.getStatTime() - startTime;
+    if (this._stats == null) {
       this.responses_from_locator.incrementAndGet();
       if (took > 0) {
         this.responseTime.getAndAdd(took);
@@ -158,28 +142,26 @@ public class LocatorStats {
         this._stats.incLong(_RESPONSE_TIME, took);
       }
     }
-  } 
-  
-  
-  
+  }
+
   public final void setLocatorRequests(long rl) {
-    if(this._stats==null) {
+    if (this._stats == null) {
       this.requests_to_locator.set(rl);
     } else {
-      this._stats.setLong(_REQUESTS_TO_LOCATOR,rl);
+      this._stats.setLong(_REQUESTS_TO_LOCATOR, rl);
     }
   }
-  
+
   public final void setLocatorResponses(long rl) {
-    if(this._stats==null) {
+    if (this._stats == null) {
       this.responses_from_locator.set(rl);
     } else {
-      this._stats.setLong(_RESPONSES_FROM_LOCATOR,rl);
+      this._stats.setLong(_RESPONSES_FROM_LOCATOR, rl);
     }
   }
 
   public final void setServerLoadUpdates(long v) {
-    if(this._stats==null) {
+    if (this._stats == null) {
       this.serverLoadUpdates.set(v);
     } else {
       this._stats.setLong(_SERVER_LOAD_UPDATES, v);
@@ -187,23 +169,23 @@ public class LocatorStats {
   }
 
   public final void incServerLoadUpdates() {
-    if(this._stats==null) {
+    if (this._stats == null) {
       this.serverLoadUpdates.incrementAndGet();
     } else {
       this._stats.incLong(_SERVER_LOAD_UPDATES, 1);
     }
   }
-  
+
   public void incRequestInProgress(int threads) {
-    if(this._stats!=null) {
+    if (this._stats != null) {
       this._stats.incInt(_REQUESTS_IN_PROGRESS, threads);
     } else {
       requestsInProgress.getAndAdd(threads);
     }
   }
-  
+
   public void close() {
-    if(this._stats!=null) {
+    if (this._stats != null) {
       this._stats.close();
     }
   }

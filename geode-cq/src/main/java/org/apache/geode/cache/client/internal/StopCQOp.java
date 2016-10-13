@@ -33,16 +33,15 @@ public class StopCQOp {
    * @param pool the pool to use to communicate with the server.
    * @param cqName name of the CQ to stop
    */
-  public static void execute(ExecutablePool pool, String cqName)
-  {
+  public static void execute(ExecutablePool pool, String cqName) {
     AbstractOp op = new StopCQOpImpl(cqName);
     pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
-                                                               
+
   private StopCQOp() {
     // no instances allowed
   }
-  
+
   private static class StopCQOpImpl extends CreateCQOpImpl {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
@@ -51,18 +50,22 @@ public class StopCQOp {
       super(MessageType.STOPCQ_MSG_TYPE, 1);
       getMessage().addStringPart(cqName);
     }
+
     @Override
     protected String getOpName() {
       return "stopCQ";
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startStopCQ();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endStopCQSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endStopCQ(start, hasTimedOut(), hasFailed());

@@ -40,8 +40,7 @@ import org.apache.geode.internal.offheap.annotations.Retained;
  * @since GemFire 4.0
  *  
  */
-public class TXRmtEvent implements TransactionEvent
-{
+public class TXRmtEvent implements TransactionEvent {
   private final TransactionId txId;
 
   private Cache cache;
@@ -49,45 +48,41 @@ public class TXRmtEvent implements TransactionEvent
   // This list of EntryEventImpls are released by calling freeOffHeapResources
   @Released
   private List events;
-  
+
   TXRmtEvent(TransactionId txId, Cache cache) {
     this.txId = txId;
     this.cache = cache;
     this.events = null;
   }
-  
-  public TransactionId getTransactionId()
-  {
+
+  public TransactionId getTransactionId() {
     return this.txId;
   }
 
   private boolean isEventUserVisible(CacheEvent ce) {
-    return BucketRegion.FORCE_LOCAL_LISTENERS_INVOCATION || !(ce.getRegion() instanceof PartitionedRegion);  
+    return BucketRegion.FORCE_LOCAL_LISTENERS_INVOCATION || !(ce.getRegion() instanceof PartitionedRegion);
   }
-  
-  public List getEvents()
-  {
+
+  public List getEvents() {
     if (this.events == null) {
       return Collections.EMPTY_LIST;
-    }
-    else {
+    } else {
       ArrayList result = new ArrayList(this.events.size());
       Iterator it = this.events.iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (isEventUserVisible(ce)) {
           result.add(ce);
         }
       }
       if (result.isEmpty()) {
         return Collections.EMPTY_LIST;
-      }
-      else {
+      } else {
         return Collections.unmodifiableList(result);
       }
     }
   }
-  
+
   /**
    * Do all operations touch internal regions?
    * Returns false if the transaction is empty
@@ -97,14 +92,12 @@ public class TXRmtEvent implements TransactionEvent
     if (events == null || events.isEmpty()) {
       return false;
     }
-    Iterator<CacheEvent<?,?>> it = this.events.iterator();
+    Iterator<CacheEvent<?, ?>> it = this.events.iterator();
     while (it.hasNext()) {
-      CacheEvent<?,?> event = it.next();
+      CacheEvent<?, ?> event = it.next();
       if (isEventUserVisible(event)) {
-        LocalRegion region = (LocalRegion)event.getRegion();
-        if (region != null
-            && !region.isPdxTypesRegion()
-            && !region.isInternalRegion()) {
+        LocalRegion region = (LocalRegion) event.getRegion();
+        if (region != null && !region.isPdxTypesRegion() && !region.isInternalRegion()) {
           return false;
         }
       }
@@ -112,116 +105,101 @@ public class TXRmtEvent implements TransactionEvent
     return true;
   }
 
-  public List getCreateEvents()
-  {
+  public List getCreateEvents() {
     if (this.events == null) {
       return Collections.EMPTY_LIST;
-    }
-    else {
+    } else {
       ArrayList result = new ArrayList(this.events.size());
       Iterator it = this.events.iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isCreate() && isEventUserVisible(ce)) {
           result.add(ce);
         }
       }
       if (result.isEmpty()) {
         return Collections.EMPTY_LIST;
-      }
-      else {
+      } else {
         return Collections.unmodifiableList(result);
       }
     }
   }
 
-  public List getPutEvents()
-  {
+  public List getPutEvents() {
     if (this.events == null) {
       return Collections.EMPTY_LIST;
-    }
-    else {
+    } else {
       ArrayList result = new ArrayList(this.events.size());
       Iterator it = this.events.iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isUpdate() && isEventUserVisible(ce)) {
           result.add(ce);
         }
       }
       if (result.isEmpty()) {
         return Collections.EMPTY_LIST;
-      }
-      else {
+      } else {
         return Collections.unmodifiableList(result);
       }
     }
   }
 
-  public List getInvalidateEvents()
-  {
+  public List getInvalidateEvents() {
     if (this.events == null) {
       return Collections.EMPTY_LIST;
-    }
-    else {
+    } else {
       ArrayList result = new ArrayList(this.events.size());
       Iterator it = this.events.iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isInvalidate() && isEventUserVisible(ce)) {
           result.add(ce);
         }
       }
       if (result.isEmpty()) {
         return Collections.EMPTY_LIST;
-      }
-      else {
+      } else {
         return Collections.unmodifiableList(result);
       }
     }
   }
 
-  public List getDestroyEvents()
-  {
+  public List getDestroyEvents() {
     if (this.events == null) {
       return Collections.EMPTY_LIST;
-    }
-    else {
+    } else {
       ArrayList result = new ArrayList(this.events.size());
       Iterator it = this.events.iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isDestroy() && isEventUserVisible(ce)) {
           result.add(ce);
         }
       }
       if (result.isEmpty()) {
         return Collections.EMPTY_LIST;
-      }
-      else {
+      } else {
         return Collections.unmodifiableList(result);
       }
     }
   }
-  
+
   public boolean isEmpty() {
     return (events == null) || events.isEmpty();
   }
 
   @Retained
-  private EntryEventImpl createEvent(LocalRegion r, Operation op,
-      RegionEntry re, Object key, Object newValue,Object aCallbackArgument)
-  {
-    DistributedMember originator = ((TXId)this.txId).getMemberId();
+  private EntryEventImpl createEvent(LocalRegion r, Operation op, RegionEntry re, Object key, Object newValue, Object aCallbackArgument) {
+    DistributedMember originator = ((TXId) this.txId).getMemberId();
     //TODO:ASIF :EventID will not be generated with this constructor . Check if
     // this is correct
     LocalRegion eventRegion = r;
     if (r.isUsedForPartitionedRegionBucket()) {
       eventRegion = r.getPartitionedRegion();
     }
-    @Retained EntryEventImpl event = EntryEventImpl.create(
-        eventRegion, op, key, newValue,
-        aCallbackArgument, // callbackArg
+    @Retained
+    EntryEventImpl event = EntryEventImpl.create(eventRegion, op, key, newValue, aCallbackArgument, // callbackArg
         true, // originRemote
         originator);
     event.setOldValue(re.getValueInVM(r)); // OFFHEAP: copy into heap cd
@@ -232,8 +210,7 @@ public class TXRmtEvent implements TransactionEvent
   /**
    * Add an event to our internal list
    */
-  private void addEvent(EntryEventImpl e)
-  {
+  private void addEvent(EntryEventImpl e) {
     synchronized (this) {
       if (this.events == null) {
         this.events = new ArrayList();
@@ -242,30 +219,25 @@ public class TXRmtEvent implements TransactionEvent
     }
   }
 
-  void addDestroy(LocalRegion r, RegionEntry re, Object key,Object aCallbackArgument)
-  {
-    addEvent(createEvent(r, Operation.DESTROY, re, key, null,aCallbackArgument));
+  void addDestroy(LocalRegion r, RegionEntry re, Object key, Object aCallbackArgument) {
+    addEvent(createEvent(r, Operation.DESTROY, re, key, null, aCallbackArgument));
   }
 
-  void addInvalidate(LocalRegion r, RegionEntry re, Object key, Object newValue,Object aCallbackArgument)
-  {
-    addEvent(createEvent(r, Operation.INVALIDATE, re, key, newValue,aCallbackArgument));
+  void addInvalidate(LocalRegion r, RegionEntry re, Object key, Object newValue, Object aCallbackArgument) {
+    addEvent(createEvent(r, Operation.INVALIDATE, re, key, newValue, aCallbackArgument));
   }
 
-  void addPut(Operation putOp, LocalRegion r, RegionEntry re, Object key,
-      Object newValue,Object aCallbackArgument)
-  {
-    addEvent(createEvent(r, putOp, re, key, newValue,aCallbackArgument));
+  void addPut(Operation putOp, LocalRegion r, RegionEntry re, Object key, Object newValue, Object aCallbackArgument) {
+    addEvent(createEvent(r, putOp, re, key, newValue, aCallbackArgument));
   }
 
-  public Cache getCache()
-  {
+  public Cache getCache() {
     return this.cache;
   }
 
   public void freeOffHeapResources() {
     if (this.events != null) {
-      for (EntryEventImpl e: (List<EntryEventImpl>)this.events) {
+      for (EntryEventImpl e : (List<EntryEventImpl>) this.events) {
         e.release();
       }
     }

@@ -27,25 +27,25 @@ package org.apache.geode.cache.query.data;
  */
 import java.io.Serializable;
 
-public class Numbers implements Serializable{
-    ///////fields of class
-    public int id;
-    public int id1;
-    public int id2;
-    public float avg1;
-    public float max1;
-    public double range;
-    public long l;
-    
-    /** Creates a new instance of Numbers */
-    public Numbers(int i) {
-        id = i;
-        id1 = -1*id;
-        id2 = 1000 - id;
-        avg1 = (id + id1 + id2) / 3;
-        max1 = id;
-        range = (id - id1);
-        l = id*100000000;
-    }
-    
+public class Numbers implements Serializable {
+  ///////fields of class
+  public int id;
+  public int id1;
+  public int id2;
+  public float avg1;
+  public float max1;
+  public double range;
+  public long l;
+
+  /** Creates a new instance of Numbers */
+  public Numbers(int i) {
+    id = i;
+    id1 = -1 * id;
+    id2 = 1000 - id;
+    avg1 = (id + id1 + id2) / 3;
+    max1 = id;
+    range = (id - id1);
+    l = id * 100000000;
+  }
+
 }

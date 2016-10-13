@@ -49,11 +49,10 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * remaining.
  * 
  */
-public class JCAConnectionManagerImpl implements ConnectionManager,
-    ConnectionEventListener {
+public class JCAConnectionManagerImpl implements ConnectionManager, ConnectionEventListener {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 5281512854051120661L;
   protected transient TransactionManager transManager;
   protected ConnectionPoolCache mannPoolCache;
@@ -66,15 +65,13 @@ public class JCAConnectionManagerImpl implements ConnectionManager,
    * Constructor.
    *  
    */
-  public JCAConnectionManagerImpl(ManagedConnectionFactory mcf,
-      ConfiguredDataSourceProperties configs) {
+  public JCAConnectionManagerImpl(ManagedConnectionFactory mcf, ConfiguredDataSourceProperties configs) {
     // Get the security info and form the Subject
     // Initialize the Pool.
     try {
       isActive = true;
       mannPoolCache = new ManagedPoolCacheImpl(mcf, null, null, this, configs);
-    }
-    catch (Exception ex) { 
+    } catch (Exception ex) {
       logger.fatal(LocalizedMessage.create(LocalizedStrings.JCAConnectionManagerImpl_EXCEPTION_CAUGHT_WHILE_INITIALIZING, ex.getLocalizedMessage()), ex);
     }
   }
@@ -86,14 +83,14 @@ public class JCAConnectionManagerImpl implements ConnectionManager,
    * 
    * @throws ResourceException
    */
-  public Object allocateConnection(ManagedConnectionFactory mcf,
-      ConnectionRequestInfo reqInfo) throws ResourceException {
-    if (!isActive) { throw new ResourceException(LocalizedStrings.JCAConnectionManagerImpl_JCACONNECTIONMANAGERIMPLALLOCATECONNECTIONNO_VALID_CONNECTION_AVAILABLE.toLocalizedString()); }
+  public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo reqInfo) throws ResourceException {
+    if (!isActive) {
+      throw new ResourceException(LocalizedStrings.JCAConnectionManagerImpl_JCACONNECTIONMANAGERIMPLALLOCATECONNECTIONNO_VALID_CONNECTION_AVAILABLE.toLocalizedString());
+    }
     ManagedConnection conn = null;
     try {
       conn = (ManagedConnection) mannPoolCache.getPooledConnectionFromPool();
-    }
-    catch (PoolException ex) {
+    } catch (PoolException ex) {
       //ex.printStackTrace();
       throw new ResourceException(LocalizedStrings.JCAConnectionManagerImpl_JCACONNECTIONMANAGERIMPL_ALLOCATECONNECTION_IN_GETTING_CONNECTION_FROM_POOL_DUE_TO_0.toLocalizedString(ex.getMessage()), ex);
     }
@@ -117,11 +114,9 @@ public class JCAConnectionManagerImpl implements ConnectionManager,
         xaResourcesMap.put(conn, xar);
         // else throw a resource exception
       }
-    }
-    catch (RollbackException ex) {
+    } catch (RollbackException ex) {
       throw new ResourceException(LocalizedStrings.JCAConnectionManagerImpl_JCACONNECTIONMANAGERIMPL_ALLOCATECONNECTION_IN_TRANSACTION_DUE_TO_0.toLocalizedString(ex.getMessage()), ex);
-    }
-    catch (SystemException ex) {
+    } catch (SystemException ex) {
       throw new ResourceException(LocalizedStrings.JCAConnectionManagerImpl_JCACONNECTIONMANAGERIMPL_ALLOCATECONNECTION_SYSTEM_EXCEPTION_DUE_TO_0.toLocalizedString(ex.getMessage()), ex);
     }
     return conn.getConnection(subject, reqInfo);
@@ -138,23 +133,19 @@ public class JCAConnectionManagerImpl implements ConnectionManager,
       ManagedConnection conn = (ManagedConnection) event.getSource();
       XAResource xar = (XAResource) xaResourcesMap.get(conn);
       xaResourcesMap.remove(conn);
-      TransactionManagerImpl transManager = TransactionManagerImpl
-          .getTransactionManager();
+      TransactionManagerImpl transManager = TransactionManagerImpl.getTransactionManager();
       try {
         Transaction txn = transManager.getTransaction();
         if (txn != null && xar != null)
-            txn.delistResource(xar, XAResource.TMSUCCESS);
-      }
-      catch (SystemException se) {
+          txn.delistResource(xar, XAResource.TMSUCCESS);
+      } catch (SystemException se) {
         se.printStackTrace();
       }
       try {
         mannPoolCache.expirePooledConnection(conn);
         //mannPoolCache.destroyPooledConnection(conn);
-      }
-      catch (Exception ex) {
-        String exception = "JCAConnectionManagerImpl::connectionErrorOccured: Exception occured due to "
-            + ex;
+      } catch (Exception ex) {
+        String exception = "JCAConnectionManagerImpl::connectionErrorOccured: Exception occured due to " + ex;
         if (logger.isDebugEnabled()) {
           logger.debug(exception, ex);
         }
@@ -172,17 +163,15 @@ public class JCAConnectionManagerImpl implements ConnectionManager,
       ManagedConnection conn = (ManagedConnection) event.getSource();
       XAResource xar = null;
       if (xaResourcesMap.get(conn) != null)
-          xar = (XAResource) xaResourcesMap.get(conn);
+        xar = (XAResource) xaResourcesMap.get(conn);
       xaResourcesMap.remove(conn);
       try {
         Transaction txn = transManager.getTransaction();
         if (txn != null && xar != null) {
           txn.delistResource(xar, XAResource.TMSUCCESS);
         }
-      }
-      catch (Exception se) {
-        String exception = "JCAConnectionManagerImpl::connectionClosed: Exception occured due to "
-            + se;
+      } catch (Exception se) {
+        String exception = "JCAConnectionManagerImpl::connectionClosed: Exception occured due to " + se;
         if (logger.isDebugEnabled()) {
           logger.debug(exception, se);
         }

@@ -208,11 +208,9 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     final VM server1 = Host.getHost(0).getVM(1);
     final VM server2 = Host.getHost(0).getVM(3);
     final VM manager = Host.getHost(0).getVM(0);
-    String serverName1 = (String) server1.invoke("get DistributedMemberID ", () ->
-        getDistributedMemberId());
+    String serverName1 = (String) server1.invoke("get DistributedMemberID ", () -> getDistributedMemberId());
 
-    String serverName2 = (String) server2.invoke("get DistributedMemberID ", () ->
-        getDistributedMemberId());
+    String serverName2 = (String) server2.invoke("get DistributedMemberID ", () -> getDistributedMemberId());
 
     final DistributedMember serverMember1 = getMember(server1);
 
@@ -393,8 +391,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     getLogWriter().info("testDescribeClientWithServers commandStr=" + commandString);
 
     final VM server1 = Host.getHost(0).getVM(1);
-    String serverName = (String) server1.invoke("get Distributed Member Id", () ->
-        getDistributedMemberId());
+    String serverName = (String) server1.invoke("get Distributed Member Id", () -> getDistributedMemberId());
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testDescribeClientWithServers commandResult=" + commandResult);
@@ -466,8 +463,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
       return bean.getClientIds();
     });
 
-    String serverName = (String) server1.invoke("get distributed member Id", () ->
-        getDistributedMemberId());
+    String serverName = (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testListClient commandResult=" + commandResult);
@@ -523,11 +519,9 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
       return bean.getClientIds();
     });
 
-    String serverName1 = (String) server1.invoke("get distributed member Id", () ->
-        getDistributedMemberId());
+    String serverName1 = (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
 
-    String serverName2 = (String) server2.invoke("get distributed member Id", () ->
-        getDistributedMemberId());
+    String serverName2 = (String) server2.invoke("get distributed member Id", () -> getDistributedMemberId());
 
     CommandResult commandResult = executeCommand(commandString);
     System.out.println("testListClientForServers commandResult=" + commandResult);
@@ -687,8 +681,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     });
   }
 
-  private int startCacheServer(VM server, final int port,
-      final boolean createPR, final String regionName) throws Exception {
+  private int startCacheServer(VM server, final int port, final boolean createPR, final String regionName) throws Exception {
 
     return server.invoke("setup CacheServer", () -> {
       getSystem(getServerProperties());
@@ -741,8 +734,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
         ClientCache clientCache = (ClientCache) getClientCache(ccf);
         //Create region
         if (clientCache.getRegion(Region.SEPARATOR + regionName) == null && clientCache.getRegion(regionName) == null) {
-          ClientRegionFactory regionFactory = clientCache.createClientRegionFactory(ClientRegionShortcut.LOCAL)
-              .setPoolName(clientCache.getDefaultPool().getName());
+          ClientRegionFactory regionFactory = clientCache.createClientRegionFactory(ClientRegionShortcut.LOCAL).setPoolName(clientCache.getDefaultPool().getName());
           Region dataRegion = regionFactory.create(regionName);
           assertNotNull(dataRegion);
           dataRegion.put("k1", "v1");
@@ -752,15 +744,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
       } else {
         String poolName = "new_pool_" + System.currentTimeMillis();
         try {
-          PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(getServerHostName(server.getHost()), port)
-              .setThreadLocalConnections(true)
-              .setMinConnections(1)
-              .setSubscriptionEnabled(true)
-              .setPingInterval(1)
-              .setStatisticInterval(1)
-              .setMinConnections(1)
-              .setSubscriptionRedundancy(1)
-              .create(poolName);
+          PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(getServerHostName(server.getHost()), port).setThreadLocalConnections(true).setMinConnections(1).setSubscriptionEnabled(true).setPingInterval(1).setStatisticInterval(1).setMinConnections(1).setSubscriptionRedundancy(1).create(poolName);
           System.out.println("Created new pool pool " + poolName);
           assertNotNull(p);
         } catch (Exception eee) {
@@ -931,8 +915,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     String[] clientIds = setupSystemWithSubAndNonSubClient();
 
     final VM server1 = Host.getHost(0).getVM(1);
-    String serverName = (String) server1.invoke("Get DistributedMember Id", () ->
-        getDistributedMemberId());
+    String serverName = (String) server1.invoke("Get DistributedMember Id", () -> getDistributedMemberId());
 
     String commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientIds[0] + "\"";
     getLogWriter().info("testDescribeMixClientWithServers commandStr=" + commandString);
@@ -1079,8 +1062,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
         ClientCache clientCache = (ClientCache) getClientCache(ccf);
         //Create region
         if (clientCache.getRegion(Region.SEPARATOR + regionName) == null && clientCache.getRegion(regionName) == null) {
-          ClientRegionFactory regionFactory = clientCache.createClientRegionFactory(ClientRegionShortcut.LOCAL)
-              .setPoolName(clientCache.getDefaultPool().getName());
+          ClientRegionFactory regionFactory = clientCache.createClientRegionFactory(ClientRegionShortcut.LOCAL).setPoolName(clientCache.getDefaultPool().getName());
           Region dataRegion = regionFactory.create(regionName);
           assertNotNull(dataRegion);
           dataRegion.put("k1", "v1");
@@ -1090,15 +1072,7 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
       } else {
         String poolName = "new_pool_" + System.currentTimeMillis();
         try {
-          PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(getServerHostName(server.getHost()), port)
-              .setThreadLocalConnections(true)
-              .setMinConnections(1)
-              .setSubscriptionEnabled(false)
-              .setPingInterval(1)
-              .setStatisticInterval(1)
-              .setMinConnections(1)
-              .setSubscriptionRedundancy(1)
-              .create(poolName);
+          PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(getServerHostName(server.getHost()), port).setThreadLocalConnections(true).setMinConnections(1).setSubscriptionEnabled(false).setPingInterval(1).setStatisticInterval(1).setMinConnections(1).setSubscriptionRedundancy(1).create(poolName);
           cache.getLogger().info("Created new pool pool " + poolName);
           assertNotNull(p);
         } catch (Exception eee) {

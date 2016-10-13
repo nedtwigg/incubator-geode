@@ -34,9 +34,7 @@ import javax.management.modelmbean.*;
  *
  * @since GemFire 3.5
  */
-public class DistributedSystemHealthConfigJmxImpl
-  extends DistributedSystemHealthConfigImpl 
-  implements ManagedResource {
+public class DistributedSystemHealthConfigJmxImpl extends DistributedSystemHealthConfigImpl implements ManagedResource {
 
   /** The <code>GemFireHealth</code> that we help configure */
   private GemFireHealth health;
@@ -57,16 +55,11 @@ public class DistributedSystemHealthConfigJmxImpl
    * that configures the health of the distributed system monitored by
    * <code>health</code>.
    */
-  DistributedSystemHealthConfigJmxImpl(GemFireHealthJmxImpl health)
-    throws AdminException {
+  DistributedSystemHealthConfigJmxImpl(GemFireHealthJmxImpl health) throws AdminException {
 
     super();
     this.health = health;
-    this.mbeanName = new StringBuffer()
-      .append(MBEAN_NAME_PREFIX)
-      .append("DistributedSystemHealthConfig,id=")
-      .append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId()))
-      .toString();
+    this.mbeanName = new StringBuffer().append(MBEAN_NAME_PREFIX).append("DistributedSystemHealthConfig,id=").append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId())).toString();
     this.objectName = MBeanUtil.createMBean(this);
   }
 
@@ -85,7 +78,7 @@ public class DistributedSystemHealthConfigJmxImpl
   public String getMBeanName() {
     return this.mbeanName;
   }
-  
+
   public ModelMBean getModelMBean() {
     return this.modelMBean;
   }
@@ -102,6 +95,7 @@ public class DistributedSystemHealthConfigJmxImpl
     return this.objectName;
   }
 
-  public void cleanupResource() {}
+  public void cleanupResource() {
+  }
 
 }

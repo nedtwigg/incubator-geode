@@ -49,7 +49,7 @@ public class ServerLocatorJUnitTest {
     final ServerLocator serverLocator = createServerLocator();
 
     final Object response = serverLocator.processRequest(new LocatorStatusRequest());
-    System.out.println("response="+response);
+    System.out.println("response=" + response);
     assertTrue(response instanceof LocatorStatusResponse);
   }
 
@@ -61,10 +61,12 @@ public class ServerLocatorJUnitTest {
     TestServerLocator() throws IOException {
       super();
     }
+
     @Override
     protected boolean readyToProcessRequests() {
       return true;
     }
+
     @Override
     LogWriterI18n getLogWriterI18n() {
       return new LocalLogWriter(InternalLogWriter.NONE_LEVEL);

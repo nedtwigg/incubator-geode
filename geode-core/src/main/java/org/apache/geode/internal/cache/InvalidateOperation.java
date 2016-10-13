@@ -41,8 +41,7 @@ import org.apache.geode.internal.offheap.annotations.Retained;
  * 
  *  
  */
-public class InvalidateOperation extends DistributedCacheOperation
-{
+public class InvalidateOperation extends DistributedCacheOperation {
   private static final Logger logger = LogService.getLogger();
 
   /** Creates a new instance of InvalidateOperation */
@@ -51,40 +50,33 @@ public class InvalidateOperation extends DistributedCacheOperation
   }
 
   @Override
-  protected CacheOperationMessage createMessage()
-  {
+  protected CacheOperationMessage createMessage() {
     if (this.event.hasClientOrigin()) {
       InvalidateWithContextMessage msgwithContxt = new InvalidateWithContextMessage();
-      msgwithContxt.context = ((EntryEventImpl)this.event).getContext();
+      msgwithContxt.context = ((EntryEventImpl) this.event).getContext();
       return msgwithContxt;
-    }
-    else {
+    } else {
       return new InvalidateMessage();
     }
   }
 
   @Override
-  protected void initMessage(CacheOperationMessage msg,
-      DirectReplyProcessor processor)
-  {
+  protected void initMessage(CacheOperationMessage msg, DirectReplyProcessor processor) {
     super.initMessage(msg, processor);
-    InvalidateMessage imsg = (InvalidateMessage)msg;
-    EntryEventImpl eei = (EntryEventImpl)this.event;
+    InvalidateMessage imsg = (InvalidateMessage) msg;
+    EntryEventImpl eei = (EntryEventImpl) this.event;
     imsg.key = eei.getKey();
     imsg.eventId = eei.getEventId();
   }
 
-  public static class InvalidateMessage extends CacheOperationMessage
-  {
+  public static class InvalidateMessage extends CacheOperationMessage {
     protected Object key;
     protected EventID eventId = null;
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
-        throws EntryNotFoundException
-    {
-      EntryEventImpl ev = (EntryEventImpl)event;
-      DistributedRegion rgn = (DistributedRegion)ev.region;
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+      EntryEventImpl ev = (EntryEventImpl) event;
+      DistributedRegion rgn = (DistributedRegion) ev.region;
 
       try {
         if (!rgn.isCacheContentProxy()) {
@@ -95,8 +87,7 @@ public class InvalidateOperation extends DistributedCacheOperation
           // if this is a mirrored region and we're still initializing, or
           // concurrency conflict detection is enabled (requiring version #
           // retention) then force new entry creation
-          boolean forceNewEntry = rgn.dataPolicy.withReplication()
-          && (!rgn.isInitialized() || rgn.getConcurrencyChecksEnabled());
+          boolean forceNewEntry = rgn.dataPolicy.withReplication() && (!rgn.isInitialized() || rgn.getConcurrencyChecksEnabled());
           boolean invokeCallbacks = rgn.isInitialized();
           rgn.basicInvalidate(ev, invokeCallbacks, forceNewEntry);
         }
@@ -110,17 +101,14 @@ public class InvalidateOperation extends DistributedCacheOperation
 
     @Override
     @Retained
-    protected InternalCacheEvent createEvent(DistributedRegion rgn)
-        throws EntryNotFoundException {
-      @Retained EntryEventImpl ev = EntryEventImpl.create(
-         rgn, getOperation(), this.key,
-         null, this.callbackArg, true, getSender());
+    protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
+      @Retained
+      EntryEventImpl ev = EntryEventImpl.create(rgn, getOperation(), this.key, null, this.callbackArg, true, getSender());
       ev.setEventId(this.eventId);
       setOldValueInEvent(ev);
       ev.setVersionTag(this.versionTag);
       if (this.filterRouting != null) {
-        ev.setLocalFilterInfo(this.filterRouting
-            .getFilterInfo(rgn.getMyId()));
+        ev.setLocalFilterInfo(this.filterRouting.getFilterInfo(rgn.getMyId()));
       }
       ev.setInhibitAllNotifications(this.inhibitAllNotifications);
       return ev;
@@ -138,17 +126,14 @@ public class InvalidateOperation extends DistributedCacheOperation
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException
-    {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
-      this.eventId = (EventID)DataSerializer.readObject(in);
+      this.eventId = (EventID) DataSerializer.readObject(in);
       this.key = DataSerializer.readObject(in);
     }
 
     @Override
-    public void toData(DataOutput out) throws IOException
-    {
+    public void toData(DataOutput out) throws IOException {
       super.toData(out);
       DataSerializer.writeObject(this.eventId, out);
       DataSerializer.writeObject(this.key, out);
@@ -160,50 +145,39 @@ public class InvalidateOperation extends DistributedCacheOperation
     }
 
     @Override
-    public List getOperations()
-    {
+    public List getOperations() {
       byte deserializationPolicy = DistributedCacheOperation.DESERIALIZATION_POLICY_NONE;
-      QueuedOperation qOp = new QueuedOperation(getOperation(),
-                                                this.key,
-                                                null,
-                                                null,
-                                                deserializationPolicy,
-                                                this.callbackArg);
+      QueuedOperation qOp = new QueuedOperation(getOperation(), this.key, null, null, deserializationPolicy, this.callbackArg);
       return Collections.singletonList(qOp);
     }
 
     @Override
-    public ConflationKey getConflationKey()
-    {
+    public ConflationKey getConflationKey() {
       if (!super.regionAllowsConflation || getProcessorId() != 0) {
         // if the publisher's region attributes do not support conflation
         // or if it is an ack region
         // then don't even bother with a conflation key
         return null;
-      }
-      else {
+      } else {
         // don't conflate invalidates
         return new ConflationKey(this.key, super.regionPath, false);
       }
     }
   }
-  
-  public static final class InvalidateWithContextMessage extends InvalidateMessage
-  {
+
+  public static final class InvalidateWithContextMessage extends InvalidateMessage {
     transient ClientProxyMembershipID context;
 
     @Override
     @Retained
-    protected InternalCacheEvent createEvent(DistributedRegion rgn)
-      throws EntryNotFoundException  {
-      EntryEventImpl event = (EntryEventImpl)super.createEvent(rgn);
+    protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
+      EntryEventImpl event = (EntryEventImpl) super.createEvent(rgn);
       event.setContext(this.context);
       return event;
     }
 
     @Override
-    protected void appendFields(StringBuilder buff)
-    {
+    protected void appendFields(StringBuilder buff) {
       super.appendFields(buff);
       buff.append("; membershipID=");
       buff.append(this.context == null ? "" : this.context.toString());
@@ -213,23 +187,18 @@ public class InvalidateOperation extends DistributedCacheOperation
     public int getDSFID() {
       return INVALIDATE_WITH_CONTEXT_MESSAGE;
     }
-    
+
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException
-    {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.context = ClientProxyMembershipID.readCanonicalized(in);
     }
 
     @Override
-    public void toData(DataOutput out) throws IOException
-    {
+    public void toData(DataOutput out) throws IOException {
       super.toData(out);
       DataSerializer.writeObject(this.context, out);
     }
 
   }
 }
-
-

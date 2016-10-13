@@ -23,7 +23,7 @@ import org.apache.geode.cache.lucene.LuceneIndex;
 import org.apache.geode.cache.lucene.internal.repository.RepositoryManager;
 
 public interface InternalLuceneIndex extends LuceneIndex {
-  
+
   public RepositoryManager getRepositoryManager();
 
   /**

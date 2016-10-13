@@ -30,11 +30,13 @@ public interface LRUMapCallbacks {
   public void lruUpdateCallback();
 
   public void lruUpdateCallback(int n);
+
   /**
    * Disables lruUpdateCallback in calling thread
    * @return false if it's already disabled
    */
   public boolean disableLruUpdateCallback();
+
   /**
    * Enables lruUpdateCallback in calling thread
    */
@@ -53,7 +55,7 @@ public interface LRUMapCallbacks {
   public boolean lruLimitExceeded();
 
   public void lruCloseStats();
-  
+
   /**
    * Called when an entry is faulted in from disk.
    */

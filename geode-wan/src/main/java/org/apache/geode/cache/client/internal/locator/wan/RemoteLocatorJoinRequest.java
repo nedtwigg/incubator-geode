@@ -36,15 +36,14 @@ import org.apache.geode.internal.admin.remote.DistributionLocatorId;
 public class RemoteLocatorJoinRequest implements DataSerializableFixedID {
 
   private DistributionLocatorId locator = null;
- 
+
   private int distributedSystemId = -1;
 
   public RemoteLocatorJoinRequest() {
     super();
   }
 
-  public RemoteLocatorJoinRequest(int distributedSystemId, DistributionLocatorId locator,
-      String serverGroup) {
+  public RemoteLocatorJoinRequest(int distributedSystemId, DistributionLocatorId locator, String serverGroup) {
     this.distributedSystemId = distributedSystemId;
     this.locator = locator;
   }
@@ -62,11 +61,11 @@ public class RemoteLocatorJoinRequest implements DataSerializableFixedID {
   public DistributionLocatorId getLocator() {
     return this.locator;
   }
-  
+
   public int getDistributedSystemId() {
     return distributedSystemId;
   }
-  
+
   public int getDSFID() {
     return DataSerializableFixedID.REMOTE_LOCATOR_JOIN_REQUEST;
   }

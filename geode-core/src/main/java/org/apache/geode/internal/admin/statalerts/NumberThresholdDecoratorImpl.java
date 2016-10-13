@@ -32,8 +32,7 @@ import org.apache.geode.internal.admin.StatAlertDefinition;
  * number
  * 
  */
-public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl 
-  implements DataSerializableFixedID {
+public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl implements DataSerializableFixedID {
 
   private static final long serialVersionUID = -1799140125261894306L;
 
@@ -43,8 +42,7 @@ public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl
   public NumberThresholdDecoratorImpl() {
   }
 
-  public NumberThresholdDecoratorImpl(StatAlertDefinition definition,
-      Number threshold, boolean evalForGtThan) {
+  public NumberThresholdDecoratorImpl(StatAlertDefinition definition, Number threshold, boolean evalForGtThan) {
     super(definition);
     this.threshold = threshold;
     this.evalForGtThan = evalForGtThan;
@@ -61,11 +59,11 @@ public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl
   public boolean isGauge() {
     return false;
   }
-  
+
   public boolean isEvalForGreaterThan() {
     return evalForGtThan;
   }
-  
+
   @Override
   public boolean verify(StatisticsFactory factory) {
     return (super.verify(factory) && (null != threshold));
@@ -85,11 +83,9 @@ public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl
   @Override
   public boolean evaluate(Number[] params) {
     if (this.evalForGtThan)
-      return super.evaluate(params)
-            && isGreaterThan(getValue(params)[0], threshold);
+      return super.evaluate(params) && isGreaterThan(getValue(params)[0], threshold);
     else
-      return super.evaluate(params)
-      && isLessThan(getValue(params)[0], threshold);      
+      return super.evaluate(params) && isLessThan(getValue(params)[0], threshold);
   }
 
   @Override
@@ -124,8 +120,7 @@ public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl
 
   @Override
   public StatAlertDefinition getDecorator(String decoratorID) {
-    return ID.equalsIgnoreCase(decoratorID) ? this : super
-        .getDecorator(decoratorID);
+    return ID.equalsIgnoreCase(decoratorID) ? this : super.getDecorator(decoratorID);
   }
 
   @Override
@@ -136,10 +131,9 @@ public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.threshold = (Number)DataSerializer.readObject(in);
+    this.threshold = (Number) DataSerializer.readObject(in);
     this.evalForGtThan = DataSerializer.readPrimitiveBoolean(in);
   }
 

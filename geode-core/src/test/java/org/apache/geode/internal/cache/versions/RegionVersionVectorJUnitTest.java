@@ -46,18 +46,18 @@ public class RegionVersionVectorJUnitTest {
     DiskStoreID ownerId = new DiskStoreID(0, 0);
     DiskStoreID id1 = new DiskStoreID(0, 1);
     DiskStoreID id2 = new DiskStoreID(1, 0);
-    
+
     DiskRegionVersionVector rvv = new DiskRegionVersionVector(ownerId);
-    
+
     doExceptionsWithContains(ownerId, rvv);
     doExceptionsWithContains(id1, rvv);
   }
-  
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Test
   public void testRegionVersionVectors() throws Exception {
     // this is just a quick set of unit tests for basic RVV functionality
-    
+
     final String local = NetworkUtils.getIPLiteral();
     InternalDistributedMember server1 = new InternalDistributedMember(local, 101);
     InternalDistributedMember server2 = new InternalDistributedMember(local, 102);
@@ -65,7 +65,7 @@ public class RegionVersionVectorJUnitTest {
     InternalDistributedMember server4 = new InternalDistributedMember(local, 104);
 
     RegionVersionVector rv1 = null;
-    
+
     // (a) Test that an exception is mended when the versions that are missing are
     // added
     rv1 = new VMRegionVersionVector(server1);
@@ -88,7 +88,7 @@ public class RegionVersionVectorJUnitTest {
     rv1.recordVersion(server2, 7);
     System.out.println("for test (a) RVV is now: " + rv1.fullToString());
     assertEquals(0, rv1.getExceptionCount(server2));
-    
+
     // (b) Test the contains() operation
     rv1 = new VMRegionVersionVector(server1);
     rv1.recordVersion(server2, 1);
@@ -138,8 +138,7 @@ public class RegionVersionVectorJUnitTest {
     assertTrue(rv1.contains(server2, 9));
     assertTrue(rv1.getExceptionCount(server2) == 0);
     assertTrue(rv1.contains(server2, 8));
-    
-    
+
     // Test RVV comparisons for GII Delta
     rv1 = new VMRegionVersionVector(server1);
     rv1.recordVersion(server2, 1);
@@ -149,13 +148,13 @@ public class RegionVersionVectorJUnitTest {
     rv1.recordVersion(server2, 10);
     rv1.recordVersion(server2, 11);
     rv1.recordVersion(server2, 12);
-    
+
     rv1.recordVersion(server3, 2);
     rv1.recordVersion(server3, 3);
     rv1.recordVersion(server3, 4);
     rv1.recordVersion(server3, 6);
     rv1.recordVersion(server3, 7);
-    
+
     RegionVersionVector rv2 = rv1.getCloneForTransmission();
     System.out.println("rv1 is " + rv1.fullToString());
     System.out.println("rv2 is " + rv2.fullToString());
@@ -188,7 +187,7 @@ public class RegionVersionVectorJUnitTest {
     assertTrue(rv1.isNewerThanOrCanFillExceptionsFor(rv2));
     rv2.recordVersion(server3, 5);
     assertFalse(rv1.isNewerThanOrCanFillExceptionsFor(rv2));
-    
+
     // test that old members are removed from the vector
     InternalDistributedMember server5 = new InternalDistributedMember(local, 105);
     rv1 = new VMRegionVersionVector(server1);
@@ -202,10 +201,10 @@ public class RegionVersionVectorJUnitTest {
     assertTrue(rv1.containsMember(server3));
     assertTrue(rv1.containsMember(server4));
     Set retain = new HashSet();
-      retain.add(server2);  // still have data from server2
-      retain.add(server3);  // still have data from server3
-      // no data found from server4 in region
-      retain.add(server5);  // still have data from server5
+    retain.add(server2); // still have data from server2
+    retain.add(server3); // still have data from server3
+    // no data found from server4 in region
+    retain.add(server5); // still have data from server5
     rv1.removeOldMembers(retain);
     assertFalse(rv1.containsMember(server4));
 
@@ -224,7 +223,7 @@ public class RegionVersionVectorJUnitTest {
     DataSerializer.writeObject(rv2, out);
     ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
     DataInputStream in = new DataInputStream(bais);
-    RegionVersionVector transmittedVector = (RegionVersionVector)DataSerializer.readObject(in);
+    RegionVersionVector transmittedVector = (RegionVersionVector) DataSerializer.readObject(in);
     // record the provider's rvv in the receiver of the image
     giiReceiverRVV.recordVersions(transmittedVector);
     // removedMembers in the receiver should hold {server4, server3}.  Simulate
@@ -239,35 +238,35 @@ public class RegionVersionVectorJUnitTest {
     rv1 = new VMRegionVersionVector(server1);
     long bitSetRollPoint = RegionVersionHolder.BIT_SET_WIDTH + 1;
     long boundary = RegionVersionHolder.BIT_SET_WIDTH * 3 / 4;
-    for (long i=1; i<boundary; i++) {
+    for (long i = 1; i < boundary; i++) {
       rv1.recordVersion(server2, i);
       assertTrue(rv1.contains(server2, i));
     }
-    assertFalse(rv1.contains(server2, boundary+1));
-    
+    assertFalse(rv1.contains(server2, boundary + 1));
+
     RegionVersionVector.DEBUG = true;
 
     rv1.recordVersion(server2, bitSetRollPoint);
-    rv1.recordVersion(server2, bitSetRollPoint+1); // bitSet should be rolled at this point
-    RegionVersionHolder h = (RegionVersionHolder)rv1.getMemberToVersion().get(server2);
+    rv1.recordVersion(server2, bitSetRollPoint + 1); // bitSet should be rolled at this point
+    RegionVersionHolder h = (RegionVersionHolder) rv1.getMemberToVersion().get(server2);
     long versionBoundary = h.getBitSetVersionForTesting();
-    assertEquals("expected holder bitset version to roll to this value", boundary-1, versionBoundary);
-    assertFalse(rv1.contains(server2, bitSetRollPoint-1));
+    assertEquals("expected holder bitset version to roll to this value", boundary - 1, versionBoundary);
+    assertFalse(rv1.contains(server2, bitSetRollPoint - 1));
     assertTrue(rv1.contains(server2, bitSetRollPoint));
-    assertTrue(rv1.contains(server2, bitSetRollPoint+1));
-    assertFalse(rv1.contains(server2, bitSetRollPoint+2));
-    
-    assertTrue(rv1.contains(server2, boundary-1));
+    assertTrue(rv1.contains(server2, bitSetRollPoint + 1));
+    assertFalse(rv1.contains(server2, bitSetRollPoint + 2));
+
+    assertTrue(rv1.contains(server2, boundary - 1));
     assertFalse(rv1.contains(server2, boundary));
-    assertFalse(rv1.contains(server2, boundary+1));
+    assertFalse(rv1.contains(server2, boundary + 1));
 
     // now test the merge
     System.out.println("testing merge for " + rv1.fullToString());
     assertEquals(1, rv1.getExceptionCount(server2)); // one exception from boundary-1 to bitSetRollPoint
-    assertFalse(rv1.contains(server2, bitSetRollPoint-1));
+    assertFalse(rv1.contains(server2, bitSetRollPoint - 1));
     assertTrue(rv1.contains(server2, bitSetRollPoint));
-    assertTrue(rv1.contains(server2, bitSetRollPoint+1));
-    assertFalse(rv1.contains(server2, bitSetRollPoint+2));
+    assertTrue(rv1.contains(server2, bitSetRollPoint + 1));
+    assertFalse(rv1.contains(server2, bitSetRollPoint + 2));
   }
 
   @Test
@@ -275,7 +274,7 @@ public class RegionVersionVectorJUnitTest {
     DiskStoreID ownerId = new DiskStoreID(0, 0);
     DiskStoreID id1 = new DiskStoreID(0, 1);
     DiskStoreID id2 = new DiskStoreID(1, 0);
-    
+
     DiskRegionVersionVector rvv = new DiskRegionVersionVector(ownerId);
     rvv.recordVersion(id1, 5);
     rvv.recordVersion(id1, 6);
@@ -286,19 +285,19 @@ public class RegionVersionVectorJUnitTest {
     rvv.recordVersion(id1, 12);
     rvv.recordGCVersion(id2, 5);
     rvv.recordGCVersion(id1, 3);
-    
+
     assertTrue(rvv.sameAs(rvv.getCloneForTransmission()));
-    
+
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     InternalDataSerializer.writeObject(rvv.getCloneForTransmission(), out);
     byte[] bytes = out.toByteArray();
-    
+
     DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes));
     DiskRegionVersionVector rvv2 = InternalDataSerializer.readObject(dis);
-    
+
     assertTrue(rvv.sameAs(rvv2));
   }
-  
+
   /**
    * Test that we can copy the member to version map correctly.
    */
@@ -307,27 +306,27 @@ public class RegionVersionVectorJUnitTest {
     DiskStoreID id0 = new DiskStoreID(0, 0);
     DiskStoreID id1 = new DiskStoreID(0, 1);
     DiskStoreID id2 = new DiskStoreID(1, 0);
-    
+
     DiskRegionVersionVector rvv0 = new DiskRegionVersionVector(id0);
     rvv0.getNextVersion();
     rvv0.getNextVersion();
     rvv0.getNextVersion();
-    
+
     rvv0.recordVersion(id1, 1);
     rvv0.recordVersion(id1, 3);
-    
+
     DiskRegionVersionVector rvv1 = new DiskRegionVersionVector(id1);
     rvv1.recordVersions(rvv0);
-    
+
     assertEquals(3, rvv1.getCurrentVersion());
     assertFalse(rvv1.contains(id1, 2));
     assertTrue(rvv1.contains(id1, 1));
     assertTrue(rvv1.contains(id1, 3));
-    
+
     assertTrue(rvv1.contains(id0, 3));
-    
+
     assertTrue(rvv0.sameAs(rvv1));
-    
+
     rvv1.recordVersion(id1, 2);
     assertTrue(rvv1.isNewerThanOrCanFillExceptionsFor(rvv0));
     assertFalse(rvv0.isNewerThanOrCanFillExceptionsFor(rvv1));
@@ -340,22 +339,22 @@ public class RegionVersionVectorJUnitTest {
     DiskStoreID id0 = new DiskStoreID(0, 0);
     DiskStoreID id1 = new DiskStoreID(0, 1);
     DiskStoreID id2 = new DiskStoreID(1, 0);
-    
+
     DiskRegionVersionVector rvv0 = new DiskRegionVersionVector(id0);
     rvv0.getNextVersion();
     rvv0.getNextVersion();
     rvv0.getNextVersion();
-    
+
     rvv0.recordVersion(id1, 1);
     rvv0.recordVersion(id1, 2);
-    
+
     DiskRegionVersionVector rvv1 = new DiskRegionVersionVector(id1);
     rvv1.recordVersions(rvv0);
 
     rvv1.recordVersion(id1, 3);
     RegionVersionHolder holder_at_rvv1 = rvv1.getLocalExceptions();
     RegionVersionHolder holder_at_rvv0 = rvv0.getMemberToVersion().get(id1);
-    holder_at_rvv1.addException(2,4);
+    holder_at_rvv1.addException(2, 4);
     assertFalse(rvv1.isNewerThanOrCanFillExceptionsFor(rvv0));
     assertFalse(rvv0.isNewerThanOrCanFillExceptionsFor(rvv1));
     assertTrue(rvv1.dominates(rvv0));
@@ -366,27 +365,27 @@ public class RegionVersionVectorJUnitTest {
   public void test48066_1() {
     DiskStoreID id0 = new DiskStoreID(0, 0);
     DiskRegionVersionVector rvv0 = new DiskRegionVersionVector(id0);
-    for (int i=1; i<=3; i++) {
+    for (int i = 1; i <= 3; i++) {
       rvv0.recordVersion(id0, i);
     }
-    System.out.println("rvv0="+rvv0.fullToString());
+    System.out.println("rvv0=" + rvv0.fullToString());
 
-    DiskRegionVersionVector rvv1 = (DiskRegionVersionVector)rvv0.getCloneForTransmission();
-    System.out.println("after clone, rvv1="+rvv1.fullToString());
+    DiskRegionVersionVector rvv1 = (DiskRegionVersionVector) rvv0.getCloneForTransmission();
+    System.out.println("after clone, rvv1=" + rvv1.fullToString());
 
     DiskRegionVersionVector rvv2 = new DiskRegionVersionVector(id0);
-    for (int i=1; i<=10; i++) {
+    for (int i = 1; i <= 10; i++) {
       rvv2.recordVersion(id0, i);
     }
     rvv2.recordVersions(rvv1);
-    System.out.println("after init, rvv2="+rvv2.fullToString());
-    
+    System.out.println("after init, rvv2=" + rvv2.fullToString());
+
     rvv2.recordVersion(id0, 4);
-    System.out.println("after record 4, rvv2="+rvv2.fullToString());
+    System.out.println("after record 4, rvv2=" + rvv2.fullToString());
     assertEquals(4, rvv2.getCurrentVersion());
-    
+
     rvv2.recordVersion(id0, 7);
-    System.out.println("after record 7, rvv2="+rvv2.fullToString());
+    System.out.println("after record 7, rvv2=" + rvv2.fullToString());
     assertEquals(7, rvv2.getCurrentVersion());
   }
 
@@ -394,30 +393,30 @@ public class RegionVersionVectorJUnitTest {
   public void test48066_2() {
     DiskStoreID id0 = new DiskStoreID(0, 0);
     DiskRegionVersionVector rvv0 = new DiskRegionVersionVector(id0);
-    for (int i=1; i<=10; i++) {
+    for (int i = 1; i <= 10; i++) {
       rvv0.recordVersion(id0, i);
     }
-    
+
     DiskRegionVersionVector rvv1 = new DiskRegionVersionVector(id0);
     rvv0.recordVersions(rvv1);
-    System.out.println("rvv0="+rvv0.fullToString());
-    
+    System.out.println("rvv0=" + rvv0.fullToString());
+
     rvv0.recordVersion(id0, 4);
-    System.out.println("after record 4, rvv0="+rvv0.fullToString());
+    System.out.println("after record 4, rvv0=" + rvv0.fullToString());
     assertEquals(4, rvv0.getCurrentVersion());
 
     rvv0.recordVersion(id0, 7);
-    System.out.println("after record 7, rvv0="+rvv0.fullToString());
+    System.out.println("after record 7, rvv0=" + rvv0.fullToString());
     assertEquals(7, rvv0.getCurrentVersion());
     assertFalse(rvv0.contains(id0, 5));
 
-    DiskRegionVersionVector rvv2 = (DiskRegionVersionVector)rvv0.getCloneForTransmission(); 
-    System.out.println("after clone, rvv2="+rvv2.fullToString());
+    DiskRegionVersionVector rvv2 = (DiskRegionVersionVector) rvv0.getCloneForTransmission();
+    System.out.println("after clone, rvv2=" + rvv2.fullToString());
     assertEquals(11, rvv0.getNextVersion());
     assertFalse(rvv2.contains(id0, 5));
     assertEquals(11, rvv2.getNextVersion());
   }
-  
+
   /**
    * Test for bug 47023. Make sure recordGCVersion works
    * correctly and doesn't generate exceptions for the local member.
@@ -426,14 +425,14 @@ public class RegionVersionVectorJUnitTest {
   public void testRecordGCVersion() {
     DiskStoreID id0 = new DiskStoreID(0, 0);
     DiskStoreID id1 = new DiskStoreID(0, 1);
-    
+
     DiskRegionVersionVector rvv0 = new DiskRegionVersionVector(id0);
-    
+
     //generate 3 local versions
     rvv0.getNextVersion();
     rvv0.getNextVersion();
     rvv0.getNextVersion();
-    
+
     //record some version from a remote member
     rvv0.recordVersion(id1, 1);
     rvv0.recordVersion(id1, 3);
@@ -448,11 +447,11 @@ public class RegionVersionVectorJUnitTest {
       assertFalse(holder1.contains(2));
       assertFalse(holder1.contains(4));
     }
-    
+
     //Record some GC versions
     rvv0.recordGCVersion(id0, 2);
     rvv0.recordGCVersion(id1, 3);
-    
+
     {
       Map<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion = rvv0.getMemberToVersion();
       RegionVersionHolder<DiskStoreID> holder0 = memberToVersion.get(id0);
@@ -463,16 +462,16 @@ public class RegionVersionVectorJUnitTest {
 
     //Clean up old exceptions
     rvv0.pruneOldExceptions();
-    
+
     //Make assertions about what exceptions are still present 
     Map<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion = rvv0.getMemberToVersion();
     RegionVersionHolder<DiskStoreID> holder0 = memberToVersion.get(id0);
     RegionVersionHolder<DiskStoreID> holder1 = memberToVersion.get(id1);
     assertTrue(holder0.getExceptionForTest().isEmpty());
-    
+
     //exceptions less than the GC version should have been removed
     assertTrue(holder1.contains(2));
-    
+
     //exceptions greater than the GC version should still be there.
     assertFalse(holder1.contains(4));
   }
@@ -482,21 +481,21 @@ public class RegionVersionVectorJUnitTest {
     DiskStoreID id0 = new DiskStoreID(0, 0);
     DiskStoreID id1 = new DiskStoreID(0, 1);
     DiskStoreID id2 = new DiskStoreID(0, 2);
-    
+
     DiskRegionVersionVector rvv = new DiskRegionVersionVector(id0);
-    
+
     // generate 3 local versions
     rvv.getNextVersion();
     rvv.getNextVersion();
     rvv.getNextVersion();
-    
+
     // record some version from a remote member
     rvv.recordVersion(id1, 1);
     rvv.recordVersion(id1, 3);
     rvv.recordVersion(id1, 5);
     // record a GC version for that member that is older than its version
     rvv.recordGCVersion(id1, 3);
-    
+
     rvv.recordGCVersion(id2, 4950);
     rvv.recordVersion(id2, 5000);
     rvv.recordVersion(id2, 5001);
@@ -504,17 +503,12 @@ public class RegionVersionVectorJUnitTest {
 
     rvv.removeOldVersions();
 
-    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(), 
-        rvv.getCurrentVersion(), rvv.getGCVersion(null));
-    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(),
-        rvv.getVersionForMember(id1), rvv.getGCVersion(id1));
-    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(),
-        rvv.getVersionForMember(id2), rvv.getGCVersion(id2));
-    
-    assertEquals("expected exceptions to be erased for " + rvv.fullToString(),
-        rvv.getExceptionCount(id1), 0);
-    assertEquals("expected exceptions to be erased for " + rvv.fullToString(),
-        rvv.getExceptionCount(id2), 0);
+    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(), rvv.getCurrentVersion(), rvv.getGCVersion(null));
+    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(), rvv.getVersionForMember(id1), rvv.getGCVersion(id1));
+    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(), rvv.getVersionForMember(id2), rvv.getGCVersion(id2));
+
+    assertEquals("expected exceptions to be erased for " + rvv.fullToString(), rvv.getExceptionCount(id1), 0);
+    assertEquals("expected exceptions to be erased for " + rvv.fullToString(), rvv.getExceptionCount(id2), 0);
   }
 
   @Test
@@ -527,23 +521,23 @@ public class RegionVersionVectorJUnitTest {
 
   private void doExceptionsWithContains(DiskStoreID id, DiskRegionVersionVector rvv) {
     rvv.recordVersion(id, 10);
-    
+
     //Make sure we have exceptions from 0-10
     assertFalse(rvv.contains(id, 5));
-    
+
     rvv.recordVersion(id, 5);
     assertTrue(rvv.contains(id, 5));
     assertFalse(rvv.contains(id, 4));
     assertFalse(rvv.contains(id, 6));
 
-    for(int i =0; i < 10; i++) {
+    for (int i = 0; i < 10; i++) {
       rvv.recordVersion(id, i);
     }
-    
-    for(int i =0; i < 10; i++) {
+
+    for (int i = 0; i < 10; i++) {
       assertTrue(rvv.contains(id, i));
     }
-    assertEquals(0,rvv.getExceptionCount(id));
+    assertEquals(0, rvv.getExceptionCount(id));
   }
 
 }

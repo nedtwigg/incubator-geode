@@ -33,13 +33,12 @@ public class CreatePersistentRegionProcessor extends CreateRegionProcessor {
   private final PersistenceAdvisor persistenceAdvisor;
   private final boolean recoverFromDisk;
 
-  public CreatePersistentRegionProcessor(CacheDistributionAdvisee advisee,
-      PersistenceAdvisor persistenceAdvisor, boolean recoverFromDisk) {
+  public CreatePersistentRegionProcessor(CacheDistributionAdvisee advisee, PersistenceAdvisor persistenceAdvisor, boolean recoverFromDisk) {
     super(advisee);
-    this.persistenceAdvisor= persistenceAdvisor;
+    this.persistenceAdvisor = persistenceAdvisor;
     this.recoverFromDisk = recoverFromDisk;
   }
-  
+
   /**
    * Returns the member id of the member who has the latest
    * copy of the persistent region. This may be the local member ID
@@ -50,8 +49,7 @@ public class CreatePersistentRegionProcessor extends CreateRegionProcessor {
    * which are not based on the state that is persisted in this member.
    */
   @Override
-  public CacheDistributionAdvisor.InitialImageAdvice getInitialImageAdvice(
-      CacheDistributionAdvisor.InitialImageAdvice previousAdvice) {
+  public CacheDistributionAdvisor.InitialImageAdvice getInitialImageAdvice(CacheDistributionAdvisor.InitialImageAdvice previousAdvice) {
     return this.persistenceAdvisor.getInitialImageAdvice(previousAdvice, recoverFromDisk);
   }
 }

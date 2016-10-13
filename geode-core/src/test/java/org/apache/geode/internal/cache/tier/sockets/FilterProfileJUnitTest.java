@@ -39,7 +39,7 @@ public class FilterProfileJUnitTest {
 
   private LocalRegion mockRegion;
   private FilterProfile fprofile;
-  
+
   @Before
   public void setUp() {
     mockRegion = mock(LocalRegion.class);
@@ -53,7 +53,7 @@ public class FilterProfileJUnitTest {
   public void testUnregisterKey() {
     unregisterKey(false);
   }
-  
+
   @Test
   public void testUnregisterKeyInv() {
     unregisterKey(true);
@@ -63,7 +63,7 @@ public class FilterProfileJUnitTest {
     unregisterKey(inv, false);
     unregisterKey(inv, true);
   }
-  
+
   private void unregisterKey(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, "Object1234", InterestType.KEY, inv);
@@ -90,7 +90,7 @@ public class FilterProfileJUnitTest {
     unregisterTwoKeys(inv, false);
     unregisterTwoKeys(inv, true);
   }
-  
+
   private void unregisterTwoKeys(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, "Object1234", InterestType.KEY, inv);
@@ -119,7 +119,7 @@ public class FilterProfileJUnitTest {
     unregisterAllKey(inv, false);
     unregisterAllKey(inv, true);
   }
-  
+
   private void unregisterAllKey(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, "Object1234", InterestType.KEY, inv);
@@ -147,7 +147,7 @@ public class FilterProfileJUnitTest {
     unregisterRegex(inv, false);
     unregisterRegex(inv, true);
   }
-  
+
   private void unregisterRegex(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, "Object.*", InterestType.REGULAR_EXPRESSION, inv);
@@ -159,7 +159,7 @@ public class FilterProfileJUnitTest {
     fprofile.unregisterClientInterest(clientId, "Object.*", InterestType.REGULAR_EXPRESSION);
     assertFalse(fprofile.hasRegexInterestFor(clientId, inv));
   }
-  
+
   @Test
   public void testUnregisterAllRegex() {
     unregisterAllRegex(false);
@@ -174,7 +174,7 @@ public class FilterProfileJUnitTest {
     unregisterAllRegex(inv, false);
     unregisterAllRegex(inv, true);
   }
-  
+
   private void unregisterAllRegex(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, ".*", InterestType.REGULAR_EXPRESSION, inv);
@@ -206,7 +206,7 @@ public class FilterProfileJUnitTest {
     unregisterAllKeys(inv, false);
     unregisterAllKeys(inv, true);
   }
-  
+
   private void unregisterAllKeys(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, ".*", InterestType.REGULAR_EXPRESSION, inv);
@@ -218,17 +218,17 @@ public class FilterProfileJUnitTest {
     fprofile.unregisterClientInterest(clientId, ".*", InterestType.REGULAR_EXPRESSION);
     assertFalse(fprofile.hasAllKeysInterestFor(clientId, inv));
   }
-  
+
   @Test
   public void testUnregisterFilterClass() {
     unregisterFilterClass(false);
   }
-  
+
   @Test
   public void testUnregisterFilterClassInv() {
     unregisterFilterClass(true);
   }
-  
+
   private void unregisterFilterClass(boolean inv) {
     unregisterFilterClass(inv, false);
     unregisterFilterClass(inv, true);
@@ -250,12 +250,12 @@ public class FilterProfileJUnitTest {
   public void testUnregisterAllFilterClass() {
     unregisterAllFilterClass(false);
   }
-  
+
   @Test
   public void testUnregisterAllFilterClassInv() {
     unregisterAllFilterClass(true);
   }
-  
+
   private void unregisterAllFilterClass(boolean inv) {
     unregisterAllFilterClass(inv, false);
     unregisterAllFilterClass(inv, true);
@@ -271,9 +271,9 @@ public class FilterProfileJUnitTest {
     assertTrue(isClientInterested);
     fprofile.unregisterClientInterest(clientId, UnregisterAllInterest.singleton(), InterestType.FILTER_CLASS);
     assertFalse(fprofile.hasFilterInterestFor(clientId, inv));
-    
+
   }
-  
+
   @Test
   public void testUnregisterRegexNotRegistered() {
     unregisterRegexNotRegistered(false);
@@ -283,12 +283,12 @@ public class FilterProfileJUnitTest {
   public void testUnregisterRegexNotRegisteredInv() {
     unregisterRegexNotRegistered(true);
   }
-  
+
   private void unregisterRegexNotRegistered(boolean inv) {
     unregisterRegexNotRegistered(inv, false);
     unregisterRegexNotRegistered(inv, true);
   }
-  
+
   private void unregisterRegexNotRegistered(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, "Object.*", InterestType.REGULAR_EXPRESSION, inv);
@@ -310,12 +310,12 @@ public class FilterProfileJUnitTest {
   public void testUnregisterKeyNotRegisteredInv() {
     unregisterKeyNotRegistered(true);
   }
-  
+
   private void unregisterKeyNotRegistered(boolean inv) {
     unregisterKeyNotRegistered(inv, false);
     unregisterKeyNotRegistered(inv, true);
   }
-  
+
   private void unregisterKeyNotRegistered(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, "Object1234", InterestType.KEY, inv);
@@ -337,12 +337,12 @@ public class FilterProfileJUnitTest {
   public void testUnregisterFilterNotRegisteredInv() {
     unregisterFilterNotRegistered(true);
   }
-  
+
   private void unregisterFilterNotRegistered(boolean inv) {
     unregisterFilterNotRegistered(inv, false);
     unregisterFilterNotRegistered(inv, true);
   }
-  
+
   private void unregisterFilterNotRegistered(boolean inv, boolean twoClients) {
     String clientId = "client";
     fprofile.registerClientInterest(clientId, "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
@@ -364,12 +364,12 @@ public class FilterProfileJUnitTest {
   public void testUnregisterAllKeysNotRegisteredInv() {
     unregisterAllKeysNotRegistered(true);
   }
-  
+
   private void unregisterAllKeysNotRegistered(boolean inv) {
     unregisterAllKeysNotRegistered(inv, false);
     unregisterAllKeysNotRegistered(inv, true);
   }
-  
+
   private void unregisterAllKeysNotRegistered(boolean inv, boolean twoClients) {
     String clientId = "client";
     if (twoClients) {
@@ -380,6 +380,7 @@ public class FilterProfileJUnitTest {
     fprofile.unregisterClientInterest(clientId, ".*", InterestType.REGULAR_EXPRESSION);
     assertFalse(fprofile.hasAllKeysInterestFor(clientId, inv));
   }
+
   @Test
   public void testUnregisterAllFilterNotRegistered() {
     unregisterAllFilterNotRegistered(false);
@@ -389,12 +390,12 @@ public class FilterProfileJUnitTest {
   public void testUnregisterAllFilterNotRegisteredInv() {
     unregisterAllFilterNotRegistered(true);
   }
-  
+
   private void unregisterAllFilterNotRegistered(boolean inv) {
     unregisterAllFilterNotRegistered(inv, false);
     unregisterAllFilterNotRegistered(inv, true);
   }
-  
+
   private void unregisterAllFilterNotRegistered(boolean inv, boolean twoClients) {
     String clientId = "client";
     if (twoClients) {
@@ -405,7 +406,7 @@ public class FilterProfileJUnitTest {
     fprofile.unregisterClientInterest(clientId, "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS);
     assertFalse(fprofile.hasFilterInterestFor(clientId, inv));
   }
-  
+
   @Test
   public void testRegisterUnregisterClientInterestListAndVerifyKeysRegistered() {
     registerUnregisterClientInterestListAndVerifyKeysRegistered(false);
@@ -416,26 +417,25 @@ public class FilterProfileJUnitTest {
     registerUnregisterClientInterestListAndVerifyKeysRegistered(true);
   }
 
-
-  private void registerUnregisterClientInterestListAndVerifyKeysRegistered(boolean updatesAsInvalidates){
+  private void registerUnregisterClientInterestListAndVerifyKeysRegistered(boolean updatesAsInvalidates) {
     String clientId = "client";
     List<String> keys = Arrays.asList("K1", "K2");
 
     Set registeredKeys = fprofile.registerClientInterestList(clientId, keys, updatesAsInvalidates);
-    int numKeys = updatesAsInvalidates? fprofile.getKeysOfInterestInv(clientId).size():fprofile.getKeysOfInterest(clientId).size();
+    int numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(2, numKeys);
     assertTrue("Expected key not found in registered list.", registeredKeys.containsAll(keys));
 
     // Re-register same keys. The return should be empty.
     registeredKeys = fprofile.registerClientInterestList(clientId, keys, updatesAsInvalidates);
-    numKeys = updatesAsInvalidates? fprofile.getKeysOfInterestInv(clientId).size():fprofile.getKeysOfInterest(clientId).size();
+    numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(2, numKeys);
     assertEquals(0, registeredKeys.size());
 
     // Register one old key and new. It should return only the new key.
     keys = Arrays.asList("K2", "K3");
     registeredKeys = fprofile.registerClientInterestList(clientId, keys, updatesAsInvalidates);
-    numKeys = updatesAsInvalidates? fprofile.getKeysOfInterestInv(clientId).size():fprofile.getKeysOfInterest(clientId).size();
+    numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(3, numKeys);
     assertEquals(1, registeredKeys.size());
     assertTrue("Expected key not found in registered list.", registeredKeys.contains("K3"));
@@ -443,7 +443,7 @@ public class FilterProfileJUnitTest {
     // Keys Registered are K1, K2, K3
     keys = Arrays.asList("K1", "K2");
     registeredKeys = fprofile.unregisterClientInterestList(clientId, keys);
-    numKeys = updatesAsInvalidates? fprofile.getKeysOfInterestInv(clientId).size():fprofile.getKeysOfInterest(clientId).size();
+    numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(1, numKeys);
     assertTrue("Expected keys not found in unregistered list.", keys.containsAll(registeredKeys));
 
@@ -451,7 +451,7 @@ public class FilterProfileJUnitTest {
     keys = Arrays.asList("K2", "K3");
     registeredKeys = fprofile.unregisterClientInterestList(clientId, keys);
     // Once all the interest for client is removed, the client id is removed from the interest list map.
-    Set keySet = updatesAsInvalidates? fprofile.getKeysOfInterestInv(clientId):fprofile.getKeysOfInterest(clientId);
+    Set keySet = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId) : fprofile.getKeysOfInterest(clientId);
     assertNull(keySet);
     assertEquals(1, registeredKeys.size());
     assertTrue("Expected key not found in unregistered list.", registeredKeys.contains("K3"));

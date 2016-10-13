@@ -35,6 +35,7 @@ public class JConsoleNotFoundException extends GemFireException {
   public JConsoleNotFoundException(final String message) {
     super(message);
   }
+
   public JConsoleNotFoundException(final Throwable cause) {
     super(cause);
   }

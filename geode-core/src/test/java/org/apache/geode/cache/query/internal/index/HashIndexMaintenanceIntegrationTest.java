@@ -40,9 +40,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class HashIndexMaintenanceIntegrationTest extends AbstractIndexMaintenanceIntegrationTest {
 
   @Override
-  protected AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath)
-    throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
-    return (HashIndex)qs.createHashIndex(name, indexExpression, regionPath);
+  protected AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    return (HashIndex) qs.createHashIndex(name, indexExpression, regionPath);
   }
 
   @Test
@@ -60,8 +59,8 @@ public class HashIndexMaintenanceIntegrationTest extends AbstractIndexMaintenanc
     results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
     assertEquals(0, results.size());
 
-    HashIndex cindex = (HashIndex)index;
-    Iterator iterator =  cindex.entriesSet.iterator();
+    HashIndex cindex = (HashIndex) index;
+    Iterator iterator = cindex.entriesSet.iterator();
     int count = 0;
     while (iterator.hasNext()) {
       count++;

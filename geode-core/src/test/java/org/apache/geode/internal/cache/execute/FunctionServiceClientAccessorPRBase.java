@@ -55,7 +55,7 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
 
-    for(int i =0; i < numberOfExecutions(); i++) {
+    for (int i = 0; i < numberOfExecutions(); i++) {
       VM vm = host.getVM(i);
       createRegion(vm);
     }
@@ -65,23 +65,19 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
       PartitionRegionHelper.assignBucketsToPartitions(region);
     });
 
-    region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY)
-      .create(REGION);
+    region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION);
   }
 
   private void createRegion(final VM vm) {
     vm.invoke(() -> {
-      getCache().createRegionFactory(RegionShortcut.PARTITION)
-        .create(REGION);
-      });
+      getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION);
+    });
   }
 
   @Override
   public Execution getExecution() {
     return FunctionService.onRegion(region);
   }
-
-
 
   /**
    * Test that a custom result collector will still receive all partial
@@ -99,12 +95,10 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
 
     //Execute a function which will close the cache on one source.
     try {
-      ResultCollector rc = getExecution()
-        .withCollector(customCollector)
-        .execute(new BucketMovingNonHAFunction(firstMember, secondMember));
+      ResultCollector rc = getExecution().withCollector(customCollector).execute(new BucketMovingNonHAFunction(firstMember, secondMember));
       rc.getResult();
       fail("Should have thrown an exception");
-    } catch(Exception expected) {
+    } catch (Exception expected) {
       //do nothing
     }
     assertEquals(new HashSet(members), new HashSet(customCollector.getResult()));

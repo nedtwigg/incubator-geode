@@ -45,7 +45,7 @@ public class OffHeapStoredObjectWithHeapFormJUnitTest extends OffHeapStoredObjec
     byte[] valueInBytes = getValueAsByteArray();
     OffHeapStoredObjectWithHeapForm heapForm = new OffHeapStoredObjectWithHeapForm(chunk, valueInBytes);
 
-    OffHeapStoredObject chunkWithOutHeapForm = (OffHeapStoredObject)heapForm.getStoredObjectWithoutHeapForm();
+    OffHeapStoredObject chunkWithOutHeapForm = (OffHeapStoredObject) heapForm.getStoredObjectWithoutHeapForm();
 
     assertNotNull(chunkWithOutHeapForm);
     assertEquals(OffHeapStoredObject.class, chunkWithOutHeapForm.getClass());

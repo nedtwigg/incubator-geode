@@ -22,17 +22,17 @@ public class StackTracesPerMember implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private final String memberNameOrId;
-  private final byte []stackTraces;
-  
-  public StackTracesPerMember (String memberNameOrId, byte [] stackTraces) {
+  private final byte[] stackTraces;
+
+  public StackTracesPerMember(String memberNameOrId, byte[] stackTraces) {
     this.memberNameOrId = memberNameOrId;
     this.stackTraces = stackTraces;
   }
-  
-  public String getMemberNameOrId () {
+
+  public String getMemberNameOrId() {
     return this.memberNameOrId;
   }
-  
+
   public byte[] getStackTraces() {
     return this.stackTraces;
   }

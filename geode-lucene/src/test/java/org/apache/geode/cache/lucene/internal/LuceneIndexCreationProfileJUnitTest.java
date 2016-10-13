@@ -55,53 +55,18 @@ public class LuceneIndexCreationProfileJUnitTest {
   }
 
   private final Object[] getSerializationProfiles() {
-    return $(
-        new Object[] { getOneFieldLuceneIndexCreationProfile() },
-        new Object[] { getTwoFieldLuceneIndexCreationProfile() },
-        new Object[] { getTwoAnalyzersLuceneIndexCreationProfile() },
-        new Object[] { getNullField1AnalyzerLuceneIndexCreationProfile() }
-    );
+    return $(new Object[] { getOneFieldLuceneIndexCreationProfile() }, new Object[] { getTwoFieldLuceneIndexCreationProfile() }, new Object[] { getTwoAnalyzersLuceneIndexCreationProfile() }, new Object[] { getNullField1AnalyzerLuceneIndexCreationProfile() });
   }
 
   @Test
   @Parameters(method = "getCheckCompatibilityProfiles")
   public void testCheckCompatibility(LuceneIndexCreationProfile myProfile, LuceneIndexCreationProfile otherProfile, String expectedResult) {
-    assertEquals(expectedResult, otherProfile.checkCompatibility("/"+REGION_NAME, myProfile));
+    assertEquals(expectedResult, otherProfile.checkCompatibility("/" + REGION_NAME, myProfile));
   }
 
   private final Object[] getCheckCompatibilityProfiles() {
-    return $(
-        new Object[] {
-            getOneFieldLuceneIndexCreationProfile(),
-            getTwoFieldLuceneIndexCreationProfile(),
-            CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_FIELDS
-        },
-        new Object[] {
-            getTwoAnalyzersLuceneIndexCreationProfile(),
-            getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()),
-            CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS
-        },
-        new Object[] {
-            getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()),
-            getTwoAnalyzersLuceneIndexCreationProfile(),
-            CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_3
-        },
-        new Object[] {
-            getOneAnalyzerLuceneIndexCreationProfile(new StandardAnalyzer()),
-            getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()),
-            CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2
-        },
-        new Object[] {
-            getNullField2AnalyzerLuceneIndexCreationProfile(),
-            getNullField1AnalyzerLuceneIndexCreationProfile(),
-            CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_1
-        },
-        new Object[] {
-            getNullField1AnalyzerLuceneIndexCreationProfile(),
-            getNullField2AnalyzerLuceneIndexCreationProfile(),
-            LuceneTestUtilities.CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2
-        }
-    );
+    return $(new Object[] { getOneFieldLuceneIndexCreationProfile(), getTwoFieldLuceneIndexCreationProfile(), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_FIELDS }, new Object[] { getTwoAnalyzersLuceneIndexCreationProfile(), getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS }, new Object[] { getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()), getTwoAnalyzersLuceneIndexCreationProfile(), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_3 }, new Object[] { getOneAnalyzerLuceneIndexCreationProfile(new StandardAnalyzer()), getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2 }, new Object[] { getNullField2AnalyzerLuceneIndexCreationProfile(), getNullField1AnalyzerLuceneIndexCreationProfile(), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_1 },
+        new Object[] { getNullField1AnalyzerLuceneIndexCreationProfile(), getNullField2AnalyzerLuceneIndexCreationProfile(), LuceneTestUtilities.CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2 });
   }
 
   private LuceneIndexCreationProfile getOneFieldLuceneIndexCreationProfile() {

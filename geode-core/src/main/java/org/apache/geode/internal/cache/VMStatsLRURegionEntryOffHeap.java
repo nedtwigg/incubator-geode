@@ -22,19 +22,21 @@ public abstract class VMStatsLRURegionEntryOffHeap extends VMStatsLRURegionEntry
   public VMStatsLRURegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VMStatsLRURegionEntryOffHeapFactory factory = new VMStatsLRURegionEntryOffHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VMStatsLRURegionEntryOffHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VMStatsLRURegionEntryOffHeapIntKey(context, (Integer)key, value);
+          return new VMStatsLRURegionEntryOffHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VMStatsLRURegionEntryOffHeapLongKey(context, (Long)key, value);
+          return new VMStatsLRURegionEntryOffHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -47,7 +49,7 @@ public abstract class VMStatsLRURegionEntryOffHeap extends VMStatsLRURegionEntry
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VMStatsLRURegionEntryOffHeapUUIDKey(context, (UUID)key, value);
+          return new VMStatsLRURegionEntryOffHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VMStatsLRURegionEntryOffHeapObjectKey(context, key, value);
@@ -58,9 +60,11 @@ public abstract class VMStatsLRURegionEntryOffHeap extends VMStatsLRURegionEntry
       // This estimate will not take into account the memory saved by inlining the keys.
       return VMStatsLRURegionEntryOffHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return VersionedStatsLRURegionEntryOffHeap.getEntryFactory();
     }
+
     @Override
     public RegionEntryFactory makeOnHeap() {
       return VMStatsLRURegionEntryHeap.getEntryFactory();

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.internal.admin;
 
 import org.apache.geode.internal.admin.remote.*;
@@ -26,7 +26,7 @@ import org.apache.geode.internal.admin.remote.*;
  *
  */
 public class GfManagerAgentFactory {
- 
+
   /**
    * Creates a GfManagerAgent for managing a distributed system.
    *

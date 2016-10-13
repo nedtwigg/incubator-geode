@@ -33,7 +33,7 @@ public class CommitConflictException extends TransactionException {
   public CommitConflictException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>CommitConflictException</code> with the specified detail message
    * and cause.
@@ -43,7 +43,7 @@ public class CommitConflictException extends TransactionException {
   public CommitConflictException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>CommitConflictException</code> with the specified cause.
    * @param cause the causal Throwable
@@ -52,5 +52,5 @@ public class CommitConflictException extends TransactionException {
   public CommitConflictException(Throwable cause) {
     super(cause);
   }
-  
+
 }

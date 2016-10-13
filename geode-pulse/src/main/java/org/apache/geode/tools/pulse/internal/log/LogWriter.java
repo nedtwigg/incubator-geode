@@ -67,6 +67,7 @@ public interface LogWriter {
   /**
    * Writes an exception to this writer. The exception level is "error".
    */
+
   // public void error(Throwable ex);
   /**
    * Returns true if "warning" log messages are enabled. Returns false if

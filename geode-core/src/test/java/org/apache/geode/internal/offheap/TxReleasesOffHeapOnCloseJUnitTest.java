@@ -30,9 +30,9 @@ import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class TxReleasesOffHeapOnCloseJUnitTest {
-  
+
   protected Cache cache;
-  
+
   protected void createCache() {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -40,7 +40,7 @@ public class TxReleasesOffHeapOnCloseJUnitTest {
     props.setProperty(ConfigurationProperties.OFF_HEAP_MEMORY_SIZE, "1m");
     cache = new CacheFactory(props).create();
   }
-  
+
   // Start a tx and have it modify an entry on an offheap region.
   // Close the cache and verify that the offheap memory was released
   // even though the tx was not commited or rolled back.

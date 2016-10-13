@@ -54,23 +54,12 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
   }
 
   protected void configure(HttpSecurity http) throws Exception {
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authorizeRequests()
-        .antMatchers("/ping").permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .formLogin()
-        .and()
-        .csrf().disable();
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().antMatchers("/ping").permitAll().anyRequest().authenticated().and().formLogin().and().csrf().disable();
 
-    if(securityService.isIntegratedSecurity()) {
+    if (securityService.isIntegratedSecurity()) {
       http.httpBasic();
-    }
-    else{
-      http
-        .authorizeRequests()
-        .anyRequest().permitAll();
+    } else {
+      http.authorizeRequests().anyRequest().permitAll();
     }
   }
 }

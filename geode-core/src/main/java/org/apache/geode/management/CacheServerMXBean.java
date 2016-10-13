@@ -68,7 +68,7 @@ public interface CacheServerMXBean {
    * CacheServer will listen on.
    */
   public String getBindAddress();
-  
+
   /**
    * Returns the configured buffer size of the socket connection for this CacheServer.
    */
@@ -79,7 +79,7 @@ public interface CacheServerMXBean {
    * health of client's attached to the server.
    */
   public int getMaximumTimeBetweenPings();
-  
+
   /**
    * Returns the maximum allowed client connections.
    */
@@ -89,7 +89,7 @@ public interface CacheServerMXBean {
    * Returns the maxium number of threads allowed in this CacheServer to service client requests.
    */
   public int getMaxThreads();
-  
+
   /**
    * Returns the maximum number of messages that can be enqueued in a client-queue.
    */
@@ -99,12 +99,12 @@ public interface CacheServerMXBean {
    * Returns the time (in seconds) after which a message in the client queue will expire.
    */
   public int getMessageTimeToLive();
-  
+
   /**
    * Returns the frequency (in milliseconds) to poll the load probe on this CacheServer.
    */
   public long getLoadPollInterval();
-  
+
   /**
    * Returns the name or IP address to pass to the client as the location
    * where the server is listening. When the server connects to the locator it tells
@@ -115,7 +115,7 @@ public interface CacheServerMXBean {
    * alternate hostname for the locator to pass to the client.
    */
   public String getHostNameForClients();
-  
+
   /**
    * Returns the load probe for this CacheServer.
    */
@@ -148,7 +148,7 @@ public interface CacheServerMXBean {
    * Returns the number of sockets accepted and used for client to server messaging.
    */
   public int getClientConnectionCount();
-  
+
   /**
    * Returns the number of client virtual machines connected.
    */
@@ -210,7 +210,6 @@ public interface CacheServerMXBean {
    */
   public double getLoadPerQueue();
 
-
   /**
    * Returns the rate of get requests.
    */
@@ -220,7 +219,7 @@ public interface CacheServerMXBean {
    * Returns the rate of put requests.
    */
   public float getPutRequestRate();
-  
+
   /**
    * Returns the total number of bytes sent to clients.
    */
@@ -230,7 +229,7 @@ public interface CacheServerMXBean {
    * Returns the total number of bytes received from clients.
    */
   public long getTotalReceivedBytes();
-  
+
   /**
    * Returns the number of cache client notification requests.
    */
@@ -329,8 +328,7 @@ public interface CacheServerMXBean {
   @Deprecated
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   public void closeAllContinuousQuery(String regionName) throws Exception;
-  
-  
+
   /**
    * Unregister a CQ
    * 
@@ -343,7 +341,6 @@ public interface CacheServerMXBean {
   @Deprecated
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   public void closeContinuousQuery(String queryName) throws Exception;
-
 
   /**
    * Returns a list of IDs for all connected clients.
@@ -362,7 +359,7 @@ public interface CacheServerMXBean {
    *          ID of the client for which to retrieve information.
    */
   public ClientHealthStatus showClientStats(String clientId) throws Exception;
-  
+
   /**
    * Returns the number of clients who have existing subscriptions.
    */
@@ -375,7 +372,7 @@ public interface CacheServerMXBean {
    * have set a "StatisticsInterval".
    */
   public ClientHealthStatus[] showAllClientStats() throws Exception;
-  
+
   /**
    * Shows a list of client with their queue statistics. Client queue statistics
    * shown in this method are the following
@@ -387,7 +384,7 @@ public interface CacheServerMXBean {
    * @throws Exception
    */
   public ClientQueueDetail[] showClientQueueDetails() throws Exception;
-  
+
   /**
    * 
    * Shows queue statistics of the given client. Client queue statistics

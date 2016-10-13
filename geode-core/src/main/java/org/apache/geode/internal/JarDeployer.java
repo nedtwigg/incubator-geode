@@ -150,7 +150,7 @@ public class JarDeployer implements Serializable {
           throw new IllegalArgumentException("File does not contain valid JAR content: " + jarNames[i]);
         }
       }
-      
+
       for (int i = 0; i < jarNames.length; i++) {
         jarClassLoaders[i] = deployWithoutRegistering(jarNames[i], jarBytes[i]);
       }
@@ -182,8 +182,7 @@ public class JarDeployer implements Serializable {
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("Deploying {}: {}", jarName, 
-          (oldJarClassLoader == null ? ": not yet deployed" : ": already deployed as " + oldJarClassLoader.getFileCanonicalPath()));
+      logger.debug("Deploying {}: {}", jarName, (oldJarClassLoader == null ? ": not yet deployed" : ": already deployed as " + oldJarClassLoader.getFileCanonicalPath()));
     }
 
     // Test to see if the exact same file is being deployed
@@ -323,7 +322,7 @@ public class JarDeployer implements Serializable {
   public void suspendAll() {
     lock.lock();
   }
-  
+
   /**
    * Release the lock that controls entry into the deploy/undeploy methods
    * which will allow those activities to continue.
@@ -331,7 +330,7 @@ public class JarDeployer implements Serializable {
   public void resumeAll() {
     lock.unlock();
   }
-  
+
   /**
    * Figure out the next version of a JAR file
    * 
@@ -619,7 +618,7 @@ public class JarDeployer implements Serializable {
     }
     throw new IOException("Unable to write to deploy directory");
   }
-  
+
   private byte[] getJarContent(File jarFile) throws IOException {
     InputStream inputStream = new FileInputStream(jarFile);
     try {

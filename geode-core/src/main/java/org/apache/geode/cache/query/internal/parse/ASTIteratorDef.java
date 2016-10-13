@@ -27,52 +27,48 @@ import org.apache.geode.cache.query.internal.QCompiler;
  */
 public class ASTIteratorDef extends GemFireAST {
   private static final long serialVersionUID = -736956634497535951L;
-  
-  public ASTIteratorDef() { }
-  
-  
+
+  public ASTIteratorDef() {
+  }
+
   public ASTIteratorDef(Token t) {
     super(t);
   }
-  
+
   @Override
   public void compile(QCompiler compiler) {
     // children are colln expr, id, and type.
     // the id and/or type may be missing.
-    
-    GemFireAST child = (GemFireAST)getFirstChild();
+
+    GemFireAST child = (GemFireAST) getFirstChild();
     child.compile(compiler); // the colln expr
-    
-    GemFireAST nextChild = (GemFireAST)child.getNextSibling();
+
+    GemFireAST nextChild = (GemFireAST) child.getNextSibling();
     if (nextChild == null) {
       // push two nulls for id and type
       compiler.pushNull();
       compiler.pushNull();
-    }
-    else {
+    } else {
       if (nextChild instanceof ASTType) {
         // push a null for the id
-        compiler.pushNull();  // id
+        compiler.pushNull(); // id
         nextChild.compile(compiler); // the type
-        nextChild = (GemFireAST)nextChild.getNextSibling();
+        nextChild = (GemFireAST) nextChild.getNextSibling();
         Assert.assertTrue(nextChild == null);
-      }
-      else {
+      } else {
         nextChild.compile(compiler); // the id
-        nextChild = (GemFireAST)nextChild.getNextSibling();
+        nextChild = (GemFireAST) nextChild.getNextSibling();
         if (nextChild == null) { // no type
           compiler.pushNull(); // type
-        }
-        else {
+        } else {
           Assert.assertTrue(nextChild instanceof ASTType);
           nextChild.compile(compiler); // must be the type
           Assert.assertTrue(nextChild.getNextSibling() == null);
         }
       }
     }
-    
+
     compiler.iteratorDef();
   }
-  
-  
+
 }

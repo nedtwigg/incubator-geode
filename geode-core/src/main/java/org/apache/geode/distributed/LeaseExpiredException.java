@@ -25,8 +25,8 @@ import org.apache.geode.GemFireException;
  * expired before it was explicitly released.
  */
 
-public class LeaseExpiredException extends GemFireException  {
-private static final long serialVersionUID = 6216142987243536540L;
+public class LeaseExpiredException extends GemFireException {
+  private static final long serialVersionUID = 6216142987243536540L;
 
   /**
    * Creates a new <code>LeaseExpiredException</code>

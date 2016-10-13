@@ -27,11 +27,13 @@ public interface CacheInfo {
    * Returns the name of this cache.
    */
   public String getName();
+
   /**
    * Return and Id that can be used to determine what instance of the
    * cache the information pertains to.
    */
   public int getId();
+
   /**
    * Returns true if the current cache is closed.
    */
@@ -42,13 +44,13 @@ public interface CacheInfo {
    * a distributed lock lease.
    */
   public int getLockTimeout();
-  
+
   /**
    * Gets the length, in seconds, of distributed lock leases obtained
    * by this cache.
    */
   public int getLockLease();
-  
+
   /**
    * Gets the number of seconds a cache
    * {@link org.apache.geode.cache.Region#get(Object) get} operation

@@ -44,17 +44,17 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
    * Compressed region name.
    */
   protected static final String COMPRESSED_REGION_NAME = "compressedRegion";
-  
+
   /**
    * A valid compressor.
    */
   protected static final Compressor compressor = new SnappyCompressor();
-  
+
   /**
    * Our test vm.
    */
   protected static final int TEST_VM = 0;
-  
+
   /**
    * Creates a new CompressionRegionFactoryDUnitTest.
    * @param name test name.
@@ -62,7 +62,7 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
   public CompressionRegionFactoryDUnitTest() {
     super();
   }
-  
+
   /**
    * Asserts that a region is created when a valid compressor is used.
    * Asserts that the region attributes contain the correct compressor value. 
@@ -73,7 +73,7 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
     assertCompressor(getVM(TEST_VM), COMPRESSED_REGION_NAME, compressor);
     cleanup(getVM(TEST_VM));
   }
-  
+
   /**
    * Returns the VM for a given identifier.
    * @param vm a virtual machine identifier.
@@ -87,22 +87,22 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
    * @param vm the virtual machine to cleanup.
    */
   private void cleanup(final VM vm) {
-    vm.invoke(new SerializableRunnable() {      
+    vm.invoke(new SerializableRunnable() {
       @Override
       public void run() {
-        getCache().getRegion(COMPRESSED_REGION_NAME).destroyRegion();        
+        getCache().getRegion(COMPRESSED_REGION_NAME).destroyRegion();
       }
-    });        
+    });
   }
-  
+
   /**
    * Asserts that a given compressor has been assigned to a region.
    * @param vm the virtual machine to run the assertions on.
    * @param name a region name.
    * @param compressor a compressor.
    */
-  private void assertCompressor(final VM vm,final String name,final Compressor compressor) {
-    vm.invoke(new SerializableRunnable() {      
+  private void assertCompressor(final VM vm, final String name, final Compressor compressor) {
+    vm.invoke(new SerializableRunnable() {
       @Override
       public void run() {
         Region region = getCache().getRegion(name);
@@ -110,7 +110,7 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
         assertNotNull(region.getAttributes().getCompressor());
         assertTrue(compressor.equals(region.getAttributes().getCompressor()));
       }
-    });    
+    });
   }
 
   /**
@@ -120,18 +120,18 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
    * @param compressor a compressor.
    * @return true if successfully created, otherwise false.
    */
-  private boolean createCompressedRegionOnVm(final VM vm,final String name,final Compressor compressor) {
+  private boolean createCompressedRegionOnVm(final VM vm, final String name, final Compressor compressor) {
     return (Boolean) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         try {
-          createRegion(name,compressor);
-        } catch(IllegalStateException e) {
+          createRegion(name, compressor);
+        } catch (IllegalStateException e) {
           return Boolean.FALSE;
         }
-        
+
         return Boolean.TRUE;
-      }      
+      }
     });
   }
 
@@ -140,7 +140,7 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
    * @param name a region name.
    * @param compressor a compressor.
    */
-  private Region createRegion(String name,Compressor compressor) {
-    return getCache().<String,String>createRegionFactory().setDataPolicy(DataPolicy.REPLICATE).setCloningEnabled(true).setCompressor(compressor).create(name);
+  private Region createRegion(String name, Compressor compressor) {
+    return getCache().<String, String> createRegionFactory().setDataPolicy(DataPolicy.REPLICATE).setCloningEnabled(true).setCompressor(compressor).create(name);
   }
 }

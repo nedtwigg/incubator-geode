@@ -42,9 +42,7 @@ public class Invalidate70 extends Invalidate {
   }
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg,
-      ServerConnection servConn, PartitionedRegion pr,
-      byte nwHop, VersionTag versionTag) throws IOException {
+  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop, VersionTag versionTag) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -60,7 +58,7 @@ public class Invalidate70 extends Invalidate {
     if (versionTag != null) {
       replyMsg.addObjPart(versionTag);
     }
-    replyMsg.addBytesPart(new byte[]{pr.getMetadataVersion(), nwHop});
+    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
     pr.getPrStats().incPRMetaDataSentCount();
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
@@ -69,9 +67,7 @@ public class Invalidate70 extends Invalidate {
   }
 
   @Override
-  protected void writeReply(Message origMsg, ServerConnection servConn,
-      VersionTag versionTag)
-  throws IOException {
+  protected void writeReply(Message origMsg, ServerConnection servConn, VersionTag versionTag) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);

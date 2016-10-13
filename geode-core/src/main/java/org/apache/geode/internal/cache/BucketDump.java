@@ -37,24 +37,22 @@ public class BucketDump {
    * The version vector for this bucket
    */
   private final RegionVersionVector rvv;
-  
+
   /**
    * The contents of the bucket
    */
   private final Map<Object, Object> values;
-  
+
   /**
    * The contents of the bucket
    */
   private final Map<Object, VersionTag> versions;
-  
+
   private final int bucketId;
-  
+
   private final InternalDistributedMember member;
 
-  public BucketDump(int bucketId, InternalDistributedMember member,
-      RegionVersionVector rvv, Map<Object, Object> values,
-      Map<Object, VersionTag> versions) {
+  public BucketDump(int bucketId, InternalDistributedMember member, RegionVersionVector rvv, Map<Object, Object> values, Map<Object, VersionTag> versions) {
     this.bucketId = bucketId;
     this.member = member;
     this.rvv = rvv;
@@ -65,7 +63,6 @@ public class BucketDump {
   public RegionVersionVector getRvv() {
     return rvv;
   }
-
 
   public Map<Object, Object> getValues() {
     return values;
@@ -99,15 +96,12 @@ public class BucketDump {
   }
 
   @Override
-  public String toString()
-  {
-//    int sz; 
-//    synchronized(this) {
-//      sz = this.size();
-//    }
-    return "Bucket id = " + bucketId + " from member = "
-        + member
-        + ": " + super.toString();
+  public String toString() {
+    //    int sz; 
+    //    synchronized(this) {
+    //      sz = this.size();
+    //    }
+    return "Bucket id = " + bucketId + " from member = " + member + ": " + super.toString();
   }
 
   @Override

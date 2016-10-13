@@ -38,58 +38,57 @@ public class DiskRegCbkChkJUnitTest extends DiskRegionTestingBase {
   private static volatile boolean intoCreateAfterCbk = false;
   private static volatile boolean intoUpdateAfterCbk = false;
   private static volatile boolean intoDestroyAfterCbk = false;
-  
-  private DiskRegionProperties getDiskRegionProperties(){
+
+  private DiskRegionProperties getDiskRegionProperties() {
     DiskRegionProperties diskProperties = new DiskRegionProperties();
     diskProperties.setRegionName("DiskRegCbkChkJUnitTest_region");
     diskProperties.setMaxOplogSize(20480);
     diskProperties.setDiskDirs(dirs);
     return diskProperties;
   }
-    
+
   @Test
   public void testAfterCallbacks() {
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache,
-      getDiskRegionProperties(), Scope.LOCAL);
+    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, getDiskRegionProperties(), Scope.LOCAL);
 
     //testing create callbacks
-    region.getAttributesMutator().setCacheListener(new CacheListenerAdapter(){
+    region.getAttributesMutator().setCacheListener(new CacheListenerAdapter() {
       public void afterCreate(EntryEvent event) {
-  	intoCreateAfterCbk = true;
+        intoCreateAfterCbk = true;
       }
     });
-    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter(){
+    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter() {
       public void beforeCreate(EntryEvent event) {
-      	region.clear();
+        region.clear();
       }
     });
     region.create("key1", "createValue");
     assertTrue("Create callback not called", intoCreateAfterCbk);
-	
+
     //testing update callbacks
-    region.getAttributesMutator().setCacheListener(new CacheListenerAdapter(){
+    region.getAttributesMutator().setCacheListener(new CacheListenerAdapter() {
       public void afterUpdate(EntryEvent event) {
-    	intoUpdateAfterCbk = true;
+        intoUpdateAfterCbk = true;
       }
     });
-    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter(){
+    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter() {
       public void beforeUpdate(EntryEvent event) {
-    	region.clear();
+        region.clear();
       }
     });
     region.create("key2", "createValue");
     region.put("key2", "updateValue");
     assertTrue("Update callback not called", intoUpdateAfterCbk);
-	
+
     //testing destroy callbacks
-    region.getAttributesMutator().setCacheListener(new CacheListenerAdapter(){
+    region.getAttributesMutator().setCacheListener(new CacheListenerAdapter() {
       public void afterDestroy(EntryEvent event) {
-    	intoDestroyAfterCbk = true;
+        intoDestroyAfterCbk = true;
       }
     });
-    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter(){
+    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter() {
       public void beforeDestroy(EntryEvent event) {
-    	region.clear();
+        region.clear();
       }
     });
     region.create("key3", "createValue");

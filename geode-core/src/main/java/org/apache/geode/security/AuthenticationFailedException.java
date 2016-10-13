@@ -23,7 +23,7 @@ package org.apache.geode.security;
  * @since GemFire 5.5
  */
 public class AuthenticationFailedException extends GemFireSecurityException {
-private static final long serialVersionUID = -8202866472279088879L;
+  private static final long serialVersionUID = -8202866472279088879L;
 
   // TODO Derive from SecurityException
   /**

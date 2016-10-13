@@ -17,7 +17,7 @@
 package org.apache.geode.pdx;
 
 public class DomainObjectClassLoadable extends DomainObject {
-  
+
   public DomainObjectClassLoadable() {
   }
 

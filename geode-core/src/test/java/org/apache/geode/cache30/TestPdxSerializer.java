@@ -42,7 +42,7 @@ public class TestPdxSerializer implements PdxSerializer, Declarable2 {
 
   public void init(Properties props) {
     this.properties = props;
-    
+
   }
 
   public Properties getConfig() {
@@ -56,13 +56,10 @@ public class TestPdxSerializer implements PdxSerializer, Declarable2 {
 
   @Override
   public boolean equals(Object obj) {
-    if(!(obj instanceof TestPdxSerializer)) {
+    if (!(obj instanceof TestPdxSerializer)) {
       return false;
     }
-    return properties.equals(((TestPdxSerializer)obj).properties);
+    return properties.equals(((TestPdxSerializer) obj).properties);
   }
-  
-  
-  
 
 }

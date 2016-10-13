@@ -131,57 +131,11 @@ public class ShellCommands implements CommandMarker {
 
   @CliCommand(value = { CliStrings.CONNECT }, help = CliStrings.CONNECT__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH, CliStrings.TOPIC_GEODE_JMX, CliStrings.TOPIC_GEODE_MANAGER })
-  public Result connect(
-    @CliOption(key = { CliStrings.CONNECT__LOCATOR },
-      unspecifiedDefaultValue = ConnectionEndpointConverter.DEFAULT_LOCATOR_ENDPOINTS,
-      optionContext = ConnectionEndpoint.LOCATOR_OPTION_CONTEXT,
-      help = CliStrings.CONNECT__LOCATOR__HELP) ConnectionEndpoint locatorTcpHostPort,
-    @CliOption(key = { CliStrings.CONNECT__JMX_MANAGER },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      optionContext = ConnectionEndpoint.JMXMANAGER_OPTION_CONTEXT,
-      help = CliStrings.CONNECT__JMX_MANAGER__HELP) ConnectionEndpoint memberRmiHostPort,
-    @CliOption(key = { CliStrings.CONNECT__USE_HTTP },
-      mandatory = false,
-      specifiedDefaultValue = "true",
-      unspecifiedDefaultValue = "false",
-      help = CliStrings.CONNECT__USE_HTTP__HELP) boolean useHttp,
-    @CliOption(key = { CliStrings.CONNECT__URL },
-      mandatory = false,
-      unspecifiedDefaultValue = CliStrings.CONNECT__DEFAULT_BASE_URL,
-      help = CliStrings.CONNECT__URL__HELP) String url,
-    @CliOption(key = { CliStrings.CONNECT__USERNAME },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__USERNAME__HELP) String userName,
-    @CliOption(key = { CliStrings.CONNECT__PASSWORD },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__PASSWORD__HELP) String password,
-    @CliOption(key = { CliStrings.CONNECT__KEY_STORE },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__KEY_STORE__HELP) String keystore,
-    @CliOption(key = { CliStrings.CONNECT__KEY_STORE_PASSWORD },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__KEY_STORE_PASSWORD__HELP) String keystorePassword,
-    @CliOption(key = { CliStrings.CONNECT__TRUST_STORE },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__TRUST_STORE__HELP) String truststore,
-    @CliOption(key = { CliStrings.CONNECT__TRUST_STORE_PASSWORD },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__TRUST_STORE_PASSWORD__HELP) String truststorePassword,
-    @CliOption(key = { CliStrings.CONNECT__SSL_CIPHERS },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__SSL_CIPHERS__HELP) String sslCiphers,
-    @CliOption(key = { CliStrings.CONNECT__SSL_PROTOCOLS },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__SSL_PROTOCOLS__HELP) String sslProtocols,
-    @CliOption(key = CliStrings.CONNECT__SECURITY_PROPERTIES,
-      optionContext = ConverterHint.FILE_PATHSTRING,
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      help = CliStrings.CONNECT__SECURITY_PROPERTIES__HELP) final String gfSecurityPropertiesPath,
-    @CliOption(key = { CliStrings.CONNECT__USE_SSL },
-      specifiedDefaultValue = "true",
-      unspecifiedDefaultValue = "false",
-      help = CliStrings.CONNECT__USE_SSL__HELP) final boolean useSsl)
-  {
+  public Result connect(@CliOption(key = { CliStrings.CONNECT__LOCATOR }, unspecifiedDefaultValue = ConnectionEndpointConverter.DEFAULT_LOCATOR_ENDPOINTS, optionContext = ConnectionEndpoint.LOCATOR_OPTION_CONTEXT, help = CliStrings.CONNECT__LOCATOR__HELP) ConnectionEndpoint locatorTcpHostPort, @CliOption(key = { CliStrings.CONNECT__JMX_MANAGER }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConnectionEndpoint.JMXMANAGER_OPTION_CONTEXT, help = CliStrings.CONNECT__JMX_MANAGER__HELP) ConnectionEndpoint memberRmiHostPort, @CliOption(key = { CliStrings.CONNECT__USE_HTTP }, mandatory = false, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.CONNECT__USE_HTTP__HELP) boolean useHttp, @CliOption(key = { CliStrings.CONNECT__URL }, mandatory = false, unspecifiedDefaultValue = CliStrings.CONNECT__DEFAULT_BASE_URL, help = CliStrings.CONNECT__URL__HELP) String url,
+      @CliOption(key = { CliStrings.CONNECT__USERNAME }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__USERNAME__HELP) String userName, @CliOption(key = { CliStrings.CONNECT__PASSWORD }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__PASSWORD__HELP) String password, @CliOption(key = { CliStrings.CONNECT__KEY_STORE }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__KEY_STORE__HELP) String keystore, @CliOption(key = { CliStrings.CONNECT__KEY_STORE_PASSWORD }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__KEY_STORE_PASSWORD__HELP) String keystorePassword, @CliOption(key = { CliStrings.CONNECT__TRUST_STORE }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__TRUST_STORE__HELP) String truststore,
+      @CliOption(key = { CliStrings.CONNECT__TRUST_STORE_PASSWORD }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__TRUST_STORE_PASSWORD__HELP) String truststorePassword, @CliOption(key = { CliStrings.CONNECT__SSL_CIPHERS }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__SSL_CIPHERS__HELP) String sslCiphers, @CliOption(key = { CliStrings.CONNECT__SSL_PROTOCOLS }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__SSL_PROTOCOLS__HELP) String sslProtocols, @CliOption(key = CliStrings.CONNECT__SECURITY_PROPERTIES, optionContext = ConverterHint.FILE_PATHSTRING, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.CONNECT__SECURITY_PROPERTIES__HELP)
+      final String gfSecurityPropertiesPath, @CliOption(key = { CliStrings.CONNECT__USE_SSL }, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.CONNECT__USE_SSL__HELP)
+      final boolean useSsl) {
     Result result;
     String passwordToUse = decrypt(password);
     String keystoreToUse = keystore;
@@ -207,26 +161,21 @@ public class ShellCommands implements CommandMarker {
         }
       }
 
-      sslConfigProps = this.readSSLConfiguration(useSsl, keystoreToUse, keystorePasswordToUse,
-        truststoreToUse, truststorePasswordToUse, sslCiphersToUse, sslProtocolsToUse, gfSecurityPropertiesPath);
-    }
-    catch (IOException e) {
+      sslConfigProps = this.readSSLConfiguration(useSsl, keystoreToUse, keystorePasswordToUse, truststoreToUse, truststorePasswordToUse, sslCiphersToUse, sslProtocolsToUse, gfSecurityPropertiesPath);
+    } catch (IOException e) {
       return handleExcpetion(e, null);
     }
 
     if (useHttp) {
       result = httpConnect(sslConfigProps, useSsl, url, userName, passwordToUse);
-    }
-    else {
+    } else {
       result = jmxConnect(sslConfigProps, memberRmiHostPort, locatorTcpHostPort, useSsl, userName, passwordToUse, gfSecurityPropertiesPath, false);
     }
 
     return result;
   }
 
-
-  private Result httpConnect(Map<String, String> sslConfigProps, boolean useSsl, String url, String userName, String passwordToUse)
-  {
+  private Result httpConnect(Map<String, String> sslConfigProps, boolean useSsl, String url, String userName, String passwordToUse) {
     Gfsh gfsh = getGfsh();
     try {
       Map<String, String> securityProperties = new HashMap<String, String>();
@@ -255,8 +204,7 @@ public class ShellCommands implements CommandMarker {
 
       LogWrapper.getInstance().warning(String.format("Sending HTTP request for Link Index at (%1$s)...", url.concat("/index").concat(query)));
 
-      LinkIndex linkIndex = new SimpleHttpRequester(gfsh, CONNECT_LOCATOR_TIMEOUT_MS, securityProperties).exchange(url.concat("/index").concat(query),
-        LinkIndex.class);
+      LinkIndex linkIndex = new SimpleHttpRequester(gfsh, CONNECT_LOCATOR_TIMEOUT_MS, securityProperties).exchange(url.concat("/index").concat(query), LinkIndex.class);
 
       LogWrapper.getInstance().warning(String.format("Received Link Index (%1$s)", linkIndex.toString()));
 
@@ -268,8 +216,7 @@ public class ShellCommands implements CommandMarker {
       LogWrapper.getInstance().info(CliStrings.format(CliStrings.CONNECT__MSG__SUCCESS, operationInvoker.toString()));
       return ResultBuilder.createInfoResult(CliStrings.format(CliStrings.CONNECT__MSG__SUCCESS, operationInvoker.toString()));
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       // all other exceptions, just logs it and returns a connection error
       if (!(e instanceof SecurityException) && !(e instanceof AuthenticationFailedException)) {
         return handleExcpetion(e, null);
@@ -285,25 +232,15 @@ public class ShellCommands implements CommandMarker {
         userName = this.readText(gfsh, "username: ");
         passwordToUse = this.readPassword(gfsh, "password: ");
         return httpConnect(sslConfigProps, useSsl, url, userName, passwordToUse);
-      }
-      catch (IOException ioe) {
+      } catch (IOException ioe) {
         return handleExcpetion(ioe, null);
       }
-    }
-    finally {
+    } finally {
       Gfsh.redirectInternalJavaLoggers();
     }
   }
 
-  private Result jmxConnect(Map<String, String> sslConfigProps,
-                            ConnectionEndpoint memberRmiHostPort,
-                            ConnectionEndpoint locatorTcpHostPort,
-                            boolean useSsl,
-                            String userName,
-                            String passwordToUse,
-                            String gfSecurityPropertiesPath,
-                            boolean retry)
-  {
+  private Result jmxConnect(Map<String, String> sslConfigProps, ConnectionEndpoint memberRmiHostPort, ConnectionEndpoint locatorTcpHostPort, boolean useSsl, String userName, String passwordToUse, String gfSecurityPropertiesPath, boolean retry) {
     ConnectionEndpoint hostPortToConnect = null;
     Gfsh gfsh = getGfsh();
 
@@ -312,8 +249,7 @@ public class ShellCommands implements CommandMarker {
       // trying to find the hostPortToConnect, if rmi host port exists, use that, otherwise, use locator to find the rmi host port
       if (memberRmiHostPort != null) {
         hostPortToConnect = memberRmiHostPort;
-      }
-      else {
+      } else {
         // Props required to configure a SocketCreator with SSL.
         // Used for gfsh->locator connection & not needed for gfsh->manager connection
         if (useSsl || !sslConfigProps.isEmpty()) {
@@ -328,8 +264,7 @@ public class ShellCommands implements CommandMarker {
         }
 
         Gfsh.println(CliStrings.format(CliStrings.CONNECT__MSG__CONNECTING_TO_LOCATOR_AT_0, new Object[] { locatorTcpHostPort.toString(false) }));
-        ConnectToLocatorResult connectToLocatorResult = connectToLocator(locatorTcpHostPort.getHost(), locatorTcpHostPort.getPort(), CONNECT_LOCATOR_TIMEOUT_MS,
-          sslConfigProps);
+        ConnectToLocatorResult connectToLocatorResult = connectToLocator(locatorTcpHostPort.getHost(), locatorTcpHostPort.getPort(), CONNECT_LOCATOR_TIMEOUT_MS, sslConfigProps);
         hostPortToConnect = connectToLocatorResult.getMemberEndpoint();
 
         // when locator is configured to use SSL (ssl-enabled=true) but manager is not (jmx-manager-ssl=false)
@@ -349,15 +284,13 @@ public class ShellCommands implements CommandMarker {
       }
 
       InfoResultData infoResultData = ResultBuilder.createInfoResultData();
-      JmxOperationInvoker operationInvoker = new JmxOperationInvoker(hostPortToConnect.getHost(), hostPortToConnect.getPort(), userName, passwordToUse,
-        sslConfigProps, gfSecurityPropertiesPath);
+      JmxOperationInvoker operationInvoker = new JmxOperationInvoker(hostPortToConnect.getHost(), hostPortToConnect.getPort(), userName, passwordToUse, sslConfigProps, gfSecurityPropertiesPath);
 
       gfsh.setOperationInvoker(operationInvoker);
       infoResultData.addLine(CliStrings.format(CliStrings.CONNECT__MSG__SUCCESS, hostPortToConnect.toString(false)));
       LogWrapper.getInstance().info(CliStrings.format(CliStrings.CONNECT__MSG__SUCCESS, hostPortToConnect.toString(false)));
       return ResultBuilder.buildResult(infoResultData);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       // all other exceptions, just logs it and returns a connection error
       if (!(e instanceof SecurityException) && !(e instanceof AuthenticationFailedException)) {
         return handleExcpetion(e, hostPortToConnect);
@@ -373,12 +306,10 @@ public class ShellCommands implements CommandMarker {
         userName = this.readText(gfsh, "username: ");
         passwordToUse = this.readPassword(gfsh, "password: ");
         return jmxConnect(sslConfigProps, hostPortToConnect, null, useSsl, userName, passwordToUse, gfSecurityPropertiesPath, true);
-      }
-      catch (IOException ioe) {
+      } catch (IOException ioe) {
         return handleExcpetion(ioe, hostPortToConnect);
       }
-    }
-    finally {
+    } finally {
       Gfsh.redirectInternalJavaLoggers();
     }
   }
@@ -391,7 +322,6 @@ public class ShellCommands implements CommandMarker {
     LogWrapper.getInstance().severe(errorMessage, e);
     return ResultBuilder.createConnectionErrorResult(errorMessage);
   }
-
 
   private String decrypt(String password) {
     if (password != null) {
@@ -442,12 +372,10 @@ public class ShellCommands implements CommandMarker {
 
       SSLContext ssl = SSLContext.getInstance(SSLUtil.getSSLAlgo(SSLUtil.readArray(sslProtocolsToUse)));
 
-      ssl.init(keyManagerFactory != null ? keyManagerFactory.getKeyManagers() : null,
-        trustManagerFactory != null ? trustManagerFactory.getTrustManagers() : null, new java.security.SecureRandom());
+      ssl.init(keyManagerFactory != null ? keyManagerFactory.getKeyManagers() : null, trustManagerFactory != null ? trustManagerFactory.getTrustManagers() : null, new java.security.SecureRandom());
 
       HttpsURLConnection.setDefaultSSLSocketFactory(ssl.getSocketFactory());
-    }
-    finally {
+    } finally {
       if (keyStoreStream != null) {
         keyStoreStream.close();
       }
@@ -457,16 +385,12 @@ public class ShellCommands implements CommandMarker {
 
     }
 
-
   }
 
   /**
    * Common code to read SSL information. Used by JMX, Locator & HTTP mode connect
    */
-  private Map<String, String> readSSLConfiguration(boolean useSsl, String keystoreToUse, String keystorePasswordToUse,
-                                                   String truststoreToUse, String truststorePasswordToUse, String sslCiphersToUse, String sslProtocolsToUse,
-                                                   String gfSecurityPropertiesPath) throws IOException
-  {
+  private Map<String, String> readSSLConfiguration(boolean useSsl, String keystoreToUse, String keystorePasswordToUse, String truststoreToUse, String truststorePasswordToUse, String sslCiphersToUse, String sslProtocolsToUse, String gfSecurityPropertiesPath) throws IOException {
 
     Gfsh gfshInstance = getGfsh();
     final Map<String, String> sslConfigProps = new LinkedHashMap<String, String>();
@@ -484,12 +408,10 @@ public class ShellCommands implements CommandMarker {
         // User specified gfSecurity properties doesn't exist
         if (!IOUtils.isExistingPathname(gfSecurityPropertiesPathToUse)) {
           gfshInstance.printAsSevere(CliStrings.format(CliStrings.GEODE_0_PROPERTIES_1_NOT_FOUND_MESSAGE, "Security ", gfSecurityPropertiesPathToUse));
-        }
-        else {
+        } else {
           gfSecurityPropertiesUrl = new File(gfSecurityPropertiesPathToUse).toURI().toURL();
         }
-      }
-      else if (useSsl && gfSecurityPropertiesPath == null) {
+      } else if (useSsl && gfSecurityPropertiesPath == null) {
         // Case 2: User has specified to useSsl but hasn't specified
         // gfSecurity properties file. Use default "gfsecurity.properties"
         // in current dir, user's home or classpath
@@ -497,8 +419,7 @@ public class ShellCommands implements CommandMarker {
       }
       // if 'gfSecurityPropertiesPath' OR gfsecurity.properties has resolvable path
       if (gfSecurityPropertiesUrl != null) {
-        gfshInstance.logToFile("Using security properties file : "
-          + CliUtil.decodeWithDefaultCharSet(gfSecurityPropertiesUrl.getPath()), null);
+        gfshInstance.logToFile("Using security properties file : " + CliUtil.decodeWithDefaultCharSet(gfSecurityPropertiesUrl.getPath()), null);
         Map<String, String> gfsecurityProps = loadPropertiesFromURL(gfSecurityPropertiesUrl);
         // command line options (if any) would override props in gfsecurity.properties
         sslConfigProps.putAll(gfsecurityProps);
@@ -533,8 +454,7 @@ public class ShellCommands implements CommandMarker {
             keystorePasswordToUse = readPassword(gfshInstance, CliStrings.CONNECT__KEY_STORE_PASSWORD + ": ");
             sslConfigProps.put(Gfsh.SSL_KEYSTORE_PASSWORD, keystorePasswordToUse);
           }
-        }
-        else {//For cases where password is already part of command option
+        } else {//For cases where password is already part of command option
           sslConfigProps.put(Gfsh.SSL_KEYSTORE_PASSWORD, keystorePasswordToUse);
         }
         sslConfigProps.put(Gfsh.SSL_KEYSTORE, keystoreToUse);
@@ -552,8 +472,7 @@ public class ShellCommands implements CommandMarker {
             truststorePasswordToUse = readPassword(gfshInstance, CliStrings.CONNECT__TRUST_STORE_PASSWORD + ": ");
             sslConfigProps.put(Gfsh.SSL_TRUSTSTORE_PASSWORD, truststorePasswordToUse);
           }
-        }
-        else {//For cases where password is already part of command option
+        } else {//For cases where password is already part of command option
           sslConfigProps.put(Gfsh.SSL_TRUSTSTORE_PASSWORD, truststorePasswordToUse);
         }
         sslConfigProps.put(Gfsh.SSL_TRUSTSTORE, truststoreToUse);
@@ -576,8 +495,7 @@ public class ShellCommands implements CommandMarker {
       }
 
       // SSL is required to be used but no SSL config found
-    }
-    while (useSsl && sslConfigProps.isEmpty() && (0 == numTimesPrompted++) && !gfshInstance.isQuietMode());
+    } while (useSsl && sslConfigProps.isEmpty() && (0 == numTimesPrompted++) && !gfshInstance.isQuietMode());
     return sslConfigProps;
   }
 
@@ -588,8 +506,7 @@ public class ShellCommands implements CommandMarker {
   private String readText(Gfsh gfsh, String textToPrompt) throws IOException {
     if (!gfsh.isHeadlessMode() || !gfsh.isQuietMode()) {
       return gfsh.interact(textToPrompt);
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -597,8 +514,7 @@ public class ShellCommands implements CommandMarker {
   private String readPassword(Gfsh gfsh, String textToPrompt) throws IOException {
     if (!gfsh.isHeadlessMode() || !gfsh.isQuietMode()) {
       return gfsh.readWithMask(textToPrompt, '*');
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -625,21 +541,16 @@ public class ShellCommands implements CommandMarker {
               jmxSpecificProps.add(key);
 
               propsMap.put(key, (String) entry.getValue());
-            }
-            else if (!jmxSpecificProps.contains(key)) {// Prefer properties ending with "-jmx" over default SSL props.
+            } else if (!jmxSpecificProps.contains(key)) {// Prefer properties ending with "-jmx" over default SSL props.
               propsMap.put(key, (String) entry.getValue());
             }
           }
           props.clear();
           jmxSpecificProps.clear();
         }
-      }
-      catch (IOException io) {
-        throw new RuntimeException(CliStrings.format(
-          CliStrings.CONNECT__MSG__COULD_NOT_READ_CONFIG_FROM_0,
-          CliUtil.decodeWithDefaultCharSet(gfSecurityPropertiesUrl.getPath())), io);
-      }
-      finally {
+      } catch (IOException io) {
+        throw new RuntimeException(CliStrings.format(CliStrings.CONNECT__MSG__COULD_NOT_READ_CONFIG_FROM_0, CliUtil.decodeWithDefaultCharSet(gfSecurityPropertiesUrl.getPath())), io);
+      } finally {
         IOUtils.close(inputStream);
       }
     }
@@ -653,8 +564,7 @@ public class ShellCommands implements CommandMarker {
     if (file.exists()) {
       try {
         return IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(file).toURI().toURL();
-      }
-      catch (MalformedURLException ignore) {
+      } catch (MalformedURLException ignore) {
       }
     }
 
@@ -663,17 +573,14 @@ public class ShellCommands implements CommandMarker {
     if (file.exists()) {
       try {
         return IOUtils.tryGetCanonicalFileElseGetAbsoluteFile(file).toURI().toURL();
-      }
-      catch (MalformedURLException ignore) {
+      } catch (MalformedURLException ignore) {
       }
     }
 
     return ClassPathLoader.getLatest().getResource(ShellCommands.class, fileName);
   }
 
-  public static ConnectToLocatorResult connectToLocator(String host, int port, int timeout, Map<String, String> props)
-    throws IOException
-  {
+  public static ConnectToLocatorResult connectToLocator(String host, int port, int timeout, Map<String, String> props) throws IOException {
     // register DSFID types first; invoked explicitly so that all message type
     // initializations do not happen in first deserialization on a possibly
     // "precious" thread
@@ -687,10 +594,8 @@ public class ShellCommands implements CommandMarker {
 
       if (locatorResponseException != null) {
         String locatorResponseExceptionMessage = locatorResponseException.getMessage();
-        locatorResponseExceptionMessage = (!StringUtils.isBlank(locatorResponseExceptionMessage)
-          ? locatorResponseExceptionMessage : locatorResponseException.toString());
-        exceptionMessage = "Exception caused JMX Manager startup to fail because: '"
-          .concat(locatorResponseExceptionMessage).concat("'");
+        locatorResponseExceptionMessage = (!StringUtils.isBlank(locatorResponseExceptionMessage) ? locatorResponseExceptionMessage : locatorResponseException.toString());
+        exceptionMessage = "Exception caused JMX Manager startup to fail because: '".concat(locatorResponseExceptionMessage).concat("'");
       }
 
       throw new IllegalStateException(exceptionMessage, locatorResponseException);
@@ -698,12 +603,10 @@ public class ShellCommands implements CommandMarker {
 
     ConnectionEndpoint memberEndpoint = new ConnectionEndpoint(locatorResponse.getHost(), locatorResponse.getPort());
 
-    String resultMessage = CliStrings.format(CliStrings.CONNECT__MSG__CONNECTING_TO_MANAGER_AT_0,
-      memberEndpoint.toString(false));
+    String resultMessage = CliStrings.format(CliStrings.CONNECT__MSG__CONNECTING_TO_MANAGER_AT_0, memberEndpoint.toString(false));
 
     return new ConnectToLocatorResult(memberEndpoint, resultMessage, locatorResponse.isJmxManagerSslEnabled());
   }
-
 
   @CliCommand(value = { CliStrings.DISCONNECT }, help = CliStrings.DISCONNECT__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH, CliStrings.TOPIC_GEODE_JMX, CliStrings.TOPIC_GEODE_MANAGER })
@@ -712,8 +615,7 @@ public class ShellCommands implements CommandMarker {
 
     if (getGfsh() != null && !getGfsh().isConnectedAndReady()) {
       result = ResultBuilder.createInfoResult("Not connected.");
-    }
-    else {
+    } else {
       InfoResultData infoResultData = ResultBuilder.createInfoResultData();
       try {
         Gfsh gfshInstance = getGfsh();
@@ -721,24 +623,20 @@ public class ShellCommands implements CommandMarker {
           OperationInvoker operationInvoker = gfshInstance.getOperationInvoker();
           Gfsh.println("Disconnecting from: " + operationInvoker);
           operationInvoker.stop();
-          infoResultData.addLine(CliStrings
-            .format(CliStrings.DISCONNECT__MSG__DISCONNECTED, operationInvoker.toString()));
+          infoResultData.addLine(CliStrings.format(CliStrings.DISCONNECT__MSG__DISCONNECTED, operationInvoker.toString()));
           LogWrapper.getInstance().info(CliStrings.format(CliStrings.DISCONNECT__MSG__DISCONNECTED, operationInvoker.toString()));
           gfshInstance.setPromptPath(org.apache.geode.management.internal.cli.converters.RegionPathConverter.DEFAULT_APP_CONTEXT_PATH);
-        }
-        else {
+        } else {
           infoResultData.addLine(CliStrings.DISCONNECT__MSG__NOTCONNECTED);
         }
         result = ResultBuilder.buildResult(infoResultData);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         result = ResultBuilder.createConnectionErrorResult(CliStrings.format(CliStrings.DISCONNECT__MSG__ERROR, e.getMessage()));
       }
     }
 
     return result;
   }
-
 
   @CliCommand(value = { CliStrings.DESCRIBE_CONNECTION }, help = CliStrings.DESCRIBE_CONNECTION__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH, CliStrings.TOPIC_GEODE_JMX })
@@ -751,33 +649,21 @@ public class ShellCommands implements CommandMarker {
         OperationInvoker operationInvoker = gfshInstance.getOperationInvoker();
         //        tabularResultData.accumulate("Monitored GemFire DS", operationInvoker.toString());
         tabularResultData.accumulate("Connection Endpoints", operationInvoker.toString());
-      }
-      else {
+      } else {
         tabularResultData.accumulate("Connection Endpoints", "Not connected");
       }
       result = ResultBuilder.buildResult(tabularResultData);
-    }
-    catch (Exception e) {
-      ErrorResultData errorResultData =
-        ResultBuilder.createErrorResultData()
-          .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
-          .addLine(e.getMessage());
+    } catch (Exception e) {
+      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
     }
 
     return result;
   }
 
-
   @CliCommand(value = { CliStrings.ECHO }, help = CliStrings.ECHO__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH })
-  public Result echo(
-    @CliOption(key = { CliStrings.ECHO__STR, "" },
-      unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-      specifiedDefaultValue = "",
-      mandatory = true,
-      help = CliStrings.ECHO__STR__HELP) String stringToEcho)
-  {
+  public Result echo(@CliOption(key = { CliStrings.ECHO__STR, "" }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, specifiedDefaultValue = "", mandatory = true, help = CliStrings.ECHO__STR__HELP) String stringToEcho) {
     Result result = null;
 
     if (stringToEcho.equals("$*")) {
@@ -787,8 +673,7 @@ public class ShellCommands implements CommandMarker {
       TabularResultData resultData = buildResultForEcho(setEnvMap);
 
       result = ResultBuilder.buildResult(resultData);
-    }
-    else {
+    } else {
       result = ResultBuilder.createInfoResult(stringToEcho);
     }
 
@@ -807,25 +692,14 @@ public class ShellCommands implements CommandMarker {
     return resultData;
   }
 
-
   @CliCommand(value = { CliStrings.SET_VARIABLE }, help = CliStrings.SET_VARIABLE__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH })
-  public Result setVariable(
-    @CliOption(key = CliStrings.SET_VARIABLE__VAR,
-      mandatory = true,
-      help = CliStrings.SET_VARIABLE__VAR__HELP)
-      String var,
-    @CliOption(key = CliStrings.SET_VARIABLE__VALUE,
-      mandatory = true,
-      help = CliStrings.SET_VARIABLE__VALUE__HELP)
-      String value)
-  {
+  public Result setVariable(@CliOption(key = CliStrings.SET_VARIABLE__VAR, mandatory = true, help = CliStrings.SET_VARIABLE__VAR__HELP) String var, @CliOption(key = CliStrings.SET_VARIABLE__VALUE, mandatory = true, help = CliStrings.SET_VARIABLE__VALUE__HELP) String value) {
     Result result = null;
     try {
       getGfsh().setEnvProperty(var, String.valueOf(value));
       result = ResultBuilder.createInfoResult("Value for variable " + var + " is now: " + value + ".");
-    }
-    catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       ErrorResultData errorResultData = ResultBuilder.createErrorResultData();
       errorResultData.addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
@@ -851,32 +725,20 @@ public class ShellCommands implements CommandMarker {
 
   @CliCommand(value = { CliStrings.DEBUG }, help = CliStrings.DEBUG__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH, CliStrings.TOPIC_GEODE_DEBUG_UTIL })
-  public Result debug(
-    @CliOption(key = CliStrings.DEBUG__STATE,
-      unspecifiedDefaultValue = "OFF",
-      mandatory = true,
-      optionContext = "debug",
-      help = CliStrings.DEBUG__STATE__HELP)
-      String state)
-  {
+  public Result debug(@CliOption(key = CliStrings.DEBUG__STATE, unspecifiedDefaultValue = "OFF", mandatory = true, optionContext = "debug", help = CliStrings.DEBUG__STATE__HELP) String state) {
     Gfsh gfshInstance = Gfsh.getCurrentInstance();
     if (gfshInstance != null) {
       // Handle state
       if (state.equalsIgnoreCase("ON")) {
         gfshInstance.setDebug(true);
-      }
-      else if (state.equalsIgnoreCase("OFF")) {
+      } else if (state.equalsIgnoreCase("OFF")) {
         gfshInstance.setDebug(false);
-      }
-      else {
+      } else {
         return ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.DEBUG__MSG_0_INVALID_STATE_VALUE, state));
       }
 
-    }
-    else {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData()
-        .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(
-          CliStrings.ECHO__MSG__NO_GFSH_INSTANCE);
+    } else {
+      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.ECHO__MSG__NO_GFSH_INSTANCE);
       return ResultBuilder.buildResult(errorResultData);
     }
     return ResultBuilder.createInfoResult(CliStrings.DEBUG__MSG_DEBUG_STATE_IS + state);
@@ -884,18 +746,12 @@ public class ShellCommands implements CommandMarker {
 
   @CliCommand(value = CliStrings.HISTORY, help = CliStrings.HISTORY__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH })
-  public Result history(
-    @CliOption(key = { CliStrings.HISTORY__FILE }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.HISTORY__FILE__HELP)
-      String saveHistoryTo,
-    @CliOption(key = { CliStrings.HISTORY__CLEAR }, specifiedDefaultValue = "true",
-      unspecifiedDefaultValue = "false", help = CliStrings.HISTORY__CLEAR__HELP) Boolean clearHistory)
-  {
+  public Result history(@CliOption(key = { CliStrings.HISTORY__FILE }, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.HISTORY__FILE__HELP) String saveHistoryTo, @CliOption(key = { CliStrings.HISTORY__CLEAR }, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.HISTORY__CLEAR__HELP) Boolean clearHistory) {
 
     //process clear history
     if (clearHistory) {
       return executeClearHistory();
-    }
-    else {
+    } else {
       //Process file option
       Gfsh gfsh = Gfsh.getCurrentInstance();
       ErrorResultData errorResultData = null;
@@ -908,8 +764,7 @@ public class ShellCommands implements CommandMarker {
 
       GfshHistory gfshHistory = gfsh.getGfshHistory();
       Iterator<?> it = gfshHistory.entries();
-      boolean flagForLineNumbers = (saveHistoryTo != null && saveHistoryTo
-        .length() > 0) ? false : true;
+      boolean flagForLineNumbers = (saveHistoryTo != null && saveHistoryTo.length() > 0) ? false : true;
       long lineNumber = 0;
 
       while (it.hasNext()) {
@@ -917,8 +772,7 @@ public class ShellCommands implements CommandMarker {
         if (line.isEmpty() == false) {
           if (flagForLineNumbers) {
             lineNumber++;
-            contents.append(String.format("%" + historySizeWordLength + "s  ",
-              lineNumber));
+            contents.append(String.format("%" + historySizeWordLength + "s  ", lineNumber));
           }
           contents.append(line);
           contents.append(GfshParser.LINE_SEPARATOR);
@@ -932,51 +786,37 @@ public class ShellCommands implements CommandMarker {
           output = new BufferedWriter(new FileWriter(saveHistoryToFile));
 
           if (!saveHistoryToFile.exists()) {
-            errorResultData = ResultBuilder.createErrorResultData()
-              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
-              .addLine(CliStrings.HISTORY__MSG__FILE_DOES_NOT_EXISTS);
+            errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.HISTORY__MSG__FILE_DOES_NOT_EXISTS);
             return ResultBuilder.buildResult(errorResultData);
           }
           if (!saveHistoryToFile.isFile()) {
-            errorResultData = ResultBuilder.createErrorResultData()
-              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
-              .addLine(CliStrings.HISTORY__MSG__FILE_SHOULD_NOT_BE_DIRECTORY);
+            errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.HISTORY__MSG__FILE_SHOULD_NOT_BE_DIRECTORY);
             return ResultBuilder.buildResult(errorResultData);
           }
           if (!saveHistoryToFile.canWrite()) {
-            errorResultData = ResultBuilder.createErrorResultData()
-              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
-              .addLine(CliStrings.HISTORY__MSG__FILE_CANNOT_BE_WRITTEN);
+            errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.HISTORY__MSG__FILE_CANNOT_BE_WRITTEN);
             return ResultBuilder.buildResult(errorResultData);
           }
 
           output.write(contents.toString());
         }
 
-      }
-      catch (IOException ex) {
-        return ResultBuilder.createInfoResult("File error " + ex.getMessage()
-          + " for file " + saveHistoryTo);
-      }
-      finally {
+      } catch (IOException ex) {
+        return ResultBuilder.createInfoResult("File error " + ex.getMessage() + " for file " + saveHistoryTo);
+      } finally {
         try {
           if (output != null) {
             output.close();
           }
-        }
-        catch (IOException e) {
-          errorResultData = ResultBuilder.createErrorResultData()
-            .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
-            .addLine("exception in closing file");
+        } catch (IOException e) {
+          errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine("exception in closing file");
           return ResultBuilder.buildResult(errorResultData);
         }
       }
       if (saveHistoryTo != null && saveHistoryTo.length() > 0) {
         // since written to file no need to display the content
-        return ResultBuilder.createInfoResult("Wrote successfully to file "
-          + saveHistoryTo);
-      }
-      else {
+        return ResultBuilder.createInfoResult("Wrote successfully to file " + saveHistoryTo);
+      } else {
         return ResultBuilder.createInfoResult(contents.toString());
       }
     }
@@ -987,8 +827,7 @@ public class ShellCommands implements CommandMarker {
     try {
       Gfsh gfsh = Gfsh.getCurrentInstance();
       gfsh.clearHistory();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LogWrapper.getInstance().info(CliUtil.stackTraceAsString(e));
       return ResultBuilder.createGemFireErrorResult("Exception occured while clearing history " + e.getMessage());
     }
@@ -996,60 +835,30 @@ public class ShellCommands implements CommandMarker {
 
   }
 
-
   @CliCommand(value = { CliStrings.RUN }, help = CliStrings.RUN__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH })
-  public Result executeScript(
-    @CliOption(key = CliStrings.RUN__FILE,
-      optionContext = ConverterHint.FILE,
-      mandatory = true,
-      help = CliStrings.RUN__FILE__HELP)
-      File file,
-    @CliOption(key = { CliStrings.RUN__QUIET },
-      specifiedDefaultValue = "true",
-      unspecifiedDefaultValue = "false",
-      help = CliStrings.RUN__QUIET__HELP)
-      boolean quiet,
-    @CliOption(key = { CliStrings.RUN__CONTINUEONERROR },
-      specifiedDefaultValue = "true",
-      unspecifiedDefaultValue = "false",
-      help = CliStrings.RUN__CONTINUEONERROR__HELP)
-      boolean continueOnError)
-  {
+  public Result executeScript(@CliOption(key = CliStrings.RUN__FILE, optionContext = ConverterHint.FILE, mandatory = true, help = CliStrings.RUN__FILE__HELP) File file, @CliOption(key = { CliStrings.RUN__QUIET }, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.RUN__QUIET__HELP) boolean quiet, @CliOption(key = { CliStrings.RUN__CONTINUEONERROR }, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.RUN__CONTINUEONERROR__HELP) boolean continueOnError) {
     Result result = null;
 
     Gfsh gfsh = Gfsh.getCurrentInstance();
     try {
       result = gfsh.executeScript(file, quiet, continueOnError);
-    }
-    catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       result = ResultBuilder.createShellClientErrorResult(e.getMessage());
     } // let CommandProcessingException go to the caller
 
     return result;
   }
 
-
   @CliCommand(value = CliStrings.ENCRYPT, help = CliStrings.ENCRYPT__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
-  public Result encryptPassword(
-    @CliOption(key = CliStrings.ENCRYPT_STRING,
-      help = CliStrings.ENCRYPT_STRING__HELP,
-      mandatory = true)
-      String stringToEncrypt)
-  {
+  public Result encryptPassword(@CliOption(key = CliStrings.ENCRYPT_STRING, help = CliStrings.ENCRYPT_STRING__HELP, mandatory = true) String stringToEncrypt) {
     return ResultBuilder.createInfoResult(PasswordUtil.encrypt(stringToEncrypt, false/*echo*/));
   }
 
   @CliCommand(value = { CliStrings.VERSION }, help = CliStrings.VERSION__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH })
-  public Result version(
-    @CliOption(key = { CliStrings.VERSION__FULL },
-      specifiedDefaultValue = "true",
-      unspecifiedDefaultValue = "false",
-      help = CliStrings.VERSION__FULL__HELP)
-      boolean full)
-  {
+  public Result version(@CliOption(key = { CliStrings.VERSION__FULL }, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.VERSION__FULL__HELP) boolean full) {
     Gfsh gfsh = Gfsh.getCurrentInstance();
 
     return ResultBuilder.createInfoResult(gfsh.getVersion(full));
@@ -1057,43 +866,25 @@ public class ShellCommands implements CommandMarker {
 
   @CliCommand(value = { CliStrings.SLEEP }, help = CliStrings.SLEEP__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH })
-  public Result sleep(
-    @CliOption(key = { CliStrings.SLEEP__TIME },
-      unspecifiedDefaultValue = "3",
-      help = CliStrings.SLEEP__TIME__HELP)
-      double time)
-  {
+  public Result sleep(@CliOption(key = { CliStrings.SLEEP__TIME }, unspecifiedDefaultValue = "3", help = CliStrings.SLEEP__TIME__HELP) double time) {
     try {
       LogWrapper.getInstance().fine("Sleeping for " + time + "seconds.");
       Thread.sleep(Math.round(time * 1000));
-    }
-    catch (InterruptedException ignorable) {
+    } catch (InterruptedException ignorable) {
     }
     return ResultBuilder.createInfoResult("");
   }
 
   @CliCommand(value = { CliStrings.SH }, help = CliStrings.SH__HELP)
   @CliMetaData(shellOnly = true, relatedTopic = { CliStrings.TOPIC_GFSH })
-  public Result sh(
-    @CliArgument(name = CliStrings.SH__COMMAND,
-      mandatory = true,
-      help = CliStrings.SH__COMMAND__HELP)
-      String command,
-    @CliOption(key = CliStrings.SH__USE_CONSOLE,
-      specifiedDefaultValue = "true",
-      unspecifiedDefaultValue = "false",
-      help = CliStrings.SH__USE_CONSOLE__HELP)
-      boolean useConsole)
-  {
+  public Result sh(@CliArgument(name = CliStrings.SH__COMMAND, mandatory = true, help = CliStrings.SH__COMMAND__HELP) String command, @CliOption(key = CliStrings.SH__USE_CONSOLE, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.SH__USE_CONSOLE__HELP) boolean useConsole) {
     Result result = null;
     try {
       result = ResultBuilder.buildResult(executeCommand(Gfsh.getCurrentInstance(), command, useConsole));
-    }
-    catch (IllegalStateException e) {
+    } catch (IllegalStateException e) {
       result = ResultBuilder.createUserErrorResult(e.getMessage());
       LogWrapper.getInstance().warning("Unable to execute command \"" + command + "\". Reason:" + e.getMessage() + ".");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       result = ResultBuilder.createUserErrorResult(e.getMessage());
       LogWrapper.getInstance().warning("Unable to execute command \"" + command + "\". Reason:" + e.getMessage() + ".");
     }
@@ -1109,8 +900,7 @@ public class ShellCommands implements CommandMarker {
     if (SystemUtils.isWindows()) {
       cmdExecutor = "cmd";
       cmdExecutorOpt = "/c";
-    }
-    else if (useConsole) {
+    } else if (useConsole) {
       cmdToExecute = cmdToExecute + " </dev/tty >/dev/tty";
     }
     String[] commandArray = { cmdExecutor, cmdExecutorOpt, cmdToExecute };
@@ -1134,13 +924,11 @@ public class ShellCommands implements CommandMarker {
       if (proc.waitFor() != 0) {
         gfsh.logWarning("The command '" + userCommand + "' did not complete successfully", null);
       }
-    }
-    catch (final InterruptedException e) {
+    } catch (final InterruptedException e) {
       throw new IllegalStateException(e);
     }
     return infoResultData;
   }
-
 
   @CliAvailabilityIndicator({ CliStrings.CONNECT, CliStrings.DISCONNECT, CliStrings.DESCRIBE_CONNECTION })
   public boolean isAvailable() {

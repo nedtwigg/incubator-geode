@@ -27,7 +27,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 
-
 /**
  * AdminConfig loads/stores the member information list. The list contains
  * all of the members being monitored.
@@ -42,11 +41,9 @@ import java.util.Date;
  * the instance
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
-public class AdminConfig
-{
+public class AdminConfig {
   // Name, Type, Host, Port
-  public static Entry[] loadConfig(File file) throws IOException
-  {
+  public static Entry[] loadConfig(File file) throws IOException {
 
     // Place all lines into stack
     ArrayList entryList = new ArrayList();
@@ -65,17 +62,16 @@ public class AdminConfig
         line = line.replace('\t', ' ');
 
         // Skip all empty and comment lines
-          if (line.length() != 0 && line.startsWith("#") == false) {
-            try {
-              entryList.add(new Entry(line));
-            } catch (Exception ex) {
-          // ignore - drop any lines that are not valid
-        }
+        if (line.length() != 0 && line.startsWith("#") == false) {
+          try {
+            entryList.add(new Entry(line));
+          } catch (Exception ex) {
+            // ignore - drop any lines that are not valid
           }
-          line = fileReader.readLine();
+        }
+        line = fileReader.readLine();
       }
-    }
-    finally {
+    } finally {
       if (fileReader != null) {
         fileReader.close();
       }
@@ -84,17 +80,16 @@ public class AdminConfig
       }
     }
 
-    return (Entry[])entryList.toArray(new Entry[0]);
+    return (Entry[]) entryList.toArray(new Entry[0]);
   }
 
-  public static void storeConfig(File file, AdminConfig.Entry entries[]) throws IOException
-  {
+  public static void storeConfig(File file, AdminConfig.Entry entries[]) throws IOException {
     FileOutputStream fos = null;
     PrintStream ps = null;
     try {
       fos = new FileOutputStream(file);
       ps = new PrintStream(fos);
-  
+
       // Header
       ps.print("#");
       ps.println(LocalizedStrings.AdminConfig_THIS_FILE_IS_GENERATED_BY_ADMINCONSOLE_EDIT_AS_YOU_WISH_BUT_IT_WILL_BE_OVERWRITTEN_IF_IT_IS_MODIFIED_IN_ADMINCONSOLE.toLocalizedString());
@@ -108,8 +103,7 @@ public class AdminConfig
         ps.println(entries[i].toString());
       }
       ps.flush();
-    }
-    finally {
+    } finally {
       if (ps != null) {
         ps.close();
       }
@@ -119,28 +113,24 @@ public class AdminConfig
     }
   }
 
-
-  public static class Entry
-  {
+  public static class Entry {
     public String name;
     public String type;
     public String host;
     public int port;
 
-    public Entry(String line)
-    {
-            // Split
-            String split[] = line.split(",");
+    public Entry(String line) {
+      // Split
+      String split[] = line.split(",");
 
-            // Convert line to parameters
-            name = split[0].trim();
-            type = split[1].trim();
-            host = split[2].trim();
-            port = Integer.parseInt(split[3]);
+      // Convert line to parameters
+      name = split[0].trim();
+      type = split[1].trim();
+      host = split[2].trim();
+      port = Integer.parseInt(split[3]);
     }
 
-    public Entry(String name, String type, String host, int port)
-    {
+    public Entry(String name, String type, String host, int port) {
       this.name = name;
       this.type = type;
       this.host = host;
@@ -148,8 +138,7 @@ public class AdminConfig
     }
 
     @Override // GemStoneAddition
-    public String toString()
-    {
+    public String toString() {
       return name + "," + type + "," + host + "," + port;
     }
   }

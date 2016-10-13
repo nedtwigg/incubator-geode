@@ -42,7 +42,7 @@ public class MovePrimaries extends RebalanceDirectorAdapter {
     // TODO Auto-generated method stub
     return movePrimaries();
   }
-  
+
   /**
    * Move a single primary from one member to another
    * @return if we are able to move a primary.
@@ -55,7 +55,7 @@ public class MovePrimaries extends RebalanceDirectorAdapter {
     }
 
     model.movePrimary(bestMove);
-    
+
     return true;
   }
 

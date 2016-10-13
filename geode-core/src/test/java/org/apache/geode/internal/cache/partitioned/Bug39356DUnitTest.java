@@ -71,7 +71,7 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
     final VM vm0 = host.getVM(0);
     final VM vm1 = host.getVM(1);
     final VM vm2 = host.getVM(2);
-    
+
     SerializableRunnable createParReg = new SerializableRunnable("Create parReg") {
       public void run() {
         DistributionMessageObserver.setInstance(new MyRegionObserver(vm0));
@@ -87,7 +87,7 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
     };
     vm1.invoke(createParReg);
     vm2.invoke(createParReg);
-    
+
     SerializableRunnable createParRegAccessor = new SerializableRunnable("Create parReg") {
       public void run() {
         Cache cache = getCache();
@@ -98,29 +98,28 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
         af.setDataPolicy(DataPolicy.PARTITION);
         af.setPartitionAttributes(pf.create());
         Region r = cache.createRegion(REGION_NAME, af.create());
-        
+
         //trigger the creation of a bucket, which should trigger the destruction of this VM.
         try {
           r.put("ping", "pong");
           fail("Should have gotten a CancelException");
-        } 
-        catch (CancelException e) {
+        } catch (CancelException e) {
           //this is ok, we expect our observer to close this cache.
         }
       }
     };
-  
+
     vm0.invoke(createParRegAccessor);
-    
+
     SerializableRunnable verifyBuckets = new SerializableRunnable("Verify buckets") {
 
       public void run() {
         LogWriter log = org.apache.geode.test.dunit.LogWriterUtils.getLogWriter();
         Cache cache = getCache();
         PartitionedRegion r = (PartitionedRegion) cache.getRegion(REGION_NAME);
-        for(int i = 0; i < r.getAttributes().getPartitionAttributes().getTotalNumBuckets(); i++) {
+        for (int i = 0; i < r.getAttributes().getPartitionAttributes().getTotalNumBuckets(); i++) {
           List owners = null;
-          while(owners == null) {
+          while (owners == null) {
             try {
               owners = r.getBucketOwnersForValidation(i);
             } catch (ForceReattemptException e) {
@@ -128,11 +127,11 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
               Wait.pause(1000);
             }
           }
-          if(owners.isEmpty()) {
+          if (owners.isEmpty()) {
             log.info("skipping bucket " + i + " because it has no data");
             continue;
           }
-          assertEquals("Expecting bucket " +  i + " to have two copies", 2, owners.size());
+          assertEquals("Expecting bucket " + i + " to have two copies", 2, owners.size());
           log.info("bucket " + i + " had two copies");
         }
       }
@@ -140,7 +139,7 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(verifyBuckets);
     vm2.invoke(verifyBuckets);
   }
-  
+
   protected final class MyRegionObserver extends DistributionMessageObserver implements Serializable {
     private final VM vm0;
 
@@ -151,15 +150,11 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
       this.vm0 = vm0;
     }
 
-    
-    public void afterProcessMessage(DistributionManager dm,
-        DistributionMessage message) {
+    public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
     }
 
-
-    public void beforeProcessMessage(DistributionManager dm,
-        DistributionMessage message) {
-      if(message instanceof ManageBucketMessage) {
+    public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
+      if (message instanceof ManageBucketMessage) {
         vm0.invoke(new SerializableRunnable("Disconnect VM 0") {
           public void run() {
             disconnectFromDS();
@@ -174,7 +169,7 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
     }
 
   }
-  
+
   /**
    * A test to make sure that we cannot move a bucket to a member which already
    * hosts the bucket, thereby reducing our redundancy.
@@ -184,10 +179,9 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     SerializableRunnable createPrRegion = new SerializableRunnable("createRegion") {
-      public void run()
-      {
+      public void run() {
         Cache cache = getCache();
         AttributesFactory attr = new AttributesFactory();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -199,31 +193,30 @@ public class Bug39356DUnitTest extends JUnit4CacheTestCase {
         cache.createRegion("region1", attr.create());
       }
     };
-    
+
     vm0.invoke(createPrRegion);
     vm1.invoke(createPrRegion);
-    
-  //Create a bucket
+
+    //Create a bucket
     vm0.invoke(new SerializableRunnable("createSomeBuckets") {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region1");
         region.put(Integer.valueOf(0), "A");
       }
     });
-    
+
     final InternalDistributedMember vm1MemberId = (InternalDistributedMember) vm1.invoke(new SerializableCallable() {
 
       public Object call() throws Exception {
         return InternalDistributedSystem.getAnyInstance().getDistributedMember();
       }
     });
-    
-    
+
     //Move the bucket
     vm0.invoke(new SerializableRunnable("moveBucket") {
-      
+
       public void run() {
         Cache cache = getCache();
         PartitionedRegion region = (PartitionedRegion) cache.getRegion("region1");

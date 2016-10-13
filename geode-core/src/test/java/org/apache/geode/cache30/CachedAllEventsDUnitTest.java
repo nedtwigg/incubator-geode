@@ -47,32 +47,33 @@ public class CachedAllEventsDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     return host.getVM(0);
   }
-    
+
   private void initOtherId() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("Connect") {
-        public void run2() throws CacheException {
-          getCache();
-        }
-      });
+      public void run2() throws CacheException {
+        getCache();
+      }
+    });
     vm.invoke(() -> CachedAllEventsDUnitTest.getVMDistributedMember());
   }
+
   private void doCreateOtherVm() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("create root") {
-        public void run2() throws CacheException {
-          AttributesFactory af = new AttributesFactory();
-          af.setScope(Scope.DISTRIBUTED_ACK);
-          Region r1 = createRootRegion("r1", af.create());
-          r1.create("key", "value");
-        }
-      });
+      public void run2() throws CacheException {
+        AttributesFactory af = new AttributesFactory();
+        af.setScope(Scope.DISTRIBUTED_ACK);
+        Region r1 = createRootRegion("r1", af.create());
+        r1.create("key", "value");
+      }
+    });
   }
 
   public static DistributedMember getVMDistributedMember() {
     return InternalDistributedSystem.getAnyInstance().getDistributedMember();
   }
-  
+
   /**
    * make sure a remote create will be done in a NORMAL+ALL region
    * @param rmtCreate is true if create should happen in remote region

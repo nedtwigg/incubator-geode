@@ -39,8 +39,7 @@ import java.util.*;
  *
  * @since GemFire     3.5
  */
-public class DistributionLocatorImpl
-    implements DistributionLocator, InternalManagedEntity {
+public class DistributionLocatorImpl implements DistributionLocator, InternalManagedEntity {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -79,8 +78,7 @@ public class DistributionLocatorImpl
    * Constructs new instance of <code>DistributionLocatorImpl</code>
    * that is a member of the given distributed system.
    */
-  public DistributionLocatorImpl(DistributionLocatorConfig config,
-      AdminDistributedSystemImpl system) {
+  public DistributionLocatorImpl(DistributionLocatorConfig config, AdminDistributedSystemImpl system) {
     this.config = (DistributionLocatorConfigImpl) config;
     this.config.validate();
     this.config.setManagedEntity(this);
@@ -135,8 +133,7 @@ public class DistributionLocatorImpl
    * Polls to determine whether or not this managed entity has
    * started.
    */
-  public boolean waitToStart(long timeout)
-      throws InterruptedException {
+  public boolean waitToStart(long timeout) throws InterruptedException {
 
     if (Thread.interrupted())
       throw new InterruptedException();
@@ -151,8 +148,7 @@ public class DistributionLocatorImpl
       }
     }
 
-    logger.info(LocalizedMessage.create(
-        LocalizedStrings.DistributionLocatorImpl_DONE_WAITING_FOR_LOCATOR));
+    logger.info(LocalizedMessage.create(LocalizedStrings.DistributionLocatorImpl_DONE_WAITING_FOR_LOCATOR));
     return this.isRunning();
   }
 
@@ -160,8 +156,7 @@ public class DistributionLocatorImpl
    * Polls to determine whether or not this managed entity has
    * stopped.
    */
-  public boolean waitToStop(long timeout)
-      throws InterruptedException {
+  public boolean waitToStop(long timeout) throws InterruptedException {
 
     if (Thread.interrupted())
       throw new InterruptedException();
@@ -195,8 +190,8 @@ public class DistributionLocatorImpl
 
     boolean found = false;
     Map<InternalDistributedMember, Collection<String>> hostedLocators = dm.getAllHostedLocators();
-    for (Iterator<InternalDistributedMember> memberIter = hostedLocators.keySet().iterator(); memberIter.hasNext(); ) {
-      for (Iterator<String> locatorIter = hostedLocators.get(memberIter.next()).iterator(); locatorIter.hasNext(); ) {
+    for (Iterator<InternalDistributedMember> memberIter = hostedLocators.keySet().iterator(); memberIter.hasNext();) {
+      for (Iterator<String> locatorIter = hostedLocators.get(memberIter.next()).iterator(); locatorIter.hasNext();) {
         DistributionLocatorId locator = new DistributionLocatorId(locatorIter.next());
         found = found || locator.getHost().getHostAddress().equals(host);
         found = found || locator.getHost().getHostName().equals(host);
@@ -211,8 +206,7 @@ public class DistributionLocatorImpl
             // try config host as if it is an IP address instead of host name
           }
         }
-        if (locator.getBindAddress() != null && !locator.getBindAddress().isEmpty()
-            && bindAddress != null && !bindAddress.isEmpty()) {
+        if (locator.getBindAddress() != null && !locator.getBindAddress().isEmpty() && bindAddress != null && !bindAddress.isEmpty()) {
           found = found && locator.getBindAddress().equals(bindAddress);
         }
         found = found && locator.getPort() == port;
@@ -281,8 +275,7 @@ public class DistributionLocatorImpl
     }
     sb.append(" ");
 
-    String sslArgs =
-        this.controller.buildSSLArguments(this.system.getConfig());
+    String sslArgs = this.controller.buildSSLArguments(this.system.getConfig());
     if (sslArgs != null) {
       sb.append(sslArgs);
     }
@@ -305,8 +298,7 @@ public class DistributionLocatorImpl
     }
     sb.append(" ");
 
-    String sslArgs =
-        this.controller.buildSSLArguments(this.system.getConfig());
+    String sslArgs = this.controller.buildSSLArguments(this.system.getConfig());
     if (sslArgs != null) {
       sb.append(sslArgs);
     }
@@ -333,4 +325,3 @@ public class DistributionLocatorImpl
   }
 
 }
-

@@ -66,25 +66,17 @@ public class InternalFunctionService {
    */
   public static Execution onRegions(Set<Region> regions) {
     if (regions == null) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
-              .toLocalizedString("regions set"));
+      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("regions set"));
     }
     if (regions.contains(null)) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.OnRegionsFunctions_THE_REGION_SET_FOR_ONREGIONS_HAS_NULL
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.OnRegionsFunctions_THE_REGION_SET_FOR_ONREGIONS_HAS_NULL.toLocalizedString());
     }
     if (regions.isEmpty()) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.OnRegionsFunctions_THE_REGION_SET_IS_EMPTY_FOR_ONREGIONS
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.OnRegionsFunctions_THE_REGION_SET_IS_EMPTY_FOR_ONREGIONS.toLocalizedString());
     }
     for (Region region : regions) {
       if (isClientRegion(region)) {
-        throw new UnsupportedOperationException(
-            LocalizedStrings.OnRegionsFunctions_NOT_SUPPORTED_FOR_CLIENT_SERVER
-                .toLocalizedString());
+        throw new UnsupportedOperationException(LocalizedStrings.OnRegionsFunctions_NOT_SUPPORTED_FOR_CLIENT_SERVER.toLocalizedString());
       }
     }
     return new MultiRegionFunctionExecutor(regions);
@@ -96,7 +88,7 @@ public class InternalFunctionService {
    * @since GemFire 6.0
    */
   private static boolean isClientRegion(Region region) {
-    LocalRegion localRegion = (LocalRegion)region;
+    LocalRegion localRegion = (LocalRegion) region;
     return localRegion.hasServerProxy();
   }
 

@@ -27,16 +27,13 @@ package org.apache.geode.internal.cache;
  *
  *
  */
-public abstract class VMStatsLRURegionEntry extends AbstractLRURegionEntry
-{
+public abstract class VMStatsLRURegionEntry extends AbstractLRURegionEntry {
   protected VMStatsLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }
-  
 
   //////////////////////////////////////////////////////////////////////
   // Stats fields and methods
   // Do not add any instance fields to this class.
   // Instead add them to the STATS section of LeafRegionEntry.cpp.
 }
-

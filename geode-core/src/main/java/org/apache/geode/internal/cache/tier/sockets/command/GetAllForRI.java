@@ -33,11 +33,11 @@ import org.apache.geode.internal.cache.tier.sockets.SerializedObjectPartList;
  */
 public class GetAllForRI extends GetAll651 {
   private final static GetAllForRI singleton = new GetAllForRI();
-  
+
   public static Command getCommand() {
     return singleton;
   }
-  
+
   protected GetAllForRI() {
   }
 
@@ -45,7 +45,5 @@ public class GetAllForRI extends GetAll651 {
   protected ObjectPartList651 getObjectPartsList(boolean includeKeys) {
     return new SerializedObjectPartList(maximumChunkSize, includeKeys);
   }
-  
-  
 
 }

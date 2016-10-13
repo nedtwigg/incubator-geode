@@ -37,27 +37,27 @@ public class StatArchiveDescriptor {
   private final long systemStartTime;
   private final String systemDirectoryPath;
   private final String productDescription;
-  
+
   public String getArchiveName() {
     return this.archiveName;
   }
-  
+
   public long getSystemId() {
     return this.systemId;
   }
-  
+
   public long getSystemStartTime() {
     return this.systemStartTime;
   }
-  
+
   public String getSystemDirectoryPath() {
     return this.systemDirectoryPath;
   }
-  
+
   public String getProductDescription() {
     return this.productDescription;
   }
-  
+
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(getClass().getName());
@@ -70,14 +70,14 @@ public class StatArchiveDescriptor {
     sb.append("}");
     return sb.toString();
   }
-  
+
   public static class Builder {
     private String archiveName;
     private long systemId = -1;
     private long systemStartTime = -1;
     private String systemDirectoryPath;
     private String productDescription;
-    
+
     public Builder setArchiveName(String archiveName) {
       this.archiveName = archiveName;
       return this;
@@ -87,22 +87,22 @@ public class StatArchiveDescriptor {
       this.systemId = systemId;
       return this;
     }
-    
+
     public Builder setSystemStartTime(long systemStartTime) {
       this.systemStartTime = systemStartTime;
       return this;
     }
-    
+
     public Builder setSystemDirectoryPath(String systemDirectoryPath) {
       this.systemDirectoryPath = systemDirectoryPath;
       return this;
     }
-    
+
     public Builder setProductDescription(String productDescription) {
       this.productDescription = productDescription;
       return this;
     }
-    
+
     public StatArchiveDescriptor build() throws IllegalStateException {
       if (this.archiveName == null) {
         throw new IllegalStateException("archiveName must not be null");
@@ -122,7 +122,7 @@ public class StatArchiveDescriptor {
       return new StatArchiveDescriptor(this);
     }
   }
-  
+
   private StatArchiveDescriptor(Builder builder) {
     this.archiveName = builder.archiveName;
     this.systemId = builder.systemId;

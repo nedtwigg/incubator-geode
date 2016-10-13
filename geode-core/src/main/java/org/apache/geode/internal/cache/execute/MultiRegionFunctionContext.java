@@ -33,7 +33,7 @@ import org.apache.geode.cache.execute.FunctionContext;
 public interface MultiRegionFunctionContext extends FunctionContext {
 
   public Set<Region> getRegions();
-  
+
   /**
    * Returns a boolean to identify whether this is a re-execute. Returns true if
    * it is a re-execute else returns false

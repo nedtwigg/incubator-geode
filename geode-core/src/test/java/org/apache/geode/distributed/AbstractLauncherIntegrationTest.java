@@ -43,14 +43,14 @@ public class AbstractLauncherIntegrationTest {
 
   @Rule
   public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-  
+
   @Rule
   public final TestName testName = new TestName();
-  
+
   @Before
   public void setUp() throws Exception {
     this.gemfirePropertiesFile = this.temporaryFolder.newFile(DistributionConfig.GEMFIRE_PREFIX + "properties");
-    
+
     this.expectedGemfireProperties = new Properties();
     this.expectedGemfireProperties.setProperty(NAME, "memberOne");
     this.expectedGemfireProperties.setProperty(GROUPS, "groupOne, groupTwo");
@@ -60,7 +60,7 @@ public class AbstractLauncherIntegrationTest {
     assertThat(this.gemfirePropertiesFile.exists()).isTrue();
     assertThat(this.gemfirePropertiesFile.isFile()).isTrue();
   }
-  
+
   @Test
   public void testLoadGemFirePropertiesFromFile() throws Exception {
     final Properties actualGemFireProperties = AbstractLauncher.loadGemFireProperties(this.gemfirePropertiesFile.toURI().toURL());

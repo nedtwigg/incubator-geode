@@ -161,15 +161,14 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   protected static QueueListener listener1;
   protected static QueueListener listener2;
 
-  protected static AsyncEventListener eventListener1 ;
-  protected static AsyncEventListener eventListener2 ;
+  protected static AsyncEventListener eventListener1;
+  protected static AsyncEventListener eventListener2;
 
   private static final long MAX_WAIT = 10000;
 
   protected static GatewayEventFilter eventFilter;
 
-  protected static List<Integer> dispatcherThreads =
-	  new ArrayList<Integer>(Arrays.asList(1, 3, 5));
+  protected static List<Integer> dispatcherThreads = new ArrayList<Integer>(Arrays.asList(1, 3, 5));
   //this will be set for each test method run with one of the values from above list
   protected static int numDispatcherThreadsForTheRun = 1;
 
@@ -214,11 +213,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void shuffleNumDispatcherThreads() {
-	  Collections.shuffle(dispatcherThreads);
+    Collections.shuffle(dispatcherThreads);
   }
 
   public static void setNumDispatcherThreadsForTheRun(int numThreads) {
-	  numDispatcherThreadsForTheRun = numThreads;
+    numDispatcherThreadsForTheRun = numThreads;
   }
 
   public static void stopOldLocator() {
@@ -227,11 +226,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createLocator(int dsId, int port, Set<String> localLocatorsList, Set<String> remoteLocatorsList){
+  public static void createLocator(int dsId, int port, Set<String> localLocatorsList, Set<String> remoteLocatorsList) {
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     StringBuffer localLocatorBuffer = new StringBuffer(localLocatorsList.toString());
     localLocatorBuffer.deleteCharAt(0);
     localLocatorBuffer.deleteCharAt(localLocatorBuffer.lastIndexOf("]"));
@@ -255,7 +254,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + port + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     test.getSystem(props);
@@ -268,7 +267,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + port + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=false,peer=true,hostname-for-clients=localhost");
     test.getSystem(props);
@@ -281,7 +280,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     test.getSystem(props);
@@ -294,7 +293,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=false,peer=true,hostname-for-clients=localhost");
     test.getSystem(props);
@@ -307,7 +306,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + port + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
@@ -320,13 +319,12 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     Properties props = test.getDistributedSystemProperties();
     props.put(LOG_LEVEL, "fine");
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + oldPort + "]");
     props.setProperty(START_LOCATOR, "localhost[" + oldPort + "],server=true,peer=true,hostname-for-clients=localhost");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
     test.getSystem(props);
   }
-
 
   public static Integer createFirstRemotePeerLocator(int dsId, int remoteLocPort) {
     stopOldLocator();
@@ -334,7 +332,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + port + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=false,peer=true,hostname-for-clients=localhost");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
@@ -342,14 +340,13 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return port;
   }
 
-  public static Integer createSecondRemoteLocator(int dsId, int localPort,
-      int remoteLocPort) {
+  public static Integer createSecondRemoteLocator(int dsId, int localPort, int remoteLocPort) {
     stopOldLocator();
     WANTestBase test = new WANTestBase();
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + localPort + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
@@ -357,30 +354,26 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return port;
   }
 
-  public static Integer createSecondRemoteLocatorWithAPI(int dsId, int localPort,
-                                                  int remoteLocPort, String hostnameForClients)
-    throws IOException
-  {
+  public static Integer createSecondRemoteLocatorWithAPI(int dsId, int localPort, int remoteLocPort, String hostnameForClients) throws IOException {
     stopOldLocator();
     WANTestBase test = new WANTestBase();
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + localPort + "]");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
     Locator locator = Locator.startLocatorAndDS(0, null, InetAddress.getByName("localhost"), props, true, true, hostnameForClients);
     return locator.getPort();
   }
 
-  public static Integer createSecondRemotePeerLocator(int dsId, int localPort,
-      int remoteLocPort) {
+  public static Integer createSecondRemotePeerLocator(int dsId, int localPort, int remoteLocPort) {
     stopOldLocator();
     WANTestBase test = new WANTestBase();
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(DISTRIBUTED_SYSTEM_ID, ""+dsId);
+    props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + localPort + "]");
     props.setProperty(START_LOCATOR, "localhost[" + port + "],server=false,peer=true,hostname-for-clients=localhost");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
@@ -397,21 +390,17 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     GatewayReceiver receiver = fact.create();
     try {
       receiver.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
       org.apache.geode.test.dunit.Assert.fail("Failed to start GatewayReceiver on port " + port, e);
     }
     return port;
   }
 
-  public static void createReplicatedRegion(String regionName, String senderIds, Boolean offHeap){
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class
-        .getName());
-    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class
-        .getName());
+  public static void createReplicatedRegion(String regionName, String senderIds, Boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class.getName());
+    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       if (senderIds != null) {
@@ -433,11 +422,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createNormalRegion(String regionName, String senderIds){
+  public static void createNormalRegion(String regionName, String senderIds) {
     AttributesFactory fact = new AttributesFactory();
-    if(senderIds!= null){
+    if (senderIds != null) {
       StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
-      while (tokenizer.hasMoreTokens()){
+      while (tokenizer.hasMoreTokens()) {
         String senderId = tokenizer.nextToken();
         fact.addGatewaySenderId(senderId);
       }
@@ -448,11 +437,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     assertNotNull(r);
   }
 
-  public static void createPersistentReplicatedRegion(String regionName, String senderIds, Boolean offHeap){
+  public static void createPersistentReplicatedRegion(String regionName, String senderIds, Boolean offHeap) {
     AttributesFactory fact = new AttributesFactory();
-    if(senderIds!= null){
+    if (senderIds != null) {
       StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
-      while (tokenizer.hasMoreTokens()){
+      while (tokenizer.hasMoreTokens()) {
         String senderId = tokenizer.nextToken();
         fact.addGatewaySenderId(senderId);
       }
@@ -463,10 +452,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     assertNotNull(r);
   }
 
-  public static void createReplicatedRegionWithAsyncEventQueue(
-      String regionName, String asyncQueueIds, Boolean offHeap) {
-    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+  public static void createReplicatedRegionWithAsyncEventQueue(String regionName, String asyncQueueIds, Boolean offHeap) {
+    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       if (asyncQueueIds != null) {
@@ -486,10 +473,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createReplicatedRegionWithSenderAndAsyncEventQueue(
-      String regionName, String senderIds, String asyncChannelId, Boolean offHeap) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+  public static void createReplicatedRegionWithSenderAndAsyncEventQueue(String regionName, String senderIds, String asyncChannelId, Boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       if (senderIds != null) {
@@ -511,11 +496,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createReplicatedRegion(String regionName, String senderIds, Scope scope, DataPolicy policy, Boolean offHeap){
+  public static void createReplicatedRegion(String regionName, String senderIds, Scope scope, DataPolicy policy, Boolean offHeap) {
     AttributesFactory fact = new AttributesFactory();
-    if(senderIds!= null){
+    if (senderIds != null) {
       StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
-      while (tokenizer.hasMoreTokens()){
+      while (tokenizer.hasMoreTokens()) {
         String senderId = tokenizer.nextToken();
         fact.addGatewaySenderId(senderId);
       }
@@ -527,14 +512,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     assertNotNull(r);
   }
 
-  public static void createAsyncEventQueue(
-      String asyncChannelId, boolean isParallel,
-      Integer maxMemory, Integer batchSize, boolean isConflation,
-      boolean isPersistent, String diskStoreName, boolean isDiskSynchronous) {
+  public static void createAsyncEventQueue(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous) {
 
     if (diskStoreName != null) {
-      File directory = new File(asyncChannelId + "_disk_"
-          + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+      File directory = new File(asyncChannelId + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
       directory.mkdir();
       File[] dirs1 = new File[] { directory };
       DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -557,11 +538,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     factory.create(asyncChannelId, asyncEventListener);
   }
 
-  public static void createPartitionedRegion(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap){
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-        .getName());
+  public static void createPartitionedRegion(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       if (senderIds != null) {
@@ -586,12 +565,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   }
 
   // TODO:OFFHEAP: add offheap flavor
-  public static void createPartitionedRegionWithPersistence(String regionName,
-      String senderIds, Integer redundantCopies, Integer totalNumBuckets) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-        .getName());
+  public static void createPartitionedRegionWithPersistence(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       if (senderIds != null) {
@@ -614,57 +590,52 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       exp1.remove();
     }
   }
-  public static void createColocatedPartitionedRegion(String regionName,
-	      String senderIds, Integer redundantCopies, Integer totalNumBuckets, String colocatedWith) {
-	IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-		.getName());
-	IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-		.getName());
-	try {
-	  AttributesFactory fact = new AttributesFactory();
-	  if (senderIds != null) {
-		  StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
-		  while (tokenizer.hasMoreTokens()) {
-			  String senderId = tokenizer.nextToken();
-			  fact.addGatewaySenderId(senderId);
-		  }
-	  }
-	  PartitionAttributesFactory pfact = new PartitionAttributesFactory();
-	  pfact.setTotalNumBuckets(totalNumBuckets);
-	  pfact.setRedundantCopies(redundantCopies);
-	  pfact.setRecoveryDelay(0);
-	  pfact.setColocatedWith(colocatedWith);
-	  fact.setPartitionAttributes(pfact.create());
-	  Region r = cache.createRegionFactory(fact.create()).create(regionName);
-	  assertNotNull(r);
-	} finally {
-		exp.remove();
-		exp1.remove();
-	}
+
+  public static void createColocatedPartitionedRegion(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, String colocatedWith) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
+    try {
+      AttributesFactory fact = new AttributesFactory();
+      if (senderIds != null) {
+        StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
+        while (tokenizer.hasMoreTokens()) {
+          String senderId = tokenizer.nextToken();
+          fact.addGatewaySenderId(senderId);
+        }
+      }
+      PartitionAttributesFactory pfact = new PartitionAttributesFactory();
+      pfact.setTotalNumBuckets(totalNumBuckets);
+      pfact.setRedundantCopies(redundantCopies);
+      pfact.setRecoveryDelay(0);
+      pfact.setColocatedWith(colocatedWith);
+      fact.setPartitionAttributes(pfact.create());
+      Region r = cache.createRegionFactory(fact.create()).create(regionName);
+      assertNotNull(r);
+    } finally {
+      exp.remove();
+      exp1.remove();
+    }
   }
 
-  public static void addSenderThroughAttributesMutator(String regionName,
-      String senderIds){
+  public static void addSenderThroughAttributesMutator(String regionName, String senderIds) {
     final Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
     AttributesMutator mutator = r.getAttributesMutator();
     mutator.addGatewaySenderId(senderIds);
   }
 
-  public static void addAsyncEventQueueThroughAttributesMutator(
-      String regionName, String queueId) {
+  public static void addAsyncEventQueueThroughAttributesMutator(String regionName, String queueId) {
     final Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
     AttributesMutator mutator = r.getAttributesMutator();
     mutator.addAsyncEventQueueId(queueId);
   }
 
-  public static void createPartitionedRegionAsAccessor(
-      String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets){
+  public static void createPartitionedRegionAsAccessor(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets) {
     AttributesFactory fact = new AttributesFactory();
-    if(senderIds!= null){
+    if (senderIds != null) {
       StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
-      while (tokenizer.hasMoreTokens()){
+      while (tokenizer.hasMoreTokens()) {
         String senderId = tokenizer.nextToken();
         fact.addGatewaySenderId(senderId);
       }
@@ -678,7 +649,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     assertNotNull(r);
   }
 
-  public static void createPartitionedRegionWithSerialParallelSenderIds(String regionName, String serialSenderIds, String parallelSenderIds, String colocatedWith, Boolean offHeap){
+  public static void createPartitionedRegionWithSerialParallelSenderIds(String regionName, String serialSenderIds, String parallelSenderIds, String colocatedWith, Boolean offHeap) {
     AttributesFactory fact = new AttributesFactory();
     if (serialSenderIds != null) {
       StringTokenizer tokenizer = new StringTokenizer(serialSenderIds, ",");
@@ -702,17 +673,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     assertNotNull(r);
   }
 
-  public static void createPersistentPartitionedRegion(
-      String regionName,
-      String senderIds,
-      Integer redundantCopies,
-      Integer totalNumBuckets,
-      Boolean offHeap){
+  public static void createPersistentPartitionedRegion(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap) {
 
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
     try {
 
       AttributesFactory fact = new AttributesFactory();
@@ -737,11 +701,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createCustomerOrderShipmentPartitionedRegion(
-      String senderIds, Integer redundantCopies,
-      Integer totalNumBuckets, Boolean offHeap) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+  public static void createCustomerOrderShipmentPartitionedRegion(String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       if (senderIds != null) {
@@ -753,25 +714,15 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
 
       PartitionAttributesFactory paf = new PartitionAttributesFactory();
-      paf.setRedundantCopies(redundantCopies)
-          .setTotalNumBuckets(totalNumBuckets)
-          .setPartitionResolver(
-              new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+      paf.setRedundantCopies(redundantCopies).setTotalNumBuckets(totalNumBuckets).setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
       fact.setPartitionAttributes(paf.create());
       fact.setOffHeap(offHeap);
-      customerRegion = (PartitionedRegion)cache.createRegionFactory(
-          fact.create()).create(customerRegionName);
+      customerRegion = (PartitionedRegion) cache.createRegionFactory(fact.create()).create(customerRegionName);
       assertNotNull(customerRegion);
-      LogWriterUtils.getLogWriter().info(
-          "Partitioned Region CUSTOMER created Successfully :"
-              + customerRegion.toString());
+      LogWriterUtils.getLogWriter().info("Partitioned Region CUSTOMER created Successfully :" + customerRegion.toString());
 
       paf = new PartitionAttributesFactory();
-      paf.setRedundantCopies(redundantCopies)
-          .setTotalNumBuckets(totalNumBuckets)
-          .setColocatedWith(customerRegionName)
-          .setPartitionResolver(
-              new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+      paf.setRedundantCopies(redundantCopies).setTotalNumBuckets(totalNumBuckets).setColocatedWith(customerRegionName).setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
       fact = new AttributesFactory();
       if (senderIds != null) {
         StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
@@ -782,19 +733,12 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
       fact.setPartitionAttributes(paf.create());
       fact.setOffHeap(offHeap);
-      orderRegion = (PartitionedRegion)cache.createRegionFactory(fact.create())
-          .create(orderRegionName);
+      orderRegion = (PartitionedRegion) cache.createRegionFactory(fact.create()).create(orderRegionName);
       assertNotNull(orderRegion);
-      LogWriterUtils.getLogWriter().info(
-          "Partitioned Region ORDER created Successfully :"
-              + orderRegion.toString());
+      LogWriterUtils.getLogWriter().info("Partitioned Region ORDER created Successfully :" + orderRegion.toString());
 
       paf = new PartitionAttributesFactory();
-      paf.setRedundantCopies(redundantCopies)
-          .setTotalNumBuckets(totalNumBuckets)
-          .setColocatedWith(orderRegionName)
-          .setPartitionResolver(
-              new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+      paf.setRedundantCopies(redundantCopies).setTotalNumBuckets(totalNumBuckets).setColocatedWith(orderRegionName).setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
       fact = new AttributesFactory();
       if (senderIds != null) {
         StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
@@ -805,22 +749,19 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
       fact.setPartitionAttributes(paf.create());
       fact.setOffHeap(offHeap);
-      shipmentRegion = (PartitionedRegion)cache.createRegionFactory(
-          fact.create()).create(shipmentRegionName);
+      shipmentRegion = (PartitionedRegion) cache.createRegionFactory(fact.create()).create(shipmentRegionName);
       assertNotNull(shipmentRegion);
-      LogWriterUtils.getLogWriter().info(
-          "Partitioned Region SHIPMENT created Successfully :"
-              + shipmentRegion.toString());
+      LogWriterUtils.getLogWriter().info("Partitioned Region SHIPMENT created Successfully :" + shipmentRegion.toString());
     } finally {
       exp.remove();
     }
   }
 
-  public static void createColocatedPartitionedRegions(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap){
+  public static void createColocatedPartitionedRegions(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap) {
     AttributesFactory fact = new AttributesFactory();
-    if(senderIds!= null){
+    if (senderIds != null) {
       StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
-      while (tokenizer.hasMoreTokens()){
+      while (tokenizer.hasMoreTokens()) {
         String senderId = tokenizer.nextToken();
         fact.addGatewaySenderId(senderId);
       }
@@ -836,18 +777,18 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     pfact.setColocatedWith(r.getName());
     fact.setPartitionAttributes(pfact.create());
     fact.setOffHeap(offHeap);
-    Region r1 = cache.createRegionFactory(fact.create()).create(regionName+"_child1");
+    Region r1 = cache.createRegionFactory(fact.create()).create(regionName + "_child1");
     assertNotNull(r1);
 
-    Region r2 = cache.createRegionFactory(fact.create()).create(regionName+"_child2");
+    Region r2 = cache.createRegionFactory(fact.create()).create(regionName + "_child2");
     assertNotNull(r2);
   }
 
-  public static void createColocatedPartitionedRegions2 (String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap){
+  public static void createColocatedPartitionedRegions2(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets, Boolean offHeap) {
     AttributesFactory fact = new AttributesFactory();
-    if(senderIds!= null){
+    if (senderIds != null) {
       StringTokenizer tokenizer = new StringTokenizer(senderIds, ",");
-      while (tokenizer.hasMoreTokens()){
+      while (tokenizer.hasMoreTokens()) {
         String senderId = tokenizer.nextToken();
         fact.addGatewaySenderId(senderId);
       }
@@ -859,16 +800,15 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     fact.setOffHeap(offHeap);
     Region r = cache.createRegionFactory(fact.create()).create(regionName);
     assertNotNull(r);
-
 
     fact = new AttributesFactory();
     pfact.setColocatedWith(r.getName());
     fact.setPartitionAttributes(pfact.create());
     fact.setOffHeap(offHeap);
-    Region r1 = cache.createRegionFactory(fact.create()).create(regionName+"_child1");
+    Region r1 = cache.createRegionFactory(fact.create()).create(regionName + "_child1");
     assertNotNull(r1);
 
-    Region r2 = cache.createRegionFactory(fact.create()).create(regionName+"_child2");
+    Region r2 = cache.createRegionFactory(fact.create()).create(regionName + "_child2");
     assertNotNull(r2);
   }
 
@@ -879,54 +819,50 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void addListenerToSleepAfterCreateEvent(int milliSeconds, final String regionName) {
-    cache.getRegion(regionName).getAttributesMutator()
-      .addCacheListener(new CacheListenerAdapter<Object, Object>() {
-        @Override
-        public void afterCreate(final EntryEvent<Object, Object> event) {
-          try {
-            Thread.sleep(milliSeconds);
-          }
-          catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-          }
+    cache.getRegion(regionName).getAttributesMutator().addCacheListener(new CacheListenerAdapter<Object, Object>() {
+      @Override
+      public void afterCreate(final EntryEvent<Object, Object> event) {
+        try {
+          Thread.sleep(milliSeconds);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
         }
-      });
+      }
+    });
   }
 
   private static CacheListener myListener;
+
   public static void longPauseAfterNumEvents(int numEvents, int milliSeconds) {
     myListener = new CacheListenerAdapter<Object, Object>() {
       @Override
       public void afterCreate(final EntryEvent<Object, Object> event) {
         try {
-          if (event.getRegion().size() >= numEvents){
+          if (event.getRegion().size() >= numEvents) {
             Thread.sleep(milliSeconds);
           }
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
       }
     };
-    cache.getRegion(getTestMethodName() + "_RR_1").getAttributesMutator()
-      .addCacheListener(myListener);
+    cache.getRegion(getTestMethodName() + "_RR_1").getAttributesMutator().addCacheListener(myListener);
   }
 
   public static void removeCacheListener() {
-    cache.getRegion(getTestMethodName() + "_RR_1").getAttributesMutator()
-      .removeCacheListener(myListener);
+    cache.getRegion(getTestMethodName() + "_RR_1").getAttributesMutator().removeCacheListener(myListener);
 
   }
 
-
-  public static void createCache(Integer locPort){
+  public static void createCache(Integer locPort) {
     createCache(false, locPort);
   }
-  public static void createManagementCache(Integer locPort){
+
+  public static void createManagementCache(Integer locPort) {
     createCache(true, locPort);
   }
 
-  public static void createCacheConserveSockets(Boolean conserveSockets,Integer locPort){
+  public static void createCacheConserveSockets(Boolean conserveSockets, Integer locPort) {
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -955,8 +891,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     WANTestBase test = new WANTestBase();
 
     boolean gatewaySslenabled = true;
-    String  gatewaySslprotocols = "any";
-    String  gatewaySslciphers = "any";
+    String gatewaySslprotocols = "any";
+    String gatewaySslciphers = "any";
     boolean gatewaySslRequireAuth = true;
 
     Properties gemFireProps = test.getDistributedSystemProperties();
@@ -967,11 +903,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     gemFireProps.put(GATEWAY_SSL_REQUIRE_AUTHENTICATION, String.valueOf(gatewaySslRequireAuth));
 
     gemFireProps.put(GATEWAY_SSL_KEYSTORE_TYPE, "jks");
-    gemFireProps.put(GATEWAY_SSL_KEYSTORE,
-        TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/client.keystore"));
+    gemFireProps.put(GATEWAY_SSL_KEYSTORE, TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/client.keystore"));
     gemFireProps.put(GATEWAY_SSL_KEYSTORE_PASSWORD, "password");
-    gemFireProps.put(GATEWAY_SSL_TRUSTSTORE,
-        TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/client.truststore"));
+    gemFireProps.put(GATEWAY_SSL_TRUSTSTORE, TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/client.truststore"));
     gemFireProps.put(GATEWAY_SSL_TRUSTSTORE_PASSWORD, "password");
 
     gemFireProps.setProperty(MCAST_PORT, "0");
@@ -983,7 +917,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     cache = CacheFactory.create(ds);
   }
 
-  public static void createCache_PDX(Integer locPort){
+  public static void createCache_PDX(Integer locPort) {
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
@@ -996,21 +930,20 @@ public class WANTestBase extends JUnit4DistributedTestCase {
 
     File pdxDir = new File(CacheTestCase.getDiskDir(), "pdx");
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
-    File [] dirs1 = new File[] {pdxDir};
+    File[] dirs1 = new File[] { pdxDir };
     dsf.setDiskDirs(dirs1).setMaxOplogSize(1).create("PDX_TEST");
   }
 
-  public static void createCache(Integer locPort1, Integer locPort2){
+  public static void createCache(Integer locPort1, Integer locPort2) {
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + locPort1
-        + "],localhost[" + locPort2 + "]");
+    props.setProperty(LOCATORS, "localhost[" + locPort1 + "],localhost[" + locPort2 + "]");
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
   }
 
-  public static void createCacheWithoutLocator(Integer mCastPort){
+  public static void createCacheWithoutLocator(Integer mCastPort) {
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "" + mCastPort);
@@ -1029,8 +962,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     server1.setPort(0);
     try {
       server1.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       org.apache.geode.test.dunit.Assert.fail("Failed to start the Server", e);
     }
     assertTrue(server1.isRunning());
@@ -1078,21 +1010,17 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     for (AsyncInvocation invocation : tasks) {
       try {
         invocation.join(30000); // TODO: these might be AsyncInvocation orphans
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         fail("Starting senders was interrupted");
       }
     }
   }
 
-
   public static void startSender(String senderId) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
 
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class.getName());
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       GatewaySender sender = null;
@@ -1116,53 +1044,50 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     AbstractGatewaySender sender = null;
     for (GatewaySender s : senders) {
       if (s.getId().equals(senderId)) {
-        sender = (AbstractGatewaySender)s;
+        sender = (AbstractGatewaySender) s;
         break;
       }
     }
     sender.test_setBatchConflationEnabled(true);
   }
 
-  public static Map getSenderToReceiverConnectionInfo(String senderId){
-	  Set<GatewaySender> senders = cache.getGatewaySenders();
-	  GatewaySender sender = null;
-	  for(GatewaySender s : senders){
-		  if(s.getId().equals(senderId)){
-			  sender = s;
-			  break;
-	      }
-	  }
-	  Map connectionInfo = null;
-	  if (!sender.isParallel() && ((AbstractGatewaySender) sender).isPrimary()) {
-		  connectionInfo = new HashMap();
-		  GatewaySenderEventDispatcher dispatcher =
-			  ((AbstractGatewaySender)sender).getEventProcessor().getDispatcher();
-		  if (dispatcher instanceof GatewaySenderEventRemoteDispatcher) {
-			  ServerLocation serverLocation =
-				  ((GatewaySenderEventRemoteDispatcher) dispatcher).getConnection(false).getServer();
-			  connectionInfo.put("serverHost", serverLocation.getHostName());
-			  connectionInfo.put("serverPort", serverLocation.getPort());
+  public static Map getSenderToReceiverConnectionInfo(String senderId) {
+    Set<GatewaySender> senders = cache.getGatewaySenders();
+    GatewaySender sender = null;
+    for (GatewaySender s : senders) {
+      if (s.getId().equals(senderId)) {
+        sender = s;
+        break;
+      }
+    }
+    Map connectionInfo = null;
+    if (!sender.isParallel() && ((AbstractGatewaySender) sender).isPrimary()) {
+      connectionInfo = new HashMap();
+      GatewaySenderEventDispatcher dispatcher = ((AbstractGatewaySender) sender).getEventProcessor().getDispatcher();
+      if (dispatcher instanceof GatewaySenderEventRemoteDispatcher) {
+        ServerLocation serverLocation = ((GatewaySenderEventRemoteDispatcher) dispatcher).getConnection(false).getServer();
+        connectionInfo.put("serverHost", serverLocation.getHostName());
+        connectionInfo.put("serverPort", serverLocation.getPort());
 
-		  }
-	  }
-	  return connectionInfo;
+      }
+    }
+    return connectionInfo;
   }
-  public static List<Integer> getSenderStats(String senderId, final int expectedQueueSize){
+
+  public static List<Integer> getSenderStats(String senderId, final int expectedQueueSize) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     AbstractGatewaySender sender = null;
     for (GatewaySender s : senders) {
       if (s.getId().equals(senderId)) {
-        sender = (AbstractGatewaySender)s;
+        sender = (AbstractGatewaySender) s;
         break;
       }
     }
     final GatewaySenderStats statistics = sender.getStatistics();
     if (expectedQueueSize != -1) {
       final RegionQueue regionQueue;
-      regionQueue = sender.getQueues().toArray(
-          new RegionQueue[1])[0];
-      Awaitility.await().atMost(120,TimeUnit.SECONDS).until(() -> assertEquals("Expected queue entries: " +
-        expectedQueueSize + " but actual entries: " + regionQueue.size(), expectedQueueSize,regionQueue.size()));
+      regionQueue = sender.getQueues().toArray(new RegionQueue[1])[0];
+      Awaitility.await().atMost(120, TimeUnit.SECONDS).until(() -> assertEquals("Expected queue entries: " + expectedQueueSize + " but actual entries: " + regionQueue.size(), expectedQueueSize, regionQueue.size()));
     }
     ArrayList<Integer> stats = new ArrayList<Integer>();
     stats.add(statistics.getEventQueueSize());
@@ -1177,9 +1102,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return stats;
   }
 
-  public static void checkQueueStats(String senderId, final int queueSize,
-      final int eventsReceived, final int eventsQueued,
-      final int eventsDistributed) {
+  public static void checkQueueStats(String senderId, final int queueSize, final int eventsReceived, final int eventsQueued, final int eventsDistributed) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
     for (GatewaySender s : senders) {
@@ -1189,66 +1112,57 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final GatewaySenderStats statistics = ((AbstractGatewaySender)sender).getStatistics();
+    final GatewaySenderStats statistics = ((AbstractGatewaySender) sender).getStatistics();
     assertEquals(queueSize, statistics.getEventQueueSize());
     assertEquals(eventsReceived, statistics.getEventsReceived());
     assertEquals(eventsQueued, statistics.getEventsQueued());
-    assert(statistics.getEventsDistributed() >= eventsDistributed);
+    assert (statistics.getEventsDistributed() >= eventsDistributed);
   }
 
-  public static void checkGatewayReceiverStats(int processBatches,
-      int eventsReceived, int creates) {
+  public static void checkGatewayReceiverStats(int processBatches, int eventsReceived, int creates) {
     Set<GatewayReceiver> gatewayReceivers = cache.getGatewayReceivers();
     GatewayReceiver receiver = gatewayReceivers.iterator().next();
-    CacheServerStats stats = ((CacheServerImpl)receiver.getServer())
-        .getAcceptor().getStats();
+    CacheServerStats stats = ((CacheServerImpl) receiver.getServer()).getAcceptor().getStats();
 
     assertTrue(stats instanceof GatewayReceiverStats);
-    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats)stats;
+    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats) stats;
     assertTrue(gatewayReceiverStats.getProcessBatchRequests() >= processBatches);
     assertEquals(eventsReceived, gatewayReceiverStats.getEventsReceived());
     assertEquals(creates, gatewayReceiverStats.getCreateRequest());
   }
 
-  public static void checkMinimumGatewayReceiverStats(int processBatches,
-      int eventsReceived) {
+  public static void checkMinimumGatewayReceiverStats(int processBatches, int eventsReceived) {
     Set<GatewayReceiver> gatewayReceivers = cache.getGatewayReceivers();
     GatewayReceiver receiver = gatewayReceivers.iterator().next();
-    CacheServerStats stats = ((CacheServerImpl)receiver.getServer())
-        .getAcceptor().getStats();
+    CacheServerStats stats = ((CacheServerImpl) receiver.getServer()).getAcceptor().getStats();
 
     assertTrue(stats instanceof GatewayReceiverStats);
-    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats)stats;
+    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats) stats;
     assertTrue(gatewayReceiverStats.getProcessBatchRequests() >= processBatches);
-    assertTrue(gatewayReceiverStats.getEventsReceived()>= eventsReceived);
+    assertTrue(gatewayReceiverStats.getEventsReceived() >= eventsReceived);
   }
 
   public static void checkExceptionStats(int exceptionsOccurred) {
     Set<GatewayReceiver> gatewayReceivers = cache.getGatewayReceivers();
     GatewayReceiver receiver = gatewayReceivers.iterator().next();
-    CacheServerStats stats = ((CacheServerImpl)receiver.getServer())
-        .getAcceptor().getStats();
+    CacheServerStats stats = ((CacheServerImpl) receiver.getServer()).getAcceptor().getStats();
 
     assertTrue(stats instanceof GatewayReceiverStats);
-    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats)stats;
+    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats) stats;
     if (exceptionsOccurred == 0) {
-      assertEquals(exceptionsOccurred, gatewayReceiverStats
-          .getExceptionsOccured());
-    }
-    else {
+      assertEquals(exceptionsOccurred, gatewayReceiverStats.getExceptionsOccured());
+    } else {
       assertTrue(gatewayReceiverStats.getExceptionsOccured() >= exceptionsOccurred);
     }
   }
 
-  public static void checkGatewayReceiverStatsHA(int processBatches,
-      int eventsReceived, int creates) {
+  public static void checkGatewayReceiverStatsHA(int processBatches, int eventsReceived, int creates) {
     Set<GatewayReceiver> gatewayReceivers = cache.getGatewayReceivers();
     GatewayReceiver receiver = gatewayReceivers.iterator().next();
-    CacheServerStats stats = ((CacheServerImpl)receiver.getServer())
-        .getAcceptor().getStats();
+    CacheServerStats stats = ((CacheServerImpl) receiver.getServer()).getAcceptor().getStats();
 
     assertTrue(stats instanceof GatewayReceiverStats);
-    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats)stats;
+    GatewayReceiverStats gatewayReceiverStats = (GatewayReceiverStats) stats;
     assertTrue(gatewayReceiverStats.getProcessBatchRequests() >= processBatches);
     assertTrue(gatewayReceiverStats.getEventsReceived() >= eventsReceived);
     assertTrue(gatewayReceiverStats.getCreateRequest() >= creates);
@@ -1263,7 +1177,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final GatewaySenderStats statistics = ((AbstractGatewaySender)sender).getStatistics();
+    final GatewaySenderStats statistics = ((AbstractGatewaySender) sender).getStatistics();
     assertEquals(eventsFiltered, statistics.getEventsFiltered());
   }
 
@@ -1276,12 +1190,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final GatewaySenderStats statistics = ((AbstractGatewaySender)sender).getStatistics();
+    final GatewaySenderStats statistics = ((AbstractGatewaySender) sender).getStatistics();
     assertEquals(eventsConflated, statistics.getEventsNotQueuedConflated());
   }
 
-  public static void checkStats_Failover(String senderId,
-      final int eventsReceived) {
+  public static void checkStats_Failover(String senderId, final int eventsReceived) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
     for (GatewaySender s : senders) {
@@ -1290,13 +1203,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final GatewaySenderStats statistics = ((AbstractGatewaySender)sender)
-        .getStatistics();
+    final GatewaySenderStats statistics = ((AbstractGatewaySender) sender).getStatistics();
 
     assertEquals(eventsReceived, statistics.getEventsReceived());
-    assertEquals(eventsReceived, (statistics.getEventsQueued()
-        + statistics.getUnprocessedTokensAddedByPrimary() + statistics
-        .getUnprocessedEventsRemovedByPrimary()));
+    assertEquals(eventsReceived, (statistics.getEventsQueued() + statistics.getUnprocessedTokensAddedByPrimary() + statistics.getUnprocessedEventsRemovedByPrimary()));
   }
 
   public static void checkBatchStats(String senderId, final int batches) {
@@ -1308,14 +1218,12 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final GatewaySenderStats statistics = ((AbstractGatewaySender)sender)
-        .getStatistics();
+    final GatewaySenderStats statistics = ((AbstractGatewaySender) sender).getStatistics();
     assert (statistics.getBatchesDistributed() >= batches);
     assertEquals(0, statistics.getBatchesRedistributed());
   }
 
-  public static void checkBatchStats(String senderId,
-      final boolean batchesDistributed, final boolean batchesRedistributed) {
+  public static void checkBatchStats(String senderId, final boolean batchesDistributed, final boolean batchesRedistributed) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
     for (GatewaySender s : senders) {
@@ -1324,11 +1232,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final GatewaySenderStats statistics = ((AbstractGatewaySender)sender)
-        .getStatistics();
+    final GatewaySenderStats statistics = ((AbstractGatewaySender) sender).getStatistics();
     assertEquals(batchesDistributed, (statistics.getBatchesDistributed() > 0));
-    assertEquals(batchesRedistributed,
-        (statistics.getBatchesRedistributed() > 0));
+    assertEquals(batchesRedistributed, (statistics.getBatchesRedistributed() > 0));
   }
 
   public static void checkUnProcessedStats(String senderId, int events) {
@@ -1340,38 +1246,31 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final GatewaySenderStats statistics = ((AbstractGatewaySender)sender)
-        .getStatistics();
-    assertEquals(events,
-        (statistics.getUnprocessedEventsAddedBySecondary() + statistics
-            .getUnprocessedTokensRemovedBySecondary()));
-    assertEquals(events,
-        (statistics.getUnprocessedEventsRemovedByPrimary() + statistics
-            .getUnprocessedTokensAddedByPrimary()));
+    final GatewaySenderStats statistics = ((AbstractGatewaySender) sender).getStatistics();
+    assertEquals(events, (statistics.getUnprocessedEventsAddedBySecondary() + statistics.getUnprocessedTokensRemovedBySecondary()));
+    assertEquals(events, (statistics.getUnprocessedEventsRemovedByPrimary() + statistics.getUnprocessedTokensAddedByPrimary()));
   }
 
-  public static void waitForSenderRunningState(String senderId){
+  public static void waitForSenderRunningState(String senderId) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       final GatewaySender sender = getGatewaySenderById(senders, senderId);
-      Awaitility.await().atMost(300,TimeUnit.SECONDS).until(() -> assertEquals("Expected sender isRunning state to "
-        + "be true but is false", true, (sender != null && sender.isRunning())));
+      Awaitility.await().atMost(300, TimeUnit.SECONDS).until(() -> assertEquals("Expected sender isRunning state to " + "be true but is false", true, (sender != null && sender.isRunning())));
     } finally {
       exln.remove();
     }
   }
 
-  public static void waitForSenderToBecomePrimary(String senderId){
-    Set<GatewaySender> senders = ((GemFireCacheImpl)cache).getAllGatewaySenders();
+  public static void waitForSenderToBecomePrimary(String senderId) {
+    Set<GatewaySender> senders = ((GemFireCacheImpl) cache).getAllGatewaySenders();
     final GatewaySender sender = getGatewaySenderById(senders, senderId);
-    Awaitility.await().atMost(10,TimeUnit.SECONDS).until(() -> assertEquals("Expected sender primary state to "
-      + "be true but is false", true, (sender != null && ((AbstractGatewaySender)sender).isPrimary())));
+    Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> assertEquals("Expected sender primary state to " + "be true but is false", true, (sender != null && ((AbstractGatewaySender) sender).isPrimary())));
   }
 
   private static GatewaySender getGatewaySenderById(Set<GatewaySender> senders, String senderId) {
-    for(GatewaySender s : senders){
-      if(s.getId().equals(senderId)){
+    for (GatewaySender s : senders) {
+      if (s.getId().equals(senderId)) {
         return s;
       }
     }
@@ -1379,7 +1278,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return null;
   }
 
-  public static HashMap checkQueue(){
+  public static HashMap checkQueue() {
     HashMap listenerAttrs = new HashMap();
     listenerAttrs.put("Create", listener1.createList);
     listenerAttrs.put("Update", listener1.updateList);
@@ -1387,7 +1286,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return listenerAttrs;
   }
 
-  public static void checkQueueOnSecondary (final Map primaryUpdatesMap){
+  public static void checkQueueOnSecondary(final Map primaryUpdatesMap) {
     final HashMap secondaryUpdatesMap = new HashMap();
     secondaryUpdatesMap.put("Create", listener1.createList);
     secondaryUpdatesMap.put("Update", listener1.updateList);
@@ -1397,12 +1296,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       secondaryUpdatesMap.put("Create", listener1.createList);
       secondaryUpdatesMap.put("Update", listener1.updateList);
       secondaryUpdatesMap.put("Destroy", listener1.destroyList);
-      assertEquals("Expected secondary map to be " + primaryUpdatesMap + " but it is " + secondaryUpdatesMap,
-        true,secondaryUpdatesMap.equals(primaryUpdatesMap));
+      assertEquals("Expected secondary map to be " + primaryUpdatesMap + " but it is " + secondaryUpdatesMap, true, secondaryUpdatesMap.equals(primaryUpdatesMap));
     });
   }
 
-  public static HashMap checkQueue2(){
+  public static HashMap checkQueue2() {
     HashMap listenerAttrs = new HashMap();
     listenerAttrs.put("Create", listener2.createList);
     listenerAttrs.put("Update", listener2.updateList);
@@ -1410,9 +1308,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return listenerAttrs;
   }
 
-  public static HashMap checkPR(String regionName){
-    PartitionedRegion region = (PartitionedRegion)cache.getRegion(regionName);
-    QueueListener listener = (QueueListener)region.getCacheListener();
+  public static HashMap checkPR(String regionName) {
+    PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
+    QueueListener listener = (QueueListener) region.getCacheListener();
 
     HashMap listenerAttrs = new HashMap();
     listenerAttrs.put("Create", listener.createList);
@@ -1421,41 +1319,40 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return listenerAttrs;
   }
 
-  public static HashMap checkBR(String regionName, int numBuckets){
-    PartitionedRegion region = (PartitionedRegion)cache.getRegion(regionName);
+  public static HashMap checkBR(String regionName, int numBuckets) {
+    PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
     HashMap listenerAttrs = new HashMap();
     for (int i = 0; i < numBuckets; i++) {
       BucketRegion br = region.getBucketRegion(i);
-      QueueListener listener = (QueueListener)br.getCacheListener();
-      listenerAttrs.put("Create"+i, listener.createList);
-      listenerAttrs.put("Update"+i, listener.updateList);
-      listenerAttrs.put("Destroy"+i, listener.destroyList);
+      QueueListener listener = (QueueListener) br.getCacheListener();
+      listenerAttrs.put("Create" + i, listener.createList);
+      listenerAttrs.put("Update" + i, listener.updateList);
+      listenerAttrs.put("Destroy" + i, listener.destroyList);
     }
     return listenerAttrs;
   }
 
-  public static HashMap checkQueue_BR(String senderId, int numBuckets){
+  public static HashMap checkQueue_BR(String senderId, int numBuckets) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
-    for(GatewaySender s : senders){
-      if(s.getId().equals(senderId)){
+    for (GatewaySender s : senders) {
+      if (s.getId().equals(senderId)) {
         sender = s;
         break;
       }
     }
-    RegionQueue parallelQueue = ((AbstractGatewaySender)sender)
-    .getQueues().toArray(new RegionQueue[1])[0];
+    RegionQueue parallelQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
 
-    PartitionedRegion region = (PartitionedRegion)parallelQueue.getRegion();
+    PartitionedRegion region = (PartitionedRegion) parallelQueue.getRegion();
     HashMap listenerAttrs = new HashMap();
     for (int i = 0; i < numBuckets; i++) {
       BucketRegion br = region.getBucketRegion(i);
       if (br != null) {
-        QueueListener listener = (QueueListener)br.getCacheListener();
+        QueueListener listener = (QueueListener) br.getCacheListener();
         if (listener != null) {
-          listenerAttrs.put("Create"+i, listener.createList);
-          listenerAttrs.put("Update"+i, listener.updateList);
-          listenerAttrs.put("Destroy"+i, listener.destroyList);
+          listenerAttrs.put("Create" + i, listener.createList);
+          listenerAttrs.put("Update" + i, listener.updateList);
+          listenerAttrs.put("Destroy" + i, listener.destroyList);
         }
       }
     }
@@ -1467,8 +1364,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     test.addCacheListenerOnBucketRegion(regionName, numBuckets);
   }
 
-  private void addCacheListenerOnBucketRegion(String regionName, int numBuckets){
-    PartitionedRegion region = (PartitionedRegion)cache.getRegion(regionName);
+  private void addCacheListenerOnBucketRegion(String regionName, int numBuckets) {
+    PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
     for (int i = 0; i < numBuckets; i++) {
       BucketRegion br = region.getBucketRegion(i);
       AttributesMutator mutator = br.getAttributesMutator();
@@ -1482,19 +1379,18 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     test.addCacheListenerOnQueueBucketRegion(senderId, numBuckets);
   }
 
-  private void addCacheListenerOnQueueBucketRegion(String senderId, int numBuckets){
+  private void addCacheListenerOnQueueBucketRegion(String senderId, int numBuckets) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
-    for(GatewaySender s : senders){
-      if(s.getId().equals(senderId)){
+    for (GatewaySender s : senders) {
+      if (s.getId().equals(senderId)) {
         sender = s;
         break;
       }
     }
-    RegionQueue parallelQueue = ((AbstractGatewaySender)sender)
-    .getQueues().toArray(new RegionQueue[1])[0];
+    RegionQueue parallelQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
 
-    PartitionedRegion region = (PartitionedRegion)parallelQueue.getRegion();
+    PartitionedRegion region = (PartitionedRegion) parallelQueue.getRegion();
     for (int i = 0; i < numBuckets; i++) {
       BucketRegion br = region.getBucketRegion(i);
       if (br != null) {
@@ -1506,21 +1402,22 @@ public class WANTestBase extends JUnit4DistributedTestCase {
 
   }
 
-  public static void addQueueListener(String senderId, boolean isParallel){
+  public static void addQueueListener(String senderId, boolean isParallel) {
     WANTestBase test = new WANTestBase();
     test.addCacheQueueListener(senderId, isParallel);
   }
 
-  public static void addSecondQueueListener(String senderId, boolean isParallel){
+  public static void addSecondQueueListener(String senderId, boolean isParallel) {
     WANTestBase test = new WANTestBase();
     test.addSecondCacheQueueListener(senderId, isParallel);
   }
 
-  public static void addListenerOnRegion(String regionName){
+  public static void addListenerOnRegion(String regionName) {
     WANTestBase test = new WANTestBase();
     test.addCacheListenerOnRegion(regionName);
   }
-  private void addCacheListenerOnRegion(String regionName){
+
+  private void addCacheListenerOnRegion(String regionName) {
     Region region = cache.getRegion(regionName);
     AttributesMutator mutator = region.getAttributesMutator();
     listener1 = new QueueListener();
@@ -1530,22 +1427,20 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   private void addCacheQueueListener(String senderId, boolean isParallel) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
-    for(GatewaySender s : senders){
-      if(s.getId().equals(senderId)){
+    for (GatewaySender s : senders) {
+      if (s.getId().equals(senderId)) {
         sender = s;
         break;
       }
     }
     listener1 = new QueueListener();
     if (!isParallel) {
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
-      for(RegionQueue q: queues) {
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+      for (RegionQueue q : queues) {
         q.addCacheListener(listener1);
       }
-    }
-    else {
-      RegionQueue parallelQueue = ((AbstractGatewaySender)sender)
-      .getQueues().toArray(new RegionQueue[1])[0];
+    } else {
+      RegionQueue parallelQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
       parallelQueue.addCacheListener(listener1);
     }
   }
@@ -1561,22 +1456,19 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
     listener2 = new QueueListener();
     if (!isParallel) {
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
-      for(RegionQueue q: queues) {
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+      for (RegionQueue q : queues) {
         q.addCacheListener(listener2);
       }
-    }
-    else {
-    	RegionQueue parallelQueue = ((AbstractGatewaySender)sender)
-      .getQueues().toArray(new RegionQueue[1])[0];
+    } else {
+      RegionQueue parallelQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
       parallelQueue.addCacheListener(listener2);
     }
   }
 
   public static void pauseSender(String senderId) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       GatewaySender sender = null;
@@ -1597,8 +1489,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
 
   public static void resumeSender(String senderId) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       GatewaySender sender = null;
@@ -1617,8 +1508,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
 
   public static void stopSender(String senderId) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       GatewaySender sender = null;
@@ -1636,8 +1526,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
 
       Set<RegionQueue> queues = null;
       if (eventProcessor instanceof ConcurrentSerialGatewaySenderEventProcessor) {
-        queues = ((ConcurrentSerialGatewaySenderEventProcessor)eventProcessor).getQueues();
-        for (RegionQueue queue: queues) {
+        queues = ((ConcurrentSerialGatewaySenderEventProcessor) eventProcessor).getQueues();
+        for (RegionQueue queue : queues) {
           if (queue instanceof SerialGatewaySenderQueue) {
             assertFalse(((SerialGatewaySenderQueue) queue).isRemovalThreadAlive());
           }
@@ -1667,12 +1557,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static GatewaySenderFactory configureGateway(DiskStoreFactory dsf, File[] dirs1, String dsName,
-      boolean isParallel, Integer maxMemory,
-      Integer batchSize, boolean isConflation, boolean isPersistent,
-      GatewayEventFilter filter, boolean isManualStart, int numDispatchers, OrderPolicy policy) {
+  public static GatewaySenderFactory configureGateway(DiskStoreFactory dsf, File[] dirs1, String dsName, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, boolean isManualStart, int numDispatchers, OrderPolicy policy) {
 
-    InternalGatewaySenderFactory gateway = (InternalGatewaySenderFactory)cache.createGatewaySenderFactory();
+    InternalGatewaySenderFactory gateway = (InternalGatewaySenderFactory) cache.createGatewaySenderFactory();
     gateway.setParallel(isParallel);
     gateway.setMaximumQueueMemory(maxMemory);
     gateway.setBatchSize(batchSize);
@@ -1687,8 +1574,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
     if (isPersistent) {
       gateway.setPersistenceEnabled(true);
-      gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName)
-          .getName());
+      gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName).getName());
     } else {
       DiskStore store = dsf.setDiskDirs(dirs1).create(dsName);
       gateway.setDiskStoreName(store.getName());
@@ -1696,14 +1582,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return gateway;
   }
 
-  public static void createSender(String dsName, int remoteDsId,
-      boolean isParallel, Integer maxMemory,
-      Integer batchSize, boolean isConflation, boolean isPersistent,
-      GatewayEventFilter filter, boolean isManualStart) {
+  public static void createSender(String dsName, int remoteDsId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, boolean isManualStart) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
     try {
-      File persistentDirectory = new File(dsName + "_disk_"
-          + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+      File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
       persistentDirectory.mkdir();
       DiskStoreFactory dsf = cache.createDiskStoreFactory();
       File[] dirs1 = new File[] { persistentDirectory };
@@ -1715,18 +1597,14 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createSenderWithMultipleDispatchers(String dsName, int remoteDsId,
-	boolean isParallel, Integer maxMemory,
-	Integer batchSize, boolean isConflation, boolean isPersistent,
-	GatewayEventFilter filter, boolean isManualStart, int numDispatchers, OrderPolicy orderPolicy) {
-	  final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
+  public static void createSenderWithMultipleDispatchers(String dsName, int remoteDsId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, boolean isManualStart, int numDispatchers, OrderPolicy orderPolicy) {
+    final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
     try {
       File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
       persistentDirectory.mkdir();
       DiskStoreFactory dsf = cache.createDiskStoreFactory();
       File[] dirs1 = new File[] { persistentDirectory };
-      GatewaySenderFactory gateway = configureGateway(dsf, dirs1, dsName,isParallel, maxMemory, batchSize, isConflation, isPersistent, filter,
-          isManualStart, numDispatchers, orderPolicy);
+      GatewaySenderFactory gateway = configureGateway(dsf, dirs1, dsName, isParallel, maxMemory, batchSize, isConflation, isPersistent, filter, isManualStart, numDispatchers, orderPolicy);
       gateway.create(dsName, remoteDsId);
 
     } finally {
@@ -1734,27 +1612,22 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createSenderWithoutDiskStore(String dsName, int remoteDsId, Integer maxMemory,
-      Integer batchSize, boolean isConflation, boolean isManualStart) {
+  public static void createSenderWithoutDiskStore(String dsName, int remoteDsId, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isManualStart) {
 
-      GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
-      gateway.setParallel(true);
-      gateway.setMaximumQueueMemory(maxMemory);
-      gateway.setBatchSize(batchSize);
-      gateway.setManualStart(isManualStart);
-      //set dispatcher threads
-      gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-      gateway.setBatchConflationEnabled(isConflation);
-      gateway.create(dsName, remoteDsId);
+    GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
+    gateway.setParallel(true);
+    gateway.setMaximumQueueMemory(maxMemory);
+    gateway.setBatchSize(batchSize);
+    gateway.setManualStart(isManualStart);
+    //set dispatcher threads
+    gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
+    gateway.setBatchConflationEnabled(isConflation);
+    gateway.create(dsName, remoteDsId);
   }
 
-  public static void createConcurrentSender(String dsName, int remoteDsId,
-      boolean isParallel, Integer maxMemory, Integer batchSize,
-      boolean isConflation, boolean isPersistent, GatewayEventFilter filter,
-      boolean isManualStart, int concurrencyLevel, OrderPolicy policy) {
+  public static void createConcurrentSender(String dsName, int remoteDsId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, boolean isManualStart, int concurrencyLevel, OrderPolicy policy) {
 
-    File persistentDirectory = new File(dsName + "_disk_"
-        + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+    File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
     persistentDirectory.mkdir();
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     File[] dirs1 = new File[] { persistentDirectory };
@@ -1762,17 +1635,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     gateway.create(dsName, remoteDsId);
   }
 
-  public static void createSenderForValidations(String dsName, int remoteDsId,
-      boolean isParallel, Integer alertThreshold,
-      boolean isConflation, boolean isPersistent,
-      List<GatewayEventFilter> eventFilters,
-      List<GatewayTransportFilter> transportFilters, boolean isManualStart,
-      boolean isDiskSync) {
-    IgnoredException exp1 = IgnoredException.addIgnoredException(RegionDestroyedException.class
-        .getName());
+  public static void createSenderForValidations(String dsName, int remoteDsId, boolean isParallel, Integer alertThreshold, boolean isConflation, boolean isPersistent, List<GatewayEventFilter> eventFilters, List<GatewayTransportFilter> transportFilters, boolean isManualStart, boolean isDiskSync) {
+    IgnoredException exp1 = IgnoredException.addIgnoredException(RegionDestroyedException.class.getName());
     try {
-      File persistentDirectory = new File(dsName + "_disk_"
-          + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+      File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
       persistentDirectory.mkdir();
       DiskStoreFactory dsf = cache.createDiskStoreFactory();
       File[] dirs1 = new File[] { persistentDirectory };
@@ -1781,8 +1647,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
         gateway.setParallel(true);
         gateway.setAlertThreshold(alertThreshold);
-        ((InternalGatewaySenderFactory)gateway)
-            .setLocatorDiscoveryCallback(new MyLocatorCallback());
+        ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
         if (eventFilters != null) {
           for (GatewayEventFilter filter : eventFilters) {
             gateway.addGatewayEventFilter(filter);
@@ -1795,10 +1660,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         }
         if (isPersistent) {
           gateway.setPersistenceEnabled(true);
-          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1)
-              .create(dsName + "_Parallel").getName());
-        }
-        else {
+          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName + "_Parallel").getName());
+        } else {
           DiskStore store = dsf.setDiskDirs(dirs1).create(dsName + "_Parallel");
           gateway.setDiskStoreName(store.getName());
         }
@@ -1809,15 +1672,13 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
         gateway.create(dsName, remoteDsId);
 
-      }
-      else {
+      } else {
         GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
         gateway.setAlertThreshold(alertThreshold);
         gateway.setManualStart(isManualStart);
         //set dispatcher threads
         gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-        ((InternalGatewaySenderFactory)gateway)
-            .setLocatorDiscoveryCallback(new MyLocatorCallback());
+        ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
         if (eventFilters != null) {
           for (GatewayEventFilter filter : eventFilters) {
             gateway.addGatewayEventFilter(filter);
@@ -1831,10 +1692,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         gateway.setBatchConflationEnabled(isConflation);
         if (isPersistent) {
           gateway.setPersistenceEnabled(true);
-          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1)
-              .create(dsName + "_Serial").getName());
-        }
-        else {
+          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName + "_Serial").getName());
+        } else {
           DiskStore store = dsf.setDiskDirs(dirs1).create(dsName + "_Serial");
           gateway.setDiskStoreName(store.getName());
         }
@@ -1846,25 +1705,20 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static String createSenderWithDiskStore(String dsName, int remoteDsId,
-      boolean isParallel, Integer maxMemory,
-      Integer batchSize, boolean isConflation, boolean isPersistent,
-      GatewayEventFilter filter, String dsStore, boolean isManualStart) {
+  public static String createSenderWithDiskStore(String dsName, int remoteDsId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, String dsStore, boolean isManualStart) {
     File persistentDirectory = null;
     if (dsStore == null) {
-      persistentDirectory = new File(dsName + "_disk_"
-          + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
-    }
-    else {
+      persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+    } else {
       persistentDirectory = new File(dsStore);
     }
     LogWriterUtils.getLogWriter().info("The ds is : " + persistentDirectory.getName());
 
     persistentDirectory.mkdir();
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
-    File [] dirs1 = new File[] {persistentDirectory};
+    File[] dirs1 = new File[] { persistentDirectory };
 
-    if(isParallel) {
+    if (isParallel) {
       GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
       gateway.setParallel(true);
       gateway.setMaximumQueueMemory(maxMemory);
@@ -1872,17 +1726,16 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       gateway.setManualStart(isManualStart);
       //set dispatcher threads
       gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-      ((InternalGatewaySenderFactory)gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
+      ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
       if (filter != null) {
         gateway.addGatewayEventFilter(filter);
       }
-      if(isPersistent) {
+      if (isPersistent) {
         gateway.setPersistenceEnabled(true);
         String dsname = dsf.setDiskDirs(dirs1).create(dsName).getName();
         gateway.setDiskStoreName(dsname);
         LogWriterUtils.getLogWriter().info("The DiskStoreName is : " + dsname);
-      }
-      else {
+      } else {
         DiskStore store = dsf.setDiskDirs(dirs1).create(dsName);
         gateway.setDiskStoreName(store.getName());
         LogWriterUtils.getLogWriter().info("The ds is : " + store.getName());
@@ -1890,23 +1743,22 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       gateway.setBatchConflationEnabled(isConflation);
       gateway.create(dsName, remoteDsId);
 
-    }else {
+    } else {
       GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
       gateway.setMaximumQueueMemory(maxMemory);
       gateway.setBatchSize(batchSize);
       gateway.setManualStart(isManualStart);
       //set dispatcher threads
       gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-      ((InternalGatewaySenderFactory)gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
+      ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
       if (filter != null) {
         gateway.addGatewayEventFilter(filter);
       }
       gateway.setBatchConflationEnabled(isConflation);
-      if(isPersistent) {
+      if (isPersistent) {
         gateway.setPersistenceEnabled(true);
         gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName).getName());
-      }
-      else {
+      } else {
         DiskStore store = dsf.setDiskDirs(dirs1).create(dsName);
 
         gateway.setDiskStoreName(store.getName());
@@ -1916,35 +1768,27 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return persistentDirectory.getName();
   }
 
-
-  public static void createSenderWithListener(String dsName, int remoteDsName,
-      boolean isParallel, Integer maxMemory,
-      Integer batchSize, boolean isConflation, boolean isPersistent,
-      GatewayEventFilter filter, boolean attachTwoListeners, boolean isManualStart) {
-    File persistentDirectory = new File(dsName + "_disk_"
-        + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+  public static void createSenderWithListener(String dsName, int remoteDsName, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, boolean attachTwoListeners, boolean isManualStart) {
+    File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
     persistentDirectory.mkdir();
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     File[] dirs1 = new File[] { persistentDirectory };
 
     if (isParallel) {
-      GatewaySenderFactory gateway = cache
-          .createGatewaySenderFactory();
+      GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
       gateway.setParallel(true);
       gateway.setMaximumQueueMemory(maxMemory);
       gateway.setBatchSize(batchSize);
       gateway.setManualStart(isManualStart);
       //set dispatcher threads
       gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-      ((InternalGatewaySenderFactory)gateway)
-          .setLocatorDiscoveryCallback(new MyLocatorCallback());
+      ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
       if (filter != null) {
         gateway.addGatewayEventFilter(filter);
       }
       if (isPersistent) {
         gateway.setPersistenceEnabled(true);
-        gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName)
-            .getName());
+        gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName).getName());
       } else {
         DiskStore store = dsf.setDiskDirs(dirs1).create(dsName);
         gateway.setDiskStoreName(store.getName());
@@ -1953,35 +1797,32 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       gateway.create(dsName, remoteDsName);
 
     } else {
-      GatewaySenderFactory gateway = cache
-          .createGatewaySenderFactory();
+      GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
       gateway.setMaximumQueueMemory(maxMemory);
       gateway.setBatchSize(batchSize);
       gateway.setManualStart(isManualStart);
       //set dispatcher threads
       gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-      ((InternalGatewaySenderFactory)gateway)
-          .setLocatorDiscoveryCallback(new MyLocatorCallback());
+      ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
       if (filter != null) {
         gateway.addGatewayEventFilter(filter);
       }
       gateway.setBatchConflationEnabled(isConflation);
       if (isPersistent) {
         gateway.setPersistenceEnabled(true);
-        gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName)
-            .getName());
+        gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName).getName());
       } else {
         DiskStore store = dsf.setDiskDirs(dirs1).create(dsName);
         gateway.setDiskStoreName(store.getName());
       }
 
       eventListener1 = new MyGatewaySenderEventListener();
-      ((InternalGatewaySenderFactory)gateway).addAsyncEventListener(eventListener1);
+      ((InternalGatewaySenderFactory) gateway).addAsyncEventListener(eventListener1);
       if (attachTwoListeners) {
         eventListener2 = new MyGatewaySenderEventListener2();
-        ((InternalGatewaySenderFactory)gateway).addAsyncEventListener(eventListener2);
+        ((InternalGatewaySenderFactory) gateway).addAsyncEventListener(eventListener2);
       }
-      ((InternalGatewaySenderFactory)gateway).create(dsName);
+      ((InternalGatewaySenderFactory) gateway).create(dsName);
     }
   }
 
@@ -2000,11 +1841,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     GatewayReceiver receiver = fact.create();
     try {
       receiver.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-      Assert.fail("Test " + getTestMethodName()
-          + " failed to start GatewayReceiver on port " + port, e);
+      Assert.fail("Test " + getTestMethodName() + " failed to start GatewayReceiver on port " + port, e);
     }
     return port;
   }
@@ -2014,8 +1853,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-    props.setProperty(LOCATORS, "localhost[" + locPort
-        + "]");
+    props.setProperty(LOCATORS, "localhost[" + locPort + "]");
 
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
@@ -2029,17 +1867,15 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     try {
       receiver.start();
       fail("Expected GatewayReceiver Exception");
-    }
-    catch (GatewayReceiverException gRE){
+    } catch (GatewayReceiverException gRE) {
       LogWriterUtils.getLogWriter().fine("Got the GatewayReceiverException", gRE);
       assertTrue(gRE.getMessage().contains("Failed to create server socket on"));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-      fail("Test " + test.getName()
-          + " failed to start GatewayReceiver on port " + port);
+      fail("Test " + test.getName() + " failed to start GatewayReceiver on port " + port);
     }
   }
+
   public static int createReceiverWithSSL(int locPort) {
     WANTestBase test = new WANTestBase();
 
@@ -2052,11 +1888,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     gemFireProps.put(GATEWAY_SSL_REQUIRE_AUTHENTICATION, "true");
 
     gemFireProps.put(GATEWAY_SSL_KEYSTORE_TYPE, "jks");
-    gemFireProps.put(GATEWAY_SSL_KEYSTORE,
-        TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/cacheserver.keystore"));
+    gemFireProps.put(GATEWAY_SSL_KEYSTORE, TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/cacheserver.keystore"));
     gemFireProps.put(GATEWAY_SSL_KEYSTORE_PASSWORD, "password");
-    gemFireProps.put(GATEWAY_SSL_TRUSTSTORE,
-        TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/cacheserver.truststore"));
+    gemFireProps.put(GATEWAY_SSL_TRUSTSTORE, TestUtil.getResourcePath(WANTestBase.class, "/org/apache/geode/cache/client/internal/cacheserver.truststore"));
     gemFireProps.put(GATEWAY_SSL_TRUSTSTORE_PASSWORD, "password");
 
     gemFireProps.setProperty(MCAST_PORT, "0");
@@ -2074,11 +1908,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     GatewayReceiver receiver = fact.create();
     try {
       receiver.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-      fail("Test " + test.getName()
-          + " failed to start GatewayReceiver on port " + port);
+      fail("Test " + test.getName() + " failed to start GatewayReceiver on port " + port);
     }
     return port;
   }
@@ -2087,8 +1919,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + locPort
-        + "]");
+    props.setProperty(LOCATORS, "localhost[" + locPort + "]");
 
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
@@ -2100,11 +1931,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     GatewayReceiver receiver = fact.create();
     try {
       receiver.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-      fail("Test " + test.getName()
-          + " failed to start GatewayReceiver on port " + receiverPort);
+      fail("Test " + test.getName() + " failed to start GatewayReceiver on port " + receiverPort);
     }
     CacheServer server = cache.addCacheServer();
     int serverPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -2121,8 +1950,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + locPort
-        + "]");
+    props.setProperty(LOCATORS, "localhost[" + locPort + "]");
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
 
@@ -2138,8 +1966,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return port;
   }
 
-  public static void createClientWithLocator(int port0,String host,
-      String regionName) {
+  public static void createClientWithLocator(int port0, String host, String regionName) {
     createClientWithLocator(port0, host);
 
     AttributesFactory factory = new AttributesFactory();
@@ -2149,9 +1976,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     region = cache.createRegion(regionName, attrs);
     region.registerInterest("ALL_KEYS");
     assertNotNull(region);
-    LogWriterUtils.getLogWriter().info(
-        "Distributed Region " + regionName + " created Successfully :"
-            + region.toString());
+    LogWriterUtils.getLogWriter().info("Distributed Region " + regionName + " created Successfully :" + region.toString());
   }
 
   public static void createClientWithLocator(final int port0, final String host) {
@@ -2167,11 +1992,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     CacheServerTestUtil.disableShufflingOfEndpoints();
     Pool p;
     try {
-      p = PoolManager.createFactory().addLocator(host, port0)
-          .setPingInterval(250).setSubscriptionEnabled(true)
-          .setSubscriptionRedundancy(-1).setReadTimeout(2000)
-          .setSocketBufferSize(1000).setMinConnections(6).setMaxConnections(10)
-          .setRetryAttempts(3).create("pool");
+      p = PoolManager.createFactory().addLocator(host, port0).setPingInterval(250).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(2000).setSocketBufferSize(1000).setMinConnections(6).setMaxConnections(10).setRetryAttempts(3).create("pool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -2188,10 +2009,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     cacheConfig.setPdxPersistent(true);
     cacheConfig.setPdxDiskStore("pdxStore");
     cache = GemFireCacheImpl.create(ds, false, cacheConfig);
-    cache.createDiskStoreFactory()
-      .setDiskDirs(new File[] { pdxDir})
-      .setMaxOplogSize(1)
-      .create("pdxStore");
+    cache.createDiskStoreFactory().setDiskDirs(new File[] { pdxDir }).setMaxOplogSize(1).create("pdxStore");
     GatewayReceiverFactory fact = cache.createGatewayReceiverFactory();
     int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
     fact.setStartPort(port);
@@ -2200,11 +2018,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     GatewayReceiver receiver = fact.create();
     try {
       receiver.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-      fail("Test " + test.getName()
-          + " failed to start GatewayReceiver on port " + port);
+      fail("Test " + test.getName() + " failed to start GatewayReceiver on port " + port);
     }
     return port;
   }
@@ -2213,10 +2029,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     CacheTransactionManager txMgr = cache.getCacheTransactionManager();
     txMgr.setDistributed(true);
 
-    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class
-        .getName());
-    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class
-        .getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class.getName());
+    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class.getName());
     try {
       Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
@@ -2231,12 +2045,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-
   public static void doPuts(String regionName, int numPuts, Object value) {
-    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class
-        .getName());
-    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class
-        .getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class.getName());
+    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class.getName());
     try {
       Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
@@ -2250,10 +2061,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void doPuts(String regionName, int numPuts) {
-    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class
-        .getName());
-    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class
-        .getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class.getName());
+    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class.getName());
     try {
       Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
@@ -2295,14 +2104,13 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     assertNotNull(r);
     for (long i = 0; i < numPuts; i++) {
       Map putAllMap = new HashMap();
-      for(long j =0; j< size; j++) {
-        putAllMap.put((size* i)+j,i);
+      for (long j = 0; j < size; j++) {
+        putAllMap.put((size * i) + j, i);
       }
       r.putAll(putAllMap, "putAllCallback");
       putAllMap.clear();
     }
   }
-
 
   public static void doPutsWithKeyAsString(String regionName, int numPuts) {
     Region r = cache.getRegion(Region.SEPARATOR + regionName);
@@ -2315,7 +2123,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   public static void putGivenKeyValue(String regionName, Map keyValues) {
     Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
-    for (Object key: keyValues.keySet()) {
+    for (Object key : keyValues.keySet()) {
       r.put(key, keyValues.get(key));
     }
   }
@@ -2327,13 +2135,12 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   public static void destroyRegion(String regionName, final int min) {
     final Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
-    Awaitility.await().atMost(30,TimeUnit.SECONDS).until(() -> r.size() > min);
+    Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> r.size() > min);
     r.destroyRegion();
   }
 
   public static void localDestroyRegion(String regionName) {
-    IgnoredException exp = IgnoredException.addIgnoredException(PRLocallyDestroyedException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(PRLocallyDestroyedException.class.getName());
     try {
       Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
@@ -2342,7 +2149,6 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       exp.remove();
     }
   }
-
 
   public static Map putCustomerPartitionedRegion(int numPuts) {
     String valueSuffix = "";
@@ -2354,8 +2160,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     return putCustomerPartitionedRegion(numPuts, valueSuffix);
   }
 
-  protected static Map putCustomerPartitionedRegion(int numPuts,
-      String valueSuffix) {
+  protected static Map putCustomerPartitionedRegion(int numPuts, String valueSuffix) {
     assertNotNull(cache);
     assertNotNull(customerRegion);
     Map custKeyValues = new HashMap();
@@ -2365,13 +2170,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       try {
         customerRegion.put(custid, customer);
         assertTrue(customerRegion.containsKey(custid));
-        assertEquals(customer,customerRegion.get(custid));
+        assertEquals(customer, customerRegion.get(custid));
         custKeyValues.put(custid, customer);
-      }
-      catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-            "putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ",
-            e);
+      } catch (Exception e) {
+        org.apache.geode.test.dunit.Assert.fail("putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ", e);
       }
       LogWriterUtils.getLogWriter().info("Customer :- { " + custid + " : " + customer + " }");
     }
@@ -2391,13 +2193,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         orderRegion.put(orderId, order);
         orderKeyValues.put(orderId, order);
         assertTrue(orderRegion.containsKey(orderId));
-        assertEquals(order,orderRegion.get(orderId));
+        assertEquals(order, orderRegion.get(orderId));
 
-      }
-      catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-            "putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
-            e);
+      } catch (Exception e) {
+        org.apache.geode.test.dunit.Assert.fail("putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
       }
       LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
     }
@@ -2418,9 +2217,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         assertEquals(order, orderRegion.get(custid));
 
       } catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-            "putOrderPartitionedRegionUsingCustId : failed while doing put operation in OrderPartitionedRegion ",
-            e);
+        org.apache.geode.test.dunit.Assert.fail("putOrderPartitionedRegionUsingCustId : failed while doing put operation in OrderPartitionedRegion ", e);
       }
       LogWriterUtils.getLogWriter().info("Order :- { " + custid + " : " + order + " }");
     }
@@ -2440,13 +2237,10 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         orderRegion.put(orderId, order);
         orderKeyValues.put(orderId, order);
         assertTrue(orderRegion.containsKey(orderId));
-        assertEquals(order,orderRegion.get(orderId));
+        assertEquals(order, orderRegion.get(orderId));
 
-      }
-      catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-          "updateOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
-          e);
+      } catch (Exception e) {
+        org.apache.geode.test.dunit.Assert.fail("updateOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
       }
       LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
     }
@@ -2459,16 +2253,14 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     Map orderKeyValues = new HashMap();
     for (int i = 1; i <= numPuts; i++) {
       CustId custid = new CustId(i);
-      Order order =new Order("ORDER" + i + "_update");
+      Order order = new Order("ORDER" + i + "_update");
       try {
         orderRegion.put(custid, order);
         assertTrue(orderRegion.containsKey(custid));
         assertEquals(order, orderRegion.get(custid));
         orderKeyValues.put(custid, order);
       } catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-            "updateOrderPartitionedRegionUsingCustId : failed while doing put operation in OrderPartitionedRegion ",
-            e);
+        org.apache.geode.test.dunit.Assert.fail("updateOrderPartitionedRegionUsingCustId : failed while doing put operation in OrderPartitionedRegion ", e);
       }
       LogWriterUtils.getLogWriter().info("Order :- { " + custid + " : " + order + " }");
     }
@@ -2483,22 +2275,18 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       CustId custid = new CustId(i);
       int oid = i + 1;
       OrderId orderId = new OrderId(oid, custid);
-      int sid = oid  + 1;
+      int sid = oid + 1;
       ShipmentId shipmentId = new ShipmentId(sid, orderId);
       Shipment shipment = new Shipment("Shipment" + sid);
       try {
         shipmentRegion.put(shipmentId, shipment);
         assertTrue(shipmentRegion.containsKey(shipmentId));
-        assertEquals(shipment,shipmentRegion.get(shipmentId));
+        assertEquals(shipment, shipmentRegion.get(shipmentId));
         shipmentKeyValue.put(shipmentId, shipment);
+      } catch (Exception e) {
+        org.apache.geode.test.dunit.Assert.fail("putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ", e);
       }
-      catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-          "putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ",
-          e);
-      }
-      LogWriterUtils.getLogWriter().info(
-        "Shipment :- { " + shipmentId + " : " + shipment + " }");
+      LogWriterUtils.getLogWriter().info("Shipment :- { " + shipmentId + " : " + shipment + " }");
     }
     return shipmentKeyValue;
   }
@@ -2514,7 +2302,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       customerRegion.put(custid, customer);
       int oid = i + 1;
       OrderId orderId = new OrderId(oid, custid);
-      Order order = new Order("Order"+orderId);
+      Order order = new Order("Order" + orderId);
       orderRegion.put(orderId, order);
       int sid = oid + 1;
       ShipmentId shipmentId = new ShipmentId(sid, orderId);
@@ -2536,9 +2324,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         assertEquals(shipment, shipmentRegion.get(custid));
         shipmentKeyValue.put(custid, shipment);
       } catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-            "putShipmentPartitionedRegionUsingCustId : failed while doing put operation in ShipmentPartitionedRegion ",
-            e);
+        org.apache.geode.test.dunit.Assert.fail("putShipmentPartitionedRegionUsingCustId : failed while doing put operation in ShipmentPartitionedRegion ", e);
       }
       LogWriterUtils.getLogWriter().info("Shipment :- { " + custid + " : " + shipment + " }");
     }
@@ -2559,16 +2345,12 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       try {
         shipmentRegion.put(shipmentId, shipment);
         assertTrue(shipmentRegion.containsKey(shipmentId));
-        assertEquals(shipment,shipmentRegion.get(shipmentId));
+        assertEquals(shipment, shipmentRegion.get(shipmentId));
         shipmentKeyValue.put(shipmentId, shipment);
+      } catch (Exception e) {
+        org.apache.geode.test.dunit.Assert.fail("updateShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ", e);
       }
-      catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-          "updateShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ",
-          e);
-      }
-      LogWriterUtils.getLogWriter().info(
-        "Shipment :- { " + shipmentId + " : " + shipment + " }");
+      LogWriterUtils.getLogWriter().info("Shipment :- { " + shipmentId + " : " + shipment + " }");
     }
     return shipmentKeyValue;
   }
@@ -2586,9 +2368,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         assertEquals(shipment, shipmentRegion.get(custid));
         shipmentKeyValue.put(custid, shipment);
       } catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail(
-            "updateShipmentPartitionedRegionUsingCustId : failed while doing put operation in ShipmentPartitionedRegion ",
-            e);
+        org.apache.geode.test.dunit.Assert.fail("updateShipmentPartitionedRegionUsingCustId : failed while doing put operation in ShipmentPartitionedRegion ", e);
       }
       LogWriterUtils.getLogWriter().info("Shipment :- { " + custid + " : " + shipment + " }");
     }
@@ -2599,7 +2379,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
     for (int i = 0; i < numPuts; i++) {
-      r.put("Key_" + i, new SimpleClass(i, (byte)i));
+      r.put("Key_" + i, new SimpleClass(i, (byte) i));
     }
   }
 
@@ -2607,10 +2387,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
     for (int i = 0; i < numPuts; i++) {
-      r.put("Key_" + i, new SimpleClass1(false, (short) i, "" + i, i,"" +i ,""+ i,i, i));
+      r.put("Key_" + i, new SimpleClass1(false, (short) i, "" + i, i, "" + i, "" + i, i, i));
     }
   }
-
 
   public static void doTxPuts(String regionName) {
     Region r = cache.getRegion(Region.SEPARATOR + regionName);
@@ -2625,8 +2404,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void doNextPuts(String regionName, int start, int numPuts) {
-    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class.getName());
     try {
       Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
@@ -2652,14 +2430,14 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
     if (sender.isParallel()) {
       int totalSize = 0;
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
-      for( RegionQueue q : queues) {
-    	  ConcurrentParallelGatewaySenderQueue prQ = (ConcurrentParallelGatewaySenderQueue)q;
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+      for (RegionQueue q : queues) {
+        ConcurrentParallelGatewaySenderQueue prQ = (ConcurrentParallelGatewaySenderQueue) q;
         totalSize += prQ.size();
       }
-      assertEquals(numQueueEntries,totalSize);
+      assertEquals(numQueueEntries, totalSize);
     } else {
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
       int size = 0;
       for (RegionQueue q : queues) {
         size += q.size();
@@ -2673,8 +2451,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
    * @param senderId    Id of the ParallelGatewaySender
    * @param numQueueEntries     Expected number of ParallelGatewaySenderQueue entries
    */
-  public static void checkPRQLocalSize(String senderId,
-      final int numQueueEntries) {
+  public static void checkPRQLocalSize(String senderId, final int numQueueEntries) {
     GatewaySender sender = null;
     for (GatewaySender s : cache.getGatewaySenders()) {
       if (s.getId().equals(senderId)) {
@@ -2684,15 +2461,14 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
 
     if (sender.isParallel()) {
-      final Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
-      Awaitility.await().atMost(120,TimeUnit.SECONDS).until(() -> {
+      final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+      Awaitility.await().atMost(120, TimeUnit.SECONDS).until(() -> {
         int size = 0;
         for (RegionQueue q : queues) {
-          ConcurrentParallelGatewaySenderQueue prQ = (ConcurrentParallelGatewaySenderQueue)q;
+          ConcurrentParallelGatewaySenderQueue prQ = (ConcurrentParallelGatewaySenderQueue) q;
           size += prQ.localSize();
         }
-        assertEquals(" Expected local queue entries: " + numQueueEntries
-          + " but actual entries: " + size, numQueueEntries, size);
+        assertEquals(" Expected local queue entries: " + numQueueEntries + " but actual entries: " + size, numQueueEntries, size);
       });
     }
   }
@@ -2711,9 +2487,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
     if (sender.isParallel()) {
       int totalSize = 0;
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
-      for( RegionQueue q : queues) {
-        ConcurrentParallelGatewaySenderQueue prQ = (ConcurrentParallelGatewaySenderQueue)q;
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+      for (RegionQueue q : queues) {
+        ConcurrentParallelGatewaySenderQueue prQ = (ConcurrentParallelGatewaySenderQueue) q;
         totalSize += prQ.localSize();
       }
       return totalSize;
@@ -2723,17 +2499,15 @@ public class WANTestBase extends JUnit4DistributedTestCase {
 
   public static void doMultiThreadedPuts(String regionName, int numPuts) {
     final AtomicInteger ai = new AtomicInteger(-1);
-    final ExecutorService execService = Executors.newFixedThreadPool(5,
-        new ThreadFactory() {
-          AtomicInteger threadNum = new AtomicInteger();
+    final ExecutorService execService = Executors.newFixedThreadPool(5, new ThreadFactory() {
+      AtomicInteger threadNum = new AtomicInteger();
 
-          public Thread newThread(final Runnable r) {
-            Thread result = new Thread(r, "Client Put Thread-"
-                + threadNum.incrementAndGet());
-            result.setDaemon(true);
-            return result;
-          }
-        });
+      public Thread newThread(final Runnable r) {
+        Thread result = new Thread(r, "Client Put Thread-" + threadNum.incrementAndGet());
+        result.setDaemon(true);
+        return result;
+      }
+    });
 
     final Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
@@ -2759,18 +2533,13 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void validateRegionSize(String regionName, final int regionSize, long waitTimeInMilliSec) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(CacheClosedException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(CacheClosedException.class.getName());
     try {
       final Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
-      if ( regionSize != r.keySet().size()) {
-        Awaitility.await().atMost(waitTimeInMilliSec, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
-          .until(() ->
-            assertEquals("Expected region entries: " + regionSize + " but actual entries: " + r.keySet().size()
-              + " present region keyset " + r.keySet(), regionSize, r.keySet().size()));
+      if (regionSize != r.keySet().size()) {
+        Awaitility.await().atMost(waitTimeInMilliSec, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS).until(() -> assertEquals("Expected region entries: " + regionSize + " but actual entries: " + r.keySet().size() + " present region keyset " + r.keySet(), regionSize, r.keySet().size()));
       }
     } finally {
       exp.remove();
@@ -2790,8 +2559,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
 
     final Map eventsMap = ((MyAsyncEventListener) theListener).getEventsMap();
     assertNotNull(eventsMap);
-    Awaitility.await().atMost(60,TimeUnit.SECONDS).until(() -> assertEquals("Expected map entries: " + expectedSize
-      + " but actual entries: " + eventsMap.size(), expectedSize, eventsMap.size()));
+    Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> assertEquals("Expected map entries: " + expectedSize + " but actual entries: " + eventsMap.size(), expectedSize, eventsMap.size()));
   }
 
   public static void waitForAsyncQueueToGetEmpty(String asyncQueueId) {
@@ -2804,13 +2572,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final GatewaySender sender = ((AsyncEventQueueImpl)theAsyncEventQueue)
-        .getSender();
+    final GatewaySender sender = ((AsyncEventQueueImpl) theAsyncEventQueue).getSender();
 
     if (sender.isParallel()) {
-      final Set<RegionQueue> queues = ((AbstractGatewaySender)sender)
-          .getQueues();
-      Awaitility.await().atMost(60,TimeUnit.SECONDS).until(() -> {
+      final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+      Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> {
         int size = 0;
         for (RegionQueue q : queues) {
           size += q.size();
@@ -2818,9 +2584,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         assertEquals("Expected queue size to be : " + 0 + " but actual entries: " + size, 0, size);
       });
     } else {
-      Awaitility.await().atMost(60,TimeUnit.SECONDS).until(() -> {
-        Set<RegionQueue> queues = ((AbstractGatewaySender)sender)
-          .getQueues();
+      Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> {
+        Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
         int size = 0;
         for (RegionQueue q : queues) {
           size += q.size();
@@ -2840,7 +2605,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final Map eventsMap = ((MyAsyncEventListener)theListener).getEventsMap();
+    final Map eventsMap = ((MyAsyncEventListener) theListener).getEventsMap();
     assertNotNull(eventsMap);
     LogWriterUtils.getLogWriter().info("The events map size is " + eventsMap.size());
     return eventsMap.size();
@@ -2849,20 +2614,19 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   public static void validateRegionSize_PDX(String regionName, final int regionSize) {
     final Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
-    Awaitility.await().atMost(200,TimeUnit.SECONDS).until(() -> assertEquals("Expected region entries: " + regionSize +
-      " but actual entries: " + r.keySet().size() + " present region keyset " + r.keySet(),
-      true,(regionSize <= r.keySet().size())));
-    for(int i = 0 ; i < regionSize; i++){
-      LogWriterUtils.getLogWriter().info("For Key : Key_"+i + " : Values : " + r.get("Key_" + i));
-      assertEquals(new SimpleClass(i, (byte)i), r.get("Key_" + i));
+    Awaitility.await().atMost(200, TimeUnit.SECONDS).until(() -> assertEquals("Expected region entries: " + regionSize + " but actual entries: " + r.keySet().size() + " present region keyset " + r.keySet(), true, (regionSize <= r.keySet().size())));
+    for (int i = 0; i < regionSize; i++) {
+      LogWriterUtils.getLogWriter().info("For Key : Key_" + i + " : Values : " + r.get("Key_" + i));
+      assertEquals(new SimpleClass(i, (byte) i), r.get("Key_" + i));
     }
   }
 
   public static void validateQueueSizeStat(String id, final int queueSize) {
-    final AbstractGatewaySender sender = (AbstractGatewaySender)  cache.getGatewaySender(id);
+    final AbstractGatewaySender sender = (AbstractGatewaySender) cache.getGatewaySender(id);
     Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> assertEquals(queueSize, sender.getEventQueueSize()));
     assertEquals(queueSize, sender.getEventQueueSize());
   }
+
   /**
    * This method is specifically written for pause and stop operations.
    * This method validates that the region size remains same for at least minimum number of verification
@@ -2879,12 +2643,13 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       final int MIN_VERIFICATION_RUNS = 20;
       int sameRegionSizeCounter = 0;
       long previousSize = -1;
+
       public boolean done() {
         if (r.keySet().size() == previousSize) {
           sameRegionSizeCounter++;
           int s = r.keySet().size();
           //if the sameRegionSizeCounter exceeds the minimum verification runs and regionSize is below specified limit, then return true
-          if (sameRegionSizeCounter >= MIN_VERIFICATION_RUNS &&  s <= regionSizeLimit) {
+          if (sameRegionSizeCounter >= MIN_VERIFICATION_RUNS && s <= regionSizeLimit) {
             return true;
           } else {
             return false;
@@ -2919,13 +2684,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   public static void validateRegionContents(String regionName, final Map keyValues) {
     final Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
-    Awaitility.await().atMost(120,TimeUnit.SECONDS).until(() -> {
+    Awaitility.await().atMost(120, TimeUnit.SECONDS).until(() -> {
       boolean matchFlag = true;
-      for(Object key: keyValues.keySet()) {
+      for (Object key : keyValues.keySet()) {
         if (!r.get(key).equals(keyValues.get(key))) {
-          LogWriterUtils.getLogWriter().info(
-            "The values are for key " + "  " + key + " " + r.get(key)
-              + " in the map " + keyValues.get(key));
+          LogWriterUtils.getLogWriter().info("The values are for key " + "  " + key + " " + r.get(key) + " in the map " + keyValues.get(key));
           matchFlag = false;
         }
       }
@@ -2933,25 +2696,23 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     });
   }
 
-
-
   public static void doHeavyPuts(String regionName, int numPuts) {
     Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
     // GatewaySender.DEFAULT_BATCH_SIZE * OBJECT_SIZE should be more than MAXIMUM_QUEUE_MEMORY
     // to guarantee overflow
     for (long i = 0; i < numPuts; i++) {
-      r.put(i, new byte[1024*1024]);
+      r.put(i, new byte[1024 * 1024]);
     }
   }
 
-  public static void addCacheListenerAndDestroyRegion(String regionName){
+  public static void addCacheListenerAndDestroyRegion(String regionName) {
     final Region region = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(region);
     CacheListenerAdapter cl = new CacheListenerAdapter() {
       @Override
       public void afterCreate(EntryEvent event) {
-        if((Long)event.getKey() == 99){
+        if ((Long) event.getKey() == 99) {
           region.destroyRegion();
         }
       }
@@ -2959,27 +2720,25 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     region.getAttributesMutator().addCacheListener(cl);
   }
 
-  public static Boolean killSender(String senderId){
+  public static Boolean killSender(String senderId) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
-    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
-    Set<GatewaySender> senders = cache.getGatewaySenders();
-    AbstractGatewaySender sender = null;
-    for(GatewaySender s : senders){
-      if(s.getId().equals(senderId)){
-        sender = (AbstractGatewaySender)s;
-        break;
+      Set<GatewaySender> senders = cache.getGatewaySenders();
+      AbstractGatewaySender sender = null;
+      for (GatewaySender s : senders) {
+        if (s.getId().equals(senderId)) {
+          sender = (AbstractGatewaySender) s;
+          break;
+        }
       }
-    }
-    if (sender.isPrimary()) {
-      LogWriterUtils.getLogWriter().info("Gateway sender is killed by a test");
-      cache.getDistributedSystem().disconnect();
-      return Boolean.TRUE;
-    }
-    return Boolean.FALSE;
+      if (sender.isPrimary()) {
+        LogWriterUtils.getLogWriter().info("Gateway sender is killed by a test");
+        cache.getDistributedSystem().disconnect();
+        return Boolean.TRUE;
+      }
+      return Boolean.FALSE;
     } finally {
       exp.remove();
       exp1.remove();
@@ -2987,50 +2746,43 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void killSender(){
+  public static void killSender() {
     LogWriterUtils.getLogWriter().info("Gateway sender is going to be killed by a test");
     cache.close();
     cache.getDistributedSystem().disconnect();
     LogWriterUtils.getLogWriter().info("Gateway sender is killed by a test");
   }
 
-  public static void checkAllSiteMetaData(
-      Map<Integer, Set<InetSocketAddress>> dsIdToLocatorAddresses) {
+  public static void checkAllSiteMetaData(Map<Integer, Set<InetSocketAddress>> dsIdToLocatorAddresses) {
     List<Locator> locatorsConfigured = Locator.getLocators();
     Locator locator = locatorsConfigured.get(0);
-    Awaitility.waitAtMost(60, TimeUnit.SECONDS).until( () -> {
-      Map<Integer, Set<DistributionLocatorId>> allSiteMetaData = ((InternalLocator) locator)
-        .getlocatorMembershipListener().getAllLocatorsInfo();
+    Awaitility.waitAtMost(60, TimeUnit.SECONDS).until(() -> {
+      Map<Integer, Set<DistributionLocatorId>> allSiteMetaData = ((InternalLocator) locator).getlocatorMembershipListener().getAllLocatorsInfo();
       for (Map.Entry<Integer, Set<InetSocketAddress>> entry : dsIdToLocatorAddresses.entrySet()) {
         Set<DistributionLocatorId> foundLocatorIds = allSiteMetaData.get(entry.getKey());
         Set<InetSocketAddress> expectedLocators = entry.getValue();
-        final Set<InetSocketAddress> foundLocators = foundLocatorIds.stream()
-          .map(distributionLocatorId -> new InetSocketAddress(distributionLocatorId.getHostnameForClients(),
-            distributionLocatorId.getPort()))
-          .collect(Collectors.toSet());
+        final Set<InetSocketAddress> foundLocators = foundLocatorIds.stream().map(distributionLocatorId -> new InetSocketAddress(distributionLocatorId.getHostnameForClients(), distributionLocatorId.getPort())).collect(Collectors.toSet());
         assertEquals(expectedLocators, foundLocators);
       }
     });
   }
 
   public static Long checkAllSiteMetaDataFor3Sites(final Map<Integer, Set<String>> dsVsPort) {
-    Awaitility.await().atMost(50,TimeUnit.SECONDS).until(() -> assertEquals("System is not initialized", true,
-      (getSystemStatic() != null)));
+    Awaitility.await().atMost(50, TimeUnit.SECONDS).until(() -> assertEquals("System is not initialized", true, (getSystemStatic() != null)));
     List<Locator> locatorsConfigured = Locator.getLocators();
     Locator locator = locatorsConfigured.get(0);
-    LocatorMembershipListener listener = ((InternalLocator)locator).getlocatorMembershipListener();
-    if(listener == null) {
+    LocatorMembershipListener listener = ((InternalLocator) locator).getlocatorMembershipListener();
+    if (listener == null) {
       fail("No locator membership listener available. WAN is likely not enabled. Is this test in the WAN project?");
     }
-    final Map<Integer,Set<DistributionLocatorId>> allSiteMetaData = listener.getAllLocatorsInfo();
+    final Map<Integer, Set<DistributionLocatorId>> allSiteMetaData = listener.getAllLocatorsInfo();
     System.out.println("allSiteMetaData : " + allSiteMetaData);
 
-    Awaitility.await().atMost(300,TimeUnit.SECONDS).until(() -> {
-      assertEquals(true,(dsVsPort.size() == allSiteMetaData.size()));
+    Awaitility.await().atMost(300, TimeUnit.SECONDS).until(() -> {
+      assertEquals(true, (dsVsPort.size() == allSiteMetaData.size()));
       boolean completeFlag = true;
       for (Map.Entry<Integer, Set<String>> entry : dsVsPort.entrySet()) {
-        Set<DistributionLocatorId> locators = allSiteMetaData.get(entry
-          .getKey());
+        Set<DistributionLocatorId> locators = allSiteMetaData.get(entry.getKey());
         for (String locatorInMetaData : entry.getValue()) {
           DistributionLocatorId locatorId = new DistributionLocatorId(locatorInMetaData);
           if (!locators.contains(locatorId)) {
@@ -3038,44 +2790,35 @@ public class WANTestBase extends JUnit4DistributedTestCase {
             break;
           }
         }
-        if(false == completeFlag){
+        if (false == completeFlag) {
           break;
         }
       }
-      assertEquals("Expected site Metadata: " + dsVsPort + " but actual meta data: " + allSiteMetaData,
-        true,completeFlag);
+      assertEquals("Expected site Metadata: " + dsVsPort + " but actual meta data: " + allSiteMetaData, true, completeFlag);
     });
     return System.currentTimeMillis();
   }
 
-  public static void checkLocatorsinSender(String senderId, InetSocketAddress locatorToWaitFor)
-      throws InterruptedException {
+  public static void checkLocatorsinSender(String senderId, InetSocketAddress locatorToWaitFor) throws InterruptedException {
 
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
-    for(GatewaySender s : senders){
-      if(s.getId().equals(senderId)){
+    for (GatewaySender s : senders) {
+      if (s.getId().equals(senderId)) {
         sender = s;
         break;
       }
     }
 
-    MyLocatorCallback callback = (MyLocatorCallback)((AbstractGatewaySender)sender)
-        .getLocatorDiscoveryCallback();
+    MyLocatorCallback callback = (MyLocatorCallback) ((AbstractGatewaySender) sender).getLocatorDiscoveryCallback();
 
     boolean discovered = callback.waitForDiscovery(locatorToWaitFor, MAX_WAIT);
-    assertTrue(
-        "Waited " + MAX_WAIT + " for " + locatorToWaitFor
-            + " to be discovered on client. List is now: "
-            + callback.getDiscovered(), discovered);
+    assertTrue("Waited " + MAX_WAIT + " for " + locatorToWaitFor + " to be discovered on client. List is now: " + callback.getDiscovered(), discovered);
   }
 
-  public static void validateQueueContents(final String senderId,
-      final int regionSize) {
-    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class
-        .getName());
-    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class
-        .getName());
+  public static void validateQueueContents(final String senderId, final int regionSize) {
+    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class.getName());
+    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class.getName());
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       GatewaySender sender = null;
@@ -3087,21 +2830,18 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
 
       if (!sender.isParallel()) {
-        final Set<RegionQueue> queues = ((AbstractGatewaySender) sender)
-            .getQueues();
-        Awaitility.await().atMost(120,TimeUnit.SECONDS).until(() -> {
+        final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+        Awaitility.await().atMost(120, TimeUnit.SECONDS).until(() -> {
           int size = 0;
           for (RegionQueue q : queues) {
             size += q.size();
           }
-          assertEquals("Expected queue entries: " + regionSize + " but actual entries: " + size,regionSize, size);
+          assertEquals("Expected queue entries: " + regionSize + " but actual entries: " + size, regionSize, size);
         });
       } else if (sender.isParallel()) {
         final RegionQueue regionQueue;
-        regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(
-            new RegionQueue[1])[0];
-        Awaitility.await().atMost(120,TimeUnit.SECONDS).until(() -> assertEquals("Expected queue entries: " + regionSize
-            + " but actual entries: " + regionQueue.size(), regionSize, regionQueue.size()));
+        regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
+        Awaitility.await().atMost(120, TimeUnit.SECONDS).until(() -> assertEquals("Expected queue entries: " + regionSize + " but actual entries: " + regionQueue.size(), regionSize, regionQueue.size()));
       }
     } finally {
       exp1.remove();
@@ -3122,16 +2862,14 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
     final Set<RegionQueue> regionQueue;
     if (sender instanceof AbstractGatewaySender) {
-      regionQueue = ((AbstractGatewaySender)sender)
-          .getQueuesForConcurrentSerialGatewaySender();
+      regionQueue = ((AbstractGatewaySender) sender).getQueuesForConcurrentSerialGatewaySender();
     } else {
       regionQueue = null;
     }
     assertEquals(null, regionQueue);
   }
 
-  public static void validateQueueContentsForConcurrentSerialGatewaySender(
-      final String senderId, final int regionSize) {
+  public static void validateQueueContentsForConcurrentSerialGatewaySender(final String senderId, final int regionSize) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
     for (GatewaySender s : senders) {
@@ -3142,12 +2880,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
     final Set<RegionQueue> regionQueue;
     if (!sender.isParallel()) {
-      regionQueue = ((AbstractGatewaySender)sender)
-          .getQueuesForConcurrentSerialGatewaySender();
+      regionQueue = ((AbstractGatewaySender) sender).getQueuesForConcurrentSerialGatewaySender();
     } else {
       regionQueue = null;
     }
-    Awaitility.await().atMost(120,TimeUnit.SECONDS).until(() -> {
+    Awaitility.await().atMost(120, TimeUnit.SECONDS).until(() -> {
       int size = 0;
       for (RegionQueue q : regionQueue) {
         size += q.size();
@@ -3167,8 +2904,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
 
     if (!sender.isParallel()) {
-      final Set<RegionQueue> queues = ((AbstractGatewaySender)sender)
-          .getQueues();
+      final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
       int size = 0;
       for (RegionQueue q : queues) {
         size += q.size();
@@ -3176,8 +2912,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       return size;
     } else if (sender.isParallel()) {
       RegionQueue regionQueue = null;
-      regionQueue = ((AbstractGatewaySender)sender).getQueues().toArray(
-          new RegionQueue[1])[0];
+      regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
       return regionQueue.getRegion().size();
     }
     return 0;
@@ -3192,19 +2927,16 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    RegionQueue regionQueue = ((AbstractGatewaySender)sender).getQueues().toArray(new RegionQueue[1])[0];
-    Set<BucketRegion> buckets = ((PartitionedRegion)regionQueue.getRegion()).getDataStore().getAllLocalPrimaryBucketRegions();
+    RegionQueue regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
+    Set<BucketRegion> buckets = ((PartitionedRegion) regionQueue.getRegion()).getDataStore().getAllLocalPrimaryBucketRegions();
     for (BucketRegion bucket : buckets) {
       assertEquals("Expected bucket entries for bucket " + bucket.getId() + " is different than actual.", bucketSize, bucket.keySet().size());
     }
   }
 
-  public static void validateParallelSenderQueueAllBucketsDrained(
-      final String senderId) {
-    IgnoredException exp = IgnoredException.addIgnoredException(RegionDestroyedException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+  public static void validateParallelSenderQueueAllBucketsDrained(final String senderId) {
+    IgnoredException exp = IgnoredException.addIgnoredException(RegionDestroyedException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       GatewaySender sender = null;
@@ -3214,17 +2946,13 @@ public class WANTestBase extends JUnit4DistributedTestCase {
           break;
         }
       }
-      RegionQueue regionQueue = ((AbstractGatewaySender) sender)
-          .getQueues().toArray(new RegionQueue[1])[0];
-      Set<BucketRegion> buckets = ((PartitionedRegion) regionQueue.getRegion())
-          .getDataStore().getAllLocalPrimaryBucketRegions();
+      RegionQueue regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
+      Set<BucketRegion> buckets = ((PartitionedRegion) regionQueue.getRegion()).getDataStore().getAllLocalPrimaryBucketRegions();
       for (final BucketRegion bucket : buckets) {
-        Awaitility.await().atMost(180,TimeUnit.SECONDS).until(() -> {
-          assertEquals("Expected bucket entries for bucket: " + bucket.getId() + " is: 0 but actual entries: "
-            + bucket.keySet().size() + " This bucket isPrimary: " + bucket.getBucketAdvisor().isPrimary() + " KEYSET: "
-            + bucket.keySet(),0,bucket.keySet().size());
+        Awaitility.await().atMost(180, TimeUnit.SECONDS).until(() -> {
+          assertEquals("Expected bucket entries for bucket: " + bucket.getId() + " is: 0 but actual entries: " + bucket.keySet().size() + " This bucket isPrimary: " + bucket.getBucketAdvisor().isPrimary() + " KEYSET: " + bucket.keySet(), 0, bucket.keySet().size());
         });
-      }// for loop ends
+      } // for loop ends
     } finally {
       exp.remove();
       exp1.remove();
@@ -3242,13 +2970,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final MyGatewayEventFilter_AfterAck filter = (MyGatewayEventFilter_AfterAck)sender
-        .getGatewayEventFilters().get(0);
+    final MyGatewayEventFilter_AfterAck filter = (MyGatewayEventFilter_AfterAck) sender.getGatewayEventFilters().get(0);
     return filter.getAckList().size();
   }
 
-  public static int verifyAndGetEventsDispatchedByConcurrentDispatchers(
-      final String senderId) {
+  public static int verifyAndGetEventsDispatchedByConcurrentDispatchers(final String senderId) {
     Set<GatewaySender> senders = cache.getGatewaySenders();
     GatewaySender sender = null;
     for (GatewaySender s : senders) {
@@ -3257,9 +2983,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    ConcurrentParallelGatewaySenderEventProcessor cProc = (ConcurrentParallelGatewaySenderEventProcessor)
-      ((AbstractGatewaySender)sender).getEventProcessor();
-    if (cProc == null) return 0;
+    ConcurrentParallelGatewaySenderEventProcessor cProc = (ConcurrentParallelGatewaySenderEventProcessor) ((AbstractGatewaySender) sender).getEventProcessor();
+    if (cProc == null)
+      return 0;
 
     int totalDispatched = 0;
     for (ParallelGatewaySenderEventProcessor lProc : cProc.getProcessors()) {
@@ -3282,10 +3008,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     long numEntries = 0;
     if (sender.isParallel()) {
       RegionQueue regionQueue;
-      regionQueue = ((AbstractGatewaySender)sender).getQueues().toArray(
-          new RegionQueue[1])[0];
-      numEntries = ((ConcurrentParallelGatewaySenderQueue)regionQueue)
-          .getNumEntriesOverflowOnDiskTestOnly();
+      regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
+      numEntries = ((ConcurrentParallelGatewaySenderQueue) regionQueue).getNumEntriesOverflowOnDiskTestOnly();
     }
     return numEntries;
   }
@@ -3302,10 +3026,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     RegionQueue regionQueue;
     long numEntries = 0;
     if (sender.isParallel()) {
-      regionQueue = ((AbstractGatewaySender)sender).getQueues().toArray(
-          new RegionQueue[1])[0];
-      numEntries = ((ConcurrentParallelGatewaySenderQueue)regionQueue)
-          .getNumEntriesInVMTestOnly();
+      regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
+      numEntries = ((ConcurrentParallelGatewaySenderQueue) regionQueue).getNumEntriesInVMTestOnly();
     }
     return numEntries;
   }
@@ -3321,20 +3043,16 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
 
     if (!sender.isParallel()) {
-      final Set<RegionQueue> queues = ((AbstractGatewaySender)sender)
-          .getQueues();
+      final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
       int queueSize = 0;
       for (RegionQueue q : queues) {
         queueSize += q.size();
       }
 
-      assertEquals("verifyQueueSize failed for sender " + senderId, size,
-          queueSize);
+      assertEquals("verifyQueueSize failed for sender " + senderId, size, queueSize);
     } else if (sender.isParallel()) {
-      RegionQueue regionQueue = ((AbstractGatewaySender)sender).getQueues()
-          .toArray(new RegionQueue[1])[0];
-      assertEquals("verifyQueueSize failed for sender " + senderId, size,
-          regionQueue.size());
+      RegionQueue regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
+      assertEquals("verifyQueueSize failed for sender " + senderId, size, regionQueue.size());
     }
   }
 
@@ -3349,8 +3067,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
 
     if (!sender.isParallel()) {
-      final Set<RegionQueue> queues = ((AbstractGatewaySender)sender)
-          .getQueues();
+      final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
       int queueSize = 0;
       for (RegionQueue q : queues) {
         queueSize += q.size();
@@ -3358,8 +3075,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       assertTrue(queues.size() > 0);
       assertTrue(queueSize > 0);
     } else if (sender.isParallel()) {
-      RegionQueue regionQueue = ((AbstractGatewaySender)sender).getQueues()
-          .toArray(new RegionQueue[1])[0];
+      RegionQueue regionQueue = ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0];
       assertTrue(regionQueue.size() > 0);
     }
   }
@@ -3375,8 +3091,8 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
 
     if (!sender.isParallel()) {
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueuesForConcurrentSerialGatewaySender();
-      for(RegionQueue q:queues) {
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueuesForConcurrentSerialGatewaySender();
+      for (RegionQueue q : queues) {
         assertTrue(q.size() > 0);
       }
     }
@@ -3435,8 +3151,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     assertTrue(sender.isRunning());
   }
 
-  public static void removeSenderFromTheRegion(String senderId,
-      String regionName) {
+  public static void removeSenderFromTheRegion(String senderId, String regionName) {
     Region region = cache.getRegion(regionName);
     assertNotNull(region);
     region.getAttributesMutator().removeGatewaySenderId(senderId);
@@ -3459,7 +3174,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     AbstractGatewaySender sender = null;
     for (GatewaySender s : senders) {
       if (s.getId().equals(senderId)) {
-        sender = (AbstractGatewaySender)s;
+        sender = (AbstractGatewaySender) s;
         break;
       }
     }
@@ -3492,8 +3207,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static class MyLocatorCallback extends
-      LocatorDiscoveryCallbackAdapter {
+  public static class MyLocatorCallback extends LocatorDiscoveryCallbackAdapter {
 
     private final Set discoveredLocators = new HashSet();
 
@@ -3509,14 +3223,11 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       notifyAll();
     }
 
-    public boolean waitForDiscovery(InetSocketAddress locator, long time)
-        throws InterruptedException {
+    public boolean waitForDiscovery(InetSocketAddress locator, long time) throws InterruptedException {
       return waitFor(discoveredLocators, locator, time);
     }
 
-
-    private synchronized boolean waitFor(Set set, InetSocketAddress locator,
-        long time) throws InterruptedException {
+    private synchronized boolean waitFor(Set set, InetSocketAddress locator, long time) throws InterruptedException {
       long remaining = time;
       long endTime = System.currentTimeMillis() + time;
       while (!set.contains(locator) && remaining >= 0) {
@@ -3548,10 +3259,9 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     public Object call() throws Exception {
       while (true) {
         int key = key_value.incrementAndGet();
-        if(key < numPuts) {
+        if (key < numPuts) {
           region.put(key, key);
-        }
-        else {
+        } else {
           break;
         }
       }
@@ -3594,18 +3304,18 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       // TODO Auto-generated method stub
     }
 
-    public boolean equals(Object obj){
-      if(this == obj){
+    public boolean equals(Object obj) {
+      if (this == obj) {
         return true;
       }
-      if ( !(obj instanceof MyGatewayEventFilter) ) return false;
-      MyGatewayEventFilter filter = (MyGatewayEventFilter)obj;
+      if (!(obj instanceof MyGatewayEventFilter))
+        return false;
+      MyGatewayEventFilter filter = (MyGatewayEventFilter) obj;
       return this.Id.equals(filter.Id);
     }
   }
 
-  public static class MyGatewayEventFilter_AfterAck implements
-      GatewayEventFilter, Serializable {
+  public static class MyGatewayEventFilter_AfterAck implements GatewayEventFilter, Serializable {
 
     String Id = "MyGatewayEventFilter_AfterAck";
 
@@ -3632,7 +3342,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     }
 
     public void afterAcknowledgement(GatewayQueueEvent event) {
-      ackList.add((Long)event.getKey());
+      ackList.add((Long) event.getKey());
     }
 
     public Set getAckList() {
@@ -3645,12 +3355,12 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       }
       if (!(obj instanceof MyGatewayEventFilter))
         return false;
-      MyGatewayEventFilter filter = (MyGatewayEventFilter)obj;
+      MyGatewayEventFilter filter = (MyGatewayEventFilter) obj;
       return this.Id.equals(filter.Id);
     }
   }
 
- public static class PDXGatewayEventFilter implements GatewayEventFilter, Serializable {
+  public static class PDXGatewayEventFilter implements GatewayEventFilter, Serializable {
 
     String Id = "PDXGatewayEventFilter";
 
@@ -3688,12 +3398,13 @@ public class WANTestBase extends JUnit4DistributedTestCase {
       // TODO Auto-generated method stub
     }
 
-    public boolean equals(Object obj){
-      if(this == obj){
+    public boolean equals(Object obj) {
+      if (this == obj) {
         return true;
       }
-      if ( !(obj instanceof MyGatewayEventFilter) ) return false;
-      MyGatewayEventFilter filter = (MyGatewayEventFilter)obj;
+      if (!(obj instanceof MyGatewayEventFilter))
+        return false;
+      MyGatewayEventFilter filter = (MyGatewayEventFilter) obj;
       return this.Id.equals(filter.Id);
     }
   }
@@ -3703,7 +3414,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     cleanupVM();
     List<AsyncInvocation> invocations = new ArrayList<AsyncInvocation>();
     final Host host = Host.getHost(0);
-    for (int i=0; i< host.getVMCount(); i++) {
+    for (int i = 0; i < host.getVMCount(); i++) {
       invocations.add(host.getVM(i).invokeAsync(() -> WANTestBase.cleanupVM()));
     }
     for (AsyncInvocation invocation : invocations) {
@@ -3720,7 +3431,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
     CacheTestCase.cleanDiskDirs();
   }
 
-  public static void closeCache(){
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();
@@ -3744,7 +3455,7 @@ public class WANTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void printEventListenerMap() {
-    ((MyGatewaySenderEventListener)eventListener1).printMap();
+    ((MyGatewaySenderEventListener) eventListener1).printMap();
   }
 
   @Override

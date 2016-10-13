@@ -26,7 +26,8 @@ import org.junit.experimental.categories.Category;
 @Category(DistributedTest.class)
 public class FunctionServiceClientOnServerDUnitTest extends FunctionServiceClientOnServerBase {
 
-  @Override public int numberOfExecutions() {
+  @Override
+  public int numberOfExecutions() {
     return 1;
   }
 }

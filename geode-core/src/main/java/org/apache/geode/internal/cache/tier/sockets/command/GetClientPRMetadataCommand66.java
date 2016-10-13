@@ -31,6 +31,7 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
+
 /**
  * {@link Command} for {@link GetClientPRMetadataCommand66}
  * 
@@ -49,52 +50,40 @@ public class GetClientPRMetadataCommand66 extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, ClassNotFoundException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
     String regionFullPath = null;
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
     regionFullPath = msg.getPart(0).getString();
     String errMessage = "";
     if (regionFullPath == null) {
       logger.warn(LocalizedMessage.create(LocalizedStrings.GetClientPRMetadata_THE_INPUT_REGION_PATH_IS_NULL));
-      errMessage = LocalizedStrings.GetClientPRMetadata_THE_INPUT_REGION_PATH_IS_NULL
-          .toLocalizedString();
-      writeErrorResponse(msg, MessageType.GET_CLIENT_PR_METADATA_ERROR,
-          errMessage.toString(), servConn);
+      errMessage = LocalizedStrings.GetClientPRMetadata_THE_INPUT_REGION_PATH_IS_NULL.toLocalizedString();
+      writeErrorResponse(msg, MessageType.GET_CLIENT_PR_METADATA_ERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
-    }
-    else {
+    } else {
       Region region = crHelper.getRegion(regionFullPath);
       if (region == null) {
         logger.warn(LocalizedMessage.create(LocalizedStrings.GetClientPRMetadata_REGION_NOT_FOUND_FOR_SPECIFIED_REGION_PATH, regionFullPath));
-        errMessage = LocalizedStrings.GetClientPRMetadata_REGION_NOT_FOUND
-            .toLocalizedString()
-            + regionFullPath;
-        writeErrorResponse(msg, MessageType.GET_CLIENT_PR_METADATA_ERROR,
-            errMessage.toString(), servConn);
+        errMessage = LocalizedStrings.GetClientPRMetadata_REGION_NOT_FOUND.toLocalizedString() + regionFullPath;
+        writeErrorResponse(msg, MessageType.GET_CLIENT_PR_METADATA_ERROR, errMessage.toString(), servConn);
         servConn.setAsTrue(RESPONDED);
-      }
-      else {
+      } else {
         try {
           Message responseMsg = servConn.getResponseMessage();
           responseMsg.setTransactionId(msg.getTransactionId());
           responseMsg.setMessageType(MessageType.RESPONSE_CLIENT_PR_METADATA);
 
-          PartitionedRegion prRgion = (PartitionedRegion)region;
-          Map<Integer, List<BucketServerLocation66>> bucketToServerLocations = prRgion
-              .getRegionAdvisor().getAllClientBucketProfiles();
+          PartitionedRegion prRgion = (PartitionedRegion) region;
+          Map<Integer, List<BucketServerLocation66>> bucketToServerLocations = prRgion.getRegionAdvisor().getAllClientBucketProfiles();
           responseMsg.setNumberOfParts(bucketToServerLocations.size());
-          for (List<BucketServerLocation66> serverLocations : bucketToServerLocations
-              .values()) {
+          for (List<BucketServerLocation66> serverLocations : bucketToServerLocations.values()) {
             responseMsg.addObjPart(serverLocations);
           }
           responseMsg.send();
           msg.clearParts();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           writeException(msg, e, false, servConn);
-        }
-        finally {
+        } finally {
           servConn.setAsTrue(Command.RESPONDED);
         }
       }

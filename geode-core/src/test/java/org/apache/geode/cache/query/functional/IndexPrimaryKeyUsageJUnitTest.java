@@ -54,31 +54,28 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public class IndexPrimaryKeyUsageJUnitTest {
 
-
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
     Region r = CacheUtils.createRegion("portfolios", Portfolio.class);
-    for(int i=0;i<4;i++)
-      r.put(i+"", new Portfolio(i));
+    for (int i = 0; i < 4; i++)
+      r.put(i + "", new Portfolio(i));
   }
 
   @After
   public void tearDown() throws java.lang.Exception {
     CacheUtils.closeCache();
   }
+
   @Test
   public void testPrimaryKeyIndexUsage() throws Exception {
     // Task ID: PKI 1
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-        "select distinct * from /portfolios x, x.positions.values where x.pk = '1'",
-        "select distinct * from /portfolios x, x.positions.values where x.pkid = '1'",
+    String queries[] = { "select distinct * from /portfolios x, x.positions.values where x.pk = '1'", "select distinct * from /portfolios x, x.positions.values where x.pkid = '1'",
         //          BUG # 32707:  FIXED       
-        "select distinct * from /portfolios p, p.positions.values where p.pkid != '53'"        
-    };
-    SelectResults r[][]= new SelectResults[queries.length][2];
+        "select distinct * from /portfolios p, p.positions.values where p.pkid != '53'" };
+    SelectResults r[][] = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -88,16 +85,16 @@ public class IndexPrimaryKeyUsageJUnitTest {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         //                DebuggerSupport.waitForJavaDebugger(CacheUtils.getLogger());
-        r[i][0] = (SelectResults)q.execute();
-        if(!observer.isIndexesUsed){
+        r[i][0] = (SelectResults) q.execute();
+        if (!observer.isIndexesUsed) {
           CacheUtils.log("NO INDEX USED");
         }
         CacheUtils.log(Utils.printResult(r[i][0]));
-        if ((r[i][0]).size() != 0){
+        if ((r[i][0]).size() != 0) {
           CacheUtils.log("As Expected, Results Size is NON ZERO");
-        }else {
+        } else {
           fail("FAILED:Search result Size is zero");
-        } 
+        }
       } catch (Exception e) {
         e.printStackTrace();
         fail(e.toString());
@@ -116,17 +113,17 @@ public class IndexPrimaryKeyUsageJUnitTest {
         QueryObserverImpl observer2 = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer2);
         q = CacheUtils.getQueryService().newQuery(queries[i]);
-        r[i][1] =(SelectResults) q.execute();
-        if(observer2.isIndexesUsed == true){
+        r[i][1] = (SelectResults) q.execute();
+        if (observer2.isIndexesUsed == true) {
           CacheUtils.log("As expected, INDEX is USED!");
 
-        }else {
+        } else {
           fail("FAILED: INDEX IS NOT USED!");
         }
         CacheUtils.log(Utils.printResult(r[i][1]));
-        if ((r[i][1]).size() != 0){
+        if ((r[i][1]).size() != 0) {
           CacheUtils.log("As Expected, Results Size is NON ZERO");
-        }else {
+        } else {
           fail("FAILED:Search result Size is zero");
         }
       } catch (Exception e) {
@@ -134,20 +131,16 @@ public class IndexPrimaryKeyUsageJUnitTest {
         fail(q.getQueryString());
       }
     }
-    CacheUtils.compareResultsOfWithAndWithoutIndex(r,this);
+    CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
   }
 
   @Test
-  public void testPrimaryKeyIndexUsageNegativeTestA() throws Exception{
+  public void testPrimaryKeyIndexUsageNegativeTestA() throws Exception {
     // Task ID: PKI 2
-    Object r[]= new Object[5];
+    Object r[] = new Object[5];
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-        "select distinct * from /portfolios x, x.positions.values where x.pk = '1'",
-        "select distinct * from /portfolios.entries x, x.value.positions.values where x.value.pkid = '1'",
-        "select distinct * from /portfolios.entries x, x.value.positions.values where x.key = '1'",
-    };
+    String queries[] = { "select distinct * from /portfolios x, x.positions.values where x.pk = '1'", "select distinct * from /portfolios.entries x, x.value.positions.values where x.value.pkid = '1'", "select distinct * from /portfolios.entries x, x.value.positions.values where x.key = '1'", };
     qs = CacheUtils.getQueryService();
     qs.createIndex("pkidIndex", IndexType.PRIMARY_KEY, "pkid", "/portfolios");
     for (int i = 0; i < queries.length; i++) {
@@ -157,17 +150,17 @@ public class IndexPrimaryKeyUsageJUnitTest {
         QueryObserverHolder.setInstance(observer);
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         r[i] = q.execute();
-        if(!observer.isIndexesUsed == false){
+        if (!observer.isIndexesUsed == false) {
           fail("FAILED: INDEX IS USED!");
-        }else{
+        } else {
           CacheUtils.log("As Expected, INDEX is NOT USED");
         }
-        CacheUtils.log(Utils.printResult(r[i]) );
-        if (((SelectResults)r[i]).size() != 0){
+        CacheUtils.log(Utils.printResult(r[i]));
+        if (((SelectResults) r[i]).size() != 0) {
           CacheUtils.log("As Expected, Results Size is NON ZERO");
-        }else {
+        } else {
           fail("FAILED:Search result Size is zero");
-        } 
+        }
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
@@ -176,14 +169,12 @@ public class IndexPrimaryKeyUsageJUnitTest {
   }
 
   @Test
-  public void testPrimaryKeyIndexUsageNegativeTestB() throws Exception{
+  public void testPrimaryKeyIndexUsageNegativeTestB() throws Exception {
     //Task ID : PKI 3
-    Object r[]= new Object[5];
+    Object r[] = new Object[5];
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-        "select distinct * from /portfolios x, x.positions.values where x.pkid = '1'",
-    };
+    String queries[] = { "select distinct * from /portfolios x, x.positions.values where x.pkid = '1'", };
     qs = CacheUtils.getQueryService();
     qs.createIndex("pkIndex", IndexType.PRIMARY_KEY, "pk", "/portfolios");
     for (int i = 0; i < queries.length; i++) {
@@ -193,17 +184,17 @@ public class IndexPrimaryKeyUsageJUnitTest {
         QueryObserverHolder.setInstance(observer);
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         r[i] = q.execute();
-        if(observer.isIndexesUsed){
+        if (observer.isIndexesUsed) {
           fail("INDEX IS USED!");
-        }else{
+        } else {
           CacheUtils.log("As Expected, Index Is Not Used");
         }
-        CacheUtils.log(Utils.printResult(r[i]) );
-        if (((SelectResults)r[i]).size() != 0){
+        CacheUtils.log(Utils.printResult(r[i]));
+        if (((SelectResults) r[i]).size() != 0) {
           CacheUtils.log("As Expected, Results Size is NON ZERO");
-        }else {
+        } else {
           fail("FAILED:Search result Size is zero");
-        } 
+        }
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
@@ -218,11 +209,7 @@ public class IndexPrimaryKeyUsageJUnitTest {
     Object r[] = new Object[7];
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-        "select distinct * from /portfolios p, p.positions.values where p.ID > 1 ",
-        "select distinct * from /portfolios p, p.positions.values where p.ID < 3 ",
-        "select distinct * from /portfolios p, p.positions.values where p.ID >= 1 ",
-        "select distinct * from /portfolios p, p.positions.values where p.ID <= 1 ",
+    String queries[] = { "select distinct * from /portfolios p, p.positions.values where p.ID > 1 ", "select distinct * from /portfolios p, p.positions.values where p.ID < 3 ", "select distinct * from /portfolios p, p.positions.values where p.ID >= 1 ", "select distinct * from /portfolios p, p.positions.values where p.ID <= 1 ",
 
     };
     qs = CacheUtils.getQueryService();
@@ -236,20 +223,20 @@ public class IndexPrimaryKeyUsageJUnitTest {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         r[i] = q.execute();
 
-        if(observer.isIndexesUsed){
+        if (observer.isIndexesUsed) {
           CacheUtils.log("YES, INDEX IS USED!");
-        }else{
+        } else {
           fail("ERROR:Index Is Not Used");
         }
-        CacheUtils.log(Utils.printResult(r[i]) );
-        if (observer.IndexTypeFunctional != 1){
+        CacheUtils.log(Utils.printResult(r[i]));
+        if (observer.IndexTypeFunctional != 1) {
           fail("IMPROPER INDEX USAGE: INDEX USED IS NOT OF TYPE FUNCTIONAL");
         }
-        if (((SelectResults)r[i]).size() != 0){
+        if (((SelectResults) r[i]).size() != 0) {
           CacheUtils.log("As Expected, Results Size is NON ZERO");
-        }else {
+        } else {
           fail("FAILED:Search result Size is zero");
-        } 
+        }
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
@@ -272,9 +259,7 @@ public class IndexPrimaryKeyUsageJUnitTest {
     Object r[] = new Object[5];
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = {
-        "select distinct * from /portfolios p, /employees e  where p.pkid = '1' ",
-    };
+    String queries[] = { "select distinct * from /portfolios p, /employees e  where p.pkid = '1' ", };
     qs = CacheUtils.getQueryService();
     qs.createIndex("IDFNLIndex", IndexType.FUNCTIONAL, "pkid", "/portfolios");
     qs.createIndex("IDPRKIndex", IndexType.PRIMARY_KEY, "pkid", "/portfolios");
@@ -287,19 +272,19 @@ public class IndexPrimaryKeyUsageJUnitTest {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         r[i] = q.execute();
 
-        if(observer.isIndexesUsed){
+        if (observer.isIndexesUsed) {
           CacheUtils.log("YES, INDEX IS USED!");
 
-        }else{
+        } else {
           fail("FAILED:Index Is Not Used");
         }
-        CacheUtils.log(Utils.printResult(r[i]) );
-        if (observer.IndexTypePrimKey != 2){
+        CacheUtils.log(Utils.printResult(r[i]));
+        if (observer.IndexTypePrimKey != 2) {
           fail("IMPROPER INDEX USAGE: INDEX USED IS NOT OF TYPE PRIMARY_KEY");
         }
-        if (((SelectResults)r[i]).size() != 0){
+        if (((SelectResults) r[i]).size() != 0) {
           CacheUtils.log("As Expected, Results Size is NON ZERO");
-        }else {
+        } else {
           fail("FAILED:Search result Size is zero");
         }
       } catch (Exception e) {
@@ -307,25 +292,25 @@ public class IndexPrimaryKeyUsageJUnitTest {
         fail(q.getQueryString());
       }
     }
-  } 
+  }
 
-  class QueryObserverImpl extends QueryObserverAdapter{
+  class QueryObserverImpl extends QueryObserverAdapter {
     boolean isIndexesUsed = false;
     ArrayList indexesUsed = new ArrayList();
-    int IndexTypeFunctional = 0 ;
-    int IndexTypePrimKey    = 0 ;
+    int IndexTypeFunctional = 0;
+    int IndexTypePrimKey = 0;
 
     public void beforeIndexLookup(Index index, int oper, Object key) {
       indexesUsed.add(index.getName());
-      if ((index.getType()).equals(IndexType.FUNCTIONAL)){
+      if ((index.getType()).equals(IndexType.FUNCTIONAL)) {
         IndexTypeFunctional = 1;
-      }else {
-        IndexTypePrimKey    = 2;
+      } else {
+        IndexTypePrimKey = 2;
       }
     }
 
     public void afterIndexLookup(Collection results) {
-      if(results != null){
+      if (results != null) {
         isIndexesUsed = true;
         //CacheUtils.log(Utils.printResult(results));
       }

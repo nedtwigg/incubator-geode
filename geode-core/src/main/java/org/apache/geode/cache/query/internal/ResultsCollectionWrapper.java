@@ -38,8 +38,7 @@ import org.apache.geode.internal.Version;
  * 
  * @since GemFire 4.0
  */
-public final class ResultsCollectionWrapper
-  implements SelectResults, DataSerializableFixedID {
+public final class ResultsCollectionWrapper implements SelectResults, DataSerializableFixedID {
 
   private Collection base;
   private CollectionType collectionType;
@@ -47,13 +46,12 @@ public final class ResultsCollectionWrapper
    * Holds value of property modifiable.
    */
   private boolean modifiable = true;
-  
+
   final Object limitLock = new Object();
-  private  int limit ; 
-  
-  private final boolean hasLimitIterator ;
-  private final boolean limitImposed ;
-  
+  private int limit;
+
+  private final boolean hasLimitIterator;
+  private final boolean limitImposed;
 
   /** no-arg constructor required for DataSerializable */
   public ResultsCollectionWrapper() {
@@ -63,15 +61,14 @@ public final class ResultsCollectionWrapper
   }
 
   public ResultsCollectionWrapper(ObjectType constraint, Collection base, int limit) {
-    validateConstraint(constraint);    
+    validateConstraint(constraint);
     this.base = base;
-    this.collectionType = new CollectionTypeImpl(getBaseClass(), constraint);    
+    this.collectionType = new CollectionTypeImpl(getBaseClass(), constraint);
     this.limit = limit;
     if (this.limit > -1 && this.base.size() > this.limit) {
       if (this.collectionType.isOrdered()) {
         this.hasLimitIterator = true;
-      }
-      else {
+      } else {
         this.hasLimitIterator = false;
         // Asif:Take only elements upto the limit so that order is predictable
         // If it is a sorted set it will not come here & so we need not worry
@@ -85,40 +82,36 @@ public final class ResultsCollectionWrapper
           }
         }
       }
-    }
-    else {
+    } else {
       this.hasLimitIterator = false;
     }
 
     this.limitImposed = this.limit > -1;
   }
-  
+
   public ResultsCollectionWrapper(ObjectType constraint, Collection base) {
-    validateConstraint(constraint);    
+    validateConstraint(constraint);
     this.base = base;
     this.collectionType = new CollectionTypeImpl(getBaseClass(), constraint);
     this.limit = -1;
     this.hasLimitIterator = false;
-    this.limitImposed = false;    
+    this.limitImposed = false;
   }
 
   private void validateConstraint(ObjectType constraint) {
     if (constraint == null)
-        throw new IllegalArgumentException(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CANNOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CANNOT_BE_NULL.toLocalizedString());
     // must be public
     if (!Modifier.isPublic(constraint.resolveClass().getModifiers()))
-        throw new IllegalArgumentException(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CLASS_MUST_BE_PUBLIC.toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CLASS_MUST_BE_PUBLIC.toLocalizedString());
   }
 
   // @todo should we bother taking the performance hit to check the constraint?
   private void checkConstraint(Object obj) {
     ObjectType elementType = this.collectionType.getElementType();
-    if (!elementType.resolveClass().isInstance(obj)) { 
-        throw new InternalGemFireError(
-          LocalizedStrings.
-            ResultsCollectionWrapper_CONSTRAINT_VIOLATION_0_IS_NOT_A_1
-            .toLocalizedString( new Object[] { 
-            obj.getClass().getName(), elementType})); }
+    if (!elementType.resolveClass().isInstance(obj)) {
+      throw new InternalGemFireError(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_VIOLATION_0_IS_NOT_A_1.toLocalizedString(new Object[] { obj.getClass().getName(), elementType }));
+    }
   }
 
   // java.lang.Object methods
@@ -132,7 +125,7 @@ public final class ResultsCollectionWrapper
     if (!(obj instanceof SelectResults)) {
       return false;
     }
-    if (!this.collectionType.equals(((SelectResults)obj).getCollectionType())) {
+    if (!this.collectionType.equals(((SelectResults) obj).getCollectionType())) {
       return false;
     }
     return this.base.equals(obj);
@@ -147,16 +140,14 @@ public final class ResultsCollectionWrapper
   public boolean add(Object o) {
     //    checkConstraint(o);
     if (this.limitImposed) {
-      throw new UnsupportedOperationException(
-          "Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
     }
     return this.base.add(o);
   }
 
   public boolean addAll(Collection c) {
     if (this.limitImposed) {
-      throw new UnsupportedOperationException(
-          "Addition to the SelectResults not allowed as  the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as  the query result is constrained by LIMIT");
     }
     return this.base.addAll(c);
     //    boolean changed = false;
@@ -175,16 +166,15 @@ public final class ResultsCollectionWrapper
       synchronized (this.limitLock) {
         return this.limit;
       }
-    }
-    else {
+    } else {
       return this.base.size();
-    }    
+    }
   }
 
   public Iterator iterator() {
-    if(this.hasLimitIterator) {
-      return new LimitIterator();      
-    }else {
+    if (this.hasLimitIterator) {
+      return new LimitIterator();
+    } else {
       return this.base.iterator();
     }
   }
@@ -195,7 +185,7 @@ public final class ResultsCollectionWrapper
     }*/
     this.base.clear();
   }
-  
+
   /*
    *Asif: May throw ConcurrentModificationException 
    */
@@ -203,7 +193,7 @@ public final class ResultsCollectionWrapper
     if (this.hasLimitIterator) {
       //Keith: Optimize case where contains is false, avoids iteration
       boolean peak = this.base.contains(obj);
-      if(!peak) {
+      if (!peak) {
         return false;
       }
       Iterator itr = this.iterator();
@@ -215,12 +205,11 @@ public final class ResultsCollectionWrapper
         }
       }
       return found;
-    }
-    else {
+    } else {
       return this.base.contains(obj);
     }
   }
-  
+
   // Asif :The limit case has a very inefficient implementation
   // May throw ConcurrentModificationException
   public boolean containsAll(Collection collection) {
@@ -231,8 +220,7 @@ public final class ResultsCollectionWrapper
         containsAll = this.contains(itr.next());
       }
       return containsAll;
-    }
-    else {
+    } else {
       return this.base.containsAll(collection);
     }
   }
@@ -244,8 +232,8 @@ public final class ResultsCollectionWrapper
     }
     return this.base.isEmpty() || size == 0;
   }
-  
- // Asif: May throw ConucrrentModificationException
+
+  // Asif: May throw ConucrrentModificationException
   public boolean remove(Object obj) {
     /*
      * if( this.limit > -1) { throw new UnsupportedOperationException("Removal
@@ -265,8 +253,7 @@ public final class ResultsCollectionWrapper
         }
       }
       return removed;
-    }
-    else {
+    } else {
       return this.base.remove(obj);
     }
   }
@@ -289,8 +276,7 @@ public final class ResultsCollectionWrapper
         }
       }
       return removed;
-    }
-    else {
+    } else {
       return this.base.removeAll(collection);
     }
   }
@@ -313,8 +299,7 @@ public final class ResultsCollectionWrapper
         }
       }
       return changed;
-    }
-    else {
+    } else {
       return this.retainAll(collection);
     }
   }
@@ -326,27 +311,27 @@ public final class ResultsCollectionWrapper
     Iterator itr = c.iterator();
     int idx = 0;
     while (true) {
-        while (idx < len && itr.hasNext()) {
-            arr[idx++] = itr.next();
+      while (idx < len && itr.hasNext()) {
+        arr[idx++] = itr.next();
+      }
+      if (!itr.hasNext()) {
+        if (idx == len)
+          return arr;
+        // otherwise have to trim
+        return Arrays.copyOf(arr, idx, Object[].class);
+      }
+      // otherwise, have to grow
+      int newcap = ((arr.length / 2) + 1) * 3;
+      if (newcap < arr.length) {
+        // overflow
+        if (arr.length < Integer.MAX_VALUE) {
+          newcap = Integer.MAX_VALUE;
+        } else {
+          throw new OutOfMemoryError("required array size too large");
         }
-        if (!itr.hasNext()) {
-            if (idx == len) return arr;
-            // otherwise have to trim
-            return Arrays.copyOf(arr, idx, Object[].class);
-        }
-        // otherwise, have to grow
-        int newcap = ((arr.length/2)+1)*3;
-        if (newcap < arr.length) {
-            // overflow
-            if (arr.length < Integer.MAX_VALUE) {
-                newcap = Integer.MAX_VALUE;
-            }
-            else {
-                throw new OutOfMemoryError("required array size too large");
-            }
-        }
-        arr = Arrays.copyOf(arr, newcap, Object[].class);
-        len = newcap;
+      }
+      arr = Arrays.copyOf(arr, newcap, Object[].class);
+      len = newcap;
     }
   }
 
@@ -354,46 +339,44 @@ public final class ResultsCollectionWrapper
     Class aType = a.getClass();
     // guess the array size; expect to possibly be different
     int len = c.size();
-    Object[] arr = (a.length >= len ? a :
-                    (Object[])Array.newInstance(aType.getComponentType(), len));
+    Object[] arr = (a.length >= len ? a : (Object[]) Array.newInstance(aType.getComponentType(), len));
     Iterator itr = c.iterator();
     int idx = 0;
     while (true) {
-        while (idx < len && itr.hasNext()) {
-            arr[idx++] = itr.next();
+      while (idx < len && itr.hasNext()) {
+        arr[idx++] = itr.next();
+      }
+      if (!itr.hasNext()) {
+        if (idx == len)
+          return arr;
+        if (arr == a) {
+          // orig array -> null terminate
+          a[idx] = null;
+          return a;
+        } else {
+          // have to trim
+          return Arrays.copyOf(arr, idx, aType);
         }
-        if (!itr.hasNext()) {
-            if (idx == len) return arr;
-            if (arr == a) {
-                // orig array -> null terminate
-                a[idx] = null;
-                return a;
-            }
-            else {
-                // have to trim
-                return Arrays.copyOf(arr, idx, aType);
-            }
+      }
+      // otherwise, have to grow
+      int newcap = ((arr.length / 2) + 1) * 3;
+      if (newcap < arr.length) {
+        // overflow
+        if (arr.length < Integer.MAX_VALUE) {
+          newcap = Integer.MAX_VALUE;
+        } else {
+          throw new OutOfMemoryError("required array size too large");
         }
-        // otherwise, have to grow
-        int newcap = ((arr.length/2)+1)*3;
-        if (newcap < arr.length) {
-            // overflow
-            if (arr.length < Integer.MAX_VALUE) {
-                newcap = Integer.MAX_VALUE;
-            }
-            else {
-                throw new OutOfMemoryError("required array size too large");
-            }
-        }
-        arr = Arrays.copyOf(arr, newcap, aType);
-        len = newcap;
+      }
+      arr = Arrays.copyOf(arr, newcap, aType);
+      len = newcap;
     }
   }
+
   public Object[] toArray() {
     if (this.hasLimitIterator) {
       return collectionToArray(this);
-    }
-    else {
+    } else {
       return this.base.toArray();
     }
   }
@@ -401,8 +384,7 @@ public final class ResultsCollectionWrapper
   public Object[] toArray(Object[] obj) {
     if (this.hasLimitIterator) {
       return collectionToArray(this, obj);
-    }
-    else {
+    } else {
       return this.base.toArray(obj);
     }
   }
@@ -418,24 +400,20 @@ public final class ResultsCollectionWrapper
         int truncate = this.base.size() - this.limit;
         if (truncate > this.limit) {
           returnList = new ArrayList(this);
-        }
-        else {
-          ListIterator li = ((List)this.base).listIterator(this.base.size());
+        } else {
+          ListIterator li = ((List) this.base).listIterator(this.base.size());
           for (int j = 0; j < truncate; ++j) {
             li.previous();
             li.remove();
           }
-          returnList = (List)this.base;
+          returnList = (List) this.base;
         }
-      }
-      else {
+      } else {
         returnList = new ArrayList(this);
       }
       return returnList;
-    }
-    else {
-      return this.base instanceof List ? (List)this.base : new ArrayList(
-          this.base);
+    } else {
+      return this.base instanceof List ? (List) this.base : new ArrayList(this.base);
     }
   }
 
@@ -457,21 +435,18 @@ public final class ResultsCollectionWrapper
             itr.remove();
           }
         }
-        returnSet = (Set)this.base;
-      }
-      else {
+        returnSet = (Set) this.base;
+      } else {
         returnSet = new HashSet(this);
       }
       return returnSet;
-    }
-    else {
-      return this.base instanceof Set ? (Set)this.base : new HashSet(this.base);
+    } else {
+      return this.base instanceof Set ? (Set) this.base : new HashSet(this.base);
     }
   }
 
   public void setElementType(ObjectType elementType) {
-    this.collectionType = new CollectionTypeImpl(getBaseClass(),
-        elementType);
+    this.collectionType = new CollectionTypeImpl(getBaseClass(), elementType);
   }
 
   public CollectionType getCollectionType() {
@@ -495,8 +470,8 @@ public final class ResultsCollectionWrapper
   public void setModifiable(boolean modifiable) {
     this.modifiable = modifiable;
   }
-  
- // Asif : If the underlying collection is a ordered
+
+  // Asif : If the underlying collection is a ordered
   // one then it will allow duplicates. In such case , our
   // limit iterator will correctly give the number of occurences
   // but if the underlying collection is not ordered , it will
@@ -520,8 +495,7 @@ public final class ResultsCollectionWrapper
   public int getDSFID() {
     return RESULTS_COLLECTION_WRAPPER;
   }
-  
-  
+
   /**
     * Writes the state of this object as primitive data to the given
    * <code>DataOutput</code>.
@@ -534,15 +508,14 @@ public final class ResultsCollectionWrapper
     boolean isBagSetView = this.base instanceof Bag.SetView;
     out.writeBoolean(isBagSetView);
     if (isBagSetView) {
-      InternalDataSerializer.writeSet((Set)this.base, out);
-    }
-    else {
+      InternalDataSerializer.writeSet((Set) this.base, out);
+    } else {
       DataSerializer.writeObject(this.base, out);
     }
     DataSerializer.writeObject(this.collectionType, out);
     out.writeBoolean(this.modifiable);
   }
-  
+
   /**
    * Reads the state of this object as primitive data from the given
    * <code>DataInput</code>. 
@@ -553,19 +526,17 @@ public final class ResultsCollectionWrapper
    *         A class could not be loaded while reading from
    *         <code>in</code> 
    */
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
-      boolean isBagSetView = in.readBoolean();
-      if (isBagSetView) {
-        this.base = (Set)InternalDataSerializer.readSet(in);
-      }
-      else {
-        this.base = (Collection)DataSerializer.readObject(in);
-      }
-      this.collectionType = (CollectionType)DataSerializer.readObject(in);
-      this.modifiable = in.readBoolean();
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
+    boolean isBagSetView = in.readBoolean();
+    if (isBagSetView) {
+      this.base = (Set) InternalDataSerializer.readSet(in);
+    } else {
+      this.base = (Collection) DataSerializer.readObject(in);
     }
-    
+    this.collectionType = (CollectionType) DataSerializer.readObject(in);
+    this.modifiable = in.readBoolean();
+  }
+
   /**
    * Abstract the base class to Set if it implements Set
    * (instead of using the concrete class as the type).
@@ -577,19 +548,17 @@ public final class ResultsCollectionWrapper
    * at this time
    */
   private Class getBaseClass() {
-    if (this.base instanceof Ordered)
-    {
+    if (this.base instanceof Ordered) {
       return Ordered.class;
-    }else if (this.base instanceof TreeSet) {
+    } else if (this.base instanceof TreeSet) {
       return TreeSet.class;
-    }    
-    else if (this.base instanceof Set) {
+    } else if (this.base instanceof Set) {
       return Set.class;
     } else {
       return this.base.getClass();
     }
   }
-    
+
   /**
    * 
    *
@@ -615,8 +584,7 @@ public final class ResultsCollectionWrapper
     public Object next() {
       if (this.currPos == this.localLimit) {
         throw new NoSuchElementException();
-      }
-      else {
+      } else {
         Object obj = this.iter.next();
         ++currPos;
         return obj;
@@ -629,8 +597,7 @@ public final class ResultsCollectionWrapper
     public void remove() {
       if (currPos == 0) {
         throw new IllegalStateException("next() must be called before remove()");
-      }
-      else {
+      } else {
         synchronized (ResultsCollectionWrapper.this.limitLock) {
           this.iter.remove();
           --ResultsCollectionWrapper.this.limit;
@@ -641,19 +608,19 @@ public final class ResultsCollectionWrapper
       // not allowed as the query result is constrained by LIMIT");
     }
   }
-  
-  public void setKeepSerialized(boolean keepSerialized){
-    if(base instanceof EntriesSet){
-      ((EntriesSet)base).setKeepSerialized(keepSerialized);
+
+  public void setKeepSerialized(boolean keepSerialized) {
+    if (base instanceof EntriesSet) {
+      ((EntriesSet) base).setKeepSerialized(keepSerialized);
     }
   }
-  
+
   public void setIgnoreCopyOnReadForQuery(boolean ignore) {
     if (base instanceof EntriesSet) {
       ((EntriesSet) base).setIgnoreCopyOnReadForQuery(ignore);
     }
   }
-  
+
   @Override
   public Version[] getSerializationVersions() {
     return null;

@@ -30,62 +30,61 @@ import java.io.*;
 /**
  *
  */
-public class UtilParser extends LLkParser {    
-    
-    public UtilParser(int k_) {
-        super(k_);
-    }
+public class UtilParser extends LLkParser {
 
-    public UtilParser(ParserSharedInputState state, int k_) {
-        super(state, k_);
-    }
+  public UtilParser(int k_) {
+    super(k_);
+  }
 
-    public UtilParser(TokenBuffer tokenBuf, int k_) {
-        super(tokenBuf, k_);
-    }
+  public UtilParser(ParserSharedInputState state, int k_) {
+    super(state, k_);
+  }
 
-    public UtilParser(TokenStream lexer, int k_) {
-        super(lexer, k_);
+  public UtilParser(TokenBuffer tokenBuf, int k_) {
+    super(tokenBuf, k_);
+  }
+
+  public UtilParser(TokenStream lexer, int k_) {
+    super(lexer, k_);
+  }
+
+  /** 
+   *  Parse a query string. Gets the string from stdin unless
+   *  cmd line has a string in it that doesn't start with "-",
+   *  in which case it parses that string instead.
+   *  A cmd line arg  that starts with "-f" causes out put
+   *  to be put into a GUI tree widget thingy; otherwise,
+   *  the output is a LISP-like string to stdout
+   */
+  public static void main(String[] args) throws Exception {
+    boolean useFrame = false;
+    Reader reader = new InputStreamReader(System.in);
+    if (args.length > 0 && args[0].startsWith("-f"))
+      useFrame = true;
+    for (int i = 0; i < args.length; i++) {
+      if (!args[i].startsWith("-")) {
+        reader = new StringReader(args[i]);
+        System.out.println("Parsing: \"" + args[i] + "\"");
+        break;
+      }
     }
-        
-    /** 
-     *  Parse a query string. Gets the string from stdin unless
-     *  cmd line has a string in it that doesn't start with "-",
-     *  in which case it parses that string instead.
-     *  A cmd line arg  that starts with "-f" causes out put
-     *  to be put into a GUI tree widget thingy; otherwise,
-     *  the output is a LISP-like string to stdout
-     */
-    public static void main (String[] args) throws Exception {        
-        boolean useFrame = false;
-        Reader reader = new InputStreamReader(System.in);
-        if (args.length > 0 && args[0].startsWith("-f")) useFrame = true;
-        for (int i = 0; i < args.length; i++) {
-            if (!args[i].startsWith("-")) {
-                reader = new StringReader(args[i]);
-                System.out.println("Parsing: \"" + args[i] + "\"");
-                break;
-            }
-        }
-        OQLLexer lexer = new OQLLexer(reader);
-        OQLParser parser = new OQLParser(lexer);
-        // by default use Unsupported AST class, overridden for supported
-        // operators in the grammer proper
-        parser.setASTNodeClass("org.apache.geode.cache.query.internal.parse.ASTUnsupported");
-        parser.queryProgram();
-        AST t = parser.getAST();
-        if (useFrame) {
-            ASTFrame frame = new ASTFrame("OQL Example", t);
-            frame.setVisible(true);
-        }
-        else {
-            if (t == null) {
-                System.out.println("AST is NULL");
-            }
-            else {
-                System.out.println(t.toStringTree());
-            }
-        }
+    OQLLexer lexer = new OQLLexer(reader);
+    OQLParser parser = new OQLParser(lexer);
+    // by default use Unsupported AST class, overridden for supported
+    // operators in the grammer proper
+    parser.setASTNodeClass("org.apache.geode.cache.query.internal.parse.ASTUnsupported");
+    parser.queryProgram();
+    AST t = parser.getAST();
+    if (useFrame) {
+      ASTFrame frame = new ASTFrame("OQL Example", t);
+      frame.setVisible(true);
+    } else {
+      if (t == null) {
+        System.out.println("AST is NULL");
+      } else {
+        System.out.println(t.toStringTree());
+      }
     }
-    
+  }
+
 }

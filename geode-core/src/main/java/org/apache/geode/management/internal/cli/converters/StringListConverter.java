@@ -39,8 +39,7 @@ public class StringListConverter extends MultipleValueAdapter<List<String>> {
   }
 
   @Override
-  public List<String> convertFromText(String[] value, Class<?> targetType,
-      String context) {
+  public List<String> convertFromText(String[] value, Class<?> targetType, String context) {
     List<String> list = null;
 
     if (List.class.isAssignableFrom(targetType) && ConverterHint.STRING_LIST.equals(context) && value != null && value.length > 0) {
@@ -50,9 +49,7 @@ public class StringListConverter extends MultipleValueAdapter<List<String>> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String[] existingData, String context,
-      MethodTarget target) {
+  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String[] existingData, String context, MethodTarget target) {
     return List.class.isAssignableFrom(targetType) && ConverterHint.STRING_LIST.equals(context);
   }
 

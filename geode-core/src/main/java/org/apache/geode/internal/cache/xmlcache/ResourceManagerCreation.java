@@ -36,7 +36,7 @@ public class ResourceManagerCreation implements ResourceManager {
 
   private volatile float evictionHeapPercentage;
   private boolean evictionHeapSet = false;
-  
+
   private volatile float criticalOffHeapPercentage;
   private boolean criticalOffHeapSet = false;
 
@@ -71,7 +71,7 @@ public class ResourceManagerCreation implements ResourceManager {
     this.criticalHeapSet = true;
     this.criticalHeapPercentage = heapPercentage;
   }
-  
+
   public void setCriticalHeapPercentageToDefault() {
     this.criticalHeapPercentage = MemoryThresholds.DEFAULT_CRITICAL_PERCENTAGE;
   }
@@ -83,7 +83,7 @@ public class ResourceManagerCreation implements ResourceManager {
   public boolean hasCriticalHeap() {
     return this.criticalHeapSet;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.control.ResourceManager#getCriticalOffHeapPercentage()
    */
@@ -100,7 +100,7 @@ public class ResourceManagerCreation implements ResourceManager {
     this.criticalOffHeapSet = true;
     this.criticalOffHeapPercentage = offHeapPercentage;
   }
-  
+
   public void setCriticalOffHeapPercentageToDefault() {
     this.criticalOffHeapPercentage = MemoryThresholds.DEFAULT_CRITICAL_PERCENTAGE;
   }
@@ -133,27 +133,23 @@ public class ResourceManagerCreation implements ResourceManager {
    */
   public void sameAs(ResourceManager other) {
     if (getCriticalHeapPercentage() != other.getCriticalHeapPercentage()) {
-      throw new RuntimeException("Resource Manager critical heap percentages differ: "
-          + getCriticalHeapPercentage() + " != " + other.getCriticalHeapPercentage());
+      throw new RuntimeException("Resource Manager critical heap percentages differ: " + getCriticalHeapPercentage() + " != " + other.getCriticalHeapPercentage());
     }
     if (getCriticalOffHeapPercentage() != other.getCriticalOffHeapPercentage()) {
-      throw new RuntimeException("Resource Manager critical off-heap percentages differ: "
-          + getCriticalOffHeapPercentage() + " != " + other.getCriticalOffHeapPercentage());
+      throw new RuntimeException("Resource Manager critical off-heap percentages differ: " + getCriticalOffHeapPercentage() + " != " + other.getCriticalOffHeapPercentage());
     }
     if (hasEvictionHeap()) {
       // If we don't have it set don't compare since other may have been set to
       // a smart default.
       if (getEvictionHeapPercentage() != other.getEvictionHeapPercentage()) {
-        throw new RuntimeException("Resource Manager eviction heap percentages differ: "
-                                   + getEvictionHeapPercentage() + " != " + other.getEvictionHeapPercentage());
+        throw new RuntimeException("Resource Manager eviction heap percentages differ: " + getEvictionHeapPercentage() + " != " + other.getEvictionHeapPercentage());
       }
     }
     if (hasEvictionOffHeap()) {
       // If we don't have it set don't compare since other may have been set to
       // a smart default.
       if (getEvictionOffHeapPercentage() != other.getEvictionOffHeapPercentage()) {
-        throw new RuntimeException("Resource Manager eviction off-heap percentages differ: "
-                                   + getEvictionOffHeapPercentage() + " != " + other.getEvictionOffHeapPercentage());
+        throw new RuntimeException("Resource Manager eviction off-heap percentages differ: " + getEvictionOffHeapPercentage() + " != " + other.getEvictionOffHeapPercentage());
       }
     }
   }
@@ -172,11 +168,11 @@ public class ResourceManagerCreation implements ResourceManager {
     this.evictionHeapSet = true;
     this.evictionHeapPercentage = heapPercentage;
   }
-  
+
   public void setEvictionHeapPercentageToDefault() {
     this.evictionHeapPercentage = MemoryThresholds.DEFAULT_EVICTION_PERCENTAGE;
   }
-  
+
   /**
    * Determine if the eviction heap was configured
    * @return true if the eviction heap was configured
@@ -184,7 +180,7 @@ public class ResourceManagerCreation implements ResourceManager {
   public boolean hasEvictionHeap() {
     return this.evictionHeapSet;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.control.ResourceManager#getEvictionOffHeapPercentage()
    */
@@ -199,11 +195,11 @@ public class ResourceManagerCreation implements ResourceManager {
     this.evictionOffHeapSet = true;
     this.evictionOffHeapPercentage = offHeapPercentage;
   }
-  
+
   public void setEvictionOffHeapPercentageToDefault() {
     this.evictionOffHeapPercentage = MemoryThresholds.DEFAULT_EVICTION_PERCENTAGE;
   }
-  
+
   /**
    * Determine if the eviction off-heap was configured
    * @return true if the eviction off-heap was configured

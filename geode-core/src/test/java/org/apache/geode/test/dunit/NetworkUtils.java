@@ -40,7 +40,7 @@ public class NetworkUtils {
 
   protected NetworkUtils() {
   }
-  
+
   /** 
    * Get the IP literal name for the current host. Use this instead of  
    * "localhost" to avoid IPv6 name resolution bugs in the JDK/machine config.

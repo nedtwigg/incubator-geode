@@ -33,14 +33,14 @@ public class SuiteBlockRunner extends BlockJUnit4ClassRunner {
    * @param klass
    * @throws InitializationError if the test class is malformed.
    */
-  public SuiteBlockRunner(final Class parentClass,  final Class<?> klass) throws InitializationError {
+  public SuiteBlockRunner(final Class parentClass, final Class<?> klass) throws InitializationError {
     super(klass);
     this.suiteClass = parentClass;
   }
 
   @Override
   protected String testName(FrameworkMethod method) {
-    return method.getName()+"@"+ suiteClass.getName();
+    return method.getName() + "@" + suiteClass.getName();
   }
 
 }

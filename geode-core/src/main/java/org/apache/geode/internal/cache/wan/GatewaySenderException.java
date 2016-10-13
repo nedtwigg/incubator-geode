@@ -20,7 +20,7 @@ package org.apache.geode.internal.cache.wan;
 import org.apache.geode.cache.OperationAbortedException;
 
 public class GatewaySenderException extends OperationAbortedException {
-private static final long serialVersionUID = 8090143153569084886L;
+  private static final long serialVersionUID = 8090143153569084886L;
 
   /**
    * Constructor.

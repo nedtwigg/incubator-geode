@@ -50,10 +50,10 @@ public class FunctionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/functions")
   @ResponseBody
-  public String listFunctions(@RequestParam(value = CliStrings.LIST_FUNCTION__GROUP, required = false) final String[] groups,
-                              @RequestParam(value = CliStrings.LIST_FUNCTION__MEMBER, required = false) final String[] members,
-                              @RequestParam(value = CliStrings.LIST_FUNCTION__MATCHES, required = false) final String matches)
-  {
+  public String listFunctions(@RequestParam(value = CliStrings.LIST_FUNCTION__GROUP, required = false)
+  final String[] groups, @RequestParam(value = CliStrings.LIST_FUNCTION__MEMBER, required = false)
+  final String[] members, @RequestParam(value = CliStrings.LIST_FUNCTION__MATCHES, required = false)
+  final String matches) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.LIST_FUNCTION);
 
     if (hasValue(groups)) {
@@ -72,14 +72,14 @@ public class FunctionCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/functions/{id}")
-  public Callable<ResponseEntity<String>> executeFunction(@PathVariable("id") final String functionId,
-                                                          @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONGROUPS, required = false) final String groupName,
-                                                          @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONMEMBER, required = false) final String memberNameId,
-                                                          @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONREGION, required = false) final String regionNamePath,
-                                                          @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ARGUMENTS, required = false) final String[] arguments,
-                                                          @RequestParam(value = CliStrings.EXECUTE_FUNCTION__FILTER, required = false) final String filter,
-                                                          @RequestParam(value = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR, required = false) final String resultCollector)
-  {
+  public Callable<ResponseEntity<String>> executeFunction(@PathVariable("id")
+  final String functionId, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONGROUPS, required = false)
+  final String groupName, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONMEMBER, required = false)
+  final String memberNameId, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONREGION, required = false)
+  final String regionNamePath, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ARGUMENTS, required = false)
+  final String[] arguments, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__FILTER, required = false)
+  final String filter, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR, required = false)
+  final String resultCollector) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.EXECUTE_FUNCTION);
 
     command.addOption(CliStrings.EXECUTE_FUNCTION__ID, decode(functionId));
@@ -112,10 +112,10 @@ public class FunctionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/functions/{id}")
   @ResponseBody
-  public String destroyFunction(@PathVariable("id") final String functionId,
-                                @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONGROUPS, required = false) final String groupName,
-                                @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONMEMBER, required = false) final String memberNameId)
-  {
+  public String destroyFunction(@PathVariable("id")
+  final String functionId, @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONGROUPS, required = false)
+  final String groupName, @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONMEMBER, required = false)
+  final String memberNameId) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESTROY_FUNCTION);
 
     command.addOption(CliStrings.DESTROY_FUNCTION__ID, decode(functionId));

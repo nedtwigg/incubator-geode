@@ -48,10 +48,10 @@ public class Bug40632DUnitTest extends JUnit4CacheTestCase {
     try {
       cache.createRegion("region1", attr.create());
       fail("We should not have been able to create the region");
-    } catch(IllegalStateException expected) {
+    } catch (IllegalStateException expected) {
     }
   }
-  
+
   @Test
   public void testLocalDestroyTimeToLive() throws Exception {
     Cache cache = getCache();
@@ -67,10 +67,10 @@ public class Bug40632DUnitTest extends JUnit4CacheTestCase {
     try {
       cache.createRegion("region1", attr.create());
       fail("We should not have been able to create the region");
-    } catch(IllegalStateException expected) {
+    } catch (IllegalStateException expected) {
     }
   }
-  
+
   @Test
   public void testLocalInvalidateIdleTimeout() throws Exception {
     Cache cache = getCache();
@@ -86,10 +86,10 @@ public class Bug40632DUnitTest extends JUnit4CacheTestCase {
     try {
       cache.createRegion("region1", attr.create());
       fail("We should not have been able to create the region");
-    } catch(IllegalStateException expected) {
+    } catch (IllegalStateException expected) {
     }
   }
-  
+
   @Test
   public void testLocalInvalidateTimeToLive() throws Exception {
     Cache cache = getCache();
@@ -105,7 +105,7 @@ public class Bug40632DUnitTest extends JUnit4CacheTestCase {
     try {
       cache.createRegion("region1", attr.create());
       fail("We should not have been able to create the region");
-    } catch(IllegalStateException expected) {
+    } catch (IllegalStateException expected) {
     }
   }
 }

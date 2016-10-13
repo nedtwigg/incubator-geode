@@ -83,7 +83,7 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
     vm1 = host.getVM(1);
     vm2 = host.getVM(2);
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     disconnectAllFromDS();
@@ -106,7 +106,7 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
     helpTestPRQueryOnLocalNode(utils.queries.get("544"), 100, 100, false);
     helpTestPRQueryOnLocalNode("select * from /portfolios p where p.ID = 1", 100, 1, false);
   }
-  
+
   //tests different queries with a transaction for replicated region
   @Test
   public void testTransactionsOnReplicatedRegion() throws Exception {
@@ -117,14 +117,14 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
     helpTestTransactionsOnReplicatedRegion(utils.queries.get("543"), 100, 100, true);
     helpTestTransactionsOnReplicatedRegion(utils.queries.get("544"), 100, 100, true);
     helpTestTransactionsOnReplicatedRegion("select * from /portfolios p where p.ID = 1", 100, 1, true);
-    
+
     helpTestTransactionsOnReplicatedRegion(utils.queries.get("545"), 100, 100, false);
     helpTestTransactionsOnReplicatedRegion(utils.queries.get("546"), 100, 100, false);
     helpTestTransactionsOnReplicatedRegion(utils.queries.get("543"), 100, 100, false);
     helpTestTransactionsOnReplicatedRegion(utils.queries.get("544"), 100, 100, false);
     helpTestTransactionsOnReplicatedRegion("select * from /portfolios p where p.ID = 1", 100, 1, false);
   }
-  
+
   private void configureServers() throws Exception {
     final int[] port = AvailablePortHelper.getRandomAvailableTCPPorts(3);
     startCacheServer(vm0, port[0]);
@@ -132,20 +132,20 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
     startCacheServer(vm2, port[2]);
 
   }
-  
+
   //The tests sets up a partition region across 2 servers
   //It does puts in each server, checking instance counts of portfolio objects
   //Querying the data will result in deserialization of portfolio objects.
   //In cases where index is present, the objects will be deserialized in the cache
   public void helpTestPRQueryOnLocalNode(final String queryString, final int numPortfolios, final int numExpectedResults, final boolean hasIndex) throws Exception {
     final int numPortfoliosPerVM = numPortfolios / 2;
-  
+
     resetInstanceCount(vm0);
     resetInstanceCount(vm1);
-    
+
     createPartitionRegion(vm0, "portfolios");
     createPartitionRegion(vm1, "portfolios");
-    
+
     if (hasIndex) {
       vm0.invoke(new SerializableCallable() {
         public Object call() throws Exception {
@@ -155,26 +155,25 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         }
       });
     }
-   
+
     vm0.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region region = getCache().getRegion("/portfolios");
-        for (int i = 0 ; i < numPortfoliosPerVM; i++) {
+        for (int i = 0; i < numPortfoliosPerVM; i++) {
           Portfolio p = new Portfolio(i);
           p.status = "testStatus";
           p.positions = new HashMap();
           p.positions.put("" + i, new Position("" + i, 20));
           region.put("key " + i, p);
         }
-        
+
         if (hasIndex) {
           //operations we have done on this vm consist of:
           //numPortfoliosPerVM instances of Portfolio created for put operation
           //Due to index, we have deserialized all of the entries this vm currently host
           Index index = getCache().getQueryService().getIndex(region, "idIndex");
-          Wait.waitForCriterion(verifyPortfolioCount((int)index.getStatistics().getNumberOfValues() + numPortfoliosPerVM), 5000, 200, true);
-        }
-        else {
+          Wait.waitForCriterion(verifyPortfolioCount((int) index.getStatistics().getNumberOfValues() + numPortfoliosPerVM), 5000, 200, true);
+        } else {
           //operations we have done on this vm consist of:
           //numPortfoliosPerVM instances of Portfolio created for put operation
           //We do not have an index, so we have not deserialized any values
@@ -183,11 +182,11 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     });
-    
+
     vm1.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region region = getCache().getRegion("/portfolios");
-        for (int i = numPortfoliosPerVM ; i < numPortfolios; i++) {
+        for (int i = numPortfoliosPerVM; i < numPortfolios; i++) {
           Portfolio p = new Portfolio(i);
           p.status = "testStatus";
           p.positions = new HashMap();
@@ -204,9 +203,8 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
             QueryTestUtils utils = new QueryTestUtils();
             index = utils.createIndex("idIndex", "p.ID", "/portfolios p");
           }
-          Wait.waitForCriterion(verifyPortfolioCount((int)index.getStatistics().getNumberOfValues() + numPortfoliosPerVM), 5000, 200, true);
-        }
-        else {
+          Wait.waitForCriterion(verifyPortfolioCount((int) index.getStatistics().getNumberOfValues() + numPortfoliosPerVM), 5000, 200, true);
+        } else {
           //operations we have done on this vm consist of:
           //numPortfoliosPerVM instances of Portfolio created for put operation
           //We do not have an index, so we have not deserialized any values
@@ -215,7 +213,7 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     });
-    
+
     vm0.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region region = getCache().getRegion("/portfolios");
@@ -224,12 +222,11 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         SelectResults results = (SelectResults) query.execute();
         Iterator it = results.iterator();
         assertEquals("Failed:" + queryString, numExpectedResults, results.size());
-        for (Object o: results) {
+        for (Object o : results) {
           if (o instanceof Portfolio) {
             Portfolio p = (Portfolio) o;
             p.status = "discardStatus";
-          }
-          else {
+          } else {
             Struct struct = (Struct) o;
             Portfolio p = (Portfolio) struct.getFieldValues()[0];
             p.status = "discardStatus";
@@ -241,35 +238,33 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
           //Due to index, we have deserialized all of the entries this vm currently host
           //Since we have deserialized and cached these values, we just need to add the number of results we did a copy of due to copy on read
           Index index = getCache().getQueryService().getIndex(region, "idIndex");
-          Wait.waitForCriterion(verifyPortfolioCount((int)index.getStatistics().getNumberOfValues() + numPortfoliosPerVM + numExpectedResults), 5000, 200, true);
-        }
-        else {
+          Wait.waitForCriterion(verifyPortfolioCount((int) index.getStatistics().getNumberOfValues() + numPortfoliosPerVM + numExpectedResults), 5000, 200, true);
+        } else {
           //operations we have done on this vm consist of:
           //50 instances of Portfolio created for put operation
           //Due to the query we deserialized the number of entries this vm currently hosts
           //We had to deserialized the results from the other data nodes when we iterated through the results as well as our own
-          Wait.waitForCriterion(verifyPortfolioCount((int)((PartitionedRegion)region).getLocalSize() + numExpectedResults + numPortfoliosPerVM), 5000, 200, true);
+          Wait.waitForCriterion(verifyPortfolioCount((int) ((PartitionedRegion) region).getLocalSize() + numExpectedResults + numPortfoliosPerVM), 5000, 200, true);
         }
         return null;
       }
     });
-    
+
     vm1.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region region = getCache().getRegion("/portfolios");
         if (hasIndex) {
           //After vm0 executed the query, we already had the values deserialized in our cache
           //So it's the same total as before
-          Wait.waitForCriterion(verifyPortfolioCount((int)((PartitionedRegion)region).getLocalSize() + numPortfoliosPerVM), 5000, 200, true);
-        }
-        else {
+          Wait.waitForCriterion(verifyPortfolioCount((int) ((PartitionedRegion) region).getLocalSize() + numPortfoliosPerVM), 5000, 200, true);
+        } else {
           //After vm0 executed the query, we had to deserialize the values in our vm
-          Wait.waitForCriterion(verifyPortfolioCount((int)((PartitionedRegion)region).getLocalSize() + numPortfoliosPerVM), 5000, 200, true);
+          Wait.waitForCriterion(verifyPortfolioCount((int) ((PartitionedRegion) region).getLocalSize() + numPortfoliosPerVM), 5000, 200, true);
         }
         return null;
       }
     });
-    
+
     vm0.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region region = getCache().getRegion("/portfolios");
@@ -277,13 +272,12 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         Query query = qs.newQuery(queryString);
         SelectResults results = (SelectResults) query.execute();
         assertEquals(numExpectedResults, results.size());
-        for (Object o: results) {
+        for (Object o : results) {
           if (o instanceof Portfolio) {
             Portfolio p = (Portfolio) o;
             assertEquals("status should not have been changed", "testStatus", p.status);
-          }
-          else {
-            Struct struct = (Struct)o;
+          } else {
+            Struct struct = (Struct) o;
             Portfolio p = (Portfolio) struct.getFieldValues()[0];
             assertEquals("status should not have been changed", "testStatus", p.status);
           }
@@ -294,25 +288,23 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
           //Due to index, we have deserialized all of the entries this vm currently host
           //This is the second query, because we have deserialized and cached these values, we just need to add the number of results a second time
           Index index = getCache().getQueryService().getIndex(region, "idIndex");
-          Wait.waitForCriterion(verifyPortfolioCount((int)index.getStatistics().getNumberOfValues() + numExpectedResults + numExpectedResults + numPortfoliosPerVM), 5000, 200, true);
-        }
-        else {
-        //operations we have done on this vm consist of:
+          Wait.waitForCriterion(verifyPortfolioCount((int) index.getStatistics().getNumberOfValues() + numExpectedResults + numExpectedResults + numPortfoliosPerVM), 5000, 200, true);
+        } else {
+          //operations we have done on this vm consist of:
           //50 instances of Portfolio created for put operation
           //Due to index, we have deserialized all of the entries this vm currently host
           //This is the second query, because we have deserialized and cached these values, we just need to add the number of results a second time
           //Because we have no index, we have to again deserialize all the values that this vm is hosting
-          Wait.waitForCriterion(verifyPortfolioCount((int)(((PartitionedRegion)region).getLocalSize() + ((PartitionedRegion)region).getLocalSize() + numExpectedResults + numExpectedResults + numPortfoliosPerVM)), 5000, 200, true);
+          Wait.waitForCriterion(verifyPortfolioCount((int) (((PartitionedRegion) region).getLocalSize() + ((PartitionedRegion) region).getLocalSize() + numExpectedResults + numExpectedResults + numPortfoliosPerVM)), 5000, 200, true);
         }
         return null;
       }
     });
-    
+
     destroyRegion("portfolio", vm0);
-    
+
   }
 
-  
   public void helpTestTransactionsOnReplicatedRegion(final String queryString, final int numPortfolios, final int numExpectedResults, final boolean hasIndex) throws Exception {
 
     resetInstanceCount(vm0);
@@ -321,7 +313,7 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
     createReplicatedRegion(vm0, "portfolios");
     createReplicatedRegion(vm1, "portfolios");
     createReplicatedRegion(vm2, "portfolios");
-    
+
     //In the case of replicated region hasPR really has no effect on serialization/deserialization counts
     if (hasIndex) {
       vm0.invoke(new SerializableCallable() {
@@ -332,7 +324,7 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         }
       });
       //let's not create index on vm1 to check different scenarios
-      
+
       vm2.invoke(new SerializableCallable() {
         public Object call() throws Exception {
           QueryTestUtils utils = new QueryTestUtils();
@@ -341,25 +333,24 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         }
       });
     }
-    
 
     vm0.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region region = getCache().getRegion("/portfolios");
-        for (int i = 0 ; i < numPortfolios; i++) {
+        for (int i = 0; i < numPortfolios; i++) {
           Portfolio p = new Portfolio(i);
           p.status = "testStatus";
           p.positions = new HashMap();
           p.positions.put("" + i, new Position("" + i, 20));
           region.put("key " + i, p);
         }
-        
+
         //We should have the same number of portfolio objects that we created for the put
         Wait.waitForCriterion(verifyPortfolioCount(numPortfolios), 5000, 200, true);
         return null;
       }
     });
-    
+
     vm1.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         //At this point, we should only have serialized values in this vm
@@ -368,21 +359,20 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     });
-    
+
     vm2.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         //There is an index for vm2, so we should have deserialized values at this point,
         Region region = getCache().getRegion("/portfolios");
         if (hasIndex) {
           Wait.waitForCriterion(verifyPortfolioCount(numPortfolios), 0, 200, true);
-        }
-        else {
+        } else {
           Wait.waitForCriterion(verifyPortfolioCount(0), 0, 200, true);
         }
         return null;
       }
     });
-    
+
     //start transaction
     //execute query
     //modify results
@@ -390,40 +380,37 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region region = getCache().getRegion("/portfolios");
-        CacheTransactionManager txManager =
-            region.getCache().getCacheTransactionManager();
+        CacheTransactionManager txManager = region.getCache().getCacheTransactionManager();
         try {
-        txManager.begin();
+          txManager.begin();
 
-        QueryService qs = getCache().getQueryService();
-        Query query = qs.newQuery(queryString);
-        SelectResults results = (SelectResults) query.execute();
-        assertEquals(numExpectedResults, results.size());
-        for (Object o: results) {
-          if (o instanceof Portfolio) {
-            Portfolio p = (Portfolio) o;
-            p.status = "discardStatus";
+          QueryService qs = getCache().getQueryService();
+          Query query = qs.newQuery(queryString);
+          SelectResults results = (SelectResults) query.execute();
+          assertEquals(numExpectedResults, results.size());
+          for (Object o : results) {
+            if (o instanceof Portfolio) {
+              Portfolio p = (Portfolio) o;
+              p.status = "discardStatus";
+            } else {
+              Struct struct = (Struct) o;
+              Portfolio p = (Portfolio) struct.getFieldValues()[0];
+              p.status = "discardStatus";
+            }
           }
-          else {
-            Struct struct = (Struct) o;
-            Portfolio p = (Portfolio) struct.getFieldValues()[0];
-            p.status = "discardStatus";
-          }
-        }
-        
-        txManager.commit();
-        }
-        catch (CommitConflictException conflict) {
+
+          txManager.commit();
+        } catch (CommitConflictException conflict) {
           Assert.fail("commit conflict exception", conflict);
         }
-        
+
         //We have created puts from our previous callable
         //Now we have copied the results from the query 
         Wait.waitForCriterion(verifyPortfolioCount(numExpectedResults + numPortfolios), 0, 200, true);
         return null;
       }
     });
-    
+
     //Check objects in cache on vm1
     vm1.invoke(new SerializableCallable() {
       public Object call() throws Exception {
@@ -432,14 +419,13 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         Query query = qs.newQuery(queryString);
         SelectResults results = (SelectResults) query.execute();
         assertEquals(numExpectedResults, results.size());
-        for (Object o: results) {
+        for (Object o : results) {
           if (o instanceof Portfolio) {
             Portfolio p = (Portfolio) o;
             assertEquals("status should not have been changed", "testStatus", p.status);
             p.status = "discardStatus";
-          }
-          else {
-            Struct struct = (Struct)o;
+          } else {
+            Struct struct = (Struct) o;
             Portfolio p = (Portfolio) struct.getFieldValues()[0];
             assertEquals("status should not have been changed", "testStatus", p.status);
             p.status = "discardStatus";
@@ -451,25 +437,24 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
 
         results = (SelectResults) query.execute();
         assertEquals(numExpectedResults, results.size());
-        for (Object o: results) {
+        for (Object o : results) {
           if (o instanceof Portfolio) {
             Portfolio p = (Portfolio) o;
             assertEquals("status should not have been changed", "testStatus", p.status);
-          }
-          else {
-            Struct struct = (Struct)o;
+          } else {
+            Struct struct = (Struct) o;
             Portfolio p = (Portfolio) struct.getFieldValues()[0];
             assertEquals("status should not have been changed", "testStatus", p.status);
           }
         }
-      
+
         //we never created index on vm1
         //so in this case, we always have to deserialize the value from the region
         Wait.waitForCriterion(verifyPortfolioCount(numPortfolios * 2 + numExpectedResults * 2), 0, 200, true);
         return null;
       }
     });
-    
+
     //Check objects in cache on vm2
     vm2.invoke(new SerializableCallable() {
       public Object call() throws Exception {
@@ -478,51 +463,47 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         Query query = qs.newQuery(queryString);
         SelectResults results = (SelectResults) query.execute();
         assertEquals(numExpectedResults, results.size());
-        for (Object o: results) {
+        for (Object o : results) {
           if (o instanceof Portfolio) {
             Portfolio p = (Portfolio) o;
             assertEquals("status should not have been changed", "testStatus", p.status);
             p.status = "discardStatus";
-          }
-          else {
-            Struct struct = (Struct)o;
+          } else {
+            Struct struct = (Struct) o;
             Portfolio p = (Portfolio) struct.getFieldValues()[0];
             assertEquals("status should not have been changed", "testStatus", p.status);
             p.status = "discardStatus";
           }
         }
         //with or without index, the values had to have been deserialized at one point
-        Wait.waitForCriterion(verifyPortfolioCount(numPortfolios + numExpectedResults), 0, 200, true);        
+        Wait.waitForCriterion(verifyPortfolioCount(numPortfolios + numExpectedResults), 0, 200, true);
         results = (SelectResults) query.execute();
         assertEquals(numExpectedResults, results.size());
-        for (Object o: results) {
+        for (Object o : results) {
           if (o instanceof Portfolio) {
             Portfolio p = (Portfolio) o;
             assertEquals("status should not have been changed", "testStatus", p.status);
-          }
-          else {
-            Struct struct = (Struct)o;
+          } else {
+            Struct struct = (Struct) o;
             Portfolio p = (Portfolio) struct.getFieldValues()[0];
             assertEquals("status should not have been changed", "testStatus", p.status);
           }
         }
-      
 
         if (hasIndex) {
           //we have an index, so the values are already deserialized
           //total is now our original deserialization amount : numPortfolios
           //two query results copied.
-          Wait.waitForCriterion(verifyPortfolioCount(numPortfolios + numExpectedResults * 2), 0, 200, true);        
-        }
-        else {
+          Wait.waitForCriterion(verifyPortfolioCount(numPortfolios + numExpectedResults * 2), 0, 200, true);
+        } else {
           //we never created index on vm1
           //so in this case, we always have to deserialize the value from the region
-          Wait.waitForCriterion(verifyPortfolioCount(numPortfolios * 2 + numExpectedResults * 2), 0, 200, true);        
+          Wait.waitForCriterion(verifyPortfolioCount(numPortfolios * 2 + numExpectedResults * 2), 0, 200, true);
         }
         return null;
       }
     });
-    
+
     //Check objects in cache on vm0
     vm0.invoke(new SerializableCallable() {
       public Object call() throws Exception {
@@ -531,29 +512,28 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
         Query query = qs.newQuery(queryString);
         SelectResults results = (SelectResults) query.execute();
         assertEquals(numExpectedResults, results.size());
-        for (Object o: results) {
+        for (Object o : results) {
           if (o instanceof Portfolio) {
             Portfolio p = (Portfolio) o;
             assertEquals("status should not have been changed", "testStatus", p.status);
-          }
-          else {
-            Struct struct = (Struct)o;
+          } else {
+            Struct struct = (Struct) o;
             Portfolio p = (Portfolio) struct.getFieldValues()[0];
             assertEquals("status should not have been changed", "testStatus", p.status);
           }
         }
-        
+
         //with or without index, the values we put in the region were already deserialized values
-        Wait.waitForCriterion(verifyPortfolioCount(numExpectedResults * 2 + numPortfolios), 0, 200, true);        
+        Wait.waitForCriterion(verifyPortfolioCount(numExpectedResults * 2 + numPortfolios), 0, 200, true);
         return null;
       }
     });
-    
+
     destroyRegion("portfolio", vm0);
   }
-  
-  private void destroyRegion(String regionName, VM ...vms) {
-    for (VM vm: vms) {
+
+  private void destroyRegion(String regionName, VM... vms) {
+    for (VM vm : vms) {
       vm.invoke(new SerializableCallable() {
         public Object call() throws Exception {
           QueryTestUtils utils = new QueryTestUtils();
@@ -565,7 +545,6 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
       });
     }
   }
- 
 
   private void createPartitionRegion(VM vm, String regionName) {
     vm.invoke(new SerializableCallable() {
@@ -576,7 +555,7 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private void createReplicatedRegion(VM vm, String regionName) {
     vm.invoke(new SerializableCallable() {
       public Object call() throws Exception {
@@ -586,7 +565,7 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private void resetInstanceCount(VM vm) {
     vm.invoke(new SerializableRunnable() {
       public void run() {
@@ -594,40 +573,41 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
+
   private void startCacheServer(VM server, final int port) throws Exception {
     server.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         getSystem(getServerProperties());
-        
-        GemFireCacheImpl cache = (GemFireCacheImpl)getCache();
+
+        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         cache.setCopyOnRead(true);
-        AttributesFactory factory = new AttributesFactory();        
-        
+        AttributesFactory factory = new AttributesFactory();
+
         CacheServer cacheServer = getCache().addCacheServer();
         cacheServer.setPort(port);
-        cacheServer.start();  
-        
+        cacheServer.start();
+
         QueryTestUtils.setCache(cache);
         return null;
       }
     });
   }
-  
+
   private void startClient(VM client, final VM server, final int port) {
     client.invoke(new CacheSerializableRunnable("Start client") {
       public void run2() throws CacheException {
         Properties props = getClientProps();
         getSystem(props);
-        
+
         final ClientCacheFactory ccf = new ClientCacheFactory(props);
         ccf.addPoolServer(NetworkUtils.getServerHostName(server.getHost()), port);
         ccf.setPoolSubscriptionEnabled(true);
-        
-        ClientCache cache = (ClientCache)getClientCache(ccf);
+
+        ClientCache cache = (ClientCache) getClientCache(ccf);
       }
     });
   }
- 
+
   protected Properties getClientProps() {
     Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0");
@@ -644,16 +624,15 @@ public class CopyOnReadIndexDUnitTest extends JUnit4CacheTestCase {
   private WaitCriterion verifyPortfolioCount(final int expected) {
     return new WaitCriterion() {
       private int expectedCount = expected;
+
       public boolean done() {
         return expectedCount == Portfolio.instanceCount.get();
       }
-      
+
       public String description() {
         return "verifying number of object instances created";
       }
     };
   }
-  
 
 }
-

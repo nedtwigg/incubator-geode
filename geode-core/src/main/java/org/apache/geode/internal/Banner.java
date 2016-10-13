@@ -38,31 +38,29 @@ public class Banner {
 
   private static void prettyPrintPath(String path, PrintWriter out) {
     if (path != null) {
-      StringTokenizer st =
-          new StringTokenizer(path, System.getProperty("path.separator"));
+      StringTokenizer st = new StringTokenizer(path, System.getProperty("path.separator"));
       while (st.hasMoreTokens()) {
         out.println("  " + st.nextToken());
       }
     }
   }
+
   /**
    * Print information about this process to the specified stream.
    * @param args possibly null list of command line arguments
    */
   private static void print(PrintWriter out, String args[]) {
-    Map sp = new TreeMap((Properties)System.getProperties().clone()); // fix for 46822
+    Map sp = new TreeMap((Properties) System.getProperties().clone()); // fix for 46822
     int processId = -1;
     final String SEPERATOR = "---------------------------------------------------------------------------";
     try {
       processId = OSProcess.getId();
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -116,21 +114,21 @@ public class Banner {
     }
 
     if (args != null && args.length != 0) {
-      for (int i=0; i < args.length; i++) {
+      for (int i = 0; i < args.length; i++) {
         allArgs.add(args[i]);
       }
     }
     if (!allArgs.isEmpty()) {
       out.println("Command Line Parameters:");
-      for (String arg: allArgs) {
+      for (String arg : allArgs) {
         out.println("  " + arg);
       }
     }
     out.println("Class Path:");
-    prettyPrintPath((String)sp.get("java.class.path"), out);
+    prettyPrintPath((String) sp.get("java.class.path"), out);
     sp.remove("java.class.path");
     out.println("Library Path:");
-    prettyPrintPath((String)sp.get("java.library.path"), out);
+    prettyPrintPath((String) sp.get("java.library.path"), out);
     sp.remove("java.library.path");
 
     if (Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableSystemPropertyLogging")) {
@@ -139,15 +137,11 @@ public class Banner {
       out.println("System Properties:");
       Iterator it = sp.entrySet().iterator();
       while (it.hasNext()) {
-        Map.Entry me = (Map.Entry)it.next();
+        Map.Entry me = (Map.Entry) it.next();
         String key = me.getKey().toString();
         // SW: Filter out the security properties since they may contain
         // sensitive information.
-        if (!key.startsWith(DistributionConfig.GEMFIRE_PREFIX
-            + DistributionConfig.SECURITY_PREFIX_NAME)
-            && !key.startsWith(DistributionConfigImpl.SECURITY_SYSTEM_PREFIX
-            + DistributionConfig.SECURITY_PREFIX_NAME)
-            && !key.toLowerCase().contains("password") /* bug 45381 */) {
+        if (!key.startsWith(DistributionConfig.GEMFIRE_PREFIX + DistributionConfig.SECURITY_PREFIX_NAME) && !key.startsWith(DistributionConfigImpl.SECURITY_SYSTEM_PREFIX + DistributionConfig.SECURITY_PREFIX_NAME) && !key.toLowerCase().contains("password") /* bug 45381 */) {
           out.println("    " + key + " = " + me.getValue());
         } else {
           out.println("    " + key + " = " + "********");

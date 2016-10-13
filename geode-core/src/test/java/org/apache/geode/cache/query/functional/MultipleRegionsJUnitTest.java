@@ -45,25 +45,24 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public class MultipleRegionsJUnitTest {
 
-
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
     Region region1 = CacheUtils.createRegion("Portfolios", Portfolio.class);
-    for(int i=0;i<5;i++){
-      region1.put(""+i, new Portfolio(i));
+    for (int i = 0; i < 5; i++) {
+      region1.put("" + i, new Portfolio(i));
     }
     Region region2 = CacheUtils.createRegion("Portfolios2", Portfolio.class);
-    for(int i=0;i<2;i++){
-      region2.put(""+i, new Portfolio(i));
+    for (int i = 0; i < 2; i++) {
+      region2.put("" + i, new Portfolio(i));
     }
     Region region3 = CacheUtils.createRegion("Data", Data.class);
-    for(int i=0;i<2;i++){
-      region3.put(""+i, new Data());
+    for (int i = 0; i < 2; i++) {
+      region3.put("" + i, new Data());
     }
     Region region4 = CacheUtils.createRegion("Portfolios3", Portfolio.class);
-    for(int i=0;i<4;i++){
-      region4.put(""+i, new Portfolio(i));
+    for (int i = 0; i < 4; i++) {
+      region4.put("" + i, new Portfolio(i));
     }
   }
 
@@ -74,35 +73,25 @@ public class MultipleRegionsJUnitTest {
 
   @Test
   public void testQueriesExecutionOnMultipleRegion() throws Exception {
-    int SizeArray[]={5,2,0,8,80,10,8,10,48};
+    int SizeArray[] = { 5, 2, 0, 8, 80, 10, 8, 10, 48 };
     QueryService qs = CacheUtils.getQueryService();
-    String queries[]={
+    String queries[] = {
         // Multiple Regions Available. Execute queries on any of the Region.
-        "select distinct * from /Portfolios",
-        "SELECT DISTINCT * FROM /Portfolios2,  positions.values where status='active'",
-        "SELECT DISTINCT * from /Portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'",
-        "Select distinct * from /Portfolios3 pf, pf.positions",
+        "select distinct * from /Portfolios", "SELECT DISTINCT * FROM /Portfolios2,  positions.values where status='active'", "SELECT DISTINCT * from /Portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'", "Select distinct * from /Portfolios3 pf, pf.positions",
         // Multiple Regions in a Query         
-        "Select distinct * from /Portfolios, /Portfolios2, /Portfolios3, /Data",
-        "Select distinct * from /Portfolios, /Portfolios2",
-        "Select distinct * from /Portfolios3, /Data",
-        "Select distinct * from /Portfolios, /Data",  
-        "Select distinct * from /Portfolios pf, /Portfolios2, /Portfolios3, /Data where pf.status='active'"
-    };
-    try{
-      for(int i=0;i<queries.length;i++){
+        "Select distinct * from /Portfolios, /Portfolios2, /Portfolios3, /Data", "Select distinct * from /Portfolios, /Portfolios2", "Select distinct * from /Portfolios3, /Data", "Select distinct * from /Portfolios, /Data", "Select distinct * from /Portfolios pf, /Portfolios2, /Portfolios3, /Data where pf.status='active'" };
+    try {
+      for (int i = 0; i < queries.length; i++) {
         Query query = qs.newQuery(queries[i]);
         Object result = query.execute();
         //  CacheUtils.log(Utils.printResult(result));
-        if (((Collection)result).size()!= SizeArray[i])
+        if (((Collection) result).size() != SizeArray[i])
           fail("Size of Result is not as Expected");
       }
-    }catch(Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
       fail();
     }
   }
 
-
 }
-

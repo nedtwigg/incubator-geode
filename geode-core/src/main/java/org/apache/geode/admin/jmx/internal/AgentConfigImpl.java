@@ -631,7 +631,7 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
     Properties sslProps = getSSLProperties();
     if (sslProps.size() > 0) {
       int sequence = 0;
-      for (Iterator iter = sslProps.keySet().iterator(); iter.hasNext(); ) {
+      for (Iterator iter = sslProps.keySet().iterator(); iter.hasNext();) {
         String key = (String) iter.next();
         String value = sslProps.getProperty(key);
         props.setProperty("ssl-property-" + sequence, key + "=" + OBFUSCATED_STRING);
@@ -674,7 +674,6 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
 
     return props;
   }
-
 
   // -------------------------------------------------------------------------
   //   Agent specific properties
@@ -1098,8 +1097,7 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
     } else if (prop.equals(LOG_DISK_SPACE_LIMIT_NAME)) {
       return LocalizedStrings.AgentConfigImpl_LIMIT_IN_MEGABYTES_OF_HOW_MUCH_DISK_SPACE_CAN_BE_CONSUMED_BY_OLD_INACTIVE_LOG_FILES.toLocalizedString();
     } else if (prop.equals(LOG_FILE_SIZE_LIMIT_NAME)) {
-      return LocalizedStrings.AgentConfigImpl_LIMIT_IN_MEGABYTES_OF_HOW_LARGE_THE_CURRENT_STATISTIC_ARCHIVE_FILE_CAN_GROW_BEFORE_IT_IS_CLOSED_AND_ARCHIVAL_ROLLS_ON_TO_A_NEW_FILE
-        .toLocalizedString();
+      return LocalizedStrings.AgentConfigImpl_LIMIT_IN_MEGABYTES_OF_HOW_LARGE_THE_CURRENT_STATISTIC_ARCHIVE_FILE_CAN_GROW_BEFORE_IT_IS_CLOSED_AND_ARCHIVAL_ROLLS_ON_TO_A_NEW_FILE.toLocalizedString();
     } else if (prop.equals(MCAST_PORT)) {
       return LocalizedStrings.AgentConfigImpl_MULTICAST_PORT_USED_TO_CONNECT_TO_DISTRIBUTED_SYSTEM.toLocalizedString();
     } else if (prop.equals(MCAST_ADDRESS)) {
@@ -1307,21 +1305,15 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
     super.validate();
 
     if (this.httpPort < 0 || this.httpPort > MAX_HTTP_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] {
-        HTTP_PORT_NAME, Integer.valueOf(MIN_HTTP_PORT), Integer.valueOf(MAX_HTTP_PORT)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { HTTP_PORT_NAME, Integer.valueOf(MIN_HTTP_PORT), Integer.valueOf(MAX_HTTP_PORT) }));
     }
 
     if (this.rmiPort < 0 || this.rmiPort > MAX_RMI_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] {
-        RMI_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { RMI_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT) }));
     }
 
     if (this.rmiServerPort < 0 || this.rmiServerPort > MAX_RMI_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] {
-        RMI_SERVER_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { RMI_SERVER_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT) }));
     }
 
   }
@@ -1383,9 +1375,7 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
    */
   private int validateHttpPort(int val) {
     if (val < 0 || val > MAX_HTTP_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] {
-        HTTP_PORT_NAME, Integer.valueOf(MIN_HTTP_PORT), Integer.valueOf(MAX_HTTP_PORT)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { HTTP_PORT_NAME, Integer.valueOf(MIN_HTTP_PORT), Integer.valueOf(MAX_HTTP_PORT) }));
     }
     return val;
   }
@@ -1481,9 +1471,7 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
    */
   private int validateRmiPort(int val) {
     if (val < MIN_RMI_PORT || val > MAX_RMI_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] {
-        RMI_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { RMI_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT) }));
     }
     return val;
   }
@@ -1509,9 +1497,7 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
    */
   private int validateRmiServerPort(int val) {
     if (val < MIN_RMI_PORT || val > MAX_RMI_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] {
-        RMI_SERVER_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT)
-      }));
+      throw new IllegalArgumentException(LocalizedStrings.AgentConfigImpl_0_MUST_BE_ZERO_OR_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { RMI_SERVER_PORT_NAME, Integer.valueOf(MIN_RMI_PORT), Integer.valueOf(MAX_RMI_PORT) }));
     }
     return val;
   }
@@ -1791,4 +1777,3 @@ public class AgentConfigImpl extends DistributedSystemConfigImpl implements Agen
     return super.clone();
   }
 }
-

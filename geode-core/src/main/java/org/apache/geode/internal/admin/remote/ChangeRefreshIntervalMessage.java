@@ -67,11 +67,9 @@ public class ChangeRefreshIntervalMessage extends PooledDistributionMessage {
     return CHANGE_REFRESH_INT_MESSAGE;
   }
 
-
   @Override
   protected void process(DistributionManager dm) {
-    StatAlertsManager.getInstance(dm)
-        .setRefreshTimeInterval(getRefreshInterval());
+    StatAlertsManager.getInstance(dm).setRefreshTimeInterval(getRefreshInterval());
   }
 
   /**
@@ -91,7 +89,6 @@ public class ChangeRefreshIntervalMessage extends PooledDistributionMessage {
 
   @Override
   public String toString() {
-    return "Set alerts refresh time interval in "
-        + InternalDistributedSystem.getAnyInstance().getDistributedMember();
+    return "Set alerts refresh time interval in " + InternalDistributedSystem.getAnyInstance().getDistributedMember();
   }
 }

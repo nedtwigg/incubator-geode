@@ -29,7 +29,7 @@ import org.apache.geode.internal.cache.partitioned.rebalance.PartitionedRegionLo
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 public class ExplicitMoveDirector extends RebalanceDirectorAdapter {
-  
+
   private PartitionedRegionLoadModel model;
   private final int bucketId;
   private final InternalDistributedMember source;
@@ -37,9 +37,7 @@ public class ExplicitMoveDirector extends RebalanceDirectorAdapter {
   private final Object key;
   private InternalDistributedSystem ds;
 
-  
-  public ExplicitMoveDirector(Object key, int bucketId, DistributedMember source,
-      DistributedMember target, DistributedSystem distributedSystem) {
+  public ExplicitMoveDirector(Object key, int bucketId, DistributedMember source, DistributedMember target, DistributedSystem distributedSystem) {
     this.key = key;
     this.bucketId = bucketId;
     this.source = (InternalDistributedMember) source;
@@ -62,38 +60,38 @@ public class ExplicitMoveDirector extends RebalanceDirectorAdapter {
     Bucket bucket = model.getBuckets()[bucketId];
     Member sourceMember = model.getMember(source);
     Member targetMember = model.getMember(target);
-    if(sourceMember == null) {
+    if (sourceMember == null) {
       throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(model.getName(), source));
     }
-    if(targetMember == null) {
+    if (targetMember == null) {
       throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(model.getName(), target));
     }
-    
-    if(bucket == null) {
+
+    if (bucket == null) {
       throw new IllegalStateException("The bucket for key " + key + ", bucket " + bucketId + ", region " + model.getName() + " does not exist");
     }
-    
-    if(!bucket.getMembersHosting().contains(sourceMember)) {
+
+    if (!bucket.getMembersHosting().contains(sourceMember)) {
       throw new IllegalStateException("The bucket for key " + key + ", bucket " + bucketId + ", region " + model.getName() + " is not hosted by " + source + ". Members hosting: " + bucket.getMembersHosting());
     }
-    
+
     RefusalReason reason = targetMember.willAcceptBucket(bucket, sourceMember, model.enforceUniqueZones());
-    if(reason.willAccept()) {
-      if(!model.moveBucket(new Move(sourceMember, targetMember, bucket))) {
+    if (reason.willAccept()) {
+      if (!model.moveBucket(new Move(sourceMember, targetMember, bucket))) {
         //Double check to see if the source or destination have left the DS
         Set allMembers = ds.getDistributionManager().getDistributionManagerIdsIncludingAdmin();
-        if(!allMembers.contains(sourceMember)) {
+        if (!allMembers.contains(sourceMember)) {
           throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(model.getName(), source));
         }
-        if(!allMembers.contains(targetMember)) {
+        if (!allMembers.contains(targetMember)) {
           throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(model.getName(), target));
         }
         throw new IllegalStateException("Unable to move bucket " + bucket + " from " + sourceMember + " to " + targetMember);
-      } 
+      }
     } else {
       throw new IllegalStateException("Unable to move bucket for " + model.getName() + ". " + reason.formatMessage(sourceMember, targetMember, bucket));
     }
-    
+
     return false;
   }
 }

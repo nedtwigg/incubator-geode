@@ -53,10 +53,10 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
   public void testPerformance() throws Exception {
     int iterations = 5;
     int dataCount = 10000;
-    
+
     execute(iterations, dataCount);
   }
-  
+
   private void execute(int iterations, int dataCount) throws Exception {
     RegionType[] rts = new RegionType[] { RegionType.REPLICATE, RegionType.PARTITION };
     SerializationType[] sts = new SerializationType[] { SerializationType.DATA_SERIALIZABLE, SerializationType.PDX };
@@ -68,21 +68,21 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
 
           loadData(region, st, dataCount);
           doExport(region);
-          
+
           region = createRegion(rt, st);
           doImport(region);
         }
       }
     }
   }
-  
+
   private void doExport(Region<Integer, MyObject> region) throws Exception {
     File f = new File(getDiskDirs()[0], region.getName());
-    
+
     long start = System.currentTimeMillis();
     region.getSnapshotService().save(f, SnapshotFormat.GEMFIRE);
     long elapsed = System.currentTimeMillis() - start;
-    
+
     int size = region.size();
     long bytes = f.length();
 
@@ -93,17 +93,17 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
     LogWriterUtils.getLogWriter().info("SNP: Export entry rate: " + eps + " entries / sec");
     LogWriterUtils.getLogWriter().info("SNP: Export data rate: " + mbps + " MB / sec");
   }
-  
+
   private void doImport(Region<Integer, MyObject> region) throws Exception {
     File f = new File(getDiskDirs()[0], region.getName());
-    
+
     long start = System.currentTimeMillis();
     region.getSnapshotService().load(f, SnapshotFormat.GEMFIRE);
     long elapsed = System.currentTimeMillis() - start;
-    
+
     int size = region.size();
     long bytes = f.length();
-    
+
     double eps = 1000.0 * size / elapsed;
     double mbps = 1000.0 * bytes / elapsed / (1024 * 1024);
 
@@ -116,28 +116,28 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
   public final void postSetUp() throws Exception {
     createCache();
   }
-  
+
   private void createCache() throws Exception {
     SerializableCallable setup = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
-        
+
         getCache(cf);
         return null;
       }
     };
-    
+
     SnapshotDUnitTest.forEachVm(setup, true);
   }
-  
+
   private Region<Integer, MyObject> createRegion(final RegionType rt, final SerializationType st) throws Exception {
     final String name = "snapshot-" + rt.name() + "-" + st.name();
     Region<Integer, MyObject> region = getCache().getRegion(name);
     if (region != null) {
       region.destroyRegion();
     }
-    
+
     SerializableCallable setup = new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -146,17 +146,17 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     };
-    
+
     SnapshotDUnitTest.forEachVm(setup, true);
     return getCache().getRegion(name);
   }
 
   private void loadData(Region<Integer, MyObject> region, SerializationType st, int count) {
     RegionGenerator rgen = new RegionGenerator();
-    
+
     int bufferSize = 1000;
     Map<Integer, MyObject> buffer = new HashMap<Integer, MyObject>(bufferSize);
-    
+
     long start = System.currentTimeMillis();
     for (int i = 0; i < count; i++) {
       buffer.put(i, rgen.createData(st, i, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at sapien lectus. Nam ullamcorper blandit tempus. Morbi accumsan ornare erat eget lobortis. Mauris laoreet auctor purus et vehicula. Cras hendrerit consectetur odio, in placerat orci vehicula a. Ut laoreet consectetur quam, at pellentesque felis sollicitudin sed. Aliquam imperdiet, augue at vehicula placerat, quam mi feugiat mi, non semper elit diam vitae lectus. Fusce vestibulum erat vitae dui scelerisque aliquet. Nam magna sapien, scelerisque id tincidunt non, dapibus quis ipsum."));
@@ -165,14 +165,14 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
         buffer.clear();
       }
     }
-    
+
     if (!buffer.isEmpty()) {
       region.putAll(buffer);
     }
-    
+
     long elapsed = System.currentTimeMillis() - start;
     LogWriterUtils.getLogWriter().info("SNP: loaded " + count + " entries in " + elapsed + " ms");
-    
+
     assertEquals(count, region.size());
   }
 }

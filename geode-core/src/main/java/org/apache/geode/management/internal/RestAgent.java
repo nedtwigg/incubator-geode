@@ -63,16 +63,13 @@ public class RestAgent {
   }
 
   private boolean isManagementRestServiceRunning(GemFireCacheImpl cache) {
-    final SystemManagementService managementService = (SystemManagementService) ManagementService
-        .getManagementService(cache);
-    return (managementService.getManagementAgent() != null && managementService
-        .getManagementAgent().isHttpServiceRunning());
+    final SystemManagementService managementService = (SystemManagementService) ManagementService.getManagementService(cache);
+    return (managementService.getManagementAgent() != null && managementService.getManagementAgent().isHttpServiceRunning());
 
   }
 
   public synchronized void start(GemFireCacheImpl cache) {
-    if (!this.running && this.config.getHttpServicePort() != 0
-        && !isManagementRestServiceRunning(cache)) {
+    if (!this.running && this.config.getHttpServicePort() != 0 && !isManagementRestServiceRunning(cache)) {
       try {
         startHttpService();
         this.running = true;
@@ -116,8 +113,7 @@ public class RestAgent {
     // TODO: add a check that will make sure that we start HTTP service on
     // non-manager data node
     String httpServiceBindAddress = getBindAddressForHttpService();
-    logger.info("Attempting to start HTTP service on port ({}) at bind-address ({})...",
-        this.config.getHttpServicePort(), httpServiceBindAddress);
+    logger.info("Attempting to start HTTP service on port ({}) at bind-address ({})...", this.config.getHttpServicePort(), httpServiceBindAddress);
 
     // Find the developer REST WAR file
     final String gemfireAPIWar = agentUtil.findWarLocation("geode-web-api");
@@ -128,7 +124,7 @@ public class RestAgent {
     try {
       // Check if we're already running inside Tomcat
       if (isRunningInTomcat()) {
-        logger.warn("Detected presence of catalina system properties. HTTP service will not be started. To enable the GemFire Developer REST API, please deploy the /geode-web-api WAR file in your application server."); 
+        logger.warn("Detected presence of catalina system properties. HTTP service will not be started. To enable the GemFire Developer REST API, please deploy the /geode-web-api WAR file in your application server.");
       } else if (agentUtil.isWebApplicationAvailable(gemfireAPIWar)) {
 
         final int port = this.config.getHttpServicePort();
@@ -139,8 +135,7 @@ public class RestAgent {
         this.httpServer = JettyHelper.addWebApplication(httpServer, "/geode", gemfireAPIWar);
 
         if (logger.isDebugEnabled()) {
-          logger.info("Starting HTTP embedded server on port ({}) at bind-address ({})...",
-              ((ServerConnector) this.httpServer.getConnectors()[0]).getPort(), httpServiceBindAddress);
+          logger.info("Starting HTTP embedded server on port ({}) at bind-address ({})...", ((ServerConnector) this.httpServer.getConnectors()[0]).getPort(), httpServiceBindAddress);
         }
 
         this.httpServer = JettyHelper.startJetty(this.httpServer);
@@ -187,8 +182,7 @@ public class RestAgent {
         try {
           this.httpServer.destroy();
         } catch (Exception ignore) {
-          logger.error("Failed to properly release resources held by the HTTP service: {}",
-              ignore.getMessage(), ignore);
+          logger.error("Failed to properly release resources held by the HTTP service: {}", ignore.getMessage(), ignore);
         } finally {
           this.httpServer = null;
           System.clearProperty("catalina.base");
@@ -233,8 +227,7 @@ public class RestAgent {
       }
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Error creating __ParameterizedQueries__ Region with cause {}",
-            e.getMessage(), e);
+        logger.debug("Error creating __ParameterizedQueries__ Region with cause {}", e.getMessage(), e);
       }
     }
   }

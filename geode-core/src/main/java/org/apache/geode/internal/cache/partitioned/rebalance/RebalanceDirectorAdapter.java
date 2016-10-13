@@ -25,8 +25,7 @@ package org.apache.geode.internal.cache.partitioned.rebalance;
 public abstract class RebalanceDirectorAdapter implements RebalanceDirector {
 
   @Override
-  public boolean isRebalanceNecessary(boolean redundancyImpaired,
-      boolean withPersistence) {
+  public boolean isRebalanceNecessary(boolean redundancyImpaired, boolean withPersistence) {
     return true;
   }
 

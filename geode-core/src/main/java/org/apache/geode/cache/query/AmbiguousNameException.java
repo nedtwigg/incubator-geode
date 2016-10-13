@@ -25,8 +25,8 @@ package org.apache.geode.cache.query;
  */
 
 public class AmbiguousNameException extends NameResolutionException {
-private static final long serialVersionUID = 5635771575414148564L;
-  
+  private static final long serialVersionUID = 5635771575414148564L;
+
   /**
    * Constructs instance of AmbiguousNameException with error message
    * @param msg the error message
@@ -34,7 +34,7 @@ private static final long serialVersionUID = 5635771575414148564L;
   public AmbiguousNameException(String msg) {
     super(msg);
   }
-    
+
   /**
    * Constructs instance of AmbiguousNameException with error message and cause
    * @param msg the error message

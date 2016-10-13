@@ -86,8 +86,7 @@ public class PulseController {
   PulseServiceFactory pulseServiceFactory;
 
   @RequestMapping(value = "/pulseUpdate", method = RequestMethod.POST)
-  public void getPulseUpdate(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void getPulseUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String pulseData = request.getParameter("pulseData");
 
     ObjectNode responseMap = mapper.createObjectNode();
@@ -102,11 +101,10 @@ public class PulseController {
       while (keys.hasNext()) {
         String serviceName = keys.next().toString();
         try {
-          PulseService pulseService = pulseServiceFactory
-              .getPulseServiceInstance(serviceName);
+          PulseService pulseService = pulseServiceFactory.getPulseServiceInstance(serviceName);
           responseMap.put(serviceName, pulseService.execute(request));
         } catch (Exception serviceException) {
-          LOGGER.warning("serviceException [for service "+serviceName+"] = " + serviceException.getMessage());
+          LOGGER.warning("serviceException [for service " + serviceName + "] = " + serviceException.getMessage());
           responseMap.put(serviceName, EMPTY_JSON);
         }
       }
@@ -121,8 +119,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/authenticateUser", method = RequestMethod.GET)
-  public void authenticateUser(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void authenticateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // json object to be sent as response
     ObjectNode responseJSON = mapper.createObjectNode();
 
@@ -148,8 +145,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/pulseVersion", method = RequestMethod.GET)
-  public void pulseVersion(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void pulseVersion(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     // json object to be sent as response
     ObjectNode responseJSON = mapper.createObjectNode();
@@ -158,9 +154,7 @@ public class PulseController {
       // Reference to repository
       Repository repository = Repository.get();
       // set pulse web app url
-      String pulseWebAppUrl = request.getScheme() + "://"
-          + request.getServerName() + ":" + request.getServerPort()
-          + request.getContextPath();
+      String pulseWebAppUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
 
       repository.setPulseWebAppUrl(pulseWebAppUrl);
 
@@ -204,15 +198,13 @@ public class PulseController {
       Cluster cluster = Repository.get().getCluster();
       cluster.clearAlerts(alertType, isClearAll);
       responseJSON.put("status", "deleted");
-      responseJSON.put(
-          "systemAlerts", SystemAlertsService.getAlertsJson(cluster,
-              cluster.getNotificationPageNumber()));
+      responseJSON.put("systemAlerts", SystemAlertsService.getAlertsJson(cluster, cluster.getNotificationPageNumber()));
       responseJSON.put("pageNumber", cluster.getNotificationPageNumber());
 
       boolean isGFConnected = cluster.isConnectedFlag();
-      if(isGFConnected){
+      if (isGFConnected) {
         responseJSON.put("connectedFlag", isGFConnected);
-      }else{
+      } else {
         responseJSON.put("connectedFlag", isGFConnected);
         responseJSON.put("connectedErrorMsg", cluster.getConnectionErrorMsg());
       }
@@ -227,8 +219,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/acknowledgeAlert", method = RequestMethod.GET)
-  public void acknowledgeAlert(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void acknowledgeAlert(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int alertId;
     ObjectNode responseJSON = mapper.createObjectNode();
 
@@ -261,8 +252,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserRegions", method = RequestMethod.GET)
-  public void dataBrowserRegions(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void dataBrowserRegions(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // get cluster object
     Cluster cluster = Repository.get().getCluster();
 
@@ -316,8 +306,7 @@ public class PulseController {
         ArrayNode jsonRegionMembers = mapper.createArrayNode();
 
         for (int i = 0; i < regionsMembers.size(); i++) {
-          Cluster.Member member = cluster.getMembersHMap().get(
-              regionsMembers.get(i));
+          Cluster.Member member = cluster.getMembersHMap().get(regionsMembers.get(i));
           ObjectNode jsonMember = mapper.createObjectNode();
           jsonMember.put("key", regionsMembers.get(i));
           jsonMember.put("id", member.getId());
@@ -334,8 +323,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserQuery", method = RequestMethod.GET)
-  public void dataBrowserQuery(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void dataBrowserQuery(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // get query string
     String query = request.getParameter("query");
     String members = request.getParameter("members");
@@ -378,8 +366,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserQueryHistory", method = RequestMethod.GET)
-  public void dataBrowserQueryHistory(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void dataBrowserQueryHistory(HttpServletRequest request, HttpServletResponse response) throws IOException {
     ObjectNode responseJSON = mapper.createObjectNode();
     ArrayNode queryResult = null;
     String action = "";
@@ -424,8 +411,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserExport", method = RequestMethod.POST)
-  public void dataBrowserExport(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void dataBrowserExport(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     // get query string
     String filename = request.getParameter("filename");
@@ -447,9 +433,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/pulseProductSupport", method = RequestMethod.GET)
-  public void getConfiguredPulseProduct(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
-      ObjectNode responseJSON = mapper.createObjectNode();
+  public void getConfiguredPulseProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    ObjectNode responseJSON = mapper.createObjectNode();
 
     try {
       responseJSON.put("product", pulseProductSupport);
@@ -464,8 +449,7 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/getQueryStatisticsGridModel", method = RequestMethod.GET)
-  public void getQueryStatisticsGridModel(HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+  public void getQueryStatisticsGridModel(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     ObjectNode responseJSON = mapper.createObjectNode();
     // get cluster object

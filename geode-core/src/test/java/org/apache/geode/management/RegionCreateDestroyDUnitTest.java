@@ -105,9 +105,7 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
       fail(e.getMessage());
     }
     client1.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true)
-                                                                          .addPoolServer("localhost", serverPort)
-                                                                          .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(GOOD_REGION_NAME);
       region.destroyRegion();
       assertThat(region.isDestroyed()).isTrue();
@@ -129,9 +127,7 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
       fail(e.getMessage());
     }
     client1.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true)
-                                                                          .addPoolServer("localhost", serverPort)
-                                                                          .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
       try {
         cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(BAD_REGION_NAME);
         fail("Should have thrown an IllegalArgumentException");
@@ -159,9 +155,7 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
 
     try {
       client1.invoke(() -> {
-        ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true)
-                                                                            .addPoolServer("localhost", serverPort)
-                                                                            .create();
+        ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
         try {
           cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(RESERVED_REGION_NAME);
           fail("Should have thrown an IllegalArgumentException");

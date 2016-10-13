@@ -27,7 +27,6 @@ public class InterestEvent {
   private Object value;
   private boolean isDeserialized = false;
 
-
   public InterestEvent(Object key, Object value, boolean isDeserialized) {
 
     this.key = key;
@@ -42,27 +41,22 @@ public class InterestEvent {
     return key;
   }
 
-
-
-
-
   public Object getValue() {
 
-    if(isDeserialized || value == null) {
+    if (isDeserialized || value == null) {
       return value;
     }
 
     try {
-      value = CacheServerHelper.deserialize((byte[])value);
-    } catch(IOException ioe) {
+      value = CacheServerHelper.deserialize((byte[]) value);
+    } catch (IOException ioe) {
       throw new RuntimeException(LocalizedStrings.InterestEvent_IOEXCEPTION_DESERIALIZING_VALUE.toLocalizedString(), ioe);
-    } catch(ClassNotFoundException cnfe) {
+    } catch (ClassNotFoundException cnfe) {
       throw new RuntimeException(LocalizedStrings.InterestEvent_CLASSNOTFOUNDEXCEPTION_DESERIALIZING_VALUE.toLocalizedString(), cnfe);
     }
     isDeserialized = true;
 
     return value;
   }
-
 
 }

@@ -35,18 +35,18 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * 
  */
 @Category(IntegrationTest.class)
-public class RegionStatsJUnitTest extends MBeanStatsTestCase{
-  
+public class RegionStatsJUnitTest extends MBeanStatsTestCase {
+
   private RegionMBeanBridge bridge;
-  
+
   private PartitionedRegionBridge parBridge;
-  
+
   private DiskRegionBridge diskBridge;
-  
+
   private CachePerfStats cachePerfStats;
-  
+
   private PartitionedRegionStats partitionedRegionStats;
-  
+
   private DiskRegionStats diskRegionStats;
 
   protected void init() {
@@ -58,7 +58,7 @@ public class RegionStatsJUnitTest extends MBeanStatsTestCase{
     parBridge = new PartitionedRegionBridge(partitionedRegionStats);
     diskBridge = new DiskRegionBridge(diskRegionStats);
   }
-  
+
   @Test
   public void testPlainCounters() throws InterruptedException {
     cachePerfStats.incEntryCount(400);
@@ -102,14 +102,14 @@ public class RegionStatsJUnitTest extends MBeanStatsTestCase{
     diskRegionStats.endRead(startTime, CachePerfStats.getStatTime(), 1000);
 
     sample();
-    
+
     assertTrue(getDiskReadsRate() > 0);
     assertTrue(getDiskReadsAverageLatency() > 0);
-    
+
     assertTrue(getDiskWritesRate() > 0);
     assertTrue(getDiskWritesAverageLatency() > 0);
   }
-  
+
   @Test
   public void testTimeBasedCounters() throws InterruptedException {
     final long startTime = CachePerfStats.getStatTime();
@@ -117,13 +117,13 @@ public class RegionStatsJUnitTest extends MBeanStatsTestCase{
     cachePerfStats.startCacheListenerCall();
     cachePerfStats.startCacheWriterCall();
     partitionedRegionStats.startPutRemote();
-    
+
     sample();
 
     cachePerfStats.endCacheListenerCall(startTime);
-    cachePerfStats.endCacheWriterCall(startTime); 
+    cachePerfStats.endCacheWriterCall(startTime);
     partitionedRegionStats.endPutRemote(startTime);
-  
+
     sample();
 
     assertTrue(getCacheListenerCallsAvgLatency() > 0);
@@ -134,132 +134,131 @@ public class RegionStatsJUnitTest extends MBeanStatsTestCase{
   private long getEntryCount() {
     return bridge.getEntryCount();
   }
- 
+
   private long getCacheListenerCallsAvgLatency() {
     return bridge.getCacheListenerCallsAvgLatency();
   }
- 
+
   private long getCacheWriterCallsAvgLatency() {
     return bridge.getCacheWriterCallsAvgLatency();
   }
- 
+
   private float getCreatesRate() {
     return bridge.getCreatesRate();
   }
- 
+
   private float getPutAllRate() {
     return bridge.getPutAllRate();
   }
- 
+
   private float getPutLocalRate() {
     return parBridge.getPutLocalRate();
   }
- 
+
   private float getPutRemoteRate() {
     return parBridge.getPutRemoteRate();
   }
- 
+
   private long getPutRemoteAvgLatency() {
     return parBridge.getPutRemoteAvgLatency();
   }
- 
+
   private long getPutRemoteLatency() {
     return parBridge.getPutRemoteLatency();
   }
- 
+
   private float getPutsRate() {
     return bridge.getPutsRate();
   }
- 
+
   private float getDestroyRate() {
     return bridge.getDestroyRate();
   }
- 
+
   private float getGetsRate() {
     return bridge.getGetsRate();
   }
- 
+
   private long getHitCount() {
     return bridge.getHitCount();
   }
- 
+
   private float getHitRatio() {
-   return bridge.getHitRatio();
+    return bridge.getHitRatio();
   }
- 
+
   private long getLastAccessedTime() {
     return bridge.getLastAccessedTime();
   }
- 
+
   private long getLastModifiedTime() {
     return bridge.getLastModifiedTime();
   }
- 
+
   private float getLruDestroyRate() {
     return bridge.getLruDestroyRate();
   }
- 
+
   private float getLruEvictionRate() {
     return bridge.getLruEvictionRate();
   }
- 
+
   private long getMissCount() {
-   return bridge.getMissCount();
+    return bridge.getMissCount();
   }
- 
+
   private float getDiskReadsRate() {
     return diskBridge.getDiskReadsRate();
   }
- 
+
   private float getDiskWritesRate() {
     return diskBridge.getDiskWritesRate();
   }
- 
+
   private long getDiskReadsAverageLatency() {
     return diskBridge.getDiskReadsAverageLatency();
   }
- 
+
   private long getDiskWritesAverageLatency() {
     return diskBridge.getDiskWritesAverageLatency();
   }
- 
+
   private long getTotalDiskWritesProgress() {
     return diskBridge.getTotalDiskWritesProgress();
   }
- 
+
   private long getTotalDiskEntriesInVM() {
     return diskBridge.getTotalDiskEntriesInVM();
   }
- 
+
   private long getTotalEntriesOnlyOnDisk() {
     return diskBridge.getTotalEntriesOnlyOnDisk();
   }
- 
+
   private int getActualRedundancy() {
     return parBridge.getActualRedundancy();
   }
- 
+
   private int getAvgBucketSize() {
     return parBridge.getAvgBucketSize();
   }
- 
+
   private int getBucketCount() {
     return parBridge.getBucketCount();
   }
- 
+
   private int getConfiguredRedundancy() {
     return parBridge.getConfiguredRedundancy();
   }
- 
 
   private int getNumBucketsWithoutRedundancy() {
     return parBridge.getNumBucketsWithoutRedundancy();
   }
- 
+
   private int getPrimaryBucketCount() {
     return parBridge.getPrimaryBucketCount();
   }
- 
+
   private int getDataStoreEntryCount() {
     return parBridge.getTotalBucketSize();
   }

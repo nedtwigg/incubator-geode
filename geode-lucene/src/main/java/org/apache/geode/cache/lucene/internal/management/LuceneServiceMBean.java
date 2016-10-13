@@ -22,8 +22,7 @@ import org.apache.geode.management.internal.beans.CacheServiceMBeanBase;
 
 import javax.management.NotificationBroadcasterSupport;
 
-public class LuceneServiceMBean extends NotificationBroadcasterSupport
-    implements LuceneServiceMXBean, CacheServiceMBeanBase {
+public class LuceneServiceMBean extends NotificationBroadcasterSupport implements LuceneServiceMXBean, CacheServiceMBeanBase {
 
   private LuceneServiceBridge bridge;
 

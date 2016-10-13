@@ -61,6 +61,7 @@ public class AuthJUnitTest {
     server.shutdown();
     cache.close();
   }
+
   private void setupCacheWithPassword() {
     CacheFactory cf = new CacheFactory();
     cf.set(LOG_LEVEL, "error");
@@ -76,14 +77,14 @@ public class AuthJUnitTest {
   public void testAuthConfig() {
     setupCacheWithPassword();
     InternalDistributedSystem iD = (InternalDistributedSystem) cache.getDistributedSystem();
-    assert(iD.getConfig().getRedisPassword().equals(PASSWORD));
+    assert (iD.getConfig().getRedisPassword().equals(PASSWORD));
   }
 
   @Test
   public void testAuthRejectAccept() {
     setupCacheWithPassword();
     Exception ex = null;
-    try {                        
+    try {
       jedis.auth("wrongpwd");
     } catch (JedisDataException e) {
       ex = e;
@@ -105,7 +106,7 @@ public class AuthJUnitTest {
     server.start();
 
     Exception ex = null;
-    try {                        
+    try {
       jedis.auth(PASSWORD);
     } catch (JedisDataException e) {
       ex = e;
@@ -117,7 +118,7 @@ public class AuthJUnitTest {
   public void testAuthAcceptRequests() {
     setupCacheWithPassword();
     Exception ex = null;
-    try {                        
+    try {
       jedis.set("foo", "bar");
     } catch (JedisDataException e) {
       ex = e;
@@ -136,7 +137,7 @@ public class AuthJUnitTest {
     Jedis authorizedJedis = null;
     Jedis nonAuthorizedJedis = null;
     try {
-      authorizedJedis =  new Jedis("localhost", port, 100000);
+      authorizedJedis = new Jedis("localhost", port, 100000);
       nonAuthorizedJedis = new Jedis("localhost", port, 100000);
       String res = authorizedJedis.auth(PASSWORD);
       assertEquals(res, "OK");
@@ -144,7 +145,7 @@ public class AuthJUnitTest {
 
       authorizedJedis.auth(PASSWORD);
       Exception ex = null;
-      try {                        
+      try {
         nonAuthorizedJedis.set("foo", "bar");
       } catch (JedisDataException e) {
         ex = e;

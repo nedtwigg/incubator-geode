@@ -136,14 +136,12 @@ public abstract class BaseDecoratorImpl implements StatAlertDefinition {
     try {
       int eval = compare(param, threshold);
       return eval > 0;
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable e) {
+    } catch (Throwable e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -158,14 +156,12 @@ public abstract class BaseDecoratorImpl implements StatAlertDefinition {
     try {
       int eval = compare(param, threshold);
       return eval < 0;
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable e) {
+    } catch (Throwable e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -181,26 +177,20 @@ public abstract class BaseDecoratorImpl implements StatAlertDefinition {
       int eval = 0;
       if (threshold instanceof Double) {
         eval = Double.compare(param.doubleValue(), threshold.doubleValue());
-      }
-      else if (threshold instanceof Float) {
+      } else if (threshold instanceof Float) {
         eval = Float.compare(param.floatValue(), threshold.floatValue());
-      }
-      else if (threshold instanceof Long) {
-        eval = (Long.valueOf(param.longValue())).compareTo(Long.valueOf(threshold
-            .longValue()));
-      }
-      else if (threshold instanceof Integer) {
+      } else if (threshold instanceof Long) {
+        eval = (Long.valueOf(param.longValue())).compareTo(Long.valueOf(threshold.longValue()));
+      } else if (threshold instanceof Integer) {
         eval = param.intValue() > threshold.intValue() ? 1 : -1;
       }
       return eval;
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable e) {
+    } catch (Throwable e) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -211,13 +201,11 @@ public abstract class BaseDecoratorImpl implements StatAlertDefinition {
     }
   }
 
-
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeObject(this._def, out);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this._def = (StatAlertDefinition) DataSerializer.readObject(in);
   }
 }

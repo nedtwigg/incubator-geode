@@ -25,8 +25,7 @@ import org.apache.geode.management.DistributedLockServiceMXBean;
  * 
  * 
  */
-public class DistributedLockServiceMBean implements
-    DistributedLockServiceMXBean {
+public class DistributedLockServiceMBean implements DistributedLockServiceMXBean {
 
   private DistributedLockServiceBridge bridge;
 

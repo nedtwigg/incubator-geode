@@ -63,12 +63,11 @@ public class GemFireMemcachedServer {
    * The protocol used by GemFireMemcachedServer
    */
   public enum Protocol {
-    ASCII,
-    BINARY
+    ASCII, BINARY
   }
 
   private static LogWriter logger;
-  
+
   /**
    * Name of the GemFire region in which data is stored, value id "gemcached"
    */
@@ -78,17 +77,17 @@ public class GemFireMemcachedServer {
    * version of gemcached server
    */
   public static final String version = "0.2";
-  
+
   /**
    * the configured address to listen for client connections
    */
   private final String bindAddress;
-  
+
   /**
    * the port to listen for client connections
    */
   private final int serverPort;
-  
+
   private final int DEFAULT_PORT = 11212;
 
   /**
@@ -97,10 +96,11 @@ public class GemFireMemcachedServer {
    */
   private ExecutorService executor = Executors.newCachedThreadPool(new ThreadFactory() {
     private final AtomicInteger counter = new AtomicInteger();
+
     @Override
     public Thread newThread(Runnable r) {
       Thread t = new Thread(r);
-      t.setName("Gemcached-"+counter.incrementAndGet());
+      t.setName("Gemcached-" + counter.incrementAndGet());
       t.setDaemon(true);
       return t;
     }
@@ -110,7 +110,7 @@ public class GemFireMemcachedServer {
    * GemFire cache where data will be stored
    */
   private Cache cache;
-  
+
   /**
    * thread that listens for client connections
    */
@@ -151,7 +151,7 @@ public class GemFireMemcachedServer {
    */
   public GemFireMemcachedServer(String bindAddress, int port, Protocol protocol) {
     this.bindAddress = bindAddress;
-    if (port <= 0 ) {
+    if (port <= 0) {
       this.serverPort = DEFAULT_PORT;
     } else {
       this.serverPort = port;
@@ -173,7 +173,7 @@ public class GemFireMemcachedServer {
       throw new RuntimeException("Could not start Server", e);
     }
   }
-  
+
   private void startGemFire() {
     this.cache = GemFireCacheImpl.getInstance();
     if (this.cache == null) {
@@ -182,7 +182,7 @@ public class GemFireMemcachedServer {
     }
     logger = this.cache.getLogger();
   }
-  
+
   private void startMemcachedServer() throws IOException, InterruptedException {
     ServerSocketChannel channel = ServerSocketChannel.open();
     final ServerSocket serverSocket = channel.socket();
@@ -190,7 +190,7 @@ public class GemFireMemcachedServer {
     serverSocket.setReuseAddress(true);
     serverSocket.bind(new InetSocketAddress(getBindAddress(), serverPort));
     if (logger.fineEnabled()) {
-      logger.fine("GemFireMemcachedServer configured socket buffer size:"+getSocketBufferSize());
+      logger.fine("GemFireMemcachedServer configured socket buffer size:" + getSocketBufferSize());
     }
     final CountDownLatch latch = new CountDownLatch(1);
     acceptor = new Thread(new Runnable() {
@@ -219,15 +219,13 @@ public class GemFireMemcachedServer {
     acceptor.setDaemon(true);
     acceptor.start();
     latch.await();
-    logger.config("GemFireMemcachedServer server started on host:"+SocketCreator.getLocalHost()+" port: "+this.serverPort);
+    logger.config("GemFireMemcachedServer server started on host:" + SocketCreator.getLocalHost() + " port: " + this.serverPort);
   }
-  
+
   private InetAddress getBindAddress() throws UnknownHostException {
-    return this.bindAddress == null || this.bindAddress.isEmpty()
-        ? SocketCreator.getLocalHost()
-        : InetAddress.getByName(this.bindAddress);
+    return this.bindAddress == null || this.bindAddress.isEmpty() ? SocketCreator.getLocalHost() : InetAddress.getByName(this.bindAddress);
   }
-  
+
   private int getSocketBufferSize() {
     InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
     return system.getConfig().getSocketBufferSize();
@@ -249,7 +247,7 @@ public class GemFireMemcachedServer {
     this.executor.shutdownNow();
     this.cache.close();
   }
-  
+
   /**
    * 
    * @param args
@@ -258,7 +256,7 @@ public class GemFireMemcachedServer {
     int port = getPort(args);
     GemFireMemcachedServer server = new GemFireMemcachedServer(port);
     server.start();
-    while(true) {
+    while (true) {
       try {
         System.in.read();
       } catch (IOException e) {
@@ -270,7 +268,7 @@ public class GemFireMemcachedServer {
   private static int getPort(String[] args) {
     int port = 0;
     if (args != null && args.length > 0) {
-      for (int i=0; i<args.length; i++) {
+      for (int i = 0; i < args.length; i++) {
         if (args[i].startsWith("-port")) {
           String p = args[i].substring(args[i].indexOf('='));
           p = p.trim();

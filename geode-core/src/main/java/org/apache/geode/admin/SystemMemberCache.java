@@ -31,20 +31,24 @@ public interface SystemMemberCache {
    * The name of the cache.
    */
   public String getName();
+
   /**
    * Value that uniquely identifies an instance of a cache for a given member.
    */
   public int getId();
+
   /**
    * Indicates if this cache has been closed.
    * @return true, if this cache is closed; false, otherwise
    */
   public boolean isClosed();
+
   /**
    * Gets the number of seconds a cache operation will wait to obtain
    * a distributed lock lease.
    */
   public int getLockTimeout();
+
   /**
    * Sets the number of seconds a cache operation may wait to obtain a
    * distributed lock lease before timing out.
@@ -56,12 +60,13 @@ public interface SystemMemberCache {
    * @see org.apache.geode.cache.Cache#setLockTimeout
    */
   public void setLockTimeout(int seconds) throws AdminException;
-  
+
   /**
    * Gets the length, in seconds, of distributed lock leases obtained
    * by this cache.
    */
   public int getLockLease();
+
   /**
    * Sets the length, in seconds, of distributed lock leases obtained
    * by this cache.
@@ -73,7 +78,7 @@ public interface SystemMemberCache {
    * @see org.apache.geode.cache.Cache#setLockLease
    */
   public void setLockLease(int seconds) throws AdminException;
-  
+
   /**
    * Gets the number of seconds a cache
    * {@link org.apache.geode.cache.Region#get(Object) get} operation
@@ -83,6 +88,7 @@ public interface SystemMemberCache {
    * an exception.
    */
   public int getSearchTimeout();
+
   /**
    * Sets the number of seconds a cache get operation can spend searching
    * for a value.
@@ -94,6 +100,7 @@ public interface SystemMemberCache {
    * @see org.apache.geode.cache.Cache#setSearchTimeout
    */
   public void setSearchTimeout(int seconds) throws AdminException;
+
   /**
    * Returns number of seconds since this member's cache has been created.
    * Returns <code>-1</code> if this member does not have a cache or its cache
@@ -140,9 +147,7 @@ public interface SystemMemberCache {
    * @deprecated as of GemFire 5.0, use {@link #createRegion} instead
    */
   @Deprecated
-  public SystemMemberRegion createVMRegion(String name,
-                                           RegionAttributes attrs)
-    throws AdminException;
+  public SystemMemberRegion createVMRegion(String name, RegionAttributes attrs) throws AdminException;
 
   /**
    * Creates a root <code>Region</code> in this cache.
@@ -157,9 +162,7 @@ public interface SystemMemberCache {
    *
    * @since GemFire 5.0
    */
-  public SystemMemberRegion createRegion(String name,
-                                         RegionAttributes attrs)
-    throws AdminException;
+  public SystemMemberRegion createRegion(String name, RegionAttributes attrs) throws AdminException;
 
   /**
    * Updates the state of this cache instance. Note that once a cache
@@ -175,8 +178,7 @@ public interface SystemMemberCache {
    *
    * @since GemFire 5.7
    */
-  public SystemMemberCacheServer addCacheServer()
-    throws AdminException;
+  public SystemMemberCacheServer addCacheServer() throws AdminException;
 
   /**
    * Returns the cache servers that run in this member's VM.  Note
@@ -187,8 +189,7 @@ public interface SystemMemberCache {
    *
    * @since GemFire 5.7
    */
-  public SystemMemberCacheServer[] getCacheServers()
-    throws AdminException;
+  public SystemMemberCacheServer[] getCacheServers() throws AdminException;
 
   /**
    * Returns whether or not this cache acts as a server.  This method
@@ -201,4 +202,3 @@ public interface SystemMemberCache {
    */
   public boolean isServer() throws AdminException;
 }
-

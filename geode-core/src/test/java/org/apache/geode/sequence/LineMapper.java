@@ -26,7 +26,7 @@ package org.apache.geode.sequence;
  *
  */
 public interface LineMapper {
-  
+
   /**
    * Return the short name for this lifeline.
    */

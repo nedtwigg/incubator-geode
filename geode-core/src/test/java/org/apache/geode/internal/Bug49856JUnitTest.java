@@ -39,7 +39,7 @@ public class Bug49856JUnitTest {
   public void testNoGFThreadsRunningPostCacheClose() throws Exception {
 
     ClientCacheFactory ccf = new ClientCacheFactory();
-    GemFireCacheImpl cache = (GemFireCacheImpl)ccf.create();
+    GemFireCacheImpl cache = (GemFireCacheImpl) ccf.create();
 
     SystemFailure.getFailure();
 

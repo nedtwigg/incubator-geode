@@ -25,27 +25,27 @@ import org.apache.geode.internal.Version;
 public class GMSPingPonger {
   private byte[] pingInBytes = new byte[] { 'p', 'i', 'n', 'g' };
   private byte[] pongInBytes = new byte[] { 'p', 'o', 'n', 'g' };
-  
+
   public boolean isPingMessage(byte[] buffer) {
     return buffer.length == 4 && (buffer[0] == 'p' && buffer[1] == 'i' && buffer[2] == 'n' && buffer[3] == 'g');
   }
-  
+
   public boolean isPongMessage(byte[] buffer) {
     return buffer.length == 4 && (buffer[0] == 'p' && buffer[1] == 'o' && buffer[2] == 'n' && buffer[3] == 'g');
   }
-  
+
   public void sendPongMessage(JChannel channel, Address src, Address dest) throws Exception {
-    channel.send(createPongMessage(src, dest)); 
+    channel.send(createPongMessage(src, dest));
   }
-  
+
   public Message createPongMessage(Address src, Address dest) {
-	  return createJGMessage(pongInBytes, src, dest, Version.CURRENT_ORDINAL);
+    return createJGMessage(pongInBytes, src, dest, Version.CURRENT_ORDINAL);
   }
-  
+
   public Message createPingMessage(Address src, Address dest) {
     return createJGMessage(pingInBytes, src, dest, Version.CURRENT_ORDINAL);
   }
-  
+
   public void sendPingMessage(JChannel channel, Address src, JGAddress dest) throws Exception {
     channel.send(createPingMessage(src, dest));
   }

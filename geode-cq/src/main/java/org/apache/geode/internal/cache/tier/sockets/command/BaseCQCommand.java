@@ -20,6 +20,4 @@ import org.apache.geode.internal.cache.tier.sockets.BaseCommandQuery;
 
 public abstract class BaseCQCommand extends BaseCommandQuery {
 
-  
-
 }

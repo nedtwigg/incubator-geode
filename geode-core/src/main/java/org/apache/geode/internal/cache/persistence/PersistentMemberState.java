@@ -24,16 +24,13 @@ import java.io.IOException;
  *
  */
 public enum PersistentMemberState {
-  OFFLINE,
-  ONLINE,
-  EQUAL,
-  REVOKED;
-  
+  OFFLINE, ONLINE, EQUAL, REVOKED;
+
   public static PersistentMemberState fromData(DataInput in) throws IOException {
     byte ordinal = in.readByte();
     return PersistentMemberState.values()[ordinal];
   }
-  
+
   public void toData(DataOutput out) throws IOException {
     out.writeByte((byte) this.ordinal());
   }

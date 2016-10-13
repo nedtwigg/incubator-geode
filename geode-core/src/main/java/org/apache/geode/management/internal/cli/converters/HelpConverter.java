@@ -35,9 +35,8 @@ import org.apache.geode.management.internal.cli.shell.Gfsh;
 public class HelpConverter implements Converter<String> {
 
   @Override
-  public String convertFromText(String existingData, Class<?> dataType,
-      String optionContext) {
-    
+  public String convertFromText(String existingData, Class<?> dataType, String optionContext) {
+
     if (optionContext.equals(CliStrings.PARAM_CONTEXT_HELP)) {
       return existingData.replaceAll("\"", "").replaceAll("'", "");
     } else {
@@ -46,12 +45,10 @@ public class HelpConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completionCandidates,
-      Class<?> dataType, String existingData, String optionContext,
-      MethodTarget arg4) {
+  public boolean getAllPossibleValues(List<Completion> completionCandidates, Class<?> dataType, String existingData, String optionContext, MethodTarget arg4) {
 
     List<String> commandNames = Gfsh.getCurrentInstance().obtainHelpCommandNames(existingData);
-    
+
     for (String string : commandNames) {
       completionCandidates.add(new Completion(string));
     }
@@ -63,8 +60,7 @@ public class HelpConverter implements Converter<String> {
 
   @Override
   public boolean supports(Class<?> arg0, String optionContext) {
-    if (String.class.isAssignableFrom(arg0)
-        && optionContext.equals(CliStrings.PARAM_CONTEXT_HELP)) {
+    if (String.class.isAssignableFrom(arg0) && optionContext.equals(CliStrings.PARAM_CONTEXT_HELP)) {
       return true;
     }
     return false;

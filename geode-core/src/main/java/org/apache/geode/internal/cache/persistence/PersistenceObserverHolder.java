@@ -26,52 +26,52 @@ import org.apache.geode.cache.Region;
 
 public class PersistenceObserverHolder {
   private static PersistenceObserver INSTANCE = new PersistenceObserverAdapter();
-  
+
   public static void setInstance(PersistenceObserver instance) {
-    if(instance == null) {
-      INSTANCE = new PersistenceObserverAdapter(); 
+    if (instance == null) {
+      INSTANCE = new PersistenceObserverAdapter();
     }
     INSTANCE = instance;
   }
-  
+
   public static PersistenceObserver getInstance() {
-    return INSTANCE;  
+    return INSTANCE;
   }
-  
+
   private PersistenceObserverHolder() {
-    
+
   }
-  
+
   public static interface PersistenceObserver {
     /**Fired just before we persist that a member is offline. Returning false
      * indicates that we should not persist the change.
      */
     public boolean memberOffline(String regionName, PersistentMemberID persistentID);
-    
+
     /**Fired after we persist that a member is offline.
      */
     public void afterPersistedOffline(String fullPath, PersistentMemberID persistentID);
-    
+
     /**Fired just before we persist that a member is online. Returning false
      * indicates that we should not persist the change.
      */
     public boolean memberOnline(String regionName, PersistentMemberID persistentID);
-    
+
     /**Fired after we persist that a member is online.
      */
     public void afterPersistedOnline(String fullPath, PersistentMemberID persistentID);
-    
+
     /**Fired just before we persist that a member no longer hosts a region. Returning false
      * indicates that we should not persist the change.
      */
     public boolean memberRemoved(String regionName, PersistentMemberID persistentID);
-    
+
     /**Fired after we persist that a member no longer hosts the region.
      */
     public void afterRemovePersisted(String fullPath, PersistentMemberID persistentID);
 
   }
-  
+
   public static class PersistenceObserverAdapter implements PersistenceObserver {
 
     public boolean memberOffline(String region, PersistentMemberID persistentID) {
@@ -86,16 +86,13 @@ public class PersistenceObserverHolder {
       return true;
     }
 
-    public void afterPersistedOffline(String fullPath,
-        PersistentMemberID persistentID) {
+    public void afterPersistedOffline(String fullPath, PersistentMemberID persistentID) {
     }
 
-    public void afterPersistedOnline(String fullPath,
-        PersistentMemberID persistentID) {
+    public void afterPersistedOnline(String fullPath, PersistentMemberID persistentID) {
     }
 
-    public void afterRemovePersisted(String fullPath,
-        PersistentMemberID persistentID) {
+    public void afterRemovePersisted(String fullPath, PersistentMemberID persistentID) {
     }
   }
 }

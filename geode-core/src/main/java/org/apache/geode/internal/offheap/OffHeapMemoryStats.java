@@ -26,29 +26,50 @@ import org.apache.geode.Statistics;
 public interface OffHeapMemoryStats {
 
   public void incFreeMemory(long value);
+
   public void incMaxMemory(long value);
+
   public void incUsedMemory(long value);
+
   public void incObjects(int value);
+
   public void incReads();
+
   public void setFragments(long value);
+
   public void setLargestFragment(int value);
+
   public long startDefragmentation();
+
   public void endDefragmentation(long start);
+
   public void setFragmentation(int value);
-  
+
   public long getFreeMemory();
+
   public long getMaxMemory();
+
   public long getUsedMemory();
+
   public long getReads();
+
   public int getObjects();
+
   public int getDefragmentations();
+
   public int getDefragmentationsInProgress();
+
   public long getFragments();
+
   public int getLargestFragment();
+
   public int getFragmentation();
+
   public long getDefragmentationTime();
-  
+
   public Statistics getStats();
+
   public void close();
+
   public void initialize(OffHeapMemoryStats stats);
 }

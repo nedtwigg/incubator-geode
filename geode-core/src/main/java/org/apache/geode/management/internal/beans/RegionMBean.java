@@ -34,8 +34,7 @@ import org.apache.geode.management.RegionMXBean;
  * 
  * 
  */
-public class RegionMBean<K, V> extends NotificationBroadcasterSupport implements
-    RegionMXBean {
+public class RegionMBean<K, V> extends NotificationBroadcasterSupport implements RegionMXBean {
 
   /** Bridge is responsible for extracting data from GemFire Layer **/
   private RegionMBeanBridge<K, V> bridge;
@@ -109,7 +108,6 @@ public class RegionMBean<K, V> extends NotificationBroadcasterSupport implements
   public EvictionAttributesData listEvictionAttributes() {
     return bridge.listEvictionAttributes();
   }
-
 
   @Override
   public float getGetsRate() {
@@ -265,12 +263,12 @@ public class RegionMBean<K, V> extends NotificationBroadcasterSupport implements
   public long getDiskTaskWaiting() {
     return bridge.getDiskTaskWaiting();
   }
-  
-  public RegionMBeanBridge<K, V> getBridge(){
+
+  public RegionMBeanBridge<K, V> getBridge() {
     return bridge;
   }
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     bridge.stopMonitor();
   }
 
@@ -311,7 +309,7 @@ public class RegionMBean<K, V> extends NotificationBroadcasterSupport implements
 
   @Override
   public int getLocalMaxMemory() {
-    return bridge.getLocalMaxMemory(); 
+    return bridge.getLocalMaxMemory();
   }
 
 }

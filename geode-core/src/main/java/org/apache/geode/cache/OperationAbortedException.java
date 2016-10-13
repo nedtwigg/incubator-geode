@@ -33,8 +33,7 @@ public abstract class OperationAbortedException extends CacheRuntimeException {
    */
   public OperationAbortedException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>OperationAbortedException</code> with the specified detail message.
    * @param msg the detail message
@@ -42,7 +41,7 @@ public abstract class OperationAbortedException extends CacheRuntimeException {
   public OperationAbortedException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>OperationAbortedException</code> with the specified detail message
    * and cause.
@@ -52,7 +51,7 @@ public abstract class OperationAbortedException extends CacheRuntimeException {
   public OperationAbortedException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>OperationAbortedException</code> with the specified cause.
    * @param cause the causal Throwable

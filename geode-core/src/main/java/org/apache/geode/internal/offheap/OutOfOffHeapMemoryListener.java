@@ -35,7 +35,7 @@ public interface OutOfOffHeapMemoryListener {
    * @param cause the actual OutOfOffHeapMemoryError that was thrown
    */
   public void outOfOffHeapMemory(OutOfOffHeapMemoryException cause);
-  
+
   /**
    * Close any resources used by this listener.
    */

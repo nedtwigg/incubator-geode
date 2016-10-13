@@ -69,7 +69,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4DistributedTestCase {
 
- /** Server1 VM **/
+  /** Server1 VM **/
   static VM server1 = null;
   /** Server2 VM **/
   static VM server2 = null;
@@ -126,12 +126,9 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
     client2.invoke(verifyIfAllPutsGot());
   }
 
-  private CacheSerializableRunnable putFromServer()
-  {
-    CacheSerializableRunnable putFromServer = new CacheSerializableRunnable(
-        "putFromServer") {
-      public void run2() throws CacheException
-      {
+  private CacheSerializableRunnable putFromServer() {
+    CacheSerializableRunnable putFromServer = new CacheSerializableRunnable("putFromServer") {
+      public void run2() throws CacheException {
         Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
         assertNotNull(region);
         for (int i = 0; i < 1000; i++) {
@@ -141,20 +138,17 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
     };
     return putFromServer;
   }
-  
-  
-  private CacheSerializableRunnable verifyIfAllPutsGot()
-  {
-    CacheSerializableRunnable putFromServer = new CacheSerializableRunnable(
-        "createRegionOnServer") {
-      public void run2() throws CacheException
-      {
+
+  private CacheSerializableRunnable verifyIfAllPutsGot() {
+    CacheSerializableRunnable putFromServer = new CacheSerializableRunnable("createRegionOnServer") {
+      public void run2() throws CacheException {
         final Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
         assertNotNull(region);
         WaitCriterion ev = new WaitCriterion() {
           public boolean done() {
             return region.size() == 1000;
           }
+
           public String description() {
             return null;
           }
@@ -165,13 +159,9 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
     return putFromServer;
   }
 
-  
-  private CacheSerializableRunnable createRegionOnServer()
-  {
-    CacheSerializableRunnable putFromServer = new CacheSerializableRunnable(
-        "createRegionOnServer") {
-      public void run2() throws CacheException
-      {
+  private CacheSerializableRunnable createRegionOnServer() {
+    CacheSerializableRunnable putFromServer = new CacheSerializableRunnable("createRegionOnServer") {
+      public void run2() throws CacheException {
         AttributesFactory factory = new AttributesFactory();
         factory.setScope(Scope.DISTRIBUTED_ACK);
         factory.setMirrorType(MirrorType.KEYS_VALUES);
@@ -181,25 +171,23 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
     };
     return putFromServer;
   }
-  
+
   // function to create 2servers and 2 clients
-  private void createClientServerConfigurationForClearTest() throws Exception
-  {
+  private void createClientServerConfigurationForClearTest() throws Exception {
     //create server and region
-    PORT1 = ((Integer)server1.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createServer( new Boolean(true) ))).intValue();
-    
+    PORT1 = ((Integer) server1.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createServer(new Boolean(true)))).intValue();
+
     //only create server, no region
-    PORT2 = ((Integer)server2.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createServer( new Boolean(false) ))).intValue();
-    
+    PORT2 = ((Integer) server2.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createServer(new Boolean(false)))).intValue();
+
     //client1 connected to server1
-    client1.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createClient( NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1) ));
-    
+    client1.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createClient(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1)));
+
     //client2 connected to server2
-    client2.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createClient( NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2) ));
+    client2.invoke(() -> RegisterInterestBeforeRegionCreationDUnitTest.createClient(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2)));
   }
 
-  public static Integer createServer(Boolean createRegion) throws Exception
-  {
+  public static Integer createServer(Boolean createRegion) throws Exception {
     new RegisterInterestBeforeRegionCreationDUnitTest().createCache(new Properties());
     boolean isCreateRegion = createRegion.booleanValue();
     if (isCreateRegion) {
@@ -209,7 +197,7 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
       RegionAttributes attrs = factory.createRegionAttributes();
       cache.createVMRegion(REGION_NAME, attrs);
     }
-    CacheServerImpl server = (CacheServerImpl)cache.addCacheServer();
+    CacheServerImpl server = (CacheServerImpl) cache.addCacheServer();
     assertNotNull(server);
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     server.setPort(port);
@@ -218,8 +206,7 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
     return new Integer(server.getPort());
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     assertNotNull(ds);
     ds.disconnect();
@@ -228,23 +215,16 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
     assertNotNull(cache);
   }
 
-  public static void createClient(String host, Integer port1) throws Exception
-  {
+  public static void createClient(String host, Integer port1) throws Exception {
     PORT1 = port1.intValue();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new RegisterInterestBeforeRegionCreationDUnitTest().createCache(props);
-    Pool p = PoolManager.createFactory()
-      .addServer(host, PORT1)
-      .setSubscriptionEnabled(true)
-      .setSubscriptionRedundancy(-1)
-      .setReadTimeout(2000)
-      .setSocketBufferSize(1000)
-      .setMinConnections(2)
-      // retryAttempts 2
-      // retryInterval 250
-      .create("RegisterInterestBeforeRegionCreationDUnitTestPool");
+    Pool p = PoolManager.createFactory().addServer(host, PORT1).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(2000).setSocketBufferSize(1000).setMinConnections(2)
+        // retryAttempts 2
+        // retryInterval 250
+        .create("RegisterInterestBeforeRegionCreationDUnitTestPool");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setPoolName(p.getName());
@@ -255,8 +235,7 @@ public class RegisterInterestBeforeRegionCreationDUnitTest extends JUnit4Distrib
     region.registerInterest("ALL_KEYS", InterestResultPolicy.NONE);
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();

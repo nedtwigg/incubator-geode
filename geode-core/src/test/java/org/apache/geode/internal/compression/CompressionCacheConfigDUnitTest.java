@@ -50,7 +50,7 @@ public class CompressionCacheConfigDUnitTest extends JUnit4CacheTestCase {
    * The name of our test region.
    */
   public static final String REGION_NAME = "compressedRegion";
-  
+
   /**
    * Sample cache.xml with a recognized compressor.
    */
@@ -68,12 +68,12 @@ public class CompressionCacheConfigDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testCreateCacheWithGoodCompressor() throws Exception {
     File cacheXml = createCacheXml(GOOD_COMPRESSOR);
-    assertTrue(createCacheOnVM(getVM(0),cacheXml.getCanonicalPath()));
+    assertTrue(createCacheOnVM(getVM(0), cacheXml.getCanonicalPath()));
     assertCompressorOnVM(getVM(0), new SnappyCompressor(), REGION_NAME);
     cleanup(getVM(0));
     cacheXml.delete();
   }
-  
+
   /**
    * Asserts that member initialization fails when an unrecognized compressor is declared in the
    * cache.xml.
@@ -90,31 +90,31 @@ public class CompressionCacheConfigDUnitTest extends JUnit4CacheTestCase {
       cacheXml.delete();
     }
   }
-  
+
   /**
    * Asserts that a region is compressed using a given compressor.
    * @param vm a peer.
    * @param compressor a compressor.
    * @param regionName a compressed region.
    */
-  private void assertCompressorOnVM(final VM vm,final Compressor compressor,final String regionName) {
-   vm.invoke(new SerializableRunnable() {
-    @Override
-    public void run() {
-      Region<String,String> region = getCache().getRegion(regionName);
-      assertNotNull(region);
-      assertTrue(compressor.equals(((LocalRegion) region).getCompressor()));
-    }     
-   });
+  private void assertCompressorOnVM(final VM vm, final Compressor compressor, final String regionName) {
+    vm.invoke(new SerializableRunnable() {
+      @Override
+      public void run() {
+        Region<String, String> region = getCache().getRegion(regionName);
+        assertNotNull(region);
+        assertTrue(compressor.equals(((LocalRegion) region).getCompressor()));
+      }
+    });
   }
-  
+
   /**
    * Creates a new Cache for a given VM using a cache.xml.
    * @param vm a peer.
    * @param cacheXml a declaritive xml file.
    * @return true if the cache was created, false otherwise.
    */
-  private boolean createCacheOnVM(final VM vm,final String cacheXml) {
+  private boolean createCacheOnVM(final VM vm, final String cacheXml) {
     return (Boolean) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
@@ -126,28 +126,28 @@ public class CompressionCacheConfigDUnitTest extends JUnit4CacheTestCase {
           getSystem(props);
           assertNotNull(getCache());
           return Boolean.TRUE;
-        } catch(Exception e) {
+        } catch (Exception e) {
           LogWriterUtils.getLogWriter().error("Could not create the cache", e);
           return Boolean.FALSE;
         } finally {
           LogWriterUtils.getLogWriter().info("<ExpectedException action=remove>ClassNotFoundException</ExpectedException>");
         }
-      }      
+      }
     });
   }
-  
+
   /**
    * Creates a temporary cache.xml on the file system. 
    * @param contents cache.xml contents.
    * @return A File representing the created file.
    * @throws IOException something bad happened.
    */
-  private File createCacheXml(String contents) throws IOException{
+  private File createCacheXml(String contents) throws IOException {
     File cacheXml = File.createTempFile("cache", "xml");
     PrintStream pstream = new PrintStream(cacheXml);
     pstream.print(contents);
     pstream.close();
-    
+
     return cacheXml;
   }
 
@@ -164,15 +164,14 @@ public class CompressionCacheConfigDUnitTest extends JUnit4CacheTestCase {
    * @param vm the virtual machine to cleanup.
    */
   private void cleanup(final VM vm) {
-    vm.invoke(new SerializableRunnable() {      
+    vm.invoke(new SerializableRunnable() {
       @Override
       public void run() {
-        Region<String,String> region = getCache().getRegion(REGION_NAME);         
+        Region<String, String> region = getCache().getRegion(REGION_NAME);
         assertNotNull(region);
         region.destroyRegion();
         disconnectFromDS();
       }
-    });        
+    });
   }
 }
-

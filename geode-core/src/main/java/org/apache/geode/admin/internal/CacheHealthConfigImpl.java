@@ -24,8 +24,7 @@ import org.apache.geode.admin.*;
  *
  * @since GemFire 3.5
  */
-public abstract class CacheHealthConfigImpl
-  extends MemberHealthConfigImpl implements CacheHealthConfig {
+public abstract class CacheHealthConfigImpl extends MemberHealthConfigImpl implements CacheHealthConfig {
 
   /** The maximum number of milliseconds a
    * <code>netSearch</code> operation can take before the cache member

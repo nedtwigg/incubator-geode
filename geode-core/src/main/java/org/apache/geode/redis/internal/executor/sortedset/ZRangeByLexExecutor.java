@@ -130,7 +130,7 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
     }
     if (list == null)
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
-    else      
+    else
       command.setResponse(getCustomBulkStringArrayResponse(list, context));
   }
 
@@ -139,7 +139,8 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
       List<ByteArrayWrapper> l = new ArrayList<ByteArrayWrapper>(keyRegion.keySet());
       int size = l.size();
       Collections.sort(l);
-      if (limit == 0) limit += size;
+      if (limit == 0)
+        limit += size;
       l = l.subList(Math.min(size, offset), Math.min(offset + limit, size));
       return l;
     } else if (start.equals("+") || stop.equals("-"))
@@ -153,17 +154,17 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXNINF, context);
       }
-      params = new Object[]{stop, INFINITY_LIMIT};
+      params = new Object[] { stop, INFINITY_LIMIT };
     } else if (stop.equals("+")) {
       if (startInclusive) {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINFI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINF, context);
       }
-      params = new Object[]{start, INFINITY_LIMIT};
+      params = new Object[] { start, INFINITY_LIMIT };
     } else {
       if (startInclusive) {
-        if(stopInclusive) {
+        if (stopInclusive) {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEXSTISI, context);
         } else {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEXSTI, context);
@@ -175,10 +176,10 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEX, context);
         }
       }
-      params = new Object[]{start, stop, INFINITY_LIMIT};
+      params = new Object[] { start, stop, INFINITY_LIMIT };
     }
     if (limit > 0)
-      params[params.length - 1] =  (limit + offset);
+      params[params.length - 1] = (limit + offset);
     SelectResults<ByteArrayWrapper> results = (SelectResults<ByteArrayWrapper>) query.execute(params);
     List<ByteArrayWrapper> list = results.asList();
     int size = list.size();
@@ -193,7 +194,7 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
     response.writeBytes(Coder.intToBytes(items.size()));
     response.writeBytes(Coder.CRLFar);
 
-    while(it.hasNext()) {
+    while (it.hasNext()) {
       ByteArrayWrapper next = it.next();
       byte[] byteAr = next.toBytes();
       response.writeByte(Coder.BULK_STRING_ID);

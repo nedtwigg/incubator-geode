@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -34,13 +33,12 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class FetchHealthDiagnosisResponse extends AdminResponse {
   // instance variables
   String[] diagnosis;
-  
+
   /**
    * Returns a <code>FetchHealthDiagnosisResponse</code> that will be returned to the
    * specified recipient.
    */
-  public static FetchHealthDiagnosisResponse create(DistributionManager dm, InternalDistributedMember recipient, int id,
-                                                    GemFireHealth.Health healthCode) {
+  public static FetchHealthDiagnosisResponse create(DistributionManager dm, InternalDistributedMember recipient, int id, GemFireHealth.Health healthCode) {
     FetchHealthDiagnosisResponse m = new FetchHealthDiagnosisResponse();
     m.setRecipient(recipient);
     {
@@ -61,20 +59,19 @@ public final class FetchHealthDiagnosisResponse extends AdminResponse {
     return FETCH_HEALTH_DIAGNOSIS_RESPONSE;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeStringArray(this.diagnosis, out);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.diagnosis = DataSerializer.readStringArray(in);
   }
 
-  @Override  
+  @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append("FetchHealthDiagnosisResponse from ");

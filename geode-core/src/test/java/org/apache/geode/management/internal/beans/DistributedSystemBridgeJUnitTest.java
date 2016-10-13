@@ -41,7 +41,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class DistributedSystemBridgeJUnitTest {
-  
+
   private GemFireCacheImpl cache;
   private BackupManager backupManager;
 
@@ -53,27 +53,27 @@ public class DistributedSystemBridgeJUnitTest {
     when(cache.startBackup(any())).thenReturn(backupManager);
     when(cache.getPersistentMemberManager()).thenReturn(memberManager);
     when(cache.getBackupManager()).thenReturn(backupManager);
-    
+
     DLockService dlock = mock(DLockService.class);
     when(dlock.lock(any(), anyLong(), anyLong())).thenReturn(true);
-    
+
     DLockService.addLockServiceForTests(BackupDataStoreHelper.LOCK_SERVICE_NAME, dlock);
     GemFireCacheImpl.setInstanceForTests(cache);
   }
-  
+
   @After
   public void clearCache() {
     GemFireCacheImpl.setInstanceForTests(null);
     DLockService.removeLockServiceForTests(BackupDataStoreHelper.LOCK_SERVICE_NAME);
   }
-  
+
   @Test
   public void testSuccessfulBackup() throws Exception {
     DM dm = cache.getDistributionManager();
-    
+
     DistributedSystemBridge bridge = new DistributedSystemBridge(null);
     bridge.backupAllMembers("/tmp", null);
-    
+
     InOrder inOrder = inOrder(dm, backupManager);
     inOrder.verify(dm).putOutgoing(isA(PrepareBackupRequest.class));
     inOrder.verify(backupManager).prepareBackup();
@@ -90,15 +90,14 @@ public class DistributedSystemBridgeJUnitTest {
     when(cache.getPersistentMemberManager()).thenReturn(memberManager);
     when(cache.getBackupManager()).thenReturn(backupManager);
     when(dm.putOutgoing(isA(PrepareBackupRequest.class))).thenThrow(new RuntimeException("Fail the prepare"));
-    
-    
+
     DistributedSystemBridge bridge = new DistributedSystemBridge(null);
     try {
       bridge.backupAllMembers("/tmp", null);
       fail("Should have failed with an exception");
-    } catch(RuntimeException expected) {
+    } catch (RuntimeException expected) {
     }
-    
+
     verify(dm).putOutgoing(isA(FinishBackupRequest.class));
     verify(backupManager).finishBackup(any(), any(), eq(true));
   }

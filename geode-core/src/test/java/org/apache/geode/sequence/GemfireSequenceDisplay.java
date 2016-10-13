@@ -81,15 +81,11 @@ public class GemfireSequenceDisplay {
 
     JMenu sequenceMenu = new JMenu("Sequence");
     sequenceMenu.setMnemonic(KeyEvent.VK_S);
-    sequenceMenu.getAccessibleContext().setAccessibleDescription(
-        "The only menu in this program that has menu items");
+    sequenceMenu.getAccessibleContext().setAccessibleDescription("The only menu in this program that has menu items");
     menuBar.add(sequenceMenu);
-    JMenuItem selectGraphs = new JMenuItem("Choose Graphs",
-        KeyEvent.VK_G);
-    selectGraphs.setAccelerator(KeyStroke.getKeyStroke(
-        KeyEvent.VK_G, ActionEvent.ALT_MASK));
-    selectGraphs.getAccessibleContext().setAccessibleDescription(
-        "Select what graphs to display");
+    JMenuItem selectGraphs = new JMenuItem("Choose Graphs", KeyEvent.VK_G);
+    selectGraphs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+    selectGraphs.getAccessibleContext().setAccessibleDescription("Select what graphs to display");
     selectGraphs.setActionCommand("selectgraphs");
     selectGraphs.addActionListener(new ActionListener() {
 
@@ -114,12 +110,12 @@ public class GemfireSequenceDisplay {
   }
 
   private void updateGraphs(List<GraphID> selectedIds) {
-    List<GraphID> existingDiagrams =(List) sequenceDiagram.getSubDiagramsNames();
-    for(GraphID id : selectedIds) {
+    List<GraphID> existingDiagrams = (List) sequenceDiagram.getSubDiagramsNames();
+    for (GraphID id : selectedIds) {
       showSubDiagram(id);
       existingDiagrams.remove(id);
     }
-    for(GraphID id : existingDiagrams) {
+    for (GraphID id : existingDiagrams) {
       hideSubDiagram(id);
     }
 
@@ -203,7 +199,6 @@ public class GemfireSequenceDisplay {
         destState.addInboundArrow(arrow);
       }
 
-
       lineMap.put(graphId, lines);
       arrowMap.put(graphId, arrows);
     }
@@ -235,31 +230,27 @@ public class GemfireSequenceDisplay {
     boolean areGemfireLogs = false;
     if (args.length > 0) {
       ArrayList<File> fileList = new ArrayList<File>();
-      for (int i =0; i < args.length; i++) {
+      for (int i = 0; i < args.length; i++) {
         String arg = args[i];
-        if(arg.equals("-filterkey")) {
-          keyFilters.add(args[i+1]);
+        if (arg.equals("-filterkey")) {
+          keyFilters.add(args[i + 1]);
           i++;
-        } else if(arg.equals("-logs")) {
+        } else if (arg.equals("-logs")) {
           areGemfireLogs = true;
-        }
-        else {
+        } else {
           fileList.add(new File(args[i]));
         }
-        
+
       }
       files = fileList.toArray(new File[0]);
     } else {
-      System.err.println("Usage: java -jar sequence.jar (-logs) (-filterkey key)* <file>+\n\n" +
-                "\t-logs (expiremental) instead of using .graph files, parse the gemfire logs to generate the sequence display" +
-      		"\t-filterkey a java regular expression to match against key names. If specified\n" +
-      		"The list of key sequence diagrams will only contain matching keys");
+      System.err.println("Usage: java -jar sequence.jar (-logs) (-filterkey key)* <file>+\n\n" + "\t-logs (expiremental) instead of using .graph files, parse the gemfire logs to generate the sequence display" + "\t-filterkey a java regular expression to match against key names. If specified\n" + "The list of key sequence diagrams will only contain matching keys");
       System.exit(1);
       return;
     }
-    
+
     final GraphSet graphs;
-    
+
     graphs = getGraphs(areGemfireLogs, keyFilters, files);
 
     final LineMapper lineMapper = getLineMapper(files);
@@ -273,14 +264,12 @@ public class GemfireSequenceDisplay {
     });
   }
 
-  private static GraphSet getGraphs(boolean useLogFiles, Set<String> keyFilters, File[] files)
-      throws IOException {
+  private static GraphSet getGraphs(boolean useLogFiles, Set<String> keyFilters, File[] files) throws IOException {
     Filter graphFilter = new KeyFilter(keyFilters);
-    
-    
+
     GraphReader reader = new GraphReader(files);
     final GraphSet graphs;
-    if(keyFilters.isEmpty()) {
+    if (keyFilters.isEmpty()) {
       graphs = reader.readGraphs(useLogFiles);
     } else {
       graphs = reader.readGraphs(graphFilter, useLogFiles);
@@ -293,43 +282,40 @@ public class GemfireSequenceDisplay {
    * @return
    */
   private static LineMapper getLineMapper(File[] files) {
-    if(HydraLineMapper.isInHydraRun(files)) {
+    if (HydraLineMapper.isInHydraRun(files)) {
       return new HydraLineMapper(files);
     } else {
       return new DefaultLineMapper();
     }
   }
-  
+
   private static class KeyFilter implements Filter {
     Set<Pattern> patterns = new HashSet<Pattern>();
-    
 
     public KeyFilter(Set<String> keyFilters) {
-      for(String filterString : keyFilters) {
+      for (String filterString : keyFilters) {
         patterns.add(Pattern.compile(filterString));
       }
     }
 
-    public boolean accept(GraphType graphType, String name, String edgeName,
-        String source, String dest) {
-      if(graphType.equals(GraphType.KEY)) {
-        for(Pattern pattern : patterns) {
-          if(pattern.matcher(name).find()) {
+    public boolean accept(GraphType graphType, String name, String edgeName, String source, String dest) {
+      if (graphType.equals(GraphType.KEY)) {
+        for (Pattern pattern : patterns) {
+          if (pattern.matcher(name).find()) {
             return true;
           }
         }
-        
+
         return false;
       } else {
         return true;
       }
     }
 
-    public boolean acceptPattern(GraphType graphType, Pattern pattern,
-        String edgeName, String source, String dest) {
+    public boolean acceptPattern(GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
       return true;
     }
-    
+
   }
 
 }

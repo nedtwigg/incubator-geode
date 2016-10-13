@@ -149,4 +149,3 @@ public class GMSAuthenticatorWithSecurityManagerTest extends AbstractGMSAuthenti
   }
 
 }
-

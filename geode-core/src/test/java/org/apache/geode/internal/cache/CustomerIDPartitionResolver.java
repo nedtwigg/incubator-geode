@@ -33,12 +33,11 @@ public class CustomerIDPartitionResolver implements PartitionResolver {
 
   private String id;
 
-
   private String resolverName;
 
-  public CustomerIDPartitionResolver(){
+  public CustomerIDPartitionResolver() {
   }
-  
+
   public CustomerIDPartitionResolver(String resolverID) {
     id = resolverID;
   }
@@ -52,21 +51,21 @@ public class CustomerIDPartitionResolver implements PartitionResolver {
     Serializable routingbject = null;
 
     if (opDetails.getKey() instanceof ShipmentId) {
-      ShipmentId shipmentId = (ShipmentId)opDetails.getKey();
+      ShipmentId shipmentId = (ShipmentId) opDetails.getKey();
       routingbject = shipmentId.getOrderId().getCustId();
     }
     if (opDetails.getKey() instanceof OrderId) {
-      OrderId orderId = (OrderId)opDetails.getKey();
+      OrderId orderId = (OrderId) opDetails.getKey();
       routingbject = orderId.getCustId();
-    }
-    else if (opDetails.getKey() instanceof CustId) {
-      CustId custId = (CustId)opDetails.getKey();
+    } else if (opDetails.getKey() instanceof CustId) {
+      CustId custId = (CustId) opDetails.getKey();
       routingbject = custId.getCustId();
     }
     return routingbject;
   }
 
-  public void close() {}
+  public void close() {
+  }
 
   public boolean equals(Object o) {
     if (this == o)
@@ -75,12 +74,9 @@ public class CustomerIDPartitionResolver implements PartitionResolver {
     if (!(o instanceof CustomerIDPartitionResolver))
       return false;
 
-    CustomerIDPartitionResolver otherCustomerIDPartitionResolver = (CustomerIDPartitionResolver)o;
+    CustomerIDPartitionResolver otherCustomerIDPartitionResolver = (CustomerIDPartitionResolver) o;
     return otherCustomerIDPartitionResolver.id.equals(this.id);
 
   }
 
 }
-
-
-

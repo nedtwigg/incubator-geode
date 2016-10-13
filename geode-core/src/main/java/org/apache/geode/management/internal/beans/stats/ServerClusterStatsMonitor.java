@@ -41,8 +41,7 @@ public class ServerClusterStatsMonitor {
 
   private Map<String, Class<?>> typeMap;
 
-  public void aggregate(FederationComponent newState,
-      FederationComponent oldState) {
+  public void aggregate(FederationComponent newState, FederationComponent oldState) {
     aggregator.aggregate(newState, oldState);
 
   }

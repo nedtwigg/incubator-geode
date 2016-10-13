@@ -39,9 +39,11 @@ public class RegionPathConverterJUnitTest {
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {{
-      setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    mockContext = new Mockery() {
+      {
+        setImposteriser(ClassImposteriser.INSTANCE);
+      }
+    };
   }
 
   @After
@@ -51,26 +53,27 @@ public class RegionPathConverterJUnitTest {
   }
 
   private RegionPathConverter createMockRegionPathConverter(final String[] allRegionPaths) {
-    
+
     final RegionPathConverter mockRegionPathConverter = mockContext.mock(RegionPathConverter.class, "RPC");
-    mockContext.checking(new Expectations() {{
-      oneOf(mockRegionPathConverter).getAllRegionPaths();
-      will(returnValue(new TreeSet<String>(Arrays.asList(allRegionPaths))));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockRegionPathConverter).getAllRegionPaths();
+        will(returnValue(new TreeSet<String>(Arrays.asList(allRegionPaths))));
+      }
+    });
 
     return mockRegionPathConverter;
   }
-  
-  
+
   @Test
   public void testGetAllRegionPaths() throws Exception {
-    String[] allRegionPaths = { "/region1", "/region2", "/rg3"};
+    String[] allRegionPaths = { "/region1", "/region2", "/rg3" };
     TreeSet<String> expectedPaths = new TreeSet<String>(Arrays.asList(allRegionPaths));
-    
+
     final RegionPathConverter mockRegionPathConverter = createMockRegionPathConverter(allRegionPaths);
-    
+
     Set<String> mocked = mockRegionPathConverter.getAllRegionPaths();
-    
+
     assertEquals("mocked paths don't match expectedPaths.", mocked, expectedPaths);
   }
 

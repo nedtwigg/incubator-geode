@@ -50,7 +50,8 @@ public class MemberCommandsController extends AbstractCommandsController {
   //public String listMembers(@RequestBody MultiValueMap<String, String> requestParameters) {
   //public String listMembers(@RequestParam(value = "group", required = false) final String groupName,
   //                          @RequestParam(value = "group", required = false) final String[] groupNames) {
-  public String listMembers(@RequestParam(value = CliStrings.LIST_MEMBER__GROUP, required = false) final String groupName) {
+  public String listMembers(@RequestParam(value = CliStrings.LIST_MEMBER__GROUP, required = false)
+  final String groupName) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.LIST_MEMBER);
 
     //logger.info(String.format("Request Body: %1$s", requestParameters));
@@ -68,7 +69,8 @@ public class MemberCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/members/{name}")
   @ResponseBody
-  public String describeMember(@PathVariable("name") final String memberNameId) {
+  public String describeMember(@PathVariable("name")
+  final String memberNameId) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESCRIBE_MEMBER);
     command.addOption(CliStrings.DESCRIBE_MEMBER__IDENTIFIER, decode(memberNameId));
     return processCommand(command.toString());

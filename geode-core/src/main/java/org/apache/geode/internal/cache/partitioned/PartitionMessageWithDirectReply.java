@@ -41,8 +41,7 @@ import org.apache.geode.internal.cache.PartitionedRegion;
  * pass false for the register parameter of the PartitionResponse.
  *
  */
-public abstract class PartitionMessageWithDirectReply extends
-    PartitionMessage implements DirectReplyMessage {
+public abstract class PartitionMessageWithDirectReply extends PartitionMessage implements DirectReplyMessage {
 
   protected DirectReplyProcessor processor;
 
@@ -52,37 +51,32 @@ public abstract class PartitionMessageWithDirectReply extends
     super();
   }
 
-  public PartitionMessageWithDirectReply(Collection<InternalDistributedMember> recipients, int regionId,
-      DirectReplyProcessor processor) {
+  public PartitionMessageWithDirectReply(Collection<InternalDistributedMember> recipients, int regionId, DirectReplyProcessor processor) {
     super(recipients, regionId, processor);
     this.processor = processor;
     this.posDup = false;
   }
 
-  public PartitionMessageWithDirectReply(Set recipients, int regionId,
-      DirectReplyProcessor processor, EntryEventImpl event) {
+  public PartitionMessageWithDirectReply(Set recipients, int regionId, DirectReplyProcessor processor, EntryEventImpl event) {
     super(recipients, regionId, processor);
     this.processor = processor;
     this.posDup = event.isPossibleDuplicate();
   }
 
-  public PartitionMessageWithDirectReply(InternalDistributedMember recipient, int regionId,
-      DirectReplyProcessor processor) {
+  public PartitionMessageWithDirectReply(InternalDistributedMember recipient, int regionId, DirectReplyProcessor processor) {
     super(recipient, regionId, processor);
     this.processor = processor;
   }
-  
+
   /**
    * @param original
    */
-  public PartitionMessageWithDirectReply(
-      PartitionMessageWithDirectReply original, EntryEventImpl event) {
+  public PartitionMessageWithDirectReply(PartitionMessageWithDirectReply original, EntryEventImpl event) {
     super(original);
     this.processor = original.processor;
     if (event != null) {
       this.posDup = event.isPossibleDuplicate();
-    }
-    else {
+    } else {
       this.posDup = original.posDup;
     }
   }
@@ -90,7 +84,7 @@ public abstract class PartitionMessageWithDirectReply extends
   public boolean supportsDirectAck() {
     return true;
   }
-  
+
   public DirectReplyProcessor getDirectReplyProcessor() {
     return processor;
   }
@@ -98,15 +92,11 @@ public abstract class PartitionMessageWithDirectReply extends
   public void registerProcessor() {
     this.processorId = processor.register();
   }
-  
+
   @Override
-  public Set relayToListeners(Set cacheOpRecipients, Set adjunctRecipients,
-      FilterRoutingInfo filterRoutingInfo, 
-      EntryEventImpl event, PartitionedRegion r, DirectReplyProcessor p)
-  {
+  public Set relayToListeners(Set cacheOpRecipients, Set adjunctRecipients, FilterRoutingInfo filterRoutingInfo, EntryEventImpl event, PartitionedRegion r, DirectReplyProcessor p) {
     this.processor = p;
-    return super.relayToListeners(cacheOpRecipients, adjunctRecipients,
-        filterRoutingInfo, event, r, p);
+    return super.relayToListeners(cacheOpRecipients, adjunctRecipients, filterRoutingInfo, event, r, p);
   }
 
   @Override
@@ -119,8 +109,7 @@ public abstract class PartitionMessageWithDirectReply extends
   }
 
   @Override
-  protected void setBooleans(short s, DataInput in) throws IOException,
-      ClassNotFoundException {
+  protected void setBooleans(short s, DataInput in) throws IOException, ClassNotFoundException {
     super.setBooleans(s, in);
     if ((s & POS_DUP) != 0) {
       this.posDup = true;
@@ -132,7 +121,7 @@ public abstract class PartitionMessageWithDirectReply extends
     super.appendFields(buff);
     buff.append("; posDup=").append(this.posDup);
   }
-  
+
   @Override
   public boolean canStartRemoteTransaction() {
     return true;

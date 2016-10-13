@@ -51,16 +51,16 @@ public class BindDistributedSystemJUnitTest {
     }
     this.system = null;
   }
-  
-//  public void testBindToAddressNull() throws Exception {
-//    DistributedSystemFactory.bindToAddress(null);
-//     todo...
-//  }
-//
-//  public void testBindToAddressEmpty() throws Exception {
-//    DistributedSystemFactory.bindToAddress("");
-//     todo...
-//  }
+
+  //  public void testBindToAddressNull() throws Exception {
+  //    DistributedSystemFactory.bindToAddress(null);
+  //     todo...
+  //  }
+  //
+  //  public void testBindToAddressEmpty() throws Exception {
+  //    DistributedSystemFactory.bindToAddress("");
+  //     todo...
+  //  }
 
   @Test
   public void testBindToAddressLoopback() throws Exception {
@@ -70,11 +70,9 @@ public class BindDistributedSystemJUnitTest {
 
     Properties props = new Properties();
     props.setProperty(BIND_ADDRESS, bindTo);
-    props.setProperty(START_LOCATOR,
-        "localhost["+AvailablePortHelper.getRandomAvailableTCPPort()+"]");
-    this.system = org.apache.geode.distributed.DistributedSystem.connect(
-        props);
-        
+    props.setProperty(START_LOCATOR, "localhost[" + AvailablePortHelper.getRandomAvailableTCPPort() + "]");
+    this.system = org.apache.geode.distributed.DistributedSystem.connect(props);
+
     assertEquals(true, this.system.isConnected());
 
     // Because of fix for bug 31409
@@ -82,6 +80,4 @@ public class BindDistributedSystemJUnitTest {
 
   }
 
-
 }
-

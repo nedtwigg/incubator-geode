@@ -29,8 +29,7 @@ import org.apache.geode.internal.Version;
  * 
  *
  */
-public interface NetMember extends Comparable<NetMember>
-{
+public interface NetMember extends Comparable<NetMember> {
 
   public void setAttributes(MemberAttributes args);
 
@@ -39,27 +38,27 @@ public interface NetMember extends Comparable<NetMember>
   public InetAddress getInetAddress();
 
   public int getPort();
-  
+
   public void setPort(int p);
 
   public boolean isMulticastAddress();
-  
+
   public short getVersionOrdinal();
-  
+
   /**
    * return a flag stating whether the member has network partition detection enabled
    * @since GemFire 5.6
    */
   public boolean isNetworkPartitionDetectionEnabled();
-  
+
   public void setNetworkPartitionDetectionEnabled(boolean enabled);
-  
+
   /**
    * return a flag stating whether the member can be the membership coordinator
    * @since GemFire 5.6
    */
   public boolean preferredForCoordinator();
-  
+
   /**
    * Set whether this member ID is preferred for coordinator.  This
    * is mostly useful for unit tests because it does not distribute
@@ -67,15 +66,15 @@ public interface NetMember extends Comparable<NetMember>
    * @param preferred
    */
   public void setPreferredForCoordinator(boolean preferred);
-  
+
   public byte getMemberWeight();
-  
+
   public void setVersion(Version v);
 
   /** write identity information not known by DistributedMember instances */
   public void writeAdditionalData(DataOutput out) throws IOException;
-  
+
   /** read identity information not known by DistributedMember instances */
   public void readAdditionalData(DataInput in) throws ClassNotFoundException, IOException;
 
- }
+}

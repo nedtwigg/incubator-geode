@@ -32,10 +32,10 @@ public abstract class TestCacheCallback implements CacheCallback {
   // differentiate between callback being closed and callback
   // event methods being invoked
   private volatile boolean isClosed = false;
-  
+
   /** Was a callback event method invoked? */
   volatile boolean invoked = false;
-  
+
   volatile protected Throwable callbackError = null;
 
   /**
@@ -51,6 +51,7 @@ public abstract class TestCacheCallback implements CacheCallback {
     }
     return value;
   }
+
   /**
    * Waits up to timeoutMs milliseconds for the listener to be invoked.
    * Calls wasInvoked and returns its value
@@ -58,12 +59,14 @@ public abstract class TestCacheCallback implements CacheCallback {
   public boolean waitForInvocation(int timeoutMs) {
     return waitForInvocation(timeoutMs, 200);
   }
+
   public boolean waitForInvocation(int timeoutMs, long interval) {
     if (!this.invoked) {
       WaitCriterion ev = new WaitCriterion() {
         public boolean done() {
           return invoked;
         }
+
         public String description() {
           return "listener was never invoked";
         }
@@ -72,7 +75,7 @@ public abstract class TestCacheCallback implements CacheCallback {
     }
     return wasInvoked();
   }
-  
+
   public boolean isClosed() {
     checkForError();
     return this.isClosed;
@@ -90,10 +93,10 @@ public abstract class TestCacheCallback implements CacheCallback {
   public void close2() {
 
   }
-  
+
   private void checkForError() {
     if (this.callbackError != null) {
-      AssertionError  error = new AssertionError("Exception occurred in callback");
+      AssertionError error = new AssertionError("Exception occurred in callback");
       error.initCause(this.callbackError);
       throw error;
     }

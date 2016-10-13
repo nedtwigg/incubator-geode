@@ -42,13 +42,13 @@ public interface IndexRepository {
    * @throws IOException 
    */
   void update(Object key, Object value) throws IOException;
-  
+
   /**
    * Delete the entries in the lucene index
    * @throws IOException 
    */
   void delete(Object key) throws IOException;
-  
+
   /**
    * Query the index index repository, passing the results to the collector
    * Only the documents with the top scores, up to the limit, will be passed

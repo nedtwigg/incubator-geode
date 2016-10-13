@@ -124,8 +124,6 @@ public class OptionSet {
 
   @Override
   public String toString() {
-    return "OptionSet [optionsMap=" + optionsMap + ", argumentsMap="
-        + argumentsMap + ", noOfSpacesRemoved=" + noOfSpacesRemoved
-        + ", split=" + split + ", userInput=" + userInput + "]";
+    return "OptionSet [optionsMap=" + optionsMap + ", argumentsMap=" + argumentsMap + ", noOfSpacesRemoved=" + noOfSpacesRemoved + ", split=" + split + ", userInput=" + userInput + "]";
   }
 }

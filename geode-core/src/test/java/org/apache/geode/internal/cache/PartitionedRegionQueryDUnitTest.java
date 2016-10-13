@@ -80,7 +80,7 @@ import org.apache.geode.test.dunit.VM;
  */
 @Category(DistributedTest.class)
 public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
-  
+
   /**
    * @param name
    */
@@ -88,7 +88,7 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     super();
     // TODO Auto-generated constructor stub
   }
-  
+
   private static final AtomicReference<RebalanceResults> rebalanceResults = new AtomicReference<RebalanceResults>();
 
   @Test
@@ -97,8 +97,8 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     //VM vm2 = host.getVM(2);
-        
-    createPR(vm0);    
+
+    createPR(vm0);
     createPR(vm1);
     createIndex(vm0, "compactRangeIndex", "entry.value", "/region.entrySet entry");
 
@@ -107,51 +107,47 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region");
-        for(int i =0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
           region.put(i, new TestObject(i));
         }
       }
     });
-    
+
     vm0.invoke(new SerializableRunnable("resetting sqt") {
-      public void run() {        
+      public void run() {
         IndexManager.setIndexBufferTime(Long.MAX_VALUE, Long.MAX_VALUE);
       }
     });
-    
+
     vm1.invoke(new SerializableRunnable("resetting sqt") {
       public void run() {
         IndexManager.setIndexBufferTime(Long.MAX_VALUE, Long.MAX_VALUE);
       }
     });
-    
+
     vm0.invoke(new SerializableRunnable("query") {
       public void run() {
         try {
           QueryService qs = getCache().getQueryService();
           qs.newQuery("SELECT DISTINCT entry.key, entry.value FROM /region.entrySet entry WHERE entry.value.score >= 5 AND entry.value.score <= 10 ORDER BY value asc").execute();
-        }
-        catch (QueryInvocationTargetException e) {
+        } catch (QueryInvocationTargetException e) {
           e.printStackTrace();
-          fail (e.toString());
-        }
-        catch (NameResolutionException e) {
-          fail (e.toString());
+          fail(e.toString());
+        } catch (NameResolutionException e) {
+          fail(e.toString());
+
+        } catch (TypeMismatchException e) {
+          fail(e.toString());
+
+        } catch (FunctionDomainException e) {
+          fail(e.toString());
 
         }
-        catch (TypeMismatchException e) {
-          fail (e.toString());
 
-        }
-        catch (FunctionDomainException e) {
-          fail (e.toString());
-
-        }
-        
       }
-    });    
+    });
   }
-  
+
   /**
    * Test of bug 43102.
    * 1. Buckets are created on several nodes
@@ -165,26 +161,25 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     createAccessor(vm0);
-    
+
     createPR(vm1);
-    
+
     createBuckets(vm1);
-    
+
     createPR(vm2);
-    
+
     //Add a listener that will trigger a rebalance
     //as soon as the query arrives on this node.
     vm1.invoke(new SerializableRunnable("add listener") {
-      
+
       public void run() {
         DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
 
           @Override
-          public void beforeProcessMessage(DistributionManager dm,
-              DistributionMessage message) {
-            if(message instanceof QueryMessage) {
+          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
+            if (message instanceof QueryMessage) {
               RebalanceOperation rebalance = getCache().getResourceManager().createRebalanceFactory().start();
               //wait for the rebalance
               try {
@@ -192,26 +187,26 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
               } catch (CancellationException e) {
                 //ignore
               } catch (InterruptedException e) {
-              //ignore
+                //ignore
               }
             }
           }
         });
-        
+
       }
     });
-    
+
     executeQuery(vm0);
-    
+
     vm1.invoke(new SerializableRunnable("check rebalance happened") {
-      
+
       public void run() {
         assertNotNull(rebalanceResults.get());
         assertEquals(5, rebalanceResults.get().getTotalBucketTransfersCompleted());
       }
     });
   }
-  
+
   /**
    * Test of bug 50749
    * 1. Indexes and Buckets are created on several nodes
@@ -225,47 +220,47 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
-    
+
     createAccessor(vm0);
-    
+
     createPR(vm1);
     createPR(vm2);
     createIndex(vm1, "prIndex", "r.score", "/region r");
-    
+
     //Do Puts
     vm1.invoke(new SerializableRunnable("putting data") {
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region");
-        for(int i =0; i < 2000; i++) {
+        for (int i = 0; i < 2000; i++) {
           region.put(i, new TestObject(i));
         }
       }
     });
-    
+
     createPR(vm3);
-    
+
     //Rebalance
     vm1.invoke(new SerializableRunnable("rebalance") {
       public void run() {
-              RebalanceOperation rebalance = getCache().getResourceManager().createRebalanceFactory().start();
-              //wait for the rebalance
-              try {
-                rebalance.getResults();
-              } catch (CancellationException e) {
-                //ignore
-              } catch (InterruptedException e) {
-              //ignore
-              }
+        RebalanceOperation rebalance = getCache().getResourceManager().createRebalanceFactory().start();
+        //wait for the rebalance
+        try {
+          rebalance.getResults();
+        } catch (CancellationException e) {
+          //ignore
+        } catch (InterruptedException e) {
+          //ignore
+        }
       }
     });
-       
+
     checkForLingeringBucketIndexes(vm1, "prIndex");
     checkForLingeringBucketIndexes(vm2, "prIndex");
-  
+
     closeCache(vm1, vm2, vm3, vm0);
   }
-  
+
   /**
    * tests trace for pr queries when <trace> is used and query verbose is set to true on local and remote servers
    */
@@ -279,47 +274,44 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
-    
+
     try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = true;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = true;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = true;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = true;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "<trace> select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("<trace> select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       //verify hooks
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-          PRQueryTraceTestHook server1TestHook = (PRQueryTraceTestHook) DefaultQuery.testHook;          
+          PRQueryTraceTestHook server1TestHook = (PRQueryTraceTestHook) DefaultQuery.testHook;
           assertTrue(server1TestHook.getHooks().get("Pull off PR Query Trace Info"));
           assertTrue(server1TestHook.getHooks().get("Create PR Query Trace String"));
           assertTrue(server1TestHook.getHooks().get("Create PR Query Trace Info From Local Node"));
@@ -332,13 +324,11 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertTrue(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-  
-  
+
   /**
    * tests trace for pr queries when <trace> is used and query verbose is set to true on local but false on remote servers
    * All flags should be true still as the <trace> is OR'd with query verbose flag
@@ -353,45 +343,42 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
-      try {
+    try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = true;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = true;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "<trace> select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("<trace> select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-          PRQueryTraceTestHook server1TestHook = (PRQueryTraceTestHook) DefaultQuery.testHook;        
+          PRQueryTraceTestHook server1TestHook = (PRQueryTraceTestHook) DefaultQuery.testHook;
           assertTrue(server1TestHook.getHooks().get("Pull off PR Query Trace Info"));
           assertTrue(server1TestHook.getHooks().get("Create PR Query Trace String"));
           assertTrue(server1TestHook.getHooks().get("Create PR Query Trace Info From Local Node"));
@@ -404,13 +391,11 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertTrue(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-  
-  
+
   /**
    * tests trace for pr queries when <trace> is NOT used and query verbose is set to true on local but false on remote
    * The remote should not send a pr query trace info back because trace was not requested
@@ -425,42 +410,39 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
     try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = true;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = true;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           PRQueryTraceTestHook server1TestHook = (PRQueryTraceTestHook) DefaultQuery.testHook;
@@ -476,13 +458,11 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertNull(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-  
-  
+
   /**
    * tests trace for pr queries when <trace> is NOT used and query verbose is set to false on local but true on remote servers
    * We don't output the string or do anything on the local side, but we still pull off the object due to the remote server
@@ -498,42 +478,39 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
     try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = true;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = true;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       //verify hooks
       vm1.invoke(new SerializableRunnable() {
         public void run() {
@@ -550,13 +527,11 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertTrue(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-  
-  
+
   /**
    * tests trace for pr queries when <trace> is used and query verbose is set to false on local and remote servers
    * trace is OR'd so the entire trace process should be invoked
@@ -571,42 +546,39 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
-      try {
+    try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = true;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = true;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "<trace> select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("<trace> select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       //verify hooks
       vm1.invoke(new SerializableRunnable() {
         public void run() {
@@ -623,13 +595,11 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertTrue(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-	   
-  
+
   /**
    * tests trace for pr queries when <trace> is NOT used and query verbose is set to false on local but true remote servers
    * The local node still receives the pr trace info from the remote node due to query verbose being on
@@ -645,42 +615,39 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
     try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = true;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = true;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       //verify hooks
       vm1.invoke(new SerializableRunnable() {
         public void run() {
@@ -697,13 +664,11 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertTrue(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-  
-  
+
   /**
    * tests trace for pr queries when <trace> is NOT used and query verbose is set to false on local and remote servers
    * None of our hooks should have triggered
@@ -718,42 +683,39 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
     try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       //verify hooks
       vm1.invoke(new SerializableRunnable() {
         public void run() {
@@ -770,12 +732,11 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertNull(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-  
+
   /**
    * tests trace for pr queries when <trace> is used and query verbose is set to false on local and remote servers
    * All hooks should have triggered due to trace being used
@@ -790,42 +751,39 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm1);
     createPR(vm2);
     createBuckets(vm1);
-    
+
     final PRQueryTraceTestHook server1TestHook = new PRQueryTraceTestHook();
     final PRQueryTraceTestHook server2TestHook = new PRQueryTraceTestHook();
     try {
       vm1.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server1TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server1TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm2.invoke(new SerializableRunnable() {
         public void run() {
-           DefaultQuery.testHook = server2TestHook;
-           DefaultQuery.QUERY_VERBOSE = false;
+          DefaultQuery.testHook = server2TestHook;
+          DefaultQuery.QUERY_VERBOSE = false;
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          Query query = cache.getQueryService().newQuery(
-              "<trace> select * from /region r where r > 0");
+          Query query = cache.getQueryService().newQuery("<trace> select * from /region r where r > 0");
           try {
             SelectResults results = (SelectResults) query.execute();
-            assertEquals(
-                new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8,
-                    9 })), results.asSet());
-  
+            assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
+
           } catch (Exception e) {
             Assert.fail("Bad query", e);
           }
         }
       });
-      
+
       vm1.invoke(new SerializableRunnable() {
         public void run() {
           PRQueryTraceTestHook server1TestHook = (PRQueryTraceTestHook) DefaultQuery.testHook;
@@ -841,12 +799,10 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
           assertTrue(server2TestHook.getHooks().get("Create PR Query Trace Info for Remote Query"));
         }
       });
-    }
-    finally {
+    } finally {
       setQueryVerbose(false, vm1, vm2);
     }
   }
-  
 
   @Test
   public void testOrderByOnPRWithReservedKeywords() throws Exception {
@@ -856,80 +812,22 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     final VM client = host.getVM(2);
     final String regionName = "region1";
 
-    final String[] queries = { 
-        "select distinct * from /" + regionName + " order by \"date\"",
-        "select distinct \"date\" from /" + regionName + " order by \"date\"",
-        "select distinct * from /" + regionName + " order by \"time\"",
-        "select distinct \"time\" from /" + regionName + " order by \"time\"",
-        "select distinct * from /" + regionName + " order by \"timestamp\"",
-        "select distinct \"timestamp\" from /" + regionName + " order by \"timestamp\"",
-        "select distinct \"date\" from /" + regionName + " order by \"date\".\"score\"",
-        "select distinct * from /" + regionName + " order by nested.\"date\"",
-        "select distinct * from /" + regionName + " order by nested.\"date\".nonKeyword",
-        "select distinct * from /" + regionName + " order by nested.\"date\".\"date\"",
-        "select distinct * from /" + regionName + " order by nested.\"date\".\"date\".score",
-        };
+    final String[] queries = { "select distinct * from /" + regionName + " order by \"date\"", "select distinct \"date\" from /" + regionName + " order by \"date\"", "select distinct * from /" + regionName + " order by \"time\"", "select distinct \"time\" from /" + regionName + " order by \"time\"", "select distinct * from /" + regionName + " order by \"timestamp\"", "select distinct \"timestamp\" from /" + regionName + " order by \"timestamp\"", "select distinct \"date\" from /" + regionName + " order by \"date\".\"score\"", "select distinct * from /" + regionName + " order by nested.\"date\"", "select distinct * from /" + regionName + " order by nested.\"date\".nonKeyword", "select distinct * from /" + regionName + " order by nested.\"date\".\"date\"", "select distinct * from /" + regionName + " order by nested.\"date\".\"date\".score", };
 
     // Start server1
-    final Integer port1 = (Integer) server1.invoke(new SerializableCallable(
-        "Create Server1") {
+    final Integer port1 = (Integer) server1.invoke(new SerializableCallable("Create Server1") {
       @Override
       public Object call() throws Exception {
-        String jsonCustomer = "{"
-            + "\"firstName\": \"John\","
-            + "\"lastName\": \"Smith\","
-            + " \"age\": 25,"
-            + " \"date\":"+" \""+ new java.util.Date()+"\","
-            + " \"time\":"+" \""+ new java.sql.Time(1000)+"\","
-            + " \"timestamp\":"+" \""+ new java.sql.Timestamp(1000)+"\""
-            + "}";
-         
-         String jsonCustomer1 = "{"
-            + "\"firstName\": \"John1\","
-            + "\"lastName\": \"Smith1\","
-            + " \"age\": 25,"
-            + " \"date\":"+" \""+ new java.util.Date()+"\","
-            + " \"time\":"+" \""+ new java.sql.Time(1000)+"\","
-            + " \"timestamp\":"+" \""+ new java.sql.Timestamp(1000)+"\""
-            + "}";
-         
-          String jsonCustomer2 = "{"
-            + "\"firstName\": \"John2\","
-            + "\"lastName\": \"Smith2\","
-            + " \"age\": 25,"
-            + " \"date\":"+" \""+ new java.util.Date()+"\","
-            + " \"time\":"+" \""+ new java.sql.Time(1000)+"\","
-            + " \"timestamp\":"+" \""+ new java.sql.Timestamp(1000)+"\""
-            + "}";
-          String jsonCustomer3 = "{"
-              + "\"firstName\": \"John3\","
-              + "\"lastName\": \"Smith3\","
-              + " \"age\": 25,"
-              + " \"date\":"+" \""+ new TestObject(1) +"\","
-              + " \"time\":"+" \""+ new java.sql.Time(1000)+"\","
-              + " \"timestamp\":"+" \""+ new java.sql.Timestamp(1000)+"\""
-              + "}";
-          String jsonCustomer4 = "{"
-              + "\"firstName\": \"John4\","
-              + "\"lastName\": \"Smith4\","
-              + " \"age\": 25,"
-              + " \"date\":"+" \""+ new TestObject(1) +"\","
-              + " \"time\":"+" \""+ new java.sql.Time(1000)+"\","
-              + " \"timestamp\":"+" \""+ new java.sql.Timestamp(1000)+"\","
-              + " \"nested\":"+" \""+ new NestedKeywordObject(1) +"\""
-              + "}";
-          String jsonCustomer5 = "{"
-              + "\"firstName\": \"John5\","
-              + "\"lastName\": \"Smith5\","
-              + " \"age\": 25,"
-              + " \"date\":"+" \""+ new TestObject(1) +"\","
-              + " \"time\":"+" \""+ new java.sql.Time(1000)+"\","
-              + " \"timestamp\":"+" \""+ new java.sql.Timestamp(1000)+"\","
-              + " \"nested\":"+" \""+ new NestedKeywordObject(new NestedKeywordObject(new TestObject(1))) +"\""
-              + "}";
+        String jsonCustomer = "{" + "\"firstName\": \"John\"," + "\"lastName\": \"Smith\"," + " \"age\": 25," + " \"date\":" + " \"" + new java.util.Date() + "\"," + " \"time\":" + " \"" + new java.sql.Time(1000) + "\"," + " \"timestamp\":" + " \"" + new java.sql.Timestamp(1000) + "\"" + "}";
 
-        Region r1 = getCache().createRegionFactory(RegionShortcut.PARTITION)
-            .create(regionName);
+        String jsonCustomer1 = "{" + "\"firstName\": \"John1\"," + "\"lastName\": \"Smith1\"," + " \"age\": 25," + " \"date\":" + " \"" + new java.util.Date() + "\"," + " \"time\":" + " \"" + new java.sql.Time(1000) + "\"," + " \"timestamp\":" + " \"" + new java.sql.Timestamp(1000) + "\"" + "}";
+
+        String jsonCustomer2 = "{" + "\"firstName\": \"John2\"," + "\"lastName\": \"Smith2\"," + " \"age\": 25," + " \"date\":" + " \"" + new java.util.Date() + "\"," + " \"time\":" + " \"" + new java.sql.Time(1000) + "\"," + " \"timestamp\":" + " \"" + new java.sql.Timestamp(1000) + "\"" + "}";
+        String jsonCustomer3 = "{" + "\"firstName\": \"John3\"," + "\"lastName\": \"Smith3\"," + " \"age\": 25," + " \"date\":" + " \"" + new TestObject(1) + "\"," + " \"time\":" + " \"" + new java.sql.Time(1000) + "\"," + " \"timestamp\":" + " \"" + new java.sql.Timestamp(1000) + "\"" + "}";
+        String jsonCustomer4 = "{" + "\"firstName\": \"John4\"," + "\"lastName\": \"Smith4\"," + " \"age\": 25," + " \"date\":" + " \"" + new TestObject(1) + "\"," + " \"time\":" + " \"" + new java.sql.Time(1000) + "\"," + " \"timestamp\":" + " \"" + new java.sql.Timestamp(1000) + "\"," + " \"nested\":" + " \"" + new NestedKeywordObject(1) + "\"" + "}";
+        String jsonCustomer5 = "{" + "\"firstName\": \"John5\"," + "\"lastName\": \"Smith5\"," + " \"age\": 25," + " \"date\":" + " \"" + new TestObject(1) + "\"," + " \"time\":" + " \"" + new java.sql.Time(1000) + "\"," + " \"timestamp\":" + " \"" + new java.sql.Timestamp(1000) + "\"," + " \"nested\":" + " \"" + new NestedKeywordObject(new NestedKeywordObject(new TestObject(1))) + "\"" + "}";
+
+        Region r1 = getCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
 
         r1.put("jsondoc", JSONFormatter.fromJSON(jsonCustomer));
         r1.put("jsondoc1", JSONFormatter.fromJSON(jsonCustomer1));
@@ -947,12 +845,10 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     });
 
     // Start server2
-    final Integer port2 = (Integer) server2.invoke(new SerializableCallable(
-        "Create Server2") {
+    final Integer port2 = (Integer) server2.invoke(new SerializableCallable("Create Server2") {
       @Override
       public Object call() throws Exception {
-        Region r1 = getCache().createRegionFactory(RegionShortcut.PARTITION)
-            .create(regionName);
+        Region r1 = getCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
         CacheServer server = getCache().addCacheServer();
         int port = AvailablePortHelper.getRandomAvailablePortForDUnitSite();
         server.setPort(port);
@@ -969,8 +865,7 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
         cf.addPoolServer(NetworkUtils.getServerHostName(server2.getHost()), port2);
         ClientCache cache = getClientCache(cf);
 
-        Region region = cache.createClientRegionFactory(
-            ClientRegionShortcut.CACHING_PROXY).create(regionName);
+        Region region = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(regionName);
         QueryService qs = null;
         SelectResults sr = null;
 
@@ -983,8 +878,7 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
         for (int i = 0; i < queries.length; i++) {
           try {
             sr = (SelectResults) qs.newQuery(queries[i]).execute();
-            assertTrue("Size of resultset should be greater than 0 for query: "
-             + queries[i], sr.size() > 0);
+            assertTrue("Size of resultset should be greater than 0 for query: " + queries[i], sr.size() > 0);
           } catch (Exception e) {
             Assert.fail("Failed executing query ", e);
           }
@@ -998,11 +892,10 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
     this.closeClient(client);
 
   }
-  
+
   /* Close Client */
   public void closeClient(VM client) {
-    SerializableRunnable closeCache = new CacheSerializableRunnable(
-        "Close Client") {
+    SerializableRunnable closeCache = new CacheSerializableRunnable("Close Client") {
       public void run2() throws CacheException {
         LogWriterUtils.getLogWriter().info("### Close Client. ###");
         try {
@@ -1016,32 +909,31 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
 
     client.invoke(closeCache);
   }
-  
+
   private void executeQuery(VM vm0) {
     vm0.invoke(new SerializableRunnable() {
-      
+
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region");
         Query query = cache.getQueryService().newQuery("select * from /region r where r > 0");
         try {
           SelectResults results = (SelectResults) query.execute();
-          assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3 ,4, 5, 6, 7, 8, 9 })), results.asSet());
+          assertEquals(new HashSet(Arrays.asList(new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 })), results.asSet());
         } catch (Exception e) {
           Assert.fail("Bad query", e);
         }
       }
     });
   }
-  
+
   private void checkForLingeringBucketIndexes(VM vm, final String indexName) {
     vm.invoke(new SerializableRunnable() {
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region");
         QueryService qs = cache.getQueryService();
-        PartitionedIndex index = (PartitionedIndex) qs.getIndex(region,
-            indexName);
+        PartitionedIndex index = (PartitionedIndex) qs.getIndex(region, indexName);
         Iterator iterator = index.getBucketIndexes().iterator();
         int numBucketIndexes = index.getBucketIndexes().size();
         while (iterator.hasNext()) {
@@ -1057,13 +949,13 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
       public void run() {
         Cache cache = getCache();
         Region region = cache.getRegion("region");
-        for(int i =0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
           region.put(i, i);
         }
       }
     });
   }
-  
+
   private void createPR(VM vm) {
     vm.invoke(new SerializableRunnable("create accessor") {
       public void run() {
@@ -1077,39 +969,34 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
 
   private void createAccessor(VM vm) {
     vm.invoke(new SerializableRunnable("create accessor") {
-      
+
       public void run() {
         Cache cache = getCache();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setTotalNumBuckets(10);
         paf.setLocalMaxMemory(0);
-        cache.createRegionFactory(RegionShortcut.PARTITION_PROXY)
-          .setPartitionAttributes(paf.create())
-          .create("region");
+        cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).setPartitionAttributes(paf.create()).create("region");
       }
     });
   }
-  
+
   private void createIndex(VM vm, final String indexName, final String indexedExpression, final String regionPath) {
     vm.invoke(new SerializableRunnable("create index") {
       public void run() {
         try {
           Cache cache = getCache();
           cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
-        }
-        catch (RegionNotFoundException e) {
+        } catch (RegionNotFoundException e) {
           fail(e.toString());
-        }
-        catch (IndexExistsException e) {
+        } catch (IndexExistsException e) {
           fail(e.toString());
-        }
-        catch (IndexNameConflictException e) {
+        } catch (IndexNameConflictException e) {
           fail(e.toString());
         }
       }
     });
   }
-  
+
   private void closeCache(VM... vms) {
     for (VM vm : vms) {
       vm.invoke(new SerializableRunnable() {
@@ -1119,63 +1006,64 @@ public class PartitionedRegionQueryDUnitTest extends JUnit4CacheTestCase {
       });
     }
   }
-  
+
   private void setQueryVerbose(final boolean value, VM... vms) {
-    for(VM vm: vms) {
+    for (VM vm : vms) {
       vm.invoke(new SerializableRunnable() {
         public void run() {
           DefaultQuery.QUERY_VERBOSE = value;
-       }
-     });
+        }
+      });
     }
   }
-  
-  
+
   private class TestObject implements Serializable, Comparable {
     @Override
     public int compareTo(Object o) {
       if (o instanceof TestObject) {
-        return score.compareTo(((TestObject)o).score);
+        return score.compareTo(((TestObject) o).score);
       }
       return 1;
     }
 
     public Double score;
-    
+
     public TestObject(double score) {
       this.score = score;
     }
-    
+
   }
- 
+
   private class NestedKeywordObject implements Serializable {
-    
+
     public Object date;
     public Object nonKeyword;
- 
+
     public NestedKeywordObject(Object object) {
       this.date = object;
     }
+
     public NestedKeywordObject(Object keywordObject, Object nonKeywordObject) {
       this.date = keywordObject;
       this.nonKeyword = nonKeywordObject;
     }
   }
-  
-  private class PRQueryTraceTestHook implements DefaultQuery.TestHook, Serializable {
-      private HashMap<String, Boolean> hooks = new HashMap<String, Boolean>();
-      public HashMap<String, Boolean> getHooks() {
-        return hooks;
-      }
-      
-      @Override
-      public void doTestHook(int spot) {
-        
-      }
 
-      @Override
-      public void doTestHook(String spot) {
-        hooks.put(spot, Boolean.TRUE);
-      }
+  private class PRQueryTraceTestHook implements DefaultQuery.TestHook, Serializable {
+    private HashMap<String, Boolean> hooks = new HashMap<String, Boolean>();
+
+    public HashMap<String, Boolean> getHooks() {
+      return hooks;
+    }
+
+    @Override
+    public void doTestHook(int spot) {
+
+    }
+
+    @Override
+    public void doTestHook(String spot) {
+      hooks.put(spot, Boolean.TRUE);
+    }
   }
 }

@@ -99,8 +99,7 @@ public class GroupByQueryDUnitTest extends JUnit4CacheTestCase {
           QueryService qs = getCache().getQueryService();
           String queryStr = "select  p.shortID as short_id  from /portfolio p where p.ID >= 0 group by short_id ";
           Query query = qs.newQuery(queryStr);
-          SelectResults<Struct> results = (SelectResults<Struct>) query
-              .execute();
+          SelectResults<Struct> results = (SelectResults<Struct>) query.execute();
           Iterator<Struct> iter = results.iterator();
           int counter = 0;
           while (iter.hasNext()) {
@@ -143,8 +142,7 @@ public class GroupByQueryDUnitTest extends JUnit4CacheTestCase {
         Cache cache = getCache();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setTotalNumBuckets(10);
-        cache.createRegionFactory(RegionShortcut.PARTITION)
-            .setPartitionAttributes(paf.create()).create("portfolio");
+        cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(paf.create()).create("portfolio");
       }
     });
   }
@@ -157,20 +155,17 @@ public class GroupByQueryDUnitTest extends JUnit4CacheTestCase {
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setTotalNumBuckets(10);
         paf.setLocalMaxMemory(0);
-        cache.createRegionFactory(RegionShortcut.PARTITION_PROXY)
-            .setPartitionAttributes(paf.create()).create("portfolio");
+        cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).setPartitionAttributes(paf.create()).create("portfolio");
       }
     });
   }
 
-  private void createIndex(VM vm, final String indexName,
-      final String indexedExpression, final String regionPath) {
+  private void createIndex(VM vm, final String indexName, final String indexedExpression, final String regionPath) {
     vm.invoke(new SerializableRunnable("create index") {
       public void run() {
         try {
           Cache cache = getCache();
-          cache.getQueryService().createIndex(indexName, indexedExpression,
-              regionPath);
+          cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
         } catch (RegionNotFoundException e) {
           fail(e.toString());
         } catch (IndexExistsException e) {

@@ -26,19 +26,19 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  *
  *
  */
-public abstract class DebuggerSupport  {
+public abstract class DebuggerSupport {
   private static final Logger logger = LogService.getLogger();
-  
+
   /** Creates a new instance of DebuggerSupport */
   private DebuggerSupport() {
   }
-  
+
   /** Debugger support */
   public static void waitForJavaDebugger() {
     waitForJavaDebugger(null);
   }
-  
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="IL_INFINITE_LOOP", justification="Endless loop is for debugging purposes.") 
+
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "IL_INFINITE_LOOP", justification = "Endless loop is for debugging purposes.")
   public static void waitForJavaDebugger(String extraLogMsg) {
     boolean cont = false;
     String msg = ":";
@@ -50,8 +50,7 @@ public abstract class DebuggerSupport  {
       try {
         // SET BREAKPOINT HERE
         Thread.sleep(1000);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         interrupted = true;
         // ...but keep going, waiting for debugger
       }

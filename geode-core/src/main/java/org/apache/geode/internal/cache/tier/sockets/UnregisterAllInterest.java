@@ -27,22 +27,23 @@ import java.io.*;
 public class UnregisterAllInterest implements Serializable {
   private static final long serialVersionUID = 5026160621257178459L;
   private static final UnregisterAllInterest SINGLETON = new UnregisterAllInterest();
+
   /**
    * Return the only instance of this class.
    */
   public static final UnregisterAllInterest singleton() {
     return SINGLETON;
   }
-  
+
   /** Creates a new instance of UnregisterAllInterest */
   private UnregisterAllInterest() {
   }
-  
+
   @Override
   public String toString() {
     return "UNREGISTER ALL INTEREST";
   }
-  
+
   private Object readResolve() throws ObjectStreamException {
     return SINGLETON;
   }

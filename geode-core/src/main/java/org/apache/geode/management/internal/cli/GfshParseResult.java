@@ -59,23 +59,19 @@ public class GfshParseResult extends ParseResult {
    * @param userInput
    *          user specified commands string
    */
-  protected GfshParseResult(final Method method, final Object instance, 
-                            final Object[] arguments, final String userInput, 
-                            final String commandName,
-                            final Map<String, String> parametersAsString) {
+  protected GfshParseResult(final Method method, final Object instance, final Object[] arguments, final String userInput, final String commandName, final Map<String, String> parametersAsString) {
     super(method, instance, arguments);
     this.userInput = userInput;
     this.commandName = commandName;
     this.paramValueStringMap = new HashMap<String, String>(parametersAsString);
   }
-  
+
   /**
    * @return the userInput
    */
   public String getUserInput() {
     return userInput;
   }
-  
 
   /**
    * @return the unmodifiable paramValueStringMap

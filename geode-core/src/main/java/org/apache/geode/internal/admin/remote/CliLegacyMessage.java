@@ -23,7 +23,6 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-
 /**
  * An extension of AdminRequest for messages that are used
  * as part of the new CLI. The new CLI expects errors to be logged on
@@ -44,7 +43,7 @@ public abstract class CliLegacyMessage extends AdminRequest {
     } catch (Exception ex) {
       logger.error(LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), ex);
       response = AdminFailureResponse.create(dm, this.getSender(), ex);
-      
+
     }
     if (response != null) { //cancellations result in null response
       response.setMsgId(this.getMsgId());

@@ -115,7 +115,7 @@ public class VMDUnitTest extends JUnit4DistributedTestCase {
     a1.join();
     assertEquals(new Integer(1), a1.getReturnValue());
     // Assert object method invocation works with no return
-    a1 = vm.invokeAsync(o, "set", new Object[] {new Integer(3)});
+    a1 = vm.invokeAsync(o, "set", new Object[] { new Integer(3) });
     a1.join();
     assertNull(a1.getReturnValue());
   }
@@ -181,6 +181,7 @@ public class VMDUnitTest extends JUnit4DistributedTestCase {
     BasicTestException() {
       this("Test exception.  Please ignore.");
     }
+
     BasicTestException(String s) {
       super(s);
     }
@@ -189,15 +190,19 @@ public class VMDUnitTest extends JUnit4DistributedTestCase {
   private static class VMTestObject implements Serializable {
     private static final long serialVersionUID = 1L;
     private final AtomicInteger val;
+
     public VMTestObject(int init) {
       this.val = new AtomicInteger(init);
     }
+
     public Integer get() {
       return new Integer(this.val.get());
     }
+
     public Integer incrementAndGet() {
       return new Integer(this.val.incrementAndGet());
     }
+
     public void set(Integer newVal) {
       this.val.set(newVal.intValue());
     }

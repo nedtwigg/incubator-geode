@@ -21,9 +21,8 @@ import org.apache.geode.internal.cache.versions.VersionStamp;
 /**
  *
  */
-public abstract class VersionedStatsDiskLRURegionEntry extends VMStatsDiskLRURegionEntry
-  implements VersionStamp {
-  
+public abstract class VersionedStatsDiskLRURegionEntry extends VMStatsDiskLRURegionEntry implements VersionStamp {
+
   protected VersionedStatsDiskLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }

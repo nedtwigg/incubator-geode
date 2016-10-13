@@ -217,7 +217,6 @@ public class GeodeRedisServer {
    */
   private final ConcurrentMap<ByteArrayWrapper, ScheduledFuture<?>> expirationFutures;
 
-
   /**
    * The field that defines the name of the {@link Region} which holds all of
    * the strings. The current value of this field is {@value #STRING_REGION}.
@@ -319,7 +318,6 @@ public class GeodeRedisServer {
     this(bindAddress, port, null);
   }
 
-
   /**
    * Constructor for {@link GeodeRedisServer} that will start the
    * server and bind to the given address and port. Keep in mind that the
@@ -345,6 +343,7 @@ public class GeodeRedisServer {
     this.expirationFutures = new ConcurrentHashMap<ByteArrayWrapper, ScheduledFuture<?>>();
     this.expirationExecutor = Executors.newScheduledThreadPool(numExpirationThreads, new ThreadFactory() {
       private final AtomicInteger counter = new AtomicInteger();
+
       @Override
       public Thread newThread(Runnable r) {
         Thread t = new Thread(r);
@@ -366,9 +365,7 @@ public class GeodeRedisServer {
    * @throws UnknownHostException
    */
   private InetAddress getBindAddress() throws UnknownHostException {
-    return this.bindAddress == null || this.bindAddress.isEmpty()
-        ? SocketCreator.getLocalHost()
-            : InetAddress.getByName(this.bindAddress);
+    return this.bindAddress == null || this.bindAddress.isEmpty() ? SocketCreator.getLocalHost() : InetAddress.getByName(this.bindAddress);
   }
 
   /**
@@ -452,7 +449,7 @@ public class GeodeRedisServer {
 
   private void checkForRegions() {
     Collection<Entry<String, RedisDataType>> entrySet = this.regionCache.metaEntrySet();
-    for (Entry<String, RedisDataType> entry: entrySet) {
+    for (Entry<String, RedisDataType> entry : entrySet) {
       String regionName = entry.getKey();
       RedisDataType type = entry.getValue();
       Region<?, ?> newRegion = cache.getRegion(regionName);
@@ -477,6 +474,7 @@ public class GeodeRedisServer {
   private void startRedisServer() throws IOException, InterruptedException {
     ThreadFactory selectorThreadFactory = new ThreadFactory() {
       private final AtomicInteger counter = new AtomicInteger();
+
       @Override
       public Thread newThread(Runnable r) {
         Thread t = new Thread(r);
@@ -489,6 +487,7 @@ public class GeodeRedisServer {
 
     ThreadFactory workerThreadFactory = new ThreadFactory() {
       private final AtomicInteger counter = new AtomicInteger();
+
       @Override
       public Thread newThread(Runnable r) {
         Thread t = new Thread(r);
@@ -514,9 +513,7 @@ public class GeodeRedisServer {
     String pwd = system.getConfig().getRedisPassword();
     final byte[] pwdB = Coder.stringToBytes(pwd);
     ServerBootstrap b = new ServerBootstrap();
-    b.group(bossGroup, workerGroup)
-    .channel(socketClass)
-    .childHandler(new ChannelInitializer<SocketChannel>() {
+    b.group(bossGroup, workerGroup).channel(socketClass).childHandler(new ChannelInitializer<SocketChannel>() {
       @Override
       public void initChannel(SocketChannel ch) throws Exception {
         if (logger.fineEnabled())
@@ -525,12 +522,7 @@ public class GeodeRedisServer {
         p.addLast(ByteToCommandDecoder.class.getSimpleName(), new ByteToCommandDecoder());
         p.addLast(ExecutionHandlerContext.class.getSimpleName(), new ExecutionHandlerContext(ch, cache, regionCache, GeodeRedisServer.this, pwdB));
       }
-    })
-    .option(ChannelOption.SO_REUSEADDR, true)
-    .option(ChannelOption.SO_RCVBUF, getBufferSize())
-    .childOption(ChannelOption.SO_KEEPALIVE, true)
-    .childOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, GeodeRedisServer.connectTimeoutMillis)
-    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+    }).option(ChannelOption.SO_REUSEADDR, true).option(ChannelOption.SO_RCVBUF, getBufferSize()).childOption(ChannelOption.SO_KEEPALIVE, true).childOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, GeodeRedisServer.connectTimeoutMillis).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
     // Bind and start to accept incoming connections.
     ChannelFuture f = b.bind(new InetSocketAddress(getBindAddress(), serverPort)).sync();
@@ -578,7 +570,7 @@ public class GeodeRedisServer {
       if (value != null && value != RedisDataType.REDIS_STRING && value != RedisDataType.REDIS_HLL && value != RedisDataType.REDIS_PROTECTED) {
         ByteArrayWrapper kW = Coder.stringToByteArrayWrapper(key);
         Region<?, ?> r = this.regionCache.getRegion(kW);
-        if (r != null) { 
+        if (r != null) {
           this.regionCache.removeRegionReferenceLocally(kW, value);
         }
       }
@@ -648,7 +640,7 @@ public class GeodeRedisServer {
     int port = DEFAULT_REDIS_SERVER_PORT;
     String bindAddress = null;
     String logLevel = null;
-    for (String arg: args) {
+    for (String arg : args) {
       if (arg.startsWith("-port"))
         port = getPort(arg);
       else if (arg.startsWith("-bind-address"))
@@ -659,10 +651,10 @@ public class GeodeRedisServer {
     mainThread = Thread.currentThread();
     GeodeRedisServer server = new GeodeRedisServer(bindAddress, port, logLevel);
     server.start();
-    while(true) {
+    while (true) {
       try {
         Thread.sleep(Long.MAX_VALUE);
-      } catch (InterruptedException e1) { 
+      } catch (InterruptedException e1) {
         break;
       } catch (Exception e) {
       }

@@ -20,7 +20,7 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.management.internal.beans.CacheServiceMBeanBase;
 
 public class MockCacheServiceImpl implements MockCacheService {
-  
+
   private Cache cache;
 
   @Override

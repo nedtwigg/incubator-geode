@@ -33,9 +33,9 @@ package org.apache.geode.test.dunit;
  * @see com.jayway.awaitility.core.ConditionFactory
  */
 public interface WaitCriterion {
-  
+
   public boolean done();
-  
+
   public String description();
-  
+
 }

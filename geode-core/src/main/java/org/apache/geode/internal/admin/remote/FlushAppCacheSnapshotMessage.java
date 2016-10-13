@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
 //import org.apache.geode.*;
 //import org.apache.geode.internal.*;
 import java.io.*;
-
 
 /**
  * A message to cause a remote application to release any snapshot info it
@@ -35,16 +33,15 @@ public final class FlushAppCacheSnapshotMessage extends PooledDistributionMessag
     return m;
   }
 
-
   @Override
   protected void process(DistributionManager dm) {
-//     try {
-//       AppCacheSnapshotMessage.flushSnapshots(this.getSender());
-//     } catch (Exception ex) {
-//       LogWriterI18n logger = dm.getLogger();
-//       if (logger != null)
-//         logger.warning("Failed " + this, ex);
-//     }
+    //     try {
+    //       AppCacheSnapshotMessage.flushSnapshots(this.getSender());
+    //     } catch (Exception ex) {
+    //       LogWriterI18n logger = dm.getLogger();
+    //       if (logger != null)
+    //         logger.warning("Failed " + this, ex);
+    //     }
   }
 
   public int getDSFID() {
@@ -57,8 +54,7 @@ public final class FlushAppCacheSnapshotMessage extends PooledDistributionMessag
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 

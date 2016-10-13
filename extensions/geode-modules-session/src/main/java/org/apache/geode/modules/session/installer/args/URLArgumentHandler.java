@@ -32,8 +32,7 @@ public class URLArgumentHandler implements ArgumentHandler {
   /**
    * Logger.
    */
-  private static final Logger LOG =
-      Logger.getLogger(URLArgumentHandler.class.getName());
+  private static final Logger LOG = Logger.getLogger(URLArgumentHandler.class.getName());
 
   /**
    * Ensure that the argument is either a file path or a properly formatted URL.
@@ -45,11 +44,7 @@ public class URLArgumentHandler implements ArgumentHandler {
    * @param parameters parameters supplied
    * @throws UsageException when file not found or not a workable URL
    */
-  public void handleArgument(
-      final Argument arg,
-      final String form,
-      final String[] parameters)
-      throws UsageException {
+  public void handleArgument(final Argument arg, final String form, final String[] parameters) throws UsageException {
     final File file = new File(parameters[0]);
     URL result = null;
 
@@ -68,9 +63,7 @@ public class URLArgumentHandler implements ArgumentHandler {
       }
     }
     if (result == null) {
-      throw (new UsageException(
-          "Argument parameter value is not a valid file "
-              + "path or URL: " + arg));
+      throw (new UsageException("Argument parameter value is not a valid file " + "path or URL: " + arg));
     }
     parameters[0] = result.toString();
   }

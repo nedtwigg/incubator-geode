@@ -33,38 +33,38 @@ import org.apache.geode.internal.cache.LocalRegion;
  *
  */
 public class ClientHelper {
-  
+
   public static PoolImpl getPool(Region region) {
-    ServerProxy proxy = ((LocalRegion)region).getServerProxy();
-    if(proxy == null) {
+    ServerProxy proxy = ((LocalRegion) region).getServerProxy();
+    if (proxy == null) {
       return null;
     } else {
       return (PoolImpl) proxy.getPool();
     }
   }
-  
+
   public static Set getActiveServers(Region region) {
     return new HashSet(getPool(region).getCurrentServers());
   }
-  
-//   public static Set getDeadServers(Region region) {
-//   }
-  
+
+  //   public static Set getDeadServers(Region region) {
+  //   }
+
   private ClientHelper() {
-    
+
   }
-  
+
   public static int getRetryInterval(Region region) {
-    return (int)(getPool(region).getPingInterval());
+    return (int) (getPool(region).getPingInterval());
   }
 
   /**
    * @param region
    */
   public static void release(Region region) {
-    
+
     PoolImpl pool = getPool(region);
-    if(pool != null) {
+    if (pool != null) {
       pool.releaseThreadLocalConnection();
     }
   }

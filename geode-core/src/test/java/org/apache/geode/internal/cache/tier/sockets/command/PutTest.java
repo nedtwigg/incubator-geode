@@ -55,7 +55,7 @@ public class PutTest {
   private static final Object CALLBACK_ARG = "arg";
   private static final byte[] EVENT = new byte[8];
   private static final byte[] VALUE = new byte[8];
-  private static final byte[] OK_BYTES = new byte[]{0};
+  private static final byte[] OK_BYTES = new byte[] { 0 };
 
   @Mock
   private SecurityService securityService;

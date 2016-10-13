@@ -49,7 +49,7 @@ public class ExceptionHandlingJUnitTest {
     RegionAttributes regionAttributes = factory.create();
     testRegion = cache.createRegion("TestRegion", regionAttributes);
   }
-  
+
   @AfterClass
   public static void caseTearDown() {
     distributedSystem.disconnect();
@@ -71,8 +71,7 @@ public class ExceptionHandlingJUnitTest {
     boolean caught = false;
     try {
       testRegion.containsValue(null);
-    }
-    catch (NullPointerException ex) {
+    } catch (NullPointerException ex) {
       caught = true;
     }
     if (!caught) {
@@ -86,8 +85,7 @@ public class ExceptionHandlingJUnitTest {
     boolean caught = false;
     try {
       testRegion.get(null);
-    }
-    catch (NullPointerException ex) {
+    } catch (NullPointerException ex) {
       caught = true;
     }
     if (!caught) {
@@ -100,8 +98,7 @@ public class ExceptionHandlingJUnitTest {
     boolean caught = false;
     try {
       testRegion.remove(null);
-    }
-    catch (NullPointerException ex) {
+    } catch (NullPointerException ex) {
       caught = true;
     }
     if (!caught) {
@@ -114,9 +111,8 @@ public class ExceptionHandlingJUnitTest {
   public void testNullPointerWithPut() {
     boolean caught = false;
     try {
-      testRegion.put(null,null);
-    }
-    catch (NullPointerException ex) {
+      testRegion.put(null, null);
+    } catch (NullPointerException ex) {
       caught = true;
     }
     if (!caught) {
@@ -129,8 +125,7 @@ public class ExceptionHandlingJUnitTest {
     boolean caught = false;
     try {
       testRegion.putAll(null);
-    }
-    catch (NullPointerException ex) {
+    } catch (NullPointerException ex) {
       caught = true;
     }
     if (!caught) {
@@ -146,22 +141,20 @@ public class ExceptionHandlingJUnitTest {
       map.put("key1", "key1value");
       map.put("key2", null);
       testRegion.putAll(map);
-    }
-    catch (NullPointerException ex) {
+    } catch (NullPointerException ex) {
       caught = true;
     }
     if (!caught) {
       fail("Nullpointer exception not thrown");
     }
   }
-  
+
   @Test
   public void testNullPointerWithContainsKey() {
     boolean caught = false;
     try {
       testRegion.containsKey(null);
-    }
-    catch (NullPointerException ex) {
+    } catch (NullPointerException ex) {
       caught = true;
     }
     if (!caught) {

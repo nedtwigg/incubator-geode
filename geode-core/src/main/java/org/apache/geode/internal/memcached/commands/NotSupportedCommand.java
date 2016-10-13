@@ -29,8 +29,7 @@ import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 public class NotSupportedCommand extends AbstractCommand {
 
   @Override
-  public ByteBuffer processCommand(RequestReader request, Protocol protocol,
-      Cache cache) {
+  public ByteBuffer processCommand(RequestReader request, Protocol protocol, Cache cache) {
     assert protocol == Protocol.BINARY;
     ByteBuffer response = request.getResponse();
     response.putShort(POSITION_RESPONSE_STATUS, ResponseStatus.NOT_SUPPORTED.asShort());

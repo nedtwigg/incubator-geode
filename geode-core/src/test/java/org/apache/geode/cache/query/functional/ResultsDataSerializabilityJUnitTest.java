@@ -66,38 +66,27 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class ResultsDataSerializabilityJUnitTest {
-  
+
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
   }
-  
+
   @After
   public void tearDown() throws java.lang.Exception {
     CacheUtils.closeCache();
   }
-  
+
   /* In the absence of some kind of hook into the DataSerializer,
    * just test to see if the known implementation classes that are part of query
    * results implement the  DataSerializable interface
    */
   @Test
   public void testImplementsDataSerializable() throws Exception {
-    Class[] classes = new Class[] {
-      SortedResultSet.class,
-      ResultsCollectionWrapper.class,
-      ResultsSet.class,
-      SortedStructSet.class,
-      StructImpl.class,
-      StructSet.class,
-      Undefined.class,
-//      QRegion.class, // QRegions remain unserializable
-      CollectionTypeImpl.class,
-      MapTypeImpl.class,
-      ObjectTypeImpl.class,
-      StructTypeImpl.class,
-    };
-    
+    Class[] classes = new Class[] { SortedResultSet.class, ResultsCollectionWrapper.class, ResultsSet.class, SortedStructSet.class, StructImpl.class, StructSet.class, Undefined.class,
+        //      QRegion.class, // QRegions remain unserializable
+        CollectionTypeImpl.class, MapTypeImpl.class, ObjectTypeImpl.class, StructTypeImpl.class, };
+
     List list = new ArrayList();
     for (int i = 0; i < classes.length; i++) {
       Class nextClass = classes[i];
@@ -107,40 +96,39 @@ public class ResultsDataSerializabilityJUnitTest {
         }
       }
     }
-    
-    assertTrue(list + " are not DataSerializable",
-               list.isEmpty());
+
+    assertTrue(list + " are not DataSerializable", list.isEmpty());
   }
-  
+
   // For locally executed queries, ResultsCollectionPdxDeserializerWrapper is
   // returned which is not required to be DSFID as it is not sent over the
   // network. Hence a dunit test is required for testing this functionality.
-  
+
   /* test DataSerializability of a simple query result */
   @Ignore
   @Test
   public void testDataSerializability() throws Exception {
-              
+
     Region region = CacheUtils.createRegion("Portfolios", Portfolio.class);
-    for(int i = 0; i < 10000; i++) {
-      region.put(i+"",new Portfolio(i));
+    for (int i = 0; i < 10000; i++) {
+      region.put(i + "", new Portfolio(i));
     }
-    
+
     String queryStr = "SELECT DISTINCT * FROM /Portfolios";
     Query q = CacheUtils.getQueryService().newQuery(queryStr);
-    
-    SelectResults res1 = (SelectResults)q.execute();
-        
+
+    SelectResults res1 = (SelectResults) q.execute();
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(baos);
     DataSerializer.writeObject(res1, out, false); // false prevents Java serialization
     out.close();
-    
-    DataInputStream in = new DataInputStream(new ByteArrayInputStream(baos.toByteArray()));    
-    SelectResults res2 = (SelectResults)DataSerializer.readObject(in);
+
+    DataInputStream in = new DataInputStream(new ByteArrayInputStream(baos.toByteArray()));
+    SelectResults res2 = (SelectResults) DataSerializer.readObject(in);
     in.close();
-    
+
     assertEquals(res2.size(), res1.size());
   }
-  
+
 }

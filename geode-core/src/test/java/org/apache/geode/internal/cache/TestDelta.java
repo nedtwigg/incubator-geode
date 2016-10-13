@@ -51,9 +51,8 @@ public final class TestDelta implements Delta, DataSerializable, Cloneable {
     assertEquals(clones, this.clones);
   }
 
-  public synchronized void fromDelta(DataInput in) throws IOException,
-      InvalidDeltaException {
-//      new Exception("DAN - From Delta Called").printStackTrace();
+  public synchronized void fromDelta(DataInput in) throws IOException, InvalidDeltaException {
+    //      new Exception("DAN - From Delta Called").printStackTrace();
     this.hasDelta = true;
     info = DataSerializer.readString(in);
     deltas++;
@@ -64,13 +63,12 @@ public final class TestDelta implements Delta, DataSerializable, Cloneable {
   }
 
   public synchronized void toDelta(DataOutput out) throws IOException {
-//      new Exception("DAN - To Delta Called").printStackTrace();
+    //      new Exception("DAN - To Delta Called").printStackTrace();
     DataSerializer.writeString(info, out);
   }
 
-  public synchronized void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
-//      new Exception("DAN - From Data Called").printStackTrace();
+  public synchronized void fromData(DataInput in) throws IOException, ClassNotFoundException {
+    //      new Exception("DAN - From Data Called").printStackTrace();
     info = DataSerializer.readString(in);
     serializations = in.readInt();
     deserializations = in.readInt();
@@ -80,7 +78,7 @@ public final class TestDelta implements Delta, DataSerializable, Cloneable {
   }
 
   public synchronized void toData(DataOutput out) throws IOException {
-//      new Exception("DAN - To Data Called").printStackTrace();
+    //      new Exception("DAN - To Data Called").printStackTrace();
     serializations++;
     DataSerializer.writeString(info, out);
     out.writeInt(serializations);
@@ -91,7 +89,7 @@ public final class TestDelta implements Delta, DataSerializable, Cloneable {
 
   @Override
   public synchronized Object clone() throws CloneNotSupportedException {
-//    new Exception("DAN - Clone Called").printStackTrace();
+    //    new Exception("DAN - Clone Called").printStackTrace();
     clones++;
     return super.clone();
   }

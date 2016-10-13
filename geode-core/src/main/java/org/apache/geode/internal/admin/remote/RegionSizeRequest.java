@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -30,7 +29,7 @@ import java.io.*;
  * A message that is sent to a particular app vm to request all the subregions
  * of a given parent region.
  */
-public final class RegionSizeRequest extends RegionAdminRequest  implements Cancellable {
+public final class RegionSizeRequest extends RegionAdminRequest implements Cancellable {
   private transient boolean cancelled;
   private transient RegionSizeResponse resp;
 
@@ -50,9 +49,13 @@ public final class RegionSizeRequest extends RegionAdminRequest  implements Canc
     Assert.assertTrue(this.getSender() != null);
     CancellationRegistry.getInstance().registerMessage(this);
     resp = RegionSizeResponse.create(dm, this.getSender());
-    if (cancelled) { return null; }
+    if (cancelled) {
+      return null;
+    }
     resp.calcSize(this.getRegion(dm.getSystem()));
-    if (cancelled) { return null; }
+    if (cancelled) {
+      return null;
+    }
     CancellationRegistry.getInstance().deregisterMessage(this);
     return resp;
   }
@@ -78,8 +81,7 @@ public final class RegionSizeRequest extends RegionAdminRequest  implements Canc
   }
 
   @Override
-  public void fromData(DataInput in)
-      throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 

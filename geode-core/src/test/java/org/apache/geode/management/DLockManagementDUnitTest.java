@@ -54,7 +54,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
   private static final long serialVersionUID = 1L;
 
   private static final String LOCK_SERVICE_NAME = "testLockService";
-  
+
   // This must be bigger than the dunit ack-wait-threshold for the revoke
   // tests. The command line is setting the ack-wait-threshold to be
   // 60 seconds.
@@ -73,13 +73,12 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
   @Category(FlakyTest.class) // GEODE-173: eats exceptions, HeadlessGFSH, time sensitive, waitForCriterions
   @Test
   public void testDLockMBean() throws Throwable {
-    
+
     initManagement(false);
-    
-    VM[] managedNodes = new VM[getManagedNodeList()
-        .size()];
+
+    VM[] managedNodes = new VM[getManagedNodeList().size()];
     VM managingNode = getManagingNode();
-    
+
     getManagedNodeList().toArray(managedNodes);
 
     createGrantorLockService(managedNodes[0]);
@@ -87,7 +86,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
     createLockService(managedNodes[1]);
 
     createLockService(managedNodes[2]);
-    
+
     for (VM vm : getManagedNodeList()) {
       verifyLockData(vm);
     }
@@ -97,7 +96,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
       closeLockService(vm);
     }
   }
-  
+
   /**
    * Distributed Lock Service test
    * 
@@ -107,10 +106,9 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
   @Test
   public void testDLockAggregate() throws Throwable {
     initManagement(false);
-    VM[] managedNodes = new VM[getManagedNodeList()
-        .size()];
+    VM[] managedNodes = new VM[getManagedNodeList().size()];
     VM managingNode = getManagingNode();
-    
+
     getManagedNodeList().toArray(managedNodes);
 
     createGrantorLockService(managedNodes[0]);
@@ -118,14 +116,13 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
     createLockService(managedNodes[1]);
 
     createLockService(managedNodes[2]);
-    
+
     checkAggregate(managingNode, 3);
     DistributedMember member = getMember(managedNodes[2]);
     checkNavigation(managingNode, member);
-    
+
     createLockService(managingNode);
     checkAggregate(managingNode, 4);
-   
 
     for (VM vm : getManagedNodeList()) {
       closeLockService(vm);
@@ -136,17 +133,14 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
     checkAggregate(managingNode, 0);
 
   }
-  
+
   public void ensureProxyCleanup(final VM vm) {
 
-    SerializableRunnable ensureProxyCleanup = new SerializableRunnable(
-        "Ensure Proxy cleanup") {
+    SerializableRunnable ensureProxyCleanup = new SerializableRunnable("Ensure Proxy cleanup") {
       public void run() {
         GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager()
-            .getOtherNormalDistributionManagerIds();
+        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
         final SystemManagementService service = (SystemManagementService) getManagementService();
- 
 
         for (final DistributedMember member : otherMemberSet) {
           RegionMXBean bean = null;
@@ -189,31 +183,24 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void createGrantorLockService(final VM vm) {
-    SerializableRunnable createGrantorLockService = new SerializableRunnable(
-        "Create Grantor LockService") {
+    SerializableRunnable createGrantorLockService = new SerializableRunnable("Create Grantor LockService") {
       public void run() {
-        GemFireCacheImpl cache  = GemFireCacheImpl.getInstance();
+        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
         assertNull(DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
 
-        DLockService service = (DLockService) DistributedLockService.create(
-            LOCK_SERVICE_NAME, cache.getDistributedSystem());
+        DLockService service = (DLockService) DistributedLockService.create(LOCK_SERVICE_NAME, cache.getDistributedSystem());
 
-        assertSame(service, DistributedLockService
-            .getServiceNamed(LOCK_SERVICE_NAME));
+        assertSame(service, DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
 
-        InternalDistributedMember grantor = service.getLockGrantorId()
-            .getLockGrantorMember();
+        InternalDistributedMember grantor = service.getLockGrantorId().getLockGrantorMember();
 
         assertNotNull(grantor);
 
         LogWriterUtils.getLogWriter().info("In identifyLockGrantor - grantor is " + grantor);
 
-       
-
         ManagementService mgmtService = getManagementService();
 
-        LockServiceMXBean bean = mgmtService
-            .getLocalLockServiceMBean(LOCK_SERVICE_NAME);
+        LockServiceMXBean bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
 
         assertNotNull(bean);
 
@@ -223,8 +210,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
 
         assertTrue(bean.isLockGrantor());
 
-        assertEquals(cache.getDistributedSystem().getMemberId(), bean
-            .fetchGrantorMember());
+        assertEquals(cache.getDistributedSystem().getMemberId(), bean.fetchGrantorMember());
 
       }
     };
@@ -237,23 +223,17 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void createLockService(final VM vm) {
-    SerializableRunnable createLockService = new SerializableRunnable(
-        "Create LockService") {
+    SerializableRunnable createLockService = new SerializableRunnable("Create LockService") {
       public void run() {
         assertNull(DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
-        GemFireCacheImpl cache  = GemFireCacheImpl.getInstance();
-        DistributedLockService service = DistributedLockService.create(
-            LOCK_SERVICE_NAME, cache.getDistributedSystem());
+        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+        DistributedLockService service = DistributedLockService.create(LOCK_SERVICE_NAME, cache.getDistributedSystem());
 
-        assertSame(service, DistributedLockService
-            .getServiceNamed(LOCK_SERVICE_NAME));
-
-        
+        assertSame(service, DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
 
         ManagementService mgmtService = getManagementService();
 
-        LockServiceMXBean bean = mgmtService
-            .getLocalLockServiceMBean(LOCK_SERVICE_NAME);
+        LockServiceMXBean bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
 
         assertNotNull(bean);
 
@@ -271,12 +251,10 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void closeLockService(final VM vm) {
-    SerializableRunnable closeLockService = new SerializableRunnable(
-        "Close LockService") {
+    SerializableRunnable closeLockService = new SerializableRunnable("Close LockService") {
       public void run() {
 
-        DistributedLockService service = DistributedLockService
-            .getServiceNamed(LOCK_SERVICE_NAME);
+        DistributedLockService service = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
 
         DistributedLockService.destroy(LOCK_SERVICE_NAME);
 
@@ -303,12 +281,10 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void verifyLockData(final VM vm) {
-    SerializableRunnable verifyLockData = new SerializableRunnable(
-        "Verify LockService") {
+    SerializableRunnable verifyLockData = new SerializableRunnable("Verify LockService") {
       public void run() {
 
-        DistributedLockService service = DistributedLockService
-            .getServiceNamed(LOCK_SERVICE_NAME);
+        DistributedLockService service = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
 
         final String LOCK_OBJECT = "lockObject_" + vm.getPid();
 
@@ -320,8 +296,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
           }
 
           public boolean done() {
-            DistributedLockService service = DistributedLockService
-                .getServiceNamed(LOCK_SERVICE_NAME);
+            DistributedLockService service = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
             boolean done = service != null;
             return done;
           }
@@ -329,7 +304,6 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
         }, MAX_WAIT, 500, true);
 
         service.lock(LOCK_OBJECT, 1000, -1);
-        
 
         ManagementService mgmtService = getManagementService();
 
@@ -347,8 +321,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
         LogWriterUtils.getLogWriter().info("List Of Lock Object is  " + listHeldLock[0]);
         Map<String, String> lockThreadMap = bean.listThreadsHoldingLock();
         assertEquals(lockThreadMap.size(), 1);
-        LogWriterUtils.getLogWriter().info(
-            "List Of Lock Thread is  " + lockThreadMap.toString());
+        LogWriterUtils.getLogWriter().info("List Of Lock Thread is  " + lockThreadMap.toString());
       }
     };
     vm.invoke(verifyLockData);
@@ -360,21 +333,18 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void verifyLockDataRemote(final VM vm) {
-    SerializableRunnable verifyLockDataRemote = new SerializableRunnable(
-        "Verify LockService Remote") {
+    SerializableRunnable verifyLockDataRemote = new SerializableRunnable("Verify LockService Remote") {
       public void run() {
 
         GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager()
-            .getOtherNormalDistributionManagerIds();
+        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
         for (DistributedMember member : otherMemberSet) {
           LockServiceMXBean bean = null;
           try {
             bean = MBeanUtil.getLockServiceMbeanProxy(member, LOCK_SERVICE_NAME);
           } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine(
-                "Undesired Result , LockServiceMBean Should not be null", e);
+            InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , LockServiceMBean Should not be null", e);
 
           }
           assertNotNull(bean);
@@ -383,39 +353,32 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
           LogWriterUtils.getLogWriter().info("List Of Lock Object is  " + listHeldLock[0]);
           Map<String, String> lockThreadMap = bean.listThreadsHoldingLock();
           assertEquals(lockThreadMap.size(), 1);
-          LogWriterUtils.getLogWriter().info(
-              "List Of Lock Thread is  " + lockThreadMap.toString());
+          LogWriterUtils.getLogWriter().info("List Of Lock Thread is  " + lockThreadMap.toString());
         }
 
       }
     };
     vm.invoke(verifyLockDataRemote);
   }
-  
-  protected void checkNavigation(final VM vm,
-      final DistributedMember lockServiceMember) {
-    SerializableRunnable checkNavigation = new SerializableRunnable(
-        "Check Navigation") {
+
+  protected void checkNavigation(final VM vm, final DistributedMember lockServiceMember) {
+    SerializableRunnable checkNavigation = new SerializableRunnable("Check Navigation") {
       public void run() {
 
         final ManagementService service = getManagementService();
 
         DistributedSystemMXBean disMBean = service.getDistributedSystemMXBean();
         try {
-          ObjectName expected = MBeanJMXAdapter
-              .getDistributedLockServiceName(LOCK_SERVICE_NAME);
-          ObjectName actual = disMBean
-              .fetchDistributedLockServiceObjectName(LOCK_SERVICE_NAME);
+          ObjectName expected = MBeanJMXAdapter.getDistributedLockServiceName(LOCK_SERVICE_NAME);
+          ObjectName actual = disMBean.fetchDistributedLockServiceObjectName(LOCK_SERVICE_NAME);
           assertEquals(expected, actual);
         } catch (Exception e) {
           throw new AssertionError("Lock Service Navigation Failed ", e);
         }
 
         try {
-          ObjectName expected = MBeanJMXAdapter.getLockServiceMBeanName(
-              lockServiceMember.getId(), LOCK_SERVICE_NAME);
-          ObjectName actual = disMBean.fetchLockServiceObjectName(
-              lockServiceMember.getId(), LOCK_SERVICE_NAME);
+          ObjectName expected = MBeanJMXAdapter.getLockServiceMBeanName(lockServiceMember.getId(), LOCK_SERVICE_NAME);
+          ObjectName actual = disMBean.fetchLockServiceObjectName(lockServiceMember.getId(), LOCK_SERVICE_NAME);
           assertEquals(expected, actual);
         } catch (Exception e) {
           throw new AssertionError("Lock Service Navigation Failed ", e);
@@ -432,10 +395,9 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void checkAggregate(final VM vm, final int expectedMembers) {
-    SerializableRunnable checkAggregate = new SerializableRunnable(
-        "Verify Aggregate MBean") {
+    SerializableRunnable checkAggregate = new SerializableRunnable("Verify Aggregate MBean") {
       public void run() {
-        
+
         final ManagementService service = getManagementService();
         if (expectedMembers == 0) {
           try {
@@ -448,8 +410,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
               }
 
               public boolean done() {
-                bean = service
-                    .getDistributedLockServiceMXBean(LOCK_SERVICE_NAME);
+                bean = service.getDistributedLockServiceMXBean(LOCK_SERVICE_NAME);
 
                 boolean done = (bean == null);
                 return done;
@@ -465,16 +426,15 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
         }
 
         DistributedLockServiceMXBean bean = null;
-          try {
-            bean = MBeanUtil.getDistributedLockMbean(LOCK_SERVICE_NAME, expectedMembers);
-          } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine(
-                "Undesired Result , LockServiceMBean Should not be null", e);
+        try {
+          bean = MBeanUtil.getDistributedLockMbean(LOCK_SERVICE_NAME, expectedMembers);
+        } catch (Exception e) {
+          InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , LockServiceMBean Should not be null", e);
 
-          }
-          assertNotNull(bean);
-          assertEquals(bean.getName(),LOCK_SERVICE_NAME);
-   
+        }
+        assertNotNull(bean);
+        assertEquals(bean.getName(), LOCK_SERVICE_NAME);
+
       }
     };
     vm.invoke(checkAggregate);

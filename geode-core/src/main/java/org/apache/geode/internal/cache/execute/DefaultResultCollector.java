@@ -48,8 +48,7 @@ public class DefaultResultCollector implements ResultCollector {
    * @param distributedMember
    * @param resultOfSingleExecution
    */
-  public synchronized void addResult(DistributedMember distributedMember,
-      Object resultOfSingleExecution) {
+  public synchronized void addResult(DistributedMember distributedMember, Object resultOfSingleExecution) {
     this.resultList.add(resultOfSingleExecution);
   }
 
@@ -90,8 +89,7 @@ public class DefaultResultCollector implements ResultCollector {
    * @throws FunctionException
    *                 if something goes wrong while retrieving the result
    */
-  public Object getResult(long timeout, TimeUnit unit)
-      throws FunctionException {
+  public Object getResult(long timeout, TimeUnit unit) throws FunctionException {
     return this.resultList;
   }
 

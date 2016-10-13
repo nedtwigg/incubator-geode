@@ -38,12 +38,10 @@ public class PRDataStoreMemoryOffHeapJUnitTest extends PRDataStoreMemoryJUnitTes
     dsProps.setProperty(OFF_HEAP_MEMORY_SIZE, "1m");
     return dsProps;
   }
-  
+
   @SuppressWarnings({ "rawtypes", "deprecation" })
   @Override
   protected RegionFactory<?, ?> defineRegionFactory() {
-    return new RegionFactory()
-        .setPartitionAttributes(definePartitionAttributes())
-        .setOffHeap(true);
+    return new RegionFactory().setPartitionAttributes(definePartitionAttributes()).setOffHeap(true);
   }
 }

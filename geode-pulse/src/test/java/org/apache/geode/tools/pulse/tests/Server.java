@@ -196,33 +196,28 @@ public class Server {
     }
   }
 
-  private void addMemberMBean(
-      String m) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
+  private void addMemberMBean(String m) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
     Member m1 = new Member(m);
     mbs.registerMBean(m1, new ObjectName(Member.OBJECT_NAME + ",member=" + m));
   }
 
   // For GemFire XD
-  private void addGemFireXDMemberMBean(
-      String xdm) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
+  private void addGemFireXDMemberMBean(String xdm) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
     GemFireXDMember xdmo = new GemFireXDMember(xdm);
     mbs.registerMBean(xdmo, new ObjectName(GemFireXDMember.OBJECT_NAME + ",member=" + xdm));
   }
 
-  private void addRegionMBean(
-      String reg) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
+  private void addRegionMBean(String reg) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
     Region regionObject = new Region(reg);
     mbs.registerMBean(regionObject, new ObjectName(Region.OBJECT_NAME + ",name=/" + reg));
 
     for (String member : regionObject.getMembers()) {
       RegionOnMember regionOnMemberObject = new RegionOnMember(regionObject.getFullPath(), member);
-      mbs.registerMBean(regionOnMemberObject, new ObjectName(
-          PulseConstants.OBJECT_NAME_REGION_ON_MEMBER_REGION + regionObject.getFullPath() + PulseConstants.OBJECT_NAME_REGION_ON_MEMBER_MEMBER + member));
+      mbs.registerMBean(regionOnMemberObject, new ObjectName(PulseConstants.OBJECT_NAME_REGION_ON_MEMBER_REGION + regionObject.getFullPath() + PulseConstants.OBJECT_NAME_REGION_ON_MEMBER_MEMBER + member));
     }
   }
 
-  private void addServerMBean(
-      String server) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
+  private void addServerMBean(String server) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, NullPointerException {
     ServerObject so = new ServerObject(server);
     mbs.registerMBean(so, new ObjectName(ServerObject.OBJECT_NAME));
   }
@@ -232,8 +227,7 @@ public class Server {
     return propVal.split(" ");
   }
 
-  public static Server createServer(int port, String properties, String jsonAuthFile)
-      throws MalformedObjectNameException {
+  public static Server createServer(int port, String properties, String jsonAuthFile) throws MalformedObjectNameException {
     Server s = null;
     try {
       s = new Server(port, properties, jsonAuthFile);

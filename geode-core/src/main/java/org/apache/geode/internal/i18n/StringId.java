@@ -26,32 +26,31 @@ public interface StringId {
   /**
    * Accessor for the raw (unformatted) text of this StringId
    * @return unformated text
-   **/ 
+   **/
   public String getRawText();
-  
+
   /**
    * @return the English translation of this StringId
-   **/ 
+   **/
   @Override
   public String toString();
 
-
   /**
    * Substitutes parameter Objects into the text
    * @see java.text.MessageFormat
    * @return the English translation of this StringId
-   **/ 
-  public String toString(Object ... params);
+   **/
+  public String toString(Object... params);
 
   /**
    * @return the translation of this StringId based on the current {@link java.util.Locale}
-   **/ 
+   **/
   public String toLocalizedString();
-  
+
   /**
    * Substitutes parameter Objects into the text
    * @see java.text.MessageFormat
    * @return the translation of this StringId based on the current {@link java.util.Locale}
-   **/ 
-  public String toLocalizedString(Object ... params);
+   **/
+  public String toLocalizedString(Object... params);
 }

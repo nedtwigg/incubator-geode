@@ -25,7 +25,7 @@ import org.apache.geode.DataSerializer;
 public class MyDataSerializer extends DataSerializer {
   @Override
   public Class<?>[] getSupportedClasses() {
-    return new Class[] { MyObjectDataSerializable2.class};
+    return new Class[] { MyObjectDataSerializable2.class };
   }
 
   @Override
@@ -33,17 +33,16 @@ public class MyDataSerializer extends DataSerializer {
     MyObject obj = (MyObject) o;
     out.writeLong(obj.f1);
     out.writeUTF(obj.f2);
-    
+
     return true;
   }
 
   @Override
-  public Object fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public Object fromData(DataInput in) throws IOException, ClassNotFoundException {
     MyObjectDataSerializable2 obj = new MyObjectDataSerializable2();
     obj.f1 = in.readLong();
     obj.f2 = in.readUTF();
-    
+
     return obj;
   }
 
@@ -51,7 +50,7 @@ public class MyDataSerializer extends DataSerializer {
   public int getId() {
     return 8892;
   }
-  
+
   public static class MyObjectDataSerializable2 extends MyObject {
     public MyObjectDataSerializable2() {
     }

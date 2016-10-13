@@ -26,7 +26,7 @@ import org.apache.geode.StatisticsType;
  * @since GemFire 7.0
  */
 public interface StatisticsNotification extends Iterable<StatisticId> {
-  
+
   public static enum Type {
     /** CounterMonitor threshold was exceeded */
     THRESHOLD_VALUE_EXCEEDED,

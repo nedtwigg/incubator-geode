@@ -50,15 +50,15 @@ public class PdxRenameJUnitTest {
       final Cache cache = (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
       try {
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        dsf.setDiskDirs(new File[]{f});
+        dsf.setDiskDirs(new File[] { f });
         dsf.create(DS_NAME);
-        RegionFactory<String, PdxValue> rf1 = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT);    
+        RegionFactory<String, PdxValue> rf1 = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT);
         rf1.setDiskStoreName(DS_NAME);
         Region<String, PdxValue> region1 = rf1.create("region1");
         region1.put("key1", new PdxValue(1));
         cache.close();
 
-        Collection<PdxType> types = DiskStoreImpl.getPdxTypes(DS_NAME, new File[]{f});
+        Collection<PdxType> types = DiskStoreImpl.getPdxTypes(DS_NAME, new File[] { f });
         assertEquals(1, types.size());
         assertEquals(PdxValue.class.getName(), types.iterator().next().getClassName());
       } finally {
@@ -70,7 +70,7 @@ public class PdxRenameJUnitTest {
       FileUtil.delete(f);
     }
   }
-    
+
   @Test
   public void testPdxRename() throws Exception {
     String DS_NAME = "PdxRenameJUnitTestDiskStore";
@@ -83,27 +83,27 @@ public class PdxRenameJUnitTest {
       final Cache cache = (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
       try {
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        dsf.setDiskDirs(new File[]{f});
+        dsf.setDiskDirs(new File[] { f });
         dsf.create(DS_NAME);
-        RegionFactory<String, PdxValue> rf1 = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT);    
+        RegionFactory<String, PdxValue> rf1 = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT);
         rf1.setDiskStoreName(DS_NAME);
         Region<String, PdxValue> region1 = rf1.create("region1");
         region1.put("key1", new PdxValue(1));
         cache.close();
 
-        Collection<Object> renameResults = DiskStoreImpl.pdxRename(DS_NAME, new File[]{f}, "apache", "pivotal");
+        Collection<Object> renameResults = DiskStoreImpl.pdxRename(DS_NAME, new File[] { f }, "apache", "pivotal");
         assertEquals(2, renameResults.size());
-        
-        for(Object o : renameResults) {
-          if(o instanceof PdxType) {
-            PdxType t = (PdxType)o;
+
+        for (Object o : renameResults) {
+          if (o instanceof PdxType) {
+            PdxType t = (PdxType) o;
             assertEquals("org.pivotal.geode.internal.PdxRenameJUnitTest$PdxValue", t.getClassName());
           } else {
             EnumInfo ei = (EnumInfo) o;
             assertEquals("org.pivotal.geode.internal.PdxRenameJUnitTest$Day", ei.getClassName());
           }
         }
-        Collection<PdxType> types = DiskStoreImpl.getPdxTypes(DS_NAME, new File[]{f});
+        Collection<PdxType> types = DiskStoreImpl.getPdxTypes(DS_NAME, new File[] { f });
         assertEquals(1, types.size());
         assertEquals("org.pivotal.geode.internal.PdxRenameJUnitTest$PdxValue", types.iterator().next().getClassName());
 
@@ -116,7 +116,7 @@ public class PdxRenameJUnitTest {
       FileUtil.delete(f);
     }
   }
-  
+
   @Test
   public void testRegEx() {
     Pattern pattern = DiskStoreImpl.createPdxRenamePattern("foo");
@@ -132,14 +132,15 @@ public class PdxRenameJUnitTest {
     pattern = DiskStoreImpl.createPdxRenamePattern("foo.bar");
     assertEquals("com.pivotal.Hello", DiskStoreImpl.replacePdxRenamePattern(pattern, "com.foo.bar.Hello", "pivotal"));
   }
-    
+
   enum Day {
     Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday;
   }
-  
+
   class PdxValue implements PdxSerializable {
     private int value;
     public Day aDay;
+
     public PdxValue(int v) {
       this.value = v;
       aDay = Day.Sunday;

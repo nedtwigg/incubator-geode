@@ -47,7 +47,7 @@ import org.mockito.ArgumentCaptor;
 @Category(UnitTest.class)
 
 public class LuceneSearchIndexFunctionJUnitTest {
-  
+
   @Test
   @SuppressWarnings("unchecked")
   public void testExecute() throws LuceneQueryException {
@@ -55,9 +55,9 @@ public class LuceneSearchIndexFunctionJUnitTest {
     ResultSender resultSender = mock(ResultSender.class);
     GemFireCacheImpl cache = Fakes.cache();
 
-    LuceneQueryInfo queryInfo = createMockQueryInfo("index","region","field1:region1","field1",1);
-    InternalLuceneService service = getMockLuceneService("A","Value","1.2");
-    Region mockRegion=mock(Region.class);
+    LuceneQueryInfo queryInfo = createMockQueryInfo("index", "region", "field1:region1", "field1", 1);
+    InternalLuceneService service = getMockLuceneService("A", "Value", "1.2");
+    Region mockRegion = mock(Region.class);
 
     LuceneSearchIndexFunction function = spy(LuceneSearchIndexFunction.class);
 
@@ -69,30 +69,31 @@ public class LuceneSearchIndexFunctionJUnitTest {
     when(cache.getRegion(queryInfo.getRegionPath())).thenReturn(mockRegion);
 
     function.execute(context);
-    ArgumentCaptor<Set> resultCaptor  = ArgumentCaptor.forClass(Set.class);
+    ArgumentCaptor<Set> resultCaptor = ArgumentCaptor.forClass(Set.class);
     verify(resultSender).lastResult(resultCaptor.capture());
     Set<LuceneSearchResults> result = resultCaptor.getValue();
 
-    assertEquals(1,result.size());
-    for (LuceneSearchResults searchResult: result) {
-      assertEquals("A",searchResult.getKey());
-      assertEquals("Value",searchResult.getValue());
-      assertEquals(1.2,searchResult.getScore(),.1);
+    assertEquals(1, result.size());
+    for (LuceneSearchResults searchResult : result) {
+      assertEquals("A", searchResult.getKey());
+      assertEquals("Value", searchResult.getValue());
+      assertEquals(1.2, searchResult.getScore(), .1);
     }
   }
-  private InternalLuceneService getMockLuceneService(String resultKey, String resultValue, String resultScore) throws LuceneQueryException{
-    InternalLuceneService service=mock(InternalLuceneService.class);
+
+  private InternalLuceneService getMockLuceneService(String resultKey, String resultValue, String resultScore) throws LuceneQueryException {
+    InternalLuceneService service = mock(InternalLuceneService.class);
     LuceneQueryFactory mockQueryFactory = spy(LuceneQueryFactory.class);
-    LuceneQuery mockQuery=mock(LuceneQuery.class);
+    LuceneQuery mockQuery = mock(LuceneQuery.class);
     PageableLuceneQueryResults pageableLuceneQueryResults = mock(PageableLuceneQueryResults.class);
-    LuceneResultStruct<String,String> resultStruct = new LuceneResultStructImpl(resultKey,resultValue,Float.valueOf(resultScore));
-    List<LuceneResultStruct<String,String>> queryResults= new ArrayList<>();
+    LuceneResultStruct<String, String> resultStruct = new LuceneResultStructImpl(resultKey, resultValue, Float.valueOf(resultScore));
+    List<LuceneResultStruct<String, String>> queryResults = new ArrayList<>();
     queryResults.add(resultStruct);
 
-    doReturn(mock(LuceneIndex.class)).when(service).getIndex(anyString(),anyString());
+    doReturn(mock(LuceneIndex.class)).when(service).getIndex(anyString(), anyString());
     doReturn(mockQueryFactory).when(service).createLuceneQueryFactory();
     doReturn(mockQueryFactory).when(mockQueryFactory).setResultLimit(anyInt());
-    doReturn(mockQuery).when(mockQueryFactory).create(any(),any(),any(),any());
+    doReturn(mockQuery).when(mockQueryFactory).create(any(), any(), any(), any());
     when(mockQuery.findPages()).thenReturn(pageableLuceneQueryResults);
     when(pageableLuceneQueryResults.hasNext()).thenReturn(true).thenReturn(false);
     when(pageableLuceneQueryResults.next()).thenReturn(queryResults);

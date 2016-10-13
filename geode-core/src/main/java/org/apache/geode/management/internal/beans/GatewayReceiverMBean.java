@@ -24,8 +24,7 @@ import org.apache.geode.management.GatewayReceiverMXBean;
  * 
  * 
  */
-public class GatewayReceiverMBean extends NotificationBroadcasterSupport
-    implements GatewayReceiverMXBean {
+public class GatewayReceiverMBean extends NotificationBroadcasterSupport implements GatewayReceiverMXBean {
 
   private GatewayReceiverMBeanBridge bridge;
 
@@ -89,13 +88,13 @@ public class GatewayReceiverMBean extends NotificationBroadcasterSupport
   }
 
   @Override
-  public void start() throws Exception{
+  public void start() throws Exception {
     bridge.start();
 
   }
 
   @Override
-  public void stop() throws Exception{
+  public void stop() throws Exception {
     bridge.stop();
 
   }
@@ -195,19 +194,19 @@ public class GatewayReceiverMBean extends NotificationBroadcasterSupport
     return bridge.getTotalSentBytes();
   }
 
-  public void stopMonior(){
+  public void stopMonior() {
     bridge.stopMonitor();
   }
 
-  public String[] getConnectedGatewaySenders(){
+  public String[] getConnectedGatewaySenders() {
     return bridge.getConnectedGatewaySenders();
   }
-  
+
   public GatewayReceiverMBeanBridge getBridge() {
     return bridge;
   }
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     bridge.stopMonitor();
   }
 
@@ -215,5 +214,5 @@ public class GatewayReceiverMBean extends NotificationBroadcasterSupport
   public long getAverageBatchProcessingTime() {
     return bridge.getAverageBatchProcessingTime();
   }
-  
+
 }

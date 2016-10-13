@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management;
 
-
 import org.apache.geode.internal.security.SecurableCommunicationChannel;
 
 /**
@@ -180,26 +179,26 @@ public class GemFireProperties {
    * deleted. Set to zero to disable automatic log file deletion.
    **/
   private int logDiskSpaceLimit;
-//  /**
-//   * If true, all gemfire socket communication is configured to use SSL through
-//   * JSSE.
-//   **/
-//  private boolean sslEnabled;
-//  /**
-//   * A space seperated list of the SSL cipher suites to enable. Those listed
-//   * must be supported by the available providers.
-//   **/
-//  private String sslCiphers;
-//  /**
-//   * A space seperated list of the SSL protocols to enable. Those listed must be
-//   * supported by the available providers.
-//   **/
-//  private String sslProtocols;
-//  /**
-//   * If false, allow ciphers that do not require the client side of the
-//   * connection to be authenticated.
-//   **/
-//  private boolean sslRequireAuthentication;
+  //  /**
+  //   * If true, all gemfire socket communication is configured to use SSL through
+  //   * JSSE.
+  //   **/
+  //  private boolean sslEnabled;
+  //  /**
+  //   * A space seperated list of the SSL cipher suites to enable. Those listed
+  //   * must be supported by the available providers.
+  //   **/
+  //  private String sslCiphers;
+  //  /**
+  //   * A space seperated list of the SSL protocols to enable. Those listed must be
+  //   * supported by the available providers.
+  //   **/
+  //  private String sslProtocols;
+  //  /**
+  //   * If false, allow ciphers that do not require the client side of the
+  //   * connection to be authenticated.
+  //   **/
+  //  private boolean sslRequireAuthentication;
   /**
    * The number of milliseconds a thread can keep exclusive access to a socket
    * that it is not actively using. Once a thread loses its lease to a socket it
@@ -433,7 +432,6 @@ public class GemFireProperties {
   private boolean startDevRestApi;
   private int jmxManagerUpdateRate;
 
-
   /**
    * @deprecated Geode 1.0 use {@link #clusterSSLEnabled}
    */
@@ -480,7 +478,7 @@ public class GemFireProperties {
   @Deprecated
   private String jmxManagerSSLTrustStorePassword;
   private String jmxSSLAlias;
-  
+
   private boolean clusterSSLEnabled;
   private String clusterSSLProtocols;
   private String clusterSSLCiphers;
@@ -632,7 +630,7 @@ public class GemFireProperties {
   @Deprecated
   private String httpServiceSSLTrustStorePassword;
   private String httpServiceSSLAlias;
-  
+
   /**
    * Specifies whether the default transaction mode should be distributed.
    */
@@ -651,8 +649,7 @@ public class GemFireProperties {
   private String sslTrustStorePassword;
   private boolean sslWebServiceRequireAuthentication;
   private String sslDefaultAlias;
-  
-  
+
   /**
    * This constructor is to be used by internal JMX framework only. User should
    * not try to create an instance of this class.
@@ -913,351 +910,349 @@ public class GemFireProperties {
   public boolean isEnforceUniqueHost() {
     return enforceUniqueHost;
   }
-  
-  public int getStatisticSampleRate(){
+
+  public int getStatisticSampleRate() {
     return statisticSampleRate;
   }
 
   public void setMemberName(String memberName) {
     this.memberName = memberName;
-    
+
   }
 
   public void setMemberGroups(String memberGroups) {
     this.memberGroups = memberGroups;
-    
+
   }
 
   public void setMcastPort(int mcastPort) {
     this.mcastPort = mcastPort;
-    
+
   }
 
   public void setMcastAddress(String mcastAddress) {
     this.mcastAddress = mcastAddress;
-    
+
   }
 
   public void setBindAddress(String bindAddress) {
     this.bindAddress = bindAddress;
-    
+
   }
 
   public void setTcpPort(int tcpPort) {
     this.tcpPort = tcpPort;
-    
+
   }
 
   public void setCacheXMLFile(String cacheXMLFile) {
     this.cacheXMLFile = cacheXMLFile;
-    
+
   }
 
   public void setConfigFile(String configFile) {
     this.configFile = configFile;
-    
+
   }
 
   public void setMcastTTL(int mcastTTL) {
     this.mcastTTL = mcastTTL;
-    
+
   }
 
   public void setServerBindAddress(String serverBindAddress) {
     this.serverBindAddress = serverBindAddress;
-    
+
   }
 
   public void setLocators(String locators) {
     this.locators = locators;
-    
+
   }
 
   public void setStartLocator(String startLocator) {
     this.startLocator = startLocator;
-    
+
   }
 
   public void setLogFile(String logFile) {
     this.logFile = logFile;
-    
+
   }
 
   public void setLogLevel(int logLevel) {
     this.logLevel = logLevel;
-    
+
   }
 
   public void setStatisticSamplingEnabled(boolean statisticSamplingEnabled) {
     this.statisticSamplingEnabled = statisticSamplingEnabled;
-    
+
   }
 
   public void setStatisticArchiveFile(String statisticArchiveFile) {
     this.statisticArchiveFile = statisticArchiveFile;
-    
+
   }
 
   public void setIncludeFile(String includeFile) {
     this.includeFile = includeFile;
-    
+
   }
 
   public void setAckWaitThreshold(int ackWaitThreshold) {
     this.ackWaitThreshold = ackWaitThreshold;
-    
+
   }
 
   public void setAckSevereAlertThreshold(int ackSevereAlertThreshold) {
     this.ackSevereAlertThreshold = ackSevereAlertThreshold;
-    
+
   }
 
   public void setArchiveFileSizeLimit(int archiveFileSizeLimit) {
     this.archiveFileSizeLimit = archiveFileSizeLimit;
-    
+
   }
 
   public void setArchiveDiskSpaceLimit(int archiveDiskSpaceLimit) {
     this.archiveDiskSpaceLimit = archiveDiskSpaceLimit;
-    
+
   }
 
   public void setLogFileSizeLimit(int logFileSizeLimit) {
     this.logFileSizeLimit = logFileSizeLimit;
-    
+
   }
 
   public void setLogDiskSpaceLimit(int logDiskSpaceLimit) {
     this.logDiskSpaceLimit = logDiskSpaceLimit;
-    
+
   }
 
-//  public void setSSLEnabled(boolean sslEnabled) {
-//    this.sslEnabled = sslEnabled;
-//
-//  }
-//
-//  public void setSSLCiphers(String sslCiphers) {
-//    this.sslCiphers = sslCiphers;
-//
-//  }
-//
-//  public void setSSLProtocols(String sslProtocols) {
-//    this.sslProtocols = sslProtocols;
-//
-//  }
-//
-//  public void setSSLRequireAuthentication(boolean sslRequireAuthentication) {
-//    this.sslRequireAuthentication = sslRequireAuthentication;
-//
-//  }
+  //  public void setSSLEnabled(boolean sslEnabled) {
+  //    this.sslEnabled = sslEnabled;
+  //
+  //  }
+  //
+  //  public void setSSLCiphers(String sslCiphers) {
+  //    this.sslCiphers = sslCiphers;
+  //
+  //  }
+  //
+  //  public void setSSLProtocols(String sslProtocols) {
+  //    this.sslProtocols = sslProtocols;
+  //
+  //  }
+  //
+  //  public void setSSLRequireAuthentication(boolean sslRequireAuthentication) {
+  //    this.sslRequireAuthentication = sslRequireAuthentication;
+  //
+  //  }
 
   public void setSocketLeaseTime(int socketLeaseTime) {
     this.socketLeaseTime = socketLeaseTime;
-    
+
   }
 
   public void setSocketBufferSize(int socketBufferSize) {
     this.socketBufferSize = socketBufferSize;
-    
+
   }
 
   public void setMcastSendBufferSize(int mcastSendBufferSize) {
     this.mcastSendBufferSize = mcastSendBufferSize;
-    
+
   }
 
   public void setMcastRecvBufferSize(int mcastRecvBufferSize) {
     this.mcastRecvBufferSize = mcastRecvBufferSize;
-    
+
   }
 
   public void setMcastByteAllowance(int mcastByteAllowance) {
     this.mcastByteAllowance = mcastByteAllowance;
-    
+
   }
 
   public void setMcastRechargeThreshold(float mcastRechargeThreshold) {
     this.mcastRechargeThreshold = mcastRechargeThreshold;
-    
+
   }
 
   public void setMcastRechargeBlockMs(int mcastRechargeBlockMs) {
     this.mcastRechargeBlockMs = mcastRechargeBlockMs;
-    
+
   }
 
   public void setUdpFragmentSize(int udpFragmentSize) {
     this.udpFragmentSize = udpFragmentSize;
-    
+
   }
 
   public void setUdpSendBufferSize(int udpSendBufferSize) {
     this.udpSendBufferSize = udpSendBufferSize;
-    
+
   }
 
   public void setUdpRecvBufferSize(int udpRecvBufferSize) {
     this.udpRecvBufferSize = udpRecvBufferSize;
-    
+
   }
 
   public void setDisableTcp(boolean disableTcp) {
     this.disableTcp = disableTcp;
-    
+
   }
 
   public void setEnableTimeStatistics(boolean enableTimeStatistics) {
     this.enableTimeStatistics = enableTimeStatistics;
-    
+
   }
 
-  public void setEnableNetworkPartitionDetection(
-      boolean enableNetworkPartitionDetection) {
+  public void setEnableNetworkPartitionDetection(boolean enableNetworkPartitionDetection) {
     this.enableNetworkPartitionDetection = enableNetworkPartitionDetection;
-    
+
   }
 
   public void setDepartureCorrelationWindow(int departureCorrelationWindow) {
     this.departureCorrelationWindow = departureCorrelationWindow;
-    
+
   }
 
   public void setMemberTimeout(int memberTimeout) {
     this.memberTimeout = memberTimeout;
-    
+
   }
 
   public void setMembershipPortRange(int[] membershipPortRange) {
     this.membershipPortRange = membershipPortRange;
-    
+
   }
 
   public void setConserveSockets(boolean conserveSockets) {
     this.conserveSockets = conserveSockets;
-    
+
   }
 
   public void setRoles(String roles) {
     this.roles = roles;
-    
+
   }
 
   public void setMaxWaitTimeForReconnect(int maxWaitTimeForReconnect) {
     this.maxWaitTimeForReconnect = maxWaitTimeForReconnect;
-    
+
   }
 
   public void setMaxNumReconnectTries(int maxNumReconnectTries) {
     this.maxNumReconnectTries = maxNumReconnectTries;
-    
+
   }
 
   public void setAsyncDistributionTimeout(int asyncDistributionTimeout) {
     this.asyncDistributionTimeout = asyncDistributionTimeout;
-    
+
   }
 
   public void setAsyncQueueTimeout(int asyncQueueTimeout) {
     this.asyncQueueTimeout = asyncQueueTimeout;
-    
+
   }
 
   public void setAsyncMaxQueueSize(int asyncMaxQueueSize) {
     this.asyncMaxQueueSize = asyncMaxQueueSize;
-    
+
   }
 
   public void setClientConflation(String clientConflation) {
     this.clientConflation = clientConflation;
-    
+
   }
 
   public void setDurableClientId(String durableClientId) {
     this.durableClientId = durableClientId;
-    
+
   }
 
   public void setDurableClientTimeout(int durableClientTimeout) {
     this.durableClientTimeout = durableClientTimeout;
-    
+
   }
 
   public void setSecurityClientAuthInit(String securityClientAuthInit) {
     this.securityClientAuthInit = securityClientAuthInit;
-    
+
   }
 
   public void setSecurityClientAuthenticator(String securityClientAuthenticator) {
     this.securityClientAuthenticator = securityClientAuthenticator;
-    
+
   }
 
   public void setSecurityClientDHAlgo(String securityClientDHAlgo) {
     this.securityClientDHAlgo = securityClientDHAlgo;
-    
+
   }
 
   public void setSecurityPeerAuthInit(String securityPeerAuthInit) {
     this.securityPeerAuthInit = securityPeerAuthInit;
-    
+
   }
 
   public void setSecurityPeerAuthenticator(String securityPeerAuthenticator) {
     this.securityPeerAuthenticator = securityPeerAuthenticator;
-    
+
   }
 
   public void setSecurityClientAccessor(String securityClientAccessor) {
     this.securityClientAccessor = securityClientAccessor;
-    
+
   }
 
   public void setSecurityClientAccessorPP(String securityClientAccessorPP) {
     this.securityClientAccessorPP = securityClientAccessorPP;
-    
+
   }
 
   public void setSecurityLogLevel(int securityLogLevel) {
     this.securityLogLevel = securityLogLevel;
-     
+
   }
 
   public void setSecurityLogFile(String securityLogFile) {
     this.securityLogFile = securityLogFile;
-    
+
   }
 
   public void setSecurityPeerMembershipTimeout(int securityPeerMembershipTimeout) {
     this.securityPeerMembershipTimeout = securityPeerMembershipTimeout;
-    
+
   }
 
   public void setRemoveUnresponsiveClient(boolean removeUnresponsiveClient) {
     this.removeUnresponsiveClient = removeUnresponsiveClient;
-    
+
   }
 
   public void setDeltaPropagation(boolean deltaPropagation) {
     this.deltaPropagation = deltaPropagation;
-    
+
   }
 
   public void setRedundancyZone(String redundancyZone) {
     this.redundancyZone = redundancyZone;
-    
+
   }
 
   public void setEnforceUniqueHost(boolean enforceUniqueHost) {
     this.enforceUniqueHost = enforceUniqueHost;
-     
-  }
 
+  }
 
   public void setStatisticSampleRate(int statisticSampleRate) {
     this.statisticSampleRate = statisticSampleRate;
-    
+
   }
 
   public boolean isJmxManager() {
@@ -1283,7 +1278,7 @@ public class GemFireProperties {
   public void setJmxManagerSSL(boolean jmxManagerSSL) {
     this.jmxManagerSSL = jmxManagerSSL;
   }
-  
+
   public int getJmxManagerPort() {
     return jmxManagerPort;
   }
@@ -1327,7 +1322,7 @@ public class GemFireProperties {
   public int getJmxManagerHttpPort() {
     return getHttpServicePort();
   }
- 
+
   public void setJmxManagerHttpPort(int jmxManagerHttpPort) {
     //this.jmxManagerHttpPort = jmxManagerHttpPort;
     setHttpServicePort(jmxManagerHttpPort);
@@ -1336,7 +1331,7 @@ public class GemFireProperties {
   public int getHttpServicePort() {
     return httpServicePort;
   }
- 
+
   public void setHttpServicePort(int httpServicePort) {
     this.httpServicePort = httpServicePort;
   }
@@ -1348,7 +1343,7 @@ public class GemFireProperties {
   public void setHttpServiceBindAddress(String httpServiceBindAddress) {
     this.httpServiceBindAddress = httpServiceBindAddress;
   }
-  
+
   public boolean getStartDevRestApi() {
     return startDevRestApi;
   }
@@ -1356,7 +1351,7 @@ public class GemFireProperties {
   public void setStartDevRestApi(boolean startDevRestApi) {
     this.startDevRestApi = startDevRestApi;
   }
-  
+
   public int getJmxManagerUpdateRate() {
     return jmxManagerUpdateRate;
   }
@@ -1364,7 +1359,7 @@ public class GemFireProperties {
   public void setJmxManagerUpdateRate(int jmxManagerUpdateRate) {
     this.jmxManagerUpdateRate = jmxManagerUpdateRate;
   }
-  
+
   public boolean isJmxManagerSSLEnabled() {
     return jmxManagerSSLEnabled;
   }
@@ -1393,8 +1388,7 @@ public class GemFireProperties {
     return jmxManagerSSLRequireAuthentication;
   }
 
-  public void setJmxManagerSSLRequireAuthentication(
-      boolean jmxManagerSSLRequireAuthentication) {
+  public void setJmxManagerSSLRequireAuthentication(boolean jmxManagerSSLRequireAuthentication) {
     this.jmxManagerSSLRequireAuthentication = jmxManagerSSLRequireAuthentication;
   }
 
@@ -1437,7 +1431,7 @@ public class GemFireProperties {
   public void setJmxManagerSSLTrustStorePassword(String jmxManagerSSLTrustStorePassword) {
     this.jmxManagerSSLTrustStorePassword = jmxManagerSSLTrustStorePassword;
   }
-  
+
   public boolean isClusterSSLEnabled() {
     return clusterSSLEnabled;
   }
@@ -1466,8 +1460,7 @@ public class GemFireProperties {
     return clusterSSLRequireAuthentication;
   }
 
-  public void setClusterSSLRequireAuthentication(
-      boolean clusterSSLRequireAuthentication) {
+  public void setClusterSSLRequireAuthentication(boolean clusterSSLRequireAuthentication) {
     this.clusterSSLRequireAuthentication = clusterSSLRequireAuthentication;
   }
 
@@ -1539,8 +1532,7 @@ public class GemFireProperties {
     return serverSSLRequireAuthentication;
   }
 
-  public void setServerSSLRequireAuthentication(
-      boolean serverSSLRequireAuthentication) {
+  public void setServerSSLRequireAuthentication(boolean serverSSLRequireAuthentication) {
     this.serverSSLRequireAuthentication = serverSSLRequireAuthentication;
   }
 
@@ -1612,8 +1604,7 @@ public class GemFireProperties {
     return gatewaySSLRequireAuthentication;
   }
 
-  public void setGatewaySSLRequireAuthentication(
-      boolean gatewaySSLRequireAuthentication) {
+  public void setGatewaySSLRequireAuthentication(boolean gatewaySSLRequireAuthentication) {
     this.gatewaySSLRequireAuthentication = gatewaySSLRequireAuthentication;
   }
 
@@ -1728,11 +1719,11 @@ public class GemFireProperties {
   public void setHttpServiceSSLTrustStorePassword(String httpServiceSSLTrustStorePassword) {
     this.httpServiceSSLTrustStorePassword = httpServiceSSLTrustStorePassword;
   }
-  
+
   public void setDistributedTransactions(boolean value) {
     this.distributedTransactions = value;
   }
-  
+
   public boolean getDistributedTransactions() {
     return this.distributedTransactions;
   }

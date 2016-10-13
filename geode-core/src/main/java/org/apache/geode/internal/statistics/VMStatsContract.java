@@ -29,6 +29,7 @@ public interface VMStatsContract {
    * refetched from the system.
    */
   public void refresh();
+
   /**
    * Called by sampler when it wants the VMStats to go away.
    */

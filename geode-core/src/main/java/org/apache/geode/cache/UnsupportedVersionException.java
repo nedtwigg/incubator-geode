@@ -22,7 +22,7 @@ package org.apache.geode.cache;
  * @since GemFire 5.7
  */
 public class UnsupportedVersionException extends VersionException {
-private static final long serialVersionUID = 1152280300663399399L;
+  private static final long serialVersionUID = 1152280300663399399L;
 
   /**
    * Constructs a new <code>UnsupportedVersionException</code>.
@@ -32,7 +32,7 @@ private static final long serialVersionUID = 1152280300663399399L;
   public UnsupportedVersionException(short versionOrdinal) {
     super(String.valueOf(versionOrdinal));
   }
-  
+
   /**
    * Constructs a new <code>UnsupportedVersionException</code>.
    * 

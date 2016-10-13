@@ -49,13 +49,13 @@ public class ByteToCommandDecoder extends ByteToMessageDecoder {
    * encoding so we should not risk java handling char to byte conversions, rather 
    * just hard code {@link Coder#CHARSET} chars as bytes
    */
-  
+
   private static final byte rID = 13; // '\r';
   private static final byte nID = 10; // '\n';
   private static final byte bulkStringID = 36; // '$';
   private static final byte arrayID = 42; // '*';
   private static final int MAX_BULK_STRING_LENGTH = 512 * 1024 * 1024; // 512 MB
-  
+
   public ByteToCommandDecoder() {
   }
 
@@ -90,7 +90,7 @@ public class ByteToCommandDecoder extends ByteToMessageDecoder {
     return new Command(commandElems);
   }
 
-  private boolean parseArray(ArrayList<byte[]> commandElems, ByteBuf buffer) throws RedisCommandParserException { 
+  private boolean parseArray(ArrayList<byte[]> commandElems, ByteBuf buffer) throws RedisCommandParserException {
     byte currentChar;
     int arrayLength = parseCurrentNumber(buffer);
     if (arrayLength == Integer.MIN_VALUE || !parseRN(buffer))

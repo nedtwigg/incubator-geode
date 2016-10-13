@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -30,8 +29,7 @@ import java.io.*;
  * when changes have been detected that will be of interest to
  * registered stat listeners.
  */
-public final class StatListenerMessage extends PooledDistributionMessage
-  implements AdminMessageType {
+public final class StatListenerMessage extends PooledDistributionMessage implements AdminMessageType {
 
   //instance variables
   private long timestamp;
@@ -47,7 +45,7 @@ public final class StatListenerMessage extends PooledDistributionMessage
    * @param maxChanges
    *        The number of statistics that are reported in the message
    */
-  public static StatListenerMessage create(long timestamp, int maxChanges){
+  public static StatListenerMessage create(long timestamp, int maxChanges) {
     StatListenerMessage m = new StatListenerMessage();
     m.timestamp = timestamp;
     m.changeCount = 0;
@@ -67,13 +65,12 @@ public final class StatListenerMessage extends PooledDistributionMessage
     values[changeCount] = value;
     changeCount++;
   }
-  
+
   @Override
   public void process(DistributionManager dm) {
     RemoteGfManagerAgent agent = dm.getAgent();
     if (agent != null) {
-      RemoteGemFireVM mgr =
-        agent.getMemberById(this.getSender());
+      RemoteGemFireVM mgr = agent.getMemberById(this.getSender());
       if (mgr != null) {
         mgr.callStatListeners(timestamp, listenerIds, values);
       }
@@ -89,7 +86,7 @@ public final class StatListenerMessage extends PooledDistributionMessage
     return true;
   }
 
-@Override
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeLong(this.timestamp);
@@ -101,8 +98,7 @@ public final class StatListenerMessage extends PooledDistributionMessage
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.timestamp = in.readLong();
     this.changeCount = in.readInt();
@@ -114,5 +110,4 @@ public final class StatListenerMessage extends PooledDistributionMessage
     }
   }
 
-  
 }

@@ -36,7 +36,7 @@ public class RemoteRegionSnapshot implements RegionSnapshot, DataSerializable {
 
   public RemoteRegionSnapshot(Region r) throws CacheException {
 
-    this.name = r.getName();    
+    this.name = r.getName();
     RegionAttributes rAttr = r.getAttributes();
     this.attributes = new RemoteRegionAttributes(rAttr);
     if (rAttr.getStatisticsEnabled()) {
@@ -60,13 +60,14 @@ public class RemoteRegionSnapshot implements RegionSnapshot, DataSerializable {
   /**
    * This constructor is only for use by the DataSerializableMechanism
    */
-  public RemoteRegionSnapshot() {}
+  public RemoteRegionSnapshot() {
+  }
 
   public Object getName() {
     return this.name;
   }
 
-  public long getLastModifiedTime() {     
+  public long getLastModifiedTime() {
     return stats.getLastModifiedTime();
   }
 
@@ -85,16 +86,16 @@ public class RemoteRegionSnapshot implements RegionSnapshot, DataSerializable {
   public float getHitRatio() {
     return stats.getHitRatio();
   }
-  
+
   public RegionAttributes getAttributes() {
     return this.attributes;
-//     if (rUserAttributes != null) {
-//       Iterator it = rUserAttributes.entrySet().iterator();
-//       while (it.hasNext()) {
-//         Map.Entry me = (Map.Entry)it.next();
-//         result.setUserAttribute(me.getKey(), me.getValue());
-//       }
-//     }
+    //     if (rUserAttributes != null) {
+    //       Iterator it = rUserAttributes.entrySet().iterator();
+    //       while (it.hasNext()) {
+    //         Map.Entry me = (Map.Entry)it.next();
+    //         result.setUserAttribute(me.getKey(), me.getValue());
+    //       }
+    //     }
   }
 
   public int getEntryCount() {
@@ -109,22 +110,23 @@ public class RemoteRegionSnapshot implements RegionSnapshot, DataSerializable {
     return userAttribute;
   }
 
-//  private String getDesc(Object o) {
-//    if (o == null) {
-//      return "";
-//    } else {
-//      return o.getClass().getName();
-//    }
-//  }
+  //  private String getDesc(Object o) {
+  //    if (o == null) {
+  //      return "";
+  //    } else {
+  //      return o.getClass().getName();
+  //    }
+  //  }
 
   @Override
   public boolean equals(Object other) {
-    if (other == this) return true;
+    if (other == this)
+      return true;
     if (other instanceof RemoteRegionSnapshot) {
-      RemoteRegionSnapshot snap = (RemoteRegionSnapshot)other;
+      RemoteRegionSnapshot snap = (RemoteRegionSnapshot) other;
       return this.name.equals(snap.name);
     }
-    return false;    
+    return false;
   }
 
   @Override
@@ -146,11 +148,10 @@ public class RemoteRegionSnapshot implements RegionSnapshot, DataSerializable {
     DataSerializer.writeObject(this.userAttribute, out);
   }
 
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.name = DataSerializer.readString(in);
-    this.stats = (RemoteCacheStatistics)DataSerializer.readObject(in);
-    this.attributes = (RemoteRegionAttributes)DataSerializer.readObject(in);
+    this.stats = (RemoteCacheStatistics) DataSerializer.readObject(in);
+    this.attributes = (RemoteRegionAttributes) DataSerializer.readObject(in);
     this.entryCount = in.readInt();
     this.subregionCount = in.readInt();
     this.userAttribute = DataSerializer.readObject(in);

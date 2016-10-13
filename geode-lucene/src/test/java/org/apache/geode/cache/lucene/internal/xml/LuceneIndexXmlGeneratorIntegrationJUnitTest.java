@@ -48,7 +48,7 @@ public class LuceneIndexXmlGeneratorIntegrationJUnitTest {
   public void closeCache() {
     cache.close();
   }
-  
+
   /**
    * Test of generating and reading cache configuration back in.
    */
@@ -58,29 +58,28 @@ public class LuceneIndexXmlGeneratorIntegrationJUnitTest {
     LuceneService service = LuceneServiceProvider.get(cache);
     service.createIndex("index", "region", "a", "b", "c");
     cache.createRegionFactory(RegionShortcut.PARTITION).create("region");
-    
-    
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     PrintWriter pw = new PrintWriter(baos);
     CacheXmlGenerator.generate(cache, pw, true, false, false);
     pw.flush();
-    
+
     cache.close();
     cache = new CacheFactory().set(MCAST_PORT, "0").create();
-    
+
     byte[] bytes = baos.toByteArray();
     ByteArrayInputStream in = new ByteArrayInputStream(bytes);
     System.out.println("---FILE---");
     System.out.println(new String(bytes, Charset.defaultCharset()));
     cache.loadCacheXml(new ByteArrayInputStream(bytes));
-    
+
     LuceneService service2 = LuceneServiceProvider.get(cache);
     assertTrue(service != service2);
-    
+
     LuceneIndex index = service2.getIndex("index", "region");
     assertNotNull(index);
-    
-    assertArrayEquals(new String[] {"a", "b", "c"}, index.getFieldNames());
+
+    assertArrayEquals(new String[] { "a", "b", "c" }, index.getFieldNames());
   }
 
 }

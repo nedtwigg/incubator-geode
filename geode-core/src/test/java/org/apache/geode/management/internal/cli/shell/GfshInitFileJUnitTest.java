@@ -81,8 +81,7 @@ public class GfshInitFileJUnitTest {
    */
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
-    saveLog4j2Config = System
-        .getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
+    saveLog4j2Config = System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     saveUserDir = System.getProperty("user.dir");
     saveUserHome = System.getProperty("user.home");
 
@@ -94,8 +93,7 @@ public class GfshInitFileJUnitTest {
 
     File log4j2XML = temporaryFolder_Config.newFile("log4j2.xml");
     FileUtils.writeStringToFile(log4j2XML, "<Configuration/>", APPEND);
-    System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY,
-        log4j2XML.toURI().toString());
+    System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, log4j2XML.toURI().toString());
   }
 
   /*
@@ -110,8 +108,7 @@ public class GfshInitFileJUnitTest {
     if (saveLog4j2Config == null) {
       System.clearProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     } else {
-      System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY,
-          saveLog4j2Config);
+      System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, saveLog4j2Config);
       ((LoggerContext) LogManager.getContext(false)).reconfigure();
     }
 
@@ -134,8 +131,7 @@ public class GfshInitFileJUnitTest {
   @Before
   public void setUp() throws Exception {
     // Fake running from home directory
-    String userDir = temporaryFolder_CurrentDirectory.getRoot()
-        .getAbsolutePath();
+    String userDir = temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath();
     String userHome = userDir;
 
     System.setProperty("user.dir", userDir);
@@ -167,8 +163,7 @@ public class GfshInitFileJUnitTest {
     logWrapper_logger.set(this.gfshFileLogger, julLogger);
 
     Gfsh.gfshout = new PrintStream(sysout);
-    this.gfshHistoryFileName = temporaryFolder_CurrentDirectory.newFile(
-        "historyFile").getAbsolutePath();
+    this.gfshHistoryFileName = temporaryFolder_CurrentDirectory.newFile("historyFile").getAbsolutePath();
   }
 
   @After
@@ -183,9 +178,7 @@ public class GfshInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, null);
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, null);
     assertNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -198,8 +191,7 @@ public class GfshInitFileJUnitTest {
     assertEquals("Status 0==success", expectedStatus, actualStatus);
 
     int expectedLogCount = BANNER_LINES;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
     for (LogRecord logRecord : this.junitLoggerHandler.getLog()) {
       assertNull("No exceptions in log", logRecord.getThrown());
     }
@@ -208,17 +200,14 @@ public class GfshInitFileJUnitTest {
   @Test
   public void testInitFile_NotFound() throws Exception {
     // Construct the file name but not the file
-    String initFileName = temporaryFolder_CurrentDirectory.getRoot()
-        .getAbsolutePath() + File.separator + INIT_FILE_NAME;
+    String initFileName = temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath() + File.separator + INIT_FILE_NAME;
 
     /*
      * String historyFileName, String defaultPrompt, int historySize, String
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, initFileName);
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, initFileName);
     assertNotNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -231,8 +220,7 @@ public class GfshInitFileJUnitTest {
     assertNotEquals("Status <0==failure", expectedStatus, actualStatus);
 
     int expectedLogCount = BANNER_LINES + INIT_FILE_CITATION_LINES + 1;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
     Throwable exception = null;
     for (LogRecord logRecord : this.junitLoggerHandler.getLog()) {
       if (logRecord.getThrown() != null) {
@@ -252,9 +240,7 @@ public class GfshInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, initFile.getAbsolutePath());
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, initFile.getAbsolutePath());
     assertNotNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -267,8 +253,7 @@ public class GfshInitFileJUnitTest {
     assertEquals("Status 0==success", expectedStatus, actualStatus);
 
     int expectedLogCount = BANNER_LINES + INIT_FILE_CITATION_LINES + 1;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
     for (LogRecord logRecord : this.junitLoggerHandler.getLog()) {
       assertNull("No exceptions in log", logRecord.getThrown());
     }
@@ -277,17 +262,14 @@ public class GfshInitFileJUnitTest {
   @Test
   public void testInitFile_OneGoodCommand() throws Exception {
     File initFile = temporaryFolder_CurrentDirectory.newFile(INIT_FILE_NAME);
-    FileUtils.writeStringToFile(initFile, "echo --string=hello"
-        + Gfsh.LINE_SEPARATOR, APPEND);
+    FileUtils.writeStringToFile(initFile, "echo --string=hello" + Gfsh.LINE_SEPARATOR, APPEND);
 
     /*
      * String historyFileName, String defaultPrompt, int historySize, String
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, initFile.getAbsolutePath());
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, initFile.getAbsolutePath());
     assertNotNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -300,8 +282,7 @@ public class GfshInitFileJUnitTest {
     assertEquals("Status 0==success", expectedStatus, actualStatus);
 
     int expectedLogCount = BANNER_LINES + INIT_FILE_CITATION_LINES + 1;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
     for (LogRecord logRecord : this.junitLoggerHandler.getLog()) {
       assertNull("No exceptions in log", logRecord.getThrown());
     }
@@ -310,19 +291,15 @@ public class GfshInitFileJUnitTest {
   @Test
   public void testInitFile_TwoGoodCommands() throws Exception {
     File initFile = temporaryFolder_CurrentDirectory.newFile(INIT_FILE_NAME);
-    FileUtils.writeStringToFile(initFile, "echo --string=hello"
-        + Gfsh.LINE_SEPARATOR, APPEND);
-    FileUtils.writeStringToFile(initFile, "echo --string=goodbye"
-        + Gfsh.LINE_SEPARATOR, APPEND);
+    FileUtils.writeStringToFile(initFile, "echo --string=hello" + Gfsh.LINE_SEPARATOR, APPEND);
+    FileUtils.writeStringToFile(initFile, "echo --string=goodbye" + Gfsh.LINE_SEPARATOR, APPEND);
 
     /*
      * String historyFileName, String defaultPrompt, int historySize, String
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, initFile.getAbsolutePath());
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, initFile.getAbsolutePath());
     assertNotNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -335,8 +312,7 @@ public class GfshInitFileJUnitTest {
     assertEquals("Status 0==success", expectedStatus, actualStatus);
 
     int expectedLogCount = BANNER_LINES + INIT_FILE_CITATION_LINES + 1;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
     for (LogRecord logRecord : this.junitLoggerHandler.getLog()) {
       assertNull("No exceptions in log", logRecord.getThrown());
     }
@@ -352,9 +328,7 @@ public class GfshInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, initFile.getAbsolutePath());
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, initFile.getAbsolutePath());
     assertNotNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -368,8 +342,7 @@ public class GfshInitFileJUnitTest {
 
     // after upgrading to Spring-shell 1.2, the bad command exception is logged as well
     int expectedLogCount = BANNER_LINES + INIT_FILE_CITATION_LINES + 2;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
   }
 
   @Test
@@ -383,9 +356,7 @@ public class GfshInitFileJUnitTest {
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, initFile.getAbsolutePath());
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, initFile.getAbsolutePath());
     assertNotNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -399,25 +370,21 @@ public class GfshInitFileJUnitTest {
 
     // after upgrading to Spring-shell 1.2, the bad command exception is logged as well
     int expectedLogCount = BANNER_LINES + INIT_FILE_CITATION_LINES + 2;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
   }
 
   @Test
   public void testInitFile_BadAndGoodCommands() throws Exception {
     File initFile = temporaryFolder_CurrentDirectory.newFile(INIT_FILE_NAME);
     FileUtils.writeStringToFile(initFile, "fail" + Gfsh.LINE_SEPARATOR, APPEND);
-    FileUtils.writeStringToFile(initFile, "echo --string=goodbye"
-        + Gfsh.LINE_SEPARATOR, APPEND);
+    FileUtils.writeStringToFile(initFile, "echo --string=goodbye" + Gfsh.LINE_SEPARATOR, APPEND);
 
     /*
      * String historyFileName, String defaultPrompt, int historySize, String
      * logDir, Level logLevel, Integer logLimit, Integer logCount, String
      * initFileName
      */
-    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0,
-        temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null,
-        null, null, initFile.getAbsolutePath());
+    GfshConfig gfshConfig = new GfshConfig(this.gfshHistoryFileName, "", 0, temporaryFolder_CurrentDirectory.getRoot().getAbsolutePath(), null, null, null, initFile.getAbsolutePath());
     assertNotNull(INIT_FILE_NAME, gfshConfig.getInitFileName());
 
     /*
@@ -431,8 +398,7 @@ public class GfshInitFileJUnitTest {
 
     // after upgrading to Spring-shell 1.2, the bad command exception is logged as well
     int expectedLogCount = BANNER_LINES + INIT_FILE_CITATION_LINES + 2;
-    assertEquals("Log records written", expectedLogCount,
-        this.junitLoggerHandler.getLog().size());
+    assertEquals("Log records written", expectedLogCount, this.junitLoggerHandler.getLog().size());
   }
 
   /**

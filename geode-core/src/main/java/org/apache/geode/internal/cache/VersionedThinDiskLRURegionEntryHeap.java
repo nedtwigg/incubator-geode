@@ -18,24 +18,25 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VersionedThinDiskLRURegionEntryHeap extends
-    VersionedThinDiskLRURegionEntry {
+public abstract class VersionedThinDiskLRURegionEntryHeap extends VersionedThinDiskLRURegionEntry {
   public VersionedThinDiskLRURegionEntryHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VersionedThinDiskLRURegionEntryHeapFactory factory = new VersionedThinDiskLRURegionEntryHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VersionedThinDiskLRURegionEntryHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VersionedThinDiskLRURegionEntryHeapIntKey(context, (Integer)key, value);
+          return new VersionedThinDiskLRURegionEntryHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VersionedThinDiskLRURegionEntryHeapLongKey(context, (Long)key, value);
+          return new VersionedThinDiskLRURegionEntryHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -48,7 +49,7 @@ public abstract class VersionedThinDiskLRURegionEntryHeap extends
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VersionedThinDiskLRURegionEntryHeapUUIDKey(context, (UUID)key, value);
+          return new VersionedThinDiskLRURegionEntryHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VersionedThinDiskLRURegionEntryHeapObjectKey(context, key, value);
@@ -59,10 +60,12 @@ public abstract class VersionedThinDiskLRURegionEntryHeap extends
       // This estimate will not take into account the memory saved by inlining the keys.
       return VersionedThinDiskLRURegionEntryHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return this;
     }
-	@Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return this;
     }

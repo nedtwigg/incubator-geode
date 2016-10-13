@@ -33,8 +33,7 @@ import org.apache.geode.management.internal.cli.remote.CommandExecutionContext;
  * 
  * 
  */
-public class MemberMBean extends NotificationBroadcasterSupport implements
-    MemberMXBean {
+public class MemberMBean extends NotificationBroadcasterSupport implements MemberMXBean {
 
   private MemberMBeanBridge bridge;
 
@@ -87,7 +86,6 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
     return bridge.listConnectedGatewaySenders();
   }
 
-
   @Override
   public float getCpuUsage() {
     return bridge.getCpuUsage();
@@ -128,7 +126,6 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
     return getFreeMemory();
   }
 
-
   @Override
   public float getFunctionExecutionRate() {
     return bridge.getFunctionExecutionRate();
@@ -153,7 +150,6 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   public int getInitialImagesInProgres() {
     return bridge.getInitialImagesInProgres();
   }
-
 
   @Override
   public String[] fetchJvmThreads() {
@@ -234,7 +230,6 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   public int getTotalBucketCount() {
     return bridge.getTotalBucketCount();
   }
-
 
   @Override
   public long getTotalFileDescriptorOpen() {
@@ -335,7 +330,7 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   public long getLockTimeout() {
     return bridge.getLockTimeout();
   }
-  
+
   public int getProcessId() {
     return bridge.getProcessId();
   }
@@ -368,6 +363,7 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   public boolean isManager() {
     return bridge.isManager();
   }
+
   @Override
   public boolean isManagerCreated() {
     return bridge.isManagerCreated();
@@ -408,7 +404,7 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
       CommandExecutionContext.clear();
     }
   }
-  
+
   @Override
   public String[] listDiskStores(boolean includeRegionOwned) {
     return bridge.listDiskStores(includeRegionOwned);
@@ -427,7 +423,7 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   @Override
   public void shutDownMember() {
     bridge.shutDownMember();
-    
+
   }
 
   @Override
@@ -439,12 +435,12 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   public String getId() {
     return bridge.getId();
   }
-  
+
   @Override
   public String getMember() {
     return bridge.getMember();
   }
-  
+
   public String[] getGroups() {
     return bridge.getGroups();
   }
@@ -548,12 +544,12 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   public float getPDXDeserializationRate() {
     return bridge.getPDXDeserializationRate();
   }
-  
-  public MemberMBeanBridge getBridge(){
+
+  public MemberMBeanBridge getBridge() {
     return bridge;
   }
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     bridge.stopMonitor();
   }
 
@@ -630,7 +626,7 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   @Override
   public int getVisibleNodes() {
     return bridge.getVisibleNodes();
-  }    
+  }
 
   @Override
   public int getOffHeapObjects() {
@@ -660,18 +656,18 @@ public class MemberMBean extends NotificationBroadcasterSupport implements
   @Override
   public long getOffHeapCompactionTime() {
     return bridge.getOffHeapCompactionTime();
-  }    
+  }
 
   @Override
   public long getMaxMemory() {
     return bridge.getMaxMemory();
- }
-  
+  }
+
   @Override
   public long getFreeMemory() {
     return bridge.getFreeMemory();
   }
-  
+
   @Override
   public long getUsedMemory() {
     return bridge.getUsedMemory();

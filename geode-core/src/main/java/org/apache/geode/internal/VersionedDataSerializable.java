@@ -29,5 +29,4 @@ import org.apache.geode.DataSerializable;
  */
 public interface VersionedDataSerializable extends DataSerializable, SerializationVersions {
 
-
 }

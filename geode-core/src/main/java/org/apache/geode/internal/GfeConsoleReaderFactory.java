@@ -34,18 +34,18 @@ import org.apache.geode.management.internal.cli.util.GfshConsoleReader;
  */
 public class GfeConsoleReaderFactory {
   private static GfeConsoleReader defaultConsoleReader = createConsoleReader();
-  
+
   public static final GfeConsoleReader getDefaultConsoleReader() {
     return defaultConsoleReader;
   }
-  
+
   public static final GfeConsoleReader createConsoleReader() {
     GfeConsoleReader consoleReader = null;
 
     if (CliUtil.isGfshVM()) {
       LogWrapper.getInstance().info("GfeConsoleReaderFactory.createConsoleReader(): isGfshVM");
       consoleReader = new GfshConsoleReader();
-      LogWrapper.getInstance().info("GfeConsoleReaderFactory.createConsoleReader(): consoleReader: "+consoleReader+"="+consoleReader.isSupported());
+      LogWrapper.getInstance().info("GfeConsoleReaderFactory.createConsoleReader(): consoleReader: " + consoleReader + "=" + consoleReader.isSupported());
     }
     if (consoleReader == null) {
       consoleReader = new GfeConsoleReader();
@@ -55,23 +55,23 @@ public class GfeConsoleReaderFactory {
 
   public static class GfeConsoleReader {
     private Console console;
-    
+
     protected GfeConsoleReader() {
       console = System.console();
     }
-    
+
     public boolean isSupported() {
       return console != null;
     }
-    
+
     public String readLine(String textToPrompt) {
       if (isSupported()) {
         return console.readLine(textToPrompt);
       }
       return null;
     }
-    
-    public char [] readPassword(String textToPrompt) {
+
+    public char[] readPassword(String textToPrompt) {
       if (isSupported()) {
         return console.readPassword(textToPrompt);
       }

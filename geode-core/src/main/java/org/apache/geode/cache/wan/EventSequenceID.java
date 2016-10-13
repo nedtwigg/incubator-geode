@@ -52,10 +52,8 @@ public final class EventSequenceID {
     // convert the byte array of membershipID to a readable string
     Object mbr;
     try {
-      mbr = InternalDistributedMember.readEssentialData(new DataInputStream(
-          new ByteArrayInputStream(membershipID)));
-    }
-    catch (Exception e) {
+      mbr = InternalDistributedMember.readEssentialData(new DataInputStream(new ByteArrayInputStream(membershipID)));
+    } catch (Exception e) {
       mbr = Arrays.toString(membershipID); // punt and use the bytes
     }
     this.membershipID = mbr.toString();
@@ -74,17 +72,15 @@ public final class EventSequenceID {
   public long getSequenceID() {
     return this.sequenceID;
   }
-  
+
   public boolean equals(Object obj) {
     if (!(obj instanceof EventSequenceID))
       return false;
 
-    EventSequenceID obj2 = (EventSequenceID)obj;
-    return (this.membershipID.equals(obj2.getMembershipID())
-        && this.threadID == obj2.getThreadID() 
-        && this.sequenceID == obj2.getSequenceID());
+    EventSequenceID obj2 = (EventSequenceID) obj;
+    return (this.membershipID.equals(obj2.getMembershipID()) && this.threadID == obj2.getThreadID() && this.sequenceID == obj2.getSequenceID());
   }
-  
+
   public int hashCode() {
     StringBuilder builder = new StringBuilder();
     builder.append(this.membershipID);
@@ -92,7 +88,7 @@ public final class EventSequenceID {
     builder.append(this.sequenceID);
     return builder.toString().hashCode();
   }
-  
+
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("membershipID: " + membershipID);

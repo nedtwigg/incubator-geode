@@ -25,8 +25,7 @@ import org.apache.geode.cache.*;
  */
 public class DatabaseLoader implements CacheLoader, Declarable {
 
-  public Object load(LoaderHelper helper)
-    throws CacheLoaderException {
+  public Object load(LoaderHelper helper) throws CacheLoaderException {
 
     throw new UnsupportedOperationException("I do NOTHING");
   }

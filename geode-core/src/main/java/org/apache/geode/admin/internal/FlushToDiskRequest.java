@@ -39,12 +39,12 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
  * 
  *
  */
-public class FlushToDiskRequest  extends CliLegacyMessage {
-  
+public class FlushToDiskRequest extends CliLegacyMessage {
+
   public FlushToDiskRequest() {
-    
+
   }
-  
+
   public static void send(DM dm, Set recipients) {
     FlushToDiskRequest request = new FlushToDiskRequest();
     request.setRecipients(recipients);
@@ -55,40 +55,40 @@ public class FlushToDiskRequest  extends CliLegacyMessage {
     try {
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
-      if(!(e.getCause() instanceof CancelException)) {
+      if (!(e.getCause() instanceof CancelException)) {
         throw e;
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    AdminResponse response = request.createResponse((DistributionManager)dm);
+    AdminResponse response = request.createResponse((DistributionManager) dm);
     response.setSender(dm.getDistributionManagerId());
     replyProcessor.process(response);
   }
-  
+
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     HashSet<PersistentID> persistentIds;
-    if(cache != null) {
+    if (cache != null) {
       Collection<DiskStoreImpl> diskStores = cache.listDiskStoresIncludingRegionOwned();
-      for(DiskStoreImpl store : diskStores) {
+      for (DiskStoreImpl store : diskStores) {
         store.flush();
       }
     }
-    
+
     return new FlushToDiskResponse(this.getSender());
   }
 
   public int getDSFID() {
     return FLUSH_TO_DISK_REQUEST;
   }
-  
+
   private static class FlushToDiskProcessor extends AdminMultipleReplyProcessor {
     public FlushToDiskProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
     }
-    
+
     @Override
     protected boolean stopBecauseOfExceptions() {
       return false;

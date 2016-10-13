@@ -34,14 +34,14 @@ public class SnapshotOptionsImpl<K, V> implements SnapshotOptions<K, V> {
 
   /** true if parallel mode is enabled */
   private volatile boolean parallel;
-  
+
   /** the file mapper, or null if parallel mode is not enabled */
   private volatile SnapshotFileMapper mapper;
-  
+
   public SnapshotOptionsImpl() {
     filter = null;
   }
-  
+
   @Override
   public SnapshotOptions<K, V> setFilter(SnapshotFilter<K, V> filter) {
     this.filter = filter;
@@ -97,7 +97,7 @@ public class SnapshotOptionsImpl<K, V> implements SnapshotOptions<K, V> {
   public boolean isParallelMode() {
     return parallel;
   }
-  
+
   /**
    * Overrides the default file mapping for parallel import and export
    * operations.
@@ -110,7 +110,7 @@ public class SnapshotOptionsImpl<K, V> implements SnapshotOptions<K, V> {
     this.mapper = mapper;
     return this;
   }
-  
+
   /**
    * Returns the snapshot file mapper for parallel import and export.
    * 

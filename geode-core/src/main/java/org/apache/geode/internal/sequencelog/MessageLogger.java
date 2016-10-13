@@ -23,15 +23,15 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
  *
  */
 public class MessageLogger {
-  
+
   public static final SequenceLogger LOGGER = SequenceLoggerImpl.getInstance();
-  
+
   public static boolean isEnabled() {
     return LOGGER.isEnabled(GraphType.MESSAGE);
   }
-  
+
   public static void logMessage(DistributionMessage message, InternalDistributedMember source, InternalDistributedMember dest) {
-    if(isEnabled()) {
+    if (isEnabled()) {
       LOGGER.logTransition(GraphType.MESSAGE, message.getClass().getSimpleName(), "", "received", source, dest);
     }
   }

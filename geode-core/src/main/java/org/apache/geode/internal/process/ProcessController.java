@@ -30,12 +30,12 @@ public interface ProcessController {
    * Returns the status of a running GemFire {@link ControllableProcess}.
    */
   public String status() throws UnableToControlProcessException, ConnectionFailedException, IOException, MBeanInvocationFailedException, InterruptedException, TimeoutException;
-  
+
   /**
    * Stops a running GemFire {@link ControllableProcess}.
    */
   public void stop() throws UnableToControlProcessException, ConnectionFailedException, IOException, MBeanInvocationFailedException;
-  
+
   /**
    * Returns the PID of a running GemFire {@link ControllableProcess}.
    */
@@ -49,12 +49,13 @@ public interface ProcessController {
    * @throws org.apache.geode.lang.AttachAPINotFoundException if the Attach API is not found
    */
   public void checkPidSupport();
-  
+
   /**
    * Defines the arguments that a client must provide to the ProcessController.
    */
   static interface Arguments {
     public int getProcessId();
+
     public ProcessType getProcessType();
   }
 }

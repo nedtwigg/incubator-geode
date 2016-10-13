@@ -84,10 +84,7 @@ public class LogWrapper {
   public void configure(GfshConfig config) {
     if (config.isLoggingEnabled()) {
       try {
-        FileHandler fileHandler = new FileHandler(config.getLogFilePath(),
-                                                  config.getLogFileSizeLimit(),
-                                                  config.getLogFileCount(),
-                                                  true /*append*/);
+        FileHandler fileHandler = new FileHandler(config.getLogFilePath(), config.getLogFileSizeLimit(), config.getLogFileCount(), true /*append*/);
         fileHandler.setFormatter(new GemFireFormatter());
         fileHandler.setLevel(config.getLogLevel());
         logger.addHandler(fileHandler);
@@ -109,7 +106,8 @@ public class LogWrapper {
     System.err.println("Logs will be written on Console.");
     try {
       Thread.sleep(3000); //sleep for 3 secs for the message to appear
-    } catch (InterruptedException ignore) {}
+    } catch (InterruptedException ignore) {
+    }
   }
 
   /**
@@ -163,12 +161,13 @@ public class LogWrapper {
       logger.setLevel(newLevel);
     }
   }
+
   public Level getLogLevel() {
-      return logger.getLevel();
+    return logger.getLevel();
   }
 
-  //TODO - Abhishek - ideally shouldn't be exposed outside.
-  /*package*/ Logger getLogger() {
+      //TODO - Abhishek - ideally shouldn't be exposed outside.
+      /*package*/ Logger getLogger() {
     return logger;
   }
 
@@ -189,17 +188,17 @@ public class LogWrapper {
   }
 
   //TODO - Abhishek - Check whether we can use GemFireLevel.ERROR
-//  public boolean errorEnabled() {
-//    return severeEnabled();
-//  }
-//
-//  public void error(String message) {
-//    logger.severe(message);
-//  }
-//
-//  public void error(String message, Throwable t) {
-//    logger.log(Level.SEVERE, message, t);
-//  }
+  //  public boolean errorEnabled() {
+  //    return severeEnabled();
+  //  }
+  //
+  //  public void error(String message) {
+  //    logger.severe(message);
+  //  }
+  //
+  //  public void error(String message, Throwable t) {
+  //    logger.log(Level.SEVERE, message, t);
+  //  }
 
   public boolean warningEnabled() {
     return logger.isLoggable(Level.WARNING);
@@ -350,7 +349,8 @@ public class LogWrapper {
       pw.close();
       try {
         sw.close();
-      } catch (java.io.IOException ignore) {}
+      } catch (java.io.IOException ignore) {
+      }
       String result = sw.toString();
       return result;
     }
@@ -364,7 +364,7 @@ public class LogWrapper {
 
       while (end != BreakIterator.DONE) {
         // Look at the end and only accept whitespace breaks
-        char endChar = target.charAt(end-1);
+        char endChar = target.charAt(end - 1);
         while (!Character.isWhitespace(endChar)) {
           int lastEnd = end;
           end = boundary.next();
@@ -373,13 +373,13 @@ public class LogWrapper {
             end = lastEnd;
             break;
           }
-          endChar = target.charAt(end-1);
+          endChar = target.charAt(end - 1);
         }
         int wordEnd = end;
         if (endChar == '\n') {
           // trim off the \n since println will do it for us
           wordEnd--;
-          if (wordEnd > 0 && target.charAt(wordEnd-1) == '\r') {
+          if (wordEnd > 0 && target.charAt(wordEnd - 1) == '\r') {
             wordEnd--;
           }
         } else if (endChar == '\t') {

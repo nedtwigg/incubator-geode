@@ -31,18 +31,17 @@ public class CompoundEntrySnapshot implements EntrySnapshot {
   private static final long serialVersionUID = 5776382582897895718L;
   /** The key ("name") of the Region entry */
   private Object name;
-  
-  private long lastModifiedTime = 0L; //the latest modified time
-  private long lastAccessTime   = 0L; //the latest access time
-  private long numHits          = 0L; //sum of all hits
-  private long numMisses        = 0L; //sum of all misses
-  private float hitRatio        = 0f; //calculated from all
-  private long hitResponders    = 0;
-  private double hitRatioSum    = 0.0;
-  //private Map individuals      = new HashMap();
-  private Set allValues        = new HashSet();
-  private Set allUserAttributes = new HashSet();
 
+  private long lastModifiedTime = 0L; //the latest modified time
+  private long lastAccessTime = 0L; //the latest access time
+  private long numHits = 0L; //sum of all hits
+  private long numMisses = 0L; //sum of all misses
+  private float hitRatio = 0f; //calculated from all
+  private long hitResponders = 0;
+  private double hitRatioSum = 0.0;
+  //private Map individuals      = new HashMap();
+  private Set allValues = new HashSet();
+  private Set allUserAttributes = new HashSet();
 
   /**
    * Creates a <code>CompoundEntrySnapshot</code> for the region entry
@@ -84,7 +83,7 @@ public class CompoundEntrySnapshot implements EntrySnapshot {
     } else {
       allUserAttributes.add("null");
     }
-    
+
     long modified = snap.getLastModifiedTime();
     if (modified > 0 && modified > this.lastModifiedTime) {
       this.lastModifiedTime = modified;
@@ -109,10 +108,10 @@ public class CompoundEntrySnapshot implements EntrySnapshot {
     if (hitRatio >= 0.00) {
       hitResponders++;
       hitRatioSum += hitRatio;
-      this.hitRatio = (float)(hitRatioSum/hitResponders);      
+      this.hitRatio = (float) (hitRatioSum / hitResponders);
     }
 
-  }  
+  }
 
   /**
    * Returns the name ("key") of the region entry amalgamated by this
@@ -189,7 +188,7 @@ public class CompoundEntrySnapshot implements EntrySnapshot {
   public long getNumberOfMisses() {
     return this.numMisses;
   }
-  
+
   /**
    * Returns the aggregate hit ratio across all instances of this
    * snapshot's region entry.

@@ -74,7 +74,7 @@ public class ProductUseLogJUnitTest {
     log.log("test message");
     log.close();
 
-    BufferedReader reader = new BufferedReader(new  FileReader(logFile));
+    BufferedReader reader = new BufferedReader(new FileReader(logFile));
 
     String line = reader.readLine();
     assertTrue(line.length() == 0);
@@ -97,11 +97,9 @@ public class ProductUseLogJUnitTest {
     ProductUseLog log = new ProductUseLog(logFile);
 
     String logEntry = "log entry";
-    for (long i=0; i<ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE; i++) {
+    for (long i = 0; i < ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE; i++) {
       log.log(logEntry);
-      assertTrue("expected " + logFile.getPath() + " to remain under "+
-          ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE + " bytes in length",
-          logFile.length() < ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE);
+      assertTrue("expected " + logFile.getPath() + " to remain under " + ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE + " bytes in length", logFile.length() < ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE);
     }
   }
 }

@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Locale;
 
-
 /**
  * Baseclass for all {@link StringId} based ResourceBundles
  * @see java.util.ResourceBundle 
@@ -44,7 +43,7 @@ public class AbstractStringIdResourceBundle {
    * English has a special implementation for speed.
    */
   private static AbstractStringIdResourceBundle messageBundle;
-  
+
   /**
    * Init method to populate the TIntObjectHashMap for Non-english locales
    * <code>data = new TIntObjectHashMap();</code>
@@ -66,7 +65,7 @@ public class AbstractStringIdResourceBundle {
       se.printStackTrace();
       System.err.flush();
     }
-    if ( is == null ) {
+    if (is == null) {
       //No matching data file for the requested langauge, 
       //defaulting to English
       data = null;
@@ -74,51 +73,52 @@ public class AbstractStringIdResourceBundle {
       data = readDataFile(is);
     }
   }
-	
+
   private Int2ObjectOpenHashMap readDataFile(InputStream is) {
     Int2ObjectOpenHashMap map = new Int2ObjectOpenHashMap();
     boolean complete = false;
     BufferedReader input = null;
     try {
-       input = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-       String line = null;
-       while((line = input.readLine()) != null ) {
-         int equalSign = line.indexOf('=');
-         String idAsString = line.substring(0, equalSign-1).trim();
-         //The +2 is because we need to skip the "= ", we dont use trim because some messages want leading whitespace
-         String message = line.substring(equalSign+2).replaceAll("\\\\n", "\n");
-         try {
-           int id = Integer.parseInt(idAsString);
-           map.put(id, message);
-         } catch(NumberFormatException nfe) {
-           //unit tests should prevent this from happening in a customer situation
-           throw new InternalGemFireException(nfe);
-         }
-         complete = true;
-       }
-    } catch( IOException ioe ) {
+      input = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+      String line = null;
+      while ((line = input.readLine()) != null) {
+        int equalSign = line.indexOf('=');
+        String idAsString = line.substring(0, equalSign - 1).trim();
+        //The +2 is because we need to skip the "= ", we dont use trim because some messages want leading whitespace
+        String message = line.substring(equalSign + 2).replaceAll("\\\\n", "\n");
+        try {
+          int id = Integer.parseInt(idAsString);
+          map.put(id, message);
+        } catch (NumberFormatException nfe) {
+          //unit tests should prevent this from happening in a customer situation
+          throw new InternalGemFireException(nfe);
+        }
+        complete = true;
+      }
+    } catch (IOException ioe) {
       //@TODO log this exception
     } finally {
-      if ( ! complete ) {
+      if (!complete) {
         //something went wrong, clean up and revert back to English
         try {
-          if ( input != null ) {
+          if (input != null) {
             input.close();
           } else {
             is.close();
           }
-        } catch (IOException ignore ) {}
+        } catch (IOException ignore) {
+        }
         //set map back to null so we default to English
         map = null;
       }
     }
     return map;
   }
-  
+
   private AbstractStringIdResourceBundle() {
     //Intentionally blank  
   }
-  
+
   /**
    * @param key
    *        StringId passed to {@link #getString java.util.ResourceBundle} 
@@ -128,14 +128,14 @@ public class AbstractStringIdResourceBundle {
   public String getString(StringId key) {
     if (usingRawMode())
       return key.getRawText();
-    String txt = (String) data.get(((StringId)key).id);
-    if( txt != null ) {
+    String txt = (String) data.get(((StringId) key).id);
+    if (txt != null) {
       return txt;
     } else {
       //found an untranslated message, use the English as a fall back
       return key.getRawText();
     }
-    
+
   }
 
   /**
@@ -151,5 +151,5 @@ public class AbstractStringIdResourceBundle {
     messageBundle = newMessageBundle;
     return messageBundle;
   }
-   
+
 }

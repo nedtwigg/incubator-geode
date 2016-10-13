@@ -43,20 +43,20 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 public class PrepareRevokePersistentIDRequest extends CliLegacyMessage {
   PersistentMemberPattern pattern;
   private boolean cancel;
-  
+
   public PrepareRevokePersistentIDRequest() {
-    
+
   }
-  
+
   public PrepareRevokePersistentIDRequest(PersistentMemberPattern pattern, boolean cancel) {
     this.pattern = pattern;
     this.cancel = cancel;
   }
-  
+
   public static void cancel(DM dm, PersistentMemberPattern pattern) {
     send(dm, pattern, true);
   }
-  
+
   public static void send(DM dm, PersistentMemberPattern pattern) {
     send(dm, pattern, false);
   }
@@ -66,14 +66,14 @@ public class PrepareRevokePersistentIDRequest extends CliLegacyMessage {
     recipients.remove(dm.getId());
     PrepareRevokePersistentIDRequest request = new PrepareRevokePersistentIDRequest(pattern, cancel);
     request.setRecipients(recipients);
-    
+
     AdminMultipleReplyProcessor replyProcessor = new AdminMultipleReplyProcessor(dm, recipients);
     request.msgId = replyProcessor.getProcessorId();
     dm.putOutgoing(request);
     try {
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
-      if(e.getCause() instanceof CancelException) {
+      if (e.getCause() instanceof CancelException) {
         //ignore
         return;
       }
@@ -82,21 +82,19 @@ public class PrepareRevokePersistentIDRequest extends CliLegacyMessage {
       e.printStackTrace();
     }
     request.setSender(dm.getId());
-    request.createResponse((DistributionManager)dm);
+    request.createResponse((DistributionManager) dm);
   }
-  
+
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-    if(cache != null && !cache.isClosed()) {
+    if (cache != null && !cache.isClosed()) {
       PersistentMemberManager mm = cache.getPersistentMemberManager();
-      if(cancel) {
+      if (cancel) {
         mm.cancelRevoke(pattern);
       } else {
-        if(!mm.prepareRevoke(pattern, dm, getSender())) {
-          throw new RevokeFailedException(
-              LocalizedStrings.RevokeFailedException_Member_0_is_already_running_1
-                  .toLocalizedString(dm.getId(), pattern));
+        if (!mm.prepareRevoke(pattern, dm, getSender())) {
+          throw new RevokeFailedException(LocalizedStrings.RevokeFailedException_Member_0_is_already_running_1.toLocalizedString(dm.getId(), pattern));
         }
       }
     }

@@ -32,18 +32,19 @@ public class LogWriterLoggerDisabledPerformanceTest extends LogWriterLoggerPerfo
   @Override
   protected PerformanceLogger createPerformanceLogger() throws IOException {
     final Logger logger = createLogger();
-    
+
     final PerformanceLogger perfLogger = new PerformanceLogger() {
       @Override
       public void log(String message) {
         logger.debug(message);
       }
+
       @Override
       public boolean isEnabled() {
         return logger.isEnabled(Level.DEBUG);
       }
     };
-    
+
     return perfLogger;
   }
 }

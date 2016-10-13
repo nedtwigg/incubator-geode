@@ -34,11 +34,10 @@ import java.util.Properties;
  */
 public final class LicenseInfoResponse extends AdminResponse {
   private static final Logger logger = LogService.getLogger();
-  
+
   // instance variables
   private Properties p;
-  
-  
+
   /**
    * Returns a <code>LicenseInfoResponse</code> that will be returned to the
    * specified recipient.
@@ -54,25 +53,24 @@ public final class LicenseInfoResponse extends AdminResponse {
   public Properties getLicenseInfo() {
     return p;
   }
-  
+
   public int getDSFID() {
     return LICENSE_INFO_RESPONSE;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(this.p, out);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
-    super.fromData(in);    
-    this.p = (Properties)DataSerializer.readObject(in);
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
+    super.fromData(in);
+    this.p = (Properties) DataSerializer.readObject(in);
   }
 
-  @Override  
+  @Override
   public String toString() {
     return "LicenseInfoResponse from " + this.getSender();
   }

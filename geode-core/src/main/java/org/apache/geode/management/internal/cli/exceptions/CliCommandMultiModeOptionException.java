@@ -21,10 +21,10 @@ import org.apache.geode.management.internal.cli.parser.Option;
 import org.apache.geode.management.internal.cli.parser.OptionSet;
 
 public class CliCommandMultiModeOptionException extends CliCommandOptionException {
-  
+
   public static final int MULTIPLE_LEAD_OPTIONS = 1; // TODO: move or delete
   public static final int OPTIONS_FROM_MULTIPLE_MODES = 2; // TODO: move or delete
-  
+
   private String leadOptionString;
   private int code;
 

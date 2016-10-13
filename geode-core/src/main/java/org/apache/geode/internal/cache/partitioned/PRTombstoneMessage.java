@@ -52,11 +52,10 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * This message class sends tombstone GC information to other PR holders
  * @since GemFire 7.0
  */
-public final class PRTombstoneMessage extends PartitionMessageWithDirectReply
-  implements SerializationVersions {
+public final class PRTombstoneMessage extends PartitionMessageWithDirectReply implements SerializationVersions {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private static Version[] serializationVersions = null;
 
   private Set<Object> keys;
@@ -67,16 +66,15 @@ public final class PRTombstoneMessage extends PartitionMessageWithDirectReply
    */
   public PRTombstoneMessage() {
   }
-  
-  public static void send(BucketRegion r, final Set<Object> keys, EventID eventID)  {
+
+  public static void send(BucketRegion r, final Set<Object> keys, EventID eventID) {
     Set<InternalDistributedMember> recipients = r.getPartitionedRegion().getRegionAdvisor().adviseAllPRNodes();
     recipients.removeAll(r.getDistributionAdvisor().adviseReplicates());
     if (recipients.size() == 0) {
       return;
     }
     PartitionResponse p = new Response(r.getSystem(), recipients);
-    PRTombstoneMessage m = new PRTombstoneMessage(recipients, r.getPartitionedRegion().getPRId(), p,
-        keys, eventID);
+    PRTombstoneMessage m = new PRTombstoneMessage(recipients, r.getPartitionedRegion().getPRId(), p, keys, eventID);
     r.getDistributionManager().putOutgoing(m);
 
     try {
@@ -87,29 +85,23 @@ public final class PRTombstoneMessage extends PartitionMessageWithDirectReply
     }
   }
 
-  private PRTombstoneMessage(Set<InternalDistributedMember> recipients, int regionId,
-      PartitionResponse p, Set<Object> reapedKeys, EventID eventID) {
+  private PRTombstoneMessage(Set<InternalDistributedMember> recipients, int regionId, PartitionResponse p, Set<Object> reapedKeys, EventID eventID) {
     super(recipients, regionId, p);
     this.keys = reapedKeys;
     this.eventID = eventID;
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(
-      final DistributionManager dm, PartitionedRegion r, long startTime)
-      throws ForceReattemptException
-  {
+  protected final boolean operateOnPartitionedRegion(final DistributionManager dm, PartitionedRegion r, long startTime) throws ForceReattemptException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.debug("PRTombstoneMessage operateOnRegion: {}", r.getFullPath());
     }
     FilterProfile fp = r.getFilterProfile();
     if (this.keys != null && this.keys.size() > 0) { // sanity check
       if (fp != null && CacheClientNotifier.getInstance() != null && this.eventID != null) {
-        RegionEventImpl regionEvent = new RegionEventImpl(r, Operation.REGION_DESTROY, 
-            null, true, r.getGemFireCache().getMyId()); 
-        regionEvent.setLocalFilterInfo(fp.getLocalFilterRouting(regionEvent)); 
-        ClientUpdateMessage clientMessage = ClientTombstoneMessage.gc(r, this.keys,
-            this.eventID);
+        RegionEventImpl regionEvent = new RegionEventImpl(r, Operation.REGION_DESTROY, null, true, r.getGemFireCache().getMyId());
+        regionEvent.setLocalFilterInfo(fp.getLocalFilterRouting(regionEvent));
+        ClientUpdateMessage clientMessage = ClientTombstoneMessage.gc(r, this.keys, this.eventID);
         CacheClientNotifier.notifyClients(regionEvent, clientMessage);
       }
     }
@@ -117,8 +109,7 @@ public final class PRTombstoneMessage extends PartitionMessageWithDirectReply
   }
 
   @Override
-  protected void appendFields(StringBuffer buff)
-  {
+  protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
     buff.append("; keys=").append(this.keys.size());
     buff.append("; eventID=").append(this.eventID);
@@ -131,47 +122,44 @@ public final class PRTombstoneMessage extends PartitionMessageWithDirectReply
   public Version[] getSerializationVersions() {
     return serializationVersions;
   }
-  
+
   @Override
-  public void fromData(DataInput in) throws IOException,
-          ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     int numKeys = in.readInt();
     this.keys = new HashSet<Object>(numKeys);
-    for (int i=0; i<numKeys; i++) {
+    for (int i = 0; i < numKeys; i++) {
       this.keys.add(DataSerializer.readObject(in));
     }
-    this.eventID = (EventID)DataSerializer.readObject(in);
+    this.eventID = (EventID) DataSerializer.readObject(in);
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeInt(this.keys.size());
-    for (Object key: keys) {
+    for (Object key : keys) {
       DataSerializer.writeObject(key, out);
     }
     DataSerializer.writeObject(this.eventID, out);
   }
-  
-  private static class Response extends PartitionResponse
-  {
-//    Set<InternalDistributedMember> forceReattemptSenders = new HashSet<InternalDistributedMember>();
+
+  private static class Response extends PartitionResponse {
+    //    Set<InternalDistributedMember> forceReattemptSenders = new HashSet<InternalDistributedMember>();
 
     public Response(InternalDistributedSystem ds, Set recipients) {
       super(ds, recipients, false);
     }
 
     @Override
-    public void process(DistributionMessage msg)
-    {
-      ReplyMessage reply = (ReplyMessage)msg;
+    public void process(DistributionMessage msg) {
+      ReplyMessage reply = (ReplyMessage) msg;
       if (reply.getException() != null) {
         Throwable cause = reply.getException().getCause();
         if (cause instanceof ForceReattemptException || cause instanceof CancelException) {
           // TODO do we need to resend to these recipients?  Might they have clients that won't otherwise get
           // the GC message?
-//          this.forceReattemptSenders.add(reply.getSender());
+          //          this.forceReattemptSenders.add(reply.getSender());
           reply.setException(null);
         }
       }

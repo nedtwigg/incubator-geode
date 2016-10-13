@@ -40,17 +40,17 @@ public final class ShutdownMessage extends HighPriorityDistributionMessage imple
   void setDistributionManagerId(InternalDistributedMember id) {
     this.id = id;
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
   }
-  
+
   /** set the reply processor id that's used to wait for acknowledgements */
   public void setProcessorId(int pid) {
     processorId = pid;
   }
-  
+
   /** return the reply processor id that's used to wait for acknowledgements */
   @Override
   public int getProcessorId() {
@@ -61,7 +61,7 @@ public final class ShutdownMessage extends HighPriorityDistributionMessage imple
   public boolean getInlineProcess() {
     return false;
   }
-  
+
   /**
    * Removes the distribution manager that is started up from the current
    * DM's list of members.
@@ -73,24 +73,24 @@ public final class ShutdownMessage extends HighPriorityDistributionMessage imple
     Assert.assertTrue(this.id != null);
     // The peer goes deaf after sending us this message, so do not
     // attempt a reply.
-    
-//    final ReplyMessage reply = new ReplyMessage();
-//    reply.setProcessorId(processorId);
-//    reply.setRecipient(getSender());
+
+    //    final ReplyMessage reply = new ReplyMessage();
+    //    reply.setProcessorId(processorId);
+    //    reply.setRecipient(getSender());
     // can't send a response in a UDP receiver thread or we might miss
     // the other side going away due to blocking receipt of views
-//    if (DistributionMessage.isPreciousThread()) {
-//      dm.getWaitingThreadPool().execute(new Runnable() {
-//        public void run() {
-//          dm.putOutgoing(reply);
-//          dm.handleManagerDeparture(ShutdownMessage.this.id, false, "shutdown message received");
-//        }
-//      });
-//    }
-//    else {
-//      dm.putOutgoing(reply);
-      dm.shutdownMessageReceived(id, LocalizedStrings.ShutdownMessage_SHUTDOWN_MESSAGE_RECEIVED.toLocalizedString());
-//    }
+    //    if (DistributionMessage.isPreciousThread()) {
+    //      dm.getWaitingThreadPool().execute(new Runnable() {
+    //        public void run() {
+    //          dm.putOutgoing(reply);
+    //          dm.handleManagerDeparture(ShutdownMessage.this.id, false, "shutdown message received");
+    //        }
+    //      });
+    //    }
+    //    else {
+    //      dm.putOutgoing(reply);
+    dm.shutdownMessageReceived(id, LocalizedStrings.ShutdownMessage_SHUTDOWN_MESSAGE_RECEIVED.toLocalizedString());
+    //    }
   }
 
   public int getDSFID() {
@@ -105,8 +105,7 @@ public final class ShutdownMessage extends HighPriorityDistributionMessage imple
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
 
     super.fromData(in);
     processorId = in.readInt();

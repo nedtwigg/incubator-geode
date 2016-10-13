@@ -187,17 +187,16 @@ public class CompanySerializer extends DataSerializer {
  *
  * @since GemFire 3.5 */
 public abstract class DataSerializer {
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   /** The eventId of this <code>DataSerializer</code> */
   private EventID eventId;
 
   /** The originator of this <code>DataSerializer</code> */
   private ClientProxyMembershipID context;
 
-  protected static final boolean TRACE_SERIALIZABLE =
-    Boolean.getBoolean("DataSerializer.TRACE_SERIALIZABLE");
+  protected static final boolean TRACE_SERIALIZABLE = Boolean.getBoolean("DataSerializer.TRACE_SERIALIZABLE");
 
   /* Used to prevent standard Java serialization when sending data to a non-Java client */
   protected static final ThreadLocal<Boolean> DISALLOW_JAVA_SERIALIZATION = new ThreadLocal<Boolean>();
@@ -218,8 +217,7 @@ public abstract class DataSerializer {
    *
    * @see #readClass
    */
-  public static void writeClass(Class<?> c, DataOutput out)
-    throws IOException {
+  public static void writeClass(Class<?> c, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -229,8 +227,7 @@ public abstract class DataSerializer {
 
     if (c == null || c.isPrimitive()) {
       InternalDataSerializer.writePrimitiveClass(c, out);
-    }
-    else {
+    } else {
       // non-primitive classes have a second CLASS byte
       // if readObject/writeObject is called:
       // the first CLASS byte indicates it's a Class, the second
@@ -251,8 +248,7 @@ public abstract class DataSerializer {
    * 
    * @see #readNonPrimitiveClassName(DataInput)
    */
-  public static void writeNonPrimitiveClassName(String className, DataOutput out)
-    throws IOException {
+  public static void writeNonPrimitiveClassName(String className, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -275,8 +271,7 @@ public abstract class DataSerializer {
    * @throws ClassNotFoundException
    *         The class cannot be loaded
    */
-  public static Class<?> readClass(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static Class<?> readClass(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -286,12 +281,11 @@ public abstract class DataSerializer {
       className = swizzleClassNameForRead(className, in);
       Class<?> c = InternalDataSerializer.getCachedClass(className); // fix for bug 41206
       return c;
-    }
-    else {
+    } else {
       return InternalDataSerializer.decodePrimitiveClass(typeCode);
     }
   }
-  
+
   /**
    * For backward compatibility we must swizzle the package of
    * some classes that had to be moved when GemFire was open-
@@ -314,7 +308,7 @@ public abstract class DataSerializer {
     }
     return name;
   }
-  
+
   /**
    * For backward compatibility we must swizzle the package of
    * some classes that had to be moved when GemFire was open-
@@ -337,7 +331,7 @@ public abstract class DataSerializer {
     }
     return name;
   }
-  
+
   /**
    * Reads name of an instance of <code>Class</code> from a
    * <code>DataInput</code>.
@@ -348,8 +342,7 @@ public abstract class DataSerializer {
    *           A problem occurs while reading from <code>in</code>
    * @see #writeNonPrimitiveClassName(String, DataOutput)
    */
-  public static String readNonPrimitiveClassName(DataInput in)
-      throws IOException {
+  public static String readNonPrimitiveClassName(DataInput in) throws IOException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -365,8 +358,7 @@ public abstract class DataSerializer {
    * <code>null</code> value and not throw a
    * <code>NullPointerException</code>.
    */
-  public static void writeRegion(Region<?,?> rgn, DataOutput out)
-  throws IOException {
+  public static void writeRegion(Region<?, ?> rgn, DataOutput out) throws IOException {
     writeString((rgn != null) ? rgn.getFullPath() : null, out);
   }
 
@@ -384,20 +376,18 @@ public abstract class DataSerializer {
    * @throws RegionNotFoundException if there is no region by this name
    * in the Cache
    */
-  public static <K,V> Region<K,V> readRegion(DataInput in)
-  throws IOException, ClassNotFoundException {
+  public static <K, V> Region<K, V> readRegion(DataInput in) throws IOException, ClassNotFoundException {
     String fullPath = readString(in);
-    Region<K,V> rgn = null;
+    Region<K, V> rgn = null;
     if (fullPath != null) {
       // use getExisting to fix bug 43151
-      rgn = ((Cache)GemFireCacheImpl.getExisting("Needed cache to find region.")).getRegion(fullPath);
+      rgn = ((Cache) GemFireCacheImpl.getExisting("Needed cache to find region.")).getRegion(fullPath);
       if (rgn == null) {
-      throw new RegionNotFoundException(LocalizedStrings.DataSerializer_REGION_0_COULD_NOT_BE_FOUND_WHILE_READING_A_DATASERIALIZER_STREAM.toLocalizedString(fullPath));
+        throw new RegionNotFoundException(LocalizedStrings.DataSerializer_REGION_0_COULD_NOT_BE_FOUND_WHILE_READING_A_DATASERIALIZER_STREAM.toLocalizedString(fullPath));
       }
     }
     return rgn;
   }
-
 
   /**
    * Writes an instance of <code>Date</code> to a
@@ -416,8 +406,7 @@ public abstract class DataSerializer {
    *
    * @see #readDate
    */
-  public static void writeDate(Date date, DataOutput out)
-    throws IOException {
+  public static void writeDate(Date date, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -479,8 +468,7 @@ public abstract class DataSerializer {
    * @see #readFile
    * @see File#getCanonicalPath
    */
-  public static void writeFile(File file, DataOutput out)
-    throws IOException {
+  public static void writeFile(File file, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -536,9 +524,7 @@ public abstract class DataSerializer {
    *
    * @see #readInetAddress
    */
-  public static void writeInetAddress(InetAddress address,
-                                      DataOutput out)
-    throws IOException {
+  public static void writeInetAddress(InetAddress address, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -560,8 +546,7 @@ public abstract class DataSerializer {
    *
    * @see InetAddress#getAddress
    */
-  public static InetAddress readInetAddress(DataInput in)
-    throws IOException {
+  public static InetAddress readInetAddress(DataInput in) throws IOException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -597,8 +582,7 @@ public abstract class DataSerializer {
    *
    * @see #readString
    */
-  public static void writeString(String value, DataOutput out)
-    throws IOException {
+  public static void writeString(String value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -624,7 +608,7 @@ public abstract class DataSerializer {
       // a multibyte char, we revert to using writeUTF()
       int len = value.length();
       int utfLen = len; // added for bug 40932
-      for (int i=0; i<len; i++) {
+      for (int i = 0; i < len; i++) {
         char c = value.charAt(i);
         if ((c <= 0x007F) && (c >= 0x0001)) {
           // nothing needed
@@ -654,8 +638,7 @@ public abstract class DataSerializer {
           out.writeByte(DSCODE.STRING);
           out.writeUTF(value);
         }
-      }
-      else {
+      } else {
         if (len > 0xFFFF) {
           if (isDebugEnabled) {
             logger.trace(LogMarker.SERIALIZER, "Writing HUGE_STRING_BYTES of len={}", len);
@@ -699,8 +682,7 @@ public abstract class DataSerializer {
    *
    * @see #readBoolean
    */
-  public static void writeBoolean(Boolean value, DataOutput out)
-    throws IOException {
+  public static void writeBoolean(Boolean value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -738,8 +720,7 @@ public abstract class DataSerializer {
    *
    * @see #readCharacter
    */
-  public static void writeCharacter(Character value, DataOutput out)
-    throws IOException {
+  public static void writeCharacter(Character value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -757,8 +738,7 @@ public abstract class DataSerializer {
    * @throws IOException
    *         A problem occurs while reading from <code>in</code>
    */
-  public static Character readCharacter(DataInput in)
-    throws IOException {
+  public static Character readCharacter(DataInput in) throws IOException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -779,8 +759,7 @@ public abstract class DataSerializer {
    *
    * @see #readByte
    */
-  public static void writeByte(Byte value, DataOutput out)
-    throws IOException {
+  public static void writeByte(Byte value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -818,8 +797,7 @@ public abstract class DataSerializer {
    *
    * @see #readShort
    */
-  public static void writeShort(Short value, DataOutput out)
-    throws IOException {
+  public static void writeShort(Short value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -857,8 +835,7 @@ public abstract class DataSerializer {
    *
    * @see #readInteger
    */
-  public static void writeInteger(Integer value, DataOutput out)
-    throws IOException {
+  public static void writeInteger(Integer value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -896,8 +873,7 @@ public abstract class DataSerializer {
    *
    * @see #readLong
    */
-  public static void writeLong(Long value, DataOutput out)
-    throws IOException {
+  public static void writeLong(Long value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -935,8 +911,7 @@ public abstract class DataSerializer {
    *
    * @see #readFloat
    */
-  public static void writeFloat(Float value, DataOutput out)
-    throws IOException {
+  public static void writeFloat(Float value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -974,8 +949,7 @@ public abstract class DataSerializer {
    *
    * @see #readDouble
    */
-  public static void writeDouble(Double value, DataOutput out)
-    throws IOException {
+  public static void writeDouble(Double value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1013,8 +987,7 @@ public abstract class DataSerializer {
    * @see DataOutput#writeBoolean
    * @since GemFire 5.1
    */
-  public static void writePrimitiveBoolean(boolean value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveBoolean(boolean value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1054,8 +1027,7 @@ public abstract class DataSerializer {
    * @see DataOutput#writeByte
    * @since GemFire 5.1
    */
-  public static void writePrimitiveByte(byte value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveByte(byte value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1095,8 +1067,7 @@ public abstract class DataSerializer {
    * @see DataOutput#writeChar
    * @since GemFire 5.1
    */
-  public static void writePrimitiveChar(char value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveChar(char value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1136,8 +1107,7 @@ public abstract class DataSerializer {
    * @see DataOutput#writeShort
    * @since GemFire 5.1
    */
-  public static void writePrimitiveShort(short value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveShort(short value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1178,8 +1148,7 @@ public abstract class DataSerializer {
    * @see DataInput#readUnsignedByte
    * @since GemFire 5.1
    */
-  public static void writeUnsignedByte(int value, DataOutput out)
-    throws IOException {
+  public static void writeUnsignedByte(int value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1219,8 +1188,7 @@ public abstract class DataSerializer {
    * @see DataInput#readUnsignedShort
    * @since GemFire 5.1
    */
-  public static void writeUnsignedShort(int value, DataOutput out)
-    throws IOException {
+  public static void writeUnsignedShort(int value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1258,8 +1226,7 @@ public abstract class DataSerializer {
    *
    * @see DataOutput#writeInt
    */
-  public static void writePrimitiveInt(int value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveInt(int value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1299,8 +1266,7 @@ public abstract class DataSerializer {
    * @see DataOutput#writeLong
    * @since GemFire 5.1
    */
-  public static void writePrimitiveLong(long value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveLong(long value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1340,8 +1306,7 @@ public abstract class DataSerializer {
    * @see DataOutput#writeFloat
    * @since GemFire 5.1
    */
-  public static void writePrimitiveFloat(float value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveFloat(float value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1381,8 +1346,7 @@ public abstract class DataSerializer {
    * @see DataOutput#writeDouble
    * @since GemFire 5.1
    */
-  public static void writePrimitiveDouble(double value, DataOutput out)
-    throws IOException {
+  public static void writePrimitiveDouble(double value, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1424,8 +1388,7 @@ public abstract class DataSerializer {
    *
    * @see #readByteArray
    */
-  public static void writeByteArray(byte[] array, DataOutput out)
-    throws IOException {
+  public static void writeByteArray(byte[] array, DataOutput out) throws IOException {
     int len = 0;
     if (array != null) {
       len = array.length;
@@ -1448,13 +1411,12 @@ public abstract class DataSerializer {
    *
    * @see #readByteArray
    */
-  public static void writeByteArray(byte[] array, int len, DataOutput out)
-    throws IOException {
+  public static void writeByteArray(byte[] array, int len, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
     int length = len; // to avoid warnings about parameter assignment
-    
+
     if (array == null) {
       length = -1;
     } else {
@@ -1470,6 +1432,7 @@ public abstract class DataSerializer {
       out.write(array, 0, length);
     }
   }
+
   /**
    * Serialize the given object <code>obj</code> into a byte array
    * using {@link #writeObject(Object, DataOutput)} and then writes the byte array
@@ -1489,12 +1452,11 @@ public abstract class DataSerializer {
    * @see #readByteArray
    * @since GemFire 5.0.2
    */
-  public static void writeObjectAsByteArray(Object obj, DataOutput out)
-    throws IOException {
+  public static void writeObjectAsByteArray(Object obj, DataOutput out) throws IOException {
     Object object = obj;
     if (obj instanceof CachedDeserializable) {
       if (obj instanceof StoredObject) {
-        StoredObject so = (StoredObject)obj;
+        StoredObject so = (StoredObject) obj;
         if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
           logger.trace(LogMarker.SERIALIZER, "writeObjectAsByteArray StoredObject");
         }
@@ -1512,16 +1474,16 @@ public abstract class DataSerializer {
       }
     }
     if (object instanceof byte[] || object == null) {
-      writeByteArray((byte[])object, out);
+      writeByteArray((byte[]) object, out);
     } else if (out instanceof ObjToByteArraySerializer) {
-      ((ObjToByteArraySerializer)out).writeAsSerializedByteArray(object);
-    }/*else if (obj instanceof Sendable) {
-      ((Sendable)obj).sendTo(out); 
-    } */ 
+      ((ObjToByteArraySerializer) out).writeAsSerializedByteArray(object);
+    } /*else if (obj instanceof Sendable) {
+       ((Sendable)obj).sendTo(out); 
+      } */
     else {
       HeapDataOutputStream hdos;
       if (object instanceof HeapDataOutputStream) {
-        hdos = (HeapDataOutputStream)object;
+        hdos = (HeapDataOutputStream) object;
       } else {
         Version v = InternalDataSerializer.getVersionForDataStreamOrNull(out);
         if (v == null) {
@@ -1550,25 +1512,24 @@ public abstract class DataSerializer {
    *
    * @see #writeByteArray(byte[], DataOutput)
    */
-  public static byte[] readByteArray(DataInput in)
-    throws IOException {
+  public static byte[] readByteArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        byte[] array = new byte[length];
-        in.readFully(array, 0, length);
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      byte[] array = new byte[length];
+      in.readFully(array, 0, length);
 
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read byte array of length {}", length);
-        }
-
-        return array;
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read byte array of length {}", length);
       }
+
+      return array;
     }
+  }
 
   /**
    * Writes an array of <code>String</code>s to a
@@ -1583,8 +1544,7 @@ public abstract class DataSerializer {
    * @see #readStringArray
    * @see #writeString
    */
-  public static void writeStringArray(String[] array, DataOutput out)
-    throws IOException {
+  public static void writeStringArray(String[] array, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1614,27 +1574,26 @@ public abstract class DataSerializer {
    *
    * @see #writeStringArray
    */
-  public static String[] readStringArray(DataInput in)
-    throws IOException {
+  public static String[] readStringArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        String[] array = new String[length];
-        for (int i = 0; i < length; i++) {
-          array[i] = readString(in);
-        }
-
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read String array of length {}", length);
-        }
-
-        return array;
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      String[] array = new String[length];
+      for (int i = 0; i < length; i++) {
+        array[i] = readString(in);
       }
+
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read String array of length {}", length);
+      }
+
+      return array;
     }
+  }
 
   /**
    * Writes an array of <code>short</code>s to a
@@ -1648,8 +1607,7 @@ public abstract class DataSerializer {
    *
    * @see #readShortArray
    */
-  public static void writeShortArray(short[] array, DataOutput out)
-    throws IOException {
+  public static void writeShortArray(short[] array, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1679,27 +1637,26 @@ public abstract class DataSerializer {
    *
    * @see #writeShortArray
    */
-  public static short[] readShortArray(DataInput in)
-    throws IOException {
+  public static short[] readShortArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        short[] array = new short[length];
-        for (int i = 0; i < length; i++) {
-          array[i] = in.readShort();
-        }
-
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read short array of length {}", length);
-        }
-
-        return array;
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      short[] array = new short[length];
+      for (int i = 0; i < length; i++) {
+        array[i] = in.readShort();
       }
+
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read short array of length {}", length);
+      }
+
+      return array;
     }
+  }
 
   /**
    * Writes an array of <code>char</code>s to a
@@ -1711,11 +1668,9 @@ public abstract class DataSerializer {
    * @see #readCharArray
    * @since GemFire 5.7
    */
-  public static void writeCharArray(char[] array, DataOutput out)
-      throws IOException {
+  public static void writeCharArray(char[] array, DataOutput out) throws IOException {
 
-    InternalDataSerializer.writeCharArray(array, array != null ? array.length
-        : -1, out);
+    InternalDataSerializer.writeCharArray(array, array != null ? array.length : -1, out);
   }
 
   /**
@@ -1728,8 +1683,7 @@ public abstract class DataSerializer {
    * @see #writeCharArray
    * @since GemFire 5.7
    */
-  public static char[] readCharArray(DataInput in)
-    throws IOException {
+  public static char[] readCharArray(DataInput in) throws IOException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -1749,6 +1703,7 @@ public abstract class DataSerializer {
       return array;
     }
   }
+
   /**
    * Writes an array of <code>boolean</code>s to a
    * <code>DataOutput</code>.
@@ -1759,8 +1714,7 @@ public abstract class DataSerializer {
    * @see #readBooleanArray
    * @since GemFire 5.7
    */
-  public static void writeBooleanArray(boolean[] array, DataOutput out)
-    throws IOException {
+  public static void writeBooleanArray(boolean[] array, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1791,8 +1745,7 @@ public abstract class DataSerializer {
    * @see #writeBooleanArray
    * @since GemFire 5.7
    */
-  public static boolean[] readBooleanArray(DataInput in)
-    throws IOException {
+  public static boolean[] readBooleanArray(DataInput in) throws IOException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -1812,6 +1765,7 @@ public abstract class DataSerializer {
       return array;
     }
   }
+
   /**
    * Writes an <code>int</code> array to a <code>DataOutput</code>.
    * This method will serialize a
@@ -1823,8 +1777,7 @@ public abstract class DataSerializer {
    *
    * @see #readIntArray
    */
-  public static void writeIntArray(int[] array, DataOutput out)
-    throws IOException {
+  public static void writeIntArray(int[] array, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1854,27 +1807,26 @@ public abstract class DataSerializer {
    *
    * @see #writeIntArray
    */
-  public static int[] readIntArray(DataInput in)
-    throws IOException {
+  public static int[] readIntArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        int[] array = new int[length];
-        for (int i = 0; i < length; i++) {
-          array[i] = in.readInt();
-        }
-
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read int array of length {}", length);
-        }
-
-        return array;
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      int[] array = new int[length];
+      for (int i = 0; i < length; i++) {
+        array[i] = in.readInt();
       }
+
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read int array of length {}", length);
+      }
+
+      return array;
     }
+  }
 
   /**
    * Writes an array of <code>long</code>s to a
@@ -1888,8 +1840,7 @@ public abstract class DataSerializer {
    *
    * @see #readLongArray
    */
-  public static void writeLongArray(long[] array, DataOutput out)
-    throws IOException {
+  public static void writeLongArray(long[] array, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1919,27 +1870,26 @@ public abstract class DataSerializer {
    *
    * @see #writeLongArray
    */
-  public static long[] readLongArray(DataInput in)
-    throws IOException {
+  public static long[] readLongArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        long[] array = new long[length];
-        for (int i = 0; i < length; i++) {
-          array[i] = in.readLong();
-        }
-
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read long array of length {}", length);
-        }
-
-        return array;
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      long[] array = new long[length];
+      for (int i = 0; i < length; i++) {
+        array[i] = in.readLong();
       }
+
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read long array of length {}", length);
+      }
+
+      return array;
     }
+  }
 
   /**
    * Writes an array of <code>float</code>s to a
@@ -1953,8 +1903,7 @@ public abstract class DataSerializer {
    *
    * @see #readFloatArray
    */
-  public static void writeFloatArray(float[] array, DataOutput out)
-    throws IOException {
+  public static void writeFloatArray(float[] array, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -1984,27 +1933,26 @@ public abstract class DataSerializer {
    *
    * @see #writeFloatArray
    */
-  public static float[] readFloatArray(DataInput in)
-    throws IOException {
+  public static float[] readFloatArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        float[] array = new float[length];
-        for (int i = 0; i < length; i++) {
-          array[i] = in.readFloat();
-        }
-
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read float array of length {}", length);
-        }
-
-        return array;
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      float[] array = new float[length];
+      for (int i = 0; i < length; i++) {
+        array[i] = in.readFloat();
       }
+
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read float array of length {}", length);
+      }
+
+      return array;
     }
+  }
 
   /**
    * Writes an array of <code>double</code>s to a
@@ -2018,8 +1966,7 @@ public abstract class DataSerializer {
    *
    * @see #readDoubleArray
    */
-  public static void writeDoubleArray(double[] array, DataOutput out)
-    throws IOException {
+  public static void writeDoubleArray(double[] array, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2049,27 +1996,26 @@ public abstract class DataSerializer {
    *
    * @see #writeDoubleArray
    */
-  public static double[] readDoubleArray(DataInput in)
-    throws IOException {
+  public static double[] readDoubleArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        double[] array = new double[length];
-        for (int i = 0; i < length; i++) {
-          array[i] = in.readDouble();
-        }
-
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read double array of length {}", length);
-        }
-
-        return array;
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      double[] array = new double[length];
+      for (int i = 0; i < length; i++) {
+        array[i] = in.readDouble();
       }
+
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read double array of length {}", length);
+      }
+
+      return array;
     }
+  }
 
   /**
    * Writes an array of <code>Object</code>s to a
@@ -2084,11 +2030,10 @@ public abstract class DataSerializer {
    * @see #readObjectArray
    * @see #writeObject(Object, DataOutput)
    */
-  public static void writeObjectArray(Object[] array, DataOutput out)
-    throws IOException {
+  public static void writeObjectArray(Object[] array, DataOutput out) throws IOException {
     InternalDataSerializer.writeObjectArray(array, out, false);
   }
-  
+
   /**
    * Reads an array of <code>Object</code>s from a
    * <code>DataInput</code>.
@@ -2099,83 +2044,81 @@ public abstract class DataSerializer {
    * @see #writeObjectArray
    * @see #readObject
    */
-  public static Object[] readObjectArray(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static Object[] readObjectArray(DataInput in) throws IOException, ClassNotFoundException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length == -1) {
-        return null;
-      } else {
-        Class<?> c = null;
-        byte typeCode = in.readByte();
-        String typeString = null;
-        if (typeCode == DSCODE.CLASS) {
-          typeString = readString(in);
-        }
-        
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        boolean lookForPdxInstance = false;
-        ClassNotFoundException cnfEx = null;
-        if (typeCode == DSCODE.CLASS
-            && cache != null && cache.getPdxReadSerializedByAnyGemFireServices()) {
-          try {
-            c = InternalDataSerializer.getCachedClass(typeString);
-            lookForPdxInstance = true;
-          } catch (ClassNotFoundException ignore) {
-            c = Object.class;
-            cnfEx = ignore;
-          }
-        } else {
-          if (typeCode == DSCODE.CLASS) {
-            c = InternalDataSerializer.getCachedClass(typeString);
-          } else {
-            c = InternalDataSerializer.decodePrimitiveClass(typeCode);
-          }
-        }
-        Object o = null;
-        if (length > 0) {
-          o = readObject(in);
-          if (lookForPdxInstance && o instanceof PdxInstance) {
-            lookForPdxInstance = false;
-            c = Object.class;
-          }
-        }
-        Object[] array = (Object[]) Array.newInstance(c, length);
-        if (length > 0) {
-          array[0] = o;
-        }
-        for (int i = 1; i < length; i++) {
-          o = readObject(in);
-          if (lookForPdxInstance && o instanceof PdxInstance) {
-            // create an Object[] and copy all the entries we already did into it
-            lookForPdxInstance = false;
-            c = Object.class;
-            Object[] newArray = (Object[])Array.newInstance(c, length);
-            System.arraycopy(array, 0, newArray, 0, i);
-            array = newArray;
-          }
-          array[i] = o;
-        }
-        if (lookForPdxInstance && cnfEx != null && length > 0) {
-          // We have a non-empty array and didn't find any
-          // PdxInstances in it. So we should have been able
-          // to load the element type.
-          // Note that empty arrays in this case will deserialize
-          // as an Object[] since we can't tell if the element
-          // type is a pdx one.
-          throw cnfEx;
-        }
-
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Read Object array of length {}", length);
-        }
-
-        return array;
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length == -1) {
+      return null;
+    } else {
+      Class<?> c = null;
+      byte typeCode = in.readByte();
+      String typeString = null;
+      if (typeCode == DSCODE.CLASS) {
+        typeString = readString(in);
       }
+
+      GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+      boolean lookForPdxInstance = false;
+      ClassNotFoundException cnfEx = null;
+      if (typeCode == DSCODE.CLASS && cache != null && cache.getPdxReadSerializedByAnyGemFireServices()) {
+        try {
+          c = InternalDataSerializer.getCachedClass(typeString);
+          lookForPdxInstance = true;
+        } catch (ClassNotFoundException ignore) {
+          c = Object.class;
+          cnfEx = ignore;
+        }
+      } else {
+        if (typeCode == DSCODE.CLASS) {
+          c = InternalDataSerializer.getCachedClass(typeString);
+        } else {
+          c = InternalDataSerializer.decodePrimitiveClass(typeCode);
+        }
+      }
+      Object o = null;
+      if (length > 0) {
+        o = readObject(in);
+        if (lookForPdxInstance && o instanceof PdxInstance) {
+          lookForPdxInstance = false;
+          c = Object.class;
+        }
+      }
+      Object[] array = (Object[]) Array.newInstance(c, length);
+      if (length > 0) {
+        array[0] = o;
+      }
+      for (int i = 1; i < length; i++) {
+        o = readObject(in);
+        if (lookForPdxInstance && o instanceof PdxInstance) {
+          // create an Object[] and copy all the entries we already did into it
+          lookForPdxInstance = false;
+          c = Object.class;
+          Object[] newArray = (Object[]) Array.newInstance(c, length);
+          System.arraycopy(array, 0, newArray, 0, i);
+          array = newArray;
+        }
+        array[i] = o;
+      }
+      if (lookForPdxInstance && cnfEx != null && length > 0) {
+        // We have a non-empty array and didn't find any
+        // PdxInstances in it. So we should have been able
+        // to load the element type.
+        // Note that empty arrays in this case will deserialize
+        // as an Object[] since we can't tell if the element
+        // type is a pdx one.
+        throw cnfEx;
+      }
+
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Read Object array of length {}", length);
+      }
+
+      return array;
     }
-  
+  }
+
   /**
    * Writes an array of <tt>byte[]</tt> to a <tt>DataOutput</tt>.
    *
@@ -2183,15 +2126,13 @@ public abstract class DataSerializer {
    *         A problem occurs while writing to <tt>out</tt>.
    *
    */
-  public static void writeArrayOfByteArrays(byte[][] array, DataOutput out)
-  throws IOException {    
-    
+  public static void writeArrayOfByteArrays(byte[][] array, DataOutput out) throws IOException {
+
     InternalDataSerializer.checkOut(out);
     int length;
     if (array == null) {
       length = -1;
-    }
-    else {
+    } else {
       length = array.length;
     }
     InternalDataSerializer.writeArrayLength(length, out);
@@ -2204,7 +2145,7 @@ public abstract class DataSerializer {
       }
     }
   }
-  
+
   /**
    * Reads an array of <code>byte[]</code>s from a
    * <code>DataInput</code>.
@@ -2212,11 +2153,10 @@ public abstract class DataSerializer {
    * @throws IOException
    *         A problem occurs while reading from <code>in</code>
    */
-  public static byte[][] readArrayOfByteArrays(DataInput in)
-  throws IOException, ClassNotFoundException {
-    
+  public static byte[][] readArrayOfByteArrays(DataInput in) throws IOException, ClassNotFoundException {
+
     InternalDataSerializer.checkIn(in);
-    
+
     int length = InternalDataSerializer.readArrayLength(in);
     if (length == -1) {
       return null;
@@ -2225,16 +2165,15 @@ public abstract class DataSerializer {
       for (int i = 0; i < length; i++) {
         array[i] = readByteArray(in);
       }
-      
+
       if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
         logger.trace(LogMarker.SERIALIZER, "Read byte[][] of length {}", length);
       }
-      
+
       return array;
     }
   }
-  
-  
+
   /**
    * Writes an <code>ArrayList</code> to a <code>DataOutput</code>.
    * Note that even though <code>list</code> may be an instance of a
@@ -2252,8 +2191,7 @@ public abstract class DataSerializer {
    *
    * @see #readArrayList
    */
-  public static void writeArrayList(ArrayList<?> list, DataOutput out)
-    throws IOException {
+  public static void writeArrayList(ArrayList<?> list, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2268,13 +2206,11 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing ArrayList with {} elements: {}", size, list);
     }
     if (size > 0) {
-      for (int i=0; i < size; i++) {
+      for (int i = 0; i < size; i++) {
         writeObject(list.get(i), out);
       }
     }
   }
-  
-  
 
   /**
    * Reads an <code>ArrayList</code> from a <code>DataInput</code>.
@@ -2287,8 +2223,7 @@ public abstract class DataSerializer {
    *
    * @see #writeArrayList
    */
-  public static <E> ArrayList<E> readArrayList(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <E> ArrayList<E> readArrayList(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2298,7 +2233,7 @@ public abstract class DataSerializer {
     } else {
       ArrayList<E> list = new ArrayList<E>(size);
       for (int i = 0; i < size; i++) {
-        E element = DataSerializer.<E>readObject(in);
+        E element = DataSerializer.<E> readObject(in);
         list.add(element);
       }
 
@@ -2325,8 +2260,7 @@ public abstract class DataSerializer {
    * @see #readVector
    * @since GemFire 5.7
    */
-  public static void writeVector(Vector<?> list, DataOutput out)
-    throws IOException {
+  public static void writeVector(Vector<?> list, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2341,7 +2275,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing Vector with {} elements: {}", size, list);
     }
     if (size > 0) {
-      for (int i=0; i < size; i++) {
+      for (int i = 0; i < size; i++) {
         writeObject(list.get(i), out);
       }
     }
@@ -2359,8 +2293,7 @@ public abstract class DataSerializer {
    * @see #writeVector
    * @since GemFire 5.7
    */
-  public static <E> Vector<E> readVector(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <E> Vector<E> readVector(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2370,7 +2303,7 @@ public abstract class DataSerializer {
     } else {
       Vector<E> list = new Vector<E>(size);
       for (int i = 0; i < size; i++) {
-        E element = DataSerializer.<E>readObject(in);
+        E element = DataSerializer.<E> readObject(in);
         list.add(element);
       }
 
@@ -2397,8 +2330,7 @@ public abstract class DataSerializer {
    * @see #readStack
    * @since GemFire 5.7
    */
-  public static void writeStack(Stack<?> list, DataOutput out)
-    throws IOException {
+  public static void writeStack(Stack<?> list, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2413,7 +2345,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing Stack with {} elements: {}", size, list);
     }
     if (size > 0) {
-      for (int i=0; i < size; i++) {
+      for (int i = 0; i < size; i++) {
         writeObject(list.get(i), out);
       }
     }
@@ -2431,8 +2363,7 @@ public abstract class DataSerializer {
    * @see #writeStack
    * @since GemFire 5.7
    */
-  public static <E> Stack<E> readStack(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <E> Stack<E> readStack(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2442,7 +2373,7 @@ public abstract class DataSerializer {
     } else {
       Stack<E> list = new Stack<E>();
       for (int i = 0; i < size; i++) {
-        E element = DataSerializer.<E>readObject(in);
+        E element = DataSerializer.<E> readObject(in);
         list.add(element);
       }
 
@@ -2471,8 +2402,7 @@ public abstract class DataSerializer {
    *
    * @see #readLinkedList
    */
-  public static void writeLinkedList(LinkedList<?> list, DataOutput out)
-    throws IOException {
+  public static void writeLinkedList(LinkedList<?> list, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2487,7 +2417,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing LinkedList with {} elements: {}", size, list);
     }
     if (size > 0) {
-      for (Object e: list) {
+      for (Object e : list) {
         writeObject(e, out);
       }
     }
@@ -2504,8 +2434,7 @@ public abstract class DataSerializer {
    *
    * @see #writeLinkedList
    */
-  public static <E> LinkedList<E> readLinkedList(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <E> LinkedList<E> readLinkedList(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2515,7 +2444,7 @@ public abstract class DataSerializer {
     } else {
       LinkedList<E> list = new LinkedList<E>();
       for (int i = 0; i < size; i++) {
-        E element = DataSerializer.<E>readObject(in);
+        E element = DataSerializer.<E> readObject(in);
         list.add(element);
       }
 
@@ -2544,8 +2473,7 @@ public abstract class DataSerializer {
    *
    * @see #readHashSet
    */
-  public static void writeHashSet(HashSet<?> set, DataOutput out)
-    throws IOException {
+  public static void writeHashSet(HashSet<?> set, DataOutput out) throws IOException {
     InternalDataSerializer.writeSet(set, out);
   }
 
@@ -2560,8 +2488,7 @@ public abstract class DataSerializer {
    *
    * @see #writeHashSet
    */
-  public static <E> HashSet<E> readHashSet(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <E> HashSet<E> readHashSet(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2571,7 +2498,7 @@ public abstract class DataSerializer {
     } else {
       HashSet<E> set = new HashSet<E>(size);
       for (int i = 0; i < size; i++) {
-        E element = DataSerializer.<E>readObject(in);
+        E element = DataSerializer.<E> readObject(in);
         set.add(element);
       }
 
@@ -2598,8 +2525,7 @@ public abstract class DataSerializer {
    * @see #readLinkedHashSet
    * @since GemFire 5.7
    */
-  public static void writeLinkedHashSet(LinkedHashSet<?> set, DataOutput out)
-    throws IOException {
+  public static void writeLinkedHashSet(LinkedHashSet<?> set, DataOutput out) throws IOException {
     InternalDataSerializer.writeSet(set, out);
   }
 
@@ -2615,8 +2541,7 @@ public abstract class DataSerializer {
    * @see #writeLinkedHashSet
    * @since GemFire 5.7
    */
-  public static <E> LinkedHashSet<E> readLinkedHashSet(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <E> LinkedHashSet<E> readLinkedHashSet(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2626,7 +2551,7 @@ public abstract class DataSerializer {
     } else {
       LinkedHashSet<E> set = new LinkedHashSet<E>(size);
       for (int i = 0; i < size; i++) {
-        E element = DataSerializer.<E>readObject(in);
+        E element = DataSerializer.<E> readObject(in);
         set.add(element);
       }
 
@@ -2655,8 +2580,7 @@ public abstract class DataSerializer {
    *
    * @see #readHashMap
    */
-  public static void writeHashMap(Map<?,?> map, DataOutput out)
-    throws IOException {
+  public static void writeHashMap(Map<?, ?> map, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2671,7 +2595,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing HashMap with {} elements: {}", size, map);
     }
     if (size > 0) {
-      for (Map.Entry<?,?> entry: map.entrySet()) {
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
         writeObject(entry.getKey(), out);
         writeObject(entry.getValue(), out);
       }
@@ -2689,8 +2613,7 @@ public abstract class DataSerializer {
    *
    * @see #writeHashMap
    */
-  public static <K,V> HashMap<K,V> readHashMap(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <K, V> HashMap<K, V> readHashMap(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2698,10 +2621,10 @@ public abstract class DataSerializer {
     if (size == -1) {
       return null;
     } else {
-      HashMap<K,V> map = new HashMap<K,V>(size);
+      HashMap<K, V> map = new HashMap<K, V>(size);
       for (int i = 0; i < size; i++) {
-        K key = DataSerializer.<K>readObject(in);
-        V value = DataSerializer.<V>readObject(in);
+        K key = DataSerializer.<K> readObject(in);
+        V value = DataSerializer.<V> readObject(in);
         map.put(key, value);
       }
 
@@ -2727,8 +2650,7 @@ public abstract class DataSerializer {
    *
    * @see #readIdentityHashMap
    */
-  public static void writeIdentityHashMap(IdentityHashMap<?,?> map, DataOutput out)
-    throws IOException {
+  public static void writeIdentityHashMap(IdentityHashMap<?, ?> map, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2743,7 +2665,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing IdentityHashMap with {} elements: {}", size, map);
     }
     if (size > 0) {
-      for (Map.Entry<?,?> entry: map.entrySet()){
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
         writeObject(entry.getKey(), out);
         writeObject(entry.getValue(), out);
       }
@@ -2763,8 +2685,7 @@ public abstract class DataSerializer {
    *
    * @see #writeIdentityHashMap
    */
-  public static <K,V> IdentityHashMap<K,V> readIdentityHashMap(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <K, V> IdentityHashMap<K, V> readIdentityHashMap(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2772,10 +2693,10 @@ public abstract class DataSerializer {
     if (size == -1) {
       return null;
     } else {
-      IdentityHashMap<K,V> map = new IdentityHashMap<K,V>(size);
+      IdentityHashMap<K, V> map = new IdentityHashMap<K, V>(size);
       for (int i = 0; i < size; i++) {
-        K key = DataSerializer.<K>readObject(in);
-        V value = DataSerializer.<V>readObject(in);
+        K key = DataSerializer.<K> readObject(in);
+        V value = DataSerializer.<V> readObject(in);
         map.put(key, value);
       }
 
@@ -2806,18 +2727,17 @@ public abstract class DataSerializer {
    * @see #readConcurrentHashMap
    * @since GemFire 6.6
    */
-  public static void writeConcurrentHashMap(ConcurrentHashMap<?,?> map, DataOutput out)
-    throws IOException {
+  public static void writeConcurrentHashMap(ConcurrentHashMap<?, ?> map, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
     int size;
-    Collection<Map.Entry<?,?>> entrySnapshot = null;
+    Collection<Map.Entry<?, ?>> entrySnapshot = null;
     if (map == null) {
       size = -1;
     } else {
       // take a snapshot to fix bug 44562
-      entrySnapshot = new ArrayList<Map.Entry<?,?>>(map.entrySet());
+      entrySnapshot = new ArrayList<Map.Entry<?, ?>>(map.entrySet());
       size = entrySnapshot.size();
     }
     InternalDataSerializer.writeArrayLength(size, out);
@@ -2825,7 +2745,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing ConcurrentHashMap with {} elements: {}", size, entrySnapshot);
     }
     if (size > 0) {
-      for (Map.Entry<?,?> entry: entrySnapshot) {
+      for (Map.Entry<?, ?> entry : entrySnapshot) {
         writeObject(entry.getKey(), out);
         writeObject(entry.getValue(), out);
       }
@@ -2844,8 +2764,7 @@ public abstract class DataSerializer {
    * @see #writeConcurrentHashMap
    * @since GemFire 6.6
    */
-  public static <K,V> ConcurrentHashMap<K,V> readConcurrentHashMap(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <K, V> ConcurrentHashMap<K, V> readConcurrentHashMap(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2853,10 +2772,10 @@ public abstract class DataSerializer {
     if (size == -1) {
       return null;
     } else {
-      ConcurrentHashMap<K,V> map = new ConcurrentHashMap<K,V>(size);
+      ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>(size);
       for (int i = 0; i < size; i++) {
-        K key = DataSerializer.<K>readObject(in);
-        V value = DataSerializer.<V>readObject(in);
+        K key = DataSerializer.<K> readObject(in);
+        V value = DataSerializer.<V> readObject(in);
         map.put(key, value);
       }
 
@@ -2883,8 +2802,7 @@ public abstract class DataSerializer {
    * @see #readHashtable
    * @since GemFire 5.7
    */
-  public static void writeHashtable(Hashtable<?,?> map, DataOutput out)
-    throws IOException {
+  public static void writeHashtable(Hashtable<?, ?> map, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2899,7 +2817,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing Hashtable with {} elements: {}", size, map);
     }
     if (size > 0) {
-      for (Map.Entry<?,?> entry: map.entrySet()) {
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
         writeObject(entry.getKey(), out);
         writeObject(entry.getValue(), out);
       }
@@ -2918,8 +2836,7 @@ public abstract class DataSerializer {
    * @see #writeHashtable
    * @since GemFire 5.7
    */
-  public static <K,V> Hashtable<K,V> readHashtable(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <K, V> Hashtable<K, V> readHashtable(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -2927,10 +2844,10 @@ public abstract class DataSerializer {
     if (size == -1) {
       return null;
     } else {
-      Hashtable<K,V> map = new Hashtable<K,V>(size);
+      Hashtable<K, V> map = new Hashtable<K, V>(size);
       for (int i = 0; i < size; i++) {
-        K key = DataSerializer.<K>readObject(in);
-        V value = DataSerializer.<V>readObject(in);
+        K key = DataSerializer.<K> readObject(in);
+        V value = DataSerializer.<V> readObject(in);
         map.put(key, value);
       }
 
@@ -2958,8 +2875,7 @@ public abstract class DataSerializer {
    * @see #readTreeMap
    * @since GemFire 5.7
    */
-  public static void writeTreeMap(TreeMap<?,?> map, DataOutput out)
-    throws IOException {
+  public static void writeTreeMap(TreeMap<?, ?> map, DataOutput out) throws IOException {
 
     InternalDataSerializer.checkOut(out);
 
@@ -2975,7 +2891,7 @@ public abstract class DataSerializer {
     }
     if (size >= 0) {
       writeObject(map.comparator(), out);
-      for (Map.Entry<?,?> entry: map.entrySet()) {
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
         writeObject(entry.getKey(), out);
         writeObject(entry.getValue(), out);
       }
@@ -2994,8 +2910,7 @@ public abstract class DataSerializer {
    * @see #writeTreeMap
    * @since GemFire 5.7
    */
-  public static <K,V> TreeMap<K,V> readTreeMap(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <K, V> TreeMap<K, V> readTreeMap(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -3003,11 +2918,11 @@ public abstract class DataSerializer {
     if (size == -1) {
       return null;
     } else {
-      Comparator<? super K> c = InternalDataSerializer.<Comparator<? super K>>readNonPdxInstanceObject(in);
-      TreeMap<K,V> map = new TreeMap<K,V>(c);
+      Comparator<? super K> c = InternalDataSerializer.<Comparator<? super K>> readNonPdxInstanceObject(in);
+      TreeMap<K, V> map = new TreeMap<K, V>(c);
       for (int i = 0; i < size; i++) {
-        K key = DataSerializer.<K>readObject(in);
-        V value = DataSerializer.<V>readObject(in);
+        K key = DataSerializer.<K> readObject(in);
+        V value = DataSerializer.<V> readObject(in);
         map.put(key, value);
       }
 
@@ -3034,12 +2949,11 @@ public abstract class DataSerializer {
    *
    * @see #readTreeSet
    */
-  public static void writeTreeSet(TreeSet<?> set, DataOutput out)
-    throws IOException {
+  public static void writeTreeSet(TreeSet<?> set, DataOutput out) throws IOException {
     InternalDataSerializer.checkOut(out);
 
     int size;
-    
+
     if (set == null) {
       size = -1;
     } else {
@@ -3051,7 +2965,7 @@ public abstract class DataSerializer {
     }
     if (size >= 0) {
       writeObject(set.comparator(), out);
-      for (Object e: set) {
+      for (Object e : set) {
         writeObject(e, out);
       }
     }
@@ -3068,8 +2982,7 @@ public abstract class DataSerializer {
    *
    * @see #writeTreeSet
    */
-  public static <E> TreeSet<E> readTreeSet(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static <E> TreeSet<E> readTreeSet(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -3077,10 +2990,10 @@ public abstract class DataSerializer {
     if (size == -1) {
       return null;
     } else {
-      Comparator<? super E> c = InternalDataSerializer.<Comparator<? super E>>readNonPdxInstanceObject(in);
+      Comparator<? super E> c = InternalDataSerializer.<Comparator<? super E>> readNonPdxInstanceObject(in);
       TreeSet<E> set = new TreeSet<E>(c);
       for (int i = 0; i < size; i++) {
-        E element = DataSerializer.<E>readObject(in);
+        E element = DataSerializer.<E> readObject(in);
         set.add(element);
       }
 
@@ -3108,11 +3021,10 @@ public abstract class DataSerializer {
    *
    * @see #readProperties
    */
-  public static void writeProperties(Properties props, DataOutput out)
-      throws IOException {
+  public static void writeProperties(Properties props, DataOutput out) throws IOException {
     InternalDataSerializer.checkOut(out);
 
-    Set<Map.Entry<Object,Object>> s;
+    Set<Map.Entry<Object, Object>> s;
     int size;
     if (props == null) {
       s = null;
@@ -3126,7 +3038,7 @@ public abstract class DataSerializer {
       logger.trace(LogMarker.SERIALIZER, "Writing Properties with {} elements: {}", size, props);
     }
     if (size > 0) {
-      for (Map.Entry<Object,Object> entry: s) {
+      for (Map.Entry<Object, Object> entry : s) {
         // although we should have just String instances in a Properties
         // object our security code stores byte[] instances in them
         // so the following code must use writeObject instead of writeString.
@@ -3148,16 +3060,14 @@ public abstract class DataSerializer {
    *
    * @see #writeProperties
    */
-  public static Properties readProperties(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public static Properties readProperties(DataInput in) throws IOException, ClassNotFoundException {
 
     InternalDataSerializer.checkIn(in);
 
     int size = InternalDataSerializer.readArrayLength(in);
     if (size == -1) {
       return null;
-    }
-    else {
+    } else {
       Properties props = new Properties();
       for (int index = 0; index < size; index++) {
         Object key = readObject(in);
@@ -3204,22 +3114,20 @@ public abstract class DataSerializer {
    * @see Instantiator
    * @see ObjectOutputStream#writeObject
    */
-  public static final void writeObject(Object o, DataOutput out, boolean allowJavaSerialization)
-    throws IOException {
-    
-      if (allowJavaSerialization) {
-        writeObject(o, out);
-        return;
-      }
+  public static final void writeObject(Object o, DataOutput out, boolean allowJavaSerialization) throws IOException {
 
-      DISALLOW_JAVA_SERIALIZATION.set(Boolean.TRUE);
-      try {
-        writeObject(o, out);
-      } finally {
-        DISALLOW_JAVA_SERIALIZATION.set(Boolean.FALSE); // with JDK 1.5 this can be changed to remove()
-      }
+    if (allowJavaSerialization) {
+      writeObject(o, out);
+      return;
+    }
+
+    DISALLOW_JAVA_SERIALIZATION.set(Boolean.TRUE);
+    try {
+      writeObject(o, out);
+    } finally {
+      DISALLOW_JAVA_SERIALIZATION.set(Boolean.FALSE); // with JDK 1.5 this can be changed to remove()
+    }
   }
-
 
   /**
    * Writes an arbitrary object to a <code>DataOutput</code>.  If
@@ -3245,8 +3153,7 @@ public abstract class DataSerializer {
    * @see DataSerializer
    * @see ObjectOutputStream#writeObject
    */
-  public static final void writeObject(Object o, DataOutput out)
-    throws IOException {
+  public static final void writeObject(Object o, DataOutput out) throws IOException {
     InternalDataSerializer.basicWriteObject(o, out, false);
   }
 
@@ -3276,8 +3183,7 @@ public abstract class DataSerializer {
    * @see ObjectInputStream#readObject
    */
   @SuppressWarnings("unchecked")
-  public static final <T> T readObject(final DataInput in)
-    throws IOException, ClassNotFoundException {
+  public static final <T> T readObject(final DataInput in) throws IOException, ClassNotFoundException {
     return (T) InternalDataSerializer.basicReadObject(in);
   }
 
@@ -3322,6 +3228,7 @@ public abstract class DataSerializer {
   public static final DataSerializer register(Class<?> c) {
     return InternalDataSerializer.register(c, true);
   }
+
   /**
    * @deprecated as of 5.7 use {@link #register(Class)} instead
    */
@@ -3402,8 +3309,7 @@ public abstract class DataSerializer {
    * @return <code>false</code> if this <code>DataSerializer</code> does
    *         not know how to data serialize <code>o</code>.
    */
-  public abstract boolean toData(Object o, DataOutput out)
-    throws IOException;
+  public abstract boolean toData(Object o, DataOutput out) throws IOException;
 
   /**
    * Reads an object from a <code>DataInput</code>.
@@ -3416,8 +3322,7 @@ public abstract class DataSerializer {
    *
    * @see #toData
    */
-  public abstract Object fromData(DataInput in)
-    throws IOException, ClassNotFoundException;
+  public abstract Object fromData(DataInput in) throws IOException, ClassNotFoundException;
 
   /**
    * Returns the id of this <code>DataSerializer</code>.
@@ -3432,17 +3337,18 @@ public abstract class DataSerializer {
   @Override
   public boolean equals(Object o) {
     if (o instanceof DataSerializer) {
-      DataSerializer oDS = (DataSerializer)o;
+      DataSerializer oDS = (DataSerializer) o;
       return oDS.getId() == getId() && getClass().equals(oDS.getClass());
     } else {
       return false;
     }
   }
+
   @Override
   public int hashCode() {
     return getId();
   }
-  
+
   /**
    * For internal use only.
    * Sets the unique <code>eventId</code> of this
@@ -3450,9 +3356,9 @@ public abstract class DataSerializer {
    * @since GemFire 6.5
    */
   public final void setEventId(Object/*EventID*/ eventId) {
-    this.eventId = (EventID)eventId;
+    this.eventId = (EventID) eventId;
   }
-  
+
   /**
    * For internal use only.
    * Returns the unique <code>eventId</code> of this
@@ -3462,7 +3368,7 @@ public abstract class DataSerializer {
   public final Object/*EventID*/ getEventId() {
     return this.eventId;
   }
-  
+
   /**
    * For internal use only.
    * Sets the context of this
@@ -3470,9 +3376,9 @@ public abstract class DataSerializer {
    * @since GemFire 6.5
    */
   public final void setContext(Object/*ClientProxyMembershipID*/ context) {
-    this.context = (ClientProxyMembershipID)context;
+    this.context = (ClientProxyMembershipID) context;
   }
-  
+
   /**
    * For internal use only.
    * Returns the context of this
@@ -3482,7 +3388,7 @@ public abstract class DataSerializer {
   public final Object/*ClientProxyMembershipID*/ getContext() {
     return this.context;
   }
-  
+
   /**
    * maps a class to its enum constants.
    */
@@ -3498,7 +3404,7 @@ public abstract class DataSerializer {
    * @return enum constants for the given class
    */
   private static <E extends Enum> E[] getEnumConstantsForClass(Class<E> clazz) {
-    E[] returnVal = (E[])knownEnums.get(clazz);
+    E[] returnVal = (E[]) knownEnums.get(clazz);
     if (returnVal == null) {
       returnVal = clazz.getEnumConstants();
       knownEnums.put(clazz, returnVal);
@@ -3523,9 +3429,7 @@ public abstract class DataSerializer {
     InternalDataSerializer.checkOut(out);
 
     if (e == null) {
-      throw new NullPointerException(
-          LocalizedStrings.DataSerializer_ENUM_TO_SERIALIZE_IS_NULL
-              .toLocalizedString());
+      throw new NullPointerException(LocalizedStrings.DataSerializer_ENUM_TO_SERIALIZE_IS_NULL.toLocalizedString());
     }
 
     if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
@@ -3551,19 +3455,14 @@ public abstract class DataSerializer {
    *           if the wrong enum class/enum class with a different version and
    *           less enum constants is used
    */
-  public static <E extends Enum<E>> E readEnum(Class<E> clazz, DataInput in)
-      throws IOException {
+  public static <E extends Enum<E>> E readEnum(Class<E> clazz, DataInput in) throws IOException {
 
     InternalDataSerializer.checkIn(in);
 
     if (clazz == null) {
-      throw new NullPointerException(
-          LocalizedStrings.DataSerializer_ENUM_CLASS_TO_DESERIALIZE_IS_NULL
-              .toLocalizedString());
+      throw new NullPointerException(LocalizedStrings.DataSerializer_ENUM_CLASS_TO_DESERIALIZE_IS_NULL.toLocalizedString());
     } else if (!clazz.isEnum()) {
-      throw new IllegalArgumentException(
-          LocalizedStrings.DataSerializer_CLASS_0_NOT_ENUM
-              .toLocalizedString(clazz.getName()));
+      throw new IllegalArgumentException(LocalizedStrings.DataSerializer_CLASS_0_NOT_ENUM.toLocalizedString(clazz.getName()));
     }
 
     int ordinal = InternalDataSerializer.readArrayLength(in);
@@ -3571,4 +3470,3 @@ public abstract class DataSerializer {
     return getEnumConstantsForClass(clazz)[ordinal];
   }
 }
-

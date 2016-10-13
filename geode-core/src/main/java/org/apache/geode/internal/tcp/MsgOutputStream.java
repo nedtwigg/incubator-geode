@@ -43,11 +43,11 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
     }
     this.buffer.position(Connection.MSG_HEADER_BYTES);
   }
-  
+
   /** write the low-order 8 bits of the given int */
   @Override
   public final void write(int b) {
-    buffer.put((byte)b);
+    buffer.put((byte) b);
   }
 
   /** override OutputStream's write() */
@@ -59,15 +59,15 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
   private int size() {
     return this.buffer.position() - Connection.MSG_HEADER_BYTES;
   }
-  
+
   /** write the header after the message has been written to the
       stream */
   public final void setMessageHeader(int msgType, int processorType, short msgId) {
     buffer.putInt(Connection.MSG_HEADER_SIZE_OFFSET, Connection.calcHdrSize(size()));
-    buffer.put(Connection.MSG_HEADER_TYPE_OFFSET, (byte)(msgType&0xff));
+    buffer.put(Connection.MSG_HEADER_TYPE_OFFSET, (byte) (msgType & 0xff));
     buffer.putShort(Connection.MSG_HEADER_ID_OFFSET, msgId);
   }
-    
+
   public final void reset() {
     this.buffer.clear();
     this.buffer.position(Connection.MSG_HEADER_BYTES);
@@ -138,7 +138,7 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
      * @exception  IOException  if an I/O error occurs.
      */
   public final void writeShort(int v) throws IOException {
-    buffer.putShort((short)v);
+    buffer.putShort((short) v);
   }
 
   /**
@@ -161,7 +161,7 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
      * @exception  IOException  if an I/O error occurs.
      */
   public final void writeChar(int v) throws IOException {
-    buffer.putChar((char)v);
+    buffer.putChar((char) v);
   }
 
   /**
@@ -285,15 +285,15 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
         // I know this is a deprecated method but it is PERFECT for this impl.
         int pos = this.buffer.position();
         str.getBytes(0, strlen, this.buffer.array(), this.buffer.arrayOffset() + pos);
-        this.buffer.position(pos+strlen);
+        this.buffer.position(pos + strlen);
       } else {
         byte[] bytes = new byte[strlen];
         str.getBytes(0, strlen, bytes, 0);
         this.buffer.put(bytes);
       }
-//       for (int i = 0 ; i < len ; i++) {
-//         this.buffer.put((byte)s.charAt(i));
-//       }
+      //       for (int i = 0 ; i < len ; i++) {
+      //         this.buffer.put((byte)s.charAt(i));
+      //       }
     }
   }
 
@@ -318,7 +318,7 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
   public final void writeChars(String s) throws IOException {
     int len = s.length();
     if (len > 0) {
-      for (int i=0; i < len; i++) {
+      for (int i = 0; i < len; i++) {
         this.buffer.putChar(s.charAt(i));
       }
     }
@@ -377,6 +377,7 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
   public final void writeUTF(String str) throws IOException {
     writeFullUTF(str);
   }
+
   private final void writeFullUTF(String str) throws IOException {
     int strlen = str.length();
     if (strlen > 65535) {
@@ -385,27 +386,27 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
     // make room for worst case space 3 bytes for each char and 2 for len
     int utfSizeIdx = this.buffer.position();
     // skip bytes reserved for length
-    this.buffer.position(utfSizeIdx+2);
+    this.buffer.position(utfSizeIdx + 2);
     for (int i = 0; i < strlen; i++) {
       int c = str.charAt(i);
       if ((c >= 0x0001) && (c <= 0x007F)) {
-        this.buffer.put((byte)c);
+        this.buffer.put((byte) c);
       } else if (c > 0x07FF) {
         this.buffer.put((byte) (0xE0 | ((c >> 12) & 0x0F)));
-        this.buffer.put((byte) (0x80 | ((c >>  6) & 0x3F)));
-        this.buffer.put((byte) (0x80 | ((c >>  0) & 0x3F)));
+        this.buffer.put((byte) (0x80 | ((c >> 6) & 0x3F)));
+        this.buffer.put((byte) (0x80 | ((c >> 0) & 0x3F)));
       } else {
-        this.buffer.put((byte) (0xC0 | ((c >>  6) & 0x1F)));
-        this.buffer.put((byte) (0x80 | ((c >>  0) & 0x3F)));
+        this.buffer.put((byte) (0xC0 | ((c >> 6) & 0x1F)));
+        this.buffer.put((byte) (0x80 | ((c >> 0) & 0x3F)));
       }
     }
-    int utflen = this.buffer.position() - (utfSizeIdx+2);
+    int utflen = this.buffer.position() - (utfSizeIdx + 2);
     if (utflen > 65535) {
       // act as if we wrote nothing to this buffer
       this.buffer.position(utfSizeIdx);
       throw new UTFDataFormatException(LocalizedStrings.MsgOutputStream_STRING_TOO_LONG_FOR_JAVA_SERIALIZATION.toLocalizedString());
     }
-    this.buffer.putShort(utfSizeIdx, (short)utflen);
+    this.buffer.putShort(utfSizeIdx, (short) utflen);
   }
 
   /**
@@ -416,11 +417,11 @@ public class MsgOutputStream extends OutputStream implements ObjToByteArraySeria
   public void writeAsSerializedByteArray(Object v) throws IOException {
     ByteBuffer sizeBuf = this.buffer;
     int sizePos = sizeBuf.position();
-    sizeBuf.position(sizePos+5);
+    sizeBuf.position(sizePos + 5);
     final int preArraySize = size();
     DataSerializer.writeObject(v, this);
     int arraySize = size() - preArraySize;
     sizeBuf.put(sizePos, InternalDataSerializer.INT_ARRAY_LEN);
-    sizeBuf.putInt(sizePos+1, arraySize);
+    sizeBuf.putInt(sizePos + 1, arraySize);
   }
 }

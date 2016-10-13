@@ -16,8 +16,6 @@
  */
 package org.apache.geode.cache.util;
 
-
-
 /**
  * GatewayConflictResolver is a Cache-level plugin that is called upon to decide what to do
  * with events that originate in other systems and arrive through the WAN Gateway.  A

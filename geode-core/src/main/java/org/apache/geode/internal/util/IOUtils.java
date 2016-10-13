@@ -75,8 +75,7 @@ public abstract class IOUtils {
     if (obj != null) {
       try {
         obj.close();
-      }
-      catch (IOException ignore) {
+      } catch (IOException ignore) {
       }
     }
   }
@@ -135,8 +134,7 @@ public abstract class IOUtils {
     try {
       objIn = new ObjectInputStream(new ByteArrayInputStream(objBytes));
       return objIn.readObject();
-    }
-    finally {
+    } finally {
       close(objIn);
     }
   }
@@ -164,8 +162,7 @@ public abstract class IOUtils {
     try {
       objIn = new ClassLoaderObjectInputStream(new ByteArrayInputStream(objBytes), loader);
       return objIn.readObject();
-    }
-    finally {
+    } finally {
       close(objIn);
     }
   }
@@ -222,8 +219,7 @@ public abstract class IOUtils {
       objOut.flush();
 
       return out.toByteArray();
-    }
-    finally {
+    } finally {
       close(objOut);
     }
   }
@@ -249,8 +245,7 @@ public abstract class IOUtils {
         out.write(buffer, 0, bytesRead);
         out.flush();
       }
-    }
-    finally {
+    } finally {
       IOUtils.close(in);
       IOUtils.close(out);
     }
@@ -270,8 +265,7 @@ public abstract class IOUtils {
   public static File tryGetCanonicalFileElseGetAbsoluteFile(final File file) {
     try {
       return file.getCanonicalFile();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       return file.getAbsoluteFile();
     }
   }
@@ -288,8 +282,7 @@ public abstract class IOUtils {
   public static String tryGetCanonicalPathElseGetAbsolutePath(final File file) {
     try {
       return file.getCanonicalPath();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       return file.getAbsolutePath();
     }
   }

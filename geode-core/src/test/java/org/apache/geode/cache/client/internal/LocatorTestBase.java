@@ -152,12 +152,11 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
   }
 
   protected int addCacheServerInVM(VM vm, final String[] groups) {
-    SerializableCallable connect =
-        new SerializableCallable("Add Bridge server") {
-          public Object call() throws Exception {
-            return addCacheServer(groups);
-          }
-        };
+    SerializableCallable connect = new SerializableCallable("Add Bridge server") {
+      public Object call() throws Exception {
+        return addCacheServer(groups);
+      }
+    };
     Integer port = (Integer) vm.invoke(connect);
     return port.intValue();
   }
@@ -167,12 +166,11 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
   }
 
   protected int startBridgeServerInVM(VM vm, final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) {
-    SerializableCallable connect =
-        new SerializableCallable("Start bridge server") {
-          public Object call() throws IOException {
-            return startBridgeServer(groups, locators, regions, probe);
-          }
-        };
+    SerializableCallable connect = new SerializableCallable("Start bridge server") {
+      public Object call() throws IOException {
+        return startBridgeServer(groups, locators, regions, probe);
+      }
+    };
     Integer port = (Integer) vm.invoke(connect);
     return port.intValue();
   }
@@ -185,8 +183,7 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
     return startBridgeServer(groups, locators, regions, CacheServer.DEFAULT_LOAD_PROBE);
   }
 
-  protected int startBridgeServer(final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe)
-      throws IOException {
+  protected int startBridgeServer(final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) throws IOException {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, locators);
@@ -211,8 +208,7 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  protected int startBridgeServerWithEmbeddedLocator(final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe)
-      throws IOException {
+  protected int startBridgeServerWithEmbeddedLocator(final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) throws IOException {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, String.valueOf(0));
     props.setProperty(START_LOCATOR, locators);
@@ -238,14 +234,12 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  protected int startBridgeServerWithEmbeddedLocatorInVM(VM vm, final String[] groups, final String locators, final String[] regions,
-      final ServerLoadProbe probe) {
-    SerializableCallable connect =
-        new SerializableCallable("Start bridge server") {
-          public Object call() throws IOException {
-            return startBridgeServerWithEmbeddedLocator(groups, locators, regions, probe);
-          }
-        };
+  protected int startBridgeServerWithEmbeddedLocatorInVM(VM vm, final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) {
+    SerializableCallable connect = new SerializableCallable("Start bridge server") {
+      public Object call() throws IOException {
+        return startBridgeServerWithEmbeddedLocator(groups, locators, regions, probe);
+      }
+    };
     Integer port = (Integer) vm.invoke(connect);
     return port.intValue();
   }
@@ -256,11 +250,7 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
 
   protected void startBridgeClientInVM(VM vm, final String group, final String host, final int port, final String[] regions) throws Exception {
     PoolFactoryImpl pf = new PoolFactoryImpl(null);
-    pf.addLocator(host, port)
-        .setServerGroup(group)
-        .setPingInterval(200)
-        .setSubscriptionEnabled(true)
-        .setSubscriptionRedundancy(-1);
+    pf.addLocator(host, port).setServerGroup(group).setPingInterval(200).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1);
     startBridgeClientInVM(vm, pf.getPoolAttributes(), regions);
   }
 
@@ -283,11 +273,7 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
 
   protected void startBridgeClient(final String group, final String host, final int port, final String[] regions) throws Exception {
     PoolFactoryImpl pf = new PoolFactoryImpl(null);
-    pf.addLocator(host, port)
-        .setServerGroup(group)
-        .setPingInterval(200)
-        .setSubscriptionEnabled(true)
-        .setSubscriptionRedundancy(-1);
+    pf.addLocator(host, port).setServerGroup(group).setPingInterval(200).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1);
     startBridgeClient(pf.getPoolAttributes(), regions);
   }
 
@@ -332,10 +318,7 @@ public abstract class LocatorTestBase extends JUnit4DistributedTestCase {
   public String getLocatorString(Host host, int[] locatorPorts) {
     StringBuffer str = new StringBuffer();
     for (int i = 0; i < locatorPorts.length; i++) {
-      str.append(NetworkUtils.getServerHostName(host))
-          .append("[")
-          .append(locatorPorts[i])
-          .append("]");
+      str.append(NetworkUtils.getServerHostName(host)).append("[").append(locatorPorts[i]).append("]");
       if (i < locatorPorts.length - 1) {
         str.append(",");
       }

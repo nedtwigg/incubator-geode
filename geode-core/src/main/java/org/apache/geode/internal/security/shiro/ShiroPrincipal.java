@@ -24,7 +24,7 @@ import org.apache.shiro.subject.Subject;
 public class ShiroPrincipal implements Principal {
   private Subject subject;
 
-  public ShiroPrincipal(Subject subject){
+  public ShiroPrincipal(Subject subject) {
     this.subject = subject;
   }
 
@@ -33,7 +33,7 @@ public class ShiroPrincipal implements Principal {
     return subject.getPrincipal().toString();
   }
 
-  public Subject getSubject(){
+  public Subject getSubject() {
     return subject;
   }
 }

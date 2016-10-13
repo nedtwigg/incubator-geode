@@ -20,8 +20,7 @@ import java.util.Set;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.i18n.LogWriterI18n;
 
-public class StartupMessageReplyProcessor extends ReplyProcessor21
-{
+public class StartupMessageReplyProcessor extends ReplyProcessor21 {
   /** has a rejection message (license mismatch, etc) been received? */
   private boolean receivedRejectionMessage;
 
@@ -43,7 +42,7 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21
     dm.removeUnfinishedStartup(m, true);
     return result;
   }
-  
+
   protected boolean getReceivedRejectionMessage() {
     return this.receivedRejectionMessage;
   }
@@ -51,7 +50,7 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21
   protected boolean getReceivedAcceptance() {
     return this.receivedAcceptance;
   }
-  
+
   protected void setReceivedRejectionMessage(boolean v) {
     this.receivedRejectionMessage = v;
   }
@@ -67,7 +66,7 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21
     if (stillWaiting()) {
       InternalDistributedMember[] memberList = getMembers();
       synchronized (memberList) {
-        for (int i=0; i < memberList.length; i++) {
+        for (int i = 0; i < memberList.length; i++) {
           InternalDistributedMember m = memberList[i];
           if (m != null) {
             s.add(m);
@@ -76,14 +75,13 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21
       }
     }
   }
-  
+
   @Override
   public void process(DistributionMessage msg) {
     final LogWriterI18n log = this.system.getLogWriter().convertToLogWriterI18n();
     super.process(msg);
     if (log.fineEnabled()) {
-      log.fine(this.toString() + " done processing " + msg + " from " +
-               msg.getSender());
+      log.fine(this.toString() + " done processing " + msg + " from " + msg.getSender());
     }
   }
 
@@ -96,16 +94,16 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21
     // because this is the startup message and we do not yet have any
     // members in the dm's list.
     mgr.addMembershipListener(this);
-//     Set activeMembers = mgr.addMembershipListenerAndGetDistributionManagerIds(this);
-//     synchronized (this.members) {
-//       for (int i = 0; i < getMembers().length; i++) {
-//         if (!activeMembers.contains(getMembers()[i])) {
-//           memberDeparted(getMembers()[i], false);
-//         }
-//       }
-//     }
+    //     Set activeMembers = mgr.addMembershipListenerAndGetDistributionManagerIds(this);
+    //     synchronized (this.members) {
+    //       for (int i = 0; i < getMembers().length; i++) {
+    //         if (!activeMembers.contains(getMembers()[i])) {
+    //           memberDeparted(getMembers()[i], false);
+    //         }
+    //       }
+    //     }
   }
-  
+
   /** overridden from ReplyProcessor21 to allow early-out. 
    * If an existing member accepted or rejected us then we are done.
    */
@@ -113,6 +111,5 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21
   protected boolean canStopWaiting() {
     return this.receivedAcceptance || this.receivedRejectionMessage;
   }
-  
-  
+
 }

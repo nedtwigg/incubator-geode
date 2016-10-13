@@ -59,22 +59,20 @@ import org.apache.geode.test.dunit.VM;
 @Category(DistributedTest.class)
 public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCase {
 
-	/* SerializableRunnable object to create a PR */
-	CacheSerializableRunnable createPrRegionWithDS_DACK = new CacheSerializableRunnable("createPrRegionWithDS") {
+  /* SerializableRunnable object to create a PR */
+  CacheSerializableRunnable createPrRegionWithDS_DACK = new CacheSerializableRunnable("createPrRegionWithDS") {
 
-		public void run2() throws CacheException {
-			Cache cache = getCache();
-			AttributesFactory attr = new AttributesFactory();
-			PartitionAttributesFactory paf = new PartitionAttributesFactory();
-			paf.setTotalNumBuckets(5);
-			PartitionAttributes prAttr = paf.create();
-			attr.setPartitionAttributes(prAttr);
-			RegionAttributes regionAttribs = attr.create();
-			cache.createRegion("PR1",
-                                                    regionAttribs);
-		}
-	};
-
+    public void run2() throws CacheException {
+      Cache cache = getCache();
+      AttributesFactory attr = new AttributesFactory();
+      PartitionAttributesFactory paf = new PartitionAttributesFactory();
+      paf.setTotalNumBuckets(5);
+      PartitionAttributes prAttr = paf.create();
+      attr.setPartitionAttributes(prAttr);
+      RegionAttributes regionAttribs = attr.create();
+      cache.createRegion("PR1", regionAttribs);
+    }
+  };
 
   public StreamingPartitionOperationManyDUnitTest() {
     super();
@@ -82,7 +80,7 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
 
   @Test
   public void testStreamingManyProvidersNoExceptions() throws Exception {
-//    final String name = this.getUniqueName();
+    //    final String name = this.getUniqueName();
 
     // ask four other VMs to connect to the distributed system
     // and create partitioned region; this will be the data provider
@@ -100,8 +98,7 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
     // also create the PR here so we can get the regionId
     createPrRegionWithDS_DACK.run2();
 
-    int regionId = ((PartitionedRegion)getCache().getRegion("PR1")).getPRId();
-
+    int regionId = ((PartitionedRegion) getCache().getRegion("PR1")).getPRId();
 
     // get the other member id that connected
     // by getting the list of other member ids and
@@ -113,9 +110,8 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
 
   }
 
-
   // about 100 chunks worth of integers?
-  protected static final int NUM_INTEGERS = 32*1024 /* default socket buffer size*/ * 100 / 4;
+  protected static final int NUM_INTEGERS = 32 * 1024 /* default socket buffer size*/ * 100 / 4;
 
   public static class TestStreamingPartitionOperationManyProviderNoExceptions extends StreamingPartitionOperation {
     volatile boolean dataValidated = false;
@@ -136,10 +132,10 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
 
       int numChunks = -1;
 
-      ConcurrentMap chunkMap = (ConcurrentMap)senderMap.get(sender);
+      ConcurrentMap chunkMap = (ConcurrentMap) senderMap.get(sender);
       if (chunkMap == null) {
         chunkMap = new ConcurrentHashMap();
-        ConcurrentMap chunkMap2 = (ConcurrentMap)this.senderMap.putIfAbsent(sender, chunkMap);
+        ConcurrentMap chunkMap2 = (ConcurrentMap) this.senderMap.putIfAbsent(sender, chunkMap);
         if (chunkMap2 != null) {
           chunkMap = chunkMap2;
         }
@@ -159,20 +155,20 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
         }
       }
 
-      Integer numChunksI = (Integer)senderNumChunksMap.get(sender);
+      Integer numChunksI = (Integer) senderNumChunksMap.get(sender);
       if (numChunksI != null) {
         numChunks = numChunksI.intValue();
       }
 
       // are we completely done with all senders ?
-      if (chunkMap.size() == numChunks  &&   // done with this sender
-          senderMap.size() == 4) {           // we've heard from all 4 senders
-        boolean completelyDone = true;       // start with true assumption
-        for (Iterator itr = senderMap.entrySet().iterator(); itr.hasNext(); ) {
-          Map.Entry entry = (Map.Entry)itr.next();
-          InternalDistributedMember senderV = (InternalDistributedMember)entry.getKey();
-          ConcurrentMap chunkMapV = (ConcurrentMap)entry.getValue();
-          Integer numChunksV = (Integer)senderNumChunksMap.get(senderV);
+      if (chunkMap.size() == numChunks && // done with this sender
+          senderMap.size() == 4) { // we've heard from all 4 senders
+        boolean completelyDone = true; // start with true assumption
+        for (Iterator itr = senderMap.entrySet().iterator(); itr.hasNext();) {
+          Map.Entry entry = (Map.Entry) itr.next();
+          InternalDistributedMember senderV = (InternalDistributedMember) entry.getKey();
+          ConcurrentMap chunkMapV = (ConcurrentMap) entry.getValue();
+          Integer numChunksV = (Integer) senderNumChunksMap.get(senderV);
           if (chunkMapV == null || numChunksV == null || chunkMapV.size() != numChunksV.intValue()) {
             completelyDone = false;
           }
@@ -189,19 +185,19 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
       LogWriter logger = this.sys.getLogWriter();
       logger.info("Validating data...");
       try {
-        for (Iterator senderItr = this.senderMap.entrySet().iterator(); senderItr.hasNext(); ) {
-          Map.Entry entry = (Map.Entry)senderItr.next();
-          ConcurrentMap chunkMap = (ConcurrentMap)entry.getValue();
-          InternalDistributedMember sender = (InternalDistributedMember)entry.getKey();
+        for (Iterator senderItr = this.senderMap.entrySet().iterator(); senderItr.hasNext();) {
+          Map.Entry entry = (Map.Entry) senderItr.next();
+          ConcurrentMap chunkMap = (ConcurrentMap) entry.getValue();
+          InternalDistributedMember sender = (InternalDistributedMember) entry.getKey();
           List[] arrayOfLists = new ArrayList[chunkMap.size()];
           List objList;
           int expectedInt = 0;
 
           // sort the input streams
-          for (Iterator itr = chunkMap.entrySet().iterator(); itr.hasNext(); ) {
-            Map.Entry entry2 = (Map.Entry)itr.next();
-            int seqNum = ((Integer)entry2.getKey()).intValue();
-            objList = (List)entry2.getValue();
+          for (Iterator itr = chunkMap.entrySet().iterator(); itr.hasNext();) {
+            Map.Entry entry2 = (Map.Entry) itr.next();
+            int seqNum = ((Integer) entry2.getKey()).intValue();
+            objList = (List) entry2.getValue();
             arrayOfLists[seqNum] = objList;
           }
 
@@ -210,7 +206,7 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
             Iterator itr = arrayOfLists[i].iterator();
             Integer nextInteger;
             while (itr.hasNext()) {
-              nextInteger = (Integer)itr.next();
+              nextInteger = (Integer) itr.next();
               if (nextInteger.intValue() != expectedInt) {
                 logger.severe("nextInteger.intValue() != expectedInt");
                 return;
@@ -225,8 +221,7 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
           }
           logger.info("Received " + count + " integers from " + sender + " in " + chunkMap.size() + " chunks");
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.severe("Validation exception", e);
       }
       logger.info("Successful validation");
@@ -246,14 +241,14 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
       super(recipients, regionId, processor);
     }
 
-    protected Object getNextReplyObject(PartitionedRegion pr)
-    throws ReplyException {
+    protected Object getNextReplyObject(PartitionedRegion pr) throws ReplyException {
       if (++count > NUM_INTEGERS) {
         return Token.END_OF_STREAM;
       }
       nextInt += 10;
       return new Integer(nextInt);
     }
+
     public int getDSFID() {
       return NO_FIXED_ID;
     }

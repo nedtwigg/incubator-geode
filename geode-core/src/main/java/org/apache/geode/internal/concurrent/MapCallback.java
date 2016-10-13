@@ -134,8 +134,7 @@ public interface MapCallback<K, V, C, P> {
    * @param removeParams
    *          parameters, if any, to be passed for cleanup of the object
    */
-  public Object removeValue(Object key, Object value, V existingValue,
-      C context, P removeParams);
+  public Object removeValue(Object key, Object value, V existingValue, C context, P removeParams);
 
   /**
    * Invoked after removal of an entry. Some implementations
@@ -156,8 +155,7 @@ public interface MapCallback<K, V, C, P> {
    * @param removeParams
    *          parameters, if any, to be passed for cleanup of the object
    */
-  public void postRemove(Object key, Object value, V existingValue, C context,
-      P removeParams);
+  public void postRemove(Object key, Object value, V existingValue, C context, P removeParams);
 
   /**
    * Invoked when an existing value in map is read by the <code>replace</code>
@@ -179,8 +177,7 @@ public interface MapCallback<K, V, C, P> {
    * @return updated value to be actually put in the map, if non-null; if null
    *         then retry the map operation internally
    */
-  public V replaceValue(K key, V oldValue, V existingValue, V newValue,
-      C context, P params);
+  public V replaceValue(K key, V oldValue, V existingValue, V newValue, C context, P params);
 
   /**
    * Invoked after the node is found and just before the replace. The replace
@@ -212,8 +209,7 @@ public interface MapCallback<K, V, C, P> {
    * @param params
    *          any callback parameters passed to the replace method
    */
-  public void afterReplace(K mapKey, V newValue, Object beforeResult,
-      C context, P params);
+  public void afterReplace(K mapKey, V newValue, Object beforeResult, C context, P params);
 
   /**
    * Invoked after replace fails and passing it the result of
@@ -230,8 +226,7 @@ public interface MapCallback<K, V, C, P> {
    * @param params
    *          any callback parameters passed to the replace method
    */
-  public void onReplaceFailed(K mapKey, V newValue, Object beforeResult,
-      C context, P params);
+  public void onReplaceFailed(K mapKey, V newValue, Object beforeResult, C context, P params);
 
   /**
    * Invoked after replace or delete fails at the end, passing it the
@@ -258,8 +253,7 @@ public interface MapCallback<K, V, C, P> {
    * @return value to be returned as result of operation ignoring failure (or
    *         null for failure)
    */
-  public V onOperationFailed(K key, Object oldValue, V updatedValue,
-      V newValue, C context, P params);
+  public V onOperationFailed(K key, Object oldValue, V updatedValue, V newValue, C context, P params);
 
   /**
    * Invoked by some implementations like ConcurrentTHashSet to in its toArray.

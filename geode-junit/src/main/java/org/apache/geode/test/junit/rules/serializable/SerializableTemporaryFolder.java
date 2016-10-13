@@ -58,7 +58,7 @@ public class SerializableTemporaryFolder extends TemporaryFolder implements Seri
 
     SerializationProxy(final SerializableTemporaryFolder instance) {
       this.parentFolder = (File) readField(TemporaryFolder.class, instance, FIELD_PARENT_FOLDER);
-      this.folder =(File) readField(TemporaryFolder.class, instance, FIELD_FOLDER);
+      this.folder = (File) readField(TemporaryFolder.class, instance, FIELD_FOLDER);
     }
 
     private Object readResolve() {

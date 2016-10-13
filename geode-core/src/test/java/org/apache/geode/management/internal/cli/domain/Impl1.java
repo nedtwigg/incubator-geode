@@ -16,6 +16,6 @@
  */
 package org.apache.geode.management.internal.cli.domain;
 
-public class Impl1 implements Interface1{
+public class Impl1 implements Interface1 {
 
 }

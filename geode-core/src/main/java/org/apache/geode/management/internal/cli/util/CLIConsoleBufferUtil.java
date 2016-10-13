@@ -20,17 +20,17 @@ import jline.console.ConsoleReader;
 import org.apache.geode.management.internal.cli.shell.Gfsh;
 
 public class CLIConsoleBufferUtil {
-  public static String processMessegeForExtraCharactersFromConsoleBuffer(String messege){
-    
-    ConsoleReader reader = Gfsh.getConsoleReader();    
+  public static String processMessegeForExtraCharactersFromConsoleBuffer(String messege) {
+
+    ConsoleReader reader = Gfsh.getConsoleReader();
     if (reader != null) {
       int bufferLength = reader.getCursorBuffer().length();
-      if(bufferLength > messege.length()){
+      if (bufferLength > messege.length()) {
         int appendSpaces = bufferLength - messege.length();
-        for(int i = 0; i < appendSpaces; i++){
+        for (int i = 0; i < appendSpaces; i++) {
           messege = messege + " ";
         }
-      }   
+      }
     }
     return messege;
   }

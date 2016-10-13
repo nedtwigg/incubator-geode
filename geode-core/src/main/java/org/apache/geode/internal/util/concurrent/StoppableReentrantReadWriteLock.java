@@ -35,19 +35,19 @@ import org.apache.geode.internal.Assert;
  * that respond to cancellation
  *
  */
-public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ java.io.Serializable  {
+public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ java.io.Serializable {
   private static final long serialVersionUID = -1185707921434766946L;
-  
+
   /**
    * The underlying read lock
    */
   transient private final StoppableReadLock readLock;
-  
+
   /**
    * the underlying write lock
    */
   transient private final StoppableWriteLock writeLock;
-  
+
   /**
    * This is how often waiters will wake up to check for cancellation
    */
@@ -73,14 +73,14 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
   public StoppableReadLock readLock() {
     return readLock;
   }
-  
+
   /**
    * @return the write lock
    */
   public StoppableWriteLock writeLock() {
     return writeLock;
   }
-  
+
   /**
    * read locks that are stoppable
    */
@@ -88,7 +88,7 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
 
     private final Lock lock;
     private final CancelCriterion stopper;
-    
+
     /**
      * Create a new read lock from the given lock
      * @param lock the lock to be used
@@ -97,7 +97,7 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
     StoppableReadLock(ReadWriteLock lock, CancelCriterion stopper) {
       this.lock = lock.readLock();
       this.stopper = stopper;
-      }
+    }
 
     public void lock() {
       boolean interrupted = Thread.interrupted();
@@ -106,13 +106,13 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
           try {
             lockInterruptibly();
             break;
-          }
-          catch (InterruptedException e) {
+          } catch (InterruptedException e) {
             interrupted = true;
           }
         } // for
       } finally {
-        if (interrupted) Thread.currentThread().interrupt();
+        if (interrupted)
+          Thread.currentThread().interrupt();
       }
     }
 
@@ -149,26 +149,26 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
       lock.unlock();
     }
 
-//     /**
-//      * @return the new condition
-//      */
-//     public StoppableCondition newCondition() {
-//       return new StoppableCondition(lock.newCondition(), stopper);
-//     }
+    //     /**
+    //      * @return the new condition
+    //      */
+    //     public StoppableCondition newCondition() {
+    //       return new StoppableCondition(lock.newCondition(), stopper);
+    //     }
   }
-  
+
   static public class StoppableWriteLock {
-    
+
     /**
      * The underlying write lock
      */
     private final Lock lock;
-    
+
     /**
      * the cancellation criterion
      */
     private final CancelCriterion stopper;
-    
+
     /**
      * Create a new instance
      * @param lock the underlying lock
@@ -177,7 +177,7 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
     public StoppableWriteLock(ReadWriteLock lock, CancelCriterion stopper) {
       this.lock = lock.writeLock();
       this.stopper = stopper;
-      }
+    }
 
     public void lock() {
       boolean interrupted = Thread.interrupted();
@@ -186,13 +186,13 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
           try {
             lockInterruptibly();
             break;
-          }
-          catch (InterruptedException e) {
+          } catch (InterruptedException e) {
             interrupted = true;
           }
         } // for
       } finally {
-        if (interrupted) Thread.currentThread().interrupt();
+        if (interrupted)
+          Thread.currentThread().interrupt();
       }
     }
 
@@ -231,12 +231,12 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
       lock.unlock();
     }
 
-//     /**
-//      * @return the new condition
-//      */
-//     public StoppableCondition newCondition() {
-//       return new StoppableCondition(lock.newCondition(), stopper);
-//     }
-    
+    //     /**
+    //      * @return the new condition
+    //      */
+    //     public StoppableCondition newCondition() {
+    //       return new StoppableCondition(lock.newCondition(), stopper);
+    //     }
+
   }
 }

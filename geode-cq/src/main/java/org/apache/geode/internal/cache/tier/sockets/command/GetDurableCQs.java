@@ -48,8 +48,7 @@ public class GetDurableCQs extends BaseCQCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
     AcceptorImpl acceptor = servConn.getAcceptor();
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
     ClientProxyMembershipID id = servConn.getProxyID();
@@ -66,8 +65,7 @@ public class GetDurableCQs extends BaseCQCommand {
     CqService cqServiceForExec = null;
 
     try {
-      qService = (DefaultQueryService) ((GemFireCacheImpl) crHelper.getCache())
-          .getLocalQueryService();
+      qService = (DefaultQueryService) ((GemFireCacheImpl) crHelper.getCache()).getLocalQueryService();
 
       this.securityService.authorizeClusterRead();
 
@@ -103,8 +101,7 @@ public class GetDurableCQs extends BaseCQCommand {
       sendDurableCqsResponseChunk(durableCqList, true, servConn);
 
     } catch (CqException cqe) {
-      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(),
-          cqe, servConn);
+      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(), cqe, servConn);
       return;
     } catch (Exception e) {
       writeChunkedException(msg, e, false, servConn);
@@ -112,8 +109,7 @@ public class GetDurableCQs extends BaseCQCommand {
     }
   }
 
-  private void sendDurableCqsResponseChunk(List list, boolean lastChunk,
-      ServerConnection servConn) throws IOException {
+  private void sendDurableCqsResponseChunk(List list, boolean lastChunk, ServerConnection servConn) throws IOException {
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
 
     chunkedResponseMsg.setNumberOfParts(1);
@@ -126,6 +122,5 @@ public class GetDurableCQs extends BaseCQCommand {
 
     chunkedResponseMsg.sendChunk(servConn);
   }
-
 
 }

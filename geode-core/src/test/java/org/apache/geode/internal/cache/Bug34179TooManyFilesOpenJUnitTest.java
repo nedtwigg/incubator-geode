@@ -47,24 +47,24 @@ public class Bug34179TooManyFilesOpenJUnitTest extends DiskRegionTestingBase {
   private LogWriter log = null;
 
   private DiskRegionProperties diskProps = new DiskRegionProperties();
- 
+
   @Override
   protected final void postSetUp() throws Exception {
-    File file1 = new File("testingDirectory/" + getName()+ "1");
+    File file1 = new File("testingDirectory/" + getName() + "1");
     file1.mkdir();
     file1.deleteOnExit();
     dirs = new File[1];
     dirs[0] = file1;
     diskProps.setDiskDirs(dirs);
-     
+
     diskProps.setPersistBackup(true);
     diskProps.setTimeInterval(15000l);
     diskProps.setBytesThreshold(10000l);
     diskProps.setRolling(true);
     //set max oplog size as 10 kb
     diskProps.setMaxOplogSize(10240);
-    region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache,diskProps);
-    
+    region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
+
     log = ds.getLogWriter();
   }
 
@@ -75,7 +75,7 @@ public class Bug34179TooManyFilesOpenJUnitTest extends DiskRegionTestingBase {
   @Test
   public void testPopulate1kbwrites() {
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
+    Arrays.fill(value, (byte) 77);
     for (int i = 0; i < OP_COUNT; i++) {
       region.put(new Integer(i), value);
     }
@@ -93,5 +93,5 @@ public class Bug34179TooManyFilesOpenJUnitTest extends DiskRegionTestingBase {
       }
     }
   }
-  
+
 }// end of Bug34179TooManyFilesOpenJUnitTest

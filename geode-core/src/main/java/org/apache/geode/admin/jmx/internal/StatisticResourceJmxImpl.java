@@ -39,19 +39,16 @@ import org.apache.geode.internal.logging.LogService;
  * @since GemFire     3.5
  *
  */
-public class StatisticResourceJmxImpl 
-extends org.apache.geode.admin.internal.StatisticResourceImpl
-implements javax.management.NotificationListener, 
-           org.apache.geode.admin.jmx.internal.ManagedResource {
+public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.StatisticResourceImpl implements javax.management.NotificationListener, org.apache.geode.admin.jmx.internal.ManagedResource {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** 
    * Interval in seconds between refreshes. Values less than one results in no 
    * refreshing .
    */
   private int refreshInterval = 0;
-  
+
   /** The JMX object name of this managed resource */
   private ObjectName objectName;
 
@@ -61,7 +58,7 @@ implements javax.management.NotificationListener,
   // -------------------------------------------------------------------------
   //   Constructor(s)
   // -------------------------------------------------------------------------
-  
+
   /**
    * Constructor for the StatisticResource object
    *
@@ -70,36 +67,27 @@ implements javax.management.NotificationListener,
    * @exception org.apache.geode.admin.AdminException 
    *            if unable to create this StatisticResource for administration
    */
-  public StatisticResourceJmxImpl(StatResource statResource,
-                                  SystemMemberJmx member)
-                           throws org.apache.geode.admin.AdminException {
+  public StatisticResourceJmxImpl(StatResource statResource, SystemMemberJmx member) throws org.apache.geode.admin.AdminException {
     super(statResource, member);
     initializeMBean();
   }
 
   /** Create and register the MBean to manage this resource */
-  private void initializeMBean() 
-  throws org.apache.geode.admin.AdminException {
-    this.mbeanName = new StringBuffer("GemFire.Statistic:")
-                      .append("source=").append(MBeanUtil.makeCompliantMBeanNameProperty(this.member.getId()))
-                      .append(",type=").append(MBeanUtil.makeCompliantMBeanNameProperty(getType()))
-                      .append(",name=").append(MBeanUtil.makeCompliantMBeanNameProperty(getName()))
-                      .append(",uid=").append(getUniqueId()).toString();
-      
-    this.objectName =
-      MBeanUtil.createMBean(this, 
-        addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
+  private void initializeMBean() throws org.apache.geode.admin.AdminException {
+    this.mbeanName = new StringBuffer("GemFire.Statistic:").append("source=").append(MBeanUtil.makeCompliantMBeanNameProperty(this.member.getId())).append(",type=").append(MBeanUtil.makeCompliantMBeanNameProperty(getType())).append(",name=").append(MBeanUtil.makeCompliantMBeanNameProperty(getName())).append(",uid=").append(getUniqueId()).toString();
+
+    this.objectName = MBeanUtil.createMBean(this, addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
 
     // Refresh Interval
-    AdminDistributedSystemJmxImpl sysJmx = (AdminDistributedSystemJmxImpl)this.member.getDistributedSystem();
-    if (sysJmx.getRefreshInterval()>0)
+    AdminDistributedSystemJmxImpl sysJmx = (AdminDistributedSystemJmxImpl) this.member.getDistributedSystem();
+    if (sysJmx.getRefreshInterval() > 0)
       this.refreshInterval = sysJmx.getRefreshInterval();
   }
 
   // -------------------------------------------------------------------------
   //   MBean attributes - accessors/mutators
   // -------------------------------------------------------------------------
-  
+
   /**
    * Gets the interval in seconds between statistics refreshes
    *
@@ -117,18 +105,15 @@ implements javax.management.NotificationListener,
    * @param refreshInterval  the new refresh interval in seconds
    */
   private void _setRefreshInterval(int refreshInterval) {
-    boolean isRegistered = MBeanUtil.isRefreshNotificationRegistered(this,
-        RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS);
+    boolean isRegistered = MBeanUtil.isRefreshNotificationRegistered(this, RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS);
 
     if (isRegistered && (getRefreshInterval() == refreshInterval))
       return;
 
     try {
-      MBeanUtil.registerRefreshNotification(
-          this, // NotificationListener
+      MBeanUtil.registerRefreshNotification(this, // NotificationListener
           getMBeanName(), // User Data as MBean Name
-          RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS, 
-          refreshInterval); // int
+          RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS, refreshInterval); // int
 
       this.refreshInterval = refreshInterval;
       timerInited = true;
@@ -151,7 +136,7 @@ implements javax.management.NotificationListener,
       this.refreshInterval = 0; // zero out to avoid more exceptions
     }
   }
-  
+
   /**
    * RefreshInterval is now set only through the AdminDistributedSystem property
    * refreshInterval. Attempt to set refreshInterval on StatisticResourceJmx
@@ -163,12 +148,10 @@ implements javax.management.NotificationListener,
    * @deprecated since 6.0 use DistributedSystemConfig.refreshInterval instead
    */
   @Deprecated
-  public void setRefreshInterval(int refreshInterval)
-      throws OperationNotSupportedException {
-    throw new OperationNotSupportedException(
-        LocalizedStrings.MANAGED_RESOURCE_REFRESH_INTERVAL_CANT_BE_SET_DIRECTLY.toLocalizedString());
+  public void setRefreshInterval(int refreshInterval) throws OperationNotSupportedException {
+    throw new OperationNotSupportedException(LocalizedStrings.MANAGED_RESOURCE_REFRESH_INTERVAL_CANT_BE_SET_DIRECTLY.toLocalizedString());
   }
-  
+
   // -------------------------------------------------------------------------
   //   JMX Notification listener
   // -------------------------------------------------------------------------
@@ -187,15 +170,11 @@ implements javax.management.NotificationListener,
    *          handback object is unused
    */
   public void handleNotification(Notification notification, Object hb) {
-    AdminDistributedSystemJmxImpl adminDSJmx = 
-      (AdminDistributedSystemJmxImpl) this.member.getDistributedSystem();
-    
-    String typeStatResourceStats = 
-              RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS.getType();
-    
-    if (typeStatResourceStats.equals(notification.getType()) && 
-        getMBeanName().equals(notification.getUserData()) &&
-        !adminDSJmx.isRmiClientCountZero()) {
+    AdminDistributedSystemJmxImpl adminDSJmx = (AdminDistributedSystemJmxImpl) this.member.getDistributedSystem();
+
+    String typeStatResourceStats = RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS.getType();
+
+    if (typeStatResourceStats.equals(notification.getType()) && getMBeanName().equals(notification.getUserData()) && !adminDSJmx.isRmiClientCountZero()) {
       try {
         refresh();
 
@@ -227,11 +206,11 @@ implements javax.management.NotificationListener,
       }
     }
   }
-  
+
   // -------------------------------------------------------------------------
   //   Create MBean attributes for each Statistic
   // -------------------------------------------------------------------------
-  
+
   /**
    * Add MBean attribute definitions for each Statistic.
    *
@@ -239,14 +218,13 @@ implements javax.management.NotificationListener,
    * @return a new instance of ManagedBean copied from <code>managed</code> but 
    *         with the new attributes added
    */
-  ManagedBean addDynamicAttributes(ManagedBean managed) 
-  throws org.apache.geode.admin.AdminException {
+  ManagedBean addDynamicAttributes(ManagedBean managed) throws org.apache.geode.admin.AdminException {
     if (managed == null) {
       throw new IllegalArgumentException(LocalizedStrings.StatisticResourceJmxImpl_MANAGEDBEAN_IS_NULL.toLocalizedString());
     }
-    
+
     refresh(); // to get the stats...
-    
+
     // need to create a new instance of ManagedBean to clean the "slate"...
     ManagedBean newManagedBean = new DynamicManagedBean(managed);
     for (int i = 0; i < this.statistics.length; i++) {
@@ -262,7 +240,7 @@ implements javax.management.NotificationListener,
       attrInfo.setWriteable(false);
 
       attrInfo.setStat(this.statistics[i]);
-      
+
       newManagedBean.addAttribute(attrInfo);
     }
     return newManagedBean;
@@ -272,7 +250,7 @@ implements javax.management.NotificationListener,
     if (!timerInited) {
       // 1st call to getStatistics would trigger
       // the auto-refresh if an interval is set
-      if (this.refreshInterval>0) {
+      if (this.refreshInterval > 0) {
         this._setRefreshInterval(this.refreshInterval);
       }
     }
@@ -280,8 +258,7 @@ implements javax.management.NotificationListener,
     if (this.statistics == null) {
       try {
         this.refresh();
-      }
-      catch (AdminException e) {
+      } catch (AdminException e) {
         this.statistics = new Statistic[0];
       }
     }
@@ -292,24 +269,25 @@ implements javax.management.NotificationListener,
   // -------------------------------------------------------------------------
   //   ManagedResource implementation
   // -------------------------------------------------------------------------
-  
+
   /** The name of the MBean that will manage this resource */
   private String mbeanName;
 
   /** The ModelMBean that is configured to manage this resource */
   private ModelMBean modelMBean;
-  
-	public String getMBeanName() {
-		return this.mbeanName;
-	}
-  
-	public ModelMBean getModelMBean() {
-		return this.modelMBean;
-	}
-	public void setModelMBean(ModelMBean modelMBean) {
-		this.modelMBean = modelMBean;
-	}
-  
+
+  public String getMBeanName() {
+    return this.mbeanName;
+  }
+
+  public ModelMBean getModelMBean() {
+    return this.modelMBean;
+  }
+
+  public void setModelMBean(ModelMBean modelMBean) {
+    this.modelMBean = modelMBean;
+  }
+
   public ObjectName getObjectName() {
     return this.objectName;
   }
@@ -317,14 +295,14 @@ implements javax.management.NotificationListener,
   public ManagedResourceType getManagedResourceType() {
     return ManagedResourceType.STATISTIC_RESOURCE;
   }
-  
+
   public void cleanupResource() {
     this.modelMBean = null;
     this.member = null;
     this.statistics = null;
     this.statResource = null;
   }
-  
+
   /**
    * Checks equality of the given object with <code>this</code> based on the
    * type (Class) and the MBean Name returned by <code>getMBeanName()</code>
@@ -337,10 +315,10 @@ implements javax.management.NotificationListener,
    */
   @Override
   public boolean equals(Object obj) {
-    if ( !(obj instanceof StatisticResourceJmxImpl) ) {
+    if (!(obj instanceof StatisticResourceJmxImpl)) {
       return false;
     }
-    
+
     StatisticResourceJmxImpl other = (StatisticResourceJmxImpl) obj;
 
     return this.getMBeanName().equals(other.getMBeanName());
@@ -357,4 +335,3 @@ implements javax.management.NotificationListener,
     return this.getMBeanName().hashCode();
   }
 }
-

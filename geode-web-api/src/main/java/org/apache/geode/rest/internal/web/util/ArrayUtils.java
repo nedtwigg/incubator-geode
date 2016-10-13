@@ -56,7 +56,7 @@ public abstract class ArrayUtils {
   }
 
   public static String toString(final String... array) {
-    return toString((Object[])array); 
+    return toString((Object[]) array);
   }
 
   public static Set asSet(String[] filter) {

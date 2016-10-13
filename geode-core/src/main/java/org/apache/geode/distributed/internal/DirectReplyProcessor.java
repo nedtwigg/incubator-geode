@@ -36,8 +36,7 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
    * @param system the DistributedSystem connection
    * @param member the member this processor wants a reply from
    */
-  public DirectReplyProcessor(InternalDistributedSystem system,
-                          InternalDistributedMember member) {
+  public DirectReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member) {
     this(system, Collections.singleton(member));
   }
 
@@ -50,9 +49,7 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
    * @param cancelCriterion optional CancelCriterion to use; will use the 
    *  DistributionManager if null
    */
-  public DirectReplyProcessor(InternalDistributedSystem system,
-                          InternalDistributedMember member,
-                          CancelCriterion cancelCriterion) {
+  public DirectReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member, CancelCriterion cancelCriterion) {
     this(system, Collections.singleton(member), cancelCriterion);
   }
 
@@ -63,11 +60,10 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
    * @param dm the DistributionManager to use for messaging and membership
    * @param member the member this processor wants a reply from
    */
-  public DirectReplyProcessor(DM dm, 
-                          InternalDistributedMember member) {
+  public DirectReplyProcessor(DM dm, InternalDistributedMember member) {
     this(dm, Collections.singleton(member));
   }
-  
+
   /**
    * Creates a new <code>ReplyProcessor</code> that wants replies from
    * some number of members of a distributed system. Call this method
@@ -78,11 +74,10 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
    * @param dm the DistributionManager to use for messaging and membership
    * @param initMembers the Set of members this processor wants replies from
    */
-  public DirectReplyProcessor(DM dm,
-                          Collection initMembers) {
+  public DirectReplyProcessor(DM dm, Collection initMembers) {
     this(dm, dm.getSystem(), initMembers, null);
   }
-  
+
   /**
    * Creates a new <code>ReplyProcessor</code> that wants replies from
    * some number of members of a distributed system. Call this method
@@ -93,11 +88,10 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
    * @param system the DistributedSystem connection
    * @param initMembers the Set of members this processor wants replies from
    */
-  public DirectReplyProcessor(InternalDistributedSystem system,
-                          Collection initMembers) {
+  public DirectReplyProcessor(InternalDistributedSystem system, Collection initMembers) {
     this(system.getDistributionManager(), system, initMembers, null);
   }
-  
+
   /**
    * Creates a new <code>ReplyProcessor</code> that wants replies from
    * some number of members of a distributed system. Call this method
@@ -110,26 +104,23 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
    * @param cancelCriterion optional CancelCriterion to use; will use the 
    * DistributedSystem's DistributionManager if null
    */
-  public DirectReplyProcessor(InternalDistributedSystem system,
-                          Collection initMembers,
-                          CancelCriterion cancelCriterion) {
+  public DirectReplyProcessor(InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
     this(system.getDistributionManager(), system, initMembers, cancelCriterion);
   }
-  
+
   /**
    * @param dm
    * @param system
    * @param initMembers
    * @param cancelCriterion
    */
-  public DirectReplyProcessor(DM dm, InternalDistributedSystem system,
-      Collection initMembers, CancelCriterion cancelCriterion) {
+  public DirectReplyProcessor(DM dm, InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
     super(dm, system, initMembers, cancelCriterion, false);
   }
-  
+
   @Override
   public int register() {
-    if(processorId != 0) {
+    if (processorId != 0) {
       return processorId;
     }
     return super.register();
@@ -137,7 +128,7 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
 
   @Override
   protected boolean removeMember(InternalDistributedMember m, boolean departed) {
-    if(isExpectingDirectReply()) {
+    if (isExpectingDirectReply()) {
       return true;
     } else {
       return super.removeMember(m, departed);
@@ -150,22 +141,18 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
 
   @Override
   protected boolean stillWaiting() {
-    if(isExpectingDirectReply()) {
+    if (isExpectingDirectReply()) {
       return false;
     } else {
       return super.stillWaiting();
     }
   }
-  
+
   @Override
   protected void checkIfDone() {
-    if(processorId != 0) {
+    if (processorId != 0) {
       super.checkIfDone();
     }
   }
-  
-  
-  
-  
 
 }

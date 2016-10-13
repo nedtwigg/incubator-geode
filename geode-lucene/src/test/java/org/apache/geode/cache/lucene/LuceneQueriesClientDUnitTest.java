@@ -35,10 +35,10 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 public class LuceneQueriesClientDUnitTest extends LuceneQueriesBase {
 
-  @Override public void postSetUp() throws Exception {
+  @Override
+  public void postSetUp() throws Exception {
     super.postSetUp();
-    SerializableCallableIF<Integer> launchServer = () ->
-    {
+    SerializableCallableIF<Integer> launchServer = () -> {
       final Cache cache = getCache();
       final CacheServer server = cache.addCacheServer();
       server.setPort(0);

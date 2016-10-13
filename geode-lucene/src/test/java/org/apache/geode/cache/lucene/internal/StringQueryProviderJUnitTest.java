@@ -74,7 +74,7 @@ public class StringQueryProviderJUnitTest {
     StringQueryProvider provider = new StringQueryProvider("invalid:lucene:query:string", DEFAULT_FIELD);
     provider.getQuery(mockIndex);
   }
-  
+
   @Test
   public void testSerialization() {
     LuceneServiceImpl.registerDataSerializables();
@@ -85,7 +85,7 @@ public class StringQueryProviderJUnitTest {
 
   @Test
   public void defaultFieldParameterShouldBeUsedByQuery() throws LuceneQueryException {
-    StringQueryProvider provider = new StringQueryProvider("findThis",  "field-2");
+    StringQueryProvider provider = new StringQueryProvider("findThis", "field-2");
     Query query = provider.getQuery(mockIndex);
     Assert.assertNotNull(query);
     assertEquals("field-2:findthis", query.toString());

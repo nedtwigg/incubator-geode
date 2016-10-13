@@ -46,7 +46,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
   private static final long serialVersionUID = 1L;
-  
+
   public CacheXml81DUnitTest() {
     super();
   }
@@ -130,7 +130,7 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
     assertEquals(0, m.getXmlGeneratorCounter.get());
 
   }
-  
+
   /**
    * Test {@link Locator} is used in {@link SAXParseException}.
    * Exercises {@link XmlParser#setDocumentLocator(Locator)}

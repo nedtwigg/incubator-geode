@@ -24,9 +24,9 @@ package org.apache.geode.cache;
  * @since GemFire 2.0
  */
 public class RegionDestroyedException extends CacheRuntimeException {
-private static final long serialVersionUID = 319804842308010754L;
+  private static final long serialVersionUID = 319804842308010754L;
   private String regionFullPath;
-  
+
   /** Constructs a <code>RegionDestroyedException</code> with a message.
    * @param msg the String message
    */
@@ -34,7 +34,7 @@ private static final long serialVersionUID = 319804842308010754L;
     super(msg);
     this.regionFullPath = regionFullPath;
   }
-  
+
   /** Constructs a <code>RegionDestroyedException</code> with a message and
    * a cause.
    * @param s the String message
@@ -44,7 +44,7 @@ private static final long serialVersionUID = 319804842308010754L;
     super(s, ex);
     this.regionFullPath = regionFullPath;
   }
-  
+
   public String getRegionFullPath() {
     return this.regionFullPath;
   }

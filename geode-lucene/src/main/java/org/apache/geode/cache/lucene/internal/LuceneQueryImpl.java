@@ -53,9 +53,8 @@ public class LuceneQueryImpl<K, V> implements LuceneQuery<K, V> {
   private LuceneQueryProvider query;
   private Region<K, V> region;
   private String defaultField;
-  
-  public LuceneQueryImpl(String indexName, Region<K, V> region, LuceneQueryProvider provider, String[] projectionFields,
-      int limit, int pageSize) {
+
+  public LuceneQueryImpl(String indexName, Region<K, V> region, LuceneQueryProvider provider, String[] projectionFields, int limit, int pageSize) {
     this.indexName = indexName;
     this.region = region;
     this.limit = limit;
@@ -69,24 +68,20 @@ public class LuceneQueryImpl<K, V> implements LuceneQuery<K, V> {
     TopEntries<K> entries = findTopEntries();
     final List<EntryScore<K>> hits = entries.getHits();
 
-    return hits.stream()
-      .map(hit -> hit.getKey())
-      .collect(Collectors.toList());
+    return hits.stream().map(hit -> hit.getKey()).collect(Collectors.toList());
   }
 
   @Override
   public Collection<V> findValues() throws LuceneQueryException {
     final List<LuceneResultStruct<K, V>> page = findResults();
 
-    return page.stream()
-      .map(entry -> entry.getValue())
-      .collect(Collectors.toList());
+    return page.stream().map(entry -> entry.getValue()).collect(Collectors.toList());
   }
 
   @Override
   public List<LuceneResultStruct<K, V>> findResults() throws LuceneQueryException {
     PageableLuceneQueryResults<K, V> pages = findPages(0);
-    if(!pages.hasNext()) {
+    if (!pages.hasNext()) {
       return Collections.emptyList();
     }
 
@@ -108,17 +103,14 @@ public class LuceneQueryImpl<K, V> implements LuceneQuery<K, V> {
     LuceneFunctionContext<TopEntriesCollector> context = new LuceneFunctionContext<>(query, indexName, manager, limit);
     TopEntriesFunctionCollector collector = new TopEntriesFunctionCollector(context);
 
-    ResultCollector<TopEntriesCollector, TopEntries<K>> rc = (ResultCollector<TopEntriesCollector, TopEntries<K>>) onRegion()
-        .withArgs(context)
-        .withCollector(collector)
-        .execute(LuceneFunction.ID);
+    ResultCollector<TopEntriesCollector, TopEntries<K>> rc = (ResultCollector<TopEntriesCollector, TopEntries<K>>) onRegion().withArgs(context).withCollector(collector).execute(LuceneFunction.ID);
 
     //TODO provide a timeout to the user?
     TopEntries<K> entries;
     try {
       entries = rc.getResult();
-    } catch(FunctionException e) {
-      if(e.getCause() instanceof LuceneQueryException) {
+    } catch (FunctionException e) {
+      if (e.getCause() instanceof LuceneQueryException) {
         throw new LuceneQueryException(e);
       } else {
         throw e;

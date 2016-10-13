@@ -38,9 +38,7 @@ public class IntegratedClientRegionClearAuthDistributedTest extends AbstractSecu
     SerializableRunnable clearUnauthorized = new SerializableRunnable() {
       @Override
       public void run() {
-        ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                 .addPoolServer("localhost", serverPort)
-                                                                                                 .create();
+        ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
         Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
         assertNotAuthorized(() -> region.clear(), "DATA:WRITE:AuthRegion");
@@ -52,9 +50,7 @@ public class IntegratedClientRegionClearAuthDistributedTest extends AbstractSecu
     SerializableRunnable clearAuthorized = new SerializableRunnable() {
       @Override
       public void run() {
-        ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionUser", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                       .addPoolServer("localhost", serverPort)
-                                                                                                       .create();
+        ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
         Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
         region.clear();

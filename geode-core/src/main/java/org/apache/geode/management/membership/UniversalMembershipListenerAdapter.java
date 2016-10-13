@@ -147,24 +147,23 @@ import org.apache.geode.management.ManagementService;
  * 
  * @since GemFire 8.0
  */
-public abstract class UniversalMembershipListenerAdapter implements MembershipListener{
-  
+public abstract class UniversalMembershipListenerAdapter implements MembershipListener {
+
   /**
    * Default number of historical events to track in order to avoid duplicate
    * events for members that are both clients and peer members; value is 100.
    */
   public static final int DEFAULT_HISTORY_SIZE = 100;
-  
+
   private final int historySize;
   private final LinkedList<String> eventHistory; // list of String memberIds
-  private final Map<String,Boolean> eventJoined; // key: memberId, value: Boolean
-  
-  
+  private final Map<String, Boolean> eventJoined; // key: memberId, value: Boolean
+
   /** Constructs an instance of UniversalMembershipListenerAdapter. */
   public UniversalMembershipListenerAdapter() {
     this(DEFAULT_HISTORY_SIZE);
   }
-  
+
   /**
    * Constructs an instance of UniversalMembershipListenerAdapter.
    * 
@@ -181,10 +180,10 @@ public abstract class UniversalMembershipListenerAdapter implements MembershipLi
     }
     this.historySize = historySize;
     this.eventHistory = new LinkedList<String>();
-    this.eventJoined = new HashMap<String,Boolean>();
+    this.eventJoined = new HashMap<String, Boolean>();
     ClientMembership.registerClientMembershipListener(this.clientMembershipListener);
   }
-  
+
   /**
    * Registers this adapter with the <code>ManagementService</code>. Registering
    * in this way allows the adapter to ensure that callback will not be invoked
@@ -220,7 +219,7 @@ public abstract class UniversalMembershipListenerAdapter implements MembershipLi
   public void registerClientMembershipListener() {
     ClientMembership.registerClientMembershipListener(this.clientMembershipListener);
   }
-  
+
   /**
    * Unregisters this adapter as a <code>ClientMembershipListener</code>.
    * 
@@ -255,7 +254,7 @@ public abstract class UniversalMembershipListenerAdapter implements MembershipLi
    */
   public void memberCrashed(MembershipEvent event) {
   }
-  
+
   /** Adapts ClientMembershipEvent to look like a MembershipEvent */
   public static class AdaptedMembershipEvent implements MembershipEvent {
     private final ClientMembershipEvent event;
@@ -311,19 +310,20 @@ public abstract class UniversalMembershipListenerAdapter implements MembershipLi
     }
   }
 
-  private final ClientMembershipListener clientMembershipListener =
-  new ClientMembershipListener() {
+  private final ClientMembershipListener clientMembershipListener = new ClientMembershipListener() {
     public void memberJoined(ClientMembershipEvent event) {
       membershipListener.memberJoined(new AdaptedMembershipEvent(event));
     }
+
     public void memberLeft(ClientMembershipEvent event) {
       membershipListener.memberLeft(new AdaptedMembershipEvent(event));
     }
+
     public void memberCrashed(ClientMembershipEvent event) {
       membershipListener.memberCrashed(new AdaptedMembershipEvent(event));
     }
   };
-  
+
   protected final MembershipListener membershipListener = new MembershipListener() {
     public void memberJoined(MembershipEvent event) {
       if (!isDuplicate(event, true)) {
@@ -358,8 +358,7 @@ public abstract class UniversalMembershipListenerAdapter implements MembershipLi
           } else {
             // remove the event from history and map... will be re-inserted
             Assert.assertTrue(eventHistory.remove(memberId), "Failed to replace entry in eventHistory for " + memberId);
-            Assert.assertTrue(eventJoined.remove(memberId) != null, "Failed to replace entry in eventJoined for "
-                + memberId);
+            Assert.assertTrue(eventJoined.remove(memberId) != null, "Failed to replace entry in eventJoined for " + memberId);
           }
         }
 
@@ -371,8 +370,7 @@ public abstract class UniversalMembershipListenerAdapter implements MembershipLi
           }
           eventHistory.addLast(memberId); // linked list
           eventJoined.put(memberId, Boolean.valueOf(joined)); // boolean map
-          Assert.assertTrue(eventHistory.size() <= historySize, "Attempted to grow eventHistory beyond maximum of "
-              + historySize);
+          Assert.assertTrue(eventHistory.size() <= historySize, "Attempted to grow eventHistory beyond maximum of " + historySize);
         }
         return duplicate;
       } // sync
@@ -380,4 +378,3 @@ public abstract class UniversalMembershipListenerAdapter implements MembershipLi
   };
 
 }
-

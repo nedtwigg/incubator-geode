@@ -32,7 +32,6 @@ public interface ArgumentHandler {
    * @param params parameters supplied to the argument
    * @throws UsageException when usage was suboptimal
    */
-  void handleArgument(Argument arg, String form, String[] params)
-      throws UsageException;
+  void handleArgument(Argument arg, String form, String[] params) throws UsageException;
 
 }

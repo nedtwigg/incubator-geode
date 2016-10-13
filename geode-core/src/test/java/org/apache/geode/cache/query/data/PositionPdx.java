@@ -26,9 +26,8 @@ import org.apache.geode.pdx.PdxReader;
 import org.apache.geode.pdx.PdxSerializable;
 import org.apache.geode.pdx.PdxWriter;
 
-
 public class PositionPdx implements Serializable, PdxSerializable, Comparable {
-  private long avg20DaysVol=0;
+  private long avg20DaysVol = 0;
   private String bondRating;
   private double convRatio;
   private String country;
@@ -47,10 +46,10 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
   private int pid;
   public static int cnt = 0;
   public int portfolioId = 0;
-  
+
   public static int numInstance = 0;
-  
-  /* public no-arg constructor required for DataSerializable */  
+
+  /* public no-arg constructor required for DataSerializable */
   public PositionPdx() {
     this.numInstance++;
     //GemFireCacheImpl.getInstance().getLoggerI18n().fine(new Exception("DEBUG"));
@@ -66,65 +65,63 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
     this.numInstance++;
     //GemFireCacheImpl.getInstance().getLoggerI18n().fine(new Exception("DEBUG" + this.secId));
   }
-  
+
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof PositionPdx)) return false;
-    return this.secId.equals(((PositionPdx)o).secId);
+    if (!(o instanceof PositionPdx))
+      return false;
+    return this.secId.equals(((PositionPdx) o).secId);
   }
-  
+
   @Override
   public int hashCode() {
     return this.secId.hashCode();
   }
-  
-  
+
   public static void resetCounter() {
     cnt = 0;
   }
-  
+
   public double getMktValue() {
     return this.mktValue;
   }
-  
-  public String getSecId(){
+
+  public String getSecId() {
     return secId;
   }
-  
-  public int getId(){
+
+  public int getId() {
     return pid;
   }
-  
-  public double getSharesOutstanding(){
+
+  public double getSharesOutstanding() {
     return sharesOutstanding;
   }
-  
-  public String toString(){
-    return "PositionPdx [secId=" + this.secId + " out=" + this.sharesOutstanding
-           + " type=" + this.secType + " id=" + this.pid + " mktValue="
-           + this.mktValue + "]";
+
+  public String toString() {
+    return "PositionPdx [secId=" + this.secId + " out=" + this.sharesOutstanding + " type=" + this.secType + " id=" + this.pid + " mktValue=" + this.mktValue + "]";
   }
-  
-  public Set getSet(int size){
+
+  public Set getSet(int size) {
     Set set = new HashSet();
-    for(int i=0;i<size;i++){
-      set.add(""+i);
+    for (int i = 0; i < size; i++) {
+      set.add("" + i);
     }
     return set;
   }
-  
-  public Set getCol(){
+
+  public Set getCol() {
     Set set = new HashSet();
-    for(int i=0;i<2;i++){
-      set.add(""+i);
+    for (int i = 0; i < 2; i++) {
+      set.add("" + i);
     }
     return set;
   }
-  
+
   public int getPid() {
     return pid;
   }
-  
+
   public void fromData(PdxReader in) {
     this.avg20DaysVol = in.readLong("avg20DaysVol");
     this.bondRating = in.readString("bondRating");
@@ -145,11 +142,11 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
     this.portfolioId = in.readInt("portfolioId");
     //GemFireCacheImpl.getInstance().getLoggerI18n().fine(new Exception("DEBUG fromData() " + this.secId));    
   }
-  
+
   public void toData(PdxWriter out) {
-    out.writeLong("avg20DaysVol",this.avg20DaysVol);
+    out.writeLong("avg20DaysVol", this.avg20DaysVol);
     out.writeString("bondRating", this.bondRating);
-    out.writeDouble("convRatio",this.convRatio);
+    out.writeDouble("convRatio", this.convRatio);
     out.writeString("country", this.country);
     out.writeDouble("delta", this.delta);
     out.writeLong("industry", this.industry);
@@ -166,17 +163,15 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
     out.writeInt("portfolioId", this.portfolioId);
     // Identity Field.
     out.markIdentityField("secId");
- }
+  }
 
-
-  public int compareTo(Object o)
-  {
-    if( o == this || ((PositionPdx)o).secId.equals(this.secId)) {
+  public int compareTo(Object o) {
+    if (o == this || ((PositionPdx) o).secId.equals(this.secId)) {
       return 0;
     } else {
-      return this.pid < ((PositionPdx)o).pid ? -1:1;
+      return this.pid < ((PositionPdx) o).pid ? -1 : 1;
     }
-     
-  } 
-  
+
+  }
+
 }

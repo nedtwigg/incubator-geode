@@ -41,10 +41,10 @@ public class PdxString implements Comparable<PdxString>, Sendable {
   public PdxString(byte[] bytes, int offset) {
     this.bytes = bytes;
     this.header = bytes[offset];
-    this.offset = calcOffset(header,offset);
+    this.offset = calcOffset(header, offset);
   }
 
-  public PdxString(String s)  {
+  public PdxString(String s) {
     ByteArrayOutputStream bos = new ByteArrayOutputStream(s.length());
     try {
       DataSerializer.writeString(s, new DataOutputStream(bos));
@@ -56,17 +56,17 @@ public class PdxString implements Comparable<PdxString>, Sendable {
     this.offset = calcOffset(header, 0);
   }
 
-  private int calcOffset( int header, int offset) {
+  private int calcOffset(int header, int offset) {
     offset++; // increment offset for the header byte
     // length is stored as short for small strings
     if (header == DSCODE.STRING_BYTES || header == DSCODE.STRING) {
       offset += 2; // position the offset to the start of the String
-                        // (skipping header and length bytes)
+                   // (skipping header and length bytes)
     }
     // length is stored as int for huge strings
     else if (header == DSCODE.HUGE_STRING_BYTES || header == DSCODE.HUGE_STRING) {
       offset += 4; // position the offset to the start of the String
-                        // (skipping header and length bytes)
+                   // (skipping header and length bytes)
     }
     return offset;
   }
@@ -94,8 +94,8 @@ public class PdxString implements Comparable<PdxString>, Sendable {
 
   public int compareTo(PdxString o) {
     // not handling strings with different headers
-    if(this.header != o.header){
-      int diff =this.toString().compareTo(o.toString());
+    if (this.header != o.header) {
+      int diff = this.toString().compareTo(o.toString());
       return diff;
     }
     int len1 = this.getLength();
@@ -141,12 +141,12 @@ public class PdxString implements Comparable<PdxString>, Sendable {
   }
 
   public boolean equals(Object anObject) {
-     if (this == anObject) {
+    if (this == anObject) {
       return true;
     }
     if (anObject instanceof PdxString) {
       PdxString o = (PdxString) anObject;
-      if(this.header != o.header){ //header needs to be same for Pdxstrings to be equal
+      if (this.header != o.header) { //header needs to be same for Pdxstrings to be equal
         return false;
       }
       int n = this.getLength();
@@ -163,7 +163,6 @@ public class PdxString implements Comparable<PdxString>, Sendable {
     return false;
   }
 
- 
   public String toString() {
     String s = null;
     int headerOffset = this.offset;
@@ -171,18 +170,16 @@ public class PdxString implements Comparable<PdxString>, Sendable {
       --headerOffset; // for header byte
       if (header == DSCODE.STRING_BYTES || header == DSCODE.STRING) {
         headerOffset -= 2; // position the offset to the start of the String (skipping
-                     // header and length bytes)
+        // header and length bytes)
       }
       // length is stored as int for huge strings
-      else if (header == DSCODE.HUGE_STRING_BYTES
-          || header == DSCODE.HUGE_STRING) {
+      else if (header == DSCODE.HUGE_STRING_BYTES || header == DSCODE.HUGE_STRING) {
         headerOffset -= 4;
       }
-      ByteBuffer stringByteBuffer = ByteBuffer.wrap(bytes, headerOffset, bytes.length
-          - headerOffset); // Wrapping more bytes than the actual String bytes in
-                     // array. Counting on the readString() to read only String
-                     // bytes
-      s = DataSerializer.readString(new ByteBufferInputStream (stringByteBuffer));
+      ByteBuffer stringByteBuffer = ByteBuffer.wrap(bytes, headerOffset, bytes.length - headerOffset); // Wrapping more bytes than the actual String bytes in
+      // array. Counting on the readString() to read only String
+      // bytes
+      s = DataSerializer.readString(new ByteBufferInputStream(stringByteBuffer));
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
@@ -193,15 +190,14 @@ public class PdxString implements Comparable<PdxString>, Sendable {
   public void sendTo(DataOutput out) throws IOException {
     int offset = this.offset;
     int len = getLength();
-    --offset;  // for header byte  
+    --offset; // for header byte  
     len++;
     if (header == DSCODE.STRING_BYTES || header == DSCODE.STRING) {
-      len+=2;
-      offset -= 2; 
-    }
-    else if (header == DSCODE.HUGE_STRING_BYTES || header == DSCODE.HUGE_STRING) {
-      len+=4;
-      offset -= 4; 
+      len += 2;
+      offset -= 2;
+    } else if (header == DSCODE.HUGE_STRING_BYTES || header == DSCODE.HUGE_STRING) {
+      len += 4;
+      offset -= 4;
     }
     out.write(bytes, offset, len);
   }

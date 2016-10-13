@@ -42,7 +42,7 @@ import static org.junit.Assert.fail;
  *
  */
 @Category(IntegrationTest.class)
-public class InterruptDiskJUnitTest  {
+public class InterruptDiskJUnitTest {
 
   private static volatile Thread puttingThread;
   private static final long MAX_WAIT = 60 * 1000;
@@ -55,15 +55,14 @@ public class InterruptDiskJUnitTest  {
   @Test
   @Ignore
   public void testLoop() throws Throwable {
-    for(int i=0; i < 100; i++) {
-      System.err.println("i=" +i);
-      System.out.println("i=" +i);
+    for (int i = 0; i < 100; i++) {
+      System.err.println("i=" + i);
+      System.out.println("i=" + i);
       testDRPutWithInterrupt();
       tearDown();
       setUp();
     }
   }
-
 
   @Before
   public void setUp() {
@@ -78,18 +77,16 @@ public class InterruptDiskJUnitTest  {
     cache = CacheFactory.create(ds);
     File diskStore = new File("diskStore");
     diskStore.mkdir();
-    cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] {diskStore} ).create("store");
+    cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] { diskStore }).create("store");
     region = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT).setDiskStoreName("store").create("region");
     ex = Executors.newSingleThreadExecutor();
   }
-
 
   @After
   public void tearDown() {
     ds.disconnect();
     ex.shutdownNow();
   }
-
 
   @Test
   public void testDRPutWithInterrupt() throws Throwable {
@@ -99,33 +96,32 @@ public class InterruptDiskJUnitTest  {
       public Object call() {
         puttingThread = Thread.currentThread();
         long end = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_WAIT);
-        while(!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
           region.put(0, nextValue.incrementAndGet());
-          if(System.nanoTime() > end) {
+          if (System.nanoTime() > end) {
             fail("Did not get interrupted in 60 seconds");
           }
         }
         return null;
       }
     };
-    
+
     Future result = ex.submit(doPuts);
-    
-    
+
     Thread.sleep(50);
     long end = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_WAIT);
-    while(puttingThread == null) {
+    while (puttingThread == null) {
       Thread.sleep(50);
-      if(System.nanoTime() > end) {
+      if (System.nanoTime() > end) {
         fail("Putting thread not set in 60 seconds");
       }
     }
 
     puttingThread.interrupt();
-    
+
     result.get(60, TimeUnit.SECONDS);
-    
+
     assertEquals(nextValue.get(), region.get(0));
-    
+
   }
 }

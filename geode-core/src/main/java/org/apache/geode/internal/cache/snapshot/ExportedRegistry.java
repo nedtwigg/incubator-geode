@@ -35,28 +35,28 @@ import org.apache.geode.pdx.internal.TypeRegistry;
 public class ExportedRegistry {
   /** the types */
   private final Map<Integer, PdxType> types;
-  
+
   /** the enums */
   private final Map<Integer, EnumInfo> enums;
-  
+
   public ExportedRegistry() {
     types = new HashMap<Integer, PdxType>();
     enums = new HashMap<Integer, EnumInfo>();
   }
-  
+
   public ExportedRegistry(TypeRegistry tr) {
     types = new HashMap<Integer, PdxType>(tr.typeMap());
     enums = new HashMap<Integer, EnumInfo>(tr.enumMap());
   }
-  
+
   public Map<Integer, PdxType> types() {
     return types;
   }
-  
+
   public Map<Integer, EnumInfo> enums() {
     return enums;
   }
-  
+
   public void addType(int id, PdxType type) {
     types.put(id, type);
   }
@@ -68,7 +68,7 @@ public class ExportedRegistry {
   public PdxType getType(int id) {
     return types.get(id);
   }
-  
+
   public EnumInfo getEnum(int id) {
     return enums.get(id);
   }
@@ -78,7 +78,7 @@ public class ExportedRegistry {
     for (Entry<Integer, PdxType> entry : types.entrySet()) {
       DataSerializer.writeObject(entry.getValue(), out);
     }
-    
+
     out.writeInt(enums.size());
     for (Entry<Integer, EnumInfo> entry : enums.entrySet()) {
       out.writeInt(entry.getKey());
@@ -92,7 +92,7 @@ public class ExportedRegistry {
       PdxType type = DataSerializer.readObject(in);
       types.put(type.getTypeId(), type);
     }
-    
+
     int enumCount = in.readInt();
     for (int i = 0; i < enumCount; i++) {
       int id = in.readInt();

@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.operations;
 
-
 /**
  * Encapsulates registration/unregistration of interest in a region.
  * 

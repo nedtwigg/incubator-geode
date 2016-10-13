@@ -122,8 +122,7 @@ public interface Agent {
    * @return The object name of the system that the <code>Agent</code>
    *         is now connected to.
    */
-  public ObjectName connectToSystem()
-    throws AdminException, MalformedObjectNameException;
+  public ObjectName connectToSystem() throws AdminException, MalformedObjectNameException;
 
   /**
    * Returns the <code>AdminDistributedSystem</code> that underlies
@@ -138,8 +137,7 @@ public interface Agent {
    * <code>null</code> if this <code>Agent</code> has not {@linkplain
    * #connectToSystem connected} to the distributed system.
    */
-  public ObjectName manageDistributedSystem()
-    throws MalformedObjectNameException;
+  public ObjectName manageDistributedSystem() throws MalformedObjectNameException;
 
   /**
    * Disconnects this agent from the distributed system and

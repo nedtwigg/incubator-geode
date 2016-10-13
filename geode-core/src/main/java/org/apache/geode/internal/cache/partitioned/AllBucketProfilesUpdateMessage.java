@@ -44,26 +44,23 @@ import org.apache.geode.internal.logging.LogService;
  * 
  * @since GemFire 6.6
  */
-public final class AllBucketProfilesUpdateMessage extends DistributionMessage
-    implements MessageWithReply
-{
+public final class AllBucketProfilesUpdateMessage extends DistributionMessage implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
   private int prId;
   private int processorId = 0;
-  private Map<Integer,BucketAdvisor.BucketProfile> profiles; 
+  private Map<Integer, BucketAdvisor.BucketProfile> profiles;
 
-  public AllBucketProfilesUpdateMessage() {}
-  
+  public AllBucketProfilesUpdateMessage() {
+  }
+
   @Override
   final public int getProcessorType() {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
 
-  private AllBucketProfilesUpdateMessage(Set recipients,
-      int partitionedRegionId, int processorId,
-      Map<Integer, BucketAdvisor.BucketProfile> profiles) {
+  private AllBucketProfilesUpdateMessage(Set recipients, int partitionedRegionId, int processorId, Map<Integer, BucketAdvisor.BucketProfile> profiles) {
     setRecipients(recipients);
     this.processorId = processorId;
     this.prId = partitionedRegionId;
@@ -76,47 +73,40 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage
   }
 
   @Override
-  protected void process(DistributionManager dm)
-  {
+  protected void process(DistributionManager dm) {
     try {
       PartitionedRegion pr = PartitionedRegion.getPRFromId(this.prId);
-      for(Map.Entry<Integer,BucketAdvisor.BucketProfile> profile : this.profiles.entrySet()){
-        pr.getRegionAdvisor().putBucketProfile(profile.getKey(), profile.getValue());  
-      }      
-    }
-    catch (PRLocallyDestroyedException fre) {
+      for (Map.Entry<Integer, BucketAdvisor.BucketProfile> profile : this.profiles.entrySet()) {
+        pr.getRegionAdvisor().putBucketProfile(profile.getKey(), profile.getValue());
+      }
+    } catch (PRLocallyDestroyedException fre) {
       if (logger.isDebugEnabled())
         logger.debug("<region locally destroyed> ///{}", this);
-    }
-    catch (RegionDestroyedException e) {
+    } catch (RegionDestroyedException e) {
       if (logger.isDebugEnabled())
         logger.debug("<region destroyed> ///{}", this);
-    }
-    catch (CancelException e) {
+    } catch (CancelException e) {
       if (logger.isDebugEnabled())
         logger.debug("<cache closed> ///{}", this);
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable ignore) {
+    } catch (Throwable ignore) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
       // error condition, so you also need to check to see if the JVM
       // is still usable:
       SystemFailure.checkFailure();
-    }
-    finally {
+    } finally {
       if (this.processorId != 0) {
         ReplyMessage.send(getSender(), this.processorId, null, dm);
       }
     }
   }
-  
+
   /**
    * Send a profile update to a set of members.
    * @param recipients the set of members to be notified
@@ -127,13 +117,12 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage
    * @return an instance of reply processor if requireAck is true on which the caller
    * can wait until the event has finished. 
    */
-  public static ReplyProcessor21 send(Set recipients, DM dm, int prId, Map<Integer, BucketAdvisor.BucketProfile> profiles, boolean requireAck)
-  {
+  public static ReplyProcessor21 send(Set recipients, DM dm, int prId, Map<Integer, BucketAdvisor.BucketProfile> profiles, boolean requireAck) {
     if (recipients.isEmpty()) {
       return null;
     }
     ReplyProcessor21 rp = null;
-    int procId = 0; 
+    int procId = 0;
     if (requireAck) {
       rp = new ReplyProcessor21(dm, recipients);
       procId = rp.getProcessorId();
@@ -146,10 +135,9 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage
   public int getDSFID() {
     return PR_ALL_BUCKET_PROFILES_UPDATE_MESSAGE;
   }
-  
+
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.prId = in.readInt();
     this.processorId = in.readInt();
@@ -157,8 +145,7 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeInt(this.prId);
     out.writeInt(this.processorId);
@@ -166,4 +153,3 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage
   }
 
 }
-

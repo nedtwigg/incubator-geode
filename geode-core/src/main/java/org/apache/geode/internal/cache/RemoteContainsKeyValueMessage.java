@@ -47,10 +47,9 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * to another peer.
  * @since GemFire 6.5
  */
-public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageWithDirectReply
-  {
+public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageWithDirectReply {
   private static final Logger logger = LogService.getLogger();
-  
+
   private boolean valueCheck;
 
   private Object key;
@@ -60,8 +59,7 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
   public RemoteContainsKeyValueMessage() {
   }
 
-  public RemoteContainsKeyValueMessage(InternalDistributedMember recipient, String regionPath,
-      DirectReplyProcessor processor, Object key, boolean valueCheck) {
+  public RemoteContainsKeyValueMessage(InternalDistributedMember recipient, String regionPath, DirectReplyProcessor processor, Object key, boolean valueCheck) {
     super(recipient, regionPath, processor);
     this.valueCheck = valueCheck;
     this.key = key;
@@ -87,14 +85,10 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
    *          desired
    * @return the processor used to read the returned keys
    */
-  public static RemoteContainsKeyValueResponse send(InternalDistributedMember recipient,
-      LocalRegion r, Object key, boolean valueCheck)
-      throws RemoteOperationException {
-    Assert.assertTrue(recipient != null,
-        "PRDistribuedRemoteContainsKeyValueMessage NULL reply message");
+  public static RemoteContainsKeyValueResponse send(InternalDistributedMember recipient, LocalRegion r, Object key, boolean valueCheck) throws RemoteOperationException {
+    Assert.assertTrue(recipient != null, "PRDistribuedRemoteContainsKeyValueMessage NULL reply message");
 
-    RemoteContainsKeyValueResponse p = new RemoteContainsKeyValueResponse(r.getSystem(),
-        Collections.singleton(recipient), key);
+    RemoteContainsKeyValueResponse p = new RemoteContainsKeyValueResponse(r.getSystem(), Collections.singleton(recipient), key);
     RemoteContainsKeyValueMessage m = new RemoteContainsKeyValueMessage(recipient, r.getFullPath(), p, key, valueCheck);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
@@ -111,32 +105,28 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
   }
 
   @Override
-  protected boolean operateOnRegion(DistributionManager dm,
-      LocalRegion r, long startTime) throws CacheException,
-      RemoteOperationException
-  {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws CacheException, RemoteOperationException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "DistributedRemoteContainsKeyValueMessage operateOnRegion: {}", r.getFullPath());
     }
-    
-    if ( ! (r instanceof PartitionedRegion) ) {  // prs already wait on initialization
+
+    if (!(r instanceof PartitionedRegion)) { // prs already wait on initialization
       r.waitOnInitialization(); // bug #43371 - accessing a region before it's initialized
     }
 
     final boolean replyVal;
-        if (this.valueCheck) {
-          replyVal = r.containsValueForKey(this.key);
-        } else {
-          replyVal = r.containsKey(this.key);
-        }
+    if (this.valueCheck) {
+      replyVal = r.containsValueForKey(this.key);
+    } else {
+      replyVal = r.containsKey(this.key);
+    }
 
-      if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.debug("DistributedRemoteContainsKeyValueMessage sending reply back using processorId: {}",getProcessorId());
-      }
+    if (logger.isTraceEnabled(LogMarker.DM)) {
+      logger.debug("DistributedRemoteContainsKeyValueMessage sending reply back using processorId: {}", getProcessorId());
+    }
 
-      //r.getPrStats().endPartitionMessagesProcessing(startTime); 
-      RemoteContainsKeyValueReplyMessage.send(getSender(), getProcessorId(), getReplySender(dm),
-          replyVal);
+    //r.getPrStats().endPartitionMessagesProcessing(startTime); 
+    RemoteContainsKeyValueReplyMessage.send(getSender(), getProcessorId(), getReplySender(dm), replyVal);
 
     // Unless there was an exception thrown, this message handles sending the
     // response
@@ -144,11 +134,9 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
   }
 
   @Override
-  protected void appendFields(StringBuffer buff)
-  {
+  protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
-    buff.append("; valueCheck=").append(this.valueCheck).append("; key=")
-        .append(this.key);
+    buff.append("; valueCheck=").append(this.valueCheck).append("; key=").append(this.key);
   }
 
   public int getDSFID() {
@@ -156,16 +144,14 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.key = DataSerializer.readObject(in);
     this.valueCheck = (flags & VALUE_CHECK) != 0;
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(this.key, out);
   }
@@ -173,13 +159,12 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
   @Override
   protected short computeCompressedShort() {
     short flags = super.computeCompressedShort();
-    if (this.valueCheck) flags |= VALUE_CHECK;
+    if (this.valueCheck)
+      flags |= VALUE_CHECK;
     return flags;
   }
 
-  public static final class RemoteContainsKeyValueReplyMessage extends
-      ReplyMessage
-   {
+  public static final class RemoteContainsKeyValueReplyMessage extends ReplyMessage {
 
     /** Propagated exception from remote node to operation initiator */
     private boolean containsKeyValue;
@@ -190,20 +175,15 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
     public RemoteContainsKeyValueReplyMessage() {
     }
 
-    private RemoteContainsKeyValueReplyMessage(int processorId,
-        boolean containsKeyValue) {
+    private RemoteContainsKeyValueReplyMessage(int processorId, boolean containsKeyValue) {
       this.processorId = processorId;
       this.containsKeyValue = containsKeyValue;
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId,
-        ReplySender replySender, boolean containsKeyValue)
-    {
-      Assert.assertTrue(recipient != null,
-          "ContainsKeyValueReplyMessage NULL reply message");
-      RemoteContainsKeyValueReplyMessage m = new RemoteContainsKeyValueReplyMessage(
-          processorId, containsKeyValue);
+    public static void send(InternalDistributedMember recipient, int processorId, ReplySender replySender, boolean containsKeyValue) {
+      Assert.assertTrue(recipient != null, "ContainsKeyValueReplyMessage NULL reply message");
+      RemoteContainsKeyValueReplyMessage m = new RemoteContainsKeyValueReplyMessage(processorId, containsKeyValue);
       m.setRecipient(recipient);
       replySender.putOutgoing(m);
     }
@@ -216,8 +196,7 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
      *          the distribution manager that is processing the message.
      */
     @Override
-    public void process(final DM dm, ReplyProcessor21 processor)
-    {
+    public void process(final DM dm, ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
 
       if (processor == null) {
@@ -237,33 +216,25 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException
-    {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.containsKeyValue = in.readBoolean();
     }
 
     @Override
-    public void toData(DataOutput out) throws IOException
-    {
+    public void toData(DataOutput out) throws IOException {
       super.toData(out);
       out.writeBoolean(this.containsKeyValue);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("ContainsKeyValueReplyMessage ").append(
-          "processorid=").append(this.processorId).append(" reply to sender ")
-          .append(this.getSender()).append(" returning containsKeyValue=")
-          .append(doesItContainKeyValue());
+      sb.append("ContainsKeyValueReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender()).append(" returning containsKeyValue=").append(doesItContainKeyValue());
       return sb.toString();
     }
 
-    public boolean doesItContainKeyValue()
-    {
+    public boolean doesItContainKeyValue() {
       return this.containsKeyValue;
     }
   }
@@ -274,32 +245,28 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
    * 
    * @since GemFire 6.5
    */
-  public static class RemoteContainsKeyValueResponse extends RemoteOperationResponse
-   {
+  public static class RemoteContainsKeyValueResponse extends RemoteOperationResponse {
     private volatile boolean returnValue;
     private volatile boolean returnValueReceived;
     final Object key;
 
-    public RemoteContainsKeyValueResponse(InternalDistributedSystem ds,
-        Set recipients, Object key) {
+    public RemoteContainsKeyValueResponse(InternalDistributedSystem ds, Set recipients, Object key) {
       super(ds, recipients, false);
       this.key = key;
     }
 
     @Override
-    public void process(DistributionMessage msg)
-    {
+    public void process(DistributionMessage msg) {
       try {
         if (msg instanceof RemoteContainsKeyValueReplyMessage) {
-          RemoteContainsKeyValueReplyMessage reply = (RemoteContainsKeyValueReplyMessage)msg;
+          RemoteContainsKeyValueReplyMessage reply = (RemoteContainsKeyValueReplyMessage) msg;
           this.returnValue = reply.doesItContainKeyValue();
           this.returnValueReceived = true;
           if (logger.isTraceEnabled(LogMarker.DM)) {
             logger.trace(LogMarker.DM, "ContainsKeyValueResponse return value is {}", this.returnValue);
           }
         }
-      }
-      finally {
+      } finally {
         super.process(msg);
       }
     }
@@ -309,23 +276,18 @@ public final class RemoteContainsKeyValueMessage extends RemoteOperationMessageW
      *         {@link RemoteContainsKeyValueMessage}
      * @throws PrimaryBucketException if the instance of the bucket that received this operation was not primary
      */
-    public boolean waitForContainsResult() throws PrimaryBucketException,
-        RemoteOperationException {
+    public boolean waitForContainsResult() throws PrimaryBucketException, RemoteOperationException {
       try {
         waitForCacheException();
-      }
-      catch (RemoteOperationException rce) {
+      } catch (RemoteOperationException rce) {
         rce.checkKey(key);
         throw rce;
-      }
-      catch (PrimaryBucketException pbe) {
+      } catch (PrimaryBucketException pbe) {
         // Is this necessary?
         throw pbe;
-      }
-      catch (RegionDestroyedException e) {
+      } catch (RegionDestroyedException e) {
         throw e;
-      }
-      catch (CacheException ce) {
+      } catch (CacheException ce) {
         logger.debug("ContainsKeyValueResponse got remote CacheException; forcing reattempt.", ce);
         throw new RemoteOperationException(LocalizedStrings.RemoteContainsKeyValueMessage_CONTAINSKEYVALUERESPONSE_GOT_REMOTE_CACHEEXCEPTION.toLocalizedString(), ce);
       }

@@ -37,8 +37,7 @@ public class DeltaSessionAttributeEventBatch extends AbstractGatewayDeltaEvent {
   public DeltaSessionAttributeEventBatch() {
   }
 
-  public DeltaSessionAttributeEventBatch(String regionName, String sessionId,
-      List<DeltaSessionAttributeEvent> eventQueue) {
+  public DeltaSessionAttributeEventBatch(String regionName, String sessionId, List<DeltaSessionAttributeEvent> eventQueue) {
     super(regionName, sessionId);
     this.eventQueue = eventQueue;
   }
@@ -75,15 +74,6 @@ public class DeltaSessionAttributeEventBatch extends AbstractGatewayDeltaEvent {
   }
 
   public String toString() {
-    return new StringBuilder().append("DeltaSessionAttributeEventBatch[")
-        .append("regionName=")
-        .append(this.regionName)
-        .append("; sessionId=")
-        .append(this.key)
-        .append("; numberOfEvents=")
-        .append(this.eventQueue.size())
-        .append("]")
-        .toString();
+    return new StringBuilder().append("DeltaSessionAttributeEventBatch[").append("regionName=").append(this.regionName).append("; sessionId=").append(this.key).append("; numberOfEvents=").append(this.eventQueue.size()).append("]").toString();
   }
 }
-

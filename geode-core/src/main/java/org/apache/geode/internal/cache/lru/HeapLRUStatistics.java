@@ -31,8 +31,7 @@ import org.apache.geode.*;
  */
 public class HeapLRUStatistics extends LRUStatistics {
 
-  public HeapLRUStatistics(StatisticsFactory factory, 
-                              String name, EnableLRU helper) {
+  public HeapLRUStatistics(StatisticsFactory factory, String name, EnableLRU helper) {
     super(factory, name, helper);
   }
 
@@ -50,7 +49,7 @@ public class HeapLRUStatistics extends LRUStatistics {
    * @see EnableLRU#mustEvict
    */
   @Override
-  final public void updateCounter( long delta ) {
+  final public void updateCounter(long delta) {
     super.updateCounter(delta);
   }
 
@@ -64,4 +63,3 @@ public class HeapLRUStatistics extends LRUStatistics {
     super.resetCounter();
   }
 }
-

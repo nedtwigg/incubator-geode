@@ -51,20 +51,16 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 public class DeposePrimaryBucketMessage extends PartitionMessage {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private volatile int bucketId;
-  
+
   /**
    * Empty constructor to satisfy {@link DataSerializer} requirements
    */
   public DeposePrimaryBucketMessage() {
   }
 
-  private DeposePrimaryBucketMessage(
-      InternalDistributedMember recipient, 
-      int regionId, 
-      ReplyProcessor21 processor,
-      int bucketId) {
+  private DeposePrimaryBucketMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
   }
@@ -77,21 +73,14 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
    * @param bucketId the bucket to depose primary for
    * @return the processor used to wait for the response
    */
-  public static DeposePrimaryBucketResponse send(
-      InternalDistributedMember recipient, 
-      PartitionedRegion region,
-      int bucketId) {
-    
-    Assert.assertTrue(recipient != null, 
-        "DeposePrimaryBucketMessage NULL recipient");
-    
-    DeposePrimaryBucketResponse response = new DeposePrimaryBucketResponse(
-        region.getSystem(), recipient, region);
-    DeposePrimaryBucketMessage msg = new DeposePrimaryBucketMessage(
-        recipient, region.getPRId(), response, bucketId);
+  public static DeposePrimaryBucketResponse send(InternalDistributedMember recipient, PartitionedRegion region, int bucketId) {
 
-    Set<InternalDistributedMember> failures = 
-      region.getDistributionManager().putOutgoing(msg);
+    Assert.assertTrue(recipient != null, "DeposePrimaryBucketMessage NULL recipient");
+
+    DeposePrimaryBucketResponse response = new DeposePrimaryBucketResponse(region.getSystem(), recipient, region);
+    DeposePrimaryBucketMessage msg = new DeposePrimaryBucketMessage(recipient, region.getPRId(), response, bucketId);
+
+    Set<InternalDistributedMember> failures = region.getDistributionManager().putOutgoing(msg);
     if (failures != null && failures.size() > 0) {
       //throw new ForceReattemptException("Failed sending <" + msg + ">");
       return null;
@@ -100,8 +89,7 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
     return response;
   }
 
-  public DeposePrimaryBucketMessage(DataInput in) 
-  throws IOException, ClassNotFoundException {
+  public DeposePrimaryBucketMessage(DataInput in) throws IOException, ClassNotFoundException {
     fromData(in);
   }
 
@@ -112,22 +100,17 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm,
-                                                     PartitionedRegion region, 
-                                                     long startTime) 
-                                              throws ForceReattemptException {
-    
-    BucketAdvisor bucketAdvisor = 
-        region.getRegionAdvisor().getBucketAdvisor(this.bucketId);
-    
+  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion region, long startTime) throws ForceReattemptException {
+
+    BucketAdvisor bucketAdvisor = region.getRegionAdvisor().getBucketAdvisor(this.bucketId);
+
     bucketAdvisor.deposePrimary();
-    
+
     region.getPrStats().endPartitionMessagesProcessing(startTime);
-    DeposePrimaryBucketReplyMessage.send(
-        getSender(), getProcessorId(), dm, (ReplyException)null);
-    
+    DeposePrimaryBucketReplyMessage.send(getSender(), getProcessorId(), dm, (ReplyException) null);
+
     return false;
-    
+
   }
 
   @Override
@@ -152,39 +135,31 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
     out.writeInt(this.bucketId);
   }
 
-  public static final class DeposePrimaryBucketReplyMessage 
-  extends ReplyMessage {
-    
+  public static final class DeposePrimaryBucketReplyMessage extends ReplyMessage {
+
     /**
      * Empty constructor to conform to DataSerializable interface
      */
     public DeposePrimaryBucketReplyMessage() {
     }
 
-    public DeposePrimaryBucketReplyMessage(DataInput in)
-        throws IOException, ClassNotFoundException {
+    public DeposePrimaryBucketReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
     }
 
-    private DeposePrimaryBucketReplyMessage(
-        int processorId, ReplyException re) {
+    private DeposePrimaryBucketReplyMessage(int processorId, ReplyException re) {
       setProcessorId(processorId);
       setException(re);
     }
 
     /** Send a reply */
-    public static void send(InternalDistributedMember recipient,
-                            int processorId, 
-                            DM dm, 
-                            ReplyException re) {
-      Assert.assertTrue(recipient != null,
-          "DeposePrimaryBucketReplyMessage NULL recipient");
-      DeposePrimaryBucketReplyMessage m = 
-          new DeposePrimaryBucketReplyMessage(processorId, re);
+    public static void send(InternalDistributedMember recipient, int processorId, DM dm, ReplyException re) {
+      Assert.assertTrue(recipient != null, "DeposePrimaryBucketReplyMessage NULL recipient");
+      DeposePrimaryBucketReplyMessage m = new DeposePrimaryBucketReplyMessage(processorId, re);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
-    
+
     boolean isSuccess() {
       return true; //this.responseCode == OK;
     }
@@ -205,7 +180,7 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
       processor.process(this);
 
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "{} processed {}",processor, this);
+        logger.trace(LogMarker.DM, "{} processed {}", processor, this);
       }
       dm.getStats().incReplyMessageTime(NanoTimer.getTime() - startTime);
     }
@@ -221,17 +196,14 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
     }
 
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("DeposePrimaryBucketReplyMessage ")
-        .append("processorid=").append(this.processorId)
-        .append(" reply to sender ").append(this.getSender());
+      sb.append("DeposePrimaryBucketReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender());
       return sb.toString();
     }
   }
@@ -240,13 +212,9 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
    * A processor to capture the value returned by the
    * <code>DeposePrimaryBucketReplyMessage</code>
    */
-  public static class DeposePrimaryBucketResponse extends
-      PartitionResponse {
-    
-    public DeposePrimaryBucketResponse(
-        InternalDistributedSystem ds,
-        InternalDistributedMember recipient, 
-        PartitionedRegion theRegion) {
+  public static class DeposePrimaryBucketResponse extends PartitionResponse {
+
+    public DeposePrimaryBucketResponse(InternalDistributedSystem ds, InternalDistributedMember recipient, PartitionedRegion theRegion) {
       super(ds, recipient);
     }
 
@@ -254,19 +222,16 @@ public class DeposePrimaryBucketMessage extends PartitionMessage {
     public void process(DistributionMessage msg) {
       try {
         if (msg instanceof DeposePrimaryBucketReplyMessage) {
-          DeposePrimaryBucketReplyMessage reply = 
-              (DeposePrimaryBucketReplyMessage)msg;
+          DeposePrimaryBucketReplyMessage reply = (DeposePrimaryBucketReplyMessage) msg;
           if (reply.isSuccess()) {
             if (logger.isTraceEnabled(LogMarker.DM)) {
               logger.trace(LogMarker.DM, "DeposePrimaryBucketResponse return OK");
             }
-          }
-          else if (logger.isTraceEnabled(LogMarker.DM)) {
+          } else if (logger.isTraceEnabled(LogMarker.DM)) {
             logger.trace(LogMarker.DM, "DeposePrimaryBucketResponse return NOT_PRIMARY");
           }
         }
-      }
-      finally {
+      } finally {
         super.process(msg);
       }
     }

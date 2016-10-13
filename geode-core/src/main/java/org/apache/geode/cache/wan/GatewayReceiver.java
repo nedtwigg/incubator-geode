@@ -39,45 +39,44 @@ public interface GatewayReceiver {
    * is used by the <code>ClientHealthMonitor</code> to determine the
    * health of this <code>GatewayReceiver</code>'s clients.
    */
-  public static final  int DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS  = 60000;
+  public static final int DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS = 60000;
 
   /**
    * Default start value of the port range from which the <code>GatewayReceiver</code>'s port will be chosen
    */
   public static final int DEFAULT_START_PORT = 5000;
-  
+
   /**
    * Default end value of the port range from which the <code>GatewayReceiver</code>'s port will be chosen
    */
   public static final int DEFAULT_END_PORT = 5500;
-  
+
   /**
    * The default buffer size for socket buffers for the <code>GatewayReceiver</code>.
    */
   public static final int DEFAULT_SOCKET_BUFFER_SIZE = 524288;
-  
+
   /**
    * The default ip address or host name that the receiver's socket will
    * listen on for client connections.
    * The current default is an empty string.
    */
-  public static final String DEFAULT_BIND_ADDRESS = ""; 
-  
+  public static final String DEFAULT_BIND_ADDRESS = "";
+
   public static final String DEFAULT_HOSTNAME_FOR_SENDERS = "";
-  
+
   /**
    * The default value (true) for manually starting a
    * <code>GatewayReceiver</code>.
    * @since GemFire 8.1
    */
   public static final boolean DEFAULT_MANUAL_START = false;
-  
+
   /**
    * If the batch already seen by this receiver, arrives again then whether it is to be
    * re-applied or not is decided by this attribute.  
    */
-  public static final boolean APPLY_RETRIES = Boolean
-      .getBoolean(DistributionConfig.GEMFIRE_PREFIX + "GatewayReceiver.ApplyRetries");
+  public static final boolean APPLY_RETRIES = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "GatewayReceiver.ApplyRetries");
 
   /**
    * Starts this receiver.  Once the receiver is running, its
@@ -87,7 +86,7 @@ public interface GatewayReceiver {
    *         If an error occurs while starting the receiver
    */
   public void start() throws IOException;
-  
+
   /**
    * Stops this receiver. Note that the
    * <code>GatewayReceiver</code> can be reconfigured and restarted if
@@ -99,7 +98,7 @@ public interface GatewayReceiver {
    * Returns whether or not this receiver is running
    */
   public boolean isRunning();
-  
+
   /**
    * Returns the list of <code>GatewayTransportFilter</code> added to this
    * GatewayReceiver.
@@ -122,17 +121,17 @@ public interface GatewayReceiver {
    * Returns the port on which this <code>GatewayReceiver</code> listens for clients.
    */
   public int getPort();
-  
+
   /**
    * Returns start value of the port range from which the <code>GatewayReceiver</code>'s port will be chosen.
    */
   public int getStartPort();
-  
+
   /**
    * Returns end value of the port range from which the <code>GatewayReceiver</code>'s port will be chosen.
    */
   public int getEndPort();
-  
+
   /**
    * Returns a string representing the ip address or host name that server locators
    * will tell clients (<code>GatewaySender</code>s in this case) that this receiver is listening on.
@@ -156,7 +155,7 @@ public interface GatewayReceiver {
    * @see #DEFAULT_BIND_ADDRESS
    */
   public String getBindAddress();
-  
+
   /**
    * Returns the manual start boolean property for this GatewayReceiver.
    * Default is true i.e. the GatewayReceiver will not automatically start once created.
@@ -165,10 +164,10 @@ public interface GatewayReceiver {
    * 
    */
   public boolean isManualStart();
-  
+
   /**
    * Return the underlying Cacheserver 
    */
   public CacheServer getServer();
-  
+
 }

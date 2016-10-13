@@ -35,19 +35,19 @@ public interface DistributedMember extends Comparable<DistributedMember> {
    * @since GemFire 7.0
    */
   public String getName();
-  
+
   /**
    * Returns the canonical name of the host machine for this member.
    */
   public String getHost();
-  
+
   /**
    * Returns the Roles that this member performs in the system.
    * Note that the result will contain both groups and roles.
    * @deprecated Roles is scheduled to be removed
    */
   public Set<Role> getRoles();
-  
+
   /**
    * Returns the groups this member belongs to.
    * A member defines the groups it is in using the "groups"
@@ -58,23 +58,21 @@ public interface DistributedMember extends Comparable<DistributedMember> {
    * @return a list of groups that this member belongs to.
    */
   public List<String> getGroups();
- 
+
   /**
    * Returns the process id for this member. This may return zero if the
    * platform or configuration does not allow native access to process info. 
    */
   public int getProcessId();
-  
+
   /**
    * Returns a unique identifier for this member.
    */
   public String getId();
-  
+
   /**
    * Returns the durable attributes for this client.
    */
   public DurableClientAttributes getDurableClientAttributes();
 
 }
-
-

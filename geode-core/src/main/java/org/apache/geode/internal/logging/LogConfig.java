@@ -26,6 +26,7 @@ public interface LogConfig {
    * @see org.apache.geode.internal.logging.LogWriterImpl
    */
   int getLogLevel();
+
   /**
    * Returns the value of the <a
    * href="../DistributedSystem.html#log-file">"log-file"</a> property
@@ -34,12 +35,14 @@ public interface LogConfig {
    *         out
    */
   File getLogFile();
+
   /**
    * Returns the value of the <a
    * href="../DistributedSystem.html#log-file-size-limit">"log-file-size-limit"</a>
    * property
    */
   int getLogFileSizeLimit();
+
   /**
    * Returns the value of the <a
    * href="../DistributedSystem.html#log-disk-space-limit">"log-disk-space-limit"</a>

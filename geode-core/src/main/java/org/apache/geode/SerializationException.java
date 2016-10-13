@@ -23,7 +23,8 @@ import org.apache.geode.GemFireIOException;
  * @since GemFire 5.7
  */
 public class SerializationException extends GemFireIOException {
-private static final long serialVersionUID = 7783018024920098997L;
+  private static final long serialVersionUID = 7783018024920098997L;
+
   /**
    * 
    * Create a new instance of SerializationException with a detail message

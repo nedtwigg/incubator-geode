@@ -31,4 +31,3 @@ public class StoppableReadWriteLock extends StoppableReentrantReadWriteLock {
     super(new SemaphoreReadWriteLock(), stopper);
   }
 }
-

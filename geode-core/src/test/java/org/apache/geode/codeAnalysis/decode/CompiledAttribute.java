@@ -15,32 +15,32 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis.decode;
+
 import java.io.*;
 
 import org.apache.geode.codeAnalysis.decode.cp.CpUtf8;
 
-
 public class CompiledAttribute {
-    int attribute_name_index;  // java predefines some but others are allowed, too
-    long attribute_length;
-    byte info[];
-    String name;
+  int attribute_name_index; // java predefines some but others are allowed, too
+  long attribute_length;
+  byte info[];
+  String name;
 
-    CompiledAttribute( DataInputStream source ) throws IOException {
-        int idx;
+  CompiledAttribute(DataInputStream source) throws IOException {
+    int idx;
 
-        attribute_name_index = source.readUnsignedShort();
-        attribute_length = source.readInt();
-        info = new byte[(int)attribute_length];
-        for (idx=0; idx<attribute_length; idx++) {
-            info[idx] = (byte)source.readUnsignedByte();
-        }
+    attribute_name_index = source.readUnsignedShort();
+    attribute_length = source.readInt();
+    info = new byte[(int) attribute_length];
+    for (idx = 0; idx < attribute_length; idx++) {
+      info[idx] = (byte) source.readUnsignedByte();
     }
-    
-    public String name(CompiledClass dclass) {
-      if (name == null) {
-        name = ((CpUtf8)dclass.constant_pool[attribute_name_index]).stringValue();
-      }
-      return name;
+  }
+
+  public String name(CompiledClass dclass) {
+    if (name == null) {
+      name = ((CpUtf8) dclass.constant_pool[attribute_name_index]).stringValue();
     }
+    return name;
+  }
 }

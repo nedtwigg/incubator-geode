@@ -67,7 +67,7 @@ public class BlobHelper {
     final int startBytes = hdos.size();
     final long start = startSerialization();
     DataSerializer.writeObject(obj, hdos);
-    endSerialization(start, hdos.size()-startBytes);
+    endSerialization(start, hdos.size() - startBytes);
   }
 
   /**
@@ -141,7 +141,7 @@ public class BlobHelper {
     }
     return result;
   }
-  
+
   private static void endSerialization(long start, int bytes) {
     DMStats stats = InternalDistributedSystem.getDMStats();
     if (stats != null) {
@@ -157,12 +157,12 @@ public class BlobHelper {
     }
     return result;
   }
-  
+
   private static void endDeserialization(long start, int bytes) {
     DMStats stats = InternalDistributedSystem.getDMStats();
     if (stats != null) {
       stats.endDeserialization(start, bytes);
     }
   }
-  
+
 }

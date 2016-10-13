@@ -62,14 +62,12 @@ public final class ClientMarkerMessageImpl implements ClientMessage {
     if (clientVersion.compareTo(Version.GFE_57) >= 0) {
       message = getGFEMessage();
     } else {
-      throw new IOException(
-          "Unsupported client version for server-to-client message creation: "
-              + clientVersion);
+      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
     }
-      
+
     return message;
   }
-  
+
   protected Message getGFEMessage() throws IOException {
     Message message = new Message(1, Version.CURRENT);
     message.setMessageType(MessageType.CLIENT_MARKER);
@@ -90,8 +88,7 @@ public final class ClientMarkerMessageImpl implements ClientMessage {
     return CLIENT_MARKER_MESSAGE_IMPL;
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.eventId = (EventID) DataSerializer.readObject(in);
   }
 
@@ -115,7 +112,7 @@ public final class ClientMarkerMessageImpl implements ClientMessage {
     return "marker";
   }
 
-  public void setLatestValue(Object value){
+  public void setLatestValue(Object value) {
     return;
   }
 

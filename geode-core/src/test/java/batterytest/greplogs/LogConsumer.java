@@ -37,7 +37,7 @@ public class LogConsumer {
   private String fileName;
   HashMap individalErrorCount = new HashMap();
   private final int repeatLimit;
-  
+
   private static final Pattern ExpectedExceptionPattern = Pattern.compile("<ExpectedException action=(add|remove)>(.*)</ExpectedException>");
   private static final Pattern logPattern = Pattern.compile("^\\[(?:fatal|error|warn|info|debug|trace|severe|warning|fine|finer|finest)");
   private static final Pattern blankPattern = Pattern.compile("^\\s*$");
@@ -59,12 +59,8 @@ public class LogConsumer {
   private static final Pattern rvvBitSetMessagePattern = Pattern.compile("RegionVersionVector.+bsv\\d+.+bs=\\{\\d+\\}");
   /** Limit long errors to this many lines */
   private static int ERROR_BUFFER_LIMIT = 128;
-  
-  
-  
-  
-  public LogConsumer(boolean skipLogMsgs, 
-      List testExpectStrs, String fileName, int repeatLimit) {
+
+  public LogConsumer(boolean skipLogMsgs, List testExpectStrs, String fileName, int repeatLimit) {
     super();
     this.skipLogMsgs = skipLogMsgs;
     this.testExpectStrs = testExpectStrs;
@@ -77,7 +73,7 @@ public class LogConsumer {
       lineNumber++;
       Matcher m = ExpectedExceptionPattern.matcher(line);
       if (m.find()) {
-        if ( m.group(1).equals("add")) {
+        if (m.group(1).equals("add")) {
           expectedExceptions.add(Pattern.compile(m.group(2)));
         } else {
           //assume add and remove are the only choices
@@ -86,9 +82,9 @@ public class LogConsumer {
         return null;
       }
     }
-    if(skipLogMsgs) {
-      if(infoMsgFlag) {
-        if(logPattern.matcher(line).find()) {
+    if (skipLogMsgs) {
+      if (infoMsgFlag) {
+        if (logPattern.matcher(line).find()) {
           infoMsgFlag = false;
         } else if (blankPattern.matcher(line).matches()) {
           infoMsgFlag = false;
@@ -97,27 +93,27 @@ public class LogConsumer {
           return null;
         }
       }
-      if (skipLevelPattern.matcher(line).find()){
+      if (skipLevelPattern.matcher(line).find()) {
         infoMsgFlag = true;
         return null;
       }
     }
-    
-    if ( eatLines != 0 ) {
+
+    if (eatLines != 0) {
       eatLines--;
       return null;
     } else {
-      if(saveFlag || fatalOrErrorPattern.matcher(line).find()) {
-        if(! saveFlag) {
+      if (saveFlag || fatalOrErrorPattern.matcher(line).find()) {
+        if (!saveFlag) {
           saveFlag = true;
-          tmpErrFlag = true;   
-          if(checkExpectedStrs(line, expectedExceptions)) {
+          tmpErrFlag = true;
+          if (checkExpectedStrs(line, expectedExceptions)) {
             saveFlag = false;
             tmpErrFlag = false;
             tmpErrLines = 0;
           }
-          if(tmpErrFlag) {
-            tmpErrLines=1;
+          if (tmpErrFlag) {
+            tmpErrLines = 1;
             all = new StringBuilder(line);
             all.append("\n");
             savelinenum = lineNumber;
@@ -134,9 +130,9 @@ public class LogConsumer {
             // one of the registered expected strings
             tmpErrFlag = false;
             tmpErrLines = 0;
-            saveFlag = false; 
+            saveFlag = false;
           }
-          
+
           // We save all the lines up to the next blank line so we're
           //looking for a blank line here
           if (blankPattern.matcher(line).matches()) {
@@ -147,58 +143,46 @@ public class LogConsumer {
             if (m.matches()) {
               String shortName = m.group(1);
               Integer i = (Integer) individalErrorCount.get(shortName);
-              Integer occurances = 
-                new Integer((i == null) ? 1 : i.intValue() + 1);
+              Integer occurances = new Integer((i == null) ? 1 : i.intValue() + 1);
               individalErrorCount.put(shortName, occurances);
-              return enforceErrorLimit(occurances.intValue(), 
-                                all.toString(), 
-                                //reader.getLineNumber(),
-                                savelinenum,
-                                fileName);
-              
+              return enforceErrorLimit(occurances.intValue(), all.toString(),
+                  //reader.getLineNumber(),
+                  savelinenum, fileName);
+
             } else {
               //error in determining shortName, wing it
-              return enforceErrorLimit(1, 
-                                all.toString(), 
-                                lineNumber,
-                                fileName);
+              return enforceErrorLimit(1, all.toString(), lineNumber, fileName);
             }
           }
-          
+
           // we're still saving lines to append them on to all which contains
           // all the lines we're trying to save          
-          if ( tmpErrFlag ) {
-            if ( tmpErrLines < ERROR_BUFFER_LIMIT ) {
+          if (tmpErrFlag) {
+            if (tmpErrLines < ERROR_BUFFER_LIMIT) {
               tmpErrLines++;
               all.append(line).append("\n");
             }
-            if ( tmpErrLines == ERROR_BUFFER_LIMIT ) {
+            if (tmpErrLines == ERROR_BUFFER_LIMIT) {
               tmpErrLines++; //increment to prevent this line from repeating
-              all.append("GrepLogs: ERROR_BUFFER_LIMIT limit reached,")
-                 .append(" the error was too long to display completely.\n");
+              all.append("GrepLogs: ERROR_BUFFER_LIMIT limit reached,").append(" the error was too long to display completely.\n");
             }
-            
+
           }
         }
-      // unique condition for when bridge server see log exception and      
-      // logging level is set to fine. Message looks like this:
-      //[fine 2005/10/25 17:53:13.586 PDT gemfire2 Server connection from hobbes.gemstone.com:34466-0xf4 nid=0x23e40f1] Server connection from hobbes.gemstone.com:34466: Wrote exception:
-      //org.apache.geode.cache.EntryNotFoundException: remote-destroy-key
-      // also now handles a JMX WARNING
-      } else if(wroteExceptionPattern.matcher(line).find() 
-                || rmiWarnPattern.matcher(line).find()) {
+        // unique condition for when bridge server see log exception and      
+        // logging level is set to fine. Message looks like this:
+        //[fine 2005/10/25 17:53:13.586 PDT gemfire2 Server connection from hobbes.gemstone.com:34466-0xf4 nid=0x23e40f1] Server connection from hobbes.gemstone.com:34466: Wrote exception:
+        //org.apache.geode.cache.EntryNotFoundException: remote-destroy-key
+        // also now handles a JMX WARNING
+      } else if (wroteExceptionPattern.matcher(line).find() || rmiWarnPattern.matcher(line).find()) {
         //Eat only the single EntryNotFound Exception
-        eatLines=1;
+        eatLines = 1;
         // if we are here then the line didn't have severe or error in it and      
         // didn't meet any special cases that require eating lines      
         // Check for other kinds of exceptions. This is by no means inclusive      
         //of all types of exceptions that could occur and some ARE missed.               
-      } else if (exceptionPattern.matcher(line).find()
-                 || javaLangErrorPattern.matcher(line).find()
-                 || (misformatedI18nMessagePattern.matcher(line).find()
-                     && !(skipLevelPattern.matcher(line).find()
-                         && rvvBitSetMessagePattern.matcher(line).find())) ) {
-        if(! checkExpectedStrs(line, expectedExceptions)) {
+      } else if (exceptionPattern.matcher(line).find() || javaLangErrorPattern.matcher(line).find() || (misformatedI18nMessagePattern.matcher(line).find() && !(skipLevelPattern.matcher(line).find() && rvvBitSetMessagePattern.matcher(line).find()))) {
+        if (!checkExpectedStrs(line, expectedExceptions)) {
           // it's the Exception colon that we want to find
           // along with the next six words and define to shortline
           // shortline is only used for the unique sting to count the
@@ -208,8 +192,8 @@ public class LogConsumer {
           Matcher m3 = exceptionPattern3.matcher(line);
           Matcher m4 = exceptionPattern4.matcher(line);
           String shortName = null;
-           
-          if(m2.find()) {
+
+          if (m2.find()) {
             shortName = m2.group(1);
           } else if (m3.find()) {
             shortName = m3.group(1);
@@ -217,71 +201,56 @@ public class LogConsumer {
             shortName = m4.group(1);
           }
           if (shortName != null) {
-          Integer i = (Integer) individalErrorCount.get(shortName);
-          Integer occurances = 
-            new Integer((i == null) ? 1 : i.intValue() + 1);
-          individalErrorCount.put(shortName, occurances);
-          return enforceErrorLimit(occurances.intValue(), 
-                            line + "\n", 
-                            lineNumber,
-                            fileName);
+            Integer i = (Integer) individalErrorCount.get(shortName);
+            Integer occurances = new Integer((i == null) ? 1 : i.intValue() + 1);
+            individalErrorCount.put(shortName, occurances);
+            return enforceErrorLimit(occurances.intValue(), line + "\n", lineNumber, fileName);
           } else {
             return enforceErrorLimit(1, line + "\n", lineNumber, fileName);
           }
         }
       }
     }
-    
+
     return null;
   }
-  
+
   public StringBuilder close() {
-    if(saveFlag) {
+    if (saveFlag) {
       //  Bug fix for severe that occurs at the end of a log file. Since we
       // collect lines up to a blank line that never happens this prints the
       // collection of in process suspect strings if we close the file and
       // we're still trying to save lines
-      
+
       saveFlag = false;
       return enforceErrorLimit(1, all.toString(), savelinenum, fileName);
     }
     return null;
   }
-  
+
   private boolean checkExpectedStrs(CharSequence line, List expectedExceptions) {
-    for(int i = 0; i < expectedExceptions.size(); i++) {
+    for (int i = 0; i < expectedExceptions.size(); i++) {
       Pattern p = (Pattern) expectedExceptions.get(i);
-      if(p.matcher(line).find()) return true;
+      if (p.matcher(line).find())
+        return true;
     }
-    for(int i = 0; i < testExpectStrs.size(); i++) {
+    for (int i = 0; i < testExpectStrs.size(); i++) {
       Pattern p = (Pattern) testExpectStrs.get(i);
-      if(p.matcher(line).find()) return true;
+      if (p.matcher(line).find())
+        return true;
     }
     return false;
   }
-  
-  private StringBuilder enforceErrorLimit(int hits, 
-      String line,
-      int linenum,
-      String filename) {
-    if ( hits <= repeatLimit ) {
+
+  private StringBuilder enforceErrorLimit(int hits, String line, int linenum, String filename) {
+    if (hits <= repeatLimit) {
       StringBuilder buffer = new StringBuilder();
-      buffer.append("-----------------------------------------------------------------------\n")
-      .append("Found suspect string in ")
-      .append(filename)
-      .append(" at line ")
-      .append(linenum)
-      .append("\n\n")
-      .append(line)
-      .append("\n");
+      buffer.append("-----------------------------------------------------------------------\n").append("Found suspect string in ").append(filename).append(" at line ").append(linenum).append("\n\n").append(line).append("\n");
       return buffer;
     }
-    if ( hits == repeatLimit ) {
+    if (hits == repeatLimit) {
       StringBuilder buffer = new StringBuilder();
-      buffer.append("\n\nHit occurrence limit of ")
-      .append(hits)
-      .append(" for this string.\n")
-      .append("Further reporting of this type of error will be suppressed.\n");
+      buffer.append("\n\nHit occurrence limit of ").append(hits).append(" for this string.\n").append("Further reporting of this type of error will be suppressed.\n");
       return buffer;
     }
     return null;

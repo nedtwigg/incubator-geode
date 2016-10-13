@@ -51,15 +51,15 @@ public class SearchLoadAndWriteProcessorTest {
     when(lr.getKeyInfo(any(), any(), any())).thenReturn(keyInfo);
     processor.region = lr;
     EntryEventImpl event = EntryEventImpl.create(lr, Operation.REPLACE, key, value, cbArg, false, null);
-    
+
     try {
       // the test
       processor.doNetWrite(event, null, null, 0);
-      
+
       // verification
       verify(value, times(2)).retain();
       verify(value, times(1)).release();
-      
+
     } finally {
       processor.release();
     }

@@ -42,17 +42,16 @@ public class Bug48182JUnitTest {
    * A region entry key.
    */
   private static final String KEY = "KEY";
-  
+
   /**
    * A region entry value.
    */
   private static final String VALUE = " Vestibulum quis lobortis risus. Cras cursus eget dolor in facilisis. Curabitur purus arcu, dignissim ac lorem non, venenatis condimentum tellus. Praesent at erat dapibus, bibendum nunc sed, congue nulla";
-  
+
   /**
    * A cache.
    */
   private GemFireCacheImpl cache = null;
-
 
   @Before
   public void setUp() throws Exception {
@@ -72,7 +71,7 @@ public class Bug48182JUnitTest {
   protected GemFireCacheImpl getCache() {
     return this.cache;
   }
-  
+
   /**
    * Close a cache.
    * @param gfc the cache to close.
@@ -80,41 +79,41 @@ public class Bug48182JUnitTest {
   protected void closeCache(GemFireCacheImpl gfc) {
     gfc.close();
   }
-  
+
   /**
    * @return the test's off heap memory size.
    */
   protected String getOffHeapMemorySize() {
     return "2m";
   }
-  
+
   /**
    * @return the type of region for the test.
    */
   protected RegionShortcut getRegionShortcut() {
     return RegionShortcut.REPLICATE;
   }
-  
+
   /**
    * @return the region containing our test data.
    */
   protected String getRegionName() {
     return "region1";
   }
-  
+
   /**
    * Creates and returns the test region with concurrency checks enabled.
    */
-  protected Region<Object,Object> createRegion() {
+  protected Region<Object, Object> createRegion() {
     return createRegion(true);
   }
-  
+
   /**
    * Creates and returns the test region.
    * @param concurrencyChecksEnabled concurrency checks will be enabled if true.
    */
-  protected Region<Object,Object> createRegion(boolean concurrencyChecksEnabled) {
-    return getCache().createRegionFactory(getRegionShortcut()).setOffHeap(true).setConcurrencyChecksEnabled(concurrencyChecksEnabled).create(getRegionName());    
+  protected Region<Object, Object> createRegion(boolean concurrencyChecksEnabled) {
+    return getCache().createRegionFactory(getRegionShortcut()).setOffHeap(true).setConcurrencyChecksEnabled(concurrencyChecksEnabled).create(getRegionName());
   }
 
   /**
@@ -140,27 +139,27 @@ public class Bug48182JUnitTest {
       @Override
       public void run() {
         getCache().close();
-      }      
+      }
     };
-    
+
     // True when the correct exception has been triggered.
     boolean correctException = false;
-    
-    Region<Object,Object> region = createRegion();
+
+    Region<Object, Object> region = createRegion();
     region.put(KEY, VALUE);
-    
+
     try {
       region.destroy(KEY);
-    } catch(CacheClosedException e) {
+    } catch (CacheClosedException e) {
       correctException = true;
-//      e.printStackTrace();
-    } catch(Exception e) {
-//      e.printStackTrace();
+      //      e.printStackTrace();
+    } catch (Exception e) {
+      //      e.printStackTrace();
       fail("Did not receive a CacheClosedException.  Received a " + e.getClass().getName() + " instead.");
     }
-    
-    assertTrue("A CacheClosedException was not triggered",correctException);
-  }  
+
+    assertTrue("A CacheClosedException was not triggered", correctException);
+  }
 
   /**
    * Simulates the conditions similar to 48182 by setting a test hook boolean in {@link AbstractRegionMap}.  This test 
@@ -173,25 +172,25 @@ public class Bug48182JUnitTest {
       @Override
       public void run() {
         getCache().getRegion(getRegionName()).destroyRegion();
-      }      
+      }
     };
 
     // True when the correct exception has been triggered.
     boolean correctException = false;
-    
-    Region<Object,Object> region = createRegion();
+
+    Region<Object, Object> region = createRegion();
     region.put(KEY, VALUE);
-    
+
     try {
       region.destroy(KEY);
-    } catch(RegionDestroyedException e) {
+    } catch (RegionDestroyedException e) {
       correctException = true;
-//      e.printStackTrace();
-    } catch(Exception e) {
-//      e.printStackTrace();
+      //      e.printStackTrace();
+    } catch (Exception e) {
+      //      e.printStackTrace();
       fail("Did not receive a RegionDestroyedException.  Received a " + e.getClass().getName() + " instead.");
     }
 
-    assertTrue("A RegionDestroyedException was not triggered",correctException);    
+    assertTrue("A RegionDestroyedException was not triggered", correctException);
   }
 }

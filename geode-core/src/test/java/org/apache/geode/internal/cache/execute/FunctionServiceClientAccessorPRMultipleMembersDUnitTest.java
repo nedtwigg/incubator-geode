@@ -43,7 +43,8 @@ import org.junit.experimental.categories.Category;
 @Category(DistributedTest.class)
 public class FunctionServiceClientAccessorPRMultipleMembersDUnitTest extends FunctionServiceClientAccessorPRBase {
 
-  @Override public void createRegions() {
+  @Override
+  public void createRegions() {
     super.createRegions();
     //Make sure the client is consistently using singlehop by proactively getting
     //the server location metadata.

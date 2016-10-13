@@ -51,12 +51,11 @@ public class MemoryInspectorImpl implements MemoryInspector {
   public synchronized List<MemoryBlock> getSnapshot() {
     List<MemoryBlock> value = this.memoryBlocks;
     if (value == null) {
-      return Collections.<MemoryBlock>emptyList();
+      return Collections.<MemoryBlock> emptyList();
     } else {
       return value;
     }
   }
-
 
   @Override
   public MemoryBlock getFirstBlock() {

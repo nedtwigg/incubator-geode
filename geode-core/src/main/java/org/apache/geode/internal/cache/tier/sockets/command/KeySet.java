@@ -63,8 +63,7 @@ public class KeySet extends BaseCommand {
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("{}: Received key set request ({} bytes) from {} for region {}", servConn.getName(), msg.getPayloadLength(), servConn
-        .getSocketString(), regionName);
+      logger.debug("{}: Received key set request ({} bytes) from {} for region {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName);
     }
 
     // Process the key set request
@@ -72,10 +71,8 @@ public class KeySet extends BaseCommand {
       String message = null;
       //      if (regionName == null) (can only be null)
       {
-        message = LocalizedStrings.KeySet_0_THE_INPUT_REGION_NAME_FOR_THE_KEY_SET_REQUEST_IS_NULL.toLocalizedString(servConn
-          .getName());
-        logger.warn(LocalizedMessage.create(LocalizedStrings.KeySet_0_THE_INPUT_REGION_NAME_FOR_THE_KEY_SET_REQUEST_IS_NULL, servConn
-          .getName()));
+        message = LocalizedStrings.KeySet_0_THE_INPUT_REGION_NAME_FOR_THE_KEY_SET_REQUEST_IS_NULL.toLocalizedString(servConn.getName());
+        logger.warn(LocalizedMessage.create(LocalizedStrings.KeySet_0_THE_INPUT_REGION_NAME_FOR_THE_KEY_SET_REQUEST_IS_NULL, servConn.getName()));
       }
       writeKeySetErrorResponse(msg, MessageType.KEY_SET_DATA_ERROR, message, servConn);
       servConn.setAsTrue(RESPONDED);
@@ -145,10 +142,7 @@ public class KeySet extends BaseCommand {
 
   }
 
-  private void fillAndSendKeySetResponseChunks(LocalRegion region,
-                                               String regionName,
-                                               KeySetOperationContext context,
-                                               ServerConnection servConn) throws IOException {
+  private void fillAndSendKeySetResponseChunks(LocalRegion region, String regionName, KeySetOperationContext context, ServerConnection servConn) throws IOException {
 
     // Get the key set
     Set keySet = region.keys();
@@ -163,12 +157,11 @@ public class KeySet extends BaseCommand {
 
     List keyList = new ArrayList(maximumChunkSize);
     final boolean isTraceEnabled = logger.isTraceEnabled();
-    for (Iterator it = keySet.iterator(); it.hasNext(); ) {
+    for (Iterator it = keySet.iterator(); it.hasNext();) {
       Object entryKey = it.next();
       keyList.add(entryKey);
       if (isTraceEnabled) {
-        logger.trace("{}: fillAndSendKeySetResponseKey <{}>; list size was {}; region: {}", servConn.getName(), entryKey, keyList
-          .size(), region.getFullPath());
+        logger.trace("{}: fillAndSendKeySetResponseKey <{}>; list size was {}; region: {}", servConn.getName(), entryKey, keyList.size(), region.getFullPath());
       }
       if (keyList.size() == maximumChunkSize) {
         // Send the chunk and clear the list
@@ -180,8 +173,7 @@ public class KeySet extends BaseCommand {
     sendKeySetResponseChunk(region, keyList, true, servConn);
   }
 
-  private static void sendKeySetResponseChunk(Region region, List list, boolean lastChunk, ServerConnection servConn)
-    throws IOException {
+  private static void sendKeySetResponseChunk(Region region, List list, boolean lastChunk, ServerConnection servConn) throws IOException {
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
 
     chunkedResponseMsg.setNumberOfParts(1);
@@ -189,8 +181,7 @@ public class KeySet extends BaseCommand {
     chunkedResponseMsg.addObjPart(list, zipValues);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sending {} key set response chunk for region={}{}", servConn.getName(), (lastChunk ? " last " : " "), region
-        .getFullPath(), (logger.isTraceEnabled() ? " keys=" + list + " chunk=<" + chunkedResponseMsg + ">" : ""));
+      logger.debug("{}: Sending {} key set response chunk for region={}{}", servConn.getName(), (lastChunk ? " last " : " "), region.getFullPath(), (logger.isTraceEnabled() ? " keys=" + list + " chunk=<" + chunkedResponseMsg + ">" : ""));
     }
 
     chunkedResponseMsg.sendChunk(servConn);

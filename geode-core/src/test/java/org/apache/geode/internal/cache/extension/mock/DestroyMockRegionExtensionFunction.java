@@ -77,8 +77,7 @@ public class DestroyMockRegionExtensionFunction extends FunctionAdapter {
     final ResultSender<Object> resultSender = context.getResultSender();
     final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
 
-    resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format("Mock region extension \"{0}\" destroyed on \"{1}\"",
-        new Object[] { region.getFullPath(), memberNameOrId })));
+    resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format("Mock region extension \"{0}\" destroyed on \"{1}\"", new Object[] { region.getFullPath(), memberNameOrId })));
 
   }
 

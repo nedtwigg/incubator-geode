@@ -69,13 +69,11 @@ public abstract class UriUtils {
         do {
           previousEncodedValue = encodedValue;
           encodedValue = URLDecoder.decode(encodedValue, encoding);
-        }
-        while (!encodedValue.equals(previousEncodedValue));
+        } while (!encodedValue.equals(previousEncodedValue));
       }
 
       return encodedValue;
-    }
-    catch (UnsupportedEncodingException ignore) {
+    } catch (UnsupportedEncodingException ignore) {
       return encodedValue;
     }
   }
@@ -178,8 +176,7 @@ public abstract class UriUtils {
   public static String encode(final String value, final String encoding) {
     try {
       return (value != null ? URLEncoder.encode(value, encoding) : value);
-    }
-    catch (UnsupportedEncodingException ignore) {
+    } catch (UnsupportedEncodingException ignore) {
       return value;
     }
   }

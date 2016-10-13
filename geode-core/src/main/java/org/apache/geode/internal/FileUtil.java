@@ -52,22 +52,22 @@ public class FileUtil {
    * @throws IOException
    */
   public static void copy(File source, File dest) throws IOException {
-    if(source.isDirectory()) {
+    if (source.isDirectory()) {
       dest.mkdir();
-      for(File child: listFiles(source)) {
+      for (File child : listFiles(source)) {
         copy(child, new File(dest, child.getName()));
       }
     } else {
-      if(source.exists()) {
+      if (source.exists()) {
         long lm = source.lastModified();
-        if(dest.isDirectory()) {
+        if (dest.isDirectory()) {
           dest = new File(dest, source.getName());
         }
         FileOutputStream fos = new FileOutputStream(dest);
         try {
           FileInputStream fis = new FileInputStream(source);
           try {
-            if(USE_NIO) {
+            if (USE_NIO) {
               nioCopy(fos, fis);
             } else {
               oioCopy(source, fos, fis);
@@ -83,7 +83,7 @@ public class FileUtil {
       }
     }
   }
-  
+
   /**
    * Basically just like {@link File#listFiles()} but instead of returning null
    * returns an empty array. This fixes bug 43729
@@ -95,6 +95,7 @@ public class FileUtil {
     }
     return result;
   }
+
   /**
    * Basically just like {@link File#listFiles(FilenameFilter)} but instead of returning null
    * returns an empty array. This fixes bug 43729
@@ -106,24 +107,24 @@ public class FileUtil {
     }
     return result;
   }
+
   /**
    * Copy a single file using NIO.
    * @throws IOException
    */
-  private static void nioCopy(FileOutputStream fos, FileInputStream fis)
-      throws IOException {
+  private static void nioCopy(FileOutputStream fos, FileInputStream fis) throws IOException {
     FileChannel outChannel = fos.getChannel();
     FileChannel inChannel = fis.getChannel();
     long length = inChannel.size();
     long offset = 0;
-    while(true) {
+    while (true) {
       long remaining = length - offset;
-      
+
       long toTransfer = remaining < MAX_TRANSFER_SIZE ? remaining : MAX_TRANSFER_SIZE;
       long transferredBytes = inChannel.transferTo(offset, toTransfer, outChannel);
       offset += transferredBytes;
       length = inChannel.size();
-      if(offset >= length) {
+      if (offset >= length) {
         break;
       }
     }
@@ -133,12 +134,11 @@ public class FileUtil {
    * Copy a single file using the java.io.
    * @throws IOException
    */
-  private static void oioCopy(File source, FileOutputStream fos, FileInputStream fis)
-  throws IOException {
+  private static void oioCopy(File source, FileOutputStream fos, FileInputStream fis) throws IOException {
     int size = (int) (source.length() < MAX_TRANSFER_SIZE ? source.length() : MAX_TRANSFER_SIZE);
     byte[] buffer = new byte[size];
     int read;
-    while((read = fis.read(buffer)) > 0) {
+    while ((read = fis.read(buffer)) > 0) {
       fos.write(buffer, 0, read);
     }
 
@@ -152,18 +152,18 @@ public class FileUtil {
    *           which just returns false.
    */
   public static void delete(File file) throws IOException {
-    if(!file.exists())
+    if (!file.exists())
       return;
 
-    if(file.isDirectory()) {
-      for(File child: listFiles(file)) {
+    if (file.isDirectory()) {
+      for (File child : listFiles(file)) {
         delete(child);
       }
     }
 
     Files.delete(file.toPath());
   }
-  
+
   /**
    * Recursively delete a file or directory.
    * A description of any files or directories
@@ -172,24 +172,20 @@ public class FileUtil {
    * This method tries to delete as much as possible.
    */
   public static void delete(File file, StringBuilder failures) {
-    if(!file.exists())
+    if (!file.exists())
       return;
 
-    if(file.isDirectory()) {
-      for(File child: listFiles(file)) {
+    if (file.isDirectory()) {
+      for (File child : listFiles(file)) {
         delete(child, failures);
       }
     }
 
-    try{
+    try {
       Files.delete(file.toPath());
     } catch (IOException e) {
       if (failures != null) {
-        failures.append("Could not delete ")
-            .append(file)
-            .append(" due to ")
-            .append(e.getMessage())
-            .append('\n');
+        failures.append("Could not delete ").append(file).append(" due to ").append(e.getMessage()).append('\n');
       }
     }
   }
@@ -202,20 +198,20 @@ public class FileUtil {
    * This could probably use a lot of optimization!
    */
   public static File find(File baseFile, String regex) {
-    if(baseFile.getAbsolutePath().matches(regex)) {
+    if (baseFile.getAbsolutePath().matches(regex)) {
       return baseFile;
     }
-    if(baseFile.exists() && baseFile.isDirectory()) {
-      for(File child: listFiles(baseFile)) {
-        File foundFile =  find(child, regex);
-        if(foundFile != null) {
+    if (baseFile.exists() && baseFile.isDirectory()) {
+      for (File child : listFiles(baseFile)) {
+        File foundFile = find(child, regex);
+        if (foundFile != null) {
           return foundFile;
         }
       }
     }
     return null;
   }
-  
+
   /**
    * Find a files in a given base directory that match
    * a the given regex. The regex is matched against the
@@ -226,7 +222,7 @@ public class FileUtil {
     findAll(baseFile, regex, found);
     return found;
   }
-  
+
   /**
    * Destroys all files that match the given regex that
    * are in the given directory.
@@ -234,8 +230,8 @@ public class FileUtil {
    * made to destroy any other files that match.
    */
   public static void deleteMatching(File baseFile, String regex) {
-    if(baseFile.exists() && baseFile.isDirectory()) {
-      for(File child: listFiles(baseFile)) {
+    if (baseFile.exists() && baseFile.isDirectory()) {
+      for (File child : listFiles(baseFile)) {
         if (child.getName().matches(regex)) {
           try {
             delete(child);
@@ -248,11 +244,11 @@ public class FileUtil {
 
   /** Implementation of findAll. */
   private static void findAll(File baseFile, String regex, List<File> found) {
-    if(baseFile.getAbsolutePath().matches(regex)) {
+    if (baseFile.getAbsolutePath().matches(regex)) {
       found.add(baseFile);
     }
-    if(baseFile.exists() && baseFile.isDirectory()) {
-      for(File child: listFiles(baseFile)) {
+    if (baseFile.exists() && baseFile.isDirectory()) {
+      for (File child : listFiles(baseFile)) {
         findAll(child, regex, found);
       }
     }
@@ -288,7 +284,7 @@ public class FileUtil {
       try {
         byte[] buffer = new byte[8192];
         int read;
-        while((read = is.read(buffer)) > 0) {
+        while ((read = is.read(buffer)) > 0) {
           os.write(buffer, 0, read);
         }
       } finally {
@@ -297,9 +293,9 @@ public class FileUtil {
     } finally {
       is.close();
     }
-    
+
   }
-  
+
   /**
    * A safer version of File.mkdirs, which works around
    * a race in the 1.5 JDK where two VMs creating the same 
@@ -309,18 +305,18 @@ public class FileUtil {
    */
   public static boolean mkdirs(File file) {
     final File parentFile = file.getAbsoluteFile().getParentFile();
-    if(! parentFile.exists()) {
+    if (!parentFile.exists()) {
       mkdirs(parentFile);
     }
     //As long as someone successfully created the parent file
     //go ahead and create the child directory.
-    if(parentFile.exists()) {
+    if (parentFile.exists()) {
       return file.mkdir();
     } else {
       return false;
     }
   }
-  
+
   /**
    * Returns the file name with the extension stripped off (if it has one).
    * 

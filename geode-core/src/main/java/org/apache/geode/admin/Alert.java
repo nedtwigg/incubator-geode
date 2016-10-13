@@ -26,7 +26,7 @@ package org.apache.geode.admin;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public interface Alert {
-  
+
   /** The level at which this alert is issued */
   public AlertLevel getLevel();
 

@@ -45,8 +45,7 @@ public class SetCommand extends StorageCommand {
   }
 
   @Override
-  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas,
-      int flags, Cache cache, RequestReader request) {
+  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
     ByteBuffer response = request.getResponse();
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     ValueWrapper val = ValueWrapper.getWrappedValue(value, flags);
@@ -59,11 +58,11 @@ public class SetCommand extends StorageCommand {
       } else {
         r.put(key, val);
       }
-      
+
       if (getLogger().fineEnabled()) {
-        getLogger().fine("set key:"+key+" succedded:"+success);
+        getLogger().fine("set key:" + key + " succedded:" + success);
       }
-      
+
       if (success) {
         if (isQuiet()) {
           return null;

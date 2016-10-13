@@ -37,5 +37,5 @@ public interface CommandProcessor {
    * @param cache 
    */
   public ByteBuffer processCommand(RequestReader reader, Protocol protocol, Cache cache);
-  
+
 }

@@ -66,7 +66,7 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
   private transient DistributedMember otherId;
   protected transient int clInvokeCount;
   protected transient CacheEvent clLastEvent;
-  
+
   public ProxyDUnitTest() {
     super();
   }
@@ -75,32 +75,33 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     return host.getVM(0);
   }
-    
+
   private void initOtherId() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("Connect") {
-        public void run2() throws CacheException {
-          getCache();
-        }
-      });
-    this.otherId = (DistributedMember)vm.invoke(() -> ProxyDUnitTest.getVMDistributedMember());
+      public void run2() throws CacheException {
+        getCache();
+      }
+    });
+    this.otherId = (DistributedMember) vm.invoke(() -> ProxyDUnitTest.getVMDistributedMember());
   }
+
   private void doCreateOtherVm() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("create root") {
-        public void run2() throws CacheException {
-          AttributesFactory af = new AttributesFactory();
-          af.setDataPolicy(DataPolicy.REPLICATE);
-          af.setScope(Scope.DISTRIBUTED_ACK);
-          createRootRegion("ProxyDUnitTest", af.create());
-        }
-      });
+      public void run2() throws CacheException {
+        AttributesFactory af = new AttributesFactory();
+        af.setDataPolicy(DataPolicy.REPLICATE);
+        af.setScope(Scope.DISTRIBUTED_ACK);
+        createRootRegion("ProxyDUnitTest", af.create());
+      }
+    });
   }
 
   public static DistributedMember getVMDistributedMember() {
     return InternalDistributedSystem.getAnyInstance().getDistributedMember();
   }
-  
+
   //////////////////////  Test Methods  //////////////////////
 
   /**
@@ -118,49 +119,49 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
     doCreateOtherVm();
 
     r.put("putkey", "putvalue1");
-    
+
     getOtherVm().invoke(new CacheSerializableRunnable("check put") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(true, r.containsKey("putkey"));
-          assertEquals("putvalue1", r.getEntry("putkey").getValue());
-          r.put("putkey", "putvalue2");
-        }
-      });
-    
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(true, r.containsKey("putkey"));
+        assertEquals("putvalue1", r.getEntry("putkey").getValue());
+        r.put("putkey", "putvalue2");
+      }
+    });
+
     assertEquals(false, r.containsKey("putkey"));
     assertEquals("putvalue2", r.get("putkey")); // netsearch
 
     r.invalidate("putkey");
 
     getOtherVm().invoke(new CacheSerializableRunnable("check invalidate") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(true, r.containsKey("putkey"));
-          assertEquals(null, r.getEntry("putkey").getValue());
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(true, r.containsKey("putkey"));
+        assertEquals(null, r.getEntry("putkey").getValue());
+      }
+    });
     assertEquals(null, r.get("putkey")); // invalid so total miss
 
     r.destroy("putkey");
 
     getOtherVm().invoke(new CacheSerializableRunnable("check destroy") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(false, r.containsKey("putkey"));
-        }
-      });
-    
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(false, r.containsKey("putkey"));
+      }
+    });
+
     assertEquals(null, r.get("putkey")); // total miss
 
     r.create("createKey", "createValue1");
     getOtherVm().invoke(new CacheSerializableRunnable("check create") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(true, r.containsKey("createKey"));
-          assertEquals("createValue1", r.getEntry("createKey").getValue());
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(true, r.containsKey("createKey"));
+        assertEquals("createValue1", r.getEntry("createKey").getValue());
+      }
+    });
     {
       Map m = new HashMap();
       m.put("putAllKey1", "putAllValue1");
@@ -168,68 +169,69 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
       r.putAll(m, "putAllCallback");
     }
     getOtherVm().invoke(new CacheSerializableRunnable("check putAll") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(true, r.containsKey("putAllKey1"));
-          assertEquals("putAllValue1", r.getEntry("putAllKey1").getValue());
-          assertEquals(true, r.containsKey("putAllKey2"));
-          assertEquals("putAllValue2", r.getEntry("putAllKey2").getValue());
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(true, r.containsKey("putAllKey1"));
+        assertEquals("putAllValue1", r.getEntry("putAllKey1").getValue());
+        assertEquals(true, r.containsKey("putAllKey2"));
+        assertEquals("putAllValue2", r.getEntry("putAllKey2").getValue());
+      }
+    });
     r.clear();
     getOtherVm().invoke(new CacheSerializableRunnable("check clear") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(0, r.size());
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(0, r.size());
+      }
+    });
 
     getOtherVm().invoke(new CacheSerializableRunnable("install CacheWriter") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          AttributesMutator am = r.getAttributesMutator();
-          CacheWriter cw = new CacheWriterAdapter() {
-              public void beforeCreate(EntryEvent event) throws CacheWriterException {
-                throw new CacheWriterException("expected");
-              }
-            };
-          am.setCacheWriter(cw);
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        AttributesMutator am = r.getAttributesMutator();
+        CacheWriter cw = new CacheWriterAdapter() {
+          public void beforeCreate(EntryEvent event) throws CacheWriterException {
+            throw new CacheWriterException("expected");
+          }
+        };
+        am.setCacheWriter(cw);
+      }
+    });
     try {
       r.put("putkey", "putvalue");
       fail("expected CacheWriterException");
     } catch (CacheWriterException expected) {
     }
     getOtherVm().invoke(new CacheSerializableRunnable("check clear") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(0, r.size());
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(0, r.size());
+      }
+    });
 
     assertEquals(null, r.get("loadkey")); // total miss
     getOtherVm().invoke(new CacheSerializableRunnable("install CacheLoader") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          AttributesMutator am = r.getAttributesMutator();
-          am.setCacheWriter(null); // clear csche writer
-          CacheLoader cl = new CacheLoader() {
-              public Object load(LoaderHelper helper) throws CacheLoaderException {
-                if (helper.getKey().equals("loadkey")) {
-                  return "loadvalue";
-                } else if (helper.getKey().equals("loadexception")) {
-                  throw new CacheLoaderException("expected");
-                } else {
-                  return null;
-                }
-              }
-              public void close() {
-              }
-            };
-          am.setCacheLoader(cl);
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        AttributesMutator am = r.getAttributesMutator();
+        am.setCacheWriter(null); // clear csche writer
+        CacheLoader cl = new CacheLoader() {
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            if (helper.getKey().equals("loadkey")) {
+              return "loadvalue";
+            } else if (helper.getKey().equals("loadexception")) {
+              throw new CacheLoaderException("expected");
+            } else {
+              return null;
+            }
+          }
+
+          public void close() {
+          }
+        };
+        am.setCacheLoader(cl);
+      }
+    });
     assertEquals("loadvalue", r.get("loadkey")); // net load
     assertEquals(null, r.get("foobar")); // total miss
     try {
@@ -239,19 +241,20 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
     }
     r.destroyRegion();
     getOtherVm().invoke(new CacheSerializableRunnable("check clear") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals(null, r);
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals(null, r);
+      }
+    });
   }
+
   /**
    * Gets the DMStats for the vm's DM
    */
   private DMStats getDMStats() {
-    return ((InternalDistributedSystem)getCache().getDistributedSystem())
-      .getDistributionManager().getStats();
+    return ((InternalDistributedSystem) getCache().getDistributedSystem()).getDistributionManager().getStats();
   }
+
   /**
    * check remote ops done in a normal vm are correctly distributed to PROXY regions
    */
@@ -262,41 +265,50 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
     af.setSubscriptionAttributes(new SubscriptionAttributes(ip));
     af.setScope(Scope.DISTRIBUTED_ACK);
     CacheListener cl1 = new CacheListener() {
-        public void afterUpdate(EntryEvent e) {
-          clLastEvent = e;
-          clInvokeCount++;
-        }
-        public void afterCreate(EntryEvent e) {
-          clLastEvent = e;
-          clInvokeCount++;
-        }
-        public void afterInvalidate(EntryEvent e) {
-          clLastEvent = e;
-          clInvokeCount++;
-        }
-        public void afterDestroy(EntryEvent e) {
-          clLastEvent = e;
-          clInvokeCount++;
-        }
-        public void afterRegionInvalidate(RegionEvent e) {
-          clLastEvent = e;
-          clInvokeCount++;
-        }
-        public void afterRegionDestroy(RegionEvent e) {
-          clLastEvent = e;
-          clInvokeCount++;
-        }
-        public void afterRegionClear(RegionEvent e) {
-          clLastEvent = e;
-          clInvokeCount++;
-        }
-        public void afterRegionCreate(RegionEvent e) {
-        }
-        public void afterRegionLive(RegionEvent e) {
-        }
-        public void close() {
-        }
-      };
+      public void afterUpdate(EntryEvent e) {
+        clLastEvent = e;
+        clInvokeCount++;
+      }
+
+      public void afterCreate(EntryEvent e) {
+        clLastEvent = e;
+        clInvokeCount++;
+      }
+
+      public void afterInvalidate(EntryEvent e) {
+        clLastEvent = e;
+        clInvokeCount++;
+      }
+
+      public void afterDestroy(EntryEvent e) {
+        clLastEvent = e;
+        clInvokeCount++;
+      }
+
+      public void afterRegionInvalidate(RegionEvent e) {
+        clLastEvent = e;
+        clInvokeCount++;
+      }
+
+      public void afterRegionDestroy(RegionEvent e) {
+        clLastEvent = e;
+        clInvokeCount++;
+      }
+
+      public void afterRegionClear(RegionEvent e) {
+        clLastEvent = e;
+        clInvokeCount++;
+      }
+
+      public void afterRegionCreate(RegionEvent e) {
+      }
+
+      public void afterRegionLive(RegionEvent e) {
+      }
+
+      public void close() {
+      }
+    };
     af.addCacheListener(cl1);
     Region r = createRootRegion("ProxyDUnitTest", af.create());
     this.clInvokeCount = 0;
@@ -308,124 +320,124 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
 
     if (ip.isAll()) {
       getOtherVm().invoke(new CacheSerializableRunnable("do put") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            r.put("p", "v");
-          }
-        });
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          r.put("p", "v");
+        }
+      });
       assertEquals(1, this.clInvokeCount);
       assertEquals(Operation.CREATE, this.clLastEvent.getOperation());
       assertEquals(true, this.clLastEvent.isOriginRemote());
       assertEquals(this.otherId, this.clLastEvent.getDistributedMember());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getOldValue());
-      assertEquals(false, ((EntryEvent)this.clLastEvent).isOldValueAvailable()); // failure
-      assertEquals("v", ((EntryEvent)this.clLastEvent).getNewValue());
-      assertEquals("p", ((EntryEvent)this.clLastEvent).getKey());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getOldValue());
+      assertEquals(false, ((EntryEvent) this.clLastEvent).isOldValueAvailable()); // failure
+      assertEquals("v", ((EntryEvent) this.clLastEvent).getNewValue());
+      assertEquals("p", ((EntryEvent) this.clLastEvent).getKey());
       this.clInvokeCount = 0;
-      
+
       getOtherVm().invoke(new CacheSerializableRunnable("do create") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            r.create("c", "v");
-          }
-        });
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          r.create("c", "v");
+        }
+      });
       assertEquals(1, this.clInvokeCount);
       assertEquals(Operation.CREATE, this.clLastEvent.getOperation());
       assertEquals(true, this.clLastEvent.isOriginRemote());
       assertEquals(this.otherId, this.clLastEvent.getDistributedMember());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getOldValue());
-      assertEquals(false, ((EntryEvent)this.clLastEvent).isOldValueAvailable());
-      assertEquals("v", ((EntryEvent)this.clLastEvent).getNewValue());
-      assertEquals("c", ((EntryEvent)this.clLastEvent).getKey());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getOldValue());
+      assertEquals(false, ((EntryEvent) this.clLastEvent).isOldValueAvailable());
+      assertEquals("v", ((EntryEvent) this.clLastEvent).getNewValue());
+      assertEquals("c", ((EntryEvent) this.clLastEvent).getKey());
       this.clInvokeCount = 0;
-      
+
       getOtherVm().invoke(new CacheSerializableRunnable("do update") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            r.put("c", "v2");
-          }
-        });
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          r.put("c", "v2");
+        }
+      });
       assertEquals(1, this.clInvokeCount);
       assertEquals(Operation.UPDATE, this.clLastEvent.getOperation());
       assertEquals(true, this.clLastEvent.isOriginRemote());
       assertEquals(this.otherId, this.clLastEvent.getDistributedMember());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getOldValue());
-      assertEquals(false, ((EntryEvent)this.clLastEvent).isOldValueAvailable());
-      assertEquals("v2", ((EntryEvent)this.clLastEvent).getNewValue());
-      assertEquals("c", ((EntryEvent)this.clLastEvent).getKey());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getOldValue());
+      assertEquals(false, ((EntryEvent) this.clLastEvent).isOldValueAvailable());
+      assertEquals("v2", ((EntryEvent) this.clLastEvent).getNewValue());
+      assertEquals("c", ((EntryEvent) this.clLastEvent).getKey());
       this.clInvokeCount = 0;
 
       getOtherVm().invoke(new CacheSerializableRunnable("do invalidate") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            r.invalidate("c");
-          }
-        });
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          r.invalidate("c");
+        }
+      });
       assertEquals(1, this.clInvokeCount);
       assertEquals(Operation.INVALIDATE, this.clLastEvent.getOperation());
       assertEquals(true, this.clLastEvent.isOriginRemote());
       assertEquals(this.otherId, this.clLastEvent.getDistributedMember());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getOldValue());
-      assertEquals(false, ((EntryEvent)this.clLastEvent).isOldValueAvailable());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getNewValue());
-      assertEquals("c", ((EntryEvent)this.clLastEvent).getKey());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getOldValue());
+      assertEquals(false, ((EntryEvent) this.clLastEvent).isOldValueAvailable());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getNewValue());
+      assertEquals("c", ((EntryEvent) this.clLastEvent).getKey());
       this.clInvokeCount = 0;
-      
+
       getOtherVm().invoke(new CacheSerializableRunnable("do destroy") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            r.destroy("c");
-          }
-        });
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          r.destroy("c");
+        }
+      });
       assertEquals(1, this.clInvokeCount);
       assertEquals(Operation.DESTROY, this.clLastEvent.getOperation());
       assertEquals(true, this.clLastEvent.isOriginRemote());
       assertEquals(this.otherId, this.clLastEvent.getDistributedMember());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getOldValue());
-      assertEquals(false, ((EntryEvent)this.clLastEvent).isOldValueAvailable());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getNewValue());
-      assertEquals("c", ((EntryEvent)this.clLastEvent).getKey());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getOldValue());
+      assertEquals(false, ((EntryEvent) this.clLastEvent).isOldValueAvailable());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getNewValue());
+      assertEquals("c", ((EntryEvent) this.clLastEvent).getKey());
       this.clInvokeCount = 0;
-      
+
       getOtherVm().invoke(new CacheSerializableRunnable("do putAll") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            Map m = new HashMap();
-            m.put("putAllKey1", "putAllValue1");
-            m.put("putAllKey2", "putAllValue2");
-            r.putAll(m);
-          }
-        });
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          Map m = new HashMap();
+          m.put("putAllKey1", "putAllValue1");
+          m.put("putAllKey2", "putAllValue2");
+          r.putAll(m);
+        }
+      });
       assertEquals(2, this.clInvokeCount);
       // @todo darrel; check putAll events
       this.clInvokeCount = 0;
 
       getOtherVm().invoke(new CacheSerializableRunnable("do netsearch") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            assertEquals(null, r.get("loadkey")); // total miss
-          }
-        });
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          assertEquals(null, r.get("loadkey")); // total miss
+        }
+      });
       assertEquals(0, this.clInvokeCount);
-      
+
     } else {
       getOtherVm().invoke(new CacheSerializableRunnable("do entry ops") {
-          public void run2() throws CacheException {
-            Region r = getRootRegion("ProxyDUnitTest");
-            r.put("p", "v");
-            r.create("c", "v");
-            r.put("c", "v"); // update
-            r.invalidate("c");
-            r.destroy("c");
-            {
-              Map m = new HashMap();
-              m.put("putAllKey1", "putAllValue1");
-              m.put("putAllKey2", "putAllValue2");
-              r.putAll(m);
-            }
-            assertEquals(null, r.get("loadkey")); // total miss
+        public void run2() throws CacheException {
+          Region r = getRootRegion("ProxyDUnitTest");
+          r.put("p", "v");
+          r.create("c", "v");
+          r.put("c", "v"); // update
+          r.invalidate("c");
+          r.destroy("c");
+          {
+            Map m = new HashMap();
+            m.put("putAllKey1", "putAllValue1");
+            m.put("putAllKey2", "putAllValue2");
+            r.putAll(m);
           }
-        });
+          assertEquals(null, r.get("loadkey")); // total miss
+        }
+      });
 
       assertEquals(0, this.clInvokeCount);
       assertEquals(0, r.size());
@@ -436,42 +448,43 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
     {
       AttributesMutator am = r.getAttributesMutator();
       CacheLoader cl = new CacheLoader() {
-          public Object load(LoaderHelper helper) throws CacheLoaderException {
-            if (helper.getKey().equals("loadkey")) {
-              return "loadvalue";
-            } else if (helper.getKey().equals("loadexception")) {
-              throw new CacheLoaderException("expected");
-            } else {
-              return null;
-            }
+        public Object load(LoaderHelper helper) throws CacheLoaderException {
+          if (helper.getKey().equals("loadkey")) {
+            return "loadvalue";
+          } else if (helper.getKey().equals("loadexception")) {
+            throw new CacheLoaderException("expected");
+          } else {
+            return null;
           }
-          public void close() {
-          }
-        };
+        }
+
+        public void close() {
+        }
+      };
       am.setCacheLoader(cl);
     }
 
     receivedMsgs = stats.getReceivedMessages();
     getOtherVm().invoke(new CacheSerializableRunnable("check net loader") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          assertEquals("loadvalue", r.get("loadkey")); // net load
-          assertEquals(null, r.get("foobar")); // total miss
-          try {
-            r.get("loadexception");
-            fail("expected CacheLoaderException");
-          } catch (CacheLoaderException expected) {
-          }
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        assertEquals("loadvalue", r.get("loadkey")); // net load
+        assertEquals(null, r.get("foobar")); // total miss
+        try {
+          r.get("loadexception");
+          fail("expected CacheLoaderException");
+        } catch (CacheLoaderException expected) {
         }
-      });
+      }
+    });
     assertTrue(stats.getReceivedMessages() > receivedMsgs);
     if (ip.isAll()) {
       assertEquals(1, this.clInvokeCount);
       assertEquals(Operation.NET_LOAD_CREATE, this.clLastEvent.getOperation());
       assertEquals(true, this.clLastEvent.isOriginRemote());
       assertEquals(this.otherId, this.clLastEvent.getDistributedMember());
-      assertEquals(null, ((EntryEvent)this.clLastEvent).getOldValue());
-      assertEquals(false, ((EntryEvent)this.clLastEvent).isOldValueAvailable());
+      assertEquals(null, ((EntryEvent) this.clLastEvent).getOldValue());
+      assertEquals(false, ((EntryEvent) this.clLastEvent).isOldValueAvailable());
       this.clInvokeCount = 0;
     } else {
       assertEquals(0, this.clInvokeCount);
@@ -481,23 +494,23 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
       AttributesMutator am = r.getAttributesMutator();
       am.setCacheLoader(null);
       CacheWriter cw = new CacheWriterAdapter() {
-          public void beforeCreate(EntryEvent event) throws CacheWriterException {
-            throw new CacheWriterException("expected");
-          }
-        };
+        public void beforeCreate(EntryEvent event) throws CacheWriterException {
+          throw new CacheWriterException("expected");
+        }
+      };
       am.setCacheWriter(cw);
     }
     receivedMsgs = stats.getReceivedMessages();
     getOtherVm().invoke(new CacheSerializableRunnable("check net write") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          try {
-            r.put("putkey", "putvalue");
-            fail("expected CacheWriterException");
-          } catch (CacheWriterException expected) {
-          }
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        try {
+          r.put("putkey", "putvalue");
+          fail("expected CacheWriterException");
+        } catch (CacheWriterException expected) {
         }
-      });
+      }
+    });
     assertTrue(stats.getReceivedMessages() > receivedMsgs);
     {
       AttributesMutator am = r.getAttributesMutator();
@@ -506,11 +519,11 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
     assertEquals(0, this.clInvokeCount);
     this.clLastEvent = null;
     getOtherVm().invoke(new CacheSerializableRunnable("check region invalidate") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          r.invalidateRegion();
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        r.invalidateRegion();
+      }
+    });
     assertEquals(1, this.clInvokeCount);
     assertEquals(Operation.REGION_INVALIDATE, this.clLastEvent.getOperation());
     assertEquals(true, this.clLastEvent.isOriginRemote());
@@ -518,11 +531,11 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
 
     this.clLastEvent = null;
     getOtherVm().invoke(new CacheSerializableRunnable("check region clear") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          r.clear();
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        r.clear();
+      }
+    });
     assertEquals(2, this.clInvokeCount);
     assertEquals(Operation.REGION_CLEAR, this.clLastEvent.getOperation());
     assertEquals(true, this.clLastEvent.isOriginRemote());
@@ -530,18 +543,18 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
 
     this.clLastEvent = null;
     getOtherVm().invoke(new CacheSerializableRunnable("check region destroy") {
-        public void run2() throws CacheException {
-          Region r = getRootRegion("ProxyDUnitTest");
-          r.destroyRegion();
-        }
-      });
+      public void run2() throws CacheException {
+        Region r = getRootRegion("ProxyDUnitTest");
+        r.destroyRegion();
+      }
+    });
     assertEquals(3, this.clInvokeCount);
     assertEquals(Operation.REGION_DESTROY, this.clLastEvent.getOperation());
     assertEquals(true, this.clLastEvent.isOriginRemote());
     assertEquals(this.otherId, this.clLastEvent.getDistributedMember());
     assertTrue(r.isDestroyed());
   }
-  
+
   @Test
   public void testDistributedOpsPROXY() throws CacheException {
     distributedOps(DataPolicy.EMPTY, InterestPolicy.CACHE_CONTENT);
@@ -551,6 +564,7 @@ public class ProxyDUnitTest extends JUnit4CacheTestCase {
   public void testRemoteOriginOpsPROXY() throws CacheException {
     remoteOriginOps(DataPolicy.EMPTY, InterestPolicy.CACHE_CONTENT);
   }
+
   @Test
   public void testRemoteOriginOpsPROXY_ALL() throws CacheException {
     remoteOriginOps(DataPolicy.EMPTY, InterestPolicy.ALL);

@@ -54,7 +54,7 @@ public class CountStarJUnitTest {
   private static String regionName = "test";
   private static String exampleRegionName = "employee";
   private int numElem = 100;
-  
+
   @Before
   public void setUp() throws Exception {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "Query.VERBOSE", "true");
@@ -69,25 +69,21 @@ public class CountStarJUnitTest {
   private static HashMap<String, Integer> countStarQueries = new HashMap<String, Integer>();
 
   //EquiJoin Queries
-  private static String[] countStarQueriesWithEquiJoins = { "select COUNT(*) from /" + regionName + " p, /"+ exampleRegionName +" e where p.ID = e.ID AND p.ID > 0",
-    "select COUNT(*) from /" + regionName + " p, /"+ exampleRegionName +" e where p.ID = e.ID AND p.ID > 20 AND e.ID > 40",
-    "select COUNT(*) from /" + regionName + " p, /"+ exampleRegionName +" e where p.ID = e.ID AND p.ID > 0 AND p.status = 'active'",
-    "select COUNT(*) from /" + regionName + " p, /"+ exampleRegionName +" e where p.ID = e.ID OR e.status = 'active' "};
+  private static String[] countStarQueriesWithEquiJoins = { "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID AND p.ID > 0", "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID AND p.ID > 20 AND e.ID > 40", "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID AND p.ID > 0 AND p.status = 'active'", "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID OR e.status = 'active' " };
 
-  
   //Queries with COUNT(*) to be executed with corresponding result count.
   static {
-    countStarQueries.put("select COUNT(*) from /" + regionName , 100);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0",100);
+    countStarQueries.put("select COUNT(*) from /" + regionName, 100);
+    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0", 100);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID < 0", 0);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 LIMIT 50",50);
+    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 LIMIT 50", 50);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 AND status='active'", 50);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 OR status='active'", 100);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 AND status LIKE 'act%'", 50);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 OR status LIKE 'ina%'", 100);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID IN SET(1, 2, 3, 4, 5)", 5);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where NOT (ID > 5)", 5);
-    
+
     //StructSet queries.
     countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM'", 15);
     countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM' LIMIT 5", 5);
@@ -100,7 +96,7 @@ public class CountStarJUnitTest {
     countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM' LIMIT 150", 150);
     countStarQueries.put("select DISTINCT COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM' ORDER BY p.ID", 200);
   }
-  
+
   //Queries without indexes.
 
   /**
@@ -113,26 +109,26 @@ public class CountStarJUnitTest {
     createLocalRegion();
     assertNotNull(cache.getRegion(regionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
-    
+
     QueryService queryService = cache.getQueryService();
     Query query1 = null;
     Query query2 = null;
 
-    for(String queryStr: countStarQueries.keySet()){
+    for (String queryStr : countStarQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
-      assertEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
+      assertEquals("Query: " + queryStr, countStarQueries.get(queryStr).intValue(), count);
 
     }
   }
@@ -147,26 +143,26 @@ public class CountStarJUnitTest {
     createReplicatedRegion();
     assertNotNull(cache.getRegion(regionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
-    
+
     QueryService queryService = cache.getQueryService();
     Query query1 = null;
     Query query2 = null;
 
-    for(String queryStr: countStarQueries.keySet()){
+    for (String queryStr : countStarQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
-      assertEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
+      assertEquals("Query: " + queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
 
     //Destroy current Region for other tests
@@ -183,24 +179,24 @@ public class CountStarJUnitTest {
     createPartitionedRegion();
     assertNotNull(cache.getRegion(regionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
-    
+
     QueryService queryService = cache.getQueryService();
     Query query1 = null;
     Query query2 = null;
 
-    for(String queryStr: countStarQueries.keySet()){
+    for (String queryStr : countStarQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
@@ -217,13 +213,13 @@ public class CountStarJUnitTest {
     createLocalRegion();
     assertNotNull(cache.getRegion(regionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
-    
+
     QueryService queryService = cache.getQueryService();
-    
+
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/"+regionName+" p, p.positions.values pos");
+    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/" + regionName + " p, p.positions.values pos");
 
     Region region = cache.getRegion(regionName);
     //Verify Index Creation
@@ -235,19 +231,19 @@ public class CountStarJUnitTest {
     Query query1 = null;
     Query query2 = null;
 
-    for(String queryStr: countStarQueries.keySet()){
+    for (String queryStr : countStarQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
@@ -263,12 +259,12 @@ public class CountStarJUnitTest {
     createReplicatedRegion();
     assertNotNull(cache.getRegion(regionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
-    
+
     QueryService queryService = cache.getQueryService();
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/"+regionName+" p, p.positions.values pos");
+    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/" + regionName + " p, p.positions.values pos");
 
     Region region = cache.getRegion(regionName);
     //Verify Index Creation
@@ -280,19 +276,19 @@ public class CountStarJUnitTest {
     Query query1 = null;
     Query query2 = null;
 
-    for(String queryStr: countStarQueries.keySet()){
+    for (String queryStr : countStarQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
@@ -308,11 +304,11 @@ public class CountStarJUnitTest {
     createPartitionedRegion();
     assertNotNull(cache.getRegion(regionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
-    
+
     QueryService queryService = cache.getQueryService();
     //CReate Index on status and ID
-    
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/"+regionName+ " p");
+
+    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
     //queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/"+regionName+ " p");
     //queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/"+regionName+" p, p.positions.values pos");
 
@@ -326,19 +322,19 @@ public class CountStarJUnitTest {
     Query query1 = null;
     Query query2 = null;
 
-    for(String queryStr: countStarQueries.keySet()){
+    for (String queryStr : countStarQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
@@ -357,35 +353,35 @@ public class CountStarJUnitTest {
     assertNotNull(cache.getRegion(exampleRegionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
     assertEquals(numElem, cache.getRegion(exampleRegionName).size());
-    
+
     QueryService queryService = cache.getQueryService();
     //Run queries
     Query query1 = null;
     Query query2 = null;
-    
+
     // Without Indexes
-    for(String queryStr: countStarQueriesWithEquiJoins){
+    for (String queryStr : countStarQueriesWithEquiJoins) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
 
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "e.ID", "/"+exampleRegionName+ " e");
-    queryService.createIndex("sampleIndex-4", IndexType.FUNCTIONAL, "e.status", "/"+exampleRegionName+ " e");
+    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "e.ID", "/" + exampleRegionName + " e");
+    queryService.createIndex("sampleIndex-4", IndexType.FUNCTIONAL, "e.status", "/" + exampleRegionName + " e");
 
     Region region = cache.getRegion(regionName);
     Region region2 = cache.getRegion(exampleRegionName);
@@ -397,19 +393,19 @@ public class CountStarJUnitTest {
     assertEquals(4, queryService.getIndexes().size());
 
     //With Indexes
-    for(String queryStr: countStarQueriesWithEquiJoins){
+    for (String queryStr : countStarQueriesWithEquiJoins) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query with indexes: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query with indexes: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
@@ -418,22 +414,21 @@ public class CountStarJUnitTest {
     region.destroyRegion();
     region2.destroyRegion();
   }
-  
+
   @Test
   public void testCountStarOnCollection() throws Exception {
     String collection = "$1";
     HashMap<String, Integer> countStarQueriesWithParms = new HashMap<String, Integer>();
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection , 100);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0",100);
+    countStarQueriesWithParms.put("select COUNT(*) from " + collection, 100);
+    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0", 100);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID < 0", 0);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 LIMIT 50",50);
+    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 LIMIT 50", 50);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 AND status='active'", 50);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 OR status='active'", 100);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 AND status LIKE 'act%'", 50);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 OR status LIKE 'ina%'", 100);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID IN SET(1, 2, 3, 4, 5)", 5);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where NOT (ID > 5)", 5);
-    
 
     Cache cache = CacheUtils.getCache();
 
@@ -441,31 +436,31 @@ public class CountStarJUnitTest {
     //Run queries
     Query query1 = null;
     Query query2 = null;
-    
+
     //Create a collection
     ArrayList<Portfolio> portfolios = new ArrayList<Portfolio>(100);
-    for (int i=1; i<=100; i++) {
+    for (int i = 1; i <= 100; i++) {
       portfolios.add(new Portfolio(i, i));
     }
     // Without Indexes
-    for(String queryStr: countStarQueriesWithParms.keySet()){
+    for (String queryStr : countStarQueriesWithParms.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute(new Object[]{portfolios});
-      SelectResults result2 = (SelectResults)query2.execute(new Object[]{portfolios});
+      SelectResults result1 = (SelectResults) query1.execute(new Object[] { portfolios });
+      SelectResults result2 = (SelectResults) query2.execute(new Object[] { portfolios });
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
-      assertEquals("Query: "+ queryStr, countStarQueriesWithParms.get(queryStr).intValue(), count);
+      assertEquals("Query: " + queryStr, countStarQueriesWithParms.get(queryStr).intValue(), count);
     }
   }
-  
+
   @Test
   public void testCountStarWithDuplicateValues() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -473,56 +468,56 @@ public class CountStarJUnitTest {
     createLocalRegion();
     assertNotNull(cache.getRegion(regionName));
     assertEquals(numElem, cache.getRegion(regionName).size());
-    
+
     HashMap<String, Integer> countStarDistinctQueries = new HashMap<String, Integer>();
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName , 100);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0",100);
+    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName, 100);
+    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0", 100);
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID < 0", 0);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 LIMIT 50",50);
+    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 LIMIT 50", 50);
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 AND status='active'", 50);
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 OR status='active'", 100);
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 AND status LIKE 'act%'", 50);
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 OR status LIKE 'ina%'", 100);
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID IN SET(1, 2, 3, 4, 5)", 5);
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where NOT (ID > 5)", 5);
-    
+
     QueryService queryService = cache.getQueryService();
     //Run queries
     Query query1 = null;
     Query query2 = null;
-    
+
     //Populate the region.
     Region region = cache.getRegion(regionName);
-    for (int i=1; i<=100; i++) {
+    for (int i = 1; i <= 100; i++) {
       region.put(i, new Portfolio(i, i));
     }
-    
+
     //Duplicate values
-    for (int i=1; i<=100; i++) {
-      region.put(i+100, new Portfolio(i, i));
+    for (int i = 1; i <= 100; i++) {
+      region.put(i + 100, new Portfolio(i, i));
     }
     // Without Indexes
-    for(String queryStr: countStarDistinctQueries.keySet()){
+    for (String queryStr : countStarDistinctQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarDistinctQueries.get(queryStr).intValue(), count);
     }
 
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/"+regionName+ " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/"+regionName+" p, p.positions.values pos");
+    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/" + regionName + " p, p.positions.values pos");
 
     //Verify Index Creation
     assertNotNull(queryService.getIndex(region, "sampleIndex-1"));
@@ -530,19 +525,19 @@ public class CountStarJUnitTest {
     assertEquals(3, queryService.getIndexes().size());
 
     // Without Indexes
-    for(String queryStr: countStarDistinctQueries.keySet()){
+    for (String queryStr : countStarDistinctQueries.keySet()) {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults)query1.execute();
-      SelectResults result2 = (SelectResults)query2.execute();
+      SelectResults result1 = (SelectResults) query1.execute();
+      SelectResults result2 = (SelectResults) query2.execute();
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
-      int count = ((Integer)result1.asList().get(0)).intValue();
+      int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query: " + queryStr , result2.size(), count);
+      assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarDistinctQueries.get(queryStr).intValue(), count);
     }
@@ -555,7 +550,7 @@ public class CountStarJUnitTest {
     RegionAttributes regionAttributes = attributesFactory.create();
     Region region = cache.createRegion(regionName, regionAttributes);
 
-    for(int i=1; i<=numElem; i++) {
+    for (int i = 1; i <= numElem; i++) {
       Portfolio obj = new Portfolio(i);
       region.put(i, obj);
       CacheUtils.log(obj);
@@ -569,7 +564,7 @@ public class CountStarJUnitTest {
     RegionAttributes regionAttributes = attributesFactory.create();
     Region region = cache.createRegion(exampleRegionName, regionAttributes);
 
-    for(int i=1; i<=numElem; i++) {
+    for (int i = 1; i <= numElem; i++) {
       Portfolio obj = new Portfolio(i);
       region.put(i, obj);
       CacheUtils.log(obj);
@@ -584,7 +579,7 @@ public class CountStarJUnitTest {
     RegionAttributes regionAttributes = attributesFactory.create();
     Region region = cache.createRegion(regionName, regionAttributes);
 
-    for(int i=1; i<=numElem; i++) {
+    for (int i = 1; i <= numElem; i++) {
       Portfolio obj = new Portfolio(i);
       region.put(i, obj);
       CacheUtils.log(obj);
@@ -598,7 +593,7 @@ public class CountStarJUnitTest {
     RegionAttributes regionAttributes = attributesFactory.create();
     Region region = cache.createRegion(regionName, regionAttributes);
 
-    for(int i=1; i<=numElem; i++) {
+    for (int i = 1; i <= numElem; i++) {
       Portfolio obj = new Portfolio(i);
       region.put(i, obj);
       CacheUtils.log(obj);

@@ -19,6 +19,7 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.internal.cache.DiskStoreImpl.OplogCompactor;
 import org.apache.geode.internal.cache.persistence.BytesAndBits;
 import org.apache.geode.internal.cache.persistence.DiskRegionView;
+
 /**
  * Contract that must be implemented by oplogs so that
  * they can be compacted.
@@ -29,8 +30,10 @@ import org.apache.geode.internal.cache.persistence.DiskRegionView;
 
 public interface CompactableOplog {
   public void prepareForCompact();
+
   public int compact(OplogCompactor compactor);
-  public BytesAndBits getBytesAndBits(DiskRegionView dr, DiskId id,
-      boolean faultIn, boolean bitOnly);
+
+  public BytesAndBits getBytesAndBits(DiskRegionView dr, DiskId id, boolean faultIn, boolean bitOnly);
+
   public BytesAndBits getNoBuffer(DiskRegion dr, DiskId id);
 }

@@ -74,7 +74,7 @@ public class AsyncInvocation<V> implements Future<V> {
 
   /** True if this {@code AsyncInvocation} has been cancelled */
   private boolean cancelled;
-  
+
   /**
    * Creates a new {@code AsyncInvocation}.
    *
@@ -447,11 +447,11 @@ public class AsyncInvocation<V> implements Future<V> {
 
   private Runnable runnable(final Callable<V> work) {
     return () -> {
-        try {
-          resultValue.set(work.call());
-        } catch (Throwable throwable) {
-          resultThrowable.set(throwable);
-        }
+      try {
+        resultValue.set(work.call());
+      } catch (Throwable throwable) {
+        resultThrowable.set(throwable);
+      }
     };
   }
 
@@ -487,7 +487,7 @@ public class AsyncInvocation<V> implements Future<V> {
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
       if (throwable instanceof VirtualMachineError) {
-        SystemFailure.setFailure((VirtualMachineError)throwable); // don't throw
+        SystemFailure.setFailure((VirtualMachineError) throwable); // don't throw
       }
       resultThrowable.set(throwable);
     }

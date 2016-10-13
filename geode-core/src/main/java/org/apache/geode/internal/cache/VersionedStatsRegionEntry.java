@@ -21,13 +21,12 @@ import org.apache.geode.internal.cache.versions.VersionStamp;
 /**
  *
  */
-public abstract class VersionedStatsRegionEntry extends VMStatsRegionEntry
-  implements VersionStamp {
-  
+public abstract class VersionedStatsRegionEntry extends VMStatsRegionEntry implements VersionStamp {
+
   protected VersionedStatsRegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }
-  
+
   // Do not add any instance fields to this class.
   // Instead add them to the VERSIONED section of LeafRegionEntry.cpp.
 }

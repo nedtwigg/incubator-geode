@@ -33,7 +33,7 @@ import org.apache.geode.*;
  *
  */
 public class DummyStatisticsImpl implements Statistics {
-  
+
   private final StatisticsType type;
   private final String textId;
   private final long numericId;
@@ -76,16 +76,19 @@ public class DummyStatisticsImpl implements Statistics {
   public final String getTextId() {
     return this.textId;
   }
+
   public final long getNumericId() {
     return this.numericId;
   }
+
   public final boolean isAtomic() {
     return true;
   }
+
   public final boolean isClosed() {
     return false;
   }
-  
+
   ////////////////////////  set() Methods  ///////////////////////
 
   public final void setInt(int id, int value) {
@@ -156,11 +159,11 @@ public class DummyStatisticsImpl implements Statistics {
   private static final Number dummyNumber = Integer.valueOf(0);
 
   public final Number get(StatisticDescriptor descriptor) {
-    return dummyNumber; 
+    return dummyNumber;
   }
 
   public final Number get(String name) {
-    return dummyNumber; 
+    return dummyNumber;
   }
 
   public final long getRawBits(StatisticDescriptor descriptor) {
@@ -215,23 +218,28 @@ public class DummyStatisticsImpl implements Statistics {
     return null;
   }
 
-  @Override public LongSupplier setLongSupplier(final int id, final LongSupplier supplier) {
+  @Override
+  public LongSupplier setLongSupplier(final int id, final LongSupplier supplier) {
     return null;
   }
 
-  @Override public LongSupplier setLongSupplier(final String name, final LongSupplier supplier) {
+  @Override
+  public LongSupplier setLongSupplier(final String name, final LongSupplier supplier) {
     return null;
   }
 
-  @Override public LongSupplier setLongSupplier(final StatisticDescriptor descriptor, final LongSupplier supplier) {
+  @Override
+  public LongSupplier setLongSupplier(final StatisticDescriptor descriptor, final LongSupplier supplier) {
     return null;
   }
 
-  @Override public DoubleSupplier setDoubleSupplier(final int id, final DoubleSupplier supplier) {
+  @Override
+  public DoubleSupplier setDoubleSupplier(final int id, final DoubleSupplier supplier) {
     return null;
   }
 
-  @Override public DoubleSupplier setDoubleSupplier(final String name, final DoubleSupplier supplier) {
+  @Override
+  public DoubleSupplier setDoubleSupplier(final String name, final DoubleSupplier supplier) {
     return null;
   }
 

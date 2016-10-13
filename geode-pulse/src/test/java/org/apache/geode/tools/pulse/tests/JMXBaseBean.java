@@ -31,13 +31,11 @@ public abstract class JMXBaseBean {
   }
 
   protected boolean getBoolean(String key) {
-    return Boolean.parseBoolean(JMXProperties.getInstance().getProperty(
-        getKey(key)));
+    return Boolean.parseBoolean(JMXProperties.getInstance().getProperty(getKey(key)));
   }
 
   protected int getInt(String key) {
-    return Integer.parseInt(JMXProperties.getInstance()
-        .getProperty(getKey(key)));
+    return Integer.parseInt(JMXProperties.getInstance().getProperty(getKey(key)));
   }
 
   protected long getLong(String key) {
@@ -55,13 +53,11 @@ public abstract class JMXBaseBean {
   }
 
   protected double getDouble(String key) {
-    return Double.parseDouble(JMXProperties.getInstance().getProperty(
-        getKey(key)));
+    return Double.parseDouble(JMXProperties.getInstance().getProperty(getKey(key)));
   }
 
   protected float getFloat(String key) {
-    return Float.parseFloat(JMXProperties.getInstance()
-        .getProperty(getKey(key)));
+    return Float.parseFloat(JMXProperties.getInstance().getProperty(getKey(key)));
   }
 
 }

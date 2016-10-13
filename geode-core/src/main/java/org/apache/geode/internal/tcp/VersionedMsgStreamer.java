@@ -30,13 +30,11 @@ import org.apache.geode.internal.VersionedDataStream;
  * 
  * @since GemFire 7.1
  */
-final class VersionedMsgStreamer extends MsgStreamer implements
-    VersionedDataStream {
+final class VersionedMsgStreamer extends MsgStreamer implements VersionedDataStream {
 
   private final Version version;
 
-  VersionedMsgStreamer(List<?> cons, DistributionMessage msg,
-      boolean directReply, DMStats stats, int sendBufferSize, Version version) {
+  VersionedMsgStreamer(List<?> cons, DistributionMessage msg, boolean directReply, DMStats stats, int sendBufferSize, Version version) {
     super(cons, msg, directReply, stats, sendBufferSize);
     this.version = version;
   }

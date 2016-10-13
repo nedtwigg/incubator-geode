@@ -159,7 +159,8 @@ public class ConfiguredDataSourceProperties implements Serializable {
    * @param loginTime
    */
   public void setLoginTimeOut(int loginTime) {
-    if (loginTime > 0) loginTimeOut = loginTime;
+    if (loginTime > 0)
+      loginTimeOut = loginTime;
   }
 
   /**
@@ -195,7 +196,8 @@ public class ConfiguredDataSourceProperties implements Serializable {
    * @param inpoolSize
    */
   public void setInitialPoolSize(int inpoolSize) {
-    if (inpoolSize >= 0) initialPoolSize = inpoolSize;
+    if (inpoolSize >= 0)
+      initialPoolSize = inpoolSize;
   }
 
   /**
@@ -204,7 +206,8 @@ public class ConfiguredDataSourceProperties implements Serializable {
    * @param mxpoolSize
    */
   public void setMaxPoolSize(int mxpoolSize) {
-    if (mxpoolSize > 0) maxPoolSize = mxpoolSize;
+    if (mxpoolSize > 0)
+      maxPoolSize = mxpoolSize;
   }
 
   /**
@@ -227,7 +230,8 @@ public class ConfiguredDataSourceProperties implements Serializable {
    * @param time
    */
   public void setConnectionExpirationTime(int time) {
-    if (time > 0) expirationTime = time;
+    if (time > 0)
+      expirationTime = time;
   }
 
   /**
@@ -236,7 +240,8 @@ public class ConfiguredDataSourceProperties implements Serializable {
    * @param time
    */
   public void setConnectionTimeOut(int time) {
-    if (time > 0) timeOut = time;
+    if (time > 0)
+      timeOut = time;
   }
 
   /**

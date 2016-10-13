@@ -63,31 +63,21 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
     return r1;
 
   }
-  
+
   @Override
-  public  Index createIndex(String indexName, IndexType indexType,
-      String indexedExpression, String fromClause)
-      throws IndexInvalidException, IndexNameConflictException,
-      IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-    return CacheUtils.getQueryService().createIndex(indexName, indexType, indexedExpression, 
-        fromClause);
+  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
+    return CacheUtils.getQueryService().createIndex(indexName, indexType, indexedExpression, fromClause);
   }
 
   @Override
-  public Index createIndex(String indexName, String indexedExpression,
-      String regionPath) throws IndexInvalidException,
-      IndexNameConflictException, IndexExistsException,
-      RegionNotFoundException, UnsupportedOperationException {
-    return CacheUtils.getQueryService().createIndex(indexName, indexedExpression, regionPath); 
+  public Index createIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
+    return CacheUtils.getQueryService().createIndex(indexName, indexedExpression, regionPath);
   }
-  
-  
-  
+
   @Override
-  public  boolean assertIndexUsedOnQueryNode() {
+  public boolean assertIndexUsedOnQueryNode() {
     return true;
   }
-  
 
   // Asif: This test to me does not make sense as the bind parameter should be a
   // constant
@@ -130,36 +120,9 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
   public void testOrderedResultsPartitionedRegion_Bug43514_1() throws Exception {
     String queries[] = {
         // Test case No. IUMR021
-        "select distinct * from /portfolio1 p order by status, ID desc",
-        "select distinct * from /portfolio1 p, p.positions.values val order by p.ID, val.secId desc",
-        "select distinct p.status from /portfolio1 p order by p.status",
-        "select distinct status, ID from /portfolio1 order by status, ID",
-        "select distinct p.status, p.ID from /portfolio1 p order by p.status, p.ID",
-        "select distinct key.ID from /portfolio1.keys key order by key.ID",
-        "select distinct key.ID, key.status from /portfolio1.keys key order by key.status, key.ID",
-        "select distinct key.ID, key.status from /portfolio1.keys key order by key.status desc, key.ID",
-        "select distinct key.ID, key.status from /portfolio1.keys key order by key.status, key.ID desc",
-        "select distinct p.status, p.ID from /portfolio1 p order by p.status asc, p.ID",
-        "select distinct p.ID, p.status from /portfolio1 p order by p.ID desc, p.status asc",
-        "select distinct p.ID from /portfolio1 p, p.positions.values order by p.ID",
-        "select distinct p.ID, p.status from /portfolio1 p, p.positions.values order by p.status, p.ID",
-        "select distinct pos.secId from /portfolio1 p, p.positions.values pos order by pos.secId",
-        "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by pos.secId, p.ID",
-        "select distinct p.iD from /portfolio1 p order by p.iD",
-        "select distinct p.iD, p.status from /portfolio1 p order by p.iD",
-        "select distinct iD, status from /portfolio1 order by iD",
-        "select distinct p.getID() from /portfolio1 p order by p.getID()",
-        "select distinct p.names[1] from /portfolio1 p order by p.names[1]",
-        "select distinct p.position1.secId, p.ID from /portfolio1 p order by p.position1.secId desc, p.ID",
-        "select distinct p.ID, p.position1.secId from /portfolio1 p order by p.position1.secId, p.ID",
-        "select distinct e.key.ID from /portfolio1.entries e order by e.key.ID",
-        "select distinct e.key.ID, e.value.status from /portfolio1.entries e order by e.key.ID",
-        "select distinct e.key.ID, e.value.status from /portfolio1.entrySet e order by e.key.ID desc , e.value.status desc",
-        "select distinct e.key, e.value from /portfolio1.entrySet e order by e.key.ID, e.value.status desc",
-        "select distinct e.key from /portfolio1.entrySet e order by e.key.ID desc, e.key.pkid desc",
-        "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by p.ID, pos.secId",
-        "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by p.ID desc, pos.secId desc",
-        "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by p.ID desc, pos.secId",
+        "select distinct * from /portfolio1 p order by status, ID desc", "select distinct * from /portfolio1 p, p.positions.values val order by p.ID, val.secId desc", "select distinct p.status from /portfolio1 p order by p.status", "select distinct status, ID from /portfolio1 order by status, ID", "select distinct p.status, p.ID from /portfolio1 p order by p.status, p.ID", "select distinct key.ID from /portfolio1.keys key order by key.ID", "select distinct key.ID, key.status from /portfolio1.keys key order by key.status, key.ID", "select distinct key.ID, key.status from /portfolio1.keys key order by key.status desc, key.ID", "select distinct key.ID, key.status from /portfolio1.keys key order by key.status, key.ID desc", "select distinct p.status, p.ID from /portfolio1 p order by p.status asc, p.ID", "select distinct p.ID, p.status from /portfolio1 p order by p.ID desc, p.status asc", "select distinct p.ID from /portfolio1 p, p.positions.values order by p.ID",
+        "select distinct p.ID, p.status from /portfolio1 p, p.positions.values order by p.status, p.ID", "select distinct pos.secId from /portfolio1 p, p.positions.values pos order by pos.secId", "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by pos.secId, p.ID", "select distinct p.iD from /portfolio1 p order by p.iD", "select distinct p.iD, p.status from /portfolio1 p order by p.iD", "select distinct iD, status from /portfolio1 order by iD", "select distinct p.getID() from /portfolio1 p order by p.getID()", "select distinct p.names[1] from /portfolio1 p order by p.names[1]", "select distinct p.position1.secId, p.ID from /portfolio1 p order by p.position1.secId desc, p.ID", "select distinct p.ID, p.position1.secId from /portfolio1 p order by p.position1.secId, p.ID", "select distinct e.key.ID from /portfolio1.entries e order by e.key.ID", "select distinct e.key.ID, e.value.status from /portfolio1.entries e order by e.key.ID",
+        "select distinct e.key.ID, e.value.status from /portfolio1.entrySet e order by e.key.ID desc , e.value.status desc", "select distinct e.key, e.value from /portfolio1.entrySet e order by e.key.ID, e.value.status desc", "select distinct e.key from /portfolio1.entrySet e order by e.key.ID desc, e.key.pkid desc", "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by p.ID, pos.secId", "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by p.ID desc, pos.secId desc", "select distinct p.ID, pos.secId from /portfolio1 p, p.positions.values pos order by p.ID desc, pos.secId",
 
     };
     Object r[][] = new Object[queries.length][2];
@@ -192,11 +155,9 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
     // Create Indexes
     this.createIndex("i1", IndexType.FUNCTIONAL, "p.status", "/portfolio1 p");
     this.createIndex("i2", IndexType.FUNCTIONAL, "p.ID", "/portfolio1 p");
-    this.createIndex("i3", IndexType.FUNCTIONAL, "p.position1.secId",
-        "/portfolio1 p");
+    this.createIndex("i3", IndexType.FUNCTIONAL, "p.position1.secId", "/portfolio1 p");
     this.createIndex("i4", IndexType.FUNCTIONAL, "key.ID", "/portfolio1.keys key");
-    this.createIndex("i5", IndexType.FUNCTIONAL, "key.status",
-        "/portfolio1.keys key");
+    this.createIndex("i5", IndexType.FUNCTIONAL, "key.status", "/portfolio1.keys key");
     // Execute Queries with Indexes
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -213,38 +174,20 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
       }
     }
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true,
-        queries);
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true, queries);
   }
 
   @Test
   public void testOrderedResultsPartitionedRegion_Bug43514_2() throws Exception {
     String queries[] = {
         // Test case No. IUMR021
-        "select distinct status as st from /portfolio1 where ID > 0 order by status",
-        "select distinct p.status as st from /portfolio1 p where ID > 0 and status = 'inactive' order by p.status",
-        "select distinct p.position1.secId as st from /portfolio1 p where p.ID > 0 and p.position1.secId != 'IBM' order by p.position1.secId",
-        "select distinct  key.status as st from /portfolio1 key where key.ID > 5 order by key.status",
-        "select distinct key.ID,key.status as st from /portfolio1 key where key.status = 'inactive' order by key.status desc, key.ID",
-        "select distinct  status, ID from /portfolio1 order by status",
-        "select distinct  p.status, p.ID from /portfolio1 p order by p.status",
-        "select distinct p.position1.secId, p.ID from /portfolio1 p order by p.position1.secId",
-        "select distinct p.status, p.ID from /portfolio1 p order by p.status asc, p.ID",
+        "select distinct status as st from /portfolio1 where ID > 0 order by status", "select distinct p.status as st from /portfolio1 p where ID > 0 and status = 'inactive' order by p.status", "select distinct p.position1.secId as st from /portfolio1 p where p.ID > 0 and p.position1.secId != 'IBM' order by p.position1.secId", "select distinct  key.status as st from /portfolio1 key where key.ID > 5 order by key.status", "select distinct key.ID,key.status as st from /portfolio1 key where key.status = 'inactive' order by key.status desc, key.ID", "select distinct  status, ID from /portfolio1 order by status", "select distinct  p.status, p.ID from /portfolio1 p order by p.status", "select distinct p.position1.secId, p.ID from /portfolio1 p order by p.position1.secId", "select distinct p.status, p.ID from /portfolio1 p order by p.status asc, p.ID",
 
         "select distinct p.ID from /portfolio1 p, p.positions.values order by p.ID",
 
-        "select distinct * from /portfolio1 p, p.positions.values order by p.ID",
-        "select distinct p.iD, p.status from /portfolio1 p order by p.iD",
-        "select distinct iD, status from /portfolio1 order by iD",
-        "select distinct * from /portfolio1 p order by p.getID()",
-        "select distinct * from /portfolio1 p order by p.getP1().secId",
-        "select distinct  p.position1.secId  as st from /portfolio1 p order by p.position1.secId",
+        "select distinct * from /portfolio1 p, p.positions.values order by p.ID", "select distinct p.iD, p.status from /portfolio1 p order by p.iD", "select distinct iD, status from /portfolio1 order by iD", "select distinct * from /portfolio1 p order by p.getID()", "select distinct * from /portfolio1 p order by p.getP1().secId", "select distinct  p.position1.secId  as st from /portfolio1 p order by p.position1.secId",
 
-        "select distinct p, pos from /portfolio1 p, p.positions.values pos order by p.ID",
-        "select distinct p, pos from /portfolio1 p, p.positions.values pos order by pos.secId",
-        "select distinct status from /portfolio1 where ID > 0 order by status",
-        "select distinct p.status as st from /portfolio1 p where ID > 0 and status = 'inactive' order by p.status",
-        "select distinct p.position1.secId as st from /portfolio1 p where p.ID > 0 and p.position1.secId != 'IBM' order by p.position1.secId"
+        "select distinct p, pos from /portfolio1 p, p.positions.values pos order by p.ID", "select distinct p, pos from /portfolio1 p, p.positions.values pos order by pos.secId", "select distinct status from /portfolio1 where ID > 0 order by status", "select distinct p.status as st from /portfolio1 p where ID > 0 and status = 'inactive' order by p.status", "select distinct p.position1.secId as st from /portfolio1 p where p.ID > 0 and p.position1.secId != 'IBM' order by p.position1.secId"
 
     };
     Object r[][] = new Object[queries.length][2];
@@ -277,8 +220,7 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
     // Create Indexes
     this.createIndex("i1", IndexType.FUNCTIONAL, "p.status", "/portfolio1 p");
     this.createIndex("i2", IndexType.FUNCTIONAL, "p.ID", "/portfolio1 p");
-    this.createIndex("i3", IndexType.FUNCTIONAL, "p.position1.secId",
-        "/portfolio1 p");
+    this.createIndex("i3", IndexType.FUNCTIONAL, "p.position1.secId", "/portfolio1 p");
 
     // Execute Queries with Indexes
     for (int i = 0; i < queries.length; i++) {
@@ -296,11 +238,9 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
       }
     }
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true,
-        queries);
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true, queries);
   }
-  
- 
+
   @Test
   public void testOrderByWithNullValues() throws Exception {
     // IN ORDER BY NULL values are treated as smallest. E.g For an ascending order by field
@@ -318,7 +258,7 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
     for (int i = 1; i <= size; i++) {
       Portfolio pf = new Portfolio(i);
       // Add numNullValues null values.
-      if(i <= numNullValues) {
+      if (i <= numNullValues) {
         pf.pkid = null;
         pf.status = "a" + i;
       }
@@ -334,53 +274,53 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
       str = queries[0];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       r[0][0] = results;
       list = results.asList();
       for (int i = 1; i <= size; i++) {
-        Portfolio p = (Portfolio)list.get((i-1));
+        Portfolio p = (Portfolio) list.get((i - 1));
         if (i <= numNullValues) {
-          assertNull( "Expected null value for pkid, p: " + p, p.pkid);
+          assertNull("Expected null value for pkid, p: " + p, p.pkid);
         } else {
           assertNotNull("Expected not null value for pkid", p.pkid);
           if (!p.pkid.equals("" + i)) {
-            fail(" Value of pkid is not in expected order.");  
+            fail(" Value of pkid is not in expected order.");
           }
         }
       }
-      
+
       // Query 1 - null values are first in the order.
       str = queries[1];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
       for (int i = 1; i <= size; i++) {
-        Portfolio p = (Portfolio)list.get((i-1));
+        Portfolio p = (Portfolio) list.get((i - 1));
         if (i <= numNullValues) {
-          assertNull( "Expected null value for pkid", p.pkid);
+          assertNull("Expected null value for pkid", p.pkid);
         } else {
           assertNotNull("Expected not null value for pkid", p.pkid);
           if (!p.pkid.equals("" + i)) {
-            fail(" Value of pkid is not in expected order.");  
+            fail(" Value of pkid is not in expected order.");
           }
         }
       }
-      
+
       // Query 2 - null values are last in the order.
       str = queries[2];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
       for (int i = 1; i <= size; i++) {
-        Portfolio p = (Portfolio)list.get((i-1));
-        if (i > (size - numNullValues )) {
-          assertNull( "Expected null value for pkid", p.pkid);
+        Portfolio p = (Portfolio) list.get((i - 1));
+        if (i > (size - numNullValues)) {
+          assertNull("Expected null value for pkid", p.pkid);
         } else {
           assertNotNull("Expected not null value for pkid", p.pkid);
-          if (!p.pkid.equals("" + (size - (i-1)))) {
-            fail(" Value of pkid is not in expected order.");  
+          if (!p.pkid.equals("" + (size - (i - 1)))) {
+            fail(" Value of pkid is not in expected order.");
           }
         }
       }
@@ -389,158 +329,153 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
       str = queries[3];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
       for (int i = 1; i <= list.size(); i++) {
-        String pkid = (String)list.get((i-1));
+        String pkid = (String) list.get((i - 1));
         if (i == 1) {
-          assertNull( "Expected null value for pkid", pkid);
+          assertNull("Expected null value for pkid", pkid);
         } else {
           assertNotNull("Expected not null value for pkid", pkid);
-          if (!pkid.equals("" + (numNullValues + (i-1)))) {
-            fail(" Value of pkid is not in expected order.");  
+          if (!pkid.equals("" + (numNullValues + (i - 1)))) {
+            fail(" Value of pkid is not in expected order.");
           }
         }
       }
-      
+
       // Query 4 - 1 distinct null value with pkid.
       str = queries[4];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
       for (int i = 1; i <= list.size(); i++) {
-        String pkid = (String)list.get((i-1));
+        String pkid = (String) list.get((i - 1));
         if (i == 1) {
-          assertNull( "Expected null value for pkid", pkid);
+          assertNull("Expected null value for pkid", pkid);
         } else {
           assertNotNull("Expected not null value for pkid", pkid);
-          if (!pkid.equals("" + (numNullValues + (i-1)))) {
-            fail(" Value of pkid is not in expected order.");  
+          if (!pkid.equals("" + (numNullValues + (i - 1)))) {
+            fail(" Value of pkid is not in expected order.");
           }
         }
       }
-      
+
       // Query 5 -  1 distinct null value with pkid at the end.
       str = queries[5];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
       for (int i = 1; i <= list.size(); i++) {
-        String pkid = (String)list.get((i-1));
+        String pkid = (String) list.get((i - 1));
         if (i == (list.size())) {
-          assertNull( "Expected null value for pkid", pkid);
+          assertNull("Expected null value for pkid", pkid);
         } else {
           assertNotNull("Expected not null value for pkid", pkid);
-          if (!pkid.equals("" + (size - (i-1)))) {
-            fail(" Value of pkid is not in expected order.");  
+          if (!pkid.equals("" + (size - (i - 1)))) {
+            fail(" Value of pkid is not in expected order.");
           }
         }
       }
-      
-     
+
       // Query 6 - ID field values should be in the same order.
       str = queries[6];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
       for (int i = 1; i <= size; i++) {
-        int id = (Integer)((Struct)list.get((i-1))).getFieldValues()[0];
+        int id = (Integer) ((Struct) list.get((i - 1))).getFieldValues()[0];
         // ID should be one of 1, 2, 3  because of distinct
         if (i <= numNullValues) {
           if (!(id == 1 || id == 2 || id == 3)) {
-            fail(" Value of ID is not as expected " + id);            
+            fail(" Value of ID is not as expected " + id);
           }
         } else {
           if (id != i) {
-            fail(" Value of ID is not as expected " + id);             
+            fail(" Value of ID is not as expected " + id);
           }
         }
       }
-      
-     
-      
-    
-      
+
       // Query 7 - ID, pkid field values should be in the same order.
       str = queries[7];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
-      
-      for (int i = 1; i <= list.size(); i++) {      
-        Struct vals = (Struct)list.get((i-1));
-        int id  = ((Integer)vals.get("ID")).intValue();
-        String pkid = (String)vals.get("pkid");
+
+      for (int i = 1; i <= list.size(); i++) {
+        Struct vals = (Struct) list.get((i - 1));
+        int id = ((Integer) vals.get("ID")).intValue();
+        String pkid = (String) vals.get("pkid");
 
         if (i <= numNullValues) {
-          assertNull( "Expected null value for pkid, " + pkid, pkid);
+          assertNull("Expected null value for pkid, " + pkid, pkid);
           if (!(id == 1 || id == 2 || id == 3)) {
-            fail(" Value of ID is not as expected " + id);            
+            fail(" Value of ID is not as expected " + id);
           }
         } else {
-          if (!pkid .equals("" + i)) {
-            fail(" Value of pkid is not as expected, " + pkid);             
+          if (!pkid.equals("" + i)) {
+            fail(" Value of pkid is not as expected, " + pkid);
           }
           if (id != i) {
-            fail(" Value of ID is not as expected, " + id);             
+            fail(" Value of ID is not as expected, " + id);
           }
         }
       }
-      
+
       // Query 8 - ID asc, pkid field values should be in the same order.
       str = queries[8];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
-      
-      for (int i = 1; i <= list.size(); i++) {      
-        Struct vals = (Struct)list.get((i-1));
-        int id  = ((Integer)vals.get("ID")).intValue();
-        String pkid = (String)vals.get("pkid");
+
+      for (int i = 1; i <= list.size(); i++) {
+        Struct vals = (Struct) list.get((i - 1));
+        int id = ((Integer) vals.get("ID")).intValue();
+        String pkid = (String) vals.get("pkid");
 
         if (i <= numNullValues) {
-          assertNull( "Expected null value for pkid, " + pkid, pkid);
+          assertNull("Expected null value for pkid, " + pkid, pkid);
           if (id != i) {
-            fail(" Value of ID is not as expected, it is: " + id + " expected :" + i);            
+            fail(" Value of ID is not as expected, it is: " + id + " expected :" + i);
           }
         } else {
-          if (!pkid .equals("" + i)) {
-            fail(" Value of pkid is not as expected, " + pkid);             
+          if (!pkid.equals("" + i)) {
+            fail(" Value of pkid is not as expected, " + pkid);
           }
           if (id != i) {
-            fail(" Value of ID is not as expected, " + id);             
+            fail(" Value of ID is not as expected, " + id);
           }
         }
       }
-      
-    // Query 9 - ID desc, pkid field values should be in the same order.
+
+      // Query 9 - ID desc, pkid field values should be in the same order.
       str = queries[9];
       q = CacheUtils.getQueryService().newQuery(str);
       CacheUtils.getLogger().info("Executing query: " + str);
-      results = (SelectResults)q.execute();
+      results = (SelectResults) q.execute();
       list = results.asList();
-      
-      for (int i = 1; i <= list.size(); i++) {      
-        Struct vals = (Struct)list.get((i-1));
-        int id  = ((Integer)vals.get("ID")).intValue();
-        String pkid = (String)vals.get("pkid");
+
+      for (int i = 1; i <= list.size(); i++) {
+        Struct vals = (Struct) list.get((i - 1));
+        int id = ((Integer) vals.get("ID")).intValue();
+        String pkid = (String) vals.get("pkid");
 
         if (i <= numNullValues) {
-          assertNull( "Expected null value for pkid, " + pkid, pkid);
-          if (id != (numNullValues - (i -1))) {
-            fail(" Value of ID is not as expected " + id);            
+          assertNull("Expected null value for pkid, " + pkid, pkid);
+          if (id != (numNullValues - (i - 1))) {
+            fail(" Value of ID is not as expected " + id);
           }
         } else {
-          if (!pkid .equals("" + i)) {
-            fail(" Value of pkid is not as expected, " + pkid);             
+          if (!pkid.equals("" + i)) {
+            fail(" Value of pkid is not as expected, " + pkid);
           }
           if (id != i) {
-            fail(" Value of ID is not as expected, " + id);             
+            fail(" Value of ID is not as expected, " + id);
           }
         }
       }
@@ -555,32 +490,31 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
     // order by field
     // its null values are reported first and then the values in ascending
     // order.
-    String queries[] = {
-        "SELECT  distinct * FROM /portfolio1 pf1 order by pkid", // 0 null
-                                                                 // values are
-                                                                 // first in the
-                                                                 // order.
+    String queries[] = { "SELECT  distinct * FROM /portfolio1 pf1 order by pkid", // 0 null
+        // values are
+        // first in the
+        // order.
         "SELECT  distinct * FROM /portfolio1 pf1  order by pkid asc", // 1 same
-                                                                      // as
-                                                                      // above.
+        // as
+        // above.
         "SELECT  distinct * FROM /portfolio1 order by pkid desc", // 2 null
-                                                                  // values are
-                                                                  // last in the
-                                                                  // order.
+        // values are
+        // last in the
+        // order.
         "SELECT  distinct pkid FROM /portfolio1 pf1 order by pkid", // 3 null
-                                                                    // values
-                                                                    // are first
-                                                                    // in the
-                                                                    // order.
+        // values
+        // are first
+        // in the
+        // order.
         "SELECT  distinct pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid asc", // 4
         "SELECT  distinct pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid desc", // 5
-                                                                                              // null
-                                                                                              // values
-                                                                                              // are
-                                                                                              // last
-                                                                                              // in
-                                                                                              // the
-                                                                                              // order.
+        // null
+        // values
+        // are
+        // last
+        // in
+        // the
+        // order.
 
         "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 6
         "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 7
@@ -593,24 +527,10 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
   public String[] getQueriesForLimitNotAppliedIfOrderByNotUsingIndex() {
     String queries[] = {
         // Test case No. IUMR021
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc limit 10",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc limit 10",
 
-       
     };
     return queries;
 
@@ -619,47 +539,19 @@ public class OrderByPartitionedJUnitTest extends OrderByTestImplementation {
   public String[] getQueriesForMultiColOrderByWithIndexResultWithProjection() {
     String queries[] = {
         // Test case No. IUMR021
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
-         };
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10", };
     return queries;
   }
 
   public String[] getQueriesForMultiColOrderByWithMultiIndexResultProjection() {
     String queries[] = {
         // Test case No. IUMR021
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc limit 10",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc limit 10",
 
-      
     };
     return queries;
   }

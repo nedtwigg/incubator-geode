@@ -102,7 +102,7 @@ public interface Function extends Identifiable<String> {
   public default boolean optimizeForWrite() {
     return false;
   }
-  
+
   /**
    * Specifies whether the function is eligible for re-execution (in case of
    * failure).

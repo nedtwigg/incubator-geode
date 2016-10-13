@@ -47,11 +47,13 @@ public class FunctionServiceMultipleOnMemberDUnitTest extends FunctionServiceBas
     members.add(vm1.invoke(() -> getSystem().getDistributedMember()));
   }
 
-  @Override public Execution getExecution() {
+  @Override
+  public Execution getExecution() {
     return FunctionService.onMembers(members);
   }
 
-  @Override public int numberOfExecutions() {
+  @Override
+  public int numberOfExecutions() {
     return 2;
   }
 }

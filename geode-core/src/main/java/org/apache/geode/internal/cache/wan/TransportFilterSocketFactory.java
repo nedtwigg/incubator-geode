@@ -25,15 +25,15 @@ import java.util.Set;
 import org.apache.geode.cache.wan.GatewayTransportFilter;
 import org.apache.geode.distributed.ClientSocketFactory;
 
-public class TransportFilterSocketFactory implements ClientSocketFactory{
+public class TransportFilterSocketFactory implements ClientSocketFactory {
 
   private List<GatewayTransportFilter> gatewayTransportFilters;
-  
-  public TransportFilterSocketFactory setGatewayTransportFilters(List<GatewayTransportFilter> transportFilters){
+
+  public TransportFilterSocketFactory setGatewayTransportFilters(List<GatewayTransportFilter> transportFilters) {
     this.gatewayTransportFilters = transportFilters;
     return this;
   }
-  
+
   public Socket createSocket(InetAddress address, int port) throws IOException {
     return new TransportFilterSocket(gatewayTransportFilters, address, port);
   }

@@ -40,10 +40,12 @@ public class QRegion implements SelectResults {
 
   /** Creates a new instance of QRegion */
   public QRegion(Region region, boolean includeKeys) {
-    if (region == null) throw new IllegalArgumentException(LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
+    if (region == null)
+      throw new IllegalArgumentException(LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
     this.region = region;
     Class constraint = this.region.getAttributes().getValueConstraint();
-    if (constraint == null) constraint = Object.class;
+    if (constraint == null)
+      constraint = Object.class;
     ResultsCollectionWrapper res = null;
     if (includeKeys) {
       res = new ResultsCollectionWrapper(TypeUtils.getObjectType(constraint), this.region.entrySet());
@@ -58,15 +60,17 @@ public class QRegion implements SelectResults {
   }
 
   public QRegion(Region region, boolean includeKeys, ExecutionContext context) {
-    
-    if (region == null) throw new IllegalArgumentException(LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
-    
+
+    if (region == null)
+      throw new IllegalArgumentException(LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
+
     Class constraint = region.getAttributes().getValueConstraint();
-    if (constraint == null) constraint = Object.class;
-    
+    if (constraint == null)
+      constraint = Object.class;
+
     ResultsCollectionWrapper res = null;
     if (context.getBucketList() != null && region instanceof PartitionedRegion) {
-      LocalDataSet localData = new LocalDataSet(((PartitionedRegion)region), new HashSet(context.getBucketList()));
+      LocalDataSet localData = new LocalDataSet(((PartitionedRegion) region), new HashSet(context.getBucketList()));
       this.region = localData;
       if (includeKeys) {
         res = new ResultsCollectionWrapper(TypeUtils.getObjectType(constraint), localData.localEntrySet());
@@ -87,16 +91,15 @@ public class QRegion implements SelectResults {
     }
     this.values = res;
   }
-  
+
   public Region getRegion() {
     return this.region;
   }
 
-  
-  public void setKeepSerialized(boolean keepSerialized){
-    ((ResultsCollectionWrapper)(this.values)).setKeepSerialized(keepSerialized);
+  public void setKeepSerialized(boolean keepSerialized) {
+    ((ResultsCollectionWrapper) (this.values)).setKeepSerialized(keepSerialized);
   }
-  
+
   protected ObjectType getKeyType() {
     Class constraint = this.region.getAttributes().getKeyConstraint();
     if (constraint == null) {
@@ -116,7 +119,7 @@ public class QRegion implements SelectResults {
   public SelectResults getKeys() {
     ResultsCollectionWrapper res;
     if (this.region instanceof LocalDataSet) {
-      LocalDataSet localData = (LocalDataSet)this.region;
+      LocalDataSet localData = (LocalDataSet) this.region;
       res = new ResultsCollectionWrapper(getKeyType(), localData.localKeys());
     } else {
       res = new ResultsCollectionWrapper(getKeyType(), this.region.keys());
@@ -148,12 +151,10 @@ public class QRegion implements SelectResults {
   public SelectResults getEntries() {
     ResultsCollectionWrapper res;
     if (this.region instanceof LocalDataSet) {
-      LocalDataSet localData = (LocalDataSet)this.region;
-      res = new ResultsCollectionWrapper(TypeUtils.getRegionEntryType(this.region), 
-          localData.localEntrySet());
+      LocalDataSet localData = (LocalDataSet) this.region;
+      res = new ResultsCollectionWrapper(TypeUtils.getRegionEntryType(this.region), localData.localEntrySet());
     } else {
-      res = new ResultsCollectionWrapper(TypeUtils.getRegionEntryType(this.region), 
-          this.region.entries(false));
+      res = new ResultsCollectionWrapper(TypeUtils.getRegionEntryType(this.region), this.region.entries(false));
     }
     res.setModifiable(false);
     return res;
@@ -178,7 +179,7 @@ public class QRegion implements SelectResults {
   public int occurrences(Object element) {
     // expensive!!
     int count = 0;
-    for (Iterator itr = this.values.iterator(); itr.hasNext(); ) {
+    for (Iterator itr = this.values.iterator(); itr.hasNext();) {
       Object v = itr.next();
       if (element == null ? v == null : element.equals(v)) {
         count++;
@@ -186,7 +187,7 @@ public class QRegion implements SelectResults {
     }
     return count;
   }
-  
+
   public List asList() {
     return new ArrayList(this.values);
   }
@@ -272,18 +273,15 @@ public class QRegion implements SelectResults {
     return this.region.containsValueForKey(key);
   }
 
-  public void create(Object key, Object value) throws TimeoutException, EntryExistsException, CacheWriterException 
-  {
+  public void create(Object key, Object value) throws TimeoutException, EntryExistsException, CacheWriterException {
     this.region.create(key, value);
   }
 
-  public void create(Object key, Object value, Object aCacheWriterParam) throws TimeoutException, EntryExistsException,
-      CacheWriterException {
+  public void create(Object key, Object value, Object aCacheWriterParam) throws TimeoutException, EntryExistsException, CacheWriterException {
     this.region.create(key, value, aCacheWriterParam);
   }
 
-  public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes) throws RegionExistsException,
-      TimeoutException {
+  public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes) throws RegionExistsException, TimeoutException {
     return this.region.createSubregion(subregionName, aRegionAttributes);
   }
 
@@ -291,8 +289,7 @@ public class QRegion implements SelectResults {
     this.region.destroy(key);
   }
 
-  public void destroy(Object key, Object aCacheWriterParam) throws TimeoutException, EntryNotFoundException,
-      CacheWriterException {
+  public void destroy(Object key, Object aCacheWriterParam) throws TimeoutException, EntryNotFoundException, CacheWriterException {
     this.region.destroy(key, aCacheWriterParam);
   }
 
@@ -308,8 +305,7 @@ public class QRegion implements SelectResults {
     return this.region.entries(recursive);
   }
 
-  public boolean existsValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  public boolean existsValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     return this.region.existsValue(queryPredicate);
   }
 
@@ -433,18 +429,15 @@ public class QRegion implements SelectResults {
     this.region.put(key, value);
   }
 
-  public void put(Object key, Object value, Object aCallbackArgument) throws TimeoutException, CacheWriterException 
-  {
+  public void put(Object key, Object value, Object aCallbackArgument) throws TimeoutException, CacheWriterException {
     this.region.put(key, value, aCallbackArgument);
   }
 
-  public SelectResults query(String predicate) throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  public SelectResults query(String predicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     return this.region.query(predicate);
   }
 
-  public Object selectValue(String predicate) throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  public Object selectValue(String predicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     return this.region.selectValue(predicate);
   }
 
@@ -453,12 +446,11 @@ public class QRegion implements SelectResults {
   }
 
   public Set subregions(boolean recursive) {
-   //return this.region.subregions(recursive);
+    //return this.region.subregions(recursive);
     throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
-  public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException,
-      TimeoutException {
+  public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
     this.region.loadSnapshot(inputStream);
   }
 
@@ -515,23 +507,22 @@ public class QRegion implements SelectResults {
   }
 
   public boolean containsValue(Object arg0) {
-    return this.region.containsValue(arg0);  
+    return this.region.containsValue(arg0);
   }
 
   public void putAll(Map arg0) {
-   this.region.putAll(arg0);
-    
+    this.region.putAll(arg0);
+
   }
 
   public SelectResults entrySet() {
-    ResultsCollectionWrapper res = new ResultsCollectionWrapper(new ObjectTypeImpl(Map.Entry.class), this.region
-        .entries(false));
+    ResultsCollectionWrapper res = new ResultsCollectionWrapper(new ObjectTypeImpl(Map.Entry.class), this.region.entries(false));
     res.setModifiable(false);
-    return res; 
+    return res;
   }
 
   public Set keySet() {
     return this.region.keys();
   }
- 
+
 }

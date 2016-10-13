@@ -79,14 +79,14 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
   public ClientCacheCreation(boolean forParsing) {
     super(forParsing);
   }
-  
+
   //////////////////////  Instance Methods  //////////////////////
 
   static final private RegionAttributes clientDefaults;
   static {
     AttributesFactory af = new AttributesFactory();
     af.setScope(Scope.LOCAL);
-//    af.setIgnoreJTA(true);  In 6.6 and later releases client regions support JTA
+    //    af.setIgnoreJTA(true);  In 6.6 and later releases client regions support JTA
     af.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
     clientDefaults = af.create();
   }
@@ -104,30 +104,30 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
   public org.apache.geode.cache.query.QueryService getQueryService(String poolName) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
+
   public org.apache.geode.cache.query.QueryService getLocalQueryService() {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
+
   /**
    * @since GemFire 6.5
    */
-  public <K,V> ClientRegionFactory<K,V> createClientRegionFactory(ClientRegionShortcut atts) {
+  public <K, V> ClientRegionFactory<K, V> createClientRegionFactory(ClientRegionShortcut atts) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
   /**
    * @since GemFire 6.5
    */
-  public <K,V> ClientRegionFactory<K,V> createClientRegionFactory(String regionAttributesId) {
-    throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-  }
-  
-  public RegionService createAuthenticatedView(Properties properties,
-      String poolName) {
+  public <K, V> ClientRegionFactory<K, V> createClientRegionFactory(String regionAttributesId) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  public RegionService createAuthenticatedView(
-      Properties userSecurityProperties) {
+  public RegionService createAuthenticatedView(Properties properties, String poolName) {
+    throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+  }
+
+  public RegionService createAuthenticatedView(Properties userSecurityProperties) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
@@ -135,7 +135,7 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
   public void setLockTimeout(int seconds) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
-  
+
   @Override
   public void setLockLease(int seconds) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
@@ -155,10 +155,12 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
   public CacheServer addCacheServer() {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
+
   @Override
   public void setIsServer(boolean isServer) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
+
   @Override
   public void addBackup(File backup) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
@@ -174,10 +176,7 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
    * @throws GatewayException
    */
   @Override
-  void create(GemFireCacheImpl cache)
-    throws TimeoutException, CacheWriterException,
-           GatewayException,
-           RegionExistsException {
+  void create(GemFireCacheImpl cache) throws TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
     cache.setDeclarativeCacheConfig(this.getCacheConfig());
     if (!cache.isClient()) {
       throw new IllegalStateException("You must use ClientCacheFactory when the cache.xml uses client-cache.");
@@ -188,11 +187,11 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
         boolean setDefault = m.size() == 1;
         Iterator it = m.values().iterator();
         while (it.hasNext()) {
-          Pool cp = (Pool)it.next();
+          Pool cp = (Pool) it.next();
           PoolFactoryImpl f;
-          f = (PoolFactoryImpl)PoolManager.createFactory();
+          f = (PoolFactoryImpl) PoolManager.createFactory();
           f.init(cp);
-          PoolImpl p = (PoolImpl)f.create(cp.getName());
+          PoolImpl p = (PoolImpl) f.create(cp.getName());
         }
       }
     }
@@ -218,12 +217,12 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
       DiskStoreAttributesCreation creation = (DiskStoreAttributesCreation) iter.next();
 
       // It's GemFireCache
-      GemFireCacheImpl gfc = (GemFireCacheImpl)cache;
+      GemFireCacheImpl gfc = (GemFireCacheImpl) cache;
       // Don't let the DiskStoreAttributesCreation escape to the user
       DiskStoreFactory factory = gfc.createDiskStoreFactory(creation);
       DiskStore ds = factory.create(creation.getName());
     }
-    
+
     if (hasDynamicRegionFactory()) {
       DynamicRegionFactory.get().open(getDynamicRegionFactoryConfig());
     }
@@ -231,24 +230,19 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
       cache.setCopyOnRead(getCopyOnRead());
     }
 
-    if (this.txMgrCreation != null &&
-        this.txMgrCreation.getListeners().length > 0 &&
-        cache.getCacheTransactionManager()!=null) {
+    if (this.txMgrCreation != null && this.txMgrCreation.getListeners().length > 0 && cache.getCacheTransactionManager() != null) {
       cache.getCacheTransactionManager().initListeners(this.txMgrCreation.getListeners());
     }
-    
-    if (this.txMgrCreation != null &&
-        cache.getCacheTransactionManager()!=null && this.txMgrCreation.getWriter() != null) {
+
+    if (this.txMgrCreation != null && cache.getCacheTransactionManager() != null && this.txMgrCreation.getWriter() != null) {
       throw new IllegalStateException(LocalizedStrings.TXManager_NO_WRITER_ON_CLIENT.toLocalizedString());
     }
-    
+
     cache.initializePdxRegistry();
 
-    for (Iterator iter = this.regionAttributesNames.iterator();
-         iter.hasNext(); ) {
+    for (Iterator iter = this.regionAttributesNames.iterator(); iter.hasNext();) {
       String id = (String) iter.next();
-      RegionAttributesCreation creation =
-        (RegionAttributesCreation) getRegionAttributes(id);
+      RegionAttributesCreation creation = (RegionAttributesCreation) getRegionAttributes(id);
       creation.inheritAttributes(cache, false);
 
       RegionAttributes attrs;
@@ -261,7 +255,7 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
 
     Iterator it = this.roots.values().iterator();
     while (it.hasNext()) {
-      RegionCreation r = (RegionCreation)it.next();
+      RegionCreation r = (RegionCreation) it.next();
       r.createRoot(cache);
     }
 
@@ -273,26 +267,25 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
     String result = null;
     Map m = getPools();
     if (m.size() == 1) {
-      Pool p = (Pool)m.values().iterator().next();
+      Pool p = (Pool) m.values().iterator().next();
       result = p.getName();
     } else if (m.isEmpty()) {
       result = "DEFAULT";
     }
     return result;
   }
-  
+
   public Pool getDefaultPool() {
     return (Pool) getPools().get(getDefaultPoolName());
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.cache.client.CacheCreation#getPdxReadSerialized()
    */
   @Override
   public boolean getPdxReadSerialized() {
-      return false;
+    return false;
   }
-
 
   /* (non-Javadoc)
    * @see org.apache.geode.cache.client.ClientCache#getCurrentServers()
@@ -300,6 +293,5 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
   public Set<InetSocketAddress> getCurrentServers() {
     return Collections.EMPTY_SET;
   }
-
 
 }

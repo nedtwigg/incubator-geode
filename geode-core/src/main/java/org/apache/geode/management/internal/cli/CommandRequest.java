@@ -78,8 +78,7 @@ public class CommandRequest {
       }
 
       return buffer.toString().trim();
-    }
-    else {
+    } else {
       return "unknown";
     }
   }
@@ -118,11 +117,10 @@ public class CommandRequest {
       String key = mapEntry.getKey();
       String value = mapEntry.getValue();
 
-      if (hasQuotesAroundNegativeNumber(value)){
+      if (hasQuotesAroundNegativeNumber(value)) {
         String trimmed = value.substring(1, value.length() - 1);
         parameters.put(key, trimmed);
-      }
-      else {
+      } else {
         parameters.put(key, value);
       }
     }

@@ -41,8 +41,7 @@ public class TransactionImpl implements Transaction {
   /**
    * The transaction manager that owns this transaction.
    */
-  private TransactionManagerImpl tm = TransactionManagerImpl
-      .getTransactionManager();
+  private TransactionManagerImpl tm = TransactionManagerImpl.getTransactionManager();
 
   /**
    * List of registered Synchronization objects.
@@ -76,8 +75,7 @@ public class TransactionImpl implements Transaction {
    * 
    * @see javax.transaction.Transaction#commit()
    */
-  public void commit() throws RollbackException, HeuristicMixedException,
-      HeuristicRollbackException, SecurityException, SystemException {
+  public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, SystemException {
     tm.commit();
   }
 
@@ -109,7 +107,8 @@ public class TransactionImpl implements Transaction {
     if (gtx == null) {
       String exception = LocalizedStrings.TransactionImpl_TRANSACTIONIMPL_SETROLLBACKONLY_NO_GLOBAL_TRANSACTION_EXISTS.toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (writer.fineEnabled()) writer.fine(exception);
+      if (writer.fineEnabled())
+        writer.fine(exception);
       throw new SystemException(exception);
     }
     gtx.setRollbackOnly();
@@ -133,9 +132,10 @@ public class TransactionImpl implements Transaction {
    * not supported
    */
   public void setTransactionTimeout(int seconds) throws SystemException {
-    String exception = LocalizedStrings.TransactionImpl_SETTRANSACTIONTIMEOUT_IS_NOT_SUPPORTED.toLocalizedString(); 
+    String exception = LocalizedStrings.TransactionImpl_SETTRANSACTIONTIMEOUT_IS_NOT_SUPPORTED.toLocalizedString();
     LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-    if (writer.fineEnabled()) writer.fine(exception);
+    if (writer.fineEnabled())
+      writer.fine(exception);
     throw new SystemException(exception);
   }
 
@@ -155,13 +155,13 @@ public class TransactionImpl implements Transaction {
    * 
    * @see javax.transaction.Transaction#enlistResource(javax.transaction.xa.XAResource)
    */
-  public boolean enlistResource(XAResource xaRes) throws RollbackException,
-      IllegalStateException, SystemException {
+  public boolean enlistResource(XAResource xaRes) throws RollbackException, IllegalStateException, SystemException {
     gtx = tm.getGlobalTransaction();
     if (gtx == null) {
       String exception = LocalizedStrings.TransactionImpl_TRANSACTIONIMPL_ENLISTRESOURCE_NO_GLOBAL_TRANSACTION_EXISTS.toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (writer.fineEnabled()) writer.fine(exception);
+      if (writer.fineEnabled())
+        writer.fine(exception);
       throw new SystemException(exception);
     }
     return gtx.enlistResource(xaRes);
@@ -182,13 +182,13 @@ public class TransactionImpl implements Transaction {
    * @see javax.transaction.Transaction#delistResource(javax.transaction.xa.XAResource,
    *      int)
    */
-  public boolean delistResource(XAResource xaRes, int flag)
-      throws IllegalStateException, SystemException {
+  public boolean delistResource(XAResource xaRes, int flag) throws IllegalStateException, SystemException {
     gtx = tm.getGlobalTransaction();
     if (gtx == null) {
       String exception = LocalizedStrings.TransactionImpl_TRANSACTIONIMPL_DELISTRESOURCE_NO_GLOBAL_TRANSACTION_EXISTS.toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (writer.fineEnabled()) writer.fine(exception);
+      if (writer.fineEnabled())
+        writer.fine(exception);
       throw new SystemException(exception);
     }
     return gtx.delistResource(xaRes, flag);
@@ -203,8 +203,7 @@ public class TransactionImpl implements Transaction {
    * 
    * @see javax.transaction.Transaction#registerSynchronization(javax.transaction.Synchronization)
    */
-  public void registerSynchronization(Synchronization synchronisation)
-      throws SystemException, IllegalStateException, RollbackException {
+  public void registerSynchronization(Synchronization synchronisation) throws SystemException, IllegalStateException, RollbackException {
     {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.fineEnabled()) {
@@ -212,7 +211,7 @@ public class TransactionImpl implements Transaction {
       }
     }
     if (synchronisation == null)
-        throw new SystemException(LocalizedStrings.TransactionImpl_TRANSACTIONIMPLREGISTERSYNCHRONIZATIONSYNCHRONIZATION_IS_NULL.toLocalizedString());
+      throw new SystemException(LocalizedStrings.TransactionImpl_TRANSACTIONIMPLREGISTERSYNCHRONIZATIONSYNCHRONIZATION_IS_NULL.toLocalizedString());
     gtx = tm.getGlobalTransaction();
     if (gtx == null) {
       throw new SystemException(LocalizedStrings.TransactionManagerImpl_NO_TRANSACTION_PRESENT.toLocalizedString());
@@ -222,12 +221,14 @@ public class TransactionImpl implements Transaction {
       if ((status = gtx.getStatus()) == Status.STATUS_MARKED_ROLLBACK) {
         String exception = LocalizedStrings.TransactionImpl_TRANSACTIONIMPL_REGISTERSYNCHRONIZATION_SYNCHRONIZATION_CANNOT_BE_REGISTERED_BECAUSE_THE_TRANSACTION_HAS_BEEN_MARKED_FOR_ROLLBACK.toLocalizedString();
         LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (writer.fineEnabled()) writer.fine(exception);
+        if (writer.fineEnabled())
+          writer.fine(exception);
         throw new RollbackException(exception);
       } else if (status != Status.STATUS_ACTIVE) {
         String exception = LocalizedStrings.TransactionImpl_TRANSACTIONIMPL_REGISTERSYNCHRONIZATION_SYNCHRONIZATION_CANNOT_BE_REGISTERED_ON_A_TRANSACTION_WHICH_IS_NOT_ACTIVE.toLocalizedString();
         LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (writer.fineEnabled()) writer.fine(exception);
+        if (writer.fineEnabled())
+          writer.fine(exception);
         throw new IllegalStateException(exception);
       }
       syncList.add(synchronisation);

@@ -84,7 +84,7 @@ public class ColocatedRegionDetails implements DataSerializable {
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     boolean hasHost = in.readBoolean();
-    if(hasHost) {
+    if (hasHost) {
       host = DataSerializer.readString(in);
     }
     boolean hasMember = in.readBoolean();
@@ -104,7 +104,7 @@ public class ColocatedRegionDetails implements DataSerializable {
   @Override
   public void toData(DataOutput out) throws IOException {
     out.writeBoolean(host != null);
-    if(host != null) {
+    if (host != null) {
       DataSerializer.writeString(host, out);
     }
     out.writeBoolean(member != null);
@@ -125,22 +125,22 @@ public class ColocatedRegionDetails implements DataSerializable {
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append("[");
-    if(host != null) {
+    if (host != null) {
       result.append("host:" + host.toString());
     } else {
       result.append("");
     }
-    if(member != null) {
+    if (member != null) {
       result.append(", member:" + member.toString());
     } else {
       result.append(",");
     }
-    if(parent != null) {
+    if (parent != null) {
       result.append(", parent:" + parent.toString());
     } else {
       result.append(",");
     }
-    if(child != null) {
+    if (child != null) {
       result.append(", child:" + child.toString());
     } else {
       result.append(",");

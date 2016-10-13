@@ -63,7 +63,7 @@ public class RegionDestroyFunction implements Function, InternalEntity {
     } catch (IllegalStateException e) {
       context.getResultSender().lastResult(new CliFunctionResult("", e, null));
     } catch (Exception ex) {
-      context.getResultSender().lastResult(new CliFunctionResult("", new RuntimeException(CliStrings.format(CliStrings.DESTROY_REGION__MSG__ERROR_WHILE_DESTROYING_REGION_0_REASON_1, new Object[] {regionPath, ex.getMessage()})), null));
+      context.getResultSender().lastResult(new CliFunctionResult("", new RuntimeException(CliStrings.format(CliStrings.DESTROY_REGION__MSG__ERROR_WHILE_DESTROYING_REGION_0_REASON_1, new Object[] { regionPath, ex.getMessage() })), null));
     }
   }
 
@@ -80,5 +80,5 @@ public class RegionDestroyFunction implements Function, InternalEntity {
   @Override
   public boolean isHA() {
     return false;
-  } 
+  }
 }

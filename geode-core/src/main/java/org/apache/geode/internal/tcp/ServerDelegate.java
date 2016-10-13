@@ -21,7 +21,6 @@ import org.apache.geode.distributed.internal.DistributionMessage;
 import org.apache.geode.distributed.internal.membership.*;
 import org.apache.geode.i18n.LogWriterI18n;
 
-
 /** <p>ServerDelegate is a conduit plugin that receives
     {@link org.apache.geode.distributed.internal.DistributionMessage}
     objects received from other conduits.</p>
@@ -33,8 +32,7 @@ import org.apache.geode.i18n.LogWriterI18n;
   */
 public interface ServerDelegate {
 
-  public void receive( DistributionMessage message, int bytesRead,
-                       DistributedMember connId );
+  public void receive(DistributionMessage message, int bytesRead, DistributedMember connId);
 
   public LogWriterI18n getLogger();
 

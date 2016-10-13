@@ -37,8 +37,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  * @since Geode 1.0
  */
 @Category(DistributedTest.class)
-public class OffHeapLRUEvictionControllerDUnitTest extends
-    LRUEvictionControllerDUnitTest {
+public class OffHeapLRUEvictionControllerDUnitTest extends LRUEvictionControllerDUnitTest {
 
   public OffHeapLRUEvictionControllerDUnitTest() {
     super();
@@ -50,7 +49,7 @@ public class OffHeapLRUEvictionControllerDUnitTest extends
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -63,20 +62,20 @@ public class OffHeapLRUEvictionControllerDUnitTest extends
   public Properties getDistributedSystemProperties() {
     Properties properties = super.getDistributedSystemProperties();
     properties.setProperty(OFF_HEAP_MEMORY_SIZE, "100m");
-    
+
     return properties;
-  }  
-  
+  }
+
   @Override
   protected boolean isOffHeapEnabled() {
     return true;
   }
-  
+
   @Override
   protected HeapEvictor getEvictor() {
     return ((GemFireCacheImpl) getCache()).getOffHeapEvictor();
   }
-  
+
   @Override
   protected ResourceType getResourceType() {
     return ResourceType.OFFHEAP_MEMORY;

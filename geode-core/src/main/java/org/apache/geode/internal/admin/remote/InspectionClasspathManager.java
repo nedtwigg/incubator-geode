@@ -30,8 +30,8 @@ public class InspectionClasspathManager {
   private static InspectionClasspathManager internalRef;
   private Map pathsToLoaders = new HashMap();
   private ThreadLocal oldClassLoader = new ThreadLocal();
-//  private static final String DESER_JAR = "lib" + File.separator + "gemfire_j2ee.jar";
-//  private static final String DEFAULT_LOADER = "";
+  //  private static final String DESER_JAR = "lib" + File.separator + "gemfire_j2ee.jar";
+  //  private static final String DEFAULT_LOADER = "";
 
   public static synchronized InspectionClasspathManager getInstance() {
     if (internalRef == null) {
@@ -45,8 +45,8 @@ public class InspectionClasspathManager {
       // TODO Kirk and Darrel believe this is dead code that is never used
       ClassLoader current = Thread.currentThread().getContextClassLoader();
       oldClassLoader.set(current);
-      synchronized(pathsToLoaders) {
-        ClassLoader newClassLoader = (ClassLoader)pathsToLoaders.get(modifiedClasspath);
+      synchronized (pathsToLoaders) {
+        ClassLoader newClassLoader = (ClassLoader) pathsToLoaders.get(modifiedClasspath);
         if (newClassLoader == null) {
           URL[] urls = convertToURLs(modifiedClasspath);
           URLClassLoader userClassLoader = new URLClassLoader(urls, current);
@@ -59,7 +59,7 @@ public class InspectionClasspathManager {
   }
 
   public void revertToOldClassLoader() {
-    ClassLoader loader = (ClassLoader)oldClassLoader.get();
+    ClassLoader loader = (ClassLoader) oldClassLoader.get();
     if (loader != null) {
       Thread.currentThread().setContextClassLoader(loader);
       oldClassLoader.set(null);
@@ -70,21 +70,21 @@ public class InspectionClasspathManager {
     List urls = new ArrayList();
     //must accept both separators, not just the current system's separator
     StringTokenizer tokenizer = new StringTokenizer(classpath, ":;");
-    while(tokenizer.hasMoreTokens()) {      
+    while (tokenizer.hasMoreTokens()) {
       java.io.File f = new java.io.File(tokenizer.nextToken());
       try {
-        f = f.getCanonicalFile();          
+        f = f.getCanonicalFile();
       } catch (IOException ex) {
         continue; //ignore?          
-      }        
+      }
       try {
         urls.add(f.toURL());
-      } catch (MalformedURLException mue){
+      } catch (MalformedURLException mue) {
         continue; //ignore?
       }
     }
     URL[] array = new URL[urls.size()];
-    return (URL[])urls.toArray(array);
+    return (URL[]) urls.toArray(array);
   }
 
 }

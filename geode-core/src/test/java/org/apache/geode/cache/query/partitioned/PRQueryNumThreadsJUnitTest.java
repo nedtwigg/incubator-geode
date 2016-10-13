@@ -41,20 +41,17 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * 
  */
 @Category(IntegrationTest.class)
-public class PRQueryNumThreadsJUnitTest
-{
+public class PRQueryNumThreadsJUnitTest {
   String regionName = "portfolios";
 
   LogWriter logger = null;
 
   @Before
-  public void setUp() throws Exception
-  {
+  public void setUp() throws Exception {
     if (logger == null) {
       logger = PartitionedRegionTestHelper.getLogger();
     }
   }
-
 
   /**
    * Tests the execution of query on a PartitionedRegion created on a single
@@ -65,10 +62,8 @@ public class PRQueryNumThreadsJUnitTest
    * @throws Exception
    */
   @Test
-  public void testQueryOnSingleDataStore() throws Exception
-  {
-    Region region = PartitionedRegionTestHelper.createPartitionedRegion(
-        regionName, "100", 0);
+  public void testQueryOnSingleDataStore() throws Exception {
+    Region region = PartitionedRegionTestHelper.createPartitionedRegion(regionName, "100", 0);
     PortfolioData[] portfolios = new PortfolioData[100];
     for (int j = 0; j < 100; j++) {
       portfolios[j] = new PortfolioData(j);
@@ -84,38 +79,36 @@ public class PRQueryNumThreadsJUnitTest
       queryString = "ID > 5 and ID <=15";
       resSet = region.query(queryString);
       Assert.assertTrue(resSet.size() == 10);
-    } finally { 
+    } finally {
       PRQueryProcessor.TEST_NUM_THREADS = 0;
       region.close();
     }
   }
 
   @Test
-  public void testQueryWithNullProjectionValue() throws Exception
-  {
-    Region region = PartitionedRegionTestHelper.createPartitionedRegion(
-        regionName, "100", 0);
+  public void testQueryWithNullProjectionValue() throws Exception {
+    Region region = PartitionedRegionTestHelper.createPartitionedRegion(regionName, "100", 0);
     int size = 10;
     HashMap value = null;
     for (int j = 0; j < size; j++) {
       value = new HashMap();
       value.put("account" + j, "account" + j);
-      region.put("" +j,  value);
+      region.put("" + j, value);
     }
 
     String queryString = "Select p.get('account') from /" + region.getName() + " p ";
     Query query = region.getCache().getQueryService().newQuery(queryString);
-    SelectResults sr = (SelectResults)query.execute();
+    SelectResults sr = (SelectResults) query.execute();
     Assert.assertTrue(sr.size() == size);
-    
+
     PRQueryProcessor.TEST_NUM_THREADS = 10;
     try {
       queryString = "Select p.get('acc') from /" + region.getName() + " p ";
       query = region.getCache().getQueryService().newQuery(queryString);
-      sr = (SelectResults)query.execute();
+      sr = (SelectResults) query.execute();
       Assert.assertTrue(sr.size() == 10);
-      for (Object r : sr.asList()){
-        if (r  != null) {
+      for (Object r : sr.asList()) {
+        if (r != null) {
           fail("Expected null value, but found " + r);
         }
       }
@@ -124,15 +117,13 @@ public class PRQueryNumThreadsJUnitTest
       region.close();
     }
   }
-  
+
   @Test
-  public void testOrderByQuery() throws Exception
-  {
-    Region region = PartitionedRegionTestHelper.createPartitionedRegion(
-        regionName, "100", 0);
+  public void testOrderByQuery() throws Exception {
+    Region region = PartitionedRegionTestHelper.createPartitionedRegion(regionName, "100", 0);
     String[] values = new String[100];
     for (int j = 0; j < 100; j++) {
-      values[j] = new String(""+ j);
+      values[j] = new String("" + j);
     }
     PRQueryProcessor.TEST_NUM_THREADS = 10;
     try {
@@ -140,7 +131,7 @@ public class PRQueryNumThreadsJUnitTest
 
       String queryString = "Select distinct p from /" + region.getName() + " p order by p";
       Query query = region.getCache().getQueryService().newQuery(queryString);
-      SelectResults sr = (SelectResults)query.execute();
+      SelectResults sr = (SelectResults) query.execute();
 
       Assert.assertTrue(sr.size() == 100);
     } finally {
@@ -155,8 +146,7 @@ public class PRQueryNumThreadsJUnitTest
    * @param region
    * @param data
    */
-  private void populateData(Region region, Object[] data)
-  {
+  private void populateData(Region region, Object[] data) {
     for (int j = 0; j < data.length; j++) {
       region.put(new Integer(j), data[j]);
     }

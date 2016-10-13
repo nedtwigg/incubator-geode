@@ -34,11 +34,10 @@ public class TouchCommand extends AbstractCommand {
   private static final int EXTRAS_LENGTH = 4;
 
   @Override
-  public ByteBuffer processCommand(RequestReader request, Protocol protocol,
-      Cache cache) {
+  public ByteBuffer processCommand(RequestReader request, Protocol protocol, Cache cache) {
     assert protocol == Protocol.BINARY;
     int newExpTime = 0;
-    
+
     ByteBuffer buffer = request.getRequest();
     ByteBuffer response = null;
     int extrasLength = buffer.get(EXTRAS_LENGTH_INDEX);
@@ -48,7 +47,7 @@ public class TouchCommand extends AbstractCommand {
       assert extrasLength == 4;
       newExpTime = buffer.getInt();
     }
-    
+
     KeyWrapper key = getKey(buffer, HEADER_LENGTH + extrasLength);
 
     if (newExpTime > 0) {
@@ -80,7 +79,7 @@ public class TouchCommand extends AbstractCommand {
         response.position(HEADER_LENGTH);
         response.putInt(val.getFlags());
         response.put(realValue);
-        
+
         response.flip();
       }
     }

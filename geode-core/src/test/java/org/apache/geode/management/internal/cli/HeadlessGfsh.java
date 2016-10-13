@@ -38,7 +38,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
-
 /**
  * This is headless shell which can be used to submit random commands and get command-result It is used for commands
  * testing but can be used as for anything like programmatically sending commands to operate on GemFire Distributed
@@ -120,7 +119,8 @@ public class HeadlessGfsh implements ResultHandler {
 
   public Object getResult() throws InterruptedException {
     //Dont wait for when some command calls gfsh.stop();
-    if (shell.stopCalledThroughAPI) return null;
+    if (shell.stopCalledThroughAPI)
+      return null;
     try {
       Object result = queue.poll(timeout, TimeUnit.SECONDS);
       queue.clear();
@@ -172,7 +172,7 @@ public class HeadlessGfsh implements ResultHandler {
     boolean stopCalledThroughAPI = false;
 
     protected HeadlessGfshShell(String testName, ResultHandler handler, String parentDir) throws ClassNotFoundException, IOException {
-      super(false, new String[]{}, new HeadlessGfshConfig(testName, parentDir));
+      super(false, new String[] {}, new HeadlessGfshConfig(testName, parentDir));
       this.handler = handler;
     }
 

@@ -40,13 +40,12 @@ public interface RegionMXBean {
    * Returns the name of the Region.
    */
   public String getName();
-  
-  
+
   /**
    * Returns the type (data policy) of the Region.
    */
   public String getRegionType();
-  
+
   /**
    * Returns the full path of the Region.
    */
@@ -75,12 +74,11 @@ public interface RegionMXBean {
    * Returns the partition attributes of the Region.
    */
   public PartitionAttributesData listPartitionAttributes();
-  
 
   /**
    * Returns the fixed partition attributes of the Region.
    */
-  
+
   public FixedPartitionAttributesData[] listFixedPartitionAttributes();
 
   /**
@@ -194,19 +192,17 @@ public interface RegionMXBean {
    */
   public long getTotalDiskEntriesInVM();
 
-
   /**
    * Returns the number of entries reads per second from disk.
    */
   public float getDiskReadsRate();
-  
-  
+
   /**
    * Returns the average latency of disk reads in nanoseconds
    * @deprecated See corresponding DiskStores latency to get the latency.
    */
   public long getDiskReadsAverageLatency();
-  
+
   /**
    * Returns the average latency of disk writes in nanoseconds.
    * @deprecated See corresponding DiskStores latency to get the latency.
@@ -222,7 +218,7 @@ public interface RegionMXBean {
    * Returns the current number of disk writes in progress.
    */
   public long getTotalDiskWritesProgress();
-  
+
   /**
    * Returns the current number of disk tasks (op-log compaction, asynchronous
    * recoveries, etc) that are waiting for a thread to run.
@@ -251,13 +247,13 @@ public interface RegionMXBean {
    * eviction.
    */
   public float getLruDestroyRate();
-  
+
   /**
    * Returns the number of buckets on this member. Only applicable for partitioned
    * regions.
    */
   public int getBucketCount();
-  
+
   /**
    * Returns the number of primary buckets on this member. Only applicable for
    * partitioned regions.
@@ -299,13 +295,12 @@ public interface RegionMXBean {
      performance. 
    */
   public int getAvgBucketSize();
-  
-  
+
   /**
    * Returns the total number of bytes stored in disk for this region.
    */
   public long getDiskUsage();
-  
+
   /**
    * Returns the aggregate entry size (in bytes) of all entries. This will
    * provide a correct value only if the eviction algorithm has been set to
@@ -321,8 +316,7 @@ public interface RegionMXBean {
    * Returns whether this region sends data using a GatewaySender.
    */
   public boolean isGatewayEnabled();
-  
-  
+
   /**
    * Returns the average number of read requests per second.
    */
@@ -333,7 +327,7 @@ public interface RegionMXBean {
    * of put,putAll & create operations on the region
    */
   public float getAverageWrites();
-  
+
   /**
    * Returns whether persistence is enabled.
    */
@@ -343,12 +337,11 @@ public interface RegionMXBean {
    * Returns the name/ID of the member hosting this Region.
    */
   public String getMember();
-  
-  
+
   /**
    * Returns the maximum amount of local memory that can be used by the region.
    * This attribute is applicable for PartitionedRegion only. For other regions it will be -1
    */
   public int getLocalMaxMemory();
-  
+
 }

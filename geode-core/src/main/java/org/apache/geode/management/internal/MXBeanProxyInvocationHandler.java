@@ -41,14 +41,11 @@ public class MXBeanProxyInvocationHandler {
 
   private MBeanProxyInvocationHandler proxyHandler;
 
-  private final Map<Method, MethodHandler> methodHandlerMap = OpenTypeUtil
-      .newMap();
+  private final Map<Method, MethodHandler> methodHandlerMap = OpenTypeUtil.newMap();
 
   private LogWriterI18n logger;
 
-  public MXBeanProxyInvocationHandler(ObjectName objectName,
-      Class<?> mxbeanInterface, MBeanProxyInvocationHandler proxyHandler)
-      throws Exception {
+  public MXBeanProxyInvocationHandler(ObjectName objectName, Class<?> mxbeanInterface, MBeanProxyInvocationHandler proxyHandler) throws Exception {
 
     if (mxbeanInterface == null)
       throw new IllegalArgumentException("Null parameter");
@@ -78,16 +75,11 @@ public class MXBeanProxyInvocationHandler {
         attrName = name.substring(2);
       }
 
-      if (attrName.length() != 0 && m.getParameterTypes().length == 0
-          && m.getReturnType() != void.class) { // For Getters
+      if (attrName.length() != 0 && m.getParameterTypes().length == 0 && m.getReturnType() != void.class) { // For Getters
 
-        methodHandlerMap
-            .put(m, new GetterHandler(attrName, OpenMethod.from(m)));
-      } else if (name.startsWith("set") && name.length() > 3
-          && m.getParameterTypes().length == 1
-          && m.getReturnType() == void.class) { // For Setteres
-        methodHandlerMap
-            .put(m, new SetterHandler(attrName, OpenMethod.from(m)));
+        methodHandlerMap.put(m, new GetterHandler(attrName, OpenMethod.from(m)));
+      } else if (name.startsWith("set") && name.length() > 3 && m.getParameterTypes().length == 1 && m.getReturnType() == void.class) { // For Setteres
+        methodHandlerMap.put(m, new SetterHandler(attrName, OpenMethod.from(m)));
       } else {
         methodHandlerMap.put(m, new OpHandler(attrName, OpenMethod.from(m)));
       }
@@ -120,8 +112,7 @@ public class MXBeanProxyInvocationHandler {
       }
     }
 
-    final List<Method> methods = OpenTypeUtil.newList(Arrays
-        .asList(methodArray));
+    final List<Method> methods = OpenTypeUtil.newList(Arrays.asList(methodArray));
     methods.removeAll(overridden);
     return methods;
   }
@@ -179,8 +170,7 @@ public class MXBeanProxyInvocationHandler {
       return convertingMethod;
     }
 
-    abstract Object invoke(Object proxy, Method method, Object[] args)
-        throws Throwable;
+    abstract Object invoke(Object proxy, Method method, Object[] args) throws Throwable;
 
     private final String name;
     private final OpenMethod convertingMethod;
@@ -198,8 +188,7 @@ public class MXBeanProxyInvocationHandler {
       String attrName = "";
       if (methodName.startsWith("get")) {
         attrName = methodName.substring(3);
-      } else if (methodName.startsWith("is")
-          && method.getReturnType() == boolean.class) {
+      } else if (methodName.startsWith("is") && method.getReturnType() == boolean.class) {
         attrName = methodName.substring(2);
 
       }
@@ -219,8 +208,7 @@ public class MXBeanProxyInvocationHandler {
       final String[] signature = new String[paramTypes.length];
       for (int i = 0; i < paramTypes.length; i++)
         signature[i] = paramTypes[i].getName();
-      return proxyHandler.delegateToFucntionService(objectName, methodName,
-          args, signature);
+      return proxyHandler.delegateToFucntionService(objectName, methodName, args, signature);
 
     }
   }
@@ -238,14 +226,12 @@ public class MXBeanProxyInvocationHandler {
       final String[] signature = new String[paramTypes.length];
       for (int i = 0; i < paramTypes.length; i++)
         signature[i] = paramTypes[i].getName();
-      return proxyHandler.delegateToFucntionService(objectName, methodName,
-          args, signature);
+      return proxyHandler.delegateToFucntionService(objectName, methodName, args, signature);
     }
 
   }
 
-  public Object invoke(Object proxy, Method method, Object[] args)
-      throws Throwable {
+  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
     MethodHandler handler = methodHandlerMap.get(method);
     OpenMethod cm = handler.getConvertingMethod();

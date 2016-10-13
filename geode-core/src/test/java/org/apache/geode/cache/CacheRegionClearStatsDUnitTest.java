@@ -60,9 +60,9 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
   private static final String client_k1 = "client-k1";
 
   private static final String client_k2 = "client-k2";
-  
+
   private static final int clearOp = 2;
-  
+
   @Override
   public final void postSetUp() throws Exception {
     final Host host = Host.getHost(0);
@@ -75,22 +75,17 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
     ds.disconnect();
     ds = getSystem(props);
     assertNotNull(ds);
-    cache = (GemFireCacheImpl)CacheFactory.create(ds);
+    cache = (GemFireCacheImpl) CacheFactory.create(ds);
     assertNotNull(cache);
   }
 
-  public static void createClientCache(String host, Integer port1)
-      throws Exception {
+  public static void createClientCache(String host, Integer port1) throws Exception {
     new CacheRegionClearStatsDUnitTest();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new CacheRegionClearStatsDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl)PoolManager.createFactory().addServer(host,
-        port1.intValue()).setSubscriptionEnabled(false)
-        .setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(
-            20000).setPingInterval(10000).setRetryAttempts(1)
-        .create("CacheRegionClearStatsDUnitTest");
+    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(false).setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1).create("CacheRegionClearStatsDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -124,18 +119,13 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
     return createCache(DataPolicy.REPLICATE);
   }
 
-  public static void createClientCacheDisk(String host, Integer port1)
-      throws Exception {
+  public static void createClientCacheDisk(String host, Integer port1) throws Exception {
     new CacheRegionClearStatsDUnitTest();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new CacheRegionClearStatsDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl)PoolManager.createFactory().addServer(host,
-        port1.intValue()).setSubscriptionEnabled(false)
-        .setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(
-            20000).setPingInterval(10000).setRetryAttempts(1).create(
-            "CacheRegionClearStatsDUnitTest");
+    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(false).setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1).create("CacheRegionClearStatsDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -151,21 +141,20 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
    * 1)Verifies that clear operation count matches with stats count<br>
    */
   @Test
-  public void testClearStatsWithNormalRegion(){
-    Integer port1 = ((Integer)server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCache()));
+  public void testClearStatsWithNormalRegion() {
+    Integer port1 = ((Integer) server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCache()));
 
-    client1.invoke(() -> CacheRegionClearStatsDUnitTest.createClientCache(
-            NetworkUtils.getServerHostName(server1.getHost()), port1 ));
+    client1.invoke(() -> CacheRegionClearStatsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.put());
-    
-    try{
+
+    try {
       Thread.sleep(10000);
-    }catch(Exception e){
+    } catch (Exception e) {
       // sleep 
     }
-    
+
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.validationClearStat());
-    
+
     server1.invoke(() -> CacheRegionClearStatsDUnitTest.validationClearStat());
   }
 
@@ -174,24 +163,23 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
    * 1)Verifies that clear operation count matches with stats count <br>
    */
   @Test
-  public void testClearStatsWithDiskRegion(){
-    Integer port1 = ((Integer)server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCacheDisk()));
+  public void testClearStatsWithDiskRegion() {
+    Integer port1 = ((Integer) server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCacheDisk()));
 
-    client1.invoke(() -> CacheRegionClearStatsDUnitTest.createClientCacheDisk(
-            NetworkUtils.getServerHostName(server1.getHost()), port1 ));
+    client1.invoke(() -> CacheRegionClearStatsDUnitTest.createClientCacheDisk(NetworkUtils.getServerHostName(server1.getHost()), port1));
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.put());
-    
-    try{
+
+    try {
       Thread.sleep(10000);
-    }catch(Exception e){
+    } catch (Exception e) {
       // sleep 
     }
-    
+
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.validationClearStat());
-    
+
     server1.invoke(() -> CacheRegionClearStatsDUnitTest.validationClearStat());
   }
-  
+
   @Override
   public final void preTearDown() throws Exception {
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.closeCache());
@@ -205,7 +193,7 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
       cache.getDistributedSystem().disconnect();
     }
   }
-  
+
   public static void put() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -215,32 +203,30 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
       assertEquals(r1.getEntry(k1).getValue(), client_k1);
       r1.put(k2, client_k2);
       assertEquals(r1.getEntry(k2).getValue(), client_k2);
-      try{
+      try {
         Thread.sleep(10000);
-      }catch(Exception e){
+      } catch (Exception e) {
         // sleep 
       }
       r1.clear();
-      
+
       r1.put(k1, client_k1);
       assertEquals(r1.getEntry(k1).getValue(), client_k1);
       r1.put(k2, client_k2);
       assertEquals(r1.getEntry(k2).getValue(), client_k2);
-      try{
+      try {
         Thread.sleep(10000);
-      }catch(Exception e){
+      } catch (Exception e) {
         // sleep 
       }
       r1.clear();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while put", ex);
     }
   }
-  
-  public static void validationClearStat(){
+
+  public static void validationClearStat() {
     assertEquals(cache.getCachePerfStats().getClearCount(), clearOp);
   }
-  
-  
+
 }

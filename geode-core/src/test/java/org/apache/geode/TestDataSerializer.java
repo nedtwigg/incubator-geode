@@ -29,7 +29,7 @@ import org.apache.geode.internal.cache.tier.sockets.DataSerializerPropogationDUn
  *
  */
 public class TestDataSerializer extends DataSerializer {
-  
+
   static {
     DataSerializerPropogationDUnitTest.successfullyLoadedTestDataSerializer = true;
   }
@@ -50,7 +50,7 @@ public class TestDataSerializer extends DataSerializer {
    */
   @Override
   public Class<?>[] getSupportedClasses() {
-    return new Class[] { TestSupportedClass1.class, TestSupportedClass2.class, TestSupportedClass3.class};
+    return new Class[] { TestSupportedClass1.class, TestSupportedClass2.class, TestSupportedClass3.class };
   }
 
   /* (non-Javadoc)
@@ -67,8 +67,7 @@ public class TestDataSerializer extends DataSerializer {
    * @see org.apache.geode.DataSerializer#fromData(java.io.DataInput)
    */
   @Override
-  public Object fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public Object fromData(DataInput in) throws IOException, ClassNotFoundException {
     return new TestDataSerializer(readString(in), readPrimitiveInt(in));
   }
 
@@ -84,9 +83,11 @@ public class TestDataSerializer extends DataSerializer {
 
 class TestSupportedClass1 {
   private int field = 10;
+
   public void setField(int f) {
     this.field = f;
   }
+
   public int getField() {
     return this.field;
   }
@@ -94,9 +95,11 @@ class TestSupportedClass1 {
 
 class TestSupportedClass2 {
   private int field = 20;
+
   public void setField(int f) {
     this.field = f;
   }
+
   public int getField() {
     return this.field;
   }
@@ -104,11 +107,12 @@ class TestSupportedClass2 {
 
 class TestSupportedClass3 {
   private int field = 30;
+
   public void setField(int f) {
     this.field = f;
   }
+
   public int getField() {
     return this.field;
   }
 }
-

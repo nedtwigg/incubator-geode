@@ -48,7 +48,7 @@ import org.apache.geode.internal.logging.LogService;
 public class GemFireHealthEvaluator {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** Determines how the health of GemFire is determined */
   private GemFireHealthConfig config;
 
@@ -77,8 +77,7 @@ public class GemFireHealthEvaluator {
    * @param dm
    *        The distribution manager 
    */
-  public GemFireHealthEvaluator(GemFireHealthConfig config,
-                                DistributionManager dm) {
+  public GemFireHealthEvaluator(GemFireHealthConfig config, DistributionManager dm) {
     if (config == null) {
       throw new NullPointerException(LocalizedStrings.GemFireHealthEvaluator_NULL_GEMFIREHEALTHCONFIG.toLocalizedString());
     }
@@ -107,9 +106,8 @@ public class GemFireHealthEvaluator {
     this.okayDiagnoses.clear();
     this.poorDiagnoses.clear();
 
-    for (Iterator iter = status.iterator(); iter.hasNext(); ) {
-      AbstractHealthEvaluator.HealthStatus health =
-        (AbstractHealthEvaluator.HealthStatus) iter.next();
+    for (Iterator iter = status.iterator(); iter.hasNext();) {
+      AbstractHealthEvaluator.HealthStatus health = (AbstractHealthEvaluator.HealthStatus) iter.next();
       if (overallHealth == GemFireHealth.GOOD_HEALTH) {
         if ((health.getHealthCode() != GemFireHealth.GOOD_HEALTH)) {
           overallHealth = health.getHealthCode();

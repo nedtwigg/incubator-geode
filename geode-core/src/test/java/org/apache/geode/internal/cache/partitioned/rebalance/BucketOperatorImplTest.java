@@ -60,10 +60,10 @@ public class BucketOperatorImplTest {
     region = mock(PartitionedRegion.class);
     rebalanceOp = mock(PartitionedRegionRebalanceOp.class);
     completion = mock(Completion.class);
-    
+
     resourceObserver = spy(new InternalResourceManager.ResourceObserverAdapter());
     InternalResourceManager.setResourceObserver(resourceObserver);
-    
+
     doReturn(region).when(rebalanceOp).getLeaderRegion();
 
     operator = new BucketOperatorImpl(rebalanceOp);

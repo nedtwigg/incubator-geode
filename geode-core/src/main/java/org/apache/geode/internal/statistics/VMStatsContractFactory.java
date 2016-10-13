@@ -30,14 +30,12 @@ public class VMStatsContractFactory {
     VMStatsContract result;
     try {
       result = new VMStats50(f, id);
-    } 
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable ignore) {
+    } catch (Throwable ignore) {
       // Now that we no longer support 1.4 I'm not sure why we would get here.
       // But just in case other vm vendors don't support mxbeans I've left
       // this logic in that will create a simple VMStats instance.
@@ -53,7 +51,7 @@ public class VMStatsContractFactory {
     }
     return result;
   }
-  
+
   private VMStatsContractFactory() {
     // private so no instances allowed. static methods only
   }

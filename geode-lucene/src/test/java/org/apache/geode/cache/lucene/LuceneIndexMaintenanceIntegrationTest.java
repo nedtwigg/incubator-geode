@@ -142,9 +142,7 @@ public class LuceneIndexMaintenanceIntegrationTest extends LuceneIntegrationTest
     luceneService.createIndex(INDEX_NAME, REGION_NAME, "title", "description");
 
     // Configure PR with expiration operation set to destroy
-    Region region = cache.createRegionFactory(RegionShortcut.PARTITION)
-        .setEntryTimeToLive(new ExpirationAttributes(1, ExpirationAction.DESTROY))
-        .create(REGION_NAME);
+    Region region = cache.createRegionFactory(RegionShortcut.PARTITION).setEntryTimeToLive(new ExpirationAttributes(1, ExpirationAction.DESTROY)).create(REGION_NAME);
     populateRegion(region);
     // Wait for expiration to destroy region entries. The region should be
     // left with zero entries.
@@ -174,7 +172,7 @@ public class LuceneIndexMaintenanceIntegrationTest extends LuceneIntegrationTest
     region.put("object-3", new TestObject("title 3", "hello world"));
     region.put("object-4", new TestObject("hello world", "hello world"));
 
-    LuceneIndexImpl index = (LuceneIndexImpl)luceneService.getIndex(INDEX_NAME, REGION_NAME);
+    LuceneIndexImpl index = (LuceneIndexImpl) luceneService.getIndex(INDEX_NAME, REGION_NAME);
     assertFalse(index.waitUntilFlushed(500));
     LuceneTestUtilities.resumeSender(cache);
     assertTrue(index.waitUntilFlushed(WAIT_FOR_FLUSH_TIME));

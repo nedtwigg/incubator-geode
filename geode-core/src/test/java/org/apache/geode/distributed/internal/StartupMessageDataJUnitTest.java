@@ -62,10 +62,10 @@ public class StartupMessageDataJUnitTest {
   @Test
   public void testWriteHostedLocatorsWithOne() throws Exception {
     String locatorString = createOneLocatorString();
-    
+
     List<String> hostedLocators = new ArrayList<String>();
     hostedLocators.add(locatorString);
-    
+
     StartupMessageData data = new StartupMessageData();
     data.writeHostedLocators(hostedLocators);
     assertEquals(1, data.getOptionalFields().size());
@@ -77,19 +77,17 @@ public class StartupMessageDataJUnitTest {
     String[] locatorStrings = createManyLocatorStrings(3);
     List<String> hostedLocators = new ArrayList<String>();
     for (int i = 0; i < 3; i++) {
-      hostedLocators.add(locatorStrings[i]); 
+      hostedLocators.add(locatorStrings[i]);
     }
-    
+
     StartupMessageData data = new StartupMessageData();
     data.writeHostedLocators(hostedLocators);
     assertEquals(1, data.getOptionalFields().size());
-    
-    String hostedLocatorsField = 
-        data.getOptionalFields().getProperty(StartupMessageData.HOSTED_LOCATORS);
-    
-    StringTokenizer st = new StringTokenizer(
-        hostedLocatorsField, StartupMessageData.COMMA_DELIMITER);
-    for (int i = 0; st.hasMoreTokens(); i++) { 
+
+    String hostedLocatorsField = data.getOptionalFields().getProperty(StartupMessageData.HOSTED_LOCATORS);
+
+    StringTokenizer st = new StringTokenizer(hostedLocatorsField, StartupMessageData.COMMA_DELIMITER);
+    for (int i = 0; st.hasMoreTokens(); i++) {
       assertEquals(locatorStrings[i], st.nextToken());
     }
   }
@@ -100,18 +98,18 @@ public class StartupMessageDataJUnitTest {
     String[] locatorStrings = createManyLocatorStrings(3);
     List<String> hostedLocators = new ArrayList<String>();
     for (int i = 0; i < 3; i++) {
-      hostedLocators.add(locatorStrings[i]); 
+      hostedLocators.add(locatorStrings[i]);
     }
-    
+
     StartupMessageData data = new StartupMessageData();
     data.writeHostedLocators(hostedLocators);
     assertEquals(1, data.getOptionalFields().size());
-    
+
     // test readHostedLocators
     int i = 0;
     Collection<String> readLocatorStrings = data.readHostedLocators();
     assertEquals(3, readLocatorStrings.size());
-    for (String readLocatorString : readLocatorStrings) { 
+    for (String readLocatorString : readLocatorStrings) {
       assertEquals(locatorStrings[i], readLocatorString);
       i++;
     }
@@ -122,14 +120,14 @@ public class StartupMessageDataJUnitTest {
     Collection<String> hostedLocators = new ArrayList<String>();
     StartupMessageData data = new StartupMessageData();
     data.writeHostedLocators(hostedLocators);
-    
+
     ByteArrayData testStream = new ByteArrayData();
     assertTrue(testStream.isEmpty());
 
     DataOutputStream out = testStream.getDataOutput();
     data.writeTo(out);
     assertTrue(testStream.size() > 0);
-    
+
     DataInput in = testStream.getDataInput();
     Properties props = (Properties) DataSerializer.readObject(in);
     assertNull(props);
@@ -140,14 +138,14 @@ public class StartupMessageDataJUnitTest {
     Collection<String> hostedLocators = null;
     StartupMessageData data = new StartupMessageData();
     data.writeHostedLocators(hostedLocators);
-    
+
     ByteArrayData testStream = new ByteArrayData();
     assertTrue(testStream.isEmpty());
 
     DataOutputStream out = testStream.getDataOutput();
     data.writeTo(out);
     assertTrue(testStream.size() > 0);
-    
+
     DataInput in = testStream.getDataInput();
     Properties props = (Properties) DataSerializer.readObject(in);
     assertNull(props);
@@ -156,24 +154,24 @@ public class StartupMessageDataJUnitTest {
   @Test
   public void testToDataWithOneHostedLocator() throws Exception {
     String locatorString = createOneLocatorString();
-    
+
     List<String> hostedLocators = new ArrayList<String>();
     hostedLocators.add(locatorString);
 
     StartupMessageData data = new StartupMessageData();
     data.writeHostedLocators(hostedLocators);
-    
+
     ByteArrayData testStream = new ByteArrayData();
     assertTrue(testStream.isEmpty());
 
     DataOutputStream out = testStream.getDataOutput();
     data.writeTo(out);
     assertTrue(testStream.size() > 0);
-    
+
     DataInput in = testStream.getDataInput();
     Properties props = (Properties) DataSerializer.readObject(in);
     assertNotNull(props);
-    
+
     String hostedLocatorsString = props.getProperty(StartupMessageData.HOSTED_LOCATORS);
     assertNotNull(hostedLocatorsString);
     assertEquals(locatorString, hostedLocatorsString);
@@ -184,25 +182,24 @@ public class StartupMessageDataJUnitTest {
     String[] locatorStrings = createManyLocatorStrings(3);
     List<String> hostedLocators = new ArrayList<String>();
     for (int i = 0; i < 3; i++) {
-      hostedLocators.add(locatorStrings[i]); 
+      hostedLocators.add(locatorStrings[i]);
     }
 
     StartupMessageData data = new StartupMessageData();
     data.writeHostedLocators(hostedLocators);
-    
+
     ByteArrayData testStream = new ByteArrayData();
     assertTrue(testStream.isEmpty());
 
     DataOutputStream out = testStream.getDataOutput();
     data.writeTo(out);
     assertTrue(testStream.size() > 0);
-    
+
     DataInput in = testStream.getDataInput();
     Properties props = (Properties) DataSerializer.readObject(in);
     assertNotNull(props);
-    
-    String hostedLocatorsString = props.getProperty(
-        StartupMessageData.HOSTED_LOCATORS);
+
+    String hostedLocatorsString = props.getProperty(StartupMessageData.HOSTED_LOCATORS);
     assertNotNull(hostedLocatorsString);
 
     Collection<String> actualLocatorStrings = new ArrayList<String>(1);
@@ -213,7 +210,7 @@ public class StartupMessageDataJUnitTest {
     assertEquals(3, actualLocatorStrings.size());
 
     int i = 0;
-    for (String actualLocatorString : actualLocatorStrings) { 
+    for (String actualLocatorString : actualLocatorStrings) {
       assertEquals(locatorStrings[i], actualLocatorString);
       i++;
     }
@@ -250,51 +247,42 @@ public class StartupMessageDataJUnitTest {
     assertEquals(1, readHostedLocators.size());
     assertEquals(locatorString, readHostedLocators.iterator().next());
   }
-  
+
   private String createOneLocatorString() throws Exception {
-    DistributionLocatorId locatorId = new DistributionLocatorId(
-        SocketCreator.getLocalHost(), 
-        445566, 
-        "111.222.333.444", 
-        null);
+    DistributionLocatorId locatorId = new DistributionLocatorId(SocketCreator.getLocalHost(), 445566, "111.222.333.444", null);
     String locatorString = locatorId.marshal();
-    assertEquals("" + locatorId.getHost().getHostAddress() 
-        + ":111.222.333.444[445566]", locatorString);
+    assertEquals("" + locatorId.getHost().getHostAddress() + ":111.222.333.444[445566]", locatorString);
     return locatorString;
   }
-  
+
   private String[] createManyLocatorStrings(int n) throws Exception {
     String[] locatorStrings = new String[3];
     for (int i = 0; i < 3; i++) {
       int j = i + 1;
       int k = j + 1;
       int l = k + 1;
-      DistributionLocatorId locatorId = new DistributionLocatorId(
-          SocketCreator.getLocalHost(), 
-          445566, 
-          ""+i+""+i+""+i+"."+j+""+j+""+j+"."+k+""+k+""+k+"."+l+""+l+""+l, 
-          null);
+      DistributionLocatorId locatorId = new DistributionLocatorId(SocketCreator.getLocalHost(), 445566, "" + i + "" + i + "" + i + "." + j + "" + j + "" + j + "." + k + "" + k + "" + k + "." + l + "" + l + "" + l, null);
       locatorStrings[i] = locatorId.marshal();
     }
     return locatorStrings;
   }
-  
+
   private DataInput getDataInputWithOneHostedLocator(String locatorString) throws Exception {
     List<String> hostedLocators = new ArrayList<String>();
     if (locatorString != null) {
       hostedLocators.add(locatorString);
     }
-    
+
     StartupMessageData dataToWrite = new StartupMessageData();
     dataToWrite.writeHostedLocators(hostedLocators);
-    
+
     ByteArrayData testStream = new ByteArrayData();
     assertTrue(testStream.isEmpty());
 
     DataOutputStream out = testStream.getDataOutput();
     dataToWrite.writeTo(out);
     assertTrue(testStream.size() > 0);
-    
+
     DataInput in = testStream.getDataInput();
     assertNotNull(in);
     return in;

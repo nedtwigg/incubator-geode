@@ -24,8 +24,7 @@ import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.configuration.domain.ConfigurationChangeResult;
 
-public class DeleteJarFunction extends FunctionAdapter implements
-InternalEntity {
+public class DeleteJarFunction extends FunctionAdapter implements InternalEntity {
 
   /**
    * 
@@ -45,7 +44,7 @@ InternalEntity {
       if (locator.isSharedConfigurationRunning()) {
         final Object[] args = (Object[]) context.getArguments();
         final String[] jarFilenames = (String[]) args[0];
-        final String[] groups = (String[])args[1];
+        final String[] groups = (String[]) args[1];
 
         SharedConfiguration sharedConfiguration = locator.getSharedConfiguration();
         sharedConfiguration.removeJars(jarFilenames, groups);

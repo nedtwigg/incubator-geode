@@ -56,7 +56,7 @@ public class LogRecord {
    * Returns the level that the message should be logged at
    */
   public Level getLevel() {
-    return(this.level);
+    return (this.level);
   }
 
   /**
@@ -70,7 +70,7 @@ public class LogRecord {
    * Returns the name of the logger to which this log record belongs
    */
   public String getLoggerName() {
-    return(this.loggerName);
+    return (this.loggerName);
   }
 
   /**
@@ -84,7 +84,7 @@ public class LogRecord {
    * Returns the message for this log entry
    */
   public String getMessage() {
-    return(this.message);
+    return (this.message);
   }
 
   /**
@@ -98,7 +98,7 @@ public class LogRecord {
    * Returns the event time in milliseconds since 1970
    */
   public long getMillis() {
-    return(this.millis);
+    return (this.millis);
   }
 
   /**
@@ -112,7 +112,7 @@ public class LogRecord {
    * Returns the parameters to this log entry
    */
   public Object[] getParameters() {
-    return(this.parameters);
+    return (this.parameters);
   }
 
   /**
@@ -126,7 +126,7 @@ public class LogRecord {
    * Returns the sequence number of this log entry
    */
   public long getSequenceNumber() {
-    return(this.sequenceNumber);
+    return (this.sequenceNumber);
   }
 
   /**
@@ -142,7 +142,7 @@ public class LogRecord {
    * was issued
    */
   public String getSourceClassName() {
-    return(this.sourceClassName);
+    return (this.sourceClassName);
   }
 
   /**
@@ -158,7 +158,7 @@ public class LogRecord {
    * was issued
    */
   public String getSourceMethodName() {
-    return(this.sourceMethodName);
+    return (this.sourceMethodName);
   }
 
   /**
@@ -172,7 +172,7 @@ public class LogRecord {
    * Returns the throwable associated with this log entry
    */
   public Throwable getThrown() {
-    return(this.thrown);
+    return (this.thrown);
   }
 
   /**
@@ -180,6 +180,6 @@ public class LogRecord {
    * <code>LogRecord</code>
    */
   public String toString() {
-    return(this.message + " at " + this.level);
+    return (this.message + " at " + this.level);
   }
 }

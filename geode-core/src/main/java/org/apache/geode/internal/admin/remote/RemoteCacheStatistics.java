@@ -37,13 +37,14 @@ public class RemoteCacheStatistics implements CacheStatistics, DataSerializable 
     this.lastAccessed = stats.getLastAccessedTime();
     this.hitCount = stats.getHitCount();
     this.missCount = stats.getMissCount();
-    this.hitRatio = stats.getHitRatio();    
+    this.hitRatio = stats.getHitRatio();
   }
 
   /**
    * For use only by DataExternalizable mechanism
    */
-  public RemoteCacheStatistics() {}
+  public RemoteCacheStatistics() {
+  }
 
   public long getLastModifiedTime() {
     return lastModified;
@@ -76,7 +77,7 @@ public class RemoteCacheStatistics implements CacheStatistics, DataSerializable 
     out.writeLong(missCount);
     out.writeFloat(hitRatio);
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     lastModified = in.readLong();
     lastAccessed = in.readLong();

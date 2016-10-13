@@ -29,15 +29,15 @@ public class SortedResultMapImpl implements ResultMap {
   //This should be <CachedDeserializable, CachedDeserializable>, except
   //that we support retrievals using non CachedDeserializable objects.
   private final ConcurrentSkipListMap<Object, Object> map;
-  
+
   public SortedResultMapImpl(boolean reverse) {
     Comparator comparator = new CachedDeserializableComparator(new NaturalComparator());
-    if(reverse) {
+    if (reverse) {
       comparator = new ReverseComparator(comparator);
     }
     map = new ConcurrentSkipListMap(comparator);
   }
-  
+
   @Override
   public void put(Object key, Object value) {
     map.put(toDeserializable(key), toDeserializable(value));
@@ -52,7 +52,7 @@ public class SortedResultMapImpl implements ResultMap {
 
   @Override
   public Entry getEntry(Object key) {
-    if(map.containsKey(key)) {
+    if (map.containsKey(key)) {
       return new EntryImpl(toDeserializable(key), (CachedDeserializable) map.get(key));
     } else {
       return null;
@@ -65,8 +65,7 @@ public class SortedResultMapImpl implements ResultMap {
   }
 
   @Override
-  public CloseableIterator<Entry> iterator(Object start,
-      boolean startInclusive, Object end, boolean endInclusive) {
+  public CloseableIterator<Entry> iterator(Object start, boolean startInclusive, Object end, boolean endInclusive) {
     return new IterImpl(map.subMap(start, startInclusive, end, endInclusive).entrySet().iterator());
   }
 
@@ -82,16 +81,13 @@ public class SortedResultMapImpl implements ResultMap {
     return new IterImpl(map.entrySet().iterator());
   }
 
-
   @Override
-  public CloseableIterator<CachedDeserializable> keyIterator(Object start,
-      boolean startInclusive, Object end, boolean endInclusive) {
+  public CloseableIterator<CachedDeserializable> keyIterator(Object start, boolean startInclusive, Object end, boolean endInclusive) {
     return new ItrAdapter(map.subMap(start, startInclusive, end, endInclusive).keySet().iterator());
   }
 
   @Override
-  public CloseableIterator<CachedDeserializable> keyIterator(Object start,
-      boolean startInclusive) {
+  public CloseableIterator<CachedDeserializable> keyIterator(Object start, boolean startInclusive) {
     return new ItrAdapter(map.subMap(start, startInclusive).keySet().iterator());
   }
 
@@ -99,15 +95,15 @@ public class SortedResultMapImpl implements ResultMap {
   public CloseableIterator<CachedDeserializable> keyIterator() {
     return new ItrAdapter(map.keySet().iterator());
   }
-  
+
   public CloseableIterator<CachedDeserializable> valueIterator() {
     return new ItrAdapter(map.values().iterator());
   }
-  
+
   public CloseableIterator<CachedDeserializable> valueIterator(Object start, boolean startInclusive) {
     return new ItrAdapter(map.tailMap(start, startInclusive).values().iterator());
   }
-  
+
   @Override
   public void close() {
     //do nothing
@@ -132,18 +128,17 @@ public class SortedResultMapImpl implements ResultMap {
     public CachedDeserializable getValue() {
       return value;
     }
-    
-    
+
   }
-  
+
   private CachedDeserializable toDeserializable(Object value) {
-    if(value instanceof CachedDeserializable) {
+    if (value instanceof CachedDeserializable) {
       return (CachedDeserializable) value;
     }
-    
+
     return new PreferBytesCachedDeserializable(value);
   }
-  
+
   private static class IterImpl implements CloseableIterator<Entry> {
 
     private Iterator<java.util.Map.Entry<Object, Object>> iterator;
@@ -166,17 +161,17 @@ public class SortedResultMapImpl implements ResultMap {
     @Override
     public void remove() {
       throw new UnsupportedOperationException();
-      
+
     }
 
     @Override
     public void close() {
       //do nothing
-      
+
     }
-    
+
   }
-  
+
   public boolean containsKey(Object e) {
     return map.containsKey(e);
   }

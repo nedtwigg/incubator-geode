@@ -49,7 +49,7 @@ public class AlertsNotificationMessage extends PooledDistributionMessage {
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this._alerts = (StatAlert[])DataSerializer.readObjectArray(in);
+    this._alerts = (StatAlert[]) DataSerializer.readObjectArray(in);
   }
 
   /**
@@ -63,11 +63,10 @@ public class AlertsNotificationMessage extends PooledDistributionMessage {
   protected void process(DistributionManager dm) {
     // TODO add code to invoke process notification of agrregator
     // TODO: need to check whether it's a valid implimentation
-    AdminDistributedSystemImpl ds = AdminDistributedSystemImpl
-        .getConnectedInstance();
+    AdminDistributedSystemImpl ds = AdminDistributedSystemImpl.getConnectedInstance();
 
     if (ds instanceof StatAlertsAggregator) {
-      StatAlertsAggregator aggregator = (StatAlertsAggregator)ds;
+      StatAlertsAggregator aggregator = (StatAlertsAggregator) ds;
 
       RemoteGemFireVM remoteVM = dm.getAgent().getMemberById(getSender());
 
@@ -97,7 +96,7 @@ public class AlertsNotificationMessage extends PooledDistributionMessage {
     sb.append("AlertsNotification[");
     sb.append("count = " + _alerts.length);
     sb.append(" (");
-    for (int i = 0; i < _alerts.length; i ++) {
+    for (int i = 0; i < _alerts.length; i++) {
       sb.append(_alerts[i].toString());
       if (i != _alerts.length - 1) {
         sb.append(", ");

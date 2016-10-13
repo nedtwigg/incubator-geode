@@ -38,15 +38,15 @@ public class RuleAndClassRuleTest {
   @Test
   public void usingRuleAsRuleAndClassRuleShouldInvokeBeforeClass() {
     Result result = TestRunner.runTest(UsingRuleAsRuleAndClassRule.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(UsingRuleAsRuleAndClassRule.staticRule.beforeClassInvoked).isEqualTo(true);
   }
-  
+
   @Test
   public void usingRuleAsRuleAndClassRuleShouldInvokeAfterClass() {
     Result result = TestRunner.runTest(UsingRuleAsRuleAndClassRule.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(UsingRuleAsRuleAndClassRule.staticRule.afterClassInvoked).isEqualTo(true);
   }
@@ -54,7 +54,7 @@ public class RuleAndClassRuleTest {
   @Test
   public void usingRuleAsRuleAndClassRuleShouldInvokeBefore() {
     Result result = TestRunner.runTest(UsingRuleAsRuleAndClassRule.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(UsingRuleAsRuleAndClassRule.staticRule.beforeInvoked).isEqualTo(true);
   }
@@ -62,7 +62,7 @@ public class RuleAndClassRuleTest {
   @Test
   public void usingRuleAsRuleAndClassRuleShouldInvokeAfter() {
     Result result = TestRunner.runTest(UsingRuleAsRuleAndClassRule.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(UsingRuleAsRuleAndClassRule.staticRule.afterInvoked).isEqualTo(true);
   }
@@ -76,7 +76,7 @@ public class RuleAndClassRuleTest {
     boolean afterClassInvoked = false;
     boolean beforeInvoked = false;
     boolean afterInvoked = false;
-    
+
     @Override
     public Statement apply(final Statement base, final Description description) {
       if (description.isTest()) {
@@ -100,7 +100,7 @@ public class RuleAndClassRuleTest {
         }
       };
     }
-    
+
     private Statement statementClass(final Statement base) {
       return new Statement() {
         @Override
@@ -114,19 +114,19 @@ public class RuleAndClassRuleTest {
         }
       };
     }
-    
+
     private void beforeClass() {
       this.beforeClassInvoked = true;
     }
-    
+
     private void afterClass() {
       this.afterClassInvoked = true;
     }
-    
+
     private void before() {
       this.beforeInvoked = true;
     }
-    
+
     private void after() {
       this.afterInvoked = true;
     }
@@ -140,6 +140,7 @@ public class RuleAndClassRuleTest {
     public static SpyRule staticRule = new SpyRule();
     @Rule
     public SpyRule rule = staticRule;
+
     @Test
     public void doTest() throws Exception {
     }

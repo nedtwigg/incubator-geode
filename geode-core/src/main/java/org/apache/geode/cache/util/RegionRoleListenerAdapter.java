@@ -27,13 +27,12 @@ import org.apache.geode.cache.RoleEvent;
  * 
  * @deprecated this feature is scheduled to be removed
  */
-public abstract class RegionRoleListenerAdapter<K,V> 
-extends RegionMembershipListenerAdapter<K,V>
-implements RegionRoleListener<K,V> {
+public abstract class RegionRoleListenerAdapter<K, V> extends RegionMembershipListenerAdapter<K, V> implements RegionRoleListener<K, V> {
 
-  public void afterRoleGain(RoleEvent<K,V> event) {}
-  
-  public void afterRoleLoss(RoleEvent<K,V> event) {}
+  public void afterRoleGain(RoleEvent<K, V> event) {
+  }
+
+  public void afterRoleLoss(RoleEvent<K, V> event) {
+  }
 
 }
-

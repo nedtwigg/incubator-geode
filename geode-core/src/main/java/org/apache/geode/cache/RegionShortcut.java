@@ -233,5 +233,5 @@ public enum RegionShortcut {
    * Queries will be executed on this PROXY region.
    * The actual RegionAttributes for a REPLICATE_PROXY region set the {@link DataPolicy} to {@link DataPolicy#EMPTY} and {@link Scope} to {@link Scope#DISTRIBUTED_ACK}.
    */
-  REPLICATE_PROXY,  
+  REPLICATE_PROXY,
 }

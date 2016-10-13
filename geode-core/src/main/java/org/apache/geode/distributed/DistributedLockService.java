@@ -33,7 +33,7 @@ import org.apache.geode.distributed.internal.*;
  * or any names in the service.</p>
  */
 public abstract class DistributedLockService {
-  
+
   /**
    * Create a DistributedLockService with the given serviceName for the
    * given DistributedSystem.  This DistributedLockService will 
@@ -53,17 +53,11 @@ public abstract class DistributedLockService {
    * @throws IllegalStateException if this process is in the middle of 
    * disconnecting from the <code>DistributedSystem</code>
    */
-  public static DistributedLockService create(String serviceName, 
-                                              DistributedSystem ds)
-                                       throws IllegalArgumentException {
+  public static DistributedLockService create(String serviceName, DistributedSystem ds) throws IllegalArgumentException {
     DLockService.validateServiceName(serviceName);
-    return DLockService.create(serviceName, 
-                               (InternalDistributedSystem) ds, 
-                               true /*distributed*/, 
-                               true /*destroyOnDisconnect*/, 
-                               false /*automateFreeResources*/);
+    return DLockService.create(serviceName, (InternalDistributedSystem) ds, true /*distributed*/, true /*destroyOnDisconnect*/, false /*automateFreeResources*/);
   }
-  
+
   /**
    * Look up and return the DistributedLockService with the given name,
    * if it has been created in this VM.  If it has not been created, 
@@ -77,7 +71,7 @@ public abstract class DistributedLockService {
   public static DistributedLockService getServiceNamed(String serviceName) {
     return DLockService.getServiceNamed(serviceName);
   }
-  
+
   /**
    * Destroy a previously created DistributedLockService with the given
    * <code>serviceName</code>.  Any locks currently held in this 
@@ -93,18 +87,17 @@ public abstract class DistributedLockService {
    * DistributedLockService with the given <code>serviceName</code> and
    * <code>dm</code>.
    */
-  public static void destroy(String serviceName)
-  throws IllegalArgumentException {
+  public static void destroy(String serviceName) throws IllegalArgumentException {
     DLockService.destroyServiceNamed(serviceName);
   }
-  
+
   /**
    * Public instance creation is prohibited - use 
    * {@link #create(String, DistributedSystem)}
    */
   protected DistributedLockService() {
   }
-  
+
   /**
    * <p>Attempts to acquire a lock named <code>name</code>.  Returns 
    * <code>true</code> as soon as the lock is acquired.  If the lock 
@@ -200,8 +193,7 @@ public abstract class DistributedLockService {
    * with waitTimeMillis instead
    */
   @Deprecated
-  public abstract boolean lockInterruptibly(Object name, long waitTimeMillis, long leaseTimeMillis)
-  throws InterruptedException;
+  public abstract boolean lockInterruptibly(Object name, long waitTimeMillis, long leaseTimeMillis) throws InterruptedException;
 
   /**
    * Release the lock previously granted for the given <code>name</code>.
@@ -217,7 +209,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if the service has been destroyed
    */
   public abstract void unlock(Object name) throws LeaseExpiredException;
-  
+
   /**
    * Determine whether the current thread owns the lock on the given object.
    *
@@ -226,7 +218,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if this service has been destroyed
    */
   public abstract boolean isHeldByCurrentThread(Object name);
-  
+
   /**
    * Suspend granting of locks in this service.  When locking has been 
    * suspended, no other thread in the distributed system will be granted a lock 
@@ -258,9 +250,8 @@ public abstract class DistributedLockService {
    * with waitTimeMillis instead
    */
   @Deprecated
-  public abstract boolean suspendLockingInterruptibly(long waitTimeMillis)
-  throws InterruptedException;
-  
+  public abstract boolean suspendLockingInterruptibly(long waitTimeMillis) throws InterruptedException;
+
   /**
    * Suspend granting of locks in this service.  When locking has been 
    * suspended, no other thread in the distributed system will be granted a lock 
@@ -289,7 +280,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if the service has been destroyed
    */
   public abstract boolean suspendLocking(long waitTimeMillis);
-  
+
   /**
    * Allow locking to resume in this DistributedLockService instance. 
    *
@@ -299,8 +290,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if the service has been destroyed
    */
   public abstract void resumeLocking();
-  
-  
+
   /**
    * Determine whether the current thread has suspended locking in this
    * DistributedLockService.
@@ -310,7 +300,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if this service has been destroyed
    */
   public abstract boolean isLockingSuspendedByCurrentThread();
-  
+
   /**
    * Free internal resources associated with the given <code>name</code>.  
    * This may reduce this VM's memory use, but may also prohibit performance 
@@ -320,7 +310,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if this service has been destroyed
    */
   public abstract void freeResources(Object name);
-  
+
   /**
    * Specifies this member to become the grantor for this lock service.  The 
    * grantor will be the lock authority which is responsible for handling all 
@@ -341,7 +331,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if this service has been destroyed
    */
   public abstract void becomeLockGrantor();
-  
+
   /**
    * Specifies that this member should become the grantor for the named locking
    * service.
@@ -353,11 +343,10 @@ public abstract class DistributedLockService {
    *
    * @see org.apache.geode.distributed.DistributedLockService#becomeLockGrantor()
    */
-  public static void becomeLockGrantor(String serviceName)
-  throws IllegalArgumentException {
+  public static void becomeLockGrantor(String serviceName) throws IllegalArgumentException {
     DLockService.becomeLockGrantor(serviceName);
   }
-  
+
   /**
    * Returns true if this member is currently the lock authority responsible
    * for granting locks for this service.  This can be explicitly requested by
@@ -372,7 +361,7 @@ public abstract class DistributedLockService {
    * @throws LockServiceDestroyedException if lock service has been destroyed
    */
   public abstract boolean isLockGrantor();
-  
+
   /**
    * Returns true if this member is the grantor for the named service.
    *
@@ -385,9 +374,8 @@ public abstract class DistributedLockService {
    *
    * @see org.apache.geode.distributed.DistributedLockService#isLockGrantor()
    */
-  public static boolean isLockGrantor(String serviceName)
-  throws IllegalArgumentException {
+  public static boolean isLockGrantor(String serviceName) throws IllegalArgumentException {
     return DLockService.isLockGrantor(serviceName);
   }
-  
+
 }

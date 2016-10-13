@@ -30,8 +30,7 @@ import org.apache.geode.internal.cache.lru.*;
  */
 final class VMLRURegionMap extends AbstractLRURegionMap {
 
-  VMLRURegionMap(Object owner, Attributes attr,
-      InternalRegionArguments internalRegionArgs) {
+  VMLRURegionMap(Object owner, Attributes attr, InternalRegionArguments internalRegionArgs) {
     super(internalRegionArgs);
     initialize(owner, attr, internalRegionArgs);
   }
@@ -49,14 +48,17 @@ final class VMLRURegionMap extends AbstractLRURegionMap {
   protected final void _setCCHelper(EnableLRU ccHelper) {
     this.ccHelper = ccHelper;
   }
+
   @Override
   protected final EnableLRU _getCCHelper() {
     return this.ccHelper;
   }
+
   @Override
   protected final void _setLruList(NewLRUClockHand lruList) {
     this.lruList = lruList;
   }
+
   @Override
   public final NewLRUClockHand _getLruList() {
     return this.lruList;

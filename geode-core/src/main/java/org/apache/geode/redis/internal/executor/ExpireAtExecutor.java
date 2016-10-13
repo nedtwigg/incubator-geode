@@ -60,7 +60,7 @@ public class ExpireAtExecutor extends AbstractExecutor implements Extendable {
       timestamp = timestamp * millisInSecond;
 
     long currentTimeMillis = System.currentTimeMillis();
-    
+
     if (timestamp <= currentTimeMillis) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_SET));
       return;

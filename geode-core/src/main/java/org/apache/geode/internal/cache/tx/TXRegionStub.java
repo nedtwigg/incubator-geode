@@ -29,36 +29,29 @@ import java.util.Set;
 
 public interface TXRegionStub {
 
-  void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite,
-      Object expectedOldValue);
+  void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue);
 
   Entry getEntry(KeyInfo keyInfo, boolean allowTombstone);
 
-  void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks,
-      boolean forceNewEntry);
+  void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry);
 
   boolean containsKey(KeyInfo keyInfo);
 
   boolean containsValueForKey(KeyInfo keyInfo);
 
-  Object findObject(KeyInfo keyInfo, boolean isCreate,
-                    boolean generateCallbacks, Object value, boolean preferCD,
-                    ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent);
+  Object findObject(KeyInfo keyInfo, boolean isCreate, boolean generateCallbacks, Object value, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent);
 
   Object getEntryForIterator(KeyInfo keyInfo, boolean allowTombstone);
 
-  boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld,
-      Object expectedOldValue, boolean requireOldValue, long lastModified,
-      boolean overwriteDestroyed);
+  boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed);
 
   int entryCount();
 
   Set getRegionKeysForIteration(LocalRegion currRegion);
 
-  void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts,
-      LocalRegion region);
-  void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps,
-      LocalRegion region);
+  void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region);
+
+  void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region);
 
   void cleanup();
 

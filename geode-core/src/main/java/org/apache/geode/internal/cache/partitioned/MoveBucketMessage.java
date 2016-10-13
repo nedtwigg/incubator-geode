@@ -59,19 +59,14 @@ public class MoveBucketMessage extends PartitionMessage {
 
   private volatile int bucketId;
   private volatile InternalDistributedMember source;
-  
+
   /**
    * Empty constructor to satisfy {@link DataSerializer} requirements
    */
   public MoveBucketMessage() {
   }
 
-  private MoveBucketMessage(
-      InternalDistributedMember recipient, 
-      int regionId, 
-      ReplyProcessor21 processor,
-      int bucketId,
-      InternalDistributedMember source) {
+  private MoveBucketMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId, InternalDistributedMember source) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
     this.source = source;
@@ -87,22 +82,14 @@ public class MoveBucketMessage extends PartitionMessage {
    * @param source the member to move the bucket from
    * @return the processor used to wait for the response
    */
-  public static MoveBucketResponse send(
-      InternalDistributedMember recipient, 
-      PartitionedRegion region,
-      int bucketId,
-      InternalDistributedMember source) {
-    
-    Assert.assertTrue(recipient != null, 
-        "MoveBucketMessage NULL recipient");
-    
-    MoveBucketResponse response = new MoveBucketResponse(
-        region.getSystem(), recipient, region);
-    MoveBucketMessage msg = new MoveBucketMessage(
-        recipient, region.getPRId(), response, bucketId, source);
+  public static MoveBucketResponse send(InternalDistributedMember recipient, PartitionedRegion region, int bucketId, InternalDistributedMember source) {
 
-    Set<InternalDistributedMember> failures = 
-      region.getDistributionManager().putOutgoing(msg);
+    Assert.assertTrue(recipient != null, "MoveBucketMessage NULL recipient");
+
+    MoveBucketResponse response = new MoveBucketResponse(region.getSystem(), recipient, region);
+    MoveBucketMessage msg = new MoveBucketMessage(recipient, region.getPRId(), response, bucketId, source);
+
+    Set<InternalDistributedMember> failures = region.getDistributionManager().putOutgoing(msg);
     if (failures != null && failures.size() > 0) {
       //throw new ForceReattemptException("Failed sending <" + msg + ">");
       return null;
@@ -111,8 +98,7 @@ public class MoveBucketMessage extends PartitionMessage {
     return response;
   }
 
-  public MoveBucketMessage(DataInput in) 
-  throws IOException, ClassNotFoundException {
+  public MoveBucketMessage(DataInput in) throws IOException, ClassNotFoundException {
     fromData(in);
   }
 
@@ -123,18 +109,14 @@ public class MoveBucketMessage extends PartitionMessage {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm,
-                                                     PartitionedRegion region, 
-                                                     long startTime) 
-                                              throws ForceReattemptException {
-    
+  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion region, long startTime) throws ForceReattemptException {
+
     PartitionedRegionDataStore dataStore = region.getDataStore();
-    boolean moved = dataStore.moveBucket(this.bucketId, this.source,true);
-    
+    boolean moved = dataStore.moveBucket(this.bucketId, this.source, true);
+
     region.getPrStats().endPartitionMessagesProcessing(startTime);
-    MoveBucketReplyMessage.send(
-        getSender(), getProcessorId(), dm, null, moved);
-    
+    MoveBucketReplyMessage.send(getSender(), getProcessorId(), dm, null, moved);
+
     return false;
   }
 
@@ -163,9 +145,8 @@ public class MoveBucketMessage extends PartitionMessage {
     DataSerializer.writeObject(this.source, out);
   }
 
-  public static final class MoveBucketReplyMessage 
-  extends ReplyMessage {
-    
+  public static final class MoveBucketReplyMessage extends ReplyMessage {
+
     private boolean moved;
 
     /**
@@ -174,32 +155,24 @@ public class MoveBucketMessage extends PartitionMessage {
     public MoveBucketReplyMessage() {
     }
 
-    public MoveBucketReplyMessage(DataInput in)
-        throws IOException, ClassNotFoundException {
+    public MoveBucketReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
     }
 
-    private MoveBucketReplyMessage(
-        int processorId, ReplyException re, boolean moved) {
+    private MoveBucketReplyMessage(int processorId, ReplyException re, boolean moved) {
       this.processorId = processorId;
       this.moved = moved;
       setException(re);
     }
 
     /** Send a reply */
-    public static void send(InternalDistributedMember recipient,
-                            int processorId, 
-                            DM dm, 
-                            ReplyException re,
-                            boolean moved) {
-      Assert.assertTrue(recipient != null,
-          "MoveBucketReplyMessage NULL recipient");
-      MoveBucketReplyMessage m = 
-          new MoveBucketReplyMessage(processorId, re, moved);
+    public static void send(InternalDistributedMember recipient, int processorId, DM dm, ReplyException re, boolean moved) {
+      Assert.assertTrue(recipient != null, "MoveBucketReplyMessage NULL recipient");
+      MoveBucketReplyMessage m = new MoveBucketReplyMessage(processorId, re, moved);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
-    
+
     boolean moved() {
       return this.moved;
     }
@@ -237,8 +210,7 @@ public class MoveBucketMessage extends PartitionMessage {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.moved = in.readBoolean();
     }
@@ -246,10 +218,7 @@ public class MoveBucketMessage extends PartitionMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("MoveBucketReplyMessage ")
-        .append("processorid=").append(this.processorId)
-        .append(" moved=").append(this.moved)
-        .append(" reply to sender ").append(this.getSender());
+      sb.append("MoveBucketReplyMessage ").append("processorid=").append(this.processorId).append(" moved=").append(this.moved).append(" reply to sender ").append(this.getSender());
       return sb.toString();
     }
   }
@@ -259,13 +228,10 @@ public class MoveBucketMessage extends PartitionMessage {
    * <code>MoveBucketReplyMessage</code>
    */
   public static class MoveBucketResponse extends PartitionResponse {
-    
+
     private volatile boolean moved = false;
-    
-    public MoveBucketResponse(
-        InternalDistributedSystem ds,
-        InternalDistributedMember recipient, 
-        PartitionedRegion theRegion) {
+
+    public MoveBucketResponse(InternalDistributedSystem ds, InternalDistributedMember recipient, PartitionedRegion theRegion) {
       super(ds, recipient);
     }
 
@@ -273,8 +239,7 @@ public class MoveBucketMessage extends PartitionMessage {
     public void process(DistributionMessage msg) {
       try {
         if (msg instanceof MoveBucketReplyMessage) {
-          MoveBucketReplyMessage reply = 
-              (MoveBucketReplyMessage) msg;
+          MoveBucketReplyMessage reply = (MoveBucketReplyMessage) msg;
           this.moved = reply.moved();
           if (logger.isTraceEnabled(LogMarker.DM)) {
             logger.trace(LogMarker.DM, "MoveBucketResponse is {}", moved);
@@ -293,11 +258,11 @@ public class MoveBucketMessage extends PartitionMessage {
     protected void processException(ReplyException ex) {
       logger.debug("MoveBucketMessage ignoring exception: {}", ex.getMessage(), ex);
     }
-    
+
     public boolean waitForResponse() {
       try {
         waitForRepliesUninterruptibly();
-      }   catch(ReplyException e) {
+      } catch (ReplyException e) {
         Throwable t = e.getCause();
         if (t instanceof CancelException) {
           String msg = "MoveBucketMessage got remote cancellation,";

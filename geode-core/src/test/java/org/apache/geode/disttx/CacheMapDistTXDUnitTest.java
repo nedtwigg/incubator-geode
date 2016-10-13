@@ -29,7 +29,6 @@ import org.apache.geode.test.dunit.VM;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-
 /**
  * Same tests as that of {@link CacheMapTxnDUnitTest} after setting
  * "distributed-transactions" property to true
@@ -74,7 +73,7 @@ public class CacheMapDistTXDUnitTest extends CacheMapTxnDUnitTest {
   public static void checkIsDistributedTX() {
     assertTrue(cache.getCacheTransactionManager().isDistributed());
   }
-  
+
   @Override
   @Test
   public void testCommitTxn() {

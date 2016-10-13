@@ -88,19 +88,17 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  public static Integer createServerCache(Integer mcastPort,
-      Integer maxMessageCount) throws Exception {
+  public static Integer createServerCache(Integer mcastPort, Integer maxMessageCount) throws Exception {
     Properties props = new Properties();
     props.setProperty(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
 
     Bug51400DUnitTest test = new Bug51400DUnitTest();
     DistributedSystem ds = test.getSystem(props);
     ds.disconnect();
-    cache = (GemFireCacheImpl)CacheFactory.create(test.getSystem());
-//    cache = (GemFireCacheImpl) new CacheFactory(props).create();
+    cache = (GemFireCacheImpl) CacheFactory.create(test.getSystem());
+    //    cache = (GemFireCacheImpl) new CacheFactory(props).create();
 
-    RegionFactory<String, String> rf = cache
-        .createRegionFactory(RegionShortcut.REPLICATE);
+    RegionFactory<String, String> rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
 
     rf.setConcurrencyChecksEnabled(false);
 
@@ -113,8 +111,7 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
     return server.getPort();
   }
 
-  public static void createClientCache(String hostName, Integer[] ports,
-      Integer interval) throws Exception {
+  public static void createClientCache(String hostName, Integer[] ports, Integer interval) throws Exception {
     Properties props = new Properties();
 
     DistributedSystem ds = new Bug51400DUnitTest().getSystem(props);
@@ -127,28 +124,22 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
     }
     cache = (GemFireCacheImpl) ccf.create();
 
-    ClientRegionFactory<String, String> crf = cache
-        .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+    ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
 
     Region<String, String> region = crf.create(REGION_NAME);
 
     region.registerInterest("ALL_KEYS");
   }
 
-  public static void verifyQueueSize(Boolean isPrimary,
-      Integer numOfEvents) throws Exception {
-    CacheClientProxyStats stats = ((CacheClientProxy) CacheClientNotifier
-        .getInstance().getClientProxies().toArray()[0]).getStatistics();
+  public static void verifyQueueSize(Boolean isPrimary, Integer numOfEvents) throws Exception {
+    CacheClientProxyStats stats = ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0]).getStatistics();
 
     if (isPrimary) {
       numOfEvents = numOfEvents + 1; // marker
     }
     long qSize = stats.getMessageQueueSize();
-    assertEquals("Expected queue size: " + numOfEvents
-        + " but actual size: " + qSize + " at "
-        + (isPrimary ? "primary." : "secondary."), numOfEvents.intValue(), qSize);
+    assertEquals("Expected queue size: " + numOfEvents + " but actual size: " + qSize + " at " + (isPrimary ? "primary." : "secondary."), numOfEvents.intValue(), qSize);
   }
-
 
   @Ignore("ticket51932")
   @Test
@@ -159,19 +150,17 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
 
     fail("Invoking bad method");
     int port1 = 0;
-//    int port1 = (Integer) server0.invoke(() -> Bug51400DUnitTest.createServerCache( maxQSize));
+    //    int port1 = (Integer) server0.invoke(() -> Bug51400DUnitTest.createServerCache( maxQSize));
 
-    client1.invoke(Bug51400DUnitTest.class, "createClientCache",
-        new Object[] { NetworkUtils.getServerHostName(Host.getHost(0)), new Integer[]{port1}, ackInterval});
+    client1.invoke(Bug51400DUnitTest.class, "createClientCache", new Object[] { NetworkUtils.getServerHostName(Host.getHost(0)), new Integer[] { port1 }, ackInterval });
 
     // Do puts from server as well as from client on the same key.
-    AsyncInvocation ai1 = server0.invokeAsync(() -> Bug51400DUnitTest.updateKey( 2 * maxQSize ));
-    AsyncInvocation ai2 = client1.invokeAsync(() -> Bug51400DUnitTest.updateKey( 2 * maxQSize ));
+    AsyncInvocation ai1 = server0.invokeAsync(() -> Bug51400DUnitTest.updateKey(2 * maxQSize));
+    AsyncInvocation ai2 = client1.invokeAsync(() -> Bug51400DUnitTest.updateKey(2 * maxQSize));
     ai1.getResult();
     ai2.getResult();
     // Verify that the queue has crossed its limit of maxQSize
-    server0.invoke(() -> Bug51400DUnitTest.verifyQueueSize(
-        true, 2 * maxQSize ));
+    server0.invoke(() -> Bug51400DUnitTest.verifyQueueSize(true, 2 * maxQSize));
   }
 
   public static void updateKey(Integer num) {
@@ -181,8 +170,7 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
       for (int i = 0; i < num; ++i) {
         r.put(k, "VALUE_" + i);
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Failed in updateKey()" + e);
     }
   }

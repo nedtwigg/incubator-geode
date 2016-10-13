@@ -28,5 +28,6 @@ public interface LRUEntry extends LRUClockNode, RegionEntry {
    * but if the key is stored as primitives then returns null.
    */
   public Object getKeyForSizing();
+
   public void setDelayedDiskId(LocalRegion r);
 }

@@ -28,13 +28,13 @@ package org.apache.geode.cache;
  * @see EntryEvent
  * @since GemFire 2.0
  */
-public interface RegionEvent<K,V> extends CacheEvent<K,V> {
-  
+public interface RegionEvent<K, V> extends CacheEvent<K, V> {
+
   /**
    * Return true if this region was destroyed but is being reinitialized,
    * for example if a snapshot was just loaded. Can only return true for
    * an event related to region destruction.
    */
   public boolean isReinitializing();
-  
+
 }

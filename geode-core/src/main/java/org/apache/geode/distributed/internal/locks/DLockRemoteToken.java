@@ -39,7 +39,7 @@ public class DLockRemoteToken implements DataSerializableFixedID {
    * Lock name for this lock.
    */
   private final Object name;
-  
+
   /** 
    * The reply processor id is used to identify the distinct lease which the
    * lessee has used to lease this lock.
@@ -51,12 +51,12 @@ public class DLockRemoteToken implements DataSerializableFixedID {
    * -1 represents a lease which will not expire until explicitly released.
    */
   private final long leaseExpireTime;
-  
+
   /** 
    * Serializable identity of thread currently leasing this lock.
    */
   private final RemoteThread lesseeThread;
-  
+
   /**
    * Creates a new immutable instance of DLockRemoteToken representing the
    * current lease tracked by DLockToken. Synchronizes on the provided
@@ -67,8 +67,7 @@ public class DLockRemoteToken implements DataSerializableFixedID {
    */
   public static DLockRemoteToken createFromDLockToken(DLockToken token) {
     synchronized (token) {
-      return new DLockRemoteToken(token.getName(), token.getLesseeThread(),
-          token.getLeaseId(), token.getLeaseExpireTime());
+      return new DLockRemoteToken(token.getName(), token.getLesseeThread(), token.getLeaseId(), token.getLeaseExpireTime());
     }
   }
 
@@ -83,36 +82,28 @@ public class DLockRemoteToken implements DataSerializableFixedID {
    * @throws ClassNotFoundException if DataSerializer failed to find class to
    * read object from input
    */
-  public static DLockRemoteToken createFromDataInput(DataInput in) 
-  throws IOException, ClassNotFoundException {
+  public static DLockRemoteToken createFromDataInput(DataInput in) throws IOException, ClassNotFoundException {
     Object name = DataSerializer.readObject(in);
     RemoteThread lesseeThread = null;
-    InternalDistributedMember lessee = 
-      (InternalDistributedMember) DataSerializer.readObject(in);
+    InternalDistributedMember lessee = (InternalDistributedMember) DataSerializer.readObject(in);
     lesseeThread = new RemoteThread(lessee, in.readInt());
     int leaseId = in.readInt();
     long leaseExpireTime = in.readLong();
-    return new DLockRemoteToken(
-        name, lesseeThread, leaseId, leaseExpireTime);
+    return new DLockRemoteToken(name, lesseeThread, leaseId, leaseExpireTime);
   }
-  
-  public static DLockRemoteToken create(Object name,
-                                        RemoteThread lesseeThread,
-                                        int leaseId,
-                                        long leaseExpireTime) {
-    return new DLockRemoteToken(
-        name, lesseeThread, leaseId, leaseExpireTime);
+
+  public static DLockRemoteToken create(Object name, RemoteThread lesseeThread, int leaseId, long leaseExpireTime) {
+    return new DLockRemoteToken(name, lesseeThread, leaseId, leaseExpireTime);
   }
-  
+
   /**
    * Unused no-arg constructor for Serializable. Instead use DataSerializable
    * and {@link DLockRemoteToken#createFromDataInput(DataInput)}.
    */
   public DLockRemoteToken() {
-    throw new UnsupportedOperationException(
-        "Use DLockRemoteToken#createFromDataInput(DataInput) instead.");
+    throw new UnsupportedOperationException("Use DLockRemoteToken#createFromDataInput(DataInput) instead.");
   }
-  
+
   /**
    * Instantiates an immutable DLockRemoteToken.
    * 
@@ -121,16 +112,13 @@ public class DLockRemoteToken implements DataSerializableFixedID {
    * @param leaseId used to identify the distinct lease used by the lease holder
    * @param leaseExpireTime the absolute time when this lease will expire
    */
-  private DLockRemoteToken(Object name,
-                           RemoteThread lesseeThread,
-                           int leaseId,
-                           long leaseExpireTime) {
+  private DLockRemoteToken(Object name, RemoteThread lesseeThread, int leaseId, long leaseExpireTime) {
     this.name = name;
     this.lesseeThread = lesseeThread;
     this.leaseId = leaseId;
     this.leaseExpireTime = leaseExpireTime;
   }
-  
+
   /**
    * Returns the identifying name of this lock.
    * 
@@ -139,7 +127,7 @@ public class DLockRemoteToken implements DataSerializableFixedID {
   public Object getName() {
     return this.name;
   }
-  
+
   /**
    * Returns the serializable identity of the thread currently leasing this 
    * lock or null if no thread currently holds this lock.
@@ -149,7 +137,7 @@ public class DLockRemoteToken implements DataSerializableFixedID {
   public RemoteThread getLesseeThread() {
     return this.lesseeThread;
   }
-  
+
   /**
    * Returns the member currently leasing this lock or null if no member
    * curently holds this lock.
@@ -159,12 +147,11 @@ public class DLockRemoteToken implements DataSerializableFixedID {
   public DistributedMember getLessee() {
     if (this.lesseeThread == null) {
       return null;
-    }
-    else {
+    } else {
       return this.lesseeThread.getDistributedMember();
     }
   }
-  
+
   /**
    * Returns the lease id currently used to hold a lease on this lock or -1
    * if no thread currently holds this lock.
@@ -174,7 +161,7 @@ public class DLockRemoteToken implements DataSerializableFixedID {
   public int getLeaseId() {
     return this.leaseId;
   }
-  
+
   /**
    * Returns the absolute time at which the current lease will expire or -1
    * if there is no lease.
@@ -184,28 +171,28 @@ public class DLockRemoteToken implements DataSerializableFixedID {
   public long getLeaseExpireTime() {
     return this.leaseExpireTime;
   }
-  
+
   /**
    * Returns a string representation of this object.
    */
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer("DLockRemoteToken@");
-    sb.append(Integer.toHexString(hashCode())); 
+    sb.append(Integer.toHexString(hashCode()));
     sb.append(", name: ").append(this.name);
     sb.append(", lesseeThread: ").append(this.lesseeThread);
     sb.append(", leaseId: ").append(this.leaseId);
     sb.append(", leaseExpireTime: ").append(this.leaseExpireTime);
     return sb.toString();
   }
-  
+
   /**
    * return the ID for serialization of instances of DLockRemoteToken
    */
   public int getDSFID() {
     return DataSerializableFixedID.DLOCK_REMOTE_TOKEN;
   }
-  
+
   /**
    * Writes the contents of this object to the given output.
    */
@@ -221,14 +208,12 @@ public class DLockRemoteToken implements DataSerializableFixedID {
    * Unsupported. Use {@link DLockRemoteToken#createFromDataInput(DataInput)} 
    * instead.
    */
-  public void fromData(DataInput in) 
-  throws IOException, ClassNotFoundException {
-    throw new UnsupportedOperationException(
-        "Use DLockRemoteToken#createFromDataInput(DataInput) instead.");
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
+    throw new UnsupportedOperationException("Use DLockRemoteToken#createFromDataInput(DataInput) instead.");
   }
 
   @Override
   public Version[] getSerializationVersions() {
-     return null;
+    return null;
   }
 }

@@ -80,14 +80,12 @@ public class ClearRegion extends BaseCommand {
     }
     regionName = regionNamePart.getString();
     if (logger.isDebugEnabled()) {
-      logger.debug(servConn.getName() + ": Received clear region request (" + msg.getPayloadLength() + " bytes) from " + servConn
-        .getSocketString() + " for region " + regionName);
+      logger.debug(servConn.getName() + ": Received clear region request (" + msg.getPayloadLength() + " bytes) from " + servConn.getSocketString() + " for region " + regionName);
     }
 
     // Process the clear region request
     if (regionName == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ClearRegion_0_THE_INPUT_REGION_NAME_FOR_THE_CLEAR_REGION_REQUEST_IS_NULL, servConn
-        .getName()));
+      logger.warn(LocalizedMessage.create(LocalizedStrings.ClearRegion_0_THE_INPUT_REGION_NAME_FOR_THE_CLEAR_REGION_REQUEST_IS_NULL, servConn.getName()));
       String errMessage = LocalizedStrings.ClearRegion_THE_INPUT_REGION_NAME_FOR_THE_CLEAR_REGION_REQUEST_IS_NULL.toLocalizedString();
 
       writeErrorResponse(msg, MessageType.CLEAR_REGION_DATA_ERROR, errMessage, servConn);
@@ -141,6 +139,5 @@ public class ClearRegion extends BaseCommand {
     }
     stats.incWriteClearRegionResponseTime(DistributionStats.getStatTime() - start);
   }
-
 
 }

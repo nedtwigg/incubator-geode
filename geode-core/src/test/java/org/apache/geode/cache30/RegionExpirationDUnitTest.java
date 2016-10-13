@@ -54,15 +54,15 @@ public class RegionExpirationDUnitTest extends JUnit4CacheTestCase {
     super();
   }
 
-//  /**
-//   * Returns the attributes of a region to be tested.
-//   */
-//  private RegionAttributes getRegionAttributes() {
-//    AttributesFactory factory = new AttributesFactory();
-//    factory.setScope(Scope.LOCAL);
-//    factory.setStatisticsEnabled(true);
-//    return factory.create();
-//  }
+  //  /**
+  //   * Returns the attributes of a region to be tested.
+  //   */
+  //  private RegionAttributes getRegionAttributes() {
+  //    AttributesFactory factory = new AttributesFactory();
+  //    factory.setScope(Scope.LOCAL);
+  //    factory.setStatisticsEnabled(true);
+  //    return factory.create();
+  //  }
 
   /**
    * Test internal methods that encode & decode time
@@ -86,58 +86,45 @@ public class RegionExpirationDUnitTest extends JUnit4CacheTestCase {
    */
 
   @Test
-  public void testRegionTTLLocalDestroy()
-  throws CacheException, InterruptedException
-  {
+  public void testRegionTTLLocalDestroy() throws CacheException, InterruptedException {
     _testRegionTTL(getUniqueName(), ExpirationAction.LOCAL_DESTROY);
   }
 
   @Test
-  public void testRegionTTLDestroy()
-  throws CacheException, InterruptedException
-  {
+  public void testRegionTTLDestroy() throws CacheException, InterruptedException {
     _testRegionTTL(getUniqueName(), ExpirationAction.DESTROY);
   }
 
   @Test
-  public void testRegionTTLLocalInvalidate()
-  throws CacheException, InterruptedException
-  {
+  public void testRegionTTLLocalInvalidate() throws CacheException, InterruptedException {
     _testRegionTTL(getUniqueName(), ExpirationAction.LOCAL_INVALIDATE);
   }
 
   @Test
-  public void testRegionTTLInvalidate()
-  throws CacheException, InterruptedException
-  {
+  public void testRegionTTLInvalidate() throws CacheException, InterruptedException {
     _testRegionTTL(getUniqueName(), ExpirationAction.INVALIDATE);
   }
 
   @Test
-  public void testRegionTTLAfterMutating()
-  throws InterruptedException, CacheException
-  {
+  public void testRegionTTLAfterMutating() throws InterruptedException, CacheException {
     String regionName = getUniqueName();
     int firstTimeout = 2;
     int secondTimeout = 6;
-    createWithExpiration(
-      regionName,
-      new ExpirationAttributes(firstTimeout, ExpirationAction.DESTROY),
-      null);
+    createWithExpiration(regionName, new ExpirationAttributes(firstTimeout, ExpirationAction.DESTROY), null);
     long startTime = System.currentTimeMillis();
     final Region region = getOrCreateRootRegion().getSubregion(regionName);
-    region.getAttributesMutator().setRegionTimeToLive(
-      new ExpirationAttributes(secondTimeout, ExpirationAction.DESTROY));
+    region.getAttributesMutator().setRegionTimeToLive(new ExpirationAttributes(secondTimeout, ExpirationAction.DESTROY));
     Thread.sleep(firstTimeout * 1000 + 100);
     if (region.isDestroyed()) {
       assertTrue(System.currentTimeMillis() >= startTime + secondTimeout * 1000);
     }
-    
+
     Thread.sleep((secondTimeout - firstTimeout) * 1000 + 100);
     WaitCriterion wc = new WaitCriterion() {
       public boolean done() {
         return region.isDestroyed();
       }
+
       public String description() {
         return "region never destroyed";
       }
@@ -146,16 +133,11 @@ public class RegionExpirationDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void testWhenBothTtlAndIdleAreSet() 
-  throws InterruptedException, CacheException
-  {
+  public void testWhenBothTtlAndIdleAreSet() throws InterruptedException, CacheException {
     String regionName = getUniqueName();
     int ttlTimeout = 4;
     int idleTimeout = 3;
-    createWithExpiration(
-      regionName,
-      new ExpirationAttributes(ttlTimeout, ExpirationAction.DESTROY),
-      new ExpirationAttributes(idleTimeout, ExpirationAction.INVALIDATE));
+    createWithExpiration(regionName, new ExpirationAttributes(ttlTimeout, ExpirationAction.DESTROY), new ExpirationAttributes(idleTimeout, ExpirationAction.INVALIDATE));
     Region region = getOrCreateRootRegion().getSubregion(regionName);
     region.create("key", "val");
     Thread.sleep(idleTimeout * 1000 + 200);
@@ -163,18 +145,15 @@ public class RegionExpirationDUnitTest extends JUnit4CacheTestCase {
 
     // Touch the lastAccessedTime
     assertNull(region.get("key"));
-    
+
     // Next action that occurs should be ttl - the destroy
     Thread.sleep(((ttlTimeout - idleTimeout) * 1000) + 5000);
     assertTrue(region.isDestroyed());
   }
 
-
   /////////////// Utility methods ///////////////////////////
 
-  private void _testRegionTTL(final String regionName, final ExpirationAction action)
-  throws InterruptedException
-  {
+  private void _testRegionTTL(final String regionName, final ExpirationAction action) throws InterruptedException {
     final int timeoutSecs = 10;
     final Object key = "key";
     final Object originalValue = "original value";
@@ -189,43 +168,35 @@ public class RegionExpirationDUnitTest extends JUnit4CacheTestCase {
 
     // In vm0, create the region with ttl, and put value
     vm0.invoke(new CacheSerializableRunnable("Create Region & Key") {
-        public void run2() throws CacheException {
-          createWithExpiration(
-            regionName,
-            new ExpirationAttributes(timeoutSecs, action),
-            null);
-          Region region = getOrCreateRootRegion().getSubregion(regionName);
-          region.put(key, originalValue);
-          assertEquals(originalValue, region.get(key));
-          assertTrue(region.containsValueForKey(key));
-        }
-      });
+      public void run2() throws CacheException {
+        createWithExpiration(regionName, new ExpirationAttributes(timeoutSecs, action), null);
+        Region region = getOrCreateRootRegion().getSubregion(regionName);
+        region.put(key, originalValue);
+        assertEquals(originalValue, region.get(key));
+        assertTrue(region.containsValueForKey(key));
+      }
+    });
     // In vm1, create the region - no ttl
     vm1.invoke(new CacheSerializableRunnable("Create Region & Key") {
-        public void run2() throws CacheException {
-          createWithExpiration(
-            regionName,
-            null,
-            null);
-        }
-      });
+      public void run2() throws CacheException {
+        createWithExpiration(regionName, null, null);
+      }
+    });
 
     // In vm1, do get() to cause netsearch
     vm1.invoke(new CacheSerializableRunnable("Get") {
-        public void run2() throws CacheException {
-          Region region = getOrCreateRootRegion().getSubregion(regionName);
-          Object newVal = region.get(key);
+      public void run2() throws CacheException {
+        Region region = getOrCreateRootRegion().getSubregion(regionName);
+        Object newVal = region.get(key);
 
-          if (!originalValue.equals(newVal)) {
-            assertTrue("expected original value but got " + newVal,
-                System.currentTimeMillis() + 1000 >= tilt);
-          }
-          if (!region.containsValueForKey(key)) {
-            assertTrue("Region doesn't hold key",
-                System.currentTimeMillis() + 1000 >= tilt);
-          }
+        if (!originalValue.equals(newVal)) {
+          assertTrue("expected original value but got " + newVal, System.currentTimeMillis() + 1000 >= tilt);
         }
-      });
+        if (!region.containsValueForKey(key)) {
+          assertTrue("Region doesn't hold key", System.currentTimeMillis() + 1000 >= tilt);
+        }
+      }
+    });
 
     // Wait for expiration to occur
     Thread.sleep(timeoutSecs * 1000 + 2000);
@@ -233,42 +204,41 @@ public class RegionExpirationDUnitTest extends JUnit4CacheTestCase {
     // In vm0, region should be absent (for destroy, localDestroy), or
     // entry invalid
     vm0.invoke(new CacheSerializableRunnable("Get") {
-        public void run2() throws CacheException {
-          Region region = getRootRegion().getSubregion(regionName);
-          LogWriterUtils.getLogWriter().info("3: " + regionName + ", " + region + ", action is " + action);
-          if (action.isInvalidate() || action.isLocalInvalidate()) {
-            assertTrue(!region.containsValueForKey(key));
-          } else {
-            assertTrue(region == null);
-          }
+      public void run2() throws CacheException {
+        Region region = getRootRegion().getSubregion(regionName);
+        LogWriterUtils.getLogWriter().info("3: " + regionName + ", " + region + ", action is " + action);
+        if (action.isInvalidate() || action.isLocalInvalidate()) {
+          assertTrue(!region.containsValueForKey(key));
+        } else {
+          assertTrue(region == null);
         }
-      });
+      }
+    });
     // In vm1, region should be absent (for destroy), or entry invalid (invalidate).
     // For LOCAL_DESTROY or LOCAL_INVALIDATE, the value should be intact
     vm1.invoke(new CacheSerializableRunnable("Get") {
-        public void run2() throws CacheException {
-          Region region = getRootRegion().getSubregion(regionName);
-          if (action.isInvalidate()) {
-            assertTrue(region.containsKey(key));
-            assertTrue(!region.containsValueForKey(key));
-          } else if (action.isDestroy()) {
-            assertTrue(region == null);
-          } else {
-            assertTrue(region.containsValueForKey(key));
-            assertEquals(originalValue, region.get(key));
-          }
+      public void run2() throws CacheException {
+        Region region = getRootRegion().getSubregion(regionName);
+        if (action.isInvalidate()) {
+          assertTrue(region.containsKey(key));
+          assertTrue(!region.containsValueForKey(key));
+        } else if (action.isDestroy()) {
+          assertTrue(region == null);
+        } else {
+          assertTrue(region.containsValueForKey(key));
+          assertEquals(originalValue, region.get(key));
         }
-      });
+      }
+    });
   }
 
-  protected void createWithExpiration(String regionName, ExpirationAttributes ttl,
-                                    ExpirationAttributes idle)
-  throws CacheException
-  {
+  protected void createWithExpiration(String regionName, ExpirationAttributes ttl, ExpirationAttributes idle) throws CacheException {
     AttributesFactory factory = new AttributesFactory();
     factory.setStatisticsEnabled(true);
-    if (ttl != null) factory.setRegionTimeToLive(ttl);
-    if (idle != null) factory.setRegionIdleTimeout(idle);
+    if (ttl != null)
+      factory.setRegionTimeToLive(ttl);
+    if (idle != null)
+      factory.setRegionIdleTimeout(idle);
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setEarlyAck(false);
     RegionAttributes attrs = factory.create();
@@ -276,9 +246,7 @@ public class RegionExpirationDUnitTest extends JUnit4CacheTestCase {
     getOrCreateRootRegion().createSubregion(regionName, attrs);
   }
 
-  protected Region getOrCreateRootRegion()
-  throws CacheException
-  {
+  protected Region getOrCreateRootRegion() throws CacheException {
     Region root = getRootRegion();
     if (root == null) {
       AttributesFactory factory = new AttributesFactory();

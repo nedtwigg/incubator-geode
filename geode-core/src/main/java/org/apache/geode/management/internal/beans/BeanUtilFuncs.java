@@ -46,9 +46,7 @@ public class BeanUtilFuncs {
    * @return tail of the log file
    * @throws IOException
    */
-  public static String tailSystemLog(File logFile, final int numLines)
-    throws IOException
-  {
+  public static String tailSystemLog(File logFile, final int numLines) throws IOException {
     if (logFile == null || logFile.equals(new File(""))) {
       return null;
     }
@@ -57,8 +55,7 @@ public class BeanUtilFuncs {
     if (fileLength == 0) {
       return null;
     }
-    byte[] buffer = (fileLength > maxBuffer) ? new byte[maxBuffer]
-      : new byte[(int) fileLength];
+    byte[] buffer = (fileLength > maxBuffer) ? new byte[maxBuffer] : new byte[(int) fileLength];
 
     int readSize = buffer.length;
     RandomAccessFile f = new RandomAccessFile(logFile, "r");
@@ -98,8 +95,7 @@ public class BeanUtilFuncs {
 
       if (readSize < seekPosition) {
         seekPosition = seekPosition - readSize;
-      }
-      else {
+      } else {
         readSize = (int) seekPosition;
         seekPosition = 0;
       }
@@ -111,7 +107,6 @@ public class BeanUtilFuncs {
 
     return returnStr.toString();
   }
-
 
   /**
    * @param sc
@@ -129,17 +124,14 @@ public class BeanUtilFuncs {
     return tailSystemLog(logFile, numLines);
   }
 
-  public static DistributedMember getDistributedMemberByNameOrId(
-    String memberNameOrId)
-  {
+  public static DistributedMember getDistributedMemberByNameOrId(String memberNameOrId) {
     DistributedMember memberFound = null;
 
     if (memberNameOrId != null) {
       Cache cache = CacheFactory.getAnyInstance();
       Set<DistributedMember> memberSet = CliUtil.getAllMembers(cache);
       for (DistributedMember member : memberSet) {
-        if (memberNameOrId.equals(member.getId())
-          || memberNameOrId.equals(member.getName())) {
+        if (memberNameOrId.equals(member.getId()) || memberNameOrId.equals(member.getName())) {
           memberFound = member;
           break;
         }
@@ -162,12 +154,10 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setMemberName(config.getName());
     gemFirePropertyData.setMemberGroups(memberGroups);
     gemFirePropertyData.setMcastPort(config.getMcastPort());
-    gemFirePropertyData.setMcastAddress(config.getMcastAddress()
-      .getHostAddress());
+    gemFirePropertyData.setMcastAddress(config.getMcastAddress().getHostAddress());
     gemFirePropertyData.setBindAddress(config.getBindAddress());
     gemFirePropertyData.setTcpPort(config.getTcpPort());
-    gemFirePropertyData.setCacheXMLFile(config.getCacheXmlFile()
-      .getAbsolutePath());
+    gemFirePropertyData.setCacheXMLFile(config.getCacheXmlFile().getAbsolutePath());
     gemFirePropertyData.setConfigFile(configFile);
     gemFirePropertyData.setMcastTTL(config.getMcastTtl());
     gemFirePropertyData.setServerBindAddress(config.getServerBindAddress());
@@ -175,22 +165,17 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setStartLocator(config.getStartLocator());
     gemFirePropertyData.setLogFile(config.getLogFile().getAbsolutePath());
     gemFirePropertyData.setLogLevel(config.getLogLevel());
-    gemFirePropertyData.setStatisticSamplingEnabled(config
-      .getStatisticSamplingEnabled());
+    gemFirePropertyData.setStatisticSamplingEnabled(config.getStatisticSamplingEnabled());
 
-    gemFirePropertyData.setStatisticArchiveFile(config
-      .getStatisticArchiveFile().getAbsolutePath());
+    gemFirePropertyData.setStatisticArchiveFile(config.getStatisticArchiveFile().getAbsolutePath());
     gemFirePropertyData.setIncludeFile(includeFile);
     gemFirePropertyData.setAckWaitThreshold(config.getAckWaitThreshold());
 
-    gemFirePropertyData.setAckSevereAlertThreshold(config
-      .getAckSevereAlertThreshold());
+    gemFirePropertyData.setAckSevereAlertThreshold(config.getAckSevereAlertThreshold());
 
-    gemFirePropertyData.setArchiveFileSizeLimit(config
-      .getArchiveFileSizeLimit());
+    gemFirePropertyData.setArchiveFileSizeLimit(config.getArchiveFileSizeLimit());
 
-    gemFirePropertyData.setArchiveDiskSpaceLimit(config
-      .getArchiveDiskSpaceLimit());
+    gemFirePropertyData.setArchiveDiskSpaceLimit(config.getArchiveDiskSpaceLimit());
     gemFirePropertyData.setLogFileSizeLimit(config.getLogFileSizeLimit());
     gemFirePropertyData.setLogDiskSpaceLimit(config.getLogDiskSpaceLimit());
 
@@ -250,68 +235,49 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setMcastSendBufferSize(config.getMcastSendBufferSize());
     gemFirePropertyData.setMcastRecvBufferSize(config.getMcastRecvBufferSize());
 
-    gemFirePropertyData.setMcastByteAllowance(config.getMcastFlowControl()
-      .getByteAllowance());
-    gemFirePropertyData.setMcastRechargeThreshold(config.getMcastFlowControl()
-      .getRechargeThreshold());
-    gemFirePropertyData.setMcastRechargeBlockMs(config.getMcastFlowControl()
-      .getRechargeBlockMs());
+    gemFirePropertyData.setMcastByteAllowance(config.getMcastFlowControl().getByteAllowance());
+    gemFirePropertyData.setMcastRechargeThreshold(config.getMcastFlowControl().getRechargeThreshold());
+    gemFirePropertyData.setMcastRechargeBlockMs(config.getMcastFlowControl().getRechargeBlockMs());
     gemFirePropertyData.setUdpFragmentSize(config.getUdpFragmentSize());
 
     gemFirePropertyData.setUdpRecvBufferSize(config.getUdpRecvBufferSize());
     gemFirePropertyData.setDisableTcp(config.getDisableTcp());
 
-    gemFirePropertyData.setEnableTimeStatistics(config
-      .getEnableTimeStatistics());
+    gemFirePropertyData.setEnableTimeStatistics(config.getEnableTimeStatistics());
 
-    gemFirePropertyData.setEnableNetworkPartitionDetection(config
-      .getEnableNetworkPartitionDetection());
+    gemFirePropertyData.setEnableNetworkPartitionDetection(config.getEnableNetworkPartitionDetection());
 
     gemFirePropertyData.setMemberTimeout(config.getMemberTimeout());
     gemFirePropertyData.setMembershipPortRange(config.getMembershipPortRange());
     gemFirePropertyData.setConserveSockets(config.getConserveSockets());
 
     gemFirePropertyData.setRoles(config.getRoles());
-    gemFirePropertyData.setMaxWaitTimeForReconnect(config
-      .getMaxWaitTimeForReconnect());
+    gemFirePropertyData.setMaxWaitTimeForReconnect(config.getMaxWaitTimeForReconnect());
 
-    gemFirePropertyData.setMaxNumReconnectTries(config
-      .getMaxNumReconnectTries());
+    gemFirePropertyData.setMaxNumReconnectTries(config.getMaxNumReconnectTries());
 
-    gemFirePropertyData.setAsyncDistributionTimeout(config
-      .getAsyncDistributionTimeout());
+    gemFirePropertyData.setAsyncDistributionTimeout(config.getAsyncDistributionTimeout());
 
     gemFirePropertyData.setAsyncQueueTimeout(config.getAsyncQueueTimeout());
     gemFirePropertyData.setAsyncMaxQueueSize(config.getAsyncMaxQueueSize());
     gemFirePropertyData.setClientConflation(config.getClientConflation());
 
     gemFirePropertyData.setDurableClientId(config.getDurableClientId());
-    gemFirePropertyData.setDurableClientTimeout(config
-      .getDurableClientTimeout());
-    gemFirePropertyData.setSecurityClientAuthInit(config
-      .getSecurityClientAuthInit());
-    gemFirePropertyData.setSecurityClientAuthenticator(config
-      .getSecurityClientAuthenticator());
-    gemFirePropertyData.setSecurityClientDHAlgo(config
-      .getSecurityClientDHAlgo());
-    gemFirePropertyData.setSecurityPeerAuthInit(config
-      .getSecurityPeerAuthInit());
-    gemFirePropertyData.setSecurityPeerAuthenticator(config
-      .getSecurityPeerAuthenticator());
-    gemFirePropertyData.setSecurityClientAccessor(config
-      .getSecurityClientAccessor());
-    gemFirePropertyData.setSecurityClientAccessorPP(config
-      .getSecurityClientAccessorPP());
+    gemFirePropertyData.setDurableClientTimeout(config.getDurableClientTimeout());
+    gemFirePropertyData.setSecurityClientAuthInit(config.getSecurityClientAuthInit());
+    gemFirePropertyData.setSecurityClientAuthenticator(config.getSecurityClientAuthenticator());
+    gemFirePropertyData.setSecurityClientDHAlgo(config.getSecurityClientDHAlgo());
+    gemFirePropertyData.setSecurityPeerAuthInit(config.getSecurityPeerAuthInit());
+    gemFirePropertyData.setSecurityPeerAuthenticator(config.getSecurityPeerAuthenticator());
+    gemFirePropertyData.setSecurityClientAccessor(config.getSecurityClientAccessor());
+    gemFirePropertyData.setSecurityClientAccessorPP(config.getSecurityClientAccessorPP());
     gemFirePropertyData.setSecurityLogLevel(config.getSecurityLogLevel());
 
-    gemFirePropertyData.setSecurityLogFile(config.getSecurityLogFile()
-      .getAbsolutePath());
+    gemFirePropertyData.setSecurityLogFile(config.getSecurityLogFile().getAbsolutePath());
 
-    gemFirePropertyData.setSecurityPeerMembershipTimeout(config
-      .getSecurityPeerMembershipTimeout());
+    gemFirePropertyData.setSecurityPeerMembershipTimeout(config.getSecurityPeerMembershipTimeout());
 
-    gemFirePropertyData.setRemoveUnresponsiveClient(config
-      .getRemoveUnresponsiveClient());
+    gemFirePropertyData.setRemoveUnresponsiveClient(config.getRemoveUnresponsiveClient());
 
     gemFirePropertyData.setDeltaPropagation(config.getDeltaPropagation());
     gemFirePropertyData.setRedundancyZone(config.getRedundancyZone());
@@ -353,7 +319,6 @@ public class BeanUtilFuncs {
     return gemFirePropertyData;
 
   }
-
 
   /**
    * Compresses a given String. It is encoded using ISO-8859-1, So any

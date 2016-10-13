@@ -46,9 +46,8 @@ import org.apache.geode.test.dunit.VM;
  * @since GemFire 6.0
  */
 @Category(DistributedTest.class)
-public class PartitionedRegionMembershipListenerDUnitTest extends
-    RegionMembershipListenerDUnitTest {
-  
+public class PartitionedRegionMembershipListenerDUnitTest extends RegionMembershipListenerDUnitTest {
+
   private transient MyRML myPRListener;
   private transient Region prr; // root region
 
@@ -57,18 +56,13 @@ public class PartitionedRegionMembershipListenerDUnitTest extends
   }
 
   @Override
-  protected RegionAttributes createSubRegionAttributes(
-      CacheListener[] cacheListeners) {
+  protected RegionAttributes createSubRegionAttributes(CacheListener[] cacheListeners) {
     AttributesFactory af = new AttributesFactory();
     if (cacheListeners != null) {
       af.initCacheListeners(cacheListeners);
     }
-    af.setPartitionAttributes(
-        new PartitionAttributesFactory()
-        .setTotalNumBuckets(5)
-        .setRedundantCopies(0)
-        .create());
-    return af.create();   
+    af.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
+    return af.create();
   }
 
   @Override
@@ -86,18 +80,13 @@ public class PartitionedRegionMembershipListenerDUnitTest extends
   }
 
   @Override
-  protected void createRootRegionWithListener(final String rName)
-      throws CacheException {
+  protected void createRootRegionWithListener(final String rName) throws CacheException {
     super.createRootRegionWithListener(rName);
     int to = getOpTimeout();
     this.myPRListener = new MyRML(to);
     AttributesFactory af = new AttributesFactory();
-    af.initCacheListeners(new CacheListener[]{this.myPRListener});
-    af.setPartitionAttributes(
-        new PartitionAttributesFactory()
-        .setTotalNumBuckets(5)
-        .setRedundantCopies(0)
-        .create());
+    af.initCacheListeners(new CacheListener[] { this.myPRListener });
+    af.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
     this.prr = createRootRegion(rName + "-pr", af.create());
   }
 
@@ -109,11 +98,7 @@ public class PartitionedRegionMembershipListenerDUnitTest extends
     vm.invoke(new CacheSerializableRunnable("create PR root") {
       public void run2() throws CacheException {
         AttributesFactory af = new AttributesFactory();
-        af.setPartitionAttributes(
-            new PartitionAttributesFactory()
-            .setTotalNumBuckets(5)
-            .setRedundantCopies(0)
-            .create());
+        af.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
         createRootRegion(rName + "-pr", af.create());
       }
     });
@@ -125,10 +110,10 @@ public class PartitionedRegionMembershipListenerDUnitTest extends
     super.destroyRootOtherVm(rName);
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("local destroy PR root") {
-        public void run2() throws CacheException {
-          getRootRegion(rName + "-pr").localDestroyRegion();
-        }
-      });
+      public void run2() throws CacheException {
+        getRootRegion(rName + "-pr").localDestroyRegion();
+      }
+    });
   }
 
   @Override
@@ -136,10 +121,10 @@ public class PartitionedRegionMembershipListenerDUnitTest extends
     super.closeRootOtherVm(rName);
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("close PR root") {
-        public void run2() throws CacheException {
-          getRootRegion(rName + "-pr").close();
-        }
-      });
+      public void run2() throws CacheException {
+        getRootRegion(rName + "-pr").close();
+      }
+    });
   }
 
   @Override
@@ -154,6 +139,5 @@ public class PartitionedRegionMembershipListenerDUnitTest extends
     assertTrue(this.myPRListener.lastOpWasDeparture());
     assertEventStuff(this.myPRListener.getLastEvent(), this.otherId, this.prr);
   }
-  
-  
+
 }

@@ -29,6 +29,7 @@ public interface CacheLifecycleListener {
    * Invoked when a new <code>GemFireCache</code> is created
    */
   public void cacheCreated(GemFireCacheImpl cache);
+
   /**
    * Invoked when a <code>GemFireCache</code> is closed
    */

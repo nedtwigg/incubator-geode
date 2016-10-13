@@ -23,8 +23,8 @@ package org.apache.geode.cache.query;
  */
 
 public class NameResolutionException extends QueryException {
-private static final long serialVersionUID = -7409771357534316562L;
-  
+  private static final long serialVersionUID = -7409771357534316562L;
+
   /**
    * Constructs a NameResolutionException
    * @param msg the error message
@@ -32,7 +32,7 @@ private static final long serialVersionUID = -7409771357534316562L;
   public NameResolutionException(String msg) {
     super(msg);
   }
-    
+
   /**
    * Constructs a NameResolutionException
    * @param msg the error message
@@ -41,6 +41,5 @@ private static final long serialVersionUID = -7409771357534316562L;
   public NameResolutionException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
-  
+
 }

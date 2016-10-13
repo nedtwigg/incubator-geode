@@ -29,7 +29,7 @@ import org.apache.geode.management.internal.beans.stats.StatsRate;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
-public class StatsRateJUnitTest  {
+public class StatsRateJUnitTest {
 
   private Long SINGLE_STATS_LONG_COUNTER = null;
   private Integer SINGLE_STATS_INT_COUNTER = null;
@@ -120,7 +120,7 @@ public class StatsRateJUnitTest  {
 
     assertEquals(expectedRate, actualRate, 0);
   }
-  
+
   private class TestMBeanStatsMonitor extends MBeanStatsMonitor {
 
     public TestMBeanStatsMonitor(String name) {

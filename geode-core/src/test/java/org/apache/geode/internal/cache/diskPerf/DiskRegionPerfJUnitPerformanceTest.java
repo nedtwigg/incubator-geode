@@ -78,11 +78,9 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       dirs[3] = file4;
 
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache,
-          diskProps);
+      region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache, diskProps);
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("Failed in testOverflowSync1 ");
     }
@@ -95,7 +93,7 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     // stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
     deleteFiles();
-   
+
   } //end of testOverflowSync1
 
   @Test
@@ -122,25 +120,22 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       diskProps.setTimeInterval(15000l);
       diskProps.setBytesThreshold(10000l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testOverflowASyncWithBuffer2 ");
     }
     //Perf test for 1kb writes
     populateData();
-    System.out.println("OverflowASyncWithBuffer2:: Stats for 1 kb writes :"
-        + stats);
+    System.out.println("OverflowASyncWithBuffer2:: Stats for 1 kb writes :" + stats);
     //Perf test for 1kb writes. Puting values on the same KEY
     // populateDataPutOnSameKey();
     // System.out.println("OverflowASyncWithBuffer2:: Stats for 1 kb writes :"+
     // stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
-     deleteFiles();
-    
-     } //end of testOverflowASyncWithBuffer2
+    deleteFiles();
+
+  } //end of testOverflowASyncWithBuffer2
 
   @Test
   public void testOverflowASyncWithoutBuffer3() {
@@ -167,25 +162,21 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       diskProps.setTimeInterval(1000l);
       diskProps.setBytesThreshold(0l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testOverflowASyncWithoutBuffer3");
     }
     //Perf test for 1kb writes
     populateData();
-    System.out
-        .println("OverflowASyncWITHOUTBuffer3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
-            + stats);
+    System.out.println("OverflowASyncWITHOUTBuffer3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
     // Perf test for 1kb writes. Puting values on the same KEY
     // populateDataPutOnSameKey();
     // System.out.println("OverflowASyncWITHOUTBuffer3:: Stats for 1 kb writes
     // :"+ stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
     deleteFiles();
-    
+
   } //end of testOverflowASyncWithoutBuffer3
 
   @Test
@@ -210,10 +201,8 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       dirs[2] = file3;
       dirs[3] = file4;
 
-      region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache,
-          diskProps, Scope.LOCAL);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testpersistSync4");
     }
@@ -227,7 +216,7 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     //  Deleting all the files and logs created during the test...
     deleteFiles();
     //closeDown();
-    
+
   } //end of testPersistSync4
 
   @Test
@@ -254,17 +243,14 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
 
       diskProps.setTimeInterval(15000l);
       diskProps.setBytesThreshold(10000l);
-      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testpersistASyncWithBuffer5");
     }
     //Perf test for 1kb writes
     populateData();
-    System.out.println("PersistASyncWithBuffer5:: Stats for 1 kb writes :"
-        + stats);
+    System.out.println("PersistASyncWithBuffer5:: Stats for 1 kb writes :" + stats);
     //Perf test for 1kb writes. Puting values on the same KEY
     //  populateDataPutOnSameKey();
     // System.out.println("OverflowASyncWithBuffer5:: Stats for 1 kb writes :"+
@@ -272,7 +258,7 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     //  Deleting all the files and logs created during the test...
     deleteFiles();
     //closeDown();
-    
+
   } //end of testPersistASyncWithBuffer5
 
   @Test
@@ -291,7 +277,7 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       File file4 = new File("testPersistASyncWithoutBuffer6Dir4");
       file4.mkdir();
       file4.deleteOnExit();
-      dirs = new File[4];      
+      dirs = new File[4];
       dirs[0] = file1;
       dirs[1] = file2;
       dirs[2] = file3;
@@ -299,18 +285,14 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
 
       diskProps.setTimeInterval(15000l);
       diskProps.setBytesThreshold(0l);
-      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistASyncWithoutBuffer6");
     }
     //Perf test for 1kb writes
     populateData();
-    System.out
-        .println("PersistASyncWITHOUTBuffer6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
-            + stats);
+    System.out.println("PersistASyncWITHOUTBuffer6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
     // Perf test for 1kb writes. Puting values on the same KEY
     //  populateDataPutOnSameKey();
     // System.out.println("OverflowASyncWITHOUTBuffer6:: Stats for 1 kb writes
@@ -318,8 +300,7 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     //  Deleting all the files and logs created during the test...
     deleteFiles();
     //closeDown();    
-    
-    
+
   } //end of testPersistASyncWithoutBuffer
 
   @Test
@@ -345,17 +326,14 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       dirs[3] = file4;
 
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistOverflowSync7 ");
     }
     //Perf test for 1kb writes
     populateData();
-    System.out.println("PersistOverflowWithSync7:: Stats for 1 kb writes :"
-        + stats);
+    System.out.println("PersistOverflowWithSync7:: Stats for 1 kb writes :" + stats);
     //Perf test for 1kb writes. Puting values on the same KEY
     // populateDataPutOnSameKey();
     //System.out.println("PersistOverflowWithSync7:: Stats for 1 kb writes :"+
@@ -363,7 +341,7 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     //  Deleting all the files and logs created during the test...
     deleteFiles();
     //closeDown();
-    
+
   } //end of testPersistOverflowSync
 
   @Test
@@ -391,26 +369,22 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       diskProps.setTimeInterval(15000l);
       diskProps.setBytesThreshold(10000l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistOverflowASyncWithBuffer8");
     }
     //Perf test for 1kb writes
     populateData();
-    System.out
-        .println("PersistOverflowASyncWithBuffer8:: Stats for 1 kb writes :"
-            + stats);
+    System.out.println("PersistOverflowASyncWithBuffer8:: Stats for 1 kb writes :" + stats);
     //Perf test for 1kb writes. Puting values on the same KEY
     // populateDataPutOnSameKey();
     //System.out.println("PersistOverflowASyncWithBuffer8:: Stats for 1 kb
     // writes :"+ stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
     deleteFiles();
-   // closeDown();
-    
+    // closeDown();
+
   } //end of testpersistOverflowASyncWithBuffer8
 
   @Test
@@ -438,18 +412,14 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       diskProps.setTimeInterval(15000l);
       diskProps.setBytesThreshold(0l);
       diskProps.setOverFlowCapacity(1000);
-      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache,
-          diskProps);
-    }
-    catch (Exception e) {
+      region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskProps);
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed in testPersistOverflowASyncWithoutBuffer9");
     }
     //Perf test for 1kb writes
     populateData();
-    System.out
-        .println("Persist-OverflowASyncWITHOUTBuffer9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
-            + stats);
+    System.out.println("Persist-OverflowASyncWITHOUTBuffer9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
     // Perf test for 1kb writes. Puting values on the same KEY
     //populateDataPutOnSameKey();
     //System.out.println("Persist-OverflowASyncWITHOUTBuffer9:: Stats for 1 kb
@@ -457,11 +427,11 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     //  Deleting all the files and logs created during the test...
     deleteFiles();
     //closeDown();
-    
+
   } //end of testPersistOverflowASyncWithoutBuffer9
 
   public static int ENTRY_SIZE = 1024;
-  
+
   /**
    *  OP_COUNT can be increased/decrease as per the requirement.
    * If required to be set as higher value such as 1000000
@@ -475,9 +445,9 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
   public void populateData() {
     //Put for validation.
     putForValidation(region);
-    
+
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
+    Arrays.fill(value, (byte) 77);
     long startTime = System.currentTimeMillis();
     for (int i = 0; i < OP_COUNT; i++) {
       region.put("" + i, value);
@@ -485,41 +455,37 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     }
     long endTime = System.currentTimeMillis();
     System.out.println(" done with putting");
-//  validate put operation
+    //  validate put operation
     validatePut(region);
     region.destroyRegion();// closes disk file which will flush all buffers
     float et = endTime - startTime;
     float etSecs = et / 1000f;
     float opPerSec = etSecs == 0 ? 0 : (OP_COUNT / (et / 1000f));
-    float bytesPerSec = etSecs == 0 ? 0
-        : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
-    stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec="
-        + bytesPerSec;
+    float bytesPerSec = etSecs == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
+    stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec=" + bytesPerSec;
     log = ds.getLogWriter();
     log.info(stats);
   }
 
   public void populateDataPutOnSameKey() {
-//  Put for validation.
+    //  Put for validation.
     putForValidation(region);
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
+    Arrays.fill(value, (byte) 77);
     long startTime = System.currentTimeMillis();
     for (int i = 0; i < OP_COUNT; i++) {
       region.put("K", value);
     }
     long endTime = System.currentTimeMillis();
     System.out.println(" done with putting");
-//  validate put operation
+    //  validate put operation
     validatePut(region);
     region.close(); // closes disk file which will flush all buffers
     float et = endTime - startTime;
     float etSecs = et / 1000f;
     float opPerSec = etSecs == 0 ? 0 : (OP_COUNT / (et / 1000f));
-    float bytesPerSec = etSecs == 0 ? 0
-        : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
-    stats_ForSameKeyputs = "et=" + et + "ms writes/sec=" + opPerSec
-        + " bytes/sec=" + bytesPerSec;
+    float bytesPerSec = etSecs == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (et / 1000f));
+    stats_ForSameKeyputs = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec=" + bytesPerSec;
     log = ds.getLogWriter();
     log.info(stats_ForSameKeyputs);
   }

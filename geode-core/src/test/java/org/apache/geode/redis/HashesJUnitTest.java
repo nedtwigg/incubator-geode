@@ -79,7 +79,7 @@ public class HashesJUnitTest {
     }
     Set<String> keys = hash.keySet();
     Long count = 1L;
-    for (String field: keys) {
+    for (String field : keys) {
       Long res = jedis.hset(key, field, hash.get(field));
       assertTrue(res == 1L);
       assertEquals(count++, jedis.hlen(key));
@@ -149,8 +149,7 @@ public class HashesJUnitTest {
     assertTrue(response2 == incr);
 
     long response3 = jedis.hincrBy(key, field, incr);
-    assertTrue(response3 == 2*incr);
-
+    assertTrue(response3 == 2 * incr);
 
     String field1 = randString();
     Exception ex = null;

@@ -34,7 +34,6 @@ import org.apache.geode.internal.concurrent.CompactConcurrentHashSet2;
  */
 public class IndexConcurrentHashSet<E> extends CompactConcurrentHashSet2<E> {
 
-  
   public IndexConcurrentHashSet() {
     super();
   }
@@ -43,8 +42,7 @@ public class IndexConcurrentHashSet<E> extends CompactConcurrentHashSet2<E> {
     super(m);
   }
 
-  public IndexConcurrentHashSet(int initialCapacity, float loadFactor,
-      int concurrencyLevel) {
+  public IndexConcurrentHashSet(int initialCapacity, float loadFactor, int concurrencyLevel) {
     super(initialCapacity, loadFactor, concurrencyLevel);
   }
 
@@ -65,13 +63,13 @@ public class IndexConcurrentHashSet<E> extends CompactConcurrentHashSet2<E> {
    * 
    * Note: This has been modified for GemFire Indexes.
    */
-//  @Override
-//  public int size() {
-//    long trueSize = mappingCount();
-//    if (trueSize > Integer.MAX_VALUE) {
-//      return Integer.MAX_VALUE;
-//    } else {
-//      return (int)trueSize;
-//    }
-//  }
+  //  @Override
+  //  public int size() {
+  //    long trueSize = mappingCount();
+  //    if (trueSize > Integer.MAX_VALUE) {
+  //      return Integer.MAX_VALUE;
+  //    } else {
+  //      return (int)trueSize;
+  //    }
+  //  }
 }

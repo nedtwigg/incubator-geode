@@ -66,8 +66,7 @@ public class IndexElemArray implements Iterable, Collection {
       }
       // minCapacity is usually close to size, so this is a win:
       Object[] newElementData = new Object[newCapacity];
-      System.arraycopy(this.elementData, 0, newElementData, 0,
-          this.elementData.length);
+      System.arraycopy(this.elementData, 0, newElementData, 0, this.elementData.length);
       elementData = newElementData;
     }
   }
@@ -292,7 +291,7 @@ public class IndexElemArray implements Iterable, Collection {
         len = size;
       }
     }
-    
+
     /**
      * Checks if the array has next element, stores reference to the current
      * element and increments cursor. This is required since an element may be
@@ -323,34 +322,29 @@ public class IndexElemArray implements Iterable, Collection {
 
     @Override
     public void remove() {
-      throw new UnsupportedOperationException(
-          "remove() method is not supported");
+      throw new UnsupportedOperationException("remove() method is not supported");
     }
 
   }
 
   @Override
   public Object[] toArray(Object[] a) {
-    throw new UnsupportedOperationException(
-        "toArray(Object[] a) method is not supported");
+    throw new UnsupportedOperationException("toArray(Object[] a) method is not supported");
   }
 
   @Override
   public boolean containsAll(Collection c) {
-    throw new UnsupportedOperationException(
-        "containsAll() method is not supported");
+    throw new UnsupportedOperationException("containsAll() method is not supported");
   }
 
   @Override
   public boolean removeAll(Collection c) {
-    throw new UnsupportedOperationException(
-        "removeAll() method is not supported");
+    throw new UnsupportedOperationException("removeAll() method is not supported");
   }
 
   @Override
   public boolean retainAll(Collection c) {
-    throw new UnsupportedOperationException(
-        "retainAll() method is not supported");
+    throw new UnsupportedOperationException("retainAll() method is not supported");
   }
 
   //for internal testing only

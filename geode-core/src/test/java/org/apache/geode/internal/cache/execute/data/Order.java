@@ -51,12 +51,12 @@ public class Order implements DataSerializable {
   }
 
   public boolean equals(Object obj) {
-    if(this == obj)
+    if (this == obj)
       return true;
-    
-    if(obj instanceof Order){
-      Order other = (Order)obj;
-      if(other.orderName != null && other.orderName.equals(this.orderName)){
+
+    if (obj instanceof Order) {
+      Order other = (Order) obj;
+      if (other.orderName != null && other.orderName.equals(this.orderName)) {
         return true;
       }
     }

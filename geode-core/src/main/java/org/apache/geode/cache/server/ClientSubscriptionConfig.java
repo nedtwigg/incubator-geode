@@ -67,22 +67,22 @@ package org.apache.geode.cache.server;
  */
 
 public interface ClientSubscriptionConfig {
-  
+
   /**
    * The default limit that is assigned to client subscription.
    */
   public static final int DEFAULT_CAPACITY = 1;
-  
+
   /**
    * The default eviction policy that is assigned to client subscription.
    */
   public static final String DEFAULT_EVICTION_POLICY = "none";
-  
+
   /**
    * The default overflow directory that is assigned to client subscription.
    */
   public static final String DEFAULT_OVERFLOW_DIRECTORY = ".";
-  
+
   /**
    * Returns the capacity of the client queue.
    * will be in MB for eviction-policy <b>mem</b> else
@@ -132,6 +132,7 @@ public interface ClientSubscriptionConfig {
    * @deprecated as of 6.5 use {@link #getDiskStoreName} instead
    */
   public String getOverflowDirectory();
+
   /**
    * Sets the disk store name for overflow  
    * @param diskStoreName 

@@ -65,9 +65,11 @@ public class IndexCommandsJUnitTest {
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {{
-      setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    mockContext = new Mockery() {
+      {
+        setImposteriser(ClassImposteriser.INSTANCE);
+      }
+    };
   }
 
   @After
@@ -103,13 +105,15 @@ public class IndexCommandsJUnitTest {
     results.add(CollectionUtils.asSet(indexDetails2, indexDetails1));
     results.add(CollectionUtils.asSet(indexDetails3));
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(ListIndexFunction.class)));
-      will(returnValue(mockResultCollector));
-      oneOf(mockResultCollector).getResult();
-      will(returnValue(results));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(ListIndexFunction.class)));
+        will(returnValue(mockResultCollector));
+        oneOf(mockResultCollector).getResult();
+        will(returnValue(results));
+      }
+    });
 
     final IndexCommands commands = createIndexCommands(mockCache, mockFunctionExecutor);
 
@@ -125,17 +129,18 @@ public class IndexCommandsJUnitTest {
 
     final Execution mockFunctionExecutor = mockContext.mock(Execution.class, "Function Executor");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(ListIndexFunction.class)));
-      will(throwException(new RuntimeException("expected")));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(ListIndexFunction.class)));
+        will(throwException(new RuntimeException("expected")));
+      }
+    });
 
     final IndexCommands commands = createIndexCommands(mockCache, mockFunctionExecutor);
 
     try {
       commands.getIndexListing();
-    }
-    catch (RuntimeException expected) {
+    } catch (RuntimeException expected) {
       assertEquals("expected", expected.getMessage());
       throw expected;
     }
@@ -158,13 +163,15 @@ public class IndexCommandsJUnitTest {
     results.add(CollectionUtils.asSet(indexDetails));
     results.add(new FunctionInvocationTargetException("expected"));
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
-      oneOf(mockFunctionExecutor).execute(with(aNonNull(ListIndexFunction.class)));
-      will(returnValue(mockResultCollector));
-      oneOf(mockResultCollector).getResult();
-      will(returnValue(results));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockFunctionExecutor).setIgnoreDepartedMembers(with(equal(true)));
+        oneOf(mockFunctionExecutor).execute(with(aNonNull(ListIndexFunction.class)));
+        will(returnValue(mockResultCollector));
+        oneOf(mockResultCollector).getResult();
+        will(returnValue(results));
+      }
+    });
 
     final IndexCommands commands = createIndexCommands(mockCache, mockFunctionExecutor);
 

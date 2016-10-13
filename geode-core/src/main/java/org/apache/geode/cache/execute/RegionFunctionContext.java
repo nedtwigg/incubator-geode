@@ -66,5 +66,5 @@ public interface RegionFunctionContext extends FunctionContext {
    * @since GemFire 6.0
    */
   public <K, V> Region<K, V> getDataSet();
-  
+
 }

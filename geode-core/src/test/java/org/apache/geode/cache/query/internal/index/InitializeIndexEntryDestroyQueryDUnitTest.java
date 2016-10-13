@@ -72,22 +72,25 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
 
   final Portfolio portfolio = new Portfolio(1, 1);
 
-  private int cnt=0;
+  private int cnt = 0;
 
-  private int cntDest=100;
+  private int cntDest = 100;
 
   volatile static boolean hooked = false;
+
   /**
    * @param name
    */
   public InitializeIndexEntryDestroyQueryDUnitTest() {
     super();
   }
+
   public void setCacheInVMs(VM... vms) {
     for (VM vm : vms) {
       vm.invoke(() -> PRQueryDUnitHelper.setCache(getCache()));
     }
   }
+
   @Test
   public void testAsyncIndexInitDuringEntryDestroyAndQuery() {
     Host host = Host.getHost(0);
@@ -112,28 +115,25 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
         }
         assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
         assertNotNull("Region ref null", localRegion);
-        assertTrue("Region ref claims to be destroyed",
-            !localRegion.isDestroyed());
+        assertTrue("Region ref claims to be destroyed", !localRegion.isDestroyed());
       }
     });
 
-
     final PortfolioData[] portfolio = createPortfolioData(cnt, cntDest);
     // Putting the data into the PR's created
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio,
-        cnt, cntDest));
- 
+    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, cnt, cntDest));
+
     AsyncInvocation asyInvk0 = vm0.invokeAsync(new CacheSerializableRunnable("Create Index with Hook") {
 
       @Override
       public void run2() throws CacheException {
 
-        for (int i=0; i<cntDest; i++) {
+        for (int i = 0; i < cntDest; i++) {
           //Create Index first to go in hook.
           Cache cache = getCache();
           Index index = null;
           try {
-            index = cache.getQueryService().createIndex("statusIndex", "p.status", "/"+name+" p");
+            index = cache.getQueryService().createIndex("statusIndex", "p.status", "/" + name + " p");
           } catch (Exception e1) {
             e1.printStackTrace();
             fail("Index creation failed");
@@ -157,9 +157,9 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
         // Do a put in region.
         Region r = getCache().getRegion(name);
 
-        for (int i=0, j=0; i<1000; i++,j++) {
+        for (int i = 0, j = 0; i < 1000; i++, j++) {
 
-          PortfolioData p = (PortfolioData)r.get(j);
+          PortfolioData p = (PortfolioData) r.get(j);
 
           getCache().getLogger().fine("Going to destroy the value" + p);
           r.destroy(j);
@@ -171,8 +171,8 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
           r.put(j, p);
 
           //Reset j
-          if (j==cntDest-1) {
-            j=0;
+          if (j == cntDest - 1) {
+            j = 0;
           }
         }
       }
@@ -185,17 +185,16 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
         // Do a put in region.
         Region r = getCache().getRegion(name);
 
-        Query query = getCache().getQueryService().newQuery("select * from /"+name+" p where p.status = 'active'");
+        Query query = getCache().getQueryService().newQuery("select * from /" + name + " p where p.status = 'active'");
 
         //Now run the query
         SelectResults results = null;
 
-
-        for (int i=0; i<500; i++) {
+        for (int i = 0; i < 500; i++) {
 
           try {
             getCache().getLogger().fine("Querying the region");
-            results = (SelectResults)query.execute();
+            results = (SelectResults) query.execute();
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -208,12 +207,12 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
         }
       }
     });
-    
+
     ThreadUtils.join(asyInvk0, 1000 * 1000);
     if (asyInvk0.exceptionOccurred()) {
       Assert.fail("asyInvk0 failed", asyInvk0.getException());
     }
-    
+
     ThreadUtils.join(asyInvk1, 1000 * 1000);
     if (asyInvk1.exceptionOccurred()) {
       Assert.fail("asyInvk1 failed", asyInvk1.getException());
@@ -249,22 +248,20 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
       }
     });
 
-
     final PortfolioData[] portfolio = createPortfolioData(cnt, cntDest);
     // Putting the data into the PR's created
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio,
-        cnt, cntDest));
+    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, cnt, cntDest));
 
     AsyncInvocation asyInvk0 = vm0.invokeAsync(new CacheSerializableRunnable("Create Index with Hook") {
 
       @Override
       public void run2() throws CacheException {
-        for (int i=0; i<cntDest; i++) {
+        for (int i = 0; i < cntDest; i++) {
           //Create Index first to go in hook.
           Cache cache = getCache();
           Index index = null;
           try {
-            index = cache.getQueryService().createIndex("statusIndex", "p.status", "/"+name+" p");
+            index = cache.getQueryService().createIndex("statusIndex", "p.status", "/" + name + " p");
           } catch (Exception e1) {
             e1.printStackTrace();
             Assert.fail("Index creation failed", e1);
@@ -285,9 +282,9 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
         // Do a put in region.
         Region r = getCache().getRegion(name);
 
-        for (int i=0, j=0; i<1000; i++,j++) {
+        for (int i = 0, j = 0; i < 1000; i++, j++) {
 
-          PortfolioData p = (PortfolioData)r.get(j);
+          PortfolioData p = (PortfolioData) r.get(j);
 
           getCache().getLogger().fine("Going to destroy the value" + p);
           r.destroy(j);
@@ -299,8 +296,8 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
           r.put(j, p);
 
           //Reset j
-          if (j==cntDest-1) {
-            j=0;
+          if (j == cntDest - 1) {
+            j = 0;
           }
         }
       }
@@ -311,17 +308,16 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
       @Override
       public void run2() throws CacheException {
         // Do a put in region.
-        Query query = getCache().getQueryService().newQuery("select * from /"+name+" p where p.status = 'active'");
+        Query query = getCache().getQueryService().newQuery("select * from /" + name + " p where p.status = 'active'");
 
         //Now run the query
         SelectResults results = null;
 
-
-        for (int i=0; i<500; i++) {
+        for (int i = 0; i < 500; i++) {
 
           try {
             getCache().getLogger().fine("Querying the region");
-            results = (SelectResults)query.execute();
+            results = (SelectResults) query.execute();
           } catch (Exception e) {
             e.printStackTrace(); // TODO: eats exceptions
           }
@@ -339,7 +335,7 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
     if (asyInvk0.exceptionOccurred()) {
       Assert.fail("asyInvk0 failed", asyInvk0.getException());
     }
-    
+
     ThreadUtils.join(asyInvk1, 1000 * 1000); // TODO: this is way too long: 16.67 minutes!
     if (asyInvk1.exceptionOccurred()) {
       Assert.fail("asyInvk1 failed", asyInvk1.getException());
@@ -370,11 +366,9 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
         }
         assertNotNull("Region " + name + " not in cache", cache.getRegion(name));
         assertNotNull("Region ref null", partitionRegion);
-        assertTrue("Region ref claims to be destroyed",
-            !partitionRegion.isDestroyed());
+        assertTrue("Region ref claims to be destroyed", !partitionRegion.isDestroyed());
       }
     });
-
 
     final PortfolioData[] portfolio = createPortfolioData(cnt, cntDest);
     // Putting the data into the PR's created
@@ -385,22 +379,22 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
       @Override
       public void run2() throws CacheException {
 
-          //Create Index first to go in hook.
-          Cache cache = getCache();
-          Index sindex = null;
-          Index iindex = null;
-          Index pkindex = null;
-          try {
-            sindex = cache.getQueryService().createIndex("statusIndex", "p.status", "/" + name + " p");
-            iindex = cache.getQueryService().createIndex("idIndex", "p.ID", "/" + name + " p");
-            pkindex = cache.getQueryService().createIndex("pkidIndex", "p.pk", "/" + name + " p");
-          } catch (Exception e1) {
-            e1.printStackTrace();
-            fail("Index creation failed");
-          }
-          assertNotNull(sindex);
-          assertNotNull(iindex);
-          assertNotNull(pkindex);        
+        //Create Index first to go in hook.
+        Cache cache = getCache();
+        Index sindex = null;
+        Index iindex = null;
+        Index pkindex = null;
+        try {
+          sindex = cache.getQueryService().createIndex("statusIndex", "p.status", "/" + name + " p");
+          iindex = cache.getQueryService().createIndex("idIndex", "p.ID", "/" + name + " p");
+          pkindex = cache.getQueryService().createIndex("pkidIndex", "p.pk", "/" + name + " p");
+        } catch (Exception e1) {
+          e1.printStackTrace();
+          fail("Index creation failed");
+        }
+        assertNotNull(sindex);
+        assertNotNull(iindex);
+        assertNotNull(pkindex);
       }
     });
 
@@ -409,15 +403,15 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
       @Override
       public void run2() throws CacheException {
         // Do a put in region.
-        Query query = getCache().getQueryService().newQuery("select * from /"+name+" p where p.status = 'active' and p.ID > 0 and p.pk != ' ' ");
+        Query query = getCache().getQueryService().newQuery("select * from /" + name + " p where p.status = 'active' and p.ID > 0 and p.pk != ' ' ");
         //Now run the query
         SelectResults results = null;
 
-        for (int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
 
           try {
             getCache().getLogger().fine("Querying the region with " + query);
-            results = (SelectResults)query.execute();
+            results = (SelectResults) query.execute();
           } catch (Exception e) {
             Assert.fail("Query: " + query + " execution failed with exception", e);
           }
@@ -430,7 +424,7 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
         }
       }
     });
-    
+
     vm0.invoke(new CacheSerializableRunnable("Create Index") {
 
       @Override
@@ -438,9 +432,8 @@ public class InitializeIndexEntryDestroyQueryDUnitTest extends JUnit4CacheTestCa
 
         Region r = getCache().getRegion(name);
 
-          //Create Index first to go in hook.
-          getCache().getQueryService().removeIndexes(r);
-
+        //Create Index first to go in hook.
+        getCache().getQueryService().removeIndexes(r);
 
       }
     });

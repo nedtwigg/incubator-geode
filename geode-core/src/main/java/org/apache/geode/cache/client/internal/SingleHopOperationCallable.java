@@ -22,6 +22,7 @@ import org.apache.geode.cache.client.AllConnectionsInUseException;
 import org.apache.geode.cache.client.internal.ExecuteRegionFunctionOp.ExecuteRegionFunctionOpImpl;
 import org.apache.geode.cache.client.internal.ExecuteRegionFunctionSingleHopOp.ExecuteRegionFunctionSingleHopOpImpl;
 import org.apache.geode.distributed.internal.ServerLocation;
+
 /**
  * 
  *
@@ -36,8 +37,7 @@ public class SingleHopOperationCallable implements Callable {
 
   final private UserAttributes securityAttributes;
 
-  public SingleHopOperationCallable(ServerLocation server, PoolImpl pool,
-      AbstractOp op, UserAttributes securityAttributes) {
+  public SingleHopOperationCallable(ServerLocation server, PoolImpl pool, AbstractOp op, UserAttributes securityAttributes) {
     this.server = server;
     this.pool = pool;
     this.op = op;
@@ -47,37 +47,33 @@ public class SingleHopOperationCallable implements Callable {
   public Object call() throws Exception {
     op.initMessagePart();
     Object result = null;
-    boolean onlyUseExistingCnx = ((pool.getMaxConnections() != -1 && pool
-        .getConnectionCount() >= pool.getMaxConnections()) ? true : false);
-    op.setAllowDuplicateMetadataRefresh(! onlyUseExistingCnx);
+    boolean onlyUseExistingCnx = ((pool.getMaxConnections() != -1 && pool.getConnectionCount() >= pool.getMaxConnections()) ? true : false);
+    op.setAllowDuplicateMetadataRefresh(!onlyUseExistingCnx);
     try {
       UserAttributes.userAttributes.set(securityAttributes);
       result = this.pool.executeOn(server, op, true, onlyUseExistingCnx);
-    }
-    catch (AllConnectionsInUseException ex) {
+    } catch (AllConnectionsInUseException ex) {
       // if we reached connection limit and don't have available connection to
       // that server,then execute function on one of the connections available
       // from other servers instead of creating new connection to the original
       // server
-      if (op instanceof ExecuteRegionFunctionSingleHopOpImpl){
-        ExecuteRegionFunctionSingleHopOpImpl newop = (ExecuteRegionFunctionSingleHopOpImpl)op;
+      if (op instanceof ExecuteRegionFunctionSingleHopOpImpl) {
+        ExecuteRegionFunctionSingleHopOpImpl newop = (ExecuteRegionFunctionSingleHopOpImpl) op;
         result = this.pool.execute(new ExecuteRegionFunctionOpImpl(newop));
-      }else {
+      } else {
         result = this.pool.execute(this.op);
       }
-    }
-    finally {
+    } finally {
       UserAttributes.userAttributes.set(null);
     }
     return result;
   }
-  
+
   public ServerLocation getServer() {
     return this.server;
   }
-  
+
   public AbstractOp getOperation() {
     return this.op;
   }
 }
-

@@ -86,10 +86,10 @@ public abstract class DiskRegionTestingBase {
     File testingDirectory = new File("testingDirectory");
     testingDirectory.mkdir();
     testingDirectory.deleteOnExit();
-    failureCause ="";
+    failureCause = "";
     testFailed = false;
     cache = createCache();
-    
+
     File file1 = new File("testingDirectory/" + name.getMethodName() + "1");
     file1.mkdir();
     file1.deleteOnExit();
@@ -133,26 +133,24 @@ public abstract class DiskRegionTestingBase {
     try {
       if (cache != null && !cache.isClosed()) {
         for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext();) {
-          Region root = (Region)itr.next();
-          if(root.isDestroyed() || root instanceof HARegion) {
+          Region root = (Region) itr.next();
+          if (root.isDestroyed() || root instanceof HARegion) {
             continue;
           }
           try {
             logWriter.info("<ExpectedException action=add>RegionDestroyedException</ExpectedException>");
             root.localDestroyRegion("teardown");
             logWriter.info("<ExpectedException action=remove>RegionDestroyedException</ExpectedException>");
-          } 
-          catch (RegionDestroyedException e) {
+          } catch (RegionDestroyedException e) {
             // ignore
           }
         }
       }
-      
+
       for (DiskStoreImpl dstore : ((GemFireCacheImpl) cache).listDiskStoresIncludingRegionOwned()) {
         dstore.waitForClose();
       }
-    }
-    finally {
+    } finally {
       closeCache();
     }
     ds.disconnect();
@@ -175,7 +173,7 @@ public abstract class DiskRegionTestingBase {
     logWriter = cache.getLogger();
     return cache;
   }
-  
+
   /** Close the cache */
   private static synchronized final void closeCache() {
     if (cache != null) {
@@ -221,8 +219,8 @@ public abstract class DiskRegionTestingBase {
             }
           }
         }
-        if (cnt>=3) {
-          throw new RuntimeException("Error deleting file "+files[j], ioe);            
+        if (cnt >= 3) {
+          throw new RuntimeException("Error deleting file " + files[j], ioe);
         }
       }
     }
@@ -230,7 +228,7 @@ public abstract class DiskRegionTestingBase {
 
   protected static void closeDiskStores() {
     if (cache != null) {
-      ((GemFireCacheImpl)cache).closeDiskStores();
+      ((GemFireCacheImpl) cache).closeDiskStores();
     }
   }
 
@@ -243,8 +241,8 @@ public abstract class DiskRegionTestingBase {
       if (!region.isDestroyed()) {
         region.destroyRegion();
       }
-    } catch(Exception e) {
-      this.logWriter.error("DiskRegionTestingBase::closeDown:Exception in destroyiong the region",e);
+    } catch (Exception e) {
+      this.logWriter.error("DiskRegionTestingBase::closeDown:Exception in destroyiong the region", e);
     }
   }
 
@@ -260,10 +258,10 @@ public abstract class DiskRegionTestingBase {
   protected void verify100Int() {
     verify100Int(true);
   }
-  
+
   protected void verify100Int(boolean verifySize) {
     if (verifySize) {
-      assertEquals(100,region.size());
+      assertEquals(100, region.size());
     }
     for (int i = 0; i < 100; i++) {
       Integer key = new Integer(i);
@@ -295,32 +293,31 @@ public abstract class DiskRegionTestingBase {
    */
   protected void validatePut(Region region) {
     // flush data to disk
-    ((LocalRegion)region).getDiskRegion().flushForTesting();
+    ((LocalRegion) region).getDiskRegion().flushForTesting();
     try {
-      ((LocalRegion)region).getValueOnDisk("testKey");
-    }
-    catch (Exception ex) {
+      ((LocalRegion) region).getValueOnDisk("testKey");
+    } catch (Exception ex) {
       ex.printStackTrace();
       fail("Failed to get the value on disk");
     }
   }
-  
+
   protected HashMap<String, VersionTag> saveVersionTags(LocalRegion region) {
     HashMap<String, VersionTag> tagmap = new HashMap<String, VersionTag>();
     Iterator entryItr = region.entrySet().iterator();
     while (entryItr.hasNext()) {
-      RegionEntry entry = ((NonTXEntry)entryItr.next()).getRegionEntry();
-      String key = (String)entry.getKey();
+      RegionEntry entry = ((NonTXEntry) entryItr.next()).getRegionEntry();
+      String key = (String) entry.getKey();
       VersionTag tag = entry.getVersionStamp().asVersionTag();
       tagmap.put(key, tag);
     }
     return tagmap;
   }
-  
+
   protected void compareVersionTags(HashMap<String, VersionTag> map1, HashMap<String, VersionTag> map2) {
     assertEquals(map1.size(), map2.size());
-    
-    for (String key: map1.keySet()) {
+
+    for (String key : map1.keySet()) {
       VersionTag tag1 = map1.get(key);
       VersionTag tag2 = map2.get(key);
       assertEquals(tag1.getEntryVersion(), tag2.getEntryVersion());
@@ -346,13 +343,13 @@ public abstract class DiskRegionTestingBase {
     assertTrue(ds != null);
     assertTrue(lr.getAttributes().isDiskSynchronous() == drp.isSynchronous());
     assertTrue(ds.getAutoCompact() == drp.isRolling());
-    assertEquals(drp.getMaxOplogSize()/(1024*1024), ds.getMaxOplogSize());  
+    assertEquals(drp.getMaxOplogSize() / (1024 * 1024), ds.getMaxOplogSize());
     if (drp.getTimeInterval() != -1) {
       assertEquals(drp.getTimeInterval(), ds.getTimeInterval());
     } else {
       assertEquals(DiskStoreFactory.DEFAULT_TIME_INTERVAL, ds.getTimeInterval());
     }
-    assertEquals((int)drp.getBytesThreshold(), ds.getQueueSize());
+    assertEquals((int) drp.getBytesThreshold(), ds.getQueueSize());
     int dirnum = drp.getDiskDirs().length;
     int dirnum2 = ds.getDiskDirs().length;
     int[] diskSizes = drp.getDiskDirSizes();
@@ -362,14 +359,14 @@ public abstract class DiskRegionTestingBase {
       diskSizes = new int[dirnum];
       java.util.Arrays.fill(diskSizes, Integer.MAX_VALUE);
     }
-    for (int i=0; i<dirnum; i++) {
+    for (int i = 0; i < dirnum; i++) {
       assertTrue("diskSizes not matching", diskSizes[i] == ds_diskSizes[i]);
     }
-    
+
     assertEquals(DiskStoreFactory.DEFAULT_DISK_USAGE_WARNING_PERCENTAGE, ds.getDiskUsageWarningPercentage(), 0.01);
     assertEquals(DiskStoreFactory.DEFAULT_DISK_USAGE_CRITICAL_PERCENTAGE, ds.getDiskUsageCriticalPercentage(), 0.01);
   }
-  
+
   public String getName() {
     return name.getMethodName();
   }

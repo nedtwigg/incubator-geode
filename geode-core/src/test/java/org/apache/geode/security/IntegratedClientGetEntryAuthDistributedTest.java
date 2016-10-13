@@ -36,9 +36,7 @@ public class IntegratedClientGetEntryAuthDistributedTest extends AbstractSecureS
     // client1 connects to server as a user not authorized to do any operations
 
     AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                               .addPoolServer("localhost", serverPort)
-                                                                                               .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       CacheTransactionManager transactionManager = cache.getCacheTransactionManager();
       transactionManager.begin();
@@ -52,9 +50,7 @@ public class IntegratedClientGetEntryAuthDistributedTest extends AbstractSecureS
     });
 
     AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                       .addPoolServer("localhost", serverPort)
-                                                                                                       .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       CacheTransactionManager transactionManager = cache.getCacheTransactionManager();
       transactionManager.begin();

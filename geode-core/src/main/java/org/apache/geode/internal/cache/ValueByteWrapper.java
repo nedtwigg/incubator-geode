@@ -21,8 +21,7 @@ package org.apache.geode.internal.cache;
  * the htree
  */
 
-class ValueByteWrapper
-{
+class ValueByteWrapper {
   /** stores the bytes that were read * */
   private final byte[] valueBytes;
 
@@ -52,8 +51,7 @@ class ValueByteWrapper
   /**
    * @return byte[] returns the value bytes stored
    */
-  byte[] getValueBytes()
-  {
+  byte[] getValueBytes() {
     return this.valueBytes;
   }
 
@@ -63,8 +61,7 @@ class ValueByteWrapper
    * 
    * @return byte value
    */
-  byte getUserBit()
-  {
+  byte getUserBit() {
     return this.userBit;
   }
 }

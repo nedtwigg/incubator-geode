@@ -25,14 +25,14 @@ package org.apache.geode.management.internal.cli.remote;
  * @since GemFire 7.0
  */
 public abstract class WrapperThreadLocal<T> extends ThreadLocal<T> {
-  
+
   public T getAndCreateIfAbsent() {
     if (!isSet()) {
       set(createWrapped());
     }
     return get();
   }
-  
+
   protected abstract T createWrapped();
 
   public boolean isSet() {

@@ -24,6 +24,5 @@ package org.apache.geode.rest.internal.web.controllers;
 
 @SuppressWarnings("unused")
 public enum Gender {
-  FEMALE,
-  MALE
+  FEMALE, MALE
 }

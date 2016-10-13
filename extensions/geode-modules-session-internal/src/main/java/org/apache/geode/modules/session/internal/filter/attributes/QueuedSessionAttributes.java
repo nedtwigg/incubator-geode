@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class QueuedSessionAttributes extends AbstractSessionAttributes {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(QueuedSessionAttributes.class.getName());
+  private static final Logger LOG = LoggerFactory.getLogger(QueuedSessionAttributes.class.getName());
 
   /**
    * Register ourselves for de-serialization

@@ -105,8 +105,7 @@ public class CreateRegionFunction implements Function, Declarable {
       try {
         RegionHelper.validateRegion(this.cache, configuration, region);
       } catch (Exception e) {
-        if (!e.getMessage()
-            .equals(LocalizedStrings.RegionAttributesCreation_CACHELISTENERS_ARE_NOT_THE_SAME.toLocalizedString())) {
+        if (!e.getMessage().equals(LocalizedStrings.RegionAttributesCreation_CACHELISTENERS_ARE_NOT_THE_SAME.toLocalizedString())) {
           this.cache.getLogger().warning(e);
         }
         status = RegionStatus.INVALID;
@@ -182,8 +181,7 @@ public class CreateRegionFunction implements Function, Declarable {
         try {
           RegionHelper.validateRegion(this.cache, configuration, region);
         } catch (Exception e) {
-          if (!e.getMessage()
-              .equals(LocalizedStrings.RegionAttributesCreation_CACHELISTENERS_ARE_NOT_THE_SAME.toLocalizedString())) {
+          if (!e.getMessage().equals(LocalizedStrings.RegionAttributesCreation_CACHELISTENERS_ARE_NOT_THE_SAME.toLocalizedString())) {
             this.cache.getLogger().warning(e);
           }
           status = RegionStatus.INVALID;
@@ -191,10 +189,7 @@ public class CreateRegionFunction implements Function, Declarable {
       }
     } catch (Exception e) {
       StringBuilder builder = new StringBuilder();
-      builder.append(this)
-          .append(": Caught Exception attempting to create region named ")
-          .append(configuration.getRegionName())
-          .append(":");
+      builder.append(this).append(": Caught Exception attempting to create region named ").append(configuration.getRegionName()).append(":");
       this.cache.getLogger().warning(builder.toString(), e);
       status = RegionStatus.INVALID;
     } finally {
@@ -258,4 +253,3 @@ public class CreateRegionFunction implements Function, Declarable {
     return lockService;
   }
 }
-

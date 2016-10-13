@@ -29,23 +29,23 @@ import org.apache.geode.internal.Assert;
  * <code>final</code>.  Thus, we do not need to worry about refreshing
  * an instance when it resides in shared memory.
  */
-public class LRUStatistics  {
+public class LRUStatistics {
 
   /** The Statistics object that we delegate most behavior to */
   private final Statistics stats;
-  protected  int limitId;
+  protected int limitId;
   /**
    * the number of destroys that must occur before a list scan is initiated to
    * to remove unlinked entries.
    */
-  protected  int destroysLimitId;
+  protected int destroysLimitId;
   protected int counterId;
   /** entries that have been evicted from the LRU list */
-  protected  int evictionsId;
+  protected int evictionsId;
   /** entries that have been destroyed, but not yet evicted from the LRU list */
   protected int destroysId;
-  protected  int evaluationsId;
-  protected  int greedyReturnsId;
+  protected int evaluationsId;
+  protected int greedyReturnsId;
 
   // Note: the following atomics have been added so that the LRU code
   // does not depend on the value of a statistic for its operations.
@@ -56,7 +56,7 @@ public class LRUStatistics  {
   private final AtomicLong destroysLimit = new AtomicLong();
   private final AtomicLong destroys = new AtomicLong();
   private final AtomicLong evictions = new AtomicLong();
-  
+
   /////////////////////////  Constructors  /////////////////////////
 
   /**
@@ -64,13 +64,10 @@ public class LRUStatistics  {
    *
    * @param  name  Description of the Parameter
    */
-  public LRUStatistics( StatisticsFactory factory, String name, 
-                        EnableLRU helper) {
+  public LRUStatistics(StatisticsFactory factory, String name, EnableLRU helper) {
     String statName = helper.getStatisticsName() + "-" + name;
-    stats = factory.createAtomicStatistics(helper.getStatisticsType(),
-                                           statName);
-    if(!helper.getEvictionAlgorithm().isLRUHeap())
-    {
+    stats = factory.createAtomicStatistics(helper.getStatisticsType(), statName);
+    if (!helper.getEvictionAlgorithm().isLRUHeap()) {
       limitId = helper.getLimitStatId();
     }
     destroysLimitId = helper.getDestroysLimitStatId();
@@ -81,8 +78,7 @@ public class LRUStatistics  {
     this.greedyReturnsId = helper.getGreedyReturnsStatId();
   }
 
-  public LRUStatistics(StatisticsFactory factory, String name,
-      StatisticsType statisticsType) {
+  public LRUStatistics(StatisticsFactory factory, String name, StatisticsType statisticsType) {
     stats = factory.createAtomicStatistics(statisticsType, name);
     limitId = 0;
     destroysLimitId = 0;
@@ -98,15 +94,13 @@ public class LRUStatistics  {
   }
 
   /** common counter for different lru types */
-  public long getCounter( ) {
+  public long getCounter() {
     return this.counter.get();
   }
 
   /** limit */
-  public void setLimit( long newValue ) {
-    Assert.assertTrue(newValue > 0L,
-                      "limit must be positive, an attempt was made to set it to: "
-                      + newValue);
+  public void setLimit(long newValue) {
+    Assert.assertTrue(newValue > 0L, "limit must be positive, an attempt was made to set it to: " + newValue);
     long oldValue = this.limit.get();
     if (oldValue != newValue) {
       this.limit.set(newValue);
@@ -115,47 +109,45 @@ public class LRUStatistics  {
   }
 
   /** destroy limit */
-  public void setDestroysLimit( long newValue ) {
-    Assert.assertTrue(newValue > 0L,
-                      "destroys limit must be positive, an attempt was made to set it to: "
-                      + newValue);
+  public void setDestroysLimit(long newValue) {
+    Assert.assertTrue(newValue > 0L, "destroys limit must be positive, an attempt was made to set it to: " + newValue);
     long oldValue = this.destroysLimit.get();
     if (oldValue != newValue) {
       this.destroysLimit.set(newValue);
-      stats.setLong( destroysLimitId, newValue );
+      stats.setLong(destroysLimitId, newValue);
     }
   }
 
-  public long getLimit( ) {
+  public long getLimit() {
     return this.limit.get();
   }
 
-  public long getDestroysLimit( ) {
+  public long getDestroysLimit() {
     return this.destroysLimit.get();
   }
 
-  public void updateCounter( long delta ) {
+  public void updateCounter(long delta) {
     if (delta != 0) {
       this.counter.getAndAdd(delta);
       stats.incLong(counterId, delta);
     }
   }
 
-  public void resetCounter( ) {
+  public void resetCounter() {
     if (this.counter.get() != 0) {
       this.counter.set(0);
       stats.setLong(counterId, 0);
     }
   }
 
-//  public void setCounter(long newValue) {
-//    long oldValue = this.counter.get();
-//    if (oldValue != newValue) {
-//      this.counter.set(oldValue+newValue);
-//      stats.setLong(counterId, newValue);
-//    }
-//  }
-//  
+  //  public void setCounter(long newValue) {
+  //    long oldValue = this.counter.get();
+  //    if (oldValue != newValue) {
+  //      this.counter.set(oldValue+newValue);
+  //      stats.setLong(counterId, newValue);
+  //    }
+  //  }
+  //  
   public void decrementCounter(long delta) {
     if (delta != 0) {
       this.counter.addAndGet(-delta);
@@ -163,48 +155,46 @@ public class LRUStatistics  {
     }
   }
 
-  public void incEvictions( ) {
+  public void incEvictions() {
     this.evictions.getAndAdd(1);
-    stats.incLong( evictionsId, 1 );
+    stats.incLong(evictionsId, 1);
   }
 
-  public void incEvictions(long delta ) {
+  public void incEvictions(long delta) {
     this.evictions.getAndAdd(delta);
-    stats.incLong( evictionsId, delta );
+    stats.incLong(evictionsId, delta);
   }
-  
-  public long getEvictions( ) {
+
+  public long getEvictions() {
     return this.evictions.get();
   }
 
-  public void resetDestroys( ) {
+  public void resetDestroys() {
     if (this.destroys.get() != 0) {
       this.destroys.set(0);
       stats.setLong(destroysId, 0);
     }
   }
 
-  public void incDestroys( ) {
+  public void incDestroys() {
     this.destroys.getAndAdd(1);
-    stats.incLong( destroysId, 1 );
+    stats.incLong(destroysId, 1);
   }
 
-  public long getDestroys( ) {
+  public long getDestroys() {
     return this.destroys.get();
   }
 
-  public void incEvaluations(long numEvals ) {
-    stats.incLong( evaluationsId, numEvals );
+  public void incEvaluations(long numEvals) {
+    stats.incLong(evaluationsId, numEvals);
   }
 
   public void incGreedyReturns(long numEvals) {
     stats.incLong(greedyReturnsId, numEvals);
   }
-  
 
   public Statistics getStats() {
     return this.stats;
   }
 
 }
-

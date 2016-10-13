@@ -35,9 +35,8 @@ import org.apache.geode.pdx.PdxUnreadFields;
  * We should optimize this before making this a public feature.
  *
  */
-public class PdxInstanceFactoryImpl implements
-    PdxInstanceFactory {
-  
+public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
+
   private final PdxWriterImpl writer;
   private boolean created = false;
 
@@ -175,9 +174,7 @@ public class PdxInstanceFactoryImpl implements
     return this;
   }
 
-  
-  public PdxInstanceFactory writeArrayOfByteArrays(String fieldName,
-      byte[][] array) {
+  public PdxInstanceFactory writeArrayOfByteArrays(String fieldName, byte[][] array) {
     this.writer.writeArrayOfByteArrays(fieldName, array);
     return this;
   }
@@ -191,8 +188,7 @@ public class PdxInstanceFactoryImpl implements
     return this;
   }
 
-  public PdxInstanceFactory writeObject(String fieldName, Object value,
-      boolean checkPortability) {
+  public PdxInstanceFactory writeObject(String fieldName, Object value, boolean checkPortability) {
     if (InternalDataSerializer.is662SerializationEnabled()) {
       boolean alreadyInProgress = InternalDataSerializer.isPdxSerializationInProgress();
       if (!alreadyInProgress) {
@@ -208,12 +204,11 @@ public class PdxInstanceFactoryImpl implements
     } else {
       this.writer.writeObject(fieldName, value, checkPortability);
     }
-    
+
     return this;
   }
 
-  public PdxInstanceFactory writeObjectArray(String fieldName, Object[] value,
-      boolean checkPortability) {
+  public PdxInstanceFactory writeObjectArray(String fieldName, Object[] value, boolean checkPortability) {
     if (InternalDataSerializer.is662SerializationEnabled()) {
       boolean alreadyInProgress = InternalDataSerializer.isPdxSerializationInProgress();
       if (!alreadyInProgress) {
@@ -232,8 +227,7 @@ public class PdxInstanceFactoryImpl implements
     return this;
   }
 
-  public <CT, VT extends CT> PdxInstanceFactory writeField(String fieldName,
-      VT fieldValue, Class<CT> fieldType, boolean checkPortability) {
+  public <CT, VT extends CT> PdxInstanceFactory writeField(String fieldName, VT fieldValue, Class<CT> fieldType, boolean checkPortability) {
     if (InternalDataSerializer.is662SerializationEnabled()) {
       boolean alreadyInProgress = InternalDataSerializer.isPdxSerializationInProgress();
       if (!alreadyInProgress) {

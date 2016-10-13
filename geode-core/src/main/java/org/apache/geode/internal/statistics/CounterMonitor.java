@@ -20,13 +20,13 @@ package org.apache.geode.internal.statistics;
  * @since GemFire 7.0
  */
 public final class CounterMonitor extends StatisticsMonitor {
-  
+
   public static enum Type {
     GREATER_THAN, LESS_THAN
   }
 
   private volatile Number threshold;
-  
+
   public CounterMonitor(Number threshold) {
     super();
     this.threshold = threshold;
@@ -37,7 +37,7 @@ public final class CounterMonitor extends StatisticsMonitor {
     super.addStatistic(statId);
     return this;
   }
-  
+
   @Override
   public CounterMonitor removeStatistic(StatisticId statId) {
     super.removeStatistic(statId);
@@ -47,7 +47,7 @@ public final class CounterMonitor extends StatisticsMonitor {
   public CounterMonitor greaterThan(Number threshold) {
     return this;
   }
-  
+
   @Override
   protected StringBuilder appendToString() {
     final StringBuilder sb = new StringBuilder();

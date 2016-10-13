@@ -217,7 +217,7 @@ public class DistributedSystemStatisticsIntegrationTest {
   }
 
   private Statistics setUpIntStatistics(final int count) {
-    String[] descriptions = new String[] {"ONE", "TWO", "THREE"};
+    String[] descriptions = new String[] { "ONE", "TWO", "THREE" };
     StatisticDescriptor[] descriptors = new StatisticDescriptor[count];
     for (int i = 0; i < count; i++) {
       descriptors[i] = factory().createIntGauge(this.statNames[i], descriptions[i], "x");
@@ -233,7 +233,7 @@ public class DistributedSystemStatisticsIntegrationTest {
   }
 
   private Statistics setUpLongStatistics(final int count) {
-    String[] descriptions = new String[] {"ONE", "TWO", "THREE"};
+    String[] descriptions = new String[] { "ONE", "TWO", "THREE" };
     StatisticDescriptor[] descriptors = new StatisticDescriptor[count];
     for (int i = 0; i < count; i++) {
       descriptors[i] = factory().createLongGauge(this.statNames[i], descriptions[i], "x");
@@ -249,7 +249,7 @@ public class DistributedSystemStatisticsIntegrationTest {
   }
 
   private Statistics setUpDoubleStatistics(final int count) {
-    String[] descriptions = new String[] {"ONE", "TWO", "THREE"};
+    String[] descriptions = new String[] { "ONE", "TWO", "THREE" };
     StatisticDescriptor[] descriptors = new StatisticDescriptor[count];
     for (int i = 0; i < count; i++) {
       descriptors[i] = factory().createDoubleGauge(this.statNames[i], descriptions[i], "x");

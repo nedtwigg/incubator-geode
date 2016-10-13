@@ -23,11 +23,9 @@ package org.apache.geode.management.internal.cli.result;
  */
 public interface CliJsonSerializableIds {
   /* sample objects 11-20 */
-  int CLI_DOMAIN_OBJECT__REGION_DETAILS        = 11;
-  int CLI_DOMAIN_OBJECT__REGION_ATTR_INFO      = 12;
+  int CLI_DOMAIN_OBJECT__REGION_DETAILS = 11;
+  int CLI_DOMAIN_OBJECT__REGION_ATTR_INFO = 12;
   int CLI_DOMAIN_OBJECT__REGION_MEMBER_DETAILS = 13;
-  
+
   /* CLI Data Transfer Objects 100 onwards - add below */
 }
-
-

@@ -23,7 +23,6 @@ import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.cache.execute.RegionFunctionContext;
 
-
 /**
  * Function that puts the value from the argument at the key passed in through
  * the filter.
@@ -34,7 +33,7 @@ public class PutKeyFunction implements Function {
   private static final String ID = "PutKeyFunction";
 
   public void execute(FunctionContext context) {
-    RegionFunctionContext regionContext = (RegionFunctionContext)context;
+    RegionFunctionContext regionContext = (RegionFunctionContext) context;
     Region dataSet = regionContext.getDataSet();
     Object key = regionContext.getFilter().iterator().next();
     Object value = regionContext.getArguments();
@@ -56,8 +55,8 @@ public class PutKeyFunction implements Function {
   public boolean optimizeForWrite() {
     return true;
   }
+
   public boolean isHA() {
     return true;
   }
 }
-

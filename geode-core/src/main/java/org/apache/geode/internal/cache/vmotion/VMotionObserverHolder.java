@@ -42,8 +42,7 @@ public class VMotionObserverHolder {
    * observer.
    */
   public static final VMotionObserver setInstance(VMotionObserver observer) {
-    Support.assertArg(observer != null,
-        "setInstance expects a non-null argument!");
+    Support.assertArg(observer != null, "setInstance expects a non-null argument!");
     VMotionObserver oldObserver = _instance;
     _instance = observer;
     return oldObserver;

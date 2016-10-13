@@ -49,7 +49,7 @@ public class HashIndexSet implements Set {
    * optional statistics object to track number of hash collisions and time
    * spent probing based on hash collisions
    */
-  final class HashIndexSetProperties{
+  final class HashIndexSetProperties {
     /** the set of Objects */
     final protected transient Object[] set;
     /** used for hashing into the table**/
@@ -83,6 +83,7 @@ public class HashIndexSet implements Set {
       this.mask = mask;
     }
   }
+
   private transient CachePerfStats cacheStats;
 
   /** the load above which rehashing occurs. */
@@ -101,7 +102,7 @@ public class HashIndexSet implements Set {
 
   protected HashIndex.IMQEvaluator _imqEvaluator;
 
- /**
+  /**
   * The removed token
   */
   protected static final Object REMOVED = new Object();
@@ -126,7 +127,7 @@ public class HashIndexSet implements Set {
    * @param loadFactor a <code>float</code> value
    */
   private HashIndexSet(int initialCapacity, float loadFactor) {
-    setUp(initialCapacity , loadFactor);
+    setUp(initialCapacity, loadFactor);
   }
 
   public void setEvaluator(HashIndex.IMQEvaluator evaluator) {
@@ -247,7 +248,7 @@ public class HashIndexSet implements Set {
     Object oldObject = set[index];
     if (oldObject == null || oldObject == REMOVED) {
       set[index] = newObject;
-    } 
+    }
 
     return added;
   }
@@ -338,7 +339,7 @@ public class HashIndexSet implements Set {
       }
     }
   }
-  
+
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof HashIndexSet)) {
@@ -376,13 +377,10 @@ public class HashIndexSet implements Set {
     Object[] oldSet = metaData.set;
     int oldCapacity = oldSet.length;
 
-
-
-    
     int mask = newN - 1;
     int _maxSize = computeMaxSize(newN, _loadFactor);
     Object[] newSet = new Object[newN + 1];
-    HashIndexSetProperties newHashIndexProperties = new HashIndexSetProperties(newSet,mask);
+    HashIndexSetProperties newHashIndexProperties = new HashIndexSetProperties(newSet, mask);
     newHashIndexProperties.size = metaData.size;
     newHashIndexProperties.free = hashIndexSetProperties.computeNumFree();
     newHashIndexProperties.removedTokens = 0;
@@ -405,7 +403,6 @@ public class HashIndexSet implements Set {
     hashIndexSetProperties = newHashIndexProperties;
 
   }
-
 
   /**
    * Unsupported as the hash index does not use this method call
@@ -444,7 +441,6 @@ public class HashIndexSet implements Set {
   protected int capacity() {
     return hashIndexSetProperties.set.length;
   }
-
 
   public boolean remove(Object obj) {
     return remove(_imqEvaluator.evaluateKey(obj), obj);
@@ -485,15 +481,14 @@ public class HashIndexSet implements Set {
     }
     return false;
   }
-  
+
   public final boolean areObjectsEqual(Object o1, Object o2) {
     if (o1 == null) {
       return o2 == null;
     }
     try {
       return TypeUtils.compare(o1, o2, OQLLexerTokenTypes.TOK_EQ).equals(Boolean.TRUE);
-    }
-    catch (TypeMismatchException e) {
+    } catch (TypeMismatchException e) {
       return o1.equals(o2);
     }
   }
@@ -603,18 +598,18 @@ public class HashIndexSet implements Set {
   public void compact() {
     trimToSize(hashIndexSetProperties.size);
   }
-  
-  public boolean trimToSize( final int n ) {
-    final int l = HashCommon.nextPowerOfTwo( (int)Math.ceil( n / _loadFactor ) );
-    if (this.hashIndexSetProperties.n <= l ) return true;
+
+  public boolean trimToSize(final int n) {
+    final int l = HashCommon.nextPowerOfTwo((int) Math.ceil(n / _loadFactor));
+    if (this.hashIndexSetProperties.n <= l)
+      return true;
     try {
-            rehash( l );
-    }
-    catch ( OutOfMemoryError cantDoIt ) {
-            return false;
+      rehash(l);
+    } catch (OutOfMemoryError cantDoIt) {
+      return false;
     }
     return true;
-}
+  }
 
   /**
    * Remove the object at <tt>index</tt>.
@@ -642,12 +637,12 @@ public class HashIndexSet implements Set {
    * initializes this index set
    */
   protected int setUp(final int expectedCapacity, final float loadFactor) {
-    int n = arraySize( expectedCapacity, loadFactor );
+    int n = arraySize(expectedCapacity, loadFactor);
     this._loadFactor = loadFactor;
     int _maxSize = computeMaxSize(n, loadFactor);
     int mask = n - 1;
     Object[] set = new Object[n + 1];
-    HashIndexSetProperties metaData  = new HashIndexSetProperties(set,mask);
+    HashIndexSetProperties metaData = new HashIndexSetProperties(set, mask);
     metaData.n = n;
     metaData.maxSize = _maxSize;
     hashIndexSetProperties = metaData;
@@ -655,9 +650,9 @@ public class HashIndexSet implements Set {
 
     return n;
   }
-  
+
   private int computeMaxSize(int n, float loadFactor) {
-    return Math.min( (int)Math.ceil( n * loadFactor ), n - 1 );
+    return Math.min((int) Math.ceil(n * loadFactor), n - 1);
   }
 
   /**
@@ -706,7 +701,7 @@ public class HashIndexSet implements Set {
       current = objects[pos];
     }
 
-    private HashIndexSetIterator(Object keyToMatch , HashIndexSetProperties metaData) {
+    private HashIndexSetIterator(Object keyToMatch, HashIndexSetProperties metaData) {
       this.keyToMatch = keyToMatch;
       this.objects = metaData.set;
       mask = metaData.mask;
@@ -715,7 +710,7 @@ public class HashIndexSet implements Set {
       prevPos = pos;
       current = this.objects[pos];
     }
-    
+
     private void setPos(int pos) {
       this.prevPos = this.pos;
       this.pos = pos;
@@ -732,7 +727,7 @@ public class HashIndexSet implements Set {
           } else if (notMatchingAnyKeyToRemove(keysToRemove, current)) {
             return true;
           }
-          setPos(pos+1);
+          setPos(pos + 1);
         }
         return false;
       } else {
@@ -770,7 +765,7 @@ public class HashIndexSet implements Set {
       if (keysToRemove != null) {
         // for Not equals we need to continue looking
         // so increment the index here
-        setPos(pos+1);
+        setPos(pos + 1);
       } else {
         // advance the pointer
         setPos((pos + 1) & mask);
@@ -786,32 +781,28 @@ public class HashIndexSet implements Set {
     public void remove() {
       removeAt(currentObjectIndex());
     }
-    
-    
+
     public boolean objectMatchesIndexKey(Object indexKey, Object o) {
       Object fieldValue = _imqEvaluator.evaluateKey(o);
-     
+
       if (fieldValue == IndexManager.NULL && indexKey == IndexManager.NULL) {
         return true;
       } else {
         try {
           if (fieldValue instanceof PdxString) {
-           if (indexKey instanceof String) {
-             fieldValue = ((PdxString) fieldValue).toString(); 
-           }
-         }
-         else if (indexKey instanceof PdxString) {
-           if (fieldValue instanceof String) {
-             fieldValue = new PdxString((String)fieldValue);
-           }
-         }
-         return TypeUtils.compare(fieldValue, indexKey, OQLLexerTokenTypes.TOK_EQ).equals(Boolean.TRUE);
-        }
-        catch (TypeMismatchException e) {
+            if (indexKey instanceof String) {
+              fieldValue = ((PdxString) fieldValue).toString();
+            }
+          } else if (indexKey instanceof PdxString) {
+            if (fieldValue instanceof String) {
+              fieldValue = new PdxString((String) fieldValue);
+            }
+          }
+          return TypeUtils.compare(fieldValue, indexKey, OQLLexerTokenTypes.TOK_EQ).equals(Boolean.TRUE);
+        } catch (TypeMismatchException e) {
           return fieldValue.equals(indexKey);
         }
       }
     }
   }
 }
-

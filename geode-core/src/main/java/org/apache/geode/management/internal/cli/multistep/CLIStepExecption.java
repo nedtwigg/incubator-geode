@@ -19,20 +19,15 @@ package org.apache.geode.management.internal.cli.multistep;
 import org.apache.geode.management.cli.Result;
 
 public class CLIStepExecption extends RuntimeException {
-  
-  
+
   private Result result;
-  
-  
-  public CLIStepExecption(Result result){
+
+  public CLIStepExecption(Result result) {
     this.result = result;
   }
-
 
   public Result getResult() {
     return result;
   }
-  
-  
 
 }

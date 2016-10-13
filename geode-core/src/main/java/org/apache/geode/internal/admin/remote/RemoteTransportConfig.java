@@ -119,15 +119,7 @@ public class RemoteTransportConfig implements TransportConfig {
    * Constructs a transport config given a collection of {@link
    * DistributionLocatorId} instances.
    */
-  public RemoteTransportConfig(boolean isMcastEnabled,
-                               boolean isTcpDisabled,
-                               boolean isAutoReconnectDisabled,
-                               String bindAddress,
-                               SSLConfig sslConfig,
-                               Collection ids,
-                               String membershipPortRange,
-                               int tcpPort,
-                               int vmKind) {
+  public RemoteTransportConfig(boolean isMcastEnabled, boolean isTcpDisabled, boolean isAutoReconnectDisabled, String bindAddress, SSLConfig sslConfig, Collection ids, String membershipPortRange, int tcpPort, int vmKind) {
     DistributionLocatorId mid = null;
 
     if (bindAddress == null) {
@@ -165,7 +157,6 @@ public class RemoteTransportConfig implements TransportConfig {
     this.tcpPort = tcpPort;
     this.vmKind = vmKind;
   }
-
 
   private static String getMembershipPortRangeString(int[] membershipPortRange) {
     String membershipPortRangeString = "";
@@ -266,7 +257,7 @@ public class RemoteTransportConfig implements TransportConfig {
     }
     // Create locator string
     StringBuffer locators = new StringBuffer();
-    for (Iterator iter = this.ids.iterator(); iter.hasNext(); ) {
+    for (Iterator iter = this.ids.iterator(); iter.hasNext();) {
       DistributionLocatorId locator = (DistributionLocatorId) iter.next();
       if (!locator.isMcastId()) {
         String baddr = locator.getBindAddress();
@@ -325,7 +316,6 @@ public class RemoteTransportConfig implements TransportConfig {
   public String locatorsString() {
     return this.toString(true);
   }
-
 
   // -------------------------------------------------------------------------
   //   Methods overridden from java.lang.Object

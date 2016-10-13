@@ -75,8 +75,7 @@ public interface ManagedEntity {
    *         If the thread invoking this method is interrupted while
    *         waiting. 
    */
-  public boolean waitToStart(long timeout)
-    throws InterruptedException;
+  public boolean waitToStart(long timeout) throws InterruptedException;
 
   /**
    * Waits for up to a given number of milliseconds for this managed
@@ -93,8 +92,7 @@ public interface ManagedEntity {
    *         If the thread invoking this method is interrupted while
    *         waiting. 
    */
-  public boolean waitToStop(long timeout)
-    throws InterruptedException;
+  public boolean waitToStop(long timeout) throws InterruptedException;
 
   /**
    * Returns whether or not this managed entity is running.  Note that

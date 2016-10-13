@@ -30,12 +30,10 @@ import java.util.List;
 public abstract class StatisticsMonitor {
 
   private final Object mutex = new Object();
-  
-  private volatile List<StatisticsListener> listeners = 
-        Collections.<StatisticsListener>emptyList();
 
-  private volatile List<StatisticId> statisticIds = 
-        Collections.<StatisticId>emptyList();
+  private volatile List<StatisticsListener> listeners = Collections.<StatisticsListener> emptyList();
+
+  private volatile List<StatisticId> statisticIds = Collections.<StatisticId> emptyList();
 
   public StatisticsMonitor() {
   }
@@ -54,7 +52,7 @@ public abstract class StatisticsMonitor {
     }
     return this;
   }
-  
+
   public StatisticsMonitor removeStatistic(StatisticId statId) {
     if (statId == null) {
       throw new NullPointerException("StatisticId is null");
@@ -105,7 +103,7 @@ public abstract class StatisticsMonitor {
       }
     }
   }
-  
+
   /**
    * This method may be overridden but please ensure that you invoke 
    * super.monitor(long, List) from this method in the subclass.
@@ -116,21 +114,21 @@ public abstract class StatisticsMonitor {
   protected void monitor(long millisTimeStamp, List<ResourceInstance> resourceInstances) {
     monitorStatisticIds(millisTimeStamp, resourceInstances);
   }
-  
+
   private final void monitorStatisticIds(long millisTimeStamp, List<ResourceInstance> resourceInstances) {
     List<StatisticId> statisticIdsToMonitor = statisticIds;
     if (!statisticIdsToMonitor.isEmpty()) {
       // TODO:
     }
   }
-  
+
   protected final void notifyListeners(StatisticsNotification notification) {
-    List<StatisticsListener> listenersToNotify = this.listeners;    
+    List<StatisticsListener> listenersToNotify = this.listeners;
     for (StatisticsListener listener : listenersToNotify) {
       listener.handleNotification(notification);
     }
   }
-  
+
   protected final Object mutex() {
     return this.mutex;
   }
@@ -138,12 +136,12 @@ public abstract class StatisticsMonitor {
   StatMonitorHandler getStatMonitorHandler() {
     return SampleCollector.getStatMonitorHandler();
   }
-  
+
   /** For testing only */
   List<StatisticsListener> getStatisticsListenersSnapshot() {
     return this.listeners;
   }
-  
+
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(getClass().getName());
@@ -157,7 +155,7 @@ public abstract class StatisticsMonitor {
     sb.append("}");
     return sb.toString();
   }
-  
+
   /** Override to append to toString() */
   protected StringBuilder appendToString() {
     return null;

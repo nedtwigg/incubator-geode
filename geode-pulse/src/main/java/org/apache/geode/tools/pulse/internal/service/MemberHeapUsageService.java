@@ -62,8 +62,7 @@ public class MemberHeapUsageService implements PulseService {
 
     if (clusterMember != null) {
       // response
-      responseJSON.put("heapUsageTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_HEAP_USAGE_SAMPLE)));
+      responseJSON.put("heapUsageTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_HEAP_USAGE_SAMPLE)));
       responseJSON.put("currentHeapUsage", clusterMember.getCurrentHeapSize());
     }
 

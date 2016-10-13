@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.operations;
 
-
 /**
  * Encapsulates a region-level operation in both the pre-operation and
  * post-operation cases. The operations this class encapsulates are

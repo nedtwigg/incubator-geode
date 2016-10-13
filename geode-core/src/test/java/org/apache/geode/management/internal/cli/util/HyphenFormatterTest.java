@@ -31,7 +31,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class HyphenFormatterTest {
 
   private HyphenFormatter formatter;
-  
+
   @Before
   public void setUp() {
     this.formatter = new HyphenFormatter();

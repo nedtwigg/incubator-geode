@@ -49,17 +49,16 @@ import org.apache.geode.internal.logging.LoggingThreadGroup;
  *         has been modified such that it waits on activeCache if it is empty.
  *         Prevention of deadlocks & optmization of code.
  */
-public abstract class AbstractPoolCache implements ConnectionPoolCache,
-    Serializable {
+public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializable {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   protected int INIT_LIMIT;
   private int MAX_LIMIT;
   protected transient Map availableCache;
   protected transient Map activeCache;
   protected EventListener connEventListner;
-//  private String error = "";
+  //  private String error = "";
   protected ConfiguredDataSourceProperties configProps;
   //Asif:expirationTime is for the available
   //connection which are expired in milliseconds
@@ -69,7 +68,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
   protected int timeOut;
   //Client Timeout in milliseconds
   protected int loginTimeOut;
-//  private final boolean DEBUG = false;
+  //  private final boolean DEBUG = false;
   public transient ConnectionCleanUpThread cleaner;
   private int totalConnections = 0;
   private int activeConnections = 0;
@@ -85,10 +84,8 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
    *          configuration for the pool.
    * @throws PoolException
    */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="SC_START_IN_CTOR",
-      justification="the thread started is a cleanup thread and is not active until there is a timeout tx")
-  public AbstractPoolCache(EventListener eventListner,
-      ConfiguredDataSourceProperties configs) throws PoolException {
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "SC_START_IN_CTOR", justification = "the thread started is a cleanup thread and is not active until there is a timeout tx")
+  public AbstractPoolCache(EventListener eventListner, ConfiguredDataSourceProperties configs) throws PoolException {
     availableCache = new HashMap();
     activeCache = Collections.synchronizedMap(new LinkedHashMap());
     connEventListner = eventListner;
@@ -113,10 +110,9 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
         try {
           availableCache.put(getNewPoolConnection(), Long.valueOf(currTime));
           ++totalConnections;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           if (logger.isDebugEnabled()) {
-              logger.debug("AbstractPoolCache::initializePool:Error in creating connection", ex.getCause());
+            logger.debug("AbstractPoolCache::initializePool:Error in creating connection", ex.getCause());
           }
         }
       }
@@ -176,8 +172,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
       // seeking state
       synchronized (this.availableCache) {
         --this.activeConnections;
-        this.availableCache.put(connectionObject, Long.valueOf(System
-            .currentTimeMillis()));
+        this.availableCache.put(connectionObject, Long.valueOf(System.currentTimeMillis()));
         this.availableCache.notify();
       }
     }
@@ -264,16 +259,14 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
     }*/
     long now = System.currentTimeMillis();
     synchronized (this.availableCache) {
-      while ((totalConnections - activeConnections) == 0
-          && totalConnections == MAX_LIMIT) {
+      while ((totalConnections - activeConnections) == 0 && totalConnections == MAX_LIMIT) {
         try {
           this.availableCache.wait(loginTimeOut);
           long newtime = System.currentTimeMillis();
           long duration = newtime - now;
           if (duration > loginTimeOut)
-              throw new PoolException(LocalizedStrings.AbstractPoolCache_ABSTRACTPOOLEDCACHEGETPOOLEDCONNECTIONFROMPOOLLOGIN_TIMEOUT_EXCEEDED.toLocalizedString());
-        }
-        catch (InterruptedException e) {
+            throw new PoolException(LocalizedStrings.AbstractPoolCache_ABSTRACTPOOLEDCACHEGETPOOLEDCONNECTIONFROMPOOLLOGIN_TIMEOUT_EXCEEDED.toLocalizedString());
+        } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           // TODO add a cancellation check?
           if (logger.isDebugEnabled()) {
@@ -322,7 +315,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
    * @return Object Connection object from the pool.
    */
   private Object checkOutConnection(long now) throws PoolException {
-//    boolean expiryCheck = false;
+    //    boolean expiryCheck = false;
     Object retConn = null;
     Set entryset = availableCache.entrySet();
     Iterator itr = entryset.iterator();
@@ -334,8 +327,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
         retConn = entry.getKey();
         itr.remove();
         break;
-      }
-      else {
+      } else {
         //Asif : Take a lock on expiredConns, so that clean up thread
         // does not miss it while emptying.
         synchronized (this.expiredConns) {
@@ -389,8 +381,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
           Map.Entry entry = (Map.Entry) itr.next();
           conn = entry.getKey();
           associatedValue = (Long) entry.getValue();
-        }
-        else {
+        } else {
           toContinue = false;
           continue;
         }
@@ -418,8 +409,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
               this.activeCache.remove(conn);
               this.expiredConns.add(conn);
               ++numConnTimedOut;
-            }
-            else {
+            } else {
               //AsifTODO: Just keep a final expitry time
               sleepTime = then + timeOut - now;
               toContinue = false;
@@ -467,10 +457,9 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
     cleaner.toContinueRunning = false;
     try {
       th.interrupt();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       if (logger.isDebugEnabled()) {
-          logger.debug("AbstractPoolCache::clearUp: Exception in interrupting the thread", e);
+        logger.debug("AbstractPoolCache::clearUp: Exception in interrupting the thread", e);
       }
     }
     // closing all the connection
@@ -483,8 +472,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
       while (availableCacheItr.hasNext()) {
         ((Connection) availableCacheItr.next()).close();
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       if (logger.isDebugEnabled()) {
         logger.debug("AbstractPoolCache::clearUp: Exception in closing connections. Ignoring this exception)");
       }
@@ -512,7 +500,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
         SystemFailure.checkFailure();
         try {
           cleanUp();
-          if (sleepTime != -1) 
+          if (sleepTime != -1)
             Thread.sleep(sleepTime);
           //Asif : The cleaner thread will wait on activeCache if it is
           // empty . Else it will sleep for a while & again do the
@@ -525,28 +513,24 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache,
               activeCache.wait();
             }
           } // synchronized
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           // No need to reset the bit, we'll exit.
           if (toContinueRunning) {
             logger.debug("ConnectionCleanupThread: interrupted", e);
           }
           break;
-        }
-        catch (CancelException e) {
+        } catch (CancelException e) {
           if (toContinueRunning) {
             logger.debug("ConnectionCleanupThread: cancelled", e);
           }
           break;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           if (logger.isDebugEnabled() && toContinueRunning) {
-              logger.debug("ConnectionCleanUpThread::run: Thread encountered Exception. e={}. Ignoring the exception",
-                  e.getMessage(), e);
+            logger.debug("ConnectionCleanUpThread::run: Thread encountered Exception. e={}. Ignoring the exception", e.getMessage(), e);
           }
         }
       } // while
     } // method
-    
+
   } // CleanupThread
 }

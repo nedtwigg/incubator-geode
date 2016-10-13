@@ -30,15 +30,14 @@ package org.apache.geode.cache;
  * @since GemFire 3.0
  */
 public class StatisticsDisabledException extends CacheRuntimeException {
-private static final long serialVersionUID = -2987721454129719551L;
-  
+  private static final long serialVersionUID = -2987721454129719551L;
+
   /**
    * Creates a new instance of <code>StatisticsDisabledException</code> without detail message.
    */
   public StatisticsDisabledException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail message.
    * @param msg the detail message
@@ -46,7 +45,7 @@ private static final long serialVersionUID = -2987721454129719551L;
   public StatisticsDisabledException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail message
    * and cause.
@@ -56,7 +55,7 @@ private static final long serialVersionUID = -2987721454129719551L;
   public StatisticsDisabledException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>StatisticsDisabledException</code> with the specified cause.
    * @param cause the causal Throwable

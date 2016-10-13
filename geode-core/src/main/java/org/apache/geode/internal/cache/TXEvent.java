@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.internal.cache;
+
 import org.apache.geode.cache.*;
 import java.util.*;
 import org.apache.geode.internal.offheap.Releasable;
@@ -50,7 +51,7 @@ public class TXEvent implements TransactionEvent, Releasable {
       ArrayList result = new ArrayList();
       Iterator it = getEvents().iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isCreate()) {
           result.add(ce);
         }
@@ -69,7 +70,7 @@ public class TXEvent implements TransactionEvent, Releasable {
       ArrayList result = new ArrayList();
       Iterator it = getEvents().iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isUpdate()) {
           result.add(ce);
         }
@@ -88,7 +89,7 @@ public class TXEvent implements TransactionEvent, Releasable {
       ArrayList result = new ArrayList();
       Iterator it = getEvents().iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isInvalidate()) {
           result.add(ce);
         }
@@ -107,7 +108,7 @@ public class TXEvent implements TransactionEvent, Releasable {
       ArrayList result = new ArrayList();
       Iterator it = getEvents().iterator();
       while (it.hasNext()) {
-        CacheEvent ce = (CacheEvent)it.next();
+        CacheEvent ce = (CacheEvent) it.next();
         if (ce.getOperation().isDestroy()) {
           result.add(ce);
         }
@@ -120,7 +121,7 @@ public class TXEvent implements TransactionEvent, Releasable {
     }
     return this.destroyEvents;
   }
-  
+
   public synchronized List getEvents() {
     if (this.events == null) {
       this.events = this.localTxState.getEvents();
@@ -134,15 +135,13 @@ public class TXEvent implements TransactionEvent, Releasable {
    * or if any events touch non-internal regions.
    */
   public boolean hasOnlyInternalEvents() {
-    List<CacheEvent<?,?>> txevents = getEvents();
+    List<CacheEvent<?, ?>> txevents = getEvents();
     if (txevents == null || txevents.isEmpty()) {
       return false;
     }
-    for (CacheEvent<?,?> txevent: txevents) {
-      LocalRegion region = (LocalRegion)txevent.getRegion();
-      if (region != null
-          && !region.isPdxTypesRegion()
-          && !region.isInternalRegion()) {
+    for (CacheEvent<?, ?> txevent : txevents) {
+      LocalRegion region = (LocalRegion) txevent.getRegion();
+      if (region != null && !region.isPdxTypesRegion() && !region.isInternalRegion()) {
         return false;
       }
     }

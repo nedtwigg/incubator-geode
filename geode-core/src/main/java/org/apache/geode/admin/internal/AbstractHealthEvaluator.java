@@ -41,10 +41,10 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  *
  * @since GemFire 3.5
  * */
-public abstract class AbstractHealthEvaluator  {
+public abstract class AbstractHealthEvaluator {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** The number of times this evaluator has been evaluated.  Certain
    * checks are not made the first time an evaluation occurs.  */
   private int numEvaluations;
@@ -63,9 +63,7 @@ public abstract class AbstractHealthEvaluator  {
    * <code>InternalDistributedSystem</code>'s
    * <code>DistributionManager</code> is set.
    */
-  protected AbstractHealthEvaluator(GemFireHealthConfig config,
-                                    DM dm)
-  {
+  protected AbstractHealthEvaluator(GemFireHealthConfig config, DM dm) {
     this.numEvaluations = 0;
   }
 
@@ -136,7 +134,7 @@ public abstract class AbstractHealthEvaluator  {
   /**
    * Represents the health of a GemFire component.
    */
-  public class HealthStatus  {
+  public class HealthStatus {
     /** The health of a GemFire component */
     private GemFireHealth.Health healthCode;
 
@@ -154,9 +152,7 @@ public abstract class AbstractHealthEvaluator  {
      */
     HealthStatus(GemFireHealth.Health healthCode, String diagnosis) {
       this.healthCode = healthCode;
-      this.diagnosis =
-        "[" + AbstractHealthEvaluator.this.getDescription() + "] " +
-        diagnosis;
+      this.diagnosis = "[" + AbstractHealthEvaluator.this.getDescription() + "] " + diagnosis;
     }
 
     /////////////////////  Instance Methods  /////////////////////

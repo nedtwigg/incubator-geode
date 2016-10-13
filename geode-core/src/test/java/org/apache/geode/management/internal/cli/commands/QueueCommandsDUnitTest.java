@@ -119,23 +119,8 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
     QueueCommandsDUnitTest.this.filesToBeDeleted.add(jarFile.getAbsolutePath());
 
     ClassBuilder classBuilder = new ClassBuilder();
-    byte[] jarBytes = classBuilder.createJarFromClassContent("com/qcdunit/QueueCommandsDUnitTestHelper",
-        "package com.qcdunit;" +
-            "import java.util.List; import java.util.Properties;" +
-            "import org.apache.geode.internal.cache.xmlcache.Declarable2; import org.apache.geode.cache.asyncqueue.AsyncEvent;" +
-            "import org.apache.geode.cache.wan.GatewayEventFilter; import org.apache.geode.cache.wan.GatewayEventSubstitutionFilter;" +
-            "import org.apache.geode.cache.asyncqueue.AsyncEventListener; import org.apache.geode.cache.wan.GatewayQueueEvent;" +
-            "import org.apache.geode.cache.EntryEvent;" +
-            "public class QueueCommandsDUnitTestHelper implements Declarable2, GatewayEventFilter, GatewayEventSubstitutionFilter, AsyncEventListener {" +
-            "Properties props;" +
-            "public boolean processEvents(List<AsyncEvent> events) { return true; }" +
-            "public void afterAcknowledgement(GatewayQueueEvent event) {}" +
-            "public boolean beforeEnqueue(GatewayQueueEvent event) { return true; }" +
-            "public boolean beforeTransmit(GatewayQueueEvent event) { return true; }" +
-            "public Object getSubstituteValue(EntryEvent event) { return null; }" +
-            "public void close() {}" +
-            "public void init(final Properties props) {this.props = props;}" +
-            "public Properties getConfig() {return this.props;}}");
+    byte[] jarBytes = classBuilder.createJarFromClassContent("com/qcdunit/QueueCommandsDUnitTestHelper", "package com.qcdunit;" + "import java.util.List; import java.util.Properties;" + "import org.apache.geode.internal.cache.xmlcache.Declarable2; import org.apache.geode.cache.asyncqueue.AsyncEvent;" + "import org.apache.geode.cache.wan.GatewayEventFilter; import org.apache.geode.cache.wan.GatewayEventSubstitutionFilter;" + "import org.apache.geode.cache.asyncqueue.AsyncEventListener; import org.apache.geode.cache.wan.GatewayQueueEvent;" + "import org.apache.geode.cache.EntryEvent;" + "public class QueueCommandsDUnitTestHelper implements Declarable2, GatewayEventFilter, GatewayEventSubstitutionFilter, AsyncEventListener {" + "Properties props;" + "public boolean processEvents(List<AsyncEvent> events) { return true; }" + "public void afterAcknowledgement(GatewayQueueEvent event) {}" + "public boolean beforeEnqueue(GatewayQueueEvent event) { return true; }"
+        + "public boolean beforeTransmit(GatewayQueueEvent event) { return true; }" + "public Object getSubstituteValue(EntryEvent event) { return null; }" + "public void close() {}" + "public void init(final Properties props) {this.props = props;}" + "public Properties getConfig() {return this.props;}}");
     writeJarBytesToFile(jarFile, jarBytes);
 
     cmdResult = executeCommand("deploy --jar=QueueCommandsDUnit.jar");
@@ -164,14 +149,11 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__ENABLEBATCHCONFLATION, "true");
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISPATCHERTHREADS, "2");
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__ORDERPOLICY, "PARTITION");
-    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER,
-        "com.qcdunit.QueueCommandsDUnitTestHelper");
-    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER,
-        "com.qcdunit.QueueCommandsDUnitTestHelper");
+    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER, "com.qcdunit.QueueCommandsDUnitTestHelper");
+    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER, "com.qcdunit.QueueCommandsDUnitTestHelper");
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISKSYNCHRONOUS, "false");
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__FORWARD_EXPIRATION_DESTROY, "true");
-    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER,
-        "com.qcdunit.QueueCommandsDUnitTestHelper");
+    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER, "com.qcdunit.QueueCommandsDUnitTestHelper");
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER_PARAM_AND_VALUE, "param1");
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER_PARAM_AND_VALUE, "param2#value2");
     cmdResult = executeCommand(commandStringBuilder.toString());
@@ -186,8 +168,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(Result.Status.OK, cmdResult.getStatus());
     stringResult = commandResultToString(cmdResult);
     assertEquals(3, countLinesInString(stringResult, false));
-    assertTrue(stringContainsLine(stringResult,
-        vm1Name + " .*" + queue1Name + " .*514 .*true .*" + diskStoreName + " .*213 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper" + ".*"));
+    assertTrue(stringContainsLine(stringResult, vm1Name + " .*" + queue1Name + " .*514 .*true .*" + diskStoreName + " .*213 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper" + ".*"));
     assertTrue(stringContainsLine(stringResult, vm1Name + ".*param2=value2.*"));
     assertTrue(stringContainsLine(stringResult, vm1Name + ".*param1=[^\\w].*"));
     assertFalse(stringContainsLine(stringResult, vm2Name + ".*" + queue1Name + ".*"));
@@ -206,10 +187,8 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
         assertEquals(queue.getDispatcherThreads(), 2);
         assertEquals(queue.getOrderPolicy().toString(), "PARTITION");
         assertEquals(queue.getGatewayEventFilters().size(), 1);
-        assertEquals(queue.getGatewayEventFilters().get(0).getClass().getName(),
-            "com.qcdunit.QueueCommandsDUnitTestHelper");
-        assertEquals(queue.getGatewayEventSubstitutionFilter().getClass().getName(),
-            "com.qcdunit.QueueCommandsDUnitTestHelper");
+        assertEquals(queue.getGatewayEventFilters().get(0).getClass().getName(), "com.qcdunit.QueueCommandsDUnitTestHelper");
+        assertEquals(queue.getGatewayEventSubstitutionFilter().getClass().getName(), "com.qcdunit.QueueCommandsDUnitTestHelper");
         assertEquals(queue.isDiskSynchronous(), false);
         assertEquals(queue.isForwardExpirationDestroy(), true);
         assertEquals(queue.getAsyncEventListener().getClass().getName(), "com.qcdunit.QueueCommandsDUnitTestHelper");
@@ -218,8 +197,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
 
     commandStringBuilder = new CommandStringBuilder(CliStrings.CREATE_ASYNC_EVENT_QUEUE);
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__ID, queue2Name);
-    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER,
-        "com.qcdunit.QueueCommandsDUnitTestHelper");
+    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER, "com.qcdunit.QueueCommandsDUnitTestHelper");
     cmdResult = executeCommand(commandStringBuilder.toString());
     assertEquals(Result.Status.OK, cmdResult.getStatus());
     stringResult = commandResultToString(cmdResult);
@@ -233,14 +211,10 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(Result.Status.OK, cmdResult.getStatus());
     stringResult = commandResultToString(cmdResult);
     assertEquals(6, countLinesInString(stringResult, false));
-    assertTrue(stringContainsLine(stringResult,
-        "Manager .*" + queue2Name + " .*100 .*false .*null .*100 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper"));
-    assertTrue(stringContainsLine(stringResult,
-        vm1Name + " .*" + queue1Name + " .*514 .*true .*" + diskStoreName + " .*213 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper" + ".*"));
-    assertTrue(stringContainsLine(stringResult,
-        vm1Name + " .*" + queue2Name + " .*100 .*false .*null .*100 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper"));
-    assertTrue(stringContainsLine(stringResult,
-        vm2Name + " .*" + queue2Name + " .*100 .*false .*null .*100 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper"));
+    assertTrue(stringContainsLine(stringResult, "Manager .*" + queue2Name + " .*100 .*false .*null .*100 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper"));
+    assertTrue(stringContainsLine(stringResult, vm1Name + " .*" + queue1Name + " .*514 .*true .*" + diskStoreName + " .*213 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper" + ".*"));
+    assertTrue(stringContainsLine(stringResult, vm1Name + " .*" + queue2Name + " .*100 .*false .*null .*100 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper"));
+    assertTrue(stringContainsLine(stringResult, vm2Name + " .*" + queue2Name + " .*100 .*false .*null .*100 .*" + " .*com.qcdunit.QueueCommandsDUnitTestHelper"));
   }
 
   /**
@@ -267,8 +241,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
         locatorProps.setProperty(LOG_LEVEL, "fine");
         locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
         try {
-          final InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(locatorPort, locatorLogFile, null,
-              locatorProps);
+          final InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(locatorPort, locatorLogFile, null, locatorProps);
 
           WaitCriterion wc = new WaitCriterion() {
             @Override
@@ -291,7 +264,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
     // Start the default manager
     Properties managerProps = new Properties();
     managerProps.setProperty(MCAST_PORT, "0");
-    managerProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+    managerProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
     setUpJmxManagerOnVm0ThenConnect(managerProps);
 
     // Create a cache in VM 1
@@ -301,7 +274,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
       public void run() {
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
         localProps.setProperty(GROUPS, groupName);
         getSystem(localProps);
         assertNotNull(getCache());
@@ -313,17 +286,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
     QueueCommandsDUnitTest.this.filesToBeDeleted.add(jarFile.getAbsolutePath());
 
     ClassBuilder classBuilder = new ClassBuilder();
-    byte[] jarBytes = classBuilder.createJarFromClassContent("com/qcdunit/QueueCommandsDUnitTestListener",
-        "package com.qcdunit;" +
-            "import java.util.List; import java.util.Properties;" +
-            "import org.apache.geode.internal.cache.xmlcache.Declarable2; import org.apache.geode.cache.asyncqueue.AsyncEvent;" +
-            "import org.apache.geode.cache.asyncqueue.AsyncEventListener;" +
-            "public class QueueCommandsDUnitTestListener implements Declarable2, AsyncEventListener {" +
-            "Properties props;" +
-            "public boolean processEvents(List<AsyncEvent> events) { return true; }" +
-            "public void close() {}" +
-            "public void init(final Properties props) {this.props = props;}" +
-            "public Properties getConfig() {return this.props;}}");
+    byte[] jarBytes = classBuilder.createJarFromClassContent("com/qcdunit/QueueCommandsDUnitTestListener", "package com.qcdunit;" + "import java.util.List; import java.util.Properties;" + "import org.apache.geode.internal.cache.xmlcache.Declarable2; import org.apache.geode.cache.asyncqueue.AsyncEvent;" + "import org.apache.geode.cache.asyncqueue.AsyncEventListener;" + "public class QueueCommandsDUnitTestListener implements Declarable2, AsyncEventListener {" + "Properties props;" + "public boolean processEvents(List<AsyncEvent> events) { return true; }" + "public void close() {}" + "public void init(final Properties props) {this.props = props;}" + "public Properties getConfig() {return this.props;}}");
     writeJarBytesToFile(jarFile, jarBytes);
 
     CommandResult cmdResult = executeCommand("deploy --jar=QueueCommandsDUnit.jar");
@@ -333,8 +296,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
     CommandStringBuilder commandStringBuilder = new CommandStringBuilder(CliStrings.CREATE_ASYNC_EVENT_QUEUE);
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__ID, queueName);
     commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__GROUP, groupName);
-    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER,
-        "com.qcdunit.QueueCommandsDUnitTestListener");
+    commandStringBuilder.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER, "com.qcdunit.QueueCommandsDUnitTestListener");
     cmdResult = executeCommand(commandStringBuilder.toString());
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
@@ -366,7 +328,7 @@ public class QueueCommandsDUnitTest extends CliCommandTestBase {
 
         Properties localProps = new Properties();
         localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort+"]");
+        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
         localProps.setProperty(GROUPS, groupName);
         localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
         getSystem(localProps);

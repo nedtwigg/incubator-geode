@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis.decode.cp;
+
 import java.io.*;
 
 import org.apache.geode.codeAnalysis.decode.CompiledClass;
 
-
 public class CpMethodHandle extends Cp {
-    byte reference_kind;
-    int reference_index;
-    CpMethodHandle( DataInputStream source ) throws IOException {
-        reference_kind = source.readByte();
-        reference_index = source.readUnsignedShort();
-    }
-    public String returnType(CompiledClass info) {
-        return "not yet implemented";
-    }
+  byte reference_kind;
+  int reference_index;
+
+  CpMethodHandle(DataInputStream source) throws IOException {
+    reference_kind = source.readByte();
+    reference_index = source.readUnsignedShort();
+  }
+
+  public String returnType(CompiledClass info) {
+    return "not yet implemented";
+  }
 }

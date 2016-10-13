@@ -34,7 +34,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-@SuppressWarnings({"rawtypes", "serial"})
+@SuppressWarnings({ "rawtypes", "serial" })
 @Category(DistributedTest.class)
 public class HAInterestPart2DUnitTest extends HAInterestTestCase {
 
@@ -159,7 +159,7 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   @Test
   public void testRefreshEntriesFromPrimaryWhenDSMDetectsServerLive() throws Exception {
     IgnoredException.addIgnoredException(ServerConnectivityException.class.getName());
-    
+
     PORT1 = ((Integer) server1.invoke(() -> HAInterestTestCase.createServerCache())).intValue();
     server1.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
     createClientPoolCacheConnectionToSingleServer(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
@@ -336,7 +336,7 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   @Test
   public void testInterestRecoveryFailure() throws Exception {
     IgnoredException.addIgnoredException("Server unreachable");
-    
+
     PORT1 = ((Integer) server1.invoke(() -> HAInterestTestCase.createServerCache())).intValue();
     server1.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
     PORT2 = ((Integer) server2.invoke(() -> HAInterestTestCase.createServerCache())).intValue();
@@ -360,7 +360,7 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
     }
     final Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r1);
-    
+
     WaitCriterion wc = new WaitCriterion() {
       private String excuse;
 

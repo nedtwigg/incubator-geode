@@ -39,57 +39,57 @@ public class RegionOnMember extends JMXBaseBean implements RegionOnMemberMBean {
   }
 
   @Override
-  public String getFullPath(){
+  public String getFullPath() {
     return this.fullPath;
   }
 
   @Override
-  public String getMember(){
+  public String getMember() {
     return this.member;
   }
 
   @Override
-  public String getName(){
+  public String getName() {
     return getString("name");
   }
 
   @Override
-  public String getRegionType(){
+  public String getRegionType() {
     return getString("regionType");
   }
 
   @Override
-  public long getEntrySize(){
+  public long getEntrySize() {
     return getLong("entrySize");
   }
 
   @Override
-  public long getEntryCount(){
+  public long getEntryCount() {
     return getLong("entryCount");
   }
 
   @Override
-  public double getGetsRate(){
+  public double getGetsRate() {
     return getDouble("getsRate");
   }
 
   @Override
-  public double getPutsRate(){
+  public double getPutsRate() {
     return getDouble("putsRate");
   }
 
   @Override
-  public double getDiskReadsRate(){
+  public double getDiskReadsRate() {
     return getDouble("diskGetsRate");
   }
 
   @Override
-  public double getDiskWritesRate(){
+  public double getDiskWritesRate() {
     return getDouble("diskPutsRate");
   }
 
   @Override
-  public int getLocalMaxMemory(){
+  public int getLocalMaxMemory() {
     return getInt("localMaxMemory");
   }
 }

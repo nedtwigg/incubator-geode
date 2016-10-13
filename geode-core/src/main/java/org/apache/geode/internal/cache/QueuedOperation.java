@@ -30,8 +30,7 @@ import java.io.*;
  * 
  * @since GemFire 5.0
  */
-public class QueuedOperation
-  {
+public class QueuedOperation {
   private final Operation op;
 
   private final Object key; // may be null
@@ -51,8 +50,7 @@ public class QueuedOperation
   /**
    * Creates an instance of a queued operation with the given data.
    */
-  public QueuedOperation(Operation op, Object key, byte[] value,
-      Object valueObj, byte deserializationPolicy, Object cbArg) {
+  public QueuedOperation(Operation op, Object key, byte[] value, Object valueObj, byte deserializationPolicy, Object cbArg) {
     this.op = op;
     this.key = key;
     this.value = value;
@@ -61,96 +59,73 @@ public class QueuedOperation
     this.cbArg = cbArg;
   }
 
-  public void process(LocalRegion lr, DistributedMember src, long lastMod)
-  {
+  public void process(LocalRegion lr, DistributedMember src, long lastMod) {
     if (this.op.isRegion()) {
       // it is a region operation
-      RegionEventImpl re = new RegionEventImpl(lr, this.op, this.cbArg, true,
-          src);
+      RegionEventImpl re = new RegionEventImpl(lr, this.op, this.cbArg, true, src);
       //re.setQueued(true);
       if (this.op.isRegionInvalidate()) {
         lr.basicInvalidateRegion(re);
-      }
-      else if (this.op == Operation.REGION_CLEAR) {
+      } else if (this.op == Operation.REGION_CLEAR) {
         lr.cmnClearRegion(re, false/* cacheWrite */, false/*useRVV*/);
-      }
-      else {
+      } else {
         throw new IllegalStateException(LocalizedStrings.QueuedOperation_THE_0_SHOULD_NOT_HAVE_BEEN_QUEUED.toLocalizedString(this.op));
       }
-    }
-    else {
+    } else {
       // it is an entry operation
       //TODO :EventID should be passed from the sender & should be reused here
-      @Released EntryEventImpl ee = EntryEventImpl.create(
-          lr, this.op, this.key, null,
-          this.cbArg, true, src);
+      @Released
+      EntryEventImpl ee = EntryEventImpl.create(lr, this.op, this.key, null, this.cbArg, true, src);
       try {
-      //ee.setQueued(true);
-      if (this.op.isCreate() || this.op.isUpdate()) {
-        UpdateOperation.UpdateMessage.setNewValueInEvent(this.value,
-                                                         this.valueObj,
-                                                         ee,
-                                                         this.deserializationPolicy);
-        try {
-          long time = lastMod;
-          if (ee.getVersionTag() != null) {
-            time = ee.getVersionTag().getVersionTimeStamp();
+        //ee.setQueued(true);
+        if (this.op.isCreate() || this.op.isUpdate()) {
+          UpdateOperation.UpdateMessage.setNewValueInEvent(this.value, this.valueObj, ee, this.deserializationPolicy);
+          try {
+            long time = lastMod;
+            if (ee.getVersionTag() != null) {
+              time = ee.getVersionTag().getVersionTimeStamp();
+            }
+            if (AbstractUpdateOperation.doPutOrCreate(lr, ee, time)) {
+              // am I done?
+            }
+          } catch (ConcurrentCacheModificationException e) {
+            // operation was rejected by the cache's concurrency control mechanism as being old
           }
-          if (AbstractUpdateOperation.doPutOrCreate(lr, ee, time)) {
-            // am I done?
+        } else if (this.op.isDestroy()) {
+          ee.setOldValueFromRegion();
+          try {
+            lr.basicDestroy(ee, false, null); // expectedOldValue
+                                              // ???:ezoerner:20080815
+                                              // can a remove(key, value) operation be
+                                              // queued?
+          } catch (ConcurrentCacheModificationException e) {
+            // operation was rejected by the cache's concurrency control mechanism as being old
+          } catch (EntryNotFoundException ignore) {
+          } catch (CacheWriterException e) {
+            throw new Error(LocalizedStrings.QueuedOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(), e);
+          } catch (TimeoutException e) {
+            throw new Error(LocalizedStrings.QueuedOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED.toLocalizedString(), e);
           }
-        } catch (ConcurrentCacheModificationException e) {
-          // operation was rejected by the cache's concurrency control mechanism as being old
+        } else if (this.op.isInvalidate()) {
+          ee.setOldValueFromRegion();
+          boolean forceNewEntry = lr.dataPolicy.withReplication() && !lr.isInitialized();
+          boolean invokeCallbacks = lr.isInitialized();
+          try {
+            lr.basicInvalidate(ee, invokeCallbacks, forceNewEntry);
+          } catch (ConcurrentCacheModificationException e) {
+            // operation was rejected by the cache's concurrency control mechanism as being old
+          } catch (EntryNotFoundException ignore) {
+          }
+        } else {
+          throw new IllegalStateException(LocalizedStrings.QueuedOperation_THE_0_SHOULD_NOT_HAVE_BEEN_QUEUED.toLocalizedString(this.op));
         }
-      }
-      else if (this.op.isDestroy()) {
-        ee.setOldValueFromRegion();
-        try {
-          lr.basicDestroy(ee,
-                          false,
-                          null); // expectedOldValue
-                                 // ???:ezoerner:20080815
-                                 // can a remove(key, value) operation be
-                                 // queued?
-        }
-        catch (ConcurrentCacheModificationException e) {
-          // operation was rejected by the cache's concurrency control mechanism as being old
-        }
-        catch (EntryNotFoundException ignore) {
-        }
-        catch (CacheWriterException e) {
-          throw new Error(LocalizedStrings.QueuedOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(), e);
-        }
-        catch (TimeoutException e) {
-          throw new Error(LocalizedStrings.QueuedOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED.toLocalizedString(), e);
-        }
-      }
-      else if (this.op.isInvalidate()) {
-        ee.setOldValueFromRegion();
-        boolean forceNewEntry = lr.dataPolicy.withReplication()
-            && !lr.isInitialized();
-        boolean invokeCallbacks = lr.isInitialized();
-        try {
-          lr.basicInvalidate(ee, invokeCallbacks, forceNewEntry);
-        }
-        catch (ConcurrentCacheModificationException e) {
-          // operation was rejected by the cache's concurrency control mechanism as being old
-        }
-        catch (EntryNotFoundException ignore) {
-        }
-      }
-      else {
-        throw new IllegalStateException(LocalizedStrings.QueuedOperation_THE_0_SHOULD_NOT_HAVE_BEEN_QUEUED.toLocalizedString(this.op));
-      }
       } finally {
         ee.release();
       }
     }
   }
 
-  public static QueuedOperation createFromData(DataInput in)
-      throws IOException, ClassNotFoundException
-  {
+  public static QueuedOperation createFromData(DataInput in) throws IOException, ClassNotFoundException {
     Operation op = Operation.fromOrdinal(in.readByte());
     Object key = null;
     byte[] value = null;
@@ -164,13 +139,10 @@ public class QueuedOperation
         value = DataSerializer.readByteArray(in);
       }
     }
-    return new QueuedOperation(op, key, value, valueObj, deserializationPolicy,
-        cbArg);
+    return new QueuedOperation(op, key, value, valueObj, deserializationPolicy, cbArg);
   }
 
-
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     out.writeByte(this.op.ordinal);
     DataSerializer.writeObject(this.cbArg, out);
     if (this.op.isEntry()) {

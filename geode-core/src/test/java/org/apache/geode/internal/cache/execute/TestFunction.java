@@ -63,17 +63,13 @@ public class TestFunction extends FunctionAdapter {
 
     if (id.equals(TEST_FUNCTION1)) {
       execute1(context);
-    }
-    else if (id.equals(TEST_FUNCTION2)) {
+    } else if (id.equals(TEST_FUNCTION2)) {
       execute2(context);
-    }
-    else if (id.equals(TEST_FUNCTION3)) {
+    } else if (id.equals(TEST_FUNCTION3)) {
       execute2(context);
-    }
-    else if (id.equals(TEST_FUNCTION4)) {
+    } else if (id.equals(TEST_FUNCTION4)) {
       execute2(context);
-    }
-    else if (id.equals(TEST_FUNCTION5)) {
+    } else if (id.equals(TEST_FUNCTION5)) {
       execute5(context);
     }
   }
@@ -81,8 +77,7 @@ public class TestFunction extends FunctionAdapter {
   public void execute1(FunctionContext context) {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.info("Executing executeException in TestFunction on Member : "
-        + ds.getDistributedMember() + "with Context : " + context);
+    logger.info("Executing executeException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
     context.getResultSender().lastResult((Serializable) context.getArguments());
   }
 
@@ -93,8 +88,7 @@ public class TestFunction extends FunctionAdapter {
       synchronized (this) {
         this.wait(20000000);
       }
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
 
     }
     context.getResultSender().lastResult(Boolean.TRUE);
@@ -104,18 +98,15 @@ public class TestFunction extends FunctionAdapter {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
 
-    if (this.props.get("TERMINATE") != null
-        && this.props.get("TERMINATE").equals("YES")) {
+    if (this.props.get("TERMINATE") != null && this.props.get("TERMINATE").equals("YES")) {
       logger.info("Function Terminated");
-    }
-    else {
+    } else {
       try {
         synchronized (this) {
           logger.info("Function Running");
           this.wait(20000);
         }
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
 
       }
     }

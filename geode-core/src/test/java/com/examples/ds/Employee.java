@@ -27,8 +27,7 @@ public class Employee implements DataSerializable {
   private Date birthday;
   private Company employer;
 
-  public Employee(int id, String name, Date birthday,
-                  Company employer){
+  public Employee(int id, String name, Date birthday, Company employer) {
     this.id = id;
     this.name = name;
     this.birthday = birthday;
@@ -42,8 +41,7 @@ public class Employee implements DataSerializable {
     DataSerializer.writeObject(this.employer, out);
   }
 
-  public void fromData(DataInput in) 
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
 
     this.id = in.readInt();
     this.name = in.readUTF();

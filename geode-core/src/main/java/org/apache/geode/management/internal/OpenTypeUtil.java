@@ -101,8 +101,7 @@ public class OpenTypeUtil {
       return name;
     }
     int offset1 = Character.offsetByCodePoints(name, 0, 1);
-    if (offset1 < name.length()
-        && Character.isUpperCase(name.codePointAt(offset1)))
+    if (offset1 < name.length() && Character.isUpperCase(name.codePointAt(offset1)))
       return name;
     return name.substring(0, offset1).toLowerCase() + name.substring(offset1);
   }

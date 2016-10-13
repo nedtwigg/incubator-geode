@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
 public class CommentSkipHelper {
 
   private boolean inBlockComment;
-  
+
   public String skipComments(String line) {
     // We support simple block comments; ie a single pair per line
     if (!inBlockComment && line.contains("/*") && line.contains("*/")) {

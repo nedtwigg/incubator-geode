@@ -104,8 +104,7 @@ public class TcpServer {
 
   private static final Logger log = LogService.getLogger();
 
-  protected/*GemStoneAddition*/ final/*GemStoneAddition*/ static int READ_TIMEOUT = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "TcpServer.READ_TIMEOUT", 60 * 1000)
-                                                                                           .intValue();
+  protected/*GemStoneAddition*/ final/*GemStoneAddition*/ static int READ_TIMEOUT = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "TcpServer.READ_TIMEOUT", 60 * 1000).intValue();
   //This is for backwards compatibility. The p2p.backlog flag used to be the only way to configure the locator backlog.
   private static final int P2P_BACKLOG = Integer.getInteger("p2p.backlog", 1000).intValue();
   private static final int BACKLOG = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "TcpServer.BACKLOG", P2P_BACKLOG).intValue();
@@ -138,14 +137,7 @@ public class TcpServer {
     GOSSIP_TO_GEMFIRE_VERSION_MAP.put(OLDGOSSIPVERSION, Version.GFE_57.ordinal());
   }
 
-  public TcpServer(int port,
-                   InetAddress bind_address,
-                   Properties sslConfig,
-                   DistributionConfigImpl cfg,
-                   TcpHandler handler,
-                   PoolStatHelper poolHelper,
-                   ThreadGroup threadGroup,
-                   String threadName) {
+  public TcpServer(int port, InetAddress bind_address, Properties sslConfig, DistributionConfigImpl cfg, TcpHandler handler, PoolStatHelper poolHelper, ThreadGroup threadGroup, String threadName) {
     this.port = port;
     this.bind_address = bind_address;
     this.handler = handler;
@@ -192,8 +184,7 @@ public class TcpServer {
     this.handler.restarting(ds, cache, sharedConfig);
     startServerThread();
     this.executor = createExecutor(this.poolHelper, this.threadGroup);
-    this.log.info("TcpServer@" + System.identityHashCode(this) + " restarting: completed.  Server thread=" + serverThread + "@" + System.identityHashCode(serverThread) + ";alive=" + serverThread
-      .isAlive());
+    this.log.info("TcpServer@" + System.identityHashCode(this) + " restarting: completed.  Server thread=" + serverThread + "@" + System.identityHashCode(serverThread) + ";alive=" + serverThread.isAlive());
   }
 
   public void start() throws IOException {

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.internal.cache.tier.sockets;
 
 import org.apache.geode.cache.InterestResultPolicy;
@@ -30,9 +29,9 @@ import java.io.*;
  *
  * @since GemFire 5.7
  */
-public final class InterestResultPolicyImpl extends InterestResultPolicy
-  implements DataSerializableFixedID {
+public final class InterestResultPolicyImpl extends InterestResultPolicy implements DataSerializableFixedID {
   private static final long serialVersionUID = -7456596794818237831L;
+
   /** Should only be called by static field initialization in InterestResultPolicy */
   public InterestResultPolicyImpl(String name) {
     super(name);
@@ -53,6 +52,6 @@ public final class InterestResultPolicyImpl extends InterestResultPolicy
 
   @Override
   public Version[] getSerializationVersions() {
-     return null;
+    return null;
   }
 }

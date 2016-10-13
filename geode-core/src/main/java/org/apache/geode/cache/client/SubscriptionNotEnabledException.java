@@ -18,7 +18,6 @@ package org.apache.geode.cache.client;
 
 import org.apache.geode.cache.Region;
 
-
 /**
  * An exception indicating that client subscriptions are not enabled on this client, but
  * the client is trying to perform an operation that requires a client subscription,

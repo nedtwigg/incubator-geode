@@ -38,12 +38,7 @@ public class DummyAuthenticator implements Authenticator {
   }
 
   public static boolean checkValidName(final String userName) {
-    return userName.startsWith("user") ||
-           userName.startsWith("reader") ||
-           userName.startsWith("writer") ||
-           userName.equals("admin") ||
-           userName.equals("root") ||
-           userName.equals("administrator");
+    return userName.startsWith("user") || userName.startsWith("reader") || userName.startsWith("writer") || userName.equals("admin") || userName.equals("root") || userName.equals("administrator");
   }
 
   @Override
@@ -59,7 +54,7 @@ public class DummyAuthenticator implements Authenticator {
 
     final String password = credentials.getProperty(UserPasswordAuthInit.PASSWORD);
     if (password == null) {
-      throw new AuthenticationFailedException( "DummyAuthenticator: password property [" + UserPasswordAuthInit.PASSWORD + "] not provided");
+      throw new AuthenticationFailedException("DummyAuthenticator: password property [" + UserPasswordAuthInit.PASSWORD + "] not provided");
     }
 
     if (userName.equals(password) && checkValidName(userName)) {

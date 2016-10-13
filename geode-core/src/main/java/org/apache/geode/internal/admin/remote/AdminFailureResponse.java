@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -31,7 +30,7 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class AdminFailureResponse extends AdminResponse {
   // instance variables
   Exception cause;
-  
+
   /**
    * Returns a <code>AdminFailureResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of the local manager's
@@ -48,7 +47,7 @@ public final class AdminFailureResponse extends AdminResponse {
   public Exception getCause() {
     return this.cause;
   }
-  
+
   public int getDSFID() {
     return ADMIN_FAILURE_RESPONSE;
   }
@@ -60,10 +59,9 @@ public final class AdminFailureResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.cause = (Exception)DataSerializer.readObject(in);
+    this.cause = (Exception) DataSerializer.readObject(in);
   }
 
   @Override

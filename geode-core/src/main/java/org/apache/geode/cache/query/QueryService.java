@@ -91,11 +91,8 @@ public interface QueryService {
    *           which does not support indexes.
    * 
    */
-  public Index createHashIndex(String indexName, String indexedExpression,
-      String regionPath) throws IndexInvalidException,
-      IndexNameConflictException, IndexExistsException,
-      RegionNotFoundException, UnsupportedOperationException;
-  
+  public Index createHashIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+
   /**
    * Defines a key index that can be used when executing queries. The key index
    * expression indicates query engine to use region key as index for query
@@ -120,9 +117,8 @@ public interface QueryService {
    * @throws RegionNotFoundException if the region referred to in the fromClause
    *           doesn't exist
    */
-  public void defineKeyIndex(String indexName, String indexedExpression,
-      String regionPath) throws RegionNotFoundException;
- 
+  public void defineKeyIndex(String indexName, String indexedExpression, String regionPath) throws RegionNotFoundException;
+
   /**
    * Defines a hash index that can be used when executing equal and not equal
    * queries. Hash index is not supported with asynchronous index maintenance.
@@ -149,10 +145,8 @@ public interface QueryService {
    *           doesn't exist
    * 
    */
-  public void defineHashIndex(String indexName, String indexedExpression,
-      String regionPath) throws RegionNotFoundException;
-  
-  
+  public void defineHashIndex(String indexName, String indexedExpression, String regionPath) throws RegionNotFoundException;
+
   /**
    * Defines a hash index that can be used when executing equal and not equal
    * queries.  Hash index is not supported with asynchronous index maintenance.
@@ -184,9 +178,8 @@ public interface QueryService {
    * @throws RegionNotFoundException if the region referred to in the fromClause
    *           doesn't exist
    */
-  public void defineHashIndex(String indexName, String indexedExpression,
-      String regionPath, String imports) throws RegionNotFoundException;
- 
+  public void defineHashIndex(String indexName, String indexedExpression, String regionPath, String imports) throws RegionNotFoundException;
+
   /**
    * Defines an index that can be used when executing queries.
    * To create all the defined indexes call {@link #createDefinedIndexes()} 
@@ -215,8 +208,7 @@ public interface QueryService {
    *           doesn't exist
    * 
    */
-  public void defineIndex(String indexName, String indexedExpression,
-      String regionPath) throws RegionNotFoundException;
+  public void defineIndex(String indexName, String indexedExpression, String regionPath) throws RegionNotFoundException;
 
   /**
    * Defines an index that can be used when executing queries.
@@ -257,8 +249,7 @@ public interface QueryService {
    * @throws UnsupportedOperationException If Index is being created on a region
    *           which overflows to disk
    */
-  public void defineIndex(String indexName, String indexedExpression,
-      String regionPath, String imports) throws RegionNotFoundException;
+  public void defineIndex(String indexName, String indexedExpression, String regionPath, String imports) throws RegionNotFoundException;
 
   /**
    * Create a hash index that can be used when executing equal and not equal
@@ -301,10 +292,7 @@ public interface QueryService {
    * @throws UnsupportedOperationException If Index is being created on a region
    *           which overflows to disk
    */
-  public Index createHashIndex(String indexName, String indexedExpression,
-      String regionPath, String imports) throws IndexInvalidException,
-      IndexNameConflictException, IndexExistsException,
-      RegionNotFoundException, UnsupportedOperationException;
+  public Index createHashIndex(String indexName, String indexedExpression, String regionPath, String imports) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
 
   /**
    * 
@@ -356,10 +344,7 @@ public interface QueryService {
    * 
    */
   @Deprecated
-  public Index createIndex(String indexName, IndexType indexType,
-      String indexedExpression, String fromClause)
-      throws IndexInvalidException, IndexNameConflictException,
-      IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
 
   /**
    * @deprecated As of 6.6.2, use
@@ -414,10 +399,7 @@ public interface QueryService {
    *         overflows to disk 
    */
   @Deprecated
-  public Index createIndex(String indexName, IndexType indexType,
-      String indexedExpression, String fromClause, String imports)
-      throws IndexInvalidException, IndexNameConflictException,
-      IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause, String imports) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
 
   /**
    * Create an index that can be used when executing queries.
@@ -457,11 +439,8 @@ public interface QueryService {
    *           which does not support indexes.
    * 
    */
-  public Index createIndex(String indexName, String indexedExpression,
-      String regionPath) throws IndexInvalidException,
-      IndexNameConflictException, IndexExistsException,
-      RegionNotFoundException, UnsupportedOperationException;
-  
+  public Index createIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+
   /**
    * Create an index that can be used when executing queries.
    * 
@@ -505,11 +484,8 @@ public interface QueryService {
    * @throws UnsupportedOperationException If Index is being created on a region
    *           which overflows to disk
    */
-  public Index createIndex(String indexName, String indexedExpression,
-      String regionPath, String imports) throws IndexInvalidException,
-      IndexNameConflictException, IndexExistsException,
-      RegionNotFoundException, UnsupportedOperationException;
-  
+  public Index createIndex(String indexName, String indexedExpression, String regionPath, String imports) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+
   /**
    * Create a key index that can be used when executing queries. The key index
    * expression indicates query engine to use region key as index for query
@@ -545,12 +521,8 @@ public interface QueryService {
    * @throws UnsupportedOperationException If Index is being created on a region
    *           which overflows to disk
    */
-  public Index createKeyIndex(String indexName, String indexedExpression,
-      String regionPath) throws IndexInvalidException,
-      IndexNameConflictException, IndexExistsException,
-      RegionNotFoundException, UnsupportedOperationException;
- 
-  
+  public Index createKeyIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+
   /**
    * Creates all the indexes that were defined using
    * {@link #defineIndex(String, String, String)} 
@@ -571,7 +543,7 @@ public interface QueryService {
    * @param region the Region for the requested index
    * @return the index of the region with this name, or null if there isn't one
    */
-  public Index getIndex(Region<?,?> region, String indexName);
+  public Index getIndex(Region<?, ?> region, String indexName);
 
   /**
    * Get a collection of all the indexes in the Cache.
@@ -586,7 +558,7 @@ public interface QueryService {
    * @param region the region for the requested indexes
    * @return the collection of indexes on the specified region
    */
-  public Collection<Index> getIndexes(Region<?,?> region);
+  public Collection<Index> getIndexes(Region<?, ?> region);
 
   /**
    * 
@@ -620,11 +592,10 @@ public interface QueryService {
    * 
    * @param region the Region to remove all indexes from
    */
-  public void removeIndexes(Region<?,?> region);
-  
+  public void removeIndexes(Region<?, ?> region);
 
   // CQ Service related APIs.
-  
+
   /**
    * Constructs a new continuous query, represented by an instance of
    * CqQuery. The CqQuery is not executed until the execute method
@@ -646,8 +617,7 @@ public interface QueryService {
    *         Only one iterator in the FROM clause is supported, and it must be a region path. 
    *         Bind parameters in the query are not yet supported.
    */
-  public CqQuery newCq(String queryString, CqAttributes  cqAttr)
-  				throws QueryInvalidException, CqException;
+  public CqQuery newCq(String queryString, CqAttributes cqAttr) throws QueryInvalidException, CqException;
 
   /**
    * Constructs a new continuous query, represented by an instance of
@@ -672,8 +642,8 @@ public interface QueryService {
    *         Only one iterator in the FROM clause is supported, and it must be a region path. 
    *         Bind parameters in the query are not yet supported.
    */
-  public CqQuery newCq(String queryString, CqAttributes  cqAttr, boolean isDurable)
-                                throws QueryInvalidException, CqException;
+  public CqQuery newCq(String queryString, CqAttributes cqAttr, boolean isDurable) throws QueryInvalidException, CqException;
+
   /**
    * Constructs a new named continuous query, represented by an instance of
    * CqQuery. The CqQuery is not executed until the execute method
@@ -701,10 +671,8 @@ public interface QueryService {
    *         Bind parameters in the query are not yet supported.
    *
    */
-  public CqQuery newCq(String name, String queryString, CqAttributes cqAttr)
-  		throws QueryInvalidException, CqExistsException, CqException;
+  public CqQuery newCq(String name, String queryString, CqAttributes cqAttr) throws QueryInvalidException, CqExistsException, CqException;
 
-  
   /**
    * Constructs a new named continuous query, represented by an instance of
    * CqQuery. The CqQuery is not executed until the execute method
@@ -733,8 +701,8 @@ public interface QueryService {
    *         Bind parameters in the query are not yet supported.
    *
    */
-  public CqQuery newCq(String name, String queryString, CqAttributes cqAttr, boolean isDurable)
-                throws QueryInvalidException, CqExistsException, CqException;
+  public CqQuery newCq(String name, String queryString, CqAttributes cqAttr, boolean isDurable) throws QueryInvalidException, CqExistsException, CqException;
+
   /** 
    * Unregister all Continuous Queries. 
    * All artifacts and resources associated with the CQs are released.
@@ -754,7 +722,7 @@ public interface QueryService {
    *         null if there are no CQs.   
    */
   public CqQuery[] getCqs();
-  
+
   /**
    * Retrieves all the registered Continuous Queries for a given region.
    * This is a collection of CqQuery objects. 
@@ -776,7 +744,7 @@ public interface QueryService {
    *          null if no CqQuery object is found.
    */
   public CqQuery getCq(String cqName);
-    
+
   /**
    * Starts execution of all the registered continuous queries for this client.
    * This is complementary to stopCqs.
@@ -786,7 +754,7 @@ public interface QueryService {
    * @throws CqException if failure to execute CQ.
    */
   public void executeCqs() throws CqException;
-  
+
   /**
    * Stops execution of all the continuous queries for this client to become inactive.
    * This is useful when client needs to control the incoming CQ messages during
@@ -818,9 +786,9 @@ public interface QueryService {
    * 
    * @since GemFire 5.5
    * @throws CqException if failure to execute CQs.
-   */  
+   */
   public void stopCqs(String regionName) throws CqException;
-  
+
   /**
    * Retrieves all the durable CQs registered by the client calling this method. 
    *
@@ -829,7 +797,7 @@ public interface QueryService {
    *         empty list if no durable cqs.   
    */
   public List<String> getAllDurableCqsFromServer() throws CqException;
-    
+
   /**
    * Returns CqServiceStatistics object, which provides helper methods to 
    * get CQ service related statistics for this client. 
@@ -847,5 +815,5 @@ public interface QueryService {
    * 
    */
   public CqServiceStatistics getCqStatistics();
-    
+
 }

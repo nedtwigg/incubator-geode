@@ -96,7 +96,7 @@ public class SetsJUnitTest {
 
     assertEquals(returnedSet, new HashSet<String>(strings));
 
-    for (String entry: strings) {
+    for (String entry : strings) {
       boolean exists = jedis.sismember(key, entry);
       assertTrue(exists);
     }
@@ -117,7 +117,7 @@ public class SetsJUnitTest {
     jedis.sadd(source, stringArray);
 
     long i = 1;
-    for (String entry: strings) {
+    for (String entry : strings) {
       assertTrue(jedis.smove(source, dest, entry) == 1);
       assertTrue(jedis.sismember(dest, entry));
       assertTrue(jedis.scard(source) == strings.size() - i);
@@ -141,29 +141,29 @@ public class SetsJUnitTest {
         newSet.add(randString());
       sets.add(newSet);
     }
-    
+
     for (int i = 0; i < numSets; i++) {
       Set<String> s = sets.get(i);
       String[] stringArray = s.toArray(new String[s.size()]);
       jedis.sadd(keys[i], stringArray);
     }
-    
+
     Set<String> result = sets.get(0);
     for (int i = 1; i < numSets; i++)
       result.removeAll(sets.get(i));
-    
+
     assertEquals(result, jedis.sdiff(keys));
-    
+
     String destination = randString();
-    
+
     jedis.sdiffstore(destination, keys);
-    
+
     Set<String> destResult = jedis.smembers(destination);
-    
+
     assertEquals(result, destResult);
-    
+
   }
-  
+
   @Test
   public void testSUnionAndStore() {
     int numSets = 3;
@@ -177,29 +177,29 @@ public class SetsJUnitTest {
         newSet.add(randString());
       sets.add(newSet);
     }
-    
+
     for (int i = 0; i < numSets; i++) {
       Set<String> s = sets.get(i);
       String[] stringArray = s.toArray(new String[s.size()]);
       jedis.sadd(keys[i], stringArray);
     }
-    
+
     Set<String> result = sets.get(0);
     for (int i = 1; i < numSets; i++)
       result.addAll(sets.get(i));
-    
+
     assertEquals(result, jedis.sunion(keys));
-    
+
     String destination = randString();
-    
+
     jedis.sunionstore(destination, keys);
-    
+
     Set<String> destResult = jedis.smembers(destination);
-    
+
     assertEquals(result, destResult);
-    
+
   }
-  
+
   @Test
   public void testSInterAndStore() {
     int numSets = 3;
@@ -213,27 +213,27 @@ public class SetsJUnitTest {
         newSet.add(randString());
       sets.add(newSet);
     }
-    
+
     for (int i = 0; i < numSets; i++) {
       Set<String> s = sets.get(i);
       String[] stringArray = s.toArray(new String[s.size()]);
       jedis.sadd(keys[i], stringArray);
     }
-    
+
     Set<String> result = sets.get(0);
     for (int i = 1; i < numSets; i++)
       result.retainAll(sets.get(i));
-    
+
     assertEquals(result, jedis.sinter(keys));
-    
+
     String destination = randString();
-    
+
     jedis.sinterstore(destination, keys);
-    
+
     Set<String> destResult = jedis.smembers(destination);
-    
+
     assertEquals(result, destResult);
-    
+
   }
 
   private String randString() {

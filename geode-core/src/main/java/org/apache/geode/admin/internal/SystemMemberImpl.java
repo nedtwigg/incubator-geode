@@ -40,12 +40,10 @@ import java.util.*;
  *
  * @since GemFire     3.5
  */
-public class SystemMemberImpl 
-implements org.apache.geode.admin.SystemMember,
-           org.apache.geode.admin.internal.ConfigurationParameterListener {
+public class SystemMemberImpl implements org.apache.geode.admin.SystemMember, org.apache.geode.admin.internal.ConfigurationParameterListener {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** Identifying name of this member.
    * Note that by default this is the string form of internalId but the
    * ManagedSystemMemberImpl subclass resets it to getNewId()
@@ -62,7 +60,7 @@ implements org.apache.geode.admin.SystemMember,
   protected String host;
 
   /** The internal configuration this impl delegates to for runtime config */
-//  private Config config;
+  //  private Config config;
 
   /** The configuration parameters for this member.  Maps the name of
       the ConfigurationParameter to the ConfigurationParameter. */
@@ -73,7 +71,7 @@ implements org.apache.geode.admin.SystemMember,
 
   /** Internal GemFire vm to delegate to */
   private GemFireVM vm;
-  
+
   // -------------------------------------------------------------------------
   //   Constructor(s)
   // -------------------------------------------------------------------------
@@ -84,8 +82,7 @@ implements org.apache.geode.admin.SystemMember,
    *
    * @param system  the distributed system this member belongs to
    */
-  protected SystemMemberImpl(AdminDistributedSystem system) 
-    throws AdminException {
+  protected SystemMemberImpl(AdminDistributedSystem system) throws AdminException {
 
     this.system = system;
     refreshConfig(getDefaultConfig());
@@ -99,9 +96,7 @@ implements org.apache.geode.admin.SystemMember,
    * @param system      the distributed system this member belongs to
    * @param vm internal GemFire vm to delegate to
    */
-  public SystemMemberImpl(AdminDistributedSystem system, 
-                          GemFireVM vm)
-    throws AdminException {
+  public SystemMemberImpl(AdminDistributedSystem system, GemFireVM vm) throws AdminException {
 
     this(system);
     setGemFireVM(vm);
@@ -122,9 +117,7 @@ implements org.apache.geode.admin.SystemMember,
    *           
    * @since GemFire 6.5
    */
-  protected SystemMemberImpl(AdminDistributedSystem system,
-                          InternalDistributedMember member) 
-                          throws AdminException {
+  protected SystemMemberImpl(AdminDistributedSystem system, InternalDistributedMember member) throws AdminException {
     this(system);
     updateByInternalDistributedMember(member);
   }
@@ -145,7 +138,7 @@ implements org.apache.geode.admin.SystemMember,
   public final AdminDistributedSystem getDistributedSystem() {
     return this.system;
   }
-  
+
   public final InternalDistributedMember getInternalId() {
     return internalId;
   }
@@ -157,11 +150,11 @@ implements org.apache.geode.admin.SystemMember,
   public final String getName() {
     return this.name;
   }
-  
+
   public String getHost() {
     return this.host;
   }
-  
+
   public final InetAddress getHostAddress() {
     return InetAddressUtil.toInetAddress(this.getHost());
   }
@@ -169,21 +162,22 @@ implements org.apache.geode.admin.SystemMember,
   // -------------------------------------------------------------------------
   //   Operations
   // -------------------------------------------------------------------------
-  
+
   public final String getLog() {
     String childTail = null;
     String mainTail = null;
     GemFireVM vm = getGemFireVM();
     if (vm != null) {
       String[] log = vm.getSystemLogs();
-      if (log != null && log.length > 0) mainTail = log[0];
-      if (log != null && log.length > 1) childTail = log[1];
+      if (log != null && log.length > 0)
+        mainTail = log[0];
+      if (log != null && log.length > 1)
+        childTail = log[1];
     }
-    
+
     if (childTail == null && mainTail == null) {
       return LocalizedStrings.SystemMemberImpl_NO_LOG_FILE_CONFIGURED_LOG_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT.toLocalizedString();
-    } 
-    else {
+    } else {
       StringBuffer result = new StringBuffer();
       if (mainTail != null) {
         result.append(mainTail);
@@ -198,27 +192,27 @@ implements org.apache.geode.admin.SystemMember,
 
   public final java.util.Properties getLicense() {
     GemFireVM vm = getGemFireVM();
-    if (vm == null) return null;
+    if (vm == null)
+      return null;
     return new Properties();
   }
 
   public final String getVersion() {
     GemFireVM vm = getGemFireVM();
-    if (vm == null) return null;
+    if (vm == null)
+      return null;
     return vm.getVersionInfo();
   }
 
-  public StatisticResource[] getStat(String statisticsTypeName) 
-  throws org.apache.geode.admin.AdminException {
+  public StatisticResource[] getStat(String statisticsTypeName) throws org.apache.geode.admin.AdminException {
     StatisticResource[] res = new StatisticResource[0];
     if (this.vm != null) {
       res = getStatsImpl(this.vm.getStats(statisticsTypeName));
     }
-    return res.length==0 ? null : res;
+    return res.length == 0 ? null : res;
   }
 
-  public StatisticResource[] getStats() 
-  throws org.apache.geode.admin.AdminException {
+  public StatisticResource[] getStats() throws org.apache.geode.admin.AdminException {
     StatisticResource[] statsImpl = new StatisticResource[0];
     if (this.vm != null) {
       statsImpl = getStatsImpl(this.vm.getStats(null));
@@ -236,11 +230,10 @@ implements org.apache.geode.admin.SystemMember,
     }
   }
 
-  public final SystemMemberCache getCache()
-    throws org.apache.geode.admin.AdminException
-  {
+  public final SystemMemberCache getCache() throws org.apache.geode.admin.AdminException {
     GemFireVM vm = getGemFireVM(); // fix for bug 33505
-    if (vm == null) return null;
+    if (vm == null)
+      return null;
     try {
       return createSystemMemberCache(vm);
 
@@ -251,55 +244,50 @@ implements org.apache.geode.admin.SystemMember,
       return null;
     }
   }
-  
-  public void refreshConfig() 
-  throws org.apache.geode.admin.AdminException {
+
+  public void refreshConfig() throws org.apache.geode.admin.AdminException {
     GemFireVM vm = getGemFireVM();
-    if (vm == null) return;
+    if (vm == null)
+      return;
     refreshConfig(vm.getConfig());
   }
-  
+
   /**
    * Sets the value of this system member's distribution-related
    * configuration based on the given <code>Config</code> object.
    */
-  public final void refreshConfig(Config config) 
-  throws org.apache.geode.admin.AdminException {
+  public final void refreshConfig(Config config) throws org.apache.geode.admin.AdminException {
     if (config == null) {
-      throw new AdminException(LocalizedStrings.SystemMemberImpl_FAILED_TO_REFRESH_CONFIGURATION_PARAMETERS_FOR_0.toLocalizedString(new Object[] {getId()}));
+      throw new AdminException(LocalizedStrings.SystemMemberImpl_FAILED_TO_REFRESH_CONFIGURATION_PARAMETERS_FOR_0.toLocalizedString(new Object[] { getId() }));
     }
-    
+
     String[] names = config.getAttributeNames();
     if (names == null || names.length < 1) {
-      throw new AdminException(LocalizedStrings.SystemMemberImpl_FAILED_TO_REFRESH_CONFIGURATION_PARAMETERS_FOR_0.toLocalizedString(new Object[] {getId()}));
+      throw new AdminException(LocalizedStrings.SystemMemberImpl_FAILED_TO_REFRESH_CONFIGURATION_PARAMETERS_FOR_0.toLocalizedString(new Object[] { getId() }));
     }
-    
+
     for (int i = 0; i < names.length; i++) {
       String name = names[i];
       Object value = config.getAttributeObject(name);
       if (value != null) {
-        ConfigurationParameter parm = createConfigurationParameter(
-              name,                                 // name
-              config.getAttributeDescription(name), // description
-              value,      // value
-              config.getAttributeType(name),        // valueType
-              config.isAttributeModifiable(name) ); // isModifiable
+        ConfigurationParameter parm = createConfigurationParameter(name, // name
+            config.getAttributeDescription(name), // description
+            value, // value
+            config.getAttributeType(name), // valueType
+            config.isAttributeModifiable(name)); // isModifiable
         ((ConfigurationParameterImpl) parm).addConfigurationParameterListener(this);
         this.parms.put(name, parm);
       }
     }
   }
-  
+
   public final ConfigurationParameter[] getConfiguration() {
-    ConfigurationParameter[] array =
-      new ConfigurationParameter[this.parms.size()];
+    ConfigurationParameter[] array = new ConfigurationParameter[this.parms.size()];
     this.parms.values().toArray(array);
     return array;
   }
-  
-  public ConfigurationParameter[]
-    setConfiguration(ConfigurationParameter[] parms) 
-    throws AdminException {
+
+  public ConfigurationParameter[] setConfiguration(ConfigurationParameter[] parms) throws AdminException {
 
     for (int i = 0; i < parms.length; i++) {
       ConfigurationParameter parm = parms[i];
@@ -318,15 +306,15 @@ implements org.apache.geode.admin.SystemMember,
 
     return this.getConfiguration();
   }
-  
+
   public SystemMemberType getType() {
     return SystemMemberType.APPLICATION;
   }
-  
+
   // -------------------------------------------------------------------------
   //   Listener callbacks
   // -------------------------------------------------------------------------
-  
+
   // -- org.apache.geode.admin.internal.ConfigurationParameterListener ---
   public void configurationParameterValueChanged(ConfigurationParameter parm) {
     try {
@@ -338,10 +326,10 @@ implements org.apache.geode.admin.SystemMember,
     } catch (java.lang.Exception e) {
       logger.warn(e.getMessage(), e);
     }
-//    catch (java.lang.RuntimeException e) {
-//      logWriter.warning(e);
-//      throw e;
-//    }
+    //    catch (java.lang.RuntimeException e) {
+    //      logWriter.warning(e);
+    //      throw e;
+    //    }
     catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
@@ -358,20 +346,20 @@ implements org.apache.geode.admin.SystemMember,
       throw e;
     }
   }
-  
+
   // -------------------------------------------------------------------------
   //   Overridden method(s) from java.lang.Object
   // -------------------------------------------------------------------------
-  
+
   @Override
   public String toString() {
     return getName();
   }
-  
+
   // -------------------------------------------------------------------------
   //   Template methods with default behavior impl'ed.  Override if needed.
   // -------------------------------------------------------------------------
-  
+
   /**
    * Returns the <code>GemFireVM</code> that underlies this
    * <code>SystemMember</code>. 
@@ -418,15 +406,13 @@ implements org.apache.geode.admin.SystemMember,
    *          
    * @since GemFire 6.5
    */
-  private void updateByInternalDistributedMember(
-      InternalDistributedMember member) {
+  private void updateByInternalDistributedMember(InternalDistributedMember member) {
     if (member != null) {
       this.internalId = member;
-      this.id         = this.internalId.toString();
-      this.host       = this.internalId.getHost();
-      this.name       = this.internalId.getName();      
-      if (this.name == null || 
-          DistributionConfig.DEFAULT_NAME.equals(this.name)) { 
+      this.id = this.internalId.toString();
+      this.host = this.internalId.getHost();
+      this.name = this.internalId.getName();
+      if (this.name == null || DistributionConfig.DEFAULT_NAME.equals(this.name)) {
         /*
          * name could be null & referring to description of a fix for 32877
          */
@@ -434,18 +420,17 @@ implements org.apache.geode.admin.SystemMember,
       }
     }
   }
-  
+
   /**
    * Template method for creating {@link StatisticResource}.
    *
    * @param stat  the internal stat resource to wrap with {@link StatisticResource}
    * @return new impl instance of {@link StatisticResource}
    */
-  protected StatisticResource createStatisticResource(StatResource stat)
-  throws org.apache.geode.admin.AdminException {
+  protected StatisticResource createStatisticResource(StatResource stat) throws org.apache.geode.admin.AdminException {
     return new StatisticResourceImpl(stat, this);
   }
-  
+
   /**
    * Template method for creating {@link ConfigurationParameter}.
    *
@@ -456,30 +441,22 @@ implements org.apache.geode.admin.SystemMember,
    * @param userModifiable  true if this is modifiable; false if read-only
    * @return new impl instance of {@link ConfigurationParameter}
    */
-  protected ConfigurationParameter createConfigurationParameter(String name,
-                                                                String description,
-                                                                Object value,
-                                                                Class type,
-                                                                boolean userModifiable) {
-    return new ConfigurationParameterImpl(
-        name, description, value, type, userModifiable);
+  protected ConfigurationParameter createConfigurationParameter(String name, String description, Object value, Class type, boolean userModifiable) {
+    return new ConfigurationParameterImpl(name, description, value, type, userModifiable);
   }
-  
+
   /**
    * Template method for creating {@link SystemMemberCache}.
    *
    * @param vm  the GemFire vm to retrieve cache info from
    * @return new impl instance of {@link SystemMemberCache}
    */
-  protected SystemMemberCache createSystemMemberCache(GemFireVM vm)
-    throws org.apache.geode.admin.AdminException
-  {
+  protected SystemMemberCache createSystemMemberCache(GemFireVM vm) throws org.apache.geode.admin.AdminException {
     return new SystemMemberCacheImpl(vm);
   }
 
   /** Wrap the internal stats with impls of {@link StatisticResource} */
-  protected StatisticResource[] getStatsImpl(StatResource[] stats)
-  throws org.apache.geode.admin.AdminException {
+  protected StatisticResource[] getStatsImpl(StatResource[] stats) throws org.apache.geode.admin.AdminException {
     List statList = new ArrayList();
     for (int i = 0; i < stats.length; i++) {
       statList.add(createStatisticResource(stats[i]));
@@ -497,9 +474,8 @@ implements org.apache.geode.admin.SystemMember,
     }
     return roleNames;
   }
-  
+
   public DistributedMember getDistributedMember() {
-    return this.internalId;    
+    return this.internalId;
   }
 }
-

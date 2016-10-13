@@ -32,8 +32,7 @@ import org.apache.geode.distributed.internal.membership.*;
  * 
  * @since GemFire 5.6
  */
-public class DurableClientInfoResponse extends AdminResponse
-{
+public class DurableClientInfoResponse extends AdminResponse {
   // instance variables
   /**
    * The result for the query made the request (hasDurableClient or
@@ -45,57 +44,46 @@ public class DurableClientInfoResponse extends AdminResponse
    * Returns a <code>DurableClientInfoResponse</code> that will be returned to
    * the specified recipient.
    */
-  public static DurableClientInfoResponse create(DistributionManager dm,
-      InternalDistributedMember recipient, DurableClientInfoRequest request)
-  {
+  public static DurableClientInfoResponse create(DistributionManager dm, InternalDistributedMember recipient, DurableClientInfoRequest request) {
     DurableClientInfoResponse m = new DurableClientInfoResponse();
     m.setRecipient(recipient);
     try {
-      GemFireCacheImpl c = (GemFireCacheImpl)CacheFactory.getInstanceCloseOk(dm
-          .getSystem());
+      GemFireCacheImpl c = (GemFireCacheImpl) CacheFactory.getInstanceCloseOk(dm.getSystem());
       if (c.getCacheServers().size() > 0) {
 
-        CacheServerImpl server = (CacheServerImpl)c.getCacheServers()
-            .iterator().next();
+        CacheServerImpl server = (CacheServerImpl) c.getCacheServers().iterator().next();
         switch (request.action) {
         case DurableClientInfoRequest.HAS_DURABLE_CLIENT_REQUEST: {
-          m.returnVal = server.getAcceptor().getCacheClientNotifier()
-              .hasDurableClient(request.durableId);
+          m.returnVal = server.getAcceptor().getCacheClientNotifier().hasDurableClient(request.durableId);
           break;
         }
         case DurableClientInfoRequest.IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST: {
-          m.returnVal = server.getAcceptor().getCacheClientNotifier()
-              .hasPrimaryForDurableClient(request.durableId);
+          m.returnVal = server.getAcceptor().getCacheClientNotifier().hasPrimaryForDurableClient(request.durableId);
           break;
         }
         }
       }
-    }
-    catch (CacheClosedException ex) {
+    } catch (CacheClosedException ex) {
       // do nothing
     }
     return m;
   }
 
-  public boolean getResultBoolean()
-  {
+  public boolean getResultBoolean() {
     return this.returnVal;
   }
 
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeBoolean(this.returnVal);
   }
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.returnVal = in.readBoolean();
   }
 
-  public String toString()
-  {
+  public String toString() {
     return "DurableClientInfoResponse from " + this.getSender();
   }
 

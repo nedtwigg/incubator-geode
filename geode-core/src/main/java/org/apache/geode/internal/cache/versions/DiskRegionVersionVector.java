@@ -39,12 +39,10 @@ public class DiskRegionVersionVector extends RegionVersionVector<DiskStoreID> {
   public DiskRegionVersionVector(DiskStoreID ownerId, LocalRegion owner) {
     super(ownerId, owner);
   }
-  
+
   public DiskRegionVersionVector(DiskStoreID ownerId) {
     super(ownerId);
   }
-  
-  
 
   @Override
   public void recordVersion(DiskStoreID member, long version) {
@@ -53,7 +51,6 @@ public class DiskRegionVersionVector extends RegionVersionVector<DiskStoreID> {
     super.recordVersion(member, version);
   }
 
-
   @Override
   public void recordGCVersion(DiskStoreID mbr, long regionVersion) {
     //TODO - RVV - This is a temporary check to make sure we get
@@ -61,30 +58,20 @@ public class DiskRegionVersionVector extends RegionVersionVector<DiskStoreID> {
     super.recordGCVersion(mbr, regionVersion);
   }
 
-  public DiskRegionVersionVector(DiskStoreID ownerId,
-      ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> vector, long version,
-      ConcurrentHashMap<DiskStoreID, Long> gcVersions, long gcVersion,
-      boolean singleMember, 
-      RegionVersionHolder<DiskStoreID> localExceptions) {
-    super(ownerId, vector, version, gcVersions, gcVersion, singleMember,
-        localExceptions);
+  public DiskRegionVersionVector(DiskStoreID ownerId, ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> vector, long version, ConcurrentHashMap<DiskStoreID, Long> gcVersions, long gcVersion, boolean singleMember, RegionVersionHolder<DiskStoreID> localExceptions) {
+    super(ownerId, vector, version, gcVersions, gcVersion, singleMember, localExceptions);
   }
 
   @Override
-  protected RegionVersionVector<DiskStoreID> createCopy(DiskStoreID ownerId,
-      ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> vector, long version,
-      ConcurrentHashMap<DiskStoreID, Long> gcVersions, long gcVersion,
-      boolean singleMember, 
-      RegionVersionHolder<DiskStoreID> localExceptions) {
-    return new DiskRegionVersionVector(ownerId, vector, version,
-        gcVersions, gcVersion, singleMember, localExceptions);
+  protected RegionVersionVector<DiskStoreID> createCopy(DiskStoreID ownerId, ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> vector, long version, ConcurrentHashMap<DiskStoreID, Long> gcVersions, long gcVersion, boolean singleMember, RegionVersionHolder<DiskStoreID> localExceptions) {
+    return new DiskRegionVersionVector(ownerId, vector, version, gcVersions, gcVersion, singleMember, localExceptions);
   }
 
   @Override
   protected void writeMember(DiskStoreID member, DataOutput out) throws IOException {
     out.writeLong(member.getMostSignificantBits());
     out.writeLong(member.getLeastSignificantBits());
-    
+
   }
 
   @Override

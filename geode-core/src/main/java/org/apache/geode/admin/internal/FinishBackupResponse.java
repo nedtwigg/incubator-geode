@@ -34,9 +34,9 @@ import org.apache.geode.internal.admin.remote.AdminResponse;
  *
  */
 public class FinishBackupResponse extends AdminResponse {
-  
+
   private HashSet<PersistentID> persistentIds;
-  
+
   public FinishBackupResponse() {
     super();
   }
@@ -45,7 +45,7 @@ public class FinishBackupResponse extends AdminResponse {
     this.setRecipient(sender);
     this.persistentIds = persistentIds;
   }
-  
+
   public HashSet<PersistentID> getPersistentIds() {
     return persistentIds;
   }
@@ -70,7 +70,7 @@ public class FinishBackupResponse extends AdminResponse {
   public int getDSFID() {
     return FINISH_BACKUP_RESPONSE;
   }
-  
+
   @Override
   public String toString() {
     return getClass().getName() + ": " + persistentIds;

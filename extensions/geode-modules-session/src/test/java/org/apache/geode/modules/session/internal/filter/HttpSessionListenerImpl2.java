@@ -23,8 +23,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-public class HttpSessionListenerImpl2 extends AbstractListener
-    implements HttpSessionListener {
+public class HttpSessionListenerImpl2 extends AbstractListener implements HttpSessionListener {
 
   @Override
   public void sessionCreated(HttpSessionEvent se) {
@@ -34,8 +33,7 @@ public class HttpSessionListenerImpl2 extends AbstractListener
 
   @Override
   public void sessionDestroyed(HttpSessionEvent se) {
-    HttpSession gfeSession = SessionCachingFilter.getWrappingSession(
-        se.getSession());
+    HttpSession gfeSession = SessionCachingFilter.getWrappingSession(se.getSession());
     assert (gfeSession != null);
     events.add(ListenerEventType.SESSION_DESTROYED);
     latch.countDown();

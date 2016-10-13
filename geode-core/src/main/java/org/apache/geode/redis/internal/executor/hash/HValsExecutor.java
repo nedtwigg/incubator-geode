@@ -48,7 +48,7 @@ public class HValsExecutor extends HashExecutor {
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
       return;
     }
-    
+
     Collection<ByteArrayWrapper> vals = new ArrayList(keyRegion.values());
 
     if (vals.isEmpty()) {

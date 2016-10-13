@@ -67,14 +67,13 @@ import org.apache.geode.internal.offheap.annotations.Unretained;
  * @since GemFire 7.0
  * 
  */
-public class GatewaySenderEventImpl implements 
-    AsyncEvent, DataSerializableFixedID, Conflatable, Sizeable, Releasable {
+public class GatewaySenderEventImpl implements AsyncEvent, DataSerializableFixedID, Conflatable, Sizeable, Releasable {
   private static final long serialVersionUID = -5690172020872255422L;
 
   protected static final Object TOKEN_NULL = new Object();
 
   protected static final short VERSION = 0x11;
-  
+
   protected EnumListenerEvent operation;
 
   protected Object substituteValue;
@@ -83,12 +82,12 @@ public class GatewaySenderEventImpl implements
    * The action to be taken (e.g. AFTER_CREATE)
    */
   protected int action;
-  
+
   /**
    * The operation detail of EntryEvent (e.g. LOAD, PUTALL etc.)
    */
   protected int operationDetail;
-  
+
   /**
    * The number of parts for the <code>Message</code>
    * 
@@ -121,7 +120,7 @@ public class GatewaySenderEventImpl implements
    * May not be computed at construction time.
    */
   protected byte[] value;
-  
+
   /**
    * The "object" form of the value.
    * Will be null after this object is deserialized.
@@ -146,7 +145,7 @@ public class GatewaySenderEventImpl implements
    * The version timestamp
    */
   protected long versionTimeStamp;
-  
+
   /**
    * Whether this event is a possible duplicate
    */
@@ -158,7 +157,7 @@ public class GatewaySenderEventImpl implements
    * GatewaySenderEvent. But can be extended for for other GatewaySenderEvent.
    */
   protected volatile boolean isAcked;
-  
+
   /**
    * Whether this event is dispatched by dispatcher. As of now this is getting
    * used for PDX related GatewaySenderEvent. But can be extended for for other
@@ -177,7 +176,7 @@ public class GatewaySenderEventImpl implements
   protected int bucketId;
 
   protected Long shadowKey = Long.valueOf(-1L);
-  
+
   protected boolean isInitialized;
 
   /**
@@ -197,34 +196,34 @@ public class GatewaySenderEventImpl implements
   private static final int DESTROY_ACTION = 2;
 
   private static final int VERSION_ACTION = 3;
-  
+
   private static final int INVALIDATE_ACTION = 5;
   /**
    * Static constants for Operation detail of EntryEvent.
    */
   private static final int OP_DETAIL_NONE = 10;
-  
+
   private static final int OP_DETAIL_LOCAL_LOAD = 11;
-  
+
   private static final int OP_DETAIL_NET_LOAD = 12;
-  
+
   private static final int OP_DETAIL_PUTALL = 13;
-  
+
   private static final int OP_DETAIL_REMOVEALL = 14;
 
   private static final int DEFAULT_SERIALIZED_VALUE_SIZE = -1;
 
   private volatile int serializedValueSize = DEFAULT_SERIALIZED_VALUE_SIZE;
 
-//  /**
-//   * Is this thread in the process of deserializing this event?
-//   */
-//  public static final ThreadLocal isDeserializingValue = new ThreadLocal() {
-//    @Override
-//    protected Object initialValue() {
-//      return Boolean.FALSE;
-//    }
-//  };
+  //  /**
+  //   * Is this thread in the process of deserializing this event?
+  //   */
+  //  public static final ThreadLocal isDeserializingValue = new ThreadLocal() {
+  //    @Override
+  //    protected Object initialValue() {
+  //      return Boolean.FALSE;
+  //    }
+  //  };
 
   /**
    * Constructor. No-arg constructor for data serialization.
@@ -248,15 +247,12 @@ public class GatewaySenderEventImpl implements
    * @throws IOException
    */
   @Retained
-  public GatewaySenderEventImpl(EnumListenerEvent operation, CacheEvent event,
-      Object substituteValue) throws IOException {
+  public GatewaySenderEventImpl(EnumListenerEvent operation, CacheEvent event, Object substituteValue) throws IOException {
     this(operation, event, substituteValue, true);
   }
 
   @Retained
-  public GatewaySenderEventImpl(EnumListenerEvent operation, CacheEvent event,
-      Object substituteValue, boolean initialize, int bucketId)
-      throws IOException {
+  public GatewaySenderEventImpl(EnumListenerEvent operation, CacheEvent event, Object substituteValue, boolean initialize, int bucketId) throws IOException {
     this(operation, event, substituteValue, initialize);
     this.bucketId = bucketId;
   }
@@ -277,10 +273,9 @@ public class GatewaySenderEventImpl implements
    * @throws IOException
    */
   @Retained
-  public GatewaySenderEventImpl(EnumListenerEvent operation, CacheEvent ce,
-      Object substituteValue, boolean initialize) throws IOException {
+  public GatewaySenderEventImpl(EnumListenerEvent operation, CacheEvent ce, Object substituteValue, boolean initialize) throws IOException {
     // Set the operation and event
-    final EntryEventImpl event = (EntryEventImpl)ce;
+    final EntryEventImpl event = (EntryEventImpl) ce;
     this.operation = operation;
     this.substituteValue = substituteValue;
 
@@ -288,19 +283,18 @@ public class GatewaySenderEventImpl implements
     // can get serialized/deserialized (for some reason) between the time
     // it is set above and used (in initialize). If this happens, the
     // region is null because it is a transient field of the event.
-    this.region = (LocalRegion)event.getRegion();
+    this.region = (LocalRegion) event.getRegion();
     this.regionPath = this.region.getFullPath();
 
     // Initialize the unique id
     initializeId(event);
 
     // Initialize possible duplicate
-    this.possibleDuplicate = event.isPossibleDuplicate(); 
-    
+    this.possibleDuplicate = event.isPossibleDuplicate();
+
     //Initialize ack and dispatch status of events
     this.isAcked = false;
     this.isDispatched = false;
-    
 
     // Initialize the creation timestamp
     this.creationTime = System.currentTimeMillis();
@@ -318,18 +312,17 @@ public class GatewaySenderEventImpl implements
     initializeValue(event);
 
     // Set the callback arg
-    this.callbackArgument = (GatewaySenderEventCallbackArgument)
-        event.getRawCallbackArgument();
+    this.callbackArgument = (GatewaySenderEventCallbackArgument) event.getRawCallbackArgument();
 
     // Initialize the action and number of parts (called after _callbackArgument
     // is set above)
     initializeAction(this.operation);
-    
+
     //initialize the operation detail 
     initializeOperationDetail(event.getOperation());
 
     setShadowKey(event.getTailKey());
-    
+
     if (initialize) {
       initialize();
     }
@@ -362,7 +355,7 @@ public class GatewaySenderEventImpl implements
     this.valueIsObject = offHeapEvent.valueIsObject;
     this.value = offHeapEvent.getSerializedValue();
   }
-  
+
   /**
    * Returns this event's action
    * 
@@ -386,38 +379,38 @@ public class GatewaySenderEventImpl implements
         op = Operation.LOCAL_LOAD_CREATE;
         break;
       case OP_DETAIL_NET_LOAD:
-    	op = Operation.NET_LOAD_CREATE;
-    	break;
+        op = Operation.NET_LOAD_CREATE;
+        break;
       case OP_DETAIL_PUTALL:
         op = Operation.PUTALL_CREATE;
-    	break;
+        break;
       case OP_DETAIL_NONE:
-    	op = Operation.CREATE;
-    	break;
+        op = Operation.CREATE;
+        break;
       //if operationDetail is none of the above, then default should be NONE 
       default:
-    	op = Operation.CREATE;
-    	break;
+        op = Operation.CREATE;
+        break;
       }
       break;
     case UPDATE_ACTION:
       switch (this.operationDetail) {
       case OP_DETAIL_LOCAL_LOAD:
-    	op = Operation.LOCAL_LOAD_UPDATE;
-    	break;
+        op = Operation.LOCAL_LOAD_UPDATE;
+        break;
       case OP_DETAIL_NET_LOAD:
-    	op = Operation.NET_LOAD_UPDATE;
-    	break;
+        op = Operation.NET_LOAD_UPDATE;
+        break;
       case OP_DETAIL_PUTALL:
-    	op = Operation.PUTALL_UPDATE;
-    	break;
+        op = Operation.PUTALL_UPDATE;
+        break;
       case OP_DETAIL_NONE:
-    	op = Operation.UPDATE;
-    	break;
+        op = Operation.UPDATE;
+        break;
       //if operationDetail is none of the above, then default should be NONE 
       default:
-    	op = Operation.UPDATE;
-    	break;
+        op = Operation.UPDATE;
+        break;
       }
       break;
     case DESTROY_ACTION:
@@ -440,10 +433,11 @@ public class GatewaySenderEventImpl implements
   public Object getSubstituteValue() {
     return this.substituteValue;
   }
-  
-  public EnumListenerEvent getEnumListenerEvent(){
+
+  public EnumListenerEvent getEnumListenerEvent() {
     return this.operation;
   }
+
   /**
    * Return this event's region name
    * 
@@ -456,6 +450,7 @@ public class GatewaySenderEventImpl implements
   public boolean isInitialized() {
     return this.isInitialized;
   }
+
   /**
    * Returns this event's key
    * 
@@ -486,7 +481,7 @@ public class GatewaySenderEventImpl implements
   public Object getCallbackArgument() {
     Object result = getSenderCallbackArgument();
     while (result instanceof WrappedCallbackArgument) {
-      WrappedCallbackArgument wca = (WrappedCallbackArgument)result;
+      WrappedCallbackArgument wca = (WrappedCallbackArgument) result;
       result = wca.getOriginalCallbackArg();
     }
     return result;
@@ -504,7 +499,7 @@ public class GatewaySenderEventImpl implements
   public int getNumberOfParts() {
     return this.numberOfParts;
   }
-  
+
   /**
    * Return the value as a byte[] array, if it is plain byte array,
    * otherwise return a cache deserializable or plain object, depending
@@ -537,7 +532,7 @@ public class GatewaySenderEventImpl implements
       return rawValue;
     }
   }
-  
+
   /**
    * Return the currently held form of the object.
    * May return a retained OFF_HEAP_REFERENCE.
@@ -549,20 +544,20 @@ public class GatewaySenderEventImpl implements
     if (result == null) {
       result = this.substituteValue;
       if (result == null) {
-      result = this.valueObj;
-      if (result instanceof StoredObject && ((StoredObject) result).hasRefCount()) {
-        if (this.valueObjReleased) {
-          result = null;
-        } else {
-          StoredObject ohref = (StoredObject) result;
-          if (!ohref.retain()) {
+        result = this.valueObj;
+        if (result instanceof StoredObject && ((StoredObject) result).hasRefCount()) {
+          if (this.valueObjReleased) {
             result = null;
-          } else if (this.valueObjReleased) {
-            ohref.release();
-            result = null;
+          } else {
+            StoredObject ohref = (StoredObject) result;
+            if (!ohref.retain()) {
+              result = null;
+            } else if (this.valueObjReleased) {
+              ohref.release();
+              result = null;
+            }
           }
         }
-      }
       }
     }
     return result;
@@ -583,19 +578,18 @@ public class GatewaySenderEventImpl implements
           throw new IllegalStateException("Value is no longer available. getDeserializedValue must be called before processEvents returns.");
         }
         if (so instanceof StoredObject) {
-          return ((StoredObject)so).getValueAsDeserializedHeapObject();
+          return ((StoredObject) so).getValueAsDeserializedHeapObject();
         } else {
           throw new IllegalStateException("expected valueObj field to be an instance of StoredObject but it was " + so);
         }
       }
       return result;
-    }
-    else {
+    } else {
       Object vo = this.valueObj;
       if (vo != null) {
         if (vo instanceof StoredObject) {
           @Unretained(OffHeapIdentifier.GATEWAY_SENDER_EVENT_IMPL_VALUE)
-          StoredObject so = (StoredObject)vo;
+          StoredObject so = (StoredObject) vo;
           return so.getValueAsDeserializedHeapObject();
         } else {
           return vo; // it is already deserialized
@@ -618,7 +612,7 @@ public class GatewaySenderEventImpl implements
       }
     }
   }
-  
+
   /**
    * Returns the value in the form of a String.
    * This should be used by code that wants to log
@@ -741,7 +735,7 @@ public class GatewaySenderEventImpl implements
     out.writeLong(this.creationTime);
     out.writeInt(this.bucketId);
     out.writeLong(this.shadowKey);
-    out.writeLong(getVersionTimeStamp());    
+    out.writeLong(getVersionTimeStamp());
   }
 
   protected void serializeKey(DataOutput out) throws IOException {
@@ -757,12 +751,10 @@ public class GatewaySenderEventImpl implements
     this.action = in.readInt();
     this.numberOfParts = in.readInt();
     // this._id = in.readUTF();
-    if (version < 0x11 &&
-        (in instanceof InputStream) &&
-        InternalDataSerializer.getVersionForDataStream(in) == Version.CURRENT) {
-      in = new VersionedDataInputStream((InputStream)in, Version.GFE_701);
+    if (version < 0x11 && (in instanceof InputStream) && InternalDataSerializer.getVersionForDataStream(in) == Version.CURRENT) {
+      in = new VersionedDataInputStream((InputStream) in, Version.GFE_701);
     }
-    this.id = (EventID)DataSerializer.readObject(in);   
+    this.id = (EventID) DataSerializer.readObject(in);
     // TODO:Asif ; Check if this violates Barry's logic of not assiging VM
     // specific Token.FROM_GATEWAY
     // and retain the serialized Token.FROM_GATEWAY
@@ -771,8 +763,7 @@ public class GatewaySenderEventImpl implements
     this.valueIsObject = in.readByte();
     deserializeKey(in);
     this.value = DataSerializer.readByteArray(in);
-    this.callbackArgument = (GatewaySenderEventCallbackArgument)DataSerializer
-        .readObject(in);
+    this.callbackArgument = (GatewaySenderEventCallbackArgument) DataSerializer.readObject(in);
     this.possibleDuplicate = in.readBoolean();
     this.creationTime = in.readLong();
     this.bucketId = in.readInt();
@@ -781,39 +772,24 @@ public class GatewaySenderEventImpl implements
     // TODO should this call initializeKey()?
   }
 
-  protected void deserializeKey(DataInput in) throws IOException,
-      ClassNotFoundException {
+  protected void deserializeKey(DataInput in) throws IOException, ClassNotFoundException {
     this.key = DataSerializer.readObject(in);
   }
 
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("SenderEventImpl[").append("id=").append(this.id)
-        .append(";action=").append(this.action).append(";operation=")
-        .append(getOperation()).append(";region=").append(this.regionPath)
-        .append(";key=").append(this.key).append(";value=")
-        .append(getValueAsString(true)).append(";valueIsObject=")
-        .append(this.valueIsObject).append(";numberOfParts=")
-        .append(this.numberOfParts).append(";callbackArgument=")
-        .append(this.callbackArgument).append(";possibleDuplicate=")
-        .append(this.possibleDuplicate).append(";creationTime=")
-        .append(this.creationTime).append(";shadowKey= ")
-        .append(this.shadowKey)
-        .append(";timeStamp=").append(this.versionTimeStamp)
-        .append(";acked=").append(this.isAcked)
-        .append(";dispatched=").append(this.isDispatched)
-        .append("]");
+    buffer.append("SenderEventImpl[").append("id=").append(this.id).append(";action=").append(this.action).append(";operation=").append(getOperation()).append(";region=").append(this.regionPath).append(";key=").append(this.key).append(";value=").append(getValueAsString(true)).append(";valueIsObject=").append(this.valueIsObject).append(";numberOfParts=").append(this.numberOfParts).append(";callbackArgument=").append(this.callbackArgument).append(";possibleDuplicate=").append(this.possibleDuplicate).append(";creationTime=").append(this.creationTime).append(";shadowKey= ").append(this.shadowKey).append(";timeStamp=").append(this.versionTimeStamp).append(";acked=").append(this.isAcked).append(";dispatched=").append(this.isDispatched).append("]");
     return buffer.toString();
   }
 
   public static boolean isSerializingValue() {
-    return ((Boolean)isSerializingValue.get()).booleanValue();
+    return ((Boolean) isSerializingValue.get()).booleanValue();
   }
 
-//   public static boolean isDeserializingValue() {
-//     return ((Boolean)isDeserializingValue.get()).booleanValue();
-//   }
+  //   public static boolean isDeserializingValue() {
+  //     return ((Boolean)isDeserializingValue.get()).booleanValue();
+  //   }
 
   // / Conflatable interface methods ///
 
@@ -871,8 +847,7 @@ public class GatewaySenderEventImpl implements
     // In the first case, both the operation and action are set.
     // In the second case, only the operation is set.
     // In the third case, only the action is set.
-    return this.operation == null ? this.action == UPDATE_ACTION
-        : this.operation == EnumListenerEvent.AFTER_UPDATE;
+    return this.operation == null ? this.action == UPDATE_ACTION : this.operation == EnumListenerEvent.AFTER_UPDATE;
   }
 
   /**
@@ -882,8 +857,7 @@ public class GatewaySenderEventImpl implements
    */
   protected boolean isCreate() {
     // See the comment in isUpdate() for additional details
-    return this.operation == null ? this.action == CREATE_ACTION
-        : this.operation == EnumListenerEvent.AFTER_CREATE;
+    return this.operation == null ? this.action == CREATE_ACTION : this.operation == EnumListenerEvent.AFTER_CREATE;
   }
 
   /**
@@ -893,8 +867,7 @@ public class GatewaySenderEventImpl implements
    */
   protected boolean isDestroy() {
     // See the comment in isUpdate() for additional details
-    return this.operation == null ? this.action == DESTROY_ACTION
-        : this.operation == EnumListenerEvent.AFTER_DESTROY;
+    return this.operation == null ? this.action == DESTROY_ACTION : this.operation == EnumListenerEvent.AFTER_DESTROY;
   }
 
   /**
@@ -907,9 +880,7 @@ public class GatewaySenderEventImpl implements
     this.id = event.getEventId();
     // TODO:ASIF :Once stabilized remove the check below
     if (this.id == null) {
-      throw new IllegalStateException(
-          LocalizedStrings.GatewayEventImpl_NO_EVENT_ID_IS_AVAILABLE_FOR_THIS_GATEWAY_EVENT
-              .toLocalizedString());
+      throw new IllegalStateException(LocalizedStrings.GatewayEventImpl_NO_EVENT_ID_IS_AVAILABLE_FOR_THIS_GATEWAY_EVENT.toLocalizedString());
     }
 
   }
@@ -925,7 +896,6 @@ public class GatewaySenderEventImpl implements
     this.isInitialized = true;
   }
 
-
   // Initializes the value object. This function need a relook because the 
   // serialization of the value looks unnecessary.
   @Retained(OffHeapIdentifier.GATEWAY_SENDER_EVENT_IMPL_VALUE)
@@ -933,49 +903,49 @@ public class GatewaySenderEventImpl implements
     // Set the value to be a byte[] representation of either the value or
     // substituteValue (if set).
     if (this.substituteValue == null) {
-    // If the value is already serialized, use it.
-    this.valueIsObject = 0x01;
-    /**
-     * so ends up being stored in this.valueObj
-     */
-    @Retained(OffHeapIdentifier.GATEWAY_SENDER_EVENT_IMPL_VALUE)
-    StoredObject so = null;
-    {
-      ReferenceCountHelper.setReferenceCountOwner(this);
-      so = event.getOffHeapNewValue();
-      ReferenceCountHelper.setReferenceCountOwner(null);      
-    }
-    
-    if (so != null) {
-//    if (so != null  && !event.hasDelta()) {
-      // Since GatewaySenderEventImpl instances can live for a long time in the gateway region queue
-      // we do not want the StoredObject to be one that keeps the heap form cached.
-      so = so.getStoredObjectWithoutHeapForm(); // fixes 51999
-      this.valueObj = so;
-      if (!so.isSerialized()) {
-        this.valueIsObject = 0x00;
+      // If the value is already serialized, use it.
+      this.valueIsObject = 0x01;
+      /**
+       * so ends up being stored in this.valueObj
+       */
+      @Retained(OffHeapIdentifier.GATEWAY_SENDER_EVENT_IMPL_VALUE)
+      StoredObject so = null;
+      {
+        ReferenceCountHelper.setReferenceCountOwner(this);
+        so = event.getOffHeapNewValue();
+        ReferenceCountHelper.setReferenceCountOwner(null);
       }
-    } else if (event.getCachedSerializedNewValue() != null) {
-      // We want this to have lower precedence than StoredObject so that the gateway
-      // can share a reference to the off-heap value.
-      this.value = event.getCachedSerializedNewValue();
-    } else {
-      final Object newValue = event.getRawNewValue();
-      assert !(newValue instanceof StoredObject); // since we already called getOffHeapNewValue() and it returned null
-      if (newValue instanceof CachedDeserializable) {
-        this.value = ((CachedDeserializable) newValue).getSerializedValue();
-      } else if (newValue instanceof byte[]) {
-        // The value is byte[]. Set _valueIsObject flag to 0x00 (not an object)
-        this.value = (byte[])newValue;
-        this.valueIsObject = 0x00;
+
+      if (so != null) {
+        //    if (so != null  && !event.hasDelta()) {
+        // Since GatewaySenderEventImpl instances can live for a long time in the gateway region queue
+        // we do not want the StoredObject to be one that keeps the heap form cached.
+        so = so.getStoredObjectWithoutHeapForm(); // fixes 51999
+        this.valueObj = so;
+        if (!so.isSerialized()) {
+          this.valueIsObject = 0x00;
+        }
+      } else if (event.getCachedSerializedNewValue() != null) {
+        // We want this to have lower precedence than StoredObject so that the gateway
+        // can share a reference to the off-heap value.
+        this.value = event.getCachedSerializedNewValue();
       } else {
-        // The value is an object. It will be serialized later when getSerializedValue is called.
-        this.valueObj = newValue;
-        // to prevent bug 48281 we need to serialize it now
-        this.getSerializedValue();
-        this.valueObj = null;
+        final Object newValue = event.getRawNewValue();
+        assert !(newValue instanceof StoredObject); // since we already called getOffHeapNewValue() and it returned null
+        if (newValue instanceof CachedDeserializable) {
+          this.value = ((CachedDeserializable) newValue).getSerializedValue();
+        } else if (newValue instanceof byte[]) {
+          // The value is byte[]. Set _valueIsObject flag to 0x00 (not an object)
+          this.value = (byte[]) newValue;
+          this.valueIsObject = 0x00;
+        } else {
+          // The value is an object. It will be serialized later when getSerializedValue is called.
+          this.valueObj = newValue;
+          // to prevent bug 48281 we need to serialize it now
+          this.getSerializedValue();
+          this.valueObj = null;
+        }
       }
-    }
     } else {
       // The substituteValue is set. Use it.
       if (this.substituteValue instanceof byte[]) {
@@ -1050,7 +1020,7 @@ public class GatewaySenderEventImpl implements
       this.numberOfParts = (this.callbackArgument == null) ? 7 : 8;
     }
   }
-  
+
   private void initializeOperationDetail(Operation operation) {
     if (operation.isLocalLoad()) {
       operationDetail = OP_DETAIL_LOCAL_LOAD;
@@ -1074,14 +1044,13 @@ public class GatewaySenderEventImpl implements
    * @return    EventSequenceID
    */
   public EventSequenceID getEventSequenceID() {
-    return new EventSequenceID(id.getMembershipID(), id.getThreadID(), id
-        .getSequenceID());
+    return new EventSequenceID(id.getMembershipID(), id.getThreadID(), id.getSequenceID());
   }
-  
+
   public long getVersionTimeStamp() {
     return this.versionTimeStamp;
   }
-  
+
   public int getSizeInBytes() {
     // Calculate the size of this event. This is used for overflow to disk.
 
@@ -1146,7 +1115,7 @@ public class GatewaySenderEventImpl implements
 
     // the version timestamp
     size += 8;
-    
+
     return size;
   }
 
@@ -1162,12 +1131,10 @@ public class GatewaySenderEventImpl implements
     } else if (obj instanceof Long) {
       size = 8; // estimate
     } else {
-      size = CachedDeserializableFactory.calcMemSize(obj)
-          - Sizeable.PER_OBJECT_OVERHEAD;
+      size = CachedDeserializableFactory.calcMemSize(obj) - Sizeable.PER_OBJECT_OVERHEAD;
     }
     return size;
   }
-
 
   // Asif: If the GatewayEvent serializes to a node where the region itself may
   // not be present or the
@@ -1182,8 +1149,7 @@ public class GatewaySenderEventImpl implements
   public Region<?, ?> getRegion() {
     // The region will be null mostly for the other node where the gateway event
     // is serialized
-    return this.region != null ? this.region : CacheFactory.getAnyInstance()
-        .getRegion(this.regionPath);
+    return this.region != null ? this.region : CacheFactory.getAnyInstance().getRegion(this.regionPath);
   }
 
   public int getBucketId() {
@@ -1230,7 +1196,7 @@ public class GatewaySenderEventImpl implements
     this.serializedValueSize = localSerializedValueSize;
     return localSerializedValueSize;
   }
-  
+
   @Override
   @Released(OffHeapIdentifier.GATEWAY_SENDER_EVENT_IMPL_VALUE)
   public void release() {
@@ -1241,7 +1207,7 @@ public class GatewaySenderEventImpl implements
       this.valueObjReleased = true;
     }
   }
-  
+
   public static void release(@Released(OffHeapIdentifier.GATEWAY_SENDER_EVENT_IMPL_VALUE) Object o) {
     if (o instanceof GatewaySenderEventImpl) {
       ((GatewaySenderEventImpl) o).release();
@@ -1281,7 +1247,7 @@ public class GatewaySenderEventImpl implements
       }
     }
   }
-  
+
   protected GatewaySenderEventImpl makeCopy() {
     return new GatewaySenderEventImpl(this);
   }

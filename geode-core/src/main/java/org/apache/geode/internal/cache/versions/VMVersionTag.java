@@ -31,7 +31,7 @@ import org.apache.geode.internal.Version;
  * 
  */
 public class VMVersionTag extends VersionTag<InternalDistributedMember> {
-  
+
   public VMVersionTag() {
     super();
   }
@@ -39,9 +39,9 @@ public class VMVersionTag extends VersionTag<InternalDistributedMember> {
   @Override
   public void writeMember(InternalDistributedMember member, DataOutput out) throws IOException {
     member.writeEssentialData(out);
-    
+
   }
-  
+
   @Override
   public void setCanonicalIDs(DM dm) {
     InternalDistributedMember id = getMemberID();
@@ -68,6 +68,5 @@ public class VMVersionTag extends VersionTag<InternalDistributedMember> {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 
 }

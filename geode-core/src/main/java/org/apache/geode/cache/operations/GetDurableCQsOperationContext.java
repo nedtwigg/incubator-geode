@@ -19,7 +19,6 @@ package org.apache.geode.cache.operations;
 
 import java.util.Set;
 
-
 /**
  * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#GET_DURABLE_CQS} operation for the pre-operation
  * case.

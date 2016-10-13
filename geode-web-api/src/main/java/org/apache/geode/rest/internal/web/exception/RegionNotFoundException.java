@@ -25,7 +25,7 @@ package org.apache.geode.rest.internal.web.exception;
 @SuppressWarnings("unused")
 public class RegionNotFoundException extends ResourceNotFoundException {
 
-  public RegionNotFoundException() {          
+  public RegionNotFoundException() {
   }
 
   public RegionNotFoundException(final String message) {

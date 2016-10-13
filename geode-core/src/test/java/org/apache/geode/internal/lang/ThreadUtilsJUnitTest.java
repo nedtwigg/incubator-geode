@@ -54,10 +54,12 @@ public class ThreadUtilsJUnitTest {
 
   @Before
   public void setUp() {
-    mockContext = new Mockery() {{
-      setImposteriser(ClassImposteriser.INSTANCE);
-      setThreadingPolicy(new Synchroniser());
-    }};
+    mockContext = new Mockery() {
+      {
+        setImposteriser(ClassImposteriser.INSTANCE);
+        setThreadingPolicy(new Synchroniser());
+      }
+    };
   }
 
   @After
@@ -84,9 +86,11 @@ public class ThreadUtilsJUnitTest {
   public void testInterruptWithNonNullThread() {
     final Thread mockThread = mockContext.mock(Thread.class, "Interrupted Thread");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(mockThread).interrupt();
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(mockThread).interrupt();
+      }
+    });
 
     ThreadUtils.interrupt(mockThread);
   }
@@ -136,10 +140,12 @@ public class ThreadUtilsJUnitTest {
   public void testIsWaitingWithRunningThread() {
     final Thread runningThread = mockContext.mock(Thread.class, "Running Thread");
 
-    mockContext.checking(new Expectations() {{
-      oneOf(runningThread).getState();
-      will(returnValue(State.RUNNABLE));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        oneOf(runningThread).getState();
+        will(returnValue(State.RUNNABLE));
+      }
+    });
 
     assertFalse(ThreadUtils.isWaiting(runningThread));
   }
@@ -148,10 +154,12 @@ public class ThreadUtilsJUnitTest {
   public void testIsWaitingWithWaitingThread() {
     final Thread waitingThread = mockContext.mock(Thread.class, "Waiting Thread");
 
-    mockContext.checking(new Expectations() {{
-      one(waitingThread).getState();
-      will(returnValue(State.WAITING));
-    }});
+    mockContext.checking(new Expectations() {
+      {
+        one(waitingThread).getState();
+        will(returnValue(State.WAITING));
+      }
+    });
 
     assertTrue(ThreadUtils.isWaiting(waitingThread));
   }
@@ -179,7 +187,7 @@ public class ThreadUtilsJUnitTest {
     private volatile Thread sleeperThread;
     private volatile boolean sleeperWasInterrupted;
     private volatile long actualSleepDuration;
-    
+
     public SleepInterruptedMultithreadedTestCase(final long sleepDuration) {
       assert sleepDuration > 0 : "The duration of sleep must be greater than equal to 0!";
       this.sleepDuration = sleepDuration;

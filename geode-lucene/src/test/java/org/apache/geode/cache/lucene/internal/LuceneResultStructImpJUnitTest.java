@@ -36,7 +36,7 @@ public class LuceneResultStructImpJUnitTest {
     assertEquals(result1, result1);
     assertEquals(result1, result2);
     assertEquals(result1.hashCode(), result2.hashCode());
-    
+
     //And some unequal ones
     LuceneResultStructImpl<String, String> result3 = new LuceneResultStructImpl<String, String>("key2", "value1", 5);
     LuceneResultStructImpl<String, String> result4 = new LuceneResultStructImpl<String, String>("key1", "value2", 5);

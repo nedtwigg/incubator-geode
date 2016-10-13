@@ -43,25 +43,25 @@ import org.apache.geode.internal.logging.LogService;
  *
  */
 public class Collaboration {
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   private final static Object NULL_TOPIC = null;
-  
+
   /** The current topic of collaboration 
    *
    * guarded.By {@link #topicsQueue}
    */
   private volatile Topic currentTopic;
-  
+
   /** Ordered queue of pending topics for collaboration */
   private final List topicsQueue = new ArrayList();
-  
+
   /** Map of external topic to internal wrapper object (Topic) */
   private final Map topicsMap = new HashMap();
-  
+
   private final CancelCriterion stopper;
-  
+
   /** 
    * Constructs new stoppable instance of Collaboration which will heed an 
    * interrupt request if it is acceptable to the creator of the lock.
@@ -69,7 +69,7 @@ public class Collaboration {
   public Collaboration(CancelCriterion stopper) {
     this.stopper = stopper;
   }
-  
+
   /** 
    * Acquire permission to participate in the collaboration. Returns 
    * immediately if topic matches the current topic. Otherwise, this will 
@@ -89,11 +89,9 @@ public class Collaboration {
    * reentering. 
    */
   private void assertNotRecursingTopic(Object topicObject) {
-    Assert.assertTrue(false,
-      Thread.currentThread() + " attempting to lock topic " + topicObject +
-      " while locking topic " + this.currentTopic);
+    Assert.assertTrue(false, Thread.currentThread() + " attempting to lock topic " + topicObject + " while locking topic " + this.currentTopic);
   }
-  
+
   /** 
    * Acquire permission to participate in the collaboration. Returns 
    * immediately if topic matches the current topic. Otherwise, this will 
@@ -107,7 +105,7 @@ public class Collaboration {
     if (topicObject == null) {
       topicObject = NULL_TOPIC;
     }
-    
+
     Topic pendingTopic = null;
     synchronized (this.topicsQueue) {
       // if no topic then setup and return
@@ -120,7 +118,7 @@ public class Collaboration {
         this.topicsMap.put(topicObject, this.currentTopic);
         return;
       }
-      
+
       else if (isCurrentTopic(topicObject)) {
         //assertNotRecursingTopic(topicObject);
         if (logger.isDebugEnabled()) {
@@ -129,11 +127,11 @@ public class Collaboration {
         this.currentTopic.addThread(Thread.currentThread());
         return;
       }
-      
+
       else if (hasCurrentTopic(Thread.currentThread())) {
         assertNotRecursingTopic(topicObject);
       }
-      
+
       // if other topic then add to pending topics and then wait
       else {
         pendingTopic = (Topic) this.topicsMap.get(topicObject);
@@ -152,16 +150,15 @@ public class Collaboration {
     boolean interrupted = Thread.interrupted();
     try {
       awaitTopic(pendingTopic, false);
-    }
-    catch (InterruptedException e) { // LOST INTERRUPT
+    } catch (InterruptedException e) { // LOST INTERRUPT
       interrupted = true;
       this.stopper.checkCancelInProgress(e);
-    }
-    finally {
-      if (interrupted) Thread.currentThread().interrupt();
+    } finally {
+      if (interrupted)
+        Thread.currentThread().interrupt();
     }
   }
-  
+
   private void setCurrentTopic(Topic topic) {
     synchronized (this.topicsQueue) {
       if (this.currentTopic != null) {
@@ -179,8 +176,7 @@ public class Collaboration {
           }
           this.currentTopic.notifyAll();
         }
-      }
-      else {
+      } else {
         if (logger.isDebugEnabled()) {
           logger.debug("Collaboration.setCurrentTopic: {} setting current topic to null", this.toString());
         }
@@ -188,17 +184,15 @@ public class Collaboration {
       }
     } // synchronized
   }
-  
-  private void awaitTopic(Topic topic, boolean interruptible)
-  throws InterruptedException {
+
+  private void awaitTopic(Topic topic, boolean interruptible) throws InterruptedException {
     // wait while currentTopic exists and doesn't match my topic
     boolean isDebugEnabled = logger.isDebugEnabled();
     synchronized (topic) {
       while (!topic.isCurrentTopic()) {
         if (topic.isOldTopic()) {
           // warning: cannot call toString while under sync(topic)
-          Assert.assertTrue(false, "[" + getIdentity() +
-            ".awaitTopic] attempting to wait on old topic");
+          Assert.assertTrue(false, "[" + getIdentity() + ".awaitTopic] attempting to wait on old topic");
         }
         boolean interrupted = Thread.interrupted();
         try {
@@ -211,23 +205,23 @@ public class Collaboration {
             logger.debug("Collaboration.awaitTopic: {} waiting for topic {}; current topic probably {}, which may have a thread count of {}", getIdentity(), topic, sniff.toString(), sniff.threadCount());
           }
           topic.wait();
-        }
-        catch (InterruptedException e) {
-          if (interruptible) throw e;
+        } catch (InterruptedException e) {
+          if (interruptible)
+            throw e;
           interrupted = true;
           this.stopper.checkCancelInProgress(e);
-        }
-        finally {
-          if (interrupted) Thread.currentThread().interrupt();
+        } finally {
+          if (interrupted)
+            Thread.currentThread().interrupt();
         }
       }
     }
-    
+
     // remove this assertion after we're sure this class is working...
     /*Assert.assertTrue(isCurrentTopic(topic.getTopicObject()), 
-        "Failed to make " + topic + " the topic for " + this);*/ 
+        "Failed to make " + topic + " the topic for " + this);*/
   }
-  
+
   /** 
    * Acquire permission to participate in the collaboration without waiting.
    *
@@ -237,7 +231,7 @@ public class Collaboration {
   public boolean tryAcquire(Object topicObject) {
     throw new UnsupportedOperationException(LocalizedStrings.Collaboration_NOT_IMPLEMENTED.toLocalizedString());
   }
-      
+
   /** 
    * Acquire permission to participate in the collaboration; waits the
    * specified timeout.
@@ -249,11 +243,10 @@ public class Collaboration {
    *
    * @throws InterruptedException if thread is interrupted
    */
-  public boolean tryAcquire(Object topicObject, long timeout, TimeUnit unit)
-  throws InterruptedException {
+  public boolean tryAcquire(Object topicObject, long timeout, TimeUnit unit) throws InterruptedException {
     throw new UnsupportedOperationException(LocalizedStrings.Collaboration_NOT_IMPLEMENTED.toLocalizedString());
   }
-  
+
   /**
    * Releases the current thread's participation in the collaboration. When
    * the last thread involved in the current topic has released, a new topic
@@ -285,8 +278,7 @@ public class Collaboration {
         } else {
           setCurrentTopic(null);
         }
-      }
-      else  {
+      } else {
         if (isDebugEnabled) {
           logger.debug("Collaboration.release: {} released current topic ", this.toString());
         }
@@ -297,18 +289,19 @@ public class Collaboration {
   /** Returns true if a collaboration topic currently exists. */
   public boolean hasCurrentTopic(Thread thread) {
     synchronized (this.topicsQueue) {
-      if (this.currentTopic == null) return false;
+      if (this.currentTopic == null)
+        return false;
       return this.currentTopic.hasThread(thread);
     }
   }
-  
+
   /** Returns true if a collaboration topic currently exists. */
   public boolean hasCurrentTopic() {
     synchronized (this.topicsQueue) {
       return (this.currentTopic != null);
     }
   }
-  
+
   /** Returns true if topic matches the current collaboration topic. */
   public boolean isCurrentTopic(Object topicObject) {
     if (topicObject == null) {
@@ -321,7 +314,7 @@ public class Collaboration {
       return this.currentTopic.getTopicObject().equals(topicObject);
     }
   }
-    
+
   @Override
   public String toString() {
     synchronized (this.topicsQueue) {
@@ -333,65 +326,66 @@ public class Collaboration {
       return getIdentity() + ": topic=" + topic + " threadCount=" + threadCount;
     }
   }
-  
+
   protected String getIdentity() {
     String me = super.toString();
-    return me.substring(me.lastIndexOf(".")+1);
+    return me.substring(me.lastIndexOf(".") + 1);
   }
-  
+
   /**
    * Blocking threads will wait on this wrapper object. As threads release,
    * they will be removed from the Topic. The last one removed will notifyAll 
    * on the next Topic in topicsQueue.
    */
   static public class Topic {
-    
+
     private boolean isCurrentTopic = false;
-    
+
     private boolean isOldTopic = false;
-    
+
     private final Object topicObject;
-    
+
     /**
      * guarded.By {@link Collaboration#topicsQueue}
      * guarded.By this instance, <em>after</em> acquiring the topicsQueue
      */
     private final List participatingThreads = new ArrayList();
-    
+
     /** Constructs new Topic to wrap the internal topicObject. */
     public Topic(Object topicObject) {
       this.topicObject = topicObject;
     }
-    
+
     public boolean isCurrentTopic() {
       synchronized (this) {
         return this.isCurrentTopic;
       }
     }
-    
+
     public boolean isOldTopic() {
       synchronized (this) {
         return this.isOldTopic;
       }
     }
-    
+
     public Object getTopicObject() {
       synchronized (this) {
         return this.topicObject;
       }
     }
-    
+
     public void setOldTopic(boolean v) {
       synchronized (this) {
         this.isOldTopic = v;
       }
     }
-    
+
     public void setCurrentTopic(boolean v) {
       synchronized (this) {
         this.isOldTopic = v;
       }
     }
+
     /** 
      * Atomically removes thread and returns true if there are no more 
      * participating threads. 
@@ -400,8 +394,7 @@ public class Collaboration {
       synchronized (this) {
         boolean removed = this.participatingThreads.remove(thread);
         if (!removed) {
-          Assert.assertTrue(false, 
-              "thread " + thread + " was not participating in " + this);
+          Assert.assertTrue(false, "thread " + thread + " was not participating in " + this);
         }
         /*if (Collaboration.this.debugEnabled()) {
           Collaboration.this.log.fine("[" + Collaboration.this.getIdentity() + 
@@ -411,43 +404,42 @@ public class Collaboration {
         return this.participatingThreads.isEmpty();
       }
     }
-    
-    /** Adds thread to list of threads participating in this topic. */ 
+
+    /** Adds thread to list of threads participating in this topic. */
     public void addThread(Thread thread) {
       synchronized (this) {
         this.participatingThreads.add(thread);
       }
     }
-    
+
     /** Returns true if the thread was removed from participating threads. */
     public boolean removeThread(Thread thread) {
       synchronized (this) {
         return this.participatingThreads.remove(thread);
       }
     }
-    
+
     /** Returns count of threads participating in this topic. */
     public int threadCount() {
       synchronized (this) {
         return this.participatingThreads.size();
       }
     }
-    
+
     /** Returns true if the thread is one of the participating threads. */
     public boolean hasThread(Thread thread) {
       synchronized (this) {
         return this.participatingThreads.contains(thread);
       }
     }
-    
+
     @Override
     public String toString() {
       String nick = super.toString();
       nick = nick.substring(nick.lastIndexOf(".") + 1);
       return nick + ": " + topicObject;
     }
-    
-  }
-  
-}
 
+  }
+
+}

@@ -34,7 +34,7 @@ import org.apache.geode.management.internal.configuration.messages.Configuration
  * Processes the {@link ConfigurationRequest}, sends the {@link ConfigurationResponse} containing the requested configuration.
  *
  */
-public class ConfigurationRequestHandler implements TcpHandler{
+public class ConfigurationRequestHandler implements TcpHandler {
   private static final Logger logger = LogService.getLogger();
 
   SharedConfiguration sharedConfig;
@@ -46,10 +46,10 @@ public class ConfigurationRequestHandler implements TcpHandler{
   @Override
   public Object processRequest(Object request) throws IOException {
     assert request instanceof ConfigurationRequest;
-    try{
+    try {
       logger.info("Received request for configuration  : {}", request);
-      ConfigurationRequest configRequest = (ConfigurationRequest)request;
-      return sharedConfig.createConfigurationReponse(configRequest);    
+      ConfigurationRequest configRequest = (ConfigurationRequest) request;
+      return sharedConfig.createConfigurationReponse(configRequest);
     } catch (Exception e) {
       logger.info(e.getMessage(), e);
       return null;
@@ -70,15 +70,14 @@ public class ConfigurationRequestHandler implements TcpHandler{
 
   @Override
   public void init(TcpServer tcpServer) {
-  
+
   }
-  
+
   @Override
   public void restarting(DistributedSystem system, GemFireCache cache, SharedConfiguration sharedConfig) {
     if (sharedConfig != null) {
       this.sharedConfig = sharedConfig;
     }
   }
-
 
 }

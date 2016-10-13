@@ -50,8 +50,7 @@ public class Destroy extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long startparam)
-    throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long startparam) throws IOException, InterruptedException {
     long start = startparam;
 
     Part regionNamePart = null, keyPart = null, callbackArgPart = null;
@@ -91,20 +90,17 @@ public class Destroy extends BaseCommand {
       return;
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received destroy request ({} bytes) from {} for region {} key {}", servConn.getName(), msg.getPayloadLength(), servConn
-        .getSocketString(), regionName, key);
+      logger.debug("{}: Received destroy request ({} bytes) from {} for region {} key {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName, key);
     }
 
     // Process the destroy request
     if (key == null || regionName == null) {
       if (key == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.Destroy_0_THE_INPUT_KEY_FOR_THE_DESTROY_REQUEST_IS_NULL, servConn
-          .getName()));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.Destroy_0_THE_INPUT_KEY_FOR_THE_DESTROY_REQUEST_IS_NULL, servConn.getName()));
         errMessage.append(LocalizedStrings.Destroy__THE_INPUT_KEY_FOR_THE_DESTROY_REQUEST_IS_NULL.toLocalizedString());
       }
       if (regionName == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.Destroy_0_THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REQUEST_IS_NULL, servConn
-          .getName()));
+        logger.warn(LocalizedMessage.create(LocalizedStrings.Destroy_0_THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REQUEST_IS_NULL, servConn.getName()));
         errMessage.append(LocalizedStrings.Destroy__THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REQUEST_IS_NULL.toLocalizedString());
       }
       writeErrorResponse(msg, MessageType.DESTROY_DATA_ERROR, errMessage.toString(), servConn);
@@ -145,10 +141,7 @@ public class Destroy extends BaseCommand {
     } catch (EntryNotFoundException e) {
       // Don't send an exception back to the client if this
       // exception happens. Just log it and continue.
-      logger.info(LocalizedMessage.create(LocalizedStrings.Destroy_0_DURING_ENTRY_DESTROY_NO_ENTRY_WAS_FOUND_FOR_KEY_1, new Object[] {
-        servConn.getName(),
-        key
-      }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.Destroy_0_DURING_ENTRY_DESTROY_NO_ENTRY_WAS_FOUND_FOR_KEY_1, new Object[] { servConn.getName(), key }));
     } catch (RegionDestroyedException rde) {
       writeException(msg, rde, false, servConn);
       servConn.setAsTrue(RESPONDED);

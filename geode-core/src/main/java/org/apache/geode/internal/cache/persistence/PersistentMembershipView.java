@@ -32,25 +32,25 @@ public class PersistentMembershipView implements DataSerializable {
   private Set<PersistentMemberID> offlineMembers;
   private Map<InternalDistributedMember, PersistentMemberID> onlineMembers;
   private Set<PersistentMemberPattern> revokedMembers;
-  
+
   public PersistentMembershipView() {
-    
+
   }
-  
-  public PersistentMembershipView(Set<PersistentMemberID> offlineMembers,
-      Map<InternalDistributedMember, PersistentMemberID> onlineMembers,
-      Set<PersistentMemberPattern> revokedMembers) {
+
+  public PersistentMembershipView(Set<PersistentMemberID> offlineMembers, Map<InternalDistributedMember, PersistentMemberID> onlineMembers, Set<PersistentMemberPattern> revokedMembers) {
     this.offlineMembers = offlineMembers;
     this.onlineMembers = onlineMembers;
     this.revokedMembers = revokedMembers;
   }
+
   public Set<PersistentMemberID> getOfflineMembers() {
     return offlineMembers;
   }
+
   public Map<InternalDistributedMember, PersistentMemberID> getOnlineMembers() {
     return onlineMembers;
   }
-  
+
   public Set<PersistentMemberPattern> getRevokedMembers() {
     return revokedMembers;
   }
@@ -58,49 +58,48 @@ public class PersistentMembershipView implements DataSerializable {
   /* (non-Javadoc)
    * @see org.apache.geode.DataSerializable#fromData(java.io.DataInput)
    */
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     int offlineSize = in.readInt();
     offlineMembers = new HashSet<PersistentMemberID>(offlineSize);
-    for(int i = 0; i < offlineSize; i++) {
+    for (int i = 0; i < offlineSize; i++) {
       PersistentMemberID id = new PersistentMemberID();
       InternalDataSerializer.invokeFromData(id, in);
-      offlineMembers.add(id); 
+      offlineMembers.add(id);
     }
-    
+
     int onlineSize = in.readInt();
-    onlineMembers = new HashMap<InternalDistributedMember,PersistentMemberID>(onlineSize);
-    for(int i = 0; i < onlineSize; i++) {
+    onlineMembers = new HashMap<InternalDistributedMember, PersistentMemberID>(onlineSize);
+    for (int i = 0; i < onlineSize; i++) {
       InternalDistributedMember member = new InternalDistributedMember();
       InternalDataSerializer.invokeFromData(member, in);
       PersistentMemberID id = new PersistentMemberID();
       InternalDataSerializer.invokeFromData(id, in);
-      onlineMembers.put(member, id); 
+      onlineMembers.put(member, id);
     }
-    
+
     int revokedSized = in.readInt();
     revokedMembers = new HashSet<PersistentMemberPattern>(revokedSized);
-    for(int i = 0; i < revokedSized; i++) {
+    for (int i = 0; i < revokedSized; i++) {
       PersistentMemberPattern pattern = new PersistentMemberPattern();
       InternalDataSerializer.invokeFromData(pattern, in);
       revokedMembers.add(pattern);
     }
-    
-    
+
   }
+
   public void toData(DataOutput out) throws IOException {
     out.writeInt(offlineMembers.size());
-    for(PersistentMemberID member: offlineMembers) {
+    for (PersistentMemberID member : offlineMembers) {
       InternalDataSerializer.invokeToData(member, out);
     }
     out.writeInt(onlineMembers.size());
-    for(Map.Entry<InternalDistributedMember, PersistentMemberID> entry : onlineMembers.entrySet()) {
+    for (Map.Entry<InternalDistributedMember, PersistentMemberID> entry : onlineMembers.entrySet()) {
       InternalDataSerializer.invokeToData(entry.getKey(), out);
       InternalDataSerializer.invokeToData(entry.getValue(), out);
     }
-    
+
     out.writeInt(revokedMembers.size());
-    for(PersistentMemberPattern revoked : revokedMembers) {
+    for (PersistentMemberPattern revoked : revokedMembers) {
       InternalDataSerializer.invokeToData(revoked, out);
     }
   }

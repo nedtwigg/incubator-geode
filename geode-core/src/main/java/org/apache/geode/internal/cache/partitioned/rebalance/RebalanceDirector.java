@@ -16,8 +16,6 @@
  */
 package org.apache.geode.internal.cache.partitioned.rebalance;
 
-
-
 /**
  * A class that is responsible for directing all or
  * part of a rebalance operation. The director receives
@@ -28,7 +26,7 @@ package org.apache.geode.internal.cache.partitioned.rebalance;
  *
  */
 public interface RebalanceDirector {
-  
+
   /**
    * A check to see if rebalancing is necessary on the given region.
    * This is called before the initialize method is called with the model
@@ -40,9 +38,8 @@ public interface RebalanceDirector {
    * 
    * @return true if the rebalance should continue.
    */
-  public boolean isRebalanceNecessary(boolean redundancyImpaired,
-      boolean withPersistence);
-  
+  public boolean isRebalanceNecessary(boolean redundancyImpaired, boolean withPersistence);
+
   /**
    * Initialize the director with the model of the PR. This model
    * is gathered from the peers and passed to this callback before
@@ -57,7 +54,7 @@ public interface RebalanceDirector {
    * and reinitialize it's state as appropriate.
    */
   public void membershipChanged(PartitionedRegionLoadModel model);
-  
+
   /**
    * Perform one step of the rebalancing process. This step may be to create a
    * redundant bucket, move a bucket, or move a primary.

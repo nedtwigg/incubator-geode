@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode;
 
 /**
@@ -24,7 +24,7 @@ package org.apache.geode;
  *
  */
 public class GemFireIOException extends GemFireException {
-private static final long serialVersionUID = 5694009444435264497L;
+  private static final long serialVersionUID = 5694009444435264497L;
 
   //////////////////////  Constructors  //////////////////////
 
@@ -34,6 +34,7 @@ private static final long serialVersionUID = 5694009444435264497L;
   public GemFireIOException(String message, Throwable cause) {
     super(message, cause);
   }
+
   public GemFireIOException(String message) {
     super(message);
   }

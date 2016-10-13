@@ -40,7 +40,7 @@ public class HDelExecutor extends HashExecutor {
     }
 
     int numDeleted = 0;
-    
+
     ByteArrayWrapper key = command.getKey();
 
     checkDataType(key, RedisDataType.REDIS_HASH, context);
@@ -51,7 +51,6 @@ public class HDelExecutor extends HashExecutor {
       return;
     }
 
-    
     for (int i = START_FIELDS_INDEX; i < commandElems.size(); i++) {
       ByteArrayWrapper field = new ByteArrayWrapper(commandElems.get(i));
       Object oldValue = keyRegion.remove(field);

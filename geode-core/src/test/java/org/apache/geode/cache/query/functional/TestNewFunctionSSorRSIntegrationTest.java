@@ -71,9 +71,7 @@ public class TestNewFunctionSSorRSIntegrationTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
 
-    String queries[] = {
-      "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where status = 'inactive'",
-      "select distinct * from /portfolios where ID > 1 ",
+    String queries[] = { "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where status = 'inactive'", "select distinct * from /portfolios where ID > 1 ",
 
     };
 

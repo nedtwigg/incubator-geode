@@ -27,8 +27,7 @@ public class Type2 extends Type1 {
 
   public Type2(String s, int i, long l, double d, float f, String s2) {
     super(s, i, l, d, f);
-    this.s2=s2;
+    this.s2 = s2;
   }
-  
-  
+
 }

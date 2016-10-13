@@ -41,23 +41,22 @@ public class LuceneXmlParser extends AbstractXmlParser {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName,
-      Attributes atts) throws SAXException {
-    
-    if(!NAMESPACE.equals(uri)) {
+  public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+
+    if (!NAMESPACE.equals(uri)) {
       return;
     }
-    if(INDEX.equals(localName)) {
+    if (INDEX.equals(localName)) {
       startIndex(atts);
     }
-    if(FIELD.equals(localName)) {
+    if (FIELD.equals(localName)) {
       startField(atts);
     }
   }
 
   private void startField(Attributes atts) {
     //Ignore any whitespace noise between fields
-    if(stack.peek() instanceof StringBuffer) {
+    if (stack.peek() instanceof StringBuffer) {
       stack.pop();
     }
     LuceneIndexCreation creation = (LuceneIndexCreation) stack.peek();
@@ -82,22 +81,21 @@ public class LuceneXmlParser extends AbstractXmlParser {
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
-    if(!NAMESPACE.equals(uri)) {
+  public void endElement(String uri, String localName, String qName) throws SAXException {
+    if (!NAMESPACE.equals(uri)) {
       return;
     }
-    if(INDEX.equals(localName)) {
+    if (INDEX.equals(localName)) {
       endIndex();
     }
   }
 
   private void endIndex() {
     //Ignore any whitespace noise between fields
-    if(stack.peek() instanceof StringBuffer) {
+    if (stack.peek() instanceof StringBuffer) {
       stack.pop();
     }
-    
+
     //Remove the index creation from the stack
     stack.pop();
   }
@@ -107,8 +105,7 @@ public class LuceneXmlParser extends AbstractXmlParser {
     try {
       Class c = InternalDataSerializer.getCachedClass(className);
       obj = c.newInstance();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       throw new CacheXmlException(LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(className), ex);
     }
     if (!(obj instanceof Analyzer)) {

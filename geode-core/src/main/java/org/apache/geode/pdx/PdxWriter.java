@@ -35,7 +35,7 @@ import org.apache.geode.cache.CacheFactory;
  * @since GemFire 6.6
  */
 public interface PdxWriter {
-  
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>char</code>.
@@ -47,6 +47,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeChar(String fieldName, char value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>boolean</code>.
@@ -58,6 +59,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeBoolean(String fieldName, boolean value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>byte</code>.
@@ -69,6 +71,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeByte(String fieldName, byte value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>short</code>.
@@ -80,6 +83,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeShort(String fieldName, short value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>int</code>.
@@ -91,6 +95,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeInt(String fieldName, int value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>long</code>.
@@ -102,6 +107,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeLong(String fieldName, long value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>float</code>.
@@ -113,6 +119,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeFloat(String fieldName, float value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>double</code>.
@@ -124,6 +131,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeDouble(String fieldName, double value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Date</code>.
@@ -135,6 +143,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeDate(String fieldName, Date value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>String</code>.
@@ -234,6 +243,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeBooleanArray(String fieldName, boolean[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>char[]</code>.
@@ -245,6 +255,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeCharArray(String fieldName, char[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>byte[]</code>.
@@ -256,6 +267,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeByteArray(String fieldName, byte[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>short[]</code>.
@@ -267,6 +279,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeShortArray(String fieldName, short[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>int[]</code>.
@@ -278,6 +291,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeIntArray(String fieldName, int[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>long[]</code>.
@@ -289,6 +303,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeLongArray(String fieldName, long[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>float[]</code>.
@@ -300,6 +315,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeFloatArray(String fieldName, float[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>double[]</code>.
@@ -311,6 +327,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeDoubleArray(String fieldName, double[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>String[]</code>.
@@ -322,6 +339,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeStringArray(String fieldName, String[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Object[]</code>.
@@ -336,6 +354,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public PdxWriter writeObjectArray(String fieldName, Object[] value);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>Object[]</code>.
@@ -353,6 +372,7 @@ public interface PdxWriter {
    * @since GemFire 6.6.2
    */
   public PdxWriter writeObjectArray(String fieldName, Object[] value, boolean checkPortability);
+
   /**
    * Writes the named field with the given value to the serialized form.
    * The fields type is <code>byte[][]</code>.
@@ -404,6 +424,7 @@ public interface PdxWriter {
    * @throws PdxSerializationException if serialization of the field fails.
    */
   public <CT, VT extends CT> PdxWriter writeField(String fieldName, VT fieldValue, Class<CT> fieldType);
+
   /**
    * Writes the named field with the given value and type to the serialized form.
    * This method uses the <code>fieldType</code> to determine which writeXXX method it should call.
@@ -445,7 +466,7 @@ public interface PdxWriter {
    * @since GemFire 6.6.2
    */
   public <CT, VT extends CT> PdxWriter writeField(String fieldName, VT fieldValue, Class<CT> fieldType, boolean checkPortability);
-  
+
   /**
    * Writes the given unread fields to the serialized form.
    * The unread fields are obtained by calling {@link PdxReader#readUnreadFields() readUnreadFields}.

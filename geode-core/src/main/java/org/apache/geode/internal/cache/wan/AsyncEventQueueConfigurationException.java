@@ -23,8 +23,7 @@ import org.apache.geode.cache.OperationAbortedException;
  *  
  *
  */
-public class AsyncEventQueueConfigurationException extends
-    OperationAbortedException {
+public class AsyncEventQueueConfigurationException extends OperationAbortedException {
 
   private static final long serialVersionUID = 1L;
 
@@ -44,7 +43,7 @@ public class AsyncEventQueueConfigurationException extends
    * @param msg the detail message
    * @param cause the causal Throwable
    */
-  
+
   public AsyncEventQueueConfigurationException(String msg, Throwable cause) {
     super(msg, cause);
   }

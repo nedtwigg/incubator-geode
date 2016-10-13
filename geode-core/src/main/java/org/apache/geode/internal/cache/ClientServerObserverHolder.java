@@ -26,8 +26,7 @@ import org.apache.geode.cache.query.internal.Support;
  * 
  * @since GemFire 5.1
  */
-public class ClientServerObserverHolder
-  {
+public class ClientServerObserverHolder {
 
   /**
    * The default 'do-nothing' bridge observer *
@@ -43,18 +42,15 @@ public class ClientServerObserverHolder
    * Set the given observer to be notified of events. Returns the current
    * observer.
    */
-  public static final ClientServerObserver setInstance(ClientServerObserver observer)
-  {
-    Support.assertArg(observer != null,
-        "setInstance expects a non-null argument!");
+  public static final ClientServerObserver setInstance(ClientServerObserver observer) {
+    Support.assertArg(observer != null, "setInstance expects a non-null argument!");
     ClientServerObserver oldObserver = _instance;
     _instance = observer;
     return oldObserver;
   }
 
   /** Return the current BridgeObserver instance */
-  public static final ClientServerObserver getInstance()
-  {
+  public static final ClientServerObserver getInstance() {
     return _instance;
   }
 

@@ -41,11 +41,11 @@ public class ManagerStartupMessage extends PooledDistributionMessage {
   public void setLevel(int alertLevel) {
     this.alertLevel = alertLevel;
   }
-  
+
   @Override
   public void process(DistributionManager dm) {
-    
-    if (this.alertLevel != Alert.OFF) { 
+
+    if (this.alertLevel != Alert.OFF) {
       AlertAppender.getInstance().addAlertListener(this.getSender(), this.alertLevel);
     }
   }
@@ -61,16 +61,14 @@ public class ManagerStartupMessage extends PooledDistributionMessage {
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.alertLevel = in.readInt();
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     return "ManagerStartupMessage from " + this.getSender() + " level=" + alertLevel;
   }
-
 
 }

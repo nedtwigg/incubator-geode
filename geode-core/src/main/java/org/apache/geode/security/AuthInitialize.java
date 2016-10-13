@@ -53,17 +53,17 @@ public interface AuthInitialize extends CacheCallback {
    *
    *  @deprecated since Geode 1.0, use init()
    */
-  public void init(LogWriter systemLogger, LogWriter securityLogger)
-      throws AuthenticationFailedException;
+  public void init(LogWriter systemLogger, LogWriter securityLogger) throws AuthenticationFailedException;
 
   /**
    * @since Geode 1.0. implement this method instead of init with logwriters.
    * Implementation should use log4j instead of these loggers.
    */
-  default public void init(){
+  default public void init() {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     init(cache.getLogger(), cache.getSecurityLogger());
   }
+
   /**
    * Initialize with the given set of security properties and return the
    * credentials for the peer/client as properties.
@@ -94,16 +94,14 @@ public interface AuthInitialize extends CacheCallback {
    * @deprecated since Geode 1.0, use getCredentials(Properties). When using Integrated security,
    * all members, peer/client will use the same credentials.
    */
-  public Properties getCredentials(Properties securityProps,
-                                   DistributedMember server, boolean isPeer)
-    throws AuthenticationFailedException;
+  public Properties getCredentials(Properties securityProps, DistributedMember server, boolean isPeer) throws AuthenticationFailedException;
 
   /**
    * Implement this since Geode1.0
    * @param securityProps
    * @return the credentials to be used. It needs to contain "security-username" and "security-password"
    */
-  default public Properties getCredentials(Properties securityProps){
+  default public Properties getCredentials(Properties securityProps) {
     return getCredentials(securityProps, null, true);
   }
 }

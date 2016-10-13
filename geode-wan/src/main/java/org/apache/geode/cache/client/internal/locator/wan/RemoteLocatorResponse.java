@@ -29,19 +29,19 @@ import org.apache.geode.internal.Version;
  * 
  *
  */
-public class RemoteLocatorResponse implements DataSerializableFixedID{
+public class RemoteLocatorResponse implements DataSerializableFixedID {
 
-  private Set<String> locators ;
+  private Set<String> locators;
 
   /** Used by DataSerializer */
   public RemoteLocatorResponse() {
     super();
   }
-  
+
   public RemoteLocatorResponse(Set<String> locators) {
     this.locators = locators;
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.locators = DataSerializer.readObject(in);
   }
@@ -53,10 +53,10 @@ public class RemoteLocatorResponse implements DataSerializableFixedID{
   public Set<String> getLocators() {
     return this.locators;
   }
-  
+
   @Override
   public String toString() {
-    return "RemoteLocatorResponse{locators=" + locators +"}";
+    return "RemoteLocatorResponse{locators=" + locators + "}";
   }
 
   public int getDSFID() {
@@ -65,7 +65,7 @@ public class RemoteLocatorResponse implements DataSerializableFixedID{
 
   @Override
   public Version[] getSerializationVersions() {
-     return null;
+    return null;
   }
 
 }

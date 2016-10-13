@@ -151,13 +151,12 @@ public abstract class Instantiator {
 
   /** The id of this <code>Instantiator</code> */
   private int id;
-  
+
   /** The eventId of this <code>Instantiator</code> */
   private EventID eventId;
-  
+
   /** The originator of this <code>Instantiator</code> */
   private ClientProxyMembershipID context;
-
 
   ///////////////////////  Static Methods  ///////////////////////
 
@@ -208,8 +207,7 @@ public abstract class Instantiator {
    *         If <code>instantiator</code> is <code>null</code>.
    * @deprecated as of 9.0 use {@link Instantiator#register(Instantiator)} instead
    */
-  public static synchronized void register(Instantiator instantiator,
-      boolean distribute) {
+  public static synchronized void register(Instantiator instantiator, boolean distribute) {
     InternalInstantiator.register(instantiator, distribute);
   }
 
@@ -251,7 +249,7 @@ public abstract class Instantiator {
     this.clazz = c;
     this.id = classId;
   }
-  
+
   //////////////////////  Instance Methods  //////////////////////
 
   /**
@@ -278,14 +276,15 @@ public abstract class Instantiator {
   public final int getId() {
     return this.id;
   }
+
   /**
    * sets the unique <code>eventId</code> of this
    * <code>Instantiator</code>. For internal use only.
    */
   public final void setEventId(Object/*EventID*/ eventId) {
-    this.eventId = (EventID)eventId;
+    this.eventId = (EventID) eventId;
   }
-  
+
   /**
    * Returns the unique <code>eventId</code> of this
    * <code>Instantiator</code>. For internal use only.
@@ -293,15 +292,15 @@ public abstract class Instantiator {
   public final Object/*EventID*/ getEventId() {
     return this.eventId;
   }
-  
+
   /**
    * sets the context of this
    * <code>Instantiator</code>. For internal use only.
    */
   public final void setContext(Object/*ClientProxyMembershipID*/ context) {
-    this.context = (ClientProxyMembershipID)context;
+    this.context = (ClientProxyMembershipID) context;
   }
-  
+
   /**
    * Returns the context of this
    * <code>Instantiator</code>. For internal use only.
@@ -309,6 +308,5 @@ public abstract class Instantiator {
   public final Object/*ClientProxyMembershipID*/ getContext() {
     return this.context;
   }
-  
-  
+
 }

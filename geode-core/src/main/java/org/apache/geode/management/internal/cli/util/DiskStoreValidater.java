@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.cli.util;
 
-
 import java.io.File;
 import org.apache.geode.internal.cache.DiskStoreImpl;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
@@ -25,35 +24,33 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
  * @since GemFire 7.0
  */
 
-
 public class DiskStoreValidater {
   /**
    * @param args
    */
   public static void main(String[] args) {
     if (args.length < 2 || args.length > 2) {
-      throw new IllegalArgumentException(
-          "Requires only 2  arguments : <DiskStore> <Dirs>");
+      throw new IllegalArgumentException("Requires only 2  arguments : <DiskStore> <Dirs>");
     }
-    validate((String) args[0], (String) args[1]);    
+    validate((String) args[0], (String) args[1]);
   }
 
   static void validate(String diskStoreName, String diskDirs) {
     try {
-      File[] dirs = null;      
-      String []dirList = null;
+      File[] dirs = null;
+      String[] dirList = null;
       dirList = diskDirs.split(";");
-      if (dirList != null && dirList.length  > 0) {
+      if (dirList != null && dirList.length > 0) {
         dirs = new File[dirList.length];
         for (int i = 0; i < dirList.length; ++i) {
           dirs[i] = new File(dirList[i]);
         }
       } else {
-        System.out.println(CliStrings.VALIDATE_DISK_STORE__MSG__NO_DIRS);        
+        System.out.println(CliStrings.VALIDATE_DISK_STORE__MSG__NO_DIRS);
       }
-      DiskStoreImpl.validate(diskStoreName, dirs);      
+      DiskStoreImpl.validate(diskStoreName, dirs);
     } catch (Exception e) {
-      System.out.println(CliStrings.format(CliStrings.VALIDATE_DISK_STORE__MSG__ERROR,   diskStoreName, e.getMessage()));      
+      System.out.println(CliStrings.format(CliStrings.VALIDATE_DISK_STORE__MSG__ERROR, diskStoreName, e.getMessage()));
     }
   }
 }

@@ -23,7 +23,7 @@ import org.apache.geode.internal.cache.control.InternalResourceManager;
 import org.apache.geode.internal.cache.partitioned.PartitionedRegionRebalanceOp;
 
 public class BucketOperatorImpl implements BucketOperator {
-  
+
   private PartitionedRegionRebalanceOp rebalanceOp;
 
   public BucketOperatorImpl(PartitionedRegionRebalanceOp rebalanceOp) {
@@ -31,48 +31,40 @@ public class BucketOperatorImpl implements BucketOperator {
   }
 
   @Override
-  public boolean moveBucket(InternalDistributedMember source,
-      InternalDistributedMember target, int bucketId,
-      Map<String, Long> colocatedRegionBytes) {
+  public boolean moveBucket(InternalDistributedMember source, InternalDistributedMember target, int bucketId, Map<String, Long> colocatedRegionBytes) {
 
-    InternalResourceManager.getResourceObserver().movingBucket(
-        rebalanceOp.getLeaderRegion(), bucketId, source, target);
+    InternalResourceManager.getResourceObserver().movingBucket(rebalanceOp.getLeaderRegion(), bucketId, source, target);
     return rebalanceOp.moveBucketForRegion(source, target, bucketId);
   }
 
   @Override
-  public boolean movePrimary(InternalDistributedMember source,
-      InternalDistributedMember target, int bucketId) {
+  public boolean movePrimary(InternalDistributedMember source, InternalDistributedMember target, int bucketId) {
 
-    InternalResourceManager.getResourceObserver().movingPrimary(
-        rebalanceOp.getLeaderRegion(), bucketId, source, target);
-    return rebalanceOp.movePrimaryBucketForRegion(target, bucketId); 
+    InternalResourceManager.getResourceObserver().movingPrimary(rebalanceOp.getLeaderRegion(), bucketId, source, target);
+    return rebalanceOp.movePrimaryBucketForRegion(target, bucketId);
   }
 
   @Override
-  public void createRedundantBucket(
-      InternalDistributedMember targetMember, int bucketId,
-      Map<String, Long> colocatedRegionBytes, Completion completion) {
+  public void createRedundantBucket(InternalDistributedMember targetMember, int bucketId, Map<String, Long> colocatedRegionBytes, Completion completion) {
     boolean result = false;
     try {
       result = rebalanceOp.createRedundantBucketForRegion(targetMember, bucketId);
     } finally {
-      if(result) {
+      if (result) {
         completion.onSuccess();
       } else {
         completion.onFailure();
       }
     }
   }
-  
+
   @Override
   public void waitForOperations() {
     //do nothing, all operations are synchronous
   }
 
   @Override
-  public boolean removeBucket(InternalDistributedMember targetMember, int bucketId,
-      Map<String, Long> colocatedRegionBytes) {
+  public boolean removeBucket(InternalDistributedMember targetMember, int bucketId, Map<String, Long> colocatedRegionBytes) {
     return rebalanceOp.removeRedundantBucketForRegion(targetMember, bucketId);
   }
 }

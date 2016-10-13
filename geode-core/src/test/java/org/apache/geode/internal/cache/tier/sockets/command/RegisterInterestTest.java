@@ -59,7 +59,6 @@ public class RegisterInterestTest {
   private static final String KEY = "key1";
   private static final byte[] DURABLE = new byte[8];
 
-
   @Mock
   private SecurityService securityService;
   @Mock
@@ -90,7 +89,6 @@ public class RegisterInterestTest {
   public void setUp() throws Exception {
     this.registerInterest = new RegisterInterest();
     MockitoAnnotations.initMocks(this);
-
 
     when(this.authzRequest.registerInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt(), any())).thenReturn(mock(RegisterInterestOperationContext.class));
 

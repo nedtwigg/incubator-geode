@@ -40,9 +40,7 @@ public class AlertDetails {
 
   private InternalDistributedMember sender;
 
-  public AlertDetails(int alertLevel, Date msgDate, String connectionName,
-      String threadName, long tid, String msg, String exceptionText,
-      InternalDistributedMember sender) {
+  public AlertDetails(int alertLevel, Date msgDate, String connectionName, String threadName, long tid, String msg, String exceptionText, InternalDistributedMember sender) {
 
     this.alertLevel = alertLevel;
     this.connectionName = connectionName;
@@ -102,7 +100,7 @@ public class AlertDetails {
   public Date getMsgTime() {
     return msgDate;
   }
-  
+
   public String getSource() {
     return sourceId;
   }
@@ -138,7 +136,7 @@ public class AlertDetails {
     }
     return sw.toString();
   }
-  
+
   /**
    * Converts the int alert level to a string representation.
    * 

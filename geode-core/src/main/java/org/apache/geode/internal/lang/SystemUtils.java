@@ -69,7 +69,7 @@ public class SystemUtils {
       actualVersionDigits = StringUtils.getDigitsOnly(System.getProperty("java.specification.version"));
       int dotIdx = expectedVersion.indexOf('.');
       if (dotIdx != -1) {
-        dotIdx = expectedVersion.indexOf('.', dotIdx+1);
+        dotIdx = expectedVersion.indexOf('.', dotIdx + 1);
         if (dotIdx != -1) {
           // strip off everything after the second dot.
           expectedVersion = expectedVersion.substring(0, dotIdx);
@@ -79,13 +79,11 @@ public class SystemUtils {
       actualVersionDigits = StringUtils.getDigitsOnly(System.getProperty("java.version"));
     }
 
-    String expectedVersionDigits = StringUtils.padEnding(StringUtils.getDigitsOnly(expectedVersion), '0',
-      actualVersionDigits.length());
+    String expectedVersionDigits = StringUtils.padEnding(StringUtils.getDigitsOnly(expectedVersion), '0', actualVersionDigits.length());
 
     try {
       return (Long.parseLong(actualVersionDigits) >= Long.parseLong(expectedVersionDigits));
-    }
-    catch (NumberFormatException ignore) {
+    } catch (NumberFormatException ignore) {
       return false;
     }
   }
@@ -122,7 +120,7 @@ public class SystemUtils {
   public static boolean isAzulJVM() {
     return isJvmVendor(AZUL_JVM_VENDOR_NAME);
   }
-  
+
   // @see java.lang.System#getProperty(String) with 'java.vm.vendor'.
   private static boolean isJvmVendor(final String expectedJvmVendorName) {
     String jvmVendor = System.getProperty("java.vm.vendor");
@@ -223,7 +221,7 @@ public class SystemUtils {
   public static boolean isInClassPath(String location) throws MalformedURLException {
     return isInClassPath(new File(location).toURI().toURL());
   }
-  
+
   /**
    * Returns true if the specified location is in the JVM classpath. This may
    * ignore additions to the classpath that are not reflected by the value in
@@ -237,14 +235,14 @@ public class SystemUtils {
     String classPath = System.getProperty("java.class.path");
     StringTokenizer st = new StringTokenizer(classPath, File.pathSeparator);
     while (st.hasMoreTokens()) {
-      String path =st.nextToken();
+      String path = st.nextToken();
       if (location.equals(new File(path).toURI().toURL())) {
         return true;
       }
     }
     return false;
   }
-  
+
   // @see java.lang.System#getProperty(String) with "os.name".
   private static boolean isOS(final String expectedOsName) {
     String osName = System.getProperty("os.name");

@@ -39,11 +39,11 @@ public abstract class WrappedCallbackArgument {
    * The original callbackArg
    */
   private Object _originalCallbackArg;
-  
+
   /**
    * No arg constructor for DataSerializable.
    */
-  public WrappedCallbackArgument() {    
+  public WrappedCallbackArgument() {
   }
 
   /**
@@ -53,9 +53,8 @@ public abstract class WrappedCallbackArgument {
    * caller or null if there was not callback arg
    */
   public WrappedCallbackArgument(Object originalCallbackArg) {
-    this._originalCallbackArg = originalCallbackArg;    
+    this._originalCallbackArg = originalCallbackArg;
   }
-
 
   /**
    * Returns the original callback argument.
@@ -72,7 +71,7 @@ public abstract class WrappedCallbackArgument {
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this._originalCallbackArg = DataSerializer.readObject(in);
   }
-  
+
   void setOriginalCallbackArgument(Object origCallbackArg) {
     Assert.assertTrue(this._originalCallbackArg == null);
     this._originalCallbackArg = origCallbackArg;

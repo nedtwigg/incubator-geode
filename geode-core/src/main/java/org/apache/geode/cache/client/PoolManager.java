@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.cache.client;
+
 import java.util.Map;
 
 import org.apache.geode.cache.Region;
@@ -35,11 +36,11 @@ import org.apache.geode.distributed.DistributedSystem; // for javadocs
  *
  */
 public final class PoolManager {
-  
+
   private PoolManager() {
     // no instances allowed!
   }
-  
+
   /**
    * Creates a new {@link PoolFactory pool factory},
    * which is used to configure and create new {@link Pool}s.
@@ -58,6 +59,7 @@ public final class PoolManager {
   public static Pool find(String name) {
     return PoolManagerImpl.getPMI().find(name);
   }
+
   /**
    * Returns a map containing all the pools in this manager.
    * The keys are pool names
@@ -66,9 +68,10 @@ public final class PoolManager {
    * The map is free to be changed without affecting this manager.
    * @return a Map that is a snapshot of all the pools currently known to this manager.
    */
-  public static Map<String,Pool> getAll() { 
+  public static Map<String, Pool> getAll() {
     return PoolManagerImpl.getPMI().getMap();
   }
+
   /**
    * Unconditionally destroys all created pools that are in this manager.
    * @param keepAlive whether the server should keep the durable client's subscriptions alive for the <code>durable-client-timeout</code>.
@@ -77,17 +80,17 @@ public final class PoolManager {
   public static void close(boolean keepAlive) {
     PoolManagerImpl.getPMI().close(keepAlive);
   }
-  
+
   /**
    * Find the pool used by the given region.
    * @param region The region that is using the pool.
    * @return the pool used by that region or <code>null</code> if the region does
    * not have a pool. 
    */
-  public static Pool find(Region<?,?> region) {
+  public static Pool find(Region<?, ?> region) {
     return PoolManagerImpl.getPMI().find(region);
   }
-  
+
   /**
    * Unconditionally destroys all created pools that are in this manager.
    */

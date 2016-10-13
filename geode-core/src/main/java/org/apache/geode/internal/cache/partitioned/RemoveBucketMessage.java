@@ -57,20 +57,14 @@ public class RemoveBucketMessage extends PartitionMessage {
 
   private int bucketId;
   private boolean forceRemovePrimary;
-  
-  
+
   /**
    * Empty constructor to satisfy {@link DataSerializer} requirements
    */
   public RemoveBucketMessage() {
   }
 
-  private RemoveBucketMessage(
-      InternalDistributedMember recipient, 
-      int regionId, 
-      ReplyProcessor21 processor,
-      int bucketId,
-      boolean forceRemovePrimary) {
+  private RemoveBucketMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId, boolean forceRemovePrimary) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
     this.forceRemovePrimary = forceRemovePrimary;
@@ -84,22 +78,14 @@ public class RemoveBucketMessage extends PartitionMessage {
    * @param bucketId the bucket to remove
    * @return the processor used to wait for the response
    */
-  public static RemoveBucketResponse send(
-      InternalDistributedMember recipient, 
-      PartitionedRegion region,
-      int bucketId,
-      boolean forceRemovePrimary) {
-    
-    Assert.assertTrue(recipient != null, 
-        "RemoveBucketMessage NULL recipient");
-    
-    RemoveBucketResponse response = new RemoveBucketResponse(
-        region.getSystem(), recipient, region);
-    RemoveBucketMessage msg = new RemoveBucketMessage(
-        recipient, region.getPRId(), response, bucketId, forceRemovePrimary);
+  public static RemoveBucketResponse send(InternalDistributedMember recipient, PartitionedRegion region, int bucketId, boolean forceRemovePrimary) {
 
-    Set<InternalDistributedMember> failures = 
-      region.getDistributionManager().putOutgoing(msg);
+    Assert.assertTrue(recipient != null, "RemoveBucketMessage NULL recipient");
+
+    RemoveBucketResponse response = new RemoveBucketResponse(region.getSystem(), recipient, region);
+    RemoveBucketMessage msg = new RemoveBucketMessage(recipient, region.getPRId(), response, bucketId, forceRemovePrimary);
+
+    Set<InternalDistributedMember> failures = region.getDistributionManager().putOutgoing(msg);
     if (failures != null && failures.size() > 0) {
       //throw new ForceReattemptException("Failed sending <" + msg + ">");
       return null;
@@ -108,8 +94,7 @@ public class RemoveBucketMessage extends PartitionMessage {
     return response;
   }
 
-  public RemoveBucketMessage(DataInput in) 
-  throws IOException, ClassNotFoundException {
+  public RemoveBucketMessage(DataInput in) throws IOException, ClassNotFoundException {
     fromData(in);
   }
 
@@ -120,19 +105,14 @@ public class RemoveBucketMessage extends PartitionMessage {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm,
-                                                     PartitionedRegion region, 
-                                                     long startTime) 
-                                              throws ForceReattemptException {
-    
+  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion region, long startTime) throws ForceReattemptException {
+
     PartitionedRegionDataStore dataStore = region.getDataStore();
-    boolean removed = dataStore.removeBucket(this.bucketId, 
-        this.forceRemovePrimary);
-    
+    boolean removed = dataStore.removeBucket(this.bucketId, this.forceRemovePrimary);
+
     region.getPrStats().endPartitionMessagesProcessing(startTime);
-    RemoveBucketReplyMessage.send(
-        getSender(), getProcessorId(), dm, null, removed);
-    
+    RemoveBucketReplyMessage.send(getSender(), getProcessorId(), dm, null, removed);
+
     return false;
   }
 
@@ -160,9 +140,8 @@ public class RemoveBucketMessage extends PartitionMessage {
     out.writeBoolean(this.forceRemovePrimary);
   }
 
-  public static final class RemoveBucketReplyMessage 
-  extends ReplyMessage {
-    
+  public static final class RemoveBucketReplyMessage extends ReplyMessage {
+
     private boolean removed;
 
     /**
@@ -171,32 +150,24 @@ public class RemoveBucketMessage extends PartitionMessage {
     public RemoveBucketReplyMessage() {
     }
 
-    public RemoveBucketReplyMessage(DataInput in)
-        throws IOException, ClassNotFoundException {
+    public RemoveBucketReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
     }
 
-    private RemoveBucketReplyMessage(
-        int processorId, ReplyException re, boolean removed) {
+    private RemoveBucketReplyMessage(int processorId, ReplyException re, boolean removed) {
       this.processorId = processorId;
       this.removed = removed;
       setException(re);
     }
 
     /** Send a reply */
-    public static void send(InternalDistributedMember recipient,
-                            int processorId, 
-                            DM dm, 
-                            ReplyException re,
-                            boolean removed) {
-      Assert.assertTrue(recipient != null,
-          "RemoveBucketReplyMessage NULL recipient");
-      RemoveBucketReplyMessage m = 
-          new RemoveBucketReplyMessage(processorId, re, removed);
+    public static void send(InternalDistributedMember recipient, int processorId, DM dm, ReplyException re, boolean removed) {
+      Assert.assertTrue(recipient != null, "RemoveBucketReplyMessage NULL recipient");
+      RemoveBucketReplyMessage m = new RemoveBucketReplyMessage(processorId, re, removed);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
-    
+
     boolean removed() {
       return this.removed;
     }
@@ -234,8 +205,7 @@ public class RemoveBucketMessage extends PartitionMessage {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.removed = in.readBoolean();
     }
@@ -243,10 +213,7 @@ public class RemoveBucketMessage extends PartitionMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("RemoveBucketReplyMessage ")
-        .append("processorid=").append(this.processorId)
-        .append(" removed=").append(this.removed)
-        .append(" reply to sender ").append(this.getSender());
+      sb.append("RemoveBucketReplyMessage ").append("processorid=").append(this.processorId).append(" removed=").append(this.removed).append(" reply to sender ").append(this.getSender());
       return sb.toString();
     }
   }
@@ -256,13 +223,10 @@ public class RemoveBucketMessage extends PartitionMessage {
    * <code>RemoveBucketReplyMessage</code>
    */
   public static class RemoveBucketResponse extends PartitionResponse {
-    
+
     private volatile boolean removed = false;
-    
-    public RemoveBucketResponse(
-        InternalDistributedSystem ds,
-        InternalDistributedMember recipient, 
-        PartitionedRegion theRegion) {
+
+    public RemoveBucketResponse(InternalDistributedSystem ds, InternalDistributedMember recipient, PartitionedRegion theRegion) {
       super(ds, recipient);
     }
 
@@ -270,8 +234,7 @@ public class RemoveBucketMessage extends PartitionMessage {
     public void process(DistributionMessage msg) {
       try {
         if (msg instanceof RemoveBucketReplyMessage) {
-          RemoveBucketReplyMessage reply = 
-              (RemoveBucketReplyMessage) msg;
+          RemoveBucketReplyMessage reply = (RemoveBucketReplyMessage) msg;
           this.removed = reply.removed();
           if (logger.isTraceEnabled(LogMarker.DM)) {
             logger.debug("RemoveBucketResponse is {}", removed);
@@ -290,11 +253,11 @@ public class RemoveBucketMessage extends PartitionMessage {
     protected void processException(ReplyException ex) {
       logger.debug("RemoveBucketMessage ignoring exception: {}", ex.getMessage(), ex);
     }
-    
+
     public boolean waitForResponse() {
       try {
         waitForRepliesUninterruptibly();
-      }   catch(ReplyException e) {
+      } catch (ReplyException e) {
         Throwable t = e.getCause();
         //Most of these cases indicate that the PR is destroyed on the
         // remote VM. Which is fine, because that means the bucket was "removed"

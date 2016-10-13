@@ -72,29 +72,17 @@ public class CacheClientStatus implements Serializable {
   public void setSocketAddresses(List socketAddresses) {
     this._socketAddresses = socketAddresses;
   }
-  
+
   public String getHostAddress() {
-    if(_id != null && _id.getDistributedMember() != null)
-     return _id.getDistributedMember().getHost();
+    if (_id != null && _id.getDistributedMember() != null)
+      return _id.getDistributedMember().getHost();
     return null;
   }
 
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer
-      .append("CacheClientStatus[")
-      .append("id=")
-      .append(this._id)
-      .append("; memberId=")
-      .append(this._memberId)
-      .append("; numberOfConnections=")
-      .append(this._numberOfConnections)
-      .append("; socketAddresses=")
-      .append(this._socketAddresses)
-      .append("; socketPorts=")
-      .append(this._socketPorts)
-      .append("]");
+    buffer.append("CacheClientStatus[").append("id=").append(this._id).append("; memberId=").append(this._memberId).append("; numberOfConnections=").append(this._numberOfConnections).append("; socketAddresses=").append(this._socketAddresses).append("; socketPorts=").append(this._socketPorts).append("]");
     return buffer.toString();
   }
 }

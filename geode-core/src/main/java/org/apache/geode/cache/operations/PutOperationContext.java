@@ -63,8 +63,7 @@ public class PutOperationContext extends KeyValueOperationContext {
    *                byte array
    * @since GemFire 6.5
    */
-  public PutOperationContext(Object key,Object value,
-      boolean isObject) {
+  public PutOperationContext(Object key, Object value, boolean isObject) {
     super(key, value, isObject);
     this.opType = UNKNOWN;
   }
@@ -83,8 +82,7 @@ public class PutOperationContext extends KeyValueOperationContext {
    *                true if the context is at the time of sending updates
    * @since GemFire 6.5
    */
-  public PutOperationContext(Object key, Object value,
-      boolean isObject, boolean postOperation) {
+  public PutOperationContext(Object key, Object value, boolean isObject, boolean postOperation) {
     super(key, value, isObject, postOperation);
     this.opType = UNKNOWN;
   }
@@ -106,8 +104,7 @@ public class PutOperationContext extends KeyValueOperationContext {
    *                true if the context is at the time of sending updates
    * @since GemFire 6.5
    */
-  public PutOperationContext(Object key, Object value,
-      boolean isObject, byte opType, boolean isPostOperation) {
+  public PutOperationContext(Object key, Object value, boolean isObject, byte opType, boolean isPostOperation) {
     super(key, value, isObject, isPostOperation);
     this.opType = opType;
   }

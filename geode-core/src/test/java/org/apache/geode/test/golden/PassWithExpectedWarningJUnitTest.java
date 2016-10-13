@@ -29,17 +29,17 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class PassWithExpectedWarningJUnitTest extends PassWithExpectedProblemTestCase {
-  
+
   @Override
   String problem() {
     return "warning";
   }
-  
+
   @Override
   void outputProblemInProcess(final String message) {
     new LocalLogWriter(LogWriterImpl.INFO_LEVEL).warning(message);
   }
-  
+
   public static void main(final String[] args) throws Exception {
     new PassWithExpectedWarningJUnitTest().executeInProcess();
   }

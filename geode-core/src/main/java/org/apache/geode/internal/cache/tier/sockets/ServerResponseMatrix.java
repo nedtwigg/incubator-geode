@@ -43,29 +43,23 @@ import org.apache.geode.internal.cache.tier.MessageType;
  * @since GemFire 5.1
  * 
  */
-public class ServerResponseMatrix
-{
+public class ServerResponseMatrix {
 
-  public static boolean checkForValidStateAfterRegisterInterest(
-      LocalRegion region, Object key, Object serverValue)
-  {
+  public static boolean checkForValidStateAfterRegisterInterest(LocalRegion region, Object key, Object serverValue) {
     int cacheEntryState = -1;
     RegionEntry re = region.entries.getEntry(key);
     if (re == null) {
       // nonexistent
       cacheEntryState = 0;
-    }
-    else {
+    } else {
       Token token = re.getValueAsToken();
       if (token == Token.DESTROYED) {
         // destroyed
         cacheEntryState = 3;
-      }
-      else if (token == Token.INVALID) {
+      } else if (token == Token.INVALID) {
         // invalid
         cacheEntryState = 2;
-      }
-      else {
+      } else {
         // valid
         cacheEntryState = 1;
       }
@@ -74,8 +68,7 @@ public class ServerResponseMatrix
     // A matrix During register interest response processing
     // 4 nonexistent, valid , invalid,destroyed
     // 2 invalid, valid
-    boolean matrix[][] = { { true, true }, { false, false }, { true, true },
-        { true, true } };
+    boolean matrix[][] = { { true, true }, { false, false }, { true, true }, { true, true } };
 
     int registerInterstResState = 0; // invalid
     if (serverValue != null) {
@@ -84,37 +77,29 @@ public class ServerResponseMatrix
     return matrix[cacheEntryState][registerInterstResState];
   }
 
-  public static boolean checkForValidStateAfterNotification(LocalRegion region,
-      Object key, int operation)
-  {
+  public static boolean checkForValidStateAfterNotification(LocalRegion region, Object key, int operation) {
 
     // 4 nonexistent/destroyed , valid , invalid,local-invalid ,
     // 4 create , update , invalidate, destroy
-    boolean matrix[][] = { { true, true, true, true },
-        { true, true, true, true }, { true, true, true, true },
-        { true, true, true, true } };
+    boolean matrix[][] = { { true, true, true, true }, { true, true, true, true }, { true, true, true, true }, { true, true, true, true } };
 
     int cacheEntryState = -1;
     RegionEntry re = region.entries.getEntry(key);
     if (re == null) {
       // nonexistent or destroyed
       cacheEntryState = 0;
-    }
-    else {
+    } else {
       Token token = re.getValueAsToken();
       if (token == Token.DESTROYED || token == Token.REMOVED_PHASE1 || token == Token.REMOVED_PHASE2 || token == Token.TOMBSTONE) {
         // destroyed
         cacheEntryState = 0;
-      }
-      else if (token == Token.LOCAL_INVALID) {
+      } else if (token == Token.LOCAL_INVALID) {
         // local-invalid
         cacheEntryState = 3;
-      }
-      else if (token == Token.INVALID) {
+      } else if (token == Token.INVALID) {
         // invalid
         cacheEntryState = 2;
-      }
-      else {
+      } else {
         // valid
         cacheEntryState = 1;
       }

@@ -64,8 +64,7 @@ public class ListIndexFunction extends FunctionAdapter implements InternalEntity
       }
 
       context.getResultSender().lastResult(indexDetailsSet);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       context.getResultSender().sendException(e);
     }
   }

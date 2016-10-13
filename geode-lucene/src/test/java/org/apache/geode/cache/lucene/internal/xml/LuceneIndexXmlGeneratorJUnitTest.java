@@ -38,7 +38,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class LuceneIndexXmlGeneratorJUnitTest {
-  
+
   /**
    * Test of generating and reading cache configuration back in.
    */
@@ -46,30 +46,30 @@ public class LuceneIndexXmlGeneratorJUnitTest {
   public void generateWithFields() throws Exception {
     LuceneIndex index = mock(LuceneIndex.class);
     when(index.getName()).thenReturn("index");
-    String[] fields = new String[] {"field1", "field2"};
+    String[] fields = new String[] { "field1", "field2" };
     when(index.getFieldNames()).thenReturn(fields);
-    
+
     LuceneIndexXmlGenerator generator = new LuceneIndexXmlGenerator(index);
     CacheXmlGenerator cacheXmlGenerator = mock(CacheXmlGenerator.class);
     ContentHandler handler = mock(ContentHandler.class);
     when(cacheXmlGenerator.getContentHandler()).thenReturn(handler);
     generator.generate(cacheXmlGenerator);
-    
+
     ArgumentCaptor<Attributes> captor = ArgumentCaptor.forClass(Attributes.class);
     verify(handler).startElement(eq(""), eq("index"), eq("lucene:index"), captor.capture());
     Attributes value = captor.getValue();
     assertEquals("index", value.getValue(LuceneXmlConstants.NAME));
-    
+
     captor = ArgumentCaptor.forClass(Attributes.class);
     verify(handler, times(2)).startElement(eq(""), eq("field"), eq("lucene:field"), captor.capture());
     Set<String> foundFields = new HashSet<String>();
-    for(Attributes fieldAttr : captor.getAllValues()) {
+    for (Attributes fieldAttr : captor.getAllValues()) {
       foundFields.add(fieldAttr.getValue(LuceneXmlConstants.NAME));
     }
-    
+
     HashSet<String> expected = new HashSet<String>(Arrays.asList(fields));
     assertEquals(expected, foundFields);
-    
+
     verify(handler, times(2)).endElement(eq(""), eq("field"), eq("lucene:field"));
     verify(handler).endElement(eq(""), eq("index"), eq("lucene:index"));
   }

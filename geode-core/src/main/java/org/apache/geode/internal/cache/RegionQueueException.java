@@ -18,6 +18,7 @@
 package org.apache.geode.internal.cache;
 
 import org.apache.geode.cache.CacheException;
+
 /**
  * An exception thrown by a <code>RegionQueue</code>.
  *
@@ -27,7 +28,7 @@ import org.apache.geode.cache.CacheException;
 // Since this exception is in an internal package, we make it
 // a checked exception.
 public class RegionQueueException extends CacheException {
-private static final long serialVersionUID = 4159307586325821105L;
+  private static final long serialVersionUID = 4159307586325821105L;
 
   /**
    * Required for serialization

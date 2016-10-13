@@ -47,10 +47,9 @@ public class LocatorStatusResponseJUnitTest {
     final String locatorHost = "locatorHost";
     final String locatorLogFile = "LocatorStatusResponseJUnitTest.log";
     final String locatorName = "LocatorStatusResponseJUnitTest";
-    
+
     final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-    final LocatorStatusResponse expectedResponse = new LocatorStatusResponse()
-      .initialize(locatorPort, locatorHost, locatorLogFile, locatorName);
+    final LocatorStatusResponse expectedResponse = new LocatorStatusResponse().initialize(locatorPort, locatorHost, locatorLogFile, locatorName);
 
     assertNotNull(expectedResponse);
 

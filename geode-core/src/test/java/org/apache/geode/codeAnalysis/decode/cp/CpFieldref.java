@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis.decode.cp;
+
 import java.io.*;
 
 import org.apache.geode.codeAnalysis.decode.CompiledClass;
 
-
 public class CpFieldref extends Cp {
-    int class_index;
-    int name_and_type_index;
-    CpFieldref( DataInputStream source ) throws IOException {
-        class_index = source.readUnsignedShort();
-        name_and_type_index = source.readUnsignedShort();
-    }
-    public String returnType(CompiledClass info) {
-        return "not yet implemented";
-    }
+  int class_index;
+  int name_and_type_index;
+
+  CpFieldref(DataInputStream source) throws IOException {
+    class_index = source.readUnsignedShort();
+    name_and_type_index = source.readUnsignedShort();
+  }
+
+  public String returnType(CompiledClass info) {
+    return "not yet implemented";
+  }
 }

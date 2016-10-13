@@ -61,10 +61,9 @@ public interface Authenticator extends CacheCallback {
    * @throws AuthenticationFailedException
    *                 if some exception occurs during the initialization
    */
-  void init(Properties securityProps, LogWriter systemLogger,
-      LogWriter securityLogger) throws AuthenticationFailedException;
+  void init(Properties securityProps, LogWriter systemLogger, LogWriter securityLogger) throws AuthenticationFailedException;
 
-  default void init(Properties securityProps)  throws AuthenticationFailedException{
+  default void init(Properties securityProps) throws AuthenticationFailedException {
     init(securityProps, null, null);
   }
 
@@ -86,10 +85,9 @@ public interface Authenticator extends CacheCallback {
    * @throws AuthenticationFailedException
    *                 If the authentication of the client/peer fails.
    */
-  Principal authenticate(Properties props, DistributedMember member)
-      throws AuthenticationFailedException;
+  Principal authenticate(Properties props, DistributedMember member) throws AuthenticationFailedException;
 
-  default Principal authenticate(Properties props) throws AuthenticationFailedException{
+  default Principal authenticate(Properties props) throws AuthenticationFailedException {
     return authenticate(props, null);
   }
 

@@ -19,7 +19,6 @@ package org.apache.geode.management.internal.cli;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-
 /**
  * Some methods decorated to be commands may have return type as 'void'. For
  * such commands, the result.response can be written in the
@@ -34,7 +33,7 @@ import java.io.StringWriter;
 public class CommandResponseWriter {
   private PrintWriter pwriter;
   private StringWriter swriter;
-  
+
   public CommandResponseWriter() {
     swriter = new StringWriter();
     pwriter = new PrintWriter(swriter, true);
@@ -44,12 +43,12 @@ public class CommandResponseWriter {
     pwriter.print(object);
     return this;
   }
-  
+
   public CommandResponseWriter println(Object object) {
     pwriter.println(object);
     return this;
   }
-  
+
   /**
    * @see PrintWriter#printf(String, Object...)
    */
@@ -57,9 +56,9 @@ public class CommandResponseWriter {
     pwriter.printf(format, args);
     return this;
   }
-  
+
   public String getResponseWritten() {
     return swriter.toString();
   }
-  
+
 }

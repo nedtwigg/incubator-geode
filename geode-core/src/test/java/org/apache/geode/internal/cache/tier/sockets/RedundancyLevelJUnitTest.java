@@ -39,13 +39,12 @@ import static org.junit.Assert.assertNotNull;
  * 
  */
 @Category(IntegrationTest.class)
-public class RedundancyLevelJUnitTest
-{
+public class RedundancyLevelJUnitTest {
   private static final String expectedRedundantErrorMsg = "Could not find any server to create redundant client queue on.";
   private static final String expectedPrimaryErrorMsg = "Could not find any server to create primary client queue on.";
-  
+
   final String expected = "Could not initialize a primary queue on startup. No queue servers available";
-  
+
   /** The distributed system */
   DistributedSystem system;
 
@@ -57,21 +56,18 @@ public class RedundancyLevelJUnitTest
    * distributed system.
    */
   @After
-  public void tearDown() throws Exception
-  {
+  public void tearDown() throws Exception {
     if (cache != null) {
       cache.close();
     }
     if (system != null) {
-      
-      final String removeExpectedPEM =
-          "<ExpectedException action=remove>" + expectedPrimaryErrorMsg + "</ExpectedException>";
-      final String removeExpectedREM =
-          "<ExpectedException action=remove>" + expectedRedundantErrorMsg + "</ExpectedException>";
-      
+
+      final String removeExpectedPEM = "<ExpectedException action=remove>" + expectedPrimaryErrorMsg + "</ExpectedException>";
+      final String removeExpectedREM = "<ExpectedException action=remove>" + expectedRedundantErrorMsg + "</ExpectedException>";
+
       system.getLogWriter().info(removeExpectedPEM);
       system.getLogWriter().info(removeExpectedREM);
-      
+
       system.disconnect();
     }
   }
@@ -86,42 +82,35 @@ public class RedundancyLevelJUnitTest
    * 
    */
   @Test
-  public void testRedundancyLevelSetThroughXML()
-  {
-      String path = TestUtil.getResourcePath(getClass(), "RedundancyLevelJUnitTest.xml");
+  public void testRedundancyLevelSetThroughXML() {
+    String path = TestUtil.getResourcePath(getClass(), "RedundancyLevelJUnitTest.xml");
 
-      Properties p = new Properties();
+    Properties p = new Properties();
     p.setProperty(MCAST_PORT, "0");
     p.setProperty(LOCATORS, "");
-      p.setProperty(CACHE_XML_FILE, path);
-      final String addExpected =
-        "<ExpectedException action=add>" + expected + "</ExpectedException>";
-      
-      system = DistributedSystem.connect(p);
-      system.getLogWriter().info(addExpected);
-      
-      final String addExpectedPEM =
-          "<ExpectedException action=add>" + expectedPrimaryErrorMsg + "</ExpectedException>";
-      final String addExpectedREM =
-          "<ExpectedException action=add>" + expectedRedundantErrorMsg + "</ExpectedException>";
-      system.getLogWriter().info(addExpectedPEM);
-      system.getLogWriter().info(addExpectedREM);
-     
-      try {
-        
-        cache = CacheFactory.create(system);
-        assertNotNull("cache was null", cache);
-        Region region = cache.getRegion("/root/exampleRegion");
-        assertNotNull(region);
-        Pool pool = PoolManager.find("clientPool");
-        assertEquals(
-            "Redundancy level not matching the one specified in cache-xml", 6,
-            pool.getSubscriptionRedundancy());
-      } finally {
-        final String removeExpected =
-          "<ExpectedException action=remove>" + expected + "</ExpectedException>";
-        system.getLogWriter().info(removeExpected);
-      }
+    p.setProperty(CACHE_XML_FILE, path);
+    final String addExpected = "<ExpectedException action=add>" + expected + "</ExpectedException>";
+
+    system = DistributedSystem.connect(p);
+    system.getLogWriter().info(addExpected);
+
+    final String addExpectedPEM = "<ExpectedException action=add>" + expectedPrimaryErrorMsg + "</ExpectedException>";
+    final String addExpectedREM = "<ExpectedException action=add>" + expectedRedundantErrorMsg + "</ExpectedException>";
+    system.getLogWriter().info(addExpectedPEM);
+    system.getLogWriter().info(addExpectedREM);
+
+    try {
+
+      cache = CacheFactory.create(system);
+      assertNotNull("cache was null", cache);
+      Region region = cache.getRegion("/root/exampleRegion");
+      assertNotNull(region);
+      Pool pool = PoolManager.find("clientPool");
+      assertEquals("Redundancy level not matching the one specified in cache-xml", 6, pool.getSubscriptionRedundancy());
+    } finally {
+      final String removeExpected = "<ExpectedException action=remove>" + expected + "</ExpectedException>";
+      system.getLogWriter().info(removeExpected);
+    }
   }
 
 }

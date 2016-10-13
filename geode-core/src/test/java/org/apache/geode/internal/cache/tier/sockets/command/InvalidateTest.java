@@ -104,7 +104,6 @@ public class InvalidateTest {
     when(this.message.getPart(eq(2))).thenReturn(this.eventPart);
     when(this.message.getPart(eq(3))).thenReturn(this.callbackArgPart);
 
-
     when(this.regionNamePart.getString()).thenReturn(REGION_NAME);
 
     when(this.serverConnection.getCache()).thenReturn(this.cache);

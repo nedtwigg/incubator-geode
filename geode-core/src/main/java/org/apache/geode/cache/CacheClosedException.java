@@ -30,15 +30,15 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
  * @since GemFire 3.0
  */
 public class CacheClosedException extends CancelException {
-private static final long serialVersionUID = -6479561694497811262L;
-  
+  private static final long serialVersionUID = -6479561694497811262L;
+
   /**
    * Constructs a new <code>CacheClosedException</code>.
    */
   public CacheClosedException() {
     super();
   }
-  
+
   /**
    * Constructs a new <code>CacheClosedException</code> with a message string.
    *
@@ -52,7 +52,7 @@ private static final long serialVersionUID = -6479561694497811262L;
       initCause(cache.getDisconnectCause());
     }
   }
-  
+
   /**
    * Constructs a new <code>CacheClosedException</code> with a message string
    * and a cause.
@@ -63,7 +63,7 @@ private static final long serialVersionUID = -6479561694497811262L;
   public CacheClosedException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs a new <code>CacheClosedException</code> with a cause.
    *
@@ -73,4 +73,3 @@ private static final long serialVersionUID = -6479561694497811262L;
     super(cause);
   }
 }
-

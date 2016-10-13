@@ -32,12 +32,20 @@ import org.apache.geode.internal.cache.PoolStats;
  */
 public interface InternalPool extends Pool, ExecutablePool {
   PoolStats getStats();
+
   Map getEndpointMap();
+
   EndpointManager getEndpointManager();
+
   ScheduledExecutorService getBackgroundProcessor();
+
   CancelCriterion getCancelCriterion();
+
   boolean isDurableClient();
+
   void detach();
+
   String getPoolOrCacheCancelInProgress();
+
   boolean getKeepAlive();
 }

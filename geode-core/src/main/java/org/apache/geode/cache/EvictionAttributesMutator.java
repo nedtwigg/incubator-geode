@@ -24,8 +24,7 @@ import org.apache.geode.internal.cache.EvictionAttributesImpl;
  * by {@link org.apache.geode.cache.AttributesMutator#getEvictionAttributesMutator()}
  * @since GemFire 5.0
  */
-public interface EvictionAttributesMutator
-{
+public interface EvictionAttributesMutator {
   /**
    * Sets the maximum value on the {@link EvictionAttributesImpl} that the given
    * {@link EvictionAlgorithm} uses to determine when to perform its

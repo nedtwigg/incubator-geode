@@ -20,7 +20,7 @@ import static org.apache.geode.internal.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
-import org.junit.Before; 
+import org.junit.Before;
 import org.junit.After;
 import org.junit.experimental.categories.Category;
 
@@ -33,7 +33,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class CacheServerLauncherJUnitTest {
 
   @Test
-  public void testSafeEquals(){
+  public void testSafeEquals() {
     String string1 = "string1";
 
     String string2 = string1;
@@ -47,8 +47,6 @@ public class CacheServerLauncherJUnitTest {
     assertFalse(CacheServerLauncher.safeEquals(null, string3));
     assertFalse(CacheServerLauncher.safeEquals(string1, null));
 
-    
   }
 
-
-} 
+}

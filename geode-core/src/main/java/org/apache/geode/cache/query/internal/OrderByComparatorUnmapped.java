@@ -34,12 +34,10 @@ public class OrderByComparatorUnmapped extends OrderByComparator {
 
   private final Map<Object, Object[]> orderByMap;
 
-  public OrderByComparatorUnmapped(List<CompiledSortCriterion> orderByAttrs,
-      ObjectType objType, ExecutionContext context) {
+  public OrderByComparatorUnmapped(List<CompiledSortCriterion> orderByAttrs, ObjectType objType, ExecutionContext context) {
     super(orderByAttrs, objType, context);
     if (objType.isStructType()) {
-      orderByMap = new Object2ObjectOpenCustomHashMap<Object, Object[]>(
-          new StructBag.ObjectArrayFUHashingStrategy());
+      orderByMap = new Object2ObjectOpenCustomHashMap<Object, Object[]>(new StructBag.ObjectArrayFUHashingStrategy());
     } else {
       this.orderByMap = new HashMap<Object, Object[]>();
     }
@@ -47,9 +45,7 @@ public class OrderByComparatorUnmapped extends OrderByComparator {
   }
 
   @Override
-  void addEvaluatedSortCriteria(Object row, ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  void addEvaluatedSortCriteria(Object row, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
 
     this.orderByMap.put(row, this.calculateSortCriteria(context, row));
   }
@@ -59,11 +55,9 @@ public class OrderByComparatorUnmapped extends OrderByComparator {
     return (Object[]) orderByMap.get(row);
   }
 
-
   private Object[] calculateSortCriteria(ExecutionContext context, Object row)
 
-  throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+                                                                               throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
 
     CompiledSortCriterion csc;
     if (orderByAttrs != null) {

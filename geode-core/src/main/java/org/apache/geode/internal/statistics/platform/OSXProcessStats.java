@@ -27,10 +27,9 @@ import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
  * <P>This class provides the interface for statistics about a
  * Mac OS X operating system process that is using a GemFire system.
  */
-public class OSXProcessStats
-{
-//  private final static int imageSizeINT = 0;
-//  private final static int rssSizeINT = 1;
+public class OSXProcessStats {
+  //  private final static int imageSizeINT = 0;
+  //  private final static int rssSizeINT = 1;
 
   private final static StatisticsType myType;
 
@@ -38,29 +37,25 @@ public class OSXProcessStats
     int id = myType.nameToId(name);
     Assert.assertTrue(offset == id, "Expected the offset for " + name + " to be " + offset + " but it was " + id);
   }
-  
+
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    myType = f.createType("OSXProcessStats",
-                          "Statistics on a OS X process.",
-                          new StatisticDescriptor[] {
-                              f.createIntGauge("dummyStat",
-                                            "Placeholder",
-                                             "megabytes")
-//                              f.createIntGauge("imageSize",
-//                                             "The size of the process's image in megabytes.",
-//                                             "megabytes"),
-//                            f.createIntGauge("rssSize",
-//                                             "The size of the process's resident set size in megabytes.",
-//                                             "megabytes"),
-                          });
-//    checkOffset("imageSize", imageSizeINT);
-//    checkOffset("rssSize", rssSizeINT);
+    myType = f.createType("OSXProcessStats", "Statistics on a OS X process.", new StatisticDescriptor[] { f.createIntGauge("dummyStat", "Placeholder", "megabytes")
+        //                              f.createIntGauge("imageSize",
+        //                                             "The size of the process's image in megabytes.",
+        //                                             "megabytes"),
+        //                            f.createIntGauge("rssSize",
+        //                                             "The size of the process's resident set size in megabytes.",
+        //                                             "megabytes"),
+    });
+    //    checkOffset("imageSize", imageSizeINT);
+    //    checkOffset("rssSize", rssSizeINT);
   }
 
   private OSXProcessStats() {
     // no instances allowed
   }
+
   public static StatisticsType getType() {
     return myType;
   }
@@ -77,11 +72,11 @@ public class OSXProcessStats
     } // otherwise its a Dummy implementation so do nothing
     return new ProcessStats(stats) {
       @Override
-        public long getProcessSize() {
-//          return stats.getInt(rssSizeINT);
-            return 0L;
-        }
-      };
+      public long getProcessSize() {
+        //          return stats.getInt(rssSizeINT);
+        return 0L;
+      }
+    };
   }
 
 }

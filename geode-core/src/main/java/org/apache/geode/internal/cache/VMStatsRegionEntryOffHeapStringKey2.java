@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.geode.internal.cache;
+
 // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
@@ -24,6 +25,7 @@ import org.apache.geode.internal.offheap.annotations.Released;
 import org.apache.geode.internal.offheap.annotations.Retained;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.HashEntry;
+
 // macros whose definition changes this class:
 // disk: DISK
 // lru: LRU
@@ -44,32 +46,26 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
  * that contains your build.xml.
  */
 public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHeap {
-  public VMStatsRegionEntryOffHeapStringKey2 (RegionEntryContext context, String key,
-      @Retained
-      Object value
-      , boolean byteEncode
-      ) {
-    super(context,
-          value
-        );
+  public VMStatsRegionEntryOffHeapStringKey2(RegionEntryContext context, String key, @Retained Object value, boolean byteEncode) {
+    super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     // caller has already confirmed that key.length <= MAX_INLINE_STRING_KEY
     long tmpBits1 = 0L;
     long tmpBits2 = 0L;
     if (byteEncode) {
-      for (int i=key.length()-1; i >= 0; i--) {
+      for (int i = key.length() - 1; i >= 0; i--) {
         // Note: we know each byte is <= 0x7f so the "& 0xff" is not needed. But I added it in to keep findbugs happy.
         if (i < 7) {
-          tmpBits1 |= (byte)key.charAt(i) & 0xff;
+          tmpBits1 |= (byte) key.charAt(i) & 0xff;
           tmpBits1 <<= 8;
         } else {
           tmpBits2 <<= 8;
-          tmpBits2 |= (byte)key.charAt(i) & 0xff;
+          tmpBits2 |= (byte) key.charAt(i) & 0xff;
         }
       }
-      tmpBits1 |= 1<<6;
+      tmpBits1 |= 1 << 6;
     } else {
-      for (int i=key.length()-1; i >= 0; i--) {
+      for (int i = key.length() - 1; i >= 0; i--) {
         if (i < 3) {
           tmpBits1 |= key.charAt(i);
           tmpBits1 <<= 16;
@@ -83,19 +79,21 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
     this.bits1 = tmpBits1;
     this.bits2 = tmpBits2;
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapStringKey2> lastModifiedUpdater
-    = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey2.class, "lastModified");
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapStringKey2> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey2.class, "lastModified");
   /**
    * All access done using ohAddrUpdater so it is used even though the compiler can not tell it is.
    */
   @SuppressWarnings("unused")
-  @Retained @Released private volatile long ohAddress;
+  @Retained
+  @Released
+  private volatile long ohAddress;
   /**
    * I needed to add this because I wanted clear to call setValue which normally can only be called while the re is synced.
    * But if I sync in that code it causes a lock ordering deadlock with the disk regions because they also get a rw lock in clear.
@@ -105,77 +103,91 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
    * on disk regions.
    */
   private final static AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapStringKey2> ohAddrUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey2.class, "ohAddress");
+
   @Override
   public Token getValueAsToken() {
     return OffHeapRegionEntryHelper.getValueAsToken(this);
   }
+
   @Override
   protected Object getValueField() {
     return OffHeapRegionEntryHelper._getValue(this);
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   @Override
   @Unretained
   protected void setValueField(@Unretained Object v) {
     OffHeapRegionEntryHelper.setValue(this, v);
   }
+
   @Override
   @Retained
   public Object _getValueRetain(RegionEntryContext context, boolean decompress) {
     return OffHeapRegionEntryHelper._getValueRetain(this, decompress, context);
   }
+
   @Override
   public long getAddress() {
     return ohAddrUpdater.get(this);
   }
+
   @Override
   public boolean setAddress(long expectedAddr, long newAddr) {
     return ohAddrUpdater.compareAndSet(this, expectedAddr, newAddr);
   }
+
   @Override
   @Released
   public void release() {
     OffHeapRegionEntryHelper.releaseEntry(this);
   }
+
   @Override
   public void returnToPool() {
     // Deadcoded for now; never was working
-//    if (this instanceof VMThinRegionEntryLongKey) {
-//      factory.returnToPool((VMThinRegionEntryLongKey)this);
-//    }
+    //    if (this instanceof VMThinRegionEntryLongKey) {
+    //      factory.returnToPool((VMThinRegionEntryLongKey)this);
+    //    }
   }
+
   protected long getlastModifiedField() {
     return lastModifiedUpdater.get(this);
   }
+
   protected boolean compareAndSetLastModifiedField(long expectedValue, long newValue) {
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
+
   /**
    * @see HashEntry#getEntryHash()
    */
   public final int getEntryHash() {
     return this.hash;
   }
+
   protected void setEntryHash(int v) {
     this.hash = v;
   }
+
   /**
    * @see HashEntry#getNextEntry()
    */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
+
   /**
    * @see HashEntry#setNextEntry
    */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   // stats code
   @Override
-  public final void updateStatsForGet(boolean hit, long time)
-  {
+  public final void updateStatsForGet(boolean hit, long time) {
     setLastAccessed(time);
     if (hit) {
       incrementHitCount();
@@ -183,6 +195,7 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
       incrementMissCount();
     }
   }
+
   @Override
   protected final void setLastModified(long lastModified) {
     _setLastModified(lastModified);
@@ -190,39 +203,46 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
       setLastAccessed(lastModified);
     }
   }
+
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey2> hitCountUpdater
-    = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey2.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey2> missCountUpdater
-    = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey2.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey2> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey2.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey2> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey2.class, "missCount");
+
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
     return this.lastAccessed;
   }
+
   private void setLastAccessed(long lastAccessed) {
     this.lastAccessed = lastAccessed;
   }
+
   @Override
   public final long getHitCount() throws InternalStatisticsDisabledException {
     return this.hitCount & 0xFFFFFFFFL;
   }
+
   @Override
   public final long getMissCount() throws InternalStatisticsDisabledException {
     return this.missCount & 0xFFFFFFFFL;
   }
+
   private void incrementHitCount() {
     hitCountUpdater.incrementAndGet(this);
   }
+
   private void incrementMissCount() {
     missCountUpdater.incrementAndGet(this);
   }
+
   @Override
   public final void resetCounts() throws InternalStatisticsDisabledException {
-    hitCountUpdater.set(this,0);
-    missCountUpdater.set(this,0);
+    hitCountUpdater.set(this, 0);
+    missCountUpdater.set(this, 0);
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   @Override
   public final void txDidDestroy(long currTime) {
@@ -231,10 +251,12 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
     this.hitCount = 0;
     this.missCount = 0;
   }
+
   @Override
   public boolean hasStats() {
     return true;
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   // key code
   // strlen is encoded in lowest 6 bits (max strlen is 63)
@@ -243,14 +265,17 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
   private final long bits1;
   // bits2 encodes character data
   private final long bits2;
+
   private int getKeyLength() {
     return (int) (this.bits1 & 0x003fL);
   }
+
   private int getEncoding() {
     // 0 means encoded as char
     // 1 means encoded as bytes that are all <= 0x7f;
     return (int) (this.bits1 >> 6) & 0x03;
   }
+
   @Override
   public final Object getKey() {
     int keylen = getKeyLength();
@@ -258,7 +283,7 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
     long tmpBits1 = this.bits1;
     long tmpBits2 = this.bits2;
     if (getEncoding() == 1) {
-      for (int i=0; i < keylen; i++) {
+      for (int i = 0; i < keylen; i++) {
         if (i < 7) {
           tmpBits1 >>= 8;
           chars[i] = (char) (tmpBits1 & 0x00ff);
@@ -268,10 +293,10 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
         }
       }
     } else {
-      for (int i=0; i < keylen; i++) {
+      for (int i = 0; i < keylen; i++) {
         if (i < 3) {
           tmpBits1 >>= 16;
-        chars[i] = (char) (tmpBits1 & 0x00FFff);
+          chars[i] = (char) (tmpBits1 & 0x00FFff);
         } else {
           chars[i] = (char) (tmpBits2 & 0x00FFff);
           tmpBits2 >>= 16;
@@ -280,17 +305,18 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
     }
     return new String(chars);
   }
+
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
   @Override
   public boolean isKeyEqual(Object k) {
     if (k instanceof String) {
-      String str = (String)k;
+      String str = (String) k;
       int keylen = getKeyLength();
       if (str.length() == keylen) {
         long tmpBits1 = this.bits1;
         long tmpBits2 = this.bits2;
         if (getEncoding() == 1) {
-          for (int i=0; i < keylen; i++) {
+          for (int i = 0; i < keylen; i++) {
             char c;
             if (i < 7) {
               tmpBits1 >>= 8;
@@ -304,7 +330,7 @@ public class VMStatsRegionEntryOffHeapStringKey2 extends VMStatsRegionEntryOffHe
             }
           }
         } else {
-          for (int i=0; i < keylen; i++) {
+          for (int i = 0; i < keylen; i++) {
             char c;
             if (i < 3) {
               tmpBits1 >>= 16;

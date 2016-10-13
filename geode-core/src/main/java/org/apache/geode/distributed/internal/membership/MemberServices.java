@@ -44,8 +44,7 @@ public interface MemberServices {
    * @param version TODO
    * @return the new NetMember
    */
-  public abstract NetMember newNetMember(InetAddress i, int port, 
-      boolean splitBrainEnabled, boolean canBeCoordinator, MemberAttributes payload, short version);
+  public abstract NetMember newNetMember(InetAddress i, int port, boolean splitBrainEnabled, boolean canBeCoordinator, MemberAttributes payload, short version);
 
   /**
    * Return a new NetMember representing current host
@@ -64,25 +63,20 @@ public interface MemberServices {
    * @return the new member
    */
   public abstract NetMember newNetMember(String s, int p);
-  
-   /**
-   * Create a new MembershipManager
-   * @param listener the listener to notify for callbacks
-   * @param transport holds configuration information that can be used by the manager to configure itself
-   * @param stats a gemfire statistics collection object for communications stats
-   * 
-   * @return a MembershipManager
-   */
-  public abstract MembershipManager newMembershipManager(DistributedMembershipListener listener,
-          DistributionConfig config,
-          RemoteTransportConfig transport, DMStats stats);
 
+  /**
+  * Create a new MembershipManager
+  * @param listener the listener to notify for callbacks
+  * @param transport holds configuration information that can be used by the manager to configure itself
+  * @param stats a gemfire statistics collection object for communications stats
+  * 
+  * @return a MembershipManager
+  */
+  public abstract MembershipManager newMembershipManager(DistributedMembershipListener listener, DistributionConfig config, RemoteTransportConfig transport, DMStats stats);
 
   /**
    * currently this is a test method but it ought to be used by InternalLocator
    * to create the peer location TcpHandler
    */
-  public abstract NetLocator newLocatorHandler(InetAddress bindAddress,
-      File stateFile, String locatorString, boolean usePreferredCoordinators,
-      boolean networkPartitionDetectionEnabled, LocatorStats stats, String securityUDPDHAlgo);
+  public abstract NetLocator newLocatorHandler(InetAddress bindAddress, File stateFile, String locatorString, boolean usePreferredCoordinators, boolean networkPartitionDetectionEnabled, LocatorStats stats, String securityUDPDHAlgo);
 }

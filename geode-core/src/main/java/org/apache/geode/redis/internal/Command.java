@@ -42,7 +42,7 @@ public class Command {
    * 
    * @param commandElems List of elements in command
    */
-  public Command (List<byte[]> commandElems) {
+  public Command(List<byte[]> commandElems) {
     if (commandElems == null || commandElems.isEmpty())
       throw new IllegalArgumentException("List of command elements cannot be empty -> List:" + commandElems);
     this.commandElems = commandElems;
@@ -124,7 +124,7 @@ public class Command {
       } else if (this.key == null)
         this.key = this.bytes.toString();
       return this.key;
-    } else 
+    } else
       return null;
   }
 
@@ -133,7 +133,7 @@ public class Command {
       if (this.bytes == null)
         this.bytes = new ByteArrayWrapper(this.commandElems.get(1));
       return this.bytes;
-    } else 
+    } else
       return null;
   }
 

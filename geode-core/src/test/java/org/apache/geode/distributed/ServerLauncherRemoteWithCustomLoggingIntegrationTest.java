@@ -76,9 +76,7 @@ public class ServerLauncherRemoteWithCustomLoggingIntegrationTest extends Abstra
     this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(new ToSystemOut()).build().start();
 
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder()
-            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
-            .build();
+    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
     try {
       waitForServerToStart();
 
@@ -89,7 +87,7 @@ public class ServerLauncherRemoteWithCustomLoggingIntegrationTest extends Abstra
       assertTrue(pid > 0);
       assertTrue(ProcessUtils.isProcessAlive(pid));
 
-      final String logFileName = getUniqueName()+".log";
+      final String logFileName = getUniqueName() + ".log";
       assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // check the status

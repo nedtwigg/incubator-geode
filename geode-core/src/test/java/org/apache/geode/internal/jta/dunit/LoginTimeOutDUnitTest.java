@@ -63,7 +63,7 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
 
   protected static volatile boolean runTest1Ready = false;
   protected static volatile boolean runTest2Done = false;
-  
+
   private static Cache cache;
   private static String tblName;
 
@@ -87,26 +87,8 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
     String search = "<jndi-binding type=\"XAPooledDataSource\"";
     String last_search = "</jndi-binding>";
     String newDB = "newDB_" + OSProcess.getId();
-    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\"          jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"1\" max-pool-size=\"1\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\"60\" login-timeout-seconds=\"1\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:"+newDB+";create=true\" >";
-    String config_prop = "<config-property>"
-        + "<config-property-name>description</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>hi</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>user</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>mitul</config-property-value>"
-        + "</config-property>"
-        + "<config-property>"
-        + "<config-property-name>password</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        "
-        + "</config-property>" + "<config-property>"
-        + "<config-property-name>databaseName</config-property-name>"
-        + "<config-property-type>java.lang.String</config-property-type>"
-        + "<config-property-value>"+newDB+"</config-property-value>"
-        + "</config-property>\n";
+    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\"          jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"1\" max-pool-size=\"1\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\"60\" login-timeout-seconds=\"1\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:" + newDB + ";create=true\" >";
+    String config_prop = "<config-property>" + "<config-property-name>description</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>hi</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>user</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>mitul</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>password</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>        " + "</config-property>" + "<config-property>" + "<config-property-name>databaseName</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>" + newDB + "</config-property-value>" + "</config-property>\n";
     String new_str = jndi_str + config_prop;
     /*
      * String new_str = " <jndi-binding type=\"XAPooledDataSource\"
@@ -164,7 +146,7 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
   public static void createTable(String tableName) throws Exception {
     Context ctx = cache.getJNDIContext();
     DataSource ds = (DataSource) ctx.lookup("java:/SimpleDataSource");
-    String sql = "create table " + tableName + " (id integer NOT NULL, name varchar(50), CONSTRAINT "+tableName+"_key PRIMARY KEY(id))";
+    String sql = "create table " + tableName + " (id integer NOT NULL, name varchar(50), CONSTRAINT " + tableName + "_key PRIMARY KEY(id))";
     logger.debug(sql);
     Connection conn = ds.getConnection();
     Statement sm = conn.createStatement();
@@ -191,16 +173,13 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
       Statement sm = conn.createStatement();
       sm.execute(sql);
       conn.close();
-    }
-    catch (NamingException ne) {
+    } catch (NamingException ne) {
       logger.debug("destroy table naming exception: " + ne);
       throw ne;
-    }
-    catch (SQLException se) {
+    } catch (SQLException se) {
       logger.debug("destroy table sql exception: " + se);
       throw se;
-    }
-    finally {
+    } finally {
       closeCache();
     }
   }
@@ -210,11 +189,10 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
       if (!cache.isClosed()) {
         cache.close();
       }
-    }
-    finally {
+    } finally {
       InternalDistributedSystem ids = InternalDistributedSystem.getAnyInstance();
       if (ids != null) {
-         ids.disconnect();
+        ids.disconnect();
       }
       cache = null;
       tblName = null;
@@ -237,14 +215,14 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
     try {
       vm0.invoke(() -> LoginTimeOutDUnitTest.destroyTable());
     } catch (Exception e) {
-      if ( (e instanceof RMIException) || (e instanceof SQLException)) {
+      if ((e instanceof RMIException) || (e instanceof SQLException)) {
         // sometimes we have lock timeout problems destroying the table in
         // this test
         vm0.invoke(() -> disconnectFromDS());
       }
     }
   }
-  
+
   // this test and the setUp and teardown2 methods are disabled due to frequent
   // failures in CI runs.  See bug #52206
   @Ignore("TODO: test is disabled due to #52206")
@@ -255,7 +233,7 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
     AsyncInvocation test1 = vm0.invokeAsync(() -> LoginTimeOutDUnitTest.runTest1());
     AsyncInvocation test2 = vm0.invokeAsync(() -> LoginTimeOutDUnitTest.runTest2());
     ThreadUtils.join(test2, 120 * 1000);
-    if(test2.exceptionOccurred()){
+    if (test2.exceptionOccurred()) {
       Assert.fail("asyncObj failed", test2.getException());
     }
     ThreadUtils.join(test1, 30000);
@@ -268,12 +246,10 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
       try {
         Context ctx = cache.getJNDIContext();
         ds = (DataSource) ctx.lookup("java:/XAPooledDataSource");
-      }
-      catch (NamingException e) {
+      } catch (NamingException e) {
         logger.debug("Naming Exception caught in lookup: " + e);
         fail("failed in naming lookup: " + e);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.debug("Exception caught during naming lookup: {}", e);
         fail("failed in naming lookup: " + e);
       }
@@ -281,8 +257,7 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
         for (int count = 0; count < MAX_CONNECTIONS; count++) {
           ds.getConnection();
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.debug("Exception caught in runTest1: {}", e);
         fail("Exception caught in runTest1: " + e);
       }
@@ -292,8 +267,9 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
     logger.debug("runTest1 got all of the goodies and is now sleeping");
     WaitCriterion ev = new WaitCriterion() {
       public boolean done() {
-        return runTest2Done;  
+        return runTest2Done;
       }
+
       public String description() {
         return null;
       }
@@ -306,24 +282,23 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
       logger.debug("runTest2 sleeping");
       WaitCriterion ev = new WaitCriterion() {
         public boolean done() {
-          return runTest1Ready;  
+          return runTest1Ready;
         }
+
         public String description() {
           return null;
         }
       };
       Wait.waitForCriterion(ev, 60 * 1000, 200, true);
-      
+
       DataSource ds = null;
       try {
         Context ctx = cache.getJNDIContext();
         ds = (DataSource) ctx.lookup("java:/XAPooledDataSource");
-      }
-      catch (NamingException e) {
+      } catch (NamingException e) {
         logger.debug("Exception caught during naming lookup: " + e);
         fail("failed in naming lookup: " + e);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.debug("Exception caught during naming lookup: " + e);
         fail("failed in because of unhandled excpetion: " + e);
       }
@@ -331,14 +306,12 @@ public class LoginTimeOutDUnitTest extends JUnit4DistributedTestCase {
         logger.debug("runTest2 about to acquire connection ");
         ds.getConnection();
         fail("expected a Login time-out exceeded");
-      }
-      catch (SQLException sqle) {
+      } catch (SQLException sqle) {
         if (sqle.getMessage().indexOf("Login time-out exceeded") == -1) {
           logger.debug("Exception caught in runTest2: {}", sqle);
-          fail("failed because of unhandled exception : " + sqle) ;
+          fail("failed because of unhandled exception : " + sqle);
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         logger.debug("Exception caught in runTest2: {}", e);
         fail("failed because of unhandled exception : " + e);
       }

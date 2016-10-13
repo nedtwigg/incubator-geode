@@ -61,7 +61,7 @@ public class RegionDirectory extends BaseDirectory {
   @Override
   public String[] listAll() throws IOException {
     ensureOpen();
-    String[] array = fs.listFileNames().toArray(new String[]{});
+    String[] array = fs.listFileNames().toArray(new String[] {});
     Arrays.sort(array);
     return array;
   }
@@ -126,7 +126,5 @@ public class RegionDirectory extends BaseDirectory {
   public FileSystem getFileSystem() {
     return fs;
   }
-  
-  
 
 }

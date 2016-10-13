@@ -31,9 +31,7 @@ public class CloseConnectionOp {
    * @param con the connection that is being closed
    * @param keepAlive whether to keep the proxy alive on the server
    */
-  public static void execute(Connection con, boolean keepAlive)
-    throws Exception
-  {
+  public static void execute(Connection con, boolean keepAlive) throws Exception {
     AbstractOp op = new CloseConnectionOpImpl(keepAlive);
     try {
       con.execute(op);
@@ -41,22 +39,22 @@ public class CloseConnectionOp {
       // expected
     }
   }
-                                                               
+
   private CloseConnectionOp() {
     // no instances allowed
   }
-  
+
   private static class CloseConnectionOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public CloseConnectionOpImpl(boolean keepAlive)  {
+    public CloseConnectionOpImpl(boolean keepAlive) {
       super(MessageType.CLOSE_CONNECTION, 1);
-      getMessage().addRawPart(new byte[]{(byte)(keepAlive?1:0)}, false);
+      getMessage().addRawPart(new byte[] { (byte) (keepAlive ? 1 : 0) }, false);
     }
-     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+
+    @Override
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override
@@ -82,15 +80,18 @@ public class CloseConnectionOp {
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
-    @Override  
+
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startCloseCon();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endCloseConSend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endCloseCon(start, hasTimedOut(), hasFailed());
     }

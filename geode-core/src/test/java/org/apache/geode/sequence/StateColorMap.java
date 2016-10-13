@@ -30,37 +30,36 @@ import static java.lang.Math.random;
  * To change this template use File | Settings | File Templates.
  */
 public class StateColorMap {
-    private Map<Object, Color> colors = new HashMap<Object, Color>();
-    private static Color[] PREDEFINED_COLORS = new Color[] { Color.BLUE, Color.BLACK, Color.PINK, Color.CYAN, Color.ORANGE, Color.GREEN};
+  private Map<Object, Color> colors = new HashMap<Object, Color>();
+  private static Color[] PREDEFINED_COLORS = new Color[] { Color.BLUE, Color.BLACK, Color.PINK, Color.CYAN, Color.ORANGE, Color.GREEN };
 
-    private ColorList colorList = new ColorList();
+  private ColorList colorList = new ColorList();
 
-    public StateColorMap() {
-        colors.put("created", Color.GREEN);
-        colors.put("destroyed", Color.WHITE);
-        colors.put("persisted", new Color(0, 150, 0));
+  public StateColorMap() {
+    colors.put("created", Color.GREEN);
+    colors.put("destroyed", Color.WHITE);
+    colors.put("persisted", new Color(0, 150, 0));
+  }
+
+  public Color getColor(Object state) {
+    Color color = colors.get(state);
+    if (color == null) {
+      color = colorList.nextColor();
+      colors.put(state, color);
     }
 
+    return color;
+  }
 
-    public Color getColor(Object state) {
-        Color color = colors.get(state);
-        if(color == null) {
-            color = colorList.nextColor();
-            colors.put(state, color);
-        }
+  private static class ColorList {
+    int colorIndex;
 
-        return color;
+    public Color nextColor() {
+      if (colorIndex < PREDEFINED_COLORS.length) {
+        return PREDEFINED_COLORS[colorIndex++];
+      } else {
+        return Color.getHSBColor((float) random(), (float) random(), (float) random());
+      }
     }
-
-    private static class ColorList {
-        int colorIndex;
-
-        public Color nextColor() {
-            if(colorIndex < PREDEFINED_COLORS.length) {
-                return PREDEFINED_COLORS[colorIndex++];
-            } else {
-                return Color.getHSBColor((float)random(), (float)random(), (float)random());
-            }
-        }
-    }
+  }
 }

@@ -58,7 +58,7 @@ public class AutoSerializableJUnitTest {
 
   private ReflectionBasedAutoSerializer serializer;
 
-  private String[] stdSerializableClasses = new String[] {"org.apache.geode.pdx.DomainObject.*"};
+  private String[] stdSerializableClasses = new String[] { "org.apache.geode.pdx.DomainObject.*" };
 
   public AutoSerializableJUnitTest() {
     super();
@@ -77,22 +77,21 @@ public class AutoSerializableJUnitTest {
   private void setupSerializer(String... classPatterns) {
     setupSerializer(new ReflectionBasedAutoSerializer(classPatterns), true);
   }
+
   private void setupSerializer(boolean checkPortability, String... classPatterns) {
     setupSerializer(new ReflectionBasedAutoSerializer(checkPortability, classPatterns), true);
   }
+
   private void setupSerializer(boolean checkPortability, boolean readSerialized, String... classPatterns) {
     setupSerializer(new ReflectionBasedAutoSerializer(checkPortability, classPatterns), readSerialized);
   }
-  
+
   private void setupSerializer(ReflectionBasedAutoSerializer s, boolean readSerialized) {
     this.serializer = s;
     this.manager = (AutoSerializableManager) s.getManager();
-    this.c = (GemFireCacheImpl) new CacheFactory().
-        set(MCAST_PORT, "0").
-    setPdxReadSerialized(readSerialized).
-    setPdxSerializer(s).
-    create();
+    this.c = (GemFireCacheImpl) new CacheFactory().set(MCAST_PORT, "0").setPdxReadSerialized(readSerialized).setPdxSerializer(s).create();
   }
+
   /*
    * Test basic functionality.
    */
@@ -115,14 +114,13 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
 
     assertEquals(99L, pdxIn.getField("long_0"));
     assertEquals("test string value", pdxIn.getField("string_0"));
     assertEquals("right now", pdxIn.getField("string_immediate"));
     {
-      PdxInstance epi = (PdxInstance)pdxIn.getField("anEnum");
+      PdxInstance epi = (PdxInstance) pdxIn.getField("anEnum");
       assertEquals(true, epi.isEnum());
       assertEquals(true, epi.hasField("name"));
       assertEquals(true, epi.hasField("ordinal"));
@@ -134,19 +132,18 @@ public class AutoSerializableJUnitTest {
     assertEquals(4, ((List) pdxIn.getField("string_list")).size());
 
     {
-    DomainObjectPdxAuto result = (DomainObjectPdxAuto) pdxIn.getObject();
-    assertEquals(99L, result.get("long_0"));
-    assertEquals("test string value", result.get("string_0"));
-    assertEquals("right now", result.get("string_immediate"));
-    assertEquals(DomainObjectPdxAuto.Day.FRIDAY, result.get("anEnum"));
-    assertEquals(4, ((List) result.get("string_list")).size());
+      DomainObjectPdxAuto result = (DomainObjectPdxAuto) pdxIn.getObject();
+      assertEquals(99L, result.get("long_0"));
+      assertEquals("test string value", result.get("string_0"));
+      assertEquals("right now", result.get("string_immediate"));
+      assertEquals(DomainObjectPdxAuto.Day.FRIDAY, result.get("anEnum"));
+      assertEquals(4, ((List) result.get("string_list")).size());
     }
-    
+
     // disable pdx instances to make sure we can deserialize without calling PdxInstance.getObject
     PdxInstanceImpl.setPdxReadSerialized(false);
     try {
-      DomainObjectPdxAuto result = (DomainObjectPdxAuto) DataSerializer.readObject(new DataInputStream(
-          new ByteArrayInputStream(out.toByteArray())));
+      DomainObjectPdxAuto result = (DomainObjectPdxAuto) DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
       assertEquals(99L, result.get("long_0"));
       assertEquals("test string value", result.get("string_0"));
       assertEquals("right now", result.get("string_immediate"));
@@ -167,11 +164,10 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(m, out);
 
-    Object dObj = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    Object dObj = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(m, dObj);
   }
-  
+
   @Test
   public void testMonth() throws Exception {
     setupSerializer(false, false, "org.apache.geode.pdx.AutoSerializableJUnitTest.MyMonth");
@@ -179,11 +175,10 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(m, out);
 
-    Object dObj = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    Object dObj = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(m, dObj);
   }
-  
+
   // This class can only be serialized by the auto serializer
   // if the unsafe code is available.
   // If unsafe is not available it automatically ignores this class
@@ -198,39 +193,39 @@ public class AutoSerializableJUnitTest {
     public int hashCode() {
       return month;
     }
-    
+
     public boolean equals(Object obj) {
       if (obj instanceof MyMonth) {
-        if (this.month == ((MyMonth)obj).month) {
+        if (this.month == ((MyMonth) obj).month) {
           return true;
-        }
-        else {
+        } else {
           return false;
         }
-      }
-      else {
+      } else {
         return false;
       }
     }
 
   }
-  
+
   public static class MyExternalizable implements Externalizable, PdxSerializerObject {
     private int v;
-    
+
     public MyExternalizable() {
     }
+
     public MyExternalizable(int v) {
       this.v = v;
     }
+
     public void writeExternal(ObjectOutput out) throws IOException {
       out.writeInt(v);
     }
 
-    public void readExternal(ObjectInput in) throws IOException,
-        ClassNotFoundException {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
       this.v = in.readInt();
     }
+
     @Override
     public int hashCode() {
       final int prime = 31;
@@ -238,6 +233,7 @@ public class AutoSerializableJUnitTest {
       result = prime * result + v;
       return result;
     }
+
     @Override
     public boolean equals(Object obj) {
       if (this == obj)
@@ -252,7 +248,7 @@ public class AutoSerializableJUnitTest {
       return true;
     }
   }
-  
+
   @Test
   public void testExternalizable() throws Exception {
     setupSerializer("org.apache.geode.pdx.AutoSerializableJUnitTest.MyExternalizable");
@@ -260,36 +256,36 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(o, out);
 
-    Object dObj = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    Object dObj = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(o, dObj);
   }
- 
+
   public static class MyWriteReplace implements Serializable, PdxSerializerObject {
     private String v;
-    
+
     public MyWriteReplace(String v) {
       this.v = v;
     }
+
     private Object writeReplace() throws ObjectStreamException {
       return v;
     }
   }
+
   /**
    * A serializable with a writeReplace method should use standard serialization.
    */
   @Test
-  public void testWriteReplace()  throws Exception {
+  public void testWriteReplace() throws Exception {
     setupSerializer("org.apache.geode.pdx.AutoSerializableJUnitTest.MyWriteReplace");
     MyWriteReplace o = new MyWriteReplace("79");
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(o, out);
 
-    Object dObj = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    Object dObj = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals("79", dObj);
   }
- 
+
   public static class MyComparator implements Comparator, PdxSerializerObject {
     public MyComparator() {
     }
@@ -298,21 +294,21 @@ public class AutoSerializableJUnitTest {
       return 0;
     }
   }
+
   /**
    * A serializable with a writeReplace method should use standard serialization.
    */
   @Test
-  public void testComparator()  throws Exception {
+  public void testComparator() throws Exception {
     setupSerializer("org.apache.geode.pdx.AutoSerializableJUnitTest.MyComparator");
     TreeSet o = new TreeSet(new MyComparator());
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(o, out);
 
-    Object dObj = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    Object dObj = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(o, dObj);
   }
- 
+
   public static class PrimitiveObjectHolder implements PdxSerializerObject, Serializable {
     public Boolean bool;
     public Byte b;
@@ -322,7 +318,7 @@ public class AutoSerializableJUnitTest {
     public Long l;
     public Float f;
     public Double d;
-    
+
     public PrimitiveObjectHolder() {
     }
 
@@ -392,21 +388,26 @@ public class AutoSerializableJUnitTest {
         return false;
       return true;
     }
-    
+
   }
+
   public static class BigHolder implements PdxSerializerObject, Serializable {
     private BigInteger bi;
     private BigDecimal bd;
+
     public BigHolder() {
     }
+
     public BigHolder(BigInteger bi, BigDecimal bd) {
       this.bi = bi;
       this.bd = bd;
     }
+
     public BigHolder(int i) {
-      this.bi = new BigInteger(""+i);
-      this.bd = new BigDecimal(""+i);
+      this.bi = new BigInteger("" + i);
+      this.bd = new BigDecimal("" + i);
     }
+
     @Override
     public int hashCode() {
       final int prime = 31;
@@ -415,6 +416,7 @@ public class AutoSerializableJUnitTest {
       result = prime * result + ((bi == null) ? 0 : bi.hashCode());
       return result;
     }
+
     @Override
     public boolean equals(Object obj) {
       if (this == obj)
@@ -437,13 +439,17 @@ public class AutoSerializableJUnitTest {
       return true;
     }
   }
+
   public static class CHMHolder implements PdxSerializerObject {
     private ConcurrentHashMap chm;
+
     public CHMHolder() {
     }
+
     public CHMHolder(ConcurrentHashMap chm) {
       this.chm = chm;
     }
+
     @Override
     public int hashCode() {
       final int prime = 31;
@@ -451,6 +457,7 @@ public class AutoSerializableJUnitTest {
       result = prime * result + ((chm == null) ? 0 : chm.hashCode());
       return result;
     }
+
     @Override
     public boolean equals(Object obj) {
       if (this == obj)
@@ -483,18 +490,18 @@ public class AutoSerializableJUnitTest {
     } catch (NonPortableClassException expected) {
     }
   }
-  
+
   public static class ExplicitClassNameAutoSerializer extends ReflectionBasedAutoSerializer {
-    public ExplicitClassNameAutoSerializer(boolean checkPortability,
-        String... patterns) {
+    public ExplicitClassNameAutoSerializer(boolean checkPortability, String... patterns) {
       super(checkPortability, patterns);
     }
+
     @Override
     public boolean isClassAutoSerialized(Class<?> clazz) {
       return DomainObjectPdxAuto.class.equals(clazz);
     }
   }
-  
+
   @Test
   public void testIsClassAutoSerialized() throws IOException, ClassNotFoundException {
     setupSerializer(new ExplicitClassNameAutoSerializer(false, ""), false);
@@ -502,16 +509,15 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    DomainObject objIn = (DomainObject)DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    DomainObject objIn = (DomainObject) DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(objOut, objIn);
   }
-  
+
   public static class ExplicitIdentityAutoSerializer extends ReflectionBasedAutoSerializer {
-    public ExplicitIdentityAutoSerializer(boolean checkPortability,
-        String... patterns) {
+    public ExplicitIdentityAutoSerializer(boolean checkPortability, String... patterns) {
       super(checkPortability, patterns);
     }
+
     @Override
     public boolean isIdentityField(Field f, Class<?> clazz) {
       return f.getName().equals("long_0");
@@ -525,11 +531,10 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
     DataSerializer.writeObject(objOut, out);
-    
-    DataInputStream dis = new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray()));
-    PdxInstance pi = (PdxInstance)DataSerializer.readObject(dis);
-    PdxInstance pi2 = (PdxInstance)DataSerializer.readObject(dis);
+
+    DataInputStream dis = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+    PdxInstance pi = (PdxInstance) DataSerializer.readObject(dis);
+    PdxInstance pi2 = (PdxInstance) DataSerializer.readObject(dis);
     assertEquals(true, pi.isIdentityField("long_0"));
     assertEquals(false, pi.isIdentityField("string_0"));
     assertEquals(false, pi.isEnum());
@@ -537,11 +542,12 @@ public class AutoSerializableJUnitTest {
     assertEquals(objOut, pi.getObject());
     assertEquals(objOut, pi2.getObject());
   }
+
   public static class ExplicitIncludedAutoSerializer extends ReflectionBasedAutoSerializer {
-    public ExplicitIncludedAutoSerializer(boolean checkPortability,
-        String... patterns) {
+    public ExplicitIncludedAutoSerializer(boolean checkPortability, String... patterns) {
       super(checkPortability, patterns);
     }
+
     @Override
     public boolean isFieldIncluded(Field f, Class<?> clazz) {
       return f.getName().equals("long_0");
@@ -555,20 +561,20 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    PdxInstance pi = (PdxInstance)DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pi = (PdxInstance) DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(true, pi.hasField("long_0"));
     assertEquals(false, pi.hasField("string_0"));
   }
+
   public static class ExplicitFieldNameAutoSerializer extends ReflectionBasedAutoSerializer {
-    public ExplicitFieldNameAutoSerializer(boolean checkPortability,
-        String... patterns) {
+    public ExplicitFieldNameAutoSerializer(boolean checkPortability, String... patterns) {
       super(checkPortability, patterns);
     }
+
     @Override
     public String getFieldName(Field f, Class<?> clazz) {
       if (f.getName().equals("long_0")) {
-        return "_long_0"; 
+        return "_long_0";
       } else {
         return super.getFieldName(f, clazz);
       }
@@ -582,8 +588,7 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    PdxInstance pi = (PdxInstance)DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pi = (PdxInstance) DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     System.out.println("fieldNames=" + pi.getFieldNames());
     assertEquals(false, pi.hasField("long_0"));
     assertEquals(true, pi.hasField("_long_0"));
@@ -592,16 +597,16 @@ public class AutoSerializableJUnitTest {
   }
 
   public static class BigIntegerAutoSerializer extends ReflectionBasedAutoSerializer {
-    public BigIntegerAutoSerializer(boolean checkPortability,
-        String... patterns) {
+    public BigIntegerAutoSerializer(boolean checkPortability, String... patterns) {
       super(checkPortability, patterns);
     }
+
     @Override
     public FieldType getFieldType(Field f, Class<?> clazz) {
       if (f.getType().equals(BigInteger.class)) {
-        return FieldType.BYTE_ARRAY; 
+        return FieldType.BYTE_ARRAY;
       } else if (f.getType().equals(BigDecimal.class)) {
-        return FieldType.STRING; 
+        return FieldType.STRING;
       } else {
         return super.getFieldType(f, clazz);
       }
@@ -623,14 +628,14 @@ public class AutoSerializableJUnitTest {
       if (f.getType().equals(BigInteger.class)) {
         byte[] result = null;
         if (originalValue != null) {
-          BigInteger bi = (BigInteger)originalValue;
+          BigInteger bi = (BigInteger) originalValue;
           result = bi.toByteArray();
         }
         return result;
       } else if (f.getType().equals(BigDecimal.class)) {
         Object result = null;
         if (originalValue != null) {
-          BigDecimal bd = (BigDecimal)originalValue;
+          BigDecimal bd = (BigDecimal) originalValue;
           result = bd.toString();
         }
         return result;
@@ -644,27 +649,27 @@ public class AutoSerializableJUnitTest {
       if (f.getType().equals(BigInteger.class)) {
         BigInteger result = null;
         if (serializedValue != null) {
-          result = new BigInteger((byte[])serializedValue);
+          result = new BigInteger((byte[]) serializedValue);
         }
         return result;
       } else if (f.getType().equals(BigDecimal.class)) {
         BigDecimal result = null;
         if (serializedValue != null) {
-          result = new BigDecimal((String)serializedValue);
+          result = new BigDecimal((String) serializedValue);
         }
         return result;
       } else {
         return super.readTransform(f, clazz, serializedValue);
       }
     }
-    
+
   }
-  
+
   public static class PrimitiveObjectsAutoSerializer extends ReflectionBasedAutoSerializer {
-    public PrimitiveObjectsAutoSerializer(boolean checkPortability,
-        String... patterns) {
+    public PrimitiveObjectsAutoSerializer(boolean checkPortability, String... patterns) {
       super(checkPortability, patterns);
     }
+
     @Override
     public FieldType getFieldType(Field f, Class<?> clazz) {
       if (f.getType().equals(Boolean.class)) {
@@ -789,7 +794,7 @@ public class AutoSerializableJUnitTest {
       }
     }
   }
-  
+
   @Test
   public void testPrimitiveObjects() throws Exception {
     setupSerializer(new PrimitiveObjectsAutoSerializer(true, "org.apache.geode.pdx.AutoSerializableJUnitTest.PrimitiveObjectHolder"), true);
@@ -805,58 +810,55 @@ public class AutoSerializableJUnitTest {
     defaultHolder.d = 0.0;
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(nullHolder, out);
-    PdxInstance pi = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
-    PdxField pf = ((PdxInstanceImpl)pi).getPdxField("f");
+    PdxInstance pi = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
+    PdxField pf = ((PdxInstanceImpl) pi).getPdxField("f");
     assertEquals(FieldType.FLOAT, pf.getFieldType());
     Object dObj = pi.getObject();
     assertFalse(nullHolder.equals(dObj));
     assertEquals(defaultHolder, dObj);
-   
+
     out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(defaultHolder, out);
-    pi = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    pi = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     dObj = pi.getObject();
     assertEquals(defaultHolder, dObj);
   }
-  
+
   @Test
   public void testExtensibility() throws Exception {
     setupSerializer(new BigIntegerAutoSerializer(true, "org.apache.geode.pdx.AutoSerializableJUnitTest.BigHolder"), false);
 
     doExtensible("with autoSerializer handling Big*");
   }
+
   @Test
   public void testNoExtensibility() throws Exception {
     setupSerializer(false, false, "org.apache.geode.pdx.AutoSerializableJUnitTest.BigHolder");
 
     doExtensible("using standard serialization of Big*");
   }
-  
+
   private void doExtensible(String msg) throws IOException, ClassNotFoundException {
     BigInteger bi = new BigInteger("12345678901234567890");
     BigDecimal bd = new BigDecimal("1234567890.1234567890");
     BigHolder bih = new BigHolder(bi, bd);
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(bih, out);
-    System.out.println(msg + " out.size="+ out.size());
-    Object dObj = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    System.out.println(msg + " out.size=" + out.size());
+    Object dObj = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(bih, dObj);
-    
+
   }
 
   public static class ConcurrentHashMapAutoSerializer extends BigIntegerAutoSerializer {
-    public ConcurrentHashMapAutoSerializer(boolean checkPortability,
-        String... patterns) {
+    public ConcurrentHashMapAutoSerializer(boolean checkPortability, String... patterns) {
       super(checkPortability, patterns);
     }
 
     @Override
     public FieldType getFieldType(Field f, Class<?> clazz) {
       if (f.getType().equals(ConcurrentHashMap.class)) {
-        return FieldType.OBJECT_ARRAY; 
+        return FieldType.OBJECT_ARRAY;
       } else {
         return super.getFieldType(f, clazz);
       }
@@ -876,10 +878,10 @@ public class AutoSerializableJUnitTest {
       if (f.getType().equals(ConcurrentHashMap.class)) {
         Object[] result = null;
         if (originalValue != null) {
-          ConcurrentHashMap<?,?> m = (ConcurrentHashMap<?,?>)originalValue;
-          result = new Object[m.size()*2];
+          ConcurrentHashMap<?, ?> m = (ConcurrentHashMap<?, ?>) originalValue;
+          result = new Object[m.size() * 2];
           int i = 0;
-          for (Map.Entry<?,?> e: m.entrySet()) {
+          for (Map.Entry<?, ?> e : m.entrySet()) {
             result[i++] = e.getKey();
             result[i++] = e.getValue();
           }
@@ -895,8 +897,8 @@ public class AutoSerializableJUnitTest {
       if (f.getType().equals(ConcurrentHashMap.class)) {
         ConcurrentHashMap result = null;
         if (serializedValue != null) {
-          Object[] data = (Object[])serializedValue;
-          result = new ConcurrentHashMap(data.length/2);
+          Object[] data = (Object[]) serializedValue;
+          result = new ConcurrentHashMap(data.length / 2);
           int i = 0;
           while (i < data.length) {
             Object key = data[i++];
@@ -910,31 +912,32 @@ public class AutoSerializableJUnitTest {
       }
     }
   }
-  
+
   @Test
   public void testCHM() throws Exception {
     setupSerializer(new ConcurrentHashMapAutoSerializer(false, "org.apache.geode.pdx.AutoSerializableJUnitTest.*Holder"), false);
     doCHM("with autoSerializer handling ConcurrentHashMap");
   }
+
   @Test
   public void testNoCHM() throws Exception {
     setupSerializer(false, false, "org.apache.geode.pdx.AutoSerializableJUnitTest.*Holder");
     doCHM("without autoSerializer handling ConcurrentHashMap");
   }
+
   private void doCHM(String msg) throws IOException, ClassNotFoundException {
     ConcurrentHashMap<String, BigHolder> chm = new ConcurrentHashMap<String, BigHolder>();
-    for (int i=1; i < 32; i++) {
-      chm.put("key"+i, new BigHolder(i));
+    for (int i = 1; i < 32; i++) {
+      chm.put("key" + i, new BigHolder(i));
     }
     CHMHolder h = new CHMHolder(chm);
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(h, out);
     System.out.println(msg + " out.size=" + out.size());
-    Object dObj = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    Object dObj = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     assertEquals(h, dObj);
   }
-  
+
   /*
    * Test the versioning of basic primitives where no fields are written at
    * first, but then all fields need to be read back.
@@ -953,8 +956,7 @@ public class AutoSerializableJUnitTest {
     // Now we want to read all fields.
     manager.resetCaches();
 
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     // Force the object to be de-serialized without any exceptions being thrown
     DomainObjectPdxAuto result = (DomainObjectPdxAuto) pdxIn.getObject();
 
@@ -968,7 +970,7 @@ public class AutoSerializableJUnitTest {
     assertEquals(0.0d, result.aDouble, 0.0f);
     assertEquals("aString has a value", result.get("aString"));
   }
-  
+
   /*
    * Test that when primitive wrapper classes are null, and get serialized, they
    * remain as null when being deserialized.
@@ -985,11 +987,10 @@ public class AutoSerializableJUnitTest {
 
     // Now we want to read all fields.
     manager.resetCaches();
-    
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
     DomainObjectPdxAuto result = (DomainObjectPdxAuto) pdxIn.getObject();
-    
+
     assertNull(result.anInteger);
     assertNull(result.anEnum);
   }
@@ -1083,8 +1084,7 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
 
     assertEquals(99L, pdxIn.getField("long_0"));
     assertTrue(pdxIn.isIdentityField("long_0"));
@@ -1109,8 +1109,7 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
 
     // This means we're not doing anything with this string
     assertNull(pdxIn.getField("string_0"));
@@ -1136,8 +1135,7 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
 
     // This means we're not doing anything with this string
     assertNull(pdxIn.getField("string_0"));
@@ -1163,8 +1161,7 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(objOut, out);
 
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out.toByteArray())));
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out.toByteArray())));
 
     // This means we're not doing anything with this string
     assertNull(pdxIn.getField("string_0"));
@@ -1178,8 +1175,7 @@ public class AutoSerializableJUnitTest {
   public void testConfigWithIdentityAndExclude4() throws Exception {
     setupSerializer();
     Properties props = new Properties();
-    props.put("classes", "org.apache.geode.pdx.DomainObjectPdxAuto#exclude=string.*, "
-        + "org.apache.geode.pdx.DomainObjectPdxAuto#exclude=long.*");
+    props.put("classes", "org.apache.geode.pdx.DomainObjectPdxAuto#exclude=string.*, " + "org.apache.geode.pdx.DomainObjectPdxAuto#exclude=long.*");
     serializer.init(props);
 
     assertEquals(26, manager.getFields(DomainObjectPdxAuto.class).size());
@@ -1196,15 +1192,13 @@ public class AutoSerializableJUnitTest {
     serializer.init(props);
 
     Properties result = serializer.getConfig();
-    assertEquals("Pdx, PdxAuto, Pdx#identity=id.*, PdxAuto#identity=id.*, Pdx#exclude=string.*, Pdx#exclude=badField, PdxAuto#exclude=long.*",
-        result.getProperty("classes"));
+    assertEquals("Pdx, PdxAuto, Pdx#identity=id.*, PdxAuto#identity=id.*, Pdx#exclude=string.*, Pdx#exclude=badField, PdxAuto#exclude=long.*", result.getProperty("classes"));
 
     manager.resetCaches();
     serializer.init(result);
 
     result = serializer.getConfig();
-    assertEquals("Pdx, PdxAuto, Pdx#identity=id.*, PdxAuto#identity=id.*, Pdx#exclude=string.*, Pdx#exclude=badField, PdxAuto#exclude=long.*",
-        result.getProperty("classes"));
+    assertEquals("Pdx, PdxAuto, Pdx#identity=id.*, PdxAuto#identity=id.*, Pdx#exclude=string.*, Pdx#exclude=badField, PdxAuto#exclude=long.*", result.getProperty("classes"));
   }
 
   /*
@@ -1217,8 +1211,7 @@ public class AutoSerializableJUnitTest {
   @Test
   public void testMultipleClassLoaders() throws Exception {
     setupSerializer(stdSerializableClasses);
-    ChildFirstClassLoader cfcl = 
-        new ChildFirstClassLoader(javaClassPathToUrl(), this.getClass().getClassLoader());
+    ChildFirstClassLoader cfcl = new ChildFirstClassLoader(javaClassPathToUrl(), this.getClass().getClassLoader());
     cfcl.addIncludedClass("org\\.apache.*");
     // Need to exclude DomainObject as that is what the newly created objects
     // get cast to.
@@ -1233,8 +1226,7 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out1 = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(obj1, out1);
 
-    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out1.toByteArray())));
+    PdxInstance pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out1.toByteArray())));
 
     assertEquals(99L, pdxIn.getField("long_0"));
     assertEquals("test string value", pdxIn.getField("string_0"));
@@ -1250,8 +1242,7 @@ public class AutoSerializableJUnitTest {
     HeapDataOutputStream out2 = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(obj2, out2);
 
-    pdxIn = DataSerializer.readObject(new DataInputStream(
-        new ByteArrayInputStream(out2.toByteArray())));
+    pdxIn = DataSerializer.readObject(new DataInputStream(new ByteArrayInputStream(out2.toByteArray())));
 
     assertEquals(1009L, pdxIn.getField("long_0"));
     assertEquals("different string value", pdxIn.getField("string_0"));
@@ -1270,7 +1261,7 @@ public class AutoSerializableJUnitTest {
       }
     }
 
-    return urls.toArray(new URL[]{});
+    return urls.toArray(new URL[] {});
   }
 
   /*
@@ -1284,7 +1275,7 @@ public class AutoSerializableJUnitTest {
     private List<String> excludedClasses = new ArrayList<String>();
 
     public ChildFirstClassLoader() {
-      super(new URL[]{});
+      super(new URL[] {});
     }
 
     public ChildFirstClassLoader(URL[] urls) {
@@ -1337,8 +1328,7 @@ public class AutoSerializableJUnitTest {
      * java.lang.Classloader.
      */
     @Override
-    public Class loadClass(String name, boolean resolve)
-        throws ClassNotFoundException {
+    public Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
       Class c = null;
 
       if (isRelevant(name)) {

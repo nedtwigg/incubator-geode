@@ -93,19 +93,18 @@ public class CompiledGroupBySelectJUnitTest {
     query = (DefaultQuery) qs.newQuery(queryStr);
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledGroupBySelect);
-    
+
     queryStr = "select * from /portfolio pf where pf.ID > 0 group by pf";
     query = (DefaultQuery) qs.newQuery(queryStr);
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledSelect);
-    
+
     queryStr = "select * from /portfolio pf, pf.positions pos where pf.ID > 0 group by pf, pos";
     query = (DefaultQuery) qs.newQuery(queryStr);
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledSelect);
-    
-    queryStr = "select pf.status as status , pf.shortID as shid from /portfolio pf where pf.ID > 0 "
-        + "group by status , shid order by shid";
+
+    queryStr = "select pf.status as status , pf.shortID as shid from /portfolio pf where pf.ID > 0 " + "group by status , shid order by shid";
     query = (DefaultQuery) qs.newQuery(queryStr);
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledGroupBySelect);
@@ -119,9 +118,7 @@ public class CompiledGroupBySelectJUnitTest {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
       fail("query creation should have failed");
     } catch (QueryInvalidException qie) {
-      assertTrue(qie.toString().indexOf(
-          LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY
-              .toLocalizedString()) != -1);
+      assertTrue(qie.toString().indexOf(LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY.toLocalizedString()) != -1);
     }
 
     queryStr = "select * from /portfolio pf where pf.ID > 0 group by pf.ID";
@@ -129,11 +126,9 @@ public class CompiledGroupBySelectJUnitTest {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
       fail("query creation should have failed");
     } catch (QueryInvalidException qie) {
-      assertTrue(qie.toString().indexOf(
-          LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY
-              .toLocalizedString()) != -1);
+      assertTrue(qie.toString().indexOf(LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY.toLocalizedString()) != -1);
     }
-    
+
     queryStr = "select * from /portfolio pf, pf.positions pos where pf.ID > 0 group by pf";
     try {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
@@ -151,9 +146,7 @@ public class CompiledGroupBySelectJUnitTest {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
       fail("query creation should have failed");
     } catch (QueryInvalidException qie) {
-      assertTrue(qie.toString().indexOf(
-          LocalizedStrings.DefaultQuery_GROUP_BY_COL_ABSENT_IN_PROJ
-              .toLocalizedString()) != -1);
+      assertTrue(qie.toString().indexOf(LocalizedStrings.DefaultQuery_GROUP_BY_COL_ABSENT_IN_PROJ.toLocalizedString()) != -1);
     }
   }
 

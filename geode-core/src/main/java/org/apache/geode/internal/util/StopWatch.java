@@ -20,7 +20,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /** Stop watch for measuring elapsed time. Not thread-safe. */
 public class StopWatch {
-  
+
   private long startTime;
   private long stopTime;
 
@@ -28,7 +28,7 @@ public class StopWatch {
   public StopWatch() {
     this(false);
   }
-  
+
   /** @param start true if new StopWatch should automatically start */
   public StopWatch(boolean start) {
     if (start) {
@@ -43,8 +43,7 @@ public class StopWatch {
   public long elapsedTimeMillis() {
     if (this.stopTime == 0) {
       return System.currentTimeMillis() - this.startTime;
-    }
-    else {
+    } else {
       return this.stopTime - this.startTime;
     }
   }
@@ -54,7 +53,7 @@ public class StopWatch {
     this.startTime = System.currentTimeMillis();
     this.stopTime = 0;
   }
-    
+
   /** Stop the stop watch */
   public void stop() {
     if (!isRunning()) {
@@ -62,12 +61,12 @@ public class StopWatch {
     }
     this.stopTime = System.currentTimeMillis();
   }
-  
+
   /** Returns true if stop watch is currently running */
   public boolean isRunning() {
     return this.startTime > 0 && this.stopTime == 0;
   }
-    
+
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("[StopWatch: ");

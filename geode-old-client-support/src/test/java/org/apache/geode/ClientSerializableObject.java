@@ -20,13 +20,14 @@ public class ClientSerializableObject implements java.io.Serializable {
   public static final long serialVersionUID = 1L;
 
   private ClientSerializableObject subObject;
-  
+
   public ClientSerializableObject() {
   }
-  
+
   public void setSubObject(ClientSerializableObject object) {
     subObject = object;
   }
+
   public ClientSerializableObject getSubObject() {
     return subObject;
   }

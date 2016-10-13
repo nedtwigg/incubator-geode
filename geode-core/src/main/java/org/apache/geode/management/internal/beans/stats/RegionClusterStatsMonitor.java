@@ -110,7 +110,7 @@ public class RegionClusterStatsMonitor {
   private static final String GATEWAY_ENABLED = "GatewayEnabled";
 
   private static final String PERSISTENT_ENABLED = "PersistentEnabled";
-  
+
   private volatile long lastAccessedTime = 0;
 
   private volatile long lastModifiedTime = 0;
@@ -129,7 +129,7 @@ public class RegionClusterStatsMonitor {
 
   private long entryCount = 0;
 
-  private volatile int numBucketsWithoutRedundancy = 0; 
+  private volatile int numBucketsWithoutRedundancy = 0;
 
   /**
    * Eviction attributes
@@ -140,8 +140,7 @@ public class RegionClusterStatsMonitor {
 
   private Map<String, Class<?>> typeMap;
 
-  public void aggregate(FederationComponent newState,
-      FederationComponent oldState) {
+  public void aggregate(FederationComponent newState, FederationComponent oldState) {
     aggregator.aggregate(newState, oldState);
     incLastAccessedTime(newState, oldState);
     incLastModifiedTime(newState, oldState);
@@ -193,8 +192,7 @@ public class RegionClusterStatsMonitor {
 
   }
 
-  private void incLastAccessedTime(FederationComponent newState,
-      FederationComponent oldState) {
+  private void incLastAccessedTime(FederationComponent newState, FederationComponent oldState) {
     if (newState != null) {
       if (newState.getValue(LAST_ACCESSED_TIME) != null) {
         lastAccessedTime = (Long) newState.getValue(LAST_ACCESSED_TIME);
@@ -202,20 +200,17 @@ public class RegionClusterStatsMonitor {
 
     }
   }
-  
-  private void incNumBucketsWithoutRedundancy(FederationComponent newState,
-      FederationComponent oldState) {
+
+  private void incNumBucketsWithoutRedundancy(FederationComponent newState, FederationComponent oldState) {
     if (newState != null) {
       if (newState.getValue(NUM_BUCKESTS_WITHOUT_REDUNDANCY) != null) {
-        numBucketsWithoutRedundancy = (Integer) newState
-            .getValue(NUM_BUCKESTS_WITHOUT_REDUNDANCY);
+        numBucketsWithoutRedundancy = (Integer) newState.getValue(NUM_BUCKESTS_WITHOUT_REDUNDANCY);
       }
 
     }
   }
 
-  private void incLastModifiedTime(FederationComponent newState,
-      FederationComponent oldState) {
+  private void incLastModifiedTime(FederationComponent newState, FederationComponent oldState) {
     if (newState != null) {
       if (newState.getValue(LAST_MODIFIED_TIME) != null) {
         lastModifiedTime = (Long) newState.getValue(LAST_MODIFIED_TIME);
@@ -224,8 +219,7 @@ public class RegionClusterStatsMonitor {
     }
   }
 
-  private void updateEntryCount(FederationComponent newState,
-      FederationComponent oldState) {
+  private void updateEntryCount(FederationComponent newState, FederationComponent oldState) {
     if (newState != null) {
       if (newState.getValue(ENTRY_COUNT) != null) {
         entryCount = (Long) newState.getValue(ENTRY_COUNT);
@@ -337,7 +331,7 @@ public class RegionClusterStatsMonitor {
   public int getAvgBucketSize() {
     int bucketNum = getBucketCount();
     if (bucketNum > 0) {
-      return getTotalBucketSize() /  bucketNum;
+      return getTotalBucketSize() / bucketNum;
     } else {
       return 0;
     }
@@ -379,8 +373,7 @@ public class RegionClusterStatsMonitor {
     return aggregator.getLongValue(ENTRY_SIZE);
   }
 
-  private void setFixedAttributes(FederationComponent newState,
-      FederationComponent oldState) {
+  private void setFixedAttributes(FederationComponent newState, FederationComponent oldState) {
     if (this.regionName == null) {
       if (newState != null) {
         if (newState.getValue(REGION_NAME) != null) {

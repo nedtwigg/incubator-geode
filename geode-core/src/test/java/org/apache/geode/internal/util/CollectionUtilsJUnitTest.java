@@ -301,7 +301,8 @@ public class CollectionUtilsJUnitTest {
     assertEquals(6, expectedMap.size());
 
     final Map<Object, String> actualMap = CollectionUtils.removeKeys(expectedMap, new Filter<Map.Entry<Object, String>>() {
-      @Override public boolean accept(final Map.Entry<Object, String> entry) {
+      @Override
+      public boolean accept(final Map.Entry<Object, String> entry) {
         return !StringUtils.isBlank(entry.getValue());
       }
     });
@@ -367,13 +368,13 @@ public class CollectionUtilsJUnitTest {
 
     list.add("one");
     list.add("two");
-    
+
     final Vector<String> v = new Vector<>();
     v.add("three");
     v.add("four");
-    
+
     boolean modified = CollectionUtils.addAll(list, v.elements());
-    
+
     assertTrue(modified);
     assertEquals(4, list.size());
     assertSame(v.get(0), list.get(2));
@@ -386,12 +387,12 @@ public class CollectionUtilsJUnitTest {
 
     set.add("one");
     set.add("two");
-    
+
     final Vector<String> v = new Vector<>();
     v.add("one");
-    
+
     boolean modified = CollectionUtils.addAll(set, v.elements());
-    
+
     assertTrue(!modified);
     assertEquals(2, set.size());
   }
@@ -402,17 +403,19 @@ public class CollectionUtilsJUnitTest {
 
     list.add("one");
     list.add("two");
-        
+
     boolean modified = CollectionUtils.addAll(list, new Enumeration<String>() {
       @Override
       public boolean hasMoreElements() {
         return false;
       }
+
       @Override
       public String nextElement() {
         throw new NoSuchElementException();
-      }});
-    
+      }
+    });
+
     assertTrue(!modified);
     assertEquals(2, list.size());
   }
@@ -423,9 +426,9 @@ public class CollectionUtilsJUnitTest {
 
     list.add("one");
     list.add("two");
-        
+
     boolean modified = CollectionUtils.addAll(list, (Enumeration<String>) null);
-    
+
     assertTrue(!modified);
     assertEquals(2, list.size());
   }
@@ -435,7 +438,7 @@ public class CollectionUtilsJUnitTest {
     final ArrayList<Integer> list = new ArrayList<>();
     list.add(0);
     list.add(1);
-    
+
     final Iterable<Integer> iterable = CollectionUtils.unmodifiableIterable(list);
     assertNotNull(iterable);
 
@@ -451,7 +454,7 @@ public class CollectionUtilsJUnitTest {
     } catch (NoSuchElementException e) {
       // ignore
     }
-    
+
     list.add(2);
     try {
       iterator1.next();

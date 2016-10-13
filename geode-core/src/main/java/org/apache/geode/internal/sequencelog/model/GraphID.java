@@ -24,23 +24,23 @@ import org.apache.geode.internal.sequencelog.GraphType;
  *
  */
 public class GraphID implements Comparable<GraphID>, Serializable {
-  
+
   public final GraphType type;
   public final String graphName;
-  
-  
+
   public GraphID(GraphType type, String graphName) {
     this.type = type;
     this.graphName = graphName;
   }
-  
+
   public GraphType getType() {
     return type;
   }
+
   public String getGraphName() {
     return graphName;
   }
-  
+
   @Override
   public String toString() {
     return graphName;
@@ -78,17 +78,14 @@ public class GraphID implements Comparable<GraphID>, Serializable {
   }
 
   public int compareTo(GraphID o) {
-    if(o == null) {
+    if (o == null) {
       return -1;
     }
     int result = type.compareTo(o.getType());
-    if(result != 0) {
+    if (result != 0) {
       return result;
     }
     return graphName.compareTo(o.getGraphName());
   }
-  
-  
-  
-  
+
 }

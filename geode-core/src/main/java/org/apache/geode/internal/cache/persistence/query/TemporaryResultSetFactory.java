@@ -28,8 +28,7 @@ import org.apache.geode.internal.cache.persistence.query.mock.SortedResultSetImp
  *
  */
 public class TemporaryResultSetFactory {
-  
-  
+
   /**
    * Get a result set that is sorted. The result set will be overflowed
    * on to disk as necessary, but it will not be recovered from disk.
@@ -41,7 +40,7 @@ public class TemporaryResultSetFactory {
   public ResultSet getSortedResultSet(SortKeyExtractor extractor, boolean reverse) {
     return new SortedResultSetImpl(extractor, reverse);
   }
-  
+
   /**
    * Get a result bag that is sorted. The result set will be overflowed
    * on to disk as necessary, but it will not be recovered from disk.
@@ -53,7 +52,7 @@ public class TemporaryResultSetFactory {
   public ResultBag getSortedResultBag(SortKeyExtractor extractor, boolean reverse) {
     return new SortedResultBagImpl(extractor, reverse);
   }
-  
+
   /**
    * Get a result set that is not sorted. The result set will be overflowed
    * on to disk as necessary, but it will not be recovered from disk.
@@ -66,7 +65,7 @@ public class TemporaryResultSetFactory {
   public ResultSet getUnsortedResultSet(boolean reverse) {
     return new SortedResultSetImpl(null, reverse);
   }
-  
+
   /**
    * Get a list to store temporary results. The list will be overflowed
    * on to disk as necessary, but it will not be recovered from disk.

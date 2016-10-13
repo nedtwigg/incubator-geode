@@ -54,16 +54,16 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
 
   private int server1Port;
   private int server2Port;
-  
+
   private String localHost;
-  
+
   private static final int JEDIS_TIMEOUT = 20 * 1000;
 
   private abstract class ClientTestBase extends SerializableCallable {
 
     int port;
 
-    protected ClientTestBase (int port) {
+    protected ClientTestBase(int port) {
       this.port = port;
     }
   }
@@ -78,7 +78,7 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
     server1 = host.getVM(0);
     server2 = host.getVM(1);
     client1 = host.getVM(2);
-    client2 = host.getVM(3);  
+    client2 = host.getVM(3);
     final int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
     final int locatorPort = DistributedTestUtils.getDUnitLocatorPort();
     final SerializableCallable<Object> startRedisAdapter = new SerializableCallable<Object>() {
@@ -131,7 +131,8 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
         }
         return null;
       }
-    };
+    }
+    ;
 
     AsyncInvocation i = client1.invokeAsync(new ConcListOps(server1Port));
     client2.invoke(new ConcListOps(server2Port));
@@ -149,12 +150,12 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
     IgnoredException.addIgnoredException("RegionDestroyedException");
     IgnoredException.addIgnoredException("IndexInvalidException");
     final int ops = 40;
-    final String hKey = TEST_KEY+"hash";
-    final String lKey = TEST_KEY+"list";
-    final String zKey = TEST_KEY+"zset";
-    final String sKey = TEST_KEY+"set";
+    final String hKey = TEST_KEY + "hash";
+    final String lKey = TEST_KEY + "list";
+    final String zKey = TEST_KEY + "zset";
+    final String sKey = TEST_KEY + "set";
 
-    class ConcCreateDestroy extends ClientTestBase{
+    class ConcCreateDestroy extends ClientTestBase {
       protected ConcCreateDestroy(int port) {
         super(port);
       }
@@ -209,10 +210,10 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
   public void testConcOps() throws Exception {
 
     final int ops = 100;
-    final String hKey = TEST_KEY+"hash";
-    final String lKey = TEST_KEY+"list";
-    final String zKey = TEST_KEY+"zset";
-    final String sKey = TEST_KEY+"set";
+    final String hKey = TEST_KEY + "hash";
+    final String lKey = TEST_KEY + "list";
+    final String zKey = TEST_KEY + "zset";
+    final String sKey = TEST_KEY + "set";
 
     class ConcOps extends ClientTestBase {
 

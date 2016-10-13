@@ -49,18 +49,17 @@ import org.apache.geode.test.dunit.VM;
 @Category(DistributedTest.class)
 public class Bug34387DUnitTest extends JUnit4CacheTestCase {
 
-//  private transient Region r;
-//  private transient DistributedMember otherId;
+  //  private transient Region r;
+  //  private transient DistributedMember otherId;
   protected transient int invokeCount;
-  
+
   static volatile boolean callbackFailure;
-  
+
   public Bug34387DUnitTest() {
     super();
   }
 
-  protected static void callbackAssertEquals(String message, Object expected, 
-      Object actual) {
+  protected static void callbackAssertEquals(String message, Object expected, Object actual) {
     if (expected == null && actual == null)
       return;
     if (expected != null && expected.equals(actual))
@@ -69,57 +68,57 @@ public class Bug34387DUnitTest extends JUnit4CacheTestCase {
     // Throws an error that is ignored, but...
     assertEquals(message, expected, actual);
   }
-  
 
   private VM getOtherVm() {
     Host host = Host.getHost(0);
     return host.getVM(0);
   }
-    
+
   private void initOtherId() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("Connect") {
-        public void run2() throws CacheException {
-          getCache();
-        }
-      });
+      public void run2() throws CacheException {
+        getCache();
+      }
+    });
     vm.invoke(() -> Bug34387DUnitTest.getVMDistributedMember());
   }
+
   private void doCommitOtherVm(final boolean doDestroy) {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("create root") {
-        public void run2() throws CacheException {
-          AttributesFactory af = new AttributesFactory();
-          af.setScope(Scope.DISTRIBUTED_ACK);
-          af.setConcurrencyChecksEnabled(true);
-          Region r1 = createRootRegion("r1", af.create());
-          CacheTransactionManager ctm =  getCache().getCacheTransactionManager();
-          ctm.begin();
-          r1.create("createKey", "createValue");
-          if (doDestroy) {
-            try {
-              r1.localDestroy("createKey");
-              fail("expected exception not thrown");
-            } catch (UnsupportedOperationInTransactionException e) {
-              assertEquals(e.getMessage(), LocalizedStrings.TXStateStub_LOCAL_DESTROY_NOT_ALLOWED_IN_TRANSACTION.toLocalizedString());
-            }
-          } else {
-            try {
-              r1.localInvalidate("createKey");
-              fail("expected exception not thrown");
-            } catch (UnsupportedOperationInTransactionException e) {
-              assertEquals(e.getMessage(), LocalizedStrings.TXStateStub_LOCAL_INVALIDATE_NOT_ALLOWED_IN_TRANSACTION.toLocalizedString());
-            }
+      public void run2() throws CacheException {
+        AttributesFactory af = new AttributesFactory();
+        af.setScope(Scope.DISTRIBUTED_ACK);
+        af.setConcurrencyChecksEnabled(true);
+        Region r1 = createRootRegion("r1", af.create());
+        CacheTransactionManager ctm = getCache().getCacheTransactionManager();
+        ctm.begin();
+        r1.create("createKey", "createValue");
+        if (doDestroy) {
+          try {
+            r1.localDestroy("createKey");
+            fail("expected exception not thrown");
+          } catch (UnsupportedOperationInTransactionException e) {
+            assertEquals(e.getMessage(), LocalizedStrings.TXStateStub_LOCAL_DESTROY_NOT_ALLOWED_IN_TRANSACTION.toLocalizedString());
           }
-          ctm.commit();
+        } else {
+          try {
+            r1.localInvalidate("createKey");
+            fail("expected exception not thrown");
+          } catch (UnsupportedOperationInTransactionException e) {
+            assertEquals(e.getMessage(), LocalizedStrings.TXStateStub_LOCAL_INVALIDATE_NOT_ALLOWED_IN_TRANSACTION.toLocalizedString());
+          }
         }
-      });
+        ctm.commit();
+      }
+    });
   }
 
   public static DistributedMember getVMDistributedMember() {
     return InternalDistributedSystem.getAnyInstance().getDistributedMember();
   }
-  
+
   //////////////////////  Test Methods  //////////////////////
 
   /**
@@ -133,14 +132,14 @@ public class Bug34387DUnitTest extends JUnit4CacheTestCase {
     af.setScope(Scope.DISTRIBUTED_ACK);
     af.setConcurrencyChecksEnabled(true);
     callbackFailure = false;
-    
+
     CacheListener cl1 = new CacheListenerAdapter() {
-        public void afterCreate(EntryEvent e) {
-          callbackAssertEquals("Keys not equal", "createKey", e.getKey());
-          callbackAssertEquals("Values not equal", "createValue", e.getNewValue());
-          Bug34387DUnitTest.this.invokeCount++;
-        }
-      };
+      public void afterCreate(EntryEvent e) {
+        callbackAssertEquals("Keys not equal", "createKey", e.getKey());
+        callbackAssertEquals("Values not equal", "createValue", e.getNewValue());
+        Bug34387DUnitTest.this.invokeCount++;
+      }
+    };
     af.addCacheListener(cl1);
     Region r1 = createRootRegion("r1", af.create());
 
@@ -152,6 +151,7 @@ public class Bug34387DUnitTest extends JUnit4CacheTestCase {
     assertEquals(1, this.invokeCount);
     assertFalse("Errors in callbacks; check logs for details", callbackFailure);
   }
+
   /**
    * test create followed by localInvalidate
    */
@@ -163,14 +163,14 @@ public class Bug34387DUnitTest extends JUnit4CacheTestCase {
     af.setScope(Scope.DISTRIBUTED_ACK);
     af.setConcurrencyChecksEnabled(true);
     callbackFailure = false;
-    
+
     CacheListener cl1 = new CacheListenerAdapter() {
-        public void afterCreate(EntryEvent e) {
-          callbackAssertEquals("key not equal", "createKey", e.getKey());
-          callbackAssertEquals("value not equal", "createValue", e.getNewValue());
-          Bug34387DUnitTest.this.invokeCount++;
-        }
-      };
+      public void afterCreate(EntryEvent e) {
+        callbackAssertEquals("key not equal", "createKey", e.getKey());
+        callbackAssertEquals("value not equal", "createValue", e.getNewValue());
+        Bug34387DUnitTest.this.invokeCount++;
+      }
+    };
     af.addCacheListener(cl1);
     Region r1 = createRootRegion("r1", af.create());
 

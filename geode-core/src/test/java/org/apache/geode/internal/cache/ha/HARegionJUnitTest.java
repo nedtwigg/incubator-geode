@@ -87,12 +87,11 @@ public class HARegionJUnitTest {
   /**
    * create the HARegion
    */
-  private Region createHARegion() throws TimeoutException, CacheWriterException,  GatewayException, CacheExistsException, RegionExistsException, IOException, ClassNotFoundException {
+  private Region createHARegion() throws TimeoutException, CacheWriterException, GatewayException, CacheExistsException, RegionExistsException, IOException, ClassNotFoundException {
     AttributesFactory factory = new AttributesFactory();
     factory.setDataPolicy(DataPolicy.REPLICATE);
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    ExpirationAttributes ea = new ExpirationAttributes(2000,
-        ExpirationAction.LOCAL_INVALIDATE);
+    ExpirationAttributes ea = new ExpirationAttributes(2000, ExpirationAction.LOCAL_INVALIDATE);
     factory.setStatisticsEnabled(true);
     ;
     factory.setCacheListener(new CacheListenerAdapter() {
@@ -101,8 +100,7 @@ public class HARegionJUnitTest {
       }
     });
     RegionAttributes ra = factory.create();
-    Region region = HARegion.getInstance("HARegionJUnitTest_region", (GemFireCacheImpl)cache,
-        null, ra);
+    Region region = HARegion.getInstance("HARegionJUnitTest_region", (GemFireCacheImpl) cache, null, ra);
     region.getAttributesMutator().setEntryTimeToLive(ea);
     return region;
   }
@@ -143,13 +141,13 @@ public class HARegionJUnitTest {
   public void testEventIdSetForEvictDestroy() throws Exception {
     AttributesFactory factory = new AttributesFactory();
 
-    factory.setCacheListener(new CacheListenerAdapter(){
-      public void afterDestroy(EntryEvent event){
-        assertTrue("eventId has not been set for "+ event, ((EntryEventImpl)event).getEventId() != null);
+    factory.setCacheListener(new CacheListenerAdapter() {
+      public void afterDestroy(EntryEvent event) {
+        assertTrue("eventId has not been set for " + event, ((EntryEventImpl) event).getEventId() != null);
       }
-     });
+    });
 
-    EvictionAttributes evAttr = EvictionAttributes.createLRUEntryAttributes(1,EvictionAction.LOCAL_DESTROY);
+    EvictionAttributes evAttr = EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.LOCAL_DESTROY);
     factory.setEvictionAttributes(evAttr);
 
     RegionAttributes attrs = factory.createRegionAttributes();

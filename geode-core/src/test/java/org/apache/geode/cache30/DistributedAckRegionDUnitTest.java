@@ -72,8 +72,7 @@ public class DistributedAckRegionDUnitTest extends MultiVMRegionTestCase {
    * @see Region#createSubregion
    */
   @Test
-  public void testIncompatibleSubregions()
-    throws CacheException, InterruptedException {
+  public void testIncompatibleSubregions() throws CacheException, InterruptedException {
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -85,51 +84,49 @@ public class DistributedAckRegionDUnitTest extends MultiVMRegionTestCase {
 
     final String name = this.getUniqueName() + "-ACK";
     vm0.invoke(new SerializableRunnable("Create ACK Region") {
-        public void run() {
-          try {
-            createRegion(name, "INCOMPATIBLE_ROOT", getRegionAttributes());
+      public void run() {
+        try {
+          createRegion(name, "INCOMPATIBLE_ROOT", getRegionAttributes());
 
-          } catch (CacheException ex) {
-            Assert.fail("While creating ACK region", ex);
-          }
+        } catch (CacheException ex) {
+          Assert.fail("While creating ACK region", ex);
         }
-      });
+      }
+    });
 
     vm1.invoke(new SerializableRunnable("Create GLOBAL Region") {
-        public void run() {
+      public void run() {
+        try {
+          AttributesFactory factory = new AttributesFactory(getRegionAttributes());
+          factory.setScope(Scope.GLOBAL);
           try {
-            AttributesFactory factory =
-              new AttributesFactory(getRegionAttributes());
-            factory.setScope(Scope.GLOBAL);
-            try {
-              createRegion(name, "INCOMPATIBLE_ROOT", factory.create());
-              fail("Should have thrown an IllegalStateException");
-            } catch (IllegalStateException ex) {
-              // pass...
-            }
-
-          } catch (CacheException ex) {
-            Assert.fail("While creating GLOBAL Region", ex);
+            createRegion(name, "INCOMPATIBLE_ROOT", factory.create());
+            fail("Should have thrown an IllegalStateException");
+          } catch (IllegalStateException ex) {
+            // pass...
           }
+
+        } catch (CacheException ex) {
+          Assert.fail("While creating GLOBAL Region", ex);
         }
-      });
+      }
+    });
     vm1.invoke(new SerializableRunnable("Create NOACK Region") {
-        public void run() {
+      public void run() {
+        try {
+          AttributesFactory factory = new AttributesFactory(getRegionAttributes());
+          factory.setScope(Scope.DISTRIBUTED_NO_ACK);
           try {
-            AttributesFactory factory =
-              new AttributesFactory(getRegionAttributes());
-            factory.setScope(Scope.DISTRIBUTED_NO_ACK);
-            try {
-              createRegion(name, "INCOMPATIBLE_ROOT", factory.create());
-              fail("Should have thrown an IllegalStateException");
-            } catch (IllegalStateException ex) {
-              // pass...
-            }
-
-          } catch (CacheException ex) {
-            Assert.fail("While creating NOACK Region", ex);
+            createRegion(name, "INCOMPATIBLE_ROOT", factory.create());
+            fail("Should have thrown an IllegalStateException");
+          } catch (IllegalStateException ex) {
+            // pass...
           }
+
+        } catch (CacheException ex) {
+          Assert.fail("While creating NOACK Region", ex);
         }
-      });
-  } 
+      }
+    });
+  }
 }

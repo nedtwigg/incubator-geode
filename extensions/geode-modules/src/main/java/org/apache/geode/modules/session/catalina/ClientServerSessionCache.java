@@ -108,8 +108,7 @@ public class ClientServerSessionCache extends AbstractSessionCache {
       }
     } else {
       // Execute the member touch function on all the server(s)
-      Execution execution = FunctionService.onServers(getCache())
-          .withArgs(new Object[]{this.sessionRegion.getFullPath(), sessionIds});
+      Execution execution = FunctionService.onServers(getCache()).withArgs(new Object[] { this.sessionRegion.getFullPath(), sessionIds });
       try {
         ResultCollector collector = execution.execute(TouchReplicatedRegionEntriesFunction.ID, true, false, false);
         collector.getResult();
@@ -209,9 +208,7 @@ public class ClientServerSessionCache extends AbstractSessionCache {
     for (RegionStatus status : results) {
       if (status == RegionStatus.INVALID) {
         StringBuilder builder = new StringBuilder();
-        builder.append("An exception occurred on the server while attempting to create or validate region named ")
-            .append(getSessionManager().getRegionName())
-            .append(". See the server log for additional details.");
+        builder.append("An exception occurred on the server while attempting to create or validate region named ").append(getSessionManager().getRegionName()).append(". See the server log for additional details.");
         throw new IllegalStateException(builder.toString());
       }
     }

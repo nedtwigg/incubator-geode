@@ -25,10 +25,9 @@ import org.apache.geode.cache.CacheRuntimeException;
  * @since GemFire 5.5
  */
 
-
 public class CqClosedException extends CacheRuntimeException {
-private static final long serialVersionUID = -3793993436374495840L;
-  
+  private static final long serialVersionUID = -3793993436374495840L;
+
   /**
    * Constructor used by concrete subclasses
    * @param msg the error message
@@ -36,8 +35,8 @@ private static final long serialVersionUID = -3793993436374495840L;
    */
   public CqClosedException(String msg, Throwable cause) {
     super(msg, cause);
-  }  
-  
+  }
+
   /**
    * Constructor used by concrete subclasses
    * @param msg the error message
@@ -45,12 +44,12 @@ private static final long serialVersionUID = -3793993436374495840L;
   public CqClosedException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructor used by concrete subclasses
    * @param cause a Throwable cause of this exception
    */
   public CqClosedException(Throwable cause) {
     super(cause);
-  }    
+  }
 }

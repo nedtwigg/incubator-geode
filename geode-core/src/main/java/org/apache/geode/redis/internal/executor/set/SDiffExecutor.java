@@ -33,7 +33,7 @@ public class SDiffExecutor extends SetOpExecutor {
   protected Set<ByteArrayWrapper> setOp(Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList) {
     if (firstSet == null)
       return null;
-    for (Set<ByteArrayWrapper> set: setList)
+    for (Set<ByteArrayWrapper> set : setList)
       firstSet.removeAll(set);
     return firstSet;
   }

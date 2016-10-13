@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import java.util.*;
@@ -30,8 +30,9 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 public class CancellationRegistry {
   private static CancellationRegistry internalRef;
   private Map map = new HashMap();
-  
-  private CancellationRegistry() {}
+
+  private CancellationRegistry() {
+  }
 
   public synchronized static CancellationRegistry getInstance() {
     if (internalRef == null) {
@@ -42,9 +43,9 @@ public class CancellationRegistry {
 
   public synchronized void cancelMessage(InternalDistributedMember console, int msgId) {
     Key key = new Key(console, msgId);
-    AdminRequest msg = (AdminRequest)map.get(key);
+    AdminRequest msg = (AdminRequest) map.get(key);
     if (msg instanceof Cancellable) {
-      ((Cancellable)msg).cancel();
+      ((Cancellable) msg).cancel();
     }
   }
 
@@ -75,11 +76,11 @@ public class CancellationRegistry {
 
     @Override
     public boolean equals(Object other) {
-      if (this == other) return true;
+      if (this == other)
+        return true;
       if (other instanceof Key) {
-        Key toTest = (Key)other;
-        return (toTest.console.equals(this.console) &&
-                toTest.msgId == this.msgId);
+        Key toTest = (Key) other;
+        return (toTest.console.equals(this.console) && toTest.msgId == this.msgId);
       }
       return false;
     }

@@ -31,15 +31,14 @@ public class BackupDataStoreHelper {
   public static String LOCK_SERVICE_NAME = BackupDataStoreHelper.class.getSimpleName();
 
   private static String LOCK_NAME = LOCK_SERVICE_NAME + "_token";
-  
+
   private static Object LOCK_SYNC = new Object();
 
   @SuppressWarnings("rawtypes")
-  public static BackupDataStoreResult backupAllMembers(
-      DM dm, Set recipients, File targetDir, File baselineDir) {
+  public static BackupDataStoreResult backupAllMembers(DM dm, Set recipients, File targetDir, File baselineDir) {
     FlushToDiskRequest.send(dm, recipients);
 
-    boolean abort= true;
+    boolean abort = true;
     Map<DistributedMember, Set<PersistentID>> successfulMembers;
     Map<DistributedMember, Set<PersistentID>> existingDataStores;
     try {
@@ -50,7 +49,7 @@ public class BackupDataStoreHelper {
     }
     return new BackupDataStoreResult(existingDataStores, successfulMembers);
   }
-  
+
   private static DistributedLockService getLockService(DM dm) {
     DistributedLockService dls = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
     if (dls == null) {
@@ -65,11 +64,11 @@ public class BackupDataStoreHelper {
     Assert.assertTrue(dls != null);
     return dls;
   }
-  
+
   public static boolean obtainLock(DM dm) {
     return getLockService(dm).lock(LOCK_NAME, 0, -1);
   }
-  
+
   public static void releaseLock(DM dm) {
     getLockService(dm).unlock(LOCK_NAME);
   }

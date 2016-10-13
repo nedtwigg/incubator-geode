@@ -130,21 +130,21 @@ public class ClientHttpRequest implements HttpRequest {
   @Override
   public HttpMethod getMethod() {
     switch (getLink().getMethod()) {
-      case DELETE:
-        return HttpMethod.DELETE;
-      case HEAD:
-        return HttpMethod.HEAD;
-      case OPTIONS:
-        return HttpMethod.OPTIONS;
-      case POST:
-        return HttpMethod.POST;
-      case PUT:
-        return HttpMethod.PUT;
-      case TRACE:
-        return HttpMethod.TRACE;
-      case GET:
-      default:
-        return HttpMethod.GET;
+    case DELETE:
+      return HttpMethod.DELETE;
+    case HEAD:
+      return HttpMethod.HEAD;
+    case OPTIONS:
+      return HttpMethod.OPTIONS;
+    case POST:
+      return HttpMethod.POST;
+    case PUT:
+      return HttpMethod.PUT;
+    case TRACE:
+      return HttpMethod.TRACE;
+    case GET:
+    default:
+      return HttpMethod.GET;
     }
   }
 
@@ -235,7 +235,7 @@ public class ClientHttpRequest implements HttpRequest {
    * @see java.net.URI
    */
   public URI getURL() {
-    return getURL(Collections.<String, Object>emptyMap());
+    return getURL(Collections.<String, Object> emptyMap());
   }
 
   /**
@@ -255,19 +255,19 @@ public class ClientHttpRequest implements HttpRequest {
       final List<String> pathVariables = getPathVariables();
 
       // get query parameters to append to the URI/URL based on the request parameters that are not path variables...
-      final Map<String, List<Object>> queryParameters = CollectionUtils.removeKeys(
-        new LinkedMultiValueMap<String, Object>(getParameters()), new Filter<Map.Entry<String, List<Object>>>() {
-          @Override public boolean accept(final Map.Entry<String, List<Object>> entry) {
-            //GEODE-1469: since stepArgs has json string in there, we will need to encode it so that it won't interfere with the expand() call afterwards
-            if(entry.getKey().contains(CLIMultiStepHelper.STEP_ARGS)){
-              List<Object> stepArgsList = entry.getValue();
-              if(stepArgsList!=null){
-                String stepArgs = (String)stepArgsList.remove(0);
-                stepArgsList.add(UriUtils.encode(stepArgs));
-              }
+      final Map<String, List<Object>> queryParameters = CollectionUtils.removeKeys(new LinkedMultiValueMap<String, Object>(getParameters()), new Filter<Map.Entry<String, List<Object>>>() {
+        @Override
+        public boolean accept(final Map.Entry<String, List<Object>> entry) {
+          //GEODE-1469: since stepArgs has json string in there, we will need to encode it so that it won't interfere with the expand() call afterwards
+          if (entry.getKey().contains(CLIMultiStepHelper.STEP_ARGS)) {
+            List<Object> stepArgsList = entry.getValue();
+            if (stepArgsList != null) {
+              String stepArgs = (String) stepArgsList.remove(0);
+              stepArgsList.add(UriUtils.encode(stepArgs));
             }
-            return !pathVariables.contains(entry.getKey());
           }
+          return !pathVariables.contains(entry.getKey());
+        }
       });
 
       for (final String queryParameterName : queryParameters.keySet()) {
@@ -293,14 +293,12 @@ public class ClientHttpRequest implements HttpRequest {
       if (!getParameters().isEmpty()) {
         getHeaders().setContentType(determineContentType(MediaType.APPLICATION_FORM_URLENCODED));
         return new HttpEntity<MultiValueMap<String, Object>>(getParameters(), getHeaders());
-      }
-      else {
+      } else {
         // NOTE the HTTP "Content-Type" header will be determined and set by the appropriate HttpMessageConverter
         // based on the Class type of the "content".
         return new HttpEntity<Object>(getContent(), getHeaders());
       }
-    }
-    else {
+    } else {
       return new HttpEntity<Object>(getHeaders());
     }
   }
@@ -328,7 +326,7 @@ public class ClientHttpRequest implements HttpRequest {
     // of the HTTP request
     if (contentType == null) {
       if (isPost() || isPut()) {
-        OUT : for (final String name : getParameters().keySet()) {
+        OUT: for (final String name : getParameters().keySet()) {
           for (final Object value : getParameters().get(name)) {
             if (value != null && !(value instanceof String)) {
               contentType = MediaType.MULTIPART_FORM_DATA;
@@ -339,8 +337,7 @@ public class ClientHttpRequest implements HttpRequest {
 
         // since this is a POST/PUT HTTP request, default the content/media type to "application/x-www-form-urlencoded"
         contentType = ObjectUtils.defaultIfNull(contentType, MediaType.APPLICATION_FORM_URLENCODED);
-      }
-      else {
+      } else {
         // NOTE the "Content-Type" HTTP header is not applicable to GET/DELETE and other methods of HTTP requests
         // since there is typically no content (media/payload/request body/etc) to send.  Any request parameters
         // are encoded in the URL as query parameters.

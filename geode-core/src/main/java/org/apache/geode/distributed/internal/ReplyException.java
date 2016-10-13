@@ -32,7 +32,7 @@ public class ReplyException extends GemFireException {
   private static final long serialVersionUID = -4410839793809166071L;
   private static final String REMOTE_MEMBER_TOKEN = "Remote Member";
   private transient InternalDistributedMember sender;
-  
+
   /**
    * Creates a new instance of <code>ReplyException</code> without detail message.
    * 
@@ -40,8 +40,7 @@ public class ReplyException extends GemFireException {
    */
   public ReplyException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>ReplyException</code> with the specified detail message.
    * @param msg the detail message.
@@ -49,7 +48,7 @@ public class ReplyException extends GemFireException {
   public ReplyException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>ReplyException</code> with the specified detail message
    * and cause.
@@ -59,7 +58,7 @@ public class ReplyException extends GemFireException {
   public ReplyException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>ReplyException</code> with the specified cause.
    * @param cause the causal Throwable
@@ -67,7 +66,7 @@ public class ReplyException extends GemFireException {
   public ReplyException(Throwable cause) {
     super(cause);
   }
-  
+
   /** After expected reply exceptions have already been handled, 
    * call this method to handle this exception as unexpected,
    * i.e. converts to an appropriate runtime exception and throws it.
@@ -81,11 +80,11 @@ public class ReplyException extends GemFireException {
     }
     if (c instanceof RuntimeException) {
       fixUpRemoteEx(c);
-      throw (RuntimeException)c;
+      throw (RuntimeException) c;
     }
     if (c instanceof Error) {
       fixUpRemoteEx(c);
-      throw (Error)c;
+      throw (Error) c;
     }
     if (c instanceof ClassNotFoundException) {
       //for bug 43602
@@ -93,6 +92,7 @@ public class ReplyException extends GemFireException {
     }
     throw new InternalGemFireException(LocalizedStrings.ReplyException_UNEXPECTED_EXCEPTION_ON_MEMBER_0.toLocalizedString(getSender()), c);
   }
+
   /**
    * Fixes a remote exception that this ReplyException has wrapped. Adds the 
    * local stack frames. The remote stack elements have the sender id info. 
@@ -104,12 +104,12 @@ public class ReplyException extends GemFireException {
     if (getSender() == null) {
       return;
     }
-   
+
     String senderId = getSender().toString();
     addSenderInfo(t, senderId);
 
     StackTraceElement[] remoteStack = t.getStackTrace();
-    StackTraceElement[] localStack  = Thread.currentThread().getStackTrace();
+    StackTraceElement[] localStack = Thread.currentThread().getStackTrace();
 
     int localStartIdx = 0;
     if (localStartIdx < localStack.length) {
@@ -122,18 +122,16 @@ public class ReplyException extends GemFireException {
     }
 
     // do not consider localStartIdx no. of elements.
-    StackTraceElement[] newStack =  new StackTraceElement[remoteStack.length + 
-                                                         localStack.length - 
-                                                         localStartIdx];
-   
+    StackTraceElement[] newStack = new StackTraceElement[remoteStack.length + localStack.length - localStartIdx];
+
     int i = 0;
     for (; i < remoteStack.length; i++) {
       newStack[i] = remoteStack[i];
     }
-    for (int j=2; i < newStack.length; j++, i++) {
+    for (int j = 2; i < newStack.length; j++, i++) {
       newStack[i] = localStack[j];
     }
-   
+
     t.setStackTrace(newStack);
   }
 
@@ -149,23 +147,18 @@ public class ReplyException extends GemFireException {
    */
   private static void addSenderInfo(Throwable toModify, String senderId) {
     StackTraceElement[] stackTrace = toModify.getStackTrace();
-   
+
     StackTraceElement element = null;
     for (int i = 0; i < stackTrace.length; i++) {
       element = stackTrace[i];
       if (!element.getClassName().startsWith(REMOTE_MEMBER_TOKEN)) {
-        stackTrace[i] = new StackTraceElement(
-                          REMOTE_MEMBER_TOKEN + " '"+ senderId + 
-                          "' in " + element.getClassName(), 
-                          element.getMethodName(), 
-                          element.getFileName(), 
-                          element.getLineNumber());
+        stackTrace[i] = new StackTraceElement(REMOTE_MEMBER_TOKEN + " '" + senderId + "' in " + element.getClassName(), element.getMethodName(), element.getFileName(), element.getLineNumber());
       }
     }
-   
+
     toModify.setStackTrace(stackTrace);
     Throwable cause = toModify.getCause();
-   
+
     if (cause != null) {
       addSenderInfo(cause, senderId);
     }
@@ -195,6 +188,6 @@ public class ReplyException extends GemFireException {
   public String getMessage() {
     InternalDistributedMember s = getSender();
     String m = super.getMessage();
-    return (s!=null) ? ("From " + s + ": " + m) : m;
+    return (s != null) ? ("From " + s + ": " + m) : m;
   }
 }

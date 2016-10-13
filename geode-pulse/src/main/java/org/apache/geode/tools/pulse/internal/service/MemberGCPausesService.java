@@ -62,8 +62,7 @@ public class MemberGCPausesService implements PulseService {
 
     if (clusterMember != null) {
       // response
-      responseJSON.put("gcPausesTrend",
-          mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_GARBAGE_COLLECTION)));
+      responseJSON.put("gcPausesTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_GARBAGE_COLLECTION)));
       responseJSON.put("gcPausesCount", clusterMember.getGarbageCollectionCount());
     }
 

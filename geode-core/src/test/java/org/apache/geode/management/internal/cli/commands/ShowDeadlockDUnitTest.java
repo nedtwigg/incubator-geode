@@ -155,7 +155,6 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
 
   }
 
-
   private void createCache(Properties props) {
     getSystem(props);
     final Cache cache = getCache();
@@ -164,7 +163,7 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
   private Properties createProperties(Host host, int locatorPort) {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
-//    props.setProperty(DistributionConfig.LOCATORS_NAME, getServerHostName(host) + "[" + locatorPort + "]");
+    //    props.setProperty(DistributionConfig.LOCATORS_NAME, getServerHostName(host) + "[" + locatorPort + "]");
     props.setProperty(LOG_LEVEL, "info");
     props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
     props.setProperty(ENABLE_TIME_STATISTICS, "true");
@@ -267,4 +266,3 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
     }
   }
 }
-

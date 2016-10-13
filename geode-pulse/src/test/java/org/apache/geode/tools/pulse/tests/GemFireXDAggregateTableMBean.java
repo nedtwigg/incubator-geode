@@ -20,7 +20,7 @@ package org.apache.geode.tools.pulse.tests;
 
 public interface GemFireXDAggregateTableMBean {
   public static final String OBJECT_NAME = "GemFireXD:service=Table,type=Aggregate,table=";
-  
+
   public long getEntrySize();
 
   public int getNumberOfRows();

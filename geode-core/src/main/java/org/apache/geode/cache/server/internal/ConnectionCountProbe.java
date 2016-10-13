@@ -45,10 +45,10 @@ import org.apache.geode.internal.cache.xmlcache.Declarable2;
  * 
  * @since GemFire 5.7
  */
-public class ConnectionCountProbe extends ServerLoadProbeAdapter implements
-    Declarable2, DataSerializable {
-  
+public class ConnectionCountProbe extends ServerLoadProbeAdapter implements Declarable2, DataSerializable {
+
   private static final long serialVersionUID = -5072528455996471323L;
+
   /**
    * Get a loads object representing the number of connections
    * to this bridge server
@@ -57,7 +57,7 @@ public class ConnectionCountProbe extends ServerLoadProbeAdapter implements
     float load = metrics.getConnectionCount() / (float) metrics.getMaxConnections();
     int queueLoad = metrics.getSubscriptionConnectionCount();
     float loadPerConnection = 1 / (float) metrics.getMaxConnections();
-    
+
     return new ServerLoad(load, loadPerConnection, queueLoad, 1);
   }
 
@@ -67,22 +67,23 @@ public class ConnectionCountProbe extends ServerLoadProbeAdapter implements
 
   public void init(Properties props) {
   }
-  
+
   @Override
   public boolean equals(Object other) {
-    return(other != null && this.getClass().equals(other.getClass()));
+    return (other != null && this.getClass().equals(other.getClass()));
   }
+
   @Override
   public int hashCode() {
     // since we have no state defer to super. Added this to keep findbugs happy.
     return super.hashCode();
   }
-  
+
   @Override
   public String toString() {
     return "ConnectionCountProbe";
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     //do nothing, we have no state
   }

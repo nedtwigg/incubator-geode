@@ -73,11 +73,10 @@ import java.util.*;
  *
  * @since GemFire 2.1
  */
-public class ReplyProcessor21
-    implements MembershipListener {
+public class ReplyProcessor21 implements MembershipListener {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   public final static boolean THROW_EXCEPTION_ON_TIMEOUT = Boolean.getBoolean("ack-threshold-exception");
 
   /** the ratio by which ack-severe-alert-threshold is lowered when
@@ -177,14 +176,13 @@ public class ReplyProcessor21
     double ratio;
     try {
       ratio = Double.parseDouble(str);
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       System.err.println("Unable to parse gemfire.ack-severe-alert-reduction-ratio setting of \"" + str + "\"");
       ratio = 0.80;
     }
     PR_SEVERE_ALERT_RATIO = ratio;
   }
-  
+
   /**
    * Returns the <code>ReplyProcessor</code> with the given
    * id, or <code>null</code> if it no longer exists.
@@ -195,7 +193,7 @@ public class ReplyProcessor21
    * @see #getProcessorId
    */
   public static ReplyProcessor21 getProcessor(int processorId) {
-    return (ReplyProcessor21)keeper.retrieve(processorId);
+    return (ReplyProcessor21) keeper.retrieve(processorId);
   }
 
   ///////////////////////  Constructors  //////////////////////
@@ -207,8 +205,7 @@ public class ReplyProcessor21
    * @param system the DistributedSystem connection
    * @param member the member this processor wants a reply from
    */
-  public ReplyProcessor21(InternalDistributedSystem system,
-                          InternalDistributedMember member) {
+  public ReplyProcessor21(InternalDistributedSystem system, InternalDistributedMember member) {
     this(system, Collections.singleton(member));
   }
 
@@ -221,9 +218,7 @@ public class ReplyProcessor21
    * @param cancelCriterion optional CancelCriterion to use; will use the
    *  DistributionManager if null
    */
-  public ReplyProcessor21(InternalDistributedSystem system,
-                          InternalDistributedMember member,
-                          CancelCriterion cancelCriterion) {
+  public ReplyProcessor21(InternalDistributedSystem system, InternalDistributedMember member, CancelCriterion cancelCriterion) {
     this(system, Collections.singleton(member), cancelCriterion);
   }
 
@@ -234,8 +229,7 @@ public class ReplyProcessor21
    * @param dm the DistributionManager to use for messaging and membership
    * @param member the member this processor wants a reply from
    */
-  public ReplyProcessor21(DM dm,
-                          InternalDistributedMember member) {
+  public ReplyProcessor21(DM dm, InternalDistributedMember member) {
     this(dm, Collections.singleton(member));
   }
 
@@ -249,8 +243,7 @@ public class ReplyProcessor21
    * @param dm the DistributionManager to use for messaging and membership
    * @param initMembers the Set of members this processor wants replies from
    */
-  public ReplyProcessor21(DM dm,
-                          Collection initMembers) {
+  public ReplyProcessor21(DM dm, Collection initMembers) {
     this(dm, dm.getSystem(), initMembers, null);
   }
 
@@ -264,8 +257,7 @@ public class ReplyProcessor21
    * @param system the DistributedSystem connection
    * @param initMembers the Set of members this processor wants replies from
    */
-  public ReplyProcessor21(InternalDistributedSystem system,
-                          Collection initMembers) {
+  public ReplyProcessor21(InternalDistributedSystem system, Collection initMembers) {
     this(system.getDistributionManager(), system, initMembers, null);
   }
 
@@ -281,9 +273,7 @@ public class ReplyProcessor21
    * @param cancelCriterion optional CancelCriterion to use; will use the
    * DistributedSystem's DistributionManager if null
    */
-  public ReplyProcessor21(InternalDistributedSystem system,
-                          Collection initMembers,
-                          CancelCriterion cancelCriterion) {
+  public ReplyProcessor21(InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
     this(system.getDistributionManager(), system, initMembers, cancelCriterion);
   }
 
@@ -296,12 +286,9 @@ public class ReplyProcessor21
    * @param cancelCriterion optional CancelCriterion to use; will use the dm
    * if null
    */
-  private ReplyProcessor21(DM dm,
-                           InternalDistributedSystem system,
-                           Collection initMembers,
-                           CancelCriterion cancelCriterion) {
+  private ReplyProcessor21(DM dm, InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
 
-   this(dm, system, initMembers, cancelCriterion, true);
+    this(dm, system, initMembers, cancelCriterion, true);
   }
 
   /**
@@ -313,16 +300,12 @@ public class ReplyProcessor21
    * @param cancelCriterion optional CancelCriterion to use; will use the dm
    * if null
    */
-  protected ReplyProcessor21(DM dm,
-                           InternalDistributedSystem system,
-                           Collection initMembers,
-                           CancelCriterion cancelCriterion, boolean register) {
+  protected ReplyProcessor21(DM dm, InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion, boolean register) {
     if (!allowReplyFromSender()) {
       Assert.assertTrue(initMembers != null, "null initMembers");
       Assert.assertTrue(system != null, "null system");
       if (dm != null) {
-        Assert.assertTrue(!initMembers.contains(dm.getId()),
-            "dm present in initMembers but reply from sender is not allowed");
+        Assert.assertTrue(!initMembers.contains(dm.getId()), "dm present in initMembers but reply from sender is not allowed");
       }
     }
     this.system = system;
@@ -334,15 +317,15 @@ public class ReplyProcessor21
     int sz = initMembers.size();
     this.members = new InternalDistributedMember[sz];
     if (sz > 0) {
-      int i=0;
+      int i = 0;
       for (Iterator it = initMembers.iterator(); it.hasNext(); i++) {
-        this.members[i] = (InternalDistributedMember)it.next();
+        this.members[i] = (InternalDistributedMember) it.next();
       }
     }
     this.done = false;
     this.shutdown = false;
     this.exception = null;
-    if(register) {
+    if (register) {
       register();
     }
     this.keeperCleanedUp = false;
@@ -375,7 +358,6 @@ public class ReplyProcessor21
     }
   }
 
-
   /**
    * Override and return true if processor should wait for reply from sender.
    * <p>
@@ -399,7 +381,6 @@ public class ReplyProcessor21
     return true;
   }
 
-
   /**
    * Makes note of a reply from a member.  If all members have
    * replied, the waiting thread is signaled.  This method can be
@@ -416,12 +397,11 @@ public class ReplyProcessor21
       logger.debug("{} got process({}) from {}", this, msg, msg.getSender());
     }
     if (msg instanceof ReplyMessage) {
-      ReplyException ex = ((ReplyMessage)msg).getException();
+      ReplyException ex = ((ReplyMessage) msg).getException();
       if (ex != null) {
         if (ex.getCause() instanceof DSFIDNotFoundException) {
-          processException(msg, (DSFIDNotFoundException)ex.getCause());
-        }
-        else {
+          processException(msg, (DSFIDNotFoundException) ex.getCause());
+        } else {
           processException(msg, ex);
         }
       }
@@ -434,31 +414,26 @@ public class ReplyProcessor21
       Set ids = getDistributionManagerIds();
       if (ids == null || ids.contains(sender)) {
         List viewMembers = dm.getViewMembers();
-        if (system.getConfig().getMcastPort() == 0  // could be using multicast & will get responses from everyone
-             && (viewMembers == null || viewMembers.contains(sender))) {
-          logger.warn(LocalizedMessage.create(
-            LocalizedStrings.ReplyProcessor21_RECEIVED_REPLY_FROM_MEMBER_0_BUT_WAS_NOT_EXPECTING_ONE_MORE_THAN_ONE_REPLY_MAY_HAVE_BEEN_RECEIVED_THE_REPLY_THAT_WAS_NOT_EXPECTED_IS_1,
-            new Object[] {sender, msg}));
+        if (system.getConfig().getMcastPort() == 0 // could be using multicast & will get responses from everyone
+            && (viewMembers == null || viewMembers.contains(sender))) {
+          logger.warn(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_RECEIVED_REPLY_FROM_MEMBER_0_BUT_WAS_NOT_EXPECTING_ONE_MORE_THAN_ONE_REPLY_MAY_HAVE_BEEN_RECEIVED_THE_REPLY_THAT_WAS_NOT_EXPECTED_IS_1, new Object[] { sender, msg }));
         }
       }
     }
     checkIfDone();
   }
 
-
-  protected synchronized void processException(DistributionMessage msg,
-                                               ReplyException ex) {
+  protected synchronized void processException(DistributionMessage msg, ReplyException ex) {
     processException(ex);
   }
+
   protected synchronized void processException(ReplyException ex) {
-    if (this.exception == null) {  // only keep first exception
+    if (this.exception == null) { // only keep first exception
       this.exception = ex;
 
     } else if (logMultipleExceptions()) {
-      if ( ! (ex.getCause() instanceof ConcurrentCacheModificationException) ) {
-        logger.fatal(LocalizedMessage.create(
-          LocalizedStrings.ReplyProcessor21_EXCEPTION_RECEIVED_IN_REPLYMESSAGE_ONLY_ONE_EXCEPTION_IS_PASSED_BACK_TO_CALLER_THIS_EXCEPTION_IS_LOGGED_ONLY),
-          ex);
+      if (!(ex.getCause() instanceof ConcurrentCacheModificationException)) {
+        logger.fatal(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_EXCEPTION_RECEIVED_IN_REPLYMESSAGE_ONLY_ONE_EXCEPTION_IS_PASSED_BACK_TO_CALLER_THIS_EXCEPTION_IS_LOGGED_ONLY), ex);
       }
     }
   }
@@ -474,8 +449,7 @@ public class ReplyProcessor21
    * upto individual messages to handle differently by overriding the above
    * method.
    */
-  protected synchronized void processException(DistributionMessage msg,
-      DSFIDNotFoundException ex) {
+  protected synchronized void processException(DistributionMessage msg, DSFIDNotFoundException ex) {
     final short versionOrdinal = ex.getProductVersionOrdinal();
     String versionStr = null;
     try {
@@ -486,8 +460,7 @@ public class ReplyProcessor21
     if (versionStr == null) {
       versionStr = "Ordinal=" + versionOrdinal;
     }
-    logger.fatal(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_UNKNOWN_DSFID_ERROR,
-        new Object[] { ex.getUnknownDSFID(), msg.getSender(), versionStr }), ex);
+    logger.fatal(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_UNKNOWN_DSFID_ERROR, new Object[] { ex.getUnknownDSFID(), msg.getSender(), versionStr }), ex);
   }
 
   public void memberJoined(InternalDistributedMember id) {
@@ -497,14 +470,13 @@ public class ReplyProcessor21
   public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
   }
 
-  public void memberSuspect(InternalDistributedMember id,
-      InternalDistributedMember whoSuspected, String reason) {
+  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
     if (isSevereAlertProcessingEnabled()) {
       // if we're waiting for the member that initiated suspicion, we don't
       // want to be hasty about kicking it out of the distributed system
       synchronized (this.members) {
         int cells = this.members.length;
-        for (int i=0; i<cells; i++) {
+        for (int i = 0; i < cells; i++) {
           InternalDistributedMember e = this.members[i];
           if (e != null && e.equals(whoSuspected)) {
             this.severeAlertTimerReset = true;
@@ -529,13 +501,11 @@ public class ReplyProcessor21
    * @throws InterruptedException thrown if the wait is interrupted
    * @see #canStopWaiting()
    */
-  public final void waitForReplies()
-    throws InterruptedException, ReplyException {
+  public final void waitForReplies() throws InterruptedException, ReplyException {
 
     boolean result = waitForReplies(0);
     Assert.assertTrue(result, "failed but no exception thrown");
   }
-
 
   /**
    * Registers this processor as a membership listener and
@@ -544,9 +514,9 @@ public class ReplyProcessor21
    * @since GemFire 5.7
    */
   protected Set addListenerAndGetMembers() {
-    return getDistributionManager()
-      .addMembershipListenerAndGetDistributionManagerIds(this);
+    return getDistributionManager().addMembershipListenerAndGetDistributionManagerIds(this);
   }
+
   /**
    * Unregisters this processor as a membership listener
    * @since GemFire 5.7
@@ -554,11 +524,11 @@ public class ReplyProcessor21
   protected void removeListener() {
     try {
       getDistributionManager().removeMembershipListener(this);
-    }
-    catch (DistributedSystemDisconnectedException e) {
+    } catch (DistributedSystemDisconnectedException e) {
       // ignore
     }
   }
+
   /**
    * Returns the set of members that this processor should care about.
    * @return a Set of the current members
@@ -577,7 +547,7 @@ public class ReplyProcessor21
       processActiveMembers(activeMembers);
     }
   }
-  
+
   /**
    * perform initial membership processing while under synchronization
    * of this.members
@@ -636,14 +606,11 @@ public class ReplyProcessor21
    * @return Whether or not we received all of the replies in the
    *         given amount of time.
    */
-  public final boolean waitForReplies(long msecs) throws InterruptedException,
-      ReplyException {
+  public final boolean waitForReplies(long msecs) throws InterruptedException, ReplyException {
     return waitForReplies(msecs, getLatch(), true);
   }
 
-  public final boolean waitForReplies(long msecs,
-      StoppableCountDownLatch latch, boolean doCleanUp)
-      throws InterruptedException, ReplyException {
+  public final boolean waitForReplies(long msecs, StoppableCountDownLatch latch, boolean doCleanUp) throws InterruptedException, ReplyException {
     if (this.keeperCleanedUp) {
       throw new IllegalStateException(LocalizedStrings.ReplyProcessor21_THIS_REPLY_PROCESSOR_HAS_ALREADY_BEEN_REMOVED_FROM_THE_PROCESSOR_KEEPER.toLocalizedString());
     }
@@ -652,16 +619,15 @@ public class ReplyProcessor21
     MessageDependencyMonitor.waitingForReply(this);
     try {
       // do the interrupted check inside the try so that cleanup is called
-      if (interrupted) throw new InterruptedException();
+      if (interrupted)
+        throw new InterruptedException();
       if (stillWaiting()) {
         preWait();
         try {
           result = basicWait(msecs, latch);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           interrupted = true;
-        }
-        finally {
+        } finally {
           if (doCleanUp) {
             postWait();
           }
@@ -670,13 +636,13 @@ public class ReplyProcessor21
       if (this.exception != null) {
         throw this.exception;
       }
-    }
-    finally {
+    } finally {
       if (doCleanUp) {
         try {
           cleanup();
         } finally {
-          if (interrupted) throw new InterruptedException();
+          if (interrupted)
+            throw new InterruptedException();
         }
       }
       MessageDependencyMonitor.doneWaiting(this);
@@ -691,8 +657,7 @@ public class ReplyProcessor21
    * @return whether or not we received all of the replies in the given amount
    * of time
    */
-  protected boolean basicWait(long msecs, StoppableCountDownLatch latch)
-  throws InterruptedException, ReplyException {
+  protected boolean basicWait(long msecs, StoppableCountDownLatch latch) throws InterruptedException, ReplyException {
     if (Thread.interrupted()) {
       throw new InterruptedException();
     }
@@ -706,10 +671,10 @@ public class ReplyProcessor21
       }
       if (msecs == 0) {
         boolean timedOut = false;
-        if (timeout <= timeSoFar+1) {
+        if (timeout <= timeSoFar + 1) {
           timedOut = !latch.await(10);
         }
-        if (timedOut || !latch.await(timeout-timeSoFar-1)) {
+        if (timedOut || !latch.await(timeout - timeSoFar - 1)) {
           this.dmgr.getCancelCriterion().checkCancelInProgress(null);
 
           // only start SUSPECT processing if severe alerts are enabled
@@ -721,7 +686,7 @@ public class ReplyProcessor21
           if (isSevereAlertProcessingEnabled() && severeAlertTimeout > 0) {
             boolean timedout;
             do {
-              this.severeAlertTimerReset = false;  // retry if this gets set by suspect processing (splitbrain requirement)
+              this.severeAlertTimerReset = false; // retry if this gets set by suspect processing (splitbrain requirement)
               timedout = !latch.await(severeAlertTimeout);
             } while (timedout && this.severeAlertTimerReset);
             if (timedout) {
@@ -731,28 +696,25 @@ public class ReplyProcessor21
               // that ejects the removed members
               latch.await();
             }
-          }
-          else {
+          } else {
             latch.await();
           }
           // Give an info message since timeout gave a warning.
           logger.info(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_WAIT_FOR_REPLIES_COMPLETED_1, shortName()));
         }
-      }
-      else {
+      } else {
         if (msecs > timeout) {
           if (!latch.await(timeout)) {
             timeout(isSevereAlertProcessingEnabled() && (severeAlertTimeout > 0), false);
             // after timeout alert, wait remaining time
-            if (!latch.await(msecs-timeout)) {
+            if (!latch.await(msecs - timeout)) {
               logger.info(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_WAIT_FOR_REPLIES_TIMING_OUT_AFTER_0_SEC, Long.valueOf(msecs / 1000)));
               return false;
             }
             // Give an info message since timeout gave a warning.
             logger.info(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_WAIT_FOR_REPLIES_COMPLETED_1, shortName()));
           }
-        }
-        else {
+        } else {
           if (!latch.await(msecs)) {
             return false;
           }
@@ -784,14 +746,11 @@ public class ReplyProcessor21
    * property "ack-threshold-exception" is set to true
    * @throws IllegalStateException if the processor is not registered to receive replies
    */
-  public final boolean waitForRepliesUninterruptibly(long p_msecs)
-      throws ReplyException {
-	  return waitForRepliesUninterruptibly(p_msecs, getLatch(), true);
+  public final boolean waitForRepliesUninterruptibly(long p_msecs) throws ReplyException {
+    return waitForRepliesUninterruptibly(p_msecs, getLatch(), true);
   }
-  
-  public final boolean waitForRepliesUninterruptibly(long p_msecs, 
-		  StoppableCountDownLatch latch, boolean doCleanUp)
-      throws ReplyException {
+
+  public final boolean waitForRepliesUninterruptibly(long p_msecs, StoppableCountDownLatch latch, boolean doCleanUp) throws ReplyException {
     if (this.keeperCleanedUp) {
       throw new IllegalStateException(LocalizedStrings.ReplyProcessor21_THIS_REPLY_PROCESSOR_HAS_ALREADY_BEEN_REMOVED_FROM_THE_PROCESSOR_KEEPER.toLocalizedString());
     }
@@ -811,8 +770,7 @@ public class ReplyProcessor21
             try {
               result = basicWait(msecs, latch);
               break;
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
               interrupted = true; // keep looping
               this.dmgr.getCancelCriterion().checkCancelInProgress(e);
               if (msecs > 0) {
@@ -824,15 +782,13 @@ public class ReplyProcessor21
                   break;
                 }
               }
-            }
-            finally {
+            } finally {
               if (interrupted) {
                 Thread.currentThread().interrupt();
               }
             }
           } // while
-        }
-        finally {
+        } finally {
           if (doCleanUp) {
             postWait();
           }
@@ -874,8 +830,7 @@ public class ReplyProcessor21
    * @throws InternalGemFireException if ack-threshold was exceeded and system
    * property "ack-threshold-exception" is set to true
    */
-  public final void waitForRepliesUninterruptibly()
-  throws ReplyException {
+  public final void waitForRepliesUninterruptibly() throws ReplyException {
     waitForRepliesUninterruptibly(0);
   }
 
@@ -989,10 +944,7 @@ public class ReplyProcessor21
 
   @Override
   public String toString() {
-    return "<" + shortName() + " " + this.getProcessorId() +
-      " waiting for " + numMembers() + " replies" +
-      (exception == null ? "" : (" exception: " + exception)) +
-      " from " + membersToString() + ">";
+    return "<" + shortName() + " " + this.getProcessorId() + " waiting for " + numMembers() + " replies" + (exception == null ? "" : (" exception: " + exception)) + " from " + membersToString() + ">";
   }
 
   /**
@@ -1005,7 +957,7 @@ public class ReplyProcessor21
     boolean removed = false;
     synchronized (this.members) {
       int cells = this.members.length;
-      for (int i=0; i<cells; i++) {
+      for (int i = 0; i < cells; i++) {
         InternalDistributedMember e = this.members[i];
         if (e != null && e.equals(m)) {
           this.members[i] = null;
@@ -1026,7 +978,7 @@ public class ReplyProcessor21
     int sz = 0;
     synchronized (this.members) {
       int cells = this.members.length;
-      for (int i=0; i<cells; i++) {
+      for (int i = 0; i < cells; i++) {
         if (this.members[i] != null) {
           sz++;
         }
@@ -1038,7 +990,7 @@ public class ReplyProcessor21
   protected boolean waitingOnMember(InternalDistributedMember id) {
     synchronized (this.members) {
       int cells = this.members.length;
-      for (int i=0; i<cells; i++) {
+      for (int i = 0; i < cells; i++) {
         if (id.equals(this.members[i])) {
           return true;
         }
@@ -1046,7 +998,6 @@ public class ReplyProcessor21
       return false;
     } // synchronized
   }
-
 
   /**
    * Return the time in sec to wait before sending an alert while
@@ -1065,8 +1016,8 @@ public class ReplyProcessor21
   protected int getSevereAlertThreshold() {
     return this.system.getConfig().getAckSevereAlertThreshold();
   }
-  
-  protected boolean processTimeout(){
+
+  protected boolean processTimeout() {
     return true;
   }
 
@@ -1077,20 +1028,19 @@ public class ReplyProcessor21
    * @param severeAlert whether to ask the membership manager to disconnect the unresponseive members
    */
   private void timeout(boolean suspectThem, boolean severeAlert) {
-    
-    if(!this.processTimeout())
+
+    if (!this.processTimeout())
       return;
-    
+
     Set activeMembers = getDistributionManagerIds();
 
     // an alert that will show up in the console
     long timeout = getAckWaitThreshold();
-    final Object[] msgArgs = new Object[] {Long.valueOf(timeout + (severeAlert? getSevereAlertThreshold() : 0)), this, getDistributionManager().getId(), activeMembers};
+    final Object[] msgArgs = new Object[] { Long.valueOf(timeout + (severeAlert ? getSevereAlertThreshold() : 0)), this, getDistributionManager().getId(), activeMembers };
     final StringId msg = LocalizedStrings.ReplyProcessor21_0_SEC_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLIES_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3;
     if (severeAlert) {
       logger.fatal(LocalizedMessage.create(msg, msgArgs));
-    }
-    else {
+    } else {
       logger.warn(LocalizedMessage.create(msg, msgArgs));
     }
     msgArgs[3] = "(omitted)";
@@ -1102,8 +1052,7 @@ public class ReplyProcessor21
     final Set suspectMembers;
     if (suspectThem || severeAlert) {
       suspectMembers = new HashSet();
-    }
-    else {
+    } else {
       suspectMembers = null;
     }
 
@@ -1111,12 +1060,9 @@ public class ReplyProcessor21
       for (int i = 0; i < this.members.length; i++) {
         if (this.members[i] != null) {
           if (!activeMembers.contains(this.members[i])) {
-            logger.warn(LocalizedMessage.create(
-              LocalizedStrings.ReplyProcessor21_VIEW_NO_LONGER_HAS_0_AS_AN_ACTIVE_MEMBER_SO_WE_WILL_NO_LONGER_WAIT_FOR_IT,
-              this.members[i]));
+            logger.warn(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_VIEW_NO_LONGER_HAS_0_AS_AN_ACTIVE_MEMBER_SO_WE_WILL_NO_LONGER_WAIT_FOR_IT, this.members[i]));
             memberDeparted(this.members[i], false);
-          }
-          else {
+          } else {
             if (suspectMembers != null) {
               suspectMembers.add(this.members[i]);
             }
@@ -1128,17 +1074,13 @@ public class ReplyProcessor21
     if (THROW_EXCEPTION_ON_TIMEOUT) {
       // init the cause to be a TimeoutException so catchers can determine cause
       TimeoutException cause = new TimeoutException(LocalizedStrings.TIMED_OUT_WAITING_FOR_ACKS.toLocalizedString());
-      throw new InternalGemFireException(LocalizedStrings.ReplyProcessor21_0_SEC_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLIES_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3
-          .toLocalizedString(msgArgs), cause);
-    }
-    else if (suspectThem) {
+      throw new InternalGemFireException(LocalizedStrings.ReplyProcessor21_0_SEC_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLIES_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3.toLocalizedString(msgArgs), cause);
+    } else if (suspectThem) {
       if (suspectMembers != null && suspectMembers.size() > 0) {
-        getDistributionManager().getMembershipManager()
-          .suspectMembers(suspectMembers, "Failed to respond within ack-wait-threshold");
+        getDistributionManager().getMembershipManager().suspectMembers(suspectMembers, "Failed to respond within ack-wait-threshold");
       }
     }
   }
-
 
   protected String membersToString() {
     StringBuffer sb = new StringBuffer("[");
@@ -1193,7 +1135,7 @@ public class ReplyProcessor21
   }
 
   public static boolean getShortSevereAlertProcessing() {
-    return ((Boolean)SevereAlertShorten.get()).booleanValue();
+    return ((Boolean) SevereAlertShorten.get()).booleanValue();
   }
 
   /**
@@ -1216,9 +1158,8 @@ public class ReplyProcessor21
    * processing.
    */
   public static boolean isSevereAlertProcessingForced() {
-    return ((Boolean)ForceSevereAlertProcessing.get()).booleanValue();
+    return ((Boolean) ForceSevereAlertProcessing.get()).booleanValue();
   }
-
 
   /**
    * Get the ack-severe-alert-threshold, in milliseconds,
@@ -1226,8 +1167,8 @@ public class ReplyProcessor21
    */
   public long getAckSevereAlertThresholdMS() {
     long disconnectTimeout = getSevereAlertThreshold() * 1000L;
-    if (disconnectTimeout > 0 && ((Boolean)SevereAlertShorten.get()).booleanValue()) {
-      disconnectTimeout = (long)(disconnectTimeout * PR_SEVERE_ALERT_RATIO);
+    if (disconnectTimeout > 0 && ((Boolean) SevereAlertShorten.get()).booleanValue()) {
+      disconnectTimeout = (long) (disconnectTimeout * PR_SEVERE_ALERT_RATIO);
     }
     return disconnectTimeout;
   }
@@ -1236,10 +1177,10 @@ public class ReplyProcessor21
     return this.severeAlertEnabled || isSevereAlertProcessingForced();
   }
 
-
   private final static ThreadLocal messageId = new ThreadLocal();
 
   private final static Integer VOID_RPID = Integer.valueOf(0);
+
   /**
    * Used by messages to store the id for the current message into a thread local.
    * This allows the comms layer to still send replies even when it can't deserialize
@@ -1248,13 +1189,16 @@ public class ReplyProcessor21
   public static void setMessageRPId(int id) {
     messageId.set(Integer.valueOf(id));
   }
+
   public static void initMessageRPId() {
     messageId.set(VOID_RPID);
   }
+
   public static void clearMessageRPId() {
     messageId.set(VOID_RPID);
     // messageId.remove(); change to use remove when we drop 1.4 support
   }
+
   /**
    * Returns the reply processor id for the message currently being read.
    * Returns 0 if no id exists.
@@ -1263,7 +1207,7 @@ public class ReplyProcessor21
     int result = 0;
     Object v = messageId.get();
     if (v != null) {
-      result = ((Integer)v).intValue();
+      result = ((Integer) v).intValue();
     }
     return result;
   }

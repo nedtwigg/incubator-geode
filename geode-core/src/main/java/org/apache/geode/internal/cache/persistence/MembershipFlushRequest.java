@@ -43,29 +43,26 @@ import org.apache.geode.internal.cache.ProxyBucketRegion;
 /**
  *
  */
-public class MembershipFlushRequest extends
-  PooledDistributionMessage implements MessageWithReply {
+public class MembershipFlushRequest extends PooledDistributionMessage implements MessageWithReply {
 
   private String regionPath;
   private int processorId;
 
   public MembershipFlushRequest() {
   }
-  
+
   public MembershipFlushRequest(String regionPath, int processorId) {
     this.regionPath = regionPath;
     this.processorId = processorId;
   }
 
-  public static void send(
-      Set<InternalDistributedMember> recipients, DM dm, String regionPath) throws ReplyException {
+  public static void send(Set<InternalDistributedMember> recipients, DM dm, String regionPath) throws ReplyException {
     ReplyProcessor21 processor = new ReplyProcessor21(dm, recipients);
     MembershipFlushRequest msg = new MembershipFlushRequest(regionPath, processor.getProcessorId());
     msg.setRecipients(recipients);
     dm.putOutgoing(msg);
     processor.waitForRepliesUninterruptibly();
   }
-  
 
   @Override
   protected void process(DistributionManager dm) {
@@ -79,40 +76,34 @@ public class MembershipFlushRequest extends
 
       Cache cache = CacheFactory.getInstance(dm.getSystem());
       PartitionedRegion region = (PartitionedRegion) cache.getRegion(this.regionPath);
-      if(region != null && region.getRegionAdvisor().isInitialized()) {
+      if (region != null && region.getRegionAdvisor().isInitialized()) {
         ProxyBucketRegion[] proxyBuckets = region.getRegionAdvisor().getProxyBucketArray();
         // buckets are null if initPRInternals is still not complete
         if (proxyBuckets != null) {
           for (ProxyBucketRegion bucket : proxyBuckets) {
-            final BucketPersistenceAdvisor persistenceAdvisor = bucket
-                .getPersistenceAdvisor();
+            final BucketPersistenceAdvisor persistenceAdvisor = bucket.getPersistenceAdvisor();
             if (persistenceAdvisor != null) {
               persistenceAdvisor.flushMembershipChanges();
             }
           }
         }
       }
-    }
-    catch(RegionDestroyedException e) {
+    } catch (RegionDestroyedException e) {
       //ignore
-    }
-    catch(CancelException e) {
+    } catch (CancelException e) {
       //ignore
-    }
-    catch(VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch(Throwable t) {
+    } catch (Throwable t) {
       SystemFailure.checkFailure();
       exception = new ReplyException(t);
-    }
-    finally {
+    } finally {
       LocalRegion.setThreadInitLevelRequirement(oldLevel);
       ReplyMessage replyMsg = new ReplyMessage();
       replyMsg.setRecipient(getSender());
       replyMsg.setProcessorId(processorId);
-      if(exception != null) {
+      if (exception != null) {
         replyMsg.setException(exception);
       }
       dm.putOutgoing(replyMsg);
@@ -122,10 +113,9 @@ public class MembershipFlushRequest extends
   public int getDSFID() {
     return PERSISTENT_MEMBERSHIP_FLUSH_REQUEST;
   }
-  
+
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     processorId = in.readInt();
     regionPath = DataSerializer.readString(in);

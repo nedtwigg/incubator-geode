@@ -141,7 +141,7 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
    */
   @Deprecated
   public final void setSystem(final Properties props, final DistributedSystem ds) { // TODO: override getDistributedSystemProperties and then delete
-    system = (InternalDistributedSystem)ds;
+    system = (InternalDistributedSystem) ds;
     lastSystemProperties = props;
     lastSystemCreatedInTest = getTestClass(); // used to be getDeclaringClass()
   }
@@ -171,42 +171,34 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
         String testMethod = getTestMethodName();
         String testName = lastSystemCreatedInTest.getName() + '-' + testMethod;
         String oldLogFile = p.getProperty(LOG_FILE);
-        p.put(LOG_FILE,
-                oldLogFile.replace("system.log", testName+".log"));
+        p.put(LOG_FILE, oldLogFile.replace("system.log", testName + ".log"));
         String oldStatFile = p.getProperty(STATISTIC_ARCHIVE_FILE);
-        p.put(STATISTIC_ARCHIVE_FILE,
-                oldStatFile.replace("statArchive.gfs", testName+".gfs"));
+        p.put(STATISTIC_ARCHIVE_FILE, oldStatFile.replace("statArchive.gfs", testName + ".gfs"));
       }
-      system = (InternalDistributedSystem)DistributedSystem.connect(p);
+      system = (InternalDistributedSystem) DistributedSystem.connect(p);
       lastSystemProperties = p;
     } else {
       boolean needNewSystem = false;
-      if(!getTestClass().equals(lastSystemCreatedInTest)) { // used to be getDeclaringClass()
+      if (!getTestClass().equals(lastSystemCreatedInTest)) { // used to be getDeclaringClass()
         Properties newProps = DistributedTestUtils.getAllDistributedSystemProperties(props);
         needNewSystem = !newProps.equals(lastSystemProperties);
-        if(needNewSystem) {
-          LogWriterUtils.getLogWriter().info(
-                  "Test class has changed and the new DS properties are not an exact match. "
-                          + "Forcing DS disconnect. Old props = "
-                          + lastSystemProperties + "new props=" + newProps);
+        if (needNewSystem) {
+          LogWriterUtils.getLogWriter().info("Test class has changed and the new DS properties are not an exact match. " + "Forcing DS disconnect. Old props = " + lastSystemProperties + "new props=" + newProps);
         }
       } else {
         Properties activeProps = system.getProperties();
-        for (Iterator iter = props.entrySet().iterator();
-             iter.hasNext(); ) {
+        for (Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
           Map.Entry entry = (Map.Entry) iter.next();
           String key = (String) entry.getKey();
           String value = (String) entry.getValue();
           if (!value.equals(activeProps.getProperty(key))) {
             needNewSystem = true;
-            LogWriterUtils.getLogWriter().info("Forcing DS disconnect. For property " + key
-                    + " old value = " + activeProps.getProperty(key)
-                    + " new value = " + value);
+            LogWriterUtils.getLogWriter().info("Forcing DS disconnect. For property " + key + " old value = " + activeProps.getProperty(key) + " new value = " + value);
             break;
           }
         }
       }
-      if(needNewSystem) {
+      if (needNewSystem) {
         // the current system does not meet our needs to disconnect and
         // call recursively to get a new system.
         LogWriterUtils.getLogWriter().info("Disconnecting from current DS in order to make a new one");
@@ -287,7 +279,7 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
 
   public static final void disconnectAllFromDS() {
     disconnectFromDS();
-    Invoke.invokeInEveryVM("disconnectFromDS", ()->disconnectFromDS());
+    Invoke.invokeInEveryVM("disconnectFromDS", () -> disconnectFromDS());
   }
 
   /**
@@ -378,7 +370,7 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
       Host host = Host.getHost(hostIndex);
       for (int vmIndex = 0; vmIndex < host.getVMCount(); vmIndex++) {
         final String vmDefaultDiskStoreName = getDefaultDiskStoreName(hostIndex, vmIndex, className, methodName);
-        host.getVM(vmIndex).invoke("setupVM", ()->setUpVM(methodName, vmDefaultDiskStoreName));
+        host.getVM(vmIndex).invoke("setupVM", () -> setUpVM(methodName, vmDefaultDiskStoreName));
       }
     }
 
@@ -422,34 +414,33 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
   }
 
   private final void logTestStart() {
-    System.out.println("\n\n[setup] START TEST " + getTestClass().getSimpleName()+"."+testMethodName+"\n\n");
+    System.out.println("\n\n[setup] START TEST " + getTestClass().getSimpleName() + "." + testMethodName + "\n\n");
   }
 
   private static final void setUpCreationStackGenerator() {
     // the following is moved from InternalDistributedSystem to fix #51058
-    InternalDistributedSystem.TEST_CREATION_STACK_GENERATOR.set(
-        new InternalDistributedSystem.CreationStackGenerator() {
-          @Override
-          public Throwable generateCreationStack(final DistributionConfig config) {
-            final StringBuilder sb = new StringBuilder();
-            final String[] validAttributeNames = config.getAttributeNames();
-            for (int i = 0; i < validAttributeNames.length; i++) {
-              final String attName = validAttributeNames[i];
-              final Object actualAtt = config.getAttributeObject(attName);
-              String actualAttStr = actualAtt.toString();
-              sb.append("  ");
-              sb.append(attName);
-              sb.append("=\"");
-              if (actualAtt.getClass().isArray()) {
-                actualAttStr = InternalDistributedSystem.arrayToString(actualAtt);
-              }
-              sb.append(actualAttStr);
-              sb.append("\"");
-              sb.append("\n");
-            }
-            return new Throwable("Creating distributed system with the following configuration:\n" + sb.toString());
+    InternalDistributedSystem.TEST_CREATION_STACK_GENERATOR.set(new InternalDistributedSystem.CreationStackGenerator() {
+      @Override
+      public Throwable generateCreationStack(final DistributionConfig config) {
+        final StringBuilder sb = new StringBuilder();
+        final String[] validAttributeNames = config.getAttributeNames();
+        for (int i = 0; i < validAttributeNames.length; i++) {
+          final String attName = validAttributeNames[i];
+          final Object actualAtt = config.getAttributeObject(attName);
+          String actualAttStr = actualAtt.toString();
+          sb.append("  ");
+          sb.append(attName);
+          sb.append("=\"");
+          if (actualAtt.getClass().isArray()) {
+            actualAttStr = InternalDistributedSystem.arrayToString(actualAtt);
           }
-        });
+          sb.append(actualAttStr);
+          sb.append("\"");
+          sb.append("\n");
+        }
+        return new Throwable("Creating distributed system with the following configuration:\n" + sb.toString());
+      }
+    });
   }
 
   /**
@@ -486,7 +477,7 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
   }
 
   private final void tearDownDistributedTestCase() throws Exception {
-    Invoke.invokeInEveryVM("tearDownCreationStackGenerator", ()->tearDownCreationStackGenerator());
+    Invoke.invokeInEveryVM("tearDownCreationStackGenerator", () -> tearDownCreationStackGenerator());
     if (logPerTest) {
       disconnectAllFromDS();
     }
@@ -537,8 +528,8 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
 
   private static final void cleanupAllVms() {
     tearDownVM();
-    Invoke.invokeInEveryVM("tearDownVM", ()->tearDownVM());
-    Invoke.invokeInLocator(()->{
+    Invoke.invokeInEveryVM("tearDownVM", () -> tearDownVM());
+    Invoke.invokeInLocator(() -> {
       DistributionMessageObserver.setInstance(null);
       DistributedTestUtils.unregisterInstantiatorsInThisVM();
     });
@@ -593,10 +584,10 @@ public abstract class JUnit4DistributedTestCase implements DistributedTestFixtur
     if (cache != null && !cache.isClosed()) {
       // try to destroy the root regions first so that we clean up any persistent files.
       for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext();) {
-        Region root = (Region)itr.next();
+        Region root = (Region) itr.next();
         String regionFullPath = root == null ? null : root.getFullPath();
         // for colocated regions you can't locally destroy a partitioned region.
-        if(root.isDestroyed() || root instanceof HARegion || root instanceof PartitionedRegion) {
+        if (root.isDestroyed() || root instanceof HARegion || root instanceof PartitionedRegion) {
           continue;
         }
         try {

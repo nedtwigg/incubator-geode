@@ -79,8 +79,7 @@ public class DataCommandsOverHttpDistributedTest extends CliCommandTestBase {
         @Override
         public boolean done() {
           final ManagementService service = ManagementService.getManagementService(getCache());
-          final DistributedRegionMXBean bean = service.getDistributedRegionMXBean(
-            Region.SEPARATOR + REBALANCE_REGION_NAME);
+          final DistributedRegionMXBean bean = service.getDistributedRegionMXBean(Region.SEPARATOR + REBALANCE_REGION_NAME);
           if (bean == null) {
             getLogWriter().info("Still probing for checkRegionMBeans ManagerMBean");
             return false;
@@ -100,8 +99,7 @@ public class DataCommandsOverHttpDistributedTest extends CliCommandTestBase {
         }
       };
       waitForCriterion(waitForMaangerMBean, 2 * 60 * 1000, 2000, true);
-      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean(
-        "/" + REBALANCE_REGION_NAME);
+      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean("/" + REBALANCE_REGION_NAME);
       assertNotNull(bean);
     }
   };

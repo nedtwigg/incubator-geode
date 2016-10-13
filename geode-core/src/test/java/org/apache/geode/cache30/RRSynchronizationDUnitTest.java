@@ -44,11 +44,9 @@ import org.apache.geode.test.dunit.*;
 @Category(DistributedTest.class)
 public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
   static enum TestType {
-    IN_MEMORY,
-    OVERFLOW,
-    PERSISTENT
+    IN_MEMORY, OVERFLOW, PERSISTENT
   };
-  
+
   public static LocalRegion TestRegion;
 
   public RRSynchronizationDUnitTest() {
@@ -66,18 +64,17 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
   public void testThatRegionsSyncOnPeerLoss() {
     doRegionsSyncOnPeerLoss(TestType.IN_MEMORY);
   }
-  
+
   @Test
   public void testThatRegionsSyncOnPeerLossWithPersistence() {
     doRegionsSyncOnPeerLoss(TestType.PERSISTENT);
   }
-  
+
   @Test
   public void testThatRegionsSyncOnPeerLossWithOverflow() {
     doRegionsSyncOnPeerLoss(TestType.OVERFLOW);
   }
-  
-  
+
   /**
    * We hit this problem in bug #45669.  delta-GII was not being
    * distributed in the 7.0 release.
@@ -88,56 +85,53 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     final String name = this.getUniqueName() + "Region";
 
     disconnectAllFromDS();
-    
+
     try {
       createRegion(vm0, name, typeOfTest);
       createRegion(vm1, name, typeOfTest);
       createRegion(vm2, name, typeOfTest);
-  
+
       createEntry1(vm0);
-  
-  
+
       // cause one of the VMs to throw away the next operation
       InternalDistributedMember crashedID = getID(vm0);
       VersionSource crashedVersionID = getVersionID(vm0);
       createEntry2(vm1, crashedID, crashedVersionID);
-  
+
       // Now we crash the member who "modified" vm1's cache.
       // The other replicates should perform a delta-GII for the lost member and
       // get back in sync
       DistributedTestUtils.crashDistributedSystem(vm0);
-  
+
       verifySynchronized(vm2, crashedID);
     } finally {
       disconnectAllFromDS();
     }
   }
-  
-  
+
   private boolean createEntry1(VM vm) {
-    return (Boolean)vm.invoke(new SerializableCallable("create entry1") {
+    return (Boolean) vm.invoke(new SerializableCallable("create entry1") {
       public Object call() {
         TestRegion.create("Object1", Integer.valueOf(1));
         return true;
       }
     });
   }
-  
+
   private InternalDistributedMember getID(VM vm) {
-    return (InternalDistributedMember)vm.invoke(new SerializableCallable("get dmID") {
+    return (InternalDistributedMember) vm.invoke(new SerializableCallable("get dmID") {
       public Object call() {
         return TestRegion.getCache().getMyId();
       }
     });
   }
-  
-  
+
   private VersionSource getVersionID(VM vm) {
-    return (VersionSource)vm.invoke(new SerializableCallable("get versionID") {
+    return (VersionSource) vm.invoke(new SerializableCallable("get versionID") {
       public Object call() {
         return TestRegion.getVersionMember();
       }
@@ -145,11 +139,11 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
   }
 
   private boolean createEntry2(VM vm, final InternalDistributedMember forMember, final VersionSource memberVersionID) {
-    return (Boolean)vm.invoke(new SerializableCallable("create entry2") {
+    return (Boolean) vm.invoke(new SerializableCallable("create entry2") {
       public Object call() {
         // create a fake event that looks like it came from the lost member and apply it to
         // this cache
-        DistributedRegion dr = (DistributedRegion)TestRegion;
+        DistributedRegion dr = (DistributedRegion) TestRegion;
         VersionTag tag = new VMVersionTag();
         tag.setMemberID(memberVersionID);
         tag.setRegionVersion(2);
@@ -161,7 +155,7 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
         event.setVersionTag(tag);
         dr.getRegionMap().basicPut(event, System.currentTimeMillis(), true, false, null, false, false);
         event.release();
-        
+
         // now create a tombstone so we can be sure these are transferred in delta-GII
         tag = new VMVersionTag();
         tag.setMemberID(memberVersionID);
@@ -182,14 +176,15 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private void verifySynchronized(VM vm, final InternalDistributedMember crashedMember) {
     vm.invoke(new SerializableCallable("check that synchronization happened") {
       public Object call() throws Exception {
-        final DistributedRegion dr = (DistributedRegion)TestRegion;
+        final DistributedRegion dr = (DistributedRegion) TestRegion;
         Wait.waitForCriterion(new WaitCriterion() {
           String waitingFor = "crashed member is still in membership view: " + crashedMember;
           boolean dumped = false;
+
           public boolean done() {
             if (TestRegion.getCache().getDistributionManager().isCurrentMember(crashedMember)) {
               LogWriterUtils.getLogWriter().info(waitingFor);
@@ -221,22 +216,22 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
             }
             return true;
           }
+
           public String description() {
             return waitingFor;
           }
-          
+
         }, 30000, 5000, true);
         return null;
       }
     });
   }
-        
-        
+
   private void createRegion(VM vm, final String regionName, final TestType typeOfTest) {
     SerializableCallable createRegion = new SerializableCallable() {
       @SuppressWarnings("deprecation")
       public Object call() throws Exception {
-//        TombstoneService.VERBOSE = true;
+        //        TombstoneService.VERBOSE = true;
         AttributesFactory af = new AttributesFactory();
         af.setScope(Scope.DISTRIBUTED_NO_ACK);
         switch (typeOfTest) {
@@ -248,15 +243,14 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
           break;
         case OVERFLOW:
           af.setDataPolicy(DataPolicy.REPLICATE);
-          af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(
-              5, EvictionAction.OVERFLOW_TO_DISK));
+          af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
           break;
         }
-        TestRegion = (LocalRegion)createRootRegion(regionName, af.create());
+        TestRegion = (LocalRegion) createRootRegion(regionName, af.create());
         return null;
       }
     };
     vm.invoke(createRegion);
   }
-  
+
 }

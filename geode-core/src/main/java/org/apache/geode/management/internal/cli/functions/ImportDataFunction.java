@@ -33,19 +33,18 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
  * Uses the RegionSnapshotService to import the data
  *
  */
-public class ImportDataFunction extends FunctionAdapter implements
-    InternalEntity {
+public class ImportDataFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
   public void execute(FunctionContext context) {
-    final String [] args = (String [])context.getArguments();
+    final String[] args = (String[]) context.getArguments();
     final String regionName = args[0];
     final String importFileName = args[1];
-    
+
     try {
       final Cache cache = CacheFactory.getAnyInstance();
-      final Region<?,?> region = cache.getRegion(regionName);
+      final Region<?, ?> region = cache.getRegion(regionName);
       final String hostName = cache.getDistributedSystem().getDistributedMember().getHost();
       if (region != null) {
         RegionSnapshotService<?, ?> snapshotService = region.getSnapshotService();
@@ -56,7 +55,7 @@ public class ImportDataFunction extends FunctionAdapter implements
       } else {
         throw new IllegalArgumentException(CliStrings.format(CliStrings.REGION_NOT_FOUND, regionName));
       }
-      
+
     } catch (Exception e) {
       context.getResultSender().sendException(e);
     }

@@ -26,10 +26,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-
 public class MultithreadedTester {
 
-  
   public static Collection<Object> runMultithreaded(Collection<Callable> callables) throws InterruptedException {
     final CountDownLatch allRunnablesAreSubmitted = new CountDownLatch(callables.size());
     final CountDownLatch callablesComplete = new CountDownLatch(callables.size());
@@ -42,11 +40,9 @@ public class MultithreadedTester {
           allRunnablesAreSubmitted.countDown();
           allRunnablesAreSubmitted.await(60, TimeUnit.SECONDS);
           return callable.call();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
           return t;
-        }
-        finally {
+        } finally {
           callablesComplete.countDown();
         }
       }));
@@ -60,11 +56,10 @@ public class MultithreadedTester {
 
   private static Collection<Object> convertFutureToResult(final Collection<Future> futures) {
     List<Object> results = new LinkedList<Object>();
-    futures.forEach(future-> {
+    futures.forEach(future -> {
       try {
         results.add(future.get());
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         results.add(e);
       }
     });

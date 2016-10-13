@@ -40,7 +40,7 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * @since GemFire 3.5
  */
 public final class AlertLevelChangeMessage extends SerialDistributionMessage {
-  
+
   private static final Logger logger = LogService.getLogger();
 
   /** The new alert level */
@@ -82,14 +82,13 @@ public final class AlertLevelChangeMessage extends SerialDistributionMessage {
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.newLevel = in.readInt();
   }
 
   @Override
   public String toString() {
-    return LocalizedStrings.AlertLevelChangeMessage_CHANGING_ALERT_LEVEL_TO_0.toLocalizedString(AlertLevel.forSeverity(this.newLevel)); 
+    return LocalizedStrings.AlertLevelChangeMessage_CHANGING_ALERT_LEVEL_TO_0.toLocalizedString(AlertLevel.forSeverity(this.newLevel));
   }
 }

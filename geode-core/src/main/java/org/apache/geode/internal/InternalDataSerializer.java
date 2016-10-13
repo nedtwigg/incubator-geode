@@ -129,7 +129,7 @@ import org.apache.geode.pdx.internal.TypeRegistry;
  */
 public abstract class InternalDataSerializer extends DataSerializer implements DSCODE {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final Set loggedClasses = new HashSet();
 
   /**
@@ -137,7 +137,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * find a DataSerializer during serialization.
    */
   private static final ConcurrentHashMap<String, DataSerializer> classesToSerializers = new ConcurrentHashMap<String, DataSerializer>();
-  
+
   private static final String serializationVersionTxt = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "serializationVersion");
 
   /**
@@ -151,16 +151,16 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * @since GemFire 6.6.2
    */
   private static enum SERIALIZATION_VERSION {
-    vINVALID,
-    v660, // includes 6.6.0.x and 6.6.1.x. Note that no serialization changes were made in 6.6 until 6.6.2
+    vINVALID, v660, // includes 6.6.0.x and 6.6.1.x. Note that no serialization changes were made in 6.6 until 6.6.2
     v662 // 6.6.2.x or later
     // NOTE if you add a new constant make sure and update "latestVersion".
   }
+
   /**
    * Change this constant to be the last one in SERIALIZATION_VERSION
    */
   private static final SERIALIZATION_VERSION latestVersion = SERIALIZATION_VERSION.v662;
-  
+
   private static SERIALIZATION_VERSION calculateSerializationVersion() {
     if (serializationVersionTxt == null || serializationVersionTxt.equals("")) {
       return latestVersion;
@@ -172,12 +172,13 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       return SERIALIZATION_VERSION.vINVALID;
     }
   }
+
   private static final SERIALIZATION_VERSION serializationVersion = calculateSerializationVersion();
 
   public static boolean is662SerializationEnabled() {
     return serializationVersion.ordinal() >= SERIALIZATION_VERSION.v662.ordinal();
   }
-  
+
   public static void checkSerializationVersion() {
     if (serializationVersion == SERIALIZATION_VERSION.vINVALID) {
       throw new IllegalArgumentException("The system property \"gemfire.serializationVersion\" was set to \"" + serializationVersionTxt + "\" which is not a valid serialization version. Valid versions must start with \"6.6.0\", \"6.6.1\", or \"6.6.2\"");
@@ -187,456 +188,423 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   static {
     initializeWellKnownSerializers();
   }
-  private static void initializeWellKnownSerializers() { 
+
+  private static void initializeWellKnownSerializers() {
     // ArrayBlockingQueue does not have zero-arg constructor
     // LinkedBlockingQueue does have zero-arg constructor but no way to get capacity
-  
-    classesToSerializers.put("java.lang.String",
-                             new WellKnownPdxDS() {
+
+    classesToSerializers.put("java.lang.String", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 try {
-                                   writeString((String)o, out);
-                                 }
-                                 catch (UTFDataFormatException ex) {
-                                   // See bug 30428
-                                   String s = "While writing a String of length " +
-                                     ((String)o).length();
-                                   UTFDataFormatException ex2 = new UTFDataFormatException(s);
-                                   ex2.initCause(ex);
-                                   throw ex2;
-                                 }
-                                 return true;
-                               }});
-    classesToSerializers.put("java.net.InetAddress",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        try {
+          writeString((String) o, out);
+        } catch (UTFDataFormatException ex) {
+          // See bug 30428
+          String s = "While writing a String of length " + ((String) o).length();
+          UTFDataFormatException ex2 = new UTFDataFormatException(s);
+          ex2.initCause(ex);
+          throw ex2;
+        }
+        return true;
+      }
+    });
+    classesToSerializers.put("java.net.InetAddress", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 InetAddress address = (InetAddress) o;
-                                 out.writeByte(INET_ADDRESS);
-                                 writeInetAddress(address, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.net.Inet4Address",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        InetAddress address = (InetAddress) o;
+        out.writeByte(INET_ADDRESS);
+        writeInetAddress(address, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.net.Inet4Address", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 InetAddress address = (InetAddress) o;
-                                 out.writeByte(INET_ADDRESS);
-                                 writeInetAddress(address, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.net.Inet6Address",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        InetAddress address = (InetAddress) o;
+        out.writeByte(INET_ADDRESS);
+        writeInetAddress(address, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.net.Inet6Address", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 InetAddress address = (InetAddress) o;
-                                 out.writeByte(INET_ADDRESS);
-                                 writeInetAddress(address, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Class",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        InetAddress address = (InetAddress) o;
+        out.writeByte(INET_ADDRESS);
+        writeInetAddress(address, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Class", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Class c = (Class) o;
-                                 if (c.isPrimitive()) {
-                                   writePrimitiveClass(c, out);
-                                 }
-                                 else {
-                                   out.writeByte(CLASS);
-                                   writeClass(c, out);
-                                 }
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Boolean",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Class c = (Class) o;
+        if (c.isPrimitive()) {
+          writePrimitiveClass(c, out);
+        } else {
+          out.writeByte(CLASS);
+          writeClass(c, out);
+        }
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Boolean", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Boolean value = (Boolean) o;
-                                 out.writeByte(BOOLEAN);
-                                 writeBoolean(value, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Character",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Boolean value = (Boolean) o;
+        out.writeByte(BOOLEAN);
+        writeBoolean(value, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Character", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Character value = (Character) o;
-                                 out.writeByte(CHARACTER);
-                                 writeCharacter(value, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Byte",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Character value = (Character) o;
+        out.writeByte(CHARACTER);
+        writeCharacter(value, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Byte", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Byte value = (Byte) o;
-                                 out.writeByte(BYTE);
-                                 writeByte(value, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Short",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Byte value = (Byte) o;
+        out.writeByte(BYTE);
+        writeByte(value, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Short", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Short value = (Short) o;
-                                 out.writeByte(SHORT);
-                                 writeShort(value, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Integer",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Short value = (Short) o;
+        out.writeByte(SHORT);
+        writeShort(value, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Integer", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Integer value = (Integer) o;
-                                 out.writeByte(INTEGER);
-                                 writeInteger(value, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Long",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Integer value = (Integer) o;
+        out.writeByte(INTEGER);
+        writeInteger(value, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Long", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Long value = (Long) o;
-                                 out.writeByte(LONG);
-                                 writeLong(value, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Float",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Long value = (Long) o;
+        out.writeByte(LONG);
+        writeLong(value, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Float", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Float value = (Float) o;
-                                 out.writeByte(FLOAT);
-                                 writeFloat(value, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.lang.Double",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Float value = (Float) o;
+        out.writeByte(FLOAT);
+        writeFloat(value, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.lang.Double", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Double value = (Double) o;
-                                 out.writeByte(DOUBLE);
-                                 writeDouble(value, out);
-                                 return true;
-                               }});
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Double value = (Double) o;
+        out.writeByte(DOUBLE);
+        writeDouble(value, out);
+        return true;
+      }
+    });
     classesToSerializers.put("[Z", // boolean[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(BOOLEAN_ARRAY);
-                                 writeBooleanArray((boolean[]) o, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            out.writeByte(BOOLEAN_ARRAY);
+            writeBooleanArray((boolean[]) o, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[B", // byte[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 byte[] array = (byte[]) o;
-                                 out.writeByte(BYTE_ARRAY);
-                                 writeByteArray(array, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            byte[] array = (byte[]) o;
+            out.writeByte(BYTE_ARRAY);
+            writeByteArray(array, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[C", // char[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(CHAR_ARRAY);
-                                 writeCharArray((char[]) o, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            out.writeByte(CHAR_ARRAY);
+            writeCharArray((char[]) o, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[D", // double[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 double[] array = (double[]) o;
-                                 out.writeByte(DOUBLE_ARRAY);
-                                 writeDoubleArray(array, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            double[] array = (double[]) o;
+            out.writeByte(DOUBLE_ARRAY);
+            writeDoubleArray(array, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[F", // float[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 float[] array = (float[]) o;
-                                 out.writeByte(FLOAT_ARRAY);
-                                 writeFloatArray(array, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            float[] array = (float[]) o;
+            out.writeByte(FLOAT_ARRAY);
+            writeFloatArray(array, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[I", // int[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 int[] array = (int[]) o;
-                                 out.writeByte(INT_ARRAY);
-                                 writeIntArray(array, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            int[] array = (int[]) o;
+            out.writeByte(INT_ARRAY);
+            writeIntArray(array, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[J", // long[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 long[] array = (long[]) o;
-                                 out.writeByte(LONG_ARRAY);
-                                 writeLongArray(array, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            long[] array = (long[]) o;
+            out.writeByte(LONG_ARRAY);
+            writeLongArray(array, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[S", // short[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 short[] array = (short[]) o;
-                                 out.writeByte(SHORT_ARRAY);
-                                 writeShortArray(array, out);
-                                 return true;
-                               }});
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            short[] array = (short[]) o;
+            out.writeByte(SHORT_ARRAY);
+            writeShortArray(array, out);
+            return true;
+          }
+        });
     classesToSerializers.put("[Ljava.lang.String;", // String[]
-                             new WellKnownPdxDS() {
-      @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 String[] array = (String[]) o;
-                                 out.writeByte(STRING_ARRAY);
-                                 writeStringArray(array, out);
-                                 return true;
-                               }});
-    classesToSerializers.put(TimeUnit.NANOSECONDS.getClass().getName(),
-        new WellKnownDS() {
-          @Override public final boolean toData(Object o, DataOutput out)
-            throws IOException {
-            out.writeByte(TIME_UNIT);
-            out.writeByte(TIME_UNIT_NANOSECONDS);
+        new WellKnownPdxDS() {
+          @Override
+          public final boolean toData(Object o, DataOutput out) throws IOException {
+            String[] array = (String[]) o;
+            out.writeByte(STRING_ARRAY);
+            writeStringArray(array, out);
             return true;
-          }});
-    classesToSerializers.put(TimeUnit.MICROSECONDS.getClass().getName(),
-        new WellKnownDS() {
-          @Override public final boolean toData(Object o, DataOutput out)
-            throws IOException {
-            out.writeByte(TIME_UNIT);
-            out.writeByte(TIME_UNIT_MICROSECONDS);
-            return true;
-          }});
-    classesToSerializers.put(TimeUnit.MILLISECONDS.getClass().getName(),
-        new WellKnownDS() {
-          @Override public final boolean toData(Object o, DataOutput out)
-            throws IOException {
-            out.writeByte(TIME_UNIT);
-            out.writeByte(TIME_UNIT_MILLISECONDS);
-            return true;
-          }});
-    classesToSerializers.put(TimeUnit.SECONDS.getClass().getName(),
-        new WellKnownDS() {
-          @Override public final boolean toData(Object o, DataOutput out)
-            throws IOException {
-            out.writeByte(TIME_UNIT);
-            out.writeByte(TIME_UNIT_SECONDS);
-            return true;
-          }});
-    classesToSerializers.put("java.util.Date",
-                             new WellKnownPdxDS() {
+          }
+        });
+    classesToSerializers.put(TimeUnit.NANOSECONDS.getClass().getName(), new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Date date = (Date) o;
-                                 out.writeByte(DATE);
-                                 writeDate(date, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.io.File",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(TIME_UNIT);
+        out.writeByte(TIME_UNIT_NANOSECONDS);
+        return true;
+      }
+    });
+    classesToSerializers.put(TimeUnit.MICROSECONDS.getClass().getName(), new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 File file = (File) o;
-                                 out.writeByte(FILE);
-                                 writeFile(file, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.ArrayList",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(TIME_UNIT);
+        out.writeByte(TIME_UNIT_MICROSECONDS);
+        return true;
+      }
+    });
+    classesToSerializers.put(TimeUnit.MILLISECONDS.getClass().getName(), new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 ArrayList list = (ArrayList) o;
-                                 out.writeByte(ARRAY_LIST);
-                                 writeArrayList(list, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.LinkedList",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(TIME_UNIT);
+        out.writeByte(TIME_UNIT_MILLISECONDS);
+        return true;
+      }
+    });
+    classesToSerializers.put(TimeUnit.SECONDS.getClass().getName(), new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 LinkedList list = (LinkedList) o;
-                                 out.writeByte(LINKED_LIST);
-                                 writeLinkedList(list, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.Vector",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(TIME_UNIT);
+        out.writeByte(TIME_UNIT_SECONDS);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.Date", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(VECTOR);
-                                 writeVector((Vector) o, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.Stack",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Date date = (Date) o;
+        out.writeByte(DATE);
+        writeDate(date, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.io.File", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(STACK);
-                                 writeStack((Stack) o, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.HashSet",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        File file = (File) o;
+        out.writeByte(FILE);
+        writeFile(file, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.ArrayList", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 HashSet list = (HashSet) o;
-                                 out.writeByte(HASH_SET);
-                                 writeHashSet(list, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.LinkedHashSet",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        ArrayList list = (ArrayList) o;
+        out.writeByte(ARRAY_LIST);
+        writeArrayList(list, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.LinkedList", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(LINKED_HASH_SET);
-                                 writeLinkedHashSet((LinkedHashSet) o, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.HashMap",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        LinkedList list = (LinkedList) o;
+        out.writeByte(LINKED_LIST);
+        writeLinkedList(list, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.Vector", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 HashMap list = (HashMap) o;
-                                 out.writeByte(HASH_MAP);
-                                 writeHashMap(list, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.IdentityHashMap",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(VECTOR);
+        writeVector((Vector) o, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.Stack", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(IDENTITY_HASH_MAP);
-                                 writeIdentityHashMap((IdentityHashMap) o, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.Hashtable",
-                             new WellKnownPdxDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(STACK);
+        writeStack((Stack) o, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.HashSet", new WellKnownPdxDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(HASH_TABLE);
-                                 writeHashtable((Hashtable) o, out);
-                                 return true;
-                               }});
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        HashSet list = (HashSet) o;
+        out.writeByte(HASH_SET);
+        writeHashSet(list, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.LinkedHashSet", new WellKnownPdxDS() {
+      @Override
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(LINKED_HASH_SET);
+        writeLinkedHashSet((LinkedHashSet) o, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.HashMap", new WellKnownPdxDS() {
+      @Override
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        HashMap list = (HashMap) o;
+        out.writeByte(HASH_MAP);
+        writeHashMap(list, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.IdentityHashMap", new WellKnownDS() {
+      @Override
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(IDENTITY_HASH_MAP);
+        writeIdentityHashMap((IdentityHashMap) o, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.Hashtable", new WellKnownPdxDS() {
+      @Override
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(HASH_TABLE);
+        writeHashtable((Hashtable) o, out);
+        return true;
+      }
+    });
     // We can't add this here because it would cause writeObject to not be compatible with previous releases
-//    classesToSerializers.put("java.util.concurrent.ConcurrentHashMap",
-//                             new WellKnownDS() {
-//                              @Override
-//                              public final boolean toData(Object o, DataOutput out)
-//                                throws IOException {
-//                                out.writeByte(CONCURRENT_HASH_MAP);
-//                                writeConcurrentHashMap((ConcurrentHashMap<?, ?>) o, out);
-//                                return true;
-//                              }});
-    classesToSerializers.put("java.util.Properties",
-                             new WellKnownDS() {
+    //    classesToSerializers.put("java.util.concurrent.ConcurrentHashMap",
+    //                             new WellKnownDS() {
+    //                              @Override
+    //                              public final boolean toData(Object o, DataOutput out)
+    //                                throws IOException {
+    //                                out.writeByte(CONCURRENT_HASH_MAP);
+    //                                writeConcurrentHashMap((ConcurrentHashMap<?, ?>) o, out);
+    //                                return true;
+    //                              }});
+    classesToSerializers.put("java.util.Properties", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 Properties props  = (Properties) o;
-                                 out.writeByte(PROPERTIES);
-                                 writeProperties(props, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.TreeMap",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        Properties props = (Properties) o;
+        out.writeByte(PROPERTIES);
+        writeProperties(props, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.TreeMap", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(TREE_MAP);
-                                 writeTreeMap((TreeMap) o, out);
-                                 return true;
-                               }});
-    classesToSerializers.put("java.util.TreeSet",
-                             new WellKnownDS() {
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(TREE_MAP);
+        writeTreeMap((TreeMap) o, out);
+        return true;
+      }
+    });
+    classesToSerializers.put("java.util.TreeSet", new WellKnownDS() {
       @Override
-                               public final boolean toData(Object o, DataOutput out)
-                                 throws IOException {
-                                 out.writeByte(TREE_SET);
-                                 writeTreeSet((TreeSet) o, out);
-                                 return true;
-                               }});
+      public final boolean toData(Object o, DataOutput out) throws IOException {
+        out.writeByte(TREE_SET);
+        writeTreeSet((TreeSet) o, out);
+        return true;
+      }
+    });
     if (is662SerializationEnabled()) {
-      classesToSerializers.put("java.math.BigInteger",
-          new WellKnownDS() {
+      classesToSerializers.put("java.math.BigInteger", new WellKnownDS() {
         @Override
-        public final boolean toData(Object o, DataOutput out)
-        throws IOException {
+        public final boolean toData(Object o, DataOutput out) throws IOException {
           out.writeByte(BIG_INTEGER);
           writeBigInteger((BigInteger) o, out);
           return true;
-        }});
-      classesToSerializers.put("java.math.BigDecimal",
-          new WellKnownDS() {
+        }
+      });
+      classesToSerializers.put("java.math.BigDecimal", new WellKnownDS() {
         @Override
-        public final boolean toData(Object o, DataOutput out)
-        throws IOException {
+        public final boolean toData(Object o, DataOutput out) throws IOException {
           out.writeByte(BIG_DECIMAL);
           writeBigDecimal((BigDecimal) o, out);
           return true;
-        }});
-      classesToSerializers.put("java.util.UUID",
-          new WellKnownDS() {
+        }
+      });
+      classesToSerializers.put("java.util.UUID", new WellKnownDS() {
         @Override
-        public final boolean toData(Object o, DataOutput out)
-        throws IOException {
+        public final boolean toData(Object o, DataOutput out) throws IOException {
           out.writeByte(UUID);
           writeUUID((UUID) o, out);
           return true;
-        }});
-      classesToSerializers.put("java.sql.Timestamp",
-          new WellKnownDS() {
+        }
+      });
+      classesToSerializers.put("java.sql.Timestamp", new WellKnownDS() {
         @Override
-        public final boolean toData(Object o, DataOutput out)
-        throws IOException {
+        public final boolean toData(Object o, DataOutput out) throws IOException {
           out.writeByte(TIMESTAMP);
           writeTimestamp((Timestamp) o, out);
           return true;
-        }});
+        }
+      });
     }
   }
-  
+
   /** Maps the id of a serializer to its <code>DataSerializer</code>.
    */
   private static final ConcurrentMap/*<Integer, DataSerializer|Marker>*/ idsToSerializers = new ConcurrentHashMap();
@@ -706,11 +674,11 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
 
     } catch (NoSuchMethodException ex) {
       StringId s = LocalizedStrings.DataSerializer_CLASS_0_DOES_NOT_HAVE_A_ZEROARGUMENT_CONSTRUCTOR;
-      Object[] args = new Object[] {c.getName()};
+      Object[] args = new Object[] { c.getName() };
       if (c.getDeclaringClass() != null) {
         s = LocalizedStrings.DataSerializer_CLASS_0_DOES_NOT_HAVE_A_ZEROARGUMENT_CONSTRUCTOR_IT_IS_AN_INNER_CLASS_OF_1_SHOULD_IT_BE_A_STATIC_INNER_CLASS;
-        args = new Object[] {c.getName(), c.getDeclaringClass()};
-      } 
+        args = new Object[] { c.getName(), c.getDeclaringClass() };
+      }
       throw new IllegalArgumentException(s.toLocalizedString(args));
     }
 
@@ -735,9 +703,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
 
     return s;
   }
-  
-  public static DataSerializer register(Class c, boolean distribute, EventID eventId,
-      ClientProxyMembershipID context) {
+
+  public static DataSerializer register(Class c, boolean distribute, EventID eventId, ClientProxyMembershipID context) {
     DataSerializer s = newInstance(c);
     // This method is only called when server connection and
     // CacheClientUpdaterThread
@@ -760,9 +727,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     final DataSerializer s = newInstance(c);
     return _register(s, distribute);
   }
-  
-  public static DataSerializer _register(DataSerializer s,
-                                        boolean distribute) {
+
+  public static DataSerializer _register(DataSerializer s, boolean distribute) {
     final int id = s.getId();
     DataSerializer dsForMarkers = s;
     if (id == 0) {
@@ -796,7 +762,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         if (oldSerializer instanceof Marker) {
           retry = !idsToSerializers.replace(idx, oldSerializer, m);
           if (!retry) {
-            oldMarker = (Marker)oldSerializer;
+            oldMarker = (Marker) oldSerializer;
           }
         } else if (oldSerializer.getClass().equals(s.getClass())) {
           // We've already got one of these registered
@@ -806,7 +772,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           return (DataSerializer) oldSerializer;
         } else {
           DataSerializer other = (DataSerializer) oldSerializer;
-          throw new IllegalStateException(LocalizedStrings.InternalDataSerializer_A_DATASERIALIZER_OF_CLASS_0_IS_ALREADY_REGISTERED_WITH_ID_1_SO_THE_DATASERIALIZER_OF_CLASS_2_COULD_NOT_BE_REGISTERED.toLocalizedString(new Object[] {other.getClass().getName(), Integer.valueOf(other.getId())}));
+          throw new IllegalStateException(LocalizedStrings.InternalDataSerializer_A_DATASERIALIZER_OF_CLASS_0_IS_ALREADY_REGISTERED_WITH_ID_1_SO_THE_DATASERIALIZER_OF_CLASS_2_COULD_NOT_BE_REGISTERED.toLocalizedString(new Object[] { other.getClass().getName(), Integer.valueOf(other.getId()) }));
         }
       }
     } while (retry);
@@ -825,15 +791,9 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
             if (oldS.getId() == 0) {
               oldMsg = "DataSerializer has built-in support for class ";
             } else {
-              oldMsg = "A DataSerializer of class "
-                + oldS.getClass().getName()
-                + " is already registered to support class ";
+              oldMsg = "A DataSerializer of class " + oldS.getClass().getName() + " is already registered to support class ";
             }
-            String msg = oldMsg
-              + classes[i].getName()
-              + " so the DataSerializer of class "
-              + s.getClass().getName()
-              + " could not be registered.";
+            String msg = oldMsg + classes[i].getName() + " so the DataSerializer of class " + s.getClass().getName() + " could not be registered.";
             if (oldS.getId() == 0) {
               throw new IllegalArgumentException(msg);
             } else {
@@ -854,14 +814,14 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       m.setSerializer(dsForMarkers);
     }
 
- // if dataserializer is getting registered for first time
+    // if dataserializer is getting registered for first time
     // its EventID will be null, so generate a new event id
     // the the distributed system is connected
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     if (cache != null && s.getEventId() == null) {
       s.setEventId(new EventID(cache.getDistributedSystem()));
     }
-    
+
     if (distribute) {
       // send a message to other peers telling them about a newly-registered
       // dataserializer, it also send event id of the originator along with the
@@ -874,7 +834,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     // bridge servers send it all the clients irelevent of
     // originator VM
     sendRegistrationMessageToClients(s);
-    
+
     fireNewDataSerializer(s);
 
     return s;
@@ -894,10 +854,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    *          proxy id
    * @see DataSerializer#register(Class)
    */
-  public static void register(String className, boolean distribute,
-      EventID eventId, ClientProxyMembershipID proxyId, int id) {
-    register(className, distribute, new SerializerAttributesHolder(className,
-        eventId, proxyId, id));
+  public static void register(String className, boolean distribute, EventID eventId, ClientProxyMembershipID proxyId, int id) {
+    register(className, distribute, new SerializerAttributesHolder(className, eventId, proxyId, id));
   }
 
   /**
@@ -914,21 +872,15 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     register(className, distribute, new SerializerAttributesHolder());
   }
 
-  private static void register(String className, boolean distribute,
-      SerializerAttributesHolder holder) {
+  private static void register(String className, boolean distribute, SerializerAttributesHolder holder) {
     if (className == null || className.trim().equals("")) {
       throw new IllegalArgumentException("Class name cannot be null or empty.");
     }
 
-    SerializerAttributesHolder oldValue = dsClassesToHolders.putIfAbsent(
-        className, holder);
+    SerializerAttributesHolder oldValue = dsClassesToHolders.putIfAbsent(className, holder);
     if (oldValue != null) {
-      if (oldValue.getId() != 0 && holder.getId() != 0
-          && oldValue.getId() != holder.getId()) {
-        throw new IllegalStateException(
-            LocalizedStrings.InternalDataSerializer_A_DATASERIALIZER_OF_CLASS_0_IS_ALREADY_REGISTERED_WITH_ID_1_SO_THE_DATASERIALIZER_OF_CLASS_2_COULD_NOT_BE_REGISTERED
-                .toLocalizedString(new Object[] {oldValue.getClass().getName(),
-                    Integer.valueOf(oldValue.getId())}));
+      if (oldValue.getId() != 0 && holder.getId() != 0 && oldValue.getId() != holder.getId()) {
+        throw new IllegalStateException(LocalizedStrings.InternalDataSerializer_A_DATASERIALIZER_OF_CLASS_0_IS_ALREADY_REGISTERED_WITH_ID_1_SO_THE_DATASERIALIZER_OF_CLASS_2_COULD_NOT_BE_REGISTERED.toLocalizedString(new Object[] { oldValue.getClass().getName(), Integer.valueOf(oldValue.getId()) }));
       }
     }
 
@@ -937,7 +889,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     Object ds = idsToSerializers.get(holder.getId());
     if (ds instanceof Marker) {
       synchronized (ds) {
-        ((Marker)ds).notifyAll();
+        ((Marker) ds).notifyAll();
       }
     }
 
@@ -946,20 +898,16 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
   }
 
-  public static void updateSupportedClassesMap(
-      HashMap<Integer, ArrayList<String>> map) {
+  public static void updateSupportedClassesMap(HashMap<Integer, ArrayList<String>> map) {
     for (Entry<Integer, ArrayList<String>> e : map.entrySet()) {
       for (String supportedClassName : e.getValue()) {
-        supportedClassesToHolders.putIfAbsent(supportedClassName,
-            idsToHolders.get(e.getKey()));
+        supportedClassesToHolders.putIfAbsent(supportedClassName, idsToHolders.get(e.getKey()));
       }
     }
   }
 
-  public static void updateSupportedClassesMap(String dsClassName,
-      String supportedClassName) {
-    supportedClassesToHolders.putIfAbsent(supportedClassName,
-        dsClassesToHolders.get(dsClassName));
+  public static void updateSupportedClassesMap(String dsClassName, String supportedClassName) {
+    supportedClassesToHolders.putIfAbsent(supportedClassName, dsClassesToHolders.get(dsClassName));
   }
 
   public static class SerializerAttributesHolder {
@@ -967,12 +915,11 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     private EventID eventId = null;
     private ClientProxyMembershipID proxyId = null;
     private int id = 0;
-    
-    public SerializerAttributesHolder () {
+
+    public SerializerAttributesHolder() {
     }
 
-    public SerializerAttributesHolder(String name, EventID event,
-        ClientProxyMembershipID proxy, int id) {
+    public SerializerAttributesHolder(String name, EventID event, ClientProxyMembershipID proxy, int id) {
       this.className = name;
       this.eventId = event;
       this.proxyId = proxy;
@@ -1005,18 +952,15 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
   }
 
-  private static void sendRegistrationMessageToServers(DataSerializer dataSerializer)
-  {
+  private static void sendRegistrationMessageToServers(DataSerializer dataSerializer) {
     PoolManagerImpl.allPoolsRegisterDataSerializers(dataSerializer);
   }
 
-  private static void sendRegistrationMessageToServers(
-      SerializerAttributesHolder holder) {
+  private static void sendRegistrationMessageToServers(SerializerAttributesHolder holder) {
     PoolManagerImpl.allPoolsRegisterDataSerializers(holder);
   }
 
-  private static void sendRegistrationMessageToClients(DataSerializer dataSerializer)
-  {
+  private static void sendRegistrationMessageToClients(DataSerializer dataSerializer) {
     Cache cache = GemFireCacheImpl.getInstance();
     if (cache == null) {
       // A cache has not yet been created.
@@ -1025,36 +969,31 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     byte[][] serializedDataSerializer = new byte[2][];
     try {
-      serializedDataSerializer[0] = CacheServerHelper.serialize(dataSerializer
-          .getClass().toString().substring(6));
+      serializedDataSerializer[0] = CacheServerHelper.serialize(dataSerializer.getClass().toString().substring(6));
       {
         byte[] idBytes = new byte[4];
         Part.encodeInt(dataSerializer.getId(), idBytes);
         serializedDataSerializer[1] = idBytes;
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
         logger.trace(LogMarker.SERIALIZER, "InternalDataSerializer encountered an IOException while serializing DataSerializer :{}", dataSerializer);
       }
     }
-    ClientDataSerializerMessage clientDataSerializerMessage = new ClientDataSerializerMessage(
-        EnumListenerEvent.AFTER_REGISTER_DATASERIALIZER, serializedDataSerializer,
-        (ClientProxyMembershipID)dataSerializer.getContext(),
-        (EventID)dataSerializer.getEventId(),
-        new Class[][]{dataSerializer.getSupportedClasses()});
+    ClientDataSerializerMessage clientDataSerializerMessage = new ClientDataSerializerMessage(EnumListenerEvent.AFTER_REGISTER_DATASERIALIZER, serializedDataSerializer, (ClientProxyMembershipID) dataSerializer.getContext(), (EventID) dataSerializer.getEventId(), new Class[][] { dataSerializer.getSupportedClasses() });
     // Deliver it to all the clients
     CacheClientNotifier.routeClientMessage(clientDataSerializerMessage);
   }
 
-  public static EventID generateEventId(){
+  public static EventID generateEventId() {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-    if(cache == null){
+    if (cache == null) {
       // A cache has not yet created
       return null;
     }
     return new EventID(InternalDistributedSystem.getAnyInstance());
   }
+
   /**
    * Unregisters a <code>Serializer</code> that was previously
    * registered with the data serialization framework.
@@ -1064,11 +1003,11 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     Object o = idsToSerializers.remove(idx);
     if (o != null) {
       if (o instanceof InitMarker) {
-        o = ((Marker)o).getSerializer();
+        o = ((Marker) o).getSerializer();
       }
     }
     if (o instanceof DataSerializer) {
-      DataSerializer s = (DataSerializer)o;
+      DataSerializer s = (DataSerializer) o;
       Class[] classes = s.getSupportedClasses();
       for (int i = 0; i < classes.length; i++) {
         classesToSerializers.remove(classes[i].getName(), s);
@@ -1078,7 +1017,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       idsToHolders.remove(idx);
     }
   }
-  
+
   // testHook used to clean up any registered DataSerializers
   public static void reinitialize() {
     idsToSerializers.clear();
@@ -1128,7 +1067,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     final GetMarker marker = new GetMarker();
     DataSerializer result = null;
     boolean timedOut = false;
-    SerializerAttributesHolder sah=idsToHolders.get(idx);
+    SerializerAttributesHolder sah = idsToHolders.get(idx);
     while (result == null && !timedOut && sah == null) {
       Object o = idsToSerializers.putIfAbsent(idx, marker);
       if (o == null) {
@@ -1139,7 +1078,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           idsToSerializers.remove(idx, marker);
         }
       } else if (o instanceof Marker) {
-        result = ((Marker)o).getSerializer();
+        result = ((Marker) o).getSerializer();
       } else {
         result = (DataSerializer) o;
       }
@@ -1165,6 +1104,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     return result;
   }
+
   /**
    * Returns all of the currently registered serializers
    */
@@ -1175,7 +1115,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     while (it.hasNext()) {
       Object v = it.next();
       if (v instanceof InitMarker) {
-        v = ((Marker)v).getSerializer();
+        v = ((Marker) v).getSerializer();
       }
       if (v instanceof DataSerializer) {
         coll.add(v);
@@ -1188,7 +1128,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       String name = entry.getKey();
       SerializerAttributesHolder holder = entry.getValue();
       try {
-        Class cl = getCachedClass(name); 
+        Class cl = getCachedClass(name);
         DataSerializer ds = null;
         if (holder.getEventId() != null) {
           ds = register(cl, false, holder.getEventId(), holder.getProxyId());
@@ -1219,25 +1159,21 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static SerializerAttributesHolder[] getSerializersForDistribution() {
 
     final int size = idsToSerializers.size() + dsClassesToHolders.size();
-    Collection<SerializerAttributesHolder> coll = new ArrayList<InternalDataSerializer.SerializerAttributesHolder>(
-        size);
+    Collection<SerializerAttributesHolder> coll = new ArrayList<InternalDataSerializer.SerializerAttributesHolder>(size);
 
     Iterator it = idsToSerializers.values().iterator();
     while (it.hasNext()) {
       Object v = it.next();
       if (v instanceof InitMarker) {
-        v = ((Marker)v).getSerializer();
+        v = ((Marker) v).getSerializer();
       }
       if (v instanceof DataSerializer) {
-        DataSerializer s = (DataSerializer)v;
-        coll.add(new SerializerAttributesHolder(s.getClass().getName(),
-            (EventID)s.getEventId(), (ClientProxyMembershipID)s.getContext(), s
-                .getId()));
+        DataSerializer s = (DataSerializer) v;
+        coll.add(new SerializerAttributesHolder(s.getClass().getName(), (EventID) s.getEventId(), (ClientProxyMembershipID) s.getContext(), s.getId()));
       }
     }
 
-    Iterator<Entry<String, SerializerAttributesHolder>> iterator = dsClassesToHolders
-        .entrySet().iterator();
+    Iterator<Entry<String, SerializerAttributesHolder>> iterator = dsClassesToHolders.entrySet().iterator();
     while (iterator.hasNext()) {
       SerializerAttributesHolder v = iterator.next().getValue();
       coll.add(v);
@@ -1245,7 +1181,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
 
     return coll.toArray(new SerializerAttributesHolder[coll.size()]);
   }
-  
+
   /**
    * Persist this class's map to out 
    */
@@ -1254,17 +1190,16 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     while (it.hasNext()) {
       Object v = it.next();
       if (v instanceof InitMarker) {
-        v = ((Marker)v).getSerializer();
+        v = ((Marker) v).getSerializer();
       }
       if (v instanceof DataSerializer) {
-        DataSerializer ds = (DataSerializer)v;
+        DataSerializer ds = (DataSerializer) v;
         out.writeInt(ds.getId()); // since 5.7 an int instead of a byte
         DataSerializer.writeClass(ds.getClass(), out);
       }
     }
     if (!dsClassesToHolders.isEmpty()) {
-      Iterator<Entry<String, SerializerAttributesHolder>> iterator = dsClassesToHolders
-          .entrySet().iterator();
+      Iterator<Entry<String, SerializerAttributesHolder>> iterator = dsClassesToHolders.entrySet().iterator();
       Class dsClass = null;
       while (iterator.hasNext()) {
         try {
@@ -1293,8 +1228,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * Read the data from in and register it with this class.
    * @throws IllegalArgumentException if a registration fails
    */
-  public static void loadRegistrations(DataInput in) throws IOException
-  {
+  public static void loadRegistrations(DataInput in) throws IOException {
     while (in.readInt() != 0) {
       Class dsClass = null;
       boolean skip = false;
@@ -1382,7 +1316,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     if (dsfid == DataSerializableFixedID.ILLEGAL) {
       throw new IllegalStateException(LocalizedStrings.InternalDataSerializer_ATTEMPTED_TO_SERIALIZE_ILLEGAL_DSFID.toLocalizedString());
     }
-   if (dsfid <= Byte.MAX_VALUE && dsfid >= Byte.MIN_VALUE) {
+    if (dsfid <= Byte.MAX_VALUE && dsfid >= Byte.MIN_VALUE) {
       out.writeByte(DS_FIXED_ID_BYTE);
       out.writeByte(dsfid);
     } else if (dsfid <= Short.MAX_VALUE && dsfid >= Short.MIN_VALUE) {
@@ -1393,10 +1327,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       out.writeInt(dsfid);
     }
   }
-  
-  public static final void writeDSFID(DataSerializableFixedID o, DataOutput out)
-    throws IOException
-  {
+
+  public static final void writeDSFID(DataSerializableFixedID o, DataOutput out) throws IOException {
     int dsfid = o.getDSFID();
     if (dsfidToClassMap != null && logger.isTraceEnabled(LogMarker.DEBUG_DSFID)) {
       logger.trace(LogMarker.DEBUG_DSFID, "writeDSFID {} class={}", dsfid, o.getClass());
@@ -1404,7 +1336,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         // consistency check to make sure that the same DSFID is not used
         // for two different classes
         String newClassName = o.getClass().getName();
-        String existingClassName = (String)dsfidToClassMap.putIfAbsent(Integer.valueOf(dsfid), newClassName);
+        String existingClassName = (String) dsfidToClassMap.putIfAbsent(Integer.valueOf(dsfid), newClassName);
         if (existingClassName != null && !existingClassName.equals(newClassName)) {
           logger.trace(LogMarker.DEBUG_DSFID, "dsfid={} is used for class {} and class {}", dsfid, existingClassName, newClassName);
         }
@@ -1441,7 +1373,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       // error condition, so you also need to check to see if the JVM
       // is still usable:
       SystemFailure.checkFailure();
-      throw new ToDataException("toData failed on dsfid=" + dsfid+" msg:"+t.getMessage(),  t);
+      throw new ToDataException("toData failed on dsfid=" + dsfid + " msg:" + t.getMessage(), t);
     }
   }
 
@@ -1452,11 +1384,10 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * @return <code>true</code> if <code>o</code> was actually
    *         written to <code>out</code>
    */
-  public static boolean writeWellKnownObject(Object o,
-                                              DataOutput out, boolean ensurePdxCompatibility)
-    throws IOException {
+  public static boolean writeWellKnownObject(Object o, DataOutput out, boolean ensurePdxCompatibility) throws IOException {
     return writeUserObject(o, out, ensurePdxCompatibility);
   }
+
   /**
    * Data serializes an instance of a "user class" (that is, a class
    * that can be handled by a registered <code>DataSerializer</code>)
@@ -1465,12 +1396,10 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * @return <code>true</code> if <code>o</code> was written to
    *         <code>out</code>.
    */
-  private static boolean writeUserObject(Object o, DataOutput out, boolean ensurePdxCompatibility)
-    throws IOException {
+  private static boolean writeUserObject(Object o, DataOutput out, boolean ensurePdxCompatibility) throws IOException {
 
     final Class<?> c = o.getClass();
-    final DataSerializer serializer =
-      InternalDataSerializer.getSerializer(c);
+    final DataSerializer serializer = InternalDataSerializer.getSerializer(c);
     if (serializer != null) {
       int id = serializer.getId();
       if (id != 0) {
@@ -1478,7 +1407,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         // id will be 0 if it is a WellKnowDS
         if (id <= Byte.MAX_VALUE && id >= Byte.MIN_VALUE) {
           out.writeByte(USER_CLASS);
-          out.writeByte((byte)id);
+          out.writeByte((byte) id);
         } else if (id <= Short.MAX_VALUE && id >= Short.MIN_VALUE) {
           out.writeByte(USER_CLASS_2);
           out.writeShort(id);
@@ -1505,7 +1434,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           // because if user code throws an IOException we want
           // to create a ToDataException to report it as a problem
           // with the plugin code.
-          throw new ToDataException("toData failed on DataSerializer with id=" + id + " for class " + c,  io);
+          throw new ToDataException("toData failed on DataSerializer with id=" + id + " for class " + c, io);
         }
       } catch (ToDataException ex) {
         throw ex;
@@ -1526,18 +1455,16 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         // error condition, so you also need to check to see if the JVM
         // is still usable:
         SystemFailure.checkFailure();
-        throw new ToDataException("toData failed on DataSerializer with id=" + id + " for class " + c,  t);
+        throw new ToDataException("toData failed on DataSerializer with id=" + id + " for class " + c, t);
       }
       if (toDataResult) {
         return true;
       } else {
-        throw new ToDataException(
-          LocalizedStrings.DataSerializer_SERIALIZER_0_A_1_SAID_THAT_IT_COULD_SERIALIZE_AN_INSTANCE_OF_2_BUT_ITS_TODATA_METHOD_RETURNED_FALSE
-          .toLocalizedString(new Object[]{Integer.valueOf(serializer.getId()), serializer.getClass().getName(), o.getClass().getName()}));
+        throw new ToDataException(LocalizedStrings.DataSerializer_SERIALIZER_0_A_1_SAID_THAT_IT_COULD_SERIALIZE_AN_INSTANCE_OF_2_BUT_ITS_TODATA_METHOD_RETURNED_FALSE.toLocalizedString(new Object[] { Integer.valueOf(serializer.getId()), serializer.getClass().getName(), o.getClass().getName() }));
       }
       // Do byte[][] and Object[] here to fix bug 44060
     } else if (o instanceof byte[][]) {
-      byte[][] byteArrays = (byte[][])o;
+      byte[][] byteArrays = (byte[][]) o;
       out.writeByte(ARRAY_OF_BYTE_ARRAYS);
       writeArrayOfByteArrays(byteArrays, out);
       return true;
@@ -1546,13 +1473,12 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       out.writeByte(OBJECT_ARRAY);
       writeObjectArray(array, out, ensurePdxCompatibility);
       return true;
-    } else if (is662SerializationEnabled() && (o.getClass().isEnum()
-        /* for bug 52271 */ || (o.getClass().getSuperclass() != null && o.getClass().getSuperclass().isEnum()))) {
+    } else if (is662SerializationEnabled() && (o.getClass().isEnum()/* for bug 52271 */ || (o.getClass().getSuperclass() != null && o.getClass().getSuperclass().isEnum()))) {
       if (isPdxSerializationInProgress()) {
-        writePdxEnum((Enum<?>)o, out);
+        writePdxEnum((Enum<?>) o, out);
       } else {
         checkPdxCompatible(o, ensurePdxCompatibility);
-        writeGemFireEnum((Enum<?>)o, out);
+        writeGemFireEnum((Enum<?>) o, out);
       }
       return true;
     } else {
@@ -1563,7 +1489,6 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       return false;
     }
   }
-
 
   public static boolean autoSerialized(Object o, DataOutput out) throws IOException {
     AutoSerializableManager asm = TypeRegistry.getAutoSerializableManager();
@@ -1620,7 +1545,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           // error condition, so you also need to check to see if the JVM
           // is still usable:
           SystemFailure.checkFailure();
-          throw new ToDataException("PdxSerializer failed when calling toData on " + o.getClass(),  t);
+          throw new ToDataException("PdxSerializer failed when calling toData on " + o.getClass(), t);
         }
         int bytesWritten = writer.completeByteStreamGeneration();
         getDMStats(gfc).incPdxSerialization(bytesWritten);
@@ -1645,9 +1570,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    */
   private static boolean isGemfireObject(Object o) {
     return ((o instanceof Function) // fixes 43691
-            || o.getClass().getName().startsWith("org.apache.")
-             || o.getClass().getName().startsWith("org.apache.geode"))
-      && !(o instanceof PdxSerializerObject);
+        || o.getClass().getName().startsWith("org.apache.") || o.getClass().getName().startsWith("org.apache.geode")) && !(o instanceof PdxSerializerObject);
   }
 
   /**
@@ -1658,10 +1581,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    *         If the serializer that can deserialize the object is
    *         not registered.
    */
-  private static Object readUserObject(DataInput in, int serializerId)
-    throws IOException, ClassNotFoundException {
-    DataSerializer serializer =
-      InternalDataSerializer.getSerializer(serializerId);
+  private static Object readUserObject(DataInput in, int serializerId) throws IOException, ClassNotFoundException {
+    DataSerializer serializer = InternalDataSerializer.getSerializer(serializerId);
 
     if (serializer == null) {
       throw new IOException(LocalizedStrings.DataSerializer_SERIALIZER_0_IS_NOT_REGISTERED.toLocalizedString(new Object[] { Integer.valueOf(serializerId) }));
@@ -1683,6 +1604,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       throw new NullPointerException(s);
     }
   }
+
   /**
    * Checks to make sure a <code>DataInput</code> is not
    * <code>null</code>.
@@ -1696,8 +1618,6 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       throw new NullPointerException(s);
     }
   }
-
-
 
   /**
    * Writes a <code>Set</code> to a <code>DataOutput</code>.
@@ -1716,13 +1636,12 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    *
    * @since GemFire 4.0
    */
-  public static void writeSet(Collection<?> set, DataOutput out)
-      throws IOException {
+  public static void writeSet(Collection<?> set, DataOutput out) throws IOException {
 
     checkOut(out);
 
     int size;
-    
+
     if (set == null) {
       size = -1;
     } else {
@@ -1752,8 +1671,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    *
    * @since GemFire 4.0
    */
-  public static Set readSet(DataInput in) 
-    throws IOException, ClassNotFoundException {
+  public static Set readSet(DataInput in) throws IOException, ClassNotFoundException {
     return readHashSet(in);
   }
 
@@ -1770,8 +1688,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * 
    * @see #writeSet
    */
-  public static <E> boolean readCollection(DataInput in, Collection<E> c)
-      throws IOException, ClassNotFoundException {
+  public static <E> boolean readCollection(DataInput in, Collection<E> c) throws IOException, ClassNotFoundException {
 
     checkIn(in);
 
@@ -1803,17 +1720,17 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     } else {
       out.writeInt(set.size());
       out.writeBoolean(hasLongIDs);
-      for (Iterator it=set.iterator(); it.hasNext(); ) {
-        Long l = (Long)it.next();
+      for (Iterator it = set.iterator(); it.hasNext();) {
+        Long l = (Long) it.next();
         if (hasLongIDs) {
           out.writeLong(l.longValue());
         } else {
-          out.writeInt((int)l.longValue());
+          out.writeInt((int) l.longValue());
         }
       }
     }
   }
-  
+
   /** read a set of Long objects */
   public static Set<Long> readSetOfLongs(DataInput in) throws IOException {
     int size = in.readInt();
@@ -1822,8 +1739,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     } else {
       Set result = new HashSet(size);
       boolean longIDs = in.readBoolean();
-      for (int i=0; i<size; i++) {
-        long l = longIDs? in.readLong() : in.readInt();
+      for (int i = 0; i < size; i++) {
+        long l = longIDs ? in.readLong() : in.readInt();
         result.add(Long.valueOf(l));
       }
       return result;
@@ -1842,17 +1759,17 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     } else {
       out.writeInt(list.size());
       out.writeBoolean(hasLongIDs);
-      for (Iterator it=list.iterator(); it.hasNext(); ) {
-        Long l = (Long)it.next();
+      for (Iterator it = list.iterator(); it.hasNext();) {
+        Long l = (Long) it.next();
         if (hasLongIDs) {
           out.writeLong(l.longValue());
         } else {
-          out.writeInt((int)l.longValue());
+          out.writeInt((int) l.longValue());
         }
       }
     }
   }
-  
+
   /** read a set of Long objects */
   public static List<Long> readListOfLongs(DataInput in) throws IOException {
     int size = in.readInt();
@@ -1861,81 +1778,68 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     } else {
       List result = new LinkedList();
       boolean longIDs = in.readBoolean();
-      for (int i=0; i<size; i++) {
-        long l = longIDs? in.readLong() : in.readInt();
+      for (int i = 0; i < size; i++) {
+        long l = longIDs ? in.readLong() : in.readInt();
         result.add(Long.valueOf(l));
       }
       return result;
     }
   }
-  
 
-  
   /**
    * Writes the type code for a primitive type Class
    * to <code>DataOutput</code>.
    */
-  public static final void writePrimitiveClass(Class c, DataOutput out)
-  throws IOException {
+  public static final void writePrimitiveClass(Class c, DataOutput out) throws IOException {
     if (c == Boolean.TYPE) {
       out.writeByte(BOOLEAN_TYPE);
-    }
-    else if (c == Character.TYPE) {
+    } else if (c == Character.TYPE) {
       out.writeByte(CHARACTER_TYPE);
-    }
-    else if (c == Byte.TYPE) {
+    } else if (c == Byte.TYPE) {
       out.writeByte(BYTE_TYPE);
-    }
-    else if (c == Short.TYPE) {
+    } else if (c == Short.TYPE) {
       out.writeByte(SHORT_TYPE);
-    }
-    else if (c == Integer.TYPE) {
+    } else if (c == Integer.TYPE) {
       out.writeByte(INTEGER_TYPE);
-    }
-    else if (c == Long.TYPE) {
+    } else if (c == Long.TYPE) {
       out.writeByte(LONG_TYPE);
-    }
-    else if (c == Float.TYPE) {
+    } else if (c == Float.TYPE) {
       out.writeByte(FLOAT_TYPE);
-    }
-    else if (c == Double.TYPE) {
+    } else if (c == Double.TYPE) {
       out.writeByte(DOUBLE_TYPE);
-    }
-    else if (c == Void.TYPE) {
+    } else if (c == Void.TYPE) {
       out.writeByte(VOID_TYPE);
-    }
-    else if (c == null) {
+    } else if (c == null) {
       out.writeByte(NULL);
-    }
-    else {
+    } else {
       throw new InternalGemFireError(LocalizedStrings.InternalDataSerializer_UNKNOWN_PRIMITIVE_TYPE_0.toLocalizedString(c.getName()));
     }
   }
-  
+
   public static final Class decodePrimitiveClass(byte typeCode) {
     switch (typeCode) {
-      case BOOLEAN_TYPE:
-        return Boolean.TYPE;
-      case CHARACTER_TYPE:
-        return Character.TYPE;
-      case BYTE_TYPE:
-        return Byte.TYPE;
-      case SHORT_TYPE:
-        return Short.TYPE;
-      case INTEGER_TYPE:
-        return Integer.TYPE;
-      case LONG_TYPE:
-        return Long.TYPE;
-      case FLOAT_TYPE:
-        return Float.TYPE;
-      case DOUBLE_TYPE:
-        return Double.TYPE;
-      case VOID_TYPE:
-        return Void.TYPE;
-      case NULL:
-        return null;
-      default:
-        throw new InternalGemFireError(LocalizedStrings.InternalDataSerializer_UNEXPECTED_TYPECODE_0.toLocalizedString(Byte.valueOf(typeCode)));
+    case BOOLEAN_TYPE:
+      return Boolean.TYPE;
+    case CHARACTER_TYPE:
+      return Character.TYPE;
+    case BYTE_TYPE:
+      return Byte.TYPE;
+    case SHORT_TYPE:
+      return Short.TYPE;
+    case INTEGER_TYPE:
+      return Integer.TYPE;
+    case LONG_TYPE:
+      return Long.TYPE;
+    case FLOAT_TYPE:
+      return Float.TYPE;
+    case DOUBLE_TYPE:
+      return Double.TYPE;
+    case VOID_TYPE:
+      return Void.TYPE;
+    case NULL:
+      return null;
+    default:
+      throw new InternalGemFireError(LocalizedStrings.InternalDataSerializer_UNEXPECTED_TYPECODE_0.toLocalizedString(Byte.valueOf(typeCode)));
     }
   }
 
@@ -1950,8 +1854,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * @throws IOException
    *         A problem occurs while writing to <code>out</code>
    */
-  public static TimeUnit readTimeUnit(DataInput in)
-    throws IOException {
+  public static TimeUnit readTimeUnit(DataInput in) throws IOException {
 
     InternalDataSerializer.checkIn(in);
 
@@ -1990,6 +1893,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     DataSerializer.writePrimitiveLong(o.getTime(), out);
   }
+
   public static Timestamp readTimestamp(DataInput in) throws IOException {
     InternalDataSerializer.checkIn(in);
     Timestamp result = new Timestamp(DataSerializer.readPrimitiveLong(in));
@@ -2008,6 +1912,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     DataSerializer.writePrimitiveLong(o.getMostSignificantBits(), out);
     DataSerializer.writePrimitiveLong(o.getLeastSignificantBits(), out);
   }
+
   public static UUID readUUID(DataInput in) throws IOException {
     InternalDataSerializer.checkIn(in);
     long mb = DataSerializer.readPrimitiveLong(in);
@@ -2027,6 +1932,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     DataSerializer.writeString(o.toString(), out);
   }
+
   public static BigDecimal readBigDecimal(DataInput in) throws IOException {
     InternalDataSerializer.checkIn(in);
     BigDecimal result = new BigDecimal(DataSerializer.readString(in));
@@ -2044,6 +1950,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     DataSerializer.writeByteArray(o.toByteArray(), out);
   }
+
   public static BigInteger readBigInteger(DataInput in) throws IOException {
     InternalDataSerializer.checkIn(in);
     BigInteger result = new BigInteger(DataSerializer.readByteArray(in));
@@ -2053,14 +1960,10 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     return result;
   }
 
-
   //private static final HashSet seenClassNames = DEBUG_DSFID ? new HashSet(): null;
-  private static final ConcurrentMap dsfidToClassMap = logger.isTraceEnabled(LogMarker.DEBUG_DSFID) ? new ConcurrentHashMap(): null;
-  
-  public static final void writeUserDataSerializableHeader(int classId,
-                                                           DataOutput out)
-    throws IOException
-  {
+  private static final ConcurrentMap dsfidToClassMap = logger.isTraceEnabled(LogMarker.DEBUG_DSFID) ? new ConcurrentHashMap() : null;
+
+  public static final void writeUserDataSerializableHeader(int classId, DataOutput out) throws IOException {
     if (classId <= Byte.MAX_VALUE && classId >= Byte.MIN_VALUE) {
       out.writeByte(USER_DATA_SERIALIZABLE);
       out.writeByte(classId);
@@ -2083,8 +1986,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * @see DataSerializer#readCharArray
    * @since GemFire 6.6
    */
-  public static void writeCharArray(char[] array, int length, DataOutput out)
-      throws IOException {
+  public static void writeCharArray(char[] array, int length, DataOutput out) throws IOException {
 
     checkOut(out);
 
@@ -2101,7 +2003,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
     }
   }
-  
+
   /**
    * returns true if the byte array is the serialized form of a null reference
    * @param serializedForm the serialized byte array
@@ -2110,8 +2012,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     return serializedForm.length == 1 && serializedForm[0] == NULL;
   }
 
-  public static final void basicWriteObject(Object o, DataOutput out, boolean ensurePdxCompatibility)
-    throws IOException {
+  public static final void basicWriteObject(Object o, DataOutput out, boolean ensurePdxCompatibility) throws IOException {
 
     checkOut(out);
 
@@ -2126,7 +2027,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
 
     } else if (o instanceof DataSerializableFixedID) {
       checkPdxCompatible(o, ensurePdxCompatibility);
-      DataSerializableFixedID dsfid = (DataSerializableFixedID)o;
+      DataSerializableFixedID dsfid = (DataSerializableFixedID) o;
       writeDSFID(dsfid, out);
     } else if (autoSerialized(o, out)) {
       // all done
@@ -2151,18 +2052,18 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         writeUserDataSerializableHeader(classId, out);
       } else {
         out.writeByte(DATA_SERIALIZABLE);
-//         if (DEBUG_DSFID) {
-//           if (logger.infoEnabled()) {
-//             boolean alreadySeen;
-//             synchronized (seenClassNames) {
-//               alreadySeen = seenClassNames.add(c.getName());
-//             }
-//             if (alreadySeen) {
-//               // this class should be made a DSFID if it is a product class
-//               logger.info("DataSerialized class " + c.getName(), new RuntimeException("CALLSTACK"));
-//             }
-//           }
-//         }
+        //         if (DEBUG_DSFID) {
+        //           if (logger.infoEnabled()) {
+        //             boolean alreadySeen;
+        //             synchronized (seenClassNames) {
+        //               alreadySeen = seenClassNames.add(c.getName());
+        //             }
+        //             if (alreadySeen) {
+        //               // this class should be made a DSFID if it is a product class
+        //               logger.info("DataSerialized class " + c.getName(), new RuntimeException("CALLSTACK"));
+        //             }
+        //           }
+        //         }
         DataSerializer.writeClass(c, out);
       }
       DataSerializable ds = (DataSerializable) o;
@@ -2172,7 +2073,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       if (!(o instanceof PdxInstance) || o instanceof PdxInstanceEnum) {
         checkPdxCompatible(o, ensurePdxCompatibility);
       }
-      ((Sendable)o).sendTo(out);
+      ((Sendable) o).sendTo(out);
     } else if (writeWellKnownObject(o, out, ensurePdxCompatibility)) {
       // Nothing more to do...
     } else {
@@ -2190,34 +2091,34 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         throw new NotSerializableException(LocalizedStrings.DataSerializer_0_IS_NOT_DATASERIALIZABLE_AND_JAVA_SERIALIZATION_IS_DISALLOWED.toLocalizedString(o.getClass().getName()));
       }
 
-//       if (out instanceof DSDataOutput) {
-//         // Unwrap the DSDataOutput to avoid one layer of
-//         // delegation.  This also prevents us from having to flush
-//         // the ObjectOutputStream.
-//         out = ((DSDataOutput) out).out;
-//       }
+      //       if (out instanceof DSDataOutput) {
+      //         // Unwrap the DSDataOutput to avoid one layer of
+      //         // delegation.  This also prevents us from having to flush
+      //         // the ObjectOutputStream.
+      //         out = ((DSDataOutput) out).out;
+      //       }
       writeSerializableObject(o, out);
     }
   }
-  
+
   private static boolean disallowJavaSerialization() {
     Boolean v = DISALLOW_JAVA_SERIALIZATION.get();
     return v != null && v;
   }
-  
+
   /**
    * @throws IOException 
    * @since GemFire 6.6.2
    */
   private static void writePdxEnum(Enum<?> e, DataOutput out) throws IOException {
-    TypeRegistry tr =
-      GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.").getPdxRegistry();
+    TypeRegistry tr = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.").getPdxRegistry();
     int eId = tr.getEnumId(e);
     if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
       logger.trace(LogMarker.SERIALIZER, "write PdxEnum id={} enum={}", eId, e);
     }
     writePdxEnumId(eId, out);
   }
+
   public static void writePdxEnumId(int eId, DataOutput out) throws IOException {
     out.writeByte(PDX_ENUM);
     out.writeByte(eId >> 24);
@@ -2237,14 +2138,14 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     GemFireCacheImpl gfc = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
     TypeRegistry tr = gfc.getPdxRegistry();
-    
+
     Object result = tr.getEnumById(enumId);
     if (result instanceof PdxInstance) {
       getDMStats(gfc).incPdxInstanceCreations();
     }
     return result;
   }
-  
+
   private static void writeGemFireEnum(Enum<?> e, DataOutput out) throws IOException {
     boolean isGemFireObject = isGemfireObject(e);
     DataSerializer.writePrimitiveByte(isGemFireObject ? GEMFIRE_ENUM : PDX_INLINE_ENUM, out);
@@ -2279,7 +2180,6 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
   }
 
-
   /**
    * write an object in java Serializable form with a SERIALIZABLE DSCODE so
    * that it can be deserialized with DataSerializer.readObject()
@@ -2287,33 +2187,32 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * @param out the data output to serialize to
    * @throws IOException
    */
-  public static final void writeSerializableObject(Object o, DataOutput out)
-    throws IOException {
+  public static final void writeSerializableObject(Object o, DataOutput out) throws IOException {
     out.writeByte(SERIALIZABLE);
     if (out instanceof ObjectOutputStream) {
-      ((ObjectOutputStream)out).writeObject(o);
+      ((ObjectOutputStream) out).writeObject(o);
     } else {
       OutputStream stream;
       if (out instanceof OutputStream) {
-        stream = (OutputStream)out;
+        stream = (OutputStream) out;
 
       } else {
         final DataOutput out2 = out;
         stream = new OutputStream() {
           @Override
-            public void write(int b) throws IOException {
-              out2.write(b);
-            }
+          public void write(int b) throws IOException {
+            out2.write(b);
+          }
 
-            //               public void write(byte[] b) throws IOException {
-            //                 out.write(b);
-            //               }
+          //               public void write(byte[] b) throws IOException {
+          //                 out.write(b);
+          //               }
 
-            //               public void write(byte[] b, int off, int len)
-            //                 throws IOException {
-            //                 out.write(b, off, len);
-            //               }
-          };
+          //               public void write(byte[] b, int off, int len)
+          //                 throws IOException {
+          //                 out.write(b, off, len);
+          //               }
+        };
       }
       boolean wasDoNotCopy = false;
       if (out instanceof HeapDataOutputStream) {
@@ -2324,17 +2223,17 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         wasDoNotCopy = ((HeapDataOutputStream) out).setDoNotCopy(false);
       }
       try {
-      ObjectOutput oos = new ObjectOutputStream(stream);
-      if ( stream instanceof VersionedDataStream ) {
-        Version v = ((VersionedDataStream)stream).getVersion();
-        if (v != null && v != Version.CURRENT) { 
-          oos = new VersionedObjectOutput(oos, v);
+        ObjectOutput oos = new ObjectOutputStream(stream);
+        if (stream instanceof VersionedDataStream) {
+          Version v = ((VersionedDataStream) stream).getVersion();
+          if (v != null && v != Version.CURRENT) {
+            oos = new VersionedObjectOutput(oos, v);
+          }
         }
-      }
-      oos.writeObject(o);
-      // To fix bug 35568 just call flush. We can't call close because
-      // it calls close on the wrapped OutputStream.
-      oos.flush();
+        oos.writeObject(o);
+        // To fix bug 35568 just call flush. We can't call close because
+        // it calls close on the wrapped OutputStream.
+        oos.flush();
       } finally {
         if (wasDoNotCopy) {
           ((HeapDataOutputStream) out).setDoNotCopy(true);
@@ -2342,7 +2241,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
     }
   }
-  
+
   /**
    * For backward compatibility this method should be used to invoke
    * toData on a DSFID or DataSerializable.  It will invoke the
@@ -2360,7 +2259,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       boolean invoked = false;
       Version v = InternalDataSerializer.getVersionForDataStreamOrNull(out);
       Version[] versions = null;
-      
+
       if (v != null && v != Version.CURRENT) {
         // get versions where DataOutput was upgraded
         if (ds instanceof SerializationVersions) {
@@ -2373,22 +2272,19 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           for (int i = 0; i < versions.length; i++) {
             // if peer version is less than the greatest upgraded version
             if (v.compareTo(versions[i]) < 0) {
-              ds.getClass()
-                  .getMethod(
-                      "toDataPre_" + versions[i].getMethodSuffix(),
-                      new Class[] { DataOutput.class }).invoke(ds, out);
+              ds.getClass().getMethod("toDataPre_" + versions[i].getMethodSuffix(), new Class[] { DataOutput.class }).invoke(ds, out);
               invoked = true;
               break;
             }
           }
         }
       }
-      
+
       if (!invoked) {
         if (isDSFID) {
-          ((DataSerializableFixedID)ds).toData(out);
+          ((DataSerializableFixedID) ds).toData(out);
         } else {
-          ((DataSerializable)ds).toData(out);
+          ((DataSerializable) ds).toData(out);
         }
       }
     } catch (IOException io) {
@@ -2399,7 +2295,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       if (isDSFID) {
         throw io;
       } else {
-        throw new ToDataException("toData failed on DataSerializable " + ds.getClass(),  io);
+        throw new ToDataException("toData failed on DataSerializable " + ds.getClass(), io);
       }
     } catch (ToDataException ex) {
       throw ex;
@@ -2420,10 +2316,10 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       // error condition, so you also need to check to see if the JVM
       // is still usable:
       SystemFailure.checkFailure();
-      throw new ToDataException("toData failed on DataSerializable " + ds.getClass(),  t);
+      throw new ToDataException("toData failed on DataSerializable " + ds.getClass(), t);
     }
   }
-  
+
   /**
    * For backward compatibility this method should be used to invoke
    * fromData on a DSFID or DataSerializable.  It will invoke the
@@ -2452,10 +2348,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           for (int i = 0; i < versions.length; i++) {
             // if peer version is less than the greatest upgraded version
             if (v.compareTo(versions[i]) < 0) {
-              ds.getClass()
-                  .getMethod(
-                      "fromDataPre" + "_" + versions[i].getMethodSuffix(),
-                      new Class[] { DataInput.class }).invoke(ds, in);
+              ds.getClass().getMethod("fromDataPre" + "_" + versions[i].getMethodSuffix(), new Class[] { DataInput.class }).invoke(ds, in);
               invoked = true;
               break;
             }
@@ -2464,9 +2357,9 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
       if (!invoked) {
         if (ds instanceof DataSerializableFixedID) {
-          ((DataSerializableFixedID)ds).fromData(in);
+          ((DataSerializableFixedID) ds).fromData(in);
         } else {
-          ((DataSerializable)ds).fromData(in);
+          ((DataSerializable) ds).fromData(in);
         }
       }
     } catch (EOFException ex) {
@@ -2482,10 +2375,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
   }
 
-  
-  private static final Object readDataSerializable(final DataInput in)
-    throws IOException, ClassNotFoundException
-  {
+  private static final Object readDataSerializable(final DataInput in) throws IOException, ClassNotFoundException {
     Class c = readClass(in);
     try {
       Constructor init = c.getConstructor(new Class[0]);
@@ -2508,10 +2398,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       throw ex2;
     }
   }
-  private static final Object
-    readDataSerializableFixedID(final DataInput in)
-    throws IOException, ClassNotFoundException
-  {
+
+  private static final Object readDataSerializableFixedID(final DataInput in) throws IOException, ClassNotFoundException {
     Class c = readClass(in);
     try {
       Constructor init = c.getConstructor(new Class[0]);
@@ -2519,7 +2407,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       Object o = init.newInstance(new Object[0]);
 
       invokeFromData(o, in);
-      
+
       if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
         logger.trace(LogMarker.SERIALIZER, "Read DataSerializableFixedID {}", o);
       }
@@ -2539,10 +2427,9 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static final Version getVersionForDataStream(DataInput in) {
     // check if this is a versioned data input
     if (in instanceof VersionedDataStream) {
-      final Version v = ((VersionedDataStream)in).getVersion();
+      final Version v = ((VersionedDataStream) in).getVersion();
       return v != null ? v : Version.CURRENT;
-    }
-    else {
+    } else {
       // assume latest version
       return Version.CURRENT;
     }
@@ -2555,9 +2442,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static final Version getVersionForDataStreamOrNull(DataInput in) {
     // check if this is a versioned data input
     if (in instanceof VersionedDataStream) {
-      return ((VersionedDataStream)in).getVersion();
-    }
-    else {
+      return ((VersionedDataStream) in).getVersion();
+    } else {
       // assume latest version
       return null;
     }
@@ -2570,10 +2456,9 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static final Version getVersionForDataStream(DataOutput out) {
     // check if this is a versioned data output
     if (out instanceof VersionedDataStream) {
-      final Version v = ((VersionedDataStream)out).getVersion();
+      final Version v = ((VersionedDataStream) out).getVersion();
       return v != null ? v : Version.CURRENT;
-    }
-    else {
+    } else {
       // assume latest version
       return Version.CURRENT;
     }
@@ -2586,9 +2471,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static final Version getVersionForDataStreamOrNull(DataOutput out) {
     // check if this is a versioned data output
     if (out instanceof VersionedDataStream) {
-      return ((VersionedDataStream)out).getVersion();
-    }
-    else {
+      return ((VersionedDataStream) out).getVersion();
+    } else {
       // assume latest version
       return null;
     }
@@ -2603,10 +2487,9 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * @since GemFire 5.7
    */
   public static final byte INT_ARRAY_LEN = -3; // array len encoded as int in next 4 bytes
-  private static final int MAX_BYTE_ARRAY_LEN = ((byte)-4) & 0xFF; 
-  
-  public static void writeArrayLength(int len, DataOutput out)
-    throws IOException {
+  private static final int MAX_BYTE_ARRAY_LEN = ((byte) -4) & 0xFF;
+
+  public static void writeArrayLength(int len, DataOutput out) throws IOException {
     if (len == -1) {
       out.writeByte(NULL_ARRAY);
     } else if (len <= MAX_BYTE_ARRAY_LEN) {
@@ -2619,8 +2502,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       out.writeInt(len);
     }
   }
-  public static int readArrayLength(DataInput in)
-    throws IOException {
+
+  public static int readArrayLength(DataInput in) throws IOException {
     byte code = in.readByte();
     if (code == NULL_ARRAY) {
       return -1;
@@ -2670,15 +2553,13 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         list.add(Integer.valueOf(in.readInt()));
       }
       return list;
-    }
-    else if (size == 0) {
-      return Collections.<Integer>emptyList();
-    }
-    else {
+    } else if (size == 0) {
+      return Collections.<Integer> emptyList();
+    } else {
       return null;
     }
   }
-  
+
   /**
    * Reads and discards an array of <code>byte</code>s from a
    * <code>DataInput</code>.
@@ -2688,23 +2569,20 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    *
    * @see #writeByteArray(byte[], DataOutput)
    */
-  public static void skipByteArray(DataInput in)
-    throws IOException {
+  public static void skipByteArray(DataInput in) throws IOException {
 
-      InternalDataSerializer.checkIn(in);
+    InternalDataSerializer.checkIn(in);
 
-      int length = InternalDataSerializer.readArrayLength(in);
-      if (length != -1) {
-        in.skipBytes(length);
-        if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
-          logger.trace(LogMarker.SERIALIZER, "Skipped byte array of length {}", length);
-        }
+    int length = InternalDataSerializer.readArrayLength(in);
+    if (length != -1) {
+      in.skipBytes(length);
+      if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
+        logger.trace(LogMarker.SERIALIZER, "Skipped byte array of length {}", length);
       }
     }
+  }
 
-  public static final Object readDSFID(final DataInput in)
-    throws IOException, ClassNotFoundException
-  {
+  public static final Object readDSFID(final DataInput in) throws IOException, ClassNotFoundException {
     checkIn(in);
     byte header = in.readByte();
     if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
@@ -2722,25 +2600,23 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       throw new IllegalStateException("unexpected byte: " + header + " while reading dsfid");
     }
   }
-  
-  public static final int readDSFIDHeader(final DataInput in)
-      throws IOException, ClassNotFoundException
-    {
-      checkIn(in);
-      byte header = in.readByte();
-      if (header == DS_FIXED_ID_BYTE) {
-        return in.readByte();
-      } else if (header == DS_FIXED_ID_SHORT) {
-        return in.readShort();
-      } else if (header == DS_NO_FIXED_ID) {
-        return Integer.MAX_VALUE;//is that correct??
-      } else if (header == DS_FIXED_ID_INT) {
-        return in.readInt();
-      } else {
-        throw new IllegalStateException("unexpected byte: " + header + " while reading dsfid");
-      }
+
+  public static final int readDSFIDHeader(final DataInput in) throws IOException, ClassNotFoundException {
+    checkIn(in);
+    byte header = in.readByte();
+    if (header == DS_FIXED_ID_BYTE) {
+      return in.readByte();
+    } else if (header == DS_FIXED_ID_SHORT) {
+      return in.readShort();
+    } else if (header == DS_NO_FIXED_ID) {
+      return Integer.MAX_VALUE;//is that correct??
+    } else if (header == DS_FIXED_ID_INT) {
+      return in.readInt();
+    } else {
+      throw new IllegalStateException("unexpected byte: " + header + " while reading dsfid");
     }
-  
+  }
+
   /**
    * Reads an instance of <code>String</code> from a
    * <code>DataInput</code> given the header byte already being read.
@@ -2759,21 +2635,18 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
       byte[] buf = new byte[len];
       in.readFully(buf, 0, len);
-      return new String(buf, 0);  // intentionally using deprecated constructor
-    }
-    else if (header == DSCODE.STRING) {
+      return new String(buf, 0); // intentionally using deprecated constructor
+    } else if (header == DSCODE.STRING) {
       if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
         logger.trace(LogMarker.SERIALIZER, "Reading utf STRING");
       }
       return in.readUTF();
-    }
-    else if (header == DSCODE.NULL_STRING) {
+    } else if (header == DSCODE.NULL_STRING) {
       if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
         logger.trace(LogMarker.SERIALIZER, "Reading NULL_STRING");
       }
       return null;
-    }
-    else if (header == DSCODE.HUGE_STRING_BYTES) {
+    } else if (header == DSCODE.HUGE_STRING_BYTES) {
       int len = in.readInt();
       if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
         logger.trace(LogMarker.SERIALIZER, "Reading HUGE_STRING_BYTES of len={}", len);
@@ -2781,19 +2654,17 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       byte[] buf = new byte[len];
       in.readFully(buf, 0, len);
       return new String(buf, 0); // intentionally using deprecated constructor
-    }
-    else if (header == DSCODE.HUGE_STRING) {
+    } else if (header == DSCODE.HUGE_STRING) {
       int len = in.readInt();
       if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
         logger.trace(LogMarker.SERIALIZER, "Reading HUGE_STRING of len={}", len);
       }
       char[] buf = new char[len];
-      for (int i=0; i < len; i++) {
+      for (int i = 0; i < len; i++) {
         buf[i] = in.readChar();
       }
       return new String(buf);
-    }
-    else {
+    } else {
       String s = "Unknown String header " + header;
       throw new IOException(s);
     }
@@ -2804,29 +2675,27 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static void registerDVDDeserializer(DataSerializer dvddeslzr) {
     dvddeserializer = dvddeslzr;
   }
-  
+
   /**
    * Just like readObject but make sure and pdx deserialized is not
    * a PdxInstance. 
    * @since GemFire 6.6.2
    */
-  public static final <T> T readNonPdxInstanceObject(final DataInput in)
-  throws IOException, ClassNotFoundException {
+  public static final <T> T readNonPdxInstanceObject(final DataInput in) throws IOException, ClassNotFoundException {
     boolean wouldReadSerialized = PdxInstanceImpl.getPdxReadSerialized();
     if (!wouldReadSerialized) {
-      return DataSerializer.<T>readObject(in);
+      return DataSerializer.<T> readObject(in);
     } else {
       PdxInstanceImpl.setPdxReadSerialized(false);
       try {
-        return DataSerializer.<T>readObject(in);
+        return DataSerializer.<T> readObject(in);
       } finally {
         PdxInstanceImpl.setPdxReadSerialized(true);
       }
     }
   }
-  
-  public static final Object basicReadObject(final DataInput in)
-      throws IOException, ClassNotFoundException {
+
+  public static final Object basicReadObject(final DataInput in) throws IOException, ClassNotFoundException {
 
     checkIn(in);
 
@@ -2879,7 +2748,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     case BYTE_ARRAY:
       return readByteArray(in);
     case ARRAY_OF_BYTE_ARRAYS:
-      return readArrayOfByteArrays(in);  
+      return readArrayOfByteArrays(in);
     case SHORT_ARRAY:
       return readShortArray(in);
     case STRING_ARRAY:
@@ -2965,36 +2834,36 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       final boolean isDebugEnabled_SERIALIZER = logger.isTraceEnabled(LogMarker.SERIALIZER);
       Object serializableResult = null;
       if (in instanceof DSObjectInputStream) {
-        serializableResult = ((DSObjectInputStream)in).readObject();
+        serializableResult = ((DSObjectInputStream) in).readObject();
       } else {
         InputStream stream;
         if (in instanceof InputStream) {
-          stream = (InputStream)in;
+          stream = (InputStream) in;
         } else {
           stream = new InputStream() {
             @Override
-              public int read() throws IOException {
-                try {
-                  return in.readUnsignedByte(); // fix for bug 47249
-                } catch (EOFException enfOfStream) {
-                  // InputStream.read() should return -1 on EOF
-                  return -1;
-                }
+            public int read() throws IOException {
+              try {
+                return in.readUnsignedByte(); // fix for bug 47249
+              } catch (EOFException enfOfStream) {
+                // InputStream.read() should return -1 on EOF
+                return -1;
               }
+            }
 
-            };
+          };
         }
 
         ObjectInput ois = new DSObjectInputStream(stream);
-        if ( stream instanceof VersionedDataStream ) {
-          Version v = ((VersionedDataStream)stream).getVersion();
-          if (v != null && v != Version.CURRENT) { 
+        if (stream instanceof VersionedDataStream) {
+          Version v = ((VersionedDataStream) stream).getVersion();
+          if (v != null && v != Version.CURRENT) {
             ois = new VersionedObjectInput(ois, v);
           }
         }
 
         serializableResult = ois.readObject();
-        
+
         if (isDebugEnabled_SERIALIZER) {
           logger.trace(LogMarker.SERIALIZER, "Read Serializable object: {}", serializableResult);
         }
@@ -3004,22 +2873,22 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
       return serializableResult;
     }
-      case PDX:
-        return readPdxSerializable(in);
-      case PDX_ENUM:
-        return readPdxEnum(in);
-      case GEMFIRE_ENUM:
-        return readGemFireEnum(in);
-      case PDX_INLINE_ENUM:
-        return readPdxInlineEnum(in);
-      case BIG_INTEGER:
-        return readBigInteger(in);
-      case BIG_DECIMAL:
-        return readBigDecimal(in);
-      case UUID:
-        return readUUID(in);
-      case TIMESTAMP:
-        return readTimestamp(in);
+    case PDX:
+      return readPdxSerializable(in);
+    case PDX_ENUM:
+      return readPdxEnum(in);
+    case GEMFIRE_ENUM:
+      return readGemFireEnum(in);
+    case PDX_INLINE_ENUM:
+      return readPdxInlineEnum(in);
+    case BIG_INTEGER:
+      return readBigInteger(in);
+    case BIG_DECIMAL:
+      return readBigDecimal(in);
+    case UUID:
+      return readUUID(in);
+    case TIMESTAMP:
+      return readTimestamp(in);
     default:
       String s = "Unknown header byte: " + header;
       throw new IOException(s);
@@ -3027,10 +2896,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
 
   }
 
-  private static final Object readUserDataSerializable(final DataInput in, int classId)
-    throws IOException, ClassNotFoundException {
-    Instantiator instantiator =
-      InternalInstantiator.getInstantiator(classId);
+  private static final Object readUserDataSerializable(final DataInput in, int classId) throws IOException, ClassNotFoundException {
+    Instantiator instantiator = InternalInstantiator.getInstantiator(classId);
     if (instantiator == null) {
       logger.error(LogMarker.SERIALIZER, LocalizedMessage.create(LocalizedStrings.DataSerializer_NO_INSTANTIATOR_HAS_BEEN_REGISTERED_FOR_CLASS_WITH_ID_0, classId));
       throw new IOException(LocalizedStrings.DataSerializer_NO_INSTANTIATOR_HAS_BEEN_REGISTERED_FOR_CLASS_WITH_ID_0.toLocalizedString(classId));
@@ -3039,7 +2906,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       try {
         DataSerializable ds;
         if (instantiator instanceof CanonicalInstantiator) {
-          CanonicalInstantiator ci = (CanonicalInstantiator)instantiator;
+          CanonicalInstantiator ci = (CanonicalInstantiator) instantiator;
           ds = ci.newInstance(in);
         } else {
           ds = instantiator.newInstance();
@@ -3055,10 +2922,12 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   }
 
   private static final ThreadLocal<Boolean> pdxSerializationInProgress = new ThreadLocal<Boolean>();
+
   public static boolean isPdxSerializationInProgress() {
     Boolean v = pdxSerializationInProgress.get();
     return v != null && v;
   }
+
   public static void setPdxSerializationInProgress(boolean v) {
     if (v) {
       pdxSerializationInProgress.set(true);
@@ -3066,9 +2935,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       pdxSerializationInProgress.set(false);
     }
   }
-  
-  public final static boolean writePdx(DataOutput out, GemFireCacheImpl gfc,
-      Object pdx, PdxSerializer pdxSerializer) throws IOException {
+
+  public final static boolean writePdx(DataOutput out, GemFireCacheImpl gfc, Object pdx, PdxSerializer pdxSerializer) throws IOException {
     TypeRegistry tr = null;
     if (gfc != null) {
       tr = gfc.getPdxRegistry();
@@ -3088,7 +2956,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       if (pdxSerializer != null) {
         //Hack to make sure we don't pass internal objects to the user's 
         //serializer
-        if(isGemfireObject(pdx)) {
+        if (isGemfireObject(pdx)) {
           return false;
         }
         if (is662SerializationEnabled()) {
@@ -3151,9 +3019,9 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       // is still usable:
       SystemFailure.checkFailure();
       if (pdxSerializer != null) {
-        throw new ToDataException("PdxSerializer failed when calling toData on " + pdx.getClass(),  t);
+        throw new ToDataException("PdxSerializer failed when calling toData on " + pdx.getClass(), t);
       } else {
-        throw new ToDataException("toData failed on PdxSerializable " + pdx.getClass(),  t);
+        throw new ToDataException("toData failed on PdxSerializable " + pdx.getClass(), t);
       }
     }
     int bytesWritten = writer.completeByteStreamGeneration();
@@ -3176,12 +3044,11 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
   }
 
-  private static final Object readPdxSerializable(final DataInput in)
-      throws IOException, ClassNotFoundException {
+  private static final Object readPdxSerializable(final DataInput in) throws IOException, ClassNotFoundException {
 
     int len = in.readInt();
     int typeId = in.readInt();
-    
+
     GemFireCacheImpl gfc = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
     PdxType pdxType = gfc.getPdxRegistry().getType(typeId);
     if (logger.isTraceEnabled(LogMarker.SERIALIZER)) {
@@ -3190,26 +3057,27 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     if (pdxType == null) {
       throw new IllegalStateException("Unknown pdx type=" + typeId);
     }
-    
+
     DMStats dmStats = getDMStats(gfc);
-    dmStats.incPdxDeserialization(len+9);
-    
+    dmStats.incPdxDeserialization(len + 9);
+
     // check if PdxInstance needs to be returned.
     if (pdxType.getNoDomainClass() || gfc.getPdxReadSerializedByAnyGemFireServices()) {
-//      if (logger.isDebugEnabled()) {
-//        gfc.getLogger().info("returning PdxInstance", new Exception("stack trace"));
-//      }
+      //      if (logger.isDebugEnabled()) {
+      //        gfc.getLogger().info("returning PdxInstance", new Exception("stack trace"));
+      //      }
       dmStats.incPdxInstanceCreations();
       return new PdxInstanceImpl(pdxType, in, len);
     } else {
-//      if (logger.isDebugEnabled()) {
-//        gfc.getLogger().info("returning domain object", new Exception("stack trace"));
-//      }
+      //      if (logger.isDebugEnabled()) {
+      //        gfc.getLogger().info("returning domain object", new Exception("stack trace"));
+      //      }
       // return domain object.
       PdxReaderImpl pdxReader = new PdxReaderImpl(pdxType, in, len);
       return pdxReader.getObject();
-    } 
+    }
   }
+
   /**
    * Reads a PdxInstance from dataBytes and returns it. If the first object
    * read is not pdx encoded returns null.
@@ -3272,7 +3140,6 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   }
   /////////////////////////////   END Test only methods /////////////////////////////
 
-
   ///////////////// END DataSerializer Implementation Methods ///////////
 
   ///////////////////////  Inner Classes  ///////////////////////
@@ -3290,7 +3157,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     protected DataSerializer serializer = null;
     /** set to true once setSerializer is called. */
     protected boolean hasBeenSet = false;
-    
+
     abstract DataSerializer getSerializer();
 
     /**
@@ -3306,6 +3173,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
     }
   }
+
   /**
    * A marker object for <Code>DataSerializer</code>s that have not
    * been registered.  Using this marker object allows us to
@@ -3344,10 +3212,10 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
             long remainingMs = endTime - System.currentTimeMillis();
             if (remainingMs > 0) {
               this.wait(remainingMs); // spurious wakeup ok
-//               if (!this.hasBeenSet) {
-//                 logger.info("logger.isDebugEnabled() getSerializer had to wait for " + remainingMs + "ms",
-//                             new Exception("STACK"));
-//               }
+              //               if (!this.hasBeenSet) {
+              //                 logger.info("logger.isDebugEnabled() getSerializer had to wait for " + remainingMs + "ms",
+              //                             new Exception("STACK"));
+              //               }
             } else {
               // timed out call setSerializer just to make sure that anyone else
               // also waiting on this marker times out also
@@ -3400,6 +3268,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
     }
   }
+
   /**
    * A distribution message that alerts other members of the
    * distributed cache of a new <code>DataSerializer</code> being
@@ -3415,11 +3284,11 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     /** The eventId of the <codE>DataSerializer</code> that was
      * registered */
     protected EventID eventId;
-    
+
     /** The name of the <code>DataSerializer</code> class */
     private String className;
     /** The versions in which this message was modified */
-    private static final Version[] dsfidVersions = new Version[]{};
+    private static final Version[] dsfidVersions = new Version[] {};
 
     /**
      * Constructor for <code>DataSerializable</code>
@@ -3435,7 +3304,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     public RegistrationMessage(DataSerializer s) {
       this.className = s.getClass().getName();
       this.id = s.getId();
-      this.eventId = (EventID)s.getEventId();
+      this.eventId = (EventID) s.getEventId();
     }
 
     public static String getFullMessage(Throwable t) {
@@ -3443,7 +3312,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       getFullMessage(sb, t);
       return sb.toString();
     }
-    
+
     private static void getFullMessage(StringBuffer sb, Throwable t) {
       if (t.getMessage() != null) {
         sb.append(t.getMessage());
@@ -3455,9 +3324,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
         getFullMessage(sb, t.getCause());
       }
     }
-    
-    
-    
+
     @Override
     protected void process(DistributionManager dm) {
       if (CacheClientNotifier.getInstance() != null) {
@@ -3469,8 +3336,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           c = getCachedClass(this.className); // fix for bug 41206
         } catch (ClassNotFoundException ex) {
           // fixes bug 44112
-          logger.warn("Could not load data serializer class {} so both clients of this server and this server will not have this data serializer. Load failed because: {}",
-              this.className, getFullMessage(ex));
+          logger.warn("Could not load data serializer class {} so both clients of this server and this server will not have this data serializer. Load failed because: {}", this.className, getFullMessage(ex));
           return;
         }
         DataSerializer s = null;
@@ -3478,41 +3344,36 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
           s = newInstance(c);
         } catch (IllegalArgumentException ex) {
           // fixes bug 44112
-          logger.warn("Could not create an instance of data serializer for class {} so both clients of this server and this server will not have this data serializer. Create failed because: {}",
-              this.className, getFullMessage(ex));
+          logger.warn("Could not create an instance of data serializer for class {} so both clients of this server and this server will not have this data serializer. Create failed because: {}", this.className, getFullMessage(ex));
           return;
         }
         s.setEventId(this.eventId);
         try {
           InternalDataSerializer._register(s, false);
         } catch (IllegalArgumentException ex) {
-          logger.warn("Could not register data serializer for class {} so both clients of this server and this server will not have this data serializer. Registration failed because: {}",
-              this.className, getFullMessage(ex));
+          logger.warn("Could not register data serializer for class {} so both clients of this server and this server will not have this data serializer. Registration failed because: {}", this.className, getFullMessage(ex));
           return;
         } catch (IllegalStateException ex) {
-          logger.warn("Could not register data serializer for class {} so both clients of this server and this server will not have this data serializer. Registration failed because: {}",
-              this.className, getFullMessage(ex));
+          logger.warn("Could not register data serializer for class {} so both clients of this server and this server will not have this data serializer. Registration failed because: {}", this.className, getFullMessage(ex));
           return;
         }
       } else {
         try {
           InternalDataSerializer.register(this.className, false, this.eventId, null, this.id);
         } catch (IllegalArgumentException ex) {
-          logger.warn("Could not register data serializer for class {} so it will not be available in this JVM. Registration failed because: {}",
-              this.className, getFullMessage(ex));
+          logger.warn("Could not register data serializer for class {} so it will not be available in this JVM. Registration failed because: {}", this.className, getFullMessage(ex));
           return;
         } catch (IllegalStateException ex) {
-          logger.warn("Could not register data serializer for class {} so it will not be available in this JVM. Registration failed because: {}",
-              this.className, getFullMessage(ex));
+          logger.warn("Could not register data serializer for class {} so it will not be available in this JVM. Registration failed because: {}", this.className, getFullMessage(ex));
           return;
         }
-     }
+      }
     }
 
     public int getDSFID() {
       return IDS_REGISTRATION_MESSAGE;
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -3522,20 +3383,18 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
 
     @Override
-    public void fromData(DataInput in)
-      throws IOException, ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
 
       super.fromData(in);
       InternalDataSerializer.checkIn(in);
       this.className = DataSerializer.readNonPrimitiveClassName(in);
       this.id = in.readInt();
-      this.eventId = (EventID)DataSerializer.readObject(in);
+      this.eventId = (EventID) DataSerializer.readObject(in);
     }
 
     @Override
     public String toString() {
-      return LocalizedStrings.InternalDataSerializer_REGISTER_DATASERIALIZER_0_OF_CLASS_1
-      .toLocalizedString(new Object[]{Integer.valueOf(this.id), this.className});
+      return LocalizedStrings.InternalDataSerializer_REGISTER_DATASERIALIZER_0_OF_CLASS_1.toLocalizedString(new Object[] { Integer.valueOf(this.id), this.className });
     }
 
     @Override
@@ -3584,25 +3443,23 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
 
     @Override
-    protected Class resolveClass(ObjectStreamClass desc)
-      throws IOException, ClassNotFoundException {
+    protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 
       String className = desc.getName();
       OldClientSupportService svc = getOldClientSupportService();
       if (svc != null) {
         className = svc.processIncomingClassName(className);
       }
-     try {
-       Class clazz = getCachedClass(className);
-       return clazz;
+      try {
+        Class clazz = getCachedClass(className);
+        return clazz;
       } catch (ClassNotFoundException ex) {
         return super.resolveClass(desc);
       }
     }
 
     @Override
-    protected Class resolveProxyClass(String[] interfaces)
-      throws IOException, ClassNotFoundException {
+    protected Class resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
 
       ClassLoader nonPublicLoader = null;
       boolean hasNonPublicInterface = false;
@@ -3611,13 +3468,11 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       // interface(s), if any
       Class[] classObjs = new Class[interfaces.length];
       for (int i = 0; i < interfaces.length; i++) {
-        Class cl =
-          getCachedClass(interfaces[i]);
+        Class cl = getCachedClass(interfaces[i]);
         if ((cl.getModifiers() & Modifier.PUBLIC) == 0) {
           if (hasNonPublicInterface) {
             if (nonPublicLoader != cl.getClassLoader()) {
-              String s =
-                "conflicting non-public interface class loaders";
+              String s = "conflicting non-public interface class loaders";
               throw new IllegalAccessError(s);
             }
 
@@ -3641,135 +3496,135 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
   }
 
-//   /**
-//    * A <code>DataOutput</code> that writes special header information
-//    * before it writes any other data.  It is passed to a
-//    * <code>DataSerializer</code>'s {@link
-//    * DataSerializer#toData(Object, DataOutput)} method to ensure
-//    * that the stream has the correct format.
-//    */
-//   private static class DSDataOutput implements DataOutput {
-//     /** Has the header information been written? */
-//     private boolean headerWritten = false;
+  //   /**
+  //    * A <code>DataOutput</code> that writes special header information
+  //    * before it writes any other data.  It is passed to a
+  //    * <code>DataSerializer</code>'s {@link
+  //    * DataSerializer#toData(Object, DataOutput)} method to ensure
+  //    * that the stream has the correct format.
+  //    */
+  //   private static class DSDataOutput implements DataOutput {
+  //     /** Has the header information been written? */
+  //     private boolean headerWritten = false;
 
-//     /** The id of serializer that is writing to this output */
-//     private byte serializerId;
+  //     /** The id of serializer that is writing to this output */
+  //     private byte serializerId;
 
-//     /** The output stream to which this DSDataOutput writes */
-//     protected DataOutput out;
+  //     /** The output stream to which this DSDataOutput writes */
+  //     protected DataOutput out;
 
-//     //////////////////////  Constructors  //////////////////////
+  //     //////////////////////  Constructors  //////////////////////
 
-//     /**
-//      * Creates a new <code>DSDataOutput</code> that write to the
-//      * given output stream.
-//      */
-//     DSDataOutput(DataOutput out) {
-//       this.out = out;
-//     }
+  //     /**
+  //      * Creates a new <code>DSDataOutput</code> that write to the
+  //      * given output stream.
+  //      */
+  //     DSDataOutput(DataOutput out) {
+  //       this.out = out;
+  //     }
 
-//     /////////////////////  Instance Methods  ////////////////////
+  //     /////////////////////  Instance Methods  ////////////////////
 
-//     /**
-//      * Sets the id of the serializer that will possibly write to
-//      * this stream.
-//      */
-//     void setSerializerId(byte id) {
-//       this.serializerId = id;
-//     }
+  //     /**
+  //      * Sets the id of the serializer that will possibly write to
+  //      * this stream.
+  //      */
+  //     void setSerializerId(byte id) {
+  //       this.serializerId = id;
+  //     }
 
-//     /**
-//      * Returns whether or not any data hass been written to this
-//      * stream.
-//      */
-//     boolean hasWritten() {
-//       return this.headerWritten;
-//     }
+  //     /**
+  //      * Returns whether or not any data hass been written to this
+  //      * stream.
+  //      */
+  //     boolean hasWritten() {
+  //       return this.headerWritten;
+  //     }
 
-//     /**
-//      * Write the {@link #USER_CLASS} "class id" followed by the id
-//      * of the serializer.
-//      */
-//     private void writeHeader() throws IOException {
-//       if (!headerWritten) {
-//         out.writeByte(USER_CLASS);
-//         out.writeByte(serializerId);
-//         this.headerWritten = true;
-//       }
-//     }
+  //     /**
+  //      * Write the {@link #USER_CLASS} "class id" followed by the id
+  //      * of the serializer.
+  //      */
+  //     private void writeHeader() throws IOException {
+  //       if (!headerWritten) {
+  //         out.writeByte(USER_CLASS);
+  //         out.writeByte(serializerId);
+  //         this.headerWritten = true;
+  //       }
+  //     }
 
-//     public void write(int b) throws IOException {
-//       writeHeader();
-//       out.write(b);
-//     }
+  //     public void write(int b) throws IOException {
+  //       writeHeader();
+  //       out.write(b);
+  //     }
 
-//     public void write(byte[] b) throws IOException {
-//       writeHeader();
-//       out.write(b);
-//     }
+  //     public void write(byte[] b) throws IOException {
+  //       writeHeader();
+  //       out.write(b);
+  //     }
 
-//     public void write(byte[] b, int off, int len)
-//       throws IOException {
-//       writeHeader();
-//       out.write(b, off, len);
-//     }
+  //     public void write(byte[] b, int off, int len)
+  //       throws IOException {
+  //       writeHeader();
+  //       out.write(b, off, len);
+  //     }
 
-//     public void writeBoolean(boolean v) throws IOException {
-//       writeHeader();
-//       out.writeBoolean(v);
-//     }
+  //     public void writeBoolean(boolean v) throws IOException {
+  //       writeHeader();
+  //       out.writeBoolean(v);
+  //     }
 
-//     public void writeByte(int v) throws IOException {
-//       writeHeader();
-//       out.writeByte(v);
-//     }
+  //     public void writeByte(int v) throws IOException {
+  //       writeHeader();
+  //       out.writeByte(v);
+  //     }
 
-//     public void writeShort(int v) throws IOException {
-//       writeHeader();
-//       out.writeShort(v);
-//     }
+  //     public void writeShort(int v) throws IOException {
+  //       writeHeader();
+  //       out.writeShort(v);
+  //     }
 
-//     public void writeChar(int v) throws IOException {
-//       writeHeader();
-//       out.writeChar(v);
-//     }
+  //     public void writeChar(int v) throws IOException {
+  //       writeHeader();
+  //       out.writeChar(v);
+  //     }
 
-//     public void writeInt(int v) throws IOException {
-//       writeHeader();
-//       out.writeInt(v);
-//     }
+  //     public void writeInt(int v) throws IOException {
+  //       writeHeader();
+  //       out.writeInt(v);
+  //     }
 
-//     public void writeLong(long v) throws IOException {
-//       writeHeader();
-//       out.writeLong(v);
-//     }
+  //     public void writeLong(long v) throws IOException {
+  //       writeHeader();
+  //       out.writeLong(v);
+  //     }
 
-//     public void writeFloat(float v) throws IOException {
-//       writeHeader();
-//       out.writeFloat(v);
-//     }
+  //     public void writeFloat(float v) throws IOException {
+  //       writeHeader();
+  //       out.writeFloat(v);
+  //     }
 
-//     public void writeDouble(double v) throws IOException {
-//       writeHeader();
-//       out.writeDouble(v);
-//     }
+  //     public void writeDouble(double v) throws IOException {
+  //       writeHeader();
+  //       out.writeDouble(v);
+  //     }
 
-//     public void writeBytes(String s) throws IOException {
-//       writeHeader();
-//       out.writeBytes(s);
-//     }
+  //     public void writeBytes(String s) throws IOException {
+  //       writeHeader();
+  //       out.writeBytes(s);
+  //     }
 
-//     public void writeChars(String s) throws IOException {
-//       writeHeader();
-//       out.writeChars(s);
-//     }
+  //     public void writeChars(String s) throws IOException {
+  //       writeHeader();
+  //       out.writeChars(s);
+  //     }
 
-//     public void writeUTF(String str) throws IOException {
-//       writeHeader();
-//       out.writeUTF(str);
-//     }
+  //     public void writeUTF(String str) throws IOException {
+  //       writeHeader();
+  //       out.writeUTF(str);
+  //     }
 
-//   }
+  //   }
   /**
    * Used to implement serialization code for the well known classes we support
    * in DataSerializer.
@@ -3782,18 +3637,21 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       // with this id it gives us one to use
       return 0;
     }
+
     @Override
     public final Class[] getSupportedClasses() {
       // illegal for a customer to return null but we can do it since we never register
       // this serializer.
       return null;
     }
+
     @Override
     public final Object fromData(DataInput in) throws IOException, ClassNotFoundException {
       throw new IllegalStateException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
     }
     // subclasses need to implement toData
   }
+
   /**
    * Just like a WellKnownDS but its type is compatible with PDX.
    *
@@ -3801,9 +3659,8 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   protected static abstract class WellKnownPdxDS extends WellKnownDS {
     // subclasses need to implement toData
   }
-  
-  public static void writeObjectArray(Object[] array, DataOutput out, boolean ensureCompatibility)
-    throws IOException {
+
+  public static void writeObjectArray(Object[] array, DataOutput out, boolean ensureCompatibility) throws IOException {
     InternalDataSerializer.checkOut(out);
     int length;
     if (array == null) {
@@ -3822,7 +3679,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       }
     }
   }
-  
+
   private static final byte INT_VL = 126; // Variable Length long encoded as int
   // in next 4 bytes
   private static final byte LONG_VL = 127; // Variable Length long encoded as
@@ -3835,7 +3692,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
    * members or files.
    */
   public static void writeVLOld(long data, DataOutput out) throws IOException {
-    if(data < 0) {
+    if (data < 0) {
       Assert.fail("Data expected to be >=0 is " + data);
     }
     if (data <= MAX_BYTE_VL) {
@@ -3877,7 +3734,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     return result;
   }
-  
+
   /**
    * Encode a long as a variable length array. 
    * 
@@ -3891,15 +3748,15 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static void writeUnsignedVL(long data, DataOutput out) throws IOException {
     while (true) {
       if ((data & ~0x7FL) == 0) {
-        out.writeByte((int)data);
+        out.writeByte((int) data);
         return;
       } else {
-        out.writeByte(((int)data & 0x7F) | 0x80);
+        out.writeByte(((int) data & 0x7F) | 0x80);
         data >>>= 7;
       }
     }
   }
-  
+
   /**
    * Decode a long as a variable length array. 
    * 
@@ -3911,7 +3768,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     long result = 0;
     while (shift < 64) {
       final byte b = in.readByte();
-      result |= (long)(b & 0x7F) << shift;
+      result |= (long) (b & 0x7F) << shift;
       if ((b & 0x80) == 0) {
         return result;
       }
@@ -3919,7 +3776,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
     }
     throw new GemFireIOException("Malformed variable length integer");
   }
-  
+
   /**
    * Encode a signed long as a variable length array. 
    * 
@@ -3931,7 +3788,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static void writeSignedVL(long data, DataOutput out) throws IOException {
     writeUnsignedVL(encodeZigZag64(data), out);
   }
-  
+
   /**
    * Decode a signed long as a variable length array. 
    * 
@@ -3995,7 +3852,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
   public static final boolean LOAD_CLASS_EACH_TIME = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "loadClassOnEveryDeserialization");
   private static final CopyOnWriteHashMap<String, WeakReference<Class<?>>> classCache = LOAD_CLASS_EACH_TIME ? null : new CopyOnWriteHashMap<String, WeakReference<Class<?>>>();
   private static final Object cacheAccessLock = new Object();
-  
+
   public static Class<?> getCachedClass(String className) throws ClassNotFoundException {
     if (LOAD_CLASS_EACH_TIME) {
       return ClassPathLoader.getLatest().forName(className);
@@ -4016,6 +3873,7 @@ public abstract class InternalDataSerializer extends DataSerializer implements D
       return result;
     }
   }
+
   private static Class<?> getExistingCachedClass(String className) {
     WeakReference<Class<?>> wr = classCache.get(className);
     Class<?> result = null;

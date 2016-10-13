@@ -52,15 +52,15 @@ import org.apache.geode.test.junit.runners.CategoryWithParameterizedRunnerFactor
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
 public class CQPDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
-  private static byte[] BYTES = {1,0};
+  private static byte[] BYTES = { 1, 0 };
 
   @Parameterized.Parameters
-  public static Collection<Object[]> parameters(){
-    Object[][] params = {{true}, {false}};
+  public static Collection<Object[]> parameters() {
+    Object[][] params = { { true }, { false } };
     return Arrays.asList(params);
   }
 
-  public CQPDXPostProcessorDUnitTest(boolean pdxPersistent){
+  public CQPDXPostProcessorDUnitTest(boolean pdxPersistent) {
     this.postProcessor = PDXPostProcessor.class;
     this.pdxPersistent = pdxPersistent;
     this.jmxPort = AvailablePortHelper.getRandomAvailableTCPPort();
@@ -84,11 +84,10 @@ public class CQPDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
         public void onEvent(final CqEvent aCqEvent) {
           Object key = aCqEvent.getKey();
           Object value = aCqEvent.getNewValue();
-          if(key.equals("key1")) {
+          if (key.equals("key1")) {
             assertTrue(value instanceof SimpleClass);
-          }
-          else if(key.equals("key2")){
-            assertTrue(Arrays.equals(BYTES, (byte[])value));
+          } else if (key.equals("key2")) {
+            assertTrue(Arrays.equals(BYTES, (byte[]) value));
           }
         }
       });

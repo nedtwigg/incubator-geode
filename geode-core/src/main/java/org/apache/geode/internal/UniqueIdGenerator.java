@@ -59,7 +59,7 @@ public class UniqueIdGenerator {
   /**
    * Given a bit index return unit index containing it.
    */
-    private static int unitIndex(int bitIndex) {
+  private static int unitIndex(int bitIndex) {
     return bitIndex >> ADDRESS_BITS_PER_UNIT;
   }
 
@@ -98,65 +98,49 @@ public class UniqueIdGenerator {
    * trailingZeroTable[i] is the number of trailing zero bits in the binary
    * representation of i.
    */
-  private final static byte trailingZeroTable[] = {
-    -25, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
+  private final static byte trailingZeroTable[] = { -25, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0 };
 
   private static int trailingZeroCnt(long val) {
     // Loop unrolled for performance
-    int byteVal = (int)val & 0xff;
+    int byteVal = (int) val & 0xff;
     if (byteVal != 0) {
       return trailingZeroTable[byteVal];
     }
 
-    byteVal = (int)(val >>> 8) & 0xff;
+    byteVal = (int) (val >>> 8) & 0xff;
     if (byteVal != 0) {
       return trailingZeroTable[byteVal] + 8;
     }
 
-    byteVal = (int)(val >>> 16) & 0xff;
+    byteVal = (int) (val >>> 16) & 0xff;
     if (byteVal != 0) {
       return trailingZeroTable[byteVal] + 16;
     }
 
-    byteVal = (int)(val >>> 24) & 0xff;
+    byteVal = (int) (val >>> 24) & 0xff;
     if (byteVal != 0) {
       return trailingZeroTable[byteVal] + 24;
     }
 
-    byteVal = (int)(val >>> 32) & 0xff;
+    byteVal = (int) (val >>> 32) & 0xff;
     if (byteVal != 0) {
       return trailingZeroTable[byteVal] + 32;
     }
 
-    byteVal = (int)(val >>> 40) & 0xff;
+    byteVal = (int) (val >>> 40) & 0xff;
     if (byteVal != 0) {
       return trailingZeroTable[byteVal] + 40;
     }
 
-    byteVal = (int)(val >>> 48) & 0xff;
+    byteVal = (int) (val >>> 48) & 0xff;
     if (byteVal != 0) {
       return trailingZeroTable[byteVal] + 48;
     }
 
-    byteVal = (int)(val >>> 56) & 0xff;
+    byteVal = (int) (val >>> 56) & 0xff;
     return trailingZeroTable[byteVal] + 56;
   }
-  
+
   private static final long WORD_MASK = 0xffffffffffffffffL;
 
   /**
@@ -175,7 +159,7 @@ public class UniqueIdGenerator {
       testIndex = 0;
     }
 
-    while((unit==WORD_MASK) && (u < this.units.length-1)) {
+    while ((unit == WORD_MASK) && (u < this.units.length - 1)) {
       unit = this.units[++u];
     }
 
@@ -206,8 +190,8 @@ public class UniqueIdGenerator {
     if (numIds <= 0) {
       throw new IllegalArgumentException(LocalizedStrings.UniqueIdGenerator_NUMIDS_0.toLocalizedString());
     }
-    this.units = new long[(unitIndex(numIds-1) + 1)];
-    this.MAX_ID = numIds-1;
+    this.units = new long[(unitIndex(numIds - 1) + 1)];
+    this.MAX_ID = numIds - 1;
     this.ctr = 0;
   }
 
@@ -233,7 +217,7 @@ public class UniqueIdGenerator {
         if (result == MAX_ID) {
           this.ctr = 0;
         } else {
-          this.ctr = result+1;
+          this.ctr = result + 1;
         }
         return result;
       }

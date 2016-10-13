@@ -30,9 +30,7 @@ import org.apache.geode.cache.LoaderHelper;
  *  
  * @since GemFire 5.0
  */
-public interface LoaderHelperFactory
-{
-  public LoaderHelper createLoaderHelper(Object key, Object callbackArgument, boolean netSearchAllowed, boolean netLoadAllowed,
-      SearchLoadAndWriteProcessor searcher);
-  
+public interface LoaderHelperFactory {
+  public LoaderHelper createLoaderHelper(Object key, Object callbackArgument, boolean netSearchAllowed, boolean netLoadAllowed, SearchLoadAndWriteProcessor searcher);
+
 }

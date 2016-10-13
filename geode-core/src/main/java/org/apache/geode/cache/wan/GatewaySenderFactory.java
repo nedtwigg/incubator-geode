@@ -37,15 +37,14 @@ public interface GatewaySenderFactory {
    *          boolean to indicate whether distribution policy is parallel
    */
   public GatewaySenderFactory setParallel(boolean isParallel);
-  
+
   /**
    * Adds a <code>GatewayEventFilter</code>
    * 
    * @param filter
    *          GatewayEventFilter
    */
-  public GatewaySenderFactory addGatewayEventFilter(
-      GatewayEventFilter filter);
+  public GatewaySenderFactory addGatewayEventFilter(GatewayEventFilter filter);
 
   /**
    * Adds a <code>GatewayTransportFilter</code>
@@ -53,8 +52,7 @@ public interface GatewaySenderFactory {
    * @param filter
    *          GatewayTransportFilter
    */
-  public GatewaySenderFactory addGatewayTransportFilter(
-      GatewayTransportFilter filter);
+  public GatewaySenderFactory addGatewayTransportFilter(GatewayTransportFilter filter);
 
   /**
    * Sets the buffer size in bytes of the socket connection for this
@@ -101,7 +99,7 @@ public interface GatewaySenderFactory {
    * @param policy
    */
   public GatewaySenderFactory setOrderPolicy(OrderPolicy policy);
-  
+
   /**
    * Sets the maximum amount of memory (in MB) for a
    * <code>GatewaySender</code>'s queue.
@@ -145,8 +143,7 @@ public interface GatewaySenderFactory {
    *          <code>GatewaySender</code> to its corresponding
    *          <code>GatewayReceiver</code>.
    */
-  public GatewaySenderFactory setBatchConflationEnabled(
-      boolean isConflation);
+  public GatewaySenderFactory setBatchConflationEnabled(boolean isConflation);
 
   /**
    * Sets whether to enable persistence for a <code>GatewaySender</code>'s
@@ -180,7 +177,7 @@ public interface GatewaySenderFactory {
    *          <code>GatewaySender</code>
    */
   public GatewaySenderFactory setManualStart(boolean start);
-  
+
   /**
    * Sets whether or not the writing to the disk is synchronous.
    * Default is true.
@@ -190,7 +187,7 @@ public interface GatewaySenderFactory {
    *  
    */
   public GatewaySenderFactory setDiskSynchronous(boolean isSynchronous);
-  
+
   /**
    * Removes the provided <code>GatewayEventFilter</code> from this
    * GatewaySender.
@@ -208,15 +205,14 @@ public interface GatewaySenderFactory {
   public GatewaySenderFactory removeGatewayTransportFilter(GatewayTransportFilter filter);
 
   public GatewaySenderFactory setParallelFactorForReplicatedRegion(int parallel);
-  
+
   /**
    * Sets the provided <code>GatewayEventSubstitutionFilter</code> in this
    * GatewaySenderFactory.
    * 
    * @param filter The <code>GatewayEventSubstitutionFilter</code>
    */
-  public GatewaySenderFactory setGatewayEventSubstitutionFilter(
-      GatewayEventSubstitutionFilter filter);
+  public GatewaySenderFactory setGatewayEventSubstitutionFilter(GatewayEventSubstitutionFilter filter);
 
   /**
    * Creates a <code>GatewaySender</code> to communicate with remote
@@ -230,7 +226,7 @@ public interface GatewaySenderFactory {
    * @throws IllegalStateException 
    *           If the GatewaySender creation fails during validation due to mismatch of 
    *           attributes of GatewaySender created on other nodes with same id 
-   */ 
+   */
   public GatewaySender create(String id, int remoteDSId);
 
 }

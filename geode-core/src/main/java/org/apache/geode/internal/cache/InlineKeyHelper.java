@@ -30,7 +30,7 @@ public class InlineKeyHelper {
    * to store the string key inline.
    */
   public static final int MAX_LONGS_USED_FOR_STRING_KEY = 2;
-  
+
   /**
    * Given the number of longs used to encode the inline string
    * return the maximum number of characters that can be encoded
@@ -61,7 +61,7 @@ public class InlineKeyHelper {
   }
 
   private static boolean isByteEncodingOk(String skey) {
-    for (int i=0; i < skey.length(); i++) {
+    for (int i = 0; i < skey.length(); i++) {
       if (skey.charAt(i) > 0x7f) {
         return false;
       }

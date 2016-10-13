@@ -53,7 +53,7 @@ public class TcpServerBackwardCompatDUnitTest extends JUnit4DistributedTestCase 
   public final void postSetUp() throws Exception {
     disconnectAllFromDS();
     Invoke.invokeInEveryVM(new CacheSerializableRunnable("Set TcpServer.isTesting true") {
-      
+
       @Override
       public void run2() throws CacheException {
         TcpServer.isTesting = true;
@@ -64,7 +64,7 @@ public class TcpServerBackwardCompatDUnitTest extends JUnit4DistributedTestCase 
   @Override
   public final void preTearDown() throws Exception {
     Invoke.invokeInEveryVM(new CacheSerializableRunnable("Set TcpServer.isTesting true") {
-      
+
       @Override
       public void run2() throws CacheException {
         TcpServer.isTesting = false;
@@ -91,29 +91,28 @@ public class TcpServerBackwardCompatDUnitTest extends JUnit4DistributedTestCase 
     // Create properties for locator0
     final int port0 = ports[0];
     final File logFile0 = null;//new File("");
-    
+
     // Create properties for locator1
     final int port1 = ports[1];
     final File logFile1 = null;//new File("");
-    
-    final String locators = host.getHostName() + "[" + port0 + "]," +
-                            host.getHostName() + "[" + port1 + "]";
-    
+
+    final String locators = host.getHostName() + "[" + port0 + "]," + host.getHostName() + "[" + port1 + "]";
+
     final Properties props = new Properties();
     props.setProperty(LOCATORS, locators);
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(ENABLE_CLUSTER_CONFIGURATION, "false");
-//    props.setProperty(LOG_LEVEL, "finest");
-    
+    //    props.setProperty(LOG_LEVEL, "finest");
+
     // Start locator0 with props.
     //props.setProperty(DistributionConfig.START_LOCATOR_NAME, host.getHostName() + "["+port0+"]");
     locator0.invoke(new CacheSerializableRunnable("Starting first locator on port " + port0) {
-      
+
       @Override
       public void run2() throws CacheException {
         try {
-          TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.TESTVERSION-100, Version.CURRENT_ORDINAL);
-          
+          TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.TESTVERSION - 100, Version.CURRENT_ORDINAL);
+
           Locator.startLocatorAndDS(port0, logFile0, props);
         } catch (IOException e) {
           org.apache.geode.test.dunit.Assert.fail("Locator1 start failed with Gossip Version: " + TcpServer.GOSSIPVERSION + "!", e);
@@ -123,11 +122,11 @@ public class TcpServerBackwardCompatDUnitTest extends JUnit4DistributedTestCase 
 
     // Start a new member to add it to discovery set of locator0.
     member.invoke(new CacheSerializableRunnable("Start a member") {
-      
+
       @Override
       public void run2() throws CacheException {
         disconnectFromDS();
-        TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.TESTVERSION-100, Version.CURRENT_ORDINAL);
+        TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.TESTVERSION - 100, Version.CURRENT_ORDINAL);
         InternalDistributedSystem.connect(props);
       }
     });
@@ -143,17 +142,16 @@ public class TcpServerBackwardCompatDUnitTest extends JUnit4DistributedTestCase 
           TcpServer.OLDTESTVERSION -= 100;
           TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.TESTVERSION, Version.CURRENT_ORDINAL);
           TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.OLDTESTVERSION, Version.GFE_57.ordinal());
-//          assertIndexDetailsEquals("Gossip Version and Test version are not same", TcpServer.GOSSIPVERSION, TcpServer.TESTVERSION);
-//          assertIndexDetailsEquals("Previous Gossip Version and Test version are not same", TcpServer.OLDGOSSIPVERSION, TcpServer.OLDTESTVERSION);
+          //          assertIndexDetailsEquals("Gossip Version and Test version are not same", TcpServer.GOSSIPVERSION, TcpServer.TESTVERSION);
+          //          assertIndexDetailsEquals("Previous Gossip Version and Test version are not same", TcpServer.OLDGOSSIPVERSION, TcpServer.OLDTESTVERSION);
 
           Locator.startLocatorAndDS(port1, logFile1, props);
 
           // Start a gossip client to connect to first locator "locator0".
-          FindCoordinatorRequest req = new FindCoordinatorRequest(new InternalDistributedMember(
-              SocketCreator.getLocalHost(), 1234));
+          FindCoordinatorRequest req = new FindCoordinatorRequest(new InternalDistributedMember(SocketCreator.getLocalHost(), 1234));
           FindCoordinatorResponse response = null;
-          
-          response = (FindCoordinatorResponse)new TcpClient().requestToServer(SocketCreator.getLocalHost(), port1, req, 5000);
+
+          response = (FindCoordinatorResponse) new TcpClient().requestToServer(SocketCreator.getLocalHost(), port1, req, 5000);
           assertNotNull(response);
 
         } catch (Exception e) {
@@ -164,18 +162,18 @@ public class TcpServerBackwardCompatDUnitTest extends JUnit4DistributedTestCase 
 
     // Stop first locator currently running in locator0 VM.
     locator0.invoke(new CacheSerializableRunnable("Stopping first locator") {
-      
+
       @Override
       public void run2() throws CacheException {
         Locator.getLocator().stop();
         disconnectFromDS();
       }
     });
-    
+
     // Restart first locator in new VM.
     //props.setProperty(DistributionConfig.START_LOCATOR_NAME, host.getHostName() + "["+port0+"]");
     locatorRestart0.invoke(new CacheSerializableRunnable("Restarting first locator on port " + port0) {
-      
+
       @Override
       public void run2() throws CacheException {
         try {
@@ -183,17 +181,16 @@ public class TcpServerBackwardCompatDUnitTest extends JUnit4DistributedTestCase 
           TcpServer.OLDTESTVERSION -= 100;
           TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.TESTVERSION, Version.CURRENT_ORDINAL);
           TcpServer.getGossipVersionMapForTestOnly().put(TcpServer.OLDTESTVERSION, Version.GFE_57.ordinal());
-//          assertIndexDetailsEquals("Gossip Version and Test version are not same", TcpServer.GOSSIPVERSION, TcpServer.TESTVERSION);
-//          assertIndexDetailsEquals("Previous Gossip Version and Test version are not same", TcpServer.OLDGOSSIPVERSION, TcpServer.OLDTESTVERSION);
+          //          assertIndexDetailsEquals("Gossip Version and Test version are not same", TcpServer.GOSSIPVERSION, TcpServer.TESTVERSION);
+          //          assertIndexDetailsEquals("Previous Gossip Version and Test version are not same", TcpServer.OLDGOSSIPVERSION, TcpServer.OLDTESTVERSION);
 
           Locator.startLocatorAndDS(port0, logFile0, props);
 
           // Start a gossip client to connect to first locator "locator0".
-          FindCoordinatorRequest req = new FindCoordinatorRequest(new InternalDistributedMember(
-              SocketCreator.getLocalHost(), 1234));
+          FindCoordinatorRequest req = new FindCoordinatorRequest(new InternalDistributedMember(SocketCreator.getLocalHost(), 1234));
           FindCoordinatorResponse response = null;
-          
-          response = (FindCoordinatorResponse)new TcpClient().requestToServer(SocketCreator.getLocalHost(), port0, req, 5000);
+
+          response = (FindCoordinatorResponse) new TcpClient().requestToServer(SocketCreator.getLocalHost(), port0, req, 5000);
           assertNotNull(response);
 
         } catch (Exception e) {

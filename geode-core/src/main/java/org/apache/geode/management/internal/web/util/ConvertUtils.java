@@ -114,8 +114,7 @@ public abstract class ConvertUtils {
 
       for (final Resource resource : resources) {
         if (StringUtils.isBlank(resource.getFilename())) {
-          throw new IllegalArgumentException(String.format("The filename of Resource (%1$s) must be specified!",
-            resource.getDescription()));
+          throw new IllegalArgumentException(String.format("The filename of Resource (%1$s) must be specified!", resource.getDescription()));
         }
 
         fileData.add(resource.getFilename().getBytes());

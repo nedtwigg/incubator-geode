@@ -23,14 +23,18 @@ import java.io.ObjectOutput;
 
 public class UnitTestValueHolder implements Externalizable {
   private Object value;
+
   public UnitTestValueHolder() {
   }
+
   public UnitTestValueHolder(Object v) {
     this.value = v;
   }
+
   public Object getValue() {
     return this.value;
   }
+
   @Override
   public void writeExternal(ObjectOutput out) throws IOException {
     out.writeObject(this.value);

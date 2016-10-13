@@ -27,9 +27,9 @@ import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 public class PersistExecutor extends AbstractExecutor {
 
   private final int TIMEOUT_REMOVED = 1;
-  
+
   private final int KEY_NOT_EXIST_OR_NO_TIMEOUT = 0;
-  
+
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
     List<byte[]> commandElems = command.getProcessedCommand();
@@ -40,9 +40,9 @@ public class PersistExecutor extends AbstractExecutor {
     }
 
     ByteArrayWrapper key = command.getKey();
-    
+
     boolean canceled = context.getRegionProvider().cancelKeyExpiration(key);
-    
+
     if (canceled)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), TIMEOUT_REMOVED));
     else

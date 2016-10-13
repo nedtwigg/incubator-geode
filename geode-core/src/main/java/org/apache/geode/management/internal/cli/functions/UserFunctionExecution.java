@@ -46,11 +46,10 @@ public class UserFunctionExecution implements Function, InternalEntity {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void execute(FunctionContext context) {   
-    try {      
+  public void execute(FunctionContext context) {
+    try {
       Cache cache = CacheFactory.getAnyInstance();
-      DistributedMember member = cache.getDistributedSystem()
-          .getDistributedMember();
+      DistributedMember member = cache.getDistributedSystem().getDistributedMember();
       String[] functionArgs = null;
       Object[] args = (Object[]) context.getArguments();
       if (args != null) {
@@ -67,8 +66,7 @@ public class UserFunctionExecution implements Function, InternalEntity {
           Set<String> filters = new HashSet<String>();
           ResultCollector resultCollectorInstance = null;
           if (resultCollectorName != null && resultCollectorName.length() > 0) {
-            resultCollectorInstance = (ResultCollector) ClassPathLoader
-                .getLatest().forName(resultCollectorName).newInstance();
+            resultCollectorInstance = (ResultCollector) ClassPathLoader.getLatest().forName(resultCollectorName).newInstance();
           }
           if (filterString != null && filterString.length() > 0) {
             filters.add(filterString);
@@ -76,13 +74,7 @@ public class UserFunctionExecution implements Function, InternalEntity {
           Function function = FunctionService.getFunction(functionId);
 
           if (function == null) {
-            context
-                .getResultSender()
-                .lastResult(
-                    CliStrings
-                        .format(
-                            CliStrings.EXECUTE_FUNCTION__MSG__DOES_NOT_HAVE_FUNCTION_0_REGISTERED,
-                            functionId));
+            context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__DOES_NOT_HAVE_FUNCTION_0_REGISTERED, functionId));
           } else {
             Execution execution = null;
             if (onRegion != null && onRegion.length() > 0) {
@@ -106,8 +98,7 @@ public class UserFunctionExecution implements Function, InternalEntity {
                 execution = execution.withFilter(filters);
               }
 
-              List<Object> results = (List<Object>) execution.execute(function)
-                  .getResult();
+              List<Object> results = (List<Object>) execution.execute(function).getResult();
 
               StringBuilder resultMessege = new StringBuilder();
               if (results != null) {
@@ -117,9 +108,7 @@ public class UserFunctionExecution implements Function, InternalEntity {
                       resultMessege.append(((String) resultObj));
                       resultMessege.append(GfshParser.LINE_SEPARATOR);
                     } else if (resultObj instanceof Exception) {
-                      resultMessege
-                          .append(((IllegalArgumentException) resultObj)
-                              .getMessage());
+                      resultMessege.append(((IllegalArgumentException) resultObj).getMessage());
                     } else {
                       resultMessege.append(resultObj);
                       resultMessege.append(GfshParser.LINE_SEPARATOR);
@@ -129,76 +118,30 @@ public class UserFunctionExecution implements Function, InternalEntity {
               }
               context.getResultSender().lastResult(resultMessege);
             } else {
-              context
-                  .getResultSender()
-                  .lastResult(
-                      CliStrings
-                          .format(
-                              CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_MEMBER_1_ON_REGION_2_DETAILS_3,
-                              functionId,
-                              member.getId(),
-                              onRegion,
-                              CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR));
+              context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_MEMBER_1_ON_REGION_2_DETAILS_3, functionId, member.getId(), onRegion, CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR));
             }
           }
 
         } catch (ClassNotFoundException e) {
-          context
-              .getResultSender()
-              .lastResult(
-                  CliStrings
-                      .format(
-                          CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1,
-                          resultCollectorName, e.getMessage()));
+          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1, resultCollectorName, e.getMessage()));
         } catch (FunctionException e) {
-          context
-              .getResultSender()
-              .lastResult(
-                  CliStrings
-                      .format(
-                          CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2,
-                          functionId, member.getId(), e.getMessage()));
+          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2, functionId, member.getId(), e.getMessage()));
         } catch (CancellationException e) {
-          context
-              .getResultSender()
-              .lastResult(
-                  CliStrings
-                      .format(
-                          CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2,
-                          functionId, member.getId(), e.getMessage()));
+          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2, functionId, member.getId(), e.getMessage()));
         } catch (InstantiationException e) {
-          context
-              .getResultSender()
-              .lastResult(
-                  CliStrings
-                      .format(
-                          CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1,
-                          resultCollectorName, e.getMessage()));
+          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1, resultCollectorName, e.getMessage()));
         } catch (IllegalAccessException e) {
-          context
-              .getResultSender()
-              .lastResult(
-                  CliStrings
-                      .format(
-                          CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1,
-                          resultCollectorName, e.getMessage()));
+          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1, resultCollectorName, e.getMessage()));
         } catch (Exception e) {
-          context
-              .getResultSender()
-              .lastResult(
-                  CliStrings
-                      .format(
-                          CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2,
-                          functionId, member.getId(), e.getMessage()));
+          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2, functionId, member.getId(), e.getMessage()));
         }
       } else {
-        context.getResultSender().lastResult(
-            CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_RETRIEVE_ARGUMENTS);
+        context.getResultSender().lastResult(CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_RETRIEVE_ARGUMENTS);
       }
 
-    } catch(Exception ex){
+    } catch (Exception ex) {
       context.getResultSender().lastResult(ex.getMessage());
-    } 
+    }
   }
 
   @Override
@@ -223,4 +166,3 @@ public class UserFunctionExecution implements Function, InternalEntity {
   }
 
 }
-

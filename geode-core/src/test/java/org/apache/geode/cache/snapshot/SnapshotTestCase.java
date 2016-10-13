@@ -45,30 +45,25 @@ public class SnapshotTestCase {
   public void setUp() throws Exception {
     store = new File("store-" + Math.abs(new Random().nextInt()));
     store.mkdir();
-    
+
     snaps = new File("snapshots-" + Math.abs(new Random().nextInt()));
     snaps.mkdir();
 
     rgen = new RegionGenerator();
 
-    CacheFactory cf = new CacheFactory()
-        .set(MCAST_PORT, "0")
-        .set(LOG_LEVEL, "error");
+    CacheFactory cf = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error");
     cache = cf.create();
-    
-    ds = cache.createDiskStoreFactory()
-        .setMaxOplogSize(1)
-        .setDiskDirs(new File[] { store })
-        .create("snapshotTest");
+
+    ds = cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] { store }).create("snapshotTest");
   }
-  
+
   @After
   public void tearDown() throws Exception {
     cache.close();
     deleteFiles(store);
     deleteFiles(snaps);
   }
-  
+
   public Map<Integer, MyObject> createExpected(SerializationType type) {
     Map<Integer, MyObject> expected = new HashMap<Integer, MyObject>();
     for (int i = 0; i < 1000; i++) {
@@ -84,7 +79,7 @@ public class SnapshotTestCase {
         return true;
       }
     });
-    
+
     if (deletes != null) {
       for (File f : deletes) {
         f.delete();

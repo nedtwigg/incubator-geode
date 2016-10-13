@@ -113,9 +113,7 @@ public class SecurityClusterConfigDUnitTest extends JUnit4DistributedTestCase {
     // initial security properties should only contain initial set of values
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class)
-                                                     .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION
-                                                       .toLocalizedString());
+    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
 
   }
 
@@ -132,9 +130,7 @@ public class SecurityClusterConfigDUnitTest extends JUnit4DistributedTestCase {
     // initial security properties should only contain initial set of values
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class)
-                                                     .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION
-                                                       .toLocalizedString());
+    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
 
   }
 
@@ -150,9 +146,7 @@ public class SecurityClusterConfigDUnitTest extends JUnit4DistributedTestCase {
 
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class)
-                                                     .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2
-                                                       .toLocalizedString());
+    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toLocalizedString());
 
   }
 

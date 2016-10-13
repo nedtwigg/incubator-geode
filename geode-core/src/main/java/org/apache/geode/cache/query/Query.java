@@ -36,8 +36,7 @@ public interface Query {
    * @return the original query string
    */
   public String getQueryString();
-  
-  
+
   /**
    * Executes this query and returns an object that represent its
    * result.  If the query resolves to a primitive type, an instance
@@ -90,10 +89,8 @@ public interface Query {
    *         If the query gets canceled due to low memory conditions and
    *         the resource manager critical heap percentage has been set
    */
-  public Object execute()
-    throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-           QueryInvocationTargetException;
-  
+  public Object execute() throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
+
   /**
    * Executes this query with the given parameters and returns an
    * object that represent its result.  If the query resolves to a
@@ -114,7 +111,7 @@ public interface Query {
    * QueryExecutionTimeoutException. This timeout does not account for 
    * the time taken to construct the results after execution completes 
    * and the results returned to the caller.
-
+  
    * @param params
    *        Values that are bound to parameters (such as
    *        <code>$1</code>) in this query. 
@@ -152,9 +149,7 @@ public interface Query {
    *         the resource manager critical heap percentage has been set
    *         
    */
-  public Object execute(Object[] params)
-    throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-           QueryInvocationTargetException;
+  public Object execute(Object[] params) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * Executes this query on the partitioned data-store associated with the given
@@ -221,9 +216,7 @@ public interface Query {
    *         If the query gets canceled due to low memory conditions and
    *         the resource manager critical heap percentage has been set
    */
-  public Object execute(RegionFunctionContext context)
-    throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-           QueryInvocationTargetException;
+  public Object execute(RegionFunctionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * Executes this query on the partitioned data-store associated with the given
@@ -292,9 +285,7 @@ public interface Query {
    *         If the query gets canceled due to low memory conditions and
    *         the resource manager critical heap percentage has been set
    */
-  public Object execute(RegionFunctionContext context, Object[] params)
-    throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-           QueryInvocationTargetException;
+  public Object execute(RegionFunctionContext context, Object[] params) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
 
   /**
    * Compiles this <code>Query</code> to achieve higher performance
@@ -308,9 +299,8 @@ public interface Query {
    * @deprecated as of 6.5
    */
   @Deprecated
-  public void compile() 
-    throws TypeMismatchException, NameResolutionException;
-  
+  public void compile() throws TypeMismatchException, NameResolutionException;
+
   /**
    * Return whether this query has been compiled into VM bytecodes.
    * @return <code>true</code> if this query has been compiled into bytecodes
@@ -319,7 +309,6 @@ public interface Query {
   @Deprecated
   public boolean isCompiled();
 
-  
   /**
    * Get statistics information for this query.
    */

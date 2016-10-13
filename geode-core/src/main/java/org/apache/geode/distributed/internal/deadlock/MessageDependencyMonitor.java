@@ -38,47 +38,47 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
  */
 public class MessageDependencyMonitor implements DependencyMonitor {
   private final UnsafeThreadLocal<ReplyProcessor21> waitingProcessors = new UnsafeThreadLocal<ReplyProcessor21>();
-  private final UnsafeThreadLocal<MessageWithReply> processingMessages= new UnsafeThreadLocal<MessageWithReply>();
-  
+  private final UnsafeThreadLocal<MessageWithReply> processingMessages = new UnsafeThreadLocal<MessageWithReply>();
+
   public static final MessageDependencyMonitor INSTANCE;
-  
+
   static {
     INSTANCE = new MessageDependencyMonitor();
     DependencyMonitorManager.addMonitor(INSTANCE);
   }
-  
+
   public static void waitingForReply(ReplyProcessor21 reply) {
     INSTANCE.waitingProcessors.set(reply);
   }
-  
+
   public static void doneWaiting(ReplyProcessor21 reply) {
     INSTANCE.waitingProcessors.set(null);
   }
-  
+
   public static void processingMessage(DistributionMessage message) {
-    if(message instanceof MessageWithReply) {
+    if (message instanceof MessageWithReply) {
       INSTANCE.processingMessages.set((MessageWithReply) message);
     }
   }
-  
+
   public static void doneProcessing(DistributionMessage message) {
-    if(message instanceof MessageWithReply) {
+    if (message instanceof MessageWithReply) {
       INSTANCE.processingMessages.set(null);
     }
   }
 
   public Set<Dependency<Thread, Serializable>> getBlockedThreads(Thread[] allThreads) {
-    
+
     InternalDistributedSystem system = InternalDistributedSystem.getAnyInstance();
-    if(system == null) {
+    if (system == null) {
       return Collections.emptySet();
     }
     InternalDistributedMember myId = system.getDistributedMember();
-    
+
     Set<Dependency<Thread, Serializable>> blockedThreads = new HashSet<Dependency<Thread, Serializable>>();
-    for(Thread thread : allThreads) {
+    for (Thread thread : allThreads) {
       ReplyProcessor21 processor = waitingProcessors.get(thread);
-      if(processor != null && processor.getProcessorId() > 0) {
+      if (processor != null && processor.getProcessorId() > 0) {
         blockedThreads.add(new Dependency<Thread, Serializable>(thread, new MessageKey(myId, processor.getProcessorId())));
       }
     }
@@ -87,23 +87,23 @@ public class MessageDependencyMonitor implements DependencyMonitor {
 
   public Set<Dependency<Serializable, Thread>> getHeldResources(Thread[] allThreads) {
     Set<Dependency<Serializable, Thread>> heldResources = new HashSet<Dependency<Serializable, Thread>>();
-    
-    for(Thread thread : allThreads) {
+
+    for (Thread thread : allThreads) {
       MessageWithReply message = processingMessages.get(thread);
-      if(message != null && message.getProcessorId() > 0) {
+      if (message != null && message.getProcessorId() > 0) {
         heldResources.add(new Dependency<Serializable, Thread>(new MessageKey(message.getSender(), message.getProcessorId()), thread));
       }
     }
     return heldResources;
   }
-  
+
   public static class MessageKey implements Serializable {
 
     private static final long serialVersionUID = 414781046295505260L;
-    
+
     private final InternalDistributedMember myId;
     private final int processorId;
-    
+
     public MessageKey(InternalDistributedMember myId, int processorId) {
       super();
       this.myId = myId;
@@ -145,10 +145,10 @@ public class MessageDependencyMonitor implements DependencyMonitor {
         return false;
       return true;
     }
-    
+
     @Override
     public String toString() {
-      return "MessageFrom(" + myId + ", " + processorId + ")"; 
+      return "MessageFrom(" + myId + ", " + processorId + ")";
     }
   }
 }

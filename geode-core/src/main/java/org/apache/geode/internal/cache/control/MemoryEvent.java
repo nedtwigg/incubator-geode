@@ -31,9 +31,8 @@ public class MemoryEvent implements ResourceEvent {
   private final long bytesUsed;
   private final boolean isLocal;
   private final MemoryThresholds thresholds;
- 
-  public MemoryEvent(final ResourceType type, final MemoryState previousState, final MemoryState state,
-      final DistributedMember member, final long bytesUsed, final boolean isLocal, final MemoryThresholds thresholds) {
+
+  public MemoryEvent(final ResourceType type, final MemoryState previousState, final MemoryState state, final DistributedMember member, final long bytesUsed, final boolean isLocal, final MemoryThresholds thresholds) {
     this.type = type;
     this.previousState = previousState;
     this.state = state;
@@ -47,11 +46,11 @@ public class MemoryEvent implements ResourceEvent {
   public ResourceType getType() {
     return this.type;
   }
-  
+
   public MemoryState getPreviousState() {
     return this.previousState;
   }
-  
+
   public MemoryState getState() {
     return this.state;
   }
@@ -64,28 +63,18 @@ public class MemoryEvent implements ResourceEvent {
   public long getBytesUsed() {
     return this.bytesUsed;
   }
-  
+
   @Override
   public boolean isLocal() {
     return this.isLocal;
   }
-  
+
   public MemoryThresholds getThresholds() {
     return this.thresholds;
   }
-  
+
   @Override
   public String toString() {
-    return new StringBuilder().append("MemoryEvent@")
-        .append(System.identityHashCode(this))
-        .append("[Member:" + this.member)
-        .append(",type:" + this.type)
-        .append(",previousState:" + this.previousState)
-        .append(",state:" + this.state)
-        .append(",bytesUsed:" + this.bytesUsed)
-        .append(",isLocal:" + this.isLocal)
-        .append(",thresholds:" + this.thresholds + "]")
-        .toString();
+    return new StringBuilder().append("MemoryEvent@").append(System.identityHashCode(this)).append("[Member:" + this.member).append(",type:" + this.type).append(",previousState:" + this.previousState).append(",state:" + this.state).append(",bytesUsed:" + this.bytesUsed).append(",isLocal:" + this.isLocal).append(",thresholds:" + this.thresholds + "]").toString();
   }
 }
-

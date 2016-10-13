@@ -34,7 +34,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
 public class ClasspathScanLoadHelperJUnitTest {
-  
+
   private final String PACKAGE_NAME = "org.apache.geode.management.internal.cli.domain";
   private final String WRONG_PACKAGE_NAME = "org.apache.geode.management.internal.cli.domain1";
   private final Class<?> INTERFACE1 = Interface1.class;
@@ -43,7 +43,7 @@ public class ClasspathScanLoadHelperJUnitTest {
   private final Class<?> IMPL1 = Impl1.class;
   private final Class<?> IMPL2 = Impl12.class;
   private final Class<?> ABSTRACT_IMPL = AbstractImpl.class;
-  
+
   @Test
   public void testLoadAndGet() throws Exception {
     Set<Class<?>> classLoaded = ClasspathScanLoadHelper.loadAndGet(PACKAGE_NAME, INTERFACE1, true);

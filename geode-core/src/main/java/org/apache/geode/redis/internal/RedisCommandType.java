@@ -149,6 +149,7 @@ public enum RedisCommandType {
    */
   AUTH {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -156,19 +157,22 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
-  
+  },
+
   /**
    * DEL key [key ...] <p>
    * Delete a key
    */
   DEL {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -176,12 +180,14 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * EXISTS key <p>
@@ -189,6 +195,7 @@ public enum RedisCommandType {
    */
   EXISTS {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -196,12 +203,14 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * EXPIRE key seconds <p>
@@ -209,6 +218,7 @@ public enum RedisCommandType {
    */
   EXPIRE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -216,12 +226,14 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * EXPIREAT key timestamp <p>
@@ -229,6 +241,7 @@ public enum RedisCommandType {
    */
   EXPIREAT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -236,12 +249,14 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * FLUSHALL <p>
@@ -249,6 +264,7 @@ public enum RedisCommandType {
    */
   FLUSHALL {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -256,18 +272,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * FLUSHDB<p>Remove all keys from the current database<p>Same as FLUSHALL for this implementation
    */
   FLUSHDB {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -275,7 +294,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -288,6 +309,7 @@ public enum RedisCommandType {
    */
   KEYS {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -295,12 +317,14 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * PERSIST key <p>
@@ -308,6 +332,7 @@ public enum RedisCommandType {
    */
   PERSIST {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -315,18 +340,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * PEXPIRE key milliseconds<p>Set a key's time to live in milliseconds
    */
   PEXPIRE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -334,18 +362,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * PEXPIREAT key milliseconds-timestamp<p>Set the expiration for a key as a UNIX timestamp specified in milliseconds
    */
   PEXPIREAT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -353,18 +384,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * PTTL key<p>Get the time to live for a key in milliseconds
    */
   PTTL {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -372,18 +406,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * SCAN cursor [MATCH pattern] [COUNT count]<p>Incrementally iterate the keys space
    */
   SCAN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -391,7 +428,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -403,6 +442,7 @@ public enum RedisCommandType {
    */
   TTL {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -410,7 +450,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -422,6 +464,7 @@ public enum RedisCommandType {
    */
   TYPE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -429,7 +472,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -445,6 +490,7 @@ public enum RedisCommandType {
    */
   APPEND {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -452,18 +498,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * BITCOUNT key start end [start end ...]<p>Count set bits in a string
    */
   BITCOUNT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -471,18 +520,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * BITOP operation destkey key [key ...]<p>Perform bitwise operations between strings
    */
   BITOP {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -490,7 +542,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -502,6 +556,7 @@ public enum RedisCommandType {
    */
   BITPOS {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -509,18 +564,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * DECR key<p>Decrement the integer value of a key by one
    */
   DECR {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -528,18 +586,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * DECRBY key decrement<p>Decrement the integer value of a key by the given number
    */
   DECRBY {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -547,18 +608,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * GET key<p>Get the value of a key
    */
   GET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -566,18 +630,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * GETBIT key offset<p>Returns the bit value at offset in the string value stored at key
    */
   GETBIT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -585,18 +652,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * GETRANGE key start end<p>Get a substring of the string stored at a key
    */
   GETRANGE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -604,18 +674,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * GETSET key value<p>Set the string value of a key and return its old value
    */
   GETSET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -623,18 +696,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * INCR key<p>Increment the integer value of a key by one
    */
   INCR {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -642,18 +718,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * INCRBY key increment<p>Increment the integer value of a key by the given amount
    */
   INCRBY {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -661,18 +740,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * INCRBYFLOAT key increment<p>Increment the float value of a key by the given amount
    */
   INCRBYFLOAT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -680,18 +762,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * MGET key [key ...]<p>Get the values of all the given keys
    */
   MGET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -699,18 +784,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * MSET key value [key value ...]<p>Set multiple keys to multiple values
    */
   MSET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -718,18 +806,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * MSETNX key value [key value ...]<p>Set multiple keys to multiple values, only if none of the keys exist
    */
   MSETNX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -737,18 +828,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * PSETEX key milliseconds value<p>Set the value and expiration in milliseconds of a key
    */
   PSETEX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -756,18 +850,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * SETEX key seconds value<p>Set the value and expiration of a key
    */
   SETEX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -775,18 +872,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * SET key value [EX seconds] [PX milliseconds] [NX|XX]<p>Set the string value of a key
    */
   SET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -794,18 +894,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * SETBIT key offset value<P>Sets or clears the bit at offset in the string value stored at key
    */
   SETBIT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -813,18 +916,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * SETNX key value<p>Set the value of a key, only if the key does not exist
    */
   SETNX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -832,18 +938,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * SETRANGE key offset value<p>Overwrite part of a string at key starting at the specified offset
    */
   SETRANGE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -851,7 +960,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -863,6 +974,7 @@ public enum RedisCommandType {
    */
   STRLEN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -870,7 +982,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_STRING;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -885,6 +999,7 @@ public enum RedisCommandType {
    */
   HDEL {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -892,18 +1007,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HEXISTS key field<p>Determine if a hash field exists
    */
   HEXISTS {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -911,18 +1029,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HGET key field<p>Get the value of a hash field
    */
   HGET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -930,18 +1051,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HGETALL key<p>Get all the fields and values in a hash
    */
   HGETALL {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -949,18 +1073,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HINCRBY key field increment<p>Increment the integer value of a hash field by the given number
    */
   HINCRBY {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -968,18 +1095,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HINCRBYFLOAT key field increment<p>Increment the float value of a hash field by the given amount
    */
   HINCRBYFLOAT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -987,18 +1117,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HKEYS key<p>Get all the fields in a hash
    */
   HKEYS {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1006,18 +1139,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HLEN key<p>Get the number of fields in a hash
    */
   HLEN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1025,18 +1161,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HMGET key field [field ...]<p>Get the values of all the given hash fields
    */
   HMGET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1044,18 +1183,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HMSET key field value [field value ...]<p>Set multiple hash fields to multiple values
    */
   HMSET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1063,18 +1205,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HSCAN key cursor [MATCH pattern] [COUNT count]<p>Incrementally iterate hash fields and associated values
    */
   HSCAN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1082,7 +1227,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1094,6 +1241,7 @@ public enum RedisCommandType {
    */
   HSET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1101,18 +1249,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HSETNX key field value<p>Set the value of a hash field, only if the field does not exist
    */
   HSETNX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1120,18 +1271,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * HVALS key<p>Get all the values in a hash
    */
   HVALS {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1139,7 +1293,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HASH;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1155,6 +1311,7 @@ public enum RedisCommandType {
    */
   PFADD {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1162,7 +1319,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HLL;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1174,6 +1333,7 @@ public enum RedisCommandType {
    */
   PFCOUNT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1181,7 +1341,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HLL;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1193,6 +1355,7 @@ public enum RedisCommandType {
    */
   PFMERGE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1200,7 +1363,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_HLL;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1216,6 +1381,7 @@ public enum RedisCommandType {
    */
   LINDEX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1223,18 +1389,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LINSERT key BEFORE|AFTER pivot value<p>Insert an element before or after another element in a list
    */
   LINSERT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1242,18 +1411,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LLEN key<p>Get the length of a list
    */
   LLEN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1261,18 +1433,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LPOP key<p>Remove and get the first element in a list
    */
   LPOP {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1280,18 +1455,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LPUSH key value [value ...]<p>Prepend one or multiple values to a list
    */
   LPUSH {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1299,18 +1477,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LPUSHX key value<p>Prepend a value to a list, only if the list exists
    */
   LPUSHX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1318,18 +1499,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LRANGE key start stop<p>Get a range of elements from a list
    */
   LRANGE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1337,18 +1521,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LREM key count value<p>Remove elements from a list
    */
   LREM {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1356,18 +1543,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * LSET key index value<p>Set the value of an element in a list by its index
    */
   LSET {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1375,18 +1565,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * LTRIM key start stop<p>Trim a list to the specified range
    */
   LTRIM {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1394,18 +1587,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * RPOP key<p>Remove and get the last element in a list
    */
   RPOP {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1413,18 +1609,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * RPUSH key value [value ...]<p>Append one or multiple values to a list
    */
   RPUSH {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1432,18 +1631,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * RPUSHX key value<p>Append a value to a list, only if the list exists
    */
   RPUSHX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1451,7 +1653,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_LIST;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1467,6 +1671,7 @@ public enum RedisCommandType {
    */
   SADD {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1474,18 +1679,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SCARD key<p>Get the number of members in a set
    */
   SCARD {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1493,18 +1701,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SDIFF key [key ...]<p>Subtract multiple sets
    */
-  SDIFF { 
+  SDIFF {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1512,18 +1723,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SDIFFSTORE destination key [key ...]<p>Subtract multiple sets and store the resulting set in a key
    */
   SDIFFSTORE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1531,18 +1745,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SISMEMBER key member<p>Determine if a given value is a member of a set
    */
   SISMEMBER {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1550,18 +1767,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SINTER key [key ...]<p>Intersect multiple sets
    */
   SINTER {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1569,18 +1789,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SINTERSTORE destination key [key ...]<p>Intersect multiple sets and store the resulting set in a key
    */
   SINTERSTORE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1588,18 +1811,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SMEMBERS key<p>Get all the members in a set
    */
   SMEMBERS {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1607,18 +1833,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SMOVE source destination member<p>Move a member from one set to another
    */
   SMOVE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1626,18 +1855,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * SPOP key<p>Remove and return a random member from a set
    */
   SPOP {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1645,18 +1877,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * SRANDMEMBER key [count]<p>Get one or multiple random members from a set
    */
   SRANDMEMBER {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1664,18 +1899,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * SUNION key [key ...]<p>Add multiple sets
    */
   SUNION {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1683,18 +1921,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * SUNIONSTORE destination key [key ...]<p>Add multiple sets and store the resulting set in a key
    */
   SUNIONSTORE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1702,7 +1943,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1714,6 +1957,7 @@ public enum RedisCommandType {
    */
   SSCAN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1721,7 +1965,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1733,6 +1979,7 @@ public enum RedisCommandType {
    */
   SREM {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1740,7 +1987,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -1756,6 +2005,7 @@ public enum RedisCommandType {
    */
   ZADD {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1763,18 +2013,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZCARD key<p>Get the number of members in a sorted set
    */
   ZCARD {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1782,18 +2035,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZCOUNT key min max<p>Count the members in a sorted set with scores within the given values
    */
   ZCOUNT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1801,18 +2057,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZINCRBY key increment member<p>Increment the score of a member in a sorted set
    */
   ZINCRBY {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1820,18 +2079,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZLEXCOUNT key min max<p>Count the number of members in a sorted set between a given lexicographical range
    */
   ZLEXCOUNT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1839,18 +2101,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZRANGE key start stop [WITHSCORES]<p>Return a range of members in a sorted set, by index
    */
   ZRANGE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1858,18 +2123,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZRANGEBYLEX key min max [LIMIT offset count]<p>Return a range of members in a sorted set, by lexicographical range
    */
   ZRANGEBYLEX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1877,18 +2145,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]<p>Return a range of members in a sorted set, by score
    */
   ZRANGEBYSCORE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1896,18 +2167,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZREVRANGE key start stop [WITHSCORES]<p>Return a range of members in a sorted set, by index, with scores ordered from high to low
    */
   ZREVRANGE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1915,18 +2189,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZRANK key member<p>Determine the index of a member in a sorted set
    */
   ZRANK {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1934,18 +2211,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZREM key member [member ...]<p>Remove one or more members from a sorted set
    */
   ZREM {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1953,18 +2233,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZREMRANGEBYLEX key min max<p>Remove all members in a sorted set between the given lexicographical range
    */
   ZREMRANGEBYLEX {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1972,18 +2255,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZREMRANGEBYRANK key start stop<p>Remove all members in a sorted set within the given indexes
    */
   ZREMRANGEBYRANK {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -1991,18 +2277,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZREMRANGEBYSCORE key min max<p>Remove all members in a sorted set within the given scores
    */
   ZREMRANGEBYSCORE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2010,18 +2299,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]<p>Return a range of members in a sorted set, by score, with scores ordered from high to low
    */
   ZREVRANGEBYSCORE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2029,18 +2321,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * ZREVRANK key member<p>Determine the index of a member in a sorted set, with scores ordered from high to low
    */
   ZREVRANK {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2048,18 +2343,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },  
+  },
 
   /**
    * ZSCAN key cursor [MATCH pattern] [COUNT count]<P>Incrementally iterate sorted sets elements and associated scores
    */
   ZSCAN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2067,7 +2365,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2079,6 +2379,7 @@ public enum RedisCommandType {
    */
   ZSCORE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2086,7 +2387,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.REDIS_SORTEDSET;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2102,6 +2405,7 @@ public enum RedisCommandType {
    */
   DISCARD {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2109,7 +2413,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2121,6 +2427,7 @@ public enum RedisCommandType {
    */
   EXEC {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2128,7 +2435,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2140,6 +2449,7 @@ public enum RedisCommandType {
    */
   MULTI {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2147,7 +2457,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2159,6 +2471,7 @@ public enum RedisCommandType {
    */
   UNWATCH {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2166,7 +2479,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2178,6 +2493,7 @@ public enum RedisCommandType {
    */
   WATCH {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2185,7 +2501,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2201,6 +2519,7 @@ public enum RedisCommandType {
    */
   DBSIZE {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2208,18 +2527,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * ECHO message<p>Echo the given string
    */
   ECHO {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2227,18 +2549,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * TIME <p>Return the current server time
    */
   TIME {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2246,18 +2571,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  }, 
+  },
 
   /**
    * PING<p>Ping the server
    */
   PING {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2265,18 +2593,21 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
     }
-  },   
+  },
 
   /**
    * QUIT<p>Close the connection
    */
   QUIT {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2284,7 +2615,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2296,6 +2629,7 @@ public enum RedisCommandType {
    */
   SHUTDOWN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2303,7 +2637,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;
@@ -2313,6 +2649,7 @@ public enum RedisCommandType {
   // UNKNOWN
   UNKNOWN {
     private Executor executor;
+
     @Override
     public Executor getExecutor() {
       if (executor == null) {
@@ -2320,7 +2657,9 @@ public enum RedisCommandType {
       }
       return executor;
     }
+
     private final RedisDataType dataType = RedisDataType.NONE;
+
     @Override
     public RedisDataType getDataType() {
       return this.dataType;

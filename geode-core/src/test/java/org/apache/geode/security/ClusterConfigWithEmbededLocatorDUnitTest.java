@@ -40,28 +40,18 @@ public class ClusterConfigWithEmbededLocatorDUnitTest extends JUnit4DistributedT
   }
 
   @Test
-  public void testEmbeddedLocator() throws Exception{
+  public void testEmbeddedLocator() throws Exception {
     int locatorPort = AvailablePortHelper.getRandomAvailableTCPPort();
 
     // locator started this way won't have cluster configuration running
-    locator.invoke(()->{
-      new CacheFactory()
-        .set("name", this.getName()+".server1")
-        .set("mcast-port", "0")
-        .set("log-level", "config")
-        .set("start-locator", "localhost["+locatorPort+"]")
-        .create();
+    locator.invoke(() -> {
+      new CacheFactory().set("name", this.getName() + ".server1").set("mcast-port", "0").set("log-level", "config").set("start-locator", "localhost[" + locatorPort + "]").create();
     });
 
     // when this server joins the above locator, it won't request the cluster config from the locator
     // since DM.getAllHostedLocatorsWithSharedConfiguration() will return an empty list. This would
     // execute without error
 
-    new CacheFactory()
-      .set("name", this.getName()+".server2")
-      .set("mcast-port", "0")
-      .set("log-level", "config")
-      .set("locators", "localhost["+locatorPort+"]")
-      .create();
+    new CacheFactory().set("name", this.getName() + ".server2").set("mcast-port", "0").set("log-level", "config").set("locators", "localhost[" + locatorPort + "]").create();
   }
 }

@@ -28,8 +28,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
 @Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientExecuteRegionFunctionAuthDistributedTest
-  extends AbstractSecureServerDUnitTest {
+public class IntegratedClientExecuteRegionFunctionAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   private final static Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
 
@@ -42,21 +41,15 @@ public class IntegratedClientExecuteRegionFunctionAuthDistributedTest
       ClientCache cache = createClientCache("dataReader", "1234567", serverPort);
 
       FunctionService.registerFunction(function);
-      assertNotAuthorized(() -> FunctionService.onRegion(cache.getRegion(REGION_NAME))
-                                               .withArgs(Boolean.TRUE)
-                                               .execute(function.getId()), "DATA:WRITE");
+      assertNotAuthorized(() -> FunctionService.onRegion(cache.getRegion(REGION_NAME)).withArgs(Boolean.TRUE).execute(function.getId()), "DATA:WRITE");
     });
 
     client2.invoke("logging in with super-user", () -> {
       ClientCache cache = createClientCache("super-user", "1234567", serverPort);
 
       FunctionService.registerFunction(function);
-      ResultCollector rc = FunctionService.onRegion(cache.getRegion(REGION_NAME))
-                                          .withArgs(Boolean.TRUE)
-                                          .execute(function.getId());
+      ResultCollector rc = FunctionService.onRegion(cache.getRegion(REGION_NAME)).withArgs(Boolean.TRUE).execute(function.getId());
       rc.getResult();
     });
   }
 }
-
-

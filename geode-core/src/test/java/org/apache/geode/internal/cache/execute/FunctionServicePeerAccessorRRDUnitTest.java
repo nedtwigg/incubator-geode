@@ -39,25 +39,24 @@ public class FunctionServicePeerAccessorRRDUnitTest extends FunctionServiceBase 
 
   @Before
   public void createRegions() {
-    region = getCache().createRegionFactory(RegionShortcut.REPLICATE_PROXY)
-      .create(REGION);
+    region = getCache().createRegionFactory(RegionShortcut.REPLICATE_PROXY).create(REGION);
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     vm0.invoke(() -> {
 
-      getCache().createRegionFactory(RegionShortcut.REPLICATE)
-        .create(REGION);
+      getCache().createRegionFactory(RegionShortcut.REPLICATE).create(REGION);
 
-      });
+    });
   }
 
-  @Override public Execution getExecution() {
+  @Override
+  public Execution getExecution() {
     return FunctionService.onRegion(region);
   }
 
-  @Override public int numberOfExecutions() {
+  @Override
+  public int numberOfExecutions() {
     return 1;
   }
-
 
 }

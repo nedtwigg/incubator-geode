@@ -38,8 +38,7 @@ public final class Undefined implements DataSerializableFixedID, Comparable, Ser
   private static final long serialVersionUID = 6643107525908324141L;
 
   public Undefined() {
-    Support.assertState(QueryService.UNDEFINED == null,
-        "UNDEFINED constant already instantiated");
+    Support.assertState(QueryService.UNDEFINED == null, "UNDEFINED constant already instantiated");
 
     // org.apache.persistence.CanonicalizationHelper
     // .putCanonicalObj("com/gemstone/persistence/query/QueryService.UNDEFINED",
@@ -78,9 +77,9 @@ public final class Undefined implements DataSerializableFixedID, Comparable, Ser
     return (o instanceof Undefined);
   }
 
-    @Override
-    public Version[] getSerializationVersions() {
-       return null;
-    }
+  @Override
+  public Version[] getSerializationVersions() {
+    return null;
+  }
 
 }

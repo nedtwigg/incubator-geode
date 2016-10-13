@@ -26,8 +26,7 @@ import java.io.OutputStream;
  * 
  * @since GemFire 7.1
  */
-public final class VersionedDataOutputStream extends DataOutputStream implements
-    VersionedDataStream {
+public final class VersionedDataOutputStream extends DataOutputStream implements VersionedDataStream {
 
   private final Version version;
 

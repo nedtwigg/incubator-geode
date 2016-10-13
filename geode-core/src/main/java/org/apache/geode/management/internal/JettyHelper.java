@@ -90,7 +90,6 @@ public class JettyHelper {
         logger.warn(ManagementStrings.SSL_PROTOCOAL_COULD_NOT_BE_DETERMINED);
       }
 
-
       if (StringUtils.isBlank(sslConfig.getKeystore())) {
         throw new GemFireConfigException("Key store can't be empty if SSL is enabled for HttpService");
       }
@@ -118,7 +117,6 @@ public class JettyHelper {
       //Somehow With HTTP_2.0 Jetty throwing NPE. Need to investigate further whether all GemFire web application(Pulse, REST) can do with HTTP_1.1
       connector = new ServerConnector(jettyServer, new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()), new HttpConnectionFactory(httpConfig));
 
-
       connector.setPort(port);
     } else {
       connector = new ServerConnector(jettyServer, new HttpConnectionFactory(httpConfig));
@@ -132,7 +130,6 @@ public class JettyHelper {
       connector.setHost(bindAddress);
     }
 
-
     if (bindAddress != null && !bindAddress.isEmpty()) {
       JettyHelper.bindAddress = bindAddress;
     }
@@ -141,7 +138,6 @@ public class JettyHelper {
 
     return jettyServer;
   }
-
 
   public static Server startJetty(final Server jetty) throws Exception {
     jetty.start();
@@ -164,19 +160,9 @@ public class JettyHelper {
     return jetty;
   }
 
-
   private static String getWebAppBaseDirectory(final String context) {
     String underscoredContext = context.replace("/", "_");
-    final String workingDirectory = USER_DIR.concat(FILE_PATH_SEPARATOR)
-                                            .concat("GemFire_" + USER_NAME)
-                                            .concat(FILE_PATH_SEPARATOR)
-                                            .concat("services")
-                                            .concat(FILE_PATH_SEPARATOR)
-                                            .concat("http")
-                                            .concat(FILE_PATH_SEPARATOR)
-                                            .concat((StringUtils.isBlank(bindAddress)) ? "0.0.0.0" : bindAddress)
-                                            .concat("_")
-                                            .concat(String.valueOf(port).concat(underscoredContext));
+    final String workingDirectory = USER_DIR.concat(FILE_PATH_SEPARATOR).concat("GemFire_" + USER_NAME).concat(FILE_PATH_SEPARATOR).concat("services").concat(FILE_PATH_SEPARATOR).concat("http").concat(FILE_PATH_SEPARATOR).concat((StringUtils.isBlank(bindAddress)) ? "0.0.0.0" : bindAddress).concat("_").concat(String.valueOf(port).concat(underscoredContext));
 
     return workingDirectory;
   }

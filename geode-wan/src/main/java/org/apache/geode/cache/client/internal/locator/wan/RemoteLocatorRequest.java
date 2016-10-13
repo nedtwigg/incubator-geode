@@ -22,20 +22,22 @@ import java.io.IOException;
 
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
+
 /**
  * 
  *
  */
-public class RemoteLocatorRequest implements DataSerializableFixedID{
-  private int distributedSystemId ;
+public class RemoteLocatorRequest implements DataSerializableFixedID {
+  private int distributedSystemId;
 
   public RemoteLocatorRequest() {
     super();
   }
+
   public RemoteLocatorRequest(int dsId, String serverGroup) {
     this.distributedSystemId = dsId;
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.distributedSystemId = in.readInt();
   }
@@ -47,7 +49,7 @@ public class RemoteLocatorRequest implements DataSerializableFixedID{
   public int getDsId() {
     return this.distributedSystemId;
   }
-  
+
   public int getDSFID() {
     return DataSerializableFixedID.REMOTE_LOCATOR_REQUEST;
   }
@@ -56,6 +58,7 @@ public class RemoteLocatorRequest implements DataSerializableFixedID{
   public String toString() {
     return "RemoteLocatorRequest{dsName=" + distributedSystemId + "}";
   }
+
   @Override
   public Version[] getSerializationVersions() {
     return null;

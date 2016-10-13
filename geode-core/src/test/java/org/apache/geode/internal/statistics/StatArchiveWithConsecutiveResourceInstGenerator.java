@@ -61,8 +61,8 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
   protected static final String ARCHIVE_FILE_NAME = TEST_NAME + ".gfs";
 
   private File dir;
-  private Map<String,String> statisticTypes;
-  private Map<String,Map<String,Number>> allStatistics;
+  private Map<String, String> statisticTypes;
+  private Map<String, Map<String, Number>> allStatistics;
   protected String archiveFileName;
 
   private TestStatisticsManager manager;
@@ -84,13 +84,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
     this.archiveFileName = new File(this.dir.getAbsolutePath(), ARCHIVE_FILE_NAME).getAbsolutePath();
 
     this.manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
-    StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder()
-      .setArchiveName(this.archiveFileName)
-      .setSystemId(1)
-      .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000)
-      .setSystemDirectoryPath(TEST_NAME)
-      .setProductDescription(TEST_NAME)
-      .build();
+    StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000).setSystemDirectoryPath(TEST_NAME).setProductDescription(TEST_NAME).build();
     this.writer = new TestStatArchiveWriter(archiveDescriptor);
     this.sampler = new TestStatisticsSampler(manager);
     this.sampleCollector = new SampleCollector(sampler);
@@ -105,7 +99,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
   @Test
   public void generateStatArchiveFile() throws Exception {
 
-    long sampleTimeNanos = WRITER_PREVIOUS_TIMESTAMP_NANOS + NANOS_PER_MILLI*1000;
+    long sampleTimeNanos = WRITER_PREVIOUS_TIMESTAMP_NANOS + NANOS_PER_MILLI * 1000;
 
     // 1) create statistics
 
@@ -145,7 +139,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
 
     // validate content of stat archive file using StatArchiveReader
 
-    StatArchiveReader reader = new StatArchiveReader(new File[]{actual}, null, false);
+    StatArchiveReader reader = new StatArchiveReader(new File[] { actual }, null, false);
 
     // compare all resourceInst values against what was printed above
 
@@ -158,7 +152,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
       assertNotNull(expectedStatsType);
       assertEquals(expectedStatsType, ri.getType().getName());
 
-      Map<String,Number> expectedStatValues = this.allStatistics.get(resourceName);
+      Map<String, Number> expectedStatValues = this.allStatistics.get(resourceName);
       assertNotNull(expectedStatValues);
 
       StatValue[] statValues = ri.getStatValues();
@@ -171,9 +165,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
 
         statValues[i].setFilter(StatValue.FILTER_NONE);
         double[] rawSnapshots = statValues[i].getRawSnapshots();
-        assertEquals("Value " + i + " for " + statName + " is wrong: " + expectedStatValues,
-          expectedStatValues.get(statName).doubleValue(),
-          statValues[i].getSnapshotsMostRecent(), 0.01);
+        assertEquals("Value " + i + " for " + statName + " is wrong: " + expectedStatValues, expectedStatValues.get(statName).doubleValue(), statValues[i].getSnapshotsMostRecent(), 0.01);
       }
     }
 
@@ -187,7 +179,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
     logger.info("ArchiveFile: {}", archiveFile.getAbsolutePath());
     logger.info("ArchiveFile length: {}", archiveFile.length());
 
-    for (ResourceInst resourceInst: findResourceInsts(archiveFile, STATS_SPEC_STRING)) {
+    for (ResourceInst resourceInst : findResourceInsts(archiveFile, STATS_SPEC_STRING)) {
       logger.info("ResourceInst: {}", resourceInst);
     }
   }
@@ -197,9 +189,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
   }
 
   private StatisticsType createStatisticsType(final String name, final String description) {
-    StatisticDescriptor[] descriptors = new StatisticDescriptor[] {
-      manager.createIntCounter("stat", "description of stat", "units"),
-    };
+    StatisticDescriptor[] descriptors = new StatisticDescriptor[] { manager.createIntCounter("stat", "description of stat", "units"), };
     return manager.createType(name, description, descriptors);
   }
 
@@ -209,7 +199,7 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
 
   private void incInt(Statistics statistics, String stat, int value) {
     assertFalse(statistics.isClosed());
-    Map<String,Number> statValues = this.allStatistics.get(statistics.getTextId());
+    Map<String, Number> statValues = this.allStatistics.get(statistics.getTextId());
     if (statValues == null) {
       statValues = new HashMap<>();
       this.allStatistics.put(statistics.getTextId(), statValues);

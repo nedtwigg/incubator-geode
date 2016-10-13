@@ -39,8 +39,7 @@ public class CompositeConverter extends OpenTypeConverter {
   private final OpenTypeConverter[] getterConverters;
   private CompositeBuilder compositeBuilder;
 
-  CompositeConverter(Class targetClass, CompositeType compositeType,
-      String[] itemNames, Method[] getters) throws OpenDataException {
+  CompositeConverter(Class targetClass, CompositeType compositeType, String[] itemNames, Method[] getters) throws OpenDataException {
     super(targetClass, compositeType, CompositeData.class);
 
     assert (itemNames.length == getters.length);
@@ -70,8 +69,7 @@ public class CompositeConverter extends OpenTypeConverter {
         Object got = getters[i].invoke(value, (Object[]) null);
         values[i] = getterConverters[i].toOpenValue(got);
       } catch (Exception e) {
-        throw openDataException("Error calling getter for " + itemNames[i]
-            + ": " + e, e);
+        throw openDataException("Error calling getter for " + itemNames[i] + ": " + e, e);
       }
     }
     return new CompositeDataSupport(ct, itemNames, values);
@@ -82,21 +80,13 @@ public class CompositeConverter extends OpenTypeConverter {
    * type. For a type that is not reconstructible, this method will fail every
    * time, and will throw the right exception.
    */
-  private synchronized void makeCompositeBuilder()
-      throws InvalidObjectException {
+  private synchronized void makeCompositeBuilder() throws InvalidObjectException {
     if (compositeBuilder != null)
       return;
 
     Class targetClass = (Class<?>) getTargetType();
 
-    CompositeBuilder[][] builders = {
-        { new CompositeBuilderViaFrom(targetClass, itemNames), },
-        { new CompositeBuilderViaConstructor(targetClass, itemNames), },
-        {
-            new CompositeBuilderCheckGetters(targetClass, itemNames,
-                getterConverters),
-            new CompositeBuilderViaSetters(targetClass, itemNames),
-            new CompositeBuilderViaProxy(targetClass, itemNames), }, };
+    CompositeBuilder[][] builders = { { new CompositeBuilderViaFrom(targetClass, itemNames), }, { new CompositeBuilderViaConstructor(targetClass, itemNames), }, { new CompositeBuilderCheckGetters(targetClass, itemNames, getterConverters), new CompositeBuilderViaSetters(targetClass, itemNames), new CompositeBuilderViaProxy(targetClass, itemNames), }, };
     CompositeBuilder foundBuilder = null;
 
     StringBuilder whyNots = new StringBuilder();
@@ -122,8 +112,7 @@ public class CompositeConverter extends OpenTypeConverter {
       }
     }
     if (foundBuilder == null) {
-      String msg = "Do not know how to make a " + targetClass.getName()
-          + " from a CompositeData: " + whyNots;
+      String msg = "Do not know how to make a " + targetClass.getName() + " from a CompositeData: " + whyNots;
       if (possibleCause != null)
         msg += ". Remaining exceptions show a POSSIBLE cause.";
       throw invalidObjectException(msg, possibleCause);
@@ -135,11 +124,9 @@ public class CompositeConverter extends OpenTypeConverter {
     makeCompositeBuilder();
   }
 
-  public final Object fromNonNullOpenValue(Object value)
-      throws InvalidObjectException {
+  public final Object fromNonNullOpenValue(Object value) throws InvalidObjectException {
     makeCompositeBuilder();
-    return compositeBuilder.fromCompositeData((CompositeData) value, itemNames,
-        getterConverters);
+    return compositeBuilder.fromCompositeData((CompositeData) value, itemNames, getterConverters);
   }
 
 }

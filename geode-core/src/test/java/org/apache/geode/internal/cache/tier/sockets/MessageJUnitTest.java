@@ -37,7 +37,7 @@ public class MessageJUnitTest {
   private MessageStats mockStats;
   private ByteBuffer msgBuffer;
   private ServerConnection mockServerConnection;
-  
+
   @Before
   public void setUp() throws Exception {
     mockSocket = mock(Socket.class);
@@ -50,18 +50,18 @@ public class MessageJUnitTest {
   }
 
   @Test
-  public void clearDoesNotThrowNPE() throws Exception{
+  public void clearDoesNotThrowNPE() throws Exception {
     // unsetComms clears the message's ByteBuffer, which was causing an NPE during shutdown
     // when clear() was invoked
     message.unsetComms();
     message.clear();
   }
-  
+
   @Test
   public void numberOfPartsIsAdjusted() {
     int numParts = message.getNumberOfParts();
-    message.setNumberOfParts(2*numParts+1);
-    assertEquals(2*numParts+1, message.getNumberOfParts());
+    message.setNumberOfParts(2 * numParts + 1);
+    assertEquals(2 * numParts + 1, message.getNumberOfParts());
     message.addBytesPart(new byte[1]);
     message.addIntPart(2);
     message.addLongPart(3);
@@ -69,12 +69,12 @@ public class MessageJUnitTest {
     message.addStringPart("5");
     assertEquals(5, message.getNextPartNumber());
   }
-  
+
   @Test
   public void messageLongerThanMaxIntIsRejected() throws Exception {
     Part[] parts = new Part[2];
     Part mockPart1 = mock(Part.class);
-    when(mockPart1.getLength()).thenReturn(Integer.MAX_VALUE/2);
+    when(mockPart1.getLength()).thenReturn(Integer.MAX_VALUE / 2);
     parts[0] = mockPart1;
     parts[1] = mockPart1;
     message.setParts(parts);
@@ -85,12 +85,12 @@ public class MessageJUnitTest {
       assertTrue(e.getMessage().contains("exceeds maximum integer value"));
     }
   }
-  
+
   @Test
   public void maxMessageSizeIsRespected() throws Exception {
     Part[] parts = new Part[2];
     Part mockPart1 = mock(Part.class);
-    when(mockPart1.getLength()).thenReturn(Message.MAX_MESSAGE_SIZE/2);
+    when(mockPart1.getLength()).thenReturn(Message.MAX_MESSAGE_SIZE / 2);
     parts[0] = mockPart1;
     parts[1] = mockPart1;
     message.setParts(parts);

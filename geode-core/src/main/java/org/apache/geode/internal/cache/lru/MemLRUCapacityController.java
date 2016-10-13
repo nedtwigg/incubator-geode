@@ -35,7 +35,6 @@ import org.apache.geode.internal.cache.CachedDeserializableFactory;
 import org.apache.geode.internal.cache.Token;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-
 /**
  * A <code>CapacityController</code> that will remove the least
  * recently used (LRU) entry from a region once the region reaches a
@@ -80,8 +79,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @since GemFire 2.0.2
  */
-public final class MemLRUCapacityController extends LRUAlgorithm
-  implements Declarable {
+public final class MemLRUCapacityController extends LRUAlgorithm implements Declarable {
 
   private static final long serialVersionUID = 6364183985590572514L;
 
@@ -108,33 +106,16 @@ public final class MemLRUCapacityController extends LRUAlgorithm
   static {
     // create the stats type for MemLRU.
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    
-    final String bytesAllowedDesc = 
-      "Number of total bytes allowed in this region.";
-    final String byteCountDesc = 
-      "Number of bytes in region.";
-    final String lruEvictionsDesc = 
-      "Number of total entry evictions triggered by LRU.";
+
+    final String bytesAllowedDesc = "Number of total bytes allowed in this region.";
+    final String byteCountDesc = "Number of bytes in region.";
+    final String lruEvictionsDesc = "Number of total entry evictions triggered by LRU.";
     final String lruDestroysDesc = "Number of entries destroyed in the region through both destroy cache operations and eviction. Reset to zero each time it exceeds lruDestroysLimit.";
-    final String lruDestroysLimitDesc =
-      "Maximum number of entry destroys triggered by LRU before scan occurs.";
-    final String lruEvaluationsDesc = 
-      "Number of entries evaluated during LRU operations.";
-    final String lruGreedyReturnsDesc =
-      "Number of non-LRU entries evicted during LRU operations";
-     
-    statType = f.createType( "MemLRUStatistics",
-      "Statistics about byte based Least Recently Used region entry disposal",
-      new StatisticDescriptor[] {
-        f.createLongGauge("bytesAllowed", bytesAllowedDesc, "bytes" ),
-        f.createLongGauge("byteCount", byteCountDesc, "bytes" ),
-        f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries" ),
-        f.createLongCounter("lruDestroys", lruDestroysDesc, "entries" ),
-        f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries" ),
-        f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries" ),
-        f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"),
-      }
-    );
+    final String lruDestroysLimitDesc = "Maximum number of entry destroys triggered by LRU before scan occurs.";
+    final String lruEvaluationsDesc = "Number of entries evaluated during LRU operations.";
+    final String lruGreedyReturnsDesc = "Number of non-LRU entries evicted during LRU operations";
+
+    statType = f.createType("MemLRUStatistics", "Statistics about byte based Least Recently Used region entry disposal", new StatisticDescriptor[] { f.createLongGauge("bytesAllowed", bytesAllowedDesc, "bytes"), f.createLongGauge("byteCount", byteCountDesc, "bytes"), f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"), f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"), f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"), f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"), f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"), });
   }
 
   ////////////////////  Instance Fields  ////////////////////
@@ -144,7 +125,7 @@ public final class MemLRUCapacityController extends LRUAlgorithm
   private ObjectSizer sizer;
 
   private int perEntryOverHead = OVERHEAD_PER_ENTRY;
-  
+
   private final boolean isOffHeap;
 
   ///////////////////////  Constructors  ///////////////////////
@@ -157,7 +138,7 @@ public final class MemLRUCapacityController extends LRUAlgorithm
    * {@link #setMaximumMegabytes} method.
    */
   public MemLRUCapacityController(Region region) {
-    this(DEFAULT_MAXIMUM_MEGABYTES,region);
+    this(DEFAULT_MAXIMUM_MEGABYTES, region);
   }
 
   /**
@@ -178,10 +159,9 @@ public final class MemLRUCapacityController extends LRUAlgorithm
    *                for this VM. It can be different for the same region in
    *                different VMs.
    */
-  public MemLRUCapacityController( int megabytes,Region region )  {
-    this( megabytes, null /* sizerImpl */,region );
+  public MemLRUCapacityController(int megabytes, Region region) {
+    this(megabytes, null /* sizerImpl */, region);
   }
-
 
   /**
    * Create an instance of the capacity controller the given settings.
@@ -204,8 +184,8 @@ public final class MemLRUCapacityController extends LRUAlgorithm
    *                classname of a class that implements ObjectSizer, used to
    *                compute object sizes for MemLRU
    */
-  public MemLRUCapacityController( int megabytes , ObjectSizer sizerImpl,Region region)  {
-    this( megabytes, sizerImpl, EvictionAction.DEFAULT_EVICTION_ACTION ,region, false);
+  public MemLRUCapacityController(int megabytes, ObjectSizer sizerImpl, Region region) {
+    this(megabytes, sizerImpl, EvictionAction.DEFAULT_EVICTION_ACTION, region, false);
   }
 
   /**
@@ -230,9 +210,8 @@ public final class MemLRUCapacityController extends LRUAlgorithm
    *                compute object sizes for MemLRU
    * @param isOffHeap true if the region that owns this cc is stored off heap
    */
-  public MemLRUCapacityController( int megabytes , ObjectSizer sizerImpl,
-                                   EvictionAction evictionAction,Region region, boolean isOffHeap)  {
-    super(evictionAction,region);
+  public MemLRUCapacityController(int megabytes, ObjectSizer sizerImpl, EvictionAction evictionAction, Region region, boolean isOffHeap) {
+    super(evictionAction, region);
     this.isOffHeap = isOffHeap;
     setMaximumMegabytes(megabytes);
     setSizer(sizerImpl);
@@ -264,23 +243,22 @@ public final class MemLRUCapacityController extends LRUAlgorithm
   public void init(Properties props) {
     String prop = null;
     String sizerStr = null;
-    if ( ( sizerStr = props.getProperty(SIZER_IMPL) ) != null ) {
+    if ((sizerStr = props.getProperty(SIZER_IMPL)) != null) {
       try {
         Class c = ClassPathLoader.getLatest().forName(sizerStr);
-        setSizer((ObjectSizer)c.newInstance());
-      }
-      catch(Exception e) {
+        setSizer((ObjectSizer) c.newInstance());
+      } catch (Exception e) {
         IllegalArgumentException ex = new IllegalArgumentException(LocalizedStrings.MemLRUCapacityController_COULD_NOT_CREATE_SIZER_INSTANCE_GIVEN_THE_CLASS_NAME_0.toLocalizedString(sizer));
         ex.initCause(e);
         throw ex;
       }
     }
-    
-    if ( ( prop = props.getProperty( MAXIMUM_MEGABYTES ) ) != null ) {
-      this.limit = Integer.parseInt( prop ) * ONE_MEG;
+
+    if ((prop = props.getProperty(MAXIMUM_MEGABYTES)) != null) {
+      this.limit = Integer.parseInt(prop) * ONE_MEG;
     }
 
-    if ( ( prop = props.getProperty( EVICTION_ACTION ) ) != null ) {
+    if ((prop = props.getProperty(EVICTION_ACTION)) != null) {
       setEvictionAction(EvictionAction.parseAction(prop));
     }
   }
@@ -309,20 +287,18 @@ public final class MemLRUCapacityController extends LRUAlgorithm
    * region's byte size. If the region is shared, this change is seen by all vms
    * on using the same GemFire shared memory system.
    */
-  public void setMaximumMegabytes( int megabytes ) {
+  public void setMaximumMegabytes(int megabytes) {
     if (megabytes <= 0) {
-      throw new IllegalArgumentException(LocalizedStrings.MemLRUCapacityController_MEMLRUCONTROLLER_LIMIT_MUST_BE_POSTIVE_0
-          .toLocalizedString(Integer.valueOf(megabytes)));
+      throw new IllegalArgumentException(LocalizedStrings.MemLRUCapacityController_MEMLRUCONTROLLER_LIMIT_MUST_BE_POSTIVE_0.toLocalizedString(Integer.valueOf(megabytes)));
     }
     this.limit = (megabytes) * ONE_MEG;
     if (bucketRegion != null) {
       bucketRegion.setLimit(this.limit);
-    }
-    else if (this.stats != null) {
+    } else if (this.stats != null) {
       this.stats.setLimit(this.limit);
     }
   }
-  
+
   @Override
   public void setLimit(int maximum) {
     setMaximumMegabytes(maximum);
@@ -336,37 +312,37 @@ public final class MemLRUCapacityController extends LRUAlgorithm
     this.perEntryOverHead = entryOverHead;
   }
 
-//   public void writeExternal(ObjectOutput out)
-//     throws IOException {
-//     super.writeExternal(out);
-//     if (this.stats != null) {
-//       long limit = this.getLRUHelper().limit();
-//       Assert.assertTrue(limit > 0);
-//       out.writeLong(limit);
+  //   public void writeExternal(ObjectOutput out)
+  //     throws IOException {
+  //     super.writeExternal(out);
+  //     if (this.stats != null) {
+  //       long limit = this.getLRUHelper().limit();
+  //       Assert.assertTrue(limit > 0);
+  //       out.writeLong(limit);
 
-//     } else {
-//       Assert.assertTrue(this.limit > 0);
-//       out.writeLong(this.limit);
-//     }
-//     if (this.sizer != null) {
-//       out.writeBoolean(true);
-//       out.writeUTF(this.sizer.getClass().getName());
+  //     } else {
+  //       Assert.assertTrue(this.limit > 0);
+  //       out.writeLong(this.limit);
+  //     }
+  //     if (this.sizer != null) {
+  //       out.writeBoolean(true);
+  //       out.writeUTF(this.sizer.getClass().getName());
 
-//     } else {
-//       out.writeBoolean(false);
-//     }
-//   }
+  //     } else {
+  //       out.writeBoolean(false);
+  //     }
+  //   }
 
-//   public void readExternal(ObjectInput in)
-//     throws IOException, ClassNotFoundException {
-//     super.readExternal(in);
-//     long limit = in.readLong();
-//     setMaximumMegabytes((int) limit);
-//     if (in.readBoolean()) {
-//       String className = in.readUTF();
-//       setSizer(className);
-//     }
-//   }
+  //   public void readExternal(ObjectInput in)
+  //     throws IOException, ClassNotFoundException {
+  //     super.readExternal(in);
+  //     long limit = in.readLong();
+  //     setMaximumMegabytes((int) limit);
+  //     if (in.readBoolean()) {
+  //       String className = in.readUTF();
+  //       setSizer(className);
+  //     }
+  //   }
 
   /**
    * Sets the {@link ObjectSizer} used to calculate the size of
@@ -395,17 +371,15 @@ public final class MemLRUCapacityController extends LRUAlgorithm
         return EvictionAlgorithm.LRU_MEMORY;
       }
 
-
       /**
        * compute the size of storing a key/value pair in the cache..
        */
-      public int entrySize( Object key, Object value )
-        throws IllegalArgumentException {
+      public int entrySize(Object key, Object value) throws IllegalArgumentException {
 
         if (value == Token.TOMBSTONE) {
           return 0;
         }
-        
+
         int size = 0;
         int keySize = 0;
         if (!MemLRUCapacityController.this.isOffHeap) {
@@ -413,9 +387,9 @@ public final class MemLRUCapacityController extends LRUAlgorithm
           keySize = sizeof(key);
         }
         int valueSize = sizeof(value);
-//         org.apache.geode.internal.cache.GemFireCacheImpl.getInstance().getLogger().info("DEBUG MemLRUCC: overhead=" + size
-//                                                     + " keySize=" + keySize
-//                                                     + " valueSize=" + valueSize);
+        //         org.apache.geode.internal.cache.GemFireCacheImpl.getInstance().getLogger().info("DEBUG MemLRUCC: overhead=" + size
+        //                                                     + " keySize=" + keySize
+        //                                                     + " valueSize=" + valueSize);
         size += keySize;
         size += valueSize;
         return size;
@@ -452,7 +426,7 @@ public final class MemLRUCapacityController extends LRUAlgorithm
       public int getEvaluationsStatId() {
         return statType.nameToId("lruEvaluations");
       }
-      
+
       public int getGreedyReturnsStatId() {
         return statType.nameToId("lruGreedyReturns");
       }
@@ -464,29 +438,24 @@ public final class MemLRUCapacityController extends LRUAlgorithm
   }
 
   // added to fix bug 40718
-  static int basicSizeof(Object o, ObjectSizer sizer)
-      throws IllegalArgumentException {
+  static int basicSizeof(Object o, ObjectSizer sizer) throws IllegalArgumentException {
     final boolean cdChangingForm = o instanceof CDValueWrapper;
     if (cdChangingForm) {
-      o = ((CDValueWrapper)o).getValue();
+      o = ((CDValueWrapper) o).getValue();
     }
-    if (o == null || o == Token.INVALID || o == Token.LOCAL_INVALID
-        || o == Token.DESTROYED || o == Token.TOMBSTONE) {
+    if (o == null || o == Token.INVALID || o == Token.LOCAL_INVALID || o == Token.DESTROYED || o == Token.TOMBSTONE) {
       return 0;
     }
 
     int size;
-//    Shouldn't we defer to the user's object sizer for these things?
-    if ( o instanceof byte[]  || o instanceof String) {
+    //    Shouldn't we defer to the user's object sizer for these things?
+    if (o instanceof byte[] || o instanceof String) {
       size = ObjectSizer.DEFAULT.sizeof(o);
-    }
-    else if (o instanceof Sizeable) {
-      size = ((Sizeable)o).getSizeInBytes();
-    }
-    else if (sizer != null) {
+    } else if (o instanceof Sizeable) {
+      size = ((Sizeable) o).getSizeInBytes();
+    } else if (sizer != null) {
       size = sizer.sizeof(o);
-    }
-    else {
+    } else {
       size = ObjectSizer.DEFAULT.sizeof(o);
     }
     if (cdChangingForm) {
@@ -494,25 +463,28 @@ public final class MemLRUCapacityController extends LRUAlgorithm
     }
     return size;
   }
+
   /**
    * Return the size of an object as stored in GemFire... Typically
    * this is the serialized size in bytes..  This implementation is
    * slow....  Need to add Sizer interface and call it for customer
    * objects.
    */
-  protected int sizeof( Object o ) throws IllegalArgumentException {
+  protected int sizeof(Object o) throws IllegalArgumentException {
     return basicSizeof(o, this.sizer);
   }
 
   public int getPerEntryOverhead() {
     return perEntryOverHead;
   }
-  
+
   @Override
   public boolean equals(Object cc) {
-    if (!super.equals(cc)) return false;
-    MemLRUCapacityController other = (MemLRUCapacityController)cc;
-    if (this.limit != other.limit) return false;
+    if (!super.equals(cc))
+      return false;
+    MemLRUCapacityController other = (MemLRUCapacityController) cc;
+    if (this.limit != other.limit)
+      return false;
     return true;
   }
 
@@ -529,7 +501,7 @@ public final class MemLRUCapacityController extends LRUAlgorithm
     result += this.limit;
     return result;
   }
-  
+
   /**
    * Returns a brief description of this capacity controller.
    *
@@ -537,8 +509,6 @@ public final class MemLRUCapacityController extends LRUAlgorithm
    */
   @Override
   public String toString() {
-    return "MemLRUCapacityController with a capacity of " +
-      this.getLimit() + " megabytes and and eviction action " + this.getEvictionAction();
+    return "MemLRUCapacityController with a capacity of " + this.getLimit() + " megabytes and and eviction action " + this.getEvictionAction();
   }
 }
-

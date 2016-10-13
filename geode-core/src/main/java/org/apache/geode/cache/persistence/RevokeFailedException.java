@@ -45,6 +45,4 @@ public class RevokeFailedException extends GemFireException {
     super(cause);
   }
 
-  
-
 }

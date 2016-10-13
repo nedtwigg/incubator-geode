@@ -32,16 +32,15 @@ public class Argument extends Parameter {
   public void setArgumentName(String argumentName) {
     this.argumentName = argumentName;
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 13;
     int result = 1;
-    result = prime * result
-        + ((argumentName == null) ? 0 : argumentName.hashCode());
+    result = prime * result + ((argumentName == null) ? 0 : argumentName.hashCode());
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -63,13 +62,11 @@ public class Argument extends Parameter {
     }
     return true;
   }
-  
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(Argument.class.getSimpleName())
-        .append("[name=" + argumentName).append(",help=" + help)
-        .append(",required" + required + "]");
+    builder.append(Argument.class.getSimpleName()).append("[name=" + argumentName).append(",help=" + help).append(",required" + required + "]");
     return builder.toString();
   }
 }

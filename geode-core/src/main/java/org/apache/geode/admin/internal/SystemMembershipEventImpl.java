@@ -45,22 +45,22 @@ public class SystemMembershipEventImpl implements SystemMembershipEvent {
   public String getMemberId() {
     return this.id.toString();
   }
-  
+
   public DistributedMember getDistributedMember() {
     return this.id;
   }
 
-//   /**
-//    * Returns the user specified callback object associated with this
-//    * membership event.  Note that the callback argument is always
-//    * <code>null</code> for the event delivered to the {@link
-//    * SystemMembershipListener#memberCrashed} method.
-//    *
-//    * @since GemFire 4.0
-//    */
-//   public Object getCallbackArgument() {
-//     throw new UnsupportedOperationException("Not implemented yet");
-//   }
+  //   /**
+  //    * Returns the user specified callback object associated with this
+  //    * membership event.  Note that the callback argument is always
+  //    * <code>null</code> for the event delivered to the {@link
+  //    * SystemMembershipListener#memberCrashed} method.
+  //    *
+  //    * @since GemFire 4.0
+  //    */
+  //   public Object getCallbackArgument() {
+  //     throw new UnsupportedOperationException("Not implemented yet");
+  //   }
 
   @Override
   public String toString() {

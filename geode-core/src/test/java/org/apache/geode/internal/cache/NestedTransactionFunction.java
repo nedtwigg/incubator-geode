@@ -54,7 +54,7 @@ public class NestedTransactionFunction implements Function {
 
   public static final int COMMIT = 1;
   public static final int ROLLBACK = 2;
-  
+
   private static final long serialVersionUID = 1400965724856341543L;
 
   public boolean hasResult() {

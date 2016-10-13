@@ -25,7 +25,7 @@ package org.apache.geode.internal;
 public class SystemFailureTestHook {
 
   private static Class<?> expectedClass;
-  
+
   /**
    * If a test sets this to a non-null value then it should also
    * set it to "null" with a finally block.

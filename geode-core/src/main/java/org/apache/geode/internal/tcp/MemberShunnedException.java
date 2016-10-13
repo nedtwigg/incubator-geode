@@ -25,11 +25,10 @@ import org.apache.geode.distributed.DistributedMember;
  * received from a member that has been removed from membership.  It
  * is currently only thrown by JGroupMembershipManager.processMessage()
  */
-public class MemberShunnedException extends GemFireException
-{
+public class MemberShunnedException extends GemFireException {
   private static final long serialVersionUID = -8453126202477831557L;
   private DistributedMember member;
-  
+
   /**
    * constructor
    * @param member the member that was shunned
@@ -38,7 +37,7 @@ public class MemberShunnedException extends GemFireException
     super("");
     this.member = member;
   }
-  
+
   /**
    * @return the member that was shunned
    */

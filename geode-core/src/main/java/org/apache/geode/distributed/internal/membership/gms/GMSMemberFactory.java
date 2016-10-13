@@ -57,8 +57,7 @@ public class GMSMemberFactory implements MemberServices {
    * @param attr the MemberAttributes
    * @return the new NetMember
    */
-  public NetMember newNetMember(InetAddress i, int p, boolean splitBrainEnabled,
-      boolean canBeCoordinator, MemberAttributes attr, short version) {
+  public NetMember newNetMember(InetAddress i, int p, boolean splitBrainEnabled, boolean canBeCoordinator, MemberAttributes attr, short version) {
     GMSMember result = new GMSMember(attr, i, p, splitBrainEnabled, canBeCoordinator, version, 0, 0);
     return result;
   }
@@ -87,44 +86,32 @@ public class GMSMemberFactory implements MemberServices {
   public NetMember newNetMember(String s, int p) {
     InetAddress inetAddr = null;
     try {
-      inetAddr=SocketCreator.getLocalHost();
+      inetAddr = SocketCreator.getLocalHost();
     } catch (UnknownHostException e2) {
       throw new RuntimeException("Unable to create an identifier for testing for " + s, e2);
     }
     return newNetMember(inetAddr, p);
   }
-  
-  public MembershipManager newMembershipManager(DistributedMembershipListener listener,
-          DistributionConfig config,
-          RemoteTransportConfig transport, DMStats stats) throws DistributionException
-  {
+
+  public MembershipManager newMembershipManager(DistributedMembershipListener listener, DistributionConfig config, RemoteTransportConfig transport, DMStats stats) throws DistributionException {
     Services services = new Services(listener, config, transport, stats);
     try {
       services.init();
       services.start();
-    }
-    catch (ConnectionException e) {
+    } catch (ConnectionException e) {
       throw new DistributionException(LocalizedStrings.MemberFactory_UNABLE_TO_CREATE_MEMBERSHIP_MANAGER.toLocalizedString(), e);
-    }
-    catch (GemFireConfigException
-        | SystemConnectException
-        | GemFireSecurityException e) {
+    } catch (GemFireConfigException | SystemConnectException | GemFireSecurityException e) {
       throw e;
-    }
-    catch (RuntimeException e) {
+    } catch (RuntimeException e) {
       Services.getLogger().error("Unexpected problem starting up membership services", e);
       throw new SystemConnectException("Problem starting up membership services", e);
     }
-    return (MembershipManager)services.getManager();
+    return (MembershipManager) services.getManager();
   }
-  
+
   @Override
-  public NetLocator newLocatorHandler(InetAddress bindAddress,
-      File stateFile,
-      String locatorString,
-      boolean usePreferredCoordinators,
-      boolean networkPartitionDetectionEnabled, LocatorStats stats, String securityUDPDHAlgo) {
-    
+  public NetLocator newLocatorHandler(InetAddress bindAddress, File stateFile, String locatorString, boolean usePreferredCoordinators, boolean networkPartitionDetectionEnabled, LocatorStats stats, String securityUDPDHAlgo) {
+
     return new GMSLocator(bindAddress, stateFile, locatorString, usePreferredCoordinators, networkPartitionDetectionEnabled, stats, securityUDPDHAlgo);
   }
 

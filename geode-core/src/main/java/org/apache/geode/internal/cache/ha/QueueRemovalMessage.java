@@ -47,28 +47,26 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * 
  *  
  */
-public final class QueueRemovalMessage extends PooledDistributionMessage
-  {
+public final class QueueRemovalMessage extends PooledDistributionMessage {
   private static final Logger logger = LogService.getLogger();
 
-//  /**
-//   * Executor for processing incoming messages
-//   */
-//  private static final Executor executor;
-
+  //  /**
+  //   * Executor for processing incoming messages
+  //   */
+  //  private static final Executor executor;
 
   /**
    * List of messages (String[] )
    */
   private List messagesList;
 
-//  /**
-//   * create the executor in a static block
-//   */
-//  static {
-//    //TODO:Mitul best implementation of executor for this task?
-//    executor = Executors.newCachedThreadPool();
-//  }
+  //  /**
+  //   * create the executor in a static block
+  //   */
+  //  static {
+  //    //TODO:Mitul best implementation of executor for this task?
+  //    executor = Executors.newCachedThreadPool();
+  //  }
 
   /**
    * Constructor : Set the recipient list to ALL_RECIPIENTS
@@ -83,8 +81,7 @@ public final class QueueRemovalMessage extends PooledDistributionMessage
    * 
    * @param messages
    */
-  public void setMessagesList(List messages)
-  {
+  public void setMessagesList(List messages) {
     this.messagesList = messages;
   }
 
@@ -95,36 +92,34 @@ public final class QueueRemovalMessage extends PooledDistributionMessage
    * @param dm
    */
   @Override
-  protected void process(DistributionManager dm)
-  {
+  protected void process(DistributionManager dm) {
 
     final GemFireCacheImpl cache;
     // use GemFireCache.getInstance to avoid blocking during cache.xml processing.
     cache = GemFireCacheImpl.getInstance(); //CacheFactory.getAnyInstance();
     if (cache != null) {
       Iterator iterator = this.messagesList.iterator();
-      int oldLevel = LocalRegion.setThreadInitLevelRequirement(
-          LocalRegion.BEFORE_INITIAL_IMAGE); 
+      int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.BEFORE_INITIAL_IMAGE);
       try {
-      while (iterator.hasNext()) {
-        final String regionName = (String)iterator.next();
-        final int size = ((Integer)iterator.next()).intValue();
-          final LocalRegion region = (LocalRegion)cache.getRegion(regionName);
-        final HARegionQueue hrq;
+        while (iterator.hasNext()) {
+          final String regionName = (String) iterator.next();
+          final int size = ((Integer) iterator.next()).intValue();
+          final LocalRegion region = (LocalRegion) cache.getRegion(regionName);
+          final HARegionQueue hrq;
           if (region == null || !region.isInitialized()) {
-          hrq = null;
+            hrq = null;
           } else {
-            HARegionQueue tmp = ((HARegion)region).getOwner();
+            HARegionQueue tmp = ((HARegion) region).getOwner();
             if (tmp != null && tmp.isQueueInitialized()) {
               hrq = tmp;
             } else {
               hrq = null;
-        }
+            }
           }
           // we have to iterate even if the hrq isn't available since there are
           // a bunch of event IDs to go through
-        for (int i = 0; i < size; i++) {
-          final EventID id = (EventID)iterator.next();
+          for (int i = 0; i < size; i++) {
+            final EventID id = (EventID) iterator.next();
             boolean interrupted = Thread.interrupted();
             if (hrq == null || !hrq.isQueueInitialized()) {
               continue;
@@ -134,25 +129,23 @@ public final class QueueRemovalMessage extends PooledDistributionMessage
               //dm.getWaitingThreadPool().execute(new Runnable() {
               //  public void run()
               //  {
-                  try {
-                    if (logger.isTraceEnabled()) {
-                      logger.trace("QueueRemovalMessage: removing dispatched events on queue {} for {}", regionName, id);
-                    }
-                    hrq.removeDispatchedEvents(id);
-                  } catch (RegionDestroyedException rde) {
-                    logger.info(LocalizedMessage.create(LocalizedStrings.QueueRemovalMessage_QUEUE_FOUND_DESTROYED_WHILE_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_EVENT_ID_IS_0_FOR_HAREGION_WITH_NAME_1, new Object[] {id, regionName}));
-                  } catch (CancelException e) {
-                    return;  // cache or DS is closing  
-                  } catch (CacheException e) {
-                    logger.error(LocalizedMessage.create(LocalizedStrings.QueueRemovalMessage_QUEUEREMOVALMESSAGEPROCESSEXCEPTION_IN_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_PROBLEM_IS_WITH_EVENT_ID__0_FOR_HAREGION_WITH_NAME_1, new Object[] {regionName, id}), e);
-                  } catch (InterruptedException ie) {
-                    return; // interrupt occurs during shutdown.  this runs in an executor, so just stop processing
-                  }
-            }
-            catch (RejectedExecutionException e) {
+              try {
+                if (logger.isTraceEnabled()) {
+                  logger.trace("QueueRemovalMessage: removing dispatched events on queue {} for {}", regionName, id);
+                }
+                hrq.removeDispatchedEvents(id);
+              } catch (RegionDestroyedException rde) {
+                logger.info(LocalizedMessage.create(LocalizedStrings.QueueRemovalMessage_QUEUE_FOUND_DESTROYED_WHILE_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_EVENT_ID_IS_0_FOR_HAREGION_WITH_NAME_1, new Object[] { id, regionName }));
+              } catch (CancelException e) {
+                return; // cache or DS is closing  
+              } catch (CacheException e) {
+                logger.error(LocalizedMessage.create(LocalizedStrings.QueueRemovalMessage_QUEUEREMOVALMESSAGEPROCESSEXCEPTION_IN_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_PROBLEM_IS_WITH_EVENT_ID__0_FOR_HAREGION_WITH_NAME_1, new Object[] { regionName, id }), e);
+              } catch (InterruptedException ie) {
+                return; // interrupt occurs during shutdown.  this runs in an executor, so just stop processing
+              }
+            } catch (RejectedExecutionException e) {
               interrupted = true;
-            }
-            finally {
+            } finally {
               if (interrupted) {
                 Thread.currentThread().interrupt();
               }
@@ -166,8 +159,7 @@ public final class QueueRemovalMessage extends PooledDistributionMessage
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     /**
      * first write the total list size then in a loop write the region name,
      * number of eventIds and the event ids
@@ -182,10 +174,10 @@ public final class QueueRemovalMessage extends PooledDistributionMessage
     Object eventId = null;
     int maxVal;
     while (iterator.hasNext()) {
-      regionName = (String)iterator.next();
+      regionName = (String) iterator.next();
       //write the regionName
       DataSerializer.writeString(regionName, out);
-      numberOfIds = (Integer)iterator.next();
+      numberOfIds = (Integer) iterator.next();
       //write the number of event ids
       DataSerializer.writeInteger(numberOfIds, out);
       maxVal = numberOfIds.intValue();
@@ -202,8 +194,7 @@ public final class QueueRemovalMessage extends PooledDistributionMessage
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     /**
      * read the total list size, reconstruct the message list in a loop by reading
      * the region name, number of eventIds and the event ids

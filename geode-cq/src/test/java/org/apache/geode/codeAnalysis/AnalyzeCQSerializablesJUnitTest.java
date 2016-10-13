@@ -32,7 +32,7 @@ import org.apache.geode.util.test.TestUtil;
  */
 @Category(IntegrationTest.class)
 public class AnalyzeCQSerializablesJUnitTest extends AnalyzeSerializablesJUnitTest {
-  
+
   @Before
   public void loadClasses() throws Exception {
     if (classes.size() > 0) {
@@ -42,19 +42,15 @@ public class AnalyzeCQSerializablesJUnitTest extends AnalyzeSerializablesJUnitTe
     List<String> excludedClasses = loadExcludedClasses(new File(TestUtil.getResourcePath(AnalyzeCQSerializablesJUnitTest.class, "excludedClasses.txt")));
     List<String> openBugs = loadOpenBugs(new File(TestUtil.getResourcePath(AnalyzeCQSerializablesJUnitTest.class, "openBugs.txt")));
     excludedClasses.addAll(openBugs);
-    
+
     String cp = System.getProperty("java.class.path");
     System.out.println("java classpath is " + cp);
     System.out.flush();
     String[] entries = cp.split(File.pathSeparator);
-    String buildDirName =
-         "geode-cq"+File.separatorChar
-        +"build"+File.separatorChar
-        +"classes"+File.separatorChar
-        +"main";
+    String buildDirName = "geode-cq" + File.separatorChar + "build" + File.separatorChar + "classes" + File.separatorChar + "main";
     String buildDir = null;
-    
-    for (int i=0; i<entries.length  &&  buildDir==null; i++) {
+
+    for (int i = 0; i < entries.length && buildDir == null; i++) {
       System.out.println("examining '" + entries[i] + "'");
       System.out.flush();
       if (entries[i].endsWith(buildDirName)) {
@@ -67,12 +63,10 @@ public class AnalyzeCQSerializablesJUnitTest extends AnalyzeSerializablesJUnitTe
       long start = System.currentTimeMillis();
       loadClassesFromBuild(new File(buildDir), excludedClasses);
       long finish = System.currentTimeMillis();
-      System.out.println("done loading " + classes.size() + " classes.  elapsed time = "
-          + (finish-start)/1000 + " seconds");
-    }
-    else {
+      System.out.println("done loading " + classes.size() + " classes.  elapsed time = " + (finish - start) / 1000 + " seconds");
+    } else {
       fail("unable to find CQ classes");
     }
   }
-  
+
 }

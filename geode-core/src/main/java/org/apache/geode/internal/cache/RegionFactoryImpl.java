@@ -29,8 +29,7 @@ import org.apache.geode.cache.client.ClientNotReadyException;
  * @since GemFire 6.5
  */
 
-public class RegionFactoryImpl<K,V> extends RegionFactory<K,V>
-{
+public class RegionFactoryImpl<K, V> extends RegionFactory<K, V> {
   public RegionFactoryImpl(GemFireCacheImpl cache) {
     super(cache);
   }
@@ -46,5 +45,5 @@ public class RegionFactoryImpl<K,V> extends RegionFactory<K,V>
   public RegionFactoryImpl(GemFireCacheImpl cache, String regionAttributesId) {
     super(cache, regionAttributesId);
   }
-  
+
 }

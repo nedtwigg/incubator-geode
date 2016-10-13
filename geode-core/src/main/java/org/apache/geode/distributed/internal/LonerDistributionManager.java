@@ -49,8 +49,7 @@ public class LonerDistributionManager implements DM {
   private final InternalDistributedSystem system;
   private final InternalLogWriter logger;
   private ElderState elderState;
-  
-  
+
   ////////////////////////  Constructors  ////////////////////////
 
   /**
@@ -61,8 +60,7 @@ public class LonerDistributionManager implements DM {
    *        will send messages.
    *
    */
-  public LonerDistributionManager(InternalDistributedSystem system,
-                                  InternalLogWriter logger) {
+  public LonerDistributionManager(InternalDistributedSystem system, InternalLogWriter logger) {
     this.system = system;
     this.logger = logger;
     this.id = generateMemberId();
@@ -92,11 +90,11 @@ public class LonerDistributionManager implements DM {
               DistributionManager.LONER_DM_TYPE,
               MemberAttributes.parseRoles(system.getConfig().getRoles()));
       id = new InternalDistributedMember(host, 65535); // noise value for port number
-
+  
     } catch (UnknownHostException ex) {
       throw new InternalError(LocalizedStrings.LonerDistributionManager_CANNOT_RESOLVE_LOCAL_HOST_NAME_TO_AN_IP_ADDRESS.toLocalizedString());
     }
-
+  
   }*/
 
   private final Set<InternalDistributedMember> allIds;// = Collections.singleton(id);
@@ -109,6 +107,7 @@ public class LonerDistributionManager implements DM {
   public long cacheTimeMillis() {
     return this.system.getClock().cacheTimeMillis();
   }
+
   public InternalDistributedMember getDistributionManagerId() {
     return id;
   }
@@ -120,13 +119,14 @@ public class LonerDistributionManager implements DM {
   public Set getDistributionManagerIdsIncludingAdmin() {
     return allIds;
   }
+
   public Serializable[] getDirectChannels(InternalDistributedMember[] ids) {
     return ids;
   }
-  
+
   public InternalDistributedMember getCanonicalId(DistributedMember dmid) {
-    InternalDistributedMember iid = (InternalDistributedMember)dmid;
-    InternalDistributedMember result = this.canonicalIds.putIfAbsent(iid,iid);
+    InternalDistributedMember iid = (InternalDistributedMember) dmid;
+    InternalDistributedMember result = this.canonicalIds.putIfAbsent(iid, iid);
     if (result != null) {
       return result;
     }
@@ -136,57 +136,65 @@ public class LonerDistributionManager implements DM {
   public Set getOtherDistributionManagerIds() {
     return Collections.EMPTY_SET;
   }
+
   @Override
   public Set getOtherNormalDistributionManagerIds() {
     return Collections.EMPTY_SET;
   }
+
   public Set getAllOtherMembers() {
     return Collections.EMPTY_SET;
   }
-  
+
   @Override // DM method
   public void retainMembersWithSameOrNewerVersion(Collection<InternalDistributedMember> members, Version version) {
-    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext(); ) {
+    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext();) {
       InternalDistributedMember id = it.next();
       if (id.getVersionObject().compareTo(version) < 0) {
         it.remove();
       }
     }
   }
-  
+
   @Override // DM method
   public void removeMembersWithSameOrNewerVersion(Collection<InternalDistributedMember> members, Version version) {
-    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext(); ) {
+    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext();) {
       InternalDistributedMember id = it.next();
       if (id.getVersionObject().compareTo(version) >= 0) {
         it.remove();
       }
     }
   }
-  
 
   public Set addMembershipListenerAndGetDistributionManagerIds(MembershipListener l) {
     //return getOtherDistributionManagerIds();
     return allIds;
   }
+
   public Set addAllMembershipListenerAndGetAllIds(MembershipListener l) {
     return allIds;
   }
+
   public int getDistributionManagerCount() {
     return 0;
   }
+
   public InternalDistributedMember getId() {
     return getDistributionManagerId();
   }
+
   public boolean isAdam() {
     return true;
   }
+
   public InternalDistributedMember getElderId() {
     return getId();
   }
+
   public boolean isElder() {
     return true;
   }
+
   public boolean isLoner() {
     return true;
   }
@@ -211,19 +219,27 @@ public class LonerDistributionManager implements DM {
       throw new RuntimeException(LocalizedStrings.LonerDistributionManager_LONER_TRIED_TO_SEND_MESSAGE_TO_0.toLocalizedString(message.getRecipientsDescription()));
     }
   }
+
   public InternalDistributedSystem getSystem() {
     return this.system;
   }
-  public void addMembershipListener(MembershipListener l) {}
 
-  public void removeMembershipListener(MembershipListener l) {}
-  public void removeAllMembershipListener(MembershipListener l) {}
+  public void addMembershipListener(MembershipListener l) {
+  }
 
-  public void addAdminConsole(InternalDistributedMember p_id) {}
+  public void removeMembershipListener(MembershipListener l) {
+  }
+
+  public void removeAllMembershipListener(MembershipListener l) {
+  }
+
+  public void addAdminConsole(InternalDistributedMember p_id) {
+  }
 
   public DMStats getStats() {
     return stats;
   }
+
   public DistributionConfig getConfig() {
     DistributionConfig result = null;
     if (getSystem() != null) {
@@ -232,39 +248,48 @@ public class LonerDistributionManager implements DM {
     return result;
   }
 
-  public void handleManagerDeparture(InternalDistributedMember p_id, 
-      boolean crashed, String reason) {}
+  public void handleManagerDeparture(InternalDistributedMember p_id, boolean crashed, String reason) {
+  }
 
   public LogWriterI18n getLoggerI18n() {
     return this.logger;
   }
+
   public InternalLogWriter getInternalLogWriter() {
     return this.logger;
   }
+
   public ExecutorService getThreadPool() {
     return executor;
   }
+
   public ExecutorService getHighPriorityThreadPool() {
     return executor;
   }
+
   public ExecutorService getWaitingThreadPool() {
     return executor;
   }
+
   public ExecutorService getPrMetaDataCleanupThreadPool() {
     return executor;
   }
+
   public Map getChannelMap() {
     return null;
   }
+
   public Map getMemberMap() {
     return null;
   }
+
   public void close() {
   }
+
   public void restartCommunications() {
 
   }
-  
+
   @Override
   public List<InternalDistributedMember> getViewMembers() {
     return viewMembers;
@@ -272,7 +297,7 @@ public class LonerDistributionManager implements DM {
 
   public DistributedMember getOldestMember(Collection members) throws NoSuchElementException {
     if (members.size() == 1) {
-      DistributedMember member = (DistributedMember)members.iterator().next();
+      DistributedMember member = (DistributedMember) members.iterator().next();
       if (member.equals(viewMembers.get(0))) {
         return member;
       }
@@ -280,373 +305,798 @@ public class LonerDistributionManager implements DM {
     throw new NoSuchElementException(LocalizedStrings.LonerDistributionManager_MEMBER_NOT_FOUND_IN_MEMBERSHIP_SET.toLocalizedString());
   }
 
-  public Set getAdminMemberSet(){ return Collections.EMPTY_SET; }
+  public Set getAdminMemberSet() {
+    return Collections.EMPTY_SET;
+  }
 
   public static class DummyDMStats implements DMStats {
     @Override
-    public long getSentMessages() {return 0;}
-    @Override
-    public void incSentMessages(long messages) {}
-    @Override
-    public void incTOSentMsg() {}
-    @Override
-    public long getSentCommitMessages() {return 0;}
-    @Override
-    public void incSentCommitMessages(long messages) {}
-    @Override
-    public long getCommitWaits() {return 0;}
-    @Override
-    public void incCommitWaits() {}
-    @Override
-    public long getSentMessagesTime() {return 0;}
-    @Override
-    public void incSentMessagesTime(long nanos) {}
-    @Override
-    public long getBroadcastMessages() {return 0;}
-    @Override
-    public void incBroadcastMessages(long messages) {}
-    @Override
-    public long getBroadcastMessagesTime() {return 0;}
-    @Override
-    public void incBroadcastMessagesTime(long nanos) {}
-    @Override
-    public long getReceivedMessages() {return 0;}
-    @Override
-    public void incReceivedMessages(long messages) {}
-    @Override
-    public long getReceivedBytes() {return 0;}
-    @Override
-    public void incReceivedBytes(long bytes) {}
-    @Override
-    public void incSentBytes(long bytes) {}
-    @Override
-    public long getProcessedMessages() {return 0;}
-    @Override
-    public void incProcessedMessages(long messages) {}
-    @Override
-    public long getProcessedMessagesTime() {return 0;}
-    @Override
-    public void incProcessedMessagesTime(long nanos) {}
-    @Override
-    public long getMessageProcessingScheduleTime() {return 0;}
-    @Override
-    public void incMessageProcessingScheduleTime(long nanos) {}
-    @Override
-    public int getOverflowQueueSize() {return 0;}
-    @Override
-    public void incOverflowQueueSize(int messages) {}
-    @Override
-    public int getNumProcessingThreads() {return 0;}
-    @Override
-    public void incNumProcessingThreads(int threads) {}
-    @Override
-    public int getNumSerialThreads() {return 0;}
-    @Override
-    public void incNumSerialThreads(int threads) {}
-    @Override
-    public void incMessageChannelTime(long val) {}
-    @Override
-    public void incUDPDispatchRequestTime(long val) {};
-    @Override
-    public long getUDPDispatchRequestTime() {return 0;};
-    @Override
-    public long getReplyMessageTime() {return 0;}
-    @Override
-    public void incReplyMessageTime(long val) {}
-    @Override
-    public long getDistributeMessageTime() {return 0;}
-    @Override
-    public void incDistributeMessageTime(long val) {}
-    @Override
-    public int getNodes() {return 0;}
-    @Override
-    public void setNodes(int val) {}
-    @Override
-    public void incNodes(int val) {}
-    @Override
-    public int getReplyWaitsInProgress() {return 0;}
-    @Override
-    public int getReplyWaitsCompleted() {return 0;}
-    @Override
-    public long getReplyWaitTime() {return 0;}
-    @Override
-    public long startReplyWait() {return 0;}
-    @Override
-    public void endReplyWait(long startNanos, long startMillis) {}
-    @Override
-    public void incReplyTimeouts() { }
-    @Override
-    public long getReplyTimeouts() { return 0; }
-    @Override
-    public void incReceivers() {}
-    @Override
-    public void decReceivers() {}
-    @Override
-    public void incFailedAccept() {}
-    @Override
-    public void incFailedConnect() {}
-    @Override
-    public void incReconnectAttempts() {}
-    @Override
-    public void incLostLease() {}
-    @Override
-    public void incSenders(boolean shared, boolean preserveOrder) {}
-    @Override
-    public void decSenders(boolean shared, boolean preserveOrder) {}
-    @Override
-    public int getSendersSU() { return 0; }
-    @Override
-    public long startSocketWrite(boolean sync) {return 0; }
-    @Override
-    public void endSocketWrite(boolean sync, long start, int bytesWritten, int retries) {}
-    @Override
-    public long startSerialization() {return 0;}
-    @Override
-    public void endSerialization(long start, int bytes) {}
-    @Override
-    public long startDeserialization() {return 0;}
-    @Override
-    public void endDeserialization(long start, int bytes) {}
-    @Override
-    public long startMsgSerialization() {return 0;}
-    @Override
-    public void endMsgSerialization(long start) {}
-    @Override
-    public long startMsgDeserialization() {return 0;}
-    @Override
-    public void endMsgDeserialization(long start) {}
-    @Override
-    public void incBatchSendTime(long start) {}
-    @Override
-    public void incBatchCopyTime(long start) {}
-    @Override
-    public void incBatchWaitTime(long start) {}
-    @Override
-    public void incBatchFlushTime(long start) {}
-    @Override
-    public void incUcastWriteBytes(int bytesWritten) {}
-    @Override
-    public void incMcastWriteBytes(int bytesWritten) {}
-    @Override
-    public void incUcastRetransmits() {}
-    @Override
-    public void incMcastRetransmits() {}
-    @Override
-    public void incMcastRetransmitRequests() {}
-    @Override
-    public int getMcastRetransmits() { return 0; }
-    @Override
-    public int getMcastWrites() { return 0; }
-    @Override
-    public int getMcastReads() { return 0; }
-    @Override
-    public void incUcastReadBytes(int amount) {}
-    @Override
-    public void incMcastReadBytes(int amount) {}
-    @Override
-    public int getAsyncSocketWritesInProgress() {return 0;}
-    @Override
-    public int getAsyncSocketWrites() {return 0;}
-    @Override
-    public int getAsyncSocketWriteRetries() {return 0;}
-    @Override
-    public long getAsyncSocketWriteBytes() {return 0;}
-    @Override
-    public long getAsyncSocketWriteTime() {return 0;}
-    @Override
-    public int getAsyncQueues() {return 0;}
-    @Override
-    public void incAsyncQueues(int inc) {}
-    @Override
-    public int getAsyncQueueFlushesInProgress() {return 0;}
-    @Override
-    public int getAsyncQueueFlushesCompleted() {return 0;}
-    @Override
-    public long getAsyncQueueFlushTime() {return 0;}
-    @Override
-    public long startAsyncQueueFlush() {return 0;}
-    @Override
-    public void endAsyncQueueFlush(long start) {}
-    @Override
-    public int getAsyncQueueTimeouts() {return 0;}
-    @Override
-    public void incAsyncQueueTimeouts(int inc) {}
-    @Override
-    public int getAsyncQueueSizeExceeded() {return 0;}
-    @Override
-    public void incAsyncQueueSizeExceeded(int inc) {}
-    @Override
-    public int getAsyncDistributionTimeoutExceeded() {return 0;}
-    @Override
-    public void incAsyncDistributionTimeoutExceeded() {}
-    @Override
-    public long getAsyncQueueSize() {return 0;}
-    @Override
-    public void incAsyncQueueSize(long inc) {}
-    @Override
-    public long getAsyncQueuedMsgs() {return 0;}
-    @Override
-    public void incAsyncQueuedMsgs() {}
-    @Override
-    public long getAsyncDequeuedMsgs() {return 0;}
-    @Override
-    public void incAsyncDequeuedMsgs() {}
-    @Override
-    public long getAsyncConflatedMsgs() {return 0;}
-    @Override
-    public void incAsyncConflatedMsgs() {}
-    @Override
-    public int getAsyncThreads() {return 0;}
-    @Override
-    public void incAsyncThreads(int inc) {}
-    @Override
-    public int getAsyncThreadInProgress() {return 0;}
-    @Override
-    public int getAsyncThreadCompleted() {return 0;}
-    @Override
-    public long getAsyncThreadTime() {return 0;}
-    @Override
-    public long startAsyncThread() {return 0;}
-    @Override
-    public void endAsyncThread(long start) {}
-    @Override
-    public long getAsyncQueueAddTime() {return 0;}
-    @Override
-    public void incAsyncQueueAddTime(long inc) {}
-    @Override
-    public long getAsyncQueueRemoveTime() {return 0;}
-    @Override
-    public void incAsyncQueueRemoveTime(long inc) {}
-    @Override
-    public void incReceiverBufferSize(int inc, boolean direct) {}
-    @Override
-    public void incSenderBufferSize(int inc, boolean direct) {}
-    @Override
-    public long startSocketLock() {return 0;}
-    @Override
-    public void endSocketLock(long start) {}
-    @Override
-    public long startBufferAcquire() {return 0;}
-    @Override
-    public void endBufferAcquire(long start) {}
-    @Override
-    public void incMessagesBeingReceived(boolean newMsg, int bytes) {}
-    @Override
-    public void decMessagesBeingReceived(int bytes) {}
-    @Override
-    public void incReplyHandOffTime(long start) {}
-    @Override
-    public int getElders() {return 0;}
-    @Override
-    public void incElders(int val) {}
-    @Override
-    public int getInitialImageMessagesInFlight() {return 0;}
-    @Override
-    public void incInitialImageMessagesInFlight(int val) {}
-    @Override
-    public int getInitialImageRequestsInProgress() {return 0;}
-    @Override
-    public void incInitialImageRequestsInProgress(int val) {}
-    @Override
-    public void incPdxSerialization(int bytesWritten) {}
-    @Override
-    public void incPdxDeserialization(int i) {}
-    @Override
-    public long startPdxInstanceDeserialization() {return 0;}
-    @Override
-    public void endPdxInstanceDeserialization(long start) {}
-    @Override
-    public void incPdxInstanceCreations() {}
+    public long getSentMessages() {
+      return 0;
+    }
+
+    @Override
+    public void incSentMessages(long messages) {
+    }
+
+    @Override
+    public void incTOSentMsg() {
+    }
+
+    @Override
+    public long getSentCommitMessages() {
+      return 0;
+    }
+
+    @Override
+    public void incSentCommitMessages(long messages) {
+    }
+
+    @Override
+    public long getCommitWaits() {
+      return 0;
+    }
+
+    @Override
+    public void incCommitWaits() {
+    }
+
+    @Override
+    public long getSentMessagesTime() {
+      return 0;
+    }
+
+    @Override
+    public void incSentMessagesTime(long nanos) {
+    }
+
+    @Override
+    public long getBroadcastMessages() {
+      return 0;
+    }
+
+    @Override
+    public void incBroadcastMessages(long messages) {
+    }
+
+    @Override
+    public long getBroadcastMessagesTime() {
+      return 0;
+    }
+
+    @Override
+    public void incBroadcastMessagesTime(long nanos) {
+    }
+
+    @Override
+    public long getReceivedMessages() {
+      return 0;
+    }
+
+    @Override
+    public void incReceivedMessages(long messages) {
+    }
+
+    @Override
+    public long getReceivedBytes() {
+      return 0;
+    }
+
+    @Override
+    public void incReceivedBytes(long bytes) {
+    }
+
+    @Override
+    public void incSentBytes(long bytes) {
+    }
+
+    @Override
+    public long getProcessedMessages() {
+      return 0;
+    }
+
+    @Override
+    public void incProcessedMessages(long messages) {
+    }
+
+    @Override
+    public long getProcessedMessagesTime() {
+      return 0;
+    }
+
+    @Override
+    public void incProcessedMessagesTime(long nanos) {
+    }
+
+    @Override
+    public long getMessageProcessingScheduleTime() {
+      return 0;
+    }
+
+    @Override
+    public void incMessageProcessingScheduleTime(long nanos) {
+    }
+
+    @Override
+    public int getOverflowQueueSize() {
+      return 0;
+    }
+
+    @Override
+    public void incOverflowQueueSize(int messages) {
+    }
+
+    @Override
+    public int getNumProcessingThreads() {
+      return 0;
+    }
+
+    @Override
+    public void incNumProcessingThreads(int threads) {
+    }
+
+    @Override
+    public int getNumSerialThreads() {
+      return 0;
+    }
+
+    @Override
+    public void incNumSerialThreads(int threads) {
+    }
+
+    @Override
+    public void incMessageChannelTime(long val) {
+    }
+
+    @Override
+    public void incUDPDispatchRequestTime(long val) {
+    };
+
+    @Override
+    public long getUDPDispatchRequestTime() {
+      return 0;
+    };
+
+    @Override
+    public long getReplyMessageTime() {
+      return 0;
+    }
+
+    @Override
+    public void incReplyMessageTime(long val) {
+    }
+
+    @Override
+    public long getDistributeMessageTime() {
+      return 0;
+    }
+
+    @Override
+    public void incDistributeMessageTime(long val) {
+    }
+
+    @Override
+    public int getNodes() {
+      return 0;
+    }
+
+    @Override
+    public void setNodes(int val) {
+    }
+
+    @Override
+    public void incNodes(int val) {
+    }
+
+    @Override
+    public int getReplyWaitsInProgress() {
+      return 0;
+    }
+
+    @Override
+    public int getReplyWaitsCompleted() {
+      return 0;
+    }
+
+    @Override
+    public long getReplyWaitTime() {
+      return 0;
+    }
+
+    @Override
+    public long startReplyWait() {
+      return 0;
+    }
+
+    @Override
+    public void endReplyWait(long startNanos, long startMillis) {
+    }
+
+    @Override
+    public void incReplyTimeouts() {
+    }
+
+    @Override
+    public long getReplyTimeouts() {
+      return 0;
+    }
+
+    @Override
+    public void incReceivers() {
+    }
+
+    @Override
+    public void decReceivers() {
+    }
+
+    @Override
+    public void incFailedAccept() {
+    }
+
+    @Override
+    public void incFailedConnect() {
+    }
+
+    @Override
+    public void incReconnectAttempts() {
+    }
+
+    @Override
+    public void incLostLease() {
+    }
+
+    @Override
+    public void incSenders(boolean shared, boolean preserveOrder) {
+    }
+
+    @Override
+    public void decSenders(boolean shared, boolean preserveOrder) {
+    }
+
+    @Override
+    public int getSendersSU() {
+      return 0;
+    }
+
+    @Override
+    public long startSocketWrite(boolean sync) {
+      return 0;
+    }
+
+    @Override
+    public void endSocketWrite(boolean sync, long start, int bytesWritten, int retries) {
+    }
+
+    @Override
+    public long startSerialization() {
+      return 0;
+    }
+
+    @Override
+    public void endSerialization(long start, int bytes) {
+    }
+
+    @Override
+    public long startDeserialization() {
+      return 0;
+    }
+
+    @Override
+    public void endDeserialization(long start, int bytes) {
+    }
+
+    @Override
+    public long startMsgSerialization() {
+      return 0;
+    }
+
+    @Override
+    public void endMsgSerialization(long start) {
+    }
+
+    @Override
+    public long startMsgDeserialization() {
+      return 0;
+    }
+
+    @Override
+    public void endMsgDeserialization(long start) {
+    }
+
+    @Override
+    public void incBatchSendTime(long start) {
+    }
+
+    @Override
+    public void incBatchCopyTime(long start) {
+    }
+
+    @Override
+    public void incBatchWaitTime(long start) {
+    }
+
+    @Override
+    public void incBatchFlushTime(long start) {
+    }
+
+    @Override
+    public void incUcastWriteBytes(int bytesWritten) {
+    }
+
+    @Override
+    public void incMcastWriteBytes(int bytesWritten) {
+    }
+
+    @Override
+    public void incUcastRetransmits() {
+    }
+
+    @Override
+    public void incMcastRetransmits() {
+    }
+
+    @Override
+    public void incMcastRetransmitRequests() {
+    }
+
+    @Override
+    public int getMcastRetransmits() {
+      return 0;
+    }
+
+    @Override
+    public int getMcastWrites() {
+      return 0;
+    }
+
+    @Override
+    public int getMcastReads() {
+      return 0;
+    }
+
+    @Override
+    public void incUcastReadBytes(int amount) {
+    }
+
+    @Override
+    public void incMcastReadBytes(int amount) {
+    }
+
+    @Override
+    public int getAsyncSocketWritesInProgress() {
+      return 0;
+    }
+
+    @Override
+    public int getAsyncSocketWrites() {
+      return 0;
+    }
+
+    @Override
+    public int getAsyncSocketWriteRetries() {
+      return 0;
+    }
+
+    @Override
+    public long getAsyncSocketWriteBytes() {
+      return 0;
+    }
+
+    @Override
+    public long getAsyncSocketWriteTime() {
+      return 0;
+    }
+
+    @Override
+    public int getAsyncQueues() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncQueues(int inc) {
+    }
+
+    @Override
+    public int getAsyncQueueFlushesInProgress() {
+      return 0;
+    }
+
+    @Override
+    public int getAsyncQueueFlushesCompleted() {
+      return 0;
+    }
+
+    @Override
+    public long getAsyncQueueFlushTime() {
+      return 0;
+    }
+
+    @Override
+    public long startAsyncQueueFlush() {
+      return 0;
+    }
+
+    @Override
+    public void endAsyncQueueFlush(long start) {
+    }
+
+    @Override
+    public int getAsyncQueueTimeouts() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncQueueTimeouts(int inc) {
+    }
+
+    @Override
+    public int getAsyncQueueSizeExceeded() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncQueueSizeExceeded(int inc) {
+    }
+
+    @Override
+    public int getAsyncDistributionTimeoutExceeded() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncDistributionTimeoutExceeded() {
+    }
+
+    @Override
+    public long getAsyncQueueSize() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncQueueSize(long inc) {
+    }
+
+    @Override
+    public long getAsyncQueuedMsgs() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncQueuedMsgs() {
+    }
+
+    @Override
+    public long getAsyncDequeuedMsgs() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncDequeuedMsgs() {
+    }
+
+    @Override
+    public long getAsyncConflatedMsgs() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncConflatedMsgs() {
+    }
+
+    @Override
+    public int getAsyncThreads() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncThreads(int inc) {
+    }
+
+    @Override
+    public int getAsyncThreadInProgress() {
+      return 0;
+    }
+
+    @Override
+    public int getAsyncThreadCompleted() {
+      return 0;
+    }
+
+    @Override
+    public long getAsyncThreadTime() {
+      return 0;
+    }
+
+    @Override
+    public long startAsyncThread() {
+      return 0;
+    }
+
+    @Override
+    public void endAsyncThread(long start) {
+    }
+
+    @Override
+    public long getAsyncQueueAddTime() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncQueueAddTime(long inc) {
+    }
+
+    @Override
+    public long getAsyncQueueRemoveTime() {
+      return 0;
+    }
+
+    @Override
+    public void incAsyncQueueRemoveTime(long inc) {
+    }
+
+    @Override
+    public void incReceiverBufferSize(int inc, boolean direct) {
+    }
+
+    @Override
+    public void incSenderBufferSize(int inc, boolean direct) {
+    }
+
+    @Override
+    public long startSocketLock() {
+      return 0;
+    }
+
+    @Override
+    public void endSocketLock(long start) {
+    }
+
+    @Override
+    public long startBufferAcquire() {
+      return 0;
+    }
+
+    @Override
+    public void endBufferAcquire(long start) {
+    }
+
+    @Override
+    public void incMessagesBeingReceived(boolean newMsg, int bytes) {
+    }
+
+    @Override
+    public void decMessagesBeingReceived(int bytes) {
+    }
+
+    @Override
+    public void incReplyHandOffTime(long start) {
+    }
+
+    @Override
+    public int getElders() {
+      return 0;
+    }
+
+    @Override
+    public void incElders(int val) {
+    }
+
+    @Override
+    public int getInitialImageMessagesInFlight() {
+      return 0;
+    }
+
+    @Override
+    public void incInitialImageMessagesInFlight(int val) {
+    }
+
+    @Override
+    public int getInitialImageRequestsInProgress() {
+      return 0;
+    }
+
+    @Override
+    public void incInitialImageRequestsInProgress(int val) {
+    }
+
+    @Override
+    public void incPdxSerialization(int bytesWritten) {
+    }
+
+    @Override
+    public void incPdxDeserialization(int i) {
+    }
+
+    @Override
+    public long startPdxInstanceDeserialization() {
+      return 0;
+    }
+
+    @Override
+    public void endPdxInstanceDeserialization(long start) {
+    }
+
+    @Override
+    public void incPdxInstanceCreations() {
+    }
+
     @Override
     public void incThreadOwnedReceivers(long value, int dominoCount) {
     }
+
     @Override
-    public long getHeartbeatRequestsSent() {return 0;}
+    public long getHeartbeatRequestsSent() {
+      return 0;
+    }
+
     @Override
-    public void incHeartbeatRequestsSent() {}
+    public void incHeartbeatRequestsSent() {
+    }
+
     @Override
-    public long getHeartbeatRequestsReceived() {return 0;}
+    public long getHeartbeatRequestsReceived() {
+      return 0;
+    }
+
     @Override
-    public void incHeartbeatRequestsReceived() {}
+    public void incHeartbeatRequestsReceived() {
+    }
+
     @Override
-    public long getHeartbeatsSent() {return 0;}
+    public long getHeartbeatsSent() {
+      return 0;
+    }
+
     @Override
-    public void incHeartbeatsSent() {}
+    public void incHeartbeatsSent() {
+    }
+
     @Override
-    public long getHeartbeatsReceived() {return 0;}
+    public long getHeartbeatsReceived() {
+      return 0;
+    }
+
     @Override
-    public void incHeartbeatsReceived() {}
+    public void incHeartbeatsReceived() {
+    }
+
     @Override
-    public long getSuspectsSent() {return 0;}
+    public long getSuspectsSent() {
+      return 0;
+    }
+
     @Override
-    public void incSuspectsSent() {}
+    public void incSuspectsSent() {
+    }
+
     @Override
-    public long getSuspectsReceived() {return 0;}
+    public long getSuspectsReceived() {
+      return 0;
+    }
+
     @Override
-    public void incSuspectsReceived() {}
+    public void incSuspectsReceived() {
+    }
+
     @Override
-    public long getFinalCheckRequestsSent() {return 0;}
+    public long getFinalCheckRequestsSent() {
+      return 0;
+    }
+
     @Override
-    public void incFinalCheckRequestsSent() {}
+    public void incFinalCheckRequestsSent() {
+    }
+
     @Override
-    public long getFinalCheckRequestsReceived() {return 0;}
+    public long getFinalCheckRequestsReceived() {
+      return 0;
+    }
+
     @Override
-    public void incFinalCheckRequestsReceived() {}
+    public void incFinalCheckRequestsReceived() {
+    }
+
     @Override
-    public long getFinalCheckResponsesSent() {return 0;}
+    public long getFinalCheckResponsesSent() {
+      return 0;
+    }
+
     @Override
-    public void incFinalCheckResponsesSent() {}
+    public void incFinalCheckResponsesSent() {
+    }
+
     @Override
-    public long getFinalCheckResponsesReceived() {return 0;}
+    public long getFinalCheckResponsesReceived() {
+      return 0;
+    }
+
     @Override
-    public void incFinalCheckResponsesReceived() {}
-    @Override    
-    public long getTcpFinalCheckRequestsSent() {return 0;}
+    public void incFinalCheckResponsesReceived() {
+    }
+
     @Override
-    public void incTcpFinalCheckRequestsSent() {}
+    public long getTcpFinalCheckRequestsSent() {
+      return 0;
+    }
+
     @Override
-    public long getTcpFinalCheckRequestsReceived() {return 0;}
+    public void incTcpFinalCheckRequestsSent() {
+    }
+
     @Override
-    public void incTcpFinalCheckRequestsReceived() {}
+    public long getTcpFinalCheckRequestsReceived() {
+      return 0;
+    }
+
     @Override
-    public long getTcpFinalCheckResponsesSent() {return 0;}
+    public void incTcpFinalCheckRequestsReceived() {
+    }
+
     @Override
-    public void incTcpFinalCheckResponsesSent() {}
+    public long getTcpFinalCheckResponsesSent() {
+      return 0;
+    }
+
     @Override
-    public long getTcpFinalCheckResponsesReceived() {return 0;}
+    public void incTcpFinalCheckResponsesSent() {
+    }
+
     @Override
-    public void incTcpFinalCheckResponsesReceived() {}
+    public long getTcpFinalCheckResponsesReceived() {
+      return 0;
+    }
+
     @Override
-    public long getUdpFinalCheckRequestsSent() {return 0;}
+    public void incTcpFinalCheckResponsesReceived() {
+    }
+
     @Override
-    public void incUdpFinalCheckRequestsSent() {}
+    public long getUdpFinalCheckRequestsSent() {
+      return 0;
+    }
+
     @Override
-    public long getUdpFinalCheckResponsesReceived() {return 0;}
+    public void incUdpFinalCheckRequestsSent() {
+    }
+
     @Override
-    public void incUdpFinalCheckResponsesReceived() {}
+    public long getUdpFinalCheckResponsesReceived() {
+      return 0;
+    }
+
+    @Override
+    public void incUdpFinalCheckResponsesReceived() {
+    }
+
     @Override
     public long startUDPMsgEncryption() {
       return 0;
     }
+
     @Override
     public void endUDPMsgEncryption(long start) {
     }
+
     @Override
     public long startUDPMsgDecryption() {
       return 0;
     }
+
     @Override
     public void endUDPMsgDecryption(long start) {
     }
+
     @Override
     public long getUDPMsgEncryptionTiime() {
       return 0;
     }
+
     @Override
     public long getUDPMsgDecryptionTime() {
       return 0;
     }
   }
+
   protected static class DummyExecutor implements ExecutorService {
     @Override
     public void execute(Runnable command) {
@@ -673,8 +1123,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public boolean awaitTermination(long timeout, TimeUnit unit)
-        throws InterruptedException {
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
       return true;
     }
 
@@ -707,8 +1156,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
-        throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
       List<Future<T>> results = new ArrayList<Future<T>>();
       for (Callable<T> task : tasks) {
         results.add(submit(task));
@@ -717,15 +1165,12 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(
-        Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-        throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
       return invokeAll(tasks);
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-        throws InterruptedException, ExecutionException {
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
 
       ExecutionException ex = null;
       for (Callable<T> task : tasks) {
@@ -739,22 +1184,20 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks,
-        long timeout, TimeUnit unit) throws InterruptedException,
-        ExecutionException, TimeoutException {
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
       return invokeAny(tasks);
     }
   }
-  
+
   private static class CompletedFuture<T> implements Future<T> {
     private final T result;
     private final Exception ex;
-    
+
     public CompletedFuture(T result, Exception ex) {
       this.result = result;
       this.ex = ex;
     }
-    
+
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
       return false;
@@ -779,12 +1222,11 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException,
-        ExecutionException, TimeoutException {
+    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
       return get();
     }
   }
-  
+
   public void throwIfDistributionStopped() {
     stopper.checkCancelInProgress(null);
   }
@@ -816,7 +1258,7 @@ public class LonerDistributionManager implements DM {
       // use low four bytes for backward compatibility
       long time = System.currentTimeMillis() & 0xffffffffL;
       for (int i = 0; i < 4; i++) {
-        String hex = Integer.toHexString((int)(time & 0xff));
+        String hex = Integer.toHexString((int) (time & 0xff));
         if (hex.length() < 2) {
           sb.append('0');
         }
@@ -831,11 +1273,9 @@ public class LonerDistributionManager implements DM {
       DistributionConfig config = system.getConfig();
       DurableClientAttributes dac = null;
       if (config.getDurableClientId() != null) {
-        dac = new DurableClientAttributes(config.getDurableClientId(), config
-            .getDurableClientTimeout());
+        dac = new DurableClientAttributes(config.getDurableClientId(), config.getDurableClientTimeout());
       }
-      result = new InternalDistributedMember(host, lonerPort, name, uniqueString, DistributionManager.LONER_DM_TYPE,
-          MemberAttributes.parseGroups(config.getRoles(), config.getGroups()), dac);
+      result = new InternalDistributedMember(host, lonerPort, name, uniqueString, DistributionManager.LONER_DM_TYPE, MemberAttributes.parseGroups(config.getRoles(), config.getGroups()), dac);
 
     } catch (UnknownHostException ex) {
       throw new InternalGemFireError(LocalizedStrings.LonerDistributionManager_CANNOT_RESOLVE_LOCAL_HOST_NAME_TO_AN_IP_ADDRESS.toLocalizedString());
@@ -851,17 +1291,16 @@ public class LonerDistributionManager implements DM {
    * @param newPort the new port to use
    */
   public void updateLonerPort(int newPort) {
-    this.logger.config(LocalizedStrings.LonerDistributionmanager_CHANGING_PORT_FROM_TO,
-        new Object[]{this.lonerPort, newPort, getId()});
+    this.logger.config(LocalizedStrings.LonerDistributionmanager_CHANGING_PORT_FROM_TO, new Object[] { this.lonerPort, newPort, getId() });
     this.lonerPort = newPort;
     this.getId().setPort(this.lonerPort);
   }
+
   public boolean isCurrentMember(InternalDistributedMember p_id) {
     return getId().equals(p_id);
   }
 
-  public Set putOutgoing(DistributionMessage msg)
-  {
+  public Set putOutgoing(DistributionMessage msg) {
     return null;
   }
 
@@ -888,6 +1327,7 @@ public class LonerDistributionManager implements DM {
       return null;
     }
   }
+
   private final Stopper stopper = new Stopper();
 
   public CancelCriterion getCancelCriterion() {
@@ -937,21 +1377,18 @@ public class LonerDistributionManager implements DM {
     return system.getConfig().getEnforceUniqueHost() || system.getConfig().getRedundancyZone() != null;
   }
 
-  public boolean areInSameZone(InternalDistributedMember member1,
-      InternalDistributedMember member2) {
+  public boolean areInSameZone(InternalDistributedMember member1, InternalDistributedMember member2) {
     return false;
   }
 
-  public boolean areOnEquivalentHost(InternalDistributedMember member1,
-                                     InternalDistributedMember member2) {
+  public boolean areOnEquivalentHost(InternalDistributedMember member1, InternalDistributedMember member2) {
     return member1 == member2;
   }
-  
-  public Set<InternalDistributedMember> getMembersInSameZone(
-      InternalDistributedMember acceptedMember) {
+
+  public Set<InternalDistributedMember> getMembersInSameZone(InternalDistributedMember acceptedMember) {
     return Collections.singleton(acceptedMember);
   }
-  
+
   public Set<InetAddress> getEquivalents(InetAddress in) {
     Set<InetAddress> value = new HashSet<InetAddress>();
     value.add(this.getId().getInetAddress());
@@ -960,7 +1397,7 @@ public class LonerDistributionManager implements DM {
 
   public Set<DistributedMember> getGroupMembers(String group) {
     if (getDistributionManagerId().getGroups().contains(group)) {
-      return Collections.singleton((DistributedMember)getDistributionManagerId());
+      return Collections.singleton((DistributedMember) getDistributionManagerId());
     } else {
       return Collections.emptySet();
     }
@@ -969,13 +1406,13 @@ public class LonerDistributionManager implements DM {
   public void addHostedLocators(InternalDistributedMember member, Collection<String> locators, boolean isSharedConfigurationEnabled) {
     // no-op
   }
-  
+
   public Collection<String> getHostedLocators(InternalDistributedMember member) {
-    return Collections.<String>emptyList();
+    return Collections.<String> emptyList();
   }
-  
+
   public Map<InternalDistributedMember, Collection<String>> getAllHostedLocators() {
-    return Collections.<InternalDistributedMember, Collection<String>>emptyMap();
+    return Collections.<InternalDistributedMember, Collection<String>> emptyMap();
   }
 
   @Override
@@ -985,7 +1422,7 @@ public class LonerDistributionManager implements DM {
 
   @Override
   public Map<InternalDistributedMember, Collection<String>> getAllHostedLocatorsWithSharedConfiguration() {
-    return Collections.<InternalDistributedMember, Collection<String>>emptyMap();
+    return Collections.<InternalDistributedMember, Collection<String>> emptyMap();
   }
 
   @Override

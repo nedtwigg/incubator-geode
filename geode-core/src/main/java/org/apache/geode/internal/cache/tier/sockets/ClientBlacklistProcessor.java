@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 /**
  * A processor for sending client black list message to all nodes from primary.
  * This adds client to the blacklist and destroy it's queue if available on node.
@@ -43,43 +44,39 @@ import java.util.Set;
  *
  */
 public class ClientBlacklistProcessor extends ReplyProcessor21 {
-  
-   public static void sendBlacklistedClient(ClientProxyMembershipID proxyId,
-      DM dm, Set members) {
-    ClientBlacklistProcessor processor = new ClientBlacklistProcessor(dm,
-        members);
+
+  public static void sendBlacklistedClient(ClientProxyMembershipID proxyId, DM dm, Set members) {
+    ClientBlacklistProcessor processor = new ClientBlacklistProcessor(dm, members);
     ClientBlacklistMessage.send(proxyId, dm, processor, members);
     try {
       processor.waitForRepliesUninterruptibly();
-    }
-    catch (ReplyException e) {
+    } catch (ReplyException e) {
       e.handleAsUnexpected();
     }
     return;
   }
- 
+
   ////////////// Instance methods //////////////
-  
+
   @Override
   public void process(DistributionMessage msg) {
-      super.process(msg);
+    super.process(msg);
   }
+
   /** Creates a new instance of ClientBlacklistProcessor
    */
   private ClientBlacklistProcessor(DM dm, Set members) {
     super(dm, members);
   }
-  
+
   ///////////////   Inner message classes  //////////////////
-  
-  public static class ClientBlacklistMessage extends PooledDistributionMessage
-      implements MessageWithReply {
+
+  public static class ClientBlacklistMessage extends PooledDistributionMessage implements MessageWithReply {
     private int processorId;
 
     private ClientProxyMembershipID proxyId;
 
-    protected static void send(ClientProxyMembershipID proxyId, DM dm,
-        ClientBlacklistProcessor proc, Set members) {
+    protected static void send(ClientProxyMembershipID proxyId, DM dm, ClientBlacklistProcessor proc, Set members) {
       ClientBlacklistMessage msg = new ClientBlacklistMessage();
       msg.processorId = proc.getProcessorId();
       msg.proxyId = proxyId;
@@ -105,29 +102,27 @@ public class ClientBlacklistProcessor extends ReplyProcessor21 {
           if (l != null) {
             Iterator i = l.iterator();
             while (i.hasNext()) {
-              CacheServerImpl bs = (CacheServerImpl)i.next();
-              CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier(); 
+              CacheServerImpl bs = (CacheServerImpl) i.next();
+              CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
               //add client to the black list.
               ccn.addToBlacklistedClient(this.proxyId);
-              CacheClientProxy proxy = ccn.getClientProxy(this.proxyId); 
-              if(proxy != null) {
-              //close the proxy and remove from client proxy list.
-                proxy.close(false,false);
+              CacheClientProxy proxy = ccn.getClientProxy(this.proxyId);
+              if (proxy != null) {
+                //close the proxy and remove from client proxy list.
+                proxy.close(false, false);
                 ccn.removeClientProxy(proxy);
+              }
             }
           }
         }
-       }   
-      }
-      finally {
+      } finally {
         ClientBlacklistReply reply = new ClientBlacklistReply();
         reply.setProcessorId(this.getProcessorId());
         reply.setRecipient(getSender());
         if (dm.getId().equals(getSender())) {
           reply.setSender(getSender());
           reply.dmProcess(dm);
-        }
-        else {
+        } else {
           dm.putOutgoing(reply);
         }
       }
@@ -143,8 +138,7 @@ public class ClientBlacklistProcessor extends ReplyProcessor21 {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.processorId = in.readInt();
       this.proxyId = ClientProxyMembershipID.readCanonicalized(in);
@@ -160,14 +154,12 @@ public class ClientBlacklistProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("ClientBlacklistMessage (proxyId='").append(this.proxyId)
-          .append("' processorId=").append(this.processorId).append(")");
+      buff.append("ClientBlacklistMessage (proxyId='").append(this.proxyId).append("' processorId=").append(this.processorId).append(")");
       return buff.toString();
     }
   }
-  
+
   public static class ClientBlacklistReply extends ReplyMessage {
   }
 
 }
-

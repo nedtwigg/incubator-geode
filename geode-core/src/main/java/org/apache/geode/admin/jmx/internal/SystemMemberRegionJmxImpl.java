@@ -29,9 +29,7 @@ import javax.management.modelmbean.ModelMBean;
  *
  * @since GemFire     3.5
  */
-public class SystemMemberRegionJmxImpl 
-extends org.apache.geode.admin.internal.SystemMemberRegionImpl
-implements org.apache.geode.admin.jmx.internal.ManagedResource {
+public class SystemMemberRegionJmxImpl extends org.apache.geode.admin.internal.SystemMemberRegionImpl implements org.apache.geode.admin.jmx.internal.ManagedResource {
 
   /** The object name of this managed resource */
   private ObjectName objectName;
@@ -46,53 +44,42 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    * @param cache   the cache this region belongs to
    * @param region  internal region to delegate real work to
    */
-  public SystemMemberRegionJmxImpl(SystemMemberCacheImpl cache, 
-                                   Region region)
-                            throws org.apache.geode.admin.AdminException {
+  public SystemMemberRegionJmxImpl(SystemMemberCacheImpl cache, Region region) throws org.apache.geode.admin.AdminException {
     super(cache, region);
     initializeMBean(cache);
   }
 
   /** Create and register the MBean to manage this resource */
-  private void initializeMBean(SystemMemberCacheImpl cache)
-  throws org.apache.geode.admin.AdminException {
-    
+  private void initializeMBean(SystemMemberCacheImpl cache) throws org.apache.geode.admin.AdminException {
+
     GemFireVM vm = cache.getVM();
-    this.mbeanName = new StringBuffer("GemFire.Cache:")
-        .append("path=")
-        .append(MBeanUtil.makeCompliantMBeanNameProperty(getFullPath()))
-        .append(",name=")
-        .append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName()))
-        .append(",id=")
-        .append(cache.getId())
-        .append(",owner=")
-        .append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString()))
-        .append(",type=Region").toString();
-      
+    this.mbeanName = new StringBuffer("GemFire.Cache:").append("path=").append(MBeanUtil.makeCompliantMBeanNameProperty(getFullPath())).append(",name=").append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName())).append(",id=").append(cache.getId()).append(",owner=").append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString())).append(",type=Region").toString();
+
     this.objectName = MBeanUtil.createMBean(this);
   }
-  
+
   // -------------------------------------------------------------------------
   //   ManagedResource implementation
   // -------------------------------------------------------------------------
-  
+
   /** The name of the MBean that will manage this resource */
   private String mbeanName;
 
   /** The ModelMBean that is configured to manage this resource */
   private ModelMBean modelMBean;
-  
-	public String getMBeanName() {
-		return this.mbeanName;
-	}
-  
-	public ModelMBean getModelMBean() {
-		return this.modelMBean;
-	}
-	public void setModelMBean(ModelMBean modelMBean) {
-		this.modelMBean = modelMBean;
-	}
-  
+
+  public String getMBeanName() {
+    return this.mbeanName;
+  }
+
+  public ModelMBean getModelMBean() {
+    return this.modelMBean;
+  }
+
+  public void setModelMBean(ModelMBean modelMBean) {
+    this.modelMBean = modelMBean;
+  }
+
   public ObjectName getObjectName() {
     return this.objectName;
   }
@@ -100,8 +87,9 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
   public ManagedResourceType getManagedResourceType() {
     return ManagedResourceType.SYSTEM_MEMBER_REGION;
   }
-  
-  public void cleanupResource() {}
+
+  public void cleanupResource() {
+  }
 
   /**
    * Checks equality of the given object with <code>this</code> based on the
@@ -115,12 +103,12 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
    */
   @Override
   public boolean equals(Object obj) {
-    if ( !(obj instanceof SystemMemberRegionJmxImpl) ) {
+    if (!(obj instanceof SystemMemberRegionJmxImpl)) {
       return false;
     }
-    
-    SystemMemberRegionJmxImpl other = (SystemMemberRegionJmxImpl) obj; 
-    
+
+    SystemMemberRegionJmxImpl other = (SystemMemberRegionJmxImpl) obj;
+
     return this.getMBeanName().equals(other.getMBeanName());
   }
 
@@ -135,4 +123,3 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource {
     return this.getMBeanName().hashCode();
   }
 }
-

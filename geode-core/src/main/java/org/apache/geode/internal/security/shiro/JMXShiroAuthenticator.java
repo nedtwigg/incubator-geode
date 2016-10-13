@@ -48,29 +48,25 @@ public class JMXShiroAuthenticator implements JMXAuthenticator, NotificationList
     if (credentials instanceof Properties) {
       credProps = (Properties) credentials;
       username = credProps.getProperty(ResourceConstants.USER_NAME);
-    }
-    else if (credentials instanceof String[]) {
+    } else if (credentials instanceof String[]) {
       final String[] aCredentials = (String[]) credentials;
       username = aCredentials[0];
       credProps.setProperty(ResourceConstants.USER_NAME, aCredentials[0]);
       credProps.setProperty(ResourceConstants.PASSWORD, aCredentials[1]);
-    }
-    else {
+    } else {
       throw new AuthenticationFailedException(MISSING_CREDENTIALS_MESSAGE);
     }
 
     org.apache.shiro.subject.Subject shiroSubject = this.securityService.login(credProps);
     Principal principal;
 
-    if(shiroSubject==null){
+    if (shiroSubject == null) {
       principal = new JMXPrincipal(username);
-    }
-    else{
+    } else {
       principal = new ShiroPrincipal(shiroSubject);
     }
 
-    return new Subject(true, Collections.singleton(principal), Collections.EMPTY_SET,
-      Collections.EMPTY_SET);
+    return new Subject(true, Collections.singleton(principal), Collections.EMPTY_SET, Collections.EMPTY_SET);
   }
 
   @Override

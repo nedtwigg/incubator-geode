@@ -62,8 +62,7 @@ public class MemberAsynchEventQueuesService implements PulseService {
 
     if (clusterMember != null) {
       // response
-      Cluster.AsyncEventQueue[] asyncEventQueues = clusterMember
-          .getMemberAsyncEventQueueList();
+      Cluster.AsyncEventQueue[] asyncEventQueues = clusterMember.getMemberAsyncEventQueueList();
       ArrayNode asyncEventQueueJsonList = mapper.createArrayNode();
 
       if (asyncEventQueues != null && asyncEventQueues.length > 0) {
@@ -74,16 +73,11 @@ public class MemberAsynchEventQueuesService implements PulseService {
           asyncEventQueueJSON.put("id", asyncEventQueue.getId());
           asyncEventQueueJSON.put("primary", asyncEventQueue.getPrimary());
           asyncEventQueueJSON.put("senderType", asyncEventQueue.isParallel());
-          asyncEventQueueJSON
-              .put("batchSize", asyncEventQueue.getBatchSize());
-          asyncEventQueueJSON.put("batchTimeInterval",
-              asyncEventQueue.getBatchTimeInterval());
-          asyncEventQueueJSON.put("batchConflationEnabled",
-              asyncEventQueue.isBatchConflationEnabled());
-          asyncEventQueueJSON.put("asyncEventListener",
-              asyncEventQueue.getAsyncEventListener());
-          asyncEventQueueJSON.put("queueSize",
-              asyncEventQueue.getEventQueueSize());
+          asyncEventQueueJSON.put("batchSize", asyncEventQueue.getBatchSize());
+          asyncEventQueueJSON.put("batchTimeInterval", asyncEventQueue.getBatchTimeInterval());
+          asyncEventQueueJSON.put("batchConflationEnabled", asyncEventQueue.isBatchConflationEnabled());
+          asyncEventQueueJSON.put("asyncEventListener", asyncEventQueue.getAsyncEventListener());
+          asyncEventQueueJSON.put("queueSize", asyncEventQueue.getEventQueueSize());
 
           asyncEventQueueJsonList.add(asyncEventQueueJSON);
         }

@@ -22,8 +22,6 @@
  */
 package org.apache.geode.cache.query.functional;
 
-
-
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
@@ -46,137 +44,169 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  *
  */
 @Category(IntegrationTest.class)
-public class ComparisonOperatorsJUnitTest  {
-  
+public class ComparisonOperatorsJUnitTest {
+
   public ComparisonOperatorsJUnitTest() {
   }
-  
+
   public String getName() {
     return this.getClass().getSimpleName();
   }
-  
+
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
     Region region = CacheUtils.createRegion("Portfolios", Portfolio.class);
-    region.put("0",new Portfolio(0));
-    region.put("1",new Portfolio(1));
-    region.put("2",new Portfolio(2));
-    region.put("3",new Portfolio(3));
+    region.put("0", new Portfolio(0));
+    region.put("1", new Portfolio(1));
+    region.put("2", new Portfolio(2));
+    region.put("3", new Portfolio(3));
   }
-  
+
   @After
   public void tearDown() throws java.lang.Exception {
     CacheUtils.closeCache();
   }
-  
-  String operators[] ={"=","<>","!=","<","<=",">",">="};
+
+  String operators[] = { "=", "<>", "!=", "<", "<=", ">", ">=" };
 
   @Test
-  public void testCompareWithInt() throws Exception{
+  public void testCompareWithInt() throws Exception {
     String var = "ID";
     int value = 2;
     QueryService qs = CacheUtils.getQueryService();
-    for(int i=0;i<operators.length;i++){
-      Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where "+var+operators[i]+value);
+    for (int i = 0; i < operators.length; i++) {
+      Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where " + var + operators[i] + value);
       Object result = query.execute();
-      if(result instanceof Collection){
-        Iterator iter = ((Collection)result).iterator();
-        while(iter.hasNext()){
+      if (result instanceof Collection) {
+        Iterator iter = ((Collection) result).iterator();
+        while (iter.hasNext()) {
           boolean isPassed = false;
-          Portfolio p = (Portfolio)iter.next();
-          switch(i){
-            case 0 : isPassed = (p.getID() == value); break;
-            case 1 : isPassed = (p.getID() != value); break;
-            case 2 : isPassed = (p.getID() != value); break;
-            case 3 : isPassed = (p.getID() < value); break;
-            case 4 : isPassed = (p.getID() <= value); break;
-            case 5 : isPassed = (p.getID() > value); break;
-            case 6 : isPassed = (p.getID() >= value); break;
+          Portfolio p = (Portfolio) iter.next();
+          switch (i) {
+          case 0:
+            isPassed = (p.getID() == value);
+            break;
+          case 1:
+            isPassed = (p.getID() != value);
+            break;
+          case 2:
+            isPassed = (p.getID() != value);
+            break;
+          case 3:
+            isPassed = (p.getID() < value);
+            break;
+          case 4:
+            isPassed = (p.getID() <= value);
+            break;
+          case 5:
+            isPassed = (p.getID() > value);
+            break;
+          case 6:
+            isPassed = (p.getID() >= value);
+            break;
           }
-          if(!isPassed)
-            fail(this.getName()+" failed for operator "+operators[i]);
+          if (!isPassed)
+            fail(this.getName() + " failed for operator " + operators[i]);
         }
-      }else{
-        fail(this.getName()+" failed for operator "+operators[i]);
+      } else {
+        fail(this.getName() + " failed for operator " + operators[i]);
       }
     }
   }
-  
+
   @Test
-  public void testCompareWithString() throws Exception{
+  public void testCompareWithString() throws Exception {
     String var = "P1.secId";
     String value = "DELL";
     QueryService qs = CacheUtils.getQueryService();
-    for(int i=0;i<operators.length;i++){
-      Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where "+var+operators[i]+"'"+value+"'");
+    for (int i = 0; i < operators.length; i++) {
+      Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where " + var + operators[i] + "'" + value + "'");
       Object result = query.execute();
-      if(result instanceof Collection){
-        Iterator iter = ((Collection)result).iterator();
-        while(iter.hasNext()){
+      if (result instanceof Collection) {
+        Iterator iter = ((Collection) result).iterator();
+        while (iter.hasNext()) {
           boolean isPassed = false;
-          Portfolio p = (Portfolio)iter.next();
-          switch(i){
-            case 0 : isPassed = (p.getP1().getSecId().compareTo(value) == 0); break;
-            case 1 : isPassed = (p.getP1().getSecId().compareTo(value) != 0); break;
-            case 2 : isPassed = (p.getP1().getSecId().compareTo(value) != 0); break;
-            case 3 : isPassed = (p.getP1().getSecId().compareTo(value) < 0); break;
-            case 4 : isPassed = (p.getP1().getSecId().compareTo(value) <= 0); break;
-            case 5 : isPassed = (p.getP1().getSecId().compareTo(value) > 0); break;
-            case 6 : isPassed = (p.getP1().getSecId().compareTo(value) >= 0); break;
+          Portfolio p = (Portfolio) iter.next();
+          switch (i) {
+          case 0:
+            isPassed = (p.getP1().getSecId().compareTo(value) == 0);
+            break;
+          case 1:
+            isPassed = (p.getP1().getSecId().compareTo(value) != 0);
+            break;
+          case 2:
+            isPassed = (p.getP1().getSecId().compareTo(value) != 0);
+            break;
+          case 3:
+            isPassed = (p.getP1().getSecId().compareTo(value) < 0);
+            break;
+          case 4:
+            isPassed = (p.getP1().getSecId().compareTo(value) <= 0);
+            break;
+          case 5:
+            isPassed = (p.getP1().getSecId().compareTo(value) > 0);
+            break;
+          case 6:
+            isPassed = (p.getP1().getSecId().compareTo(value) >= 0);
+            break;
           }
-          if(!isPassed)
-            fail(this.getName()+" failed for operator "+operators[i]);
+          if (!isPassed)
+            fail(this.getName() + " failed for operator " + operators[i]);
         }
-      }else{
-        fail(this.getName()+" failed for operator "+operators[i]);
+      } else {
+        fail(this.getName() + " failed for operator " + operators[i]);
       }
     }
   }
-  
+
   @Test
-  public void testCompareWithNULL() throws Exception{
-    String var ="P2";
+  public void testCompareWithNULL() throws Exception {
+    String var = "P2";
     Object value = null;
     QueryService qs = CacheUtils.getQueryService();
-    for(int i=0;i<operators.length;i++){
-      Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where "+var+operators[i]+value);
+    for (int i = 0; i < operators.length; i++) {
+      Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where " + var + operators[i] + value);
       Object result = query.execute();
-      if(result instanceof Collection){
-        Iterator iter = ((Collection)result).iterator();
-        while(iter.hasNext()){
+      if (result instanceof Collection) {
+        Iterator iter = ((Collection) result).iterator();
+        while (iter.hasNext()) {
           boolean isPassed = false;
-          Portfolio p = (Portfolio)iter.next();
-          switch(i){
-            case 0 : isPassed = (p.getP2() == value); break;
-            default : isPassed = (p.getP2() != value); break;
+          Portfolio p = (Portfolio) iter.next();
+          switch (i) {
+          case 0:
+            isPassed = (p.getP2() == value);
+            break;
+          default:
+            isPassed = (p.getP2() != value);
+            break;
           }
-          if(!isPassed)
-            fail(this.getName()+" failed for operator "+operators[i]);
+          if (!isPassed)
+            fail(this.getName() + " failed for operator " + operators[i]);
         }
-      }else{
-        fail(this.getName()+" failed for operator "+operators[i]);
+      } else {
+        fail(this.getName() + " failed for operator " + operators[i]);
       }
     }
   }
-  
+
   @Test
-  public void testCompareWithUNDEFINED() throws Exception{
+  public void testCompareWithUNDEFINED() throws Exception {
     String var = "P2.secId";
     QueryService qs = CacheUtils.getQueryService();
-    for(int i=0;i<operators.length;i++){
+    for (int i = 0; i < operators.length; i++) {
       // According to docs:
       // To perform equality or inequality comparisons with UNDEFINED, use the
       // IS_DEFINED and IS_UNDEFINED preset query functions instead of these
       // comparison operators.
-      if(!operators[i].equals("=") && !operators[i].equals("!=") && !operators[i].equals("<>")) {
-        Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where "+var+operators[i]+" UNDEFINED");
+      if (!operators[i].equals("=") && !operators[i].equals("!=") && !operators[i].equals("<>")) {
+        Query query = qs.newQuery("SELECT DISTINCT * FROM /Portfolios where " + var + operators[i] + " UNDEFINED");
         Object result = query.execute();
-        if(result instanceof Collection){
-          if(((Collection)result).size() != 0)
-            fail(this.getName()+" failed for operator "+operators[i]);
-        }else{
-          fail(this.getName()+" failed for operator "+operators[i]);
+        if (result instanceof Collection) {
+          if (((Collection) result).size() != 0)
+            fail(this.getName() + " failed for operator " + operators[i]);
+        } else {
+          fail(this.getName() + " failed for operator " + operators[i]);
         }
       }
     }

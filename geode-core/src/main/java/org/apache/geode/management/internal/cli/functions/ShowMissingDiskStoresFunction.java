@@ -58,21 +58,21 @@ public class ShowMissingDiskStoresFunction extends FunctionAdapter implements In
         final DistributedMember member = gemfireCache.getMyId();
 
         GemFireCacheImpl gfci = GemFireCacheImpl.getInstance();
-        if(gfci != null && !gfci.isClosed()) {
+        if (gfci != null && !gfci.isClosed()) {
           // Missing DiskStores
           PersistentMemberManager mm = gfci.getPersistentMemberManager();
           Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
           for (Map.Entry<String, Set<PersistentMemberID>> entry : waitingRegions.entrySet()) {
-            for(PersistentMemberID id : entry.getValue()) {
+            for (PersistentMemberID id : entry.getValue()) {
               memberMissingIDs.add(new PersistentMemberPattern(id));
             }
           }
           // Missing colocated regions
           Set<PartitionedRegion> prs = gfci.getPartitionedRegions();
-          for (PartitionedRegion pr: prs) {
+          for (PartitionedRegion pr : prs) {
             List<String> missingChildRegions = pr.getMissingColocatedChildren();
-            for (String child:missingChildRegions) {
-              missingColocatedRegions.add(new ColocatedRegionDetails(member.getHost(), member.getName(),pr.getFullPath(), child));
+            for (String child : missingChildRegions) {
+              missingColocatedRegions.add(new ColocatedRegionDetails(member.getHost(), member.getName(), pr.getFullPath(), child));
             }
           }
         }
@@ -93,8 +93,7 @@ public class ShowMissingDiskStoresFunction extends FunctionAdapter implements In
           context.getResultSender().lastResult(missingColocatedRegions);
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       context.getResultSender().sendException(e);
     }
   }
@@ -104,4 +103,3 @@ public class ShowMissingDiskStoresFunction extends FunctionAdapter implements In
     return getClass().getName();
   }
 }
-

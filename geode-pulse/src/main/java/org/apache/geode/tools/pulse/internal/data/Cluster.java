@@ -54,6 +54,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Class Cluster This class is the Data Model for the data used for the Pulse
  * Web UI.
@@ -67,8 +68,7 @@ public class Cluster extends Thread {
   public static final int PAGE_ALERTS_MAX_SIZE = 100;
 
   private final PulseLogWriter LOGGER = PulseLogWriter.getLogger();
-  private final ResourceBundle resourceBundle = Repository.get()
-      .getResourceBundle();
+  private final ResourceBundle resourceBundle = Repository.get().getResourceBundle();
 
   private String jmxUserName;
   private String jmxUserPassword;
@@ -119,22 +119,14 @@ public class Cluster extends Thread {
   private Map<String, Cluster.Region> clusterRegionMap = new ConcurrentHashMap<String, Cluster.Region>();
   private List<Cluster.Alert> alertsList = new ArrayList<Cluster.Alert>();
 
-  private CircularFifoBuffer totalBytesOnDiskTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
-  private CircularFifoBuffer throughoutWritesTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
-  private CircularFifoBuffer throughoutReadsTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
-  private CircularFifoBuffer writePerSecTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
-  private CircularFifoBuffer readPerSecTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
-  private CircularFifoBuffer queriesPerSecTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
-  private CircularFifoBuffer memoryUsageTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
-  private CircularFifoBuffer garbageCollectionTrend = new CircularFifoBuffer(
-      MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer totalBytesOnDiskTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer throughoutWritesTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer throughoutReadsTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer writePerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer readPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer queriesPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer memoryUsageTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+  private CircularFifoBuffer garbageCollectionTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
   private long previousJVMPauseCount = 0L;
 
   private HashMap<String, Boolean> wanInformation = new HashMap<String, Boolean>();
@@ -269,24 +261,16 @@ public class Cluster extends Thread {
     private List<String> serverGroups = new ArrayList<String>();
     private List<String> redundancyZones = new ArrayList<String>();
 
-    private CircularFifoBuffer cpuUsageSamples = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer heapUsageSamples = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer cpuUsageSamples = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer heapUsageSamples = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
     private HashMap<String, Cluster.Region> memberRegions = new HashMap<String, Cluster.Region>();
     private HashMap<String, Cluster.Client> memberClientsHMap = new HashMap<String, Cluster.Client>();
-    private CircularFifoBuffer totalBytesOnDiskSamples = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer getsPerSecond = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer putsPerSecond = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer throughputWritesTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer throughputReadsTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer garbageCollectionSamples = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer totalBytesOnDiskSamples = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer getsPerSecond = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer putsPerSecond = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer throughputWritesTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer throughputReadsTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer garbageCollectionSamples = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
     private long previousJVMPauseCount = 0L;
 
     private Cluster.GatewayReceiver gatewayReceiver = null;
@@ -451,9 +435,9 @@ public class Cluster extends Thread {
     }
 
     public String getHostnameForClients() {
-      if(StringUtils.isNotNullNotEmptyNotWhiteSpace(hostnameForClients))
+      if (StringUtils.isNotNullNotEmptyNotWhiteSpace(hostnameForClients))
         return this.hostnameForClients;
-      else if(StringUtils.isNotNullNotEmptyNotWhiteSpace(bindAddress))
+      else if (StringUtils.isNotNullNotEmptyNotWhiteSpace(bindAddress))
         return this.bindAddress;
       return null;
     }
@@ -538,7 +522,7 @@ public class Cluster extends Thread {
       this.hostnameForClients = hostnameForClients;
     }
 
-    public void setBindAddress(String bindAddress){
+    public void setBindAddress(String bindAddress) {
       this.bindAddress = bindAddress;
     }
 
@@ -602,8 +586,7 @@ public class Cluster extends Thread {
       return this.memberClientsHMap;
     }
 
-    public void setMemberClientsHMap(
-        HashMap<String, Cluster.Client> memberClientsHMap) {
+    public void setMemberClientsHMap(HashMap<String, Cluster.Client> memberClientsHMap) {
       this.memberClientsHMap = memberClientsHMap;
     }
 
@@ -667,8 +650,7 @@ public class Cluster extends Thread {
       return this.gatewaySenderList;
     }
 
-    public void setGatewaySenderList(
-        List<Cluster.GatewaySender> gatewaySenderList) {
+    public void setGatewaySenderList(List<Cluster.GatewaySender> gatewaySenderList) {
       this.gatewaySenderList = gatewaySenderList;
     }
 
@@ -676,8 +658,7 @@ public class Cluster extends Thread {
       return this.asyncEventQueueList;
     }
 
-    public void setAsyncEventQueueList(
-        List<Cluster.AsyncEventQueue> asyncEventQueueList) {
+    public void setAsyncEventQueueList(List<Cluster.AsyncEventQueue> asyncEventQueueList) {
       this.asyncEventQueueList = asyncEventQueueList;
     }
 
@@ -725,8 +706,7 @@ public class Cluster extends Thread {
       return this.totalBytesOnDiskSamples;
     }
 
-    public void setTotalBytesOnDiskSamples(
-        CircularFifoBuffer totalBytesOnDiskSamples) {
+    public void setTotalBytesOnDiskSamples(CircularFifoBuffer totalBytesOnDiskSamples) {
       this.totalBytesOnDiskSamples = totalBytesOnDiskSamples;
     }
 
@@ -750,8 +730,7 @@ public class Cluster extends Thread {
       return this.throughputWritesTrend;
     }
 
-    public void setThroughputWritesTrend(
-        CircularFifoBuffer throughputWritesTrend) {
+    public void setThroughputWritesTrend(CircularFifoBuffer throughputWritesTrend) {
       this.throughputWritesTrend = throughputWritesTrend;
     }
 
@@ -767,8 +746,7 @@ public class Cluster extends Thread {
       return this.garbageCollectionSamples;
     }
 
-    public void setGarbageCollectionSamples(
-        CircularFifoBuffer garbageCollectionSamples) {
+    public void setGarbageCollectionSamples(CircularFifoBuffer garbageCollectionSamples) {
       this.garbageCollectionSamples = garbageCollectionSamples;
     }
 
@@ -788,8 +766,7 @@ public class Cluster extends Thread {
       this.numSqlfireClients = numSqlfireClients;
     }
 
-    public void updateMemberClientsHMap(
-        HashMap<String, Cluster.Client> memberClientsHM) {
+    public void updateMemberClientsHMap(HashMap<String, Cluster.Client> memberClientsHM) {
 
       if (Cluster.LAST_UPDATE_TIME == 0) {
         Cluster.LAST_UPDATE_TIME = System.nanoTime();
@@ -812,10 +789,9 @@ public class Cluster extends Thread {
           existingClient.setQueueSize(updatedClient.getQueueSize());
           existingClient.setStatus(updatedClient.getStatus());
           existingClient.setThreads(updatedClient.getThreads());
-          existingClient.setClientCQCount(updatedClient.getClientCQCount()); 
-       	  existingClient.setSubscriptionEnabled(updatedClient.isSubscriptionEnabled()); 
-          long elapsedTime = updatedClient.getUptime()
-              - existingClient.getUptime();
+          existingClient.setClientCQCount(updatedClient.getClientCQCount());
+          existingClient.setSubscriptionEnabled(updatedClient.isSubscriptionEnabled());
+          long elapsedTime = updatedClient.getUptime() - existingClient.getUptime();
           existingClient.setUptime(updatedClient.getUptime());
 
           // set cpu usage
@@ -824,8 +800,7 @@ public class Cluster extends Thread {
           long currCPUTime = 0;
           currCPUTime = updatedClient.getProcessCpuTime();
 
-          double newCPUTime = (double) (currCPUTime - lastCPUTime)
-              / (elapsedTime * 1000000000);
+          double newCPUTime = (double) (currCPUTime - lastCPUTime) / (elapsedTime * 1000000000);
 
           double newCPUUsage = 0;
           int availableCpus = updatedClient.getCpus();
@@ -845,8 +820,7 @@ public class Cluster extends Thread {
 
       // Remove unwanted entries from clients list
       HashMap<String, Cluster.Client> memberClientsHMapNew = new HashMap<String, Cluster.Client>();
-      for (Map.Entry<String, Cluster.Client> entry : memberClientsHMap
-          .entrySet()) {
+      for (Map.Entry<String, Cluster.Client> entry : memberClientsHMap.entrySet()) {
         String clientId = entry.getKey();
         if (memberClientsHM.get(clientId) != null) {
           memberClientsHMapNew.put(clientId, memberClientsHMap.get(clientId));
@@ -891,59 +865,19 @@ public class Cluster extends Thread {
     private long qNRespDeSerTime;
 
     public static String[] getGridColumnNames() {
-      String[] colNames = new String[] {
-          PulseConstants.MBEAN_COLNAME_QUERYDEFINITION,
-          PulseConstants.MBEAN_COLNAME_NUMEXECUTION,
-          PulseConstants.MBEAN_COLNAME_TOTALEXECUTIONTIME,
-          PulseConstants.MBEAN_COLNAME_NUMEXECUTIONSINPROGRESS,
-          PulseConstants.MBEAN_COLNAME_NUMTIMESCOMPILED,
-          PulseConstants.MBEAN_COLNAME_NUMTIMESGLOBALINDEXLOOKUP,
-          PulseConstants.MBEAN_COLNAME_NUMROWSMODIFIED,
-          PulseConstants.MBEAN_COLNAME_PARSETIME,
-          PulseConstants.MBEAN_COLNAME_BINDTIME,
-          PulseConstants.MBEAN_COLNAME_OPTIMIZETIME,
-          PulseConstants.MBEAN_COLNAME_ROUTINGINFOTIME,
-          PulseConstants.MBEAN_COLNAME_GENERATETIME,
-          PulseConstants.MBEAN_COLNAME_TOTALCOMPILATIONTIME,
-          PulseConstants.MBEAN_COLNAME_EXECUTIONTIME,
-          PulseConstants.MBEAN_COLNAME_PROJECTIONTIME,
-          PulseConstants.MBEAN_COLNAME_ROWSMODIFICATIONTIME,
-          PulseConstants.MBEAN_COLNAME_QNNUMROWSSEEN,
-          PulseConstants.MBEAN_COLNAME_QNMSGSENDTIME,
-          PulseConstants.MBEAN_COLNAME_QNMSGSERTIME,
-          PulseConstants.MBEAN_COLNAME_QNRESPDESERTIME };
+      String[] colNames = new String[] { PulseConstants.MBEAN_COLNAME_QUERYDEFINITION, PulseConstants.MBEAN_COLNAME_NUMEXECUTION, PulseConstants.MBEAN_COLNAME_TOTALEXECUTIONTIME, PulseConstants.MBEAN_COLNAME_NUMEXECUTIONSINPROGRESS, PulseConstants.MBEAN_COLNAME_NUMTIMESCOMPILED, PulseConstants.MBEAN_COLNAME_NUMTIMESGLOBALINDEXLOOKUP, PulseConstants.MBEAN_COLNAME_NUMROWSMODIFIED, PulseConstants.MBEAN_COLNAME_PARSETIME, PulseConstants.MBEAN_COLNAME_BINDTIME, PulseConstants.MBEAN_COLNAME_OPTIMIZETIME, PulseConstants.MBEAN_COLNAME_ROUTINGINFOTIME, PulseConstants.MBEAN_COLNAME_GENERATETIME, PulseConstants.MBEAN_COLNAME_TOTALCOMPILATIONTIME, PulseConstants.MBEAN_COLNAME_EXECUTIONTIME, PulseConstants.MBEAN_COLNAME_PROJECTIONTIME, PulseConstants.MBEAN_COLNAME_ROWSMODIFICATIONTIME, PulseConstants.MBEAN_COLNAME_QNNUMROWSSEEN, PulseConstants.MBEAN_COLNAME_QNMSGSENDTIME, PulseConstants.MBEAN_COLNAME_QNMSGSERTIME, PulseConstants.MBEAN_COLNAME_QNRESPDESERTIME };
       return colNames;
     }
 
     public static String[] getGridColumnAttributes() {
-      String[] colAttributes = new String[] {
-          PulseConstants.MBEAN_ATTRIBUTE_QUERYDEFINITION,
-          PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTION,
-          PulseConstants.MBEAN_ATTRIBUTE_TOTALEXECUTIONTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTIONSINPROGRESS,
-          PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESCOMPILED,
-          PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESGLOBALINDEXLOOKUP,
-          PulseConstants.MBEAN_ATTRIBUTE_NUMROWSMODIFIED,
-          PulseConstants.MBEAN_ATTRIBUTE_PARSETIME,
-          PulseConstants.MBEAN_ATTRIBUTE_BINDTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_OPTIMIZETIME,
-          PulseConstants.MBEAN_ATTRIBUTE_ROUTINGINFOTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_GENERATETIME,
-          PulseConstants.MBEAN_ATTRIBUTE_TOTALCOMPILATIONTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_EXECUTIONTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_PROJECTIONTIME,
+      String[] colAttributes = new String[] { PulseConstants.MBEAN_ATTRIBUTE_QUERYDEFINITION, PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTION, PulseConstants.MBEAN_ATTRIBUTE_TOTALEXECUTIONTIME, PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTIONSINPROGRESS, PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESCOMPILED, PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESGLOBALINDEXLOOKUP, PulseConstants.MBEAN_ATTRIBUTE_NUMROWSMODIFIED, PulseConstants.MBEAN_ATTRIBUTE_PARSETIME, PulseConstants.MBEAN_ATTRIBUTE_BINDTIME, PulseConstants.MBEAN_ATTRIBUTE_OPTIMIZETIME, PulseConstants.MBEAN_ATTRIBUTE_ROUTINGINFOTIME, PulseConstants.MBEAN_ATTRIBUTE_GENERATETIME, PulseConstants.MBEAN_ATTRIBUTE_TOTALCOMPILATIONTIME, PulseConstants.MBEAN_ATTRIBUTE_EXECUTIONTIME, PulseConstants.MBEAN_ATTRIBUTE_PROJECTIONTIME,
 
-          PulseConstants.MBEAN_ATTRIBUTE_ROWSMODIFICATIONTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_QNNUMROWSSEEN,
-          PulseConstants.MBEAN_ATTRIBUTE_QNMSGSENDTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_QNMSGSERTIME,
-          PulseConstants.MBEAN_ATTRIBUTE_QNRESPDESERTIME };
+          PulseConstants.MBEAN_ATTRIBUTE_ROWSMODIFICATIONTIME, PulseConstants.MBEAN_ATTRIBUTE_QNNUMROWSSEEN, PulseConstants.MBEAN_ATTRIBUTE_QNMSGSENDTIME, PulseConstants.MBEAN_ATTRIBUTE_QNMSGSERTIME, PulseConstants.MBEAN_ATTRIBUTE_QNRESPDESERTIME };
       return colAttributes;
     }
 
     public static int[] getGridColumnWidths() {
-      int[] colWidths = new int[] { 300, 150, 160, 180, 150, 200, 150, 130, 130,
-          160, 140, 180, 170, 160, 130,  190, 170, 170, 170, 200 };
+      int[] colWidths = new int[] { 300, 150, 160, 180, 150, 200, 150, 130, 130, 160, 140, 180, 170, 160, 130, 190, 170, 170, 170, 200 };
       return colWidths;
     }
 
@@ -1265,14 +1199,10 @@ public class Cluster extends Thread {
     private double diskPutsRate;
     private int localMaxMemory;
 
-    private CircularFifoBuffer getsPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer putsPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer diskReadsPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer diskWritesPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer getsPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer putsPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer diskReadsPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer diskWritesPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
 
     /**
      * @return the entrySize
@@ -1518,15 +1448,11 @@ public class Cluster extends Thread {
     private String compressionCodec = "";
 
     private List<String> memberName = new ArrayList<String>();
-    private List<RegionOnMember> regionOnMembers  = new ArrayList<RegionOnMember>();
-    private CircularFifoBuffer getsPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer putsPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer diskReadsPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
-    private CircularFifoBuffer diskWritesPerSecTrend = new CircularFifoBuffer(
-        MAX_SAMPLE_SIZE);
+    private List<RegionOnMember> regionOnMembers = new ArrayList<RegionOnMember>();
+    private CircularFifoBuffer getsPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer putsPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer diskReadsPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
+    private CircularFifoBuffer diskWritesPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
 
     public static final int REGION_STAT_GETS_PER_SEC_TREND = 0;
     public static final int REGION_STAT_PUTS_PER_SEC_TREND = 1;
@@ -1683,8 +1609,7 @@ public class Cluster extends Thread {
       return this.diskWritesPerSecTrend;
     }
 
-    public void setDiskWritesPerSecTrend(
-        CircularFifoBuffer diskWritesPerSecTrend) {
+    public void setDiskWritesPerSecTrend(CircularFifoBuffer diskWritesPerSecTrend) {
       this.diskWritesPerSecTrend = diskWritesPerSecTrend;
     }
 
@@ -1899,11 +1824,11 @@ public class Cluster extends Thread {
     private int gets;
     private int puts;
     private int cpus;
-    private int clientCQCount; 
+    private int clientCQCount;
     private long processCpuTime;
     private String status;
     private boolean isConnected = false;
-    private boolean isSubscriptionEnabled = false; 
+    private boolean isSubscriptionEnabled = false;
 
     public String getId() {
       return this.id;
@@ -1917,21 +1842,21 @@ public class Cluster extends Thread {
       return this.puts;
     }
 
-	public int getClientCQCount() {
-	  return clientCQCount;
-	}
+    public int getClientCQCount() {
+      return clientCQCount;
+    }
 
-	public void setClientCQCount(int clientCQCount) {
-	  this.clientCQCount = clientCQCount;
-	}
-     
-	public boolean isSubscriptionEnabled() { 
-	  return isSubscriptionEnabled; 
-	} 
-	 		 
-	public void setSubscriptionEnabled(boolean isSubscriptionEnabled) { 
-	  this.isSubscriptionEnabled = isSubscriptionEnabled; 
-	} 
+    public void setClientCQCount(int clientCQCount) {
+      this.clientCQCount = clientCQCount;
+    }
+
+    public boolean isSubscriptionEnabled() {
+      return isSubscriptionEnabled;
+    }
+
+    public void setSubscriptionEnabled(boolean isSubscriptionEnabled) {
+      this.isSubscriptionEnabled = isSubscriptionEnabled;
+    }
 
     public void setId(String id) {
       this.id = id;
@@ -2327,7 +2252,6 @@ public class Cluster extends Thread {
   public Cluster() {
   }
 
-
   /**
    * This function is used for calling getUpdator function of ClusterDataFactory
    * and starting the thread for updating the Cluster details.
@@ -2342,8 +2266,7 @@ public class Cluster extends Thread {
    *          pulse user password
    * @throws ConnectException
    */
-  public Cluster(String host, String port, String userName, String userPassword)
-      throws ConnectException {
+  public Cluster(String host, String port, String userName, String userPassword) throws ConnectException {
     this.serverName = host;
     this.port = port;
     this.jmxUserName = userName;
@@ -2381,8 +2304,7 @@ public class Cluster extends Thread {
     }
 
     if (LOGGER.infoEnabled()) {
-      LOGGER.info(resourceBundle.getString("LOG_MSG_STOP_THREAD_UPDATES")
-          + " :: " + this.serverName + ":" + this.port);
+      LOGGER.info(resourceBundle.getString("LOG_MSG_STOP_THREAD_UPDATES") + " :: " + this.serverName + ":" + this.port);
     }
   }
 
@@ -2397,8 +2319,7 @@ public class Cluster extends Thread {
     // Connect if required or hold a connection. If unable to connect,
     // return false
     if (LOGGER.finerEnabled()) {
-      LOGGER.finer(resourceBundle.getString("LOG_MSG_CLUSTER_DATA_IS_UPDATING")
-          + "::" + this.serverName + ":" + this.port);
+      LOGGER.finer(resourceBundle.getString("LOG_MSG_CLUSTER_DATA_IS_UPDATING") + "::" + this.serverName + ":" + this.port);
     }
     return this.updater.updateData();
   }
@@ -2840,8 +2761,7 @@ public class Cluster extends Thread {
     return this.garbageCollectionTrend;
   }
 
-  public void setGarbageCollectionTrend(
-      CircularFifoBuffer garbageCollectionSamples) {
+  public void setGarbageCollectionTrend(CircularFifoBuffer garbageCollectionSamples) {
     this.garbageCollectionTrend = garbageCollectionSamples;
   }
 
@@ -2881,9 +2801,9 @@ public class Cluster extends Thread {
   public boolean deleteQueryById(String userId, String queryId) {
     return this.getDataBrowser().deleteQueryById(userId, queryId);
   }
-  
+
   public JMXConnector connectToGemFire() {
-    if(this.updater instanceof JMXDataUpdater) {
+    if (this.updater instanceof JMXDataUpdater) {
       return ((JMXDataUpdater) this.updater).getJMXConnection(false);
     } else {
       return null;
@@ -2942,32 +2862,16 @@ public class Cluster extends Thread {
       // Create 3 members first time around
       if (membersHMap.size() == 0) {
 
-        membersHMap.put(
-            "pnq-visitor1",
-            initializeMember(
-                "pnq-visitor1(Launcher_Manager-1099-13-40-24-5368)-24357",
-                "pnq-visitor1", true, true, true, true));
+        membersHMap.put("pnq-visitor1", initializeMember("pnq-visitor1(Launcher_Manager-1099-13-40-24-5368)-24357", "pnq-visitor1", true, true, true, true));
 
         for (int i = 2; i <= 8; i++) {
           if ((i % 2) == 0) {
-            membersHMap.put(
-                "pnq-visitor" + i,
-                initializeMember("pnq-visitor" + i
-                    + "(Launcher_Server-1099-13-40-24-5368)-24357",
-                    "pnq-visitor" + i, false, false, true, false));
+            membersHMap.put("pnq-visitor" + i, initializeMember("pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357", "pnq-visitor" + i, false, false, true, false));
           } else {
             if ((i % 3) == 0) {
-              membersHMap.put(
-                  "pnq-visitor" + i,
-                  initializeMember("pnq-visitor" + i
-                      + "(Launcher_Server-1099-13-40-24-5368)-24357",
-                      "pnq-visitor" + i, false, false, false, false));
+              membersHMap.put("pnq-visitor" + i, initializeMember("pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357", "pnq-visitor" + i, false, false, false, false));
             } else {
-              membersHMap.put(
-                  "pnq-visitor" + i,
-                  initializeMember("pnq-visitor" + i
-                      + "(Launcher_Server-1099-13-40-24-5368)-24357",
-                      "pnq-visitor" + i, false, true, true, true));
+              membersHMap.put("pnq-visitor" + i, initializeMember("pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357", "pnq-visitor" + i, false, true, true, true));
             }
           }
         }
@@ -3006,21 +2910,17 @@ public class Cluster extends Thread {
             memberClientsHM.put(client.getId(), client);
             randomInt = randomGenerator.nextInt(10);
             for (int y = 1; y < randomInt; y++) {
-              Client newClient = initMemberClient(y, memberSet.getValue()
-                  .getHost());
+              Client newClient = initMemberClient(y, memberSet.getValue().getHost());
               memberClientsHM.put(newClient.getId(), newClient);
             }
-            membersHMap.get(memberSet.getKey()).updateMemberClientsHMap(
-                memberClientsHM);
-            clientConnectionCount = clientConnectionCount
-                + membersHMap.get(memberSet.getKey()).getMemberClientsHMap()
-                    .size();
+            membersHMap.get(memberSet.getKey()).updateMemberClientsHMap(memberClientsHM);
+            clientConnectionCount = clientConnectionCount + membersHMap.get(memberSet.getKey()).getMemberClientsHMap().size();
           }
 
         }
       }
 
-		// add additional regions to members
+      // add additional regions to members
       for (Entry<String, Member> memberSet : membersHMap.entrySet()) {
         HashMap<String, Cluster.Region> memberRegions = new HashMap<String, Cluster.Region>();
 
@@ -3085,28 +2985,27 @@ public class Cluster extends Thread {
         region.diskWritesPerSecTrend.add(region.diskWritesRate);
       }
 
-      if(clusterStatementMap.size() < 500){
-        for(int i = 1; i <= 500; ++i) {
+      if (clusterStatementMap.size() < 500) {
+        for (int i = 1; i <= 500; ++i) {
           if (LOGGER.infoEnabled()) {
             LOGGER.info("Adding statement = " + i);
           }
 
           updateClusterStatement(i);
         }
-      } else if(clusterStatementMap.size() == 510){
-        for(Iterator itSt = clusterStatementMap.values().iterator(); itSt.hasNext(); ){
-          Cluster.Statement statement = (Cluster.Statement)itSt.next();
-          statement.setNumTimesCompiled((statement.getNumTimesCompiled()+5));
-          statement.setNumExecution((statement.getNumExecution()+5));
-          statement.setNumExecutionsInProgress((statement.getNumExecutionsInProgress()+5));
-          statement.setNumTimesGlobalIndexLookup((statement.getNumTimesGlobalIndexLookup()+5));
-          statement.setNumRowsModified((statement.getNumRowsModified()+5));
+      } else if (clusterStatementMap.size() == 510) {
+        for (Iterator itSt = clusterStatementMap.values().iterator(); itSt.hasNext();) {
+          Cluster.Statement statement = (Cluster.Statement) itSt.next();
+          statement.setNumTimesCompiled((statement.getNumTimesCompiled() + 5));
+          statement.setNumExecution((statement.getNumExecution() + 5));
+          statement.setNumExecutionsInProgress((statement.getNumExecutionsInProgress() + 5));
+          statement.setNumTimesGlobalIndexLookup((statement.getNumTimesGlobalIndexLookup() + 5));
+          statement.setNumRowsModified((statement.getNumRowsModified() + 5));
         }
-      } else if(clusterStatementMap.size() < 510){
+      } else if (clusterStatementMap.size() < 510) {
         Cluster.Statement statement = new Cluster.Statement();
         Random randomGenerator = new Random();
-        String statementDefinition = "select * from member where member_name = member-510"
-            + " and lastUpdatedTime = '" + new Date().toString() + "'";
+        String statementDefinition = "select * from member where member_name = member-510" + " and lastUpdatedTime = '" + new Date().toString() + "'";
         Integer intVal = randomGenerator.nextInt(5);
         statement.setQueryDefinition(statementDefinition);
         statement.setNumTimesCompiled(intVal.longValue());
@@ -3138,8 +3037,7 @@ public class Cluster extends Thread {
 
       Cluster.Statement statement = new Cluster.Statement();
       Random randomGenerator = new Random();
-      String statementDefinition = "select * from member where member_name = member-"
-          + iNum + " and lastUpdatedTime = '" + new Date().toString() + "'";
+      String statementDefinition = "select * from member where member_name = member-" + iNum + " and lastUpdatedTime = '" + new Date().toString() + "'";
       Integer intVal = randomGenerator.nextInt(5);
       statement.setQueryDefinition(statementDefinition);
       statement.setNumTimesCompiled(intVal.longValue());
@@ -3182,9 +3080,7 @@ public class Cluster extends Thread {
       } else if (count >= 10 && count < 14) {
         memberRegion.setFullPath("/GlobalVilage_3/GlobalVilage_" + count);
       } else {
-        memberRegion
-            .setFullPath("/GlobalVilage_3/GlobalVilage_11/GlobalVilage_"
-                + count);
+        memberRegion.setFullPath("/GlobalVilage_3/GlobalVilage_11/GlobalVilage_" + count);
       }
 
       Random randomGenerator = new Random();
@@ -3200,8 +3096,7 @@ public class Cluster extends Thread {
       memberRegion.persistentEnabled = true;
       memberRegion.wanEnabled = count % 2 == 0;
       memberRegion.wanEnabled = true;
-      memberRegion.setSystemRegionEntryCount(Long.valueOf(String.valueOf(Math
-          .abs(randomGenerator.nextInt(100)))));
+      memberRegion.setSystemRegionEntryCount(Long.valueOf(String.valueOf(Math.abs(randomGenerator.nextInt(100)))));
       memberRegion.memberName.add(memName);
       memberRegion.memberCount = 1;
 
@@ -3247,16 +3142,14 @@ public class Cluster extends Thread {
         memberClient.setStatus("down");
       }
       memberClient.setThreads(Math.abs(r.nextInt(100)));
-      memberClient
-          .setUptime(Math.abs(System.currentTimeMillis() - r.nextLong()));
+      memberClient.setUptime(Math.abs(System.currentTimeMillis() - r.nextLong()));
 
       return memberClient;
     }
 
-    private Member initializeMember(String id, String name, boolean manager,
-        boolean isCache, boolean isLocator, boolean isServer) {
+    private Member initializeMember(String id, String name, boolean manager, boolean isCache, boolean isLocator, boolean isServer) {
       Member m = new Member();
-      m.gemfireVersion = "7.5"; 
+      m.gemfireVersion = "7.5";
       m.manager = manager;
       m.id = id;
       m.name = name;
@@ -3305,7 +3198,7 @@ public class Cluster extends Thread {
       }
 
       // sample data for async queues
-      if( !(m.name.equalsIgnoreCase("pnq-visitor2")) ){
+      if (!(m.name.equalsIgnoreCase("pnq-visitor2"))) {
         int asyncEventQueueCount = Math.abs(r.nextInt(10));
         for (int i = 0; i < asyncEventQueueCount; i++) {
           m.asyncEventQueueList.add(createasyncEventQueueCount(r));
@@ -3316,13 +3209,13 @@ public class Cluster extends Thread {
 
       // set server groups and redundancy zones
       Random rg = new Random();
-      int serverGroupNum = Math.abs(rg.nextInt(3)+1);
-      int redundancyZoneNum = Math.abs(rg.nextInt(2)+1);
-      for(int c=0; c<serverGroupNum; c++){
-        m.getServerGroups().add("SG"+c);
+      int serverGroupNum = Math.abs(rg.nextInt(3) + 1);
+      int redundancyZoneNum = Math.abs(rg.nextInt(2) + 1);
+      for (int c = 0; c < serverGroupNum; c++) {
+        m.getServerGroups().add("SG" + c);
       }
-      for(int c=0; c<redundancyZoneNum; c++){
-        m.getRedundancyZones().add("RZ"+c);
+      for (int c = 0; c < redundancyZoneNum; c++) {
+        m.getRedundancyZones().add("RZ" + c);
       }
 
       List<Cluster.Member> memberArrList = physicalToMember.get(m.host);
@@ -3355,7 +3248,7 @@ public class Cluster extends Thread {
       return gatewaySender;
     }
 
-    private AsyncEventQueue createasyncEventQueueCount(Random r){
+    private AsyncEventQueue createasyncEventQueueCount(Random r) {
 
       AsyncEventQueue asyncEventQueue = new AsyncEventQueue();
 
@@ -3395,8 +3288,7 @@ public class Cluster extends Thread {
 
     private void refresh(Member m) {
       if (LOGGER.infoEnabled()) {
-        LOGGER.info(resourceBundle.getString("LOG_MSG_REFRESHING_MEMBER_DATA")
-            + " : " + m.name);
+        LOGGER.info(resourceBundle.getString("LOG_MSG_REFRESHING_MEMBER_DATA") + " : " + m.name);
       }
 
       Random r = new Random(System.currentTimeMillis());
@@ -3437,8 +3329,7 @@ public class Cluster extends Thread {
         // Generate alerts
         if (r.nextBoolean()) {
           if (r.nextInt(10) > 5) {
-            alertsList
-                .add(createAlert(Alert.SEVERE, m.name, alertsList.size()));
+            alertsList.add(createAlert(Alert.SEVERE, m.name, alertsList.size()));
             if (alertsList.size() > ALERTS_MAX_SIZE) {
               alertsList.remove(0);
             }
@@ -3456,8 +3347,7 @@ public class Cluster extends Thread {
 
         if (r.nextBoolean()) {
           if (r.nextInt(10) > 5) {
-            alertsList
-                .add(createAlert(Alert.WARNING, m.name, alertsList.size()));
+            alertsList.add(createAlert(Alert.WARNING, m.name, alertsList.size()));
             if (alertsList.size() > ALERTS_MAX_SIZE) {
               alertsList.remove(0);
             }
@@ -3467,7 +3357,7 @@ public class Cluster extends Thread {
         if (r.nextBoolean()) {
           if (r.nextInt(10) > 5) {
             alertsList.add(createAlert(Alert.INFO, m.name, alertsList.size()));
-            if(alertsList.size() > ALERTS_MAX_SIZE){
+            if (alertsList.size() > ALERTS_MAX_SIZE) {
               alertsList.remove(0);
             }
           }
@@ -3513,8 +3403,8 @@ public class Cluster extends Thread {
       InputStream is = null;
       URL url = null;
       String inputStr = null;
-      
-      if(queryCounter > 24){
+
+      if (queryCounter > 24) {
         queryCounter = 0;
       }
 
@@ -3770,8 +3660,7 @@ public class Cluster extends Thread {
     private ClusterDataFactory() {
     }
 
-    public static IClusterUpdater getUpdater(Cluster cluster,
-        String serverName, String port) {
+    public static IClusterUpdater getUpdater(Cluster cluster, String serverName, String port) {
 
       String prop = System.getProperty("pulse.propMockDataUpdaterClass");
       if (prop != null) {

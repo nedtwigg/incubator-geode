@@ -26,12 +26,13 @@ package org.apache.geode.cache.query.data;
  *
  */
 public class Street {
-    public String street;
-    public String lane;
-    /** Creates a new instance of Street */
-    public Street(String street,String lane) {
-        this.street = street;
-        this.lane = lane;
-    }
-    
+  public String street;
+  public String lane;
+
+  /** Creates a new instance of Street */
+  public Street(String street, String lane) {
+    this.street = street;
+    this.lane = lane;
+  }
+
 }

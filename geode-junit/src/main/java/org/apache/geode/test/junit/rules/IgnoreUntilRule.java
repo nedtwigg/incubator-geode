@@ -50,7 +50,8 @@ public class IgnoreUntilRule implements TestRule, Serializable {
   @Override
   public Statement apply(final Statement base, final Description description) {
     return new Statement() {
-      @Override public void evaluate() throws Throwable {
+      @Override
+      public void evaluate() throws Throwable {
         IgnoreUntilRule.this.evaluate(base, description);
       }
     };
@@ -70,8 +71,7 @@ public class IgnoreUntilRule implements TestRule, Serializable {
       if (testCaseAnnotation != null) {
         ignoreTest = evaluate(testCaseAnnotation, description);
         message = testCaseAnnotation.value();
-      }
-      else if (description.getTestClass().isAnnotationPresent(IgnoreUntil.class)) {
+      } else if (description.getTestClass().isAnnotationPresent(IgnoreUntil.class)) {
         IgnoreUntil testClassAnnotation = description.getTestClass().getAnnotation(IgnoreUntil.class);
 
         ignoreTest = evaluate(testClassAnnotation, description);
@@ -96,25 +96,21 @@ public class IgnoreUntilRule implements TestRule, Serializable {
   }
 
   protected boolean evaluate(IgnoreUntil conditionalIgnoreAnnotation, Description description) {
-    return (evaluateCondition(conditionalIgnoreAnnotation.condition(), description)
-      || evaluateUntil(conditionalIgnoreAnnotation.until()));
+    return (evaluateCondition(conditionalIgnoreAnnotation.condition(), description) || evaluateUntil(conditionalIgnoreAnnotation.until()));
   }
 
   protected boolean evaluateCondition(Class<? extends IgnoreCondition> ignoreConditionType, Description description) {
     try {
       return ignoreConditionType.newInstance().evaluate(description);
-    }
-    catch (Exception e) {
-      throw new IgnoreConditionEvaluationException(String.format("failed to evaluate IgnoreCondition: %1$s",
-        ignoreConditionType.getName()), e);
+    } catch (Exception e) {
+      throw new IgnoreConditionEvaluationException(String.format("failed to evaluate IgnoreCondition: %1$s", ignoreConditionType.getName()), e);
     }
   }
 
   protected boolean evaluateUntil(String timestamp) {
     try {
       return DATE_FORMAT.parse(timestamp).after(Calendar.getInstance().getTime());
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       return false;
     }
   }

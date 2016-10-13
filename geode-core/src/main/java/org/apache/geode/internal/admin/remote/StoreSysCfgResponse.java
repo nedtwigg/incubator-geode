@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -31,7 +30,6 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class StoreSysCfgResponse extends AdminResponse {
   // instance variables
 
-
   // static methods
   /**
    * Returns a <code>StoreSysCfgResponse</code> that states that a
@@ -44,17 +42,17 @@ public final class StoreSysCfgResponse extends AdminResponse {
     InternalDistributedSystem sys = dm.getSystem();
     Config conf = sys.getConfig();
     String[] names = conf.getAttributeNames();
-    for (int i=0; i<names.length; i++) {
+    for (int i = 0; i < names.length; i++) {
       if (conf.isAttributeModifiable(names[i])) {
         conf.setAttributeObject(names[i], sc.getAttributeObject(names[i]), ConfigSource.runtime());
       }
     }
-      
+
     return m;
   }
 
   // instance methods
-  
+
   public int getDSFID() {
     return STORE_SYS_CFG_RESPONSE;
   }
@@ -65,8 +63,7 @@ public final class StoreSysCfgResponse extends AdminResponse {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 

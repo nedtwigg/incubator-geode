@@ -25,7 +25,6 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-
 import org.apache.geode.cache.query.internal.cq.CqServiceImpl;
 import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.dunit.Invoke;
@@ -53,7 +52,7 @@ public class CqDataOptimizedExecuteDUnitTest extends CqDataDUnitTest {
       }
     });
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {

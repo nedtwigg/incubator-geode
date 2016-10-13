@@ -67,7 +67,6 @@ public class UsageException extends Exception {
     super(cause);
   }
 
-
   /**
    * Attaches a usage message to the exception for later consumption.
    *

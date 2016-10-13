@@ -49,7 +49,7 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
 
   @Override
   public final void postSetUp() throws Exception {
-    Invoke.invokeInEveryVM(PersistentReplicatedTestBase.class,"setRegionName", new Object[]{getUniqueName()});
+    Invoke.invokeInEveryVM(PersistentReplicatedTestBase.class, "setRegionName", new Object[] { getUniqueName() });
     setRegionName(getUniqueName());
     diskDir = new File("diskDir-" + getName()).getAbsoluteFile();
     org.apache.geode.internal.FileUtil.delete(diskDir);
@@ -60,26 +60,26 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
   public static void setRegionName(String testName) {
     REGION_NAME = testName + "Region";
   }
-  
+
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     org.apache.geode.internal.FileUtil.delete(diskDir);
     postTearDownPersistentReplicatedTestBase();
   }
-  
+
   protected void postTearDownPersistentReplicatedTestBase() throws Exception {
   }
 
   protected void waitForBlockedInitialization(VM vm) {
     vm.invoke(new SerializableRunnable() {
-  
+
       public void run() {
         Wait.waitForCriterion(new WaitCriterion() {
-  
+
           public String description() {
             return "Waiting for another persistent member to come online";
           }
-          
+
           public boolean done() {
             GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
             PersistentMemberManager mm = cache.getPersistentMemberManager();
@@ -87,11 +87,11 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
             boolean done = !regions.isEmpty();
             return done;
           }
-          
+
         }, MAX_WAIT, 100, true);
-        
+
       }
-      
+
     });
   }
 
@@ -102,7 +102,7 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
         File dir = getDiskDirForVM(vm0);
         dir.mkdirs();
-        dsf.setDiskDirs(new File[] {dir});
+        dsf.setDiskDirs(new File[] { dir });
         dsf.setMaxOplogSize(1);
         dsf.setAutoCompact(false);
         dsf.setAllowForceCompaction(true);
@@ -148,7 +148,7 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
         cache.close();
       }
     };
-    
+
     return vm0.invokeAsync(close);
   }
 
@@ -168,20 +168,22 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
   protected AsyncInvocation createPersistentRegionWithWait(VM vm) throws Exception {
     return _createPersistentRegion(vm, true);
   }
+
   protected void createPersistentRegion(VM vm) throws Exception {
     _createPersistentRegion(vm, false);
   }
+
   private AsyncInvocation _createPersistentRegion(VM vm, boolean wait) throws Exception {
     AsyncInvocation future = createPersistentRegionAsync(vm);
     long waitTime = wait ? 500 : MAX_WAIT;
     future.join(waitTime);
-    if(future.isAlive() && !wait) {
+    if (future.isAlive() && !wait) {
       fail("Region not created within" + MAX_WAIT);
     }
     if (!future.isAlive() && wait) {
       fail("Did not expecte region creation to complete");
     }
-    if(!wait && future.exceptionOccurred()) {
+    if (!wait && future.exceptionOccurred()) {
       throw new RuntimeException(future.getException());
     }
     return future;
@@ -194,7 +196,7 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
         DiskStoreFactory dsf = cache.createDiskStoreFactory();
         File dir = getDiskDirForVM(vm);
         dir.mkdirs();
-        dsf.setDiskDirs(new File[] {dir});
+        dsf.setDiskDirs(new File[] { dir });
         dsf.setMaxOplogSize(1);
         DiskStore ds = dsf.create(REGION_NAME);
         RegionFactory rf = new RegionFactory();
@@ -222,7 +224,7 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
   protected void restoreBackup(VM vm) throws IOException {
     File dirForVM = getDiskDirForVM(vm);
     File backFile = new File(dirForVM.getParent(), dirForVM.getName() + ".bk");
-    if(!backFile.renameTo(dirForVM)) {
+    if (!backFile.renameTo(dirForVM)) {
       FileUtil.delete(dirForVM);
       FileUtil.copy(backFile, dirForVM);
       FileUtil.delete(backFile);

@@ -73,7 +73,7 @@ public final class ClassPathLoader {
   public static final String EXCLUDE_TCCL_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "excludeThreadContextClassLoader";
   public static final boolean EXCLUDE_TCCL_DEFAULT_VALUE = false;
   private boolean excludeTCCL;
-  
+
   // This calculates the location of the extlib directory relative to the
   // location of the gemfire jar file.  If for some reason the ClassPathLoader
   // class is found in a directory instead of a JAR file (as when testing),
@@ -81,6 +81,7 @@ public final class ClassPathLoader {
   // class.
   public static final String EXT_LIB_DIR_PARENT_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "ClassPathLoader.EXT_LIB_DIR";
   public static final String EXT_LIB_DIR_PARENT_DEFAULT = ClassPathLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+
   static final File defineEXT_LIB_DIR() {
     return new File((new File(System.getProperty(EXT_LIB_DIR_PARENT_PROPERTY, EXT_LIB_DIR_PARENT_DEFAULT))).getParent(), "ext");
   }
@@ -117,7 +118,7 @@ public final class ClassPathLoader {
 
     setLatestToDefault();
   }
-  
+
   /**
    * Starting at the files or directories identified by 'files', search for valid
    * JAR files and return a list of their URLs.  Sub-directories will also be
@@ -197,7 +198,7 @@ public final class ClassPathLoader {
     for (final ClassLoader classLoader : defaultLoaders) {
       classLoaders.add(classLoader);
     }
-    
+
     // Add user JAR files from the EXT_LIB_DIR directory using a single ClassLoader
     try {
       File EXT_LIB_DIR = defineEXT_LIB_DIR();
@@ -567,13 +568,13 @@ public final class ClassPathLoader {
    */
   public Enumeration<URL> getResources(final Class<?> contextClass, final String name) throws IOException {
     final boolean isDebugEnabled = logger.isTraceEnabled();
-    
+
     if (isDebugEnabled) {
       logger.trace(new StringBuilder("getResources(").append(name).append(")"));
     }
-    
+
     final LinkedHashSet<URL> urls = new LinkedHashSet<URL>();
-    
+
     try {
       if (contextClass != null) {
         CollectionUtils.addAll(urls, contextClass.getClassLoader().getResources(name));
@@ -581,7 +582,7 @@ public final class ClassPathLoader {
     } catch (IOException ignore) {
       // ignore and search others
     }
-    
+
     Enumeration<URL> resources = null;
     ClassLoader tccl = null;
     if (!excludeTCCL) {
@@ -640,14 +641,14 @@ public final class ClassPathLoader {
       }
       throw ioException;
     }
-    
+
     if (isDebugEnabled) {
       logger.trace("getResources returning empty enumeration");
     }
-    
+
     return Collections.enumeration(urls);
   }
-  
+
   /**
    * Finds all the resources with the given name.
    * 
@@ -667,7 +668,7 @@ public final class ClassPathLoader {
   public Enumeration<URL> getResources(String name) throws IOException {
     return getResources(null, name);
   }
-    
+
   /**
    * Wrap this {@link ClassPathLoader} with a {@link ClassLoader} facade.
    * 
@@ -702,11 +703,11 @@ public final class ClassPathLoader {
       }
     };
   }
-  
+
   public static ClassPathLoader getLatest() {
     return latest.get();
   }
-  
+
   /**
    * Helper method equivalent to
    * <code>ClassPathLoader.getLatest().asClassLoader();</code>.

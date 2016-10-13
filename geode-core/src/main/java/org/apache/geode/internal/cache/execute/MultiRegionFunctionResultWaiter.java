@@ -27,33 +27,24 @@ import org.apache.geode.distributed.internal.DistributionMessage;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.cache.MemberFunctionStreamingMessage;
+
 /**
  * 
  *
  */
-public class MultiRegionFunctionResultWaiter extends
-    StreamingFunctionOperation {
+public class MultiRegionFunctionResultWaiter extends StreamingFunctionOperation {
 
-  private Map<InternalDistributedMember, Set<String>> memberToRegions = null ;;
+  private Map<InternalDistributedMember, Set<String>> memberToRegions = null;;
 
-  public MultiRegionFunctionResultWaiter(InternalDistributedSystem sys,
-      ResultCollector rc, final Function function, Set recipients,
-      final HashMap<InternalDistributedMember, Object> memberArgs,
-      ResultSender resultSender,
-      Map<InternalDistributedMember, Set<String>> memberToRegions) {
-    super(sys, rc, function, memberArgs, recipients,resultSender);
+  public MultiRegionFunctionResultWaiter(InternalDistributedSystem sys, ResultCollector rc, final Function function, Set recipients, final HashMap<InternalDistributedMember, Object> memberArgs, ResultSender resultSender, Map<InternalDistributedMember, Set<String>> memberToRegions) {
+    super(sys, rc, function, memberArgs, recipients, resultSender);
     this.memberToRegions = memberToRegions;
   }
-  
+
   @Override
-  protected DistributionMessage createRequestMessage(Set recipients,
-      FunctionStreamingResultCollector processor, boolean isReExecute,
-      boolean isFnSerializationReqd) {
-    InternalDistributedMember target = (InternalDistributedMember)recipients.toArray()[0]; 
-    MemberFunctionStreamingMessage msg = new MemberFunctionStreamingMessage(
-        this.functionObject, processor.getProcessorId(),
-        memberArgs.get(target), isFnSerializationReqd, this.memberToRegions
-            .get(target), isReExecute);
+  protected DistributionMessage createRequestMessage(Set recipients, FunctionStreamingResultCollector processor, boolean isReExecute, boolean isFnSerializationReqd) {
+    InternalDistributedMember target = (InternalDistributedMember) recipients.toArray()[0];
+    MemberFunctionStreamingMessage msg = new MemberFunctionStreamingMessage(this.functionObject, processor.getProcessorId(), memberArgs.get(target), isFnSerializationReqd, this.memberToRegions.get(target), isReExecute);
     msg.setRecipients(recipients);
     return msg;
   }

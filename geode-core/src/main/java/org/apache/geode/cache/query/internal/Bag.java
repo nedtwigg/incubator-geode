@@ -55,8 +55,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @since GemFire 8.1
  */
-public abstract class Bag<E> extends AbstractCollection<E> implements
-    CqResults<E> {
+public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<E> {
   protected ObjectType elementType;
   // protected ObjectIntHashMap map;
   protected int size = 0;
@@ -125,9 +124,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
 
   public void setElementType(ObjectType elementType) {
     if (elementType instanceof StructType)
-      throw new IllegalArgumentException(
-          LocalizedStrings.ResultsBag_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS
-              .toLocalizedString());
+      throw new IllegalArgumentException(LocalizedStrings.ResultsBag_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS.toLocalizedString());
     this.elementType = elementType;
   }
 
@@ -223,8 +220,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
   @Override
   public boolean add(Object element) {
     if (this.limit > -1) {
-      throw new UnsupportedOperationException(
-          "Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
     }
     if (element == null) {
       numNulls++;
@@ -328,11 +324,9 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
       return false;
     }
     Bag otherBag = (Bag) o;
-    return this.size == otherBag.size
-        && this.elementType.equals(otherBag.elementType)
+    return this.size == otherBag.size && this.elementType.equals(otherBag.elementType)
 
-        && this.getMap().equals(otherBag.getMap())
-        && this.numNulls == otherBag.numNulls;
+        && this.getMap().equals(otherBag.getMap()) && this.numNulls == otherBag.numNulls;
   }
 
   protected abstract Object getMap();
@@ -347,8 +341,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
 
   public boolean addAll(Collection coll) {
     if (this.limit > -1) {
-      throw new UnsupportedOperationException(
-          "Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
     } else {
       return super.addAll(coll);
     }
@@ -446,8 +439,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
       int nullDupLimit = Bag.this.numNulls;
 
       public boolean hasNext() {
-        return this.mapIterator.hasNext() || this.currentDup < this.dupLimit
-            || this.nullDup < this.nullDupLimit;
+        return this.mapIterator.hasNext() || this.currentDup < this.dupLimit || this.nullDup < this.nullDupLimit;
       }
 
       public Object next() {
@@ -498,8 +490,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
         // see if there is another duplicate to emit
         if (this.currentDup < this.dupLimit) {
           this.currentDup++;
-          return (this.currentEntry == null) ? null : Bag.this
-              .keyFromEntry(currentEntry);
+          return (this.currentEntry == null) ? null : Bag.this.keyFromEntry(currentEntry);
         }
         // otherwise, go to next object
         currentEntry = this.mapIterator.next();
@@ -513,9 +504,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
         checkModifiablity();
         if (this.currentDup == 0) {
           // next has not yet been called
-          throw new IllegalStateException(
-              LocalizedStrings.ResultsBag_NEXT_MUST_BE_CALLED_BEFORE_REMOVE
-                  .toLocalizedString());
+          throw new IllegalStateException(LocalizedStrings.ResultsBag_NEXT_MUST_BE_CALLED_BEFORE_REMOVE.toLocalizedString());
         }
 
         this.dupLimit--;
@@ -659,8 +648,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements
       public void remove() {
         if (this.currPos == 0) {
           // next has not yet been called
-          throw new IllegalStateException(
-              "next() must be called before remove()");
+          throw new IllegalStateException("next() must be called before remove()");
         }
         synchronized (Bag.this.limitLock) {
           if (currentIsNull) {

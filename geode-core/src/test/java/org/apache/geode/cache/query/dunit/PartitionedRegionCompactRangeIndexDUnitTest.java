@@ -51,11 +51,11 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
     props.setProperty(CACHE_XML_FILE, TestUtil.getResourcePath(getClass(), cacheXML));
     return props;
   }
-  
+
   public void postSetUp() throws Exception {
     disconnectAllFromDS();
   }
-  
+
   @Override
   public void preTearDown() throws Exception {
     Host host = Host.getHost(0);
@@ -66,7 +66,7 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
     QueryTestUtils.closeCacheInVM(vm1);
     QueryTestUtils.closeCacheInVM(vm2);
   }
-  
+
   @Test
   public void testGIIUpdateWithIndexDoesNotDuplicateEntryInIndexWhenAlreadyRecoveredFromPersistence() throws Exception {
     Host host = Host.getHost(0);
@@ -75,7 +75,7 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
     VM vm2 = host.getVM(2);
     //Adding due to known race condition for creation of partitioned indexes via cache.xml
     IgnoredException.addIgnoredException("IndexNameConflictException");
-    
+
     String regionName = "persistentTestRegion"; //this region is created via cache.xml
     String idQuery = "select * from /" + regionName + " p where p.ID = 1";
     int idQueryExpectedSize = 1;
@@ -83,7 +83,7 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
     Map<String, Portfolio> entries = new HashMap<>();
     IntStream.range(0, numEntries).forEach(i -> entries.put("key-" + i, new Portfolio(i)));
     Map<String, Portfolio> newEntries = new HashMap<>();
-    IntStream.range(0, numEntries).forEach(i -> newEntries.put("key-" + i,  new Portfolio(i + 1)));
+    IntStream.range(0, numEntries).forEach(i -> newEntries.put("key-" + i, new Portfolio(i + 1)));
 
     File rootDiskStore1 = QueryTestUtils.createRootDiskStoreInVM(vm0, "diskDir-PersistentPartitionWithIndexDiskStore");
     File rootDiskStore2 = QueryTestUtils.createRootDiskStoreInVM(vm1, "diskDir-PersistentPartitionWithIndexDiskStore");
@@ -93,10 +93,10 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
     QueryTestUtils.createCacheInVM(vm1, getSystemProperties("PersistentPartitionWithIndex.xml"));
     QueryTestUtils.createCacheInVM(vm2, getSystemProperties("PersistentPartitionWithIndex.xml"));
     QueryTestUtils.populateRegion(vm2, regionName, entries);
-    
+
     vm1.invoke(verifyQueryResultsSize(idQuery, idQueryExpectedSize));
     QueryTestUtils.closeCacheInVM(vm1);
-    
+
     //update entries
     QueryTestUtils.populateRegion(vm0, regionName, entries);
     QueryTestUtils.closeCacheInVM(vm0);
@@ -109,7 +109,7 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
     vm1.invoke(verifyQueryResultsSize(idQuery, idQueryExpectedSize));
     vm0.invoke(verifyQueryResultsSize(idQuery, idQueryExpectedSize));
   }
-  
+
   private SerializableRunnable verifyQueryResultsSize(String query, int expectedSize) {
     return new SerializableRunnable() {
       public void run() {
@@ -118,8 +118,7 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
           Query q = qs.newQuery(query);
           SelectResults sr = (SelectResults) q.execute();
           assertEquals(expectedSize, sr.size());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           fail("Exception occurred when executing verifyQueryResultsSize for query:" + query);
         }
       }

@@ -24,30 +24,29 @@ import javax.print.attribute.EnumSyntax;
  * @see org.apache.geode.cache.EvictionAction
  * @see org.apache.geode.internal.cache.EvictionAttributesImpl
  */
-public final class EvictionAlgorithm extends EnumSyntax
-{
+public final class EvictionAlgorithm extends EnumSyntax {
   private static final long serialVersionUID = 5778669432033106789L;
   /** 
    * The canonical EvictionAction that represents no eviction action  
    */
   public static final EvictionAlgorithm NONE = new EvictionAlgorithm(0);
-  
+
   /**
    * An algorithm that considers the number of Entries in the Region before
    * invoking its {@link EvictionAction} 
    */
   public static final EvictionAlgorithm LRU_ENTRY = new EvictionAlgorithm(1);
-  
+
   /** 
    * An algorithm that considers the JVM heap size before invoking its {@link EvictionAction}
    */
   public static final EvictionAlgorithm LRU_HEAP = new EvictionAlgorithm(2);
-  
+
   /** 
    * An algorithm that considers the amount of bytes consumed by the Region before invoking its {@link EvictionAction} 
    */
   public static final EvictionAlgorithm LRU_MEMORY = new EvictionAlgorithm(3);
-  
+
   /**
    * An algorithm that considers the number of Entries in the Region before
    * invoking its {@link EvictionAction}
@@ -63,33 +62,21 @@ public final class EvictionAlgorithm extends EnumSyntax
    * @deprecated
    */
   public static final EvictionAlgorithm LIFO_MEMORY = new EvictionAlgorithm(5);
-  
-  private EvictionAlgorithm(int val) { super(val); }
-  
-  private static final String[] stringTable = {
-    "none",
-    "lru-entry-count",
-    "lru-heap-percentage",
-    "lru-memory-size",
-    "lifo-entry-count",
-    "lifo-memory-size"
-  };
-  
+
+  private EvictionAlgorithm(int val) {
+    super(val);
+  }
+
+  private static final String[] stringTable = { "none", "lru-entry-count", "lru-heap-percentage", "lru-memory-size", "lifo-entry-count", "lifo-memory-size" };
+
   @Override
   final protected String[] getStringTable() {
     return stringTable;
   }
-    
+
   //TODO post Java 1.8.0u45 uncomment final flag, see JDK-8076152
-  private static /*final*/ EvictionAlgorithm[] enumValueTable = {
-    NONE,
-    LRU_ENTRY,
-    LRU_HEAP,
-    LRU_MEMORY,
-    LIFO_ENTRY,
-    LIFO_MEMORY,
-  };
-    
+  private static /*final*/ EvictionAlgorithm[] enumValueTable = { NONE, LRU_ENTRY, LRU_HEAP, LRU_MEMORY, LIFO_ENTRY, LIFO_MEMORY, };
+
   @Override
   final protected EnumSyntax[] getEnumValueTable() {
     return enumValueTable;
@@ -107,44 +94,45 @@ public final class EvictionAlgorithm extends EnumSyntax
       return enumValueTable[v];
     }
   }
+
   public static EvictionAlgorithm parseAction(String s) {
     if (s == null)
       return null;
-    if (s.length() < 1) 
+    if (s.length() < 1)
       return null;
     for (int i = 0; i < stringTable.length; ++i) {
       if (s.equals(stringTable[i])) {
-        return enumValueTable[i]; 
+        return enumValueTable[i];
       }
     }
     return null;
   }
 
-    public final boolean isLRUEntry() {
-	return this == LRU_ENTRY;
-    }
+  public final boolean isLRUEntry() {
+    return this == LRU_ENTRY;
+  }
 
-    public final boolean isLRUMemory() {
-	return this == LRU_MEMORY;
-    }
-    
-    public final boolean isLRUHeap() {
-	return this == LRU_HEAP;
-    }
+  public final boolean isLRUMemory() {
+    return this == LRU_MEMORY;
+  }
 
-    /** returns true if this object uses a least-recently-used algorithm */
-    public boolean isLRU() {
-      return this.isLRUEntry() || this.isLRUMemory() || this.isLRUHeap();
-    }
+  public final boolean isLRUHeap() {
+    return this == LRU_HEAP;
+  }
 
-    public final boolean isNone() {
-	return this == NONE;
-    }
+  /** returns true if this object uses a least-recently-used algorithm */
+  public boolean isLRU() {
+    return this.isLRUEntry() || this.isLRUMemory() || this.isLRUHeap();
+  }
 
-    /**
-     * @deprecated
-     */
-    public boolean isLIFO() {
-      return this == LIFO_ENTRY || this == LIFO_MEMORY;
-    }
+  public final boolean isNone() {
+    return this == NONE;
+  }
+
+  /**
+   * @deprecated
+   */
+  public boolean isLIFO() {
+    return this == LIFO_ENTRY || this == LIFO_MEMORY;
+  }
 }

@@ -27,7 +27,7 @@ import org.apache.geode.pdx.PdxInstance;
 public class MyObject implements Serializable {
   protected long f1;
   protected String f2;
-  
+
   public MyObject() {
   }
 
@@ -35,15 +35,15 @@ public class MyObject implements Serializable {
     f1 = number;
     f2 = s;
   }
-  
+
   public long getF1() {
     return f1;
   }
-  
+
   public String getF2() {
     return f2;
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (o instanceof MyObject) {
@@ -56,12 +56,12 @@ public class MyObject implements Serializable {
     }
     return false;
   }
-  
+
   @Override
   public int hashCode() {
     return (int) (17 * f1 ^ f2.hashCode());
   }
-  
+
   public String toString() {
     return f1 + "-" + f2;
   }

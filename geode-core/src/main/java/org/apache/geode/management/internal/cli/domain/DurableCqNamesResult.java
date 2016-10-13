@@ -24,39 +24,40 @@ import java.util.List;
  * Data class used for sending back names for the durable client cq
  * for a client
  */
-public class DurableCqNamesResult extends MemberResult implements Serializable{
+public class DurableCqNamesResult extends MemberResult implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private List<String> cqNames = new ArrayList<String>();
-  
+
   public DurableCqNamesResult(final String memberNameOrId) {
-	 super(memberNameOrId);
+    super(memberNameOrId);
   }
-  public DurableCqNamesResult (final String memberNameOrId, List<String> cqNames) {
-	  super(memberNameOrId);
-	  cqNames.addAll(cqNames);
+
+  public DurableCqNamesResult(final String memberNameOrId, List<String> cqNames) {
+    super(memberNameOrId);
+    cqNames.addAll(cqNames);
   }
-  
+
   public void addCqName(String cqName) {
     cqNames.add(cqName);
     super.isSuccessful = true;
     super.opPossible = true;
   }
-  
+
   public List<String> getCqNamesList() {
     return cqNames;
   }
-  
+
   public void setCqNamesList(List<String> cqNamesList) {
-	  this.cqNames.addAll(cqNamesList);
-	  this.isSuccessful = true;
-	  this.opPossible = true;
+    this.cqNames.addAll(cqNamesList);
+    this.isSuccessful = true;
+    this.opPossible = true;
   }
-  
+
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(super.toString());
-    for (String cqName: cqNames) {
+    for (String cqName : cqNames) {
       sb.append("\nCqName : " + cqName);
     }
     return sb.toString();

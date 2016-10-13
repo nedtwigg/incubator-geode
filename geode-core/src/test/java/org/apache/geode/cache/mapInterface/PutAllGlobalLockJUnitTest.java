@@ -40,65 +40,63 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 @Category(IntegrationTest.class)
 public class PutAllGlobalLockJUnitTest { // TODO: reformat
-    
-    Region testRegion = null;
-    volatile boolean done = false;
-    boolean testOK = false;
-    Thread thread;
-    
-    @Before
-    public void setUp() throws Exception {
-        try {
-            Properties properties = new Properties();
-            properties.setProperty(MCAST_PORT, "0");
-            properties.setProperty(LOCATORS, "");
-            DistributedSystem distributedSystem = DistributedSystem
-                    .connect(properties);
-            Cache cache = CacheFactory.create(distributedSystem);
-            AttributesFactory factory = new AttributesFactory();
-            factory.setScope(Scope.GLOBAL);
-            factory.setCacheListener(new Listener());
-            RegionAttributes regionAttributes = factory.create();
-            testRegion = cache.createRegion("TestRegion", regionAttributes);
-        } catch (Exception e) {
-            throw new AssertionError("test failed to create a distributed system/cache", e);
-        }
-    }
-    
 
-    @Test
-    public void testPutAllGlobalLock() {
-        TreeMap trialMap = new TreeMap();
-        for (long i = 0; i < 1000; i++) {
-            trialMap.put(new Long(i), new Long(i));
-        }
-        try {
-            testRegion.putAll(trialMap);
-            ThreadUtils.join(this.thread, 30 * 1000);
-            assertTrue(this.testOK);
-        } catch (Exception e) {
-            throw new AssertionError("Test has failed due to ", e);
-        }      
+  Region testRegion = null;
+  volatile boolean done = false;
+  boolean testOK = false;
+  Thread thread;
+
+  @Before
+  public void setUp() throws Exception {
+    try {
+      Properties properties = new Properties();
+      properties.setProperty(MCAST_PORT, "0");
+      properties.setProperty(LOCATORS, "");
+      DistributedSystem distributedSystem = DistributedSystem.connect(properties);
+      Cache cache = CacheFactory.create(distributedSystem);
+      AttributesFactory factory = new AttributesFactory();
+      factory.setScope(Scope.GLOBAL);
+      factory.setCacheListener(new Listener());
+      RegionAttributes regionAttributes = factory.create();
+      testRegion = cache.createRegion("TestRegion", regionAttributes);
+    } catch (Exception e) {
+      throw new AssertionError("test failed to create a distributed system/cache", e);
     }
-       
-    protected  class Listener extends CacheListenerAdapter {
-        
-        public void afterCreate(EntryEvent event) {
-            if (event.getKey().equals(new Long(1))) {
-                PutAllGlobalLockJUnitTest.this.thread = new Thread(new Runner());
-                thread.start();
-            }else if (event.getKey().equals(new Long(999))) {
-                PutAllGlobalLockJUnitTest.this.done = true;
-                
-            }
-        }
+  }
+
+  @Test
+  public void testPutAllGlobalLock() {
+    TreeMap trialMap = new TreeMap();
+    for (long i = 0; i < 1000; i++) {
+      trialMap.put(new Long(i), new Long(i));
     }
-    
-    protected  class Runner implements Runnable {
-        
-        public void run() {
-            testRegion.put(new Long(1000), new Long(1000));
-            PutAllGlobalLockJUnitTest.this.testOK = PutAllGlobalLockJUnitTest.this.done;
-        }
+    try {
+      testRegion.putAll(trialMap);
+      ThreadUtils.join(this.thread, 30 * 1000);
+      assertTrue(this.testOK);
+    } catch (Exception e) {
+      throw new AssertionError("Test has failed due to ", e);
     }
+  }
+
+  protected class Listener extends CacheListenerAdapter {
+
+    public void afterCreate(EntryEvent event) {
+      if (event.getKey().equals(new Long(1))) {
+        PutAllGlobalLockJUnitTest.this.thread = new Thread(new Runner());
+        thread.start();
+      } else if (event.getKey().equals(new Long(999))) {
+        PutAllGlobalLockJUnitTest.this.done = true;
+
+      }
+    }
+  }
+
+  protected class Runner implements Runnable {
+
+    public void run() {
+      testRegion.put(new Long(1000), new Long(1000));
+      PutAllGlobalLockJUnitTest.this.testOK = PutAllGlobalLockJUnitTest.this.done;
+    }
+  }
 }

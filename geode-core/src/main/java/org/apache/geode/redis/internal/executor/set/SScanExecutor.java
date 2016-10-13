@@ -125,7 +125,7 @@ public class SScanExecutor extends AbstractScanExecutor {
     int beforeCursor = 0;
     int numElements = 0;
     int i = -1;
-    for (ByteArrayWrapper value: (Collection<ByteArrayWrapper>) list) {
+    for (ByteArrayWrapper value : (Collection<ByteArrayWrapper>) list) {
       String key = Coder.bytesToString(value.toBytes());
       i++;
       if (beforeCursor < cursor) {

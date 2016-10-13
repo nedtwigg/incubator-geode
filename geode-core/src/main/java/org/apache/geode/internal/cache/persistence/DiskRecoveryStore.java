@@ -38,26 +38,44 @@ import org.apache.geode.internal.cache.versions.VersionTag;
  */
 public interface DiskRecoveryStore {
   public DiskRegionView getDiskRegionView();
+
   public DiskEntry getDiskEntry(Object key);
+
   public void foreachRegionEntry(LocalRegion.RegionEntryCallback callback);
+
   public DiskEntry initializeRecoveredEntry(Object key, DiskEntry.RecoveredEntry re);
+
   public DiskEntry updateRecoveredEntry(Object key, DiskEntry.RecoveredEntry re);
+
   public void destroyRecoveredEntry(Object key);
+
   public boolean lruLimitExceeded();
+
   public void copyRecoveredEntries(RegionMap rm);
+
   public void updateSizeOnFaultIn(Object key, int newSize, int bytesOnDisk);
+
   public int calculateValueSize(Object val);
+
   public int calculateRegionEntryValueSize(RegionEntry re);
+
   public RegionMap getRegionMap();
+
   public void handleDiskAccessException(DiskAccessException dae);
+
   public EvictionAttributes getEvictionAttributes();
-  public void initializeStats(long numEntriesInVM, long numOverflowOnDisk,
-      long numOverflowBytesOnDisk);
+
+  public void initializeStats(long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk);
+
   public void recordRecoveredGCVersion(VersionSource member, long gcVersion);
-  public void recordRecoveredVersonHolder(VersionSource member,
-      RegionVersionHolder versionHolder, boolean latestOplog);
+
+  public void recordRecoveredVersonHolder(VersionSource member, RegionVersionHolder versionHolder, boolean latestOplog);
+
   public void recordRecoveredVersionTag(VersionTag tag);
+
   public long getVersionForMember(VersionSource member);
+
   public void setRVVTrusted(boolean rvvTrusted);
+
   public DiskStoreImpl getDiskStore();
 }

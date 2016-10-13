@@ -34,7 +34,7 @@ public class RebalanceResultsImpl implements RebalanceResults, Serializable {
   private long totalPrimaryTransferTime;
   private int totalPrimaryTransfersCompleted;
   private long totalTime;
-  
+
   public void addDetails(PartitionRebalanceInfo details) {
     this.detailSet.add(details);
     totalBucketCreateBytes += details.getBucketCreateBytes();
@@ -58,8 +58,8 @@ public class RebalanceResultsImpl implements RebalanceResults, Serializable {
     totalBucketTransfersCompleted += details.totalBucketTransfersCompleted;
     totalPrimaryTransferTime += details.totalPrimaryTransferTime;
     totalPrimaryTransfersCompleted += details.totalPrimaryTransfersCompleted;
-    if(details.totalTime > totalTime)
-    totalTime = details.totalTime;
+    if (details.totalTime > totalTime)
+      totalTime = details.totalTime;
   }
 
   public Set<PartitionRebalanceInfo> getPartitionRebalanceDetails() {

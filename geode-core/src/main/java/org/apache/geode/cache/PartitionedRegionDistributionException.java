@@ -22,11 +22,9 @@ package org.apache.geode.cache;
  *
  * @since GemFire 5.1
  */
-public class PartitionedRegionDistributionException extends
-   CacheRuntimeException
-{
+public class PartitionedRegionDistributionException extends CacheRuntimeException {
   private static final long serialVersionUID = -3004093739855972548L;
-   
+
   public PartitionedRegionDistributionException() {
     super();
   }

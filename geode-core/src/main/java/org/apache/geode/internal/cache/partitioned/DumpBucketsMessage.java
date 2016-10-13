@@ -39,14 +39,14 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * @see org.apache.geode.internal.cache.PartitionedRegion#dumpAllBuckets(boolean)
  */
-public final class DumpBucketsMessage extends PartitionMessage
-{
+public final class DumpBucketsMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   boolean validateOnly;
   boolean bucketsOnly;
-  
-  public DumpBucketsMessage() {}
+
+  public DumpBucketsMessage() {
+  }
 
   private DumpBucketsMessage(Set recipients, int regionId, ReplyProcessor21 processor, boolean validate, boolean buckets) {
     super(recipients, regionId, processor);
@@ -54,22 +54,20 @@ public final class DumpBucketsMessage extends PartitionMessage
     this.bucketsOnly = buckets;
   }
 
-  public static PartitionResponse send(Set recipients, PartitionedRegion r, 
-      final boolean validateOnly, final boolean onlyBuckets) {
+  public static PartitionResponse send(Set recipients, PartitionedRegion r, final boolean validateOnly, final boolean onlyBuckets) {
     PartitionResponse p = new PartitionResponse(r.getSystem(), recipients);
     DumpBucketsMessage m = new DumpBucketsMessage(recipients, r.getPRId(), p, validateOnly, onlyBuckets);
 
     /*Set failures =*/ r.getDistributionManager().putOutgoing(m);
-//    if (failures != null && failures.size() > 0) {
-//      throw new PartitionedRegionCommunicationException("Failed sending ", m);
-//    }
+    //    if (failures != null && failures.size() > 0) {
+    //      throw new PartitionedRegionCommunicationException("Failed sending ", m);
+    //    }
     return p;
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, 
-      PartitionedRegion pr, long startTime) throws CacheException {
-    
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
+
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "DumpBucketsMessage operateOnRegion: {}", pr.getFullPath());
     }
@@ -93,16 +91,14 @@ public final class DumpBucketsMessage extends PartitionMessage
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.validateOnly = in.readBoolean();
     this.bucketsOnly = in.readBoolean();
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeBoolean(this.validateOnly);
     out.writeBoolean(this.bucketsOnly);

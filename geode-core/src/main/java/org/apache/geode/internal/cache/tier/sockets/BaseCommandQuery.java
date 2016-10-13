@@ -62,15 +62,10 @@ public abstract class BaseCommandQuery extends BaseCommand {
    *         false in case of failure.
    * @throws IOException
    */
-  protected boolean processQuery(Message msg, Query query,
-      String queryString, Set regionNames, long start, ServerCQ cqQuery,
-      QueryOperationContext queryContext, ServerConnection servConn, 
-      boolean sendResults)
-      throws IOException, InterruptedException {
-    return processQueryUsingParams(msg, query, queryString,
-        regionNames, start, cqQuery, queryContext, servConn, sendResults, null);
+  protected boolean processQuery(Message msg, Query query, String queryString, Set regionNames, long start, ServerCQ cqQuery, QueryOperationContext queryContext, ServerConnection servConn, boolean sendResults) throws IOException, InterruptedException {
+    return processQueryUsingParams(msg, query, queryString, regionNames, start, cqQuery, queryContext, servConn, sendResults, null);
   }
-  
+
   /**
    * Process the give query and sends the resulset back to the client.
    *
@@ -86,15 +81,11 @@ public abstract class BaseCommandQuery extends BaseCommand {
    *         false in case of failure.
    * @throws IOException
    */
-  protected boolean processQueryUsingParams(Message msg, Query query,
-      String queryString, Set regionNames, long start, ServerCQ cqQuery,
-      QueryOperationContext queryContext, ServerConnection servConn, 
-      boolean sendResults, Object[] params)
-      throws IOException, InterruptedException {
+  protected boolean processQueryUsingParams(Message msg, Query query, String queryString, Set regionNames, long start, ServerCQ cqQuery, QueryOperationContext queryContext, ServerConnection servConn, boolean sendResults, Object[] params) throws IOException, InterruptedException {
     ChunkedMessage queryResponseMsg = servConn.getQueryResponseMessage();
     CacheServerStats stats = servConn.getCacheServerStats();
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
-    
+
     {
       long oldStart = start;
       start = DistributionStats.getStatTime();
@@ -109,7 +100,7 @@ public abstract class BaseCommandQuery extends BaseCommand {
     // Process the query request
     try {
       // integrated security
-      for(Object regionName:regionNames){
+      for (Object regionName : regionNames) {
         this.securityService.authorizeRegionRead(regionName.toString());
       }
 
@@ -121,7 +112,7 @@ public abstract class BaseCommandQuery extends BaseCommand {
       // which is the only possibility now, but this may change
       // in the future if we support arbitrary queries
       Object result = null;
-      
+
       if (params != null) {
         result = query.execute(params);
       } else {
@@ -133,28 +124,24 @@ public abstract class BaseCommandQuery extends BaseCommand {
       //or not. If yes, throw an Exception.
       //This is a workaround/fix for Bug 36969
       Iterator itr = regionNames.iterator();
-      while(itr.hasNext()) {
-        String regionName = (String)itr.next();
-        if(crHelper.getRegion(regionName) == null) {
-          throw new RegionDestroyedException(
-              LocalizedStrings.BaseCommand_REGION_DESTROYED_DURING_THE_EXECUTION_OF_THE_QUERY.toLocalizedString(), regionName);
+      while (itr.hasNext()) {
+        String regionName = (String) itr.next();
+        if (crHelper.getRegion(regionName) == null) {
+          throw new RegionDestroyedException(LocalizedStrings.BaseCommand_REGION_DESTROYED_DURING_THE_EXECUTION_OF_THE_QUERY.toLocalizedString(), regionName);
         }
       }
       AuthorizeRequestPP postAuthzRequest = servConn.getPostAuthzRequest();
       if (postAuthzRequest != null) {
         if (cqQuery == null) {
-          queryContext = postAuthzRequest.queryAuthorize(queryString,
-              regionNames, result, queryContext, params);
-        }
-        else {
-          queryContext = postAuthzRequest.executeCQAuthorize(cqQuery.getName(),
-              queryString, regionNames, result, queryContext);
+          queryContext = postAuthzRequest.queryAuthorize(queryString, regionNames, result, queryContext, params);
+        } else {
+          queryContext = postAuthzRequest.executeCQAuthorize(cqQuery.getName(), queryString, regionNames, result, queryContext);
         }
         result = queryContext.getQueryResult();
       }
 
       if (result instanceof SelectResults) {
-        SelectResults selectResults = (SelectResults)result;
+        SelectResults selectResults = (SelectResults) result;
 
         if (logger.isDebugEnabled()) {
           logger.debug("Query Result size for : {} is {}", query.getQueryString(), selectResults.size());
@@ -166,8 +153,7 @@ public abstract class BaseCommandQuery extends BaseCommand {
 
         // check if resultset has serialized objects, so that they could be sent
         // as ObjectPartList
-        boolean hasSerializedObjects = ((DefaultQuery) query)
-            .isKeepSerialized();
+        boolean hasSerializedObjects = ((DefaultQuery) query).isKeepSerialized();
         if (logger.isDebugEnabled()) {
           logger.debug("Query Result for :{} has serialized objects: {}", query.getQueryString(), hasSerializedObjects);
         }
@@ -186,31 +172,28 @@ public abstract class BaseCommandQuery extends BaseCommand {
         isStructs = collectionType.getElementType().isStructType();
 
         // Check if the Query is from CQ execution.
-        if (cqQuery != null){
+        if (cqQuery != null) {
           // Check if the key can be sent to the client based on its version.
           sendCqResultsWithKey = sendCqResultsWithKey(servConn);
 
-          if (sendCqResultsWithKey){
+          if (sendCqResultsWithKey) {
             // Update the collection type to include key info.
-            collectionType = new CollectionTypeImpl(Collection.class,
-                new StructTypeImpl(new String[]{"key", "value"}));
+            collectionType = new CollectionTypeImpl(Collection.class, new StructTypeImpl(new String[] { "key", "value" }));
             isStructs = collectionType.getElementType().isStructType();
           }
         }
 
-        int numberOfChunks = (int)Math.ceil(selectResults.size() * 1.0
-            / maximumChunkSize);
+        int numberOfChunks = (int) Math.ceil(selectResults.size() * 1.0 / maximumChunkSize);
 
         if (logger.isTraceEnabled()) {
-          logger.trace("{}: Query results size: {}: Entries in chunk: {}: Number of chunks: {}",
-              servConn.getName(), selectResults.size(), maximumChunkSize, numberOfChunks);
+          logger.trace("{}: Query results size: {}: Entries in chunk: {}: Number of chunks: {}", servConn.getName(), selectResults.size(), maximumChunkSize, numberOfChunks);
         }
 
         long oldStart = start;
         start = DistributionStats.getStatTime();
         stats.incProcessQueryTime(start - oldStart);
 
-        if(sendResults){
+        if (sendResults) {
           queryResponseMsg.setMessageType(MessageType.RESPONSE);
           queryResponseMsg.setTransactionId(msg.getTransactionId());
           queryResponseMsg.sendHeader();
@@ -219,79 +202,67 @@ public abstract class BaseCommandQuery extends BaseCommand {
         if (sendResults && numberOfChunks == 0) {
           // Send 1 empty chunk
           if (logger.isTraceEnabled()) {
-            logger.trace("{}: Creating chunk: 0", servConn.getName() );
+            logger.trace("{}: Creating chunk: 0", servConn.getName());
           }
           writeQueryResponseChunk(new Object[0], collectionType, true, servConn);
           if (logger.isDebugEnabled()) {
             logger.debug("{}: Sent chunk (1 of 1) of query response for query {}", servConn.getName(), queryString);
           }
-        }
-        else {
+        } else {
           // Send response to client.
           // from 7.0, if the object is in the form of serialized byte array,
           // send it as a part of ObjectPartList
           if (hasSerializedObjects) {
-            sendResultsAsObjectPartList(numberOfChunks, servConn,
-                selectResults.asList(), isStructs, collectionType,
-                queryString, cqQuery, sendCqResultsWithKey, sendResults);
+            sendResultsAsObjectPartList(numberOfChunks, servConn, selectResults.asList(), isStructs, collectionType, queryString, cqQuery, sendCqResultsWithKey, sendResults);
           } else {
-            sendResultsAsObjectArray(selectResults, numberOfChunks, servConn,
-                isStructs, collectionType, queryString, cqQuery, sendCqResultsWithKey, sendResults);
+            sendResultsAsObjectArray(selectResults, numberOfChunks, servConn, isStructs, collectionType, queryString, cqQuery, sendCqResultsWithKey, sendResults);
           }
         }
 
-        if(cqQuery != null){
+        if (cqQuery != null) {
           // Set the CQ query result cache initialized flag.
           cqQuery.setCqResultsCacheInitialized();
         }
 
-      }
-      else if (result instanceof Integer) {
+      } else if (result instanceof Integer) {
         if (sendResults) {
           queryResponseMsg.setMessageType(MessageType.RESPONSE);
           queryResponseMsg.setTransactionId(msg.getTransactionId());
           queryResponseMsg.sendHeader();
           writeQueryResponseChunk(result, null, true, servConn);
         }
-      }
-      else {
+      } else {
         throw new QueryInvalidException(LocalizedStrings.BaseCommand_UNKNOWN_RESULT_TYPE_0.toLocalizedString(result.getClass()));
       }
       msg.clearParts();
-    }
-    catch (QueryInvalidException e) {
+    } catch (QueryInvalidException e) {
       // Handle this exception differently since it can contain
       // non-serializable objects.
       // java.io.NotSerializableException: antlr.CommonToken
       // Log a warning to show stack trace and create a new
       // QueryInvalidEsception on the original one's message (not cause).
-      logger.warn(LocalizedMessage.create(
-        LocalizedStrings.BaseCommand_UNEXPECTED_QUERYINVALIDEXCEPTION_WHILE_PROCESSING_QUERY_0, queryString), e);
-      QueryInvalidException qie = new QueryInvalidException(LocalizedStrings.BaseCommand_0_QUERYSTRING_IS_1
-          .toLocalizedString(new Object[] {e.getLocalizedMessage(), queryString}));
+      logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_UNEXPECTED_QUERYINVALIDEXCEPTION_WHILE_PROCESSING_QUERY_0, queryString), e);
+      QueryInvalidException qie = new QueryInvalidException(LocalizedStrings.BaseCommand_0_QUERYSTRING_IS_1.toLocalizedString(new Object[] { e.getLocalizedMessage(), queryString }));
       writeQueryResponseException(msg, qie, false, servConn);
       return false;
-    }
-    catch (DistributedSystemDisconnectedException se) {
+    } catch (DistributedSystemDisconnectedException se) {
       if (msg != null && logger.isDebugEnabled()) {
-        logger.debug("{}: ignoring message of type {} from client {} because shutdown occurred during message processing.",
-            servConn.getName(), MessageType.getString(msg.getMessageType()), servConn.getProxyID());
+        logger.debug("{}: ignoring message of type {} from client {} because shutdown occurred during message processing.", servConn.getName(), MessageType.getString(msg.getMessageType()), servConn.getProxyID());
       }
       servConn.setFlagProcessMessagesAsFalse();
       return false;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       // If an interrupted exception is thrown , rethrow it
       checkForInterrupt(servConn, e);
       // Otherwise, write a query response and continue
       // Check if query got canceled from QueryMonitor.
-      DefaultQuery defaultQuery = (DefaultQuery)query;
-      if ((defaultQuery).isCanceled()){
+      DefaultQuery defaultQuery = (DefaultQuery) query;
+      if ((defaultQuery).isCanceled()) {
         e = new QueryException(defaultQuery.getQueryCanceledException().getMessage(), e.getCause());
       }
       writeQueryResponseException(msg, e, false, servConn);
       return false;
-    }  finally {
+    } finally {
       // Since the query object is being shared in case of bind queries,
       // resetting the flag may cause inconsistency.
       // Also since this flag is only being set in code path executed by
@@ -316,8 +287,7 @@ public abstract class BaseCommandQuery extends BaseCommand {
     return false;
   }
 
-  protected void sendCqResponse(int msgType, String msgStr, int txId,
-      Throwable e, ServerConnection servConn) throws IOException {
+  protected void sendCqResponse(int msgType, String msgStr, int txId, Throwable e, ServerConnection servConn) throws IOException {
     ChunkedMessage cqMsg = servConn.getChunkedResponseMessage();
     if (logger.isDebugEnabled()) {
       logger.debug("CQ Response message :{}", msgStr);
@@ -365,10 +335,7 @@ public abstract class BaseCommandQuery extends BaseCommand {
     }
   }
 
-  private void sendResultsAsObjectArray(SelectResults selectResults,
-      int numberOfChunks, ServerConnection servConn, 
-      boolean isStructs, CollectionType collectionType, String queryString, ServerCQ cqQuery, boolean sendCqResultsWithKey, boolean sendResults)
-      throws IOException {
+  private void sendResultsAsObjectArray(SelectResults selectResults, int numberOfChunks, ServerConnection servConn, boolean isStructs, CollectionType collectionType, String queryString, ServerCQ cqQuery, boolean sendCqResultsWithKey, boolean sendResults) throws IOException {
     int resultIndex = 0;
     // For CQ only as we dont want CQEntries which have null values.
     int cqResultIndex = 0;
@@ -385,10 +352,10 @@ public abstract class BaseCommandQuery extends BaseCommand {
           break;
         }
         if (logger.isTraceEnabled()) {
-            logger.trace("{}: Adding entry [{}] to query results: {}", servConn.getName(), resultIndex, objs[resultIndex]);
+          logger.trace("{}: Adding entry [{}] to query results: {}", servConn.getName(), resultIndex, objs[resultIndex]);
         }
-        if (cqQuery != null){
-          CqEntry e = (CqEntry)objs[resultIndex];
+        if (cqQuery != null) {
+          CqEntry e = (CqEntry) objs[resultIndex];
           // The value may have become null because of entry invalidation.
           if (e.getValue() == null) {
             resultIndex++;
@@ -440,12 +407,10 @@ public abstract class BaseCommandQuery extends BaseCommand {
       }
 
       if (sendResults) {
-        writeQueryResponseChunk(results, collectionType,
-            (resultIndex == selectResults.size()), servConn);
+        writeQueryResponseChunk(results, collectionType, (resultIndex == selectResults.size()), servConn);
 
         if (logger.isDebugEnabled()) {
-          logger.debug("{}: Sent chunk ({} of {}) of query response for query: {}",
-              servConn.getName(), (j + 1), numberOfChunks, queryString);
+          logger.debug("{}: Sent chunk ({} of {}) of query response for query: {}", servConn.getName(), (j + 1), numberOfChunks, queryString);
         }
       }
       // If we have reached the last element of SelectResults then we should
@@ -456,27 +421,23 @@ public abstract class BaseCommandQuery extends BaseCommand {
     }
   }
 
-  private void sendResultsAsObjectPartList(int numberOfChunks,
-      ServerConnection servConn, List objs, boolean isStructs,
-      CollectionType collectionType, String queryString, ServerCQ cqQuery, boolean sendCqResultsWithKey, boolean sendResults)
-      throws IOException {
+  private void sendResultsAsObjectPartList(int numberOfChunks, ServerConnection servConn, List objs, boolean isStructs, CollectionType collectionType, String queryString, ServerCQ cqQuery, boolean sendCqResultsWithKey, boolean sendResults) throws IOException {
     int resultIndex = 0;
     Object result = null;
     for (int j = 0; j < numberOfChunks; j++) {
       if (logger.isTraceEnabled()) {
         logger.trace("{}: Creating chunk: {}", servConn.getName(), j);
       }
-      ObjectPartList serializedObjs = new ObjectPartList(maximumChunkSize,
-          false);
+      ObjectPartList serializedObjs = new ObjectPartList(maximumChunkSize, false);
       for (int i = 0; i < maximumChunkSize; i++) {
         if ((resultIndex) == objs.size()) {
           break;
         }
         if (logger.isTraceEnabled()) {
-            logger.trace("{}: Adding entry [{}] to query results: {}", servConn.getName() , resultIndex, objs.get(resultIndex));
+          logger.trace("{}: Adding entry [{}] to query results: {}", servConn.getName(), resultIndex, objs.get(resultIndex));
         }
-        if (cqQuery != null){
-          CqEntry e = (CqEntry)objs.get(resultIndex);
+        if (cqQuery != null) {
+          CqEntry e = (CqEntry) objs.get(resultIndex);
           // The value may have become null because of entry invalidation.
           if (e.getValue() == null) {
             resultIndex++;
@@ -498,54 +459,44 @@ public abstract class BaseCommandQuery extends BaseCommand {
           } else {
             result = e.getValue();
           }
-        }
-        else {
+        } else {
           result = objs.get(resultIndex);
         }
         if (sendResults) {
-          addToObjectPartList(serializedObjs, result, collectionType, false,
-              servConn, isStructs);
+          addToObjectPartList(serializedObjs, result, collectionType, false, servConn, isStructs);
         }
         resultIndex++;
       }
 
       if (sendResults) {
-        writeQueryResponseChunk(serializedObjs, collectionType,
-            ((j + 1) == numberOfChunks), servConn);
+        writeQueryResponseChunk(serializedObjs, collectionType, ((j + 1) == numberOfChunks), servConn);
 
         if (logger.isDebugEnabled()) {
-          logger.debug("{}: Sent chunk ({} of {}) of query response for query: {}",
-              servConn.getName(), (j + 1), numberOfChunks, queryString);
+          logger.debug("{}: Sent chunk ({} of {}) of query response for query: {}", servConn.getName(), (j + 1), numberOfChunks, queryString);
         }
       }
-   }
+    }
   }
 
-  private void addToObjectPartList(ObjectPartList serializedObjs,
-      Object res, CollectionType collectionType, boolean lastChunk,
-      ServerConnection servConn, boolean isStructs) throws IOException {
+  private void addToObjectPartList(ObjectPartList serializedObjs, Object res, CollectionType collectionType, boolean lastChunk, ServerConnection servConn, boolean isStructs) throws IOException {
     if (isStructs && (res instanceof Struct)) {
       Object[] values = ((Struct) res).getFieldValues();
       // create another ObjectPartList for the struct
-      ObjectPartList serializedValueObjs = new ObjectPartList(values.length,
-          false);
+      ObjectPartList serializedValueObjs = new ObjectPartList(values.length, false);
       for (Object value : values) {
         addObjectToPartList(serializedValueObjs, null, value);
       }
-      serializedObjs.addPart(null, serializedValueObjs, ObjectPartList.OBJECT,
-          null);
+      serializedObjs.addPart(null, serializedValueObjs, ObjectPartList.OBJECT, null);
     } else if (res instanceof Object[]) {// for CQ key-value pairs
       Object[] values = ((Object[]) res);
       // create another ObjectPartList for the Object[]
-      ObjectPartList serializedValueObjs = new ObjectPartList(values.length,
-          false);
-      for(int i=0; i<values.length; i+=2) {
+      ObjectPartList serializedValueObjs = new ObjectPartList(values.length, false);
+      for (int i = 0; i < values.length; i += 2) {
         Object key = values[i];
-        Object value = values[i+1];
+        Object value = values[i + 1];
         addObjectToPartList(serializedValueObjs, key, value);
       }
-      serializedObjs.addPart(null, serializedValueObjs, ObjectPartList.OBJECT,
-          null);
+      serializedObjs.addPart(null, serializedValueObjs, ObjectPartList.OBJECT, null);
     } else { //for deserialized objects
       addObjectToPartList(serializedObjs, null, res);
     }
@@ -555,17 +506,16 @@ public abstract class BaseCommandQuery extends BaseCommand {
     Object object = value;
     boolean isObject = true;
     if (value instanceof CachedDeserializable) {
-      object = ((CachedDeserializable)value).getSerializedValue();
-    }
-    else if(value instanceof byte[]){
+      object = ((CachedDeserializable) value).getSerializedValue();
+    } else if (value instanceof byte[]) {
       isObject = false;
     }
 
     object = this.securityService.postProcess(null, key, object, isObject);
-    if(key!=null){
+    if (key != null) {
       objPartList.addPart(null, key, ObjectPartList.OBJECT, null);
     }
-    objPartList.addPart(null, object, isObject?ObjectPartList.OBJECT:ObjectPartList.BYTES, null);
+    objPartList.addPart(null, object, isObject ? ObjectPartList.OBJECT : ObjectPartList.BYTES, null);
   }
 
 }

@@ -85,8 +85,7 @@ public class HttpInvocationHandler implements InvocationHandler {
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
     if (isAttributeAccessor(method)) {
       return getOperationInvoker().getAttribute(getResourceName(), getAttributeName(method));
-    }
-    else {
+    } else {
       return getOperationInvoker().invoke(getResourceName(), method.getName(), args, getSignature(method));
     }
   }

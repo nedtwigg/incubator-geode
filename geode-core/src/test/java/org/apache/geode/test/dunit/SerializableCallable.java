@@ -45,9 +45,9 @@ import java.util.concurrent.Callable;
  * 
  */
 public abstract class SerializableCallable<T> implements SerializableCallableIF<T> {
-  
+
   private static final long serialVersionUID = -5914706166172952484L;
-  
+
   private String name;
 
   public SerializableCallable() {

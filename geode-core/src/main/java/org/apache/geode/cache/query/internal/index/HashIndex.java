@@ -94,7 +94,7 @@ import org.apache.geode.internal.offheap.StoredObject;
  */
 public class HashIndex extends AbstractIndex {
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * ThreadLocal for Map for under update RegionEntries=>oldKey (reverse map) if
    * {@link IndexManager#INPLACE_OBJECT_MODIFICATION} is false.
@@ -109,7 +109,7 @@ public class HashIndex extends AbstractIndex {
 
   /**
    * Map for RegionEntries=>value of indexedExpression (reverse map)
- maintained by the HashIndexSet entrieSet
+  maintained by the HashIndexSet entrieSet
    */
   private ConcurrentMap<Object, Object> entryToValuesMap = null;
 
@@ -137,25 +137,18 @@ public class HashIndex extends AbstractIndex {
    * @param definitions
    *          the canonicalized definitions
    */
-  public HashIndex(String indexName, Region region, String fromClause,
-      String indexedExpression, String projectionAttributes,
-      String origFromClause, String origIndexExpr, String[] definitions,
-      IndexStatistics stats) {
-    super(indexName, region, fromClause, indexedExpression,
-        projectionAttributes, origFromClause, origIndexExpr, definitions, stats);
+  public HashIndex(String indexName, Region region, String fromClause, String indexedExpression, String projectionAttributes, String origFromClause, String origIndexExpr, String[] definitions, IndexStatistics stats) {
+    super(indexName, region, fromClause, indexedExpression, projectionAttributes, origFromClause, origIndexExpr, definitions, stats);
     RegionAttributes ra = region.getAttributes();
 
-
     if (IndexManager.isObjectModificationInplace()) {
-      entryToValuesMap = new ConcurrentHashMap(ra.getInitialCapacity(),
-          ra.getLoadFactor(), ra.getConcurrencyLevel());
-    }
-    else {
+      entryToValuesMap = new ConcurrentHashMap(ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel());
+    } else {
       if (entryToOldKeysMap == null) {
         entryToOldKeysMap = new ThreadLocal<Object2ObjectOpenHashMap>();
       }
     }
-    
+
     entriesSet = new HashIndexSet();
   }
 
@@ -177,8 +170,7 @@ public class HashIndex extends AbstractIndex {
   public void initializeIndex(boolean loadEntries) throws IMQException {
     long startTime = System.nanoTime();
     this.evaluator.initializeIndex(loadEntries);
-    this.internalIndexStats.incNumUpdates(((IMQEvaluator) this.evaluator)
-        .getTotalEntriesUpdated());
+    this.internalIndexStats.incNumUpdates(((IMQEvaluator) this.evaluator).getTotalEntriesUpdated());
     long endTime = System.nanoTime();
     this.internalIndexStats.incUpdateTime(endTime - startTime);
   }
@@ -201,8 +193,7 @@ public class HashIndex extends AbstractIndex {
    * @param entry
    * @throws IMQException
    */
-  private void basicAddMapping(Object key, RegionEntry entry)
-      throws IMQException {
+  private void basicAddMapping(Object key, RegionEntry entry) throws IMQException {
 
     try {
       if (DefaultQuery.testHook != null) {
@@ -216,17 +207,16 @@ public class HashIndex extends AbstractIndex {
           //meaning we do not have an old mapping
           // we will continue to remove the old mapping to be safe and log a fine level message
           Object oldKey = null;
-          if (IndexManager.isObjectModificationInplace() && this.entryToValuesMap.containsKey(entry)){
+          if (IndexManager.isObjectModificationInplace() && this.entryToValuesMap.containsKey(entry)) {
             oldKey = this.entryToValuesMap.get(entry);
-          }
-          else if (!IndexManager.isObjectModificationInplace() && this.entryToOldKeysMap != null) {
+          } else if (!IndexManager.isObjectModificationInplace() && this.entryToOldKeysMap != null) {
             Map oldKeyMap = this.entryToOldKeysMap.get();
             if (oldKeyMap != null) {
               oldKey = TypeUtils.indexKeyFor(oldKeyMap.get(entry));
             }
           }
           if (oldKey != null) {
-            if (logger.isDebugEnabled()) { 
+            if (logger.isDebugEnabled()) {
               logger.debug("A removed or invalid token was being added, and we had an old mapping.");
             }
             removeFromEntriesSet(oldKey, entry, true);
@@ -234,14 +224,14 @@ public class HashIndex extends AbstractIndex {
           return;
         }
       }
-      
+
       // Before adding the entry with new value, remove it from reverse map and
       // using the oldValue remove entry from the forward map.
       // Reverse-map is used based on the system property
       Object oldKey = getOldKey(entry);
-      
+
       int indexSlot = this.entriesSet.add(newKey, entry);
-      
+
       if (indexSlot >= 0) {
         // Update the reverse map
         if (IndexManager.isObjectModificationInplace()) {
@@ -255,11 +245,10 @@ public class HashIndex extends AbstractIndex {
 
       }
     } catch (TypeMismatchException ex) {
-      throw new IMQException("Could not add object of type "
-          + key.getClass().getName(), ex);
+      throw new IMQException("Could not add object of type " + key.getClass().getName(), ex);
     }
   }
-  
+
   private Object getOldKey(RegionEntry entry) throws TypeMismatchException {
     Object oldKey = null;
     if (IndexManager.isObjectModificationInplace() && this.entryToValuesMap.containsKey(entry)) {
@@ -313,8 +302,7 @@ public class HashIndex extends AbstractIndex {
    *          true only when RegionEntry is invalidated/destroyed.
    * @throws IMQException
    */
-  private void basicRemoveMapping(Object key, RegionEntry entry,
-      boolean updateReverseMap) throws IMQException {
+  private void basicRemoveMapping(Object key, RegionEntry entry, boolean updateReverseMap) throws IMQException {
     // after removal, trim the ArrayList to prevent
     // too much extra space.
     // Ideally we would only trim if there is excessive
@@ -325,15 +313,14 @@ public class HashIndex extends AbstractIndex {
       Object newKey = TypeUtils.indexKeyFor(key);
       removeFromEntriesSet(newKey, entry, updateReverseMap);
     } catch (TypeMismatchException ex) {
-      throw new IMQException("Could not add object of type "
-          + key.getClass().getName(), ex);
+      throw new IMQException("Could not add object of type " + key.getClass().getName(), ex);
     }
   }
-  
+
   private void removeFromEntriesSet(Object newKey, RegionEntry entry, boolean updateReverseMap) {
     removeFromEntriesSet(newKey, entry, updateReverseMap, -1);
   }
-  
+
   private void removeFromEntriesSet(Object newKey, RegionEntry entry, boolean updateReverseMap, int ignoreThisSlot) {
     if (this.entriesSet.remove(newKey, entry, ignoreThisSlot)) {
       if (updateReverseMap && IndexManager.isObjectModificationInplace()) {
@@ -351,21 +338,18 @@ public class HashIndex extends AbstractIndex {
   /**
    * computes the resultset of an equijoin query
    */
-  public List queryEquijoinCondition(IndexProtocol indx,
-      ExecutionContext context) throws TypeMismatchException,
-      FunctionDomainException, NameResolutionException,
-      QueryInvocationTargetException {
+  public List queryEquijoinCondition(IndexProtocol indx, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
     // get a read lock when doing a lookup
     long start = updateIndexUseStats();
-    ((AbstractIndex)indx).updateIndexUseStats();
+    ((AbstractIndex) indx).updateIndexUseStats();
     List data = new ArrayList();
-    Iterator  inner = null;
+    Iterator inner = null;
     try {
       // We will iterate over each of the valueToEntries Map to obtain the keys
       Iterator outer = entriesSet.iterator();
-      if(indx instanceof CompactRangeIndex){
+      if (indx instanceof CompactRangeIndex) {
         inner = ((CompactRangeIndex) indx).getIndexStorage().iterator(null);
-      } else{
+      } else {
         inner = ((RangeIndex) indx).getValueToEntriesMap().entrySet().iterator();
       }
       Map.Entry outerEntry = null;
@@ -374,46 +358,40 @@ public class HashIndex extends AbstractIndex {
       Object innerKey = null;
       // boolean incrementOuter = true;
       boolean incrementInner = true;
-    outer: 
-      while (outer.hasNext()) {
+      outer: while (outer.hasNext()) {
         // if (incrementOuter) {
         outerEntry = (Map.Entry) outer.next();
         //}
         outerKey = outerEntry.getKey();
-      inner:
-        while (!incrementInner || inner.hasNext()) {
+        inner: while (!incrementInner || inner.hasNext()) {
           if (incrementInner) {
             innerEntry = inner.next();
-            if(innerEntry instanceof IndexStoreEntry){
-              innerKey = ((IndexStoreEntry)innerEntry).getDeserializedKey();
-            } else{
-              innerKey = ((Map.Entry)innerEntry).getKey();
+            if (innerEntry instanceof IndexStoreEntry) {
+              innerKey = ((IndexStoreEntry) innerEntry).getDeserializedKey();
+            } else {
+              innerKey = ((Map.Entry) innerEntry).getKey();
             }
           }
           int compare = ((Comparable) outerKey).compareTo(innerKey);
           if (compare == 0) {
             Object innerValue = null;
-            if(innerEntry instanceof IndexStoreEntry){
+            if (innerEntry instanceof IndexStoreEntry) {
               innerValue = ((CompactRangeIndex) indx).getIndexStorage().get(outerKey);
-            } else{
-              innerValue = ((Map.Entry)innerEntry).getValue();
+            } else {
+              innerValue = ((Map.Entry) innerEntry).getValue();
             }
-            populateListForEquiJoin(data,
-                outerEntry.getValue(),
-                innerValue, context, innerKey);            
-            
+            populateListForEquiJoin(data, outerEntry.getValue(), innerValue, context, innerKey);
+
             incrementInner = true;
             continue outer;
-          }
-          else if (compare < 0) {
+          } else if (compare < 0) {
             //Asif :The outer key is smaller than the inner key. That means
             // that we need
             // to increment the outer loop without moving inner loop.
             //incrementOuter = true;
             incrementInner = false;
             continue outer;
-          }
-          else {
+          } else {
             //The outer key is greater than inner key , so increment the
             // inner loop without changing outer
             incrementInner = true;
@@ -422,9 +400,8 @@ public class HashIndex extends AbstractIndex {
         break;
       }
       return data;
-    }
-    finally {
-      ((AbstractIndex)indx).updateIndexUseEndStats(start);
+    } finally {
+      ((AbstractIndex) indx).updateIndexUseEndStats(start);
       updateIndexUseEndStats(start);
       if (inner != null && indx instanceof CompactRangeIndex) {
         ((CloseableIterator<IndexStoreEntry>) inner).close();
@@ -449,10 +426,7 @@ public class HashIndex extends AbstractIndex {
    * @throws NameResolutionException
    * @throws QueryInvocationTargetException
    */
-  private boolean verifyInnerAndOuterEntryValues(RegionEntry entry,
-      ExecutionContext context, IndexInfo indexInfo, Object keyVal)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  private boolean verifyInnerAndOuterEntryValues(RegionEntry entry, ExecutionContext context, IndexInfo indexInfo, Object keyVal) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     // Verify index key in value.
     CompactRangeIndex index = (CompactRangeIndex) indexInfo._getIndex();
     RuntimeIterator runtimeItr = index.getRuntimeIteratorForThisIndex(context, indexInfo);
@@ -474,13 +448,9 @@ public class HashIndex extends AbstractIndex {
    * @throws TypeMismatchException
    * @throws FunctionDomainException
    */
-  private void populateListForEquiJoin(List list, Collection outerEntries,
-      Collection innerEntries, ExecutionContext context, Object key)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  private void populateListForEquiJoin(List list, Collection outerEntries, Collection innerEntries, ExecutionContext context, Object key) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
 
-    Assert.assertTrue((outerEntries != null && innerEntries != null),
-        "OuterEntries or InnerEntries must not be null");
+    Assert.assertTrue((outerEntries != null && innerEntries != null), "OuterEntries or InnerEntries must not be null");
 
     Object values[][] = new Object[2][];
     int j = 0;
@@ -502,8 +472,7 @@ public class HashIndex extends AbstractIndex {
         // are consistent with index key values.
         boolean ok = true;
         if (re.isUpdateInProgress()) {
-          IndexInfo[] indexInfo = (IndexInfo[]) context
-              .cacheGet(CompiledValue.INDEX_INFO);
+          IndexInfo[] indexInfo = (IndexInfo[]) context.cacheGet(CompiledValue.INDEX_INFO);
           IndexInfo indInfo = (j == 0) ? indexInfo[0] : indexInfo[1];
 
           ok = verifyInnerAndOuterEntryValues(re, context, indInfo, key);
@@ -517,8 +486,7 @@ public class HashIndex extends AbstractIndex {
     list.add(values);
   }
 
-  public int getSizeEstimate(Object key, int operator, int matchLevel)
-      throws TypeMismatchException {
+  public int getSizeEstimate(Object key, int operator, int matchLevel) throws TypeMismatchException {
     // Get approx size;
     int size = 0;
     long start = updateIndexUseStats(false);
@@ -528,7 +496,7 @@ public class HashIndex extends AbstractIndex {
         key = TypeUtils.indexKeyFor(key);
         size = this.entriesSet.size(key);
       }
-      break;
+        break;
       case OQLLexerTokenTypes.TOK_NE_ALT:
       case OQLLexerTokenTypes.TOK_NE:
         size = this.region.size();
@@ -557,26 +525,18 @@ public class HashIndex extends AbstractIndex {
   }
 
   /** Method called while appropriate lock held on index */
-  private void lockedQueryPrivate(Object key, int operator, Collection results,
-      CompiledValue iterOps, RuntimeIterator runtimeItr,
-      ExecutionContext context, Set keysToRemove, List projAttrib,
-      SelectResults intermediateResults, boolean isIntersection)
-      throws TypeMismatchException, FunctionDomainException,
-      NameResolutionException, QueryInvocationTargetException {
+  private void lockedQueryPrivate(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, Set keysToRemove, List projAttrib, SelectResults intermediateResults, boolean isIntersection) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
     if (keysToRemove == null) {
       keysToRemove = new HashSet(0);
     }
     int limit = -1;
 
-    Boolean applyLimit = (Boolean) context
-        .cacheGet(CompiledValue.CAN_APPLY_LIMIT_AT_INDEX);
+    Boolean applyLimit = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_LIMIT_AT_INDEX);
     if (applyLimit != null && applyLimit.booleanValue()) {
-      limit = ((Integer) context.cacheGet(CompiledValue.RESULT_LIMIT))
-          .intValue();
+      limit = ((Integer) context.cacheGet(CompiledValue.RESULT_LIMIT)).intValue();
     }
 
-    Boolean orderByClause = (Boolean) context
-        .cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
+    Boolean orderByClause = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
     boolean applyOrderBy = false;
     boolean asc = true;
     List orderByAttrs = null;
@@ -588,35 +548,22 @@ public class HashIndex extends AbstractIndex {
       applyOrderBy = true;
       multiColOrderBy = orderByAttrs.size() > 1;
     }
-    evaluate(key, operator, results, iterOps, runtimeItr, context,
-        keysToRemove, projAttrib, intermediateResults, isIntersection, limit,
-        applyOrderBy, orderByAttrs);
+    evaluate(key, operator, results, iterOps, runtimeItr, context, keysToRemove, projAttrib, intermediateResults, isIntersection, limit, applyOrderBy, orderByAttrs);
   }
 
   /** Method called while appropriate lock held on index */
-  void lockedQuery(Object lowerBoundKey, int lowerBoundOperator,
-      Object upperBoundKey, int upperBoundOperator, Collection results,
-      Set keysToRemove, ExecutionContext context) throws TypeMismatchException,
-      FunctionDomainException, NameResolutionException,
-      QueryInvocationTargetException {
-    throw new UnsupportedOperationException(
-        "Range grouping for HashIndex condition is not supported");
+  void lockedQuery(Object lowerBoundKey, int lowerBoundOperator, Object upperBoundKey, int upperBoundOperator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+    throw new UnsupportedOperationException("Range grouping for HashIndex condition is not supported");
 
   }
 
-  private void evaluate(Object key, int operator, Collection results,
-      CompiledValue iterOps, RuntimeIterator runtimeItr,
-      ExecutionContext context, Set keysToRemove, List projAttrib,
-      SelectResults intermediateResults, boolean isIntersection, int limit,
-      boolean applyOrderBy, List orderByAttribs) throws TypeMismatchException,
-      FunctionDomainException, NameResolutionException,
-      QueryInvocationTargetException {
+  private void evaluate(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, Set keysToRemove, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit, boolean applyOrderBy, List orderByAttribs) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
     boolean multiColOrderBy = false;
     if (keysToRemove == null) {
       keysToRemove = new HashSet(0);
     }
     key = TypeUtils.indexKeyFor(key);
-    if(key == null) {
+    if (key == null) {
       key = IndexManager.NULL;
     }
     boolean asc = true;
@@ -628,21 +575,17 @@ public class HashIndex extends AbstractIndex {
 
     try {
       long iteratorCreationTime = GemFireCacheImpl.getInstance().cacheTimeMillis();
-      
+
       switch (operator) {
       case OQLLexerTokenTypes.TOK_EQ:
         assert keysToRemove.isEmpty();
-        addToResultsFromEntries(this.entriesSet.get(key), results, iterOps,
-            runtimeItr, context, projAttrib, intermediateResults,
-            isIntersection, multiColOrderBy ? -1 : limit, keysToRemove, applyOrderBy, asc, iteratorCreationTime);
+        addToResultsFromEntries(this.entriesSet.get(key), results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit, keysToRemove, applyOrderBy, asc, iteratorCreationTime);
         break;
       case OQLLexerTokenTypes.TOK_NE_ALT:
       case OQLLexerTokenTypes.TOK_NE: {
         keysToRemove.add(key);
-        addToResultsFromEntries(this.entriesSet.getAllNotMatching(keysToRemove), results, iterOps,
-            runtimeItr, context, projAttrib, intermediateResults,
-            isIntersection, multiColOrderBy ? -1 : limit, keysToRemove, applyOrderBy, asc, iteratorCreationTime);
-        }
+        addToResultsFromEntries(this.entriesSet.getAllNotMatching(keysToRemove), results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit, keysToRemove, applyOrderBy, asc, iteratorCreationTime);
+      }
         break;
       default:
         throw new AssertionError("Operator = " + operator);
@@ -651,14 +594,10 @@ public class HashIndex extends AbstractIndex {
       if (operator == OQLLexerTokenTypes.TOK_EQ) { // result is empty
         // set
         return;
-      } else if (operator == OQLLexerTokenTypes.TOK_NE
-          || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put
+      } else if (operator == OQLLexerTokenTypes.TOK_NE || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put
         keysToRemove.add(key);
         long iteratorCreationTime = GemFireCacheImpl.getInstance().cacheTimeMillis();
-        addToResultsFromEntries(this.entriesSet.getAllNotMatching(keysToRemove), results, iterOps,
-            runtimeItr, context, projAttrib, intermediateResults,
-            isIntersection, multiColOrderBy ? -1 : limit, keysToRemove, applyOrderBy, asc,
-                iteratorCreationTime);
+        addToResultsFromEntries(this.entriesSet.getAllNotMatching(keysToRemove), results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit, keysToRemove, applyOrderBy, asc, iteratorCreationTime);
       } else { // otherwise throw exception
         throw new TypeMismatchException("", ex);
       }
@@ -668,7 +607,7 @@ public class HashIndex extends AbstractIndex {
   @Override
   void instantiateEvaluator(IndexCreationHelper ich) {
     this.evaluator = new IMQEvaluator(ich);
-    this.entriesSet.setEvaluator((HashIndex.IMQEvaluator)evaluator);
+    this.entriesSet.setEvaluator((HashIndex.IMQEvaluator) evaluator);
     this.comparator = ((IMQEvaluator) evaluator).comparator;
   }
 
@@ -676,25 +615,18 @@ public class HashIndex extends AbstractIndex {
     return this.evaluator.getIndexResultSetType();
   }
 
-
   /**
    * @param entriesIter
    *          is Iterable<RegionEntry>
    */
-  private void addToResultsFromEntries(Iterator entriesIter, Collection result,
-      CompiledValue iterOps, RuntimeIterator runtimeItr,
-      ExecutionContext context, List projAttrib,
-      SelectResults intermediateResults, boolean isIntersection, int limit, Set keysToRemove, boolean applyOrderBy, boolean asc, long iteratorCreationTime)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  private void addToResultsFromEntries(Iterator entriesIter, Collection result, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit, Set keysToRemove, boolean applyOrderBy, boolean asc, long iteratorCreationTime) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     QueryObserver observer = QueryObserverHolder.getInstance();
-    if ( result == null
-        || (limit != -1 && result != null && result.size() == limit)) {
+    if (result == null || (limit != -1 && result != null && result.size() == limit)) {
       return;
     }
     List orderedKeys = null;
     List orderedResults = null;
-    if(applyOrderBy) {
+    if (applyOrderBy) {
       orderedKeys = new ArrayList();
       orderedResults = new ArrayList();
     }
@@ -713,8 +645,8 @@ public class HashIndex extends AbstractIndex {
       if (obj != null && obj != HashIndexSet.REMOVED) {
         RegionEntry re = (RegionEntry) obj;
         if (applyOrderBy) {
-          key = ((HashIndex.IMQEvaluator)evaluator).evaluateKey(obj);
-          orderedKeys.add(new Object[]{key,i++});
+          key = ((HashIndex.IMQEvaluator) evaluator).evaluateKey(obj);
+          orderedKeys.add(new Object[] { key, i++ });
           addValueToResultSet(re, orderedResults, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit, observer, iteratorCreationTime);
         } else {
           addValueToResultSet(re, result, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit, observer, iteratorCreationTime);
@@ -738,28 +670,21 @@ public class HashIndex extends AbstractIndex {
       Object[] temp = orderedResults.toArray();
       List tempResults = new ArrayList(temp.length);
       for (Object o : orderedKeys) {
-        int index = (Integer) ((Object[])o)[1];
+        int index = (Integer) ((Object[]) o)[1];
         tempResults.add(temp[index]);
       }
       result.addAll(tempResults);
     }
   }
 
-  private void addValueToResultSet(RegionEntry re, Collection result,
-      CompiledValue iterOps, RuntimeIterator runtimeItr,
-      ExecutionContext context, List projAttrib,
-      SelectResults intermediateResults, boolean isIntersection, int limit,
-      QueryObserver observer, long iteratorCreationTime) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  private void addValueToResultSet(RegionEntry re, Collection result, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit, QueryObserver observer, long iteratorCreationTime) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     Object value = getTargetObject(re);
     if (value != null) {
       boolean ok = true;
       //If the region entry is currently being updated or it has been modified since starting iteration
       //we will reevaluate to be sure the value still matches the key
       if (re.isUpdateInProgress() || IndexManager.needsRecalculation(iteratorCreationTime, re.getLastModified())) {
-        IndexInfo indexInfo = (IndexInfo) context
-            .cacheGet(CompiledValue.INDEX_INFO);
+        IndexInfo indexInfo = (IndexInfo) context.cacheGet(CompiledValue.INDEX_INFO);
         if (runtimeItr == null) {
           runtimeItr = getRuntimeIteratorForThisIndex(context, indexInfo);
           if (runtimeItr == null) {
@@ -781,8 +706,7 @@ public class HashIndex extends AbstractIndex {
         if (context != null && context.isCqQueryContext()) {
           result.add(new CqEntry(re.getKey(), value));
         } else {
-          applyProjection(projAttrib, context, result, value,
-              intermediateResults, isIntersection);
+          applyProjection(projAttrib, context, result, value, intermediateResults, isIntersection);
         }
         if (limit != -1 && result.size() == limit) {
           observer.limitAppliedAtIndexLevel(this, limit, result);
@@ -791,7 +715,7 @@ public class HashIndex extends AbstractIndex {
       }
     }
   }
-  
+
   /**
    * This evaluates the left and right side of a where condition for which this
    * Index was used. Like, if condition is "ID > 1", {@link IndexInfo} will
@@ -811,9 +735,7 @@ public class HashIndex extends AbstractIndex {
    * @throws NameResolutionException
    * @throws QueryInvocationTargetException
    */
-  private boolean evaluateEntry(IndexInfo indexInfo, ExecutionContext context,
-      Object keyVal) throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  private boolean evaluateEntry(IndexInfo indexInfo, ExecutionContext context, Object keyVal) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     CompiledValue path = ((IndexInfo) indexInfo)._path();
     Object left = path.evaluate(context);
     CompiledValue key = ((IndexInfo) indexInfo)._key();
@@ -838,8 +760,7 @@ public class HashIndex extends AbstractIndex {
     if (left == null && right == null) {
       return Boolean.TRUE;
     } else {
-      return ((Boolean) TypeUtils.compare(left, right, operator))
-          .booleanValue();
+      return ((Boolean) TypeUtils.compare(left, right, operator)).booleanValue();
     }
   }
 
@@ -866,7 +787,7 @@ public class HashIndex extends AbstractIndex {
     }
     return ((LocalRegion) getRegion()).new NonTXEntry(entry);
   }
-  
+
   private Object getTargetObjectForUpdate(RegionEntry entry) {
     if (this.indexOnValues) {
       Object o = entry.getValueOffHeapOrDiskWithoutFaultIn((LocalRegion) getRegion());
@@ -879,7 +800,7 @@ public class HashIndex extends AbstractIndex {
             ohval.release();
           }
         } else if (o instanceof CachedDeserializable) {
-          o = ((CachedDeserializable)o).getDeserializedForReading();
+          o = ((CachedDeserializable) o).getDeserializedForReading();
         }
       } catch (EntryDestroyedException ede) {
         return Token.INVALID;
@@ -914,48 +835,43 @@ public class HashIndex extends AbstractIndex {
 
   public String dump() {
     StringBuffer sb = new StringBuffer(toString()).append(" {\n");
-//    sb.append("Null Values\n");
-//    Iterator nI = nullMappedEntries.iterator();
-//    while (nI.hasNext()) {
-//      RegionEntry e = (RegionEntry) nI.next();
-//      Object value = getTargetObject(e);
-//      sb.append("  RegionEntry.key = ").append(e.getKey());
-//      sb.append("  Value.type = ").append(value.getClass().getName());
-//      if (value instanceof Collection) {
-//        sb.append("  Value.size = ").append(((Collection) value).size());
-//      }
-//      sb.append("\n");
-//    }
-//    sb.append(" -----------------------------------------------\n");
-//    sb.append("Undefined Values\n");
-//    Iterator uI = undefinedMappedEntries.iterator();
-//    while (uI.hasNext()) {
-//      RegionEntry e = (RegionEntry) uI.next();
-//      Object value = getTargetObject(e);
-//      sb.append("  RegionEntry.key = ").append(e.getKey());
-//      sb.append("  Value.type = ").append(value.getClass().getName());
-//      if (value instanceof Collection) {
-//        sb.append("  Value.size = ").append(((Collection) value).size());
-//      }
-//      sb.append("\n");
-//    }
+    //    sb.append("Null Values\n");
+    //    Iterator nI = nullMappedEntries.iterator();
+    //    while (nI.hasNext()) {
+    //      RegionEntry e = (RegionEntry) nI.next();
+    //      Object value = getTargetObject(e);
+    //      sb.append("  RegionEntry.key = ").append(e.getKey());
+    //      sb.append("  Value.type = ").append(value.getClass().getName());
+    //      if (value instanceof Collection) {
+    //        sb.append("  Value.size = ").append(((Collection) value).size());
+    //      }
+    //      sb.append("\n");
+    //    }
+    //    sb.append(" -----------------------------------------------\n");
+    //    sb.append("Undefined Values\n");
+    //    Iterator uI = undefinedMappedEntries.iterator();
+    //    while (uI.hasNext()) {
+    //      RegionEntry e = (RegionEntry) uI.next();
+    //      Object value = getTargetObject(e);
+    //      sb.append("  RegionEntry.key = ").append(e.getKey());
+    //      sb.append("  Value.type = ").append(value.getClass().getName());
+    //      if (value instanceof Collection) {
+    //        sb.append("  Value.size = ").append(((Collection) value).size());
+    //      }
+    //      sb.append("\n");
+    //    }
     sb.append(" -----------------------------------------------\n");
     Iterator i1 = this.entriesSet.iterator();
     while (i1.hasNext()) {
       Map.Entry indexEntry = (Map.Entry) i1.next();
       sb.append(" Key = " + indexEntry.getKey()).append("\n");
-      sb.append(" Value Type = ")
-          .append(" " + indexEntry.getValue().getClass().getName())
-          .append("\n");
+      sb.append(" Value Type = ").append(" " + indexEntry.getValue().getClass().getName()).append("\n");
       if (indexEntry.getValue() instanceof Collection) {
-        sb.append(" Value Size = ")
-            .append(" " + ((Collection) indexEntry.getValue()).size())
-            .append("\n");
+        sb.append(" Value Size = ").append(" " + ((Collection) indexEntry.getValue()).size()).append("\n");
       } else if (indexEntry.getValue() instanceof RegionEntry) {
         sb.append(" Value Size = ").append(" " + 1).append("\n");
       } else {
-        throw new AssertionError("value instance of "
-            + indexEntry.getValue().getClass().getName());
+        throw new AssertionError("value instance of " + indexEntry.getValue().getClass().getName());
       }
       Collection entrySet = regionEntryCollection(indexEntry.getValue());
       Iterator i2 = entrySet.iterator();
@@ -1100,8 +1016,7 @@ public class HashIndex extends AbstractIndex {
       sb.append("No Values = ").append(getNumberOfValues()).append("\n");
       sb.append("No Uses = ").append(getTotalUses()).append("\n");
       sb.append("No Updates = ").append(getNumUpdates()).append("\n");
-      sb.append("Total Update time = ").append(getTotalUpdateTime())
-          .append("\n");
+      sb.append("Total Update time = ").append(getTotalUpdateTime()).append("\n");
       return sb.toString();
     }
   }
@@ -1199,7 +1114,7 @@ public class HashIndex extends AbstractIndex {
     public void expansion(List expandedResults, Object lowerBoundKey, Object upperBoundKey, int lowerBoundOperator, int upperBoundOperator, Object value) throws IMQException {
       //no-op
     }
-    
+
     /**
      * @param add
      *          true if adding to index, false if removing
@@ -1216,8 +1131,7 @@ public class HashIndex extends AbstractIndex {
           //This code relies on current implementation of remove mapping, relying on behavior that will force a
           //crawl through the index to remove the entry if it exists, even if it is not present at the provided key
           entriesSet.remove(QueryService.UNDEFINED, target, -1);
-        }
-        else {
+        } else {
           throw new IMQException(tme);
         }
       } catch (IMQException imqe) {
@@ -1244,14 +1158,12 @@ public class HashIndex extends AbstractIndex {
         // object, it will get incremented on very index initialization
         this.initContext.newScope(1);
         for (int i = 0; i < this.iteratorSize; i++) {
-          CompiledIteratorDef iterDef = (CompiledIteratorDef) this.indexInitIterators
-              .get(i);
+          CompiledIteratorDef iterDef = (CompiledIteratorDef) this.indexInitIterators.get(i);
           RuntimeIterator rIter = null;
           if (!this.hasInitOccuredOnce) {
             iterDef.computeDependencies(this.initContext);
             rIter = iterDef.getRuntimeIterator(this.initContext);
-            this.initContext
-                .addToIndependentRuntimeItrMapForIndexCreation(iterDef);
+            this.initContext.addToIndependentRuntimeItrMapForIndexCreation(iterDef);
           }
           if (rIter == null) {
             rIter = iterDef.getRuntimeIterator(this.initContext);
@@ -1262,9 +1174,8 @@ public class HashIndex extends AbstractIndex {
         if (this.indexResultSetType == null) {
           this.indexResultSetType = createIndexResultSetType();
         }
-        if(loadEntries) {
-          doNestedIterationsForIndexInit(0,
-             this.initContext.getCurrentIterators());
+        if (loadEntries) {
+          doNestedIterationsForIndexInit(0, this.initContext.getCurrentIterators());
         }
       } catch (IMQException imqe) {
         throw imqe;
@@ -1275,10 +1186,7 @@ public class HashIndex extends AbstractIndex {
       }
     }
 
-    private void doNestedIterationsForIndexInit(int level, List runtimeIterators)
-        throws TypeMismatchException, AmbiguousNameException,
-        FunctionDomainException, NameResolutionException,
-        QueryInvocationTargetException, IMQException {
+    private void doNestedIterationsForIndexInit(int level, List runtimeIterators) throws TypeMismatchException, AmbiguousNameException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException, IMQException {
       if (level == 1) {
         ++this.initEntriesUpdated;
       }
@@ -1316,28 +1224,22 @@ public class HashIndex extends AbstractIndex {
      * attribute of the Struct object is obtained by evaluating the additional
      * projection attribute.
      */
-    private void applyProjectionForIndexInit(List currentRuntimeIters)
-        throws FunctionDomainException, TypeMismatchException,
-        NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void applyProjectionForIndexInit(List currentRuntimeIters) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException, IMQException {
       if (QueryMonitor.isLowMemory()) {
         throw new IMQException(LocalizedStrings.IndexCreationMsg_CANCELED_DUE_TO_LOW_MEMORY.toLocalizedString());
       }
-      
+
       Object indexKey = null;
       RegionEntry re = null;
-      indexKey = this.isFirstItrOnEntry ? this.indexedExpr
-          .evaluate(this.initContext) : modifiedIndexExpr
-          .evaluate(this.initContext);
+      indexKey = this.isFirstItrOnEntry ? this.indexedExpr.evaluate(this.initContext) : modifiedIndexExpr.evaluate(this.initContext);
       if (indexKey == null) {
         indexKey = IndexManager.NULL;
       }
       LocalRegion.NonTXEntry temp = null;
       if (this.isFirstItrOnEntry && this.additionalProj != null) {
-        temp = (LocalRegion.NonTXEntry) additionalProj
-            .evaluate(this.initContext);
+        temp = (LocalRegion.NonTXEntry) additionalProj.evaluate(this.initContext);
       } else {
-        temp = (LocalRegion.NonTXEntry) (((RuntimeIterator) currentRuntimeIters
-            .get(0)).evaluate(this.initContext));
+        temp = (LocalRegion.NonTXEntry) (((RuntimeIterator) currentRuntimeIters.get(0)).evaluate(this.initContext));
       }
       re = temp.getRegionEntry();
       basicAddMapping(indexKey, re);
@@ -1349,10 +1251,7 @@ public class HashIndex extends AbstractIndex {
      *          true if adding to index, false if removing
      * @param context
      */
-    private void doNestedIterations(int level, boolean add,
-        ExecutionContext context) throws TypeMismatchException,
-        AmbiguousNameException, FunctionDomainException,
-        NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void doNestedIterations(int level, boolean add, ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException, IMQException {
       List iterList = context.getCurrentIterators();
       if (level == this.iteratorSize) {
         applyProjection(add, context);
@@ -1375,16 +1274,13 @@ public class HashIndex extends AbstractIndex {
      *          true if adding, false if removing from index
      * @param context
      */
-    private void applyProjection(boolean add, ExecutionContext context)
-        throws FunctionDomainException, TypeMismatchException,
-        NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void applyProjection(boolean add, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException, IMQException {
       Object indexKey = indexedExpr.evaluate(context);
       if (indexKey == null) {
         indexKey = IndexManager.NULL;
       }
 
-      RegionEntry entry = ((DummyQRegion) context.getBindArgument(1))
-          .getEntry();
+      RegionEntry entry = ((DummyQRegion) context.getBindArgument(1)).getEntry();
       // Get thread local reverse map if available.
       if (add) {
         // Add new index entries before removing old ones.
@@ -1397,12 +1293,10 @@ public class HashIndex extends AbstractIndex {
           Map oldKeyMap = entryToOldKeysMap.get();
           if (oldKeyMap != null) {
             oldKeyMap.put(entry, indexKey);
-          }
-          else {
+          } else {
             basicRemoveMapping(indexKey, entry, true);
           }
-        }
-        else {
+        } else {
           basicRemoveMapping(indexKey, entry, true);
         }
       }
@@ -1426,8 +1320,7 @@ public class HashIndex extends AbstractIndex {
         // fieldNames[0] = "iter1";
         fieldTypes[0] = addnlProjType;
       }
-      type = (len == 1) ? fieldTypes[0] : new StructTypeImpl(
-          this.canonicalIterNames, fieldTypes);
+      type = (len == 1) ? fieldTypes[0] : new StructTypeImpl(this.canonicalIterNames, fieldTypes);
       return type;
     }
 
@@ -1454,8 +1347,7 @@ public class HashIndex extends AbstractIndex {
           context.setDependencyGraph(dependencyGraph);
         }
         for (int i = 0; i < this.iteratorSize; i++) {
-          CompiledIteratorDef iterDef = (CompiledIteratorDef) fromIterators
-              .get(i);
+          CompiledIteratorDef iterDef = (CompiledIteratorDef) fromIterators.get(i);
           // We are re-using the same ExecutionContext on every evaluate -- this
           // is not how ExecutionContext was intended to be used.
           // Asif: Compute the dependency only once. The call to methods of this
@@ -1472,10 +1364,7 @@ public class HashIndex extends AbstractIndex {
           dependencyGraph = context.getDependencyGraph();
         }
 
-        Support
-            .Assert(
-                this.indexResultSetType != null,
-                "IMQEvaluator::evaluate:The StrcutType should have been initialized during index creation");
+        Support.Assert(this.indexResultSetType != null, "IMQEvaluator::evaluate:The StrcutType should have been initialized during index creation");
       } finally {
 
       }
@@ -1484,7 +1373,7 @@ public class HashIndex extends AbstractIndex {
 
     public Object evaluateKey(Object object) {
       Object value = object;
-      
+
       ExecutionContext newContext = null;
       Object key = null;
       try {
@@ -1506,7 +1395,7 @@ public class HashIndex extends AbstractIndex {
         }
         throw new Error("Could not reevaluate key for hash index", e);
       }
-      
+
       if (key == null) {
         key = IndexManager.NULL;
       }
@@ -1522,9 +1411,9 @@ public class HashIndex extends AbstractIndex {
         //We check to see if an update was in progress.  If so (and is the way these turn to undefined),
         //the value is reevaluated and removed from the result set if it does not match the 
         //search criteria.  This occurs in addToResultsFromEntries()
-        Object key0 = ((Object[])arg0)[0];
-        Object key1 = ((Object[])arg1)[0];
-      
+        Object key0 = ((Object[]) arg0)[0];
+        Object key1 = ((Object[]) arg1)[0];
+
         Comparable comp0 = (Comparable) key0;
         Comparable comp1 = (Comparable) key1;
         return comp0.compareTo(comp1);
@@ -1533,42 +1422,30 @@ public class HashIndex extends AbstractIndex {
 
   }
 
-  void lockedQuery(Object key, int operator, Collection results,
-      CompiledValue iterOps, RuntimeIterator indpndntItr,
-      ExecutionContext context, List projAttrib,
-      SelectResults intermediateResults, boolean isIntersection)
-      throws TypeMismatchException, FunctionDomainException,
-      NameResolutionException, QueryInvocationTargetException {
-    this.lockedQueryPrivate(key, operator, results, iterOps, indpndntItr,
-        context, null, projAttrib, intermediateResults, isIntersection);
+  void lockedQuery(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator indpndntItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+    this.lockedQueryPrivate(key, operator, results, iterOps, indpndntItr, context, null, projAttrib, intermediateResults, isIntersection);
   }
 
-  void lockedQuery(Object key, int operator, Collection results,
-      Set keysToRemove, ExecutionContext context) throws TypeMismatchException,
-      FunctionDomainException, NameResolutionException,
-      QueryInvocationTargetException {
-    this.lockedQueryPrivate(key, operator, results, null, null, context,
-        keysToRemove, null, null, true);
+  void lockedQuery(Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+    this.lockedQueryPrivate(key, operator, results, null, null, context, keysToRemove, null, null, true);
   }
 
   @Override
-  void addMapping(Object key, Object value, RegionEntry entry)
-      throws IMQException {
+  void addMapping(Object key, Object value, RegionEntry entry) throws IMQException {
     // TODO Auto-generated method stub
 
   }
 
   @Override
-  void saveMapping(Object key, Object value, RegionEntry entry)
-      throws IMQException {
+  void saveMapping(Object key, Object value, RegionEntry entry) throws IMQException {
     // TODO Auto-generated method stub
   }
-  
+
   public boolean isEmpty() {
     return entriesSet.isEmpty();
   }
-  
-//  public String printAll() {
-//    return this.entriesSet.printAll();
-//  }
+
+  //  public String printAll() {
+  //    return this.entriesSet.printAll();
+  //  }
 }

@@ -49,14 +49,14 @@ public class Shipment implements DataSerializable {
   public String toString() {
     return this.shipmentName;
   }
-  
+
   public boolean equals(Object obj) {
-    if(this == obj)
+    if (this == obj)
       return true;
-    
-    if(obj instanceof Shipment){
-      Shipment other = (Shipment)obj;
-      if(other.shipmentName != null && other.shipmentName.equals(this.shipmentName)){
+
+    if (obj instanceof Shipment) {
+      Shipment other = (Shipment) obj;
+      if (other.shipmentName != null && other.shipmentName.equals(this.shipmentName)) {
         return true;
       }
     }

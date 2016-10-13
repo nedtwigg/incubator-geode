@@ -33,8 +33,7 @@ import org.apache.geode.management.internal.beans.stats.MBeanStatsMonitor.Defaul
  * 
  *
  */
-public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
-
+public class MemberLevelDiskMonitor extends MBeanStatsMonitor {
 
   private volatile long diskReadBytes = 0;
 
@@ -52,10 +51,9 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
 
   private volatile int queueSize = 0;
 
-  
   private Map<Statistics, ValueMonitor> monitors;
-  
-  private Map<Statistics ,MemberLevelDiskStatisticsListener > listeners;
+
+  private Map<Statistics, MemberLevelDiskStatisticsListener> listeners;
 
   public MemberLevelDiskMonitor(String name) {
     super(name);
@@ -64,7 +62,7 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
   }
 
   @Override
-  public void addStatisticsToMonitor(Statistics stats) { 
+  public void addStatisticsToMonitor(Statistics stats) {
     ValueMonitor diskMonitor = new ValueMonitor();
     MemberLevelDiskStatisticsListener listener = new MemberLevelDiskStatisticsListener();
     diskMonitor.addListener(listener);
@@ -72,7 +70,7 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
     monitors.put(stats, diskMonitor);
     listeners.put(stats, listener);
   }
-  
+
   @Override
   public void removeStatisticsFromMonitor(Statistics stats) {
     ValueMonitor monitor = monitors.remove(stats);
@@ -85,7 +83,7 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
     }
     listener.decreaseDiskStoreStats(stats);
   }
-  
+
   @Override
   public void stopListener() {
     for (Statistics stat : listeners.keySet()) {
@@ -129,13 +127,13 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
   private class MemberLevelDiskStatisticsListener implements StatisticsListener {
 
     DefaultHashMap statsMap = new DefaultHashMap();
-    
+
     private boolean removed = false;
 
     @Override
     public void handleNotification(StatisticsNotification notification) {
       synchronized (statsMap) {
-        if(removed){
+        if (removed) {
           return;
         }
         for (StatisticId statId : notification) {
@@ -147,7 +145,7 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
           } catch (StatisticNotFoundException e) {
             value = 0;
           }
-          log(name,value);
+          log(name, value);
 
           Number deltaValue = computeDelta(statsMap, name, value);
           statsMap.put(name, value);
@@ -171,8 +169,7 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
     public void decreaseDiskStoreStats(Statistics stats) {
       synchronized (statsMap) {
         queueSize -= statsMap.get(StatsKey.DISK_QUEUE_SIZE).intValue();
-        backupsInProgress -= statsMap.get(StatsKey.BACKUPS_IN_PROGRESS)
-            .intValue();
+        backupsInProgress -= statsMap.get(StatsKey.BACKUPS_IN_PROGRESS).intValue();
         ;
         removed = true;
 
@@ -181,9 +178,8 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
     }
 
   };
-  
-  private Number computeDelta(DefaultHashMap statsMap, String name,
-      Number currentValue) {
+
+  private Number computeDelta(DefaultHashMap statsMap, String name, Number currentValue) {
     if (name.equals(StatsKey.DISK_READ_BYTES)) {
       Number prevValue = statsMap.get(StatsKey.DISK_READ_BYTES).longValue();
       Number deltaValue = currentValue.longValue() - prevValue.longValue();
@@ -194,13 +190,13 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
       Number deltaValue = currentValue.longValue() - prevValue.longValue();
       return deltaValue;
     }
-    
+
     if (name.equals(StatsKey.DISK_WRITEN_BYTES)) {
       Number prevValue = statsMap.get(StatsKey.DISK_WRITEN_BYTES).longValue();
       Number deltaValue = currentValue.longValue() - prevValue.longValue();
       return deltaValue;
     }
-    if (name.equals(StatsKey.BACKUPS_IN_PROGRESS)) { 
+    if (name.equals(StatsKey.BACKUPS_IN_PROGRESS)) {
       /**
        *  A negative value is also OK. 
        * previous backup_in_progress = 5
@@ -274,7 +270,6 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor{
       return;
     }
   }
-
 
   public long getDiskReads() {
     return diskReadBytes;

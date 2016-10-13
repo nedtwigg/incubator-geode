@@ -25,12 +25,12 @@ import org.apache.geode.cache.query.CqStatistics;
  */
 public class CqStatisticsImpl implements CqStatistics {
   private CqQueryImpl cqQuery;
-  
-//  private long numInserts;
-//  private long numDeletes;
-//  private long numUpdates;
-//  private long numEvents;
-  
+
+  //  private long numInserts;
+  //  private long numDeletes;
+  //  private long numUpdates;
+  //  private long numEvents;
+
   /**
    * Constructor for CqStatisticsImpl
    * @param cq - CqQuery reference to the CqQueryImpl object
@@ -38,7 +38,7 @@ public class CqStatisticsImpl implements CqStatistics {
   public CqStatisticsImpl(CqQueryImpl cq) {
     cqQuery = cq;
   }
-  
+
   /**
    * Returns the number of Insert events for this CQ.
    * @return the number of insert events
@@ -46,7 +46,7 @@ public class CqStatisticsImpl implements CqStatistics {
   public long numInserts() {
     return this.cqQuery.getVsdStats().getNumInserts();
   }
-  
+
   /**
    * Returns number of Delete events for this CQ.
    * @return the number of delete events
@@ -54,21 +54,21 @@ public class CqStatisticsImpl implements CqStatistics {
   public long numDeletes() {
     return this.cqQuery.getVsdStats().getNumDeletes();
   }
-  
+
   /**
    * Returns number of Update events for this CQ.
    * @return the number of update events
    */
-  public long numUpdates(){
+  public long numUpdates() {
     return this.cqQuery.getVsdStats().getNumUpdates();
   }
-  
+
   /**
    * Returns the total number of events for this CQ.
    * @return the total number of insert, update, and delete events
    */
-  public long numEvents(){
+  public long numEvents() {
     return cqQuery.getVsdStats().getNumEvents();
   }
-  
+
 }

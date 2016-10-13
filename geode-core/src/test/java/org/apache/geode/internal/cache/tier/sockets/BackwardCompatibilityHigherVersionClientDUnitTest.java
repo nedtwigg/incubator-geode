@@ -90,20 +90,13 @@ public class BackwardCompatibilityHigherVersionClientDUnitTest extends JUnit4Dis
     addExceptions();
   }
 
-  public static void createClientCache(String host, Integer port1)
-      throws Exception {
+  public static void createClientCache(String host, Integer port1) throws Exception {
     new BackwardCompatibilityHigherVersionClientDUnitTest();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new BackwardCompatibilityHigherVersionClientDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl)PoolManager.createFactory().addServer(host,
-        port1.intValue()).setSubscriptionEnabled(true)
-        .setSubscriptionRedundancy(1).setThreadLocalConnections(true)
-        .setMinConnections(1).setFreeConnectionTimeout(200000).setReadTimeout(
-            200000).setPingInterval(10000).setRetryAttempts(1)
-        .setSubscriptionAckInterval(CLIENT_ACK_INTERVAL).create(
-            "BackwardCompatibilityHigherVersionClientDUnitTest");
+    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(1).setThreadLocalConnections(true).setMinConnections(1).setFreeConnectionTimeout(200000).setReadTimeout(200000).setPingInterval(10000).setRetryAttempts(1).setSubscriptionAckInterval(CLIENT_ACK_INTERVAL).create("BackwardCompatibilityHigherVersionClientDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -115,8 +108,7 @@ public class BackwardCompatibilityHigherVersionClientDUnitTest extends JUnit4Dis
   }
 
   public static Integer createServerCache() throws Exception {
-    new BackwardCompatibilityHigherVersionClientDUnitTest()
-        .createCache(new Properties());
+    new BackwardCompatibilityHigherVersionClientDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
@@ -155,11 +147,10 @@ public class BackwardCompatibilityHigherVersionClientDUnitTest extends JUnit4Dis
    */
   @Test
   public void testHigherVersionedClient() {
-    Integer port1 = ((Integer)server1.invoke(() -> BackwardCompatibilityHigherVersionClientDUnitTest.createServerCache()));
+    Integer port1 = ((Integer) server1.invoke(() -> BackwardCompatibilityHigherVersionClientDUnitTest.createServerCache()));
 
     client1.invoke(() -> BackwardCompatibilityHigherVersionClientDUnitTest.setHandshakeVersionForTesting());
-    client1.invoke(() -> BackwardCompatibilityHigherVersionClientDUnitTest.createClientCache(
-            NetworkUtils.getServerHostName(server1.getHost()), port1 ));
+    client1.invoke(() -> BackwardCompatibilityHigherVersionClientDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
     client1.invoke(() -> BackwardCompatibilityHigherVersionClientDUnitTest.verifyConnectionToServerFailed());
   }
 
@@ -168,44 +159,24 @@ public class BackwardCompatibilityHigherVersionClientDUnitTest extends JUnit4Dis
    * during handshake.
    */
   public static void setHandshakeVersionForTesting() throws Exception {
-    HandShake.setVersionForTesting((short)(currentClientVersion + 1));
+    HandShake.setVersionForTesting((short) (currentClientVersion + 1));
   }
 
   public static void addExceptions() throws Exception {
     if (cache != null && !cache.isClosed()) {
-      cache.getLogger().info(
-          "<ExpectedException action=add>" + "UnsupportedVersionException"
-              + "</ExpectedException>");
-      cache.getLogger().info(
-          "<ExpectedException action=add>" + "ServerRefusedConnectionException"
-              + "</ExpectedException>");
-      cache.getLogger().info(
-          "<ExpectedException action=add>" + "SocketException"
-              + "</ExpectedException>");
-      cache.getLogger()
-          .info(
-              "<ExpectedException action=add>"
-                  + "Could not initialize a primary queue"
-                  + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=add>" + "UnsupportedVersionException" + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=add>" + "ServerRefusedConnectionException" + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=add>" + "SocketException" + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=add>" + "Could not initialize a primary queue" + "</ExpectedException>");
     }
   }
 
   public static void removeExceptions() {
     if (cache != null && !cache.isClosed()) {
-      cache.getLogger().info(
-          "<ExpectedException action=remove>" + "UnsupportedVersionException"
-              + "</ExpectedException>");
-      cache.getLogger().info(
-          "<ExpectedException action=remove>"
-              + "ServerRefusedConnectionException" + "</ExpectedException>");
-      cache.getLogger().info(
-          "<ExpectedException action=remove>" + "SocketException"
-              + "</ExpectedException>");
-      cache.getLogger()
-          .info(
-              "<ExpectedException action=remove>"
-                  + "Could not initialize a primary queue"
-                  + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=remove>" + "UnsupportedVersionException" + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=remove>" + "ServerRefusedConnectionException" + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=remove>" + "SocketException" + "</ExpectedException>");
+      cache.getLogger().info("<ExpectedException action=remove>" + "Could not initialize a primary queue" + "</ExpectedException>");
     }
   }
 
@@ -213,8 +184,7 @@ public class BackwardCompatibilityHigherVersionClientDUnitTest extends JUnit4Dis
    * Verify that Client failed when connecting to Server
    */
   public static void verifyConnectionToServerFailed() throws Exception {
-    assertTrue("Higher version Client connected successfully to Server",
-        ConnectionFactoryImpl.testFailedConnectionToServer == true);
+    assertTrue("Higher version Client connected successfully to Server", ConnectionFactoryImpl.testFailedConnectionToServer == true);
   }
 
   /*
@@ -238,8 +208,7 @@ public class BackwardCompatibilityHigherVersionClientDUnitTest extends JUnit4Dis
       Region r = cache.getRegion("/" + REGION_NAME);
       assertNotNull(r);
       r.destroyRegion();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while destroy region ", ex);
     }
   }

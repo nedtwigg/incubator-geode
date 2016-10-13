@@ -50,10 +50,10 @@ public class HExistsExecutor extends HashExecutor {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
       return;
     }
-    
+
     byte[] byteField = commandElems.get(FIELD_INDEX);
     ByteArrayWrapper field = new ByteArrayWrapper(byteField);
-    
+
     boolean hasField = keyRegion.containsKey(field);
 
     if (hasField)

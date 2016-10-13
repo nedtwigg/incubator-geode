@@ -40,14 +40,14 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 public class DestroyDiskStoreFunction extends FunctionAdapter implements InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long serialVersionUID = 1L;
 
   @Override
   public void execute(FunctionContext context) {
     // Declared here so that it's available when returning a Throwable
     String memberId = "";
-    
+
     try {
       final Object[] args = (Object[]) context.getArguments();
       final String diskStoreName = (String) args[0];
@@ -77,7 +77,7 @@ public class DestroyDiskStoreFunction extends FunctionAdapter implements Interna
     } catch (IllegalStateException isex) {
       CliFunctionResult result = new CliFunctionResult(memberId, false, isex.getMessage());
       context.getResultSender().lastResult(result);
-      
+
     } catch (CacheClosedException cce) {
       CliFunctionResult result = new CliFunctionResult(memberId, false, null);
       context.getResultSender().lastResult(result);
@@ -85,7 +85,7 @@ public class DestroyDiskStoreFunction extends FunctionAdapter implements Interna
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not destroy disk store: {}", th.getMessage(), th);

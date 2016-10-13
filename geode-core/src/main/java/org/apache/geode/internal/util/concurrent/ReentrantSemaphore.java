@@ -19,7 +19,6 @@ package org.apache.geode.internal.util.concurrent;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * A special purpose semaphore that allows reentrancy. With this semaphore, a thread
  * will only acquire a real permit the first time it calls acquire. After that, the
@@ -52,23 +51,23 @@ public class ReentrantSemaphore extends Semaphore {
 
   @Override
   public void acquire() throws InterruptedException {
-    if(incHoldCount()) {
+    if (incHoldCount()) {
       super.acquire();
     }
   }
 
   @Override
   public void acquireUninterruptibly() {
-    if(incHoldCount()) {
+    if (incHoldCount()) {
       super.acquireUninterruptibly();
     }
   }
 
   @Override
   public boolean tryAcquire() {
-    if(incHoldCount()) {
+    if (incHoldCount()) {
       boolean result = super.tryAcquire();
-      if(!result) {
+      if (!result) {
         decHoldCount();
       }
       return result;
@@ -78,11 +77,10 @@ public class ReentrantSemaphore extends Semaphore {
   }
 
   @Override
-  public boolean tryAcquire(long timeout, TimeUnit unit)
-      throws InterruptedException {
-    if(incHoldCount()) {
+  public boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException {
+    if (incHoldCount()) {
       boolean result = super.tryAcquire();
-      if(!result) {
+      if (!result) {
         decHoldCount();
       }
       return result;
@@ -93,7 +91,7 @@ public class ReentrantSemaphore extends Semaphore {
 
   @Override
   public void release() {
-    if(decHoldCount()) {
+    if (decHoldCount()) {
       super.release();
     }
   }
@@ -114,8 +112,7 @@ public class ReentrantSemaphore extends Semaphore {
   }
 
   @Override
-  public boolean tryAcquire(int permits, long timeout, TimeUnit unit)
-      throws InterruptedException {
+  public boolean tryAcquire(int permits, long timeout, TimeUnit unit) throws InterruptedException {
     throw new UnsupportedOperationException("ReentrantSemaphore doesn't support a single thread using more than one permit");
   }
 
@@ -126,21 +123,22 @@ public class ReentrantSemaphore extends Semaphore {
 
   private boolean incHoldCount() {
     Integer count = holdCount.get();
-    if(count != null) {
+    if (count != null) {
       holdCount.set(Integer.valueOf(count.intValue() + 1));
       return false;
-    } {
+    }
+    {
       holdCount.set(Integer.valueOf(1));
       return true;
     }
   }
-  
+
   private boolean decHoldCount() {
     Integer count = holdCount.get();
-    if(count == null) {
+    if (count == null) {
       return true;
-    } 
-    if(count.intValue() == 1) {
+    }
+    if (count.intValue() == 1) {
       holdCount.remove();
       return true;
     } else {
@@ -153,8 +151,7 @@ public class ReentrantSemaphore extends Semaphore {
     return tryAcquire(timeout, TimeUnit.MILLISECONDS);
   }
 
-  public boolean tryAcquireMs(int permits, long timeout)
-      throws InterruptedException {
+  public boolean tryAcquireMs(int permits, long timeout) throws InterruptedException {
     return tryAcquire(permits, TimeUnit.MILLISECONDS);
   }
 }

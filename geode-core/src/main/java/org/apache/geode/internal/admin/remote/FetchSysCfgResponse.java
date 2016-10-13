@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -32,7 +31,7 @@ import org.apache.geode.distributed.internal.membership.*;
 public final class FetchSysCfgResponse extends AdminResponse {
   // instance variables
   Config sc;
-  
+
   /**
    * Returns a <code>FetchSysCfgResponse</code> that will be returned to the
    * specified recipient. The message will contains a copy of the local manager's
@@ -41,9 +40,9 @@ public final class FetchSysCfgResponse extends AdminResponse {
   public static FetchSysCfgResponse create(DistributionManager dm, InternalDistributedMember recipient) {
     FetchSysCfgResponse m = new FetchSysCfgResponse();
     m.setRecipient(recipient);
-    Config conf = dm.getSystem().getConfig();  
+    Config conf = dm.getSystem().getConfig();
     if (conf instanceof RuntimeDistributionConfigImpl) {
-      m.sc = ((RuntimeDistributionConfigImpl)conf).takeSnapshot();
+      m.sc = ((RuntimeDistributionConfigImpl) conf).takeSnapshot();
     }
     return m;
   }
@@ -52,25 +51,24 @@ public final class FetchSysCfgResponse extends AdminResponse {
   public Config getConfig() {
     return this.sc;
   }
-  
+
   public int getDSFID() {
     return FETCH_SYS_CFG_RESPONSE;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeObject(this.sc, out);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.sc = (Config)DataSerializer.readObject(in);
+    this.sc = (Config) DataSerializer.readObject(in);
   }
 
-  @Override  
+  @Override
   public String toString() {
     return "FetchSysCfgResponse from " + this.getRecipient() + " cfg=" + this.sc;
   }

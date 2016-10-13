@@ -44,15 +44,12 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 public class MissingCqService implements CqService {
 
   @Override
-  public ClientCQ newCq(String cqName, String queryString,
-      CqAttributes cqAttributes, InternalPool serverProxy, boolean isDurable)
-      throws QueryInvalidException, CqExistsException, CqException {
+  public ClientCQ newCq(String cqName, String queryString, CqAttributes cqAttributes, InternalPool serverProxy, boolean isDurable) throws QueryInvalidException, CqExistsException, CqException {
     throw new IllegalStateException("CqService is not available.");
   }
 
   @Override
-  public CqQuery getClientCqFromServer(ClientProxyMembershipID clientProxyId,
-      String clientCqName) {
+  public CqQuery getClientCqFromServer(ClientProxyMembershipID clientProxyId, String clientCqName) {
     throw new IllegalStateException("CqService is not available.");
   }
 
@@ -102,8 +99,7 @@ public class MissingCqService implements CqService {
   }
 
   @Override
-  public void closeCq(String cqName, ClientProxyMembershipID clientProxyId)
-      throws CqException {
+  public void closeCq(String cqName, ClientProxyMembershipID clientProxyId) throws CqException {
     throw new IllegalStateException("CqService is not available.");
   }
 
@@ -113,42 +109,36 @@ public class MissingCqService implements CqService {
   }
 
   @Override
-  public void closeAllCqs(boolean clientInitiated, Collection<? extends InternalCqQuery> cqs,
-      boolean keepAlive) {
+  public void closeAllCqs(boolean clientInitiated, Collection<? extends InternalCqQuery> cqs, boolean keepAlive) {
     throw new IllegalStateException("CqService is not available.");
   }
 
   @Override
   public CqServiceStatistics getCqStatistics() {
-    return new MissingCqServiceStatistics(); 
+    return new MissingCqServiceStatistics();
   }
 
   @Override
-  public void closeClientCqs(ClientProxyMembershipID clientProxyId)
-      throws CqException {
+  public void closeClientCqs(ClientProxyMembershipID clientProxyId) throws CqException {
   }
 
   @Override
-  public List<ServerCQ> getAllClientCqs(
-      ClientProxyMembershipID clientProxyId) {
+  public List<ServerCQ> getAllClientCqs(ClientProxyMembershipID clientProxyId) {
     return Collections.EMPTY_LIST;
   }
 
   @Override
-  public List<String> getAllDurableClientCqs(
-      ClientProxyMembershipID clientProxyId) throws CqException {
+  public List<String> getAllDurableClientCqs(ClientProxyMembershipID clientProxyId) throws CqException {
     return Collections.EMPTY_LIST;
   }
 
   @Override
-  public void dispatchCqListeners(HashMap cqs, int messageType, Object key,
-      Object value, byte[] delta, QueueManager qManager, EventID eventId) {
+  public void dispatchCqListeners(HashMap cqs, int messageType, Object key, Object value, byte[] delta, QueueManager qManager, EventID eventId) {
     throw new IllegalStateException("CqService is not available.");
   }
 
   @Override
-  public void processEvents(CacheEvent event, Profile localProfile,
-      Profile[] profiles, FilterRoutingInfo frInfo) throws CqException {
+  public void processEvents(CacheEvent event, Profile localProfile, Profile[] profiles, FilterRoutingInfo frInfo) throws CqException {
     throw new IllegalStateException("CqService is not available.");
   }
 
@@ -172,14 +162,12 @@ public class MissingCqService implements CqService {
   }
 
   @Override
-  public String constructServerCqName(String cqName,
-      ClientProxyMembershipID clientProxyId) {
+  public String constructServerCqName(String cqName, ClientProxyMembershipID clientProxyId) {
     throw new IllegalStateException("CqService is not available.");
   }
 
   @Override
-  public void stopCq(String cqName, ClientProxyMembershipID clientId)
-      throws CqException {
+  public void stopCq(String cqName, ClientProxyMembershipID clientId) throws CqException {
     throw new IllegalStateException("CqService is not available.");
   }
 
@@ -192,17 +180,12 @@ public class MissingCqService implements CqService {
   }
 
   @Override
-  public ServerCQ executeCq(String cqName, String queryString, int cqState,
-      ClientProxyMembershipID clientProxyId, CacheClientNotifier ccn,
-      boolean isDurable, boolean manageEmptyRegions, int regionDataPolicy,
-      Map emptyRegionsMap) throws CqException, RegionNotFoundException,
-      CqClosedException {
+  public ServerCQ executeCq(String cqName, String queryString, int cqState, ClientProxyMembershipID clientProxyId, CacheClientNotifier ccn, boolean isDurable, boolean manageEmptyRegions, int regionDataPolicy, Map emptyRegionsMap) throws CqException, RegionNotFoundException, CqClosedException {
     throw new IllegalStateException("CqService is not available.");
   }
 
   @Override
-  public void closeNonDurableClientCqs(ClientProxyMembershipID clientProxyId)
-      throws CqException {
+  public void closeNonDurableClientCqs(ClientProxyMembershipID clientProxyId) throws CqException {
   }
 
   @Override

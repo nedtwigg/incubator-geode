@@ -30,35 +30,30 @@ import org.apache.geode.internal.util.BlobHelper;
 
 public class RegisterDataSerializersOp {
 
-  public static void execute(ExecutablePool pool,
-      DataSerializer[] dataSerializers, EventID eventId) {
-    AbstractOp op = new RegisterDataSerializersOpImpl(dataSerializers,
-        eventId);
+  public static void execute(ExecutablePool pool, DataSerializer[] dataSerializers, EventID eventId) {
+    AbstractOp op = new RegisterDataSerializersOpImpl(dataSerializers, eventId);
     pool.execute(op);
   }
-  
-  public static void execute(ExecutablePool pool,
-      SerializerAttributesHolder[] holders, EventID eventId) {
-    AbstractOp op = new RegisterDataSerializersOpImpl(holders,
-        eventId);
+
+  public static void execute(ExecutablePool pool, SerializerAttributesHolder[] holders, EventID eventId) {
+    AbstractOp op = new RegisterDataSerializersOpImpl(holders, eventId);
     pool.execute(op);
   }
-  
+
   private RegisterDataSerializersOp() {
     // no instances allowed
   }
-  
+
   private static class RegisterDataSerializersOpImpl extends AbstractOp {
 
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public RegisterDataSerializersOpImpl(DataSerializer[] dataSerializers,
-        EventID eventId) {
+    public RegisterDataSerializersOpImpl(DataSerializer[] dataSerializers, EventID eventId) {
       super(MessageType.REGISTER_DATASERIALIZERS, dataSerializers.length * 2 + 1);
-      for(int i = 0; i < dataSerializers.length; i++) {
+      for (int i = 0; i < dataSerializers.length; i++) {
         DataSerializer dataSerializer = dataSerializers[i];
-         // strip '.class' off these class names
+        // strip '.class' off these class names
         String className = dataSerializer.getClass().toString().substring(6);
         try {
           getMessage().addBytesPart(BlobHelper.serializeToBlob(className));
@@ -73,19 +68,17 @@ public class RegisterDataSerializersOp {
         ClientServerObserver bo = ClientServerObserverHolder.getInstance();
         bo.beforeSendingToServer(eventId);
       }
-   }
-    
+    }
+
     /**
      * @throws SerializationException
      *           Thrown when serialization fails.
      */
-    public RegisterDataSerializersOpImpl(SerializerAttributesHolder[] holders,
-        EventID eventId) {
+    public RegisterDataSerializersOpImpl(SerializerAttributesHolder[] holders, EventID eventId) {
       super(MessageType.REGISTER_DATASERIALIZERS, holders.length * 2 + 1);
       for (int i = 0; i < holders.length; i++) {
         try {
-          getMessage().addBytesPart(
-              BlobHelper.serializeToBlob(holders[i].getClassName()));
+          getMessage().addBytesPart(BlobHelper.serializeToBlob(holders[i].getClassName()));
         } catch (IOException ex) {
           throw new SerializationException("failed serializing object", ex);
         }
@@ -104,31 +97,36 @@ public class RegisterDataSerializersOp {
       processAck(msg, "registerDataSerializers");
       return null;
     }
-    
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startRegisterDataSerializers();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endRegisterDataSerializersSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endRegisterDataSerializers(start, hasTimedOut(), hasFailed());
     }
+
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
+
     @Override
     protected boolean needsUserId() {
       return false;
     }
+
     @Override
     protected void sendMessage(Connection cnx) throws Exception {
       getMessage().clearMessageHasSecurePartFlag();

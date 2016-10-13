@@ -35,8 +35,7 @@ public abstract class CacheRuntimeException extends GemFireException {
    */
   public CacheRuntimeException() {
   }
-  
-  
+
   /**
    * Constructs an instance of <code>CacheRuntimeException</code> with the specified detail message.
    * @param msg the detail message
@@ -44,7 +43,7 @@ public abstract class CacheRuntimeException extends GemFireException {
   public CacheRuntimeException(String msg) {
     super(msg);
   }
-  
+
   /**
    * Constructs an instance of <code>CacheRuntimeException</code> with the specified detail message
    * and cause.
@@ -54,7 +53,7 @@ public abstract class CacheRuntimeException extends GemFireException {
   public CacheRuntimeException(String msg, Throwable cause) {
     super(msg, cause);
   }
-  
+
   /**
    * Constructs an instance of <code>CacheRuntimeException</code> with the specified cause.
    * @param cause the causal Throwable
@@ -71,9 +70,7 @@ public abstract class CacheRuntimeException extends GemFireException {
       String causeStr = cause.toString();
       final String glue = ", caused by ";
       StringBuffer sb = new StringBuffer(result.length() + causeStr.length() + glue.length());
-      sb.append(result)
-        .append(glue)
-        .append(causeStr);
+      sb.append(result).append(glue).append(causeStr);
       result = sb.toString();
     }
     return result;

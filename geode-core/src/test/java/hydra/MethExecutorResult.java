@@ -28,32 +28,29 @@ public class MethExecutorResult implements Serializable {
 
   /** A "result" object that indicates that an exception occurred
    * while invoking the method */
-  public static final Serializable EXCEPTION_OCCURRED = new
-    Serializable() {
-      public boolean equals(Object o) {
-        // Allows instances to be compared across VMs
-        return o != null && this.getClass().equals(o.getClass());
-      }
+  public static final Serializable EXCEPTION_OCCURRED = new Serializable() {
+    public boolean equals(Object o) {
+      // Allows instances to be compared across VMs
+      return o != null && this.getClass().equals(o.getClass());
+    }
 
-      public String toString() {
-        return "EXCEPTION_OCCURRED";
-      }
-    };
+    public String toString() {
+      return "EXCEPTION_OCCURRED";
+    }
+  };
 
   /** A "exception" object that indicates that an exception could not
    * be serialized. */
-  public static final Throwable NONSERIALIZABLE_EXCEPTION = new
-    Throwable() {
-      public boolean equals(Object o) {
-        // Allows instances to be compared across VMs
-        return o != null && this.getClass().equals(o.getClass());
-      }
+  public static final Throwable NONSERIALIZABLE_EXCEPTION = new Throwable() {
+    public boolean equals(Object o) {
+      // Allows instances to be compared across VMs
+      return o != null && this.getClass().equals(o.getClass());
+    }
 
-      public String toString() {
-        return "NONSERIALIZABLE_EXCEPTION";
-      }
-    };
-
+    public String toString() {
+      return "NONSERIALIZABLE_EXCEPTION";
+    }
+  };
 
   ////////////////////  Instance Methods  ///////////////////////////
 
@@ -76,7 +73,7 @@ public class MethExecutorResult implements Serializable {
     this.result = null;
   }
 
-  public MethExecutorResult( Object result ) {
+  public MethExecutorResult(Object result) {
     this.result = result;
   }
 
@@ -98,7 +95,6 @@ public class MethExecutorResult implements Serializable {
       this.stackTrace = "No stack trace for SchedulingOrder\n";
       this.exception = thr;
 
-
     } else {
       thr.printStackTrace(new PrintWriter(sw, true));
       this.stackTrace = sw.toString();
@@ -119,10 +115,10 @@ public class MethExecutorResult implements Serializable {
 
   public String toString() {
     StringBuffer s = new StringBuffer();
-    s.append( this.getResult() );
-    s.append( "\n" );
-    if ( this.getStackTrace() != null ) {
-      s.append( this.getStackTrace() );
+    s.append(this.getResult());
+    s.append("\n");
+    if (this.getStackTrace() != null) {
+      s.append(this.getStackTrace());
     }
     return s.toString();
   }

@@ -40,13 +40,13 @@ public class DistributedSystemIntegrationJUnitTest {
 
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
-  
+
   @Rule
   public final TemporaryFolder temporaryFolder = new TemporaryFolder();
-  
+
   @Rule
   public final TestName testName = new TestName();
-  
+
   @Test
   public void getPropertiesFileShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("test.properties");
@@ -56,7 +56,7 @@ public class DistributedSystemIntegrationJUnitTest {
 
     assertThat(DistributedSystem.getPropertiesFile()).isEqualTo(propertiesFile.getCanonicalPath());
   }
-  
+
   @Test
   public void getPropertiesFileUrlShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("test.properties");
@@ -67,7 +67,7 @@ public class DistributedSystemIntegrationJUnitTest {
     URL propertiesURL = propertiesFile.getCanonicalFile().toURI().toURL();
     assertThat(DistributedSystem.getPropertiesFileURL()).isEqualTo(propertiesURL);
   }
-  
+
   @Test
   public void getSecurityPropertiesFileShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("testsecurity.properties");
@@ -77,7 +77,7 @@ public class DistributedSystemIntegrationJUnitTest {
 
     assertThat(DistributedSystem.getSecurityPropertiesFile()).isEqualTo(propertiesFile.getCanonicalPath());
   }
-  
+
   @Test
   public void getSecurityPropertiesFileUrlShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("testsecurity.properties");

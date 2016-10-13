@@ -123,8 +123,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
 
   protected static boolean destroyFlag = false;
 
-  protected static List<Integer> dispatcherThreads = new ArrayList<Integer>(
-      Arrays.asList(1, 3, 5));
+  protected static List<Integer> dispatcherThreads = new ArrayList<Integer>(Arrays.asList(1, 3, 5));
 
   // this will be set for each test method run with one of the values from above
   // list
@@ -169,10 +168,8 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
     //props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
-    props.setProperty(LOCATORS, "localhost[" + port
-        + "]");
-    props.setProperty(START_LOCATOR, "localhost["
-        + port + "],server=true,peer=true,hostname-for-clients=localhost");
+    props.setProperty(LOCATORS, "localhost[" + port + "]");
+    props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     test.getSystem(props);
     return port;
   }
@@ -183,19 +180,15 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
-    props.setProperty(LOCATORS, "localhost[" + port
-        + "]");
-    props.setProperty(START_LOCATOR, "localhost["
-        + port + "],server=true,peer=true,hostname-for-clients=localhost");
+    props.setProperty(LOCATORS, "localhost[" + port + "]");
+    props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
     test.getSystem(props);
     return port;
   }
 
-  public static void createReplicatedRegionWithAsyncEventQueue(
-      String regionName, String asyncQueueIds, Boolean offHeap) {
-    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+  public static void createReplicatedRegionWithAsyncEventQueue(String regionName, String asyncQueueIds, Boolean offHeap) {
+    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       addAsyncEventQueueIds(fact, asyncQueueIds);
@@ -204,14 +197,12 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       RegionFactory regionFactory = cache.createRegionFactory(fact.create());
       Region r = regionFactory.create(regionName);
       assertNotNull(r);
-    }
-    finally {
+    } finally {
       exp1.remove();
     }
   }
 
-  public static void createReplicatedRegionWithCacheLoaderAndAsyncEventQueue(
-      String regionName, String asyncQueueIds) {
+  public static void createReplicatedRegionWithCacheLoaderAndAsyncEventQueue(String regionName, String asyncQueueIds) {
 
     AttributesFactory fact = new AttributesFactory();
     addAsyncEventQueueIds(fact, asyncQueueIds);
@@ -233,10 +224,8 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createReplicatedRegionWithSenderAndAsyncEventQueue(
-      String regionName, String senderIds, String asyncChannelId, Boolean offHeap) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+  public static void createReplicatedRegionWithSenderAndAsyncEventQueue(String regionName, String senderIds, String asyncChannelId, Boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
 
       AttributesFactory fact = new AttributesFactory();
@@ -254,31 +243,16 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       regionFactory.addAsyncEventQueueId(asyncChannelId);
       Region r = regionFactory.create(regionName);
       assertNotNull(r);
-    }
-    finally {
+    } finally {
       exp.remove();
     }
   }
 
-  public static void createAsyncEventQueue(String asyncChannelId,
-                                           boolean isParallel, Integer maxMemory, Integer batchSize,
-                                           boolean isConflation, boolean isPersistent, String diskStoreName,
-                                           boolean isDiskSynchronous)
-  {
-    createAsyncEventQueue(asyncChannelId, isParallel, maxMemory, batchSize, isConflation, isPersistent, diskStoreName,
-      isDiskSynchronous, new MyAsyncEventListener());
+  public static void createAsyncEventQueue(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous) {
+    createAsyncEventQueue(asyncChannelId, isParallel, maxMemory, batchSize, isConflation, isPersistent, diskStoreName, isDiskSynchronous, new MyAsyncEventListener());
   }
 
-  public static void createAsyncEventQueue(
-    String asyncChannelId,
-    boolean isParallel,
-    Integer maxMemory,
-    Integer batchSize,
-    boolean isConflation,
-    boolean isPersistent,
-    String diskStoreName,
-    boolean isDiskSynchronous,
-    final AsyncEventListener asyncEventListener) {
+  public static void createAsyncEventQueue(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous, final AsyncEventListener asyncEventListener) {
     createDiskStore(asyncChannelId, diskStoreName);
 
     AsyncEventQueueFactory factory = getInitialAsyncEventQueueFactory(isParallel, maxMemory, batchSize, isPersistent, diskStoreName);
@@ -287,14 +261,12 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     // set dispatcher threads
     factory.setDispatcherThreads(numDispatcherThreadsForTheRun);
     // Set GatewayEventSubstitutionFilter
-    AsyncEventQueue asyncChannel = factory.create(asyncChannelId,
-        asyncEventListener);
+    AsyncEventQueue asyncChannel = factory.create(asyncChannelId, asyncEventListener);
   }
 
   private static void createDiskStore(String asyncChannelId, String diskStoreName) {
     if (diskStoreName != null) {
-      File directory = new File(asyncChannelId + "_disk_"
-          + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+      File directory = new File(asyncChannelId + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
       directory.mkdir();
       File[] dirs1 = new File[] { directory };
       DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -303,9 +275,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createAsyncEventQueueWithListener2(String asyncChannelId,
-      boolean isParallel, Integer maxMemory, Integer batchSize,
-      boolean isPersistent, String diskStoreName) {
+  public static void createAsyncEventQueueWithListener2(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isPersistent, String diskStoreName) {
 
     createDiskStore(asyncChannelId, diskStoreName);
 
@@ -314,23 +284,14 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     AsyncEventQueueFactory factory = getInitialAsyncEventQueueFactory(isParallel, maxMemory, batchSize, isPersistent, diskStoreName);
     // set dispatcher threads
     factory.setDispatcherThreads(numDispatcherThreadsForTheRun);
-    AsyncEventQueue asyncChannel = factory.create(asyncChannelId,
-        asyncEventListener);
+    AsyncEventQueue asyncChannel = factory.create(asyncChannelId, asyncEventListener);
   }
 
-  public static void createAsyncEventQueue(String asyncChannelId,
-      boolean isParallel, Integer maxMemory, Integer batchSize,
-      boolean isConflation, boolean isPersistent, String diskStoreName,
-      boolean isDiskSynchronous, String asyncListenerClass) throws Exception {
-    createAsyncEventQueue(asyncChannelId, isParallel, maxMemory, batchSize, isConflation, isPersistent,
-        diskStoreName, isDiskSynchronous, asyncListenerClass, null);
+  public static void createAsyncEventQueue(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous, String asyncListenerClass) throws Exception {
+    createAsyncEventQueue(asyncChannelId, isParallel, maxMemory, batchSize, isConflation, isPersistent, diskStoreName, isDiskSynchronous, asyncListenerClass, null);
   }
 
-  public static void createAsyncEventQueue(String asyncChannelId,
-      boolean isParallel, Integer maxMemory, Integer batchSize,
-      boolean isConflation, boolean isPersistent, String diskStoreName,
-      boolean isDiskSynchronous, String asyncListenerClass,
-      String substitutionFilterClass) throws Exception {
+  public static void createAsyncEventQueue(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous, String asyncListenerClass, String substitutionFilterClass) throws Exception {
 
     createDiskStore(asyncChannelId, diskStoreName);
 
@@ -338,11 +299,11 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     factory.setDiskSynchronous(isDiskSynchronous);
     factory.setBatchConflationEnabled(isConflation);
     if (substitutionFilterClass != null) {
-      factory.setGatewayEventSubstitutionListener((GatewayEventSubstitutionFilter)getClass(substitutionFilterClass).newInstance());
+      factory.setGatewayEventSubstitutionListener((GatewayEventSubstitutionFilter) getClass(substitutionFilterClass).newInstance());
     }
     // set dispatcher threads
     factory.setDispatcherThreads(numDispatcherThreadsForTheRun);
-    AsyncEventQueue asyncChannel = factory.create(asyncChannelId, (AsyncEventListener)getClass(asyncListenerClass).newInstance());
+    AsyncEventQueue asyncChannel = factory.create(asyncChannelId, (AsyncEventListener) getClass(asyncListenerClass).newInstance());
   }
 
   private static Class getClass(String simpleClassName) throws Exception {
@@ -351,29 +312,19 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     Class clazz = null;
     try {
       clazz = Class.forName(className);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw e;
     }
     return clazz;
   }
 
-  public static void createAsyncEventQueueWithCustomListener(
-      String asyncChannelId, boolean isParallel, Integer maxMemory,
-      Integer batchSize, boolean isConflation, boolean isPersistent,
-      String diskStoreName, boolean isDiskSynchronous) {
-    createAsyncEventQueueWithCustomListener(asyncChannelId, isParallel,
-        maxMemory, batchSize, isConflation, isPersistent, diskStoreName,
-        isDiskSynchronous, GatewaySender.DEFAULT_DISPATCHER_THREADS);
+  public static void createAsyncEventQueueWithCustomListener(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous) {
+    createAsyncEventQueueWithCustomListener(asyncChannelId, isParallel, maxMemory, batchSize, isConflation, isPersistent, diskStoreName, isDiskSynchronous, GatewaySender.DEFAULT_DISPATCHER_THREADS);
   }
 
-  public static void createAsyncEventQueueWithCustomListener(
-      String asyncChannelId, boolean isParallel, Integer maxMemory,
-      Integer batchSize, boolean isConflation, boolean isPersistent,
-      String diskStoreName, boolean isDiskSynchronous, int nDispatchers) {
+  public static void createAsyncEventQueueWithCustomListener(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous, int nDispatchers) {
 
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
 
     try {
       createDiskStore(asyncChannelId, diskStoreName);
@@ -382,16 +333,13 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
 
       AsyncEventQueueFactory factory = getInitialAsyncEventQueueFactory(isParallel, maxMemory, batchSize, isPersistent, diskStoreName);
       factory.setDispatcherThreads(nDispatchers);
-      AsyncEventQueue asyncChannel = factory.create(asyncChannelId,
-          asyncEventListener);
-    }
-    finally {
+      AsyncEventQueue asyncChannel = factory.create(asyncChannelId, asyncEventListener);
+    } finally {
       exp.remove();
     }
   }
 
-  private static AsyncEventQueueFactory getInitialAsyncEventQueueFactory(boolean isParallel, Integer maxMemory, Integer batchSize,
-      boolean isPersistent, String diskStoreName) {
+  private static AsyncEventQueueFactory getInitialAsyncEventQueueFactory(boolean isParallel, Integer maxMemory, Integer batchSize, boolean isPersistent, String diskStoreName) {
     AsyncEventQueueFactory factory = cache.createAsyncEventQueueFactory();
     factory.setBatchSize(batchSize);
     factory.setPersistent(isPersistent);
@@ -401,10 +349,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     return factory;
   }
 
-  public static void createConcurrentAsyncEventQueue(String asyncChannelId,
-      boolean isParallel, Integer maxMemory, Integer batchSize,
-      boolean isConflation, boolean isPersistent, String diskStoreName,
-      boolean isDiskSynchronous, int dispatcherThreads, OrderPolicy policy) {
+  public static void createConcurrentAsyncEventQueue(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous, int dispatcherThreads, OrderPolicy policy) {
 
     createDiskStore(asyncChannelId, diskStoreName);
 
@@ -414,22 +359,17 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     factory.setDiskSynchronous(isDiskSynchronous);
     factory.setBatchConflationEnabled(isConflation);
     factory.setOrderPolicy(policy);
-    AsyncEventQueue asyncChannel = factory.create(asyncChannelId,
-        asyncEventListener);
+    AsyncEventQueue asyncChannel = factory.create(asyncChannelId, asyncEventListener);
   }
 
-  public static String createAsyncEventQueueWithDiskStore(
-      String asyncChannelId, boolean isParallel, Integer maxMemory,
-      Integer batchSize, boolean isPersistent, String diskStoreName) {
+  public static String createAsyncEventQueueWithDiskStore(String asyncChannelId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isPersistent, String diskStoreName) {
 
     AsyncEventListener asyncEventListener = new MyAsyncEventListener();
 
     File persistentDirectory = null;
     if (diskStoreName == null) {
-      persistentDirectory = new File(asyncChannelId + "_disk_"
-          + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
-    }
-    else {
+      persistentDirectory = new File(asyncChannelId + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+    } else {
       persistentDirectory = new File(diskStoreName);
     }
     LogWriterUtils.getLogWriter().info("The ds is : " + persistentDirectory.getName());
@@ -442,14 +382,12 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     factory.setParallel(isParallel);
     if (isPersistent) {
       factory.setPersistent(isPersistent);
-      factory.setDiskStoreName(dsf.setDiskDirs(dirs1).create(asyncChannelId)
-          .getName());
+      factory.setDiskStoreName(dsf.setDiskDirs(dirs1).create(asyncChannelId).getName());
     }
     factory.setMaximumQueueMemory(maxMemory);
     // set dispatcher threads
     factory.setDispatcherThreads(numDispatcherThreadsForTheRun);
-    AsyncEventQueue asyncChannel = factory.create(asyncChannelId,
-        asyncEventListener);
+    AsyncEventQueue asyncChannel = factory.create(asyncChannelId, asyncEventListener);
     return persistentDirectory.getName();
   }
 
@@ -463,11 +401,10 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    ((AsyncEventQueueImpl)theChannel).getSender().pause();
+    ((AsyncEventQueueImpl) theChannel).getSender().pause();
   }
 
-  public static void pauseAsyncEventQueueAndWaitForDispatcherToPause(
-      String asyncChannelId) {
+  public static void pauseAsyncEventQueueAndWaitForDispatcherToPause(String asyncChannelId) {
     AsyncEventQueue theChannel = null;
 
     Set<AsyncEventQueue> asyncEventChannels = cache.getAsyncEventQueues();
@@ -478,10 +415,9 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    ((AsyncEventQueueImpl)theChannel).getSender().pause();
+    ((AsyncEventQueueImpl) theChannel).getSender().pause();
 
-    ((AbstractGatewaySender)((AsyncEventQueueImpl)theChannel).getSender())
-        .getEventProcessor().waitForDispatcherToPause();
+    ((AbstractGatewaySender) ((AsyncEventQueueImpl) theChannel).getSender()).getEventProcessor().waitForDispatcherToPause();
   }
 
   public static void resumeAsyncEventQueue(String asyncQueueId) {
@@ -494,11 +430,10 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    ((AsyncEventQueueImpl)theQueue).getSender().resume();
+    ((AsyncEventQueueImpl) theQueue).getSender().resume();
   }
 
-  public static void checkAsyncEventQueueSize(String asyncQueueId,
-      int numQueueEntries) {
+  public static void checkAsyncEventQueueSize(String asyncQueueId, int numQueueEntries) {
     AsyncEventQueue theAsyncEventQueue = null;
 
     Set<AsyncEventQueue> asyncEventChannels = cache.getAsyncEventQueues();
@@ -508,16 +443,13 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    GatewaySender sender = ((AsyncEventQueueImpl)theAsyncEventQueue)
-        .getSender();
+    GatewaySender sender = ((AsyncEventQueueImpl) theAsyncEventQueue).getSender();
 
     if (sender.isParallel()) {
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
-      assertEquals(numQueueEntries,
-          queues.toArray(new RegionQueue[queues.size()])[0].getRegion().size());
-    }
-    else {
-      Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
+      assertEquals(numQueueEntries, queues.toArray(new RegionQueue[queues.size()])[0].getRegion().size());
+    } else {
+      Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
       int size = 0;
       for (RegionQueue q : queues) {
         size += q.size();
@@ -537,8 +469,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
    *          expected number of Queue entries
    * @throws Exception
    */
-  public static void waitForAsyncEventQueueSize(String asyncQueueId,
-      final int numQueueEntries) throws Exception {
+  public static void waitForAsyncEventQueueSize(String asyncQueueId, final int numQueueEntries) throws Exception {
     AsyncEventQueue theAsyncEventQueue = null;
 
     Set<AsyncEventQueue> asyncEventChannels = cache.getAsyncEventQueues();
@@ -548,12 +479,10 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    GatewaySender sender = ((AsyncEventQueueImpl)theAsyncEventQueue)
-        .getSender();
+    GatewaySender sender = ((AsyncEventQueueImpl) theAsyncEventQueue).getSender();
 
     if (sender.isParallel()) {
-      final Set<RegionQueue> queues = ((AbstractGatewaySender)sender)
-          .getQueues();
+      final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
 
       Wait.waitForCriterion(new WaitCriterion() {
 
@@ -562,27 +491,21 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         }
 
         public boolean done() {
-          boolean done = numQueueEntries == queues.toArray(new RegionQueue[queues
-              .size()])[0].getRegion().size();
+          boolean done = numQueueEntries == queues.toArray(new RegionQueue[queues.size()])[0].getRegion().size();
           return done;
         }
 
       }, MAX_WAIT, 500, true);
 
-    }
-    else {
-      throw new Exception(
-          "This method should be used for only ParallelGatewaySender,SerialGatewaySender should use checkAsyncEventQueueSize() method instead");
+    } else {
+      throw new Exception("This method should be used for only ParallelGatewaySender,SerialGatewaySender should use checkAsyncEventQueueSize() method instead");
 
     }
   }
 
-  public static void createPartitionedRegion(String regionName,
-      String senderIds, Integer redundantCopies, Integer totalNumBuckets) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-        .getName());
+  public static void createPartitionedRegion(String regionName, String senderIds, Integer redundantCopies, Integer totalNumBuckets) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
       if (senderIds != null) {
@@ -601,19 +524,15 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       fact.setPartitionAttributes(pfact.create());
       Region r = cache.createRegionFactory(fact.create()).create(regionName);
       assertNotNull(r);
-    }
-    finally {
+    } finally {
       exp.remove();
       exp1.remove();
     }
   }
 
-  public static void createPartitionedRegionWithAsyncEventQueue(
-      String regionName, String asyncEventQueueId, Boolean offHeap) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-        .getName());
+  public static void createPartitionedRegionWithAsyncEventQueue(String regionName, String asyncEventQueueId, Boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
 
@@ -621,49 +540,38 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       pfact.setTotalNumBuckets(16);
       fact.setPartitionAttributes(pfact.create());
       fact.setOffHeap(offHeap);
-      Region r = cache.createRegionFactory(fact.create())
-          .addAsyncEventQueueId(asyncEventQueueId).create(regionName);
+      Region r = cache.createRegionFactory(fact.create()).addAsyncEventQueueId(asyncEventQueueId).create(regionName);
       assertNotNull(r);
-    }
-    finally {
+    } finally {
       exp.remove();
       exp1.remove();
     }
   }
 
-  public static void createFixedPartitionedRegionWithAsyncEventQueue(
-    String regionName, String asyncEventQueueId, String partitionName, final List<String> allPartitions, boolean offHeap) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-      .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-      .getName());
+  public static void createFixedPartitionedRegionWithAsyncEventQueue(String regionName, String asyncEventQueueId, String partitionName, final List<String> allPartitions, boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
 
       PartitionAttributesFactory pfact = new PartitionAttributesFactory();
       pfact.setTotalNumBuckets(16);
-      pfact.addFixedPartitionAttributes(FixedPartitionAttributes.createFixedPartition(partitionName,true));
+      pfact.addFixedPartitionAttributes(FixedPartitionAttributes.createFixedPartition(partitionName, true));
       pfact.setPartitionResolver(new MyFixedPartitionResolver(allPartitions));
       fact.setPartitionAttributes(pfact.create());
       fact.setOffHeap(offHeap);
-      Region r = cache.createRegionFactory(fact.create())
-        .addAsyncEventQueueId(asyncEventQueueId).create(regionName);
+      Region r = cache.createRegionFactory(fact.create()).addAsyncEventQueueId(asyncEventQueueId).create(regionName);
       assertNotNull(r);
-    }
-    finally {
+    } finally {
       exp.remove();
       exp1.remove();
     }
   }
 
-  public static void createColocatedPartitionedRegionWithAsyncEventQueue(
-      String regionName, String asyncEventQueueId, Integer totalNumBuckets,
-      String colocatedWith) {
+  public static void createColocatedPartitionedRegionWithAsyncEventQueue(String regionName, String asyncEventQueueId, Integer totalNumBuckets, String colocatedWith) {
 
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(PartitionOfflineException.class.getName());
     try {
       AttributesFactory fact = new AttributesFactory();
 
@@ -671,18 +579,15 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       pfact.setTotalNumBuckets(totalNumBuckets);
       pfact.setColocatedWith(colocatedWith);
       fact.setPartitionAttributes(pfact.create());
-      Region r = cache.createRegionFactory(fact.create())
-          .addAsyncEventQueueId(asyncEventQueueId).create(regionName);
+      Region r = cache.createRegionFactory(fact.create()).addAsyncEventQueueId(asyncEventQueueId).create(regionName);
       assertNotNull(r);
-    }
-    finally {
+    } finally {
       exp.remove();
       exp1.remove();
     }
   }
 
-  public static void createPartitionedRegionWithCacheLoaderAndAsyncQueue(
-      String regionName, String asyncEventQueueId) {
+  public static void createPartitionedRegionWithCacheLoaderAndAsyncQueue(String regionName, String asyncEventQueueId) {
 
     AttributesFactory fact = new AttributesFactory();
 
@@ -691,18 +596,15 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     fact.setPartitionAttributes(pfact.create());
     // set the CacheLoader implementation
     fact.setCacheLoader(new MyCacheLoader());
-    Region r = cache.createRegionFactory(fact.create())
-        .addAsyncEventQueueId(asyncEventQueueId).create(regionName);
+    Region r = cache.createRegionFactory(fact.create()).addAsyncEventQueueId(asyncEventQueueId).create(regionName);
     assertNotNull(r);
   }
 
   /**
    * Create PartitionedRegion with 1 redundant copy
    */
-  public static void createPRWithRedundantCopyWithAsyncEventQueue(
-      String regionName, String asyncEventQueueId, Boolean offHeap) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+  public static void createPRWithRedundantCopyWithAsyncEventQueue(String regionName, String asyncEventQueueId, Boolean offHeap) {
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
 
     try {
       AttributesFactory fact = new AttributesFactory();
@@ -712,24 +614,20 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       pfact.setRedundantCopies(1);
       fact.setPartitionAttributes(pfact.create());
       fact.setOffHeap(offHeap);
-      Region r = cache.createRegionFactory(fact.create())
-          .addAsyncEventQueueId(asyncEventQueueId).create(regionName);
+      Region r = cache.createRegionFactory(fact.create()).addAsyncEventQueueId(asyncEventQueueId).create(regionName);
       assertNotNull(r);
-    }
-    finally {
+    } finally {
       exp.remove();
     }
   }
 
-  public static void createPartitionedRegionAccessorWithAsyncEventQueue(
-      String regionName, String asyncEventQueueId) {
+  public static void createPartitionedRegionAccessorWithAsyncEventQueue(String regionName, String asyncEventQueueId) {
     AttributesFactory fact = new AttributesFactory();
     PartitionAttributesFactory pfact = new PartitionAttributesFactory();
     pfact.setTotalNumBuckets(16);
     pfact.setLocalMaxMemory(0);
     fact.setPartitionAttributes(pfact.create());
-    Region r = cache.createRegionFactory(fact.create())
-        .addAsyncEventQueueId(asyncEventQueueId).create(regionName);
+    Region r = cache.createRegionFactory(fact.create()).addAsyncEventQueueId(asyncEventQueueId).create(regionName);
     // fact.create()).create(regionName);
     assertNotNull(r);
   }
@@ -738,8 +636,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     AsyncEventQueueTestBase test = new AsyncEventQueueTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + locPort
-        + "]");
+    props.setProperty(LOCATORS, "localhost[" + locPort + "]");
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
   }
@@ -752,9 +649,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     cache = CacheFactory.create(ds);
   }
 
-  public static void checkAsyncEventQueueStats(String queueId,
-      final int queueSize, final int eventsReceived, final int eventsQueued,
-      final int eventsDistributed) {
+  public static void checkAsyncEventQueueStats(String queueId, final int queueSize, final int eventsReceived, final int eventsQueued, final int eventsDistributed) {
     Set<AsyncEventQueue> asyncQueues = cache.getAsyncEventQueues();
     AsyncEventQueue queue = null;
     for (AsyncEventQueue q : asyncQueues) {
@@ -763,16 +658,14 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl)queue)
-        .getStatistics();
+    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl) queue).getStatistics();
     assertEquals(queueSize, statistics.getEventQueueSize());
     assertEquals(eventsReceived, statistics.getEventsReceived());
     assertEquals(eventsQueued, statistics.getEventsQueued());
     assert (statistics.getEventsDistributed() >= eventsDistributed);
   }
 
-  public static void checkAsyncEventQueueConflatedStats(
-      String asyncEventQueueId, final int eventsConflated) {
+  public static void checkAsyncEventQueueConflatedStats(String asyncEventQueueId, final int eventsConflated) {
     Set<AsyncEventQueue> queues = cache.getAsyncEventQueues();
     AsyncEventQueue queue = null;
     for (AsyncEventQueue q : queues) {
@@ -781,13 +674,11 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl)queue)
-        .getStatistics();
+    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl) queue).getStatistics();
     assertEquals(eventsConflated, statistics.getEventsNotQueuedConflated());
   }
 
-  public static void checkAsyncEventQueueStats_Failover(
-      String asyncEventQueueId, final int eventsReceived) {
+  public static void checkAsyncEventQueueStats_Failover(String asyncEventQueueId, final int eventsReceived) {
     Set<AsyncEventQueue> asyncEventQueues = cache.getAsyncEventQueues();
     AsyncEventQueue queue = null;
     for (AsyncEventQueue q : asyncEventQueues) {
@@ -796,19 +687,13 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl)queue)
-        .getStatistics();
+    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl) queue).getStatistics();
 
     assertEquals(eventsReceived, statistics.getEventsReceived());
-    assertEquals(
-        eventsReceived,
-        (statistics.getEventsQueued()
-            + statistics.getUnprocessedTokensAddedByPrimary() + statistics
-            .getUnprocessedEventsRemovedByPrimary()));
+    assertEquals(eventsReceived, (statistics.getEventsQueued() + statistics.getUnprocessedTokensAddedByPrimary() + statistics.getUnprocessedEventsRemovedByPrimary()));
   }
 
-  public static void checkAsyncEventQueueBatchStats(String asyncQueueId,
-      final int batches) {
+  public static void checkAsyncEventQueueBatchStats(String asyncQueueId, final int batches) {
     Set<AsyncEventQueue> queues = cache.getAsyncEventQueues();
     AsyncEventQueue queue = null;
     for (AsyncEventQueue q : queues) {
@@ -817,14 +702,12 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl)queue)
-        .getStatistics();
+    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl) queue).getStatistics();
     assert (statistics.getBatchesDistributed() >= batches);
     assertEquals(0, statistics.getBatchesRedistributed());
   }
 
-  public static void checkAsyncEventQueueUnprocessedStats(String asyncQueueId,
-      int events) {
+  public static void checkAsyncEventQueueUnprocessedStats(String asyncQueueId, int events) {
     Set<AsyncEventQueue> asyncQueues = cache.getAsyncEventQueues();
     AsyncEventQueue queue = null;
     for (AsyncEventQueue q : asyncQueues) {
@@ -833,23 +716,17 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         break;
       }
     }
-    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl)queue)
-        .getStatistics();
-    assertEquals(events,
-        (statistics.getUnprocessedEventsAddedBySecondary() + statistics
-            .getUnprocessedTokensRemovedBySecondary()));
-    assertEquals(events,
-        (statistics.getUnprocessedEventsRemovedByPrimary() + statistics
-            .getUnprocessedTokensAddedByPrimary()));
+    final AsyncEventQueueStats statistics = ((AsyncEventQueueImpl) queue).getStatistics();
+    assertEquals(events, (statistics.getUnprocessedEventsAddedBySecondary() + statistics.getUnprocessedTokensRemovedBySecondary()));
+    assertEquals(events, (statistics.getUnprocessedEventsRemovedByPrimary() + statistics.getUnprocessedTokensAddedByPrimary()));
   }
 
   public static void waitForSenderToBecomePrimary(String senderId) {
-    Set<GatewaySender> senders = ((GemFireCacheImpl)cache)
-        .getAllGatewaySenders();
+    Set<GatewaySender> senders = ((GemFireCacheImpl) cache).getAllGatewaySenders();
     final GatewaySender sender = getGatewaySenderById(senders, senderId);
     WaitCriterion wc = new WaitCriterion() {
       public boolean done() {
-        if (sender != null && ((AbstractGatewaySender)sender).isPrimary()) {
+        if (sender != null && ((AbstractGatewaySender) sender).isPrimary()) {
           return true;
         }
         return false;
@@ -862,8 +739,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     Wait.waitForCriterion(wc, 10000, 1000, true);
   }
 
-  private static GatewaySender getGatewaySenderById(Set<GatewaySender> senders,
-      String senderId) {
+  private static GatewaySender getGatewaySenderById(Set<GatewaySender> senders, String senderId) {
     for (GatewaySender s : senders) {
       if (s.getId().equals(senderId)) {
         return s;
@@ -873,14 +749,10 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     return null;
   }
 
-  public static void createSender(String dsName, int remoteDsId,
-      boolean isParallel, Integer maxMemory, Integer batchSize,
-      boolean isConflation, boolean isPersistent, GatewayEventFilter filter,
-      boolean isManulaStart) {
+  public static void createSender(String dsName, int remoteDsId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, boolean isManulaStart) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
     try {
-      File persistentDirectory = new File(dsName + "_disk_"
-          + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+      File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
       persistentDirectory.mkdir();
       DiskStoreFactory dsf = cache.createDiskStoreFactory();
       File[] dirs1 = new File[] { persistentDirectory };
@@ -892,34 +764,29 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         gateway.setManualStart(isManulaStart);
         // set dispatcher threads
         gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-        ((InternalGatewaySenderFactory)gateway)
-            .setLocatorDiscoveryCallback(new MyLocatorCallback());
+        ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
         if (filter != null) {
           eventFilter = filter;
           gateway.addGatewayEventFilter(filter);
         }
         if (isPersistent) {
           gateway.setPersistenceEnabled(true);
-          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName)
-              .getName());
-        }
-        else {
+          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName).getName());
+        } else {
           DiskStore store = dsf.setDiskDirs(dirs1).create(dsName);
           gateway.setDiskStoreName(store.getName());
         }
         gateway.setBatchConflationEnabled(isConflation);
         gateway.create(dsName, remoteDsId);
 
-      }
-      else {
+      } else {
         GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
         gateway.setMaximumQueueMemory(maxMemory);
         gateway.setBatchSize(batchSize);
         gateway.setManualStart(isManulaStart);
         // set dispatcher threads
         gateway.setDispatcherThreads(numDispatcherThreadsForTheRun);
-        ((InternalGatewaySenderFactory)gateway)
-            .setLocatorDiscoveryCallback(new MyLocatorCallback());
+        ((InternalGatewaySenderFactory) gateway).setLocatorDiscoveryCallback(new MyLocatorCallback());
         if (filter != null) {
           eventFilter = filter;
           gateway.addGatewayEventFilter(filter);
@@ -927,17 +794,14 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         gateway.setBatchConflationEnabled(isConflation);
         if (isPersistent) {
           gateway.setPersistenceEnabled(true);
-          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName)
-              .getName());
-        }
-        else {
+          gateway.setDiskStoreName(dsf.setDiskDirs(dirs1).create(dsName).getName());
+        } else {
           DiskStore store = dsf.setDiskDirs(dirs1).create(dsName);
           gateway.setDiskStoreName(store.getName());
         }
         gateway.create(dsName, remoteDsId);
       }
-    }
-    finally {
+    } finally {
       exln.remove();
     }
   }
@@ -959,8 +823,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     AsyncEventQueueTestBase test = new AsyncEventQueueTestBase();
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + locPort
-        + "]");
+    props.setProperty(LOCATORS, "localhost[" + locPort + "]");
 
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
@@ -972,11 +835,9 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     GatewayReceiver receiver = fact.create();
     try {
       receiver.start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-      fail("Test " + test.getName()
-          + " failed to start GatewayRecevier on port " + port);
+      fail("Test " + test.getName() + " failed to start GatewayRecevier on port " + port);
     }
     return port;
   }
@@ -1011,25 +872,21 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       RebalanceOperation rebalanceOp = factory.start();
       RebalanceResults rebalanceResults = rebalanceOp.getResults();
 
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Assert.fail("Interrupted", e);
     }
   }
 
   public static void doPuts(String regionName, int numPuts) {
-    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class
-        .getName());
-    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class
-        .getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(InterruptedException.class.getName());
+    IgnoredException exp2 = IgnoredException.addIgnoredException(GatewaySenderException.class.getName());
     try {
       Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
       for (long i = 0; i < numPuts; i++) {
         r.put(i, i);
       }
-    }
-    finally {
+    } finally {
       exp1.remove();
       exp2.remove();
     }
@@ -1080,25 +937,21 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
 
   public static void doNextPuts(String regionName, int start, int numPuts) {
     // waitForSitesToUpdate();
-    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class.getName());
     try {
       Region r = cache.getRegion(Region.SEPARATOR + regionName);
       assertNotNull(r);
       for (long i = start; i < numPuts; i++) {
         r.put(i, i);
       }
-    }
-    finally {
+    } finally {
       exp.remove();
     }
   }
 
   public static void validateRegionSize(String regionName, final int regionSize) {
-    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(CacheClosedException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(CacheClosedException.class.getName());
     try {
 
       final Region r = cache.getRegion(Region.SEPARATOR + regionName);
@@ -1112,14 +965,11 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         }
 
         public String description() {
-          return "Expected region entries: " + regionSize
-              + " but actual entries: " + r.keySet().size()
-              + " present region keyset " + r.keySet();
+          return "Expected region entries: " + regionSize + " but actual entries: " + r.keySet().size() + " present region keyset " + r.keySet();
         }
       };
       Wait.waitForCriterion(wc, 240000, 500, true);
-    }
-    finally {
+    } finally {
       exp.remove();
       exp1.remove();
     }
@@ -1129,10 +979,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
    * Validate whether all the attributes set on AsyncEventQueueFactory are set
    * on the sender underneath the AsyncEventQueue.
    */
-  public static void validateAsyncEventQueueAttributes(String asyncChannelId,
-      int maxQueueMemory, int batchSize, int batchTimeInterval,
-      boolean isPersistent, String diskStoreName, boolean isDiskSynchronous,
-      boolean batchConflationEnabled) {
+  public static void validateAsyncEventQueueAttributes(String asyncChannelId, int maxQueueMemory, int batchSize, int batchTimeInterval, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous, boolean batchConflationEnabled) {
 
     AsyncEventQueue theChannel = null;
 
@@ -1143,28 +990,21 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    GatewaySender theSender = ((AsyncEventQueueImpl)theChannel).getSender();
-    assertEquals("maxQueueMemory", maxQueueMemory,
-        theSender.getMaximumQueueMemory());
+    GatewaySender theSender = ((AsyncEventQueueImpl) theChannel).getSender();
+    assertEquals("maxQueueMemory", maxQueueMemory, theSender.getMaximumQueueMemory());
     assertEquals("batchSize", batchSize, theSender.getBatchSize());
-    assertEquals("batchTimeInterval", batchTimeInterval,
-        theSender.getBatchTimeInterval());
+    assertEquals("batchTimeInterval", batchTimeInterval, theSender.getBatchTimeInterval());
     assertEquals("isPersistent", isPersistent, theSender.isPersistenceEnabled());
     assertEquals("diskStoreName", diskStoreName, theSender.getDiskStoreName());
-    assertEquals("isDiskSynchronous", isDiskSynchronous,
-        theSender.isDiskSynchronous());
-    assertEquals("batchConflation", batchConflationEnabled,
-        theSender.isBatchConflationEnabled());
+    assertEquals("isDiskSynchronous", isDiskSynchronous, theSender.isDiskSynchronous());
+    assertEquals("batchConflation", batchConflationEnabled, theSender.isBatchConflationEnabled());
   }
-  
+
   /**
    * Validate whether all the attributes set on AsyncEventQueueFactory are set
    * on the sender underneath the AsyncEventQueue.
    */
-  public static void validateConcurrentAsyncEventQueueAttributes(String asyncChannelId,
-      int maxQueueMemory, int batchSize, int batchTimeInterval,
-      boolean isPersistent, String diskStoreName, boolean isDiskSynchronous,
-      boolean batchConflationEnabled, int dispatcherThreads, OrderPolicy policy) {
+  public static void validateConcurrentAsyncEventQueueAttributes(String asyncChannelId, int maxQueueMemory, int batchSize, int batchTimeInterval, boolean isPersistent, String diskStoreName, boolean isDiskSynchronous, boolean batchConflationEnabled, int dispatcherThreads, OrderPolicy policy) {
 
     AsyncEventQueue theChannel = null;
 
@@ -1175,25 +1015,19 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    GatewaySender theSender = ((AsyncEventQueueImpl)theChannel).getSender();
-    assertEquals("maxQueueMemory", maxQueueMemory, theSender
-        .getMaximumQueueMemory());
+    GatewaySender theSender = ((AsyncEventQueueImpl) theChannel).getSender();
+    assertEquals("maxQueueMemory", maxQueueMemory, theSender.getMaximumQueueMemory());
     assertEquals("batchSize", batchSize, theSender.getBatchSize());
-    assertEquals("batchTimeInterval", batchTimeInterval, theSender
-        .getBatchTimeInterval());
+    assertEquals("batchTimeInterval", batchTimeInterval, theSender.getBatchTimeInterval());
     assertEquals("isPersistent", isPersistent, theSender.isPersistenceEnabled());
     assertEquals("diskStoreName", diskStoreName, theSender.getDiskStoreName());
-    assertEquals("isDiskSynchronous", isDiskSynchronous, theSender
-        .isDiskSynchronous());
-    assertEquals("batchConflation", batchConflationEnabled, theSender
-        .isBatchConflationEnabled());
-    assertEquals("dispatcherThreads", dispatcherThreads, theSender
-        .getDispatcherThreads());
+    assertEquals("isDiskSynchronous", isDiskSynchronous, theSender.isDiskSynchronous());
+    assertEquals("batchConflation", batchConflationEnabled, theSender.isBatchConflationEnabled());
+    assertEquals("dispatcherThreads", dispatcherThreads, theSender.getDispatcherThreads());
     assertEquals("orderPolicy", policy, theSender.getOrderPolicy());
   }
 
-  public static void validateAsyncEventListener(String asyncQueueId,
-      final int expectedSize) {
+  public static void validateAsyncEventListener(String asyncQueueId, final int expectedSize) {
     AsyncEventListener theListener = null;
 
     Set<AsyncEventQueue> asyncEventQueues = cache.getAsyncEventQueues();
@@ -1203,7 +1037,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final Map eventsMap = ((MyAsyncEventListener)theListener).getEventsMap();
+    final Map eventsMap = ((MyAsyncEventListener) theListener).getEventsMap();
     assertNotNull(eventsMap);
     WaitCriterion wc = new WaitCriterion() {
       public boolean done() {
@@ -1214,15 +1048,13 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
 
       public String description() {
-        return "Expected map entries: " + expectedSize
-            + " but actual entries: " + eventsMap.size();
+        return "Expected map entries: " + expectedSize + " but actual entries: " + eventsMap.size();
       }
     };
     Wait.waitForCriterion(wc, 60000, 500, true); // TODO:Yogs
   }
 
-  public static void validateAsyncEventForOperationDetail(String asyncQueueId,
-      final int expectedSize, boolean isLoad, boolean isPutAll) {
+  public static void validateAsyncEventForOperationDetail(String asyncQueueId, final int expectedSize, boolean isLoad, boolean isPutAll) {
 
     AsyncEventListener theListener = null;
 
@@ -1233,8 +1065,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final Map eventsMap = ((MyAsyncEventListener_CacheLoader)theListener)
-        .getEventsMap();
+    final Map eventsMap = ((MyAsyncEventListener_CacheLoader) theListener).getEventsMap();
     assertNotNull(eventsMap);
     WaitCriterion wc = new WaitCriterion() {
       public boolean done() {
@@ -1245,15 +1076,14 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
 
       public String description() {
-        return "Expected map entries: " + expectedSize
-            + " but actual entries: " + eventsMap.size();
+        return "Expected map entries: " + expectedSize + " but actual entries: " + eventsMap.size();
       }
     };
     Wait.waitForCriterion(wc, 60000, 500, true); // TODO:Yogs
     Collection values = eventsMap.values();
     Iterator itr = values.iterator();
     while (itr.hasNext()) {
-      AsyncEvent asyncEvent = (AsyncEvent)itr.next();
+      AsyncEvent asyncEvent = (AsyncEvent) itr.next();
       if (isLoad)
         assertTrue(asyncEvent.getOperation().isLoad());
       if (isPutAll)
@@ -1261,8 +1091,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void validateCustomAsyncEventListener(String asyncQueueId,
-      final int expectedSize) {
+  public static void validateCustomAsyncEventListener(String asyncQueueId, final int expectedSize) {
     AsyncEventListener theListener = null;
 
     Set<AsyncEventQueue> asyncEventQueues = cache.getAsyncEventQueues();
@@ -1272,8 +1101,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final Map eventsMap = ((CustomAsyncEventListener)theListener)
-        .getEventsMap();
+    final Map eventsMap = ((CustomAsyncEventListener) theListener).getEventsMap();
     assertNotNull(eventsMap);
     WaitCriterion wc = new WaitCriterion() {
       public boolean done() {
@@ -1284,8 +1112,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
 
       public String description() {
-        return "Expected map entries: " + expectedSize
-            + " but actual entries: " + eventsMap.size();
+        return "Expected map entries: " + expectedSize + " but actual entries: " + eventsMap.size();
       }
     };
     Wait.waitForCriterion(wc, 60000, 500, true); // TODO:Yogs
@@ -1293,8 +1120,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     Iterator<AsyncEvent> itr = eventsMap.values().iterator();
     while (itr.hasNext()) {
       AsyncEvent event = itr.next();
-      assertTrue("possibleDuplicate should be true for event: " + event,
-          event.getPossibleDuplicate());
+      assertTrue("possibleDuplicate should be true for event: " + event, event.getPossibleDuplicate());
     }
   }
 
@@ -1308,12 +1134,10 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final GatewaySender sender = ((AsyncEventQueueImpl)theAsyncEventQueue)
-        .getSender();
+    final GatewaySender sender = ((AsyncEventQueueImpl) theAsyncEventQueue).getSender();
 
     if (sender.isParallel()) {
-      final Set<RegionQueue> queues = ((AbstractGatewaySender)sender)
-          .getQueues();
+      final Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
 
       WaitCriterion wc = new WaitCriterion() {
         public boolean done() {
@@ -1332,17 +1156,15 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
           for (RegionQueue q : queues) {
             size += q.size();
           }
-          return "Expected queue size to be : " + 0 + " but actual entries: "
-              + size;
+          return "Expected queue size to be : " + 0 + " but actual entries: " + size;
         }
       };
       Wait.waitForCriterion(wc, 60000, 500, true);
 
-    }
-    else {
+    } else {
       WaitCriterion wc = new WaitCriterion() {
         public boolean done() {
-          Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
+          Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
           int size = 0;
           for (RegionQueue q : queues) {
             size += q.size();
@@ -1354,21 +1176,19 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         }
 
         public String description() {
-          Set<RegionQueue> queues = ((AbstractGatewaySender)sender).getQueues();
+          Set<RegionQueue> queues = ((AbstractGatewaySender) sender).getQueues();
           int size = 0;
           for (RegionQueue q : queues) {
             size += q.size();
           }
-          return "Expected queue size to be : " + 0 + " but actual entries: "
-              + size;
+          return "Expected queue size to be : " + 0 + " but actual entries: " + size;
         }
       };
       Wait.waitForCriterion(wc, 60000, 500, true);
     }
   }
 
-  public static void verifyAsyncEventListenerForPossibleDuplicates(
-      String asyncEventQueueId, Set<Integer> bucketIds, int batchSize) {
+  public static void verifyAsyncEventListenerForPossibleDuplicates(String asyncEventQueueId, Set<Integer> bucketIds, int batchSize) {
     AsyncEventListener theListener = null;
 
     Set<AsyncEventQueue> asyncEventQueues = cache.getAsyncEventQueues();
@@ -1378,16 +1198,13 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       }
     }
 
-    final Map<Integer, List<GatewaySenderEventImpl>> bucketToEventsMap = ((MyAsyncEventListener2)theListener)
-        .getBucketToEventsMap();
+    final Map<Integer, List<GatewaySenderEventImpl>> bucketToEventsMap = ((MyAsyncEventListener2) theListener).getBucketToEventsMap();
     assertNotNull(bucketToEventsMap);
     assertTrue(bucketIds.size() > 1);
 
     for (int bucketId : bucketIds) {
-      List<GatewaySenderEventImpl> eventsForBucket = bucketToEventsMap
-          .get(bucketId);
-      LogWriterUtils.getLogWriter().info(
-          "Events for bucket: " + bucketId + " is " + eventsForBucket);
+      List<GatewaySenderEventImpl> eventsForBucket = bucketToEventsMap.get(bucketId);
+      LogWriterUtils.getLogWriter().info("Events for bucket: " + bucketId + " is " + eventsForBucket);
       assertNotNull(eventsForBucket);
       for (int i = 0; i < batchSize; i++) {
         GatewaySenderEventImpl senderEvent = eventsForBucket.get(i);
@@ -1412,11 +1229,10 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     assertEquals(expectedNumInvocations, eventsMap.size());
 
     for (Iterator i = eventsMap.entrySet().iterator(); i.hasNext();) {
-      Map.Entry<Integer,String> entry = (Map.Entry<Integer,String>) i.next();
+      Map.Entry<Integer, String> entry = (Map.Entry<Integer, String>) i.next();
       assertEquals(MyGatewayEventSubstitutionFilter.SUBSTITUTION_PREFIX + entry.getKey(), entry.getValue());
     }
   }
-
 
   public static void verifySubstitutionFilterToDataInvocations(String asyncEventQueueId, int expectedToDataInvoations) {
     AsyncEventQueue queue = cache.getAsyncEventQueue(asyncEventQueueId);
@@ -1443,7 +1259,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
   public static int getAsyncEventListenerMapSize(String asyncEventQueueId) {
     AsyncEventListener theListener = getAsyncEventListener(asyncEventQueueId);
 
-    final Map eventsMap = ((MyAsyncEventListener)theListener).getEventsMap();
+    final Map eventsMap = ((MyAsyncEventListener) theListener).getEventsMap();
     assertNotNull(eventsMap);
     LogWriterUtils.getLogWriter().info("The events map size is " + eventsMap.size());
     return eventsMap.size();
@@ -1469,7 +1285,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
   }
 
   public static Set<Integer> getAllPrimaryBucketsOnTheNode(String regionName) {
-    PartitionedRegion region = (PartitionedRegion)cache.getRegion(regionName);
+    PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
     return region.getDataStore().getAllLocalPrimaryBucketIds();
   }
 
@@ -1479,7 +1295,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     CacheListenerAdapter cl = new CacheListenerAdapter() {
       @Override
       public void afterCreate(EntryEvent event) {
-        if ((Long)event.getKey() == 900) {
+        if ((Long) event.getKey() == 900) {
           cache.getLogger().fine(" Gateway sender is killed by a test");
           cache.close();
           cache.getDistributedSystem().disconnect();
@@ -1491,16 +1307,14 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
 
   public static Boolean killSender(String senderId) {
     final IgnoredException exln = IgnoredException.addIgnoredException("Could not connect");
-    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class
-        .getName());
-    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class
-        .getName());
+    IgnoredException exp = IgnoredException.addIgnoredException(CacheClosedException.class.getName());
+    IgnoredException exp1 = IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     try {
       Set<GatewaySender> senders = cache.getGatewaySenders();
       AbstractGatewaySender sender = null;
       for (GatewaySender s : senders) {
         if (s.getId().equals(senderId)) {
-          sender = (AbstractGatewaySender)s;
+          sender = (AbstractGatewaySender) s;
           break;
         }
       }
@@ -1510,8 +1324,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
         return Boolean.TRUE;
       }
       return Boolean.FALSE;
-    }
-    finally {
+    } finally {
       exp.remove();
       exp1.remove();
       exln.remove();
@@ -1523,7 +1336,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     AsyncEventQueueImpl queue = null;
     for (AsyncEventQueue q : queues) {
       if (q.getId().equals(asyncQueueId)) {
-        queue = (AsyncEventQueueImpl)q;
+        queue = (AsyncEventQueueImpl) q;
         break;
       }
     }
@@ -1558,18 +1371,15 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       notifyAll();
     }
 
-    public boolean waitForDiscovery(InetSocketAddress locator, long time)
-        throws InterruptedException {
+    public boolean waitForDiscovery(InetSocketAddress locator, long time) throws InterruptedException {
       return waitFor(discoveredLocators, locator, time);
     }
 
-    public boolean waitForRemove(InetSocketAddress locator, long time)
-        throws InterruptedException {
+    public boolean waitForRemove(InetSocketAddress locator, long time) throws InterruptedException {
       return waitFor(removedLocators, locator, time);
     }
 
-    private synchronized boolean waitFor(Set set, InetSocketAddress locator,
-        long time) throws InterruptedException {
+    private synchronized boolean waitFor(Set set, InetSocketAddress locator, long time) throws InterruptedException {
       long remaining = time;
       long endTime = System.currentTimeMillis() + time;
       while (!set.contains(locator) && remaining >= 0) {
@@ -1587,7 +1397,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       return new HashSet(removedLocators);
     }
   }
-  
+
   @Override
   public final void postTearDown() throws Exception {
     cleanupVM();
@@ -1607,8 +1417,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
       cache.close();
       cache.getDistributedSystem().disconnect();
       cache = null;
-    }
-    else {
+    } else {
       AsyncEventQueueTestBase test = new AsyncEventQueueTestBase();
       if (test.isConnectedToDS()) {
         test.getSystem().disconnect();
@@ -1622,12 +1431,12 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void printEventListenerMap() {
-    ((MyGatewaySenderEventListener)eventListener1).printMap();
+    ((MyGatewaySenderEventListener) eventListener1).printMap();
   }
-  
+
   @Override
   public final Properties getDistributedSystemProperties() {
-  // For now all WANTestBase tests allocate off-heap memory even though
+    // For now all WANTestBase tests allocate off-heap memory even though
     // many of them never use it.
     // The problem is that WANTestBase has static methods that create instances
     // of WANTestBase (instead of instances of the subclass). So we can't override
@@ -1636,7 +1445,7 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     props.setProperty(OFF_HEAP_MEMORY_SIZE, "300m");
     return props;
   }
-  
+
   /**
    * Returns true if the test should create off-heap regions.
    * OffHeap tests should over-ride this method and return false.
@@ -1654,20 +1463,24 @@ public class AsyncEventQueueTestBase extends JUnit4DistributedTestCase {
     }
 
     @Override
-    public String getPartitionName(final EntryOperation opDetails, @Deprecated final Set targetPartitions) {
-      int hash =  Math.abs(opDetails.getKey().hashCode() % allPartitions.size());
+    public String getPartitionName(final EntryOperation opDetails, @Deprecated
+    final Set targetPartitions) {
+      int hash = Math.abs(opDetails.getKey().hashCode() % allPartitions.size());
       return allPartitions.get(hash);
     }
 
-    @Override public Object getRoutingObject(final EntryOperation opDetails) {
+    @Override
+    public Object getRoutingObject(final EntryOperation opDetails) {
       return opDetails.getKey();
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
       return getClass().getName();
     }
 
-    @Override public void close() {
+    @Override
+    public void close() {
 
     }
   }
@@ -1698,7 +1511,7 @@ class MyAsyncEventListener_CacheLoader implements AsyncEventListener {
 class MyCacheLoader implements CacheLoader, Declarable {
 
   public Object load(LoaderHelper helper) {
-    Long key = (Long)helper.getKey();
+    Long key = (Long) helper.getKey();
     return "LoadedValue" + "_" + key;
   }
 
@@ -1764,13 +1577,7 @@ class GatewayEventSubstituteObject implements DataSerializable, Sizeable {
   }
 
   public String toString() {
-    return new StringBuilder()
-        .append(getClass().getSimpleName())
-        .append("[")
-        .append("id=")
-        .append(this.id)
-        .append("]")
-        .toString();
+    return new StringBuilder().append(getClass().getSimpleName()).append("[").append("id=").append(this.id).append("]").toString();
   }
 }
 

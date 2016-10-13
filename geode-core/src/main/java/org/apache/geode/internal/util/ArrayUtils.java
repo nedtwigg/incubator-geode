@@ -44,8 +44,7 @@ public abstract class ArrayUtils {
   public static <T> T getElementAtIndex(T[] array, int index, T defaultValue) {
     try {
       return array[index];
-    }
-    catch (ArrayIndexOutOfBoundsException ignore) {
+    } catch (ArrayIndexOutOfBoundsException ignore) {
       return defaultValue;
     }
   }
@@ -84,9 +83,9 @@ public abstract class ArrayUtils {
   }
 
   public static String toString(final String... array) {
-    return toString((Object[])array); 
+    return toString((Object[]) array);
   }
-  
+
   /**
    * Insert an element into an array.  The element is inserted at the
    * given position, all elements afterwards are moved to the right.
@@ -97,8 +96,7 @@ public abstract class ArrayUtils {
    * @return the new array
    */
   public static Object[] insert(Object[] originalArray, int pos, Object element) {
-    Object[] newArray = (Object[]) java.lang.reflect.Array.newInstance(
-      originalArray.getClass().getComponentType(), originalArray.length + 1);
+    Object[] newArray = (Object[]) java.lang.reflect.Array.newInstance(originalArray.getClass().getComponentType(), originalArray.length + 1);
 
     // Test Cases (proof of correctness by examining corner cases)
     // 1) A B C D insert at 0: expect X A B C D
@@ -143,8 +141,7 @@ public abstract class ArrayUtils {
    * @return the new array
    */
   public static Object[] remove(Object[] originalArray, int pos) {
-    Object[] newArray = (Object[])java.lang.reflect.Array.newInstance(
-      originalArray.getClass().getComponentType(), originalArray.length - 1);
+    Object[] newArray = (Object[]) java.lang.reflect.Array.newInstance(originalArray.getClass().getComponentType(), originalArray.length - 1);
 
     // Test cases: (proof of correctness)
     // 1) A B C D E remove 0: expect "B C D E"
@@ -174,16 +171,13 @@ public abstract class ArrayUtils {
   }
 
   public static String objectRefString(Object obj) {
-    return obj != null ? obj.getClass().getSimpleName() + '@'
-        + Integer.toHexString(System.identityHashCode(obj)) : "(null)";
+    return obj != null ? obj.getClass().getSimpleName() + '@' + Integer.toHexString(System.identityHashCode(obj)) : "(null)";
   }
 
   public static void objectRefString(Object obj, StringBuilder sb) {
     if (obj != null) {
-      sb.append(obj.getClass().getSimpleName()).append('@')
-          .append(Integer.toHexString(System.identityHashCode(obj)));
-    }
-    else {
+      sb.append(obj.getClass().getSimpleName()).append('@').append(Integer.toHexString(System.identityHashCode(obj)));
+    } else {
       sb.append("(null)");
     }
   }
@@ -200,18 +194,16 @@ public abstract class ArrayUtils {
     if (obj instanceof Object[]) {
       sb.append('(');
       boolean first = true;
-      for (Object o : (Object[])obj) {
+      for (Object o : (Object[]) obj) {
         if (!first) {
           sb.append(',');
-        }
-        else {
+        } else {
           first = false;
         }
         objectString(o, sb);
       }
       sb.append(')');
-    }
-    else {
+    } else {
       objectStringWithBytes(obj, sb);
     }
   }
@@ -224,8 +216,8 @@ public abstract class ArrayUtils {
     StringBuilder sb = new StringBuilder();
     objectStringNonRecursive(obj, sb);
     return sb.toString();
-  }  
-  
+  }
+
   public static boolean areByteArrayArrayEquals(byte[][] v1, byte[][] v2) {
     boolean areEqual = false;
     if (v1.length == v2.length) {
@@ -248,20 +240,18 @@ public abstract class ArrayUtils {
     if (obj instanceof Object[]) {
       sb.append('(');
       boolean first = true;
-      for (Object o : (Object[])obj) {
+      for (Object o : (Object[]) obj) {
         if (!first) {
           sb.append(',');
           sb.append(o);
-        }
-        else {
+        } else {
           first = false;
           // show the first byte[] for byte[][] storage
           objectStringWithBytes(o, sb);
         }
       }
       sb.append(')');
-    }
-    else {
+    } else {
       objectStringWithBytes(obj, sb);
     }
   }
@@ -270,13 +260,12 @@ public abstract class ArrayUtils {
     if (obj instanceof byte[]) {
       sb.append('(');
       boolean first = true;
-      final byte[] bytes = (byte[])obj;
+      final byte[] bytes = (byte[]) obj;
       int numBytes = 0;
       for (byte b : bytes) {
         if (!first) {
           sb.append(',');
-        }
-        else {
+        } else {
           first = false;
         }
         sb.append(b);
@@ -287,8 +276,7 @@ public abstract class ArrayUtils {
         }
       }
       sb.append(')');
-    }
-    else {
+    } else {
       sb.append(obj);
     }
   }
@@ -324,7 +312,7 @@ public abstract class ArrayUtils {
 
     return integerArray;
   }
-  
+
   /**
    * Converts a double byte array into a double Byte array. 
    * 

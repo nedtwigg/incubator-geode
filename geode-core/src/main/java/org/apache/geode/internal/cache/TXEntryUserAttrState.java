@@ -32,28 +32,32 @@ public class TXEntryUserAttrState {
   private final Object originalValue;
   private Object pendingValue;
 
-  public TXEntryUserAttrState(Object originalValue) 
-  {
+  public TXEntryUserAttrState(Object originalValue) {
     this.originalValue = originalValue;
     this.pendingValue = originalValue;
   }
+
   public Object getOriginalValue() {
     return this.originalValue;
   }
+
   public Object getPendingValue() {
     return this.pendingValue;
   }
+
   public Object setPendingValue(Object pv) {
     Object result = this.pendingValue;
     this.pendingValue = pv;
     return result;
   }
+
   void checkForConflict(LocalRegion r, Object key) throws CommitConflictException {
     Object curCmtValue = r.basicGetEntryUserAttribute(key);
     if (this.originalValue != curCmtValue) {
-      throw new CommitConflictException(LocalizedStrings.TXEntryUserAttrState_ENTRY_USER_ATTRIBUTE_FOR_KEY_0_ON_REGION_1_HAD_ALREADY_BEEN_CHANGED_TO_2.toLocalizedString(new Object[] {key, r.getFullPath(), curCmtValue}));
+      throw new CommitConflictException(LocalizedStrings.TXEntryUserAttrState_ENTRY_USER_ATTRIBUTE_FOR_KEY_0_ON_REGION_1_HAD_ALREADY_BEEN_CHANGED_TO_2.toLocalizedString(new Object[] { key, r.getFullPath(), curCmtValue }));
     }
   }
+
   void applyChanges(LocalRegion r, Object key) {
     try {
       Region.Entry re = r.getEntry(key);

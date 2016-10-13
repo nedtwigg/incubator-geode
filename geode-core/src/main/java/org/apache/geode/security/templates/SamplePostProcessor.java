@@ -24,7 +24,7 @@ import org.apache.geode.security.PostProcessor;
 /**
  * This is example that implements PostProcessor
  */
-public class SamplePostProcessor implements PostProcessor{
+public class SamplePostProcessor implements PostProcessor {
 
   @Override
   public void init(final Properties securityProps) {
@@ -44,17 +44,13 @@ public class SamplePostProcessor implements PostProcessor{
    * @return the processed value
    */
   @Override
-  public Object processRegionValue(Object principal,
-                                   String regionName,
-                                   Object key,
-                                   Object value) {
+  public Object processRegionValue(Object principal, String regionName, Object key, Object value) {
     String name = null;
-    if(principal instanceof Principal){
+    if (principal instanceof Principal) {
       name = ((Principal) principal).getName();
-    }
-    else{
+    } else {
       name = principal.toString();
     }
-    return name+"/"+regionName+"/"+key+"/"+value;
+    return name + "/" + regionName + "/" + key + "/" + value;
   }
 }

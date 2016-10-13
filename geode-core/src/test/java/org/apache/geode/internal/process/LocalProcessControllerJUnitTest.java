@@ -71,7 +71,7 @@ public class LocalProcessControllerJUnitTest {
   public void tearDown() throws Exception {
     this.server.unregisterMBean(objectName);
   }
-  
+
   @Test
   public void testProcessMBean() throws Exception {
     // validate basics of the ProcessMBean
@@ -79,13 +79,13 @@ public class LocalProcessControllerJUnitTest {
     assertFalse("Zero matching mbeans", mbeanNames.isEmpty());
     assertEquals(1, mbeanNames.size());
     final ObjectName name = mbeanNames.iterator().next();
-    
+
     final MBeanInfo info = this.server.getMBeanInfo(name);
-    
+
     final MBeanOperationInfo[] operInfo = info.getOperations();
     assertEquals(1, operInfo.length);
     assertEquals("stop", operInfo[0].getName());
-    
+
     final MBeanAttributeInfo[] attrInfo = info.getAttributes();
     assertEquals(2, attrInfo.length);
     // The order of these attributes is indeterminate
@@ -93,35 +93,27 @@ public class LocalProcessControllerJUnitTest {
     assertTrue("Pid".equals(attrInfo[1].getName()) || "Process".equals(attrInfo[1].getName()));
     assertNotNull(this.server.getAttribute(name, "Pid"));
     assertNotNull(this.server.getAttribute(name, "Process"));
-    
+
     assertEquals(pid, this.server.getAttribute(name, "Pid"));
     assertEquals(true, this.server.getAttribute(name, "Process"));
 
     // validate query using only Pid attribute
-    QueryExp constraint = Query.eq(
-        Query.attr("Pid"),
-        Query.value(pid));
+    QueryExp constraint = Query.eq(Query.attr("Pid"), Query.value(pid));
     mbeanNames = this.server.queryNames(objectName, constraint);
     assertFalse("Zero matching mbeans", mbeanNames.isEmpty());
-    
+
     // validate query with wrong Pid finds nothing
-    constraint = Query.eq(
-        Query.attr("Pid"),
-        Query.value(pid+1));
+    constraint = Query.eq(Query.attr("Pid"), Query.value(pid + 1));
     mbeanNames = this.server.queryNames(objectName, constraint);
     assertTrue("Found matching mbeans", mbeanNames.isEmpty());
-    
+
     // validate query using both attributes
-    constraint = Query.and(
-        Query.eq(Query.attr("Process"),Query.value(true)),
-        Query.eq(Query.attr("Pid"),Query.value(pid)));
+    constraint = Query.and(Query.eq(Query.attr("Process"), Query.value(true)), Query.eq(Query.attr("Pid"), Query.value(pid)));
     mbeanNames = this.server.queryNames(objectName, constraint);
     assertFalse("Zero matching mbeans", mbeanNames.isEmpty());
-    
+
     // validate query with wrong attribute finds nothing
-    constraint = Query.and(
-        Query.eq(Query.attr("Process"),Query.value(false)),
-        Query.eq(Query.attr("Pid"),Query.value(pid)));
+    constraint = Query.and(Query.eq(Query.attr("Process"), Query.value(false)), Query.eq(Query.attr("Pid"), Query.value(pid)));
     mbeanNames = this.server.queryNames(objectName, constraint);
     assertTrue("Found matching mbeans", mbeanNames.isEmpty());
   }

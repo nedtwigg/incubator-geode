@@ -29,16 +29,15 @@ import org.apache.geode.internal.logging.LogService;
  *
  */
 public class RemoveOverRedundancy extends RebalanceDirectorAdapter {
-  
-  private static final Logger logger = LogService.getLogger();
-  
-  private PartitionedRegionLoadModel model;
 
+  private static final Logger logger = LogService.getLogger();
+
+  private PartitionedRegionLoadModel model;
 
   @Override
   public void initialize(PartitionedRegionLoadModel model) {
     this.model = model;
-    
+
   }
 
   @Override
@@ -58,24 +57,24 @@ public class RemoveOverRedundancy extends RebalanceDirectorAdapter {
   private boolean removeOverRedundancy() {
     Move bestMove = null;
     BucketRollup first = null;
-    while(bestMove == null) {
-      if(model.getOverRedundancyBuckets().isEmpty()) {
+    while (bestMove == null) {
+      if (model.getOverRedundancyBuckets().isEmpty()) {
         return false;
-      } 
+      }
 
       first = model.getOverRedundancyBuckets().first();
       bestMove = model.findBestRemove(first);
-      if(bestMove == null) {
-        if(logger.isDebugEnabled()) {
+      if (bestMove == null) {
+        if (logger.isDebugEnabled()) {
           logger.debug("Skipping overredundancy bucket {} because couldn't find a member to remove from?", first);
         }
         model.ignoreOverRedundancyBucket(first);
       }
     }
     Member targetMember = bestMove.getTarget();
-    
+
     model.remoteOverRedundancyBucket(first, targetMember);
-    
+
     return true;
   }
 }

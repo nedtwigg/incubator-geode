@@ -26,7 +26,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
  */
 @Category(UnitTest.class)
 public class RegionVersionHolderSmallBitSetJUnitTest extends RegionVersionHolderJUnitTest {
-  
+
   @Override
   protected final void postSetUp() throws Exception {
     RegionVersionHolder.BIT_SET_WIDTH = 4;

@@ -36,16 +36,16 @@ public class BytesAndBitsForCompactor {
    * When done with the offHeapData, null it out if you want to reuse the byte[] later.
    */
   private @Unretained StoredObject offHeapData;
-  private  byte[] data;
-  private  byte userBits=0;
+  private byte[] data;
+  private byte userBits = 0;
   // length of the data present in the byte array 
-  private  int validLength;
+  private int validLength;
   private static final byte[] INIT_FOR_WRAPPER = new byte[0];
   // boolean indicating if the object can be reused.
   // Typically if the data stores the reference of a value byte [] directly
   // from the RegionEntry than this byte array cannot be reused for
   //storing another entry's data 
-  private boolean isReusable ;
+  private boolean isReusable;
 
   public BytesAndBitsForCompactor() {
     this.data = INIT_FOR_WRAPPER;
@@ -54,25 +54,26 @@ public class BytesAndBitsForCompactor {
     this.isReusable = true;
   }
 
-  
   public final StoredObject getOffHeapData() {
     return this.offHeapData;
   }
+
   public final byte[] getBytes() {
     return this.data;
   }
+
   public final byte getBits() {
     return this.userBits;
   }
-  
+
   public final int getValidLength() {
     return this.validLength;
   }
-  
+
   public boolean isReusable() {
     return this.isReusable;
   }
-  
+
   /**
    * 
    * @param data byte array storing the data 
@@ -83,9 +84,10 @@ public class BytesAndBitsForCompactor {
   public void setData(byte[] data, byte userBits, int validLength, boolean isReusable) {
     this.data = data;
     this.userBits = userBits;
-    this.validLength = validLength;    
+    this.validLength = validLength;
     this.isReusable = isReusable;
   }
+
   public void setOffHeapData(StoredObject so, byte userBits) {
     this.offHeapData = so;
     this.userBits = userBits;

@@ -28,7 +28,6 @@ import org.apache.geode.internal.Version;
  */
 public class RemoteLocatorPingResponse implements DataSerializableFixedID {
 
-
   /** Used by DataSerializer */
   public RemoteLocatorPingResponse() {
     super();
@@ -39,8 +38,6 @@ public class RemoteLocatorPingResponse implements DataSerializableFixedID {
 
   public void toData(DataOutput out) throws IOException {
   }
-
-
 
   public int getDSFID() {
     return DataSerializableFixedID.REMOTE_LOCATOR_PING_RESPONSE;

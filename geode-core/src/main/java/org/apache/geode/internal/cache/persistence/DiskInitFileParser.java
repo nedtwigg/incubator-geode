@@ -53,21 +53,21 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  */
 public class DiskInitFileParser {
   private static final Logger logger = LogService.getLogger();
-  
+
   private final CountingDataInputStream dis;
   private DiskInitFileInterpreter interpreter;
 
   public DiskInitFileParser(CountingDataInputStream dis, DiskInitFileInterpreter interpreter) {
     this.dis = dis;
-    if(logger.isDebugEnabled()) {
+    if (logger.isDebugEnabled()) {
       this.interpreter = createPrintingInterpreter(interpreter);
     } else {
       this.interpreter = interpreter;
     }
   }
-  
+
   private transient boolean gotEOF;
-  
+
   public DiskStoreID parse() throws IOException, ClassNotFoundException {
     Version gfversion = Version.GFE_662;
     DiskStoreID result = null;
@@ -87,11 +87,11 @@ public class DiskInitFileParser {
         gotEOF = true;
         break;
       case DiskInitFile.IFREC_INSTANTIATOR_ID: {
-          int id = dis.readInt();
-          String cn = readClassName(dis);
-          String icn = readClassName(dis);
-          readEndOfRecord(dis);
-          interpreter.cmnInstantiatorId(id, cn, icn);
+        int id = dis.readInt();
+        String cn = readClassName(dis);
+        String icn = readClassName(dis);
+        readEndOfRecord(dis);
+        interpreter.cmnInstantiatorId(id, cn, icn);
       }
         break;
       case DiskInitFile.IFREC_DATA_SERIALIZER_ID: {
@@ -208,9 +208,8 @@ public class DiskInitFileParser {
       case DiskInitFile.IFREC_CLEAR_REGION_WITH_RVV_ID: {
         long drId = readDiskRegionID(dis);
         int size = dis.readInt();
-        ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion 
-          = new ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>>(size);
-        for(int i = 0; i < size; i++) {
+        ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion = new ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>>(size);
+        for (int i = 0; i < size; i++) {
           DiskStoreID id = new DiskStoreID();
           InternalDataSerializer.invokeFromData(id, dis);
           RegionVersionHolder holder = new RegionVersionHolder(dis);
@@ -283,10 +282,7 @@ public class DiskInitFileParser {
         if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
           logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
         }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit,
-            concurrencyLevel, initialCapacity, loadFactor,
-            statisticsEnabled, isBucket, flags,
-            ProxyBucketRegion.NO_FIXED_PARTITION_NAME, // fixes bug 43910
+        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, ProxyBucketRegion.NO_FIXED_PARTITION_NAME, // fixes bug 43910
             -1, null, false);
       }
         break;
@@ -301,15 +297,13 @@ public class DiskInitFileParser {
         boolean statisticsEnabled = dis.readBoolean();
         boolean isBucket = dis.readBoolean();
         EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
-        String partitionName = dis.readUTF(); 
+        String partitionName = dis.readUTF();
         int startingBucketId = dis.readInt();
         readEndOfRecord(dis);
         if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
           logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
         }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit,
-                                    concurrencyLevel, initialCapacity, loadFactor,
-                                    statisticsEnabled, isBucket, flags, partitionName, startingBucketId, null, false);
+        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, partitionName, startingBucketId, null, false);
       }
         break;
       case DiskInitFile.IFREC_REGION_CONFIG_ID_80: {
@@ -323,24 +317,21 @@ public class DiskInitFileParser {
         boolean statisticsEnabled = dis.readBoolean();
         boolean isBucket = dis.readBoolean();
         EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
-        String partitionName = dis.readUTF(); 
+        String partitionName = dis.readUTF();
         int startingBucketId = dis.readInt();
-        
+
         String compressorClassName = dis.readUTF();
         if ("".equals(compressorClassName)) {
           compressorClassName = null;
         }
-        if(dis.readBoolean()) {
+        if (dis.readBoolean()) {
           flags.add(DiskRegionFlag.IS_WITH_VERSIONING);
         }
         readEndOfRecord(dis);
         if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
           logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
         }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit,
-                                    concurrencyLevel, initialCapacity, loadFactor,
-                                    statisticsEnabled, isBucket, flags, partitionName, 
-                                    startingBucketId, compressorClassName, false);
+        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, partitionName, startingBucketId, compressorClassName, false);
       }
         break;
       case DiskInitFile.IFREC_REGION_CONFIG_ID_90: {
@@ -354,26 +345,23 @@ public class DiskInitFileParser {
         boolean statisticsEnabled = dis.readBoolean();
         boolean isBucket = dis.readBoolean();
         EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
-        String partitionName = dis.readUTF(); 
+        String partitionName = dis.readUTF();
         int startingBucketId = dis.readInt();
-        
+
         String compressorClassName = dis.readUTF();
         if ("".equals(compressorClassName)) {
           compressorClassName = null;
         }
-        if(dis.readBoolean()) {
+        if (dis.readBoolean()) {
           flags.add(DiskRegionFlag.IS_WITH_VERSIONING);
         }
         boolean offHeap = dis.readBoolean();
-        
+
         readEndOfRecord(dis);
         if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
           logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
         }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit,
-                                    concurrencyLevel, initialCapacity, loadFactor,
-                                    statisticsEnabled, isBucket, flags, partitionName, 
-                                    startingBucketId, compressorClassName, offHeap);
+        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, partitionName, startingBucketId, compressorClassName, offHeap);
       }
         break;
       case DiskInitFile.IFREC_OFFLINE_AND_EQUAL_MEMBER_ID: {
@@ -418,9 +406,7 @@ public class DiskInitFileParser {
         try {
           gfversion = Version.fromOrdinal(ver, false);
         } catch (UnsupportedVersionException e) {
-          throw new DiskAccessException(LocalizedStrings
-              .Oplog_UNEXPECTED_PRODUCT_VERSION_0.toLocalizedString(ver), e,
-              this.interpreter.getNameForError());
+          throw new DiskAccessException(LocalizedStrings.Oplog_UNEXPECTED_PRODUCT_VERSION_0.toLocalizedString(ver), e, this.interpreter.getNameForError());
         }
         interpreter.cmnGemfireVersion(gfversion);
         break;
@@ -463,9 +449,8 @@ public class DiskInitFileParser {
     }
     return result;
   }
-  
-  private void readOplogMagicSeqRecord(DataInput dis, OPLOG_TYPE type)
-      throws IOException {
+
+  private void readOplogMagicSeqRecord(DataInput dis, OPLOG_TYPE type) throws IOException {
     byte[] seq = new byte[OPLOG_TYPE.getLen()];
     dis.readFully(seq);
     for (int i = 0; i < OPLOG_TYPE.getLen(); i++) {
@@ -473,8 +458,7 @@ public class DiskInitFileParser {
         if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
           logger.trace(LogMarker.PERSIST_RECOVERY, "oplog magic code mismatched at byte:{}, value:{}", (i + 1), seq[i]);
         }
-        throw new DiskAccessException("Invalid oplog (" + type.name()
-            + ") file provided.", interpreter.getNameForError());
+        throw new DiskAccessException("Invalid oplog (" + type.name() + ") file provided.", interpreter.getNameForError());
       }
     }
     if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
@@ -486,15 +470,14 @@ public class DiskInitFileParser {
     }
     readEndOfRecord(dis);
   }
-  
+
   /**
    * Reads a class name from the given input stream, as written by writeClass,
    * and loads the class.
    * 
    * @return null if class can not be loaded; otherwise loaded Class
    */
-  private static Class<?> readClass(DataInput di) throws IOException
-  {
+  private static Class<?> readClass(DataInput di) throws IOException {
     int len = di.readInt();
     byte[] bytes = new byte[len];
     di.readFully(bytes);
@@ -502,29 +485,26 @@ public class DiskInitFileParser {
     Class<?> result = null;
     try {
       result = InternalDataSerializer.getCachedClass(className); // see bug 41206
-    }
-    catch (ClassNotFoundException ignore) {
+    } catch (ClassNotFoundException ignore) {
     }
     return result;
   }
-  
+
   /**
    * Reads a class name from the given input stream.
    * 
    * @return class name 
    */
-  private static String readClassName(DataInput di) throws IOException
-  {
+  private static String readClassName(DataInput di) throws IOException {
     int len = di.readInt();
     byte[] bytes = new byte[len];
     di.readFully(bytes);
     return new String(bytes); // use default decoder
   }
-  
+
   static long readDiskRegionID(CountingDataInputStream dis) throws IOException {
     int bytesToRead = dis.readUnsignedByte();
-    if (bytesToRead <= DiskStoreImpl.MAX_RESERVED_DRID
-        && bytesToRead >= DiskStoreImpl.MIN_RESERVED_DRID) {
+    if (bytesToRead <= DiskStoreImpl.MAX_RESERVED_DRID && bytesToRead >= DiskStoreImpl.MIN_RESERVED_DRID) {
       long result = dis.readByte(); // we want to sign extend this first byte
       bytesToRead--;
       while (bytesToRead > 0) {
@@ -537,7 +517,7 @@ public class DiskInitFileParser {
       return bytesToRead;
     }
   }
-  
+
   private void readEndOfRecord(DataInput di) throws IOException {
     int b = di.readByte();
     if (b != DiskInitFile.END_OF_RECORD_ID) {
@@ -547,23 +527,19 @@ public class DiskInitFileParser {
       } else {
         // Our implementation currently relies on all unwritten bytes having
         // a value of 0. So throw this exception if we find one we didn't expect.
-        throw new IllegalStateException("expected end of record (byte=="
-                                        + DiskInitFile.END_OF_RECORD_ID
-                                        + ") or zero but found " + b);
+        throw new IllegalStateException("expected end of record (byte==" + DiskInitFile.END_OF_RECORD_ID + ") or zero but found " + b);
       }
     }
   }
 
-  private PersistentMemberID readPMID(CountingDataInputStream dis,
-      Version gfversion) throws IOException, ClassNotFoundException {
+  private PersistentMemberID readPMID(CountingDataInputStream dis, Version gfversion) throws IOException, ClassNotFoundException {
     int len = dis.readInt();
     byte[] buf = new byte[len];
     dis.readFully(buf);
     return bytesToPMID(buf, gfversion);
   }
 
-  private PersistentMemberID bytesToPMID(byte[] bytes, Version gfversion)
-      throws IOException, ClassNotFoundException {
+  private PersistentMemberID bytesToPMID(byte[] bytes, Version gfversion) throws IOException, ClassNotFoundException {
     ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
     DataInputStream dis = new DataInputStream(bais);
     PersistentMemberID result = new PersistentMemberID();
@@ -574,9 +550,9 @@ public class DiskInitFileParser {
     }
     return result;
   }
-  
-  public static void main(String [] args) throws IOException, ClassNotFoundException {
-    if(args.length != 1) {
+
+  public static void main(String[] args) throws IOException, ClassNotFoundException {
+    if (args.length != 1) {
       System.err.println("Usage: parse filename");
       System.exit(1);
     }
@@ -586,7 +562,7 @@ public class DiskInitFileParser {
   public static void dump(File file) throws IOException, ClassNotFoundException {
     InputStream is = new FileInputStream(file);
     CountingDataInputStream dis = new CountingDataInputStream(is, file.length());
-    
+
     try {
       DiskInitFileInterpreter interpreter = createPrintingInterpreter(null);
       DiskInitFileParser parser = new DiskInitFileParser(dis, interpreter);
@@ -595,16 +571,12 @@ public class DiskInitFileParser {
       is.close();
     }
   }
-  
+
   private static DiskInitFileInterpreter createPrintingInterpreter(DiskInitFileInterpreter wrapped) {
-    DiskInitFileInterpreter interpreter = (DiskInitFileInterpreter) Proxy
-        .newProxyInstance(DiskInitFileInterpreter.class.getClassLoader(),
-            new Class[] { DiskInitFileInterpreter.class },
-            new PrintingInterpreter(wrapped));
+    DiskInitFileInterpreter interpreter = (DiskInitFileInterpreter) Proxy.newProxyInstance(DiskInitFileInterpreter.class.getClassLoader(), new Class[] { DiskInitFileInterpreter.class }, new PrintingInterpreter(wrapped));
     return interpreter;
   }
-  
-  
+
   private static class PrintingInterpreter implements InvocationHandler {
 
     private final DiskInitFileInterpreter delegate;
@@ -613,36 +585,34 @@ public class DiskInitFileParser {
       this.delegate = wrapped;
     }
 
-    public Object invoke(Object proxy, Method method, Object[] args)
-        throws Throwable {
-      if(method.getName().equals("isClosing")) {
-        if(delegate == null) {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+      if (method.getName().equals("isClosing")) {
+        if (delegate == null) {
           return Boolean.FALSE;
         } else {
           return delegate.isClosing();
         }
       }
       Object result = null;
-      if(method.getReturnType().equals(boolean.class)) {
+      if (method.getReturnType().equals(boolean.class)) {
         result = Boolean.TRUE;
       }
-      
+
       StringBuilder out = new StringBuilder();
       out.append(method.getName()).append("(");
-      for(Object arg : args) {
+      for (Object arg : args) {
         out.append(arg);
         out.append(",");
       }
-      out.replace(out.length() -1, out.length(), ")");
+      out.replace(out.length() - 1, out.length(), ")");
       System.out.println(out.toString());
-      if(delegate == null) {
+      if (delegate == null) {
         return result;
-      }
-      else {
+      } else {
         return method.invoke(delegate, args);
       }
     }
-    
+
   }
 
   public boolean gotEOF() {

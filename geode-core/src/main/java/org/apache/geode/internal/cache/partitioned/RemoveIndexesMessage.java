@@ -52,20 +52,19 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * 
  * 
  */
-public final class RemoveIndexesMessage extends PartitionMessage
-  {
+public final class RemoveIndexesMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Represents how many buckets had indexes and got removed.
    */
-//  private int bucketIndexesRemoved;
-  
+  //  private int bucketIndexesRemoved;
+
   /**
    * Name of the index to be removed.
    */
   private String indexName;
-  
+
   /**
    * Boolean indicating only a single index has to be removed.
    */
@@ -77,7 +76,7 @@ public final class RemoveIndexesMessage extends PartitionMessage
   public RemoveIndexesMessage() {
 
   }
-  
+
   /**
    * Constructor for remove indexes to be sent over the wire.
    * 
@@ -88,10 +87,10 @@ public final class RemoveIndexesMessage extends PartitionMessage
    * @param processor
    *          the processor to reply to
    */
-  public RemoveIndexesMessage (Set recipients, int regionId, ReplyProcessor21 processor) {
+  public RemoveIndexesMessage(Set recipients, int regionId, ReplyProcessor21 processor) {
     super(recipients, regionId, processor);
   }
-  
+
   /**
    * Constructor to remove a particular index which will be sent over the wire.
    * @param recipients
@@ -105,7 +104,7 @@ public final class RemoveIndexesMessage extends PartitionMessage
    * @param indexName name of the index to be removed.
    * 
    */
-  public RemoveIndexesMessage (Set recipients, int regionId, ReplyProcessor21 processor, boolean removeSingleIndex, String indexName) {
+  public RemoveIndexesMessage(Set recipients, int regionId, ReplyProcessor21 processor, boolean removeSingleIndex, String indexName) {
     super(recipients, regionId, processor);
     this.removeSingleIndex = removeSingleIndex;
     this.indexName = indexName;
@@ -138,17 +137,14 @@ public final class RemoveIndexesMessage extends PartitionMessage
    *           shutdown.
    */
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm,
-      PartitionedRegion pr, long startTime) throws CacheException, QueryException,
-      ForceReattemptException, InterruptedException
-  {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, QueryException, ForceReattemptException, InterruptedException {
     // TODO Auto-generated method stub
-    
+
     ReplyException replyEx = null;
     boolean result = true;
     int bucketIndexRemoved = 0; // invalid
     int numIndexesRemoved = 0;
-    
+
     logger.info(LocalizedMessage.create(LocalizedStrings.RemoveIndexesMessage_WILL_REMOVE_THE_INDEXES_ON_THIS_PR___0, pr));
     try {
       if (this.removeSingleIndex) {
@@ -159,16 +155,15 @@ public final class RemoveIndexesMessage extends PartitionMessage
       numIndexesRemoved = pr.getDataStore().getAllLocalBuckets().size();
     } catch (Exception ex) {
       result = false;
-      replyEx = new ReplyException (ex);
+      replyEx = new ReplyException(ex);
     }
 
     // send back the reply.
-    sendReply(getSender(), getProcessorId(), dm, replyEx, result, 
-        bucketIndexRemoved, numIndexesRemoved);
-    
+    sendReply(getSender(), getProcessorId(), dm, replyEx, result, bucketIndexRemoved, numIndexesRemoved);
+
     return false;
   }
-  
+
   /**
    * Send a reply for remove indexes message.
    * 
@@ -185,11 +180,9 @@ public final class RemoveIndexesMessage extends PartitionMessage
    * @param bucketIndexesRemoved
    *          number of bucket indexes removed properly.
    */
-  void sendReply(InternalDistributedMember member, int procId, DM dm,
-      ReplyException ex, boolean result, int bucketIndexesRemoved,
-      int totalNumBuckets) {
+  void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, boolean result, int bucketIndexesRemoved, int totalNumBuckets) {
     RemoveIndexesReplyMessage.send(member, processorId, dm, ex, result, bucketIndexesRemoved, totalNumBuckets);
-    
+
   }
 
   /**
@@ -200,21 +193,20 @@ public final class RemoveIndexesMessage extends PartitionMessage
    * 
    */
 
-  public static PartitionResponse send(PartitionedRegion pr, Index ind, boolean removeAllIndex)
-  {
+  public static PartitionResponse send(PartitionedRegion pr, Index ind, boolean removeAllIndex) {
     RemoveIndexesResponse processor = null;
-  //  PartitionResponse processor = null;
-    RegionAdvisor advisor = (RegionAdvisor)(pr.getDistributionAdvisor());
+    //  PartitionResponse processor = null;
+    RegionAdvisor advisor = (RegionAdvisor) (pr.getDistributionAdvisor());
     final Set recipients = new HashSet(advisor.adviseDataStore());
     // removing the originator for remove index command.
     recipients.remove(pr.getDistributionManager().getDistributionManagerId());
-    
-   // RemoveIndexesResponse processor = null;
-   // RemoveIndexesMessage removeIndexesMsg = new RemoveIndexesMessage();
-    if ( recipients.size() > 0) {
-      
-      processor = (RemoveIndexesResponse)(new RemoveIndexesMessage()).createReplyProcessor(pr, recipients);
-    
+
+    // RemoveIndexesResponse processor = null;
+    // RemoveIndexesMessage removeIndexesMsg = new RemoveIndexesMessage();
+    if (recipients.size() > 0) {
+
+      processor = (RemoveIndexesResponse) (new RemoveIndexesMessage()).createReplyProcessor(pr, recipients);
+
     }
     if (removeAllIndex) {
       RemoveIndexesMessage rm = new RemoveIndexesMessage(recipients, pr.getPRId(), processor);
@@ -227,13 +219,12 @@ public final class RemoveIndexesMessage extends PartitionMessage
     return processor;
 
   }
-  
+
   @Override
-  PartitionResponse createReplyProcessor(PartitionedRegion r, Set recipients)
-  {
+  PartitionResponse createReplyProcessor(PartitionedRegion r, Set recipients) {
     return new RemoveIndexesResponse(r.getSystem(), recipients);
   }
-  
+
   public int getDSFID() {
     return PR_REMOVE_INDEXES_MESSAGE;
   }
@@ -242,10 +233,10 @@ public final class RemoveIndexesMessage extends PartitionMessage
   public final void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.removeSingleIndex = in.readBoolean();
-    if (this.removeSingleIndex) 
+    if (this.removeSingleIndex)
       this.indexName = in.readUTF();
   }
-  
+
   @Override
   public final void toData(DataOutput out) throws IOException {
     super.toData(out);
@@ -253,6 +244,7 @@ public final class RemoveIndexesMessage extends PartitionMessage
     if (this.removeSingleIndex)
       out.writeUTF(this.indexName);
   }
+
   /**
    * Processes remove index on the receiver.
    */
@@ -262,34 +254,29 @@ public final class RemoveIndexesMessage extends PartitionMessage
     Throwable thr = null;
     boolean sendReply = true;
     PartitionedRegion pr = null;
-    
+
     try {
       logger.info(LocalizedMessage.create(LocalizedStrings.RemoveIndexesMessage_TRYING_TO_GET_PR_WITH_ID___0, this.regionId));
       pr = PartitionedRegion.getPRFromId(this.regionId);
       logger.info(LocalizedMessage.create(LocalizedStrings.RemoveIndexesMessage_REMOVE_INDEXES_MESSAGE_GOT_THE_PR__0, pr));
-      
+
       if (pr == null /* && failIfRegionMissing() */ ) {
-        throw new PartitionedRegionException(LocalizedStrings.RemoveIndexesMessage_COULD_NOT_GET_PARTITIONED_REGION_FROM_ID_0_FOR_MESSAGE_1_RECEIVED_ON_MEMBER_2_MAP_3.toLocalizedString(
-              new Object[] {Integer.valueOf(this.regionId), this, dm.getId(), PartitionedRegion.dumpPRId()}));
+        throw new PartitionedRegionException(LocalizedStrings.RemoveIndexesMessage_COULD_NOT_GET_PARTITIONED_REGION_FROM_ID_0_FOR_MESSAGE_1_RECEIVED_ON_MEMBER_2_MAP_3.toLocalizedString(new Object[] { Integer.valueOf(this.regionId), this, dm.getId(), PartitionedRegion.dumpPRId() }));
       }
       // remove the indexes on the pr.
       sendReply = operateOnPartitionedRegion(dm, pr, 0);
 
-    
-    }
-    catch(PRLocallyDestroyedException pde){
-      if(logger.isDebugEnabled()){
+    } catch (PRLocallyDestroyedException pde) {
+      if (logger.isDebugEnabled()) {
         logger.debug("Region is locally Destroyed ");
-        }
+      }
       thr = pde;
-    }
-    catch (VirtualMachineError err) {
+    } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
       // now, so don't let this thread continue.
       throw err;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       // Whenever you catch Error or Throwable, you must also
       // catch VirtualMachineError (see above).  However, there is
       // _still_ a possibility that you are dealing with a cascading
@@ -299,22 +286,18 @@ public final class RemoveIndexesMessage extends PartitionMessage
       // log the exception at fine level if there is no reply to the message
       if (this.processorId == 0) {
         logger.debug("{} exception while processing message: {}", this, t.getMessage(), t);
-      }
-      else if (logger.isTraceEnabled(LogMarker.DM) && (t instanceof RuntimeException)) {
+      } else if (logger.isTraceEnabled(LogMarker.DM) && (t instanceof RuntimeException)) {
         logger.debug("Exception caught while processing message: {}", t.getMessage(), t);
       }
       if (t instanceof RegionDestroyedException && pr != null) {
         if (pr.isClosed) {
-          logger.info(LocalizedMessage.create(
-              LocalizedStrings.RemoveIndexesMessage_REGION_IS_LOCALLY_DESTROYED_THROWING_REGIONDESTROYEDEXCEPTION_FOR__0, pr));
+          logger.info(LocalizedMessage.create(LocalizedStrings.RemoveIndexesMessage_REGION_IS_LOCALLY_DESTROYED_THROWING_REGIONDESTROYEDEXCEPTION_FOR__0, pr));
           thr = new RegionDestroyedException(LocalizedStrings.RemoveIndexesMessage_REGION_IS_LOCALLY_DESTROYED_ON_0.toLocalizedString(dm.getId()), pr.getFullPath());
         }
-      }
-      else {
+      } else {
         thr = t;
       }
-    }
-    finally {
+    } finally {
       if (sendReply && this.processorId != 0) {
         ReplyException rex = null;
         if (thr != null) {
@@ -323,8 +306,7 @@ public final class RemoveIndexesMessage extends PartitionMessage
         sendReply(getSender(), this.processorId, dm, rex, pr, 0);
       }
     }
-  
-    
+
   }
 
   /**
@@ -334,21 +316,18 @@ public final class RemoveIndexesMessage extends PartitionMessage
    * 
    * 
    */
-  public static class RemoveIndexesResponse extends PartitionResponse
-   {
+  public static class RemoveIndexesResponse extends PartitionResponse {
 
-    
     /**
      * Result of remove index.
      */
-//     boolean result;
-     
-     
+    //     boolean result;
+
     /**
      * Number of buckets index removed.
      */
     private int numBucketIndexRemoved;
-    
+
     /**
      * Total number of buckets in the sytem.
      */
@@ -365,13 +344,11 @@ public final class RemoveIndexesMessage extends PartitionMessage
      * Waits for the response from the members for remove indexes call on this system.
      * @throws ForceReattemptException 
      */
-    public RemoveIndexesResult waitForResults() throws CacheException,
-        ForceReattemptException
-    {
+    public RemoveIndexesResult waitForResults() throws CacheException, ForceReattemptException {
       waitForCacheException();
       return new RemoveIndexesResult(0);
     }
-    
+
     /**
      * Sets the relevant information in the response.
      * 
@@ -382,21 +359,19 @@ public final class RemoveIndexesMessage extends PartitionMessage
      * @param numTotalBuckets
      *          number of total buckets in the member.
      */
-    public void setResponse(boolean result, int numBucketsIndexesRemoved,
-        int numTotalBuckets)
-    {
-//      this.result = result;
+    public void setResponse(boolean result, int numBucketsIndexesRemoved, int numTotalBuckets) {
+      //      this.result = result;
       this.numBucketIndexRemoved += numBucketsIndexesRemoved;
       this.numTotalRemoteBuckets += numTotalBuckets;
     }
-    
+
     /**
      * Returns number of remotely removed indexes.
      */
     public int getRemoteRemovedIndexes() {
       return this.numBucketIndexRemoved;
     }
-    
+
     /**
      * Returns the total number of remote buckets.
      */
@@ -410,13 +385,12 @@ public final class RemoveIndexesMessage extends PartitionMessage
    * Class representing remove index results on pr.
    * 
    */
-  public static class RemoveIndexesResult
-   {
+  public static class RemoveIndexesResult {
 
     /**
      * Int representing number of total bucket indexes removed.
      */
-//    private int numBucketIndexRemoved;
+    //    private int numBucketIndexRemoved;
 
     /**
      * Constructor.
@@ -425,20 +399,18 @@ public final class RemoveIndexesMessage extends PartitionMessage
      */
     public RemoveIndexesResult(int numBucketIndexRemoved) {
 
-//      this.numBucketIndexRemoved = numBucketIndexRemoved;
+      //      this.numBucketIndexRemoved = numBucketIndexRemoved;
     }
 
   } // RemoveIndexesResult
-  
-  
-  
+
   /**
    * Class for index creation reply. This class has the information about sucessful
    * or unsucessful index creation.
    *
    */
-  public static final class RemoveIndexesReplyMessage extends ReplyMessage  {
-    
+  public static final class RemoveIndexesReplyMessage extends ReplyMessage {
+
     /** Indexes removed or not. */
     private boolean result;
 
@@ -449,16 +421,15 @@ public final class RemoveIndexesMessage extends PartitionMessage
 
     /** Number of total bukets in this vm. */
     private int numTotalBuckets;
-    
+
     /**
      * Default constructor.
      *
      */
-    public RemoveIndexesReplyMessage () {
-      
+    public RemoveIndexesReplyMessage() {
+
     }
-    
-    
+
     /**
      * Constructor for index creation reply message.
      * @param processorId processor id of the waiting processor
@@ -467,8 +438,7 @@ public final class RemoveIndexesMessage extends PartitionMessage
      * @param numBucketsIndexesRemoved number of buckets indexed.
      * @param numTotalBuckets number of total buckets.
      */
-    RemoveIndexesReplyMessage(int processorId, ReplyException ex, boolean result,
-        int numBucketsIndexesRemoved, int numTotalBuckets) {
+    RemoveIndexesReplyMessage(int processorId, ReplyException ex, boolean result, int numBucketsIndexesRemoved, int numTotalBuckets) {
       super();
       super.setException(ex);
       this.result = result;
@@ -476,21 +446,20 @@ public final class RemoveIndexesMessage extends PartitionMessage
       this.numTotalBuckets = numTotalBuckets;
       setProcessorId(processorId);
     }
-    
+
     @Override
     public int getDSFID() {
       return PR_REMOVE_INDEXES_REPLY_MESSAGE;
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       super.fromData(in);
       this.result = in.readBoolean();
       this.numBucketsIndexesRemoved = in.readInt();
       this.numTotalBuckets = in.readInt();
     }
-    
+
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
@@ -499,8 +468,6 @@ public final class RemoveIndexesMessage extends PartitionMessage
       out.writeInt(this.numTotalBuckets);
     }
 
-    
-    
     /**
      * Actual method sending the index creation reply message.
      * @param recipient the originator of index creation message
@@ -511,31 +478,25 @@ public final class RemoveIndexesMessage extends PartitionMessage
      * @param numBucketsIndexesRemoved number of buckets indexed
      * @param numTotalBuckets total number of buckets
      */
-    public static void send(InternalDistributedMember recipient,
-        int processorId, DM dm, ReplyException ex, boolean result,
-        int numBucketsIndexesRemoved, int numTotalBuckets)
-    {
-      RemoveIndexesReplyMessage rmIndMsg = new RemoveIndexesReplyMessage(processorId, ex,
-          result, numBucketsIndexesRemoved, numTotalBuckets);
+    public static void send(InternalDistributedMember recipient, int processorId, DM dm, ReplyException ex, boolean result, int numBucketsIndexesRemoved, int numTotalBuckets) {
+      RemoveIndexesReplyMessage rmIndMsg = new RemoveIndexesReplyMessage(processorId, ex, result, numBucketsIndexesRemoved, numTotalBuckets);
       rmIndMsg.setRecipient(recipient);
       dm.putOutgoing(rmIndMsg);
     }
-    
+
     /**
      * Processes this RemoveIndexesReplyMessge on the receiver.
      * @param dm distribution manager
      */
     @Override
-    public final void process(final DM dm, final ReplyProcessor21 p)
-    {
-      RemoveIndexesResponse processor = (RemoveIndexesResponse)p;
+    public final void process(final DM dm, final ReplyProcessor21 p) {
+      RemoveIndexesResponse processor = (RemoveIndexesResponse) p;
       if (processor != null) {
-        processor.setResponse(this.result, this.numBucketsIndexesRemoved,
-            this.numTotalBuckets);
+        processor.setResponse(this.result, this.numBucketsIndexesRemoved, this.numTotalBuckets);
         processor.process(this);
       }
     }
-    
+
   } // RemvoeIndexReplyMessage
 
 }

@@ -40,7 +40,6 @@ public class HTTPServiceSSLSupportJUnitTest {
 
   private File jks;
 
-
   @Before
   public void setUp() throws Exception {
     jks = findTrustedJKS();
@@ -153,6 +152,5 @@ public class HTTPServiceSSLSupportJUnitTest {
     assertEquals("password", config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStorePassword"));
 
   }
-
 
 }

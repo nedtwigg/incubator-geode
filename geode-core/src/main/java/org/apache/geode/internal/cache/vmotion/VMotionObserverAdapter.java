@@ -44,6 +44,6 @@ public class VMotionObserverAdapter implements VMotionObserver {
   /**
    * This callback is called before a request for GII is sent.
    */
-  public void vMotionDuringGII(Set recipientSet, LocalRegion region){
+  public void vMotionDuringGII(Set recipientSet, LocalRegion region) {
   }
 }

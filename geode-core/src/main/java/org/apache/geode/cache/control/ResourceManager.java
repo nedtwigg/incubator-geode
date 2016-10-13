@@ -42,7 +42,7 @@ import org.apache.geode.cache.query.QueryService;
  * @since GemFire 6.0
  */
 public interface ResourceManager {
-  
+
   /**
    * The default percent of heap memory at which the VM is considered in a 
    * critical state. Current value is <code>0.0</code>.
@@ -72,7 +72,7 @@ public interface ResourceManager {
    * @return a factory for defining and starting RebalanceOperations
    */
   public RebalanceFactory createRebalanceFactory();
-  
+
   /**
    * Returns a set of all active {@link RebalanceOperation
    * RebalanceOperations} that were started locally on this member.
@@ -133,7 +133,7 @@ public interface ResourceManager {
    * @since GemFire 6.0
    */
   public void setCriticalHeapPercentage(float heapPercentage);
-  
+
   /**
    * Get the percentage of heap at or above which the cache is considered in
    * danger of becoming inoperable.
@@ -144,7 +144,7 @@ public interface ResourceManager {
    * @since GemFire 6.0
    */
   public float getCriticalHeapPercentage();
-  
+
   /**
    * Set the percentage of off-heap at or above which the cache is considered in
    * danger of becoming inoperable due to out of memory exceptions.
@@ -175,7 +175,7 @@ public interface ResourceManager {
    * @since Geode 1.0
    */
   public void setCriticalOffHeapPercentage(float offHeapPercentage);
-  
+
   /**
    * Get the percentage of off-heap at or above which the cache is considered in
    * danger of becoming inoperable.
@@ -211,7 +211,7 @@ public interface ResourceManager {
    * @since GemFire 6.0
    */
   public void setEvictionHeapPercentage(float heapPercentage);
-  
+
   /**
    * Get the percentage of heap at or above which the eviction should begin on
    * Regions configured for {@linkplain 
@@ -245,7 +245,7 @@ public interface ResourceManager {
    * @since Geode 1.0
    */
   public void setEvictionOffHeapPercentage(float offHeapPercentage);
-  
+
   /**
    * Get the percentage of off-heap at or above which the eviction should begin on
    * Regions configured for {@linkplain 

@@ -56,8 +56,7 @@ public class StatAlertsManagerAssignMessage extends PooledDistributionMessage {
    * @param refreshInterval
    *                Refresh interval to set
    */
-  public StatAlertsManagerAssignMessage(StatAlertDefinition[] alertDefs,
-      long refreshInterval) {
+  public StatAlertsManagerAssignMessage(StatAlertDefinition[] alertDefs, long refreshInterval) {
     this.alertDefs = alertDefs;
     this.refreshInterval = refreshInterval;
   }
@@ -73,8 +72,7 @@ public class StatAlertsManagerAssignMessage extends PooledDistributionMessage {
    *                Refresh interval to be set
    * @return an instance of StatAlertsManagerAssignRequest
    */
-  public static StatAlertsManagerAssignMessage create(
-      StatAlertDefinition[] alertDefs, long refreshInterval) {
+  public static StatAlertsManagerAssignMessage create(StatAlertDefinition[] alertDefs, long refreshInterval) {
     return new StatAlertsManagerAssignMessage(alertDefs, refreshInterval);
   }
 
@@ -99,8 +97,7 @@ public class StatAlertsManagerAssignMessage extends PooledDistributionMessage {
    */
   private void setManager(DistributionManager dm) {
     StatAlertsManager manager = StatAlertsManager.getInstance(dm);
-    manager.updateAlertDefinition(alertDefs,
-        UpdateAlertDefinitionMessage.ADD_ALERT_DEFINITION);
+    manager.updateAlertDefinition(alertDefs, UpdateAlertDefinitionMessage.ADD_ALERT_DEFINITION);
     manager.setRefreshTimeInterval(refreshInterval);
   }
 
@@ -129,13 +126,13 @@ public class StatAlertsManagerAssignMessage extends PooledDistributionMessage {
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     refreshInterval = in.readLong();
-    alertDefs = (StatAlertDefinition[])DataSerializer.readObjectArray(in);
+    alertDefs = (StatAlertDefinition[]) DataSerializer.readObjectArray(in);
   }
 
   /**
    * Returns the DataSerializer fixed id for the class that implements this method.
    */
-  public int getDSFID() {    
+  public int getDSFID() {
     return STAT_ALERTS_MGR_ASSIGN_MESSAGE;
   }
 

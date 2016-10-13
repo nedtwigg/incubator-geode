@@ -40,7 +40,7 @@ public class LocalDataSetTest {
     LocalDataSet lds = new LocalDataSet(pr, Collections.emptySet());
     assertTrue(lds.isEmpty());
   }
-  
+
   @Test
   public void verifyThatIsEmptyIsFalseWhenEntryCountReturnsNonZero() {
     PartitionedRegion pr = mock(PartitionedRegion.class);
@@ -49,7 +49,7 @@ public class LocalDataSetTest {
     LocalDataSet lds = new LocalDataSet(pr, Collections.emptySet());
     assertFalse(lds.isEmpty());
   }
-  
+
   @Test
   public void verifyThatGetCallbackArgIsCorrectlyPassedToGetHashKey() {
     PartitionedRegion pr = mock(PartitionedRegion.class);
@@ -58,9 +58,9 @@ public class LocalDataSetTest {
     LocalDataSet spy = spy(lds);
     Object key = "key";
     Object callbackArg = "callbackArg";
-    
+
     spy.get(key, callbackArg);
-    
+
     verify(spy).getHashKey(Operation.CONTAINS_KEY, key, null, callbackArg);
   }
 }

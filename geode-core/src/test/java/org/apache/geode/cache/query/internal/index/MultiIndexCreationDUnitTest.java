@@ -70,8 +70,7 @@ public class MultiIndexCreationDUnitTest extends JUnit4CacheTestCase {
     AsyncInvocation a1 = server1.invokeAsync(new SerializableCallable("Create Server1") {
       @Override
       public Object call() throws Exception {
-        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE)
-            .create(regionName);
+        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
 
         for (int i = 0; i < numberOfEntries; i++) {
           Portfolio p = new Portfolio(i);
@@ -85,16 +84,13 @@ public class MultiIndexCreationDUnitTest extends JUnit4CacheTestCase {
         qs.defineIndex("IDIndex", "ID", r.getFullPath());
         List<Index> indexes = qs.createDefinedIndexes();
 
-        assertEquals("Only 2 indexes should have been created. ", 2,
-            indexes.size());
+        assertEquals("Only 2 indexes should have been created. ", 2, indexes.size());
 
         return null;
       }
     });
 
-    final String[] queries = {
-        "select * from " + name + " where status = 'active'",
-        "select * from " + name + " where ID > 4" };
+    final String[] queries = { "select * from " + name + " where status = 'active'", "select * from " + name + " where ID > 4" };
 
     AsyncInvocation a2 = server1.invokeAsync(new SerializableCallable("Create Server1") {
       @Override
@@ -105,72 +101,68 @@ public class MultiIndexCreationDUnitTest extends JUnit4CacheTestCase {
           Wait.pause(100);
         }
         assertTrue(hooked);
-        
-        QueryObserver old = QueryObserverHolder
-            .setInstance(new QueryObserverAdapter() {
-              private boolean indexCalled = false;
 
-              public void afterIndexLookup(Collection results) {
-                indexCalled = true;
-              }
+        QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
+          private boolean indexCalled = false;
 
-              public void endQuery() {
-                assertFalse("Index should not have been used. ", indexCalled);
-              }
+          public void afterIndexLookup(Collection results) {
+            indexCalled = true;
+          }
 
-            });
+          public void endQuery() {
+            assertFalse("Index should not have been used. ", indexCalled);
+          }
+
+        });
 
         SelectResults sr = null;
         for (int i = 0; i < queries.length; i++) {
           try {
-            sr = (SelectResults) getCache().getQueryService()
-                .newQuery(queries[i]).execute();
+            sr = (SelectResults) getCache().getQueryService().newQuery(queries[i]).execute();
           } catch (Exception e) {
             fail("QueryExecution failed, " + e);
           }
           assertEquals(5, sr.size());
         }
         QueryObserverHolder.setInstance(old);
-        
+
         hooked = false;
-        
+
         return null;
       }
     });
-    
+
     ThreadUtils.join(a1, 6000);
-    
-    if(a1.exceptionOccurred()) {
+
+    if (a1.exceptionOccurred()) {
       fail(a1.getException().getMessage());
     }
     ThreadUtils.join(a2, 6000);
-    if(a2.exceptionOccurred()) {
+    if (a2.exceptionOccurred()) {
       fail(a2.getException().getMessage());
     }
-    
+
     server1.invoke(new SerializableCallable("Create Server1") {
       @Override
       public Object call() throws Exception {
         IndexManager.testHook = null;
-        QueryObserver old = QueryObserverHolder
-            .setInstance(new QueryObserverAdapter() {
-              private boolean indexCalled = false;
+        QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
+          private boolean indexCalled = false;
 
-              public void afterIndexLookup(Collection results) {
-                indexCalled = true;
-              }
+          public void afterIndexLookup(Collection results) {
+            indexCalled = true;
+          }
 
-              public void endQuery() {
-                assertTrue("Index should have been used. ", indexCalled);
-              }
+          public void endQuery() {
+            assertTrue("Index should have been used. ", indexCalled);
+          }
 
-            });
+        });
 
         SelectResults sr = null;
         for (int i = 0; i < queries.length; i++) {
           try {
-            sr = (SelectResults) getCache().getQueryService()
-                .newQuery(queries[i]).execute();
+            sr = (SelectResults) getCache().getQueryService().newQuery(queries[i]).execute();
           } catch (Exception e) {
             fail("QueryExecution failed, " + e);
           }
@@ -187,7 +179,7 @@ public class MultiIndexCreationDUnitTest extends JUnit4CacheTestCase {
     hooked = false;
     Invoke.invokeInEveryVM(() -> disconnectFromDS());
   }
-  
+
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(() -> QueryObserverHolder.reset());

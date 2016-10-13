@@ -36,11 +36,11 @@ public class GetPDXTypesOp {
     AbstractOp op = new GetPDXTypesOpImpl();
     return (Map<Integer, PdxType>) pool.execute(op);
   }
-                                                               
+
   private GetPDXTypesOp() {
     // no instances allowed
   }
-  
+
   private static class GetPDXTypesOpImpl extends AbstractOp {
     public GetPDXTypesOpImpl() {
       super(MessageType.GET_PDX_TYPES, 1);
@@ -63,8 +63,7 @@ public class GetPDXTypesOp {
           throw new ServerOperationException(part.getString());
 
         } else {
-          throw new InternalGemFireError("Unexpected message type "
-              + MessageType.getString(msgType));
+          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
@@ -86,10 +85,9 @@ public class GetPDXTypesOp {
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
     }
-    
+
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override

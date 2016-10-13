@@ -40,8 +40,7 @@ public class TypeAwareMap<K extends CacheProperty, Object> extends HashMap {
       } else if (key.getClazz() == Integer.class) {
         return (Object) super.put(key, Integer.valueOf((String) value));
       } else {
-        throw new IllegalArgumentException("Value is not of type " +
-            key.getClazz().getName());
+        throw new IllegalArgumentException("Value is not of type " + key.getClazz().getName());
       }
     }
 

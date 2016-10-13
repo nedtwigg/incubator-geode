@@ -48,8 +48,7 @@ import org.apache.geode.test.dunit.VM;
  */
 
 @Category(DistributedTest.class)
-public class Bug37377DUnitTest extends JUnit4CacheTestCase
-{
+public class Bug37377DUnitTest extends JUnit4CacheTestCase {
 
   protected static String regionName = "TestRegion";
 
@@ -103,8 +102,7 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
   private void createCacheForVM0() {
     try {
 
-      distributedSystem = (new Bug37377DUnitTest())
-          .getSystem(props);
+      distributedSystem = (new Bug37377DUnitTest()).getSystem(props);
       assertTrue(distributedSystem != null);
       cache = CacheFactory.create(distributedSystem);
       assertTrue(cache != null);
@@ -112,14 +110,10 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
       factory.setScope(Scope.DISTRIBUTED_ACK);
       factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       factory.setDiskSynchronous(false);
-      factory.setDiskStoreName(cache.createDiskStoreFactory()
-          .setDiskDirs(dirs)
-          .create("Bug37377DUnitTest")
-          .getName());
+      factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37377DUnitTest").getName());
       RegionAttributes attr = factory.create();
       cache.createRegion(regionName, attr);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
       fail("Error Creating cache / region ");
     }
@@ -131,8 +125,7 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
   @SuppressWarnings("deprecation")
   private void createCacheForVM1() {
     try {
-      distributedSystem = (new Bug37377DUnitTest())
-          .getSystem(props);
+      distributedSystem = (new Bug37377DUnitTest()).getSystem(props);
       assertTrue(distributedSystem != null);
       cache = CacheFactory.create(distributedSystem);
       assertTrue("cache found null", cache != null);
@@ -141,33 +134,22 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
       factory.setScope(Scope.DISTRIBUTED_ACK);
       factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       factory.setDiskSynchronous(false);
-      factory.setDiskStoreName(cache.createDiskStoreFactory()
-          .setDiskDirs(dirs)
-          .create("Bug37377DUnitTest")
-          .getName());
+      factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37377DUnitTest").getName());
       RegionAttributes attr = factory.create();
-      DistributedRegion distRegion = new DistributedRegion(regionName,
-          attr, null, (GemFireCacheImpl)cache, new InternalRegionArguments()
-          .setDestroyLockFlag(true).setRecreateFlag(false)
-          .setSnapshotInputStream(null).setImageTarget(null));
+      DistributedRegion distRegion = new DistributedRegion(regionName, attr, null, (GemFireCacheImpl) cache, new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null));
       //      assertTrue("Distributed Region is null", distRegion != null); (cannot be null)
 
-      TestAbstractDiskRegionEntry.setMembers(vm1, vm0);    // vm1 is thisVM, vm0 is otherVM
+      TestAbstractDiskRegionEntry.setMembers(vm1, vm0); // vm1 is thisVM, vm0 is otherVM
 
-      ((AbstractRegionMap)distRegion.entries)
-      .setEntryFactory(TestAbstractDiskRegionEntry.getEntryFactory());
+      ((AbstractRegionMap) distRegion.entries).setEntryFactory(TestAbstractDiskRegionEntry.getEntryFactory());
 
-      LocalRegion region = (LocalRegion)((GemFireCacheImpl)cache)
-          .createVMRegion(regionName, attr, new InternalRegionArguments()
-              .setInternalMetaRegion(distRegion).setDestroyLockFlag(true)
-              .setSnapshotInputStream(null).setImageTarget(null));
+      LocalRegion region = (LocalRegion) ((GemFireCacheImpl) cache).createVMRegion(regionName, attr, new InternalRegionArguments().setInternalMetaRegion(distRegion).setDestroyLockFlag(true).setSnapshotInputStream(null).setImageTarget(null));
       assertTrue("Local Region is null", region != null);
 
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       ex.printStackTrace();
       fail("Error Creating cache / region " + ex);
-    }  
+    }
   }
 
   /**
@@ -223,8 +205,8 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
       Region rgn = cache.getRegion(regionName);
       rgn.localDestroyRegion();
       cache.close();
+    } catch (Exception ex) {
     }
-    catch (Exception ex) {}
   }
 
   /**
@@ -237,7 +219,7 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
     assertTrue("Cache is found as null ", cache != null);
     cache.close();
   }
- 
+
   /**
    * This method verifies that the reintialized region size is zero
    */
@@ -282,7 +264,7 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
     }
 
     private static RegionEntryFactory factory = new RegionEntryFactory() {
-      
+
       public final RegionEntry createEntry(RegionEntryContext r, Object key, Object value) {
         return new TestAbstractDiskRegionEntry(r, key, value);
       }
@@ -305,15 +287,9 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
      * entry
      */
     @Override
-    public boolean initialImageInit(final LocalRegion r,
-        final long lastModifiedTime,
-        final Object newValue,
-        final boolean create,
-        final boolean wasRecovered,
-        final boolean versionTagAccepted) throws RegionClearedException
-    {
-      synchronized(clearOccured) {
-        if(!clearOccured) {
+    public boolean initialImageInit(final LocalRegion r, final long lastModifiedTime, final Object newValue, final boolean create, final boolean wasRecovered, final boolean versionTagAccepted) throws RegionClearedException {
+      synchronized (clearOccured) {
+        if (!clearOccured) {
           // Force other member to perform a clear during our GII
           invokeRemoteClearAndWait(otherVM, thisVM);
           clearOccured = true;
@@ -326,7 +302,7 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
       } catch (RegionClearedException rce) {
         throw rce;
       } catch (Exception ex) {
-        fail("Caught exception during initialImageInit: " + ex );
+        fail("Caught exception during initialImageInit: " + ex);
       }
 
       return true;
@@ -337,4 +313,3 @@ public class Bug37377DUnitTest extends JUnit4CacheTestCase
     }
   }
 }
-

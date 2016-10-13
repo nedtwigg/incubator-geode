@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.query;
 
-
 /**
  * Extension of CqListener. Adds two new methods to CqListener, one that
  *  is called when the cq is connected and one that is called when
@@ -31,9 +30,9 @@ public interface CqStatusListener extends CqListener {
 
   /**
    * Called when the cq loses connection with all servers
-   */  
+   */
   public void onCqDisconnected();
- 
+
   /**
    * Called when the cq establishes a connection with a server
    */

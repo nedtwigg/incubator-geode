@@ -180,33 +180,31 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
    */
   @Test
   public void testInterestListRegistration() throws Exception {
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
 
-    vm1.invoke(() -> InterestListDUnitTest.registerKey( key1 ));
-    vm2.invoke(() -> InterestListDUnitTest.registerKey( key2 ));
+    vm1.invoke(() -> InterestListDUnitTest.registerKey(key1));
+    vm2.invoke(() -> InterestListDUnitTest.registerKey(key2));
 
-    vm1.invoke(() -> InterestListDUnitTest.put( "vm1" ));
+    vm1.invoke(() -> InterestListDUnitTest.put("vm1"));
     Wait.pause(10000);
-    vm2.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2( "vm2" ));
-    vm2.invoke(() -> InterestListDUnitTest.put( "vm2" ));
+    vm2.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2("vm2"));
+    vm2.invoke(() -> InterestListDUnitTest.put("vm2"));
     Wait.pause(10000);
-    vm1.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2( "vm1" ));
+    vm1.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2("vm1"));
 
-    vm1.invoke(() -> InterestListDUnitTest.unregisterKey( key1 ));
-    vm2.invoke(() -> InterestListDUnitTest.unregisterKey( key2 ));
+    vm1.invoke(() -> InterestListDUnitTest.unregisterKey(key1));
+    vm2.invoke(() -> InterestListDUnitTest.unregisterKey(key2));
 
-    vm1.invoke(() -> InterestListDUnitTest.putAgain( "vm1" ));
+    vm1.invoke(() -> InterestListDUnitTest.putAgain("vm1"));
     Wait.pause(10000);
-    vm2.invoke(() -> InterestListDUnitTest.validateEntriesAgain( "vm2" ));
-    vm2.invoke(() -> InterestListDUnitTest.putAgain( "vm2" ));
+    vm2.invoke(() -> InterestListDUnitTest.validateEntriesAgain("vm2"));
+    vm2.invoke(() -> InterestListDUnitTest.putAgain("vm2"));
     Wait.pause(10000);
-    vm1.invoke(() -> InterestListDUnitTest.validateEntriesAgain( "vm1" ));
+    vm1.invoke(() -> InterestListDUnitTest.validateEntriesAgain("vm1"));
   }
 
   /**
@@ -237,37 +235,37 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   public void testValueRefresh() throws Exception {
     // Initialization
     Host host = Host.getHost(0);
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache( NetworkUtils.getServerHostName(host), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache( NetworkUtils.getServerHostName(host), new Integer(PORT1)));
+    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1)));
+    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1)));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
 
     // STEP 1
-    vm2.invoke(() -> InterestListDUnitTest.putSingleEntry( key2, "vm2" ));
+    vm2.invoke(() -> InterestListDUnitTest.putSingleEntry(key2, "vm2"));
     Wait.pause(2000);
     vm1.invoke(() -> InterestListDUnitTest.validateSingleEntry(key2, key2_originalValue));
 
     // STEP 2
     // Force key2 to synchronize with server cache
-    vm1.invoke(() -> InterestListDUnitTest.registerKey( key2 ));
+    vm1.invoke(() -> InterestListDUnitTest.registerKey(key2));
     // Verify that new value is present
     vm1.invoke(() -> InterestListDUnitTest.validateSingleEntry(key2, "vm2")); // value now magically changed
     // but the other key should not have changed
     vm1.invoke(() -> InterestListDUnitTest.validateSingleEntry(key1, key1_originalValue)); // still unchanged
 
     // STEP 3
-    vm1.invoke(() -> InterestListDUnitTest.putSingleEntry( key1, "vm1" ));
+    vm1.invoke(() -> InterestListDUnitTest.putSingleEntry(key1, "vm1"));
     Wait.pause(2000);
     vm2.invoke(() -> InterestListDUnitTest.validateSingleEntry(key1, key1_originalValue)); // still unchanged
-    vm2.invoke(() -> InterestListDUnitTest.registerKey( key1 ));
+    vm2.invoke(() -> InterestListDUnitTest.registerKey(key1));
     // Verify that new value is present
     vm2.invoke(() -> InterestListDUnitTest.validateSingleEntry(key1, "vm1")); // value now magically changed
 
     // STEP 4
     // unregister on one key
-    vm2.invoke(() -> InterestListDUnitTest.unregisterKey( key1 ));
-    vm1.invoke(() -> InterestListDUnitTest.putSingleEntry( key1, key1_originalValue ));
+    vm2.invoke(() -> InterestListDUnitTest.unregisterKey(key1));
+    vm1.invoke(() -> InterestListDUnitTest.putSingleEntry(key1, key1_originalValue));
     Wait.pause(2000);
     vm2.invoke(() -> InterestListDUnitTest.validateSingleEntry(key1, "vm1")); // update lost
   }
@@ -279,10 +277,8 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
    */
   @Test
   public void testInterestListRegistration_ALL_KEYS() throws Exception {
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
@@ -308,10 +304,8 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> InterestListDUnitTest.multiple_put());
     Wait.pause(1000);
     // create clients to connect to that server
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
 
     // register interest
     vm1.invoke(() -> InterestListDUnitTest.registerKeys());
@@ -340,45 +334,41 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
    */
   @Test
   public void testInterestListRegistrationOnServer() throws Exception {
-    DistributedMember c1 = (DistributedMember)vm1
-      .invoke(() -> InterestListDUnitTest.createClientCache(
-        NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
-    DistributedMember c2 = (DistributedMember)vm2
-      .invoke(() -> InterestListDUnitTest.createClientCache(
-        NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
+    DistributedMember c1 = (DistributedMember) vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
+    DistributedMember c2 = (DistributedMember) vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
 
-    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient( c1, key1 ));
-    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient( c2, key2 ));
+    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient(c1, key1));
+    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient(c2, key2));
 
     vm0.invoke(() -> InterestListDUnitTest.flushQueues());
 
-    vm1.invoke(() -> InterestListDUnitTest.put( "vm1" ));
+    vm1.invoke(() -> InterestListDUnitTest.put("vm1"));
 
     vm0.invoke(() -> InterestListDUnitTest.flushQueues());
 
-    vm2.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2( "vm2" ));
-    vm2.invoke(() -> InterestListDUnitTest.put( "vm2" ));
+    vm2.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2("vm2"));
+    vm2.invoke(() -> InterestListDUnitTest.put("vm2"));
 
     vm0.invoke(() -> InterestListDUnitTest.flushQueues());
 
-    vm1.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2( "vm1" ));
+    vm1.invoke(() -> InterestListDUnitTest.validateEntriesK1andK2("vm1"));
 
-    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient( c1, key1 ));
-    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient( c2, key2 ));
+    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient(c1, key1));
+    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient(c2, key2));
 
-    vm1.invoke(() -> InterestListDUnitTest.putAgain( "vm1" ));
-
-    vm0.invoke(() -> InterestListDUnitTest.flushQueues());
-
-    vm2.invoke(() -> InterestListDUnitTest.validateEntriesAgain( "vm2" ));
-    vm2.invoke(() -> InterestListDUnitTest.putAgain( "vm2" ));
+    vm1.invoke(() -> InterestListDUnitTest.putAgain("vm1"));
 
     vm0.invoke(() -> InterestListDUnitTest.flushQueues());
 
-    vm1.invoke(() -> InterestListDUnitTest.validateEntriesAgain( "vm1" ));
+    vm2.invoke(() -> InterestListDUnitTest.validateEntriesAgain("vm2"));
+    vm2.invoke(() -> InterestListDUnitTest.putAgain("vm2"));
+
+    vm0.invoke(() -> InterestListDUnitTest.flushQueues());
+
+    vm1.invoke(() -> InterestListDUnitTest.validateEntriesAgain("vm1"));
   }
 
   /**
@@ -399,12 +389,8 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> InterestListDUnitTest.addRegisterInterestListener());
 
     // servers are set up, now do the clients
-    DistributedMember c1 = (DistributedMember)vm1
-    .invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
-    DistributedMember c2 = (DistributedMember)vm2
-    .invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
+    DistributedMember c1 = (DistributedMember) vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
+    DistributedMember c2 = (DistributedMember) vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
@@ -412,41 +398,41 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     // interest registration from clients should cause listeners to be invoked
     // in both servers
     LogWriterUtils.getLogWriter().info("test phase 1");
-    vm1.invoke(() -> InterestListDUnitTest.registerKey( key1 ));
-    vm2.invoke(() -> InterestListDUnitTest.registerKey( key2 ));
+    vm1.invoke(() -> InterestListDUnitTest.registerKey(key1));
+    vm2.invoke(() -> InterestListDUnitTest.registerKey(key2));
 
     Integer zero = new Integer(0);
     Integer two = new Integer(2);
 
     interestListener.verifyCountsAndClear(2, 0);
-    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear( two, zero ));
+    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear(two, zero));
 
     // unregistration from clients should invoke listeners on both servers
     LogWriterUtils.getLogWriter().info("test phase 2");
-    vm1.invoke(() -> InterestListDUnitTest.unregisterKey( key1 ));
-    vm2.invoke(() -> InterestListDUnitTest.unregisterKey( key2 ));
+    vm1.invoke(() -> InterestListDUnitTest.unregisterKey(key1));
+    vm2.invoke(() -> InterestListDUnitTest.unregisterKey(key2));
 
     interestListener.verifyCountsAndClear(0, 2);
-    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear( zero, two ));
+    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear(zero, two));
 
     // now the primary server for eache client will register and unregister
     LogWriterUtils.getLogWriter().info("test phase 3");
     registerKeyForClient(c1, key1);
-    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient( c1, key1 ));
+    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient(c1, key1));
     registerKeyForClient(c2, key2);
-    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient( c2, key2 ));
+    vm0.invoke(() -> InterestListDUnitTest.registerKeyForClient(c2, key2));
 
     interestListener.verifyCountsAndClear(2, 0);
-    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear( two, zero ));
+    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear(two, zero));
 
     LogWriterUtils.getLogWriter().info("test phase 4");
     unregisterKeyForClient(c1, key1);
-    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient( c1, key1 ));
+    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient(c1, key1));
     unregisterKeyForClient(c2, key2);
-    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient( c2, key2 ));
+    vm0.invoke(() -> InterestListDUnitTest.unregisterKeyForClient(c2, key2));
 
     interestListener.verifyCountsAndClear(0, 2);
-    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear( zero, two ));
+    vm0.invoke(() -> InterestListDUnitTest.verifyCountsAndClear(zero, two));
   }
 
   /**
@@ -456,17 +442,17 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testNoAvailableServer() throws Exception {
     // Register interest in key1.
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache( NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1) ));
-    vm1.invoke(() -> InterestListDUnitTest.registerKey( key1 ));
+    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(() -> InterestListDUnitTest.registerKey(key1));
 
     // Stop the server.
     vm0.invoke(() -> InterestListDUnitTest.closeCache());
 
     // Try to unregister interest in key1 -- should not throw an exception.
-    vm1.invoke(() -> InterestListDUnitTest.unregisterKeyEx( key1 ));
+    vm1.invoke(() -> InterestListDUnitTest.unregisterKeyEx(key1));
 
     // Now try registration of interest in key2 -- should throw an exception.
-    vm1.invoke(() -> InterestListDUnitTest.registerKeyEx( key2 ));
+    vm1.invoke(() -> InterestListDUnitTest.registerKeyEx(key2));
   }
 
   @Test
@@ -484,39 +470,38 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> InterestListDUnitTest.closeCache());
 
     // Start two servers with the appropriate region
-    int port1 = ((Integer) vm0.invoke(() -> InterestListDUnitTest.createServerCache( addReplicatedRegion ))).intValue();
+    int port1 = ((Integer) vm0.invoke(() -> InterestListDUnitTest.createServerCache(addReplicatedRegion))).intValue();
     VM server2VM = Host.getHost(0).getVM(3);
-    int port2 =  ((Integer) server2VM.invoke(() -> InterestListDUnitTest.createServerCache( addReplicatedRegion ))).intValue();
+    int port2 = ((Integer) server2VM.invoke(() -> InterestListDUnitTest.createServerCache(addReplicatedRegion))).intValue();
 
     // Add a cache loader to the region in both cache servers
     vm0.invoke(() -> InterestListDUnitTest.addCacheLoader());
     server2VM.invoke(() -> InterestListDUnitTest.addCacheLoader());
 
     // Create client cache
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(
-      NetworkUtils.getServerHostName(vm0.getHost()), port1, port2));
-    
+    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), port1, port2));
+
     // Register interest in all keys
     vm1.invoke(() -> InterestListDUnitTest.registerALL_KEYS());
-    
+
     // Add CacheListener
     int numEvents = 100;
     vm1.invoke(() -> InterestListDUnitTest.addCacheListener(numEvents));
-    
+
     // Do gets on the client
     vm1.invoke(() -> InterestListDUnitTest.doGets(numEvents));
-    
+
     // Wait for cache listener create events
     vm1.invoke(() -> InterestListDUnitTest.waitForCacheListenerCreates());
-    
+
     // Confirm there are no cache listener update events
     vm1.invoke(() -> InterestListDUnitTest.confirmNoCacheListenerUpdates());
 
     // Confirm there are no cache listener invalidate events
     vm1.invoke(() -> InterestListDUnitTest.confirmNoCacheListenerInvalidates());
   }
-  
-  private  void createCache(Properties props) throws Exception {
+
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     cache = CacheFactory.create(ds);
     assertNotNull(cache);
@@ -533,16 +518,9 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(DELTA_PROPAGATION, "false");
 
     new InterestListDUnitTest().createCache(props);
-    PoolFactory pfactory = PoolManager.createFactory()
-      .addServer(host, port)
-      .setThreadLocalConnections(true)
-      .setMinConnections(3)
-      .setSubscriptionEnabled(true)
-      .setSubscriptionRedundancy(-1)
-      .setReadTimeout(10000)
-      .setSocketBufferSize(32768);
-      // .setRetryInterval(10000)
-      // .setRetryAttempts(5)
+    PoolFactory pfactory = PoolManager.createFactory().addServer(host, port).setThreadLocalConnections(true).setMinConnections(3).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(10000).setSocketBufferSize(32768);
+    // .setRetryInterval(10000)
+    // .setRetryAttempts(5)
     if (port2 > 0) {
       pfactory.addServer(host, port2);
     }
@@ -587,7 +565,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
 
   private static CacheServer addCacheServer() throws Exception {
     CacheServer s = cache.addCacheServer();
-    int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET) ;
+    int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     s.setPort(port);
     s.start();
     return s;
@@ -608,14 +586,15 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
 
   /** wait for queues to drain in the server */
   private static void flushQueues() throws Exception {
-    CacheServerImpl impl = (CacheServerImpl)server;
-    for (CacheClientProxy proxy: (Set<CacheClientProxy>)impl.getAllClientSessions()) {
+    CacheServerImpl impl = (CacheServerImpl) server;
+    for (CacheClientProxy proxy : (Set<CacheClientProxy>) impl.getAllClientSessions()) {
       final CacheClientProxy fproxy = proxy;
       WaitCriterion ev = new WaitCriterion() {
         @Override
         public boolean done() {
           return fproxy.getHARegionQueue().size() == 0;
         }
+
         @Override
         public String description() {
           return "waiting for queues to drain for " + fproxy.getProxyID();
@@ -628,7 +607,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   private static void addRegisterInterestListener() {
     interestListener = new InterestListener();
     List<CacheServer> servers = cache.getCacheServers();
-    for (CacheServer s: servers) {
+    for (CacheServer s : servers) {
       s.registerInterestRegistrationListener(interestListener);
     }
   }
@@ -649,21 +628,22 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     // Do gets.
     // These gets cause the CacheLoader to be invoked on the server
     Region region = cache.getRegion(REGION_NAME);
-    for (int i=0; i<numGets; i++) {
+    for (int i = 0; i < numGets; i++) {
       region.get(i);
     }
   }
-  
+
   private static void waitForCacheListenerCreates() throws Exception {
     // Wait for the EventCountingCacheListener to receive all of its create events
     Region region = cache.getRegion(REGION_NAME);
     final EventCountingCacheListener fCacheListener = (EventCountingCacheListener) region.getAttributes().getCacheListener();
-  
+
     WaitCriterion ev = new WaitCriterion() {
       @Override
       public boolean done() {
         return fCacheListener.hasReceivedAllCreateEvents();
       }
+
       @Override
       public String description() {
         return "waiting for " + fCacheListener.getExpectedCreates() + " create events";
@@ -671,7 +651,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     };
     Wait.waitForCriterion(ev, 5 * 10 * 1000, 200, true);
   }
-  
+
   private static void confirmNoCacheListenerUpdates() throws Exception {
     // Confirm there are no EventCountingCacheListener update events.
     // These would be coming from the subscription channel.
@@ -679,7 +659,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     EventCountingCacheListener cacheListener = (EventCountingCacheListener) region.getAttributes().getCacheListener();
     assertEquals(0/*expected*/, cacheListener.getUpdates()/*actual*/);
   }
-  
+
   private static void confirmNoCacheListenerInvalidates() throws Exception {
     // Confirm there are no EventCountingCacheListener invalidate events.
     // These would be coming from the subscription channel.
@@ -705,8 +685,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       // Verify that no invalidates occurred to this region
       assertEquals(r.getEntry(key1).getValue(), key1_originalValue);
       assertEquals(r.getEntry(key2).getValue(), key2_originalValue);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while createEntries()", ex);
     }
   }
@@ -720,8 +699,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   private static void registerKey(Object key) {
     try {
       registerKeyOnly(key);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while registering key(" + key + ")", ex);
     }
   }
@@ -736,8 +714,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     try {
       ClientSession cs = server.getClientSession(clientId);
       if (cs.isPrimary()) {
-        cs.registerInterest(Region.SEPARATOR + REGION_NAME, key,
-          InterestResultPolicy.KEYS_VALUES, false);
+        cs.registerInterest(Region.SEPARATOR + REGION_NAME, key, InterestResultPolicy.KEYS_VALUES, false);
       }
     } catch (Exception ex) {
       Assert.fail("failed while registering key(" + key + ")", ex);
@@ -748,8 +725,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     try {
       registerKeyOnly(key);
       fail("Expected an exception during register interest with no available servers.");
-    }
-    catch (NoSubscriptionServersAvailableException ex) {
+    } catch (NoSubscriptionServersAvailableException ex) {
       // expected an exception
       LogWriterUtils.getLogWriter().info("Got expected exception in registerKey: ");
     }
@@ -760,8 +736,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
       assertNotNull(r);
       r.registerInterest("ALL_KEYS");
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while registering ALL_KEYS", ex);
     }
   }
@@ -775,8 +750,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       // Verify that no invalidates occurred to this region
       assertEquals(r.getEntry(key1).getValue(), "vm1-key-1");
       assertEquals(r.getEntry(key2).getValue(), "vm1-key-2");
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while put_ALL_KEY()", ex);
     }
   }
@@ -787,8 +761,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(r);
       assertEquals(r.getEntry(key1).getValue(), "vm1-key-1");
       assertEquals(r.getEntry(key2).getValue(), "vm1-key-2");
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while validate_ALL_KEY", ex);
     }
   }
@@ -801,8 +774,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       list.add("k1");
       list.add("k2");
       r.registerInterest(list);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while registering keys" + list + "", ex);
     }
   }
@@ -815,8 +787,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       list.add("k4");
       list.add("k5");
       r.registerInterest(list);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while registering keys" + list + "", ex);
     }
   }
@@ -830,8 +801,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   private static void unregisterKey(Object key) {
     try {
       unregisterKeyOnly(key);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while un-registering key(" + key + ")", ex);
     }
   }
@@ -847,8 +817,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       if (cs.isPrimary()) {
         cs.unregisterInterest(Region.SEPARATOR + REGION_NAME, key, false);
       }
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while un-registering key(" + key + ") for client " + clientId, ex);
     }
   }
@@ -884,8 +853,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       r.put(key, value);
       // Verify that no invalidates occurred to this region
       assertEquals(r.getEntry(key).getValue(), value);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while r.put()", ex);
     }
   }
@@ -900,8 +868,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
         // Verify that no invalidates occurred to this region
         assertEquals("vm1-key-1", r.getEntry(key1).getValue());
         assertEquals("vm1-key-2", r.getEntry(key2).getValue());
-      }
-      else {
+      } else {
         r.put(key1, "vm2-key-1");
         r.put(key2, "vm2-key-2");
         // Verify that no invalidates occurred to this region
@@ -909,8 +876,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
         assertEquals("vm2-key-2", r.getEntry(key2).getValue());
       }
 
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while r.put()", ex);
     }
   }
@@ -925,8 +891,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       r.put("k4", "server4");
       r.put("k5", "server5");
 
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while r.put()", ex);
     }
   }
@@ -941,8 +906,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
         // Verify that no invalidates occurred to this region
         assertEquals(r.getEntry(key1).getValue(), "vm1-key-1-again");
         assertEquals(r.getEntry(key2).getValue(), "vm1-key-2-again");
-      }
-      else {
+      } else {
         r.put(key1, "vm2-key-1-again");
         r.put(key2, "vm2-key-2-again");
         // Verify that no invalidates occurred to this region
@@ -950,8 +914,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
         assertEquals(r.getEntry(key2).getValue(), "vm2-key-2-again");
       }
 
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while r.putAgain()", ex);
     }
   }
@@ -968,19 +931,18 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
             // original value
             assertEquals("vm2-key-1", r.getEntry(key1).getValue());
             assertEquals("vm1-key-2", r.getEntry(key2).getValue());
-          }
-          else {
+          } else {
             // Verify that 'key-2' was updated, but 'key-1' was not and contains the
             // original value
             assertEquals(key1_originalValue, r.getEntry(key1).getValue());
             assertEquals("vm1-key-2", r.getEntry(key2).getValue());
           }
           return true;
-        }
-        catch (AssertionError ex) {
+        } catch (AssertionError ex) {
           return false;
         }
       }
+
       @Override
       public String description() {
         return "waiting for client to apply events from server";
@@ -993,8 +955,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
       assertEquals(value, r.getEntry(key).getValue());
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while validateSingleEntry()", ex);
     }
   }
@@ -1008,14 +969,12 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
         // original value
         assertEquals(r.getEntry(key1).getValue(), "vm1-key-1-again");
         assertEquals(r.getEntry(key2).getValue(), "vm1-key-2-again");
-      }
-      else {
+      } else {
         // Verify that no updates occurred to this region
         assertEquals(r.getEntry(key1).getValue(), "vm2-key-1");
         assertEquals(r.getEntry(key2).getValue(), "vm2-key-2");
       }
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while r.put()", ex);
     }
   }
@@ -1064,7 +1023,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     public InterestListener() {
     }
   }
-  
+
   private static class EventCountingCacheListener extends CacheListenerAdapter {
 
     private AtomicInteger creates = new AtomicInteger();
@@ -1072,7 +1031,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     private AtomicInteger invalidates = new AtomicInteger();
 
     private int expectedCreates;
-    
+
     public EventCountingCacheListener(int expectedCreates) {
       this.expectedCreates = expectedCreates;
     }
@@ -1101,7 +1060,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     private void incrementCreates() {
       this.creates.incrementAndGet();
     }
-    
+
     private int getCreates() {
       return this.creates.get();
     }
@@ -1109,7 +1068,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     private void incrementUpdates() {
       this.updates.incrementAndGet();
     }
-    
+
     private int getUpdates() {
       return this.updates.get();
     }
@@ -1126,14 +1085,14 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
       return this.expectedCreates == getCreates();
     }
   }
-  
+
   private static class ReturnKeyCacheLoader implements CacheLoader {
 
     @Override
     public void close() {
       // Do nothing
     }
-  
+
     @Override
     public Object load(LoaderHelper helper) throws CacheLoaderException {
       return helper.getKey();

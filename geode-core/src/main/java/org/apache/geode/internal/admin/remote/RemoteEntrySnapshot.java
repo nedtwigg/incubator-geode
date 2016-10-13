@@ -57,10 +57,12 @@ public class RemoteEntrySnapshot implements EntrySnapshot, DataSerializable {
       this.stats = new RemoteCacheStatistics();
     }
   }
+
   /**
    * This constructor is only for use by the DataSerializable mechanism
    */
-  public RemoteEntrySnapshot() {}
+  public RemoteEntrySnapshot() {
+  }
 
   public Object getName() {
     return this.name;
@@ -96,14 +98,15 @@ public class RemoteEntrySnapshot implements EntrySnapshot, DataSerializable {
 
   @Override
   public boolean equals(Object other) {
-    if (other == this) return true;
+    if (other == this)
+      return true;
     if (other instanceof RemoteEntrySnapshot) {
-      RemoteEntrySnapshot snap = (RemoteEntrySnapshot)other;
+      RemoteEntrySnapshot snap = (RemoteEntrySnapshot) other;
       return this.name.equals(snap.name);
     }
-    return false;    
+    return false;
   }
-  
+
   @Override
   public int hashCode() {
     return this.name.hashCode();
@@ -113,19 +116,18 @@ public class RemoteEntrySnapshot implements EntrySnapshot, DataSerializable {
   public String toString() {
     return getName().toString();
   }
-  
+
   public void toData(DataOutput out) throws IOException {
-    DataSerializer.writeObject(this.name, out);  
+    DataSerializer.writeObject(this.name, out);
     DataSerializer.writeObject(this.value, out);
     DataSerializer.writeObject(this.stats, out);
     DataSerializer.writeObject(this.userAttribute, out);
   }
 
-  public void fromData(DataInput in) throws IOException, 
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.name = DataSerializer.readObject(in);
     this.value = DataSerializer.readObject(in);
-    this.stats = (RemoteCacheStatistics)DataSerializer.readObject(in);
+    this.stats = (RemoteCacheStatistics) DataSerializer.readObject(in);
     this.userAttribute = DataSerializer.readObject(in);
   }
 }

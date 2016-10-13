@@ -33,9 +33,9 @@ import org.apache.logging.log4j.Logger;
  *  maintaining the list in a cu-pipe and determining the next entry to be removed.
  *  Each EntriesMap that supports LRU holds one of these.
  */
-public class NewLRUClockHand  {
+public class NewLRUClockHand {
   private static final Logger logger = LogService.getLogger();
-  
+
   private BucketRegion bucketRegion = null;
 
   /**  The last node in the LRU list after which all new nodes are added */
@@ -43,7 +43,7 @@ public class NewLRUClockHand  {
 
   /**  The starting point in the LRU list for searching for the LRU node */
   protected LRUClockNode head = new GuardNode();
-  
+
   /** The object for locking the head of the cu-pipe. */
   final protected HeadLock lock;
 
@@ -54,39 +54,35 @@ public class NewLRUClockHand  {
 
   public static final boolean debug = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "verbose-lru-clock");
 
-static private final int maxEntries;
+  static private final int maxEntries;
 
-static {
-  String squelch = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "lru.maxSearchEntries");
-  if (squelch == null)
-    maxEntries = -1;
-  else
-    maxEntries = Integer.parseInt(squelch);
-}
+  static {
+    String squelch = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "lru.maxSearchEntries");
+    if (squelch == null)
+      maxEntries = -1;
+    else
+      maxEntries = Integer.parseInt(squelch);
+  }
 
   /** only used by enhancer */
   // protected NewLRUClockHand( ) { }
-  
-//   private long size = 0;
 
-public NewLRUClockHand(Object region, EnableLRU ccHelper,
-      InternalRegionArguments internalRegionArgs) {
+  //   private long size = 0;
+
+  public NewLRUClockHand(Object region, EnableLRU ccHelper, InternalRegionArguments internalRegionArgs) {
     setBucketRegion(region);
     this.lock = new HeadLock();
-     // behavior relies on a single evicted node in the pipe when the pipe is empty.
+    // behavior relies on a single evicted node in the pipe when the pipe is empty.
     initHeadAndTail();
     if (this.bucketRegion != null) {
-      this.stats = internalRegionArgs.getPartitionedRegion() != null ? internalRegionArgs
-          .getPartitionedRegion().getEvictionController().stats
-          : null;
-    }
-    else {
+      this.stats = internalRegionArgs.getPartitionedRegion() != null ? internalRegionArgs.getPartitionedRegion().getEvictionController().stats : null;
+    } else {
       LRUStatistics tmp = null;
       if (region instanceof PlaceHolderDiskRegion) {
-        tmp = ((PlaceHolderDiskRegion)region).getPRLRUStats();
+        tmp = ((PlaceHolderDiskRegion) region).getPRLRUStats();
       } else if (region instanceof PartitionedRegion) {
-        tmp = ((PartitionedRegion)region).getPRLRUStatsDuringInitialization(); // bug 41938
-        PartitionedRegion pr = (PartitionedRegion)region;
+        tmp = ((PartitionedRegion) region).getPRLRUStatsDuringInitialization(); // bug 41938
+        PartitionedRegion pr = (PartitionedRegion) region;
         if (tmp != null) {
           pr.getEvictionController().stats = tmp;
         }
@@ -101,14 +97,14 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
 
   public void setBucketRegion(Object r) {
     if (r instanceof BucketRegion) {
-      this.bucketRegion = (BucketRegion)r; // see bug 41388
+      this.bucketRegion = (BucketRegion) r; // see bug 41388
     }
   }
- 
-  public NewLRUClockHand( Region region, EnableLRU ccHelper, NewLRUClockHand oldList) {
+
+  public NewLRUClockHand(Region region, EnableLRU ccHelper, NewLRUClockHand oldList) {
     setBucketRegion(region);
     this.lock = new HeadLock();
-     // behavior relies on a single evicted node in the pipe when the pipe is empty.
+    // behavior relies on a single evicted node in the pipe when the pipe is empty.
     initHeadAndTail();
     if (oldList.stats == null) {
       // see bug 41388
@@ -119,23 +115,22 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
       if (this.bucketRegion != null) {
         this.stats.decrementCounter(this.bucketRegion.getCounter());
         this.bucketRegion.resetCounter();
-      }
-      else {
+      } else {
         this.stats.resetCounter();
       }
     }
   }
-  
+
   /**  Description of the Method */
   public void close() {
     closeStats();
-    if(bucketRegion!=null)
+    if (bucketRegion != null)
       bucketRegion.close();
   }
 
   public void closeStats() {
     LRUStatistics ls = this.stats;
-    if( ls != null ) {
+    if (ls != null) {
       ls.close();
     }
   }
@@ -145,8 +140,8 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
    *  of the list.
    *
    * @param  aNode  Description of the Parameter
-   */  
-  public final void appendEntry( final LRUClockNode aNode ) {
+   */
+  public final void appendEntry(final LRUClockNode aNode) {
     synchronized (this.lock) {
       if (aNode.nextLRUNode() != null || aNode.prevLRUNode() != null) {
         return;
@@ -159,7 +154,7 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
       this.tail.prevLRUNode().setNextLRUNode(aNode);
       aNode.setPrevLRUNode(this.tail.prevLRUNode());
       this.tail.setPrevLRUNode(aNode);
-      
+
       this.size++;
     }
   }
@@ -170,37 +165,36 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
   private LRUClockNode getHeadEntry() {
     synchronized (lock) {
       LRUClockNode aNode = NewLRUClockHand.this.head.nextLRUNode();
-      if(aNode == this.tail) {
+      if (aNode == this.tail) {
         return null;
       }
-      
+
       LRUClockNode next = aNode.nextLRUNode();
       this.head.setNextLRUNode(next);
       next.setPrevLRUNode(this.head);
-      
+
       aNode.setNextLRUNode(null);
       aNode.setPrevLRUNode(null);
       this.size--;
       return aNode;
     }
   }
-  
 
   /** return the Entry that is considered least recently used. The entry will no longer
     * be in the pipe (unless it is the last empty marker).
     */
   public LRUClockNode getLRUEntry() {
     long numEvals = 0;
-    
+
     for (;;) {
-	LRUClockNode aNode = null;
-	aNode = getHeadEntry();
+      LRUClockNode aNode = null;
+      aNode = getHeadEntry();
 
-        if (logger.isTraceEnabled(LogMarker.LRU_CLOCK)) {
-	  logger.trace(LogMarker.LRU_CLOCK, "lru considering {}", aNode);
-	}
+      if (logger.isTraceEnabled(LogMarker.LRU_CLOCK)) {
+        logger.trace(LogMarker.LRU_CLOCK, "lru considering {}", aNode);
+      }
 
-      if ( aNode == null ) { // hit the end of the list
+      if (aNode == null) { // hit the end of the list
         this.stats.incEvaluations(numEvals);
         return aNode;
       } // hit the end of the list
@@ -211,12 +205,12 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
       // eviction should not cause commit conflicts
       synchronized (aNode) {
         if (aNode instanceof AbstractRegionEntry) {
-        if (((AbstractRegionEntry) aNode).isInUseByTransaction()) {
-          if (logger.isTraceEnabled(LogMarker.LRU_CLOCK)) {
-            logger.trace(LogMarker.LRU_CLOCK, LocalizedMessage.create(LocalizedStrings.NewLRUClockHand_REMOVING_TRANSACTIONAL_ENTRY_FROM_CONSIDERATION));
+          if (((AbstractRegionEntry) aNode).isInUseByTransaction()) {
+            if (logger.isTraceEnabled(LogMarker.LRU_CLOCK)) {
+              logger.trace(LogMarker.LRU_CLOCK, LocalizedMessage.create(LocalizedStrings.NewLRUClockHand_REMOVING_TRANSACTIONAL_ENTRY_FROM_CONSIDERATION));
+            }
+            continue;
           }
-          continue;
-        }
         }
         if (aNode.testEvicted()) {
           if (logger.isTraceEnabled(LogMarker.LRU_CLOCK)) {
@@ -224,7 +218,7 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
           }
           continue;
         }
-        
+
         // At this point we have any acceptable entry.  Now
         // use various criteria to determine if it's good enough
         // to return, or if we need to add it back to the list.
@@ -234,9 +228,7 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
           }
           this.stats.incGreedyReturns(1);
           // fall through, return this node           
-        }
-        else
-        if ( aNode.testRecentlyUsed()) {
+        } else if (aNode.testRecentlyUsed()) {
           // Throw it back, it's in the working set
           aNode.unsetRecentlyUsed();
           // aNode.setInList();
@@ -245,8 +237,7 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
           }
           appendEntry(aNode);
           continue; // keep looking
-        }
-        else {
+        } else {
           if (logger.isTraceEnabled(LogMarker.LRU_CLOCK)) {
             logger.trace(LogMarker.LRU_CLOCK, LocalizedMessage.create(LocalizedStrings.NewLRUClockHand_RETURNING_UNUSED_ENTRY, aNode));
           }
@@ -266,15 +257,15 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
       return;
     }
     synchronized (lock) {
-      int idx=1;
-      for (LRUClockNode aNode = this.head; aNode != null; aNode = aNode.nextLRUNode())  {
+      int idx = 1;
+      for (LRUClockNode aNode = this.head; aNode != null; aNode = aNode.nextLRUNode()) {
         if (isDebugEnabled) {
           logger.trace(LogMarker.LRU_CLOCK, "  ({}) {}", (idx++), aNode);
         }
       }
     }
   }
-  
+
   public long getExpensiveListCount() {
     synchronized (lock) {
       long count = 0;
@@ -284,33 +275,30 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
       return count;
     }
   }
-  
-  public String getAuditReport( ) {
+
+  public String getAuditReport() {
     LRUClockNode h = this.head;
     int totalNodes = 0;
     int evictedNodes = 0;
     int usedNodes = 0;
-    while( h != null ) {
+    while (h != null) {
       totalNodes++;
-      if ( h.testEvicted() ) evictedNodes++;
-      if ( h.testRecentlyUsed() ) usedNodes++;
+      if (h.testEvicted())
+        evictedNodes++;
+      if (h.testRecentlyUsed())
+        usedNodes++;
       h = h.nextLRUNode();
     }
     StringBuffer result = new StringBuffer(128);
-    result.append("LRUList Audit: listEntries = ")
-      .append(totalNodes)      
-      .append(" evicted = ")
-      .append(evictedNodes)
-      .append(" used = ")
-      .append(usedNodes);
+    result.append("LRUList Audit: listEntries = ").append(totalNodes).append(" evicted = ").append(evictedNodes).append(" used = ").append(usedNodes);
     return result.toString();
   }
 
   /** unsynchronized audit...only run after activity has ceased. */
-  public void audit( ) {
+  public void audit() {
     System.out.println(getAuditReport());
   }
-  
+
   /** remove an entry from the pipe... (marks it evicted to be skipped later) */
   public boolean unlinkEntry(LRUClockNode entry) {
     if (logger.isTraceEnabled(LogMarker.LRU_CLOCK)) {
@@ -318,10 +306,10 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
     }
     entry.setEvicted();
     stats().incDestroys();
-    synchronized(lock) {
+    synchronized (lock) {
       LRUClockNode next = entry.nextLRUNode();
       LRUClockNode prev = entry.prevLRUNode();
-      if(next == null || prev == null) {
+      if (next == null || prev == null) {
         //not in the list anymore.
         return false;
       }
@@ -333,28 +321,29 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
     }
     return true;
   }
-  
+
   /**
    *  Get the modifier for lru based statistics.
    *
    * @return    The LRUStatistics for this Clock hand's region.
    */
   public LRUStatistics stats() {
-    return this.stats; 
-  }  /**
-   * called when an LRU map is cleared... resets stats and releases prev and next.
-   */
+    return this.stats;
+  }
+
+  /**
+  * called when an LRU map is cleared... resets stats and releases prev and next.
+  */
 
   public void clear(RegionVersionVector rvv) {
     if (rvv != null) {
       return; // when concurrency checks are enabled the clear operation removes entries iteratively
     }
-    synchronized  (this.lock ) {
-      if (bucketRegion!=null) {
+    synchronized (this.lock) {
+      if (bucketRegion != null) {
         this.stats.decrementCounter(bucketRegion.getCounter());
         bucketRegion.resetCounter();
-      }
-      else {
+      } else {
         this.stats.resetCounter();
       }
       initHeadAndTail();
@@ -381,31 +370,32 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
     this.tail.setPrevLRUNode(this.head);
     this.size = 0;
   }
-  
-    /**
-     * Get size of LRU queue
-     *
-     * @return size
-     */
-    public int size() {
-        return size;
-    }
+
+  /**
+   * Get size of LRU queue
+   *
+   * @return size
+   */
+  public int size() {
+    return size;
+  }
 
   /** perform work of clear(), after subclass has properly synchronized */
-//  private void internalClear() {
-//    stats().resetCounter();
-//    LRUClockNode node = this.tail;
-//    node.setEvicted();
-//
-//    // NYI need to walk the list and call unsetInList for each one.
-//    
-//    // tail's next should already be null.
-//    setHead( node );
-//  }
+  //  private void internalClear() {
+  //    stats().resetCounter();
+  //    LRUClockNode node = this.tail;
+  //    node.setEvicted();
+  //
+  //    // NYI need to walk the list and call unsetInList for each one.
+  //    
+  //    // tail's next should already be null.
+  //    setHead( node );
+  //  }
 
   /** Marker class name to identify the lock more easily in thread dumps */
-  protected static class HeadLock extends Object  { }
-  
+  protected static class HeadLock extends Object {
+  }
+
   private static final class GuardNode implements LRUClockNode {
 
     private LRUClockNode next;
@@ -424,7 +414,7 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
     }
 
     public void setEvicted() {
-      
+
     }
 
     public void setNextLRUNode(LRUClockNode next) {
@@ -455,9 +445,9 @@ public NewLRUClockHand(Object region, EnableLRU ccHelper,
     public int updateEntrySize(EnableLRU ccHelper) {
       return 0;
     }
+
     public int updateEntrySize(EnableLRU ccHelper, Object value) {
       return 0;
     }
   }
 }
-

@@ -63,15 +63,14 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
    * The default percentage of VM heap usage over which LRU eviction occurs
    */
   public static final String TOP_UP_HEAP_EVICTION_PERCENTAGE_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "topUpHeapEvictionPercentage";
-  
+
   public static final float DEFAULT_TOP_UP_HEAP_EVICTION_PERCENTAGE = 4.0f;
-  
+
   public static final int DEFAULT_HEAP_PERCENTAGE = 75;
 
   public static final int PER_ENTRY_OVERHEAD = 250;
 
   private int perEntryOverhead = PER_ENTRY_OVERHEAD;
-
 
   /**
    * The default number of milliseconds the evictor thread should wait before
@@ -92,17 +91,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
     final String lruEvaluationsDesc = "Number of entries evaluated during LRU operations.";
     final String lruGreedyReturnsDesc = "Number of non-LRU entries evicted during LRU operations";
 
-    statType = f
-        .createType(
-            "HeapLRUStatistics",
-            "Statistics about byte based Least Recently Used region entry disposal",
-            new StatisticDescriptor[] {
-                f.createLongGauge("entryBytes", entryBytesDesc, "bytes"),
-                f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"),
-                f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"),
-                f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"),
-                f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"),
-                f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"), });
+    statType = f.createType("HeapLRUStatistics", "Statistics about byte based Least Recently Used region entry disposal", new StatisticDescriptor[] { f.createLongGauge("entryBytes", entryBytesDesc, "bytes"), f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"), f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"), f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"), f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"), f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"), });
   }
 
   // //////////////////// Instance Fields /////////////////////
@@ -120,7 +109,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
     super(evictionAction, region);
   }
 
-  public HeapLRUCapacityController(ObjectSizer sizerImpl,EvictionAction evictionAction, Region region) {
+  public HeapLRUCapacityController(ObjectSizer sizerImpl, EvictionAction evictionAction, Region region) {
     super(evictionAction, region);
     setSizer(sizerImpl);
   }
@@ -166,7 +155,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
     int result = super.hashCode();
     return result;
   }
-  
+
   /**
    * Returns a brief description of this eviction controller.
    * 
@@ -174,7 +163,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
    */
   @Override
   public String toString() {
-    return LocalizedStrings.HeapLRUCapacityController_HEAPLRUCAPACITYCONTROLLER_WITH_A_CAPACITY_OF_0_OF_HEAP_AND_AN_THREAD_INTERVAL_OF_1_AND_EVICTION_ACTION_2.toLocalizedString(new Object[] { Long.valueOf(this.getLimit()), this.getEvictionAction()});
+    return LocalizedStrings.HeapLRUCapacityController_HEAPLRUCAPACITYCONTROLLER_WITH_A_CAPACITY_OF_0_OF_HEAP_AND_AN_THREAD_INTERVAL_OF_1_AND_EVICTION_ACTION_2.toLocalizedString(new Object[] { Long.valueOf(this.getLimit()), this.getEvictionAction() });
   }
 
   /**
@@ -187,7 +176,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
   private void setSizer(ObjectSizer sizer) {
     this.sizer = sizer;
   }
-  
+
   @Override
   protected EnableLRU createLRUHelper() {
     return new AbstractEnableLRU() {
@@ -203,8 +192,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
       /**
        * As far as we're concerned all entries have the same size
        */
-      public int entrySize(Object key, Object value)
-          throws IllegalArgumentException {
+      public int entrySize(Object key, Object value) throws IllegalArgumentException {
         // value is null only after eviction occurs. A change in size is
         // required for eviction stats, bug 30974
         /*
@@ -213,7 +201,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
         if (value == Token.TOMBSTONE) {
           return 0;
         }
-        
+
         int size = HeapLRUCapacityController.this.getPerEntryOverhead();
         size += sizeof(key);
         size += sizeof(value);
@@ -227,8 +215,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
       @Override
       public LRUStatistics initStats(Object region, StatisticsFactory sf) {
         setRegionName(region);
-        final LRUStatistics stats
-          = new HeapLRUStatistics(sf, getRegionName(), this);
+        final LRUStatistics stats = new HeapLRUStatistics(sf, getRegionName(), this);
         setStats(stats);
         return stats;
       }
@@ -268,7 +255,7 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
       public int getGreedyReturnsStatId() {
         return statType.nameToId("lruGreedyReturns");
       }
-      
+
       /**
        * Okay, deep breath. Instead of basing the LRU calculation on the number
        * of entries in the region or on their "size" (which turned out to be
@@ -286,22 +273,22 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
           cache = GemFireCacheImpl.getInstance();
         }
         InternalResourceManager resourceManager = cache.getResourceManager();
-        
+
         if (region == null) {
           return resourceManager.getHeapMonitor().getState().isEviction();
         }
-        
+
         final boolean monitorStateIsEviction;
         if (!((AbstractRegion) region).getOffHeap()) {
           monitorStateIsEviction = resourceManager.getHeapMonitor().getState().isEviction();
         } else {
           monitorStateIsEviction = resourceManager.getOffHeapMonitor().getState().isEviction();
         }
-        
+
         if (region instanceof BucketRegion) {
           return monitorStateIsEviction && ((BucketRegion) region).getSizeForEviction() > 0;
         }
-        
+
         return monitorStateIsEviction && ((LocalRegion) region).getRegionMap().sizeInVM() > 0;
       }
     };

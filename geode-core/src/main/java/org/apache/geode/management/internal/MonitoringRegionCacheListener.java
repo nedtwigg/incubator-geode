@@ -35,8 +35,7 @@ import org.apache.geode.internal.logging.LogService;
  * 
  * 
  */
-public class MonitoringRegionCacheListener extends
-    CacheListenerAdapter<String, Object> {
+public class MonitoringRegionCacheListener extends CacheListenerAdapter<String, Object> {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -81,35 +80,35 @@ public class MonitoringRegionCacheListener extends
     }
 
   }
-  
-  @Override 
-      public void afterCreate(EntryEvent<String, Object> event) { 
-        ObjectName objectName = null; 
-        try { 
-     
-          if (!service.isStartedAndOpen() || !service.isManager()) { 
-            // NO OP return; No work for Non Manager Nodes 
-            return; 
-          } 
-          objectName = ObjectName.getInstance(event.getKey()); 
-     
-          FederationComponent newObject = (FederationComponent) event.getNewValue(); 
-          String className = newObject.getMBeanInterfaceClass(); 
-          Class interfaceClass; 
-          if (classRef.get(className) != null) { 
-            interfaceClass = classRef.get(className); 
-          } else { 
-            interfaceClass = ClassLoadUtil.classFromName(className); 
-            classRef.put(className, interfaceClass); 
-          } 
-     
-         service.afterPseudoCreateProxy(objectName, interfaceClass, null, newObject); 
-     
-        } catch (Exception e) { 
-          if (logger.isDebugEnabled()) { 
-            logger.debug("{}: Aggregation Failed failed for {} With Exception {}", THIS_COMPONENT, objectName, e); 
-          } 
-        } 
-      } 
+
+  @Override
+  public void afterCreate(EntryEvent<String, Object> event) {
+    ObjectName objectName = null;
+    try {
+
+      if (!service.isStartedAndOpen() || !service.isManager()) {
+        // NO OP return; No work for Non Manager Nodes 
+        return;
+      }
+      objectName = ObjectName.getInstance(event.getKey());
+
+      FederationComponent newObject = (FederationComponent) event.getNewValue();
+      String className = newObject.getMBeanInterfaceClass();
+      Class interfaceClass;
+      if (classRef.get(className) != null) {
+        interfaceClass = classRef.get(className);
+      } else {
+        interfaceClass = ClassLoadUtil.classFromName(className);
+        classRef.put(className, interfaceClass);
+      }
+
+      service.afterPseudoCreateProxy(objectName, interfaceClass, null, newObject);
+
+    } catch (Exception e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("{}: Aggregation Failed failed for {} With Exception {}", THIS_COMPONENT, objectName, e);
+      }
+    }
+  }
 
 }

@@ -16,10 +16,8 @@
  */
 package org.apache.geode.cache30;
 
-
 import java.io.Serializable;
 import java.util.Properties;
-
 
 import org.apache.geode.cache.EntryOperation;
 import org.apache.geode.cache.PartitionResolver;
@@ -41,7 +39,8 @@ public class CacheXMLPartitionResolver implements PartitionResolver, Serializabl
     return null;
   }
 
-  public void close() {}
+  public void close() {
+  }
 
   // @Override
   public boolean equals(Object obj) {
@@ -51,10 +50,10 @@ public class CacheXMLPartitionResolver implements PartitionResolver, Serializabl
     if (obj == null) {
       return false;
     }
-    if (! obj.getClass().equals(this.getClass())) {
+    if (!obj.getClass().equals(this.getClass())) {
       return false;
     }
-    CacheXMLPartitionResolver other = (CacheXMLPartitionResolver)obj; 
+    CacheXMLPartitionResolver other = (CacheXMLPartitionResolver) obj;
     if (!this.resolveProps.equals(other.getConfig())) {
       return false;
     }

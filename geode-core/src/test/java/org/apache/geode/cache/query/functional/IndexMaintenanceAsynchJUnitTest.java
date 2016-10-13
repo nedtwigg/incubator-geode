@@ -57,7 +57,7 @@ public class IndexMaintenanceAsynchJUnitTest {
 
   @Before
   public void setUp() throws Exception {
-    if(!isInitDone){
+    if (!isInitDone) {
       init();
     }
   }
@@ -70,29 +70,30 @@ public class IndexMaintenanceAsynchJUnitTest {
   static boolean isInitDone = false;
   static Region region;
   static IndexProtocol index;
-  private static void init(){
-    try{
+
+  private static void init() {
+    try {
       String queryString;
       Query query;
       Object result;
       Cache cache = CacheUtils.getCache();
-      region = CacheUtils.createRegion("portfolios",Portfolio.class, false);
-      for (int i = 0; i < 4; i++){
-        region.put(""+i,new Portfolio(i));
+      region = CacheUtils.createRegion("portfolios", Portfolio.class, false);
+      for (int i = 0; i < 4; i++) {
+        region.put("" + i, new Portfolio(i));
       }
       qs = cache.getQueryService();
-      index = (IndexProtocol)qs.createIndex("statusIndex", IndexType.FUNCTIONAL,"status","/portfolios");
+      index = (IndexProtocol) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
       IndexStatistics stats = index.getStatistics();
       assertEquals(4, stats.getNumUpdates());
 
       // queryString= "SELECT DISTINCT * FROM /portfolios p, p.positions.values pos where pos.secId='IBM'";
-      queryString= "SELECT DISTINCT * FROM /portfolios";
+      queryString = "SELECT DISTINCT * FROM /portfolios";
       query = CacheUtils.getQueryService().newQuery(queryString);
 
       result = query.execute();
       CacheUtils.log(Utils.printResult(result));
 
-    }catch(Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
     isInitDone = true;
@@ -106,7 +107,6 @@ public class IndexMaintenanceAsynchJUnitTest {
     Thread.sleep(12000);
   }
 
-
   class NewThread implements Runnable {
     String queryString;
     Query query;
@@ -114,24 +114,27 @@ public class IndexMaintenanceAsynchJUnitTest {
     Thread t;
     Region region;
     IndexProtocol index;
+
     NewThread(Region region, IndexProtocol index) {
-      t = new Thread(this,"Demo");
+      t = new Thread(this, "Demo");
       this.region = region;
       this.index = index;
       t.setPriority(10);
       t.start();
     }
+
     public void run() {
       try {
         IndexStatistics stats = index.getStatistics();
-        for (int i = 5; i < 9; i++){
-          region.put(""+i,new Portfolio(i));
+        for (int i = 5; i < 9; i++) {
+          region.put("" + i, new Portfolio(i));
         }
         final IndexStatistics st = stats;
         WaitCriterion ev = new WaitCriterion() {
           public boolean done() {
             return st.getNumUpdates() == 8;
           }
+
           public String description() {
             return "index updates never became 8";
           }
@@ -139,17 +142,17 @@ public class IndexMaintenanceAsynchJUnitTest {
         Wait.waitForCriterion(ev, 5000, 200, true);
 
         //queryString= "SELECT DISTINCT * FROM /portfolios p, p.positions.values pos where pos.secId='IBM'";
-        queryString= "SELECT DISTINCT * FROM /portfolios where status = 'active'";
+        queryString = "SELECT DISTINCT * FROM /portfolios where status = 'active'";
         query = CacheUtils.getQueryService().newQuery(queryString);
         QueryObserverImpl observer = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer);
 
         result = query.execute();
-        if(!observer.isIndexesUsed){
+        if (!observer.isIndexesUsed) {
           fail("NO INDEX USED");
         }
         CacheUtils.log(Utils.printResult(result));
-        if (((Collection)result).size() != 4 ) {
+        if (((Collection) result).size() != 4) {
           fail("Did not obtain expected size of result for the query");
         }
         // Task ID: IMA 1
@@ -160,7 +163,8 @@ public class IndexMaintenanceAsynchJUnitTest {
       }
     }
   }
-  class QueryObserverImpl extends QueryObserverAdapter{
+
+  class QueryObserverImpl extends QueryObserverAdapter {
     boolean isIndexesUsed = false;
     ArrayList indexesUsed = new ArrayList();
 
@@ -169,7 +173,7 @@ public class IndexMaintenanceAsynchJUnitTest {
     }
 
     public void afterIndexLookup(Collection results) {
-      if(results != null){
+      if (results != null) {
         isIndexesUsed = true;
       }
     }

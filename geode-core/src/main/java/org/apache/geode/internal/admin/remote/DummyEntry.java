@@ -23,22 +23,21 @@ import org.apache.geode.cache.*;
  * does nothing but provide an instance of {@link org.apache.geode.cache.CacheStatistics}
  */
 public class DummyEntry implements Region.Entry {
-  
+
   private final Region region;
   private final Object key;
   private final Object value;
   private final CacheStatistics stats;
   private final Object userAttribute;
 
-  DummyEntry(Region region, Object key, Object cachedObject,
-             Object userAttribute, CacheStatistics stats) {
+  DummyEntry(Region region, Object key, Object cachedObject, Object userAttribute, CacheStatistics stats) {
     this.region = region;
     this.key = key;
     this.value = cachedObject;
     this.userAttribute = userAttribute;
     this.stats = stats;
   }
-  
+
   public boolean isLocal() {
     return false;
   }
@@ -46,27 +45,27 @@ public class DummyEntry implements Region.Entry {
   public Object getKey() {
     return this.key;
   }
-  
+
   public Object getValue() {
     return this.value;
   }
-  
+
   public Region getRegion() {
     return this.region;
   }
-  
+
   public CacheStatistics getStatistics() {
     return this.stats;
   }
-  
+
   public Object getUserAttribute() {
     return this.userAttribute;
   }
-  
+
   public Object setUserAttribute(Object userAttribute) {
     throw new UnsupportedOperationException();
   }
-  
+
   public boolean isDestroyed() {
     throw new UnsupportedOperationException();
   }

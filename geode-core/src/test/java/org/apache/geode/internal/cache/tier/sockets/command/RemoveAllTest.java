@@ -172,7 +172,7 @@ public class RemoveAllTest {
 
     this.removeAll.cmdExecute(this.message, this.serverConnection, 0);
 
-    for (Object key: KEYS) {
+    for (Object key : KEYS) {
       verify(this.authzRequest).removeAllAuthorize(eq(REGION_NAME), any(), any());
     }
 
@@ -189,11 +189,10 @@ public class RemoveAllTest {
     }
     this.removeAll.cmdExecute(this.message, this.serverConnection, 0);
 
-    for (Object key: KEYS) {
+    for (Object key : KEYS) {
       verify(this.authzRequest).removeAllAuthorize(eq(REGION_NAME), any(), any());
     }
     verify(this.chunkedResponseMessage).sendChunk(eq(this.serverConnection));
   }
-
 
 }

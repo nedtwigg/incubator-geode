@@ -81,166 +81,166 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
   public SizingFlagDUnitTest() {
     super();
   }
-  
+
   @Test
   public void testRRMemLRU() {
     doRRMemLRUTest();
   }
-  
+
   @Test
   public void testRRMemLRUDeltaAndFlag() {
     doRRMemLRUDeltaTest(true);
   }
-  
+
   @Test
   public void testRRMemLRUDelta() {
     doRRMemLRUDeltaTest(false);
   }
-  
+
   @Test
   public void testRRListener() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     createRR(vm0);
     createRR(vm1);
-    
+
     addListener(vm0);
     addListener(vm1);
-    
+
     doListenerTestRR(vm0, vm1);
   }
-  
+
   @Test
   public void testPRMemLRU() {
     doPRMemLRUTest();
   }
-  
+
   @Test
   public void testPRMemLRUAndFlagDeltaPutOnPrimary() {
     doPRDeltaTestLRU(false, false, true, false);
   }
-  
+
   @Test
   public void testPRMemLRUDeltaPutOnPrimary() {
     doPRDeltaTestLRU(false, false, true, false);
   }
-  
+
   @Test
   public void testPRMemLRUAndFlagDeltaPutOnSecondary() {
     doPRDeltaTestLRU(false, false, false, true);
   }
-  
+
   @Test
   public void testPRMemLRUDeltaPutOnSecondary() {
     doPRDeltaTestLRU(false, false, false, true);
   }
-  
+
   @Test
   public void testPRNoLRUDelta() {
     doPRNoLRUDeltaTest(false);
   }
-  
+
   @Test
   public void testPRNoLRUAndFlagDelta() {
     doPRNoLRUDeltaTest(true);
   }
-  
+
   @Test
   public void testPRListener() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     createPR(vm0, true);
     createPR(vm1, true);
-    
+
     addListener(vm0);
     addListener(vm1);
-    
+
     doListenerTestPR(vm0, vm1);
   }
-  
+
   @Test
   public void testPRHeapLRU() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     createPRHeapLRU(vm0);
     createPRHeapLRU(vm1);
-    
+
     put(vm0, new TestKey("a"), new TestObject(100, 1000));
-    
+
     assertValueType(vm0, new TestKey("a"), ValueType.CD_SERIALIZED);
     assertValueType(vm1, new TestKey("a"), ValueType.CD_SERIALIZED);
-    
+
     assertEquals(1, getObjectSizerInvocations(vm0));
     long origSize0 = getSizeFromPRStats(vm0);
-    assertTrue("Size was " + origSize0 , 1000 > origSize0);
+    assertTrue("Size was " + origSize0, 1000 > origSize0);
     assertEquals(1, getObjectSizerInvocations(vm1));
     long origSize1 = getSizeFromPRStats(vm1);
-    assertTrue("Size was " + origSize1 , 1000 > origSize1);
-    
+    assertTrue("Size was " + origSize1, 1000 > origSize1);
+
     get(vm0, new TestKey("a"), new TestObject(100, 1000));
-    
+
     assertValueType(vm0, new TestKey("a"), ValueType.CD_DESERIALIZED);
     assertValueType(vm1, new TestKey("a"), ValueType.CD_SERIALIZED);
     //assertTrue(1000 < getSizeFromPRStats(vm0));
     assertEquals(3, getObjectSizerInvocations(vm0));
     //assertTrue(1000 > getSizeFromPRStats(vm1));
     assertEquals(1, getObjectSizerInvocations(vm1));
-    
+
     //Test what happens when we reach the heap threshold??
   }
-  
+
   @Test
   public void testRRHeapLRU() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     createRRHeapLRU(vm0);
     createRRHeapLRU(vm1);
-    
+
     put(vm0, "a", new TestObject(100, 1000));
-    
+
     assertValueType(vm0, "a", ValueType.RAW_VALUE);
     assertValueType(vm1, "a", ValueType.CD_SERIALIZED);
-    
+
     assertEquals(1, getObjectSizerInvocations(vm0));
     assertEquals(0, getObjectSizerInvocations(vm1));
-    
+
     get(vm1, "a", new TestObject(100, 1000));
-    
+
     assertValueType(vm0, "a", ValueType.RAW_VALUE);
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
     assertEquals(1, getObjectSizerInvocations(vm0));
     assertEquals(1, getObjectSizerInvocations(vm1));
-    
+
     //Test what happens when we reach the heap threshold??
   }
-  
+
   @Test
   public void testPRHeapLRUDeltaWithFlagPutOnPrimary() {
     doPRDeltaTestLRU(false, true, true, false);
-  }  
-  
+  }
+
   @Test
   public void testPRHeapLRUDeltaPutOnPrimary() {
     doPRDeltaTestLRU(false, true, true, false);
-  }  
+  }
 
   @Test
   public void testPRHeapLRUDeltaWithFlagPutOnSecondary() {
     doPRDeltaTestLRU(false, true, false, true);
-  }  
-  
+  }
+
   @Test
   public void testPRHeapLRUDeltaPutOnSecondary() {
     doPRDeltaTestLRU(false, true, false, true);
-  }  
+  }
 
   // test to cover bug41916
   @Test
@@ -248,7 +248,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     setDeltaRecalculatesSize(vm0, false);
     setDeltaRecalculatesSize(vm1, false);
 
@@ -257,11 +257,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     // make a string bigger than socket-buffer-size which defaults to 32k
     int BIG_DELTA_SIZE = 32 * 1024 * 2;
     StringBuilder sb = new StringBuilder(BIG_DELTA_SIZE);
-    for (int i=0; i < BIG_DELTA_SIZE; i++) {
+    for (int i = 0; i < BIG_DELTA_SIZE; i++) {
       sb.append('7');
     }
     TestDelta delta1 = new TestDelta(true, sb.toString());
-
 
     assignPRBuckets(vm0);
     boolean vm0isPrimary = prHostsBucketForKey(vm0, 0);
@@ -285,7 +284,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     setDeltaRecalculatesSize(vm0, shouldSizeChange);
     setDeltaRecalculatesSize(vm1, shouldSizeChange);
 
@@ -329,7 +328,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     // It will always be CD_SERIALIZED on the secondary.
     assertValueType(secondaryVm, 0, ValueType.CD_SERIALIZED);
     assertEquals(0, getObjectSizerInvocations(secondaryVm));
-    
+
     long origEvictionSize0 = getSizeFromEvictionStats(primaryVm);
     long origEvictionSize1 = getSizeFromEvictionStats(secondaryVm);
     long origPRSize0 = getSizeFromPRStats(primaryVm);
@@ -342,10 +341,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     } else {
       put(secondaryVm, 0, delta1);
     }
-    
+
     assertValueType(primaryVm, 0, ValueType.CD_DESERIALIZED);
     assertValueType(secondaryVm, 0, ValueType.CD_DESERIALIZED);
-    
+
     if (shouldSizeChange) {
       assertEquals(2, getObjectSizerInvocations(primaryVm));
       // once when we deserialize the value in the cache
@@ -360,12 +359,12 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       // 1 sizer invoke since the first value needs to be deserialized
       assertEquals(0, getObjectSizerInvocations(secondaryVm));
     }
-    
+
     long finalEvictionSize0 = getSizeFromEvictionStats(primaryVm);
     long finalEvictionSize1 = getSizeFromEvictionStats(secondaryVm);
     long finalPRSize0 = getSizeFromPRStats(primaryVm);
     long finalPRSize1 = getSizeFromPRStats(secondaryVm);
-    if(shouldSizeChange) {
+    if (shouldSizeChange) {
       //I'm not sure what the change in size should be, because we went
       //from serialized to deserialized
       assertTrue(finalEvictionSize0 - origEvictionSize0 != 0);
@@ -378,7 +377,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       assertEquals(0, finalPRSize1 - origPRSize1);
     }
   }
-  
+
   private void addListener(VM vm) {
     vm.invoke(new SerializableRunnable("Add listener") {
       public void run() {
@@ -393,65 +392,62 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     });
   }
 
-
   private void doListenerTestRR(VM vm0, VM vm1) {
     assertEquals(0, getObjectSizerInvocations(vm0));
     assertEquals(0, getObjectSizerInvocations(vm1));
     put(vm0, "a", new TestObject(100, 100000));
     assertEquals(1, getObjectSizerInvocations(vm0));
     assertEquals(1, getObjectSizerInvocations(vm1));
-    
+
     long origEvictionSize0 = getSizeFromEvictionStats(vm0);
     long origEvictionSize1 = getSizeFromEvictionStats(vm1);
-    
-    
+
     assertValueType(vm0, "a", ValueType.RAW_VALUE);
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
     assertTrue(origEvictionSize0 >= 100000);
     assertTrue(origEvictionSize1 >= 100000);
-    
+
     put(vm0, "a", new TestObject(200, 200000));
     assertEquals(2, getObjectSizerInvocations(vm0));
     assertEquals(2, getObjectSizerInvocations(vm1));
-    
+
     long finalEvictionSize0 = getSizeFromEvictionStats(vm0);
     long finalEvictionSize1 = getSizeFromEvictionStats(vm1);
-    
+
     assertValueType(vm0, "a", ValueType.RAW_VALUE);
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
     assertEquals(100000, finalEvictionSize0 - origEvictionSize0);
     assertEquals(100000, finalEvictionSize1 - origEvictionSize1);
   }
-  
+
   private void doListenerTestPR(VM vm0, VM vm1) {
     assertEquals(0, getObjectSizerInvocations(vm0));
     assertEquals(0, getObjectSizerInvocations(vm1));
     put(vm0, "a", new TestObject(100, 100000));
     assertEquals(1, getObjectSizerInvocations(vm0));
     assertEquals(1, getObjectSizerInvocations(vm1));
-    
+
     long origEvictionSize0 = getSizeFromEvictionStats(vm0);
     long origEvictionSize1 = getSizeFromEvictionStats(vm1);
     long origPRSize0 = getSizeFromPRStats(vm1);
     long origPRSize1 = getSizeFromPRStats(vm1);
-    
-  
+
     assertValueType(vm0, "a", ValueType.CD_DESERIALIZED);
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
     assertTrue(origEvictionSize1 >= 100000);
     assertTrue(origEvictionSize0 >= 100000);
     assertTrue(origPRSize0 <= 500);
     assertTrue(origPRSize1 <= 500);
-    
+
     put(vm0, "a", new TestObject(200, 200000));
     assertEquals(2, getObjectSizerInvocations(vm0));
     assertEquals(2, getObjectSizerInvocations(vm1));
-    
+
     long finalEvictionSize0 = getSizeFromEvictionStats(vm0);
     long finalEvictionSize1 = getSizeFromEvictionStats(vm1);
     long finalPRSize0 = getSizeFromPRStats(vm0);
     long finalPRSize1 = getSizeFromPRStats(vm1);
-    
+
     assertValueType(vm0, "a", ValueType.CD_DESERIALIZED);
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
     assertEquals(100000, finalEvictionSize0 - origEvictionSize0);
@@ -460,59 +456,57 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     assertEquals(100, finalPRSize1 - origPRSize1);
   }
 
-
   private void doRRMemLRUTest() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     createRR(vm0);
     createRR(vm1);
     put(vm0, "a", new TestObject(100, 100000));
     long origEvictionSize0 = getSizeFromEvictionStats(vm0);
     long origEvictionSize1 = getSizeFromEvictionStats(vm1);
     put(vm0, "a", new TestObject(200, 200000));
-    
-    
+
     assertValueType(vm0, "a", ValueType.RAW_VALUE);
     assertValueType(vm1, "a", ValueType.CD_SERIALIZED);
     assertEquals(2, getObjectSizerInvocations(vm0));
-    
+
     long finalEvictionSize0 = getSizeFromEvictionStats(vm0);
     long finalEvictionSize1 = getSizeFromEvictionStats(vm1);
     assertEquals(100000, finalEvictionSize0 - origEvictionSize0);
     assertEquals(100, finalEvictionSize1 - origEvictionSize1);
-    
+
     assertEquals(0, getObjectSizerInvocations(vm1));
-    
+
     //Do a get to make sure we deserialize the object and calculate
     //the size adjustment
     Object v = new TestObject(200, 200000);
     get(vm1, "a", v);
     int vSize = CachedDeserializableFactory.calcSerializedMemSize(v);
-    
+
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
     long evictionSizeAfterGet = getSizeFromEvictionStats(vm1);
     assertEquals(1, getObjectSizerInvocations(vm1));
-    assertEquals(200000+CachedDeserializableFactory.overhead() - vSize, evictionSizeAfterGet - finalEvictionSize1);
-    
+    assertEquals(200000 + CachedDeserializableFactory.overhead() - vSize, evictionSizeAfterGet - finalEvictionSize1);
+
     //Do a put that will trigger an eviction if it is deserialized
     put(vm0, "b", new TestObject(100, 1000000));
-    
+
     assertEquals(1, getEvictions(vm0));
     assertEquals(0, getEvictions(vm1));
-    
+
     //Do a get to make sure we deserialize the object and calculate
     //the size adjustment
     get(vm1, "b", new TestObject(100, 1000000));
     assertEquals(1, getEvictions(vm1));
   }
-  
+
   private void doPRMemLRUTest() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     createPR(vm0, true);
     createPR(vm1, true);
     put(vm0, 0, new TestObject(100, 100000));
@@ -523,9 +517,9 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     long origPRSize0 = getSizeFromPRStats(vm0);
     long origPRSize1 = getSizeFromPRStats(vm1);
     put(vm0, 0, new TestObject(200, 200000));
-    
+
     assertEquals(0, getObjectSizerInvocations(vm0));
-    
+
     long finalEvictionSize0 = getSizeFromEvictionStats(vm0);
     long finalPRSize0 = getSizeFromPRStats(vm0);
     long finalEvictionSize1 = getSizeFromEvictionStats(vm1);
@@ -534,7 +528,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     assertEquals(100, finalEvictionSize1 - origEvictionSize1);
     assertEquals(100, finalPRSize0 - origPRSize0);
     assertEquals(100, finalPRSize1 - origPRSize1);
-    
+
     assertEquals(0, getObjectSizerInvocations(vm1));
 
     //Do a get to see if we deserialize the object and calculate
@@ -548,22 +542,22 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     long prSizeAfterGet = getSizeFromPRStats(vm0);
     assertEquals(1, getObjectSizerInvocations(vm0));
     assertEquals(0, getObjectSizerInvocations(vm1));
-    assertEquals(200000+CachedDeserializableFactory.overhead() - vSize, evictionSizeAfterGet - finalEvictionSize0);
+    assertEquals(200000 + CachedDeserializableFactory.overhead() - vSize, evictionSizeAfterGet - finalEvictionSize0);
     assertEquals(0, prSizeAfterGet - finalPRSize0);
-    
+
     //Do a put that will trigger an eviction if it is deserialized
     // It should not be deserialized.
-    put(vm0, 113, new TestObject(100, 1024*1024));
+    put(vm0, 113, new TestObject(100, 1024 * 1024));
     assertValueType(vm0, 113, ValueType.CD_SERIALIZED);
     assertValueType(vm1, 113, ValueType.CD_SERIALIZED);
     long evictionSizeAfterPutVm1 = getSizeFromEvictionStats(vm1);
-    
+
     assertEquals(0, getEvictions(vm0));
     assertEquals(0, getEvictions(vm1));
-    
+
     //Do a get to make sure we deserialize the object and calculate
     //the size adjustment which should force an eviction
-    get(vm1, 113, new TestObject(100, 1024*1024));
+    get(vm1, 113, new TestObject(100, 1024 * 1024));
     long evictionSizeAfterGetVm1 = getSizeFromEvictionStats(vm1);
     assertValueType(vm0, 113, ValueType.CD_SERIALIZED);
     assertValueType(vm1, 113, ValueType.EVICTED);
@@ -572,7 +566,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     assertEquals(1, getObjectSizerInvocations(vm1));
     assertEquals(2, getEvictions(vm1));
   }
-  
+
   private void doRRMemLRUDeltaTest(boolean shouldSizeChange) {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -580,33 +574,33 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
 
     setDeltaRecalculatesSize(vm0, shouldSizeChange);
     setDeltaRecalculatesSize(vm1, shouldSizeChange);
-    
+
     createRR(vm0);
     createRR(vm1);
     TestDelta delta1 = new TestDelta(false, "12345");
     put(vm0, "a", delta1);
-    
+
     assertValueType(vm0, "a", ValueType.RAW_VALUE);
     assertValueType(vm1, "a", ValueType.CD_SERIALIZED);
     assertEquals(1, getObjectSizerInvocations(vm0));
     assertEquals(0, getObjectSizerInvocations(vm1));
-    
+
     long origEvictionSize0 = getSizeFromEvictionStats(vm0);
     long origEvictionSize1 = getSizeFromEvictionStats(vm1);
     delta1.info = "1234567890";
     delta1.hasDelta = true;
     //Update the delta
     put(vm0, "a", delta1);
-    
+
     assertValueType(vm0, "a", ValueType.RAW_VALUE);
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
-    
+
     assertEquals(2, getObjectSizerInvocations(vm0));
-    
+
     long finalEvictionSize0 = getSizeFromEvictionStats(vm0);
     long finalEvictionSize1 = getSizeFromEvictionStats(vm1);
     assertEquals(5, finalEvictionSize0 - origEvictionSize0);
-    if(shouldSizeChange) {
+    if (shouldSizeChange) {
       assertEquals(1, getObjectSizerInvocations(vm1));
       //I'm not sure what the change in size should be, because we went
       //from serialized to deserialized
@@ -617,12 +611,12 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       assertEquals(0, finalEvictionSize1 - origEvictionSize1);
     }
   }
-  
+
   private void doPRNoLRUDeltaTest(boolean shouldSizeChange) {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     setDeltaRecalculatesSize(vm0, shouldSizeChange);
     setDeltaRecalculatesSize(vm1, shouldSizeChange);
 
@@ -636,11 +630,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     delta1.hasDelta = true;
     //Update the delta
     put(vm0, "a", delta1);
-    
-    
+
     long finalPRSize0 = getSizeFromPRStats(vm0);
     long finalPRSize1 = getSizeFromPRStats(vm1);
-    if(shouldSizeChange) {
+    if (shouldSizeChange) {
       //I'm not sure what the change in size should be, because we went
       //from serialized to deserialized
       assertTrue(finalPRSize0 - origPRSize0 != 0);
@@ -661,10 +654,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       public Object call() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion("region");
-        if(region instanceof PartitionedRegion) {
+        if (region instanceof PartitionedRegion) {
           long total = 0;
           PartitionedRegion pr = ((PartitionedRegion) region);
-          for(int i =0; i < pr.getPartitionAttributes().getTotalNumBuckets(); i++) {
+          for (int i = 0; i < pr.getPartitionAttributes().getTotalNumBuckets(); i++) {
             total += pr.getDataStore().getBucketSize(i);
           }
           return total;
@@ -674,12 +667,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
-  
 
   private long getSizeFromEvictionStats(VM vm0) {
     return (Long) vm0.invoke(new SerializableCallable() {
-      
+
       public Object call() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion("region");
@@ -687,10 +678,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private long getEvictions(VM vm0) {
     return (Long) vm0.invoke(new SerializableCallable() {
-      
+
       public Object call() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion("region");
@@ -698,10 +689,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private int getObjectSizerInvocations(VM vm0) {
     return (Integer) vm0.invoke(new SerializableCallable() {
-      
+
       public Object call() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion("region");
@@ -720,7 +711,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
   }
 
   private boolean prHostsBucketForKey(VM vm, final Object key) {
-    Boolean result = (Boolean)vm.invoke(new SerializableCallable("prHostsBucketForKey") {
+    Boolean result = (Boolean) vm.invoke(new SerializableCallable("prHostsBucketForKey") {
       public Object call() {
         Cache cache = getCache();
         DistributedMember myId = cache.getDistributedSystem().getDistributedMember();
@@ -730,28 +721,28 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
           throw new IllegalStateException("bucket for key " + key + " is not hosted!");
         }
         boolean res = Boolean.valueOf(myId.equals(hostMember));
-//         cache.getLogger().info("DEBUG prHostsBucketForKey=" + res);
+        //         cache.getLogger().info("DEBUG prHostsBucketForKey=" + res);
         return res;
       }
     });
     return result.booleanValue();
   }
-  
+
   private void put(VM vm0, final Object key, final Object value) {
     vm0.invoke(new SerializableRunnable("Put data") {
-      
+
       public void run() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion("region");
-//         cache.getLogger().info("DEBUG about to put(" + key + ", " + value + ")");
+        //         cache.getLogger().info("DEBUG about to put(" + key + ", " + value + ")");
         region.put(key, value);
       }
     });
   }
-  
+
   private void get(VM vm0, final Object key, final Object value) {
     vm0.invoke(new SerializableRunnable("Put data") {
-      
+
       public void run() {
         Cache cache = getCache();
         LocalRegion region = (LocalRegion) cache.getRegion("region");
@@ -763,16 +754,16 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
   protected int getObjectSizerInvocations(LocalRegion region) {
     TestObjectSizer sizer = (TestObjectSizer) region.getEvictionAttributes().getObjectSizer();
     int result = sizer.invocations.get();
-     region.getCache().getLogger().info("objectSizerInvocations=" + result);
+    region.getCache().getLogger().info("objectSizerInvocations=" + result);
     return result;
   }
 
   private long getSizeFromEvictionStats(LocalRegion region) {
     long result = region.getEvictionController().getLRUHelper().getStats().getCounter();
-//     region.getCache().getLogger().info("DEBUG evictionSize=" + result);
+    //     region.getCache().getLogger().info("DEBUG evictionSize=" + result);
     return result;
   }
-  
+
   private long getEvictions(LocalRegion region) {
     return region.getEvictionController().getLRUHelper().getStats().getEvictions();
   }
@@ -784,7 +775,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private void createRR(VM vm) {
     vm.invoke(new SerializableRunnable("Create rr") {
       public void run() {
@@ -798,9 +789,9 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.createRegion("region", attr.create());
       }
     });
-    
+
   }
-  
+
   private void assertValueType(VM vm, final Object key, final ValueType expectedType) {
     vm.invoke(new SerializableRunnable("Create rr") {
       public void run() {
@@ -808,32 +799,32 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         LocalRegion region = (LocalRegion) cache.getRegion("region");
         Object value = region.getValueInVM(key);
         switch (expectedType) {
-          case RAW_VALUE:
-            assertTrue("Value was " + value + " type " + value.getClass(), !(value instanceof CachedDeserializable));
-            break;
-          case CD_SERIALIZED:
-            assertTrue("Value was " + value + " type " + value.getClass(), value instanceof CachedDeserializable);
-            assertTrue("Value not serialized", ((CachedDeserializable)value).getValue() instanceof byte[]);
-            break;
-          case CD_DESERIALIZED:
-            assertTrue("Value was " + value + " type " + value.getClass(), value instanceof CachedDeserializable);
-            assertTrue("Value was serialized", !(((CachedDeserializable)value).getValue() instanceof byte[]));
-            break;
-          case EVICTED:
-            assertEquals(null, value);
-            break;
+        case RAW_VALUE:
+          assertTrue("Value was " + value + " type " + value.getClass(), !(value instanceof CachedDeserializable));
+          break;
+        case CD_SERIALIZED:
+          assertTrue("Value was " + value + " type " + value.getClass(), value instanceof CachedDeserializable);
+          assertTrue("Value not serialized", ((CachedDeserializable) value).getValue() instanceof byte[]);
+          break;
+        case CD_DESERIALIZED:
+          assertTrue("Value was " + value + " type " + value.getClass(), value instanceof CachedDeserializable);
+          assertTrue("Value was serialized", !(((CachedDeserializable) value).getValue() instanceof byte[]));
+          break;
+        case EVICTED:
+          assertEquals(null, value);
+          break;
         }
       }
     });
   }
-  
+
   private File[] getMyDiskDirs() {
     long random = new Random().nextLong();
     File file = new File(Long.toString(random));
     file.mkdirs();
-    return new File[] { file};
+    return new File[] { file };
   }
-  
+
   private void createPR(VM vm, final boolean enableLRU) {
     vm.invoke(new SerializableRunnable("Create pr") {
       public void run() {
@@ -842,7 +833,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         attr.setDiskSynchronous(true);
         PartitionAttributesFactory<Integer, TestDelta> paf = new PartitionAttributesFactory<Integer, TestDelta>();
         paf.setRedundantCopies(1);
-        if(enableLRU) {
+        if (enableLRU) {
           paf.setLocalMaxMemory(1); // memlru limit is 1 megabyte
           attr.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
           attr.setDiskDirs(getMyDiskDirs());
@@ -854,9 +845,9 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         Region<Integer, TestDelta> region = cache.createRegion("region", attr.create());
       }
     });
-    
+
   }
-  
+
   private void createRRHeapLRU(VM vm) {
     vm.invoke(new SerializableRunnable("Create rr") {
       public void run() {
@@ -865,8 +856,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         manager.setCriticalHeapPercentage(95);
         manager.setEvictionHeapPercentage(90);
         AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        attr.setEvictionAttributes(EvictionAttributes.createLRUHeapAttributes(
-            new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
+        attr.setEvictionAttributes(EvictionAttributes.createLRUHeapAttributes(new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
         attr.setDiskDirs(getMyDiskDirs());
         attr.setDataPolicy(DataPolicy.REPLICATE);
         attr.setScope(Scope.DISTRIBUTED_ACK);
@@ -874,9 +864,9 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         Region region = cache.createRegion("region", attr.create());
       }
     });
-    
+
   }
-  
+
   private void createPRHeapLRU(VM vm) {
     vm.invoke(new SerializableRunnable("Create pr") {
       public void run() {
@@ -888,8 +878,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
         PartitionAttributesFactory<Integer, TestDelta> paf = new PartitionAttributesFactory<Integer, TestDelta>();
         paf.setRedundantCopies(1);
-        attr.setEvictionAttributes(EvictionAttributes.createLRUHeapAttributes(
-            new TestObjectSizer(), EvictionAction.LOCAL_DESTROY));
+        attr.setEvictionAttributes(EvictionAttributes.createLRUHeapAttributes(new TestObjectSizer(), EvictionAction.LOCAL_DESTROY));
         PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
         attr.setPartitionAttributes(prAttr);
         attr.setDataPolicy(DataPolicy.PARTITION);
@@ -897,7 +886,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         Region<Integer, TestDelta> region = cache.createRegion("region", attr.create());
       }
     });
-    
+
   }
 
   private static class TestObjectSizer implements ObjectSizer {
@@ -907,42 +896,41 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       if (InternalDistributedSystem.getLoggerI18n().fineEnabled()) {
         InternalDistributedSystem.getLoggerI18n().fine("TestObjectSizer invoked"/*, new Exception("stack trace")*/);
       }
-      if(o instanceof TestObject) {
-//         org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG TestObjectSizer: sizeof o=" + o, new RuntimeException("STACK"));
+      if (o instanceof TestObject) {
+        //         org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG TestObjectSizer: sizeof o=" + o, new RuntimeException("STACK"));
         invocations.incrementAndGet();
         return ((TestObject) o).sizeForSizer;
       }
-      if(o instanceof TestDelta) {
-//         org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG TestObjectSizer: sizeof delta o=" + o, new RuntimeException("STACK"));
+      if (o instanceof TestDelta) {
+        //         org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG TestObjectSizer: sizeof delta o=" + o, new RuntimeException("STACK"));
         invocations.incrementAndGet();
         return ((TestDelta) o).info.length();
       }
       //This is the key. Why don't we handle Integers internally?
-      if(o instanceof Integer) {
+      if (o instanceof Integer) {
         return 0;
       }
-      if(o instanceof TestKey) {
-//         org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG TestObjectSizer: sizeof TestKey o=" + o, new RuntimeException("STACK"));
+      if (o instanceof TestKey) {
+        //         org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG TestObjectSizer: sizeof TestKey o=" + o, new RuntimeException("STACK"));
         invocations.incrementAndGet();
         return ((TestKey) o).value.length();
       }
       throw new RuntimeException("Unpected type to be sized " + o.getClass() + ", object=" + o);
     }
   }
-  
+
   private static class TestKey implements DataSerializable {
     String value;
-    
+
     public TestKey() {
-      
+
     }
 
     public TestKey(String value) {
       this.value = value;
     }
 
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       value = DataSerializer.readString(in);
     }
 
@@ -974,17 +962,16 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
         return false;
       return true;
     }
-    
+
   }
-  
+
   private static class TestObject implements DataSerializable {
     public int sizeForSizer;
     public int sizeForSerialization;
 
     public TestObject() {
-      
+
     }
-    
 
     public TestObject(int sizeForSerialization, int sizeForSizer) {
       super();
@@ -992,8 +979,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       this.sizeForSerialization = sizeForSerialization;
     }
 
-    public void fromData(DataInput in) throws IOException,
-        ClassNotFoundException {
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       sizeForSizer = in.readInt();
       sizeForSerialization = in.readInt();
       //We don't actually need these things.
@@ -1004,7 +990,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       out.writeInt(sizeForSizer);
       out.writeInt(sizeForSerialization);
       out.write(new byte[sizeForSerialization]);
-      
+
     }
 
     @Override
@@ -1034,11 +1020,10 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
 
     @Override
     public String toString() {
-      return "TestObject [sizeForSerialization=" + sizeForSerialization
-          + ", sizeForSizer=" + sizeForSizer + "]";
+      return "TestObject [sizeForSerialization=" + sizeForSerialization + ", sizeForSizer=" + sizeForSizer + "]";
     }
   }
-  
+
   public static class TestCacheListener extends CacheListenerAdapter {
 
     @Override
@@ -1054,14 +1039,11 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       event.getRegion().getCache().getLoggerI18n().fine("invoked afterUpdate with ");
       event.getRegion().getCache().getLoggerI18n().info(LocalizedStrings.DEBUG, "value is " + event.getNewValue());
     }
-    
+
   }
-  
+
   enum ValueType {
-    RAW_VALUE,
-    CD_SERIALIZED,
-    CD_DESERIALIZED,
-    EVICTED  
+    RAW_VALUE, CD_SERIALIZED, CD_DESERIALIZED, EVICTED
   }
 
 }

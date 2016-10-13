@@ -42,7 +42,6 @@ public class SuperClass {
     map.put("four", new Integer(4));
   }
 
-
   public static class SubClass extends SuperClass {
 
     protected Map anotherMap;
@@ -86,7 +85,5 @@ public class SuperClass {
     }
 
   }
-
-
 
 }

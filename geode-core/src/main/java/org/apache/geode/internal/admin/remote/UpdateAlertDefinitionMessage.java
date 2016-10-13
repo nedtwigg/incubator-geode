@@ -55,8 +55,7 @@ public class UpdateAlertDefinitionMessage extends PooledDistributionMessage {
    *                REMOVE_ALERT_DEFINITION
    */
 
-  public static UpdateAlertDefinitionMessage create(
-      StatAlertDefinition[] alertDefs, int actionCode) {
+  public static UpdateAlertDefinitionMessage create(StatAlertDefinition[] alertDefs, int actionCode) {
 
     UpdateAlertDefinitionMessage m = new UpdateAlertDefinitionMessage();
     m._alertDefinitions = alertDefs;
@@ -81,21 +80,19 @@ public class UpdateAlertDefinitionMessage extends PooledDistributionMessage {
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this._actionCode = in.readByte();
-    this._alertDefinitions = (StatAlertDefinition[])DataSerializer
-        .readObjectArray(in);
+    this._alertDefinitions = (StatAlertDefinition[]) DataSerializer.readObjectArray(in);
   }
 
   /**
    * Returns the DataSerializer fixed id for the class that implements this method.
    */
-  public int getDSFID() {    
+  public int getDSFID() {
     return UPDATE_ALERTS_DEFN_MESSAGE;
   }
 
   @Override
   protected void process(DistributionManager dm) {
-    StatAlertsManager.getInstance(dm).updateAlertDefinition(_alertDefinitions,
-        _actionCode);
+    StatAlertsManager.getInstance(dm).updateAlertDefinition(_alertDefinitions, _actionCode);
   }
 
   /**
@@ -123,8 +120,7 @@ public class UpdateAlertDefinitionMessage extends PooledDistributionMessage {
    *                Action(ADD_ALERT_DEFINITION, UPDATE_ALERT_DEFINITION,
    *                REMOVE_ALERT_DEFINITION) to be taken on alert definitions
    */
-  public void updateAlertDefinition(StatAlertDefinition[] alertDefinitions,
-      int actionCode) {
+  public void updateAlertDefinition(StatAlertDefinition[] alertDefinitions, int actionCode) {
     _alertDefinitions = alertDefinitions;
     _actionCode = actionCode;
   }
@@ -143,19 +139,15 @@ public class UpdateAlertDefinitionMessage extends PooledDistributionMessage {
   @Override
   public String toString() {
     //instance specific for VM that executes this
-    InternalDistributedSystem internalDS = 
-                              InternalDistributedSystem.getAnyInstance();
-    
+    InternalDistributedSystem internalDS = InternalDistributedSystem.getAnyInstance();
+
     String stringInfo = "";
-    
+
     if (internalDS != null && internalDS.isConnected()) {
-      stringInfo = "Add/update the alert definitions" +
-      		         " to " + internalDS.getDistributedMember() +  
-                   " from "+this.getSender();
+      stringInfo = "Add/update the alert definitions" + " to " + internalDS.getDistributedMember() + " from " + this.getSender();
     } else { //when no DS instance found in current VM
-      stringInfo = "InternalDistributedSystem instance not found, " +
-      		         "no connection with DistributedSystem.";
+      stringInfo = "InternalDistributedSystem instance not found, " + "no connection with DistributedSystem.";
     }
     return stringInfo;
-  }  
+  }
 }

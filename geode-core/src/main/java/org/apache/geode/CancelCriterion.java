@@ -43,9 +43,8 @@ package org.apache.geode;
  * @see CancelException
  * @since GemFire 5.1
  */
-public abstract class CancelCriterion
-{
-  
+public abstract class CancelCriterion {
+
   /**
    * Indicate if the service is in the progress of being cancelled.  The
    * typical use of this is to indicate, in the case of an {@link InterruptedException},
@@ -54,11 +53,11 @@ public abstract class CancelCriterion
    * construct an exception indicating the service is shut down.
    */
   public abstract String cancelInProgress();
-//import org.apache.geode.distributed.internal.DistributionManager;
-//    * <p>
-//    * In particular, a {@link DistributionManager} returns a non-null result if
-//    * message distribution has been terminated.
-  
+  //import org.apache.geode.distributed.internal.DistributionManager;
+  //    * <p>
+  //    * In particular, a {@link DistributionManager} returns a non-null result if
+  //    * message distribution has been terminated.
+
   /**
    * Use this utility  function in your implementation of cancelInProgress()
    * and cancelled() to indicate a system failure
@@ -116,6 +115,5 @@ public abstract class CancelCriterion
   public boolean isCancelInProgress() {
     return cancelInProgress() != null;
   }
-
 
 }

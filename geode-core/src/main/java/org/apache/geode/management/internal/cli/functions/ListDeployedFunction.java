@@ -35,7 +35,7 @@ import org.apache.geode.internal.logging.LogService;
 
 public class ListDeployedFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String ID = ListDeployedFunction.class.getName();
 
   private static final long serialVersionUID = 1L;
@@ -48,7 +48,7 @@ public class ListDeployedFunction implements Function, InternalEntity {
     try {
       Cache cache = CacheFactory.getAnyInstance();
       final JarDeployer jarDeployer = new JarDeployer(((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
-      
+
       DistributedMember member = cache.getDistributedSystem().getDistributedMember();
 
       memberId = member.getId();
@@ -67,15 +67,15 @@ public class ListDeployedFunction implements Function, InternalEntity {
 
       CliFunctionResult result = new CliFunctionResult(memberId, jars);
       context.getResultSender().lastResult(result);
-      
+
     } catch (CacheClosedException cce) {
       CliFunctionResult result = new CliFunctionResult(memberId, false, null);
       context.getResultSender().lastResult(result);
-      
+
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-      
+
     } catch (Throwable th) {
       SystemFailure.checkFailure();
       logger.error("Could not list JAR files: {}", th.getMessage(), th);

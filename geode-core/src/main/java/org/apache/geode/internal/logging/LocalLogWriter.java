@@ -25,71 +25,69 @@ import java.io.*;
   * Note this class is no longer needed. It can be replaced by PureLogWriter.
   */
 public class LocalLogWriter extends PureLogWriter {
-    // Constructors
-    /**
-     * Creates a writer that logs to <code>System.out</code>.
-     * @param level only messages greater than or equal to this value will be logged.
-     * @throws IllegalArgumentException if level is not in legal range
-     */
-    public LocalLogWriter(int level) {
-      super(level);
-    }
+  // Constructors
+  /**
+   * Creates a writer that logs to <code>System.out</code>.
+   * @param level only messages greater than or equal to this value will be logged.
+   * @throws IllegalArgumentException if level is not in legal range
+   */
+  public LocalLogWriter(int level) {
+    super(level);
+  }
 
-    /**
-     * Creates a writer that logs to <code>logWriter</code>.
-     * @param level only messages greater than or equal to this value will be logged.
-     * @param logWriter is the stream that message will be printed to.
-     * @throws IllegalArgumentException if level is not in legal range
-     */
-    public LocalLogWriter(int level, PrintStream logWriter) {
-      super(level, logWriter);
-    }
+  /**
+   * Creates a writer that logs to <code>logWriter</code>.
+   * @param level only messages greater than or equal to this value will be logged.
+   * @param logWriter is the stream that message will be printed to.
+   * @throws IllegalArgumentException if level is not in legal range
+   */
+  public LocalLogWriter(int level, PrintStream logWriter) {
+    super(level, logWriter);
+  }
 
-    /**
-     * Creates a writer that logs to <code>logWriter</code>.
-     *
-     * @param level
-     *        only messages greater than or equal to this value will
-     *        be logged.
-     * @param logWriter
-     *        is the stream that message will be printed to.
-     * @param connectionName
-     *        Name of connection associated with this log writer
-     *
-     * @throws IllegalArgumentException if level is not in legal range
-     */
-    public LocalLogWriter(int level, PrintStream logWriter,
-                          String connectionName) {
-      super(level, logWriter, connectionName);
-    }
+  /**
+   * Creates a writer that logs to <code>logWriter</code>.
+   *
+   * @param level
+   *        only messages greater than or equal to this value will
+   *        be logged.
+   * @param logWriter
+   *        is the stream that message will be printed to.
+   * @param connectionName
+   *        Name of connection associated with this log writer
+   *
+   * @throws IllegalArgumentException if level is not in legal range
+   */
+  public LocalLogWriter(int level, PrintStream logWriter, String connectionName) {
+    super(level, logWriter, connectionName);
+  }
 
-    /**
-     * Creates a writer that logs to <code>logWriter</code>.
-     * @param level only messages greater than or equal to this value will be logged.
-     * @param logWriter is the stream that message will be printed to.
-     * @throws IllegalArgumentException if level is not in legal range
-     */
-    public LocalLogWriter(int level, PrintWriter logWriter) {
-	this(level, logWriter, null);
-    }
+  /**
+   * Creates a writer that logs to <code>logWriter</code>.
+   * @param level only messages greater than or equal to this value will be logged.
+   * @param logWriter is the stream that message will be printed to.
+   * @throws IllegalArgumentException if level is not in legal range
+   */
+  public LocalLogWriter(int level, PrintWriter logWriter) {
+    this(level, logWriter, null);
+  }
 
-    /**
-     * Creates a writer that logs to <code>logWriter</code>.
-     *
-     * @param level
-     *        only messages greater than or equal to this value will
-     *        be logged.
-     * @param logWriter
-     *        is the stream that message will be printed to.
-     * @param connectionName
-     *        Name of connection associated with this log writer
-     *
-     * @throws IllegalArgumentException if level is not in legal range
-     *
-     * @since GemFire 3.5
-     */
-    public LocalLogWriter(int level, PrintWriter logWriter,
-                          String connectionName) {
-	super(level, logWriter, connectionName);
-    }
+  /**
+   * Creates a writer that logs to <code>logWriter</code>.
+   *
+   * @param level
+   *        only messages greater than or equal to this value will
+   *        be logged.
+   * @param logWriter
+   *        is the stream that message will be printed to.
+   * @param connectionName
+   *        Name of connection associated with this log writer
+   *
+   * @throws IllegalArgumentException if level is not in legal range
+   *
+   * @since GemFire 3.5
+   */
+  public LocalLogWriter(int level, PrintWriter logWriter, String connectionName) {
+    super(level, logWriter, connectionName);
+  }
 }

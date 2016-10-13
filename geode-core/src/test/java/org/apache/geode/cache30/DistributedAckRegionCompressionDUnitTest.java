@@ -32,7 +32,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 @SuppressWarnings({ "deprecation", "serial" })
 public class DistributedAckRegionCompressionDUnitTest extends DistributedAckRegionDUnitTest {
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes getRegionAttributes() {
@@ -48,7 +48,7 @@ public class DistributedAckRegionCompressionDUnitTest extends DistributedAckRegi
     factory.setCompressor(compressor);
     return factory.create();
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
@@ -61,7 +61,7 @@ public class DistributedAckRegionCompressionDUnitTest extends DistributedAckRegi
     }
     RegionAttributes ra = super.getRegionAttributes(type);
     AttributesFactory factory = new AttributesFactory(ra);
-    if(!ra.getDataPolicy().isEmpty()) {
+    if (!ra.getDataPolicy().isEmpty()) {
       factory.setCompressor(compressor);
     }
     return factory.create();

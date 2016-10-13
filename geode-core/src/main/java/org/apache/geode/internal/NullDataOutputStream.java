@@ -28,15 +28,14 @@ import org.apache.geode.DataSerializer;
  *  @since GemFire 5.0.2
  * 
  */
-public final class NullDataOutputStream extends OutputStream implements
-    ObjToByteArraySerializer {
+public final class NullDataOutputStream extends OutputStream implements ObjToByteArraySerializer {
 
   private int size;
 
   public NullDataOutputStream() {
     this.size = 0;
   }
-  
+
   /** write the low-order 8 bits of the given int */
   @Override
   public final void write(int b) {
@@ -56,6 +55,7 @@ public final class NullDataOutputStream extends OutputStream implements
   @Override
   public void flush() {
   }
+
   @Override
   public void close() {
   }
@@ -285,7 +285,7 @@ public final class NullDataOutputStream extends OutputStream implements
   public final void writeChars(String s) throws IOException {
     int len = s.length();
     if (len > 0) {
-      this.size += len*2;
+      this.size += len * 2;
     }
   }
 
@@ -369,7 +369,7 @@ public final class NullDataOutputStream extends OutputStream implements
   public void writeAsSerializedByteArray(Object v) throws IOException {
     if (v instanceof HeapDataOutputStream) {
       this.size += 4; // length is encoded as an int (or less)
-      this.size += ((HeapDataOutputStream)v).size();
+      this.size += ((HeapDataOutputStream) v).size();
     } else {
       this.size += 5; // length is encoded as a byte + an int
       DataSerializer.writeObject(v, this);

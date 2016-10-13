@@ -38,16 +38,16 @@ public class RemotePutReplyMessageJUnitTest extends OldValueImporterTestBase {
 
   @Override
   protected Object getOldValueFromImporter(OldValueImporter ovi) {
-    return ((PutReplyMessage)ovi).getOldValue();
+    return ((PutReplyMessage) ovi).getOldValue();
   }
 
   @Override
   protected void toData(OldValueImporter ovi, HeapDataOutputStream hdos) throws IOException {
-    ((PutReplyMessage)ovi).toData(hdos);
+    ((PutReplyMessage) ovi).toData(hdos);
   }
 
   @Override
   protected void fromData(OldValueImporter ovi, byte[] bytes) throws IOException, ClassNotFoundException {
-    ((PutReplyMessage)ovi).fromData(new DataInputStream(new ByteArrayInputStream(bytes)));
+    ((PutReplyMessage) ovi).fromData(new DataInputStream(new ByteArrayInputStream(bytes)));
   }
 }

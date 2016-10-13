@@ -18,9 +18,10 @@ package org.apache.geode.cache.query.internal;
 
 import java.util.List;
 
-public interface MapIndexable
-{
-   CompiledValue  getMapLookupKey();
-   CompiledValue  getRecieverSansIndexArgs();
-   List<CompiledValue> getIndexingKeys();
+public interface MapIndexable {
+  CompiledValue getMapLookupKey();
+
+  CompiledValue getRecieverSansIndexArgs();
+
+  List<CompiledValue> getIndexingKeys();
 }

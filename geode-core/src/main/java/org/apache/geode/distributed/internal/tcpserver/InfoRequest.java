@@ -31,10 +31,10 @@ import org.apache.geode.DataSerializable;
  */
 public class InfoRequest implements DataSerializable {
   private static final long serialVersionUID = -9129777520477738699L;
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
   }
-  
+
   public void toData(DataOutput out) throws IOException {
   }
 }

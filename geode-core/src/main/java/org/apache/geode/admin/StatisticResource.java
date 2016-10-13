@@ -26,7 +26,7 @@ package org.apache.geode.admin;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public interface StatisticResource {
-  
+
   /**
    * Gets the identifying name of this resource.
    *
@@ -40,7 +40,7 @@ public interface StatisticResource {
    * @return the full description of this resource
    */
   public String getDescription();
-  
+
   /**
    * Gets the classification type of this resource.
    *
@@ -48,7 +48,7 @@ public interface StatisticResource {
    * @since GemFire 5.0
    */
   public String getType();
-  
+
   /**
    * Returns a display string of the {@link SystemMember} owning this 
    * resource.
@@ -56,7 +56,7 @@ public interface StatisticResource {
    * @return a display string of the owning {@link SystemMember}
    */
   public String getOwner();
-  
+
   /**
    * Returns an ID that uniquely identifies the resource within the
    * {@link SystemMember} it belongs to.
@@ -64,14 +64,14 @@ public interface StatisticResource {
    * @return unique id within the owning {@link SystemMember}
    */
   public long getUniqueId();
-  
+
   /**
    * Returns a read-only array of every {@link Statistic} in this resource.
    *
    * @return read-only array of every {@link Statistic} in this resource
    */
   public Statistic[] getStatistics();
-  
+
   /**
    * Refreshes the values of every {@link Statistic} in this resource by
    * retrieving them from the member's VM.
@@ -80,6 +80,5 @@ public interface StatisticResource {
    *         if unable to refresh statistic values
    */
   public void refresh() throws org.apache.geode.admin.AdminException;
-  
-}
 
+}

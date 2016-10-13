@@ -17,7 +17,6 @@
 
 package org.apache.geode.cache.operations;
 
-
 /**
  * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#GET} region operation having the key
  * object for the pre-operation case and both key, value objects for the

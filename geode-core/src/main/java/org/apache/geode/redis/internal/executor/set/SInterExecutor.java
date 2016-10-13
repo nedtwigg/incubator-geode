@@ -23,7 +23,7 @@ import org.apache.geode.redis.internal.ByteArrayWrapper;
 import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class SInterExecutor extends SetOpExecutor {
-  
+
   @Override
   protected boolean isStorage() {
     return false;
@@ -33,7 +33,7 @@ public class SInterExecutor extends SetOpExecutor {
   protected Set<ByteArrayWrapper> setOp(Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList) {
     if (firstSet == null)
       return null;
-    for (Set<ByteArrayWrapper> set: setList) {
+    for (Set<ByteArrayWrapper> set : setList) {
       if (set == null || set.isEmpty())
         return null;
       firstSet.retainAll(set);

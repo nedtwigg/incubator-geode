@@ -67,10 +67,7 @@ public class SerializableTimeoutTest {
     TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     boolean lookingForStuckThread = false;
 
-    SerializableTimeout instance = SerializableTimeout.builder()
-        .withTimeout(timeout, timeUnit)
-        .withLookingForStuckThread(lookingForStuckThread)
-        .build();
+    SerializableTimeout instance = SerializableTimeout.builder().withTimeout(timeout, timeUnit).withLookingForStuckThread(lookingForStuckThread).build();
 
     assertThat(readField(Timeout.class, instance, FIELD_TIMEOUT)).isEqualTo(timeout);
     assertThat(readField(Timeout.class, instance, FIELD_TIME_UNIT)).isEqualTo(timeUnit);
@@ -88,10 +85,7 @@ public class SerializableTimeoutTest {
     TimeUnit timeUnit = TimeUnit.SECONDS;
     boolean lookingForStuckThread = true;
 
-    SerializableTimeout instance = SerializableTimeout.builder()
-        .withTimeout(timeout, timeUnit)
-        .withLookingForStuckThread(lookingForStuckThread)
-        .build();
+    SerializableTimeout instance = SerializableTimeout.builder().withTimeout(timeout, timeUnit).withLookingForStuckThread(lookingForStuckThread).build();
 
     assertThat(readField(Timeout.class, instance, FIELD_TIMEOUT)).isEqualTo(timeout);
     assertThat(readField(Timeout.class, instance, FIELD_TIME_UNIT)).isEqualTo(timeUnit);

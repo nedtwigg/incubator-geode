@@ -34,9 +34,7 @@ public class CommandTarget {
   private final GfshOptionParser optionParser;
   private AvailabilityTarget availabilityIndicator;
 
-  public CommandTarget(String commandName, String[] synonyms,
-      GfshMethodTarget methodTarget, GfshOptionParser optionParser,
-      AvailabilityTarget availabilityIndicator, String commandHelp) {
+  public CommandTarget(String commandName, String[] synonyms, GfshMethodTarget methodTarget, GfshOptionParser optionParser, AvailabilityTarget availabilityIndicator, String commandHelp) {
     this.commandName = commandName;
     this.synonyms = synonyms;
     this.gfshMethodTarget = methodTarget;
@@ -53,11 +51,9 @@ public class CommandTarget {
     return optionParser;
   }
 
-  public boolean isAvailable() throws IllegalArgumentException,
-      IllegalAccessException, InvocationTargetException {
+  public boolean isAvailable() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     if (availabilityIndicator != null) {
-      return (Boolean) availabilityIndicator.getMethod().invoke(
-          availabilityIndicator.getTarget());
+      return (Boolean) availabilityIndicator.getMethod().invoke(availabilityIndicator.getTarget());
     } else {
       return true;
     }
@@ -81,27 +77,18 @@ public class CommandTarget {
   }
 
   public CommandTarget duplicate(String key, String remainingBuffer) {
-    return new CommandTarget(commandName, synonyms, new GfshMethodTarget(
-        gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(),
-        remainingBuffer, key), optionParser, availabilityIndicator, commandHelp);
+    return new CommandTarget(commandName, synonyms, new GfshMethodTarget(gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(), remainingBuffer, key), optionParser, availabilityIndicator, commandHelp);
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 47;
     int result = 3;
-    result = prime * result
-        + ((commandName == null) ? 0 : commandName.hashCode());
-    result = prime * result
-        + ((commandHelp == null) ? 0 : commandHelp.hashCode());
-    result = prime * result
-        + ((gfshMethodTarget == null) ? 0 : gfshMethodTarget.hashCode());
-    result = prime * result
-        + ((optionParser == null) ? 0 : optionParser.hashCode());
-    result = prime
-        * result
-        + ((availabilityIndicator == null) ? 0 : availabilityIndicator
-            .hashCode());
+    result = prime * result + ((commandName == null) ? 0 : commandName.hashCode());
+    result = prime * result + ((commandHelp == null) ? 0 : commandHelp.hashCode());
+    result = prime * result + ((gfshMethodTarget == null) ? 0 : gfshMethodTarget.hashCode());
+    result = prime * result + ((optionParser == null) ? 0 : optionParser.hashCode());
+    result = prime * result + ((availabilityIndicator == null) ? 0 : availabilityIndicator.hashCode());
     return result;
   }
 
@@ -151,8 +138,7 @@ public class CommandTarget {
       if (commandTarget.getAvailabilityIndicator() != null) {
         return false;
       }
-    } else if (!availabilityIndicator.equals(commandTarget
-        .getAvailabilityIndicator())) {
+    } else if (!availabilityIndicator.equals(commandTarget.getAvailabilityIndicator())) {
       return false;
     }
     return true;
@@ -161,22 +147,20 @@ public class CommandTarget {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(CommandTarget.class.getSimpleName())
-        .append("[" + "commandName=" + commandName)
-        .append(",commandHelp=" + commandHelp);
+    builder.append(CommandTarget.class.getSimpleName()).append("[" + "commandName=" + commandName).append(",commandHelp=" + commandHelp);
     builder.append(",synonyms=");
     if (synonyms != null) {
       for (String string : synonyms) {
         builder.append(string + " ");
       }
-    } 
+    }
     builder.append(",gfshMethodTarget=" + gfshMethodTarget);
     builder.append(",optionParser=" + optionParser);
     builder.append(",availabilityIndicator=" + availabilityIndicator);
     builder.append("]");
     return builder.toString();
   }
-  
+
   public String getCommandName() {
     return commandName;
   }

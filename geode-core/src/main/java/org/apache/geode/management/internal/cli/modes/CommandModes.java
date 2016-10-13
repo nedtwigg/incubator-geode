@@ -16,7 +16,6 @@
  */
 package org.apache.geode.management.internal.cli.modes;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -31,7 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CommandModes {
-  
+
   public static final String DEFAULT_MODE = "default";
 
   public Map<String, Map<String, CommandMode>> getModeMap() {
@@ -57,11 +56,11 @@ public class CommandModes {
   private Map<String, Map<String, CommandMode>> modeMap = new HashMap<String, Map<String, CommandMode>>();
 
   private void readAllModes() {
-    try {      
+    try {
       InputStream stream = CommandModes.class.getResourceAsStream("commands.json");
       byte[] bytes = new byte[50 * 1024];
       int bytesRead = stream.read(bytes);
-      String str = new String(bytes, 0, bytesRead);      
+      String str = new String(bytes, 0, bytesRead);
       parseModes(str);
       stream.close();
     } catch (IOException e) {
@@ -75,11 +74,11 @@ public class CommandModes {
     JSONObject jsonObject = new JSONObject(str);
     JSONArray array = jsonObject.getJSONArray("commands");
     for (int i = 0; i < array.length(); i++) {
-      try{
+      try {
         addCommandMode(array.getString(i));
-      }catch(JSONException e){
+      } catch (JSONException e) {
         logException(e);
-      } catch (IOException e) {        
+      } catch (IOException e) {
         logException(e);
       }
     }
@@ -91,11 +90,11 @@ public class CommandModes {
     logger.warning("Error parsing command mode descriptor", e);
   }
 
-  private void addCommandMode(String commandName) throws JSONException, IOException {    
+  private void addCommandMode(String commandName) throws JSONException, IOException {
     InputStream stream = CommandModes.class.getResourceAsStream(commandName + ".json");
     byte[] bytes = new byte[50 * 1024];
     int bytesRead = stream.read(bytes);
-    String str = new String(bytes, 0, bytesRead); 
+    String str = new String(bytes, 0, bytesRead);
     JSONObject object = new JSONObject(str);
     String name = object.getString("name");
     JSONArray array = object.getJSONArray("modes");
@@ -123,18 +122,20 @@ public class CommandModes {
     return array;
   }
 
-  public Collection<CommandMode> getCommandModes(String name) {    
-    Map<String,CommandMode> commandModes =  modeMap.get(name);
-    if(commandModes!=null)
+  public Collection<CommandMode> getCommandModes(String name) {
+    Map<String, CommandMode> commandModes = modeMap.get(name);
+    if (commandModes != null)
       return commandModes.values();
-    else return null;
+    else
+      return null;
   }
-  
-  public CommandMode getCommandMode(String commandName, String modeName) {    
-    Map<String,CommandMode> commandModes =  modeMap.get(commandName);
-    if(commandModes!=null)
+
+  public CommandMode getCommandMode(String commandName, String modeName) {
+    Map<String, CommandMode> commandModes = modeMap.get(commandName);
+    if (commandModes != null)
       return commandModes.get(modeName);
-    else return null;
+    else
+      return null;
   }
 
   public String toString() {
@@ -150,6 +151,6 @@ public class CommandModes {
     public String toString() {
       return "CM: name : " + name + " text:" + text;
     }
-  } 
+  }
 
 }

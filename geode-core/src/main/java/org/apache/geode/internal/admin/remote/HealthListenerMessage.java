@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -38,16 +37,15 @@ public final class HealthListenerMessage extends PooledDistributionMessage imple
   private int listenerId;
   private GemFireHealth.Health status;
 
-  public static HealthListenerMessage create(int listenerId,
-                                             GemFireHealth.Health status){
+  public static HealthListenerMessage create(int listenerId, GemFireHealth.Health status) {
     HealthListenerMessage m = new HealthListenerMessage();
     m.listenerId = listenerId;
     m.status = status;
     return m;
   }
 
-  @Override  
-  public void process(DistributionManager dm){
+  @Override
+  public void process(DistributionManager dm) {
     RemoteGfManagerAgent agent = dm.getAgent();
     if (agent != null) {
       RemoteGemFireVM mgr = agent.getMemberById(this.getSender());
@@ -60,30 +58,29 @@ public final class HealthListenerMessage extends PooledDistributionMessage imple
   public int getDSFID() {
     return HEALTH_LISTENER_MESSAGE;
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeInt(this.listenerId);
     DataSerializer.writeObject(this.status, out);
   }
 
-  @Override  
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.listenerId = in.readInt();
     this.status = (GemFireHealth.Health) DataSerializer.readObject(in);
   }
 
-  @Override  
+  @Override
   public String toString() {
-    return LocalizedStrings.HealthListenerMessage_THE_STATUS_OF_LISTENER_0_IS_1.toLocalizedString(new Object[] {Integer.valueOf(this.listenerId), this.status});
+    return LocalizedStrings.HealthListenerMessage_THE_STATUS_OF_LISTENER_0_IS_1.toLocalizedString(new Object[] { Integer.valueOf(this.listenerId), this.status });
   }
-  
+
 }

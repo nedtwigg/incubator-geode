@@ -32,10 +32,10 @@ public class PutAllOperationContext extends OperationContext {
 
   /** The set of keys for the operation */
   private final UpdateOnlyMap map;
-  
+
   /** True if this is a post-operation context */
   private boolean postOperation = false;
-  
+
   private Object callbackArg;
 
   /**
@@ -81,7 +81,7 @@ public class PutAllOperationContext extends OperationContext {
    * If the returned map is modified and this is a pre-operation
    * authorization then the modified map is what will be used by the operation.
    */
-  public <K,V> Map<K,V> getMap() {
+  public <K, V> Map<K, V> getMap() {
     return this.map;
   }
 

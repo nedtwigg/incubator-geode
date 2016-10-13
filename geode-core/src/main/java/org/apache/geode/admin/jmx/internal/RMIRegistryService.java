@@ -83,7 +83,7 @@ public class RMIRegistryService implements RMIRegistryServiceMBean {
       ssf = new RMIServerSocketFactoryImpl(host);
     }
   }
-  
+
   /**
    * Returns the host on which rmiregistry listens for incoming connections
    *
@@ -100,12 +100,12 @@ public class RMIRegistryService implements RMIRegistryServiceMBean {
    *          the host on which rmiregistry listens for incoming connections
    */
   protected void setHost(String host) {
-    if (isRunning()) { 
+    if (isRunning()) {
       throw new IllegalStateException("RMIRegistryService is running, cannot change the host");
     }
     this.host = host;
   }
-  
+
   /**
    * Returns the port on which rmiregistry listens for incoming connections
    * 
@@ -122,7 +122,7 @@ public class RMIRegistryService implements RMIRegistryServiceMBean {
    *          the port on which rmiregistry listens for incoming connections
    */
   protected void setPort(int port) {
-    if (isRunning()) { 
+    if (isRunning()) {
       throw new IllegalStateException("RMIRegistryService is running, cannot change the port");
     }
     this.port = port;
@@ -137,13 +137,12 @@ public class RMIRegistryService implements RMIRegistryServiceMBean {
   public synchronized void start() throws RemoteException {
     if (!isRunning()) {
       if (ssf != null) {
-        registry = LocateRegistry.createRegistry(port, 
-                                                 null, //RMIClientSocketFactory 
-                                                 ssf); //RMIServerSocketFactory
+        registry = LocateRegistry.createRegistry(port, null, //RMIClientSocketFactory 
+            ssf); //RMIServerSocketFactory
       } else {
         registry = LocateRegistry.createRegistry(port);
       }
-      
+
       isRunning = true;
     }
   }
@@ -213,8 +212,7 @@ class RMIServerSocketFactoryImpl implements RMIServerSocketFactory {
    * @throws UnknownHostException
    *           if IP Address can not be resolved for the given host string
    */
-  /*default */RMIServerSocketFactoryImpl(String rmiBindAddress) 
-    throws UnknownHostException {
+  /*default */ RMIServerSocketFactoryImpl(String rmiBindAddress) throws UnknownHostException {
     this.bindAddress = InetAddress.getByName(rmiBindAddress);
   }
 
@@ -229,9 +227,6 @@ class RMIServerSocketFactoryImpl implements RMIServerSocketFactory {
    *              if an I/O error occurs during server socket creation
    */
   public ServerSocket createServerSocket(int port) throws IOException {
-    return new ServerSocket(port, 
-                            0/*backlog - for '0' internally uses the default*/, 
-                            bindAddress);
+    return new ServerSocket(port, 0/*backlog - for '0' internally uses the default*/, bindAddress);
   }
 }
-

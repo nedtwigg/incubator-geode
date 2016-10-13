@@ -34,11 +34,11 @@ import org.apache.geode.test.dunit.SerializableRunnable;
  *
  */
 @Category(DistributedTest.class)
-public class CqQueryUsingPoolOptimizedExecuteDUnitTest extends CqQueryUsingPoolDUnitTest{
+public class CqQueryUsingPoolOptimizedExecuteDUnitTest extends CqQueryUsingPoolDUnitTest {
 
   public CqQueryUsingPoolOptimizedExecuteDUnitTest() {
     super();
-   }
+  }
 
   @Override
   public final void postSetUpCqQueryUsingPoolDUnitTest() throws Exception {
@@ -48,7 +48,7 @@ public class CqQueryUsingPoolOptimizedExecuteDUnitTest extends CqQueryUsingPoolD
       }
     });
   }
-  
+
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {

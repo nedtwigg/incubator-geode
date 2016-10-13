@@ -57,7 +57,7 @@ import org.apache.geode.test.junit.categories.FlakyTest;
 
 @Category(DistributedTest.class)
 public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
-  
+
   private static final Set<Thread> stuckThreads = Collections.synchronizedSet(new HashSet<Thread>());
 
   @Override
@@ -67,9 +67,9 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
 
   private void stopStuckThreads() {
     Invoke.invokeInEveryVM(new SerializableRunnable() {
-      
+
       public void run() {
-        for(Thread thread: stuckThreads) {
+        for (Thread thread : stuckThreads) {
           thread.interrupt();
           disconnectFromDS();
           try {
@@ -86,16 +86,16 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
   public GemFireDeadlockDetectorDUnitTest() {
     super();
   }
-  
+
   @Test
   public void testNoDeadlock() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     //Make sure a deadlock from a previous test is cleared.
     disconnectAllFromDS();
-    
+
     createCache(vm0);
     createCache(vm1);
     getSystem();
@@ -103,9 +103,9 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
     GemFireDeadlockDetector detect = new GemFireDeadlockDetector();
     assertEquals(null, detect.find().findCycle());
   }
-  
+
   private static final Lock lock = new ReentrantLock();
-  
+
   @Category(FlakyTest.class) // GEODE-516 & GEODE-576: async actions, thread sleeps, time sensitive
   @Test
   public void testDistributedDeadlockWithFunction() throws Throwable {
@@ -117,13 +117,12 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
     final InternalDistributedMember member2 = createCache(vm1);
 
     //Have two threads lock locks on different members in different orders.
-    
-    
+
     //This thread locks the lock member1 first, then member2.
     AsyncInvocation async1 = lockTheLocks(vm0, member2);
     //This thread locks the lock member2 first, then member1.
     AsyncInvocation async2 = lockTheLocks(vm1, member1);
-    
+
     Thread.sleep(5000);
     GemFireDeadlockDetector detect = new GemFireDeadlockDetector();
     LinkedList<Dependency> deadlock = detect.find().findCycle();
@@ -133,8 +132,6 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
     async1.getResult(30000);
     async2.getResult(30000);
   }
-  
-  
 
   private AsyncInvocation lockTheLocks(VM vm0, final InternalDistributedMember member) {
     return vm0.invokeAsync(new SerializableRunnable() {
@@ -153,44 +150,44 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   @Category(FlakyTest.class) // GEODE-1580 uses asyncs with pauses
   @Test
   public void testDistributedDeadlockWithDLock() throws Throwable {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     AsyncInvocation async1 = lockTheDLocks(vm0, "one", "two");
     AsyncInvocation async2 = lockTheDLocks(vm1, "two", "one");
     getSystem();
     GemFireDeadlockDetector detect = new GemFireDeadlockDetector();
-    
+
     LinkedList<Dependency> deadlock = null;
-    for(int i =0; i < 60; i ++) {
+    for (int i = 0; i < 60; i++) {
       deadlock = detect.find().findCycle();
-      if(deadlock != null) {
+      if (deadlock != null) {
         break;
       }
       Thread.sleep(1000);
     }
-    
+
     assertTrue(deadlock != null);
     LogWriterUtils.getLogWriter().info("Deadlock=" + DeadlockDetector.prettyFormat(deadlock));
     assertEquals(4, deadlock.size());
     disconnectAllFromDS();
     async1.getResult(30000);
     async2.getResult(30000);
-  } 
+  }
 
   private AsyncInvocation lockTheDLocks(VM vm, final String first, final String second) {
     return vm.invokeAsync(new SerializableRunnable() {
-      
+
       public void run() {
         getCache();
         DistributedLockService dls = DistributedLockService.create("deadlock_test", getSystem());
         dls.lock(first, 10 * 1000, -1);
-        
+
         try {
           Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -198,15 +195,15 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
         }
         try {
           dls.lock(second, 10 * 1000, -1);
-        } catch(LockServiceDestroyedException expected) {
+        } catch (LockServiceDestroyedException expected) {
           //this is ok, the test is terminating
         } catch (DistributedSystemDisconnectedException expected) {
           //this is ok, the test is terminating
         }
-        
+
       }
     });
-    
+
   }
 
   private InternalDistributedMember createCache(VM vm) {
@@ -217,15 +214,14 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
       }
     });
   }
-  
+
   private static class TestFunction implements Function {
-    
+
     private static final int LOCK_WAIT_TIME = 1000;
 
     public boolean hasResult() {
       return true;
     }
-    
 
     public void execute(FunctionContext context) {
       try {
@@ -249,7 +245,6 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
     public boolean isHA() {
       return false;
     }
-
 
   }
 

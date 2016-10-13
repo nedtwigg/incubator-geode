@@ -39,16 +39,14 @@ public class PulseServiceFactory implements ApplicationContextAware {
 
   public PulseService getPulseServiceInstance(final String servicename) {
 
-    if (applicationContext != null
-        && applicationContext.containsBean(servicename)) {
+    if (applicationContext != null && applicationContext.containsBean(servicename)) {
       return (PulseService) applicationContext.getBean(servicename);
     }
     return null;
   }
 
   @Override
-  public void setApplicationContext(final ApplicationContext applicationContext)
-      throws BeansException {
+  public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 
     this.applicationContext = applicationContext;
   }

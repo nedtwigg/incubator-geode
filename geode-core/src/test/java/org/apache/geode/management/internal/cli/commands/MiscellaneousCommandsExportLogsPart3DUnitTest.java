@@ -104,8 +104,7 @@ public class MiscellaneousCommandsExportLogsPart3DUnitTest extends CliCommandTes
     String[] groups = new String[1];
     groups[0] = "Group1";
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForGroup" + dir, groups, null, logLevel, false,
-        false, start, end, 1);
+    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForGroup" + dir, groups, null, logLevel, false, false, start, end, 1);
 
     getLogWriter().info("testExportLogsForGroup command result =" + cmdResult);
     if (cmdResult != null) {
@@ -138,8 +137,7 @@ public class MiscellaneousCommandsExportLogsPart3DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForMember" + dir, null, vm1MemberId, logLevel,
-        false, false, start, end, 1);
+    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForMember" + dir, null, vm1MemberId, logLevel, false, false, start, end, 1);
 
     getLogWriter().info("testExportLogsForMember command result =" + cmdResult);
 

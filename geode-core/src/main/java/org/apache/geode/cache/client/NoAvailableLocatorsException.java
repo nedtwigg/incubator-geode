@@ -16,7 +16,6 @@
  */
 package org.apache.geode.cache.client;
 
-
 /**
  * An exception indicating that there are no active locators available to connect to.
  * @since GemFire 5.7

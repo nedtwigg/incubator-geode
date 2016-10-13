@@ -56,12 +56,8 @@ public class LuceneQueriesPersistenceIntegrationTest extends LuceneIntegrationTe
   @Override
   public void createCache() {
     super.createCache();
-    cache.createDiskStoreFactory()
-      .setDiskDirs(new File[] {diskDirRule.get()})
-      .setMaxOplogSize(1)
-      .create(GemFireCacheImpl.getDefaultDiskStoreName());
+    cache.createDiskStoreFactory().setDiskDirs(new File[] { diskDirRule.get() }).setMaxOplogSize(1).create(GemFireCacheImpl.getDefaultDiskStoreName());
   }
-
 
   @Test
   public void shouldReturnCorrectResultsWithEntriesOverflowedToDisk() throws Exception {
@@ -99,6 +95,5 @@ public class LuceneQueriesPersistenceIntegrationTest extends LuceneIntegrationTe
     PageableLuceneQueryResults<Integer, Type1> results = query.findPages();
     Assert.assertEquals(3, results.size());
   }
-
 
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode;
 
 /**
@@ -54,7 +54,7 @@ public abstract class GemFireCheckedException extends Exception {
     super(message);
     this.initCause(cause);
   }
-  
+
   /**
    * Creates a new <code>GemFireCheckedException</code> with the given cause and
    * no detail message
@@ -71,20 +71,21 @@ public abstract class GemFireCheckedException extends Exception {
    * <code>null</code> if the cause is nonexistent or unknown.
    */
   public Throwable getRootCause() {
-      if ( this.getCause() == null ) return null;
-      Throwable root = this.getCause();
-      while ( root != null ) {
-//          if ( ! ( root instanceof GemFireCheckedException )) {
-//              break;
-//          }
-//          GemFireCheckedException tmp = (GemFireCheckedException) root;
-          if ( root.getCause() == null ) {
-              break;
-          } else {
-              root = root.getCause();
-          }
+    if (this.getCause() == null)
+      return null;
+    Throwable root = this.getCause();
+    while (root != null) {
+      //          if ( ! ( root instanceof GemFireCheckedException )) {
+      //              break;
+      //          }
+      //          GemFireCheckedException tmp = (GemFireCheckedException) root;
+      if (root.getCause() == null) {
+        break;
+      } else {
+        root = root.getCause();
       }
-      return root;
+    }
+    return root;
   }
-  
+
 }

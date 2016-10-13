@@ -44,14 +44,14 @@ public class CqAttributesFactory {
 
   /* Handle for CqAttributes. */
   private final CqAttributesImpl cqAttributes = new CqAttributesImpl();
-  
+
   /**
    * Creates a new instance of AttributesFactory ready to create a
    * <code>CqAttributes</code> with default settings.
    */
   public CqAttributesFactory() {
   }
-  
+
   /**
    * Creates a new instance of CqAttributesFactory ready to create a
    * <code>CqAttributes</code> with the same settings as those in the
@@ -64,7 +64,7 @@ public class CqAttributesFactory {
   public CqAttributesFactory(CqAttributes cqAttributes) {
     this.cqAttributes.setCqListeners(new ArrayList(Arrays.asList(cqAttributes.getCqListeners())));
   }
-    
+
   /**
    * Adds a CQ listener to the end of the list of cq listeners on this factory.
    * @param cqListener the CqListener to add to the factory.
@@ -76,7 +76,7 @@ public class CqAttributesFactory {
     }
     this.cqAttributes.addCqListener(cqListener);
   }
-  
+
   /**
    * Removes all Cq listeners and then adds each listener in the specified array.
    * @param cqListeners a possibly null or empty array of listeners to add to this 
@@ -95,14 +95,13 @@ public class CqAttributesFactory {
       this.cqAttributes.setCqListeners(new ArrayList(nl));
     }
   }
-      
+
   /** 
    * Creates a <code>CqAttributes</code> with the current settings.
    * @return the newly created <code>CqAttributes</code>
    */
   public CqAttributes create() {
-    return (CqAttributes)this.cqAttributes.clone();
+    return (CqAttributes) this.cqAttributes.clone();
   }
-
 
 }

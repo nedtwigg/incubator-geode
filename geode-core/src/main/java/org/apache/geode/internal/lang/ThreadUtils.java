@@ -92,8 +92,7 @@ public abstract class ThreadUtils {
 
     try {
       Thread.sleep(milliseconds);
-    }
-    catch (InterruptedException ignore) {
+    } catch (InterruptedException ignore) {
       Thread.currentThread().interrupt();
     }
 
@@ -117,10 +116,10 @@ public abstract class ThreadUtils {
       if (expectNull == true) {
         return null;
       }
-      
+
       return "";
     }
-    
+
     StringWriter stringWriter = new StringWriter();
     PrintWriter printWriter = new PrintWriter(stringWriter);
     throwable.printStackTrace(printWriter);

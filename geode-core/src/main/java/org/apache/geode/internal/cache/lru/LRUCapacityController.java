@@ -53,8 +53,7 @@ import java.util.*;
  *
  * @since GemFire 2.0.2
  */
-public final class LRUCapacityController extends LRUAlgorithm
-  implements Declarable {
+public final class LRUCapacityController extends LRUAlgorithm implements Declarable {
 
   private static final long serialVersionUID = -4383074909189355938L;
 
@@ -73,33 +72,16 @@ public final class LRUCapacityController extends LRUAlgorithm
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    final String entriesAllowedDesc = 
-      "Number of entries allowed in this region.";
-    final String regionEntryCountDesc = 
-      "Number of entries in this region.";
-    final String lruEvictionsDesc = 
-      "Number of total entry evictions triggered by LRU.";
+    final String entriesAllowedDesc = "Number of entries allowed in this region.";
+    final String regionEntryCountDesc = "Number of entries in this region.";
+    final String lruEvictionsDesc = "Number of total entry evictions triggered by LRU.";
     final String lruDestroysDesc = "Number of entries destroyed in the region through both destroy cache operations and eviction. Reset to zero each time it exceeds lruDestroysLimit.";
-    final String lruDestroysLimitDesc =
-      "Maximum number of entry destroys triggered by LRU before scan occurs.";
-    final String lruEvaluationsDesc = 
-      "Number of entries evaluated during LRU operations.";
-    final String lruGreedyReturnsDesc =
-      "Number of non-LRU entries evicted during LRU operations";
+    final String lruDestroysLimitDesc = "Maximum number of entry destroys triggered by LRU before scan occurs.";
+    final String lruEvaluationsDesc = "Number of entries evaluated during LRU operations.";
+    final String lruGreedyReturnsDesc = "Number of non-LRU entries evicted during LRU operations";
 
-    statType = f.createType( "LRUStatistics",
-      "Statistics about entry based Least Recently Used region entry disposal",
-      new StatisticDescriptor[] {
-        f.createLongGauge("entriesAllowed", entriesAllowedDesc, "entries" ), 
-        f.createLongGauge("entryCount", regionEntryCountDesc, "entries" ),
-        f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries" ),
-        f.createLongCounter("lruDestroys", lruDestroysDesc, "entries" ),
-        f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries" ),
-        f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries" ),
-        f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"),
-      }
-    );
-    
+    statType = f.createType("LRUStatistics", "Statistics about entry based Least Recently Used region entry disposal", new StatisticDescriptor[] { f.createLongGauge("entriesAllowed", entriesAllowedDesc, "entries"), f.createLongGauge("entryCount", regionEntryCountDesc, "entries"), f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"), f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"), f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"), f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"), f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"), });
+
   }
 
   //////////////////////  Instance Fields  /////////////////////
@@ -119,7 +101,7 @@ public final class LRUCapacityController extends LRUAlgorithm
    * @see #LRUCapacityController(int,Region)
    */
   public LRUCapacityController(Region region) {
-    this(DEFAULT_MAXIMUM_ENTRIES, EvictionAction.DEFAULT_EVICTION_ACTION,region);
+    this(DEFAULT_MAXIMUM_ENTRIES, EvictionAction.DEFAULT_EVICTION_ACTION, region);
   }
 
   /**
@@ -141,8 +123,8 @@ public final class LRUCapacityController extends LRUAlgorithm
    *                the bucket in which the subsequent <code>put</code> takes
    *                place.
    */
-  public LRUCapacityController(int maximumEntries,Region region) {
-    this(maximumEntries, EvictionAction.DEFAULT_EVICTION_ACTION,region);
+  public LRUCapacityController(int maximumEntries, Region region) {
+    this(maximumEntries, EvictionAction.DEFAULT_EVICTION_ACTION, region);
   }
 
   /**
@@ -167,9 +149,8 @@ public final class LRUCapacityController extends LRUAlgorithm
    *                The action to perform upon the least recently used entry.
    *                See {@link #EVICTION_ACTION}.
    */
-  public LRUCapacityController(int maximumEntries,
-                               EvictionAction evictionAction,Region region) {
-    super(evictionAction,region);
+  public LRUCapacityController(int maximumEntries, EvictionAction evictionAction, Region region) {
+    super(evictionAction, region);
     setMaximumEntries(maximumEntries);
   }
 
@@ -177,18 +158,17 @@ public final class LRUCapacityController extends LRUAlgorithm
    * Sets the limit on the number of entries allowed. This change takes place on
    * next region operation that could increase the region size.
    */
-  public void setMaximumEntries( int maximumEntries )  {
-    if (maximumEntries <= 0 )
+  public void setMaximumEntries(int maximumEntries) {
+    if (maximumEntries <= 0)
       throw new IllegalArgumentException(LocalizedStrings.LRUCapacityController_MAXIMUM_ENTRIES_MUST_BE_POSITIVE.toLocalizedString());
     this.maximumEntries = maximumEntries;
     if (bucketRegion != null) {
       bucketRegion.setLimit(this.maximumEntries);
-    }
-    else if (this.stats != null) {
+    } else if (this.stats != null) {
       this.stats.setLimit(this.maximumEntries);
     }
   }
-  
+
   @Override
   public void setLimit(int max) {
     setMaximumEntries(max);
@@ -214,11 +194,11 @@ public final class LRUCapacityController extends LRUAlgorithm
    */
   public void init(Properties props) throws NumberFormatException {
     String prop = null;
-    if ( ( prop = props.getProperty( MAXIMUM_ENTRIES ) ) != null ) {
-      this.maximumEntries = Integer.parseInt( prop );
+    if ((prop = props.getProperty(MAXIMUM_ENTRIES)) != null) {
+      this.maximumEntries = Integer.parseInt(prop);
     }
 
-    if ( ( prop = props.getProperty( EVICTION_ACTION ) ) != null ) {
+    if ((prop = props.getProperty(EVICTION_ACTION)) != null) {
       setEvictionAction(EvictionAction.parseAction(prop));
     }
   }
@@ -257,18 +237,14 @@ public final class LRUCapacityController extends LRUAlgorithm
        * All entries for the LRUCapacityController are
        * considered to be of size 1.
        */
-      public int entrySize( Object key, Object value )
-        throws IllegalArgumentException {
+      public int entrySize(Object key, Object value) throws IllegalArgumentException {
 
         if (Token.isRemoved(value) /*&& (value != Token.TOMBSTONE)*/) { // un-comment to make tombstones visible 
           // bug #42228 - lruEntryDestroy removes an entry from the LRU, but if
           // it is subsequently resurrected we want the new entry to generate a delta
           return 0;
         }
-        if ((value == null /* overflow to disk */ || 
-            value == Token.INVALID ||
-            value == Token.LOCAL_INVALID) &&
-            getEvictionAction().isOverflowToDisk()) {
+        if ((value == null /* overflow to disk */ || value == Token.INVALID || value == Token.LOCAL_INVALID) && getEvictionAction().isOverflowToDisk()) {
           // Don't count this guys toward LRU
           return 0;
 
@@ -312,20 +288,22 @@ public final class LRUCapacityController extends LRUAlgorithm
       public int getGreedyReturnsStatId() {
         return statType.nameToId("lruGreedyReturns");
       }
-      
+
       public boolean mustEvict(LRUStatistics stats, Region region, int delta) {
-       return stats.getCounter() + delta > stats.getLimit();
+        return stats.getCounter() + delta > stats.getLimit();
       }
     };
   }
 
-
   @Override
   public boolean equals(Object cc) {
-    if (!super.equals(cc)) return false;
-    if (!(cc instanceof LRUCapacityController)) return false;
-    LRUCapacityController other = (LRUCapacityController)cc;
-    if (this.maximumEntries != other.maximumEntries) return false;
+    if (!super.equals(cc))
+      return false;
+    if (!(cc instanceof LRUCapacityController))
+      return false;
+    LRUCapacityController other = (LRUCapacityController) cc;
+    if (this.maximumEntries != other.maximumEntries)
+      return false;
     return true;
   }
 
@@ -342,7 +320,7 @@ public final class LRUCapacityController extends LRUAlgorithm
     result += this.maximumEntries;
     return result;
   }
-  
+
   /**
    * Returns a brief description of this capacity controller.
    *
@@ -350,6 +328,6 @@ public final class LRUCapacityController extends LRUAlgorithm
    */
   @Override
   public String toString() {
-    return LocalizedStrings.LRUCapacityController_LRUCAPACITYCONTROLLER_WITH_A_CAPACITY_OF_0_ENTRIES_AND_EVICTION_ACTION_1.toLocalizedString( new Object[] { Long.valueOf(this.getLimit()), this.getEvictionAction()});
+    return LocalizedStrings.LRUCapacityController_LRUCAPACITYCONTROLLER_WITH_A_CAPACITY_OF_0_ENTRIES_AND_EVICTION_ACTION_1.toLocalizedString(new Object[] { Long.valueOf(this.getLimit()), this.getEvictionAction() });
   }
 }

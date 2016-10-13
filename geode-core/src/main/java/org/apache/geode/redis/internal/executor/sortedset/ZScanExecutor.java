@@ -126,7 +126,7 @@ public class ZScanExecutor extends AbstractScanExecutor {
     int beforeCursor = 0;
     int numElements = 0;
     int i = -1;
-    for (Entry<ByteArrayWrapper, DoubleWrapper> entry: (Collection<Entry<ByteArrayWrapper, DoubleWrapper>>) list) {
+    for (Entry<ByteArrayWrapper, DoubleWrapper> entry : (Collection<Entry<ByteArrayWrapper, DoubleWrapper>>) list) {
       ByteArrayWrapper keyWrapper = entry.getKey();
       String key = keyWrapper.toString();
 

@@ -39,18 +39,18 @@ import static org.junit.Assert.*;
  */
 @Category(IntegrationTest.class)
 public class TXManagerImplJUnitTest {
-  
-  @Rule 
+
+  @Rule
   public TestName name = new TestName();
 
   protected Cache cache = null;
   protected Region region = null;
-  
+
   @Before
   public void setUp() throws Exception {
     createCache();
   }
-  
+
   protected void createCache() {
     Properties props = new Properties();
     props.put(MCAST_PORT, "0");
@@ -58,12 +58,12 @@ public class TXManagerImplJUnitTest {
     cache = new CacheFactory(props).create();
     region = cache.createRegionFactory(RegionShortcut.REPLICATE).create("testRegion");
   }
-  
+
   @After
   public void tearDown() throws Exception {
     cache.close();
   }
-  
+
   /**
    * two threads suspend and resume a single transaction, while
    * making changes. 
@@ -111,7 +111,7 @@ public class TXManagerImplJUnitTest {
     mgr.commit();
     assertEquals(3, region.size());
   }
-  
+
   @Test
   public void testResumeTimeout() throws Exception {
     final CacheTransactionManager mgr = cache.getCacheTransactionManager();
@@ -135,7 +135,7 @@ public class TXManagerImplJUnitTest {
     t.join();
     mgr.commit();
   }
-  
+
   @Test
   public void testMultipleSuspends() throws Exception {
     final CacheTransactionManager mgr = cache.getCacheTransactionManager();
@@ -179,7 +179,7 @@ public class TXManagerImplJUnitTest {
     assertEquals(3, region.size());
     mgr.commit();
   }
-  
+
   @Test
   public void testUnblockOnCommit() throws Exception {
     final CacheTransactionManager mgr = cache.getCacheTransactionManager();
@@ -209,12 +209,11 @@ public class TXManagerImplJUnitTest {
     Thread.sleep(100);
     long start = System.currentTimeMillis();
     mgr.commit();
-    assertTrue("expected to wait for less than 100 millis, but waited for:"
-        +(System.currentTimeMillis() - start), latch2.await(100, TimeUnit.MILLISECONDS));
+    assertTrue("expected to wait for less than 100 millis, but waited for:" + (System.currentTimeMillis() - start), latch2.await(100, TimeUnit.MILLISECONDS));
     t1.join();
     t2.join();
   }
-  
+
   @Test
   public void testExists() {
     CacheTransactionManager mgr = cache.getCacheTransactionManager();
@@ -225,7 +224,7 @@ public class TXManagerImplJUnitTest {
     assertTrue(mgr.exists(txId));
     mgr.commit();
     assertFalse(mgr.exists(txId));
-    
+
     mgr.begin();
     txId = mgr.suspend();
     assertTrue(mgr.exists(txId));
@@ -234,7 +233,7 @@ public class TXManagerImplJUnitTest {
     mgr.rollback();
     assertFalse(mgr.exists(txId));
   }
-  
+
   @Test
   public void testEarlyoutOnTryResume() {
     CacheTransactionManager mgr = cache.getCacheTransactionManager();
@@ -242,7 +241,7 @@ public class TXManagerImplJUnitTest {
     TransactionId txId = mgr.suspend();
     mgr.resume(txId);
     mgr.commit();
-    
+
     long start = System.currentTimeMillis();
     mgr.tryResume(txId, 10, TimeUnit.SECONDS);
     assertTrue("did not expect tryResume to block", System.currentTimeMillis() - start < 100);
@@ -289,7 +288,7 @@ public class TXManagerImplJUnitTest {
     mgr.begin();
     region.put("key", "value");
     final TransactionId txId = mgr.suspend();
-    
+
     Thread t = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -312,7 +311,7 @@ public class TXManagerImplJUnitTest {
     mgr.begin();
     region.put("key", "value");
     final TransactionId txId = mgr.suspend();
-    Thread.sleep(70*1000);
+    Thread.sleep(70 * 1000);
     try {
       mgr.resume(txId);
       fail("An expected exception was not thrown");

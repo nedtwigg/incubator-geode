@@ -44,7 +44,7 @@ public class GetTestMethodNameDUnitTest extends JUnit4DistributedTestCase {
     assertGetTestMethodName("testGetTestMethodNameInAllVMs");
 
     for (int vmIndex = 0; vmIndex < Host.getHost(0).getVMCount(); vmIndex++) {
-      Host.getHost(0).getVM(vmIndex).invoke(()->assertGetTestMethodName("testGetTestMethodNameInAllVMs"));
+      Host.getHost(0).getVM(vmIndex).invoke(() -> assertGetTestMethodName("testGetTestMethodNameInAllVMs"));
     }
   }
 

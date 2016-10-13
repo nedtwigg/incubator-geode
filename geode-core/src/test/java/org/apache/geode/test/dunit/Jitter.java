@@ -28,7 +28,7 @@ class Jitter {
    * {@link WaitCriterion}.
    */
   private static final boolean USE_JITTER = true;
-  
+
   private static final Random jitter = new Random();
 
   protected Jitter() {
@@ -49,15 +49,15 @@ class Jitter {
       return intervalMillis;
     }
   }
-  
+
   static int minimum() {
     return 10;
   }
-  
+
   static int maximum() {
     return 5000;
   }
-  
+
   /**
    * If jittering is enabled then returns a jittered interval up to a maximum
    * of <code>intervalMillis</code> milliseconds, inclusive.
@@ -72,14 +72,14 @@ class Jitter {
   private static int adjustIntervalIfJitterIsEnabled(final long intervalMillis) {
     final int minLegal = minimum();
     final int maxLegal = maximum();
-    
+
     if (intervalMillis <= minLegal) {
-      return (int)intervalMillis; // Don't ever jitter anything below this.
+      return (int) intervalMillis; // Don't ever jitter anything below this.
     }
 
     int maxValue = maxLegal;
     if (intervalMillis < maxLegal) {
-      maxValue = (int)intervalMillis;
+      maxValue = (int) intervalMillis;
     }
 
     return minLegal + jitter.nextInt(maxValue - minLegal + 1);

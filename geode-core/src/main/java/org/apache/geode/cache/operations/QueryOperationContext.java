@@ -43,7 +43,7 @@ public class QueryOperationContext extends OperationContext {
 
   /** The bind parameters for the query */
   private Object[] queryParams;
-  
+
   /**
    * Constructor for the query operation.
    * 
@@ -54,8 +54,7 @@ public class QueryOperationContext extends OperationContext {
    * @param postOperation
    *                true to set the post-operation flag
    */
-  public QueryOperationContext(String queryString, Set regionNames,
-      boolean postOperation) {
+  public QueryOperationContext(String queryString, Set regionNames, boolean postOperation) {
     this.queryString = queryString;
     this.regionNames = regionNames;
     this.queryResult = null;
@@ -74,12 +73,11 @@ public class QueryOperationContext extends OperationContext {
    * @param queryParams
    *                the bind parameters for the query
    */
-  public QueryOperationContext(String queryString, Set regionNames,
-      boolean postOperation, Object[] queryParams) {
+  public QueryOperationContext(String queryString, Set regionNames, boolean postOperation, Object[] queryParams) {
     this(queryString, regionNames, postOperation);
     this.queryParams = queryParams;
   }
-  
+
   /**
    * Return the operation associated with the <code>OperationContext</code>
    * object.

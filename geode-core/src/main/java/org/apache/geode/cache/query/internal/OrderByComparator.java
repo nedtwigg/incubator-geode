@@ -39,8 +39,7 @@ public class OrderByComparator implements Comparator {
   private final ExecutionContext context;
   protected final List<CompiledSortCriterion> orderByAttrs;
 
-  public OrderByComparator(List<CompiledSortCriterion> orderByAttrs,
-      ObjectType objType, ExecutionContext context) {
+  public OrderByComparator(List<CompiledSortCriterion> orderByAttrs, ObjectType objType, ExecutionContext context) {
     this.objType = objType;
     this.context = context;
     this.orderByAttrs = orderByAttrs;
@@ -95,15 +94,13 @@ public class OrderByComparator implements Comparator {
     }
     assert !(obj1 instanceof VMCachedDeserializable || obj2 instanceof VMCachedDeserializable);
 
-    if ((this.objType.isStructType() && obj1 instanceof Object[] && obj2 instanceof Object[])
-        || !this.objType.isStructType()) { // obj1 instanceof Object && obj2
-                                           // instanceof Object){
+    if ((this.objType.isStructType() && obj1 instanceof Object[] && obj2 instanceof Object[]) || !this.objType.isStructType()) { // obj1 instanceof Object && obj2
+                                                                                                                                   // instanceof Object){
       Object[] list1 = this.evaluateSortCriteria(obj1);
       Object[] list2 = this.evaluateSortCriteria(obj2);
 
       if (list1.length != list2.length) {
-        Support
-            .assertionFailed("Error Occured due to improper sort criteria evaluation ");
+        Support.assertionFailed("Error Occured due to improper sort criteria evaluation ");
       } else {
         for (int i = 0; i < list1.length; i++) {
           Object arr1[] = (Object[]) list1[i];
@@ -115,8 +112,7 @@ public class OrderByComparator implements Comparator {
             } else {
               result = 1;
             }
-          } else if (arr1[0] == QueryService.UNDEFINED
-              || arr2[0] == QueryService.UNDEFINED) {
+          } else if (arr1[0] == QueryService.UNDEFINED || arr2[0] == QueryService.UNDEFINED) {
             if (arr1[0] == QueryService.UNDEFINED) {
               result = (arr2[0] == QueryService.UNDEFINED ? 0 : -1);
             } else {
@@ -124,14 +120,12 @@ public class OrderByComparator implements Comparator {
             }
           } else {
             if (arr1[0] instanceof Number && arr2[0] instanceof Number) {
-              double diff = ((Number) arr1[0]).doubleValue()
-                  - ((Number) arr2[0]).doubleValue();
+              double diff = ((Number) arr1[0]).doubleValue() - ((Number) arr2[0]).doubleValue();
               result = diff > 0 ? 1 : diff < 0 ? -1 : 0;
             } else {
               if (arr1[0] instanceof PdxString && arr2[0] instanceof String) {
                 arr2[0] = new PdxString((String) arr2[0]);
-              } else if (arr2[0] instanceof PdxString
-                  && arr1[0] instanceof String) {
+              } else if (arr2[0] instanceof PdxString && arr1[0] instanceof String) {
                 arr1[0] = new PdxString((String) arr1[0]);
               }
               result = ((Comparable) arr1[0]).compareTo(arr2[0]);
@@ -172,8 +166,7 @@ public class OrderByComparator implements Comparator {
               } else {
                 return 1;
               }
-            } else if (o1 == QueryService.UNDEFINED
-                || o2 == QueryService.UNDEFINED) {
+            } else if (o1 == QueryService.UNDEFINED || o2 == QueryService.UNDEFINED) {
               if (o1 == QueryService.UNDEFINED) {
                 if (o2 == QueryService.UNDEFINED) {
                   continue;
@@ -187,8 +180,7 @@ public class OrderByComparator implements Comparator {
             if (o1 instanceof Comparable) {
               final int rslt;
               if (o1 instanceof Number && o2 instanceof Number) {
-                double diff = ((Number) o1).doubleValue()
-                    - ((Number) o2).doubleValue();
+                double diff = ((Number) o1).doubleValue() - ((Number) o2).doubleValue();
                 rslt = diff > 0 ? 1 : diff < 0 ? -1 : 0;
               } else {
                 if (o1 instanceof PdxString && o2 instanceof String) {
@@ -226,9 +218,7 @@ public class OrderByComparator implements Comparator {
     return -1;
   }
 
-  void addEvaluatedSortCriteria(Object row, ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  void addEvaluatedSortCriteria(Object row, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     // No op
   }
 

@@ -15,23 +15,21 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache.query.internal.parse;
 
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-
-public class ASTProjection extends GemFireAST {  
+public class ASTProjection extends GemFireAST {
   private static final long serialVersionUID = -1464858491766486290L;
-  
-  public ASTProjection() { }
-  
+
+  public ASTProjection() {
+  }
+
   public ASTProjection(Token t) {
     super(t);
   }
-  
-    
+
   @Override
   public void compile(QCompiler compiler) {
     // has either one or two children
@@ -43,6 +41,5 @@ public class ASTProjection extends GemFireAST {
     }
     compiler.projection();
   }
-  
-  
+
 }

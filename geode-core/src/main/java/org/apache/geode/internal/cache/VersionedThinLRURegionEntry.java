@@ -25,9 +25,8 @@ import org.apache.geode.internal.cache.versions.VersionTag;
 /**
  *
  */
-public abstract class VersionedThinLRURegionEntry extends VMThinLRURegionEntry
-  implements VersionStamp {
-  
+public abstract class VersionedThinLRURegionEntry extends VMThinLRURegionEntry implements VersionStamp {
+
   protected VersionedThinLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }

@@ -41,17 +41,15 @@ import java.util.zip.GZIPOutputStream;
 public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private static volatile String traceStatisticsName = null;
   private static volatile String traceStatisticsTypeName = null;
   private static volatile int traceResourceInstId = -1;
 
   private final boolean trace = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "stats.debug.traceStatArchiveWriter");
-  
-  private final Set<ResourceInstance> sampleWrittenForResources = 
-      new HashSet<ResourceInstance>();
-  private final Set<ResourceInstance> addedResources = 
-      new HashSet<ResourceInstance>();
+
+  private final Set<ResourceInstance> sampleWrittenForResources = new HashSet<ResourceInstance>();
+  private final Set<ResourceInstance> addedResources = new HashSet<ResourceInstance>();
   private final StatArchiveDescriptor archiveDescriptor;
   private long initialDate;
   private final OutputStream outStream;
@@ -60,14 +58,14 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
   private final PrintStream traceDataOut;
   private long previousMillisTimeStamp;
   private int sampleCount;
-  
+
   /**
    * Opens a StatArchiveWriter that will archive to the specified file.
    * @throws GemFireIOException if <code>archiveName</code> can not be written to
    */
   public StatArchiveWriter(StatArchiveDescriptor archiveDescriptor) {
     this.archiveDescriptor = archiveDescriptor;
-    
+
     if (archiveDescriptor.getArchiveName().endsWith(".gz")) {
       try {
         this.outStream = new GZIPOutputStream(new FileOutputStream(archiveDescriptor.getArchiveName()), 32768);
@@ -83,7 +81,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
 
     this.dataOut = new MyDataOutputStream(this.outStream);
-    
+
     if (this.trace) {
       String traceFileName = archiveDescriptor.getArchiveName() + ".trace";
       try {
@@ -101,7 +99,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
   public String getArchiveName() {
     return this.archiveDescriptor.getArchiveName();
   }
-  
+
   public void initialize(long nanosTimeStamp) {
     this.previousMillisTimeStamp = initPreviousMillisTimeStamp(nanosTimeStamp);
     this.initialDate = initInitialDate();
@@ -121,7 +119,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     sb.append("initialDate=").append(this.initialDate);
     return sb.toString();
   }
-  
+
   /**
    * Closes the statArchiver by flushing its data to disk a closing its output stream.
    * @throws GemFireIOException if the archive file could not be closed.
@@ -149,8 +147,8 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       deleteFileIfPossible(new File(getArchiveName()));
     }
   }
-  
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification="Best effort attempt to delete a GFS file without any samples.") 
+
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "Best effort attempt to delete a GFS file without any samples.")
   private static void deleteFileIfPossible(File file) {
     file.delete();
   }
@@ -166,19 +164,19 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
   protected long initPreviousMillisTimeStamp(long nanosTimeStamp) {
     return NanoTimer.nanosToMillis(nanosTimeStamp);
   }
-  
+
   protected long initInitialDate() {
     return System.currentTimeMillis();
   }
-  
+
   protected TimeZone getTimeZone() {
     return Calendar.getInstance().getTimeZone();
   }
-  
+
   protected String getOSInfo() {
     return System.getProperty("os.name") + " " + System.getProperty("os.version");
   }
-  
+
   protected String getMachineInfo() {
     String machineInfo = System.getProperty("os.arch");
     try {
@@ -188,7 +186,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
     return machineInfo;
   }
-  
+
   private void writeHeader(long initialDate, StatArchiveDescriptor archiveDescriptor) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
       logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeHeader initialDate={} archiveDescriptor={}", initialDate, archiveDescriptor);
@@ -206,7 +204,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       this.dataOut.writeUTF(archiveDescriptor.getProductDescription());
       this.dataOut.writeUTF(getOSInfo());
       this.dataOut.writeUTF(getMachineInfo());
-      
+
       if (this.trace) {
         this.traceDataOut.println("writeHeader traceStatisticsName: " + traceStatisticsName);
         this.traceDataOut.println("writeHeader traceStatisticsTypeName: " + traceStatisticsTypeName);
@@ -232,7 +230,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#allocatedResourceType resourceType={}", resourceType);
     }
     if (resourceType.getStatisticDescriptors().length >= ILLEGAL_STAT_OFFSET) {
-      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] {resourceType.getStatisticsType().getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET-1)}));
+      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] { resourceType.getStatisticsType().getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET - 1) }));
     }
     // write the type to the archive
     try {
@@ -249,16 +247,16 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         this.traceDataOut.println("allocatedResourceType#writeUTF resourceType.getStatisticsType().getDescription(): " + resourceType.getStatisticsType().getDescription());
         this.traceDataOut.println("allocatedResourceType#writeShort stats.length: " + stats.length);
       }
-      for (int i=0; i < stats.length; i++) {
+      for (int i = 0; i < stats.length; i++) {
         this.dataOut.writeUTF(stats[i].getName());
-        this.dataOut.writeByte(((StatisticDescriptorImpl)stats[i]).getTypeCode());
+        this.dataOut.writeByte(((StatisticDescriptorImpl) stats[i]).getTypeCode());
         this.dataOut.writeBoolean(stats[i].isCounter());
         this.dataOut.writeBoolean(stats[i].isLargerBetter());
         this.dataOut.writeUTF(stats[i].getUnit());
         this.dataOut.writeUTF(stats[i].getDescription());
         if (this.trace && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(resourceType.getStatisticsType().getName()))) {
           this.traceDataOut.println("allocatedResourceType#writeUTF stats[i].getName(): " + stats[i].getName());
-          this.traceDataOut.println("allocatedResourceType#writeByte ((StatisticDescriptorImpl)stats[i]).getTypeCode(): " + ((StatisticDescriptorImpl)stats[i]).getTypeCode());
+          this.traceDataOut.println("allocatedResourceType#writeByte ((StatisticDescriptorImpl)stats[i]).getTypeCode(): " + ((StatisticDescriptorImpl) stats[i]).getTypeCode());
           this.traceDataOut.println("allocatedResourceType#writeBoolean stats[i].isCounter(): " + stats[i].isCounter());
           this.traceDataOut.println("allocatedResourceType#writeBoolean stats[i].isLargerBetter(): " + stats[i].isLargerBetter());
           this.traceDataOut.println("allocatedResourceType#writeUTF stats[i].getUnit(): " + stats[i].getUnit());
@@ -269,14 +267,14 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_NEW_RESOURCE_TYPE_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
     }
   }
-  
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification="This is only for debugging and there is never more than one instance being traced because there is only one stat sampler.") 
+
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "This is only for debugging and there is never more than one instance being traced because there is only one stat sampler.")
   public void allocatedResourceInstance(ResourceInstance statResource) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
       logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#allocatedResourceInstance statResource={}", statResource);
     }
     if (statResource.getResourceType().getStatisticDescriptors().length >= ILLEGAL_STAT_OFFSET) {
-      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] {statResource.getResourceType().getStatisticsType().getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET-1)}));
+      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] { statResource.getResourceType().getStatisticsType().getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET - 1) }));
     }
     if (statResource.getStatistics().isClosed()) {
       return;
@@ -301,12 +299,12 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_NEW_RESOURCE_INSTANCE_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
     }
   }
-  
+
   public void destroyedResourceInstance(ResourceInstance resourceInstance) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
       logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#destroyedResourceInstance resourceInstance={}", resourceInstance);
     }
-    if (!this.addedResources.contains(resourceInstance)) {    // Fix for bug #45377
+    if (!this.addedResources.contains(resourceInstance)) { // Fix for bug #45377
       return;
     }
 
@@ -324,7 +322,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_DELETE_RESOURCE_INSTANCE_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
     }
   }
-  
+
   static long calcDelta(long previousMillis, long currentMillis) {
     long delta = currentMillis - previousMillis;
     if (delta <= 0) {
@@ -332,27 +330,27 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
     return delta;
   }
-  
+
   private void writeTimeStamp(long nanosTimeStamp) throws IOException {
     final long millisTimeStamp = NanoTimer.nanosToMillis(nanosTimeStamp);
     final long delta = calcDelta(this.previousMillisTimeStamp, millisTimeStamp);
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeTimeStamp millisTimeStamp={}, delta={}", millisTimeStamp, (int)delta);
+      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeTimeStamp millisTimeStamp={}, delta={}", millisTimeStamp, (int) delta);
     }
     if (delta > MAX_SHORT_TIMESTAMP) {
       if (delta > Integer.MAX_VALUE) {
-        throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_TIMESTAMP_DELTA_0_WAS_GREATER_THAN_1.toLocalizedString(new Object[] {Long.valueOf(delta), Integer.valueOf(Integer.MAX_VALUE)}));
+        throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_TIMESTAMP_DELTA_0_WAS_GREATER_THAN_1.toLocalizedString(new Object[] { Long.valueOf(delta), Integer.valueOf(Integer.MAX_VALUE) }));
       }
       this.dataOut.writeShort(INT_TIMESTAMP_TOKEN);
-      this.dataOut.writeInt((int)delta);
+      this.dataOut.writeInt((int) delta);
       if (this.trace) {
         this.traceDataOut.println("writeTimeStamp#writeShort INT_TIMESTAMP_TOKEN: " + INT_TIMESTAMP_TOKEN);
-        this.traceDataOut.println("writeTimeStamp#writeInt (int)delta: " + (int)delta);
+        this.traceDataOut.println("writeTimeStamp#writeInt (int)delta: " + (int) delta);
       }
     } else {
-      this.dataOut.writeShort((int)delta);
+      this.dataOut.writeShort((int) delta);
       if (this.trace) {
-        this.traceDataOut.println("writeTimeStamp#writeShort (int)delta: " + (int)delta);
+        this.traceDataOut.println("writeTimeStamp#writeShort (int)delta: " + (int) delta);
       }
     }
     this.previousMillisTimeStamp = millisTimeStamp;
@@ -424,11 +422,11 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
     this.sampleCount++; // only inc after sample done w/o an exception thrown
   }
-  
+
   public int getSampleCount() {
     return this.sampleCount;
   }
-  
+
   private void writeSample(ResourceInstance ri) throws IOException {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
@@ -446,26 +444,25 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
     boolean wroteInstId = false;
     boolean checkForChange = true;
-    
+
     if (!this.sampleWrittenForResources.contains(ri)) {
       // first time for this instance so all values need to be written
       checkForChange = false;
       this.sampleWrittenForResources.add(ri);
     }
-    
+
     long[] previousStatValues = ri.getPreviousStatValues();
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeSample checkForChange={}, previousStatValues={}, stats.length={}",
-          checkForChange, Arrays.toString(previousStatValues), stats.length);
+      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeSample checkForChange={}, previousStatValues={}, stats.length={}", checkForChange, Arrays.toString(previousStatValues), stats.length);
     }
     if (previousStatValues == null) {
       previousStatValues = new long[stats.length];
       ri.setPreviousStatValues(previousStatValues);
     }
-    
+
     int statsWritten = 0;
     try {
-      for (int i=0; i < stats.length; i++) {
+      for (int i = 0; i < stats.length; i++) {
         long value = ri.getLatestStatValues()[i];
         if (!checkForChange || value != previousStatValues[i]) {
           long delta = checkForChange ? value - previousStatValues[i] : value;
@@ -482,8 +479,8 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
           }
           writeStatValue(stats[i], delta, this.dataOut);
           if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(ri.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(ri.getResourceType().getStatisticsType().getName()))) {
-            byte typeCode = ((StatisticDescriptorImpl)stats[i]).getTypeCode();
-            switch(typeCode) {
+            byte typeCode = ((StatisticDescriptorImpl) stats[i]).getTypeCode();
+            switch (typeCode) {
             case BYTE_CODE:
               this.traceDataOut.println("writeStatValue#writeByte " + typeCodeToString(typeCode) + " delta: " + delta);
               break;
@@ -504,13 +501,10 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     } catch (IllegalStateException closedEx) {
       // resource was closed causing getStatValue to throw this exception
     }
-    
+
     if (wroteInstId) {
       this.dataOut.writeByte(ILLEGAL_STAT_OFFSET);
-      if (this.trace && (traceStatisticsName == null
-          || traceStatisticsName.equals(ri.getStatistics().getTextId()))
-          && (traceStatisticsTypeName == null
-          || traceStatisticsTypeName.equals(ri.getResourceType().getStatisticsType().getName()))) {
+      if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(ri.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(ri.getResourceType().getStatisticsType().getName()))) {
         this.traceDataOut.println("writeSample#writeByte ILLEGAL_STAT_OFFSET: " + ILLEGAL_STAT_OFFSET);
       }
     }
@@ -518,27 +512,27 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeSample statsWritten={}", statsWritten);
     }
   }
-  
+
   public static void writeCompactValue(long v, DataOutput dataOut) throws IOException {
     if (v <= MAX_1BYTE_COMPACT_VALUE && v >= MIN_1BYTE_COMPACT_VALUE) {
-      dataOut.writeByte((int)v);
+      dataOut.writeByte((int) v);
     } else if (v <= MAX_2BYTE_COMPACT_VALUE && v >= MIN_2BYTE_COMPACT_VALUE) {
       dataOut.writeByte(COMPACT_VALUE_2_TOKEN);
-      dataOut.writeShort((int)v);
+      dataOut.writeShort((int) v);
     } else {
       byte[] buffer = new byte[8];
       int idx = 0;
       long originalValue = v;
       if (v < 0) {
         while (v != -1 && v != 0) {
-          buffer[idx++] = (byte)(v & 0xFF);
+          buffer[idx++] = (byte) (v & 0xFF);
           v >>= 8;
         }
         // On windows v goes to zero somtimes; seems like a bug
         if (v == 0) {
           // when this happens we end up with a bunch of -1 bytes
           // so strip off the high order ones
-          while (buffer[idx-1] == -1) {
+          while (buffer[idx - 1] == -1) {
             idx--;
           }
           //               System.out.print("DEBUG: originalValue=" + originalValue);
@@ -547,7 +541,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
           //               }
           //               System.out.println();
         }
-        if ((buffer[idx-1] & 0x80) == 0) {
+        if ((buffer[idx - 1] & 0x80) == 0) {
           /* If the most significant byte does not have its high order bit set
            * then add a -1 byte so we know this is a negative number
            */
@@ -555,10 +549,10 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         }
       } else {
         while (v != 0) {
-          buffer[idx++] = (byte)(v & 0xFF);
+          buffer[idx++] = (byte) (v & 0xFF);
           v >>= 8;
         }
-        if ((buffer[idx-1] & 0x80) != 0) {
+        if ((buffer[idx - 1] & 0x80) != 0) {
           /* If the most significant byte has its high order bit set
            * then add a zero byte so we know this is a positive number
            */
@@ -566,11 +560,11 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         }
       }
       if (idx <= 2) {
-        throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_EXPECTED_IDX_TO_BE_GREATER_THAN_2_IT_WAS_0_FOR_THE_VALUE_1.toLocalizedString(new Object[] {Integer.valueOf(idx), Long.valueOf(originalValue)}));
+        throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_EXPECTED_IDX_TO_BE_GREATER_THAN_2_IT_WAS_0_FOR_THE_VALUE_1.toLocalizedString(new Object[] { Integer.valueOf(idx), Long.valueOf(originalValue) }));
       }
       int token = COMPACT_VALUE_2_TOKEN + (idx - 2);
       dataOut.writeByte(token);
-      for (int i=idx-1; i >= 0; i--) {
+      for (int i = idx - 1; i >= 0; i--) {
         dataOut.writeByte(buffer[i]);
       }
     }
@@ -589,7 +583,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
           System.out.print("compactValue(short)=" + v);
         }
       } else {
-        int bytesToRead = ((byte)v - COMPACT_VALUE_2_TOKEN) + 2;
+        int bytesToRead = ((byte) v - COMPACT_VALUE_2_TOKEN) + 2;
         v = dataIn.readByte(); // note the first byte will be a signed byte.
         if (dump) {
           System.out.print("compactValue(" + bytesToRead + ")=" + v);
@@ -606,17 +600,17 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
   }
 
   protected static void writeStatValue(StatisticDescriptor f, long v, DataOutput dataOut) throws IOException {
-    byte typeCode = ((StatisticDescriptorImpl)f).getTypeCode();
+    byte typeCode = ((StatisticDescriptorImpl) f).getTypeCode();
     writeStatValue(typeCode, v, dataOut);
   }
 
   public static void writeStatValue(byte typeCode, long v, DataOutput dataOut) throws IOException {
-    switch(typeCode) {
+    switch (typeCode) {
     case BYTE_CODE:
-      dataOut.writeByte((int)v);
+      dataOut.writeByte((int) v);
       break;
     case SHORT_CODE:
-      dataOut.writeShort((int)v);
+      dataOut.writeShort((int) v);
       break;
     case INT_CODE:
     case FLOAT_CODE:
@@ -628,21 +622,21 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_UNEXPECTED_TYPE_CODE_0.toLocalizedString(Byte.valueOf(typeCode)));
     }
   }
-    
+
   protected static void setTraceFilter(String traceStatisticsName, String traceStatisticsTypeName) {
     StatArchiveWriter.traceStatisticsName = traceStatisticsName;
     StatArchiveWriter.traceStatisticsTypeName = traceStatisticsTypeName;
     StatArchiveWriter.traceResourceInstId = -1;
   }
-  
+
   protected static void clearTraceFilter() {
     StatArchiveWriter.traceStatisticsName = null;
     StatArchiveWriter.traceStatisticsTypeName = null;
     StatArchiveWriter.traceResourceInstId = -1;
   }
-  
+
   private static String typeCodeToString(byte typeCode) {
-    switch(typeCode) {
+    switch (typeCode) {
     case BYTE_CODE:
       return "BYTE_CODE";
     case SHORT_CODE:
@@ -659,7 +653,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       return "unknown typeCode " + typeCode;
     }
   }
-    
+
   private static class MyDataOutputStream implements DataOutput {
     private long bytesWritten = 0;
     private final DataOutputStream dataOut;
@@ -667,39 +661,48 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     public MyDataOutputStream(OutputStream out) {
       this.dataOut = new DataOutputStream(out);
     }
-    
+
     public final long getBytesWritten() {
       return this.bytesWritten;
     }
+
     public final void flush() throws IOException {
       this.dataOut.flush();
     }
+
     @SuppressWarnings("unused")
     public final void close() throws IOException {
       this.dataOut.close();
     }
-    
+
     public final void write(int b) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
+
     public final void write(byte[] b, int off, int len) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
+
     public final void write(byte[] b) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
+
     public final void writeBytes(String v) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
+
     public final void writeChar(int v) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
+
     public final void writeChars(String v) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
+
     public final void writeDouble(double v) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
+
     public final void writeFloat(float v) throws IOException {
       throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
@@ -708,22 +711,27 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       this.dataOut.writeBoolean(v);
       this.bytesWritten += 1;
     }
+
     public final void writeByte(int v) throws IOException {
       this.dataOut.writeByte(v);
       this.bytesWritten += 1;
     }
+
     public final void writeShort(int v) throws IOException {
       this.dataOut.writeShort(v);
       this.bytesWritten += 2;
     }
+
     public final void writeInt(int v) throws IOException {
       this.dataOut.writeInt(v);
       this.bytesWritten += 4;
     }
+
     public final void writeLong(long v) throws IOException {
       this.dataOut.writeLong(v);
       this.bytesWritten += 8;
     }
+
     public final void writeUTF(String v) throws IOException {
       this.dataOut.writeUTF(v);
       this.bytesWritten += v.length() + 2; // this is the minimum. The max is v.size()*3 +2

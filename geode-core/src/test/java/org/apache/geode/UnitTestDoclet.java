@@ -55,8 +55,7 @@ public class UnitTestDoclet {
     }
   }
 
-  public static boolean validOptions(String[][] options,
-                                     DocErrorReporter reporter) {
+  public static boolean validOptions(String[][] options, DocErrorReporter reporter) {
     boolean sawOutput = false;
 
     for (int i = 0; i < options.length; i++) {
@@ -65,8 +64,7 @@ public class UnitTestDoclet {
       if (option[0].equals("-output")) {
         File output = new File(option[1]);
         if (output.exists() && output.isDirectory()) {
-          reporter.printError("Output file " + output +
-                              " is a directory");
+          reporter.printError("Output file " + output + " is a directory");
           return false;
 
         } else {
@@ -88,7 +86,7 @@ public class UnitTestDoclet {
    */
   public static boolean start(RootDoc root) {
     String[][] options = root.options();
-    
+
     File outputFile = null;
     for (int i = 0; i < options.length; i++) {
       String[] option = options[i];
@@ -106,20 +104,19 @@ public class UnitTestDoclet {
     }
 
     try {
-      PrintWriter pw =
-        new PrintWriter(new FileWriter(outputFile));
+      PrintWriter pw = new PrintWriter(new FileWriter(outputFile));
       Formatter.center("GemFire Unit Test Summary", pw);
       Formatter.center(new Date().toString(), pw);
       pw.println("");
 
       ClassDoc[] classes = root.classes();
       Arrays.sort(classes, new Comparator() {
-          public int compare(Object o1, Object o2) {
-            ClassDoc c1 = (ClassDoc) o1;
-            ClassDoc c2 = (ClassDoc) o2;
-            return c1.qualifiedName().compareTo(c2.qualifiedName());
-          }
-        });
+        public int compare(Object o1, Object o2) {
+          ClassDoc c1 = (ClassDoc) o1;
+          ClassDoc c2 = (ClassDoc) o2;
+          return c1.qualifiedName().compareTo(c2.qualifiedName());
+        }
+      });
       for (int i = 0; i < classes.length; i++) {
         ClassDoc c = classes[i];
         if (!c.isAbstract() && isUnitTest(c)) {
@@ -159,8 +156,7 @@ public class UnitTestDoclet {
   /**
    * Summarizes the test methods of the given class
    */
-  public static void document(ClassDoc c, PrintWriter pw) 
-    throws IOException {
+  public static void document(ClassDoc c, PrintWriter pw) throws IOException {
 
     pw.println(c.qualifiedName());
 
@@ -178,7 +174,7 @@ public class UnitTestDoclet {
       MethodDoc method = methods[i];
       pw.print("  ");
       pw.println(method.name());
-      
+
       String comment = method.commentText();
       if (comment != null && !comment.equals("")) {
         pw.println("");
@@ -200,8 +196,7 @@ public class UnitTestDoclet {
       MethodDoc[] methods = c.methods();
       for (int i = 0; i < methods.length; i++) {
         MethodDoc method = methods[i];
-        if (method.isPublic() && method.parameters().length == 0 &&
-            method.name().startsWith("test")) {
+        if (method.isPublic() && method.parameters().length == 0 && method.name().startsWith("test")) {
           set.add(method);
         }
       }
@@ -215,8 +210,7 @@ public class UnitTestDoclet {
   /**
    * Indents a block of text a given amount.
    */
-  private static void indent(String text, final int indent,
-                             PrintWriter pw) {
+  private static void indent(String text, final int indent, PrintWriter pw) {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < indent; i++) {
       sb.append(" ");
@@ -231,8 +225,7 @@ public class UnitTestDoclet {
     BreakIterator boundary = BreakIterator.getWordInstance();
     boundary.setText(text);
     int start = boundary.first();
-    for (int end = boundary.next(); end != BreakIterator.DONE; 
-         start = end, end = boundary.next()) {
+    for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
 
       String word = text.substring(start, end);
 
@@ -246,8 +239,7 @@ public class UnitTestDoclet {
       if (word.charAt(word.length() - 1) == '\n') {
         pw.write(word, 0, word.length() - 1);
 
-      } else if (firstWord &&
-                 Character.isWhitespace(word.charAt(0))) {
+      } else if (firstWord && Character.isWhitespace(word.charAt(0))) {
         pw.write(word, 1, word.length() - 1);
 
       } else {

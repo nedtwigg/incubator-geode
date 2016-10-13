@@ -23,13 +23,12 @@ package org.apache.geode.internal.util;
  * 
  * @since GemFire 5.0
  */
-public interface Versionable
-{
+public interface Versionable {
 
   public abstract Comparable getVersion();
 
   public abstract boolean isNewerThan(Versionable other);
-  
+
   public abstract boolean isSame(Versionable other);
 
   public abstract boolean isOlderThan(Versionable other);

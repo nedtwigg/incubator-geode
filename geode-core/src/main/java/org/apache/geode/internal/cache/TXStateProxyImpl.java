@@ -56,9 +56,9 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 public class TXStateProxyImpl implements TXStateProxy {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   protected static final AtomicBoolean txDistributedClientWarningIssued = new AtomicBoolean();
-  
+
   private boolean isJTA;
   private TXId txId;
   final protected TXManagerImpl txMgr;
@@ -76,21 +76,21 @@ public class TXStateProxyImpl implements TXStateProxy {
 
   /** number of operations in this transaction */
   private int operationCount = 0;
-  
+
   /**
    * tracks bucketIds of transactional operations so as to distinguish between
    * TransactionDataNotColocated and TransactionDataRebalanced exceptions.
    */
   private Map<Integer, Boolean> buckets = new HashMap<Integer, Boolean>();
-  
+
   public void setSynchronizationRunnable(TXSynchronizationRunnable synch) {
     this.synchRunnable = synch;
   }
-  
+
   public TXSynchronizationRunnable getSynchronizationRunnable() {
     return this.synchRunnable;
   }
-  
+
   /*
    * (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#getSemaphore()
@@ -98,8 +98,7 @@ public class TXStateProxyImpl implements TXStateProxy {
   public ReentrantLock getLock() {
     return this.lock;
   }
-  
-  
+
   /**
    * @return the isJTA
    */
@@ -135,11 +134,11 @@ public class TXStateProxyImpl implements TXStateProxy {
    */
   public TXStateInterface getRealDeal(KeyInfo key, LocalRegion r) {
     if (this.realDeal == null) {
-      if (r == null) {  // TODO: stop gap to get tests working
-        this.realDeal = new TXState(this,false);
+      if (r == null) { // TODO: stop gap to get tests working
+        this.realDeal = new TXState(this, false);
       } else {
         // Code to keep going forward
-        if(r.hasServerProxy()) {
+        if (r.hasServerProxy()) {
           this.realDeal = new ClientTXStateStub(this, target, r);
           if (r.scope.isDistributed()) {
             if (txDistributedClientWarningIssued.compareAndSet(false, true)) {
@@ -151,10 +150,10 @@ public class TXStateProxyImpl implements TXStateProxy {
           // wait for the region to be initialized fixes bug 44652
           r.waitOnInitialization(r.initializationLatchBeforeGetInitialImage);
           target = r.getOwnerForKey(key);
-          if (target==null || target.equals(this.txMgr.getDM().getId())) {
-            this.realDeal = new TXState(this,false);   
+          if (target == null || target.equals(this.txMgr.getDM().getId())) {
+            this.realDeal = new TXState(this, false);
           } else {
-             this.realDeal = new PeerTXStateStub(this, target,onBehalfOfClientMember);
+            this.realDeal = new PeerTXStateStub(this, target, onBehalfOfClientMember);
           }
         }
       }
@@ -162,9 +161,9 @@ public class TXStateProxyImpl implements TXStateProxy {
         logger.debug("Built a new TXState: {} me:{}", this.realDeal, this.txMgr.getDM().getId());
       }
     }
-    return this.realDeal;   
+    return this.realDeal;
   }
-  
+
   public TXStateInterface getRealDeal(DistributedMember t) {
     assert t != null;
     if (this.realDeal == null) {
@@ -176,7 +175,7 @@ public class TXStateProxyImpl implements TXStateProxy {
          * txtodo: // what to do!!
          * We don't know if this is client or server!!!
          */
-        this.realDeal = new PeerTXStateStub(this, target,onBehalfOfClientMember);
+        this.realDeal = new PeerTXStateStub(this, target, onBehalfOfClientMember);
       }
       if (logger.isDebugEnabled()) {
         logger.debug("Built a new TXState: {} me:{}", this.realDeal, this.txMgr.getDM().getId());
@@ -189,7 +188,7 @@ public class TXStateProxyImpl implements TXStateProxy {
    * @param managerImpl
    * @param id
    */
-  public TXStateProxyImpl(TXManagerImpl managerImpl, TXId id,InternalDistributedMember clientMember) {
+  public TXStateProxyImpl(TXManagerImpl managerImpl, TXId id, InternalDistributedMember clientMember) {
     this.txMgr = managerImpl;
     this.txId = id;
     this.isJTA = false;
@@ -206,7 +205,7 @@ public class TXStateProxyImpl implements TXStateProxy {
     this.txId = id;
     this.isJTA = isjta;
   }
-  
+
   protected void setTXIDForReplay(TXId id) {
     this.txId = id;
   }
@@ -214,11 +213,11 @@ public class TXStateProxyImpl implements TXStateProxy {
   public boolean isOnBehalfOfClient() {
     return this.onBehalfOfClientMember != null;
   }
-  
+
   public void setIsJTA(boolean isJTA) {
     this.isJTA = isJTA;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#checkJTA(java.lang.String)
    */
@@ -232,13 +231,10 @@ public class TXStateProxyImpl implements TXStateProxy {
   }
 
   @Override
-  public void precommit() throws CommitConflictException,
-      UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(
-        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION
-            .toLocalizedString("precommit"));
+  public void precommit() throws CommitConflictException, UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("precommit"));
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#commit()
    */
@@ -260,22 +256,20 @@ public class TXStateProxyImpl implements TXStateProxy {
 
   private TransactionException getTransactionException(KeyInfo keyInfo, GemFireException e) {
     if (isRealDealLocal() && !buckets.isEmpty() && !buckets.containsKey(keyInfo.getBucketId())) {
-      TransactionException ex = new TransactionDataNotColocatedException(LocalizedStrings.
-          PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(keyInfo.getKey()));
+      TransactionException ex = new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(keyInfo.getKey()));
       ex.initCause(e.getCause());
       return ex;
     }
     Throwable ex = e;
     while (ex != null) {
       if (ex instanceof PrimaryBucketException) {
-        return new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING
-            .toLocalizedString());
+        return new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING.toLocalizedString());
       }
       ex = ex.getCause();
     }
     return (TransactionException) e;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#containsValueForKey(java.lang.Object, org.apache.geode.internal.cache.LocalRegion)
    */
@@ -305,8 +299,7 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#destroyExistingEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, java.lang.Object)
    */
-  public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite,
-      Object expectedOldValue) throws EntryNotFoundException {
+  public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws EntryNotFoundException {
     try {
       this.operationCount++;
       getRealDeal(event.getKeyInfo(), event.getLocalRegion()).destroyExistingEntry(event, cacheWrite, expectedOldValue);
@@ -341,16 +334,8 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#getDeserializedValue(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public Object getDeserializedValue(KeyInfo keyInfo,
-                                     LocalRegion localRegion,
-                                     boolean updateStats,
-                                     boolean disableCopyOnRead,
-                                     boolean preferCD,
-                                     EntryEventImpl clientEvent,
-                                     boolean returnTombstones,
-                                     boolean retainResult) {
-    Object val = getRealDeal(keyInfo, localRegion).getDeserializedValue(keyInfo, localRegion, updateStats, disableCopyOnRead, preferCD, null, false,
-      retainResult);
+  public Object getDeserializedValue(KeyInfo keyInfo, LocalRegion localRegion, boolean updateStats, boolean disableCopyOnRead, boolean preferCD, EntryEventImpl clientEvent, boolean returnTombstones, boolean retainResult) {
+    Object val = getRealDeal(keyInfo, localRegion).getDeserializedValue(keyInfo, localRegion, updateStats, disableCopyOnRead, preferCD, null, false, retainResult);
     if (val != null) {
       // fixes bug 51057: TXStateStub  on client always returns null, so do not increment
       // the operation count it will be incremented in findObject()
@@ -407,8 +392,7 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#invalidateExistingEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean)
    */
-  public void invalidateExistingEntry(EntryEventImpl event,
-      boolean invokeCallbacks, boolean forceNewEntry) {
+  public void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
     try {
       this.operationCount++;
       getRealDeal(event.getKeyInfo(), event.getLocalRegion()).invalidateExistingEntry(event, invokeCallbacks, forceNewEntry);
@@ -479,11 +463,10 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#txPutEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean, boolean)
    */
-  public boolean txPutEntry(EntryEventImpl event, boolean ifNew,
-      boolean requireOldValue, boolean checkResources, Object expectedOldValue) {
+  public boolean txPutEntry(EntryEventImpl event, boolean ifNew, boolean requireOldValue, boolean checkResources, Object expectedOldValue) {
     try {
       this.operationCount++;
-      boolean retVal = getRealDeal(event.getKeyInfo(), (LocalRegion)event.getRegion()).txPutEntry(event, ifNew, requireOldValue, checkResources, expectedOldValue);
+      boolean retVal = getRealDeal(event.getKeyInfo(), (LocalRegion) event.getRegion()).txPutEntry(event, ifNew, requireOldValue, checkResources, expectedOldValue);
       trackBucketForTx(event.getKeyInfo());
       return retVal;
     } catch (TransactionDataRebalancedException | PrimaryBucketException re) {
@@ -494,12 +477,10 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#txReadEntry(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public TXEntryState txReadEntry(KeyInfo keyInfo, LocalRegion localRegion,
-      boolean rememberRead,boolean createTxEntryIfAbsent) {
+  public TXEntryState txReadEntry(KeyInfo keyInfo, LocalRegion localRegion, boolean rememberRead, boolean createTxEntryIfAbsent) {
     try {
       this.operationCount++;
-      TXEntryState retVal = getRealDeal(keyInfo, localRegion).txReadEntry(keyInfo, localRegion, 
-          rememberRead,createTxEntryIfAbsent);
+      TXEntryState retVal = getRealDeal(keyInfo, localRegion).txReadEntry(keyInfo, localRegion, rememberRead, createTxEntryIfAbsent);
       trackBucketForTx(keyInfo);
       return retVal;
     } catch (TransactionDataRebalancedException | PrimaryBucketException re) {
@@ -531,9 +512,9 @@ public class TXStateProxyImpl implements TXStateProxy {
   }
 
   private void assertBootstrapped() {
-    assert realDeal!=null;
+    assert realDeal != null;
   }
-  
+
   /* (non-Javadoc)
    * @see javax.transaction.Synchronization#afterCompletion(int)
    */
@@ -554,7 +535,7 @@ public class TXStateProxyImpl implements TXStateProxy {
    */
   public void beforeCompletion() {
     assertBootstrapped();
-    getRealDeal(null, null).beforeCompletion();    
+    getRealDeal(null, null).beforeCompletion();
   }
 
   /* (non-Javadoc)
@@ -574,14 +555,14 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#entryCount(org.apache.geode.internal.cache.LocalRegion)
    */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="UL_UNRELEASED_LOCK", justification="This method unlocks and then conditionally undoes the unlock in the finally-block. Review again at later time.") 
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK", justification = "This method unlocks and then conditionally undoes the unlock in the finally-block. Review again at later time.")
   public int entryCount(LocalRegion localRegion) {
     // if size is the first operation in the transaction, then reset the txState
     boolean resetTXState = this.realDeal == null;
     TXStateProxy txp = null;
     boolean txUnlocked = false;
     if (resetTXState) {
-    	txp = getTxMgr().internalSuspend();
+      txp = getTxMgr().internalSuspend();
     } else {
       if (getLock().isHeldByCurrentThread()) {
         txUnlocked = true; // bug #42945 - hang trying to compute size for PR
@@ -589,8 +570,8 @@ public class TXStateProxyImpl implements TXStateProxy {
       }
     }
     try {
-      if(resetTXState) {
-    	return localRegion.getSharedDataView().entryCount(localRegion);
+      if (resetTXState) {
+        return localRegion.getSharedDataView().entryCount(localRegion);
       }
       return getRealDeal(null, localRegion).entryCount(localRegion);
     } finally {
@@ -605,14 +586,10 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#findObject(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, java.lang.Object, boolean, boolean, java.lang.Object)
    */
-  public Object findObject(KeyInfo key, LocalRegion r, boolean isCreate,
-                           boolean generateCallbacks, Object value, boolean disableCopyOnRead,
-                           boolean preferCD, ClientProxyMembershipID requestingClient,
-                           EntryEventImpl clientEvent, boolean returnTombstones) {
+  public Object findObject(KeyInfo key, LocalRegion r, boolean isCreate, boolean generateCallbacks, Object value, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) {
     try {
       this.operationCount++;
-      Object retVal = getRealDeal(key, r).findObject(key, r, isCreate, generateCallbacks,
-          value, disableCopyOnRead, preferCD, requestingClient, clientEvent, false);
+      Object retVal = getRealDeal(key, r).findObject(key, r, isCreate, generateCallbacks, value, disableCopyOnRead, preferCD, requestingClient, clientEvent, false);
       trackBucketForTx(key);
       return retVal;
     } catch (TransactionDataRebalancedException | PrimaryBucketException re) {
@@ -633,12 +610,11 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getEntryForIterator(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, boolean)
    */
-  public Object getEntryForIterator(KeyInfo key, LocalRegion currRgn,
-      boolean rememberReads, boolean allowTombstones) {
+  public Object getEntryForIterator(KeyInfo key, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
     boolean resetTxState = this.realDeal == null;
     TXStateProxy txp = null;
-    if(resetTxState) {
-    	txp = getTxMgr().internalSuspend();
+    if (resetTxState) {
+      txp = getTxMgr().internalSuspend();
     }
     try {
       if (resetTxState) {
@@ -650,18 +626,17 @@ public class TXStateProxyImpl implements TXStateProxy {
         getTxMgr().resume(txp);
       }
     }
-    
+
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getKeyForIterator(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public Object getKeyForIterator(KeyInfo keyInfo, LocalRegion currRgn,
-      boolean rememberReads, boolean allowTombstones) {
+  public Object getKeyForIterator(KeyInfo keyInfo, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
     boolean resetTxState = this.realDeal == null;
     TXStateProxy txp = null;
-    if(resetTxState) {
-        txp = getTxMgr().internalSuspend();
+    if (resetTxState) {
+      txp = getTxMgr().internalSuspend();
     }
     try {
       if (resetTxState) {
@@ -678,8 +653,7 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getValueInVM(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public Object getValueInVM(KeyInfo keyInfo, LocalRegion localRegion,
-      boolean rememberRead) {
+  public Object getValueInVM(KeyInfo keyInfo, LocalRegion localRegion, boolean rememberRead) {
     this.operationCount++;
     return getRealDeal(keyInfo, localRegion).getValueInVM(keyInfo, localRegion, rememberRead);
   }
@@ -695,13 +669,10 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#putEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean, java.lang.Object, boolean, long, boolean)
    */
-  public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld,
-      Object expectedOldValue, boolean requireOldValue, long lastModified,
-      boolean overwriteDestroyed) {
+  public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) {
     try {
       this.operationCount++;
-      boolean retVal = getRealDeal(event.getKeyInfo(), event.getLocalRegion()).putEntry(event, ifNew,
-            ifOld, expectedOldValue, requireOldValue, lastModified, overwriteDestroyed);
+      boolean retVal = getRealDeal(event.getKeyInfo(), event.getLocalRegion()).putEntry(event, ifNew, ifOld, expectedOldValue, requireOldValue, lastModified, overwriteDestroyed);
       trackBucketForTx(event.getKeyInfo());
       return retVal;
     } catch (TransactionDataRebalancedException | PrimaryBucketException re) {
@@ -713,7 +684,7 @@ public class TXStateProxyImpl implements TXStateProxy {
    * @see org.apache.geode.internal.cache.TXStateInterface#isInProgressAndSameAs(org.apache.geode.internal.cache.TXStateInterface)
    */
   public boolean isInProgressAndSameAs(TXStateInterface otherState) {
-    return isInProgress() && otherState == this; 
+    return isInProgress() && otherState == this;
   }
 
   /* (non-Javadoc)
@@ -727,12 +698,7 @@ public class TXStateProxyImpl implements TXStateProxy {
    * (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getSerializedValue(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, java.lang.Object)
    */
-  public Object getSerializedValue(LocalRegion localRegion,
-                                   KeyInfo key,
-                                   boolean doNotLockEntry,
-                                   ClientProxyMembershipID requestingClient,
-                                   EntryEventImpl clientEvent,
-                                   boolean returnTombstones) throws DataLocationException {
+  public Object getSerializedValue(LocalRegion localRegion, KeyInfo key, boolean doNotLockEntry, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) throws DataLocationException {
     this.operationCount++;
     return getRealDeal(key, localRegion).getSerializedValue(localRegion, key, doNotLockEntry, requestingClient, clientEvent, returnTombstones);
   }
@@ -740,25 +706,21 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#putEntryOnRemote(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean, java.lang.Object, boolean, long, boolean)
    */
-  public boolean putEntryOnRemote(EntryEventImpl event, boolean ifNew,
-      boolean ifOld, Object expectedOldValue, boolean requireOldValue,
-      long lastModified, boolean overwriteDestroyed)
-      throws DataLocationException {
+  public boolean putEntryOnRemote(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) throws DataLocationException {
     this.operationCount++;
     TXStateInterface tx = getRealDeal(event.getKeyInfo(), event.getLocalRegion());
     assert (tx instanceof TXState) : tx.getClass().getSimpleName();
     return tx.putEntryOnRemote(event, ifNew, ifOld, expectedOldValue, requireOldValue, lastModified, overwriteDestroyed);
   }
-  
+
   public boolean isFireCallbacks() {
-    return getRealDeal(null,null).isFireCallbacks();
+    return getRealDeal(null, null).isFireCallbacks();
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#destroyOnRemote(java.lang.Integer, org.apache.geode.internal.cache.EntryEventImpl, java.lang.Object)
    */
-  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite,
-      Object expectedOldValue) throws DataLocationException {
+  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws DataLocationException {
     this.operationCount++;
     TXStateInterface tx = getRealDeal(event.getKeyInfo(), event.getLocalRegion());
     assert (tx instanceof TXState);
@@ -768,27 +730,23 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#invalidateOnRemote(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean)
    */
-  public void invalidateOnRemote(EntryEventImpl event, boolean invokeCallbacks,
-      boolean forceNewEntry) throws DataLocationException {
+  public void invalidateOnRemote(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) throws DataLocationException {
     this.operationCount++;
     TXStateInterface tx = getRealDeal(event.getKeyInfo(), event.getLocalRegion());
     assert (tx instanceof TXState);
     tx.invalidateOnRemote(event, invokeCallbacks, forceNewEntry);
   }
-  
-  public void checkSupportsRegionDestroy()
-    throws UnsupportedOperationInTransactionException {
+
+  public void checkSupportsRegionDestroy() throws UnsupportedOperationInTransactionException {
     throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXState_REGION_DESTROY_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
   }
-  
-  public void checkSupportsRegionInvalidate()
-    throws UnsupportedOperationInTransactionException {
+
+  public void checkSupportsRegionInvalidate() throws UnsupportedOperationInTransactionException {
     throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXState_REGION_INVALIDATE_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
   }
 
   @Override
-  public void checkSupportsRegionClear()
-      throws UnsupportedOperationInTransactionException {
+  public void checkSupportsRegionClear() throws UnsupportedOperationInTransactionException {
     throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXState_REGION_CLEAR_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
   }
 
@@ -799,12 +757,12 @@ public class TXStateProxyImpl implements TXStateProxy {
     //if this the first operation in a transaction, reset txState
     boolean resetTxState = this.realDeal == null;
     TXStateProxy txp = null;
-    if(resetTxState) {
-    	txp = getTxMgr().internalSuspend();
+    if (resetTxState) {
+      txp = getTxMgr().internalSuspend();
     }
     try {
-      if(resetTxState) {
-    	return localRegion.getSharedDataView().getBucketKeys(localRegion, bucketId, false);
+      if (resetTxState) {
+        return localRegion.getSharedDataView().getBucketKeys(localRegion, bucketId, false);
       }
       return getRealDeal(null, localRegion).getBucketKeys(localRegion, bucketId, false);
     } finally {
@@ -817,16 +775,15 @@ public class TXStateProxyImpl implements TXStateProxy {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getEntryOnRemote(java.lang.Object, org.apache.geode.internal.cache.LocalRegion)
    */
-  public Entry getEntryOnRemote(KeyInfo keyInfo, LocalRegion localRegion, boolean allowTombstones)
-      throws DataLocationException {
+  public Entry getEntryOnRemote(KeyInfo keyInfo, LocalRegion localRegion, boolean allowTombstones) throws DataLocationException {
     this.operationCount++;
     TXStateInterface tx = getRealDeal(keyInfo, localRegion);
     assert (tx instanceof TXState);
     return tx.getEntryOnRemote(keyInfo, localRegion, allowTombstones);
   }
-  
+
   public void forceLocalBootstrap() {
-    getRealDeal(null,null);
+    getRealDeal(null, null);
   }
 
   /* (non-Javadoc)
@@ -872,18 +829,17 @@ public class TXStateProxyImpl implements TXStateProxy {
   public boolean isRealDealLocal() {
     if (this.realDeal != null) {
       return this.realDeal.isRealDealLocal();
-    }
-    else {
+    } else {
       // no real deal
       return false;
     }
   }
-  
+
   /** if there is local txstate, return it */
   public TXState getLocalRealDeal() {
     if (this.realDeal != null) {
       if (this.realDeal.isRealDealLocal()) {
-        return (TXState)this.realDeal;
+        return (TXState) this.realDeal;
       }
     }
     return null;
@@ -892,79 +848,71 @@ public class TXStateProxyImpl implements TXStateProxy {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("TXStateProxyImpl@").append(System.identityHashCode(this))
-    .append(" txId:").append(this.txId)
-    .append(" realDeal:"+this.realDeal)
-    .append(" isJTA:").append(isJTA);
+    builder.append("TXStateProxyImpl@").append(System.identityHashCode(this)).append(" txId:").append(this.txId).append(" realDeal:" + this.realDeal).append(" isJTA:").append(isJTA);
     return builder.toString();
   }
 
   public InternalDistributedMember getOriginatingMember() {
-    if(this.realDeal==null) {
+    if (this.realDeal == null) {
       return null;
     } else {
       return this.realDeal.getOriginatingMember();
     }
   }
 
-
   public boolean isMemberIdForwardingRequired() {
-    if(this.realDeal==null) {
+    if (this.realDeal == null) {
       return false;
     } else {
       return this.realDeal.isMemberIdForwardingRequired();
     }
   }
 
-
   public TXCommitMessage getCommitMessage() {
-    if(this.realDeal==null) {
+    if (this.realDeal == null) {
       return null;
     } else {
       return this.realDeal.getCommitMessage();
     }
   }
-  
-  
-  public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts,LocalRegion region) {
-    if(putallOp.putAllData.length==0) {
+
+  public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region) {
+    if (putallOp.putAllData.length == 0) {
       return;
     }
     region.getCancelCriterion().checkCancelInProgress(null); // fix for bug #43651
     Object key = null;
-    if(putallOp.putAllData[0]!=null) {
+    if (putallOp.putAllData[0] != null) {
       key = putallOp.putAllData[0].key;
     }
-    KeyInfo ki = new KeyInfo(key,null,null);
-    TXStateInterface tsi = getRealDeal(ki,region);
+    KeyInfo ki = new KeyInfo(key, null, null);
+    TXStateInterface tsi = getRealDeal(ki, region);
     tsi.postPutAll(putallOp, successfulPuts, region);
   }
+
   @Override
   public void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
-    if(op.removeAllData.length==0) {
+    if (op.removeAllData.length == 0) {
       return;
     }
     region.getCancelCriterion().checkCancelInProgress(null); // fix for bug #43651
     Object key = null;
-    if(op.removeAllData[0]!=null) {
+    if (op.removeAllData[0] != null) {
       key = op.removeAllData[0].key;
     }
-    KeyInfo ki = new KeyInfo(key,null,null);
-    TXStateInterface tsi = getRealDeal(ki,region);
+    KeyInfo ki = new KeyInfo(key, null, null);
+    TXStateInterface tsi = getRealDeal(ki, region);
     tsi.postRemoveAll(op, successfulOps, region);
   }
 
-  public boolean isJCATransaction()
-  {
+  public boolean isJCATransaction() {
     return this.isJCATransaction;
   }
-    
- 
-    public void setJCATransaction()
-    {
-      this.isJCATransaction = true;
-    }
-  
+
+  public void setJCATransaction() {
+    this.isJCATransaction = true;
+  }
+
   public Entry accessEntry(KeyInfo keyInfo, LocalRegion region) {
     try {
       this.operationCount++;
@@ -987,11 +935,11 @@ public class TXStateProxyImpl implements TXStateProxy {
       getRealDeal(null, null).resume();
     }
   }
-  
+
   /** test hook - record a list of ops in the transaction */
   public void recordTXOperation(ServerRegionDataAccess region, ServerRegionOperation op, Object key, Object arguments[]) {
     if (ClientTXStateStub.transactionRecordingEnabled()) {
-      getRealDeal(null, (LocalRegion)region.getRegion()).recordTXOperation(region, op, key, arguments);
+      getRealDeal(null, (LocalRegion) region.getRegion()).recordTXOperation(region, op, key, arguments);
     }
   }
 
@@ -999,7 +947,7 @@ public class TXStateProxyImpl implements TXStateProxy {
   public int operationCount() {
     return this.operationCount;
   }
-  
+
   /**
    * increments the operation count by 1
    */
@@ -1008,38 +956,36 @@ public class TXStateProxyImpl implements TXStateProxy {
   }
 
   @Override
-  public void updateEntryVersion(EntryEventImpl event)
-      throws EntryNotFoundException {
+  public void updateEntryVersion(EntryEventImpl event) throws EntryNotFoundException {
     // Do nothing. Not applicable for transactions.    
   }
 
-  
   public void close() {
     if (this.realDeal != null) {
       this.realDeal.close();
     }
   }
-  
+
   @Override
   public boolean isTxState() {
     return false;
   }
-  
+
   @Override
   public boolean isTxStateStub() {
     return false;
   }
-  
+
   @Override
   public boolean isTxStateProxy() {
     return true;
   }
-  
+
   @Override
   public boolean isDistTx() {
     return false;
   }
-  
+
   @Override
   public boolean isCreatedOnDistTxCoordinator() {
     return false;
@@ -1048,9 +994,8 @@ public class TXStateProxyImpl implements TXStateProxy {
   @Override
   public void updateProxyServer(InternalDistributedMember proxy) {
     //only update in TXState if it has one
-    if (this.realDeal != null && this.realDeal.isRealDealLocal() 
-        && isOnBehalfOfClient()) {
-      ((TXState)this.realDeal).setProxyServer(proxy);
+    if (this.realDeal != null && this.realDeal.isRealDealLocal() && isOnBehalfOfClient()) {
+      ((TXState) this.realDeal).setProxyServer(proxy);
     }
   }
 }

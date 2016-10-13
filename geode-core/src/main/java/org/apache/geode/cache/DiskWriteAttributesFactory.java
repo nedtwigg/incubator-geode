@@ -29,8 +29,7 @@ import org.apache.geode.internal.cache.xmlcache.CacheXml;
  * @deprecated as of 6.5 use {@link DiskStoreFactory} instead
  */
 @Deprecated
-public final class DiskWriteAttributesFactory implements java.io.Serializable
-{
+public final class DiskWriteAttributesFactory implements java.io.Serializable {
   private static final long serialVersionUID = -4077746249663727235L;
 
   private final Properties props = new Properties();
@@ -68,18 +67,13 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    */
   public DiskWriteAttributesFactory(DiskWriteAttributes dwa) {
 
-    this.props.setProperty(CacheXml.BYTES_THRESHOLD,
-        String.valueOf(dwa.getBytesThreshold()));
+    this.props.setProperty(CacheXml.BYTES_THRESHOLD, String.valueOf(dwa.getBytesThreshold()));
     long maxOplogSizeInBytes = convertToBytes(dwa.getMaxOplogSize());
-    this.props.setProperty(CacheXml.MAX_OPLOG_SIZE,
-        String.valueOf(maxOplogSizeInBytes));
-    this.props.setProperty(CacheXml.ROLL_OPLOG,
-                           String.valueOf(dwa.isRollOplogs()));
-    this.props.setProperty(DiskWriteAttributesImpl.SYNCHRONOUS_PROPERTY, String
-        .valueOf(dwa.isSynchronous()));
+    this.props.setProperty(CacheXml.MAX_OPLOG_SIZE, String.valueOf(maxOplogSizeInBytes));
+    this.props.setProperty(CacheXml.ROLL_OPLOG, String.valueOf(dwa.isRollOplogs()));
+    this.props.setProperty(DiskWriteAttributesImpl.SYNCHRONOUS_PROPERTY, String.valueOf(dwa.isSynchronous()));
     if (dwa.getTimeInterval() > -1) {
-      this.props.setProperty(CacheXml.TIME_INTERVAL,
-          String.valueOf(dwa.getTimeInterval()));
+      this.props.setProperty(CacheXml.TIME_INTERVAL, String.valueOf(dwa.getTimeInterval()));
     }
 
   }
@@ -92,10 +86,8 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @deprecated as of 6.5 use {@link AttributesFactory#setDiskSynchronous} instead
    */
   @Deprecated
-  public void setSynchronous(boolean isSynchronous)
-  {
-    this.props.setProperty(DiskWriteAttributesImpl.SYNCHRONOUS_PROPERTY, String
-        .valueOf(isSynchronous));
+  public void setSynchronous(boolean isSynchronous) {
+    this.props.setProperty(DiskWriteAttributesImpl.SYNCHRONOUS_PROPERTY, String.valueOf(isSynchronous));
   }
 
   /**
@@ -106,8 +98,7 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @deprecated as of 6.5 use {@link DiskStoreFactory#setAutoCompact} instead
    */
   @Deprecated
-  public void setRollOplogs(boolean rollingEnabled)
-  {
+  public void setRollOplogs(boolean rollingEnabled) {
     this.props.setProperty(CacheXml.ROLL_OPLOG, String.valueOf(rollingEnabled));
   }
 
@@ -132,14 +123,13 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
   @Deprecated
   public void setCompactionThreshold(int compactionThreshold) {
     if (compactionThreshold < 0) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(new Object[] {CacheXml.COMPACTION_THRESHOLD, Integer.valueOf(compactionThreshold)}));
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(new Object[] { CacheXml.COMPACTION_THRESHOLD, Integer.valueOf(compactionThreshold) }));
     } else if (compactionThreshold > 100) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_LESS_THAN_2_BUT_WAS_1.toLocalizedString(new Object[] {CacheXml.COMPACTION_THRESHOLD, Integer.valueOf(compactionThreshold), Integer.valueOf(100)}));
+      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_LESS_THAN_2_BUT_WAS_1.toLocalizedString(new Object[] { CacheXml.COMPACTION_THRESHOLD, Integer.valueOf(compactionThreshold), Integer.valueOf(100) }));
     }
-    this.props.setProperty(CacheXml.COMPACTION_THRESHOLD,
-                           String.valueOf(compactionThreshold));
+    this.props.setProperty(CacheXml.COMPACTION_THRESHOLD, String.valueOf(compactionThreshold));
   }
-  
+
   /**
    * Sets the maximum oplog size in bytes. When the active oplog size hits
    * the maximum a new oplog will be created.
@@ -151,14 +141,12 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @deprecated as of 6.5 use {@link DiskStoreFactory#setMaxOplogSize} instead
    */
   @Deprecated
-  public void setMaxOplogSizeInBytes(long maxOplogSize)
-  {
-	
+  public void setMaxOplogSizeInBytes(long maxOplogSize) {
+
     if (maxOplogSize < 0) {
       throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesFactory_MAXIMUM_OPLOG_SIZE_SPECIFIED_HAS_TO_BE_A_NONNEGATIVE_NUMBER_AND_THE_VALUE_GIVEN_0_IS_NOT_ACCEPTABLE.toLocalizedString(Long.valueOf(maxOplogSize)));
     }
-    this.props.setProperty(CacheXml.MAX_OPLOG_SIZE,
-        String.valueOf(maxOplogSize));
+    this.props.setProperty(CacheXml.MAX_OPLOG_SIZE, String.valueOf(maxOplogSize));
   }
 
   /**
@@ -172,15 +160,13 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @deprecated as of 6.5 use {@link DiskStoreFactory#setMaxOplogSize} instead
    */
   @Deprecated
-  public void setMaxOplogSize(int maxOplogSize)
-  {
+  public void setMaxOplogSize(int maxOplogSize) {
 
     if (maxOplogSize < 0) {
       throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesFactory_MAXIMUM_OPLOG_SIZE_SPECIFIED_HAS_TO_BE_A_NONNEGATIVE_NUMBER_AND_THE_VALUE_GIVEN_0_IS_NOT_ACCEPTABLE.toLocalizedString(Integer.valueOf(maxOplogSize)));
     }
     long maxOplogSizeInBytes = convertToBytes(maxOplogSize);
-    this.props.setProperty(CacheXml.MAX_OPLOG_SIZE, String
-        .valueOf(maxOplogSizeInBytes));
+    this.props.setProperty(CacheXml.MAX_OPLOG_SIZE, String.valueOf(maxOplogSizeInBytes));
   }
 
   /**
@@ -191,13 +177,12 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @param megaBytes
    * @return the converted value
    */
-  private long convertToBytes(int megaBytes)
-  {
+  private long convertToBytes(int megaBytes) {
     long bytes = megaBytes;
     bytes = bytes * 1024 * 1024;
     return bytes;
   }
-  
+
   /**
    * Sets the number of milliseconds that can elapse before unwritten data is
    * written to disk. It has significance only in case of asynchronous mode of
@@ -210,14 +195,12 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @deprecated as of 6.5 use {@link DiskStoreFactory#setTimeInterval} instead
    */
   @Deprecated
-  public void setTimeInterval(long timeInterval)
-  {
+  public void setTimeInterval(long timeInterval) {
     if (timeInterval < 0) {
       throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesFactory_TIME_INTERVAL_SPECIFIED_HAS_TO_BE_A_NONNEGATIVE_NUMBER_AND_THE_VALUE_GIVEN_0_IS_NOT_ACCEPTABLE.toLocalizedString(Long.valueOf(timeInterval)));
     }
 
-    this.props.setProperty(CacheXml.TIME_INTERVAL,
-        String.valueOf(timeInterval));
+    this.props.setProperty(CacheXml.TIME_INTERVAL, String.valueOf(timeInterval));
   }
 
   /**
@@ -232,14 +215,12 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @deprecated as of 6.5 use {@link DiskStoreFactory#setQueueSize} instead
    */
   @Deprecated
-  public void setBytesThreshold(long bytesThreshold)
-  {
+  public void setBytesThreshold(long bytesThreshold) {
     if (bytesThreshold < 0) {
       throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesFactory_QUEUE_SIZE_SPECIFIED_HAS_TO_BE_A_NONNEGATIVE_NUMBER_AND_THE_VALUE_GIVEN_0_IS_NOT_ACCEPTABLE.toLocalizedString(Long.valueOf(bytesThreshold)));
     }
 
-    this.props.setProperty(CacheXml.BYTES_THRESHOLD,
-        String.valueOf(bytesThreshold));
+    this.props.setProperty(CacheXml.BYTES_THRESHOLD, String.valueOf(bytesThreshold));
   }
 
   /**
@@ -253,8 +234,7 @@ public final class DiskWriteAttributesFactory implements java.io.Serializable
    * @deprecated as of 6.5 use {@link DiskStoreFactory#create} instead
    */
   @Deprecated
-  public DiskWriteAttributes create()
-  {
+  public DiskWriteAttributes create() {
     return new DiskWriteAttributesImpl(this.props);
   }
 

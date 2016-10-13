@@ -44,7 +44,6 @@ public class DescribedExternalResource implements TestRule {
     };
   }
 
-
   /**
    * Override to set up your specific external resource.
    *

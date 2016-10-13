@@ -24,7 +24,7 @@ package org.apache.geode.cache.query.internal.index;
  * from clause. It identifies the match level & the maping of Iterators of the
  * Group to the index result fields.
  */
-public class IndexData  {
+public class IndexData {
 
   /**
    * Index assosciated with the condition

@@ -94,6 +94,6 @@ public interface ManagedEntityConfig extends Cloneable {
    * Returns a new <code>ManagedEntityConfig</code> with the same
    * configuration as this <code>ManagedEntityConfig</code>.
    */
-  public Object clone() throws CloneNotSupportedException; 
+  public Object clone() throws CloneNotSupportedException;
 
 }

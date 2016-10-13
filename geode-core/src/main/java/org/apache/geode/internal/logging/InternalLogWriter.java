@@ -90,45 +90,41 @@ public interface InternalLogWriter extends LogWriter, LogWriterI18n {
    */
   public final static int NONE_LEVEL = Integer.MAX_VALUE;
 
-  public static final String[] levelNames = new String[] {
-    "all", "finest", "finer", "fine", "config", "info", "warning", "error", "severe", "none"
-   };
+  public static final String[] levelNames = new String[] { "all", "finest", "finer", "fine", "config", "info", "warning", "error", "severe", "none" };
 
-   public static final int[] allLevels = new int[] {
-     ALL_LEVEL, FINEST_LEVEL, FINER_LEVEL, FINE_LEVEL, CONFIG_LEVEL, INFO_LEVEL, WARNING_LEVEL, ERROR_LEVEL, SEVERE_LEVEL, NONE_LEVEL
-   };
+  public static final int[] allLevels = new int[] { ALL_LEVEL, FINEST_LEVEL, FINER_LEVEL, FINE_LEVEL, CONFIG_LEVEL, INFO_LEVEL, WARNING_LEVEL, ERROR_LEVEL, SEVERE_LEVEL, NONE_LEVEL };
 
-   public int getLogWriterLevel();
-   
-   public void setLogWriterLevel(int LogWriterLevel);
-   
-   public boolean isSecure();
-   
-   public String getConnectionName();
-   
-   /**
-    * Logs a message and an exception of the given level.
-    * 
-    * @param msgLevel
-    *                the level code for the message to log
-    * @param msg
-    *                the actual message to log
-    * @param exception
-    *                the actual Exception to log
-    */
-   public void put(int msgLevel, String msg, Throwable exception);
-   
-   /**
-    * Logs a message and an exception of the given level.
-    * 
-    * @param msgLevel
-    *                the level code for the message to log
-    * @param msgId
-    *                A locale agnostic form of the message
-    * @param params
-    *                the Object arguments to plug into the message               
-    * @param exception
-    *                the actual Exception to log
-    */
-   public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception);
+  public int getLogWriterLevel();
+
+  public void setLogWriterLevel(int LogWriterLevel);
+
+  public boolean isSecure();
+
+  public String getConnectionName();
+
+  /**
+   * Logs a message and an exception of the given level.
+   * 
+   * @param msgLevel
+   *                the level code for the message to log
+   * @param msg
+   *                the actual message to log
+   * @param exception
+   *                the actual Exception to log
+   */
+  public void put(int msgLevel, String msg, Throwable exception);
+
+  /**
+   * Logs a message and an exception of the given level.
+   * 
+   * @param msgLevel
+   *                the level code for the message to log
+   * @param msgId
+   *                A locale agnostic form of the message
+   * @param params
+   *                the Object arguments to plug into the message               
+   * @param exception
+   *                the actual Exception to log
+   */
+  public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception);
 }

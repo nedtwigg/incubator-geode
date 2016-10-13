@@ -18,25 +18,23 @@ package org.apache.geode.internal.size;
 
 import java.lang.instrument.Instrumentation;
 
-
 public class InstrumentationSingleObjectSizer implements SingleObjectSizer {
-  
+
   private static Instrumentation instrumentation;
-  
+
   public static void premain(String agentArgs, Instrumentation instrumentation) {
     InstrumentationSingleObjectSizer.instrumentation = instrumentation;
   }
-  
+
   public InstrumentationSingleObjectSizer() {
-    if(instrumentation == null) {
+    if (instrumentation == null) {
       throw new RuntimeException("SizeOfUtil50 must be used as an instrumentation agent by specifying -javaagent:/path/to/sizeagent.jar to java on the command line");
     }
-    
+
   }
 
   public long sizeof(Object object) {
     return instrumentation.getObjectSize(object);
   }
-  
 
 }

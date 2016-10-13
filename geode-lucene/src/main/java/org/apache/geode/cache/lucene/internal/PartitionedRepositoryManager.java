@@ -36,15 +36,12 @@ public class PartitionedRepositoryManager extends AbstractPartitionedRepositoryM
 
   public static IndexRepositoryFactory indexRepositoryFactory = new IndexRepositoryFactory();
 
-  public PartitionedRepositoryManager(LuceneIndexImpl index,
-      LuceneSerializer serializer) {
+  public PartitionedRepositoryManager(LuceneIndexImpl index, LuceneSerializer serializer) {
     super(index, serializer);
   }
 
   @Override
-  public IndexRepository createOneIndexRepository(Integer bucketId,
-      LuceneSerializer serializer, LuceneIndexImpl index,
-      PartitionedRegion userRegion) throws IOException {
+  public IndexRepository createOneIndexRepository(Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
     return indexRepositoryFactory.createIndexRepository(bucketId, serializer, index, userRegion);
   }
 }

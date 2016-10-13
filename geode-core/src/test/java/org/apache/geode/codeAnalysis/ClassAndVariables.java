@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,17 +23,15 @@ import java.util.Map;
 import org.apache.geode.codeAnalysis.decode.CompiledClass;
 import org.apache.geode.codeAnalysis.decode.CompiledField;
 
-
-
 public class ClassAndVariables implements Comparable {
   public CompiledClass dclass;
   public boolean hasSerialVersionUID = false;
   public long serialVersionUID;
-  public Map<String,CompiledField> variables = new HashMap<String,CompiledField>();
-  
+  public Map<String, CompiledField> variables = new HashMap<String, CompiledField>();
+
   public ClassAndVariables(CompiledClass parsedClass) {
     this.dclass = parsedClass;
-    
+
     String name = dclass.fullyQualifiedName().replace('/', '.');
     try {
       Class realClass = Class.forName(name);
@@ -42,22 +41,22 @@ public class ClassAndVariables implements Comparable {
       hasSerialVersionUID = true;
     } catch (NoSuchFieldException e) {
       //No serialVersionUID defined
-      
-    } catch (Throwable e) {  
+
+    } catch (Throwable e) {
       System.out.println("Unable to load" + name + ":" + e);
     }
-    
+
   }
-  
+
   public int compareTo(Object other) {
-    if ( !(other instanceof ClassAndVariables) ) {
+    if (!(other instanceof ClassAndVariables)) {
       return -1;
     }
-    return dclass.compareTo(((ClassAndVariables)other).dclass);
+    return dclass.compareTo(((ClassAndVariables) other).dclass);
   }
-  
-  
-  @Override public String toString() {
+
+  @Override
+  public String toString() {
     return ClassAndVariableDetails.convertForStoring(this);
   }
 

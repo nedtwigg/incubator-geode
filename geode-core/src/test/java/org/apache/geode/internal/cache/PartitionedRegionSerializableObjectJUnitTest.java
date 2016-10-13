@@ -66,10 +66,8 @@ public class PartitionedRegionSerializableObjectJUnitTest {
   public void testOperationsWithSerializableObject() {
     int localMaxMemory = 50;
     Thread threadArr[] = new Thread[10];
-    root = PartitionedRegionTestHelper.createPartitionedRegion(regionName,
-        String.valueOf(localMaxMemory), 0);
-    System.out
-        .println("*******testOperationsWithSerializableObject started*********");
+    root = PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(localMaxMemory), 0);
+    System.out.println("*******testOperationsWithSerializableObject started*********");
     for (int i = 0; i < MAX_THREADS; i++) {
       putThread putObj = new putThread("PRSerializableObjectJUnitTest" + i);
       threadArr[i] = putObj;
@@ -86,13 +84,11 @@ public class PartitionedRegionSerializableObjectJUnitTest {
 
     try {
       Thread.sleep(100);
-    }
-    catch (InterruptedException e) {
-      root.getCache().getLogger().warning("Got Interrupted Exception in sleep.",e);
+    } catch (InterruptedException e) {
+      root.getCache().getLogger().warning("Got Interrupted Exception in sleep.", e);
       fail("interrupted");
     }
-    System.out
-        .println("********testOperationsWithSerializableObject complited successfully********");
+    System.out.println("********testOperationsWithSerializableObject complited successfully********");
   }
 
   /**
@@ -100,7 +96,7 @@ public class PartitionedRegionSerializableObjectJUnitTest {
    * Map and performs get operation with these objects as key and verifying
    * result with itself because key and values are same in the partition Region
    */
-  private  class getThread extends Thread {
+  private class getThread extends Thread {
 
     getThread(String threadName) {
       super(threadName);
@@ -108,11 +104,10 @@ public class PartitionedRegionSerializableObjectJUnitTest {
 
     @Override
     public void run() {
-      Region pr = PartitionedRegionTestHelper
-          .getExistingRegion(Region.SEPARATOR + regionName);
+      Region pr = PartitionedRegionTestHelper.getExistingRegion(Region.SEPARATOR + regionName);
       assertNotNull(pr);
       List list = new ArrayList();
-      list = (ArrayList)thread2List.get(this.getName());
+      list = (ArrayList) thread2List.get(this.getName());
 
       Iterator itr = list.iterator();
 
@@ -124,8 +119,7 @@ public class PartitionedRegionSerializableObjectJUnitTest {
           if (!listObj.equals(retObj)) {
             fail("PRSerializableObjectJUniTest:getThread() Object from the region is not equal to Object from the list");
           }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           fail("PRSerializableObjectJUniTest:getThread() failed ");
         }
       }
@@ -145,23 +139,18 @@ public class PartitionedRegionSerializableObjectJUnitTest {
 
     @Override
     public void run() {
-      Region pr = PartitionedRegionTestHelper
-          .getExistingRegion(Region.SEPARATOR + regionName);
+      Region pr = PartitionedRegionTestHelper.getExistingRegion(Region.SEPARATOR + regionName);
       assertNotNull(pr);
       int key = 0;
       Object obj = null;
       List list = new ArrayList();
       for (key = 0; key < MAX_COUNT; key++) {
         try {
-          obj = PartitionedRegionTestHelper.createPRSerializableObject(this
-              .getName()
-              + key, key);
+          obj = PartitionedRegionTestHelper.createPRSerializableObject(this.getName() + key, key);
           pr.put(obj, obj);
           list.add(obj);
-        }
-        catch (Exception ex) {
-          fail("PRSerializableObjectJUnitTest:putThread Got an incorrect exception for localMaxMemory=0 at count = "
-              + key + ". Exception stack = " + ex);
+        } catch (Exception ex) {
+          fail("PRSerializableObjectJUnitTest:putThread Got an incorrect exception for localMaxMemory=0 at count = " + key + ". Exception stack = " + ex);
         }
       }
       thread2List.put(this.getName(), list);

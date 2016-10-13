@@ -51,13 +51,12 @@ public class ReplaceCommand extends StorageCommand {
   }
 
   @Override
-  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas,
-      int flags, Cache cache, RequestReader request) {
+  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
     ByteBuffer response = request.getResponse();
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     ValueWrapper val = ValueWrapper.getWrappedValue(value, flags);
     boolean success = false;
-    
+
     try {
       if (cas != 0L) {
         ValueWrapper expected = ValueWrapper.getDummyValue(cas);
@@ -68,11 +67,11 @@ public class ReplaceCommand extends StorageCommand {
     } catch (Exception e) {
       return handleBinaryException(key, request, response, "replace", e);
     }
-    
+
     if (getLogger().fineEnabled()) {
-      getLogger().fine("replace:key:"+key+" cas:"+cas+" success:"+success);
+      getLogger().fine("replace:key:" + key + " cas:" + cas + " success:" + success);
     }
-    
+
     // set status
     if (success) {
       if (isQuiet()) {

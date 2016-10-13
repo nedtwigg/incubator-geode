@@ -64,213 +64,201 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
   protected static File[] dirs = null;
   final static byte[] value = new byte[1024];
 
-    public DiskRegByteArrayDUnitTest() {
-      super();
-      File file1 = new File( getTestMethodName() + "1");
-      file1.mkdir();
-      file1.deleteOnExit();
-      File file2 = new File( getTestMethodName() + "2");
-      file2.mkdir();
-      file2.deleteOnExit();
-      File file3 = new File( getTestMethodName() + "3");
-      file3.mkdir();
-      file3.deleteOnExit();
-      File file4 = new File( getTestMethodName() + "4");
-      file4.mkdir();
-      file4.deleteOnExit();
-      dirs = new File[4];
-      dirs[0] = file1;
-      dirs[1] = file2;
-      dirs[2] = file3;
-      dirs[3] = file4;
-    }
+  public DiskRegByteArrayDUnitTest() {
+    super();
+    File file1 = new File(getTestMethodName() + "1");
+    file1.mkdir();
+    file1.deleteOnExit();
+    File file2 = new File(getTestMethodName() + "2");
+    file2.mkdir();
+    file2.deleteOnExit();
+    File file3 = new File(getTestMethodName() + "3");
+    file3.mkdir();
+    file3.deleteOnExit();
+    File file4 = new File(getTestMethodName() + "4");
+    file4.mkdir();
+    file4.deleteOnExit();
+    dirs = new File[4];
+    dirs[0] = file1;
+    dirs[1] = file2;
+    dirs[2] = file3;
+    dirs[3] = file4;
+  }
 
-    @Override
-    public final void postSetUp() throws Exception {
+  @Override
+  public final void postSetUp() throws Exception {
+    Host host = Host.getHost(0);
+    VM vm0 = host.getVM(0);
+    VM vm1 = host.getVM(1);
+    vm0.invoke(() -> DiskRegByteArrayDUnitTest.createCacheForVM0());
+    vm1.invoke(() -> DiskRegByteArrayDUnitTest.createCacheForVM1());
+  }
+
+  @Override
+  public final void postTearDownCacheTestCase() throws Exception {
+    cache = null;
+    Invoke.invokeInEveryVM(new SerializableRunnable() {
+      public void run() {
+        cache = null;
+      }
+    });
+  }
+
+  /* public void tearDown(){
       Host host = Host.getHost(0);
       VM vm0 = host.getVM(0);
       VM vm1 = host.getVM(1);
-      vm0.invoke(() -> DiskRegByteArrayDUnitTest.createCacheForVM0());
-      vm1.invoke(() -> DiskRegByteArrayDUnitTest.createCacheForVM1());
-     }
-    
-    @Override
-    public final void postTearDownCacheTestCase() throws Exception {
-      cache = null;
-      Invoke.invokeInEveryVM(new SerializableRunnable() { public void run() { cache = null; } });
-    }
+      vm0.invoke(() -> DiskRegByteArrayDUnitTest.deleteFiles());
+      vm1.invoke(() -> DiskRegByteArrayDUnitTest.deleteFiles());
+      vm0.invoke(() -> DiskRegByteArrayDUnitTest.closeCache());
+      vm1.invoke(() -> DiskRegByteArrayDUnitTest.closeCache());
+  }*/
 
-    /* public void tearDown(){
-        Host host = Host.getHost(0);
-        VM vm0 = host.getVM(0);
-        VM vm1 = host.getVM(1);
-        vm0.invoke(() -> DiskRegByteArrayDUnitTest.deleteFiles());
-        vm1.invoke(() -> DiskRegByteArrayDUnitTest.deleteFiles());
-        vm0.invoke(() -> DiskRegByteArrayDUnitTest.closeCache());
-        vm1.invoke(() -> DiskRegByteArrayDUnitTest.closeCache());
-    }*/
-    
-    public static void createCacheForVM0(){
-        try{
-            ds = (new DiskRegByteArrayDUnitTest()).getSystem(props);
-            cache = CacheFactory.create(ds);
-            AttributesFactory factory  = new AttributesFactory();
-            factory.setScope(Scope.DISTRIBUTED_ACK);
-            factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-            factory.setDiskSynchronous(false);
-            factory.setDiskStoreName(cache.createDiskStoreFactory()
-                                     .setDiskDirs(dirs)
-                                     .create("DiskRegByteArrayDUnitTest")
-                                     .getName());
-            RegionAttributes attr = factory.create();
-            region = cache.createVMRegion("region", attr);
-        } catch (Exception ex){
-            ex.printStackTrace();
-            fail(ex.toString());
-        }
+  public static void createCacheForVM0() {
+    try {
+      ds = (new DiskRegByteArrayDUnitTest()).getSystem(props);
+      cache = CacheFactory.create(ds);
+      AttributesFactory factory = new AttributesFactory();
+      factory.setScope(Scope.DISTRIBUTED_ACK);
+      factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+      factory.setDiskSynchronous(false);
+      factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("DiskRegByteArrayDUnitTest").getName());
+      RegionAttributes attr = factory.create();
+      region = cache.createVMRegion("region", attr);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail(ex.toString());
     }
-    
-    public static void createCacheForVM1(){
-        try{
-            
-            ds = (new DiskRegByteArrayDUnitTest()).getSystem(props);
-            cache = CacheFactory.create(ds);
-            AttributesFactory factory  = new AttributesFactory();
-            factory.setScope(Scope.DISTRIBUTED_ACK);
-            factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-            factory.setDiskSynchronous(false);
-            factory.setDiskStoreName(cache.createDiskStoreFactory()
-                                     .setDiskDirs(dirs)
-                                     .create("DiskRegByteArrayDUnitTest")
-                                     .getName());
-            RegionAttributes attr = factory.create();
-            region = cache.createVMRegion("region", attr);
-        } catch (Exception ex){
-            ex.printStackTrace();
-            fail(ex.toString());
-        }
-    }
-    /*
-    public static void closeCache(){
-        try{
-            cache.close();
-            ds.disconnect();
-        } catch (Exception ex){
-            ex.printStackTrace();
-            fail(ex.toString());
-        }
-    }*/
-    
-    //test methods
- 
-  @Test
-  public void testPutGetByteArray(){
-        
-        Host host = Host.getHost(0);
-        VM vm0 = host.getVM(0);
-        VM vm1 = host.getVM(1);
-        
-       Object[] objArr = new Object[1];
-       objArr[0] = "key";
+  }
 
-       //Put in vm0 
-       vm0.invoke(DiskRegByteArrayDUnitTest.class, "putMethod", objArr);
-       //forceflush data to disk
-        vm1.invoke(() -> DiskRegByteArrayDUnitTest.flushMethod());
-      /* get the val from disk
-       * verify that the value retrieved from disk represents a byte[]
-       * 
-       */
-        vm1.invoke(DiskRegByteArrayDUnitTest.class, "verifyByteArray", objArr);
-        
-        
-    }//end of test case1
-    
-    
-    public static Object putMethod(Object ob){
-        Object obj=null;
-        try{
-            if(ob != null){
-              Arrays.fill(value , (byte)77);
-              obj = region.put(ob, value);
-            }
-        }catch(Exception ex){
-            ex.printStackTrace();
-            fail("Failed while region.put");
-        }
-        return obj;
-    }//end of putMethod
-    
-    public static Object getMethod(Object ob){
-      Object obj=null;
+  public static void createCacheForVM1() {
+    try {
+
+      ds = (new DiskRegByteArrayDUnitTest()).getSystem(props);
+      cache = CacheFactory.create(ds);
+      AttributesFactory factory = new AttributesFactory();
+      factory.setScope(Scope.DISTRIBUTED_ACK);
+      factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+      factory.setDiskSynchronous(false);
+      factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("DiskRegByteArrayDUnitTest").getName());
+      RegionAttributes attr = factory.create();
+      region = cache.createVMRegion("region", attr);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail(ex.toString());
+    }
+  }
+  /*
+  public static void closeCache(){
       try{
-          obj = region.get(ob);
-      } catch(Exception ex){
-          fail("Failed while region.get");
-      }
-      return obj;
-  } // end of getMethod
-      
-    
-    public static Object getValueFromDiskMethod(Object ob){
-        Object val =null;
-        //get from disk   
-        try {
-            DiskId diskId = ((DiskEntry)(((LocalRegion)region).basicGetEntry(ob)))
-              .getDiskId();
-          val = ((LocalRegion)region).getDiskRegion().get(diskId);
-        }
-        catch (Exception ex) {
+          cache.close();
+          ds.disconnect();
+      } catch (Exception ex){
           ex.printStackTrace();
-          fail("Failed to get the value on disk");
-
-        }
-        return val;
-        
-    }//end of getValueFromDiskMethod
-    
-    public static boolean verifyByteArray(Object ob){
-      boolean result = false;
-     Object val =null;
-      Arrays.fill(value , (byte)77);
-      //get from disk   
-      try {
-      DiskId diskId = ((DiskEntry)(((LocalRegion)region).basicGetEntry(ob))).getDiskId();
-        val = ((LocalRegion)region).getDiskRegion().get(diskId);
+          fail(ex.toString());
       }
-      catch (Exception ex) {
-        ex.printStackTrace();
-        fail("Failed to get the value on disk");
+  }*/
 
+  //test methods
+
+  @Test
+  public void testPutGetByteArray() {
+
+    Host host = Host.getHost(0);
+    VM vm0 = host.getVM(0);
+    VM vm1 = host.getVM(1);
+
+    Object[] objArr = new Object[1];
+    objArr[0] = "key";
+
+    //Put in vm0 
+    vm0.invoke(DiskRegByteArrayDUnitTest.class, "putMethod", objArr);
+    //forceflush data to disk
+    vm1.invoke(() -> DiskRegByteArrayDUnitTest.flushMethod());
+    /* get the val from disk
+     * verify that the value retrieved from disk represents a byte[]
+     * 
+     */
+    vm1.invoke(DiskRegByteArrayDUnitTest.class, "verifyByteArray", objArr);
+
+  }//end of test case1
+
+  public static Object putMethod(Object ob) {
+    Object obj = null;
+    try {
+      if (ob != null) {
+        Arrays.fill(value, (byte) 77);
+        obj = region.put(ob, value);
       }
-      assertTrue("The value retrieved from disk is not a byte[] " +
-        		"or the length of byte[] is not equla to the length set while put",
-        		(((byte[])val).length)== (value.length) );
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail("Failed while region.put");
+    }
+    return obj;
+  }//end of putMethod
 
-         
-      byte [] x = null;
-      x = (byte [])val;
-     
-     for (int i=0; i < x.length; i++  ){
-       result = (x[i] == value[i]); 
-     //  System.out.println("*********"+result);
-     }
-     
-     
-     return result;
-      
-    }//end of verifyByteArray
-     /**
-      * Force flush the data to disk
-      *
-      */  
-    public static void flushMethod(){
-        try{
-          ((LocalRegion)region).getDiskRegion().forceFlush();
-        } catch(Exception ex){
-            ex.printStackTrace();
-        }
-    }  
-    
+  public static Object getMethod(Object ob) {
+    Object obj = null;
+    try {
+      obj = region.get(ob);
+    } catch (Exception ex) {
+      fail("Failed while region.get");
+    }
+    return obj;
+  } // end of getMethod
+
+  public static Object getValueFromDiskMethod(Object ob) {
+    Object val = null;
+    //get from disk   
+    try {
+      DiskId diskId = ((DiskEntry) (((LocalRegion) region).basicGetEntry(ob))).getDiskId();
+      val = ((LocalRegion) region).getDiskRegion().get(diskId);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail("Failed to get the value on disk");
+
+    }
+    return val;
+
+  }//end of getValueFromDiskMethod
+
+  public static boolean verifyByteArray(Object ob) {
+    boolean result = false;
+    Object val = null;
+    Arrays.fill(value, (byte) 77);
+    //get from disk   
+    try {
+      DiskId diskId = ((DiskEntry) (((LocalRegion) region).basicGetEntry(ob))).getDiskId();
+      val = ((LocalRegion) region).getDiskRegion().get(diskId);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      fail("Failed to get the value on disk");
+
+    }
+    assertTrue("The value retrieved from disk is not a byte[] " + "or the length of byte[] is not equla to the length set while put", (((byte[]) val).length) == (value.length));
+
+    byte[] x = null;
+    x = (byte[]) val;
+
+    for (int i = 0; i < x.length; i++) {
+      result = (x[i] == value[i]);
+      //  System.out.println("*********"+result);
+    }
+
+    return result;
+
+  }//end of verifyByteArray
+
+  /**
+   * Force flush the data to disk
+   *
+   */
+  public static void flushMethod() {
+    try {
+      ((LocalRegion) region).getDiskRegion().forceFlush();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
 }// end of class
-

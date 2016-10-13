@@ -59,8 +59,7 @@ public class RegisterInterestList66 extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
     Part regionNamePart = null, keyPart = null;// numberOfKeysPart = null;
     String regionName = null;
     Object key = null;
@@ -82,48 +81,44 @@ public class RegisterInterestList66 extends BaseCommand {
 
     // Retrieve the InterestResultPolicy
     try {
-      policy = (InterestResultPolicy)msg.getPart(1).getObject();
-    }
-    catch (Exception e) {
+      policy = (InterestResultPolicy) msg.getPart(1).getObject();
+    } catch (Exception e) {
       writeChunkedException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
     }
-    boolean isDurable = false ;
+    boolean isDurable = false;
     try {
       Part durablePart = msg.getPart(2);
-      byte[] durablePartBytes = (byte[])durablePart.getObject();
+      byte[] durablePartBytes = (byte[]) durablePart.getObject();
       isDurable = durablePartBytes[0] == 0x01;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       writeChunkedException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
     }
-//  region data policy
+    //  region data policy
     byte[] regionDataPolicyPartBytes;
     boolean serializeValues = false;
     try {
-      Part regionDataPolicyPart = msg.getPart(msg.getNumberOfParts()-1);
-      regionDataPolicyPartBytes = (byte[])regionDataPolicyPart.getObject();
+      Part regionDataPolicyPart = msg.getPart(msg.getNumberOfParts() - 1);
+      regionDataPolicyPartBytes = (byte[]) regionDataPolicyPart.getObject();
       if (servConn.getClientVersion().compareTo(Version.GFE_80) >= 0) {
         // The second byte here is serializeValues
-        serializeValues = regionDataPolicyPartBytes[1] == (byte)0x01;
+        serializeValues = regionDataPolicyPartBytes[1] == (byte) 0x01;
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       writeChunkedException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
     }
-   
+
     partNumber = 3;
-    Part list = msg.getPart(partNumber);    
+    Part list = msg.getPart(partNumber);
     try {
-      keys = (List)list.getObject();
+      keys = (List) list.getObject();
       numberOfKeys = keys.size();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       writeChunkedException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
@@ -132,10 +127,9 @@ public class RegisterInterestList66 extends BaseCommand {
     boolean sendUpdatesAsInvalidates = false;
     try {
       Part notifyPart = msg.getPart(partNumber + 1);
-      byte[] notifyPartBytes = (byte[])notifyPart.getObject();
+      byte[] notifyPartBytes = (byte[]) notifyPart.getObject();
       sendUpdatesAsInvalidates = notifyPartBytes[0] == 0x01;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       writeChunkedException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
@@ -144,7 +138,7 @@ public class RegisterInterestList66 extends BaseCommand {
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received register interest 66 request ({} bytes) from {} for the following {} keys in region {}: {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), numberOfKeys, regionName, keys);
     }
-    
+
     /*
     AcceptorImpl acceptor = servConn.getAcceptor();
     
@@ -170,94 +164,84 @@ public class RegisterInterestList66 extends BaseCommand {
       }
       String s = errMessage.toLocalizedString();
       logger.warn("{}: {}", servConn.getName(), s);
-      writeChunkedErrorResponse(msg, MessageType.REGISTER_INTEREST_DATA_ERROR,
-          s, servConn);
+      writeChunkedErrorResponse(msg, MessageType.REGISTER_INTEREST_DATA_ERROR, s, servConn);
       servConn.setAsTrue(RESPONDED);
     }
 
-   // key not null
-      LocalRegion region = (LocalRegion)servConn.getCache().getRegion(regionName);
-      if (region == null) {
-        logger.info(LocalizedMessage.create(LocalizedStrings.RegisterInterestList_0_REGION_NAMED_1_WAS_NOT_FOUND_DURING_REGISTER_INTEREST_LIST_REQUEST, new Object[]{servConn.getName(), regionName}));
-        // writeChunkedErrorResponse(msg,
-        // MessageType.REGISTER_INTEREST_DATA_ERROR, message);
-        // responded = true;
-      } // else { // region not null
-      try {
-        this.securityService.authorizeRegionRead(regionName);
-        AuthorizeRequest authzRequest = servConn.getAuthzRequest();
-        if (authzRequest != null) {
-          if (!DynamicRegionFactory.regionIsDynamicRegionList(regionName)) {
-            RegisterInterestOperationContext registerContext = authzRequest
-                .registerInterestListAuthorize(regionName, keys, policy);
-            keys = (List)registerContext.getKey();
-          }
+    // key not null
+    LocalRegion region = (LocalRegion) servConn.getCache().getRegion(regionName);
+    if (region == null) {
+      logger.info(LocalizedMessage.create(LocalizedStrings.RegisterInterestList_0_REGION_NAMED_1_WAS_NOT_FOUND_DURING_REGISTER_INTEREST_LIST_REQUEST, new Object[] { servConn.getName(), regionName }));
+      // writeChunkedErrorResponse(msg,
+      // MessageType.REGISTER_INTEREST_DATA_ERROR, message);
+      // responded = true;
+    } // else { // region not null
+    try {
+      this.securityService.authorizeRegionRead(regionName);
+      AuthorizeRequest authzRequest = servConn.getAuthzRequest();
+      if (authzRequest != null) {
+        if (!DynamicRegionFactory.regionIsDynamicRegionList(regionName)) {
+          RegisterInterestOperationContext registerContext = authzRequest.registerInterestListAuthorize(regionName, keys, policy);
+          keys = (List) registerContext.getKey();
         }
-        // Register interest
-        servConn.getAcceptor().getCacheClientNotifier()
-            .registerClientInterest(regionName, keys, servConn.getProxyID(),
-                isDurable, sendUpdatesAsInvalidates,
-                true, regionDataPolicyPartBytes[0],true);
       }
-      catch (Exception ex) {
+      // Register interest
+      servConn.getAcceptor().getCacheClientNotifier().registerClientInterest(regionName, keys, servConn.getProxyID(), isDurable, sendUpdatesAsInvalidates, true, regionDataPolicyPartBytes[0], true);
+    } catch (Exception ex) {
+      // If an interrupted exception is thrown , rethrow it
+      checkForInterrupt(servConn, ex);
+      // Otherwise, write an exception message and continue
+      writeChunkedException(msg, ex, false, servConn);
+      servConn.setAsTrue(RESPONDED);
+      return;
+    }
+
+    // Update the statistics and write the reply
+    // bserverStats.incLong(processDestroyTimeId,
+    // DistributionStats.getStatTime() - start);
+    // start = DistributionStats.getStatTime();
+
+    boolean isPrimary = servConn.getAcceptor().getCacheClientNotifier().getClientProxy(servConn.getProxyID()).isPrimary();
+    if (!isPrimary) {
+      chunkedResponseMsg.setMessageType(MessageType.RESPONSE_FROM_SECONDARY);
+      chunkedResponseMsg.setTransactionId(msg.getTransactionId());
+      chunkedResponseMsg.sendHeader();
+      chunkedResponseMsg.setLastChunk(true);
+      if (logger.isDebugEnabled()) {
+        logger.debug("{}: Sending register interest response chunk from secondary for region: {} for key: {} chunk=<{}>", servConn.getName(), regionName, key, chunkedResponseMsg);
+      }
+      chunkedResponseMsg.sendChunk(servConn);
+    } else { // isPrimary
+      // Send header which describes how many chunks will follow
+      chunkedResponseMsg.setMessageType(MessageType.RESPONSE_FROM_PRIMARY);
+      chunkedResponseMsg.setTransactionId(msg.getTransactionId());
+      chunkedResponseMsg.sendHeader();
+
+      // Send chunk response
+      try {
+        fillAndSendRegisterInterestResponseChunks(region, keys, InterestType.KEY, serializeValues, policy, servConn);
+        servConn.setAsTrue(RESPONDED);
+      } catch (Exception e) {
         // If an interrupted exception is thrown , rethrow it
-        checkForInterrupt(servConn, ex);
-        // Otherwise, write an exception message and continue
-        writeChunkedException(msg, ex, false, servConn);
+        checkForInterrupt(servConn, e);
+
+        // otherwise send the exception back to client
+        writeChunkedException(msg, e, false, servConn);
         servConn.setAsTrue(RESPONDED);
         return;
       }
 
-      // Update the statistics and write the reply
-      // bserverStats.incLong(processDestroyTimeId,
-      // DistributionStats.getStatTime() - start);
-      // start = DistributionStats.getStatTime();
-
-      boolean isPrimary = servConn.getAcceptor().getCacheClientNotifier()
-          .getClientProxy(servConn.getProxyID()).isPrimary();
-      if (!isPrimary) {
-        chunkedResponseMsg.setMessageType(MessageType.RESPONSE_FROM_SECONDARY);
-        chunkedResponseMsg.setTransactionId(msg.getTransactionId());
-        chunkedResponseMsg.sendHeader();
-        chunkedResponseMsg.setLastChunk(true);
-        if (logger.isDebugEnabled()) {
-          logger.debug("{}: Sending register interest response chunk from secondary for region: {} for key: {} chunk=<{}>", servConn.getName(), regionName, key, chunkedResponseMsg);
-        }
-        chunkedResponseMsg.sendChunk(servConn);
+      if (logger.isDebugEnabled()) {
+        // logger.debug(getName() + ": Sent chunk (1 of 1) of register interest
+        // response (" + chunkedResponseMsg.getBufferLength() + " bytes) for
+        // region " + regionName + " key " + key);
+        logger.debug("{}: Sent register interest response for the following {} keys in region {}: {}", servConn.getName(), numberOfKeys, regionName, keys);
       }
-      else { // isPrimary
-        // Send header which describes how many chunks will follow
-        chunkedResponseMsg.setMessageType(MessageType.RESPONSE_FROM_PRIMARY);
-        chunkedResponseMsg.setTransactionId(msg.getTransactionId());
-        chunkedResponseMsg.sendHeader();
-
-        // Send chunk response
-        try {
-          fillAndSendRegisterInterestResponseChunks(region, keys,
-              InterestType.KEY, serializeValues, policy, servConn);
-          servConn.setAsTrue(RESPONDED);
-        }
-        catch (Exception e) {
-          // If an interrupted exception is thrown , rethrow it
-          checkForInterrupt(servConn, e);
-
-          // otherwise send the exception back to client
-          writeChunkedException(msg, e, false, servConn);
-          servConn.setAsTrue(RESPONDED);
-          return;
-        }
-
-        if (logger.isDebugEnabled()) {
-          // logger.debug(getName() + ": Sent chunk (1 of 1) of register interest
-          // response (" + chunkedResponseMsg.getBufferLength() + " bytes) for
-          // region " + regionName + " key " + key);
-          logger.debug("{}: Sent register interest response for the following {} keys in region {}: {}", servConn.getName(), numberOfKeys, regionName, keys);
-        }
-        // bserverStats.incLong(writeDestroyResponseTimeId,
-        // DistributionStats.getStatTime() - start);
-        // bserverStats.incInt(destroyResponsesId, 1);
-      } // isPrimary
-      // } // region not null
+      // bserverStats.incLong(writeDestroyResponseTimeId,
+      // DistributionStats.getStatTime() - start);
+      // bserverStats.incInt(destroyResponsesId, 1);
+    } // isPrimary
+    // } // region not null
   }
 
 }

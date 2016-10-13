@@ -120,9 +120,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(3, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1")
-        .newLeftCol("1")
-        .newLeftCol("1");
+    row1.newLeftCol("1").newLeftCol("1").newLeftCol("1");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -136,10 +134,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -153,10 +148,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("123456789-123456789-")
-        .newLeftCol("123456789-12345")
-        .newLeftCol("123456789-")
-        .newLeftCol("1");
+    row1.newLeftCol("123456789-123456789-").newLeftCol("123456789-12345").newLeftCol("123456789-").newLeftCol("1");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -170,10 +162,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-123456789-123456789-")
-        .newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-123456789-123456789-").newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -187,10 +176,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("123456789-123456789-123456789-")
-        .newLeftCol("123456789-123456789-12345")
-        .newLeftCol("1")
-        .newLeftCol("123456789-");
+    row1.newLeftCol("123456789-123456789-123456789-").newLeftCol("123456789-123456789-12345").newLeftCol("1").newLeftCol("123456789-");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -205,9 +191,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(3, "|", "A", "A", "A");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("123")
-        .newLeftCol("123")
-        .newLeftCol("123");
+    row1.newLeftCol("123").newLeftCol("123").newLeftCol("123");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -222,9 +206,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(3, "|", "A", "A", "A");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("12")
-        .newLeftCol("12")
-        .newLeftCol("12");
+    row1.newLeftCol("12").newLeftCol("12").newLeftCol("12");
 
     // This should throw an exception
     List<String> result = validateTable(table, true);
@@ -237,10 +219,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-123456789-123456789-")
-        .newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-123456789-123456789-").newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -254,10 +233,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "<|>");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -274,14 +250,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(8, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-");
+    row1.newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -299,11 +268,7 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(5, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-")
-        .newLeftCol("123456789-123456789-12345")
-        .newLeftCol("1");
+    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-123456789-12345").newLeftCol("1");
 
     List<String> result = validateTable(table, false);
     // Check the last line

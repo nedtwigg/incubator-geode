@@ -26,87 +26,82 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
  * 
  * @since GemFire 5.1
  */
-public class ClientServerObserverAdapter implements ClientServerObserver
-{
+public class ClientServerObserverAdapter implements ClientServerObserver {
   /**
    * This callback is called when now primary Ep is identified.
    */
-  public void afterPrimaryIdentificationFromBackup(ServerLocation primaryEndpoint)
-  {
+  public void afterPrimaryIdentificationFromBackup(ServerLocation primaryEndpoint) {
   }
 
   /**
    * This callback is called just before interest registartion
    */
-  public void beforeInterestRegistration()
-  {
+  public void beforeInterestRegistration() {
   }
 
   /**
    * This callback is called just after interest registartion
    */
-  public void afterInterestRegistration()
-  {
+  public void afterInterestRegistration() {
   }
 
   /**
    * This callback is called just before primary identification
    */
-  public void beforePrimaryIdentificationFromBackup()
-  {
+  public void beforePrimaryIdentificationFromBackup() {
   }
 
   /**
    * This callback is called just before Interest Recovery by DSM thread happens
    */
-  public void beforeInterestRecovery()
-  {
+  public void beforeInterestRecovery() {
 
   }
 
-  public void beforeFailoverByCacheClientUpdater(ServerLocation epFailed)
-  {
+  public void beforeFailoverByCacheClientUpdater(ServerLocation epFailed) {
   }
+
   /**
    * Invoked before sending an instantiator message to server
    * 
    * @param eventId
    */
-  public void beforeSendingToServer(EventID eventId){
-    
+  public void beforeSendingToServer(EventID eventId) {
+
   }
+
   /**
    * Invoked after sending an instantiator message to server 
    * 
    * @param eventId
    */
-  public void afterReceivingFromServer(EventID eventId){
-    
+  public void afterReceivingFromServer(EventID eventId) {
+
   }
-  
+
   /**
    * This callback is called just before sending client ack to the primary servrer.
    */
-  public void beforeSendingClientAck(){
-    
-  }  
+  public void beforeSendingClientAck() {
+
+  }
 
   /**
    * Invoked after Message is created
    *
    * @param msg
    */
-  public void afterMessageCreation(Message msg){
-  
+  public void afterMessageCreation(Message msg) {
+
   }
-  
+
   /**
    * Invoked after Queue Destroy Message has been sent
    */
-  public void afterQueueDestroyMessage(){
-    
+  public void afterQueueDestroyMessage() {
+
   }
-  
+
   /**
    * Invoked after a primary is recovered from a backup or new connection. 
    */

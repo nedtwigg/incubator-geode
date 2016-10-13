@@ -22,8 +22,7 @@ import javax.servlet.ServletRequestAttributeListener;
 
 /**
  */
-public class ServletRequestAttributeListenerImpl extends AbstractListener
-    implements ServletRequestAttributeListener {
+public class ServletRequestAttributeListenerImpl extends AbstractListener implements ServletRequestAttributeListener {
 
   public synchronized void attributeAdded(ServletRequestAttributeEvent srae) {
     events.add(ListenerEventType.SERVLET_REQUEST_ATTRIBUTE_ADDED);
@@ -35,8 +34,7 @@ public class ServletRequestAttributeListenerImpl extends AbstractListener
     latch.countDown();
   }
 
-  public synchronized void attributeReplaced(
-      ServletRequestAttributeEvent srae) {
+  public synchronized void attributeReplaced(ServletRequestAttributeEvent srae) {
     events.add(ListenerEventType.SERVLET_REQUEST_ATTRIBUTE_REPLACED);
     latch.countDown();
   }

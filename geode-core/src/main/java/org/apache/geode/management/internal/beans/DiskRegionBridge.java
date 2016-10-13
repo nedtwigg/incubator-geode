@@ -47,9 +47,7 @@ public class DiskRegionBridge {
   private StatsRate diskRegionWritesRate;
 
   public static final String DISK_REGION_MONITOR = "DiskRegionMonitor";
-  
-  
-  
+
   private static final String REGION_MONITOR = "MemberLevelRegionMonitor";
 
   public DiskRegionBridge(DiskRegionStats stats) {
@@ -62,7 +60,7 @@ public class DiskRegionBridge {
 
     this.configureDiskRegionMetrics();
   }
-  
+
   private Number getDiskRegionStatistic(String statName) {
     if (diskRegionStats != null) {
       return diskRegionStats.getStats().get(statName);
@@ -90,11 +88,9 @@ public class DiskRegionBridge {
 
     diskRegionWritesRate = new StatsRate(StatsKey.DISK_WRITES, StatType.LONG_TYPE, diskRegionMonitor);
 
-    diskRegionReadsAverageLatency = new StatsAverageLatency(StatsKey.DISK_READS, StatType.LONG_TYPE,
-        StatsKey.DISK_REGION_READ_TIME, diskRegionMonitor);
+    diskRegionReadsAverageLatency = new StatsAverageLatency(StatsKey.DISK_READS, StatType.LONG_TYPE, StatsKey.DISK_REGION_READ_TIME, diskRegionMonitor);
 
-    diskRegionWritesAverageLatency = new StatsAverageLatency(StatsKey.DISK_WRITES, StatType.LONG_TYPE,
-        StatsKey.DISK_REGION_WRITE_TIMES, diskRegionMonitor);
+    diskRegionWritesAverageLatency = new StatsAverageLatency(StatsKey.DISK_WRITES, StatType.LONG_TYPE, StatsKey.DISK_REGION_WRITE_TIMES, diskRegionMonitor);
   }
 
   public float getDiskReadsRate() {

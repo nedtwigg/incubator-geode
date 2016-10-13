@@ -29,8 +29,7 @@ import org.apache.geode.internal.cache.wan.serial.SerialGatewaySenderQueueDUnitT
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class SerialGatewaySenderQueueOffHeapDUnitTest extends
-    SerialGatewaySenderQueueDUnitTest {
+public class SerialGatewaySenderQueueOffHeapDUnitTest extends SerialGatewaySenderQueueDUnitTest {
 
   public SerialGatewaySenderQueueOffHeapDUnitTest() {
     super();

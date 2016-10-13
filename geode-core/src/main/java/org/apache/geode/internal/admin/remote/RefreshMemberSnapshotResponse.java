@@ -43,17 +43,15 @@ public class RefreshMemberSnapshotResponse extends AdminResponse {
    * specified recipient. The message will contains a copy of the local
    * manager's config.
    */
-  public static RefreshMemberSnapshotResponse create(DistributionManager dm,
-      InternalDistributedMember recipient) {
+  public static RefreshMemberSnapshotResponse create(DistributionManager dm, InternalDistributedMember recipient) {
     RefreshMemberSnapshotResponse m = new RefreshMemberSnapshotResponse();
     m.setRecipient(recipient);
 
     try {
       DistributedSystem sys = dm.getSystem();
-      GemFireCacheImpl c = (GemFireCacheImpl)CacheFactory.getInstance(sys);
+      GemFireCacheImpl c = (GemFireCacheImpl) CacheFactory.getInstance(sys);
       m.snapshot = new GemFireMemberStatus(c);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       m.snapshot = null;
     }
     return m;
@@ -75,20 +73,18 @@ public class RefreshMemberSnapshotResponse extends AdminResponse {
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
-    this.snapshot = (GemFireMemberStatus)DataSerializer.readObject(in);
+    this.snapshot = (GemFireMemberStatus) DataSerializer.readObject(in);
   }
 
   /**
    * Returns the DataSerializer fixed id for the class that implements this method.
    */
-  public int getDSFID() {    
+  public int getDSFID() {
     return REFRESH_MEMBER_SNAP_RESPONSE;
   }
 
-
   @Override
   public String toString() {
-    return "RefreshMemberSnapshotResponse from " + this.getRecipient()
-        + " snapshot=" + this.snapshot;
+    return "RefreshMemberSnapshotResponse from " + this.getRecipient() + " snapshot=" + this.snapshot;
   }
 }

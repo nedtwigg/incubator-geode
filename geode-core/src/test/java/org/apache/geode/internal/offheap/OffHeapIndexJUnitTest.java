@@ -42,7 +42,7 @@ import static org.junit.Assert.fail;
 @Category(IntegrationTest.class)
 public class OffHeapIndexJUnitTest {
   private GemFireCacheImpl gfc;
-  
+
   @Before
   public void setUp() {
     Properties props = new Properties();
@@ -51,13 +51,14 @@ public class OffHeapIndexJUnitTest {
     props.setProperty(ConfigurationProperties.OFF_HEAP_MEMORY_SIZE, "100m");
     this.gfc = (GemFireCacheImpl) new CacheFactory(props).create();
   }
+
   @After
   public void tearDown() {
     this.gfc.close();
     MemoryAllocatorImpl.freeOffHeapMemory();
     // TODO cleanup default disk store files
   }
-  
+
   @Test
   public void testUnsupportedAsyncIndexes() throws RegionNotFoundException, IndexInvalidException, IndexNameConflictException, IndexExistsException {
     RegionFactory<Object, Object> rf = this.gfc.createRegionFactory();
@@ -72,6 +73,7 @@ public class OffHeapIndexJUnitTest {
       assertEquals("Asynchronous index maintenance is currently not supported for off-heap regions. The off-heap region is /r", expected.getMessage());
     }
   }
+
   @Test
   public void testUnsupportedMultiIteratorIndexes() throws RegionNotFoundException, IndexInvalidException, IndexNameConflictException, IndexExistsException {
     RegionFactory<Object, Object> rf = this.gfc.createRegionFactory();

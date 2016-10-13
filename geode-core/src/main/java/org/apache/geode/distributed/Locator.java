@@ -79,7 +79,7 @@ public abstract class Locator {
    * @since GemFire 5.7
    */
   protected String hostnameForClients;
-  
+
   protected static boolean loadSharedConfig = false;
 
   //////////////////////  Static Methods  //////////////////////
@@ -115,10 +115,9 @@ public abstract class Locator {
    *         If the locator cannot be started
    * @deprecated as of 7.0 use startLocatorAndDS instead.
    */
-  public static Locator startLocator(int port, File logFile)
-    throws IOException {
+  public static Locator startLocator(int port, File logFile) throws IOException {
 
-    return startLocator(port, logFile, false, (InetAddress)null, (Properties)null, true, false, null);
+    return startLocator(port, logFile, false, (InetAddress) null, (Properties) null, true, false, null);
   }
 
   /**
@@ -160,10 +159,9 @@ public abstract class Locator {
    * @throws IOException
    *                 If the locator cannot be started
    */
-  public static Locator startLocatorAndDS(int port, File logFile, Properties distributedSystemProperties)
-    throws IOException {
+  public static Locator startLocatorAndDS(int port, File logFile, Properties distributedSystemProperties) throws IOException {
 
-    return startLocator(port, logFile, (InetAddress)null, distributedSystemProperties, true, true, null);
+    return startLocator(port, logFile, (InetAddress) null, distributedSystemProperties, true, true, null);
   }
 
   /**
@@ -196,14 +194,11 @@ public abstract class Locator {
    *         If the locator cannot be started
    * @deprecated as of 7.0 use startLocatorAndDS instead.
    */
-  public static Locator startLocator(int port, File logFile,
-                                     InetAddress bindAddress) 
-    throws IOException {
+  public static Locator startLocator(int port, File logFile, InetAddress bindAddress) throws IOException {
 
-    return startLocator(port, logFile, false, bindAddress, (Properties)null,  true, false, null);
+    return startLocator(port, logFile, false, bindAddress, (Properties) null, true, false, null);
   }
-  
-  
+
   /**
    * Starts a new distribution locator host by this VM that binds to the given
    * network address.
@@ -242,17 +237,10 @@ public abstract class Locator {
    * @throws IOException
    *         If the locator cannot be started
    */
-  public static Locator startLocatorAndDS(
-    int port,
-    File logFile,
-    InetAddress bindAddress,
-    java.util.Properties dsProperties
-    )
-    throws IOException
-  {
-    return startLocator(port, logFile, bindAddress, dsProperties,  true, true, null);
+  public static Locator startLocatorAndDS(int port, File logFile, InetAddress bindAddress, java.util.Properties dsProperties) throws IOException {
+    return startLocator(port, logFile, bindAddress, dsProperties, true, true, null);
   }
-  
+
   /**
    * Starts a new distribution locator host by this VM that binds to the given
    * network address.
@@ -303,72 +291,22 @@ public abstract class Locator {
    *         
    * @since GemFire 5.7
    */
-  public static Locator startLocatorAndDS(
-    int port,
-    File logFile,
-    InetAddress bindAddress,
-    java.util.Properties dsProperties,
-    boolean peerLocator,
-    boolean serverLocator,
-    String hostnameForClients
-    )
-    throws IOException
-  {
+  public static Locator startLocatorAndDS(int port, File logFile, InetAddress bindAddress, java.util.Properties dsProperties, boolean peerLocator, boolean serverLocator, String hostnameForClients) throws IOException {
     return startLocator(port, logFile, bindAddress, dsProperties, peerLocator, serverLocator, hostnameForClients);
   }
-  
+
   /** all Locator methods that start locators should use this method to
    *  start the locator and its distributed system
    */
-  private static Locator startLocator(
-      int port,
-      File logFile,
-      InetAddress bindAddress,
-      java.util.Properties dsProperties, 
-      boolean peerLocator, 
-      boolean serverLocator,
-      String hostnameForClients
-      )
-      throws IOException
-    {
-      return InternalLocator.startLocator(port, 
-                                          logFile,
-                                          null,
-                                          null,
-                                          null,
-                                          bindAddress,
-                                          dsProperties,
-                                          peerLocator,
-                                          serverLocator,
-                                          hostnameForClients, loadSharedConfig);
-    }
+  private static Locator startLocator(int port, File logFile, InetAddress bindAddress, java.util.Properties dsProperties, boolean peerLocator, boolean serverLocator, String hostnameForClients) throws IOException {
+    return InternalLocator.startLocator(port, logFile, null, null, null, bindAddress, dsProperties, peerLocator, serverLocator, hostnameForClients, loadSharedConfig);
+  }
 
   /**
    * @deprecated as of 7.0 use startLocator(int, File, InetAddress, java.util.Properties, peerLocator, serverLocator, hostnameForClients) instead.
    */
-  private static Locator startLocator(
-    int port,
-    File logFile,
-    boolean startDistributedSystem,
-    InetAddress bindAddress,
-    java.util.Properties dsProperties, 
-    boolean peerLocator, 
-    boolean serverLocator,
-    String hostnameForClients
-    )
-    throws IOException
-  {
-    return InternalLocator.startLocator(port, 
-                                        logFile,
-                                        null,
-                                        null,
-                                        null,
-                                        bindAddress,
-                                        startDistributedSystem,
-                                        dsProperties,
-                                        peerLocator,
-                                        serverLocator,
-                                        hostnameForClients, loadSharedConfig);
+  private static Locator startLocator(int port, File logFile, boolean startDistributedSystem, InetAddress bindAddress, java.util.Properties dsProperties, boolean peerLocator, boolean serverLocator, String hostnameForClients) throws IOException {
+    return InternalLocator.startLocator(port, logFile, null, null, null, bindAddress, startDistributedSystem, dsProperties, peerLocator, serverLocator, hostnameForClients, loadSharedConfig);
   }
 
   /**
@@ -384,7 +322,7 @@ public abstract class Locator {
       return Collections.singletonList(result);
     }
   }
-  
+
   /**
    * Returns the locator if it exists in this JVM.
    * Otherwise returns null.
@@ -424,8 +362,7 @@ public abstract class Locator {
    * Returns the distributed system started by this locator, if any
    */
   public abstract DistributedSystem getDistributedSystem();
-  
-  
+
   /**
    * Returns the log file to which this locator's output is written
    */
@@ -454,21 +391,20 @@ public abstract class Locator {
     }
     return result;
   }
-  
+
   /**
    * Indicates whether the locator provides peer location services
    * to members
    * @return if peer location is enabled
    */
   public abstract boolean isPeerLocator();
-  
+
   /**
    * Indicates whether the locator provides server location services
    * to clients
    * @return if server location is enabled
    */
   public abstract boolean isServerLocator();
-  
 
   /**
    * Stops this distribution locator.
@@ -480,8 +416,7 @@ public abstract class Locator {
    */
   @Override
   public String toString() {
-    return LocalizedStrings.DistributionLocator_DISTRIBUTION_LOCATOR_ON_0
-        .toLocalizedString(asString());
+    return LocalizedStrings.DistributionLocator_DISTRIBUTION_LOCATOR_ON_0.toLocalizedString(asString());
   }
 
   /**

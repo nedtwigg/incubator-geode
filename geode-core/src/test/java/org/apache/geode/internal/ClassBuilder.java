@@ -95,7 +95,7 @@ public class ClassBuilder implements Serializable {
   public byte[] createJarFromName(final String className) throws IOException {
     return createJarFromClassContent(className, "public class " + className + "{}");
   }
-  
+
   /**
    * Create a JAR using the given file contents and with the given file name.
    * 
@@ -120,7 +120,7 @@ public class ClassBuilder implements Serializable {
     jarOutputStream.close();
     return byteArrayOutputStream.toByteArray();
   }
-  
+
   /**
    * Create a JAR using the given class contents and with the given class name.
    * 
@@ -153,20 +153,20 @@ public class ClassBuilder implements Serializable {
    */
   public void writeJarFromContent(final String className, final String content, final OutputStream outStream) throws IOException {
     JarOutputStream jarOutputStream = new JarOutputStream(outStream);
-    
+
     // Add the class file to the JAR file
     String formattedName = className;
     if (!formattedName.endsWith(".class")) {
       formattedName = formattedName.concat(".class");
     }
-    
+
     // If the class is in a package create a directory entry in the JAR file for the package.
     if (className.contains("/")) {
       JarEntry entry = new JarEntry(className.substring(0, className.lastIndexOf('/')));
       entry.setTime(System.currentTimeMillis());
       jarOutputStream.putNextEntry(entry);
     }
-    
+
     JarEntry entry = new JarEntry(formattedName);
     entry.setTime(System.currentTimeMillis());
     jarOutputStream.putNextEntry(entry);
@@ -209,15 +209,14 @@ public class ClassBuilder implements Serializable {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
     JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-    OutputStreamJavaFileManager<JavaFileManager> fileManager = new OutputStreamJavaFileManager<JavaFileManager>(javaCompiler
-        .getStandardFileManager(null, null, null), byteArrayOutputStream);
+    OutputStreamJavaFileManager<JavaFileManager> fileManager = new OutputStreamJavaFileManager<JavaFileManager>(javaCompiler.getStandardFileManager(null, null, null), byteArrayOutputStream);
 
     List<JavaFileObject> fileObjects = new ArrayList<JavaFileObject>();
     fileObjects.add(new JavaSourceFromString(className, classCode));
 
     List<String> options = Arrays.asList("-classpath", this.classPath);
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-    if (! javaCompiler.getTask(null, fileManager, diagnostics, options, null, fileObjects).call()) {
+    if (!javaCompiler.getTask(null, fileManager, diagnostics, options, null, fileObjects).call()) {
       StringBuilder errorMsg = new StringBuilder();
       for (Diagnostic d : diagnostics.getDiagnostics()) {
         String err = String.format("Compilation error: Line %d - %s%n", d.getLineNumber(), d.getMessage(null));
@@ -287,8 +286,7 @@ public class ClassBuilder implements Serializable {
     }
 
     @Override
-    public JavaFileObject getJavaFileForOutput(final JavaFileManager.Location location, final String className,
-        final JavaFileObject.Kind kind, final FileObject sibling) {
+    public JavaFileObject getJavaFileForOutput(final JavaFileManager.Location location, final String className, final JavaFileObject.Kind kind, final FileObject sibling) {
       return new OutputStreamSimpleFileObject(new File(className).toURI(), kind, outputStream);
     }
   }

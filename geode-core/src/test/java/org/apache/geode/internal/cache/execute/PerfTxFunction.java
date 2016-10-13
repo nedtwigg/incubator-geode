@@ -32,22 +32,19 @@ import org.apache.geode.internal.cache.execute.data.ShipmentId;
 public class PerfTxFunction implements Function {
 
   public void execute(FunctionContext context) {
-    RegionFunctionContext ctx = (RegionFunctionContext)context;
+    RegionFunctionContext ctx = (RegionFunctionContext) context;
     Region customerPR = ctx.getDataSet();
-    Region orderPR = customerPR.getCache().getRegion(
-        PRColocationDUnitTest.OrderPartitionedRegionName);
-    Region shipmentPR = customerPR.getCache().getRegion(
-        PRColocationDUnitTest.ShipmentPartitionedRegionName);
-    ArrayList args = (ArrayList)ctx.getArguments();
+    Region orderPR = customerPR.getCache().getRegion(PRColocationDUnitTest.OrderPartitionedRegionName);
+    Region shipmentPR = customerPR.getCache().getRegion(PRColocationDUnitTest.ShipmentPartitionedRegionName);
+    ArrayList args = (ArrayList) ctx.getArguments();
     // put the entries
-    CacheTransactionManager mgr = customerPR.getCache()
-        .getCacheTransactionManager();
+    CacheTransactionManager mgr = customerPR.getCache().getCacheTransactionManager();
     mgr.begin();
     for (int i = 0; i < args.size() / 4; i++) {
-      OrderId orderId = (OrderId)args.get(i * 4);
-      Order order = (Order)args.get(i * 4 + 1);
-      ShipmentId shipmentId = (ShipmentId)args.get(i * 4 + 2);
-      Shipment shipment = (Shipment)args.get(i * 4 + 3);
+      OrderId orderId = (OrderId) args.get(i * 4);
+      Order order = (Order) args.get(i * 4 + 1);
+      ShipmentId shipmentId = (ShipmentId) args.get(i * 4 + 2);
+      Shipment shipment = (Shipment) args.get(i * 4 + 3);
       orderPR.put(orderId, order);
       shipmentPR.put(shipmentId, shipment);
     }

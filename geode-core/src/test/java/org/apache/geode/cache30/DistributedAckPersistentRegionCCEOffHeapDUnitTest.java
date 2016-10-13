@@ -29,7 +29,6 @@ import org.apache.geode.test.dunit.Invoke;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-
 /**
  * Tests Distributed Ack Persistent Region with ConcurrencyChecksEnabled and OffHeap memory.
  * 
@@ -38,7 +37,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @SuppressWarnings({ "deprecation", "serial" })
 @Category(DistributedTest.class)
 public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends DistributedAckPersistentRegionCCEDUnitTest {
-  
+
   public DistributedAckPersistentRegionCCEOffHeapDUnitTest() {
     super();
   }
@@ -49,7 +48,7 @@ public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends Distribut
 
       @Override
       public void run() {
-        if(hasCache()) {
+        if (hasCache()) {
           OffHeapTestUtil.checkOrphans();
         }
       }
@@ -64,7 +63,7 @@ public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends Distribut
     props.setProperty(OFF_HEAP_MEMORY_SIZE, "10m");
     return props;
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes getRegionAttributes() {
@@ -73,13 +72,13 @@ public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends Distribut
     factory.setOffHeap(true);
     return factory.create();
   }
-  
+
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = super.getRegionAttributes(type);
     AttributesFactory factory = new AttributesFactory(ra);
-    if(!ra.getDataPolicy().isEmpty()) {
+    if (!ra.getDataPolicy().isEmpty()) {
       factory.setOffHeap(true);
     }
     return factory.create();

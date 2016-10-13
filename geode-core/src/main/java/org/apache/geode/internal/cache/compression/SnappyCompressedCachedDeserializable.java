@@ -29,8 +29,7 @@ import org.apache.geode.internal.Version;
  * all instances of this class within the {@link Cache}.
  * 
  */
-public class SnappyCompressedCachedDeserializable extends
-    CompressedCachedDeserializable {
+public class SnappyCompressedCachedDeserializable extends CompressedCachedDeserializable {
 
   /**
    * Empty constructor for serialization.
@@ -42,7 +41,7 @@ public class SnappyCompressedCachedDeserializable extends
   /**
    * Creates a new {@link SnappyCompressedCachedDeserializable} with a serialized value or raw byte array.
    * @param serializedValue a region entry value that has already been serialized or is a raw byte array.
-   */  
+   */
   public SnappyCompressedCachedDeserializable(final byte[] serializedValue) {
     super(serializedValue);
   }
@@ -50,11 +49,11 @@ public class SnappyCompressedCachedDeserializable extends
   /**
    * Creates a new {@link SnappyCompressedCachedDeserializable} with an unserialized value.
    * @param obj a region entry value.
-   */  
+   */
   public SnappyCompressedCachedDeserializable(final Object obj) {
     super(obj);
   }
-  
+
   /**
    * Shared Snappy {@link Compressor} instance.
    */

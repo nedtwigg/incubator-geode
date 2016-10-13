@@ -32,7 +32,7 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * 
  * @since GemFire 6.6
  */
-public class CacheXmlPropertyResolver implements PropertyResolver{
+public class CacheXmlPropertyResolver implements PropertyResolver {
   private static final Logger logger = LogService.getLogger();
 
   /**
@@ -54,8 +54,7 @@ public class CacheXmlPropertyResolver implements PropertyResolver{
    */
   private Properties props = null;
 
-  public CacheXmlPropertyResolver(boolean ignoreUnresolvedProperties,
-      int propertyOverridden, Properties props) {
+  public CacheXmlPropertyResolver(boolean ignoreUnresolvedProperties, int propertyOverridden, Properties props) {
     super();
     this.ignoreUnresolvedProperties = ignoreUnresolvedProperties;
     this.propertyOverridden = propertyOverridden;
@@ -101,9 +100,9 @@ public class CacheXmlPropertyResolver implements PropertyResolver{
     replacement = System.getProperty(replaceString);
 
     //Override system property if replacement is null or we want to override system property.
-    if((replacement == null || getPropertyOverridden() == SYSTEM_PROPERTIES_OVERRIDE) && props != null){
+    if ((replacement == null || getPropertyOverridden() == SYSTEM_PROPERTIES_OVERRIDE) && props != null) {
       String userDefined = props.getProperty(replaceString);
-      if(userDefined != null){
+      if (userDefined != null) {
         replacement = userDefined;
       }
     }
@@ -116,10 +115,10 @@ public class CacheXmlPropertyResolver implements PropertyResolver{
    * @param suffix
    * @return string
    */
-  public String processUnresolvableString(String stringWithPrefixAndSuffix, String prefix, String suffix){
+  public String processUnresolvableString(String stringWithPrefixAndSuffix, String prefix, String suffix) {
     String resolvedString = null;
-    try{
-      if (helper == null){
+    try {
+      if (helper == null) {
         helper = new CacheXmlPropertyResolverHelper(prefix, suffix);
       }
       /** A <code>resolvedString</code> can be same as <code>stringWithPrefixAndSuffix</code> if 
@@ -127,11 +126,11 @@ public class CacheXmlPropertyResolver implements PropertyResolver{
        */
       resolvedString = helper.parseResolvablePropString(stringWithPrefixAndSuffix, this, new HashSet<String>());
     } catch (IllegalArgumentException e) {
-      if(ignoreUnresolvedProperties) {
+      if (ignoreUnresolvedProperties) {
         //Do Nothing
       } else {
         logger.error(LocalizedMessage.create(LocalizedStrings.CacheXmlPropertyResolver_UNSEROLVAVLE_STRING_FORMAT_ERROR__0, stringWithPrefixAndSuffix));
-      }      
+      }
     }
     return resolvedString;
   }

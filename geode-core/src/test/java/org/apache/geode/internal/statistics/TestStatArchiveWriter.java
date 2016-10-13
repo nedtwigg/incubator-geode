@@ -27,7 +27,7 @@ public class TestStatArchiveWriter extends StatArchiveWriter {
   public static final TimeZone WRITER_TIME_ZONE = TimeZone.getTimeZone("PDT");
   public static final String WRITER_OS_INFO = "Linux 2.6.18-262.el5";
   public static final String WRITER_MACHINE_INFO = "i386 kuwait";
-  
+
   public TestStatArchiveWriter(final StatArchiveDescriptor archiveDescriptor) {
     super(archiveDescriptor);
     initialize(WRITER_PREVIOUS_TIMESTAMP_NANOS);
@@ -42,12 +42,12 @@ public class TestStatArchiveWriter extends StatArchiveWriter {
   protected TimeZone getTimeZone() {
     return WRITER_TIME_ZONE;
   }
-  
+
   @Override
   protected String getOSInfo() {
     return WRITER_OS_INFO;
   }
-  
+
   @Override
   protected String getMachineInfo() {
     return WRITER_MACHINE_INFO;

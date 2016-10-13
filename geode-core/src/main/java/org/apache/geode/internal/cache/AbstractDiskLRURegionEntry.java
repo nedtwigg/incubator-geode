@@ -17,7 +17,6 @@
 
 package org.apache.geode.internal.cache;
 
-
 import org.apache.geode.internal.cache.lru.LRUEntry;
 
 /**
@@ -28,14 +27,11 @@ import org.apache.geode.internal.cache.lru.LRUEntry;
  *
  *
  */
-public abstract class AbstractDiskLRURegionEntry
-  extends AbstractOplogDiskRegionEntry
-  implements LRUEntry
-{
+public abstract class AbstractDiskLRURegionEntry extends AbstractOplogDiskRegionEntry implements LRUEntry {
   protected AbstractDiskLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }
-  
+
   // Do not add any instance variables to this class.
   // Instead add them to the LRU section of LeafRegionEntry.cpp.
 }

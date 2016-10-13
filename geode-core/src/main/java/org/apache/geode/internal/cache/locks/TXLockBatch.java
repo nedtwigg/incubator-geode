@@ -36,34 +36,34 @@ import org.apache.geode.distributed.internal.membership.*;
  *
  */
 public final class TXLockBatch implements DLockBatch, DataSerializableFixedID {
-  
+
   /** Identifies the batch as a single entity */
   private TXLockIdImpl txLockId;
-  
+
   /** List of <code>TXRegionLockRequests</code> */
   private List reqs;
-  
+
   /** Identifies the members participating in the transaction */
   private Set participants;
-  
+
   /** 
    * Constructs a <code>TXLockBatch</code> for the list of 
    * <code>TXRegionLockRequests</code> 
    */
   public TXLockBatch(TXLockId txLockId, List reqs, Set participants) {
-    this.txLockId = (TXLockIdImpl)txLockId;
+    this.txLockId = (TXLockIdImpl) txLockId;
     this.reqs = reqs;
     this.participants = participants;
   }
-  
+
   public InternalDistributedMember getOwner() {
     return this.txLockId.getMemberId();
   }
-  
+
   public TXLockId getTXLockId() {
     return this.txLockId;
   }
-  
+
   public DLockBatchId getBatchId() {
     return this.txLockId;
   }
@@ -71,7 +71,7 @@ public final class TXLockBatch implements DLockBatch, DataSerializableFixedID {
   public void setParticipants(Set participants) {
     this.participants = participants;
   }
-  
+
   public void grantedBy(LockGrantorId lockGrantorId) {
     this.txLockId.setLockGrantorId(lockGrantorId);
   }
@@ -82,11 +82,10 @@ public final class TXLockBatch implements DLockBatch, DataSerializableFixedID {
     }
     return this.reqs;
   }
-  
+
   @Override
   public String toString() {
-    return "[TXLockBatch: txLockId=" + txLockId + 
-           "; reqs=" + reqs + "; participants=" + participants + "]";
+    return "[TXLockBatch: txLockId=" + txLockId + "; reqs=" + reqs + "; participants=" + participants + "]";
   }
 
   /**
@@ -97,19 +96,19 @@ public final class TXLockBatch implements DLockBatch, DataSerializableFixedID {
   public Set getParticipants() {
     return this.participants;
   }
-  
+
   // -------------------------------------------------------------------------
   //   DataSerializable support
   // -------------------------------------------------------------------------
-  
-  public TXLockBatch() {}
-  
+
+  public TXLockBatch() {
+  }
+
   public int getDSFID() {
     return TX_LOCK_BATCH;
   }
 
-  public void fromData(DataInput in)
-  throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.txLockId = TXLockIdImpl.createFromData(in);
     this.participants = InternalDataSerializer.readSet(in);
     {
@@ -122,7 +121,7 @@ public final class TXLockBatch implements DLockBatch, DataSerializableFixedID {
       }
     }
   }
-  
+
   public void toData(DataOutput out) throws IOException {
     InternalDataSerializer.invokeToData(this.txLockId, out);
     InternalDataSerializer.writeSet(this.participants, out);
@@ -130,8 +129,8 @@ public final class TXLockBatch implements DLockBatch, DataSerializableFixedID {
       out.writeInt(-1);
     } else {
       out.writeInt(this.reqs.size());
-      for (Iterator iter = this.reqs.iterator(); iter.hasNext(); ) {
-        TXRegionLockRequestImpl elem = (TXRegionLockRequestImpl)iter.next();
+      for (Iterator iter = this.reqs.iterator(); iter.hasNext();) {
+        TXRegionLockRequestImpl elem = (TXRegionLockRequestImpl) iter.next();
         InternalDataSerializer.invokeToData(elem, out);
       }
     }
@@ -142,6 +141,5 @@ public final class TXLockBatch implements DLockBatch, DataSerializableFixedID {
     // TODO Auto-generated method stub
     return null;
   }
-  
-}
 
+}

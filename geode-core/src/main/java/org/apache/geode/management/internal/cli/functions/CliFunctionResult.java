@@ -43,36 +43,35 @@ public class CliFunctionResult implements Comparable<CliFunctionResult>, DataSer
 
   public CliFunctionResult(final String memberIdOrName) {
     this.memberIdOrName = memberIdOrName;
-    
+
     this.successful = true;
   }
-  
+
   public CliFunctionResult(final String memberIdOrName, final Serializable[] serializables) {
     this.memberIdOrName = memberIdOrName;
     this.serializables = serializables;
-    
+
     this.successful = true;
   }
-  
+
   public CliFunctionResult(final String memberIdOrName, final byte[] byteData, final Serializable[] serializables) {
     this.byteData = byteData;
     this.serializables = serializables;
     this.successful = true;
   }
-  
+
   public CliFunctionResult(final String memberIdOrName, final XmlEntity xmlEntity) {
     this.memberIdOrName = memberIdOrName;
     this.xmlEntity = xmlEntity;
-    
+
     this.successful = true;
   }
-  
-  
+
   public CliFunctionResult(final String memberIdOrName, final XmlEntity xmlEntity, final Serializable[] serializables) {
     this.memberIdOrName = memberIdOrName;
     this.xmlEntity = xmlEntity;
     this.serializables = serializables;
-    
+
     this.successful = true;
   }
 
@@ -82,10 +81,10 @@ public class CliFunctionResult implements Comparable<CliFunctionResult>, DataSer
     if (message != null) {
       this.serializables = new String[] { message };
     }
-    
+
     this.successful = true;
   }
-  
+
   public CliFunctionResult(final String memberIdOrName, final boolean successful, final String message) {
     this.memberIdOrName = memberIdOrName;
     this.successful = successful;
@@ -93,17 +92,17 @@ public class CliFunctionResult implements Comparable<CliFunctionResult>, DataSer
       this.serializables = new String[] { message };
     }
   }
-  
+
   public CliFunctionResult(final String memberIdOrName, final Throwable throwable, final String message) {
     this.memberIdOrName = memberIdOrName;
     this.throwable = throwable;
     if (message != null) {
       this.serializables = new String[] { message };
     }
-    
+
     this.successful = false;
   }
-  
+
   public String getMemberIdOrName() {
     return this.memberIdOrName;
   }
@@ -112,14 +111,14 @@ public class CliFunctionResult implements Comparable<CliFunctionResult>, DataSer
     if (this.serializables.length == 0 || !(this.serializables[0] instanceof String)) {
       return null;
     }
-    
+
     return (String) this.serializables[0];
   }
 
   public Serializable[] getSerializables() {
     return this.serializables;
   }
-  
+
   public Throwable getThrowable() {
     return this.throwable;
   }
@@ -160,19 +159,19 @@ public class CliFunctionResult implements Comparable<CliFunctionResult>, DataSer
     this.throwable = DataSerializer.readObject(in);
     this.serializables = (Serializable[]) DataSerializer.readObjectArray(in);
   }
-  
+
   public boolean isSuccessful() {
     return this.successful;
   }
-  
+
   public XmlEntity getXmlEntity() {
     return this.xmlEntity;
   }
-  
+
   public byte[] getByteData() {
     return this.byteData;
   }
-  
+
   @Override
   public int compareTo(CliFunctionResult o) {
     if (this.memberIdOrName == null && o.memberIdOrName == null) {
@@ -214,14 +213,9 @@ public class CliFunctionResult implements Comparable<CliFunctionResult>, DataSer
 
   @Override
   public String toString() {
-    return "CliFunctionResult [memberId=" + this.memberIdOrName
-        + ", successful=" + this.successful
-        + ", xmlEntity=" + this.xmlEntity
-        + ", serializables=" + Arrays.toString(this.serializables)
-        + ", throwable=" + this.throwable
-        + ", byteData=" + Arrays.toString(this.byteData) +"]";
+    return "CliFunctionResult [memberId=" + this.memberIdOrName + ", successful=" + this.successful + ", xmlEntity=" + this.xmlEntity + ", serializables=" + Arrays.toString(this.serializables) + ", throwable=" + this.throwable + ", byteData=" + Arrays.toString(this.byteData) + "]";
   }
-  
+
   /** 
    * Remove elements from the list that are not instances of CliFunctionResult and then
    * sort the results.
@@ -236,13 +230,13 @@ public class CliFunctionResult implements Comparable<CliFunctionResult>, DataSer
         returnResults.add((CliFunctionResult) result);
       }
     }
-    
+
     Collections.sort(returnResults);
     return returnResults;
   }
 
   @Override
   public Version[] getSerializationVersions() {
-     return new Version[] {Version.GFE_80};
+    return new Version[] { Version.GFE_80 };
   }
 }

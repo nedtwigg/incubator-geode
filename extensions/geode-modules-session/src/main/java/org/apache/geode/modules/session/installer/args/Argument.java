@@ -75,10 +75,7 @@ public class Argument {
    * @param parameterNames names of the parameters to this argument for use in
    *                       the usage generation
    */
-  public Argument(
-      final String primaryForm,
-      final boolean argRequired,
-      final String... parameterNames) {
+  public Argument(final String primaryForm, final boolean argRequired, final String... parameterNames) {
     forms.add(primaryForm);
     paramNames = parameterNames;
     required = argRequired;
@@ -208,8 +205,7 @@ public class Argument {
    */
   public Argument setDefaults(final String... newDefaults) {
     if (newDefaults.length != paramNames.length) {
-      throw (new IllegalArgumentException(
-          "Defaults array length provided is not the correct size"));
+      throw (new IllegalArgumentException("Defaults array length provided is not the correct size"));
     }
     defaults = newDefaults;
     return this;
@@ -233,9 +229,7 @@ public class Argument {
    */
   public Argument setEnvVars(final String... newEnvVars) {
     if (newEnvVars.length != paramNames.length) {
-      throw (new IllegalArgumentException(
-          "Environment variables array length provided is not "
-              + "the correct size"));
+      throw (new IllegalArgumentException("Environment variables array length provided is not " + "the correct size"));
     }
     envVars = newEnvVars;
     return this;

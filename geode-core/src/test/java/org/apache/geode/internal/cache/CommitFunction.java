@@ -104,8 +104,7 @@ public class CommitFunction implements Function {
       ArrayList args = new ArrayList();
       args.add(txId);
       args.add(NestedTransactionFunction.COMMIT);
-      Execution ex = FunctionService.onMember(cache.getDistributedSystem(),
-          member).withArgs(args);
+      Execution ex = FunctionService.onMember(cache.getDistributedSystem(), member).withArgs(args);
       if (isDebugEnabled) {
         logger.debug("CommitFunction: for transaction: {} executing NestedTransactionFunction on member: {}", txId, member);
       }
@@ -114,7 +113,7 @@ public class CommitFunction implements Function {
         result = (Boolean) list.get(0);
       } catch (FunctionException fe) {
         if (fe.getCause() instanceof FunctionInvocationTargetException) {
-          throw new TransactionDataNodeHasDepartedException("Could not commit on member:"+member);
+          throw new TransactionDataNodeHasDepartedException("Could not commit on member:" + member);
         } else {
           throw fe;
         }

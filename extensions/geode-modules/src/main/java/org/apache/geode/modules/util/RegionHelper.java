@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 
-@SuppressWarnings({"deprecation", "unchecked"})
+@SuppressWarnings({ "deprecation", "unchecked" })
 public class RegionHelper {
 
   public static final String NAME = "gemfire_modules";
@@ -80,11 +80,7 @@ public class RegionHelper {
     String regionName = region.getName(); // FilterByName only looks at name and not full path
     if (!PartitionRegionHelper.isPartitionedRegion(region)) {
       StringBuilder builder = new StringBuilder();
-      builder.append("Region ")
-          .append(regionName)
-          .append(" is not partitioned. Instead, it is ")
-          .append(region.getAttributes().getDataPolicy())
-          .append(". It can't be rebalanced.");
+      builder.append("Region ").append(regionName).append(" is not partitioned. Instead, it is ").append(region.getAttributes().getDataPolicy()).append(". It can't be rebalanced.");
       throw new IllegalArgumentException(builder.toString());
     }
 
@@ -123,8 +119,7 @@ public class RegionHelper {
     // Create the requested attributes
     RegionAttributes baseRequestedAttributes = cache.getRegionAttributes(configuration.getRegionAttributesId());
     if (baseRequestedAttributes == null) {
-      throw new IllegalArgumentException(
-          "No region attributes named " + configuration.getRegionAttributesId() + " are defined.");
+      throw new IllegalArgumentException("No region attributes named " + configuration.getRegionAttributesId() + " are defined.");
     }
     AttributesFactory requestedFactory = new AttributesFactory(baseRequestedAttributes);
 
@@ -147,7 +142,7 @@ public class RegionHelper {
 
     // Enable gateway replication if necessary
     // TODO: Disabled for WAN
-//    requestedFactory.setEnableGateway(configuration.getEnableGatewayReplication());
+    //    requestedFactory.setEnableGateway(configuration.getEnableGatewayReplication());
 
     // Add the debug cache listener if necessary
     if (configuration.getEnableDebugListener()) {
@@ -193,49 +188,19 @@ public class RegionHelper {
   }
 
   private static void fillInRebalanceResultsSummary(StringBuilder builder, PartitionRebalanceInfo rebalanceInfo) {
-    builder.append("\nRebalanced region ")
-        .append(rebalanceInfo.getRegionPath())
-        .append(" in ")
-        .append(rebalanceInfo.getTime())
-        .append(" ms")
+    builder.append("\nRebalanced region ").append(rebalanceInfo.getRegionPath()).append(" in ").append(rebalanceInfo.getTime()).append(" ms")
 
-        .append("\nCreated ")
-        .append(rebalanceInfo.getBucketCreatesCompleted())
-        .append(" buckets containing ")
-        .append(rebalanceInfo.getBucketCreateBytes())
-        .append(" bytes in ")
-        .append(rebalanceInfo.getBucketCreateTime())
-        .append(" ms")
+        .append("\nCreated ").append(rebalanceInfo.getBucketCreatesCompleted()).append(" buckets containing ").append(rebalanceInfo.getBucketCreateBytes()).append(" bytes in ").append(rebalanceInfo.getBucketCreateTime()).append(" ms")
 
-        .append("\nTransferred ")
-        .append(rebalanceInfo.getBucketTransfersCompleted())
-        .append(" buckets containing ")
-        .append(rebalanceInfo.getBucketTransferBytes())
-        .append(" bytes in ")
-        .append(rebalanceInfo.getBucketTransferTime())
-        .append(" ms")
+        .append("\nTransferred ").append(rebalanceInfo.getBucketTransfersCompleted()).append(" buckets containing ").append(rebalanceInfo.getBucketTransferBytes()).append(" bytes in ").append(rebalanceInfo.getBucketTransferTime()).append(" ms")
 
-        .append("\nTransferred ")
-        .append(rebalanceInfo.getPrimaryTransfersCompleted())
-        .append(" primary buckets in ")
-        .append(rebalanceInfo.getPrimaryTransferTime())
-        .append(" ms");
+        .append("\nTransferred ").append(rebalanceInfo.getPrimaryTransfersCompleted()).append(" primary buckets in ").append(rebalanceInfo.getPrimaryTransferTime()).append(" ms");
   }
 
-  private static void fillInRebalanceResultsMemberDetails(StringBuilder builder, Set<PartitionMemberInfo> memberInfoSet,
-      String when) {
+  private static void fillInRebalanceResultsMemberDetails(StringBuilder builder, Set<PartitionMemberInfo> memberInfoSet, String when) {
     builder.append("\nMember Info ").append(when).append(" Rebalance:\n");
     for (PartitionMemberInfo info : memberInfoSet) {
-      builder.append("\tdistributedMember=")
-          .append(info.getDistributedMember())
-          .append(", configuredMaxMemory=")
-          .append(info.getConfiguredMaxMemory())
-          .append(", size=")
-          .append(info.getSize())
-          .append(", bucketCount=")
-          .append(info.getBucketCount())
-          .append(", primaryCount=")
-          .append(info.getPrimaryCount());
+      builder.append("\tdistributedMember=").append(info.getDistributedMember()).append(", configuredMaxMemory=").append(info.getConfiguredMaxMemory()).append(", size=").append(info.getSize()).append(", bucketCount=").append(info.getBucketCount()).append(", primaryCount=").append(info.getPrimaryCount());
     }
   }
 }

@@ -70,13 +70,13 @@ public class ManagementResourceRepo {
   public Region<String, Object> getLocalMonitoringRegion() {
     return localMonitoringRegion;
   }
-  
-  public void destroyLocalMonitoringRegion(){
+
+  public void destroyLocalMonitoringRegion() {
     localMonitoringRegion.localDestroyRegion();
     localMonitoringRegion = null;
   }
-  
-  public void destroyLocalNotifRegion(){
+
+  public void destroyLocalNotifRegion() {
     localNotificationRegion.localDestroyRegion();
     localNotificationRegion = null;
   }
@@ -87,8 +87,7 @@ public class ManagementResourceRepo {
    * @param localMonitoringRegion
    *          local monitoring region
    */
-  public void setLocalMonitoringRegion(
-      Region<String, Object> localMonitoringRegion) {
+  public void setLocalMonitoringRegion(Region<String, Object> localMonitoringRegion) {
     this.localMonitoringRegion = localMonitoringRegion;
   }
 
@@ -113,14 +112,13 @@ public class ManagementResourceRepo {
    * @param objectMap
    *          Object Map containing key-value operations
    */
-  public void putAllInLocalMonitoringRegion(
-      Map<String, FederationComponent> objectMap) {
+  public void putAllInLocalMonitoringRegion(Map<String, FederationComponent> objectMap) {
     if (localMonitoringRegion != null && !localMonitoringRegion.isDestroyed()) {
       localMonitoringRegion.putAll(objectMap);
     }
 
   }
-  
+
   public boolean keyExistsInLocalMonitoringRegion(String key) {
     if (localMonitoringRegion != null && !localMonitoringRegion.isDestroyed()) {
       // We want to just check locally without sending a message to the manager.
@@ -130,7 +128,6 @@ public class ManagementResourceRepo {
       return true; // so caller will think he does not need to do a putAll
     }
   }
-
 
   /**
    * get a entry from local monitoring region
@@ -158,8 +155,7 @@ public class ManagementResourceRepo {
    * @param localNotificationRegion
    *          local notification region
    */
-  public void setLocalNotificationRegion(
-      Region<NotificationKey, Notification> localNotificationRegion) {
+  public void setLocalNotificationRegion(Region<NotificationKey, Notification> localNotificationRegion) {
     this.localNotificationRegion = localNotificationRegion;
   }
 
@@ -171,8 +167,7 @@ public class ManagementResourceRepo {
    * @param notif
    *          Notification Object
    */
-  public void putEntryInLocalNotificationRegion(NotificationKey key,
-      Notification notif) {
+  public void putEntryInLocalNotificationRegion(NotificationKey key, Notification notif) {
     localNotificationRegion.put(key, notif);
   }
 
@@ -184,8 +179,7 @@ public class ManagementResourceRepo {
    * @param region
    *          Corresponding region
    */
-  public void putEntryInMonitoringRegionMap(DistributedMember member,
-      Region<String, Object> region) {
+  public void putEntryInMonitoringRegionMap(DistributedMember member, Region<String, Object> region) {
     monitoringRegionMap.put(member, region);
   }
 
@@ -195,8 +189,7 @@ public class ManagementResourceRepo {
    *          Distributed Member
    * @return the corresponding Monitoring region at Managing Node side
    */
-  public Region<String, Object> getEntryFromMonitoringRegionMap(
-      DistributedMember member) {
+  public Region<String, Object> getEntryFromMonitoringRegionMap(DistributedMember member) {
 
     return monitoringRegionMap.get(member);
   }
@@ -228,8 +221,7 @@ public class ManagementResourceRepo {
    * @param region
    *          Corresponding notification region
    */
-  public void putEntryInNotifRegionMap(DistributedMember member,
-      Region<NotificationKey, Notification> region) {
+  public void putEntryInNotifRegionMap(DistributedMember member, Region<NotificationKey, Notification> region) {
     notifRegionMap.put(member, region);
   }
 
@@ -240,8 +232,7 @@ public class ManagementResourceRepo {
    *          Distributed Member
    * @return notification Region for the member
    */
-  public Region<NotificationKey, Notification> getEntryFromNotifRegionMap(
-      DistributedMember member) {
+  public Region<NotificationKey, Notification> getEntryFromNotifRegionMap(DistributedMember member) {
 
     return notifRegionMap.get(member);
   }
@@ -256,6 +247,5 @@ public class ManagementResourceRepo {
 
     notifRegionMap.remove(member);
   }
-
 
 }

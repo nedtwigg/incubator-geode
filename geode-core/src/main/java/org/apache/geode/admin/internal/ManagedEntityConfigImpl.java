@@ -35,8 +35,7 @@ import java.net.*;
  *
  * @since GemFire 4.0
  */
-public abstract class ManagedEntityConfigImpl
-  implements ManagedEntityConfig {
+public abstract class ManagedEntityConfigImpl implements ManagedEntityConfig {
 
   /** The name of the host on which the managed entity runs */
   private String host;
@@ -106,11 +105,9 @@ public abstract class ManagedEntityConfigImpl
    */
   protected ManagedEntityConfigImpl() {
     this.host = getLocalHostName();
-    this.workingDirectory =
-      getCurrentWorkingDirectory().getAbsolutePath(); 
-    this.productDirectory =
-      getGemFireInstallation().getAbsolutePath();
-    this.remoteCommand = null;  // Delegate to AdminDistributedSystem
+    this.workingDirectory = getCurrentWorkingDirectory().getAbsolutePath();
+    this.productDirectory = getGemFireInstallation().getAbsolutePath();
+    this.remoteCommand = null; // Delegate to AdminDistributedSystem
   }
 
   /**
@@ -232,8 +229,7 @@ public abstract class ManagedEntityConfigImpl
   public Object clone() throws CloneNotSupportedException {
     // Since all fields are immutable objects, no deep cloning is
     // necessary.
-    ManagedEntityConfigImpl clone =
-      (ManagedEntityConfigImpl) super.clone();
+    ManagedEntityConfigImpl clone = (ManagedEntityConfigImpl) super.clone();
     clone.entity = null;
     return clone;
   }
@@ -246,7 +242,7 @@ public abstract class ManagedEntityConfigImpl
 
     StringBuffer sb = new StringBuffer();
     sb.append(className);
-    
+
     sb.append(" host=");
     sb.append(this.getHost());
     sb.append(" workingDirectory=");

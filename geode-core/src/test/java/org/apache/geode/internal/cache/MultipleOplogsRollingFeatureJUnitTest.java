@@ -64,10 +64,9 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
     deleteFiles();
     diskProps.setMaxOplogSize(450);
     diskProps.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache,
-        diskProps, Scope.LOCAL);
+    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     assertNotNull(region);
-    DiskRegion diskRegion = ((LocalRegion)region).getDiskRegion();
+    DiskRegion diskRegion = ((LocalRegion) region).getDiskRegion();
     assertNotNull(diskRegion);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     CacheObserverHolder.setInstance(getCacheObserver());
@@ -81,7 +80,7 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
       logWriter.info("testMultipleRolling adding entry 1");
       addEntries(1 /* oplogNumber*/, 50 /* byte array size*/);
 
-      ((LocalRegion)region).getDiskStore().forceCompaction();
+      ((LocalRegion) region).getDiskStore().forceCompaction();
       waitForCompactor(3000/*wait for forceRolling to finish */);
       logWriter.info("testMultipleRolling after waitForCompactor");
       // the compactor copied two tombstone and 1 entry to oplog #2
@@ -140,13 +139,10 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
     // let the main thread sleep so that rolling gets over
     waitForCompactor(5000);
 
-    assertTrue(
-        "Number of Oplogs to be rolled is not null : this is unexpected",
-        diskRegion.getOplogToBeCompacted() == null);
+    assertTrue("Number of Oplogs to be rolled is not null : this is unexpected", diskRegion.getOplogToBeCompacted() == null);
     cache.close();
     cache = createCache();
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache,
-        diskProps, Scope.LOCAL);
+    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     assertTrue("Recreated region size is not 1 ", region.size() == 1);
 
     closeDown();
@@ -158,13 +154,11 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
     long start = System.currentTimeMillis();
     while (!FLAG) { // wait until
       // condition is met
-      assertTrue("Waited over " + maxWaitTime + "entry to get refreshed",
-          (System.currentTimeMillis() - start) < maxWaitTime);
+      assertTrue("Waited over " + maxWaitTime + "entry to get refreshed", (System.currentTimeMillis() - start) < maxWaitTime);
       try {
         Thread.sleep(1);
 
-      }
-      catch (InterruptedException ie) {
+      } catch (InterruptedException ie) {
         fail("Interrupted while waiting " + ie);
       }
     }
@@ -174,7 +168,7 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
     assertNotNull(region);
     byte[] val = new byte[valueSize];
     for (int i = 0; i < valueSize; ++i) {
-      val[i] = (byte)i;
+      val[i] = (byte) i;
     }
 
     // Creating opLog1
@@ -210,8 +204,7 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
   private CacheObserver getCacheObserver() {
     return (new CacheObserverAdapter() {
 
-      public void beforeGoingToCompact()
-      {
+      public void beforeGoingToCompact() {
 
         if (logWriter.fineEnabled()) {
 
@@ -220,15 +213,13 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
 
       }
 
-      public void afterHavingCompacted()
-      {
+      public void afterHavingCompacted() {
         FLAG = true;
         if (CALLBACK_SET) {
           synchronized (mutex) {
             try {
               mutex.wait();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
               fail("interrupted");
             }
           }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.internal.admin;
 
 /**
@@ -31,7 +31,7 @@ public interface StatListener {
    *        The time at which the statistic's value change was
    *        detected 
    */
-  public void statValueChanged( double value, long time );
+  public void statValueChanged(double value, long time);
 
   /**
    * Invoked when the value of a statistic has not changed
@@ -39,5 +39,5 @@ public interface StatListener {
    * @param time
    *        The time of the latest statistic sample
    */
-  public void statValueUnchanged( long time );
+  public void statValueUnchanged(long time);
 }

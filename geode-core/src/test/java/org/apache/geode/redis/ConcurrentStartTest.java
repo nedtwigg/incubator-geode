@@ -40,10 +40,10 @@ public class ConcurrentStartTest {
 
   private Cache cache;
   private int numServers = 10;
-  
+
   @Rule
   public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
-  
+
   @Before
   public void setUp() {
     System.setProperty(DistributedSystem.PROPERTIES_FILE_PROPERTY, getClass().getSimpleName() + ".properties");
@@ -56,23 +56,23 @@ public class ConcurrentStartTest {
       this.cache = null;
     }
   }
-  
+
   @Test
   public void testCachelessStart() throws InterruptedException {
     runNServers(numServers);
     GemFireCacheImpl.getInstance().close();
   }
-  
+
   @Test
   public void testCachefulStart() throws InterruptedException {
     CacheFactory cf = new CacheFactory();
     cf.set(MCAST_PORT, "0");
     cf.set(LOCATORS, "");
     this.cache = cf.create();
-    
+
     runNServers(numServers);
   }
-  
+
   private void runNServers(int n) throws InterruptedException {
     final int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(numServers);
     final Thread[] threads = new Thread[n];
@@ -87,7 +87,7 @@ public class ConcurrentStartTest {
           s.shutdown();
         }
       };
-      
+
       Thread t = new Thread(r);
       t.setDaemon(true);
       t.start();

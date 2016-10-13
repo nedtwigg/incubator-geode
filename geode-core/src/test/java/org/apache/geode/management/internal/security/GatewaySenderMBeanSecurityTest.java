@@ -48,14 +48,13 @@ public class GatewaySenderMBeanSecurityTest {
   private GatewaySenderMXBean bean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(
-      jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
 
   @BeforeClass
-  public static void beforeClass() throws Exception{
+  public static void beforeClass() throws Exception {
     // the server does not have a GAtewaySenderMXBean registered initially, has to register a mock one.
     service = ManagementService.getManagementService(serverRule.getCache());
     mockBeanName = ObjectName.getInstance("GemFire", "key", "value");
@@ -63,7 +62,7 @@ public class GatewaySenderMBeanSecurityTest {
   }
 
   @AfterClass
-  public static void afterClass(){
+  public static void afterClass() {
     service.unregisterMBean(mockBeanName);
   }
 

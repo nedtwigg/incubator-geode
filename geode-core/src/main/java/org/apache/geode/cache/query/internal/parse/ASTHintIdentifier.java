@@ -29,15 +29,15 @@ import org.apache.geode.cache.query.internal.QCompiler;
  *
  */
 public class ASTHintIdentifier extends GemFireAST {
-  
+
   public ASTHintIdentifier() {
-  
+
   }
-  
+
   public ASTHintIdentifier(Token token) {
     super(token);
   }
-  
+
   @Override
   public String getText() {
     return super.getText();

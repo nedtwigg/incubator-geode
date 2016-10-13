@@ -24,38 +24,38 @@ import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
 
 public class GetValueForKey implements Function {
-  
+
   @Override
-  public void execute(FunctionContext context) {  
+  public void execute(FunctionContext context) {
     Object args = context.getArguments();
-    
+
     Cache cache = null;
-    
-    try{
+
+    try {
       cache = CacheFactory.getAnyInstance();
-      
-      if(args.toString().equalsIgnoreCase("1") ){
+
+      if (args.toString().equalsIgnoreCase("1")) {
         Region<String, Object> r = cache.getRegion("Products");
         Object result = r.get("1");
         context.getResultSender().lastResult(result);
-      
-      }else if(args.toString().equalsIgnoreCase("2")){
+
+      } else if (args.toString().equalsIgnoreCase("2")) {
         Region<String, Object> r = cache.getRegion("People");
         Object result = r.get("2");
-        context.getResultSender().lastResult(result);      
-      }else{
+        context.getResultSender().lastResult(result);
+      } else {
         //Default case
-        int i=10;
+        int i = 10;
         context.getResultSender().lastResult(i);
       }
-    }catch(CacheClosedException e){
+    } catch (CacheClosedException e) {
       context.getResultSender().lastResult("Error: CacheClosedException");
     }
-    
+
   }
 
   @Override
-  public String getId() {    
+  public String getId() {
     return "GetValueForKey";
   }
 
@@ -72,6 +72,5 @@ public class GetValueForKey implements Function {
   @Override
   public boolean isHA() {
     return false;
-  }      
+  }
 }
-

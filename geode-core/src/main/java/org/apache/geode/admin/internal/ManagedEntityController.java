@@ -40,14 +40,14 @@ interface ManagedEntityController {
    * Returns whether or not a managed entity is running
    */
   public boolean isRunning(InternalManagedEntity entity);
-  
+
   /**
    * Returns the contents of a locator's log file.  Other APIs are
    * used to get the log file of managed entities that are also system
    * members.
    */
   public String getLog(DistributionLocatorImpl locator);
-  
+
   /**
    * Returns the full path to the executable in
    * <code>$GEMFIRE/bin</code> taking into account the {@linkplain
@@ -64,7 +64,7 @@ interface ManagedEntityController {
    *        <code>$GEMFIRE/bin</code>.
    */
   public String getProductExecutable(InternalManagedEntity entity, String executable);
-  
+
   /**
    * Builds optional SSL command-line arguments.  Returns null if SSL is not
    * enabled for the distributed system.

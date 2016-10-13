@@ -27,32 +27,32 @@ package org.apache.geode.internal.cache;
  */
 public final class OpType {
 
-	private OpType() {
-	}
+  private OpType() {
+  }
 
-	public static final byte CREATE = 1;
+  public static final byte CREATE = 1;
 
-	public static final byte UPDATE = 2;
+  public static final byte UPDATE = 2;
 
-	public static final byte GET = 3;
+  public static final byte GET = 3;
 
-	public static final byte INVALIDATE = 4;
+  public static final byte INVALIDATE = 4;
 
-	public static final byte GET_ENTRY = 5;
+  public static final byte GET_ENTRY = 5;
 
-	public static final byte CONTAINS_KEY = 6;
+  public static final byte CONTAINS_KEY = 6;
 
-	public static final byte CONTAINS_VALUE = 7;
+  public static final byte CONTAINS_VALUE = 7;
 
-	public static final byte DESTROY = 8;
+  public static final byte DESTROY = 8;
 
-	public static final byte CONTAINS_VALUE_FOR_KEY = 9;
+  public static final byte CONTAINS_VALUE_FOR_KEY = 9;
 
-	public static final byte FUNCTION_EXECUTION = 10;
+  public static final byte FUNCTION_EXECUTION = 10;
 
-        public static final byte UPDATE_ENTRY_VERSION = 11;
+  public static final byte UPDATE_ENTRY_VERSION = 11;
 
-	public static final byte CLEAR = 16;
+  public static final byte CLEAR = 16;
 
-	public static final byte MARKER = 32;
+  public static final byte MARKER = 32;
 }

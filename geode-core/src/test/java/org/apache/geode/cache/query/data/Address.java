@@ -24,27 +24,27 @@ package org.apache.geode.cache.query.data;
 
 import java.util.*;
 
-
 /**
  *
  */
 public class Address {
-    public String zipCode;
-    public String city;
-    
-    public Set street;
-    public Set phoneNo;
-    
-    /** Creates a new instance of Address */
-    public Address(String zipCode,String city) {
-        this.zipCode=zipCode;
-        this.city=city;
-    }
-    public Address(String zipCode,String city,Set street,Set phoneNo) {
-        this.zipCode=zipCode;
-        this.city=city;
-        this.street=street;
-        this.phoneNo=phoneNo;
-    }
-    
+  public String zipCode;
+  public String city;
+
+  public Set street;
+  public Set phoneNo;
+
+  /** Creates a new instance of Address */
+  public Address(String zipCode, String city) {
+    this.zipCode = zipCode;
+    this.city = city;
+  }
+
+  public Address(String zipCode, String city, Set street, Set phoneNo) {
+    this.zipCode = zipCode;
+    this.city = city;
+    this.street = street;
+    this.phoneNo = phoneNo;
+  }
+
 }//end of class

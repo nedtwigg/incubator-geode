@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.distributed.internal;
 
 import org.apache.geode.admin.GemFireHealth;
@@ -29,14 +29,17 @@ public interface HealthMonitor {
    * a unique id when it is created.
    */
   public int getId();
+
   /**
    * Resets the current health status to zero.
    */
   public void resetStatus();
+
   /**
    * Returns the diagnosis of the desired status.
    */
   public String[] getDiagnosis(GemFireHealth.Health healthCode);
+
   /**
    * Stops the monitor so it no longer checks for health.
    * Once stopped a monitor can not be started.

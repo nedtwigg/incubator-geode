@@ -40,9 +40,9 @@ public class OffHeapTestUtil {
     }
     long end = System.currentTimeMillis() + 5000;
     List<MemoryBlock> orphans = allocator.getOrphans();
-    
+
     //Wait for the orphans to go away
-    while(orphans != null && !orphans.isEmpty() && System.currentTimeMillis() < end) {
+    while (orphans != null && !orphans.isEmpty() && System.currentTimeMillis() < end) {
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
@@ -50,8 +50,8 @@ public class OffHeapTestUtil {
       }
       orphans = allocator.getOrphans();
     }
-    
-    if(orphans != null && ! orphans.isEmpty()) {
+
+    if (orphans != null && !orphans.isEmpty()) {
       List<RefCountChangeInfo> info = ReferenceCountHelper.getRefCountInfo(orphans.get(0).getAddress());
       System.out.println("FOUND ORPHAN!!");
       System.out.println("Sample orphan: " + orphans.get(0));
@@ -61,4 +61,3 @@ public class OffHeapTestUtil {
   }
 
 }
-

@@ -32,9 +32,8 @@ import org.apache.geode.internal.util.BlobHelper;
  *
  *
  */
-public interface CachedDeserializable extends Sizeable
-{
-  
+public interface CachedDeserializable extends Sizeable {
+
   /**
    * Returns the raw byte[] that represents this cache value.
    * @return the raw byte[] that represents this cache value
@@ -48,7 +47,7 @@ public interface CachedDeserializable extends Sizeable
    * @since GemFire 4.0
    */
   public Object getDeserializedForReading();
-  
+
   /**
    * Gets the string form of the cached object. If an exception
    * is thrown while converting to a string then the exception
@@ -57,7 +56,7 @@ public interface CachedDeserializable extends Sizeable
    * @since GemFire 6.6
    */
   public String getStringForm();
-  
+
   /**
    * Always makes a copy of the deserialized object and returns it.
    * Leaves the value in a form that will optimize future calls.
@@ -66,7 +65,7 @@ public interface CachedDeserializable extends Sizeable
    * @return the deserialized object for this cache value
    */
   public Object getDeserializedWritableCopy(Region r, RegionEntry re);
-  
+
   /**
    * Returns the deserialized object for this cache value.
    * @param r the region that owns this object or null if no owner
@@ -94,7 +93,7 @@ public interface CachedDeserializable extends Sizeable
    * @throws IOException
    */
   public void writeValueAsByteArray(DataOutput out) throws IOException;
-  
+
   /**
    * Sets the serialized value of the Object in the wrapper along with
    * appropriate user bit & valid length. If the Object is already in a
@@ -104,16 +103,18 @@ public interface CachedDeserializable extends Sizeable
    * @param wrapper object of type BytesAndBitsForCompactor 
    */
   public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits);
-  
+
   /**
    * Return the size of the value, not including the overhead
    * added by this wrapper class.
    */
   public int getValueSizeInBytes();
+
   /**
    * Returns true if the value stored in this memory chunk is a serialized object. Returns false if it is a byte array.
    */
   public boolean isSerialized();
+
   /**
    * Return true if the value uses the java heap; false if not.
    */

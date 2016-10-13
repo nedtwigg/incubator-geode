@@ -37,11 +37,10 @@ import org.apache.geode.internal.statistics.StatisticsManager;
  * or in vm's that do not have a distributed system nor a gemfire connection.
  *
  */
-public class LocalStatisticsFactory extends AbstractStatisticsFactory
-    implements StatisticsFactory, StatisticsManager {
+public class LocalStatisticsFactory extends AbstractStatisticsFactory implements StatisticsFactory, StatisticsManager {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   public static final String STATS_DISABLE_NAME_PROPERTY = "stats.disable";
 
   private final SimpleStatSampler sampler;
@@ -49,7 +48,7 @@ public class LocalStatisticsFactory extends AbstractStatisticsFactory
 
   public LocalStatisticsFactory(CancelCriterion stopper) {
     super(initId(), initName(), initStartTime());
-    
+
     this.statsDisabled = Boolean.getBoolean(STATS_DISABLE_NAME_PROPERTY);
     if (statsDisabled) {
       this.sampler = null;
@@ -61,20 +60,20 @@ public class LocalStatisticsFactory extends AbstractStatisticsFactory
       this.sampler = null;
     }
   }
-  
+
   protected static long initId() {
     return Thread.currentThread().hashCode();
   }
-  
+
   protected static String initName() {
     return System.getProperty("stats.name", Thread.currentThread().getName());
   }
-  
+
   protected static long initStartTime() {
     return System.currentTimeMillis();
   }
-  
- protected SimpleStatSampler getStatSampler() {
+
+  protected SimpleStatSampler getStatSampler() {
     return this.sampler;
   }
 
@@ -84,7 +83,7 @@ public class LocalStatisticsFactory extends AbstractStatisticsFactory
       this.sampler.stop();
     }
   }
-  
+
   @Override
   protected Statistics createOsStatistics(StatisticsType type, String textId, long numericId, int osStatFlags) {
     if (this.statsDisabled) {

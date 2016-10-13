@@ -17,7 +17,7 @@
 package org.apache.geode.management.internal.cli;
 
 public interface ResultHandler {
-  
+
   void handleExecutionResult(Object result, String sysout);
 
 }

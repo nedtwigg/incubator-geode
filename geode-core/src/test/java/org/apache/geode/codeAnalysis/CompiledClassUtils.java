@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,8 +39,6 @@ import org.apache.geode.codeAnalysis.decode.CompiledClass;
 import org.apache.geode.codeAnalysis.decode.CompiledField;
 import org.apache.geode.codeAnalysis.decode.CompiledMethod;
 
-
-
 public class CompiledClassUtils {
   /**
    * Parse the given class files and return a map of name->Dclass.  Any
@@ -49,8 +48,8 @@ public class CompiledClassUtils {
    */
   public static Map<String, CompiledClass> parseClassFiles(List<File> classFiles) {
     Map<String, CompiledClass> result = new HashMap<String, CompiledClass>();
-    
-    for (File file: classFiles) {
+
+    for (File file : classFiles) {
       try {
         CompiledClass parsed = CompiledClass.getInstance(file);
         if (!parsed.isInterface()) {
@@ -62,7 +61,7 @@ public class CompiledClassUtils {
     }
     return result;
   }
-  
+
   /**
    * Parse the files in the given jar file and return a map of name->CompiledClass.
    * Any IO exceptions are consumed by this method and written to stderr.
@@ -72,7 +71,7 @@ public class CompiledClassUtils {
     Map<String, CompiledClass> result = new HashMap<String, CompiledClass>();
     try {
       JarFile jarfile = new JarFile(jar);
-      for (Enumeration<JarEntry> entries=jarfile.entries(); entries.hasMoreElements(); ) {
+      for (Enumeration<JarEntry> entries = jarfile.entries(); entries.hasMoreElements();) {
         JarEntry entry = entries.nextElement();
         if (entry.getName().endsWith(".class")) {
           try {
@@ -91,18 +90,17 @@ public class CompiledClassUtils {
     }
     return result;
   }
-  
+
   /**
    * Parse the files in the given jar file and return a map of name->CompiledClass.
    * Any IO exceptions are consumed by this method and written to stderr.
    */
   public static Map<String, CompiledClass> parseClassFilesInDir(File buildDir) {
     Map<String, CompiledClass> result = new HashMap<String, CompiledClass>();
-    for (File entry: buildDir.listFiles()) {
+    for (File entry : buildDir.listFiles()) {
       if (entry.isDirectory()) {
         result.putAll(parseClassFilesInDir(entry));
-      }
-      else if (entry.getName().endsWith(".class")) {
+      } else if (entry.getName().endsWith(".class")) {
         try {
           CompiledClass parsed = CompiledClass.getInstance(new FileInputStream(entry));
           if (!parsed.isInterface()) {
@@ -115,7 +113,7 @@ public class CompiledClassUtils {
     }
     return result;
   }
-  
+
   /**
    * returns a collection of all of the .class files in the given list
    * of files and directories.
@@ -127,8 +125,8 @@ public class CompiledClassUtils {
   public static List<File> findClassFiles(String parentPath, String[] filenames, boolean recursive) {
     // Grab classes and Expand directory names found in list
     List<File> classFiles = new ArrayList<File>();
-    for (int i = 0; i <  filenames.length; i ++) {
-      File f = new File(parentPath+filenames[i]);
+    for (int i = 0; i < filenames.length; i++) {
+      File f = new File(parentPath + filenames[i]);
       String n = f.getAbsolutePath();
       if (!f.exists()) {
         System.err.println("File " + n + " does not exist - skipping");
@@ -139,7 +137,7 @@ public class CompiledClassUtils {
         continue;
       }
       if (f.isDirectory() && recursive) {
-        classFiles.addAll(findClassFiles(f.getAbsolutePath()+"/", f.list(), true));
+        classFiles.addAll(findClassFiles(f.getAbsolutePath() + "/", f.list(), true));
       }
     }
     Collections.sort(classFiles);
@@ -158,20 +156,19 @@ public class CompiledClassUtils {
     return result;
   }
 
-  public static String diffSortedClassesAndMethods(
-      List<ClassAndMethodDetails> goldRecord, List<ClassAndMethods> toDatas) throws IOException {
-    
+  public static String diffSortedClassesAndMethods(List<ClassAndMethodDetails> goldRecord, List<ClassAndMethods> toDatas) throws IOException {
+
     StringBuilder newClassesSb = new StringBuilder(10000);
     StringBuilder changedClassesSb = new StringBuilder(10000);
     newClassesSb.append("New or moved classes----------------------------------------\n");
     int newBase = newClassesSb.length();
     changedClassesSb.append("Modified classes--------------------------------------------\n");
     int changedBase = changedClassesSb.length();
-    
+
     Iterator<ClassAndMethods> it = toDatas.iterator();
     ClassAndMethods newclass = null;
-    
-    for (ClassAndMethodDetails gold: goldRecord) {
+
+    for (ClassAndMethodDetails gold : goldRecord) {
       if (newclass == null) {
         if (!it.hasNext()) {
           changedClassesSb.append(gold).append(": deleted or moved\n");
@@ -180,8 +177,7 @@ public class CompiledClassUtils {
         newclass = it.next();
       }
       int comparison = -1;
-      while (newclass != null
-          && (comparison=gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
+      while (newclass != null && (comparison = gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
         newClassesSb.append(newclass).append("\n");
         if (it.hasNext()) {
           newclass = it.next();
@@ -197,7 +193,7 @@ public class CompiledClassUtils {
           continue;
         }
         boolean comma = false;
-        for (Map.Entry<String, CompiledMethod> entry: nc.methods.entrySet()) {
+        for (Map.Entry<String, CompiledMethod> entry : nc.methods.entrySet()) {
           CompiledMethod method = entry.getValue();
           String name = method.name();
           byte[] goldCode = gold.methodCode.get(name);
@@ -223,7 +219,7 @@ public class CompiledClassUtils {
             continue;
           }
         }
-        for (Map.Entry<String, byte[]> entry: gold.methodCode.entrySet()) {
+        for (Map.Entry<String, byte[]> entry : gold.methodCode.entrySet()) {
           if (!nc.methods.containsKey(entry.getKey())) {
             if (comma) {
               changedClassesSb.append(", and ");
@@ -255,13 +251,10 @@ public class CompiledClassUtils {
     return result;
   }
 
-  
-  
-  public static void storeClassesAndMethods(List<ClassAndMethods> cams,
-      File file) throws IOException {
+  public static void storeClassesAndMethods(List<ClassAndMethods> cams, File file) throws IOException {
     FileWriter fw = new FileWriter(file);
     BufferedWriter out = new BufferedWriter(fw);
-    for (ClassAndMethods entry: cams) {
+    for (ClassAndMethods entry : cams) {
       out.append(ClassAndMethodDetails.convertForStoring(entry));
       out.newLine();
     }
@@ -271,22 +264,15 @@ public class CompiledClassUtils {
 
   static String codeDiff(byte[] method1, byte[] method2) {
     if (method1.length != method2.length) {
-      return " (len="+method2.length+",expected="+method1.length+")";
+      return " (len=" + method2.length + ",expected=" + method1.length + ")";
     }
-//    for (int i=0; i<method1.length; i++) {
-//      if (method1[i] != method2[i]) {
-//        return "(code["+i+"])";
-//      }
-//    }
+    //    for (int i=0; i<method1.length; i++) {
+    //      if (method1[i] != method2[i]) {
+    //        return "(code["+i+"])";
+    //      }
+    //    }
     return null;
   }
-
-
-
-
-
-
-
 
   public static List<ClassAndVariableDetails> loadClassesAndVariables(File file) throws IOException {
     List<ClassAndVariableDetails> result = new LinkedList<ClassAndVariableDetails>();
@@ -297,8 +283,7 @@ public class CompiledClassUtils {
       line = line.trim();
       if (line.startsWith("#") || line.startsWith("//")) {
         // comment line
-      }
-      else {
+      } else {
         result.add(new ClassAndVariableDetails(line));
       }
     }
@@ -306,25 +291,26 @@ public class CompiledClassUtils {
     return result;
   }
 
-  public static String diffSortedClassesAndVariables(
-      List<ClassAndVariableDetails> goldRecord, List<ClassAndVariables> cavs) throws IOException {
-    
+  public static String diffSortedClassesAndVariables(List<ClassAndVariableDetails> goldRecord, List<ClassAndVariables> cavs) throws IOException {
+
     StringBuilder newClassesSb = new StringBuilder(10000);
     StringBuilder changedClassesSb = new StringBuilder(10000);
     newClassesSb.append("New or moved classes----------------------------------------\n");
     int newBase = newClassesSb.length();
     changedClassesSb.append("Modified classes--------------------------------------------\n");
     int changedBase = changedClassesSb.length();
-    
+
     Iterator<ClassAndVariables> it = cavs.iterator();
     ClassAndVariables newclass = null;
-    
+
     List<String> added = new ArrayList<String>();
     List<String> removed = new ArrayList<String>();
     List<String> changed = new ArrayList<String>();
-    
-    for (ClassAndVariableDetails gold: goldRecord) {
-      added.clear(); removed.clear(); changed.clear();
+
+    for (ClassAndVariableDetails gold : goldRecord) {
+      added.clear();
+      removed.clear();
+      changed.clear();
       if (newclass == null) {
         if (!it.hasNext()) {
           changedClassesSb.append(gold).append(": deleted or moved\n");
@@ -333,8 +319,7 @@ public class CompiledClassUtils {
         newclass = it.next();
       }
       int comparison = -1;
-      while (newclass != null
-          && (comparison=gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
+      while (newclass != null && (comparison = gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
         newClassesSb.append(ClassAndVariableDetails.convertForStoring(newclass)).append("\n");
         newclass = null;
         if (it.hasNext()) {
@@ -344,21 +329,21 @@ public class CompiledClassUtils {
       if (comparison == 0) {
         ClassAndVariables nc = newclass;
         newclass = null;
-//        if (gold.variables.size() != nc.variables.size()) {
-//          changedClassesSb.append(nc).append(": field count\n");
-//          continue;
-//        }
-        for (Map.Entry<String, CompiledField> entry: nc.variables.entrySet()) {
+        //        if (gold.variables.size() != nc.variables.size()) {
+        //          changedClassesSb.append(nc).append(": field count\n");
+        //          continue;
+        //        }
+        for (Map.Entry<String, CompiledField> entry : nc.variables.entrySet()) {
           CompiledField field = entry.getValue();
           String name = entry.getKey();
           String type = gold.variables.get(name);
           if (type == null) {
-//            if (comma) {
-//              changedClassesSb.append(", and ");
-//            } else {
-//              changedClassesSb.append(nc).append(":  ");
-//              comma = true;
-//            }
+            //            if (comma) {
+            //              changedClassesSb.append(", and ");
+            //            } else {
+            //              changedClassesSb.append(nc).append(":  ");
+            //              comma = true;
+            //            }
             added.add(name);
             continue; // only report one diff per class
           }
@@ -368,7 +353,7 @@ public class CompiledClassUtils {
             continue;
           }
         }
-        for (Map.Entry<String, String> entry: gold.variables.entrySet()) {
+        for (Map.Entry<String, String> entry : gold.variables.entrySet()) {
           if (!nc.variables.containsKey(entry.getKey())) {
             removed.add(entry.getKey());
           }
@@ -387,12 +372,10 @@ public class CompiledClassUtils {
             if (!Long.valueOf(gold.serialVersionUID).equals(nc.serialVersionUID)) {
               changedClassesSb.append("\t\t " + nc.dclass.fullyQualifiedName() + " serialVersionUID was changed from " + gold.serialVersionUID + " to " + nc.serialVersionUID + " this may break client/server compatibility as well as server/server compatibility \n");
             }
-          }
-          else {
+          } else {
             changedClassesSb.append("\t\t " + nc.dclass.fullyQualifiedName() + " serialVersionUID was removed, this may break client/server compatibility as well as server/server compatibility \n");
           }
-        }
-        else {
+        } else {
           if (nc.hasSerialVersionUID) {
             changedClassesSb.append("\t\t " + nc.dclass.fullyQualifiedName() + " serialVersionUID was added \n");
           }
@@ -416,13 +399,10 @@ public class CompiledClassUtils {
     return result;
   }
 
-  
-  
-  public static void storeClassesAndVariables(List<ClassAndVariables> cams,
-      File file) throws IOException {
+  public static void storeClassesAndVariables(List<ClassAndVariables> cams, File file) throws IOException {
     FileWriter fw = new FileWriter(file);
     BufferedWriter out = new BufferedWriter(fw);
-    for (ClassAndVariables entry: cams) {
+    for (ClassAndVariables entry : cams) {
       out.append(ClassAndVariableDetails.convertForStoring(entry));
       out.newLine();
     }

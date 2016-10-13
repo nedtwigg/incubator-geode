@@ -49,7 +49,7 @@ public class GfshHistory extends MemoryHistory {
   public void setAutoFlush(boolean autoFlush) {
     this.autoFlush = autoFlush;
   }
-  
+
   public static String redact(String buffer) {
     String trimmed = PreprocessorUtils.trim(buffer, false).getString();
 

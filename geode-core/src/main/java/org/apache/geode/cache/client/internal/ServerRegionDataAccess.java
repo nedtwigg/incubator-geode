@@ -52,10 +52,7 @@ public interface ServerRegionDataAccess {
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    * @param isCreateFwd
    */
-  public abstract Object put(Object key, Object value, byte[] deltaBytes, EntryEventImpl clientEvent,
-      Operation op, boolean requireOldValue, Object expectedOldValue,
-      Object callbackArg, boolean isCreateFwd);
-
+  public abstract Object put(Object key, Object value, byte[] deltaBytes, EntryEventImpl clientEvent, Operation op, boolean requireOldValue, Object expectedOldValue, Object callbackArg, boolean isCreateFwd);
 
   /**
    * Does a region entry destroy on the server
@@ -65,24 +62,20 @@ public interface ServerRegionDataAccess {
    * @param clientEvent the client event, if any, for version propagation
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public abstract Object destroy(Object key, Object expectedOldValue,
-      Operation operation, EntryEventImpl clientEvent, Object callbackArg);
+  public abstract Object destroy(Object key, Object expectedOldValue, Operation operation, EntryEventImpl clientEvent, Object callbackArg);
 
-  
   /**
    * Does a region entry invalidate on the server
    * @param event the entryEventImpl that represents the invalidate
    */
   public abstract void invalidate(EntryEventImpl event);
-  
-  
+
   /**
    * Does a region clear on the server
    * @param eventId the event id for this clear
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
   public abstract void clear(EventID eventId, Object callbackArg);
-
 
   /**
    * Does a region containsKey on a server
@@ -95,15 +88,13 @@ public interface ServerRegionDataAccess {
    * @param key the entry key to do the containsKey on
    */
   public abstract boolean containsValueForKey(Object key);
-  
-  
+
   /**
    * Does a region containsValue on a server
    * @param value the entry value to search for
    */
   public boolean containsValue(Object value);
 
-  
   /**
    * Does a region keySet on a server
    */
@@ -114,7 +105,7 @@ public interface ServerRegionDataAccess {
   public abstract VersionedObjectList removeAll(Collection<Object> keys, EventID eventId, Object callbackArg);
 
   public abstract VersionedObjectList getAll(List keys, Object callback);
-  
+
   public int size();
 
   /**
@@ -123,21 +114,20 @@ public interface ServerRegionDataAccess {
    * @return an {@link EntrySnapshot} for the given key
    */
   public Entry getEntry(Object key);
-//  public boolean containsValue(Object value);
-//  public Set entries(boolean recursive) {
-//  public void invalidate(Object key) throws TimeoutException,
-//  public int size()
+  //  public boolean containsValue(Object value);
+  //  public Set entries(boolean recursive) {
+  //  public void invalidate(Object key) throws TimeoutException,
+  //  public int size()
 
   /**
    * returns the name of the region to which this interface provides access
    */
   public String getRegionName();
-  
+
   /**
    * returns the region to which this interface provides access.  This may be
    * null in an admin system
    */
   public Region getRegion();
-
 
 }

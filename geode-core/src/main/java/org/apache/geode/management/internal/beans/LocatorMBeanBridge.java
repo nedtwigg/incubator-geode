@@ -32,59 +32,52 @@ import org.apache.geode.management.internal.JmxManagerAdvisor.JmxManagerProfile;
 import org.apache.geode.management.internal.ManagementConstants;
 import org.apache.geode.management.internal.ManagementStrings;
 
-
 /**
  * 
  *
  */
 public class LocatorMBeanBridge {
   private static final Logger logger = LogService.getLogger();
-  
+
   private Locator loc;
-  
+
   private InternalDistributedSystem system;
-  
+
   private GemFireCacheImpl cache;
-  
+
   public LocatorMBeanBridge(Locator loc) {
     this.loc = loc;
     this.system = (InternalDistributedSystem) loc.getDistributedSystem();
     this.cache = GemFireCacheImpl.getInstance();
   }
- 
+
   public String getBindAddress() {
     return loc.getBindAddress().getCanonicalHostName();
   }
 
- 
   public String getHostnameForClients() {
-     return loc.getHostnameForClients();
+    return loc.getHostnameForClients();
   }
 
- 
   public String viewLog() {
-    return fetchLog(loc.getLogFile(),ManagementConstants.DEFAULT_SHOW_LOG_LINES);
+    return fetchLog(loc.getLogFile(), ManagementConstants.DEFAULT_SHOW_LOG_LINES);
   }
 
- 
   public int getPort() {
     return loc.getPort();
   }
 
- 
   public boolean isPeerLocator() {
     return loc.isPeerLocator();
   }
 
- 
   public boolean isServerLocator() {
     return loc.isServerLocator();
   }
 
   public String[] listManagers() {
     if (cache != null) {
-      List<JmxManagerProfile> alreadyManaging = this.cache
-          .getJmxManagerAdvisor().adviseAlreadyManaging();
+      List<JmxManagerProfile> alreadyManaging = this.cache.getJmxManagerAdvisor().adviseAlreadyManaging();
       if (!alreadyManaging.isEmpty()) {
         String[] managers = new String[alreadyManaging.size()];
         int j = 0;
@@ -100,8 +93,7 @@ public class LocatorMBeanBridge {
 
   public String[] listPotentialManagers() {
     if (cache != null) {
-      List<JmxManagerProfile> willingToManage = this.cache
-          .getJmxManagerAdvisor().adviseWillingToManage();
+      List<JmxManagerProfile> willingToManage = this.cache.getJmxManagerAdvisor().adviseWillingToManage();
       if (!willingToManage.isEmpty()) {
         String[] managers = new String[willingToManage.size()];
         int j = 0;
@@ -132,8 +124,7 @@ public class LocatorMBeanBridge {
       InternalDistributedSystem sys = system;
       mainTail = BeanUtilFuncs.tailSystemLog(logFile, numLines);
       if (mainTail == null) {
-        mainTail = ManagementStrings.TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_IS_BEING_DIRECTED_TO_STDOUT
-            .toLocalizedString();
+        mainTail = ManagementStrings.TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_IS_BEING_DIRECTED_TO_STDOUT.toLocalizedString();
       }
 
     } catch (IOException e) {
@@ -141,9 +132,8 @@ public class LocatorMBeanBridge {
       mainTail = "";
     }
 
-    if ( mainTail == null) {
-      return LocalizedStrings.SystemMemberImpl_NO_LOG_FILE_CONFIGURED_LOG_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT
-          .toLocalizedString();
+    if (mainTail == null) {
+      return LocalizedStrings.SystemMemberImpl_NO_LOG_FILE_CONFIGURED_LOG_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT.toLocalizedString();
     } else {
       StringBuffer result = new StringBuffer();
       if (mainTail != null) {

@@ -52,7 +52,7 @@ public class NullTypeRegistration implements TypeRegistration {
   public void gatewaySenderStarted(GatewaySender gatewaySender) {
     //do nothing
   }
-  
+
   public void creatingPersistentRegion() {
     //do nothing
   }
@@ -89,14 +89,14 @@ public class NullTypeRegistration implements TypeRegistration {
 
   @Override
   public PdxType getPdxTypeForField(String fieldName, String className) {
-   return null;
+    return null;
   }
 
   @Override
   public void testClearRegistry() {
-    
+
   }
-  
+
   @Override
   public boolean isClient() {
     return false;

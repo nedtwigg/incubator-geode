@@ -114,8 +114,7 @@ public class ColocationHelperTest {
       colocatedPR = ColocationHelper.getColocatedRegion(pr);
     } catch (Exception e) {
       assertEquals("Expected IllegalStateException for missing colocated parent region", IllegalStateException.class, e.getClass());
-      assertTrue("Expected IllegalStateException to be thrown for missing colocated region",
-          e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
+      assertTrue("Expected IllegalStateException to be thrown for missing colocated region", e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
       caughtIllegalStateException = true;
     }
     assertTrue(caughtIllegalStateException);
@@ -131,7 +130,7 @@ public class ColocationHelperTest {
     when(pr.getPartitionAttributes()).thenReturn(pa);
     when(pr.getFullPath()).thenReturn("/region1");
     when(pa.getColocatedWith()).thenReturn("region2");
-    when(((Region)prRoot).get("#region2")).thenReturn(prc);
+    when(((Region) prRoot).get("#region2")).thenReturn(prc);
 
     PartitionedRegion colocatedPR = null;
     boolean caughtIllegalStateException = false;
@@ -139,8 +138,7 @@ public class ColocationHelperTest {
       colocatedPR = ColocationHelper.getColocatedRegion(pr);
     } catch (Exception e) {
       assertEquals("Expected IllegalStateException for missing colocated parent region", IllegalStateException.class, e.getClass());
-      assertTrue("Expected IllegalStateException to be thrown for missing colocated region",
-          e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
+      assertTrue("Expected IllegalStateException to be thrown for missing colocated region", e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
       caughtIllegalStateException = true;
     }
     assertTrue(caughtIllegalStateException);

@@ -28,9 +28,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @since GemFire 3.5
  */
-public class GemFireHealthConfigImpl
-  extends CacheHealthConfigImpl
-  implements GemFireHealthConfig {
+public class GemFireHealthConfigImpl extends CacheHealthConfigImpl implements GemFireHealthConfig {
 
   private static final long serialVersionUID = -6797673296902808018L;
 

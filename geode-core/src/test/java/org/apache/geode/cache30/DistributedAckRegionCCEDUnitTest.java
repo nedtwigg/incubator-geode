@@ -82,7 +82,7 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
     Properties p = super.getDistributedSystemProperties();
     p.put(CONSERVE_SOCKETS, "false");
     if (distributedSystemID > 0) {
-      p.put(DISTRIBUTED_SYSTEM_ID, ""+distributedSystemID);
+      p.put(DISTRIBUTED_SYSTEM_ID, "" + distributedSystemID);
     }
     return p;
   }
@@ -103,8 +103,7 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = getCache().getRegionAttributes(type);
     if (ra == null) {
-      throw new IllegalStateException("The region shortcut " + type
-                                      + " has been removed.");
+      throw new IllegalStateException("The region shortcut " + type + " has been removed.");
     }
     AttributesFactory factory = new AttributesFactory(ra);
     factory.setConcurrencyChecksEnabled(true);
@@ -150,23 +149,23 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
     final String key = "mykey";
     VM vm1 = Host.getHost(0).getVM(1);
     VM vm2 = Host.getHost(0).getVM(2);
-    
+
     // create some destroyed entries so the GC service is populated
     SerializableCallable create = new SerializableCallable("create region") {
       public Object call() {
         RegionFactory f = getCache().createRegionFactory(getRegionAttributes());
-        CCRegion = (LocalRegion)f.create(name);
+        CCRegion = (LocalRegion) f.create(name);
         return CCRegion.getDistributionManager().getDistributionManagerId();
       }
     };
     // do conflicting update() and destroy() on the region.  We want the update() to
     // be sent with a message and the destroy() to be transferred in the initial image
     // and be the value that we want to keep
-    InternalDistributedMember vm1ID = (InternalDistributedMember)vm1.invoke(create);
-    
+    InternalDistributedMember vm1ID = (InternalDistributedMember) vm1.invoke(create);
+
     AsyncInvocation partialCreate = vm2.invokeAsync(new SerializableCallable("create region with stall") {
       public Object call() throws Exception {
-        final GemFireCacheImpl cache = (GemFireCacheImpl)getCache();
+        final GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
         RegionFactory f = cache.createRegionFactory(getRegionAttributes());
         InitialImageOperation.VMOTION_DURING_GII = true;
         // this will stall region creation at the point of asking for an initial image
@@ -174,15 +173,16 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
           @Override
           public void vMotionBeforeCQRegistration() {
           }
+
           @Override
           public void vMotionBeforeRegisterInterest() {
           }
+
           @Override
           public void vMotionDuringGII(Set recipientSet, LocalRegion region) {
             InitialImageOperation.VMOTION_DURING_GII = false;
-            int oldLevel = LocalRegion.setThreadInitLevelRequirement(
-                LocalRegion.BEFORE_INITIAL_IMAGE);
-            LocalRegion ccregion = cache.getRegionByPath("/"+name);
+            int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.BEFORE_INITIAL_IMAGE);
+            LocalRegion ccregion = cache.getRegionByPath("/" + name);
             try {
               // wait for the update op (sent below from vm1) to arrive, then allow the GII to happen
               while (!ccregion.isDestroyed() && ccregion.getRegionEntry(key) == null) {
@@ -198,7 +198,7 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
           }
         });
         try {
-          CCRegion = (LocalRegion)f.create(name);
+          CCRegion = (LocalRegion) f.create(name);
           // at this point we should have received the update op and then the GII, which should overwrite
           // the conflicting update op
           assertFalse("expected initial image transfer to destroy entry", CCRegion.containsKey(key));
@@ -212,9 +212,13 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
       public void run() {
         // wait for the other to come on line
         long waitEnd = System.currentTimeMillis() + 45000;
-        DistributionAdvisor adv = ((DistributedRegion)CCRegion).getCacheDistributionAdvisor();
+        DistributionAdvisor adv = ((DistributedRegion) CCRegion).getCacheDistributionAdvisor();
         while (System.currentTimeMillis() < waitEnd && adv.adviseGeneric().isEmpty()) {
-          try {Thread.sleep(1000);} catch (InterruptedException e) { return; }
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+            return;
+          }
         }
         if (adv.adviseGeneric().isEmpty()) {
           fail("other member never came on line");
@@ -226,20 +230,19 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
         } finally {
           DistributedCacheOperation.LOSS_SIMULATION_RATIO = 0.0;
         }
-        
+
         // generate a fake version tag for the message
         VersionTag tag = CCRegion.getRegionEntry(key).getVersionStamp().asVersionTag();
         // create a fake member ID that will be < mine and lose a concurrency check
         NetMember nm = CCRegion.getDistributionManager().getDistributionManagerId().getNetMember();
         InternalDistributedMember mbr = null;
         try {
-          mbr = new InternalDistributedMember(nm.getInetAddress().getCanonicalHostName(), nm.getPort()-1,
-              "fake_id", "fake_id_ustring", DistributionManager.NORMAL_DM_TYPE, null, null);
+          mbr = new InternalDistributedMember(nm.getInetAddress().getCanonicalHostName(), nm.getPort() - 1, "fake_id", "fake_id_ustring", DistributionManager.NORMAL_DM_TYPE, null, null);
           tag.setMemberID(mbr);
         } catch (UnknownHostException e) {
           org.apache.geode.test.dunit.Assert.fail("could not create member id", e);
         }
-        
+
         // generate an event to distribute that contains the fake version tag
         EntryEventImpl event = EntryEventImpl.create(CCRegion, Operation.UPDATE, key, false, mbr, true, false);
         event.setNewValue("newValue");
@@ -256,12 +259,12 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
     } catch (Throwable e) {
       org.apache.geode.test.dunit.Assert.fail("async invocation in vm2 failed", e);
     }
-  }  
+  }
 
   protected void do_version_recovery_if_necessary(final VM vm0, final VM vm1, final VM vm2, final Object[] params) {
     // do nothing here
   }
-  
+
   /**
    * This tests the concurrency versioning system to ensure that event conflation
    * happens correctly and that the statistic is being updated properly
@@ -270,7 +273,7 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
   public void testConcurrentEvents() throws Exception {
     versionTestConcurrentEvents();
   }
-  
+
   @Test
   public void testClearWithConcurrentEvents() throws Exception {
     z_versionTestClearWithConcurrentEvents(true);
@@ -291,7 +294,7 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
   public void testTombstones() {
     versionTestTombstones();
   }
-  
+
   /**
    * make sure that an operation performed on a new region entry created after
    * a tombstone has been reaped is accepted by another member that has yet to
@@ -301,16 +304,16 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
   public void testTombstoneExpirationRace() {
     VM vm0 = Host.getHost(0).getVM(0);
     VM vm1 = Host.getHost(0).getVM(1);
-//    VM vm2 = Host.getHost(0).getVM(2);
-    
+    //    VM vm2 = Host.getHost(0).getVM(2);
+
     final String name = this.getUniqueName() + "-CC";
     SerializableRunnable createRegion = new SerializableRunnable("Create Region") {
       public void run() {
         try {
           RegionFactory f = getCache().createRegionFactory(getRegionAttributes());
-          CCRegion = (LocalRegion)f.create(name);
+          CCRegion = (LocalRegion) f.create(name);
           CCRegion.put("cckey0", "ccvalue");
-          CCRegion.put("cckey0", "ccvalue");  // version number will end up at 4
+          CCRegion.put("cckey0", "ccvalue"); // version number will end up at 4
         } catch (CacheException ex) {
           org.apache.geode.test.dunit.Assert.fail("While creating region", ex);
         }
@@ -318,7 +321,7 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
     };
     vm0.invoke(createRegion);
     vm1.invoke(createRegion);
-//    vm2.invoke(createRegion);
+    //    vm2.invoke(createRegion);
     vm1.invoke(new SerializableRunnable("Create local tombstone and adjust time") {
       public void run() {
         // make the entry for cckey0 a tombstone in this VM and set its modification time to be older
@@ -347,11 +350,11 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
       }
     });
     vm1.invoke(new SerializableRunnable("Check that the create() was applied") {
-        public void run() {
-          RegionEntry entry = CCRegion.getRegionEntry("cckey0");
-          assertTrue(entry.getVersionStamp().getEntryVersion() == 1);
-        }
-      });
+      public void run() {
+        RegionEntry entry = CCRegion.getRegionEntry("cckey0");
+        assertTrue(entry.getVersionStamp().getEntryVersion() == 1);
+      }
+    });
     disconnectAllFromDS();
   }
 
@@ -365,7 +368,6 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
 
     final String name = this.getUniqueName() + "-CC";
 
-
     final int saveExpiredTombstoneLimit = TombstoneService.EXPIRED_TOMBSTONE_LIMIT;
     final long saveTombstoneTimeout = TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT;
     TombstoneService.EXPIRED_TOMBSTONE_LIMIT = 50;
@@ -373,11 +375,11 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
     try {
       // create some destroyed entries so the GC service is populated
       RegionFactory f = getCache().createRegionFactory(getRegionAttributes());
-      CCRegion = (LocalRegion)f.create(name);
+      CCRegion = (LocalRegion) f.create(name);
       final long initialCount = CCRegion.getCachePerfStats().getTombstoneGCCount();
-      for (int i=0; i<100; i++) {
-        CCRegion.put("cckey"+i, "ccvalue"+i);
-        CCRegion.destroy("cckey"+i);
+      for (int i = 0; i < 100; i++) {
+        CCRegion.put("cckey" + i, "ccvalue" + i);
+        CCRegion.destroy("cckey" + i);
       }
       // now simulate a low free-memory condition
       TombstoneService.FORCE_GC_MEMORY_EVENTS = true;
@@ -385,6 +387,7 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
         public boolean done() {
           return CCRegion.getCachePerfStats().getTombstoneGCCount() > initialCount;
         }
+
         public String description() {
           return "waiting for GC to occur";
         }
@@ -435,9 +438,9 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
       public void run() {
         try {
           RegionFactory f = getCache().createRegionFactory(getRegionAttributes());
-          CCRegion = (LocalRegion)f.create(name);
-          for (int i=0; i<numEntries; i++) {
-            CCRegion.put("cckey"+i, "ccvalue");
+          CCRegion = (LocalRegion) f.create(name);
+          for (int i = 0; i < numEntries; i++) {
+            CCRegion.put("cckey" + i, "ccvalue");
           }
           assertEquals("expected no conflated events", 0, CCRegion.getCachePerfStats().getConflatedEventsCount());
         } catch (CacheException ex) {
@@ -474,199 +477,198 @@ public class DistributedAckRegionCCEDUnitTest extends DistributedAckRegionDUnitT
   // when new tests are added
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//  @Override
-//  public void testNonblockingGetInitialImage() throws Throwable {
-//  }
-//  @Override
-//  public void testConcurrentOperations() throws Exception {
-//  }
-//
-//  @Override
-//  public void testDistributedUpdate() {
-//  }
-//
-//  @Override
-//  public void testDistributedGet() {
-//  }
-//
-//  @Override
-//  public void testDistributedPutNoUpdate() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testDefinedEntryUpdated() {
-//  }
-//
-//  @Override
-//  public void testDistributedDestroy() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testDistributedRegionDestroy() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testLocalRegionDestroy() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testDistributedInvalidate() {
-//  }
-//
-//  @Override
-//  public void testDistributedInvalidate4() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testDistributedRegionInvalidate() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testRemoteCacheListener() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testRemoteCacheListenerInSubregion() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testRemoteCacheLoader() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testRemoteCacheLoaderArg() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testRemoteCacheLoaderException() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testCacheLoaderWithNetSearch() throws CacheException {
-//  }
-//
-//  @Override
-//  public void testCacheLoaderWithNetLoad() throws CacheException {
-//  }
-//
-//  @Override
-//  public void testNoRemoteCacheLoader() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testNoLoaderWithInvalidEntry() {
-//  }
-//
-//  @Override
-//  public void testRemoteCacheWriter() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testLocalAndRemoteCacheWriters() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testCacheLoaderModifyingArgument() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testRemoteLoaderNetSearch() throws CacheException {
-//  }
-//
-//  @Override
-//  public void testLocalCacheLoader() {
-//  }
-//
-//  @Override
-//  public void testDistributedPut() throws Exception {
-//  }
-//
-//  @Override
-//  public void testReplicate() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testDeltaWithReplicate() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testGetInitialImage() {
-//  }
-//
-//  @Override
-//  public void testLargeGetInitialImage() {
-//  }
-//
-//  @Override
-//  public void testMirroredDataFromNonMirrored() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testNoMirroredDataToNonMirrored() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testMirroredLocalLoad() {
-//  }
-//
-//  @Override
-//  public void testMirroredNetLoad() {
-//  }
-//
-//  @Override
-//  public void testNoRegionKeepAlive() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testNetSearchObservesTtl() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testNetSearchObservesIdleTime() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testEntryTtlDestroyEvent() throws InterruptedException {
-//  }
-//
-//  @Override
-//  public void testUpdateResetsIdleTime() throws InterruptedException {
-//  }
-//  @Override
-//  public void testTXNonblockingGetInitialImage() throws Throwable {
-//  }
-//
-//  @Override
-//  public void testNBRegionInvalidationDuringGetInitialImage() throws Throwable {
-//  }
-//
-//  @Override
-//  public void testNBRegionDestructionDuringGetInitialImage() throws Throwable {
-//  }
-//
-//  @Override
-//  public void testNoDataSerializer() {
-//  }
-//
-//  @Override
-//  public void testNoInstantiator() {
-//  }
-//
-//  @Override
-//  public void testTXSimpleOps() throws Exception {
-//  }
-//
-//  @Override
-//  public void testTXUpdateLoadNoConflict() throws Exception {
-//  }
-//
-//  @Override
-//  public void testTXMultiRegion() throws Exception {
-//  }
-//
-//  @Override
-//  public void testTXRmtMirror() throws Exception {
-//  }
-
+  //  @Override
+  //  public void testNonblockingGetInitialImage() throws Throwable {
+  //  }
+  //  @Override
+  //  public void testConcurrentOperations() throws Exception {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedUpdate() {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedGet() {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedPutNoUpdate() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testDefinedEntryUpdated() {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedDestroy() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedRegionDestroy() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testLocalRegionDestroy() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedInvalidate() {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedInvalidate4() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedRegionInvalidate() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testRemoteCacheListener() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testRemoteCacheListenerInSubregion() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testRemoteCacheLoader() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testRemoteCacheLoaderArg() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testRemoteCacheLoaderException() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testCacheLoaderWithNetSearch() throws CacheException {
+  //  }
+  //
+  //  @Override
+  //  public void testCacheLoaderWithNetLoad() throws CacheException {
+  //  }
+  //
+  //  @Override
+  //  public void testNoRemoteCacheLoader() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testNoLoaderWithInvalidEntry() {
+  //  }
+  //
+  //  @Override
+  //  public void testRemoteCacheWriter() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testLocalAndRemoteCacheWriters() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testCacheLoaderModifyingArgument() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testRemoteLoaderNetSearch() throws CacheException {
+  //  }
+  //
+  //  @Override
+  //  public void testLocalCacheLoader() {
+  //  }
+  //
+  //  @Override
+  //  public void testDistributedPut() throws Exception {
+  //  }
+  //
+  //  @Override
+  //  public void testReplicate() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testDeltaWithReplicate() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testGetInitialImage() {
+  //  }
+  //
+  //  @Override
+  //  public void testLargeGetInitialImage() {
+  //  }
+  //
+  //  @Override
+  //  public void testMirroredDataFromNonMirrored() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testNoMirroredDataToNonMirrored() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testMirroredLocalLoad() {
+  //  }
+  //
+  //  @Override
+  //  public void testMirroredNetLoad() {
+  //  }
+  //
+  //  @Override
+  //  public void testNoRegionKeepAlive() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testNetSearchObservesTtl() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testNetSearchObservesIdleTime() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testEntryTtlDestroyEvent() throws InterruptedException {
+  //  }
+  //
+  //  @Override
+  //  public void testUpdateResetsIdleTime() throws InterruptedException {
+  //  }
+  //  @Override
+  //  public void testTXNonblockingGetInitialImage() throws Throwable {
+  //  }
+  //
+  //  @Override
+  //  public void testNBRegionInvalidationDuringGetInitialImage() throws Throwable {
+  //  }
+  //
+  //  @Override
+  //  public void testNBRegionDestructionDuringGetInitialImage() throws Throwable {
+  //  }
+  //
+  //  @Override
+  //  public void testNoDataSerializer() {
+  //  }
+  //
+  //  @Override
+  //  public void testNoInstantiator() {
+  //  }
+  //
+  //  @Override
+  //  public void testTXSimpleOps() throws Exception {
+  //  }
+  //
+  //  @Override
+  //  public void testTXUpdateLoadNoConflict() throws Exception {
+  //  }
+  //
+  //  @Override
+  //  public void testTXMultiRegion() throws Exception {
+  //  }
+  //
+  //  @Override
+  //  public void testTXRmtMirror() throws Exception {
+  //  }
 
 }

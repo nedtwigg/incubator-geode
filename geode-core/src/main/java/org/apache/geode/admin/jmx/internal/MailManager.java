@@ -45,7 +45,7 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 public class MailManager {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   public MailManager() {
   }
 
@@ -58,8 +58,7 @@ public class MailManager {
     FileInputStream fio = new FileInputStream(mailPropertiesFile);
     try {
       prop.load(fio);
-    }
-    finally {
+    } finally {
       fio.close();
     }
     setMailProperties(prop);
@@ -89,8 +88,7 @@ public class MailManager {
       logger.trace("Entered MailManager:processEmail");
     }
 
-    if (mailHost == null || mailHost.length() == 0
-        || emailData == null || mailToAddresses.length == 0) {
+    if (mailHost == null || mailHost.length() == 0 || emailData == null || mailToAddresses.length == 0) {
       logger.error(LocalizedMessage.create(LocalizedStrings.MailManager_REQUIRED_MAILSERVER_CONFIGURATION_NOT_SPECIFIED));
       if (logger.isDebugEnabled()) {
         logger.debug("Exited MailManager:processEmail: Not sending email as conditions not met");
@@ -106,8 +104,7 @@ public class MailManager {
 
     try {
       for (int i = 0; i < mailToAddresses.length; i++) {
-        mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(
-            mailToAddresses[i]));
+        mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(mailToAddresses[i]));
       }
 
       if (subject == null) {
@@ -121,9 +118,7 @@ public class MailManager {
       mimeMessage.setText(message);
 
       Transport.send(mimeMessage);
-      logger.info(LocalizedMessage.create(
-          LocalizedStrings.MailManager_EMAIL_ALERT_HAS_BEEN_SENT_0_1_2,
-          new Object[] { mailToList, subject, message }));
+      logger.info(LocalizedMessage.create(LocalizedStrings.MailManager_EMAIL_ALERT_HAS_BEEN_SENT_0_1_2, new Object[] { mailToList, subject, message }));
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
@@ -243,7 +238,7 @@ public class MailManager {
    * @return list all the registered email id
    */
   public String[] getAllToAddresses() {
-    return (String[])mailToSet.toArray(new String[0]);
+    return (String[]) mailToSet.toArray(new String[0]);
   }
 
   /**
@@ -285,8 +280,7 @@ public class MailManager {
         buffer.append(", ");
       }
       buffer.replace(buffer.length() - 2, buffer.length(), "");
-    }
-    else {
+    } else {
       buffer.append(" Undefined");
     }
     buffer.append("]");
@@ -324,8 +318,7 @@ public class MailManager {
   }
 
   public static void main(String args[]) {
-    MailManager mailManager = new MailManager("mailsrv1.gemstone.com",
-        "hkhanna@gemstone.com");
+    MailManager mailManager = new MailManager("mailsrv1.gemstone.com", "hkhanna@gemstone.com");
     mailManager.sendEmail("Alert!", "Test");
   }
 }

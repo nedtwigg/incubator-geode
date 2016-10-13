@@ -45,17 +45,14 @@ public class InvalidatePartitionedRegionMessage extends PartitionMessage {
   public InvalidatePartitionedRegionMessage() {
   }
 
-  public InvalidatePartitionedRegionMessage(Set recipients, Object callbackArg,
-      PartitionedRegion r, ReplyProcessor21 processor) {
+  public InvalidatePartitionedRegionMessage(Set recipients, Object callbackArg, PartitionedRegion r, ReplyProcessor21 processor) {
     super(recipients, r.getPRId(), processor);
     this.callbackArg = callbackArg;
   }
 
   public static ReplyProcessor21 send(Set recipients, PartitionedRegion r, RegionEventImpl event) {
-    ReplyProcessor21 response = 
-          new ReplyProcessor21(r.getSystem(), recipients);
-    InvalidatePartitionedRegionMessage msg = new InvalidatePartitionedRegionMessage(recipients,
-        event.getCallbackArgument(), r, response);
+    ReplyProcessor21 response = new ReplyProcessor21(r.getSystem(), recipients);
+    InvalidatePartitionedRegionMessage msg = new InvalidatePartitionedRegionMessage(recipients, event.getCallbackArgument(), r, response);
     r.getSystem().getDistributionManager().putOutgoing(msg);
     return response;
   }
@@ -64,12 +61,9 @@ public class InvalidatePartitionedRegionMessage extends PartitionMessage {
    * @see org.apache.geode.internal.cache.partitioned.PartitionMessage#operateOnPartitionedRegion(org.apache.geode.distributed.internal.DistributionManager, org.apache.geode.internal.cache.PartitionedRegion, long)
    */
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm,
-      PartitionedRegion pr, long startTime) throws CacheException,
-      QueryException, ForceReattemptException, InterruptedException {
-    
-    RegionEventImpl event = new RegionEventImpl(pr,Operation.REGION_INVALIDATE,
-        this.callbackArg, !dm.getId().equals(getSender()), getSender());
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, QueryException, ForceReattemptException, InterruptedException {
+
+    RegionEventImpl event = new RegionEventImpl(pr, Operation.REGION_INVALIDATE, this.callbackArg, !dm.getId().equals(getSender()), getSender());
     pr.basicInvalidateRegion(event);
     return true;
   }

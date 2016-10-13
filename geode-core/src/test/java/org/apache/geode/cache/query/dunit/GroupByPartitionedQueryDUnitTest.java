@@ -85,16 +85,13 @@ public class GroupByPartitionedQueryDUnitTest extends GroupByDUnitImpl {
     });
   }
 
-  private void createPR(VM vm, final String regionName,
-      final Class valueConstraint) {
+  private void createPR(VM vm, final String regionName, final Class valueConstraint) {
     vm.invoke(new SerializableRunnable("create data store") {
       public void run() {
         Cache cache = getCache();
         PartitionAttributesFactory paf = new PartitionAttributesFactory();
         paf.setTotalNumBuckets(10);
-        cache.createRegionFactory(RegionShortcut.PARTITION)
-            .setValueConstraint(valueConstraint)
-            .setPartitionAttributes(paf.create()).create(regionName);
+        cache.createRegionFactory(RegionShortcut.PARTITION).setValueConstraint(valueConstraint).setPartitionAttributes(paf.create()).create(regionName);
       }
     });
   }
@@ -105,10 +102,7 @@ public class GroupByPartitionedQueryDUnitTest extends GroupByDUnitImpl {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     paf.setTotalNumBuckets(10);
     paf.setLocalMaxMemory(0);
-    return cache.createRegionFactory(RegionShortcut.PARTITION_PROXY)
-        .setValueConstraint(valueConstraint)
-        .setPartitionAttributes(paf.create()).create(regionName);
+    return cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).setValueConstraint(valueConstraint).setPartitionAttributes(paf.create()).create(regionName);
   }
-
 
 }

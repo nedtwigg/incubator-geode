@@ -48,23 +48,23 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
       return Boolean.FALSE;
     }
   };
-  
+
   private final PureLogWriter logWriter;
   private final FileOutputStream fos; // TODO:LOG:CLEANUP: why do we track this outside ManagerLogWriter? doesn't rolling invalidate it?
-  
+
   private final AppenderContext[] appenderContexts;
   private final String appenderName;
   private final String logWriterLoggerName;
-  
+
   private LogWriterAppender(final AppenderContext[] appenderContexts, final String name, final PureLogWriter logWriter, final FileOutputStream fos) {
     super(LogWriterAppender.class.getName() + "-" + name, null, PatternLayout.createDefaultLayout());
-    this.appenderContexts = appenderContexts; 
+    this.appenderContexts = appenderContexts;
     this.appenderName = LogWriterAppender.class.getName() + "-" + name;
     this.logWriterLoggerName = name;
     this.logWriter = logWriter;
     this.fos = fos;
   }
-  
+
   /**
    * Used by LogWriterAppenders and tests to create a new instance.
    * 
@@ -90,8 +90,7 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
     }
     appending.set(Boolean.TRUE);
     try {
-      this.logWriter.put(LogWriterLogger.log4jLevelToLogWriterLevel(event.getLevel()), event.getMessage().getFormattedMessage(),
-          event.getThrown());
+      this.logWriter.put(LogWriterLogger.log4jLevelToLogWriterLevel(event.getLevel()), event.getMessage().getFormattedMessage(), event.getThrown());
     } finally {
       appending.set(Boolean.FALSE);
     }
@@ -111,7 +110,7 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
       }
     }
   }
-  
+
   /**
    * Stop the appender and remove it from the Log4j configuration.
    */
@@ -136,77 +135,76 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
 
   private void cleanUp() { // was closingLogFile() -- called from destroy() as the final step 
     if (this.logWriter instanceof ManagerLogWriter) {
-      ((ManagerLogWriter)this.logWriter).closingLogFile();
+      ((ManagerLogWriter) this.logWriter).closingLogFile();
     }
     if (this.fos != null) {
       try {
         this.fos.close();
-      }
-      catch (IOException ignore) {
+      } catch (IOException ignore) {
       }
     }
   }
-  
+
   @Override
   public void stop() {
     try {
       if (this.logWriter instanceof ManagerLogWriter) {
-        ((ManagerLogWriter)this.logWriter).shuttingDown();
+        ((ManagerLogWriter) this.logWriter).shuttingDown();
       }
     } catch (RuntimeException e) {
       logger.warn("RuntimeException encountered while shuttingDown LogWriterAppender", e);
     }
-    
+
     super.stop();
   }
-  
+
   protected void startupComplete() {
     if (this.logWriter instanceof ManagerLogWriter) {
-      ((ManagerLogWriter)this.logWriter).startupComplete();
+      ((ManagerLogWriter) this.logWriter).startupComplete();
     }
   }
-  
+
   protected void setConfig(final LogConfig cfg) {
     if (this.logWriter instanceof ManagerLogWriter) {
-      ((ManagerLogWriter)this.logWriter).setConfig(cfg);
+      ((ManagerLogWriter) this.logWriter).setConfig(cfg);
     }
   }
-  
+
   public File getChildLogFile() {
     if (this.logWriter instanceof ManagerLogWriter) {
-      return ((ManagerLogWriter)this.logWriter).getChildLogFile();
+      return ((ManagerLogWriter) this.logWriter).getChildLogFile();
     } else {
       return null;
     }
   }
-  
+
   public File getLogDir() {
     if (this.logWriter instanceof ManagerLogWriter) {
-      return ((ManagerLogWriter)this.logWriter).getLogDir();
+      return ((ManagerLogWriter) this.logWriter).getLogDir();
     } else {
       return null;
     }
   }
-  
+
   public int getMainLogId() {
     if (this.logWriter instanceof ManagerLogWriter) {
-      return ((ManagerLogWriter)this.logWriter).getMainLogId();
+      return ((ManagerLogWriter) this.logWriter).getMainLogId();
     } else {
       return -1;
     }
   }
-  
+
   public boolean useChildLogging() {
     if (this.logWriter instanceof ManagerLogWriter) {
-      return ((ManagerLogWriter)this.logWriter).useChildLogging();
+      return ((ManagerLogWriter) this.logWriter).useChildLogging();
     } else {
       return false;
     }
   }
-  
+
   protected void configChanged() {
     if (this.logWriter instanceof ManagerLogWriter) {
-      ((ManagerLogWriter)this.logWriter).configChanged();
+      ((ManagerLogWriter) this.logWriter).configChanged();
     }
   }
 }

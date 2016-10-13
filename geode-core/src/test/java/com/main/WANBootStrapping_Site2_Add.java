@@ -54,55 +54,44 @@ public class WANBootStrapping_Site2_Add {
 
   public static void main(String[] args) {
 
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener",
-        "com.main.MyDistributedSystemListener");
-    
+    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener", "com.main.MyDistributedSystemListener");
+
     //create a locator and a cache
     System.out.println("Creating cache ...It will take some time..");
-    Cache cache = new CacheFactory()
-        .set(MCAST_PORT, "0")
-    .set(DISTRIBUTED_SYSTEM_ID, ""+2)
-        .set(LOCATORS, "localhost[" + 20202 + "]")
-        .set(START_LOCATOR, "localhost[" + 20202 + "],server=true,peer=true,hostname-for-clients=localhost")
-    .set(REMOTE_LOCATORS, "localhost[" + 10101 + "]")
-    .set(LOG_LEVEL, "warning")
-    .create();
+    Cache cache = new CacheFactory().set(MCAST_PORT, "0").set(DISTRIBUTED_SYSTEM_ID, "" + 2).set(LOCATORS, "localhost[" + 20202 + "]").set(START_LOCATOR, "localhost[" + 20202 + "],server=true,peer=true,hostname-for-clients=localhost").set(REMOTE_LOCATORS, "localhost[" + 10101 + "]").set(LOG_LEVEL, "warning").create();
     System.out.println("Cache Created");
-    
+
     //get the region whose size should be 100 
     Region region = cache.getRegion("MyRegion");
-    while(region == null){
+    while (region == null) {
       region = cache.getRegion("MyRegion");
       try {
         Thread.sleep(5000);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         e.printStackTrace();
       }
     }
-    
+
     //region size should be 100. This is the data which will recieve from remote site
-    while(region.size()!= 100){
+    while (region.size() != 100) {
       continue;
     }
     System.out.println("Checked region size : " + region.size());
 
     GatewayReceiver receiver = cache.getGatewayReceivers().iterator().next();
-    
-     // to stop gateway receiver ask to run WANBootStrapping_Site1_Remove program
+
+    // to stop gateway receiver ask to run WANBootStrapping_Site1_Remove program
     while (receiver.isRunning()) {
-      System.out
-          .println("Waitng for receiver to stop through DistributedSystemListener");
-      System.out.println("Start WANBootStrapping_Site1_Remove ");  
+      System.out.println("Waitng for receiver to stop through DistributedSystemListener");
+      System.out.println("Start WANBootStrapping_Site1_Remove ");
       try {
         Thread.sleep(2000);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         e.printStackTrace();
       }
     }
 
-    System.out.println("GatewayReciver " + receiver + " is stopped") ;
+    System.out.println("GatewayReciver " + receiver + " is stopped");
     System.exit(0);
   }
 }

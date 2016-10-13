@@ -25,17 +25,19 @@ package org.apache.geode;
  */
 public class ToDataException extends SerializationException {
   private static final long serialVersionUID = -2329606027453879918L;
+
   /**
    * Creates a new <code>ToDataException</code> with the given message
    */
   public ToDataException(String message) {
-      super(message);
+    super(message);
   }
+
   /**
    * Creates a new <code>ToDataException</code> with the given message
    * and cause.
    */
   public ToDataException(String message, Throwable cause) {
-      super(message, cause);
+    super(message, cause);
   }
 }

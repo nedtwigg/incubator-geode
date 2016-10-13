@@ -36,7 +36,6 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.security.GemFireSecurityException;
 
-
 public class Size extends BaseCommand {
 
   private final static Size singleton = new Size();
@@ -48,8 +47,7 @@ public class Size extends BaseCommand {
     return singleton;
   }
 
-  private static void writeSizeResponse(Integer sizeCount, Message origMsg, ServerConnection servConn)
-    throws IOException {
+  private static void writeSizeResponse(Integer sizeCount, Message origMsg, ServerConnection servConn) throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setNumberOfParts(1);

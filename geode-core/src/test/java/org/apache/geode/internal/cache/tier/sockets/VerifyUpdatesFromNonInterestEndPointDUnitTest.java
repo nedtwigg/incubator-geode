@@ -82,14 +82,13 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
     vm1 = host.getVM(1);
     vm2 = host.getVM(2);
 
-    PORT1 =  ((Integer)vm0.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache())).intValue();
-    PORT2 =  ((Integer)vm1.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache())).intValue();
+    PORT1 = ((Integer) vm0.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache())).intValue();
+    PORT2 = ((Integer) vm1.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache())).intValue();
 
-    vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createClientCache( NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1),new Integer(PORT2)));
+    vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1), new Integer(PORT2)));
   }
 
-  private Cache createCache(Properties props) throws Exception
-  {
+  private Cache createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     Cache cache = null;
     cache = CacheFactory.create(ds);
@@ -100,49 +99,44 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
   }
 
   @Test
-  public void testVerifyUpdatesFromNonInterestEndPoint()
-  {
+  public void testVerifyUpdatesFromNonInterestEndPoint() {
     vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createEntries());
     vm1.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createEntries());
     vm0.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createEntries());
 
     vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.registerKey());
 
-    vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.acquireConnectionsAndPut( new Integer(PORT2)));
+    vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.acquireConnectionsAndPut(new Integer(PORT2)));
     Wait.pause(30000);
     vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.verifyPut());
   }
 
-  public static void acquireConnectionsAndPut(Integer port)
-  {
+  public static void acquireConnectionsAndPut(Integer port) {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
       String poolName = r1.getAttributes().getPoolName();
       assertNotNull(poolName);
-      PoolImpl pool = (PoolImpl)PoolManager.find(poolName);
+      PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
       assertNotNull(pool);
       Connection conn1 = pool.acquireConnection();
       Connection conn2 = pool.acquireConnection();
       ServerRegionProxy srp = new ServerRegionProxy(Region.SEPARATOR + REGION_NAME, pool);
       // put on a connection which is is not interest list ep
-      if(conn1.getServer().getPort() == port.intValue() ){
-        srp.putOnForTestsOnly(conn1, "key-1", "server-value1", new EventID(new byte[] { 1 },1,1),null);
-        srp.putOnForTestsOnly(conn1, "key-2", "server-value2", new EventID(new byte[] { 1 },1,2),null);
+      if (conn1.getServer().getPort() == port.intValue()) {
+        srp.putOnForTestsOnly(conn1, "key-1", "server-value1", new EventID(new byte[] { 1 }, 1, 1), null);
+        srp.putOnForTestsOnly(conn1, "key-2", "server-value2", new EventID(new byte[] { 1 }, 1, 2), null);
+      } else if (conn2.getServer().getPort() == port.intValue()) {
+        srp.putOnForTestsOnly(conn2, "key-1", "server-value1", new EventID(new byte[] { 1 }, 1, 1), null);
+        srp.putOnForTestsOnly(conn2, "key-2", "server-value2", new EventID(new byte[] { 1 }, 1, 2), null);
       }
-      else if(conn2.getServer().getPort() == port.intValue()){
-        srp.putOnForTestsOnly(conn2, "key-1", "server-value1", new EventID(new byte[] { 1 },1,1),null);
-        srp.putOnForTestsOnly(conn2, "key-2", "server-value2", new EventID(new byte[] { 1 },1,2),null);
-      }
-    }
-    catch (Exception ex) {
-      fail("while setting acquireConnections  "+ ex);
+    } catch (Exception ex) {
+      fail("while setting acquireConnections  " + ex);
     }
   }
 
-  public static void createEntries()
-  {
+  public static void createEntries() {
     try {
-      LocalRegion r1 = (LocalRegion)cache.getRegion(Region.SEPARATOR + REGION_NAME);
+      LocalRegion r1 = (LocalRegion) cache.getRegion(Region.SEPARATOR + REGION_NAME);
       if (!r1.containsKey("key-1")) {
         r1.create("key-1", "key-1");
       }
@@ -151,14 +145,12 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
       }
       assertEquals(r1.getEntry("key-1").getValue(), "key-1");
       assertEquals(r1.getEntry("key-2").getValue(), "key-2");
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while createEntries()", ex);
     }
   }
 
-  public static void createClientCache(String host, Integer port1, Integer port2) throws Exception
-  {
+  public static void createClientCache(String host, Integer port1, Integer port2) throws Exception {
     VerifyUpdatesFromNonInterestEndPointDUnitTest test = new VerifyUpdatesFromNonInterestEndPointDUnitTest();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -166,17 +158,10 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
     cache = test.createCache(props);
     Pool p;
     try {
-      p = PoolManager.createFactory()
-        .addServer(host, port1.intValue())
-        .addServer(host, port2.intValue())
-        .setSubscriptionEnabled(true)
-        .setSubscriptionRedundancy(-1)
-        .setMinConnections(6)
-        .setSocketBufferSize(32768)
-        .setReadTimeout(2000)
-        // .setRetryInterval(250)
-        // .setRetryAttempts(5)
-        .create("UpdatePropagationDUnitTestPool");
+      p = PoolManager.createFactory().addServer(host, port1.intValue()).addServer(host, port2.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setMinConnections(6).setSocketBufferSize(32768).setReadTimeout(2000)
+          // .setRetryInterval(250)
+          // .setRetryAttempts(5)
+          .create("UpdatePropagationDUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -189,8 +174,7 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
 
   }
 
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     cache = new VerifyUpdatesFromNonInterestEndPointDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -198,42 +182,37 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
     CacheServer server1 = cache.addCacheServer();
-    int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET) ;
+    int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     server1.setPort(port);
     server1.setNotifyBySubscription(true);
     server1.start();
     return new Integer(server1.getPort());
   }
 
-  public static void registerKey()
-  {
+  public static void registerKey() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
       assertNotNull(r);
       r.registerInterest("key-1");
 
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while registerKey()", ex);
     }
   }
 
-  public static void verifyPut()
-  {
+  public static void verifyPut() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
       assertNotNull(r);
       // verify no update
       assertEquals("key-1", r.getEntry("key-1").getValue());
       assertEquals("key-2", r.getEntry("key-2").getValue());
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while verifyPut()", ex);
     }
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();

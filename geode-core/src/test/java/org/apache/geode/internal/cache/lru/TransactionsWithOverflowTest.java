@@ -44,7 +44,7 @@ public class TransactionsWithOverflowTest {
   private String createDiskStoreAndGetName() {
     Cache cache = getCache();
     File[] diskDirs = new File[1];
-    diskDirs[0] = new File("diskRegionDirs/"+getClass().getCanonicalName());
+    diskDirs[0] = new File("diskRegionDirs/" + getClass().getCanonicalName());
     diskDirs[0].mkdirs();
     DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
     diskStoreFactory.setDiskDirs(diskDirs);
@@ -58,8 +58,8 @@ public class TransactionsWithOverflowTest {
     Cache cache = getCache();
     String diskStoreName = createDiskStoreAndGetName();
     Region pr = createOverflowPR(cache, diskStoreName);
-    for (int i=0; i<5;i++) {
-      pr.put(i, "value"+i);
+    for (int i = 0; i < 5; i++) {
+      pr.put(i, "value" + i);
     }
     CacheTransactionManager mgr = cache.getCacheTransactionManager();
     mgr.begin();

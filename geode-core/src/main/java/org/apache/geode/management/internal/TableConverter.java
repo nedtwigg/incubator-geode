@@ -37,8 +37,7 @@ import javax.management.openmbean.TabularType;
  * 
  */
 public final class TableConverter extends OpenTypeConverter {
-  TableConverter(Type targetType, boolean sortedMap, TabularType tabularType,
-      OpenTypeConverter keyConverter, OpenTypeConverter valueConverter) {
+  TableConverter(Type targetType, boolean sortedMap, TabularType tabularType, OpenTypeConverter keyConverter, OpenTypeConverter valueConverter) {
     super(targetType, tabularType, TabularData.class);
     this.sortedMap = sortedMap;
     this.keyConverter = keyConverter;
@@ -50,8 +49,7 @@ public final class TableConverter extends OpenTypeConverter {
     if (valueMap instanceof SortedMap) {
       Comparator comparator = ((SortedMap) valueMap).comparator();
       if (comparator != null) {
-        final String msg = "Cannot convert SortedMap with non-null comparator: "
-            + comparator;
+        final String msg = "Cannot convert SortedMap with non-null comparator: " + comparator;
         IllegalArgumentException iae = new IllegalArgumentException(msg);
         OpenDataException ode = new OpenDataException(msg);
         ode.initCause(iae);
@@ -65,20 +63,16 @@ public final class TableConverter extends OpenTypeConverter {
       final Object openKey = keyConverter.toOpenValue(entry.getKey());
       final Object openValue = valueConverter.toOpenValue(entry.getValue());
       final CompositeData row;
-      row = new CompositeDataSupport(rowType, keyValueArray, new Object[] {
-          openKey, openValue });
+      row = new CompositeDataSupport(rowType, keyValueArray, new Object[] { openKey, openValue });
       table.put(row);
     }
     return table;
   }
 
-  public final Object fromNonNullOpenValue(Object openValue)
-      throws InvalidObjectException {
+  public final Object fromNonNullOpenValue(Object openValue) throws InvalidObjectException {
     final TabularData table = (TabularData) openValue;
-    final Collection<CompositeData> rows = (Collection<CompositeData>) table
-        .values();
-    final Map<Object, Object> valueMap = sortedMap ? OpenTypeUtil
-        .newSortedMap() : OpenTypeUtil.newMap();
+    final Collection<CompositeData> rows = (Collection<CompositeData>) table.values();
+    final Map<Object, Object> valueMap = sortedMap ? OpenTypeUtil.newSortedMap() : OpenTypeUtil.newMap();
     for (CompositeData row : rows) {
       final Object key = keyConverter.fromOpenValue(row.get("key"));
       final Object value = valueConverter.fromOpenValue(row.get("value"));

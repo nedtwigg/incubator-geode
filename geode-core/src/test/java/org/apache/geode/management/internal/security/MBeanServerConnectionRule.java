@@ -80,7 +80,7 @@ public class MBeanServerConnectionRule extends DescribedExternalResource {
     return JMX.newMXBeanProxy(con, ((ObjectInstance) beans.toArray()[0]).getObjectName(), proxyClass);
   }
 
-  public AccessControlMXBean getAccessControlMBean() throws Exception{
+  public AccessControlMXBean getAccessControlMBean() throws Exception {
     return JMX.newMXBeanProxy(con, new ObjectName("GemFire:service=AccessControl,type=Distributed"), AccessControlMXBean.class);
   }
 

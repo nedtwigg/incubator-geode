@@ -24,12 +24,11 @@ import org.apache.geode.cache.wan.GatewaySender;
 import org.apache.geode.internal.cache.wan.AbstractGatewaySender;
 import org.apache.geode.internal.logging.LogService;
 
-public class RemoteSerialGatewaySenderEventProcessor extends
-    SerialGatewaySenderEventProcessor {
+public class RemoteSerialGatewaySenderEventProcessor extends SerialGatewaySenderEventProcessor {
 
   private static final Logger logger = LogService.getLogger();
-  public RemoteSerialGatewaySenderEventProcessor(AbstractGatewaySender sender,
-      String id) {
+
+  public RemoteSerialGatewaySenderEventProcessor(AbstractGatewaySender sender, String id) {
     super(sender, id);
   }
 
@@ -42,9 +41,9 @@ public class RemoteSerialGatewaySenderEventProcessor extends
     // To make them pass uncommenting the below condition
     if (this.sender.getRemoteDSId() != GatewaySender.DEFAULT_DISTRIBUTED_SYSTEM_ID) {
       this.dispatcher = new GatewaySenderEventRemoteDispatcher(this);
-    }else{
+    } else {
       this.dispatcher = new GatewaySenderEventCallbackDispatcher(this);
     }
   }
-  
+
 }

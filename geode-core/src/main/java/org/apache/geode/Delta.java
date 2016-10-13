@@ -20,7 +20,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-
 /**
  * This interface defines a contract between the application and GemFire that
  * allows GemFire to determine whether an application object contains a delta,
@@ -50,7 +49,6 @@ public interface Delta {
    * @throws IOException
    */
   void toDelta(DataOutput out) throws IOException;
-
 
   /**
    * This method is invoked on an existing application object when an update is

@@ -32,7 +32,7 @@ import org.apache.geode.internal.cache.DirectReplyMessage;
  *
  */
 public interface ReplySender {
-  
+
   public Set putOutgoing(DistributionMessage msg);
 
 }

@@ -31,20 +31,19 @@ public class PingOp {
    * @param pool the pool to use to communicate with the server.
    * @param server the server to do the execution on
    */
-  public static void execute(ExecutablePool pool, ServerLocation server)
-  {
+  public static void execute(ExecutablePool pool, ServerLocation server) {
     AbstractOp op = new PingOpImpl();
-    pool.executeOn(server, op, false,false);
+    pool.executeOn(server, op, false, false);
   }
-                                                               
+
   private PingOp() {
     // no instances allowed
   }
 
   static class PingOpImpl extends AbstractOp {
-    
+
     private long startTime;
-    
+
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
@@ -53,8 +52,7 @@ public class PingOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
       Message.messageType.set(null);
     }
 
@@ -76,18 +74,22 @@ public class PingOp {
       processAck(msg, "ping");
       return null;
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
+
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startPing();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endPingSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endPing(start, hasTimedOut(), hasFailed());

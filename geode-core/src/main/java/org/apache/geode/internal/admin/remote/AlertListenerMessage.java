@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -42,18 +41,10 @@ public final class AlertListenerMessage extends PooledDistributionMessage implem
   private long tid;
   private String msg;
   private String exceptionText;
-  
-  public static AlertListenerMessage create(Object recipient,
-                                            int msgLevel,
-                                            Date msgDate,
-                                            String connectionName,
-                                            String threadName,
-                                            long tid,
-                                            String msg,
-                                            String exceptionText)
-  {
+
+  public static AlertListenerMessage create(Object recipient, int msgLevel, Date msgDate, String connectionName, String threadName, long tid, String msg, String exceptionText) {
     AlertListenerMessage m = new AlertListenerMessage();
-    m.setRecipient((InternalDistributedMember)recipient);
+    m.setRecipient((InternalDistributedMember) recipient);
     m.msgLevel = msgLevel;
     m.msgDate = msgDate;
     m.connectionName = connectionName;
@@ -77,33 +68,25 @@ public final class AlertListenerMessage extends PooledDistributionMessage implem
   }
 
   @Override
-  public void process(DistributionManager dm){
+  public void process(DistributionManager dm) {
     RemoteGfManagerAgent agent = dm.getAgent();
     if (agent != null) {
       RemoteGemFireVM mgr = agent.getMemberById(this.getSender());
-      if (mgr == null) return;
-      Alert alert = new RemoteAlert(mgr,
-                                    msgLevel,
-                                    msgDate,
-                                    connectionName,
-                                    threadName,
-                                    tid,
-                                    msg,
-                                    exceptionText,
-                                    getSender());
+      if (mgr == null)
+        return;
+      Alert alert = new RemoteAlert(mgr, msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText, getSender());
       agent.callAlertListener(alert);
-    }else{
+    } else {
       /**
        * Its assumed that its a managing node and it has to emit any alerts
        * emitted to it.
        */
-      AlertDetails alertDetail = new AlertDetails(msgLevel, msgDate,
-          connectionName, threadName, tid, msg, exceptionText, getSender());
+      AlertDetails alertDetail = new AlertDetails(msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText, getSender());
       dm.getSystem().handleResourceEvent(ResourceEvent.SYSTEM_ALERT, alertDetail);
     }
 
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
@@ -126,11 +109,10 @@ public final class AlertListenerMessage extends PooledDistributionMessage implem
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.msgLevel = in.readInt();
-    this.msgDate = (Date)DataSerializer.readObject(in);
+    this.msgDate = (Date) DataSerializer.readObject(in);
     this.connectionName = DataSerializer.readString(in);
     this.threadName = DataSerializer.readString(in);
     this.tid = in.readLong();
@@ -140,8 +122,7 @@ public final class AlertListenerMessage extends PooledDistributionMessage implem
 
   @Override
   public String toString() {
-    return "Alert \"" + this.msg + "\" level " +
-      AlertLevel.forSeverity(this.msgLevel);
+    return "Alert \"" + this.msg + "\" level " + AlertLevel.forSeverity(this.msgLevel);
   }
 
 }

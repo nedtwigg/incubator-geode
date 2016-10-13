@@ -65,7 +65,7 @@ public class HABugInPutDUnitTest extends JUnit4DistributedTestCase {
 
   @Override
   public final void postSetUp() throws Exception {
-	  final Host host = Host.getHost(0);
+    final Host host = Host.getHost(0);
     // Server1 VM
     server1 = host.getVM(0);
 
@@ -79,15 +79,11 @@ public class HABugInPutDUnitTest extends JUnit4DistributedTestCase {
     client2 = host.getVM(3);
 
     //System.setProperty())
-    int PORT1 = ((Integer)server1.invoke(() -> HABugInPutDUnitTest.createServerCache()))
-        .intValue();
-    int PORT2 = ((Integer)server2.invoke(() -> HABugInPutDUnitTest.createServerCache()))
-        .intValue();
+    int PORT1 = ((Integer) server1.invoke(() -> HABugInPutDUnitTest.createServerCache())).intValue();
+    int PORT2 = ((Integer) server2.invoke(() -> HABugInPutDUnitTest.createServerCache())).intValue();
 
-    client1.invoke(() -> HABugInPutDUnitTest.createClientCache(
-        NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2) ));
-    client2.invoke(() -> HABugInPutDUnitTest.createClientCache(
-        NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2) ));
+    client1.invoke(() -> HABugInPutDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
+    client2.invoke(() -> HABugInPutDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
   }
 
   @Override
@@ -99,16 +95,14 @@ public class HABugInPutDUnitTest extends JUnit4DistributedTestCase {
     server2.invoke(() -> HABugInPutDUnitTest.closeCache());
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();
     }
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     assertNotNull(ds);
     ds.disconnect();
@@ -117,15 +111,14 @@ public class HABugInPutDUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     new HABugInPutDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-    CacheServerImpl server = (CacheServerImpl)cache.addCacheServer();
+    CacheServerImpl server = (CacheServerImpl) cache.addCacheServer();
     assertNotNull(server);
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     server.setPort(port);
@@ -134,9 +127,7 @@ public class HABugInPutDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  public static void createClientCache(String hostName, Integer port1, Integer port2)
-      throws Exception
-  {
+  public static void createClientCache(String hostName, Integer port1, Integer port2) throws Exception {
     int PORT1 = port1.intValue();
     int PORT2 = port2.intValue();
     Properties props = new Properties();
@@ -145,7 +136,7 @@ public class HABugInPutDUnitTest extends JUnit4DistributedTestCase {
     new HABugInPutDUnitTest().createCache(props);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[] {PORT1,PORT2}, true, -1, 2, null);
+    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[] { PORT1, PORT2 }, true, -1, 2, null);
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
     Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -154,12 +145,10 @@ public class HABugInPutDUnitTest extends JUnit4DistributedTestCase {
   }
 
   @Test
-  public void testBugInPut() throws Exception
-  {
+  public void testBugInPut() throws Exception {
     client1.invoke(new CacheSerializableRunnable("putFromClient1") {
 
-      public void run2() throws CacheException
-      {
+      public void run2() throws CacheException {
         Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
         assertNotNull(region);
         region.put(KEY1, VALUE1);

@@ -37,14 +37,14 @@ import org.apache.geode.internal.cache.EnumListenerEvent;
  *
  * @since GemFire 2.0
  */
-public interface CacheEvent<K,V> {
+public interface CacheEvent<K, V> {
 
   /** Returns the region to which this cached object belongs or
    * the region that raised this event for <code>RegionEvent</code>s.
    * @return the region associated with this object or the region that raised
    * this event.
    */
-  public Region<K,V> getRegion();
+  public Region<K, V> getRegion();
 
   /**
    * Return a description of the operation that triggered this event.
@@ -52,7 +52,7 @@ public interface CacheEvent<K,V> {
    * @since GemFire 5.0
    */
   public Operation getOperation();
-  
+
   /** Returns the callbackArgument passed to the method that generated this event.
    * Provided primarily in case this object or region has already been
    * destroyed. See the {@link Region} interface methods that take a
@@ -63,6 +63,7 @@ public interface CacheEvent<K,V> {
    * and to {@link CacheListener} on the remote side of a transaction commit.
    */
   public Object getCallbackArgument();
+
   /**
    * Returns <code>true</code> if the callback argument is "available".
    * Not available means that the callback argument may have existed but it could
@@ -79,6 +80,7 @@ public interface CacheEvent<K,V> {
    *
    */
   public boolean isOriginRemote();
+
   /**
    * Returns the {@link DistributedMember} that this event originated in.
    * @return the member that performed the operation that originated this event.

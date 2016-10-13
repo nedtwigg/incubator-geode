@@ -40,7 +40,7 @@ public interface PartitionRegionInfo {
    * @return the full path of the partitioned region that this info describes
    */
   public String getRegionPath();
-  
+
   /**
    * Returns an immutable set of <code>PartitionMemberInfo</code> 
    * representing every member that is configured to provide storage space to
@@ -49,7 +49,7 @@ public interface PartitionRegionInfo {
    * @return set of member info configured for storage space
    */
   public Set<PartitionMemberInfo> getPartitionMemberInfo();
-  
+
   /**
    * Returns the {@link 
    * org.apache.geode.cache.PartitionAttributes#getTotalNumBuckets()
@@ -58,7 +58,7 @@ public interface PartitionRegionInfo {
    * @return the configured number of buckets
    */
   public int getConfiguredBucketCount();
-  
+
   /**
    * Returns the number of actual buckets that have been created to hold data
    * for the partitioned region. This is less than or equal to {#link 
@@ -67,7 +67,7 @@ public interface PartitionRegionInfo {
    * @return the current number of actual buckets that have been created
    */
   public int getCreatedBucketCount();
-  
+
   /**
    * Returns the number of created buckets that have fewer than the {@link 
    * #getConfiguredRedundantCopies() configured redundant copies} for this
@@ -78,7 +78,7 @@ public interface PartitionRegionInfo {
    * @see #getActualRedundantCopies()
    */
   public int getLowRedundancyBucketCount();
-  
+
   /**
    * Returns the number of {@link 
    * org.apache.geode.cache.PartitionAttributes#getRedundantCopies()
@@ -88,7 +88,7 @@ public interface PartitionRegionInfo {
    * configured for
    */
   public int getConfiguredRedundantCopies();
-  
+
   /**
    * Returns the lowest number of redundant copies for any bucket holding
    * data for the partitioned region. If all data is currently at full
@@ -99,7 +99,7 @@ public interface PartitionRegionInfo {
    * partitioned region.
    */
   public int getActualRedundantCopies();
-  
+
   /**
    * Returns the {@link org.apache.geode.cache.Region#getFullPath() 
    * full path} of the partitioned region that this region has been configured 

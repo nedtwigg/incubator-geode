@@ -40,7 +40,7 @@ package org.apache.geode.cache;
  */
 
 public interface TransactionListener extends CacheCallback {
-  
+
   /** Called after a successful commit of a transaction.
    * 
    * @param event the TransactionEvent

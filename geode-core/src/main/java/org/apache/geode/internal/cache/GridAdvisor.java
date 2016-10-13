@@ -27,13 +27,12 @@ import org.apache.geode.distributed.internal.*;
 import org.apache.geode.distributed.internal.DistributionAdvisor.Profile;
 import org.apache.geode.distributed.internal.membership.*;
 
-
 /**
  * Used to share code with BridgeServerAdvisor and ControllerAdvisor
  *
  */
 public abstract class GridAdvisor extends DistributionAdvisor {
-  
+
   /** Creates a new instance of GridAdvisor */
   protected GridAdvisor(DistributionAdvisee server) {
     super(server);
@@ -46,17 +45,17 @@ public abstract class GridAdvisor extends DistributionAdvisor {
   private volatile Set/*<DistributedMember>*/ cachedControllerAdvise;
 
   private static final Filter CONTROLLER_FILTER = new Filter() {
-      public boolean include(Profile profile) {
-        return profile instanceof ControllerAdvisor.ControllerProfile;
-      }
-    };
+    public boolean include(Profile profile) {
+      return profile instanceof ControllerAdvisor.ControllerProfile;
+    }
+  };
 
   private static final Filter BRIDGE_SERVER_FILTER = new Filter() {
-      public boolean include(Profile profile) {
-        return profile instanceof CacheServerAdvisor.CacheServerProfile;
-      }
-    };
-  
+    public boolean include(Profile profile) {
+      return profile instanceof CacheServerAdvisor.CacheServerProfile;
+    }
+  };
+
   /**
    * Return an unmodifiable Set<DistributedMember> of the cnx controllers
    * in this system.
@@ -101,7 +100,7 @@ public abstract class GridAdvisor extends DistributionAdvisor {
     List/*<BridgeServerProfile>*/ result = null; //this.cachedBridgeServerProfiles;
     if (result == null) {
       synchronized (this.cacheLock) {
-//        result = this.cachedBridgeServerProfiles;
+        //        result = this.cachedBridgeServerProfiles;
         if (result == null) {
           result = fetchProfiles(BRIDGE_SERVER_FILTER);
           this.cachedBridgeServerProfiles = result;
@@ -110,6 +109,7 @@ public abstract class GridAdvisor extends DistributionAdvisor {
     }
     return result;
   }
+
   /**
    * Returns an unmodifiable <code>List</code> of the
    * <code>ControllerProfile</code>s for all known cnx controllers.
@@ -167,14 +167,17 @@ public abstract class GridAdvisor extends DistributionAdvisor {
   protected void profileCreated(Profile profile) {
     profilesChanged();
   }
+
   @Override
   protected void profileUpdated(Profile profile) {
     profilesChanged();
   }
+
   @Override
   protected void profileRemoved(Profile profile) {
     profilesChanged();
   }
+
   /**
    * Used to drop any cached profile views we have since the master list
    * of profiles changed. The next time someone asks for a view it will
@@ -194,27 +197,26 @@ public abstract class GridAdvisor extends DistributionAdvisor {
    * Tell everyone else who we are and find out who they are.
    */
   public void handshake() {
-    if(initializationGate()) {
+    if (initializationGate()) {
       //Exchange with any local servers or controllers.
       List<Profile> otherProfiles = new ArrayList<Profile>();
       GridProfile profile = (GridProfile) createProfile();
       profile.tellLocalBridgeServers(false, true, otherProfiles);
       profile.tellLocalControllers(false, true, otherProfiles);
-      for(Profile otherProfile : otherProfiles) {
-        if(!otherProfile.equals(profile)) {
+      for (Profile otherProfile : otherProfiles) {
+        if (!otherProfile.equals(profile)) {
           this.putProfile(otherProfile);
         }
       }
     }
     profilesChanged();
   }
-  
+
   @Override
   public void close() {
     try {
-      new UpdateAttributesProcessor(getAdvisee(),
-                                    true/*removeProfile*/).distribute();
-      
+      new UpdateAttributesProcessor(getAdvisee(), true/*removeProfile*/).distribute();
+
       //Notify any local bridge servers or controllers
       //that we are closing.
       GridProfile profile = (GridProfile) createProfile();
@@ -226,9 +228,7 @@ public abstract class GridAdvisor extends DistributionAdvisor {
     }
     profilesChanged();
   }
-  
-  
-  
+
   @Override
   public Set adviseProfileRemove() {
     //Our set of profiles includes local members. However, the update
@@ -238,8 +238,6 @@ public abstract class GridAdvisor extends DistributionAdvisor {
     results.remove(getDistributionManager().getId());
     return results;
   }
-
-
 
   /**
    * Describes profile data common for all Grid resources
@@ -289,7 +287,8 @@ public abstract class GridAdvisor extends DistributionAdvisor {
 
     @Override
     public final ProfileId getId() {
-      if (this.id == null) throw new IllegalStateException("profile id not yet initialized");
+      if (this.id == null)
+        throw new IllegalStateException("profile id not yet initialized");
       return this.id;
     }
 
@@ -299,22 +298,19 @@ public abstract class GridAdvisor extends DistributionAdvisor {
      * 
      * @since GemFire 5.7
      */
-    protected final void tellLocalControllers(boolean removeProfile,
-        boolean exchangeProfiles, final List<Profile> replyProfiles) {
+    protected final void tellLocalControllers(boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
       final List<Locator> locators = Locator.getLocators();
       for (int i = 0; i < locators.size(); i++) {
-        InternalLocator l = (InternalLocator)locators.get(i);
+        InternalLocator l = (InternalLocator) locators.get(i);
         DistributionAdvisee advisee = l.getServerLocatorAdvisee();
-        if(advisee != null && advisee.getProfile().equals(this)) {
+        if (advisee != null && advisee.getProfile().equals(this)) {
           continue;
         }
         // negative value for port indicates fake profile
         // meant to only gather remote profiles during profile exchange
         if (this.port > 0) {
-          handleDistributionAdvisee(advisee, removeProfile, exchangeProfiles,
-              replyProfiles);
-        }
-        else if (exchangeProfiles && advisee != null) {
+          handleDistributionAdvisee(advisee, removeProfile, exchangeProfiles, replyProfiles);
+        } else if (exchangeProfiles && advisee != null) {
           replyProfiles.add(advisee.getProfile());
         }
       }
@@ -326,25 +322,22 @@ public abstract class GridAdvisor extends DistributionAdvisor {
      * 
      * @since GemFire 5.7
      */
-    protected final void tellLocalBridgeServers(boolean removeProfile,
-        boolean exchangeProfiles, final List<Profile> replyProfiles) {
+    protected final void tellLocalBridgeServers(boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
       final GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
       if (cache != null && !cache.isClosed()) {
         List<?> bridgeServers = cache.getCacheServersAndGatewayReceiver();
         for (int i = 0; i < bridgeServers.size(); i++) {
-          CacheServerImpl bsi = (CacheServerImpl)bridgeServers.get(i);
+          CacheServerImpl bsi = (CacheServerImpl) bridgeServers.get(i);
           if (bsi.isRunning()) {
-            if(bsi.getProfile().equals(this)) {
+            if (bsi.getProfile().equals(this)) {
               continue;
             }
             // negative value for port indicates fake
             // profile meant to only gather remote profiles during profile
             // exchange
             if (this.port > 0) {
-              handleDistributionAdvisee(bsi, removeProfile, exchangeProfiles,
-                  replyProfiles);
-            }
-            else if (exchangeProfiles) {
+              handleDistributionAdvisee(bsi, removeProfile, exchangeProfiles, replyProfiles);
+            } else if (exchangeProfiles) {
               replyProfiles.add(bsi.getProfile());
             }
           }
@@ -370,7 +363,7 @@ public abstract class GridAdvisor extends DistributionAdvisor {
     public void finishInit() {
       this.id = new GridProfileId(this);
     }
-    
+
     @Override
     public void fillInToString(StringBuilder sb) {
       super.fillInToString(sb);
@@ -404,8 +397,7 @@ public abstract class GridAdvisor extends DistributionAdvisor {
 
     @Override
     public String toString() {
-      return "GridProfile[host=" + this.gp.getHost() + ",port=" + gp.getPort()
-          + ']';
+      return "GridProfile[host=" + this.gp.getHost() + ",port=" + gp.getPort() + ']';
     }
 
     @Override
@@ -418,14 +410,13 @@ public abstract class GridAdvisor extends DistributionAdvisor {
     @Override
     public boolean equals(Object obj) {
       if (obj instanceof GridProfileId) {
-        final GridProfileId other = (GridProfileId)obj;
+        final GridProfileId other = (GridProfileId) obj;
         if (this.gp.getPort() == other.gp.getPort()) {
           final String thisHost = this.gp.getHost();
           final String otherHost = other.gp.getHost();
           if (thisHost != null) {
             return thisHost.equals(otherHost);
-          }
-          else {
+          } else {
             return (otherHost == null);
           }
         }

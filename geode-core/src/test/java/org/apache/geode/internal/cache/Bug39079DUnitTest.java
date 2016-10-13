@@ -91,12 +91,11 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
 
     //Create DiskRegion locally in controller VM also
     getSystem();
-    
-    
+
     assertTrue(getCache() != null);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);    
+    factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     factory.setDiskSynchronous(false);
     factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(getClass().getSimpleName()).getName());
     RegionAttributes attr = factory.create();
@@ -113,21 +112,13 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     //Now recreate the region but set the factory such that disk region entry object
     //used is customized by us to throw exception while writing to disk
 
-    DistributedRegion distRegion = new DistributedRegion(
-      REGION_NAME_testGIIDiskAccessException,
-      attr,
-      null,
-      (GemFireCacheImpl)getCache(),
-      new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null));
+    DistributedRegion distRegion = new DistributedRegion(REGION_NAME_testGIIDiskAccessException, attr, null, (GemFireCacheImpl) getCache(), new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null));
 
     distRegion.entries.setEntryFactory(TestAbstractDiskRegionEntry.getEntryFactory());
     region = null;
 
     try {
-      region = ((GemFireCacheImpl)getCache()).createVMRegion(
-        REGION_NAME_testGIIDiskAccessException,
-        attr,
-        new InternalRegionArguments().setInternalMetaRegion(distRegion).setDestroyLockFlag(true).setSnapshotInputStream(null).setImageTarget(null));
+      region = ((GemFireCacheImpl) getCache()).createVMRegion(REGION_NAME_testGIIDiskAccessException, attr, new InternalRegionArguments().setInternalMetaRegion(distRegion).setDestroyLockFlag(true).setSnapshotInputStream(null).setImageTarget(null));
       fail("Expected DiskAccessException");
     } catch (DiskAccessException expected) {
     }
@@ -146,10 +137,10 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
 
     //create cache client
     vm1.invoke(() -> createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), port));
-   
+
     // validate
     vm0.invoke(() -> validateRunningBridgeServerList());
-   
+
     // close server cache
     vm0.invoke(() -> closeCacheAndDisconnect());
 
@@ -165,7 +156,7 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     props.setRolling(true);
     props.setDiskDirs(getDiskDirs());
     props.setPersistBackup(true);
-    
+
     Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(getCache(), props, Scope.DISTRIBUTED_ACK);
     assertNotNull(region);
     CacheServer bs1 = getCache().addCacheServer();
@@ -179,36 +170,35 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     closeCache();
     disconnectFromDS();
   }
-  
+
   private void createCache(Properties props) {
     getSystem(props);
     assertNotNull(getCache());
   }
-  
-  private  void validateRunningBridgeServerList() throws IOException {
+
+  private void validateRunningBridgeServerList() throws IOException {
     Region region = getCache().getRegion(REGION_NAME_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase);
     try {
       region.create("key1", new byte[16]);
       region.create("key2", new byte[16]);
 
       // Get the oplog handle & hence the underlying file & close it
-      UninterruptibleFileChannel oplogFileChannel = ((LocalRegion)region).getDiskRegion().testHook_getChild().getFileChannel();
+      UninterruptibleFileChannel oplogFileChannel = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
 
       try {
         oplogFileChannel.close();
         region.put("key2", new byte[16]);
         fail("Expected DiskAccessException");
-      } catch(DiskAccessException expected) {
+      } catch (DiskAccessException expected) {
       }
 
       ((LocalRegion) region).getDiskStore().waitForClose();
       assertTrue(region.getRegionService().isClosed());
-      
+
       region = null;
       List bsRunning = getCache().getCacheServers();
       assertTrue(bsRunning.isEmpty());
-    }
-    finally {
+    } finally {
       if (region != null) {
         region.destroyRegion();
       }
@@ -221,9 +211,7 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     props.setProperty(LOCATORS, "");
     createCache(props);
 
-    PoolImpl pool = (PoolImpl)PoolManager.createFactory()
-      .addServer(host, port1.intValue())
-      .setSubscriptionEnabled(true).setSubscriptionRedundancy(0).setThreadLocalConnections(true).setMinConnections(0).setReadTimeout(20000).setRetryAttempts(1).create(getClass().getSimpleName());
+    PoolImpl pool = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(0).setThreadLocalConnections(true).setMinConnections(0).setReadTimeout(20000).setRetryAttempts(1).create(getClass().getSimpleName());
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -253,8 +241,7 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
 
           RegionAttributes attr = factory.create();
           getCache().createRegion(REGION_NAME_testGIIDiskAccessException, attr);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           fail("Error Creating cache / region ", ex);
         }
       }
@@ -280,8 +267,7 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
 
           RegionAttributes attr = factory.create();
           getCache().createRegion(REGION_NAME_testGIIDiskAccessException, attr);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           fail("Error Creating cache / region ", ex);
         }
       }

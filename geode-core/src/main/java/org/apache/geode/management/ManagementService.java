@@ -26,15 +26,12 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.management.internal.BaseManagementService;
 import org.apache.geode.management.membership.MembershipListener;
 
-
-
 /**
  * Interface to the GemFire management service for a single Cache.
  * 
  * @since GemFire 7.0
  */
-public abstract class  ManagementService{
-
+public abstract class ManagementService {
 
   /**
    * Returns a newly created or the existing instance of the management service
@@ -46,6 +43,7 @@ public abstract class  ManagementService{
   public static ManagementService getManagementService(Cache cache) {
     return BaseManagementService.getManagementService(cache);
   }
+
   /**
    * Returns the existing instance of the management service for a cache.
    * 
@@ -116,8 +114,7 @@ public abstract class  ManagementService{
    *          True if the MBean is a notification emitter.
    */
 
-  public abstract <T> void federate(ObjectName objectName,
-      Class<T> interfaceClass, boolean notificationEmitter);
+  public abstract <T> void federate(ObjectName objectName, Class<T> interfaceClass, boolean notificationEmitter);
 
   /**
    * Returns the MemberMXBean for managing and monitoring the local member.
@@ -140,8 +137,7 @@ public abstract class  ManagementService{
    *          Name of the lock service.
    * @return A LockServiceMXBean if the lock service exists, null otherwise.
    */
-  public abstract LockServiceMXBean getLocalLockServiceMBean(
-      String lockServiceName);
+  public abstract LockServiceMXBean getLocalLockServiceMBean(String lockServiceName);
 
   /**
    * Returns a DiskStoreMXBean for managing and monitoring a disk store.
@@ -160,7 +156,7 @@ public abstract class  ManagementService{
    * @return A CacheServerMXBean if the cache server is found, null otherwise.
    */
   public abstract CacheServerMXBean getLocalCacheServerMXBean(int serverPort);
-  
+
   /**
    * Returns the DistributedSystemMXBean for managing and monitoring the 
    * distributed system as a whole.
@@ -168,7 +164,7 @@ public abstract class  ManagementService{
    * @return A DistributedSystemMXBean if one is found, null otherwise.
    */
   public abstract DistributedSystemMXBean getDistributedSystemMXBean();
-  
+
   /**
    * Returns the ManagerMXBean for the management service.
    * 
@@ -184,8 +180,7 @@ public abstract class  ManagementService{
    *          Path of the Region.
    * @return A DistributedRegionMXBean if the region exists, null otherwise.
    */
-  public abstract DistributedRegionMXBean getDistributedRegionMXBean(
-      String regionPath);
+  public abstract DistributedRegionMXBean getDistributedRegionMXBean(String regionPath);
 
   /**
    * Returns a LockServiceMXBean for managing and monitoring a lock service
@@ -195,9 +190,8 @@ public abstract class  ManagementService{
    *          Name of the LockService.
    * @return A DistributedLockServiceMXBean if the lock service exists, null otherwise.
    */
-  public abstract DistributedLockServiceMXBean getDistributedLockServiceMXBean(
-      String lockServiceName);
-  
+  public abstract DistributedLockServiceMXBean getDistributedLockServiceMXBean(String lockServiceName);
+
   /**
    * Returns the GatewayReceiverMXBean for managing and monitoring the
    * gateway receiver.
@@ -215,7 +209,7 @@ public abstract class  ManagementService{
    * @return A GatewaySenderMXBean if the gateway sender is found, null otherwise.
    */
   public abstract GatewaySenderMXBean getLocalGatewaySenderMXBean(String senderId);
-  
+
   /**
    * Returns a AsyncEventQueueMXBean for managing and monitoring an
    * asynchronous queue.
@@ -225,7 +219,7 @@ public abstract class  ManagementService{
    * @return An AsyncEventQueueMXBean if the asynchronous queue is found, null otherwise.
    */
   public abstract AsyncEventQueueMXBean getLocalAsyncEventQueueMXBean(String queueId);
-  
+
   /**
    * Returns the LocatorMXBean for managing and monitoring the locator.
    * 
@@ -252,8 +246,7 @@ public abstract class  ManagementService{
    * @throws ClassCastException
    *          if the MBean does not implement the given interface.
    */
-  public abstract <T> T getMBeanInstance(ObjectName objectName,
-      Class<T> interfaceClass);
+  public abstract <T> T getMBeanInstance(ObjectName objectName, Class<T> interfaceClass);
 
   /**
    * Returns the last updated time of the remote MBean as reported by
@@ -286,8 +279,7 @@ public abstract class  ManagementService{
    * @param regionPath
    *          Path of the region.
    */
-  public abstract ObjectName getRegionMBeanName(DistributedMember member,
-      String regionPath);
+  public abstract ObjectName getRegionMBeanName(DistributedMember member, String regionPath);
 
   /**
    * Returns the object name of the DiskStoreMBean representing a disk store.
@@ -299,8 +291,7 @@ public abstract class  ManagementService{
    * @param diskName
    *          Name of the disk store.
    */
-  public abstract ObjectName getDiskStoreMBeanName(DistributedMember member,
-      String diskName);
+  public abstract ObjectName getDiskStoreMBeanName(DistributedMember member, String diskName);
 
   /**
    * Returns the object name of the CacheServerMBean representing a cache server.
@@ -312,8 +303,7 @@ public abstract class  ManagementService{
    * @param serverPort
    *          Port on which the cache server is listening.
    */
-  public abstract ObjectName getCacheServerMBeanName(int serverPort,
-      DistributedMember member);
+  public abstract ObjectName getCacheServerMBeanName(int serverPort, DistributedMember member);
 
   /**
    * Returns the object name of the LockServiceMBean representing a lock service.
@@ -325,8 +315,7 @@ public abstract class  ManagementService{
    * @param lockServiceName
    *          Name of the lock service.
    */
-  public abstract ObjectName getLockServiceMBeanName(DistributedMember member,
-      String lockServiceName);
+  public abstract ObjectName getLockServiceMBeanName(DistributedMember member, String lockServiceName);
 
   /**
    * Returns the object name of the GatewayReciverMBean representing a
@@ -348,10 +337,8 @@ public abstract class  ManagementService{
    * @param gatwaySenderId
    *          ID of the gateway sender.
    */
-  public abstract ObjectName getGatewaySenderMBeanName(DistributedMember member,
-      String gatwaySenderId);
-  
-  
+  public abstract ObjectName getGatewaySenderMBeanName(DistributedMember member, String gatwaySenderId);
+
   /**
    * Returns the object name of the AsyncEventQueueMBean representing a
    * asynchronous queue. This is a utility method for generating an object
@@ -362,8 +349,7 @@ public abstract class  ManagementService{
    * @param queueId
    *          ID of the asynchronous queue.
    */
-  public abstract ObjectName getAsyncEventQueueMBeanName(DistributedMember member,
-      String queueId);
+  public abstract ObjectName getAsyncEventQueueMBeanName(DistributedMember member, String queueId);
 
   /**
    * Returns the object name of the DistributedRegionMBean representing a region.
@@ -383,8 +369,7 @@ public abstract class  ManagementService{
    * @param lockService
    *          Name of the lock service.
    */
-  public abstract ObjectName getDistributedLockServiceMBeanName(
-      String lockService);
+  public abstract ObjectName getDistributedLockServiceMBeanName(String lockService);
 
   /**
    * Returns the object name of the getDistributedSystemMBeanName representing a 
@@ -399,7 +384,7 @@ public abstract class  ManagementService{
    * it does not register an MBean. 
    */
   public abstract ObjectName getManagerMBeanName();
-  
+
   /**
    * Returns the object name of the LocatorMBean representing a locator.
    * This is a utility method for generating an object name and it does
@@ -409,14 +394,13 @@ public abstract class  ManagementService{
    *          Distributed member used to generate the object name.
    */
   public abstract ObjectName getLocatorMBeanName(DistributedMember member);
-  
-  
+
   /**
    * Registers a listener that receives call backs when a member joins
    * or leaves the distributed system.
    */
   public abstract void addMembershipListener(MembershipListener listener);
-  
+
   /**
    * Unregisters a membership listener
    *

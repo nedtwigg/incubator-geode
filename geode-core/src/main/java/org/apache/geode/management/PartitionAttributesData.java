@@ -43,10 +43,8 @@ public class PartitionAttributesData {
    * This constructor is to be used by internal JMX framework only. User should
    * not try to create an instance of this class.
    */
-  @ConstructorProperties({ "redundantCopies", "totalMaxMemory", "totalNumBuckets", "localMaxMemory", "colocatedWith", "partitionResolver",
-      "recoveryDelay", "startupRecoveryDelay", "partitionListeners" })
-  public PartitionAttributesData(int redundantCopies, long totalMaxMemory, int totalNumBuckets, int localMaxMemory, String colocatedWith,
-      String partitionResolver, long recoveryDelay, long startupRecoveryDelay, String[] partitionListeners) {
+  @ConstructorProperties({ "redundantCopies", "totalMaxMemory", "totalNumBuckets", "localMaxMemory", "colocatedWith", "partitionResolver", "recoveryDelay", "startupRecoveryDelay", "partitionListeners" })
+  public PartitionAttributesData(int redundantCopies, long totalMaxMemory, int totalNumBuckets, int localMaxMemory, String colocatedWith, String partitionResolver, long recoveryDelay, long startupRecoveryDelay, String[] partitionListeners) {
 
     this.redundantCopies = redundantCopies;
     this.totalMaxMemory = totalMaxMemory;

@@ -44,9 +44,7 @@ import org.apache.geode.test.dunit.VM;
  *  
  */
 @Category(DistributedTest.class)
-public class PartitionedRegionAsSubRegionDUnitTest extends
-    PartitionedRegionDUnitTestCase
-{
+public class PartitionedRegionAsSubRegionDUnitTest extends PartitionedRegionDUnitTestCase {
 
   //////constructor //////////
   public PartitionedRegionAsSubRegionDUnitTest() {
@@ -64,15 +62,11 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy
    */
 
-  private CacheSerializableRunnable createPR = new CacheSerializableRunnable(
-      "createPR") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable createPR = new CacheSerializableRunnable("createPR") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
-      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName
-          + Region.SEPARATOR + childRegionName);
-      parentRegion.createSubregion(PR_PREFIX, createRegionAttributesForPR(
-          1, 200));
+      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR + childRegionName);
+      parentRegion.createSubregion(PR_PREFIX, createRegionAttributesForPR(1, 200));
     }
   };
 
@@ -80,17 +74,13 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * This does put operations on the PartitionedRegion which is in
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy
    */
-  private CacheSerializableRunnable doRegionOps = new CacheSerializableRunnable(
-      "doRegionOps") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable doRegionOps = new CacheSerializableRunnable("doRegionOps") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
-      PartitionedRegion pr = (PartitionedRegion)cache
-          .getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR
-              + childRegionName + Region.SEPARATOR + PR_PREFIX);
-      for (int i = 0; i < pr.getTotalNumberOfBuckets(); i++) { 
+      PartitionedRegion pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR + childRegionName + Region.SEPARATOR + PR_PREFIX);
+      for (int i = 0; i < pr.getTotalNumberOfBuckets(); i++) {
         // Assume creating total number of bucket keys creates the maximum amount of buckets
-        pr.put(new Integer(i), i + ""); 
+        pr.put(new Integer(i), i + "");
       }
 
     }
@@ -101,25 +91,18 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * PartitionedRegion as sub region of the child region in
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy.
    */
-  private CacheSerializableRunnable recreatePRAfterDestroy = new CacheSerializableRunnable(
-      "recreatePRAfterDestroy") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable recreatePRAfterDestroy = new CacheSerializableRunnable("recreatePRAfterDestroy") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
-      Region parentRegion = cache
-          .getRegion(Region.SEPARATOR + parentRegionName);
+      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName);
       Region childRegion = null;
-      childRegion = parentRegion.createSubregion(childRegionName, parentRegion
-          .getAttributes());
+      childRegion = parentRegion.createSubregion(childRegionName, parentRegion.getAttributes());
       PartitionedRegion pr = null;
-      pr = (PartitionedRegion)cache.getRegion(Region.SEPARATOR
-          + parentRegionName + Region.SEPARATOR + childRegionName
-          + Region.SEPARATOR + PR_PREFIX);
+      pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR + childRegionName + Region.SEPARATOR + PR_PREFIX);
       if (pr != null)
         fail("PR strill exists");
 
-      pr = (PartitionedRegion)childRegion.createSubregion(PR_PREFIX,
-          createRegionAttributesForPR(1, 200));
+      pr = (PartitionedRegion) childRegion.createSubregion(PR_PREFIX, createRegionAttributesForPR(1, 200));
       //      Assert.assertTrue(pr.getBucket2Node().size()==0, "B2N cleanup was not
       // done");
 
@@ -132,25 +115,18 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * PartitionedRegion as sub region of the child region in
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy.
    */
-  private CacheSerializableRunnable recreatePRAfterLocalDestroy = new CacheSerializableRunnable(
-      "recreatePRAfterLocalDestroy") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable recreatePRAfterLocalDestroy = new CacheSerializableRunnable("recreatePRAfterLocalDestroy") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
-      Region parentRegion = cache
-          .getRegion(Region.SEPARATOR + parentRegionName);
+      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName);
       Region childRegion = null;
-      childRegion = parentRegion.createSubregion(childRegionName, parentRegion
-          .getAttributes());
+      childRegion = parentRegion.createSubregion(childRegionName, parentRegion.getAttributes());
       PartitionedRegion pr = null;
-      pr = (PartitionedRegion)cache.getRegion(Region.SEPARATOR
-          + parentRegionName + Region.SEPARATOR + childRegionName
-          + Region.SEPARATOR + PR_PREFIX);
+      pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR + childRegionName + Region.SEPARATOR + PR_PREFIX);
       if (pr != null)
         fail("PR strill exists");
 
-      pr = (PartitionedRegion)childRegion.createSubregion(PR_PREFIX,
-          createRegionAttributesForPR(1, 200));
+      pr = (PartitionedRegion) childRegion.createSubregion(PR_PREFIX, createRegionAttributesForPR(1, 200));
       //      Assert.assertTrue(pr.getBucket2Node().size()==0, "B2N cleanup was not
       // done");
 
@@ -158,18 +134,14 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
     }
   };
 
-  
   /**
    * This destroys child region from the
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy
    */
-  private CacheSerializableRunnable destroyChildRegion = new CacheSerializableRunnable(
-      "destroyChildRegion") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable destroyChildRegion = new CacheSerializableRunnable("destroyChildRegion") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
-      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName
-          + Region.SEPARATOR + childRegionName);
+      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR + childRegionName);
       parentRegion.destroyRegion();
     }
   };
@@ -178,34 +150,26 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * This destroys the PartitionedRegion from the
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy
    */
-  private CacheSerializableRunnable destroyPR = new CacheSerializableRunnable(
-      "destroyPR") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable destroyPR = new CacheSerializableRunnable("destroyPR") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
       Region pr = cache.getRegion(Region.SEPARATOR + PR_PREFIX);
       pr.destroyRegion();
     }
   };
 
-  private CacheSerializableRunnable localDestroyChildRegion = new CacheSerializableRunnable(
-      "localDestroyChildRegion") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable localDestroyChildRegion = new CacheSerializableRunnable("localDestroyChildRegion") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
-      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName
-          + Region.SEPARATOR + childRegionName);
+      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR + childRegionName);
       parentRegion.localDestroyRegion();
     }
   };
 
-  private CacheSerializableRunnable closeChildRegion = new CacheSerializableRunnable(
-      "closeChildRegion") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable closeChildRegion = new CacheSerializableRunnable("closeChildRegion") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
-      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName
-          + Region.SEPARATOR + childRegionName);
+      Region parentRegion = cache.getRegion(Region.SEPARATOR + parentRegionName + Region.SEPARATOR + childRegionName);
       parentRegion.close();
     }
   };
@@ -214,10 +178,8 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * This class creates Parent and Child regions in
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy
    */
-  private CacheSerializableRunnable createDACKRegions = new CacheSerializableRunnable(
-      "createDACKRegions") {
-    public void run2() throws CacheException
-    {
+  private CacheSerializableRunnable createDACKRegions = new CacheSerializableRunnable("createDACKRegions") {
+    public void run2() throws CacheException {
       Cache cache = getCache();
       RegionAttributes ra = createRegionAttributesForDACKRegions();
       Region parentRegion = cache.createRegion(parentRegionName, ra);
@@ -233,8 +195,7 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * @throws Exception
    */
   @Test
-  public void testSubRegionDestroyRegion() throws Exception
-  {
+  public void testSubRegionDestroyRegion() throws Exception {
 
     Host host = Host.getHost(0);
 
@@ -266,8 +227,7 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * @throws Exception
    */
   @Test
-  public void testSubRegionLocalDestroyRegion() throws Exception
-  {
+  public void testSubRegionLocalDestroyRegion() throws Exception {
 
     Host host = Host.getHost(0);
 
@@ -287,7 +247,7 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
     vm0.invoke(recreatePRAfterLocalDestroy);
     vm0.invoke(localDestroyChildRegion);
   }
-  
+
   /**
    * This method test the close call on a Child region in
    * ParentRegion/ChildRegion/PartitionedRegion hierarchy which has
@@ -296,8 +256,7 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * @throws Exception
    */
   @Test
-  public void testSubRegionClose() throws Exception
-  {
+  public void testSubRegionClose() throws Exception {
 
     Host host = Host.getHost(0);
 
@@ -326,12 +285,10 @@ public class PartitionedRegionAsSubRegionDUnitTest extends
    * 
    * @return
    */
-  protected RegionAttributes createRegionAttributesForPR(int redundancy,
-      int localMaxMem) {
+  protected RegionAttributes createRegionAttributesForPR(int redundancy, int localMaxMem) {
     AttributesFactory attr = new AttributesFactory();
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    PartitionAttributes prAttr = paf.setRedundantCopies(redundancy)
-        .setLocalMaxMemory(localMaxMem).create();
+    PartitionAttributes prAttr = paf.setRedundantCopies(redundancy).setLocalMaxMemory(localMaxMem).create();
     attr.setPartitionAttributes(prAttr);
     return attr.create();
   }

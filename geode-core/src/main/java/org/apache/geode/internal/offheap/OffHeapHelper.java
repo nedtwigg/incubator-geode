@@ -30,7 +30,7 @@ public class OffHeapHelper {
   private OffHeapHelper() {
     // no instances allowed
   }
-  
+
   /**
    * If o is off-heap then return its heap form; otherwise return o since it is already on the heap.
    */
@@ -49,14 +49,15 @@ public class OffHeapHelper {
    */
   public static Object copyAndReleaseIfNeeded(@Released Object v) {
     if (v instanceof StoredObject) {
-      @Unretained StoredObject ohv = (StoredObject) v;
+      @Unretained
+      StoredObject ohv = (StoredObject) v;
       try {
-      if (ohv.isSerialized()) {
-        return CachedDeserializableFactory.create(ohv.getSerializedValue());
-      } else {
-        // it is a byte[]
-        return ohv.getDeserializedForReading();
-      }
+        if (ohv.isSerialized()) {
+          return CachedDeserializableFactory.create(ohv.getSerializedValue());
+        } else {
+          // it is a byte[]
+          return ohv.getDeserializedForReading();
+        }
       } finally {
         release(ohv);
       }
@@ -76,7 +77,8 @@ public class OffHeapHelper {
    */
   public static Object copyIfNeeded(@Unretained Object v) {
     if (v instanceof StoredObject) {
-      @Unretained StoredObject ohv = (StoredObject) v;
+      @Unretained
+      StoredObject ohv = (StoredObject) v;
       if (ohv.isSerialized()) {
         v = CachedDeserializableFactory.create(ohv.getSerializedValue());
       } else {
@@ -86,7 +88,7 @@ public class OffHeapHelper {
     }
     return v;
   }
-  
+
   /**
    * @return true if release was done
    */
@@ -98,6 +100,7 @@ public class OffHeapHelper {
       return false;
     }
   }
+
   /**
    * Just like {@link #release(Object)} but also disable debug tracking of the release.
    * @return true if release was done
@@ -117,12 +120,13 @@ public class OffHeapHelper {
       return false;
     }
   }
-  
+
   /**
    * Just like {@link #release(Object)} but also set the owner for debug tracking of the release.
    * @return true if release was done
    */
-  public static boolean releaseAndTrackOwner(@Released final Object o, final Object owner) {
+  public static boolean releaseAndTrackOwner(@Released
+  final Object o, final Object owner) {
     if (o instanceof StoredObject) {
       StoredObject so = (StoredObject) o;
       if (!so.hasRefCount()) {

@@ -95,15 +95,13 @@ public class MultiUserDUnitTest extends CliCommandTestBase {
           continue;
         }
 
-        assertEquals("Not an expected result: " + result.toString(), ResultBuilder.ERRORCODE_UNAUTHORIZED,
-          ((ErrorResultData) result.getResultData()).getErrorCode());
+        assertEquals("Not an expected result: " + result.toString(), ResultBuilder.ERRORCODE_UNAUTHORIZED, ((ErrorResultData) result.getResultData()).getErrorCode());
         String resultMessage = result.getContent().toString();
         String permString = command.getPermission().toString();
         assertTrue(resultMessage + " does not contain " + permString, resultMessage.contains(permString));
       }
       LogService.getLogger().info("vm 2 done!");
     });
-
 
     VM vm3 = Host.getHost(0).getVM(3);
     IgnoredException.addIgnoredException("java.lang.IllegalArgumentException: Region doesnt exist: {0}", vm3);
@@ -127,8 +125,7 @@ public class MultiUserDUnitTest extends CliCommandTestBase {
           continue;
         }
 
-        assertNotEquals("Did not expect an Unauthorized exception: " + result.toString(), ResultBuilder.ERRORCODE_UNAUTHORIZED,
-          ((ErrorResultData) result.getResultData()).getErrorCode());
+        assertNotEquals("Did not expect an Unauthorized exception: " + result.toString(), ResultBuilder.ERRORCODE_UNAUTHORIZED, ((ErrorResultData) result.getResultData()).getErrorCode());
       }
 
       LogService.getLogger().info("vm 3 done!");

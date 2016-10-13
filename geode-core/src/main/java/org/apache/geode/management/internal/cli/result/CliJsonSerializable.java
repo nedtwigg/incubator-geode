@@ -26,19 +26,19 @@ import org.apache.geode.management.internal.cli.json.GfJsonObject;
  * @since GemFire 7.0
  */
 public interface CliJsonSerializable extends CliJsonSerializableIds {
-  String FIELDS_TO_SKIP                = "fieldNameToDisplayName, JSId, outputFormat, fieldsToSkipOnUI";
-  String JSID                          = "JSId";
+  String FIELDS_TO_SKIP = "fieldNameToDisplayName, JSId, outputFormat, fieldsToSkipOnUI";
+  String JSID = "JSId";
   String FIELDS_TO_DISPLAYNAME_MAPPING = "fieldNameToDisplayName";
-  String FIELDS_TO_SKIP_ON_UI          = "fieldsToSkipOnUI";
-  String OUTPUT_FORMAT                 = "outputFormat";
-  
+  String FIELDS_TO_SKIP_ON_UI = "fieldsToSkipOnUI";
+  String OUTPUT_FORMAT = "outputFormat";
+
   int getJSId();
-  
+
   Map<String, String> getFieldNameToDisplayName();
-  
+
   String[] getFieldsToSkipOnUI();
-  
-  void setFieldsToSkipOnUI(String ... fieldsToSkipOnUI);
-  
+
+  void setFieldsToSkipOnUI(String... fieldsToSkipOnUI);
+
   void fromJson(GfJsonObject objectStateAsjson);
 }

@@ -22,7 +22,7 @@ import java.lang.management.RuntimeMXBean;
 import java.util.*;
 
 public class MemberConfigurationInfo implements Serializable {
-  
+
   private List<String> jvmInputArguments;
   private Properties systemProperties;
   private Map<String, String> gfePropsSetUsingApi;
@@ -32,11 +32,11 @@ public class MemberConfigurationInfo implements Serializable {
   private Map<String, String> cacheAttributes;
   private List<Map<String, String>> cacheServerAttributes;
   private Map<String, String> pdxAttributes;
-  
+
   public MemberConfigurationInfo() {
     RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
     setJvmInputArguments(runtimeBean.getInputArguments());
-    
+
   }
 
   public List<String> getJvmInputArguments() {
@@ -47,7 +47,6 @@ public class MemberConfigurationInfo implements Serializable {
     this.jvmInputArguments = jvmInputArguments;
   }
 
-  
   public Properties getSystemProperties() {
     return systemProperties;
   }
@@ -88,7 +87,6 @@ public class MemberConfigurationInfo implements Serializable {
     this.gfePropsSetFromFile = gfePropsSetFromFile;
   }
 
-
   public Map<String, String> getCacheAttributes() {
     return cacheAttributes;
   }
@@ -112,7 +110,5 @@ public class MemberConfigurationInfo implements Serializable {
   public void setPdxAttrributes(Map<String, String> pdxAttrributes) {
     this.pdxAttributes = pdxAttrributes;
   }
-  
-  
-  
+
 }

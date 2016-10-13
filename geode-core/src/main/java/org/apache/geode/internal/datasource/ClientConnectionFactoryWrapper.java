@@ -21,7 +21,7 @@ package org.apache.geode.internal.datasource;
  * connection manager Object.
  * 
  */
-public class ClientConnectionFactoryWrapper  {
+public class ClientConnectionFactoryWrapper {
 
   private Object clientConnFac;
   private Object manager;
@@ -37,8 +37,7 @@ public class ClientConnectionFactoryWrapper  {
   public void clearUp() {
     if (manager instanceof JCAConnectionManagerImpl) {
       ((JCAConnectionManagerImpl) this.manager).clearUp();
-    }
-    else if (manager instanceof FacetsJCAConnectionManagerImpl) {
+    } else if (manager instanceof FacetsJCAConnectionManagerImpl) {
       ((FacetsJCAConnectionManagerImpl) this.manager).clearUp();
     }
   }

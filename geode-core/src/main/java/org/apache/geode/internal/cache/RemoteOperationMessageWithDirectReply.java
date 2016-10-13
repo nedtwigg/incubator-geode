@@ -37,30 +37,24 @@ import org.apache.geode.internal.cache.PartitionedRegion;
  * pass false for the register parameter of the PartitionResponse.
  *
  */
-public abstract class RemoteOperationMessageWithDirectReply extends
-    RemoteOperationMessage implements DirectReplyMessage {
-  
+public abstract class RemoteOperationMessageWithDirectReply extends RemoteOperationMessage implements DirectReplyMessage {
+
   protected DirectReplyProcessor processor;
-  
-  
 
   public RemoteOperationMessageWithDirectReply() {
     super();
   }
 
-
-  public RemoteOperationMessageWithDirectReply(Set recipients, String regionPath,
-      DirectReplyProcessor processor) {
+  public RemoteOperationMessageWithDirectReply(Set recipients, String regionPath, DirectReplyProcessor processor) {
     super(recipients, regionPath, processor);
     this.processor = processor;
   }
 
-  public RemoteOperationMessageWithDirectReply(InternalDistributedMember recipient, String regionPath,
-      DirectReplyProcessor processor) {
+  public RemoteOperationMessageWithDirectReply(InternalDistributedMember recipient, String regionPath, DirectReplyProcessor processor) {
     super(recipient, regionPath, processor);
     this.processor = processor;
   }
-  
+
   /**
    * @param original
    */
@@ -69,11 +63,10 @@ public abstract class RemoteOperationMessageWithDirectReply extends
     this.processor = original.processor;
   }
 
-
   public boolean supportsDirectAck() {
     return true;
   }
-  
+
   public DirectReplyProcessor getDirectReplyProcessor() {
     return processor;
   }

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.servlet.DefaultServlet;
+
 /**
  *
  */
@@ -33,8 +34,7 @@ public class BasicServlet extends DefaultServlet {
   Callback callback = null;
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
     if (callback != null) {
       callback.call(request, response);

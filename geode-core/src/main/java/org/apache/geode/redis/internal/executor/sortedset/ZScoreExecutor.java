@@ -52,7 +52,7 @@ public class ZScoreExecutor extends SortedSetExecutor {
     if (score == null) {
       command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
       return;
-    }    
+    }
     command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), score.toString()));
   }
 

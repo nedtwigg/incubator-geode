@@ -42,9 +42,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * 
  */
 @Category(IntegrationTest.class)
-public class BlockingHARQAddOperationJUnitTest extends
-    HARQAddOperationJUnitTest
-{
+public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest {
 
   /**
    * Creates Blocking HA region-queue object
@@ -55,11 +53,8 @@ public class BlockingHARQAddOperationJUnitTest extends
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name)
-      throws IOException, ClassNotFoundException, CacheException, InterruptedException
-  {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name,
-        cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
@@ -72,11 +67,8 @@ public class BlockingHARQAddOperationJUnitTest extends
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name,
-      HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException
-  {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name,
-        cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
@@ -87,14 +79,11 @@ public class BlockingHARQAddOperationJUnitTest extends
    * @throws Exception
    */
   @Test
-  public void testBlockingTakeConflationDisabled() throws Exception
-  {
-    this.logWriter
-        .info("HARQAddOperationJUnitTest : testBlockingTakeConflationDisabled BEGIN");
+  public void testBlockingTakeConflationDisabled() throws Exception {
+    this.logWriter.info("HARQAddOperationJUnitTest : testBlockingTakeConflationDisabled BEGIN");
 
     doBlockingTake(false);
-    this.logWriter
-        .info("HARQAddOperationJUnitTest : testBlockingTakeConflationDisabled END");
+    this.logWriter.info("HARQAddOperationJUnitTest : testBlockingTakeConflationDisabled END");
   }
 
   /**
@@ -105,14 +94,11 @@ public class BlockingHARQAddOperationJUnitTest extends
    * 
    */
   @Test
-  public void testBlockingTakeConflationEnabled() throws Exception
-  {
-    this.logWriter
-        .info("HARQAddOperationJUnitTest : testBlockingTakeConflationEnabled BEGIN");
+  public void testBlockingTakeConflationEnabled() throws Exception {
+    this.logWriter.info("HARQAddOperationJUnitTest : testBlockingTakeConflationEnabled BEGIN");
 
     doBlockingTake(true);
-    this.logWriter
-        .info("HARQAddOperationJUnitTest : testBlockingTakeConflationEnabled END");
+    this.logWriter.info("HARQAddOperationJUnitTest : testBlockingTakeConflationEnabled END");
   }
 
   /**
@@ -128,23 +114,19 @@ public class BlockingHARQAddOperationJUnitTest extends
    * @throws Exception
    * 
    */
-  public void doBlockingTake(boolean conflationEnabled) throws Exception
-  {
+  public void doBlockingTake(boolean conflationEnabled) throws Exception {
 
     testFailed = false;
     message = null;
     final HARegionQueue rq = createHARegionQueue("testBlockingTake");
     final List takenObjects = new ArrayList();
     Thread takeThread = new Thread() {
-      public void run()
-      {
+      public void run() {
         try {
           takenObjects.add(rq.take());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           testFailed = true;
-          message.append("Exception while performing take operation "
-              + e.getStackTrace());
+          message.append("Exception while performing take operation " + e.getStackTrace());
         }
       }
     };
@@ -155,12 +137,11 @@ public class BlockingHARQAddOperationJUnitTest extends
       fail("take() thread died ");
     }
     EventID id1 = new EventID(new byte[] { 1 }, 1, 1);
-    ConflatableObject c1 = new ConflatableObject(KEY1, VALUE1, id1,
-        conflationEnabled, "region1");
+    ConflatableObject c1 = new ConflatableObject(KEY1, VALUE1, id1, conflationEnabled, "region1");
     rq.put(c1);
     ThreadUtils.join(takeThread, 20 * 1000);
     assertEquals(1, takenObjects.size());
-    Conflatable obj = (Conflatable)takenObjects.get(0);
+    Conflatable obj = (Conflatable) takenObjects.get(0);
     assertNotNull(obj);
     assertEquals(id1, obj.getEventId());
 
@@ -181,10 +162,8 @@ public class BlockingHARQAddOperationJUnitTest extends
    * 
    */
   @Test
-  public void testConcurrentBlockingTake() throws Exception
-  {
-    this.logWriter
-        .info("HARQAddOperationJUnitTest : testConcurrentBlockingTake BEGIN");
+  public void testConcurrentBlockingTake() throws Exception {
+    this.logWriter.info("HARQAddOperationJUnitTest : testConcurrentBlockingTake BEGIN");
 
     testFailed = false;
     message = null;
@@ -194,15 +173,12 @@ public class BlockingHARQAddOperationJUnitTest extends
     Thread[] takeThreads = new Thread[totalTakeThreads];
     for (int i = 0; i < totalTakeThreads; i++) {
       takeThreads[i] = new Thread() {
-        public void run()
-        {
+        public void run() {
           try {
             takenObjects.add(rq.take());
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             testFailed = true;
-            message.append("Exception while performing take operation "
-                + e.getStackTrace());
+            message.append("Exception while performing take operation " + e.getStackTrace());
           }
         }
       };
@@ -223,13 +199,12 @@ public class BlockingHARQAddOperationJUnitTest extends
     assertEquals(totalTakeThreads, takenObjects.size());
 
     for (int i = 0; i < totalTakeThreads; i++) {
-      c = (Conflatable)takenObjects.get(i);
+      c = (Conflatable) takenObjects.get(i);
       assertNotNull(c);
     }
 
     if (testFailed)
       fail("Test failed due to " + message);
-    this.logWriter
-        .info("HARQAddOperationJUnitTest : testConcurrentBlockingTake END");
+    this.logWriter.info("HARQAddOperationJUnitTest : testConcurrentBlockingTake END");
   }
 }

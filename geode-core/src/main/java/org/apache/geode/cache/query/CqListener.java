@@ -29,8 +29,8 @@ import org.apache.geode.cache.CacheCallback;
  */
 
 public interface CqListener extends CacheCallback {
-  
- /**
+
+  /**
    * This method is invoked when an event is occurred on the region
    * that satisfied the query condition of this CQ.
    * This event does not contain an error.

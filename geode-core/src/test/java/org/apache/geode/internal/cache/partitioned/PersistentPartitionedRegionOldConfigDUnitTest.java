@@ -37,11 +37,9 @@ public class PersistentPartitionedRegionOldConfigDUnitTest extends PersistentPar
   public PersistentPartitionedRegionOldConfigDUnitTest() {
     super();
   }
-  
+
   @Override
-  protected RegionAttributes getPersistentPRAttributes(
-      final int redundancy, final int recoveryDelay, Cache cache, int numBuckets,
-      boolean synchronous) {
+  protected RegionAttributes getPersistentPRAttributes(final int redundancy, final int recoveryDelay, Cache cache, int numBuckets, boolean synchronous) {
     AttributesFactory af = new AttributesFactory();
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     paf.setRedundantCopies(redundancy);

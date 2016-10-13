@@ -38,13 +38,13 @@ public class ImportSharedConfigurationArtifactsFunction extends FunctionAdapter 
 
   @Override
   public void execute(FunctionContext context) {
-    Object[] args = (Object [])context.getArguments();
-    String zipFileName = (String)args[0];
+    Object[] args = (Object[]) context.getArguments();
+    String zipFileName = (String) args[0];
     byte[] zipFileData = (byte[]) args[1];
 
     InternalLocator locator = InternalLocator.getLocator();
     String memberName = locator.getDistributedSystem().getName();
-    
+
     if (locator.isSharedConfigurationRunning()) {
       File zippedSharedConfiguration = new File(zipFileName);
 

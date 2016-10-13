@@ -52,14 +52,14 @@ public class ProductUseLogDUnitTest extends JUnit4CacheTestCase {
   public void preSetUp() {
     disconnectAllFromDS();
   }
-  
+
   @Override
   public Properties getDistributedSystemProperties() {
     Properties p = super.getDistributedSystemProperties();
     p.put(USE_CLUSTER_CONFIGURATION, "false");
     return p;
   }
-  
+
   @Test
   public void testMembershipMonitoring() throws Exception {
     Host host = Host.getHost(0);
@@ -72,17 +72,17 @@ public class ProductUseLogDUnitTest extends JUnit4CacheTestCase {
     p.put(START_LOCATOR, "localhost[" + locatorPort + "],peer=false");
     p.put(USE_CLUSTER_CONFIGURATION, "false");
     InternalDistributedSystem system = getSystem(p);
-    
-    InternalLocator locator = (InternalLocator)Locator.getLocator();
+
+    InternalLocator locator = (InternalLocator) Locator.getLocator();
     // server location is forced on for product use logging
     assertTrue(locator.isServerLocator());
-    
-    File logFile = new File("locator"+locatorPort+"views.log");
+
+    File logFile = new File("locator" + locatorPort + "views.log");
     // the locator should have already created this file
     assertTrue(logFile.exists());
-    
+
     assertTrue(logFile.exists());
-    int serverPort = (Integer)vm0.invoke(new SerializableCallable("get system") {
+    int serverPort = (Integer) vm0.invoke(new SerializableCallable("get system") {
       public Object call() {
         getSystem();
         Cache cache = getCache();
@@ -97,19 +97,16 @@ public class ProductUseLogDUnitTest extends JUnit4CacheTestCase {
         return server.getPort();
       }
     });
-    
+
     vm1.invoke(new SerializableRunnable("create a client") {
       public void run() {
-        ClientCache clientCache = new ClientCacheFactory()
-            .setPoolSubscriptionEnabled(true)
-            .addPoolServer("localhost", serverPort)
-            .create();
+        ClientCache clientCache = new ClientCacheFactory().setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
         Region r = clientCache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("myregion");
         r.registerInterest(".*");
         r.put("somekey", "somevalue");
       }
     });
-    
+
     vm0.invoke(new SerializableRunnable("check region") {
       public void run() {
         Region r = getCache().getRegion("myregion");
@@ -117,7 +114,6 @@ public class ProductUseLogDUnitTest extends JUnit4CacheTestCase {
       }
     });
 
-    
     // wait for the server info to be received and logged 
     Thread.sleep(2 * CacheServer.DEFAULT_LOAD_POLL_INTERVAL);
 
@@ -126,15 +122,15 @@ public class ProductUseLogDUnitTest extends JUnit4CacheTestCase {
     String logContents = readFile(logFile);
     assertTrue("expected " + logFile + " to contain a View", logContents.contains("View"));
     assertTrue("expected " + logFile + " to have a server count of 1", logContents.contains("server count: 1"));
-    assertTrue("expected " + logFile + " to have a client count of 1" , logContents.contains("client count: 1"));
+    assertTrue("expected " + logFile + " to have a client count of 1", logContents.contains("client count: 1"));
     assertTrue("expected " + logFile + " to have a queue count of 1", logContents.contains("queue count: 1"));
   }
-  
+
   private String readFile(File file) throws IOException {
     BufferedReader reader = new BufferedReader(new FileReader(file));
     StringBuilder sb = new StringBuilder(10000);
     String line;
-    while ( (line = reader.readLine()) != null ) {
+    while ((line = reader.readLine()) != null) {
       sb.append(line).append(File.separator);
     }
     return sb.toString();

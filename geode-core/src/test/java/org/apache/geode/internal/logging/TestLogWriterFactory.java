@@ -39,13 +39,8 @@ import org.apache.geode.internal.util.LogFileUtils;
  */
 public class TestLogWriterFactory extends Assert {
 
-  public static LogWriter createLogWriter(final boolean appendToFile,
-                                          final boolean isLoner,
-                                          final boolean isSecurityLog,
-                                          final DistributionConfig config,
-                                          final boolean logConfig, 
-                                          final FileOutputStream[] FOSHolder) {
-    
+  public static LogWriter createLogWriter(final boolean appendToFile, final boolean isLoner, final boolean isSecurityLog, final DistributionConfig config, final boolean logConfig, final FileOutputStream[] FOSHolder) {
+
     assertFalse(isSecurityLog);
     LogWriter logger = null;
     File logFile = config.getLogFile();
@@ -55,7 +50,7 @@ public class TestLogWriterFactory extends Assert {
     boolean firstMsgWarning = false;
 
     LogWriter mlw = null;
-    
+
     if (logFile == null || logFile.equals(new File(""))) {
       out = System.out;
     } else {
@@ -64,16 +59,16 @@ public class TestLogWriterFactory extends Assert {
         boolean statArchivesRolling = config.getStatisticArchiveFile() != null && !config.getStatisticArchiveFile().equals(new File("")) && config.getArchiveFileSizeLimit() != 0 && config.getStatisticSamplingEnabled();
         if (!appendToFile || useChildLogging || statArchivesRolling) { // check useChildLogging for bug 50659
           File oldMain = ManagerLogWriter.getLogNameForOldMainLog(logFile, isSecurityLog || useChildLogging || statArchivesRolling);
-          boolean succeeded = LogFileUtils.renameAggressively(logFile,oldMain);
-          if(succeeded) {
+          boolean succeeded = LogFileUtils.renameAggressively(logFile, oldMain);
+          if (succeeded) {
             firstMsg = LocalizedStrings.InternalDistributedSystem_RENAMED_OLD_LOG_FILE_TO_0.toLocalizedString(oldMain);
           } else {
             firstMsgWarning = true;
-            firstMsg = LocalizedStrings.InternalDistributedSystem_COULD_NOT_RENAME_0_TO_1.toLocalizedString(new Object[] {logFile, oldMain});
+            firstMsg = LocalizedStrings.InternalDistributedSystem_COULD_NOT_RENAME_0_TO_1.toLocalizedString(new Object[] { logFile, oldMain });
           }
         }
       }
-      
+
       FileOutputStream fos;
       try {
         fos = new FileOutputStream(logFile, true);
@@ -91,9 +86,9 @@ public class TestLogWriterFactory extends Assert {
       } else {
         mlw = new ManagerLogWriter(config.getLogLevel(), out, config.getName());
       }
-      ((ManagerLogWriter)mlw).setConfig(config);
+      ((ManagerLogWriter) mlw).setConfig(config);
     }
-    
+
     if (mlw.infoEnabled()) {
       if (!isLoner || /* do this on a loner to fix bug 35602 */
           !Boolean.getBoolean(InternalLocator.INHIBIT_DM_BANNER)) {
@@ -112,7 +107,7 @@ public class TestLogWriterFactory extends Assert {
     if (logConfig && logger.configEnabled()) {
       logger.convertToLogWriterI18n().config(LocalizedStrings.InternalDistributedSystem_STARTUP_CONFIGURATIONN_0, config.toLoggerString());
     }
-    
+
     // fix #46493 by moving redirectOutput invocation here
     if (ProcessLauncherContext.isRedirectingOutput()) {
       try {
@@ -125,5 +120,5 @@ public class TestLogWriterFactory extends Assert {
 
     return logger;
   }
-  
+
 }

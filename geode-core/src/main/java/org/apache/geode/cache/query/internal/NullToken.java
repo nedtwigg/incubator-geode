@@ -33,8 +33,7 @@ import org.apache.geode.internal.Version;
 public class NullToken implements DataSerializableFixedID, Comparable {
 
   public NullToken() {
-    Support.assertState(IndexManager.NULL == null,
-        "NULL constant already instantiated");
+    Support.assertState(IndexManager.NULL == null, "NULL constant already instantiated");
   }
 
   @Override

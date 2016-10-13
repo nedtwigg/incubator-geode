@@ -34,7 +34,7 @@ public class UnreadPdxType extends PdxType {
    * Null until this unread type is finally serialized for the first time.
    */
   private PdxType serializedType;
-  
+
   public UnreadPdxType(PdxType pdxType, int[] unreadFieldIndexes) {
     super(pdxType);
     this.unreadFieldIndexes = unreadFieldIndexes;
@@ -50,7 +50,7 @@ public class UnreadPdxType extends PdxType {
 
   public void setSerializedType(PdxType t) {
     this.serializedType = t;
-  }  
+  }
 
   @Override
   public int hashCode() {
@@ -66,7 +66,7 @@ public class UnreadPdxType extends PdxType {
     return super.equals(other);
   }
 
-//   public String toString() {
-//     return "unreadFieldIdxs=" + java.util.Arrays.toString(this.unreadFieldIndexes) + super.toString();
-//   }
+  //   public String toString() {
+  //     return "unreadFieldIdxs=" + java.util.Arrays.toString(this.unreadFieldIndexes) + super.toString();
+  //   }
 }

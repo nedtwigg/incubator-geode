@@ -76,7 +76,7 @@ public class PKCSAuthenticator implements Authenticator {
 
   @Override
   public Principal authenticate(final Properties credentials, final DistributedMember member) throws AuthenticationFailedException {
-    final String alias = (String)credentials.get(PKCSAuthInit.KEYSTORE_ALIAS);
+    final String alias = (String) credentials.get(PKCSAuthInit.KEYSTORE_ALIAS);
     if (alias == null || alias.length() <= 0) {
       throw new AuthenticationFailedException("No alias received");
     }
@@ -87,7 +87,7 @@ public class PKCSAuthenticator implements Authenticator {
         throw newException("No certificate found for alias:" + alias);
       }
 
-      final byte[] signatureBytes = (byte[])credentials.get(PKCSAuthInit.SIGNATURE_DATA);
+      final byte[] signatureBytes = (byte[]) credentials.get(PKCSAuthInit.SIGNATURE_DATA);
       if (signatureBytes == null) {
         throw newException("signature data property [" + PKCSAuthInit.SIGNATURE_DATA + "] not provided");
       }
@@ -125,7 +125,7 @@ public class PKCSAuthenticator implements Authenticator {
 
       for (Enumeration e = keyStore.aliases(); e.hasMoreElements();) {
         final Object alias = e.nextElement();
-        final Certificate cert = keyStore.getCertificate((String)alias);
+        final Certificate cert = keyStore.getCertificate((String) alias);
         if (cert instanceof X509Certificate) {
           this.aliasCertificateMap.put(alias, cert);
         }

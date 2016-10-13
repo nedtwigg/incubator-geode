@@ -157,7 +157,7 @@ public abstract class LuceneQueriesPRBase extends LuceneQueriesBase {
     accessor.invoke(() -> {
       final Cache cache = getCache();
       Region<Object, Object> region = cache.getRegion(REGION_NAME);
-      IntStream.range(0,NUM_BUCKETS).forEach(i -> region.put(i, new TestObject("hello world")));
+      IntStream.range(0, NUM_BUCKETS).forEach(i -> region.put(i, new TestObject("hello world")));
     });
   }
 
@@ -190,8 +190,8 @@ public abstract class LuceneQueriesPRBase extends LuceneQueriesBase {
   private void rebalanceRegion(VM vm) {
     // Do a rebalance
     vm.invoke(() -> {
-        RebalanceOperation op = getCache().getResourceManager().createRebalanceFactory().start();
-        RebalanceResults results = op.getResults();
+      RebalanceOperation op = getCache().getResourceManager().createRebalanceFactory().start();
+      RebalanceResults results = op.getResults();
     });
   }
 

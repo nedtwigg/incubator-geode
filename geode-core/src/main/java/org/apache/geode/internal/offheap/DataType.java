@@ -50,20 +50,14 @@ public class DataType implements DSCODE {
     }
     try {
       switch (header) {
-      case DS_FIXED_ID_BYTE:
-      {
-        return "org.apache.geode.internal.DataSerializableFixedID:" 
-          + DSFIDFactory.create(in.readByte(), in).getClass().getName();
+      case DS_FIXED_ID_BYTE: {
+        return "org.apache.geode.internal.DataSerializableFixedID:" + DSFIDFactory.create(in.readByte(), in).getClass().getName();
       }
-      case DS_FIXED_ID_SHORT:
-      {
-        return "org.apache.geode.internal.DataSerializableFixedID:" 
-            + DSFIDFactory.create(in.readShort(), in).getClass().getName();
+      case DS_FIXED_ID_SHORT: {
+        return "org.apache.geode.internal.DataSerializableFixedID:" + DSFIDFactory.create(in.readShort(), in).getClass().getName();
       }
-      case DS_FIXED_ID_INT:
-      {
-        return "org.apache.geode.internal.DataSerializableFixedID:" 
-            + DSFIDFactory.create(in.readInt(), in).getClass().getName();
+      case DS_FIXED_ID_INT: {
+        return "org.apache.geode.internal.DataSerializableFixedID:" + DSFIDFactory.create(in.readInt(), in).getClass().getName();
       }
       case DS_NO_FIXED_ID:
         return "org.apache.geode.internal.DataSerializableFixedID:" + DataSerializer.readClass(in).getName();
@@ -177,25 +171,21 @@ public class DataType implements DSCODE {
         return "java.lang.Double.class";
       case VOID_TYPE:
         return "java.lang.Void.class";
-      case USER_DATA_SERIALIZABLE:
-      {
+      case USER_DATA_SERIALIZABLE: {
         Instantiator instantiator = InternalInstantiator.getInstantiator(in.readByte());
         return "org.apache.geode.Instantiator:" + instantiator.getInstantiatedClass().getName();
       }
-      case USER_DATA_SERIALIZABLE_2:
-      {
+      case USER_DATA_SERIALIZABLE_2: {
         Instantiator instantiator = InternalInstantiator.getInstantiator(in.readShort());
         return "org.apache.geode.Instantiator:" + instantiator.getInstantiatedClass().getName();
       }
-      case USER_DATA_SERIALIZABLE_4:
-      {
+      case USER_DATA_SERIALIZABLE_4: {
         Instantiator instantiator = InternalInstantiator.getInstantiator(in.readInt());
         return "org.apache.geode.Instantiator:" + instantiator.getInstantiatedClass().getName();
       }
       case DATA_SERIALIZABLE:
         return "org.apache.geode.DataSerializable:" + DataSerializer.readClass(in).getName();
-      case SERIALIZABLE:
-      {
+      case SERIALIZABLE: {
         String name = null;
         try {
           Object obj = InternalDataSerializer.basicReadObject(getDataInput(bytes));
@@ -205,22 +195,20 @@ public class DataType implements DSCODE {
         }
         return "java.io.Serializable:" + name;
       }
-      case PDX:
-      {
+      case PDX: {
         int typeId = in.readInt();
         try {
           GemFireCacheImpl gfc = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
           PdxType pdxType = gfc.getPdxRegistry().getType(typeId);
           if (pdxType == null) { // fix 52164
-            return "org.apache.geode.pdx.PdxInstance: unknown id=" + typeId; 
+            return "org.apache.geode.pdx.PdxInstance: unknown id=" + typeId;
           }
           return "org.apache.geode.pdx.PdxInstance:" + pdxType.getClassName();
-        } catch(CacheClosedException e) {
+        } catch (CacheClosedException e) {
           return "org.apache.geode.pdx.PdxInstance:PdxRegistryClosed";
         }
       }
-      case PDX_ENUM:
-      {
+      case PDX_ENUM: {
         int dsId = in.readByte();
         int tmp = InternalDataSerializer.readArrayLength(in);
         int enumId = (dsId << 24) | (tmp & 0xFFFFFF);
@@ -228,17 +216,15 @@ public class DataType implements DSCODE {
           GemFireCacheImpl gfc = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
           EnumInfo enumInfo = gfc.getPdxRegistry().getEnumInfoById(enumId);
           return "PdxRegistry/java.lang.Enum:" + enumInfo.getClassName();
-        } catch(CacheClosedException e) {
+        } catch (CacheClosedException e) {
           return "PdxRegistry/java.lang.Enum:PdxRegistryClosed";
         }
       }
-      case GEMFIRE_ENUM:
-      {
+      case GEMFIRE_ENUM: {
         String name = DataSerializer.readString(in);
         return "java.lang.Enum:" + name;
       }
-      case PDX_INLINE_ENUM:
-      {
+      case PDX_INLINE_ENUM: {
         String name = DataSerializer.readString(in);
         return "java.lang.Enum:" + name;
       }
@@ -261,8 +247,8 @@ public class DataType implements DSCODE {
       throw new Error(e);
     }
   }
-  
+
   public static DataInput getDataInput(byte[] bytes) {
-    return new DataInputStream(new ByteArrayInputStream( bytes));
+    return new DataInputStream(new ByteArrayInputStream(bytes));
   }
 }

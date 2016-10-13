@@ -28,40 +28,35 @@ import org.apache.geode.internal.cache.PartitionedRegion.RecoveryLock;
  *
  */
 public final class CreateMissingBucketsTask extends RecoveryRunnable {
-  public CreateMissingBucketsTask(
-      PRHARedundancyProvider prhaRedundancyProvider) {
+  public CreateMissingBucketsTask(PRHARedundancyProvider prhaRedundancyProvider) {
     super(prhaRedundancyProvider);
   }
 
   @Override
   public void run2() {
-    PartitionedRegion leaderRegion = ColocationHelper
-        .getLeaderRegion(redundancyProvider.prRegion);
+    PartitionedRegion leaderRegion = ColocationHelper.getLeaderRegion(redundancyProvider.prRegion);
     RecoveryLock lock = leaderRegion.getRecoveryLock();
     lock.lock();
     try {
       createMissingBuckets(redundancyProvider.prRegion);
-    }
-    finally {
+    } finally {
       lock.unlock();
     }
   }
 
   protected void createMissingBuckets(PartitionedRegion region) {
     PartitionedRegion parentRegion = ColocationHelper.getColocatedRegion(region);
-    if(parentRegion == null) {
+    if (parentRegion == null) {
       return;
     }
     // Fix for 48954 - Make sure the parent region has created missing buckets
     // before we create missing buckets for this child region.
     createMissingBuckets(parentRegion);
-    
-    for (int i = 0; i < region
-        .getTotalNumberOfBuckets(); i++) {
-      
-      if(parentRegion.getRegionAdvisor().getBucketAdvisor(i)
-      .getBucketRedundancy() != region.getRegionAdvisor().getBucketAdvisor(i).getBucketRedundancy()){
-      /*if (leaderRegion.getRegionAdvisor().isStorageAssignedForBucket(i)) {*/
+
+    for (int i = 0; i < region.getTotalNumberOfBuckets(); i++) {
+
+      if (parentRegion.getRegionAdvisor().getBucketAdvisor(i).getBucketRedundancy() != region.getRegionAdvisor().getBucketAdvisor(i).getBucketRedundancy()) {
+        /*if (leaderRegion.getRegionAdvisor().isStorageAssignedForBucket(i)) {*/
         final long startTime = PartitionedRegionStats.startTime();
         region.getRedundancyProvider().createBucketAtomically(i, 0, startTime, true, null);
       }

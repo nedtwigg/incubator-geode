@@ -49,9 +49,9 @@ import org.apache.geode.management.internal.configuration.messages.Configuration
 import org.apache.geode.management.internal.configuration.messages.ConfigurationResponse;
 
 public class ClusterConfigurationLoader {
-  
+
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * Deploys the jars received from shared configuration, it undeploys any other jars that were not part of shared configuration 
    * @param cache Cache of this member
@@ -59,13 +59,13 @@ public class ClusterConfigurationLoader {
    * @throws IOException 
    * @throws ClassNotFoundException 
    */
-  public static void deployJarsReceivedFromClusterConfiguration(Cache cache , ConfigurationResponse response) throws IOException, ClassNotFoundException {
-    if(response == null)
+  public static void deployJarsReceivedFromClusterConfiguration(Cache cache, ConfigurationResponse response) throws IOException, ClassNotFoundException {
+    if (response == null)
       return;
 
-    String []jarFileNames = response.getJarNames();
-    byte [][]jarBytes = response.getJars();
-    
+    String[] jarFileNames = response.getJarNames();
+    byte[][] jarBytes = response.getJars();
+
     final JarDeployer jarDeployer = new JarDeployer(((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
 
     /******
@@ -77,7 +77,7 @@ public class ClusterConfigurationLoader {
       for (int i = 0; i < jarFileNames.length; i++) {
         if (jarClassLoaders[i] != null) {
           logger.info("Deployed " + (jarClassLoaders[i].getFileCanonicalPath()));
-        } 
+        }
       }
     }
   }
@@ -88,8 +88,8 @@ public class ClusterConfigurationLoader {
    * @param response {@link ConfigurationResponse} containing the requested {@link Configuration}
    * @param config this member's config.
    */
-  public static void applyClusterXmlConfiguration(Cache cache , ConfigurationResponse response, DistributionConfig config) {
-    if(response == null || response.getRequestedConfiguration().isEmpty())
+  public static void applyClusterXmlConfiguration(Cache cache, ConfigurationResponse response, DistributionConfig config) {
+    if (response == null || response.getRequestedConfiguration().isEmpty())
       return;
 
     List<String> groups = getGroups(config);
@@ -137,8 +137,8 @@ public class ClusterConfigurationLoader {
    * @param response {@link ConfigurationResponse} containing the requested {@link Configuration}
    * @param config this member's config
    */
-  public static void applyClusterPropertiesConfiguration(Cache cache , ConfigurationResponse response, DistributionConfig config) {
-    if(response == null || response.getRequestedConfiguration().isEmpty())
+  public static void applyClusterPropertiesConfiguration(Cache cache, ConfigurationResponse response, DistributionConfig config) {
+    if (response == null || response.getRequestedConfiguration().isEmpty())
       return;
 
     List<String> groups = getGroups(config);
@@ -163,7 +163,7 @@ public class ClusterConfigurationLoader {
     Set<Object> attNames = runtimeProps.keySet();
     for (Object attNameObj : attNames) {
       String attName = (String) attNameObj;
-      String attValue = runtimeProps.getProperty(attName) ;
+      String attValue = runtimeProps.getProperty(attName);
       try {
         config.setAttribute(attName, attValue, ConfigSource.runtime());
       } catch (IllegalArgumentException e) {
@@ -173,7 +173,7 @@ public class ClusterConfigurationLoader {
       }
     }
   }
-  
+
   /**
    * Request the shared configuration for group(s) from locator(s) this member is bootstrapped with. 
    * @param config this member's configuration.
@@ -189,9 +189,9 @@ public class ClusterConfigurationLoader {
     for (String group : groups) {
       request.addGroups(group);
     }
-    
+
     request.setNumAttempts(10);
-    
+
     ConfigurationResponse response = null;
     //Try talking to all the locators in the list
     //to get the shared configuration.
@@ -202,32 +202,32 @@ public class ClusterConfigurationLoader {
       DistributionLocatorId dlId = new DistributionLocatorId(locatorInfo);
       String ipaddress = dlId.getBindAddress();
       InetAddress locatorInetAddress = null;
-      
+
       if (!StringUtils.isBlank(ipaddress)) {
         locatorInetAddress = InetAddress.getByName(ipaddress);
       } else {
         locatorInetAddress = dlId.getHost();
       }
-      
+
       int port = dlId.getPort();
-        
+
       try {
-          response = (ConfigurationResponse)client.requestToServer(locatorInetAddress, port, request, 10000);
-        } catch (UnknownHostException e) {
-          e.printStackTrace();
-        } catch (IOException e) {
-          // TODO Log
-          e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-          e.printStackTrace();
-        }
+        response = (ConfigurationResponse) client.requestToServer(locatorInetAddress, port, request, 10000);
+      } catch (UnknownHostException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        // TODO Log
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
       }
+    }
     // if the response is null , that means Shared Configuration service is not installed on the locator
     // and hence it returns null
-    
+
     if (response == null || response.failedToGetSharedConfig()) {
       throw new ClusterConfigurationNotAvailableException(LocalizedStrings.Launcher_Command_FAILED_TO_GET_SHARED_CONFIGURATION.toLocalizedString());
-    } 
+    }
 
     return response;
   }
@@ -240,32 +240,31 @@ public class ClusterConfigurationLoader {
     }
     return groups;
   }
- 
- /***
+
+  /***
   * Get the host and port information of the locators 
   * @return List made up of a String array containing host and port 
   */
- public static List<String[]> getLocatorsInfo(String locatorsString) {
+  public static List<String[]> getLocatorsInfo(String locatorsString) {
 
-   List<String[]> locatorList = new ArrayList<String[]>();
+    List<String[]> locatorList = new ArrayList<String[]>();
 
-   if (!StringUtils.isBlank(locatorsString)) {
-     String[] bootstrappedlocators = locatorsString.split(",");
-     for (String bootstrappedlocator : bootstrappedlocators) {
-       locatorList.add(bootstrappedlocator.split("\\[|]"));
-     }
-   }
-   return locatorList;
- }
- 
- public static List<String[]> getLocatorsInfo(List<String> locatorConnectionStrings) {
-   List<String[]> locatorList = new ArrayList<String[]>();
-   
-   for (String locatorConnectionString : locatorConnectionStrings) {
-     locatorList.add(locatorConnectionString.split("\\[|]"));
-   }
-   return locatorList;
- }
- 
- 
+    if (!StringUtils.isBlank(locatorsString)) {
+      String[] bootstrappedlocators = locatorsString.split(",");
+      for (String bootstrappedlocator : bootstrappedlocators) {
+        locatorList.add(bootstrappedlocator.split("\\[|]"));
+      }
+    }
+    return locatorList;
+  }
+
+  public static List<String[]> getLocatorsInfo(List<String> locatorConnectionStrings) {
+    List<String[]> locatorList = new ArrayList<String[]>();
+
+    for (String locatorConnectionString : locatorConnectionStrings) {
+      locatorList.add(locatorConnectionString.split("\\[|]"));
+    }
+    return locatorList;
+  }
+
 }

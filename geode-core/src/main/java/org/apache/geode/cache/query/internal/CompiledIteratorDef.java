@@ -40,43 +40,39 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   /**
    * Creates a new instance of CompiledIteratorDef name and type can be null
    */
-  public CompiledIteratorDef(String name, ObjectType elementType,
-      CompiledValue collectionExpr) {
+  public CompiledIteratorDef(String name, ObjectType elementType, CompiledValue collectionExpr) {
     this.name = name;
-    this.elementType = elementType == null ? TypeUtils.OBJECT_TYPE
-        : elementType;
+    this.elementType = elementType == null ? TypeUtils.OBJECT_TYPE : elementType;
     this.collectionExpr = collectionExpr;
   }
-  
+
   @Override
   public List getChildren() {
     return Collections.singletonList(collectionExpr);
   }
-  
+
   /**
    * Returns a RuntimeIterator (or null if evaluates to null or UNDEFINED); the
    * collection expr is evaluated lazily after dependencies are known
    */
-  public Object evaluate(ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     throw new UnsupportedOperationException(LocalizedStrings.CompiledIteratorDef_NOT_TO_BE_EVALUATED_DIRECTLY.toLocalizedString());
   }
 
-  public RuntimeIterator getRuntimeIterator(ExecutionContext context)
-      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public RuntimeIterator getRuntimeIterator(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     RuntimeIterator rIter = null;
     // check cached in context
     rIter = (RuntimeIterator) context.cacheGet(this);
-    if (rIter != null) { return rIter; }
+    if (rIter != null) {
+      return rIter;
+    }
     ObjectType type = this.elementType;
     if (type.equals(TypeUtils.OBJECT_TYPE)) {
       // check to see if there's a typecast for this collection
       ObjectType typc = getCollectionElementTypeCast();
       if (typc != null) {
         type = typc;
-      }
-      else {
+      } else {
         // Try to determine better type
         // Now only works for CompiledPaths
         // Does not determine type of nested query
@@ -88,7 +84,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
     rIter = new RuntimeIterator(this, type);
     // Rahul : generate from clause should take care of bucket region substitution if 
     // necessary and then set the definition.
-    String fromClause = genFromClause(context); 
+    String fromClause = genFromClause(context);
     rIter.setDefinition(fromClause);
     /**
      * Asif : If the type of RunTimeIterator is still ObjectType & if the
@@ -99,20 +95,16 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
      * ElementType of that RuntimeIterator is taken from the collection
      *  
      */
-    if (type.equals(TypeUtils.OBJECT_TYPE)
-       	&& !this.isDependentOnAnyIteratorOfScopeLessThanItsOwn(context)) {
+    if (type.equals(TypeUtils.OBJECT_TYPE) && !this.isDependentOnAnyIteratorOfScopeLessThanItsOwn(context)) {
       //The current Iterator definition is independent , so lets evaluate
       // the collection
       try {
         rIter.evaluateCollection(context);
-      }
-      catch (QueryExecutionTimeoutException qet){
-        throw qet;        
-      }
-      catch (RegionNotFoundException re) {
+      } catch (QueryExecutionTimeoutException qet) {
+        throw qet;
+      } catch (RegionNotFoundException re) {
         throw re;
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         if (logger.isDebugEnabled()) {
           logger.debug("Exception while getting runtime iterator.", e);
         }
@@ -127,7 +119,9 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   ObjectType getCollectionElementTypeCast() throws TypeMismatchException {
     ObjectType typ = this.collectionExpr.getTypecast();
     if (typ != null) {
-      if (!(typ instanceof CollectionType)) { throw new TypeMismatchException(LocalizedStrings.CompiledIteratorDef_AN_ITERATOR_DEFINITION_MUST_BE_A_COLLECTION_TYPE_NOT_A_0.toLocalizedString(typ)); }
+      if (!(typ instanceof CollectionType)) {
+        throw new TypeMismatchException(LocalizedStrings.CompiledIteratorDef_AN_ITERATOR_DEFINITION_MUST_BE_A_COLLECTION_TYPE_NOT_A_0.toLocalizedString(typ));
+      }
       if (typ instanceof MapType) { // we iterate over map entries
         return ((MapType) typ).getEntryType();
       }
@@ -137,9 +131,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   }
 
   /** Evaluate just the collectionExpr */
-  SelectResults evaluateCollection(ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  SelectResults evaluateCollection(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     return evaluateCollection(context, null);
   }
 
@@ -149,10 +141,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
    * @param stopAtIter the RuntimeIterator associated with this iterator defn --
    *          don't use this or any subsequent runtime iterators to evaluate.
    */
-  SelectResults evaluateCollection(ExecutionContext context,
-      RuntimeIterator stopAtIter) throws FunctionDomainException,
-      TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  SelectResults evaluateCollection(ExecutionContext context, RuntimeIterator stopAtIter) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     Object coll;
 
     // Check if query execution on this thread is Canceled.
@@ -161,8 +150,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
     context.currentScope().setLimit(stopAtIter);
     try {
       coll = this.collectionExpr.evaluate(context);
-    }
-    finally {
+    } finally {
       context.currentScope().setLimit(null);
     }
     // if we don't have an elementType and there's a typecast, apply the
@@ -173,10 +161,10 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
         this.elementType = elmTypc;
       }
     }
-    
+
     // PR bucketRegion substitution should have already happened
     // at the expression evaluation level
-    
+
     SelectResults sr = prepareIteratorDef(coll, this.elementType, context);
     return sr;
   }
@@ -226,10 +214,8 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
    * retSet = context.addDependencies(this, set); } return retSet; }
    */
   @Override
-  public Set computeDependencies(ExecutionContext context)
-      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
-    return context.addDependencies(this, this.collectionExpr
-        .computeDependencies(context));
+  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+    return context.addDependencies(this, this.collectionExpr.computeDependencies(context));
   }
 
   // @todo ericz this method is overly complex, duplicating logic already
@@ -237,17 +223,14 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   // necessary once we have full typing support.
   // There is a limitation here that it assumes that the collectionExpr is some
   // path on either a RuntimeIterator or a Region.
-  private ObjectType computeElementType(ExecutionContext context)
-      throws AmbiguousNameException
-  {
-    ObjectType type = PathUtils.computeElementTypeOfExpression(context,
-        this.collectionExpr);
+  private ObjectType computeElementType(ExecutionContext context) throws AmbiguousNameException {
+    ObjectType type = PathUtils.computeElementTypeOfExpression(context, this.collectionExpr);
     // if it's a Map, we want the Entry type, not the value type
     if (type.isMapType()) {
-      return ((MapType)type).getEntryType();
+      return ((MapType) type).getEntryType();
     }
     if (type.isCollectionType()) { // includes Regions and arrays
-      return ((CollectionType)type).getElementType();
+      return ((CollectionType) type).getElementType();
     }
     return type;
   }
@@ -257,10 +240,13 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
    * sort. The obj passed in must be unmodified, but the resulting SelectResults
    * may or may not be modifiable. Return null if obj is null or UNDEFINED.
    */
-  private SelectResults prepareIteratorDef(Object obj, ObjectType elementType, ExecutionContext context)
-      throws TypeMismatchException {
-    if (obj == null) { return null; }
-    if (obj == QueryService.UNDEFINED) { return null; }
+  private SelectResults prepareIteratorDef(Object obj, ObjectType elementType, ExecutionContext context) throws TypeMismatchException {
+    if (obj == null) {
+      return null;
+    }
+    if (obj == QueryService.UNDEFINED) {
+      return null;
+    }
     if (obj instanceof SelectResults) {
       // probably came from nested query or is a QRegion already from region
       // path
@@ -286,8 +272,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
     // domain, otherwise it would be a SelectResults.
     if (obj instanceof Collection) {
       // do not lose ordering and duplicate information,
-      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType,
-          (Collection) obj);
+      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType, (Collection) obj);
       res.setModifiable(false);
       return res;
     }
@@ -297,12 +282,10 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
       // something more specific
       if (elementType.equals(TypeUtils.OBJECT_TYPE)) { // if we don't have
         // constraint info
-        elementType = TypeUtils
-            .getObjectType(obj.getClass().getComponentType());
+        elementType = TypeUtils.getObjectType(obj.getClass().getComponentType());
       }
       // do not lose ordering and duplicate information,
-      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType,
-          Arrays.asList((Object[]) obj));
+      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType, Arrays.asList((Object[]) obj));
       res.setModifiable(false);
       return res;
     }
@@ -313,30 +296,25 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
         // use Map.Entry
         elementType = TypeUtils.getObjectType(Map.Entry.class);
       }
-      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType,
-          ((Map) obj).entrySet());
+      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType, ((Map) obj).entrySet());
       res.setModifiable(false);
       return res;
-    }
- else { 
-      obj = new Object[]{obj};
+    } else {
+      obj = new Object[] { obj };
       // the element type is specified in the array itself, unless we have
       // something more specific
       if (elementType.equals(TypeUtils.OBJECT_TYPE)) { // if we don't have
         // constraint info
-        elementType = TypeUtils
-            .getObjectType(obj.getClass().getComponentType());
+        elementType = TypeUtils.getObjectType(obj.getClass().getComponentType());
       }
       // do not lose ordering and duplicate information,
-      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType,
-          Arrays.asList((Object[]) obj));
+      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType, Arrays.asList((Object[]) obj));
       res.setModifiable(false);
       return res;
     }
   }
 
-  String genFromClause(ExecutionContext context) throws AmbiguousNameException,
-      TypeMismatchException, NameResolutionException {
+  String genFromClause(ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     StringBuffer sbuff = new StringBuffer();
     collectionExpr.generateCanonicalizedExpression(sbuff, context);
     return sbuff.toString();
@@ -345,15 +323,14 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   boolean isDependentOnAnyIterator(ExecutionContext context) {
     return context.isDependentOnAnyIterator(this);
   }
-  
+
   /**
    * Checks if the iterator in question is dependent on any other
    * RuntimeIterator of its own or lesser scope.
    * 
    * @param context
    */
-  boolean isDependentOnAnyIteratorOfScopeLessThanItsOwn(ExecutionContext context)
-  {
+  boolean isDependentOnAnyIteratorOfScopeLessThanItsOwn(ExecutionContext context) {
     // Asif : Get the list of all iterators on which the colelction expression
     // is ultimately dependent on
     // Set indpRitrs = new HashSet();
@@ -366,7 +343,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
     Iterator itr = dependencySet.iterator();
     int currScope = context.currentScope().getScopeID();// context.getScopeCount();
     while (itr.hasNext()) {
-      RuntimeIterator ritr = (RuntimeIterator)itr.next();
+      RuntimeIterator ritr = (RuntimeIterator) itr.next();
       if (ritr.getScopeID() <= currScope) {
         isDep = true;
         break;

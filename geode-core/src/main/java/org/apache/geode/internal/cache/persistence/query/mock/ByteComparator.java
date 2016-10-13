@@ -40,42 +40,42 @@ public class ByteComparator implements Comparator<Object> {
     byte[] o1Bytes = getBytes(o1);
     byte[] o2Bytes = getBytes(o2);
 
-    if(o1Bytes == o2Bytes) {
+    if (o1Bytes == o2Bytes) {
       return 0;
     }
-    
-    if(o1Bytes == MIN_BYTES) {
+
+    if (o1Bytes == MIN_BYTES) {
       return -1;
     }
-    if(o2Bytes == MIN_BYTES) {
+    if (o2Bytes == MIN_BYTES) {
       return 1;
     }
-    if(o1Bytes == MAX_BYTES) {
+    if (o1Bytes == MAX_BYTES) {
       return 1;
     }
-    if(o2Bytes == MAX_BYTES) {
+    if (o2Bytes == MAX_BYTES) {
       return -1;
     }
-    
-    for(int i =0; i < o1Bytes.length; i++) {
-      if(i > o2Bytes.length) {
+
+    for (int i = 0; i < o1Bytes.length; i++) {
+      if (i > o2Bytes.length) {
         return 1;
       } else {
         int result = o1Bytes[i] - o2Bytes[i];
-        if(result != 0 ) {
+        if (result != 0) {
           return result;
         }
       }
     }
-    
+
     return o2Bytes.length > o1Bytes.length ? 1 : 0;
   }
 
   private byte[] getBytes(Object o) {
-    if(o instanceof byte[]) {
+    if (o instanceof byte[]) {
       return (byte[]) o;
     }
-    if(o instanceof CachedDeserializable) {
+    if (o instanceof CachedDeserializable) {
       return ((CachedDeserializable) o).getSerializedValue();
     } else {
       return EntryEventImpl.serialize(o);

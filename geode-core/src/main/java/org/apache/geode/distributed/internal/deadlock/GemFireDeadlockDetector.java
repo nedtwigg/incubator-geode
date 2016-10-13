@@ -45,66 +45,64 @@ import org.apache.geode.internal.cache.execute.AbstractExecution;
 public class GemFireDeadlockDetector {
 
   private Set<DistributedMember> targetMembers = null;
-  
+
   public GemFireDeadlockDetector() {
-    
+
   }
-  public GemFireDeadlockDetector (Set<DistributedMember> targetMembers) {
+
+  public GemFireDeadlockDetector(Set<DistributedMember> targetMembers) {
     this.targetMembers = targetMembers;
   }
+
   /**
    * Find any deadlocks the exist in this distributed system.
    * 
    * The deadlocks are returned as a list of dependencies. See {@link DeadlockDetector}
    */
   public DependencyGraph find() {
-    
+
     final DeadlockDetector detector = new DeadlockDetector();
     ResultCollector<HashSet<Dependency>, Serializable> collector = new ResultCollector<HashSet<Dependency>, Serializable>() {
 
-      public synchronized Serializable getResult()
-          throws FunctionException {
+      public synchronized Serializable getResult() throws FunctionException {
         return null;
       }
 
-      public synchronized Serializable getResult(long timeout,
-          TimeUnit unit) throws FunctionException, InterruptedException {
+      public synchronized Serializable getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
         return null;
       }
 
-      public synchronized void addResult(DistributedMember memberID,
-          HashSet<Dependency> resultOfSingleExecution) {
+      public synchronized void addResult(DistributedMember memberID, HashSet<Dependency> resultOfSingleExecution) {
         detector.addDependencies(resultOfSingleExecution);
-        
+
       }
 
       public void endResults() {
-        
+
       }
 
       public void clearResults() {
-        
+
       }
 
-
     };
-    
+
     Execution execution;
     if (targetMembers != null) {
-      execution =  FunctionService.onMembers(targetMembers).withCollector(collector);
+      execution = FunctionService.onMembers(targetMembers).withCollector(collector);
     } else {
-      execution =  FunctionService.onMembers().withCollector(collector);
+      execution = FunctionService.onMembers().withCollector(collector);
     }
-    
+
     ((AbstractExecution) execution).setIgnoreDepartedMembers(true);
-    collector = (ResultCollector<HashSet<Dependency>, Serializable>)execution.execute(new CollectDependencyFunction());
-    
+    collector = (ResultCollector<HashSet<Dependency>, Serializable>) execution.execute(new CollectDependencyFunction());
+
     //Wait for results
     collector.getResult();
 
     return detector.getDependencyGraph();
   }
-  
+
   private static class CollectDependencyFunction implements Function {
 
     private static final long serialVersionUID = 6204378622627095817L;
@@ -115,13 +113,13 @@ public class GemFireDeadlockDetector {
 
     public void execute(FunctionContext context) {
       InternalDistributedSystem instance = InternalDistributedSystem.getAnyInstance();
-      if(instance == null) {
+      if (instance == null) {
         context.getResultSender().lastResult(new HashSet());
         return;
       }
-      
+
       InternalDistributedMember member = instance.getDistributedMember();
-      
+
       Set<Dependency> dependencies = DeadlockDetector.collectAllDependencies(member);
       context.getResultSender().lastResult((Serializable) dependencies);
     }

@@ -33,7 +33,7 @@ import java.net.InetAddress;
  * @see org.apache.geode.distributed.internal.membership.NetMember
  */
 public class MemberFactory {
-  
+
   private static final MemberServices services = new GMSMemberFactory();
 
   /**
@@ -47,8 +47,7 @@ public class MemberFactory {
    * @param payload the payload for this member
    * @return the new NetMember
    */
-  static public NetMember newNetMember(InetAddress i, int p,
-      boolean splitBrainEnabled, boolean canBeCoordinator, short version, MemberAttributes payload) {
+  static public NetMember newNetMember(InetAddress i, int p, boolean splitBrainEnabled, boolean canBeCoordinator, short version, MemberAttributes payload) {
     return services.newNetMember(i, p, splitBrainEnabled, canBeCoordinator, payload, version);
   }
 
@@ -73,7 +72,7 @@ public class MemberFactory {
   static public NetMember newNetMember(String s, int p) {
     return services.newNetMember(s, p);
   }
-  
+
   /**
    * Create a new MembershipManager.  Be sure to send the manager a postConnect() message
    * before you start using it.
@@ -84,25 +83,16 @@ public class MemberFactory {
    * @param stats are used for recording statistical communications information
    * @return a MembershipManager
    */
-  static public MembershipManager newMembershipManager(DistributedMembershipListener listener,
-          DistributionConfig config,
-          RemoteTransportConfig transport,
-          DMStats stats)
-  {
+  static public MembershipManager newMembershipManager(DistributedMembershipListener listener, DistributionConfig config, RemoteTransportConfig transport, DMStats stats) {
     return services.newMembershipManager(listener, config, transport, stats);
   }
-  
+
   /**
    * currently this is a test method but it ought to be used by InternalLocator
    * to create the peer location TcpHandler
    */
-  static public NetLocator newLocatorHandler(InetAddress bindAddress,
-          File stateFile,
-          String locatorString,
-          boolean usePreferredCoordinators,
-          boolean networkPartitionDetectionEnabled, LocatorStats stats, String securityUDPDHAlgo) {
-    return services.newLocatorHandler(bindAddress, stateFile, locatorString,
-        usePreferredCoordinators, networkPartitionDetectionEnabled, stats, securityUDPDHAlgo);
+  static public NetLocator newLocatorHandler(InetAddress bindAddress, File stateFile, String locatorString, boolean usePreferredCoordinators, boolean networkPartitionDetectionEnabled, LocatorStats stats, String securityUDPDHAlgo) {
+    return services.newLocatorHandler(bindAddress, stateFile, locatorString, usePreferredCoordinators, networkPartitionDetectionEnabled, stats, securityUDPDHAlgo);
   }
 
 }

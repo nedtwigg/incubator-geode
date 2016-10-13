@@ -22,7 +22,7 @@ import org.apache.geode.GemFireCheckedException;
  * @since GemFire 7.0
  */
 public class StatisticNotFoundException extends GemFireCheckedException {
-  
+
   private static final long serialVersionUID = -6232790142851058203L;
 
   /**
@@ -48,7 +48,7 @@ public class StatisticNotFoundException extends GemFireCheckedException {
     super(message);
     this.initCause(cause);
   }
-  
+
   /**
    * Creates a new <code>StatisticNotFoundException</code> with the given cause and
    * no detail message
@@ -57,5 +57,5 @@ public class StatisticNotFoundException extends GemFireCheckedException {
     super();
     this.initCause(cause);
   }
-  
+
 }

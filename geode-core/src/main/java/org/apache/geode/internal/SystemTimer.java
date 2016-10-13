@@ -48,40 +48,40 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  */
 public final class SystemTimer {
   private static final Logger logger = LogService.getLogger();
-  
+
   final static private boolean isIBM = "IBM Corporation".equals(System.getProperty("java.vm.vendor"));
 
   /**
    * Extra debugging for this class
    */
-//  private static final boolean DEBUG = true;
+  //  private static final boolean DEBUG = true;
   static final boolean DEBUG = false;
 
   /**
    * the underlying {@link Timer}
    */
   final private Timer timer;
-  
+
   /**
    * True if this timer has been cancelled
    */
   private boolean cancelled = false;
-  
+
   /**
    * the swarm to which this timer belongs
    */
   final private Object /* T */ swarm;
-  
+
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append("SystemTimer[");
     sb.append("swarm = " + swarm);
-//    sb.append("; timer = " + timer);
+    //    sb.append("; timer = " + timer);
     sb.append("]");
     return sb.toString();
   }
-  
+
   /**
    * List of all of the swarms in the system
    * 
@@ -89,7 +89,7 @@ public final class SystemTimer {
    */
   // <T, HashMap<Object, ArrayList<WeakReference<SystemTimer>>>>
   static private final HashMap allSwarms = new HashMap();
-  
+
   /**
    * Add the given timer is in the given swarm.  Used only by constructors.
    * 
@@ -101,7 +101,7 @@ public final class SystemTimer {
     // Get or add list of timers for this swarm...
     ArrayList /* ArrayList<WeakReference<SystemTimer>> */ swarmSet;
     synchronized (allSwarms) {
-      swarmSet = (ArrayList)allSwarms.get(swarm);
+      swarmSet = (ArrayList) allSwarms.get(swarm);
       if (swarmSet == null) {
         if (isDebugEnabled) {
           logger.trace("SystemTimer#addToSwarm: created swarm {}", swarm);
@@ -110,7 +110,7 @@ public final class SystemTimer {
         allSwarms.put(swarm, swarmSet);
       }
     } // synchronized
-    
+
     // Add the timer to the swarm's list
     if (isDebugEnabled) {
       logger.trace("SystemTimer#addToSwarm: adding timer <{}>", t);
@@ -120,14 +120,14 @@ public final class SystemTimer {
       swarmSet.add(wr);
     } // synchronized
   }
-  
+
   /**
    * time that the last sweep was done
    * 
    * @see #sweepAllSwarms
    */
   private static long lastSweepAllTime = 0;
-  
+
   /**
    * Interval, in milliseconds, to sweep all swarms, measured from when
    * the last sweep finished
@@ -135,7 +135,7 @@ public final class SystemTimer {
    * @see #sweepAllSwarms
    */
   private static final long SWEEP_ALL_INTERVAL = 2 * 60 * 1000; // 2 minutes
-  
+
   /**
    * Manually garbage collect {@link #allSwarms}, if it hasn't happened
    * in a while.
@@ -151,13 +151,13 @@ public final class SystemTimer {
     synchronized (allSwarms) {
       Iterator it = allSwarms.entrySet().iterator();
       while (it.hasNext()) { // iterate over allSwarms
-        Map.Entry entry = (Map.Entry)it.next();
-        ArrayList swarm = (ArrayList)entry.getValue();
+        Map.Entry entry = (Map.Entry) it.next();
+        ArrayList swarm = (ArrayList) entry.getValue();
         synchronized (swarm) {
           Iterator it2 = swarm.iterator();
           while (it2.hasNext()) { // iterate over current swarm
-            WeakReference wr = (WeakReference)it2.next();
-            SystemTimer st = (SystemTimer)wr.get();
+            WeakReference wr = (WeakReference) it2.next();
+            SystemTimer st = (SystemTimer) wr.get();
             if (st == null) {
               // Remove stale reference
               it2.remove();
@@ -170,20 +170,20 @@ public final class SystemTimer {
             }
           } // iterate over current swarm
           if (swarm.size() == 0) { // Remove unused swarm
-           it.remove(); 
-           if (isDebugEnabled) {
-             logger.trace("SystemTimer#sweepAllSwarms: removed unused swarm {}", entry.getKey());
-           }
+            it.remove();
+            if (isDebugEnabled) {
+              logger.trace("SystemTimer#sweepAllSwarms: removed unused swarm {}", entry.getKey());
+            }
           } // Remove unused swarm
         } // synchronized swarm
       } // iterate over allSwarms
     } // synchronized allSwarms
-    
+
     // Collect time at END of sweep.  It means an extra call to the system
     // timer, but makes this potentially less active.
     lastSweepAllTime = System.currentTimeMillis();
   }
-  
+
   /**
    * Remove given timer from the swarm.
    * @param t timer to remove
@@ -194,14 +194,14 @@ public final class SystemTimer {
     final boolean isDebugEnabled = logger.isTraceEnabled();
     synchronized (allSwarms) {
       // Get timer's swarm
-      ArrayList swarmSet = (ArrayList)allSwarms.get(t.swarm);
+      ArrayList swarmSet = (ArrayList) allSwarms.get(t.swarm);
       if (swarmSet == null) {
         if (isDebugEnabled) {
           logger.trace("SystemTimer#removeFromSwarm: timer already removed: {}", t);
         }
         return; // already gone
       }
-      
+
       // Remove timer from swarm
       if (isDebugEnabled) {
         logger.trace("SystemTimer#removeFromSwarm: removing timer <{}>", t);
@@ -209,9 +209,9 @@ public final class SystemTimer {
       synchronized (swarmSet) {
         Iterator it = swarmSet.iterator();
         while (it.hasNext()) {
-          WeakReference ref = (WeakReference)it.next();
-          SystemTimer t2 = (SystemTimer)ref.get();
-          if (t2 == null) { 
+          WeakReference ref = (WeakReference) it.next();
+          SystemTimer t2 = (SystemTimer) ref.get();
+          if (t2 == null) {
             // Since we've discovered an empty reference, we should remove it.
             it.remove();
             continue;
@@ -228,7 +228,7 @@ public final class SystemTimer {
             continue;
           }
         } // while
-        
+
         // While we're here, if the swarm has gone to zero size, 
         // we should remove it.
         if (swarmSet.size() == 0) {
@@ -239,10 +239,10 @@ public final class SystemTimer {
         }
       } // synchronized swarmSet
     } // synchronized allSwarms
-    
+
     sweepAllSwarms(); // Occasionally check global list, use any available logger :-)
   }
-  
+
   /**
    * Cancel all outstanding timers
    * @param swarm the swarm to cancel
@@ -252,7 +252,7 @@ public final class SystemTimer {
     // Find the swarmSet and remove it
     ArrayList swarmSet;
     synchronized (allSwarms) {
-      swarmSet = (ArrayList)allSwarms.get(swarm);
+      swarmSet = (ArrayList) allSwarms.get(swarm);
       if (swarmSet == null) {
         return; // already cancelled
       }
@@ -260,14 +260,14 @@ public final class SystemTimer {
       // in a new set with same key
       allSwarms.remove(swarmSet);
     } // synchronized
-    
+
     // Empty the swarmSet
     synchronized (swarmSet) {
       Iterator it = swarmSet.iterator();
       while (it.hasNext()) {
-        WeakReference wr = (WeakReference)it.next();
-        SystemTimer st = (SystemTimer)wr.get();
-//        it.remove();  Not necessary, we're emptying the list...
+        WeakReference wr = (WeakReference) it.next();
+        SystemTimer st = (SystemTimer) wr.get();
+        //        it.remove();  Not necessary, we're emptying the list...
         if (st != null) {
           st.cancelled = true; // for safety :-)
           st.timer.cancel(); // st.cancel() would just search for it again
@@ -280,25 +280,25 @@ public final class SystemTimer {
     if (logger.isTraceEnabled()) {
       logger.trace("SystemTimer#timerPurge of {}", this);
     }
-    
+
     // Fix 39585, IBM's java.util.timer's purge() has stack overflow issue
     if (isIBM) {
       return 0;
     }
     return this.timer.purge();
   }
-  
+
   // This creates a non-daemon timer thread.  We don't EVER do this...
-//  /**
-//   * @see Timer#Timer()
-//   * 
-//   * @param swarm the swarm this timer belongs to
-//   */
-//  public SystemTimer(DistributedSystem swarm) {
-//    this.timer = new Timer();
-//    this.swarm = swarm;
-//    addToSwarm(swarm, this);
-//  }
+  //  /**
+  //   * @see Timer#Timer()
+  //   * 
+  //   * @param swarm the swarm this timer belongs to
+  //   */
+  //  public SystemTimer(DistributedSystem swarm) {
+  //    this.timer = new Timer();
+  //    this.swarm = swarm;
+  //    addToSwarm(swarm, this);
+  //  }
 
   /**
    * @see Timer#Timer(boolean)
@@ -307,8 +307,7 @@ public final class SystemTimer {
    */
   public SystemTimer(Object /* T */ swarm, boolean isDaemon) {
     Assert.assertTrue(isDaemon); // we don't currently allow non-daemon timers
-    Assert.assertTrue(swarm instanceof InternalDistributedSystem, 
-        "Attempt to create swarm on " + swarm); // TODO allow template class?
+    Assert.assertTrue(swarm instanceof InternalDistributedSystem, "Attempt to create swarm on " + swarm); // TODO allow template class?
     this.timer = new Timer(isDaemon);
     this.swarm = swarm;
     addToSwarm(swarm, this);
@@ -321,8 +320,7 @@ public final class SystemTimer {
    */
   public SystemTimer(String name, Object /* T */ swarm, boolean isDaemon) {
     Assert.assertTrue(isDaemon); // we don't currently allow non-daemon timers
-    Assert.assertTrue(swarm instanceof InternalDistributedSystem, 
-        "Attempt to create swarm on " + swarm); // TODO allow template class?
+    Assert.assertTrue(swarm instanceof InternalDistributedSystem, "Attempt to create swarm on " + swarm); // TODO allow template class?
     this.timer = new Timer(name, isDaemon);
     this.swarm = swarm;
     addToSwarm(swarm, this);
@@ -333,7 +331,7 @@ public final class SystemTimer {
       throw new IllegalStateException("This timer has been cancelled.");
     }
   }
-  
+
   /**
    * @see Timer#schedule(TimerTask, long)
    */
@@ -360,24 +358,24 @@ public final class SystemTimer {
   }
 
   // Not currently used, so don't complicate things
-//  /**
-//   * @see Timer#schedule(TimerTask, long, long)
-//   */
-//  public void schedule(SystemTimerTask task, long delay, long period) {
-//    // TODO add debug statement
-//    checkCancelled();
-//    timer.schedule(task, delay, period);
-//  }
+  //  /**
+  //   * @see Timer#schedule(TimerTask, long, long)
+  //   */
+  //  public void schedule(SystemTimerTask task, long delay, long period) {
+  //    // TODO add debug statement
+  //    checkCancelled();
+  //    timer.schedule(task, delay, period);
+  //  }
 
   // Not currently used, so don't complicate things
-//  /**
-//   * @see Timer#schedule(TimerTask, Date, long) 
-//   */
-//  public void schedule(SystemTimerTask task, Date firstTime, long period) {
-//    // TODO add debug statement
-//    checkCancelled();
-//    timer.schedule(task, firstTime, period);
-//  }
+  //  /**
+  //   * @see Timer#schedule(TimerTask, Date, long) 
+  //   */
+  //  public void schedule(SystemTimerTask task, Date firstTime, long period) {
+  //    // TODO add debug statement
+  //    checkCancelled();
+  //    timer.schedule(task, firstTime, period);
+  //  }
 
   /**
    * @see Timer#scheduleAtFixedRate(TimerTask, long, long)
@@ -398,16 +396,15 @@ public final class SystemTimer {
   }
 
   // Not currently used, so don't complicate things
-//  /**
-//   * @see Timer#scheduleAtFixedRate(TimerTask, Date, long)
-//   */
-//  public void scheduleAtFixedRate(SystemTimerTask task, Date firstTime,
-//                                  long period) {
-//    // TODO add debug statement
-//    checkCancelled();
-//    timer.scheduleAtFixedRate(task, firstTime, period);
-//  }
-
+  //  /**
+  //   * @see Timer#scheduleAtFixedRate(TimerTask, Date, long)
+  //   */
+  //  public void scheduleAtFixedRate(SystemTimerTask task, Date firstTime,
+  //                                  long period) {
+  //    // TODO add debug statement
+  //    checkCancelled();
+  //    timer.scheduleAtFixedRate(task, firstTime, period);
+  //  }
 
   /**
    * @see Timer#cancel()
@@ -425,12 +422,12 @@ public final class SystemTimer {
    */
   public abstract static class SystemTimerTask extends TimerTask {
     protected static final Logger logger = LogService.getLogger();
-    
+
     /**
      * This is your executed action
      */
     public abstract void run2();
-    
+
     /**
      * Does debug logging, catches critical errors, then delegates to
      * {@link #run2()}
@@ -443,15 +440,12 @@ public final class SystemTimer {
       }
       try {
         this.run2();
-      }
-      catch (CancelException ignore) {
+      } catch (CancelException ignore) {
         // ignore: TimerThreads can fire during or near cache closure
-      } 
-      catch (VirtualMachineError e) {
+      } catch (VirtualMachineError e) {
         SystemFailure.initiateFailure(e);
         throw e;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         SystemFailure.checkFailure();
         logger.warn(LocalizedMessage.create(LocalizedStrings.SystemTimer_TIMER_TASK_0_ENCOUNTERED_EXCEPTION, this), t);
         // Don't rethrow, it will just get eaten and kill the timer

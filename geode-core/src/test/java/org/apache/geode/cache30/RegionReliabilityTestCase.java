@@ -92,7 +92,7 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
 
   /** Returns scope to execute tests under. */
   protected abstract Scope getRegionScope();
-  
+
   protected InternalDistributedSystem createConnection(String[] roles) {
     StringBuffer rolesValue = new StringBuffer();
     if (roles != null) {
@@ -223,7 +223,7 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
       tx.rollback();
     }
   }
-  
+
   protected void assertNoAccessThrows(Region region) throws Exception {
     assertLimitedAccessThrows(region);
     try {
@@ -322,22 +322,21 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     } catch (RegionAccessException ex) {
       // pass...
     }
-    
+
     try {
       QueryService qs = region.getCache().getQueryService();
-      Query query = qs.newQuery(
-        "(select distinct * from " + region.getFullPath() + ").size");
+      Query query = qs.newQuery("(select distinct * from " + region.getFullPath() + ").size");
       query.execute();
       fail("Should have thrown an RegionAccessException");
     } catch (RegionAccessException ex) {
       // pass...
     }
   }
-  
+
   protected void assertLimitedAccessDoesNotThrow(Region region) throws Exception {
     // insert some values for test
-    Object[] keys = new Object[] {"hip", "hop"};
-    Object[] values = new Object[] {"clip", "clop"};
+    Object[] keys = new Object[] { "hip", "hop" };
+    Object[] values = new Object[] { "clip", "clop" };
     for (int i = 0; i < keys.length; i++) {
       region.put(keys[i], values[i]);
     }
@@ -345,34 +344,34 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     // test the ops that can throw RegionAccessException for LIMITED_ACCESS
     region.create("jack", "jill");
     region.destroy("jack");
-    
+
     if (region.getAttributes().getScope().isGlobal()) {
       region.becomeLockGrantor();
 
       Lock dlock = region.getDistributedLock(keys[0]);
       dlock.lock();
       dlock.unlock();
-      
+
       Lock rlock = region.getRegionDistributedLock();
       rlock.lock();
       rlock.unlock();
     }
-    
+
     // netload (configured in vm0)
     assertEquals("netload", region.get("netload"));
     // netsearch (entry exists in vm0)
     assertEquals("netsearch", region.get("netsearch"));
-    
+
     region.invalidate(keys[0]);
     region.invalidateRegion();
-    
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     region.saveSnapshot(baos);
     region.loadSnapshot(new ByteArrayInputStream(baos.toByteArray()));
-    
+
     // need to get a new handle to the region...
     region = getRootRegion(region.getFullPath());
-    
+
     region.put(keys[0], values[0]);
 
     Map map = new HashMap();
@@ -381,10 +380,9 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     region.putAll(map, "callbackArg");
 
     QueryService qs = region.getCache().getQueryService();
-    Query query = qs.newQuery(
-      "(select distinct * from " + region.getFullPath() + ").size");
+    Query query = qs.newQuery("(select distinct * from " + region.getFullPath() + ").size");
     query.execute();
-    
+
     region.remove(keys[0]);
 
     if (!region.getAttributes().getScope().isGlobal()) {
@@ -393,19 +391,19 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
       region.put("KEY-tx", "VAL-tx");
       tx.commit();
     }
-    
+
     region.clear();
     region.destroyRegion();
   }
-  
+
   protected void assertNoAccessDoesNotThrow(Region region) throws Exception {
     // insert some values for test
-    Object[] keys = new Object[] {"bip", "bam"};
-    Object[] values = new Object[] {"foo", "bar"};
+    Object[] keys = new Object[] { "bip", "bam" };
+    Object[] values = new Object[] { "foo", "bar" };
     for (int i = 0; i < keys.length; i++) {
       region.put(keys[i], values[i]);
     }
-    
+
     // test the ops that can throw RegionAccessException for NO_ACCESS
     region.containsKey(new Object());
     region.containsValue(new Object());
@@ -425,38 +423,36 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     region.values();
 
     QueryService qs = region.getCache().getQueryService();
-    Query query = qs.newQuery(
-      "(select distinct * from " + region.getFullPath() + ").size");
+    Query query = qs.newQuery("(select distinct * from " + region.getFullPath() + ").size");
     query.execute();
-    
+
     assertLimitedAccessDoesNotThrow(region);
   }
-  
+
   protected void sleep(long millis) {
     try {
       Thread.sleep(millis);
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       fail("interrupted");
     }
   }
-  
+
   // -------------------------------------------------------------------------
   // Tests to be run under every permutation of config options
   //   Valid configurations include scope D-ACK, D-NOACK, GLOBAL
   // -------------------------------------------------------------------------
-  
+
   /**
    * Tests affect of NO_ACCESS on region operations.
    */
   @Test
   public void testNoAccess() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -467,19 +463,18 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     Region region = createRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
@@ -497,7 +492,9 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
               return null;
             }
           }
-          public void close() {}
+
+          public void close() {
+          }
         });
         RegionAttributes attr = fac.create();
         Region region = createRootRegion(name, attr);
@@ -505,45 +502,44 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
         region.put(netsearch, netsearch);
       }
     });
-    
+
     // test ops on Region that should throw
     assertNoAccessThrows(region);
-    
+
     // use vm1 to create role
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     });
-    
+
     Role role = (Role) requiredRolesSet.iterator().next();
     assertTrue(RequiredRoles.isRoleInRegionMembership(region, role));
-    
+
     // retest ops on Region to assert no longer throw    
     assertNoAccessDoesNotThrow(region);
   }
-  
+
   private static InternalDistributedMember findDistributedMember() {
-    DM dm = (
-      InternalDistributedSystem.getAnyInstance()).getDistributionManager();
+    DM dm = (InternalDistributedSystem.getAnyInstance()).getDistributionManager();
     return dm.getDistributionManagerId();
   }
-  
+
   /**
    * Tests affect of NO_ACCESS on local entry expiration actions.
    */
   @Test
   public void testNoAccessWithLocalEntryExpiration() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -554,33 +550,32 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     final Region region = createExpiryRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
     // use vm1 to create role
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     });
-    
+
     // test to make sure expiration is not suspended
     region.put("expireMe", "expireMe");
     assertTrue(region.size() == 1);
@@ -594,14 +589,13 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
 
     // set expiration and sleep
     AttributesMutator mutator = region.getAttributesMutator();
-    mutator.setEntryTimeToLive(
-      new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
+    mutator.setEntryTimeToLive(new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
     sleep(200);
 
     // make sure no values were expired
     Set entries = ((LocalRegion) region).basicEntries(false);
     assertTrue(entries.size() == 1);
-    
+
     // create region again in vm1
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
@@ -611,21 +605,21 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
         createRootRegion(name, attr);
       }
     });
-    
+
     waitForEntryDestroy(region, "expireMe");
   }
-  
+
   /**
    * Tests affect of NO_ACCESS on local region expiration actions.
    */
   @Test
   public void testNoAccessWithLocalRegionExpiration() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -636,55 +630,53 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     final Region region = createExpiryRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
     AttributesMutator mutator = region.getAttributesMutator();
-    mutator.setRegionTimeToLive(
-      new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
-      
+    mutator.setRegionTimeToLive(new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
+
     // sleep and make sure region does not expire
     sleep(200);
     assertFalse(region.isDestroyed());
-    
+
     // create region in vm1
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     });
-    
+
     waitForRegionDestroy(region);
   }
-  
+
   /**
    * Tests affect of LIMITED_ACCESS on region operations.
    */
   @Test
   public void testLimitedAccess() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -695,19 +687,18 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.LIMITED_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.LIMITED_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     Region region = createRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
@@ -725,7 +716,9 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
               return null;
             }
           }
-          public void close() {}
+
+          public void close() {
+          }
         });
         RegionAttributes attr = fac.create();
         Region region = createRootRegion(name, attr);
@@ -733,42 +726,41 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
         region.put(netsearch, netsearch);
       }
     });
-    
+
     // test ops on Region that should throw
     assertLimitedAccessThrows(region);
-    
+
     // this query should not throw
     QueryService qs = region.getCache().getQueryService();
-    Query query = qs.newQuery(
-      "(select distinct * from " + region.getFullPath() + ").size");
+    Query query = qs.newQuery("(select distinct * from " + region.getFullPath() + ").size");
     query.execute();
-    
+
     // use vm1 to create role
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     });
-    
+
     // retest ops on Region to assert no longer throw    
     assertLimitedAccessDoesNotThrow(region);
   }
-  
+
   /**
    * Tests affect of LIMITED_ACCESS on local entry expiration actions.
    */
   @Test
   public void testLimitedAccessWithLocalEntryExpiration() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -779,33 +771,32 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.LIMITED_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.LIMITED_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     final Region region = createExpiryRootRegion(name, attr);
-     
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
     // use vm1 to create role
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     });
-    
+
     // test to make sure expiration is suspended
     region.put("expireMe", "expireMe");
     assertTrue(region.size() == 1);
@@ -819,17 +810,17 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
 
     // set expiration and sleep
     AttributesMutator mutator = region.getAttributesMutator();
-    mutator.setEntryTimeToLive(
-      new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
+    mutator.setEntryTimeToLive(new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
     WaitCriterion wc1 = new WaitCriterion() {
       public boolean done() {
         return ((LocalRegion) region).basicEntries(false).size() == 0;
       }
+
       public String description() {
         return "expected zero entries but have " + ((LocalRegion) region).basicEntries(false).size();
       }
     };
-    Wait.waitForCriterion(wc1, 30*1000, 10, true);
+    Wait.waitForCriterion(wc1, 30 * 1000, 10, true);
 
     // create region again
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
@@ -840,24 +831,24 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
         createRootRegion(name, attr);
       }
     });
-    
+
     region.put("expireMe", "expireMe");
-    
+
     waitForEntryDestroy(region, "expireMe");
     assertTrue(region.size() == 0);
   }
-  
+
   /**
    * Tests affect of LIMITED_ACCESS on local region expiration actions.
    */
   @Test
   public void testLimitedAccessWithLocalRegionExpiration() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -868,40 +859,38 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.LIMITED_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.LIMITED_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     final Region region = createExpiryRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
     AttributesMutator mutator = region.getAttributesMutator();
-    mutator.setRegionTimeToLive(
-      new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
-      
+    mutator.setRegionTimeToLive(new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
+
     waitForRegionDestroy(region);
   }
-  
+
   /**
    * Tests affect of FULL_ACCESS on region operations.
    */
   @Test
   public void testFullAccess() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -912,19 +901,18 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     Region region = createRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
@@ -942,7 +930,9 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
               return null;
             }
           }
-          public void close() {}
+
+          public void close() {
+          }
         });
         RegionAttributes attr = fac.create();
         Region region = createRootRegion(name, attr);
@@ -950,11 +940,11 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
         region.put(netsearch, netsearch);
       }
     });
-    
+
     // test ops on Region that should not throw
     assertNoAccessDoesNotThrow(region);
   }
-  
+
   /**
    * Tests affect of FULL_ACCESS on local entry expiration actions.
    */
@@ -962,11 +952,11 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
   @Test
   public void testFullAccessWithLocalEntryExpiration() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
+
+    final String roleA = name + "-A";
+
     // assign names to 4 vms...
-    final String[] requiredRoles = {roleA};
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -977,19 +967,18 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     final Region region = createExpiryRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
@@ -999,47 +988,48 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
 
     // set expiration and sleep
     AttributesMutator mutator = region.getAttributesMutator();
-    mutator.setEntryTimeToLive(
-      new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
+    mutator.setEntryTimeToLive(new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
 
     waitForEntryDestroy(region, "expireMe");
     assertTrue(region.size() == 0);
   }
-  
+
   public static void waitForRegionDestroy(final Region region) {
     WaitCriterion wc = new WaitCriterion() {
       public boolean done() {
         return region.isDestroyed();
       }
+
       public String description() {
         return "expected region " + region + " to be destroyed";
       }
     };
-    Wait.waitForCriterion(wc, 30*1000, 10, true);
+    Wait.waitForCriterion(wc, 30 * 1000, 10, true);
   }
-  
+
   public static void waitForEntryDestroy(final Region region, final Object key) {
     WaitCriterion wc = new WaitCriterion() {
       public boolean done() {
         return region.get(key) == null;
       }
+
       public String description() {
         return "expected entry " + key + " to not exist but it has the value " + region.get(key);
       }
     };
-    Wait.waitForCriterion(wc, 30*1000, 10, true);
+    Wait.waitForCriterion(wc, 30 * 1000, 10, true);
   }
-  
+
   /**
    * Tests affect of FULL_ACCESS on local region expiration actions.
    */
   @Test
   public void testFullAccessWithLocalRegionExpiration() throws Exception {
     final String name = this.getUniqueName();
-    
-    final String roleA = name+"-A";
-    
-    final String[] requiredRoles = {roleA};
+
+    final String roleA = name + "-A";
+
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -1050,39 +1040,39 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setStatisticsEnabled(true);
     RegionAttributes attr = fac.create();
     final Region region = createExpiryRootRegion(name, attr);
-    
+
     // wait for memberTimeout to expire
     waitForMemberTimeout();
 
     AttributesMutator mutator = region.getAttributesMutator();
-    mutator.setRegionTimeToLive(
-      new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
-      
+    mutator.setRegionTimeToLive(new ExpirationAttributes(1, ExpirationAction.LOCAL_DESTROY));
+
     waitForRegionDestroy(region);
   }
-  
-  protected static Boolean[] detectedDeparture_testCommitDistributionException = 
-    { Boolean.FALSE };
+
+  protected static Boolean[] detectedDeparture_testCommitDistributionException = { Boolean.FALSE };
+
   @Test
   public void testCommitDistributionException() throws Exception {
-    if (getRegionScope().isGlobal()) return; // skip test under Global
-    if (getRegionScope().isDistributedNoAck()) return; // skip test under DistributedNoAck
-    
+    if (getRegionScope().isGlobal())
+      return; // skip test under Global
+    if (getRegionScope().isDistributedNoAck())
+      return; // skip test under DistributedNoAck
+
     final String name = this.getUniqueName();
-    final String roleA = name+"-A";
-    final String[] requiredRoles = {roleA};
+    final String roleA = name + "-A";
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -1093,9 +1083,9 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-    
+
     RegionMembershipListener listener = new RegionMembershipListenerAdapter() {
       public void afterRemoteRegionDeparture(RegionEvent event) {
         synchronized (detectedDeparture_testCommitDistributionException) {
@@ -1104,28 +1094,27 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
         }
       }
     };
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.addCacheListener(listener);
     RegionAttributes attr = fac.create();
     Region region = createRootRegion(name, attr);
-    
+
     // use vm1 to create role
     Host.getHost(0).getVM(1).invoke(new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     });
-    
+
     // define the afterReleaseLocalLocks callback
     SerializableRunnableIF removeRequiredRole = new SerializableRunnableIF() {
       public void run() {
@@ -1140,72 +1129,67 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
               detectedDeparture_testCommitDistributionException.wait();
             }
           }
+        } catch (InterruptedException e) {
+          fail("interrupted");
         }
-        catch (InterruptedException e) {fail("interrupted");}
       }
     };
-    
+
     // define the add and remove expected exceptions
-    final String expectedExceptions = 
-      "org.apache.geode.internal.cache.CommitReplyException";
-    SerializableRunnable addExpectedExceptions = 
-      new CacheSerializableRunnable("addExpectedExceptions") {
-        public void run2() throws CacheException {
-          getCache().getLogger().info("<ExpectedException action=add>" + 
-              expectedExceptions + "</ExpectedException>");
-        }
-      };
-    SerializableRunnable removeExpectedExceptions = 
-      new CacheSerializableRunnable("removeExpectedExceptions") {
-        public void run2() throws CacheException {
-          getCache().getLogger().info("<ExpectedException action=remove>" + 
-              expectedExceptions + "</ExpectedException>");
-        }
-      };
+    final String expectedExceptions = "org.apache.geode.internal.cache.CommitReplyException";
+    SerializableRunnable addExpectedExceptions = new CacheSerializableRunnable("addExpectedExceptions") {
+      public void run2() throws CacheException {
+        getCache().getLogger().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
+      }
+    };
+    SerializableRunnable removeExpectedExceptions = new CacheSerializableRunnable("removeExpectedExceptions") {
+      public void run2() throws CacheException {
+        getCache().getLogger().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
+      }
+    };
 
     // perform the actual test...
-      
+
     CacheTransactionManager ctm = cache.getCacheTransactionManager();
     ctm.begin();
-    TXStateInterface txStateProxy = ((TXManagerImpl)ctm).getTXState();
-    ((TXStateProxyImpl)txStateProxy).forceLocalBootstrap();
-    TXState txState = (TXState)((TXStateProxyImpl)txStateProxy).getRealDeal(null,null);
+    TXStateInterface txStateProxy = ((TXManagerImpl) ctm).getTXState();
+    ((TXStateProxyImpl) txStateProxy).forceLocalBootstrap();
+    TXState txState = (TXState) ((TXStateProxyImpl) txStateProxy).getRealDeal(null, null);
     txState.setBeforeSend(() -> {
-      try { 
-        removeRequiredRole.run(); 
-      } catch(Exception e) {
+      try {
+        removeRequiredRole.run();
+      } catch (Exception e) {
         throw new RuntimeException(e);
       }
     });
-    
+
     // now start a transaction and commit it
     region.put("KEY", "VAL");
-      
+
     addExpectedExceptions.run();
     Host.getHost(0).getVM(1).invoke(addExpectedExceptions);
-    
+
     try {
       ctm.commit();
       fail("Should have thrown CommitDistributionException");
-    }
-    catch (CommitDistributionException e) {
+    } catch (CommitDistributionException e) {
       // pass
-    }
-    finally {
+    } finally {
       removeExpectedExceptions.run();
       Host.getHost(0).getVM(1).invoke(removeExpectedExceptions);
     }
   }
-  
-  protected static Boolean[] detectedDeparture_testRegionDistributionException = 
-    { Boolean.FALSE };
+
+  protected static Boolean[] detectedDeparture_testRegionDistributionException = { Boolean.FALSE };
+
   @Test
   public void testRegionDistributionException() throws Exception {
-    if (getRegionScope().isDistributedNoAck()) return; // skip test under DistributedNoAck
-    
+    if (getRegionScope().isDistributedNoAck())
+      return; // skip test under DistributedNoAck
+
     final String name = this.getUniqueName();
-    final String roleA = name+"-A";
-    final String[] requiredRoles = {roleA};
+    final String roleA = name + "-A";
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -1216,9 +1200,9 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     RegionMembershipListener listener = new RegionMembershipListenerAdapter() {
       public void afterRemoteRegionDeparture(RegionEvent event) {
         synchronized (detectedDeparture_testRegionDistributionException) {
@@ -1229,32 +1213,31 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     };
 
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
-//    fac.addCacheListener(listener);
+    //    fac.addCacheListener(listener);
     RegionAttributes attr = fac.create();
     Region region = createRootRegion(name, attr);
-    
-    assertTrue(((AbstractRegion)region).requiresReliabilityCheck());
-    
+
+    assertTrue(((AbstractRegion) region).requiresReliabilityCheck());
+
     // use vm1 to create role
     CacheSerializableRunnable createRegion = new CacheSerializableRunnable("Create Region") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     };
-    
+
     Host.getHost(0).getVM(1).invoke(createRegion);
     region.put("DESTROY_ME", "VAL");
     region.put("INVALIDATE_ME", "VAL");
-      
+
     // define the afterReleaseLocalLocks callback
     SerializableRunnable removeRequiredRole = new SerializableRunnable() {
       public void run() {
@@ -1263,60 +1246,57 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
             getRootRegion(name).close();
           }
         });
-//        try {
-//          synchronized (detectedDeparture_testRegionDistributionException) {
-//            while (detectedDeparture_testRegionDistributionException[0] == Boolean.FALSE) {
-//              detectedDeparture_testRegionDistributionException.wait();
-//            }
-//          }
-//        }
-//        catch (InterruptedException e) {}
+        //        try {
+        //          synchronized (detectedDeparture_testRegionDistributionException) {
+        //            while (detectedDeparture_testRegionDistributionException[0] == Boolean.FALSE) {
+        //              detectedDeparture_testRegionDistributionException.wait();
+        //            }
+        //          }
+        //        }
+        //        catch (InterruptedException e) {}
       }
     };
     DistributedCacheOperation.setBeforePutOutgoing(() -> {
-     try {
-       removeRequiredRole.run();
-     } catch(Exception e) {
-       throw new RuntimeException(e);
-     }
+      try {
+        removeRequiredRole.run();
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     });
 
     Runnable reset = new Runnable() {
       public void run() {
-//        synchronized (detectedDeparture_testRegionDistributionException) {
-//          detectedDeparture_testRegionDistributionException[0] = Boolean.FALSE;
-//        }
+        //        synchronized (detectedDeparture_testRegionDistributionException) {
+        //          detectedDeparture_testRegionDistributionException[0] = Boolean.FALSE;
+        //        }
       }
     };
-    
+
     // PUT    
     try {
       region.put("KEY", "VAL");
       fail("Should have thrown RegionDistributionException");
-    }
-    catch (RegionDistributionException e) {
+    } catch (RegionDistributionException e) {
       // pass
     }
-    
+
     // INVALIDATE
     reset.run();
     Host.getHost(0).getVM(1).invoke(createRegion);
     try {
       region.invalidate("INVALIDATE_ME");
       fail("Should have thrown RegionDistributionException");
-    }
-    catch (RegionDistributionException e) {
+    } catch (RegionDistributionException e) {
       // pass
     }
-    
+
     // DESTROY
     reset.run();
     Host.getHost(0).getVM(1).invoke(createRegion);
     try {
       region.destroy("DESTROY_ME");
       fail("Should have thrown RegionDistributionException");
-    }
-    catch (RegionDistributionException e) {
+    } catch (RegionDistributionException e) {
       // pass
     }
 
@@ -1326,11 +1306,10 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     try {
       region.clear();
       fail("Should have thrown RegionDistributionException");
-    }
-    catch (RegionDistributionException e) {
+    } catch (RegionDistributionException e) {
       // pass
     }
-    
+
     // PUTALL
     reset.run();
     Host.getHost(0).getVM(1).invoke(createRegion);
@@ -1339,30 +1318,27 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
       putAll.put("PUTALL_ME", "VAL");
       region.putAll(putAll);
       fail("Should have thrown RegionDistributionException");
-    }
-    catch (RegionDistributionException e) {
+    } catch (RegionDistributionException e) {
       // pass
     }
-    
+
     // INVALIDATE REGION
     reset.run();
     Host.getHost(0).getVM(1).invoke(createRegion);
     try {
       region.invalidateRegion();
       fail("Should have thrown RegionDistributionException");
-    }
-    catch (RegionDistributionException e) {
+    } catch (RegionDistributionException e) {
       // pass
     }
-    
+
     // DESTROY REGION
     reset.run();
     Host.getHost(0).getVM(1).invoke(createRegion);
     try {
       region.destroyRegion();
       fail("Should have thrown RegionDistributionException");
-    }
-    catch (RegionDistributionException e) {
+    } catch (RegionDistributionException e) {
       // pass
     }
   }
@@ -1370,8 +1346,8 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
   @Test
   public void testReinitialization() throws Exception {
     final String name = this.getUniqueName();
-    final String roleA = name+"-A";
-    final String[] requiredRoles = {roleA};
+    final String roleA = name + "-A";
+    final String[] requiredRoles = { roleA };
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -1382,25 +1358,24 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
     Properties config = new Properties();
     config.setProperty(ROLES, "");
     getSystem(config);
-    
+
     getCache();
-    
+
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(
-        requiredRoles, LossAction.NO_ACCESS, ResumptionAction.REINITIALIZE);
+    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.REINITIALIZE);
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
     fac.setScope(getRegionScope());
     fac.setDataPolicy(DataPolicy.REPLICATE);
     RegionAttributes attr = fac.create();
     Region region = createRootRegion(name, attr);
-    
-    assertTrue(((AbstractRegion)region).requiresReliabilityCheck());
+
+    assertTrue(((AbstractRegion) region).requiresReliabilityCheck());
     assertFalse(RequiredRoles.checkForRequiredRoles(region).isEmpty());
 
     final String key = "KEY-testReinitialization";
     final String val = "VALUE-testReinitialization";
-    
+
     Host.getHost(0).getVM(0).invoke(new CacheSerializableRunnable("Create Data") {
       public void run2() throws CacheException {
         createConnection(new String[] {});
@@ -1418,56 +1393,53 @@ public abstract class RegionReliabilityTestCase extends ReliabilityTestCase {
       public void run() {
         try {
           RequiredRoles.waitForRequiredRoles(finalRegion, -1);
-        } 
-        catch (InterruptedException e) {fail("interrupted");}
-        catch (RegionReinitializedException e) {}
+        } catch (InterruptedException e) {
+          fail("interrupted");
+        } catch (RegionReinitializedException e) {
+        }
       }
     });
     thread.start();
-    
+
     // create role and verify reinitialization took place
     Host.getHost(0).getVM(1).invokeAsync(new CacheSerializableRunnable("Create Role") {
       public void run2() throws CacheException {
-        createConnection(new String[] {roleA});
+        createConnection(new String[] { roleA });
         AttributesFactory fac = new AttributesFactory();
         fac.setScope(getRegionScope());
         RegionAttributes attr = fac.create();
         createRootRegion(name, attr);
       }
     });
-    
+
     ThreadUtils.join(thread, 30 * 1000);
     assertTrue(region.isDestroyed());
     try {
       region.put("fee", "fi");
       fail("Should have thrown RegionReinitializedException");
-    }
-    catch(RegionReinitializedException e) {
+    } catch (RegionReinitializedException e) {
       // pass
     }
     try {
       RequiredRoles.checkForRequiredRoles(region);
       fail("Should have thrown RegionReinitializedException");
-    }
-    catch(RegionReinitializedException e) {
+    } catch (RegionReinitializedException e) {
       // pass
     }
     try {
       Role role = (Role) requiredRolesSet.iterator().next();
       RequiredRoles.isRoleInRegionMembership(region, role);
       fail("Should have thrown RegionReinitializedException");
-    }
-    catch(RegionReinitializedException e) {
+    } catch (RegionReinitializedException e) {
       // pass
     }
-    
+
     region = getRootRegion(name);
     assertNotNull(region);
-    assertTrue(((AbstractRegion)region).requiresReliabilityCheck());
+    assertTrue(((AbstractRegion) region).requiresReliabilityCheck());
     assertTrue(RequiredRoles.checkForRequiredRoles(region).isEmpty());
     assertNotNull(region.getEntry(key));
     assertEquals(val, region.getEntry(key).getValue());
   }
-  
-}
 
+}

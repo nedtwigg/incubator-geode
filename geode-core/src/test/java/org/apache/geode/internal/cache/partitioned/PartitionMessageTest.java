@@ -37,7 +37,6 @@ import org.apache.geode.internal.cache.TXStateProxyImpl;
 import org.apache.geode.test.fake.Fakes;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-
 @Category(UnitTest.class)
 public class PartitionMessageTest {
 
@@ -48,49 +47,49 @@ public class PartitionMessageTest {
   private TXManagerImpl txMgr;
   private long startTime = 1;
   TXStateProxy tx;
-  
+
   @Before
   public void setUp() throws PRLocallyDestroyedException, InterruptedException {
     cache = Fakes.cache();
-    dm = mock(DistributionManager.class);  
+    dm = mock(DistributionManager.class);
     msg = mock(PartitionMessage.class);
     pr = mock(PartitionedRegion.class);
     txMgr = mock(TXManagerImpl.class);
     tx = mock(TXStateProxyImpl.class);
-    
+
     when(msg.checkCacheClosing(dm)).thenReturn(false);
     when(msg.checkDSClosing(dm)).thenReturn(false);
     when(msg.getPartitionedRegion()).thenReturn(pr);
     when(msg.getGemFireCacheImpl()).thenReturn(cache);
     when(msg.getStartPartitionMessageProcessingTime(pr)).thenReturn(startTime);
     when(msg.getTXManagerImpl(cache)).thenReturn(txMgr);
-    
-    doAnswer(new CallsRealMethods()).when(msg).process(dm);     
+
+    doAnswer(new CallsRealMethods()).when(msg).process(dm);
   }
 
   @Test
-  public void messageWithNoTXPerformsOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {   
+  public void messageWithNoTXPerformsOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {
     when(txMgr.masqueradeAs(msg)).thenReturn(null);
     msg.process(dm);
-    
+
     verify(msg, times(1)).operateOnPartitionedRegion(dm, pr, startTime);
   }
-  
+
   @Test
-  public void messageForNotFinishedTXPerformsOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {   
+  public void messageForNotFinishedTXPerformsOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {
     when(txMgr.masqueradeAs(msg)).thenReturn(tx);
     when(tx.isInProgress()).thenReturn(true);
     msg.process(dm);
-    
+
     verify(msg, times(1)).operateOnPartitionedRegion(dm, pr, startTime);
   }
-  
+
   @Test
-  public void messageForFinishedTXDoesNotPerformOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {   
+  public void messageForFinishedTXDoesNotPerformOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {
     when(txMgr.masqueradeAs(msg)).thenReturn(tx);
     when(tx.isInProgress()).thenReturn(false);
     msg.process(dm);
-  
+
     verify(msg, times(0)).operateOnPartitionedRegion(dm, pr, startTime);
   }
 
@@ -103,11 +102,11 @@ public class PartitionMessageTest {
     when(msg.getTXManagerImpl(cache)).thenReturn(txMgr);
     when(msg.canParticipateInTransaction()).thenReturn(true);
     when(msg.canStartRemoteTransaction()).thenReturn(true);
-    
+
     msg.process(dm);
-    
+
     txMgr.close();
-    
+
     msg.process(dm);
 
     verify(msg, times(1)).operateOnPartitionedRegion(dm, pr, startTime);

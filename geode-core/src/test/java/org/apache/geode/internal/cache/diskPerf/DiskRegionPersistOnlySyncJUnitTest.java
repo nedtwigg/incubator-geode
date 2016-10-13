@@ -48,12 +48,12 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
     diskProps.setDiskDirs(dirs);
     diskProps.setPersistBackup(true);
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
-    
+
     log = ds.getLogWriter();
   }
 
   private static int ENTRY_SIZE = 1024;
-  
+
   /* OP_COUNT can be increased/decrease as per the requirement.
    * If required to be set as higher value such as 1000000
    * one needs to set the VM heap size accordingly.
@@ -66,18 +66,14 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
   @Test
   public void testPopulate1kbwrites() {
     RegionAttributes ra = region.getAttributes();
-//    final String key = "K";
+    //    final String key = "K";
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
-    String config = "ENTRY_SIZE=" + ENTRY_SIZE + " OP_COUNT=" + OP_COUNT
-        + " UNIQUE_KEYS=" + UNIQUE_KEYS + " opLogEnabled="
-        + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog") + " syncWrites="
-        + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
+    Arrays.fill(value, (byte) 77);
+    String config = "ENTRY_SIZE=" + ENTRY_SIZE + " OP_COUNT=" + OP_COUNT + " UNIQUE_KEYS=" + UNIQUE_KEYS + " opLogEnabled=" + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog") + " syncWrites=" + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
     if (ra.getDiskStoreName() != null) {
-      config += " diskStoreName="+ra.getDiskStoreName();
+      config += " diskStoreName=" + ra.getDiskStoreName();
     } else {
-      config += " ["
-        + ra.getDiskWriteAttributes() + "]";
+      config += " [" + ra.getDiskWriteAttributes() + "]";
     }
     log.info(config);
     // for recovery test:
@@ -97,8 +93,7 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
 
         region.put(new Integer(i), value);
       }
-    }
-    else {
+    } else {
       for (int i = 0; i < OP_COUNT; i++) {
         region.put("" + (i + 10000), value);
       }
@@ -108,11 +103,9 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
     long et = endTime - startTime;
     long etSecs = et / 1000;
     long opPerSec = etSecs == 0 ? 0 : (OP_COUNT / (et / 1000));
-    long bytesPerSec = etSecs == 0 ? 0
-        : ((OP_COUNT * ENTRY_SIZE) / (et / 1000));
+    long bytesPerSec = etSecs == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (et / 1000));
 
-    String stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec="
-        + bytesPerSec;
+    String stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec=" + bytesPerSec;
     log.info(stats);
     System.out.println("Stats for 1kb writes:" + stats);
     // close the cache after that create it again and then get the values to
@@ -127,8 +120,7 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
       cache = createCache();
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       System.out.println("Cache created to test the recovery..");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("failed while creating the cache ");
     }
@@ -151,14 +143,14 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
     assertTrue((region.get("794").toString()).equals("794"));
     assertTrue((region.get("123").toString()).equals("123"));
     assertTrue((region.get("4768").toString()).equals("4768"));
-    assertTrue((region.get("987").toString()).equals("987")); 
+    assertTrue((region.get("987").toString()).equals("987"));
     closeDown();
   }
 
   @Test
   public void testPopulate5kbwrites() {
     ENTRY_SIZE = 1024 * 5;
-    
+
     /* OP_COUNT can be increased/decrease as per the requirement.
      * If required to be set as higher value such as 1000000
      * one needs to set the VM heap size accordingly.
@@ -168,18 +160,14 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
     OP_COUNT = 1000;
     UNIQUE_KEYS = Boolean.getBoolean("DRP.UNIQUE_KEYS");
     RegionAttributes ra = region.getAttributes();
-//    final String key = "K";
+    //    final String key = "K";
     final byte[] value = new byte[ENTRY_SIZE];
-    Arrays.fill(value, (byte)77);
-    String config = "ENTRY_SIZE=" + ENTRY_SIZE + " OP_COUNT=" + OP_COUNT
-        + " UNIQUE_KEYS=" + UNIQUE_KEYS + " opLogEnabled="
-        + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog") + " syncWrites="
-        + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
+    Arrays.fill(value, (byte) 77);
+    String config = "ENTRY_SIZE=" + ENTRY_SIZE + " OP_COUNT=" + OP_COUNT + " UNIQUE_KEYS=" + UNIQUE_KEYS + " opLogEnabled=" + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog") + " syncWrites=" + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
     if (ra.getDiskStoreName() != null) {
-      config += " diskStoreName="+ra.getDiskStoreName();
+      config += " diskStoreName=" + ra.getDiskStoreName();
     } else {
-      config += " ["
-        + ra.getDiskWriteAttributes() + "]";
+      config += " [" + ra.getDiskWriteAttributes() + "]";
     }
     log.info(config);
 
@@ -189,8 +177,7 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
 
         region.put(new Integer(i), value);
       }
-    }
-    else {
+    } else {
       for (int i = 0; i < OP_COUNT; i++) {
         region.put("" + (i + 10000), value);
       }
@@ -198,20 +185,17 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
 
     long endTime = System.currentTimeMillis();
 
-  //  region.close(); // closes disk file which will flush all buffers
-    ((LocalRegion)region).forceFlush();
+    //  region.close(); // closes disk file which will flush all buffers
+    ((LocalRegion) region).forceFlush();
 
     long et = endTime - startTime;
     long etSecs = et / 1000;
     long opPerSec = etSecs == 0 ? 0 : (OP_COUNT / (et / 1000));
-    long bytesPerSec = etSecs == 0 ? 0
-        : ((OP_COUNT * ENTRY_SIZE) / (et / 1000));
+    long bytesPerSec = etSecs == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (et / 1000));
 
-    String stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec="
-        + bytesPerSec;
+    String stats = "et=" + et + "ms writes/sec=" + opPerSec + " bytes/sec=" + bytesPerSec;
     log.info(stats);
     System.out.println("Stats for 5kb writes :" + stats);
   }
 
 }
-

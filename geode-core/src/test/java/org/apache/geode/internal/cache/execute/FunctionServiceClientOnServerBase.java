@@ -34,7 +34,8 @@ public abstract class FunctionServiceClientOnServerBase extends FunctionServiceC
     ClientCache cache = createServersAndClient(numberOfExecutions());
   }
 
-  @Override public Execution getExecution() {
+  @Override
+  public Execution getExecution() {
     return FunctionService.onServers(getCache());
   }
 }

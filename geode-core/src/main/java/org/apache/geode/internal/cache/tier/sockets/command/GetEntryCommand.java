@@ -40,10 +40,9 @@ public class GetEntryCommand extends Request {
 
   protected GetEntryCommand() {
   }
-  
+
   @Override
-  public void getValueAndIsObject(Region p_region, Object key,
-      Object callbackArg, ServerConnection servConn, Object[] result) {
+  public void getValueAndIsObject(Region p_region, Object key, Object callbackArg, ServerConnection servConn, Object[] result) {
     Object data = null;
     LocalRegion region = (LocalRegion) p_region;
     Entry entry = region.getEntry(key);

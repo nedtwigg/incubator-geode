@@ -16,6 +16,7 @@
  */
 
 package org.apache.geode.internal.cache;
+
 import java.io.*;
 
 import org.apache.geode.internal.ExternalizableDSFID;
@@ -42,35 +43,34 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
  * receive a request to rebalance.
  * 
  */
-public final class Node extends ExternalizableDSFID
-{
+public final class Node extends ExternalizableDSFID {
   private InternalDistributedMember memberId;
-  
+
   public static final int NONE = 0;
   public static final int ACCESSOR = 1;
   public static final int DATASTORE = 2;
   public static final int ACCESSOR_DATASTORE = 3;
   public static final int FIXED_PR_ACCESSOR = 4;
   public static final int FIXED_PR_DATASTORE = 5;
-  
+
   private int prType = Node.NONE;
-  
+
   private boolean isPersistent = false;
 
   private byte cacheLoaderWriterByte;
-  
+
   private int serialNumber;
 
   public Node(InternalDistributedMember id, int serialNumber) {
     this.memberId = id;
     this.serialNumber = serialNumber;
   }
-  
+
   public Node(Node node) {
     this.memberId = node.getMemberId();
     this.serialNumber = node.serialNumber;
   }
-  
+
   public Node(DataInput in) throws IOException, ClassNotFoundException {
     fromData(in);
   }
@@ -78,36 +78,33 @@ public final class Node extends ExternalizableDSFID
   // for Externalizable
   public Node() {
   }
-  
-  public InternalDistributedMember getMemberId()
-  {
+
+  public InternalDistributedMember getMemberId() {
     return this.memberId;
   }
 
   public boolean isPersistent() {
     return this.isPersistent;
   }
-  
+
   public void setPersistence(boolean isPersistent) {
     this.isPersistent = isPersistent;
   }
-  
-  @Override  
-  public String toString()
-  {
-    return ("Node=[memberId=" + this.memberId + "; prType=" + prType + "; isPersistent="+ isPersistent+"]");
+
+  @Override
+  public String toString() {
+    return ("Node=[memberId=" + this.memberId + "; prType=" + prType + "; isPersistent=" + isPersistent + "]");
   }
 
-  @Override  
-  public int hashCode()
-  {
+  @Override
+  public int hashCode() {
     return this.memberId.hashCode() + 31 * serialNumber;
   }
 
   public int getPRType() {
     return prType;
   }
-  
+
   public void setPRType(int type) {
     this.prType = type;
   }
@@ -115,52 +112,44 @@ public final class Node extends ExternalizableDSFID
   public void setLoaderWriterByte(byte b) {
     this.cacheLoaderWriterByte = b;
   }
-  
 
   public boolean isCacheLoaderAttached() {
-    if (this.cacheLoaderWriterByte == 0x01
-        || this.cacheLoaderWriterByte == 0x03) {
+    if (this.cacheLoaderWriterByte == 0x01 || this.cacheLoaderWriterByte == 0x03) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
   public boolean isCacheWriterAttached() {
-    if (this.cacheLoaderWriterByte == 0x02
-        || this.cacheLoaderWriterByte == 0x03) {
+    if (this.cacheLoaderWriterByte == 0x02 || this.cacheLoaderWriterByte == 0x03) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
-  
-  @Override  
-  public boolean equals(Object obj)
-  {
+
+  @Override
+  public boolean equals(Object obj) {
     if (obj == this) {
       return true;
     }
     if (obj instanceof Node) {
-      Node n = (Node)obj;
-      if (this.memberId.equals(n.memberId)
-          && this.serialNumber == n.serialNumber) {
+      Node n = (Node) obj;
+      if (this.memberId.equals(n.memberId) && this.serialNumber == n.serialNumber) {
         return true;
       }
     }
     return false;
   }
 
-  @Override  
+  @Override
   public int getDSFID() {
     return PR_NODE;
   }
 
-  @Override  
-  public void toData(DataOutput out) throws IOException
-  {
+  @Override
+  public void toData(DataOutput out) throws IOException {
     InternalDataSerializer.invokeToData(this.memberId, out);
     out.writeInt(this.prType);
     out.writeBoolean(this.isPersistent);
@@ -168,9 +157,8 @@ public final class Node extends ExternalizableDSFID
     out.writeInt(serialNumber);
   }
 
-  @Override  
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.memberId = new InternalDistributedMember();
     InternalDataSerializer.invokeFromData(this.memberId, in);
     this.prType = in.readInt();

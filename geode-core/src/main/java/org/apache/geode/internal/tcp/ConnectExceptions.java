@@ -32,14 +32,13 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  * @since GemFire 3.0
  */
 public class ConnectExceptions extends GemFireCheckedException {
-private static final long serialVersionUID = -4173688946448867706L;
+  private static final long serialVersionUID = -4173688946448867706L;
 
   /** The causes of this exception */
   private List causes;
 
   /** The InternalDistributedMember's of the members we couldn't connect/send to */
   private List members;
-  
 
   ////////////////////  Constructors  ////////////////////
 
@@ -51,7 +50,6 @@ private static final long serialVersionUID = -4173688946448867706L;
     this.causes = new ArrayList();
     this.members = new ArrayList();
   }
-
 
   /**
    * Notes the member we couldn't connect to.
@@ -79,11 +77,11 @@ private static final long serialVersionUID = -4173688946448867706L;
   @Override
   public String getMessage() {
     StringBuffer sb = new StringBuffer();
-    for (Iterator iter = this.members.iterator(); iter.hasNext(); ) {
+    for (Iterator iter = this.members.iterator(); iter.hasNext();) {
       sb.append(' ').append(iter.next());
     }
     sb.append(" ").append(LocalizedStrings.ConnectException_CAUSES.toLocalizedString());
-    for (Iterator iter = this.causes.iterator(); iter.hasNext(); ) {
+    for (Iterator iter = this.causes.iterator(); iter.hasNext();) {
       sb.append(" {").append(iter.next()).append("}");
     }
     return LocalizedStrings.ConnectException_COULD_NOT_CONNECT_TO_0.toLocalizedString(sb);

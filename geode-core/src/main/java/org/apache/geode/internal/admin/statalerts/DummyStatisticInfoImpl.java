@@ -53,8 +53,7 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
    * @param statisticsTextId
    * @param statisticName
    */
-  public DummyStatisticInfoImpl(String statisticsTypeName,
-      String statisticsTextId, String statisticName) {
+  public DummyStatisticInfoImpl(String statisticsTypeName, String statisticsTextId, String statisticName) {
     super();
     this.statisticsTypeName = statisticsTypeName;
     this.statisticsTextId = statisticsTextId;
@@ -78,13 +77,11 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
   }
 
   public StatisticDescriptor getStatisticDescriptor() {
-    throw new UnsupportedOperationException(
-        "DummyStatisticInfoImpl class does not support getStatisticDescriptor method.");
+    throw new UnsupportedOperationException("DummyStatisticInfoImpl class does not support getStatisticDescriptor method.");
   }
 
   public Statistics getStatistics() {
-    throw new UnsupportedOperationException(
-        "DummyStatisticInfoImpl class does not support getStatistics method.");
+    throw new UnsupportedOperationException("DummyStatisticInfoImpl class does not support getStatistics method.");
   }
 
   public String getStatisticsTypeName() {
@@ -96,8 +93,7 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
   }
 
   public Number getValue() {
-    throw new UnsupportedOperationException(
-        "DummyStatisticInfoImpl class does not support getValue method.");
+    throw new UnsupportedOperationException("DummyStatisticInfoImpl class does not support getValue method.");
   }
 
   @Override
@@ -107,12 +103,9 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
       return false;
     }
 
-    DummyStatisticInfoImpl other = (DummyStatisticInfoImpl)object;
+    DummyStatisticInfoImpl other = (DummyStatisticInfoImpl) object;
 
-    if (this.statisticName.equals(other.getStatisticName())
-        && this.statisticsTypeName.equals(other.getStatisticsTypeName())
-        && this.statisticsTextId != null
-        && this.statisticsTextId.equals(other.getStatisticsTextId())) {
+    if (this.statisticName.equals(other.getStatisticName()) && this.statisticsTypeName.equals(other.getStatisticsTypeName()) && this.statisticsTextId != null && this.statisticsTextId.equals(other.getStatisticsTextId())) {
       return true;
 
     }
@@ -126,8 +119,7 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
     out.writeUTF(this.statisticName);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.statisticsTypeName = in.readUTF();
     this.statisticsTextId = in.readUTF();
     this.statisticName = in.readUTF();

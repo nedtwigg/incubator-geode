@@ -69,13 +69,11 @@ public class CleanUpJUnitTest {
   public void testGetSimpleDataSource() throws Exception {
     try {
       Context ctx = cache.getJNDIContext();
-      GemFireBasicDataSource ds = (GemFireBasicDataSource) ctx
-          .lookup("java:/SimpleDataSource");
+      GemFireBasicDataSource ds = (GemFireBasicDataSource) ctx.lookup("java:/SimpleDataSource");
       Connection conn = ds.getConnection();
       if (conn == null)
-          fail("DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
-    }
-    catch (Exception e) {
+        fail("DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
+    } catch (Exception e) {
       fail("Exception occured in testGetSimpleDataSource due to " + e);
       e.printStackTrace();
     }
@@ -99,19 +97,15 @@ public class CleanUpJUnitTest {
   public void testBlockingTimeOut() {
     try {
       Context ctx = cache.getJNDIContext();
-      GemFireConnPooledDataSource ds = (GemFireConnPooledDataSource) ctx
-          .lookup("java:/PooledDataSource");
-      GemFireConnectionPoolManager provider = (GemFireConnectionPoolManager) ds
-          .getConnectionProvider();
-      ConnectionPoolCacheImpl poolCache = (ConnectionPoolCacheImpl) provider
-          .getConnectionPoolCache();
+      GemFireConnPooledDataSource ds = (GemFireConnPooledDataSource) ctx.lookup("java:/PooledDataSource");
+      GemFireConnectionPoolManager provider = (GemFireConnectionPoolManager) ds.getConnectionProvider();
+      ConnectionPoolCacheImpl poolCache = (ConnectionPoolCacheImpl) provider.getConnectionPoolCache();
       poolCache.getPooledConnectionFromPool();
       Thread.sleep(40000);
       if (!(poolCache.activeCache.isEmpty())) {
         fail("Clean-up on expiration not done");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("Exception occured in testBlockingTimeOut due to " + e);
       e.printStackTrace();
     }

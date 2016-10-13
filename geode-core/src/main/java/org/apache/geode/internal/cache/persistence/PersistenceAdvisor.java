@@ -30,18 +30,17 @@ import org.apache.geode.internal.cache.CacheDistributionAdvisor;
  *
  */
 public interface PersistenceAdvisor {
-  
+
   /**This should be called before performing a profile exchange for the region,
    * but after the persistent data has been read.
    */
   public void initialize();
-  
+
   /**
    * Try to acquire the distributed lock which members must grab for
    * in the case of a tie. Whoever gets the lock initializes first.
    */
   boolean acquireTieLock();
-
 
   /**
    * Determine the state of this member on it's peers, along with
@@ -49,8 +48,7 @@ public interface PersistenceAdvisor {
    * @return a map from the peers persistentId to the state of this
    * member according to that peer.
    */
-  PersistentStateQueryResults getMyStateOnMembers(
-      Set<InternalDistributedMember> members) throws ReplyException, InterruptedException;
+  PersistentStateQueryResults getMyStateOnMembers(Set<InternalDistributedMember> members) throws ReplyException, InterruptedException;
 
   /**
    * Retrieve the state of a particular member from storage.
@@ -86,15 +84,14 @@ public interface PersistenceAdvisor {
    * Get the set of peers that are online 
    */
   HashSet<PersistentMemberID> getPersistedOnlineOrEqualMembers();
-  
-  
+
   /**Update the membership on this member to reflect changes
    * that have happened since the member was last online. This method
    * should be called before the member is online.
    * @param replicate the replicate to initialize from.
    */
   public void updateMembershipView(InternalDistributedMember replicate, boolean targetReinitializing);
-  
+
   /**
    * Indicate that the current member is online.
    * @param didGII - indicates that the member did a GII (for updating stats)
@@ -102,9 +99,8 @@ public interface PersistenceAdvisor {
    * an atomic bucket creation.
    * 
    */
-  public void setOnline(boolean didGII, boolean atomicCreation,
-      PersistentMemberID newId);
-  
+  public void setOnline(boolean didGII, boolean atomicCreation, PersistentMemberID newId);
+
   /**
    * Indicate that the current member has started the initialization process.
    * This creates a new persistent ID for this member and notifies other members
@@ -116,14 +112,14 @@ public interface PersistenceAdvisor {
    * Called when a peer is about to come online.
    */
   void prepareNewMember(InternalDistributedMember sender, PersistentMemberID oldId, PersistentMemberID newId);
-  
+
   /**
    * Called when a peer has destroyed the region. This is usually
    * handled by the destroy region code, but if a member crashes
    * during a destroy, it may trigger this removal during recovery.
    */
   void removeMember(PersistentMemberID id);
-  
+
   /**
    * Called when a peer returns that it has closed the cache or region when
    * a region operation was in flight.
@@ -135,11 +131,11 @@ public interface PersistenceAdvisor {
    * process of becoming online, this return the new ID of the member
    */
   PersistentMemberID getInitializingID();
-  
+
   public void close();
 
   public Set<PersistentMemberID> getPersistedMembers();
-  
+
   /**
    * Check to see if the other members know about the current member
    * .
@@ -152,7 +148,7 @@ public interface PersistenceAdvisor {
   public boolean checkMyStateOnMembers(Set<InternalDistributedMember> replicates) throws ReplyException, InterruptedException, ConflictingPersistentDataException;
 
   public void releaseTieLock();
-  
+
   /**
    * Returns the member id of the member who has the latest
    * copy of the persistent region. This may be the local member ID
@@ -163,21 +159,20 @@ public interface PersistenceAdvisor {
    * @throws ConflictingPersistentDataException if there are active members
    * which are not based on the state that is persisted in this member.
    */
-  public CacheDistributionAdvisor.InitialImageAdvice getInitialImageAdvice(
-      CacheDistributionAdvisor.InitialImageAdvice previousAdvice, boolean recoverFromDisk);
-  
+  public CacheDistributionAdvisor.InitialImageAdvice getInitialImageAdvice(CacheDistributionAdvisor.InitialImageAdvice previousAdvice, boolean recoverFromDisk);
+
   /**
    * Returns true if this member used to host data.
    */
   public boolean wasHosting();
-  
+
   /* 
    * Persist members to be offline and equal
    * @param Map<InternalDistributedMember, PersistentMemberID>
    *   map of current online members
    */
   public void persistMembersOfflineAndEqual(Map<InternalDistributedMember, PersistentMemberID> map);
-  
+
   /**
    * Generate a new persistent id for this region.
    */

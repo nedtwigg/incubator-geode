@@ -38,17 +38,17 @@ import org.apache.geode.internal.cache.tier.sockets.HAEventWrapper;
 public class HAContainerRegion implements HAContainerWrapper {
 
   private Region map;
-  
+
   private final Map<String, CacheClientProxy> haRegionNameToProxy;
-  
-  public HAContainerRegion (Region region) {
+
+  public HAContainerRegion(Region region) {
     map = region;
     haRegionNameToProxy = new ConcurrentHashMap<String, CacheClientProxy>();
   }
 
   public ClientProxyMembershipID getProxyID(String haRegionName) {
     CacheClientProxy proxy = haRegionNameToProxy.get(haRegionName);
-    if (proxy != null){
+    if (proxy != null) {
       return proxy.getProxyID();
     } else {
       return null;
@@ -56,7 +56,7 @@ public class HAContainerRegion implements HAContainerWrapper {
   }
 
   public Region getMapForTest() {
-    Region region = (Region)map;
+    Region region = (Region) map;
     return region;
   }
 
@@ -67,14 +67,14 @@ public class HAContainerRegion implements HAContainerWrapper {
   public CacheClientProxy getProxy(String haName) {
     return haRegionNameToProxy.get(haName);
   }
-  
+
   public Object removeProxy(String haName) {
     return haRegionNameToProxy.remove(haName);
   }
-    
+
   public Object getKey(Object key) {
-    Map.Entry entry = ((Region)map).getEntry(key);
-    if(entry != null) {
+    Map.Entry entry = ((Region) map).getEntry(key);
+    if (entry != null) {
       try {
         return entry.getKey();
       }
@@ -87,17 +87,15 @@ public class HAContainerRegion implements HAContainerWrapper {
   }
 
   public String getName() {
-    return ((Region)map).getName();
+    return ((Region) map).getName();
   }
 
   public void cleanUp() {
     try {
-      ((Region)map).destroyRegion();
-    }
-    catch (CancelException e) {
+      ((Region) map).destroyRegion();
+    } catch (CancelException e) {
       // ignore
-    }
-    catch (RegionDestroyedException e) {
+    } catch (RegionDestroyedException e) {
       // ignore
     }
   }
@@ -119,24 +117,24 @@ public class HAContainerRegion implements HAContainerWrapper {
   }
 
   public Object get(Object key) {
-    ClientUpdateMessageImpl msg = (ClientUpdateMessageImpl)map.get(key);
+    ClientUpdateMessageImpl msg = (ClientUpdateMessageImpl) map.get(key);
     if (msg != null) {
-      msg.setEventIdentifier(((HAEventWrapper)key).getEventId());
+      msg.setEventIdentifier(((HAEventWrapper) key).getEventId());
       if (msg.hasCqs()) {
-        msg.setClientCqs(((HAEventWrapper)key).getClientCqs());
+        msg.setClientCqs(((HAEventWrapper) key).getClientCqs());
       }
     }
     return msg;
   }
-  
+
   public Object getEntry(Object key) {
-    Region.Entry entry = ((Region)map).getEntry(key);
-    if(entry != null) {
-      ClientUpdateMessageImpl msg = (ClientUpdateMessageImpl)entry.getValue();
-      msg.setEventIdentifier(((HAEventWrapper)key).getEventId());
-      if(msg.hasCqs()) {
-        msg.setClientCqs(((HAEventWrapper)key).getClientCqs());
-      }      
+    Region.Entry entry = ((Region) map).getEntry(key);
+    if (entry != null) {
+      ClientUpdateMessageImpl msg = (ClientUpdateMessageImpl) entry.getValue();
+      msg.setEventIdentifier(((HAEventWrapper) key).getEventId());
+      if (msg.hasCqs()) {
+        msg.setClientCqs(((HAEventWrapper) key).getClientCqs());
+      }
     }
     return entry;
   }
@@ -157,7 +155,7 @@ public class HAContainerRegion implements HAContainerWrapper {
   public Object putIfAbsent(Object key, Object value) {
     return map.putIfAbsent(key, value);
   }
-  
+
   public void putAll(Map t) {
     map.putAll(t);
   }

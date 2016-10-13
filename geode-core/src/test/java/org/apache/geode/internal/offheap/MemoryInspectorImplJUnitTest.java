@@ -37,7 +37,7 @@ public class MemoryInspectorImplJUnitTest {
   @Before
   public void setUp() {
     this.freeList = mock(FreeListManager.class);
-    this.inspector =  new MemoryInspectorImpl(freeList);
+    this.inspector = new MemoryInspectorImpl(freeList);
   }
 
   @Test
@@ -86,7 +86,7 @@ public class MemoryInspectorImplJUnitTest {
   public void createSnapshotCallsGetOrderedBlocks() {
     List<MemoryBlock> emptyList = new ArrayList<MemoryBlock>();
     createSnapshot(emptyList);
-    verify(this.freeList , times(1)).getOrderedBlocks();
+    verify(this.freeList, times(1)).getOrderedBlocks();
     assertSame(emptyList, inspector.getSnapshot());
   }
 

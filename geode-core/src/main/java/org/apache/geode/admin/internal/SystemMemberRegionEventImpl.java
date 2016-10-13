@@ -27,10 +27,7 @@ import org.apache.geode.cache.Operation;
  *
  * @since GemFire 5.0
  */
-public class SystemMemberRegionEventImpl
-  extends SystemMemberCacheEventImpl
-  implements SystemMemberRegionEvent
-{
+public class SystemMemberRegionEventImpl extends SystemMemberCacheEventImpl implements SystemMemberRegionEvent {
 
   /** 
    * The path of region created/destroyed 

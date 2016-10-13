@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
+
 package org.apache.geode.admin;
 
 import org.apache.geode.GemFireCheckedException;
@@ -28,7 +28,7 @@ import org.apache.geode.GemFireCheckedException;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public class AdminException extends GemFireCheckedException {
-private static final long serialVersionUID = 879398950879472021L;
+  private static final long serialVersionUID = 879398950879472021L;
 
   /**
    * Constructs a new exception with <code>null</code> as its detail message.
@@ -85,5 +85,5 @@ private static final long serialVersionUID = 879398950879472021L;
   public AdminException(Throwable cause) {
     super(cause);
   }
-    
+
 }

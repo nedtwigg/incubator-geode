@@ -32,16 +32,13 @@ import org.apache.geode.management.internal.cli.domain.IndexInfo;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
-
-
-public class DestroyIndexFunction extends FunctionAdapter implements
-InternalEntity {
+public class DestroyIndexFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
   @Override
   public void execute(FunctionContext context) {
-    IndexInfo indexInfo = (IndexInfo)context.getArguments();
+    IndexInfo indexInfo = (IndexInfo) context.getArguments();
     String memberId = null;
 
     try {
@@ -50,19 +47,19 @@ InternalEntity {
       QueryService queryService = cache.getQueryService();
       String indexName = indexInfo.getIndexName();
       String regionPath = indexInfo.getRegionPath();
-      
-      XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", regionPath, CacheXml.INDEX, "name", indexName); 
-      
+
+      XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", regionPath, CacheXml.INDEX, "name", indexName);
+
       if (regionPath != null && !regionPath.isEmpty()) {
         Region<?, ?> region = cache.getRegion(regionPath);
-        
+
         if (region != null) {
           if (indexName == null || indexName.isEmpty()) {
             queryService.removeIndexes(region);
             context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
           } else {
             Index index = queryService.getIndex(region, indexName);
-            
+
             if (index != null) {
               queryService.removeIndex(index);
               context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
@@ -102,7 +99,7 @@ InternalEntity {
   private boolean removeIndexByName(String name, QueryService queryService) {
     List<Index> indexes = (List<Index>) queryService.getIndexes();
     boolean removed = false;
-    
+
     if (indexes != null) {
       for (Index index : indexes) {
         if (index.getName().equals(name)) {
@@ -110,7 +107,7 @@ InternalEntity {
           removed = true;
         }
       }
-    } 
+    }
     return removed;
   }
 

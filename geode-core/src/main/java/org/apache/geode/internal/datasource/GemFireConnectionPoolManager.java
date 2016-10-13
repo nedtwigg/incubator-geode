@@ -26,8 +26,7 @@ import javax.sql.*;
  * managing the the conection pools(with and wothout transactions).
  * 
  */
-public class GemFireConnectionPoolManager implements ConnectionProvider,
-    Serializable {
+public class GemFireConnectionPoolManager implements ConnectionProvider, Serializable {
   private static final long serialVersionUID = 23723212980453813L;
   protected ConnectionPoolCache connPoolCache;
 
@@ -39,9 +38,7 @@ public class GemFireConnectionPoolManager implements ConnectionProvider,
    *          properties.
    * @param listener Connection event listner for the connections.
    */
-  public GemFireConnectionPoolManager(ConnectionPoolDataSource connPool,
-      ConfiguredDataSourceProperties configs,
-      javax.sql.ConnectionEventListener listener) throws PoolException {
+  public GemFireConnectionPoolManager(ConnectionPoolDataSource connPool, ConfiguredDataSourceProperties configs, javax.sql.ConnectionEventListener listener) throws PoolException {
     connPoolCache = new ConnectionPoolCacheImpl(connPool, listener, configs);
   }
 
@@ -53,9 +50,7 @@ public class GemFireConnectionPoolManager implements ConnectionProvider,
    *          properties.
    * @param listener Connection event listner for the connections.
    */
-  public GemFireConnectionPoolManager(XADataSource connPool,
-      ConfiguredDataSourceProperties configs,
-      javax.sql.ConnectionEventListener listener) throws PoolException {
+  public GemFireConnectionPoolManager(XADataSource connPool, ConfiguredDataSourceProperties configs, javax.sql.ConnectionEventListener listener) throws PoolException {
     connPoolCache = new TranxPoolCacheImpl(connPool, listener, configs);
   }
 

@@ -28,9 +28,9 @@ import java.util.concurrent.TimeoutException;
  * @since GemFire 6.0
  */
 public interface RebalanceOperation {
-  
+
   // NOTE: cancelled is the spelling used in java.util.concurrent.Future
-  
+
   /**
    * Returns true if this operation was cancelled before it completed.
    */
@@ -57,8 +57,7 @@ public interface RebalanceOperation {
    * @throws CancellationException if the operation was cancelled
    * @throws InterruptedException if the wait was interrupted
    */
-  public RebalanceResults getResults() 
-  throws CancellationException, InterruptedException;
+  public RebalanceResults getResults() throws CancellationException, InterruptedException;
 
   /**
    * Wait for this operation to complete and return the results.
@@ -70,6 +69,5 @@ public interface RebalanceOperation {
    * @throws TimeoutException if the wait timed out
    * @throws InterruptedException if the wait was interrupted 
    */
-  public RebalanceResults getResults(long timeout, TimeUnit unit)
-  throws CancellationException, TimeoutException, InterruptedException;
+  public RebalanceResults getResults(long timeout, TimeUnit unit) throws CancellationException, TimeoutException, InterruptedException;
 }

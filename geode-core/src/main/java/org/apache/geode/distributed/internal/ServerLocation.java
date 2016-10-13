@@ -35,7 +35,7 @@ import org.apache.geode.internal.net.SocketCreator;
  */
 public class ServerLocation implements DataSerializable, Comparable {
   private static final long serialVersionUID = -5850116974987640560L;
-  
+
   private String hostName;
   private int port;
   /**
@@ -63,9 +63,9 @@ public class ServerLocation implements DataSerializable, Comparable {
    * For DataSerializer
    */
   public ServerLocation() {
-    
+
   }
-  
+
   public ServerLocation(String hostName, int port) {
     this.hostName = hostName;
     this.port = port;
@@ -112,13 +112,11 @@ public class ServerLocation implements DataSerializable, Comparable {
         return false;
     } else if (other.hostName == null) {
       return false;
-    }
-    else if (!hostName.equals(other.hostName)) {
+    } else if (!hostName.equals(other.hostName)) {
       String canonicalHostName;
       try {
         canonicalHostName = SocketCreator.getLocalHost().getCanonicalHostName();
-      }
-      catch (UnknownHostException e) {
+      } catch (UnknownHostException e) {
         throw new IllegalStateException("getLocalHost failed with " + e);
       }
       if ("localhost".equals(hostName)) {
@@ -137,7 +135,7 @@ public class ServerLocation implements DataSerializable, Comparable {
       return false;
     return true;
   }
-  
+
   @Override
   public String toString() {
     return hostName + ":" + port;
@@ -146,12 +144,12 @@ public class ServerLocation implements DataSerializable, Comparable {
   public int compareTo(Object o) {
     ServerLocation other = (ServerLocation) o;
     int difference = hostName.compareTo(other.hostName);
-    if(difference != 0) {
+    if (difference != 0) {
       return difference;
     }
     return port - other.getPort();
   }
-  
+
   public void setUserId(long id) {
     this.userId = id;
   }
@@ -173,5 +171,5 @@ public class ServerLocation implements DataSerializable, Comparable {
   public boolean getRequiresCredentials() {
     return this.requiresCredentials.get() == REQUIRES_CREDENTIALS ? true : false;
   }
-  
+
 }

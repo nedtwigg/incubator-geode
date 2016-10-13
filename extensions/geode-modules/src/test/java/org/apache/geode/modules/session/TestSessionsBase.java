@@ -256,8 +256,7 @@ public abstract class TestSessionsBase {
   @Test
   public void testSessionExpiration2() throws Exception {
     // TestSessions only live for a minute
-    sessionManager.propertyChange(
-        new PropertyChangeEvent(server.getRootContext(), "sessionTimeout", new Integer(30), new Integer(1)));
+    sessionManager.propertyChange(new PropertyChangeEvent(server.getRootContext(), "sessionTimeout", new Integer(30), new Integer(1)));
 
     // Check that the value has been set to 60 seconds
     assertEquals(60, sessionManager.getMaxInactiveInterval());
@@ -459,8 +458,6 @@ public abstract class TestSessionsBase {
     HttpSession session = (HttpSession) servlet.getServletContext().getAttribute("session");
     Long lastAccess = (Long) session.getAttribute("lastAccessTime");
 
-    assertTrue(
-        "Last access time not set correctly: " + lastAccess.longValue() + " not <= " + session.getLastAccessedTime(),
-        lastAccess.longValue() <= session.getLastAccessedTime());
+    assertTrue("Last access time not set correctly: " + lastAccess.longValue() + " not <= " + session.getLastAccessedTime(), lastAccess.longValue() <= session.getLastAccessedTime());
   }
 }

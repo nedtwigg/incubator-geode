@@ -24,8 +24,7 @@ import org.apache.geode.distributed.ServerLauncher;
 import org.apache.geode.distributed.ServerLauncherCacheProvider;
 import org.apache.geode.internal.cache.CacheConfig;
 
-public class DefaultServerLauncherCacheProvider
-    implements ServerLauncherCacheProvider {
+public class DefaultServerLauncherCacheProvider implements ServerLauncherCacheProvider {
 
   @Override
   public Cache createCache(Properties gemfireProperties, ServerLauncher serverLauncher) {

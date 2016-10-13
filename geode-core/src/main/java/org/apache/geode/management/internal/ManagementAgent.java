@@ -126,10 +126,7 @@ public class ManagementAgent {
   }
 
   private boolean isServerNode(GemFireCacheImpl cache) {
-    return (cache.getDistributedSystem().getDistributedMember().getVmKind() != DistributionManager.LOCATOR_DM_TYPE && cache.getDistributedSystem()
-                                                                                                                           .getDistributedMember()
-                                                                                                                           .getVmKind() != DistributionManager.ADMIN_ONLY_DM_TYPE && !cache
-      .isClient());
+    return (cache.getDistributedSystem().getDistributedMember().getVmKind() != DistributionManager.LOCATOR_DM_TYPE && cache.getDistributedSystem().getDistributedMember().getVmKind() != DistributionManager.ADMIN_ONLY_DM_TYPE && !cache.isClient());
   }
 
   public synchronized void startAgent(GemFireCacheImpl cache) {
@@ -230,10 +227,8 @@ public class ManagementAgent {
           this.httpServer = JettyHelper.initJetty(bindAddress, port, SSLConfigurationFactory.getSSLConfigForComponent(SecurableCommunicationChannel.WEB));
 
           if (agentUtil.isWebApplicationAvailable(gemfireWar)) {
-            this.httpServer = JettyHelper
-                .addWebApplication(this.httpServer, "/gemfire", gemfireWar);
-            this.httpServer = JettyHelper
-                .addWebApplication(this.httpServer, "/geode-mgmt", gemfireWar);
+            this.httpServer = JettyHelper.addWebApplication(this.httpServer, "/gemfire", gemfireWar);
+            this.httpServer = JettyHelper.addWebApplication(this.httpServer, "/geode-mgmt", gemfireWar);
           }
 
           if (agentUtil.isWebApplicationAvailable(pulseWar)) {
@@ -242,10 +237,8 @@ public class ManagementAgent {
 
           if (isServer && this.config.getStartDevRestApi()) {
             if (agentUtil.isWebApplicationAvailable(gemfireAPIWar)) {
-              this.httpServer = JettyHelper.addWebApplication(this.httpServer, "/geode",
-                  gemfireAPIWar);
-              this.httpServer = JettyHelper.addWebApplication(this.httpServer, "/gemfire-api",
-                  gemfireAPIWar);
+              this.httpServer = JettyHelper.addWebApplication(this.httpServer, "/geode", gemfireAPIWar);
+              this.httpServer = JettyHelper.addWebApplication(this.httpServer, "/gemfire-api", gemfireAPIWar);
               isRestWebAppAdded = true;
             }
           } else {

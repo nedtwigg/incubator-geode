@@ -114,11 +114,11 @@ public class DiskOldAPIsJUnitTest {
     assertEquals(true, r.getAttributes().isDiskSynchronous());
     r.put("key", "value");
     {
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       PartitionedRegionDataStore prds = pr.getDataStore();
       Set<BucketRegion> s = prds.getAllLocalBucketRegions();
       assertTrue(s.size() > 0);
-      for (BucketRegion br: s) {
+      for (BucketRegion br : s) {
         assertEquals(true, br.getAttributes().isDiskSynchronous());
       }
     }
@@ -135,11 +135,11 @@ public class DiskOldAPIsJUnitTest {
     assertEquals(false, r.getAttributes().isDiskSynchronous());
     r.put("key", "value");
     {
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       PartitionedRegionDataStore prds = pr.getDataStore();
       Set<BucketRegion> s = prds.getAllLocalBucketRegions();
       assertTrue(s.size() > 0);
-      for (BucketRegion br: s) {
+      for (BucketRegion br : s) {
         assertEquals(false, br.getAttributes().isDiskSynchronous());
       }
     }
@@ -148,7 +148,7 @@ public class DiskOldAPIsJUnitTest {
     } else {
       r.close();
     }
-    
+
     // now try it with an overflow pr
     dwaf.setSynchronous(true);
     af.setDiskWriteAttributes(dwaf.create());
@@ -157,14 +157,14 @@ public class DiskOldAPIsJUnitTest {
     r = cache.createRegion("r3", af.create());
     assertEquals(true, r.getAttributes().isDiskSynchronous());
     {
-      for (int i=0; i < 300; i++) {
+      for (int i = 0; i < 300; i++) {
         r.put("key" + i, "value" + i);
       }
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       PartitionedRegionDataStore prds = pr.getDataStore();
       Set<BucketRegion> s = prds.getAllLocalBucketRegions();
       assertTrue(s.size() > 0);
-      for (BucketRegion br: s) {
+      for (BucketRegion br : s) {
         assertEquals(true, br.getAttributes().isDiskSynchronous());
       }
     }
@@ -181,14 +181,14 @@ public class DiskOldAPIsJUnitTest {
     r = cache.createRegion("r3", af.create());
     assertEquals(false, r.getAttributes().isDiskSynchronous());
     {
-      for (int i=0; i < 300; i++) {
+      for (int i = 0; i < 300; i++) {
         r.put("key" + i, "value" + i);
       }
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       PartitionedRegionDataStore prds = pr.getDataStore();
       Set<BucketRegion> s = prds.getAllLocalBucketRegions();
       assertTrue(s.size() > 0);
-      for (BucketRegion br: s) {
+      for (BucketRegion br : s) {
         assertEquals(false, br.getAttributes().isDiskSynchronous());
       }
     }
@@ -215,7 +215,7 @@ public class DiskOldAPIsJUnitTest {
     af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     Region r = cache.createRegion("r", af.create());
     {
-      LocalRegion lr = (LocalRegion)r;
+      LocalRegion lr = (LocalRegion) r;
       DiskStoreImpl ds = lr.getDiskStore();
       assertEquals(1, ds.getMaxOplogSize());
       assertEquals(333, ds.getTimeInterval());
@@ -229,7 +229,7 @@ public class DiskOldAPIsJUnitTest {
     af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
     r = cache.createRegion("r", af.create());
     {
-      LocalRegion lr = (LocalRegion)r;
+      LocalRegion lr = (LocalRegion) r;
       DiskStoreImpl ds = lr.getDiskStore();
       assertEquals(1, ds.getMaxOplogSize());
       assertEquals(333, ds.getTimeInterval());
@@ -238,12 +238,12 @@ public class DiskOldAPIsJUnitTest {
     }
     r.put("key", "value");
     {
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       PartitionedRegionDataStore prds = pr.getDataStore();
       Set<BucketRegion> s = prds.getAllLocalBucketRegions();
       assertTrue(s.size() > 0);
-      for (BucketRegion br: s) {
-        LocalRegion lr = (LocalRegion)br;
+      for (BucketRegion br : s) {
+        LocalRegion lr = (LocalRegion) br;
         DiskStoreImpl ds = lr.getDiskStore();
         assertEquals(1, ds.getMaxOplogSize());
         assertEquals(333, ds.getTimeInterval());
@@ -253,7 +253,7 @@ public class DiskOldAPIsJUnitTest {
     }
     r.localDestroyRegion();
   }
-  
+
   @Test
   public void testDWA_2() throws Exception {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -265,7 +265,7 @@ public class DiskOldAPIsJUnitTest {
     af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     Region r = cache.createRegion("r", af.create());
     {
-      LocalRegion lr = (LocalRegion)r;
+      LocalRegion lr = (LocalRegion) r;
       DiskStoreImpl ds = lr.getDiskStore();
       assertEquals(2, ds.getMaxOplogSize());
       assertEquals(1, ds.getTimeInterval());
@@ -278,7 +278,7 @@ public class DiskOldAPIsJUnitTest {
     af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
     r = cache.createRegion("r", af.create());
     {
-      LocalRegion lr = (LocalRegion)r;
+      LocalRegion lr = (LocalRegion) r;
       DiskStoreImpl ds = lr.getDiskStore();
       assertEquals(2, ds.getMaxOplogSize());
       assertEquals(1, ds.getTimeInterval());
@@ -286,12 +286,12 @@ public class DiskOldAPIsJUnitTest {
     }
     r.put("key", "value");
     {
-      PartitionedRegion pr = (PartitionedRegion)r;
+      PartitionedRegion pr = (PartitionedRegion) r;
       PartitionedRegionDataStore prds = pr.getDataStore();
       Set<BucketRegion> s = prds.getAllLocalBucketRegions();
       assertTrue(s.size() > 0);
-      for (BucketRegion br: s) {
-        LocalRegion lr = (LocalRegion)br;
+      for (BucketRegion br : s) {
+        LocalRegion lr = (LocalRegion) br;
         DiskStoreImpl ds = lr.getDiskStore();
         assertEquals(2, ds.getMaxOplogSize());
         assertEquals(1, ds.getTimeInterval());
@@ -312,11 +312,11 @@ public class DiskOldAPIsJUnitTest {
     f2.mkdir();
     try {
       AttributesFactory af = new AttributesFactory();
-      af.setDiskDirs(new File[]{f1, f2});
+      af.setDiskDirs(new File[] { f1, f2 });
       af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       Region r = cache.createRegion("r", af.create());
       {
-        LocalRegion lr = (LocalRegion)r;
+        LocalRegion lr = (LocalRegion) r;
         DiskStoreImpl ds = lr.getDiskStore();
         File[] dirs = ds.getDiskDirs();
         assertEquals(2, dirs.length);
@@ -329,7 +329,7 @@ public class DiskOldAPIsJUnitTest {
       af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
       r = cache.createRegion("r", af.create());
       {
-        LocalRegion lr = (LocalRegion)r;
+        LocalRegion lr = (LocalRegion) r;
         DiskStoreImpl ds = lr.getDiskStore();
         File[] dirs = ds.getDiskDirs();
         assertEquals(2, dirs.length);
@@ -338,12 +338,12 @@ public class DiskOldAPIsJUnitTest {
       }
       r.put("key", "value");
       {
-        PartitionedRegion pr = (PartitionedRegion)r;
+        PartitionedRegion pr = (PartitionedRegion) r;
         PartitionedRegionDataStore prds = pr.getDataStore();
         Set<BucketRegion> s = prds.getAllLocalBucketRegions();
         assertTrue(s.size() > 0);
-        for (BucketRegion br: s) {
-          LocalRegion lr = (LocalRegion)br;
+        for (BucketRegion br : s) {
+          LocalRegion lr = (LocalRegion) br;
           DiskStoreImpl ds = lr.getDiskStore();
           File[] dirs = ds.getDiskDirs();
           assertEquals(2, dirs.length);
@@ -370,11 +370,11 @@ public class DiskOldAPIsJUnitTest {
     f2.mkdir();
     try {
       AttributesFactory af = new AttributesFactory();
-      af.setDiskDirsAndSizes(new File[]{f1, f2}, new int[]{1,2});
+      af.setDiskDirsAndSizes(new File[] { f1, f2 }, new int[] { 1, 2 });
       af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       Region r = cache.createRegion("r", af.create());
       {
-        LocalRegion lr = (LocalRegion)r;
+        LocalRegion lr = (LocalRegion) r;
         DiskStoreImpl ds = lr.getDiskStore();
         File[] dirs = ds.getDiskDirs();
         assertEquals(2, dirs.length);
@@ -391,7 +391,7 @@ public class DiskOldAPIsJUnitTest {
       af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
       r = cache.createRegion("r", af.create());
       {
-        LocalRegion lr = (LocalRegion)r;
+        LocalRegion lr = (LocalRegion) r;
         DiskStoreImpl ds = lr.getDiskStore();
         File[] dirs = ds.getDiskDirs();
         assertEquals(2, dirs.length);
@@ -404,12 +404,12 @@ public class DiskOldAPIsJUnitTest {
       }
       r.put("key", "value");
       {
-        PartitionedRegion pr = (PartitionedRegion)r;
+        PartitionedRegion pr = (PartitionedRegion) r;
         PartitionedRegionDataStore prds = pr.getDataStore();
         Set<BucketRegion> s = prds.getAllLocalBucketRegions();
         assertTrue(s.size() > 0);
-        for (BucketRegion br: s) {
-          LocalRegion lr = (LocalRegion)br;
+        for (BucketRegion br : s) {
+          LocalRegion lr = (LocalRegion) br;
           DiskStoreImpl ds = lr.getDiskStore();
           File[] dirs = ds.getDiskDirs();
           assertEquals(2, dirs.length);
@@ -428,10 +428,10 @@ public class DiskOldAPIsJUnitTest {
       removeDir(f2);
     }
   }
-  
+
   private static void removeDir(File dir) {
     File[] files = dir.listFiles();
-    for (int i=0; i < files.length; i++) {
+    for (int i = 0; i < files.length; i++) {
       files[i].delete();
     }
     dir.delete();

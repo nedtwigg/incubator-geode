@@ -26,8 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractListener {
 
-  protected final List<ListenerEventType> events =
-      new ArrayList<ListenerEventType>();
+  protected final List<ListenerEventType> events = new ArrayList<ListenerEventType>();
 
   protected CountDownLatch latch;
 
@@ -45,8 +44,7 @@ public abstract class AbstractListener {
     events.clear();
   }
 
-  public boolean await(long timeout,
-      TimeUnit unit) throws InterruptedException {
+  public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
     return latch.await(timeout, unit);
   }
 

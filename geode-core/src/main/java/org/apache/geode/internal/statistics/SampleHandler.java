@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface SampleHandler {
 
- /**
+  /**
   * Notification that a statistics sample has occurred.
   * <p/>
   * The timeStamp is an arbitrary nanoseconds time stamp only used for
@@ -43,14 +43,14 @@ public interface SampleHandler {
   * this sample
   */
   public void sampled(long nanosTimeStamp, List<ResourceInstance> resourceInstances);
-  
+
   /**
    * Notification that a new statistics {@link ResourceType} has been created.
    * 
    * @param resourceType the new statistics ResourceType that was created
    */
   public void allocatedResourceType(ResourceType resourceType);
-  
+
   /**
    * Notification that a new statistics {@link ResourceInstance} has been
    * created.
@@ -59,7 +59,7 @@ public interface SampleHandler {
    * created
    */
   public void allocatedResourceInstance(ResourceInstance resourceInstance);
-  
+
   /**
    * Notification that an existing statistics {@link ResourceInstance} has been
    * destroyed.

@@ -97,10 +97,12 @@ public class SampleSecurityManager implements SecurityManager {
 
   @Override
   public boolean authorize(final Object principal, final ResourcePermission context) {
-    if (principal == null) return false;
+    if (principal == null)
+      return false;
 
     User user = this.userNameToUser.get(principal.toString());
-    if (user == null) return false; // this user is not authorized to do anything
+    if (user == null)
+      return false; // this user is not authorized to do anything
 
     // check if the user has this permission defined in the context
     for (Role role : this.userNameToUser.get(user.name).roles) {
@@ -211,9 +213,7 @@ public class SampleSecurityManager implements SecurityManager {
       JsonNode regionsNode = rolesNode.get("regions");
       if (regionsNode != null) {
         if (regionsNode.isArray()) {
-          regionNames = StreamSupport.stream(regionsNode.spliterator(), false)
-                                     .map(JsonNode::asText)
-                                     .collect(Collectors.joining(","));
+          regionNames = StreamSupport.stream(regionsNode.spliterator(), false).map(JsonNode::asText).collect(Collectors.joining(","));
         } else {
           regionNames = regionsNode.asText();
         }
@@ -224,15 +224,15 @@ public class SampleSecurityManager implements SecurityManager {
         String resourcePart = (parts.length > 0) ? parts[0] : null;
         String operationPart = (parts.length > 1) ? parts[1] : null;
 
-        if (parts.length>2){
+        if (parts.length > 2) {
           regionNames = parts[2];
         }
-        if (parts.length>3){
+        if (parts.length > 3) {
           keys = parts[3];
         }
 
         String regionPart = (regionNames != null) ? regionNames : "*";
-        String keyPart = (keys !=null) ? keys : "*";
+        String keyPart = (keys != null) ? keys : "*";
 
         role.permissions.add(new ResourcePermission(resourcePart, operationPart, regionPart, keyPart));
       }

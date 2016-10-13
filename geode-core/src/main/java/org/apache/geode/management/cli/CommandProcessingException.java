@@ -118,7 +118,6 @@ public class CommandProcessingException extends RuntimeException {
    */
   @Override
   public String toString() {
-    return CommandProcessingException.class.getSimpleName() + "[errorType=" + errorTypeStrings[errorType] + ", errorData="
-        + errorData + "]";
+    return CommandProcessingException.class.getSimpleName() + "[errorType=" + errorTypeStrings[errorType] + ", errorData=" + errorData + "]";
   }
 }

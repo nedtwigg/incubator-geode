@@ -29,7 +29,7 @@ public class NewHelp {
   public NewHelp(DataNode root) {
     this.root = root;
   }
-  
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
@@ -41,12 +41,12 @@ public class NewHelp {
     if (dataNode != null && builder != null) {
       String data = dataNode.getData();
       if (data != null && !data.equals("")) {
-        builder.append(Gfsh.wrapText(data, level-1));
+        builder.append(Gfsh.wrapText(data, level - 1));
         builder.append(GfshParser.LINE_SEPARATOR);
       }
       if (dataNode.getChildren() != null && dataNode.getChildren().size() > 0) {
         for (DataNode child : dataNode.getChildren()) {
-          append(builder, child, level+1);
+          append(builder, child, level + 1);
         }
       }
     }

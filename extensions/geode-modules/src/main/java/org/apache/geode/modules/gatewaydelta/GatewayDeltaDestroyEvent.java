@@ -70,13 +70,6 @@ public class GatewayDeltaDestroyEvent extends AbstractGatewayDeltaEvent {
   }
 
   public String toString() {
-    return new StringBuilder().append("GatewayDeltaDestroyEvent[")
-        .append("regionName=")
-        .append(this.regionName)
-        .append("; key=")
-        .append(this.key)
-        .append("]")
-        .toString();
+    return new StringBuilder().append("GatewayDeltaDestroyEvent[").append("regionName=").append(this.regionName).append("; key=").append(this.key).append("]").toString();
   }
 }
-

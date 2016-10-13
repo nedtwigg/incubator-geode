@@ -23,32 +23,34 @@ import org.apache.geode.cache.util.CacheListenerAdapter;
 import org.apache.geode.distributed.internal.SharedConfiguration;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.management.internal.configuration.domain.Configuration;
+
 /****
  * CacheListener on ConfigRegion to write the configuration changes to file-system.
  *
  */
 public class ConfigurationChangeListener extends CacheListenerAdapter<String, Configuration> {
   private static final Logger logger = LogService.getLogger();
-  
+
   private final SharedConfiguration sharedConfig;
-  
+
   public ConfigurationChangeListener(SharedConfiguration sharedConfig) {
     this.sharedConfig = sharedConfig;
   }
+
   @Override
   public void afterUpdate(EntryEvent<String, Configuration> event) {
     super.afterUpdate(event);
     writeToFileSystem(event);
   }
-  
+
   @Override
   public void afterCreate(EntryEvent<String, Configuration> event) {
     super.afterCreate(event);
     writeToFileSystem(event);
   }
-  
+
   private void writeToFileSystem(EntryEvent<String, Configuration> event) {
-    Configuration newConfig = (Configuration)event.getNewValue();
+    Configuration newConfig = (Configuration) event.getNewValue();
     try {
       sharedConfig.writeConfig(newConfig);
     } catch (Exception e) {

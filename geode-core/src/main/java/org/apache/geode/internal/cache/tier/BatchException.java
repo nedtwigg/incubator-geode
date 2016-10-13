@@ -18,6 +18,7 @@
 package org.apache.geode.internal.cache.tier;
 
 import org.apache.geode.GemFireCheckedException;
+
 /**
  * An exception thrown during batch processing.
  *
@@ -27,14 +28,14 @@ import org.apache.geode.GemFireCheckedException;
 // Note that since this class is inside of an internal package,
 // we make it extend Exception, thereby making it a checked exception.
 public class BatchException extends GemFireCheckedException {
-private static final long serialVersionUID = -6707074107791305564L;
+  private static final long serialVersionUID = -6707074107791305564L;
 
   protected int _index;
 
   /**
    * Required for serialization
    */
-  public  BatchException() {
+  public BatchException() {
   }
 
   /**

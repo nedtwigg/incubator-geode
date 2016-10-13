@@ -167,5 +167,4 @@ public class Get70Test {
     verify(this.errorResponseMessage).send(eq(this.serverConnection));
   }
 
-
 }

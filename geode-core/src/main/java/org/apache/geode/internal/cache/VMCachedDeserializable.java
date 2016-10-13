@@ -38,7 +38,7 @@ import org.apache.geode.pdx.PdxInstance;
  *
  */
 public final class VMCachedDeserializable implements CachedDeserializable, DataSerializableFixedID {
-  
+
   /** The cached value */
   private volatile Object value;
   private int valueSize; // only set in constructor or fromData
@@ -49,11 +49,13 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
    * +4 for valueSize field
    */
   static final int MEM_OVERHEAD = PER_OBJECT_OVERHEAD + 4 + 4;
+
   /**
    * zero-arg constructor for serialization only
    */
   public VMCachedDeserializable() {
   }
+
   /** 
    * Creates a new instance of <code>VMCachedDeserializable</code>.
    *
@@ -82,33 +84,34 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
     this.value = object;
     this.valueSize = objectSize;
   }
-  
+
   public Object getDeserializedValue(Region r, RegionEntry re) {
     Object v = this.value;
     if (v instanceof byte[]) {
-//       org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG getDeserializedValue r=" + r + " re=" + re, new RuntimeException("STACK"));
+      //       org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG getDeserializedValue r=" + r + " re=" + re, new RuntimeException("STACK"));
       LRUEntry le = null;
       if (re != null) {
         assert r != null;
         if (re instanceof LRUEntry) {
-          le = (LRUEntry)re;
+          le = (LRUEntry) re;
         }
       }
       if (le != null) {
         if (r instanceof PartitionedRegion) {
-          r = ((PartitionedRegion)r).getBucketRegion(re.getKey());
+          r = ((PartitionedRegion) r).getBucketRegion(re.getKey());
         }
         boolean callFinish = false;
         AbstractLRURegionMap lruMap = null;
         if (r != null) { // fix for bug 44795
-          lruMap = (AbstractLRURegionMap)((LocalRegion)r).getRegionMap();
+          lruMap = (AbstractLRURegionMap) ((LocalRegion) r).getRegionMap();
         }
         boolean threadAlreadySynced = Thread.holdsLock(le);
         boolean isCacheListenerInvoked = re.isCacheListenerInvocationInProgress();
         synchronized (le) {
           v = this.value;
-          if (!(v instanceof byte[])) return v;
-          v = EntryEventImpl.deserialize((byte[])v);
+          if (!(v instanceof byte[]))
+            return v;
+          v = EntryEventImpl.deserialize((byte[]) v);
           if (threadAlreadySynced && !isCacheListenerInvoked) {
             // to fix bug 43355 and 43409 don't change the value form
             // if the thread that called us was already synced.
@@ -128,8 +131,9 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
         // we sync on this so we will only do one deserialize
         synchronized (this) {
           v = this.value;
-          if (!(v instanceof byte[])) return v;
-          v = EntryEventImpl.deserialize((byte[])v);
+          if (!(v instanceof byte[]))
+            return v;
+          v = EntryEventImpl.deserialize((byte[]) v);
           if (!(v instanceof PdxInstance)) {
             this.value = v;
           }
@@ -154,21 +158,22 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
       }
     }
     return v;
-  }  
+  }
+
   public Object getDeserializedForReading() {
     Object v = this.value;
     if (v instanceof byte[]) {
-      return EntryEventImpl.deserialize((byte[])v);
+      return EntryEventImpl.deserialize((byte[]) v);
     } else {
       return v;
     }
   }
+
   public Object getDeserializedWritableCopy(Region r, RegionEntry re) {
     Object v = this.value;
     if (v instanceof byte[]) {
-      Object result =  EntryEventImpl.deserialize((byte[])v);
-      if (CopyHelper.isWellKnownImmutableInstance(result)
-          && !(result instanceof PdxInstance)) {
+      Object result = EntryEventImpl.deserialize((byte[]) v);
+      if (CopyHelper.isWellKnownImmutableInstance(result) && !(result instanceof PdxInstance)) {
         // Since it is immutable go ahead and change the form
         // since we can return the immutable instance each time.
         result = getDeserializedValue(r, re);
@@ -178,14 +183,14 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
       return CopyHelper.copy(v);
     }
   }
- 
+
   /**
    * Return the serialized value as a byte[]
    */
   public byte[] getSerializedValue() {
     Object v = this.value;
     if (v instanceof byte[])
-      return (byte[])v;
+      return (byte[]) v;
     return EntryEventImpl.serialize(v);
   }
 
@@ -201,7 +206,7 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
   public int getSizeInBytes() {
     return MEM_OVERHEAD + this.valueSize;
   }
-  
+
   public int getValueSizeInBytes() {
     return valueSize;
   }
@@ -224,28 +229,28 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
 
   String getShortClassName() {
     String cname = getClass().getName();
-    return cname.substring(getClass().getPackage().getName().length()+1);
+    return cname.substring(getClass().getPackage().getName().length() + 1);
   }
 
   @Override
   public String toString() {
-    return getShortClassName()+"@"+this.hashCode();
+    return getShortClassName() + "@" + this.hashCode();
   }
 
   public void writeValueAsByteArray(DataOutput out) throws IOException {
     toData(out);
   }
-  
-  public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits)
-  {
-    Object v = this.value;    
-    if (v instanceof byte[]) {     
-      wrapper.setData((byte[])v, userBits, ((byte[])v).length, false /* Not Reusable as it refers to underlying value*/);
-    }else {
+
+  public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits) {
+    Object v = this.value;
+    if (v instanceof byte[]) {
+      wrapper.setData((byte[]) v, userBits, ((byte[]) v).length, false /* Not Reusable as it refers to underlying value*/);
+    } else {
       EntryEventImpl.fillSerializedValue(wrapper, v, userBits);
     }
-    
+
   }
+
   public String getStringForm() {
     try {
       return StringUtils.forceToString(getDeserializedForReading());
@@ -253,17 +258,19 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
       return "Could not convert object to string because " + ex;
     }
   }
+
   @Override
   public Version[] getSerializationVersions() {
     return null;
   }
+
   @Override
   public boolean isSerialized() {
     return true;
   }
+
   @Override
   public boolean usesHeapForStorage() {
     return true;
   }
 }
-

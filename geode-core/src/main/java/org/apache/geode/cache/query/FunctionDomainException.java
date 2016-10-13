@@ -23,8 +23,8 @@ package org.apache.geode.cache.query;
  */
 
 public class FunctionDomainException extends QueryException {
-private static final long serialVersionUID = 1198115662851760423L;
-  
+  private static final long serialVersionUID = 1198115662851760423L;
+
   /**
    * Constructs and instance of FunctionDomainException.
    * @param msg error message

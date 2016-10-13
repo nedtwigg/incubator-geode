@@ -43,8 +43,7 @@ class SelectResultsComparator implements Comparator {
     int sizeDifference = sr1.size() - sr2.size();
     if (obj1 == obj2) {
       answer = 0;
-    }
-    else if (sizeDifference > 0) {
+    } else if (sizeDifference > 0) {
       answer = 1;
     }
     return answer;

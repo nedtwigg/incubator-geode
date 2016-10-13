@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -26,20 +25,20 @@ import java.io.*;
 //import java.util.*;
 
 public final class TailLogRequest extends AdminRequest {
-  public static TailLogRequest create(){
+  public static TailLogRequest create() {
     TailLogRequest m = new TailLogRequest();
     return m;
   }
 
-  @Override  
-  public AdminResponse createResponse(DistributionManager dm){
+  @Override
+  public AdminResponse createResponse(DistributionManager dm) {
     return TailLogResponse.create(dm, this.getSender());
   }
 
   public TailLogRequest() {
     friendlyName = LocalizedStrings.TailLogRequest_TAIL_SYSTEM_LOG.toLocalizedString();
   }
-  
+
   public int getDSFID() {
     return TAIL_LOG_REQUEST;
   }
@@ -50,13 +49,12 @@ public final class TailLogRequest extends AdminRequest {
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException,
-      ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     return "TailLogRequest from " + this.getRecipient();
   }
 }

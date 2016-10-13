@@ -18,7 +18,6 @@ package org.apache.geode.redis.internal.executor.list;
 
 import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
-
 public class RPushExecutor extends PushExecutor {
 
   @Override
@@ -29,6 +28,6 @@ public class RPushExecutor extends PushExecutor {
   @Override
   public String getArgsError() {
     return ArityDef.RPUSH;
-  } 
+  }
 
 }

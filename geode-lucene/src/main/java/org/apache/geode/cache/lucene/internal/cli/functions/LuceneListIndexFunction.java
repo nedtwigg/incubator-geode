@@ -63,7 +63,7 @@ public class LuceneListIndexFunction extends FunctionAdapter implements Internal
       indexDetailsSet.add(new LuceneIndexDetails((LuceneIndexImpl) index));
     }
 
-    for(LuceneIndexCreationProfile profile : service.getAllDefinedIndexes()) {
+    for (LuceneIndexCreationProfile profile : service.getAllDefinedIndexes()) {
       indexDetailsSet.add(new LuceneIndexDetails(profile));
     }
     context.getResultSender().lastResult(indexDetailsSet);

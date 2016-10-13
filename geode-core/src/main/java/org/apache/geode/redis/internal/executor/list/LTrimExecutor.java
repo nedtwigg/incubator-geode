@@ -53,7 +53,6 @@ public class LTrimExecutor extends ListExecutor {
     int redisStart;
     int redisStop;
 
-
     checkDataType(key, RedisDataType.REDIS_LIST, context);
     Region keyRegion = getRegion(context, key);
 
@@ -70,7 +69,7 @@ public class LTrimExecutor extends ListExecutor {
 
     try {
       redisStart = Coder.bytesToInt(startArray);
-      redisStop =  Coder.bytesToInt(stopArray);
+      redisStop = Coder.bytesToInt(stopArray);
     } catch (NumberFormatException e) {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
       return;
@@ -96,12 +95,12 @@ public class LTrimExecutor extends ListExecutor {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    
-    for (Object keyElement: keyRegion.keySet()) {
+
+    for (Object keyElement : keyRegion.keySet()) {
       if (!keepList.contains(keyElement) && keyElement instanceof Integer)
         keyRegion.remove(keyElement);
     }
-    
+
     // Reset indexes in meta data region
     keyRegion.put("head", keepList.get(0));
     keyRegion.put("tail", keepList.get(keepList.size() - 1));
@@ -111,8 +110,8 @@ public class LTrimExecutor extends ListExecutor {
   private List<Integer> getRange(ExecutionHandlerContext context, ByteArrayWrapper key, int start, int stop, Region r) throws Exception {
     Query query = getQuery(key, ListQuery.LTRIM, context);
 
-    Object[] params = {Integer.valueOf(stop + 1)};
-    
+    Object[] params = { Integer.valueOf(stop + 1) };
+
     SelectResults<Integer> results = (SelectResults<Integer>) query.execute(params);
     if (results == null || results.size() <= start) {
       return null;

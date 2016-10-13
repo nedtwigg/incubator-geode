@@ -110,12 +110,12 @@ public class ClientAuthzObjectModDUnitTest extends ClientAuthorizationTestCase {
         // End of current operation block; execute all the operations on the servers with failover
         if (opBlock.size() > 0) {
           // Start the first server and execute the operation block
-          server1.invoke("createCacheServer", () -> createCacheServer(getLocatorPort(), port1, serverProps, javaProps ));
+          server1.invoke("createCacheServer", () -> createCacheServer(getLocatorPort(), port1, serverProps, javaProps));
           server2.invoke("closeCache", () -> closeCache());
           executeOpBlock(opBlock, port1, port2, authInit, extraProps, null, tgen, rnd);
           if (!currentOp.equals(OperationWithAction.OPBLOCK_NO_FAILOVER)) {
             // Failover to the second server and run the block again
-            server2.invoke("createCacheServer", () -> createCacheServer(getLocatorPort(), port2, serverProps, javaProps ));
+            server2.invoke("createCacheServer", () -> createCacheServer(getLocatorPort(), port2, serverProps, javaProps));
             server1.invoke("closeCache", () -> closeCache());
             executeOpBlock(opBlock, port1, port2, authInit, extraProps, null, tgen, rnd);
           }
@@ -134,11 +134,9 @@ public class ClientAuthzObjectModDUnitTest extends ClientAuthorizationTestCase {
         // Perform CREATE and verify with GET
         new OperationWithAction(OperationCode.PUT, 1, OpFlags.NONE, 8),
         // For second client connect with valid credentials for key2, key4, key6, key8 and check that other KEYS are not accessible
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.CHECK_NOKEY, new int[]{1, 3, 5, 7}),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.CHECK_NOKEY | OpFlags.USE_OLDCONN | OpFlags.CHECK_NOTAUTHZ, new int[]{0, 2, 4, 6}),
+        new OperationWithAction(OperationCode.GET, 2, OpFlags.CHECK_NOKEY, new int[] { 1, 3, 5, 7 }), new OperationWithAction(OperationCode.GET, 2, OpFlags.CHECK_NOKEY | OpFlags.USE_OLDCONN | OpFlags.CHECK_NOTAUTHZ, new int[] { 0, 2, 4, 6 }),
         // For third client check that key3, key6 are accessible but others are not
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.CHECK_NOKEY, new int[]{2, 5}),
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.CHECK_NOKEY | OpFlags.USE_OLDCONN | OpFlags.CHECK_NOTAUTHZ, new int[]{0, 1, 3, 4, 6, 7}),
+        new OperationWithAction(OperationCode.GET, 3, OpFlags.CHECK_NOKEY, new int[] { 2, 5 }), new OperationWithAction(OperationCode.GET, 3, OpFlags.CHECK_NOKEY | OpFlags.USE_OLDCONN | OpFlags.CHECK_NOTAUTHZ, new int[] { 0, 1, 3, 4, 6, 7 }),
 
         // OPBLOCK_END indicates end of an operation block that needs to be executed on each server when doing failover
         OperationWithAction.OPBLOCK_END,
@@ -146,22 +144,18 @@ public class ClientAuthzObjectModDUnitTest extends ClientAuthorizationTestCase {
         // Perform UPDATE and verify with GET
         new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 8),
         // For second client check that key2, key4, key6, key8 are accessible but others are not
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[]{1, 3, 5, 7}),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[]{0, 2, 4, 6}),
+        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[] { 1, 3, 5, 7 }), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[] { 0, 2, 4, 6 }),
         // For third client check that key3, key6 are accessible but others are not
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[]{2, 5}),
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[]{0, 1, 3, 4, 6, 7}),
+        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[] { 2, 5 }), new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[] { 0, 1, 3, 4, 6, 7 }),
 
         OperationWithAction.OPBLOCK_END,
 
         // Perform UPDATE and verify with GET_ALL
         new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 8),
         // For second client check that key2, key4, key6, key8 are accessible but others are not; getAll test in doOp uses a combination of local entries and remote fetches
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS, new int[]{1, 3, 5, 7}),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS | OpFlags.CHECK_NOKEY | OpFlags.CHECK_FAIL, new int[]{0, 2, 4, 6}),
+        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS, new int[] { 1, 3, 5, 7 }), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS | OpFlags.CHECK_NOKEY | OpFlags.CHECK_FAIL, new int[] { 0, 2, 4, 6 }),
         // For third client check that key3, key6 are accessible but others are not
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS, new int[]{2, 5}),
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS | OpFlags.CHECK_NOKEY | OpFlags.CHECK_FAIL, new int[]{0, 1, 3, 4, 6, 7}),
+        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS, new int[] { 2, 5 }), new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.USE_ALL_KEYS | OpFlags.CHECK_NOKEY | OpFlags.CHECK_FAIL, new int[] { 0, 1, 3, 4, 6, 7 }),
 
         // locally destroy the KEYS to also test create after failover
         new OperationWithAction(OperationCode.DESTROY, 1, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 8),
@@ -171,41 +165,30 @@ public class ClientAuthzObjectModDUnitTest extends ClientAuthorizationTestCase {
         // Perform PUTALL and verify with GET
         new OperationWithAction(OperationCode.PUTALL, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 8),
         // For second client check that key2, key4, key6, key8 are accessible but others are not
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[]{1, 3, 5, 7}),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[]{0, 2, 4, 6}),
+        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[] { 1, 3, 5, 7 }), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[] { 0, 2, 4, 6 }),
         // For third client check that key3, key6 are accessible but others are not
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[]{2, 5}),
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[]{0, 1, 3, 4, 6, 7}),
+        new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[] { 2, 5 }), new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, new int[] { 0, 1, 3, 4, 6, 7 }),
 
         OperationWithAction.OPBLOCK_END,
 
         // Test UPDATE and verify with a QUERY
         new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN, 8),
         // For second client check that key2, key4, key6, key8 are accessible but others are not
-        new OperationWithAction(OperationCode.QUERY, 2, OpFlags.USE_OLDCONN, new int[]{1, 3, 5, 7}),
-        new OperationWithAction(OperationCode.QUERY, 2, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, new int[]{0, 2, 4, 6}),
+        new OperationWithAction(OperationCode.QUERY, 2, OpFlags.USE_OLDCONN, new int[] { 1, 3, 5, 7 }), new OperationWithAction(OperationCode.QUERY, 2, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, new int[] { 0, 2, 4, 6 }),
         // For third client check that key3, key6 are accessible but others are not
-        new OperationWithAction(OperationCode.QUERY, 3, OpFlags.USE_OLDCONN, new int[]{2, 5}),
-        new OperationWithAction(OperationCode.QUERY, 3, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, new int[]{0, 1, 3, 4, 6, 7}),
+        new OperationWithAction(OperationCode.QUERY, 3, OpFlags.USE_OLDCONN, new int[] { 2, 5 }), new OperationWithAction(OperationCode.QUERY, 3, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, new int[] { 0, 1, 3, 4, 6, 7 }),
 
         OperationWithAction.OPBLOCK_END,
 
         // Test UPDATE and verify with a EXECUTE_CQ initial results
         new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 8),
         // For second client check that key2, key4, key6, key8 are accessible but others are not
-        new OperationWithAction(OperationCode.EXECUTE_CQ, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[]{1, 3, 5, 7}),
-        new OperationWithAction(OperationCode.CLOSE_CQ, 2, OpFlags.USE_OLDCONN, 1),
-        new OperationWithAction(OperationCode.EXECUTE_CQ, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_FAIL, new int[]{0, 2, 4, 6}),
-        new OperationWithAction(OperationCode.CLOSE_CQ, 2, OpFlags.USE_OLDCONN, 1),
+        new OperationWithAction(OperationCode.EXECUTE_CQ, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[] { 1, 3, 5, 7 }), new OperationWithAction(OperationCode.CLOSE_CQ, 2, OpFlags.USE_OLDCONN, 1), new OperationWithAction(OperationCode.EXECUTE_CQ, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_FAIL, new int[] { 0, 2, 4, 6 }), new OperationWithAction(OperationCode.CLOSE_CQ, 2, OpFlags.USE_OLDCONN, 1),
         // For third client check that key3, key6 are accessible but others are not
-        new OperationWithAction(OperationCode.EXECUTE_CQ, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[]{2, 5}),
-        new OperationWithAction(OperationCode.CLOSE_CQ, 3, OpFlags.USE_OLDCONN, 1),
-        new OperationWithAction(OperationCode.EXECUTE_CQ, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_FAIL, new int[]{0, 1, 3, 4, 6, 7}),
-        new OperationWithAction(OperationCode.CLOSE_CQ, 3, OpFlags.USE_OLDCONN, 1),
+        new OperationWithAction(OperationCode.EXECUTE_CQ, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, new int[] { 2, 5 }), new OperationWithAction(OperationCode.CLOSE_CQ, 3, OpFlags.USE_OLDCONN, 1), new OperationWithAction(OperationCode.EXECUTE_CQ, 3, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL | OpFlags.CHECK_FAIL, new int[] { 0, 1, 3, 4, 6, 7 }), new OperationWithAction(OperationCode.CLOSE_CQ, 3, OpFlags.USE_OLDCONN, 1),
 
-        OperationWithAction.OPBLOCK_END};
+        OperationWithAction.OPBLOCK_END };
   }
-
 
   private Properties buildProperties(final String authenticator, final Properties extraProps, final String preAccessor, final String postAccessor) {
     Properties authProps = new Properties();

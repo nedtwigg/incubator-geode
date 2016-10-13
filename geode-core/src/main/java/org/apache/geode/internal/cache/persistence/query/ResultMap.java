@@ -54,52 +54,49 @@ public interface ResultMap {
    * Return the Entry for a given key
    */
   Entry getEntry(Object key);
-  
+
   /**
    * Return the value for a given key
    */
   CachedDeserializable get(Object key);
-  
+
   /**
    * return true if this map contains the given key 
-   */ 
+   */
   public boolean containsKey(Object e);
-  
+
   /**
    * Return all of the IndexEntries in the range between start and end. 
    * If end < start, this will return a descending iterator going from end
    * to start. 
    */
-  CloseableIterator<Entry> iterator(Object start, boolean startInclusive, 
-      Object end, boolean endInclusive);
-  
+  CloseableIterator<Entry> iterator(Object start, boolean startInclusive, Object end, boolean endInclusive);
+
   /**
    * Return all of the IndexEntries that from start to the tail of the map.
    */
   CloseableIterator<Entry> iterator(Object start, boolean startInclusive);
-  
+
   /**
    * Return all of the IndexEntries in the map.
    */
   CloseableIterator<Entry> iterator();
-  
+
   /**
    * Return all of the region keys from start to end.
    */
-  CloseableIterator<CachedDeserializable> keyIterator(Object start, 
-      boolean startInclusive, Object end, boolean endInclusive);
-  
+  CloseableIterator<CachedDeserializable> keyIterator(Object start, boolean startInclusive, Object end, boolean endInclusive);
+
   /**
    * Return all of the region keys from start to the tail of the map
    */
-  CloseableIterator<CachedDeserializable> keyIterator(Object start, 
-      boolean startInclusive);
-  
+  CloseableIterator<CachedDeserializable> keyIterator(Object start, boolean startInclusive);
+
   /**
    * Return all of the region keys in the map
    */
   CloseableIterator<CachedDeserializable> keyIterator();
-  
+
   /**
    * Close the map to free up resources.
    */
@@ -114,6 +111,7 @@ public interface ResultMap {
      * Return the index key of the entry. May be NULL.
      */
     CachedDeserializable getKey();
+
     /**
      * Return the value of the entry. May be NULL.
      */

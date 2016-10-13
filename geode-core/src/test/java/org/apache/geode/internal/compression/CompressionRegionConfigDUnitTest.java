@@ -56,12 +56,12 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * The name of our test region.
    */
   public static final String REGION_NAME = "compressedRegion";
-  
+
   /**
    * Name of the common disk store used by all tests.
    */
   public static final String DISK_STORE = "diskStore";
-  
+
   /**
    * A key.
    */
@@ -71,7 +71,7 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * A value.
    */
   public static final String VALUE_1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor bibendum tempus. Suspendisse potenti. Ut enim neque, mattis et mattis ac, vulputate quis leo. Cras a metus metus, eget cursus ipsum. Aliquam sagittis condimentum massa aliquet rhoncus. Aliquam sed luctus neque. In hac habitasse platea dictumst.";
-  
+
   /**
    * Creates a new CompressionRegionOperationsDUnitTest.
    * @param name a test name.
@@ -89,12 +89,12 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
     Compressor compressor = new SnappyCompressor();
     assertTrue(createCompressedRegionOnVm(getVM(0), REGION_NAME, DataPolicy.REPLICATE, compressor));
     assertTrue(createCompressedRegionOnVm(getVM(1), REGION_NAME, DataPolicy.REPLICATE, compressor));
-    assertNull(putUsingVM(getVM(0),KEY_1,VALUE_1));
-    waitOnPut(getVM(1),KEY_1);
-    assertEquals(VALUE_1,getUsingVM(getVM(1), KEY_1));
-    cleanup(getVM(0));          
+    assertNull(putUsingVM(getVM(0), KEY_1, VALUE_1));
+    waitOnPut(getVM(1), KEY_1);
+    assertEquals(VALUE_1, getUsingVM(getVM(1), KEY_1));
+    cleanup(getVM(0));
   }
-  
+
   /**
    * Sanity check for two peers sharing a persisted replicated region.
    * @throws Exception
@@ -104,12 +104,12 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
     Compressor compressor = new SnappyCompressor();
     assertTrue(createCompressedRegionOnVm(getVM(0), REGION_NAME, DataPolicy.PERSISTENT_REPLICATE, compressor, DISK_STORE));
     assertTrue(createCompressedRegionOnVm(getVM(1), REGION_NAME, DataPolicy.PERSISTENT_REPLICATE, compressor));
-    assertNull(putUsingVM(getVM(0),KEY_1,VALUE_1));
-    waitOnPut(getVM(1),KEY_1);  
-    flushDiskStoreOnVM(getVM(0), DISK_STORE);     
+    assertNull(putUsingVM(getVM(0), KEY_1, VALUE_1));
+    waitOnPut(getVM(1), KEY_1);
+    flushDiskStoreOnVM(getVM(0), DISK_STORE);
     closeRegionOnVM(getVM(1), REGION_NAME);
     assertTrue(createCompressedRegionOnVm(getVM(1), REGION_NAME, DataPolicy.PERSISTENT_REPLICATE, compressor));
-    assertEquals(VALUE_1,getUsingVM(getVM(1), KEY_1));
+    assertEquals(VALUE_1, getUsingVM(getVM(1), KEY_1));
     cleanup(getVM(0));
   }
 
@@ -121,12 +121,12 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
     Compressor compressor = new SnappyCompressor();
     assertTrue(createCompressedRegionOnVm(getVM(0), REGION_NAME, DataPolicy.PARTITION, compressor));
     assertTrue(createCompressedRegionOnVm(getVM(1), REGION_NAME, DataPolicy.PARTITION, compressor));
-    assertNull(putUsingVM(getVM(0),KEY_1,VALUE_1));
-    waitOnPut(getVM(1),KEY_1);
-    assertEquals(VALUE_1,getUsingVM(getVM(1), KEY_1));
-    cleanup(getVM(0));      
+    assertNull(putUsingVM(getVM(0), KEY_1, VALUE_1));
+    waitOnPut(getVM(1), KEY_1);
+    assertEquals(VALUE_1, getUsingVM(getVM(1), KEY_1));
+    cleanup(getVM(0));
   }
-  
+
   /**
    * Sanity check for two peers hosting a persistent partitioned region.
    */
@@ -135,15 +135,15 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
     Compressor compressor = new SnappyCompressor();
     assertTrue(createCompressedRegionOnVm(getVM(0), REGION_NAME, DataPolicy.PERSISTENT_PARTITION, compressor, DISK_STORE));
     assertTrue(createCompressedRegionOnVm(getVM(1), REGION_NAME, DataPolicy.PERSISTENT_PARTITION, compressor));
-    assertNull(putUsingVM(getVM(0),KEY_1,VALUE_1));
-    waitOnPut(getVM(1),KEY_1);
+    assertNull(putUsingVM(getVM(0), KEY_1, VALUE_1));
+    waitOnPut(getVM(1), KEY_1);
     flushDiskStoreOnVM(getVM(0), DISK_STORE);
     closeRegionOnVM(getVM(1), REGION_NAME);
     assertTrue(createCompressedRegionOnVm(getVM(1), REGION_NAME, DataPolicy.PERSISTENT_PARTITION, compressor));
-    assertEquals(VALUE_1,getUsingVM(getVM(1), KEY_1));
+    assertEquals(VALUE_1, getUsingVM(getVM(1), KEY_1));
     cleanup(getVM(0));
   }
-  
+
   /**
    * Sanity check for a non caching client and a cache server.
    */
@@ -152,13 +152,13 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
     Compressor compressor = new SnappyCompressor();
     assertTrue(createCompressedServerRegionOnVm(getVM(0), REGION_NAME, DataPolicy.REPLICATE, compressor));
     assertTrue(createCompressedClientRegionOnVm(getVM(1), REGION_NAME, compressor, ClientRegionShortcut.PROXY));
-    assertNull(putUsingClientVM(getVM(1),KEY_1,VALUE_1));
-    assertEquals(VALUE_1,getUsingClientVM(getVM(1), KEY_1));
-    assertEquals(VALUE_1,getUsingVM(getVM(0),KEY_1));
+    assertNull(putUsingClientVM(getVM(1), KEY_1, VALUE_1));
+    assertEquals(VALUE_1, getUsingClientVM(getVM(1), KEY_1));
+    assertEquals(VALUE_1, getUsingVM(getVM(0), KEY_1));
     cleanupClient(getVM(1));
     cleanup(getVM(0));
   }
-  
+
   /**
    * Sanity check for a caching client and a cache server.
    */
@@ -167,9 +167,9 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
     Compressor compressor = new SnappyCompressor();
     assertTrue(createCompressedServerRegionOnVm(getVM(0), REGION_NAME, DataPolicy.REPLICATE, compressor));
     assertTrue(createCompressedClientRegionOnVm(getVM(1), REGION_NAME, compressor, ClientRegionShortcut.CACHING_PROXY));
-    assertNull(putUsingClientVM(getVM(1),KEY_1,VALUE_1));
-    assertEquals(VALUE_1,getUsingClientVM(getVM(1), KEY_1));
-    assertEquals(VALUE_1,getUsingVM(getVM(0),KEY_1));      
+    assertNull(putUsingClientVM(getVM(1), KEY_1, VALUE_1));
+    assertEquals(VALUE_1, getUsingClientVM(getVM(1), KEY_1));
+    assertEquals(VALUE_1, getUsingVM(getVM(0), KEY_1));
     cleanupClient(getVM(1));
     cleanup(getVM(0));
   }
@@ -184,10 +184,10 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
       @Override
       public void run() {
         getCache().getRegion(region).close();
-      }      
+      }
     });
   }
-  
+
   /**
    * Flushes a disk store on a vm causing region entries to be written to disk.
    * @param vm the virtual machine to perform the flush on.
@@ -198,10 +198,10 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
       @Override
       public void run() {
         getCache().findDiskStore(diskStore).flush();
-      }      
+      }
     });
   }
-  
+
   /**
    * Returns when a put has been replicated to a peer.
    * @param vm a peer.
@@ -217,10 +217,10 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
       @Override
       public String description() {
         return "Waiting on " + key + " to replicate.";
-      }        
-    },2000,500,true);          
+      }
+    }, 2000, 500, true);
   }
-  
+
   /**
    * Performs a put operation on a client virtual machine.
    * @param vm a client.
@@ -228,15 +228,15 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param value the value to put.
    * @return the old value.
    */
-  private String putUsingClientVM(final VM vm,final String key,final String value) {
+  private String putUsingClientVM(final VM vm, final String key, final String value) {
     return (String) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         ClientCache cache = getClientCache(getClientCacheFactory(getLocatorPort()));
-        Region<String,String> region = cache.getRegion(REGION_NAME);
+        Region<String, String> region = cache.getRegion(REGION_NAME);
         assertNotNull(region);
         return region.put(key, value);
-      }      
+      }
     });
   }
 
@@ -247,14 +247,14 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param value the value to put.
    * @return the old value.
    */
-  private String putUsingVM(final VM vm,final String key,final String value) {
+  private String putUsingVM(final VM vm, final String key, final String value) {
     return (String) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        Region<String,String> region = getCache().getRegion(REGION_NAME);
+        Region<String, String> region = getCache().getRegion(REGION_NAME);
         assertNotNull(region);
         return region.put(key, value);
-      }      
+      }
     });
   }
 
@@ -264,35 +264,35 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param key a region entry key.
    * @return the value.
    */
-  private String getUsingClientVM(final VM vm,final String key) {
+  private String getUsingClientVM(final VM vm, final String key) {
     return (String) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         ClientCache cache = getClientCache(getClientCacheFactory(getLocatorPort()));
-        Region<String,String> region = cache.getRegion(REGION_NAME);
+        Region<String, String> region = cache.getRegion(REGION_NAME);
         assertNotNull(region);
         return region.get(key);
-      }      
-    });    
-  }  
-  
+      }
+    });
+  }
+
   /**
    * Performs a get operation on a peer.
    * @param vm the peer.
    * @param key a region entry key.
    * @return the value.
    */
-  private String getUsingVM(final VM vm,final String key) {
+  private String getUsingVM(final VM vm, final String key) {
     return (String) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
-        Region<String,String> region = getCache().getRegion(REGION_NAME);
+        Region<String, String> region = getCache().getRegion(REGION_NAME);
         assertNotNull(region);
         return region.get(key);
-      }      
-    });    
+      }
+    });
   }
-  
+
   /**
    * Returns the VM for a given identifier.
    * @param vm a virtual machine identifier.
@@ -306,27 +306,27 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param vm a client.
    */
   private void cleanupClient(final VM vm) {
-    vm.invoke(new SerializableRunnable() {      
+    vm.invoke(new SerializableRunnable() {
       @Override
       public void run() {
-        getClientCache(getClientCacheFactory(getLocatorPort())).getRegion(REGION_NAME).close();        
+        getClientCache(getClientCacheFactory(getLocatorPort())).getRegion(REGION_NAME).close();
       }
-    });            
+    });
   }
-  
+
   /**
    * Removes created regions from a VM.
    * @param vm the virtual machine to cleanup.
    */
   private void cleanup(final VM vm) {
-    vm.invoke(new SerializableRunnable() {      
+    vm.invoke(new SerializableRunnable() {
       @Override
       public void run() {
-        Region<String,String> region = getCache().getRegion(REGION_NAME);         
+        Region<String, String> region = getCache().getRegion(REGION_NAME);
         assertNotNull(region);
-        region.destroyRegion();        
+        region.destroyRegion();
       }
-    });        
+    });
   }
 
   /**
@@ -336,19 +336,19 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param compressor a compressor.
    * @return true if successfully created, otherwise false.
    */
-  private boolean createCompressedServerRegionOnVm(final VM vm,final String name,final DataPolicy dataPolicy,final Compressor compressor) {
+  private boolean createCompressedServerRegionOnVm(final VM vm, final String name, final DataPolicy dataPolicy, final Compressor compressor) {
     return (Boolean) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         try {
-          assertNotNull(createServerRegion(name,dataPolicy,compressor));
-        } catch(Exception e) {
+          assertNotNull(createServerRegion(name, dataPolicy, compressor));
+        } catch (Exception e) {
           LogWriterUtils.getLogWriter().error("Could not create the compressed region", e);
           return Boolean.FALSE;
         }
-        
+
         return Boolean.TRUE;
-      }      
+      }
     });
   }
 
@@ -359,19 +359,19 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param compressor a compressor.
    * @return true if successfully created, otherwise false.
    */
-  private boolean createCompressedRegionOnVm(final VM vm,final String name,final DataPolicy dataPolicy,final Compressor compressor) {
+  private boolean createCompressedRegionOnVm(final VM vm, final String name, final DataPolicy dataPolicy, final Compressor compressor) {
     return (Boolean) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         try {
-          assertNotNull(createRegion(name,dataPolicy,compressor));
-        } catch(Exception e) {
+          assertNotNull(createRegion(name, dataPolicy, compressor));
+        } catch (Exception e) {
           LogWriterUtils.getLogWriter().error("Could not create the compressed region", e);
           return Boolean.FALSE;
         }
-        
+
         return Boolean.TRUE;
-      }      
+      }
     });
   }
 
@@ -382,19 +382,19 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param compressor a compressor.
    * @return true if successfully created, otherwise false.
    */
-  private boolean createCompressedRegionOnVm(final VM vm,final String name,final DataPolicy dataPolicy,final Compressor compressor,final String diskStoreName) {
+  private boolean createCompressedRegionOnVm(final VM vm, final String name, final DataPolicy dataPolicy, final Compressor compressor, final String diskStoreName) {
     return (Boolean) vm.invoke(new SerializableCallable() {
       @Override
       public Object call() throws Exception {
         try {
-          assertNotNull(createRegion(name,dataPolicy,compressor,diskStoreName));
-        } catch(Exception e) {
+          assertNotNull(createRegion(name, dataPolicy, compressor, diskStoreName));
+        } catch (Exception e) {
           LogWriterUtils.getLogWriter().error("Could not create the compressed region", e);
           return Boolean.FALSE;
         }
-        
+
         return Boolean.TRUE;
-      }      
+      }
     });
   }
 
@@ -411,17 +411,17 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
       @Override
       public Object call() throws Exception {
         try {
-          assertNotNull(createClientRegion(name,compressor,shortcut));
-        } catch(Exception e) {
+          assertNotNull(createClientRegion(name, compressor, shortcut));
+        } catch (Exception e) {
           LogWriterUtils.getLogWriter().error("Could not create the compressed region", e);
           return Boolean.FALSE;
         }
-        
+
         return Boolean.TRUE;
-      }      
+      }
     });
   }
-  
+
   /**
    * Creates a compressed region for a client.
    * @param name a region.
@@ -429,11 +429,11 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param shortcut the type of client.
    * @return the newly created region.
    */
-  private Region<String,String> createClientRegion(String name,Compressor compressor,ClientRegionShortcut shortcut) {
+  private Region<String, String> createClientRegion(String name, Compressor compressor, ClientRegionShortcut shortcut) {
     ClientCacheFactory factory = getClientCacheFactory(getLocatorPort());
-    return getClientCache(factory).<String,String>createClientRegionFactory(shortcut).setCloningEnabled(true).setCompressor(compressor).create(name);
+    return getClientCache(factory).<String, String> createClientRegionFactory(shortcut).setCloningEnabled(true).setCompressor(compressor).create(name);
   }
-  
+
   /**
    * Creates a region and assigns a compressor.
    * @param name the region name.
@@ -441,8 +441,8 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param compressor a compressor.
    * @return the newly created region.
    */
-  private Region<String,String> createRegion(String name,DataPolicy dataPolicy,Compressor compressor) {    
-    return getCache().<String,String>createRegionFactory().setDataPolicy(dataPolicy).setCloningEnabled(true).setCompressor(compressor).create(name);
+  private Region<String, String> createRegion(String name, DataPolicy dataPolicy, Compressor compressor) {
+    return getCache().<String, String> createRegionFactory().setDataPolicy(dataPolicy).setCloningEnabled(true).setCompressor(compressor).create(name);
   }
 
   /**
@@ -453,15 +453,15 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @return the newly created region.
    * @throws IOException a problem occurred while created the cache server.
    */
-  private Region<String,String> createServerRegion(String name,DataPolicy dataPolicy,Compressor compressor) throws IOException {
-    Region<String,String> region = getCache().<String,String>createRegionFactory().setDataPolicy(dataPolicy).setCloningEnabled(true).setCompressor(compressor).create(name);
+  private Region<String, String> createServerRegion(String name, DataPolicy dataPolicy, Compressor compressor) throws IOException {
+    Region<String, String> region = getCache().<String, String> createRegionFactory().setDataPolicy(dataPolicy).setCloningEnabled(true).setCompressor(compressor).create(name);
     CacheServer server = getCache().addCacheServer();
     server.setPort(0);
     server.start();
-    
+
     return region;
   }
-  
+
   /**
    * Creates a region and assigns a compressor.
    * @param name the region name.
@@ -469,11 +469,11 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
    * @param compressor a compressor.
    * @return the newly created region.
    */
-  private Region<String,String> createRegion(String name,DataPolicy dataPolicy,Compressor compressor,String diskStoreName) {
+  private Region<String, String> createRegion(String name, DataPolicy dataPolicy, Compressor compressor, String diskStoreName) {
     getCache().createDiskStoreFactory().create(diskStoreName);
-    return getCache().<String,String>createRegionFactory().setDataPolicy(dataPolicy).setDiskStoreName(diskStoreName).setCloningEnabled(true).setCompressor(compressor).create(name);
+    return getCache().<String, String> createRegionFactory().setDataPolicy(dataPolicy).setDiskStoreName(diskStoreName).setCloningEnabled(true).setCompressor(compressor).create(name);
   }
-  
+
   /**
    * Creates a new ClientCacheFactory.
    * @param dunitLocatorPort a locator port.
@@ -482,17 +482,17 @@ public class CompressionRegionConfigDUnitTest extends JUnit4CacheTestCase {
   private ClientCacheFactory getClientCacheFactory(int dunitLocatorPort) {
     return new ClientCacheFactory().addPoolLocator("localhost", dunitLocatorPort).setPoolSubscriptionEnabled(true);
   }
-  
+
   /**
    * Returns the locator port.
    */
   private int getLocatorPort() {
     // Running from eclipse
-    if(DUnitLauncher.isLaunched()) {
+    if (DUnitLauncher.isLaunched()) {
       String locatorString = DUnitLauncher.getLocatorString();
       int index = locatorString.indexOf("[");
-      return Integer.parseInt(locatorString.substring(index+1, locatorString.length()-1));
-    } 
+      return Integer.parseInt(locatorString.substring(index + 1, locatorString.length() - 1));
+    }
     // Running in hydra
     else {
       return DistributedTestUtils.getDUnitLocatorPort();

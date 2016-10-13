@@ -78,21 +78,19 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
 
   static {
     helpMap.put("launcher", LocalizedStrings.LocatorLauncher_LOCATOR_LAUNCHER_HELP.toLocalizedString());
-    helpMap.put(Command.START.getName(), LocalizedStrings.LocatorLauncher_START_LOCATOR_HELP.toLocalizedString(String.valueOf(
-      getDefaultLocatorPort())));
+    helpMap.put(Command.START.getName(), LocalizedStrings.LocatorLauncher_START_LOCATOR_HELP.toLocalizedString(String.valueOf(getDefaultLocatorPort())));
     helpMap.put(Command.STATUS.getName(), LocalizedStrings.LocatorLauncher_STATUS_LOCATOR_HELP.toLocalizedString());
-    helpMap.put(Command.STOP.getName(),LocalizedStrings.LocatorLauncher_STOP_LOCATOR_HELP.toLocalizedString());
+    helpMap.put(Command.STOP.getName(), LocalizedStrings.LocatorLauncher_STOP_LOCATOR_HELP.toLocalizedString());
     helpMap.put(Command.VERSION.getName(), LocalizedStrings.LocatorLauncher_VERSION_LOCATOR_HELP.toLocalizedString());
     helpMap.put("bind-address", LocalizedStrings.LocatorLauncher_LOCATOR_BIND_ADDRESS_HELP.toLocalizedString());
-    helpMap.put("debug",LocalizedStrings.LocatorLauncher_LOCATOR_DEBUG_HELP.toLocalizedString());
-    helpMap.put("dir",LocalizedStrings.LocatorLauncher_LOCATOR_DIR_HELP.toLocalizedString());
+    helpMap.put("debug", LocalizedStrings.LocatorLauncher_LOCATOR_DEBUG_HELP.toLocalizedString());
+    helpMap.put("dir", LocalizedStrings.LocatorLauncher_LOCATOR_DIR_HELP.toLocalizedString());
     helpMap.put("force", LocalizedStrings.LocatorLauncher_LOCATOR_FORCE_HELP.toLocalizedString());
     helpMap.put("help", LocalizedStrings.SystemAdmin_CAUSES_GEMFIRE_TO_PRINT_OUT_INFORMATION_INSTEAD_OF_PERFORMING_THE_COMMAND_THIS_OPTION_IS_SUPPORTED_BY_ALL_COMMANDS.toLocalizedString());
     helpMap.put("hostname-for-clients", LocalizedStrings.LocatorLauncher_LOCATOR_HOSTNAME_FOR_CLIENTS_HELP.toLocalizedString());
     helpMap.put("member", LocalizedStrings.LocatorLauncher_LOCATOR_MEMBER_HELP.toLocalizedString());
     helpMap.put("pid", LocalizedStrings.LocatorLauncher_LOCATOR_PID_HELP.toLocalizedString());
-    helpMap.put("port", LocalizedStrings.LocatorLauncher_LOCATOR_PORT_HELP.toLocalizedString(String.valueOf(
-      getDefaultLocatorPort())));
+    helpMap.put("port", LocalizedStrings.LocatorLauncher_LOCATOR_PORT_HELP.toLocalizedString(String.valueOf(getDefaultLocatorPort())));
     helpMap.put("redirect-output", LocalizedStrings.LocatorLauncher_LOCATOR_REDIRECT_OUTPUT_HELP.toLocalizedString());
   }
 
@@ -109,12 +107,12 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
    * @deprecated This is specific to the internal implementation and may go away in a future release.
    */
   public static final boolean DEFAULT_ENABLE_PEER_LOCATION = true;
-  
+
   /**
    * @deprecated This is specific to the internal implementation and may go away in a future release.
    */
   public static final boolean DEFAULT_ENABLE_SERVER_LOCATION = true;
-  
+
   /**
    * @deprecated This is specific to the internal implementation and may go away in a future release.
    */
@@ -129,13 +127,13 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
   //private volatile transient boolean debug;
 
   private final transient ControlNotificationHandler controlHandler;
-  
+
   private final AtomicBoolean starting = new AtomicBoolean(false);
 
   private final boolean force;
   private final boolean help;
   private final boolean redirectOutput;
-  
+
   private final Command command;
 
   private final boolean bindAddressSpecified;
@@ -157,11 +155,11 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
 
   // NOTE in addition to debug and locator, the other shared, mutable state
   private volatile transient String statusMessage;
-  
+
   private volatile transient ControllableProcess process;
 
   private final transient LocatorControllerParameters controllerParameters;
-  
+
   /**
    * Launches a GemFire Locator from the command-line configured with the given arguments.
    * 
@@ -170,15 +168,13 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
   public static void main(final String... args) {
     try {
       new Builder(args).build().run();
-    }
-    catch (AttachAPINotFoundException e) {
+    } catch (AttachAPINotFoundException e) {
       System.err.println(e.getMessage());
     }
   }
 
   private static Integer getDefaultLocatorPort() {
-    return Integer.getInteger(DistributionLocator.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY,
-      DistributionLocator.DEFAULT_LOCATOR_PORT);
+    return Integer.getInteger(DistributionLocator.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY, DistributionLocator.DEFAULT_LOCATOR_PORT);
   }
 
   /**
@@ -235,6 +231,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
           stopInProcess();
         }
       }
+
       @Override
       public ServiceState<?> handleStatus() {
         return statusInProcess();
@@ -251,10 +248,8 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
 
     try {
       TcpClient client = new TcpClient(new DistributionConfigImpl(new Properties()));
-      return (LocatorStatusResponse) client.requestToServer(bindAddress, port,
-        new LocatorStatusRequest(), timeout, true);
-    }
-    catch (ClassNotFoundException e) {
+      return (LocatorStatusResponse) client.requestToServer(bindAddress, port, new LocatorStatusRequest(), timeout, true);
+    } catch (ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
   }
@@ -310,7 +305,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
   public boolean isHelping() {
     return this.help;
   }
-  
+
   /**
    * Determines whether this launcher will redirect output to system logs when
    * starting a new Locator process.
@@ -354,8 +349,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       InetAddress localhost = SocketCreator.getLocalHost();
 
       return localhost.getCanonicalHostName();
-    }
-    catch (UnknownHostException ignore) {
+    } catch (UnknownHostException ignore) {
       // TODO determine a better value for the host on which the Locator is running to return here...
       // NOTE returning localhost/127.0.0.1 implies the bindAddress was null and no IP address for localhost
       // could be found
@@ -466,8 +460,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
   public void help(final Command command) {
     if (Command.isUnspecified(command)) {
       usage();
-    }
-    else {
+    } else {
       info(StringUtils.wrap(helpMap.get(command.getName()), 80, ""));
       info("\n\nusage: \n\n");
       info(StringUtils.wrap("> java ... " + getClass().getName() + " " + usageMap.get(command), 80, "\t\t"));
@@ -514,24 +507,23 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
   public void run() {
     if (!isHelping()) {
       switch (getCommand()) {
-        case START:
-          info(start());
-          waitOnLocator();
-          break;
-        case STATUS:
-          info(status());
-          break;
-        case STOP:
-          info(stop());
-          break;
-        case VERSION:
-          info(version());
-          break;
-        default:
-          usage();
+      case START:
+        info(start());
+        waitOnLocator();
+        break;
+      case STATUS:
+        info(status());
+        break;
+      case STOP:
+        info(stop());
+        break;
+      case VERSION:
+        info(version());
+        break;
+      default:
+        usage();
       }
-    }
-    else {
+    } else {
       help(getCommand());
     }
   }
@@ -544,7 +536,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
   protected File getLocatorPidFile() {
     return new File(getWorkingDirectory(), ProcessType.LOCATOR.getPidFileName());
   }
-  
+
   /**
    * Determines whether a GemFire Locator can be started with this instance of LocatorLauncher.
    * 
@@ -597,7 +589,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
 
       try {
         this.process = new ControllableProcess(this.controlHandler, new File(getWorkingDirectory()), ProcessType.LOCATOR, isForcing());
-        
+
         assertPortAvailable(getBindAddress(), getPort());
 
         ProcessLauncherContext.set(isRedirectingOutput(), getOverriddenDefaults(), new StartupStatusListener() {
@@ -606,14 +598,11 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
             LocatorLauncher.this.statusMessage = statusMessage;
           }
         });
-        
+
         //TODO : remove the extra param for loadFromSharedConfigDir
         try {
-          this.locator = InternalLocator.startLocator(getPort(), getLogFile(), null, null, null, getBindAddress(),
-            getDistributedSystemProperties(), DEFAULT_ENABLE_PEER_LOCATION, DEFAULT_ENABLE_SERVER_LOCATION,
-              getHostnameForClients(), false);
-        }
-        finally {
+          this.locator = InternalLocator.startLocator(getPort(), getLogFile(), null, null, null, getBindAddress(), getDistributedSystemProperties(), DEFAULT_ENABLE_PEER_LOCATION, DEFAULT_ENABLE_SERVER_LOCATION, getHostnameForClients(), false);
+        } finally {
           ProcessLauncherContext.remove();
         }
 
@@ -621,48 +610,36 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
         running.set(true);
 
         return new LocatorState(this, Status.ONLINE);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         failOnStart(e);
-        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_IO_ERROR_MESSAGE.toLocalizedString(
-          getServiceName(), getWorkingDirectory(), getId(), e.getMessage()), e);
-      }
-      catch (FileAlreadyExistsException e) {
+        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_IO_ERROR_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getId(), e.getMessage()), e);
+      } catch (FileAlreadyExistsException e) {
         failOnStart(e);
-        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_FILE_ALREADY_EXISTS_ERROR_MESSAGE
-          .toLocalizedString(getServiceName(), getWorkingDirectory(), getId()), e);
-      }
-      catch (PidUnavailableException e) {
+        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_FILE_ALREADY_EXISTS_ERROR_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getId()), e);
+      } catch (PidUnavailableException e) {
         failOnStart(e);
-        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_UNAVAILABLE_ERROR_MESSAGE
-          .toLocalizedString(getServiceName(), getId(), getWorkingDirectory(), e.getMessage()), e);
-      }
-      catch (Error e) {
+        throw new RuntimeException(LocalizedStrings.Launcher_Command_START_PID_UNAVAILABLE_ERROR_MESSAGE.toLocalizedString(getServiceName(), getId(), getWorkingDirectory(), e.getMessage()), e);
+      } catch (Error e) {
         failOnStart(e);
         throw e;
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         failOnStart(e);
         throw e;
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         failOnStart(e);
         throw new RuntimeException(e);
-      }
-      finally {
+      } finally {
         this.starting.set(false);
       }
-    }
-    else {
-      throw new IllegalStateException(LocalizedStrings.Launcher_Command_START_SERVICE_ALREADY_RUNNING_ERROR_MESSAGE
-        .toLocalizedString(getServiceName(), getWorkingDirectory(), getId()));
+    } else {
+      throw new IllegalStateException(LocalizedStrings.Launcher_Command_START_SERVICE_ALREADY_RUNNING_ERROR_MESSAGE.toLocalizedString(getServiceName(), getWorkingDirectory(), getId()));
     }
   }
 
   @Override
   protected Properties getDistributedSystemProperties() {
-     Properties properties = super.getDistributedSystemProperties(getProperties());
-     return properties;
+    Properties properties = super.getDistributedSystemProperties(getProperties());
+    return properties;
   }
 
   /**
@@ -678,7 +655,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     } else {
       logger.log(Level.INFO, "locator is exiting normally");
     }
-    
+
     if (this.locator != null) {
       this.locator.stop();
       this.locator = null;
@@ -714,21 +691,17 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
 
       // prevent the JVM from exiting by joining the Locator Thread
       getLocator().waitToStop();
-    }
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       t = e;
       debug(e);
-    }
-    catch (RuntimeException e) {
+    } catch (RuntimeException e) {
       t = e;
       throw e;
-    }
-    catch (Throwable e) {
+    } catch (Throwable e) {
       t = e;
       throw e;
-    }
-    finally {
+    } finally {
       failOnStart(t);
     }
 
@@ -765,14 +738,12 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       try {
         LocatorStatusResponse response = statusLocator(getPort(), getBindAddress());
         return new LocatorState(this, Status.ONLINE, response);
-      }
-      catch (Exception ignore) {
+      } catch (Exception ignore) {
         try {
           synchronized (this) {
             timeUnit.timedWait(this, interval);
           }
-        }
-        catch (InterruptedException ignoreInterrupt) {
+        } catch (InterruptedException ignoreInterrupt) {
           // NOTE just go and send another status request to the Locator...
         }
       }
@@ -845,8 +816,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     if (this.starting.get()) {
       debug("Getting status from the LocatorLauncher instance that actually launched the GemFire Locator.%n");
       return new LocatorState(this, Status.STARTING);
-    }
-    else {
+    } else {
       debug("Getting Locator status using host (%1$s) and port (%2$s)%n", getBindAddressAsString(), getPortAsString());
       return statusWithPort();
     }
@@ -859,27 +829,21 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       controller.checkPidSupport();
       final String statusJson = controller.status();
       return LocatorState.fromJson(statusJson);
-    }
-    catch (ConnectionFailedException e) {
+    } catch (ConnectionFailedException e) {
       // failed to attach to locator JVM
       return createNoResponseState(e, "Failed to connect to locator with process id " + getPid());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with locator with process id " + getPid());
-    } 
-    catch (MBeanInvocationFailedException e) {
+    } catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with locator with process id " + getPid());
-    } 
-    catch (UnableToControlProcessException e) {
+    } catch (UnableToControlProcessException e) {
       return createNoResponseState(e, "Failed to communicate with locator with process id " + getPid());
-    } 
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       return createNoResponseState(e, "Interrupted while trying to communicate with locator with process id " + getPid());
-    } 
-    catch (TimeoutException e) {
+    } catch (TimeoutException e) {
       return createNoResponseState(e, "Failed to communicate with locator with process id " + getPid());
     }
   }
@@ -888,8 +852,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     try {
       LocatorStatusResponse response = statusLocator(getPort(), getBindAddress());
       return new LocatorState(this, Status.ONLINE, response);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       return createNoResponseState(e, "Failed to connect to locator " + getId());
     }
   }
@@ -899,7 +862,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     try {
       final ProcessController controller = new ProcessControllerFactory().createProcessController(this.controllerParameters, new File(getWorkingDirectory()), ProcessType.LOCATOR.getPidFileName(), READ_PID_FILE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
       parsedPid = controller.getProcessId();
-      
+
       // note: in-process request will go infinite loop unless we do the following
       if (parsedPid == ProcessUtils.identifyPid()) {
         LocatorLauncher runningLauncher = getInstance();
@@ -910,35 +873,27 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
 
       final String statusJson = controller.status();
       return LocatorState.fromJson(statusJson);
-    }
-    catch (ConnectionFailedException e) {
+    } catch (ConnectionFailedException e) {
       // failed to attach to locator JVM
       return createNoResponseState(e, "Failed to connect to locator with process id " + parsedPid);
-    } 
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       // could not find pid file
       return createNoResponseState(e, "Failed to find process file " + ProcessType.LOCATOR.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with locator with process id " + parsedPid);
-    } 
-    catch (MBeanInvocationFailedException e) {
+    } catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with locator with process id " + parsedPid);
-    } 
-    catch (PidUnavailableException e) {
+    } catch (PidUnavailableException e) {
       // couldn't determine pid from within locator JVM
       return createNoResponseState(e, "Failed to find usable process id within file " + ProcessType.LOCATOR.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (UnableToControlProcessException e) {
+    } catch (UnableToControlProcessException e) {
       return createNoResponseState(e, "Failed to communicate with locator with process id " + parsedPid);
-    } 
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       return createNoResponseState(e, "Interrupted while trying to communicate with locator with process id " + parsedPid);
-    } 
-    catch (TimeoutException e) {
+    } catch (TimeoutException e) {
       return createNoResponseState(e, "Failed to communicate with locator with process id " + parsedPid);
     }
   }
@@ -992,12 +947,11 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     //else if (this.workingDirectorySpecified) {
     else if (getWorkingDirectory() != null) {
       return stopWithWorkingDirectory();
-    }
-    else {
+    } else {
       return new LocatorState(this, Status.NOT_RESPONDING);
     }
   }
-  
+
   private LocatorState stopInProcess() {
     if (isStoppable()) {
       this.locator.stop();
@@ -1018,20 +972,16 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       controller.checkPidSupport();
       controller.stop();
       return new LocatorState(this, Status.STOPPED);
-    }
-    catch (ConnectionFailedException e) {
+    } catch (ConnectionFailedException e) {
       // failed to attach to locator JVM
       return createNoResponseState(e, "Failed to connect to locator with process id " + getPid());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with locator with process id " + getPid());
-    } 
-    catch (MBeanInvocationFailedException e) {
+    } catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with locator with process id " + getPid());
-    } 
-    catch (UnableToControlProcessException e) {
+    } catch (UnableToControlProcessException e) {
       return createNoResponseState(e, "Failed to communicate with locator with process id " + getPid());
     }
   }
@@ -1041,12 +991,10 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     try {
       new TcpClient().stop(getBindAddress(), getPort());
       return new LocatorState(this, Status.STOPPED);
-    }
-    catch (ConnectException e) {
+    } catch (ConnectException e) {
       if (getBindAddress() == null) {
         return createNoResponseState(e, "Failed to connect to locator on port " + getPort());
-      } 
-      else {
+      } else {
         return createNoResponseState(e, "Failed to connect to locator on " + getId());
       }
     }
@@ -1057,7 +1005,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     try {
       final ProcessController controller = new ProcessControllerFactory().createProcessController(this.controllerParameters, new File(getWorkingDirectory()), ProcessType.LOCATOR.getPidFileName(), READ_PID_FILE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
       parsedPid = controller.getProcessId();
-      
+
       // NOTE in-process request will go infinite loop unless we do the following
       if (parsedPid == ProcessUtils.identifyPid()) {
         final LocatorLauncher runningLauncher = getInstance();
@@ -1065,38 +1013,30 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
           return runningLauncher.stopInProcess();
         }
       }
-      
+
       controller.stop();
       return new LocatorState(this, Status.STOPPED);
-    }
-    catch (ConnectionFailedException e) {
+    } catch (ConnectionFailedException e) {
       // failed to attach to locator JVM
       return createNoResponseState(e, "Failed to connect to locator with process id " + parsedPid);
-    } 
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       // could not find pid file
       return createNoResponseState(e, "Failed to find process file " + ProcessType.LOCATOR.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       // failed to open or read file or dir
       return createNoResponseState(e, "Failed to communicate with locator with process id " + parsedPid);
-    } 
-    catch (InterruptedException e) {
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       return createNoResponseState(e, "Interrupted while trying to communicate with locator with process id " + parsedPid);
-    } 
-    catch (MBeanInvocationFailedException e) {
+    } catch (MBeanInvocationFailedException e) {
       // MBean either doesn't exist or method or attribute don't exist
       return createNoResponseState(e, "Failed to communicate with locator with process id " + parsedPid);
-    } 
-    catch (PidUnavailableException e) {
+    } catch (PidUnavailableException e) {
       // couldn't determine pid from within locator JVM
       return createNoResponseState(e, "Failed to find usable process id within file " + ProcessType.LOCATOR.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (TimeoutException e) {
+    } catch (TimeoutException e) {
       return createNoResponseState(e, "Timed out trying to find usable process id within file " + ProcessType.LOCATOR.getPidFileName() + " in " + getWorkingDirectory());
-    } 
-    catch (UnableToControlProcessException e) {
+    } catch (UnableToControlProcessException e) {
       return createNoResponseState(e, "Failed to communicate with locator with process id " + parsedPid);
     }
   }
@@ -1106,22 +1046,21 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     //info(errorMessage);
     return new LocatorState(this, Status.NOT_RESPONDING, errorMessage);
   }
-  
+
   private Properties getOverriddenDefaults() {
     Properties overriddenDefaults = new Properties();
 
-    overriddenDefaults.put(ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX.concat(LOG_FILE),
-      getLogFileName());
+    overriddenDefaults.put(ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX.concat(LOG_FILE), getLogFileName());
 
     for (String key : System.getProperties().stringPropertyNames()) {
       if (key.startsWith(ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX)) {
         overriddenDefaults.put(key, System.getProperty(key));
       }
     }
-    
+
     return overriddenDefaults;
   }
-  
+
   private class LocatorControllerParameters implements ProcessControllerParameters {
     @Override
     public File getPidFile() {
@@ -1132,17 +1071,17 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     public File getWorkingDirectory() {
       return new File(LocatorLauncher.this.getWorkingDirectory());
     }
-  
+
     @Override
     public int getProcessId() {
       return getPid();
     }
-    
+
     @Override
     public ProcessType getProcessType() {
       return ProcessType.LOCATOR;
     }
-  
+
     @Override
     public ObjectName getNamePattern() {
       try {
@@ -1153,30 +1092,30 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
         return null;
       }
     }
-  
+
     @Override
     public String getPidAttribute() {
       return "ProcessId";
     }
-  
+
     @Override
     public String getStopMethod() {
       return "shutDownMember";
     }
-    
+
     @Override
     public String getStatusMethod() {
       return "status";
     }
-  
+
     @Override
     public String[] getAttributes() {
-      return new String[] {"Locator", "Server"};
+      return new String[] { "Locator", "Server" };
     }
-  
+
     @Override
     public Object[] getValues() {
-      return new Object[] {Boolean.TRUE, Boolean.FALSE};
+      return new Object[] { Boolean.TRUE, Boolean.FALSE };
     }
   }
 
@@ -1289,12 +1228,9 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
             setCommand(Command.VERSION);
           }
         }
-      }
-      catch (OptionException e) {
-        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_PARSE_COMMAND_LINE_ARGUMENT_ERROR_MESSAGE
-          .toLocalizedString("Locator", e.getMessage()), e);
-      }
-      catch (Exception e) {
+      } catch (OptionException e) {
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_PARSE_COMMAND_LINE_ARGUMENT_ERROR_MESSAGE.toLocalizedString("Locator", e.getMessage()), e);
+      } catch (Exception e) {
         throw new RuntimeException(e.getMessage(), e);
       }
     }
@@ -1416,7 +1352,6 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       return this;
     }
 
- 
     /**
      * Determines whether the new instance of LocatorLauncher will be used to output help information for either
      * a specific command, or for using LocatorLauncher in general.
@@ -1454,6 +1389,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       return (getBindAddress() != null);
 
     }
+
     /**
      * Gets the IP address to which the Locator has bound itself listening for client requests.
      * 
@@ -1480,21 +1416,17 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       if (StringUtils.isBlank(bindAddress)) {
         this.bindAddress = null;
         return this;
-      }
-      else {
+      } else {
         try {
           InetAddress address = InetAddress.getByName(bindAddress);
           if (SocketCreator.isLocalHost(address)) {
             this.bindAddress = address;
             return this;
-          }
-          else {
+          } else {
             throw new IllegalArgumentException(bindAddress + " is not an address for this machine.");
           }
-        }
-        catch (UnknownHostException e) {
-          throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_UNKNOWN_HOST_ERROR_MESSAGE
-            .toLocalizedString("Locator"), e);
+        } catch (UnknownHostException e) {
+          throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_UNKNOWN_HOST_ERROR_MESSAGE.toLocalizedString("Locator"), e);
         }
       }
     }
@@ -1520,8 +1452,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
      */
     public Builder setHostnameForClients(final String hostnameForClients) {
       if (StringUtils.isEmpty(StringUtils.trim(hostnameForClients))) {
-        throw new IllegalArgumentException(
-          LocalizedStrings.LocatorLauncher_Builder_INVALID_HOSTNAME_FOR_CLIENTS_ERROR_MESSAGE.toLocalizedString());
+        throw new IllegalArgumentException(LocalizedStrings.LocatorLauncher_Builder_INVALID_HOSTNAME_FOR_CLIENTS_ERROR_MESSAGE.toLocalizedString());
       }
       this.hostnameForClients = hostnameForClients;
       return this;
@@ -1547,8 +1478,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
      */
     public Builder setMemberName(final String memberName) {
       if (StringUtils.isEmpty(StringUtils.trim(memberName))) {
-        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE
-          .toLocalizedString("Locator"));
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE.toLocalizedString("Locator"));
       }
       this.memberName = memberName;
       return this;
@@ -1586,7 +1516,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     boolean isPortSpecified() {
       return (this.port != null);
     }
-    
+
     /**
      * Gets the port number used by the Locator to listen for client requests.  If the port was not specified, then the
      * default Locator port (10334) is returned.
@@ -1611,8 +1541,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       // NOTE if the user were to specify a port number of 0, then java.net.ServerSocket will pick an ephemeral port
       // to bind the socket, which we do not want.
       if (port != null && (port < 0 || port > 65535)) {
-        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE
-          .toLocalizedString("Locator"));
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE.toLocalizedString("Locator"));
       }
       this.port = port;
       return this;
@@ -1665,8 +1594,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
      * @see #setWorkingDirectory(String)
      */
     public String getWorkingDirectory() {
-      return IOUtils.tryGetCanonicalPathElseGetAbsolutePath(
-        new File(StringUtils.defaultIfBlank(this.workingDirectory, DEFAULT_WORKING_DIRECTORY)));
+      return IOUtils.tryGetCanonicalPathElseGetAbsolutePath(new File(StringUtils.defaultIfBlank(this.workingDirectory, DEFAULT_WORKING_DIRECTORY)));
     }
 
     /**
@@ -1683,9 +1611,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
      */
     public Builder setWorkingDirectory(final String workingDirectory) {
       if (!new File(StringUtils.defaultIfBlank(workingDirectory, DEFAULT_WORKING_DIRECTORY)).isDirectory()) {
-        throw new IllegalArgumentException(
-          LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Locator"),
-            new FileNotFoundException(workingDirectory));
+        throw new IllegalArgumentException(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Locator"), new FileNotFoundException(workingDirectory));
       }
       this.workingDirectory = workingDirectory;
       return this;
@@ -1729,18 +1655,12 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
      */
     protected void validateOnStart() {
       if (Command.START.equals(getCommand())) {
-        if (StringUtils.isBlank(getMemberName())
-            && !isSet(System.getProperties(), DistributionConfig.GEMFIRE_PREFIX + NAME)
-            && !isSet(getDistributedSystemProperties(), NAME)
-            && !isSet(loadGemFireProperties(DistributedSystem.getPropertyFileURL()), NAME))
-        {
-          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE
-            .toLocalizedString("Locator"));
+        if (StringUtils.isBlank(getMemberName()) && !isSet(System.getProperties(), DistributionConfig.GEMFIRE_PREFIX + NAME) && !isSet(getDistributedSystemProperties(), NAME) && !isSet(loadGemFireProperties(DistributedSystem.getPropertyFileURL()), NAME)) {
+          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE.toLocalizedString("Locator"));
         }
 
         if (!SystemUtils.CURRENT_DIRECTORY.equals(getWorkingDirectory())) {
-          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE
-            .toLocalizedString("Locator"));
+          throw new IllegalStateException(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE.toLocalizedString("Locator"));
         }
       }
     }
@@ -1783,11 +1703,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
    * An enumerated type representing valid commands to the Locator launcher.
    */
   public static enum Command {
-    START("start", "bind-address", "hostname-for-clients", "port", "force", "debug", "help"),
-    STATUS("status", "bind-address", "port", "member", "pid", "dir", "debug", "help"),
-    STOP("stop", "member", "pid", "dir", "debug", "help"),
-    VERSION("version"),
-    UNSPECIFIED("unspecified");
+    START("start", "bind-address", "hostname-for-clients", "port", "force", "debug", "help"), STATUS("status", "bind-address", "port", "member", "pid", "dir", "debug", "help"), STOP("stop", "member", "pid", "dir", "debug", "help"), VERSION("version"), UNSPECIFIED("unspecified");
 
     private final List<String> options;
 
@@ -1796,8 +1712,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     Command(final String name, final String... options) {
       assert !StringUtils.isBlank(name) : "The name of the locator launcher command must be specified!";
       this.name = name;
-      this.options = (options != null ? Collections.unmodifiableList(Arrays.asList(options))
-        : Collections.<String>emptyList());
+      this.options = (options != null ? Collections.unmodifiableList(Arrays.asList(options)) : Collections.<String> emptyList());
     }
 
     /**
@@ -1905,52 +1820,22 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     public static LocatorState fromJson(final String json) {
       try {
         final GfJsonObject gfJsonObject = new GfJsonObject(json);
-        
+
         final Status status = Status.valueOfDescription(gfJsonObject.getString(JSON_STATUS));
 
-        final List<String> jvmArguments = Arrays.asList(GfJsonArray.toStringArray(
-          gfJsonObject.getJSONArray(JSON_JVMARGUMENTS)));
+        final List<String> jvmArguments = Arrays.asList(GfJsonArray.toStringArray(gfJsonObject.getJSONArray(JSON_JVMARGUMENTS)));
 
-        return new LocatorState(status, 
-            gfJsonObject.getString(JSON_STATUSMESSAGE),
-            gfJsonObject.getLong(JSON_TIMESTAMP),
-            gfJsonObject.getString(JSON_LOCATION),
-            gfJsonObject.getInt(JSON_PID),
-            gfJsonObject.getLong(JSON_UPTIME),
-            gfJsonObject.getString(JSON_WORKINGDIRECTORY),
-            jvmArguments,
-            gfJsonObject.getString(JSON_CLASSPATH),
-            gfJsonObject.getString(JSON_GEMFIREVERSION),
-            gfJsonObject.getString(JSON_JAVAVERSION),
-            gfJsonObject.getString(JSON_LOGFILE),
-            gfJsonObject.getString(JSON_HOST),
-            gfJsonObject.getString(JSON_PORT),
-            gfJsonObject.getString(JSON_MEMBERNAME));
-      }
-      catch (GfJsonException e) {
+        return new LocatorState(status, gfJsonObject.getString(JSON_STATUSMESSAGE), gfJsonObject.getLong(JSON_TIMESTAMP), gfJsonObject.getString(JSON_LOCATION), gfJsonObject.getInt(JSON_PID), gfJsonObject.getLong(JSON_UPTIME), gfJsonObject.getString(JSON_WORKINGDIRECTORY), jvmArguments, gfJsonObject.getString(JSON_CLASSPATH), gfJsonObject.getString(JSON_GEMFIREVERSION), gfJsonObject.getString(JSON_JAVAVERSION), gfJsonObject.getString(JSON_LOGFILE), gfJsonObject.getString(JSON_HOST), gfJsonObject.getString(JSON_PORT), gfJsonObject.getString(JSON_MEMBERNAME));
+      } catch (GfJsonException e) {
         throw new IllegalArgumentException("Unable to create LocatorStatus from JSON: ".concat(json), e);
       }
     }
 
     public LocatorState(final LocatorLauncher launcher, final Status status) {
       // if status is NOT_RESPONDING then this is executing inside the JVM asking for he status; pid etc will be set according to the caller's JVM instead
-      this(status,
-        launcher.statusMessage,
-        System.currentTimeMillis(),
-        launcher.getId(),
-        identifyPid(),
-        ManagementFactory.getRuntimeMXBean().getUptime(),
-        launcher.getWorkingDirectory(),
-        ManagementFactory.getRuntimeMXBean().getInputArguments(),
-        System.getProperty("java.class.path"),
-        GemFireVersion.getGemFireVersion(),
-        System.getProperty("java.version"),
-        getLogFileCanonicalPath(launcher),
-        launcher.getBindAddressAsString(),
-        launcher.getPortAsString(),
-        launcher.getMemberName());
+      this(status, launcher.statusMessage, System.currentTimeMillis(), launcher.getId(), identifyPid(), ManagementFactory.getRuntimeMXBean().getUptime(), launcher.getWorkingDirectory(), ManagementFactory.getRuntimeMXBean().getInputArguments(), System.getProperty("java.class.path"), GemFireVersion.getGemFireVersion(), System.getProperty("java.version"), getLogFileCanonicalPath(launcher), launcher.getBindAddressAsString(), launcher.getPortAsString(), launcher.getMemberName());
     }
-    
+
     public LocatorState(final LocatorLauncher launcher, final Status status, final String errorMessage) {
       this(status, // status
           errorMessage, // statusMessage
@@ -1959,7 +1844,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
           null, // pid
           0L, // uptime
           launcher.getWorkingDirectory(), // workingDirectory
-          Collections.<String>emptyList(), // jvmArguments
+          Collections.<String> emptyList(), // jvmArguments
           null, // classpath
           GemFireVersion.getGemFireVersion(), // gemfireVersion
           null, // javaVersion
@@ -1968,7 +1853,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
           null, // port
           null);// memberName
     }
-    
+
     private static String getBindAddressAsString(LocatorLauncher launcher) {
       if (InternalLocator.hasLocator()) {
         final InternalLocator locator = InternalLocator.getLocator();
@@ -2000,7 +1885,7 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
     private static String getPortAsString(LocatorLauncher launcher) {
       if (InternalLocator.hasLocator()) {
         final InternalLocator locator = InternalLocator.getLocator();
-        final String portAsString =  String.valueOf(locator.getPort());
+        final String portAsString = String.valueOf(locator.getPort());
         if (!StringUtils.isBlank(portAsString)) {
           return portAsString;
         }
@@ -2008,42 +1893,12 @@ public final class LocatorLauncher extends AbstractLauncher<String> {
       return launcher.getPortAsString();
     }
 
-    protected LocatorState(final Status status,
-                           final String statusMessage,
-                           final long timestamp,
-                           final String locatorLocation,
-                           final Integer pid,
-                           final Long uptime,
-                           final String workingDirectory,
-                           final List<String> jvmArguments,
-                           final String classpath,
-                           final String gemfireVersion,
-                           final String javaVersion,
-                           final String logFile,
-                           final String host,
-                           final String port,
-                           final String memberName)
-    {
-      super(status, statusMessage, timestamp, locatorLocation, pid, uptime, workingDirectory, jvmArguments, classpath,
-        gemfireVersion, javaVersion, logFile, host, port, memberName);
+    protected LocatorState(final Status status, final String statusMessage, final long timestamp, final String locatorLocation, final Integer pid, final Long uptime, final String workingDirectory, final List<String> jvmArguments, final String classpath, final String gemfireVersion, final String javaVersion, final String logFile, final String host, final String port, final String memberName) {
+      super(status, statusMessage, timestamp, locatorLocation, pid, uptime, workingDirectory, jvmArguments, classpath, gemfireVersion, javaVersion, logFile, host, port, memberName);
     }
 
     private LocatorState(final LocatorLauncher launcher, final Status status, final LocatorStatusResponse response) {
-      this(status,
-        launcher.statusMessage,
-        System.currentTimeMillis(),
-        launcher.getId(),
-        response.getPid(),
-        response.getUptime(),
-        response.getWorkingDirectory(),
-        response.getJvmArgs(),
-        response.getClasspath(),
-        response.getGemFireVersion(),
-        response.getJavaVersion(),
-        response.getLogFile(),
-        response.getHost(),
-        String.valueOf(response.getPort()),
-        response.getName());
+      this(status, launcher.statusMessage, System.currentTimeMillis(), launcher.getId(), response.getPid(), response.getUptime(), response.getWorkingDirectory(), response.getJvmArgs(), response.getClasspath(), response.getGemFireVersion(), response.getJavaVersion(), response.getLogFile(), response.getHost(), String.valueOf(response.getPort()), response.getName());
     }
 
     @Override

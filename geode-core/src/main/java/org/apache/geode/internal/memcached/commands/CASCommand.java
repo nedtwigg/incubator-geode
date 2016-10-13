@@ -50,26 +50,26 @@ public class CASCommand extends AbstractCommand {
     flb.flip();
     String firstLine = getFirstLine();
     String[] firstLineElements = firstLine.split(" ");
-    
+
     String key = firstLineElements[1];
     int flags = Integer.parseInt(firstLineElements[2]);
     long expTime = Long.parseLong(firstLineElements[3]);
     int numBytes = Integer.parseInt(firstLineElements[4]);
     long casVersion = Long.parseLong(stripNewline(firstLineElements[5]));
-    
+
     byte[] value = new byte[numBytes];
     buffer.position(firstLine.length());
-    for (int i=0; i<numBytes; i++) {
+    for (int i = 0; i < numBytes; i++) {
       value[i] = buffer.get();
     }
-    
+
     String reply = Reply.EXISTS.toString();
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     ValueWrapper expected = ValueWrapper.getDummyValue(casVersion);
     if (r.replace(key, expected, ValueWrapper.getWrappedValue(value, flags))) {
       reply = Reply.STORED.toString();
     }
-    
+
     return asciiCharset.encode(reply);
   }
 }

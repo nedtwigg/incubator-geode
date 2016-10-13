@@ -36,11 +36,11 @@ public class GetPDXEnumsOp {
     AbstractOp op = new GetPDXEnumsOpImpl();
     return (Map<Integer, EnumInfo>) pool.execute(op);
   }
-                                                               
+
   private GetPDXEnumsOp() {
     // no instances allowed
   }
-  
+
   private static class GetPDXEnumsOpImpl extends AbstractOp {
     public GetPDXEnumsOpImpl() {
       super(MessageType.GET_PDX_ENUMS, 1);
@@ -63,8 +63,7 @@ public class GetPDXEnumsOp {
           throw new ServerOperationException(part.getString());
 
         } else {
-          throw new InternalGemFireError("Unexpected message type "
-              + MessageType.getString(msgType));
+          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
@@ -86,10 +85,9 @@ public class GetPDXEnumsOp {
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
     }
-    
+
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override

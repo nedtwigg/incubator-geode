@@ -26,8 +26,7 @@ import org.apache.geode.distributed.internal.DistributionManager;
  * Admin request to transfer region info for a member
  * 
  */
-public class RegionSubRegionSizeRequest extends AdminRequest implements
-    Cancellable {
+public class RegionSubRegionSizeRequest extends AdminRequest implements Cancellable {
   public RegionSubRegionSizeRequest() {
     friendlyName = "Refresh the Member's Regions' Statuses";
   }
@@ -80,11 +79,9 @@ public class RegionSubRegionSizeRequest extends AdminRequest implements
     return REGION_SUB_SIZE_REQUEST;
   }
 
-
   @Override
   public String toString() {
-    return "RegionSubRegionSizeRequest sent to " + this.getRecipient()
-        + " from " + this.getSender();
+    return "RegionSubRegionSizeRequest sent to " + this.getRecipient() + " from " + this.getSender();
   }
 
   private transient boolean cancelled = false;

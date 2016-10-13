@@ -65,7 +65,7 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** Evaluates the health of the distributed system */
   private DistributedSystemHealthEvaluator eval;
 
@@ -107,17 +107,14 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
    * @param interval
    *        How often the health is checked
    */
-  DistributedSystemHealthMonitor(DistributedSystemHealthEvaluator eval,
-                                 GemFireHealthImpl healthImpl,
-                                 int interval) {
+  DistributedSystemHealthMonitor(DistributedSystemHealthEvaluator eval, GemFireHealthImpl healthImpl, int interval) {
     this.eval = eval;
     this.healthImpl = healthImpl;
     this.interval = interval;
     this.okayDiagnoses = new ArrayList();
     this.poorDiagnoses = new ArrayList();
 
-    ThreadGroup group =
-      LoggingThreadGroup.createThreadGroup(LocalizedStrings.DistributedSystemHealthMonitor_HEALTH_MONITORS.toLocalizedString(), logger);
+    ThreadGroup group = LoggingThreadGroup.createThreadGroup(LocalizedStrings.DistributedSystemHealthMonitor_HEALTH_MONITORS.toLocalizedString(), logger);
     String name = LocalizedStrings.DistributedSystemHealthMonitor_HEALTH_MONITOR_FOR_0.toLocalizedString(eval.getDescription());
     this.thread = new Thread(group, this, name);
     this.thread.setDaemon(true);
@@ -143,9 +140,8 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
         this.okayDiagnoses.clear();
         this.poorDiagnoses.clear();
 
-        for (Iterator iter = status.iterator(); iter.hasNext(); ) {
-          AbstractHealthEvaluator.HealthStatus health =
-            (AbstractHealthEvaluator.HealthStatus) iter.next();
+        for (Iterator iter = status.iterator(); iter.hasNext();) {
+          AbstractHealthEvaluator.HealthStatus health = (AbstractHealthEvaluator.HealthStatus) iter.next();
           if (overallHealth == GemFireHealth.GOOD_HEALTH) {
             if ((health.getHealthCode() != GemFireHealth.GOOD_HEALTH)) {
               overallHealth = health.getHealthCode();
@@ -166,12 +162,12 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
             break;
           }
         }
-        
+
         if (overallHealth != prevHealth) {
           healthImpl.healthChanged(this, overallHealth);
           this.prevHealth = overallHealth;
         }
-        
+
       } catch (InterruptedException ex) {
         // We're all done
         // No need to reset the interrupted flag, since we're going to exit.
@@ -188,7 +184,7 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
   /**
    * Starts this <code>DistributedSystemHealthMonitor</code>
    */
-  void start(){
+  void start() {
     this.thread.start();
   }
 
@@ -203,8 +199,7 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
 
       try {
         this.thread.join();
-      } 
-      catch (InterruptedException ex) {
+      } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
         logger.warn(LocalizedMessage.create(LocalizedStrings.DistributedSystemHealthMonitor_INTERRUPTED_WHILE_STOPPING_HEALTH_MONITOR_THREAD), ex);
       }
@@ -221,9 +216,9 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
       throw new org.apache.geode.InternalGemFireException(LocalizedStrings.DistributedSystemHealthMonitor_COULD_NOT_GET_LOCALHOST.toLocalizedString());
     }
   }
-  
+
   public String getName() {
-//    return getId().toString();
+    //    return getId().toString();
     throw new UnsupportedOperationException("Not a real GemFireVM");
   }
 
@@ -234,12 +229,12 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
   public java.io.File getGemFireDir() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
-  
+
   public java.util.Date getBirthDate() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public Properties getLicenseInfo(){
+  public Properties getLicenseInfo() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
@@ -251,42 +246,39 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public StatResource[] getStats(String statisticsTypeName){
+  public StatResource[] getStats(String statisticsTypeName) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public StatResource[] getAllStats(){
-    throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
-  }
-   
-  public DLockInfo[] getDistributedLockInfo(){
+  public StatResource[] getAllStats() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public void addStatListener(StatListener observer,
-                              StatResource observedResource,
-                              Stat observedStat){
+  public DLockInfo[] getDistributedLockInfo() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
-  
-  public void removeStatListener(StatListener observer){
+
+  public void addStatListener(StatListener observer, StatResource observedResource, Stat observedStat) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
-  }  
-
-  public void addHealthListener(HealthListener observer,
-                                GemFireHealthConfig cfg){
-
-  }
-  
-  public void removeHealthListener(){
-
   }
 
-  public void resetHealthStatus(){
+  public void removeStatListener(StatListener observer) {
+    throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
+  }
+
+  public void addHealthListener(HealthListener observer, GemFireHealthConfig cfg) {
+
+  }
+
+  public void removeHealthListener() {
+
+  }
+
+  public void resetHealthStatus() {
     this.prevHealth = GemFireHealth.GOOD_HEALTH;
   }
 
-  public String[] getHealthDiagnosis(GemFireHealth.Health healthCode){
+  public String[] getHealthDiagnosis(GemFireHealth.Health healthCode) {
     if (healthCode == GemFireHealth.GOOD_HEALTH) {
       return new String[0];
 
@@ -303,31 +295,31 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
     }
   }
 
-  public Config getConfig(){
+  public Config getConfig() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public void setConfig(Config cfg){
+  public void setConfig(Config cfg) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public GfManagerAgent getManagerAgent(){
-    throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
-  }
-  
-  public String[] getSystemLogs(){
+  public GfManagerAgent getManagerAgent() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public void setInspectionClasspath(String classpath){
+  public String[] getSystemLogs() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
-  
-  public String getInspectionClasspath(){
+
+  public void setInspectionClasspath(String classpath) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
-  
-  public Region[] getRootRegions(){
+
+  public String getInspectionClasspath() {
+    throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
+  }
+
+  public Region[] getRootRegions() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
@@ -335,13 +327,11 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public Region createVMRootRegion(CacheInfo c, String name,
-                                   RegionAttributes attrs) {
+  public Region createVMRootRegion(CacheInfo c, String name, RegionAttributes attrs) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public Region createSubregion(CacheInfo c, String parentPath,
-                                String name, RegionAttributes attrs) {
+  public Region createSubregion(CacheInfo c, String parentPath, String name, RegionAttributes attrs) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
@@ -349,11 +339,11 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public int getCacheInspectionMode(){
+  public int getCacheInspectionMode() {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public void takeRegionSnapshot(String regionName, int snapshotId){
+  public void takeRegionSnapshot(String regionName, int snapshotId) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
@@ -381,29 +371,22 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public AdminBridgeServer addCacheServer(CacheInfo cache)
-    throws AdminException {
+  public AdminBridgeServer addCacheServer(CacheInfo cache) throws AdminException {
 
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public AdminBridgeServer getBridgeInfo(CacheInfo cache, 
-                                         int id)
-    throws AdminException {
+  public AdminBridgeServer getBridgeInfo(CacheInfo cache, int id) throws AdminException {
 
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public AdminBridgeServer startBridgeServer(CacheInfo cache,
-                                             AdminBridgeServer bridge)
-    throws AdminException {
+  public AdminBridgeServer startBridgeServer(CacheInfo cache, AdminBridgeServer bridge) throws AdminException {
 
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
-  public AdminBridgeServer stopBridgeServer(CacheInfo cache,
-                                            AdminBridgeServer bridge)
-    throws AdminException {
+  public AdminBridgeServer stopBridgeServer(CacheInfo cache, AdminBridgeServer bridge) throws AdminException {
 
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
@@ -412,8 +395,7 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
    * This operation is not supported for this object. Will throw 
    * UnsupportedOperationException if invoked.
    */
-  public void setAlertsManager(StatAlertDefinition[] alertDefs, 
-      long refreshInterval, boolean setRemotely) {
+  public void setAlertsManager(StatAlertDefinition[] alertDefs, long refreshInterval, boolean setRemotely) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 
@@ -429,8 +411,7 @@ class DistributedSystemHealthMonitor implements Runnable, GemFireVM {
    * This operation is not supported for this object. Will throw 
    * UnsupportedOperationException if invoked.
    */
-  public void updateAlertDefinitions(StatAlertDefinition[] alertDefs,
-      int actionCode) {
+  public void updateAlertDefinitions(StatAlertDefinition[] alertDefs, int actionCode) {
     throw new UnsupportedOperationException(LocalizedStrings.DistributedSystemHealthMonitor_NOT_A_REAL_GEMFIREVM.toLocalizedString());
   }
 }

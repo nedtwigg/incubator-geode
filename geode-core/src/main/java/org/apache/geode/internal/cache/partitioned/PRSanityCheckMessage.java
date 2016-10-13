@@ -41,11 +41,9 @@ import java.util.Set;
  * 
  *
  */
-public final class PRSanityCheckMessage extends PartitionMessage
-{
-  
+public final class PRSanityCheckMessage extends PartitionMessage {
+
   private String regionName;
-  
 
   public PRSanityCheckMessage() {
     super();
@@ -57,13 +55,11 @@ public final class PRSanityCheckMessage extends PartitionMessage
    * @param processor the reply processor, if you expect an answer (don't!)
    * @param regionName the regionIdentifier string
    */
-  public PRSanityCheckMessage(Set recipients, int prId, ReplyProcessor21 processor,
-      String regionName) {
+  public PRSanityCheckMessage(Set recipients, int prId, ReplyProcessor21 processor, String regionName) {
     super(recipients, prId, processor);
     this.regionName = regionName;
   }
 
-  
   @Override
   public boolean isSevereAlertCompatible() {
     // allow forced-disconnect processing for all cache op messages
@@ -92,7 +88,7 @@ public final class PRSanityCheckMessage extends PartitionMessage
     DataSerializer.writeString(this.regionName, out);
   }
 
- /**
+  /**
    * Send a sanity check message and schedule a timer to send another one
    * in gemfire.PRSanityCheckInterval (default 5000) milliseconds.  This can
    * be enabled with gemfire.PRSanityCheckEnabled=true. 
@@ -100,8 +96,8 @@ public final class PRSanityCheckMessage extends PartitionMessage
   public static void schedule(final PartitionedRegion pr) {
     if (Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "PRSanityCheckEnabled")) {
       final DM dm = pr.getDistributionManager();
-//      RegionAdvisor ra = pr.getRegionAdvisor();
-//      final Set recipients = ra.adviseAllPRNodes();
+      //      RegionAdvisor ra = pr.getRegionAdvisor();
+      //      final Set recipients = ra.adviseAllPRNodes();
       DistributedRegion prRoot = (DistributedRegion) PartitionedRegionHelper.getPRRoot(pr.getCache(), false);
       if (prRoot == null) {
         return;
@@ -110,31 +106,26 @@ public final class PRSanityCheckMessage extends PartitionMessage
       if (recipients.size() <= 0) {
         return;
       }
-      final PRSanityCheckMessage delayedInstance = new PRSanityCheckMessage(
-          recipients, pr.getPRId(), null, pr.getRegionIdentifier());
-      PRSanityCheckMessage instance = new PRSanityCheckMessage(recipients,
-          pr.getPRId(), null, pr.getRegionIdentifier());
+      final PRSanityCheckMessage delayedInstance = new PRSanityCheckMessage(recipients, pr.getPRId(), null, pr.getRegionIdentifier());
+      PRSanityCheckMessage instance = new PRSanityCheckMessage(recipients, pr.getPRId(), null, pr.getRegionIdentifier());
       dm.putOutgoing(instance);
-      int sanityCheckInterval = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "PRSanityCheckInterval",
-                                                   5000).intValue();
+      int sanityCheckInterval = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "PRSanityCheckInterval", 5000).intValue();
       if (sanityCheckInterval != 0) {
         final SystemTimer tm = new SystemTimer(dm.getSystem(), true);
         SystemTimer.SystemTimerTask st = new SystemTimer.SystemTimerTask() {
-            @Override
-              public void run2() {
-              try {
-                if (!pr.isLocallyDestroyed && !pr.isClosed && !pr.isDestroyed()) {
-                  dm.putOutgoing(delayedInstance);
-                }
+          @Override
+          public void run2() {
+            try {
+              if (!pr.isLocallyDestroyed && !pr.isClosed && !pr.isDestroyed()) {
+                dm.putOutgoing(delayedInstance);
               }
-              catch (CancelException cce) {
-                // cache is closed - can't send the message
-              }
-              finally {
-                tm.cancel();
-              }
+            } catch (CancelException cce) {
+              // cache is closed - can't send the message
+            } finally {
+              tm.cancel();
             }
-          };
+          }
+        };
         tm.schedule(st, sanityCheckInterval);
       }
     }

@@ -30,54 +30,51 @@ import java.awt.event.ComponentEvent;
  */
 public class SequencePanel extends JPanel {
 
-    public SequencePanel(SequenceDiagram sequenceDiagram) {
-         //Set up the drawing area.
-        ZoomingPanel drawingPane = new ZoomingPanel();
-        drawingPane.setBackground(Color.white);
-        drawingPane.setSequenceDiagram(sequenceDiagram);
+  public SequencePanel(SequenceDiagram sequenceDiagram) {
+    //Set up the drawing area.
+    ZoomingPanel drawingPane = new ZoomingPanel();
+    drawingPane.setBackground(Color.white);
+    drawingPane.setSequenceDiagram(sequenceDiagram);
 
-        //Put the drawing area in a scroll pane.
-        final JScrollPane scroller = new JScrollPane(drawingPane);
-        scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        final TimeAxis timeAxis = new TimeAxis(TimeAxis.VERTICAL, 
-                sequenceDiagram.getMinTime(),
-                sequenceDiagram.getMaxTime());
-        timeAxis.setPreferredHeight(drawingPane.getHeight());
-        scroller.setRowHeaderView(timeAxis);
-        scroller.setColumnHeaderView(sequenceDiagram.createMemberAxis());
-        int preferredWidth = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 100);
-        int preferredHeight = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 100);
-        scroller.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-        scroller.setAutoscrolls(true);
-//        scroller.setPreferredSize(new Dimension(200,200));
+    //Put the drawing area in a scroll pane.
+    final JScrollPane scroller = new JScrollPane(drawingPane);
+    scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+    final TimeAxis timeAxis = new TimeAxis(TimeAxis.VERTICAL, sequenceDiagram.getMinTime(), sequenceDiagram.getMaxTime());
+    timeAxis.setPreferredHeight(drawingPane.getHeight());
+    scroller.setRowHeaderView(timeAxis);
+    scroller.setColumnHeaderView(sequenceDiagram.createMemberAxis());
+    int preferredWidth = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 100);
+    int preferredHeight = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 100);
+    scroller.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+    scroller.setAutoscrolls(true);
+    //        scroller.setPreferredSize(new Dimension(200,200));
 
-        sequenceDiagram.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                int height = e.getComponent().getHeight();
-                timeAxis.setPreferredHeight(height);
-                timeAxis.revalidate();
-            }
-        });
+    sequenceDiagram.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        int height = e.getComponent().getHeight();
+        timeAxis.setPreferredHeight(height);
+        timeAxis.revalidate();
+      }
+    });
 
-        BorderLayout layout = new BorderLayout();
-//        layout.setHgap(0);
-//        layout.setVgap(0);
-        setLayout(layout);
-        //Lay out this demo.
-//        add(instructionPanel, BorderLayout.PAGE_START);
-        add(scroller, BorderLayout.CENTER);
+    BorderLayout layout = new BorderLayout();
+    //        layout.setHgap(0);
+    //        layout.setVgap(0);
+    setLayout(layout);
+    //Lay out this demo.
+    //        add(instructionPanel, BorderLayout.PAGE_START);
+    add(scroller, BorderLayout.CENTER);
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Component source =e.getComponent();
-                scroller.setSize(source.getSize());
-                scroller.revalidate();
-            }
-        });
+    addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        Component source = e.getComponent();
+        scroller.setSize(source.getSize());
+        scroller.revalidate();
+      }
+    });
 
-        
-    }
+  }
 }

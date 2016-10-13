@@ -109,36 +109,19 @@ public class QueryDataDUnitTest extends ManagementTestBase {
   static String PartitionedRegionName5 = "TestPartitionedRegion5"; // default
                                                                    // name
 
-  
   static String repRegionName = "TestRepRegion"; // default name
   static String repRegionName2 = "TestRepRegion2"; // default name
   static String repRegionName3 = "TestRepRegion3"; // default name
   static String repRegionName4 = "TestRepRegion4"; // default name
   static String localRegionName = "TestLocalRegion"; // default name
 
-  public static String[] queries = new String[] {
-      "select * from /" + PartitionedRegionName1 + " where ID>=0",
-      "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2 + " r2 where r1.ID = r2.ID",
-      "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2
-          + " r2 where r1.ID = r2.ID AND r1.status = r2.status",
-      "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2 + " r2, /"
-          + PartitionedRegionName3 + " r3 where r1.ID = r2.ID and r2.ID = r3.ID",
-      "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2 + " r2, /"
-          + PartitionedRegionName3 + " r3  , /" + repRegionName
-          + " r4 where r1.ID = r2.ID and r2.ID = r3.ID and r3.ID = r4.ID",
-      "Select * from /" + PartitionedRegionName4 + " r4 , /" + PartitionedRegionName5 + " r5 where r4.ID = r5.ID" };
+  public static String[] queries = new String[] { "select * from /" + PartitionedRegionName1 + " where ID>=0", "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2 + " r2 where r1.ID = r2.ID", "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2 + " r2 where r1.ID = r2.ID AND r1.status = r2.status", "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2 + " r2, /" + PartitionedRegionName3 + " r3 where r1.ID = r2.ID and r2.ID = r3.ID", "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName2 + " r2, /" + PartitionedRegionName3 + " r3  , /" + repRegionName + " r4 where r1.ID = r2.ID and r2.ID = r3.ID and r3.ID = r4.ID", "Select * from /" + PartitionedRegionName4 + " r4 , /" + PartitionedRegionName5 + " r5 where r4.ID = r5.ID" };
 
-  public static String[] nonColocatedQueries = new String[] {
-      "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName4 + " r4 where r1.ID = r4.ID",
-      "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName4 + " r4 , /"
-          + PartitionedRegionName5 + " r5 where r1.ID = r42.ID and r4.ID = r5.ID" };
+  public static String[] nonColocatedQueries = new String[] { "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName4 + " r4 where r1.ID = r4.ID", "Select * from /" + PartitionedRegionName1 + " r1, /" + PartitionedRegionName4 + " r4 , /" + PartitionedRegionName5 + " r5 where r1.ID = r42.ID and r4.ID = r5.ID" };
 
-  public static String[] queriesForRR = new String[] { "<trace> select * from /" + repRegionName + " where ID>=0",
-      "Select * from /" + repRegionName + " r1, /" + repRegionName2 + " r2 where r1.ID = r2.ID",
-      "select * from /" + repRegionName3 + " where ID>=0" };
-  
+  public static String[] queriesForRR = new String[] { "<trace> select * from /" + repRegionName + " where ID>=0", "Select * from /" + repRegionName + " r1, /" + repRegionName2 + " r2 where r1.ID = r2.ID", "select * from /" + repRegionName3 + " where ID>=0" };
+
   public static String[] queriesForLimit = new String[] { "select * from /" + repRegionName4 };
-
 
   public QueryDataDUnitTest() {
     super();
@@ -149,7 +132,7 @@ public class QueryDataDUnitTest extends ManagementTestBase {
     initManagement(false);
   }
 
-  private void initCommonRegions(){
+  private void initCommonRegions() {
     createRegionsInNodes();
     fillValuesInRegions();
   }
@@ -158,8 +141,7 @@ public class QueryDataDUnitTest extends ManagementTestBase {
    * This function puts portfolio objects into the created Region (PR or Local)
    * *
    */
-  public CacheSerializableRunnable getCacheSerializableRunnableForPRPuts(final String regionName,
-      final Object[] portfolio, final int from, final int to) {
+  public CacheSerializableRunnable getCacheSerializableRunnableForPRPuts(final String regionName, final Object[] portfolio, final int from, final int to) {
     SerializableRunnable puts = new CacheSerializableRunnable("Region Puts") {
       @Override
       public void run2() throws CacheException {
@@ -167,10 +149,7 @@ public class QueryDataDUnitTest extends ManagementTestBase {
         Region region = cache.getRegion(regionName);
         for (int j = from; j < to; j++)
           region.put(new Integer(j), portfolio[j]);
-        LogWriterUtils.getLogWriter()
-            .info(
-                "PRQueryDUnitHelper#getCacheSerializableRunnableForPRPuts: Inserted Portfolio data on Region "
-                    + regionName);
+        LogWriterUtils.getLogWriter().info("PRQueryDUnitHelper#getCacheSerializableRunnableForPRPuts: Inserted Portfolio data on Region " + regionName);
       }
     };
     return (CacheSerializableRunnable) puts;
@@ -189,7 +168,7 @@ public class QueryDataDUnitTest extends ManagementTestBase {
     };
     return (CacheSerializableRunnable) puts;
   }
-  
+
   /**
    * This function puts big collections to created Region (REPLICATED) *
    */
@@ -256,18 +235,18 @@ public class QueryDataDUnitTest extends ManagementTestBase {
     pi = pf.create();
     r.put("VMW", pi);
   }
-  
+
   public void putBigInstances(String regionName) throws CacheException {
     Region r = getCache().getRegion(regionName);
 
-    for(int i = 0 ; i < 1200 ; i++){
+    for (int i = 0; i < 1200; i++) {
       List<String> bigColl1 = new ArrayList<String>();
-      for(int j = 0; j< 200 ; j++){
-        bigColl1.add("BigColl_1_ElemenNo_"+j);
+      for (int j = 0; j < 200; j++) {
+        bigColl1.add("BigColl_1_ElemenNo_" + j);
       }
-      r.put("BigColl_1_"+i, bigColl1);
+      r.put("BigColl_1_" + i, bigColl1);
     }
-    
+
   }
 
   private void createRegionsInNodes() {
@@ -324,10 +303,9 @@ public class QueryDataDUnitTest extends ManagementTestBase {
     final DistributedMember member1 = getMember(managedNode1);
     final DistributedMember member2 = getMember(managedNode2);
     final DistributedMember member3 = getMember(managedNode3);
-    
+
     initCommonRegions();
-    
-    
+
     this.managingNode.invoke(new SerializableRunnable("testQueryOnPartitionedRegion") {
 
       public void run() {
@@ -343,9 +321,9 @@ public class QueryDataDUnitTest extends ManagementTestBase {
             if (i == 0) {
               jsonString = bean.queryData(queries[i], null, 10);
               if (jsonString.contains("result") && !jsonString.contains("No Data Found")) {
-               
+
                 //getLogWriter().info("testQueryOnPartitionedRegion" + queries[i] + " is = " + jsonString);
-                JSONObject jsonObj = new JSONObject(jsonString);  
+                JSONObject jsonObj = new JSONObject(jsonString);
               } else {
                 fail("Query On Cluster should have result");
               }
@@ -358,8 +336,6 @@ public class QueryDataDUnitTest extends ManagementTestBase {
                 fail("Query On Member should have member");
               }
             }
-
-            
 
           }
         } catch (JSONException e) {
@@ -376,13 +352,10 @@ public class QueryDataDUnitTest extends ManagementTestBase {
   @Test
   public void testQueryOnReplicatedRegion() throws Exception {
 
-    
     initCommonRegions();
-    
-    
+
     this.managingNode.invoke(new SerializableRunnable("Query Test For REPL1") {
 
-      
       public void run() {
         Cache cache = getCache();
         SystemManagementService service = (SystemManagementService) getManagementService();
@@ -420,18 +393,16 @@ public class QueryDataDUnitTest extends ManagementTestBase {
       }
     });
   }
-  
+
   @Category(FlakyTest.class) // GEODE-1539
   @Test
   public void testMemberWise() throws Exception {
 
     final DistributedMember member1 = getMember(managedNode1);
     final DistributedMember member2 = getMember(managedNode2);
-    
-    
+
     initCommonRegions();
-    
-    
+
     this.managingNode.invoke(new SerializableRunnable("testMemberWise") {
 
       public void run() {
@@ -445,7 +416,7 @@ public class QueryDataDUnitTest extends ManagementTestBase {
           String jsonString = BeanUtilFuncs.decompress(bytes);
           JSONObject jsonObj = new JSONObject(jsonString);
           //String memberID = (String)jsonObj.get("member");
-          
+
           //getLogWriter().info("testMemberWise " + queriesForRR[2] + " is = " + jsonString);
 
         } catch (JSONException e) {
@@ -459,14 +430,12 @@ public class QueryDataDUnitTest extends ManagementTestBase {
     });
   }
 
-  
- 
   @Test
   public void testLimitForQuery() throws Exception {
-    
+
     initCommonRegions();
     managedNode1.invoke(getCacheSerializableRunnableForBigCollPuts(repRegionName4));
-    
+
     managingNode.invoke(new SerializableRunnable("testLimitForQuery") {
       public void run() {
         SystemManagementService service = (SystemManagementService) getManagementService();
@@ -498,12 +467,12 @@ public class QueryDataDUnitTest extends ManagementTestBase {
           }
 
           // Query With Ovverride Values
-          
+
           int newQueryCollectionDepth = 150;
           int newQueryResultSetLimit = 500;
           bean.setQueryCollectionsDepth(newQueryCollectionDepth);
           bean.setQueryResultSetLimit(newQueryResultSetLimit);
-          
+
           assertEquals(newQueryCollectionDepth, bean.getQueryCollectionsDepth());
           assertEquals(newQueryResultSetLimit, bean.getQueryResultSetLimit());
 
@@ -538,14 +507,14 @@ public class QueryDataDUnitTest extends ManagementTestBase {
   }
 
   @Test
-  public void testErrors() throws Exception{
-    
+  public void testErrors() throws Exception {
+
     final DistributedMember member1 = getMember(managedNode1);
     final DistributedMember member2 = getMember(managedNode2);
     final DistributedMember member3 = getMember(managedNode3);
-    
+
     initCommonRegions();
-    
+
     this.managingNode.invoke(new SerializableRunnable("Test Error") {
       public void run() {
         SystemManagementService service = (SystemManagementService) getManagementService();
@@ -555,55 +524,55 @@ public class QueryDataDUnitTest extends ManagementTestBase {
         try {
           Cache cache = getCache();
           try {
-            String message = bean.queryData("Select * from TestPartitionedRegion1", null, 2); 
-            
+            String message = bean.queryData("Select * from TestPartitionedRegion1", null, 2);
+
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", ManagementStrings.QUERY__MSG__INVALID_QUERY.toLocalizedString("Region mentioned in query probably missing /"));
             String expectedMessage = jsonObject.toString();
-            assertEquals(expectedMessage,message);
-            
+            assertEquals(expectedMessage, message);
+
           } catch (Exception e) {
             fail(e.getLocalizedMessage());
           }
-          
+
           try {
             String query = "Select * from /PartitionedRegionName9 r1, PartitionedRegionName2 r2 where r1.ID = r2.ID";
             String message = bean.queryData(query, null, 2);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", ManagementStrings.QUERY__MSG__REGIONS_NOT_FOUND.toLocalizedString("/PartitionedRegionName9"));
             String expectedMessage = jsonObject.toString();
-            assertEquals(expectedMessage,message);
+            assertEquals(expectedMessage, message);
           } catch (Exception e) {
             fail(e.getLocalizedMessage());
-          
+
           }
-          
+
           final String testTemp = "testTemp";
           try {
             RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
-            
+
             rf.create(testTemp);
-            String query = "Select * from /"+testTemp;
-            
+            String query = "Select * from /" + testTemp;
+
             String message = bean.queryData(query, member1.getId(), 2);
-            
+
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", ManagementStrings.QUERY__MSG__REGIONS_NOT_FOUND_ON_MEMBERS.toLocalizedString("/"+testTemp));
+            jsonObject.put("message", ManagementStrings.QUERY__MSG__REGIONS_NOT_FOUND_ON_MEMBERS.toLocalizedString("/" + testTemp));
             String expectedMessage = jsonObject.toString();
-            assertEquals(expectedMessage,message);
+            assertEquals(expectedMessage, message);
           } catch (Exception e) {
             fail(e.getLocalizedMessage());
           }
-          
+
           try {
-            String query = queries[1];            
-            String message = bean.queryData(query,null, 2);
-            
+            String query = queries[1];
+            String message = bean.queryData(query, null, 2);
+
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", ManagementStrings.QUERY__MSG__JOIN_OP_EX.toLocalizedString());
             String expectedMessage = jsonObject.toString();
-            
-            assertEquals(expectedMessage,message);
+
+            assertEquals(expectedMessage, message);
           } catch (Exception e) {
             fail(e.getLocalizedMessage());
           }
@@ -615,15 +584,15 @@ public class QueryDataDUnitTest extends ManagementTestBase {
       }
     });
   }
-  
+
   @Test
-  public void testNormalRegions() throws Exception{
-    
+  public void testNormalRegions() throws Exception {
+
     final DistributedMember member1 = getMember(managedNode1);
     final DistributedMember member2 = getMember(managedNode2);
     final DistributedMember member3 = getMember(managedNode3);
     initCommonRegions();
-    
+
     this.managingNode.invoke(new SerializableRunnable("Test Error") {
       public void run() {
         SystemManagementService service = (SystemManagementService) getManagementService();
@@ -631,32 +600,31 @@ public class QueryDataDUnitTest extends ManagementTestBase {
         assertNotNull(bean);
         final String testNormal = "testNormal";
         final String testTemp = "testTemp";
-        
+
         final String testSNormal = "testSNormal"; // to Reverse order of regions while getting Random region in QueryDataFunction
         final String testATemp = "testATemp";
-        
+
         try {
           Cache cache = getCache();
-          RegionFactory rf = cache.createRegionFactory(RegionShortcut.LOCAL_HEAP_LRU);          
+          RegionFactory rf = cache.createRegionFactory(RegionShortcut.LOCAL_HEAP_LRU);
           rf.create(testNormal);
           rf.create(testSNormal);
-          
-          
-          Region region = cache.getRegion("/"+testNormal);
+
+          Region region = cache.getRegion("/" + testNormal);
           assertTrue(region.getAttributes().getDataPolicy() == DataPolicy.NORMAL);
-          
+
           RegionFactory rf1 = cache.createRegionFactory(RegionShortcut.REPLICATE);
           rf1.create(testTemp);
           rf1.create(testATemp);
           String query1 = "Select * from /testTemp r1,/testNormal r2 where r1.ID = r2.ID";
           String query2 = "Select * from /testSNormal r1,/testATemp r2 where r1.ID = r2.ID";
           String query3 = "Select * from /testSNormal";
-          
+
           try {
-           
-            bean.queryDataForCompressedResult(query1,null, 2);
-            bean.queryDataForCompressedResult(query2,null, 2);
-            bean.queryDataForCompressedResult(query3,null, 2);
+
+            bean.queryDataForCompressedResult(query1, null, 2);
+            bean.queryDataForCompressedResult(query2, null, 2);
+            bean.queryDataForCompressedResult(query3, null, 2);
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -668,7 +636,7 @@ public class QueryDataDUnitTest extends ManagementTestBase {
       }
     });
   }
- 
+
   @Test
   public void testRegionsLocalDataSet() throws Exception {
 
@@ -683,24 +651,24 @@ public class QueryDataDUnitTest extends ManagementTestBase {
     this.managedNode1.invoke(new SerializableRunnable("testRegionsLocalDataSet:Create Region") {
       public void run() {
         try {
-    
+
           Cache cache = getCache();
           PartitionAttributesFactory paf = new PartitionAttributesFactory();
 
           paf.setRedundantCopies(2).setTotalNumBuckets(12);
-          
+
           List<FixedPartitionAttributes> fpaList = createFixedPartitionList(1);
           for (FixedPartitionAttributes fpa : fpaList) {
             paf.addFixedPartitionAttributes(fpa);
           }
           paf.setPartitionResolver(new SingleHopQuarterPartitionResolver());
-          
+
           RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(paf.create());
-              
+
           Region r = rf.create(PartitionedRegionName6);
 
           for (int i = 0; i < valArray1.length; i++) {
-            r.put(new Date(2013,1,i+5), valArray1[i]);
+            r.put(new Date(2013, 1, i + 5), valArray1[i]);
           }
         } catch (Exception e) {
           e.printStackTrace();
@@ -718,21 +686,21 @@ public class QueryDataDUnitTest extends ManagementTestBase {
           PartitionAttributesFactory paf = new PartitionAttributesFactory();
 
           paf.setRedundantCopies(2).setTotalNumBuckets(12);
-          
+
           List<FixedPartitionAttributes> fpaList = createFixedPartitionList(2);
           for (FixedPartitionAttributes fpa : fpaList) {
             paf.addFixedPartitionAttributes(fpa);
           }
           paf.setPartitionResolver(new SingleHopQuarterPartitionResolver());
-          
+
           RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(paf.create());
-              
+
           Region r = rf.create(PartitionedRegionName6);
-          
+
           for (int i = 0; i < valArray2.length; i++) {
-            r.put(new Date(2013,5,i+5), valArray2[i]);
+            r.put(new Date(2013, 5, i + 5), valArray2[i]);
           }
-          
+
         } catch (Exception e) {
           fail(e.getMessage());
         }
@@ -748,19 +716,17 @@ public class QueryDataDUnitTest extends ManagementTestBase {
           PartitionAttributesFactory paf = new PartitionAttributesFactory();
 
           paf.setRedundantCopies(2).setTotalNumBuckets(12);
-          
+
           List<FixedPartitionAttributes> fpaList = createFixedPartitionList(3);
           for (FixedPartitionAttributes fpa : fpaList) {
             paf.addFixedPartitionAttributes(fpa);
           }
           paf.setPartitionResolver(new SingleHopQuarterPartitionResolver());
-          
-          RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(paf.create());
-              
-          Region r = rf.create(PartitionedRegionName6);
-          
 
-          
+          RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(paf.create());
+
+          Region r = rf.create(PartitionedRegionName6);
+
         } catch (Exception e) {
           fail(e.getMessage());
         }
@@ -768,14 +734,12 @@ public class QueryDataDUnitTest extends ManagementTestBase {
       }
     });
 
-    final List<String> member1RealData = (List<String>)managedNode1.invoke(() -> QueryDataDUnitTest.getLocalDataSet( PartitionedRegionName6 ));
-   
-    final List<String> member2RealData = (List<String>) managedNode2.invoke(() -> QueryDataDUnitTest.getLocalDataSet( PartitionedRegionName6 ));
-    
-    final List<String> member3RealData = (List<String>) managedNode3.invoke(() -> QueryDataDUnitTest.getLocalDataSet( PartitionedRegionName6 ));
-    
+    final List<String> member1RealData = (List<String>) managedNode1.invoke(() -> QueryDataDUnitTest.getLocalDataSet(PartitionedRegionName6));
 
-    
+    final List<String> member2RealData = (List<String>) managedNode2.invoke(() -> QueryDataDUnitTest.getLocalDataSet(PartitionedRegionName6));
+
+    final List<String> member3RealData = (List<String>) managedNode3.invoke(() -> QueryDataDUnitTest.getLocalDataSet(PartitionedRegionName6));
+
     this.managingNode.invoke(new SerializableRunnable("testRegionsLocalDataSet") {
       public void run() {
         SystemManagementService service = (SystemManagementService) getManagementService();
@@ -786,8 +750,7 @@ public class QueryDataDUnitTest extends ManagementTestBase {
           String query = "Select * from /" + PartitionedRegionName6;
 
           try {
-            final DistributedRegionMXBean regionMBean = MBeanUtil.getDistributedRegionMbean("/"
-                + PartitionedRegionName6, 3);
+            final DistributedRegionMXBean regionMBean = MBeanUtil.getDistributedRegionMbean("/" + PartitionedRegionName6, 3);
 
             Wait.waitForCriterion(new WaitCriterion() {
 
@@ -806,21 +769,20 @@ public class QueryDataDUnitTest extends ManagementTestBase {
             LogWriterUtils.getLogWriter().info("member1RealData  is = " + member1RealData);
             LogWriterUtils.getLogWriter().info("member2RealData  is = " + member2RealData);
             LogWriterUtils.getLogWriter().info("member3RealData  is = " + member3RealData);
-            
+
             String member1Result = bean.queryData(query, member1.getId(), 0);
             LogWriterUtils.getLogWriter().info("member1Result " + query + " is = " + member1Result);
 
-
             String member2Result = bean.queryData(query, member2.getId(), 0);
             LogWriterUtils.getLogWriter().info("member2Result " + query + " is = " + member2Result);
-            
+
             String member3Result = bean.queryData(query, member3.getId(), 0);
             LogWriterUtils.getLogWriter().info("member3Result " + query + " is = " + member3Result);
-            
+
             for (String val : member1RealData) {
               assertTrue(member1Result.contains(val));
-             }
-            
+            }
+
             for (String val : member2RealData) {
               assertTrue(member2Result.contains(val));
             }
@@ -837,20 +799,19 @@ public class QueryDataDUnitTest extends ManagementTestBase {
       }
     });
   }
-  
-  
-  private static List<String> getLocalDataSet(String region){
+
+  private static List<String> getLocalDataSet(String region) {
     PartitionedRegion parRegion = PartitionedRegionHelper.getPartitionedRegion(region, GemFireCacheImpl.getExisting());
     Set<BucketRegion> localPrimaryBucketRegions = parRegion.getDataStore().getAllLocalPrimaryBucketRegions();
     List<String> allPrimaryVals = new ArrayList<String>();
-    for(BucketRegion brRegion : localPrimaryBucketRegions){
-      for(Object obj : brRegion.values()){
-        allPrimaryVals.add((String)obj);
+    for (BucketRegion brRegion : localPrimaryBucketRegions) {
+      for (Object obj : brRegion.values()) {
+        allPrimaryVals.add((String) obj);
       }
-      
+
     }
-    
-   return allPrimaryVals;
+
+    return allPrimaryVals;
   }
 
   /**
@@ -876,6 +837,6 @@ public class QueryDataDUnitTest extends ManagementTestBase {
       fpaList.add(FixedPartitionAttributes.createFixedPartition("Q2", 3));
       fpaList.add(FixedPartitionAttributes.createFixedPartition("Q3", true, 3));
     }
-   return fpaList;
+    return fpaList;
   }
 }

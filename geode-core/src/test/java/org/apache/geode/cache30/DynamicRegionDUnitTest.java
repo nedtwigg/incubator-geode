@@ -54,6 +54,7 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
 
   // Specify oplog size in MB
   private static final int OPLOG_SIZE = 1;
+
   public DynamicRegionDUnitTest() {
     super();
   }
@@ -73,7 +74,7 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
       DynamicRegionFactory.get().open(new DynamicRegionFactory.Config(d, null));
     }
   }
-  
+
   /**
    * Tear down the test suite. 
    * <p> <H1>IMPORTANT NOTE:</H1>
@@ -87,44 +88,38 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
     try {
       //Asif destroy dynamic regions at the end of the test
       CacheSerializableRunnable destroyDynRegn = new CacheSerializableRunnable("Destroy Dynamic regions") {
-        public void run2() throws CacheException
-        {
-          Region dr = getCache().getRegion("__DynamicRegions");    
-          if(dr != null) {
-              dr.localDestroyRegion();      
+        public void run2() throws CacheException {
+          Region dr = getCache().getRegion("__DynamicRegions");
+          if (dr != null) {
+            dr.localDestroyRegion();
           }
         }
       };
       getOtherVm().invoke(destroyDynRegn);
-      Region dr = getCache().getRegion("__DynamicRegions");    
-      if(dr != null) {
-          dr.localDestroyRegion();      
+      Region dr = getCache().getRegion("__DynamicRegions");
+      if (dr != null) {
+        dr.localDestroyRegion();
       }
-    } 
-    catch (VirtualMachineError e) {
+    } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       LogWriterUtils.getLogWriter().severe("tearDown in " + this + " failed due to " + t);
-    }
-    finally {
+    } finally {
       try {
         disconnectAllFromDS();
-      } 
-      catch (VirtualMachineError e) {
+      } catch (VirtualMachineError e) {
         SystemFailure.initiateFailure(e);
         throw e;
-      }
-      catch (Throwable t) {
-        LogWriterUtils.getLogWriter().severe("tearDown in " + this + " failed to disconnect all DS due to " + t);  
+      } catch (Throwable t) {
+        LogWriterUtils.getLogWriter().severe("tearDown in " + this + " failed to disconnect all DS due to " + t);
       }
     }
-    if (! DynamicRegionFactory.get().isClosed()) {
+    if (!DynamicRegionFactory.get().isClosed()) {
       LogWriterUtils.getLogWriter().severe("DynamicRegionFactory not closed!", new Exception());
     }
   }
-  
+
   //////////////////////  Test Methods  //////////////////////
 
   private VM getOtherVm() {
@@ -135,70 +130,71 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
   private void doParentCreateOtherVm(final Properties p, final boolean persist) {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("create root") {
-        public void run2() throws CacheException {
-          File d = new File("DynamicRegionData" + OSProcess.getId());
-          d.mkdirs();
-          DynamicRegionFactory.get().open(new DynamicRegionFactory.Config(d, null));
-          getSystem(p);
-          assertEquals(true, DynamicRegionFactory.get().isOpen());
-          createParentRegion("parent", persist);
-        }
-      });
+      public void run2() throws CacheException {
+        File d = new File("DynamicRegionData" + OSProcess.getId());
+        d.mkdirs();
+        DynamicRegionFactory.get().open(new DynamicRegionFactory.Config(d, null));
+        getSystem(p);
+        assertEquals(true, DynamicRegionFactory.get().isOpen());
+        createParentRegion("parent", persist);
+      }
+    });
   }
+
   private void recreateOtherVm() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("recreate") {
-        public void run2() throws CacheException {
-          beginCacheXml();
-          {
-            File d = new File("DynamicRegionData" + OSProcess.getId());
-            d.mkdirs();
-            CacheCreation cc = (CacheCreation)getCache();
-            cc.setDynamicRegionFactoryConfig(new DynamicRegionFactory.Config(d, null));
-          }
-          createParentRegion("parent", true);
-          finishCacheXml("dynamicRegionDUnitTest");
-          // now make sure we recovered from disk ok
-          assertEquals(true, DynamicRegionFactory.get().isOpen());
+      public void run2() throws CacheException {
+        beginCacheXml();
+        {
+          File d = new File("DynamicRegionData" + OSProcess.getId());
+          d.mkdirs();
+          CacheCreation cc = (CacheCreation) getCache();
+          cc.setDynamicRegionFactoryConfig(new DynamicRegionFactory.Config(d, null));
         }
-      });
+        createParentRegion("parent", true);
+        finishCacheXml("dynamicRegionDUnitTest");
+        // now make sure we recovered from disk ok
+        assertEquals(true, DynamicRegionFactory.get().isOpen());
+      }
+    });
   }
 
   private void checkForRegionOtherVm(final String fullPath, final boolean shouldExist) {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("checkForRegion") {
-        public void run2() throws CacheException {
-          Region r = getCache().getRegion(fullPath);
-          if (shouldExist) {
-            if (r == null) {
-              fail("region " + fullPath + " does not exist");
-            }
-            //assertNotSame(r.getParentRegion().getAttributes().getCapacityController(),
-            //              r.getAttributes().getCapacityController());
-            assertEquals(true, r.containsKey("key1"));
-            assertEquals(true, r.containsValueForKey("key1"));
-            assertEquals("value1", r.getEntry("key1").getValue());
-          } else {
-            assertEquals(null, r);
+      public void run2() throws CacheException {
+        Region r = getCache().getRegion(fullPath);
+        if (shouldExist) {
+          if (r == null) {
+            fail("region " + fullPath + " does not exist");
           }
+          //assertNotSame(r.getParentRegion().getAttributes().getCapacityController(),
+          //              r.getAttributes().getCapacityController());
+          assertEquals(true, r.containsKey("key1"));
+          assertEquals(true, r.containsValueForKey("key1"));
+          assertEquals("value1", r.getEntry("key1").getValue());
+        } else {
+          assertEquals(null, r);
         }
-      });
+      }
+    });
   }
 
   private void checkForSubregionOtherVm(final String fullPath, final boolean shouldExist) {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("checkForRegion") {
-        public void run2() throws CacheException {
-          Region r = getCache().getRegion(fullPath);
-          if (shouldExist) {
-            if (r == null) {
-              fail("region " + fullPath + " does not exist");
-            }
-          } else {
-            assertEquals(null, r);
+      public void run2() throws CacheException {
+        Region r = getCache().getRegion(fullPath);
+        if (shouldExist) {
+          if (r == null) {
+            fail("region " + fullPath + " does not exist");
           }
+        } else {
+          assertEquals(null, r);
         }
-      });
+      }
+    });
   }
 
   /**
@@ -209,11 +205,7 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     File d = new File("DynamicRegionData" + OSProcess.getId());
-    factory.setDiskStoreName(getCache().createDiskStoreFactory()
-                             .setDiskDirs(new File[] {d})
-                             .setMaxOplogSize(OPLOG_SIZE)
-                             .create("DynamicRegionDUnitTest")
-                             .getName());
+    factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(new File[] { d }).setMaxOplogSize(OPLOG_SIZE).create("DynamicRegionDUnitTest").getName());
     if (persist) {
       factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     }
@@ -236,16 +228,16 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
     String drFullPath = dr.getFullPath();
     dr.put("key1", "value1");
     // test for bug 35528 - support for dynamic subregions of dynamic regions
-    for (int i=0; i<10; i++) {
+    for (int i = 0; i < 10; i++) {
       DynamicRegionFactory.get().createDynamicRegion(drFullPath, "subregion" + i);
     }
-    
+
     LogWriterUtils.getLogWriter().info("testPeerRegion - check #1 make sure other region has new dynamic subregion");
     checkForRegionOtherVm(drFullPath, true);
 
     // spot check the subregions
     checkForSubregionOtherVm(drFullPath + "/subregion7", true);
-    
+
     // now see if OTHER can recreate which should fetch meta-info from controller
     recreateOtherVm();
 
@@ -257,7 +249,7 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
     recreateOtherVm();
     LogWriterUtils.getLogWriter().info("testPeerRegion - check #3 make sure dynamic region can be recovered from disk");
     checkForRegionOtherVm(drFullPath, true);
-    for (int i=0; i<10; i++) {
+    for (int i = 0; i < 10; i++) {
       checkForSubregionOtherVm(drFullPath + "/subregion" + i, true);
     }
 
@@ -278,7 +270,7 @@ public class DynamicRegionDUnitTest extends JUnit4CacheTestCase {
       assertEquals(true, c.getRegion(drFullPath) != null);
 
       // now make sure we can destroy dynamic regions
-      for (int i=0; i<10; i++) {
+      for (int i = 0; i < 10; i++) {
         String regName = drFullPath + "/subregion" + i;
         assertEquals(true, c.getRegion(regName) != null);
         DynamicRegionFactory.get().destroyDynamicRegion(regName);

@@ -30,7 +30,7 @@ import org.apache.geode.management.cli.Result;
  * @since GemFire 7.0
  */
 public class CommandStatementImpl implements CommandStatement {
-  
+
   private CommandProcessor cmdProcessor;
   private String commandString;
   private Map<String, String> env;
@@ -38,8 +38,8 @@ public class CommandStatementImpl implements CommandStatement {
 
   CommandStatementImpl(String commandString, Map<String, String> env, CommandProcessor cmdProcessor) {
     this.commandString = commandString;
-    this.env           = env;
-    this.cmdProcessor  = cmdProcessor;
+    this.env = env;
+    this.cmdProcessor = cmdProcessor;
   }
 
   /* (non-Javadoc)

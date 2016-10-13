@@ -65,8 +65,7 @@ public class DiskRegionClearJUnitTest {
     Properties properties = new Properties();
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(LOCATORS, "");
-    distributedSystem = DistributedSystem
-    .connect(properties);
+    distributedSystem = DistributedSystem.connect(properties);
     cache = CacheFactory.create(distributedSystem);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -81,35 +80,30 @@ public class DiskRegionClearJUnitTest {
     try {
       if (cache != null && !cache.isClosed()) {
         for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext();) {
-          Region root = (Region)itr.next();
-//          String name = root.getName();
-					if(root.isDestroyed() || root instanceof HARegion) {
+          Region root = (Region) itr.next();
+          //          String name = root.getName();
+          if (root.isDestroyed() || root instanceof HARegion) {
             continue;
-        	}
+          }
           try {
             root.localDestroyRegion("teardown");
-          }
-          catch (VirtualMachineError e) { // TODO: remove all this error handling
+          } catch (VirtualMachineError e) { // TODO: remove all this error handling
             SystemFailure.initiateFailure(e);
             throw e;
-          }
-          catch (Throwable t) {
+          } catch (Throwable t) {
             cache.getLogger().error(t);
           }
         }
       }
-    }
-    finally {
+    } finally {
       try {
         closeCache();
-      }
-      catch (VirtualMachineError e) { // TODO: remove all this error handling
+      } catch (VirtualMachineError e) { // TODO: remove all this error handling
         SystemFailure.initiateFailure(e);
         throw e;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         cache.getLogger().error("Error in closing the cache ", t);
-        
+
       }
     }
   }
@@ -119,7 +113,7 @@ public class DiskRegionClearJUnitTest {
    */
   @Test
   public void testClearAndStats() throws Exception {
-    DiskRegion dr = ((LocalRegion)testRegion).getDiskRegion();
+    DiskRegion dr = ((LocalRegion) testRegion).getDiskRegion();
     assertEquals(0, dr.getStats().getNumEntriesInVM());
     // put a value in the region
     testRegion.put(new Long(1), new Long(1));
@@ -152,34 +146,33 @@ public class DiskRegionClearJUnitTest {
   public void testPutWhileclear() {
     //warm up
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    for(long i=0;i<100; i++) {
+    for (long i = 0; i < 100; i++) {
       testRegion.put(new Long(i), new Long(i));
     }
     Thread thread = new Thread(new Thread2());
     thread.start();
     final long tilt = System.currentTimeMillis() + 60 * 1000;
     // TODO why is this loop necessary?
-    while(counter!=3) {
+    while (counter != 3) {
       try {
         Thread.sleep(100);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         fail("interrupted");
-       }      
+      }
       if (System.currentTimeMillis() >= tilt) {
-        fail("timed out counter="+counter);
+        fail("timed out counter=" + counter);
       }
     }
     ThreadUtils.join(thread, 10 * 60 * 1000);
     assertTrue(counter == 3);
-    if(!cleared)
-      fail("clear not done although puts have been done");    
+    if (!cleared)
+      fail("clear not done although puts have been done");
   }
 
   @Test
   public void testRecreateRegionAndCacheNegative() throws Exception {
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-    for(long i=0;i<100; i++) {
+    for (long i = 0; i < 100; i++) {
       testRegion.put(new Long(i), new Long(i));
     }
     testRegion.clear();
@@ -196,19 +189,19 @@ public class DiskRegionClearJUnitTest {
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     RegionAttributes regionAttributes = factory.create();
     testRegion = cache.createRegion("TestRegion1", regionAttributes);
-      
+
     System.out.println("keySet after recovery = " + testRegion.keySet());
     assertEquals(0, testRegion.size());
   }
-  
+
   @Test
   public void testRecreateRegionAndCachePositive() {
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-    for(long i=0;i<1000; i++) {
+    for (long i = 0; i < 1000; i++) {
       testRegion.put(new Long(i), new Long(i));
     }
     testRegion.clear();
-    for(long i=0;i<1000; i++) {
+    for (long i = 0; i < 1000; i++) {
       testRegion.put(new Long(i), new Long(i));
     }
     assertEquals(1000, testRegion.size());
@@ -230,8 +223,8 @@ public class DiskRegionClearJUnitTest {
   private static class Thread1 implements Runnable {
     @Override
     public void run() {
-      for(long i=0 ; i< 100 ; i++) {     
-      testRegion.put(new Long(i), new Long(i));
+      for (long i = 0; i < 100; i++) {
+        testRegion.put(new Long(i), new Long(i));
       }
       counter++;
     }
@@ -253,9 +246,9 @@ public class DiskRegionClearJUnitTest {
 
     @Override
     public void beforeDiskClear() {
-      for(int i=0; i<3; i++) {
-      Thread thread = new Thread(new Thread1());
-      thread.start();
+      for (int i = 0; i < 3; i++) {
+        Thread thread = new Thread(new Thread1());
+        thread.start();
       }
     }
   }

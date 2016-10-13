@@ -25,6 +25,7 @@ import org.apache.geode.internal.cache.persistence.query.ResultList;
 public class ResultListImpl implements ResultList {
   private final SortedResultMapImpl map;
   private AtomicLong counter = new AtomicLong();
+
   public ResultListImpl() {
     map = new SortedResultMapImpl(false);
   }
@@ -32,14 +33,14 @@ public class ResultListImpl implements ResultList {
   @Override
   public void add(Object e) {
     map.put(counter.getAndIncrement(), e);
-    
+
   }
 
   @Override
   public CloseableIterator<CachedDeserializable> iterator() {
     return map.valueIterator();
   }
-  
+
   @Override
   public CloseableIterator<CachedDeserializable> iterator(long start) {
     return map.valueIterator(start, true);
@@ -49,7 +50,5 @@ public class ResultListImpl implements ResultList {
   public void close() {
     map.close();
   }
-  
-  
 
 }

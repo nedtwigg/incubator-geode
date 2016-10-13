@@ -28,9 +28,9 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class ChildVM {
-  
+
   private static boolean stopMainLoop = false;
-  
+
   /**
    * tells the main() loop to exit
    */
@@ -45,7 +45,7 @@ public class ChildVM {
       int namingPort = Integer.getInteger(DUnitLauncher.RMI_PORT_PARAM);
       int vmNum = Integer.getInteger(DUnitLauncher.VM_NUM_PARAM);
       int pid = OSProcess.getId();
-      logger.info("VM" + vmNum + " is launching" + (pid > 0? " with PID " + pid : ""));
+      logger.info("VM" + vmNum + " is launching" + (pid > 0 ? " with PID " + pid : ""));
       MasterRemote holder = (MasterRemote) Naming.lookup("//localhost:" + namingPort + "/" + DUnitLauncher.MASTER_PARAM);
       DUnitLauncher.init(holder);
       DUnitLauncher.locatorPort = holder.getLocatorPort();

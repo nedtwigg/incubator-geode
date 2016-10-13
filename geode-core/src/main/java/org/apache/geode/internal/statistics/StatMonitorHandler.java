@@ -36,18 +36,17 @@ public class StatMonitorHandler implements SampleHandler {
 
   static final String ENABLE_MONITOR_THREAD = DistributionConfig.GEMFIRE_PREFIX + "stats.enableMonitorThread";
   static final boolean enableMonitorThread = Boolean.getBoolean(ENABLE_MONITOR_THREAD);
-  
+
   /** The registered monitors */
-  private volatile List<StatisticsMonitor> monitors = 
-      Collections.<StatisticsMonitor>emptyList();
-  
+  private volatile List<StatisticsMonitor> monitors = Collections.<StatisticsMonitor> emptyList();
+
   /** Protected by synchronization on this handler instance */
   private volatile StatMonitorNotifier notifier;
 
   /** Constructs a new StatMonitorHandler instance */
   public StatMonitorHandler() {
   }
-  
+
   /** Adds a monitor which will be notified of samples */
   public boolean addMonitor(StatisticsMonitor monitor) {
     synchronized (this) {
@@ -83,7 +82,7 @@ public class StatMonitorHandler implements SampleHandler {
       return removed;
     }
   }
-  
+
   /**
    * Stops the notifier thread if one exists.
    */
@@ -94,7 +93,7 @@ public class StatMonitorHandler implements SampleHandler {
       }
     }
   }
-  
+
   @Override
   public void sampled(long nanosTimeStamp, List<ResourceInstance> resourceInstances) {
     synchronized (this) {
@@ -112,7 +111,7 @@ public class StatMonitorHandler implements SampleHandler {
       }
     }
   }
-  
+
   private void monitor(final long sampleTimeMillis, final List<ResourceInstance> resourceInstance) {
     List<StatisticsMonitor> currentMonitors = StatMonitorHandler.this.monitors;
     for (StatisticsMonitor monitor : currentMonitors) {
@@ -121,12 +120,10 @@ public class StatMonitorHandler implements SampleHandler {
       } catch (VirtualMachineError e) {
         SystemFailure.initiateFailure(e);
         throw e;
-      }
-      catch (Error e) {
+      } catch (Error e) {
         SystemFailure.checkFailure();
         logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
       }
     }
@@ -148,28 +145,28 @@ public class StatMonitorHandler implements SampleHandler {
   List<StatisticsMonitor> getMonitorsSnapshot() {
     return Collections.unmodifiableList(this.monitors);
   }
-  
+
   /** For testing only */
   StatMonitorNotifier getStatMonitorNotifier() {
     synchronized (this) {
       return this.notifier;
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
   class StatMonitorNotifier implements Runnable {
-    
+
     /** True while this notifier's thread is running */
     private volatile boolean alive;
-    
+
     /** Protected by synchronization on this notifier instance */
     private Thread consumer;
-    
+
     /** Protected by synchronization on this notifier instance */
     private boolean waiting;
-    
+
     /** Protected by synchronization on this notifier instance */
     private Thread producer;
 
@@ -178,7 +175,7 @@ public class StatMonitorHandler implements SampleHandler {
 
     StatMonitorNotifier() {
     }
-    
+
     @Override
     public void run() {
       final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
@@ -199,7 +196,7 @@ public class StatMonitorHandler implements SampleHandler {
         logger.trace(LogMarker.STATISTICS, "StatMonitorNotifier is stopping {}", this);
       }
     }
-    
+
     private void work() {
       boolean working = true;
       while (working) {
@@ -225,17 +222,14 @@ public class StatMonitorHandler implements SampleHandler {
             List<StatisticsMonitor> currentMonitors = StatMonitorHandler.this.monitors;
             for (StatisticsMonitor monitor : currentMonitors) {
               try {
-                monitor.monitor(latestTask.getSampleTimeMillis(), 
-                                latestTask.getResourceInstances());
+                monitor.monitor(latestTask.getSampleTimeMillis(), latestTask.getResourceInstances());
               } catch (VirtualMachineError e) {
                 SystemFailure.initiateFailure(e);
                 throw e;
-              }
-              catch (Error e) {
+              } catch (Error e) {
                 SystemFailure.checkFailure();
                 logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
-              }
-              catch (RuntimeException e) {
+              } catch (RuntimeException e) {
                 logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
               }
             }
@@ -247,7 +241,7 @@ public class StatMonitorHandler implements SampleHandler {
         }
       }
     }
-      
+
     void start() {
       synchronized (this) {
         if (this.consumer == null) {
@@ -268,7 +262,7 @@ public class StatMonitorHandler implements SampleHandler {
         }
       }
     }
-    
+
     void monitor(MonitorTask task) throws InterruptedException {
       boolean isAlive = false;
       synchronized (this) {
@@ -289,7 +283,7 @@ public class StatMonitorHandler implements SampleHandler {
         }
       }
     }
-    
+
     boolean isWaiting() {
       synchronized (this) {
         return this.waiting;
@@ -309,23 +303,23 @@ public class StatMonitorHandler implements SampleHandler {
       return sb.toString();
     }
   }
-  
+
   /**
    * @since GemFire 7.0
    */
   static class MonitorTask {
-    private final long sampleTimeMillis; 
+    private final long sampleTimeMillis;
     private final List<ResourceInstance> resourceInstances;
-    
+
     MonitorTask(long sampleTimeMillis, List<ResourceInstance> resourceInstances) {
       this.sampleTimeMillis = sampleTimeMillis;
       this.resourceInstances = resourceInstances;
     }
-    
+
     long getSampleTimeMillis() {
       return this.sampleTimeMillis;
     }
-    
+
     List<ResourceInstance> getResourceInstances() {
       return this.resourceInstances;
     }

@@ -33,7 +33,6 @@ public class StoppableCountDownLatch {
    */
   static final long RETRY_TIME = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "stoppable-retry-interval", 2000).longValue();
 
-  
   /**
    * The underlying latch
    */
@@ -43,28 +42,28 @@ public class StoppableCountDownLatch {
    * The cancellation criterion
    */
   private final CancelCriterion stopper;
-  
+
   /**
    * @param count the number of times {@link #countDown} must be invoked
    *        before threads can pass through {@link #await()}
    * @throws IllegalArgumentException if {@code count} is negative
    */
   public StoppableCountDownLatch(CancelCriterion stopper, int count) {
-      Assert.assertTrue(stopper != null);
-      this.latch = new CountDownLatch(count);
-      this.stopper = stopper;
+    Assert.assertTrue(stopper != null);
+    this.latch = new CountDownLatch(count);
+    this.stopper = stopper;
   }
 
   /**
    * @throws InterruptedException
    */
   public void await() throws InterruptedException {
-      for (;;) {
-        stopper.checkCancelInProgress(null);
-        if (latch.await(RETRY_TIME, TimeUnit.MILLISECONDS)) {
-          break;
-        }
+    for (;;) {
+      stopper.checkCancelInProgress(null);
+      if (latch.await(RETRY_TIME, TimeUnit.MILLISECONDS)) {
+        break;
       }
+    }
   }
 
   /**
@@ -93,6 +92,6 @@ public class StoppableCountDownLatch {
    */
   @Override
   public String toString() {
-      return "(Stoppable) " + latch.toString();
+    return "(Stoppable) " + latch.toString();
   }
 }

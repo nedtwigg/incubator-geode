@@ -50,7 +50,7 @@ public class LuceneEventListener implements AsyncEventListener {
   Logger logger = LogService.getLogger();
 
   private final RepositoryManager repositoryManager;
-  
+
   public LuceneEventListener(RepositoryManager repositoryManager) {
     this.repositoryManager = repositoryManager;
   }
@@ -90,14 +90,14 @@ public class LuceneEventListener implements AsyncEventListener {
         affectedRepos.add(repository);
       }
 
-      for(IndexRepository repo : affectedRepos) {
+      for (IndexRepository repo : affectedRepos) {
         repo.commit();
       }
       return true;
-    } catch(BucketNotFoundException | RegionDestroyedException | PrimaryBucketException e) {
+    } catch (BucketNotFoundException | RegionDestroyedException | PrimaryBucketException e) {
       logger.debug("Bucket not found while saving to lucene index: " + e.getMessage());
       return false;
-    } catch(IOException e) {
+    } catch (IOException e) {
       logger.error("Unable to save to lucene index", e);
       return false;
     } finally {

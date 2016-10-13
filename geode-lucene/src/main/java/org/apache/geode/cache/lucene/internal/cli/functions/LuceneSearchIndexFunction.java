@@ -72,36 +72,25 @@ public class LuceneSearchIndexFunction<K, V> extends FunctionAdapter implements 
       if (luceneService.getIndex(queryInfo.getIndexName(), queryInfo.getRegionPath()) == null) {
         throw new Exception("Index " + queryInfo.getIndexName() + " not found on region " + queryInfo.getRegionPath());
       }
-      final LuceneQuery<K, V> query = luceneService.createLuceneQueryFactory()
-        .setResultLimit(queryInfo.getLimit())
-        .create(queryInfo.getIndexName(), queryInfo.getRegionPath(), queryInfo.getQueryString(),
-          queryInfo.getDefaultField());
+      final LuceneQuery<K, V> query = luceneService.createLuceneQueryFactory().setResultLimit(queryInfo.getLimit()).create(queryInfo.getIndexName(), queryInfo.getRegionPath(), queryInfo.getQueryString(), queryInfo.getDefaultField());
       if (queryInfo.getKeysOnly()) {
         query.findKeys().forEach(key -> result.add(new LuceneSearchResults(key.toString())));
-      }
-      else {
+      } else {
         PageableLuceneQueryResults pageableLuceneQueryResults = query.findPages();
         while (pageableLuceneQueryResults.hasNext()) {
           List<LuceneResultStruct> page = pageableLuceneQueryResults.next();
-          page.stream()
-            .forEach(searchResult ->
-              result.add(
-                new LuceneSearchResults<K, V>(searchResult.getKey().toString(), searchResult.getValue().toString(),
-                  searchResult.getScore())));
+          page.stream().forEach(searchResult -> result.add(new LuceneSearchResults<K, V>(searchResult.getKey().toString(), searchResult.getValue().toString(), searchResult.getScore())));
         }
       }
       if (result != null) {
         context.getResultSender().lastResult(result);
       }
-    }
-    catch (LuceneQueryException e) {
+    } catch (LuceneQueryException e) {
       result.add(new LuceneSearchResults(true, e.getRootCause().getMessage()));
       context.getResultSender().lastResult(result);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       result.add(new LuceneSearchResults(true, e.getMessage()));
       context.getResultSender().lastResult(result);
     }
   }
 }
-

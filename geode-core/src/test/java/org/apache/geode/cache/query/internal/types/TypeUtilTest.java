@@ -32,15 +32,15 @@ public class TypeUtilTest {
   public void comparingEquivalentPdxStringToStringShouldMatchCorrectly() throws Exception {
     String theString = "MyString";
     PdxString pdxString = new PdxString(theString);
-    assertTrue((Boolean)TypeUtils.compare(pdxString, theString, OQLLexerTokenTypes.TOK_EQ));
-    assertTrue((Boolean)TypeUtils.compare(theString, pdxString, OQLLexerTokenTypes.TOK_EQ));
+    assertTrue((Boolean) TypeUtils.compare(pdxString, theString, OQLLexerTokenTypes.TOK_EQ));
+    assertTrue((Boolean) TypeUtils.compare(theString, pdxString, OQLLexerTokenTypes.TOK_EQ));
   }
 
   @Test
   public void comparingUnequivalentPdxStringToStringShouldNotMatch() throws Exception {
     String theString = "MyString";
     PdxString pdxString = new PdxString("AnotherString");
-    assertFalse((Boolean)TypeUtils.compare(pdxString, theString, OQLLexerTokenTypes.TOK_EQ));
-    assertFalse((Boolean)TypeUtils.compare(theString, pdxString, OQLLexerTokenTypes.TOK_EQ));
+    assertFalse((Boolean) TypeUtils.compare(pdxString, theString, OQLLexerTokenTypes.TOK_EQ));
+    assertFalse((Boolean) TypeUtils.compare(theString, pdxString, OQLLexerTokenTypes.TOK_EQ));
   }
 }

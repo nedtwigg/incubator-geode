@@ -51,7 +51,7 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
     // to create a new cache
     disconnectAllFromDS();
   }
-  
+
   /**
    * @param name
    */
@@ -65,8 +65,7 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-
-    for(int i =0; i < 200; i++) {
+    for (int i = 0; i < 200; i++) {
       final SerializableRunnable createParent = new SerializableRunnable() {
 
         public void run() {
@@ -86,7 +85,7 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          if(region != null) {
+          if (region != null) {
             AttributesFactory af = new AttributesFactory();
             af.setScope(Scope.DISTRIBUTED_ACK);
             af.setDataPolicy(DataPolicy.REPLICATE);
@@ -109,8 +108,8 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
       AsyncInvocation future = vm0.invokeAsync(destroyParent);
       try {
         vm1.invoke(createChild);
-      } catch(Exception e) {
-        if(!(e.getCause() instanceof RegionDestroyedException)) {
+      } catch (Exception e) {
+        if (!(e.getCause() instanceof RegionDestroyedException)) {
           Assert.fail("Wrong exception", e);
         }
         RegionDestroyedException rde = (RegionDestroyedException) e.getCause();
@@ -119,15 +118,14 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
       future.getResult(60 * 1000);
     }
   }
-  
+
   @Test
   public void testPartitionedRegion() throws Throwable {
     final Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-
-    for(int i =0; i < 50; i++) {
+    for (int i = 0; i < 50; i++) {
       final SerializableRunnable createParent = new SerializableRunnable() {
 
         public void run() {
@@ -147,7 +145,7 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
         public void run() {
           Cache cache = getCache();
           Region region = cache.getRegion("region");
-          if(region != null) {
+          if (region != null) {
             AttributesFactory af = new AttributesFactory();
             af.setDataPolicy(DataPolicy.PARTITION);
             Region subregion = region.createSubregion("subregion", af.create());
@@ -169,8 +167,8 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
       AsyncInvocation future = vm0.invokeAsync(destroyParent);
       try {
         vm1.invoke(createChild);
-      } catch(Exception e) {
-        if(!(e.getCause() instanceof RegionDestroyedException)) {
+      } catch (Exception e) {
+        if (!(e.getCause() instanceof RegionDestroyedException)) {
           Assert.fail("Wrong exception", e);
         }
         RegionDestroyedException rde = (RegionDestroyedException) e.getCause();

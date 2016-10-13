@@ -42,9 +42,9 @@ public class RetryRuleLocalWithErrorTest {
   @Test
   public void failsUnused() {
     Result result = TestRunner.runTest(FailsUnused.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -52,21 +52,21 @@ public class RetryRuleLocalWithErrorTest {
     assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage(FailsUnused.message);
     assertThat(FailsUnused.count).isEqualTo(1);
   }
-  
+
   @Test
   public void passesUnused() {
     Result result = TestRunner.runTest(PassesUnused.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(PassesUnused.count).isEqualTo(1);
   }
-  
+
   @Test
   public void failsOnSecondAttempt() {
     Result result = TestRunner.runTest(FailsOnSecondAttempt.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -78,17 +78,17 @@ public class RetryRuleLocalWithErrorTest {
   @Test
   public void passesOnSecondAttempt() {
     Result result = TestRunner.runTest(PassesOnSecondAttempt.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(PassesOnSecondAttempt.count).isEqualTo(2);
   }
-  
+
   @Test
   public void failsOnThirdAttempt() {
     Result result = TestRunner.runTest(FailsOnThirdAttempt.class);
-    
+
     assertThat(result.wasSuccessful()).isFalse();
-    
+
     List<Failure> failures = result.getFailures();
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
@@ -100,7 +100,7 @@ public class RetryRuleLocalWithErrorTest {
   @Test
   public void passesOnThirdAttempt() {
     Result result = TestRunner.runTest(PassesOnThirdAttempt.class);
-    
+
     assertThat(result.wasSuccessful()).isTrue();
     assertThat(PassesOnThirdAttempt.count).isEqualTo(3);
   }

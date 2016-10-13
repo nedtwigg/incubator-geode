@@ -54,7 +54,7 @@ public abstract class PopExecutor extends ListExecutor implements Extendable {
     int originalIndex = index;
     int incr = popType() == ListDirection.LEFT ? 1 : -1;
     ByteArrayWrapper valueWrapper = null;
-    
+
     /**
      * 
      * First attempt to hop over an index by moving the index 
@@ -62,7 +62,7 @@ public abstract class PopExecutor extends ListExecutor implements Extendable {
      * remove is held within the field index
      * 
      */
-    
+
     boolean indexChanged = false;
     do {
       index = (Integer) keyRegion.get(indexKey);
@@ -70,8 +70,8 @@ public abstract class PopExecutor extends ListExecutor implements Extendable {
       if (index.equals(opp))
         break;
       indexChanged = keyRegion.replace(indexKey, index, index + incr);
-    } while(!indexChanged);
-    
+    } while (!indexChanged);
+
     /**
      * 
      * Now attempt to remove the value of the index. We must do a
@@ -80,21 +80,21 @@ public abstract class PopExecutor extends ListExecutor implements Extendable {
      * try other indexes 
      * 
      */
-    
+
     boolean removed = false;
     int i = 0;
     do {
       valueWrapper = (ByteArrayWrapper) keyRegion.get(index);
       if (valueWrapper != null)
         removed = keyRegion.remove(index, valueWrapper);
-      
+
       /**
        * 
        * If remove has passed, our job is done and we can break and
        * stop looking for a value
        * 
        */
-      
+
       if (removed)
         break;
 
@@ -131,11 +131,10 @@ public abstract class PopExecutor extends ListExecutor implements Extendable {
        * If it is the case that the list is empty, it will exit this loop
        * 
        */
-      
+
       index += incr;
       Integer metaIndex = (Integer) keyRegion.get(indexKey);
-      if (i < 1 && (popType() == ListDirection.LEFT && metaIndex < originalIndex ||
-          popType() == ListDirection.RIGHT && metaIndex > originalIndex))
+      if (i < 1 && (popType() == ListDirection.LEFT && metaIndex < originalIndex || popType() == ListDirection.RIGHT && metaIndex > originalIndex))
         index = metaIndex;
       i++;
     } while (!removed && keyRegion.size() != LIST_EMPTY_SIZE);

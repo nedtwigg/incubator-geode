@@ -42,9 +42,10 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  * @since GemFire 6.0
  */
 public class FunctionService {
-  private static final FunctionServiceManager functionSvcMgr= new FunctionServiceManager();
-  
-  FunctionService() {}
+  private static final FunctionServiceManager functionSvcMgr = new FunctionServiceManager();
+
+  FunctionService() {
+  }
 
   /**
    * Returns an {@link Execution} object that can be used to execute a data
@@ -74,7 +75,7 @@ public class FunctionService {
   public static Execution onRegion(Region region) {
     return functionSvcMgr.onRegion(region);
   }
-  
+
   /**
    * Returns an {@link Execution} object that can be used to execute a data
    * independent function on a server in the provided {@link Pool}.
@@ -146,7 +147,7 @@ public class FunctionService {
   public static Execution onServers(RegionService regionService) {
     return functionSvcMgr.onServers(regionService);
   }
-  
+
   /**
    * Returns an {@link Execution} object that can be used to execute a data
    * independent function on a {@link DistributedMember} of the
@@ -165,8 +166,7 @@ public class FunctionService {
    * @since GemFire 6.0
    * @deprecated use {@link #onMember(DistributedMember)} instead
    */
-  public static Execution onMember(DistributedSystem system,
-      DistributedMember distributedMember) {
+  public static Execution onMember(DistributedSystem system, DistributedMember distributedMember) {
     return functionSvcMgr.onMember(system, distributedMember);
   }
 
@@ -205,8 +205,7 @@ public class FunctionService {
    * @since GemFire 6.0
    * @deprecated use {@link #onMembers(Set)} instead
    */
-  public static Execution onMembers(DistributedSystem system,
-      Set<DistributedMember> distributedMembers) {
+  public static Execution onMembers(DistributedSystem system, Set<DistributedMember> distributedMembers) {
     return functionSvcMgr.onMembers(system, distributedMembers);
   }
 
@@ -320,7 +319,7 @@ public class FunctionService {
   public static void registerFunction(Function function) {
     functionSvcMgr.registerFunction(function);
   }
-  
+
   /**
    * Unregisters the given {@link Function} with the {@link FunctionService}
    * using {@link Function#getId()}.
@@ -334,7 +333,7 @@ public class FunctionService {
   public static void unregisterFunction(String functionId) {
     functionSvcMgr.unregisterFunction(functionId);
   }
-  
+
   /**
    * Returns true if the function is registered to FunctionService
    * 
@@ -347,7 +346,6 @@ public class FunctionService {
     return functionSvcMgr.isRegistered(functionId);
   }
 
-
   /**
    * Returns all locally registered functions
    * @return A view of registered functions as a Map
@@ -357,13 +355,11 @@ public class FunctionService {
   public static Map<String, Function> getRegisteredFunctions() {
     return functionSvcMgr.getRegisteredFunctions();
   }
-  
+
   private static DistributedSystem getDistributedSystem() {
     DistributedSystem system = InternalDistributedSystem.getConnectedInstance();
     if (system == null) {
-      throw new DistributedSystemDisconnectedException(
-          LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED
-              .toLocalizedString());
+      throw new DistributedSystemDisconnectedException(LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString());
     }
     return system;
   }

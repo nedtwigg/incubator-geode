@@ -17,7 +17,6 @@
 
 package org.apache.geode.internal.cache;
 
-
 /**
  *
  *
@@ -51,8 +50,7 @@ class AcceptHelper {
         ackServerChannel.close();
       }
       nackServerChannel.close();
-    }
-    catch(IOException ioe) {
+    } catch (IOException ioe) {
       ioe.printStackTrace();
     }
     closed = true;
@@ -63,33 +61,28 @@ class AcceptHelper {
       if (ackPortInit) {
         ackServerChannel = ServerSocketChannel.open();
         ackServerChannel.configureBlocking(false);
-        ackServerChannel.socket().bind(null,1);
+        ackServerChannel.socket().bind(null, 1);
         //ackPort = ackServerChannel.socket().getLocalPort();
-        InetSocketAddress addr = (InetSocketAddress) ackServerChannel.
-                                  socket().getLocalSocketAddress();
+        InetSocketAddress addr = (InetSocketAddress) ackServerChannel.socket().getLocalSocketAddress();
         ackPort = addr.getPort();
 
-      }
-      else {
+      } else {
         ackServerChannel = null;
       }
 
       nackServerChannel = ServerSocketChannel.open();
       nackServerChannel.configureBlocking(false);
-      nackServerChannel.socket().bind(null,1);
-      InetSocketAddress addr = (InetSocketAddress) nackServerChannel.
-                                  socket().getLocalSocketAddress();
-     // nackPort = nackServerChannel.socket().getLocalPort();
+      nackServerChannel.socket().bind(null, 1);
+      InetSocketAddress addr = (InetSocketAddress) nackServerChannel.socket().getLocalSocketAddress();
+      // nackPort = nackServerChannel.socket().getLocalPort();
       nackPort = addr.getPort();
 
-    }
-    catch(IOException ioe) {
+    } catch (IOException ioe) {
       ioe.printStackTrace();
-    }
-    catch(Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
-    closed=false;
+    closed = false;
 
   }
 

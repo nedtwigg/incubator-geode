@@ -37,7 +37,7 @@ public class LocatorListResponse extends ServerLocationResponse {
   /** Used by DataSerializer */
   public LocatorListResponse() {
   }
-  
+
   public LocatorListResponse(List<ServerLocation> locators, boolean isBalanced) {
     this.controllers = locators;
     if (locators != null && !locators.isEmpty()) {
@@ -45,7 +45,7 @@ public class LocatorListResponse extends ServerLocationResponse {
     }
     this.isBalanced = isBalanced;
   }
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.controllers = SerializationHelper.readServerLocationList(in);
     this.isBalanced = in.readBoolean();
@@ -75,7 +75,7 @@ public class LocatorListResponse extends ServerLocationResponse {
   public boolean isBalanced() {
     return isBalanced;
   }
-  
+
   @Override
   public String toString() {
     return "LocatorListResponse{locators=" + controllers + ",isBalanced=" + isBalanced + "}";
@@ -89,5 +89,5 @@ public class LocatorListResponse extends ServerLocationResponse {
   public boolean hasResult() {
     return this.locatorsFound;
   }
-  
+
 }

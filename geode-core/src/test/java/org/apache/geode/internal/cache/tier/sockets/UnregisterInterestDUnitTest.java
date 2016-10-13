@@ -75,8 +75,8 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
     server0 = host.getVM(0);
     client1 = host.getVM(1);
     client2 = host.getVM(2);
-    
-    int port = (Integer)server0.invoke(() -> UnregisterInterestDUnitTest.createCacheAndStartServer());
+
+    int port = (Integer) server0.invoke(() -> UnregisterInterestDUnitTest.createCacheAndStartServer());
     client1.invoke(() -> UnregisterInterestDUnitTest.createClientCache(client1.getHost(), port));
     client2.invoke(() -> UnregisterInterestDUnitTest.createClientCache(client2.getHost(), port));
   }
@@ -128,8 +128,8 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testUnregisterInterestKeys() throws Exception {
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(list, 0, 0));
-    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {list, receiveValuesConstant, new String[]{"key_1", "key_2", "key_3", "key_4", "key_5"}});
-    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {list, !receiveValuesConstant, new String[]{"key_1", "key_2", "key_3", "key_4", "key_5"}});
+    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { list, receiveValuesConstant, new String[] { "key_1", "key_2", "key_3", "key_4", "key_5" } });
+    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { list, !receiveValuesConstant, new String[] { "key_1", "key_2", "key_3", "key_4", "key_5" } });
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(list, 1, 1));
     client1.invoke(() -> UnregisterInterestDUnitTest.closeCache());
     client2.invoke(() -> UnregisterInterestDUnitTest.closeCache());
@@ -149,8 +149,8 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testUnregisterInterestPatterns() throws Exception {
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(regex, 0, 0));
-    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {regex, receiveValuesConstant, new String[] {"[a-z]*[0-9]"}});
-    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {regex, !receiveValuesConstant, new String[] {"[a-z]*[0-9]"}});
+    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { regex, receiveValuesConstant, new String[] { "[a-z]*[0-9]" } });
+    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { regex, !receiveValuesConstant, new String[] { "[a-z]*[0-9]" } });
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(regex, 1, 1));
     client1.invoke(() -> UnregisterInterestDUnitTest.closeCache());
     client2.invoke(() -> UnregisterInterestDUnitTest.closeCache());
@@ -171,11 +171,11 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testUnregisterInterestKeysInvForOneClientDoesNotAffectOtherClient() throws Exception {
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(list, 0, 0));
-    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {list, !receiveValuesConstant, new String[] {"key_1", "key_2", "key_3", "key_4", "key_5"}});
-    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {list, !receiveValuesConstant, new String[] {"key_1", "key_2", "key_3", "key_4", "key_5"}});
+    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { list, !receiveValuesConstant, new String[] { "key_1", "key_2", "key_3", "key_4", "key_5" } });
+    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { list, !receiveValuesConstant, new String[] { "key_1", "key_2", "key_3", "key_4", "key_5" } });
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(list, 0, 2));
-    client1.invoke(UnregisterInterestDUnitTest.class, "unregisterInterest", new Object[] {new String[] {"key_1", "key_2", "key_3"}});
-    server0.invoke(UnregisterInterestDUnitTest.class, "updateKeys",  new Object[] {new String[] {"key_1", "key_2", "key_3", "key_4", "key_5"}});
+    client1.invoke(UnregisterInterestDUnitTest.class, "unregisterInterest", new Object[] { new String[] { "key_1", "key_2", "key_3" } });
+    server0.invoke(UnregisterInterestDUnitTest.class, "updateKeys", new Object[] { new String[] { "key_1", "key_2", "key_3", "key_4", "key_5" } });
     client1.invoke(() -> UnregisterInterestDUnitTest.timedWaitForInvalidates(2));
     client2.invoke(() -> UnregisterInterestDUnitTest.timedWaitForInvalidates(5));
   }
@@ -195,11 +195,11 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testUnregisterInterestRegexInvForOneClientDoesNotAffectOtherClient() throws Exception {
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(regex, 0, 0));
-    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {regex, !receiveValuesConstant, new String[] {"[a-z]*[0-9]"}});
-    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] {regex, !receiveValuesConstant, new String[] {"[a-z]*[0-9]"}});
+    client1.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { regex, !receiveValuesConstant, new String[] { "[a-z]*[0-9]" } });
+    client2.invoke(UnregisterInterestDUnitTest.class, "registerInterest", new Object[] { regex, !receiveValuesConstant, new String[] { "[a-z]*[0-9]" } });
     server0.invoke(() -> UnregisterInterestDUnitTest.checkRIArtifacts(regex, 0, 2));
-    client1.invoke(UnregisterInterestDUnitTest.class, "unregisterInterestRegex", new Object[] {new String[] {"[a-z]*[0-9]"}});
-    server0.invoke(UnregisterInterestDUnitTest.class, "updateKeys",  new Object[] {new String[] {"key1", "key2", "key3", "key4", "key5"}});
+    client1.invoke(UnregisterInterestDUnitTest.class, "unregisterInterestRegex", new Object[] { new String[] { "[a-z]*[0-9]" } });
+    server0.invoke(UnregisterInterestDUnitTest.class, "updateKeys", new Object[] { new String[] { "key1", "key2", "key3", "key4", "key5" } });
     client1.invoke(() -> UnregisterInterestDUnitTest.timedWaitForInvalidates(0));
     client2.invoke(() -> UnregisterInterestDUnitTest.timedWaitForInvalidates(5));
   }
@@ -229,19 +229,19 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
   }
 
   public static void checkAllKeys(Integer value, Integer valueInv) {
-    FilterProfile fp = ((GemFireCacheImpl)cache).getFilterProfile(regionname);
+    FilterProfile fp = ((GemFireCacheImpl) cache).getFilterProfile(regionname);
     assertEquals(value.intValue(), fp.getAllKeyClientsSize());
     assertEquals(valueInv.intValue(), fp.getAllKeyClientsInvSize());
   }
 
   public static void checkKeyList(Integer value, Integer valueInv) {
-    FilterProfile fp = ((GemFireCacheImpl)cache).getFilterProfile(regionname);
+    FilterProfile fp = ((GemFireCacheImpl) cache).getFilterProfile(regionname);
     assertEquals(value.intValue(), fp.getKeysOfInterestSize());
     assertEquals(valueInv.intValue(), fp.getKeysOfInterestInvSize());
   }
 
   public static void checkPatterns(Integer value, Integer valueInv) {
-    FilterProfile fp = ((GemFireCacheImpl)cache).getFilterProfile(regionname);
+    FilterProfile fp = ((GemFireCacheImpl) cache).getFilterProfile(regionname);
     assertEquals(value.intValue(), fp.getPatternsOfInterestSize());
     assertEquals(valueInv.intValue(), fp.getPatternsOfInterestInvSize());
   }
@@ -258,12 +258,12 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
     case list:
       ArrayList<String> keys = new ArrayList<String>();
       for (Object key : values) {
-        keys.add((String)key);
+        keys.add((String) key);
       }
       region.registerInterest(keys, false, receiveValues);
       break;
     case regex:
-      region.registerInterestRegex((String)values[0], false, receiveValues);
+      region.registerInterestRegex((String) values[0], false, receiveValues);
       break;
     case filter:
       break;
@@ -274,7 +274,7 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
 
   public static void unregisterInterest(String[] keys) {
     Region region = cache.getRegion(regionname);
-    
+
     for (String key : keys) {
       region.unregisterInterest(key);
     }
@@ -282,7 +282,7 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
 
   public static void unregisterInterestRegex(String[] patterns) {
     Region region = cache.getRegion(regionname);
-    
+
     for (String pattern : patterns) {
       region.unregisterInterestRegex(pattern);
     }
@@ -290,7 +290,7 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
 
   public static void updateKeys(String[] keys) {
     Region region = cache.getRegion(regionname);
-    
+
     for (String key : keys) {
       region.put(key, key + "_VALUE");
     }
@@ -300,13 +300,13 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
     final int inv = invalidates;
     final PoolImpl pool = (PoolImpl) PoolManager.find(cache.getRegion(regionname));
 
-    WaitCriterion wc = new WaitCriterion() {      
+    WaitCriterion wc = new WaitCriterion() {
       @Override
       public boolean done() {
         // Client region listeners are not invoked for invalidates that create entries.
         return pool.getInvalidateCount() == inv;
       }
-      
+
       @Override
       public String description() {
         return "Expected to receive " + inv + " invalidates but received " + pool.getInvalidateCount();
@@ -322,9 +322,9 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
     CacheFactory cf = new CacheFactory(props);
     cache = cf.create();
-    RegionFactory rf = ((GemFireCacheImpl)cache).createRegionFactory(RegionShortcut.REPLICATE);
+    RegionFactory rf = ((GemFireCacheImpl) cache).createRegionFactory(RegionShortcut.REPLICATE);
     rf.create(regionname);
-    CacheServer server = ((GemFireCacheImpl)cache).addCacheServer();
+    CacheServer server = ((GemFireCacheImpl) cache).addCacheServer();
     server.setPort(AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET));
     server.start();
     return server.getPort();
@@ -341,7 +341,7 @@ public class UnregisterInterestDUnitTest extends JUnit4DistributedTestCase {
     ccf.setPoolSubscriptionEnabled(true);
     ccf.addPoolServer(host.getHostName(), port);
     cache = ccf.create();
-    ClientRegionFactory crf = ((GemFireCacheImpl)cache).createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+    ClientRegionFactory crf = ((GemFireCacheImpl) cache).createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
     crf.create(regionname);
   }
 }

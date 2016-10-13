@@ -32,26 +32,26 @@ public class PRContainsValueFunction extends FunctionAdapter implements Internal
   @Override
   public void execute(FunctionContext context) {
 
-    RegionFunctionContext prContext = (RegionFunctionContext)context;
+    RegionFunctionContext prContext = (RegionFunctionContext) context;
     Region dataSet = prContext.getDataSet();
     Object values = context.getArguments();
-    
+
     Iterator itr = dataSet.values().iterator();
     while (itr.hasNext()) {
       Object val = itr.next();
-      if(val.equals(values)) {
+      if (val.equals(values)) {
         prContext.getResultSender().lastResult(Boolean.TRUE);
         return;
       }
     }
     prContext.getResultSender().lastResult(Boolean.FALSE);
   }
-  
+
   @Override
   public String getId() {
     return getClass().getName();
   }
-  
+
   @Override
   public boolean optimizeForWrite() {
     return false;

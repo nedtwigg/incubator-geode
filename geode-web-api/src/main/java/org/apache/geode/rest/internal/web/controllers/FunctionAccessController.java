@@ -87,17 +87,8 @@ public class FunctionAccessController extends AbstractBaseController {
    * @return result as a JSON document.
    */
   @RequestMapping(method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-  @ApiOperation(
-      value = "list all functions",
-      notes = "list all functions available in the GemFire cluster",
-      response = void.class
-  )
-  @ApiResponses({
-      @ApiResponse(code = 200, message = "OK."),
-      @ApiResponse( code = 401, message = "Invalid Username or Password." ),
-      @ApiResponse( code = 403, message = "Insufficient privileges for operation." ),
-      @ApiResponse(code = 500, message = "GemFire throws an error or exception.")
-  })
+  @ApiOperation(value = "list all functions", notes = "list all functions available in the GemFire cluster", response = void.class)
+  @ApiResponses({ @ApiResponse(code = 200, message = "OK."), @ApiResponse(code = 401, message = "Invalid Username or Password."), @ApiResponse(code = 403, message = "Insufficient privileges for operation."), @ApiResponse(code = 500, message = "GemFire throws an error or exception.") })
   @ResponseBody
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("@securityService.authorize('DATA', 'READ')")
@@ -124,35 +115,21 @@ public class FunctionAccessController extends AbstractBaseController {
    * @return result as a JSON document
    */
   @RequestMapping(method = RequestMethod.POST, value = "/{functionId}", produces = { MediaType.APPLICATION_JSON_VALUE })
-  @ApiOperation(
-      value = "execute function",
-      notes = "Execute function with arguments on regions, members, or group(s). By default function will be executed on all nodes if none of (onRegion, onMembers, onGroups) specified",
-      response = void.class
-  )
-  @ApiResponses({
-      @ApiResponse(code = 200, message = "OK."),
-      @ApiResponse( code = 401, message = "Invalid Username or Password." ),
-      @ApiResponse( code = 403, message = "Insufficient privileges for operation." ),
-      @ApiResponse(code = 500, message = "if GemFire throws an error or exception"),
-      @ApiResponse(code = 400, message = "if Function arguments specified as JSON document in the request body is invalid")
-  })
+  @ApiOperation(value = "execute function", notes = "Execute function with arguments on regions, members, or group(s). By default function will be executed on all nodes if none of (onRegion, onMembers, onGroups) specified", response = void.class)
+  @ApiResponses({ @ApiResponse(code = 200, message = "OK."), @ApiResponse(code = 401, message = "Invalid Username or Password."), @ApiResponse(code = 403, message = "Insufficient privileges for operation."), @ApiResponse(code = 500, message = "if GemFire throws an error or exception"), @ApiResponse(code = 400, message = "if Function arguments specified as JSON document in the request body is invalid") })
   @ResponseBody
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("@securityService.authorize('DATA', 'WRITE')")
-  public ResponseEntity<String> execute(@PathVariable("functionId") String functionId,
-      @RequestParam(value = "onRegion", required = false) String region,
-      @RequestParam(value = "onMembers", required = false) final String[] members,
-      @RequestParam(value = "onGroups", required = false) final String[] groups,
-      @RequestParam(value = "filter", required = false) final String[] filter,
-      @RequestBody(required = false) final String argsInBody
-  ) {
+  public ResponseEntity<String> execute(@PathVariable("functionId") String functionId, @RequestParam(value = "onRegion", required = false) String region, @RequestParam(value = "onMembers", required = false)
+  final String[] members, @RequestParam(value = "onGroups", required = false)
+  final String[] groups, @RequestParam(value = "filter", required = false)
+  final String[] filter, @RequestBody(required = false)
+  final String argsInBody) {
     Execution function = null;
     functionId = decode(functionId);
 
     if (StringUtils.hasText(region)) {
-      logger.debug("Executing Function ({}) with arguments ({}) on Region ({})...", functionId,
-        ArrayUtils.toString(argsInBody), region);
-
+      logger.debug("Executing Function ({}) with arguments ({}) on Region ({})...", functionId, ArrayUtils.toString(argsInBody), region);
 
       region = decode(region);
       try {
@@ -161,8 +138,7 @@ public class FunctionAccessController extends AbstractBaseController {
         throw new GemfireRestException(String.format("The Region identified by name (%1$s) could not found!", region), fe);
       }
     } else if (ArrayUtils.isNotEmpty(members)) {
-      logger.debug("Executing Function ({}) with arguments ({}) on Member ({})...", functionId,
-            ArrayUtils.toString(argsInBody), ArrayUtils.toString(members));
+      logger.debug("Executing Function ({}) with arguments ({}) on Member ({})...", functionId, ArrayUtils.toString(argsInBody), ArrayUtils.toString(members));
 
       try {
         function = FunctionService.onMembers(getMembers(members));
@@ -170,8 +146,7 @@ public class FunctionAccessController extends AbstractBaseController {
         throw new GemfireRestException("Could not found the specified members in distributed system!", fe);
       }
     } else if (ArrayUtils.isNotEmpty(groups)) {
-      logger.debug("Executing Function ({}) with arguments ({}) on Groups ({})...", functionId,
-            ArrayUtils.toString(argsInBody), ArrayUtils.toString(groups));
+      logger.debug("Executing Function ({}) with arguments ({}) on Groups ({})...", functionId, ArrayUtils.toString(argsInBody), ArrayUtils.toString(groups));
 
       try {
         function = FunctionService.onMembers(groups);
@@ -180,8 +155,7 @@ public class FunctionAccessController extends AbstractBaseController {
       }
     } else {
       //Default case is to execute function on all existing data node in DS, document this.
-      logger.debug("Executing Function ({}) with arguments ({}) on all Members...", functionId,
-            ArrayUtils.toString(argsInBody));
+      logger.debug("Executing Function ({}) with arguments ({}) on all Members...", functionId, ArrayUtils.toString(argsInBody));
 
       try {
         function = FunctionService.onMembers(getAllMembersInDS());
@@ -191,8 +165,7 @@ public class FunctionAccessController extends AbstractBaseController {
     }
 
     if (!ArrayUtils.isEmpty(filter)) {
-      logger.debug("Executing Function ({}) with filter ({})", functionId,
-            ArrayUtils.toString(filter));
+      logger.debug("Executing Function ({}) with filter ({})", functionId, ArrayUtils.toString(filter));
 
       Set filter1 = ArrayUtils.asSet(filter);
       function = function.withFilter(filter1);
@@ -249,4 +222,3 @@ public class FunctionAccessController extends AbstractBaseController {
     }
   }
 }
-

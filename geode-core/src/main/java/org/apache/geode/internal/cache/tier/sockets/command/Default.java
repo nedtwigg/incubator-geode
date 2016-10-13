@@ -27,7 +27,6 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 import java.io.IOException;
 
-
 public class Default extends BaseCommand {
 
   private final static Default singleton = new Default();
@@ -40,11 +39,10 @@ public class Default extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     // requiresResponse = true; NOT NEEDED... ALWAYS SEND ERROR RESPONSE
-    
-    logger.fatal(LocalizedMessage.create(LocalizedStrings.Default_0_UNKNOWN_MESSAGE_TYPE_1_WITH_TX_2_FROM_3, new Object[] {servConn.getName(), MessageType.getString(msg.getMessageType()), Integer.valueOf(msg.getTransactionId()), servConn.getSocketString()}));
+
+    logger.fatal(LocalizedMessage.create(LocalizedStrings.Default_0_UNKNOWN_MESSAGE_TYPE_1_WITH_TX_2_FROM_3, new Object[] { servConn.getName(), MessageType.getString(msg.getMessageType()), Integer.valueOf(msg.getTransactionId()), servConn.getSocketString() }));
     writeErrorResponse(msg, MessageType.UNKNOWN_MESSAGE_TYPE_ERROR, servConn);
     // responded = true; NOT NEEDED... ALWAYS SEND ERROR RESPONSE
   }

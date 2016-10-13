@@ -24,8 +24,8 @@ package org.apache.geode.cache.query;
  * @since GemFire 4.0
  */
 public class ParameterCountInvalidException extends QueryException {
-private static final long serialVersionUID = -3249156440150789428L;
-  
+  private static final long serialVersionUID = -3249156440150789428L;
+
   /**
    * Creates a new instance of QueryParameterCountInvalidException
    * @param message the error message
@@ -33,5 +33,5 @@ private static final long serialVersionUID = -3249156440150789428L;
   public ParameterCountInvalidException(String message) {
     super(message);
   }
-  
+
 }

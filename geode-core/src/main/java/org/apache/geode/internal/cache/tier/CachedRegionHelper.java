@@ -31,25 +31,24 @@ public class CachedRegionHelper {
 
   private final InternalCache cache;
   private volatile boolean shutdown = false;
-//  private Map regions;
+  //  private Map regions;
   private volatile int slowEmulationSleep = 0;
 
   public CachedRegionHelper(InternalCache c) {
     this.cache = c;
-//    this.regions = new WeakHashMap();
+    //    this.regions = new WeakHashMap();
   }
 
-  public void checkCancelInProgress(Throwable e) 
-      throws CancelException {
+  public void checkCancelInProgress(Throwable e) throws CancelException {
     cache.getCancelCriterion().checkCancelInProgress(e);
   }
-  
+
   public Region getRegion(String name) {
     return cache.getRegion(name);
   }
-  
+
   public InternalCache getCache() {
-	  return this.cache;
+    return this.cache;
   }
 
   public void setShutdown(boolean shutdown) {
@@ -57,15 +56,14 @@ public class CachedRegionHelper {
   }
 
   public boolean isShutdown() {
-    return shutdown 
-        || cache.getCancelCriterion().isCancelInProgress();
+    return shutdown || cache.getCancelCriterion().isCancelInProgress();
   }
 
   public void close() {
     //cache = null;
     //regions = null;
   }
-  
+
   /**
    * Just ensure that this class gets loaded.
    * 
@@ -74,5 +72,5 @@ public class CachedRegionHelper {
   public static void loadEmergencyClasses() {
     // nothing needed, just make sure this class gets loaded  
   }
-  
+
 }

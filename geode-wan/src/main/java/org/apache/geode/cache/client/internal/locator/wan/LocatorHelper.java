@@ -27,14 +27,16 @@ import org.apache.geode.cache.client.internal.locator.wan.LocatorMembershipListe
 import org.apache.geode.distributed.internal.WanLocatorDiscoverer;
 import org.apache.geode.internal.CopyOnWriteHashSet;
 import org.apache.geode.internal.admin.remote.DistributionLocatorId;
+
 /**
  * This is a helper class which helps to add the locator information to the allLocatorInfoMap.
  * 
  *
  */
 public class LocatorHelper {
-  
+
   public final static Object locatorObject = new Object();
+
   /**
    * 
    * This methods add the given locator to allLocatorInfoMap.
@@ -44,29 +46,23 @@ public class LocatorHelper {
    * @param locatorListener
    * @param sourceLocator
    */
-  public static boolean addLocator(int distributedSystemId,
-      DistributionLocatorId locator, LocatorMembershipListener locatorListener,
-      DistributionLocatorId sourceLocator) {
-      ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocatorsInfo = (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>)locatorListener
-          .getAllLocatorsInfo();
-      Set<DistributionLocatorId> locatorsSet = new CopyOnWriteHashSet<DistributionLocatorId>();
-      locatorsSet.add(locator);
-      Set<DistributionLocatorId> existingValue = allLocatorsInfo.putIfAbsent(distributedSystemId, locatorsSet);
-      if(existingValue != null){
-        if (!existingValue.contains(locator)) {
-          existingValue.add(locator);
-          addServerLocator(distributedSystemId, locatorListener, locator);
-          locatorListener.locatorJoined(distributedSystemId, locator,
-              sourceLocator);
-        }
-        else {
-          return false;
-        }
-      }else{
+  public static boolean addLocator(int distributedSystemId, DistributionLocatorId locator, LocatorMembershipListener locatorListener, DistributionLocatorId sourceLocator) {
+    ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocatorsInfo = (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>) locatorListener.getAllLocatorsInfo();
+    Set<DistributionLocatorId> locatorsSet = new CopyOnWriteHashSet<DistributionLocatorId>();
+    locatorsSet.add(locator);
+    Set<DistributionLocatorId> existingValue = allLocatorsInfo.putIfAbsent(distributedSystemId, locatorsSet);
+    if (existingValue != null) {
+      if (!existingValue.contains(locator)) {
+        existingValue.add(locator);
         addServerLocator(distributedSystemId, locatorListener, locator);
-        locatorListener.locatorJoined(distributedSystemId, locator,
-          sourceLocator);
+        locatorListener.locatorJoined(distributedSystemId, locator, sourceLocator);
+      } else {
+        return false;
       }
+    } else {
+      addServerLocator(distributedSystemId, locatorListener, locator);
+      locatorListener.locatorJoined(distributedSystemId, locator, sourceLocator);
+    }
     return true;
   }
 
@@ -78,18 +74,16 @@ public class LocatorHelper {
    * @param locatorListener
    * @param locator
    */
-  private static void addServerLocator(Integer distributedSystemId,
-      LocatorMembershipListener locatorListener, DistributionLocatorId locator) {
+  private static void addServerLocator(Integer distributedSystemId, LocatorMembershipListener locatorListener, DistributionLocatorId locator) {
     if (!locator.isServerLocator()) {
       return;
     }
-    ConcurrentHashMap<Integer, Set<String>> allServerLocatorsInfo = (ConcurrentHashMap<Integer, Set<String>>)locatorListener
-        .getAllServerLocatorsInfo();
-    
+    ConcurrentHashMap<Integer, Set<String>> allServerLocatorsInfo = (ConcurrentHashMap<Integer, Set<String>>) locatorListener.getAllServerLocatorsInfo();
+
     Set<String> locatorsSet = new CopyOnWriteHashSet<String>();
     locatorsSet.add(locator.toString());
     Set<String> existingValue = allServerLocatorsInfo.putIfAbsent(distributedSystemId, locatorsSet);
-    if(existingValue != null){
+    if (existingValue != null) {
       if (!existingValue.contains(locator.toString())) {
         existingValue.add(locator.toString());
       }
@@ -102,21 +96,15 @@ public class LocatorHelper {
    * @param locators
    * @param locatorListener
    */
-  public static boolean addExchangedLocators(Map<Integer, Set<DistributionLocatorId>> locators,
-                                             LocatorMembershipListener locatorListener) {
+  public static boolean addExchangedLocators(Map<Integer, Set<DistributionLocatorId>> locators, LocatorMembershipListener locatorListener) {
 
-    ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocators = (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>)locatorListener
-        .getAllLocatorsInfo();
+    ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocators = (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>) locatorListener.getAllLocatorsInfo();
     if (!allLocators.equals(locators)) {
-      for (Map.Entry<Integer, Set<DistributionLocatorId>> entry : locators
-          .entrySet()) {
-        Set<DistributionLocatorId> existingValue = allLocators.putIfAbsent(
-            entry.getKey(), new CopyOnWriteHashSet<DistributionLocatorId>(entry
-                .getValue()));
+      for (Map.Entry<Integer, Set<DistributionLocatorId>> entry : locators.entrySet()) {
+        Set<DistributionLocatorId> existingValue = allLocators.putIfAbsent(entry.getKey(), new CopyOnWriteHashSet<DistributionLocatorId>(entry.getValue()));
 
         if (existingValue != null) {
-          Set<DistributionLocatorId> localLocators = allLocators.get(entry
-              .getKey());
+          Set<DistributionLocatorId> localLocators = allLocators.get(entry.getKey());
           if (!localLocators.equals(entry.getValue())) {
             entry.getValue().removeAll(localLocators);
             for (DistributionLocatorId locator : entry.getValue()) {
@@ -126,8 +114,7 @@ public class LocatorHelper {
             }
           }
 
-        }
-        else {
+        } else {
           for (DistributionLocatorId locator : entry.getValue()) {
             addServerLocator(entry.getKey(), locatorListener, locator);
             locatorListener.locatorJoined(entry.getKey(), locator, null);
@@ -138,5 +125,5 @@ public class LocatorHelper {
     }
     return false;
   }
-  
+
 }

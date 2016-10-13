@@ -35,7 +35,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  */
 @Category(IntegrationTest.class)
 public class PassJUnitTest extends GoldenTestCase implements ExecutableProcess {
-  
+
   @Override
   protected GoldenComparator createGoldenComparator() {
     return new GoldenStringComparator(expectedProblemLines());
@@ -50,21 +50,18 @@ public class PassJUnitTest extends GoldenTestCase implements ExecutableProcess {
    */
   @Test
   public void testPass() throws Exception {
-    final String goldenString = 
-        "Begin " + name() + ".main" + "\n" + 
-        "Press Enter to continue." + "\n" +
-        "End " + name() + ".main" + "\n";
-    
+    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "End " + name() + ".main" + "\n";
+
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());
     process.execute(createProperties());
     assertTrue(process.isAlive());
-    
+
     process.waitForOutputToMatch("Begin " + name() + "\\.main");
     process.waitForOutputToMatch("Press Enter to continue\\.");
     process.sendInput();
     process.waitForOutputToMatch("End " + name() + "\\.main");
     process.waitFor();
-    
+
     assertOutputMatchesGoldenFile(process, goldenString);
     assertFalse(process.isAlive());
     assertFalse(process.getStandardOutReader().isAlive());
@@ -78,7 +75,7 @@ public class PassJUnitTest extends GoldenTestCase implements ExecutableProcess {
     new BufferedReader(new InputStreamReader(System.in)).readLine();
     outputLine("End " + name() + ".main");
   }
-  
+
   public static void main(final String[] args) throws Exception {
     new PassJUnitTest().executeInProcess();
   }

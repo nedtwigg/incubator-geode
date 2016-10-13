@@ -125,7 +125,7 @@ public class SetExecutor extends StringExecutor {
   }
 
   private boolean setXX(Region<ByteArrayWrapper, ByteArrayWrapper> r, Command command, ByteArrayWrapper key, ByteArrayWrapper valueWrapper, ExecutionHandlerContext context) {
-    if(r.containsKey(key)) {
+    if (r.containsKey(key)) {
       checkAndSetDataType(key, context);
       r.put(key, valueWrapper);
       command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), SUCCESS));

@@ -40,31 +40,25 @@ public class CacheObserverAdapter implements CacheObserver {
   public void afterRegionClear(RegionEvent event) {
   }
 
-  public void beforeDiskClear()
-  {
+  public void beforeDiskClear() {
     // TODO Auto-generated method stub
   }
 
-  public void goingToFlush()
-  {
+  public void goingToFlush() {
     // TODO Auto-generated method stub
   }
 
-  public void beforeWritingBytes()
-  {
+  public void beforeWritingBytes() {
   }
 
-  public void afterWritingBytes()
-  {
+  public void afterWritingBytes() {
   }
 
-  public void beforeGoingToCompact()
-  {
+  public void beforeGoingToCompact() {
     // TODO Auto-generated method stub
   }
 
-  public void afterHavingCompacted()
-  {
+  public void afterHavingCompacted() {
     // TODO Auto-generated method stub
   }
 
@@ -74,10 +68,10 @@ public class CacheObserverAdapter implements CacheObserver {
    * @see org.apache.geode.internal.cache.CacheObserver#afterConflation(java.nio.ByteBuffer,
    *      java.nio.ByteBuffer)
    */
-  public void afterConflation(ByteBuffer origBB, ByteBuffer conflatedBB)
-  {
+  public void afterConflation(ByteBuffer origBB, ByteBuffer conflatedBB) {
     // TODO Auto-generated method stub
   }
+
   /*
    *  (non-Javadoc)
    * @see org.apache.geode.internal.cache.CacheObserver#afterSettingOplogOffSet()
@@ -93,60 +87,55 @@ public class CacheObserverAdapter implements CacheObserver {
   public void afterSwitchingOplog() {
     // TODO Auto-generated method stub
   }
-  
+
   public void afterKrfCreated() {
-    
+
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.CacheObserver#beforeStoppingCompacter()
    */
-  public void beforeStoppingCompactor()
-  {
+  public void beforeStoppingCompactor() {
     // TODO Auto-generated method stub
-    
+
   }
+
   public void afterStoppingCompactor() {
-    
+
   }
+
   public void afterSignallingCompactor() {
   }
 
-  public void afterMarkingGIICompleted()
-  {
+  public void afterMarkingGIICompleted() {
     // TODO Auto-generated method stub
-    
+
   }
 
-  public void afterMarkingGIIStarted()
-  {
+  public void afterMarkingGIIStarted() {
     // TODO Auto-generated method stub
-    
+
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.CacheObserver#afterSwitchingWriteAndFlushMaps()
    */
-  public void afterSwitchingWriteAndFlushMaps()
-  {
+  public void afterSwitchingWriteAndFlushMaps() {
 
   }
 
-  public void afterSettingDiskRef()
-  {    
+  public void afterSettingDiskRef() {
   }
 
-  public void beforeSettingDiskRef()
-  {    
+  public void beforeSettingDiskRef() {
   }
 
-  public void beforeDeletingCompactedOplog(Oplog compactedOplog)
-  {
+  public void beforeDeletingCompactedOplog(Oplog compactedOplog) {
   }
-  public void beforeDeletingEmptyOplog(Oplog emptyOplog)
-  {
+
+  public void beforeDeletingEmptyOplog(Oplog emptyOplog) {
   }
-  
+
   @Override
   public void beforeShutdownAll() {
   }

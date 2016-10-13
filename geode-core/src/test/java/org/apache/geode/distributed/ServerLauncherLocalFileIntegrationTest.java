@@ -40,11 +40,11 @@ public class ServerLauncherLocalFileIntegrationTest extends ServerLauncherLocalI
   public final void setUpServerLauncherLocalFileTest() throws Exception {
     System.setProperty(ProcessControllerFactory.PROPERTY_DISABLE_ATTACH_API, "true");
   }
-  
+
   @After
-  public final void tearDownServerLauncherLocalFileTest() throws Exception {   
+  public final void tearDownServerLauncherLocalFileTest() throws Exception {
   }
-  
+
   @Override
   @Test
   public void testIsAttachAPIFound() throws Exception {

@@ -21,12 +21,13 @@ package org.apache.geode.internal.cache;
 
 import org.apache.geode.cache.server.ClientSubscriptionConfig;
 import org.apache.geode.internal.i18n.LocalizedStrings;
+
 /**
  * 
  * Configuration parameters for client subscription
  */
 public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
-  
+
   /**
    *  To get client subscription
    */
@@ -35,7 +36,7 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
   private int haQueueCapacity = 1;
 
   private String haEvictionPolicy = null;
-  
+
   /**
    * The name of the directory in which to store overflowed client queue entries
    */
@@ -45,14 +46,15 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
    * disk store name for overflow
    */
   private String diskStoreName;
-  
+
   private boolean hasOverflowDirectory = false;
-  
-  public ClientSubscriptionConfigImpl(){
+
+  public ClientSubscriptionConfigImpl() {
     this.haQueueCapacity = DEFAULT_CAPACITY;
     this.haEvictionPolicy = DEFAULT_EVICTION_POLICY;
     this.overflowDirectory = DEFAULT_OVERFLOW_DIRECTORY;
   }
+
   /**
    * Returns the capacity of the client client queue.
    * will be in MB for eviction-policy mem else
@@ -60,9 +62,10 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
    * @see #DEFAULT_CAPACITY
    * @since GemFire 5.7
    */
-  public int getCapacity(){
-    return this.haQueueCapacity ;
+  public int getCapacity() {
+    return this.haQueueCapacity;
   }
+
   /**
    * Sets the capacity of the client client queue.
    * will be in MB for eviction-policy mem else
@@ -70,23 +73,25 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
    * @see #DEFAULT_CAPACITY
    * @since GemFire 5.7
    */
-  public void setCapacity(int capacity){
+  public void setCapacity(int capacity) {
     this.haQueueCapacity = capacity;
   }
+
   /**
    * Returns the eviction policy that is executed when capacity of the client client queue is reached.
    * @see #DEFAULT_EVICTION_POLICY
    * @since GemFire 5.7
    */
-  public String getEvictionPolicy(){
-    return this.haEvictionPolicy ;
+  public String getEvictionPolicy() {
+    return this.haEvictionPolicy;
   }
+
   /**
    * Sets the eviction policy that is executed when capacity of the client client queue is reached.
    * @see #DEFAULT_EVICTION_POLICY
    * @since GemFire 5.7
    */
-  public void setEvictionPolicy(String policy){
+  public void setEvictionPolicy(String policy) {
     this.haEvictionPolicy = policy;
   }
 
@@ -99,8 +104,7 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
   @Deprecated
   public void setOverflowDirectory(String overflowDirectory) {
     if (this.getDiskStoreName() != null) {
-      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1
-          .toLocalizedString(new Object[] {"setOverflowDirectory", this.getDiskStoreName()}));
+      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(new Object[] { "setOverflowDirectory", this.getDiskStoreName() }));
     }
     this.overflowDirectory = overflowDirectory;
     setHasOverflowDirectory(true);
@@ -117,17 +121,14 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
   @Deprecated
   public String getOverflowDirectory() {
     if (this.getDiskStoreName() != null) {
-      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1
-          .toLocalizedString(new Object[] {"getOverflowDirectory", this.getDiskStoreName()}));
+      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(new Object[] { "getOverflowDirectory", this.getDiskStoreName() }));
     }
     return this.overflowDirectory;
   }
-  
+
   @Override
   public String toString() {
-    String str = " Eviction policy "
-        + this.getEvictionPolicy() + " capacity "
-        + this.getCapacity();
+    String str = " Eviction policy " + this.getEvictionPolicy() + " capacity " + this.getCapacity();
     if (diskStoreName == null) {
       str += " Overflow Directory " + this.getOverflowDirectory();
     } else {
@@ -135,6 +136,7 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
     }
     return str;
   }
+
   /**
    * get the diskStoreName for overflow
    * @since GemFire prPersistSprint2
@@ -142,6 +144,7 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
   public String getDiskStoreName() {
     return diskStoreName;
   }
+
   /**
    * Sets the disk store name for overflow  
    * @param diskStoreName 
@@ -149,21 +152,19 @@ public class ClientSubscriptionConfigImpl implements ClientSubscriptionConfig {
    */
   public void setDiskStoreName(String diskStoreName) {
     if (hasOverflowDirectory()) {
-      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1
-          .toLocalizedString(new Object[] {"setDiskStoreName", this.getDiskStoreName()}));
+      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(new Object[] { "setDiskStoreName", this.getDiskStoreName() }));
     }
     this.diskStoreName = diskStoreName;
   }
-  
-  public boolean hasOverflowDirectory()
-  {
+
+  public boolean hasOverflowDirectory() {
     return this.hasOverflowDirectory;
   }
-  private void setHasOverflowDirectory(boolean hasOverflowDirectory)
-  {
+
+  private void setHasOverflowDirectory(boolean hasOverflowDirectory) {
     this.hasOverflowDirectory = hasOverflowDirectory;
   }
-  
+
   /*public boolean equals(ClientSubscriptionConfig other) {
     if (other != null && other.getEvictionPolicy() != null
         && other.getOverflowDirectory() != null) {

@@ -44,13 +44,14 @@ public class ClientCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/clients")
   @ResponseBody
-	public String listClients() {
+  public String listClients() {
     return processCommand(CliStrings.LIST_CLIENTS);
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/clients/{clientID}")
   @ResponseBody
-  public String describeClient(@PathVariable("clientID") final String clientId) {
+  public String describeClient(@PathVariable("clientID")
+  final String clientId) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESCRIBE_CLIENT);
     command.addOption(CliStrings.DESCRIBE_CLIENT__ID, decode(clientId));
     return processCommand(command.toString());

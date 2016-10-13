@@ -36,21 +36,21 @@ public class SequenceLoggerImpl implements SequenceLogger {
   public static final String ENABLED_TYPES_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "GraphLoggerImpl.ENABLED_TYPES";
 
   private final EnumSet<GraphType> enabledTypes;
-  
+
   static {
     SequenceLoggerImpl logger = new SequenceLoggerImpl();
     logger.start();
     INSTANCE = logger;
   }
-  
+
   //TODO - this might be too much synchronization for recording all region
   //operations. Maybe we should use a ConcurrentLinkedQueue instead?
   private final LinkedBlockingQueue<Transition> edges = new LinkedBlockingQueue<Transition>();
-  
+
   private volatile OutputStreamAppender appender;
 
   private ConsumerThread consumerThread;
-  
+
   public static SequenceLogger getInstance() {
     return INSTANCE;
   }
@@ -68,14 +68,13 @@ public class SequenceLoggerImpl implements SequenceLogger {
     return enabledTypes.contains(type);
   }
 
-  public void logTransition(GraphType type, Object graphName, Object edgeName,
-      Object state, Object source, Object dest) {
-    if(isEnabled(type)) {
+  public void logTransition(GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
+    if (isEnabled(type)) {
       Transition edge = new Transition(type, graphName, edgeName, state, source, dest);
       edges.add(edge);
     }
   }
-  
+
   public void flush() throws InterruptedException {
     FlushToken token = new FlushToken();
     edges.add(token);
@@ -85,7 +84,7 @@ public class SequenceLoggerImpl implements SequenceLogger {
   private SequenceLoggerImpl() {
     String enabledTypesString = System.getProperty(ENABLED_TYPES_PROPERTY, "");
     this.enabledTypes = GraphType.parse(enabledTypesString);
-    if(!enabledTypes.isEmpty()) {
+    if (!enabledTypes.isEmpty()) {
       try {
         String name = "states" + OSProcess.getId() + ".graph";
         appender = new OutputStreamAppender(new File(name));
@@ -93,16 +92,16 @@ public class SequenceLoggerImpl implements SequenceLogger {
       }
     }
   }
-  
+
   private void start() {
-    if(!enabledTypes.isEmpty()) {
+    if (!enabledTypes.isEmpty()) {
       consumerThread = new ConsumerThread();
       consumerThread.start();
     }
   }
 
   private class ConsumerThread extends Thread {
-    
+
     public ConsumerThread() {
       super("State Logger Consumer Thread");
       setDaemon(true);
@@ -111,15 +110,15 @@ public class SequenceLoggerImpl implements SequenceLogger {
     @Override
     public void run() {
       Transition edge;
-      while(true) {
+      while (true) {
         try {
           edge = edges.take();
-          if(edge instanceof FlushToken) {
+          if (edge instanceof FlushToken) {
             ((FlushToken) edge).cdl.countDown();
             continue;
           }
 
-          if(appender != null) {
+          if (appender != null) {
             appender.write(edge);
           }
         } catch (InterruptedException e) {
@@ -132,10 +131,10 @@ public class SequenceLoggerImpl implements SequenceLogger {
       }
     }
   }
-  
+
   private static class FlushToken extends Transition {
     CountDownLatch cdl = new CountDownLatch(1);
-    
+
     public FlushToken() {
       super(null, null, null, null, null, null);
     }

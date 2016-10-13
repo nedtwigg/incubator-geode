@@ -29,8 +29,7 @@ public abstract class DistTXStateProxyImpl extends TXStateProxyImpl {
 
   protected static final Logger logger = LogService.getLogger();
 
-  public DistTXStateProxyImpl(TXManagerImpl managerImpl, TXId id,
-      InternalDistributedMember clientMember) {
+  public DistTXStateProxyImpl(TXManagerImpl managerImpl, TXId id, InternalDistributedMember clientMember) {
     super(managerImpl, id, clientMember);
     // TODO Auto-generated constructor stub
   }
@@ -39,7 +38,7 @@ public abstract class DistTXStateProxyImpl extends TXStateProxyImpl {
     super(managerImpl, id, isjta);
     // TODO Auto-generated constructor stub
   }
-  
+
   @Override
   public boolean isDistTx() {
     return true;

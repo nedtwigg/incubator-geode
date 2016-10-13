@@ -47,8 +47,7 @@ public class StopCQ extends BaseCQCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
     ClientProxyMembershipID id = servConn.getProxyID();
     CacheServerStats stats = servConn.getCacheServerStats();
@@ -69,8 +68,7 @@ public class StopCQ extends BaseCQCommand {
     // Process the query request
     if (cqName == null) {
       String err = LocalizedStrings.StopCQ_THE_CQNAME_FOR_THE_CQ_STOP_REQUEST_IS_NULL.toLocalizedString();
-      sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg
-          .getTransactionId(), null, servConn);
+      sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg.getTransactionId(), null, servConn);
       return;
     }
 
@@ -93,34 +91,28 @@ public class StopCQ extends BaseCQCommand {
       if (authzRequest != null) {
         String queryStr = null;
         Set cqRegionNames = null;
-        
+
         if (cqQuery != null) {
           queryStr = cqQuery.getQueryString();
           cqRegionNames = new HashSet();
-          cqRegionNames.add(((CqQueryImpl)cqQuery).getRegionName());
+          cqRegionNames.add(((CqQueryImpl) cqQuery).getRegionName());
         }
         authzRequest.stopCQAuthorize(cqName, queryStr, cqRegionNames);
       }
       cqService.stopCq(cqName, id);
-      if(cqQuery != null)
+      if (cqQuery != null)
         servConn.removeCq(cqName, cqQuery.isDurable());
-    }
-    catch (CqException cqe) {
-      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(),
-          cqe, servConn);
+    } catch (CqException cqe) {
+      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(), cqe, servConn);
       return;
-    }
-    catch (Exception e) {
-      String err = LocalizedStrings.StopCQ_EXCEPTION_WHILE_STOPPING_CQ_NAMED_0
-        .toLocalizedString(cqName);
-      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, err,
-          msg.getTransactionId(), e, servConn);
+    } catch (Exception e) {
+      String err = LocalizedStrings.StopCQ_EXCEPTION_WHILE_STOPPING_CQ_NAMED_0.toLocalizedString(cqName);
+      sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, err, msg.getTransactionId(), e, servConn);
       return;
     }
 
     // Send OK to client
-    sendCqResponse(MessageType.REPLY, LocalizedStrings.StopCQ_CQ_STOPPED_SUCCESSFULLY.toLocalizedString(), msg
-        .getTransactionId(), null, servConn);
+    sendCqResponse(MessageType.REPLY, LocalizedStrings.StopCQ_CQ_STOPPED_SUCCESSFULLY.toLocalizedString(), msg.getTransactionId(), null, servConn);
 
     servConn.setAsTrue(RESPONDED);
 

@@ -27,19 +27,20 @@ import java.io.IOException;
  */
 public class ShutdownAllResponse extends AdminResponse {
   private transient boolean isToShutDown = true;
+
   public ShutdownAllResponse() {
   }
-  
+
   @Override
   public boolean getInlineProcess() {
     return true;
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
   }
-  
+
   @Override
   public boolean orderedDelivery() {
     return true;
@@ -53,24 +54,22 @@ public class ShutdownAllResponse extends AdminResponse {
   public int getDSFID() {
     return SHUTDOWN_ALL_RESPONSE;
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeBoolean(isToShutDown);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.isToShutDown = in.readBoolean();
   }
 
   @Override
   public String toString() {
-    return "ShutdownAllResponse from " + this.getSender()
-    + " msgId=" + this.getMsgId() + " isToShutDown=" + this.isToShutDown; 
+    return "ShutdownAllResponse from " + this.getSender() + " msgId=" + this.getMsgId() + " isToShutDown=" + this.isToShutDown;
   }
 
   public boolean isToShutDown() {

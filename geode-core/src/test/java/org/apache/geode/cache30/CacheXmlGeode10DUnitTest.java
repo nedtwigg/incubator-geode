@@ -46,7 +46,6 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-
 @Category(DistributedTest.class)
 public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
   private static final long serialVersionUID = -6437436147079728413L;
@@ -55,11 +54,9 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
     super();
   }
 
-  
   // ////// Helper methods
 
-  protected String getGemFireVersion()
-  {
+  protected String getGemFireVersion() {
     return CacheXml.VERSION_1_0;
   }
 
@@ -68,27 +65,27 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
   public void testEnableOffHeapMemory() {
     try {
       System.setProperty(DistributionConfig.GEMFIRE_PREFIX + OFF_HEAP_MEMORY_SIZE, "1m");
-      
+
       final String regionName = "testEnableOffHeapMemory";
-      
+
       final CacheCreation cache = new CacheCreation();
       final RegionAttributesCreation attrs = new RegionAttributesCreation(cache);
       attrs.setOffHeap(true);
       assertEquals(true, attrs.getOffHeap());
-      
+
       final Region regionBefore = cache.createRegion(regionName, attrs);
       assertNotNull(regionBefore);
       assertEquals(true, regionBefore.getAttributes().getOffHeap());
-  
+
       testXml(cache);
-      
+
       final Cache c = getCache();
       assertNotNull(c);
-  
+
       final Region regionAfter = c.getRegion(regionName);
       assertNotNull(regionAfter);
       assertEquals(true, regionAfter.getAttributes().getOffHeap());
-      assertEquals(true, ((LocalRegion)regionAfter).getOffHeap());
+      assertEquals(true, ((LocalRegion) regionAfter).getOffHeap());
       regionAfter.localDestroyRegion();
     } finally {
       System.clearProperty(DistributionConfig.GEMFIRE_PREFIX + OFF_HEAP_MEMORY_SIZE);
@@ -99,59 +96,56 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
   @Test
   public void testEnableOffHeapMemoryRootRegionWithoutOffHeapMemoryThrowsException() {
     final String regionName = getUniqueName();
-    
+
     final CacheCreation cache = new CacheCreation();
     final RegionAttributesCreation attrs = new RegionAttributesCreation(cache);
     attrs.setOffHeap(true);
     assertEquals(true, attrs.getOffHeap());
-    
+
     final Region regionBefore = cache.createRegion(regionName, attrs);
     assertNotNull(regionBefore);
     assertEquals(true, regionBefore.getAttributes().getOffHeap());
 
-    IgnoredException expectedException = IgnoredException.addIgnoredException(LocalizedStrings.
-        LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/"+regionName));
+    IgnoredException expectedException = IgnoredException.addIgnoredException(LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + regionName));
     try {
       testXml(cache);
     } catch (IllegalStateException e) {
       // expected
-      String msg = LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/"+regionName);
+      String msg = LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + regionName);
       assertEquals(msg, e.getMessage());
     } finally {
       expectedException.remove();
     }
   }
-  
+
   @SuppressWarnings({ "rawtypes", "deprecation", "unchecked" })
   @Test
   public void testEnableOffHeapMemorySubRegionWithoutOffHeapMemoryThrowsException() {
     final String rootRegionName = getUniqueName();
     final String subRegionName = "subRegion";
-    
+
     final CacheCreation cache = new CacheCreation();
     final RegionAttributesCreation rootRegionAttrs = new RegionAttributesCreation(cache);
     assertEquals(false, rootRegionAttrs.getOffHeap());
-    
+
     final Region rootRegionBefore = cache.createRegion(rootRegionName, rootRegionAttrs);
     assertNotNull(rootRegionBefore);
     assertEquals(false, rootRegionBefore.getAttributes().getOffHeap());
-    
+
     final RegionAttributesCreation subRegionAttrs = new RegionAttributesCreation(cache);
     subRegionAttrs.setOffHeap(true);
     assertEquals(true, subRegionAttrs.getOffHeap());
-    
+
     final Region subRegionBefore = rootRegionBefore.createSubregion(subRegionName, subRegionAttrs);
     assertNotNull(subRegionBefore);
     assertEquals(true, subRegionBefore.getAttributes().getOffHeap());
 
-    IgnoredException expectedException = IgnoredException.addIgnoredException(LocalizedStrings.
-        LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/"+rootRegionName+"/"+subRegionName));
+    IgnoredException expectedException = IgnoredException.addIgnoredException(LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + rootRegionName + "/" + subRegionName));
     try {
       testXml(cache);
     } catch (IllegalStateException e) {
       // expected
-      final String msg = LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.
-          toLocalizedString("/" + rootRegionName + "/" + subRegionName);
+      final String msg = LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + rootRegionName + "/" + subRegionName);
       assertEquals(msg, e.getMessage());
     } finally {
       expectedException.remove();
@@ -180,11 +174,11 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
       testXml(cache);
       {
         c = getCache();
-        assertEquals(low, c.getResourceManager().getEvictionOffHeapPercentage(),0);
-        assertEquals(high, c.getResourceManager().getCriticalOffHeapPercentage(),0);
+        assertEquals(low, c.getResourceManager().getEvictionOffHeapPercentage(), 0);
+        assertEquals(high, c.getResourceManager().getCriticalOffHeapPercentage(), 0);
       }
       closeCache();
-      
+
       rmc = new ResourceManagerCreation();
       // Set them to similar values
       rmc.setEvictionOffHeapPercentage(low);
@@ -193,11 +187,11 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
       testXml(cache);
       {
         c = getCache();
-        assertEquals(low, c.getResourceManager().getEvictionOffHeapPercentage(),0);
-        assertEquals(low + 1, c.getResourceManager().getCriticalOffHeapPercentage(),0);
+        assertEquals(low, c.getResourceManager().getEvictionOffHeapPercentage(), 0);
+        assertEquals(low + 1, c.getResourceManager().getCriticalOffHeapPercentage(), 0);
       }
       closeCache();
-  
+
       rmc = new ResourceManagerCreation();
       rmc.setEvictionOffHeapPercentage(high);
       rmc.setCriticalOffHeapPercentage(low);
@@ -211,7 +205,7 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
         expectedException.remove();
         closeCache();
       }
-  
+
       // Disable eviction
       rmc = new ResourceManagerCreation();
       rmc.setEvictionOffHeapPercentage(0);
@@ -220,11 +214,11 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
       testXml(cache);
       {
         c = getCache();
-        assertEquals(0f, c.getResourceManager().getEvictionOffHeapPercentage(),0);
-        assertEquals(low, c.getResourceManager().getCriticalOffHeapPercentage(),0);
+        assertEquals(0f, c.getResourceManager().getEvictionOffHeapPercentage(), 0);
+        assertEquals(low, c.getResourceManager().getCriticalOffHeapPercentage(), 0);
       }
       closeCache();
-  
+
       // Disable refusing ops in "red zone"
       rmc = new ResourceManagerCreation();
       rmc.setEvictionOffHeapPercentage(low);
@@ -233,11 +227,11 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
       testXml(cache);
       {
         c = getCache();
-        assertEquals(low, c.getResourceManager().getEvictionOffHeapPercentage(),0);
-        assertEquals(0f, c.getResourceManager().getCriticalOffHeapPercentage(),0);
+        assertEquals(low, c.getResourceManager().getEvictionOffHeapPercentage(), 0);
+        assertEquals(0f, c.getResourceManager().getCriticalOffHeapPercentage(), 0);
       }
       closeCache();
-  
+
       // Disable both
       rmc = new ResourceManagerCreation();
       rmc.setEvictionOffHeapPercentage(0);
@@ -245,8 +239,8 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
       cache.setResourceManagerCreation(rmc);
       testXml(cache);
       c = getCache();
-      assertEquals(0f, c.getResourceManager().getEvictionOffHeapPercentage(),0);
-      assertEquals(0f, c.getResourceManager().getCriticalOffHeapPercentage(),0);
+      assertEquals(0f, c.getResourceManager().getEvictionOffHeapPercentage(), 0);
+      assertEquals(0f, c.getResourceManager().getCriticalOffHeapPercentage(), 0);
     } finally {
       System.clearProperty(DistributionConfig.GEMFIRE_PREFIX + OFF_HEAP_MEMORY_SIZE);
     }
@@ -262,19 +256,18 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
     final CacheCreation cache = new CacheCreation();
     AsyncEventQueueFactory factory = cache.createAsyncEventQueueFactory();
 
-
     AsyncEventListener listener = new MyAsyncEventListenerGeode10();
 
     // Test for default forwardExpirationDestroy attribute value (which is false)
     String aeqId1 = "aeqWithDefaultFED";
-    factory.create(aeqId1,listener);
+    factory.create(aeqId1, listener);
     AsyncEventQueue aeq1 = cache.getAsyncEventQueue(aeqId1);
     assertFalse(aeq1.isForwardExpirationDestroy());
 
     // Test by setting forwardExpirationDestroy attribute value.
     String aeqId2 = "aeqWithFEDsetToTrue";
     factory.setForwardExpirationDestroy(true);
-    factory.create(aeqId2,listener);
+    factory.create(aeqId2, listener);
 
     AsyncEventQueue aeq2 = cache.getAsyncEventQueue(aeqId2);
     assertTrue(aeq2.isForwardExpirationDestroy());

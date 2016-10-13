@@ -106,15 +106,9 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
     final VM vm1 = host.getVM(1);
     final VM vm2 = host.getVM(2);
 
-    final Peer peer1 = createPeer(vm1,
-                                  createDistributedSystemProperties("consumerServer"),
-                                  createRegionDefinition("consumers", Long.class, Consumer.class,
-                                          createIndex("cidIdx", IndexType.PRIMARY_KEY, "id", "/consumers"),
-                                          createIndex("cnameIdx", "name", "/consumers")));
+    final Peer peer1 = createPeer(vm1, createDistributedSystemProperties("consumerServer"), createRegionDefinition("consumers", Long.class, Consumer.class, createIndex("cidIdx", IndexType.PRIMARY_KEY, "id", "/consumers"), createIndex("cnameIdx", "name", "/consumers")));
 
-    final Peer peer2 = createPeer(vm2,
-                                  createDistributedSystemProperties("producerServer"),
-                                  createRegionDefinition("producers", Long.class, Producer.class, createIndex("pidIdx", "id", "/producers")));
+    final Peer peer2 = createPeer(vm2, createDistributedSystemProperties("producerServer"), createRegionDefinition("producers", Long.class, Producer.class, createIndex("pidIdx", "id", "/producers")));
 
     createRegionWithIndexes(peer1);
     createRegionWithIndexes(peer2);
@@ -186,30 +180,30 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
 
         while (count++ < operationsTotal) {
           switch (CrudOperation.values()[random.nextInt(CrudOperation.values().length)]) {
-            case RETRIEVE:
-              if (!proxies.isEmpty()) {
-                proxy = proxies.get(random.nextInt(proxies.size()));
-                consumer = query(consumerRegion, "id = " + proxy.getId() + "l"); // works
-                //consumer = query(consumerRegion, "Id = " + proxy.getId()); // works
-                //consumer = query(consumerRegion, "id = " + proxy.getId()); // does not work
-                proxy.setUnitsSnapshot(consumer.getUnits());
-                break;
-              }
-            case UPDATE:
-              if (!proxies.isEmpty()) {
-                proxy = proxies.get(random.nextInt(proxies.size()));
-                consumer = query(consumerRegion, "Name = " + proxy.getName());
-                consumer.consume();
-                break;
-              }
-            case CREATE:
-            default:
-              consumer = new Consumer(idGenerator.incrementAndGet());
-              proxies.add(new Proxy(consumer));
-              consumerRegion.put(consumer.getId(), consumer);
-              assertTrue(consumerRegion.containsKey(consumer.getId()));
-              assertTrue(consumerRegion.containsValueForKey(consumer.getId()));
-              assertSame(consumer, consumerRegion.get(consumer.getId()));
+          case RETRIEVE:
+            if (!proxies.isEmpty()) {
+              proxy = proxies.get(random.nextInt(proxies.size()));
+              consumer = query(consumerRegion, "id = " + proxy.getId() + "l"); // works
+              //consumer = query(consumerRegion, "Id = " + proxy.getId()); // works
+              //consumer = query(consumerRegion, "id = " + proxy.getId()); // does not work
+              proxy.setUnitsSnapshot(consumer.getUnits());
+              break;
+            }
+          case UPDATE:
+            if (!proxies.isEmpty()) {
+              proxy = proxies.get(random.nextInt(proxies.size()));
+              consumer = query(consumerRegion, "Name = " + proxy.getName());
+              consumer.consume();
+              break;
+            }
+          case CREATE:
+          default:
+            consumer = new Consumer(idGenerator.incrementAndGet());
+            proxies.add(new Proxy(consumer));
+            consumerRegion.put(consumer.getId(), consumer);
+            assertTrue(consumerRegion.containsKey(consumer.getId()));
+            assertTrue(consumerRegion.containsValueForKey(consumer.getId()));
+            assertSame(consumer, consumerRegion.get(consumer.getId()));
           }
         }
       }
@@ -232,28 +226,28 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
 
         while (count++ < operationsTotal) {
           switch (CrudOperation.values()[random.nextInt(CrudOperation.values().length)]) {
-            case RETRIEVE:
-              if (!proxies.isEmpty()) {
-                proxy = proxies.get(random.nextInt(proxies.size()));
-                producer = query(producerRegion, "Id = " + proxy.getId());
-                proxy.setUnitsSnapshot(producer.getUnits());
-                break;
-              }
-            case UPDATE:
-              if (!proxies.isEmpty()) {
-                proxy = proxies.get(random.nextInt(proxies.size()));
-                producer = query(producerRegion, "Id = " + proxy.getId());
-                producer.produce();
-                break;
-              }
-            case CREATE:
-            default:
-              producer = new Producer(idGenerator.incrementAndGet());
-              proxies.add(new Proxy(producer));
-              producerRegion.put(producer.getId(), producer);
-              assertTrue(producerRegion.containsKey(producer.getId()));
-              assertTrue(producerRegion.containsValueForKey(producer.getId()));
-              assertSame(producer, producerRegion.get(producer.getId()));
+          case RETRIEVE:
+            if (!proxies.isEmpty()) {
+              proxy = proxies.get(random.nextInt(proxies.size()));
+              producer = query(producerRegion, "Id = " + proxy.getId());
+              proxy.setUnitsSnapshot(producer.getUnits());
+              break;
+            }
+          case UPDATE:
+            if (!proxies.isEmpty()) {
+              proxy = proxies.get(random.nextInt(proxies.size()));
+              producer = query(producerRegion, "Id = " + proxy.getId());
+              producer.produce();
+              break;
+            }
+          case CREATE:
+          default:
+            producer = new Producer(idGenerator.incrementAndGet());
+            proxies.add(new Proxy(producer));
+            producerRegion.put(producer.getId(), producer);
+            assertTrue(producerRegion.containsKey(producer.getId()));
+            assertTrue(producerRegion.containsValueForKey(producer.getId()));
+            assertSame(producer, producerRegion.get(producer.getId()));
           }
         }
       }
@@ -652,9 +646,6 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
   }
 
   private static enum CrudOperation {
-    CREATE,
-    RETRIEVE,
-    UPDATE,
-    DELETE
+    CREATE, RETRIEVE, UPDATE, DELETE
   }
 }

@@ -42,14 +42,16 @@ public class Person implements Serializable {
   public int getAge() {
     return age;
   }
+
   //@Override
   public String toString() {
-    return "Name:"+name+" age:"+age;
+    return "Name:" + name + " age:" + age;
   }
 
   public static boolean THROW_ON_INDEX = false;
+
   public boolean index() {
-    if(THROW_ON_INDEX) {
+    if (THROW_ON_INDEX) {
       throw new RuntimeException("sup dawg");
     }
     return true;

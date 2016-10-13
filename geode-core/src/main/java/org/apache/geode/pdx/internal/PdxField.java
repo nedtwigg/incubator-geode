@@ -30,7 +30,7 @@ import org.apache.geode.pdx.FieldType;
 public class PdxField implements DataSerializable, Comparable<PdxField> {
 
   private static final long serialVersionUID = -1095459461236458274L;
-  
+
   private String fieldName;
   private int fieldIndex;
   private int varLenFieldSeqId;
@@ -49,9 +49,9 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
    * is the first byte after the last byte of field data.
    */
   private int vlfOffsetIndex;
-  
+
   private boolean identityField;
-  
+
   /**
    * Set to true by the pdx delete-field gfsh command
    * @since GemFire 8.1
@@ -61,8 +61,7 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
   public PdxField() {
   }
 
-  public PdxField(String fieldName, int index, int varId,
-      FieldType type, boolean identityField) {
+  public PdxField(String fieldName, int index, int varId, FieldType type, boolean identityField) {
     this.fieldName = fieldName;
     this.fieldIndex = index;
     this.varLenFieldSeqId = varId;
@@ -118,26 +117,26 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
   public void setVlfOffsetIndex(int vlfOffsetIndex) {
     this.vlfOffsetIndex = vlfOffsetIndex;
   }
-  
+
   public void setIdentityField(boolean identityField) {
     this.identityField = identityField;
   }
-  
+
   public boolean isIdentityField() {
     return this.identityField;
   }
-  
+
   public void setDeleted(boolean v) {
     this.deleted = v;
   }
-  
+
   public boolean isDeleted() {
     return this.deleted;
   }
-  
+
   private static final byte IDENTITY_BIT = 1;
   private static final byte DELETED_BIT = 2;
-  
+
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.fieldName = DataSerializer.readString(in);
     this.fieldIndex = in.readInt();
@@ -184,17 +183,17 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
       out.writeByte(bits);
     }
   }
-  
+
   @Override
   public int hashCode() {
-    int hash =1 ;
-    if(fieldName != null) {
-      hash = hash*31 + fieldName.hashCode();
+    int hash = 1;
+    if (fieldName != null) {
+      hash = hash * 31 + fieldName.hashCode();
     }
-    if(type != null) {
+    if (type != null) {
       hash = hash * 31 + type.hashCode();
     }
-    
+
     return hash;
   }
 
@@ -208,16 +207,14 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
     }
     if (other == null || !(other instanceof PdxField)) {
       return false;
-    }  
-    PdxField  otherVFT = (PdxField)other;
-  
+    }
+    PdxField otherVFT = (PdxField) other;
+
     if (otherVFT.fieldName == null) {
       return false;
     }
 
-    if (otherVFT.fieldName.equals(this.fieldName)
-        && this.isDeleted() == otherVFT.isDeleted()
-        && this.type.equals(otherVFT.type)) {
+    if (otherVFT.fieldName.equals(this.fieldName) && this.isDeleted() == otherVFT.isDeleted() && this.type.equals(otherVFT.type)) {
       return true;
     }
     return false;
@@ -225,12 +222,7 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
 
   @Override
   public String toString() {
-    return this.fieldName + ":" + this.type
-    + (isDeleted() ? ":DELETED" : "")
-    + (isIdentityField() ? ":identity" : "")
-    + ":" + this.fieldIndex 
-    + ((this.varLenFieldSeqId > 0) ? (":" + this.varLenFieldSeqId) : "")
-    + ":idx0(relativeOffset)=" + this.relativeOffset + ":idx1(vlfOffsetIndex)=" + this.vlfOffsetIndex;
+    return this.fieldName + ":" + this.type + (isDeleted() ? ":DELETED" : "") + (isIdentityField() ? ":identity" : "") + ":" + this.fieldIndex + ((this.varLenFieldSeqId > 0) ? (":" + this.varLenFieldSeqId) : "") + ":idx0(relativeOffset)=" + this.relativeOffset + ":idx1(vlfOffsetIndex)=" + this.vlfOffsetIndex;
   }
 
   public String getTypeIdString() {
@@ -253,7 +245,7 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
     if (isDeleted()) {
       printStream.print(" // DELETED");
     }
-    
+
     printStream.println();
   }
 }

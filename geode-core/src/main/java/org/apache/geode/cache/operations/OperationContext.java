@@ -32,47 +32,10 @@ import org.apache.geode.security.ResourcePermission;
  *
  * @deprecated since Geode1.0, use {@link ResourcePermission} instead
  */
-public abstract class OperationContext{
+public abstract class OperationContext {
 
   public enum OperationCode {
-    @Deprecated
-    GET,
-    @Deprecated
-    PUT,
-    @Deprecated
-    PUTALL,
-    @Deprecated
-    REMOVEALL,
-    @Deprecated
-    DESTROY,
-    @Deprecated
-    INVALIDATE,
-    @Deprecated
-    REGISTER_INTEREST,
-    @Deprecated
-    UNREGISTER_INTEREST,
-    @Deprecated
-    CONTAINS_KEY,
-    @Deprecated
-    KEY_SET,
-    @Deprecated
-    QUERY,
-    @Deprecated
-    EXECUTE_CQ,
-    @Deprecated
-    STOP_CQ,
-    @Deprecated
-    CLOSE_CQ,
-    @Deprecated
-    REGION_CLEAR,
-    @Deprecated
-    REGION_CREATE,
-    @Deprecated
-    REGION_DESTROY,
-    @Deprecated
-    EXECUTE_FUNCTION,
-    @Deprecated
-    GET_DURABLE_CQS;
+    @Deprecated GET, @Deprecated PUT, @Deprecated PUTALL, @Deprecated REMOVEALL, @Deprecated DESTROY, @Deprecated INVALIDATE, @Deprecated REGISTER_INTEREST, @Deprecated UNREGISTER_INTEREST, @Deprecated CONTAINS_KEY, @Deprecated KEY_SET, @Deprecated QUERY, @Deprecated EXECUTE_CQ, @Deprecated STOP_CQ, @Deprecated CLOSE_CQ, @Deprecated REGION_CLEAR, @Deprecated REGION_CREATE, @Deprecated REGION_DESTROY, @Deprecated EXECUTE_FUNCTION, @Deprecated GET_DURABLE_CQS;
 
     /**
      * Check if this is an entry get operation.
@@ -315,15 +278,15 @@ public abstract class OperationContext{
   public boolean isClientUpdate() {
     if (isPostOperation()) {
       switch (getOperationCode()) {
-        case PUT:
-        case PUTALL:
-        case DESTROY:
-        case REMOVEALL:
-        case INVALIDATE:
-        case REGION_CREATE:
-        case REGION_DESTROY:
-        case REGION_CLEAR:
-          return true;
+      case PUT:
+      case PUTALL:
+      case DESTROY:
+      case REMOVEALL:
+      case INVALIDATE:
+      case REGION_CREATE:
+      case REGION_DESTROY:
+      case REGION_CLEAR:
+        return true;
       }
     }
     return false;
@@ -335,11 +298,7 @@ public abstract class OperationContext{
   @Deprecated
   public boolean isClientUpdate(OperationContext context) {
     OperationCode opCode = context.getOperationCode();
-    return context.isPostOperation()
-        && (opCode.isPut() || opCode.isPutAll() || opCode.isDestroy()
-        || opCode.isRemoveAll()
-        || opCode.isInvalidate() || opCode.isRegionCreate()
-        || opCode.isRegionDestroy() || opCode.isRegionClear());
+    return context.isPostOperation() && (opCode.isPut() || opCode.isPutAll() || opCode.isDestroy() || opCode.isRemoveAll() || opCode.isInvalidate() || opCode.isRegionCreate() || opCode.isRegionDestroy() || opCode.isRegionClear());
   }
 
 }

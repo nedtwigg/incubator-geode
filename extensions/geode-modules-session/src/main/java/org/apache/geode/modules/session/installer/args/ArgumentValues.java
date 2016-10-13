@@ -31,13 +31,12 @@ public class ArgumentValues {
   /**
    * Storage location for all arguments found after the "--" pseudo-arg.
    */
-  private String[] postArgs = new String[]{};
+  private String[] postArgs = new String[] {};
 
   /**
    * Storage location for the command line argument values.
    */
-  private final Map<Argument, List<String[]>> values =
-      new LinkedHashMap<Argument, List<String[]>>();
+  private final Map<Argument, List<String[]>> values = new LinkedHashMap<Argument, List<String[]>>();
 
   /**
    * Constructor.
@@ -209,8 +208,7 @@ public class ArgumentValues {
    *                       illegally defined
    * @return value specified, or default value provided
    */
-  public int getFirstResultAsInt(
-      final Argument arg, final int undefinedValue) {
+  public int getFirstResultAsInt(final Argument arg, final int undefinedValue) {
     final String value = getFirstResult(arg);
     if (value == null) {
       return undefinedValue;

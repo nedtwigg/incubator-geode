@@ -35,7 +35,7 @@ public class ThrowableUtilsTest {
   public void getRootCauseOfNullShouldThrowNullPointerException() {
     catchException(this).getRootCause(null);
 
-    assertThat((Exception)caughtException()).isExactlyInstanceOf(NullPointerException.class);
+    assertThat((Exception) caughtException()).isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -74,14 +74,14 @@ public class ThrowableUtilsTest {
   public void hasCauseTypeOfNullClassShouldThrowNullPointerException() {
     catchException(this).hasCauseType(new Exception(), null);
 
-    assertThat((Exception)caughtException()).isExactlyInstanceOf(NullPointerException.class);
+    assertThat((Exception) caughtException()).isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
   public void hasCauseTypeOfNullThrowableShouldThrowNullPointerException() {
     catchException(this).hasCauseType(null, Exception.class);
 
-    assertThat((Exception)caughtException()).isExactlyInstanceOf(NullPointerException.class);
+    assertThat((Exception) caughtException()).isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -123,28 +123,28 @@ public class ThrowableUtilsTest {
   public void hasCauseMessageForNullShouldThrowNullPointerException() {
     catchException(this).hasCauseMessage(null, "message");
 
-    assertThat((Exception)caughtException()).isExactlyInstanceOf(NullPointerException.class);
+    assertThat((Exception) caughtException()).isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
   public void hasCauseMessageOfNullShouldThrowNullPointerException() {
     catchException(this).hasCauseMessage(new OneException(), null);
 
-    assertThat((Exception)caughtException()).isExactlyInstanceOf(NullPointerException.class);
+    assertThat((Exception) caughtException()).isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
   public void hasCauseMessageForNullMessageShouldThrowNullPointerException() {
-    catchException(this).hasCauseMessage(new OneException((String)null), null);
+    catchException(this).hasCauseMessage(new OneException((String) null), null);
 
-    assertThat((Exception)caughtException()).isExactlyInstanceOf(NullPointerException.class);
+    assertThat((Exception) caughtException()).isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
   public void hasCauseMessageOfNonMatchingNullMessageShouldThrowNullPointerException() {
     catchException(this).hasCauseMessage(new OneException("message"), null);
 
-    assertThat((Exception)caughtException()).isExactlyInstanceOf(NullPointerException.class);
+    assertThat((Exception) caughtException()).isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -187,12 +187,15 @@ public class ThrowableUtilsTest {
   private static class OneException extends Exception {
     public OneException() {
     }
+
     public OneException(String message) {
       super(message);
     }
+
     public OneException(Throwable cause) {
       super(cause);
     }
+
     public OneException(String message, Throwable cause) {
       super(message, cause);
     }
@@ -201,12 +204,15 @@ public class ThrowableUtilsTest {
   private static class SubException extends OneException {
     public SubException() {
     }
+
     public SubException(String message) {
       super(message);
     }
+
     public SubException(Throwable cause) {
       super(cause);
     }
+
     public SubException(String message, Throwable cause) {
       super(message, cause);
     }
@@ -215,12 +221,15 @@ public class ThrowableUtilsTest {
   private static class TwoException extends Exception {
     public TwoException() {
     }
+
     public TwoException(String message) {
       super(message);
     }
+
     public TwoException(Throwable cause) {
       super(cause);
     }
+
     public TwoException(String message, Throwable cause) {
       super(message, cause);
     }
@@ -229,12 +238,15 @@ public class ThrowableUtilsTest {
   private static class OtherException extends Exception {
     public OtherException() {
     }
+
     public OtherException(String message) {
       super(message);
     }
+
     public OtherException(Throwable cause) {
       super(cause);
     }
+
     public OtherException(String message, Throwable cause) {
       super(message, cause);
     }

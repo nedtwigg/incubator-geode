@@ -23,20 +23,20 @@ import org.apache.geode.internal.admin.ApplicationVM;
 import org.apache.geode.internal.logging.MergeLogFiles;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;  
-import java.io.PrintWriter;  
-import java.io.StringWriter;  
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LogCollator {
-  
+
   private GfManagerAgent system;
   private List logTails;
-    
+
   public LogCollator() {
   }
-  
+
   public String collateLogs(GfManagerAgent system) {
     try {
       if (system == null) {
@@ -47,15 +47,14 @@ public class LogCollator {
       gatherActiveLogs();
       gatherInactiveLogs();
       return mergeLogs();
-    }
-    finally {
+    } finally {
       this.system = null;
       this.logTails = null;
     }
   }
 
   // -------------------------------------------------------------------------
-  
+
   private String mergeLogs() {
     // combine logs...
     InputStream[] logFiles = new InputStream[this.logTails.size()];
@@ -65,14 +64,13 @@ public class LogCollator {
       logFiles[i] = new ByteArrayInputStream(loglet.tail.getBytes());
       logFileNames[i] = loglet.name;
     }
-    
+
     // delegate to MergeLogFiles...
     StringWriter writer = new StringWriter();
     PrintWriter mergedLog = new PrintWriter(writer);
     if (!MergeLogFiles.mergeLogFiles(logFiles, logFileNames, mergedLog)) {
       return writer.toString();
-    } 
-    else {
+    } else {
       return "";
     }
   }
@@ -83,7 +81,7 @@ public class LogCollator {
       addLogFrom(runningsApps[i]);
     }
   }
-  
+
   private void gatherInactiveLogs() {
     /* not yet supported....
     if (useStopped) {
@@ -103,7 +101,7 @@ public class LogCollator {
     }
     */
   }
-  
+
   private void addLogFrom(GemFireVM vm) {
     String name = null;
     name = vm.toString();
@@ -113,7 +111,7 @@ public class LogCollator {
 
   private void addTail(String logName, String[] logs) {
     if (logs.length > 0) {
-      String tail = (logs.length > 1) ? logs[1] : logs[0];      
+      String tail = (logs.length > 1) ? logs[1] : logs[0];
       this.logTails.add(new Loglet(logName, tail));
     }
   }
@@ -127,11 +125,11 @@ public class LogCollator {
   private static class Loglet {
     String name;
     String tail;
+
     Loglet(String name, String tail) {
       this.name = name;
       this.tail = tail;
     }
   }
-  
-}
 
+}

@@ -22,17 +22,17 @@ import javax.transaction.Synchronization;
 /*
  */
 public class SyncImpl implements Synchronization {
-	public boolean befCompletion = false ;
-	public boolean aftCompletion = false ;
-	
-	public SyncImpl(){
-	}
-	
-	public void beforeCompletion(){
-		befCompletion = true;
-	}
-	
-	public void afterCompletion(int status){
-		aftCompletion = true;
-	}
+  public boolean befCompletion = false;
+  public boolean aftCompletion = false;
+
+  public SyncImpl() {
+  }
+
+  public void beforeCompletion() {
+    befCompletion = true;
+  }
+
+  public void afterCompletion(int status) {
+    aftCompletion = true;
+  }
 }

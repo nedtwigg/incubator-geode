@@ -49,7 +49,7 @@ public interface AsyncEventQueueMXBean {
    * Returns the size of a batch that gets delivered over the AsyncEventQueue.
    */
   public int getBatchSize();
-  
+
   /**
    * Returns the interval between transmissions by the AsyncEventQueue.
    */
@@ -78,20 +78,20 @@ public interface AsyncEventQueueMXBean {
    * @return True if this is the primary queue, false otherwise.
    */
   public boolean isPrimary();
-  
+
   /**
    * Returns the number of dispatcher threads working for this <code>AsyncEventQueue</code>.
    */
   public int getDispatcherThreads();
-  
+
   /**
    * Returns the order policy followed while dispatching the events to remote
    * distributed system. Order policy is only relevant when the number of dispatcher
    * threads is greater than one.
    */
-  
+
   public String getOrderPolicy();
- 
+
   /**
    * Returns whether the isDiskSynchronous property is set for this AsyncEventQueue.
    * 
@@ -110,7 +110,7 @@ public interface AsyncEventQueueMXBean {
    * Returns the class name of the AsyncEventListener that is attached to the queue.
    */
   public String getAsyncEventListener();
-  
+
   /**
    * Returns the Size of the event queue
    * 

@@ -46,8 +46,7 @@ public class Query extends BaseCommandQuery {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start)
-      throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
 
     // Based on MessageType.DESTROY
     // Added by gregp 10/18/05
@@ -55,26 +54,23 @@ public class Query extends BaseCommandQuery {
     servConn.setAsTrue(REQUIRES_CHUNKED_RESPONSE);
     // Retrieve the data from the message parts
     String queryString = msg.getPart(0).getString();
-    
+
     //this is optional part for message specific timeout, which right now send by native client
     //need to take care while adding new message
-     
+
     if (msg.getNumberOfParts() == 3) {
       int timeout = msg.getPart(2).getInt();
       servConn.setRequestSpecificTimeout(timeout);
     }
-
 
     if (logger.isDebugEnabled()) {
       logger.debug("{}: Received query request from {} queryString: {}", servConn.getName(), servConn.getSocketString(), queryString);
     }
     try {
       // Create query
-      QueryService queryService = ((GemFireCacheImpl)servConn.getCachedRegionHelper().getCache())
-          .getLocalQueryService();
-      org.apache.geode.cache.query.Query query = queryService
-          .newQuery(queryString);
-      Set regionNames = ((DefaultQuery)query).getRegionsInQuery(null);
+      QueryService queryService = ((GemFireCacheImpl) servConn.getCachedRegionHelper().getCache()).getLocalQueryService();
+      org.apache.geode.cache.query.Query query = queryService.newQuery(queryString);
+      Set regionNames = ((DefaultQuery) query).getRegionsInQuery(null);
 
       // Authorization check
       QueryOperationContext queryContext = null;
@@ -87,16 +83,14 @@ public class Query extends BaseCommandQuery {
           queryString = newQueryString;
           regionNames = queryContext.getRegionNames();
           if (regionNames == null) {
-            regionNames = ((DefaultQuery)query).getRegionsInQuery(null);
+            regionNames = ((DefaultQuery) query).getRegionsInQuery(null);
           }
         }
       }
 
-      processQuery(msg, query, queryString, regionNames, start, null,
-          queryContext, servConn, true);
+      processQuery(msg, query, queryString, regionNames, start, null, queryContext, servConn, true);
     } catch (QueryInvalidException e) {
-      throw new QueryInvalidException(e.getMessage()
-          + queryString );
+      throw new QueryInvalidException(e.getMessage() + queryString);
     } catch (QueryExecutionLowMemoryException e) {
       writeQueryResponseException(msg, e, false, servConn);
     }

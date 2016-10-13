@@ -22,6 +22,8 @@ package org.apache.geode.internal.process.mbean;
  */
 public interface ProcessMBean {
   public int getPid();
+
   public boolean isProcess();
+
   public void stop();
 }

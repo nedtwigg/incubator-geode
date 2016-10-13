@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.geode.cache.query.internal.parse;
 
 import java.util.HashMap;
@@ -29,16 +28,14 @@ import org.apache.geode.cache.query.internal.CompiledValue;
 
 public class ASTSelect extends GemFireAST {
   private static final long serialVersionUID = 1389351692304773456L;
-  
-  
-  public ASTSelect() { }
-  
-  
+
+  public ASTSelect() {
+  }
+
   public ASTSelect(Token t) {
     super(t);
   }
-  
-  
+
   @Override
   public void compile(QCompiler compiler) {
     AST child = getFirstChild();
@@ -63,6 +60,5 @@ public class ASTSelect extends GemFireAST {
 
     compiler.select(queryComponents);
   }
-  
-  
+
 }

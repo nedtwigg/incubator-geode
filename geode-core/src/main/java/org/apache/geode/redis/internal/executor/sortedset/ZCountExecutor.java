@@ -86,14 +86,12 @@ public class ZCountExecutor extends SortedSetExecutor {
       return;
     }
 
-
     int count;
     try {
       count = getCount(key, keyRegion, context, start, stop, startInclusive, stopInclusive);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), count));
   }
@@ -112,17 +110,17 @@ public class ZCountExecutor extends SortedSetExecutor {
       } else {
         query = getQuery(key, SortedSetQuery.ZCOUNTNINF, context);
       }
-      params = new Object[]{stop};
+      params = new Object[] { stop };
     } else if (stop == Double.POSITIVE_INFINITY) {
       if (startInclusive) {
         query = getQuery(key, SortedSetQuery.ZCOUNTPINFI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZCOUNTPINF, context);
       }
-      params = new Object[]{start};
+      params = new Object[] { start };
     } else {
       if (startInclusive) {
-        if(stopInclusive) {
+        if (stopInclusive) {
           query = getQuery(key, SortedSetQuery.ZCOUNTSTISI, context);
         } else {
           query = getQuery(key, SortedSetQuery.ZCOUNTSTI, context);
@@ -134,7 +132,7 @@ public class ZCountExecutor extends SortedSetExecutor {
           query = getQuery(key, SortedSetQuery.ZCOUNT, context);
         }
       }
-      params = new Object[]{start, stop};
+      params = new Object[] { start, stop };
     }
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);

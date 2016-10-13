@@ -44,7 +44,7 @@ public class CommandSeparatorEscapeJUnitTest {
     /*for(String s : split){
       System.out.println("O >> " + s);
     }*/
-    assertEquals(0,split.size());    
+    assertEquals(0, split.size());
   }
 
   @Test
@@ -52,10 +52,10 @@ public class CommandSeparatorEscapeJUnitTest {
     String input = "stop server";
     //System.out.println("I >> " + input);
     List<String> split = getMultipleCommands(input);
-    for(String s : split){
+    for (String s : split) {
       System.out.println("O >> " + s);
     }
-    assertEquals(1,split.size());
+    assertEquals(1, split.size());
     assertEquals("stop server", split.get(0));
   }
 
@@ -67,7 +67,7 @@ public class CommandSeparatorEscapeJUnitTest {
     /*for(String s : split){
       System.out.println("O >> " + s);
     }*/
-    assertEquals(3,split.size());
+    assertEquals(3, split.size());
     assertEquals("stop server1 --option1=value1", split.get(0));
     assertEquals(" stop server2", split.get(1));
     assertEquals("stop server3 ", split.get(2));
@@ -81,7 +81,7 @@ public class CommandSeparatorEscapeJUnitTest {
     /*for(String s : split){
       System.out.println("O >> " + s);
     }*/
-    assertEquals(2,split.size());
+    assertEquals(2, split.size());
     assertEquals("put --region=/region1 --key='key1;part' --value='value1;part2'", split.get(0));
     assertEquals("put --region=/region1 --key='key2;part' --value='value2;part2'", split.get(1));
   }
@@ -94,7 +94,7 @@ public class CommandSeparatorEscapeJUnitTest {
     /*for(String s : split){
       System.out.println("O >> " + s);
     }*/
-    assertEquals(1,split.size());
+    assertEquals(1, split.size());
     assertEquals("put --region=/region1 --key='key;part' --value='value;part2'", split.get(0));
   }
 
@@ -106,7 +106,7 @@ public class CommandSeparatorEscapeJUnitTest {
     /*for(String s : split){
       System.out.println("O >> " + s);
     }*/
-    assertEquals(2,split.size());
+    assertEquals(2, split.size());
     assertEquals("put --region=/region1 --key='key;part' --value='value;part2'", split.get(0));
     assertEquals("stop server", split.get(1));
   }
@@ -119,9 +119,9 @@ public class CommandSeparatorEscapeJUnitTest {
     /*for(String s : split){
       System.out.println("O >> " + s);
     }*/
-    assertEquals(2,split.size());
+    assertEquals(2, split.size());
     assertEquals("stop server", split.get(0));
-    assertEquals("put --region=/region1 --key='key;part' --value='value;part2'", split.get(1));    
+    assertEquals("put --region=/region1 --key='key;part' --value='value;part2'", split.get(1));
   }
 
   @Test
@@ -132,7 +132,7 @@ public class CommandSeparatorEscapeJUnitTest {
     /*for(String s : split){
       System.out.println("O >> " + s);
     }*/
-    assertEquals(4,split.size());
+    assertEquals(4, split.size());
     assertEquals("stop server1", split.get(0));
     assertEquals("put --region=/region1 --key='key;part' --value='value;part2'", split.get(1));
     assertEquals("stop server2", split.get(2));

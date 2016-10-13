@@ -22,19 +22,21 @@ public abstract class VMStatsRegionEntryOffHeap extends VMStatsRegionEntry imple
   public VMStatsRegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VMStatsRegionEntryOffHeapFactory factory = new VMStatsRegionEntryOffHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VMStatsRegionEntryOffHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VMStatsRegionEntryOffHeapIntKey(context, (Integer)key, value);
+          return new VMStatsRegionEntryOffHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VMStatsRegionEntryOffHeapLongKey(context, (Long)key, value);
+          return new VMStatsRegionEntryOffHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -47,7 +49,7 @@ public abstract class VMStatsRegionEntryOffHeap extends VMStatsRegionEntry imple
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VMStatsRegionEntryOffHeapUUIDKey(context, (UUID)key, value);
+          return new VMStatsRegionEntryOffHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VMStatsRegionEntryOffHeapObjectKey(context, key, value);
@@ -58,10 +60,12 @@ public abstract class VMStatsRegionEntryOffHeap extends VMStatsRegionEntry imple
       // This estimate will not take into account the memory saved by inlining the keys.
       return VMStatsRegionEntryOffHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return VersionedStatsRegionEntryOffHeap.getEntryFactory();
     }
-	@Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return VMStatsRegionEntryHeap.getEntryFactory();
     }

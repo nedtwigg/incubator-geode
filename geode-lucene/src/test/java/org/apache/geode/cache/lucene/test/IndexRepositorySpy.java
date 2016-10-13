@@ -42,7 +42,8 @@ import org.mockito.stubbing.Answer;
 
 public class IndexRepositorySpy extends IndexRepositoryFactory {
 
-  private Consumer<Object> beforeWrite = key -> {};
+  private Consumer<Object> beforeWrite = key -> {
+  };
 
   public static IndexRepositorySpy injectSpy() {
     IndexRepositorySpy factory = new IndexRepositorySpy();
@@ -58,10 +59,8 @@ public class IndexRepositorySpy extends IndexRepositoryFactory {
   }
 
   @Override
-  public IndexRepository createIndexRepository(final Integer bucketId,
-      LuceneSerializer serializer,
-      LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
-    LuceneIndexForPartitionedRegion indexForPR = (LuceneIndexForPartitionedRegion)index;
+  public IndexRepository createIndexRepository(final Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
+    LuceneIndexForPartitionedRegion indexForPR = (LuceneIndexForPartitionedRegion) index;
     final IndexRepository indexRepo = super.createIndexRepository(bucketId, serializer, index, userRegion);
     final IndexRepository spy = Mockito.spy(indexRepo);
 
@@ -76,7 +75,6 @@ public class IndexRepositorySpy extends IndexRepositoryFactory {
 
     return spy;
   }
-
 
   /**
    * Add a callback that runs before a call to

@@ -139,8 +139,7 @@ public class ShowMetricsDUnitTest extends CliCommandTestBase {
         WaitCriterion wc = createMBeanWaitCriterion(2, regionName, null, 0);
         waitForCriterion(wc, 5000, 500, true);
         CommandProcessor commandProcessor = new CommandProcessor();
-        Result result = commandProcessor.createCommandStatement("show metrics --region=REGION1",
-            Collections.EMPTY_MAP).process();
+        Result result = commandProcessor.createCommandStatement("show metrics --region=REGION1", Collections.EMPTY_MAP).process();
         String resultAsString = commandResultToString((CommandResult) result);
         assertEquals(resultAsString, true, result.getStatus().equals(Status.OK));
         return resultAsString;
@@ -160,8 +159,7 @@ public class ShowMetricsDUnitTest extends CliCommandTestBase {
   /***
    * Creates WaitCriterion based on creation of different types of MBeans
    */
-  private WaitCriterion createMBeanWaitCriterion(final int beanType, final String regionName,
-      final DistributedMember distributedMember, final int cacheServerPort) {
+  private WaitCriterion createMBeanWaitCriterion(final int beanType, final String regionName, final DistributedMember distributedMember, final int cacheServerPort) {
 
     WaitCriterion waitCriterion = new WaitCriterion() {
 
@@ -172,20 +170,24 @@ public class ShowMetricsDUnitTest extends CliCommandTestBase {
         ManagementService mgmtService = ManagementService.getManagementService(cache);
         if (beanType == 1) {
           DistributedSystemMXBean dsMxBean = mgmtService.getDistributedSystemMXBean();
-          if (dsMxBean != null) done = true;
+          if (dsMxBean != null)
+            done = true;
         } else if (beanType == 2) {
           DistributedRegionMXBean dsRegionMxBean = mgmtService.getDistributedRegionMXBean("/" + regionName);
-          if (dsRegionMxBean != null) done = true;
+          if (dsRegionMxBean != null)
+            done = true;
         } else if (beanType == 3) {
           ObjectName memberMBeanName = mgmtService.getMemberMBeanName(distributedMember);
           MemberMXBean memberMxBean = mgmtService.getMBeanInstance(memberMBeanName, MemberMXBean.class);
 
-          if (memberMxBean != null) done = true;
+          if (memberMxBean != null)
+            done = true;
         } else if (beanType == 4) {
           ObjectName regionMBeanName = mgmtService.getRegionMBeanName(distributedMember, "/" + regionName);
           RegionMXBean regionMxBean = mgmtService.getMBeanInstance(regionMBeanName, RegionMXBean.class);
 
-          if (regionMxBean != null) done = true;
+          if (regionMxBean != null)
+            done = true;
         } else if (beanType == 5) {
           ObjectName csMxBeanName = mgmtService.getCacheServerMBeanName(cacheServerPort, distributedMember);
           CacheServerMXBean csMxBean = mgmtService.getMBeanInstance(csMxBeanName, CacheServerMXBean.class);
@@ -274,9 +276,7 @@ public class ShowMetricsDUnitTest extends CliCommandTestBase {
         WaitCriterion wc = createMBeanWaitCriterion(4, regionName, distributedMember, 0);
         waitForCriterion(wc, 5000, 500, true);
         CommandProcessor commandProcessor = new CommandProcessor();
-        Result result = commandProcessor.createCommandStatement(
-            "show metrics --region=" + regionName + " --member=" + distributedMember.getName() + " --file=" + exportFileName,
-            Collections.EMPTY_MAP).process();
+        Result result = commandProcessor.createCommandStatement("show metrics --region=" + regionName + " --member=" + distributedMember.getName() + " --file=" + exportFileName, Collections.EMPTY_MAP).process();
         String resultAsString = commandResultToString((CommandResult) result);
         assertEquals(resultAsString, true, result.getStatus().equals(Status.OK));
         assertTrue(result.hasIncomingFiles());
@@ -315,9 +315,7 @@ public class ShowMetricsDUnitTest extends CliCommandTestBase {
         WaitCriterion wc = createMBeanWaitCriterion(4, regionName, distributedMember, 0);
         waitForCriterion(wc, 5000, 500, true);
         CommandProcessor commandProcessor = new CommandProcessor();
-        Result result = commandProcessor.createCommandStatement(
-            "show metrics --region=" + regionName + " --member=" + distributedMember.getName() + " --file=" + exportFileName + " --categories=region,eviction",
-            Collections.EMPTY_MAP).process();
+        Result result = commandProcessor.createCommandStatement("show metrics --region=" + regionName + " --member=" + distributedMember.getName() + " --file=" + exportFileName + " --categories=region,eviction", Collections.EMPTY_MAP).process();
         String resultAsString = commandResultToString((CommandResult) result);
         assertEquals(resultAsString, true, result.getStatus().equals(Status.OK));
         assertTrue(result.hasIncomingFiles());

@@ -78,15 +78,18 @@ public class BasicDUnitTest extends JUnit4DistributedTestCase {
   public void testInvokeOnClassTargetWithEmptyArgs() throws Exception {
     assertThat(this.vm0.invoke(BasicDUnitTest.class, "booleanValue", new Object[] {}), is(true));
   }
+
   @Test
   public void testInvokeOnObjectTargetWithEmptyArgs() throws Exception {
     assertThat(this.vm0.invoke(new BasicDUnitTest(), "booleanValue", new Object[] {}), is(true));
   }
+
   @Test
   public void testInvokeAsyncOnClassTargetWithEmptyArgs() throws Exception {
     AsyncInvocation<?> async = this.vm0.invokeAsync(BasicDUnitTest.class, "booleanValue", new Object[] {}).join();
     assertThat(async.getResult(), is(true));
   }
+
   @Test
   public void testInvokeAsyncOnObjectTargetWithEmptyArgs() throws Exception {
     AsyncInvocation<?> async = this.vm0.invokeAsync(new BasicDUnitTest(), "booleanValue", new Object[] {}).join();
@@ -97,15 +100,18 @@ public class BasicDUnitTest extends JUnit4DistributedTestCase {
   public void testInvokeOnClassTargetWithNullArgs() throws Exception {
     assertThat(this.vm0.invoke(BasicDUnitTest.class, "booleanValue", null), is(true));
   }
+
   @Test
   public void testInvokeOnObjectTargetWithNullArgs() throws Exception {
     assertThat(this.vm0.invoke(new BasicDUnitTest(), "booleanValue", null), is(true));
   }
+
   @Test
   public void testInvokeAsyncOnClassTargetWithNullArgs() throws Exception {
     AsyncInvocation<?> async = this.vm0.invokeAsync(BasicDUnitTest.class, "booleanValue", null).join();
     assertThat(async.getResult(), is(true));
   }
+
   @Test
   public void testInvokeAsyncOnObjectTargetWithNullArgs() throws Exception {
     AsyncInvocation<?> async = this.vm0.invokeAsync(new BasicDUnitTest(), "booleanValue", null).join();
@@ -150,7 +156,7 @@ public class BasicDUnitTest extends JUnit4DistributedTestCase {
     String value = "Hello";
 
     this.vm0.invokeAsync(() -> remoteBind(name, value)).join().checkException();
-    this.vm0.invokeAsync(() -> remoteValidateBind(name, value )).join().checkException();
+    this.vm0.invokeAsync(() -> remoteValidateBind(name, value)).join().checkException();
   }
 
   @Test
@@ -220,6 +226,7 @@ public class BasicDUnitTest extends JUnit4DistributedTestCase {
     BasicTestException() {
       this("Test exception.  Please ignore.");
     }
+
     BasicTestException(String s) {
       super(s);
     }

@@ -19,39 +19,38 @@ package org.apache.geode.internal.cache.execute;
 import org.apache.geode.GemFireException;
 
 public class BucketMovedException extends GemFireException {
-    private static final long serialVersionUID = 4893171227542647452L;
+  private static final long serialVersionUID = 4893171227542647452L;
 
-    /**
-     * Creates new function exception with given error message.
-     * 
-     * @param msg
-     * @since GemFire 6.0
-     */
-    public BucketMovedException(String msg) {
-      super(msg);
-    }
-
-    /**
-     * Creates new function exception with given error message and optional nested
-     * exception.
-     * 
-     * @param msg
-     * @param cause
-     * @since GemFire 6.0
-     */
-    public BucketMovedException(String msg, Throwable cause) {
-      super(msg, cause);
-    }
-
-    /**
-     * Creates new function exception given throwable as a cause and source of
-     * error message.
-     * 
-     * @param cause
-     * @since GemFire 6.0
-     */
-    public BucketMovedException(Throwable cause) {
-      super(cause);
-    }
+  /**
+   * Creates new function exception with given error message.
+   * 
+   * @param msg
+   * @since GemFire 6.0
+   */
+  public BucketMovedException(String msg) {
+    super(msg);
   }
 
+  /**
+   * Creates new function exception with given error message and optional nested
+   * exception.
+   * 
+   * @param msg
+   * @param cause
+   * @since GemFire 6.0
+   */
+  public BucketMovedException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
+
+  /**
+   * Creates new function exception given throwable as a cause and source of
+   * error message.
+   * 
+   * @param cause
+   * @since GemFire 6.0
+   */
+  public BucketMovedException(Throwable cause) {
+    super(cause);
+  }
+}

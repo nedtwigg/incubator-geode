@@ -37,23 +37,20 @@ public class BucketCountLoadProbe implements LoadProbe, DataSerializableFixedID 
   public PRLoad getLoad(PartitionedRegion pr) {
     PartitionedRegionDataStore ds = pr.getDataStore();
     int configuredBucketCount = pr.getTotalNumberOfBuckets();
-    PRLoad prLoad = new PRLoad(
-        configuredBucketCount, pr.getLocalMaxMemory());
-    
+    PRLoad prLoad = new PRLoad(configuredBucketCount, pr.getLocalMaxMemory());
+
     // key: bid, value: size
-    for(Integer bidInt : ds.getAllLocalBucketIds()) {
+    for (Integer bidInt : ds.getAllLocalBucketIds()) {
       int bid = bidInt.intValue();
-      
-      BucketAdvisor bucketAdvisor = pr.getRegionAdvisor().
-      getBucket(bid).getBucketAdvisor();
+
+      BucketAdvisor bucketAdvisor = pr.getRegionAdvisor().getBucket(bid).getBucketAdvisor();
       //Wait for a primary to exist for this bucket, because
       //it might be this member.
       bucketAdvisor.getPrimary();
-      boolean isPrimary = pr.getRegionAdvisor().
-          getBucket(bid).getBucketAdvisor().isPrimary();
+      boolean isPrimary = pr.getRegionAdvisor().getBucket(bid).getBucketAdvisor().isPrimary();
       prLoad.addBucket(bid, 1, isPrimary ? 1 : 0);
     }
-    
+
     return prLoad;
   }
 

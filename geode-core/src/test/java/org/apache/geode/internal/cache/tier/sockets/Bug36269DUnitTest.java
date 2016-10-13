@@ -83,8 +83,7 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     PORT2 = server2.invoke(() -> Bug36269DUnitTest.createServerCache());
   }
 
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     cache = CacheFactory.create(ds);
     assertNotNull(cache);
@@ -107,9 +106,8 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     try {
       Connection desCon = pool.acquireConnection(new ServerLocation(host, PORT2));
       ServerRegionProxy srp = new ServerRegionProxy(Region.SEPARATOR + REGION_NAME, pool);
-      srp.destroyRegionOnForTestsOnly(desCon, new EventID(new byte[] {1}, 1, 1), null);
-    }
-    catch (Exception ex) {
+      srp.destroyRegionOnForTestsOnly(desCon, new EventID(new byte[] { 1 }, 1, 1), null);
+    } catch (Exception ex) {
       Assert.fail("while setting acquireConnections", ex);
     }
   }
@@ -123,16 +121,10 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     PoolImpl p;
     String host = NetworkUtils.getServerHostName(Host.getHost(0));
     try {
-      p = (PoolImpl)PoolManager.createFactory()
-        .addServer(host, PORT1)
-        .addServer(host, PORT2)
-        .setSubscriptionEnabled(true)
-        .setReadTimeout(2000)
-        .setSocketBufferSize(1000)
-        .setMinConnections(4)
-        // .setRetryAttempts(2)
-        // .setRetryInterval(250)
-        .create("Bug36269DUnitTestPool");
+      p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true).setReadTimeout(2000).setSocketBufferSize(1000).setMinConnections(4)
+          // .setRetryAttempts(2)
+          // .setRetryInterval(250)
+          .create("Bug36269DUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -144,8 +136,7 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     cache.createRegion(REGION_NAME, factory.create());
   }
 
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     new Bug36269DUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -160,37 +151,33 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  public static void verifyNoRegionDestroyOnOriginator()
-  {
+  public static void verifyNoRegionDestroyOnOriginator() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
       assertNotNull(r);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while verifyNoRegionDestroyOnOriginator()", ex);
     }
   }
 
-  public static void verifyRegionDestroy()
-  {
+  public static void verifyRegionDestroy() {
     try {
       WaitCriterion ev = new WaitCriterion() {
         public boolean done() {
           return cache.getRegion(Region.SEPARATOR + REGION_NAME) == null;
         }
+
         public String description() {
           return null;
         }
       };
       Wait.waitForCriterion(ev, 40 * 1000, 200, true);
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       Assert.fail("failed while verifyRegionDestroy", ex);
     }
   }
 
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();

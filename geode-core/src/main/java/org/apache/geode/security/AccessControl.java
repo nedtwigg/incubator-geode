@@ -67,8 +67,7 @@ public interface AccessControl extends CacheCallback {
    *                 operations on that connection will throw
    *                 <code>NotAuthorizedException</code>
    */
-  void init(Principal principal, DistributedMember remoteMember,
-      Cache cache) throws NotAuthorizedException;
+  void init(Principal principal, DistributedMember remoteMember, Cache cache) throws NotAuthorizedException;
 
   default void init(Principal principal, DistributedMember remoteMember) throws NotAuthorizedException {
     init(principal, remoteMember, null);

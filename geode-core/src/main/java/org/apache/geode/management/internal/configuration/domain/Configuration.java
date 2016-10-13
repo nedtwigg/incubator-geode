@@ -31,8 +31,8 @@ import org.apache.geode.internal.util.CollectionUtils;
  * Domain object for all the configuration related data. 
  *
  */
-public class Configuration implements DataSerializable{
-  
+public class Configuration implements DataSerializable {
+
   private static final long serialVersionUID = 1L;
   private String configName;
   private String cacheXmlContent;
@@ -40,46 +40,46 @@ public class Configuration implements DataSerializable{
   private String propertiesFileName;
   private Properties gemfireProperties = new Properties();
   Set<String> jarNames = new HashSet<String>();
-  
+
   //Public no arg constructor required for Deserializable
   public Configuration() {
-    
+
   }
-  
+
   public Configuration(String configName) {
     this.configName = configName;
     this.cacheXmlFileName = configName + ".xml";
     this.setPropertiesFileName(configName + ".properties");
   }
-  
+
   public String getCacheXmlContent() {
     return cacheXmlContent;
   }
-  
+
   public void setCacheXmlContent(String cacheXmlContent) {
     this.cacheXmlContent = cacheXmlContent;
   }
-  
+
   public String getCacheXmlFileName() {
     return cacheXmlFileName;
   }
-  
+
   public void setCacheXmlFileName(String cacheXmlFileName) {
     this.cacheXmlFileName = cacheXmlFileName;
   }
-  
+
   public Properties getGemfireProperties() {
     return gemfireProperties;
   }
-  
+
   public void setGemfireProperties(Properties gemfireProperties) {
     this.gemfireProperties = gemfireProperties;
   }
-  
+
   public String getConfigName() {
     return configName;
   }
-  
+
   public void setConfigName(String configName) {
     this.configName = configName;
   }
@@ -91,7 +91,7 @@ public class Configuration implements DataSerializable{
   public void setPropertiesFileName(String propertiesFileName) {
     this.propertiesFileName = propertiesFileName;
   }
-  
+
   public void addJarNames(String[] jarNames) {
     if (jarNames != null) {
       for (String jarName : jarNames) {
@@ -99,13 +99,13 @@ public class Configuration implements DataSerializable{
       }
     }
   }
-  
+
   public void removeJarNames(String[] jarNames) {
     if (jarNames != null) {
       for (String jarName : jarNames) {
         this.jarNames.remove(jarName);
       }
-    }else {
+    } else {
       this.jarNames.clear();
     }
   }
@@ -113,7 +113,7 @@ public class Configuration implements DataSerializable{
   public Set<String> getJarNames() {
     return this.jarNames;
   }
-  
+
   @Override
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeString(configName, out);
@@ -133,31 +133,22 @@ public class Configuration implements DataSerializable{
     this.gemfireProperties = DataSerializer.readProperties(in);
     this.jarNames = DataSerializer.readHashSet(in);
   }
-  
-  
+
   @Override
   public String toString() {
-    return "Configuration [configName=" + configName + ", cacheXmlContent="
-        + cacheXmlContent + ", cacheXmlFileName=" + cacheXmlFileName
-        + ", propertiesFileName=" + propertiesFileName + ", gemfireProperties="
-        + gemfireProperties + ", jarNames=" + jarNames + "]";
+    return "Configuration [configName=" + configName + ", cacheXmlContent=" + cacheXmlContent + ", cacheXmlFileName=" + cacheXmlFileName + ", propertiesFileName=" + propertiesFileName + ", gemfireProperties=" + gemfireProperties + ", jarNames=" + jarNames + "]";
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result
-        + ((cacheXmlContent == null) ? 0 : cacheXmlContent.hashCode());
-    result = prime * result
-        + ((cacheXmlFileName == null) ? 0 : cacheXmlFileName.hashCode());
-    result = prime * result
-        + ((configName == null) ? 0 : configName.hashCode());
-    result = prime * result
-        + ((gemfireProperties == null) ? 0 : gemfireProperties.hashCode());
+    result = prime * result + ((cacheXmlContent == null) ? 0 : cacheXmlContent.hashCode());
+    result = prime * result + ((cacheXmlFileName == null) ? 0 : cacheXmlFileName.hashCode());
+    result = prime * result + ((configName == null) ? 0 : configName.hashCode());
+    result = prime * result + ((gemfireProperties == null) ? 0 : gemfireProperties.hashCode());
     result = prime * result + ((jarNames == null) ? 0 : jarNames.hashCode());
-    result = prime * result
-        + ((propertiesFileName == null) ? 0 : propertiesFileName.hashCode());
+    result = prime * result + ((propertiesFileName == null) ? 0 : propertiesFileName.hashCode());
     return result;
   }
 
@@ -202,5 +193,5 @@ public class Configuration implements DataSerializable{
       return false;
     return true;
   }
-  
+
 }

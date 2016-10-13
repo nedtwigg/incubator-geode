@@ -43,16 +43,17 @@ public interface LuceneQuery<K, V> {
    * Execute search and return list of LuceneResultStruct.
    */
   public List<LuceneResultStruct<K, V>> findResults() throws LuceneQueryException;
+
   /**
    * Execute the search and get results. 
    */
   public PageableLuceneQueryResults<K, V> findPages() throws LuceneQueryException;
-  
+
   /**
    * Get page size setting of current query. 
    */
   public int getPageSize();
-  
+
   /**
    * Get limit size setting of current query. 
    */

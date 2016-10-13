@@ -57,7 +57,7 @@ import org.apache.geode.security.ResourcePermission.Operation;
 import org.apache.geode.security.ResourcePermission.Resource;
 import org.apache.geode.security.SecurityManager;
 
-public class IntegratedSecurityService implements SecurityService{
+public class IntegratedSecurityService implements SecurityService {
 
   private static Logger logger = LogService.getLogger(LogService.SECURITY_LOGGER_NAME);
 
@@ -94,8 +94,7 @@ public class IntegratedSecurityService implements SecurityService{
 
     // First try get the principal out of AccessControlContext instead of Shiro's Thread context
     // since threads can be shared between JMX clients.
-    javax.security.auth.Subject jmxSubject =
-      javax.security.auth.Subject.getSubject(AccessController.getContext());
+    javax.security.auth.Subject jmxSubject = javax.security.auth.Subject.getSubject(AccessController.getContext());
 
     if (jmxSubject != null) {
       Set<ShiroPrincipal> principals = jmxSubject.getPrincipals(ShiroPrincipal.class);
@@ -120,8 +119,8 @@ public class IntegratedSecurityService implements SecurityService{
   /**
    * convenient method for testing
    */
-  public Subject login(String username, String password){
-    if(StringUtils.isBlank(username) || StringUtils.isBlank(password))
+  public Subject login(String username, String password) {
+    if (StringUtils.isBlank(username) || StringUtils.isBlank(password))
       return null;
 
     Properties credentials = new Properties();
@@ -138,7 +137,7 @@ public class IntegratedSecurityService implements SecurityService{
       return null;
     }
 
-    if(credentials == null)
+    if (credentials == null)
       return null;
 
     // this makes sure it starts with a clean user object
@@ -149,8 +148,7 @@ public class IntegratedSecurityService implements SecurityService{
     try {
       logger.info("Logging in " + token.getPrincipal());
       currentUser.login(token);
-    }
-    catch (ShiroException e) {
+    } catch (ShiroException e) {
       logger.info(e.getMessage(), e);
       throw new AuthenticationFailedException("Authentication error. Please check your credentials.", e);
     }
@@ -167,8 +165,7 @@ public class IntegratedSecurityService implements SecurityService{
     try {
       logger.info("Logging out " + currentUser.getPrincipal());
       currentUser.logout();
-    }
-    catch (ShiroException e) {
+    } catch (ShiroException e) {
       logger.info(e.getMessage(), e);
       throw new GemFireSecurityException(e.getMessage(), e);
     }
@@ -199,7 +196,7 @@ public class IntegratedSecurityService implements SecurityService{
    *      state.clear();
    * }
    */
-  public ThreadState bindSubject(Subject subject){
+  public ThreadState bindSubject(Subject subject) {
     if (subject == null) {
       return null;
     }
@@ -214,9 +211,7 @@ public class IntegratedSecurityService implements SecurityService{
       return;
     }
 
-    authorize(resourceOperation.resource().name(),
-      resourceOperation.operation().name(),
-      null);
+    authorize(resourceOperation.resource().name(), resourceOperation.operation().name(), null);
   }
 
   public void authorizeClusterManage() {
@@ -271,7 +266,7 @@ public class IntegratedSecurityService implements SecurityService{
     authorize(resource, operation, null);
   }
 
-  public void authorize(String resource, String operation, String regionName){
+  public void authorize(String resource, String operation, String regionName) {
     authorize(resource, operation, regionName, null);
   }
 
@@ -296,8 +291,7 @@ public class IntegratedSecurityService implements SecurityService{
 
     try {
       currentUser.checkPermission(context);
-    }
-    catch (ShiroException e) {
+    } catch (ShiroException e) {
       String msg = currentUser.getPrincipal() + " not authorized for " + context;
       logger.info(msg);
       throw new NotAuthorizedException(msg, e);
@@ -339,14 +333,11 @@ public class IntegratedSecurityService implements SecurityService{
       org.apache.shiro.mgt.SecurityManager shiroManager = new DefaultSecurityManager(realm);
       SecurityUtils.setSecurityManager(shiroManager);
       isIntegratedSecurity = true;
-    }
-    else if( !StringUtils.isBlank(clientAuthenticatorConfig)) {
+    } else if (!StringUtils.isBlank(clientAuthenticatorConfig)) {
       isClientAuthenticator = true;
-    }
-    else if (!StringUtils.isBlank(peerAuthenticatorConfig)) {
+    } else if (!StringUtils.isBlank(peerAuthenticatorConfig)) {
       isPeerAuthenticator = true;
-    }
-    else {
+    } else {
       isIntegratedSecurity = false;
       isClientAuthenticator = false;
       isPeerAuthenticator = false;
@@ -354,11 +345,10 @@ public class IntegratedSecurityService implements SecurityService{
 
     // this initializes the post processor
     String customPostProcessor = securityProps.getProperty(SECURITY_POST_PROCESSOR);
-    if( !StringUtils.isBlank(customPostProcessor)) {
+    if (!StringUtils.isBlank(customPostProcessor)) {
       postProcessor = SecurityService.getObjectOfTypeFromClassName(customPostProcessor, PostProcessor.class);
       postProcessor.init(securityProps);
-    }
-    else{
+    } else {
       postProcessor = null;
     }
   }
@@ -385,11 +375,11 @@ public class IntegratedSecurityService implements SecurityService{
    * involved with preparations and you need to bypass it entirely, call this
    * first.
    */
-  public boolean needPostProcess(){
+  public boolean needPostProcess() {
     return (isIntegratedSecurity && postProcessor != null);
   }
 
-  public Object postProcess(String regionPath, Object key, Object value, boolean valueIsSerialized){
+  public Object postProcess(String regionPath, Object key, Object value, boolean valueIsSerialized) {
     return postProcess(null, regionPath, key, value, valueIsSerialized);
   }
 
@@ -412,20 +402,19 @@ public class IntegratedSecurityService implements SecurityService{
     if (valueIsSerialized && value instanceof byte[]) {
       try {
         Object oldObj = EntryEventImpl.deserialize((byte[]) value);
-        Object newObj = postProcessor.processRegionValue(principal, regionName, key,  oldObj);
+        Object newObj = postProcessor.processRegionValue(principal, regionName, key, oldObj);
         newValue = BlobHelper.serializeToBlob(newObj);
-      } catch (IOException|SerializationException e) {
+      } catch (IOException | SerializationException e) {
         throw new GemFireIOException("Exception de/serializing entry value", e);
       }
-    }
-    else {
+    } else {
       newValue = postProcessor.processRegionValue(principal, regionName, key, value);
     }
 
     return newValue;
   }
 
-  public SecurityManager getSecurityManager(){
+  public SecurityManager getSecurityManager() {
     return securityManager;
   }
 
@@ -433,7 +422,7 @@ public class IntegratedSecurityService implements SecurityService{
     return postProcessor;
   }
 
-  public boolean isIntegratedSecurity(){
+  public boolean isIntegratedSecurity() {
     return isIntegratedSecurity;
   }
 

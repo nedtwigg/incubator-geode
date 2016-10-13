@@ -40,7 +40,7 @@ public interface PersistentMemberView {
    * @return the set of offline members
    */
   public abstract Set<PersistentMemberID> getOfflineMembers();
-  
+
   /**
    * @return the set of offline and equal members
    */
@@ -50,7 +50,7 @@ public interface PersistentMemberView {
    * Retrieve the persisted ID of the current member.
    */
   public abstract PersistentMemberID getMyPersistentID();
-  
+
   /**
    * Indicate that this member is now online, and initialize it with the list of
    * offline and online members.
@@ -62,7 +62,7 @@ public interface PersistentMemberView {
    * online.
    */
   public abstract void memberOffline(PersistentMemberID persistentID);
-  
+
   /**
    * Indicate that a member is offline, and has the same data on disk as the
    * current member. This is only called after this member is online.
@@ -82,11 +82,11 @@ public interface PersistentMemberView {
    * @param persistentID
    */
   public void memberRemoved(PersistentMemberID persistentID);
-  
+
   public abstract PersistentMemberID generatePersistentID();
 
   public abstract void setInitializing(PersistentMemberID newId);
-  
+
   /**
    * Indicate that we are about to destroy this region.
    * This method will be called before distribution so
@@ -97,6 +97,7 @@ public interface PersistentMemberView {
    * PersistentID.
    */
   public abstract void beginDestroy(LocalRegion region);
+
   /**
    * Indicate that we are about to partially destroy this region.
    * It is used to stop hosting a bucket and become a proxy bucket.
@@ -108,11 +109,11 @@ public interface PersistentMemberView {
    * and the membership view.
    */
   public abstract void beginDestroyDataStorage();
-  
+
   /**
    * This method is called to finish either
    * setAboutToDestroy or setAboutToPartialDestroy.
-
+  
    * It can be called either during a normal region destroy
    * or during a partial region destroy.
    * AFTER distribution has completed or during initialization
@@ -121,7 +122,7 @@ public interface PersistentMemberView {
    * is expected to purge any data on disk, as
    * well as any membership view information and persistent
    * ID for this region.
-
+  
    * 
    * This method should NOT prevent this 
    * disk region from being initialized later.
@@ -129,8 +130,9 @@ public interface PersistentMemberView {
   public abstract void endDestroy(LocalRegion region);
 
   public abstract PersistentMemberID getMyInitializingID();
-  
+
   public abstract boolean wasAboutToDestroy();
+
   public abstract boolean wasAboutToDestroyDataStorage();
 
   /**

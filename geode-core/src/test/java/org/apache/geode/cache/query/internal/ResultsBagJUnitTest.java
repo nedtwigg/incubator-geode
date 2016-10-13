@@ -49,7 +49,7 @@ public class ResultsBagJUnitTest {
     assertEquals(3, bag.size());
     assertEquals(1, bag.occurrences("one"));
     assertEquals(2, bag.occurrences("two"));
-    
+
     assertTrue(bag.remove("two"));
     assertEquals(1, bag.occurrences("two"));
     assertTrue(bag.remove("one"));
@@ -64,20 +64,18 @@ public class ResultsBagJUnitTest {
     bag.add(new Integer(1));
     bag.add(new Integer(2));
     bag.add(new Integer(2));
-    
+
     int numOnes = 0;
     int numTwos = 0;
     Integer one = new Integer(1);
     Integer two = new Integer(2);
-    for (Iterator itr = bag.iterator(); itr.hasNext(); ) {
+    for (Iterator itr = bag.iterator(); itr.hasNext();) {
       Object n = itr.next();
       if (one.equals(n)) {
         numOnes++;
-      }
-      else if (two.equals(n)) {
+      } else if (two.equals(n)) {
         numTwos++;
-      }
-      else {
+      } else {
         fail(n + " did not equal 1 or 2");
       }
     }
@@ -94,25 +92,23 @@ public class ResultsBagJUnitTest {
     bag.add(null);
     bag.add(null);
     bag.add(null);
-    
+
     assertEquals(6, bag.size());
     assertEquals(1, bag.occurrences(new Integer(4)));
     assertEquals(3, bag.occurrences(null));
-    
+
     Set set = bag.asSet();
     assertEquals(4, set.size());
     assertTrue(set.contains(new Integer(4)));
-    assertTrue(set.contains(null));    
-    
-    ResultsCollectionWrapper w
-      = new ResultsCollectionWrapper(new ObjectTypeImpl(Integer.class),
-                                     set);
-    
+    assertTrue(set.contains(null));
+
+    ResultsCollectionWrapper w = new ResultsCollectionWrapper(new ObjectTypeImpl(Integer.class), set);
+
     HeapDataOutputStream hdos = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(w, hdos);
     DataInputStream in = new DataInputStream(hdos.getInputStream());
-    SelectResults setCopy = (SelectResults)DataSerializer.readObject(in);
-    
+    SelectResults setCopy = (SelectResults) DataSerializer.readObject(in);
+
     assertEquals(4, setCopy.size());
     assertTrue(setCopy.contains(new Integer(4)));
     assertTrue(setCopy.contains(null));
@@ -126,46 +122,43 @@ public class ResultsBagJUnitTest {
     assertTrue(!bag.isEmpty());
     assertEquals(1, bag.size());
     assertEquals(1, bag.occurrences(null));
-    
+
     bag.add(new Integer(1));
     assertEquals(2, bag.size());
     bag.add(new Integer(2));
     assertEquals(3, bag.size());
     bag.add(new Integer(2));
     assertEquals(4, bag.size());
-    
+
     bag.add(null);
     assertEquals(5, bag.size());
     assertEquals(2, bag.occurrences(null));
-    
+
     int numNulls = 0;
     int numOnes = 0;
     int numTwos = 0;
     Integer one = new Integer(1);
     Integer two = new Integer(2);
-    for (Iterator itr = bag.iterator(); itr.hasNext(); ) {
+    for (Iterator itr = bag.iterator(); itr.hasNext();) {
       Object n = itr.next();
       if (one.equals(n)) {
         numOnes++;
-      }
-      else if (two.equals(n)) {
+      } else if (two.equals(n)) {
         numTwos++;
-      }
-      else if (n == null) {
+      } else if (n == null) {
         numNulls++;
-      }
-      else {
+      } else {
         fail(n + " was not null and did not equal 1 or 2");
       }
     }
     assertEquals(1, numOnes);
     assertEquals(2, numTwos);
     assertEquals(2, numNulls);
-    
+
     // make sure toString doesn't blow up with nulls
     String s = bag.toString();
     assertTrue("toString didn't contain 'null': '" + s + "'", s.indexOf("null") > 0);
-    
+
     assertTrue(bag.remove(null));
     assertEquals(1, bag.occurrences(null));
     assertTrue(bag.remove(null));
@@ -184,8 +177,8 @@ public class ResultsBagJUnitTest {
     bag.add(new Integer(2));
     bag.add(new Integer(2));
     assertEquals(5, bag.size());
-    
-    for (Iterator itr = bag.iterator(); itr.hasNext(); ) {
+
+    for (Iterator itr = bag.iterator(); itr.hasNext();) {
       Object n = itr.next();
       if (n == null) {
         itr.remove();
@@ -198,24 +191,24 @@ public class ResultsBagJUnitTest {
   @Test
   public void testIterationRemoval() {
     ResultsBag bag = new ResultsBag();
-    
+
     bag.add(new Integer(1));
     bag.add(new Integer(2));
     bag.add(new Integer(2));
     bag.add(new Integer(3));
     bag.add(new Integer(3));
     bag.add(new Integer(4));
-    
+
     assertEquals(6, bag.size());
-    
+
     Iterator itr = bag.iterator();
-    for (int i = 0 ; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
       itr.next();
       itr.remove();
     }
     assertEquals(3, bag.size());
-    
-    for (int i = 0 ; i < 3; i++) {
+
+    for (int i = 0; i < 3; i++) {
       itr.next();
       itr.remove();
     }
@@ -226,31 +219,30 @@ public class ResultsBagJUnitTest {
   @Test
   public void testNoSuchElementException() {
     ResultsBag bag = new ResultsBag();
-    
+
     bag.add(new Integer(1));
     bag.add(new Integer(2));
     bag.add(new Integer(2));
     bag.add(new Integer(3));
     bag.add(new Integer(3));
     bag.add(new Integer(4));
-    
+
     assertEquals(6, bag.size());
-    
+
     Iterator itr = bag.iterator();
-    for (int i = 0 ; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
       itr.next();
     }
     try {
       itr.next();
       fail("should have thrown a NoSuchElementException");
-    }
-    catch (NoSuchElementException expected) {
+    } catch (NoSuchElementException expected) {
       // pass
     }
-    
+
     // test with removes
     itr = bag.iterator();
-    for (int i = 0 ; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
       itr.next();
       itr.remove();
     }
@@ -258,14 +250,13 @@ public class ResultsBagJUnitTest {
     try {
       itr.next();
       fail("should have thrown a NoSuchElementException");
-    }
-    catch (NoSuchElementException expected) {
+    } catch (NoSuchElementException expected) {
       // pass
     }
-    
+
     // test with nulls
     bag = new ResultsBag();
-    
+
     bag.add(new Integer(1));
     bag.add(new Integer(2));
     bag.add(new Integer(2));
@@ -275,24 +266,23 @@ public class ResultsBagJUnitTest {
     bag.add(new Integer(3));
     bag.add(new Integer(3));
     bag.add(new Integer(4));
-    
+
     assertEquals(9, bag.size());
-    
+
     itr = bag.iterator();
-    for (int i = 0 ; i < 9; i++) {
+    for (int i = 0; i < 9; i++) {
       itr.next();
     }
     try {
       itr.next();
       fail("should have thrown a NoSuchElementException");
-    }
-    catch (NoSuchElementException expected) {
+    } catch (NoSuchElementException expected) {
       // pass
     }
-    
+
     // test with removes
     itr = bag.iterator();
-    for (int i = 0 ; i < 9; i++) {
+    for (int i = 0; i < 9; i++) {
       itr.next();
       itr.remove();
     }
@@ -300,8 +290,7 @@ public class ResultsBagJUnitTest {
     try {
       itr.next();
       fail("should have thrown a NoSuchElementException");
-    }
-    catch (NoSuchElementException expected) {
+    } catch (NoSuchElementException expected) {
       // pass
     }
   }

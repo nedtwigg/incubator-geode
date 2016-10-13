@@ -21,13 +21,13 @@ import java.util.Date;
 import java.util.Map;
 
 public class DomainObjectPdxAutoNoDefaultConstructor extends DomainObject {
-  
+
   protected String string_immediate;
-  
+
   public Integer anInteger;
 
   public enum Day {
-    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY 
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
   }
 
   public char aChar;

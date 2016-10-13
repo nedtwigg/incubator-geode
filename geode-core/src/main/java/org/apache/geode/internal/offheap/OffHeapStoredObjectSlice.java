@@ -23,20 +23,23 @@ package org.apache.geode.internal.offheap;
 public class OffHeapStoredObjectSlice extends OffHeapStoredObject {
   private final int offset;
   private final int capacity;
+
   public OffHeapStoredObjectSlice(OffHeapStoredObject objectChunk, int position, int limit) {
     super(objectChunk);
     this.offset = objectChunk.getBaseDataOffset() + position;
     this.capacity = limit - position;
   }
+
   @Override
   public int getDataSize() {
     return this.capacity;
   }
-  
+
   @Override
   protected long getBaseDataAddress() {
     return super.getBaseDataAddress() + this.offset;
   }
+
   @Override
   protected int getBaseDataOffset() {
     return this.offset;

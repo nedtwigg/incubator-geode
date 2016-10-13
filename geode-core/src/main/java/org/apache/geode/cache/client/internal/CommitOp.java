@@ -30,22 +30,21 @@ public class CommitOp {
    * to communicate with the server.
    * @param pool the pool to use to communicate with the server.
    */
-  public static TXCommitMessage execute(ExecutablePool pool,int txId)
-  {
+  public static TXCommitMessage execute(ExecutablePool pool, int txId) {
     CommitOpImpl op = new CommitOpImpl(txId);
     pool.execute(op);
     return op.getTXCommitMessageResponse();
   }
-                                                               
+
   private CommitOp() {
     // no instances allowed
   }
-  
-    
+
   private static class CommitOpImpl extends AbstractOp {
     private int txId;
-    
+
     private TXCommitMessage tXCommitMessageResponse = null;
+
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
@@ -58,23 +57,22 @@ public class CommitOp {
     public TXCommitMessage getTXCommitMessageResponse() {
       return tXCommitMessageResponse;
     }
-    
+
     @Override
     public String toString() {
-      return "TXCommit(txId="+this.txId+")";
+      return "TXCommit(txId=" + this.txId + ")";
     }
 
     @Override
     protected Object processResponse(Message msg) throws Exception {
-      TXCommitMessage rcs = (TXCommitMessage)processObjResponse(msg, "commit");
+      TXCommitMessage rcs = (TXCommitMessage) processObjResponse(msg, "commit");
       assert rcs != null : "TxCommit response was null";
       this.tXCommitMessageResponse = rcs;
       return rcs;
     }
-     
+
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override
@@ -86,21 +84,24 @@ public class CommitOp {
     protected void sendMessage(Connection cnx) throws Exception {
       getMessage().clearMessageHasSecurePartFlag();
       getMessage().send(false);
-    }    
-    
-    @Override  
+    }
+
+    @Override
     protected boolean isErrorResponse(int msgType) {
       return msgType == MessageType.EXCEPTION;
     }
-    @Override  
+
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startCommit();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endCommitSend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endCommit(start, hasTimedOut(), hasFailed());
     }

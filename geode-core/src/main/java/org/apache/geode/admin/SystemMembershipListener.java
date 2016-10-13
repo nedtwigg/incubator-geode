@@ -49,13 +49,13 @@ public interface SystemMembershipListener {
    */
   public void memberCrashed(SystemMembershipEvent event);
 
-//   /**
-//    * Invoked when a member broadcasts an informational message.
-//    *
-//    * @see org.apache.geode.distributed.DistributedSystem#fireInfoEvent
-//    *
-//    * @since GemFire 4.0
-//    */
-//   public void memberInfo(SystemMembershipEvent event);
+  //   /**
+  //    * Invoked when a member broadcasts an informational message.
+  //    *
+  //    * @see org.apache.geode.distributed.DistributedSystem#fireInfoEvent
+  //    *
+  //    * @since GemFire 4.0
+  //    */
+  //   public void memberInfo(SystemMembershipEvent event);
 
 }

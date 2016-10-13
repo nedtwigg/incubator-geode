@@ -42,7 +42,6 @@ public class Coder {
    * so we'll hard code the UTF-8 symbol values as bytes here
    */
 
-
   /**
    * byte identifier of a bulk string
    */
@@ -148,7 +147,7 @@ public class Coder {
     response.writeByte(ARRAY_ID);
     response.writeBytes(intToBytes(items.size()));
     response.writeBytes(CRLFar);
-    while(it.hasNext()) {
+    while (it.hasNext()) {
       String next = it.next();
       response.writeByte(BULK_STRING_ID);
       response.writeBytes(intToBytes(next.length()));
@@ -165,7 +164,7 @@ public class Coder {
     response.writeByte(ARRAY_ID);
     response.writeBytes(intToBytes(items.size()));
     response.writeBytes(CRLFar);
-    while(it.hasNext()) {
+    while (it.hasNext()) {
       ByteArrayWrapper nextWrapper = it.next();
       if (nextWrapper != null) {
         response.writeByte(BULK_STRING_ID);
@@ -181,14 +180,14 @@ public class Coder {
   }
 
   public static final ByteBuf getKeyValArrayResponse(ByteBufAllocator alloc, Collection<Entry<ByteArrayWrapper, ByteArrayWrapper>> items) {
-    Iterator<Map.Entry<ByteArrayWrapper,ByteArrayWrapper>> it = items.iterator();
+    Iterator<Map.Entry<ByteArrayWrapper, ByteArrayWrapper>> it = items.iterator();
     ByteBuf response = alloc.buffer();
     response.writeByte(ARRAY_ID);
 
     int size = 0;
     ByteBuf tmp = alloc.buffer();
-    while(it.hasNext()) {
-      Map.Entry<ByteArrayWrapper,ByteArrayWrapper> next = it.next();
+    while (it.hasNext()) {
+      Map.Entry<ByteArrayWrapper, ByteArrayWrapper> next = it.next();
       byte[] key;
       byte[] nextByteArray;
       try {
@@ -210,7 +209,7 @@ public class Coder {
       size++;
     }
 
-    response.writeBytes(intToBytes(size*2));
+    response.writeBytes(intToBytes(size * 2));
     response.writeBytes(CRLFar);
     response.writeBytes(tmp);
 
@@ -236,7 +235,7 @@ public class Coder {
     response.writeBytes(intToBytes(items.size()));
     response.writeBytes(CRLFar);
 
-    while(it.hasNext()) {
+    while (it.hasNext()) {
       Object nextObject = it.next();
       if (nextObject instanceof String) {
         String next = (String) nextObject;
@@ -329,7 +328,7 @@ public class Coder {
     response.writeByte(Coder.ARRAY_ID);
     ByteBuf tmp = alloc.buffer();
     int size = 0;
-    while(it.hasNext()) {
+    while (it.hasNext()) {
       Object next = it.next();
       ByteArrayWrapper nextWrapper = null;
       if (next instanceof Entry) {
@@ -371,7 +370,7 @@ public class Coder {
     ByteBuf tmp = alloc.buffer();
     int size = 0;
 
-    for(Object entry: list) {
+    for (Object entry : list) {
       ByteArrayWrapper key;
       DoubleWrapper score;
       if (entry instanceof Entry) {

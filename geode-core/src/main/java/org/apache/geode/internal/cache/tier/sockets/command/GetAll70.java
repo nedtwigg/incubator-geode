@@ -80,14 +80,7 @@ public class GetAll70 extends BaseCommand {
 
     if (logger.isDebugEnabled()) {
       StringBuffer buffer = new StringBuffer();
-      buffer.append(servConn.getName())
-            .append(": Received getAll request (")
-            .append(msg.getPayloadLength())
-            .append(" bytes) from ")
-            .append(servConn.getSocketString())
-            .append(" for region ")
-            .append(regionName)
-            .append(" keys ");
+      buffer.append(servConn.getName()).append(": Received getAll request (").append(msg.getPayloadLength()).append(" bytes) from ").append(servConn.getSocketString()).append(" for region ").append(regionName).append(" keys ");
       if (keys != null) {
         for (int i = 0; i < keys.length; i++) {
           buffer.append(keys[i]).append(" ");
@@ -140,11 +133,7 @@ public class GetAll70 extends BaseCommand {
     }
   }
 
-  private void fillAndSendGetAllResponseChunks(Region region,
-                                               String regionName,
-                                               Object[] keys,
-                                               ServerConnection servConn,
-                                               boolean requestSerializedValues) throws IOException {
+  private void fillAndSendGetAllResponseChunks(Region region, String regionName, Object[] keys, ServerConnection servConn, boolean requestSerializedValues) throws IOException {
 
     // Interpret null keys object as a request to get all key,value entry pairs
     // of the region; otherwise iterate each key and perform the get behavior.
@@ -167,8 +156,7 @@ public class GetAll70 extends BaseCommand {
     // So the only reason we would tell the VersionedObjectList that it needs to track keys is if we are running
     // in the old mode (which may be impossible since we only used that mode pre 7.0) in which the client told us
     // to get and return all the keys and values. I think this was used for register interest.
-    VersionedObjectList values = new VersionedObjectList(maximumChunkSize, keys == null, region.getAttributes()
-                                                                                               .getConcurrencyChecksEnabled(), requestSerializedValues);
+    VersionedObjectList values = new VersionedObjectList(maximumChunkSize, keys == null, region.getAttributes().getConcurrencyChecksEnabled(), requestSerializedValues);
     try {
       AuthorizeRequest authzRequest = servConn.getAuthzRequest();
       AuthorizeRequestPP postAuthzRequest = servConn.getPostAuthzRequest();
@@ -202,10 +190,7 @@ public class GetAll70 extends BaseCommand {
               logger.debug("{}: Passed GET pre-authorization for key={}", servConn.getName(), key);
             }
           } catch (NotAuthorizedException ex) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] {
-              servConn.getName(),
-              key
-            }), ex);
+            logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] { servConn.getName(), key }), ex);
             values.addExceptionPart(key, ex);
             continue;
           }
@@ -214,10 +199,7 @@ public class GetAll70 extends BaseCommand {
         try {
           this.securityService.authorizeRegionRead(regionName, key.toString());
         } catch (NotAuthorizedException ex) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] {
-            servConn.getName(),
-            key
-          }), ex);
+          logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] { servConn.getName(), key }), ex);
           values.addExceptionPart(key, ex);
           continue;
         }
@@ -250,10 +232,7 @@ public class GetAll70 extends BaseCommand {
                 data = newData;
               }
             } catch (NotAuthorizedException ex) {
-              logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] {
-                servConn.getName(),
-                key
-              }), ex);
+              logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] { servConn.getName(), key }), ex);
               values.addExceptionPart(key, ex);
               continue;
             } finally {
@@ -292,19 +271,14 @@ public class GetAll70 extends BaseCommand {
     }
   }
 
-
-  private static void sendGetAllResponseChunk(Region region,
-                                              ObjectPartList list,
-                                              boolean lastChunk,
-                                              ServerConnection servConn) throws IOException {
+  private static void sendGetAllResponseChunk(Region region, ObjectPartList list, boolean lastChunk, ServerConnection servConn) throws IOException {
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
     chunkedResponseMsg.setNumberOfParts(1);
     chunkedResponseMsg.setLastChunk(lastChunk);
     chunkedResponseMsg.addObjPartNoCopying(list);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sending {} getAll response chunk for region={}{}", servConn.getName(), (lastChunk ? " last " : " "), region
-        .getFullPath(), (logger.isTraceEnabled() ? " values=" + list + " chunk=<" + chunkedResponseMsg + ">" : ""));
+      logger.debug("{}: Sending {} getAll response chunk for region={}{}", servConn.getName(), (lastChunk ? " last " : " "), region.getFullPath(), (logger.isTraceEnabled() ? " values=" + list + " chunk=<" + chunkedResponseMsg + ">" : ""));
     }
 
     chunkedResponseMsg.sendChunk(servConn);

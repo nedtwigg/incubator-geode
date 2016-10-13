@@ -32,7 +32,7 @@ public class StoppableReentrantLock {
    * the underlying lock
    */
   private final ReentrantLock lock;
-  
+
   /**
    * This is how often waiters will wake up to check for cancellation
    */
@@ -42,7 +42,7 @@ public class StoppableReentrantLock {
    * the cancellation criterion
    */
   private final CancelCriterion stopper;
-  
+
   /**
    * Create a new instance with the given cancellation criterion
    * @param stopper the cancellation criterion
@@ -51,7 +51,7 @@ public class StoppableReentrantLock {
     Assert.assertTrue(stopper != null);
     this.lock = new ReentrantLock();
     this.stopper = stopper;
-    }
+  }
 
   /**
    * Create a new instance with given fairness and cancellation criterion
@@ -62,8 +62,7 @@ public class StoppableReentrantLock {
     Assert.assertTrue(stopper != null);
     this.stopper = stopper;
     this.lock = new ReentrantLock();
-    }
-
+  }
 
   public void lock() {
     for (;;) {
@@ -71,12 +70,11 @@ public class StoppableReentrantLock {
       try {
         lockInterruptibly();
         break;
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
         interrupted = true;
-      }
-      finally {
-        if (interrupted) Thread.currentThread().interrupt();
+      } finally {
+        if (interrupted)
+          Thread.currentThread().interrupt();
       }
     } // for
   }
@@ -120,7 +118,7 @@ public class StoppableReentrantLock {
   public StoppableCondition newCondition() {
     return new StoppableCondition(lock.newCondition(), stopper);
   }
-  
+
   /**
    * @return true if it is held
    */

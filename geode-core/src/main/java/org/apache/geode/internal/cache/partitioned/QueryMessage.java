@@ -56,10 +56,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 import org.apache.geode.cache.query.Struct;
 
-public final class QueryMessage extends StreamingPartitionOperation.StreamingPartitionMessage
-  {
+public final class QueryMessage extends StreamingPartitionOperation.StreamingPartitionMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   private volatile String queryString;
   private volatile boolean cqQuery;
   private volatile Object[] parameters;
@@ -67,7 +66,7 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
   private volatile boolean isPdxSerialized;
   private volatile boolean traceOn;
 
-//  private transient PRQueryResultCollector resultCollector = new PRQueryResultCollector();
+  //  private transient PRQueryResultCollector resultCollector = new PRQueryResultCollector();
   private transient List<Collection> resultCollector = new ArrayList<Collection>();
   private transient int tokenCount = 0; // counts how many end of stream tokens received
   private transient Iterator currentResultIterator;
@@ -78,10 +77,10 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
   /**
    * Empty constructor to satisfy {@link DataSerializer} requirements
    */
-  public QueryMessage() {}
+  public QueryMessage() {
+  }
 
-  public QueryMessage(InternalDistributedMember recipient,  int regionId, ReplyProcessor21 processor,
-      DefaultQuery query, Object[] parameters, final List buckets) {
+  public QueryMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, DefaultQuery query, Object[] parameters, final List buckets) {
     super(recipient, regionId, processor);
     this.queryString = query.getQueryString();
     this.buckets = buckets;
@@ -90,24 +89,23 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
     this.traceOn = query.isTraced() || DefaultQuery.QUERY_VERBOSE;
   }
 
-
   /**  Provide results to send back to requestor.
     *  terminate by returning END_OF_STREAM token object
     */
   @Override
-  protected Object getNextReplyObject(PartitionedRegion pr)
-  throws CacheException, ForceReattemptException, InterruptedException {
+  protected Object getNextReplyObject(PartitionedRegion pr) throws CacheException, ForceReattemptException, InterruptedException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
-    
+
     if (QueryMonitor.isLowMemory()) {
       String reason = LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(QueryMonitor.getMemoryUsedDuringLowMemory());
       throw new QueryExecutionLowMemoryException(reason);
     }
-    if (Thread.interrupted()) throw new InterruptedException();
-    
+    if (Thread.interrupted())
+      throw new InterruptedException();
+
     while ((this.currentResultIterator == null || !this.currentResultIterator.hasNext())) {
       if (this.currentSelectResultIterator.hasNext()) {
-        if(this.isTraceInfoIteration && this.currentResultIterator != null) {
+        if (this.isTraceInfoIteration && this.currentResultIterator != null) {
           this.isTraceInfoIteration = false;
         }
         Collection results = this.currentSelectResultIterator.next();
@@ -121,28 +119,26 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
       }
     }
     Object data = this.currentResultIterator.next();
-    boolean isPostGFE_8_1 = this.getSender().getVersionObject().compareTo(Version.GFE_81) > 0 ;
+    boolean isPostGFE_8_1 = this.getSender().getVersionObject().compareTo(Version.GFE_81) > 0;
     //Asif: There is a bug in older versions of GFE such that the query node expects the structs to have
     // type as ObjectTypes only & not specific types. So the new version needs to send the inaccurate 
     //struct type for backward compatibility.
-    if(this.isStructType && !this.isTraceInfoIteration && isPostGFE_8_1) {
-      return ((Struct)data).getFieldValues(); 
-    }else if(this.isStructType && !this.isTraceInfoIteration) {
-      Struct s = (Struct)data;
+    if (this.isStructType && !this.isTraceInfoIteration && isPostGFE_8_1) {
+      return ((Struct) data).getFieldValues();
+    } else if (this.isStructType && !this.isTraceInfoIteration) {
+      Struct s = (Struct) data;
       ObjectType[] fieldTypes = s.getStructType().getFieldTypes();
-      for(int i = 0; i < fieldTypes.length; ++i) {
+      for (int i = 0; i < fieldTypes.length; ++i) {
         fieldTypes[i] = new ObjectTypeImpl(Object.class);
       }
       return data;
-    }else {
+    } else {
       return data;
     }
   }
 
-
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime)
-  throws CacheException, QueryException, ForceReattemptException, InterruptedException {
+  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException, QueryException, ForceReattemptException, InterruptedException {
     //calculate trace start time if trace is on
     //this is because the start time is only set if enableClock stats is on
     //in this case we still want to see trace time even if clock is not enabled
@@ -150,9 +146,10 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
     if (this.traceOn) {
       traceStartTime = NanoTimer.getTime();
     }
-    PRQueryTraceInfo queryTraceInfo = null; 
+    PRQueryTraceInfo queryTraceInfo = null;
     List queryTraceList = null;
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "QueryMessage operateOnPartitionedRegion: {} buckets {}", r.getFullPath(), buckets);
     }
@@ -167,7 +164,7 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
       //throw query exception to piggyback on existing error handling as qp.executeQuery also throws the same error for low memory
       throw new QueryExecutionLowMemoryException(reason);
     }
-    
+
     DefaultQuery query = new DefaultQuery(this.queryString, r.getCache(), false);
     // Remote query, use the PDX types in serialized form.
     DefaultQuery.setPdxReadSerialized(r.getCache(), true);
@@ -193,14 +190,14 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
         }
         queryTraceInfo = new PRQueryTraceInfo();
         queryTraceList = Collections.singletonList(queryTraceInfo);
-        
+
       }
 
       this.isStructType = qp.executeQuery(this.resultCollector);
       //Add the trace info list object after the NWayMergeResults is created so as to 
       //exclude it from the sorted collection of NWayMergeResults
-      if(isQueryTraced) {
-        this.resultCollector.add(0,queryTraceList);
+      if (isQueryTraced) {
+        this.resultCollector.add(0, queryTraceList);
       }
       this.currentSelectResultIterator = this.resultCollector.iterator();
 
@@ -242,8 +239,7 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
       // resultSize = this.resultCollector.size() - this.buckets.size(); //Minus
       // END_OF_BUCKET elements.
       if (QueryMonitor.isLowMemory()) {
-        String reason = LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY
-            .toLocalizedString(QueryMonitor.getMemoryUsedDuringLowMemory());
+        String reason = LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(QueryMonitor.getMemoryUsedDuringLowMemory());
         throw new QueryExecutionLowMemoryException(reason);
       }
       super.operateOnPartitionedRegion(dm, r, startTime);
@@ -267,11 +263,9 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
   }
 
   @Override
-  protected void appendFields(StringBuffer buff)
-  {
+  protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
-    buff.append("; query=").append(this.queryString)
-    .append("; bucketids=").append(this.buckets);
+    buff.append("; query=").append(this.queryString).append("; bucketids=").append(this.buckets);
   }
 
   public int getDSFID() {
@@ -294,14 +288,11 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
         pr.getPrStats().endPartitionMessagesProcessing(startTime);
       }
     }
-    StreamingReplyMessage.send(member, procId, ex, dm, this.outStream,
-        this.numObjectsInChunk, this.replyMsgNum,
-        this.replyLastMsg, this.isPdxSerialized);
+    StreamingReplyMessage.send(member, procId, ex, dm, this.outStream, this.numObjectsInChunk, this.replyMsgNum, this.replyLastMsg, this.isPdxSerialized);
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.queryString = DataSerializer.readString(in);
     this.buckets = DataSerializer.readArrayList(in);
@@ -312,15 +303,14 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException
-  {
+  public void toData(DataOutput out) throws IOException {
     super.toData(out);
     DataSerializer.writeString(this.queryString, out);
-    DataSerializer.writeArrayList((ArrayList)this.buckets, out);
+    DataSerializer.writeArrayList((ArrayList) this.buckets, out);
     DataSerializer.writeObjectArray(this.parameters, out);
     DataSerializer.writeBoolean(this.cqQuery, out);
     DataSerializer.writeBoolean(true, out);
     DataSerializer.writeBoolean(this.traceOn, out);
   }
-  
+
 }

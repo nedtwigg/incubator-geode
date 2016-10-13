@@ -16,7 +16,6 @@
  */
 package org.apache.geode.distributed.internal;
 
-
 /** SizeableRunnable is a Runnable with a size.  It implements the Sizeable interface
     for use in QueuedExecutors using a ThrottlingMemLinkedBlockingQueue.<p>
     
@@ -28,10 +27,11 @@ package org.apache.geode.distributed.internal;
 
 public abstract class SizeableRunnable implements Runnable, Sizeable {
   private int size;
-  
+
   public SizeableRunnable(int size) {
     this.size = size;
   }
+
   public int getSize() {
     return this.size;
   }

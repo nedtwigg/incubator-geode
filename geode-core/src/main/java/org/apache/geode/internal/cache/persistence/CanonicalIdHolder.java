@@ -39,14 +39,14 @@ public class CanonicalIdHolder {
    * Map of integer representation to canonicalized member ids.
    */
   private Int2ObjectOpenHashMap idToObject = new Int2ObjectOpenHashMap();
-  
+
   /**
    * Map of canonicalized member ids to integer representation.
    */
   private Object2IntOpenHashMap objectToID = new Object2IntOpenHashMap();
-  
+
   private int highestID = 0;
-  
+
   /**
    * Add a mapping that we have recovered from disk
    */
@@ -54,25 +54,25 @@ public class CanonicalIdHolder {
     //Store the mapping
     idToObject.put(id, object);
     objectToID.put(object, id);
-    
+
     //increase the next canonical id the recovered id is higher than it.
-    highestID = highestID  < id ? id : highestID;
+    highestID = highestID < id ? id : highestID;
   }
-  
+
   /**
    * Get the id for a given object 
    */
   public int getId(Object object) {
     return objectToID.getInt(object);
   }
-  
+
   /**
    * Get the object for a given id.
    */
   public Object getObject(int id) {
     return idToObject.get(id);
   }
-  
+
   /**
    * Create an id of the given object.
    * @param object
@@ -85,7 +85,7 @@ public class CanonicalIdHolder {
     idToObject.put(id, object);
     return id;
   }
-  
+
   /**
    * Get all of the objects that are mapped.
    * @return a map of id to object for all objects
@@ -94,7 +94,5 @@ public class CanonicalIdHolder {
   public Int2ObjectOpenHashMap getAllMappings() {
     return idToObject;
   }
-
-  
 
 }

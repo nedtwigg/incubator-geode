@@ -73,25 +73,25 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
       int port1 = createCacheServerOnVM(server1, javaProps, serverProps);
       int port2 = createCacheServerOnVM(server2, javaProps, serverProps);
 
-      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.PUT}, new OperationCode[] { OperationCode.GET, OperationCode.GET}, javaProps, authInit, port1, port2)) {
+      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.PUT }, new OperationCode[] { OperationCode.GET, OperationCode.GET }, javaProps, authInit, port1, port2)) {
         continue;
       }
 
       verifyPutsGets();
 
-      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.CONTAINS_KEY}, new OperationCode[] { OperationCode.DESTROY, OperationCode.DESTROY}, javaProps, authInit, port1, port2)) {
+      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.CONTAINS_KEY }, new OperationCode[] { OperationCode.DESTROY, OperationCode.DESTROY }, javaProps, authInit, port1, port2)) {
         continue;
       }
 
       verifyContainsKeyDestroys();
 
-      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.CONTAINS_KEY}, new OperationCode[] { OperationCode.INVALIDATE, OperationCode.INVALIDATE}, javaProps, authInit, port1, port2)) {
+      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.CONTAINS_KEY }, new OperationCode[] { OperationCode.INVALIDATE, OperationCode.INVALIDATE }, javaProps, authInit, port1, port2)) {
         continue;
       }
 
       verifyContainsKeyInvalidates();
 
-      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.GET, OperationCode.GET}, new OperationCode[] { OperationCode.REGION_DESTROY, OperationCode.REGION_DESTROY}, javaProps, authInit, port1, port2)) {
+      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.GET, OperationCode.GET }, new OperationCode[] { OperationCode.REGION_DESTROY, OperationCode.REGION_DESTROY }, javaProps, authInit, port1, port2)) {
         continue;
       }
 
@@ -125,54 +125,48 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
     int port2 = createCacheServerOnVM(server2, javaProps, serverProps);
 
     // Start client1 with valid/invalid QUERY credentials
-    Properties[] client1Credentials = new Properties[] {
-        gen.getAllowedCredentials(new OperationCode[] {OperationCode.PUT, OperationCode.QUERY}, new String[] {regionName}, 1),
-        gen.getDisallowedCredentials(new OperationCode[] {OperationCode.PUT, OperationCode.QUERY}, new String[] {regionName}, 1)
-    };
+    Properties[] client1Credentials = new Properties[] { gen.getAllowedCredentials(new OperationCode[] { OperationCode.PUT, OperationCode.QUERY }, new String[] { regionName }, 1), gen.getDisallowedCredentials(new OperationCode[] { OperationCode.PUT, OperationCode.QUERY }, new String[] { regionName }, 1) };
 
     javaProps = cGen.getJavaProperties();
     getLogWriter().info("testOps2: For first client credentials: " + client1Credentials[0] + "\n" + client1Credentials[1]);
 
     final Properties finalJavaProps = javaProps;
-    client1.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client1Credentials, finalJavaProps, new int[] {port1, port2}, -1, false, NO_EXCEPTION));
+    client1.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client1Credentials, finalJavaProps, new int[] { port1, port2 }, -1, false, NO_EXCEPTION));
 
     // Start client2 with valid/invalid EXECUTE_FUNCTION credentials
-    Properties[] client2Credentials = new Properties[] {
-        gen.getAllowedCredentials(new OperationCode[] {OperationCode.EXECUTE_FUNCTION}, new String[] {regionName}, 2),
-        gen.getDisallowedCredentials(new OperationCode[] {OperationCode.EXECUTE_FUNCTION}, new String[] {regionName}, 9)
-    };
+    Properties[] client2Credentials = new Properties[] { gen.getAllowedCredentials(new OperationCode[] { OperationCode.EXECUTE_FUNCTION }, new String[] { regionName }, 2), gen.getDisallowedCredentials(new OperationCode[] { OperationCode.EXECUTE_FUNCTION }, new String[] { regionName }, 9) };
 
     javaProps = cGen.getJavaProperties();
     getLogWriter().info("testOps2: For second client credentials: " + client2Credentials[0] + "\n" + client2Credentials[1]);
 
     final Properties finalJavaProps2 = javaProps;
-    client2.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client2Credentials, finalJavaProps2, new int[] {port1, port2}, -1, false, NO_EXCEPTION));
+    client2.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client2Credentials, finalJavaProps2, new int[] { port1, port2 }, -1, false, NO_EXCEPTION));
 
-    Function function = new TestFunction(true,TestFunction.TEST_FUNCTION1);
+    Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
 
     server1.invoke(() -> PRClientServerTestBase.registerFunction(function));
 
     server2.invoke(() -> PRClientServerTestBase.registerFunction(function));
 
     // Perform some put operations before verifying queries
-    client1.invoke(() -> doMultiUserPuts(4, 2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
-    client1.invoke(() -> doMultiUserQueries(2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, 4));
-    client1.invoke(() -> doMultiUserQueryExecute(2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, 4));
+    client1.invoke(() -> doMultiUserPuts(4, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
+    client1.invoke(() -> doMultiUserQueries(2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, 4));
+    client1.invoke(() -> doMultiUserQueryExecute(2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, 4));
 
     // Verify that the FE succeeds/fails
-    client2.invoke(() ->doMultiUserFE(2, function, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, false));
+    client2.invoke(() -> doMultiUserFE(2, function, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, false));
 
     // Failover
     server1.invoke(() -> closeCache());
     Thread.sleep(2000);
 
-    client1.invoke(() -> doMultiUserPuts(4, 2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
+    client1.invoke(() -> doMultiUserPuts(4, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
 
-    client1.invoke(() -> doMultiUserQueries(2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, 4));
-    client1.invoke(() -> doMultiUserQueryExecute(2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, 4));
+    client1.invoke(() -> doMultiUserQueries(2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, 4));
+    client1.invoke(() -> doMultiUserQueryExecute(2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, 4));
 
     // Verify that the FE succeeds/fails
-    client2.invoke(() -> doMultiUserFE(2, function, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, true));
+    client2.invoke(() -> doMultiUserFE(2, function, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, true));
   }
 
   @Test
@@ -197,13 +191,13 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
       int port1 = createCacheServerOnVM(server1, javaProps, serverProps);
       int port2 = createCacheServerOnVM(server2, javaProps, serverProps);
 
-      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.PUT}, new OperationCode[] { OperationCode.GET, OperationCode.GET}, javaProps, authInit, port1, port2, false, true)) {
+      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.PUT }, new OperationCode[] { OperationCode.GET, OperationCode.GET }, javaProps, authInit, port1, port2, false, true)) {
         continue;
       }
 
       verifyPutsGets(false, true);
 
-      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.CONTAINS_KEY}, new OperationCode[] { OperationCode.DESTROY, OperationCode.DESTROY}, javaProps, authInit, port1, port2, false, false)) {
+      if (!prepareClientsForOps(gen, cGen, new OperationCode[] { OperationCode.PUT, OperationCode.CONTAINS_KEY }, new OperationCode[] { OperationCode.DESTROY, OperationCode.DESTROY }, javaProps, authInit, port1, port2, false, false)) {
         continue;
       }
 
@@ -217,7 +211,7 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
 
   private boolean prepareClientsForOps(final AuthzCredentialGenerator gen, final CredentialGenerator cGen, final OperationCode[] client1OpCodes, final OperationCode[] client2OpCodes, Properties javaProps, final String authInit, final int port1, final int port2, final boolean bothClientsInMultiuserMode, final boolean allowOp) {
     // Start client1 with valid/invalid client1OpCodes credentials
-    Properties[] client1Credentials = new Properties[] { gen.getAllowedCredentials(client1OpCodes, new String[] {regionName}, 1), gen.getDisallowedCredentials(new OperationCode[] {client1OpCodes[1]}, new String[] {regionName}, 1)};
+    Properties[] client1Credentials = new Properties[] { gen.getAllowedCredentials(client1OpCodes, new String[] { regionName }, 1), gen.getDisallowedCredentials(new OperationCode[] { client1OpCodes[1] }, new String[] { regionName }, 1) };
 
     if (client1Credentials[0] == null || client1Credentials[0].size() == 0) {
       getLogWriter().info("testOps1: Unable to obtain valid credentials with " + client1OpCodes[0].toString() + " permission; skipping this combination.");
@@ -233,10 +227,10 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
     getLogWriter().info("testOps1: For first client credentials: " + client1Credentials[0] + "\n" + client1Credentials[1]);
     final Properties finalJavaProps = javaProps;
 
-    client1.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client1Credentials, finalJavaProps, new int[] {port1, port2}, -1, false, NO_EXCEPTION));
+    client1.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client1Credentials, finalJavaProps, new int[] { port1, port2 }, -1, false, NO_EXCEPTION));
 
     // Start client2 with valid/invalid client2OpCodes credentials
-    Properties[] client2Credentials = new Properties[] { gen.getAllowedCredentials(client2OpCodes, new String[] {regionName}, 2), gen.getDisallowedCredentials(client2OpCodes, new String[] {regionName}, 9)};
+    Properties[] client2Credentials = new Properties[] { gen.getAllowedCredentials(client2OpCodes, new String[] { regionName }, 2), gen.getDisallowedCredentials(client2OpCodes, new String[] { regionName }, 9) };
 
     if (client2Credentials[0] == null || client2Credentials[0].size() == 0) {
       getLogWriter().info("testOps1: Unable to obtain valid credentials with " + client2OpCodes[0].toString() + " permission; skipping this combination.");
@@ -253,12 +247,12 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
 
     if (bothClientsInMultiuserMode) {
       final Properties finalJavaProps2 = javaProps;
-      client2.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client2Credentials, finalJavaProps2, new int[] {port1, port2}, -1, false, NO_EXCEPTION));
+      client2.invoke(() -> createCacheClientForMultiUserMode(2, authInit, client2Credentials, finalJavaProps2, new int[] { port1, port2 }, -1, false, NO_EXCEPTION));
 
     } else {
       int credentialsIndex = allowOp ? 0 : 1;
       final Properties finalJavaProps2 = javaProps;
-      client2.invoke(() -> createCacheClient(authInit, client2Credentials[credentialsIndex], finalJavaProps2, new int[] {port1, port2}, -1, false, false, NO_EXCEPTION));
+      client2.invoke(() -> createCacheClient(authInit, client2Credentials[credentialsIndex], finalJavaProps2, new int[] { port1, port2 }, -1, false, false, NO_EXCEPTION));
     }
 
     return true;
@@ -270,15 +264,15 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
 
   private void verifyPutsGets(final boolean isMultiuser, final boolean opAllowed) throws Exception {
     // Perform some put operations from client1
-    client1.invoke(() -> doMultiUserPuts(2, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
+    client1.invoke(() -> doMultiUserPuts(2, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
 
     // Verify that the gets succeed/fail
     if (isMultiuser) {
-      client2.invoke(() -> doMultiUserGets(2, 2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
+      client2.invoke(() -> doMultiUserGets(2, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
 
     } else {
       int expectedResult = (opAllowed) ? NO_EXCEPTION : NOTAUTHZ_EXCEPTION;
-      client2.invoke(() -> doMultiUserGets(1, 1, new int[] {expectedResult}));
+      client2.invoke(() -> doMultiUserGets(1, 1, new int[] { expectedResult }));
     }
   }
 
@@ -288,16 +282,16 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
 
   private void verifyContainsKeyDestroys(final boolean isMultiUser, final boolean opAllowed) throws Exception {
     // Do puts before verifying containsKey
-    client1.invoke(() -> doMultiUserPuts(2, 2, new int[] {NO_EXCEPTION, NO_EXCEPTION}));
-    client1.invoke(() -> doMultiUserContainsKeys(1, 2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, new boolean[] {true, false}));
+    client1.invoke(() -> doMultiUserPuts(2, 2, new int[] { NO_EXCEPTION, NO_EXCEPTION }));
+    client1.invoke(() -> doMultiUserContainsKeys(1, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, new boolean[] { true, false }));
 
     // Verify that the destroys succeed/fail
     if (isMultiUser) {
-      client2.invoke(() -> doMultiUserDestroys(2, 2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
+      client2.invoke(() -> doMultiUserDestroys(2, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
 
     } else {
       int expectedResult = (opAllowed) ? NO_EXCEPTION : NOTAUTHZ_EXCEPTION;
-      client2.invoke(() -> doMultiUserDestroys(1, 1, new int[] {expectedResult}));
+      client2.invoke(() -> doMultiUserDestroys(1, 1, new int[] { expectedResult }));
     }
   }
 
@@ -307,30 +301,30 @@ public class ClientMultiUserAuthzDUnitTest extends ClientAuthorizationTestCase {
 
   private void verifyContainsKeyInvalidates(final boolean isMultiUser, final boolean opAllowed) throws Exception {
     // Do puts before verifying containsKey
-    client1.invoke(() -> doMultiUserPuts(2, 2, new int[] {NO_EXCEPTION, NO_EXCEPTION}));
-    client1.invoke(() -> doMultiUserContainsKeys(1, 2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, new boolean[] {true, false}));
+    client1.invoke(() -> doMultiUserPuts(2, 2, new int[] { NO_EXCEPTION, NO_EXCEPTION }));
+    client1.invoke(() -> doMultiUserContainsKeys(1, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, new boolean[] { true, false }));
 
     // Verify that the invalidates succeed/fail
     if (isMultiUser) {
-      client2.invoke(() -> doMultiUserInvalidates(2, 2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
+      client2.invoke(() -> doMultiUserInvalidates(2, 2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
 
     } else {
       int expectedResult = (opAllowed) ? NO_EXCEPTION : NOTAUTHZ_EXCEPTION;
-      client2.invoke(() -> doMultiUserInvalidates(1, 1, new int[] {expectedResult}));
+      client2.invoke(() -> doMultiUserInvalidates(1, 1, new int[] { expectedResult }));
     }
   }
 
   private void verifyGetAllInTX() {
     server1.invoke(() -> doPuts());
-    client1.invoke(() -> doMultiUserGetAll(2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}, true/*use TX*/));
+    client1.invoke(() -> doMultiUserGetAll(2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }, true/*use TX*/));
   }
 
   private void verifyGetAllRegionDestroys() {
     server1.invoke(() -> doPuts());
-    client1.invoke(() -> doMultiUserGetAll(2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
+    client1.invoke(() -> doMultiUserGetAll(2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
 
     // Verify that the region destroys succeed/fail
-    client2.invoke(() -> doMultiUserRegionDestroys(2, new int[] {NO_EXCEPTION, NOTAUTHZ_EXCEPTION}));
+    client2.invoke(() -> doMultiUserRegionDestroys(2, new int[] { NO_EXCEPTION, NOTAUTHZ_EXCEPTION }));
   }
 
   private void doPuts() {

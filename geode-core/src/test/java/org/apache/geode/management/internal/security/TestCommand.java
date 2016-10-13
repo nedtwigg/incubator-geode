@@ -40,7 +40,7 @@ public class TestCommand {
 
   private static List<TestCommand> testCommands = new ArrayList<>();
 
-  static{
+  static {
     init();
   }
 
@@ -65,15 +65,15 @@ public class TestCommand {
     return this.permission;
   }
 
-  public static List<TestCommand> getCommands(){
+  public static List<TestCommand> getCommands() {
     return testCommands;
   }
 
-  public static List<TestCommand> getPermittedCommands(Permission permission){
+  public static List<TestCommand> getPermittedCommands(Permission permission) {
     List<TestCommand> result = new ArrayList<>();
     for (TestCommand testCommand : testCommands) {
       ResourcePermission cPerm = testCommand.getPermission();
-      if(cPerm!=null && permission.implies(cPerm)){
+      if (cPerm != null && permission.implies(cPerm)) {
         result.add(testCommand);
       }
     }
@@ -178,7 +178,6 @@ public class TestCommand {
     createTestCommand("show dead-locks --file=deadlocks.txt", clusterRead);
     createTestCommand("show log --member=locator1 --lines=5", clusterRead);
     createTestCommand("show metrics", clusterRead);
-
 
     // PDX Commands
     createTestCommand("configure pdx --read-serialized=true", dataManage);

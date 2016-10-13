@@ -48,7 +48,7 @@ import org.apache.geode.internal.logging.LogService;
 
 public abstract class LuceneIndexImpl implements InternalLuceneIndex {
   protected static final Logger logger = LogService.getLogger();
-  
+
   protected final String indexName;
   protected final String regionPath;
   protected final Cache cache;
@@ -65,7 +65,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
     this.indexName = indexName;
     this.regionPath = regionPath;
     this.cache = cache;
-    
+
     final String statsName = indexName + "-" + regionPath;
     this.indexStats = new LuceneIndexStats(cache.getDistributedSystem(), statsName);
   }
@@ -79,9 +79,9 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
   public String getRegionPath() {
     return this.regionPath;
   }
- 
+
   protected LocalRegion getDataRegion() {
-    return (LocalRegion)cache.getRegion(regionPath);
+    return (LocalRegion) cache.getRegion(regionPath);
   }
 
   protected boolean withPersistence() {
@@ -90,7 +90,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
     final boolean withPersistence = dp.withPersistence();
     return withPersistence;
   }
-  
+
   protected void setSearchableFields(String[] fields) {
     searchableFieldNames = fields;
   }
@@ -98,7 +98,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
   @Override
   public boolean waitUntilFlushed(int maxWaitInMillisecond) {
     String aeqId = LuceneServiceImpl.getUniqueIndexName(indexName, regionPath);
-    AsyncEventQueue queue = (AsyncEventQueue)cache.getAsyncEventQueue(aeqId);
+    AsyncEventQueue queue = (AsyncEventQueue) cache.getAsyncEventQueue(aeqId);
     boolean flushed = false;
     if (queue != null) {
       long start = System.nanoTime();
@@ -113,8 +113,8 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
           }
         }
       }
-    } else { 
-      throw new IllegalArgumentException("The AEQ does not exist for the index "+indexName+" region "+regionPath);
+    } else {
+      throw new IllegalArgumentException("The AEQ does not exist for the index " + indexName + " region " + regionPath);
     }
 
     return flushed;
@@ -133,7 +133,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
   public RepositoryManager getRepositoryManager() {
     return this.repositoryManager;
   }
-  
+
   public void setAnalyzer(Analyzer analyzer) {
     if (analyzer == null) {
       this.analyzer = new StandardAnalyzer();
@@ -149,7 +149,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
   public Cache getCache() {
     return this.cache;
   }
-  
+
   public void setFieldAnalyzers(Map<String, Analyzer> fieldAnalyzers) {
     this.fieldAnalyzers = fieldAnalyzers == null ? null : Collections.unmodifiableMap(fieldAnalyzers);
   }
@@ -165,7 +165,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
       //assert dataRegion != null;
 
       repositoryManager = createRepositoryManager();
-      
+
       // create AEQ, AEQ listener and specify the listener to repositoryManager
       createAEQ(dataRegion);
 
@@ -173,9 +173,9 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
       hasInitialized = true;
     }
   }
-  
+
   protected abstract RepositoryManager createRepositoryManager();
-  
+
   protected AsyncEventQueue createAEQ(Region dataRegion) {
     return createAEQ(createAEQFactory(dataRegion));
   }
@@ -206,7 +206,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
     return indexQueue;
   }
 
-/**
+  /**
    * Register an extension with the region
    * so that xml will be generated for this index.
    */
@@ -221,12 +221,11 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
 
   protected <K, V> Region<K, V> createRegion(final String regionName, final RegionAttributes<K, V> attributes) {
     // Create InternalRegionArguments to set isUsedForMetaRegion true to suppress xml generation (among other things)
-    InternalRegionArguments ira = new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false)
-        .setSnapshotInputStream(null).setImageTarget(null).setIsUsedForMetaRegion(true);
+    InternalRegionArguments ira = new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null).setIsUsedForMetaRegion(true);
 
     // Create the region
     try {
-      return ((GemFireCacheImpl)this.cache).createVMRegion(regionName, attributes, ira);
+      return ((GemFireCacheImpl) this.cache).createVMRegion(regionName, attributes, ira);
     } catch (Exception e) {
       InternalGemFireError ige = new InternalGemFireError(LocalizedStrings.GemFireCache_UNEXPECTED_EXCEPTION.toLocalizedString());
       ige.initCause(e);

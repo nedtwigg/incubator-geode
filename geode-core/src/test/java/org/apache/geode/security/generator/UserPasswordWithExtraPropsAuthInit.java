@@ -53,16 +53,13 @@ public class UserPasswordWithExtraPropsAuthInit extends UserPasswordAuthInit {
     final String extraProps = securityProperties.getProperty(EXTRA_PROPS);
 
     if (extraProps != null) {
-    	for (Iterator it = securityProperties.keySet().iterator(); it.hasNext();) {
-    		final String key = (String) it.next();
-    		if (key.startsWith(SECURITY_PREFIX) &&
-    		    key.equalsIgnoreCase(USER_NAME) == false &&
-    		    key.equalsIgnoreCase(PASSWORD) == false &&
-    		    key.equalsIgnoreCase(EXTRA_PROPS) == false) {
-    			securityPropertiesCopy.setProperty(key, securityProperties.getProperty(key));
-    		}
-    	}
-    	this.securityLogWriter.fine("got everything and now have: " + securityPropertiesCopy.keySet().toString());
+      for (Iterator it = securityProperties.keySet().iterator(); it.hasNext();) {
+        final String key = (String) it.next();
+        if (key.startsWith(SECURITY_PREFIX) && key.equalsIgnoreCase(USER_NAME) == false && key.equalsIgnoreCase(PASSWORD) == false && key.equalsIgnoreCase(EXTRA_PROPS) == false) {
+          securityPropertiesCopy.setProperty(key, securityProperties.getProperty(key));
+        }
+      }
+      this.securityLogWriter.fine("got everything and now have: " + securityPropertiesCopy.keySet().toString());
     }
 
     return securityPropertiesCopy;

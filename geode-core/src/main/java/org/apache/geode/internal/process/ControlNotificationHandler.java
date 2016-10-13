@@ -27,5 +27,6 @@ import org.apache.geode.distributed.AbstractLauncher.ServiceState;
  */
 public interface ControlNotificationHandler {
   public void handleStop();
+
   public ServiceState<?> handleStatus();
 }

@@ -33,16 +33,16 @@ public class GetEntryOp {
    * @param key
    * @return an {@link EntrySnapshot} for the given key
    */
-  public static Object execute(ExecutablePool pool, LocalRegion region,
-      Object key) {
+  public static Object execute(ExecutablePool pool, LocalRegion region, Object key) {
     AbstractOp op = new GetEntryOpImpl(region, key);
     return pool.execute(op);
   }
-  
+
   static class GetEntryOpImpl extends AbstractOp {
 
     private LocalRegion region;
     private Object key;
+
     public GetEntryOpImpl(LocalRegion region, Object key) {
       super(MessageType.GET_ENTRY, 2);
       this.region = region;
@@ -65,15 +65,17 @@ public class GetEntryOp {
       return msgType == MessageType.REQUESTDATAERROR;
     }
 
-    @Override  
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startGetEntry();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endGetEntrySend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endGetEntry(start, hasTimedOut(), hasFailed());
     }

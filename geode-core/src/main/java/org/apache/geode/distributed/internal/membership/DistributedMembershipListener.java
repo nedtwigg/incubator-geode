@@ -27,10 +27,10 @@ public interface DistributedMembershipListener extends DirectChannelListener {
 
   /** this method is invoked when the processing of a new view is completed */
   public void viewInstalled(NetView view);
-  
+
   /** this is invoked when there has been a loss of quorum and enable-network-partition-detection is not enabled */
   public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remainingMembers);
-  
+
   /**
    * Event indicating that a new member has joined the system.
    * @param m the new member
@@ -45,7 +45,7 @@ public interface DistributedMembershipListener extends DirectChannelListener {
    * @param reason a characterization of the departure
    */
   public void memberDeparted(InternalDistributedMember id, boolean crashed, String reason);
-  
+
   /**
    * Event indicating that a member is suspected of having departed but
    * is still in the membership view
@@ -59,7 +59,7 @@ public interface DistributedMembershipListener extends DirectChannelListener {
    * @param o the message that should be processed.
    */
   public void messageReceived(DistributionMessage o);
-  
+
   /**
    * Indicates whether, during the shutdown sequence, if other members
    * of the distributed system have been notified.
@@ -70,17 +70,17 @@ public interface DistributedMembershipListener extends DirectChannelListener {
    * @return true if other members of the distributed system have been notified.
    */
   public boolean isShutdownMsgSent();
-  
+
   /**
    * Event indicating that the membership service has failed catastrophically.
    *
    */
   public void membershipFailure(String reason, Throwable t);
-  
- /**
+
+  /**
    * Support good logging on this listener
    * @return a printable string for this listener
    */
   public String toString();
-  
+
 }

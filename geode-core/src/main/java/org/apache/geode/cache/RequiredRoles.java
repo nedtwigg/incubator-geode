@@ -40,7 +40,7 @@ import java.util.*;
  * @see org.apache.geode.distributed.Role
  */
 public class RequiredRoles {
-  
+
   /**
    * Returns a set of any currently missing required roles for the
    * specified region.  If the region is not configured to require roles
@@ -50,17 +50,15 @@ public class RequiredRoles {
    * @return set of required roles that are currently missing
    * @throws IllegalStateException if region is not configured with required roles
    */
-  public static Set<Role> checkForRequiredRoles(Region<?,?> region) {
+  public static Set<Role> checkForRequiredRoles(Region<?, ?> region) {
     try {
       return waitForRequiredRoles(region, 0);
-    }
-    catch (InterruptedException ie) {
+    } catch (InterruptedException ie) {
       // This could happen if we were in an interrupted state
       // upon method entry
       Thread.currentThread().interrupt();
-      ((LocalRegion)region).getCancelCriterion().checkCancelInProgress(ie);
-      Assert.assertTrue(false, 
-          "checkForRequiredRoles cannot throw InterruptedException");
+      ((LocalRegion) region).getCancelCriterion().checkCancelInProgress(ie);
+      Assert.assertTrue(false, "checkForRequiredRoles cannot throw InterruptedException");
       return Collections.emptySet(); // keep compiler happy
     }
   }
@@ -79,9 +77,8 @@ public class RequiredRoles {
    * @throws InterruptedException if thread is interrupted while waiting
    * @throws IllegalStateException if region is not configured with required roles
    */
-  public static Set<Role> waitForRequiredRoles(Region<?,?> region, long timeout)
-  throws InterruptedException {
-//    if (Thread.interrupted()) throw new InterruptedException(); not necessary waitForRequiredRoles does this
+  public static Set<Role> waitForRequiredRoles(Region<?, ?> region, long timeout) throws InterruptedException {
+    //    if (Thread.interrupted()) throw new InterruptedException(); not necessary waitForRequiredRoles does this
     if (region == null) {
       throw new NullPointerException(LocalizedStrings.RequiredRoles_REGION_MUST_BE_SPECIFIED.toLocalizedString());
     }
@@ -91,7 +88,7 @@ public class RequiredRoles {
     DistributedRegion dr = (DistributedRegion) region;
     return dr.waitForRequiredRoles(timeout);
   }
-  
+
   /**
    * Returns true if the {@link org.apache.geode.distributed.Role Role}
    * is currently present in the {@link Region} membership. This returns true
@@ -102,15 +99,13 @@ public class RequiredRoles {
    * @param region the region whose membership will be searched
    * @param role the role to check for
    */
-  public static boolean isRoleInRegionMembership(Region<?,?> region, Role role) {
+  public static boolean isRoleInRegionMembership(Region<?, ?> region, Role role) {
     if (region instanceof DistributedRegion) {
       DistributedRegion dr = (DistributedRegion) region;
       return dr.isRoleInRegionMembership(role);
-    }
-    else {
+    } else {
       return role.isPresent();
     }
   }
-  
-}
 
+}

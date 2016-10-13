@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.*;
@@ -54,7 +53,7 @@ public abstract class RegionAdminRequest extends AdminRequest {
     Cache cache = CacheFactory.getInstance(sys);
     Region r = cache.getRegion(regionName);
     if (r == null) {
-      throw new RegionNotFoundException(LocalizedStrings.RegionAdminRequest_REGION_0_NOT_FOUND_IN_REMOTE_CACHE_1.toLocalizedString(new Object[] {regionName, cache.getName()}));
+      throw new RegionNotFoundException(LocalizedStrings.RegionAdminRequest_REGION_0_NOT_FOUND_IN_REMOTE_CACHE_1.toLocalizedString(new Object[] { regionName, cache.getName() }));
     }
     return r;
   }
@@ -66,8 +65,7 @@ public abstract class RegionAdminRequest extends AdminRequest {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.regionName = DataSerializer.readString(in);
   }

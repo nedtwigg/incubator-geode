@@ -59,10 +59,7 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
   @Override
   public void createCache() {
     super.createCache();
-    cache.createDiskStoreFactory()
-      .setDiskDirs(new File[] {diskDirRule.get()})
-      .setMaxOplogSize(1)
-      .create(GemFireCacheImpl.getDefaultDiskStoreName());
+    cache.createDiskStoreFactory().setDiskDirs(new File[] { diskDirRule.get() }).setMaxOplogSize(1).create(GemFireCacheImpl.getDefaultDiskStoreName());
   }
 
   @Test
@@ -75,12 +72,10 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
   }
 
   @Test
-  @Parameters({"true", "false"})
+  @Parameters({ "true", "false" })
   public void shouldUseDiskSynchronousWhenUserRegionHasDiskSynchronous(boolean synchronous) {
     createIndex(cache, "text");
-    cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
-      .setDiskSynchronous(synchronous)
-      .create(REGION_NAME);
+    cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).setDiskSynchronous(synchronous).create(REGION_NAME);
     verifyInternalRegions(region -> {
       assertTrue(region.getDataPolicy().withPersistence());
       //Underlying region should always be synchronous
@@ -94,8 +89,7 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
   @Test
   public void shouldRecoverPersistentIndexWhenDataStillInQueue() throws Exception {
     createIndex(cache, "field1", "field2");
-    Region dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
-      .create(REGION_NAME);
+    Region dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
     //Pause the sender so that the entry stays in the queue
     pauseSender(cache);
 
@@ -103,42 +97,35 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
     cache.close();
     createCache();
     createIndex(cache, "field1", "field2");
-    dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
-      .create(REGION_NAME);
+    dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
     verifyIndexFinishFlushing(cache, INDEX_NAME, REGION_NAME);
-    LuceneQuery<Object, Object> query = luceneService.createLuceneQueryFactory()
-      .create(INDEX_NAME, REGION_NAME,
-        "field1:world", DEFAULT_FIELD);
+    LuceneQuery<Object, Object> query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "field1:world", DEFAULT_FIELD);
     assertEquals(1, query.findPages().size());
   }
 
   @Test
   public void shouldRecoverPersistentIndexWhenDataIsWrittenToIndex() throws Exception {
     createIndex(cache, "field1", "field2");
-    Region dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
-      .create(REGION_NAME);
+    Region dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
     dataRegion.put("A", new TestObject());
     verifyIndexFinishFlushing(cache, INDEX_NAME, REGION_NAME);
     cache.close();
     createCache();
     createIndex(cache, "field1", "field2");
-    dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
-      .create(REGION_NAME);
-    LuceneQuery<Object, Object> query = luceneService.createLuceneQueryFactory()
-      .create(INDEX_NAME, REGION_NAME,
-      "field1:world", DEFAULT_FIELD);
+    dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
+    LuceneQuery<Object, Object> query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "field1:world", DEFAULT_FIELD);
     assertEquals(1, query.findPages().size());
   }
 
   @Test
   @Parameters(method = "getRegionShortcuts")
   public void shouldHandleMultipleIndexes(RegionShortcut shortcut) throws Exception {
-    LuceneServiceProvider.get(this.cache).createIndex(INDEX_NAME+"_1", REGION_NAME, "field1");
-    LuceneServiceProvider.get(this.cache).createIndex(INDEX_NAME+"_2", REGION_NAME, "field2");
+    LuceneServiceProvider.get(this.cache).createIndex(INDEX_NAME + "_1", REGION_NAME, "field1");
+    LuceneServiceProvider.get(this.cache).createIndex(INDEX_NAME + "_2", REGION_NAME, "field2");
     Region region = cache.createRegionFactory(shortcut).create(REGION_NAME);
     region.put("key1", new TestObject());
-    verifyQueryResultSize(INDEX_NAME+"_1", REGION_NAME, "field1:world", DEFAULT_FIELD, 1);
-    verifyQueryResultSize(INDEX_NAME+"_2", REGION_NAME, "field2:field", DEFAULT_FIELD, 1);
+    verifyQueryResultSize(INDEX_NAME + "_1", REGION_NAME, "field1:world", DEFAULT_FIELD, 1);
+    verifyQueryResultSize(INDEX_NAME + "_2", REGION_NAME, "field2:field", DEFAULT_FIELD, 1);
   }
 
   @Test
@@ -162,12 +149,8 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
   @Test
   public void shouldStoreIndexAndQueueInTheSameDiskStoreAsTheRegion() {
     createIndex(cache, "text");
-    cache.createDiskStoreFactory()
-      .setDiskDirs(new File[] {diskDirRule.get()})
-      .create("DiskStore");
-    cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
-      .setDiskStoreName("DiskStore")
-      .create(REGION_NAME);
+    cache.createDiskStoreFactory().setDiskDirs(new File[] { diskDirRule.get() }).create("DiskStore");
+    cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).setDiskStoreName("DiskStore").create(REGION_NAME);
     final String diskStoreName = cache.getRegion(REGION_NAME).getAttributes().getDiskStoreName();
     verifyInternalRegions(region -> {
       assertEquals(diskStoreName, region.getAttributes().getDiskStoreName());
@@ -181,7 +164,7 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
     Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> {
       try {
         assertEquals(size, query.findPages().size());
-      } catch(LuceneQueryException e) {
+      } catch (LuceneQueryException e) {
         throw new RuntimeException(e);
       }
     });
@@ -191,18 +174,8 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
     LuceneTestUtilities.verifyInternalRegions(luceneService, cache, verify);
   }
 
-
   private static final Object[] getRegionShortcuts() {
-    return $(
-      new Object[] { PARTITION },
-      new Object[] { PARTITION_REDUNDANT },
-      new Object[] { PARTITION_PERSISTENT },
-      new Object[] { PARTITION_REDUNDANT_PERSISTENT },
-      new Object[] { PARTITION_OVERFLOW },
-      new Object[] { PARTITION_REDUNDANT_OVERFLOW },
-      new Object[] { PARTITION_PERSISTENT_OVERFLOW },
-      new Object[] { PARTITION_REDUNDANT_PERSISTENT_OVERFLOW }
-    );
+    return $(new Object[] { PARTITION }, new Object[] { PARTITION_REDUNDANT }, new Object[] { PARTITION_PERSISTENT }, new Object[] { PARTITION_REDUNDANT_PERSISTENT }, new Object[] { PARTITION_OVERFLOW }, new Object[] { PARTITION_REDUNDANT_OVERFLOW }, new Object[] { PARTITION_PERSISTENT_OVERFLOW }, new Object[] { PARTITION_REDUNDANT_PERSISTENT_OVERFLOW });
   }
 
 }

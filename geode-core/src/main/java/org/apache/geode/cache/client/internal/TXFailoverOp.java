@@ -30,11 +30,11 @@ public class TXFailoverOp {
   public static void execute(ExecutablePool pool, int txId) {
     pool.execute(new TXFailoverOpImpl(txId));
   }
-  
+
   private TXFailoverOp() {
     // no instance
   }
-  
+
   private static class TXFailoverOpImpl extends AbstractOp {
     int txId;
 
@@ -43,10 +43,10 @@ public class TXFailoverOp {
       getMessage().setTransactionId(txId);
       this.txId = txId;
     }
-    
+
     @Override
     public String toString() {
-      return "TXFailoverOp(txId="+this.txId+")";
+      return "TXFailoverOp(txId=" + this.txId + ")";
     }
 
     @Override
@@ -60,22 +60,23 @@ public class TXFailoverOp {
       return msgType == MessageType.EXCEPTION;
     }
 
-    @Override  
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startTxFailover();
     }
-    @Override  
+
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endTxFailoverSend(start, hasFailed());
     }
-    @Override  
+
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endTxFailover(start, hasTimedOut(), hasFailed());
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message)
-        throws Exception {
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
     }
 
     @Override

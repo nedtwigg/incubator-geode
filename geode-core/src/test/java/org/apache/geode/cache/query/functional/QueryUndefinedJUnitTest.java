@@ -56,35 +56,12 @@ public class QueryUndefinedJUnitTest implements Serializable {
     CacheUtils.closeCache();
   }
 
-  private static String[] queries = new String[] {
-    "select * from /test WHERE age != 25", 
-    "select * from /test WHERE age !=25 AND flag = true", 
-    "select * from /test WHERE age != 25 AND age > 0 and age < 100",
-    "select * from /test WHERE age != 25 OR age > 0",
-    "select * from /test WHERE age > 0",
-    "select * from /test WHERE age IN (select t.age from /test t)",
-    "select t.age from /test t",
-    "select * from /test WHERE age != 25 and flag = false",
-    "select * from /test WHERE age IN (select t.age from /test t) and age != 25"
-  };
-  
+  private static String[] queries = new String[] { "select * from /test WHERE age != 25", "select * from /test WHERE age !=25 AND flag = true", "select * from /test WHERE age != 25 AND age > 0 and age < 100", "select * from /test WHERE age != 25 OR age > 0", "select * from /test WHERE age > 0", "select * from /test WHERE age IN (select t.age from /test t)", "select t.age from /test t", "select * from /test WHERE age != 25 and flag = false", "select * from /test WHERE age IN (select t.age from /test t) and age != 25" };
+
   //the test will be validating against the May date, so expected values revolve around month of May
-  private static int[] expectedResults = new int[] {
-    2,
-    2,
-    1,
-    3,
-    2,
-    3,
-    3,
-    0,
-    2 
-  };
+  private static int[] expectedResults = new int[] { 2, 2, 1, 3, 2, 3, 3, 0, 2 };
 
-  
-
-  private void executeQueryTest(Cache cache, String[] queries,
-      int[] expectedResults) {
+  private void executeQueryTest(Cache cache, String[] queries, int[] expectedResults) {
     CacheUtils.log("********Execute Query Test********");
     QueryService queryService = cache.getQueryService();
     Query query = null;
@@ -106,14 +83,14 @@ public class QueryUndefinedJUnitTest implements Serializable {
     // Destroy current Region for other tests
     cache.getRegion(regionName).destroyRegion();
   }
-  
+
   @Test
   public void testJSONUndefinedValuePR() throws Exception {
     Region region = CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
     createJSONData(region);
     executeQueryTest(CacheUtils.getCache(), queries, expectedResults);
   }
-  
+
   @Test
   public void testJSONUndefinedValueWithIndexPR() throws Exception {
     Region region = CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
@@ -129,14 +106,14 @@ public class QueryUndefinedJUnitTest implements Serializable {
     CacheUtils.getQueryService().createHashIndex("ageIndex", "age", "/test");
     executeQueryTest(CacheUtils.getCache(), queries, expectedResults);
   }
-  
+
   @Test
   public void testJSONUndefinedValueRR() throws Exception {
     Region region = CacheUtils.getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
     createJSONData(region);
     executeQueryTest(CacheUtils.getCache(), queries, expectedResults);
   }
-  
+
   @Test
   public void testJSONUndefinedValueWithIndexRR() throws Exception {
     Region region = CacheUtils.getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
@@ -159,7 +136,7 @@ public class QueryUndefinedJUnitTest implements Serializable {
     createObjectData(region);
     executeQueryTest(CacheUtils.getCache(), queries, expectedResults);
   }
-  
+
   @Test
   public void testObjectUndefinedValueWithIndexPR() throws Exception {
     Region region = CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
@@ -175,14 +152,14 @@ public class QueryUndefinedJUnitTest implements Serializable {
     CacheUtils.getQueryService().createHashIndex("ageIndex", "age", "/test");
     executeQueryTest(CacheUtils.getCache(), queries, expectedResults);
   }
-  
+
   @Test
   public void testObjectUndefinedValueRR() throws Exception {
     Region region = CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
     createObjectData(region);
     executeQueryTest(CacheUtils.getCache(), queries, expectedResults);
   }
-  
+
   @Test
   public void testObjectUndefinedValueWithIndexRR() throws Exception {
     Region region = CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
@@ -198,7 +175,7 @@ public class QueryUndefinedJUnitTest implements Serializable {
     CacheUtils.getQueryService().createHashIndex("ageIndex", "age", "/test");
     executeQueryTest(CacheUtils.getCache(), queries, expectedResults);
   }
- 
+
   private void createJSONData(Region region) throws ParseException {
     String obj1 = "{\"_id\": \"10002\", \"age\": 26, \"flag\": true }";
     String obj2 = "{\"_id\": \"10001\", \"age\": 25, \"flag\": true }";
@@ -207,7 +184,7 @@ public class QueryUndefinedJUnitTest implements Serializable {
     region.put("value2", JSONFormatter.fromJSON(obj2));
     region.put("value3", JSONFormatter.fromJSON(obj3));
   }
-  
+
   private void createObjectData(Region region) throws ParseException {
     String obj1 = "{\"_id\": \"10002\", \"age\": 26, \"flag\": true }";
     String obj2 = "{\"_id\": \"10001\", \"age\": 25, \"flag\": true }";
@@ -217,20 +194,18 @@ public class QueryUndefinedJUnitTest implements Serializable {
     region.put("value3", new PersonType2("10003", true));
   }
 
-
-  public class PersonType1 implements Serializable{
+  public class PersonType1 implements Serializable {
     public String name;
     public int age;
-   
 
     public boolean flag;
-    
+
     public PersonType1(String name, int age, boolean flag) {
       this.name = name;
       this.age = age;
       this.flag = flag;
-    } 
-    
+    }
+
     public String getName() {
       return name;
     }
@@ -255,16 +230,16 @@ public class QueryUndefinedJUnitTest implements Serializable {
       this.age = age;
     }
   }
-  
+
   public class PersonType2 implements Serializable {
     public String name;
     public boolean flag;
-      
-    public PersonType2(String name,  boolean flag) {
+
+    public PersonType2(String name, boolean flag) {
       this.name = name;
       this.flag = flag;
     }
-    
+
     public String getName() {
       return name;
     }
@@ -282,5 +257,3 @@ public class QueryUndefinedJUnitTest implements Serializable {
     }
   }
 }
-
-

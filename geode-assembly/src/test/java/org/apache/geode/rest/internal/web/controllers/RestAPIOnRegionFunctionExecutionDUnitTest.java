@@ -81,7 +81,6 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
     super();
   }
 
-
   private void createPeer(DataPolicy policy) {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -139,14 +138,10 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
   }
 
   private void createCacheAndRegisterFunction() {
-    restURLs.add(vm0.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm0.getHost()
-                                                                                    .getHostName(), null, urlContext)));
-    restURLs.add(vm1.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm1.getHost()
-                                                                                    .getHostName(), null, urlContext)));
-    restURLs.add(vm2.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm2.getHost()
-                                                                                    .getHostName(), null, urlContext)));
-    restURLs.add(vm3.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm3.getHost()
-                                                                                    .getHostName(), null, urlContext)));
+    restURLs.add(vm0.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm0.getHost().getHostName(), null, urlContext)));
+    restURLs.add(vm1.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm1.getHost().getHostName(), null, urlContext)));
+    restURLs.add(vm2.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm2.getHost().getHostName(), null, urlContext)));
+    restURLs.add(vm3.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm3.getHost().getHostName(), null, urlContext)));
 
     vm0.invoke("registerFunction(new SampleFunction())", () -> FunctionService.registerFunction(new SampleFunction()));
     vm1.invoke("registerFunction(new SampleFunction())", () -> FunctionService.registerFunction(new SampleFunction()));
@@ -255,19 +250,13 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
       invocationCount++;
       if (context instanceof RegionFunctionContext) {
         RegionFunctionContext rfContext = (RegionFunctionContext) context;
-        rfContext.getDataSet()
-                 .getCache()
-                 .getLogger()
-                 .info("Executing function :  SampleFunction.execute(hasResult=true) with filter: " + rfContext.getFilter() + "  " + rfContext);
+        rfContext.getDataSet().getCache().getLogger().info("Executing function :  SampleFunction.execute(hasResult=true) with filter: " + rfContext.getFilter() + "  " + rfContext);
         if (rfContext.getArguments() instanceof Boolean) {
           /* return rfContext.getArguments(); */
           if (hasResult()) {
             rfContext.getResultSender().lastResult((Serializable) rfContext.getArguments());
           } else {
-            rfContext.getDataSet()
-                     .getCache()
-                     .getLogger()
-                     .info("Executing function :  SampleFunction.execute(hasResult=false) " + rfContext);
+            rfContext.getDataSet().getCache().getLogger().info("Executing function :  SampleFunction.execute(hasResult=false) " + rfContext);
             while (!rfContext.getDataSet().isDestroyed()) {
               rfContext.getDataSet().getCache().getLogger().info("For Bug43513 ");
               try {
@@ -294,8 +283,7 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
              * (Serializable)PartitionRegionHelper.getLocalDataForContext(
              * rfContext).get(key);
              */
-            rfContext.getResultSender()
-                     .lastResult((Serializable) PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
+            rfContext.getResultSender().lastResult((Serializable) PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
           } else {
             rfContext.getResultSender().lastResult((Serializable) rfContext.getDataSet().get(key));
           }
@@ -313,7 +301,7 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
           /* return vals; */
         } else if (rfContext.getArguments() instanceof HashMap) {
           HashMap putData = (HashMap) rfContext.getArguments();
-          for (Iterator i = putData.entrySet().iterator(); i.hasNext(); ) {
+          for (Iterator i = putData.entrySet().iterator(); i.hasNext();) {
             Map.Entry me = (Map.Entry) i.next();
             rfContext.getDataSet().put(me.getKey(), me.getValue());
           }

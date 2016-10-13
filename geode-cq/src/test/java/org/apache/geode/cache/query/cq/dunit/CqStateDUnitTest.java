@@ -59,20 +59,20 @@ public class CqStateDUnitTest extends HelperTestCase {
     VM serverA = host.getVM(1);
     VM serverB = host.getVM(2);
     VM client = host.getVM(3);
-    
+
     final int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
     startCacheServer(serverA, ports[0], getAuthenticatedServerProperties());
     createReplicatedRegion(serverA, regionName, null);
 
     final String host0 = NetworkUtils.getServerHostName(serverA.getHost());
-    startClient(client, new VM[]{ serverA, serverB }, ports, 1, getClientProperties());
-    createCQ(client, cqName, "select * from /"+ regionName, null);
-    
+    startClient(client, new VM[] { serverA, serverB }, ports, 1, getClientProperties());
+    createCQ(client, cqName, "select * from /" + regionName, null);
+
     //create the cacheserver but regions must be present first or else cq execute will fail with no region found
     createCacheServer(serverB, ports[1], getServerProperties(0));
     createReplicatedRegion(serverB, regionName, null);
     startCacheServers(serverB);
-    
+
     AsyncInvocation async = executeCQ(client, cqName);
     ThreadUtils.join(async, 10000);
 
@@ -85,16 +85,17 @@ public class CqStateDUnitTest extends HelperTestCase {
           public boolean done() {
             return cq.getState().isRunning();
           }
+
           @Override
           public String description() {
             return "waiting for Cq to be in a running state: " + cq;
           }
-        },  30000, 1000, false);
+        }, 30000, 1000, false);
         return cq.getState().isRunning();
       }
     });
     assertTrue("Client was not running", clientRunning);
-    
+
     //hope that server 2 comes up before num retries is exhausted by the execute cq command
     //hope that the redundancy satisfier sends message and is executed after execute cq has been executed
     //This is the only way bug 51222 would be noticed
@@ -106,10 +107,10 @@ public class CqStateDUnitTest extends HelperTestCase {
         return cq.getState().isRunning();
       }
     });
-    
-    assertTrue("Cq was not running on server" , isRunning);
+
+    assertTrue("Cq was not running on server", isRunning);
   }
-  
+
   public Properties getAuthenticatedServerProperties() {
     Properties props = new Properties();
     props.put(MCAST_PORT, "0");
@@ -118,20 +119,19 @@ public class CqStateDUnitTest extends HelperTestCase {
     props.put(SECURITY_CLIENT_AUTHENTICATOR, DummyAuthenticator.class.getName() + ".create");
     return props;
   }
-  
+
   public Properties getServerProperties() {
     Properties props = new Properties();
     props.put(MCAST_PORT, "0");
     return props;
   }
-  
+
   public Properties getClientProperties() {
     Properties props = new Properties();
     props.put(SECURITY_CLIENT_AUTH_INIT, UserPasswordAuthInit.class.getName() + ".create");
     props.put("security-username", "root");
     props.put("security-password", "root");
     return props;
-  }  
-  
-}
+  }
 
+}

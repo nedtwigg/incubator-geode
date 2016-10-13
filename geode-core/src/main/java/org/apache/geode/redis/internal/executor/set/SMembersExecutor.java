@@ -43,14 +43,14 @@ public class SMembersExecutor extends SetExecutor {
     checkDataType(key, RedisDataType.REDIS_SET, context);
     @SuppressWarnings("unchecked")
     Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
-    
+
     if (keyRegion == null) {
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
       return;
     }
-    
+
     Set<ByteArrayWrapper> members = new HashSet(keyRegion.keySet()); // Emulate copy on read
-    
+
     command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), members));
   }
 }

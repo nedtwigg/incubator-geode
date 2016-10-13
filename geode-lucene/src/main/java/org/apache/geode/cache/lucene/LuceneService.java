@@ -85,7 +85,7 @@ public interface LuceneService {
    * indicates that the entire value should be stored as a single field in the index.
    */
   public void createIndex(String indexName, String regionPath, String... fields);
-  
+
   /**
    * Create a lucene index using specified analyzer per field
    * 
@@ -94,8 +94,7 @@ public interface LuceneService {
    * @param analyzerPerField A map of fields to analyzers. See {{@link #createIndex(String, String, String...)}}
    * for details on valid values for fields. Each field will be tokenized using the provided Analyzer.
    */
-  public void createIndex(String indexName, String regionPath,
-      Map<String, Analyzer> analyzerPerField);
+  public void createIndex(String indexName, String regionPath, Map<String, Analyzer> analyzerPerField);
 
   /**
    * Destroy the lucene index
@@ -105,7 +104,7 @@ public interface LuceneService {
    */
   @Deprecated
   public void destroyIndex(LuceneIndex index);
-  
+
   /**
    * Get the lucene index object specified by region name and index name
    * @param indexName index name
@@ -113,7 +112,7 @@ public interface LuceneService {
    * @return LuceneIndex object
    */
   public LuceneIndex getIndex(String indexName, String regionPath);
-  
+
   /**
    * get all the lucene indexes.
    * @return all index objects in a Collection
@@ -126,4 +125,4 @@ public interface LuceneService {
    */
   public LuceneQueryFactory createLuceneQueryFactory();
 
- }
+}

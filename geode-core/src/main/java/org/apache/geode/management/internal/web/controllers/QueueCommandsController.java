@@ -47,23 +47,24 @@ public class QueueCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.POST, value = "/async-event-queues")
   @ResponseBody
-  public String createAsyncEventQueue(@RequestParam(CliStrings.CREATE_ASYNC_EVENT_QUEUE__ID) final String asyncEventQueueId,
-                                      @RequestParam(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER) final String listener,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER_PARAM_AND_VALUE, required = false) final String[] listenerParametersValues,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__GROUP, required = false) final String[] groups,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__PARALLEL, defaultValue = "false") final Boolean parallel,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__ENABLEBATCHCONFLATION, defaultValue = "false") final Boolean enableBatchConflation,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__BATCH_SIZE, defaultValue = "100") final Integer batchSize,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__BATCHTIMEINTERVAL, defaultValue = "1000") final Integer batchTimeInterval,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__PERSISTENT, defaultValue = "false") final Boolean persistent,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISK_STORE, required = false) final String diskStore,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISKSYNCHRONOUS, defaultValue = "true") final Boolean diskSynchronous,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__FORWARD_EXPIRATION_DESTROY, defaultValue = "false") final Boolean forwardExpirationDestroy,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__MAXIMUM_QUEUE_MEMORY, defaultValue = "100") final Integer maxQueueMemory,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISPATCHERTHREADS, defaultValue = "1") final Integer dispatcherThreads,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__ORDERPOLICY, defaultValue = "KEY") final String orderPolicy,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER, required = false) final String[] gatewayEventFilters,
-                                      @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER, required = false) final String gatewaySubstitutionFilter)
+  public String createAsyncEventQueue(@RequestParam(CliStrings.CREATE_ASYNC_EVENT_QUEUE__ID)
+  final String asyncEventQueueId, @RequestParam(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER)
+  final String listener, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER_PARAM_AND_VALUE, required = false)
+  final String[] listenerParametersValues, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__GROUP, required = false)
+  final String[] groups, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__PARALLEL, defaultValue = "false")
+  final Boolean parallel, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__ENABLEBATCHCONFLATION, defaultValue = "false")
+  final Boolean enableBatchConflation, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__BATCH_SIZE, defaultValue = "100")
+  final Integer batchSize, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__BATCHTIMEINTERVAL, defaultValue = "1000")
+  final Integer batchTimeInterval, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__PERSISTENT, defaultValue = "false")
+  final Boolean persistent, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISK_STORE, required = false)
+  final String diskStore, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISKSYNCHRONOUS, defaultValue = "true")
+  final Boolean diskSynchronous, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__FORWARD_EXPIRATION_DESTROY, defaultValue = "false")
+  final Boolean forwardExpirationDestroy, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__MAXIMUM_QUEUE_MEMORY, defaultValue = "100")
+  final Integer maxQueueMemory, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__DISPATCHERTHREADS, defaultValue = "1")
+  final Integer dispatcherThreads, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__ORDERPOLICY, defaultValue = "KEY")
+  final String orderPolicy, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER, required = false)
+  final String[] gatewayEventFilters, @RequestParam(value = CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER, required = false)
+  final String gatewaySubstitutionFilter)
 
   {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.CREATE_ASYNC_EVENT_QUEUE);
@@ -72,13 +73,11 @@ public class QueueCommandsController extends AbstractCommandsController {
     command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER, listener);
 
     if (hasValue(listenerParametersValues)) {
-      command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER_PARAM_AND_VALUE, StringUtils.concat(
-        listenerParametersValues, StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__LISTENER_PARAM_AND_VALUE, StringUtils.concat(listenerParametersValues, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(groups)) {
-      command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__GROUP, StringUtils.concat(groups,
-        StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__GROUP, StringUtils.concat(groups, StringUtils.COMMA_DELIMITER));
     }
 
     command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__PARALLEL, String.valueOf(Boolean.TRUE.equals(parallel)));
@@ -114,8 +113,7 @@ public class QueueCommandsController extends AbstractCommandsController {
     }
 
     if (hasValue(gatewayEventFilters)) {
-      command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER, StringUtils.concat(
-          gatewayEventFilters, StringUtils.COMMA_DELIMITER));
+      command.addOption(CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER, StringUtils.concat(gatewayEventFilters, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(gatewaySubstitutionFilter)) {

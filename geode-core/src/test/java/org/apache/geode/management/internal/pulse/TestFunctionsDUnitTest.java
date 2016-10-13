@@ -59,8 +59,7 @@ public class TestFunctionsDUnitTest extends ManagementTestBase {
       @Override
       public boolean done() {
         final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service
-            .getDistributedSystemMXBean();
+        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
         if (bean != null) {
           if (bean.getNumRunningFunctions() > 0) {
             return true;
@@ -78,8 +77,7 @@ public class TestFunctionsDUnitTest extends ManagementTestBase {
     };
 
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
-    final DistributedSystemMXBean bean = getManagementService()
-        .getDistributedSystemMXBean();
+    final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
     return Integer.valueOf(bean.getNumRunningFunctions());
   }
@@ -87,22 +85,19 @@ public class TestFunctionsDUnitTest extends ManagementTestBase {
   @Test
   public void testNumOfRunningFunctions() throws Exception {
     initManagement(false);
-    VM client = managedNodeList.get(2);    
+    VM client = managedNodeList.get(2);
     client.invokeAsync(new SerializableRunnable() {
       public void run() {
-        Cache cache = getCache();        
-        Function function = new TestFunction(true,
-            TestFunction.TEST_FUNCTION_RUNNING_FOR_LONG_TIME);
-        Execution execution = FunctionService.onMember(cache
-            .getDistributedSystem().getDistributedMember());
+        Cache cache = getCache();
+        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RUNNING_FOR_LONG_TIME);
+        Execution execution = FunctionService.onMember(cache.getDistributedSystem().getDistributedMember());
         for (int i = 0; i < 100; i++) {
           execution.execute(function);
         }
       }
     });
     Integer numOfRunningFunctions = (Integer) managingNode.invoke(() -> TestFunctionsDUnitTest.getNumOfRunningFunction());
-    LogWriterUtils.getLogWriter().info(
-        "TestNumOfFunctions numOfRunningFunctions= " + numOfRunningFunctions);
+    LogWriterUtils.getLogWriter().info("TestNumOfFunctions numOfRunningFunctions= " + numOfRunningFunctions);
     assertTrue(numOfRunningFunctions > 0 ? true : false);
   }
 

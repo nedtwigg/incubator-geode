@@ -51,8 +51,7 @@ public class RegisterInterestList66Test {
   private static final String REGION_NAME = "region1";
   private static final String KEY = "key1";
   private static final byte[] DURABLE = new byte[8];
-  private static final byte[] DATA_POLICY = new byte[]{0x01,0x01};
-
+  private static final byte[] DATA_POLICY = new byte[] { 0x01, 0x01 };
 
   @Mock
   private SecurityService securityService;
@@ -90,7 +89,6 @@ public class RegisterInterestList66Test {
   public void setUp() throws Exception {
     this.registerInterestList66 = new RegisterInterestList66();
     MockitoAnnotations.initMocks(this);
-
 
     when(this.authzRequest.registerInterestListAuthorize(eq(REGION_NAME), any(), any())).thenReturn(this.registerInterestOperationContext);
 
@@ -168,7 +166,7 @@ public class RegisterInterestList66Test {
 
     this.registerInterestList66.cmdExecute(this.message, this.serverConnection, 0);
 
-    verify(this.authzRequest).registerInterestListAuthorize(eq(REGION_NAME),any(), any());
+    verify(this.authzRequest).registerInterestListAuthorize(eq(REGION_NAME), any(), any());
     verify(this.chunkedResponseMessage).sendChunk(this.serverConnection);
   }
 

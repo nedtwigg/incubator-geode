@@ -34,8 +34,7 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
  * 
  *
  */
-public class ExportDataFunction extends FunctionAdapter implements
-    InternalEntity {
+public class ExportDataFunction extends FunctionAdapter implements InternalEntity {
 
   /**
    * 
@@ -43,13 +42,13 @@ public class ExportDataFunction extends FunctionAdapter implements
   private static final long serialVersionUID = 1L;
 
   public void execute(FunctionContext context) {
-    final String [] args = (String [])context.getArguments();
+    final String[] args = (String[]) context.getArguments();
     final String regionName = args[0];
     final String fileName = args[1];
-    
+
     try {
       Cache cache = CacheFactory.getAnyInstance();
-      Region<?,?> region = cache.getRegion(regionName);
+      Region<?, ?> region = cache.getRegion(regionName);
       String hostName = cache.getDistributedSystem().getDistributedMember().getHost();
       if (region != null) {
         RegionSnapshotService<?, ?> snapshotService = region.getSnapshotService();
@@ -60,7 +59,7 @@ public class ExportDataFunction extends FunctionAdapter implements
       } else {
         throw new IllegalArgumentException(CliStrings.format(CliStrings.REGION_NOT_FOUND, regionName));
       }
-      
+
     } catch (Exception e) {
       context.getResultSender().sendException(e);
     }

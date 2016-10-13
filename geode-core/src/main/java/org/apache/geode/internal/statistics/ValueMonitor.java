@@ -53,13 +53,13 @@ import org.apache.geode.internal.CopyOnWriteHashSet;
  * @see org.apache.geode.Statistics
  */
 public final class ValueMonitor extends StatisticsMonitor {
-  
+
   public enum Type {
     CHANGE, MATCH, DIFFER
   }
-  
+
   private final CopyOnWriteHashSet<Statistics> statistics = new CopyOnWriteHashSet<Statistics>();
-  
+
   public ValueMonitor() {
     super();
   }
@@ -69,13 +69,13 @@ public final class ValueMonitor extends StatisticsMonitor {
     super.addStatistic(statId);
     return this;
   }
-  
+
   @Override
   public ValueMonitor removeStatistic(StatisticId statId) {
     super.removeStatistic(statId);
     return this;
   }
-  
+
   public ValueMonitor addStatistics(Statistics statistics) {
     if (statistics == null) {
       throw new NullPointerException("Statistics is null");
@@ -83,7 +83,7 @@ public final class ValueMonitor extends StatisticsMonitor {
     this.statistics.add(statistics);
     return this;
   }
-  
+
   public ValueMonitor removeStatistics(Statistics statistics) {
     if (statistics == null) {
       throw new NullPointerException("Statistics is null");
@@ -96,7 +96,7 @@ public final class ValueMonitor extends StatisticsMonitor {
     super.monitor(millisTimeStamp, resourceInstances);
     monitorStatistics(millisTimeStamp, resourceInstances);
   }
-  
+
   protected void monitorStatistics(long millisTimeStamp, List<ResourceInstance> resourceInstances) {
     if (!this.statistics.isEmpty()) {
       Map<StatisticId, Number> stats = new HashMap<StatisticId, Number>();
@@ -107,7 +107,7 @@ public final class ValueMonitor extends StatisticsMonitor {
           int[] updatedStats = resource.getUpdatedStats();
           for (int i = 0; i < updatedStats.length; i++) {
             int idx = updatedStats[i];
-            StatisticDescriptorImpl sdi = (StatisticDescriptorImpl)sds[idx];
+            StatisticDescriptorImpl sdi = (StatisticDescriptorImpl) sds[idx];
             SimpleStatisticId statId = new SimpleStatisticId(sdi, resource.getStatistics());
             long rawbits = resource.getLatestStatValues()[idx];
             stats.put(statId, sdi.getNumberForRawBits(rawbits));
@@ -115,8 +115,7 @@ public final class ValueMonitor extends StatisticsMonitor {
         }
       }
       if (!stats.isEmpty()) {
-        MapBasedStatisticsNotification notification = new MapBasedStatisticsNotification(
-            millisTimeStamp, StatisticsNotification.Type.VALUE_CHANGED, stats);
+        MapBasedStatisticsNotification notification = new MapBasedStatisticsNotification(millisTimeStamp, StatisticsNotification.Type.VALUE_CHANGED, stats);
         notifyListeners(notification);
       }
     }

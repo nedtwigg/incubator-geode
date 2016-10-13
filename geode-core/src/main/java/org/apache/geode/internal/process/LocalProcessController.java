@@ -52,14 +52,13 @@ import com.sun.tools.attach.VirtualMachine;
 public final class LocalProcessController {
 
   /** Property name for the JMX local connector address (from sun.management.Agent) */
-  private static final String LOCAL_CONNECTOR_ADDRESS_PROP =
-      "com.sun.management.jmxremote.localConnectorAddress";
+  private static final String LOCAL_CONNECTOR_ADDRESS_PROP = "com.sun.management.jmxremote.localConnectorAddress";
 
   private final int pid;
-  
+
   protected JMXConnector jmxc;
   protected MBeanServerConnection server;
-  
+
   /**
    * Constructs an instance for controlling a local process.
    * 
@@ -73,7 +72,7 @@ public final class LocalProcessController {
     }
     this.pid = pid;
   }
-  
+
   /**
    * Constructs an instance for controlling a local process.
    * 
@@ -87,7 +86,7 @@ public final class LocalProcessController {
   public LocalProcessController(final File pidFile) throws IOException {
     this(readPid(pidFile));
   }
-  
+
   /**
    * Constructs an instance for controlling a local process.
    * 
@@ -103,7 +102,7 @@ public final class LocalProcessController {
   public LocalProcessController(final File directory, final String pidFilename) throws IOException {
     this(readPid(directory, pidFilename));
   }
-  
+
   /**
    * Connects to the process and tells it to shut down.
    * 
@@ -118,11 +117,10 @@ public final class LocalProcessController {
    * @throws MBeanInvocationFailedException if failed to invoke stop on the MBean for any reason
    * @throws PidUnavailableException if parsing the pid from the RuntimeMXBean name fails
    */
-  public void stop(final ObjectName namePattern, final String pidAttribute, final String stopMethod, final String[] attributes, final Object[] values) 
-      throws ConnectionFailedException, IOException, MBeanInvocationFailedException, PidUnavailableException {
+  public void stop(final ObjectName namePattern, final String pidAttribute, final String stopMethod, final String[] attributes, final Object[] values) throws ConnectionFailedException, IOException, MBeanInvocationFailedException, PidUnavailableException {
     invokeOperationOnTargetMBean(namePattern, pidAttribute, stopMethod, attributes, values);
   }
-  
+
   /**
    * Connects to the process and acquires its status.
    * 
@@ -139,11 +137,10 @@ public final class LocalProcessController {
    * @throws MBeanInvocationFailedException if failed to invoke stop on the MBean for any reason
    * @throws PidUnavailableException if parsing the pid from the RuntimeMXBean name fails
    */
-  public String status(final ObjectName namePattern, final String pidAttribute, final String statusMethod, final String[] attributes, final Object[] values)
-      throws ConnectionFailedException, IOException, MBeanInvocationFailedException, PidUnavailableException {
+  public String status(final ObjectName namePattern, final String pidAttribute, final String statusMethod, final String[] attributes, final Object[] values) throws ConnectionFailedException, IOException, MBeanInvocationFailedException, PidUnavailableException {
     return invokeOperationOnTargetMBean(namePattern, pidAttribute, statusMethod, attributes, values).toString();
   }
-  
+
   /**
    * Connects to the process and use its MBean to stop it.
    * 
@@ -158,23 +155,20 @@ public final class LocalProcessController {
    * @throws MBeanInvocationFailedException if failed to invoke stop on the MBean for any reason
    * @throws PidUnavailableException if parsing the pid from the RuntimeMXBean name fails
    */
-  private Object invokeOperationOnTargetMBean(final ObjectName namePattern, final String pidAttribute, final String methodName, final String[] attributes, final Object[] values)
-      throws ConnectionFailedException, IOException, MBeanInvocationFailedException, PidUnavailableException {
+  private Object invokeOperationOnTargetMBean(final ObjectName namePattern, final String pidAttribute, final String methodName, final String[] attributes, final Object[] values) throws ConnectionFailedException, IOException, MBeanInvocationFailedException, PidUnavailableException {
     ObjectName objectName = namePattern;
     connect();
     try {
       final QueryExp constraint = buildQueryExp(pidAttribute, attributes, values);
       final Set<ObjectName> mbeanNames = this.server.queryNames(namePattern, constraint);
-      
+
       if (mbeanNames.isEmpty()) {
-        throw new MBeanInvocationFailedException("Failed to find mbean matching '" 
-            + namePattern + "' with attribute '" + pidAttribute + "' of value '" + this.pid + "'");
+        throw new MBeanInvocationFailedException("Failed to find mbean matching '" + namePattern + "' with attribute '" + pidAttribute + "' of value '" + this.pid + "'");
       }
       if (mbeanNames.size() > 1) {
-        throw new MBeanInvocationFailedException("Found more than one mbean matching '" 
-            + namePattern + "' with attribute '" + pidAttribute + "' of value '" + this.pid + "'");
+        throw new MBeanInvocationFailedException("Found more than one mbean matching '" + namePattern + "' with attribute '" + pidAttribute + "' of value '" + this.pid + "'");
       }
-      
+
       objectName = mbeanNames.iterator().next();
       return invoke(objectName, methodName);
     } catch (InstanceNotFoundException e) {
@@ -187,7 +181,7 @@ public final class LocalProcessController {
       disconnect();
     }
   }
-  
+
   /**
    * Returns the process id (pid) of the process.
    * 
@@ -196,7 +190,7 @@ public final class LocalProcessController {
   public int getProcessId() {
     return this.pid;
   }
-  
+
   /**
    * Connects to the JMX agent in the local process.
    * 
@@ -212,7 +206,7 @@ public final class LocalProcessController {
       throw new ConnectionFailedException("Failed to connect to process '" + this.pid + "'", e);
     }
   }
-  
+
   /**
    * Disconnects from the JMX agent in the local process.
    */
@@ -227,7 +221,7 @@ public final class LocalProcessController {
     }
     this.jmxc = null;
   }
-  
+
   /**
    * Ensures that the other process identifies itself by the same pid used by 
    * this stopper to connect to that process. NOT USED EXCEPT IN TEST.
@@ -239,8 +233,7 @@ public final class LocalProcessController {
    * @throws PidUnavailableException if parsing the pid from the RuntimeMXBean name fails
    */
   boolean checkPidMatches() throws IllegalStateException, IOException, PidUnavailableException {
-    final RuntimeMXBean proxy = ManagementFactory.newPlatformMXBeanProxy(
-        this.server, ManagementFactory.RUNTIME_MXBEAN_NAME, RuntimeMXBean.class);
+    final RuntimeMXBean proxy = ManagementFactory.newPlatformMXBeanProxy(this.server, ManagementFactory.RUNTIME_MXBEAN_NAME, RuntimeMXBean.class);
     final int remotePid = ProcessUtils.identifyPid(proxy.getName());
     if (remotePid != this.pid) {
       throw new IllegalStateException("Process has different pid '" + remotePid + "' than expected pid '" + this.pid + "'");
@@ -265,26 +258,24 @@ public final class LocalProcessController {
     try {
       Properties agentProps = vm.getAgentProperties();
       connectorAddress = (String) agentProps.get(LOCAL_CONNECTOR_ADDRESS_PROP);
-      
+
       if (connectorAddress == null) {
         // need to load the management-agent and get the address
-        
+
         final String javaHome = vm.getSystemProperties().getProperty("java.home");
-        
+
         // assume java.home is JDK and look in JRE for agent
-        String managementAgentPath = javaHome + File.separator + "jre" 
-            + File.separator + "lib" + File.separator + "management-agent.jar";
+        String managementAgentPath = javaHome + File.separator + "jre" + File.separator + "lib" + File.separator + "management-agent.jar";
         File managementAgent = new File(managementAgentPath);
         if (!managementAgent.exists()) {
           // assume java.home is JRE and look in lib for agent
-          managementAgentPath = javaHome + File.separator +  "lib" 
-              + File.separator + "management-agent.jar";
+          managementAgentPath = javaHome + File.separator + "lib" + File.separator + "management-agent.jar";
           managementAgent = new File(managementAgentPath);
           if (!managementAgent.exists()) {
             throw new IOException("JDK management agent not found");
           }
         }
-  
+
         // attempt to load the management agent
         managementAgentPath = managementAgent.getCanonicalPath();
         try {
@@ -298,7 +289,7 @@ public final class LocalProcessController {
           ioe.initCause(e);
           throw ioe;
         }
-  
+
         // get the connector address
         agentProps = vm.getAgentProperties();
         connectorAddress = (String) agentProps.get(LOCAL_CONNECTOR_ADDRESS_PROP);
@@ -306,15 +297,15 @@ public final class LocalProcessController {
     } finally {
       vm.detach();
     }
-    
+
     if (connectorAddress == null) {
       // should never reach here
       throw new IOException("Failed to find address to attach to process");
     }
-    
+
     return new JMXServiceURL(connectorAddress);
   }
-  
+
   /**
    * Builds the QueryExp used to identify the target MBean.
    * 
@@ -328,17 +319,13 @@ public final class LocalProcessController {
     final QueryExp optionalAttributes = buildOptionalQueryExp(attributes, values);
     QueryExp constraint;
     if (optionalAttributes != null) {
-      constraint = Query.and(optionalAttributes, Query.eq(
-        Query.attr(pidAttribute),
-        Query.value(this.pid)));
+      constraint = Query.and(optionalAttributes, Query.eq(Query.attr(pidAttribute), Query.value(this.pid)));
     } else {
-      constraint = Query.eq(
-          Query.attr(pidAttribute),
-          Query.value(this.pid));
+      constraint = Query.eq(Query.attr(pidAttribute), Query.value(this.pid));
     }
     return constraint;
   }
-  
+
   /**
    * Builds an optional QueryExp to aid in matching the correct MBean using 
    * additional attributes with the specified values. Returns null if no
@@ -353,34 +340,22 @@ public final class LocalProcessController {
     QueryExp queryExp = null;
     for (int i = 0; i < attributes.length; i++) {
       if (values[i] instanceof Boolean) {
-        if (queryExp == null) { 
-          queryExp = Query.eq(
-              Query.attr(attributes[i]), 
-              Query.value(((Boolean) values[i])));
+        if (queryExp == null) {
+          queryExp = Query.eq(Query.attr(attributes[i]), Query.value(((Boolean) values[i])));
         } else {
-          queryExp = Query.and(queryExp, 
-              Query.eq(Query.attr(attributes[i]), 
-              Query.value(((Boolean) values[i]))));
+          queryExp = Query.and(queryExp, Query.eq(Query.attr(attributes[i]), Query.value(((Boolean) values[i]))));
         }
       } else if (values[i] instanceof Number) {
-        if (queryExp == null) { 
-          queryExp = Query.eq(
-              Query.attr(attributes[i]), 
-              Query.value((Number)values[i]));
+        if (queryExp == null) {
+          queryExp = Query.eq(Query.attr(attributes[i]), Query.value((Number) values[i]));
         } else {
-          queryExp = Query.and(queryExp, 
-              Query.eq(Query.attr(attributes[i]), 
-              Query.value((Number)values[i])));
+          queryExp = Query.and(queryExp, Query.eq(Query.attr(attributes[i]), Query.value((Number) values[i])));
         }
       } else if (values[i] instanceof String) {
-        if (queryExp == null) { 
-          queryExp = Query.eq(
-              Query.attr(attributes[i]), 
-              Query.value((String)values[i]));
+        if (queryExp == null) {
+          queryExp = Query.eq(Query.attr(attributes[i]), Query.value((String) values[i]));
         } else {
-          queryExp = Query.and(queryExp, 
-              Query.eq(Query.attr(attributes[i]), 
-              Query.value((String)values[i])));
+          queryExp = Query.and(queryExp, Query.eq(Query.attr(attributes[i]), Query.value((String) values[i])));
         }
       }
     }
@@ -400,9 +375,8 @@ public final class LocalProcessController {
    * @throws MBeanException if the MBean operation throws an exception
    * @throws ReflectionException if the MBean does not have the specified operation
    */
-  private Object invoke(final ObjectName objectName, final String method) 
-      throws InstanceNotFoundException, IOException, MBeanException, ReflectionException  {
-    return this.server.invoke(objectName, method, new Object[]{}, new String[]{});
+  private Object invoke(final ObjectName objectName, final String method) throws InstanceNotFoundException, IOException, MBeanException, ReflectionException {
+    return this.server.invoke(objectName, method, new Object[] {}, new String[] {});
   }
 
   /**
@@ -431,11 +405,9 @@ public final class LocalProcessController {
       }
 
       return pid;
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       throw new IllegalArgumentException("Invalid pid '" + pidValue + "' found in " + pidFile);
-    }
-    finally {
+    } finally {
       IOUtils.close(fileReader);
     }
   }

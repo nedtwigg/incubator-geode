@@ -23,30 +23,30 @@ import java.util.Date;
 import org.apache.geode.cache.EntryOperation;
 import org.apache.geode.cache.PartitionResolver;
 
-public class MyDate2 extends Date implements PartitionResolver{
+public class MyDate2 extends Date implements PartitionResolver {
 
   public MyDate2(long time) {
     super(time);
   }
-  
+
   public String getName() {
     return "MyDate2";
   }
 
   public Serializable getRoutingObject(EntryOperation opDetails) {
-    Date date = (Date)opDetails.getKey();
+    Date date = (Date) opDetails.getKey();
     Calendar cal = Calendar.getInstance();
     cal.setTime(date);
     int month = cal.get(Calendar.MONTH);
     return month;
-  
+
   }
 
   public void close() {
     // TODO Auto-generated method stub
   }
-  
-  public String toString(){
+
+  public String toString() {
     return "MyDate2";
   }
 }

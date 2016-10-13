@@ -25,8 +25,7 @@ import org.apache.geode.distributed.DistributedMember;
  * MBeans to use this as a remotable return type.
  * 
  */
-public class PartitionMemberInfoImpl 
-implements InternalPartitionDetails, Serializable {
+public class PartitionMemberInfoImpl implements InternalPartitionDetails, Serializable {
 
   private static final long serialVersionUID = 8245020687604034289L;
   private final DistributedMember distributedMember;
@@ -37,11 +36,7 @@ implements InternalPartitionDetails, Serializable {
   private final transient PRLoad prLoad; // do not serialize for JMX mbeans
   private final transient long[] bucketSizes; // do not serialize for JMX mbeans
 
-  public PartitionMemberInfoImpl(DistributedMember distributedMember,
-                             long configuredMaxMemory,
-                             long size,
-                             int bucketCount,
-                             int primaryCount) {
+  public PartitionMemberInfoImpl(DistributedMember distributedMember, long configuredMaxMemory, long size, int bucketCount, int primaryCount) {
     this.distributedMember = distributedMember;
     this.configuredMaxMemory = configuredMaxMemory;
     this.size = size;
@@ -50,16 +45,10 @@ implements InternalPartitionDetails, Serializable {
     this.prLoad = null;
     this.bucketSizes = null;
   }
-  
-  public PartitionMemberInfoImpl(DistributedMember distributedMember,
-                             long configuredMaxMemory,
-                             long size,
-                             int bucketCount,
-                             int primaryCount,
-                             PRLoad prLoad,
-                             long[] bucketSizes) {
+
+  public PartitionMemberInfoImpl(DistributedMember distributedMember, long configuredMaxMemory, long size, int bucketCount, int primaryCount, PRLoad prLoad, long[] bucketSizes) {
     //TODO rebalance disabling this unit bug 39868 is fixed. 
-//    Assert.assertTrue(size >= 0);
+    //    Assert.assertTrue(size >= 0);
     this.distributedMember = distributedMember;
     this.configuredMaxMemory = configuredMaxMemory;
     this.size = size;
@@ -68,7 +57,7 @@ implements InternalPartitionDetails, Serializable {
     this.prLoad = prLoad;
     this.bucketSizes = bucketSizes;
   }
-  
+
   public int getBucketCount() {
     return this.bucketCount;
   }
@@ -92,18 +81,17 @@ implements InternalPartitionDetails, Serializable {
   public PRLoad getPRLoad() {
     return this.prLoad;
   }
-  
+
   public long getBucketSize(int bucketId) { // bytes
     if (this.bucketSizes == null) {
       throw new IllegalStateException(this + " has no bucketSizes");
     }
     if (bucketId < 0 || bucketId > this.bucketSizes.length) {
-      throw new IllegalArgumentException(
-          "bucketId must be between 0 and " + this.bucketSizes.length);
+      throw new IllegalArgumentException("bucketId must be between 0 and " + this.bucketSizes.length);
     }
     return this.bucketSizes[bucketId];
   }
-  
+
   /**
    * Returns the backed array of bucket bytes. Index is the BID and the value
    * is either 0 or positive. Please do not change the values! Internal use
@@ -114,7 +102,7 @@ implements InternalPartitionDetails, Serializable {
   public long[] getBucketSizes() {
     return this.bucketSizes; // bytes
   }
-  
+
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("[PartitionMemberInfoImpl: ");
@@ -129,7 +117,7 @@ implements InternalPartitionDetails, Serializable {
       if (this.bucketSizes == null) {
         sb.append("null");
       } else {
-        for (int i = 0; i < this.bucketSizes.length; i ++) {
+        for (int i = 0; i < this.bucketSizes.length; i++) {
           sb.append(this.bucketSizes[i]).append(", ");
         }
         sb.append("]");
@@ -151,14 +139,16 @@ implements InternalPartitionDetails, Serializable {
   public int hashCode() {
     return distributedMember.hashCode();
   }
+
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof PartitionMemberInfoImpl)) {
       return false;
     }
-    PartitionMemberInfoImpl o = (PartitionMemberInfoImpl)other;
+    PartitionMemberInfoImpl o = (PartitionMemberInfoImpl) other;
     return this.distributedMember.equals(o.distributedMember);
   }
+
   public int compareTo(InternalPartitionDetails other) {
     // memberId is InternalDistributedMember which implements Comparable
     return this.distributedMember.compareTo(other.getDistributedMember());

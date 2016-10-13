@@ -133,6 +133,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>char[]</code> field.
    */
   public char[] readCharArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -141,6 +142,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>boolean[]</code> field.
    */
   public boolean[] readBooleanArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -149,6 +151,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>byte[]</code> field.
    */
   public byte[] readByteArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -157,6 +160,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>short[]</code> field.
    */
   public short[] readShortArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -165,6 +169,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>int[]</code> field.
    */
   public int[] readIntArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -173,6 +178,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>long[]</code> field.
    */
   public long[] readLongArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -181,6 +187,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>float[]</code> field.
    */
   public float[] readFloatArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -188,7 +195,8 @@ public interface PdxReader {
    * @throws PdxSerializationException if deserialization of the field fails.
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>double[]</code> field.
    */
-  public double[] readDoubleArray(String fieldName) ;
+  public double[] readDoubleArray(String fieldName);
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -206,7 +214,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>Object[]</code> field.
    */
   public Object[] readObjectArray(String fieldName);
-  
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -215,7 +223,7 @@ public interface PdxReader {
    * @throws PdxFieldTypeMismatchException if the named field exists and is not a <code>byte[][]</code> field.
    */
   public byte[][] readArrayOfByteArrays(String fieldName);
-  
+
   /**
    * Reads the named field and returns its value.
    * @param fieldName the name of the field to read
@@ -233,7 +241,7 @@ public interface PdxReader {
    * @return <code>true</code> if the named field exists; otherwise <code>false</code>
    */
   public boolean hasField(String fieldName);
-  
+
   /**
    * Checks if the named field was {@link PdxWriter#markIdentityField(String) marked} as an identity field.
    * <p>Note that if no fields have been marked then all the fields are used as identity fields even though
@@ -250,7 +258,7 @@ public interface PdxReader {
    * @throws PdxSerializationException if deserialization of the field fails.
    */
   public Object readField(String fieldName);
-  
+
   /**
    * This method returns an object that represents all the unread fields which must be
    * passed to {@link PdxWriter#writeUnreadFields(PdxUnreadFields) writeUnreadFields} in the toData code.

@@ -36,7 +36,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 @Category(DistributedTest.class)
 public class DistributedSystemIdDUnitTest extends JUnit4DistributedTestCase {
-  
+
   @Override
   public void preSetUp() {
     disconnectAllFromDS(); // GEODE-558 test fails due to infection from another test
@@ -48,63 +48,63 @@ public class DistributedSystemIdDUnitTest extends JUnit4DistributedTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
-    
+
     int locatorPort = createLocator(vm0, "1");
     createSystem(vm1, "1", locatorPort);
     createSystem(vm2, "1", locatorPort);
-    
+
     checkId(vm0, 1);
     checkId(vm1, 1);
     checkId(vm2, 1);
   }
-  
+
   @Test
   public void testInfectiousId() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     int locatorPort = createLocator(vm0, "1");
     createSystem(vm1, "-1", locatorPort);
-    
+
     checkId(vm1, 1);
   }
-  
+
   @Test
   public void testMismatch() {
     IgnoredException.addIgnoredException("Rejected new system node");
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     int locatorPort = createLocator(vm0, "1");
-    
+
     try {
       createSystem(vm1, "2", locatorPort);
       fail("Should have gotten an exception");
-    } catch(Exception expected) {
+    } catch (Exception expected) {
 
     }
-    
+
     checkId(vm0, 1);
   }
-  
+
   @Test
   public void testInvalid() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
-    
+
     try {
       createLocator(vm0, "256");
       fail("Should have gotten an exception");
-    } catch(Exception expected) {
+    } catch (Exception expected) {
     }
 
     try {
       createLocator(vm0, "aardvark");
       fail("Should have gotten an exception");
-    } catch(Exception expected) {
+    } catch (Exception expected) {
     }
   }
 
@@ -121,7 +121,7 @@ public class DistributedSystemIdDUnitTest extends JUnit4DistributedTestCase {
     };
     vm.invoke(createSystem);
   }
-  
+
   private int createLocator(VM vm, final String dsId) {
     SerializableCallable createSystem = new SerializableCallable() {
       public Object call() throws Exception {
@@ -137,9 +137,9 @@ public class DistributedSystemIdDUnitTest extends JUnit4DistributedTestCase {
     };
     return (Integer) vm.invoke(createSystem);
   }
-  
+
   private void checkId(VM vm, final int dsId) {
-    
+
     SerializableCallable createSystem = new SerializableCallable() {
       public Object call() throws Exception {
         DistributionManager dm = (DistributionManager) InternalDistributedSystem.getAnyInstance().getDistributionManager();

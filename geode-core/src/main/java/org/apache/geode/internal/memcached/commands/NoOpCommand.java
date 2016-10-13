@@ -28,8 +28,7 @@ import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 public class NoOpCommand extends AbstractCommand {
 
   @Override
-  public ByteBuffer processCommand(RequestReader request, Protocol protocol,
-      Cache cache) {
+  public ByteBuffer processCommand(RequestReader request, Protocol protocol, Cache cache) {
     assert protocol == Protocol.BINARY;
     request.getRequest().position(HEADER_LENGTH);
     ByteBuffer response = request.getResponse();

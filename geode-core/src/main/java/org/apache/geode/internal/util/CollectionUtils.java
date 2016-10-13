@@ -106,7 +106,7 @@ public abstract class CollectionUtils {
    * @return the specified List if not null otherwise return an empty List.
    */
   public static <T> List<T> emptyList(final List<T> list) {
-    return (list != null ? list : Collections.<T>emptyList());
+    return (list != null ? list : Collections.<T> emptyList());
   }
 
   /**
@@ -118,7 +118,7 @@ public abstract class CollectionUtils {
    * @return the specified Set if not null otherwise return an empty Set.
    */
   public static <T> Set<T> emptySet(final Set<T> set) {
-    return (set != null ? set : Collections.<T>emptySet());
+    return (set != null ? set : Collections.<T> emptySet());
   }
 
   /**
@@ -175,7 +175,7 @@ public abstract class CollectionUtils {
    * @see org.apache.geode.internal.lang.Filter
    */
   public static <K, V> Map<K, V> removeKeys(final Map<K, V> map, final Filter<Map.Entry<K, V>> filter) {
-    for (final Iterator<Map.Entry<K, V>> mapEntries = map.entrySet().iterator(); mapEntries.hasNext(); ) {
+    for (final Iterator<Map.Entry<K, V>> mapEntries = map.entrySet().iterator(); mapEntries.hasNext();) {
       if (!filter.accept(mapEntries.next())) {
         mapEntries.remove();
       }
@@ -194,7 +194,8 @@ public abstract class CollectionUtils {
    */
   public static <K, V> Map<K, V> removeKeysWithNullValues(final Map<K, V> map) {
     return removeKeys(map, new Filter<Map.Entry<K, V>>() {
-      @Override public boolean accept(final Map.Entry<K, V> entry) {
+      @Override
+      public boolean accept(final Map.Entry<K, V> entry) {
         return (entry.getValue() != null);
       }
     });

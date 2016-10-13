@@ -81,30 +81,27 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
 
     int punePort = (Integer) puneLocator.invoke(() -> TestRemoteClusterDUnitTest.getLocatorPort());
 
-    Integer nyPort = (Integer) nyLocator.invoke(() -> WANTestBase.createFirstRemoteLocator( 12, punePort ));
+    Integer nyPort = (Integer) nyLocator.invoke(() -> WANTestBase.createFirstRemoteLocator(12, punePort));
 
-    puneSender.invoke(() -> WANTestBase.createCache( punePort ));
-    managing.invoke(() -> WANTestBase.createManagementCache( punePort ));
+    puneSender.invoke(() -> WANTestBase.createCache(punePort));
+    managing.invoke(() -> WANTestBase.createManagementCache(punePort));
     startManagingNode(managing);
 
-    puneSender.invoke(() -> WANTestBase.createSender( "pn",
-        12, true, 100, 300, false, false, null, true ));
-    managing.invoke(() -> WANTestBase.createSender( "pn", 12,
-        true, 100, 300, false, false, null, true ));
+    puneSender.invoke(() -> WANTestBase.createSender("pn", 12, true, 100, 300, false, false, null, true));
+    managing.invoke(() -> WANTestBase.createSender("pn", 12, true, 100, 300, false, false, null, true));
 
-    puneSender.invoke(() -> WANTestBase.createPartitionedRegion( getTestMethodName() + "_PR", "pn", 1, 100, false ));
-    managing.invoke(() -> WANTestBase.createPartitionedRegion(
-        getTestMethodName() + "_PR", "pn", 1, 100, false ));
+    puneSender.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "pn", 1, 100, false));
+    managing.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "pn", 1, 100, false));
 
     WANTestBase.createCacheInVMs(nyPort, nyReceiver);
     nyReceiver.invoke(() -> WANTestBase.createReceiver());
-    nyReceiver.invoke(() -> WANTestBase.createPartitionedRegion( getTestMethodName() + "_PR", null, 1, 100, false ));
+    nyReceiver.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, false));
 
     WANTestBase.startSenderInVMs("pn", puneSender, managing);
 
     // make sure all the senders are running before doing any puts
-    puneSender.invoke(() -> WANTestBase.waitForSenderRunningState( "pn" ));
-    managing.invoke(() -> WANTestBase.waitForSenderRunningState( "pn" ));
+    puneSender.invoke(() -> WANTestBase.waitForSenderRunningState("pn"));
+    managing.invoke(() -> WANTestBase.waitForSenderRunningState("pn"));
 
     checkSenderMBean(puneSender, getTestMethodName() + "_PR");
     checkSenderMBean(managing, getTestMethodName() + "_PR");
@@ -135,46 +132,39 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
    *          reference to VM
    */
   @SuppressWarnings("serial")
-  protected void checkRemoteClusterStatus(final VM vm,
-      final DistributedMember senderMember) {
-    SerializableRunnable checkProxySender = new SerializableRunnable(
-        "DS Map Size") {
+  protected void checkRemoteClusterStatus(final VM vm, final DistributedMember senderMember) {
+    SerializableRunnable checkProxySender = new SerializableRunnable("DS Map Size") {
       public void run() {
         Cache cache = GemFireCacheImpl.getInstance();
-          final WaitCriterion waitCriteria2 = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              Cache cache = GemFireCacheImpl.getInstance();
-              final ManagementService service = ManagementService
-                  .getManagementService(cache);
-              final DistributedSystemMXBean dsBean = service
-                  .getDistributedSystemMXBean();
-              if (dsBean != null) {
-                return true;
-              }
-              return false;
+        final WaitCriterion waitCriteria2 = new WaitCriterion() {
+          @Override
+          public boolean done() {
+            Cache cache = GemFireCacheImpl.getInstance();
+            final ManagementService service = ManagementService.getManagementService(cache);
+            final DistributedSystemMXBean dsBean = service.getDistributedSystemMXBean();
+            if (dsBean != null) {
+              return true;
             }
-            @Override
-            public String description() {
-              return "wait for getDistributedSystemMXBean to complete and get results";
-            }
-          };
-          Wait.waitForCriterion(waitCriteria2, 2 * 60 * 1000, 5000, true);
-          ManagementService service = ManagementService
-              .getManagementService(cache);
-          final DistributedSystemMXBean dsBean = service
-              .getDistributedSystemMXBean();
-          assertNotNull(dsBean);
-          Map<String, Boolean> dsMap = dsBean.viewRemoteClusterStatus();
-          LogWriterUtils.getLogWriter().info(
-              "Ds Map is: " + dsMap.size());
-          assertNotNull(dsMap);
-          assertEquals(true, dsMap.size() > 0 ? true : false);
-        }      
+            return false;
+          }
+
+          @Override
+          public String description() {
+            return "wait for getDistributedSystemMXBean to complete and get results";
+          }
+        };
+        Wait.waitForCriterion(waitCriteria2, 2 * 60 * 1000, 5000, true);
+        ManagementService service = ManagementService.getManagementService(cache);
+        final DistributedSystemMXBean dsBean = service.getDistributedSystemMXBean();
+        assertNotNull(dsBean);
+        Map<String, Boolean> dsMap = dsBean.viewRemoteClusterStatus();
+        LogWriterUtils.getLogWriter().info("Ds Map is: " + dsMap.size());
+        assertNotNull(dsMap);
+        assertEquals(true, dsMap.size() > 0 ? true : false);
+      }
     };
     vm.invoke(checkProxySender);
   }
-
 
   /**
    * stops a gateway sender
@@ -184,12 +174,10 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void stopGatewaySender(final VM vm) {
-    SerializableRunnable stopGatewaySender = new SerializableRunnable(
-        "Stop Gateway Sender") {
+    SerializableRunnable stopGatewaySender = new SerializableRunnable("Stop Gateway Sender") {
       public void run() {
         Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService
-            .getManagementService(cache);
+        ManagementService service = ManagementService.getManagementService(cache);
         GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
         assertNotNull(bean);
         bean.stop();
@@ -207,12 +195,10 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void startGatewaySender(final VM vm) {
-    SerializableRunnable stopGatewaySender = new SerializableRunnable(
-        "Start Gateway Sender") {
+    SerializableRunnable stopGatewaySender = new SerializableRunnable("Start Gateway Sender") {
       public void run() {
         Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService
-            .getManagementService(cache);
+        ManagementService service = ManagementService.getManagementService(cache);
         GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
         assertNotNull(bean);
         bean.start();
@@ -230,12 +216,10 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void checkReceiverMBean(final VM vm) {
-    SerializableRunnable checkMBean = new SerializableRunnable(
-        "Check Receiver MBean") {
+    SerializableRunnable checkMBean = new SerializableRunnable("Check Receiver MBean") {
       public void run() {
         Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService
-            .getManagementService(cache);
+        ManagementService service = ManagementService.getManagementService(cache);
         GatewayReceiverMXBean bean = service.getLocalGatewayReceiverMXBean();
         assertNotNull(bean);
       }
@@ -250,21 +234,17 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
    */
   @SuppressWarnings("serial")
   protected void checkSenderMBean(final VM vm, final String regionPath) {
-    SerializableRunnable checkMBean = new SerializableRunnable(
-        "Check Sender MBean") {
+    SerializableRunnable checkMBean = new SerializableRunnable("Check Sender MBean") {
       public void run() {
         Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService
-            .getManagementService(cache);
+        ManagementService service = ManagementService.getManagementService(cache);
 
         GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
         assertNotNull(bean);
         assertTrue(bean.isConnected());
 
-        ObjectName regionBeanName = service.getRegionMBeanName(cache
-            .getDistributedSystem().getDistributedMember(), "/" + regionPath);
-        RegionMXBean rBean = service.getMBeanInstance(regionBeanName,
-            RegionMXBean.class);
+        ObjectName regionBeanName = service.getRegionMBeanName(cache.getDistributedSystem().getDistributedMember(), "/" + regionPath);
+        RegionMXBean rBean = service.getMBeanInstance(regionBeanName, RegionMXBean.class);
         assertTrue(rBean.isGatewayEnabled());
 
       }

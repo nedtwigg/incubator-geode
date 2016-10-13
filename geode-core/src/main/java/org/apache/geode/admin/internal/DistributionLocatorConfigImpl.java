@@ -32,16 +32,14 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
  *
  * @since GemFire 4.0
  */
-public class DistributionLocatorConfigImpl 
-  extends ManagedEntityConfigImpl 
-  implements DistributionLocatorConfig {
+public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl implements DistributionLocatorConfig {
 
   /** The minimum networking port (0) */
   public static final int MIN_PORT = 0;
 
   /** The maximum networking port (65535) */
   public static final int MAX_PORT = 65535;
-  
+
   //////////////////////  Instance Fields  //////////////////////
 
   /** The port on which this locator listens */
@@ -49,7 +47,7 @@ public class DistributionLocatorConfigImpl
 
   /** The address to bind to on a multi-homed host */
   private String bindAddress;
-  
+
   /** The properties used to configure the DistributionLocator's
       DistributedSystem */
   private Properties dsProperties;
@@ -67,22 +65,19 @@ public class DistributionLocatorConfigImpl
    *
    * @return <code>null</code> if the locator cannot be contacted
    */
-  static DistributionLocatorConfig
-    createConfigFor(String host, int port, InetAddress bindAddress) {
+  static DistributionLocatorConfig createConfigFor(String host, int port, InetAddress bindAddress) {
     TcpClient client = new TcpClient();
     String[] info = null;
     if (bindAddress != null) {
       info = client.getInfo(bindAddress, port);
-    }
-    else {
+    } else {
       info = client.getInfo(InetAddressUtil.toInetAddress(host), port);
     }
     if (info == null) {
       return null;
     }
 
-    DistributionLocatorConfigImpl config =
-      new DistributionLocatorConfigImpl();
+    DistributionLocatorConfigImpl config = new DistributionLocatorConfigImpl();
     config.setHost(host);
     config.setPort(port);
     if (bindAddress != null) {
@@ -142,11 +137,11 @@ public class DistributionLocatorConfigImpl
     this.bindAddress = bindAddress;
     configChanged();
   }
-  
+
   public void setDistributedSystemProperties(Properties props) {
     this.dsProperties = props;
   }
-  
+
   public Properties getDistributedSystemProperties() {
     return this.dsProperties;
   }
@@ -156,11 +151,10 @@ public class DistributionLocatorConfigImpl
     super.validate();
 
     if (port < MIN_PORT || port > MAX_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.DistributionLocatorConfigImpl_PORT_0_MUST_BE_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] {Integer.valueOf(port), Integer.valueOf(MIN_PORT), Integer.valueOf(MAX_PORT)}));
+      throw new IllegalArgumentException(LocalizedStrings.DistributionLocatorConfigImpl_PORT_0_MUST_BE_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { Integer.valueOf(port), Integer.valueOf(MIN_PORT), Integer.valueOf(MAX_PORT) }));
     }
 
-    if (this.bindAddress != null &&
-        InetAddressUtil.validateHost(this.bindAddress) == null) {
+    if (this.bindAddress != null && InetAddressUtil.validateHost(this.bindAddress) == null) {
       throw new IllegalArgumentException(LocalizedStrings.DistributionLocatorConfigImpl_INVALID_HOST_0.toLocalizedString(this.bindAddress));
     }
   }
@@ -175,8 +169,7 @@ public class DistributionLocatorConfigImpl
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    DistributionLocatorConfigImpl clone =
-      (DistributionLocatorConfigImpl) super.clone();
+    DistributionLocatorConfigImpl clone = (DistributionLocatorConfigImpl) super.clone();
     clone.locator = null;
     return clone;
   }

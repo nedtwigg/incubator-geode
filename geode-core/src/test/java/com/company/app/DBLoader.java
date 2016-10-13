@@ -28,35 +28,33 @@ import org.apache.geode.cache.*;
 public class DBLoader implements CacheLoader, Declarable {
 
   private Properties props = new Properties();
-  
-  public Object load(LoaderHelper helper)
-    throws CacheLoaderException {
+
+  public Object load(LoaderHelper helper) throws CacheLoaderException {
 
     throw new UnsupportedOperationException("I do NOTHING");
   }
 
   public void init(java.util.Properties props) {
-    this.props = props; 
+    this.props = props;
   }
 
   public void close() {
   }
 
-  public boolean equals(Object obj)
-  {
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
 
-    if (! (obj instanceof DBLoader)) {
+    if (!(obj instanceof DBLoader)) {
       return false;
     }
-    
+
     DBLoader other = (DBLoader) obj;
-    if (! this.props.equals(other.props)) {
+    if (!this.props.equals(other.props)) {
       return false;
     }
-    
+
     return true;
   }
 

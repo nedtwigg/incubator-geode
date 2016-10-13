@@ -46,7 +46,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
    * @since GemFire 5.5
    */
   public static final String VERSION_LATEST = CacheXml.VERSION_1_0;
-  
+
   /**
    * @deprecated As of 8.1 use {@link #GEODE_NAMESPACE}
    */
@@ -86,7 +86,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
    * @since GemFire 8.1
    */
   public static final String LATEST_SCHEMA_LOCATION = CacheXml.SCHEMA_1_0_LOCATION;
-  
+
   /**
    * Location of the latest DTD file for Gemfire
    * 
@@ -101,14 +101,14 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
    * @since GemFire 8.1
    */
   public static final String VERSION_8_1 = "8.1";
-  
+
   /**
    * Version string for Geode 1.0
    * 
    * @since Geode 1.0
    */
   public static final String VERSION_1_0 = "1.0";
-  
+
   /**
    * The location of the GemFire 8.1 schema file.
    * 
@@ -126,144 +126,111 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   /** Version string for GemFire 8.0 */
   public static final String VERSION_8_0 = "8_0";
   /** The location of the GemFire 8.0 DTD file */
-  protected static final String DTD_8_0_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache8_0.dtd";
+  protected static final String DTD_8_0_LOCATION = "/org/apache/geode/cache/doc-files/cache8_0.dtd";
   /** The URL for the 8.0 DTD */
-  protected static final String SYSTEM_ID_8_0 =
-    "http://www.gemstone.com/dtd/cache8_0.dtd";
+  protected static final String SYSTEM_ID_8_0 = "http://www.gemstone.com/dtd/cache8_0.dtd";
   /** The public ID for the 8.0 DTD */
-  protected static final String PUBLIC_ID_8_0 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 8.0//EN";
+  protected static final String PUBLIC_ID_8_0 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 8.0//EN";
 
-//---------------------------------
+  //---------------------------------
   /** Version string for GemFire 7.0 */
   public static final String VERSION_7_0 = "7_0";
   /** The location of the GemFire 7.0 DTD file */
-  protected static final String DTD_7_0_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache7_0.dtd";
+  protected static final String DTD_7_0_LOCATION = "/org/apache/geode/cache/doc-files/cache7_0.dtd";
   /** The URL for the 7.0 DTD */
-  protected static final String SYSTEM_ID_7_0 =
-    "http://www.gemstone.com/dtd/cache7_0.dtd";
+  protected static final String SYSTEM_ID_7_0 = "http://www.gemstone.com/dtd/cache7_0.dtd";
   /** The public ID for the 7.0 DTD */
-  protected static final String PUBLIC_ID_7_0 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 7.0//EN";
-  
+  protected static final String PUBLIC_ID_7_0 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 7.0//EN";
+
   //---------------------------------
   /** Version string for GemFire 6.6 */
   public static final String VERSION_6_6 = "6_6";
   /** The location of the GemFire 6.6 DTD file */
-  protected static final String DTD_6_6_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache6_6.dtd";
+  protected static final String DTD_6_6_LOCATION = "/org/apache/geode/cache/doc-files/cache6_6.dtd";
   /** The URL for the 6.6 DTD */
-  protected static final String SYSTEM_ID_6_6 =
-    "http://www.gemstone.com/dtd/cache6_6.dtd";
+  protected static final String SYSTEM_ID_6_6 = "http://www.gemstone.com/dtd/cache6_6.dtd";
   /** The public ID for the 6.6 DTD */
-  protected static final String PUBLIC_ID_6_6 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.6//EN";
-  
+  protected static final String PUBLIC_ID_6_6 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.6//EN";
+
   //---------------------------------
   /** Version string for GemFire 6.5 */
   public static final String VERSION_6_5 = "6_5";
   /** The location of the GemFire 6.5 DTD file */
-  protected static final String DTD_6_5_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache6_5.dtd";
+  protected static final String DTD_6_5_LOCATION = "/org/apache/geode/cache/doc-files/cache6_5.dtd";
   /** The URL for the 6.5 DTD */
-  protected static final String SYSTEM_ID_6_5 =
-    "http://www.gemstone.com/dtd/cache6_5.dtd";
+  protected static final String SYSTEM_ID_6_5 = "http://www.gemstone.com/dtd/cache6_5.dtd";
   /** The public ID for the 6.5 DTD */
-  protected static final String PUBLIC_ID_6_5 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.5//EN";
+  protected static final String PUBLIC_ID_6_5 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.5//EN";
 
   //---------------------------------
   /** Version string for GemFire 6.1 */
   public static final String VERSION_6_1 = "6_1";
   /** The location of the GemFire 6.1 DTD file */
-  protected static final String DTD_6_1_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache6_1.dtd";
+  protected static final String DTD_6_1_LOCATION = "/org/apache/geode/cache/doc-files/cache6_1.dtd";
   /** The URL for the 6.1 DTD */
-  protected static final String SYSTEM_ID_6_1 =
-    "http://www.gemstone.com/dtd/cache6_1.dtd";
+  protected static final String SYSTEM_ID_6_1 = "http://www.gemstone.com/dtd/cache6_1.dtd";
   /** The public ID for the 6.1 DTD */
-  protected static final String PUBLIC_ID_6_1 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.1//EN";
+  protected static final String PUBLIC_ID_6_1 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.1//EN";
 
   //---------------------------------
   /** Version string for GemFire 6.0 */
   public static final String VERSION_6_0 = "6_0";
   /** The location of the GemFire 6.0 DTD file */
-  protected static final String DTD_6_0_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache6_0.dtd";
+  protected static final String DTD_6_0_LOCATION = "/org/apache/geode/cache/doc-files/cache6_0.dtd";
   /** The URL for the 6.0 DTD */
-  protected static final String SYSTEM_ID_6_0 =
-    "http://www.gemstone.com/dtd/cache6_0.dtd";
+  protected static final String SYSTEM_ID_6_0 = "http://www.gemstone.com/dtd/cache6_0.dtd";
   /** The public ID for the 6.0 DTD */
-  protected static final String PUBLIC_ID_6_0 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.0//EN";
+  protected static final String PUBLIC_ID_6_0 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 6.0//EN";
 
   // ---------------------------------
   /** Version string for GemFire 5.8 */
   public static final String VERSION_5_8 = "5_8";
   /** The location of the GemFire 5.8 DTD file */
-  protected static final String DTD_5_8_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache5_8.dtd";
+  protected static final String DTD_5_8_LOCATION = "/org/apache/geode/cache/doc-files/cache5_8.dtd";
   /** The URL for the 5.8 DTD */
-  protected static final String SYSTEM_ID_5_8 =
-    "http://www.gemstone.com/dtd/cache5_8.dtd";
+  protected static final String SYSTEM_ID_5_8 = "http://www.gemstone.com/dtd/cache5_8.dtd";
   /** The public ID for the 5.8 DTD */
-  protected static final String PUBLIC_ID_5_8 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.8//EN";
+  protected static final String PUBLIC_ID_5_8 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.8//EN";
 
   // ---------------------------------
   /** Version string for GemFire 5.7 */
   public static final String VERSION_5_7 = "5_7";
   /** The location of the GemFire 5.7 DTD file */
-  protected static final String DTD_5_7_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache5_7.dtd";
+  protected static final String DTD_5_7_LOCATION = "/org/apache/geode/cache/doc-files/cache5_7.dtd";
   /** The URL for the 5.7 DTD */
-  protected static final String SYSTEM_ID_5_7 =
-    "http://www.gemstone.com/dtd/cache5_7.dtd";
+  protected static final String SYSTEM_ID_5_7 = "http://www.gemstone.com/dtd/cache5_7.dtd";
   /** The public ID for the 5.7 DTD */
-  protected static final String PUBLIC_ID_5_7 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.7//EN";
+  protected static final String PUBLIC_ID_5_7 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.7//EN";
 
   // ---------------------------------
   /** Version string for GemFire 5.5 */
   public static final String VERSION_5_5 = "5_5";
   /** The location of the GemFire 5.5 DTD file */
-  protected static final String DTD_5_5_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache5_5.dtd";
+  protected static final String DTD_5_5_LOCATION = "/org/apache/geode/cache/doc-files/cache5_5.dtd";
   /** The URL for the 5.5 DTD */
-  protected static final String SYSTEM_ID_5_5 =
-    "http://www.gemstone.com/dtd/cache5_5.dtd";
+  protected static final String SYSTEM_ID_5_5 = "http://www.gemstone.com/dtd/cache5_5.dtd";
   /** The public ID for the 5.5 DTD */
-  protected static final String PUBLIC_ID_5_5 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.5//EN";
+  protected static final String PUBLIC_ID_5_5 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.5//EN";
 
   // ---------------------------------
   /** Version string for GemFire 5.1 */
   public static final String VERSION_5_1 = "5_1";
   /** The location of the GemFire 5.1 DTD file */
-  protected static final String DTD_5_1_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache5_1.dtd";
+  protected static final String DTD_5_1_LOCATION = "/org/apache/geode/cache/doc-files/cache5_1.dtd";
   /** The URL for the 5.1 DTD */
-  protected static final String SYSTEM_ID_5_1 =
-    "http://www.gemstone.com/dtd/cache5_1.dtd";
+  protected static final String SYSTEM_ID_5_1 = "http://www.gemstone.com/dtd/cache5_1.dtd";
   /** The public ID for the 5.1 DTD */
-  protected static final String PUBLIC_ID_5_1 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.1//EN";
+  protected static final String PUBLIC_ID_5_1 = "-//GemStone Systems, Inc.//GemFire Declarative Cache 5.1//EN";
 
   // ---------------------------------
   /** Version string for GemFire 5.0 */
   public static final String VERSION_5_0 = "5_0";
   /** The location of the GemFire 5.0 DTD file */
-  protected static final String DTD_5_0_LOCATION =
-    "/org/apache/geode/cache/doc-files/cache5_0.dtd";
+  protected static final String DTD_5_0_LOCATION = "/org/apache/geode/cache/doc-files/cache5_0.dtd";
   /** The URL for the 5.0 DTD */
-  protected static final String SYSTEM_ID_5_0 =
-    "http://www.gemstone.com/dtd/cache5_0.dtd";
+  protected static final String SYSTEM_ID_5_0 = "http://www.gemstone.com/dtd/cache5_0.dtd";
   /** The public ID for the 5.0 DTD */
-  protected static final String PUBLIC_ID_5_0 =
-    "-//GemStone Systems, Inc.//GemFire Declarative Caching 5.0//EN";
+  protected static final String PUBLIC_ID_5_0 = "-//GemStone Systems, Inc.//GemFire Declarative Caching 5.0//EN";
 
   // ---------------------------------
   /** Version string for GemFire 4.1 */
@@ -395,11 +362,11 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String IS_PRIMARY = "is-primary";
   /** The name of the fixed partition's <code>num-buckets</code> attribute */
   protected static final String NUM_BUCKETS = "num-buckets";
-  
-/** The name of the load probe element */
-  protected static final String LOAD_PROBE="custom-load-probe";
+
+  /** The name of the load probe element */
+  protected static final String LOAD_PROBE = "custom-load-probe";
   /** The name of the load poll interval element */
-  protected static final String LOAD_POLL_INTERVAL="load-poll-interval";
+  protected static final String LOAD_POLL_INTERVAL = "load-poll-interval";
   /** The name of the <code>bridge-server</code> element */
   protected static final String BRIDGE_SERVER = "bridge-server";
   /** The name of the <code>cache-server</code> element */
@@ -409,10 +376,10 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String GROUP = "group";
   /** The name of the <code>gateway-hub</code> element */
   protected static final String GATEWAY_HUB = "gateway-hub";
-  
+
   public static final String GATEWAY_SENDER = "gateway-sender";
   public static final String GATEWAY_RECEIVER = "gateway-receiver";
-  
+
   protected static final String GATEWAY_EVENT_FILTER = "gateway-event-filter";
   protected static final String GATEWAY_TRANSPORT_FILTER = "gateway-transport-filter";
   protected static final String GATEWAY_EVENT_LISTENER = "gateway-event-listener";
@@ -472,7 +439,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String CLIENT_SUBSCRIPTION = "client-subscription";
   /** The name of the <code>version/code> attribute */
   public static final String VERSION = "version";
-  
+
   /** The name of the <code>data-policy</code> attribute */
   protected static final String DATA_POLICY = "data-policy";
   protected static final String EMPTY_DP = "empty";
@@ -588,7 +555,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String TRANSACTION_LISTENER = "transaction-listener";
   /** The name of the <code>transaction-writer</code> element */
   protected static final String TRANSACTION_WRITER = "transaction-writer";
-  
+
   /** The name of the multicast-enabled element */
   protected static final String MULTICAST_ENABLED = "multicast-enabled";
   protected static final String JNDI_BINDINGS = "jndi-bindings";
@@ -601,18 +568,18 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String CONFIG_PROPERTY_VALUE = "config-property-value";
   /** The name of the <code>config-property-type</code> value */
   protected static final String CONFIG_PROPERTY_TYPE = "config-property-type";
-   /** Name of disk region property specifying whether to roll oplog or no **/
-  public  static final String ROLL_OPLOG = "roll-oplogs";
-   /** Name of disk region property specifying whether to automatically compact disk files **/
+  /** Name of disk region property specifying whether to roll oplog or no **/
+  public static final String ROLL_OPLOG = "roll-oplogs";
+  /** Name of disk region property specifying whether to automatically compact disk files **/
   public static final String AUTO_COMPACT = "auto-compact";
   public static final String ALLOW_FORCE_COMPACTION = "allow-force-compaction";
   public static final String COMPACTION_THRESHOLD = "compaction-threshold";
   /** Name of disk region property specifying the max oplog size in megabytes **/
   public static final String MAX_OPLOG_SIZE = "max-oplog-size";
-  
+
   /** name of the disk store property for disk usage warning percentage */
   public static final String DISK_USAGE_WARNING_PERCENTAGE = "disk-usage-warning-percentage";
-  
+
   /** name of the disk store property for disk usage critical percentage */
   public static final String DISK_USAGE_CRITICAL_PERCENTAGE = "disk-usage-critical-percentage";
 
@@ -648,8 +615,8 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   public static final String MULTIUSER_SECURE_MODE_ENABLED = "multiuser-authentication";
   // end constants for connection pool
 
- /** Size of the disk dir in megabytes **/
-   protected static final String DIR_SIZE = "dir-size";
+  /** Size of the disk dir in megabytes **/
+  protected static final String DIR_SIZE = "dir-size";
 
   /** The name of the <code>id</code> attribute */
   protected static final String ID = "id";
@@ -711,9 +678,9 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String ENABLE_BATCH_CONFLATION = "enable-batch-conflation";
   /** The name of the <code>enable-conflation</code> attribute */
   protected static final String ENABLE_PERSISTENCE = "enable-persistence";
-  
+
   protected static final String DISPATCHER_THREADS = "dispatcher-threads";
-  
+
   /** The name of the <code>alert-threshold</code> attribute */
   protected static final String ALERT_THRESHOLD = "alert-threshold";
   /** The name of the <code>enable-async-conflation</code> attribute */
@@ -732,7 +699,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String FUNCTION_SERVICE = "function-service";
   /** The name of the <code>function-name</code> element */
   protected static final String FUNCTION = "function";
-  
+
   /** The name of the top level <code>serialization-registration></code> element */
   protected static final String TOP_SERIALIZER_REGISTRATION = "serialization-registration";
   /** The name of the initializer element */
@@ -753,7 +720,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   protected static final String CRITICAL_OFF_HEAP_PERCENTAGE = "critical-off-heap-percentage";
   /** The name of the <code>eviction-off-heap-percentage</code> attribute of the resource-manager*/
   protected static final String EVICTION_OFF_HEAP_PERCENTAGE = "eviction-off-heap-percentage";
-  
+
   protected static final String ASYNC_EVENT_LISTENER = "async-event-listener";
   public static final String ASYNC_EVENT_QUEUE = "async-event-queue";
   protected static final String ASYNC_EVENT_QUEUE_IDS = "async-event-queue-ids";
@@ -765,13 +732,12 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
    * @since Geode 1.0
    */
   protected static final String OFF_HEAP = "off-heap";
- 
+
   protected static final String TCP_NO_DELAY = "tcp-no-delay";
-  
+
   /** the version of the DTD being used by the document being parsed */
   CacheXmlVersion version;
 
-  
   ///////////////////// Instance Methods /////////////////////
   /**
    * Given a public id, attempt to resolve it to a DTD. Returns an
@@ -788,60 +754,46 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
     if (SYSTEM_ID_3_0.equals(systemId) || PUBLIC_ID_3_0.equals(publicId)) {
       location = DTD_3_0_LOCATION;
       version = CacheXmlVersion.GEMFIRE_3_0;
-    }
-    else if (SYSTEM_ID_4_0.equals(systemId) || PUBLIC_ID_4_0.equals(publicId)) {
+    } else if (SYSTEM_ID_4_0.equals(systemId) || PUBLIC_ID_4_0.equals(publicId)) {
       location = DTD_4_0_LOCATION;
       version = CacheXmlVersion.GEMFIRE_4_0;
-    }
-    else if (SYSTEM_ID_4_1.equals(systemId) || PUBLIC_ID_4_1.equals(publicId)) {
+    } else if (SYSTEM_ID_4_1.equals(systemId) || PUBLIC_ID_4_1.equals(publicId)) {
       location = DTD_4_1_LOCATION;
       version = CacheXmlVersion.GEMFIRE_4_1;
-    }
-    else if (SYSTEM_ID_5_0.equals(systemId) || PUBLIC_ID_5_0.equals(publicId)) {
+    } else if (SYSTEM_ID_5_0.equals(systemId) || PUBLIC_ID_5_0.equals(publicId)) {
       location = DTD_5_0_LOCATION;
       version = CacheXmlVersion.GEMFIRE_5_0;
-    }
-    else if (SYSTEM_ID_5_1.equals(systemId) || PUBLIC_ID_5_1.equals(publicId)) {
+    } else if (SYSTEM_ID_5_1.equals(systemId) || PUBLIC_ID_5_1.equals(publicId)) {
       location = DTD_5_1_LOCATION;
       version = CacheXmlVersion.GEMFIRE_5_1;
-    }
-    else if (SYSTEM_ID_5_5.equals(systemId) || PUBLIC_ID_5_5.equals(publicId)) {
+    } else if (SYSTEM_ID_5_5.equals(systemId) || PUBLIC_ID_5_5.equals(publicId)) {
       location = DTD_5_5_LOCATION;
       version = CacheXmlVersion.GEMFIRE_5_5;
-    }
-    else if (SYSTEM_ID_5_7.equals(systemId) || PUBLIC_ID_5_7.equals(publicId)) {
+    } else if (SYSTEM_ID_5_7.equals(systemId) || PUBLIC_ID_5_7.equals(publicId)) {
       location = DTD_5_7_LOCATION;
       version = CacheXmlVersion.GEMFIRE_5_7;
-    }
-    else if (SYSTEM_ID_5_8.equals(systemId) || PUBLIC_ID_5_8.equals(publicId)) {
+    } else if (SYSTEM_ID_5_8.equals(systemId) || PUBLIC_ID_5_8.equals(publicId)) {
       location = DTD_5_8_LOCATION;
       version = CacheXmlVersion.GEMFIRE_5_8;
-    }
-    else if (SYSTEM_ID_6_0.equals(systemId) || PUBLIC_ID_6_0.equals(publicId)) {
+    } else if (SYSTEM_ID_6_0.equals(systemId) || PUBLIC_ID_6_0.equals(publicId)) {
       location = DTD_6_0_LOCATION;
       version = CacheXmlVersion.GEMFIRE_6_0;
-    }
-    else if (SYSTEM_ID_6_1.equals(systemId) || PUBLIC_ID_6_1.equals(publicId)) {
+    } else if (SYSTEM_ID_6_1.equals(systemId) || PUBLIC_ID_6_1.equals(publicId)) {
       location = DTD_6_1_LOCATION;
       version = CacheXmlVersion.GEMFIRE_6_1;
-    }
-    else if (SYSTEM_ID_6_5.equals(systemId) || PUBLIC_ID_6_5.equals(publicId)) {
+    } else if (SYSTEM_ID_6_5.equals(systemId) || PUBLIC_ID_6_5.equals(publicId)) {
       location = DTD_6_5_LOCATION;
       version = CacheXmlVersion.GEMFIRE_6_5;
-    }
-    else if (SYSTEM_ID_6_6.equals(systemId) || PUBLIC_ID_6_6.equals(publicId)) {
+    } else if (SYSTEM_ID_6_6.equals(systemId) || PUBLIC_ID_6_6.equals(publicId)) {
       location = DTD_6_6_LOCATION;
       version = CacheXmlVersion.GEMFIRE_6_6;
-    }
-    else if (SYSTEM_ID_7_0.equals(systemId) || PUBLIC_ID_7_0.equals(publicId)) {
+    } else if (SYSTEM_ID_7_0.equals(systemId) || PUBLIC_ID_7_0.equals(publicId)) {
       location = DTD_7_0_LOCATION;
       version = CacheXmlVersion.GEMFIRE_7_0;
-    }
-    else if (SYSTEM_ID_8_0.equals(systemId) || PUBLIC_ID_8_0.equals(publicId)) {
+    } else if (SYSTEM_ID_8_0.equals(systemId) || PUBLIC_ID_8_0.equals(publicId)) {
       location = DTD_8_0_LOCATION;
       version = CacheXmlVersion.GEMFIRE_8_0;
-    }
-    else {
+    } else {
       // Instruct the XML parser to open a URI connection to the
       // system id.
       version = CacheXmlVersion.valueForVersion(VERSION_LATEST); // we won't know the version, so assume the latest
@@ -851,8 +803,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
     InputStream stream = ClassPathLoader.getLatest().getResourceAsStream(getClass(), location);
     if (stream != null) {
       result = new InputSource(stream);
-    }
-    else {
+    } else {
       throw new SAXNotRecognizedException(LocalizedStrings.CacheXml_DTD_NOT_FOUND_0.toLocalizedString(location));
     }
     return result;
@@ -865,7 +816,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
     return resolveEntity(null, publicId, null, systemId);
   }
-  
+
   /* (non-Javadoc)
    * @see org.xml.sax.ext.EntityResolver2#getExternalSubset(java.lang.String, java.lang.String)
    */
@@ -873,7 +824,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   public InputSource getExternalSubset(String name, String baseURI) throws SAXException, IOException {
     return null;
   }
-  
+
   /**
    * Resolve entity using discovered {@link EntityResolver2}s.
    * @param publicId
@@ -913,7 +864,7 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
   public void fatalError(SAXParseException ex) throws SAXException {
     throw new CacheXmlException(LocalizedStrings.CacheXml_FATAL_ERROR_WHILE_PARSING_XML.toLocalizedString(), ex);
   }
-  
+
   /**
    * 
    * @param attributes
@@ -1023,5 +974,5 @@ public abstract class CacheXml implements EntityResolver2, ErrorHandler {
     }
     return Enum.valueOf(clazz, value);
   }
-  
+
 }

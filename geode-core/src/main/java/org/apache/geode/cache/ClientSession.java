@@ -60,8 +60,7 @@ public interface ClientSession {
    * @throws IllegalStateException
    *           if this is not the primary server for the given client
    */
-  public void registerInterest(String regionName, Object keyOfInterest,
-      InterestResultPolicy policy, boolean isDurable);
+  public void registerInterest(String regionName, Object keyOfInterest, InterestResultPolicy policy, boolean isDurable);
 
   /**
    * Registers interest in a particular region and key
@@ -83,9 +82,8 @@ public interface ClientSession {
    *          if this is not the primary server for the given client
    * @since GemFire 6.5
    */
-  public void registerInterest(String regionName, Object keyOfInterest,
-      InterestResultPolicy policy, boolean isDurable, boolean receiveValues);
-  
+  public void registerInterest(String regionName, Object keyOfInterest, InterestResultPolicy policy, boolean isDurable, boolean receiveValues);
+
   /**
    * Registers interest in a particular region and regular expression
    *
@@ -98,9 +96,8 @@ public interface ClientSession {
    * @throws IllegalStateException
    *          if this is not the primary server for the given client
    */
-  public void registerInterestRegex(String regionName, String regex,
-      boolean isDurable);
-  
+  public void registerInterestRegex(String regionName, String regex, boolean isDurable);
+
   /**
    * Registers interest in a particular region and regular expression
    * 
@@ -117,8 +114,7 @@ public interface ClientSession {
    *           if this is not the primary server for the given client
    * @since GemFire 6.5
    */
-  public void registerInterestRegex(String regionName, String regex,
-      boolean isDurable, boolean receiveValues);
+  public void registerInterestRegex(String regionName, String regex, boolean isDurable, boolean receiveValues);
 
   /**
    * Unregisters interest in a particular region and key
@@ -132,9 +128,8 @@ public interface ClientSession {
    * @throws IllegalStateException
    *           if this is not the primary server for the given client
    */
-  public void unregisterInterest(String regionName, Object keyOfInterest,
-      boolean isDurable);
-  
+  public void unregisterInterest(String regionName, Object keyOfInterest, boolean isDurable);
+
   /**
    * Unregisters interest in a particular region and key
    * 
@@ -151,8 +146,7 @@ public interface ClientSession {
    *           if this is not the primary server for the given client
    * @since GemFire 6.5
    */
-  public void unregisterInterest(String regionName, Object keyOfInterest,
-      boolean isDurable, boolean receiveValues);
+  public void unregisterInterest(String regionName, Object keyOfInterest, boolean isDurable, boolean receiveValues);
 
   /**
    * Unregisters interest in a particular region and regular expression
@@ -166,8 +160,7 @@ public interface ClientSession {
    * @throws IllegalStateException
    *           if this is not the primary server for the given client
    */
-  public void unregisterInterestRegex(String regionName, String regex,
-      boolean isDurable);
+  public void unregisterInterestRegex(String regionName, String regex, boolean isDurable);
 
   /**
    * Unregisters interest in a particular region and regular expression
@@ -185,8 +178,7 @@ public interface ClientSession {
    *           if this is not the primary server for the given client
    * @since GemFire 6.5
    */
-  public void unregisterInterestRegex(String regionName, String regex,
-      boolean isDurable, boolean receiveValues);
+  public void unregisterInterestRegex(String regionName, String regex, boolean isDurable, boolean receiveValues);
 
   /**
    * Returns whether this server is the primary for this client

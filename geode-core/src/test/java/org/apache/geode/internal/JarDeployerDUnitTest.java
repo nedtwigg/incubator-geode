@@ -82,7 +82,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     disconnectAllFromDS();
     deleteSavedJarFiles();
   }
-  
+
   @Test
   public void testDeployFileAndChange() throws IOException, ClassNotFoundException {
     final JarDeployer jarDeployer = new JarDeployer();
@@ -177,7 +177,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     } catch (ClassNotFoundException cnfex) {
       fail("JAR file not correctly added to Classpath");
     }
-    
+
     assertNotNull(ClassPathLoader.getLatest().getResource("JarDeployerDUnitDELA.class"));
 
     // Attempt to acquire an exclusive lock in the other VM
@@ -430,8 +430,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     stringBuffer.append("public class JarDeployerDUnitFunction  extends JarDeployerDUnitParent implements Function {");
     stringBuffer.append("private JarDeployerDUnitUses uses = new JarDeployerDUnitUses();");
     stringBuffer.append("public boolean hasResult() {return true;}");
-    stringBuffer
-        .append("public void execute(FunctionContext context) {context.getResultSender().lastResult(getValueParent() + \":\" + uses.getValueUses());}");
+    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(getValueParent() + \":\" + uses.getValueUses());}");
     stringBuffer.append("public String getId() {return \"JarDeployerDUnitFunction\";}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
@@ -443,7 +442,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     outStream = new FileOutputStream(functionJarFile);
     outStream.write(jarBytes);
     outStream.close();
-    
+
     // Start the distributed system and check to see if the function executes correctly
     DistributedSystem distributedSystem = getSystem();
     getCache();
@@ -485,16 +484,16 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
       fail("Contents of JAR file do not match those provided: " + jarFile.getName());
     }
   }
-  
+
   @Test
   public void testDeployToInvalidDirectory() throws IOException, ClassNotFoundException {
     final File alternateDir = new File("JarDeployerDUnit");
     FileUtil.delete(new File("JarDeployerDUnit"));
-    
+
     final JarDeployer jarDeployer = new JarDeployer(alternateDir);
     final CyclicBarrier barrier = new CyclicBarrier(2);
     final byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDTID");
-    
+
     // Test to verify that deployment fails if the directory doesn't exist.
     try {
       jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
@@ -502,11 +501,11 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     } catch (IOException expected) {
       // Expected.
     }
-    
+
     // Test to verify that deployment succeeds if the directory doesn't
     // initially exist, but is then created while the JarDeployer is looping
     // looking for a valid directory.
-    Thread thread = new Thread () {
+    Thread thread = new Thread() {
       @Override
       public void run() {
         try {
@@ -516,7 +515,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
         } catch (BrokenBarrierException bbex) {
           fail("Broken barrier.");
         }
-        
+
         try {
           jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
         } catch (IOException ioex) {
@@ -527,7 +526,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
       }
     };
     thread.start();
-    
+
     try {
       barrier.await();
       Thread.sleep(500);
@@ -541,14 +540,15 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
   }
 
   boolean okayToResume;
+
   @Test
-  public void testSuspendAndResume() throws IOException, ClassNotFoundException {    
+  public void testSuspendAndResume() throws IOException, ClassNotFoundException {
     final JarDeployer jarDeployer = new JarDeployer();
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitSAR");
     final JarDeployer suspendingJarDeployer = new JarDeployer();
     final CountDownLatch latch = new CountDownLatch(1);
-    
-    Thread thread = new Thread () {
+
+    Thread thread = new Thread() {
       @Override
       public void run() {
         try {
@@ -563,7 +563,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
       }
     };
     thread.start();
-    
+
     try {
       latch.await();
     } catch (InterruptedException iex) {
@@ -574,7 +574,6 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
       fail("JarDeployer did not suspend as expected");
     }
   }
-  
 
   @Test
   public void testZeroLengthFile() throws IOException, ClassNotFoundException {
@@ -586,12 +585,11 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     } catch (IllegalArgumentException expected) {
       // Expected
     }
-    
+
     try {
-      jarDeployer.deploy(new String[] { "JarDeployerDUnitZLF1.jar", "JarDeployerDUnitZLF2.jar" }, new byte[][] {
-          this.classBuilder.createJarFromName("JarDeployerDUnitZLF1"), new byte[0] });
+      jarDeployer.deploy(new String[] { "JarDeployerDUnitZLF1.jar", "JarDeployerDUnitZLF2.jar" }, new byte[][] { this.classBuilder.createJarFromName("JarDeployerDUnitZLF1"), new byte[0] });
       fail("Zero length files are not deployable");
-    } catch (IllegalArgumentException expected) { 
+    } catch (IllegalArgumentException expected) {
       // Expected
     }
   }
@@ -608,36 +606,35 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     }
 
     try {
-      jarDeployer.deploy(new String[] { "JarDeployerDUnitIJF1.jar", "JarDeployerDUnitIJF2.jar" }, new byte[][] {
-          this.classBuilder.createJarFromName("JarDeployerDUnitIJF1"), "INVALID JAR CONTENT".getBytes() });
+      jarDeployer.deploy(new String[] { "JarDeployerDUnitIJF1.jar", "JarDeployerDUnitIJF2.jar" }, new byte[][] { this.classBuilder.createJarFromName("JarDeployerDUnitIJF1"), "INVALID JAR CONTENT".getBytes() });
       fail("Non-JAR files are not deployable");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
-    
+
     final VM vm = Host.getHost(0).getVM(1);
     vm.invoke(new SerializableRunnable() {
       @Override
       public void run() {
         File invalidFile = new File(JarDeployer.JAR_PREFIX + "JarDeployerDUnitIJF.jar#3");
         try {
-        RandomAccessFile randomAccessFile = new RandomAccessFile(invalidFile, "rw");
-        randomAccessFile.write("GARBAGE".getBytes(), 0, 7);
-        randomAccessFile.close();
+          RandomAccessFile randomAccessFile = new RandomAccessFile(invalidFile, "rw");
+          randomAccessFile.write("GARBAGE".getBytes(), 0, 7);
+          randomAccessFile.close();
         } catch (IOException ioex) {
           Assert.fail("Error trying to create garbage file for test", ioex);
         }
-        
+
         getSystem();
         getCache();
-        
+
         if (invalidFile.exists()) {
           fail("Invalid JAR file should have been deleted at startup");
         }
       }
     });
   }
-  
+
   FileLock acquireSharedLock(final File file) throws IOException {
     @SuppressWarnings("resource")
     FileLock fileLock = new FileInputStream(file).getChannel().lock(0, 1, true);

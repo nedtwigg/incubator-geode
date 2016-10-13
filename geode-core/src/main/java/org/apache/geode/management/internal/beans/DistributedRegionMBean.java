@@ -55,7 +55,6 @@ public class DistributedRegionMBean implements DistributedRegionMXBean {
     return bridge.getCreatesRate();
   }
 
- 
   @Override
   public float getDestroyRate() {
 
@@ -86,13 +85,11 @@ public class DistributedRegionMBean implements DistributedRegionMXBean {
     return bridge.getFixedPartitionAttributesData();
   }
 
-
   @Override
   public String getFullPath() {
 
     return bridge.getFullPath();
   }
-
 
   @Override
   public float getGetsRate() {
@@ -230,7 +227,6 @@ public class DistributedRegionMBean implements DistributedRegionMXBean {
     return bridge.getRegionType();
   }
 
-  
   @Override
   public long getSystemRegionEntryCount() {
 
@@ -248,7 +244,6 @@ public class DistributedRegionMBean implements DistributedRegionMXBean {
 
     return bridge.getTotalDiskEntriesInVM();
   }
-
 
   @Override
   public long getTotalEntriesOnlyOnDisk() {

@@ -24,11 +24,11 @@ import org.apache.geode.cache.DiskStore;
  * @since GemFire 7.0
  */
 public class DiskMetrics {
-  
+
   private float diskReadsRate;
 
   private float diskWritesRate;
-  
+
   private int totalBackupInProgress;
 
   private int totalBackupCompleted;
@@ -36,7 +36,7 @@ public class DiskMetrics {
   private long totalBytesOnDisk;
 
   private long diskFlushAvgLatency;
-  
+
   /**
    * Returns the average number of disk reads per second.
    */

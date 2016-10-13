@@ -33,12 +33,12 @@ public interface StatArchiveHandlerConfig {
    * Gets the name of the archive file.
    */
   public File getArchiveFileName();
-  
+
   /**
    * Gets the archive size limit in bytes.
    */
   public long getArchiveFileSizeLimit();
-  
+
   /**
    * Gets the archive disk space limit in bytes.
    */
@@ -58,7 +58,7 @@ public interface StatArchiveHandlerConfig {
    * Returns the path to this sampler's system directory; if it has one.
    */
   public String getSystemDirectoryPath();
-  
+
   /**
    * Returns a description of the product that the stats are on
    */

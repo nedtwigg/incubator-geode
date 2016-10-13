@@ -30,7 +30,7 @@ public class GoldenStringComparator extends RegexGoldenComparator {
   protected GoldenStringComparator(final String[] expectedProblemLines) {
     super(expectedProblemLines);
   }
-  
+
   @Override
   protected Reader readGoldenFile(final String goldenFileName) throws IOException {
     return new StringReader(goldenFileName);

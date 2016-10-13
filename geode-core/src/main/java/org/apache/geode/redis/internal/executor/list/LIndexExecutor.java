@@ -63,7 +63,7 @@ public class LIndexExecutor extends ListExecutor {
     } catch (NumberFormatException e) {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
       return;
-    } 
+    }
 
     /*
      * Now the fun part, converting the redis index into our index.
@@ -106,7 +106,7 @@ public class LIndexExecutor extends ListExecutor {
 
     Query query = getQuery(key, ListQuery.LINDEX, context);
 
-    Object[] params = {Integer.valueOf(index + 1)};
+    Object[] params = { Integer.valueOf(index + 1) };
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 

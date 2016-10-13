@@ -27,7 +27,7 @@ import javax.management.modelmbean.ModelMBean;
  *
  */
 public interface ManagedResource {
-  
+
   /** 
    * The prefix of MBean names. Note: this is NOT used by Members, Stats, or
    * any other MBean that has it's own domain.
@@ -47,13 +47,13 @@ public interface ManagedResource {
    * @see #MBEAN_NAME_PREFIX
    */
   public String getMBeanName();
-  
+
   /** Returns the ModelMBean that is configured to manage this resource */
   public ModelMBean getModelMBean();
 
   /** Sets the ModelMBean that is configured to manage this resource */
   public void setModelMBean(ModelMBean modelMBean);
-  
+
   /** 
    * Returns the enumerated ManagedResourceType of this resource.
    *
@@ -67,11 +67,10 @@ public interface ManagedResource {
    * @see #getMBeanName
    */
   public ObjectName getObjectName();
- 
+
   /**
    * Perform any cleanup necessary before stopping management of this resource.
    */
   public void cleanupResource();
-  
-}
 
+}

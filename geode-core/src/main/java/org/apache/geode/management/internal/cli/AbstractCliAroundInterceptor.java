@@ -41,11 +41,11 @@ public abstract class AbstractCliAroundInterceptor implements CliAroundIntercept
     }
 
     public String toUpperPrompt() {
-      return this.text.substring(0,1).toUpperCase();
+      return this.text.substring(0, 1).toUpperCase();
     }
 
     public String toLowerPrompt() {
-      return this.text.substring(0,1).toLowerCase();
+      return this.text.substring(0, 1).toLowerCase();
     }
 
     public static Response fromString(final String text) {
@@ -53,8 +53,7 @@ public abstract class AbstractCliAroundInterceptor implements CliAroundIntercept
         for (Response response : Response.values()) {
           // If the whole string matches, or the input is only 1 character and it matches the
           // first character of the response text, then they are considered equal.
-          if (text.equalsIgnoreCase(response.text)
-              || ((text.length() == 1 && text.equalsIgnoreCase(response.text.substring(0, 1))))) {
+          if (text.equalsIgnoreCase(response.text) || ((text.length() == 1 && text.equalsIgnoreCase(response.text.substring(0, 1))))) {
             return response;
           }
         }

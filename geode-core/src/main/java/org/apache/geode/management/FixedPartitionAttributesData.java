@@ -51,8 +51,7 @@ public class FixedPartitionAttributesData {
   @ConstructorProperties({ "name", "primary", "numBucket"
 
   })
-  public FixedPartitionAttributesData(String name, boolean primary,
-      int numBucket) {
+  public FixedPartitionAttributesData(String name, boolean primary, int numBucket) {
     this.name = name;
     this.primary = primary;
     this.numBucket = numBucket;
@@ -86,9 +85,7 @@ public class FixedPartitionAttributesData {
    */
   @Override
   public String toString() {
-    return "FixedPartitionAttributesData [name=" + name + ", numBucket="
-        + numBucket + ", primary=" + primary + "]";
+    return "FixedPartitionAttributesData [name=" + name + ", numBucket=" + numBucket + ", primary=" + primary + "]";
   }
-
 
 }

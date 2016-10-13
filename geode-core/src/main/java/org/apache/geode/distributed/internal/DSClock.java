@@ -40,15 +40,15 @@ import java.util.concurrent.atomic.AtomicLong;
 public class DSClock implements CacheTime {
 
   private static final Logger logger = LogService.getLogger();
-  
-  private final int MAX_TIME_OFFSET_DIFF =  100; /* in milliseconds */
+
+  private final int MAX_TIME_OFFSET_DIFF = 100; /* in milliseconds */
   private final long MAX_CACHE_TIME_MILLIS = 0x00FFFFFFFFFFFFFFL;
   /**
    * Time shift received from server must be at least this far off
    * in order for the cacheTimeMillis clock to be changed.  Servers
    * are much more aggressive about it.
    */
-  private final static long MINIMUM_TIME_DIFF = 5000; 
+  private final static long MINIMUM_TIME_DIFF = 5000;
 
   /**
    * cacheTimeMillis offset from System.currentTimeMillis
@@ -62,20 +62,19 @@ public class DSClock implements CacheTime {
    * State variable used by the cacheTimeTask
    */
   private final AtomicLong suspendedTime = new AtomicLong(0L);
-  
+
   /**
    * Is this a client "distributed system"
    */
   private final boolean isLoner;
-  
+
   /** GemFire internal test hook for unit testing */
   private DSClockTestHook testHook;
-  
-  
+
   protected DSClock(boolean lonerDS) {
     this.isLoner = lonerDS;
   }
-  
+
   @Override
   public long cacheTimeMillis() {
     long result;
@@ -88,7 +87,7 @@ public class DSClock implements CacheTime {
       }
     } else {
       long ct = System.currentTimeMillis();
-      result =  ct + offset;
+      result = ct + offset;
       if (result < 0 || result > MAX_CACHE_TIME_MILLIS) {
         throw new IllegalStateException("Expected cacheTimeMillis " + result + " to be >= 0 and <= " + MAX_CACHE_TIME_MILLIS + " curTime=" + ct + " offset=" + offset);
       }
@@ -128,14 +127,13 @@ public class DSClock implements CacheTime {
       this.cacheTimeDelta = offset;
 
       String cacheTime = DateFormatter.formatDate(new Date(theTime + offset));
-      logger.info(LocalizedMessage.create(LocalizedStrings.LonerDistributionManager_Cache_Time,
-          new Object[] { cacheTime, this.cacheTimeDelta }));
-      
+      logger.info(LocalizedMessage.create(LocalizedStrings.LonerDistributionManager_Cache_Time, new Object[] { cacheTime, this.cacheTimeDelta }));
+
     } else if (offset < (this.cacheTimeDelta - MINIMUM_TIME_DIFF)) {
       // We don't issue a warning for client caches
-//      if ((this.cacheTimeDelta - offset) >= MAX_TIME_OFFSET_DIFF /* Max offset difference allowed */) {
-//        this.logger.warning(LocalizedStrings.DistributionManager_Cache_Time_Offset_Skew_Warning, (this.cacheTimeDelta - offset));
-//      }
+      //      if ((this.cacheTimeDelta - offset) >= MAX_TIME_OFFSET_DIFF /* Max offset difference allowed */) {
+      //        this.logger.warning(LocalizedStrings.DistributionManager_Cache_Time_Offset_Skew_Warning, (this.cacheTimeDelta - offset));
+      //      }
       this.cacheTimeDelta = offset;
       // We need to suspend the cacheTimeMillis for (cacheTimeDelta - offset) ms.
       cancelAndScheduleNewCacheTimerTask(offset);
@@ -156,8 +154,7 @@ public class DSClock implements CacheTime {
         if (src == null) {
           src = "local clock adjustment";
         }
-        logger.info(LocalizedMessage.create(LocalizedStrings.DistributionManager_Cache_Time,
-            new Object[]{ src, cacheTime, this.cacheTimeDelta }));
+        logger.info(LocalizedMessage.create(LocalizedStrings.DistributionManager_Cache_Time, new Object[] { src, cacheTime, this.cacheTimeDelta }));
       }
     } else if (!isJoin && offset < this.cacheTimeDelta) {
       // We need to suspend the cacheTimeMillis for (cacheTimeDelta - offset) ms.
@@ -236,7 +233,6 @@ public class DSClock implements CacheTime {
 
     private long lowerCacheTimeOffset = 0L;
 
-    
     public CacheTimeTask(long cacheTimeOffset) {
       super();
       this.lowerCacheTimeOffset = cacheTimeOffset;
@@ -244,7 +240,7 @@ public class DSClock implements CacheTime {
 
     @Override
     public void run2() {
-      boolean isCancelled =  false;
+      boolean isCancelled = false;
 
       suspendCacheTimeMillis(true);
 
@@ -262,7 +258,7 @@ public class DSClock implements CacheTime {
 
       // Resume cache time as system time once cache time has slowed down enough.
       long systemTime = currTime + this.lowerCacheTimeOffset;
-        
+
       if (cacheTime <= systemTime) {
         setCacheTimeOffset(null, this.lowerCacheTimeOffset, true);
         suspendCacheTimeMillis(false);
@@ -292,7 +288,9 @@ public class DSClock implements CacheTime {
 
   public static interface DSClockTestHook {
     public void suspendAtBreakPoint(int breakPoint);
+
     public void addInformation(Object key, Object value);
+
     public Object getInformation(Object key);
   }
 

@@ -21,41 +21,36 @@ import java.util.*;
 import org.apache.geode.cache.query.*;
 import org.apache.geode.internal.Assert;
 
-
 /**
  * Class Description
  *
  * @version     $Revision: 1.1 $
  */
 
-
 public class CompiledConstruction extends AbstractCompiledValue {
   private Class objectType;
   private List args;
-  
+
   public CompiledConstruction(Class objectType, List args) {
     this.objectType = objectType;
     this.args = args;
   }
-  
+
   @Override
   public List getChildren() {
     return args;
   }
-  
-  
+
   public int getType() {
     return CONSTRUCTION;
   }
-  
-  public Object evaluate(ExecutionContext context)
-  throws FunctionDomainException, TypeMismatchException, NameResolutionException,
-          QueryInvocationTargetException {
+
+  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     // we only support ResultsSet now
     Assert.assertTrue(this.objectType == ResultsSet.class);
     ResultsSet newSet = new ResultsSet(this.args.size());
-    for (Iterator itr = this.args.iterator(); itr.hasNext(); ) {
-      CompiledValue cv = (CompiledValue)itr.next();
+    for (Iterator itr = this.args.iterator(); itr.hasNext();) {
+      CompiledValue cv = (CompiledValue) itr.next();
       Object eval = cv.evaluate(context);
       if (eval == QueryService.UNDEFINED) {
         return QueryService.UNDEFINED;
@@ -64,12 +59,11 @@ public class CompiledConstruction extends AbstractCompiledValue {
     }
     return newSet;
   }
-  
+
   @Override
-  public Set computeDependencies(ExecutionContext context)
-  throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
-    for (Iterator itr = this.args.iterator(); itr.hasNext(); ) {
-      CompiledValue cv = (CompiledValue)itr.next();
+  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+    for (Iterator itr = this.args.iterator(); itr.hasNext();) {
+      CompiledValue cv = (CompiledValue) itr.next();
       context.addDependencies(this, cv.computeDependencies(context));
     }
     return context.getDependencySet(this, true);

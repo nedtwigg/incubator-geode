@@ -52,8 +52,7 @@ import org.apache.geode.internal.size.WellKnownClassSizer;
  * @since GemFire 3.2
  */
 @Category(DistributedTest.class)
-public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
-{
+public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
 
   private static boolean usingMain = false;
 
@@ -67,17 +66,14 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
   /**
    * Returns the <code>LRUStatistics</code> for the given region
    */
-  private LRUStatistics getLRUStats(Region region)
-  {
-    final LocalRegion l = (LocalRegion)region;
+  private LRUStatistics getLRUStats(Region region) {
+    final LocalRegion l = (LocalRegion) region;
     return l.getEvictionController().getLRUHelper().getStats();
   }
 
-  private int getEntryOverhead(Region region)
-  {
-    LocalRegion lRegion = (LocalRegion)region;
-    return ((MemLRUCapacityController)lRegion.getEvictionController())
-        .getPerEntryOverhead();
+  private int getEntryOverhead(Region region) {
+    LocalRegion lRegion = (LocalRegion) region;
+    return ((MemLRUCapacityController) lRegion.getEvictionController()).getPerEntryOverhead();
   }
 
   // ////// Test Methods
@@ -87,16 +83,14 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
    * as expected.
    */
   @Test
-  public void testRegionOperations() throws CacheException
-  {
+  public void testRegionOperations() throws CacheException {
 
     int threshold = 4;
 
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes
-        .createLRUMemoryAttributes(threshold));
+    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(threshold));
 
     Region region;
     if (usingMain) {
@@ -104,8 +98,7 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
       Cache cache = CacheFactory.create(system);
       region = cache.createRegion("Test", factory.create());
 
-    }
-    else {
+    } else {
       region = createRegion(name, factory.create());
     }
 
@@ -114,29 +107,26 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
 
     String sampleKey = new String("10000");
     int stringSize = SharedLibrary.getObjectHeaderSize() //String object
-      + (2*4) + SharedLibrary.getReferenceSize(); //2 ints and a reference on a string
+        + (2 * 4) + SharedLibrary.getReferenceSize(); //2 ints and a reference on a string
     stringSize = (int) ReflectionSingleObjectSizer.roundUpSize(stringSize);
 
-    int charArraySize = sampleKey.length() * 2
-      + SharedLibrary.getObjectHeaderSize() //char array object
-      + 4; //length of char array
+    int charArraySize = sampleKey.length() * 2 + SharedLibrary.getObjectHeaderSize() //char array object
+        + 4; //length of char array
     charArraySize = (int) ReflectionSingleObjectSizer.roundUpSize(charArraySize);
     assertEquals(stringSize, ReflectionSingleObjectSizer.sizeof(String.class));
     assertEquals(ReflectionSingleObjectSizer.roundUpSize(SharedLibrary.getObjectHeaderSize() + 4), (new ReflectionSingleObjectSizer()).sizeof(new char[0]));
     assertEquals(charArraySize, (new ReflectionSingleObjectSizer()).sizeof(new char[5]));
-    
+
     int keySize = stringSize + charArraySize;
     assertEquals(keySize, WellKnownClassSizer.sizeof(sampleKey));
     assertEquals(keySize, ObjectSizer.DEFAULT.sizeof(sampleKey));
     // now that keys are inlined the keySize is 0
     keySize = 0;
-    byte[] sampleValue =new byte[1000]; 
-    int valueSize =sampleValue.length
-      + SharedLibrary.getObjectHeaderSize() //byte array object;
-      + 4; //length of byte array
+    byte[] sampleValue = new byte[1000];
+    int valueSize = sampleValue.length + SharedLibrary.getObjectHeaderSize() //byte array object;
+        + 4; //length of byte array
     valueSize = (int) ReflectionSingleObjectSizer.roundUpSize(valueSize);
-    int entrySize = keySize 
-        + valueSize + getEntryOverhead(region);
+    int entrySize = keySize + valueSize + getEntryOverhead(region);
     assertEquals(valueSize, ObjectSizer.DEFAULT.sizeof(sampleValue));
 
     for (int i = 1; i <= 100; i++) {
@@ -154,22 +144,20 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
       assertEquals(0, lruStats.getEvictions());
     }
   }
-  
+
   /**
    * Make sure that we only size a class the first time we 
    * see the class instance.
    * @throws CacheException
    */
   @Test
-  public void testSizeClassesOnce() throws CacheException
-  {
+  public void testSizeClassesOnce() throws CacheException {
     int threshold = 4;
 
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes
-        .createLRUMemoryAttributes(threshold));
+    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(threshold));
 
     Region region = createRegion(name, factory.create());
 
@@ -204,13 +192,11 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
    * Prints out the number of bytes that a region entry occupies in the VM.
    */
   @Test
-  public void testEntryOverHead() throws Exception
-  {
+  public void testEntryOverHead() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes
-        .createLRUMemoryAttributes(50));
+    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(50));
 
     Region region;
     region = createRegion(name, factory.create());
@@ -223,8 +209,7 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
    * 
    * @since GemFire 5.0
    */
-  class CustomObjectSizer implements ObjectSizer
-  {
+  class CustomObjectSizer implements ObjectSizer {
     private int dataSize;
 
     private boolean wasCalled = false;
@@ -242,6 +227,7 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
       return this.wasCalled;
     }
   }
+
   /**
    * Validate that a custom {@link ObjectSizer} is called, configured propertly,
    * and actually limits the size of the <code>Region</code>.
@@ -249,8 +235,7 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
    * @throws Exception
    */
   @Test
-  public void testCustomObjectSizer() throws Exception
-  {
+  public void testCustomObjectSizer() throws Exception {
     final String name = this.getUniqueName();
     final int entrySize = 1024 * 1024;
     final int numEntries = 3;
@@ -259,7 +244,7 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
     factory.setScope(Scope.LOCAL);
     factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(1, cs));
     Region r = createRegion(name, factory.create());
-    
+
     for (int size = 0; size < numEntries; size++) {
       // changed to a boolean[] because byte[] does not cause a call to ObjectSizer.sizeof
       // What was calling it before was the key object. But now that keys are inlined we
@@ -269,18 +254,17 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase
     assertTrue("ObjectSizer was not triggered", cs.wasCalled());
     long actualSize = getLRUStats(r).getCounter();
     int bytesPut = (entrySize * numEntries);
-    assertTrue("Expected bytes put: " + bytesPut + " is not < "  + actualSize, actualSize < bytesPut);  
+    assertTrue("Expected bytes put: " + bytesPut + " is not < " + actualSize, actualSize < bytesPut);
   }
 
-  public static void main(String[] args) throws Exception
-  {
+  public static void main(String[] args) throws Exception {
     usingMain = true;
     (new MemLRUEvictionControllerDUnitTest()).testRegionOperations();
   }
-  
+
   private static class TestObject {
     private final byte[] field;
-    
+
     public TestObject(int size) {
       this.field = new byte[size];
     }

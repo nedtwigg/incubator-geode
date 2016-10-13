@@ -224,10 +224,10 @@ public class ClientAuthorizationDUnitTest extends ClientAuthorizationTestCase {
 
     getLogWriter().info("testInvalidAccessor: For second client GET credentials: " + getCredentials);
 
-    client1.invoke(() -> ClientAuthenticationTestUtils.createCacheClient( authInit, createCredentials, createJavaProps, port1, port2, 0, false, false, NO_EXCEPTION));
+    client1.invoke(() -> ClientAuthenticationTestUtils.createCacheClient(authInit, createCredentials, createJavaProps, port1, port2, 0, false, false, NO_EXCEPTION));
     client1.invoke(() -> doPuts(1, AUTHFAIL_EXCEPTION));
 
-    client2.invoke(() -> ClientAuthenticationTestUtils.createCacheClient( authInit, getCredentials, getJavaProps, port1, port2, 0, false, false, NO_EXCEPTION));
+    client2.invoke(() -> ClientAuthenticationTestUtils.createCacheClient(authInit, getCredentials, getJavaProps, port1, port2, 0, false, false, NO_EXCEPTION));
     client2.invoke(() -> doPuts(1, AUTHFAIL_EXCEPTION));
 
     // Now start server2 that has valid accessor
@@ -315,7 +315,7 @@ public class ClientAuthorizationDUnitTest extends ClientAuthorizationTestCase {
     client2.invoke(() -> doGets(4, NOTAUTHZ_EXCEPTION));
 
     // force a failover and do the drill again
-    server1.invoke(() -> ClientAuthorizationTestCase.createCacheServer( getLocatorPort(), port1, serverProps, javaProps ));
+    server1.invoke(() -> ClientAuthorizationTestCase.createCacheServer(getLocatorPort(), port1, serverProps, javaProps));
     server2.invoke(() -> closeCache());
 
     // Perform some put operations from client1
@@ -401,124 +401,93 @@ public class ClientAuthorizationDUnitTest extends ClientAuthorizationTestCase {
   private OperationWithAction[] unregisterOpsForTestUnregisterInterestWithFailover() {
     return new OperationWithAction[] {
         // Register interest in all KEYS using one key at a time
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, 3, OpFlags.NONE, 4),
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, 2),
+        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, 3, OpFlags.NONE, 4), new OperationWithAction(OperationCode.REGISTER_INTEREST, 2),
         // UPDATE and test with GET
-        new OperationWithAction(OperationCode.PUT),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
         // Unregister interest in all KEYS using one key at a time
-        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_OLDCONN | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 2, OpFlags.USE_OLDCONN, 4),
+        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_OLDCONN | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 2, OpFlags.USE_OLDCONN, 4),
         // UPDATE and test with GET for no updates
-        new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
         OperationWithAction.OPBLOCK_END,
 
         // Register interest in all KEYS using list
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_LIST, 4),
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, 1, OpFlags.USE_LIST, 4),
+        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_LIST, 4), new OperationWithAction(OperationCode.REGISTER_INTEREST, 1, OpFlags.USE_LIST, 4),
         // UPDATE and test with GET
-        new OperationWithAction(OperationCode.PUT, 2),
-        new OperationWithAction(OperationCode.GET, 1, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT, 2), new OperationWithAction(OperationCode.GET, 1, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
         // Unregister interest in all KEYS using list
-        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_OLDCONN | OpFlags.USE_LIST | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 1, OpFlags.USE_OLDCONN | OpFlags.USE_LIST, 4),
+        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_OLDCONN | OpFlags.USE_LIST | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 1, OpFlags.USE_OLDCONN | OpFlags.USE_LIST, 4),
         // UPDATE and test with GET for no updates
-        new OperationWithAction(OperationCode.PUT, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
-        new OperationWithAction(OperationCode.GET, 1, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 1, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
         OperationWithAction.OPBLOCK_END,
 
         // Register interest in all KEYS using regular expression
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_REGEX, 4),
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, 2, OpFlags.USE_REGEX, 4),
+        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_REGEX, 4), new OperationWithAction(OperationCode.REGISTER_INTEREST, 2, OpFlags.USE_REGEX, 4),
         // UPDATE and test with GET
-        new OperationWithAction(OperationCode.PUT),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
         // Unregister interest in all KEYS using regular expression
-        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_OLDCONN | OpFlags.USE_REGEX | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 2, OpFlags.USE_OLDCONN | OpFlags.USE_REGEX, 4),
+        new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 3, OpFlags.USE_OLDCONN | OpFlags.USE_REGEX | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 2, OpFlags.USE_OLDCONN | OpFlags.USE_REGEX, 4),
         // UPDATE and test with GET for no updates
-        new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
-        OperationWithAction.OPBLOCK_END
-    };
+        OperationWithAction.OPBLOCK_END };
   }
 
   private OperationWithAction[] allOpsForAllOpsWithFailover() {
     return new OperationWithAction[] {
         // Test CREATE and verify with a GET
-        new OperationWithAction(OperationCode.PUT, 3, OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.PUT),
-        new OperationWithAction(OperationCode.GET, 3, OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.CHECK_NOKEY, 4),
+        new OperationWithAction(OperationCode.PUT, 3, OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.PUT), new OperationWithAction(OperationCode.GET, 3, OpFlags.CHECK_NOKEY | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.GET, 2, OpFlags.CHECK_NOKEY, 4),
 
         // OPBLOCK_END indicates end of an operation block; the above block of three operations will be first executed on server1 and then on server2 after failover
         OperationWithAction.OPBLOCK_END,
 
         // Test PUTALL and verify with GETs
-        new OperationWithAction(OperationCode.PUTALL, 3, OpFlags.USE_NEWVAL | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.PUTALL, 1, OpFlags.USE_NEWVAL, 4),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
-        OperationWithAction.OPBLOCK_END,
+        new OperationWithAction(OperationCode.PUTALL, 3, OpFlags.USE_NEWVAL | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.PUTALL, 1, OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4), OperationWithAction.OPBLOCK_END,
 
         // Test UPDATE and verify with a GET
-        new OperationWithAction(OperationCode.PUT, 3, OpFlags.USE_NEWVAL | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_NEWVAL, 4),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
+        new OperationWithAction(OperationCode.PUT, 3, OpFlags.USE_NEWVAL | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
 
         OperationWithAction.OPBLOCK_END,
 
         // Test DESTROY and verify with a GET and that key should not exist
-        new OperationWithAction(OperationCode.DESTROY, 3, OpFlags.USE_NEWVAL | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.DESTROY),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, 4), // bruce: added check_nokey because we now bring tombstones to the client in 8.0
+        new OperationWithAction(OperationCode.DESTROY, 3, OpFlags.USE_NEWVAL | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.DESTROY), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, 4), // bruce: added check_nokey because we now bring tombstones to the client in 8.0
         // Repopulate the region
         new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_NEWVAL, 4),
 
         OperationWithAction.OPBLOCK_END,
 
         // Check CONTAINS_KEY
-        new OperationWithAction(OperationCode.CONTAINS_KEY, 3, OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.CONTAINS_KEY),
+        new OperationWithAction(OperationCode.CONTAINS_KEY, 3, OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.CONTAINS_KEY),
         // Destroy the KEYS and check for failure in CONTAINS_KEY
-        new OperationWithAction(OperationCode.DESTROY, 2),
-        new OperationWithAction(OperationCode.CONTAINS_KEY, 3, OpFlags.CHECK_FAIL | OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.CONTAINS_KEY, 1, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, 4),
+        new OperationWithAction(OperationCode.DESTROY, 2), new OperationWithAction(OperationCode.CONTAINS_KEY, 3, OpFlags.CHECK_FAIL | OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.CONTAINS_KEY, 1, OpFlags.USE_OLDCONN | OpFlags.CHECK_FAIL, 4),
         // Repopulate the region
         new OperationWithAction(OperationCode.PUT),
 
         OperationWithAction.OPBLOCK_END,
 
         // Check KEY_SET
-        new OperationWithAction(OperationCode.KEY_SET, 3, OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.KEY_SET, 2),
+        new OperationWithAction(OperationCode.KEY_SET, 3, OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.KEY_SET, 2),
 
         OperationWithAction.OPBLOCK_END,
 
         // Check QUERY
-        new OperationWithAction(OperationCode.QUERY, 3, OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.QUERY),
+        new OperationWithAction(OperationCode.QUERY, 3, OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.QUERY),
 
         OperationWithAction.OPBLOCK_END,
 
         // Register interest in all KEYS using one key at a time
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, 3, OpFlags.CHECK_NOTAUTHZ, 4),
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, 2),
+        new OperationWithAction(OperationCode.REGISTER_INTEREST, 3, OpFlags.CHECK_NOTAUTHZ, 4), new OperationWithAction(OperationCode.REGISTER_INTEREST, 2),
         // UPDATE and test with GET
-        new OperationWithAction(OperationCode.PUT),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
         // Unregister interest in all KEYS using one key at a time
         new OperationWithAction(OperationCode.UNREGISTER_INTEREST, 2, OpFlags.USE_OLDCONN, 4),
         // UPDATE and test with GET for no updates
-        new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
-        new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+        new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
 
         OperationWithAction.OPBLOCK_END,
 
@@ -538,7 +507,7 @@ public class ClientAuthorizationDUnitTest extends ClientAuthorizationTestCase {
   private void executeRIOpBlock(final List<OperationWithAction> opBlock, final int port1, final int port2, final String authInit, final Properties extraAuthProps, final Properties extraAuthzProps, final Properties javaProps) throws InterruptedException {
     for (Iterator opIter = opBlock.iterator(); opIter.hasNext();) {
       // Start client with valid credentials as specified in OperationWithAction
-      OperationWithAction currentOp = (OperationWithAction)opIter.next();
+      OperationWithAction currentOp = (OperationWithAction) opIter.next();
       OperationCode opCode = currentOp.getOperationCode();
       int opFlags = currentOp.getFlags();
       int clientNum = currentOp.getClientNum();
@@ -546,21 +515,21 @@ public class ClientAuthorizationDUnitTest extends ClientAuthorizationTestCase {
       boolean useThisVM = false;
 
       switch (clientNum) {
-        case 1:
-          clientVM = client1;
-          break;
-        case 2:
-          clientVM = client2;
-          break;
-        case 3:
-          useThisVM = true;
-          break;
-        default:
-          fail("executeRIOpBlock: Unknown client number " + clientNum);
-          break;
+      case 1:
+        clientVM = client1;
+        break;
+      case 2:
+        clientVM = client2;
+        break;
+      case 3:
+        useThisVM = true;
+        break;
+      default:
+        fail("executeRIOpBlock: Unknown client number " + clientNum);
+        break;
       }
 
-      getLogWriter().info( "executeRIOpBlock: performing operation number [" + currentOp.getOpNum() + "]: " + currentOp);
+      getLogWriter().info("executeRIOpBlock: performing operation number [" + currentOp.getOpNum() + "]: " + currentOp);
       if ((opFlags & OpFlags.USE_OLDCONN) == 0) {
         Properties opCredentials = null;
         String currentRegionName = '/' + regionName;

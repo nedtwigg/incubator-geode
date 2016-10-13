@@ -39,23 +39,23 @@ import org.apache.geode.internal.logging.LogService;
  */
 public final class SerialAckedMessage extends SerialDistributionMessage implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
-  
+
   /** The is of the distribution manager that sent the message */
   private InternalDistributedMember id;
   private int processorId;
 
   transient DistributionManager originDm;
   transient private ReplyProcessor21 rp;
-  
+
   public SerialAckedMessage() {
     super();
     InternalDistributedSystem ds = InternalDistributedSystem.getAnyInstance();
-    if (ds != null) {  // this constructor is used in serialization as well as when sending to others
-      this.originDm = (DistributionManager)ds.getDistributionManager();
+    if (ds != null) { // this constructor is used in serialization as well as when sending to others
+      this.originDm = (DistributionManager) ds.getDistributionManager();
       this.id = this.originDm.getDistributionManagerId();
     }
   }
-  
+
   /**
    * send the message and wait for replies
    * @param recipients the destination manager ids
@@ -63,12 +63,11 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
    * @throws InterruptedException if the operation is interrupted (as by shutdown)
    * @throws ReplyException if an exception was sent back by another manager
    */
-  public void send(Set recipients, boolean multicast)
-    throws InterruptedException, ReplyException
-  {
+  public void send(Set recipients, boolean multicast) throws InterruptedException, ReplyException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
-    
-    if (Thread.interrupted()) throw new InterruptedException();
+
+    if (Thread.interrupted())
+      throw new InterruptedException();
     recipients = new HashSet(recipients);
     DistributedMember me = originDm.getDistributionManagerId();
     if (recipients.contains(me)) {
@@ -77,7 +76,7 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
     // this message is only used by battery tests so we can log info level debug
     // messages
     if (isDebugEnabled) {
-       logger.debug("Recipients for SerialAckedMessage are {}", recipients);
+      logger.debug("Recipients for SerialAckedMessage are {}", recipients);
     }
     rp = new ReplyProcessor21(originDm, recipients);
     processorId = rp.getProcessorId();
@@ -85,18 +84,17 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
     setMulticast(multicast);
     Set failures = originDm.putOutgoing(this);
     if (failures != null && failures.size() > 0) {
-      for (Iterator i=failures.iterator(); i.hasNext(); ) {
-        InternalDistributedMember mbr = (InternalDistributedMember)i.next();
+      for (Iterator i = failures.iterator(); i.hasNext();) {
+        InternalDistributedMember mbr = (InternalDistributedMember) i.next();
         if (isDebugEnabled) {
           logger.debug("Unable to send serial acked message to {}", mbr);
         }
-//        rp.removeMember(mbr, true);
+        //        rp.removeMember(mbr, true);
       }
     }
-    
+
     rp.waitForReplies();
   }
-    
 
   /**
    * Sets the id of the distribution manager that is shutting down
@@ -104,12 +102,12 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
   void setDistributionManagerId(InternalDistributedMember id) {
     this.id = id;
   }
-  
+
   /** set the reply processor id that's used to wait for acknowledgements */
   public void setProcessorId(int pid) {
     processorId = pid;
   }
-  
+
   /** return the reply processor id that's used to wait for acknowledgements */
   @Override
   public int getProcessorId() {
@@ -143,8 +141,7 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
 
     super.fromData(in);
     processorId = in.readInt();

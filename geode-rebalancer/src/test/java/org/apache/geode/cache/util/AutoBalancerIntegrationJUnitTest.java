@@ -142,31 +142,15 @@ public class AutoBalancerIntegrationJUnitTest {
 
   @Test
   public void testInitializerCacheXML() {
-    String configStr = "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          "
-        + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      "
-        + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\""
-        + " version=\"1.0\">                                                                             "
-        + "   <initializer>                                                                              "
-        + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    "
-        + "     <parameter name=\"schedule\">                                                            "
-        + "       <string>* * * * * ? </string>                                                          "
-        + "     </parameter>                                                                             "
-        + "   </initializer>                                                                             "
-        + " </cache>";
+    String configStr = "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          " + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      " + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\"" + " version=\"1.0\">                                                                             " + "   <initializer>                                                                              " + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    " + "     <parameter name=\"schedule\">                                                            " + "       <string>* * * * * ? </string>                                                          " + "     </parameter>                                                                             "
+        + "   </initializer>                                                                             " + " </cache>";
 
     cache.loadCacheXml(new ByteArrayInputStream(configStr.getBytes()));
   }
 
   @Test(expected = GemFireConfigException.class)
   public void testInitFailOnMissingScheduleConf() {
-    String configStr = "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          "
-        + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      "
-        + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\""
-        + " version=\"1.0\">                                                                             "
-        + "   <initializer>                                                                              "
-        + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    "
-        + "   </initializer>                                                                             "
-        + " </cache>";
+    String configStr = "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          " + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      " + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\"" + " version=\"1.0\">                                                                             " + "   <initializer>                                                                              " + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    " + "   </initializer>                                                                             " + " </cache>";
 
     cache.loadCacheXml(new ByteArrayInputStream(configStr.getBytes()));
   }

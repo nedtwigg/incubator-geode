@@ -90,9 +90,7 @@ public class ManagementStrings {
 
   public static final StringId MEMBER_IS_SHUTTING_DOWN = new StringId(100030, "Member Is Shutting down");
 
-  public static final StringId TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_IS_BEING_DIRECTED_TO_STDOUT = new StringId(
-      100031,
-      "No log file was specified in the configuration, messages is being directed to stdout.");
+  public static final StringId TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_IS_BEING_DIRECTED_TO_STDOUT = new StringId(100031, "No log file was specified in the configuration, messages is being directed to stdout.");
 
   public static final StringId TailLogResponse_ERROR_OCCURRED_WHILE_READING_LOGFILE_LOG__0 = new StringId(100032, "Error occurred while reading log file:  {0}");
 
@@ -130,23 +128,20 @@ public class ManagementStrings {
   public static final StringId QUERY__MSG__REGIONS_NOT_FOUND = new StringId(100049, "Cannot find regions {0} in any of the members");
 
   public static final StringId QUERY__MSG__QUERY_EMPTY = new StringId(100050, "Query is either empty or Null");
-  
+
   public static final StringId QUERY__MSG__REGIONS_NOT_FOUND_ON_MEMBERS = new StringId(100051, "Cannot find regions {0} in specified members");
-  
+
   public static final StringId QUERY__MSG__REGIONS_NOT_FOUND_ON_MEMBER = new StringId(100052, "Cannot find region {0} in member {1}");
-  
+
   // Management Task related
-  
+
   public static final StringId MANAGEMENT_TASK_THREAD_GROUP = new StringId(100053, "Management Task Thread Group");
-  
+
   public static final StringId MANAGEMENT_TASK_CANCELLED = new StringId(100054, "Management Task Cancelled");
-  
+
   public static final StringId TARGET_DIR_CANT_BE_NULL_OR_EMPTY = new StringId(100055, "Target directory path can not be null or empty");
-  
+
   //HTTP & Jetty Related
-  
-  
-  public static final StringId SSL_PROTOCOAL_COULD_NOT_BE_DETERMINED = new StringId(
-      100056,
-      "SSL Protocol could not be determined. SSL settings might not work correctly. SSL protocols checked are \"SL\", \"SSLv2\", \"SSLv3\", \"TLS\", \"TLSv1\", \"TLSv1.1\", \"TLSv1.2\" ");
+
+  public static final StringId SSL_PROTOCOAL_COULD_NOT_BE_DETERMINED = new StringId(100056, "SSL Protocol could not be determined. SSL settings might not work correctly. SSL protocols checked are \"SL\", \"SSLv2\", \"SSLv3\", \"TLS\", \"TLSv1\", \"TLSv1.1\", \"TLSv1.2\" ");
 }

@@ -31,12 +31,12 @@ import org.apache.geode.management.internal.cli.json.GfJsonObject;
  */
 public class ObjectResultData<T extends CliJsonSerializable> extends AbstractResultData {
   public static final String OBJECTS_ACCESSOR = "__objects__";
-  
-  /*package*/ObjectResultData() {
+
+  /*package*/ ObjectResultData() {
     super();
   }
-  
-  /*package*/ObjectResultData(GfJsonObject gfJsonObject) {
+
+  /*package*/ ObjectResultData(GfJsonObject gfJsonObject) {
     super(gfJsonObject);
   }
 
@@ -44,7 +44,7 @@ public class ObjectResultData<T extends CliJsonSerializable> extends AbstractRes
   public String getType() {
     return TYPE_OBJECT;
   }
-  
+
   public ObjectResultData<T> addObject(T infoBean) {
     try {
       contentObject.accumulateAsJSONObject(OBJECTS_ACCESSOR, infoBean);
@@ -53,7 +53,7 @@ public class ObjectResultData<T extends CliJsonSerializable> extends AbstractRes
     }
     return this;
   }
-  
+
   public ObjectResultData<T> addCollection(Collection<T> infoBeans) {
     for (T infoBean : infoBeans) {
       try {
@@ -64,17 +64,17 @@ public class ObjectResultData<T extends CliJsonSerializable> extends AbstractRes
     }
     return this;
   }
-  
+
   public List<CliJsonSerializable> getAllObjects() {
     List<CliJsonSerializable> list = new ArrayList<CliJsonSerializable>();
     try {
       GfJsonArray rootJsonArray = contentObject.getJSONArray(OBJECTS_ACCESSOR);
       int size = rootJsonArray.size();
-      
+
       GfJsonObject jsonObject = null;
       CliJsonSerializable cliJsonSerializable = null;
       for (int i = 0; i < size; i++) {
-        jsonObject          = rootJsonArray.getJSONObject(i);
+        jsonObject = rootJsonArray.getJSONObject(i);
         cliJsonSerializable = CliJsonSerializableFactory.getCliJsonSerializable(jsonObject.getInt(CliJsonSerializable.JSID));
         cliJsonSerializable.fromJson(jsonObject);
         list.add(cliJsonSerializable);

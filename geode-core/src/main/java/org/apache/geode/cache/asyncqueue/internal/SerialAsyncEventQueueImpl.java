@@ -49,32 +49,29 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 public class SerialAsyncEventQueueImpl extends AbstractGatewaySender {
 
   private static final Logger logger = LogService.getLogger();
-  
-  final ThreadGroup loggerGroup = LoggingThreadGroup.createThreadGroup(
-      "Remote Site Discovery Logger Group", logger);
 
-  public SerialAsyncEventQueueImpl(){
+  final ThreadGroup loggerGroup = LoggingThreadGroup.createThreadGroup("Remote Site Discovery Logger Group", logger);
+
+  public SerialAsyncEventQueueImpl() {
     super();
     this.isParallel = false;
   }
-  public SerialAsyncEventQueueImpl(Cache cache,
-      GatewaySenderAttributes attrs) {
+
+  public SerialAsyncEventQueueImpl(Cache cache, GatewaySenderAttributes attrs) {
     super(cache, attrs);
     if (!(this.cache instanceof CacheCreation)) {
       // this sender lies underneath the AsyncEventQueue. Need to have
       // AsyncEventQueueStats
-        this.statistics = new AsyncEventQueueStats(
-            cache.getDistributedSystem(), AsyncEventQueueImpl
-                .getAsyncEventQueueIdFromSenderId(id));
-      }
+      this.statistics = new AsyncEventQueueStats(cache.getDistributedSystem(), AsyncEventQueueImpl.getAsyncEventQueueIdFromSenderId(id));
+    }
   }
-  
+
   @Override
   public void start() {
     if (logger.isDebugEnabled()) {
       logger.debug("Starting gatewaySender : {}", this);
     }
-    
+
     this.getLifeCycleLock().writeLock().lock();
     try {
       if (isRunning()) {
@@ -82,12 +79,9 @@ public class SerialAsyncEventQueueImpl extends AbstractGatewaySender {
         return;
       }
       if (this.remoteDSId != DEFAULT_DISTRIBUTED_SYSTEM_ID) {
-        String locators = ((GemFireCacheImpl)this.cache).getDistributedSystem()
-            .getConfig().getLocators();
+        String locators = ((GemFireCacheImpl) this.cache).getDistributedSystem().getConfig().getLocators();
         if (locators.length() == 0) {
-          throw new GatewaySenderConfigurationException(
-              LocalizedStrings.AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER
-                  .toLocalizedString());
+          throw new GatewaySenderConfigurationException(LocalizedStrings.AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER.toLocalizedString());
         }
       }
       getSenderAdvisor().initDLockService();
@@ -99,35 +93,31 @@ public class SerialAsyncEventQueueImpl extends AbstractGatewaySender {
         }
       }
       if (getDispatcherThreads() > 1) {
-        eventProcessor = new ConcurrentSerialGatewaySenderEventProcessor(
-            SerialAsyncEventQueueImpl.this);
+        eventProcessor = new ConcurrentSerialGatewaySenderEventProcessor(SerialAsyncEventQueueImpl.this);
       } else {
-        eventProcessor = new SerialGatewaySenderEventProcessor(
-            SerialAsyncEventQueueImpl.this, getId());
+        eventProcessor = new SerialGatewaySenderEventProcessor(SerialAsyncEventQueueImpl.this, getId());
       }
       eventProcessor.start();
       waitForRunningStatus();
       this.startTime = System.currentTimeMillis();
-      
+
       //Only notify the type registry if this is a WAN gateway queue
-      if(!isAsyncEventQueue()) {
+      if (!isAsyncEventQueue()) {
         ((GemFireCacheImpl) getCache()).getPdxRegistry().gatewaySenderStarted(this);
       }
       new UpdateAttributesProcessor(this).distribute(false);
 
-      
-      InternalDistributedSystem system = (InternalDistributedSystem) this.cache
-          .getDistributedSystem();
+      InternalDistributedSystem system = (InternalDistributedSystem) this.cache.getDistributedSystem();
       system.handleResourceEvent(ResourceEvent.GATEWAYSENDER_START, this);
-      
+
       logger.info(LocalizedMessage.create(LocalizedStrings.SerialGatewaySenderImpl_STARTED__0, this));
-  
+
       enqueueTempEvents();
     } finally {
       this.getLifeCycleLock().writeLock().unlock();
     }
   }
-  
+
   @Override
   public void stop() {
     if (logger.isDebugEnabled()) {
@@ -150,27 +140,26 @@ public class SerialAsyncEventQueueImpl extends AbstractGatewaySender {
         listener.close();
       }
       logger.info(LocalizedMessage.create(LocalizedStrings.GatewayImpl_STOPPED__0, this));
-      
+
       clearTempEventsAfterSenderStopped();
     } finally {
       this.getLifeCycleLock().writeLock().unlock();
     }
     if (this.isPrimary()) {
       try {
-        DistributedLockService
-            .destroy(getSenderAdvisor().getDLockServiceName());
+        DistributedLockService.destroy(getSenderAdvisor().getDLockServiceName());
       } catch (IllegalArgumentException e) {
         // service not found... ignore
       }
     }
     if (getQueues() != null && !getQueues().isEmpty()) {
       for (RegionQueue q : getQueues()) {
-        ((SerialGatewaySenderQueue)q).cleanUp();
+        ((SerialGatewaySenderQueue) q).cleanUp();
       }
     }
     this.setIsPrimary(false);
     try {
-    new UpdateAttributesProcessor(this).distribute(false);
+      new UpdateAttributesProcessor(this).distribute(false);
     } catch (CancelException e) {
     }
     Thread lockObtainingThread = getSenderAdvisor().getLockObtainingThread();
@@ -187,28 +176,27 @@ public class SerialAsyncEventQueueImpl extends AbstractGatewaySender {
         logger.info(LocalizedMessage.create(LocalizedStrings.GatewaySender_COULD_NOT_STOP_LOCK_OBTAINING_THREAD_DURING_GATEWAY_SENDER_STOP));
       }
     }
-    
-    InternalDistributedSystem system = (InternalDistributedSystem) this.cache
-        .getDistributedSystem();
+
+    InternalDistributedSystem system = (InternalDistributedSystem) this.cache.getDistributedSystem();
     system.handleResourceEvent(ResourceEvent.GATEWAYSENDER_STOP, this);
   }
-  
+
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append("SerialGatewaySender{");
     sb.append("id=" + getId());
-    sb.append(",remoteDsId="+ getRemoteDSId());
-    sb.append(",isRunning ="+ isRunning());
-    sb.append(",isPrimary ="+ isPrimary());
+    sb.append(",remoteDsId=" + getRemoteDSId());
+    sb.append(",isRunning =" + isRunning());
+    sb.append(",isPrimary =" + isPrimary());
     sb.append("}");
     return sb.toString();
   }
- 
+
   @Override
   public void fillInProfile(Profile profile) {
     assert profile instanceof GatewaySenderProfile;
-    GatewaySenderProfile pf = (GatewaySenderProfile)profile;
+    GatewaySenderProfile pf = (GatewaySenderProfile) profile;
     pf.Id = getId();
     pf.startTime = getStartTime();
     pf.remoteDSId = getRemoteDSId();
@@ -231,7 +219,7 @@ public class SerialAsyncEventQueueImpl extends AbstractGatewaySender {
     pf.isDiskSynchronous = isDiskSynchronous();
     pf.dispatcherThreads = getDispatcherThreads();
     pf.orderPolicy = getOrderPolicy();
-    pf.serverLocation = this.getServerLocation(); 
+    pf.serverLocation = this.getServerLocation();
   }
 
   /* (non-Javadoc)
@@ -245,15 +233,11 @@ public class SerialAsyncEventQueueImpl extends AbstractGatewaySender {
     if (ThreadIdentifier.isWanTypeThreadID(newThreadId)) {
       // This thread id has already been converted. Do nothing.
     } else {
-      newThreadId = ThreadIdentifier
-        .createFakeThreadIDForParallelGSPrimaryBucket(0, originalThreadId,
-            getEventIdIndex());
+      newThreadId = ThreadIdentifier.createFakeThreadIDForParallelGSPrimaryBucket(0, originalThreadId, getEventIdIndex());
     }
-    EventID newEventId = new EventID(originalEventId.getMembershipID(),
-        newThreadId, originalEventId.getSequenceID());
+    EventID newEventId = new EventID(originalEventId.getMembershipID(), newThreadId, originalEventId.getSequenceID());
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Generated event id for event with key={}, original event id={}, originalThreadId={}, new event id={}, newThreadId={}",
-          this, clonedEvent.getKey(), originalEventId, originalThreadId, newEventId, newThreadId);
+      logger.debug("{}: Generated event id for event with key={}, original event id={}, originalThreadId={}, new event id={}, newThreadId={}", this, clonedEvent.getKey(), originalEventId, originalThreadId, newEventId, newThreadId);
     }
     clonedEvent.setEventId(newEventId);
   }

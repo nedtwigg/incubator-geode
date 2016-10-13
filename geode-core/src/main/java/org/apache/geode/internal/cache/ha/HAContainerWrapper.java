@@ -40,8 +40,8 @@ public interface HAContainerWrapper extends Map {
   public Object putProxy(String haRegionName, CacheClientProxy proxy);
 
   public Object removeProxy(String haRegionName);
-  
+
   public CacheClientProxy getProxy(String haRegionName);
- 
+
   public Object putIfAbsent(Object key, Object value);
 }

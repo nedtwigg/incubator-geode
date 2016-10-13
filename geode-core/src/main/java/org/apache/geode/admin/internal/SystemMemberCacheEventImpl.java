@@ -27,10 +27,7 @@ import org.apache.geode.cache.Operation;
  *
  * @since GemFire 5.0
  */
-public class SystemMemberCacheEventImpl
-  extends SystemMembershipEventImpl
-  implements SystemMemberCacheEvent
-{
+public class SystemMemberCacheEventImpl extends SystemMembershipEventImpl implements SystemMemberCacheEvent {
 
   /** The operation done by this event */
   private Operation op;

@@ -66,16 +66,7 @@ public class LocatorLauncherAssemblyIntegrationTest extends AbstractLocatorLaunc
   public void testLocatorStopsWhenJmxPortIsZero() throws Throwable {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
-    final Builder builder = new Builder()
-        .setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(false)
-        .setWorkingDirectory(rootFolder)
-        .set(LOG_LEVEL, "config")
-        .set(ENABLE_CLUSTER_CONFIGURATION, "false")
-        .set(JMX_MANAGER, "true")
-        .set(JMX_MANAGER_START, "true")
-        .set(JMX_MANAGER_PORT, "0");
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(false).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(ENABLE_CLUSTER_CONFIGURATION, "false").set(JMX_MANAGER, "true").set(JMX_MANAGER_START, "true").set(JMX_MANAGER_PORT, "0");
 
     performTest(builder);
   }
@@ -88,15 +79,7 @@ public class LocatorLauncherAssemblyIntegrationTest extends AbstractLocatorLaunc
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
     final int jmxPort = AvailablePortHelper.getRandomAvailableTCPPorts(1)[0];
 
-    final Builder builder = new Builder().setMemberName(getUniqueName())
-        .setPort(this.locatorPort)
-        .setRedirectOutput(false)
-        .setWorkingDirectory(rootFolder)
-        .set(LOG_LEVEL, "config")
-        .set(ENABLE_CLUSTER_CONFIGURATION, "false")
-        .set(JMX_MANAGER, "true")
-        .set(JMX_MANAGER_START, "true")
-        .set(JMX_MANAGER_PORT, Integer.toString(jmxPort));
+    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(false).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(ENABLE_CLUSTER_CONFIGURATION, "false").set(JMX_MANAGER, "true").set(JMX_MANAGER_START, "true").set(JMX_MANAGER_PORT, Integer.toString(jmxPort));
 
     performTest(builder);
   }

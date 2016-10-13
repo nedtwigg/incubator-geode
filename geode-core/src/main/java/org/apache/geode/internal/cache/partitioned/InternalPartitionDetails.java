@@ -23,8 +23,7 @@ import org.apache.geode.cache.partition.PartitionMemberInfo;
  * {@link org.apache.geode.cache.partition.PartitionMemberInfo}.
  * 
  */
-public interface InternalPartitionDetails 
-extends PartitionMemberInfo, Comparable<InternalPartitionDetails> {
+public interface InternalPartitionDetails extends PartitionMemberInfo, Comparable<InternalPartitionDetails> {
 
   /**
    * Returns the load for the partitioned region.
@@ -32,7 +31,7 @@ extends PartitionMemberInfo, Comparable<InternalPartitionDetails> {
    * @return the load for the partitioned region
    */
   public PRLoad getPRLoad();
-  
+
   /**
    * Returns the size of the bucket in bytes.
    * 
@@ -40,5 +39,5 @@ extends PartitionMemberInfo, Comparable<InternalPartitionDetails> {
    * @return the size of the bucket in bytes
    */
   public long getBucketSize(int bucketId);
-  
+
 }

@@ -31,8 +31,7 @@ import javax.management.modelmbean.ModelMBean;
  *
  * @since GemFire 4.0
  */
-public class SystemMemberBridgeServerJmxImpl
-  extends SystemMemberBridgeServerImpl implements ManagedResource {
+public class SystemMemberBridgeServerJmxImpl extends SystemMemberBridgeServerImpl implements ManagedResource {
 
   /** The object name of this managed resource */
   private ObjectName objectName;
@@ -49,9 +48,7 @@ public class SystemMemberBridgeServerJmxImpl
    * Creates a new <code>SystemMemberBridgeServerJmxImpl</code> that
    * serves the contents of the given cache.
    */
-  SystemMemberBridgeServerJmxImpl(SystemMemberCacheImpl cache,
-                                  AdminBridgeServer bridgeInfo) 
-    throws AdminException {
+  SystemMemberBridgeServerJmxImpl(SystemMemberCacheImpl cache, AdminBridgeServer bridgeInfo) throws AdminException {
 
     super(cache, bridgeInfo);
     initializeMBean(cache);
@@ -62,33 +59,26 @@ public class SystemMemberBridgeServerJmxImpl
   /** 
    * Creates and registers the MBean to manage this resource
    */
-  private void initializeMBean(SystemMemberCacheImpl cache)
-    throws AdminException {
-    
+  private void initializeMBean(SystemMemberCacheImpl cache) throws AdminException {
+
     GemFireVM vm = cache.getVM();
-    this.mbeanName = new StringBuffer("GemFire.Cache:")
-        .append("name=")
-        .append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName()))
-        .append(",id=")
-        .append(this.getBridgeId())
-        .append(",owner=")
-        .append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString()))
-        .append(",type=CacheServer").toString();
-      
+    this.mbeanName = new StringBuffer("GemFire.Cache:").append("name=").append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName())).append(",id=").append(this.getBridgeId()).append(",owner=").append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString())).append(",type=CacheServer").toString();
+
     this.objectName = MBeanUtil.createMBean(this);
   }
 
   public String getMBeanName() {
     return this.mbeanName;
   }
-  
+
   public ModelMBean getModelMBean() {
     return this.modelMBean;
   }
+
   public void setModelMBean(ModelMBean modelMBean) {
     this.modelMBean = modelMBean;
   }
-  
+
   public ObjectName getObjectName() {
     return this.objectName;
   }
@@ -96,9 +86,10 @@ public class SystemMemberBridgeServerJmxImpl
   public ManagedResourceType getManagedResourceType() {
     return ManagedResourceType.SYSTEM_MEMBER_CACHE_SERVER;
   }
-  
-  public void cleanupResource() {}
-  
+
+  public void cleanupResource() {
+  }
+
   /**
    * Checks equality of the given object with <code>this</code> based on the
    * type (Class) and the MBean Name returned by <code>getMBeanName()</code>
@@ -111,13 +102,12 @@ public class SystemMemberBridgeServerJmxImpl
    */
   @Override
   public boolean equals(Object obj) {
-    if ( !(obj instanceof SystemMemberBridgeServerJmxImpl) ) {
+    if (!(obj instanceof SystemMemberBridgeServerJmxImpl)) {
       return false;
     }
-    
-    SystemMemberBridgeServerJmxImpl other = 
-                                (SystemMemberBridgeServerJmxImpl) obj; 
-    
+
+    SystemMemberBridgeServerJmxImpl other = (SystemMemberBridgeServerJmxImpl) obj;
+
     return this.getMBeanName().equals(other.getMBeanName());
   }
 

@@ -47,7 +47,7 @@ public class CacheClientNotifierStats {
   private static final String CQ_PROCESSING_TIME = "cqProcessingTime";
   private static final String COMPILED_QUERY_COUNT = "compiledQueryCount";
   private static final String COMPILED_QUERY_USED_COUNT = "compiledQueryUsedCount";
-  
+
   private static final int _eventsId;
   private static final int _eventProcessingTimeId;
   private static final int _clientRegistrationsId;
@@ -59,10 +59,10 @@ public class CacheClientNotifierStats {
   private static final int _queueDroppedCount;
   private static final int _eventEnqueuedWhileClientAwayCount;
   private static final int _clientHealthMonitorUnRegisterId;
-  
+
   // CQ process stat.
   private static final int _cqProcessingTimeId;
- 
+
   // Compiled query count.
   private static final int _compiledQueryCount;
 
@@ -73,84 +73,45 @@ public class CacheClientNotifierStats {
 
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    _type = f.createType(statName, statName,
-       new StatisticDescriptor[] {
-            f.createIntCounter
-            (EVENTS,
-       	     "Number of events processed by the cache client notifier.",
-       	     "operations"),
-       	     
-            f.createLongCounter
-            (EVENT_PROCESSING_TIME,
-        	 "Total time spent by the cache client notifier processing events.",
-        	 "nanoseconds"),
-        	 
-            f.createIntCounter
-            (CLIENT_REGISTRATIONS,
-        	 "Number of clients that have registered for updates.",
-        	 "operations"),
-        	 
-            f.createLongCounter
-            (CLIENT_REGISTRATION_TIME,
-         	 "Total time spent doing client registrations.",
-         	 "nanoseconds"),
-           
-            f.createIntGauge
-            ("clientHealthMonitorRegister",
-             "Number of client Register.",
-             "registered"),
-           
-            f.createIntGauge
-            ("clientHealthMonitorUnRegister",
-             "Number of client UnRegister.",
-             "unregistered"),
-               
-            f.createIntCounter
-            (DURABLE_RECONNECTION_COUNT,
-             "Number of times the same durable client connects to the server",
-             "operations"),
+    _type = f.createType(statName, statName, new StatisticDescriptor[] { f.createIntCounter(EVENTS, "Number of events processed by the cache client notifier.", "operations"),
 
-            f.createIntCounter
-            (QUEUE_DROPPED_COUNT,
-             "Number of times client queue for a particular durable client is dropped",
-             "operations"),
-  
-            f.createIntCounter
-            (EVENTS_ENQUEUED_WHILE_CLIENT_AWAY_COUNT,
-             "Number of events enqueued in queue for a durable client ", 
-             "operations"),
+        f.createLongCounter(EVENT_PROCESSING_TIME, "Total time spent by the cache client notifier processing events.", "nanoseconds"),
 
-            f.createLongCounter
-            (CQ_PROCESSING_TIME,
-             "Total time spent by the cache client notifier processing cqs.",
-             "nanoseconds"),
+        f.createIntCounter(CLIENT_REGISTRATIONS, "Number of clients that have registered for updates.", "operations"),
 
-            f.createLongGauge
-            (COMPILED_QUERY_COUNT,
-             "Number of compiled queries maintained.",
-             "maintained"),
+        f.createLongCounter(CLIENT_REGISTRATION_TIME, "Total time spent doing client registrations.", "nanoseconds"),
 
-            f.createLongCounter
-            (COMPILED_QUERY_USED_COUNT,
-             "Number of times compiled queries are used.",
-             "used"),
+        f.createIntGauge("clientHealthMonitorRegister", "Number of client Register.", "registered"),
 
-       });
+        f.createIntGauge("clientHealthMonitorUnRegister", "Number of client UnRegister.", "unregistered"),
+
+        f.createIntCounter(DURABLE_RECONNECTION_COUNT, "Number of times the same durable client connects to the server", "operations"),
+
+        f.createIntCounter(QUEUE_DROPPED_COUNT, "Number of times client queue for a particular durable client is dropped", "operations"),
+
+        f.createIntCounter(EVENTS_ENQUEUED_WHILE_CLIENT_AWAY_COUNT, "Number of events enqueued in queue for a durable client ", "operations"),
+
+        f.createLongCounter(CQ_PROCESSING_TIME, "Total time spent by the cache client notifier processing cqs.", "nanoseconds"),
+
+        f.createLongGauge(COMPILED_QUERY_COUNT, "Number of compiled queries maintained.", "maintained"),
+
+        f.createLongCounter(COMPILED_QUERY_USED_COUNT, "Number of times compiled queries are used.", "used"),
+
+    });
 
     // Initialize id fields
     _eventsId = _type.nameToId(EVENTS);
     _eventProcessingTimeId = _type.nameToId(EVENT_PROCESSING_TIME);
     _clientRegistrationsId = _type.nameToId(CLIENT_REGISTRATIONS);
     _clientRegistrationTimeId = _type.nameToId(CLIENT_REGISTRATION_TIME);
-    
+
     _clientHealthMonitorRegisterId = _type.nameToId("clientHealthMonitorRegister");
     _clientHealthMonitorUnRegisterId = _type.nameToId("clientHealthMonitorUnRegister");
 
-    
     _durableReconnectionCount = _type.nameToId(DURABLE_RECONNECTION_COUNT);
     _queueDroppedCount = _type.nameToId(QUEUE_DROPPED_COUNT);
     _eventEnqueuedWhileClientAwayCount = _type.nameToId(EVENTS_ENQUEUED_WHILE_CLIENT_AWAY_COUNT);
-    
+
     _cqProcessingTimeId = _type.nameToId(CQ_PROCESSING_TIME);
     _compiledQueryCount = _type.nameToId(COMPILED_QUERY_COUNT);
     _compiledQueryUsedCount = _type.nameToId(COMPILED_QUERY_USED_COUNT);
@@ -190,26 +151,23 @@ public class CacheClientNotifierStats {
     return this._stats.getLong(_eventProcessingTimeId);
   }
 
-  public long startTime()
-  {
+  public long startTime() {
     return DistributionStats.getStatTime();
   }
 
-  public void endEvent(long start)
-  {
+  public void endEvent(long start) {
     long ts = DistributionStats.getStatTime();
     // Increment number of notifications
     this._stats.incInt(_eventsId, 1);
 
     if (start != 0L && ts != 0L) {
       // Increment notification time
-      long elapsed = ts-start;
+      long elapsed = ts - start;
       this._stats.incLong(_eventProcessingTimeId, elapsed);
     }
   }
 
-  public void endClientRegistration(long start)
-  {
+  public void endClientRegistration(long start) {
     long ts = DistributionStats.getStatTime();
 
     // Increment number of notifications
@@ -217,13 +175,12 @@ public class CacheClientNotifierStats {
 
     if (start != 0L && ts != 0L) {
       // Increment notification time
-      long elapsed = ts-start;
+      long elapsed = ts - start;
       this._stats.incLong(_clientRegistrationTimeId, elapsed);
     }
   }
 
-  public void endCqProcessing(long start)
-  {
+  public void endCqProcessing(long start) {
     long ts = DistributionStats.getStatTime();
     if (start != 0L && ts != 0L) {
       this._stats.incLong(_cqProcessingTimeId, (ts - start));
@@ -237,7 +194,7 @@ public class CacheClientNotifierStats {
   public final int getClientRegisterRequests() {
     return this._stats.getInt(_clientHealthMonitorRegisterId);
   }
-  
+
   public final int get_durableReconnectionCount() {
     return this._stats.getInt(_durableReconnectionCount);
   }
@@ -261,30 +218,30 @@ public class CacheClientNotifierStats {
   public long getCompiledQueryUsedCount() {
     return this._stats.getLong(_compiledQueryUsedCount);
   }
-  
+
   public final void incDurableReconnectionCount() {
     this._stats.incInt(_durableReconnectionCount, 1);
-  }  
-  
+  }
+
   public final void incQueueDroppedCount() {
     this._stats.incInt(_queueDroppedCount, 1);
-  }  
-  
+  }
+
   public final void incEventEnqueuedWhileClientAwayCount() {
     this._stats.incInt(_eventEnqueuedWhileClientAwayCount, 1);
-  }  
-  
+  }
+
   public final void incClientUnRegisterRequests() {
     this._stats.incInt(_clientHealthMonitorUnRegisterId, 1);
   }
 
   public final void incCompiledQueryCount(long count) {
     this._stats.incLong(_compiledQueryCount, count);
-  }  
+  }
 
   public final void incCompiledQueryUsedCount(long count) {
     this._stats.incLong(_compiledQueryUsedCount, count);
-  }  
+  }
 
   public final int getClientUnRegisterRequests() {
     return this._stats.getInt(_clientHealthMonitorUnRegisterId);

@@ -136,7 +136,6 @@ public class MiscellaneousCommands implements CommandMarker {
     return Gfsh.getCurrentInstance();
   }
 
-  
   public void shutdownNode(final long timeout, final Set<DistributedMember> includeMembers) throws TimeoutException, InterruptedException, ExecutionException {
     Cache cache = CacheFactory.getAnyInstance();
     LogWriter logger = cache.getLogger();
@@ -146,8 +145,6 @@ public class MiscellaneousCommands implements CommandMarker {
 
       logger.info("Gfsh executing shutdown on members " + includeMembers);
 
-     
-   
       Callable<String> shutdownNodes = new Callable<String>() {
 
         @Override
@@ -167,62 +164,54 @@ public class MiscellaneousCommands implements CommandMarker {
       result.get(timeout, TimeUnit.MILLISECONDS);
 
     } catch (TimeoutException te) {
-      logger.error("TimeoutException in shutting down members."+includeMembers);
+      logger.error("TimeoutException in shutting down members." + includeMembers);
       throw te;
     } catch (InterruptedException e) {
-      logger.error("InterruptedException in shutting down members."+includeMembers);
+      logger.error("InterruptedException in shutting down members." + includeMembers);
       throw e;
     } catch (ExecutionException e) {
-      logger.error("ExecutionException in shutting down members."+includeMembers);
+      logger.error("ExecutionException in shutting down members." + includeMembers);
       throw e;
-    } finally{
+    } finally {
       exec.shutdownNow();
     }
 
   }
 
-
   @CliCommand(value = CliStrings.SHUTDOWN, help = CliStrings.SHUTDOWN__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_LIFECYCLE },
-      interceptor = "org.apache.geode.management.internal.cli.commands.MiscellaneousCommands$Interceptor")
+  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_LIFECYCLE }, interceptor = "org.apache.geode.management.internal.cli.commands.MiscellaneousCommands$Interceptor")
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.MANAGE)
-  public Result shutdown(
-      @CliOption(key = CliStrings.SHUTDOWN__TIMEOUT, unspecifiedDefaultValue = DEFAULT_TIME_OUT,
-          help = CliStrings.SHUTDOWN__TIMEOUT__HELP) int userSpecifiedTimeout,
-         @CliOption( key = CliStrings.INCLUDE_LOCATORS, unspecifiedDefaultValue="false", 
-         help=CliStrings.INCLUDE_LOCATORS_HELP) boolean shutdownLocators) {
-    try { 
+  public Result shutdown(@CliOption(key = CliStrings.SHUTDOWN__TIMEOUT, unspecifiedDefaultValue = DEFAULT_TIME_OUT, help = CliStrings.SHUTDOWN__TIMEOUT__HELP) int userSpecifiedTimeout, @CliOption(key = CliStrings.INCLUDE_LOCATORS, unspecifiedDefaultValue = "false", help = CliStrings.INCLUDE_LOCATORS_HELP) boolean shutdownLocators) {
+    try {
 
-      if(userSpecifiedTimeout < Integer.parseInt(DEFAULT_TIME_OUT)){
+      if (userSpecifiedTimeout < Integer.parseInt(DEFAULT_TIME_OUT)) {
         return ResultBuilder.createInfoResult(CliStrings.SHUTDOWN__MSG__IMPROPER_TIMEOUT);
       }
-      
-      //convert to mili-seconds
-      long timeout = userSpecifiedTimeout * 1000 ;
-      
-      Cache cache = CacheFactory.getAnyInstance();      
 
-      int numDataNodes = CliUtil.getAllNormalMembers(cache).size();      
+      //convert to mili-seconds
+      long timeout = userSpecifiedTimeout * 1000;
+
+      Cache cache = CacheFactory.getAnyInstance();
+
+      int numDataNodes = CliUtil.getAllNormalMembers(cache).size();
 
       Set<DistributedMember> locators = CliUtil.getAllMembers(cache);
-     
+
       Set<DistributedMember> dataNodes = CliUtil.getAllNormalMembers(cache);
-      
-      locators.removeAll(dataNodes);    
-      
-      
-      
-      if(!shutdownLocators && numDataNodes == 0){
+
+      locators.removeAll(dataNodes);
+
+      if (!shutdownLocators && numDataNodes == 0) {
         return ResultBuilder.createInfoResult(CliStrings.SHUTDOWN__MSG__NO_DATA_NODE_FOUND);
       }
-      
+
       GemFireCacheImpl gemFireCache = (GemFireCacheImpl) cache;
       String managerName = gemFireCache.getJmxManagerAdvisor().getDistributionManager().getId().getId();
 
       final DistributedMember manager = CliUtil.getDistributedMemberByNameOrId(managerName);
-      
+
       dataNodes.remove(manager);
-      
+
       //shut down all data members excluding this manager if manager is a data node
       long timeElapsed = shutDownNodeWithTimeOut(timeout, dataNodes);
       timeout = timeout - timeElapsed;
@@ -246,7 +235,7 @@ public class MiscellaneousCommands implements CommandMarker {
         }
       }
 
-      if(locators.contains(manager) && !shutdownLocators){ // This means manager is a locator and shutdownLocators is false. Hence we should not stop the manager
+      if (locators.contains(manager) && !shutdownLocators) { // This means manager is a locator and shutdownLocators is false. Hence we should not stop the manager
         return ResultBuilder.createInfoResult("Shutdown is triggered");
       }
       // now shut down this manager
@@ -278,9 +267,8 @@ public class MiscellaneousCommands implements CommandMarker {
    * @throws ExecutionException
    * @throws InterruptedException
    */
-  private long shutDownNodeWithTimeOut(long timeout, Set<DistributedMember> nodesToBeStopped) throws TimeoutException,
-      InterruptedException, ExecutionException {
-    
+  private long shutDownNodeWithTimeOut(long timeout, Set<DistributedMember> nodesToBeStopped) throws TimeoutException, InterruptedException, ExecutionException {
+
     long shutDownTimeStart = System.currentTimeMillis();
     shutdownNode(timeout, nodesToBeStopped);
 
@@ -300,26 +288,22 @@ public class MiscellaneousCommands implements CommandMarker {
   public static class Interceptor extends AbstractCliAroundInterceptor {
     @Override
     public Result preExecution(GfshParseResult parseResult) {
-      
+
       // This hook is for testing purpose only.
-      if(Boolean.getBoolean(CliStrings.IGNORE_INTERCEPTORS)){
-        return ResultBuilder
-            .createInfoResult(CliStrings.SHUTDOWN__MSG__SHUTDOWN_ENTIRE_DS);
+      if (Boolean.getBoolean(CliStrings.IGNORE_INTERCEPTORS)) {
+        return ResultBuilder.createInfoResult(CliStrings.SHUTDOWN__MSG__SHUTDOWN_ENTIRE_DS);
       }
-      
-      Response response = readYesNo(CliStrings.SHUTDOWN__MSG__WARN_USER,
-          Response.YES);
+
+      Response response = readYesNo(CliStrings.SHUTDOWN__MSG__WARN_USER, Response.YES);
       if (response == Response.NO) {
-        return ResultBuilder
-            .createShellClientAbortOperationResult(CliStrings.SHUTDOWN__MSG__ABORTING_SHUTDOWN);
+        return ResultBuilder.createShellClientAbortOperationResult(CliStrings.SHUTDOWN__MSG__ABORTING_SHUTDOWN);
       } else {
-        return ResultBuilder
-            .createInfoResult(CliStrings.SHUTDOWN__MSG__SHUTDOWN_ENTIRE_DS);
+        return ResultBuilder.createInfoResult(CliStrings.SHUTDOWN__MSG__SHUTDOWN_ENTIRE_DS);
       }
     }
+
     @Override
-    public Result postExecution(GfshParseResult parseResult,
-        Result commandResult) {
+    public Result postExecution(GfshParseResult parseResult, Result commandResult) {
       return commandResult;
     }
   }
@@ -327,29 +311,21 @@ public class MiscellaneousCommands implements CommandMarker {
   @CliCommand(value = CliStrings.GC, help = CliStrings.GC__HELP)
   @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.MANAGE)
-  public Result gc(
-      @CliOption(key = CliStrings.GC__GROUP, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.GC__GROUP__HELP)
-      String[] groups,
-      @CliOption(key = CliStrings.GC__MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.GC__MEMBER__HELP)
-      String memberId) {
+  public Result gc(@CliOption(key = CliStrings.GC__GROUP, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.GC__GROUP__HELP) String[] groups, @CliOption(key = CliStrings.GC__MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.GC__MEMBER__HELP) String memberId) {
     Cache cache = CacheFactory.getAnyInstance();
     Result result = null;
-    CompositeResultData gcResultTable = ResultBuilder
-        .createCompositeResultData();
-    TabularResultData resultTable = gcResultTable.addSection().addTable(
-        "Table1");
+    CompositeResultData gcResultTable = ResultBuilder.createCompositeResultData();
+    TabularResultData resultTable = gcResultTable.addSection().addTable("Table1");
     String headerText = "GC Summary";
     resultTable.setHeader(headerText);
     Set<DistributedMember> dsMembers = new HashSet<DistributedMember>();
     if (memberId != null && memberId.length() > 0) {
-      DistributedMember member = CliUtil
-          .getDistributedMemberByNameOrId(memberId);
+      DistributedMember member = CliUtil.getDistributedMemberByNameOrId(memberId);
       if (member == null) {
-        return ResultBuilder.createGemFireErrorResult(memberId
-            + CliStrings.GC__MSG__MEMBER_NOT_FOUND);
+        return ResultBuilder.createGemFireErrorResult(memberId + CliStrings.GC__MSG__MEMBER_NOT_FOUND);
       }
       dsMembers.add(member);
-      result =  executeAndBuildResult(cache, resultTable, dsMembers);
+      result = executeAndBuildResult(cache, resultTable, dsMembers);
     } else if (groups != null && groups.length > 0) {
       for (String group : groups) {
         dsMembers.addAll(cache.getDistributedSystem().getGroupMembers(group));
@@ -366,8 +342,7 @@ public class MiscellaneousCommands implements CommandMarker {
     return result;
   }
 
-  Result executeAndBuildResult(Cache cache, TabularResultData resultTable,
-      Set<DistributedMember> dsMembers) {
+  Result executeAndBuildResult(Cache cache, TabularResultData resultTable, Set<DistributedMember> dsMembers) {
     try {
       List<?> resultList = null;
       Function garbageCollectionFunction = new GarbageCollectionFunction();
@@ -376,23 +351,20 @@ public class MiscellaneousCommands implements CommandMarker {
       for (int i = 0; i < resultList.size(); i++) {
         Object object = resultList.get(i);
         if (object instanceof Exception) {
-          LogWrapper.getInstance().fine("Exception in GC "+  ((Throwable) object).getMessage(),((Throwable) object));
-         continue;
+          LogWrapper.getInstance().fine("Exception in GC " + ((Throwable) object).getMessage(), ((Throwable) object));
+          continue;
         } else if (object instanceof Throwable) {
-          LogWrapper.getInstance().fine("Exception in GC "+  ((Throwable) object).getMessage(),((Throwable) object));
+          LogWrapper.getInstance().fine("Exception in GC " + ((Throwable) object).getMessage(), ((Throwable) object));
           continue;
         }
 
-        if(object != null){
+        if (object != null) {
           if (object instanceof String) {
             // unexpected exception string - cache may be closed or something
-            return ResultBuilder.createUserErrorResult((String)object);
+            return ResultBuilder.createUserErrorResult((String) object);
           } else {
             Map<String, String> resultMap = (Map<String, String>) object;
-            toTabularResultData(resultTable, (String) resultMap.get("MemberId"),
-                (String) resultMap.get("HeapSizeBeforeGC"),
-                (String) resultMap.get("HeapSizeAfterGC"),
-                (String) resultMap.get("TimeSpentInGC"));
+            toTabularResultData(resultTable, (String) resultMap.get("MemberId"), (String) resultMap.get("HeapSizeBeforeGC"), (String) resultMap.get("HeapSizeAfterGC"), (String) resultMap.get("TimeSpentInGC"));
           }
         } else {
           LogWrapper.getInstance().fine("ResultMap was null ");
@@ -406,47 +378,22 @@ public class MiscellaneousCommands implements CommandMarker {
     return ResultBuilder.buildResult(resultTable);
   }
 
-  protected void toTabularResultData(TabularResultData table, String memberId,
-      String heapSizeBefore, String heapSizeAfter, String timeTaken) {
+  protected void toTabularResultData(TabularResultData table, String memberId, String heapSizeBefore, String heapSizeAfter, String timeTaken) {
     table.accumulate(CliStrings.GC__MSG__MEMBER_NAME, memberId);
     table.accumulate(CliStrings.GC__MSG__HEAP_SIZE_BEFORE_GC, heapSizeBefore);
     table.accumulate(CliStrings.GC__MSG__HEAP_SIZE_AFTER_GC, heapSizeAfter);
     table.accumulate(CliStrings.GC__MSG__TOTAL_TIME_IN_GC, timeTaken);
   }
 
-
   @CliCommand(value = CliStrings.NETSTAT, help = CliStrings.NETSTAT__HELP)
   @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
   //TODO : Verify the auto-completion for multiple values.
-  public Result netstat(
-      @CliOption(key = CliStrings.NETSTAT__MEMBER,
-                mandatory = false,
-                unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-                optionContext = ConverterHint.ALL_MEMBER_IDNAME,
-                help = CliStrings.NETSTAT__MEMBER__HELP)
-      @CliMetaData (valueSeparator = ",")
-      String[] members,
-      @CliOption(key = CliStrings.NETSTAT__GROUP,
-                 mandatory = false,
-                 unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-                 optionContext = ConverterHint.MEMBERGROUP,
-                 help = CliStrings.NETSTAT__GROUP__HELP)
-      String group,
-      @CliOption(key = CliStrings.NETSTAT__FILE,
-                 optionContext = ConverterHint.FILE,
-                 unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-                 help = CliStrings.NETSTAT__FILE__HELP)
-      String saveAs,
-      @CliOption(key = CliStrings.NETSTAT__WITHLSOF,
-                specifiedDefaultValue = "true",
-                unspecifiedDefaultValue = "false",
-                help = CliStrings.NETSTAT__WITHLSOF__HELP)
-      boolean withlsof) {
+  public Result netstat(@CliOption(key = CliStrings.NETSTAT__MEMBER, mandatory = false, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.NETSTAT__MEMBER__HELP) @CliMetaData(valueSeparator = ",") String[] members, @CliOption(key = CliStrings.NETSTAT__GROUP, mandatory = false, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.NETSTAT__GROUP__HELP) String group, @CliOption(key = CliStrings.NETSTAT__FILE, optionContext = ConverterHint.FILE, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.NETSTAT__FILE__HELP) String saveAs, @CliOption(key = CliStrings.NETSTAT__WITHLSOF, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.NETSTAT__WITHLSOF__HELP) boolean withlsof) {
     Result result = null;
 
-    Map<String, DistributedMember> hostMemberMap     = new HashMap<String, DistributedMember>();
-    Map<String, List<String>>      hostMemberListMap = new HashMap<String, List<String>>();
+    Map<String, DistributedMember> hostMemberMap = new HashMap<String, DistributedMember>();
+    Map<String, List<String>> hostMemberListMap = new HashMap<String, List<String>>();
 
     try {
       if (members != null && members.length > 0 && group != null) {
@@ -491,7 +438,7 @@ public class MiscellaneousCommands implements CommandMarker {
 
         for (DistributedMember distributedMember : membersToExecuteOn) {
           String memberName = distributedMember.getName();
-          String memberId   = distributedMember.getId();
+          String memberId = distributedMember.getId();
           String memberIdOrName = memberName != null && !memberName.isEmpty() ? memberName : memberId;
 
           buildMaps(hostMemberMap, hostMemberListMap, memberIdOrName, distributedMember);
@@ -519,7 +466,7 @@ public class MiscellaneousCommands implements CommandMarker {
             DeflaterInflaterData uncompressedBytes = CliUtil.uncompressBytes(deflaterInflaterData.getData(), deflaterInflaterData.getDataLength());
             resultInfo.append(new String(uncompressedBytes.getData()));
           } catch (DataFormatException e) {
-            resultInfo.append("Error in some data. Reason : "+e.getMessage());
+            resultInfo.append("Error in some data. Reason : " + e.getMessage());
           }
         }
       }
@@ -536,11 +483,11 @@ public class MiscellaneousCommands implements CommandMarker {
       }
       result = ResultBuilder.buildResult(resultData);
     } catch (IllegalArgumentException e) {
-      LogWrapper.getInstance().info(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] {Arrays.toString(members)}));
+      LogWrapper.getInstance().info(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] { Arrays.toString(members) }));
       result = ResultBuilder.createUserErrorResult(e.getMessage());
     } catch (RuntimeException e) {
-      LogWrapper.getInstance().info(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] {Arrays.toString(members)}), e);
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] {Arrays.toString(members)}));
+      LogWrapper.getInstance().info(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] { Arrays.toString(members) }), e);
+      result = ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] { Arrays.toString(members) }));
     } finally {
       hostMemberMap.clear();
       hostMemberListMap.clear();
@@ -548,9 +495,7 @@ public class MiscellaneousCommands implements CommandMarker {
     return result;
   }
 
-  private void buildMaps(Map<String, DistributedMember> hostMemberMap,
-      Map<String, List<String>> hostMemberListMap, String memberIdOrName,
-      DistributedMember distributedMember) {
+  private void buildMaps(Map<String, DistributedMember> hostMemberMap, Map<String, List<String>> hostMemberListMap, String memberIdOrName, DistributedMember distributedMember) {
     String host = distributedMember.getHost();
 
     // Maintain one member for a host - function execution purpose - once only for a host
@@ -572,10 +517,7 @@ public class MiscellaneousCommands implements CommandMarker {
   @CliCommand(value = CliStrings.SHOW_DEADLOCK, help = CliStrings.SHOW_DEADLOCK__HELP)
   @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result showDeadlock(
-      @CliOption(key = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE,
-      help = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE__HELP,
-      mandatory = true) String filename) {
+  public Result showDeadlock(@CliOption(key = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE, help = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE__HELP, mandatory = true) String filename) {
 
     Result result = null;
     try {
@@ -609,8 +551,7 @@ public class MiscellaneousCommands implements CommandMarker {
       } else {
         resultData.addLine(CliStrings.SHOW_DEADLOCK__NO__DEADLOCK);
       }
-      resultData.addAsFile(filename, DeadlockDetector.prettyFormat(dependencies),
-          MessageFormat.format(CliStrings.SHOW_DEADLOCK__DEPENDENCIES__REVIEW,filename), false);
+      resultData.addAsFile(filename, DeadlockDetector.prettyFormat(dependencies), MessageFormat.format(CliStrings.SHOW_DEADLOCK__DEPENDENCIES__REVIEW, filename), false);
       result = ResultBuilder.buildResult(resultData);
 
     } catch (Exception e) {
@@ -622,22 +563,17 @@ public class MiscellaneousCommands implements CommandMarker {
   @CliCommand(value = CliStrings.SHOW_LOG, help = CliStrings.SHOW_LOG_HELP)
   @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result showLog(
-      @CliOption(key = CliStrings.SHOW_LOG_MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.SHOW_LOG_MEMBER_HELP, mandatory = true) String memberNameOrId,
-      @CliOption(key = CliStrings.SHOW_LOG_LINE_NUM, unspecifiedDefaultValue = "0", help = CliStrings.SHOW_LOG_LINE_NUM_HELP, mandatory = false) int numberOfLines) {
+  public Result showLog(@CliOption(key = CliStrings.SHOW_LOG_MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.SHOW_LOG_MEMBER_HELP, mandatory = true) String memberNameOrId, @CliOption(key = CliStrings.SHOW_LOG_LINE_NUM, unspecifiedDefaultValue = "0", help = CliStrings.SHOW_LOG_LINE_NUM_HELP, mandatory = false) int numberOfLines) {
     Result result = null;
     try {
       Cache cache = CacheFactory.getAnyInstance();
-      SystemManagementService service = (SystemManagementService)ManagementService
-          .getExistingManagementService(cache);
+      SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
       MemberMXBean bean = null;
-      DistributedMember memberToBeInvoked = CliUtil
-          .getDistributedMemberByNameOrId(memberNameOrId);
+      DistributedMember memberToBeInvoked = CliUtil.getDistributedMemberByNameOrId(memberNameOrId);
       if (memberToBeInvoked != null) {
         String memberId = memberToBeInvoked.getId();
 
-        if (cache.getDistributedSystem().getDistributedMember().getId().equals(
-            memberId)) {
+        if (cache.getDistributedSystem().getDistributedMember().getId().equals(memberId)) {
           bean = service.getMemberMXBean();
         } else {
           ObjectName objectName = service.getMemberMBeanName(memberToBeInvoked);
@@ -659,33 +595,25 @@ public class MiscellaneousCommands implements CommandMarker {
             resultData.addLine(CliStrings.SHOW_LOG_NO_LOG);
           }
         } else {
-          ErrorResultData errorResultData = ResultBuilder
-              .createErrorResultData().setErrorCode(
-                  ResultBuilder.ERRORCODE_DEFAULT).addLine(
-                  memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
+          ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
           return (ResultBuilder.buildResult(errorResultData));
 
         }
 
         result = ResultBuilder.buildResult(resultData);
       } else {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData()
-            .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(
-                memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
+        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
         return (ResultBuilder.buildResult(errorResultData));
 
       }
 
     } catch (Exception e) {
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.SHOW_LOG_ERROR
-          + CliUtil.stackTraceAsString(e));
+      result = ResultBuilder.createGemFireErrorResult(CliStrings.SHOW_LOG_ERROR + CliUtil.stackTraceAsString(e));
     }
     return result;
   }
 
-  Result exportLogsPreprocessing(String dirName, String[] groups,
-      String memberId, String logLevel, boolean onlyLogLevel, boolean mergeLog,
-      String start, String end, int numOfLogFilesForTesting) {
+  Result exportLogsPreprocessing(String dirName, String[] groups, String memberId, String logLevel, boolean onlyLogLevel, boolean mergeLog, String start, String end, int numOfLogFilesForTesting) {
     Result result = null;
     try {
       LogWrapper.getInstance().fine("Exporting logs");
@@ -710,8 +638,7 @@ public class MiscellaneousCommands implements CommandMarker {
         startTime = parseDate(start);
         endTime = parseDate(end);
         if (endTime.getTime() - startTime.getTime() <= 0) {
-          result = ResultBuilder
-              .createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__INVALID_TIMERANGE);
+          result = ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__INVALID_TIMERANGE);
         }
       }
       if (end == null && start == null) {
@@ -719,44 +646,32 @@ public class MiscellaneousCommands implements CommandMarker {
         endTime = new Time(System.currentTimeMillis());
         startTime = new Time(endTime.getTime() - 24 * 60 * 60 * 1000);
       }
-      LogWrapper.getInstance().fine(
-          "Exporting logs startTime=" + startTime.toGMTString() + " "
-              + startTime.toLocaleString());
-      LogWrapper.getInstance().fine(
-          "Exporting logs endTime=" + endTime.toGMTString() + " "
-              + endTime.toLocaleString());
+      LogWrapper.getInstance().fine("Exporting logs startTime=" + startTime.toGMTString() + " " + startTime.toLocaleString());
+      LogWrapper.getInstance().fine("Exporting logs endTime=" + endTime.toGMTString() + " " + endTime.toLocaleString());
       if (groups != null && memberId != null) {
-        result = ResultBuilder
-            .createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__SPECIFY_ONE_OF_OPTION);
+        result = ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__SPECIFY_ONE_OF_OPTION);
       } else if (groups != null && groups.length > 0) {
         for (String group : groups) {
-          Set<DistributedMember> groupMembers = cache.getDistributedSystem()
-              .getGroupMembers(group);
+          Set<DistributedMember> groupMembers = cache.getDistributedSystem().getGroupMembers(group);
           if (groupMembers != null && groupMembers.size() > 0) {
             dsMembers.addAll(groupMembers);
           }
         }
         if (dsMembers.size() == 0) {
-          result = ResultBuilder
-              .createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__NO_GROUPMEMBER_FOUND);
+          result = ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__NO_GROUPMEMBER_FOUND);
         }
-        result = export(cache, dsMembers, dirName, logLevel,
-            onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
+        result = export(cache, dsMembers, dirName, logLevel, onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
       } else if (memberId != null) {
-        DistributedMember member = CliUtil
-            .getDistributedMemberByNameOrId(memberId);
+        DistributedMember member = CliUtil.getDistributedMemberByNameOrId(memberId);
         if (member == null) {
-          result = ResultBuilder.createUserErrorResult(CliStrings.format(
-              CliStrings.EXPORT_LOGS__MSG__INVALID_MEMBERID, memberId));
+          result = ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__INVALID_MEMBERID, memberId));
         }
         dsMembers.add(member);
-        result = export(cache, dsMembers, dirName, logLevel,
-            onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
+        result = export(cache, dsMembers, dirName, logLevel, onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
       } else {
         // run in entire DS members and get all including locators
         dsMembers.addAll(CliUtil.getAllMembers(cache));
-        result = export(cache, dsMembers, dirName, logLevel,
-            onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
+        result = export(cache, dsMembers, dirName, logLevel, onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
       }
     } catch (ParseException ex) {
       LogWrapper.getInstance().fine(ex.getMessage());
@@ -767,59 +682,37 @@ public class MiscellaneousCommands implements CommandMarker {
     }
     return result;
   }
+
   @CliCommand(value = CliStrings.EXPORT_LOGS, help = CliStrings.EXPORT_LOGS__HELP)
   @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_SERVER, CliStrings.TOPIC_GEODE_DEBUG_UTIL })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result exportLogs(
-      @CliOption(key = CliStrings.EXPORT_LOGS__DIR,
-          help = CliStrings.EXPORT_LOGS__DIR__HELP, mandatory=true) String dirName,
-      @CliOption(key = CliStrings.EXPORT_LOGS__GROUP,
-          unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-          optionContext = ConverterHint.MEMBERGROUP,
-          help = CliStrings.EXPORT_LOGS__GROUP__HELP) String[] groups,
-      @CliOption(key = CliStrings.EXPORT_LOGS__MEMBER,
-          unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-          optionContext = ConverterHint.ALL_MEMBER_IDNAME,
-          help = CliStrings.EXPORT_LOGS__MEMBER__HELP) String memberId,
-      @CliOption(key = CliStrings.EXPORT_LOGS__LOGLEVEL,
-          unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
-          optionContext = ConverterHint.LOG_LEVEL,
-          help = CliStrings.EXPORT_LOGS__LOGLEVEL__HELP) String logLevel,
-      @CliOption(key = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL,
-          unspecifiedDefaultValue = "false", help = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL__HELP) boolean onlyLogLevel,
-      @CliOption(key = CliStrings.EXPORT_LOGS__MERGELOG,
-          unspecifiedDefaultValue = "false", help = CliStrings.EXPORT_LOGS__MERGELOG__HELP) boolean mergeLog,
-      @CliOption(key = CliStrings.EXPORT_LOGS__STARTTIME,
-          unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXPORT_LOGS__STARTTIME__HELP) String start,
-      @CliOption(key = CliStrings.EXPORT_LOGS__ENDTIME,
-          unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXPORT_LOGS__ENDTIME__HELP) String end) {
+  public Result exportLogs(@CliOption(key = CliStrings.EXPORT_LOGS__DIR, help = CliStrings.EXPORT_LOGS__DIR__HELP, mandatory = true) String dirName, @CliOption(key = CliStrings.EXPORT_LOGS__GROUP, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.EXPORT_LOGS__GROUP__HELP) String[] groups, @CliOption(key = CliStrings.EXPORT_LOGS__MEMBER, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.EXPORT_LOGS__MEMBER__HELP) String memberId, @CliOption(key = CliStrings.EXPORT_LOGS__LOGLEVEL, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.LOG_LEVEL, help = CliStrings.EXPORT_LOGS__LOGLEVEL__HELP) String logLevel, @CliOption(key = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL, unspecifiedDefaultValue = "false", help = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL__HELP) boolean onlyLogLevel,
+      @CliOption(key = CliStrings.EXPORT_LOGS__MERGELOG, unspecifiedDefaultValue = "false", help = CliStrings.EXPORT_LOGS__MERGELOG__HELP) boolean mergeLog, @CliOption(key = CliStrings.EXPORT_LOGS__STARTTIME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXPORT_LOGS__STARTTIME__HELP) String start, @CliOption(key = CliStrings.EXPORT_LOGS__ENDTIME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXPORT_LOGS__ENDTIME__HELP) String end) {
     Result result = null;
     try {
-      result =  exportLogsPreprocessing(  dirName,   groups,   memberId, logLevel,  onlyLogLevel, mergeLog, start,  end, 0 );
+      result = exportLogsPreprocessing(dirName, groups, memberId, logLevel, onlyLogLevel, mergeLog, start, end, 0);
     } catch (Exception ex) {
       LogWrapper.getInstance().fine(ex.getMessage());
-      result= ResultBuilder.createUserErrorResult(ex.getMessage()) ;
+      result = ResultBuilder.createUserErrorResult(ex.getMessage());
     }
-    LogWrapper.getInstance().fine("Exporting logs returning =" + result );
+    LogWrapper.getInstance().fine("Exporting logs returning =" + result);
     return result;
   }
 
-  Time parseDate(String dateString) throws ParseException{
+  Time parseDate(String dateString) throws ParseException {
     Time time = null;
-    try{
+    try {
       SimpleDateFormat df = new SimpleDateFormat(MiscellaneousCommands.FORMAT);
       time = new Time(df.parse(dateString).getTime());
-    }catch(Exception e){
+    } catch (Exception e) {
       SimpleDateFormat df = new SimpleDateFormat(MiscellaneousCommands.ONLY_DATE_FORMAT);
       time = new Time(df.parse(dateString).getTime());
     }
     return time;
   }
 
-  Result export(Cache cache, Set<DistributedMember> dsMembers, String dirName,
-      String logLevel, String onlyLogLevel, boolean mergeLog, Time startTime, Time endTime, int numOfLogFilesForTesting) {
-    LogWrapper.getInstance().fine("Exporting logs in export membersize = " + dsMembers.size() + " dirname="+dirName + " logLevel="+logLevel
-        +" onlyLogLevel="+onlyLogLevel + " mergeLog="+mergeLog +" startTime="+startTime.toGMTString() + "endTime="+endTime.toGMTString());
+  Result export(Cache cache, Set<DistributedMember> dsMembers, String dirName, String logLevel, String onlyLogLevel, boolean mergeLog, Time startTime, Time endTime, int numOfLogFilesForTesting) {
+    LogWrapper.getInstance().fine("Exporting logs in export membersize = " + dsMembers.size() + " dirname=" + dirName + " logLevel=" + logLevel + " onlyLogLevel=" + onlyLogLevel + " mergeLog=" + mergeLog + " startTime=" + startTime.toGMTString() + "endTime=" + endTime.toGMTString());
     Function function = new LogFileFunction();
     FunctionService.registerFunction(function);
     try {
@@ -839,13 +732,11 @@ public class MiscellaneousCommands implements CommandMarker {
       while (it.hasNext()) {
         boolean toContinueForRestOfmembers = false;
         DistributedMember member = it.next();
-        LogWrapper.getInstance().fine("Exporting logs copy the logs for member="+member.getId());
-        try{
-        resultList = (ArrayList<?>) CliUtil.executeFunction(function, args,
-            member).getResult();
-        }catch(Exception ex){
-          LogWrapper.getInstance().fine(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
-              member.getId()),ex);
+        LogWrapper.getInstance().fine("Exporting logs copy the logs for member=" + member.getId());
+        try {
+          resultList = (ArrayList<?>) CliUtil.executeFunction(function, args, member).getResult();
+        } catch (Exception ex) {
+          LogWrapper.getInstance().fine(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()), ex);
           //try for other members
           continue;
         }
@@ -854,63 +745,48 @@ public class MiscellaneousCommands implements CommandMarker {
           for (int i = 0; i < resultList.size(); i++) {
             Object object = resultList.get(i);
             if (object instanceof Exception) {
-              ResultBuilder
-                  .createGemFireErrorResult(CliStrings
-                      .format(
-                          CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
-                          member.getId()));
-              LogWrapper.getInstance().fine("Exporting logs for member="+member.getId() + " exception="+ ((Throwable) object).getMessage(),((Throwable) object));
+              ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()));
+              LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " exception=" + ((Throwable) object).getMessage(), ((Throwable) object));
               toContinueForRestOfmembers = true;
               break;
             } else if (object instanceof Throwable) {
-              ResultBuilder
-                  .createGemFireErrorResult(CliStrings
-                      .format(
-                          CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
-                          member.getId()));
+              ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()));
 
               Throwable th = (Throwable) object;
               LogWrapper.getInstance().fine(CliUtil.stackTraceAsString((th)));
-              LogWrapper.getInstance().fine("Exporting logs for member="+member.getId() + " exception="+ ((Throwable) object).getMessage(),((Throwable) object) );
+              LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " exception=" + ((Throwable) object).getMessage(), ((Throwable) object));
               toContinueForRestOfmembers = true;
               break;
             }
           }
-        }else{
-          LogWrapper.getInstance().fine("Exporting logs for member="+member.getId() +" resultList is either null or empty") ;
+        } else {
+          LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " resultList is either null or empty");
           continue;
         }
 
-        if(toContinueForRestOfmembers == true){
-          LogWrapper.getInstance().fine("Exporting logs for member="+member.getId() + " toContinueForRestOfmembers="+ toContinueForRestOfmembers);
+        if (toContinueForRestOfmembers == true) {
+          LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " toContinueForRestOfmembers=" + toContinueForRestOfmembers);
           //proceed for rest of the member
           continue;
         }
 
         String rstList = (String) resultList.get(0);
-        LogWrapper.getInstance().fine("for member="+member.getId()+"Successfully exported to directory="+dirName+ " rstList="+rstList);
-        if (rstList== null || rstList.length() == 0) {
-          ResultBuilder.createGemFireErrorResult(CliStrings.format
-              (CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
-              member.getId()));
-          LogWrapper.getInstance().fine("for member="+member.getId()+"rstList is null");
+        LogWrapper.getInstance().fine("for member=" + member.getId() + "Successfully exported to directory=" + dirName + " rstList=" + rstList);
+        if (rstList == null || rstList.length() == 0) {
+          ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()));
+          LogWrapper.getInstance().fine("for member=" + member.getId() + "rstList is null");
           continue;
         } else if (rstList.contains("does not exist or cannot be created")) {
-          LogWrapper.getInstance().fine("for member="+member.getId()+" does not exist or cannot be created");
-          return ResultBuilder.createInfoResult(CliStrings.format(
-              CliStrings.EXPORT_LOGS__MSG__TARGET_DIR_CANNOT_BE_CREATED,
-              dirName));
-        } else if (rstList
-            .contains(LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED
-                .toLocalizedString())) {
-          LogWrapper.getInstance().fine("for member="+member.getId()+LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED
-              .toLocalizedString());
+          LogWrapper.getInstance().fine("for member=" + member.getId() + " does not exist or cannot be created");
+          return ResultBuilder.createInfoResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__TARGET_DIR_CANNOT_BE_CREATED, dirName));
+        } else if (rstList.contains(LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString())) {
+          LogWrapper.getInstance().fine("for member=" + member.getId() + LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString());
           //proceed for rest of the members
           continue;
         }
 
         //maintain list of log files to merge only when merge option is true.
-        if (mergeLog == true){
+        if (mergeLog == true) {
           StringTokenizer st = new StringTokenizer(rstList, ";");
           while (st.hasMoreTokens()) {
             logsToMerge.add(st.nextToken());
@@ -918,45 +794,42 @@ public class MiscellaneousCommands implements CommandMarker {
         }
       }
       //merge log files
-      if (mergeLog == true){
-        LogWrapper.getInstance().fine("Successfully exported to directory="+dirName+ " and now merging logsToMerge="+logsToMerge.size());
+      if (mergeLog == true) {
+        LogWrapper.getInstance().fine("Successfully exported to directory=" + dirName + " and now merging logsToMerge=" + logsToMerge.size());
         mergeLogs(logsToMerge);
-        return ResultBuilder.createInfoResult("Successfully exported and merged in directory "+dirName);
+        return ResultBuilder.createInfoResult("Successfully exported and merged in directory " + dirName);
       }
-      LogWrapper.getInstance().fine("Successfully exported to directory without merging"+dirName);
-      return ResultBuilder.createInfoResult("Successfully exported to directory "+dirName);
+      LogWrapper.getInstance().fine("Successfully exported to directory without merging" + dirName);
+      return ResultBuilder.createInfoResult("Successfully exported to directory " + dirName);
     } catch (Exception ex) {
-      LogWrapper.getInstance().info(ex.getMessage(),ex);
-      return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + ((LogFileFunction)function).getId() ) ;
+      LogWrapper.getInstance().info(ex.getMessage(), ex);
+      return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + ((LogFileFunction) function).getId());
     }
   }
 
   Result mergeLogs(List<String> logsToMerge) {
     //create a new process for merging
     LogWrapper.getInstance().fine("Exporting logs merging logs" + logsToMerge.size());
-    if (logsToMerge.size() > 1){
+    if (logsToMerge.size() > 1) {
       List<String> commandList = new ArrayList<String>();
-      commandList.add(System.getProperty("java.home") + File.separatorChar
-          + "bin" + File.separatorChar + "java");
+      commandList.add(System.getProperty("java.home") + File.separatorChar + "bin" + File.separatorChar + "java");
       commandList.add("-classpath");
       commandList.add(System.getProperty("java.class.path", "."));
       commandList.add(MergeLogs.class.getName());
 
-      commandList.add(logsToMerge.get(0).substring(0,logsToMerge.get(0).lastIndexOf(File.separator) + 1));
+      commandList.add(logsToMerge.get(0).substring(0, logsToMerge.get(0).lastIndexOf(File.separator) + 1));
 
       ProcessBuilder procBuilder = new ProcessBuilder(commandList);
       StringBuilder output = new StringBuilder();
       String errorString = new String();
       try {
         LogWrapper.getInstance().fine("Exporting logs now merging logs");
-        Process mergeProcess = procBuilder.redirectErrorStream(true)
-            .start();
+        Process mergeProcess = procBuilder.redirectErrorStream(true).start();
 
         mergeProcess.waitFor();
 
         InputStream inputStream = mergeProcess.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-            inputStream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String line = null;
 
         while ((line = br.readLine()) != null) {
@@ -965,19 +838,19 @@ public class MiscellaneousCommands implements CommandMarker {
         mergeProcess.destroy();
       } catch (Exception e) {
         LogWrapper.getInstance().fine(e.getMessage());
-        return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge" ) ;
+        return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge");
       } finally {
         if (errorString != null) {
           output.append(errorString).append(GfshParser.LINE_SEPARATOR);
-          LogWrapper.getInstance().fine("Exporting logs after merging logs "+output);
+          LogWrapper.getInstance().fine("Exporting logs after merging logs " + output);
         }
       }
-      if (output.toString().contains("Sucessfully merged logs")){
+      if (output.toString().contains("Sucessfully merged logs")) {
         LogWrapper.getInstance().fine("Exporting logs Sucessfully merged logs");
         return ResultBuilder.createInfoResult("Successfully merged");
-      }else{
+      } else {
         LogWrapper.getInstance().fine("Could not merge");
-        return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge") ;
+        return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge");
       }
     }
     return ResultBuilder.createInfoResult("Only one log file, nothing to merge");
@@ -992,18 +865,11 @@ public class MiscellaneousCommands implements CommandMarker {
   @CliCommand(value = CliStrings.EXPORT_STACKTRACE, help = CliStrings.EXPORT_STACKTRACE__HELP)
   @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result exportStackTrace(
-      @CliOption(key = CliStrings.EXPORT_STACKTRACE__MEMBER,
-      optionContext = ConverterHint.ALL_MEMBER_IDNAME,
-      help = CliStrings.EXPORT_STACKTRACE__HELP) String memberNameOrId,
+  public Result exportStackTrace(@CliOption(key = CliStrings.EXPORT_STACKTRACE__MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.EXPORT_STACKTRACE__HELP) String memberNameOrId,
 
-      @CliOption(key = CliStrings.EXPORT_STACKTRACE__GROUP,
-      optionContext = ConverterHint.ALL_MEMBER_IDNAME,
-      help=CliStrings.EXPORT_STACKTRACE__GROUP) String group,
+      @CliOption(key = CliStrings.EXPORT_STACKTRACE__GROUP, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.EXPORT_STACKTRACE__GROUP) String group,
 
-      @CliOption(key = CliStrings.EXPORT_STACKTRACE__FILE,
-      mandatory = true,
-      help = CliStrings.EXPORT_STACKTRACE__FILE__HELP) String fileName) {
+      @CliOption(key = CliStrings.EXPORT_STACKTRACE__FILE, mandatory = true, help = CliStrings.EXPORT_STACKTRACE__FILE__HELP) String fileName) {
 
     Result result = null;
     try {
@@ -1043,8 +909,7 @@ public class MiscellaneousCommands implements CommandMarker {
       result = ResultBuilder.buildResult(resultData);
     } catch (CommandResultException crex) {
       return crex.getResult();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       result = ResultBuilder.createGemFireErrorResult(CliStrings.EXPORT_STACKTRACE__ERROR + ex.getMessage());
     }
     return result;
@@ -1069,8 +934,8 @@ public class MiscellaneousCommands implements CommandMarker {
       os = new FileOutputStream(outputFile);
       ps = new PrintWriter(os);
 
-      for (Map.Entry<String, byte[]> entry: dumps.entrySet()) {
-        ps.append("*** Stack-trace for member " + entry.getKey() +" ***");
+      for (Map.Entry<String, byte[]> entry : dumps.entrySet()) {
+        ps.append("*** Stack-trace for member " + entry.getKey() + " ***");
         ps.flush();
         GZIPInputStream zipIn = new GZIPInputStream(new ByteArrayInputStream(entry.getValue()));
         BufferedInputStream bin = new BufferedInputStream(zipIn);
@@ -1083,7 +948,7 @@ public class MiscellaneousCommands implements CommandMarker {
       }
       ps.flush();
       filePath = outputFile.getCanonicalPath();
-    }  finally {
+    } finally {
       os.close();
     }
 
@@ -1092,13 +957,8 @@ public class MiscellaneousCommands implements CommandMarker {
 
   @CliCommand(value = CliStrings.SHOW_METRICS, help = CliStrings.SHOW_METRICS__HELP)
   @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_STATISTICS })
-  @ResourceOperation(resource = Resource.CLUSTER, operation= Operation.READ)
-  public Result showMetrics(
-      @CliOption(key = { CliStrings.SHOW_METRICS__MEMBER }, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.SHOW_METRICS__MEMBER__HELP) String memberNameOrId,
-      @CliOption(key = { CliStrings.SHOW_METRICS__REGION }, optionContext = ConverterHint.REGIONPATH, help = CliStrings.SHOW_METRICS__REGION__HELP) String regionName,
-      @CliOption(key = { CliStrings.SHOW_METRICS__FILE}, help = CliStrings.SHOW_METRICS__FILE__HELP) String export_to_report_to,
-      @CliOption(key = { CliStrings.SHOW_METRICS__CACHESERVER__PORT}, help = CliStrings.SHOW_METRICS__CACHESERVER__PORT__HELP) String cacheServerPortString,
-      @CliOption(key = { CliStrings.SHOW_METRICS__CATEGORY} , help = CliStrings.SHOW_METRICS__CATEGORY__HELP) @CliMetaData (valueSeparator = ",") String[] categories ) {
+  @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
+  public Result showMetrics(@CliOption(key = { CliStrings.SHOW_METRICS__MEMBER }, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.SHOW_METRICS__MEMBER__HELP) String memberNameOrId, @CliOption(key = { CliStrings.SHOW_METRICS__REGION }, optionContext = ConverterHint.REGIONPATH, help = CliStrings.SHOW_METRICS__REGION__HELP) String regionName, @CliOption(key = { CliStrings.SHOW_METRICS__FILE }, help = CliStrings.SHOW_METRICS__FILE__HELP) String export_to_report_to, @CliOption(key = { CliStrings.SHOW_METRICS__CACHESERVER__PORT }, help = CliStrings.SHOW_METRICS__CACHESERVER__PORT__HELP) String cacheServerPortString, @CliOption(key = { CliStrings.SHOW_METRICS__CATEGORY }, help = CliStrings.SHOW_METRICS__CATEGORY__HELP) @CliMetaData(valueSeparator = ",") String[] categories) {
 
     Result result = null;
     try {
@@ -1190,9 +1050,8 @@ public class MiscellaneousCommands implements CommandMarker {
         csvBuilder.append('\n');
       }
 
-
       CompositeResultData crd = ResultBuilder.createCompositeResultData();
-      SectionResultData section =  crd.addSection();
+      SectionResultData section = crd.addSection();
       TabularResultData metricsTable = section.addTable();
       Map<String, Boolean> categoriesMap = getSystemMetricsCategories();
 
@@ -1268,9 +1127,9 @@ public class MiscellaneousCommands implements CommandMarker {
    * @throws ResultDataException
    *           if building result fails
    */
-  private ResultData getMemberMetrics(DistributedMember distributedMember, String export_to_report_to, String [] categoriesArr, int cacheServerPort) throws ResultDataException {
+  private ResultData getMemberMetrics(DistributedMember distributedMember, String export_to_report_to, String[] categoriesArr, int cacheServerPort) throws ResultDataException {
     final Cache cache = CacheFactory.getAnyInstance();
-    final SystemManagementService managementService = (SystemManagementService)ManagementService.getManagementService(cache);
+    final SystemManagementService managementService = (SystemManagementService) ManagementService.getManagementService(cache);
 
     ObjectName memberMBeanName = managementService.getMemberMBeanName(distributedMember);
     MemberMXBean memberMxBean = managementService.getMBeanInstance(memberMBeanName, MemberMXBean.class);
@@ -1280,8 +1139,8 @@ public class MiscellaneousCommands implements CommandMarker {
     if (memberMxBean != null) {
 
       if (cacheServerPort != -1) {
-         csMxBeanName = managementService.getCacheServerMBeanName(cacheServerPort, distributedMember);
-         csMxBean = managementService.getMBeanInstance(csMxBeanName, CacheServerMXBean.class);
+        csMxBeanName = managementService.getCacheServerMBeanName(cacheServerPort, distributedMember);
+        csMxBean = managementService.getMBeanInstance(csMxBeanName, CacheServerMXBean.class);
 
         if (csMxBean == null) {
           ErrorResultData erd = ResultBuilder.createErrorResultData();
@@ -1315,16 +1174,15 @@ public class MiscellaneousCommands implements CommandMarker {
         Set<String> checkSet = new HashSet<String>(categoriesMap.keySet());
         Set<String> userCategories = getSetDifference(categories, checkSet);
 
-
         //Checking if the categories specified by the user are valid or not
         if (userCategories.isEmpty()) {
-            for (String category : checkSet) {
-              categoriesMap.put(category, false);
-            }
-            for (String category : categories) {
-              categoriesMap.put(category.toLowerCase(), true);
-            }
-          } else {
+          for (String category : checkSet) {
+            categoriesMap.put(category, false);
+          }
+          for (String category : categories) {
+            categoriesMap.put(category.toLowerCase(), true);
+          }
+        } else {
           StringBuilder sb = new StringBuilder();
           sb.append("Invalid Categories\n");
 
@@ -1361,7 +1219,7 @@ public class MiscellaneousCommands implements CommandMarker {
         writeToTableAndCsv(metricsTable, "region ", "totalRegionCount ", memberMxBean.getTotalRegionCount(), csvBuilder);
         String[] regionNames = memberMxBean.listRegions();
         if (regionNames != null) {
-          for (int i=0 ; i < regionNames.length; i++) {
+          for (int i = 0; i < regionNames.length; i++) {
             if (i == 0) {
               writeToTableAndCsv(metricsTable, "", "listOfRegions", regionNames[i].substring(1), csvBuilder);
             } else {
@@ -1372,7 +1230,7 @@ public class MiscellaneousCommands implements CommandMarker {
 
         String[] rootRegionNames = memberMxBean.getRootRegionNames();
         if (rootRegionNames != null) {
-          for (int i=0 ; i < rootRegionNames.length; i++) {
+          for (int i = 0; i < rootRegionNames.length; i++) {
             if (i == 0) {
               writeToTableAndCsv(metricsTable, "", "rootRegions", rootRegionNames[i], csvBuilder);
             } else {
@@ -1389,7 +1247,7 @@ public class MiscellaneousCommands implements CommandMarker {
         writeToTableAndCsv(metricsTable, "", "destroyRate", memberMxBean.getDestroysRate(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "putAllAvgLatency", memberMxBean.getPutAllAvgLatency(), csvBuilder);
         //Not available from stats. After Stats re-org it will be avaialble
-       // writeToTableAndCsv(metricsTable, "", "getAllAvgLatency", memberMxBean.getGetAllAvgLatency(), csvBuilder);
+        // writeToTableAndCsv(metricsTable, "", "getAllAvgLatency", memberMxBean.getGetAllAvgLatency(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "totalMissCount", memberMxBean.getTotalMissCount(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "totalHitCount", memberMxBean.getTotalHitCount(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "getsRate", memberMxBean.getGetsRate(), csvBuilder);
@@ -1419,10 +1277,10 @@ public class MiscellaneousCommands implements CommandMarker {
       if (categoriesMap.get("communication").booleanValue()) {
         writeToTableAndCsv(metricsTable, "communication", "bytesSentRate", memberMxBean.getBytesSentRate(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "bytesReceivedRate", memberMxBean.getBytesReceivedRate(), csvBuilder);
-        String [] connectedGatewayReceivers = memberMxBean.listConnectedGatewayReceivers();
+        String[] connectedGatewayReceivers = memberMxBean.listConnectedGatewayReceivers();
         writeToTableAndCsv(metricsTable, "", "connectedGatewayReceivers", connectedGatewayReceivers, csvBuilder);
 
-        String [] connectedGatewaySenders = memberMxBean.listConnectedGatewaySenders();
+        String[] connectedGatewaySenders = memberMxBean.listConnectedGatewaySenders();
         writeToTableAndCsv(metricsTable, "", "connectedGatewaySenders", connectedGatewaySenders, csvBuilder);
 
       }
@@ -1536,7 +1394,7 @@ public class MiscellaneousCommands implements CommandMarker {
 
         writeToTableAndCsv(metricsTable, "", "indexCount", csMxBean.getIndexCount(), csvBuilder);
 
-        String [] indexList = csMxBean.getIndexList();
+        String[] indexList = csMxBean.getIndexList();
         writeToTableAndCsv(metricsTable, "", "index list", indexList, csvBuilder);
         writeToTableAndCsv(metricsTable, "", "totalIndexMaintenanceTime", csMxBean.getTotalIndexMaintenanceTime(), csvBuilder);
 
@@ -1590,7 +1448,7 @@ public class MiscellaneousCommands implements CommandMarker {
 
       if (categoriesArr != null && categoriesArr.length != 0) {
         Set<String> categories = createSet(categoriesArr);
-    	Set<String> checkSet = new HashSet<String>(categoriesMap.keySet());
+        Set<String> checkSet = new HashSet<String>(categoriesMap.keySet());
         Set<String> userCategories = getSetDifference(categories, checkSet);
 
         //Checking if the categories specified by the user are valid or not
@@ -1670,8 +1528,8 @@ public class MiscellaneousCommands implements CommandMarker {
        * Eviction
        */
       if (categoriesMap.get("eviction").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "eviction" , "lruEvictionRate", regionMxBean.getLruEvictionRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "" , "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
+        writeToTableAndCsv(metricsTable, "eviction", "lruEvictionRate", regionMxBean.getLruEvictionRate(), csvBuilder);
+        writeToTableAndCsv(metricsTable, "", "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
       }
 
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
@@ -1701,8 +1559,7 @@ public class MiscellaneousCommands implements CommandMarker {
   private ResultData getRegionMetricsFromMember(String regionName, DistributedMember distributedMember, String export_to_report_to, String[] categoriesArr) throws ResultDataException {
 
     final Cache cache = CacheFactory.getAnyInstance();
-    final SystemManagementService managementService = (SystemManagementService) ManagementService
-        .getManagementService(cache);
+    final SystemManagementService managementService = (SystemManagementService) ManagementService.getManagementService(cache);
 
     ObjectName regionMBeanName = managementService.getRegionMBeanName(distributedMember, regionName);
     RegionMXBean regionMxBean = managementService.getMBeanInstance(regionMBeanName, RegionMXBean.class);
@@ -1711,7 +1568,7 @@ public class MiscellaneousCommands implements CommandMarker {
       CompositeResultData crd = ResultBuilder.createCompositeResultData();
       SectionResultData section = crd.addSection();
       TabularResultData metricsTable = section.addTable();
-      metricsTable.setHeader("Metrics for region:" + regionName+ " On Member " + MBeanJMXAdapter.getMemberNameOrId(distributedMember));
+      metricsTable.setHeader("Metrics for region:" + regionName + " On Member " + MBeanJMXAdapter.getMemberNameOrId(distributedMember));
       StringBuilder csvBuilder = null;
 
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
@@ -1786,7 +1643,7 @@ public class MiscellaneousCommands implements CommandMarker {
        */
       if (categoriesMap.get("diskstore").booleanValue()) {
         writeToTableAndCsv(metricsTable, "diskstore", "totalEntriesOnlyOnDisk", regionMxBean.getTotalEntriesOnlyOnDisk(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskReadsRate", ""+regionMxBean.getDiskReadsRate(), csvBuilder);
+        writeToTableAndCsv(metricsTable, "", "diskReadsRate", "" + regionMxBean.getDiskReadsRate(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "diskWritesRate", regionMxBean.getDiskWritesRate(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "totalDiskWriteInProgress", regionMxBean.getTotalDiskWritesProgress(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "diskTaskWaiting", regionMxBean.getDiskTaskWaiting(), csvBuilder);
@@ -1803,8 +1660,8 @@ public class MiscellaneousCommands implements CommandMarker {
        * Eviction
        */
       if (categoriesMap.get("eviction").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "eviction" , "lruEvictionRate", regionMxBean.getLruEvictionRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "" , "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
+        writeToTableAndCsv(metricsTable, "eviction", "lruEvictionRate", regionMxBean.getLruEvictionRate(), csvBuilder);
+        writeToTableAndCsv(metricsTable, "", "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
       }
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
         crd.addAsFile(export_to_report_to, csvBuilder.toString(), "Region Metrics exported to {0}.", false);
@@ -1813,13 +1670,12 @@ public class MiscellaneousCommands implements CommandMarker {
       return crd;
     } else {
       ErrorResultData erd = ResultBuilder.createErrorResultData();
-      String errorMessage = CliStrings.format(CliStrings.SHOW_METRICS__ERROR, "Region MBean for " + regionName + " on member " +  MBeanJMXAdapter.getMemberNameOrId(distributedMember) + " not found");
+      String errorMessage = CliStrings.format(CliStrings.SHOW_METRICS__ERROR, "Region MBean for " + regionName + " on member " + MBeanJMXAdapter.getMemberNameOrId(distributedMember) + " not found");
       erd.addLine(errorMessage);
       return erd;
     }
 
   }
-
 
   /*** Writes an entry to a TabularResultData and writes a comma separated entry to a string builder
    * @param metricsTable
@@ -1956,10 +1812,9 @@ public class MiscellaneousCommands implements CommandMarker {
     return sb.toString();
   }
 
-  private void writeToTableAndCsv(TabularResultData metricsTable, String type,
-      String metricName, String metricValue[], StringBuilder csvBuilder) {
+  private void writeToTableAndCsv(TabularResultData metricsTable, String type, String metricName, String metricValue[], StringBuilder csvBuilder) {
     if (metricValue != null) {
-      for (int i=0 ; i < metricValue.length; i++) {
+      for (int i = 0; i < metricValue.length; i++) {
         if (i == 0) {
           writeToTableAndCsv(metricsTable, type, metricName, metricValue[i], csvBuilder);
         } else {
@@ -1977,8 +1832,7 @@ public class MiscellaneousCommands implements CommandMarker {
    * @param metricValue
    * @param csvBuilder
    */
-  private void writeToTableAndCsv(TabularResultData metricsTable, String type,
-      String metricName, String metricValue, StringBuilder csvBuilder) {
+  private void writeToTableAndCsv(TabularResultData metricsTable, String type, String metricName, String metricValue, StringBuilder csvBuilder) {
     metricsTable.accumulate(CliStrings.SHOW_METRICS__TYPE__HEADER, type);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__METRIC__HEADER, metricName);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__VALUE__HEADER, metricValue);
@@ -1992,124 +1846,114 @@ public class MiscellaneousCommands implements CommandMarker {
       csvBuilder.append('\n');
     }
   }
-  
-  
+
   @CliCommand(value = CliStrings.CHANGE_LOGLEVEL, help = CliStrings.CHANGE_LOGLEVEL__HELP)
   @CliMetaData(relatedTopic = { CliStrings.TOPIC_CHANGELOGLEVEL })
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.WRITE)
-  public Result changeLogLevel(
-      @CliOption(key = CliStrings.CHANGE_LOGLEVEL__MEMBER, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__MEMBER__HELP) String[] memberIds, 
-      @CliOption(key = CliStrings.CHANGE_LOGLEVEL__GROUPS, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__GROUPS__HELP) String[] grps,
-      @CliOption(key = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL, optionContext = ConverterHint.LOG_LEVEL, mandatory = true, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL__HELP) String logLevel ) {
-    try {      
-      if( (memberIds == null || memberIds.length == 0 ) && (grps== null || grps.length == 0   ) ){
+  public Result changeLogLevel(@CliOption(key = CliStrings.CHANGE_LOGLEVEL__MEMBER, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__MEMBER__HELP) String[] memberIds, @CliOption(key = CliStrings.CHANGE_LOGLEVEL__GROUPS, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__GROUPS__HELP) String[] grps, @CliOption(key = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL, optionContext = ConverterHint.LOG_LEVEL, mandatory = true, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL__HELP) String logLevel) {
+    try {
+      if ((memberIds == null || memberIds.length == 0) && (grps == null || grps.length == 0)) {
         return ResultBuilder.createUserErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG__SPECIFY_GRP_OR_MEMBER);
       }
-      
-      if(logLevel == null || logLevel.length() == 0){
+
+      if (logLevel == null || logLevel.length() == 0) {
         return ResultBuilder.createUserErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG__SPECIFY_LOG_LEVEL);
       }
-      
+
       Cache cache = GemFireCacheImpl.getInstance();
       LogWriter logger = cache.getLogger();
-      
-      boolean validLogLevel = false;     
-      
-      for(int i = 0; i < LogWriterImpl.allLevels.length -1 ; i++){        
-        if(LogWriterImpl.allLevels[i] == LogWriterImpl.levelNameToCode(logLevel)){
+
+      boolean validLogLevel = false;
+
+      for (int i = 0; i < LogWriterImpl.allLevels.length - 1; i++) {
+        if (LogWriterImpl.allLevels[i] == LogWriterImpl.levelNameToCode(logLevel)) {
           validLogLevel = true;
           break;
         }
       }
-      
-      if(!validLogLevel){
+
+      if (!validLogLevel) {
         return ResultBuilder.createUserErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG__INVALID_LOG_LEVEL);
       }
-      
+
       Set<DistributedMember> dsMembers = new HashSet<DistributedMember>();
       Set<DistributedMember> ds = CliUtil.getAllMembers(cache);
-      
-      
-      if(grps != null && grps.length > 0){
-        for(String grp : grps){
+
+      if (grps != null && grps.length > 0) {
+        for (String grp : grps) {
           dsMembers.addAll(cache.getDistributedSystem().getGroupMembers(grp));
         }
       }
-      
-      if(memberIds != null && memberIds.length > 0){
-        for(String member : memberIds){          
+
+      if (memberIds != null && memberIds.length > 0) {
+        for (String member : memberIds) {
           Iterator<DistributedMember> it = ds.iterator();
-          while(it.hasNext()){
-            DistributedMember mem = it.next();            
-            if( mem.getName() == null ? false : mem.getName().equals(member) || 
-                mem.getId().equals(member)){
+          while (it.hasNext()) {
+            DistributedMember mem = it.next();
+            if (mem.getName() == null ? false : mem.getName().equals(member) || mem.getId().equals(member)) {
               dsMembers.add(mem);
-              break;    
+              break;
             }
           }
         }
-      }  
-      
-      if(dsMembers.size() == 0){
+      }
+
+      if (dsMembers.size() == 0) {
         return ResultBuilder.createGemFireErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG_NO_MEMBERS);
       }
-      
+
       Function logFunction = new ChangeLogLevelFunction();
       FunctionService.registerFunction(logFunction);
       Object[] functionArgs = new Object[1];
-      functionArgs[0] = logLevel;      
-      
+      functionArgs[0] = logLevel;
+
       CompositeResultData compositeResultData = ResultBuilder.createCompositeResultData();
       SectionResultData section = compositeResultData.addSection("section");
       TabularResultData resultTable = section.addTable("ChangeLogLevel");
-      resultTable = resultTable.setHeader("Summary");    
+      resultTable = resultTable.setHeader("Summary");
 
       Execution execution = FunctionService.onMembers(dsMembers).withArgs(functionArgs);
       if (execution == null) {
         return ResultBuilder.createUserErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG__CANNOT_EXECUTE);
       }
-      List<?> resultList = (List<?>) execution.execute(logFunction).getResult();  
-      
+      List<?> resultList = (List<?>) execution.execute(logFunction).getResult();
+
       for (Object object : resultList) {
         try {
           if (object instanceof Throwable) {
             logger.warning("Exception in ChangeLogLevelFunction " + ((Throwable) object).getMessage(), ((Throwable) object));
             continue;
           }
-            
+
           if (object != null) {
-            Map<String, String> resultMap = (Map<String, String>) object;              
+            Map<String, String> resultMap = (Map<String, String>) object;
             Entry<String, String> entry = resultMap.entrySet().iterator().next();
-              
-            if(entry.getValue().contains("ChangeLogLevelFunction exception")){
+
+            if (entry.getValue().contains("ChangeLogLevelFunction exception")) {
               resultTable.accumulate(CliStrings.CHANGE_LOGLEVEL__COLUMN_MEMBER, entry.getKey());
               resultTable.accumulate(CliStrings.CHANGE_LOGLEVEL__COLUMN_STATUS, "false");
-            }else{
+            } else {
               resultTable.accumulate(CliStrings.CHANGE_LOGLEVEL__COLUMN_MEMBER, entry.getKey());
               resultTable.accumulate(CliStrings.CHANGE_LOGLEVEL__COLUMN_STATUS, "true");
-            }           
-              
+            }
+
           }
         } catch (Exception ex) {
           LogWrapper.getInstance().warning("change log level command exception " + ex);
           continue;
         }
-      }     
-            
+      }
+
       Result result = ResultBuilder.buildResult(compositeResultData);
-      logger.info("change log-level command result=" +result);      
-      return result;      
+      logger.info("change log-level command result=" + result);
+      return result;
     } catch (Exception ex) {
       GemFireCacheImpl.getInstance().getLogger().error("GFSH Changeloglevel exception: " + ex);
-      return ResultBuilder.createUserErrorResult( ex.getMessage());
+      return ResultBuilder.createUserErrorResult(ex.getMessage());
     }
   }
-  
-  
 
-  @CliAvailabilityIndicator({ CliStrings.SHUTDOWN, CliStrings.GC,
-    CliStrings.SHOW_DEADLOCK, CliStrings.SHOW_METRICS, CliStrings.SHOW_LOG,
-    CliStrings.EXPORT_STACKTRACE, CliStrings.NETSTAT, CliStrings.EXPORT_LOGS, CliStrings.CHANGE_LOGLEVEL })
+  @CliAvailabilityIndicator({ CliStrings.SHUTDOWN, CliStrings.GC, CliStrings.SHOW_DEADLOCK, CliStrings.SHOW_METRICS, CliStrings.SHOW_LOG, CliStrings.EXPORT_STACKTRACE, CliStrings.NETSTAT, CliStrings.EXPORT_LOGS, CliStrings.CHANGE_LOGLEVEL })
   public boolean shutdownCommandAvailable() {
     boolean isAvailable = true; // always available on server
     if (CliUtil.isGfshVM()) { // in gfsh check if connected
@@ -2122,7 +1966,7 @@ public class MiscellaneousCommands implements CommandMarker {
     Set<String> setDifference = new HashSet<String>();
     for (String element : set1) {
       if (!(set2.contains(element.toLowerCase()))) {
-    	setDifference.add(element);
+        setDifference.add(element);
       }
     }
     return setDifference;

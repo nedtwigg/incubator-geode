@@ -28,6 +28,7 @@ public class VersionTagHolder extends EntryEventImpl {
     setVersionTag(tag);
     disallowOffHeapValues();
   }
+
   public VersionTagHolder() {
     this(null);
   }

@@ -52,8 +52,7 @@ import java.util.LinkedList;
  *                succeeded = false;
  *              }
  */
-public class HeapDataOutputStream extends OutputStream implements
-    ObjToByteArraySerializer, VersionedDataStream, ByteBufferWriter {
+public class HeapDataOutputStream extends OutputStream implements ObjToByteArraySerializer, VersionedDataStream, ByteBufferWriter {
   private static final Logger logger = LogService.getLogger();
   ByteBuffer buffer;
   protected LinkedList<ByteBuffer> chunks = null;
@@ -73,7 +72,7 @@ public class HeapDataOutputStream extends OutputStream implements
   private boolean doNotCopy;
 
   private static final int INITIAL_CAPACITY = 1024;
-  
+
   public HeapDataOutputStream(Version version) {
     this(INITIAL_CAPACITY, version);
   }
@@ -87,7 +86,7 @@ public class HeapDataOutputStream extends OutputStream implements
     if (ASCII_STRINGS) {
       maxStrBytes = s.length();
     } else {
-      maxStrBytes = s.length()*3;
+      maxStrBytes = s.length() * 3;
     }
     this.MIN_CHUNK_SIZE = INITIAL_CAPACITY;
     this.buffer = ByteBuffer.allocate(maxStrBytes);
@@ -98,6 +97,7 @@ public class HeapDataOutputStream extends OutputStream implements
   public HeapDataOutputStream(int allocSize, Version version) {
     this(allocSize, version, false);
   }
+
   /**
    * @param doNotCopy if true then byte arrays/buffers/sources will not
    * be copied to this hdos but instead referenced.
@@ -112,7 +112,7 @@ public class HeapDataOutputStream extends OutputStream implements
     this.version = version;
     this.doNotCopy = doNotCopy;
   }
-  
+
   /**
    * @param doNotCopy if true then byte arrays/buffers/sources will not
    * be copied to this hdos but instead referenced.
@@ -163,7 +163,7 @@ public class HeapDataOutputStream extends OutputStream implements
     }
     return result;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -182,14 +182,15 @@ public class HeapDataOutputStream extends OutputStream implements
     this.expansionException = ee;
     this.memoPosition = this.buffer.position();
   }
-  
+
   /** write the low-order 8 bits of the given int */
   @Override
   public final void write(int b) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(1);
-    buffer.put((byte)b);
+    buffer.put((byte) b);
   }
 
   private final void ensureCapacity(int amount) {
@@ -205,11 +206,11 @@ public class HeapDataOutputStream extends OutputStream implements
       this.ignoreWrites = true;
       throw this.expansionException;
     }
-    
+
     final ByteBuffer oldBuffer = this.buffer;
     if (this.chunks == null) {
       this.chunks = new LinkedList<ByteBuffer>();
-    }    
+    }
     oldBuffer.flip(); // now ready for reading    
     this.size += oldBuffer.remaining();
     this.chunks.add(oldBuffer);
@@ -224,12 +225,14 @@ public class HeapDataOutputStream extends OutputStream implements
       throw new IllegalStateException(LocalizedStrings.HeapDataOutputStream_NOT_IN_WRITE_MODE.toLocalizedString());
     }
   }
- 
+
   /** override OutputStream's write() */
   @Override
   public void write(byte[] source, int offset, int len) {
-    if (len == 0) return;
-    if (this.ignoreWrites) return;
+    if (len == 0)
+      return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     if (this.doNotCopy && len > MIN_TO_COPY) {
       moveBufferToChunks();
@@ -245,14 +248,14 @@ public class HeapDataOutputStream extends OutputStream implements
       this.buffer.put(source, offset, len);
     }
   }
-  
+
   private void addToChunks(byte[] source, int offset, int len) {
     ByteBuffer bb = ByteBuffer.wrap(source, offset, len).slice();
     bb = bb.slice();
     this.size += bb.remaining();
     this.chunks.add(bb);
   }
-  
+
   private void addToChunks(ByteBuffer bb) {
     int remaining = bb.remaining();
     if (remaining > 0) {
@@ -263,6 +266,7 @@ public class HeapDataOutputStream extends OutputStream implements
       this.chunks.add(bb);
     }
   }
+
   public int getByteBufferCount() {
     int result = 0;
     if (this.chunks != null) {
@@ -273,10 +277,10 @@ public class HeapDataOutputStream extends OutputStream implements
     }
     return result;
   }
-  
+
   public void fillByteBufferArray(ByteBuffer[] bbArray, int offset) {
     if (this.chunks != null) {
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         bbArray[offset++] = bb;
       }
     }
@@ -315,6 +319,7 @@ public class HeapDataOutputStream extends OutputStream implements
       return this.size;
     }
   }
+
   /**
    * Free up any unused memory
    */
@@ -324,17 +329,17 @@ public class HeapDataOutputStream extends OutputStream implements
       // buffer is less than half full so allocate a new one and copy it in
       ByteBuffer bb = ByteBuffer.allocate(this.buffer.limit());
       bb.put(this.buffer);
-      bb.flip();  // now ready for reading
+      bb.flip(); // now ready for reading
       this.buffer = bb;
     }
   }
-    
+
   private final void consolidateChunks() {
     if (this.chunks != null) {
       final int size = size();
       ByteBuffer newBuffer = ByteBuffer.allocate(size);
       int newBufPos = 0;
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         newBuffer.put(bb);
         newBufPos += bb.position();
         newBuffer.position(newBufPos); // works around JRockit 1.4.2.04 bug
@@ -355,7 +360,7 @@ public class HeapDataOutputStream extends OutputStream implements
     finishWriting();
     this.size = 0;
     if (this.chunks != null) {
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         bb.rewind();
         size += bb.remaining();
       }
@@ -363,7 +368,7 @@ public class HeapDataOutputStream extends OutputStream implements
     this.buffer.rewind();
     size += this.buffer.remaining();
   }
-  
+
   public final void reset() {
     this.size = 0;
     if (this.chunks != null) {
@@ -381,14 +386,16 @@ public class HeapDataOutputStream extends OutputStream implements
   public void flush() {
     // noop
   }
+
   public void finishWriting() {
     if (this.writeMode) {
       this.ignoreWrites = false;
       this.writeMode = false;
-      this.buffer.flip();      
+      this.buffer.flip();
       this.size += this.buffer.remaining();
     }
   }
+
   /**
    * Returns a ByteBuffer of the unused buffer; returns null if the buffer was completely used.
    */
@@ -409,7 +416,7 @@ public class HeapDataOutputStream extends OutputStream implements
       return null;
     }
   }
-  
+
   @Override
   public void close() {
     reset();
@@ -423,13 +430,13 @@ public class HeapDataOutputStream extends OutputStream implements
     consolidateChunks();
     return this.buffer;
   }
+
   /** gets the contents of this stream as a byte[].
    * The stream should not be written to past this point until it has been reset.
    */
   public final byte[] toByteArray() {
     ByteBuffer bb = toByteBuffer();
-    if (bb.hasArray() && bb.arrayOffset() == 0
-        && bb.limit() == bb.capacity()) {
+    if (bb.hasArray() && bb.arrayOffset() == 0 && bb.limit() == bb.capacity()) {
       return bb.array();
     } else {
       // create a new buffer of just the right size and copy the old buffer into it
@@ -440,8 +447,7 @@ public class HeapDataOutputStream extends OutputStream implements
       return this.buffer.array();
     }
   }
-  
-  
+
   /**
    * Writes this stream to the wrapper object of BytesAndBitsForCompactor type. The
    * byte array retrieved from the HeapDataOutputStream is set in the wrapper
@@ -459,8 +465,7 @@ public class HeapDataOutputStream extends OutputStream implements
     ByteBuffer bb = toByteBuffer();
     if (bb.hasArray() && bb.arrayOffset() == 0) {
       wrapper.setData(bb.array(), userBits, bb.limit(), true /* is Reusable */);
-    }
-    else {
+    } else {
       // create a new buffer of just the right size and copy the old buffer into
       // it
       ByteBuffer tmp = ByteBuffer.allocate(bb.remaining());
@@ -471,7 +476,7 @@ public class HeapDataOutputStream extends OutputStream implements
       wrapper.setData(bytes, userBits, bytes.length, true /* is Reusable */);
     }
   }
-  
+
   /**
    * Write this stream to the specified channel. Call multiple times until size returns zero to make sure all bytes in the stream have been written.
    * @return the number of bytes written, possibly zero.
@@ -484,10 +489,10 @@ public class HeapDataOutputStream extends OutputStream implements
     }
     int result;
     if (this.chunks != null) {
-      ByteBuffer[] bufs = new ByteBuffer[this.chunks.size()+1];
+      ByteBuffer[] bufs = new ByteBuffer[this.chunks.size() + 1];
       bufs = this.chunks.toArray(bufs);
       bufs[this.chunks.size()] = this.buffer;
-      result = (int)chan.write(bufs);
+      result = (int) chan.write(bufs);
     } else {
       result = chan.write(this.buffer);
     }
@@ -495,14 +500,14 @@ public class HeapDataOutputStream extends OutputStream implements
     return result;
   }
 
-  public  final void sendTo(SocketChannel chan, ByteBuffer out) throws IOException {
+  public final void sendTo(SocketChannel chan, ByteBuffer out) throws IOException {
     finishWriting();
     if (size() == 0) {
       return;
     }
     out.clear();
     if (this.chunks != null) {
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         sendChunkTo(bb, chan, out);
       }
     }
@@ -546,9 +551,10 @@ public class HeapDataOutputStream extends OutputStream implements
     }
     this.size -= bytesSent;
   }
-  
+
   private void flushBuffer(SocketChannel sc, ByteBuffer out) throws IOException {
-    if (out.position() == 0) return;
+    if (out.position() == 0)
+      return;
     out.flip();
     while (out.remaining() > 0) {
       sc.write(out);
@@ -567,7 +573,7 @@ public class HeapDataOutputStream extends OutputStream implements
       throw new BufferOverflowException();
     }
     if (this.chunks != null) {
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         int bytesToWrite = bb.remaining();
         if (bytesToWrite > 0) {
           out.put(bb);
@@ -592,18 +598,18 @@ public class HeapDataOutputStream extends OutputStream implements
   public final void sendTo(OutputStream out, ByteBuffer outBuf) throws IOException {
     finishWriting();
     if (this.chunks != null) {
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         sendTo(out, outBuf, bb);
       }
     }
     sendTo(out, outBuf, this.buffer);
     flushStream(out, outBuf);
   }
-  
+
   private void sendTo(OutputStream out, ByteBuffer outBuf, ByteBuffer inBuf) throws IOException {
     this.size -= writeByteBufferToStream(out, outBuf, inBuf);
   }
-  
+
   /**
    * Returns the number of bytes written
    */
@@ -612,7 +618,7 @@ public class HeapDataOutputStream extends OutputStream implements
     if (bytesToWrite > 0) {
       if (inBuf.hasArray()) {
         flushStream(out, outBuf);
-        out.write(inBuf.array(), inBuf.arrayOffset()+inBuf.position(), bytesToWrite);
+        out.write(inBuf.array(), inBuf.arrayOffset() + inBuf.position(), bytesToWrite);
         inBuf.position(inBuf.limit());
       } else { // fix for bug 43007
         // copy direct inBuf to heap outBuf. If out fills flush it
@@ -621,7 +627,7 @@ public class HeapDataOutputStream extends OutputStream implements
         while (bytesToWriteThisTime > OUT_MAX) {
           // copy only OUT_MAX bytes and flush outBuf
           int oldLimit = inBuf.limit();
-          inBuf.limit(inBuf.position()+OUT_MAX);
+          inBuf.limit(inBuf.position() + OUT_MAX);
           outBuf.put(inBuf);
           inBuf.limit(oldLimit);
           flushStream(out, outBuf);
@@ -633,9 +639,10 @@ public class HeapDataOutputStream extends OutputStream implements
     }
     return bytesToWrite;
   }
-    
+
   public static void flushStream(OutputStream out, ByteBuffer outBuf) throws IOException {
-    if (outBuf.position() == 0) return;
+    if (outBuf.position() == 0)
+      return;
     assert outBuf.hasArray();
     outBuf.flip();
     out.write(outBuf.array(), outBuf.arrayOffset(), outBuf.remaining());
@@ -648,13 +655,13 @@ public class HeapDataOutputStream extends OutputStream implements
   public final void sendTo(ByteBufferWriter out) {
     finishWriting();
     if (this.chunks != null) {
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         basicSendTo(out, bb);
       }
     }
     basicSendTo(out, this.buffer);
   }
-  
+
   private void basicSendTo(ByteBufferWriter out, ByteBuffer bb) {
     int bytesToWrite = bb.remaining();
     if (bytesToWrite > 0) {
@@ -662,6 +669,7 @@ public class HeapDataOutputStream extends OutputStream implements
       this.size -= bytesToWrite;
     }
   }
+
   /**
    * Returns an input stream that can be used to read the contents that
    * where written to this output stream.
@@ -669,6 +677,7 @@ public class HeapDataOutputStream extends OutputStream implements
   public final InputStream getInputStream() {
     return new HDInputStream();
   }
+
   private final class HDInputStream extends InputStream {
     private Iterator<ByteBuffer> chunkIt;
     private ByteBuffer bb;
@@ -683,6 +692,7 @@ public class HeapDataOutputStream extends OutputStream implements
         this.bb = HeapDataOutputStream.this.buffer;
       }
     }
+
     private void nextChunk() {
       if (this.chunkIt != null) {
         if (this.chunkIt.hasNext()) {
@@ -700,6 +710,7 @@ public class HeapDataOutputStream extends OutputStream implements
     public int available() {
       return size();
     }
+
     @Override
     public int read() {
       if (available() <= 0) {
@@ -714,6 +725,7 @@ public class HeapDataOutputStream extends OutputStream implements
         return this.bb.get() & 0xFF; // fix for bug 37068
       }
     }
+
     @Override
     public int read(byte[] dst, int off, int len) {
       if (available() <= 0) {
@@ -739,6 +751,7 @@ public class HeapDataOutputStream extends OutputStream implements
         return readCount;
       }
     }
+
     @Override
     public long skip(long n) {
       int remaining = size();
@@ -757,6 +770,7 @@ public class HeapDataOutputStream extends OutputStream implements
         return n;
       }
     }
+
     private long chunkSkip(long n) {
       int remaining = this.bb.limit() - this.bb.position();
       if (remaining <= n) {
@@ -767,8 +781,8 @@ public class HeapDataOutputStream extends OutputStream implements
         return remaining;
       } else {
         // skip over just a part of this chunk
-        this.bb.position(this.bb.position()+(int)n);
-        consume((int)n);
+        this.bb.position(this.bb.position() + (int) n);
+        consume((int) n);
         return n;
       }
     }
@@ -776,8 +790,9 @@ public class HeapDataOutputStream extends OutputStream implements
     private void consume(int c) {
       HeapDataOutputStream.this.size -= c;
     }
-      
+
   }
+
   /**
    * Write the contents of this stream to the specified stream.
    * <p>Note this implementation is exactly the same as writeTo(OutputStream)
@@ -786,11 +801,11 @@ public class HeapDataOutputStream extends OutputStream implements
   public final void sendTo(DataOutput out) throws IOException {
     finishWriting();
     if (this.chunks != null) {
-      for (ByteBuffer bb: this.chunks) {
+      for (ByteBuffer bb : this.chunks) {
         int bytesToWrite = bb.remaining();
         if (bytesToWrite > 0) {
           if (bb.hasArray()) {
-            out.write(bb.array(), bb.arrayOffset()+bb.position(), bytesToWrite);
+            out.write(bb.array(), bb.arrayOffset() + bb.position(), bytesToWrite);
             bb.position(bb.limit());
           } else {
             byte[] bytes = new byte[bytesToWrite];
@@ -806,7 +821,7 @@ public class HeapDataOutputStream extends OutputStream implements
       int bytesToWrite = bb.remaining();
       if (bytesToWrite > 0) {
         if (bb.hasArray()) {
-          out.write(bb.array(), bb.arrayOffset()+bb.position(), bytesToWrite);
+          out.write(bb.array(), bb.arrayOffset() + bb.position(), bytesToWrite);
           bb.position(bb.limit());
         } else {
           byte[] bytes = new byte[bytesToWrite];
@@ -873,10 +888,11 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      v   the <code>short</code> value to be written.
      */
   public final void writeShort(int v) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(2);
-    buffer.putShort((short)v);
+    buffer.putShort((short) v);
   }
 
   /**
@@ -898,10 +914,11 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      v   the <code>char</code> value to be written.
      */
   public final void writeChar(int v) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(2);
-    buffer.putChar((char)v);
+    buffer.putChar((char) v);
   }
 
   /**
@@ -923,7 +940,8 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      v   the <code>int</code> value to be written.
      */
   public final void writeInt(int v) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(4);
     buffer.putInt(v);
@@ -953,12 +971,13 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      v   the <code>long</code> value to be written.
      */
   public final void writeLong(long v) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(8);
     buffer.putLong(v);
   }
-  
+
   /**
    * Reserves space in the output for a long
    * and returns a LongUpdater than can be used
@@ -966,21 +985,24 @@ public class HeapDataOutputStream extends OutputStream implements
    * @return the LongUpdater that allows the long to be updated
    */
   public final LongUpdater reserveLong() {
-    if (this.ignoreWrites) return null;
+    if (this.ignoreWrites)
+      return null;
     checkIfWritable();
     ensureCapacity(8);
     LongUpdater result = new LongUpdater(this.buffer);
     buffer.putLong(0L);
     return result;
   }
-  
+
   public static class LongUpdater {
     private final ByteBuffer bb;
     private final int pos;
+
     public LongUpdater(ByteBuffer bb) {
       this.bb = bb;
       this.pos = bb.position();
     }
+
     public void update(long v) {
       this.bb.putLong(this.pos, v);
     }
@@ -1003,7 +1025,8 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      v   the <code>float</code> value to be written.
      */
   public final void writeFloat(float v) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(4);
     buffer.putFloat(v);
@@ -1026,7 +1049,8 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      v   the <code>double</code> value to be written.
      */
   public final void writeDouble(double v) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(8);
     buffer.putDouble(v);
@@ -1052,7 +1076,8 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      str the string of bytes to be written.
      */
   public final void writeBytes(String str) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     int strlen = str.length();
     if (strlen > 0) {
@@ -1062,15 +1087,15 @@ public class HeapDataOutputStream extends OutputStream implements
         // I know this is a deprecated method but it is PERFECT for this impl.
         int pos = this.buffer.position();
         str.getBytes(0, strlen, this.buffer.array(), this.buffer.arrayOffset() + pos);
-        this.buffer.position(pos+strlen);
+        this.buffer.position(pos + strlen);
       } else {
         byte[] bytes = new byte[strlen];
         str.getBytes(0, strlen, bytes, 0);
         this.buffer.put(bytes);
       }
-//       for (int i = 0 ; i < len ; i++) {
-//         this.buffer.put((byte)s.charAt(i));
-//       }
+      //       for (int i = 0 ; i < len ; i++) {
+      //         this.buffer.put((byte)s.charAt(i));
+      //       }
     }
   }
 
@@ -1092,12 +1117,13 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      s   the string value to be written.
      */
   public final void writeChars(String s) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     int len = s.length();
     if (len > 0) {
-      ensureCapacity(len*2);
-      for (int i=0; i < len; i++) {
+      ensureCapacity(len * 2);
+      for (int i = 0; i < len; i++) {
         this.buffer.putChar(s.charAt(i));
       }
     }
@@ -1108,7 +1134,7 @@ public class HeapDataOutputStream extends OutputStream implements
    * ASCII characters. Setting this to true gives a performance improvement.
    */
   private static final boolean ASCII_STRINGS = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "ASCII_STRINGS");
-  
+
   /**
      * Writes two bytes of length information
      * to the output stream, followed
@@ -1159,7 +1185,8 @@ public class HeapDataOutputStream extends OutputStream implements
      * @param      str   the string value to be written.
      */
   public final void writeUTF(String str) throws UTFDataFormatException {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     if (ASCII_STRINGS) {
       writeAsciiUTF(str, true);
@@ -1167,36 +1194,37 @@ public class HeapDataOutputStream extends OutputStream implements
       writeFullUTF(str, true);
     }
   }
+
   private final void writeAsciiUTF(String str, boolean encodeLength) throws UTFDataFormatException {
     int strlen = str.length();
     if (encodeLength && strlen > 65535) {
       throw new UTFDataFormatException();
     }
 
-      int maxLen = strlen;
-      if (encodeLength) {
-        maxLen += 2;
-      }
-      ensureCapacity(maxLen);
+    int maxLen = strlen;
+    if (encodeLength) {
+      maxLen += 2;
+    }
+    ensureCapacity(maxLen);
 
     if (encodeLength) {
-      this.buffer.putShort((short)strlen);
+      this.buffer.putShort((short) strlen);
     }
     if (this.buffer.hasArray()) {
       // I know this is a deprecated method but it is PERFECT for this impl.
       int pos = this.buffer.position();
       str.getBytes(0, strlen, this.buffer.array(), this.buffer.arrayOffset() + pos);
-      this.buffer.position(pos+strlen);
+      this.buffer.position(pos + strlen);
     } else {
-      for (int i = 0 ; i < strlen ; i++) {
-        this.buffer.put((byte)str.charAt(i));
+      for (int i = 0; i < strlen; i++) {
+        this.buffer.put((byte) str.charAt(i));
       }
-//       byte[] bytes = new byte[strlen];
-//       str.getBytes(0, strlen, bytes, 0);
-//       this.buffer.put(bytes);
+      //       byte[] bytes = new byte[strlen];
+      //       str.getBytes(0, strlen, bytes, 0);
+      //       this.buffer.put(bytes);
     }
   }
-  
+
   /**
    * The logic used here is based on java's DataOutputStream.writeUTF() from 
    * the version 1.6.0_10.
@@ -1210,7 +1238,7 @@ public class HeapDataOutputStream extends OutputStream implements
     }
     // make room for worst case space 3 bytes for each char and 2 for len
     {
-      int maxLen = (strlen*3);
+      int maxLen = (strlen * 3);
       if (encodeLength) {
         maxLen += 2;
       }
@@ -1219,19 +1247,19 @@ public class HeapDataOutputStream extends OutputStream implements
     int utfSizeIdx = this.buffer.position();
     if (encodeLength) {
       // skip bytes reserved for length
-      this.buffer.position(utfSizeIdx+2);
+      this.buffer.position(utfSizeIdx + 2);
     }
     for (int i = 0; i < strlen; i++) {
       int c = str.charAt(i);
       if ((c >= 0x0001) && (c <= 0x007F)) {
-        this.buffer.put((byte)c);
+        this.buffer.put((byte) c);
       } else if (c > 0x07FF) {
         this.buffer.put((byte) (0xE0 | ((c >> 12) & 0x0F)));
-        this.buffer.put((byte) (0x80 | ((c >>  6) & 0x3F)));
-        this.buffer.put((byte) (0x80 | ((c >>  0) & 0x3F)));
+        this.buffer.put((byte) (0x80 | ((c >> 6) & 0x3F)));
+        this.buffer.put((byte) (0x80 | ((c >> 0) & 0x3F)));
       } else {
-        this.buffer.put((byte) (0xC0 | ((c >>  6) & 0x1F)));
-        this.buffer.put((byte) (0x80 | ((c >>  0) & 0x3F)));
+        this.buffer.put((byte) (0xC0 | ((c >> 6) & 0x1F)));
+        this.buffer.put((byte) (0x80 | ((c >> 0) & 0x3F)));
       }
     }
     int utflen = this.buffer.position() - utfSizeIdx;
@@ -1242,7 +1270,7 @@ public class HeapDataOutputStream extends OutputStream implements
         this.buffer.position(utfSizeIdx);
         throw new UTFDataFormatException();
       }
-      this.buffer.putShort(utfSizeIdx, (short)utflen);
+      this.buffer.putShort(utfSizeIdx, (short) utflen);
     }
   }
 
@@ -1251,7 +1279,8 @@ public class HeapDataOutputStream extends OutputStream implements
    * first two bytes and allows strings longer than 65k to be encoded.
    */
   public void writeUTFNoLength(String str) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     try {
       if (ASCII_STRINGS) {
@@ -1264,43 +1293,44 @@ public class HeapDataOutputStream extends OutputStream implements
       throw new IllegalStateException(LocalizedStrings.HeapDataOutputStream_UNEXPECTED_0.toLocalizedString(ex));
     }
   }
-  
+
   /**
    * Writes the given object to this stream as a byte array.
    * The byte array is produced by serializing v. The serialization
    * is done by calling DataSerializer.writeObject.
    */
   public void writeAsSerializedByteArray(Object v) throws IOException {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     ensureCapacity(5);
     if (v instanceof HeapDataOutputStream) {
-      HeapDataOutputStream other = (HeapDataOutputStream)v;
+      HeapDataOutputStream other = (HeapDataOutputStream) v;
       other.finishWriting();
       InternalDataSerializer.writeArrayLength(other.size(), this);
       if (this.doNotCopy) {
         if (other.chunks != null) {
-          for (ByteBuffer bb: other.chunks) {
+          for (ByteBuffer bb : other.chunks) {
             write(bb);
           }
         }
         write(other.buffer);
       } else {
-        other.sendTo((ByteBufferWriter)this);
+        other.sendTo((ByteBufferWriter) this);
         other.rewind();
       }
     } else {
       ByteBuffer sizeBuf = this.buffer;
       int sizePos = sizeBuf.position();
-      sizeBuf.position(sizePos+5);
+      sizeBuf.position(sizePos + 5);
       final int preArraySize = size();
       DataSerializer.writeObject(v, this);
       int arraySize = size() - preArraySize;
       sizeBuf.put(sizePos, InternalDataSerializer.INT_ARRAY_LEN);
-      sizeBuf.putInt(sizePos+1, arraySize);
+      sizeBuf.putInt(sizePos + 1, arraySize);
     }
   }
-  
+
   /**
    * We set "doNotCopy" to prevent wasting time
    * by copying bytes. But to do this we create
@@ -1312,7 +1342,7 @@ public class HeapDataOutputStream extends OutputStream implements
    * Public for unit test access.
    */
   public static final int MIN_TO_COPY = 128;
-  
+
   /**
    * Write a byte buffer to this HeapDataOutputStream,
    * 
@@ -1321,10 +1351,12 @@ public class HeapDataOutputStream extends OutputStream implements
    */
   @Override
   public void write(ByteBuffer bb) {
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     int remaining = bb.remaining();
-    if (remaining == 0) return;
+    if (remaining == 0)
+      return;
     if (this.doNotCopy && remaining > MIN_TO_COPY) {
       moveBufferToChunks();
       addToChunks(bb);
@@ -1353,7 +1385,8 @@ public class HeapDataOutputStream extends OutputStream implements
       write(bb);
       return;
     }
-    if (this.ignoreWrites) return;
+    if (this.ignoreWrites)
+      return;
     checkIfWritable();
     int remainingSpace = this.buffer.limit() - this.buffer.position();
     if (remainingSpace < source.remaining()) {

@@ -86,43 +86,43 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     return host.getVM(0);
   }
-    
+
   private void initOtherId() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("Connect") {
-        public void run2() throws CacheException {
-          getCache();
-        }
-      });
-    this.otherId = (DistributedMember)vm.invoke(() -> TXOrderDUnitTest.getVMDistributedMember());
+      public void run2() throws CacheException {
+        getCache();
+      }
+    });
+    this.otherId = (DistributedMember) vm.invoke(() -> TXOrderDUnitTest.getVMDistributedMember());
   }
 
   private void doCommitOtherVm() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("create root") {
-        public void run2() throws CacheException {
-          AttributesFactory af = new AttributesFactory();
-          af.setScope(Scope.DISTRIBUTED_ACK);
-          Region r1 = createRootRegion("r1", af.create());
-          Region r2 = r1.createSubregion("r2", af.create());
-          Region r3 = r2.createSubregion("r3", af.create());
-          CacheTransactionManager ctm =  getCache().getCacheTransactionManager();
-          ctm.begin();
-          r2.put("b", "value1");
-          r3.put("c", "value2");
-          r1.put("a", "value3");
-          r1.put("a2", "value4");
-          r3.put("c2", "value5");
-          r2.put("b2", "value6");
-          ctm.commit();
-        }
-      });
+      public void run2() throws CacheException {
+        AttributesFactory af = new AttributesFactory();
+        af.setScope(Scope.DISTRIBUTED_ACK);
+        Region r1 = createRootRegion("r1", af.create());
+        Region r2 = r1.createSubregion("r2", af.create());
+        Region r3 = r2.createSubregion("r3", af.create());
+        CacheTransactionManager ctm = getCache().getCacheTransactionManager();
+        ctm.begin();
+        r2.put("b", "value1");
+        r3.put("c", "value2");
+        r1.put("a", "value3");
+        r1.put("a2", "value4");
+        r3.put("c2", "value5");
+        r2.put("b2", "value6");
+        ctm.commit();
+      }
+    });
   }
 
   public static DistributedMember getVMDistributedMember() {
     return InternalDistributedSystem.getAnyInstance().getDistributedMember();
   }
-  
+
   Object getCurrentExpectedKey() {
     Object result = this.expectedKeys.get(this.clCount);
     this.clCount += 1;
@@ -139,36 +139,36 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
     af.setDataPolicy(DataPolicy.REPLICATE);
     af.setScope(Scope.DISTRIBUTED_ACK);
     CacheListener cl1 = new CacheListenerAdapter() {
-        public void afterCreate(EntryEvent e) {
-          assertEquals(getCurrentExpectedKey(), e.getKey());
-        }
-      };
+      public void afterCreate(EntryEvent e) {
+        assertEquals(getCurrentExpectedKey(), e.getKey());
+      }
+    };
     af.addCacheListener(cl1);
     Region r1 = createRootRegion("r1", af.create());
     Region r2 = r1.createSubregion("r2", af.create());
     r2.createSubregion("r3", af.create());
 
     TransactionListener tl1 = new TransactionListenerAdapter() {
-        public void afterCommit(TransactionEvent e) {
-          assertEquals(6, e.getEvents().size());
-          ArrayList keys = new ArrayList();
-          Iterator it = e.getEvents().iterator();
-          while (it.hasNext()) {
-            EntryEvent ee = (EntryEvent)it.next();
-            keys.add(ee.getKey());
-            assertEquals(null, ee.getCallbackArgument());
-            assertEquals(true, ee.isCallbackArgumentAvailable());
-          }
-          assertEquals(TXOrderDUnitTest.this.expectedKeys, keys);
-          TXOrderDUnitTest.this.invokeCount = 1;
+      public void afterCommit(TransactionEvent e) {
+        assertEquals(6, e.getEvents().size());
+        ArrayList keys = new ArrayList();
+        Iterator it = e.getEvents().iterator();
+        while (it.hasNext()) {
+          EntryEvent ee = (EntryEvent) it.next();
+          keys.add(ee.getKey());
+          assertEquals(null, ee.getCallbackArgument());
+          assertEquals(true, ee.isCallbackArgumentAvailable());
         }
-      };
-    CacheTransactionManager ctm =  getCache().getCacheTransactionManager();
+        assertEquals(TXOrderDUnitTest.this.expectedKeys, keys);
+        TXOrderDUnitTest.this.invokeCount = 1;
+      }
+    };
+    CacheTransactionManager ctm = getCache().getCacheTransactionManager();
     ctm.addListener(tl1);
 
     this.invokeCount = 0;
     this.clCount = 0;
-    this.expectedKeys = Arrays.asList(new String[]{"b", "c", "a", "a2", "c2", "b2"});
+    this.expectedKeys = Arrays.asList(new String[] { "b", "c", "a", "a2", "c2", "b2" });
     doCommitOtherVm();
     assertEquals(1, this.invokeCount);
     assertEquals(6, this.clCount);
@@ -196,9 +196,10 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
         af.addCacheListener(cl1);
         CacheLoader cl = new CacheLoader() {
           public Object load(LoaderHelper helper) throws CacheLoaderException {
-            LogWriterUtils.getLogWriter().info("Loading value:"+helper.getKey()+"_value");
-            return helper.getKey()+"_value";
+            LogWriterUtils.getLogWriter().info("Loading value:" + helper.getKey() + "_value");
+            return helper.getKey() + "_value";
           }
+
           public void close() {
           }
         };
@@ -215,7 +216,7 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
         af.setScope(Scope.DISTRIBUTED_ACK);
         CacheListener cl1 = new CacheListenerAdapter() {
           public void afterCreate(EntryEvent e) {
-            LogWriterUtils.getLogWriter().info("op:"+e.getOperation().toString());
+            LogWriterUtils.getLogWriter().info("op:" + e.getOperation().toString());
             assertTrue(!e.getOperation().isLocalLoad());
           }
         };
@@ -248,10 +249,7 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
         ctm.addListener(tl);
         ExposedRegionCacheListener cl = new ExposedRegionCacheListener();
         AttributesFactory af = new AttributesFactory();
-        PartitionAttributes pa = new PartitionAttributesFactory()
-          .setRedundantCopies(1)
-          .setTotalNumBuckets(1)
-          .create();
+        PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(1).setTotalNumBuckets(1).create();
         af.setPartitionAttributes(pa);
         af.addCacheListener(cl);
         Region pr = createRootRegion("testTxEventForRegion", af.create());
@@ -280,8 +278,8 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
       public Object call() throws Exception {
         Region pr = getRootRegion("testTxEventForRegion");
         CacheTransactionManager ctm = getCache().getCacheTransactionManager();
-        ExposedRegionTransactionListener tl = (ExposedRegionTransactionListener)ctm.getListeners()[0];
-        ExposedRegionCacheListener cl = (ExposedRegionCacheListener)pr.getAttributes().getCacheListeners()[0];
+        ExposedRegionTransactionListener tl = (ExposedRegionTransactionListener) ctm.getListeners()[0];
+        ExposedRegionCacheListener cl = (ExposedRegionCacheListener) pr.getAttributes().getCacheListeners()[0];
         assertFalse(tl.exceptionOccurred);
         assertFalse(cl.exceptionOccurred);
         return null;
@@ -298,7 +296,7 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
     @Override
     public void afterCommit(TransactionEvent event) {
       List<CacheEvent<?, ?>> events = event.getEvents();
-      for (CacheEvent<?, ?>e : events) {
+      for (CacheEvent<?, ?> e : events) {
         if (!"/testTxEventForRegion".equals(e.getRegion().getFullPath())) {
           exceptionOccurred = true;
         }
@@ -314,17 +312,19 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
     public void afterCreate(EntryEvent event) {
       verifyRegion(event);
     }
+
     @Override
     public void afterUpdate(EntryEvent event) {
       verifyRegion(event);
     }
+
     private void verifyRegion(EntryEvent event) {
       if (!"/testTxEventForRegion".equals(event.getRegion().getFullPath())) {
         exceptionOccurred = true;
       }
     }
   }
-  
+
   /**
    * verify that queries on indexes work with transaction
    */
@@ -360,12 +360,12 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
     };
     vm1.invoke(createRegionAndIndex);
     vm2.invoke(createRegionAndIndex);
-    
+
     //do transactional puts in vm1
     vm1.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Context ctx = getCache().getJNDIContext();
-        UserTransaction utx = (UserTransaction)ctx.lookup("java:/UserTransaction");
+        UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
         Region region = getRootRegion("sample");
         Integer x = new Integer(0);
         utx.begin();
@@ -373,8 +373,8 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
         utx.commit();
         QueryService qs = getCache().getQueryService();
         Query q = qs.newQuery("select * from /sample where age < 50");
-        assertEquals(1, ((SelectResults)q.execute()).size());
-        Person dsample = (Person)CopyHelper.copy(region.get(x));
+        assertEquals(1, ((SelectResults) q.execute()).size());
+        Person dsample = (Person) CopyHelper.copy(region.get(x));
         dsample.setAge(55);
         utx.begin();
         switch (op) {
@@ -391,38 +391,38 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
           fail("unknown op");
         }
         utx.commit();
-        assertEquals(0, ((SelectResults)q.execute()).size());
+        assertEquals(0, ((SelectResults) q.execute()).size());
         return null;
       }
     });
-    
+
     //run query and verify results in other vm
     vm2.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         QueryService qs = getCache().getQueryService();
         Query q = qs.newQuery("select * from /sample where age < 50");
-        assertEquals(0, ((SelectResults)q.execute()).size());
+        assertEquals(0, ((SelectResults) q.execute()).size());
         return null;
       }
     });
   }
-  
+
   @Test
   public void testBug43353() {
     Host host = Host.getHost(0);
     VM vm1 = host.getVM(0);
     VM vm2 = host.getVM(1);
-    
+
     SerializableCallable createRegion = new SerializableCallable() {
       public Object call() throws Exception {
         getCache().createRegionFactory(RegionShortcut.REPLICATE).create(getTestMethodName());
         return null;
       }
     };
-    
+
     vm1.invoke(createRegion);
     vm2.invoke(createRegion);
-    
+
     vm1.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region r = getCache().getRegion(getTestMethodName());
@@ -434,7 +434,7 @@ public class TXOrderDUnitTest extends JUnit4CacheTestCase {
         return null;
       }
     });
-    
+
     vm2.invoke(new SerializableCallable() {
       public Object call() throws Exception {
         Region r = getCache().getRegion(getTestMethodName());

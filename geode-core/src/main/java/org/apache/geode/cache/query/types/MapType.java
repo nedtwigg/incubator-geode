@@ -26,13 +26,13 @@ package org.apache.geode.cache.query.types;
  * @since GemFire 4.0
  */
 public interface MapType extends CollectionType {
-  
+
   /**
    * Return the type of the keys in this type of map.
    * @return the ObjectType of the keys in this type of map.
    */
   public ObjectType getKeyType();
-  
+
   /** Return the type of the entries in this map.
    *  In the context of the query language, the entries in a map are
    *  structs with key and value fields.

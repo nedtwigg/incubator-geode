@@ -23,8 +23,8 @@ package org.apache.geode.cache.query;
  */
 
 public class TypeMismatchException extends QueryException {
-private static final long serialVersionUID = 4205901708655503775L;
-  
+  private static final long serialVersionUID = 4205901708655503775L;
+
   /**
    * Construct an instance of TypeMismatchException
    * @param msg the error message
@@ -32,7 +32,7 @@ private static final long serialVersionUID = 4205901708655503775L;
   public TypeMismatchException(String msg) {
     super(msg);
   }
-    
+
   /**
    * Construct an instance of TypeMismatchException
    * @param msg the error message
@@ -40,5 +40,5 @@ private static final long serialVersionUID = 4205901708655503775L;
    */
   public TypeMismatchException(String msg, Throwable cause) {
     super(msg, cause);
-  }  
+  }
 }

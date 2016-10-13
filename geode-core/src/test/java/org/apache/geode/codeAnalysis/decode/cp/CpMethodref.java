@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 package org.apache.geode.codeAnalysis.decode.cp;
+
 import java.io.*;
 
-
 public class CpMethodref extends CpFieldref {
-    CpMethodref( DataInputStream source ) throws IOException {
-        super( source );
-    }
+  CpMethodref(DataInputStream source) throws IOException {
+    super(source);
+  }
 }

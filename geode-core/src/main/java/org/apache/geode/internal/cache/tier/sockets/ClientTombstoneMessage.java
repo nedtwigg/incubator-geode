@@ -30,33 +30,31 @@ import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.internal.cache.tier.Acceptor;
 import org.apache.geode.internal.cache.tier.MessageType;
 import org.apache.geode.internal.cache.versions.VersionSource;
+
 /**
  * 
  *
  */
-public class ClientTombstoneMessage  extends ClientUpdateMessageImpl{
-  
+public class ClientTombstoneMessage extends ClientUpdateMessageImpl {
+
   enum TOperation {
     GC, GC_PR
   }
-  
+
   private Object removalInformation;
   private TOperation op;
 
   /** GC operation for non-partitioned regions */
-  public static ClientTombstoneMessage gc(LocalRegion region,
-      Map<VersionSource, Long> regionGCVersions, EventID eventId) {
+  public static ClientTombstoneMessage gc(LocalRegion region, Map<VersionSource, Long> regionGCVersions, EventID eventId) {
     return new ClientTombstoneMessage(TOperation.GC, region, regionGCVersions, eventId);
   }
-  
+
   /** GC operation for partitioned regions */
-  public static ClientTombstoneMessage gc(LocalRegion region,
-      Set<Object> removedKeys, EventID eventId) {
+  public static ClientTombstoneMessage gc(LocalRegion region, Set<Object> removedKeys, EventID eventId) {
     return new ClientTombstoneMessage(TOperation.GC_PR, region, removedKeys, eventId);
   }
-  
-  private ClientTombstoneMessage(TOperation op, LocalRegion region,
-      Object removalInformation, EventID eventId) {
+
+  private ClientTombstoneMessage(TOperation op, LocalRegion region, Object removalInformation, EventID eventId) {
     super(EnumListenerEvent.AFTER_TOMBSTONE_EXPIRATION, null, eventId);
     this.op = op;
     this.removalInformation = removalInformation;
@@ -70,22 +68,19 @@ public class ClientTombstoneMessage  extends ClientUpdateMessageImpl{
   }
 
   @Override
-  public boolean shouldBeConflated()
-  {
+  public boolean shouldBeConflated() {
     return false;
   }
-  
+
   /*
    * Returns a <code>Message</code> generated from the fields of this
    * <code>ClientTombstoneMessage</code>.
    */
   @Override
-  protected Message getMessage(CacheClientProxy proxy, byte[] latestValue)
-    throws IOException {
+  protected Message getMessage(CacheClientProxy proxy, byte[] latestValue) throws IOException {
     if (Version.GFE_70.compareTo(proxy.getVersion()) <= 0) {
       return getGFE70Message(proxy.getVersion());
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -117,7 +112,7 @@ public class ClientTombstoneMessage  extends ClientUpdateMessageImpl{
 
   @Override
   public void toData(DataOutput out) throws IOException {
-    
+
     out.writeByte(op.ordinal());
     out.writeByte(_operation.getEventCode());
     DataSerializer.writeString(getRegionName(), out);
@@ -127,8 +122,7 @@ public class ClientTombstoneMessage  extends ClientUpdateMessageImpl{
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException
-  {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     // note: does not call super.fromData() since there are no keys, etc.
     // The message class hierarchy should be revised to have a more abstract
     // top-level class.
@@ -137,30 +131,26 @@ public class ClientTombstoneMessage  extends ClientUpdateMessageImpl{
     this.setRegionName(DataSerializer.readString(in));
     this.removalInformation = DataSerializer.readObject(in);
     this._membershipId = ClientProxyMembershipID.readCanonicalized(in);
-    this._eventIdentifier = (EventID)DataSerializer.readObject(in);
+    this._eventIdentifier = (EventID) DataSerializer.readObject(in);
   }
 
   @Override
-  public Object getKeyToConflate()
-  {
+  public Object getKeyToConflate() {
     return null;
   }
 
   @Override
-  public String getRegionToConflate()
-  {
+  public String getRegionToConflate() {
     return null;
   }
 
   @Override
-  public Object getValueToConflate()
-  {
+  public Object getValueToConflate() {
     return null;
   }
 
   @Override
-  public void setLatestValue(Object value)
-  {
+  public void setLatestValue(Object value) {
   }
 
   @Override
@@ -174,14 +164,9 @@ public class ClientTombstoneMessage  extends ClientUpdateMessageImpl{
   }
 
   @Override
-  public String toString()
-  {
+  public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ClientTombstoneMessage[op=").append(this.op)
-      .append(";region=").append(getRegionName())
-      .append(";removalInfo=").append(this.removalInformation)
-      .append(";memberId=").append(getMembershipId())
-      .append(";eventId=").append(getEventId()).append("]");
+    buffer.append("ClientTombstoneMessage[op=").append(this.op).append(";region=").append(getRegionName()).append(";removalInfo=").append(this.removalInformation).append(";memberId=").append(getMembershipId()).append(";eventId=").append(getEventId()).append("]");
     return buffer.toString();
   }
 }

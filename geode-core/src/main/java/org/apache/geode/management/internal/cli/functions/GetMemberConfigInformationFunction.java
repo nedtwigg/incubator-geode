@@ -48,27 +48,26 @@ public class GetMemberConfigInformationFunction extends FunctionAdapter implemen
    */
   private static final long serialVersionUID = 1L;
 
-
   @Override
   public void execute(FunctionContext context) {
     Object argsObject = context.getArguments();
-    boolean hideDefaults = ((Boolean)argsObject).booleanValue();
-    
+    boolean hideDefaults = ((Boolean) argsObject).booleanValue();
+
     Cache cache = CacheFactory.getAnyInstance();
     InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
     DistributionConfig config = system.getConfig();
-    
+
     DistributionConfigImpl distConfigImpl = ((DistributionConfigImpl) config);
     MemberConfigurationInfo memberConfigInfo = new MemberConfigurationInfo();
-    memberConfigInfo.setJvmInputArguments(getJvmInputArguments()); 
+    memberConfigInfo.setJvmInputArguments(getJvmInputArguments());
     memberConfigInfo.setGfePropsRuntime(distConfigImpl.getConfigPropsFromSource(ConfigSource.runtime()));
     memberConfigInfo.setGfePropsSetUsingApi(distConfigImpl.getConfigPropsFromSource(ConfigSource.api()));
-    
+
     if (!hideDefaults)
       memberConfigInfo.setGfePropsSetWithDefaults(distConfigImpl.getConfigPropsFromSource(null));
-    
+
     memberConfigInfo.setGfePropsSetFromFile(distConfigImpl.getConfigPropsDefinedUsingFiles());
-    
+
     //CacheAttributes
     Map<String, String> cacheAttributes = new HashMap<String, String>();
 
@@ -78,27 +77,26 @@ public class GetMemberConfigInformationFunction extends FunctionAdapter implemen
     cacheAttributes.put("lock-lease", Integer.toString(cache.getLockLease()));
     cacheAttributes.put("message-sync-interval", Integer.toString(cache.getMessageSyncInterval()));
     cacheAttributes.put("search-timeout", Integer.toString(cache.getSearchTimeout()));
-    
+
     if (cache.getPdxDiskStore() == null) {
       cacheAttributes.put("pdx-disk-store", "");
-    }
-    else {
+    } else {
       cacheAttributes.put("pdx-disk-store", cache.getPdxDiskStore());
     }
-    
+
     cacheAttributes.put("pdx-ignore-unread-fields", Boolean.toString(cache.getPdxIgnoreUnreadFields()));
     cacheAttributes.put("pdx-persistent", Boolean.toString(cache.getPdxPersistent()));
     cacheAttributes.put("pdx-read-serialized", Boolean.toString(cache.getPdxReadSerialized()));
-    
+
     if (hideDefaults) {
       removeDefaults(cacheAttributes, getCacheAttributesDefaultValues());
     }
-    
+
     memberConfigInfo.setCacheAttributes(cacheAttributes);
-  
+
     List<Map<String, String>> cacheServerAttributesList = new ArrayList<Map<String, String>>();
     List<CacheServer> cacheServers = cache.getCacheServers();
-    
+
     if (cacheServers != null)
       for (CacheServer cacheServer : cacheServers) {
         Map<String, String> cacheServerAttributes = new HashMap<String, String>();
@@ -118,21 +116,22 @@ public class GetMemberConfigInformationFunction extends FunctionAdapter implemen
 
         if (hideDefaults)
           removeDefaults(cacheServerAttributes, getCacheServerAttributesDefaultValues());
-        
+
         cacheServerAttributesList.add(cacheServerAttributes);
-    }
-    
+      }
+
     memberConfigInfo.setCacheServerAttributes(cacheServerAttributesList);
-  
+
     context.getResultSender().lastResult(memberConfigInfo);
   }
+
   /****
    * Gets the default values for the cache attributes
    * @return a map containing the cache attributes - default values
    */
   private Map<String, String> getCacheAttributesDefaultValues() {
     String d = CacheConfig.DEFAULT_PDX_DISK_STORE;
-    Map <String, String> cacheAttributesDefault = new HashMap<String, String> ();
+    Map<String, String> cacheAttributesDefault = new HashMap<String, String>();
     cacheAttributesDefault.put("pdx-disk-store", "");
     cacheAttributesDefault.put("pdx-read-serialized", Boolean.toString(CacheConfig.DEFAULT_PDX_READ_SERIALIZED));
     cacheAttributesDefault.put("pdx-ignore-unread-fields", Boolean.toString(CacheConfig.DEFAULT_PDX_IGNORE_UNREAD_FIELDS));
@@ -146,13 +145,13 @@ public class GetMemberConfigInformationFunction extends FunctionAdapter implemen
 
     return cacheAttributesDefault;
   }
-  
+
   /***
    * Gets the default values for the cache attributes
    * @return a map containing the cache server attributes - default values
    */
   private Map<String, String> getCacheServerAttributesDefaultValues() {
-    Map <String, String> csAttributesDefault = new HashMap<String, String> ();
+    Map<String, String> csAttributesDefault = new HashMap<String, String>();
     csAttributesDefault.put("bind-address", CacheServer.DEFAULT_BIND_ADDRESS);
     csAttributesDefault.put("hostname-for-clients", CacheServer.DEFAULT_HOSTNAME_FOR_CLIENTS);
     csAttributesDefault.put("max-connections", Integer.toString(CacheServer.DEFAULT_MAX_CONNECTIONS));
@@ -167,21 +166,21 @@ public class GetMemberConfigInformationFunction extends FunctionAdapter implemen
     return csAttributesDefault;
 
   }
-  
+
   /****
    * Removes the default values from the attributesMap based on defaultAttributesMap
    * @param attributesMap
    * @param defaultAttributesMap
    */
-  private void removeDefaults (Map<String, String> attributesMap, Map<String, String> defaultAttributesMap) {
+  private void removeDefaults(Map<String, String> attributesMap, Map<String, String> defaultAttributesMap) {
     //Make a copy to avoid the CME's
     Set<String> attributesSet = new HashSet<String>(attributesMap.keySet());
-    
+
     if (attributesSet != null) {
       for (String attribute : attributesSet) {
         String attributeValue = attributesMap.get(attribute);
         String defaultValue = defaultAttributesMap.get(attribute);
-        
+
         if (attributeValue != null) {
           if (attributeValue.equals(defaultValue)) {
             attributesMap.remove(attribute);
@@ -194,12 +193,13 @@ public class GetMemberConfigInformationFunction extends FunctionAdapter implemen
       }
     }
   }
+
   @Override
   public String getId() {
     // TODO Auto-generated method stub
     return GetMemberConfigInformationFunction.class.toString();
   }
-  
+
   private List<String> getJvmInputArguments() {
     RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
     return runtimeBean.getInputArguments();

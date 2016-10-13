@@ -20,8 +20,6 @@ import javax.management.ObjectName;
 
 import org.apache.geode.management.ManagementException;
 
-
-
 /**
  * This chain currently has only one filter.
  * Have made it a chain to support future filters
@@ -30,33 +28,29 @@ import org.apache.geode.management.ManagementException;
  *
  */
 
-public class LocalFilterChain extends FilterChain{
+public class LocalFilterChain extends FilterChain {
 
-	private StringBasedFilter localMBeanFilter;
+  private StringBasedFilter localMBeanFilter;
 
-	public LocalFilterChain(){
-/*		
-		String excludeFilter = managementConfig.getLocalMBeanExcludeFilter();
-		String includeFilter = managementConfig.getLocalMBeanIncludeFilter();
-		FilterParam param = createFilterParam(includeFilter, excludeFilter);
-		localMBeanFilter = new StringBasedFilter(param);*/
-		
-	}
+  public LocalFilterChain() {
+    /*		
+    		String excludeFilter = managementConfig.getLocalMBeanExcludeFilter();
+    		String includeFilter = managementConfig.getLocalMBeanIncludeFilter();
+    		FilterParam param = createFilterParam(includeFilter, excludeFilter);
+    		localMBeanFilter = new StringBasedFilter(param);*/
 
+  }
 
+  public boolean isFiltered(ObjectName objectName) {
 
-	public boolean isFiltered(ObjectName objectName) {
-	  
-	  return false;
-	  
-	  // For future use of filters
-	  
-		/*boolean isExcluded = localMBeanFilter.isExcluded(objectName.getCanonicalName());
-		boolean isIncluded = localMBeanFilter.isIncluded(objectName.getCanonicalName());
+    return false;
 
-		return isFiltered(isIncluded, isExcluded);*/
-	}
+    // For future use of filters
 
-
+    /*boolean isExcluded = localMBeanFilter.isExcluded(objectName.getCanonicalName());
+    boolean isIncluded = localMBeanFilter.isIncluded(objectName.getCanonicalName());
+    
+    return isFiltered(isIncluded, isExcluded);*/
+  }
 
 }

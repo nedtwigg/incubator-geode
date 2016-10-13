@@ -82,9 +82,7 @@ public class LocatorLauncherRemoteWithCustomLoggingIntegrationTest extends Abstr
     this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(new ToSystemOut()).build().start();
 
     int pid = 0;
-    this.launcher = new LocatorLauncher.Builder()
-            .setWorkingDirectory(workingDirectory)
-            .build();
+    this.launcher = new LocatorLauncher.Builder().setWorkingDirectory(workingDirectory).build();
     try {
       waitForLocatorToStart(this.launcher);
 
@@ -95,7 +93,7 @@ public class LocatorLauncherRemoteWithCustomLoggingIntegrationTest extends Abstr
       assertTrue(pid > 0);
       assertTrue(ProcessUtils.isProcessAlive(pid));
 
-      final String logFileName = getUniqueName()+".log";
+      final String logFileName = getUniqueName() + ".log";
       assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // check the status

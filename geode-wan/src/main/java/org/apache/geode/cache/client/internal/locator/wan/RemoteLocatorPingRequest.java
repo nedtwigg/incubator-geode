@@ -28,7 +28,7 @@ import org.apache.geode.internal.Version;
  *
  */
 
-public class RemoteLocatorPingRequest implements DataSerializableFixedID{
+public class RemoteLocatorPingRequest implements DataSerializableFixedID {
 
   public RemoteLocatorPingRequest() {
     super();

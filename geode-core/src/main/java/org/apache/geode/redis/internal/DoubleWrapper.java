@@ -34,8 +34,9 @@ public class DoubleWrapper implements DataSerializable, Comparable<Object> {
 
   public Double score;
   private String toString;
-  
-  public DoubleWrapper() {}
+
+  public DoubleWrapper() {
+  }
 
   public DoubleWrapper(Double dubs) {
     this.score = dubs;
@@ -74,5 +75,5 @@ public class DoubleWrapper implements DataSerializable, Comparable<Object> {
       this.toString = Coder.doubleToString(score);
     return this.toString;
   }
-  
+
 }

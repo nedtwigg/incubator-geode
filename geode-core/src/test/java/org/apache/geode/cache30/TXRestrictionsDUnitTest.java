@@ -61,12 +61,7 @@ public class TXRestrictionsDUnitTest extends JUnit4CacheTestCase {
     File[] diskDirs = new File[1];
     diskDirs[0] = new File("diskRegionDirs/" + OSProcess.getId());
     diskDirs[0].mkdirs();
-    factory.setDiskStoreName(getCache().createDiskStoreFactory()
-                             .setDiskDirs(diskDirs)
-                             .setTimeInterval(1000)
-                             .setQueueSize(0)
-                             .create("TXRestrictionsDUnitTest")
-                             .getName());
+    factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(diskDirs).setTimeInterval(1000).setQueueSize(0).create("TXRestrictionsDUnitTest").getName());
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     return factory.create();
   }
@@ -80,19 +75,19 @@ public class TXRestrictionsDUnitTest extends JUnit4CacheTestCase {
     final String misConfigRegionName = getUniqueName();
     Region misConfigRgn = getCache().createRegion(misConfigRegionName, getDiskRegionAttributes());
     Invoke.invokeInEveryVM(new SerializableRunnable("testPersistentRestriction: Illegal Region Configuration") {
-        public void run() {
-          try {
-            getCache().createRegion(misConfigRegionName, getDiskRegionAttributes());
-            // rgn1.put("misConfigKey", "oldmisConfigVal");
-          } catch (CacheException e) {
-            Assert.fail("While creating region", e);
-          }
+      public void run() {
+        try {
+          getCache().createRegion(misConfigRegionName, getDiskRegionAttributes());
+          // rgn1.put("misConfigKey", "oldmisConfigVal");
+        } catch (CacheException e) {
+          Assert.fail("While creating region", e);
         }
-      });
+      }
+    });
     misConfigRgn.put("misConfigKey", "oldmisConfigVal");
 
     txMgr.begin();
-    
+
     try {
       misConfigRgn.put("misConfigKey", "newmisConfigVal");
       fail("Expected an IllegalStateException with information about misconfigured regions");

@@ -51,11 +51,7 @@ public class TinyMemoryBlockJUnitTest {
 
   @Before
   public void setUp() throws Exception {
-    slabs = new Slab[] {
-            new SlabImpl((int)OffHeapStorage.MIN_SLAB_SIZE),
-            new SlabImpl((int)OffHeapStorage.MIN_SLAB_SIZE),
-            new SlabImpl((int)OffHeapStorage.MIN_SLAB_SIZE)
-    };
+    slabs = new Slab[] { new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE), new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE), new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE) };
     ooohml = mock(OutOfOffHeapMemoryListener.class);
     stats = mock(OffHeapMemoryStats.class);
     ma = (MemoryAllocatorImpl) MemoryAllocatorImpl.createForUnitTest(ooohml, stats, slabs);
@@ -102,7 +98,7 @@ public class TinyMemoryBlockJUnitTest {
     return createdObject;
   }
 
-   @Test
+  @Test
   public void constructorReturnsNonNullMemoryBlock() {
     MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(slabs[0].getMemoryAddress(), 0);
     softly.assertThat(mb).isNotNull();
@@ -166,7 +162,7 @@ public class TinyMemoryBlockJUnitTest {
     boolean compressed = false;
 
     StoredObject storedObject0 = createValueAsSerializedStoredObject(obj, compressed);
-    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock)storedObject0).getAddress(), 0);
+    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
     softly.assertThat(mb.getDataType()).isEqualTo("N/A");
   }
 
@@ -176,7 +172,7 @@ public class TinyMemoryBlockJUnitTest {
     boolean compressed = false;
 
     StoredObject storedObject0 = createValueAsSerializedStoredObject(obj, compressed);
-    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock)storedObject0).getAddress(), 0);
+    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
     softly.assertThat(mb.getDataValue()).isNull();
   }
 
@@ -187,8 +183,8 @@ public class TinyMemoryBlockJUnitTest {
 
     StoredObject storedObject0 = createValueAsSerializedStoredObject(obj, compressed);
     StoredObject storedObject1 = createValueAsUnserializedStoredObject(obj, compressed);
-    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock)storedObject0).getAddress(), 0);
-    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock)storedObject1).getAddress(), 0);
+    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
+    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject1).getAddress(), 0);
     softly.assertThat(mb0.isSerialized()).isFalse();
     softly.assertThat(mb1.isSerialized()).isFalse();
   }
@@ -199,8 +195,8 @@ public class TinyMemoryBlockJUnitTest {
     boolean compressed = false;
     StoredObject storedObject0 = createValueAsUnserializedStoredObject(obj, compressed);
     StoredObject storedObject1 = createValueAsUnserializedStoredObject(obj, compressed = true);
-    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock)storedObject0).getAddress(), 0);
-    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock)storedObject1).getAddress(), 0);
+    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
+    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject1).getAddress(), 0);
     softly.assertThat(mb0.isCompressed()).isFalse();
     softly.assertThat(mb1.isCompressed()).isFalse();
   }
@@ -228,7 +224,7 @@ public class TinyMemoryBlockJUnitTest {
 
   private static class TestableFreeListManager extends FreeListManager {
     TestableFreeListManager(MemoryAllocatorImpl ma, final Slab[] slabs) {
-      super (ma, slabs);
+      super(ma, slabs);
     }
   }
 

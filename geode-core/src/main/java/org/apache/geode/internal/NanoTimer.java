@@ -44,7 +44,7 @@ package org.apache.geode.internal;
 public final class NanoTimer {
 
   public static final long NANOS_PER_MILLISECOND = 1000000;
-  
+
   /**
    * The timestamp taken when this timer was constructed.
    */
@@ -54,16 +54,16 @@ public final class NanoTimer {
    * The timestamp taken when this timer was last reset or constructed.
    */
   private long lastResetTime;
-  
+
   private final TimeService timeService;
-  
+
   private final static TimeService systemTimeService = new TimeService() {
     @Override
     public long getTime() {
       return java.lang.System.nanoTime();
     }
   };
-  
+
   /**
    * Create a NanoTimer.
    */
@@ -72,7 +72,7 @@ public final class NanoTimer {
     this.lastResetTime = systemTimeService.getTime();
     this.constructionTime = this.lastResetTime;
   }
-  
+
   /**
    * For unit testing
    */
@@ -92,7 +92,7 @@ public final class NanoTimer {
   public static long nanosToMillis(long nanos) {
     return nanos / NANOS_PER_MILLISECOND;
   }
-  
+
   /**
    * Converts milliseconds to nanoseconds by multiplying millis by 
    * {@link #NANOS_PER_MILLISECOND}.
@@ -122,7 +122,7 @@ public final class NanoTimer {
   public long getConstructionTime() {
     return this.constructionTime;
   }
-  
+
   /**
    * Return the last reset time in naonseconds since some arbitrary time
    * in the past.
@@ -170,7 +170,7 @@ public final class NanoTimer {
   public long getTimeSinceConstruction() {
     return this.timeService.getTime() - this.constructionTime;
   }
-  
+
   /**
    * Allows unit tests to insert a deterministic clock for testing.
    */
@@ -181,4 +181,3 @@ public final class NanoTimer {
     public long getTime();
   }
 }
-

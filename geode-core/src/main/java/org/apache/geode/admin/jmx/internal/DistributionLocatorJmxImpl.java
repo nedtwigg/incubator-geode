@@ -46,10 +46,7 @@ import javax.management.modelmbean.ModelMBean;
  * Provides MBean support for managing a distribution locator.
  *
  */
-public class DistributionLocatorJmxImpl 
-extends org.apache.geode.admin.internal.DistributionLocatorImpl
-implements org.apache.geode.admin.jmx.internal.ManagedResource,
-           DistributionLocatorConfig {
+public class DistributionLocatorJmxImpl extends org.apache.geode.admin.internal.DistributionLocatorImpl implements org.apache.geode.admin.jmx.internal.ManagedResource, DistributionLocatorConfig {
 
   /** The JMX object name of this managed resource */
   private ObjectName objectName;
@@ -57,13 +54,12 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource,
   // -------------------------------------------------------------------------
   //   Constructor(s)
   // -------------------------------------------------------------------------
-  
+
   /**
    * Constructs new instance of DistributionLocatorJmxImpl for managing a
    * distribution locator service via JMX.
    */
-  public DistributionLocatorJmxImpl(DistributionLocatorConfig config,
-                                    AdminDistributedSystemImpl system) {
+  public DistributionLocatorJmxImpl(DistributionLocatorConfig config, AdminDistributedSystemImpl system) {
     super(config, system);
     initializeMBean();
   }
@@ -71,8 +67,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource,
   /** Create and register the MBean to manage this resource */
   private void initializeMBean() {
     this.mbeanName = "GemFire:type=DistributionLocator,id=" + MBeanUtil.makeCompliantMBeanNameProperty(getId());
-    this.objectName =
-        MBeanUtil.createMBean(this, MBeanUtil.lookupManagedBean(this));
+    this.objectName = MBeanUtil.createMBean(this, MBeanUtil.lookupManagedBean(this));
   }
 
   ////////////////////////  Configuration  ////////////////////////
@@ -112,7 +107,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource,
   public java.util.Properties getDistributedSystemProperties() {
     return this.getConfig().getDistributedSystemProperties();
   }
-  
+
   public void setDistributedSystemProperties(java.util.Properties props) {
     this.getConfig().setDistributedSystemProperties(props);
   }
@@ -145,7 +140,7 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource,
   // -------------------------------------------------------------------------
   //   MBean attributes - accessors/mutators
   // -------------------------------------------------------------------------
-  
+
   // -------------------------------------------------------------------------
   //   JMX Notification listener
   // -------------------------------------------------------------------------
@@ -153,24 +148,25 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource,
   // -------------------------------------------------------------------------
   //   ManagedResource implementation
   // -------------------------------------------------------------------------
-  
+
   /** The name of the MBean that will manage this resource */
   private String mbeanName;
 
   /** The ModelMBean that is configured to manage this resource */
   private ModelMBean modelMBean;
-  
-	public String getMBeanName() {
-		return this.mbeanName;
-	}
-  
-	public ModelMBean getModelMBean() {
-		return this.modelMBean;
-	}
-	public void setModelMBean(ModelMBean modelMBean) {
-		this.modelMBean = modelMBean;
-	}
-  
+
+  public String getMBeanName() {
+    return this.mbeanName;
+  }
+
+  public ModelMBean getModelMBean() {
+    return this.modelMBean;
+  }
+
+  public void setModelMBean(ModelMBean modelMBean) {
+    this.modelMBean = modelMBean;
+  }
+
   public ObjectName getObjectName() {
     return this.objectName;
   }
@@ -178,8 +174,8 @@ implements org.apache.geode.admin.jmx.internal.ManagedResource,
   public ManagedResourceType getManagedResourceType() {
     return ManagedResourceType.DISTRIBUTION_LOCATOR;
   }
-  
-  public void cleanupResource() {}
-  
-}
 
+  public void cleanupResource() {
+  }
+
+}

@@ -27,8 +27,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class ConcurrentParallelGatewaySenderOffHeapDUnitTest extends
-    ConcurrentParallelGatewaySenderDUnitTest {
+public class ConcurrentParallelGatewaySenderOffHeapDUnitTest extends ConcurrentParallelGatewaySenderDUnitTest {
 
   public ConcurrentParallelGatewaySenderOffHeapDUnitTest() {
     super();

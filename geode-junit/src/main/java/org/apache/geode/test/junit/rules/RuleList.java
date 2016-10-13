@@ -39,7 +39,7 @@ import java.util.List;
  * </pre>
  */
 public class RuleList implements TestRule {
-  
+
   private final List<TestRule> rules = new ArrayList<>();
 
   /**

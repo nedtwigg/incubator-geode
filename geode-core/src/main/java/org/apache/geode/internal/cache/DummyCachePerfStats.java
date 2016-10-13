@@ -283,7 +283,8 @@ public class DummyCachePerfStats extends CachePerfStats {
   }
 
   @Override
-  public void endCacheListenerCall(long start) {}
+  public void endCacheListenerCall(long start) {
+  }
 
   @Override
   public long startGetInitialImage() {
@@ -380,7 +381,7 @@ public class DummyCachePerfStats extends CachePerfStats {
   }
 
   @Override
- public long getTxFailedLifeTime() {
+  public long getTxFailedLifeTime() {
     return 0;
   }
 

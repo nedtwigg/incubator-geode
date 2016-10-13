@@ -36,61 +36,58 @@ public class UnregisterInterestListOp {
    * @param isClosing true if this unregister is done by a close
    * @param keepAlive true if this unregister should not undo a durable registration
    */
-  public static void execute(ExecutablePool pool,
-                             String region,
-                             List keys,
-                             boolean isClosing,
-                             boolean keepAlive)
-  {
+  public static void execute(ExecutablePool pool, String region, List keys, boolean isClosing, boolean keepAlive) {
     AbstractOp op = new UnregisterInterestListOpImpl(region, keys, isClosing, keepAlive);
     pool.executeOnAllQueueServers(op);
   }
-                                                               
+
   private UnregisterInterestListOp() {
     // no instances allowed
   }
-  
+
   private static class UnregisterInterestListOpImpl extends AbstractOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public UnregisterInterestListOpImpl(String region,
-                                        List keys,
-                                        boolean isClosing,
-                                        boolean keepAlive) {
-      super(MessageType.UNREGISTER_INTEREST_LIST, 4+keys.size());
+    public UnregisterInterestListOpImpl(String region, List keys, boolean isClosing, boolean keepAlive) {
+      super(MessageType.UNREGISTER_INTEREST_LIST, 4 + keys.size());
       getMessage().addStringPart(region);
       {
-        byte closingByte = (byte)(isClosing ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] {closingByte});
+        byte closingByte = (byte) (isClosing ? 0x01 : 0x00);
+        getMessage().addBytesPart(new byte[] { closingByte });
       }
       {
-        byte keepAliveByte = (byte)(keepAlive ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] {keepAliveByte});
+        byte keepAliveByte = (byte) (keepAlive ? 0x01 : 0x00);
+        getMessage().addBytesPart(new byte[] { keepAliveByte });
       }
       getMessage().addIntPart(keys.size());
       for (Iterator i = keys.iterator(); i.hasNext();) {
         getMessage().addStringOrObjPart(i.next());
       }
     }
+
     @Override
     protected Object processResponse(Message msg) throws Exception {
       processAck(msg, "unregisterInterestList");
       return null;
     }
+
     @Override
     protected boolean isErrorResponse(int msgType) {
       return msgType == MessageType.UNREGISTER_INTEREST_DATA_ERROR;
     }
+
     // using UnregisterInterest stats
     @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startUnregisterInterest();
     }
+
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endUnregisterInterestSend(start, hasFailed());
     }
+
     @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endUnregisterInterest(start, hasTimedOut(), hasFailed());

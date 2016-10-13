@@ -47,10 +47,10 @@ import org.apache.geode.internal.logging.LogService;
  * 
  */
 
-public class ManagementFunction extends FunctionAdapter implements InternalEntity{
+public class ManagementFunction extends FunctionAdapter implements InternalEntity {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /**
    * 
    */
@@ -84,9 +84,8 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
   public void execute(FunctionContext fc) {
 
     boolean executedSuccessfully = false;
-    
-    GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
 
+    GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
 
     Object[] functionArguments = (Object[]) fc.getArguments();
 
@@ -113,13 +112,11 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
 
       } else if (methodName.equals("addNotificationListener")) {
         notificationHub.addHubNotificationListener(memberName, objectName);
-        fc.getResultSender().lastResult(
-            (Serializable) ManagementConstants.UNDEFINED);
+        fc.getResultSender().lastResult((Serializable) ManagementConstants.UNDEFINED);
 
       } else if (methodName.equals("removeNotificationListener")) {
         notificationHub.removeHubNotificationListener(memberName, objectName);
-        fc.getResultSender().lastResult(
-            (Serializable) ManagementConstants.UNDEFINED);
+        fc.getResultSender().lastResult((Serializable) ManagementConstants.UNDEFINED);
 
       } else if (methodName.equals("getNotificationInfo")) {
         fc.getResultSender().lastResult(mbeanServer.getMBeanInfo(objectName));
@@ -132,9 +129,9 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
       executedSuccessfully = true;
 
     } catch (InstanceNotFoundException e) {
-        if (cache != null && !cache.isClosed()) {
-          sendException(e, fc);
-        }
+      if (cache != null && !cache.isClosed()) {
+        sendException(e, fc);
+      }
     } catch (ReflectionException e) {
       sendException(e, fc);
     } catch (MBeanException e) {
@@ -146,8 +143,7 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
     } finally {
       if (!executedSuccessfully) {
         if (cache == null || (cache != null && cache.isClosed())) {
-          Exception e = new Exception(ManagementStrings.MEMBER_IS_SHUTTING_DOWN
-              .toLocalizedString());
+          Exception e = new Exception(ManagementStrings.MEMBER_IS_SHUTTING_DOWN.toLocalizedString());
           sendException(e, fc);
           return; // member is closing or invalid member
         }
@@ -160,8 +156,8 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
   public String getId() {
     return ManagementConstants.MGMT_FUNCTION_ID;
   }
-  
-  private void sendException(Exception e, FunctionContext fc){
+
+  private void sendException(Exception e, FunctionContext fc) {
     if (logger.isDebugEnabled()) {
       logger.debug(ManagementStrings.MANAGEMENT_FUNCTION_COULD_NOT_EXECUTE.toLocalizedString());
       logger.debug(e.getMessage(), e);

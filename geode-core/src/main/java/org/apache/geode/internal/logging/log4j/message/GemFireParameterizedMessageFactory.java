@@ -34,23 +34,23 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
  */
 public final class GemFireParameterizedMessageFactory extends AbstractMessageFactory {
 
-    private static final long serialVersionUID = 1L;
-    
-    /**
-     * Instance of StringFormatterMessageFactory.
-     */
-    public static final GemFireParameterizedMessageFactory INSTANCE = new GemFireParameterizedMessageFactory();
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Creates {@link ParameterizedMessage} instances.
-     * @param message The message pattern.
-     * @param params The message parameters.
-     * @return The Message.
-     *
-     * @see MessageFactory#newMessage(String, Object...)
-     */
-    @Override
-    public Message newMessage(final String message, final Object... params) {
-        return new GemFireParameterizedMessage(message, params); // GEODE: change to construct GemFireParameterizedMessage
-    }
+  /**
+   * Instance of StringFormatterMessageFactory.
+   */
+  public static final GemFireParameterizedMessageFactory INSTANCE = new GemFireParameterizedMessageFactory();
+
+  /**
+   * Creates {@link ParameterizedMessage} instances.
+   * @param message The message pattern.
+   * @param params The message parameters.
+   * @return The Message.
+   *
+   * @see MessageFactory#newMessage(String, Object...)
+   */
+  @Override
+  public Message newMessage(final String message, final Object... params) {
+    return new GemFireParameterizedMessage(message, params); // GEODE: change to construct GemFireParameterizedMessage
+  }
 }

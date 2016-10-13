@@ -37,7 +37,7 @@ final class FileOutputStream extends OutputStream {
     buffer = ByteBuffer.allocate(file.getChunkSize());
     this.length = file.length;
     this.chunks = file.chunks;
-    if(chunks > 0 && file.length % file.getChunkSize() != 0) {
+    if (chunks > 0 && file.length % file.getChunkSize() != 0) {
       //If the last chunk was incomplete, we're going to update it
       //rather than add a new chunk. This guarantees that all chunks
       //are full except for the last chunk.
@@ -50,7 +50,7 @@ final class FileOutputStream extends OutputStream {
   @Override
   public void write(final int b) throws IOException {
     assertOpen();
-    
+
     if (buffer.remaining() == 0) {
       flushBuffer();
     }
@@ -58,11 +58,11 @@ final class FileOutputStream extends OutputStream {
     buffer.put((byte) b);
     length++;
   }
-  
+
   @Override
   public void write(final byte[] b, int off, int len) throws IOException {
     assertOpen();
-    
+
     while (len > 0) {
       if (buffer.remaining() == 0) {
         flushBuffer();

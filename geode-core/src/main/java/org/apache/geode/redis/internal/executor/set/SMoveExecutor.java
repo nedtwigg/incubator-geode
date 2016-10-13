@@ -55,7 +55,8 @@ public class SMoveExecutor extends SetExecutor {
       return;
     }
 
-    Object oldVal = sourceRegion.get(mem); sourceRegion.remove(mem);
+    Object oldVal = sourceRegion.get(mem);
+    sourceRegion.remove(mem);
 
     if (oldVal == null) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_MOVED));

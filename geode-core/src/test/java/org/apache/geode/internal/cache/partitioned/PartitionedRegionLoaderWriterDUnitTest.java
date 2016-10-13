@@ -68,81 +68,80 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
   }
 
   @Test
-  public void testLoader_OnAccessor_NotOnDataStore(){
+  public void testLoader_OnAccessor_NotOnDataStore() {
     host = Host.getHost(0);
     accessor = host.getVM(0);
     datastore1 = host.getVM(1);
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 10));
   }
-  
+
   @Test
-  public void testWriter_NotOnAccessor_OnDataStore(){
+  public void testWriter_NotOnAccessor_OnDataStore() {
     host = Host.getHost(0);
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 0));
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, new CacheWriter2(), 10));
   }
-  
+
   @Test
-  public void testWriter_OnDataStore_NotOnAccessor(){
+  public void testWriter_OnDataStore_NotOnAccessor() {
     host = Host.getHost(0);
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, new CacheWriter2(), 10));
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 0));
   }
-  
+
   @Test
-  public void testLoader_OnAccessor_NotOnFirstDataStore_OnSecondDataStore(){
+  public void testLoader_OnAccessor_NotOnFirstDataStore_OnSecondDataStore() {
     host = Host.getHost(0);
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 10));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(new CacheLoader2(),null, 10));
+    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(new CacheLoader2(), null, 10));
   }
-  
+
   @Test
-  public void testLoader_NotOnFirstDataStore_OnAccessor_OnSecondDataStore(){
+  public void testLoader_NotOnFirstDataStore_OnAccessor_OnSecondDataStore() {
     host = Host.getHost(0);
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 10));
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(new CacheLoader2(),null, 10));
+    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(new CacheLoader2(), null, 10));
   }
-  
+
   @Test
-  public void testLoader_OnFirstDataStore_OnSecondDataStore_OnAccessor(){
+  public void testLoader_OnFirstDataStore_OnSecondDataStore_OnAccessor() {
     host = Host.getHost(0);
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(),null, 10));
+    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
   }
-  
+
   @Test
-  public void testLoader_OnFirstDataStore_OnSecondDataStore_NotOnAccessor(){
+  public void testLoader_OnFirstDataStore_OnSecondDataStore_NotOnAccessor() {
     host = Host.getHost(0);
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(),null, 10));
+    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 0));
-    
+
   }
-  
+
   public static void createRegion(CacheLoader cacheLoader, CacheWriter cacheWriter, Integer localMaxMemory) {
     try {
-      new PartitionedRegionLoaderWriterDUnitTest()
-          .createCache(new Properties());
+      new PartitionedRegionLoaderWriterDUnitTest().createCache(new Properties());
       AttributesFactory factory = new AttributesFactory();
       factory.setCacheLoader(cacheLoader);
       factory.setCacheWriter(cacheWriter);
@@ -152,20 +151,16 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
       factory.setPartitionAttributes(paf.create());
       RegionAttributes attrs = factory.create();
       cache.createRegion(PartitionedRegionName, attrs);
-    }
-    catch (Exception e) {
-      Assert.fail("Not Expected : " , e);
+    } catch (Exception e) {
+      Assert.fail("Not Expected : ", e);
     }
   }
 
-  public static void createRegionWithPossibleFail(CacheLoader cacheLoader,
-      CacheWriter cacheWriter, Integer localMaxMemory) {
-    final PartitionedRegionLoaderWriterDUnitTest test =
-      new PartitionedRegionLoaderWriterDUnitTest();
+  public static void createRegionWithPossibleFail(CacheLoader cacheLoader, CacheWriter cacheWriter, Integer localMaxMemory) {
+    final PartitionedRegionLoaderWriterDUnitTest test = new PartitionedRegionLoaderWriterDUnitTest();
     test.createCache(new Properties());
     // add expected exception
-    test.cache.getLogger().info("<ExpectedException action=add>"
-        + IllegalStateException.class.getName() + "</ExpectedException>");
+    test.cache.getLogger().info("<ExpectedException action=add>" + IllegalStateException.class.getName() + "</ExpectedException>");
     try {
       AttributesFactory factory = new AttributesFactory();
       factory.setCacheLoader(cacheLoader);
@@ -177,12 +172,10 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
       RegionAttributes attrs = factory.create();
       cache.createRegion(PartitionedRegionName, attrs);
       fail("Expected Exception ");
-    }
-    catch (IllegalStateException e) {
+    } catch (IllegalStateException e) {
       assertTrue(e.getMessage().startsWith("Incompatible"));
     }
-    test.cache.getLogger().info("<ExpectedException action=remove>"
-        + IllegalStateException.class.getName() + "</ExpectedException>");
+    test.cache.getLogger().info("<ExpectedException action=remove>" + IllegalStateException.class.getName() + "</ExpectedException>");
   }
 
   private void createCache(Properties props) {
@@ -193,8 +186,7 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
       ds = getSystem(props);
       cache = CacheFactory.create(ds);
       assertNotNull(cache);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       Assert.fail("Failed while creating the cache", e);
     }
   }

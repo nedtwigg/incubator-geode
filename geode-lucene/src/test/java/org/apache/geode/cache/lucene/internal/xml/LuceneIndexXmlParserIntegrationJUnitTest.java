@@ -56,15 +56,15 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
 
   @Rule
   public TestName name = new TestName();
-  
+
   @After
   public void tearDown() {
     Cache cache = GemFireCacheImpl.getInstance();
-    if(cache != null) {
+    if (cache != null) {
       cache.close();
     }
   }
-  
+
   /**
    * Test that we parse the index fields correctly
    */
@@ -72,8 +72,8 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
   public void parseIndex() throws FileNotFoundException {
     RegionCreation region = createRegionCreation("region");
     Map<String, String[]> expectedIndexes = new HashMap<String, String[]>();
-    expectedIndexes.put("index1", new String[] {"a", "b", "c", "d"});
-    expectedIndexes.put("index2", new String[] {"f", "g"});
+    expectedIndexes.put("index1", new String[] { "a", "b", "c", "d" });
+    expectedIndexes.put("index2", new String[] { "f", "g" });
     validateExpectedIndexes(region, expectedIndexes);
   }
 
@@ -83,12 +83,12 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
 
     // Validate expected indexes
     Map<String, String[]> expectedIndexes = new HashMap<String, String[]>();
-    expectedIndexes.put("index", new String[] {"a", "b", "c"});
+    expectedIndexes.put("index", new String[] { "a", "b", "c" });
     validateExpectedIndexes(region, expectedIndexes);
 
     // Validate expected analyzers
-    Map<String, Map<String,Class<? extends Analyzer>>> expectedIndexAnalyzers = new HashMap<>();
-    Map<String,Class<? extends Analyzer>> expectedFieldAnalyzers = new HashMap<>();
+    Map<String, Map<String, Class<? extends Analyzer>>> expectedIndexAnalyzers = new HashMap<>();
+    Map<String, Class<? extends Analyzer>> expectedFieldAnalyzers = new HashMap<>();
     expectedFieldAnalyzers.put("a", KeywordAnalyzer.class);
     expectedFieldAnalyzers.put("b", SimpleAnalyzer.class);
     expectedFieldAnalyzers.put("c", ClassicAnalyzer.class);
@@ -103,20 +103,20 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
   }
 
   private void validateExpectedIndexes(RegionCreation region, Map<String, String[]> expectedIndexes) {
-    for(Extension extension : region.getExtensionPoint().getExtensions()) {
+    for (Extension extension : region.getExtensionPoint().getExtensions()) {
       LuceneIndexCreation index = (LuceneIndexCreation) extension;
       assertEquals("/region", index.getRegionPath());
       assertArrayEquals(expectedIndexes.remove(index.getName()), index.getFieldNames());
     }
-    assertEquals(Collections.emptyMap(),expectedIndexes);
+    assertEquals(Collections.emptyMap(), expectedIndexes);
   }
 
-  private void validateExpectedAnalyzers(RegionCreation region, Map<String, Map<String,Class<? extends Analyzer>>> expectedIndexAnalyzers) {
-    for(Extension extension : region.getExtensionPoint().getExtensions()) {
+  private void validateExpectedAnalyzers(RegionCreation region, Map<String, Map<String, Class<? extends Analyzer>>> expectedIndexAnalyzers) {
+    for (Extension extension : region.getExtensionPoint().getExtensions()) {
       LuceneIndexCreation index = (LuceneIndexCreation) extension;
       expectedIndexAnalyzers.remove(index.getName());
     }
-    assertEquals(Collections.emptyMap(),expectedIndexAnalyzers);
+    assertEquals(Collections.emptyMap(), expectedIndexAnalyzers);
   }
 
   /**
@@ -136,9 +136,9 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
     LuceneIndex index1 = service.getIndex("index1", "/region");
     LuceneIndex index2 = service.getIndex("index2", "/region");
     LuceneIndex index3 = service.getIndex("index3", "/region");
-    assertArrayEquals(index1.getFieldNames(), new String[] {"a", "b", "c", "d"});
-    assertArrayEquals(index2.getFieldNames(), new String[] { "f", "g"});
-    assertArrayEquals(index3.getFieldNames(), new String[] { "h", "i", "j"});
+    assertArrayEquals(index1.getFieldNames(), new String[] { "a", "b", "c", "d" });
+    assertArrayEquals(index2.getFieldNames(), new String[] { "f", "g" });
+    assertArrayEquals(index3.getFieldNames(), new String[] { "h", "i", "j" });
   }
 
   private String getXmlFileForTest() {

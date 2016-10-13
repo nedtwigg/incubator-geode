@@ -30,29 +30,27 @@ import org.apache.geode.distributed.internal.MessageWithReply;
 import org.apache.geode.distributed.internal.ReplyMessage;
 import org.apache.geode.internal.logging.LogService;
 
-
 /**
  *
  *
  */
-  
+
 /** Creates a new instance of CloseCacheMessage */
-public final class CloseCacheMessage extends HighPriorityDistributionMessage
-  implements MessageWithReply {
+public final class CloseCacheMessage extends HighPriorityDistributionMessage implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
-  
+
   private int processorId;
-  
+
   @Override
   public int getProcessorId() {
     return this.processorId;
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
   }
-  
+
   @Override
   protected void process(DistributionManager dm) {
     // Now that Cache.close calls close on each region we don't need
@@ -60,15 +58,14 @@ public final class CloseCacheMessage extends HighPriorityDistributionMessage
     boolean systemError = false;
     try {
       try {
-          PartitionedRegionHelper.cleanUpMetaDataOnNodeFailure(getSender());
+        PartitionedRegionHelper.cleanUpMetaDataOnNodeFailure(getSender());
       } catch (VirtualMachineError err) {
         systemError = true;
         SystemFailure.initiateFailure(err);
         // If this ever returns, rethrow the error.  We're poisoned
         // now, so don't let this thread continue.
         throw err;
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         // Whenever you catch Error or Throwable, you must also
         // catch VirtualMachineError (see above).  However, there is
         // _still_ a possibility that you are dealing with a cascading
@@ -80,16 +77,16 @@ public final class CloseCacheMessage extends HighPriorityDistributionMessage
         }
       }
     } finally {
-      if(!systemError) {
+      if (!systemError) {
         ReplyMessage.send(getSender(), processorId, null, dm, false, false, true);
       }
     }
   }
-  
+
   public void setProcessorId(int id) {
     this.processorId = id;
   }
-  
+
   @Override
   public String toString() {
     return super.toString() + " (processorId=" + processorId + ")";
@@ -100,8 +97,7 @@ public final class CloseCacheMessage extends HighPriorityDistributionMessage
   }
 
   @Override
-  public void fromData(DataInput in)
-  throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.processorId = in.readInt();
   }
@@ -112,4 +108,3 @@ public final class CloseCacheMessage extends HighPriorityDistributionMessage
     out.writeInt(this.processorId);
   }
 }
- 

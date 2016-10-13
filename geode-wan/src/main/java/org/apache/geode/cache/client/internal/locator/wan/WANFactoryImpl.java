@@ -27,27 +27,16 @@ import org.apache.geode.internal.cache.wan.GatewaySenderFactoryImpl;
 import org.apache.geode.internal.cache.wan.spi.WANFactory;
 
 public class WANFactoryImpl implements WANFactory {
-  
+
   @Override
   public void initialize() {
-    DSFIDFactory.registerDSFID(
-        DataSerializableFixedID.REMOTE_LOCATOR_JOIN_REQUEST,
-        RemoteLocatorJoinRequest.class);
-    DSFIDFactory.registerDSFID(
-        DataSerializableFixedID.REMOTE_LOCATOR_JOIN_RESPONSE,
-        RemoteLocatorJoinResponse.class);
-    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_REQUEST,
-        RemoteLocatorRequest.class);
-    DSFIDFactory.registerDSFID(DataSerializableFixedID.LOCATOR_JOIN_MESSAGE,
-        LocatorJoinMessage.class);
-    DSFIDFactory.registerDSFID(
-        DataSerializableFixedID.REMOTE_LOCATOR_PING_REQUEST,
-        RemoteLocatorPingRequest.class);
-    DSFIDFactory.registerDSFID(
-        DataSerializableFixedID.REMOTE_LOCATOR_PING_RESPONSE,
-        RemoteLocatorPingResponse.class);
-    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_RESPONSE,
-        RemoteLocatorResponse.class);
+    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_JOIN_REQUEST, RemoteLocatorJoinRequest.class);
+    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_JOIN_RESPONSE, RemoteLocatorJoinResponse.class);
+    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_REQUEST, RemoteLocatorRequest.class);
+    DSFIDFactory.registerDSFID(DataSerializableFixedID.LOCATOR_JOIN_MESSAGE, LocatorJoinMessage.class);
+    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_PING_REQUEST, RemoteLocatorPingRequest.class);
+    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_PING_RESPONSE, RemoteLocatorPingResponse.class);
+    DSFIDFactory.registerDSFID(DataSerializableFixedID.REMOTE_LOCATOR_RESPONSE, RemoteLocatorResponse.class);
   }
 
   @Override
@@ -69,6 +58,5 @@ public class WANFactoryImpl implements WANFactory {
   public LocatorMembershipListener createLocatorMembershipListener() {
     return new LocatorMembershipListenerImpl();
   }
-  
-  
+
 }

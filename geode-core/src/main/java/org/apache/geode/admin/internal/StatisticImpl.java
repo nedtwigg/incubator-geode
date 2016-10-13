@@ -25,11 +25,10 @@ import org.apache.geode.internal.admin.Stat;
  * @since GemFire     3.5
  *
  */
-public class StatisticImpl
-implements org.apache.geode.admin.Statistic {
+public class StatisticImpl implements org.apache.geode.admin.Statistic {
 
   private static final long serialVersionUID = 3899296873901634399L;
-  
+
   private Stat internalStat;
 
   protected StatisticImpl() {
@@ -38,42 +37,42 @@ implements org.apache.geode.admin.Statistic {
   protected StatisticImpl(Stat internalStat) {
     this.internalStat = internalStat;
   }
-    
+
   /**
    * @return the identifying name of this stat 
    */
   public String getName() {
     return this.internalStat.getName();
   }
-  
+
   /**
    * @return the value of this stat as a <code>java.lang.Number</code> 
    */
   public Number getValue() {
     return this.internalStat.getValue();
   }
-  
+
   /**
    * @return a display string for the unit of measurement (if any) this stat represents
    */
   public String getUnits() {
     return this.internalStat.getUnits();
   }
-  
+
   /**
    * @return true if this stat represents a numeric value which always increases
    */
   public boolean isCounter() {
     return this.internalStat.isCounter();
   }
-  
+
   /**
    * @return the full description of this stat
    */
   public String getDescription() {
     return this.internalStat.getDescription();
   }
-  
+
   /**
    * Sets the internal stat which allows us to reuse the wrapper object and
    * handle refreshes along with isWriteable set to false on the attribute.
@@ -81,16 +80,15 @@ implements org.apache.geode.admin.Statistic {
   protected void setStat(Stat internalStat) {
     this.internalStat = internalStat;
   }
-    
-	/**
-	 * Returns a string representation of the object.
-	 * 
-	 * @return a string representation of the object
-	 */
-  @Override
-	public String toString() {
-		return getName();
-	}
-  
-}
 
+  /**
+   * Returns a string representation of the object.
+   * 
+   * @return a string representation of the object
+   */
+  @Override
+  public String toString() {
+    return getName();
+  }
+
+}

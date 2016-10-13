@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import java.io.DataInput;
@@ -41,13 +40,12 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * A message that is sent to a particular distribution manager to
  * make an administration request.
  */
-public abstract class AdminRequest extends PooledDistributionMessage  {
+public abstract class AdminRequest extends PooledDistributionMessage {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private String modifiedClasspath = "";
   protected transient String friendlyName = "";
-
 
   // instance variables
 
@@ -71,7 +69,6 @@ public abstract class AdminRequest extends PooledDistributionMessage  {
     return this.msgId;
   }
 
- 
   /**
    * Sends this request, waits for the AdminReponse, and returns it
    */
@@ -84,8 +81,7 @@ public abstract class AdminRequest extends PooledDistributionMessage  {
       this.msgId = -1;
 
     } else {
-      this.processor =
-        new AdminReplyProcessor(dm.getSystem(), recipient);
+      this.processor = new AdminReplyProcessor(dm.getSystem(), recipient);
       this.msgId = this.processor.getProcessorId();
     }
 
@@ -101,13 +97,12 @@ public abstract class AdminRequest extends PooledDistributionMessage  {
    * @see #getResponse
    */
   boolean waitForResponse(long timeout) throws InterruptedException {
-//    if (Thread.interrupted()) throw new InterruptedException(); not necessary waitForReplies does this?
+    //    if (Thread.interrupted()) throw new InterruptedException(); not necessary waitForReplies does this?
     try {
       return this.processor.waitForReplies(timeout);
 
     } catch (ReplyException ex) {
-      for (Throwable cause = ex.getCause(); cause != null;
-           cause = cause.getCause()) {
+      for (Throwable cause = ex.getCause(); cause != null; cause = cause.getCause()) {
         if (cause instanceof RuntimeAdminException) {
           throw (RuntimeAdminException) cause;
         }
@@ -149,6 +144,7 @@ public abstract class AdminRequest extends PooledDistributionMessage  {
       logger.info(LocalizedMessage.create(LocalizedStrings.AdminRequest_RESPONSE_TO__0__WAS_CANCELLED, this.getClass().getName()));
     }
   }
+
   /**
    * Must return a proper response to this request.
    */
@@ -162,8 +158,7 @@ public abstract class AdminRequest extends PooledDistributionMessage  {
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.msgId = in.readInt();
     this.modifiedClasspath = DataSerializer.readString(in);
@@ -183,8 +178,7 @@ public abstract class AdminRequest extends PooledDistributionMessage  {
     if (size == 0) {
       return null;
     } else if (size > 1) {
-      throw new
-        IllegalStateException(LocalizedStrings.AdminRequest_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS.toLocalizedString(Integer.valueOf(size)));
+      throw new IllegalStateException(LocalizedStrings.AdminRequest_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS.toLocalizedString(Integer.valueOf(size)));
     } else {
       return recipients[0];
     }

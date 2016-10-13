@@ -51,7 +51,7 @@ public class CustId implements DataSerializable {
   }
 
   public String toString() {
-    return "(CustId:" + this.custId+")";
+    return "(CustId:" + this.custId + ")";
   }
 
   public Integer getCustId() {
@@ -65,7 +65,7 @@ public class CustId implements DataSerializable {
     if (!(o instanceof CustId))
       return false;
 
-    CustId otherCustId = (CustId)o;
+    CustId otherCustId = (CustId) o;
     return (otherCustId.custId.equals(custId));
 
   }

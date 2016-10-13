@@ -70,12 +70,11 @@ public class IntegratedSecurityServiceTest {
     CharSequence charSequence = SecurityService.getObjectOfType(Factories.class.getName() + ".getString", String.class);
     assertNotNull(charSequence);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType(Factories.class.getName() + ".getStringNonStatic", String.class))
-      .isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> SecurityService.getObjectOfType(Factories.class.getName() + ".getStringNonStatic", String.class)).isInstanceOf(GemFireSecurityException.class);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType(Factories.class.getName() + ".getNullString", String.class))
-      .isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> SecurityService.getObjectOfType(Factories.class.getName() + ".getNullString", String.class)).isInstanceOf(GemFireSecurityException.class);
   }
+
   @Test
   public void testInitialSecurityFlags() {
     // initial state of IntegratedSecurityService
@@ -128,21 +127,21 @@ public class IntegratedSecurityServiceTest {
     assertTrue(securityService.isPeerSecurityRequired());
   }
 
-  private static class Factories{
+  private static class Factories {
 
-    public static String getString(){
+    public static String getString() {
       return new String();
     }
 
-    public static String getNullString(){
+    public static String getNullString() {
       return null;
     }
 
-    public String getStringNonStatic(){
+    public String getStringNonStatic() {
       return new String();
     }
 
-    public static Boolean getBoolean(){
+    public static Boolean getBoolean() {
       return Boolean.TRUE;
     }
   }

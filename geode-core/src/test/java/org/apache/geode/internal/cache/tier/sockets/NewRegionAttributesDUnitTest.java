@@ -56,7 +56,7 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
   /** total number of puts for the test */
   private static final int TOTAL_PUTS = 10;
 
-  private static final String REGION_NAME = "NewRegionAttributesDUnitTest_region" ;
+  private static final String REGION_NAME = "NewRegionAttributesDUnitTest_region";
 
   /**
    * Creates the server cache on test-VMs
@@ -116,15 +116,13 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * @see AttributesFactory#setEnableConflation(boolean)
    * @see AttributesFactory#setEnableAsyncConflation(boolean)
    */
-  public static void createServerCache(Boolean enableWan, Boolean setPublisher,
-      Boolean enableConflation, Boolean enableAsyncConflation) throws Exception
-  {
+  public static void createServerCache(Boolean enableWan, Boolean setPublisher, Boolean enableConflation, Boolean enableAsyncConflation) throws Exception {
     NewRegionAttributesDUnitTest test = new NewRegionAttributesDUnitTest();
     cache = test.createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
-//    factory.setPublisher(setPublisher.booleanValue());
+    //    factory.setPublisher(setPublisher.booleanValue());
     factory.setEnableConflation(enableConflation.booleanValue());
     factory.setEnableAsyncConflation(enableAsyncConflation.booleanValue());
     RegionAttributes attrs = factory.create();
@@ -141,8 +139,7 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    *           thrown if any problem occurs while connecting to distributed
    *           system or creating cache
    */
-  private Cache createCache(Properties props) throws Exception
-  {
+  private Cache createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     Cache cache = null;
     cache = CacheFactory.create(ds);
@@ -156,8 +153,7 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * Closes the cache instance created and disconnects from the distributed
    * system.
    */
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
       cache.getDistributedSystem().disconnect();
@@ -178,18 +174,17 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * @see AttributesFactory#setEnableAsyncConflation(boolean)
    */
   @Test
-  public void testEntryOperationsWithNewAttributesEnabled()
-  {
+  public void testEntryOperationsWithNewAttributesEnabled() {
     vm0.invoke(() -> NewRegionAttributesDUnitTest.checkAttributes());
     vm1.invoke(() -> NewRegionAttributesDUnitTest.checkAttributes());
     vm0.invoke(() -> NewRegionAttributesDUnitTest.doPuts());
-    Integer cnt1 = (Integer)vm1.invoke(() -> NewRegionAttributesDUnitTest.getEntryCount());
+    Integer cnt1 = (Integer) vm1.invoke(() -> NewRegionAttributesDUnitTest.getEntryCount());
     assertEquals(TOTAL_PUTS, cnt1.intValue());
     vm0.invoke(() -> NewRegionAttributesDUnitTest.doPuts());
     vm0.invoke(() -> NewRegionAttributesDUnitTest.doInvalidates());
     vm0.invoke(() -> NewRegionAttributesDUnitTest.doDestroy());
 
-    Integer cnt2 = (Integer)vm1.invoke(() -> NewRegionAttributesDUnitTest.getEntryCount());
+    Integer cnt2 = (Integer) vm1.invoke(() -> NewRegionAttributesDUnitTest.getEntryCount());
     assertEquals(0, cnt2.intValue());
   }
 
@@ -199,8 +194,7 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * verifies that <code>UnsupportedOperationException</code> occurs as expected
    */
   @Test
-  public void testRegisterInterestUseCases()
-  {
+  public void testRegisterInterestUseCases() {
     vm1.invoke(() -> NewRegionAttributesDUnitTest.registerInterest());
     vm1.invoke(() -> NewRegionAttributesDUnitTest.unregisterInterest());
     vm1.invoke(() -> NewRegionAttributesDUnitTest.getInterestForRegion());
@@ -211,10 +205,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * enableConflation and enableAysncConflation are set properly to true for the
    * test-region
    */
-  public static void checkAttributes()
-  {
+  public static void checkAttributes() {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-//    assertTrue(region1.getAttributes().getPublisher());
+    //    assertTrue(region1.getAttributes().getPublisher());
     assertTrue(region1.getAttributes().getEnableConflation());
     assertTrue(region1.getAttributes().getEnableAsyncConflation());
   }
@@ -223,14 +216,12 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * Performs PUT operations on the test-region and fails if any Exception
    * occurs during the PUTs
    */
-  public static void doPuts()
-  {
+  public static void doPuts() {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     for (int i = 0; i < TOTAL_PUTS; i++) {
       try {
         region1.put("key-" + i, "val-" + i);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         fail("Test failed due to unexpected exception during PUTs : " + e);
       }
     }
@@ -240,32 +231,27 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * Performs INVALIDATES operations on the test-region and fails if any
    * Exception occurs during the INVALIDATESs
    */
-  public static void doInvalidates()
-  {
+  public static void doInvalidates() {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     for (int i = 0; i < TOTAL_PUTS; i++) {
       try {
         region1.invalidate("key-" + i);
-      }
-      catch (Exception e) {
-        fail("Test failed due to unexpected exception during INVALIDATESs : "
-            + e);
+      } catch (Exception e) {
+        fail("Test failed due to unexpected exception during INVALIDATESs : " + e);
       }
     }
- }
+  }
 
   /**
    * Performs DESTROY operations on the test-region and fails if any Exception
    * occurs during the DESTROYs
    */
-  public static void doDestroy()
-  {
+  public static void doDestroy() {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     for (int i = 0; i < TOTAL_PUTS; i++) {
       try {
         region1.destroy("key-" + i);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         fail("Test failed due to unexpected exception during DESTROYs : " + e);
       }
     }
@@ -276,8 +262,7 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * 
    * @return total entries
    */
-  public static Object getEntryCount()
-  {
+  public static Object getEntryCount() {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     int keysSize = region1.entries(false).size();
     return new Integer(keysSize);
@@ -294,8 +279,7 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * @see Region#registerInterestRegex(String)
    * @see Region#registerInterestRegex(String, InterestResultPolicy)
    */
-  public static void registerInterest()
-  {
+  public static void registerInterest() {
     InterestResultPolicy policy = InterestResultPolicy.KEYS_VALUES;
     int totalKeys = 5;
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -308,11 +292,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     // test registerInterest(key)
     try {
       region1.registerInterest("DummyKey1");
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for registerInterest(key)");
     }
@@ -321,11 +303,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.registerInterest("DummyKey2", policy);
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for  registerInterest(key,policy)");
     }
@@ -334,11 +314,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.registerInterest(keylist);
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for registerInterest(keylist)");
     }
@@ -347,11 +325,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.registerInterest(keylist, policy);
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for registerInterest(keylist,policy)");
     }
@@ -360,11 +336,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.registerInterestRegex("ke?");
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for registerInterestRegex(expr)");
     }
@@ -373,11 +347,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.registerInterestRegex("ke?", InterestResultPolicy.KEYS_VALUES);
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for registerInterestRegex(expr,policy)");
     }
@@ -392,8 +364,7 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * @see Region#unregisterInterest(Object)
    * @see Region#unregisterInterestRegex(String)
    */
-  public static void unregisterInterest()
-  {
+  public static void unregisterInterest() {
     int totalKeys = 5;
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     List keylist = new ArrayList();
@@ -405,11 +376,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     boolean exceptionOccured = false;
     try {
       region1.unregisterInterest("DummyKey1");
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for unregisterInterest(key)");
     }
@@ -418,11 +387,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.unregisterInterest(keylist);
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for unregisterInterest(keylist)");
     }
@@ -431,11 +398,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.unregisterInterestRegex("kp?");
-    }
-    catch (UnsupportedOperationException expected) {
+    } catch (UnsupportedOperationException expected) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for unregisterInterestRegex(expr)");
     }
@@ -450,19 +415,16 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
    * @see Region#getInterestList()
    * @see Region#getInterestListRegex()
    */
-  public static void getInterestForRegion()
-  {
+  public static void getInterestForRegion() {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     boolean exceptionOccured = false;
 
     // test getInterestList()
     try {
       region1.getInterestList();
-    }
-    catch (UnsupportedOperationException e) {
+    } catch (UnsupportedOperationException e) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for getInterestList()");
     }
@@ -472,11 +434,9 @@ public class NewRegionAttributesDUnitTest extends JUnit4DistributedTestCase {
     exceptionOccured = false;
     try {
       region1.getInterestListRegex();
-    }
-    catch (UnsupportedOperationException e) {
+    } catch (UnsupportedOperationException e) {
       exceptionOccured = true;
-    }
-    finally {
+    } finally {
       if (!exceptionOccured)
         fail("UnsupportedOperationException was not thrown as expected for getInterestListRegex()");
     }

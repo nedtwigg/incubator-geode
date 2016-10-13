@@ -26,7 +26,7 @@ import java.io.InputStreamReader;
  * 
  */
 public abstract class FailOutputTestCase extends GoldenTestCase implements ExecutableProcess {
-  
+
   @Override
   protected GoldenComparator createGoldenComparator() {
     return new GoldenStringComparator(expectedProblemLines());
@@ -35,11 +35,11 @@ public abstract class FailOutputTestCase extends GoldenTestCase implements Execu
   String name() {
     return getClass().getSimpleName();
   }
-  
+
   abstract String problem();
-  
+
   abstract void outputProblemInProcess(String message);
-  
+
   @Override
   public final void executeInProcess() throws IOException {
     outputLine("Begin " + name() + ".main");

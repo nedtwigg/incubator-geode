@@ -29,6 +29,6 @@ import java.io.Serializable;
  * step has to create the state on the manager.
  * 
  */
-public interface CLIRemoteStep extends CLIStep, Serializable{
+public interface CLIRemoteStep extends CLIStep, Serializable {
 
 }

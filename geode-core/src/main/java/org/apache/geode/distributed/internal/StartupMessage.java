@@ -52,13 +52,13 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
   private int distributedSystemId;
   private String redundancyZone;
   private boolean enforceUniqueZone;
-  
+
   // additional fields using StartupMessageData below here...
   private Collection<String> hostedLocatorsAll;
   boolean isSharedConfigurationEnabled;
   private int mcastPort;
   private String mcastHostAddress; // see InetAddress.getHostAddress() for the format of this string
-  
+
   /**
    * Determine all of the addresses that this host represents.  An empty list
    * will be regarded as an error by all who see it.
@@ -68,23 +68,24 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
    */
   public static Set getMyAddresses(DistributionManager dm) {
     try {
-      Set addresses =  SocketCreator.getMyAddresses();
+      Set addresses = SocketCreator.getMyAddresses();
       return addresses;
     } catch (IllegalArgumentException e) {
       logger.fatal(e.getMessage(), e);
       return Collections.EMPTY_SET;
     }
   }
-  
+
   /** A list of errors that occurs while deserializing this message.
    * See bug 31573. */
   private transient StringBuffer fromDataProblems;
-  
+
   /**
    * Creates new instance for DataSerializer.
    */
-  public StartupMessage() {}
-  
+  public StartupMessage() {
+  }
+
   /**
    * Creates new instance for StartupOperation.
    * @param hostedLocators
@@ -94,16 +95,16 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
     this.hostedLocatorsAll = hostedLocators;
     this.isSharedConfigurationEnabled = isSharedConfigurationEnabled;
   }
-  
+
   ///////////////////////  Instance Methods  ///////////////////////
-  
+
   /**
    * Sets the reply processor for this message
    */
   void setReplyProcessorId(int proc) {
     this.replyProcessorId = proc;
   }
-  
+
   /**
    * Sets the mcastEnabled flag for this message
    * @since GemFire 5.0
@@ -111,17 +112,19 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
   void setMcastEnabled(boolean flag) {
     isMcastEnabled = flag;
   }
-  
+
   int getMcastPort() {
     return this.mcastPort;
   }
+
   void setMcastPort(int port) {
     this.mcastPort = port;
   }
-  
+
   String getMcastHostAddress() {
     return this.mcastHostAddress;
   }
+
   void setMcastHostAddress(InetAddress addr) {
     String hostAddr = null;
     if (addr != null) {
@@ -129,16 +132,16 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
     }
     this.mcastHostAddress = hostAddr;
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
   }
-  
-//  void setHostedLocatorsWithSharedConfiguration(Collection<String> hostedLocatorsWithSharedConfiguration) {
-//    this.hostedLocatorsWithSharedConfiguration = hostedLocatorsWithSharedConfiguration;
-//  }
-  
+
+  //  void setHostedLocatorsWithSharedConfiguration(Collection<String> hostedLocatorsWithSharedConfiguration) {
+  //    this.hostedLocatorsWithSharedConfiguration = hostedLocatorsWithSharedConfiguration;
+  //  }
+
   /**
    * Sets the tcpDisabled flag for this message
    * @since GemFire 5.0
@@ -148,12 +151,12 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
   }
 
   void setInterfaces(Set interfaces) {
-    this.interfaces = interfaces; 
+    this.interfaces = interfaces;
     if (interfaces == null || interfaces.size() == 0) {
       throw new SystemConnectException("Unable to examine network card");
     }
   }
-  
+
   public void setDistributedSystemId(int distributedSystemId) {
     this.distributedSystemId = distributedSystemId;
   }
@@ -161,11 +164,11 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
   public void setRedundancyZone(String redundancyZone) {
     this.redundancyZone = redundancyZone;
   }
-  
+
   public void setEnforceUniqueZone(boolean enforceUniqueZone) {
     this.enforceUniqueZone = enforceUniqueZone;
   }
-  
+
   /**
    * Adds the distribution manager that is started up to the current
    * DM's list of members.
@@ -180,41 +183,25 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
     String myVersion = GemFireVersion.getGemFireVersion();
     String theirVersion = this.version;
     if (dm.getTransport().isMcastEnabled() != isMcastEnabled) {
-      rejectionMessage =
-        LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_ISMCASTENABLED_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_IT_IS_ATTEMPTING_TO_JOIN
-        .toLocalizedString(new Object[] {getSender(), isMcastEnabled ? "enabled" : "disabled"});
-    }
-    else if (isMcastEnabled && dm.getSystem().getOriginalConfig().getMcastPort() != getMcastPort()) {
-      rejectionMessage =
-        LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_MCAST_PORT_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN
-        .toLocalizedString(new Object[] {getSender(), getMcastPort(), dm.getSystem().getOriginalConfig().getMcastPort()});
-    }
-    else if (isMcastEnabled && !checkMcastAddress(dm.getSystem().getOriginalConfig().getMcastAddress(), getMcastHostAddress())) {
-      rejectionMessage =
-        LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_MCAST_ADDRESS_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN
-        .toLocalizedString(new Object[] {getSender(), getMcastHostAddress(), dm.getSystem().getOriginalConfig().getMcastAddress()});
+      rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_ISMCASTENABLED_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(new Object[] { getSender(), isMcastEnabled ? "enabled" : "disabled" });
+    } else if (isMcastEnabled && dm.getSystem().getOriginalConfig().getMcastPort() != getMcastPort()) {
+      rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_MCAST_PORT_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(new Object[] { getSender(), getMcastPort(), dm.getSystem().getOriginalConfig().getMcastPort() });
+    } else if (isMcastEnabled && !checkMcastAddress(dm.getSystem().getOriginalConfig().getMcastAddress(), getMcastHostAddress())) {
+      rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_MCAST_ADDRESS_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(new Object[] { getSender(), getMcastHostAddress(), dm.getSystem().getOriginalConfig().getMcastAddress() });
+    } else if (dm.getTransport().isTcpDisabled() != isTcpDisabled) {
+      rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_ISTCPDISABLED_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(new Object[] { getSender(), Boolean.valueOf(isTcpDisabled) });
+    } else if (dm.getDistributedSystemId() != DistributionConfig.DEFAULT_DISTRIBUTED_SYSTEM_ID && distributedSystemId != DistributionConfig.DEFAULT_DISTRIBUTED_SYSTEM_ID && distributedSystemId != dm.getDistributedSystemId()) {
+
+      String distributedSystemListener = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener");
+      //this check is specific for Jayesh's use case of WAN BootStraping
+      if (distributedSystemListener != null) {
+        if (-distributedSystemId != dm.getDistributedSystemId()) {
+          rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_DISTRIBUTED_SYSTEM_ID_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(new Object[] { getSender(), Integer.valueOf(distributedSystemId), dm.getDistributedSystemId() });
         }
-    else if (dm.getTransport().isTcpDisabled() != isTcpDisabled) {           
-      rejectionMessage =
-          LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_ISTCPDISABLED_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_IT_IS_ATTEMPTING_TO_JOIN
-          .toLocalizedString(new Object[] {getSender(), Boolean.valueOf(isTcpDisabled)});
-    } else if (dm.getDistributedSystemId() != DistributionConfig.DEFAULT_DISTRIBUTED_SYSTEM_ID
-        && distributedSystemId != DistributionConfig.DEFAULT_DISTRIBUTED_SYSTEM_ID
-             && distributedSystemId != dm.getDistributedSystemId()) {
-     
-     String distributedSystemListener = System
-         .getProperty(DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener");
-     //this check is specific for Jayesh's use case of WAN BootStraping
-     if(distributedSystemListener != null){
-       if(-distributedSystemId != dm.getDistributedSystemId()){
-         rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_DISTRIBUTED_SYSTEM_ID_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(
-             new Object[] {getSender(), Integer.valueOf(distributedSystemId), dm.getDistributedSystemId()});
-       } 
-     }else{
-       rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_DISTRIBUTED_SYSTEM_ID_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(
-           new Object[] {getSender(), Integer.valueOf(distributedSystemId), dm.getDistributedSystemId()});
-     }
-   }
+      } else {
+        rejectionMessage = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_DISTRIBUTED_SYSTEM_ID_1_DOES_NOT_MATCH_THE_DISTRIBUTED_SYSTEM_2_IT_IS_ATTEMPTING_TO_JOIN.toLocalizedString(new Object[] { getSender(), Integer.valueOf(distributedSystemId), dm.getDistributedSystemId() });
+      }
+    }
 
     if (this.fromDataProblems != null) {
       if (logger.isDebugEnabled()) {
@@ -224,44 +211,41 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
 
     if (rejectionMessage == null) { // change state only if there's no rejectionMessage yet
       if (this.interfaces == null || this.interfaces.size() == 0) {
-        final org.apache.geode.i18n.StringId msg = 
-          LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_PEER_HAS_NO_NETWORK_INTERFACES;
+        final org.apache.geode.i18n.StringId msg = LocalizedStrings.StartupMessage_REJECTED_NEW_SYSTEM_NODE_0_BECAUSE_PEER_HAS_NO_NETWORK_INTERFACES;
         rejectionMessage = msg.toLocalizedString(getSender());
-      }
-      else {
+      } else {
         dm.setEquivalentHosts(this.interfaces);
       }
     }
-    
+
     if (rejectionMessage != null) {
       logger.warn(rejectionMessage);
     }
-    
+
     if (rejectionMessage == null) { // change state only if there's no rejectionMessage yet
       dm.setRedundancyZone(getSender(), this.redundancyZone);
       dm.setEnforceUniqueZone(this.enforceUniqueZone);
 
       if (this.hostedLocatorsAll != null) {
-//        boolean isSharedConfigurationEnabled = false;
-//        if (this.hostedLocatorsWithSharedConfiguration != null) {
-//          isSharedConfigurationEnabled = true;
-//        }
+        //        boolean isSharedConfigurationEnabled = false;
+        //        if (this.hostedLocatorsWithSharedConfiguration != null) {
+        //          isSharedConfigurationEnabled = true;
+        //        }
         dm.addHostedLocators(getSender(), this.hostedLocatorsAll, this.isSharedConfigurationEnabled);
       }
     }
 
-
     StartupResponseMessage m = null;
     //Commenting out. See Bruces note in the StartupMessageData constructor. 
     //Comparisons should use the functionality described in SerializationVersions 
-//    if (GemFireVersion.compareVersions(theirVersion,"6.6.2") >= 0) {
-      m = new StartupResponseWithVersionMessage(dm, replyProcessorId, getSender(), rejectionMessage, isAdminDM);
-//    } else {
-//      m = new StartupResponseMessage(dm, replyProcessorId, getSender(), rejectionMessage, isAdminDM);
-//    }
-      if (logger.isDebugEnabled()) {
-        logger.debug("Received StartupMessage from a member with version: {}, my version is:{}", theirVersion, myVersion);
-      }
+    //    if (GemFireVersion.compareVersions(theirVersion,"6.6.2") >= 0) {
+    m = new StartupResponseWithVersionMessage(dm, replyProcessorId, getSender(), rejectionMessage, isAdminDM);
+    //    } else {
+    //      m = new StartupResponseMessage(dm, replyProcessorId, getSender(), rejectionMessage, isAdminDM);
+    //    }
+    if (logger.isDebugEnabled()) {
+      logger.debug("Received StartupMessage from a member with version: {}, my version is:{}", theirVersion, myVersion);
+    }
     dm.putOutgoing(m);
     if (rejectionMessage != null) {
       dm.getMembershipManager().startupMessageFailed(getSender(), rejectionMessage);
@@ -277,11 +261,13 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
     if (myMcastAddr != null) {
       myMcastHostAddr = myMcastAddr.getHostAddress();
     }
-    if (StringUtils.equals(myMcastHostAddr,otherMcastHostAddr)) return true;
-    if (myMcastHostAddr == null) return false;
+    if (StringUtils.equals(myMcastHostAddr, otherMcastHostAddr))
+      return true;
+    if (myMcastHostAddr == null)
+      return false;
     return myMcastHostAddr.equals(otherMcastHostAddr);
   }
-  
+
   public int getDSFID() {
     return STARTUP_MESSAGE;
   }
@@ -315,13 +301,13 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
       String instantiatorClassName, instantiatedClassName;
       int id;
       if (insts[i] instanceof Instantiator) {
-        instantiatorClassName = ((Instantiator)insts[i]).getClass().getName();
-        instantiatedClassName = ((Instantiator)insts[i]).getInstantiatedClass().getName();
-        id = ((Instantiator)insts[i]).getId();
+        instantiatorClassName = ((Instantiator) insts[i]).getClass().getName();
+        instantiatedClassName = ((Instantiator) insts[i]).getInstantiatedClass().getName();
+        id = ((Instantiator) insts[i]).getId();
       } else {
-        instantiatorClassName = ((InstantiatorAttributesHolder)insts[i]).getInstantiatorClassName();
-        instantiatedClassName = ((InstantiatorAttributesHolder)insts[i]).getInstantiatedClassName();
-        id = ((InstantiatorAttributesHolder)insts[i]).getId();
+        instantiatorClassName = ((InstantiatorAttributesHolder) insts[i]).getInstantiatorClassName();
+        instantiatedClassName = ((InstantiatorAttributesHolder) insts[i]).getInstantiatedClassName();
+        id = ((InstantiatorAttributesHolder) insts[i]).getId();
       }
       DataSerializer.writeNonPrimitiveClassName(instantiatorClassName, out);
       DataSerializer.writeNonPrimitiveClassName(instantiatedClassName, out);
@@ -353,8 +339,7 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
 
     this.version = DataSerializer.readString(in);
@@ -372,9 +357,7 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
           InternalDataSerializer.register(cName, false, null, null, id);
         }
       } catch (IllegalArgumentException ex) {
-        fromDataProblem(
-            LocalizedStrings.StartupMessage_ILLEGALARGUMENTEXCEPTION_WHILE_REGISTERING_A_DATASERIALIZER_0
-            .toLocalizedString(ex));
+        fromDataProblem(LocalizedStrings.StartupMessage_ILLEGALARGUMENTEXCEPTION_WHILE_REGISTERING_A_DATASERIALIZER_0.toLocalizedString(ex));
       }
     }
 
@@ -389,13 +372,11 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
           InternalInstantiator.register(instantiatorClassName, instantiatedClassName, id, false);
         }
       } catch (IllegalArgumentException ex) {
-        fromDataProblem(
-          LocalizedStrings.StartupMessage_ILLEGALARGUMENTEXCEPTION_WHILE_REGISTERING_AN_INSTANTIATOR_0
-          .toLocalizedString(ex));
+        fromDataProblem(LocalizedStrings.StartupMessage_ILLEGALARGUMENTEXCEPTION_WHILE_REGISTERING_AN_INSTANTIATOR_0.toLocalizedString(ex));
       }
     } // for
 
-    this.interfaces = (Set)DataSerializer.readObject(in);
+    this.interfaces = (Set) DataSerializer.readObject(in);
     this.distributedSystemId = in.readInt();
     this.redundancyZone = DataSerializer.readString(in);
     this.enforceUniqueZone = in.readBoolean();
@@ -410,8 +391,6 @@ public final class StartupMessage extends HighPriorityDistributionMessage implem
 
   @Override
   public String toString() {
-    return 
-      LocalizedStrings.StartupMessage_STARTUPMESSAGE_DM_0_HAS_STARTED_PROCESSOR_1_WITH_DISTRIBUTED_SYSTEM_ID_2
-      .toLocalizedString(new Object[]{getSender(), Integer.valueOf(replyProcessorId), this.distributedSystemId});
+    return LocalizedStrings.StartupMessage_STARTUPMESSAGE_DM_0_HAS_STARTED_PROCESSOR_1_WITH_DISTRIBUTED_SYSTEM_ID_2.toLocalizedString(new Object[] { getSender(), Integer.valueOf(replyProcessorId), this.distributedSystemId });
   }
 }

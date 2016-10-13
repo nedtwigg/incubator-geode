@@ -74,7 +74,8 @@ public class ByteArrayWrapper implements DataSerializable, Comparable<ByteArrayW
 
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    this.value = DataSerializer.readByteArray(in);;
+    this.value = DataSerializer.readByteArray(in);
+    ;
     this.hashCode = Arrays.hashCode(this.value);
   }
 
@@ -111,7 +112,6 @@ public class ByteArrayWrapper implements DataSerializable, Comparable<ByteArrayW
   public int hashCode() {
     return this.hashCode;
   }
-
 
   /**
    * This equals is neither symmetric and therefore not transitive, 

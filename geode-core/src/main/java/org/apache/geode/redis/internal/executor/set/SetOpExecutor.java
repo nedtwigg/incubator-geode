@@ -68,8 +68,8 @@ public abstract class SetOpExecutor extends SetExecutor implements Extendable {
     }
     if (setList.isEmpty()) {
       if (isStorage()) {
-          command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
-          context.getRegionProvider().removeKey(destination);
+        command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
+        context.getRegionProvider().removeKey(destination);
       } else {
         if (firstSet == null)
           command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));

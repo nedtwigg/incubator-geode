@@ -33,7 +33,7 @@ import org.apache.geode.distributed.internal.membership.*;
  * @see DistributionManager#addMembershipListener
  */
 public interface MembershipListener {
-  
+
   /**
    * This method is invoked when a new member joins the system
    *
@@ -41,7 +41,7 @@ public interface MembershipListener {
    *        The id of the new member that has joined the system
    */
   public void memberJoined(InternalDistributedMember id);
-  
+
   /**
    * This method is invoked after a member has explicitly left
    * the system.  It may not get invoked if a member becomes unreachable
@@ -62,9 +62,8 @@ public interface MembershipListener {
    * @param whoSuspected the member that initiated suspect processing
    * @param reason the reason the member was suspected
    */
-  public void memberSuspect(InternalDistributedMember id,
-      InternalDistributedMember whoSuspected, String reason);
-  
+  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason);
+
   /**
    * This is notification that more than 50% of member weight has been
    * lost in a single view change.  Notification is performed before

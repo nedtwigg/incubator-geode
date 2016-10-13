@@ -28,8 +28,7 @@ import java.util.Properties;
 public class ProduceDateMessages {
 
   public static void main(String[] args) throws InterruptedException {
-    InternalDistributedSystem system = (InternalDistributedSystem)
-      DistributedSystem.connect(new Properties());
+    InternalDistributedSystem system = (InternalDistributedSystem) DistributedSystem.connect(new Properties());
     DM dm = system.getDistributionManager();
     System.out.println("Got DM: " + dm);
 

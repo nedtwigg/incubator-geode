@@ -31,32 +31,27 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 * @since GemFire 8.1
 */
 
-public class FindRestEnabledServersFunction extends FunctionAdapter implements InternalEntity  { 
+public class FindRestEnabledServersFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 7851518767859544678L;
 
-  
   public void execute(FunctionContext context) {
-    
+
     try {
-      GemFireCacheImpl c = (GemFireCacheImpl)CacheFactory.getAnyInstance();
+      GemFireCacheImpl c = (GemFireCacheImpl) CacheFactory.getAnyInstance();
       DistributionConfig config = InternalDistributedSystem.getAnyInstance().getConfig();
-      
-      final String protocolType =  config.getHttpServiceSSLEnabled() ? "https" : "http";
-      
-      if(c.isRESTServiceRunning()){
-        context.getResultSender().lastResult(protocolType
-        + "://"
-        + config.getHttpServiceBindAddress()
-        + ":"
-        + config.getHttpServicePort());
-        
-      }else {
+
+      final String protocolType = config.getHttpServiceSSLEnabled() ? "https" : "http";
+
+      if (c.isRESTServiceRunning()) {
+        context.getResultSender().lastResult(protocolType + "://" + config.getHttpServiceBindAddress() + ":" + config.getHttpServicePort());
+
+      } else {
         context.getResultSender().lastResult("");
       }
     } catch (CacheClosedException ex) {
       context.getResultSender().lastResult("");
-      
+
     }
   }
 

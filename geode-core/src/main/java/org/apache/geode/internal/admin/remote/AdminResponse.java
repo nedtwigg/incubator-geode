@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -29,8 +28,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 /**
  * A message that is sent as a reply to a {@link AdminRequest}.
  */
-public abstract class AdminResponse extends HighPriorityDistributionMessage
-  implements AdminMessageType {
+public abstract class AdminResponse extends HighPriorityDistributionMessage implements AdminMessageType {
 
   // instance variables
 
@@ -45,7 +43,7 @@ public abstract class AdminResponse extends HighPriorityDistributionMessage
   public void setMsgId(int msgId) {
     this.msgId = msgId;
   }
-  
+
   @Override
   public boolean sendViaUDP() {
     return true;
@@ -68,8 +66,7 @@ public abstract class AdminResponse extends HighPriorityDistributionMessage
   }
 
   @Override
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.msgId = in.readInt();
   }
@@ -80,9 +77,7 @@ public abstract class AdminResponse extends HighPriorityDistributionMessage
     if (size == 0) {
       return null;
     } else if (size > 1) {
-      throw new
-        IllegalStateException(
-          LocalizedStrings.AdminResponse_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS.toLocalizedString(Integer.valueOf(size)));
+      throw new IllegalStateException(LocalizedStrings.AdminResponse_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS.toLocalizedString(Integer.valueOf(size)));
     } else {
       return recipients[0];
     }

@@ -21,7 +21,7 @@ package org.apache.geode.cache;
  * @since GemFire 5.7
  */
 public class CommitIncompleteException extends TransactionException {
-private static final long serialVersionUID = 1017741483744420800L;
+  private static final long serialVersionUID = 1017741483744420800L;
 
   public CommitIncompleteException(String message) {
     super(message);

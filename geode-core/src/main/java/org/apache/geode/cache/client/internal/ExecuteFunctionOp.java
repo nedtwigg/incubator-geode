@@ -54,7 +54,7 @@ import org.apache.logging.log4j.Logger;
 public class ExecuteFunctionOp {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   /** index of allMembers in flags[] */
   public static final int ALL_MEMBERS_INDEX = 0;
   /** index of ignoreFailedMembers in flags[] */
@@ -63,7 +63,7 @@ public class ExecuteFunctionOp {
   private ExecuteFunctionOp() {
     // no instances allowed
   }
-  
+
   /**
    * Does a execute Function on a server using connections from the given pool
    * to communicate with the server.
@@ -71,20 +71,14 @@ public class ExecuteFunctionOp {
    * @param function of the function to be executed
    * @param args specified arguments to the application function
    */
-  public static void execute(final PoolImpl pool, Function function,
-      ServerFunctionExecutor executor, Object args,
-      MemberMappedArgument memberMappedArg, boolean allServers, byte hasResult,
-      ResultCollector rc, boolean isFnSerializationReqd,
-      UserAttributes attributes, String[] groups) {
-    final AbstractOp op = new ExecuteFunctionOpImpl(function, args,
-        memberMappedArg, hasResult, rc, isFnSerializationReqd, (byte)0, groups, allServers, executor.isIgnoreDepartedMembers());
+  public static void execute(final PoolImpl pool, Function function, ServerFunctionExecutor executor, Object args, MemberMappedArgument memberMappedArg, boolean allServers, byte hasResult, ResultCollector rc, boolean isFnSerializationReqd, UserAttributes attributes, String[] groups) {
+    final AbstractOp op = new ExecuteFunctionOpImpl(function, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, (byte) 0, groups, allServers, executor.isIgnoreDepartedMembers());
 
     if (allServers && groups.length == 0) {
       if (logger.isDebugEnabled()) {
         logger.debug("ExecuteFunctionOp#execute : Sending Function Execution Message:{} to all servers using pool: {}", op.getMessage(), pool);
       }
-      List callableTasks = constructAndGetFunctionTasks(pool, function, args,
-          memberMappedArg, hasResult, rc, isFnSerializationReqd, attributes);
+      List callableTasks = constructAndGetFunctionTasks(pool, function, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, attributes);
 
       SingleHopClientExecutor.submitAll(callableTasks);
     } else {
@@ -93,9 +87,9 @@ public class ExecuteFunctionOp {
       int retryAttempts = 0;
       boolean reexecute = false;
       int maxRetryAttempts = 0;
-      if(function.isHA())
+      if (function.isHA())
         maxRetryAttempts = pool.getRetryAttempts();
-      
+
       final boolean isDebugEnabled = logger.isDebugEnabled();
       do {
         try {
@@ -103,9 +97,7 @@ public class ExecuteFunctionOp {
             if (isDebugEnabled) {
               logger.debug("ExecuteFunctionOp#execute.reexecuteForServ : Sending Function Execution Message:{} to server using pool: {} with groups:{} all members:{} ignoreFailedMembers:{}", op.getMessage(), pool, Arrays.toString(groups), allServers, executor.isIgnoreDepartedMembers());
             }
-            reexecOp = new ExecuteFunctionOpImpl(function, args,
-                memberMappedArg, hasResult, rc, isFnSerializationReqd,
-                (byte)1/* isReExecute */, groups, allServers, executor.isIgnoreDepartedMembers());
+            reexecOp = new ExecuteFunctionOpImpl(function, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, (byte) 1/* isReExecute */, groups, allServers, executor.isIgnoreDepartedMembers());
             pool.execute(reexecOp, 0);
           } else {
             if (isDebugEnabled) {
@@ -140,27 +132,18 @@ public class ExecuteFunctionOp {
       } while (reexecuteForServ);
 
       if (reexecute && function.isHA()) {
-        ExecuteFunctionOp.reexecute(pool, function,
-            executor, rc, hasResult, isFnSerializationReqd, maxRetryAttempts - 1, groups, allServers);
+        ExecuteFunctionOp.reexecute(pool, function, executor, rc, hasResult, isFnSerializationReqd, maxRetryAttempts - 1, groups, allServers);
       }
     }
   }
-  
-  public static void execute(final PoolImpl pool, String functionId,
-      ServerFunctionExecutor executor, Object args,
-      MemberMappedArgument memberMappedArg, boolean allServers, byte hasResult,
-      ResultCollector rc, boolean isFnSerializationReqd, boolean isHA,
-      boolean optimizeForWrite, UserAttributes properties, String[] groups) {
-    final AbstractOp op = new ExecuteFunctionOpImpl(functionId, args,
-        memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA,
-        optimizeForWrite, (byte)0, groups, allServers, executor.isIgnoreDepartedMembers());
+
+  public static void execute(final PoolImpl pool, String functionId, ServerFunctionExecutor executor, Object args, MemberMappedArgument memberMappedArg, boolean allServers, byte hasResult, ResultCollector rc, boolean isFnSerializationReqd, boolean isHA, boolean optimizeForWrite, UserAttributes properties, String[] groups) {
+    final AbstractOp op = new ExecuteFunctionOpImpl(functionId, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA, optimizeForWrite, (byte) 0, groups, allServers, executor.isIgnoreDepartedMembers());
     if (allServers && groups.length == 0) {
       if (logger.isDebugEnabled()) {
         logger.debug("ExecuteFunctionOp#execute : Sending Function Execution Message:{} to all servers using pool: {}", op.getMessage(), pool);
       }
-      List callableTasks = constructAndGetFunctionTasks(pool, functionId, args,
-          memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA,
-          optimizeForWrite, properties);
+      List callableTasks = constructAndGetFunctionTasks(pool, functionId, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA, optimizeForWrite, properties);
 
       SingleHopClientExecutor.submitAll(callableTasks);
     } else {
@@ -169,17 +152,15 @@ public class ExecuteFunctionOp {
       int retryAttempts = 0;
       boolean reexecute = false;
       int maxRetryAttempts = 0;
-      if(isHA){
+      if (isHA) {
         maxRetryAttempts = pool.getRetryAttempts();
       }
-      
+
       final boolean isDebugEnabled = logger.isDebugEnabled();
       do {
         try {
           if (reexecuteForServ) {
-            reexecOp = new ExecuteFunctionOpImpl(functionId, args,
-                memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA,
-                optimizeForWrite, (byte)1, groups, allServers, executor.isIgnoreDepartedMembers());
+            reexecOp = new ExecuteFunctionOpImpl(functionId, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA, optimizeForWrite, (byte) 1, groups, allServers, executor.isIgnoreDepartedMembers());
             pool.execute(reexecOp, 0);
           } else {
             if (isDebugEnabled) {
@@ -213,46 +194,39 @@ public class ExecuteFunctionOp {
       } while (reexecuteForServ);
 
       if (reexecute && isHA) {
-        ExecuteFunctionOp.reexecute(pool, functionId, executor, rc, hasResult,
-            isFnSerializationReqd, maxRetryAttempts - 1, args, isHA,
-            optimizeForWrite, groups, allServers);
+        ExecuteFunctionOp.reexecute(pool, functionId, executor, rc, hasResult, isFnSerializationReqd, maxRetryAttempts - 1, args, isHA, optimizeForWrite, groups, allServers);
       }
     }
   }
-  
-  public static void reexecute(ExecutablePool pool, Function function,
-      ServerFunctionExecutor serverExecutor, ResultCollector resultCollector,
-      byte hasResult, boolean isFnSerializationReqd, int maxRetryAttempts, String[] groups, boolean allMembers) {
+
+  public static void reexecute(ExecutablePool pool, Function function, ServerFunctionExecutor serverExecutor, ResultCollector resultCollector, byte hasResult, boolean isFnSerializationReqd, int maxRetryAttempts, String[] groups, boolean allMembers) {
     boolean reexecute = true;
     int retryAttempts = 0;
     final boolean isDebugEnabled = logger.isDebugEnabled();
     do {
       reexecute = false;
-      AbstractOp reExecuteOp = new ExecuteFunctionOpImpl(function, serverExecutor.getArguments(),
-          serverExecutor.getMemberMappedArgument(), hasResult, resultCollector, isFnSerializationReqd, (byte)1, groups, allMembers, serverExecutor.isIgnoreDepartedMembers());
+      AbstractOp reExecuteOp = new ExecuteFunctionOpImpl(function, serverExecutor.getArguments(), serverExecutor.getMemberMappedArgument(), hasResult, resultCollector, isFnSerializationReqd, (byte) 1, groups, allMembers, serverExecutor.isIgnoreDepartedMembers());
       if (isDebugEnabled) {
         logger.debug("ExecuteFunction#reexecute : Sending Function Execution Message:{} to Server using pool:{} with groups:{} all members:{} ignoreFailedMembers:{}", reExecuteOp.getMessage(), pool, Arrays.toString(groups), allMembers, serverExecutor.isIgnoreDepartedMembers());
       }
       try {
-          pool.execute(reExecuteOp,0);
-      }
-      catch (InternalFunctionInvocationTargetException e) {
+        pool.execute(reExecuteOp, 0);
+      } catch (InternalFunctionInvocationTargetException e) {
         if (isDebugEnabled) {
           logger.debug("ExecuteFunctionOp#reexecute : Recieved InternalFunctionInvocationTargetException. The failed nodes are {}", e.getFailedNodeSet());
         }
         reexecute = true;
         resultCollector.clearResults();
-      }
-      catch (ServerConnectivityException se) {
+      } catch (ServerConnectivityException se) {
         if (isDebugEnabled) {
           logger.debug("ExecuteFunctionOp#reexecute : Received ServerConnectivity Exception.");
         }
-        
-        if(se instanceof ServerOperationException){
+
+        if (se instanceof ServerOperationException) {
           throw se;
         }
         retryAttempts++;
-        if (retryAttempts > maxRetryAttempts && maxRetryAttempts != -2) 
+        if (retryAttempts > maxRetryAttempts && maxRetryAttempts != -2)
           throw se;
 
         reexecute = true;
@@ -260,43 +234,37 @@ public class ExecuteFunctionOp {
       }
     } while (reexecute);
   }
-  
-  public static void reexecute(ExecutablePool pool, String functionId,
-      ServerFunctionExecutor serverExecutor, ResultCollector resultCollector,
-      byte hasResult, boolean isFnSerializationReqd, int maxRetryAttempts,
-      Object args, boolean isHA, boolean optimizeForWrite, String[] groups, boolean allMembers) {
+
+  public static void reexecute(ExecutablePool pool, String functionId, ServerFunctionExecutor serverExecutor, ResultCollector resultCollector, byte hasResult, boolean isFnSerializationReqd, int maxRetryAttempts, Object args, boolean isHA, boolean optimizeForWrite, String[] groups, boolean allMembers) {
     boolean reexecute = true;
     int retryAttempts = 0;
     final boolean isDebugEnabled = logger.isDebugEnabled();
     do {
       reexecute = false;
-      
-      final AbstractOp op = new ExecuteFunctionOpImpl(functionId, args,
-          serverExecutor.getMemberMappedArgument(), hasResult, resultCollector, isFnSerializationReqd, isHA, optimizeForWrite, (byte)1, groups, allMembers, serverExecutor.isIgnoreDepartedMembers());
-      
+
+      final AbstractOp op = new ExecuteFunctionOpImpl(functionId, args, serverExecutor.getMemberMappedArgument(), hasResult, resultCollector, isFnSerializationReqd, isHA, optimizeForWrite, (byte) 1, groups, allMembers, serverExecutor.isIgnoreDepartedMembers());
+
       if (isDebugEnabled) {
         logger.debug("ExecuteFunction#reexecute : Sending Function Execution Message:{} to Server using pool:{} with groups:{} all members:{} ignoreFailedMembers:{}", op.getMessage(), pool, Arrays.toString(groups), allMembers, serverExecutor.isIgnoreDepartedMembers());
       }
       try {
-          pool.execute(op,0);
-      }
-      catch (InternalFunctionInvocationTargetException e) {
+        pool.execute(op, 0);
+      } catch (InternalFunctionInvocationTargetException e) {
         if (isDebugEnabled) {
           logger.debug("ExecuteFunctionOp#reexecute : Recieved InternalFunctionInvocationTargetException. The failed nodes are {}", e.getFailedNodeSet());
         }
         reexecute = true;
         resultCollector.clearResults();
-      }
-      catch (ServerConnectivityException se) {
+      } catch (ServerConnectivityException se) {
         if (isDebugEnabled) {
           logger.debug("ExecuteFunctionOp#reexecute : Received ServerConnectivity Exception.");
         }
-        
-        if(se instanceof ServerOperationException){
+
+        if (se instanceof ServerOperationException) {
           throw se;
         }
         retryAttempts++;
-        if (retryAttempts > maxRetryAttempts && maxRetryAttempts != -2) 
+        if (retryAttempts > maxRetryAttempts && maxRetryAttempts != -2)
           throw se;
 
         reexecute = true;
@@ -305,59 +273,45 @@ public class ExecuteFunctionOp {
     } while (reexecute);
   }
 
-  static List constructAndGetFunctionTasks(final PoolImpl pool,
-      final Function function, Object args,
-      MemberMappedArgument memberMappedArg, byte hasResult, ResultCollector rc,
-      boolean isFnSerializationReqd, UserAttributes attributes) {
+  static List constructAndGetFunctionTasks(final PoolImpl pool, final Function function, Object args, MemberMappedArgument memberMappedArg, byte hasResult, ResultCollector rc, boolean isFnSerializationReqd, UserAttributes attributes) {
     final List<SingleHopOperationCallable> tasks = new ArrayList<SingleHopOperationCallable>();
     ArrayList<ServerLocation> servers = null;
-    if (pool.getLocators() == null || pool.getLocators().isEmpty()) { 
-      servers = ((ExplicitConnectionSourceImpl)pool.getConnectionSource())
-          .getAllServers();
-    }
-    else {
-      servers = ((AutoConnectionSourceImpl)pool.getConnectionSource())
-          .findAllServers(); // n/w call on locator
+    if (pool.getLocators() == null || pool.getLocators().isEmpty()) {
+      servers = ((ExplicitConnectionSourceImpl) pool.getConnectionSource()).getAllServers();
+    } else {
+      servers = ((AutoConnectionSourceImpl) pool.getConnectionSource()).findAllServers(); // n/w call on locator
     }
 
     for (ServerLocation server : servers) {
-      final AbstractOp op = new ExecuteFunctionOpImpl(function,
-          args, memberMappedArg, hasResult, rc, isFnSerializationReqd, (byte)0, null/*onGroups does not use single-hop for now*/, false, false);
+      final AbstractOp op = new ExecuteFunctionOpImpl(function, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, (byte) 0, null/*onGroups does not use single-hop for now*/, false, false);
       SingleHopOperationCallable task = new SingleHopOperationCallable(server, pool, op, attributes);
       tasks.add(task);
     }
     return tasks;
   }
-      
-  static List constructAndGetFunctionTasks(final PoolImpl pool,
-      final String functionId, Object args,
-      MemberMappedArgument memberMappedArg, byte hasResult, ResultCollector rc,
-      boolean isFnSerializationReqd, boolean isHA, boolean optimizeForWrite, UserAttributes properties) {
+
+  static List constructAndGetFunctionTasks(final PoolImpl pool, final String functionId, Object args, MemberMappedArgument memberMappedArg, byte hasResult, ResultCollector rc, boolean isFnSerializationReqd, boolean isHA, boolean optimizeForWrite, UserAttributes properties) {
     final List<SingleHopOperationCallable> tasks = new ArrayList<SingleHopOperationCallable>();
     ArrayList<ServerLocation> servers = null;
-    if (pool.getLocators() == null || pool.getLocators().isEmpty()) { 
-      servers = ((ExplicitConnectionSourceImpl)pool.getConnectionSource())
-          .getAllServers();
-    }
-    else {
-      servers = ((AutoConnectionSourceImpl)pool.getConnectionSource())
-          .findAllServers(); // n/w call on locator
+    if (pool.getLocators() == null || pool.getLocators().isEmpty()) {
+      servers = ((ExplicitConnectionSourceImpl) pool.getConnectionSource()).getAllServers();
+    } else {
+      servers = ((AutoConnectionSourceImpl) pool.getConnectionSource()).findAllServers(); // n/w call on locator
     }
 
     for (ServerLocation server : servers) {
-      final AbstractOp op = new ExecuteFunctionOpImpl(functionId,
-          args, memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA, optimizeForWrite, (byte)0,null/*onGroups does not use single-hop for now*/, false, false);
+      final AbstractOp op = new ExecuteFunctionOpImpl(functionId, args, memberMappedArg, hasResult, rc, isFnSerializationReqd, isHA, optimizeForWrite, (byte) 0, null/*onGroups does not use single-hop for now*/, false, false);
       SingleHopOperationCallable task = new SingleHopOperationCallable(server, pool, op, properties);
       tasks.add(task);
     }
     return tasks;
   }
-  
+
   static byte[] getByteArrayForFlags(boolean... flags) {
     byte[] retVal = null;
     if (flags.length > 0) {
       retVal = new byte[flags.length];
-      for (int i=0; i<flags.length; i++) {
+      for (int i = 0; i < flags.length; i++) {
         if (flags[i]) {
           retVal[i] = 1;
         } else {
@@ -371,8 +325,8 @@ public class ExecuteFunctionOp {
   static class ExecuteFunctionOpImpl extends AbstractOp {
 
     private ResultCollector resultCollector;
-    
-   //To get the instance of the Function Statistics we need the function name or instance
+
+    //To get the instance of the Function Statistics we need the function name or instance
     private String functionId;
 
     private Function function;
@@ -401,19 +355,15 @@ public class ExecuteFunctionOp {
     /**
      * @throws org.apache.geode.SerializationException if serialization fails
      */
-    public ExecuteFunctionOpImpl(Function function, Object args,
-        MemberMappedArgument memberMappedArg, byte hasResult,
-        ResultCollector rc, boolean isFnSerializationReqd, byte isReexecute, String[] groups, boolean allMembers, boolean ignoreFailedMembers) {
+    public ExecuteFunctionOpImpl(Function function, Object args, MemberMappedArgument memberMappedArg, byte hasResult, ResultCollector rc, boolean isFnSerializationReqd, byte isReexecute, String[] groups, boolean allMembers, boolean ignoreFailedMembers) {
       super(MessageType.EXECUTE_FUNCTION, MSG_PARTS);
-      byte fnState = AbstractExecution.getFunctionState(function.isHA(),
-          function.hasResult(), function.optimizeForWrite());
+      byte fnState = AbstractExecution.getFunctionState(function.isHA(), function.hasResult(), function.optimizeForWrite());
 
       addBytes(isReexecute, fnState);
-      if(isFnSerializationReqd){
-        getMessage().addStringOrObjPart(function); 
-      }
-      else{
-        getMessage().addStringOrObjPart(function.getId()); 
+      if (isFnSerializationReqd) {
+        getMessage().addStringOrObjPart(function);
+      } else {
+        getMessage().addStringOrObjPart(function.getId());
       }
       getMessage().addObjPart(args);
       getMessage().addObjPart(memberMappedArg);
@@ -421,7 +371,7 @@ public class ExecuteFunctionOp {
       this.flags = getByteArrayForFlags(allMembers, ignoreFailedMembers);
       getMessage().addBytesPart(this.flags);
       resultCollector = rc;
-      if(isReexecute == 1) {
+      if (isReexecute == 1) {
         resultCollector.clearResults();
       }
       this.functionId = function.getId();
@@ -433,13 +383,9 @@ public class ExecuteFunctionOp {
       this.groups = groups;
     }
 
-    public ExecuteFunctionOpImpl(String functionId, Object args2,
-        MemberMappedArgument memberMappedArg, byte hasResult,
-        ResultCollector rc, boolean isFnSerializationReqd, boolean isHA,
-        boolean optimizeForWrite, byte isReexecute, String[] groups, boolean allMembers, boolean ignoreFailedMembers) {
+    public ExecuteFunctionOpImpl(String functionId, Object args2, MemberMappedArgument memberMappedArg, byte hasResult, ResultCollector rc, boolean isFnSerializationReqd, boolean isHA, boolean optimizeForWrite, byte isReexecute, String[] groups, boolean allMembers, boolean ignoreFailedMembers) {
       super(MessageType.EXECUTE_FUNCTION, MSG_PARTS);
-      byte fnState = AbstractExecution.getFunctionState(isHA,
-          hasResult == (byte)1 ? true : false, optimizeForWrite);
+      byte fnState = AbstractExecution.getFunctionState(isHA, hasResult == (byte) 1 ? true : false, optimizeForWrite);
 
       addBytes(isReexecute, fnState);
       getMessage().addStringOrObjPart(functionId);
@@ -449,9 +395,9 @@ public class ExecuteFunctionOp {
       this.flags = getByteArrayForFlags(allMembers, ignoreFailedMembers);
       getMessage().addBytesPart(this.flags);
       resultCollector = rc;
-      if(isReexecute == 1) {
+      if (isReexecute == 1) {
         resultCollector.clearResults();
-      } 
+      }
       this.functionId = functionId;
       this.args = args2;
       this.memberMappedArg = memberMappedArg;
@@ -471,19 +417,18 @@ public class ExecuteFunctionOp {
       this.isFnSerializationReqd = op.isFnSerializationReqd;
       this.groups = op.groups;
       this.flags = op.flags;
-      
+
       addBytes(isReexecute, this.hasResult);
-      if(this.isFnSerializationReqd){
-        getMessage().addStringOrObjPart(function); 
-      }
-      else{
-        getMessage().addStringOrObjPart(function.getId()); 
+      if (this.isFnSerializationReqd) {
+        getMessage().addStringOrObjPart(function);
+      } else {
+        getMessage().addStringOrObjPart(function.getId());
       }
       getMessage().addObjPart(this.args);
       getMessage().addObjPart(this.memberMappedArg);
       getMessage().addObjPart(this.groups);
       getMessage().addBytesPart(this.flags);
-      if(isReexecute == 1) {
+      if (isReexecute == 1) {
         resultCollector.clearResults();
       }
     }
@@ -520,139 +465,123 @@ public class ExecuteFunctionOp {
       return ignoreFailedMembers;
     }
 
-    @Override  
-    protected Object processResponse(Message msg) throws Exception {      
-      ChunkedMessage executeFunctionResponseMsg = (ChunkedMessage)msg;
+    @Override
+    protected Object processResponse(Message msg) throws Exception {
+      ChunkedMessage executeFunctionResponseMsg = (ChunkedMessage) msg;
       try {
         // Read the header which describes the type of message following
         executeFunctionResponseMsg.readHeader();
         switch (executeFunctionResponseMsg.getMessageType()) {
-          case MessageType.EXECUTE_FUNCTION_RESULT:
-            if (logger.isDebugEnabled()) {
-              logger.debug("ExecuteFunctionOpImpl#processResponse: received message of type EXECUTE_FUNCTION_RESULT.");
-            }
-            Exception exception = null;
-            // Read the chunk
-            do{
-              executeFunctionResponseMsg.receiveChunk();
-              Object resultResponse = executeFunctionResponseMsg.getPart(0)
-                  .getObject();
-              Object result;
-              if (resultResponse instanceof ArrayList) {
-                result = ((ArrayList)resultResponse).get(0);
-              }
-              else {
-                result = resultResponse;
-              }
-              if (result instanceof FunctionException) {
-                //String s = "While performing a remote " + getOpName();
-                FunctionException ex = ((FunctionException)result);
-                if (ex instanceof InternalFunctionException || getIgnoreFailedMembers()) {
-                  Throwable cause = ex.getCause() == null ? ex : ex.getCause();
-                  DistributedMember memberID = (DistributedMember)((ArrayList)resultResponse)
-                      .get(1);
-                  this.resultCollector.addResult(memberID, cause);
-                  FunctionStats.getFunctionStats(this.functionId)
-                      .incResultsReceived();
-                  continue;
-                }
-                else {
-                  exception = ex;
-                }
-              }else if (result instanceof Throwable) {
-                String s = "While performing a remote " + getOpName();
-                exception = new ServerOperationException(s, (Throwable)result);
-                // Get the exception toString part.
-                // This was added for c++ thin client and not used in java
-                //Part exceptionToStringPart = msg.getPart(1);
-              }
-              else {
-                DistributedMember memberID = (DistributedMember)((ArrayList)resultResponse)
-                    .get(1);
-                synchronized (resultCollector) {
-                  resultCollector.addResult(memberID, result);                    
-                }
-                FunctionStats.getFunctionStats(this.functionId)
-                    .incResultsReceived();
-              }
-            }while(!executeFunctionResponseMsg.isLastChunk());
-
-            if(exception != null) {
-              throw exception;
-            }
-
-            if (logger.isDebugEnabled()) {
-              logger.debug("ExecuteFunctionOpImpl#processResponse: received all the results from server successfully.");
-            }
-            return null;          
-          case MessageType.EXCEPTION:
-            if (logger.isDebugEnabled()) {
-              logger.debug("ExecuteFunctionOpImpl#processResponse: received message of type EXCEPTION");
-            }
-            // Read the chunk
+        case MessageType.EXECUTE_FUNCTION_RESULT:
+          if (logger.isDebugEnabled()) {
+            logger.debug("ExecuteFunctionOpImpl#processResponse: received message of type EXECUTE_FUNCTION_RESULT.");
+          }
+          Exception exception = null;
+          // Read the chunk
+          do {
             executeFunctionResponseMsg.receiveChunk();
-            Part part0 = executeFunctionResponseMsg.getPart(0);
-            Object obj = part0.getObject();
-            if (obj instanceof FunctionException) {
-              FunctionException ex = ((FunctionException)obj);
-              throw ex;
+            Object resultResponse = executeFunctionResponseMsg.getPart(0).getObject();
+            Object result;
+            if (resultResponse instanceof ArrayList) {
+              result = ((ArrayList) resultResponse).get(0);
+            } else {
+              result = resultResponse;
             }
-            else {
-              String s = ": While performing a remote execute Function" + ((Throwable)obj).getMessage();
-              throw new ServerOperationException(s, (Throwable)obj);              
+            if (result instanceof FunctionException) {
+              //String s = "While performing a remote " + getOpName();
+              FunctionException ex = ((FunctionException) result);
+              if (ex instanceof InternalFunctionException || getIgnoreFailedMembers()) {
+                Throwable cause = ex.getCause() == null ? ex : ex.getCause();
+                DistributedMember memberID = (DistributedMember) ((ArrayList) resultResponse).get(1);
+                this.resultCollector.addResult(memberID, cause);
+                FunctionStats.getFunctionStats(this.functionId).incResultsReceived();
+                continue;
+              } else {
+                exception = ex;
+              }
+            } else if (result instanceof Throwable) {
+              String s = "While performing a remote " + getOpName();
+              exception = new ServerOperationException(s, (Throwable) result);
+              // Get the exception toString part.
+              // This was added for c++ thin client and not used in java
+              //Part exceptionToStringPart = msg.getPart(1);
+            } else {
+              DistributedMember memberID = (DistributedMember) ((ArrayList) resultResponse).get(1);
+              synchronized (resultCollector) {
+                resultCollector.addResult(memberID, result);
+              }
+              FunctionStats.getFunctionStats(this.functionId).incResultsReceived();
             }
-          case MessageType.EXECUTE_FUNCTION_ERROR:
-            if (logger.isDebugEnabled()) {
-              logger.debug("ExecuteFunctionOpImpl#processResponse: received message of type EXECUTE_FUNCTION_ERROR");
-            }
-            // Read the chunk
-            executeFunctionResponseMsg.receiveChunk();
-            String errorMessage = executeFunctionResponseMsg.getPart(0)
-                .getString();
-            throw new ServerOperationException(errorMessage);
-          default:
-            throw new InternalGemFireError(
-                LocalizedStrings.Op_UNKNOWN_MESSAGE_TYPE_0
-                  .toLocalizedString(
-                     Integer.valueOf(executeFunctionResponseMsg.getMessageType())));
+          } while (!executeFunctionResponseMsg.isLastChunk());
+
+          if (exception != null) {
+            throw exception;
+          }
+
+          if (logger.isDebugEnabled()) {
+            logger.debug("ExecuteFunctionOpImpl#processResponse: received all the results from server successfully.");
+          }
+          return null;
+        case MessageType.EXCEPTION:
+          if (logger.isDebugEnabled()) {
+            logger.debug("ExecuteFunctionOpImpl#processResponse: received message of type EXCEPTION");
+          }
+          // Read the chunk
+          executeFunctionResponseMsg.receiveChunk();
+          Part part0 = executeFunctionResponseMsg.getPart(0);
+          Object obj = part0.getObject();
+          if (obj instanceof FunctionException) {
+            FunctionException ex = ((FunctionException) obj);
+            throw ex;
+          } else {
+            String s = ": While performing a remote execute Function" + ((Throwable) obj).getMessage();
+            throw new ServerOperationException(s, (Throwable) obj);
+          }
+        case MessageType.EXECUTE_FUNCTION_ERROR:
+          if (logger.isDebugEnabled()) {
+            logger.debug("ExecuteFunctionOpImpl#processResponse: received message of type EXECUTE_FUNCTION_ERROR");
+          }
+          // Read the chunk
+          executeFunctionResponseMsg.receiveChunk();
+          String errorMessage = executeFunctionResponseMsg.getPart(0).getString();
+          throw new ServerOperationException(errorMessage);
+        default:
+          throw new InternalGemFireError(LocalizedStrings.Op_UNKNOWN_MESSAGE_TYPE_0.toLocalizedString(Integer.valueOf(executeFunctionResponseMsg.getMessageType())));
         }
-      }
-      finally {
+      } finally {
         executeFunctionResponseMsg.clear();
-      }      
+      }
     }
 
-    @Override  
+    @Override
     protected boolean isErrorResponse(int msgType) {
       return msgType == MessageType.EXECUTE_FUNCTION_ERROR;
     }
 
-    @Override  
+    @Override
     protected long startAttempt(ConnectionStats stats) {
       return stats.startExecuteFunction();
     }
-    
+
     protected String getOpName() {
       return "executeFunction";
     }
 
-    @Override  
+    @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
       stats.endExecuteFunctionSend(start, hasFailed());
     }
 
-    @Override  
+    @Override
     protected void endAttempt(ConnectionStats stats, long start) {
       stats.endExecuteFunction(start, hasTimedOut(), hasFailed());
     }
 
-    @Override  
+    @Override
     protected Message createResponseMessage() {
       return new ChunkedMessage(1, Version.CURRENT);
     }
   }
-  
-  public static final int MAX_FE_THREADS = Integer.getInteger(
-      "DistributionManager.MAX_FE_THREADS",
-      Math.max(Runtime.getRuntime().availableProcessors() * 4, 16)).intValue();
+
+  public static final int MAX_FE_THREADS = Integer.getInteger("DistributionManager.MAX_FE_THREADS", Math.max(Runtime.getRuntime().availableProcessors() * 4, 16)).intValue();
 }

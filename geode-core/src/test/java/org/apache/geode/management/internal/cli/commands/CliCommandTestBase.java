@@ -122,14 +122,13 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
    * @return an object array, result[0] is jmxHost(String), result[1] is jmxPort, result[2] is httpPort
    */
   protected Object[] setUpJMXManagerOnVM(int vm, final Properties props, String jsonFile) {
-    Object[] result = Host.getHost(0).getVM(vm).invoke("setUpJmxManagerOnVm"+vm, () -> {
+    Object[] result = Host.getHost(0).getVM(vm).invoke("setUpJmxManagerOnVm" + vm, () -> {
       final Object[] results = new Object[3];
       final Properties localProps = (props != null ? props : new Properties());
 
       try {
         jmxHost = InetAddress.getLocalHost().getHostName();
-      }
-      catch (UnknownHostException ignore) {
+      } catch (UnknownHostException ignore) {
         jmxHost = "localhost";
       }
 
@@ -137,7 +136,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
         localProps.setProperty(NAME, "Manager");
       }
 
-      if (jsonFile!=null) {
+      if (jsonFile != null) {
         localProps.setProperty(SampleSecurityManager.SECURITY_JSON, jsonFile);
       }
 
@@ -220,11 +219,11 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
     }
   }
 
-  protected void connect(final String host, final int jmxPort, final int httpPort, HeadlessGfsh shell){
+  protected void connect(final String host, final int jmxPort, final int httpPort, HeadlessGfsh shell) {
     connect(host, jmxPort, httpPort, shell, null, null);
   }
 
-  protected void connect(final String host, final int jmxPort, final int httpPort, HeadlessGfsh shell, String username, String password){
+  protected void connect(final String host, final int jmxPort, final int httpPort, HeadlessGfsh shell, String username, String password) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.CONNECT);
 
     String endpoint;
@@ -236,19 +235,18 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
       endpoint = host + "[" + jmxPort + "]";
       command.addOption(CliStrings.CONNECT__JMX_MANAGER, endpoint);
     }
-    if(username!=null) {
+    if (username != null) {
       command.addOption(CliStrings.CONNECT__USERNAME, username);
     }
-    if(password!=null){
+    if (password != null) {
       command.addOption(CliStrings.CONNECT__PASSWORD, password);
     }
-    System.out.println(getClass().getSimpleName()+" using endpoint: "+endpoint);
+    System.out.println(getClass().getSimpleName() + " using endpoint: " + endpoint);
 
     CommandResult result = executeCommand(shell, command.toString());
 
     if (!shell.isConnectedAndReady()) {
-      throw new AssertionError(
-        "Connect command failed to connect to manager " + endpoint + " result=" + commandResultToString(result));
+      throw new AssertionError("Connect command failed to connect to manager " + endpoint + " result=" + commandResultToString(result));
     }
 
     info("Successfully connected to managing node using " + (useHttpOnConnect ? "HTTP" : "JMX"));

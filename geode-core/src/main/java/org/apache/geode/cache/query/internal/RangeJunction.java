@@ -56,41 +56,35 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
   //moved to AbstractGroupOrRangeJunction
   //private CompiledValue iterOperands;
 
-  RangeJunction(int operator, RuntimeIterator[] indpndntItr,
-      boolean isCompleteExpansion, CompiledValue[] operands) {
+  RangeJunction(int operator, RuntimeIterator[] indpndntItr, boolean isCompleteExpansion, CompiledValue[] operands) {
     super(operator, indpndntItr, isCompleteExpansion, operands);
 
   }
+
   void addUnevaluatedFilterOperands(List unevaluatedFilterOps) {
-	throw new UnsupportedOperationException("This method should not have been invoked");  
+    throw new UnsupportedOperationException("This method should not have been invoked");
   }
+
   // moved to AbstractGroupOrRangeJunction
-/*  void addIterOperands(CompiledValue iterOps) {
+  /*  void addIterOperands(CompiledValue iterOps) {
     this.iterOperands = iterOps;
   }*/
-  private RangeJunction(AbstractGroupOrRangeJunction oldGJ,
-      boolean completeExpansion, RuntimeIterator indpnds[], CompiledValue iterOp) {
+  private RangeJunction(AbstractGroupOrRangeJunction oldGJ, boolean completeExpansion, RuntimeIterator indpnds[], CompiledValue iterOp) {
     super(oldGJ, completeExpansion, indpnds, iterOp);
   }
 
   @Override
-  AbstractGroupOrRangeJunction recreateFromOld(boolean completeExpansion,
-      RuntimeIterator indpnds[], CompiledValue iterOp) {
+  AbstractGroupOrRangeJunction recreateFromOld(boolean completeExpansion, RuntimeIterator indpnds[], CompiledValue iterOp) {
     return new RangeJunction(this, completeExpansion, indpnds, iterOp);
   }
 
   @Override
-  AbstractGroupOrRangeJunction createNewOfSameType(int operator,
-      RuntimeIterator[] indpndntItr, boolean isCompleteExpansion,
-      CompiledValue[] operands) {
-    return new RangeJunction(operator, indpndntItr, isCompleteExpansion,
-        operands);
+  AbstractGroupOrRangeJunction createNewOfSameType(int operator, RuntimeIterator[] indpndntItr, boolean isCompleteExpansion, CompiledValue[] operands) {
+    return new RangeJunction(operator, indpndntItr, isCompleteExpansion, operands);
   }
 
   @Override
-  public PlanInfo getPlanInfo(ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  public PlanInfo getPlanInfo(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     /*
      * This function would be called only if the RangeJunction is a part of
      * GroupJunction.It would be invoked in the organized operands method of
@@ -101,49 +95,48 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
      */
     return this._operands[0].getPlanInfo(context);
   }
-  
-  public boolean isConditioningNeededForIndex(RuntimeIterator independentIter, ExecutionContext context,  boolean completeExpnsNeeded) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+
+  public boolean isConditioningNeededForIndex(RuntimeIterator independentIter, ExecutionContext context, boolean completeExpnsNeeded) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     return true;
   }
-  
+
   public int getOperator() {
     return LITERAL_and;
   }
-  
-  public boolean isBetterFilter(Filter comparedTo, ExecutionContext context, final int thisSize) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException 
-  {
+
+  public boolean isBetterFilter(Filter comparedTo, ExecutionContext context, final int thisSize) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     //If the current filter is equality & comparedTo filter is also equality based , then 
     // return the one with lower size estimate is better
     boolean isThisBetter = true;
-   
+
     //Go with the lowest cost when hint is used.  
-    if (context instanceof QueryExecutionContext && ((QueryExecutionContext)context).hasHints()) {
+    if (context instanceof QueryExecutionContext && ((QueryExecutionContext) context).hasHints()) {
       return thisSize <= comparedTo.getSizeEstimate(context);
     }
-    
-    int thatOperator = comparedTo.getOperator() ;    
-    switch(thatOperator) {
-        case TOK_EQ:        
-           isThisBetter = false;
-           break;
-        case TOK_NE:
-        case TOK_NE_ALT:
-          //Give preference to Range
-          break;
-        case LITERAL_and:
-         //Asif: What to do? Let current be the better one for the want of better estimation
-         break;
-        case TOK_LE:
-        case TOK_LT:
-        case TOK_GE:
-        case TOK_GT:
-          //Give preference to this rather than single condition inequalities as a rangejunction
-          //would possibly be bounded resulting in lesser values
-          break;
-        default :
-            throw  new IllegalArgumentException("The operator type ="+ thatOperator + " is unknown");
-    }          
-      
+
+    int thatOperator = comparedTo.getOperator();
+    switch (thatOperator) {
+    case TOK_EQ:
+      isThisBetter = false;
+      break;
+    case TOK_NE:
+    case TOK_NE_ALT:
+      //Give preference to Range
+      break;
+    case LITERAL_and:
+      //Asif: What to do? Let current be the better one for the want of better estimation
+      break;
+    case TOK_LE:
+    case TOK_LT:
+    case TOK_GE:
+    case TOK_GT:
+      //Give preference to this rather than single condition inequalities as a rangejunction
+      //would possibly be bounded resulting in lesser values
+      break;
+    default:
+      throw new IllegalArgumentException("The operator type =" + thatOperator + " is unknown");
+    }
+
     return isThisBetter;
   }
 
@@ -152,17 +145,13 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    * filter evaluatable.
    */
   @Override
-  OrganizedOperands organizeOperands(ExecutionContext context)
-      throws FunctionDomainException, TypeMismatchException,
-      NameResolutionException, QueryInvocationTargetException {
+  OrganizedOperands organizeOperands(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     // get the list of operands to evaluate,
     // and evaluate operands that can use indexes first
     if (getOperator() == LITERAL_and) {
       return organizeOperandsForAndJunction(context);
-    }
-    else {
-      throw new IllegalStateException(
-        LocalizedStrings.RangeJunction_IN_THE_CASE_OF_AN_OR_JUNCTION_A_RANGEJUNCTION_SHOULD_NOT_BE_FORMED_FOR_NOW.toLocalizedString());
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_IN_THE_CASE_OF_AN_OR_JUNCTION_A_RANGEJUNCTION_SHOULD_NOT_BE_FORMED_FOR_NOW.toLocalizedString());
     }
   }
 
@@ -184,10 +173,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    * exclusive then the organized operand would just contain a single filter
    * evaluatable CompiledLiteral (false) ( indicating empty resultset).
    */
-  private OrganizedOperands organizeOperandsForAndJunction(
-      ExecutionContext context) throws AmbiguousNameException,
-      FunctionDomainException, TypeMismatchException, NameResolutionException,
-      QueryInvocationTargetException {
+  private OrganizedOperands organizeOperandsForAndJunction(ExecutionContext context) throws AmbiguousNameException, FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     List evalOperands = new ArrayList(_operands.length);
     int evalCount = 0;
     int lessCondnOp = -1;
@@ -205,7 +191,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
     for (int i = 0; i < _operands.length; i++) {
       CompiledValue operand = _operands[i];
       if (operand.getPlanInfo(context).evalAsFilter) {
-        Indexable cc = (Indexable)operand;
+        Indexable cc = (Indexable) operand;
         if (indxInfo == null) {
           indxInfo = cc.getIndexInfo(context)[0];
         }
@@ -219,21 +205,19 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
           evalOperands.add(0, _operands[i]);
           continue;
         }
-        CompiledValue ccKey = ((CompiledComparison)cc).getKey(context);
+        CompiledValue ccKey = ((CompiledComparison) cc).getKey(context);
         Object evaluatedCCKey = ccKey.evaluate(context);
-        int operator = ((CompiledComparison)cc).reflectOnOperator(ccKey);
+        int operator = ((CompiledComparison) cc).reflectOnOperator(ccKey);
         if (evaluatedCCKey == null) {
           evalCount++;
           evalOperands.add(0, _operands[i]);
           continue;
         }
         if (equalCondnOperand != null) {
-          emptyResults = !isConditionSatisfied(equalCondKey, evaluatedCCKey,
-              operator);
+          emptyResults = !isConditionSatisfied(equalCondKey, evaluatedCCKey, operator);
           if (emptyResults) {
             break;
-          }
-          else {
+          } else {
             continue;
           }
         }
@@ -241,7 +225,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
         switch (operator) {
         case TOK_EQ:
           possibleRangeFilter = false;
-          equalCondnOperand = (CompiledComparison)cc;
+          equalCondnOperand = (CompiledComparison) cc;
           equalCondKey = evaluatedCCKey;
           break;
         case TOK_NE:
@@ -257,15 +241,13 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
         case TOK_GT:
           possibleRangeFilter = true;
           if (greaterCondnOperand == null) {
-            greaterCondnOperand = (CompiledComparison)cc;
+            greaterCondnOperand = (CompiledComparison) cc;
             greaterCondnKey = evaluatedCCKey;
             greaterCondnOp = operator;
-          }
-          else {
-            if (isConditionSatisfied(evaluatedCCKey, greaterCondnKey,
-                greaterCondnOp)) {
+          } else {
+            if (isConditionSatisfied(evaluatedCCKey, greaterCondnKey, greaterCondnOp)) {
               greaterCondnKey = evaluatedCCKey;
-              greaterCondnOperand = (CompiledComparison)cc;
+              greaterCondnOperand = (CompiledComparison) cc;
               greaterCondnOp = operator;
             }
           }
@@ -277,28 +259,24 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
           // will be empty results
           possibleRangeFilter = true;
           if (lessCondnOperand == null) {
-            lessCondnOperand = (CompiledComparison)cc;
+            lessCondnOperand = (CompiledComparison) cc;
             lessCondnKey = evaluatedCCKey;
             lessCondnOp = operator;
-          }
-          else {
+          } else {
             if (isConditionSatisfied(evaluatedCCKey, lessCondnKey, lessCondnOp)) {
               lessCondnKey = evaluatedCCKey;
-              lessCondnOperand = (CompiledComparison)cc;
+              lessCondnOperand = (CompiledComparison) cc;
               lessCondnOp = operator;
             }
           }
           break;
         }
 
-      }
-      else if (!_operands[i].isDependentOnCurrentScope(context)) {
+      } else if (!_operands[i].isDependentOnCurrentScope(context)) {
         // TODO: Asif :Remove this Assert & else if condition after successful
         // testing of the build
-        Support
-            .assertionFailed("An independentoperand should not ever be present as operand inside a GroupJunction as it should always be present only in CompiledJunction");
-      }
-      else {
+        Support.assertionFailed("An independentoperand should not ever be present as operand inside a GroupJunction as it should always be present only in CompiledJunction");
+      } else {
         evalOperands.add(_operands[i]);
       }
     }
@@ -308,48 +286,30 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
         // Check if any of the preceding inequality operands, that have not been
         // checked against the equality operand , are not able to satisfy the
         // equality.
-        if (lessCondnOperand != null
-            && !this.isConditionSatisfied(equalCondKey, lessCondnKey,
-                lessCondnOp)) {
+        if (lessCondnOperand != null && !this.isConditionSatisfied(equalCondKey, lessCondnKey, lessCondnOp)) {
           emptyResults = true;
-        }
-        else if (greaterCondnOperand != null
-            && !this.isConditionSatisfied(equalCondKey, greaterCondnKey,
-                greaterCondnOp)) {
+        } else if (greaterCondnOperand != null && !this.isConditionSatisfied(equalCondKey, greaterCondnKey, greaterCondnOp)) {
           emptyResults = true;
-        }
-        else if (notEqualTypeKeys != null) {
+        } else if (notEqualTypeKeys != null) {
           Iterator itr = notEqualTypeKeys.iterator();
           while (itr.hasNext() && !emptyResults) {
-            emptyResults = !this.isConditionSatisfied(equalCondKey, itr.next(),
-                OQLLexerTokenTypes.TOK_NE);
+            emptyResults = !this.isConditionSatisfied(equalCondKey, itr.next(), OQLLexerTokenTypes.TOK_NE);
           }
         }
         if (!emptyResults) {
           filter = equalCondnOperand;
         }
-      }
-      else if (possibleRangeFilter) {
+      } else if (possibleRangeFilter) {
         if (lessCondnOperand != null && greaterCondnOperand != null) {
-          emptyResults = !checkForRangeBoundednessAndTrimNotEqualKeyset(
-              notEqualTypeKeys, lessCondnKey, lessCondnOp, greaterCondnKey,
-              greaterCondnOp);
+          emptyResults = !checkForRangeBoundednessAndTrimNotEqualKeyset(notEqualTypeKeys, lessCondnKey, lessCondnOp, greaterCondnKey, greaterCondnOp);
           if (!emptyResults) {
-            filter = new DoubleCondnRangeJunctionEvaluator(lessCondnOp,
-                lessCondnKey, greaterCondnOp, greaterCondnKey,
-                (notEqualTypeKeys == null || notEqualTypeKeys.isEmpty()) ? null
-                    : notEqualTypeKeys, indxInfo);
+            filter = new DoubleCondnRangeJunctionEvaluator(lessCondnOp, lessCondnKey, greaterCondnOp, greaterCondnKey, (notEqualTypeKeys == null || notEqualTypeKeys.isEmpty()) ? null : notEqualTypeKeys, indxInfo);
           }
-        }
-        else if (greaterCondnOperand != null) {
-          filter = generateSingleCondnEvaluatorIfRequired(notEqualTypeKeys,
-              greaterCondnOperand, greaterCondnOp, greaterCondnKey, indxInfo);
-        }
-        else if (lessCondnOperand != null) {
-          filter = generateSingleCondnEvaluatorIfRequired(notEqualTypeKeys,
-              lessCondnOperand, lessCondnOp, lessCondnKey, indxInfo);
-        }
-        else {
+        } else if (greaterCondnOperand != null) {
+          filter = generateSingleCondnEvaluatorIfRequired(notEqualTypeKeys, greaterCondnOperand, greaterCondnOp, greaterCondnKey, indxInfo);
+        } else if (lessCondnOperand != null) {
+          filter = generateSingleCondnEvaluatorIfRequired(notEqualTypeKeys, lessCondnOperand, lessCondnOp, lessCondnKey, indxInfo);
+        } else {
           assert notEqualTypeKeys != null && !notEqualTypeKeys.isEmpty();
           // TODO:Asif Ideally if there is a single NotEqualKey we should
           // not create NotEqualCondnEvaluator instead just add the
@@ -366,21 +326,19 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
         evalOperands.clear();
         evalCount = 1;
         evalOperands.add(new CompiledLiteral(Boolean.FALSE));
-      }
-      else if (filter != null) {
+      } else if (filter != null) {
         evalCount++;
         evalOperands.add(0, filter);
       }
-    }
-    else {
+    } else {
       // Asif: Create a new CompiledLiteral with boolean false
       evalOperands.clear();
       evalCount = 1;
       evalOperands.add(new CompiledLiteral(Boolean.FALSE));
     }
-    
+
     //If no hints were provided, we continue with our single index solution
-    if (!(context instanceof QueryExecutionContext) || !((QueryExecutionContext)context).hasMultiHints()) {
+    if (!(context instanceof QueryExecutionContext) || !((QueryExecutionContext) context).hasMultiHints()) {
       // At the end check if the unevaluatedIterOperand
       // are null or not. This could be the case only if at top level
       // GroupJunction is formed having multiple RangeJunctions & other
@@ -390,12 +348,12 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
       // level was a RangeJunction then the iter operands would have been
       // part of it at the time of creation of RangeJunction & we would not have
       // to add it externally.
-      if(getIterOperands() != null) {
+      if (getIterOperands() != null) {
         // Commented the assert for CompiledLike which creates 2 or 3 CompiledComparisons
         // for the same operand. The protGetPlanInfo in CompiledLike could return evalAsFilter 
         // as true the first time and false the next time for the same operand.
         // Hence the evalOperands could contain  CompiledComparisons more than number of indexes.
-        
+
         //Support.Assert(evalOperands.size() == evalCount);
         evalOperands.add(getIterOperands());
       }
@@ -413,9 +371,8 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    * @return boolean true if the condition is satisfied else false
    * @throws TypeMismatchException
    */
-  private boolean isConditionSatisfied(Object key1, Object key2, int operator)
-      throws TypeMismatchException {
-    return ((Boolean)TypeUtils.compare(key1, key2, operator)).booleanValue();
+  private boolean isConditionSatisfied(Object key1, Object key2, int operator) throws TypeMismatchException {
+    return ((Boolean) TypeUtils.compare(key1, key2, operator)).booleanValue();
   }
 
   /**
@@ -439,30 +396,24 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    * @return boolean true if the nature is bounded else false ( unbounded )
    * @throws TypeMismatchException
    */
-  private boolean checkForRangeBoundednessAndTrimNotEqualKeyset(
-      Set notEqualKeys, Object lessCondnKey, int lessOperator,
-      Object greaterCondnKey, int greaterCondnOp) throws TypeMismatchException {
+  private boolean checkForRangeBoundednessAndTrimNotEqualKeyset(Set notEqualKeys, Object lessCondnKey, int lessOperator, Object greaterCondnKey, int greaterCondnOp) throws TypeMismatchException {
     // First check if the range is bounded or (unbounded and mutually
     // exclusive).
     // If it is unbounded immediately return a false
-    if (isConditionSatisfied(greaterCondnKey, lessCondnKey, lessOperator)
-        && isConditionSatisfied(lessCondnKey, greaterCondnKey, greaterCondnOp)) {
+    if (isConditionSatisfied(greaterCondnKey, lessCondnKey, lessOperator) && isConditionSatisfied(lessCondnKey, greaterCondnKey, greaterCondnOp)) {
       // Nowremove those not equal conditions which do not satisfy the range
       if (notEqualKeys != null) {
         Iterator itr = notEqualKeys.iterator();
         Object neKey = null;
         while (itr.hasNext()) {
           neKey = itr.next();
-          if (!this
-              .isConditionSatisfied(neKey, greaterCondnKey, greaterCondnOp)
-              || !this.isConditionSatisfied(neKey, lessCondnKey, lessOperator)) {
+          if (!this.isConditionSatisfied(neKey, greaterCondnKey, greaterCondnOp) || !this.isConditionSatisfied(neKey, lessCondnKey, lessOperator)) {
             itr.remove();
           }
         }
       }
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -488,9 +439,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    *         RangeJunction.SingleCondnEvaluator object
    * @throws TypeMismatchException
    */
-  private Filter generateSingleCondnEvaluatorIfRequired(Set notEqualKeys,
-      CompiledValue operand, int operator, Object condnKey, IndexInfo indxInfo)
-      throws TypeMismatchException {
+  private Filter generateSingleCondnEvaluatorIfRequired(Set notEqualKeys, CompiledValue operand, int operator, Object condnKey, IndexInfo indxInfo) throws TypeMismatchException {
     Filter rangeFilter;
     if (notEqualKeys != null) {
       // Eliminate all the not equal keys which will never be satisfied by
@@ -498,8 +447,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
       Iterator itr = notEqualKeys.iterator();
       while (itr.hasNext()) {
         Object neKey = itr.next();
-        if (!((Boolean)TypeUtils.compare(neKey, condnKey, operator))
-            .booleanValue()) {
+        if (!((Boolean) TypeUtils.compare(neKey, condnKey, operator)).booleanValue()) {
           itr.remove();
         }
       }
@@ -507,14 +455,11 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
         notEqualKeys = null;
       }
     }
-    rangeFilter = (notEqualKeys != null) ? new SingleCondnEvaluator(operator,
-        condnKey, notEqualKeys, indxInfo) : (Filter)operand;
+    rangeFilter = (notEqualKeys != null) ? new SingleCondnEvaluator(operator, condnKey, notEqualKeys, indxInfo) : (Filter) operand;
     return rangeFilter;
   }
 
-  public Object evaluate(ExecutionContext context)
-  throws FunctionDomainException, TypeMismatchException,
-  NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
     Object r = _operands[0].evaluate(context); // UNDEFINED, null, or a
     // Boolean
 
@@ -526,27 +471,21 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
       r = QueryService.UNDEFINED; // keep going to see if we hit a
     // short-circuiting truth value
     else if (!(r instanceof Boolean))
-      throw new TypeMismatchException(
-          "LITERAL_and/LITERAL_or operands must be of type boolean, not type '"
-          + r.getClass().getName() + "'");
+      throw new TypeMismatchException("LITERAL_and/LITERAL_or operands must be of type boolean, not type '" + r.getClass().getName() + "'");
     for (int i = 1; i < _operands.length; i++) {
       Object ri = _operands[i].evaluate(context); // UNDEFINED, null, or
       // Boolean
       if (ri instanceof Boolean && !((Boolean) ri).booleanValue())
         return ri;
-      if (ri == null || ri == QueryService.UNDEFINED
-          || r == QueryService.UNDEFINED) {
+      if (ri == null || ri == QueryService.UNDEFINED || r == QueryService.UNDEFINED) {
         r = QueryService.UNDEFINED;
         continue; // keep going to see if we hit a short-circuiting
         // truth value
       } else if (!(ri instanceof Boolean))
-        throw new TypeMismatchException(
-            "LITERAL_and/LITERAL_or operands must be of type boolean, not type '"
-            + ri.getClass().getName() + "'");
+        throw new TypeMismatchException("LITERAL_and/LITERAL_or operands must be of type boolean, not type '" + ri.getClass().getName() + "'");
       // now do the actual and
 
-      r = new Boolean(((Boolean) r).booleanValue()
-          && ((Boolean) ri).booleanValue());
+      r = new Boolean(((Boolean) r).booleanValue() && ((Boolean) ri).booleanValue());
 
     }
     return r;
@@ -562,10 +501,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
     Support.assertionFailed("Should not have come here");
   }
 
-  public int getSizeEstimate(ExecutionContext context)
-  {
+  public int getSizeEstimate(ExecutionContext context) {
     //TODO:Asif:Try to estimate better
-     return RANGE_SIZE_ESTIMATE;
+    return RANGE_SIZE_ESTIMATE;
   }
 
   /*
@@ -606,17 +544,12 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static Set getKeysToBeRemoved(Object o) {
     if (o instanceof NotEqualConditionEvaluator) {
-      if (((NotEqualConditionEvaluator)o).notEqualTypeKeys == null) {
+      if (((NotEqualConditionEvaluator) o).notEqualTypeKeys == null) {
         return null;
       }
-      return Collections
-          .unmodifiableSet(((NotEqualConditionEvaluator)o).notEqualTypeKeys);
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return Collections.unmodifiableSet(((NotEqualConditionEvaluator) o).notEqualTypeKeys);
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -630,13 +563,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static int getSingleCondnEvaluatorOperator(Object o) {
     if (o instanceof SingleCondnEvaluator) {
-      return ((SingleCondnEvaluator)o).condnOp;
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return ((SingleCondnEvaluator) o).condnOp;
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -651,13 +580,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static Object getSingleCondnEvaluatorKey(Object o) {
     if (o instanceof SingleCondnEvaluator) {
-      return ((SingleCondnEvaluator)o).condnKey;
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return ((SingleCondnEvaluator) o).condnKey;
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -671,13 +596,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static Object getDoubleCondnEvaluatorLESSKey(Object o) {
     if (o instanceof DoubleCondnRangeJunctionEvaluator) {
-      return ((DoubleCondnRangeJunctionEvaluator)o).lessCondnKey;
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return ((DoubleCondnRangeJunctionEvaluator) o).lessCondnKey;
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -691,13 +612,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static Object getDoubleCondnEvaluatorGreaterKey(Object o) {
     if (o instanceof DoubleCondnRangeJunctionEvaluator) {
-      return ((DoubleCondnRangeJunctionEvaluator)o).greaterCondnKey;
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return ((DoubleCondnRangeJunctionEvaluator) o).greaterCondnKey;
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -710,13 +627,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static int getDoubleCondnEvaluatorOperatorOfLessType(Object o) {
     if (o instanceof DoubleCondnRangeJunctionEvaluator) {
-      return ((DoubleCondnRangeJunctionEvaluator)o).lessCondnOp;
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return ((DoubleCondnRangeJunctionEvaluator) o).lessCondnOp;
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -729,13 +642,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static int getDoubleCondnEvaluatorOperatorOfGreaterType(Object o) {
     if (o instanceof DoubleCondnRangeJunctionEvaluator) {
-      return ((DoubleCondnRangeJunctionEvaluator)o).greaterCondnOp;
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return ((DoubleCondnRangeJunctionEvaluator) o).greaterCondnOp;
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -750,13 +659,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    */
   static Index getIndex(Object o) {
     if (o instanceof NotEqualConditionEvaluator) {
-      return ((NotEqualConditionEvaluator)o).indxInfo._index;
-    }
-    else {
-      throw new IllegalStateException(
-          LocalizedStrings.
-            RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR
-            .toLocalizedString());
+      return ((NotEqualConditionEvaluator) o).indxInfo._index;
+    } else {
+      throw new IllegalStateException(LocalizedStrings.RangeJunction_THE_OBJECT_IS_NOT_OF_TYPE_NOTEQUALCONDITIONEVALUATOR.toLocalizedString());
     }
   }
 
@@ -769,8 +674,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    * 
    * 
    */
-  private static class NotEqualConditionEvaluator extends AbstractCompiledValue
-      implements Filter {
+  private static class NotEqualConditionEvaluator extends AbstractCompiledValue implements Filter {
     final Set notEqualTypeKeys;
 
     final IndexInfo indxInfo;
@@ -790,53 +694,40 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
     }
 
     @Override
-    public SelectResults filterEvaluate(ExecutionContext context,
-        SelectResults iterationLimit) throws FunctionDomainException,
-        TypeMismatchException, NameResolutionException,
-        QueryInvocationTargetException {
+    public SelectResults filterEvaluate(ExecutionContext context, SelectResults iterationLimit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public SelectResults filterEvaluate(ExecutionContext context,
-        SelectResults iterationLimit, boolean completeExpansionNeeded,
-        CompiledValue iterOperands, RuntimeIterator[] indpndntItrs, boolean isIntersection,boolean conditioningNeeded, boolean evalProj)
-        throws FunctionDomainException, TypeMismatchException,
-        NameResolutionException, QueryInvocationTargetException {
+    public SelectResults filterEvaluate(ExecutionContext context, SelectResults iterationLimit, boolean completeExpansionNeeded, CompiledValue iterOperands, RuntimeIterator[] indpndntItrs, boolean isIntersection, boolean conditioningNeeded, boolean evalProj) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       ObjectType resultType = this.indxInfo._index.getResultSetType();
       int indexFieldsSize = -1;
       SelectResults set = null;
-      Boolean orderByClause = (Boolean)context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
-      boolean useLinkedDataStructure = false;   
+      Boolean orderByClause = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
+      boolean useLinkedDataStructure = false;
       boolean nullValuesAtStart = true;
-      if(orderByClause != null && orderByClause.booleanValue()) {
-        List orderByAttrs = (List)context.cacheGet(CompiledValue.ORDERBY_ATTRIB);        
-        useLinkedDataStructure =orderByAttrs.size()==1;
-        nullValuesAtStart = !((CompiledSortCriterion)orderByAttrs.get(0)).getCriterion();
+      if (orderByClause != null && orderByClause.booleanValue()) {
+        List orderByAttrs = (List) context.cacheGet(CompiledValue.ORDERBY_ATTRIB);
+        useLinkedDataStructure = orderByAttrs.size() == 1;
+        nullValuesAtStart = !((CompiledSortCriterion) orderByAttrs.get(0)).getCriterion();
       }
-      
+
       if (resultType instanceof StructType) {
         if (context.getCache().getLogger().fineEnabled()) {
-          context.getCache().getLogger().fine(
-            "StructType resultType.class=" + resultType.getClass().getName());
+          context.getCache().getLogger().fine("StructType resultType.class=" + resultType.getClass().getName());
         }
         if (useLinkedDataStructure) {
-          set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl)resultType) 
-          : new SortedResultsBag<Struct>((StructTypeImpl)resultType, nullValuesAtStart);
+          set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) resultType) : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
         } else {
-          set = QueryUtils.createStructCollection(context, (StructTypeImpl)resultType) ;
+          set = QueryUtils.createStructCollection(context, (StructTypeImpl) resultType);
         }
-        indexFieldsSize = ((StructTypeImpl)resultType).getFieldNames().length;
-      }
-      else {
+        indexFieldsSize = ((StructTypeImpl) resultType).getFieldNames().length;
+      } else {
         if (context.getCache().getLogger().fineEnabled()) {
-          context.getCache().getLogger().fine(
-            "non-StructType resultType.class="
-                + resultType.getClass().getName());
+          context.getCache().getLogger().fine("non-StructType resultType.class=" + resultType.getClass().getName());
         }
         if (useLinkedDataStructure) {
-          set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType,
-              nullValuesAtStart); 
+          set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType, nullValuesAtStart);
         } else {
           set = QueryUtils.createResultCollection(context, resultType);
         }
@@ -854,93 +745,87 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
        * 
        */
       try {
-        observer.beforeIndexLookup(this.indxInfo._index,
-            OQLLexerTokenTypes.TOK_NE, this.notEqualTypeKeys);
+        observer.beforeIndexLookup(this.indxInfo._index, OQLLexerTokenTypes.TOK_NE, this.notEqualTypeKeys);
         context.cachePut(CompiledValue.INDEX_INFO, this.indxInfo);
         this.indxInfo._index.query(set, notEqualTypeKeys, context);
-      }
-      finally {
+      } finally {
         observer.afterIndexLookup(set);
       }
-      return QueryUtils.getconditionedIndexResults(set, this.indxInfo, context,
-          indexFieldsSize, completeExpansionNeeded, iterOperands, indpndntItrs);
+      return QueryUtils.getconditionedIndexResults(set, this.indxInfo, context, indexFieldsSize, completeExpansionNeeded, iterOperands, indpndntItrs);
     }
 
     @Override
-    public SelectResults auxFilterEvaluate(ExecutionContext context,
-        SelectResults intermediateResults) throws FunctionDomainException,
-        TypeMismatchException, NameResolutionException,
-        QueryInvocationTargetException {
+    public SelectResults auxFilterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
     public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-			Object evaluatedPath = this.indxInfo._path.evaluate(context); 
-			return evaluate(context,evaluatedPath);
+      Object evaluatedPath = this.indxInfo._path.evaluate(context);
+      return evaluate(context, evaluatedPath);
     }
-    
-    public boolean isConditioningNeededForIndex(RuntimeIterator independentIter, ExecutionContext context,  boolean completeExpnsNeeded) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+
+    public boolean isConditioningNeededForIndex(RuntimeIterator independentIter, ExecutionContext context, boolean completeExpnsNeeded) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
       return true;
     }
 
-    public Object evaluate(ExecutionContext context, Object evaluatedPath) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {		 
-		Iterator itr = this.notEqualTypeKeys.iterator();
-		while(itr.hasNext()) {
-			Object  val = itr.next();
-			Object result = TypeUtils.compare(evaluatedPath, val, TOK_NE);
-			if( result instanceof Boolean) {
-			  if( !((Boolean)result).booleanValue()) {
-				  return Boolean.FALSE;
-			  }
-			}else {
-				throw new TypeMismatchException("NotEqualConditionEvaluator should evaluate to boolean type");
-			}
-		}
-		return Boolean.TRUE;
+    public Object evaluate(ExecutionContext context, Object evaluatedPath) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+      Iterator itr = this.notEqualTypeKeys.iterator();
+      while (itr.hasNext()) {
+        Object val = itr.next();
+        Object result = TypeUtils.compare(evaluatedPath, val, TOK_NE);
+        if (result instanceof Boolean) {
+          if (!((Boolean) result).booleanValue()) {
+            return Boolean.FALSE;
+          }
+        } else {
+          throw new TypeMismatchException("NotEqualConditionEvaluator should evaluate to boolean type");
+        }
+      }
+      return Boolean.TRUE;
 
     }
 
     public int getType() {
       return NOTEQUALCONDITIONEVALUATOR;
     }
+
     public int getSizeEstimate(ExecutionContext context) {
-  	  return RANGE_SIZE_ESTIMATE;
+      return RANGE_SIZE_ESTIMATE;
     }
+
     @Override
     public void visitNodes(NodeVisitor visitor) {
       Support.assertionFailed("Should not have come here");
     }
 
-    public int getOperator()
-    {
+    public int getOperator() {
       return LITERAL_and;
     }
 
-    public boolean isBetterFilter(Filter comparedTo, ExecutionContext context, int thisSize) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException
-    {
+    public boolean isBetterFilter(Filter comparedTo, ExecutionContext context, int thisSize) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       //If the current filter is equality & comparedTo filter is also equality based , then 
       // return the one with lower size estimate is better
       boolean isThisBetter = true;
-     
-      int thatOperator = comparedTo.getOperator() ;
-      
+
+      int thatOperator = comparedTo.getOperator();
+
       //Go with the lowest cost when hint is used.  
-      if (context instanceof QueryExecutionContext && ((QueryExecutionContext)context).hasHints()) {
+      if (context instanceof QueryExecutionContext && ((QueryExecutionContext) context).hasHints()) {
         return thisSize <= comparedTo.getSizeEstimate(context);
       }
-      
-      switch(thatOperator) {
-          case TOK_EQ:        
-             isThisBetter = false;
-             break;
-          case TOK_NE:
-          case TOK_NE_ALT:
-            //Give preference to Range
-            break;        
-          default :
-              throw  new IllegalArgumentException("The operator type ="+ thatOperator + " is unknown");
-      }          
-        
+
+      switch (thatOperator) {
+      case TOK_EQ:
+        isThisBetter = false;
+        break;
+      case TOK_NE:
+      case TOK_NE_ALT:
+        //Give preference to Range
+        break;
+      default:
+        throw new IllegalArgumentException("The operator type =" + thatOperator + " is unknown");
+      }
+
       return isThisBetter;
     }
 
@@ -963,10 +848,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
     protected final Object condnKey;
 
     @Override
-    public SelectResults filterEvaluate(ExecutionContext context,
-        SelectResults iterationLimit) throws FunctionDomainException,
-        TypeMismatchException, NameResolutionException,
-        QueryInvocationTargetException {
+    public SelectResults filterEvaluate(ExecutionContext context, SelectResults iterationLimit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
@@ -983,53 +865,41 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
      * @param indxInfo
      *                The IndexInfo object corresponding to the RangeJunction
      */
-    SingleCondnEvaluator(int operator, Object key, Set notEqualKeys,
-        IndexInfo indxInfo) {
+    SingleCondnEvaluator(int operator, Object key, Set notEqualKeys, IndexInfo indxInfo) {
       super(notEqualKeys, indxInfo);
       this.condnOp = operator;
       this.condnKey = key;
     }
 
     @Override
-    public SelectResults filterEvaluate(ExecutionContext context,
-        SelectResults iterationLimit, boolean completeExpansionNeeded,
-        CompiledValue iterOperands, RuntimeIterator[] indpndntItrs,
-        boolean isIntersection,boolean conditioningNeeded, boolean evalProj)
-        throws FunctionDomainException, TypeMismatchException,
-        NameResolutionException, QueryInvocationTargetException {
+    public SelectResults filterEvaluate(ExecutionContext context, SelectResults iterationLimit, boolean completeExpansionNeeded, CompiledValue iterOperands, RuntimeIterator[] indpndntItrs, boolean isIntersection, boolean conditioningNeeded, boolean evalProj) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       ObjectType resultType = this.indxInfo._index.getResultSetType();
       int indexFieldsSize = -1;
       SelectResults set = null;
-      Boolean orderByClause = (Boolean)context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
+      Boolean orderByClause = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
       boolean useLinkedDataStructure = false;
       boolean nullValuesAtStart = true;
-      if(orderByClause != null && orderByClause.booleanValue()) {
-        List orderByAttrs = (List)context.cacheGet(CompiledValue.ORDERBY_ATTRIB);        
-        useLinkedDataStructure =orderByAttrs.size()==1; 
-        nullValuesAtStart = !((CompiledSortCriterion)orderByAttrs.get(0)).getCriterion();
+      if (orderByClause != null && orderByClause.booleanValue()) {
+        List orderByAttrs = (List) context.cacheGet(CompiledValue.ORDERBY_ATTRIB);
+        useLinkedDataStructure = orderByAttrs.size() == 1;
+        nullValuesAtStart = !((CompiledSortCriterion) orderByAttrs.get(0)).getCriterion();
       }
       if (resultType instanceof StructType) {
         if (context.getCache().getLogger().fineEnabled()) {
-          context.getCache().getLogger().fine(
-            "StructType resultType.class=" + resultType.getClass().getName());
+          context.getCache().getLogger().fine("StructType resultType.class=" + resultType.getClass().getName());
         }
         if (useLinkedDataStructure) {
-          set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl)resultType) 
-          : new SortedResultsBag<Struct>((StructTypeImpl)resultType, nullValuesAtStart);
+          set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) resultType) : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
         } else {
-          set = QueryUtils.createStructCollection(context, (StructTypeImpl)resultType) ;
+          set = QueryUtils.createStructCollection(context, (StructTypeImpl) resultType);
         }
-        indexFieldsSize = ((StructTypeImpl)resultType).getFieldNames().length;
-      }
-      else {
+        indexFieldsSize = ((StructTypeImpl) resultType).getFieldNames().length;
+      } else {
         if (context.getCache().getLogger().fineEnabled()) {
-          context.getCache().getLogger().fine(
-            "non-StructType resultType.class="
-                + resultType.getClass().getName());
+          context.getCache().getLogger().fine("non-StructType resultType.class=" + resultType.getClass().getName());
         }
         if (useLinkedDataStructure) {
-          set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType,
-              nullValuesAtStart); 
+          set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType, nullValuesAtStart);
         } else {
           set = QueryUtils.createResultCollection(context, resultType);
         }
@@ -1047,25 +917,21 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
        * 
        */
       try {
-        observer.beforeIndexLookup(this.indxInfo._index, this.condnOp,
-            this.condnKey);
+        observer.beforeIndexLookup(this.indxInfo._index, this.condnOp, this.condnKey);
         context.cachePut(CompiledValue.INDEX_INFO, this.indxInfo);
-        this.indxInfo._index.query(this.condnKey, this.condnOp, set,
-            notEqualTypeKeys, context);
-      }
-      finally {
+        this.indxInfo._index.query(this.condnKey, this.condnOp, set, notEqualTypeKeys, context);
+      } finally {
         observer.afterIndexLookup(set);
       }
-      return QueryUtils.getconditionedIndexResults(set, this.indxInfo, context,
-          indexFieldsSize, completeExpansionNeeded, iterOperands, indpndntItrs);
+      return QueryUtils.getconditionedIndexResults(set, this.indxInfo, context, indexFieldsSize, completeExpansionNeeded, iterOperands, indpndntItrs);
 
     }
 
     public Object evaluate(ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
       Object evaluatedPath = this.indxInfo._path.evaluate(context);
-      Boolean result =(Boolean) super.evaluate(context,evaluatedPath);
-      if( result.booleanValue()) {
-    	  result = (Boolean)TypeUtils.compare(evaluatedPath, this.condnKey, this.condnOp);
+      Boolean result = (Boolean) super.evaluate(context, evaluatedPath);
+      if (result.booleanValue()) {
+        result = (Boolean) TypeUtils.compare(evaluatedPath, this.condnKey, this.condnOp);
       }
       return result;
     }
@@ -1079,12 +945,9 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
     public void visitNodes(NodeVisitor visitor) {
       Support.assertionFailed("Should not have come here");
     }
-    
+
     @Override
-    public SelectResults auxFilterEvaluate(ExecutionContext context,
-        SelectResults intermediateResults) throws FunctionDomainException,
-        TypeMismatchException, NameResolutionException,
-        QueryInvocationTargetException {
+    public SelectResults auxFilterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
   }
@@ -1100,8 +963,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
    * 
    * 
    */
-  private static class DoubleCondnRangeJunctionEvaluator extends
-      NotEqualConditionEvaluator {
+  private static class DoubleCondnRangeJunctionEvaluator extends NotEqualConditionEvaluator {
     protected final int lessCondnOp;
 
     protected final int greaterCondnOp;
@@ -1126,9 +988,7 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
      * @param indexInfo
      *                The IndexInfo object corresponding to the RangeJunction
      */
-    DoubleCondnRangeJunctionEvaluator(int lessCondnOp, Object lessCondnKey,
-        int greaterCondnOp, Object greaterCondnKey, Set notEqualTypeKeys,
-        IndexInfo indexInfo) {
+    DoubleCondnRangeJunctionEvaluator(int lessCondnOp, Object lessCondnKey, int greaterCondnOp, Object greaterCondnKey, Set notEqualTypeKeys, IndexInfo indexInfo) {
       super(notEqualTypeKeys, indexInfo);
       this.lessCondnOp = lessCondnOp;
       this.lessCondnKey = lessCondnKey;
@@ -1137,54 +997,40 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
     }
 
     @Override
-    public SelectResults filterEvaluate(ExecutionContext context,
-        SelectResults iterationLimit) throws FunctionDomainException,
-        TypeMismatchException, NameResolutionException,
-        QueryInvocationTargetException {
+    public SelectResults filterEvaluate(ExecutionContext context, SelectResults iterationLimit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public SelectResults filterEvaluate(ExecutionContext context,
-        SelectResults iterationLimit, boolean completeExpansionNeeded,
-        CompiledValue iterOperands, RuntimeIterator[] indpndntItrs,
-         boolean isIntersection,boolean conditioningNeeded, boolean evalProj)
-        throws FunctionDomainException, TypeMismatchException,
-        NameResolutionException, QueryInvocationTargetException {
+    public SelectResults filterEvaluate(ExecutionContext context, SelectResults iterationLimit, boolean completeExpansionNeeded, CompiledValue iterOperands, RuntimeIterator[] indpndntItrs, boolean isIntersection, boolean conditioningNeeded, boolean evalProj) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       ObjectType resultType = this.indxInfo._index.getResultSetType();
       int indexFieldsSize = -1;
       SelectResults set = null;
-      Boolean orderByClause = (Boolean)context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
-      boolean useLinkedDataStructure = false; 
+      Boolean orderByClause = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
+      boolean useLinkedDataStructure = false;
       boolean nullValuesAtStart = true;
-      if(orderByClause != null && orderByClause.booleanValue()) {
-        List orderByAttrs = (List)context.cacheGet(CompiledValue.ORDERBY_ATTRIB);        
-        useLinkedDataStructure =orderByAttrs.size()==1;
-        nullValuesAtStart = !((CompiledSortCriterion)orderByAttrs.get(0)).getCriterion();
+      if (orderByClause != null && orderByClause.booleanValue()) {
+        List orderByAttrs = (List) context.cacheGet(CompiledValue.ORDERBY_ATTRIB);
+        useLinkedDataStructure = orderByAttrs.size() == 1;
+        nullValuesAtStart = !((CompiledSortCriterion) orderByAttrs.get(0)).getCriterion();
       }
-      
+
       if (resultType instanceof StructType) {
         if (context.getCache().getLogger().fineEnabled()) {
-          context.getCache().getLogger().fine(
-            "StructType resultType.class=" + resultType.getClass().getName());
-        }
-        if(useLinkedDataStructure) {
-          set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl)resultType) 
-          : new SortedResultsBag<Struct>((StructTypeImpl)resultType, nullValuesAtStart);
-        }else {
-          set = QueryUtils.createStructCollection(context, (StructTypeImpl)resultType) ;
-        }
-        indexFieldsSize = ((StructTypeImpl)resultType).getFieldNames().length;
-      }
-      else {
-        if (context.getCache().getLogger().fineEnabled()) {
-          context.getCache().getLogger().fine(
-            "non-StructType resultType.class="
-                + resultType.getClass().getName());
+          context.getCache().getLogger().fine("StructType resultType.class=" + resultType.getClass().getName());
         }
         if (useLinkedDataStructure) {
-          set = context.isDistinct() ? new  LinkedResultSet(resultType): 
-            new SortedResultsBag(resultType, nullValuesAtStart); 
+          set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) resultType) : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
+        } else {
+          set = QueryUtils.createStructCollection(context, (StructTypeImpl) resultType);
+        }
+        indexFieldsSize = ((StructTypeImpl) resultType).getFieldNames().length;
+      } else {
+        if (context.getCache().getLogger().fineEnabled()) {
+          context.getCache().getLogger().fine("non-StructType resultType.class=" + resultType.getClass().getName());
+        }
+        if (useLinkedDataStructure) {
+          set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType, nullValuesAtStart);
         } else {
           set = QueryUtils.createResultCollection(context, resultType);
         }
@@ -1205,37 +1051,29 @@ public class RangeJunction extends AbstractGroupOrRangeJunction {
        * 
        */
       try {
-        observer.beforeIndexLookup(this.indxInfo._index, this.greaterCondnOp,
-            this.greaterCondnKey, this.lessCondnOp, this.lessCondnKey,
-            this.notEqualTypeKeys);
+        observer.beforeIndexLookup(this.indxInfo._index, this.greaterCondnOp, this.greaterCondnKey, this.lessCondnOp, this.lessCondnKey, this.notEqualTypeKeys);
         context.cachePut(CompiledValue.INDEX_INFO, this.indxInfo);
-        this.indxInfo._index.query(this.greaterCondnKey, this.greaterCondnOp,
-            this.lessCondnKey, this.lessCondnOp, set, notEqualTypeKeys, context);
-      }
-      finally {
+        this.indxInfo._index.query(this.greaterCondnKey, this.greaterCondnOp, this.lessCondnKey, this.lessCondnOp, set, notEqualTypeKeys, context);
+      } finally {
         observer.afterIndexLookup(set);
       }
-      return QueryUtils.getconditionedIndexResults(set, this.indxInfo, context,
-          indexFieldsSize, completeExpansionNeeded, iterOperands, indpndntItrs);
+      return QueryUtils.getconditionedIndexResults(set, this.indxInfo, context, indexFieldsSize, completeExpansionNeeded, iterOperands, indpndntItrs);
 
     }
 
     @Override
-    public SelectResults auxFilterEvaluate(ExecutionContext context,
-        SelectResults intermediateResults) throws FunctionDomainException,
-        TypeMismatchException, NameResolutionException,
-        QueryInvocationTargetException {
+    public SelectResults auxFilterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
     public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-        Object evaluatedPath = this.indxInfo._path.evaluate(context);
-        Boolean result =(Boolean) super.evaluate(context,evaluatedPath);
-        if( result.booleanValue()) {
-      	  result = (Boolean)TypeUtils.compare(evaluatedPath, this.lessCondnKey, this.lessCondnOp);
-      	  result = result.booleanValue() ? (Boolean)TypeUtils.compare(evaluatedPath, this.greaterCondnKey, this.greaterCondnOp):Boolean.FALSE;
-        }
-        return result;
+      Object evaluatedPath = this.indxInfo._path.evaluate(context);
+      Boolean result = (Boolean) super.evaluate(context, evaluatedPath);
+      if (result.booleanValue()) {
+        result = (Boolean) TypeUtils.compare(evaluatedPath, this.lessCondnKey, this.lessCondnOp);
+        result = result.booleanValue() ? (Boolean) TypeUtils.compare(evaluatedPath, this.greaterCondnKey, this.greaterCondnOp) : Boolean.FALSE;
+      }
+      return result;
     }
 
     @Override

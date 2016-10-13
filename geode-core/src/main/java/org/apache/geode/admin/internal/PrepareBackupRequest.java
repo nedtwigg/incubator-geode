@@ -51,13 +51,13 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * 
  *
  */
-public class PrepareBackupRequest  extends CliLegacyMessage {
+public class PrepareBackupRequest extends CliLegacyMessage {
   private static final Logger logger = LogService.getLogger();
-  
+
   public PrepareBackupRequest() {
-    
+
   }
-  
+
   public static Map<DistributedMember, Set<PersistentID>> send(DM dm, Set recipients) {
     PrepareBackupRequest request = new PrepareBackupRequest();
     request.setRecipients(recipients);
@@ -68,34 +68,33 @@ public class PrepareBackupRequest  extends CliLegacyMessage {
     try {
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
-      if(!(e.getCause() instanceof CancelException)) {
+      if (!(e.getCause() instanceof CancelException)) {
         throw e;
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    AdminResponse response = request.createResponse((DistributionManager)dm);
+    AdminResponse response = request.createResponse((DistributionManager) dm);
     response.setSender(dm.getDistributionManagerId());
     replyProcessor.process(response);
     return replyProcessor.results;
   }
-  
+
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     HashSet<PersistentID> persistentIds;
-    if(cache == null) {
+    if (cache == null) {
       persistentIds = new HashSet<PersistentID>();
     } else {
       try {
         BackupManager manager = cache.startBackup(getSender());
         persistentIds = manager.prepareBackup();
-      } catch(IOException e) {
+      } catch (IOException e) {
         logger.error(LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), e);
-        return AdminFailureResponse.create(dm, getSender(), e);        
+        return AdminFailureResponse.create(dm, getSender(), e);
       }
     }
-
 
     return new PrepareBackupResponse(this.getSender(), persistentIds);
   }
@@ -103,13 +102,14 @@ public class PrepareBackupRequest  extends CliLegacyMessage {
   public int getDSFID() {
     return PREPARE_BACKUP_REQUEST;
   }
-  
+
   private static class PrepareBackupReplyProcessor extends AdminMultipleReplyProcessor {
     Map<DistributedMember, Set<PersistentID>> results = Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
+
     public PrepareBackupReplyProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
     }
-    
+
     @Override
     protected boolean stopBecauseOfExceptions() {
       return false;
@@ -117,16 +117,14 @@ public class PrepareBackupRequest  extends CliLegacyMessage {
 
     @Override
     protected void process(DistributionMessage msg, boolean warn) {
-      if(msg instanceof PrepareBackupResponse) {
+      if (msg instanceof PrepareBackupResponse) {
         final HashSet<PersistentID> persistentIds = ((PrepareBackupResponse) msg).getPersistentIds();
-        if(persistentIds != null && !persistentIds.isEmpty()) {
+        if (persistentIds != null && !persistentIds.isEmpty()) {
           results.put(msg.getSender(), persistentIds);
         }
       }
       super.process(msg, warn);
     }
-    
-    
 
   }
 }

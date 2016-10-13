@@ -130,7 +130,6 @@ public interface DistributedRegionMXBean {
    */
   public float getHitRatio();
 
-
   /**
    * Returns the number of entries in the Region.
    * 
@@ -161,7 +160,7 @@ public interface DistributedRegionMXBean {
    * Returns the number of putAlls per second.
    */
   public float getPutAllRate();
-  
+
   /**
    * Returns the number of local puts per second.
    */
@@ -202,8 +201,8 @@ public interface DistributedRegionMXBean {
   /**
    * Returns the number of entries per second for all disks.
    */
-  public float getDiskWritesRate();  
-  
+  public float getDiskWritesRate();
+
   /**
    * Returns the current number of disk tasks (op-log compaction, asynchronous
    * recoveries, etc) that are waiting for a thread to run.
@@ -237,13 +236,13 @@ public interface DistributedRegionMXBean {
    * eviction.
    */
   public float getLruDestroyRate();
-  
+
   /**
    * Returns the number of buckets on this member. Only applicable for partitioned
    * regions.
    */
   public int getBucketCount();
-  
+
   /**
    * Returns the number of primary buckets on this member. Only applicable for
    * partitioned regions.
@@ -267,12 +266,12 @@ public interface DistributedRegionMXBean {
    * partitioned regions.
    */
   public int getAvgBucketSize();
-  
+
   /**
    * Returns the total number of bytes used by all disks.
    */
   public long getDiskUsage();
-  
+
   /**
    * Returns the average number of read requests per second.
    */
@@ -282,7 +281,7 @@ public interface DistributedRegionMXBean {
    * Returns the average number of write requests per second.
    */
   public float getAverageWrites();
-  
+
   /**
    * Returns whether the Region sends data to a {@link GatewaySender}.
    * 
@@ -296,7 +295,7 @@ public interface DistributedRegionMXBean {
    * @return True if persistence is enabled, false otherwise.
    */
   public boolean isPersistentEnabled();
-  
+
   /**
    * Returns the aggregate entry size (in megabytes) of all entries. This will
    * provide a correct value only if the eviction algorithm has been set to

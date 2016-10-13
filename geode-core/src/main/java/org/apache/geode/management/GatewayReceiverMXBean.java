@@ -109,17 +109,17 @@ public interface GatewayReceiverMXBean {
    * Returns the configured end port.
    */
   public int getEndPort();
-  
+
   /**
    * Returns a list of names for the transport filters in use.
    */
   public String[] getGatewayTransportFilters();
-  
+
   /**
    * Returns the number of sockets accepted and used for client to server messaging.
    */
   public int getClientConnectionCount();
-  
+
   /**
    * Returns the number of client virtual machines connected and acting as a gateway.
    */
@@ -190,7 +190,7 @@ public interface GatewayReceiverMXBean {
    * Returns the rate of put requests.
    */
   public float getPutRequestRate();
-  
+
   /**
    * Returns the total number of bytes sent to clients.
    */
@@ -205,8 +205,8 @@ public interface GatewayReceiverMXBean {
    * Returns a list of the host and port information for gateway senders connected to
    * this gateway receiver.
    */
-  public String[] getConnectedGatewaySenders();  
-  
+  public String[] getConnectedGatewaySenders();
+
   /**
    * Returns the average batch processing time (in milliseconds).
    */

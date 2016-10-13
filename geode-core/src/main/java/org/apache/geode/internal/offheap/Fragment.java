@@ -35,14 +35,14 @@ public class Fragment implements MemoryBlock {
   @SuppressWarnings("unused")
   private volatile int freeIdx;
   private static AtomicIntegerFieldUpdater<Fragment> freeIdxUpdater = AtomicIntegerFieldUpdater.newUpdater(Fragment.class, "freeIdx");
-  
+
   public Fragment(long addr, int size) {
     MemoryAllocatorImpl.validateAddress(addr);
     this.baseAddr = addr;
     this.size = size;
     freeIdxUpdater.set(this, 0);
   }
-  
+
   public int freeSpace() {
     return getSize() - getFreeIndex();
   }
@@ -72,12 +72,12 @@ public class Fragment implements MemoryBlock {
   public MemoryBlock getNextBlock() {
     throw new UnsupportedOperationException();
   }
-  
+
   @Override
   public int getBlockSize() {
     return freeSpace();
   }
-  
+
   @Override
   public int getSlabId() {
     throw new UnsupportedOperationException();
@@ -112,7 +112,7 @@ public class Fragment implements MemoryBlock {
   public Object getDataValue() {
     return null;
   }
-  
+
   public void fill() {
     AddressableMemoryManager.fill(this.baseAddr, this.size, FILL_BYTE);
   }
@@ -124,12 +124,13 @@ public class Fragment implements MemoryBlock {
     }
     return false;
   }
-  
+
   @Override
   public int hashCode() {
     long value = this.getAddress();
-    return (int)(value ^ (value >>> 32));
+    return (int) (value ^ (value >>> 32));
   }
+
   @Override
   public String toString() {
     return "Fragment [baseAddr=" + baseAddr + ", size=" + size + ", freeIdx=" + freeIdx + "]";

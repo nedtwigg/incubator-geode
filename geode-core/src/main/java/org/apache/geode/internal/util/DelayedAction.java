@@ -27,13 +27,13 @@ import java.util.concurrent.CountDownLatch;
 public class DelayedAction implements Runnable {
   private final CountDownLatch hit = new CountDownLatch(1);
   private final CountDownLatch run = new CountDownLatch(1);
-  
+
   private final Runnable delayedAction;
-  
+
   public DelayedAction(Runnable action) {
     delayedAction = action;
   }
-  
+
   @Override
   public void run() {
     hit.countDown();
@@ -46,7 +46,7 @@ public class DelayedAction implements Runnable {
       Thread.currentThread().interrupt();
     }
   }
-  
+
   /**
    * Blocks until the delayed action is ready to be executed.
    * @throws InterruptedException interrupted while waiting
@@ -54,7 +54,7 @@ public class DelayedAction implements Runnable {
   public void waitForArrival() throws InterruptedException {
     hit.await();
   }
-  
+
   /**
    * Allows the delayed action to proceed when ready.
    */

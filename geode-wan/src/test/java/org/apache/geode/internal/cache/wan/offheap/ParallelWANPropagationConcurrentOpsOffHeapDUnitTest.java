@@ -29,8 +29,7 @@ import org.apache.geode.internal.cache.wan.parallel.ParallelWANPropagationConcur
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class ParallelWANPropagationConcurrentOpsOffHeapDUnitTest extends
-    ParallelWANPropagationConcurrentOpsDUnitTest {
+public class ParallelWANPropagationConcurrentOpsOffHeapDUnitTest extends ParallelWANPropagationConcurrentOpsDUnitTest {
 
   public ParallelWANPropagationConcurrentOpsOffHeapDUnitTest() {
     super();

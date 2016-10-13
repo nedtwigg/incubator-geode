@@ -27,17 +27,15 @@ import org.junit.experimental.categories.Category;
 @Category(DistributedTest.class)
 public class LuceneQueriesPeerPRDUnitTest extends LuceneQueriesPRBase {
 
-  @Override protected void initDataStore(final SerializableRunnableIF createIndex) throws Exception {
+  @Override
+  protected void initDataStore(final SerializableRunnableIF createIndex) throws Exception {
     createIndex.run();
-    getCache().createRegionFactory(RegionShortcut.PARTITION)
-      .setPartitionAttributes(getPartitionAttributes())
-      .create(REGION_NAME);
+    getCache().createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(getPartitionAttributes()).create(REGION_NAME);
   }
 
-  @Override protected void initAccessor(final SerializableRunnableIF createIndex) throws Exception {
+  @Override
+  protected void initAccessor(final SerializableRunnableIF createIndex) throws Exception {
     createIndex.run();
-    getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY)
-        .setPartitionAttributes(getPartitionAttributes())
-        .create(REGION_NAME);
+    getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY).setPartitionAttributes(getPartitionAttributes()).create(REGION_NAME);
   }
 }

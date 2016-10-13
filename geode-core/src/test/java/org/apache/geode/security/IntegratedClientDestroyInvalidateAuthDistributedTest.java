@@ -37,9 +37,7 @@ public class IntegratedClientDestroyInvalidateAuthDistributedTest extends Abstra
 
     // Delete one key and invalidate another key with an authorized user.
     AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("dataUser", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                               .addPoolServer("localhost", serverPort)
-                                                                                               .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("dataUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
       assertTrue(region.containsKeyOnServer("key1"));
@@ -57,9 +55,7 @@ public class IntegratedClientDestroyInvalidateAuthDistributedTest extends Abstra
 
     // Delete one key and invalidate another key with an unauthorized user.
     AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true)
-                                                                                                       .addPoolServer("localhost", serverPort)
-                                                                                                       .create();
+      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
 
       Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
 

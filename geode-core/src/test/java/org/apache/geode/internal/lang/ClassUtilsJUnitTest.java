@@ -47,8 +47,7 @@ public class ClassUtilsJUnitTest {
   public void testForNameWithNonExistingClass() {
     try {
       ClassUtils.forName("com.mycompany.non.existing.Class", new RuntimeException("expected"));
-    }
-    catch (RuntimeException expected) {
+    } catch (RuntimeException expected) {
       assertEquals("expected", expected.getMessage());
       throw expected;
     }
@@ -63,8 +62,7 @@ public class ClassUtilsJUnitTest {
   public void testForNameWithEmptyClassName() {
     try {
       ClassUtils.forName(StringUtils.EMPTY_STRING, new IllegalArgumentException("Empty Class Name!"));
-    }
-    catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException expected) {
       assertEquals("Empty Class Name!", expected.getMessage());
       throw expected;
     }
@@ -74,8 +72,7 @@ public class ClassUtilsJUnitTest {
   public void testForNameWithBlankClassName() {
     try {
       ClassUtils.forName("  ", new IllegalArgumentException("Blank Class Name!"));
-    }
-    catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException expected) {
       assertEquals("Blank Class Name!", expected.getMessage());
       throw expected;
     }

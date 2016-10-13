@@ -40,7 +40,7 @@ public class AvailablePort {
   public static final int MULTICAST = 1;
 
   ///////////////////////  Static Methods  ///////////////////////
-  
+
   /**
    * see if there is a gemfire system property that establishes a
    * default address for the given protocol, and return it
@@ -50,20 +50,17 @@ public class AvailablePort {
     try {
       if (protocol == SOCKET) {
         name = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "bind-address");
-      }
-      else if (protocol == MULTICAST) {
+      } else if (protocol == MULTICAST) {
         name = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "mcast-address");
       }
       if (name != null) {
         return InetAddress.getByName(name);
       }
-    }
-    catch (UnknownHostException e) {
+    } catch (UnknownHostException e) {
       throw new RuntimeException("Unable to resolve address " + name);
     }
     return null;
   }
-
 
   /**
    * Returns whether or not the given port on the local host is
@@ -81,8 +78,7 @@ public class AvailablePort {
   public static boolean isPortAvailable(final int port, int protocol) {
     return isPortAvailable(port, protocol, getAddress(protocol));
   }
-  
-  
+
   /**
    * Returns whether or not the given port on the local host is
    * available (that is, unused).
@@ -100,13 +96,13 @@ public class AvailablePort {
   public static boolean isPortAvailable(final int port, int protocol, InetAddress addr) {
     if (protocol == SOCKET) {
       // Try to create a ServerSocket
-      if(addr == null) {
+      if (addr == null) {
         return testAllInterfaces(port);
       } else {
         return testOneInterface(addr, port);
       }
     }
-    
+
     else if (protocol == MULTICAST) {
       MulticastSocket socket = null;
       try {
@@ -115,51 +111,44 @@ public class AvailablePort {
         socket.setInterface(localHost);
         socket.setSoTimeout(Integer.getInteger("AvailablePort.timeout", 2000).intValue());
         byte[] buffer = new byte[4];
-        buffer[0] = (byte)'p';
-        buffer[1] = (byte)'i';
-        buffer[2] = (byte)'n';
-        buffer[3] = (byte)'g';
-        InetAddress mcid = addr==null? DistributionConfig.DEFAULT_MCAST_ADDRESS : addr;
-        SocketAddress mcaddr = new InetSocketAddress(
-          mcid, port);
+        buffer[0] = (byte) 'p';
+        buffer[1] = (byte) 'i';
+        buffer[2] = (byte) 'n';
+        buffer[3] = (byte) 'g';
+        InetAddress mcid = addr == null ? DistributionConfig.DEFAULT_MCAST_ADDRESS : addr;
+        SocketAddress mcaddr = new InetSocketAddress(mcid, port);
         socket.joinGroup(mcid);
         DatagramPacket packet = new DatagramPacket(buffer, 0, buffer.length, mcaddr);
         socket.send(packet);
         try {
           socket.receive(packet);
-          packet.getData();  // make sure there's data, but no need to process it
+          packet.getData(); // make sure there's data, but no need to process it
           return false;
-        }
-        catch (SocketTimeoutException ste) {
+        } catch (SocketTimeoutException ste) {
           //System.out.println("socket read timed out");
           return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
           return false;
         }
-      }
-      catch (java.io.IOException ioe) {
+      } catch (java.io.IOException ioe) {
         if (ioe.getMessage().equals("Network is unreachable")) {
           throw new RuntimeException(LocalizedStrings.AvailablePort_NETWORK_IS_UNREACHABLE.toLocalizedString(), ioe);
         }
         ioe.printStackTrace();
         return false;
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         return false;
-      }
-      finally {
+      } finally {
         if (socket != null) {
           try {
             socket.close();
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             e.printStackTrace();
           }
         }
-      }  
+      }
     }
 
     else {
@@ -170,7 +159,7 @@ public class AvailablePort {
   public static Keeper isPortKeepable(final int port, int protocol, InetAddress addr) {
     if (protocol == SOCKET) {
       // Try to create a ServerSocket
-      if(addr == null) {
+      if (addr == null) {
         return keepAllInterfaces(port);
       } else {
         return keepOneInterface(addr, port);
@@ -191,6 +180,7 @@ public class AvailablePort {
       return false;
     }
   }
+
   private static Keeper keepOneInterface(InetAddress addr, int port) {
     ServerSocket server = null;
     try {
@@ -199,20 +189,18 @@ public class AvailablePort {
       server.setReuseAddress(true);
       if (addr != null) {
         server.bind(new InetSocketAddress(addr, port));
-      }
-      else {
+      } else {
         server.bind(new InetSocketAddress(port));
       }
       Keeper result = new Keeper(server, port);
       server = null;
       return result;
-    }
-    catch (java.io.IOException ioe) {
+    } catch (java.io.IOException ioe) {
       if (ioe.getMessage().equals("Network is unreachable")) {
         throw new RuntimeException("Network is unreachable");
       }
       //ioe.printStackTrace();
-      if(addr instanceof Inet6Address) {
+      if (addr instanceof Inet6Address) {
         byte[] addrBytes = addr.getAddress();
         if ((addrBytes[0] == (byte) 0xfe) && (addrBytes[1] == (byte) 0x80)) {
           //Hack, early Sun 1.5 versions (like Hitachi's JVM) cannot handle IPv6
@@ -226,8 +214,7 @@ public class AvailablePort {
         }
       }
       return null;
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       return null;
     } finally {
       if (server != null)
@@ -253,12 +240,13 @@ public class AvailablePort {
       return false;
     }
   }
+
   private static Keeper keepAllInterfaces(int port) {
     //First check to see if we can bind to the wildcard address.
-    if(!testOneInterface(null, port)) {
+    if (!testOneInterface(null, port)) {
       return null;
     }
-    
+
     //Now check all of the addresses for all of the addresses
     //on this system. On some systems (solaris, aix) binding
     //to the wildcard address will successfully bind to only some
@@ -274,13 +262,13 @@ public class AvailablePort {
     } catch (SocketException e) {
       throw new RuntimeException(e);
     }
-    while(en.hasMoreElements()) {
+    while (en.hasMoreElements()) {
       NetworkInterface next = (NetworkInterface) en.nextElement();
       Enumeration en2 = next.getInetAddresses();
-      while(en2.hasMoreElements()) {
+      while (en2.hasMoreElements()) {
         InetAddress addr = (InetAddress) en2.nextElement();
         boolean available = testOneInterface(addr, port);
-        if(!available) {
+        if (!available) {
           return null;
         }
       }
@@ -288,7 +276,6 @@ public class AvailablePort {
     // Now do it one more time but reserve the wildcard address
     return keepOneInterface(null, port);
   }
-
 
   /**
    * Returns a randomly selected available port in the range 5001 to
@@ -304,10 +291,11 @@ public class AvailablePort {
   public static int getRandomAvailablePort(int protocol) {
     return getRandomAvailablePort(protocol, getAddress(protocol));
   }
+
   public static Keeper getRandomAvailablePortKeeper(int protocol) {
     return getRandomAvailablePortKeeper(protocol, getAddress(protocol));
   }
-  
+
   /**
    * Returns a randomly selected available port in the provided range.
    *
@@ -320,8 +308,8 @@ public class AvailablePort {
    */
   public static int getAvailablePortInRange(int rangeBase, int rangeTop, int protocol) {
     return getAvailablePortInRange(protocol, getAddress(protocol), rangeBase, rangeTop);
-  }  
-  
+  }
+
   /**
    * Returns a randomly selected available port in the range 5001 to
    * 32767 that satisfies a modulus
@@ -333,11 +321,10 @@ public class AvailablePort {
    * @throws IllegalArgumentException
    *         <code>protocol</code> is unknown
    */
-  public static int getRandomAvailablePortWithMod(int protocol,int mod) {
-    return getRandomAvailablePortWithMod(protocol, getAddress(protocol),mod);
+  public static int getRandomAvailablePortWithMod(int protocol, int mod) {
+    return getRandomAvailablePortWithMod(protocol, getAddress(protocol), mod);
   }
-  
-  
+
   /**
    * Returns a randomly selected available port in the range 5001 to
    * 32767.
@@ -372,16 +359,17 @@ public class AvailablePort {
       int port = getRandomWildcardBindPortNumber(useMembershipPortRange);
       if (isPortAvailable(port, protocol, addr)) {
         // don't return the products default multicast port
-        if ( !(protocol == MULTICAST && port == DistributionConfig.DEFAULT_MCAST_PORT) ){
+        if (!(protocol == MULTICAST && port == DistributionConfig.DEFAULT_MCAST_PORT)) {
           return port;
         }
       }
     }
   }
+
   public static Keeper getRandomAvailablePortKeeper(int protocol, InetAddress addr) {
     return getRandomAvailablePortKeeper(protocol, addr, false);
   }
-  
+
   public static Keeper getRandomAvailablePortKeeper(int protocol, InetAddress addr, boolean useMembershipPortRange) {
     while (true) {
       int port = getRandomWildcardBindPortNumber(useMembershipPortRange);
@@ -403,8 +391,7 @@ public class AvailablePort {
    * @throws IllegalArgumentException
    *         <code>protocol</code> is unknown
    */
-  public static int getAvailablePortInRange(int protocol, InetAddress addr,
-      int rangeBase, int rangeTop) {
+  public static int getAvailablePortInRange(int protocol, InetAddress addr, int rangeBase, int rangeTop) {
     for (int port = rangeBase; port <= rangeTop; port++) {
       if (isPortAvailable(port, protocol, addr)) {
         return port;
@@ -425,15 +412,14 @@ public class AvailablePort {
    * @throws IllegalArgumentException
    *         <code>protocol</code> is unknown
    */
-  public static int getRandomAvailablePortWithMod(int protocol, InetAddress addr,int mod) {
+  public static int getRandomAvailablePortWithMod(int protocol, InetAddress addr, int mod) {
     while (true) {
       int port = getRandomWildcardBindPortNumber();
-      if (isPortAvailable(port, protocol, addr) && (port % mod)==0) {
+      if (isPortAvailable(port, protocol, addr) && (port % mod) == 0) {
         return port;
       }
     }
   }
-  
 
   public static java.util.Random rand;
 
@@ -444,15 +430,15 @@ public class AvailablePort {
     else
       rand = new java.security.SecureRandom();
   }
-  
+
   private static int getRandomWildcardBindPortNumber() {
     return getRandomWildcardBindPortNumber(false);
   }
-  
+
   private static int getRandomWildcardBindPortNumber(boolean useMembershipPortRange) {
     int rangeBase;
     int rangeTop;
-    if ( !useMembershipPortRange ) {
+    if (!useMembershipPortRange) {
       rangeBase = AVAILABLE_PORTS_LOWER_BOUND; // 20000/udp is securid
       rangeTop = AVAILABLE_PORTS_UPPER_BOUND; // 30000/tcp is spoolfax
     } else {
@@ -460,13 +446,13 @@ public class AvailablePort {
       rangeTop = DistributionConfig.DEFAULT_MEMBERSHIP_PORT_RANGE[1];
     }
 
-    return rand.nextInt(rangeTop-rangeBase) + rangeBase;
+    return rand.nextInt(rangeTop - rangeBase) + rangeBase;
   }
 
   private static int getRandomPortNumberInRange(int rangeBase, int rangeTop) {
-    return rand.nextInt(rangeTop-rangeBase) + rangeBase;
+    return rand.nextInt(rangeTop - rangeBase) + rangeBase;
   }
-  
+
   public static int getRandomAvailablePortInRange(int rangeBase, int rangeTop, int protocol) {
     int numberOfPorts = rangeTop - rangeBase;
     //do "5 times the numberOfPorts" iterations to select a port number. This will ensure that 
@@ -480,7 +466,7 @@ public class AvailablePort {
     }
     return -1;
   }
-  
+
   /**
    * This class will keep an allocated port allocated until it is used.
    * This makes the window smaller that can cause bug 46690
@@ -494,15 +480,16 @@ public class AvailablePort {
       this.ss = ss;
       this.port = port;
     }
+
     public Keeper(ServerSocket ss, Integer port) {
       this.ss = ss;
       this.port = port != null ? port : 0;
     }
-    
+
     public int getPort() {
       return this.port;
     }
-    
+
     /**
      * Once you call this the socket will be freed and can then be reallocated by someone else.
      */
@@ -539,14 +526,11 @@ public class AvailablePort {
       if (protocolString == null) {
         protocolString = args[i];
 
-      }
-      else if (args[i].equals("addr")) {
+      } else if (args[i].equals("addr")) {
         addrString = args[++i];
-      }
-      else if (portString == null) {
+      } else if (portString == null) {
         portString = args[i];
-      }
-      else {
+      } else {
         usage("Spurious command line: " + args[i]);
       }
     }
@@ -560,21 +544,19 @@ public class AvailablePort {
     } else if (protocolString.equalsIgnoreCase("socket")) {
       protocol = SOCKET;
 
-    } else if (protocolString.equalsIgnoreCase("javagroups") ||
-      protocolString.equalsIgnoreCase("jgroups")) {
+    } else if (protocolString.equalsIgnoreCase("javagroups") || protocolString.equalsIgnoreCase("jgroups")) {
       protocol = MULTICAST;
 
     } else {
       usage("Unknown protocol: " + protocolString);
       return;
     }
-    
+
     InetAddress addr = null;
     if (addrString != null) {
       try {
         addr = InetAddress.getByName(addrString);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         System.exit(1);
       }
@@ -590,14 +572,10 @@ public class AvailablePort {
         return;
       }
 
-      out.println("\nPort " + port + " is " +
-                  (isPortAvailable(port, protocol, addr) ? "" : "not ") + 
-                  "available for a " + protocolString +
-                  " connection\n");
+      out.println("\nPort " + port + " is " + (isPortAvailable(port, protocol, addr) ? "" : "not ") + "available for a " + protocolString + " connection\n");
 
     } else {
-      out.println("\nRandomly selected " + protocolString + " port: "
-                  + getRandomAvailablePort(protocol, addr) + "\n");
+      out.println("\nRandomly selected " + protocolString + " port: " + getRandomAvailablePort(protocol, addr) + "\n");
 
     }
 

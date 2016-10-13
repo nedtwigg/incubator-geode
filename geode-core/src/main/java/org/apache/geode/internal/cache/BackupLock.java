@@ -33,23 +33,23 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  */
 public class BackupLock extends ReentrantLock {
-  
+
   private Thread backupThread;
   boolean isBackingUp;
   Condition backupDone = super.newCondition();
-  
+
   public void lockForBackup() {
     super.lock();
     isBackingUp = true;
     super.unlock();
   }
-  
+
   public void setBackupThread(Thread thread) {
     super.lock();
     backupThread = thread;
     super.unlock();
   }
-  
+
   public void unlockForBackup() {
     super.lock();
     isBackingUp = false;
@@ -66,7 +66,7 @@ public class BackupLock extends ReentrantLock {
   public void lock() {
     lock(true);
   }
-  
+
   /**
    * Acquire this lock, Optionally waiting for a backup to finish the first
    * phase. Any operations that update metadata related to the distributed
@@ -83,7 +83,7 @@ public class BackupLock extends ReentrantLock {
    */
   public void lock(boolean waitForBackup) {
     super.lock();
-    while(isBackingUp && waitForBackup && !(Thread.currentThread() == backupThread)) {
+    while (isBackingUp && waitForBackup && !(Thread.currentThread() == backupThread)) {
       backupDone.awaitUninterruptibly();
     }
   }

@@ -37,19 +37,18 @@ import org.apache.geode.internal.logging.LogService;
 
 public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySenderEventProcessor {
   private static final Logger logger = LogService.getLogger();
-  
-  protected RemoteParallelGatewaySenderEventProcessor(
-      AbstractGatewaySender sender) {
+
+  protected RemoteParallelGatewaySenderEventProcessor(AbstractGatewaySender sender) {
     super(sender);
   }
-  
+
   /**
    * use in concurrent scenario where queue is to be shared among all the processors.
    */
-  protected RemoteParallelGatewaySenderEventProcessor(AbstractGatewaySender sender,  Set<Region> userRegions, int id, int nDispatcher) {
-    super(sender,  userRegions, id, nDispatcher);
+  protected RemoteParallelGatewaySenderEventProcessor(AbstractGatewaySender sender, Set<Region> userRegions, int id, int nDispatcher) {
+    super(sender, userRegions, id, nDispatcher);
   }
-  
+
   @Override
   protected void rebalance() {
     GatewaySenderStats statistics = this.sender.getStatistics();
@@ -66,7 +65,7 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
       statistics.endLoadBalance(startTime);
     }
   }
-  
+
   public void initializeEventDispatcher() {
     if (logger.isDebugEnabled()) {
       logger.debug(" Creating the GatewayEventRemoteDispatcher");
@@ -75,7 +74,7 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
       this.dispatcher = new GatewaySenderEventRemoteDispatcher(this);
     }
   }
-  
+
   /**
    * Returns if corresponding receiver WAN site of this GatewaySender has
    * GemfireVersion > 7.0.1
@@ -83,39 +82,36 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
    * @param disp
    * @return true if remote site Gemfire Version is >= 7.0.1
    */
-  private boolean shouldSendVersionEvents(GatewaySenderEventDispatcher disp)
-      throws GatewaySenderException {
-      try {
-        GatewaySenderEventRemoteDispatcher remoteDispatcher = (GatewaySenderEventRemoteDispatcher) disp;
-        // This will create a new connection if no batch has been sent till
-        // now.
-        Connection conn = remoteDispatcher.getConnection(false);
-        if (conn != null) {
-          short remoteSiteVersion = conn.getWanSiteVersion();
-          if (Version.GFE_701.compareTo(remoteSiteVersion) <= 0) {
-            return true;
-          }
+  private boolean shouldSendVersionEvents(GatewaySenderEventDispatcher disp) throws GatewaySenderException {
+    try {
+      GatewaySenderEventRemoteDispatcher remoteDispatcher = (GatewaySenderEventRemoteDispatcher) disp;
+      // This will create a new connection if no batch has been sent till
+      // now.
+      Connection conn = remoteDispatcher.getConnection(false);
+      if (conn != null) {
+        short remoteSiteVersion = conn.getWanSiteVersion();
+        if (Version.GFE_701.compareTo(remoteSiteVersion) <= 0) {
+          return true;
         }
-      } catch (GatewaySenderException e) {
-        Throwable cause = e.getCause();
-        if (cause instanceof IOException
-            || e instanceof GatewaySenderConfigurationException
-            || cause instanceof ConnectionDestroyedException) {
-          try {
-            int sleepInterval = GatewaySender.CONNECTION_RETRY_INTERVAL;
-            if (logger.isDebugEnabled()) {
-              logger.debug("Sleeping for {} milliseconds", sleepInterval);
-            }
-            Thread.sleep(sleepInterval);
-          } catch (InterruptedException ie) {
-            // log the exception
-            if (logger.isDebugEnabled()){
-              logger.debug(ie.getMessage(), ie);
-            }
-          }
-        }
-        throw e;
       }
+    } catch (GatewaySenderException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof IOException || e instanceof GatewaySenderConfigurationException || cause instanceof ConnectionDestroyedException) {
+        try {
+          int sleepInterval = GatewaySender.CONNECTION_RETRY_INTERVAL;
+          if (logger.isDebugEnabled()) {
+            logger.debug("Sleeping for {} milliseconds", sleepInterval);
+          }
+          Thread.sleep(sleepInterval);
+        } catch (InterruptedException ie) {
+          // log the exception
+          if (logger.isDebugEnabled()) {
+            logger.debug(ie.getMessage(), ie);
+          }
+        }
+      }
+      throw e;
+    }
     return false;
   }
 

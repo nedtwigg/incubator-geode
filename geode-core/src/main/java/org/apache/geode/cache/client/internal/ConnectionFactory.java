@@ -36,8 +36,7 @@ public interface ConnectionFactory {
    * @throws GemFireSecurityException if there was a security exception 
    * while trying to establish a connections.
    */
-  Connection createClientToServerConnection(ServerLocation location, boolean forQueue)
-    throws GemFireSecurityException;
+  Connection createClientToServerConnection(ServerLocation location, boolean forQueue) throws GemFireSecurityException;
 
   /**
    * Returns the best server for this client to connect to.
@@ -60,8 +59,8 @@ public interface ConnectionFactory {
    * trying to establish a connection.
    */
   Connection createClientToServerConnection(Set excludedServers) throws GemFireSecurityException;
-  
+
   ClientUpdater createServerToClientConnection(Endpoint endpoint, QueueManager qManager, boolean isPrimary, ClientUpdater failedUpdater);
-  
+
   ServerBlackList getBlackList();
 }

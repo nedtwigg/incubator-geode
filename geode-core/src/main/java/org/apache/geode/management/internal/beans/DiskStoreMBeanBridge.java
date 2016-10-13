@@ -55,32 +55,30 @@ public class DiskStoreMBeanBridge {
   private boolean isForceCompactionAllowed;
 
   private int queueSize;
-  
+
   private MBeanStatsMonitor monitor;
-  
+
   private StatsRate diskReadsRate;
-  
-  private StatsRate diskWritesRate;  
-  
+
+  private StatsRate diskWritesRate;
+
   private StatsAverageLatency diskReadsAvgLatency;
-  
+
   private StatsAverageLatency diskWritesAvgLatency;
-  
+
   private StatsAverageLatency diskFlushTimeAvgLatency;
-  
-  
+
   private DiskStoreStats diskStoreStats;
-  
+
   private DirectoryHolder[] directoryHolders;
 
   public DiskStoreMBeanBridge(DiskStore ds) {
-    this.diskStore = (DiskStoreImpl)ds;
+    this.diskStore = (DiskStoreImpl) ds;
     initDiskData();
-    this.monitor = new MBeanStatsMonitor(ManagementStrings.DISKSTORE_MONITOR
-        .toLocalizedString());
+    this.monitor = new MBeanStatsMonitor(ManagementStrings.DISKSTORE_MONITOR.toLocalizedString());
 
     this.diskStoreStats = diskStore.getStats();
-    
+
     addDiskStoreStats(diskStoreStats);
     initializeStats();
   }
@@ -104,9 +102,8 @@ public class DiskStoreMBeanBridge {
     this.diskDirectories = diskDirStr;
 
   }
-  
-  
-  public void stopMonitor(){
+
+  public void stopMonitor() {
     monitor.stopListener();
   }
 
@@ -185,38 +182,29 @@ public class DiskStoreMBeanBridge {
   }
 
   /** Statistics **/
-  
+
   public DiskStoreMBeanBridge() {
-    this.monitor = new MBeanStatsMonitor(ManagementStrings.DISKSTORE_MONITOR
-        .toLocalizedString());
+    this.monitor = new MBeanStatsMonitor(ManagementStrings.DISKSTORE_MONITOR.toLocalizedString());
     initializeStats();
   }
-  
-  public void addDiskStoreStats(DiskStoreStats stats){
+
+  public void addDiskStoreStats(DiskStoreStats stats) {
     monitor.addStatisticsToMonitor(stats.getStats());
   }
-  
-  private void initializeStats(){
-    
+
+  private void initializeStats() {
+
     String[] diskReads = new String[] { StatsKey.DISK_READ_BYTES, StatsKey.DISK_RECOVERED_BYTES };
     diskReadsRate = new StatsRate(diskReads, StatType.LONG_TYPE, monitor);
-    
-    diskWritesRate =  new StatsRate(
-        StatsKey.DISK_WRITEN_BYTES, StatType.LONG_TYPE, monitor);
-    
-    diskFlushTimeAvgLatency = new StatsAverageLatency(
-        StatsKey.NUM_FLUSHES, StatType.LONG_TYPE,
-        StatsKey.TOTAL_FLUSH_TIME, monitor);
-    
-    diskReadsAvgLatency = new StatsAverageLatency(
-        StatsKey.DISK_READ_BYTES, StatType.LONG_TYPE,
-        StatsKey.DISK_READS_TIME, monitor);
-    
-    diskWritesAvgLatency = new StatsAverageLatency(
-        StatsKey.DISK_WRITEN_BYTES, StatType.LONG_TYPE,
-        StatsKey.DISK_WRITES_TIME, monitor);
+
+    diskWritesRate = new StatsRate(StatsKey.DISK_WRITEN_BYTES, StatType.LONG_TYPE, monitor);
+
+    diskFlushTimeAvgLatency = new StatsAverageLatency(StatsKey.NUM_FLUSHES, StatType.LONG_TYPE, StatsKey.TOTAL_FLUSH_TIME, monitor);
+
+    diskReadsAvgLatency = new StatsAverageLatency(StatsKey.DISK_READ_BYTES, StatType.LONG_TYPE, StatsKey.DISK_READS_TIME, monitor);
+
+    diskWritesAvgLatency = new StatsAverageLatency(StatsKey.DISK_WRITEN_BYTES, StatType.LONG_TYPE, StatsKey.DISK_WRITES_TIME, monitor);
   }
-  
 
   public long getDiskReadsAvgLatency() {
     return diskReadsAvgLatency.getAverageLatency();
@@ -241,8 +229,8 @@ public class DiskStoreMBeanBridge {
   public int getTotalBackupInProgress() {
     return getDiskStoreStatistic(StatsKey.BACKUPS_IN_PROGRESS).intValue();
   }
-  
-  public int getTotalBackupCompleted(){
+
+  public int getTotalBackupCompleted() {
     return getDiskStoreStatistic(StatsKey.BACKUPS_COMPLETED).intValue();
   }
 
@@ -257,18 +245,18 @@ public class DiskStoreMBeanBridge {
   public int getTotalQueueSize() {
     return getDiskStoreStatistic(StatsKey.DISK_QUEUE_SIZE).intValue();
   }
-  
+
   public int getTotalRecoveriesInProgress() {
     return getDiskStoreStatistic(StatsKey.RECOVERIES_IN_PROGRESS).intValue();
   }
-   
+
   public Number getDiskStoreStatistic(String statName) {
-    if(diskStoreStats != null){
-      return diskStoreStats.getStats().get(statName);  
+    if (diskStoreStats != null) {
+      return diskStoreStats.getStats().get(statName);
     }
     return 0;
   }
-  
+
   public float getDiskUsageWarningPercentage() {
     return diskStore.getDiskUsageWarningPercentage();
   }
@@ -276,11 +264,11 @@ public class DiskStoreMBeanBridge {
   public float getDiskUsageCriticalPercentage() {
     return diskStore.getDiskUsageCriticalPercentage();
   }
-  
+
   public void setDiskUsageWarningPercentage(float warningPercent) {
     diskStore.setDiskUsageWarningPercentage(warningPercent);
   }
-  
+
   public void setDiskUsageCriticalPercentage(float criticalPercent) {
     diskStore.setDiskUsageCriticalPercentage(criticalPercent);
   }

@@ -47,17 +47,17 @@ public class JSONFormatterJUnitTest {
 
   private GemFireCacheImpl c;
   private final String PRIMITIVE_KV_STORE_REGION = "primitiveKVStore";
-    
+
   @Before
   public void setUp() throws Exception {
     this.c = (GemFireCacheImpl) new CacheFactory().set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
-    
+
     //start cache-server
     CacheServer server = c.addCacheServer();
     final int serverPort = 40405;
     server.setPort(serverPort);
     server.start();
-    
+
     // Create region, primitiveKVStore
     final AttributesFactory<Object, Object> af1 = new AttributesFactory<Object, Object>();
     af1.setDataPolicy(DataPolicy.PARTITION);
@@ -70,12 +70,12 @@ public class JSONFormatterJUnitTest {
     //shutdown and clean up the manager node.
     this.c.close();
   }
-  
-  private void ValidatePdxInstanceToJsonConversion(){
-    
+
+  private void ValidatePdxInstanceToJsonConversion() {
+
     Cache c = CacheFactory.getAnyInstance();
     Region region = c.getRegion("primitiveKVStore");
-    
+
     TestObjectForJSONFormatter actualTestObject = new TestObjectForJSONFormatter();
     actualTestObject.defaultInitialization();
 
@@ -85,19 +85,19 @@ public class JSONFormatterJUnitTest {
     Object receivedObject = region.get("201");
 
     //PdxInstance->Json conversion
-    if(receivedObject instanceof PdxInstance){
-      PdxInstance pi = (PdxInstance)receivedObject;
+    if (receivedObject instanceof PdxInstance) {
+      PdxInstance pi = (PdxInstance) receivedObject;
       String json = JSONFormatter.toJSON(pi);
 
       verifyJsonWithJavaObject(json, actualTestObject);
-    }else {
+    } else {
       fail("receivedObject is expected to be of type PdxInstance");
     }
 
   }
 
   //Testcase-2: validate Json->PdxInstance-->Java conversion
-  private void verifyJsonToPdxInstanceConversion(){
+  private void verifyJsonToPdxInstanceConversion() {
     TestObjectForJSONFormatter expectedTestObject = new TestObjectForJSONFormatter();
     expectedTestObject.defaultInitialization();
     Cache c = CacheFactory.getAnyInstance();
@@ -106,8 +106,8 @@ public class JSONFormatterJUnitTest {
     //1.gets pdxInstance using R.put() and R.get()
     region.put("501", expectedTestObject);
     Object receivedObject = region.get("501");
-    if(receivedObject instanceof PdxInstance){
-      PdxInstance expectedPI = (PdxInstance)receivedObject;
+    if (receivedObject instanceof PdxInstance) {
+      PdxInstance expectedPI = (PdxInstance) receivedObject;
 
       //2. Get the JSON string from actualTestObject using jackson ObjectMapper.
       ObjectMapper objectMapper = new ObjectMapper();
@@ -128,10 +128,10 @@ public class JSONFormatterJUnitTest {
         //      and hence actualPI.equals(expectedPI) will returns false.
 
         Object actualTestObject = actualPI.getObject();
-        if(actualTestObject instanceof TestObjectForJSONFormatter){
+        if (actualTestObject instanceof TestObjectForJSONFormatter) {
           boolean isObjectEqual = actualTestObject.equals(expectedTestObject);
           Assert.assertTrue(isObjectEqual, "actualTestObject and expectedTestObject should be equal");
-        }else {
+        } else {
           fail("actualTestObject is expected to be of type PdxInstance");
         }
       } catch (JsonProcessingException e1) {
@@ -139,56 +139,40 @@ public class JSONFormatterJUnitTest {
       } catch (JSONException e) {
         fail("JSONException occurred:" + e.getMessage());
       }
-    }else {
+    } else {
       fail("receivedObject is expected to be of type PdxInstance");
     }
   }
 
-  private void verifyJsonWithJavaObject (String json, TestObjectForJSONFormatter testObject) {
+  private void verifyJsonWithJavaObject(String json, TestObjectForJSONFormatter testObject) {
     try {
       JSONObject jsonObject = new JSONObject(json);
 
       //Testcase-1: Validate json string against the pdxInstance.
       //validation for primitive types
-      assertEquals("VerifyPdxInstanceToJson: Int type values are not matched",
-          testObject.getP_int(), jsonObject.getInt(testObject.getP_intFN()));
-      assertEquals("VerifyPdxInstanceToJson: long type values are not matched",
-          testObject.getP_long(), jsonObject.getLong(testObject.getP_longFN()));
+      assertEquals("VerifyPdxInstanceToJson: Int type values are not matched", testObject.getP_int(), jsonObject.getInt(testObject.getP_intFN()));
+      assertEquals("VerifyPdxInstanceToJson: long type values are not matched", testObject.getP_long(), jsonObject.getLong(testObject.getP_longFN()));
 
       //validation for wrapper types
-      assertEquals("VerifyPdxInstanceToJson: Boolean type values are not matched",
-          testObject.getW_bool().booleanValue(), jsonObject.getBoolean(testObject.getW_boolFN()));
-      assertEquals("VerifyPdxInstanceToJson: Float type values are not matched",
-          testObject.getW_double().doubleValue(), jsonObject.getDouble(testObject.getW_doubleFN()), 0);
-      assertEquals("VerifyPdxInstanceToJson: bigDec type values are not matched",
-          testObject.getW_bigDec().longValue(), jsonObject.getLong(testObject.getW_bigDecFN()));
+      assertEquals("VerifyPdxInstanceToJson: Boolean type values are not matched", testObject.getW_bool().booleanValue(), jsonObject.getBoolean(testObject.getW_boolFN()));
+      assertEquals("VerifyPdxInstanceToJson: Float type values are not matched", testObject.getW_double().doubleValue(), jsonObject.getDouble(testObject.getW_doubleFN()), 0);
+      assertEquals("VerifyPdxInstanceToJson: bigDec type values are not matched", testObject.getW_bigDec().longValue(), jsonObject.getLong(testObject.getW_bigDecFN()));
 
       //vlidation for array types
-      assertEquals("VerifyPdxInstanceToJson: Byte[] type values are not matched",
-          (int)testObject.getW_byteArray()[1], jsonObject.getJSONArray(testObject.getW_byteArrayFN()).getInt(1));
-      assertEquals("VerifyPdxInstanceToJson: Double[] type values are not matched",
-          testObject.getW_doubleArray()[0], jsonObject.getJSONArray(testObject.getW_doubleArrayFN()).getDouble(0), 0);
-      assertEquals("VerifyPdxInstanceToJson: String[] type values are not matched",
-          testObject.getW_strArray()[2], jsonObject.getJSONArray(testObject.getW_strArrayFN()).getString(2));
+      assertEquals("VerifyPdxInstanceToJson: Byte[] type values are not matched", (int) testObject.getW_byteArray()[1], jsonObject.getJSONArray(testObject.getW_byteArrayFN()).getInt(1));
+      assertEquals("VerifyPdxInstanceToJson: Double[] type values are not matched", testObject.getW_doubleArray()[0], jsonObject.getJSONArray(testObject.getW_doubleArrayFN()).getDouble(0), 0);
+      assertEquals("VerifyPdxInstanceToJson: String[] type values are not matched", testObject.getW_strArray()[2], jsonObject.getJSONArray(testObject.getW_strArrayFN()).getString(2));
 
       //validation for collection types
-      assertEquals("VerifyPdxInstanceToJson: list type values are not matched",
-          testObject.getC_list().get(0),
-          jsonObject.getJSONArray(testObject.getC_listFN()).getString(0));
+      assertEquals("VerifyPdxInstanceToJson: list type values are not matched", testObject.getC_list().get(0), jsonObject.getJSONArray(testObject.getC_listFN()).getString(0));
 
-      assertEquals("VerifyPdxInstanceToJson: stack type values are not matched",
-          testObject.getC_stack().get(2),
-          jsonObject.getJSONArray(testObject.getC_stackFN()).getString(2));
+      assertEquals("VerifyPdxInstanceToJson: stack type values are not matched", testObject.getC_stack().get(2), jsonObject.getJSONArray(testObject.getC_stackFN()).getString(2));
 
       //validation for Map
-      assertEquals("VerifyPdxInstanceToJson: Map type values are not matched",
-          testObject.getM_empByCity().get("Ahmedabad").get(0).getFname(),
-          jsonObject.getJSONObject(testObject.getM_empByCityFN()).getJSONArray("Ahmedabad").getJSONObject(0).getString("fname"));
+      assertEquals("VerifyPdxInstanceToJson: Map type values are not matched", testObject.getM_empByCity().get("Ahmedabad").get(0).getFname(), jsonObject.getJSONObject(testObject.getM_empByCityFN()).getJSONArray("Ahmedabad").getJSONObject(0).getString("fname"));
 
       //validation Enum
-      assertEquals("VerifyPdxInstanceToJson: Enum type values are not matched",
-          testObject.getDay().toString(),
-          jsonObject.getString(testObject.getDayFN()));
+      assertEquals("VerifyPdxInstanceToJson: Enum type values are not matched", testObject.getDay().toString(), jsonObject.getString(testObject.getDayFN()));
 
     } catch (JSONException e) {
       throw new AssertionError("Error in VerifyPdxInstanceToJson, Malformed json, can not create JSONArray from it", e);
@@ -201,5 +185,3 @@ public class JSONFormatterJUnitTest {
     verifyJsonToPdxInstanceConversion();
   }
 }
-
-

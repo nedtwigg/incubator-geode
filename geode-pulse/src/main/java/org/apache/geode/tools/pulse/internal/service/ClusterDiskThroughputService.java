@@ -58,12 +58,10 @@ public class ClusterDiskThroughputService implements PulseService {
     double currentThroughputReads = cluster.getDiskReadsRate();
 
     responseJSON.put("currentThroughputReads", currentThroughputReads);
-    responseJSON.put("throughputReads",
-        mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_READS)));
+    responseJSON.put("throughputReads", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_READS)));
 
     responseJSON.put("currentThroughputWrites", currentThroughputWrites);
-    responseJSON.put("throughputWrites",
-        mapper.valueToTree( cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_WRITES)));
+    responseJSON.put("throughputWrites", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_WRITES)));
 
     // Send json response
     return responseJSON;

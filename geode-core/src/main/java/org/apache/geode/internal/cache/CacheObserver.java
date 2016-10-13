@@ -27,15 +27,14 @@ import org.apache.geode.cache.RegionEvent;
  * present in org.apache.geode.internal.cache.LocalRegion is made true
  * 
  */
-public interface CacheObserver
-{
+public interface CacheObserver {
 
   /**
    * Called just after the region's Map is cleared & before Listener callback is
    * issued. The call to this method is synchronous
    */
   void afterRegionClear(RegionEvent event);
-  
+
   /**
    * Called just beforeclearing the DiskRegion. 
    *
@@ -118,7 +117,7 @@ public interface CacheObserver
    *  
    */
   public void afterSwitchingOplog();
-  
+
   /**
    * Callback given by the thread which creates krfs.
    */
@@ -131,6 +130,7 @@ public interface CacheObserver
    *  
    */
   public void beforeStoppingCompactor();
+
   /**
    * Callback given immediately after any thread invokes
    * ComplexDiskRegion.OplogCompactor's stopCompactor method. This method normally
@@ -138,6 +138,7 @@ public interface CacheObserver
    *  
    */
   public void afterStoppingCompactor();
+
   /**
    * Callback given immediately after the
    * ComplexDiskRegion.OplogCompactor's stopCompactor method
@@ -150,38 +151,40 @@ public interface CacheObserver
    * Called when GII begins
    */
   public void afterMarkingGIIStarted();
+
   /**
    * Called when GII ends
    */
   public void afterMarkingGIICompleted();
-  
+
   /**
    * Called after the Oplog.WriterThread (asynch writer thread) swaps the
    * pendingFlushMap and pendingWriteMap for flushing.
    */
   public void afterSwitchingWriteAndFlushMaps();
-  
+
   /**
    * Invoked just before setting the LBHTree reference in the thread local.  
    */
   public void beforeSettingDiskRef();
-  
+
   /**
    * Invoked just after setting the LBHTree reference in the thread local.  
    */
   public void afterSettingDiskRef();
-  
+
   /**
    * Invoked by the compactor thread just before deleting a compacted oplog 
    * @param compactedOplog
    */
   public void beforeDeletingCompactedOplog(Oplog compactedOplog);
+
   /**
    * Invoked just before deleting an empty oplog
    * @param emptyOplog
    */
   public void beforeDeletingEmptyOplog(Oplog emptyOplog);
-  
+
   /**
    * Invoked just before ShutdownAll operation
    */

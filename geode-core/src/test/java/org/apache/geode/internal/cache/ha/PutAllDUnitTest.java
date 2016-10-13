@@ -111,18 +111,15 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     // close server
     server1.invoke(() -> PutAllDUnitTest.closeCache());
     server2.invoke(() -> PutAllDUnitTest.closeCache());
-    
+
     // close cache in the controller VM (ezoerner) Not doing this was causing CacheExistsExceptions in other dunit tests
     closeCache();
   }
 
   /** stops the server **/
-  private CacheSerializableRunnable stopServer()
-  {
-    CacheSerializableRunnable stopserver = new CacheSerializableRunnable(
-        "stopServer") {
-      public void run2() throws CacheException
-      {
+  private CacheSerializableRunnable stopServer() {
+    CacheSerializableRunnable stopserver = new CacheSerializableRunnable("stopServer") {
+      public void run2() throws CacheException {
         server.stop();
       }
     };
@@ -130,23 +127,20 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /** function to create a 2 servers and 3 client (1 client will be in the unit controller VM) **/
-  private void createClientServerConfiguration()
-  {
-    PORT1 = ((Integer)server1.invoke(() -> PutAllDUnitTest.createServerCache())).intValue();
-    PORT2 = ((Integer)server2.invoke(() -> PutAllDUnitTest.createServerCache())).intValue();
-    client1.invoke(() -> PutAllDUnitTest.createClientCache1( NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1) ));
-    client2.invoke(() -> PutAllDUnitTest.createClientCache2( NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2) ));
+  private void createClientServerConfiguration() {
+    PORT1 = ((Integer) server1.invoke(() -> PutAllDUnitTest.createServerCache())).intValue();
+    PORT2 = ((Integer) server2.invoke(() -> PutAllDUnitTest.createServerCache())).intValue();
+    client1.invoke(() -> PutAllDUnitTest.createClientCache1(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1)));
+    client2.invoke(() -> PutAllDUnitTest.createClientCache2(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2)));
     try {
       createClientCache2(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2));
-    }
-    catch (Exception e) {
-     fail(" test failed due to "+e);
+    } catch (Exception e) {
+      fail(" test failed due to " + e);
     }
   }
 
   /** create the server **/
-  public static Integer createServerCache() throws Exception
-  {
+  public static Integer createServerCache() throws Exception {
     new PutAllDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -155,7 +149,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     factory.setCacheListener(clientListener);
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-    server = (CacheServerImpl)cache.addCacheServer();
+    server = (CacheServerImpl) cache.addCacheServer();
     assertNotNull(server);
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     server.setPort(port);
@@ -165,8 +159,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /** function to create  cache **/
-  private void createCache(Properties props) throws Exception
-  {
+  private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     assertNotNull(ds);
     ds.disconnect();
@@ -178,15 +171,14 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   private static PoolImpl pool = null;
 
   /** function to create client cache with HAEventIdPropagationListenerForClient2 as the listener  **/
-  public static void createClientCache2(String host, Integer port1) throws Exception
-  {
+  public static void createClientCache2(String host, Integer port1) throws Exception {
     int PORT1 = port1.intValue();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new PutAllDUnitTest().createCache(props);
     props.setProperty("retryAttempts", "2");
-    props.setProperty("endpoints", "ep1="+host+":" + PORT1);
+    props.setProperty("endpoints", "ep1=" + host + ":" + PORT1);
     props.setProperty("redundancyLevel", "-1");
     props.setProperty("establishCallbackConnection", "true");
     props.setProperty("LBPolicy", "Sticky");
@@ -196,7 +188,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty("connectionsPerServer", "2");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    PoolImpl p  = (PoolImpl)ClientServerTestCase.configureConnectionPool(factory, host, PORT1,-1, true, -1, 2, null);
+    PoolImpl p = (PoolImpl) ClientServerTestCase.configureConnectionPool(factory, host, PORT1, -1, true, -1, 2, null);
     CacheListener clientListener = new HAEventIdPropagationListenerForClient2();
     factory.setCacheListener(clientListener);
     RegionAttributes attrs = factory.create();
@@ -207,17 +199,15 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     pool = p;
   }
 
-
   /** function to create client cache **/
-  public static void createClientCache1(String host, Integer port1) throws Exception
-  {
+  public static void createClientCache1(String host, Integer port1) throws Exception {
     int PORT1 = port1.intValue();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new PutAllDUnitTest().createCache(props);
     props.setProperty("retryAttempts", "2");
-    props.setProperty("endpoints", "ep1="+host+":" + PORT1);
+    props.setProperty("endpoints", "ep1=" + host + ":" + PORT1);
     props.setProperty("redundancyLevel", "-1");
     props.setProperty("establishCallbackConnection", "true");
     props.setProperty("LBPolicy", "Sticky");
@@ -227,7 +217,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty("connectionsPerServer", "2");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    PoolImpl p = (PoolImpl)ClientServerTestCase.configureConnectionPool(factory, host, PORT1,-1, true, -1, 2, null);
+    PoolImpl p = (PoolImpl) ClientServerTestCase.configureConnectionPool(factory, host, PORT1, -1, true, -1, 2, null);
     CacheListener clientListener = new HAEventIdPropagationListenerForClient1();
     factory.setCacheListener(clientListener);
     RegionAttributes attrs = factory.create();
@@ -239,22 +229,19 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /** function to close cache **/
-  public static void closeCache()
-  {
+  public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       try {
         cache.close();
         cache.getDistributedSystem().disconnect();
-      }
-      catch (RuntimeException e) {
+      } catch (RuntimeException e) {
         //ignore
       }
     }
   }
 
   /** function to assert that the ThreadIdtoSequence id Map is not Null but is empty **/
-  public static void assertThreadIdToSequenceIdMapisNotNullButEmpty()
-  {
+  public static void assertThreadIdToSequenceIdMapisNotNullButEmpty() {
     Map map = pool.getThreadIdToSequenceIdMap();
     assertNotNull(map);
     // I didn't change this method name for merge purposes, but because of the
@@ -264,8 +251,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /** function to assert that the ThreadIdtoSequence id Map is not Null and has only one entry **/
-  public static Object assertThreadIdToSequenceIdMapHasEntryId()
-  {
+  public static Object assertThreadIdToSequenceIdMapHasEntryId() {
     Map map = pool.getThreadIdToSequenceIdMap();
     assertNotNull(map);
     // The map size can now be 1 or 2 because of the server thread putting
@@ -273,26 +259,25 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     // thread; the second is the client thread. If it is 1, the entry is the
     // client thread. The size changes because of the map.clear call below.
     assertTrue(map.size() != 0);
-    
+
     // Set the entry to the last entry
     Map.Entry entry = null;
     for (Iterator threadIdToSequenceIdMapIterator = map.entrySet().iterator(); threadIdToSequenceIdMapIterator.hasNext();) {
-      entry = (Map.Entry)threadIdToSequenceIdMapIterator.next();
+      entry = (Map.Entry) threadIdToSequenceIdMapIterator.next();
     }
 
     ThreadIdentifier tid = (ThreadIdentifier) entry.getKey();
-    SequenceIdAndExpirationObject seo = (SequenceIdAndExpirationObject)entry.getValue();
+    SequenceIdAndExpirationObject seo = (SequenceIdAndExpirationObject) entry.getValue();
     long sequenceId = seo.getSequenceId();
-    EventID evId = new EventID(tid.getMembershipID(),tid.getThreadID(),sequenceId);
-    synchronized(map) {
+    EventID evId = new EventID(tid.getMembershipID(), tid.getThreadID(), sequenceId);
+    synchronized (map) {
       map.clear();
     }
     return evId;
   }
 
   /** function to assert that the ThreadIdtoSequence id Map is not Null and has only one entry **/
-  public static Object[] assertThreadIdToSequenceIdMapHasEntryIds()
-  {
+  public static Object[] assertThreadIdToSequenceIdMapHasEntryIds() {
     EventID[] evids = new EventID[5];
     Map map = pool.getThreadIdToSequenceIdMap();
     assertNotNull(map);
@@ -308,7 +293,6 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(evids[4]);
     return evids;
   }
-
 
   /** EventId * */
   protected static EventID eventId = null;
@@ -335,9 +319,6 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   private static String PUTALL_VALUE4 = "putAllValue4";
   private static String PUTALL_VALUE5 = "putAllValue5";
 
-
-
-
   /**
    * This test:
    * 1) creates a client server configuration
@@ -350,20 +331,19 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
    * @throws Exception
    */
   @Test
-  public void testPutAll() throws Exception
-  {
+  public void testPutAll() throws Exception {
     setReceivedOperationToFalse();
     client2.invoke(() -> PutAllDUnitTest.setReceivedOperationToFalse());
     createClientServerConfiguration();
-    
-    EventID[] eventIds1 = (EventID[])client1.invoke(() -> PutAllDUnitTest.putAll());
+
+    EventID[] eventIds1 = (EventID[]) client1.invoke(() -> PutAllDUnitTest.putAll());
     assertNotNull(eventIds1);
     // wait for key to propagate till client
     // assert map not null on client
     client2.invoke(() -> PutAllDUnitTest.waitTillOperationReceived());
-    
+
     waitTillOperationReceived();
-    EventID[] eventIds2 = (EventID[])client2.invoke(() -> PutAllDUnitTest.assertThreadIdToSequenceIdMapHasEntryIds());
+    EventID[] eventIds2 = (EventID[]) client2.invoke(() -> PutAllDUnitTest.assertThreadIdToSequenceIdMapHasEntryIds());
     assertNotNull(eventIds2);
     server1.invoke(() -> PutAllDUnitTest.assertGotAllValues());
     server2.invoke(() -> PutAllDUnitTest.assertGotAllValues());
@@ -374,7 +354,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     server2.invoke(() -> PutAllDUnitTest.assertCallbackArgs());
     assertGotAllValues();
     assertCallbackArgs();
-    EventID[] eventIds3 = (EventID[])assertThreadIdToSequenceIdMapHasEntryIds();
+    EventID[] eventIds3 = (EventID[]) assertThreadIdToSequenceIdMapHasEntryIds();
     for (int i = 0; i < 5; i++) {
       assertNotNull(eventIds1[i]);
       assertNotNull(eventIds2[i]);
@@ -385,14 +365,13 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(eventIds3[i]);
       assertEquals(eventIds1[i], eventIds3[i]);
     }
-  }  
-  
-  public static void setReceivedOperationToFalse(){
-    receivedOperation = false;
-    }
+  }
 
-  public static void assertGotAllValues()
-  {
+  public static void setReceivedOperationToFalse() {
+    receivedOperation = false;
+  }
+
+  public static void assertGotAllValues() {
     Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(region);
     assertTrue(region.get(PUTALL_KEY1).equals(PUTALL_VALUE1));
@@ -401,7 +380,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     assertTrue(region.get(PUTALL_KEY4).equals(PUTALL_VALUE4));
     assertTrue(region.get(PUTALL_KEY5).equals(PUTALL_VALUE5));
   }
-  
+
   public static void assertCallbackArgs() {
     assertEquals("putAllCallbackArg", putAllevent1.getCallbackArgument());
     assertEquals("putAllCallbackArg", putAllevent2.getCallbackArgument());
@@ -410,23 +389,20 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     assertEquals("putAllCallbackArg", putAllevent5.getCallbackArgument());
   }
 
-
-
   /**
    * does an update and return the eventid generated. Eventid is caught in the
    * listener and stored in a static variable*
    */
-  public static Object[] putAll()
-  {
+  public static Object[] putAll() {
     Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(region);
     try {
       Map map = new LinkedHashMap();
-      map.put(PUTALL_KEY1,PUTALL_VALUE1);
-      map.put(PUTALL_KEY2,PUTALL_VALUE2);
-      map.put(PUTALL_KEY3,PUTALL_VALUE3);
-      map.put(PUTALL_KEY4,PUTALL_VALUE4);
-      map.put(PUTALL_KEY5,PUTALL_VALUE5);
+      map.put(PUTALL_KEY1, PUTALL_VALUE1);
+      map.put(PUTALL_KEY2, PUTALL_VALUE2);
+      map.put(PUTALL_KEY3, PUTALL_VALUE3);
+      map.put(PUTALL_KEY4, PUTALL_VALUE4);
+      map.put(PUTALL_KEY5, PUTALL_VALUE5);
       region.putAll(map, "putAllCallbackArg");
       EventID[] evids = new EventID[5];
       evids[0] = putAlleventId1;
@@ -440,32 +416,24 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(evids[3]);
       assertNotNull(evids[4]);
       return evids;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       fail("put failed due to " + e);
     }
     return null;
   }
 
-
-
-
-
-
-
   /** Object to wait on till create is received **/
   protected static Object lockObject = new Object();
   /** boolean to signify receipt of create **/
   protected static volatile boolean receivedOperation = false;
+
   /** wait till create is received. listener will send a notification if create is received**/
-  public static void waitTillOperationReceived()
-  {
+  public static void waitTillOperationReceived() {
     synchronized (lockObject) {
       if (!receivedOperation) {
         try {
           lockObject.wait(10000);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           fail("interrupted");
         }
       }
@@ -481,105 +449,93 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
    * storing it in a static variable
    *
    */
-  static class HAEventIdPropagationListenerForClient2 extends CacheListenerAdapter
-  {
+  static class HAEventIdPropagationListenerForClient2 extends CacheListenerAdapter {
 
-    private int putAllReceivedCount =0;
+    private int putAllReceivedCount = 0;
 
-    public void afterCreate(EntryEvent event)
-    {
+    public void afterCreate(EntryEvent event) {
       boolean shouldNotify = false;
       Object key = event.getKey();
       if (key.equals(PUTALL_KEY1)) {
         putAllReceivedCount++;
-        putAlleventId1 = (EventID)assertThreadIdToSequenceIdMapHasEntryId();
+        putAlleventId1 = (EventID) assertThreadIdToSequenceIdMapHasEntryId();
         putAllevent1 = event;
-      }
-      else if (key.equals(PUTALL_KEY2)) {
+      } else if (key.equals(PUTALL_KEY2)) {
         putAllReceivedCount++;
-        putAlleventId2 = (EventID)assertThreadIdToSequenceIdMapHasEntryId();
+        putAlleventId2 = (EventID) assertThreadIdToSequenceIdMapHasEntryId();
         putAllevent2 = event;
-      }
-      else if (key.equals(PUTALL_KEY3)) {
+      } else if (key.equals(PUTALL_KEY3)) {
         putAllReceivedCount++;
-        putAlleventId3 = (EventID)assertThreadIdToSequenceIdMapHasEntryId();
+        putAlleventId3 = (EventID) assertThreadIdToSequenceIdMapHasEntryId();
         putAllevent3 = event;
-      }
-      else if (key.equals(PUTALL_KEY4)) {
+      } else if (key.equals(PUTALL_KEY4)) {
         putAllReceivedCount++;
-        putAlleventId4 = (EventID)assertThreadIdToSequenceIdMapHasEntryId();
+        putAlleventId4 = (EventID) assertThreadIdToSequenceIdMapHasEntryId();
         putAllevent4 = event;
-      }
-      else if (key.equals(PUTALL_KEY5)) {
+      } else if (key.equals(PUTALL_KEY5)) {
         putAllReceivedCount++;
-        putAlleventId5 = (EventID)assertThreadIdToSequenceIdMapHasEntryId();
+        putAlleventId5 = (EventID) assertThreadIdToSequenceIdMapHasEntryId();
         putAllevent5 = event;
       }
-     if(putAllReceivedCount==5){
+      if (putAllReceivedCount == 5) {
         shouldNotify = true;
       }
-      if(shouldNotify){
-      synchronized (lockObject) {
-        receivedOperation = true;
-        lockObject.notify();
-      }
+      if (shouldNotify) {
+        synchronized (lockObject) {
+          receivedOperation = true;
+          lockObject.notify();
+        }
       }
     }
- }
+  }
 
   /**
    * Listener which sends a notification after create to waiting threads and also extracts teh event ids
    * storing them in  static variables
    *
    */
-  static class HAEventIdPropagationListenerForClient1 extends CacheListenerAdapter
-  {
+  static class HAEventIdPropagationListenerForClient1 extends CacheListenerAdapter {
 
-    private int putAllReceivedCount =0;
+    private int putAllReceivedCount = 0;
 
-    public void afterCreate(EntryEvent event)
-    {
-      LogWriterUtils.getLogWriter().fine(" entered after created with "+event.getKey());
+    public void afterCreate(EntryEvent event) {
+      LogWriterUtils.getLogWriter().fine(" entered after created with " + event.getKey());
       boolean shouldNotify = false;
       Object key = event.getKey();
       if (key.equals(PUTALL_KEY1)) {
         putAllReceivedCount++;
-        putAlleventId1 = ((EntryEventImpl)event).getEventId();
+        putAlleventId1 = ((EntryEventImpl) event).getEventId();
         assertNotNull(putAlleventId1);
         putAllevent1 = event;
-      }
-      else if (key.equals(PUTALL_KEY2)) {
+      } else if (key.equals(PUTALL_KEY2)) {
         putAllReceivedCount++;
-        putAlleventId2 = ((EntryEventImpl)event).getEventId();
+        putAlleventId2 = ((EntryEventImpl) event).getEventId();
         assertNotNull(putAlleventId2);
         putAllevent2 = event;
-      }
-      else if (key.equals(PUTALL_KEY3)) {
+      } else if (key.equals(PUTALL_KEY3)) {
         putAllReceivedCount++;
-        putAlleventId3 = ((EntryEventImpl)event).getEventId();
+        putAlleventId3 = ((EntryEventImpl) event).getEventId();
         assertNotNull(putAlleventId3);
         putAllevent3 = event;
-      }
-      else if (key.equals(PUTALL_KEY4)) {
+      } else if (key.equals(PUTALL_KEY4)) {
         putAllReceivedCount++;
-        putAlleventId4 = ((EntryEventImpl)event).getEventId();
+        putAlleventId4 = ((EntryEventImpl) event).getEventId();
         assertNotNull(putAlleventId4);
         putAllevent4 = event;
-      }
-      else if (key.equals(PUTALL_KEY5)) {
+      } else if (key.equals(PUTALL_KEY5)) {
         putAllReceivedCount++;
-        putAlleventId5 =((EntryEventImpl)event).getEventId();
+        putAlleventId5 = ((EntryEventImpl) event).getEventId();
         assertNotNull(putAlleventId5);
         putAllevent5 = event;
       }
-      if(putAllReceivedCount==5){
+      if (putAllReceivedCount == 5) {
         shouldNotify = true;
       }
-      if(shouldNotify){
-      synchronized (lockObject) {
-        receivedOperation = true;
-        lockObject.notify();
-      }
+      if (shouldNotify) {
+        synchronized (lockObject) {
+          receivedOperation = true;
+          lockObject.notify();
+        }
       }
     }
 

@@ -52,18 +52,15 @@ public class DiskRegionIllegalCacheXMLvaluesJUnitTest {
       props.setProperty(CACHE_XML_FILE, TestUtil.getResourcePath(getClass(), path));
       ds = DistributedSystem.connect(props);
       try {
-       
+
         CacheFactory.create(ds);
-      }
-      catch (IllegalArgumentException ex) {
+      } catch (IllegalArgumentException ex) {
         exceptionOccured = true;
-        System.out.println("ExpectedStrings: Received expected IllegalArgumentException:"+ex.getMessage());
-      }
-      catch (CacheXmlException ex) {
-         exceptionOccured = true;
-         System.out.println("ExpectedStrings: Received expected CacheXmlException:"+ex.getMessage());
-      }
-      catch (Exception e) {
+        System.out.println("ExpectedStrings: Received expected IllegalArgumentException:" + ex.getMessage());
+      } catch (CacheXmlException ex) {
+        exceptionOccured = true;
+        System.out.println("ExpectedStrings: Received expected CacheXmlException:" + ex.getMessage());
+      } catch (Exception e) {
         e.printStackTrace();
         fail("test failed due to " + e);
       }
@@ -71,15 +68,14 @@ public class DiskRegionIllegalCacheXMLvaluesJUnitTest {
       if (!exceptionOccured) {
         fail(" exception did not occur although was expected");
       }
-    }
-    finally {
+    } finally {
       if (ds != null && ds.isConnected()) {
         ds.disconnect();
         ds = null;
       }
     }
   }
- 
+
   /**
    * test Illegal max oplog size
    */

@@ -27,13 +27,13 @@ import org.apache.geode.management.internal.cli.exceptions.CliException;
  * @since GemFire 7.0
  */
 public interface GfshOptionParser {
-	public void setArguments(LinkedList<Argument> arguments);
+  public void setArguments(LinkedList<Argument> arguments);
 
-	public LinkedList<Argument> getArguments();
+  public LinkedList<Argument> getArguments();
 
-	public void setOptions(LinkedList<Option> options);
+  public void setOptions(LinkedList<Option> options);
 
-	public LinkedList<Option> getOptions();
+  public LinkedList<Option> getOptions();
 
-	OptionSet parse(String userInput) throws CliException;
+  OptionSet parse(String userInput) throws CliException;
 }

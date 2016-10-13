@@ -37,7 +37,7 @@ public class FunctionServiceCreation {
     this.functions.put(f.getId(), f);
     // Register to FunctionService also so that if somebody does not call
     // FunctionService.create()
-    FunctionService.registerFunction(f);     
+    FunctionService.registerFunction(f);
   }
 
   public void create() {

@@ -26,16 +26,16 @@ import org.apache.geode.cache.query.internal.QCompiler;
 /**
  *
  */
-public class ASTLike extends GemFireAST{
-private static final long serialVersionUID = 1171234838254852463L;
-public ASTLike() { }
-  
-  
+public class ASTLike extends GemFireAST {
+  private static final long serialVersionUID = 1171234838254852463L;
+
+  public ASTLike() {
+  }
+
   public ASTLike(Token t) {
     super(t);
   }
-  
-  
+
   @Override
   public void compile(QCompiler compiler) {
     // two children c1 and c2 (c2 being a CompiledLiteral)

@@ -42,7 +42,7 @@ package org.apache.geode.cache.query.internal;
  * 
  * @version $Revision: 1.1 $
  */
-public final class QueryObserverHolder  {
+public final class QueryObserverHolder {
 
   /**
    * The default 'do-nothing' query observer *
@@ -58,13 +58,12 @@ public final class QueryObserverHolder  {
    * observer.
    */
   public static final QueryObserver setInstance(QueryObserver observer) {
-    Support.assertArg(observer != null,
-        "setInstance expects a non-null argument!");
+    Support.assertArg(observer != null, "setInstance expects a non-null argument!");
     QueryObserver oldObserver = _instance;
     _instance = observer;
     return oldObserver;
   }
-  
+
   public static boolean hasObserver() {
     return _instance != NO_OBSERVER;
   }

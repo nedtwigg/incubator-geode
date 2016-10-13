@@ -15,10 +15,9 @@
  */
 package org.apache.geode.internal.hll;
 
-
 public interface IBuilder<T> {
 
-    T build();
+  T build();
 
-    int sizeof();
+  int sizeof();
 }

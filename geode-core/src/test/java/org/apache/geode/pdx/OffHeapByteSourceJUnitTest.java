@@ -36,7 +36,7 @@ public class OffHeapByteSourceJUnitTest extends ByteSourceJUnitTest {
 
   @Before
   public final void setUp() throws Exception {
-    MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[]{new SlabImpl(1024*1024)});
+    MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { new SlabImpl(1024 * 1024) });
   }
 
   @After
@@ -48,7 +48,7 @@ public class OffHeapByteSourceJUnitTest extends ByteSourceJUnitTest {
   protected boolean isTestOffHeap() {
     return true;
   }
-  
+
   @Override
   protected ByteSource createByteSource(byte[] bytes) {
     StoredObject so = MemoryAllocatorImpl.getAllocator().allocateAndInitialize(bytes, false, false);

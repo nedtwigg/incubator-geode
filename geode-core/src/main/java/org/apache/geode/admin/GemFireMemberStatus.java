@@ -96,11 +96,11 @@ public class GemFireMemberStatus implements Serializable {
 
   protected long _maximumHeapSize;
   protected long _freeHeapSize;
-  
+
   protected long upTime = -1;
 
   protected transient final Cache cache;
-  
+
   public GemFireMemberStatus() {
     this(null);
   }
@@ -156,13 +156,13 @@ public class GemFireMemberStatus implements Serializable {
   }
 
   public int getServerPort() {
-	  return this._serverPort;
+    return this._serverPort;
   }
-  
+
   protected void setServerPort(int port) {
-	  this._serverPort = port;
+    this._serverPort = port;
   }
-  
+
   /**
    * Returns whether this member is a hub for WAN gateways
    * @return whether this member is a hub for WAN gateways
@@ -204,9 +204,9 @@ public class GemFireMemberStatus implements Serializable {
     return this._gatewayHubStatus;
   }
 
-//  protected void setGatewayHubStatus(GatewayHubStatus gatewayHubStatus) {
-//    this._gatewayHubStatus = gatewayHubStatus;
-//  }
+  //  protected void setGatewayHubStatus(GatewayHubStatus gatewayHubStatus) {
+  //    this._gatewayHubStatus = gatewayHubStatus;
+  //  }
 
   public boolean getIsSecondaryGatewayHub() {
     return !this._isPrimaryGatewayHub;
@@ -253,7 +253,7 @@ public class GemFireMemberStatus implements Serializable {
   }
 
   public Map getOutgoingGateways() {
-	    return this._outgoingGateways;
+    return this._outgoingGateways;
   }
 
   public Map getConnectedIncomingGateways() {
@@ -284,11 +284,11 @@ public class GemFireMemberStatus implements Serializable {
   public Map getClientHealthStats() {
     return this._clientHealthStats;
   }
-  
+
   protected void setClientHealthStats(Map stats) {
     this._clientHealthStats = stats;
   }
-  
+
   /**
    * For internal use only
    * @param clientID client for health
@@ -297,19 +297,19 @@ public class GemFireMemberStatus implements Serializable {
   public Object/*ClientHealthStats*/ getClientHealthStats(String clientID) {
     return this._clientHealthStats.get(clientID);
   }
-  
+
   protected void setClientHealthStats(String clientID, ClientHealthStats stats) {
     this._clientHealthStats.put(clientID, stats);
   }
-  
+
   protected void putClientHostName(String clientId, String hostName) {
     this._clientHostNames.put(clientId, hostName);
   }
-  
+
   public String getClientHostName(String clientId) {
-    return (String)this._clientHostNames.get(clientId);
+    return (String) this._clientHostNames.get(clientId);
   }
-  
+
   public Map getRegionStatuses() {
     return this._regionStatuses;
   }
@@ -402,11 +402,11 @@ public class GemFireMemberStatus implements Serializable {
   public long getUsedHeapSize() {
     return getMaximumHeapSize() - getFreeHeapSize();
   }
-  
+
   public long getUpTime() {
     return upTime;
   }
-  
+
   public void setUpTime(long upTime) {
     this.upTime = upTime;
   }
@@ -414,66 +414,11 @@ public class GemFireMemberStatus implements Serializable {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer
-      .append("GemFireMemberStatus[")
-      .append("isConnected=")
-      .append(this._isConnected)
-      .append("; memberName=")
-      .append(this._memberName)
-      .append("; memberId=")
-      .append(this._memberId)
-      .append("; hostAddress=")
-      .append(this._hostAddress)
-      .append("; mcastPort=")
-      .append(this._mcastPort)
-      .append("; mcastAddress=")
-      .append(this._mcastAddress)
-      .append("; bindAddress=")
-      .append(this._bindAddress)
-      .append("; serverPort=")
-      .append(this._serverPort)
-      .append("; locators=")
-      .append(this._locators)
-      .append("; isClient=")
-      .append(this._isClient)
-      .append("; isServer=")
-      .append(this._isServer)
-      .append("; isGatewayHub=")
-      .append(this._isGatewayHub)
-      .append("; isLocator=")
-      .append(this._isLocator)
-      .append("; isPrimaryGatewayHub=")
-      .append(this._isPrimaryGatewayHub)
-      .append("; gatewayHubStatus=")
-      .append(this._gatewayHubStatus)
-      .append("; connectedPeers=")
-      .append(this._connectedPeers)
-      .append("; connectedServers=")
-      .append(this._connectedServers)
-      .append("; unconnectedServers=")
-      .append(this._unconnectedServers)
-      .append("; connectedClients=")
-      .append(this._connectedClients)
-      .append("; clientHostNames=")
-      .append(this._clientHostNames)
-      .append("; clientQueueSizes=")
-      .append(this._clientQueueSizes)
-      .append("; clientHealthStats=")
-      .append(this._clientHealthStats)
-      .append("; gatewayQueueSizes=")
-      .append(this._gatewayQueueSizes)
-      .append("; regionStatuses=")
-      .append(this._regionStatuses)
-      .append("; maximumHeapSize=")
-      .append(this._maximumHeapSize)
-      .append("; freeHeapSize=")
-      .append(this._freeHeapSize)
-      .append("; upTime=")
-      .append(this.upTime)
-      .append("]");
+    buffer.append("GemFireMemberStatus[").append("isConnected=").append(this._isConnected).append("; memberName=").append(this._memberName).append("; memberId=").append(this._memberId).append("; hostAddress=").append(this._hostAddress).append("; mcastPort=").append(this._mcastPort).append("; mcastAddress=").append(this._mcastAddress).append("; bindAddress=").append(this._bindAddress).append("; serverPort=").append(this._serverPort).append("; locators=").append(this._locators).append("; isClient=").append(this._isClient).append("; isServer=").append(this._isServer).append("; isGatewayHub=").append(this._isGatewayHub).append("; isLocator=").append(this._isLocator).append("; isPrimaryGatewayHub=").append(this._isPrimaryGatewayHub).append("; gatewayHubStatus=").append(this._gatewayHubStatus).append("; connectedPeers=").append(this._connectedPeers).append("; connectedServers=").append(this._connectedServers).append("; unconnectedServers=").append(this._unconnectedServers)
+        .append("; connectedClients=").append(this._connectedClients).append("; clientHostNames=").append(this._clientHostNames).append("; clientQueueSizes=").append(this._clientQueueSizes).append("; clientHealthStats=").append(this._clientHealthStats).append("; gatewayQueueSizes=").append(this._gatewayQueueSizes).append("; regionStatuses=").append(this._regionStatuses).append("; maximumHeapSize=").append(this._maximumHeapSize).append("; freeHeapSize=").append(this._freeHeapSize).append("; upTime=").append(this.upTime).append("]");
     return buffer.toString();
   }
-  
+
   protected void initialize(DistributedSystem distributedSystem) {
     // Initialize instance variables
     initializeInstanceVariables();
@@ -543,49 +488,48 @@ public class GemFireMemberStatus implements Serializable {
         CacheClientStatus ccs = (CacheClientStatus) allConnectedClientsIterator.next();
         addConnectedClient(ccs.getMemberId());
         // host address is available directly by id, hence CacheClientStatus need not be populated
-        putClientHostName(ccs.getMemberId(), ccs.getHostAddress());  
+        putClientHostName(ccs.getMemberId(), ccs.getHostAddress());
       }
 
       // Get client queue sizes
       Map clientQueueSize = getClientIDMap(InternalClientMembership.getClientQueueSizes());
       setClientQueueSizes(clientQueueSize);
-      
+
       // Set server acceptor port (set it based on the first CacheServer)
       CacheServer server = (CacheServer) servers.toArray()[0];
       setServerPort(server.getPort());
-      
+
       // Get Client Health Stats
-//      Assert.assertTrue(cache != null); (cannot be null)
-      Region clientHealthMonitoringRegion = ClientHealthMonitoringRegion.getInstance(
-          (GemFireCacheImpl)cache);
-      if(clientHealthMonitoringRegion != null) {
-        String [] clients = (String[])clientHealthMonitoringRegion.keySet().toArray(new String[0]);
+      //      Assert.assertTrue(cache != null); (cannot be null)
+      Region clientHealthMonitoringRegion = ClientHealthMonitoringRegion.getInstance((GemFireCacheImpl) cache);
+      if (clientHealthMonitoringRegion != null) {
+        String[] clients = (String[]) clientHealthMonitoringRegion.keySet().toArray(new String[0]);
         for (int i = 0; i < clients.length; i++) {
           String clientId = clients[i];
-          ClientHealthStats stats = (ClientHealthStats)clientHealthMonitoringRegion.get(clientId);
+          ClientHealthStats stats = (ClientHealthStats) clientHealthMonitoringRegion.get(clientId);
           setClientHealthStats(clientId, stats);
-        } 
+        }
       }
     }
   }
-  
-	/**
-	 * returning  Map of client queue size against client Id
-	 *  
-	 * param clientMap is a  Map of client queue size against ClientProxyMembershipID
-	 */
-	private Map getClientIDMap(Map ClientProxyMembershipIDMap) {
-	   Map clientIdMap = new HashMap();
-	   Set entrySet = ClientProxyMembershipIDMap.entrySet();
-	   Iterator entries = entrySet.iterator();
-	   while (entries.hasNext()) {
-             Map.Entry entry = (Map.Entry)entries.next();
-             ClientProxyMembershipID key = (ClientProxyMembershipID)entry.getKey();
-             Integer size = (Integer)entry.getValue();
-             clientIdMap.put(key.getDSMembership(), size);
-	   }
-           return clientIdMap;
-	  }
+
+  /**
+   * returning  Map of client queue size against client Id
+   *  
+   * param clientMap is a  Map of client queue size against ClientProxyMembershipID
+   */
+  private Map getClientIDMap(Map ClientProxyMembershipIDMap) {
+    Map clientIdMap = new HashMap();
+    Set entrySet = ClientProxyMembershipIDMap.entrySet();
+    Iterator entries = entrySet.iterator();
+    while (entries.hasNext()) {
+      Map.Entry entry = (Map.Entry) entries.next();
+      ClientProxyMembershipID key = (ClientProxyMembershipID) entry.getKey();
+      Integer size = (Integer) entry.getValue();
+      clientIdMap.put(key.getDSMembership(), size);
+    }
+    return clientIdMap;
+  }
 
   protected void initializeClient() {
     Map poolMap = PoolManager.getAll();
@@ -607,12 +551,12 @@ public class GemFireMemberStatus implements Serializable {
         while (connected.hasNext()) {
           Map.Entry entry = (Map.Entry) connected.next();
           String server = (String) entry.getKey();
-//          Integer connections = (Integer) entry.getValue();
-//          if (connections.intValue()==0) {
-//            addUnconnectedServer(server);
-//          } else {
-            addConnectedServer(server);
-//          }
+          //          Integer connections = (Integer) entry.getValue();
+          //          if (connections.intValue()==0) {
+          //            addUnconnectedServer(server);
+          //          } else {
+          addConnectedServer(server);
+          //          }
           //System.out.println(connections.size() + " logical connnections to server " + server);
         }
       }
@@ -645,10 +589,9 @@ public class GemFireMemberStatus implements Serializable {
     setLocators(config.getLocators());
     setUpTime(System.currentTimeMillis() - ids.getStartTime());
     try {
-      setHostAddress((bindAddress != null && bindAddress.length() > 0)
-        ? InetAddress.getByName(bindAddress)
-        : SocketCreator.getLocalHost());
-    } catch (IOException e) {/*ignore - leave null host address*/}
+      setHostAddress((bindAddress != null && bindAddress.length() > 0) ? InetAddress.getByName(bindAddress) : SocketCreator.getLocalHost());
+    } catch (IOException e) {
+      /*ignore - leave null host address*/}
   }
 
   protected void initializePeers(DistributedSystem distributedSystem) {
@@ -656,8 +599,8 @@ public class GemFireMemberStatus implements Serializable {
     DM dm = ids.getDistributionManager();
     Set connections = dm.getOtherNormalDistributionManagerIds();
     Set connectionsIDs = new HashSet(connections.size());
-    for (Iterator iter=connections.iterator(); iter.hasNext() ; ) {
-      InternalDistributedMember idm = (InternalDistributedMember)iter.next();
+    for (Iterator iter = connections.iterator(); iter.hasNext();) {
+      InternalDistributedMember idm = (InternalDistributedMember) iter.next();
       connectionsIDs.add(idm.getId());
     }
     setConnectedPeers(connectionsIDs);
@@ -679,20 +622,15 @@ public class GemFireMemberStatus implements Serializable {
     while (rootRegions.hasNext()) {
       LocalRegion rootRegion = (LocalRegion) rootRegions.next();
       if (!(rootRegion instanceof HARegion)) {
-        RegionStatus rootRegionStatus = rootRegion instanceof PartitionedRegion
-          ? new PartitionedRegionStatus((PartitionedRegion) rootRegion)
-          : new RegionStatus(rootRegion);
+        RegionStatus rootRegionStatus = rootRegion instanceof PartitionedRegion ? new PartitionedRegionStatus((PartitionedRegion) rootRegion) : new RegionStatus(rootRegion);
         putRegionStatus(rootRegion.getFullPath(), rootRegionStatus);
         Iterator subRegions = rootRegion.subregions(true).iterator();
         while (subRegions.hasNext()) {
           LocalRegion subRegion = (LocalRegion) subRegions.next();
-          RegionStatus subRegionStatus = subRegion instanceof PartitionedRegion
-            ? new PartitionedRegionStatus((PartitionedRegion) subRegion)
-            : new RegionStatus(subRegion);
+          RegionStatus subRegionStatus = subRegion instanceof PartitionedRegion ? new PartitionedRegionStatus((PartitionedRegion) subRegion) : new RegionStatus(subRegion);
           putRegionStatus(subRegion.getFullPath(), subRegionStatus);
         }
       }
     }
   }
 }
-

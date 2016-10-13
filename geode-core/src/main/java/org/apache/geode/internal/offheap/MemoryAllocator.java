@@ -29,7 +29,7 @@ public interface MemoryAllocator {
    * @throws IllegalStateException if the heap does not have enough memory to grant the request
    */
   public StoredObject allocate(int size);
-  
+
   /**
    * Allocates off heap memory for the given data and returns a StoredObject
    * that is backed by this allocated memory and that contains the data.
@@ -39,7 +39,7 @@ public interface MemoryAllocator {
    * @throws IllegalStateException if the heap does not have enough memory to grant the request
    */
   public StoredObject allocateAndInitialize(byte[] data, boolean isSerialized, boolean isCompressed);
-  
+
   /**
    * Allocates off heap memory for the given data and returns a StoredObject
    * that is backed by this allocated memory and that contains the data
@@ -51,9 +51,9 @@ public interface MemoryAllocator {
    * @throws IllegalStateException if the heap does not have enough memory to grant the request
    */
   public StoredObject allocateAndInitialize(byte[] data, boolean isSerialized, boolean isCompressed, byte[] originalHeapData);
-  
+
   public long getFreeMemory();
-  
+
   public long getUsedMemory();
 
   public long getTotalMemory();
@@ -66,8 +66,8 @@ public interface MemoryAllocator {
   public void close();
 
   public MemoryInspector getMemoryInspector();
-  
+
   public void addMemoryUsageListener(MemoryUsageListener listener);
-  
+
   public void removeMemoryUsageListener(MemoryUsageListener listener);
 }

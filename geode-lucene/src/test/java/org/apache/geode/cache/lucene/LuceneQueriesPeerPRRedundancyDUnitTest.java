@@ -46,18 +46,16 @@ import org.junit.experimental.categories.Category;
 @Category(DistributedTest.class)
 public class LuceneQueriesPeerPRRedundancyDUnitTest extends LuceneQueriesPRBase {
 
-  @Override protected void initDataStore(final SerializableRunnableIF createIndex) throws Exception {
+  @Override
+  protected void initDataStore(final SerializableRunnableIF createIndex) throws Exception {
     createIndex.run();
-    Region region = getCache().createRegionFactory(RegionShortcut.PARTITION_REDUNDANT)
-      .setPartitionAttributes(getPartitionAttributes())
-      .create(REGION_NAME);
+    Region region = getCache().createRegionFactory(RegionShortcut.PARTITION_REDUNDANT).setPartitionAttributes(getPartitionAttributes()).create(REGION_NAME);
   }
 
-  @Override protected void initAccessor(final SerializableRunnableIF createIndex) throws Exception {
+  @Override
+  protected void initAccessor(final SerializableRunnableIF createIndex) throws Exception {
     createIndex.run();
-    Region region = getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY_REDUNDANT)
-        .setPartitionAttributes(getPartitionAttributes())
-        .create(REGION_NAME);
+    Region region = getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY_REDUNDANT).setPartitionAttributes(getPartitionAttributes()).create(REGION_NAME);
   }
 
   @Test
@@ -131,8 +129,7 @@ public class LuceneQueriesPeerPRRedundancyDUnitTest extends LuceneQueriesPRBase 
   private void moveBucket(final DistributedMember destination, final Object key) {
     PartitionedRegion region = (PartitionedRegion) getCache().getRegion(REGION_NAME);
 
-    BecomePrimaryBucketResponse response = BecomePrimaryBucketMessage.send(
-      (InternalDistributedMember) destination, region, region.getKeyInfo(key).getBucketId(), true);
+    BecomePrimaryBucketResponse response = BecomePrimaryBucketMessage.send((InternalDistributedMember) destination, region, region.getKeyInfo(key).getBucketId(), true);
     assertNotNull(response);
     assertTrue(response.waitForResponse());
   }

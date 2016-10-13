@@ -45,19 +45,9 @@ import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 @Category({ DistributedTest.class, SecurityTest.class })
 public class MultiUserAPIDUnitTest extends ClientAuthorizationTestCase {
 
-  private static final String[] serverIgnoredExceptions = {
-      AuthenticationRequiredException.class.getName(),
-      AuthenticationFailedException.class.getName(),
-      GemFireSecurityException.class.getName(),
-      ClassNotFoundException.class.getName(),
-      IOException.class.getName(),
-      SSLException.class.getName(),
-      SSLHandshakeException.class.getName()};
+  private static final String[] serverIgnoredExceptions = { AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), GemFireSecurityException.class.getName(), ClassNotFoundException.class.getName(), IOException.class.getName(), SSLException.class.getName(), SSLHandshakeException.class.getName() };
 
-  private static final String[] clientIgnoredExceptions = {
-      AuthenticationRequiredException.class.getName(),
-      AuthenticationFailedException.class.getName(),
-      SSLHandshakeException.class.getName()};
+  private static final String[] clientIgnoredExceptions = { AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), SSLHandshakeException.class.getName() };
 
   @Test
   public void testSingleUserUnsupportedAPIs() {
@@ -104,149 +94,149 @@ public class MultiUserAPIDUnitTest extends ClientAuthorizationTestCase {
         success = false;
         try {
           switch (i) {
-            // Attempt (real) Region.create/put/get/containsKeyOnServer/destroy/
-            // destroyRegion/clear/remove/registerInterest/unregisterInterest()
-            // and expect an exception, fail otherwise.
-            case 0:
-              op = "Region.create()";
-              realRegion.create("key", "value");
-              break;
-            case 1:
-              op = "Region.put()";
-              realRegion.put("key", "value");
-              break;
-            case 2:
-              op = "Region.get()";
-              realRegion.get("key");
-              break;
-            case 3:
-              op = "Region.containsKeyOnServer()";
-              realRegion.containsKeyOnServer("key");
-              break;
-            case 4:
-              op = "Region.remove()";
-              realRegion.remove("key");
-              break;
-            case 5:
-              op = "Region.destroy()";
-              realRegion.destroy("key");
-              break;
-            case 6:
-              op = "Region.destroyRegion()";
-              realRegion.destroyRegion();
-              break;
-            case 7:
-              op = "Region.registerInterest()";
-              realRegion.registerInterest("key");
-              break;
-            // case 8:
-            // op = "Region.unregisterInterest()";
-            // realRegion.unregisterInterest("key");
-            // break;
-            case 8:
-              op = "Region.clear()";
-              realRegion.clear();
-              break;
-            // Attempt ProxyRegion.createSubregion/forceRolling/
-            // getAttributesMutator/registerInterest/loadSnapShot/saveSnapshot/
-            // setUserAttribute/unregisterInterest/writeToDisk
-            // and expect an exception, fail otherwise.
-            case 9:
-              op = "ProxyRegion.createSubregion()";
-              proxyRegion.createSubregion("subregion", null);
-              break;
-            case 10:
-              op = "ProxyRegion.forceRolling()";
-              proxyRegion.forceRolling();
-              break;
-            case 11:
-              op = "ProxyRegion.getAttributesMutator()";
-              proxyRegion.getAttributesMutator();
-              break;
-            case 12:
-              op = "ProxyRegion.registerInterest()";
-              proxyRegion.registerInterest("key");
-              break;
-            case 13:
-              op = "ProxyRegion.loadSnapshot()";
-              proxyRegion.loadSnapshot(null);
-              break;
-            case 14:
-              op = "ProxyRegion.saveSnapshot()";
-              proxyRegion.saveSnapshot(null);
-              break;
-            case 15:
-              op = "ProxyRegion.setUserAttribute()";
-              proxyRegion.setUserAttribute(null);
-              break;
-            case 16:
-              op = "ProxyRegion.unregisterInterestRegex()";
-              proxyRegion.unregisterInterestRegex("*");
-              break;
-            // Attempt FunctionService.onRegion/onServer/s(pool) and expect an
-            // exception, fail otherwise.
-            case 17:
-              op = "FunctionService.onRegion()";
-              FunctionService.onRegion(realRegion);
-              break;
-            case 18:
-              op = "FunctionService.onServer(pool)";
-              FunctionService.onServer(pool);
-              break;
-            case 19:
-              op = "FunctionService.onServers(pool)";
-              FunctionService.onServers(pool);
-              break;
-            // Attempt
-            // QueryService.newQuery().execute()/newCq().execute/executeWithInitialResults()
-            case 20:
-              op = "QueryService.newQuery.execute()";
-              Query query = pool.getQueryService().newQuery("SELECT * FROM /" + SecurityTestUtils.REGION_NAME);
-              query.execute();
-              break;
-            case 21:
-              op = "QueryService.newCq.execute()";
-              CqQuery cqQuery = pool.getQueryService().newCq("SELECT * FROM /" + SecurityTestUtils.REGION_NAME, new CqAttributesFactory().create());
-              try {
-                cqQuery.execute();
-              } catch (CqException ce) {
-                throw (Exception)ce.getCause();
-              }
-              break;
-            case 22:
-              op = "QueryService.newCq.executeWithInitialResults()";
-              cqQuery = pool.getQueryService().newCq("SELECT * FROM /" + SecurityTestUtils.REGION_NAME, new CqAttributesFactory().create());
-              try {
-                cqQuery.executeWithInitialResults();
-              } catch (CqException ce) {
-                throw (Exception)ce.getCause();
-              }
-              break;
-            // Attempt ProxyQueryService.getIndex/createIndex/removeIndex() and
-            // expect an exception, fail otherwise.
-            case 23:
-              op = "ProxyQueryService().getIndexes()";
-              SecurityTestUtils.getProxyCaches(0).getQueryService().getIndexes(null);
-              break;
-            case 24:
-              op = "ProxyQueryService().createIndex()";
-              SecurityTestUtils.getProxyCaches(0).getQueryService().createIndex(null, null, null );
-              break;
-            case 25:
-              op = "ProxyQueryService().removeIndexes()";
-              SecurityTestUtils.getProxyCaches(0).getQueryService().removeIndexes();
-              break;
-            case 26:
-              op = "ProxyRegion.localDestroy()";
-              proxyRegion.localDestroy("key");
-              break;
-            case 27:
-              op = "ProxyRegion.localInvalidate()";
-              proxyRegion.localInvalidate("key");
-              break;
-            default:
-              fail("Unknown op code: " + i);
-              break;
+          // Attempt (real) Region.create/put/get/containsKeyOnServer/destroy/
+          // destroyRegion/clear/remove/registerInterest/unregisterInterest()
+          // and expect an exception, fail otherwise.
+          case 0:
+            op = "Region.create()";
+            realRegion.create("key", "value");
+            break;
+          case 1:
+            op = "Region.put()";
+            realRegion.put("key", "value");
+            break;
+          case 2:
+            op = "Region.get()";
+            realRegion.get("key");
+            break;
+          case 3:
+            op = "Region.containsKeyOnServer()";
+            realRegion.containsKeyOnServer("key");
+            break;
+          case 4:
+            op = "Region.remove()";
+            realRegion.remove("key");
+            break;
+          case 5:
+            op = "Region.destroy()";
+            realRegion.destroy("key");
+            break;
+          case 6:
+            op = "Region.destroyRegion()";
+            realRegion.destroyRegion();
+            break;
+          case 7:
+            op = "Region.registerInterest()";
+            realRegion.registerInterest("key");
+            break;
+          // case 8:
+          // op = "Region.unregisterInterest()";
+          // realRegion.unregisterInterest("key");
+          // break;
+          case 8:
+            op = "Region.clear()";
+            realRegion.clear();
+            break;
+          // Attempt ProxyRegion.createSubregion/forceRolling/
+          // getAttributesMutator/registerInterest/loadSnapShot/saveSnapshot/
+          // setUserAttribute/unregisterInterest/writeToDisk
+          // and expect an exception, fail otherwise.
+          case 9:
+            op = "ProxyRegion.createSubregion()";
+            proxyRegion.createSubregion("subregion", null);
+            break;
+          case 10:
+            op = "ProxyRegion.forceRolling()";
+            proxyRegion.forceRolling();
+            break;
+          case 11:
+            op = "ProxyRegion.getAttributesMutator()";
+            proxyRegion.getAttributesMutator();
+            break;
+          case 12:
+            op = "ProxyRegion.registerInterest()";
+            proxyRegion.registerInterest("key");
+            break;
+          case 13:
+            op = "ProxyRegion.loadSnapshot()";
+            proxyRegion.loadSnapshot(null);
+            break;
+          case 14:
+            op = "ProxyRegion.saveSnapshot()";
+            proxyRegion.saveSnapshot(null);
+            break;
+          case 15:
+            op = "ProxyRegion.setUserAttribute()";
+            proxyRegion.setUserAttribute(null);
+            break;
+          case 16:
+            op = "ProxyRegion.unregisterInterestRegex()";
+            proxyRegion.unregisterInterestRegex("*");
+            break;
+          // Attempt FunctionService.onRegion/onServer/s(pool) and expect an
+          // exception, fail otherwise.
+          case 17:
+            op = "FunctionService.onRegion()";
+            FunctionService.onRegion(realRegion);
+            break;
+          case 18:
+            op = "FunctionService.onServer(pool)";
+            FunctionService.onServer(pool);
+            break;
+          case 19:
+            op = "FunctionService.onServers(pool)";
+            FunctionService.onServers(pool);
+            break;
+          // Attempt
+          // QueryService.newQuery().execute()/newCq().execute/executeWithInitialResults()
+          case 20:
+            op = "QueryService.newQuery.execute()";
+            Query query = pool.getQueryService().newQuery("SELECT * FROM /" + SecurityTestUtils.REGION_NAME);
+            query.execute();
+            break;
+          case 21:
+            op = "QueryService.newCq.execute()";
+            CqQuery cqQuery = pool.getQueryService().newCq("SELECT * FROM /" + SecurityTestUtils.REGION_NAME, new CqAttributesFactory().create());
+            try {
+              cqQuery.execute();
+            } catch (CqException ce) {
+              throw (Exception) ce.getCause();
+            }
+            break;
+          case 22:
+            op = "QueryService.newCq.executeWithInitialResults()";
+            cqQuery = pool.getQueryService().newCq("SELECT * FROM /" + SecurityTestUtils.REGION_NAME, new CqAttributesFactory().create());
+            try {
+              cqQuery.executeWithInitialResults();
+            } catch (CqException ce) {
+              throw (Exception) ce.getCause();
+            }
+            break;
+          // Attempt ProxyQueryService.getIndex/createIndex/removeIndex() and
+          // expect an exception, fail otherwise.
+          case 23:
+            op = "ProxyQueryService().getIndexes()";
+            SecurityTestUtils.getProxyCaches(0).getQueryService().getIndexes(null);
+            break;
+          case 24:
+            op = "ProxyQueryService().createIndex()";
+            SecurityTestUtils.getProxyCaches(0).getQueryService().createIndex(null, null, null);
+            break;
+          case 25:
+            op = "ProxyQueryService().removeIndexes()";
+            SecurityTestUtils.getProxyCaches(0).getQueryService().removeIndexes();
+            break;
+          case 26:
+            op = "ProxyRegion.localDestroy()";
+            proxyRegion.localDestroy("key");
+            break;
+          case 27:
+            op = "ProxyRegion.localInvalidate()";
+            proxyRegion.localInvalidate("key");
+            break;
+          default:
+            fail("Unknown op code: " + i);
+            break;
           }
 
         } catch (UnsupportedOperationException uoe) {
@@ -310,6 +300,6 @@ public class MultiUserAPIDUnitTest extends ClientAuthorizationTestCase {
 
   // b
   private void createCacheClient(final String authInit, final Properties authProps, final Properties javaProps, final int port1, final int port2, final int numConnections, final boolean multiUserMode, final int expectedResult) {
-    createCacheClient(authInit, authProps, javaProps, new int[] {port1, port2}, numConnections, multiUserMode, expectedResult); // invokes a
+    createCacheClient(authInit, authProps, javaProps, new int[] { port1, port2 }, numConnections, multiUserMode, expectedResult); // invokes a
   }
 }

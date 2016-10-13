@@ -26,10 +26,10 @@ public class User implements DataSerializable {
 
   static {
     Instantiator.register(new Instantiator(User.class, (byte) 45) {
-        public DataSerializable newInstance() {
-          return new User();
-        }
-      });
+      public DataSerializable newInstance() {
+        return new User();
+      }
+    });
   }
 
   public User(String name, int userId) {
@@ -50,8 +50,7 @@ public class User implements DataSerializable {
     out.writeInt(this.userId);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.name = in.readUTF();
     this.userId = in.readInt();
   }

@@ -25,7 +25,7 @@ package org.apache.geode.cache;
  * 
  *
  */
-public interface CustomExpiry<K,V> extends CacheCallback {
+public interface CustomExpiry<K, V> extends CacheCallback {
 
   /**
    * Calculate the expiration for a given entry.
@@ -37,5 +37,5 @@ public interface CustomExpiry<K,V> extends CacheCallback {
    * @return the expiration to be used, null if the region's defaults should be
    * used.
    */
-  public ExpirationAttributes getExpiry(Region.Entry<K,V> entry);
+  public ExpirationAttributes getExpiry(Region.Entry<K, V> entry);
 }

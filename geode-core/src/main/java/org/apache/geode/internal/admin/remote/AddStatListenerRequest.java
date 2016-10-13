@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-   
-   
+
 package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.*;
@@ -39,8 +38,7 @@ public final class AddStatListenerRequest extends AdminRequest {
   /**
    * Returns a <code>AddStatListenerRequest</code> to be sent to the specified recipient.
    */
-  public static AddStatListenerRequest create(StatResource observedResource,
-                                              Stat observedStat) {
+  public static AddStatListenerRequest create(StatResource observedResource, Stat observedStat) {
     AddStatListenerRequest m = new AddStatListenerRequest();
     m.resourceId = observedResource.getResourceUniqueID();
     m.statName = observedStat.getName();
@@ -54,7 +52,7 @@ public final class AddStatListenerRequest extends AdminRequest {
   /**
    * Must return a proper response to this request.
    */
-  @Override  
+  @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return AddStatListenerResponse.create(dm, this.getSender(), this.resourceId, this.statName);
   }
@@ -63,22 +61,21 @@ public final class AddStatListenerRequest extends AdminRequest {
     return ADD_STAT_LISTENER_REQUEST;
   }
 
-  @Override  
+  @Override
   public void toData(DataOutput out) throws IOException {
     super.toData(out);
     out.writeLong(this.resourceId);
     out.writeUTF(this.statName);
   }
 
-  @Override  
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  @Override
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     super.fromData(in);
     this.resourceId = in.readLong();
     this.statName = in.readUTF();
   }
 
-  @Override  
+  @Override
   public String toString() {
     return "AddStatListenerRequest from " + this.getRecipient() + " for " + this.resourceId + " " + this.statName;
   }

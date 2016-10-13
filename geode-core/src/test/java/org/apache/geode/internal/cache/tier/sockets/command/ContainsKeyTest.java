@@ -126,7 +126,6 @@ public class ContainsKeyTest {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
 
-
     containsKey.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).containsKeyAuthorize(eq(REGION_NAME), eq(KEY));

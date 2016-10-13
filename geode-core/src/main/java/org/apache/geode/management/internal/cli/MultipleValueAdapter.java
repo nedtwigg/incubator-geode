@@ -21,18 +21,15 @@ import java.util.List;
 import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.MethodTarget;
 
-public abstract class MultipleValueAdapter<T> implements MultipleValueConverter<T>{
+public abstract class MultipleValueAdapter<T> implements MultipleValueConverter<T> {
 
   @Override
-  public T convertFromText(String value, Class<?> targetType,
-      String optionContext) {
+  public T convertFromText(String value, Class<?> targetType, String optionContext) {
     return null;
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions,
-      Class<?> targetType, String existingData, String optionContext,
-      MethodTarget target) {
+  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
     return false;
   }
 

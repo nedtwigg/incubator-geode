@@ -33,13 +33,10 @@ public abstract class FailWithProblemInOutputTestCase extends FailOutputTestCase
   protected String[] expectedProblemLines() {
     return new String[] { ".*" + name() + ".*" };
   }
-  
+
   @Test
   public void testFailWithProblemLogMessageInOutput() throws Exception {
-    final String goldenString = 
-        "Begin " + name() + ".main" + "\n" + 
-        "Press Enter to continue." + "\n" +
-        "End " + name() + ".main" + "\n";
+    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "End " + name() + ".main" + "\n";
     debug(goldenString, "GOLDEN");
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());
@@ -49,7 +46,7 @@ public abstract class FailWithProblemInOutputTestCase extends FailOutputTestCase
     process.sendInput();
     process.waitForOutputToMatch("End " + name() + "\\.main");
     process.waitFor();
-    
+
     try {
       assertOutputMatchesGoldenFile(process.getOutput(), goldenString);
       fail("assertOutputMatchesGoldenFile should have failed due to " + problem());

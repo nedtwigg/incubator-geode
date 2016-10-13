@@ -136,9 +136,7 @@ public class BlobHelperTest {
 
   @Test
   public void serializeToBlobUnserializableThrowsNotSerializableException() throws Exception {
-    assertThatThrownBy(() -> serializeToBlob(new Object()))
-      .isExactlyInstanceOf(NotSerializableException.class)
-      .hasMessage(Object.class.getName());
+    assertThatThrownBy(() -> serializeToBlob(new Object())).isExactlyInstanceOf(NotSerializableException.class).hasMessage(Object.class.getName());
   }
 
   @Test
@@ -162,9 +160,7 @@ public class BlobHelperTest {
   public void serializeUnserializableToStreamThrowsNotSerializableException() throws Exception {
     HeapDataOutputStream hdos = createHeapDataOutputStream();
 
-    assertThatThrownBy(() -> serializeTo(new Object(), hdos))
-      .isExactlyInstanceOf(NotSerializableException.class)
-      .hasMessage(Object.class.getName());
+    assertThatThrownBy(() -> serializeTo(new Object(), hdos)).isExactlyInstanceOf(NotSerializableException.class).hasMessage(Object.class.getName());
   }
 
   private HeapDataOutputStream createHeapDataOutputStream() {
@@ -172,7 +168,7 @@ public class BlobHelperTest {
   }
 
   private static class ClassNotFoundSerialization implements Serializable {
-    private void readObject(final ObjectInputStream in) throws ClassNotFoundException    {
+    private void readObject(final ObjectInputStream in) throws ClassNotFoundException {
       throw new ClassNotFoundException(CLASS_NOT_FOUND_MESSAGE);
     }
   }

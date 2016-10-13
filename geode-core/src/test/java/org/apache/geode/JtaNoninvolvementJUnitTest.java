@@ -71,7 +71,7 @@ public class JtaNoninvolvementJUnitTest {
       c.close();
     }
   }
-  
+
   @After
   public void after() {
     closeCache();
@@ -80,34 +80,29 @@ public class JtaNoninvolvementJUnitTest {
       ids.disconnect();
     }
   }
-  
+
   @Test
   public void test000Noninvolvement() throws Exception {
     try {
       if (cache == null) {
         createCache(false);
       }
-      javax.transaction.UserTransaction ut =
-        (javax.transaction.UserTransaction)cache.getJNDIContext()
-          .lookup("java:/UserTransaction");
+      javax.transaction.UserTransaction ut = (javax.transaction.UserTransaction) cache.getJNDIContext().lookup("java:/UserTransaction");
       {
         ut.begin();
         txRegion.put("transactionalPut", "xxx");
-        assertTrue("expect cache to be in a transaction",
-            cache.getCacheTransactionManager().exists());
+        assertTrue("expect cache to be in a transaction", cache.getCacheTransactionManager().exists());
         ut.commit();
       }
-      assertFalse("ensure there is no transaction before testing non-involvement", 
-          cache.getCacheTransactionManager().exists());
+      assertFalse("ensure there is no transaction before testing non-involvement", cache.getCacheTransactionManager().exists());
       {
         ut.begin();
         nonTxRegion.put("nontransactionalPut", "xxx");
-        assertFalse("expect cache to not be in a transaction",
-          cache.getCacheTransactionManager().exists());
+        assertFalse("expect cache to not be in a transaction", cache.getCacheTransactionManager().exists());
         ut.commit();
       }
     }
-    
+
     finally {
       closeCache();
       cache = null;
@@ -123,8 +118,7 @@ public class JtaNoninvolvementJUnitTest {
       }
       final CountDownLatch l = new CountDownLatch(1);
       final AtomicBoolean exceptionOccured = new AtomicBoolean(false);
-      ut = 
-          (UserTransaction) cache.getJNDIContext().lookup("java:/UserTransaction");
+      ut = (UserTransaction) cache.getJNDIContext().lookup("java:/UserTransaction");
       ut.begin();
       txRegion.put("key", "value");
       nonTxRegion.put("key", "value");
@@ -161,8 +155,7 @@ public class JtaNoninvolvementJUnitTest {
     try {
       System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "ignoreJTA", "true");
       createCache(false);
-      ut = 
-          (UserTransaction) cache.getJNDIContext().lookup("java:/UserTransaction");
+      ut = (UserTransaction) cache.getJNDIContext().lookup("java:/UserTransaction");
       ut.begin();
       txRegion.put("key", "value");
       ut.rollback();

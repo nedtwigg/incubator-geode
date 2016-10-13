@@ -28,9 +28,7 @@ package org.apache.geode.internal.cache;
  *
  *
  */
-public abstract class VMStatsDiskLRURegionEntry
-  extends AbstractDiskLRURegionEntry
-{
+public abstract class VMStatsDiskLRURegionEntry extends AbstractDiskLRURegionEntry {
   protected VMStatsDiskLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }

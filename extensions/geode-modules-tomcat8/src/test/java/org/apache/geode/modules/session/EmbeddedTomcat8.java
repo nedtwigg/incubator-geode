@@ -87,13 +87,11 @@ public class EmbeddedTomcat8 {
       new File(localHost.getAppBaseFile().getAbsolutePath()).mkdir();
       new File(localHost.getCatalinaBase().getAbsolutePath(), "logs").mkdir();
       rootContext = container.addContext("", localHost.getAppBaseFile().getAbsolutePath());
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new Error(e);
     }
     // Otherwise we get NPE when instantiating servlets
     rootContext.setIgnoreAnnotations(true);
-
 
     AuthConfigFactory factory = new AuthConfigFactoryImpl();
     new SimpleAuthConfigProvider(null, factory);
@@ -153,7 +151,7 @@ public class EmbeddedTomcat8 {
     rootContext.addServletMapping(path, name);
 
     servlet.setParent(rootContext);
-//        servlet.load();
+    //        servlet.load();
 
     return servlet;
   }

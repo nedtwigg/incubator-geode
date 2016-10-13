@@ -66,11 +66,11 @@ public class GMSQuorumChecker implements QuorumChecker {
     receivedAcks = new ConcurrentHashSet<>();
 
     pingPonger = new GMSPingPonger();
-//    UUID logicalAddress = (UUID) channel.getAddress();
-//    IpAddress ipaddr = (IpAddress) channel.down(new Event(Event.GET_PHYSICAL_ADDRESS));
-//    
-//    myAddress = new JGAddress(logicalAddress, ipaddr);
-    myAddress = (JGAddress)channel.down(new Event(Event.GET_LOCAL_ADDRESS));
+    //    UUID logicalAddress = (UUID) channel.getAddress();
+    //    IpAddress ipaddr = (IpAddress) channel.down(new Event(Event.GET_PHYSICAL_ADDRESS));
+    //    
+    //    myAddress = new JGAddress(logicalAddress, ipaddr);
+    myAddress = (JGAddress) channel.down(new Event(Event.GET_LOCAL_ADDRESS));
 
     addressConversionMap = new ConcurrentHashMap<>(this.lastView.size());
     List<InternalDistributedMember> members = this.lastView.getMembers();
@@ -105,10 +105,10 @@ public class GMSQuorumChecker implements QuorumChecker {
   public void suspend() {
     // NO-OP for this implementation
   }
-  
+
   @Override
   public void close() {
-    if (channel != null  &&  !channel.isClosed()) {
+    if (channel != null && !channel.isClosed()) {
       channel.close();
     }
   }
@@ -118,7 +118,7 @@ public class GMSQuorumChecker implements QuorumChecker {
     channel.setReceiver(null);
     channel.setReceiver(new QuorumCheckerReceiver());
   }
-  
+
   @Override
   public NetView getView() {
     return this.lastView;
@@ -253,7 +253,7 @@ public class GMSQuorumChecker implements QuorumChecker {
       }
     }
   }
-  
+
   public String toString() {
     return getClass().getSimpleName() + " on view " + this.lastView;
   }

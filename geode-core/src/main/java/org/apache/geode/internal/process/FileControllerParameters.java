@@ -28,5 +28,6 @@ import org.apache.geode.internal.process.ProcessController.Arguments;
  */
 interface FileControllerParameters extends Arguments {
   public File getPidFile();
+
   public File getWorkingDirectory();
 }

@@ -22,74 +22,70 @@ import org.apache.geode.distributed.DistributedMember;
 
 public class RemoteFilterChain extends FilterChain {
 
-	private StringBasedFilter serverGroupFilter;
-	private StringBasedFilter remoteMBeanFilter;
-	private StringBasedFilter managedMemberFilter;
+  private StringBasedFilter serverGroupFilter;
+  private StringBasedFilter remoteMBeanFilter;
+  private StringBasedFilter managedMemberFilter;
 
-	public RemoteFilterChain(){
-		
-		
-		/*String remoteMBeanExcludeFilter = managementConfig.getRemoteMBeanExcludeFilter();
-		String remoteMBeanIncludeFilter = managementConfig.getRemoteMBeanIncludeFilter();
+  public RemoteFilterChain() {
 
-		FilterParam remoteMBeanParam = createFilterParam(remoteMBeanIncludeFilter, remoteMBeanExcludeFilter);
-		remoteMBeanFilter = new StringBasedFilter(remoteMBeanParam);
-		
-		String memberNodeExcludeFilter = managementConfig.getMemberNodeExcludeFilter();
-		String memberNodeIncludeFilter = managementConfig.getMemberNodeIncludeFilter();
+    /*String remoteMBeanExcludeFilter = managementConfig.getRemoteMBeanExcludeFilter();
+    String remoteMBeanIncludeFilter = managementConfig.getRemoteMBeanIncludeFilter();
+    
+    FilterParam remoteMBeanParam = createFilterParam(remoteMBeanIncludeFilter, remoteMBeanExcludeFilter);
+    remoteMBeanFilter = new StringBasedFilter(remoteMBeanParam);
+    
+    String memberNodeExcludeFilter = managementConfig.getMemberNodeExcludeFilter();
+    String memberNodeIncludeFilter = managementConfig.getMemberNodeIncludeFilter();
+    
+    FilterParam memberNodeParam = createFilterParam(memberNodeIncludeFilter, memberNodeExcludeFilter);
+    managedMemberFilter = new StringBasedFilter(memberNodeParam);
+    
+    String serverGroupExcludeFilter = managementConfig.getServerGroupExcludeFilter();
+    String serverGroupIncludeFilter = managementConfig.getServerGroupIncludeFilter();
+    
+    FilterParam serverGroupParam = createFilterParam(serverGroupIncludeFilter, serverGroupExcludeFilter);
+    serverGroupFilter = new StringBasedFilter(serverGroupParam);*/
 
-		FilterParam memberNodeParam = createFilterParam(memberNodeIncludeFilter, memberNodeExcludeFilter);
-		managedMemberFilter = new StringBasedFilter(memberNodeParam);
-		
-		String serverGroupExcludeFilter = managementConfig.getServerGroupExcludeFilter();
-		String serverGroupIncludeFilter = managementConfig.getServerGroupIncludeFilter();
+  }
 
-		FilterParam serverGroupParam = createFilterParam(serverGroupIncludeFilter, serverGroupExcludeFilter);
-		serverGroupFilter = new StringBasedFilter(serverGroupParam);*/
-		
-	}
-
-	public boolean isFiltered(ObjectName name, DistributedMember member,
-			String serverGroup) {
-	  return false;
-	  // <For future use>
-		/*isRemoteMBeanFiltered(name);
-		isManagedNodeFiltered(member);
-		isServerGroupFiltered(serverGroup);*/
-		
-
-	}
-	public boolean isRemoteMBeanFiltered(ObjectName objectName) {
-
-	  return false;
+  public boolean isFiltered(ObjectName name, DistributedMember member, String serverGroup) {
+    return false;
     // <For future use>
-		/*boolean isExcluded = remoteMBeanFilter.isExcluded(objectName.getCanonicalName());
-		boolean isIncluded = remoteMBeanFilter.isIncluded(objectName.getCanonicalName());
+    /*isRemoteMBeanFiltered(name);
+    isManagedNodeFiltered(member);
+    isServerGroupFiltered(serverGroup);*/
 
-		return isFiltered(isIncluded, isExcluded);*/
+  }
 
-	}
+  public boolean isRemoteMBeanFiltered(ObjectName objectName) {
 
-	public boolean isManagedNodeFiltered(DistributedMember member) {
-	  return false;
+    return false;
     // <For future use>
-		/*boolean isExcluded = managedMemberFilter.isExcluded(member.getId());
-		boolean isIncluded = managedMemberFilter.isIncluded(member.getId());
+    /*boolean isExcluded = remoteMBeanFilter.isExcluded(objectName.getCanonicalName());
+    boolean isIncluded = remoteMBeanFilter.isIncluded(objectName.getCanonicalName());
+    
+    return isFiltered(isIncluded, isExcluded);*/
 
-		return isFiltered(isIncluded, isExcluded);*/
+  }
 
-	}
-
-
-	public boolean isServerGroupFiltered(String serverGroup) {
-	  return false;
+  public boolean isManagedNodeFiltered(DistributedMember member) {
+    return false;
     // <For future use>
-		/*boolean isExcluded = serverGroupFilter.isExcluded(serverGroup);
-		boolean isIncluded = serverGroupFilter.isIncluded(serverGroup);
+    /*boolean isExcluded = managedMemberFilter.isExcluded(member.getId());
+    boolean isIncluded = managedMemberFilter.isIncluded(member.getId());
+    
+    return isFiltered(isIncluded, isExcluded);*/
 
-		return isFiltered(isIncluded, isExcluded);
-*/
-	}
+  }
 
-	
+  public boolean isServerGroupFiltered(String serverGroup) {
+    return false;
+    // <For future use>
+    /*boolean isExcluded = serverGroupFilter.isExcluded(serverGroup);
+    boolean isIncluded = serverGroupFilter.isIncluded(serverGroup);
+    
+    return isFiltered(isIncluded, isExcluded);
+    */
+  }
+
 }

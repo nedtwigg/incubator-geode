@@ -216,8 +216,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     request.addParameterValues("category", "science-fiction");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/amazon/books?author=Rowling&category=science-fiction",
-      toString(request.getURL(Collections.singletonMap("name", "amazon"))));
+    assertEquals("http://host.domain.com:8080/app/libraries/amazon/books?author=Rowling&category=science-fiction", toString(request.getURL(Collections.singletonMap("name", "amazon"))));
   }
 
   @Test
@@ -232,8 +231,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     uriVariables.put("item", "456");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/regions/Customers%2FAccounts%2FOrders/keys/123",
-      toString(request.getURL(uriVariables)));
+    assertEquals("http://host.domain.com:8080/app/regions/Customers%2FAccounts%2FOrders/keys/123", toString(request.getURL(uriVariables)));
   }
 
   @Test
@@ -254,8 +252,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     uriVariables.put("name", "Amazon");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/Amazon/books/Rowling?category=science-fiction&year=2007",
-      toString(request.getURL(uriVariables)));
+    assertEquals("http://host.domain.com:8080/app/libraries/Amazon/books/Rowling?category=science-fiction&year=2007", toString(request.getURL(uriVariables)));
   }
 
   @Test
@@ -266,8 +263,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     request.addParameterValues("category", "romance");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/congress/books?category=romance",
-      toString(request.getURL(Collections.singletonMap("name", "congress"))));
+    assertEquals("http://host.domain.com:8080/app/libraries/congress/books?category=romance", toString(request.getURL(Collections.singletonMap("name", "congress"))));
   }
 
   @Test
@@ -281,8 +277,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     request.addParameterValues("isbn", "0345453743");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/royal/books",
-      toString(request.getURL(Collections.singletonMap("name", "royal"))));
+    assertEquals("http://host.domain.com:8080/app/libraries/royal/books", toString(request.getURL(Collections.singletonMap("name", "royal"))));
   }
 
   @Test
@@ -298,8 +293,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     uriVariables.put("isbn", "0345453743");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/royal/books/0345453743",
-      toString(request.getURL(uriVariables)));
+    assertEquals("http://host.domain.com:8080/app/libraries/royal/books/0345453743", toString(request.getURL(uriVariables)));
   }
 
   @Test
@@ -360,8 +354,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     request.addParameterValues("year", expectedRequestParameters.getFirst("year"));
     request.addParameterValues("isbn", expectedRequestParameters.getFirst("isbn"));
 
-    final HttpEntity<MultiValueMap<String, Object>> requestEntity = (HttpEntity<MultiValueMap<String, Object>>)
-      request.createRequestEntity();
+    final HttpEntity<MultiValueMap<String, Object>> requestEntity = (HttpEntity<MultiValueMap<String, Object>>) request.createRequestEntity();
 
     assertNotNull(requestEntity);
     assertNotNull(requestEntity.getHeaders());
@@ -385,8 +378,7 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     request.addHeaderValues(HttpHeader.CONTENT_TYPE.getName(), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     request.addParameterValues("year", expectedRequestParameters.getFirst("year"));
 
-    final HttpEntity<MultiValueMap<String, Object>> requestEntity = (HttpEntity<MultiValueMap<String, Object>>)
-      request.createRequestEntity();
+    final HttpEntity<MultiValueMap<String, Object>> requestEntity = (HttpEntity<MultiValueMap<String, Object>>) request.createRequestEntity();
 
     assertNotNull(requestEntity);
     assertNotNull(requestEntity.getHeaders());
@@ -451,22 +443,19 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     assertTrue(request.getHeaders().isEmpty());
 
     request.addHeaderValues(HttpHeader.CONTENT_TYPE.getName(), MediaType.APPLICATION_JSON_VALUE);
-    request.addHeaderValues(HttpHeader.ACCEPT.getName(), MediaType.APPLICATION_JSON_VALUE,
-      MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_PLAIN_VALUE);
+    request.addHeaderValues(HttpHeader.ACCEPT.getName(), MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_PLAIN_VALUE);
 
     assertEquals(MediaType.APPLICATION_JSON_VALUE, request.getHeaderValue(HttpHeader.CONTENT_TYPE.getName()));
     assertEquals(1, request.getHeaderValues(HttpHeader.CONTENT_TYPE.getName()).size());
     assertEquals(MediaType.APPLICATION_JSON_VALUE, request.getHeaderValue(HttpHeader.ACCEPT.getName()));
     assertEquals(3, request.getHeaderValues(HttpHeader.ACCEPT.getName()).size());
-    assertTrue(request.getHeaderValues(HttpHeader.ACCEPT.getName()).containsAll(Arrays.asList(
-      MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_PLAIN_VALUE)));
+    assertTrue(request.getHeaderValues(HttpHeader.ACCEPT.getName()).containsAll(Arrays.asList(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_PLAIN_VALUE)));
 
     request.setHeader(HttpHeader.ACCEPT.getName(), MediaType.APPLICATION_OCTET_STREAM_VALUE);
 
     assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, request.getHeaderValue(HttpHeader.ACCEPT.getName()));
     assertEquals(1, request.getHeaderValues(HttpHeader.ACCEPT.getName()).size());
-    assertTrue(request.getHeaderValues(HttpHeader.ACCEPT.getName()).containsAll(Arrays.asList(
-      MediaType.APPLICATION_OCTET_STREAM_VALUE)));
+    assertTrue(request.getHeaderValues(HttpHeader.ACCEPT.getName()).containsAll(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM_VALUE)));
   }
 
   @Test
@@ -501,8 +490,11 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
   @SuppressWarnings("unused")
   private static interface Book {
     public String getAuthor();
+
     public String getIsbn();
+
     public String getTitle();
+
     public Integer getYear();
   }
 

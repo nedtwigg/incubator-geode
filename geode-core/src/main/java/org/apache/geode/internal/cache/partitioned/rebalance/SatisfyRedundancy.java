@@ -28,16 +28,15 @@ import org.apache.geode.internal.logging.LogService;
  *
  */
 public class SatisfyRedundancy extends RebalanceDirectorAdapter {
-  
-  private static final Logger logger = LogService.getLogger();
-  
-  private PartitionedRegionLoadModel model;
 
+  private static final Logger logger = LogService.getLogger();
+
+  private PartitionedRegionLoadModel model;
 
   @Override
   public void initialize(PartitionedRegionLoadModel model) {
     this.model = model;
-    
+
   }
 
   @Override
@@ -47,9 +46,9 @@ public class SatisfyRedundancy extends RebalanceDirectorAdapter {
 
   @Override
   public boolean nextStep() {
-    if(satisfyRedundancy()) {
+    if (satisfyRedundancy()) {
       return true;
-    }  else {
+    } else {
       model.waitForOperations();
       return satisfyRedundancy();
     }
@@ -62,30 +61,27 @@ public class SatisfyRedundancy extends RebalanceDirectorAdapter {
   private boolean satisfyRedundancy() {
     Move bestMove = null;
     BucketRollup first = null;
-    while(bestMove == null) {
-      if(model.getLowRedundancyBuckets().isEmpty()) {
+    while (bestMove == null) {
+      if (model.getLowRedundancyBuckets().isEmpty()) {
         return false;
-      } 
+      }
 
       first = model.getLowRedundancyBuckets().first();
       bestMove = model.findBestTarget(first, true);
-      if (bestMove == null
-          && !model.enforceUniqueZones()) {
+      if (bestMove == null && !model.enforceUniqueZones()) {
         bestMove = model.findBestTarget(first, false);
       }
-      if(bestMove == null) {
-        if(logger.isDebugEnabled()) {
+      if (bestMove == null) {
+        if (logger.isDebugEnabled()) {
           logger.debug("Skipping low redundancy bucket {} because no member will accept it", first);
         }
         model.ignoreLowRedundancyBucket(first);
       }
     }
-    
+
     model.createRedundantBucket(first, bestMove.getTarget());
-    
+
     return true;
   }
 
-  
-  
 }

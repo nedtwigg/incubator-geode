@@ -66,8 +66,8 @@ public abstract class StorageCommand extends AbstractCommand {
   /**
    * number of seconds in 30 days
    */
-  private static final long secsIn30Days = 60*60*24*30;
-  
+  private static final long secsIn30Days = 60 * 60 * 24 * 30;
+
   @Override
   public ByteBuffer processCommand(RequestReader reader, Protocol protocol, Cache cache) {
     ByteBuffer buffer = reader.getRequest();
@@ -94,15 +94,15 @@ public abstract class StorageCommand extends AbstractCommand {
     byte[] value = new byte[numBytes];
     buffer.position(firstLine.length());
     try {
-      for (int i=0; i<numBytes; i++) {
+      for (int i = 0; i < numBytes; i++) {
         value[i] = buffer.get();
       }
     } catch (BufferUnderflowException e) {
       throw new ClientError("error reading value");
     }
     if (getLogger().fineEnabled()) {
-      getLogger().fine("key:"+key);
-      getLogger().fine("value:"+Arrays.toString(value));
+      getLogger().fine("key:" + key);
+      getLogger().fine("value:" + Arrays.toString(value));
     }
     ByteBuffer retVal = processStorageCommand(key, value, flags, cache);
     if (expTime > 0) {
@@ -115,7 +115,7 @@ public abstract class StorageCommand extends AbstractCommand {
     ByteBuffer buffer = request.getRequest();
     int extrasLength = buffer.get(EXTRAS_LENGTH_INDEX);
     int flags = 0, expTime = 0;
-    
+
     KeyWrapper key = getKey(buffer, HEADER_LENGTH + extrasLength);
 
     if (extrasLength > 0) {
@@ -124,18 +124,18 @@ public abstract class StorageCommand extends AbstractCommand {
       flags = buffer.getInt();
       expTime = buffer.getInt();
     }
-    
+
     byte[] value = getValue(buffer);
-    
+
     long cas = buffer.getLong(POSITION_CAS);
-    
+
     ByteBuffer retVal = processBinaryStorageCommand(key, value, cas, flags, cache, request);
     if (expTime > 0) {
       scheduleExpiration(key, expTime, cache);
     }
     if (getLogger().fineEnabled()) {
-      getLogger().fine("key:"+key);
-      getLogger().fine("value:"+Arrays.toString(value));
+      getLogger().fine("key:" + key);
+      getLogger().fine("value:" + Arrays.toString(value));
     }
     return retVal;
   }
@@ -159,7 +159,7 @@ public abstract class StorageCommand extends AbstractCommand {
     if (p_expTime > secsIn30Days) {
       expTime = p_expTime - System.currentTimeMillis();
       if (expTime < 0) {
-        getLogger().info("Invalid expiration time passed, key:"+key+" will not expire");
+        getLogger().info("Invalid expiration time passed, key:" + key + " will not expire");
         return;
       }
     }
@@ -210,7 +210,7 @@ public abstract class StorageCommand extends AbstractCommand {
       getMemcachedRegion(cache).remove(key);
       expiryFutures.remove(key);
       if (cache.getLogger().fineEnabled()) {
-        cache.getLogger().fine("expiration removed key:"+key);
+        cache.getLogger().fine("expiration removed key:" + key);
       }
     }
   }

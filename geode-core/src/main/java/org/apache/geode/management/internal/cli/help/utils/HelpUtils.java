@@ -34,29 +34,28 @@ import java.util.List;
  */
 public class HelpUtils {
   public static final String EXE_PREFIX_FOR_EXTERNAL_HELP = org.apache.geode.management.internal.cli.shell.Gfsh.GFSH_APP_NAME + " ";
-  public static final String HELP__COMMAND_AVAILABLE      = "Available";
-  public static final String HELP__COMMAND_NOTAVAILABLE   = "Not Available";
+  public static final String HELP__COMMAND_AVAILABLE = "Available";
+  public static final String HELP__COMMAND_NOTAVAILABLE = "Not Available";
 
-  private static final String NAME_NAME         = "NAME";
-  private static final String SYNONYMS_NAME     = "SYNONYMS";
-  private static final String SYNOPSIS_NAME     = "SYNOPSIS";
-  private static final String SYNTAX_NAME       = "SYNTAX";
-  private static final String ARGUMENTS_NAME    = "ARGUMENTS";
-  private static final String OPTIONS_NAME      = "PARAMETERS";
+  private static final String NAME_NAME = "NAME";
+  private static final String SYNONYMS_NAME = "SYNONYMS";
+  private static final String SYNOPSIS_NAME = "SYNOPSIS";
+  private static final String SYNTAX_NAME = "SYNTAX";
+  private static final String ARGUMENTS_NAME = "ARGUMENTS";
+  private static final String OPTIONS_NAME = "PARAMETERS";
   private static final String IS_AVAILABLE_NAME = "IS AVAILABLE";
   private static final String MODES = "MODES";
 
-  private static final String REQUIRED_SUB_NAME     = "Required: ";
+  private static final String REQUIRED_SUB_NAME = "Required: ";
   private static final String DEFAULTVALUE_SUB_NAME = "Default value: ";
-  private static final String SYNONYMS_SUB_NAME     = "Synonyms: ";
+  private static final String SYNONYMS_SUB_NAME = "Synonyms: ";
   private static final String SPECIFIEDDEFAULTVALUE_SUB_NAME = "Default (if the parameter is specified without value): ";
   private static final String UNSPECIFIEDDEFAULTVALUE_VALUE_SUB_NAME = "Default (if the parameter is not specified): ";
 
   private static final String VALUE_FIELD = "value";
-  private static final String TRUE_TOKEN  = "true";
+  private static final String TRUE_TOKEN = "true";
   private static final String FALSE_TOKEN = "false";
-  
-  
+
   private static Help help(Block[] blocks) {
     return new Help().setBlocks(blocks);
   }
@@ -78,12 +77,9 @@ public class HelpUtils {
     if (commandTarget.getSynonyms() != null) {
       blocks.add(block(SYNONYMS_NAME, row(commandTarget.getSynonyms())));
     }
-    
-    
-    
+
     // Now comes the turn to display synopsis if any
-    if (commandTarget.getCommandHelp() != null
-        && !commandTarget.getCommandHelp().equals("")) {
+    if (commandTarget.getCommandHelp() != null && !commandTarget.getCommandHelp().equals("")) {
       blocks.add(block(SYNOPSIS_NAME, row(commandTarget.getCommandHelp())));
     }
     // Now display the syntax for the command
@@ -105,14 +101,12 @@ public class HelpUtils {
     List<Option> optionalOptions = new ArrayList<Option>();
     for (Option option : commandTarget.getOptionParser().getOptions()) {
       if (option.isRequired()) {
-        buffer.append(" " + SyntaxConstants.LONG_OPTION_SPECIFIER
-            + option.getLongOption());
-//      String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_TOKEN + "("
-//      + SyntaxConstants.OPTION_VALUE_SEPARATOR + VALUE_TOKEN + ")*";
+        buffer.append(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption());
+        //      String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_TOKEN + "("
+        //      + SyntaxConstants.OPTION_VALUE_SEPARATOR + VALUE_TOKEN + ")*";
         String temp = buildOptionHelpText(option);
-//  
-        if (option.getSpecifiedDefaultValue() != null
-            && !option.getSpecifiedDefaultValue().equals("")) {
+        //  
+        if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
           buffer.append("(");
           buffer.append(temp);
           buffer.append(")?");
@@ -124,14 +118,12 @@ public class HelpUtils {
       }
     }
     for (Option option : optionalOptions) {
-      buffer.append(" " + "[" + SyntaxConstants.LONG_OPTION_SPECIFIER
-          + option.getLongOption());
-//    String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_TOKEN + "("
-//    + SyntaxConstants.OPTION_VALUE_SEPARATOR + VALUE_TOKEN + ")*";
+      buffer.append(" " + "[" + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption());
+      //    String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_TOKEN + "("
+      //    + SyntaxConstants.OPTION_VALUE_SEPARATOR + VALUE_TOKEN + ")*";
       String temp = buildOptionHelpText(option);
-//
-      if (option.getSpecifiedDefaultValue() != null
-          && !option.getSpecifiedDefaultValue().equals("")) {
+      //
+      if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
         buffer.append("(");
         buffer.append(temp);
         buffer.append(")?");
@@ -145,10 +137,7 @@ public class HelpUtils {
     if (commandTarget.getOptionParser().getArguments().size() > 0) {
       List<Row> rows = new ArrayList<Row>();
       for (Argument argument : commandTarget.getOptionParser().getArguments()) {
-        rows.add(row(argument.getArgumentName()
-            + ((argument.getHelp() != null && !argument.getHelp().equals("")) ? ":"
-                + argument.getHelp()
-                : "")));
+        rows.add(row(argument.getArgumentName() + ((argument.getHelp() != null && !argument.getHelp().equals("")) ? ":" + argument.getHelp() : "")));
       }
       Row[] rowsArray = new Row[rows.size()];
       blocks.add(block(ARGUMENTS_NAME, rows.toArray(rowsArray)));
@@ -158,20 +147,18 @@ public class HelpUtils {
     if (commandTarget.getOptionParser().getOptions().size() > 0) {
       List<Row> rows = new ArrayList<Row>();
       for (Option option : commandTarget.getOptionParser().getOptions()) {
-        rows.add(row(option.getLongOption()
-            + ((option.getHelp() != null && !option.getHelp().equals("")) ? ":"
-                + option.getHelp() : "")));
+        rows.add(row(option.getLongOption() + ((option.getHelp() != null && !option.getHelp().equals("")) ? ":" + option.getHelp() : "")));
       }
       Row[] rowsArray = new Row[rows.size()];
       blocks.add(block(OPTIONS_NAME, rows.toArray(rowsArray)));
     }
     Block[] blocksArray = new Block[blocks.size()];
-    for(int i=0;i<blocks.size();i++){
+    for (int i = 0; i < blocks.size(); i++) {
       blocksArray[i] = blocks.get(i);
     }
     return help(blocksArray);
   }
-  
+
   /**
    * Builds help for the specified command.
    * 
@@ -207,76 +194,65 @@ public class HelpUtils {
       }
       root.addChild(synonyms);
     }
-    
-    
+
     // Now comes the turn to display synopsis if any
-    if (commandTarget.getCommandHelp() != null
-        && !commandTarget.getCommandHelp().equals("")) {
+    if (commandTarget.getCommandHelp() != null && !commandTarget.getCommandHelp().equals("")) {
       DataNode synopsis = new DataNode(SYNOPSIS_NAME, new ArrayList<DataNode>());
       synopsis.addChild(new DataNode(commandTarget.getCommandHelp(), null));
       root.addChild(synopsis);
     }
-    
-    
+
     // Now display the syntax for the command
     StringBuffer buffer = new StringBuffer();
     if (withinShell) {
       buffer.append(commandTarget.getCommandName());
     } else { // add app name in the syntax
       buffer.append(EXE_PREFIX_FOR_EXTERNAL_HELP).append(commandTarget.getCommandName());
-    }    
-    appendArguments(buffer,commandTarget);
-    appendOptions(buffer,commandTarget);
+    }
+    appendArguments(buffer, commandTarget);
+    appendOptions(buffer, commandTarget);
     DataNode syntax = new DataNode(SYNTAX_NAME, new ArrayList<DataNode>());
     syntax.addChild(new DataNode(buffer.toString(), null));
     root.addChild(syntax);
-    
-    
+
     // Detailed description of Arguments
     if (commandTarget.getOptionParser().getArguments().size() > 0) {
       DataNode arguments = new DataNode(ARGUMENTS_NAME, new ArrayList<DataNode>());
       for (Argument argument : commandTarget.getOptionParser().getArguments()) {
-        DataNode argumentNode = new DataNode(argument.getArgumentName(),
-            new ArrayList<DataNode>());
-        argumentNode
-            .addChild(new DataNode(((argument.getHelp() != null && !argument
-                .getHelp().equals("")) ? argument.getHelp() : ""), null));
-        argumentNode.addChild(new DataNode(REQUIRED_SUB_NAME+((argument.isRequired()) ? TRUE_TOKEN
-            : FALSE_TOKEN), null));
+        DataNode argumentNode = new DataNode(argument.getArgumentName(), new ArrayList<DataNode>());
+        argumentNode.addChild(new DataNode(((argument.getHelp() != null && !argument.getHelp().equals("")) ? argument.getHelp() : ""), null));
+        argumentNode.addChild(new DataNode(REQUIRED_SUB_NAME + ((argument.isRequired()) ? TRUE_TOKEN : FALSE_TOKEN), null));
         if (argument.getUnspecifiedDefaultValue() != null) {
-          argumentNode.addChild(new DataNode(DEFAULTVALUE_SUB_NAME
-              + argument.getUnspecifiedDefaultValue(), null));
+          argumentNode.addChild(new DataNode(DEFAULTVALUE_SUB_NAME + argument.getUnspecifiedDefaultValue(), null));
         }
         arguments.addChild(argumentNode);
       }
       root.addChild(arguments);
     }
 
-    
     try {
       CommandModes modes = CommandModes.getInstance();
-      Collection<CommandMode> comModes = modes.getCommandModes(commandTarget
-          .getCommandName());
+      Collection<CommandMode> comModes = modes.getCommandModes(commandTarget.getCommandName());
       DataNode modesDN = new DataNode(MODES, new ArrayList<DataNode>());
       if (comModes != null) {
         for (CommandMode cmd : comModes) {
           StringBuffer sb = new StringBuffer();
           List<Option> optionalOptions = new ArrayList<Option>();
-          
+
           sb.append(commandTarget.getCommandName()).append(" ");
-          if(!cmd.name.equals("default"))
+          if (!cmd.name.equals("default"))
             appendRequiredOption(sb, getOption(commandTarget, cmd.leadOption));
-          
+
           for (String opt : cmd.options) {
             if (!opt.equals(cmd.leadOption)) {
               Option option = getOption(commandTarget, opt);
               if (option.isRequired()) {
                 appendRequiredOption(sb, option);
               } else
-                optionalOptions.add(option);              
-            }            
+                optionalOptions.add(option);
+            }
           }
-          
+
           for (Option optOpt : optionalOptions)
             appendOption(sb, optOpt);
 
@@ -289,20 +265,18 @@ public class HelpUtils {
         //modesDN.addChild(new DataNode("No command modes found", null));
         //root.addChild(modesDN);
       }
-      
+
     } catch (Exception e) {
-    } finally{
-      
+    } finally {
+
     }
-    
+
     // Detailed description of Options
     if (commandTarget.getOptionParser().getOptions().size() > 0) {
       DataNode options = new DataNode(OPTIONS_NAME, new ArrayList<DataNode>());
       for (Option option : commandTarget.getOptionParser().getOptions()) {
-        DataNode optionNode = new DataNode(option.getLongOption(),
-            new ArrayList<DataNode>());
-        optionNode.addChild(new DataNode(((option.getHelp() != null && !option
-            .getHelp().equals("")) ? option.getHelp() : ""), null));
+        DataNode optionNode = new DataNode(option.getLongOption(), new ArrayList<DataNode>());
+        optionNode.addChild(new DataNode(((option.getHelp() != null && !option.getHelp().equals("")) ? option.getHelp() : ""), null));
         if (option.getSynonyms() != null && option.getSynonyms().size() > 0) {
           StringBuilder builder = new StringBuilder();
           for (String string : option.getSynonyms()) {
@@ -311,20 +285,14 @@ public class HelpUtils {
             }
             builder.append(string);
           }
-          optionNode.addChild(new DataNode(SYNONYMS_SUB_NAME + builder.toString(),
-              null));
+          optionNode.addChild(new DataNode(SYNONYMS_SUB_NAME + builder.toString(), null));
         }
-        optionNode.addChild(new DataNode(REQUIRED_SUB_NAME+((option.isRequired()) ? TRUE_TOKEN
-            : FALSE_TOKEN), null));
-        if (option.getSpecifiedDefaultValue() != null 
-        && !option.getSpecifiedDefaultValue().equals("")) {
-          optionNode.addChild(new DataNode(SPECIFIEDDEFAULTVALUE_SUB_NAME
-              + option.getSpecifiedDefaultValue(), null));
+        optionNode.addChild(new DataNode(REQUIRED_SUB_NAME + ((option.isRequired()) ? TRUE_TOKEN : FALSE_TOKEN), null));
+        if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
+          optionNode.addChild(new DataNode(SPECIFIEDDEFAULTVALUE_SUB_NAME + option.getSpecifiedDefaultValue(), null));
         }
-        if (option.getUnspecifiedDefaultValue() != null 
-        && !option.getUnspecifiedDefaultValue().equals("")) {
-          optionNode.addChild(new DataNode(UNSPECIFIEDDEFAULTVALUE_VALUE_SUB_NAME
-              + option.getUnspecifiedDefaultValue(), null));
+        if (option.getUnspecifiedDefaultValue() != null && !option.getUnspecifiedDefaultValue().equals("")) {
+          optionNode.addChild(new DataNode(UNSPECIFIEDDEFAULTVALUE_VALUE_SUB_NAME + option.getUnspecifiedDefaultValue(), null));
         }
         options.addChild(optionNode);
       }
@@ -332,57 +300,51 @@ public class HelpUtils {
     }
     return new NewHelp(root);
   }
-  
+
   private static Option getOption(CommandTarget commandTarget, String opt) {
-    for(Option option : commandTarget.getOptionParser().getOptions()){
-      if(option.getLongOption().equals(opt))
+    for (Option option : commandTarget.getOptionParser().getOptions()) {
+      if (option.getLongOption().equals(opt))
         return option;
     }
     return null;
   }
 
-  private static void appendOptions(StringBuffer buffer,
-      CommandTarget commandTarget) {
+  private static void appendOptions(StringBuffer buffer, CommandTarget commandTarget) {
     List<Option> optionalOptions = new ArrayList<Option>();
     for (Option option : commandTarget.getOptionParser().getOptions()) {
       if (option.isRequired()) {
-        appendRequiredOption(buffer,option);
+        appendRequiredOption(buffer, option);
       } else {
         optionalOptions.add(option);
       }
     }
     for (Option option : optionalOptions) {
       appendOption(buffer, option);
-    }    
-  }
-  
-  private static void appendRequiredOption(StringBuffer buffer, Option option){
-    buffer.append(" " + SyntaxConstants.LONG_OPTION_SPECIFIER
-        + option.getLongOption());
-    String temp = buildOptionHelpText(option);
-    if (option.getSpecifiedDefaultValue() != null
-        && !option.getSpecifiedDefaultValue().equals("")) {
-      buffer.append("(").append(temp).append(")?");
-    } else {
-      buffer.append(temp);
     }
-  }
-  
-  private static void appendOption(StringBuffer buffer, Option option){
-    buffer.append(" " + "[" + SyntaxConstants.LONG_OPTION_SPECIFIER
-        + option.getLongOption());
-    String temp = buildOptionHelpText(option);
-    if (option.getSpecifiedDefaultValue() != null
-        && !option.getSpecifiedDefaultValue().equals("")) {
-      buffer.append("(").append(temp).append(")?");
-    } else {
-      buffer.append(temp);
-    }
-    buffer.append("]");  
   }
 
-  private static void appendArguments(StringBuffer buffer,
-      CommandTarget commandTarget) {
+  private static void appendRequiredOption(StringBuffer buffer, Option option) {
+    buffer.append(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption());
+    String temp = buildOptionHelpText(option);
+    if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
+      buffer.append("(").append(temp).append(")?");
+    } else {
+      buffer.append(temp);
+    }
+  }
+
+  private static void appendOption(StringBuffer buffer, Option option) {
+    buffer.append(" " + "[" + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption());
+    String temp = buildOptionHelpText(option);
+    if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
+      buffer.append("(").append(temp).append(")?");
+    } else {
+      buffer.append(temp);
+    }
+    buffer.append("]");
+  }
+
+  private static void appendArguments(StringBuffer buffer, CommandTarget commandTarget) {
     // Create a list which will store optional arguments
     List<Argument> optionalArguments = new ArrayList<Argument>();
     for (Argument argument : commandTarget.getOptionParser().getArguments()) {
@@ -398,13 +360,11 @@ public class HelpUtils {
   }
 
   public static String buildOptionHelpText(Option option) {
-      String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_FIELD;
-      if( (option.getValueSeparator() != null &&
-    	 !CliMetaData.ANNOTATION_NULL_VALUE.equals(option.getValueSeparator()) &&
-        !option.getValueSeparator().equals("")) || isCollectionOrArrayType(option.getDataType())) {
-    	  temp += "(" + option.getValueSeparator() + VALUE_FIELD + ")*";
-      }
-      return temp;
+    String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_FIELD;
+    if ((option.getValueSeparator() != null && !CliMetaData.ANNOTATION_NULL_VALUE.equals(option.getValueSeparator()) && !option.getValueSeparator().equals("")) || isCollectionOrArrayType(option.getDataType())) {
+      temp += "(" + option.getValueSeparator() + VALUE_FIELD + ")*";
+    }
+    return temp;
   }
 
   private static boolean isCollectionOrArrayType(Class<?> typeToCheck) {

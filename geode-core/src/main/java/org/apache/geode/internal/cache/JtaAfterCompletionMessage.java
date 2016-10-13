@@ -43,9 +43,9 @@ import org.apache.geode.internal.logging.LogService;
 public class JtaAfterCompletionMessage extends TXMessage {
 
   private static final Logger logger = LogService.getLogger();
-  
+
   private int status;
-  
+
   private int processorType;
 
   public JtaAfterCompletionMessage() {
@@ -56,18 +56,16 @@ public class JtaAfterCompletionMessage extends TXMessage {
     return this.processorType;
   }
 
-  public JtaAfterCompletionMessage(int status, int txUniqId, InternalDistributedMember onBehalfOfClientMember,ReplyProcessor21 processor) {
-    super(txUniqId,onBehalfOfClientMember, processor);
+  public JtaAfterCompletionMessage(int status, int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
+    super(txUniqId, onBehalfOfClientMember, processor);
     this.status = status;
   }
 
-  public static RemoteCommitResponse send(Cache cache, int txId,InternalDistributedMember onBehalfOfClientMember,
-      int status, DistributedMember recipient) {
-    final InternalDistributedSystem system = 
-      (InternalDistributedSystem)cache.getDistributedSystem();
+  public static RemoteCommitResponse send(Cache cache, int txId, InternalDistributedMember onBehalfOfClientMember, int status, DistributedMember recipient) {
+    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
     final Set recipients = Collections.singleton(recipient);
     RemoteCommitResponse response = new RemoteCommitResponse(system, recipients);
-    JtaAfterCompletionMessage msg = new JtaAfterCompletionMessage(status, txId,onBehalfOfClientMember, response);
+    JtaAfterCompletionMessage msg = new JtaAfterCompletionMessage(status, txId, onBehalfOfClientMember, response);
     msg.setRecipients(recipients);
     // bug #43087 - hang sending JTA synchronizations from delegate server
     if (system.threadOwnsResources()) {
@@ -78,12 +76,12 @@ public class JtaAfterCompletionMessage extends TXMessage {
     system.getDistributionManager().putOutgoing(msg);
     return response;
   }
-  
+
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXMessage#operateOnTx(org.apache.geode.internal.cache.TXId)
    */
   @Override
-  protected boolean operateOnTx(TXId txId,DistributionManager dm) throws RemoteOperationException {
+  protected boolean operateOnTx(TXId txId, DistributionManager dm) throws RemoteOperationException {
     TXManagerImpl txMgr = GemFireCacheImpl.getInstance().getTXMgr();
     if (logger.isDebugEnabled()) {
       logger.debug("JTA: Calling afterCompletion for :{}", txId);
@@ -123,5 +121,5 @@ public class JtaAfterCompletionMessage extends TXMessage {
     this.status = in.readInt();
     this.processorType = in.readInt();
   }
-  
+
 }

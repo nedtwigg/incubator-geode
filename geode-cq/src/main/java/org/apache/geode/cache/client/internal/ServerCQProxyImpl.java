@@ -34,6 +34,7 @@ public class ServerCQProxyImpl extends ServerProxy {
   public ServerCQProxyImpl(InternalPool pool) {
     super(pool);
   }
+
   /**
    * Creates a server CQ proxy given using the same pool as that of
    * the given server proxy.
@@ -47,15 +48,12 @@ public class ServerCQProxyImpl extends ServerProxy {
    * Create a continuous query on the given pool
    * @param cq the CQ to create on the server
    */
-  public Object create(ClientCQ cq)
-  {
+  public Object create(ClientCQ cq) {
     pool.getRITracker().addCq(cq, cq.isDurable());
-    byte regionDataPolicyOrdinal = cq.getCqBaseRegion()==null ? (byte) 0 : cq.getCqBaseRegion()
-        .getAttributes().getDataPolicy().ordinal;
-    return CreateCQOp.execute(this.pool, cq.getName(), cq.getQueryString(),
-        CqStateImpl.RUNNING, cq.isDurable(), regionDataPolicyOrdinal);
+    byte regionDataPolicyOrdinal = cq.getCqBaseRegion() == null ? (byte) 0 : cq.getCqBaseRegion().getAttributes().getDataPolicy().ordinal;
+    return CreateCQOp.execute(this.pool, cq.getName(), cq.getQueryString(), CqStateImpl.RUNNING, cq.isDurable(), regionDataPolicyOrdinal);
   }
-  
+
   /**
    * Create a continuous query on the given server
    * @param conn the connection to use
@@ -65,25 +63,19 @@ public class ServerCQProxyImpl extends ServerProxy {
    * @param isDurable true if CQ is durable
    * @param regionDataPolicy the data policy ordinal of the region
    */
-  public Object createOn(String cqName, Connection conn, String queryStr,
-      int cqState, boolean isDurable, byte regionDataPolicy)
-  {
-    
-    return CreateCQOp.executeOn(this.pool, conn, cqName, queryStr, cqState,
-        isDurable, regionDataPolicy);
+  public Object createOn(String cqName, Connection conn, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+
+    return CreateCQOp.executeOn(this.pool, conn, cqName, queryStr, cqState, isDurable, regionDataPolicy);
   }
-  
+
   /**
    * Create a continuous query on the given server and return the initial query results.
    * @param cq the CQ to create on the server
    */
-  public SelectResults createWithIR(ClientCQ cq)
-  {
+  public SelectResults createWithIR(ClientCQ cq) {
     pool.getRITracker().addCq(cq, cq.isDurable());
-    byte regionDataPolicyOrdinal = cq.getCqBaseRegion()==null ? (byte) 0 : cq.getCqBaseRegion()
-        .getAttributes().getDataPolicy().ordinal;
-    return CreateCQWithIROp.execute(this.pool, cq.getName(), cq
-        .getQueryString(), CqStateImpl.RUNNING, cq.isDurable(),regionDataPolicyOrdinal);
+    byte regionDataPolicyOrdinal = cq.getCqBaseRegion() == null ? (byte) 0 : cq.getCqBaseRegion().getAttributes().getDataPolicy().ordinal;
+    return CreateCQWithIROp.execute(this.pool, cq.getName(), cq.getQueryString(), CqStateImpl.RUNNING, cq.isDurable(), regionDataPolicyOrdinal);
   }
 
   /**
@@ -103,8 +95,8 @@ public class ServerCQProxyImpl extends ServerProxy {
     pool.getRITracker().removeCq(cq, cq.isDurable());
     CloseCQOp.execute(this.pool, cq.getName());
   }
-  
+
   public List<String> getAllDurableCqsFromServer() {
-    return GetDurableCQsOp.execute((ExecutablePool)pool);
+    return GetDurableCQsOp.execute((ExecutablePool) pool);
   }
 }

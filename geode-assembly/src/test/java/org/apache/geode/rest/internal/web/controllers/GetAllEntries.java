@@ -38,7 +38,7 @@ public class GetAllEntries implements Function {
     myMap.put("k13", "v3");
     myMap.put("k14", "v4");
     myMap.put("k15", "v5");
-     
+
     //return map as a function result
     context.getResultSender().lastResult(myMap);
   }
@@ -64,4 +64,3 @@ public class GetAllEntries implements Function {
   }
 
 }
-

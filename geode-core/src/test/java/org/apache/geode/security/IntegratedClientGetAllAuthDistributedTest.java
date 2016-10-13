@@ -53,5 +53,3 @@ public class IntegratedClientGetAllAuthDistributedTest extends AbstractSecureSer
     });
   }
 }
-
-

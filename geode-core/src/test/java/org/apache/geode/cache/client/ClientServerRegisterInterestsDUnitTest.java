@@ -78,7 +78,8 @@ public class ClientServerRegisterInterestsDUnitTest extends JUnit4DistributedTes
     serverPort.set(0);
     entryEvents.clear();
     gemfireServerVm.invoke(new SerializableRunnable() {
-      @Override public void run() {
+      @Override
+      public void run() {
         CacheFactory.getAnyInstance().close();
       }
     });
@@ -92,18 +93,15 @@ public class ClientServerRegisterInterestsDUnitTest extends JUnit4DistributedTes
     serverPort.set(AvailablePortHelper.getRandomAvailableTCPPort());
 
     gemfireServerVm.invoke(new SerializableRunnable() {
-      @Override public void run() {
+      @Override
+      public void run() {
         try {
-          Cache cache = new CacheFactory()
-            .set("name", "ClientServerRegisterInterestsTestGemFireServer")
-              .set(MCAST_PORT, "0")
-              .set(LOG_FILE, "clientServerRegisterInterestsTest.log")
-              .set(LOG_LEVEL, "config")
-            //.set("jmx-manager", "true")
-            //.set("jmx-manager-http-port", "0")
-            //.set("jmx-manager-port", "1199")
-            //.set("jmx-manager-start", "true")
-            .create();
+          Cache cache = new CacheFactory().set("name", "ClientServerRegisterInterestsTestGemFireServer").set(MCAST_PORT, "0").set(LOG_FILE, "clientServerRegisterInterestsTest.log").set(LOG_LEVEL, "config")
+              //.set("jmx-manager", "true")
+              //.set("jmx-manager-http-port", "0")
+              //.set("jmx-manager-port", "1199")
+              //.set("jmx-manager-start", "true")
+              .create();
 
           RegionFactory<String, String> regionFactory = cache.createRegionFactory();
 
@@ -136,23 +134,17 @@ public class ClientServerRegisterInterestsDUnitTest extends JUnit4DistributedTes
           cacheServer.start();
 
           assertTrue("Cache Server is not running!", cacheServer.isRunning());
-        }
-        catch (UnknownHostException ignore) {
+        } catch (UnknownHostException ignore) {
           throw new RuntimeException(ignore);
-        }
-        catch (IOException e) {
-          throw new RuntimeException(String.format(
-            "Failed to start the GemFire Cache Server listening on port (%1$d) due to IO error!",
-              serverPort.get()), e);
+        } catch (IOException e) {
+          throw new RuntimeException(String.format("Failed to start the GemFire Cache Server listening on port (%1$d) due to IO error!", serverPort.get()), e);
         }
       }
     });
   }
 
   private ClientCache setupGemFireClientCache() {
-    ClientCache clientCache = new ClientCacheFactory()
-        .set(DURABLE_CLIENT_ID, "TestDurableClientId")
-      .create();
+    ClientCache clientCache = new ClientCacheFactory().set(DURABLE_CLIENT_ID, "TestDurableClientId").create();
 
     PoolFactory poolFactory = PoolManager.createFactory();
 
@@ -187,7 +179,8 @@ public class ClientServerRegisterInterestsDUnitTest extends JUnit4DistributedTes
   @SuppressWarnings("unchecked")
   protected <K, V> V put(final String regionName, final K key, final V value) {
     return (V) gemfireServerVm.invoke(new SerializableCallable() {
-      @Override public Object call() throws Exception {
+      @Override
+      public Object call() throws Exception {
         Cache cache = CacheFactory.getAnyInstance();
         cache.getRegion(regionName).put(key, value);
         return cache.getRegion(regionName).get(key);
@@ -202,8 +195,7 @@ public class ClientServerRegisterInterestsDUnitTest extends JUnit4DistributedTes
       synchronized (this) {
         try {
           TimeUnit.MILLISECONDS.timedWait(this, Math.min(500, waitTimeMilliseconds));
-        }
-        catch (InterruptedException ignore) {
+        } catch (InterruptedException ignore) {
         }
       }
     }
@@ -238,8 +230,7 @@ public class ClientServerRegisterInterestsDUnitTest extends JUnit4DistributedTes
       assertEquals(2, example.size());
       assertTrue(example.containsKey("2"));
       assertEquals("TWO", example.get("2"));
-    }
-    finally {
+    } finally {
       clientCache.close();
     }
   }
@@ -249,8 +240,7 @@ public class ClientServerRegisterInterestsDUnitTest extends JUnit4DistributedTes
     @Override
     public void afterCreate(final EntryEvent<String, String> event) {
       super.afterCreate(event);
-      System.out.printf("Created entry with key (%1$s) and value (%2$s) in Region (%3$s)!", event.getKey(),
-        event.getNewValue(), event.getRegion().getName());
+      System.out.printf("Created entry with key (%1$s) and value (%2$s) in Region (%3$s)!", event.getKey(), event.getNewValue(), event.getRegion().getName());
       entryEvents.push(event);
     }
   }

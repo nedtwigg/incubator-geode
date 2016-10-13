@@ -18,24 +18,25 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VersionedStatsDiskLRURegionEntryOffHeap extends
-    VersionedStatsDiskLRURegionEntry implements OffHeapRegionEntry {
+public abstract class VersionedStatsDiskLRURegionEntryOffHeap extends VersionedStatsDiskLRURegionEntry implements OffHeapRegionEntry {
   public VersionedStatsDiskLRURegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
+
   private static final VersionedStatsDiskLRURegionEntryOffHeapFactory factory = new VersionedStatsDiskLRURegionEntryOffHeapFactory();
-  
+
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
+
   private static class VersionedStatsDiskLRURegionEntryOffHeapFactory implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
         if (keyClass == Integer.class) {
-          return new VersionedStatsDiskLRURegionEntryOffHeapIntKey(context, (Integer)key, value);
+          return new VersionedStatsDiskLRURegionEntryOffHeapIntKey(context, (Integer) key, value);
         } else if (keyClass == Long.class) {
-          return new VersionedStatsDiskLRURegionEntryOffHeapLongKey(context, (Long)key, value);
+          return new VersionedStatsDiskLRURegionEntryOffHeapLongKey(context, (Long) key, value);
         } else if (keyClass == String.class) {
           final String skey = (String) key;
           final Boolean info = InlineKeyHelper.canStringBeInlineEncoded(skey);
@@ -48,7 +49,7 @@ public abstract class VersionedStatsDiskLRURegionEntryOffHeap extends
             }
           }
         } else if (keyClass == UUID.class) {
-          return new VersionedStatsDiskLRURegionEntryOffHeapUUIDKey(context, (UUID)key, value);
+          return new VersionedStatsDiskLRURegionEntryOffHeapUUIDKey(context, (UUID) key, value);
         }
       }
       return new VersionedStatsDiskLRURegionEntryOffHeapObjectKey(context, key, value);
@@ -59,10 +60,12 @@ public abstract class VersionedStatsDiskLRURegionEntryOffHeap extends
       // This estimate will not take into account the memory saved by inlining the keys.
       return VersionedStatsDiskLRURegionEntryOffHeapObjectKey.class;
     }
+
     public RegionEntryFactory makeVersioned() {
       return this;
     }
-	 @Override
+
+    @Override
     public RegionEntryFactory makeOnHeap() {
       return VersionedStatsDiskLRURegionEntryHeap.getEntryFactory();
     }

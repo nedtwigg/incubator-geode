@@ -28,12 +28,12 @@ public interface IndexStatistics {
   /** Return the total number of times this index has been updated
    */
   public long getNumUpdates();
-  
+
   /** Returns the total amount of time (in nanoseconds) spent updating
    *  this index.
    */
   public long getTotalUpdateTime();
-  
+
   /**
    * Returns the total number of times this index has been accessed by
    * a query.
@@ -50,13 +50,11 @@ public interface IndexStatistics {
    */
   public long getNumberOfValues();
 
-
   /** Return the number of values for the specified key
    *  in this index.
    */
   public long getNumberOfValues(Object key);
 
-  
   /**
    * Return number of read locks taken on this index
    */
@@ -67,7 +65,7 @@ public interface IndexStatistics {
    * at the highest level
    */
   public long getNumberOfMapIndexKeys();
-  
+
   /**
    * Returns the number of bucket indexes created
    * in the Partitioned Region

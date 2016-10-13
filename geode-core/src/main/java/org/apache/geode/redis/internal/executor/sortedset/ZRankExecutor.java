@@ -78,7 +78,7 @@ public class ZRankExecutor extends SortedSetExecutor implements Extendable {
     else
       query = getQuery(key, SortedSetQuery.ZRANK, context);
 
-    Object[] params = {valueWrapper.score, valueWrapper.score, member};
+    Object[] params = { valueWrapper.score, valueWrapper.score, member };
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 

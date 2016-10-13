@@ -99,8 +99,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
   }
 
   @Test
-  public void testConvertibleGroupByQuery_refer_column_alias_Bug520141()
-      throws Exception {
+  public void testConvertibleGroupByQuery_refer_column_alias_Bug520141() throws Exception {
     Region region = this.createRegion("portfolio", Portfolio.class);
     for (int i = 1; i < 200; ++i) {
       Portfolio pf = new Portfolio(i);
@@ -211,11 +210,9 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       assertEquals("String", fieldTypes[0].getSimpleClassName());
       assertEquals("Integer", fieldTypes[1].getSimpleClassName());
       if (struct.get("status").equals("active")) {
-        assertEquals(distinctShortIDActive.size(),
-            ((Integer) struct.get("countt")).intValue());
+        assertEquals(distinctShortIDActive.size(), ((Integer) struct.get("countt")).intValue());
       } else if (struct.get("status").equals("inactive")) {
-        assertEquals(distinctShortIDInactive.size(),
-            ((Integer) struct.get("countt")).intValue());
+        assertEquals(distinctShortIDInactive.size(), ((Integer) struct.get("countt")).intValue());
       } else {
         fail("unexpected value of status");
       }
@@ -267,11 +264,9 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       assertEquals("String", fieldTypes[0].getSimpleClassName());
       assertEquals("Integer", fieldTypes[1].getSimpleClassName());
       if (struct.get("status").equals("active")) {
-        assertEquals(distinctShortIDActive.size(),
-            ((Integer) struct.get("countt")).intValue());
+        assertEquals(distinctShortIDActive.size(), ((Integer) struct.get("countt")).intValue());
       } else if (struct.get("status").equals("inactive")) {
-        assertEquals(distinctShortIDInactive.size(),
-            ((Integer) struct.get("countt")).intValue());
+        assertEquals(distinctShortIDInactive.size(), ((Integer) struct.get("countt")).intValue());
       } else {
         fail("unexpected value of status");
       }
@@ -409,8 +404,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       pf.shortID = (short) ((short) i / 5);
       region.put("" + i, pf);
     }
-    String queryStr = "select   sum(p.ID) as summ , Max(p.ID) as maxx, min(p.ID) as minn,"
-        + " avg(p.ID) as average from /portfolio p where p.ID > 0 ";
+    String queryStr = "select   sum(p.ID) as summ , Max(p.ID) as maxx, min(p.ID) as minn," + " avg(p.ID) as average from /portfolio p where p.ID > 0 ";
     QueryService qs = CacheUtils.getQueryService();
     Query query = qs.newQuery(queryStr);
     CompiledSelect cs = ((DefaultQuery) query).getSelect();
@@ -452,8 +446,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       pf.shortID = (short) ((short) i / 5);
       region.put("" + i, pf);
     }
-    String queryStr = "select   p.status as status,  Avg(p.ID) as average from "
-        + "/portfolio p where p.ID > 0 group by status";
+    String queryStr = "select   p.status as status,  Avg(p.ID) as average from " + "/portfolio p where p.ID > 0 group by status";
     QueryService qs = CacheUtils.getQueryService();
     Query query = qs.newQuery(queryStr);
     CompiledSelect cs = ((DefaultQuery) query).getSelect();
@@ -478,8 +471,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
     }
 
     Number avgActive = AbstractAggregator.downCast(sumIDActive / numActive);
-    Number avgInactive = AbstractAggregator.downCast(sumIDInactive
-        / numInactive);
+    Number avgInactive = AbstractAggregator.downCast(sumIDInactive / numInactive);
 
     while (iter.hasNext()) {
       Struct struct = (Struct) iter.next();
@@ -512,8 +504,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       pf.shortID = (short) ((short) i / 5);
       region.put("" + i, pf);
     }
-    String queryStr = "select   p.status as status,  avg(distinct p.shortID) as average from "
-        + "/portfolio p where p.ID > 0 group by status";
+    String queryStr = "select   p.status as status,  avg(distinct p.shortID) as average from " + "/portfolio p where p.ID > 0 group by status";
     QueryService qs = CacheUtils.getQueryService();
     Query query = qs.newQuery(queryStr);
     CompiledSelect cs = ((DefaultQuery) query).getSelect();
@@ -544,10 +535,8 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       sumInactive += shortt.doubleValue();
     }
 
-    Number avgActive = AbstractAggregator.downCast(sumActive
-        / sumIDActiveSet.size());
-    Number avgInactive = AbstractAggregator.downCast(sumInactive
-        / sumIDInactiveSet.size());
+    Number avgActive = AbstractAggregator.downCast(sumActive / sumIDActiveSet.size());
+    Number avgInactive = AbstractAggregator.downCast(sumInactive / sumIDInactiveSet.size());
 
     while (iter.hasNext()) {
       Struct struct = (Struct) iter.next();
@@ -577,22 +566,14 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
     Region region = this.createRegion("portfolio", Portfolio.class);
     for (int i = 1; i < 600; ++i) {
       Portfolio pf = new Portfolio(i);
-      if(pf.status.equals("active")) {
+      if (pf.status.equals("active")) {
         pf.shortID = (short) ((short) i % 5);
-      }else {
+      } else {
         pf.shortID = (short) ((short) i % 11);
       }
       region.put("" + i, pf);
     }
-    String[] queries = { 
-        "select   p.status as status,  avg(distinct p.shortID) as average from /portfolio p where p.ID > 0 group by status order by average",
-        "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by average desc",
-        "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by  avg(p.ID)",
-        "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by  avg(p.ID) desc, shid asc",
-        "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by  avg(p.ID) desc, shid desc",
-        "select   p.status as status,  p.shortID as shid  from /portfolio p where p.ID > 0 group by status, shid order by  shid desc",
-        "select   p.shortID as shid,  count(*) as countt  from /portfolio p where p.ID > 0 group by p.shortID order by  count(*) desc"
-    };
+    String[] queries = { "select   p.status as status,  avg(distinct p.shortID) as average from /portfolio p where p.ID > 0 group by status order by average", "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by average desc", "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by  avg(p.ID)", "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by  avg(p.ID) desc, shid asc", "select   p.shortID as shid,  avg( p.ID) as average from /portfolio p where p.ID > 0 group by shid order by  avg(p.ID) desc, shid desc", "select   p.status as status,  p.shortID as shid  from /portfolio p where p.ID > 0 group by status, shid order by  shid desc", "select   p.shortID as shid,  count(*) as countt  from /portfolio p where p.ID > 0 group by p.shortID order by  count(*) desc" };
     Object[][] r = new Object[queries.length][2];
     QueryService qs = CacheUtils.getQueryService();
     for (int i = 0; i < queries.length; ++i) {
@@ -603,7 +584,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
     }
 
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
-   
+
     // Compare each of the query results with queries fired without order by ,
     // but without order by
     ssOrrs.compareExternallySortedQueriesWithOrderBy(queries, r);
@@ -617,8 +598,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       pf.shortID = (short) ((short) i / 5);
       region.put("" + i, pf);
     }
-    String queryStr = "select   p.status as status,  avg(distinct element(select iter.shortID from /portfolio iter where iter.ID = p.ID) ) as average from "
-        + "/portfolio p where p.ID > 0 group by status";
+    String queryStr = "select   p.status as status,  avg(distinct element(select iter.shortID from /portfolio iter where iter.ID = p.ID) ) as average from " + "/portfolio p where p.ID > 0 group by status";
     QueryService qs = CacheUtils.getQueryService();
     Query query = qs.newQuery(queryStr);
     CompiledSelect cs = ((DefaultQuery) query).getSelect();
@@ -649,10 +629,8 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       sumInactive += shortt.doubleValue();
     }
 
-    Number avgActive = AbstractAggregator.downCast(sumActive
-        / sumIDActiveSet.size());
-    Number avgInactive = AbstractAggregator.downCast(sumInactive
-        / sumIDInactiveSet.size());
+    Number avgActive = AbstractAggregator.downCast(sumActive / sumIDActiveSet.size());
+    Number avgInactive = AbstractAggregator.downCast(sumInactive / sumIDInactiveSet.size());
 
     while (iter.hasNext()) {
       Struct struct = (Struct) iter.next();
@@ -756,8 +734,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       }
     }
 
-    String queryStr = "select  p.status as status, p.shortID as shortID, sum(p.ID) as summ from /portfolio p"
-        + " where p.ID > 0 group by status, shortID ";
+    String queryStr = "select  p.status as status, p.shortID as shortID, sum(p.ID) as summ from /portfolio p" + " where p.ID > 0 group by status, shortID ";
 
     QueryService qs = CacheUtils.getQueryService();
     Query query = qs.newQuery(queryStr);
@@ -848,7 +825,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
     assertEquals("String", fieldTypes[0].getSimpleClassName());
     assertEquals("Number", fieldTypes[1].getSimpleClassName());
   }
- 
+
   @Test
   public void testCompactRangeIndex() throws Exception {
 
@@ -859,8 +836,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       region.put("" + i, pf);
     }
     QueryService qs = CacheUtils.getQueryService();
-    String[] queries = {
-        "select pos.secId from  /portfolio  p, p.positions.values pos where NOT (pos.secId IN SET('SUN', 'ORCL')) group by pos.secId ",// 6
+    String[] queries = { "select pos.secId from  /portfolio  p, p.positions.values pos where NOT (pos.secId IN SET('SUN', 'ORCL')) group by pos.secId ", // 6
         "select pos.secId , count(pos.ID) from /portfolio p, p.positions.values pos where  pos.secId > 'APPL' group by pos.secId ",// 7
 
     };
@@ -872,7 +848,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
-        SelectResults sr = (SelectResults)q.execute();
+        SelectResults sr = (SelectResults) q.execute();
         r[i][0] = sr;
         assertTrue(sr.size() > 0);
       } catch (Exception e) {
@@ -896,8 +872,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
         if (limitQuery) {
           limit = Integer.parseInt(queries[i].substring(indexLimit + 5).trim());
         }
-        assertTrue("Result size is " + rcw.size() + " and limit is " + limit,
-            !limitQuery || rcw.size() <= limit);
+        assertTrue("Result size is " + rcw.size() + " and limit is " + limit, !limitQuery || rcw.size() <= limit);
         String colType = rcw.getCollectionType().getSimpleClassName();
       } catch (Exception e) {
         e.printStackTrace();
@@ -906,10 +881,9 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
     }
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
 
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true,
-        queries);
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true, queries);
   }
-  
+
   public void testDistinctCountWithoutGroupBy() throws Exception {
     Region region = this.createRegion("portfolio", Portfolio.class);
     for (int i = 1; i < 200; ++i) {
@@ -918,8 +892,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       region.put("" + i, pf);
     }
     QueryService qs = CacheUtils.getQueryService();
-    String[] queries = {
-        "select  count(distinct pos.secId) from /portfolio p, p.positions.values pos where  pos.secId > 'APPL' ",//10
+    String[] queries = { "select  count(distinct pos.secId) from /portfolio p, p.positions.values pos where  pos.secId > 'APPL' ",//10
 
     };
     Object r[][] = new Object[queries.length][2];
@@ -930,7 +903,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
-        SelectResults sr = (SelectResults)q.execute();
+        SelectResults sr = (SelectResults) q.execute();
         r[i][0] = sr;
         assertTrue(sr.size() > 0);
       } catch (Exception e) {
@@ -954,8 +927,7 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
         if (limitQuery) {
           limit = Integer.parseInt(queries[i].substring(indexLimit + 5).trim());
         }
-        assertTrue("Result size is " + rcw.size() + " and limit is " + limit,
-            !limitQuery || rcw.size() <= limit);
+        assertTrue("Result size is " + rcw.size() + " and limit is " + limit, !limitQuery || rcw.size() <= limit);
         String colType = rcw.getCollectionType().getSimpleClassName();
       } catch (Exception e) {
         e.printStackTrace();
@@ -964,10 +936,9 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
     }
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
 
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true,
-        queries);
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, true, queries);
   }
-  
+
   public void testLimitWithGroupBy() throws Exception {
     Region region = this.createRegion("portfolio", Portfolio.class);
     for (int i = 1; i < 200; ++i) {
@@ -976,24 +947,24 @@ public abstract class GroupByTestImpl implements GroupByTestInterface {
       region.put("" + i, pf);
     }
     QueryService qs = CacheUtils.getQueryService();
-    String queryStr= "select pos.secId as a, count( *) as x from /portfolio p, p.positions.values pos group by a  limit 5 ";
+    String queryStr = "select pos.secId as a, count( *) as x from /portfolio p, p.positions.values pos group by a  limit 5 ";
     Query q = qs.newQuery(queryStr);
-      
-    SelectResults sr = (SelectResults)q.execute();
-    assertEquals(5, sr.size()); 
-    
-    queryStr= "select pos.secId as a, count( *) as x from /portfolio p, p.positions.values pos group by a  limit 0 ";
+
+    SelectResults sr = (SelectResults) q.execute();
+    assertEquals(5, sr.size());
+
+    queryStr = "select pos.secId as a, count( *) as x from /portfolio p, p.positions.values pos group by a  limit 0 ";
     q = qs.newQuery(queryStr);
-      
-    sr = (SelectResults)q.execute();
-    assertEquals(0, sr.size()); 
-    
-    queryStr= "select pos.secId as a, count( *) as x from /portfolio p, p.positions.values pos group by a  order by count(*) limit 5 ";
-    q = qs.newQuery(queryStr);      
-    sr = (SelectResults)q.execute();
+
+    sr = (SelectResults) q.execute();
+    assertEquals(0, sr.size());
+
+    queryStr = "select pos.secId as a, count( *) as x from /portfolio p, p.positions.values pos group by a  order by count(*) limit 5 ";
+    q = qs.newQuery(queryStr);
+    sr = (SelectResults) q.execute();
     assertEquals(5, sr.size());
     StructSetOrResultsSet ss = new StructSetOrResultsSet();
-    ss.compareExternallySortedQueriesWithOrderBy(new String[]{queryStr}, new Object[][]{ {sr, null}});
+    ss.compareExternallySortedQueriesWithOrderBy(new String[] { queryStr }, new Object[][] { { sr, null } });
   }
 
   @Before

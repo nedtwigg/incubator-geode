@@ -33,12 +33,11 @@ import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
  *
  * @since GemFire 4.0
  */
-public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
-  implements InternalManagedEntity {
+public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implements InternalManagedEntity {
 
   /** Controller for starting and stopping local or remote managers */
   protected ManagedEntityController controller;
-  
+
   /** The state of this managed entity (see bug 32455) */
   private int state = UNKNOWN;
 
@@ -52,9 +51,7 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
    * represents an existing member of an
    * <code>AdminDistributedSystem</code>.
    */
-  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system, 
-                                    GemFireVM vm) 
-    throws AdminException {
+  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system, GemFireVM vm) throws AdminException {
 
     super(system, vm);
     this.controller = system.getEntityController();
@@ -65,9 +62,7 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
    * represents a non-existing member with the given
    * <code>ManagedEntityConfig</code> that has not yet been started.
    */
-  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system,
-                                    ManagedEntityConfig config) 
-    throws AdminException {
+  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system, ManagedEntityConfig config) throws AdminException {
 
     super(system);
     this.internalId = null;
@@ -107,14 +102,14 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
       int oldState = this.state;
       this.state = state;
       return oldState;
-      
+
     } else {
       synchronized (this.stateChange) {
         int oldState = this.state;
         this.state = state;
 
         this.stateChange.notifyAll();
-        
+
         return oldState;
       }
     }
@@ -175,11 +170,11 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
   /**
    * Waits until this system member's "state" is {@link #RUNNING}.
    */
-  public boolean waitToStart(long timeout) 
-    throws InterruptedException {
+  public boolean waitToStart(long timeout) throws InterruptedException {
 
-    if (Thread.interrupted()) throw new InterruptedException();
-    
+    if (Thread.interrupted())
+      throw new InterruptedException();
+
     long start = System.currentTimeMillis();
     while (System.currentTimeMillis() - start < timeout) {
       synchronized (this.stateChange) {
@@ -200,10 +195,10 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
   /**
    * Waits until this system member's "state" is {@link #STOPPED}.
    */
-  public boolean waitToStop(long timeout) 
-    throws InterruptedException {
+  public boolean waitToStop(long timeout) throws InterruptedException {
 
-    if (Thread.interrupted()) throw new InterruptedException();
+    if (Thread.interrupted())
+      throw new InterruptedException();
     long start = System.currentTimeMillis();
     while (System.currentTimeMillis() - start < timeout) {
       synchronized (this.stateChange) {
@@ -248,8 +243,7 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
 
           if (firstBracket > -1 && lastBracket > -1) {
             String host = locator.substring(0, firstBracket);
-            String port =
-              locator.substring(firstBracket + 1, lastBracket);
+            String port = locator.substring(firstBracket + 1, lastBracket);
             locator = host + ":" + port;
           }
 

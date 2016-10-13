@@ -242,7 +242,7 @@ public class PartitionedRegionHAFailureAndRecoveryDUnitTest extends PartitionedR
         LogWriterUtils.getLogWriter().info("Listener destroy: (" + ctcl.destroys.size() + "): " + ctcl.destroys);
 
         Iterator itrator = rootReg.keySet().iterator();
-        for (Iterator itr = itrator; itr.hasNext(); ) {
+        for (Iterator itr = itrator; itr.hasNext();) {
           String prName = (String) itr.next();
           ctcl.waitForUpdated(prName);
 
@@ -315,8 +315,7 @@ public class PartitionedRegionHAFailureAndRecoveryDUnitTest extends PartitionedR
    * @return Disconnected DistributedMember
    */
   private DistributedMember disconnectMethod() {
-    DistributedMember dsMember = ((InternalDistributedSystem) getCache().getDistributedSystem()).getDistributionManager()
-                                                                                                .getId();
+    DistributedMember dsMember = ((InternalDistributedSystem) getCache().getDistributedSystem()).getDistributionManager().getId();
     getCache().getDistributedSystem().disconnect();
     LogWriterUtils.getLogWriter().info("disconnectMethod() completed ..");
     return dsMember;
@@ -325,12 +324,7 @@ public class PartitionedRegionHAFailureAndRecoveryDUnitTest extends PartitionedR
   /**
    * This function creates multiple partition regions on specified nodes.
    */
-  private void createPartitionRegionAsynch(final String regionPrefix,
-                                           final int startIndexForRegion,
-                                           final int endIndexForRegion,
-                                           final int localMaxMemory,
-                                           final int redundancy,
-                                           final int recoveryDelay) throws Exception {
+  private void createPartitionRegionAsynch(final String regionPrefix, final int startIndexForRegion, final int endIndexForRegion, final int localMaxMemory, final int redundancy, final int recoveryDelay) throws Exception {
     final AsyncInvocation[] async = new AsyncInvocation[vmArr.length];
     for (int count = 0; count < vmArr.length; count++) {
       VM vm = vmArr[count];
@@ -385,8 +379,7 @@ public class PartitionedRegionHAFailureAndRecoveryDUnitTest extends PartitionedR
         assertEquals(bucketOwners.size(), redundantCopies + 1);
         DistributedMember bucketOwner = (DistributedMember) bucketOwners.iterator().next();
         assertNotNull(bucketOwner);
-        LogWriterUtils.getLogWriter()
-                      .info("Selected distributed member " + bucketOwner + " to disconnect because it hosts bucketId " + bucketId);
+        LogWriterUtils.getLogWriter().info("Selected distributed member " + bucketOwner + " to disconnect because it hosts bucketId " + bucketId);
         return bucketOwner;
       }
     });
@@ -420,9 +413,9 @@ public class PartitionedRegionHAFailureAndRecoveryDUnitTest extends PartitionedR
               PartitionedRegionStats prs = pr.getPrStats();
               // Wait for recovery
               final long start = NanoTimer.getTime();
-              for (; ; ) {
+              for (;;) {
                 if (prs.getLowRedundancyBucketCount() == 0) {
-                  break;  // buckets have been recovered from this VM's point of view
+                  break; // buckets have been recovered from this VM's point of view
                 }
                 if (TimeUnit.NANOSECONDS.toSeconds(NanoTimer.getTime() - start) > MAX_SECONDS_TO_WAIT) {
                   fail("Test waited more than " + MAX_SECONDS_TO_WAIT + " seconds for redundancy recover");

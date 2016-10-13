@@ -51,8 +51,7 @@ public final class InterestType {
   /**
    * For registering interest in all keys matching a regular expression.
    */
-  public static final InterestType REGULAR_EXPRESSION = new InterestType(
-      "REGULAR_EXPRESSION", TP_REGEX);
+  public static final InterestType REGULAR_EXPRESSION = new InterestType("REGULAR_EXPRESSION", TP_REGEX);
 
   /**
    * For registering interest in all key/value pairs that satisfy a provided

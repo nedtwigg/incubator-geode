@@ -36,64 +36,66 @@ public class ConcurrentMapLocalJUnitTest { // TODO: reformat
 
   private Cache cache;
 
-    @Before
+  @Before
   public void setUp() throws Exception {
-      this.cache = new CacheFactory().set(MCAST_PORT, "0").set(LOCATORS, "").create();
-    }
+    this.cache = new CacheFactory().set(MCAST_PORT, "0").set(LOCATORS, "").create();
+  }
 
-    @After
+  @After
   public void tearDown() throws Exception {
-      this.cache.close();
+    this.cache.close();
+  }
+
+  private void cmOpsUnsupported(Region r) {
+    Object key = "key";
+    Object value = "value";
+    try {
+      r.putIfAbsent(key, value);
+      fail("expected UnsupportedOperationException");
+    } catch (UnsupportedOperationException expected) {
     }
-    
-    private void cmOpsUnsupported(Region r) {
-      Object key = "key";
-      Object value = "value";
-      try {
-        r.putIfAbsent(key, value);
-        fail("expected UnsupportedOperationException");
-      } catch (UnsupportedOperationException expected) {
-      }
-      try {
-        r.remove(key, value);
-        fail("expected UnsupportedOperationException");
-      } catch (UnsupportedOperationException expected) {
-      }
-      try {
-        r.replace(key, value);
-        fail("expected UnsupportedOperationException");
-      } catch (UnsupportedOperationException expected) {
-      }
-      try {
-        r.replace(key, value, "newValue");
-        fail("expected UnsupportedOperationException");
-      } catch (UnsupportedOperationException expected) {
-      }
+    try {
+      r.remove(key, value);
+      fail("expected UnsupportedOperationException");
+    } catch (UnsupportedOperationException expected) {
     }
-    
-    @Test
+    try {
+      r.replace(key, value);
+      fail("expected UnsupportedOperationException");
+    } catch (UnsupportedOperationException expected) {
+    }
+    try {
+      r.replace(key, value, "newValue");
+      fail("expected UnsupportedOperationException");
+    } catch (UnsupportedOperationException expected) {
+    }
+  }
+
+  @Test
   public void testEmptyRegion() {
-      cmOpsUnsupported(this.cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("empty"));
-    }
-    @Test
+    cmOpsUnsupported(this.cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("empty"));
+  }
+
+  @Test
   public void testNormalRegion() {
-      cmOpsUnsupported(this.cache.createRegionFactory(RegionShortcut.REPLICATE).setDataPolicy(DataPolicy.NORMAL).create("normal"));
-    }
-    @Test
+    cmOpsUnsupported(this.cache.createRegionFactory(RegionShortcut.REPLICATE).setDataPolicy(DataPolicy.NORMAL).create("normal"));
+  }
+
+  @Test
   public void testLocalRegion() {
-      Region r = this.cache.createRegionFactory(RegionShortcut.LOCAL).create("local");
-      Object key = "key";
-      assertEquals(null, r.putIfAbsent(key, "value"));
-      assertEquals("value", r.putIfAbsent(key, "value1"));
-      assertEquals("value", r.get(key));
-      assertEquals("value", r.replace(key, "value2"));
-      assertEquals("value2", r.get(key));
-      assertEquals(true, r.replace(key, "value2", "value3"));
-      assertEquals(false, r.replace(key, "value2", "value3"));
-      assertEquals(false, r.remove(key, "value2"));
-      assertEquals(true, r.containsKey(key));
-      assertEquals(true, r.remove(key, "value3"));
-      assertEquals(false, r.containsKey(key));
-    }
+    Region r = this.cache.createRegionFactory(RegionShortcut.LOCAL).create("local");
+    Object key = "key";
+    assertEquals(null, r.putIfAbsent(key, "value"));
+    assertEquals("value", r.putIfAbsent(key, "value1"));
+    assertEquals("value", r.get(key));
+    assertEquals("value", r.replace(key, "value2"));
+    assertEquals("value2", r.get(key));
+    assertEquals(true, r.replace(key, "value2", "value3"));
+    assertEquals(false, r.replace(key, "value2", "value3"));
+    assertEquals(false, r.remove(key, "value2"));
+    assertEquals(true, r.containsKey(key));
+    assertEquals(true, r.remove(key, "value3"));
+    assertEquals(false, r.containsKey(key));
+  }
 
 }

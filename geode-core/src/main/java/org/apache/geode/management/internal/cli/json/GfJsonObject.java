@@ -40,7 +40,7 @@ public class GfJsonObject {
   public GfJsonObject() {
     this.jsonObject = new JSONObject();
   }
-  
+
   @SuppressWarnings("rawtypes")
   public GfJsonObject(Object bean, boolean checkCyclicDep) {
     if (checkCyclicDep) {
@@ -52,21 +52,21 @@ public class GfJsonObject {
     } else {
       this.jsonObject = new JSONObject(bean);
       // If we want to print out the values of the primitive arrays and report back
-//      Class klass = bean.getClass();
-//      if(klass.isArray() && klass.getComponentType().isPrimitive()){
-//        String str = "";
-//        int length = Array.getLength(bean);
-//        for (int i = 0; i < length; i++) {
-//          if(i==0)
-//            str += (Array.get(bean, i));
-//          else
-//            str +=(","+Array.get(bean, i));
-//        }
-//        try {
-//          this.jsonObject.put("Value", str);
-//        } catch (JSONException ignore) {
-//        }
-//      }
+      //      Class klass = bean.getClass();
+      //      if(klass.isArray() && klass.getComponentType().isPrimitive()){
+      //        String str = "";
+      //        int length = Array.getLength(bean);
+      //        for (int i = 0; i < length; i++) {
+      //          if(i==0)
+      //            str += (Array.get(bean, i));
+      //          else
+      //            str +=(","+Array.get(bean, i));
+      //        }
+      //        try {
+      //          this.jsonObject.put("Value", str);
+      //        } catch (JSONException ignore) {
+      //        }
+      //      }
     }
     if (checkCyclicDep) {
       JSONObject.cyclicDepChkEnabled.set(false);
@@ -119,8 +119,7 @@ public class GfJsonObject {
    * @throws GfJsonException
    *           If the key is null OR if the value is non-finite number
    */
-  public GfJsonObject accumulate(String key, Object value)
-      throws GfJsonException {
+  public GfJsonObject accumulate(String key, Object value) throws GfJsonException {
     try {
       if (jsonObject.has(key)) {
         jsonObject.append(key, value);
@@ -133,9 +132,8 @@ public class GfJsonObject {
     }
     return this;
   }
-  
-  public GfJsonObject accumulateAsJSONObject(String key, Object value)
-      throws GfJsonException {
+
+  public GfJsonObject accumulateAsJSONObject(String key, Object value) throws GfJsonException {
     JSONObject val = new JSONObject(value);
     try {
       if (jsonObject.has(key)) {
@@ -171,23 +169,23 @@ public class GfJsonObject {
   public Object get(String key) {
     return jsonObject.opt(key);
   }
-  
+
   public String getString(String key) {
     return jsonObject.optString(key);
   }
-  
+
   public int getInt(String key) {
     return jsonObject.optInt(key);
   }
-  
+
   public long getLong(String key) {
     return jsonObject.optLong(key);
   }
-  
+
   public double getDouble(String key) {
     return jsonObject.optDouble(key);
   }
-  
+
   public boolean getBoolean(String key) {
     return jsonObject.optBoolean(key);
   }
@@ -196,7 +194,7 @@ public class GfJsonObject {
     Object opt = jsonObject.opt(key);
     if (opt instanceof GfJsonObject) {
       return (GfJsonObject) opt;
-    } 
+    }
     return new GfJsonObject(opt);
   }
 
@@ -232,7 +230,7 @@ public class GfJsonObject {
     if (names != null) {
       gfJsonArray = new GfJsonArray(names);
     }
-    
+
     return gfJsonArray;
   }
 
@@ -252,7 +250,7 @@ public class GfJsonObject {
     }
     return this;
   }
-  
+
   public GfJsonObject putAsJSONObject(String key, Object value) throws GfJsonException {
     try {
       Object internalJsonObj = extractInternalForGfJsonOrReturnSame(value);
@@ -309,8 +307,7 @@ public class GfJsonObject {
    * @throws GfJsonException
    *           If the value is a non-finite number.
    */
-  public GfJsonObject put(String key, Collection<?> value)
-      throws GfJsonException {
+  public GfJsonObject put(String key, Collection<?> value) throws GfJsonException {
     try {
       jsonObject.putOpt(key, value);
     } catch (JSONException e) {
@@ -318,9 +315,8 @@ public class GfJsonObject {
     }
     return this;
   }
-  
-  public GfJsonObject putJSONArray(String key, GfJsonArray value)
-      throws GfJsonException {
+
+  public GfJsonObject putJSONArray(String key, GfJsonArray value) throws GfJsonException {
     try {
       jsonObject.putOpt(key, value.getInternalJsonArray());
     } catch (JSONException e) {
@@ -358,15 +354,15 @@ public class GfJsonObject {
   public int size() {
     return jsonObject.length();
   }
-  
+
   public String toString() {
     return jsonObject.toString();
   }
-  
-  public String getType(){
+
+  public String getType() {
     return jsonObject.optString("type-class");
   }
-  
+
   /**
    * 
    * @param indentFactor
@@ -381,17 +377,17 @@ public class GfJsonObject {
       throw new GfJsonException(e.getMessage());
     }
   }
-  
+
   private static Object extractInternalForGfJsonOrReturnSame(Object value) {
     Object returnedValue = value;
     if (value instanceof GfJsonObject) {
-      returnedValue = ((GfJsonObject)value).getInternalJsonObject();
+      returnedValue = ((GfJsonObject) value).getInternalJsonObject();
     } else if (value instanceof GfJsonArray) {
-      returnedValue = ((GfJsonArray)value).getInternalJsonArray();
+      returnedValue = ((GfJsonArray) value).getInternalJsonArray();
     } else if (value == null) {
       returnedValue = NULL;
     }
-    
+
     return returnedValue;
   }
 
@@ -400,9 +396,9 @@ public class GfJsonObject {
     errorMap.put("error", errorMessage);
     return new GfJsonObject(errorMap);
   }
-  
-  public static boolean isJSONKind(Object object){
+
+  public static boolean isJSONKind(Object object) {
     return object instanceof JSONObject;
   }
-  
+
 }

@@ -73,7 +73,7 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
   }
 
   @Test
-  public void testConnectToLocatorWithSSL() throws Exception{
+  public void testConnectToLocatorWithSSL() throws Exception {
     Properties securityProps = new Properties();
     securityProps.setProperty(SSL_ENABLED_COMPONENTS, SecurableCommunicationChannel.LOCATOR.getConstant());
     securityProps.setProperty(SSL_KEYSTORE, jks.getCanonicalPath());
@@ -87,7 +87,7 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
   }
 
   @Test
-  public void testConnectToLocatorWithLegacyClusterSSL() throws Exception{
+  public void testConnectToLocatorWithLegacyClusterSSL() throws Exception {
     Properties securityProps = new Properties();
     securityProps.setProperty(CLUSTER_SSL_ENABLED, "true");
     securityProps.setProperty(CLUSTER_SSL_KEYSTORE, jks.getCanonicalPath());
@@ -100,7 +100,7 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
   }
 
   @Test
-  public void testConnectToLocatorWithLegacyJMXSSL() throws Exception{
+  public void testConnectToLocatorWithLegacyJMXSSL() throws Exception {
     Properties securityProps = new Properties();
     securityProps.setProperty(JMX_MANAGER_SSL_ENABLED, "true");
     securityProps.setProperty(JMX_MANAGER_SSL_KEYSTORE, jks.getCanonicalPath());
@@ -112,18 +112,18 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
     setUpLocatorAndConnect(securityProps);
   }
 
-  public void setUpLocatorAndConnect(Properties securityProps) throws Exception{
+  public void setUpLocatorAndConnect(Properties securityProps) throws Exception {
     // set up locator with cluster-ssl-*
     int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
     int locatorPort = ports[0];
     int jmxPort = ports[1];
 
-    locator.invoke(()->{
+    locator.invoke(() -> {
       Properties props = new Properties();
       props.setProperty(MCAST_PORT, "0");
       props.put(JMX_MANAGER, "true");
       props.put(JMX_MANAGER_START, "true");
-      props.put(JMX_MANAGER_PORT, jmxPort+"");
+      props.put(JMX_MANAGER_PORT, jmxPort + "");
       props.putAll(securityProps);
       Locator.startLocatorAndDS(locatorPort, folder.newFile("locator.log"), props);
     });
@@ -143,8 +143,8 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
     command.addOption(CliStrings.CONNECT__SECURITY_PROPERTIES, securityPropsFile.getCanonicalPath());
 
     gfsh.executeCommand(command.toString());
-    CommandResult result = (CommandResult)gfsh.getResult();
-    assertEquals(Status.OK,result.getStatus());
+    CommandResult result = (CommandResult) gfsh.getResult();
+    assertEquals(Status.OK, result.getStatus());
     assertTrue(result.getContent().toString().contains("Successfully connected to"));
   }
 

@@ -24,6 +24,7 @@ import org.apache.geode.cache.wan.GatewayTransportFilter;
 
 public class MyGatewayTransportFilter4 implements GatewayTransportFilter, Serializable {
   String Id = "MyGatewayTransportFilter4";
+
   public InputStream getInputStream(InputStream stream) {
     // TODO Auto-generated method stub
     return null;
@@ -36,21 +37,22 @@ public class MyGatewayTransportFilter4 implements GatewayTransportFilter, Serial
 
   public void close() {
     // TODO Auto-generated method stub
-    
+
   }
-  
+
   @Override
   public String toString() {
     return Id;
   }
-  
+
   @Override
-  public boolean equals(Object obj){
-    if(this == obj){
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if ( !(obj instanceof MyGatewayTransportFilter4) ) return false;
-    MyGatewayTransportFilter4 filter = (MyGatewayTransportFilter4)obj;
+    if (!(obj instanceof MyGatewayTransportFilter4))
+      return false;
+    MyGatewayTransportFilter4 filter = (MyGatewayTransportFilter4) obj;
     return this.Id.equals(filter.Id);
   }
 }

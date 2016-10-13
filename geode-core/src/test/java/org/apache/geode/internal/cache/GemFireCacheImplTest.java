@@ -57,15 +57,14 @@ public class GemFireCacheImplTest {
           }
         });
       }
-      Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(90, TimeUnit.SECONDS)
-      .until(() -> assertEquals(MAX_THREADS, executor.getCompletedTaskCount()));
+      Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(90, TimeUnit.SECONDS).until(() -> assertEquals(MAX_THREADS, executor.getCompletedTaskCount()));
     } finally {
       gfc.close();
     }
   }
 
   @Test
-  public void testIsMisConfigured(){
+  public void testIsMisConfigured() {
     Properties clusterProps = new Properties();
     Properties serverProps = new Properties();
 

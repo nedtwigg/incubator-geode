@@ -28,13 +28,13 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
  * agent to be used for failover.
  */
 public interface GfManagerAgent {
-    
+
   /**
    * Disconnects this agent from the distributed system.
    * @return true if this call resulted in being disconnected
    */
   public boolean disconnect();
-    
+
   /**
    * Returns whether or not the agent is connected to the distributed
    * system. 
@@ -54,7 +54,7 @@ public interface GfManagerAgent {
    * the distributed system.
    */
   public boolean isListening();
-    
+
   /**
    * Returns information about the application VMs that are members of
    * the distributed system.
@@ -67,27 +67,27 @@ public interface GfManagerAgent {
    * about any other distributed systems.
    */
   public GfManagerAgent[] listPeers();
-    
+
   /**
    * Registers a <code>JoinLeaveListener</code>. on this agent that is
    * notified when membership in the distributed system changes.
    */
-  public void addJoinLeaveListener( JoinLeaveListener observer );
+  public void addJoinLeaveListener(JoinLeaveListener observer);
 
   /**
    * Sets the <code>CacheCollector</code> to which this agent delivers
    * {@link CacheSnapshot}s.
    */
   public void setCacheCollector(CacheCollector collector);
-    
+
   /**
    * Deregisters a <code>JoinLeaveListener</code> from this agent.
    */
-  public void removeJoinLeaveListener( JoinLeaveListener observer );
+  public void removeJoinLeaveListener(JoinLeaveListener observer);
 
-//   public void addSnapshotListener(SnapshotListener listener);
+  //   public void addSnapshotListener(SnapshotListener listener);
 
-//   public void removeSnapshotListener(SnapshotListener listener);
+  //   public void removeSnapshotListener(SnapshotListener listener);
 
   /**
    * Returns the distribution manager used by this manager agent.

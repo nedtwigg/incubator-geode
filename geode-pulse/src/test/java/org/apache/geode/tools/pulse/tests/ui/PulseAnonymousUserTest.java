@@ -20,7 +20,6 @@ package org.apache.geode.tools.pulse.tests.ui;
 
 import static org.assertj.core.api.Assertions.*;
 
-
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +63,7 @@ public class PulseAnonymousUserTest {
   }
 
   @Before
-  public void setup(){
+  public void setup() {
     driver.get(pulseURL + "/clusterDetail.html");
   }
 
@@ -93,7 +92,6 @@ public class PulseAnonymousUserTest {
     driver.close();
     jetty.stop();
   }
-
 
   public static void setUpServer(String username, String password, String jsonAuthFile) throws Exception {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

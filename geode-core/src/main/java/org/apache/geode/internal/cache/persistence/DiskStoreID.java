@@ -37,12 +37,12 @@ import org.apache.geode.internal.cache.versions.VersionSource;
  * of a put all exception. See PutAllCSDUnitTest.testPartialKeyInPR. 
  */
 public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
-  
+
   private static final long serialVersionUID = 1L;
-  
+
   private long mostSig;
   private long leastSig;
-  
+
   public DiskStoreID(UUID uuid) {
     this.mostSig = uuid.getMostSignificantBits();
     this.leastSig = uuid.getLeastSignificantBits();
@@ -62,13 +62,13 @@ public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
     out.writeLong(mostSig);
     out.writeLong(leastSig);
   }
-  
+
   @Override
   public void writeEssentialData(DataOutput out) throws IOException {
     out.writeLong(mostSig);
     out.writeLong(leastSig);
   }
-  
+
   public static DiskStoreID readEssentialData(DataInput in) throws IOException {
     long mostSig = in.readLong();
     long leastSig = in.readLong();
@@ -83,11 +83,11 @@ public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
 
   @Override
   public int compareTo(DiskStoreID tagID) {
-    if(tagID == null) {
+    if (tagID == null) {
       return 1;
     }
     int result = Long.signum(mostSig - tagID.mostSig);
-    if(result != 0) {
+    if (result != 0) {
       result = Long.signum(leastSig - tagID.leastSig);
     }
     return result;
@@ -148,19 +148,19 @@ public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
   public Version[] getSerializationVersions() {
     return null;
   }
-  
+
   public String abbrev() {
     return Long.toHexString(mostSig).substring(8);
   }
-  
+
   @Override
   public int getSizeInBytes() {
-  
+
     int size = 0;
-  
+
     // two longs 
     size += 16;
-    
-    return size;    
+
+    return size;
   }
 }

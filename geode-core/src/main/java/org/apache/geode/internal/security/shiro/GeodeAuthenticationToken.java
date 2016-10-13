@@ -27,15 +27,12 @@ public class GeodeAuthenticationToken extends UsernamePasswordToken {
 
   Properties properties;
 
-  public GeodeAuthenticationToken(Properties properties){
-    super(
-      properties.getProperty(ResourceConstants.USER_NAME),
-      properties.getProperty(ResourceConstants.PASSWORD)
-    );
+  public GeodeAuthenticationToken(Properties properties) {
+    super(properties.getProperty(ResourceConstants.USER_NAME), properties.getProperty(ResourceConstants.PASSWORD));
     this.properties = properties;
   }
 
-  public Properties getProperties(){
+  public Properties getProperties() {
     return properties;
   }
 }

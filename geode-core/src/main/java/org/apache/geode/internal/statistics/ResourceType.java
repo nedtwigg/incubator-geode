@@ -29,7 +29,7 @@ import org.apache.geode.StatisticsType;
  * @since GemFire 7.0
  */
 public class ResourceType {
-  
+
   private final int id;
   private final StatisticDescriptor[] statisticDescriptors;
   private final StatisticsType statisticsType;
@@ -39,19 +39,19 @@ public class ResourceType {
     this.statisticDescriptors = type.getStatistics();
     this.statisticsType = type;
     // moved to StatArchiveWriter->SampleHandler#handleNewResourceType
-//    if (this.stats.length >= ILLEGAL_STAT_OFFSET) {
-//      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] {type.getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET-1)}));
-//    }
+    //    if (this.stats.length >= ILLEGAL_STAT_OFFSET) {
+    //      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] {type.getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET-1)}));
+    //    }
   }
 
   public int getId() {
     return this.id;
   }
-  
+
   public StatisticDescriptor[] getStatisticDescriptors() {
     return this.statisticDescriptors;
   }
-  
+
   public StatisticsType getStatisticsType() {
     return this.statisticsType;
   }

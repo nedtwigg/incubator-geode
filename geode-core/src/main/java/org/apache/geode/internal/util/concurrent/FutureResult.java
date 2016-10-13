@@ -36,14 +36,14 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  */
 public class FutureResult implements Future {
   private final StoppableCountDownLatch latch;
-  private Object value ;
+  private Object value;
   private volatile boolean isCancelled = false;
-  
+
   /** Creates a new instance of FutureResult */
   public FutureResult(CancelCriterion crit) {
     this.latch = new StoppableCountDownLatch(crit, 1);
   }
-  
+
   /** Creates a new instance of FutureResult with the value available immediately */
   public FutureResult(Object value) {
     this.value = value;
@@ -51,24 +51,28 @@ public class FutureResult implements Future {
   }
 
   public boolean cancel(boolean mayInterruptIfRunning) {
-   if (this.isCancelled) return false; //already cancelled
-   this.isCancelled = true;
-   if (this.latch != null) this.latch.countDown();
-   return true;
+    if (this.isCancelled)
+      return false; //already cancelled
+    this.isCancelled = true;
+    if (this.latch != null)
+      this.latch.countDown();
+    return true;
   }
 
   public Object get() throws InterruptedException {
-    if (Thread.interrupted()) throw new InterruptedException(); // check in case latch is null
-    if (this.latch != null) this.latch.await();
+    if (Thread.interrupted())
+      throw new InterruptedException(); // check in case latch is null
+    if (this.latch != null)
+      this.latch.await();
     if (this.isCancelled) {
       throw new CancellationException(LocalizedStrings.FutureResult_FUTURE_WAS_CANCELLED.toLocalizedString());
     }
     return this.value;
   }
 
-  public Object get(long timeout, TimeUnit unit)
-  throws InterruptedException, TimeoutException {
-    if (Thread.interrupted()) throw new InterruptedException(); // check in case latch is null
+  public Object get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
+    if (Thread.interrupted())
+      throw new InterruptedException(); // check in case latch is null
     if (this.latch != null) {
       if (!this.latch.await(unit.toMillis(timeout))) {
         throw new TimeoutException();
@@ -84,9 +88,10 @@ public class FutureResult implements Future {
   public boolean isDone() {
     return this.latch == null || this.latch.getCount() == 0L || this.isCancelled;
   }
-  
+
   public void set(Object value) {
     this.value = value;
-    if (this.latch != null) this.latch.countDown();
+    if (this.latch != null)
+      this.latch.countDown();
   }
 }

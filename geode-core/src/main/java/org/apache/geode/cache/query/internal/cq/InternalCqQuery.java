@@ -30,7 +30,7 @@ public interface InternalCqQuery extends CqQuery {
    * sets the CqName.
    */
   public abstract void setName(String cqName);
-  
+
   public String getName();
 
   /**
@@ -40,9 +40,7 @@ public interface InternalCqQuery extends CqQuery {
    * @param sendRequestToServer true to send the request to server.
    * @throws CqException
    */
-  public abstract void close(boolean sendRequestToServer)
-      throws CqClosedException, CqException;
-
+  public abstract void close(boolean sendRequestToServer) throws CqClosedException, CqException;
 
   public abstract LocalRegion getCqBaseRegion();
 
@@ -69,11 +67,11 @@ public interface InternalCqQuery extends CqQuery {
    * @return VSD stats of the CQ
    */
   public CqQueryVsdStats getVsdStats();
-  
+
   public abstract CqState getState();
-  
+
   public String getQueryString();
-  
+
   public abstract boolean isDurable();
 
   public abstract void close() throws CqClosedException, CqException;

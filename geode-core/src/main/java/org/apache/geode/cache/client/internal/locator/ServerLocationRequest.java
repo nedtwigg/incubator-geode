@@ -29,16 +29,16 @@ import org.apache.geode.internal.Version;
  */
 public abstract class ServerLocationRequest implements DataSerializableFixedID {
 
- private String serverGroup;
-  
+  private String serverGroup;
+
   public ServerLocationRequest(String serverGroup) {
     super();
     this.serverGroup = serverGroup;
   }
-  
+
   /** Used by DataSerializer */
   public ServerLocationRequest() {
-    
+
   }
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -52,7 +52,7 @@ public abstract class ServerLocationRequest implements DataSerializableFixedID {
   public String getServerGroup() {
     return serverGroup;
   }
-  
+
   @Override
   public Version[] getSerializationVersions() {
     return null;

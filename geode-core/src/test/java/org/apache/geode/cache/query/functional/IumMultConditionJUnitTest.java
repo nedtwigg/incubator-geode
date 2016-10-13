@@ -92,7 +92,7 @@ public class IumMultConditionJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0"};
+    String queries[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0" };
     SelectResults sr[][] = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; i++) {
@@ -105,12 +105,11 @@ public class IumMultConditionJUnitTest {
 
         if (!observer.isIndexesUsed) {
           CacheUtils.log("NO INDEX USED");
-        }else {
-          fail ("Indexes used !!!!?");
+        } else {
+          fail("Indexes used !!!!?");
         }
         //        CacheUtils.log(Utils.printResult(r));
-        resType1 = (StructType) (sr[i][0]).getCollectionType()
-            .getElementType();
+        resType1 = (StructType) (sr[i][0]).getCollectionType().getElementType();
         resSize1 = ((sr[i][0]).size());
         //        CacheUtils.log(resType1);
         strg1 = resType1.getFieldNames();
@@ -134,20 +133,18 @@ public class IumMultConditionJUnitTest {
     }
     //  Create an Index on status and execute the same query again.
     qs = CacheUtils.getQueryService();
-    qs.createIndex("statusIndex", IndexType.FUNCTIONAL,
-        "pf.status", "/pos pf, pf.positions.values pos");
+    qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf, pf.positions.values pos");
     //   Index index2 = (Index)qs.createIndex("secIdIndex",
     // IndexType.FUNCTIONAL,"pos.secId","/pos pf, pf.positions.values pos");
-    qs.createIndex("IDIndex", IndexType.FUNCTIONAL,
-        "pf.ID", "/pos pf, pf.positions.values pos");
-    String queries2[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0"};
+    qs.createIndex("IDIndex", IndexType.FUNCTIONAL, "pf.ID", "/pos pf, pf.positions.values pos");
+    String queries2[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0" };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         QueryObserverImpl observer2 = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer2);
-        sr[i][1] = (SelectResults)q.execute();
+        sr[i][1] = (SelectResults) q.execute();
 
         if (observer2.isIndexesUsed == true) {
           CacheUtils.log("YES INDEX IS USED!");
@@ -155,8 +152,7 @@ public class IumMultConditionJUnitTest {
           fail("Index NOT Used");
         }
         //        CacheUtils.log(Utils.printResult(r2));
-        resType2 = (StructType) (sr[i][1]).getCollectionType()
-            .getElementType();
+        resType2 = (StructType) (sr[i][1]).getCollectionType().getElementType();
         resSize2 = ((sr[i][1]).size());
         //         CacheUtils.log(resType2);
         strg2 = resType2.getFieldNames();
@@ -181,14 +177,13 @@ public class IumMultConditionJUnitTest {
     // Iterator Names
     //       are getting Overwritten as iter1,iter2 and so on instead of the complied
     // values of the iterator names used in the Query.
-    if ((resType1).equals(resType2)){
-      CacheUtils.log("Both Search Results are of the same Type i.e.-->"+resType1);
-    }else {
+    if ((resType1).equals(resType2)) {
+      CacheUtils.log("Both Search Results are of the same Type i.e.-->" + resType1);
+    } else {
       fail("FAILED:Search result Type is different in both the cases");
     }
-    if (resSize1 == resSize2 || resSize1 != 0 ) {
-      CacheUtils.log("Both Search Results are Non zero and are of Same Size i.e.  Size= "
-          + resSize1);
+    if (resSize1 == resSize2 || resSize1 != 0) {
+      CacheUtils.log("Both Search Results are Non zero and are of Same Size i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result Type is different in both the cases");
     }
@@ -203,11 +198,9 @@ public class IumMultConditionJUnitTest {
         fail("FAILED: In both the cases Positions are different");
       if (!StringUtils.equals(((Position) stc2.get(strg2[1])).secId, ((Position) stc1.get(strg1[1])).secId))
         fail("FAILED: In both the cases Positions secIds are different");
-      if (((Portfolio) stc2.get(strg2[0])).isActive() != ((Portfolio) stc1
-          .get(strg1[0])).isActive())
+      if (((Portfolio) stc2.get(strg2[0])).isActive() != ((Portfolio) stc1.get(strg1[0])).isActive())
         fail("FAILED: Status of the Portfolios found are different");
-      if (((Portfolio) stc2.get(strg2[0])).getID() != ((Portfolio) stc1
-          .get(strg1[0])).getID())
+      if (((Portfolio) stc2.get(strg2[0])).getID() != ((Portfolio) stc1.get(strg1[0])).getID())
         fail("FAILED: IDs of the Portfolios found are different");
     }
     CacheUtils.compareResultsOfWithAndWithoutIndex(sr, this);

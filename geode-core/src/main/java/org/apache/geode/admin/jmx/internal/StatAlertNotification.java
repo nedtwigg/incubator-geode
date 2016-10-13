@@ -103,8 +103,7 @@ public class StatAlertNotification extends StatAlert implements Serializable, Da
     buf.append("\n");
     buf.append("[ ");
     for (int i = 0; i < getValues().length; i++) {
-      buf.append(defn.getStatisticInfo()[i].toString() + "=" + getValues()[i]
-          + "\n");
+      buf.append(defn.getStatisticInfo()[i].toString() + "=" + getValues()[i] + "\n");
     }
     buf.append("]");
     return getTime().toString() + ":" + buf.toString();
@@ -116,12 +115,11 @@ public class StatAlertNotification extends StatAlert implements Serializable, Da
       return false;
     }
 
-    StatAlertNotification other = (StatAlertNotification)object;
+    StatAlertNotification other = (StatAlertNotification) object;
 
     int defId = getDefinitionId();
 
-    if (defId != -1 && defId == other.getDefinitionId() && memberId != null
-        && memberId.equals(other.getMemberId())) {
+    if (defId != -1 && defId == other.getDefinitionId() && memberId != null && memberId.equals(other.getMemberId())) {
       return true;
     }
 
@@ -143,13 +141,12 @@ public class StatAlertNotification extends StatAlert implements Serializable, Da
     DataSerializer.writeString(this.memberId, out);
   }
 
-  public void fromData(DataInput in)
-    throws IOException, ClassNotFoundException {
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     // Do not modify StatAlert to allow 57 cacheservers to function with 57+ agent
     // However, update of a new StatAlertDefn on 57 server from 57+ agent not covered with this
     this.setDefinitionId(DataSerializer.readPrimitiveInt(in));
     this.setTime(DataSerializer.readDate(in));
-    this.setValues((Number[])DataSerializer.readObjectArray(in));
+    this.setValues((Number[]) DataSerializer.readObjectArray(in));
 
     this.memberId = DataSerializer.readString(in);
   }

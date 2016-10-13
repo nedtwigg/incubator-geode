@@ -26,12 +26,12 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class TestBed {
-  
-  private String fileName=null;
-  PropFileHelper propertiesFile =null;
+
+  private String fileName = null;
+  PropFileHelper propertiesFile = null;
   GemFireDistributedSystem ds = null;
 
-  public TestBed(){
+  public TestBed() {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     InputStream inputStream = classLoader.getResourceAsStream("testbed.properties");
     Properties properties = new Properties();
@@ -45,40 +45,38 @@ public class TestBed {
     ds = new GemFireDistributedSystem("t1", propertiesFile.getProperties());
   }
 
-  public TestBed(String fileName) throws FileNotFoundException, IOException{
+  public TestBed(String fileName) throws FileNotFoundException, IOException {
     this.fileName = fileName;
     propertiesFile = new PropFileHelper(fileName);
     ds = new GemFireDistributedSystem("t1", propertiesFile.getProperties());
   }
-  
-  
-  public TestBed(String fileName,boolean flag) throws FileNotFoundException, IOException{    
-//    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//    InputStream inputStream = classLoader.getResourceAsStream("testbed.properties");
-//    System.out.println("Inputstream : " + inputStream);
+
+  public TestBed(String fileName, boolean flag) throws FileNotFoundException, IOException {
+    //    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    //    InputStream inputStream = classLoader.getResourceAsStream("testbed.properties");
+    //    System.out.println("Inputstream : " + inputStream);
     Properties properties = new Properties();
     try {
       properties.load(new FileInputStream(new File(fileName)));
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException(e);
-    }    
+    }
     this.fileName = fileName;
     propertiesFile = new PropFileHelper(properties);
     ds = new GemFireDistributedSystem("t1", propertiesFile.getProperties());
   }
-  
-  
-  public String getBrowserForDriver(){
+
+  public String getBrowserForDriver() {
     return propertiesFile.readKey("browser");
   }
-  
-  public String getBrowserVersionForDriver(String browser){
+
+  public String getBrowserVersionForDriver(String browser) {
     return propertiesFile.readKey("browserVersion");
   }
-  
-  public GemFireDistributedSystem getRootDs(){
+
+  public GemFireDistributedSystem getRootDs() {
     return ds;
-  }  
+  }
 
 }

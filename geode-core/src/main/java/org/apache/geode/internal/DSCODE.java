@@ -113,7 +113,7 @@ public interface DSCODE {
    * @since GemFire 5.7
    */
   public static final byte CHAR_ARRAY = 27;
-  
+
   // 28..36 unused
 
   /** A header byte meaning that a DataSerializable that was
@@ -337,7 +337,7 @@ public interface DSCODE {
    * @since GemFire 6.6
    */
   public static final byte PDX = 93;
-  
+
   /**
    * A header byte meaning that the next element in the stream is an
    * enum whose type is defined in the pdx registry.
@@ -377,7 +377,7 @@ public interface DSCODE {
    * @since GemFire 6.6.2
    */
   public static final byte TIMESTAMP = 99;
-  
+
   /**
    * Used for enums that need to always be deserialized into their enum domain class.
    * @since GemFire 6.6.2
@@ -390,13 +390,13 @@ public interface DSCODE {
    * @since GemFire 6.6.2
    */
   public static final byte PDX_INLINE_ENUM = 101;
-  
+
   /**
    * Used for wildcard searches in soplogs with composite keys.
    * @since GemFire 8.0
    */
   public static final byte WILDCARD = 102;
-  
+
   // 103..127 unused
 
   // DO NOT USE CODES > 127. They are not "byte".

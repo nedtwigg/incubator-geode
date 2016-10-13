@@ -19,7 +19,6 @@ package org.apache.geode.cache.query;
 
 import org.apache.geode.cache.Operation;
 
-
 /**
  * This interface provides methods to get all the information sent from the server 
  * about the CQ event.  
@@ -32,34 +31,34 @@ import org.apache.geode.cache.Operation;
  * @since GemFire 5.5
  */
 public interface CqEvent {
-  
+
   /**
    * Get the CqQuery object of this event.
    * @see CqQuery
    * @return CqQuery object.
    */
   public CqQuery getCq();
-  
+
   /** 
    * Get the operation on the base region that triggered this event.
    * @return Operation operation on the base region (on which CQ is created). 
    */
   public Operation getBaseOperation();
-  
+
   /** 
    * Get the operation on the query results. Supported operations 
    * include update, create, destroy, region clear and region invalidate.
    * @return Operation operation with respect to CQ.
    */
   public Operation getQueryOperation();
-  
+
   /**
    * Get the key relating to the event.
    * In case of REGION_CLEAR and REGION_INVALIDATE operation, the key will be null.
    * @return Object key. 
    */
   public Object getKey();
-   
+
   /**
    * Get the new value of the modification.
    * If there is no new value returns null, this will happen during delete 
@@ -70,7 +69,7 @@ public interface CqEvent {
    * @return Object new/modified value.
    */
   public Object getNewValue();
-  
+
   /** 
    * If an error occurred, return the Throwable, otherwise return null.
    * If an error occurred, then this event will be passed to the
@@ -89,4 +88,3 @@ public interface CqEvent {
    */
   public byte[] getDeltaValue();
 }
-

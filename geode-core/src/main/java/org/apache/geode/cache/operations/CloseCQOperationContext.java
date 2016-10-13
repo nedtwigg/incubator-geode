@@ -37,8 +37,7 @@ public class CloseCQOperationContext extends ExecuteCQOperationContext {
    * @param regionNames
    *                names of regions that are part of the query string
    */
-  public CloseCQOperationContext(String cqName, String queryString,
-      Set regionNames) {
+  public CloseCQOperationContext(String cqName, String queryString, Set regionNames) {
     super(cqName, queryString, regionNames, false);
   }
 

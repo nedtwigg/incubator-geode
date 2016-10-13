@@ -60,14 +60,12 @@ public class RefreshMemberSnapshotRequest extends AdminRequest {
   /**
    * Returns the DataSerializer fixed id for the class that implements this method.
    */
-  public int getDSFID() {    
+  public int getDSFID() {
     return REFRESH_MEMBER_SNAP_REQUEST;
   }
 
-
   @Override
   public String toString() {
-    return "RefreshMemberSnapshotRequest sent to " + this.getRecipient()
-        + " from " + this.getSender();
+    return "RefreshMemberSnapshotRequest sent to " + this.getRecipient() + " from " + this.getSender();
   }
 }

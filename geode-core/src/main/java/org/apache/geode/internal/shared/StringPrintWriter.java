@@ -65,17 +65,16 @@ public class StringPrintWriter extends PrintWriter {
   public StringPrintWriter(StringBuilder sb, String lineSep) {
     super(dummyLock, false);
     this.sb = sb;
-    this.lineSep = lineSep != null ? lineSep : java.security.AccessController
-      .doPrivileged(new PrivilegedAction<String>() {
-        public String run() {
-          return System.getProperty("line.separator");
-        }
-      });
+    this.lineSep = lineSep != null ? lineSep : java.security.AccessController.doPrivileged(new PrivilegedAction<String>() {
+      public String run() {
+        return System.getProperty("line.separator");
+      }
+    });
   }
 
   @Override
   public void write(int c) {
-    this.sb.append((char)c);
+    this.sb.append((char) c);
   }
 
   @Override
@@ -85,11 +84,9 @@ public class StringPrintWriter extends PrintWriter {
 
   @Override
   public void write(char[] cbuf, int off, int len) {
-    if ((off < 0) || (off > cbuf.length) || (len < 0)
-        || ((off + len) > cbuf.length) || ((off + len) < 0)) {
+    if ((off < 0) || (off > cbuf.length) || (len < 0) || ((off + len) > cbuf.length) || ((off + len) < 0)) {
       throw new IndexOutOfBoundsException();
-    }
-    else if (len == 0) {
+    } else if (len == 0) {
       return;
     }
     this.sb.append(cbuf, off, len);

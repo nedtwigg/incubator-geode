@@ -24,13 +24,12 @@ package org.apache.geode.distributed.internal.membership;
  * 
  *
  */
-public interface MembershipTestHook
-{
+public interface MembershipTestHook {
   /**
    * test hook invoked prior to shutting down distributed system
    */
   public void beforeMembershipFailure(String reason, Throwable cause);
-  
+
   /**
    * test hook invoked after shutting down distributed system
    */

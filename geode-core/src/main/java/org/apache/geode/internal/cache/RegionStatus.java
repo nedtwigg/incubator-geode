@@ -37,7 +37,8 @@ public class RegionStatus implements Serializable {
   protected int numberOfEntries;
   protected long heapSize;
 
-  public RegionStatus() {}
+  public RegionStatus() {
+  }
 
   public RegionStatus(Region region) {
     initialize(region);
@@ -75,13 +76,7 @@ public class RegionStatus implements Serializable {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer
-      .append("RegionStatus[")
-      .append("numberOfEntries=")
-      .append(this.numberOfEntries)
-      .append("; heapSize=")
-      .append(this.heapSize)
-      .append("]");
+    buffer.append("RegionStatus[").append("numberOfEntries=").append(this.numberOfEntries).append("; heapSize=").append(this.heapSize).append("]");
     return buffer.toString();
   }
 }

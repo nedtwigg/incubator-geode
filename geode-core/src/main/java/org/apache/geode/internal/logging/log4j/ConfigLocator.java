@@ -29,7 +29,7 @@ import org.apache.logging.log4j.util.LoaderUtil;
 public class ConfigLocator {
 
   static final String PREFIX = "log4j2";
-  
+
   static final String SUFFIX_TEST_YAML = "-test.yaml";
   static final String SUFFIX_TEST_YML = "-test.yml";
   static final String SUFFIX_TEST_JSON = "-test.json";
@@ -40,10 +40,10 @@ public class ConfigLocator {
   static final String SUFFIX_JSON = ".json";
   static final String SUFFIX_JSN = ".jsn";
   static final String SUFFIX_XML = ".xml";
-  
+
   /** Ordered as specified on http://logging.apache.org/log4j/2.x/manual/configuration.html */
   static final String[] SUFFIXES = new String[] { SUFFIX_TEST_YAML, SUFFIX_TEST_YML, SUFFIX_TEST_JSON, SUFFIX_TEST_JSN, SUFFIX_TEST_XML, SUFFIX_YAML, SUFFIX_YML, SUFFIX_JSON, SUFFIX_JSN, SUFFIX_XML };
-  
+
   /**
    * Finds a Log4j configuration file in the current working directory.  The 
    * names of the files to look for are the same as those that Log4j would look 
@@ -51,7 +51,7 @@ public class ConfigLocator {
    * 
    * @return configuration file or null if not found.
    */
-  public static File findConfigInWorkingDirectory() {    
+  public static File findConfigInWorkingDirectory() {
     for (final String suffix : SUFFIXES) {
       final File configFile = new File(System.getProperty("user.dir"), PREFIX + suffix);
       if (configFile.isFile()) {

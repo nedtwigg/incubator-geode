@@ -36,14 +36,14 @@ import static org.junit.Assert.assertNotNull;
  * @since GemFire 8.0
  */
 public abstract class AbstractServerLauncherIntegrationTestCase extends AbstractLauncherIntegrationTestCase {
-  
+
   protected volatile int serverPort;
   protected volatile ServerLauncher launcher;
   protected volatile String workingDirectory;
 
   @Rule
-  public ErrorCollector errorCollector= new ErrorCollector();
-  
+  public ErrorCollector errorCollector = new ErrorCollector();
+
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -57,14 +57,14 @@ public abstract class AbstractServerLauncherIntegrationTestCase extends Abstract
   }
 
   @After
-  public final void tearDownServerLauncherTest() throws Exception {    
+  public final void tearDownServerLauncherTest() throws Exception {
     this.serverPort = 0;
     if (this.launcher != null) {
       this.launcher.stop();
       this.launcher = null;
     }
   }
-  
+
   protected void waitForServerToStart(final ServerLauncher launcher, int timeout, int interval, boolean throwOnTimeout) throws Exception {
     assertEventuallyTrue("waiting for local Server to start: " + launcher.status(), new Callable<Boolean>() {
       @Override
@@ -73,8 +73,7 @@ public abstract class AbstractServerLauncherIntegrationTestCase extends Abstract
           final ServerState serverState = launcher.status();
           assertNotNull(serverState);
           return Status.ONLINE.equals(serverState.getStatus());
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
           return false;
         }
       }
@@ -84,11 +83,11 @@ public abstract class AbstractServerLauncherIntegrationTestCase extends Abstract
   protected void waitForServerToStart(final ServerLauncher launcher, boolean throwOnTimeout) throws Exception {
     waitForServerToStart(launcher, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
-  
+
   protected void waitForServerToStart(final ServerLauncher launcher, int timeout, boolean throwOnTimeout) throws Exception {
     waitForServerToStart(launcher, timeout, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
-  
+
   protected void waitForServerToStart(final ServerLauncher launcher) throws Exception {
     waitForServerToStart(launcher, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
   }

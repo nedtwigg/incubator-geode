@@ -133,7 +133,6 @@ public class UnregisterInterestTest {
     when(this.serverConnection.getAcceptor()).thenReturn(this.acceptor);
     when(this.serverConnection.getClientVersion()).thenReturn(Version.CURRENT);
 
-
     when(this.valuePart.getObject()).thenReturn(CALLBACK_ARG);
 
     when(this.unregisterInterestOperationContext.getKey()).thenReturn(KEY);

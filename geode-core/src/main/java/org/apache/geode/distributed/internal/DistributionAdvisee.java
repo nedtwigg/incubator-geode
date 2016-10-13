@@ -32,44 +32,44 @@ public interface DistributionAdvisee {
    * @return the underlying <code>DistributionManager</code>
    */
   public DM getDistributionManager();
-  
+
   /**
    * @return the cancellation object for the advisee
    */
   public CancelCriterion getCancelCriterion();
-  
+
   /**
    * Returns the <code>DistributionAdvisor</code> that provides advice for
    * this advisee.
    * @return the <code>DistributionAdvisor</code>
    */
   public DistributionAdvisor getDistributionAdvisor();
-  
+
   /**
    * Returns the <code>Profile</code> representing this member in the
    * <code>DistributionAdvisor</code>.
    * @return the <code>Profile</code> representing this member
    */
   public Profile getProfile();
-  
+
   /**
    * Returns this advisees parent or null if no parent exists.
    * @return parent advisee
    */
   public DistributionAdvisee getParentAdvisee();
-  
+
   /**
    * Returns the underlying <code>InternalDistributedSystem</code> connection.
    * @return the underlying <code>InternalDistributedSystem</code>
    */
   public InternalDistributedSystem getSystem();
-  
+
   /**
    * Returns the simple name of this resource.
    * @return the simple name of this resource
    */
   public String getName();
-  
+
   /**
    * Returns the full path of this resource.
    * @return the full path of this resource.

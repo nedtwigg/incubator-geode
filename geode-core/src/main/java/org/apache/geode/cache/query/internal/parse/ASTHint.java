@@ -31,13 +31,13 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTHint extends GemFireAST {
 
   public ASTHint() {
-  
+
   }
-  
+
   public ASTHint(Token t) {
     super(t);
   }
-  
+
   @Override
   public String getText() {
     return super.getText();

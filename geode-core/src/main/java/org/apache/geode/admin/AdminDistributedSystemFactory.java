@@ -35,7 +35,7 @@ import java.util.Properties;
  * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
  */
 public class AdminDistributedSystemFactory {
-  
+
   /**
    * Sets the address this VM should bind to when connecting to the distributed
    * system.  This involves a system property, so using this option will limit
@@ -57,7 +57,7 @@ public class AdminDistributedSystemFactory {
   public static void bindToAddress(String bindAddress) {
     throw new UnsupportedOperationException(LocalizedStrings.AdminDistributedSystemFactory_PLEASE_USE_DISTRIBUTEDSYSTEMCONFIGSETBINDADDRESS_INSTEAD.toLocalizedString());
   }
-  
+
   /**
    * Defines a "default" distributed system configuration based on VM
    * system properties and the content of
@@ -70,8 +70,7 @@ public class AdminDistributedSystemFactory {
   public static DistributedSystemConfig defineDistributedSystem() {
     DistributionConfig dc = new DistributionConfigImpl(new Properties());
 
-    String remoteCommand =
-      DistributedSystemConfig.DEFAULT_REMOTE_COMMAND;
+    String remoteCommand = DistributedSystemConfig.DEFAULT_REMOTE_COMMAND;
     return new DistributedSystemConfigImpl(dc, remoteCommand);
   }
 
@@ -96,7 +95,7 @@ public class AdminDistributedSystemFactory {
   public static void setEnableAdministrationOnly(boolean adminOnly) {
     InternalDistributedSystem.setEnableAdministrationOnly(adminOnly);
   }
-  
+
   /**
    * Defines a distributed system configuration for administering the
    * distributed system to which this VM is currently connected.  The
@@ -117,20 +116,14 @@ public class AdminDistributedSystemFactory {
    *
    * @since GemFire 4.0
    */
-  public static DistributedSystemConfig
-    defineDistributedSystem(DistributedSystem system,
-                            String remoteCommand)
-    throws AdminException {
+  public static DistributedSystemConfig defineDistributedSystem(DistributedSystem system, String remoteCommand) throws AdminException {
 
-    InternalDistributedSystem internal =
-      (InternalDistributedSystem) system;
+    InternalDistributedSystem internal = (InternalDistributedSystem) system;
     if (remoteCommand == null) {
       remoteCommand = DistributedSystemConfig.DEFAULT_REMOTE_COMMAND;
     }
-    
-    DistributedSystemConfigImpl impl =
-      new DistributedSystemConfigImpl(internal.getConfig(),
-                                      remoteCommand);
+
+    DistributedSystemConfigImpl impl = new DistributedSystemConfigImpl(internal.getConfig(), remoteCommand);
     return impl;
   }
 
@@ -144,9 +137,9 @@ public class AdminDistributedSystemFactory {
    * @return administrative interface for a distributed system
    */
   public static AdminDistributedSystem getDistributedSystem(DistributedSystemConfig config) {
-    return new AdminDistributedSystemImpl((DistributedSystemConfigImpl)config);
+    return new AdminDistributedSystemImpl((DistributedSystemConfigImpl) config);
   }
-  
+
   /**
    * Returns a default GemFire LogWriterI18n for logging.  This LogWriterI18n will
    * log to standard out.
@@ -158,4 +151,3 @@ public class AdminDistributedSystemFactory {
   }
 
 }
-

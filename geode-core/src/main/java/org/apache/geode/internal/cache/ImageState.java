@@ -41,7 +41,7 @@ public interface ImageState /* extends Lock */ {
   public boolean getInRecovery();
 
   public void addDestroyedEntry(Object key);
-  
+
   public void removeDestroyedEntry(Object key);
 
   public boolean hasDestroyedEntry(Object key);
@@ -53,36 +53,49 @@ public interface ImageState /* extends Lock */ {
    *  while in token mode
    */
   public int getDestroyedEntriesCount();
-  
+
   public void setClearRegionFlag(boolean isClearOn, RegionVersionVector rvv);
 
   public boolean getClearRegionFlag();
+
   public RegionVersionVector getClearRegionVersionVector();
+
   public boolean wasRegionClearedDuringGII();
-  
+
   public void addVersionTag(Object key, VersionTag<?> tag);
+
   public Iterator<VersionTagEntry> getVersionTags();
-  
+
   public void addLeftMember(VersionSource<?> mbr);
+
   public Set<VersionSource> getLeftMembers();
+
   public boolean hasLeftMembers();
 
   public void lockGII();
+
   public void unlockGII();
+
   public void readLockRI();
+
   public void readUnlockRI();
+
   public void writeLockRI();
+
   public void writeUnlockRI();
 
   public boolean isReplicate();
+
   public boolean isClient();
-  
+
   public void init();
-  
+
   public interface VersionTagEntry {
     public Object getKey();
+
     public VersionSource getMemberID();
+
     public long getRegionVersion();
   }
-  
+
 }

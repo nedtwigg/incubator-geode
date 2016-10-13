@@ -26,7 +26,7 @@ import org.apache.geode.internal.Version;
 @SuppressWarnings("deprecation")
 public interface ConnectionProxy {
 
-/**
+  /**
    * The GFE version of the client.
    * @since GemFire 5.7
    */

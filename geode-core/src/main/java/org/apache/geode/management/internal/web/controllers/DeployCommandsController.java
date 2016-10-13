@@ -50,7 +50,8 @@ public class DeployCommandsController extends AbstractMultiPartCommandsControlle
 
   @RequestMapping(method = RequestMethod.GET, value = "/deployed")
   @ResponseBody
-  public String listDeployed(@RequestParam(value = CliStrings.LIST_DEPLOYED__GROUP, required = false) final String[] groups) {
+  public String listDeployed(@RequestParam(value = CliStrings.LIST_DEPLOYED__GROUP, required = false)
+  final String[] groups) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.LIST_DEPLOYED);
 
     if (hasValue(groups)) {
@@ -64,12 +65,11 @@ public class DeployCommandsController extends AbstractMultiPartCommandsControlle
   @ResponseBody
   // final MultipartHttpServletRequest request
   // @RequestPart(RESOURCES_REQUEST_PARAMETER) final Resource[] jarFileResources,
-  public String deploy(@RequestParam(RESOURCES_REQUEST_PARAMETER) final MultipartFile[] jarFileResources,
-                       @RequestParam(value = CliStrings.DEPLOY__GROUP, required = false) final String[] groups,
-                       @RequestParam(value = CliStrings.DEPLOY__JAR, required = false) final String jarFileName,
-                       @RequestParam(value = CliStrings.DEPLOY__DIR, required = false) final String directory)
-    throws IOException
-  {
+  public String deploy(@RequestParam(RESOURCES_REQUEST_PARAMETER)
+  final MultipartFile[] jarFileResources, @RequestParam(value = CliStrings.DEPLOY__GROUP, required = false)
+  final String[] groups, @RequestParam(value = CliStrings.DEPLOY__JAR, required = false)
+  final String jarFileName, @RequestParam(value = CliStrings.DEPLOY__DIR, required = false)
+  final String directory) throws IOException {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.DEPLOY);
 
     if (hasValue(groups)) {
@@ -91,8 +91,9 @@ public class DeployCommandsController extends AbstractMultiPartCommandsControlle
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/deployed")
   @ResponseBody
-  public String undeploy(@RequestParam(value = CliStrings.UNDEPLOY__GROUP, required = false) final String[] groups,
-                         @RequestParam(value = CliStrings.UNDEPLOY__JAR, required = false) final String[] jarFileNames) {
+  public String undeploy(@RequestParam(value = CliStrings.UNDEPLOY__GROUP, required = false)
+  final String[] groups, @RequestParam(value = CliStrings.UNDEPLOY__JAR, required = false)
+  final String[] jarFileNames) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.UNDEPLOY);
 
     if (hasValue(groups)) {

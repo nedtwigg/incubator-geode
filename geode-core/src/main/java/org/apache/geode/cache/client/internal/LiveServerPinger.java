@@ -35,15 +35,15 @@ import org.apache.geode.internal.logging.LogService;
  * are still alive.
  *
  */
-public class LiveServerPinger  extends EndpointListenerAdapter {
+public class LiveServerPinger extends EndpointListenerAdapter {
   private static final Logger logger = LogService.getLogger();
-  
+
   private static final long NANOS_PER_MS = 1000000L;
-  
+
   private final ConcurrentMap/*<Endpoint,Future>*/ taskFutures = new ConcurrentHashMap();
   protected final InternalPool pool;
   protected final long pingIntervalNanos;
-  
+
   public LiveServerPinger(InternalPool pool) {
     this.pool = pool;
     this.pingIntervalNanos = pool.getPingInterval() * NANOS_PER_MS;
@@ -62,9 +62,7 @@ public class LiveServerPinger  extends EndpointListenerAdapter {
   @Override
   public void endpointNowInUse(Endpoint endpoint) {
     try {
-      Future future = pool.getBackgroundProcessor().scheduleWithFixedDelay(
-          new PingTask(endpoint), pingIntervalNanos, pingIntervalNanos,
-          TimeUnit.NANOSECONDS);
+      Future future = pool.getBackgroundProcessor().scheduleWithFixedDelay(new PingTask(endpoint), pingIntervalNanos, pingIntervalNanos, TimeUnit.NANOSECONDS);
       taskFutures.put(endpoint, future);
     } catch (RejectedExecutionException e) {
       if (!pool.getCancelCriterion().isCancelInProgress()) {
@@ -72,45 +70,45 @@ public class LiveServerPinger  extends EndpointListenerAdapter {
       }
     }
   }
-  
+
   private void cancelFuture(Endpoint endpoint) {
     Future future = (Future) taskFutures.remove(endpoint);
-    if(future != null) {
+    if (future != null) {
       future.cancel(false);
     }
   }
-  
+
   private class PingTask extends PoolTask {
     private final Endpoint endpoint;
-    
+
     public PingTask(Endpoint endpoint) {
       this.endpoint = endpoint;
     }
 
     @Override
     public void run2() {
-      if(endpoint.timeToPing(pingIntervalNanos)) {
-//      logger.fine("DEBUG pinging " + server);
+      if (endpoint.timeToPing(pingIntervalNanos)) {
+        //      logger.fine("DEBUG pinging " + server);
         try {
           PingOp.execute(pool, endpoint.getLocation());
-        } catch(Exception e) {
-          if(logger.isDebugEnabled()) {
+        } catch (Exception e) {
+          if (logger.isDebugEnabled()) {
             logger.debug("Error occured while pinging server: {} - {}", endpoint.getLocation(), e.getMessage());
           }
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();          
+          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
           if (cache != null) {
             ClientMetadataService cms = cache.getClientMetadataService();
             cms.removeBucketServerLocation(endpoint.getLocation());
-          }        
+          }
           //any failure to ping the server should be considered a crash (eg.
           //socket timeout exception, security exception, failure to connect).
           pool.getEndpointManager().serverCrashed(endpoint);
         }
       } else {
-//      logger.fine("DEBUG skipping ping of " + server
-//      + " because lastAccessed=" + endpoint.getLastAccessed());
+        //      logger.fine("DEBUG skipping ping of " + server
+        //      + " because lastAccessed=" + endpoint.getLastAccessed());
       }
     }
   }
-  
+
 }

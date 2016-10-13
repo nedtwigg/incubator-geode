@@ -41,10 +41,9 @@ public class FileSystemStatsJUnitTest {
   @Before
   public void createStats() {
     StatisticsFactory statsFactory = mock(StatisticsFactory.class);
-    statistics =  mock(Statistics.class);
+    statistics = mock(Statistics.class);
     when(statsFactory.createAtomicStatistics(any(), anyString())).thenReturn(statistics);
     stats = new FileSystemStats(statsFactory, "stats");
-
 
     ArgumentCaptor<StatisticsType> statsTypeCaptor = ArgumentCaptor.forClass(StatisticsType.class);
     verify(statsFactory).createAtomicStatistics(statsTypeCaptor.capture(), anyString());

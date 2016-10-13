@@ -69,41 +69,44 @@ public class Bug34948DUnitTest extends JUnit4CacheTestCase {
   private void doCreateOtherVm() {
     VM vm = getOtherVm();
     vm.invoke(new CacheSerializableRunnable("create root") {
-        public void run2() throws CacheException {
-          getSystem();
-          AttributesFactory af = new AttributesFactory();
-          af.setScope(Scope.DISTRIBUTED_ACK);
-          af.setDataPolicy(DataPolicy.PRELOADED);
-          CacheListener cl = new CacheListenerAdapter() {
-              public void afterCreate(EntryEvent event) {
-                //                   getLogWriter().info("afterCreate " + event.getKey());
-                if (event.getCallbackArgument() != null) {
-                  lastCallback = event.getCallbackArgument();
-                }
-              }
-              public void afterUpdate(EntryEvent event) {
-                //                   getLogWriter().info("afterUpdate " + event.getKey());
-                if (event.getCallbackArgument() != null) {
-                  lastCallback = event.getCallbackArgument();
-                }
-              }
-              public void afterInvalidate(EntryEvent event) {
-                if (event.getCallbackArgument() != null) {
-                  lastCallback = event.getCallbackArgument();
-                }
-              }
-              public void afterDestroy(EntryEvent event) {
-                if (event.getCallbackArgument() != null) {
-                  lastCallback = event.getCallbackArgument();
-                }
-              }
-            };
-          af.setCacheListener(cl);
-          createRootRegion("bug34948", af.create());
-        }
-      });
+      public void run2() throws CacheException {
+        getSystem();
+        AttributesFactory af = new AttributesFactory();
+        af.setScope(Scope.DISTRIBUTED_ACK);
+        af.setDataPolicy(DataPolicy.PRELOADED);
+        CacheListener cl = new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            //                   getLogWriter().info("afterCreate " + event.getKey());
+            if (event.getCallbackArgument() != null) {
+              lastCallback = event.getCallbackArgument();
+            }
+          }
+
+          public void afterUpdate(EntryEvent event) {
+            //                   getLogWriter().info("afterUpdate " + event.getKey());
+            if (event.getCallbackArgument() != null) {
+              lastCallback = event.getCallbackArgument();
+            }
+          }
+
+          public void afterInvalidate(EntryEvent event) {
+            if (event.getCallbackArgument() != null) {
+              lastCallback = event.getCallbackArgument();
+            }
+          }
+
+          public void afterDestroy(EntryEvent event) {
+            if (event.getCallbackArgument() != null) {
+              lastCallback = event.getCallbackArgument();
+            }
+          }
+        };
+        af.setCacheListener(cl);
+        createRootRegion("bug34948", af.create());
+      }
+    });
   }
-  
+
   /**
    * Make sure that value is only deserialized in cache whose application
    * asks for the value.
@@ -132,24 +135,24 @@ public class Bug34948DUnitTest extends JUnit4CacheTestCase {
 
     // @todo darrel: add putAll test once it does not deserialize
   }
-  
+
   public static class HomeBoy implements DataSerializable {
     public HomeBoy() {
     }
+
     public void toData(DataOutput out) throws IOException {
       DistributedMember me = InternalDistributedSystem.getAnyInstance().getDistributedMember();
       DataSerializer.writeObject(me, out);
     }
-    public void fromData(DataInput in)
-      throws IOException, ClassNotFoundException {
+
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
       DistributedMember me = ds.getDistributedMember();
-      DistributedMember hb = (DistributedMember)DataSerializer.readObject(in);
+      DistributedMember hb = (DistributedMember) DataSerializer.readObject(in);
       if (me.equals(hb)) {
         ds.getLogWriter().info("HomeBoy was deserialized on his home");
       } else {
-        String msg = "HomeBoy was deserialized on "
-          + me + " instead of his home " + hb;
+        String msg = "HomeBoy was deserialized on " + me + " instead of his home " + hb;
         ds.getLogWriter().error(msg);
         throw new IllegalStateException(msg);
       }

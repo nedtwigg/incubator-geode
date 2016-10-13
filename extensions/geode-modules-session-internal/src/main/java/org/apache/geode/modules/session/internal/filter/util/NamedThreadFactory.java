@@ -28,8 +28,7 @@ import java.util.logging.Logger;
  */
 public class NamedThreadFactory implements ThreadFactory {
 
-  private static final Logger LOG = Logger.getLogger(
-      NamedThreadFactory.class.getName());
+  private static final Logger LOG = Logger.getLogger(NamedThreadFactory.class.getName());
 
   private final String id;
 
@@ -59,8 +58,7 @@ public class NamedThreadFactory implements ThreadFactory {
     thr.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
       @Override
       public void uncaughtException(Thread t, Throwable e) {
-        LOG.log(Level.WARNING,
-            "Uncaught Exception in thread: " + t.getName(), e);
+        LOG.log(Level.WARNING, "Uncaught Exception in thread: " + t.getName(), e);
       }
     });
     return thr;

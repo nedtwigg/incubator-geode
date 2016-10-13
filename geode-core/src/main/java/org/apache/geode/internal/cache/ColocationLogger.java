@@ -53,14 +53,12 @@ public class ColocationLogger implements Runnable {
    */
   public ColocationLogger(PartitionedRegion region) {
     this.region = region;
-    loggerThread = new Thread(this,"ColocationLogger for " + region.getName());
+    loggerThread = new Thread(this, "ColocationLogger for " + region.getName());
     loggerThread.start();
   }
 
-  public void run()
-  {
-    CancelCriterion stopper = region
-        .getGemFireCache().getDistributedSystem().getCancelCriterion();
+  public void run() {
+    CancelCriterion stopper = region.getGemFireCache().getDistributedSystem().getCancelCriterion();
     DistributedSystem.setThreadsSocketPolicy(true /* conserve sockets */);
     SystemFailure.checkFailure();
     if (stopper.cancelInProgress() != null) {
@@ -93,7 +91,7 @@ public class ColocationLogger implements Runnable {
    */
   private void run2() throws InterruptedException {
     boolean firstLogIteration = true;
-    synchronized(loggerLock) {
+    synchronized (loggerLock) {
       while (true) {
         int sleepMillis = getLogInterval();
         // delay for first log message is half the time of the interval between subsequent log messages
@@ -107,7 +105,7 @@ public class ColocationLogger implements Runnable {
           //Terminate the logging thread, recoverycomplete is only true when there are no missing colocated regions
           break;
         }
-        if(missingChildren.isEmpty()) {
+        if (missingChildren.isEmpty()) {
           break;
         }
         logMissingRegions(region);
@@ -132,7 +130,7 @@ public class ColocationLogger implements Runnable {
 
   public void addMissingChildRegions(PartitionedRegion childRegion) {
     List<String> missingDescendants = childRegion.getMissingColocatedChildren();
-    for (String name:missingDescendants) {
+    for (String name : missingDescendants) {
       addMissingChildRegion(name);
     }
   }
@@ -168,8 +166,7 @@ public class ColocationLogger implements Runnable {
     String plural = "s";
     multipleChildren = missingChildren.size() > 1 ? plural : singular;
     namesOfMissing = String.join("\n\t", multipleChildren, namesOfMissing);
-    logger.warn(LocalizedMessage.create(LocalizedStrings.ColocationLogger_PERSISTENT_DATA_RECOVERY_OF_REGION_PREVENTED_BY_OFFLINE_COLOCATED_CHILDREN,
-        new Object[]{region.getFullPath(), namesOfMissing}));
+    logger.warn(LocalizedMessage.create(LocalizedStrings.ColocationLogger_PERSISTENT_DATA_RECOVERY_OF_REGION_PREVENTED_BY_OFFLINE_COLOCATED_CHILDREN, new Object[] { region.getFullPath(), namesOfMissing }));
   }
 
   public static int getLogInterval() {
@@ -184,6 +181,7 @@ public class ColocationLogger implements Runnable {
     LOG_INTERVAL = sleepMillis;
     return currentSleep;
   }
+
   public synchronized static void testhookResetLogInterval() {
     LOG_INTERVAL = DEFAULT_LOG_INTERVAL;
   }
